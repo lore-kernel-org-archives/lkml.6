@@ -1,91 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751394AbeCLTRG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:17:06 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:38775 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751300AbeCLTRF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:17:05 -0400
-X-Google-Smtp-Source: AG47ELtvT46YsTJe99ArsTQZbo+nzZBLJmjtiozAkgbvq5PQMtIR2xY1QS/1pLoIQciqlE8PwInxzg==
-Date: Mon, 12 Mar 2018 12:17:01 -0700
-From: Benson Leung <bleung@google.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org, bleung@google.com
-Subject: Re: [PATCH 00/14] chrome_laptop: stop being a platform driver
-Message-ID: <20180312191700.GA131001@decatoncale.mtv.corp.google.com>
-References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+        id S932200AbeCLTU0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:20:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751282AbeCLTUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 15:20:25 -0400
+Date: Mon, 12 Mar 2018 20:20:20 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Daniel Borkmann <daniel@iogearbox.net>, Wangnan <wangnan0@huawei.com>
+Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
+Message-ID: <20180312192020.GA14525@krava>
+References: <20180312094313.18738-1-jolsa@kernel.org>
+ <20180312094313.18738-12-jolsa@kernel.org>
+ <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 12, 2018 at 11:44:57AM -0700, Alexei Starovoitov wrote:
+> On Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa wrote:
+> > diff --git a/tools/perf/util/bpf-userapi.h b/tools/perf/util/bpf-userapi.h
+> > new file mode 100644
+> > index 000000000000..63f2b4c13a5c
+> > --- /dev/null
+> > +++ b/tools/perf/util/bpf-userapi.h
+> > @@ -0,0 +1,11 @@
+> > +#ifndef __BPF_USERAPI_H
+> > +#define __BPF_USERAPI_H
+> > +
+> > +enum {
+> > +	BPF_FUNC_USER_START			= 10000,
+> > +	BPF_FUNC_USER_print			= BPF_FUNC_USER_START,
+> > +	BPF_FUNC_USER_bpf_map_get_next_key,
+> > +	BPF_FUNC_USER_bpf_map_lookup_elem,
+> > +};
+> > +
+> > +#endif /* __BPF_USERFUNCS_H */
+> > diff --git a/tools/perf/util/bpf-userfuncs.h b/tools/perf/util/bpf-userfuncs.h
+> > new file mode 100644
+> > index 000000000000..e920420237ee
+> > --- /dev/null
+> > +++ b/tools/perf/util/bpf-userfuncs.h
+> > @@ -0,0 +1,19 @@
+> > +#ifndef __BPF_USERFUNCS_H
+> > +#define __BPF_USERFUNCS_H
+> > +
+> > +#include <bpf-userapi.h>
+> > +
+> > +static int (*bpfu_print)(const char *fmt, ...) =
+> > +	(void *) BPF_FUNC_USER_print;
+> > +static int (*bpfu_map_get_next_key)(void *map, void *key, void *value) =
+> > +	(void *) BPF_FUNC_USER_bpf_map_get_next_key;
+> > +static int (*bpfu_map_lookup_elem)(void *map, void *key, void *value) =
+> > +	(void *) BPF_FUNC_USER_bpf_map_lookup_elem;
+> > +
+> > +#define print(fmt, ...)                                  \
+> > +({                                                       \
+> > +	char ____fmt[] = fmt;                            \
+> > +	bpfu_print(____fmt, ##__VA_ARGS__);              \
+> > +})
+> 
+> since there is no verifier for this user space bpf interpreter
+> there is no need to restrict what BEGIN/END progs can do and can call.
+> llvm will happily compile any C code into bpf instructions.
+> With little bit of elf magic it's possible to let it call any libc
+> function instead of only 3 above.
+> perf loader will see bpf_call into normal printf, memcpy, memcmp, etc
+> then during the loading need to associate symbol with actual address
+> of these functions inside perf binary and let call_cb do the call.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+right, I kept this way, because it was already there for kernel,
+so it was fast to write ;-)
 
-On Mon, Mar 12, 2018 at 12:08:53PM -0700, Dmitry Torokhov wrote:
-> Hi,
->=20
-> This series is a combination of Atmel touchscreen driver stopping using
-> platform data and moving over to generic device properties, and
-> chromeos-laptop switching from being platform driver, which is the wrong
-> abstraction for it, and moving to using i2c bis notifier. Switching from
-> platform driver to the notifiers allows us to get rid of the ugly code th=
-at
-> manually tries to handle deferrals in case i2c bus is not ready at the ti=
-me
-> we start initializing the module.
->=20
-> Benson, because chromeos-laptop is instantiating Atmel devices the 2
-> changes are intertwined. While we could apply them in stages, with parts
-> going through input and parts going through your tree I was wondering if =
-we
-> could speed up the process and push the series through one or another tree
-> (if you are OK with the patches, of course).
->=20
+but it's true we could leave it symbol based and have some sort of
+dynamic loader behaviour.. but we'd need to sort out passing the
+arguments in some generic form.. I'll check on that
 
-I'm all for this change. I can push this through my tree.
+thanks,
+jirka
 
-Thanks,
-Benson
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---KsGdsel6WgEHnImy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqm0iwACgkQHwn1ewov
-5lihqg//TBdwbNb506AWyEFpPxFhEnXDBnaDY14NlyCe+q2as2pWDpK/hG0nPhA2
-gtNsagmO/KA2Mksm1ereK1dk+sMNJYYkp/WTQS+t3YqJOZiWKgoMT2Bao6VghxEF
-T/pKWz2XAUDLjlzxOSFL6tL3hoJWND7LUTIJVBGUb/2U0JCicor+ZbiQQd+4B2rc
-6j7ePnbWyMNUto4rWUWHVvhQHEHLSmuAHeLhetEvP5Um9Rj92o/WRls3MCqN5PMW
-aaTqbdOIoPlDe5u5lay87kyU7EvEVRGteue7s7y4dMC/5ouRLTPeO69Js0QPtKe5
-RIwFOlV02YWR5p14uC4Bi/fXqZcRsFdX+ZiPK8t/Ia8sQOMNIjwUFhvrn4UoUQi2
-bdTDUCYLphY//CdHx3z87+xxM1FbMDEkYFpZ3XjteL7H6cYsiayrxI5lxCGUEjor
-XdC1tEbjwD0XQBut6Tkh8jlFQVhix3w/IY+Htl8wXK7XtbSqogvjEVcqPB1mdGT/
-p9Vojc4lmytsK1t44FcyBJycUFgaqQvb3+po9s3C8QCQ/SFVSQyx0YV12m8VzF0D
-hz/NQVEiArb0xC0eUW18Mhl/qnpa5zgZh3dHTr6KbozYyJDYrpTcCsnFIc3QYu/3
-OfIk5qb0Ja55ztcA3t2HhaE5Kp7TIWlOAaA/8z7v+QHxlIIxqXg=
-=QOMn
------END PGP SIGNATURE-----
-
---KsGdsel6WgEHnImy--
+> I think this way begin/end will be much more powerful and useful.
+> Potentially allowing some of the bcc scripts to be written this way.
+> 
