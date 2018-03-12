@@ -1,95 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932257AbeCLJng (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:43:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59626 "EHLO mx1.redhat.com"
+        id S1752595AbeCLJnz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:43:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58064 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932410AbeCLJnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:43:31 -0400
+        id S932425AbeCLJng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:43:36 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 10/13] libbpf: Add bpf_object__run_(begin|end) functions
-Date: Mon, 12 Mar 2018 10:43:10 +0100
-Message-Id: <20180312094313.18738-11-jolsa@kernel.org>
+Subject: [PATCH 13/13] perf samples: Add syscall-count.c object
+Date: Mon, 12 Mar 2018 10:43:13 +0100
+Message-Id: <20180312094313.18738-14-jolsa@kernel.org>
 In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
 References: <20180312094313.18738-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bpf_object__run_(begin|end) functions to run
-BEGIN/END code for specific object.
+Adding syscall-count.c sample, that generates
+syscall entry calls, like:
 
-Link: http://lkml.kernel.org/n/tip-hj1hwb7fshdwco706j22ela3@git.kernel.org
+  $ perf bpf -c samples/syscall-counts.c
+  LLVM: dumping samples/syscall-counts.o
+
+  $ sudo perf bpf -e samples/syscall-counts.o -a
+  BEGIN
+  ^CEND
+                comm            value
+             firefox              182
+       Socket Thread                8
+     InotifyEventThr               26
+     xmonad-x86_64-l              405
+                perf            45122
+     VoiceProcessThr               12
+         JS Watchdog               14
+     Chrome_~dThread              657
+     Softwar~cThread              474
+      Gecko_IOThread              489
+         stalonetray                8
+                mutt              410
+                Xorg              956
+               xchat               37
+           nm-applet               14
+        xscreensaver              170
+               Timer             1205
+      NetworkManager               25
+        rtkit-daemon                4
+     webrtc_audio_mo               24
+         Web Content             6889
+     IPDL Background              474
+           JS Helper              221
+             gkrellm              434
+               xterm              528
+         InputThread              793
+
+Link: http://lkml.kernel.org/n/tip-9jsy0nnm8khn6e60fmwn4ei7@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/lib/bpf/libbpf.c | 30 ++++++++++++++++++++++++++++++
- tools/lib/bpf/libbpf.h |  4 ++++
- 2 files changed, 34 insertions(+)
+ tools/perf/samples/syscall-counts.c | 61 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 tools/perf/samples/syscall-counts.c
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 26231e278bb8..f1f999d64d6a 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -45,6 +45,7 @@
- 
- #include "libbpf.h"
- #include "bpf.h"
-+#include "interp.h"
- 
- #ifndef EM_BPF
- #define EM_BPF 247
-@@ -2107,3 +2108,32 @@ int bpf_prog_load(const char *file, enum bpf_prog_type type,
- 	*prog_fd = bpf_program__fd(first_prog);
- 	return 0;
- }
+diff --git a/tools/perf/samples/syscall-counts.c b/tools/perf/samples/syscall-counts.c
+new file mode 100644
+index 000000000000..e6de6c9fdb85
+--- /dev/null
++++ b/tools/perf/samples/syscall-counts.c
+@@ -0,0 +1,61 @@
++#include <uapi/linux/bpf.h>
++#include <bpf-helpers.h>
++#include <bpf-userfuncs.h>
 +
-+static u64 bpf_program__run(struct bpf_program *prog,
-+			    struct bpf_insn *insn,
-+			    struct bpf_interp *interp)
++#define TASK_COMM_LEN 16
++
++char _license[] SEC("license") = "GPL";
++int _version SEC("version") = LINUX_VERSION_CODE;
++
++struct key_t {
++	char comm[TASK_COMM_LEN];
++};
++
++struct bpf_map_def SEC("maps") counts_map = {
++	.type = BPF_MAP_TYPE_HASH,
++	.key_size = sizeof(struct key_t),
++	.value_size = sizeof(u64),
++	.max_entries = 100,
++};
++
++SEC("raw_syscalls:sys_enter")
++int func(void *ctx)
 +{
-+	interp->insns       = prog->insns;
-+	interp->insns_cnt   = prog->insns_cnt;
-+	interp->insns_start = insn - prog->insns;
++	u64 *val, one = 1;
++	struct key_t key;
++	char comm[TASK_COMM_LEN];
 +
-+	return bpf_interp__run(interp);
++	bpf_get_current_comm(&key.comm, sizeof(comm));
++
++	val = bpf_map_lookup_elem(&counts_map, &key);
++	if (val)
++		(*val)++;
++	else
++		bpf_map_update_elem(&counts_map, &key, &one, BPF_NOEXIST);
++
++	return 0;
 +}
 +
-+u64 bpf_object__run_begin(struct bpf_object *obj, struct bpf_interp *interp)
++int BEGIN(void)
 +{
-+	struct bpf_program *prog = obj->text;
-+	struct bpf_insn *insn = obj->insn_begin;
-+
-+	pr_debug("running BEGIN(%p) for %s\n", insn, prog->name);
-+	return insn && bpf_program__run(obj->text, insn, interp);
++	print("BEGIN\n");
++	return 0;
 +}
 +
-+u64 bpf_object__run_end(struct bpf_object *obj, struct bpf_interp *interp)
++void END(void)
 +{
-+	struct bpf_program *prog = obj->text;
-+	struct bpf_insn *insn = obj->insn_end;
++	struct key_t key = {}, next_key;
++	u64 value;
++	int i = 0;
 +
-+	pr_debug("running END(%p) for %s\n", insn, prog->name);
-+	return insn && bpf_program__run(obj->text, insn, interp);
++	print("END\n");
++	print("\n              comm            value\n");
++
++	while (bpfu_map_get_next_key(&counts_map, &key, &next_key) == 0) {
++                if (bpfu_map_lookup_elem(&counts_map, &next_key, &value))
++			continue;
++
++		print("%18s %16lu\n", next_key.comm, value);
++                key = next_key;
++        }
 +}
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index bfc4d0411ec5..8ac4d4efcc1b 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -96,6 +96,10 @@ struct bpf_program;
- struct bpf_program *bpf_program__next(struct bpf_program *prog,
- 				      struct bpf_object *obj);
- 
-+struct bpf_interp;
-+u64 bpf_object__run_begin(struct bpf_object *obj, struct bpf_interp *interp);
-+u64 bpf_object__run_end(struct bpf_object *obj, struct bpf_interp *interp);
-+
- #define bpf_object__for_each_program(pos, obj)		\
- 	for ((pos) = bpf_program__next(NULL, (obj));	\
- 	     (pos) != NULL;				\
 -- 
 2.13.6
