@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751787AbeCLONo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:13:44 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44045 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932531AbeCLON2 (ORCPT
+        id S932447AbeCLOOe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:14:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751390AbeCLOND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:13:28 -0400
-X-Google-Smtp-Source: AG47ELuoQGwYXuNo/AEV8rym0PiY2gRwq1510+v+UbmsBFg7tL+ESWfXOLFSBuem2j6azVTyoQcPnw==
-Date: Mon, 12 Mar 2018 14:13:24 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: backlight: Add binding for RAVE SP
- backlight driver
-Message-ID: <20180312141324.p2duehrev5jd7mof@dell>
-References: <20180308192046.27670-1-andrew.smirnov@gmail.com>
- <20180308192046.27670-2-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308192046.27670-2-andrew.smirnov@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 12 Mar 2018 10:13:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86ED3601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: andy.gross@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        swboyd@chromium.org, evgreen@chromium.org, bjorn.andersson@linaro.org,
+        dianders@chromium.org, marc.zyngier@arm.com,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v7 2/3] dt-bindings: qcom: Add SDM845 bindings
+Date: Mon, 12 Mar 2018 19:42:23 +0530
+Message-Id: <20180312141224.11907-3-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180312141224.11907-1-rnayak@codeaurora.org>
+References: <20180312141224.11907-1-rnayak@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Mar 2018, Andrey Smirnov wrote:
+Add a SoC string 'sdm845' for the qualcomm SDM845 SoC
 
-> Add Device Tree bindings for RAVE SP backlight driver - an MFD cell of
-> parent RAVE SP driver (documented in
-> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Aleksander Morgado <aleksander@aleksander.es>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
-> 
-> Changes since [v1]:
-> 
->  - Fixed typos in commit message and incorrect node name in example section
-> 
-> [v1] https://lkml.kernel.org/r/20180307024011.25033-2-andrew.smirnov@gmail.com
-> 
->  .../leds/backlight/zii,rave-sp-backlight.txt       | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/qcom.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks.
-
+diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
+index 0ed4d39d7fe1..ee532e705d6c 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.txt
++++ b/Documentation/devicetree/bindings/arm/qcom.txt
+@@ -26,6 +26,7 @@ The 'SoC' element must be one of the following strings:
+ 	msm8996
+ 	mdm9615
+ 	ipq8074
++	sdm845
+ 
+ The 'board' element must be one of the following strings:
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
