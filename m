@@ -1,112 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeCLMaw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:30:52 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:41248 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeCLMau (ORCPT
+        id S1751327AbeCLMdI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:33:08 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:38133 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLMdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:30:50 -0400
-Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
-To: Avri Altman <Avri.Altman@wdc.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
- <1520849262.10722.582.camel@linux.intel.com>
- <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
- <540fef96-aa2f-e6c3-467d-bc1d021dd55b@mentor.com>
- <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <329d521d-1776-43ee-2f0e-e9690c29a693@mentor.com>
-Date: Mon, 12 Mar 2018 18:00:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 08:33:05 -0400
+X-Google-Smtp-Source: AG47ELtTXWp/TxJyjSgBKumdEViCw6fmpf55iCzaPgDAjzQAnXbYwB0WyfLoTJy3aM2jCQ4wkBvksA==
 MIME-Version: 1.0
-In-Reply-To: <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+In-Reply-To: <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com> <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
+ <1520842245.1513.5.camel@bootlin.com> <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Mon, 12 Mar 2018 21:32:42 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
+Message-ID: <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Monday 12 March 2018 05:02 PM, Avri Altman wrote:
+On Mon, Mar 12, 2018 at 5:15 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+> Hi Paul, Dmitry,
 >
->> -----Original Message-----
->> From: Harish Jenny K N [mailto:harish_kandiga@mentor.com]
->> Sent: Monday, March 12, 2018 1:17 PM
->> To: Avri Altman <Avri.Altman@wdc.com>; Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com>; ulf.hansson@linaro.org;
->> linus.walleij@linaro.org; adrian.hunter@intel.com; shawn.lin@rock-chips.com
->> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Vladimir_Zapolskiy@mentor.com
->> Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+> On Mon, Mar 12, 2018 at 5:10 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+>> Hi,
 >>
+>> On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
+>>> Hello,
+>>>
+>>> On 07.03.2018 19:37, Paul Kocialkowski wrote:
+>>> > Hi,
+>>> >
+>>> > First off, I'd like to take the occasion to say thank-you for your
+>>> > work.
+>>> > This is a major piece of plumbing that is required for me to add
+>>> > support
+>>> > for the Allwinner CedarX VPU hardware in upstream Linux. Other
+>>> > drivers,
+>>> > such as tegra-vde (that was recently merged in staging) are also
+>>> > badly
+>>> > in need of this API.
+>>>
+>>> Certainly it would be good to have a common UAPI. Yet I haven't got my
+>>> hands on
+>>> trying to implement the V4L interface for the tegra-vde driver, but
+>>> I've taken a
+>>> look at Cedrus driver and for now I've one question:
+>>>
+>>> Would it be possible (or maybe already is) to have a single IOCTL that
+>>> takes input/output buffers with codec parameters, processes the
+>>> request(s) and returns to userspace when everything is done? Having 5
+>>> context switches for a single frame decode (like Cedrus VAAPI driver
+>>> does) looks like a bit of overhead.
 >>
+>> The V4L2 interface exposes ioctls for differents actions and I don't
+>> think there's a combined ioctl for this. The request API was introduced
+>> precisely because we need to have consistency between the various ioctls
+>> needed for each frame. Maybe one single (atomic) ioctl would have worked
+>> too, but that's apparently not how the V4L2 API was designed.
 >>
->> On Monday 12 March 2018 04:15 PM, Avri Altman wrote:
->>>> -----Original Message-----
->>>> From: Andy Shevchenko [mailto:andriy.shevchenko@linux.intel.com]
->>>> Sent: Monday, March 12, 2018 12:08 PM
->>>> To: Harish Jenny K N <harish_kandiga@mentor.com>;
->>>> ulf.hansson@linaro.org; linus.walleij@linaro.org;
->>>> adrian.hunter@intel.com; shawn.lin@rock- chips.com; Avri Altman
->>>> <Avri.Altman@wdc.com>
->>>> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
->>>> Vladimir_Zapolskiy@mentor.com
->>>> Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
->>>>
->>>> On Mon, 2018-03-12 at 10:01 +0530, Harish Jenny K N wrote:
->>>>> This patch exports the host capabilities to debugfs
->>>>>
->>>>> This idea of sharing host capabilities over debugfs came up from
->>>>> Abbas Raza <Abbas_Raza@mentor.com> Earlier discussions:
->>>>> https://lkml.org/lkml/2018/3/5/357
->>>>> https://www.spinics.net/lists/linux-mmc/msg48219.html
->>>>>
->>>> Address below minors and, FWIW, take mine
->>>>
->>>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>>>
->>>>> +	for_each_set_bit(bit, (const unsigned long *)&caps,
->>>>> BITS_PER_LONG)
->>>>> +	for_each_set_bit(bit, (const unsigned long *)&caps2,
->>>>> BITS_PER_LONG)
->>>> Explicit casting is not needed anymore in both cases.
->>> Also maybe use sizeof(mmc_host_capabilities) instead of BITS_PER_LONG?
->> You mean sizeof(caps) and not sizeof(mmc_host_capabilities) . Right ?
-> meant ARRAY_SIZE(mmc_host_capabilities)
+>> I don't think there is any particular overhead caused by having n ioctls
+>> instead of a single one. At least that would be very surprising IMHO.
 >
-> Thanks,
-> Avri
+> Well, there is small syscall overhead, which normally shouldn't be
+> very painful, although with all the speculative execution hardening,
+> can't be sure of anything anymore. :)
 >
+> Hans and Alex can correct me if I'm wrong, but I believe there is a
+> more atomic-like API being planned, which would only need one IOCTL to
+> do everything. However, that would be a more serious change to the
+> V4L2 interfaces, so should be decoupled from Request API itself.
 
-ARRAY_SIZE(mmc_host_capabilities) will be 32 and this will be my old change for which I got a comment from Andy Shevchenko asking me to replace u32 with unsigned long.
+Indeed, we discussed the possibility to setup and submit requests in
+one syscall, similarly (at least in spirit) to the DRM atomic API.
 
-This is the old comment:
-
->> +    int size = sizeof(u32) * BITS_PER_BYTE;
-> This is redundant. Use BITS_PER_LONG (why's that, see below) in the
-for_each_set_bit().
-
->> +    for_each_set_bit(bit, (const unsigned long *)&caps, size)
->> +    for_each_set_bit(bit, (const unsigned long *)&caps2, size)
-> These are UB cases.
-> Fix is simple, replace u32 by unsigned long in (1) above.
-
-Note: Without typecasting &caps to(const unsigned long *) will give compilation error in this case.
-
-
-Thanks,
-Harish Jenny K N
+This has only been discussed though, and as a feature to consider
+*after* the request API is merged for codecs (as the more complex
+camera use-cases would benefit more from it). As Tomasz mentioned, the
+overhead of ioctls is somehow negligible compared to the workload of
+the encoding/decoding itself, although I suppose it can still add up.
+The main advantage I can see for this is a simpler and less
+error-prone setup of requests for user-space.
