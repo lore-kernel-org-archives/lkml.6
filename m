@@ -1,119 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932794AbeCLP7Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:59:24 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43988 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932425AbeCLP6A (ORCPT
+        id S932714AbeCLQAU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:00:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:20069 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932425AbeCLQAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:58:00 -0400
-X-Google-Smtp-Source: AG47ELsH6Tvpn/qunBxjxU1ZOU8ChwktP6OVv/1Q/MSVSLvTlZwJ/MxZ38T8sFOugdG/eOHGJwOaUA==
-From: codekipper@gmail.com
-To: maxime.ripard@free-electrons.com, wens@csie.org,
-        linux-sunxi@googlegroups.com
-Cc: linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v2 2/6] ASoC: sun4i-i2s: Add regmap field to sign extend sample
-Date: Mon, 12 Mar 2018 16:57:49 +0100
-Message-Id: <20180312155753.9478-3-codekipper@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180312155753.9478-1-codekipper@gmail.com>
-References: <20180312155753.9478-1-codekipper@gmail.com>
+        Mon, 12 Mar 2018 12:00:18 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "Yannick FERTRE" <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 0/2] drm/panel: Add support for Raydium RM68200 panel
+Thread-Topic: [PATCH v2 0/2] drm/panel: Add support for Raydium RM68200 panel
+Thread-Index: AQHTudi0Oyo9EFQFMEm6G8D1U01ilqPMseEA
+Date: Mon, 12 Mar 2018 15:59:59 +0000
+Message-ID: <e98e915d-373c-06df-f5b0-d11e00bc87ed@st.com>
+References: <20180302153222.4377-1-philippe.cornu@st.com>
+ <20180312080404.GE23060@ulmo>
+In-Reply-To: <20180312080404.GE23060@ulmo>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <0CFB7451E2AADD4BAD2D20AD3F1A7288@st.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Cooper <codekipper@gmail.com>
+Hi Thierry,
 
-On the newer SoCs (H3, H5, A64 etc) this is set by default to
-transfer a 0 after each sample in each slot whereas on the
-earlier SoCs (A20, A31 etc) the default sign extension is to
-pad the LSB.
+On 03/12/2018 09:04 AM, Thierry Reding wrote:
+> On Fri, Mar 02, 2018 at 04:32:20PM +0100, Philippe Cornu wrote:
+>> The Raydium Semiconductor Corporation RM68200 is a 5.5" 720x1280
+>> TFT LCD panel connected using a MIPI-DSI video interface.
+>>
+>> Version 2:
+>> - Add Rob Herring Reviewed-by on dt-bindings.
+>> - Update Kconfig & driver thanks to Thierry Reding comments: no more
+>>    DRV_NAME, DRM_WARN_ONCE instead of DRV_NAME where applicable, use
+>>    backlight_enable/disable() & devm_of_find_backlight(), no extra
+>>    gpio reset to 0, no more msg if successful, use RM68200 instead of
+>>    rm68200 where necessary.
+>>
+>> Version 1:
+>> - Initial commit
+>>
+>> Philippe Cornu (2):
+>>    dt-bindings/display/panel: Add support for Raydium rm68200 dsi panel
+>>    drm/panel: Add support for Raydium RM68200 panel driver
+>>
+>>   .../bindings/display/panel/raydium,rm68200.txt     |  25 ++
+>>   drivers/gpu/drm/panel/Kconfig                      |   8 +
+>>   drivers/gpu/drm/panel/Makefile                     |   1 +
+>>   drivers/gpu/drm/panel/panel-raydium-rm68200.c      | 437 +++++++++++++++++++++
+>>   4 files changed, 471 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt
+>>   create mode 100755 drivers/gpu/drm/panel/panel-raydium-rm68200.c
+> 
+> Applied, thanks. There were a few tiny things I wasn't entirely happy
+> about, but I fixed those up myself.
+> 
+> Most notable was the use of DRM_WARN_ONCE(), which is bad in this case
+> because it won't show any subsequent errors, ever again. I think in this
+> case the proper solution is DRM_ERROR_RATELIMITED(), or erroring out on
+> the first error, assuming that subsequent operations won't succeed
+> either. I went with the rate limitation.
 
-Add the regmap field to configure this and set it so that it
-pads the sample with 0s.
+Big thank you for your nice cleanups and reworks, I will follow those in 
+the future :-)
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+I take the opportunity to thank you also for the merge of the 2 otm8009a 
+patches.
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 873054a6c3be..396b11346361 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -138,6 +138,7 @@
-  * @field_fmt_bclk: regmap field to set clk polarity.
-  * @field_fmt_lrclk: regmap field to set frame polarity.
-  * @field_fmt_mode: regmap field to set the operational mode.
-+ * @field_fmt_sext: regmap field to set the sign extension.
-  * @field_txchanmap: location of the tx channel mapping register.
-  * @field_rxchanmap: location of the rx channel mapping register.
-  * @field_txchansel: location of the tx channel select bit fields.
-@@ -163,6 +164,7 @@ struct sun4i_i2s_quirks {
- 	struct reg_field		field_fmt_bclk;
- 	struct reg_field		field_fmt_lrclk;
- 	struct reg_field		field_fmt_mode;
-+	struct reg_field		field_fmt_sext;
- 	struct reg_field		field_txchanmap;
- 	struct reg_field		field_rxchanmap;
- 	struct reg_field		field_txchansel;
-@@ -187,6 +189,7 @@ struct sun4i_i2s {
- 	struct regmap_field	*field_fmt_bclk;
- 	struct regmap_field	*field_fmt_lrclk;
- 	struct regmap_field	*field_fmt_mode;
-+	struct regmap_field	*field_fmt_sext;
- 	struct regmap_field	*field_txchanmap;
- 	struct regmap_field	*field_rxchanmap;
- 	struct regmap_field	*field_txchansel;
-@@ -348,6 +351,9 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
- 				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
- 				   SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
- 
-+	/* Set sign extension to pad out LSB with 0 */
-+	regmap_field_write(i2s->field_fmt_sext, 0);
-+
- 	return 0;
- }
- 
-@@ -901,6 +907,7 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.has_slave_select_bit	= true,
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
- 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -918,6 +925,7 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.has_slave_select_bit	= true,
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
- 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -958,6 +966,7 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
- 	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 19, 19),
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_CTRL_REG, 4, 5),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 4, 5),
- 	.field_txchanmap	= REG_FIELD(SUN8I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN8I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN8I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -1003,6 +1012,12 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
- 	if (IS_ERR(i2s->field_fmt_mode))
- 		return PTR_ERR(i2s->field_fmt_mode);
- 
-+	i2s->field_fmt_sext =
-+			devm_regmap_field_alloc(dev, i2s->regmap,
-+						i2s->variant->field_fmt_sext);
-+	if (IS_ERR(i2s->field_fmt_sext))
-+		return PTR_ERR(i2s->field_fmt_sext);
-+
- 	i2s->field_txchanmap =
- 			devm_regmap_field_alloc(dev, i2s->regmap,
- 						i2s->variant->field_txchanmap);
--- 
-2.16.2
+Moreover, if you think I need to update otm8009a driver with the same 
+reworks (include order, DRM_ERROR_RATELIMITED, error msg, remove msg if 
+successfull, struct data alignment...), please tell me :)
+Note: I plan to update it soon with new backlight_enable/disable api...
+
+Thank you again,
+Philippe :-)
+
+> 
+> Thierry
+> 
