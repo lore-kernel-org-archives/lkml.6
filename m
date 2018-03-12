@@ -1,148 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751415AbeCLSZg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:25:36 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38393 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeCLSZe (ORCPT
+        id S1751488AbeCLSZs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:25:48 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42064 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeCLSZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:25:34 -0400
-X-Google-Smtp-Source: AG47ELv350roQ1YNg8pcLb4epQZIJl/UfwGe7Xc0DA8nYPWtQ4pHaB+yXAlyZ02ALGNbTJvVOynvgw==
-Date: Mon, 12 Mar 2018 11:25:24 -0700
+        Mon, 12 Mar 2018 14:25:46 -0400
+X-Google-Smtp-Source: AG47ELtF4Njj0Z3AMZiO5ryLithB2fxCEsOiOub2VeBK+F9d89qR+eOG2vbjOYJI2vufclW32KZDFQ==
+Date: Sun, 11 Mar 2018 22:54:08 -0700
 From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 00/19] clk: meson: use regmap in clock controllers
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at init
+To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+        <20180214134340.17242-5-jbrunet@baylibre.com> <1970074.VYjjbDuVRv@diego>
+In-Reply-To: <1970074.VYjjbDuVRv@diego>
 MIME-Version: 1.0
 User-Agent: astroid/8ea8c2a3 (https://github.com/astroidmail/astroid)
-Message-Id: <1520878632.grlxixwihc.astroid@resonance.none>
+Message-Id: <1520834013.z6bypcssbs.astroid@resonance.none>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2CIPhJM010636
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2CIQCg2010644
 
-Bonjour Jerome,
+Excerpts from Heiko Stübner's message of February 15, 2018 1:01 pm:
+> Am Mittwoch, 14. Februar 2018, 14:43:36 CET schrieb Jerome Brunet:
+>> The orphan clocks reparents should migrate any existing count from the
+>> orphan clock to its new acestor clocks, otherwise we may have
+>> inconsistent counts in the tree and end-up with gated critical clocks
+>> 
+>> Assuming we have two clocks, A and B.
+>> * Clock A has CLK_IS_CRITICAL flag set.
+>> * Clock B is an ancestor of A which can gate. Clock B gate is left
+>>   enabled by the bootloader.
+>> 
+>> Step 1: Clock A is registered. Since it is a critical clock, it is
+>> enabled. The clock being still an orphan, no parent are enabled.
+>> 
+>> Step 2: Clock B is registered and reparented to clock A (potentially
+>> through several other clocks). We are now in situation where the enable
+>> count of clock A is 1 while the enable count of its ancestors is 0, which
+>> is not good.
+>> 
+>> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+>> clock B being 0, clock B is gated and and critical clock A actually gets
+>> disabled.
+>> 
+>> This situation was found while adding fdiv_clk gates to the meson8b
+>> platform.  These clocks parent clk81 critical clock, which is the mother
+>> of all peripheral clocks in this system. Because of the issue described
+>> here, the system is crashing when clk_disable_unused() is called.
+>> 
+>> The situation is solved by reverting
+>> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
+>> registration"). To avoid breaking again the situation described in this
+>> commit
+>> description, enabling critical clock should be done before walking the
+>> orphan list. This way, a parent critical clock may not be accidentally
+>> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+>> 
+>> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
+>> registration") Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
+> On a rk3288-veyron Chromebook
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> 
+> This made the hdmi on the machine work again with 4.16-rc1 .
+> (hdmi-cec clock is sourced from the i2c connected pmic which provides
+> the 32kHz clock needed)
+> 
+> So it would be really cool if this could make it into 4.16-rc :-)
 
-Excerpts from Jerome Brunet's message of February 12, 2018 6:58 am:
-> This changeset is a rework of meson's clock controllers to use regmap
-> instead of directly using io memory. It based clk-meson next/drivers
-> and depends on few core clock patches, mainly to export generic clocks
-> helpers: [0],[1]. The line count is pretty high but the changes are
-> actually fairly simple and repetitive.
-> 
-> This work has been triggered by the fact that the HHI register space on
-> gxbb and axg provides more than just clocks. The display driver already
-> uses a syscon for HHI on gxbb. This is why gxbb did not use
-> devm_ioremap_resource() to map the registers, since it would have
-> reserved the memory region, preventing another driver from re-mapping
-> it. The cleaner solution is, of course, to use syscon to handle. The
-> purpose of this changeset is to allow it. Even if meson8b does not need
-> this ATM, there is real reason to leave it behind. It is actually easier
-> to migrate it as well, so all meson clock drivers may support regmap
-> only.
-> 
-> The rework starts with a few easy clean-ups. The real deal starts with
-> patch 5, which adds meson's clk_regmap. This will be used as common
-> structure to implement all the controller clocks. Having this replaces
-> the gxbb AO controller specific regmap gate. This structure will also be
-> re-used in upcoming controllers, such as the axg's AO and audio
-> controllers.  Each clock type is then migrated, one at a time, to this
-> new structure.
-> 
-> While at it, the meson clock drivers have been cleaned-up a bit,
-> removing the gate embedded in the mpll driver, simplifying the pll
-> driver and removing the legacy cpu_clk of meson8b.
-> 
-> The new code around the cpu clk of the meson8b is just re-implementation,
-> using simple elements, of the old cpu_clk. As explained by Martin, the
-> old cpu_clk would hang quite often when changing the rate of the cpu
-> clock. Surprisingly, the new implementation improved the situation a bit,
-> but still hangs from time to time. As this is not acceptable, the cpu
-> clk subtree as been switched to a read-only mode, preventing any change
-> of the cpu rate, until an acceptable solution is found.
-> 
-> With this series applied, the clock controllers of the gxbb, gxl and axg
-> SoC will try get regmap from their parent DT node. If this fails, they
-> will fallback to mapping the register themselves. This fallback will be
-> kept until platform DTs have changed so clock controllers is a child of
-> the HHI system controller.
+I separated this patch out into clk-fixes to be set for -rc5 or -rc6.
 
-Looks OK to me. As we discussed off-list, can you send this (and the
-other meson patches) as a PR based on top of the clk-helpers branch in
-the clk git tree? That should satisfy the dependencies (I hope).
-
-Best regards,
+Regards,
 Mike
 
 > 
-> Based on this changeset, more patches are coming. For those interested,
-> the WIP is available here [2]
 > 
-> Changes since v1 [3]:
-> * Fixed a few typos in patches descriptions
-> * Fixed cpu clock names on meson8b, as suggested by Martin
-> * Switched cpu clock subtree to reead-only mode
-> * Fix clk_regmap mux documentation, as reported by Yixun
-> 
-> [0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
-> [2]: https://github.com/jeromebrunet/linux/tree/v4.17/meson/clk-regmap
-> [1]: https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (19):
->   clk: meson: use dev pointer where possible
->   clk: meson: use devm_of_clk_add_hw_provider
->   clk: meson: only one loop index is necessary in probe
->   clk: meson: remove obsolete comments
->   clk: meson: add regmap clocks
->   clk: meson: switch gxbb ao_clk to clk_regmap
->   clk: meson: remove superseded aoclk_gate_regmap
->   clk: meson: add regmap to the clock controllers
->   clk: meson: migrate gates to clk_regmap
->   clk: meson: migrate dividers to clk_regmap
->   clk: meson: migrate muxes to clk_regmap
->   clk: meson: add regmap helpers for parm
->   clk: meson: migrate mplls clocks to clk_regmap
->   clk: meson: migrate the audio divider clock to clk_regmap
->   clk: meson: migrate plls clocks to clk_regmap
->   clk: meson: split divider and gate part of mpll
->   clk: meson: rework meson8b cpu clock
->   clk: meson: remove obsolete cpu_clk
->   clk: meson: use hhi syscon if available
-> 
->  drivers/clk/meson/Kconfig             |    9 +
->  drivers/clk/meson/Makefile            |    5 +-
->  drivers/clk/meson/axg.c               |  722 +++++++++--------
->  drivers/clk/meson/axg.h               |    6 +-
->  drivers/clk/meson/clk-audio-divider.c |   63 +-
->  drivers/clk/meson/clk-cpu.c           |  178 -----
->  drivers/clk/meson/clk-mpll.c          |  132 +---
->  drivers/clk/meson/clk-pll.c           |  243 +++---
->  drivers/clk/meson/clk-regmap.c        |  166 ++++
->  drivers/clk/meson/clk-regmap.h        |  111 +++
->  drivers/clk/meson/clkc.h              |   93 +--
->  drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
->  drivers/clk/meson/gxbb-aoclk.c        |   20 +-
->  drivers/clk/meson/gxbb-aoclk.h        |   11 -
->  drivers/clk/meson/gxbb.c              | 1402 ++++++++++++++++++---------------
->  drivers/clk/meson/gxbb.h              |    5 +-
->  drivers/clk/meson/meson8b.c           |  588 ++++++++------
->  drivers/clk/meson/meson8b.h           |   11 +-
->  18 files changed, 1978 insertions(+), 1833 deletions(-)
->  delete mode 100644 drivers/clk/meson/clk-cpu.c
->  create mode 100644 drivers/clk/meson/clk-regmap.c
->  create mode 100644 drivers/clk/meson/clk-regmap.h
->  delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
-> 
-> -- 
-> 2.14.3
-> 
+> Heiko
 > 
