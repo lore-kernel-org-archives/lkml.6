@@ -1,59 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeCLMNa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:13:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59697 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751053AbeCLMN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:13:29 -0400
-Subject: Re: [RFC PATCH 0/4] add support for CommonLPIAff field
-To: Marc Zyngier <marc.zyngier@arm.com>
-References: <1520837395-10288-1-git-send-email-yangyingliang@huawei.com>
- <3b6997c9-761f-3f5e-79ac-6b785a9a14d9@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5AA66ED7.7080007@huawei.com>
-Date: Mon, 12 Mar 2018 20:13:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1751352AbeCLMPa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:15:30 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16864 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750988AbeCLMP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 08:15:28 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 12 Mar 2018 05:15:27 -0700
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
+Date: Mon, 12 Mar 2018 12:15:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <3b6997c9-761f-3f5e-79ac-6b785a9a14d9@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+X-Originating-IP: [10.26.11.150]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> support in this driver. Also allow for the case where the CPU voltage is
+> controlled directly by the DFLL rather than by a separate regulator object.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 4353025..f8e01a8 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+>  {
+>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+>  	clk_disable_unprepare(priv->dfll_clk);
+> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> +	if (priv->vdd_cpu_reg)
+> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+>  }
 
-On 2018/3/12 17:55, Marc Zyngier wrote:
-> On 12/03/18 06:49, Yang Yingliang wrote:
->> This patch set adjust struct rdists to support CommonLPIAff field.
->> This field is described in spec:
->>
->> CommonLPIAff, bits [25:24]
->> The affinity level at which Redistributors share a LPI Configuration table.
->> 00 All Redistributors must share a LPI Configuration table.
->> 01 All Redistributors with the same Aff3 value must share an LPI Configurationt table.
->> 10 All Redistributors with the same Aff3.Aff2 value must share an LPI Configuration table.
->> 11 All Redistributors with the same Aff3.Aff2.Aff1 value must share an LPI Configuration
->> table.
->
-> What are you trying to achieve here? We already share the same
-> configuration table across all the redistributors, irrelevant the of
-> CommonLPIAff. Why would we need to do anything else?
+OK, so this bit does not make sense to me. In the above we are switching
+from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
+are operating at the correct voltage after disabling the DFLL we need to
+sync the voltage. Seems we would need to do this for all devices, no?
+How is the different between Tegra124 and Tegra210?
 
-In some cases, such as "with the same Aff3.Aff2 value must share an LPI
-Configuration table", redistributors will access local memory node
-only, it may improve the performance. And I don't have any beneficial
-data now. I may provide it later.
+Cheers
+Jon
 
-Regards,
-Yang
->
-> Thanks,
->
-> 	M.
->
+-- 
+nvpublic
