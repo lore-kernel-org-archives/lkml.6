@@ -1,127 +1,273 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2498535-1520281998-2-7071318241602048313
+X-Cyrus-Session-Id: sloti22d1t05-3340693-1520822301-2-2406702708338120631
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  FSL_HELO_FAKE 3.2, HEADER_FROM_DIFFERENT_DOMAINS 0.249,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520281997; b=mMyplpfUATCV3WhcjbImskNxGDOIuutm3wQmG84pYA7pWA2
-    xWbfqZc6PZ1OtgRn3ZFVSIQQNuUmbbWAkAXhkzQaS93cBfk0KSHq9dplS3BU7woj
-    GPAhmnYPUWceYW2XTpYUJjH8WtAe6JcYKjF2c9bbPp1/73OGE6NAUcR+1ebLDEHL
-    Lu67iN3xxxbHNJ5+g7TBXIcbjyKbddDP3z25gWOX+cNRv8KVvxD6NxxPo/qvtVJy
-    mYoq6+/6hqDaqghBEGou/U0jJgIa12rllokeEQCmv8HOUlJKZR9IEJ6d0YP3OZFK
-    yHYQzrKfXITjU4w5kjof3oYkSzN+iD66Hk4CphQ==
+    t=1520822300; b=clwP3ZM5cUi/Rqw5CifJItYRiiaBOZ10P6jdaXWAH4HPVur
+    CcKVw98wMkSYe3TTnS0ofImx5YzpdvxcP2zeMsAgDAWdNI+OI7n1z6RUlEmRMDTw
+    HjcfRNo2886Tzm0JCZ4ddKc0yUjt8FZdH0gPDvFjYVSLwQgHZQC184CnCvQobYzy
+    LM6U610PQ3cX38911dkjkEhdKns40+NadW6fFxpMRKTkv+Eui6HJ0EhUd5NrUQY1
+    OPCYLsCHLZG30AZlhLgI55EeDbpiSwz0ewKUxC7yc6pMPqXJOXkEzBoA5pveAzW8
+    Uf1/q4pLEBBY3+7gmm9y9r+ynAnU4Wq1SZYM5Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=arctest; t=1520281997; bh=oINjiUW
-    eJnoCpUsvqeBztEQDeDG/F0F5RQ00oE4mcxY=; b=okbT2vX8agSiFQvz/3ym3hR
-    uMmJ/QPpFnDIKbWu4V/MgKgNSyYbY8IqRfexs72jpeSwzewPValXV42cQdRMCyVQ
-    BCx2loZ/oSFCE1YyYLf+bFjBzg8WI7jr3qCzmH1a47zhfrNzWbs2fz3121sRFxZU
-    nk8tSNnNo6CmCN8C20bsnWehQTOQ9Qr05wdQcxloVd/TKae3ctAAo4CypsYbITa1
-    89G0dhqdtwpBRJH1NZW+ydFUrvEyNTqtoCRDovRDnei4XGV+zsgMsawbORtJqNmc
-    8f6i2ktTfYDIlLFja/gUUtkSqNwbSZjOP/a3BHA1uaWct69oceI5XyVNmt/iw/w=
-    =
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f/Lz3tMR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1520822300; bh=Qwc//Q2efjSN86QNv5DADOfBIIhLQDa0ksf0Zi
+    E2M54=; b=UhU2ffX3Ds67h6X4FOovkge2XdC95HnFwp7sq5/r+pjrUyYSOiDjO0
+    sqWyJqmUaRP/3B+ufZ4OHzFhSol1uzudgy/s9GDJonLo0U1peVbDrPuhzNlZ8BfP
+    fqTTxe2bzS+kdEI00dg+eGVxQC9QQN+wMZrMFbQRvU7rjOyl7jb7wGcZeuc17/QL
+    qfMzdQ+HCMMtIM68RPtkXUerk1rKjkTxO4hyxEjvv2xbrjjbnPphcrN9HvqBB2J2
+    TMTzwhUk6bLxi1gfRGo9O++mH2DkEABNv6dhs6wqoBqx+KJzVGKwnIN9YSX+qtKh
+    kTERd8USpLr3LStJtxj6JCd2lABIa3Lw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZphR8Sxc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OQ+ioINo;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KEPAhMwp;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f/Lz3tMR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ZphR8Sxc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OQ+ioINo;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KEPAhMwp;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeCEUdQ (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 15:33:16 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55072 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeCEUdQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Mar 2018 15:33:16 -0500
-X-Google-Smtp-Source: AG47ELufnreIkXcUBXaMdvqelQbSLxylB5rVp8Lm/7VyQO5sQglQNKhAuEKWobfljpQ2X/AswVCCxg==
-Date: Mon, 5 Mar 2018 12:33:12 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jin Qian <jinqian@google.com>, Jin Qian <jinqian@android.com>
-Subject: Re: [PATCH 4.4 035/108] dont put symlink bodies in pagecache into
- highmem
-Message-ID: <20180305203312.GA144846@gmail.com>
-References: <20180215151222.267507937@linuxfoundation.org>
- <20180215151227.323543261@linuxfoundation.org>
- <1520210279.2786.53.camel@codethink.co.uk>
- <20180305060245.GE6670@kroah.com>
+        id S932430AbeCLCiS (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 22:38:18 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35785 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932420AbeCLCiR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 22:38:17 -0400
+X-Google-Smtp-Source: AG47ELvhIolrdb2sqE4QQkOwmUyGei6I9W+ct7wCefwZalXDt9/JRxN5SX6a6SLVhVx2n5E6/1K6hRn3sKLSuqxiGhI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180305060245.GE6670@kroah.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <309db6c4-7e21-bfbe-44d4-eb41f5516d5e@csail.mit.edu>
+References: <20171031095530.520746935@linuxfoundation.org> <20171031095531.633196173@linuxfoundation.org>
+ <97340c9a-0ea2-0d3d-cf26-58c799d76cae@mageia.org> <20171101151803.GB31285@kroah.com>
+ <4ba67095-4075-688f-d3fb-157847aee4d9@csail.mit.edu> <28ffc363-5140-5685-d288-6e3dc07c6369@csail.mit.edu>
+ <20180227085428.GA16879@kroah.com> <b20cbd94-ce9b-cb2c-dc95-a6821376823f@csail.mit.edu>
+ <20180227124050.GB31888@kroah.com> <6bca5a97-f581-86b8-12ad-77147619d519@csail.mit.edu>
+ <CAH2r5mt91WGHDk-+LP4EBTEfAOmrY2k6_X7KKjc0D+LcDCfxRw@mail.gmail.com> <309db6c4-7e21-bfbe-44d4-eb41f5516d5e@csail.mit.edu>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 11 Mar 2018 19:37:55 -0700
+Message-ID: <CAH2r5muUfsZsqaBqkAfi_dXRheib+7DN=VSsbGcV22C2MdJaGw@mail.gmail.com>
+Subject: Re: [PATCH 4.13 28/43] SMB3: Validate negotiate request must always
+ be signed
+To: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Backlund <tmb@mageia.org>,
+        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovskiy <pshilov@microsoft.com>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 07:02:45AM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Mar 05, 2018 at 12:37:59AM +0000, Ben Hutchings wrote:
-> > On Thu, 2018-02-15 at 16:16 +0100, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Al Viro <viro@zeniv.linux.org.uk>
-> > > 
-> > > commit 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream.
-> > > 
-> > > kmap() in page_follow_link_light() needed to go - allowing to hold
-> > > an arbitrary number of kmaps for long is a great way to deadlocking
-> > > the system.
-> > > 
-> > > new helper (inode_nohighmem(inode)) needs to be used for pagecache
-> > > symlinks inodes; done for all in-tree cases.  page_follow_link_light()
-> > > instrumented to yell about anything missed.
-> > 
-> > Except that this backport only updates ext4 and f2fs (and doesn't add
-> > the warning).  I suppose that's all matters for Android, but it would
-> > be nice to get a more complete backport into 4.4-stable...
-> 
-> That should be all the in-tree users of this, for 4.4, right?  If not,
-> ick.  Jin, can you look into this?
-> 
-> thanks,
-> 
-> greg k-h
+Just got a wireshark trace - this is a fairly trivial issue (missing
+the validate negotiate must be signed patch) - I had some trouble
+getting this version of the kernel running (unrelated issue) and on
+systems with access to Windows 2016...
 
-This was discussed already; see https://patchwork.kernel.org/patch/10203819/.
-It turns out that Al's original commit incidentally fixed symlink decryption for
-ext4 and f2fs on 32-bit systems, so the backport is wanted for that reason.  And
-pulling in the rest of the commit, while it could be done, would have broken
-things and required additional follow-on patches.  Jin and Greg, it would have
-been helpful if the discussion had been captured in the commit message, so that
-people like Ben who are watching the stable commits aren't left wondering.
 
-Eric
+
+On Tue, Feb 27, 2018 at 10:33 AM, Srivatsa S. Bhat
+<srivatsa@csail.mit.edu> wrote:
+> On 2/27/18 9:56 AM, Steve French wrote:
+>> This shouldn't be too hard to figure out if willing to backport a
+>> slightly larger set of fixes to the older stable, but I don't have a
+>> system running 4.9 stable.
+>>
+>
+> If you have the proposed patches that apply on 4.9, I'd be happy to
+> try them out!
+>
+> [ I would have offered to backport the patches myself, but actually I
+> already tried doing that with a larger set of patches from mainline
+> (picking those commits between the regression and the fix that seemed
+> relevant), but I felt quite out-of-depth trying to adapt them to 4.9
+> and 4.4, as I'm not that familiar with the internals of SMB/CIFS. ]
+>
+>> Is this the correct stable tree branch?
+>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/log/?h=linux-4.9.y
+>>
+>
+> Yep!
+>
+> Regards,
+> Srivatsa
+>
+>> On Tue, Feb 27, 2018 at 11:45 AM, Srivatsa S. Bhat
+>> <srivatsa@csail.mit.edu> wrote:
+>>> On 2/27/18 4:40 AM, Greg Kroah-Hartman wrote:
+>>>> On Tue, Feb 27, 2018 at 01:22:31AM -0800, Srivatsa S. Bhat wrote:
+>>>>> On 2/27/18 12:54 AM, Greg Kroah-Hartman wrote:
+>>>>>> On Mon, Feb 26, 2018 at 07:44:28PM -0800, Srivatsa S. Bhat wrote:
+>>>>>>> On 1/3/18 6:15 PM, Srivatsa S. Bhat wrote:
+>>>>>>>> On 11/1/17 8:18 AM, Greg Kroah-Hartman wrote:
+>>>>>>>>> On Tue, Oct 31, 2017 at 03:02:11PM +0200, Thomas Backlund wrote:
+>>>>>>>>>> Den 31.10.2017 kl. 11:55, skrev Greg Kroah-Hartman:
+>>>>>>>>>>> 4.13-stable review patch.  If anyone has any objections, please let me know.
+>>>>>>>>>>>
+>>>>>>>>>>> ------------------
+>>>>>>>>>>>
+>>>>>>>>>>> From: Steve French <smfrench@gmail.com>
+>>>>>>>>>>>
+>>>>>>>>>>> commit 4587eee04e2ac7ac3ac9fa2bc164fb6e548f99cd upstream.
+>>>>>>>>>>>
+>>>>>>>>>>> According to MS-SMB2 3.2.55 validate_negotiate request must
+>>>>>>>>>>> always be signed. Some Windows can fail the request if you send it unsigned
+>>>>>>>>>>>
+>>>>>>>>>>> See kernel bugzilla bug 197311
+>>>>>>>>>>>
+>>>>>>>>>>> Acked-by: Ronnie Sahlberg <lsahlber.redhat.com>
+>>>>>>>>>>> Signed-off-by: Steve French <smfrench@gmail.com>
+>>>>>>>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>>>>>>>
+>>>>>>>>>>> ---
+>>>>>>>>>>>   fs/cifs/smb2pdu.c |    3 +++
+>>>>>>>>>>>   1 file changed, 3 insertions(+)
+>>>>>>>>>>>
+>>>>>>>>>>> --- a/fs/cifs/smb2pdu.c
+>>>>>>>>>>> +++ b/fs/cifs/smb2pdu.c
+>>>>>>>>>>> @@ -1963,6 +1963,9 @@ SMB2_ioctl(const unsigned int xid, struc
+>>>>>>>>>>>        } else
+>>>>>>>>>>>                iov[0].iov_len = get_rfc1002_length(req) + 4;
+>>>>>>>>>>> +      /* validate negotiate request must be signed - see MS-SMB2 3.2.5.5 */
+>>>>>>>>>>> +      if (opcode == FSCTL_VALIDATE_NEGOTIATE_INFO)
+>>>>>>>>>>> +              req->hdr.sync_hdr.Flags |= SMB2_FLAGS_SIGNED;
+>>>>>>>>>>>        rc = SendReceive2(xid, ses, iov, n_iov, &resp_buftype, flags, &rsp_iov);
+>>>>>>>>>>>        cifs_small_buf_release(req);
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> This one needs to be backported to all stable kernels as the commit that
+>>>>>>>>>> introduced the regression:
+>>>>>>>>>> '
+>>>>>>>>>> 0603c96f3af50e2f9299fa410c224ab1d465e0f9
+>>>>>>>>>> SMB: Validate negotiate (to protect against downgrade) even if signing off
+>>>>>>>>>>
+>>>>>>>>>> is backported in stable trees as of: 4.9.53, 4.4.90, 3.18.73
+>>>>>>>>>
+>>>>>>>>> Oh wait, it breaks the builds on older kernels, that's why I didn't
+>>>>>>>>> apply it :)
+>>>>>>>>>
+>>>>>>>>> Can you provide me with a working backport?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi Steve,
+>>>>>>>>
+>>>>>>>> Is there a version of this fix available for stable kernels?
+>>>>>>>>
+>>>>>>>
+>>>>>>> Hi Greg,
+>>>>>>>
+>>>>>>> Mounting SMB3 shares continues to fail for me on 4.4.118 and 4.9.84
+>>>>>>> due to the issues that I have described in detail on this mail thread.
+>>>>>>>
+>>>>>>> Since there is no apparent fix for this bug on stable kernels, could
+>>>>>>> you please consider reverting the original commit that caused this
+>>>>>>> regression?
+>>>>>>>
+>>>>>>> That commit was intended to enhance security, which is probably why it
+>>>>>>> was backported to stable kernels in the first place; but instead it
+>>>>>>> ends up breaking basic functionality itself (mounting). So in the
+>>>>>>> absence of a proper fix, I don't see much of an option but to revert
+>>>>>>> that commit.
+>>>>>>>
+>>>>>>> So, please consider reverting the following:
+>>>>>>>
+>>>>>>> commit 02ef29f9cbb616bf419 "SMB: Validate negotiate (to protect
+>>>>>>> against downgrade) even if signing off" on 4.4.118
+>>>>>>>
+>>>>>>> commit 0e1b85a41a25ac888fb "SMB: Validate negotiate (to protect
+>>>>>>> against downgrade) even if signing off" on 4.9.84
+>>>>>>>
+>>>>>>> They correspond to commit 0603c96f3af50e2f9299fa410c224ab1d465e0f9
+>>>>>>> upstream. Both these patches should revert cleanly.
+>>>>>>
+>>>>>> Do you still have this same problem on 4.14 and 4.15?  If so, the issue
+>>>>>> needs to get fixed there, not papered-over by reverting these old
+>>>>>> changes, as you will hit the issue again in the future when you update
+>>>>>> to a newer kernel version.
+>>>>>>
+>>>>>
+>>>>> 4.14 and 4.15 work great! (I had mentioned this is in my original bug
+>>>>> report but forgot to summarize it here, sorry).
+>>>>
+>>>>
+>>>> Then what is the bugfix that should be applied here in order to keep
+>>>> things working with these patches applied?
+>>>>
+>>>
+>>> That would be the one mentioned in the subject line of this thread :)
+>>> However, a working backport of that fix is not available for 4.4 and
+>>> 4.9, hence the trouble.
+>>>
+>>> It looks like we are reconstructing elements of this email thread all
+>>> over again, so let me quickly summarize the status so far:
+>>>
+>>> In 4.14/4.15/mainline,
+>>> - commit 0603c96f3af50e2f9 (SMB: Validate negotiate (to protect against
+>>>   downgrade) even if signing off) caused mount regression with SMB v3.
+>>>
+>>> - commit 4587eee04e2ac7ac3 (SMB3: Validate negotiate request must
+>>>   always be signed) fixed the issue.
+>>>
+>>> - [ There was a lot of code churn in the CIFS/SMB codebase between
+>>>     these two commits in mainline. ]
+>>>
+>>> In this email thread, you backported the fix to stable 4.13. Thomas
+>>> noticed that the problematic commit had also made it to stable series
+>>> such as 4.4 and 4.9, and requested a backport of the fix to those
+>>> trees as well. However, a straight-forward backport of the fix to 4.4
+>>> and 4.9 breaks the build, so no fix was available for those kernels.
+>>>
+>>> I investigated this and tried to produce a working backport of the fix
+>>> to 4.4 and 4.9, but didn't succeed, despite trying several variations
+>>> as well as suggestions from Aurelien [1][2]. So, given that there is
+>>> still no known fix for the mount regression on 4.4 and 4.9 stable
+>>> series at this point, I decided to request a revert of the problematic
+>>> commit that caused the regression in those kernels.
+>>>
+>>> [1]. https://lkml.org/lkml/2018/1/3/892
+>>> [2]. https://lkml.org/lkml/2018/1/29/1009
+>>>
+>>> Regards,
+>>> Srivatsa
+>>
+>>
+>>
+>
+
+
+
+-- 
+Thanks,
+
+Steve
