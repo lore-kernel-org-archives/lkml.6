@@ -1,62 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932394AbeCLQ2k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:28:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45837 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751373AbeCLQ2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:28:38 -0400
-Date: Mon, 12 Mar 2018 10:28:36 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, keith.busch@intel.com,
-        netanel@amazon.com, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
-Subject: Re: [pci PATCH v4 1/4] pci-iov: Add support for unmanaged SR-IOV
-Message-ID: <20180312102836.6db05ef8@w520.home>
-In-Reply-To: <CAKgT0UcJz7go-vRd88M6uo1mqbG9BfedkZmR0CXZ92m6KfRPzw@mail.gmail.com>
-References: <20180308185507.5433.98830.stgit@localhost.localdomain>
-        <20180308190047.5433.77952.stgit@localhost.localdomain>
-        <20180311215909.16ed4bf1@t450s.home>
-        <20180312075907.GA5342@lst.de>
-        <CAKgT0UcJz7go-vRd88M6uo1mqbG9BfedkZmR0CXZ92m6KfRPzw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932478AbeCLQ3E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:29:04 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45026 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932421AbeCLQ3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 12:29:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: leave one item to record if regulator is enabled" to the regulator tree
+In-Reply-To: <20171215151112.25C1744006B@finisterre.ee.mobilebroadband>
+Message-Id: <20180312162859.6479C440079@finisterre.ee.mobilebroadband>
+Date: Mon, 12 Mar 2018 16:28:59 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 09:01:54 -0700
-Alexander Duyck <alexander.duyck@gmail.com> wrote:
+The patch
 
-> On Mon, Mar 12, 2018 at 12:59 AM, Christoph Hellwig <hch@lst.de> wrote:
-> > On Sun, Mar 11, 2018 at 09:59:09PM -0600, Alex Williamson wrote:  
-> >> I still struggle to understand why we need this "unmanaged"
-> >> complication and how a user of the sysfs API is expected to have any
-> >> idea whether a PF is managed or unmanaged and why they should care.
-> >> Can't we just have a pci_simple_sriov_configure() helper and ignore
-> >> this unmanaged business?  Thanks,  
-> >
-> > Just a pci_simple_sriov_configure is exactly what I envisioned originally.  
-> 
-> I can drop the "unmanaged" bits if that is what is wanted, but based
-> on previous conversations I thought there was some concern about the
-> kernel loading VFs when there was some foreign entity managing the VFs
-> other than the kernel.
+   regulator: leave one item to record if regulator is enabled
 
-My concern has always been whether the PF driver is trusted and by
-dropping the vfio bits, the remaining drivers here are native, trusted,
-host drivers, so I don't see that we have any reason to consider the
-VFs as anything other than trusted as well.  It's VFs where the PF
-driver is untrusted, such as a userspace driver, which needs some kind
-of quarantine, imo.  Thanks,
+has been applied to the regulator tree at
 
-Alex
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6d55d4654bdb36febef53a69bed769cc9f4c19fb Mon Sep 17 00:00:00 2001
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+Date: Fri, 15 Dec 2017 21:43:47 +0800
+Subject: [PATCH] regulator: leave one item to record if regulator is enabled
+
+The items "disabled" and "enabled" are a little redundant, since only one
+of them would be set to record if the regulator device should keep on
+or be switched to off in suspend states.
+
+So in this patch, the "disabled" was removed, only leave the "enabled":
+  - enabled == 1 for regulator-on-in-suspend
+  - enabled == 0 for regulator-off-in-suspend
+  - enabled == -1 means do nothing when entering suspend mode.
+
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c          | 14 ++++++--------
+ drivers/regulator/of_regulator.c  |  6 ++++--
+ include/linux/regulator/machine.h | 12 +++++++++---
+ 3 files changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 97bc9f7adf2f..5ea80e94eb69 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -742,21 +742,19 @@ static int suspend_set_state(struct regulator_dev *rdev,
+ 	 * only warn if the driver implements set_suspend_voltage or
+ 	 * set_suspend_mode callback.
+ 	 */
+-	if (!rstate->enabled && !rstate->disabled) {
++	if (rstate->enabled != ENABLE_IN_SUSPEND &&
++	    rstate->enabled != DISABLE_IN_SUSPEND) {
+ 		if (rdev->desc->ops->set_suspend_voltage ||
+ 		    rdev->desc->ops->set_suspend_mode)
+ 			rdev_warn(rdev, "No configuration\n");
+ 		return 0;
+ 	}
+ 
+-	if (rstate->enabled && rstate->disabled) {
+-		rdev_err(rdev, "invalid configuration\n");
+-		return -EINVAL;
+-	}
+-
+-	if (rstate->enabled && rdev->desc->ops->set_suspend_enable)
++	if (rstate->enabled == ENABLE_IN_SUSPEND &&
++		rdev->desc->ops->set_suspend_enable)
+ 		ret = rdev->desc->ops->set_suspend_enable(rdev);
+-	else if (rstate->disabled && rdev->desc->ops->set_suspend_disable)
++	else if (rstate->enabled == DISABLE_IN_SUSPEND &&
++		rdev->desc->ops->set_suspend_disable)
+ 		ret = rdev->desc->ops->set_suspend_disable(rdev);
+ 	else /* OK if set_suspend_enable or set_suspend_disable is NULL */
+ 		ret = 0;
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 14637a01ba2d..41dad42b18f0 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -177,10 +177,12 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 
+ 		if (of_property_read_bool(suspend_np,
+ 					"regulator-on-in-suspend"))
+-			suspend_state->enabled = true;
++			suspend_state->enabled = ENABLE_IN_SUSPEND;
+ 		else if (of_property_read_bool(suspend_np,
+ 					"regulator-off-in-suspend"))
+-			suspend_state->disabled = true;
++			suspend_state->enabled = DISABLE_IN_SUSPEND;
++		else
++			suspend_state->enabled = DO_NOTHING_IN_SUSPEND;
+ 
+ 		if (!of_property_read_u32(suspend_np,
+ 					"regulator-suspend-microvolt", &pval))
+diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
+index 9cd4fef37203..e50519f13d4d 100644
+--- a/include/linux/regulator/machine.h
++++ b/include/linux/regulator/machine.h
+@@ -42,6 +42,11 @@ struct regulator;
+ #define REGULATOR_CHANGE_DRMS		0x10
+ #define REGULATOR_CHANGE_BYPASS		0x20
+ 
++/* operations in suspend mode */
++#define DO_NOTHING_IN_SUSPEND	(-1)
++#define DISABLE_IN_SUSPEND	0
++#define ENABLE_IN_SUSPEND	1
++
+ /* Regulator active discharge flags */
+ enum regulator_active_discharge {
+ 	REGULATOR_ACTIVE_DISCHARGE_DEFAULT,
+@@ -58,14 +63,15 @@ enum regulator_active_discharge {
+  *
+  * @uV: Operating voltage during suspend.
+  * @mode: Operating mode during suspend.
+- * @enabled: Enabled during suspend.
+- * @disabled: Disabled during suspend.
++ * @enabled: operations during suspend.
++ *	     - DO_NOTHING_IN_SUSPEND
++ *	     - DISABLE_IN_SUSPEND
++ *	     - ENABLE_IN_SUSPEND
+  */
+ struct regulator_state {
+ 	int uV;	/* suspend voltage */
+ 	unsigned int mode; /* suspend regulator operating mode */
+ 	int enabled; /* is regulator enabled in this suspend state */
+-	int disabled; /* is the regulator disabled in this suspend state */
+ };
+ 
+ /**
+-- 
+2.16.2
