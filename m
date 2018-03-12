@@ -1,54 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeCLLDu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:03:50 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52489 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeCLLDt (ORCPT
+        id S1751348AbeCLLIO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:08:14 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:45168 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751237AbeCLLIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:03:49 -0400
-X-Google-Smtp-Source: AG47ELt3G37haOlCOBzoQb30dhge39U07ktjc2F6bpc4WWdITMNhzieU2XHd2avMiXCk5Cj3TaqyPA==
-Subject: Re: [PATCH v1 04/19] dt-bindings: arm: mediatek: add support for more
- mt7623 reference boards
-To: Rob Herring <robh@kernel.org>, sean.wang@mediatek.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1519378871.git.sean.wang@mediatek.com>
- <e77690ea7f7332e9e1ee64204a4e72c759c41aa9.1519378871.git.sean.wang@mediatek.com>
- <20180302160022.ub6vinw6br3l2dyb@rob-hp-laptop>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <adeee56f-97c6-1999-4f1c-d420ce24ee13@gmail.com>
-Date: Mon, 12 Mar 2018 12:03:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 07:08:12 -0400
+X-Google-Smtp-Source: AG47ELuIQYW2bG4i4WkoXbrPV4xCsfReaVK9aK4pr5ith5rSxg8xkyKhRBy9LrY8rxvJtn24/IwVHFMkfnKb3RTr2v0=
 MIME-Version: 1.0
-In-Reply-To: <20180302160022.ub6vinw6br3l2dyb@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com> <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+ <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com> <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+ <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com> <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 12 Mar 2018 11:08:11 +0000
+Message-ID: <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: Jeremy Cline <jeremy@jcline.org>, Hans de Goede <hdegoede@redhat.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com> wrote:
+> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
+>
+>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
+>> > Thanks a lot for trying out the patch!
+>> >
+>> > Please don't modify your install at this stage, I think we are hitting a
+>> > firmware bug and that would be awesome if we can fix how we are
+> handling it.
+>> > So, if we reach that stage in the function it could either be that:
+>> > * The allocation did not succeed, somehow, but the firmware still
+> returned
+>> > EFI_SUCCEED.
+>> > * The size requested is incorrect (I'm thinking something like a 1G of
+>> > log). This would be due to either a miscalculation of log_size
+> (possible)
+>> > or; the returned values of GetEventLog are not correct.
+>> > I'm sending a patch to add checks for these. Could you please apply and
+>> > retest?
+>> > Again, thanks for helping debugging this.
+>
+>> No problem, thanks for the help :)
+>
+>> With the new patch:
+>
+>> Locating the TCG2Protocol
+>> Calling GetEventLog on TCG2Protocol
+>> Log returned
+>> log_location is not empty
+>> log_size != 0
+>> log_size < 1M
+>> Allocating memory for storing the logs
+>> Returned from memory allocation
+>> Copying log to new location
+>
+>> And then it hangs. I added a couple more print statements:
+>
+>> diff --git a/drivers/firmware/efi/libstub/tpm.c
+> b/drivers/firmware/efi/libstub/tpm.c
+>> index ee3fac109078..1ab5638bc50e 100644
+>> --- a/drivers/firmware/efi/libstub/tpm.c
+>> +++ b/drivers/firmware/efi/libstub/tpm.c
+>> @@ -148,8 +148,11 @@ void
+> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>          efi_printk(sys_table_arg, "Copying log to new location\n");
+>
+>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
+>>          log_tbl->size = log_size;
+>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+>>          memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+>
+>>          efi_printk(sys_table_arg, "Installing the log into the
+> configuration table\n");
+>
+>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+>
+> Thanks. Well, it looks like the memory that is supposedly allocated is not
+> usable. I'm thinking this is a firmware bug.
+> Ard, would you agree on this assumption? Thoughts on how to proceed?
+>
 
+I am rather puzzled why the allocate_pool() should succeed and the
+subsequent memset() should fail. This does not look like an issue that
+is intimately related to TPM2 support, rather an issue in the firmware
+that happens to get tickled after the change.
 
-On 03/02/2018 05:00 PM, Rob Herring wrote:
-> On Fri, Feb 23, 2018 at 06:16:24PM +0800, sean.wang@mediatek.com wrote:
->> From: Sean Wang <sean.wang@mediatek.com>
->>
->> Update binding document for more mt7623[A,N] reference boards being
->> supported.
->>
->> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: devicetree@vger.kernel.org
->> ---
->>  Documentation/devicetree/bindings/arm/mediatek.txt | 9 +++++++++
->>  1 file changed, 9 insertions(+)
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-
-Pushed to v4.16-next/dts32
+Would you mind trying replacing EFI_LOADER_DATA with
+EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
