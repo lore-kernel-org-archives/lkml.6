@@ -1,83 +1,178 @@
 Return-Path: <opensource.ganesh@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520991213; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520832786; cv=none;
         d=google.com; s=arc-20160816;
-        b=MqkIBh19MM3zwVXE6+TV3f744m40oQC9H23AEahfpSHG+45fWsXffVrN/RoAxNWFO/
-         JUtS6TwZmhOvspZ/mhQxpeuZMaX7o0Y+RAgsR7SFYpVp5kNa20OoysRNQGxacJgsK7pg
-         yUEGnbAFDxnbX4RXC24GVUa4aP08zCYOaGb/txUil69Jn9yNx2X5opNHIMFFasvfJQ0B
-         kSexfKKQeno4U2sY3n4xlZlPD0O3ddMuVIUs4N29ZwUpdmKz8GiBS7AD+ywMLKgkCdm0
-         nmmspBTIkk6oD5N9yzUkqxjNTQ272vM/7R5CwKn4qY0J2d+Ii9bUGH1/WHOeX/Px4V5S
-         Gigg==
+        b=UqpAqiP3ekbmDJY3HiBdPkGNdSIwCnSsOdpFuB5iuVp11DXXjqsSzvciln1rlmu3na
+         pQ6QvszGLPhiUtGfTx6Ot3wdIV8+ryO9rNYSiiwy7owCXkwq8FsLSMvzKF6lmf8mwSwH
+         bVTApXU696ogadYbmCEwE+Unxo6Fysfie/5L5es39+8CoDG4cHDjASsvMW8dGznIGXl5
+         qjlBPvxtXHfARZqnQOqK3QYuc3TgycdagHn9LG623jduFvdqTXrbQjF6x5J4pkJmOslj
+         HgTuiMT07mnBeNC8X0+S0U5lX430npJg6yCZ8bfmUE5sWg7NW31AxIuMf+RT617R3CNt
+         sIUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=B4xWAAvZ20VWKZ3ZzbmJaq8fVwnRGp4/cb/IrBH6ZKY=;
-        b=VnpQ7tSYx5E1O4A02br6R5XCjmS7tcoAVJ5sQxBr2okkuud5VrPLn4/FuhnuyGnOlY
-         iQMDgDl1Ky3QgHpiCkS3ggfkgpEZwDYr6h66a+TCxzOUdFbWgBsAgzMGjAcdMVGzj0EU
-         mhj3nTRK9+81OM47eVldGrDinjzSEhoXTTawO01z90UnbWO42kg8gv7IaUxcMmStBZOf
-         ltF11o9JaWPNhY5TlstGj/UrIzBWnYtExaQP3f61q7Su82Tmuv02lhD3aI9Ljjp7Vd6U
-         HxjUdJKbJNUI6b9hLdu/qSKaMK3rZpzE6ERENl4L+l6nt+Ziia0LIt/dex1Z+gC1zF0x
-         axsw==
+        bh=athTWfq0BGtTLdyMVzUWpYs1AF9f/8/2j8JGc4Oq0HE=;
+        b=C5jRBD7fBuDcmLfo5KuZu4D32XTjIs1lEcTWT1x4ZYNRLPcAU/9USipj5/a5BoheRk
+         GjIcgmQ3MtsVTp4asEps99SgHcK+dB4mggRDeTldOnH8xMxpQqHrTcWdkJyWtncVgVEX
+         VG/qQwGaxZBI8CnmvMO9J9UAgjt21Oxde+jRHpKEpY9L+qILKv5lV/C58ubXrzpQQDTv
+         ikfhVhrrgoNw1ghuQgtETS2LgEyuYYAuoBZ1XtSlSYfkOpMcrw2Iou1zizpaEQJJO3Dm
+         x1m5DyWSOk6zdoyC8JxpCF/4eBCsXkExcgXMp/b1cfIMtObLZ6W0fFhDI6zPqldPslRt
+         PAVA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CdC68qmF;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AAZ4ckzF;
        spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CdC68qmF;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AAZ4ckzF;
        spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELvTRdfwJX9nOZd7Qof34mkaNxavtcppTMHrO+KO8O3QoYayj7Lh7ZuBC+ZJk8txJ3dBmuizIhFh+W1f4p356sE=
+X-Google-Smtp-Source: AG47ELshP4+MZY6lOc5CcT/TPt8mNp/ZtdrctR/qQaMrH4UReEf4eqh6RBdp7GFx1OBQKnk6OyknxtX/KJX4jETiXHU=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeNco97BovnVTcd=RH9zsK_gO=jmPALytP-sTFjK5Cq0Q@mail.gmail.com>
-References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com> <CAHp75VeNco97BovnVTcd=RH9zsK_gO=jmPALytP-sTFjK5Cq0Q@mail.gmail.com>
+In-Reply-To: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
+References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
 From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Wed, 14 Mar 2018 09:33:33 +0800
-Message-ID: <CADAEsF__v8b01DAC9d8B93oJk3GiqEyfieSgM6kj9CfetXMqaQ@mail.gmail.com>
+Date: Mon, 12 Mar 2018 13:33:04 +0800
+Message-ID: <CADAEsF-KO52z1sby9uk+1NWNkDo+apCRV+1dpbFe2AwDmccjXA@mail.gmail.com>
 Subject: Re: [PATCH v2] PM / wakeup: use seq_open() to show wakeup stats
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, "Brown, Len" <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	Ganesh Mahendran <opensource.ganesh@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594086852232118519?=
-X-GMAIL-MSGID: =?utf-8?q?1594874883237319587?=
+X-GMAIL-MSGID: =?utf-8?q?1594708759602490866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, Andy
+Hello, Rafael:
 
-2018-03-14 0:39 GMT+08:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
-> On Mon, Mar 5, 2018 at 10:47 AM, Ganesh Mahendran
-> <opensource.ganesh@gmail.com> wrote:
->> single_open() interface requires that the whole output must
->> fit into a single buffer. This will lead to timeout when
->> system memory is not in a good situation.
->>
->> This patch use seq_open() to show wakeup stats. This method
->> need only one page, so timeout will not be observed.
+2018-03-05 16:47 GMT+08:00 Ganesh Mahendran <opensource.ganesh@gmail.com>:
+> single_open() interface requires that the whole output must
+> fit into a single buffer. This will lead to timeout when
+> system memory is not in a good situation.
 >
->> +       if (n == 0) {
->> +               seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
->> +                       "expire_count\tactive_since\ttotal_time\tmax_time\t"
->> +                       "last_change\tprevent_suspend_time\n");
->> +       }
+> This patch use seq_open() to show wakeup stats. This method
+> need only one page, so timeout will not be observed.
 >
-> Can't you do this once at ->open() stage, for example?
+> Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
+> ----
+> v2: use srcu_read_lock instead of rcu_read_lock
 
-We can not put this at ->open(). Because in seq_open(), the buffer is
-not ready,
-the seq buffer is allocated in seq_read().
+How about the V2 patch?
+If you have other concern, please let me know.
 
 Thanks.
 
+> ---
+>  drivers/base/power/wakeup.c | 77 +++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 61 insertions(+), 16 deletions(-)
 >
->>  static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
->>  {
->> -       return single_open(file, wakeup_sources_stats_show, NULL);
->> +       return seq_open_private(file, &wakeup_sources_stats_seq_ops, sizeof(int));
->>  }
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index ea01621..3bcab7d 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -1029,32 +1029,77 @@ static int print_wakeup_source_stats(struct seq_file *m,
+>         return 0;
+>  }
 >
+> -/**
+> - * wakeup_sources_stats_show - Print wakeup sources statistics information.
+> - * @m: seq_file to print the statistics into.
+> - */
+> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
+> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
+> +                                       loff_t *pos)
+>  {
+>         struct wakeup_source *ws;
+> -       int srcuidx;
+> +       loff_t n = *pos;
+> +       int *srcuidx = m->private;
+>
+> -       seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+> -               "expire_count\tactive_since\ttotal_time\tmax_time\t"
+> -               "last_change\tprevent_suspend_time\n");
+> +       if (n == 0) {
+> +               seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+> +                       "expire_count\tactive_since\ttotal_time\tmax_time\t"
+> +                       "last_change\tprevent_suspend_time\n");
+> +       }
+>
+> -       srcuidx = srcu_read_lock(&wakeup_srcu);
+> -       list_for_each_entry_rcu(ws, &wakeup_sources, entry)
+> -               print_wakeup_source_stats(m, ws);
+> -       srcu_read_unlock(&wakeup_srcu, srcuidx);
+> +       *srcuidx = srcu_read_lock(&wakeup_srcu);
+> +       list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+> +               if (n-- > 0)
+> +                       continue;
+> +               goto out;
+> +       }
+> +       ws = NULL;
+> +out:
+> +       return ws;
+> +}
+> +
+> +static void *wakeup_sources_stats_seq_next(struct seq_file *m,
+> +                                       void *v, loff_t *pos)
+> +{
+> +       struct wakeup_source *ws = v;
+> +       struct wakeup_source *next_ws = NULL;
+> +
+> +       ++(*pos);
+>
+> -       print_wakeup_source_stats(m, &deleted_ws);
+> +       list_for_each_entry_continue_rcu(ws, &wakeup_sources, entry) {
+> +               next_ws = ws;
+> +               break;
+> +       }
+> +
+> +       return next_ws;
+> +}
+> +
+> +static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
+> +{
+> +       int *srcuidx = m->private;
+> +
+> +       srcu_read_unlock(&wakeup_srcu, *srcuidx);
+> +}
+> +
+> +/**
+> + * wakeup_sources_stats_seq_show - Print wakeup sources statistics information.
+> + * @m: seq_file to print the statistics into.
+> + * @v: wakeup_source of each iteration
+> + */
+> +static int wakeup_sources_stats_seq_show(struct seq_file *m, void *v)
+> +{
+> +       struct wakeup_source *ws = v;
+> +
+> +       print_wakeup_source_stats(m, ws);
+>
+>         return 0;
+>  }
+>
+> +static const struct seq_operations wakeup_sources_stats_seq_ops = {
+> +       .start = wakeup_sources_stats_seq_start,
+> +       .next  = wakeup_sources_stats_seq_next,
+> +       .stop  = wakeup_sources_stats_seq_stop,
+> +       .show  = wakeup_sources_stats_seq_show,
+> +};
+> +
+>  static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+>  {
+> -       return single_open(file, wakeup_sources_stats_show, NULL);
+> +       return seq_open_private(file, &wakeup_sources_stats_seq_ops, sizeof(int));
+>  }
+>
+>  static const struct file_operations wakeup_sources_stats_fops = {
+> @@ -1062,7 +1107,7 @@ static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+>         .open = wakeup_sources_stats_open,
+>         .read = seq_read,
+>         .llseek = seq_lseek,
+> -       .release = single_release,
+> +       .release = seq_release_private,
+>  };
+>
+>  static int __init wakeup_sources_debugfs_init(void)
 > --
-> With Best Regards,
-> Andy Shevchenko
+> 1.9.1
+>
