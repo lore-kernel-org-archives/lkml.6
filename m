@@ -1,23 +1,23 @@
 Return-Path: <jthumshirn@suse.de>
-X-Google-Smtp-Source: AG47ELsx5JmfXFTqw587N6CVyBnPmfaQ+5mtFcBQw7j9rckrKK6ii8yRlaHYTQEcYoUbCr/2H2a9
+X-Google-Smtp-Source: AG47ELtiAWN2yJkldvnByt9s9xvJxEe7hYR3yc3kBfOcBczVUfmM5eP/au3Nat0dSDYXfrvZebH9
 ARC-Seal: i=1; a=rsa-sha256; t=1520847687; cv=none;
         d=google.com; s=arc-20160816;
-        b=P2R44N7AC01z4MYV5qhxnp9zGszNLAQMEn2EKy8r+3uoQK7iU3W3v2tL8ALPrhwWtq
-         2JfobvmzdF5r3pm/3i5n9X/XoBZVLqjM4caLN8QBDr0jROGLSr+a/oYZ7K/e5LoG6E37
-         zrtBjQFdbjqsiHJH57tEdlEKHhwhOkybNZGN5hhlp71Tjf0JpQIu2Dm5YDnZiscM2wne
-         JBCl0jiM6CBMtDLIw13C+Hl09eU5Wsp7wcQt2O1yFEfRmFMY+qqlXNZ2SPjkXRLIlSaY
-         fKQP+Rqa5YRdx8VonVrboqBlx0Z8SBxpRUU/NPfcfYd9Y77y7b/2laJcnE5wWt9yMwIX
-         lHMw==
+        b=ooLh/b5cV/ROakEqXzSxRzHQ0cfvUmEyM8SoaPEbKq4oBKIhdgVA5gKRL7S/RWcUIj
+         OgbBysxgKaxXRDDrFgf9ps2fO1e5Q3O06FcL/HV0iw1RZiIBChQ/nZYclIoi6TcrB51v
+         Oj+bik3V50dy3PBGewY1SvaR6w5MFFDfDn4JQcub8cEz1PVKg0Wn8O9d5vKvra1N7oUY
+         OuSfgvFph5kC4Eu6XS4O5kcIAd2e9ouKhMmw8F7EiUso13SSf6t6od2XOGBr6/Eb04wC
+         ahdUm+ahQwsNkKkGFG5RKaVY/CSip1oBU+yeniZXLqlA/mDDWZuXF8hBqTaA0kDp3Ftr
+         2spw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=/nll28XAZ8oU9qRbkjAzrdJ1Z6ORk+Yv69Tcsods48c=;
-        b=SpgN9bH5Km+av3x3oOe+Y480Tia7cFztcXlwe8V6k/gNwXKqvFvYu0CgTg6vwKd9Oy
-         G0oEIhBYK+bwJoa+0in2HYpsUP+x6cd/NqIVR3fn5LJcThT8B0wWUZvTGd9I2rkPx774
-         xuZL5BdtLB/XVn4ejL3/81u8OiR/0TqNnk3HJqls1C+A18r9K/APFCmEefWm/hdGgQ40
-         lx3Kz4AUl/Q0ScLhHKz0FvktOdUjpEyUnGuuTipzK3YludH56omrEDq8mEzxlpfQNzNw
-         /xOQMmZZRMkJ4WMs86BIg02c2yq+/ise9onQR2/7aExRBQj/RvJfdaYcb1O04AAwThj7
-         qMGA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=wk/+VdHl2M5RcUvQ9uNC7a9rSXWq8cgTMuGLBO6h1oA=;
+        b=ByW7KpKZIj6hV9o/EzEW/k2nvAxaezRubmQPhXTsiSwYlXViaeK3H7a2J3qSb5lPSR
+         d1uXvR9f/1o/IGnGlOim0E43HUZuuojfEpF2Ch8kKBR+zpiYqwgIhcix6/HFs+P36wDd
+         8BF54W8u4HDP8sCyLxlCEAU59T1e7hfBuPYv5b4qvW5iV54MV0izNOgIZ/P/RtuGGmlp
+         z5zviWfty6OmSyscmDeAo5tRVSRZE8KXtW1qNylaWt0sqoKZERL1xff5MqalVhdu4mjU
+         UQ6YG3LUpUZQWdZqUG7c6BKPcvtK7KOSLGxDJZP6gdHdqhrO2DbSOKNBwiDMze1MoHBc
+         AhVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
 Authentication-Results: mx.google.com;
@@ -30,82 +30,53 @@ Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	linux-pci@vger.kernel.org,
 	Johannes Thumshirn <jthumshirn@suse.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Eli Billauer <eli.billauer@gmail.com>,
-	Anatolij Gustschin <agust@denx.de>
-Subject: [PATCH v3 1/2] PCI: Add Altera vendor ID
-Date: Mon, 12 Mar 2018 10:41:18 +0100
-Message-Id: <20180312094119.5298-2-jthumshirn@suse.de>
+	=?UTF-8?q?Andreas=20Gei=C3=9Fler?= <andreas.geissler@men.de>
+Subject: [PATCH v3 2/2] mcb: add Altera PCI ID to mcb-pci
+Date: Mon, 12 Mar 2018 10:41:19 +0100
+Message-Id: <20180312094119.5298-3-jthumshirn@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180312094119.5298-1-jthumshirn@suse.de>
 References: <20180312094119.5298-1-jthumshirn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594724385110361854?=
-X-GMAIL-MSGID: =?utf-8?q?1594724385110361854?=
+X-GMAIL-THRID: =?utf-8?q?1594724385345347346?=
+X-GMAIL-MSGID: =?utf-8?q?1594724385345347346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add the Altera PCI Vendor id to pci_ids.h and remove the private
-definitions from xillybus_pcie.c and altera-cvp.c.
+Some older PCI attached MEN FPGAs use an Altera PCI Vendor ID instead
+of the MEN one. Add it to the PCI ID table so the driver automatically
+attaches to it.
 
 Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Eli Billauer <eli.billauer@gmail.com>
-Cc: Anatolij Gustschin <agust@denx.de>
-Acked-by: Eli Billauer <eli.billauer@gmail.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Reported-by: Ben Turner <ben.turner@21net.com>
+Tested-by: Ben Turner <ben.turner@21net.com>
+Cc: Andreas Geißler <andreas.geissler@men.de>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
 ---
-Changes to v1:
-- Collected ACKs
-- Reworded Subject according to Bjorn
+Changes to v2:
+- Add Andy's review
 
 Changes to v1:
-- Remove redundant pci_ids.h include (Andy)
+- Removed redundant include of pci_ids.h
 ---
- drivers/char/xillybus/xillybus_pcie.c | 1 -
- drivers/fpga/altera-cvp.c             | 2 --
- include/linux/pci_ids.h               | 2 ++
- 3 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/mcb/mcb-pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
-index dff2d1538164..05e5324f60bd 100644
---- a/drivers/char/xillybus/xillybus_pcie.c
-+++ b/drivers/char/xillybus/xillybus_pcie.c
-@@ -24,7 +24,6 @@ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
+index af4d2f26f1c6..c2d69e33bf2b 100644
+--- a/drivers/mcb/mcb-pci.c
++++ b/drivers/mcb/mcb-pci.c
+@@ -117,6 +117,7 @@ static void mcb_pci_remove(struct pci_dev *pdev)
  
- #define PCI_DEVICE_ID_XILLYBUS		0xebeb
- 
--#define PCI_VENDOR_ID_ALTERA		0x1172
- #define PCI_VENDOR_ID_ACTEL		0x11aa
- #define PCI_VENDOR_ID_LATTICE		0x1204
- 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 00e73d28077c..77b04e4b3254 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -384,8 +384,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *dev_id);
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
--#define PCI_VENDOR_ID_ALTERA	0x1172
--
- static struct pci_device_id altera_cvp_id_tbl[] = {
- 	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
- 	{ }
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index a6b30667a331..6a96a70fb462 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1561,6 +1561,8 @@
- #define PCI_DEVICE_ID_SERVERWORKS_CSB6LPC 0x0227
- #define PCI_DEVICE_ID_SERVERWORKS_HT1100LD 0x0408
- 
-+#define PCI_VENDOR_ID_ALTERA		0x1172
-+
- #define PCI_VENDOR_ID_SBE		0x1176
- #define PCI_DEVICE_ID_SBE_WANXL100	0x0301
- #define PCI_DEVICE_ID_SBE_WANXL200	0x0302
+ static const struct pci_device_id mcb_pci_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MEN, PCI_DEVICE_ID_MEN_CHAMELEON) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_ALTERA, PCI_DEVICE_ID_MEN_CHAMELEON) },
+ 	{ 0 },
+ };
+ MODULE_DEVICE_TABLE(pci, mcb_pci_tbl);
 -- 
 2.13.6
