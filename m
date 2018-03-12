@@ -1,45 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751509AbeCLWmt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 18:42:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38358 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751282AbeCLWms (ORCPT
+        id S1751442AbeCLWvX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 18:51:23 -0400
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:39876 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751312AbeCLWvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:42:48 -0400
-Date: Mon, 12 Mar 2018 15:42:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 2/6] proc/sysctl: Check for invalid flags bits
-Message-Id: <20180312154245.a3b759d2542ac7e09a5a267a@linux-foundation.org>
-In-Reply-To: <42c1606b-304e-8cd5-d532-68a403a99dce@redhat.com>
-References: <1520885744-1546-1-git-send-email-longman@redhat.com>
-        <1520885744-1546-3-git-send-email-longman@redhat.com>
-        <20180312135204.d56f7f1e64c96cf20786eb28@linux-foundation.org>
-        <42c1606b-304e-8cd5-d532-68a403a99dce@redhat.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Mar 2018 18:51:21 -0400
+X-Google-Smtp-Source: AG47ELvjZZqZt2957rdftj8APXvfhjuvxY7vcwcWMSx0LA2vHBSZTvNoLjP4SswsDXmgIiys+LiUOw==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: NSP: Switch to port 8 for CPU port
+Date: Mon, 12 Mar 2018 15:51:01 -0700
+Message-Id: <20180312225101.14635-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180227204520.24122-1-f.fainelli@gmail.com>
+References: <20180227204520.24122-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 18:12:47 -0400 Waiman Long <longman@redhat.com> wrote:
-
-> On 03/12/2018 04:52 PM, Andrew Morton wrote:
-> > On Mon, 12 Mar 2018 16:15:40 -0400 Waiman Long <longman@redhat.com> wrote:
-> >
-> >> Checking code is added to check for invalid flags in the ctl_table
-> >> and return error if an unknown flag is used.
-> > Why?  What's wrong with the old code, what value does this change add,
-> > etc.
+On Tue, 27 Feb 2018 12:45:19 -0800, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Now that we have added support for pre-pended Broadcom tags with commit
+> 11606039604c ("net: dsa: b53: Support prepended Broadcom tags") we can
+> switch all the Northstar Plus reference boards to use port 8 for the CPU
+> port. This allows us to prepare room for supporting the Flow Accelerator
+> 2 NAPT offload, and frees up port 5 to be made fully configurable for
+> the modes that it supports: internal, SGMII, RGMII etc.
 > 
-> This is an additional checking code requested by Luis.
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
 
-Readers of this patch will wish to know why it exists.  That doesn't
-tell us!
+Applied to devicetree/next, thanks!
+--
+Florian
