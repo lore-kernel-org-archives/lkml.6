@@ -1,185 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932203AbeCLIzy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:55:54 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:52371 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeCLIzu (ORCPT
+        id S1752443AbeCLI46 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:56:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50876 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750765AbeCLI45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:55:50 -0400
-X-IronPort-AV: E=Sophos;i="5.47,460,1515456000";
-   d="scan'208";a="711501477"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>
-Subject: Re: [PATCH] X86/KVM: Update the exit_qualification access bits while
- walking an address
-Thread-Topic: [PATCH] X86/KVM: Update the exit_qualification access bits while
- walking an address
-Thread-Index: AQHTsL7uN8i8BkmWakqL1gIWWZ5a16O9OeOAgAKougCADHrsAIAAAMgA
-Date: Mon, 12 Mar 2018 08:55:44 +0000
-Message-ID: <1520844944.8021.7.camel@amazon.de>
-References: <1519841208-23349-1-git-send-email-karahmed@amazon.de>
-         <d9c6c4f4-74f6-13b1-33ea-9423ff2efc8e@redhat.com>
-         <1520158672.28771.4.camel@amazon.de> <1520844776.8021.6.camel@amazon.de>
-In-Reply-To: <1520844776.8021.6.camel@amazon.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D9BF2E0440DA2D4C90D90E7E724D9522@amazon.com>
+        Mon, 12 Mar 2018 04:56:57 -0400
+Date: Mon, 12 Mar 2018 09:56:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        will.deacon@arm.com, torvalds@linux-foundation.org, npiggin@gmail.com,
+        mingo@kernel.org, mpe@ellerman.id.au, oleg@redhat.com,
+        benh@kernel.crashing.org, Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: smp_mb__after_spinlock requirement too strong?
+Message-ID: <20180312085646.GE4064@hirez.programming.kicks-ass.net>
+References: <CAJDTihwMgUqjK6YL2M_WZY4VBaifVYgNvdZOF_fNrnk_p27Kvw@mail.gmail.com>
+ <20180312054412.yqyde34ly3kjoajj@tardis>
+ <CAJDTihxxhy7zmhTJ-ky4wvMby_o9y8UOcs9R1dABN7NccekAiQ@mail.gmail.com>
+ <20180312085600.aczjkpn73axzs2sb@tardis>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312085600.aczjkpn73axzs2sb@tardis>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2C8u2St003567
 
-On Mon, 2018-03-12 at 08:52 +0000, Raslan, KarimAllah wrote:
-> On Sun, 2018-03-04 at 10:17 +0000, Raslan, KarimAllah wrote:
-> > 
-> > On Fri, 2018-03-02 at 18:41 +0100, Paolo Bonzini wrote:
-> > > 
-> > > 
-> > > On 28/02/2018 19:06, KarimAllah Ahmed wrote:
-> > > > 
-> > > > 
-> > > > 
-> > > > ... to avoid having a stale value when handling an EPT misconfig for MMIO
-> > > > regions.
-> > > > 
-> > > > MMIO regions that are not passed-through to the guest are handled through
-> > > > EPT misconfigs. The first time a certain MMIO page is touched it causes an
-> > > > EPT violation, then KVM marks the EPT entry to cause an EPT misconfig
-> > > > instead. Any subsequent accesses to the entry will generate an EPT
-> > > > misconfig.
-> > > > 
-> > > > Things gets slightly complicated with nested guest handling for MMIO
-> > > > regions that are not passed through from L0 (i.e. emulated by L0
-> > > > user-space).
-> > > > 
-> > > > An EPT violation for one of these MMIO regions from L2, exits to L0
-> > > > hypervisor. L0 would then look at the EPT12 mapping for L1 hypervisor and
-> > > > realize it is not present (or not sufficient to serve the request). Then L0
-> > > > injects an EPT violation to L1. L1 would then update its EPT mappings. The
-> > > > EXIT_QUALIFICATION value for L1 would come from exit_qualification variable
-> > > > in "struct vcpu". The problem is that this variable is only updated on EPT
-> > > > violation and not on EPT misconfig. So if an EPT violation because of a
-> > > > read happened first, then an EPT misconfig because of a write happened
-> > > > afterwards. The L0 hypervisor will still contain exit_qualification value
-> > > > from the previous read instead of the write and end up injecting an EPT
-> > > > violation to the L1 hypervisor with an out of date EXIT_QUALIFICATION.
-> > > > 
-> > > > The EPT violation that is injected from L0 to L1 needs to have the correct
-> > > > EXIT_QUALIFICATION specially for the access bits because the individual
-> > > > access bits for MMIO EPTs are updated only on actual access of this
-> > > > specific type. So for the example above, the L1 hypervisor will keep
-> > > > updating only the read bit in the EPT then resume the L2 guest. The L2
-> > > > guest would end up causing another exit where the L0 *again* will inject
-> > > > another EPT violation to L1 hypervisor with *again* an out of date
-> > > > exit_qualification which indicates a read and not a write. Then this
-> > > > ping-pong just keeps happening without making any forward progress.
-> > > > 
-> > > > The behavior of mapping MMIO regions changed in:
-> > > > 
-> > > >    commit a340b3e229b24 ("kvm: Map PFN-type memory regions as writable (if possible)")
-> > > > 
-> > > > ... where an EPT violation for a read would also fixup the write bits to
-> > > > avoid another EPT violation which by acciddent would fix the bug mentioned
-> > > > above.
-> > > > 
-> > > > This commit fixes this situation and ensures that the access bits for the
-> > > > exit_qualifcation is up to date. That ensures that even L1 hypervisor
-> > > > running with a KVM version before the commit mentioned above would still
-> > > > work.
-> > > > 
-> > > > ( The description above assumes EPT to be available and used by L1
-> > > >   hypervisor + the L1 hypervisor is passing through the MMIO region to the L2
-> > > >   guest while this MMIO region is emulated by the L0 user-space ).
-> > > 
-> > > This looks okay.  Would it be possible to add a kvm-unit-tests testcase
-> > > for this?
-> > 
-> > Yup, makes sense. Just sent out a patch for kvm-unit-tests.
+On Mon, Mar 12, 2018 at 04:56:00PM +0800, Boqun Feng wrote:
+> So I think the purpose of smp_mb__after_spinlock() is to provide RCsc
+> locks, it's just the comments before that may be misleading. We want
+> RCsc locks in schedule code because we want writes in different critical
+> section are ordered even outside the critical sections, for case like:
 > 
-> Was the kvm-unit-test that I posted sufficient?
-
-Never mind, I just noticed that Radim already pulled this fix to the 
-kvm/queue.
-
-Thanks Radim :)
-
+> 	CPU 0		CPU 1		CPU 2
 > 
-> > 
-> > 
-> > Thanks.
-> > 
-> > > 
-> > > 
-> > > 
-> > > Thanks,
-> > > 
-> > > Paolo
-> > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > Cc: H. Peter Anvin <hpa@zytor.com>
-> > > > Cc: x86@kernel.org
-> > > > Cc: kvm@vger.kernel.org
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> > > > ---
-> > > >  arch/x86/kvm/paging_tmpl.h | 11 +++++++++--
-> > > >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-> > > > index 5abae72..6288e9d 100644
-> > > > --- a/arch/x86/kvm/paging_tmpl.h
-> > > > +++ b/arch/x86/kvm/paging_tmpl.h
-> > > > @@ -452,14 +452,21 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
-> > > >  	 * done by is_rsvd_bits_set() above.
-> > > >  	 *
-> > > >  	 * We set up the value of exit_qualification to inject:
-> > > > -	 * [2:0] - Derive from [2:0] of real exit_qualification at EPT violation
-> > > > +	 * [2:0] - Derive from the access bits. The exit_qualification might be
-> > > > +	 *         out of date if it is serving an EPT misconfiguration.
-> > > >  	 * [5:3] - Calculated by the page walk of the guest EPT page tables
-> > > >  	 * [7:8] - Derived from [7:8] of real exit_qualification
-> > > >  	 *
-> > > >  	 * The other bits are set to 0.
-> > > >  	 */
-> > > >  	if (!(errcode & PFERR_RSVD_MASK)) {
-> > > > -		vcpu->arch.exit_qualification &= 0x187;
-> > > > +		vcpu->arch.exit_qualification &= 0x180;
-> > > > +		if (write_fault)
-> > > > +			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_WRITE;
-> > > > +		if (user_fault)
-> > > > +			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_READ;
-> > > > +		if (fetch_fault)
-> > > > +			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_INSTR;
-> > > >  		vcpu->arch.exit_qualification |= (pte_access & 0x7) << 3;
-> > > >  	}
-> > > >  #endif
-> > > > 
-> > > 
-> > > 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+> 	{A =0 , B = 0}
+> 	lock(rq0);
+> 	write A=1;
+> 	unlock(rq0);
+> 
+> 			lock(rq0);
+> 			read A=1;
+> 			write B=2;
+> 			unlock(rq0);
+> 
+> 					read B=2;
+> 					smp_rmb();
+> 					read A=1;
+> 
+> I think we need to fix the comments rather than loose the requirement.
+> Peter?
+
+Yes, ISTR people relying on schedule() being RCsc, and I just picked a
+bad exmaple.
