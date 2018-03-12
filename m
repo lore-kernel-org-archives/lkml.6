@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELuz75gyNgWIABgbP1iIyrAtE5cKH3tiXcJ0BZzgDXrTXX2m7vezxVOa88VTAOQ684ZGU9AW
-ARC-Seal: i=1; a=rsa-sha256; t=1520824090; cv=none;
+X-Google-Smtp-Source: AG47ELtohH8CpuqThPA9yDXa9Wartr6SeQt5NvJnA4eyzssEk4YaJdAQXKh+XZhw5bTC4J9SVkIo
+ARC-Seal: i=1; a=rsa-sha256; t=1520824088; cv=none;
         d=google.com; s=arc-20160816;
-        b=XGAOKl/xIKjEr3UGsFZFxDpIvX12gnnhqMYJl3o+GXN9PsZ/8C8DtFdTOlJTGPOsff
-         hqagmBbFzY5WX7pGOFOPPokVvSykk7vUOXk0xUMW6F25sjhmLdIjnMKnz1HJwHigXF/d
-         A6cFwPK2zp977FtFQ/0fWQt8TbSJhxJSSeF0+iA/HJJy2cs4K3VGaenEbOxQ6GBHdLeT
-         ELnrUXA5aqAIg5cx0jfBB4SiBDobshfJJe8S64T1Zr1q1mitxrUha6fMppnuJVLwNGnp
-         qta+xaZZJfBddtUnzF1eG/m+Wix0BEQHxaTfc9KtmScPRC0LJXffcT90OKsM4LiVVTKP
-         jnIA==
+        b=bMiZS9VCTI+kZVlfOj4UKucKOIjbm0vpOvr+AJYW2GVxKi6Kw6d+oGm4xtitxwPDGh
+         IO+GyHHGPetyTsIHJthOGbLp94iyS/MDA+Y6LRoAi5STMJhwHqYrMZuMGgf/xXQLapMt
+         wDUkWprecs1mApnGoWrKCrfEe7OlnTkvGS0yqkA1ebZa1X7g6gJlGjKZ1TjOQjW7AGTV
+         9VELrWNPT2lUexmUnhaiplTMaPesOHjMtW4AzHpy62LmVrQ6BMY5aMAQHR8eoLY9ZVqy
+         Opfrh4ZgoXHWlJpginvCJRz/0tijpdKl5YnVTeDXgHf6P/mVAMwNLrwVLDnkmEduq24B
+         5ugQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=vIctZk2KqC5Q099pz40zZ5L5pL6VecL0/Qd72sZY3p8=;
-        b=L21Tq4A3dwJWb6u6yqBYKgvnvddpmx36figrpPEPMPrnRqTQ0Vp5PjuggPWq/ouLHf
-         f0wfhYdOEHEnBV3BP6Sk85D7zYU55kOehfSk3endFUgh42YOZaNhaXmYYqLyaYzVFjem
-         9d5xgodK8wO36auUn9WNkRGgarJzeSkosUHrVvfmWQ+bIs89SqnTNFTip/D6UDYxjaEv
-         ZmkvgvTUkz+pRR2tuVwN6c7UNNpT9eLDHNtQ7Q7biT0ht0dGOwORfn/hREGX6Xe0vx22
-         xiU3W/Nlzgjg2YvisjueVu9+PSAL8hMaXLHPSXkECMojESIrX1sVZXv/M4/atvRYZFiP
-         COfA==
+        bh=c2T5YRHLeOG8HxEuQlzay7gjE3BlwFMnOw/fa1XZa9U=;
+        b=TH8IHMNQMCmhAf8mEE9HAG4xhODrb467vH6XiyUjairUZHhyQaqo6RWPjfov8AW64U
+         hGXSpUysJrgxk+gn/GmhtAp1ICW93aKSFdpDbowiN7ZfbCTs4AqX0H7uWBaBghVycLp+
+         AENy07u6JCHxbjviZUGl+cAwYv8eaTS4EK2ibHgrHKtXHPYLEkxI1iEs7uufcxiIFKET
+         xCOa8eABMXdurS1bBMUgAzdeqw8XUcuIYDEFecLKcjIkwFPovtE3vZiaTvkgDV6LkNZq
+         XuTYms2RMs20tBmJGr3w8VWESRoN+ujo9OlIqt1FTuAhpUFNHWgremBc1ohzWKsOoecw
+         XOoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,36 +30,36 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- "Kees Cook" <keescook@google.com>,
- thomas.lendacky@amd.com,
- "Andy Lutomirski" <luto@amacapital.net>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
- "Jiri Kosina" <jikos@kernel.org>,
- "Dave Hansen" <dave.hansen@intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Rik van Riel" <riel@redhat.com>,
- "Andi Kleen" <ak@linux.intel.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Ingo Molnar" <mingo@kernel.org>,
- "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Paul Turner" <pjt@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Peter Zijlstra" <peterz@infradead.org>,
  gnomes@lxorguk.ukuu.org.uk,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Paul Turner" <pjt@google.com>
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Rik van Riel" <riel@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "Kees Cook" <keescook@google.com>,
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ thomas.lendacky@amd.com
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.580494457@decadent.org.uk>
+Message-ID: <lsq.1520823814.655826580@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 061/104] x86/retpoline/ftrace: Convert ftrace
- assembler indirect jumps
+Subject: [PATCH 3.2 064/104] x86/retpoline/checksum32: Convert assembler
+ indirect jumps
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699641468699388?=
-X-GMAIL-MSGID: =?utf-8?q?1594699641468699388?=
+X-GMAIL-THRID: =?utf-8?q?1594699639123527975?=
+X-GMAIL-MSGID: =?utf-8?q?1594699639123527975?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -69,10 +69,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 9351803bd803cdbeb9b5a7850b7b6f464806e3db upstream.
+commit 5096732f6f695001fa2d6f1335a2680b37912c69 upstream.
 
-Convert all indirect jumps in ftrace assembler code to use non-speculative
-sequences when CONFIG_RETPOLINE is enabled.
+Convert all indirect jumps in 32bit checksum assembler code to use
+non-speculative sequences when CONFIG_RETPOLINE is enabled.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -92,50 +92,40 @@ Cc: Kees Cook <keescook@google.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
 Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-8-git-send-email-dwmw@amazon.co.uk
-[bwh: Backported to 3.2: adjust filenames, context]
+Link: https://lkml.kernel.org/r/1515707194-20531-11-git-send-email-dwmw@amazon.co.uk
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/entry_32.S
-+++ b/arch/x86/kernel/entry_32.S
-@@ -1183,7 +1183,8 @@ trace:
- 	movl 0x4(%ebp), %edx
- 	subl $MCOUNT_INSN_SIZE, %eax
+ arch/x86/lib/checksum_32.S | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/arch/x86/lib/checksum_32.S
++++ b/arch/x86/lib/checksum_32.S
+@@ -28,7 +28,8 @@
+ #include <linux/linkage.h>
+ #include <asm/dwarf2.h>
+ #include <asm/errno.h>
+-				
++#include <asm/nospec-branch.h>
++
+ /*
+  * computes a partial checksum, e.g. for TCP/UDP fragments
+  */
+@@ -164,7 +165,7 @@ ENTRY(csum_partial)
+ 	negl %ebx
+ 	lea 45f(%ebx,%ebx,2), %ebx
+ 	testl %esi, %esi
+-	jmp *%ebx
++	JMP_NOSPEC %ebx
  
--	call *ftrace_trace_function
-+	movl ftrace_trace_function, %ecx
-+	CALL_NOSPEC %ecx
- 
- 	popl %edx
- 	popl %ecx
-@@ -1221,7 +1222,7 @@ return_to_handler:
- 	movl %eax, %ecx
- 	popl %edx
- 	popl %eax
--	jmp *%ecx
-+	JMP_NOSPEC %ecx
- #endif
- 
- .section .rodata,"a"
---- a/arch/x86/kernel/entry_64.S
-+++ b/arch/x86/kernel/entry_64.S
-@@ -126,8 +126,8 @@ trace:
- 	movq 8(%rbp), %rsi
- 	subq $MCOUNT_INSN_SIZE, %rdi
- 
--	call   *ftrace_trace_function
--
-+	movq ftrace_trace_function, %r8
-+	CALL_NOSPEC %r8
- 	MCOUNT_RESTORE_FRAME
- 
- 	jmp ftrace_stub
-@@ -168,7 +168,7 @@ GLOBAL(return_to_handler)
- 	movq 8(%rsp), %rdx
- 	movq (%rsp), %rax
- 	addq $24, %rsp
--	jmp *%rdi
-+	JMP_NOSPEC %rdi
- #endif
- 
- 
+ 	# Handle 2-byte-aligned regions
+ 20:	addw (%esi), %ax
+@@ -466,7 +467,7 @@ ENTRY(csum_partial_copy_generic)
+ 	andl $-32,%edx
+ 	lea 3f(%ebx,%ebx), %ebx
+ 	testl %esi, %esi 
+-	jmp *%ebx
++	JMP_NOSPEC %ebx
+ 1:	addl $64,%esi
+ 	addl $64,%edi 
+ 	SRC(movb -32(%edx),%bl)	; SRC(movb (%edx),%bl)
