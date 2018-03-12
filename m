@@ -1,77 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932574AbeCLC6V (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 22:58:21 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:38458 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932437AbeCLC6U (ORCPT
+        id S932569AbeCLDBL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 23:01:11 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59768 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932437AbeCLDBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 22:58:20 -0400
-X-Google-Smtp-Source: AG47ELut6sQDwlKqD3yQXxJbimwljBsI6aBW4UwIfo6B/lLEVo0d9VH9wxdjjF/bbIJbBddhcFKOcw==
-To: LKML <linux-kernel@vger.kernel.org>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Possible memory leak in acpi_ut_create_internal_object_dbg() in
- 4.16-rcX
-Message-ID: <002b1e6f-f1e8-c9e9-0083-a2bb8fb26c42@lwfinger.net>
-Date: Sun, 11 Mar 2018 21:58:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 11 Mar 2018 23:01:10 -0400
+Date: Mon, 12 Mar 2018 14:01:12 +1100
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH] macintosh/adb: Use C99 initializers for struct adb_driver
+ instances
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-Id: <S932569AbeCLDBL/20180312030112Z+193@vger.kernel.org>
 
-Running kernel 4.16-rcX, kmemleak complains about a leak of one object. This is
-linux-ubqc:~ # echo scan > /sys/kernel/debug/kmemleak
-linux-ubqc:~ # cat /sys/kernel/debug/kmemleak
-unreferenced object 0xffff8802263b2630 (size 72):
-   comm "swapper/0", pid 1, jiffies 4294892345 (age 8143.468s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 0e 14 01 00 00 05 00 00  ................
-     00 00 00 00 00 00 00 00 b8 01 1d 26 02 88 ff ff  ...........&....
-   backtrace:
-     [<00000000a4d7a095>] acpi_ut_create_internal_object_dbg+0x4d/0x10e
-     [<0000000091af3dcd>] acpi_ds_build_internal_object+0xed/0x1cd
-     [<00000000c23098e0>] acpi_ds_build_internal_package_obj+0x1e6/0x32d
-     [<00000000130427ae>] acpi_ds_eval_data_object_operands+0x178/0x218
-     [<0000000096a9eea7>] acpi_ds_exec_end_op+0x429/0x6b7
-     [<00000000bf84c466>] acpi_ps_parse_loop+0x919/0x9b1
-     [<0000000038521867>] acpi_ps_parse_aml+0x1a2/0x4af
-     [<00000000f5588116>] acpi_ds_execute_arguments+0x184/0x1c3
-     [<000000004cdf7505>] acpi_ds_get_package_arguments+0xf8/0x124
-     [<00000000d3e97ad0>] acpi_ns_init_one_object+0xca/0x133
-     [<000000006c8e6828>] acpi_ns_walk_namespace+0x134/0x283
-     [<00000000d83f628d>] acpi_walk_namespace+0xf5/0x13d
-     [<0000000031cfada2>] acpi_ns_initialize_objects+0x103/0x1fe
-     [<00000000001d0e25>] acpi_initialize_objects+0x47/0xd4
-     [<000000005e2d42df>] acpi_init+0xc7/0x340
-     [<000000000ef98997>] do_one_initcall+0x4e/0x18d
+Hopefully this will make it easier for the next reader who needs
+to check these pointers. No change to object files.
 
-Using gdb to find the offending source line returns:
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/macintosh/adb-iop.c    | 14 +++++++-------
+ drivers/macintosh/macio-adb.c  | 15 +++++++--------
+ drivers/macintosh/via-macii.c  | 14 +++++++-------
+ drivers/macintosh/via-pmu.c    | 14 +++++++-------
+ drivers/macintosh/via-pmu68k.c | 14 +++++++-------
+ 5 files changed, 35 insertions(+), 36 deletions(-)
 
-99              /* Allocate the raw object descriptor */
-100
-101             object =
-102                 acpi_ut_allocate_object_desc_dbg(module_name, line_number,
-103                                                  component_id);
-104             if (!object) {
-105                     return_PTR(NULL);
-106             }
-107
-108             switch (type) {
-
-My suspicion is that this is a false positive, and a kmemleak_not_leak() call is 
-likely appropriate, but that decision should be made at a higher level. I am not 
-sure why kmemleak is triggering on this. Most of the relevant code is more than 
-10 years old.
-
-Although leaking a single object is not serious, I prefer to eliminate it to 
-ensure that every leak mentioned in the logs is something that I need to 
-address. This is particularly important when I am debugging a driver.
-
-Thanks,
-
-Larry
+diff --git a/drivers/macintosh/adb-iop.c b/drivers/macintosh/adb-iop.c
+index 15db69d8ba69..ca623e6446e4 100644
+--- a/drivers/macintosh/adb-iop.c
++++ b/drivers/macintosh/adb-iop.c
+@@ -53,13 +53,13 @@ static void adb_iop_poll(void);
+ static int adb_iop_reset_bus(void);
+ 
+ struct adb_driver adb_iop_driver = {
+-	"ISM IOP",
+-	adb_iop_probe,
+-	adb_iop_init,
+-	adb_iop_send_request,
+-	adb_iop_autopoll,
+-	adb_iop_poll,
+-	adb_iop_reset_bus
++	.name         = "ISM IOP",
++	.probe        = adb_iop_probe,
++	.init         = adb_iop_init,
++	.send_request = adb_iop_send_request,
++	.autopoll     = adb_iop_autopoll,
++	.poll         = adb_iop_poll,
++	.reset_bus    = adb_iop_reset_bus
+ };
+ 
+ static void adb_iop_end_req(struct adb_request *req, int state)
+diff --git a/drivers/macintosh/macio-adb.c b/drivers/macintosh/macio-adb.c
+index 9a6223add30e..eb3adfb7f88d 100644
+--- a/drivers/macintosh/macio-adb.c
++++ b/drivers/macintosh/macio-adb.c
+@@ -70,14 +70,13 @@ static void macio_adb_poll(void);
+ static int macio_adb_reset_bus(void);
+ 
+ struct adb_driver macio_adb_driver = {
+-	"MACIO",
+-	macio_probe,
+-	macio_init,
+-	macio_send_request,
+-	/*macio_write,*/
+-	macio_adb_autopoll,
+-	macio_adb_poll,
+-	macio_adb_reset_bus
++	.name         = "MACIO",
++	.probe        = macio_probe,
++	.init         = macio_init,
++	.send_request = macio_send_request,
++	.autopoll     = macio_adb_autopoll,
++	.poll         = macio_adb_poll,
++	.reset_bus    = macio_adb_reset_bus,
+ };
+ 
+ int macio_probe(void)
+diff --git a/drivers/macintosh/via-macii.c b/drivers/macintosh/via-macii.c
+index 4ba06a1695ea..cf6f7d52d6be 100644
+--- a/drivers/macintosh/via-macii.c
++++ b/drivers/macintosh/via-macii.c
+@@ -91,13 +91,13 @@ static void macii_poll(void);
+ static int macii_reset_bus(void);
+ 
+ struct adb_driver via_macii_driver = {
+-	"Mac II",
+-	macii_probe,
+-	macii_init,
+-	macii_send_request,
+-	macii_autopoll,
+-	macii_poll,
+-	macii_reset_bus
++	.name         = "Mac II",
++	.probe        = macii_probe,
++	.init         = macii_init,
++	.send_request = macii_send_request,
++	.autopoll     = macii_autopoll,
++	.poll         = macii_poll,
++	.reset_bus    = macii_reset_bus,
+ };
+ 
+ static enum macii_state {
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index c4c2b3b85ebc..8da474899d79 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -199,13 +199,13 @@ static const struct file_operations pmu_options_proc_fops;
+ 
+ #ifdef CONFIG_ADB
+ struct adb_driver via_pmu_driver = {
+-	"PMU",
+-	pmu_probe,
+-	pmu_init,
+-	pmu_send_request,
+-	pmu_adb_autopoll,
+-	pmu_poll_adb,
+-	pmu_adb_reset_bus
++	.name         = "PMU",
++	.probe        = pmu_probe,
++	.init         = pmu_init,
++	.send_request = pmu_send_request,
++	.autopoll     = pmu_adb_autopoll,
++	.poll         = pmu_poll_adb,
++	.reset_bus    = pmu_adb_reset_bus,
+ };
+ #endif /* CONFIG_ADB */
+ 
+diff --git a/drivers/macintosh/via-pmu68k.c b/drivers/macintosh/via-pmu68k.c
+index 7d9c4baf8c11..d545ed45e482 100644
+--- a/drivers/macintosh/via-pmu68k.c
++++ b/drivers/macintosh/via-pmu68k.c
+@@ -120,13 +120,13 @@ static void pmu_enable_backlight(int on);
+ static void pmu_set_brightness(int level);
+ 
+ struct adb_driver via_pmu_driver = {
+-	"68K PMU",
+-	pmu_probe,
+-	pmu_init,
+-	pmu_send_request,
+-	pmu_autopoll,
+-	pmu_poll,
+-	pmu_reset_bus
++	.name         = "68K PMU",
++	.probe        = pmu_probe,
++	.init         = pmu_init,
++	.send_request = pmu_send_request,
++	.autopoll     = pmu_autopoll,
++	.poll         = pmu_poll,
++	.reset_bus    = pmu_reset_bus,
+ };
+ 
+ /*
+-- 
+2.16.1
