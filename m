@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932451AbeCLNQN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:16:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42476 "EHLO
+        id S932474AbeCLNQ2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:16:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42524 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932333AbeCLNQH (ORCPT
+        with ESMTP id S932388AbeCLNQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:16:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C76B460452
+        Mon, 12 Mar 2018 09:16:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E573860590
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -17,9 +17,9 @@ Cc: David Brown <david.brown@linaro.org>,
         Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 12/13] i2c: qup: reorganization of driver code to remove polling for qup v1
-Date: Mon, 12 Mar 2018 18:45:01 +0530
-Message-Id: <1520860502-14886-13-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v2 13/13] i2c: qup: reorganization of driver code to remove polling for qup v2
+Date: Mon, 12 Mar 2018 18:45:02 +0530
+Message-Id: <1520860502-14886-14-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
 References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
@@ -36,9 +36,15 @@ Following are the major issues in current driver code
    whenever its gets any non-error interrupts and then simply do the
    polling of available/free bytes in FIFO.
 2. The block mode is not working properly since no handling in
-   being done for OUT_BLOCK_WRITE_REQ and IN_BLOCK_READ_REQ.
+   being done for OUT_BLOCK_WRITE_REQ and IN_BLOCK_READ_READ.
+3. An i2c transfer can contain multiple message and QUP v2
+   supports reconfiguration during run in which the mode should be same
+   for all the sub transfer. Currently the mode is being programmed
+   before every sub transfer which is functionally wrong. If one message
+   is less than FIFO length and other message is greater than FIFO
+   length, then transfers will fail.
 
-Because of above, i2c v1 transfers of size greater than 32 are failing
+Because of above, i2c v2 transfers of size greater than 64 are failing
 with following error message
 
 	i2c_qup 78b6000.i2c: timeout for fifo out full
@@ -51,206 +57,209 @@ are the major changes done in this patch
    bytes and move to interrupts completely. QUP has QUP_MX_OUTPUT_DONE,
    QUP_MX_INPUT_DONE, OUT_BLOCK_WRITE_REQ and IN_BLOCK_READ_REQ
    interrupts to handle FIFO’s properly so check all these interrupts.
-2. During write, For FIFO mode, TX FIFO can be directly written
+2. Determine the mode for transfer before starting by checking
+   all the tx/rx data length in each message. The complete message can be
+   transferred either in DMA mode or Programmed IO by FIFO/Block mode.
+   in DMA mode, both tx and rx uses same mode but in PIO mode, the TX and
+   RX can be in different mode.
+3. During write, For FIFO mode, TX FIFO can be directly written
    without checking for FIFO space. For block mode, the QUP will generate
    OUT_BLOCK_WRITE_REQ interrupt whenever it has block size of available
    space.
-3. During read, both TX and RX FIFO will be used. TX will be used
+4. During read, both TX and RX FIFO will be used. TX will be used
    for writing tags and RX will be used for receiving the data. In QUP,
    TX and RX can operate in separate mode so configure modes accordingly.
-4. For read FIFO mode, wait for QUP_MX_INPUT_DONE interrupt which
+5. For read FIFO mode, wait for QUP_MX_INPUT_DONE interrupt which
    will be generated after all the bytes have been copied in RX FIFO. For
    read Block mode, QUP will generate IN_BLOCK_READ_REQ interrupts
    whenever it has block size of available data.
+6. Split the transfer in chunk of one QUP block size(256 bytes)
+   and schedule each block separately. QUP v2 supports reconfiguration
+   during run in which QUP can transfer multiple blocks without issuing a
+   stop events.
+7. Port the SMBus block read support for new code changes.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
 
 * Changes from v1:
 
-1. Fixed auto build test WARNING ‘idx' may be used uninitialized
-   in this function
-2. Removed event-based completion and changed transfer completion
+1. Removed event-based completion and changed transfer completion
    detection logic in interrupt handler
+2. Fixed function comments as suggested in v1 review comments
+3. Removed blk_mode_threshold from global structure
+4. Improved determine mode logic for QUP v2 transfers
 
- drivers/i2c/busses/i2c-qup.c | 368 ++++++++++++++++++++++++++-----------------
- 1 file changed, 224 insertions(+), 144 deletions(-)
+ drivers/i2c/busses/i2c-qup.c | 900 +++++++++++++++++++++++++------------------
+ 1 file changed, 515 insertions(+), 385 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index 4ebd922..3bf3c34 100644
+index 3bf3c34..904dfec 100644
 --- a/drivers/i2c/busses/i2c-qup.c
 +++ b/drivers/i2c/busses/i2c-qup.c
-@@ -64,8 +64,11 @@
- #define QUP_IN_SVC_FLAG		BIT(9)
- #define QUP_MX_OUTPUT_DONE	BIT(10)
- #define QUP_MX_INPUT_DONE	BIT(11)
-+#define OUT_BLOCK_WRITE_REQ	BIT(12)
-+#define IN_BLOCK_READ_REQ	BIT(13)
- 
- /* I2C mini core related values */
-+#define QUP_NO_INPUT		BIT(7)
- #define QUP_CLOCK_AUTO_GATE	BIT(13)
- #define I2C_MINI_CORE		(2 << 8)
- #define I2C_N_VAL		15
-@@ -137,13 +140,36 @@
- #define DEFAULT_CLK_FREQ 100000
+@@ -141,17 +141,40 @@
  #define DEFAULT_SRC_CLK 20000000
  
-+/*
-+ * count: no of blocks
-+ * pos: current block number
-+ * tx_tag_len: tx tag length for current block
-+ * rx_tag_len: rx tag length for current block
-+ * data_len: remaining data length for current message
-+ * total_tx_len: total tx length including tag bytes for current QUP transfer
-+ * total_rx_len: total rx length including tag bytes for current QUP transfer
-+ * tx_fifo_free: number of free bytes in current QUP block write.
-+ * fifo_available: number of available bytes in RX FIFO for current
-+ *		   QUP block read
-+ * rx_bytes_read: if all the bytes have been read from rx FIFO.
-+ * is_tx_blk_mode: whether tx uses block or FIFO mode in case of non BAM xfer.
-+ * is_rx_blk_mode: whether rx uses block or FIFO mode in case of non BAM xfer.
-+ * tags: contains tx tag bytes for current QUP transfer
+ /*
++ * Max tags length (start, stop and maximum 2 bytes address) for each QUP
++ * data transfer
 + */
- struct qup_i2c_block {
--	int	count;
--	int	pos;
--	int	tx_tag_len;
--	int	rx_tag_len;
--	int	data_len;
--	u8	tags[6];
-+	int		count;
-+	int		pos;
-+	int		tx_tag_len;
-+	int		rx_tag_len;
-+	int		data_len;
-+	int		total_tx_len;
-+	int		total_rx_len;
-+	int		tx_fifo_free;
-+	int		fifo_available;
-+	bool		rx_bytes_read;
-+	bool		is_tx_blk_mode;
-+	bool		is_rx_blk_mode;
-+	u8		tags[6];
- };
++#define QUP_MAX_TAGS_LEN		4
++/* Max data length for each DATARD tags */
++#define RECV_MAX_DATA_LEN		254
++/* TAG length for DATA READ in RX FIFO  */
++#define READ_RX_TAGS_LEN		2
++
++/*
+  * count: no of blocks
+  * pos: current block number
+  * tx_tag_len: tx tag length for current block
+  * rx_tag_len: rx tag length for current block
+  * data_len: remaining data length for current message
++ * cur_blk_len: data length for current block
+  * total_tx_len: total tx length including tag bytes for current QUP transfer
+  * total_rx_len: total rx length including tag bytes for current QUP transfer
++ * tx_fifo_data_pos: current byte number in TX FIFO word
+  * tx_fifo_free: number of free bytes in current QUP block write.
++ * rx_fifo_data_pos: current byte number in RX FIFO word
+  * fifo_available: number of available bytes in RX FIFO for current
+  *		   QUP block read
++ * tx_fifo_data: QUP TX FIFO write works on word basis (4 bytes). New byte write
++ *		 to TX FIFO will be appended in this data and will be written to
++ *		 TX FIFO when all the 4 bytes are available.
++ * rx_fifo_data: QUP RX FIFO read works on word basis (4 bytes). This will
++ *		 contains the 4 bytes of RX data.
++ * cur_data: pointer to tell cur data position for current message
++ * cur_tx_tags: pointer to tell cur position in tags
++ * tx_tags_sent: all tx tag bytes have been written in FIFO word
++ * send_last_word: for tx FIFO, last word send is pending in current block
+  * rx_bytes_read: if all the bytes have been read from rx FIFO.
++ * rx_tags_fetched: all the rx tag bytes have been fetched from rx fifo word
+  * is_tx_blk_mode: whether tx uses block or FIFO mode in case of non BAM xfer.
+  * is_rx_blk_mode: whether rx uses block or FIFO mode in case of non BAM xfer.
+  * tags: contains tx tag bytes for current QUP transfer
+@@ -162,10 +185,20 @@ struct qup_i2c_block {
+ 	int		tx_tag_len;
+ 	int		rx_tag_len;
+ 	int		data_len;
++	int		cur_blk_len;
+ 	int		total_tx_len;
+ 	int		total_rx_len;
++	int		tx_fifo_data_pos;
+ 	int		tx_fifo_free;
++	int		rx_fifo_data_pos;
+ 	int		fifo_available;
++	u32		tx_fifo_data;
++	u32		rx_fifo_data;
++	u8		*cur_data;
++	u8		*cur_tx_tags;
++	bool		tx_tags_sent;
++	bool		send_last_word;
++	bool		rx_tags_fetched;
+ 	bool		rx_bytes_read;
+ 	bool		is_tx_blk_mode;
+ 	bool		is_rx_blk_mode;
+@@ -198,6 +231,7 @@ struct qup_i2c_dev {
+ 	int			out_blk_sz;
+ 	int			in_blk_sz;
  
- struct qup_i2c_tag {
-@@ -186,6 +212,7 @@ struct qup_i2c_dev {
++	int			blk_xfer_limit;
+ 	unsigned long		one_byte_t;
+ 	unsigned long		xfer_timeout;
+ 	struct qup_i2c_block	blk;
+@@ -212,10 +246,10 @@ struct qup_i2c_dev {
  
  	/* To check if this is the last msg */
  	bool			is_last;
-+	bool			is_qup_v1;
+-	bool			is_qup_v1;
++	bool			is_smbus_read;
  
  	/* To configure when bus is in run state */
- 	int			config_run;
-@@ -202,11 +229,18 @@ struct qup_i2c_dev {
- 	struct			qup_i2c_bam btx;
+-	int			config_run;
++	u32			config_run;
  
- 	struct completion	xfer;
-+	/* function to write data in tx fifo */
-+	void (*write_tx_fifo)(struct qup_i2c_dev *qup);
-+	/* function to read data from rx fifo */
-+	void (*read_rx_fifo)(struct qup_i2c_dev *qup);
-+	/* function to write tags in tx fifo for i2c read transfer */
-+	void (*write_rx_tags)(struct qup_i2c_dev *qup);
- };
- 
- static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
- {
- 	struct qup_i2c_dev *qup = dev;
-+	struct qup_i2c_block *blk = &qup->blk;
- 	u32 bus_err;
- 	u32 qup_err;
- 	u32 opflags;
-@@ -253,12 +287,48 @@ static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
+ 	/* dma parameters */
+ 	bool			is_dma;
+@@ -223,6 +257,8 @@ struct qup_i2c_dev {
+ 	bool			use_dma;
+ 	unsigned int		max_xfer_sg_len;
+ 	unsigned int		tag_buf_pos;
++	/* The threshold length above which block mode will be used */
++	unsigned int		blk_mode_threshold;
+ 	struct			dma_pool *dpool;
+ 	struct			qup_i2c_tag start_tag;
+ 	struct			qup_i2c_bam brx;
+@@ -287,9 +323,6 @@ static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
  		goto done;
  	}
  
--	if (opflags & QUP_IN_SVC_FLAG)
--		writel(QUP_IN_SVC_FLAG, qup->base + QUP_OPERATIONAL);
-+	if (!qup->is_qup_v1)
-+		goto done;
- 
--	if (opflags & QUP_OUT_SVC_FLAG)
-+	if (opflags & QUP_OUT_SVC_FLAG) {
+-	if (!qup->is_qup_v1)
+-		goto done;
+-
+ 	if (opflags & QUP_OUT_SVC_FLAG) {
  		writel(QUP_OUT_SVC_FLAG, qup->base + QUP_OPERATIONAL);
  
-+		if (opflags & OUT_BLOCK_WRITE_REQ) {
-+			blk->tx_fifo_free += qup->out_blk_sz;
-+			if (qup->msg->flags & I2C_M_RD)
-+				qup->write_rx_tags(qup);
-+			else
-+				qup->write_tx_fifo(qup);
-+		}
-+	}
-+
-+	if (opflags & QUP_IN_SVC_FLAG) {
-+		writel(QUP_IN_SVC_FLAG, qup->base + QUP_OPERATIONAL);
-+
-+		if (!blk->is_rx_blk_mode) {
-+			blk->fifo_available += qup->in_fifo_sz;
-+			qup->read_rx_fifo(qup);
-+		} else if (opflags & IN_BLOCK_READ_REQ) {
-+			blk->fifo_available += qup->in_blk_sz;
-+			qup->read_rx_fifo(qup);
-+		}
-+	}
-+
-+	if (qup->msg->flags & I2C_M_RD) {
-+		if (!blk->rx_bytes_read)
-+			return IRQ_HANDLED;
-+	} else {
-+		/*
-+		 * Ideally, QUP_MAX_OUTPUT_DONE_FLAG should be checked
-+		 * for FIFO mode also. But, QUP_MAX_OUTPUT_DONE_FLAG lags
-+		 * behind QUP_OUTPUT_SERVICE_FLAG sometimes. The only reason
-+		 * of interrupt for write message in FIFO mode is
-+		 * QUP_MAX_OUTPUT_DONE_FLAG condition.
-+		 */
-+		if (blk->is_tx_blk_mode && !(opflags & QUP_MX_OUTPUT_DONE))
-+			return IRQ_HANDLED;
-+	}
-+
- done:
- 	qup->qup_err = qup_err;
- 	qup->bus_err = bus_err;
-@@ -324,6 +394,28 @@ static int qup_i2c_change_state(struct qup_i2c_dev *qup, u32 state)
- 	return 0;
+@@ -416,108 +449,6 @@ static int qup_i2c_bus_active(struct qup_i2c_dev *qup, int len)
+ 	return ret;
  }
  
-+/* Check if I2C bus returns to IDLE state */
-+static int qup_i2c_bus_active(struct qup_i2c_dev *qup, int len)
-+{
-+	unsigned long timeout;
-+	u32 status;
-+	int ret = 0;
-+
-+	timeout = jiffies + len * 4;
-+	for (;;) {
-+		status = readl(qup->base + QUP_I2C_STATUS);
-+		if (!(status & I2C_STATUS_BUS_ACTIVE))
-+			break;
-+
-+		if (time_after(jiffies, timeout))
-+			ret = -ETIMEDOUT;
-+
-+		usleep_range(len, len * 2);
-+	}
-+
-+	return ret;
-+}
-+
- /**
-  * qup_i2c_wait_ready - wait for a give number of bytes in tx/rx path
-  * @qup: The qup_i2c_dev device
-@@ -394,23 +486,6 @@ static void qup_i2c_set_write_mode_v2(struct qup_i2c_dev *qup,
- 	}
- }
- 
--static void qup_i2c_set_write_mode(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-/**
+- * qup_i2c_wait_ready - wait for a give number of bytes in tx/rx path
+- * @qup: The qup_i2c_dev device
+- * @op: The bit/event to wait on
+- * @val: value of the bit to wait on, 0 or 1
+- * @len: The length the bytes to be transferred
+- */
+-static int qup_i2c_wait_ready(struct qup_i2c_dev *qup, int op, bool val,
+-			      int len)
 -{
--	/* Number of entries to shift out, including the start */
--	int total = msg->len + 1;
+-	unsigned long timeout;
+-	u32 opflags;
+-	u32 status;
+-	u32 shift = __ffs(op);
+-	int ret = 0;
+-
+-	len *= qup->one_byte_t;
+-	/* timeout after a wait of twice the max time */
+-	timeout = jiffies + len * 4;
+-
+-	for (;;) {
+-		opflags = readl(qup->base + QUP_OPERATIONAL);
+-		status = readl(qup->base + QUP_I2C_STATUS);
+-
+-		if (((opflags & op) >> shift) == val) {
+-			if ((op == QUP_OUT_NOT_EMPTY) && qup->is_last) {
+-				if (!(status & I2C_STATUS_BUS_ACTIVE)) {
+-					ret = 0;
+-					goto done;
+-				}
+-			} else {
+-				ret = 0;
+-				goto done;
+-			}
+-		}
+-
+-		if (time_after(jiffies, timeout)) {
+-			ret = -ETIMEDOUT;
+-			goto done;
+-		}
+-		usleep_range(len, len * 2);
+-	}
+-
+-done:
+-	if (qup->bus_err || qup->qup_err)
+-		ret =  (qup->bus_err & QUP_I2C_NACK_FLAG) ? -ENXIO : -EIO;
+-
+-	return ret;
+-}
+-
+-static void qup_i2c_set_write_mode_v2(struct qup_i2c_dev *qup,
+-				      struct i2c_msg *msg)
+-{
+-	/* Number of entries to shift out, including the tags */
+-	int total = msg->len + qup->blk.tx_tag_len;
+-
+-	total |= qup->config_run;
 -
 -	if (total < qup->out_fifo_sz) {
 -		/* FIFO mode */
@@ -264,70 +273,173 @@ index 4ebd922..3bf3c34 100644
 -	}
 -}
 -
- static int check_for_fifo_space(struct qup_i2c_dev *qup)
+-static int check_for_fifo_space(struct qup_i2c_dev *qup)
+-{
+-	int ret;
+-
+-	ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
+-	if (ret)
+-		goto out;
+-
+-	ret = qup_i2c_wait_ready(qup, QUP_OUT_FULL,
+-				 RESET_BIT, 4 * ONE_BYTE);
+-	if (ret) {
+-		/* Fifo is full. Drain out the fifo */
+-		ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
+-		if (ret)
+-			goto out;
+-
+-		ret = qup_i2c_wait_ready(qup, QUP_OUT_NOT_EMPTY,
+-					 RESET_BIT, 256 * ONE_BYTE);
+-		if (ret) {
+-			dev_err(qup->dev, "timeout for fifo out full");
+-			goto out;
+-		}
+-
+-		ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
+-		if (ret)
+-			goto out;
+-	}
+-
+-out:
+-	return ret;
+-}
+-
+ static void qup_i2c_write_tx_fifo_v1(struct qup_i2c_dev *qup)
  {
- 	int ret;
-@@ -443,28 +518,25 @@ static int check_for_fifo_space(struct qup_i2c_dev *qup)
- 	return ret;
- }
- 
--static int qup_i2c_issue_write(struct qup_i2c_dev *qup, struct i2c_msg *msg)
-+static void qup_i2c_write_tx_fifo_v1(struct qup_i2c_dev *qup)
+ 	struct qup_i2c_block *blk = &qup->blk;
+@@ -560,60 +491,17 @@ static void qup_i2c_write_tx_fifo_v1(struct qup_i2c_dev *qup)
+ static void qup_i2c_set_blk_data(struct qup_i2c_dev *qup,
+ 				 struct i2c_msg *msg)
  {
-+	struct qup_i2c_block *blk = &qup->blk;
-+	struct i2c_msg *msg = qup->msg;
- 	u32 addr = msg->addr << 1;
- 	u32 qup_tag;
- 	int idx;
- 	u32 val;
+-	memset(&qup->blk, 0, sizeof(qup->blk));
+-
++	qup->blk.pos = 0;
+ 	qup->blk.data_len = msg->len;
+-	qup->blk.count = (msg->len + QUP_READ_LIMIT - 1) / QUP_READ_LIMIT;
+-
+-	/* 4 bytes for first block and 2 writes for rest */
+-	qup->blk.tx_tag_len = 4 + (qup->blk.count - 1) * 2;
+-
+-	/* There are 2 tag bytes that are read in to fifo for every block */
+-	if (msg->flags & I2C_M_RD)
+-		qup->blk.rx_tag_len = qup->blk.count * 2;
+-}
+-
+-static int qup_i2c_send_data(struct qup_i2c_dev *qup, int tlen, u8 *tbuf,
+-			     int dlen, u8 *dbuf)
+-{
+-	u32 val = 0, idx = 0, pos = 0, i = 0, t;
+-	int  len = tlen + dlen;
+-	u8 *buf = tbuf;
 -	int ret = 0;
- 
- 	if (qup->pos == 0) {
- 		val = QUP_TAG_START | addr;
- 		idx = 1;
-+		blk->tx_fifo_free--;
- 	} else {
- 		val = 0;
- 		idx = 0;
- 	}
- 
--	while (qup->pos < msg->len) {
--		/* Check that there's space in the FIFO for our pair */
+-
+-	while (len > 0) {
 -		ret = check_for_fifo_space(qup);
 -		if (ret)
 -			return ret;
 -
-+	while (blk->tx_fifo_free && qup->pos < msg->len) {
- 		if (qup->pos == msg->len - 1)
- 			qup_tag = QUP_TAG_STOP;
- 		else
-@@ -481,11 +553,8 @@ static int qup_i2c_issue_write(struct qup_i2c_dev *qup, struct i2c_msg *msg)
- 
- 		qup->pos++;
- 		idx++;
-+		blk->tx_fifo_free--;
- 	}
+-		t = (len >= 4) ? 4 : len;
+-
+-		while (idx < t) {
+-			if (!i && (pos >= tlen)) {
+-				buf = dbuf;
+-				pos = 0;
+-				i = 1;
+-			}
+-			val |= buf[pos++] << (idx++ * 8);
+-		}
+-
+-		writel(val, qup->base + QUP_OUT_FIFO_BASE);
+-		idx  = 0;
+-		val = 0;
+-		len -= 4;
+-	}
 -
 -	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
 -
 -	return ret;
++	qup->blk.count = DIV_ROUND_UP(msg->len, qup->blk_xfer_limit);
  }
  
- static void qup_i2c_set_blk_data(struct qup_i2c_dev *qup,
-@@ -1006,64 +1075,6 @@ static int qup_i2c_write_one_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+ static int qup_i2c_get_data_len(struct qup_i2c_dev *qup)
+ {
+ 	int data_len;
+ 
+-	if (qup->blk.data_len > QUP_READ_LIMIT)
+-		data_len = QUP_READ_LIMIT;
++	if (qup->blk.data_len > qup->blk_xfer_limit)
++		data_len = qup->blk_xfer_limit;
+ 	else
+ 		data_len = qup->blk.data_len;
+ 
+@@ -630,9 +518,9 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 *tags, struct qup_i2c_dev *qup,
+ {
+ 	int len = 0;
+ 
+-	if (msg->len > 1) {
++	if (qup->is_smbus_read) {
+ 		tags[len++] = QUP_TAG_V2_DATARD_STOP;
+-		tags[len++] = qup_i2c_get_data_len(qup) - 1;
++		tags[len++] = qup_i2c_get_data_len(qup);
+ 	} else {
+ 		tags[len++] = QUP_TAG_V2_START;
+ 		tags[len++] = addr & 0xff;
+@@ -694,24 +582,6 @@ static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+ 	return len;
+ }
+ 
+-static int qup_i2c_issue_xfer_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-{
+-	int data_len = 0, tag_len, index;
+-	int ret;
+-
+-	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg);
+-	index = msg->len - qup->blk.data_len;
+-
+-	/* only tags are written for read */
+-	if (!(msg->flags & I2C_M_RD))
+-		data_len = qup_i2c_get_data_len(qup);
+-
+-	ret = qup_i2c_send_data(qup, tag_len, qup->blk.tags,
+-				data_len, &msg->buf[index]);
+-	qup->blk.data_len -= data_len;
+-
+-	return ret;
+-}
+ 
+ static void qup_i2c_bam_cb(void *data)
+ {
+@@ -778,6 +648,7 @@ static int qup_i2c_bam_make_desc(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+ 	u32 i = 0, tlen, tx_len = 0;
+ 	u8 *tags;
+ 
++	qup->blk_xfer_limit = QUP_READ_LIMIT;
+ 	qup_i2c_set_blk_data(qup, msg);
+ 
+ 	blocks = qup->blk.count;
+@@ -1026,7 +897,7 @@ static int qup_i2c_wait_for_complete(struct qup_i2c_dev *qup,
+ 	unsigned long left;
+ 	int ret = 0;
+ 
+-	left = wait_for_completion_timeout(&qup->xfer, HZ);
++	left = wait_for_completion_timeout(&qup->xfer, qup->xfer_timeout);
+ 	if (!left) {
+ 		writel(1, qup->base + QUP_SW_RESET);
+ 		ret = -ETIMEDOUT;
+@@ -1038,65 +909,6 @@ static int qup_i2c_wait_for_complete(struct qup_i2c_dev *qup,
  	return ret;
  }
  
--static int qup_i2c_write_one(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-static int qup_i2c_write_one_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
 -{
--	int ret;
+-	int ret = 0;
 -
 -	qup->msg = msg;
 -	qup->pos = 0;
--
 -	enable_irq(qup->irq);
--
--	qup_i2c_set_write_mode(qup, msg);
+-	qup_i2c_set_blk_data(qup, msg);
+-	qup_i2c_set_write_mode_v2(qup, msg);
 -
 -	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
 -	if (ret)
@@ -336,25 +448,19 @@ index 4ebd922..3bf3c34 100644
 -	writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
 -
 -	do {
--		ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
--		if (ret)
--			goto err;
--
--		ret = qup_i2c_issue_write(qup, msg);
--		if (ret)
--			goto err;
--
--		ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
+-		ret = qup_i2c_issue_xfer_v2(qup, msg);
 -		if (ret)
 -			goto err;
 -
 -		ret = qup_i2c_wait_for_complete(qup, msg);
 -		if (ret)
 -			goto err;
--	} while (qup->pos < msg->len);
 -
--	/* Wait for the outstanding data in the fifo to drain */
+-		qup->blk.pos++;
+-	} while (qup->blk.pos < qup->blk.count);
+-
 -	ret = qup_i2c_wait_ready(qup, QUP_OUT_NOT_EMPTY, RESET_BIT, ONE_BYTE);
+-
 -err:
 -	disable_irq(qup->irq);
 -	qup->msg = NULL;
@@ -362,252 +468,721 @@ index 4ebd922..3bf3c34 100644
 -	return ret;
 -}
 -
--static void qup_i2c_set_read_mode(struct qup_i2c_dev *qup, int len)
+-static void qup_i2c_set_read_mode_v2(struct qup_i2c_dev *qup, int len)
 -{
+-	int tx_len = qup->blk.tx_tag_len;
+-
+-	len += qup->blk.rx_tag_len;
+-	len |= qup->config_run;
+-	tx_len |= qup->config_run;
+-
 -	if (len < qup->in_fifo_sz) {
 -		/* FIFO mode */
 -		writel(QUP_REPACK_EN, qup->base + QUP_IO_MODE);
+-		writel(tx_len, qup->base + QUP_MX_WRITE_CNT);
 -		writel(len, qup->base + QUP_MX_READ_CNT);
 -	} else {
 -		/* BLOCK mode (transfer data on chunks) */
 -		writel(QUP_INPUT_BLK_MODE | QUP_REPACK_EN,
 -		       qup->base + QUP_IO_MODE);
+-		writel(tx_len, qup->base + QUP_MX_OUTPUT_CNT);
 -		writel(len, qup->base + QUP_MX_INPUT_CNT);
 -	}
 -}
 -
- static void qup_i2c_set_read_mode_v2(struct qup_i2c_dev *qup, int len)
+ static void qup_i2c_read_rx_fifo_v1(struct qup_i2c_dev *qup)
  {
- 	int tx_len = qup->blk.tx_tag_len;
-@@ -1086,44 +1097,27 @@ static void qup_i2c_set_read_mode_v2(struct qup_i2c_dev *qup, int len)
- 	}
+ 	struct qup_i2c_block *blk = &qup->blk;
+@@ -1120,104 +932,6 @@ static void qup_i2c_read_rx_fifo_v1(struct qup_i2c_dev *qup)
+ 		blk->rx_bytes_read = true;
  }
  
--static void qup_i2c_issue_read(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-static int qup_i2c_read_fifo_v2(struct qup_i2c_dev *qup,
+-				struct i2c_msg *msg)
 -{
--	u32 addr, len, val;
+-	u32 val;
+-	int idx, pos = 0, ret = 0, total, msg_offset = 0;
 -
--	addr = i2c_8bit_addr_from_msg(msg);
+-	/*
+-	 * If the message length is already read in
+-	 * the first byte of the buffer, account for
+-	 * that by setting the offset
+-	 */
+-	if (qup_i2c_check_msg_len(msg) && (msg->len > 1))
+-		msg_offset = 1;
+-	total = qup_i2c_get_data_len(qup);
+-	total -= msg_offset;
 -
--	/* 0 is used to specify a length 256 (QUP_READ_LIMIT) */
--	len = (msg->len == QUP_READ_LIMIT) ? 0 : msg->len;
+-	/* 2 extra bytes for read tags */
+-	while (pos < (total + 2)) {
+-		/* Check that FIFO have data */
+-		ret = qup_i2c_wait_ready(qup, QUP_IN_NOT_EMPTY,
+-					 SET_BIT, 4 * ONE_BYTE);
+-		if (ret) {
+-			dev_err(qup->dev, "timeout for fifo not empty");
+-			return ret;
+-		}
+-		val = readl(qup->base + QUP_IN_FIFO_BASE);
 -
--	val = ((QUP_TAG_REC | len) << QUP_MSW_SHIFT) | QUP_TAG_START | addr;
--	writel(val, qup->base + QUP_OUT_FIFO_BASE);
+-		for (idx = 0; idx < 4; idx++, val >>= 8, pos++) {
+-			/* first 2 bytes are tag bytes */
+-			if (pos < 2)
+-				continue;
+-
+-			if (pos >= (total + 2))
+-				goto out;
+-			msg->buf[qup->pos + msg_offset] = val & 0xff;
+-			qup->pos++;
+-		}
+-	}
+-
+-out:
+-	qup->blk.data_len -= total;
+-
+-	return ret;
 -}
 -
--
--static int qup_i2c_read_fifo(struct qup_i2c_dev *qup, struct i2c_msg *msg)
-+static void qup_i2c_read_rx_fifo_v1(struct qup_i2c_dev *qup)
- {
-+	struct qup_i2c_block *blk = &qup->blk;
-+	struct i2c_msg *msg = qup->msg;
- 	u32 val = 0;
--	int idx;
+-static int qup_i2c_read_one_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-{
 -	int ret = 0;
-+	int idx = 0;
- 
--	for (idx = 0; qup->pos < msg->len; idx++) {
-+	while (blk->fifo_available && qup->pos < msg->len) {
- 		if ((idx & 1) == 0) {
--			/* Check that FIFO have data */
--			ret = qup_i2c_wait_ready(qup, QUP_IN_NOT_EMPTY,
--						 SET_BIT, 4 * ONE_BYTE);
--			if (ret)
--				return ret;
 -
- 			/* Reading 2 words at time */
- 			val = readl(qup->base + QUP_IN_FIFO_BASE);
+-	qup->msg = msg;
+-	qup->pos  = 0;
+-	enable_irq(qup->irq);
+-	qup_i2c_set_blk_data(qup, msg);
+-	qup_i2c_set_read_mode_v2(qup, msg->len);
 -
- 			msg->buf[qup->pos++] = val & 0xFF;
- 		} else {
- 			msg->buf[qup->pos++] = val >> QUP_MSW_SHIFT;
- 		}
-+		idx++;
-+		blk->fifo_available--;
- 	}
- 
+-	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
+-	if (ret)
+-		goto err;
+-
+-	writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
+-
+-	do {
+-		ret = qup_i2c_issue_xfer_v2(qup, msg);
+-		if (ret)
+-			goto err;
+-
+-		ret = qup_i2c_wait_for_complete(qup, msg);
+-		if (ret)
+-			goto err;
+-
+-		ret = qup_i2c_read_fifo_v2(qup, msg);
+-		if (ret)
+-			goto err;
+-
+-		qup->blk.pos++;
+-
+-		/* Handle SMBus block read length */
+-		if (qup_i2c_check_msg_len(msg) && (msg->len == 1)) {
+-			if (msg->buf[0] > I2C_SMBUS_BLOCK_MAX) {
+-				ret = -EPROTO;
+-				goto err;
+-			}
+-			msg->len += msg->buf[0];
+-			qup->pos = 0;
+-			qup_i2c_set_blk_data(qup, msg);
+-			/* set tag length for block read */
+-			qup->blk.tx_tag_len = 2;
+-			qup_i2c_set_read_mode_v2(qup, msg->buf[0]);
+-		}
+-	} while (qup->blk.pos < qup->blk.count);
+-
+-err:
+-	disable_irq(qup->irq);
+-	qup->msg = NULL;
+-
 -	return ret;
-+	if (qup->pos == msg->len)
-+		blk->rx_bytes_read = true;
- }
- 
- static int qup_i2c_read_fifo_v2(struct qup_i2c_dev *qup,
-@@ -1224,49 +1218,130 @@ static int qup_i2c_read_one_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+-}
+-
+ static void qup_i2c_write_rx_tags_v1(struct qup_i2c_dev *qup)
+ {
+ 	struct i2c_msg *msg = qup->msg;
+@@ -1404,13 +1118,434 @@ static int qup_i2c_xfer(struct i2c_adapter *adap,
  	return ret;
  }
  
--static int qup_i2c_read_one(struct qup_i2c_dev *qup, struct i2c_msg *msg)
-+static void qup_i2c_write_rx_tags_v1(struct qup_i2c_dev *qup)
- {
-+	struct i2c_msg *msg = qup->msg;
-+	u32 addr, len, val;
-+
-+	addr = i2c_8bit_addr_from_msg(msg);
-+
-+	/* 0 is used to specify a length 256 (QUP_READ_LIMIT) */
-+	len = (msg->len == QUP_READ_LIMIT) ? 0 : msg->len;
-+
-+	val = ((QUP_TAG_REC | len) << QUP_MSW_SHIFT) | QUP_TAG_START | addr;
-+	writel(val, qup->base + QUP_OUT_FIFO_BASE);
-+}
-+
-+static void qup_i2c_conf_v1(struct qup_i2c_dev *qup)
++/*
++ * Configure registers related with reconfiguration during run and call it
++ * before each i2c sub transfer.
++ */
++static void qup_i2c_conf_count_v2(struct qup_i2c_dev *qup)
 +{
 +	struct qup_i2c_block *blk = &qup->blk;
-+	u32 qup_config = I2C_MINI_CORE | I2C_N_VAL;
-+	u32 io_mode = QUP_REPACK_EN;
++	u32 qup_config = I2C_MINI_CORE | I2C_N_VAL_V2;
 +
-+	blk->is_tx_blk_mode =
-+		blk->total_tx_len > qup->out_fifo_sz ? true : false;
-+	blk->is_rx_blk_mode =
-+		blk->total_rx_len > qup->in_fifo_sz ? true : false;
-+
-+	if (blk->is_tx_blk_mode) {
-+		io_mode |= QUP_OUTPUT_BLK_MODE;
-+		writel(0, qup->base + QUP_MX_WRITE_CNT);
-+		writel(blk->total_tx_len, qup->base + QUP_MX_OUTPUT_CNT);
-+	} else {
-+		writel(0, qup->base + QUP_MX_OUTPUT_CNT);
-+		writel(blk->total_tx_len, qup->base + QUP_MX_WRITE_CNT);
-+	}
++	if (blk->is_tx_blk_mode)
++		writel(qup->config_run | blk->total_tx_len,
++		       qup->base + QUP_MX_OUTPUT_CNT);
++	else
++		writel(qup->config_run | blk->total_tx_len,
++		       qup->base + QUP_MX_WRITE_CNT);
 +
 +	if (blk->total_rx_len) {
-+		if (blk->is_rx_blk_mode) {
-+			io_mode |= QUP_INPUT_BLK_MODE;
-+			writel(0, qup->base + QUP_MX_READ_CNT);
-+			writel(blk->total_rx_len, qup->base + QUP_MX_INPUT_CNT);
-+		} else {
-+			writel(0, qup->base + QUP_MX_INPUT_CNT);
-+			writel(blk->total_rx_len, qup->base + QUP_MX_READ_CNT);
-+		}
++		if (blk->is_rx_blk_mode)
++			writel(qup->config_run | blk->total_rx_len,
++			       qup->base + QUP_MX_INPUT_CNT);
++		else
++			writel(qup->config_run | blk->total_rx_len,
++			       qup->base + QUP_MX_READ_CNT);
 +	} else {
 +		qup_config |= QUP_NO_INPUT;
 +	}
 +
 +	writel(qup_config, qup->base + QUP_CONFIG);
++}
++
++/*
++ * Configure registers related with transfer mode (FIFO/Block)
++ * before starting of i2c transfer. It will be called only once in
++ * QUP RESET state.
++ */
++static void qup_i2c_conf_mode_v2(struct qup_i2c_dev *qup)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++	u32 io_mode = QUP_REPACK_EN;
++
++	if (blk->is_tx_blk_mode) {
++		io_mode |= QUP_OUTPUT_BLK_MODE;
++		writel(0, qup->base + QUP_MX_WRITE_CNT);
++	} else {
++		writel(0, qup->base + QUP_MX_OUTPUT_CNT);
++	}
++
++	if (blk->is_rx_blk_mode) {
++		io_mode |= QUP_INPUT_BLK_MODE;
++		writel(0, qup->base + QUP_MX_READ_CNT);
++	} else {
++		writel(0, qup->base + QUP_MX_INPUT_CNT);
++	}
++
 +	writel(io_mode, qup->base + QUP_IO_MODE);
 +}
 +
-+static void qup_i2c_clear_blk_v1(struct qup_i2c_block *blk)
++/* Clear required variables before starting of any QUP v2 sub transfer. */
++static void qup_i2c_clear_blk_v2(struct qup_i2c_block *blk)
 +{
++	blk->send_last_word = false;
++	blk->tx_tags_sent = false;
++	blk->tx_fifo_data = 0;
++	blk->tx_fifo_data_pos = 0;
 +	blk->tx_fifo_free = 0;
-+	blk->fifo_available = 0;
++
++	blk->rx_tags_fetched = false;
 +	blk->rx_bytes_read = false;
++	blk->rx_fifo_data = 0;
++	blk->rx_fifo_data_pos = 0;
++	blk->fifo_available = 0;
 +}
 +
-+static int qup_i2c_conf_xfer_v1(struct qup_i2c_dev *qup, bool is_rx)
++/* Receive data from RX FIFO for read message in QUP v2 i2c transfer. */
++static void qup_i2c_recv_data(struct qup_i2c_dev *qup)
 +{
 +	struct qup_i2c_block *blk = &qup->blk;
- 	int ret;
- 
--	qup->msg = msg;
--	qup->pos  = 0;
--
--	enable_irq(qup->irq);
--	qup_i2c_set_read_mode(qup, msg->len);
--
-+	qup_i2c_clear_blk_v1(blk);
-+	qup_i2c_conf_v1(qup);
- 	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
- 
- 	ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
- 	if (ret)
--		goto err;
-+		return ret;
- 
--	qup_i2c_issue_read(qup, msg);
++	int j;
++
++	for (j = blk->rx_fifo_data_pos;
++	     blk->cur_blk_len && blk->fifo_available;
++	     blk->cur_blk_len--, blk->fifo_available--) {
++		if (j == 0)
++			blk->rx_fifo_data = readl(qup->base + QUP_IN_FIFO_BASE);
++
++		*(blk->cur_data++) = blk->rx_fifo_data;
++		blk->rx_fifo_data >>= 8;
++
++		if (j == 3)
++			j = 0;
++		else
++			j++;
++	}
++
++	blk->rx_fifo_data_pos = j;
++}
++
++/* Receive tags for read message in QUP v2 i2c transfer. */
++static void qup_i2c_recv_tags(struct qup_i2c_dev *qup)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++
++	blk->rx_fifo_data = readl(qup->base + QUP_IN_FIFO_BASE);
++	blk->rx_fifo_data >>= blk->rx_tag_len  * 8;
++	blk->rx_fifo_data_pos = blk->rx_tag_len;
++	blk->fifo_available -= blk->rx_tag_len;
++}
++
++/*
++ * Read the data and tags from RX FIFO. Since in read case, the tags will be
++ * preceded by received data bytes so
++ * 1. Check if rx_tags_fetched is false i.e. the start of QUP block so receive
++ *    all tag bytes and discard that.
++ * 2. Read the data from RX FIFO. When all the data bytes have been read then
++ *    set rx_bytes_read to true.
++ */
++static void qup_i2c_read_rx_fifo_v2(struct qup_i2c_dev *qup)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++
++	if (!blk->rx_tags_fetched) {
++		qup_i2c_recv_tags(qup);
++		blk->rx_tags_fetched = true;
++	}
++
++	qup_i2c_recv_data(qup);
++	if (!blk->cur_blk_len)
++		blk->rx_bytes_read = true;
++}
++
++/*
++ * Write bytes in TX FIFO for write message in QUP v2 i2c transfer. QUP TX FIFO
++ * write works on word basis (4 bytes). Append new data byte write for TX FIFO
++ * in tx_fifo_data and write to TX FIFO when all the 4 bytes are present.
++ */
++static void
++qup_i2c_write_blk_data(struct qup_i2c_dev *qup, u8 **data, unsigned int *len)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++	unsigned int j;
++
++	for (j = blk->tx_fifo_data_pos; *len && blk->tx_fifo_free;
++	     (*len)--, blk->tx_fifo_free--) {
++		blk->tx_fifo_data |= *(*data)++ << (j * 8);
++		if (j == 3) {
++			writel(blk->tx_fifo_data,
++			       qup->base + QUP_OUT_FIFO_BASE);
++			blk->tx_fifo_data = 0x0;
++			j = 0;
++		} else {
++			j++;
++		}
++	}
++
++	blk->tx_fifo_data_pos = j;
++}
++
++/* Transfer tags for read message in QUP v2 i2c transfer. */
++static void qup_i2c_write_rx_tags_v2(struct qup_i2c_dev *qup)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++
++	qup_i2c_write_blk_data(qup, &blk->cur_tx_tags, &blk->tx_tag_len);
++	if (blk->tx_fifo_data_pos)
++		writel(blk->tx_fifo_data, qup->base + QUP_OUT_FIFO_BASE);
++}
++
++/*
++ * Write the data and tags in TX FIFO. Since in write case, both tags and data
++ * need to be written and QUP write tags can have maximum 256 data length, so
++ *
++ * 1. Check if tx_tags_sent is false i.e. the start of QUP block so write the
++ *    tags to TX FIFO and set tx_tags_sent to true.
++ * 2. Check if send_last_word is true. It will be set when last few data bytes
++ *    (less than 4 bytes) are reamining to be written in FIFO because of no FIFO
++ *    space. All this data bytes are available in tx_fifo_data so write this
++ *    in FIFO.
++ * 3. Write the data to TX FIFO and check for cur_blk_len. If it is non zero
++ *    then more data is pending otherwise following 3 cases can be possible
++ *    a. if tx_fifo_data_pos is zero i.e. all the data bytes in this block
++ *       have been written in TX FIFO so nothing else is required.
++ *    b. tx_fifo_free is non zero i.e tx FIFO is free so copy the remaining data
++ *       from tx_fifo_data to tx FIFO. Since, qup_i2c_write_blk_data do write
++ *	 in 4 bytes and FIFO space is in multiple of 4 bytes so tx_fifo_free
++ *       will be always greater than or equal to 4 bytes.
++ *    c. tx_fifo_free is zero. In this case, last few bytes (less than 4
++ *       bytes) are copied to tx_fifo_data but couldn't be sent because of
++ *       FIFO full so make send_last_word true.
++ */
++static void qup_i2c_write_tx_fifo_v2(struct qup_i2c_dev *qup)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++
++	if (!blk->tx_tags_sent) {
++		qup_i2c_write_blk_data(qup, &blk->cur_tx_tags,
++				       &blk->tx_tag_len);
++		blk->tx_tags_sent = true;
++	}
++
++	if (blk->send_last_word)
++		goto send_last_word;
++
++	qup_i2c_write_blk_data(qup, &blk->cur_data, &blk->cur_blk_len);
++	if (!blk->cur_blk_len) {
++		if (!blk->tx_fifo_data_pos)
++			return;
++
++		if (blk->tx_fifo_free)
++			goto send_last_word;
++
++		blk->send_last_word = true;
++	}
++
++	return;
++
++send_last_word:
++	writel(blk->tx_fifo_data, qup->base + QUP_OUT_FIFO_BASE);
++}
++
++/*
++ * Main transfer function which read or write i2c data.
++ * The QUP v2 supports reconfiguration during run in which multiple i2c sub
++ * transfers can be scheduled.
++ */
++static int
++qup_i2c_conf_xfer_v2(struct qup_i2c_dev *qup, bool is_rx, bool is_first,
++		     bool change_pause_state)
++{
++	struct qup_i2c_block *blk = &qup->blk;
++	struct i2c_msg *msg = qup->msg;
++	int ret;
++
++	/*
++	 * Check if its SMBus Block read for which the top level read will be
++	 * done into 2 QUP reads. One with message length 1 while other one is
++	 * with actual length.
++	 */
++	if (qup_i2c_check_msg_len(msg)) {
++		if (qup->is_smbus_read) {
++			/*
++			 * If the message length is already read in
++			 * the first byte of the buffer, account for
++			 * that by setting the offset
++			 */
++			blk->cur_data += 1;
++			is_first = false;
++		} else {
++			change_pause_state = false;
++		}
++	}
++
++	qup->config_run = is_first ? 0 : QUP_I2C_MX_CONFIG_DURING_RUN;
++
++	qup_i2c_clear_blk_v2(blk);
++	qup_i2c_conf_count_v2(qup);
++
++	/* If it is first sub transfer, then configure i2c bus clocks */
++	if (is_first) {
++		ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
++		if (ret)
++			return ret;
++
++		writel(qup->clk_ctl, qup->base + QUP_I2C_CLK_CTL);
++
++		ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
++		if (ret)
++			return ret;
++	}
++
 +	reinit_completion(&qup->xfer);
 +	enable_irq(qup->irq);
++	/*
++	 * In FIFO mode, tx FIFO can be written directly while in block mode the
++	 * it will be written after getting OUT_BLOCK_WRITE_REQ interrupt
++	 */
 +	if (!blk->is_tx_blk_mode) {
 +		blk->tx_fifo_free = qup->out_fifo_sz;
 +
 +		if (is_rx)
-+			qup_i2c_write_rx_tags_v1(qup);
++			qup_i2c_write_rx_tags_v2(qup);
 +		else
-+			qup_i2c_write_tx_fifo_v1(qup);
++			qup_i2c_write_tx_fifo_v2(qup);
 +	}
- 
- 	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
- 	if (ret)
- 		goto err;
- 
--	do {
--		ret = qup_i2c_wait_for_complete(qup, msg);
--		if (ret)
--			goto err;
-+	ret = qup_i2c_wait_for_complete(qup, qup->msg);
++
++	ret = qup_i2c_change_state(qup, QUP_RUN_STATE);
 +	if (ret)
 +		goto err;
- 
--		ret = qup_i2c_read_fifo(qup, msg);
--		if (ret)
--			goto err;
--	} while (qup->pos < msg->len);
-+	ret = qup_i2c_bus_active(qup, ONE_BYTE);
- 
- err:
- 	disable_irq(qup->irq);
--	qup->msg = NULL;
--
- 	return ret;
- }
- 
-+static int qup_i2c_write_one(struct qup_i2c_dev *qup)
++
++	ret = qup_i2c_wait_for_complete(qup, msg);
++	if (ret)
++		goto err;
++
++	/* Move to pause state for all the transfers, except last one */
++	if (change_pause_state) {
++		ret = qup_i2c_change_state(qup, QUP_PAUSE_STATE);
++		if (ret)
++			goto err;
++	}
++
++err:
++	disable_irq(qup->irq);
++	return ret;
++}
++
++/*
++ * Transfer one read/write message in i2c transfer. It splits the message into
++ * multiple of blk_xfer_limit data length blocks and schedule each
++ * QUP block individually.
++ */
++static int qup_i2c_xfer_v2_msg(struct qup_i2c_dev *qup, int msg_id, bool is_rx)
 +{
++	int ret = 0;
++	unsigned int data_len, i;
 +	struct i2c_msg *msg = qup->msg;
 +	struct qup_i2c_block *blk = &qup->blk;
++	u8 *msg_buf = msg->buf;
 +
-+	qup->pos = 0;
-+	blk->total_tx_len = msg->len + 1;
-+	blk->total_rx_len = 0;
++	qup->blk_xfer_limit = is_rx ? RECV_MAX_DATA_LEN : QUP_READ_LIMIT;
++	qup_i2c_set_blk_data(qup, msg);
 +
-+	return qup_i2c_conf_xfer_v1(qup, false);
++	for (i = 0; i < blk->count; i++) {
++		data_len =  qup_i2c_get_data_len(qup);
++		blk->pos = i;
++		blk->cur_tx_tags = blk->tags;
++		blk->cur_blk_len = data_len;
++		blk->tx_tag_len =
++			qup_i2c_set_tags(blk->cur_tx_tags, qup, qup->msg);
++
++		blk->cur_data = msg_buf;
++
++		if (is_rx) {
++			blk->total_tx_len = blk->tx_tag_len;
++			blk->rx_tag_len = 2;
++			blk->total_rx_len = blk->rx_tag_len + data_len;
++		} else {
++			blk->total_tx_len = blk->tx_tag_len + data_len;
++			blk->total_rx_len = 0;
++		}
++
++		ret = qup_i2c_conf_xfer_v2(qup, is_rx, !msg_id && !i,
++					   !qup->is_last || i < blk->count - 1);
++		if (ret)
++			return ret;
++
++		/* Handle SMBus block read length */
++		if (qup_i2c_check_msg_len(msg) && msg->len == 1 &&
++		    !qup->is_smbus_read) {
++			if (msg->buf[0] > I2C_SMBUS_BLOCK_MAX)
++				return -EPROTO;
++
++			msg->len = msg->buf[0];
++			qup->is_smbus_read = true;
++			ret = qup_i2c_xfer_v2_msg(qup, msg_id, true);
++			qup->is_smbus_read = false;
++			if (ret)
++				return ret;
++
++			msg->len += 1;
++		}
++
++		msg_buf += data_len;
++		blk->data_len -= qup->blk_xfer_limit;
++	}
++
++	return ret;
 +}
 +
-+static int qup_i2c_read_one(struct qup_i2c_dev *qup)
++/*
++ * QUP v2 supports 3 modes
++ * Programmed IO using FIFO mode : Less than FIFO size
++ * Programmed IO using Block mode : Greater than FIFO size
++ * DMA using BAM : Appropriate for any transaction size but the address should
++ *		   be DMA applicable
++ *
++ * This function determines the mode which will be used for this transfer. An
++ * i2c transfer contains multiple message. Following are the rules to determine
++ * the mode used.
++ * 1. Determine complete length, maximum tx and rx length for complete transfer.
++ * 2. If complete transfer length is greater than fifo size then use the DMA
++ *    mode.
++ * 3. In FIFO or block mode, tx and rx can operate in different mode so check
++ *    for maximum tx and rx length to determine mode.
++ */
++static int
++qup_i2c_determine_mode_v2(struct qup_i2c_dev *qup,
++			  struct i2c_msg msgs[], int num)
 +{
-+	struct qup_i2c_block *blk = &qup->blk;
++	int idx;
++	bool no_dma = false;
++	unsigned int max_tx_len = 0, max_rx_len = 0, total_len = 0;
 +
-+	qup->pos = 0;
-+	blk->total_tx_len = 2;
-+	blk->total_rx_len = qup->msg->len;
++	/* All i2c_msgs should be transferred using either dma or cpu */
++	for (idx = 0; idx < num; idx++) {
++		if (msgs[idx].len == 0)
++			return -EINVAL;
 +
-+	return qup_i2c_conf_xfer_v1(qup, true);
++		if (msgs[idx].flags & I2C_M_RD)
++			max_rx_len = max_t(unsigned int, max_rx_len,
++					   msgs[idx].len);
++		else
++			max_tx_len = max_t(unsigned int, max_tx_len,
++					   msgs[idx].len);
++
++		if (is_vmalloc_addr(msgs[idx].buf))
++			no_dma = true;
++
++		total_len += msgs[idx].len;
++	}
++
++	if (!no_dma && qup->is_dma &&
++	    (total_len > qup->out_fifo_sz || total_len > qup->in_fifo_sz)) {
++		qup->use_dma = true;
++	} else {
++		qup->blk.is_tx_blk_mode = max_tx_len > qup->out_fifo_sz -
++			QUP_MAX_TAGS_LEN ? true : false;
++		qup->blk.is_rx_blk_mode = max_rx_len > qup->in_fifo_sz -
++			READ_RX_TAGS_LEN ? true : false;
++	}
++
++	return 0;
 +}
 +
- static int qup_i2c_xfer(struct i2c_adapter *adap,
- 			struct i2c_msg msgs[],
- 			int num)
-@@ -1305,10 +1380,11 @@ static int qup_i2c_xfer(struct i2c_adapter *adap,
- 			goto out;
+ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 			   struct i2c_msg msgs[],
+ 			   int num)
+ {
+ 	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+ 	int ret, idx = 0;
+-	unsigned int total_len = 0;
+ 
+ 	qup->bus_err = 0;
+ 	qup->qup_err = 0;
+@@ -1419,6 +1554,10 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 	if (ret < 0)
+ 		goto out;
+ 
++	ret = qup_i2c_determine_mode_v2(qup, msgs, num);
++	if (ret)
++		goto out;
++
+ 	writel(1, qup->base + QUP_SW_RESET);
+ 	ret = qup_i2c_poll_state(qup, QUP_RESET_STATE);
+ 	if (ret)
+@@ -1428,60 +1567,35 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 	writel(I2C_MINI_CORE | I2C_N_VAL_V2, qup->base + QUP_CONFIG);
+ 	writel(QUP_V2_TAGS_EN, qup->base + QUP_I2C_MASTER_GEN);
+ 
+-	if ((qup->is_dma)) {
+-		/* All i2c_msgs should be transferred using either dma or cpu */
++	if (qup_i2c_poll_state_i2c_master(qup)) {
++		ret = -EIO;
++		goto out;
++	}
++
++	if (qup->use_dma) {
++		reinit_completion(&qup->xfer);
++		ret = qup_i2c_bam_xfer(adap, &msgs[0], num);
++		qup->use_dma = false;
++	} else {
++		qup_i2c_conf_mode_v2(qup);
++
+ 		for (idx = 0; idx < num; idx++) {
+-			if (msgs[idx].len == 0) {
+-				ret = -EINVAL;
+-				goto out;
+-			}
++			qup->msg = &msgs[idx];
++			qup->is_last = idx == (num - 1);
+ 
+-			if (is_vmalloc_addr(msgs[idx].buf))
++			ret = qup_i2c_xfer_v2_msg(qup, idx,
++					!!(msgs[idx].flags & I2C_M_RD));
++			if (ret)
+ 				break;
+-
+-			total_len += msgs[idx].len;
  		}
+-
+-		if (idx == num && (total_len > qup->out_fifo_sz ||
+-				   total_len > qup->in_fifo_sz))
+-			qup->use_dma = true;
++		qup->msg = NULL;
+ 	}
  
-+		qup->msg = &msgs[idx];
- 		if (msgs[idx].flags & I2C_M_RD)
--			ret = qup_i2c_read_one(qup, &msgs[idx]);
-+			ret = qup_i2c_read_one(qup);
- 		else
--			ret = qup_i2c_write_one(qup, &msgs[idx]);
-+			ret = qup_i2c_write_one(qup);
+-	idx = 0;
+-
+-	do {
+-		if (msgs[idx].len == 0) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
+-
+-		if (qup_i2c_poll_state_i2c_master(qup)) {
+-			ret = -EIO;
+-			goto out;
+-		}
+-
+-		qup->is_last = (idx == (num - 1));
+-		if (idx)
+-			qup->config_run = QUP_I2C_MX_CONFIG_DURING_RUN;
+-		else
+-			qup->config_run = 0;
+-
+-		reinit_completion(&qup->xfer);
+-
+-		if (qup->use_dma) {
+-			ret = qup_i2c_bam_xfer(adap, &msgs[idx], num);
+-			qup->use_dma = false;
+-			break;
+-		} else {
+-			if (msgs[idx].flags & I2C_M_RD)
+-				ret = qup_i2c_read_one_v2(qup, &msgs[idx]);
+-			else
+-				ret = qup_i2c_write_one_v2(qup, &msgs[idx]);
+-		}
+-	} while ((idx++ < (num - 1)) && !ret);
++	if (!ret)
++		ret = qup_i2c_bus_active(qup, ONE_BYTE);
  
- 		if (ret)
- 			break;
-@@ -1487,6 +1563,10 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 	if (!ret)
+-		ret = qup_i2c_change_state(qup, QUP_RESET_STATE);
++		qup_i2c_change_state(qup, QUP_RESET_STATE);
+ 
+ 	if (ret == 0)
+ 		ret = num;
+@@ -1545,6 +1659,7 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 	u32 src_clk_freq = DEFAULT_SRC_CLK;
+ 	u32 clk_freq = DEFAULT_CLK_FREQ;
+ 	int blocks;
++	bool is_qup_v1;
+ 
+ 	qup = devm_kzalloc(&pdev->dev, sizeof(*qup), GFP_KERNEL);
+ 	if (!qup)
+@@ -1563,12 +1678,10 @@ static int qup_i2c_probe(struct platform_device *pdev)
  	if (of_device_is_compatible(pdev->dev.of_node, "qcom,i2c-qup-v1.1.1")) {
  		qup->adap.algo = &qup_i2c_algo;
  		qup->adap.quirks = &qup_i2c_quirks;
-+		qup->is_qup_v1 = true;
+-		qup->is_qup_v1 = true;
+-		qup->write_tx_fifo = qup_i2c_write_tx_fifo_v1;
+-		qup->read_rx_fifo = qup_i2c_read_rx_fifo_v1;
+-		qup->write_rx_tags = qup_i2c_write_rx_tags_v1;
++		is_qup_v1 = true;
+ 	} else {
+ 		qup->adap.algo = &qup_i2c_algo_v2;
++		is_qup_v1 = false;
+ 		ret = qup_i2c_req_dma(qup);
+ 
+ 		if (ret == -EPROBE_DEFER)
+@@ -1694,14 +1807,31 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 		ret = -EIO;
+ 		goto fail;
+ 	}
+-	qup->out_blk_sz = blk_sizes[size] / 2;
++	qup->out_blk_sz = blk_sizes[size];
+ 
+ 	size = QUP_INPUT_BLOCK_SIZE(io_mode);
+ 	if (size >= ARRAY_SIZE(blk_sizes)) {
+ 		ret = -EIO;
+ 		goto fail;
+ 	}
+-	qup->in_blk_sz = blk_sizes[size] / 2;
++	qup->in_blk_sz = blk_sizes[size];
++
++	if (is_qup_v1) {
++		/*
++		 * in QUP v1, QUP_CONFIG uses N as 15 i.e 16 bits constitutes a
++		 * single transfer but the block size is in bytes so divide the
++		 * in_blk_sz and out_blk_sz by 2
++		 */
++		qup->in_blk_sz /= 2;
++		qup->out_blk_sz /= 2;
 +		qup->write_tx_fifo = qup_i2c_write_tx_fifo_v1;
 +		qup->read_rx_fifo = qup_i2c_read_rx_fifo_v1;
 +		qup->write_rx_tags = qup_i2c_write_rx_tags_v1;
- 	} else {
- 		qup->adap.algo = &qup_i2c_algo_v2;
- 		ret = qup_i2c_req_dma(qup);
++	} else {
++		qup->write_tx_fifo = qup_i2c_write_tx_fifo_v2;
++		qup->read_rx_fifo = qup_i2c_read_rx_fifo_v2;
++		qup->write_rx_tags = qup_i2c_write_rx_tags_v2;
++	}
+ 
+ 	size = QUP_OUTPUT_FIFO_SIZE(io_mode);
+ 	qup->out_fifo_sz = qup->out_blk_sz * (2 << size);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
