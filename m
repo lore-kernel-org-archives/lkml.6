@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932271AbeCLMZh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:25:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37637 "EHLO
+        id S1751588AbeCLM0c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:26:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55477 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751556AbeCLMZf (ORCPT
+        with ESMTP id S1751242AbeCLM0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:25:35 -0400
-Date: Mon, 12 Mar 2018 05:25:11 -0700
-From: tip-bot for Dmitry Vyukov <tipbot@zytor.com>
-Message-ID: <tip-ac605bee0bfab40fd5d11964705e907d2d5a32de@git.kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, akpm@linux-foundation.org,
-        will.deacon@arm.com, dvyukov@google.com, aryabinin@virtuozzo.com,
-        peterz@infradead.org, mark.rutland@arm.com, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, torvalds@linux-foundation.org,
-        peterz@infradead.org, aryabinin@virtuozzo.com, hpa@zytor.com,
-        mark.rutland@arm.com, dvyukov@google.com, will.deacon@arm.com
-In-Reply-To: <cc595efc644bb905407012d82d3eb8bac3368e7a.1517246437.git.dvyukov@google.com>
-References: <cc595efc644bb905407012d82d3eb8bac3368e7a.1517246437.git.dvyukov@google.com>
+        Mon, 12 Mar 2018 08:26:31 -0400
+Date: Mon, 12 Mar 2018 05:26:09 -0700
+From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
+Message-ID: <tip-81b53e5ff21e09b42525cfa08f2b0af2b8c5f465@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, ebiederm@xmission.com,
+        peterz@infradead.org, jgross@suse.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        rafael.j.wysocki@intel.com, mingo@kernel.org,
+        torvalds@linux-foundation.org
+Reply-To: ebiederm@xmission.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        rafael.j.wysocki@intel.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, jgross@suse.com,
+        tglx@linutronix.de, andriy.shevchenko@linux.intel.com
+In-Reply-To: <20180220180506.65523-2-andriy.shevchenko@linux.intel.com>
+References: <20180220180506.65523-2-andriy.shevchenko@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/atomic, asm-generic, x86: Add comments
- for atomic instrumentation
-Git-Commit-ID: ac605bee0bfab40fd5d11964705e907d2d5a32de
+Subject: [tip:x86/mm] ACPI, x86/boot: Introduce the
+ ->reduced_hw_early_init() ACPI callback
+Git-Commit-ID: 81b53e5ff21e09b42525cfa08f2b0af2b8c5f465
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,84 +37,87 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ac605bee0bfab40fd5d11964705e907d2d5a32de
-Gitweb:     https://git.kernel.org/tip/ac605bee0bfab40fd5d11964705e907d2d5a32de
-Author:     Dmitry Vyukov <dvyukov@google.com>
-AuthorDate: Mon, 29 Jan 2018 18:26:07 +0100
+Commit-ID:  81b53e5ff21e09b42525cfa08f2b0af2b8c5f465
+Gitweb:     https://git.kernel.org/tip/81b53e5ff21e09b42525cfa08f2b0af2b8c5f465
+Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate: Tue, 20 Feb 2018 20:05:05 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Mar 2018 12:15:35 +0100
+CommitDate: Mon, 12 Mar 2018 12:32:57 +0100
 
-locking/atomic, asm-generic, x86: Add comments for atomic instrumentation
+ACPI, x86/boot: Introduce the ->reduced_hw_early_init() ACPI callback
 
-The comments are factored out from the code changes to make them
-easier to read. Add them separately to explain some non-obvious
-aspects.
+Some ACPI hardware reduced platforms need to initialize certain devices
+defined by the ACPI hardware specification even though in principle
+those devices should not be present in an ACPI hardware reduced platform.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+To allow that to happen, make it possible to override the generic
+x86_init callbacks and provide a custom legacy_pic value, add a new
+->reduced_hw_early_init() callback to struct x86_init_acpi and make
+acpi_reduced_hw_init() use it.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: kasan-dev@googlegroups.com
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/cc595efc644bb905407012d82d3eb8bac3368e7a.1517246437.git.dvyukov@google.com
+Cc: linux-acpi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180220180506.65523-2-andriy.shevchenko@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/atomic.h             |  4 ++++
- include/asm-generic/atomic-instrumented.h | 21 +++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ arch/x86/include/asm/x86_init.h | 2 ++
+ arch/x86/kernel/acpi/boot.c     | 2 +-
+ arch/x86/kernel/x86_init.c      | 2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index 33afc966d6a9..0db6bec95489 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -24,6 +24,10 @@
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index 2e2c34d2bb00..5bd45a8f5ae3 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -133,9 +133,11 @@ struct x86_hyper_init {
+ /**
+  * struct x86_init_acpi - x86 ACPI init functions
+  * @get_root_pointer:		get RSDP address
++ * @reduced_hw_early_init:	hardware reduced platform early init
   */
- static __always_inline int arch_atomic_read(const atomic_t *v)
+ struct x86_init_acpi {
+ 	u64 (*get_root_pointer)(void);
++	void (*reduced_hw_early_init)(void);
+ };
+ 
+ /**
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index baa084ecffdb..7a37d9357bc4 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1390,7 +1390,7 @@ void __init acpi_generic_reduced_hw_init(void)
+ static void __init acpi_reduced_hw_init(void)
  {
-+	/*
-+	 * Note for KASAN: we deliberately don't use READ_ONCE_NOCHECK() here,
-+	 * it's non-inlined function that increases binary size and stack usage.
-+	 */
- 	return READ_ONCE((v)->counter);
+ 	if (acpi_gbl_reduced_hardware)
+-		acpi_generic_reduced_hw_init();
++		x86_init.acpi.reduced_hw_early_init();
  }
  
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index 82e080505982..ec07f23678ea 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -1,3 +1,15 @@
-+/*
-+ * This file provides wrappers with KASAN instrumentation for atomic operations.
-+ * To use this functionality an arch's atomic.h file needs to define all
-+ * atomic operations with arch_ prefix (e.g. arch_atomic_read()) and include
-+ * this file at the end. This file provides atomic_read() that forwards to
-+ * arch_atomic_read() for actual atomic operation.
-+ * Note: if an arch atomic operation is implemented by means of other atomic
-+ * operations (e.g. atomic_read()/atomic_cmpxchg() loop), then it needs to use
-+ * arch_ variants (i.e. arch_atomic_read()/arch_atomic_cmpxchg()) to avoid
-+ * double instrumentation.
-+ */
-+
- #ifndef _LINUX_ATOMIC_INSTRUMENTED_H
- #define _LINUX_ATOMIC_INSTRUMENTED_H
+ /*
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index b8cff22a8785..ac67ccffeef0 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -8,6 +8,7 @@
+ #include <linux/export.h>
+ #include <linux/pci.h>
  
-@@ -442,6 +454,15 @@ cmpxchg64_local_size(volatile u64 *ptr, u64 old, u64 new)
- 		(u64)(new)));						\
- })
++#include <asm/acpi.h>
+ #include <asm/bios_ebda.h>
+ #include <asm/paravirt.h>
+ #include <asm/pci_x86.h>
+@@ -95,6 +96,7 @@ struct x86_init_ops x86_init __initdata = {
  
-+/*
-+ * Originally we had the following code here:
-+ *     __typeof__(p1) ____p1 = (p1);
-+ *     kasan_check_write(____p1, 2 * sizeof(*____p1));
-+ *     arch_cmpxchg_double(____p1, (p2), (o1), (o2), (n1), (n2));
-+ * But it leads to compilation failures (see gcc issue 72873).
-+ * So for now it's left non-instrumented.
-+ * There are few callers of cmpxchg_double(), so it's not critical.
-+ */
- #define cmpxchg_double(p1, p2, o1, o2, n1, n2)				\
- ({									\
- 	arch_cmpxchg_double((p1), (p2), (o1), (o2), (n1), (n2));	\
+ 	.acpi = {
+ 		.get_root_pointer	= u64_x86_init_noop,
++		.reduced_hw_early_init	= acpi_generic_reduced_hw_init,
+ 	},
+ };
+ 
