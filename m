@@ -1,81 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932497AbeCLJp6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:45:58 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51455 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752404AbeCLJpy (ORCPT
+        id S1752673AbeCLJqJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:46:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42150 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751543AbeCLJqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:45:54 -0400
-X-Google-Smtp-Source: AG47ELuPTelBrIG7i69DRQ3prIyQKD7NqDWVhyXFyREmgDr+D/NljUx0GR/JG48cM/eRGtCa1PmOhtHediIF6IN2pKI=
+        Mon, 12 Mar 2018 05:46:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F31060585
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
-References: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 12 Mar 2018 10:45:53 +0100
-Message-ID: <CAOi1vP-MG5mT_E2DF0heWYFZ4uM9C=MhXkDzwm-z0S-wQZgknw@mail.gmail.com>
-Subject: Re: [PATCH] rbd: Remove VLA usage
-To: Kyle Spiers <kyle@spiers.me>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [RESEND] rsi: Remove stack VLA usage
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1520819022-15238-1-git-send-email-me@tobin.cc>
+References: <1520819022-15238-1-git-send-email-me@tobin.cc>
+To: tcharding <me@tobin.cc>
+Cc: "Tobin C. Harding" <me@tobin.cc>, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180312094606.7197F607F5@smtp.codeaurora.org>
+Date: Mon, 12 Mar 2018 09:46:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 6:14 AM, Kyle Spiers <kyle@spiers.me> wrote:
-> From 4198ebe2e8058ff676d8e2f993d8806d6ca29c11 Mon Sep 17 00:00:00 2001
-> From: Kyle Spiers <kyle@spiers.me>
-> Date: Fri, 9 Mar 2018 12:34:15 -0800
-> Subject: [PATCH] rbd: Remove VLA usage
->
-> As part of the effort to remove VLAs from the kernel[1], this moves
-> the literal values into the stack array calculation instead of using a
-> variable for the sizing. The resulting size can be found from
-> sizeof(buf).
->
-> [1] https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Kyle Spiers <kyle@spiers.me>
->
-> ---
->  drivers/block/rbd.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 8e40da0..0e94e1f 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device
-> *rbd_dev,
->  {
->      struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
->      struct rbd_client_id cid = rbd_get_cid(rbd_dev);
-> -    int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
-> -    char buf[buf_size];
-> +    char buf[4 + 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
-> +    int buf_size = sizeof(buf);
->      void *p = buf;
->
->      dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
-> @@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct
-> rbd_device *rbd_dev,
->                       u64 notify_id, u64 cookie, s32 *result)
->  {
->      struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-> -    int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
-> -    char buf[buf_size];
-> +    char buf[4 + CEPH_ENCODING_START_BLK_LEN];
-> +    int buf_size = sizeof(buf);
->      int ret;
->
->      if (result) {
+tcharding <me@tobin.cc> wrote:
 
-This patch is mangled -- tabs, etc.  See
+> The kernel would like to have all stack VLA usage removed[1].  rsi uses
+> a VLA based on 'blksize'.  Elsewhere in the SDIO code maximum block size
+> is defined using a magic number.  We can use a pre-processor defined
+> constant and declare the array to maximum size.  We add a check before
+> accessing the array in case of programmer error.
+> 
+> [1]: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
 
-  https://www.kernel.org/doc/html/v4.15/process/email-clients.html
+Tobin, your name in patchwork.kernel.org is just "tcharding" then it should be
+"Tobin C. Harding". Patchwork is braindead in a way as it takes the name from
+it's database instead of the From header of the patch in question.
 
-Thanks,
+I can fix that manually but it would be helpful if you could register to
+patchwork and fix your name during registration. You have only one chance to
+fix your name (another braindead feature!) so be careful :)
 
-                Ilya
+-- 
+https://patchwork.kernel.org/patch/10274983/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
