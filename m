@@ -1,72 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932322AbeCLUgK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:36:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52758 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbeCLUgJ (ORCPT
+        id S932316AbeCLUjV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:39:21 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54092 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932171AbeCLUjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:36:09 -0400
-Date: Mon, 12 Mar 2018 13:36:06 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mon, 12 Mar 2018 16:39:19 -0400
+Date: Mon, 12 Mar 2018 20:39:17 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: John Ogness <john.ogness@linutronix.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] platform/x86: dell-smbios: Resolve dependency error on
- ACPI_WMI
-Message-ID: <4716007c23abeb0e42015786794539454aff487b.1520886814.git.dvhart@infradead.org>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
+ breakage when used from shrink_dentry_list())
+Message-ID: <20180312203916.GQ30522@ZenIV.linux.org.uk>
+References: <87h8q7erlo.fsf@linutronix.de>
+ <20180223150928.GC30522@ZenIV.linux.org.uk>
+ <20180223174216.GD30522@ZenIV.linux.org.uk>
+ <20180223201317.GG30522@ZenIV.linux.org.uk>
+ <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+ <20180224002248.GH30522@ZenIV.linux.org.uk>
+ <20180225073950.GI30522@ZenIV.linux.org.uk>
+ <87bmgbnhar.fsf_-_@linutronix.de>
+ <20180312191351.GN30522@ZenIV.linux.org.uk>
+ <877eqhcab3.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <877eqhcab3.fsf@xmission.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to DCDBAS for DELL_SMBIOS_SMM, if DELL_SMBIOS_WMI is enabled,
-DELL_SMBIOS becomes dependent on ACPI_WMI. Update the depends lines to
-prevent a configuration where DELL_SMBIOS=y and either backend
-dependency =m. Update the comment accordingly.
+On Mon, Mar 12, 2018 at 03:23:44PM -0500, Eric W. Biederman wrote:
 
-Cc: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
----
-Since v1: Split depends line into two per Andy Shevchenko's feedback
-
- drivers/platform/x86/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index e55b008..1868aab 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -106,13 +106,14 @@ config ASUS_LAPTOP
- 	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+> Of the two code paths you are concert about:
+> 
+> For path path_connected looking at s_root is a heuristic to avoid
+> calling is_subdir every time we need to do that check.  If the heuristic
+> fails we still have is_subdir which should remain accurate.  If
+> is_subdir fails the path is genuinely not connected at that moment
+> and failing is the correct thing to do.
  
- #
--# If the DELL_SMBIOS_SMM feature is enabled, the DELL_SMBIOS driver
--# becomes dependent on the DCDBAS driver. The "depends" line prevents a
--# configuration where DELL_SMBIOS=y while DCDBAS=m.
-+# The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those
-+# backends are selected. The "depends" line prevents a configuration
-+# where DELL_SMBIOS=y while either of those dependencies =m.
- #
- config DELL_SMBIOS
- 	tristate "Dell SMBIOS driver"
- 	depends on DCDBAS || DCDBAS=n
-+	depends on ACPI_WMI || ACPI_WMI=n
- 	---help---
- 	This provides support for the Dell SMBIOS calling interface.
- 	If you have a Dell computer you should enable this option.
--- 
-2.9.5
+Umm...  That might be not good enough - the logics is "everything's
+reachable from ->s_root anyway, so we might as well not bother checking".
+For NFS it's simply not true.
 
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+We can mount server:/foo/bar/baz on /tmp/a, then server:/foo on /tmp/b
+and we'll have ->s_root pointing to a subtree of what's reachable at
+/tmp/b.  Play with renames under /tmp/b and you just might end up with
+a problem.  And mount on /tmp/a will be (mistakenly) considered to
+be safe, since it satisfies the heuristics in path_connected().
