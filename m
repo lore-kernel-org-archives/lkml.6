@@ -1,35 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932240AbeCLNxL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:53:11 -0400
-Received: from resqmta-ch2-06v.sys.comcast.net ([69.252.207.38]:45490 "EHLO
-        resqmta-ch2-06v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751229AbeCLNxJ (ORCPT
+        id S932289AbeCLNzJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:55:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37514 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932147AbeCLNzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:53:09 -0400
-Date: Mon, 12 Mar 2018 08:53:07 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Roman Lakeev <sunnyddayss@gmail.com>
-cc: Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/slab.c: remove duplicated check of colour_next
-In-Reply-To: <877eqilr71.fsf@gmail.com>
-Message-ID: <alpine.DEB.2.20.1803120852490.1262@nuc-kabylake>
-References: <877eqilr71.fsf@gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 12 Mar 2018 09:55:06 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfJZqF4abQpj8on0CN944w3xNGUApXInZeh2edIgL35HyfyUaGuyGuwDkbv1MOtV92yJPCctjo+6e/6nD+YZh42Kbi/gLzMcoWzC3Zzk6FEj14rTjMDvI
- srUrrdcbJ2YMJsq2rzzDNJxNYKDvMsGPglWmMACS68xYiYWNfJ36Y9gziY9qV6pYYn7gDQ935OPS/NDv1xBvsZPYmzSWm1JpcXDf+oxGRcgXFDyXx273c7CQ
- evcgCxaQAP8R8yUNV9Md5tLUtbOWiQhL2Y1oxE2FRZisFEaKEdpe17mQk3j5xaL2YcQ4c9DSKbP0NXxa+Bv/fEGWRyM+U7voT99tmNd7Rnrt3oioSq+hqJUz
- PKB7qqaX
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Mon, 12 Mar 2018 19:25:05 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: "Christ, Austin" <austinwc@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
+        David Brown <david.brown@linaro.org>,
+        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] i2c: qup: fix buffer overflow for multiple msg of
+ maximum xfer len
+In-Reply-To: <99d007e0-7983-f0bf-1ca0-d37f2ea4d8fa@codeaurora.org>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-10-git-send-email-absahu@codeaurora.org>
+ <99d007e0-7983-f0bf-1ca0-d37f2ea4d8fa@codeaurora.org>
+Message-ID: <732eadb6cf4304c6fb963f7b901ca4bf@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-02-28 03:36, Christ, Austin wrote:
+> Hey Abhishek,
+> 
+> 
+> On 2/3/2018 12:58 AM, Abhishek Sahu wrote:
+>> The BAM mode requires buffer for start tag data and tx, rx SG
+>> list. Currently, this is being taken for maximum transfer length
+>> (65K). But an I2C transfer can have multiple messages and each
+>> message can be of this maximum length so the buffer overflow will
+>> happen in this case. Since increasing buffer length won’t be
+>> feasible since an I2C transfer can contain any number of messages
+>> so this patch does following changes to make i2c transfers working
+>> for multiple messages case.
+>> 
+>> 1. Calculate the required buffers for 2 maximum length messages
+>>     (65K * 2).
+>> 2. Split the descriptor formation and descriptor scheduling.
+>>     The idea is to fit as many messages in one DMA transfers for 65K
+>>     threshold value (max_xfer_sg_len). Whenever the sg_cnt is
+>>     crossing this, then schedule the BAM transfer and subsequent
+>>     transfer will again start from zero.
+>> 
 
-Acked-by: Christoph Lameter <cl@linux.com>
+<snip>
+
+>> @@ -1603,7 +1640,7 @@ static int qup_i2c_probe(struct platform_device 
+>> *pdev)
+>>   	one_bit_t = (USEC_PER_SEC / clk_freq) + 1;
+>>   	qup->one_byte_t = one_bit_t * 9;
+>>   	qup->xfer_timeout = TOUT_MIN * HZ +
+>> -			    usecs_to_jiffies(MX_TX_RX_LEN * qup->one_byte_t);
+>> +		usecs_to_jiffies(2 * MX_TX_RX_LEN * qup->one_byte_t);
+> 
+> Maybe it would make sense to add a comment here explaining why the
+> magic number 2 has been added.
+
+  Thanks Austin for reviewing the patches.
+
+  Now in v2, I have used the new macro MX_DMA_TX_RX_LEN  which will make
+  this multiplication by 2 more clear. This 2 is for allocating memory
+  by taking 2 maximum length messages.
+
+  https://lkml.org/lkml/2018/3/12/423
+
+  Thanks,
+  Abhishek
