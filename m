@@ -1,89 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751259AbeCLEYB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 00:24:01 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:47700 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751119AbeCLEX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 00:23:59 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] ARM: dts: sun8i: a33: Drop GPIO pinmux settings for A33-OLinuXino
-Date: Mon, 12 Mar 2018 12:23:53 +0800
-Message-Id: <20180312042356.18625-2-wens@csie.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180312042356.18625-1-wens@csie.org>
-References: <20180312042356.18625-1-wens@csie.org>
+        id S1751244AbeCLEbn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 00:31:43 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:34267 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeCLEbm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 00:31:42 -0400
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
+        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
+Subject: [PATCH v9] mmc: Export host capabilities to debugfs.
+Date: Mon, 12 Mar 2018 10:01:30 +0530
+Message-ID: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Normal GPIO usage does not need an additional pinmix setting. Exclusive
-usage of the pin will be guaranteed by the driver.
+This patch exports the host capabilities to debugfs
 
-Drop the extra pinmux settings.
+This idea of sharing host capabilities over debugfs
+came up from Abbas Raza <Abbas_Raza@mentor.com>
+Earlier discussions:
+https://lkml.org/lkml/2018/3/5/357
+https://www.spinics.net/lists/linux-mmc/msg48219.html
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 ---
- arch/arm/boot/dts/sun8i-a33-olinuxino.dts | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33-olinuxino.dts b/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-index 9757265c58d4..6349e0bec9a3 100644
---- a/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-+++ b/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-@@ -62,8 +62,6 @@
- 
- 	leds {
- 		compatible = "gpio-leds";
--		pinctrl-names = "default";
--		pinctrl-0 = <&led_pin_olinuxino>;
- 
- 		green {
- 			label = "a33-olinuxino:green:usr";
-@@ -78,7 +76,7 @@
- 
- &mmc0 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_olinuxino>;
-+	pinctrl-0 = <&mmc0_pins_a>;
- 	vmmc-supply = <&reg_dcdc1>;
- 	bus-width = <4>;
- 	cd-gpios = <&pio 1 4 GPIO_ACTIVE_LOW>; /* PB4 */
-@@ -89,23 +87,6 @@
- 	status = "okay";
- };
- 
--&pio {
--	led_pin_olinuxino: led_pins@0 {
--		pins = "PB7";
--		function = "gpio_out";
--	};
--
--	mmc0_cd_pin_olinuxino: mmc0_cd_pin@0 {
--		pins = "PB4";
--		function = "gpio_in";
--	};
--
--	usb0_id_detect_pin: usb0_id_detect_pin@0 {
--		pins = "PB3";
--		function = "gpio_in";
--	};
--};
--
- &r_rsb {
- 	status = "okay";
- 
-@@ -210,8 +191,6 @@
- };
- 
- &usbphy {
--	pinctrl-names = "default";
--	pinctrl-0 = <&usb0_id_detect_pin>;
- 	usb0_id_det-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* PB3 */
- 	usb0_vbus_power-supply = <&usb_power_supply>;
- 	usb0_vbus-supply = <&reg_drivevbus>;
--- 
-2.16.2
+Changes in v9
+- More code cleanup as suggested by Andy Shevchenko.
+
+Changes in v8
+- Changes to use for_each_set_bit as suggested by Andy Shevchenko.
+
+Changes in v7
+- Moved additional capabilities also to caps file as mentioned by Ulf Hansson
+- compacting the code with macros
+
+Changes in v6:
+- Used DEFINE_SHOW_ATTRIBUTE
+
+Changes in v5:
+- Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
+- Changed Author
+
+Changes in v4:
+- Moved the creation of nodes to mmc_add_host_debugfs
+- Exported caps2
+- Renamed host_caps to caps
+
+Changes in v3:
+- Removed typecasting of &host->caps to (u32 *)
+
+Changes in v2:
+- Changed Author
+
+ drivers/mmc/core/debugfs.c | 107 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 107 insertions(+)
+
+diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+index c51e0c0..e19305a 100644
+--- a/drivers/mmc/core/debugfs.c
++++ b/drivers/mmc/core/debugfs.c
+@@ -225,6 +225,110 @@ static int mmc_clock_opt_set(void *data, u64 val)
+ DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
+ 	"%llu\n");
+
++/*
++ * mmc_host_capabilities - MMC host capabilities
++ *
++ * This must be in sync with caps definitions in the mmc/host.h
++ */
++static const char * const mmc_host_capabilities[] = {
++	"4-bit transfers allowed",
++	"Supports MMC high-speed timing",
++	"Supports SD high-speed timing",
++	"Can signal pending SDIO IRQs",
++	"Talks only SPI protocols",
++	"Needs polling for card-detection",
++	"8 bit transfers allowed",
++	"Suspends (e)MMC/SD at idle",
++	"Nonremovable",
++	"Waits while card is busy",
++	"Allows erase/trim commands",
++	"Supports DDR mode at 3.3V",
++	"Supports DDR mode at 1.8V",
++	"Supports DDR mode at 1.2V",
++	"Can power off after boot",
++	"CMD14/CMD19 bus width ok",
++	"Supports UHS SDR12 mode",
++	"Supports UHS SDR25 mode",
++	"Supports UHS SDR50 mode",
++	"Supports UHS SDR104 mode",
++	"Supports UHS DDR50 mode",
++	"Unknown (bit 21)",
++	"Unknown (bit 22)",
++	"Supports Driver Type A",
++	"Supports Driver Type C",
++	"Supports Driver Type D",
++	"Unknown (bit 26)",
++	"RW reqs can be completed within mmc_request_done()",
++	"Supports Enable card detect wake",
++	"Can send commands during data transfer",
++	"CMD23 supported",
++	"Supports Hardware reset"
++};
++
++/*
++ * mmc_host_capabilities2 - MMC host additional capabilities
++ *
++ * This must be in sync with caps2 definitions in the mmc/host.h
++ */
++static const char * const mmc_host_capabilities2[] = {
++	"No access to Boot partition",
++	"Unknown (bit 1)",
++	"Can do full power cycle",
++	"Unknown (bit 3)",
++	"Unknown (bit 4)",
++	"Supports HS200 1.8V SDR",
++	"Supports HS200 1.2V SDR",
++	"Unknown (bit 7)",
++	"Unknown (bit 8)",
++	"Unknown (bit 9)",
++	"Card-detect signal active high",
++	"Write-protect signal active high",
++	"Unknown (bit 12)",
++	"Unknown (bit 13)",
++	"Can do complete power cycle of the card",
++	"Supports HS400 1.8V",
++	"Support HS400 1.2V",
++	"SDIO IRQ - Nothread",
++	"No physical write protect pin, assume always read-write",
++	"Do not send SDIO commands during initialization",
++	"Supports enhanced strobe",
++	"Do not send SD commands during initialization",
++	"Do not send (e)MMC commands during initialization",
++	"Has eMMC command queue engine",
++	"CQE can issue a direct command",
++	"Unknown (bit 25)",
++	"Unknown (bit 26)",
++	"Unknown (bit 27)",
++	"Unknown (bit 28)",
++	"Unknown (bit 29)",
++	"Unknown (bit 30)",
++	"Unknown (bit 31)"
++};
++
++static int mmc_caps_show(struct seq_file *s, void *unused)
++{
++	struct mmc_host *host = s->private;
++	unsigned long caps = host->caps;
++	unsigned long caps2 = host->caps2;
++	int bit;
++
++	seq_puts(s, "MMC Host capabilities are:\n");
++	seq_puts(s, "=============================================\n");
++
++	for_each_set_bit(bit, (const unsigned long *)&caps, BITS_PER_LONG)
++		seq_printf(s, "%s\n", mmc_host_capabilities[bit]);
++
++	seq_puts(s, "=============================================\n");
++	seq_puts(s, "MMC Host additional capabilities are:\n");
++	seq_puts(s, "=============================================\n");
++
++	for_each_set_bit(bit, (const unsigned long *)&caps2, BITS_PER_LONG)
++		seq_printf(s, "%s\n", mmc_host_capabilities2[bit]);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(mmc_caps);
++
+ void mmc_add_host_debugfs(struct mmc_host *host)
+ {
+ 	struct dentry *root;
+@@ -243,6 +347,9 @@ void mmc_add_host_debugfs(struct mmc_host *host)
+ 	if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
+ 		goto err_node;
+
++	if (!debugfs_create_file("caps", S_IRUSR, root, host, &mmc_caps_fops))
++		goto err_node;
++
+ 	if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
+ 			&mmc_clock_fops))
+ 		goto err_node;
+--
+1.9.1
