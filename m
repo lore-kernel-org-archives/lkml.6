@@ -1,79 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCLO1X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:27:23 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7475 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751685AbeCLO1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:27:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
-   d="scan'208";a="37468592"
-Message-ID: <1520864837.10722.596.camel@linux.intel.com>
-Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Harish Jenny K N <harish_kandiga@mentor.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
-Date: Mon, 12 Mar 2018 16:27:17 +0200
-In-Reply-To: <1520864550.10722.594.camel@linux.intel.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
-         <1520849262.10722.582.camel@linux.intel.com>
-         <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
-         <540fef96-aa2f-e6c3-467d-bc1d021dd55b@mentor.com>
-         <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
-         <329d521d-1776-43ee-2f0e-e9690c29a693@mentor.com>
-         <1520859807.10722.591.camel@linux.intel.com>
-         <5e038945-a09c-5c64-2152-5d2783a249ec@mentor.com>
-         <1520864550.10722.594.camel@linux.intel.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751901AbeCLO2s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:28:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46294 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeCLO2q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:28:46 -0400
+Date: Mon, 12 Mar 2018 15:28:45 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] kernel/rtmutex: Handle non enqueued waiters gracefully in
+ remove_waiter()
+Message-ID: <20180312142845.m4ohqyg3mak34umf@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-12 at 16:22 +0200, Andy Shevchenko wrote:
-> On Mon, 2018-03-12 at 19:04 +0530, Harish Jenny K N wrote:
-> > 
-> > On Monday 12 March 2018 06:33 PM, Andy Shevchenko wrote:
-> > > On Mon, 2018-03-12 at 18:00 +0530, Harish Jenny K N wrote:
-> > > > > > > > > +	for_each_set_bit(bit, (const unsigned long
-> > > > > > > > > *)&caps,
-> > > > > > > > > BITS_PER_LONG)
-> > > > > > > > > +	for_each_set_bit(bit, (const unsigned long
-> > > > > > > > > *)&caps2,
-> > > > > > > > > BITS_PER_LONG)
-> > > > > > > > 
-> > > > > > > > Explicit casting is not needed anymore in both cases.
-> > Sorry for I was not clear that the compilation error is for the
-> > following case
+In -RT task_blocks_on_rt_mutex() may return with -EAGAIN due to
+(->pi_blocked_on == PI_WAKEUP_INPROGRESS) before it added itself as a
+waiter. In such a case we must not call remove_waiter() because without
+a waiter it will trigger the BUG_ON() statement.
 
-> > > u32 caps = host->caps;
+This was initially reported by Yimin Deng. Thomas Gleixner fixed it then
+with an explicit check for waiters before calling remove_waiter() with
+the following note:
 
-This is wrong! I told you that and you seems changed at least in v9.
-What are you doing locally?
+| Guard it with rt_mutex_has_waiters(). This is a quick fix which is
+| easy to backport. The proper fix is to have a central check in
+| remove_waiter() so we can call it unconditionally.
 
-> > > for_each_set_bit(bit, &caps, ARRAY_SIZE(mmc_host_capabilities))
-> > 
+This is the suggested change.
+Now that it is possible to call remove_waiter() unconditionally I also
+remove that check from rt_mutex_slowlock().
 
-> Are you sure you have caps defined as unsigned long?
-> 
-> Check your code, the explicit casting should gone. Otherwise you are
-> doing something wrong.
+Link: https://lkml.kernel.org/r/CAAh1qt=DCL9aUXNxanP5BKtiPp3m+qj4yB+gDohhXPVFCxWwzg@mail.gmail.com
+Reported-and-debugged-by: Yimin Deng <yimin11.deng@gmail.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/locking/rtmutex.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-See above.
-
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 65cc0cb984e6..57d28d8f5280 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1068,12 +1068,15 @@ static void mark_wakeup_next_waiter(struct wake_q_head *wake_q,
+ static void remove_waiter(struct rt_mutex *lock,
+ 			  struct rt_mutex_waiter *waiter)
+ {
+-	bool is_top_waiter = (waiter == rt_mutex_top_waiter(lock));
++	bool is_top_waiter = false;
+ 	struct task_struct *owner = rt_mutex_owner(lock);
+ 	struct rt_mutex *next_lock;
+ 
+ 	lockdep_assert_held(&lock->wait_lock);
+ 
++	if (rt_mutex_has_waiters(lock))
++		is_top_waiter = waiter == rt_mutex_top_waiter(lock);
++
+ 	raw_spin_lock(&current->pi_lock);
+ 	rt_mutex_dequeue(lock, waiter);
+ 	current->pi_blocked_on = NULL;
+@@ -1268,8 +1271,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
+ 
+ 	if (unlikely(ret)) {
+ 		__set_current_state(TASK_RUNNING);
+-		if (rt_mutex_has_waiters(lock))
+-			remove_waiter(lock, &waiter);
++		remove_waiter(lock, &waiter);
+ 		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
+ 	}
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.16.2
