@@ -1,96 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932338AbeCLNqJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:46:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45378 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932242AbeCLNqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:46:05 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 5/8] hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint
-Date: Mon, 12 Mar 2018 14:45:45 +0100
-Message-Id: <20180312134548.31532-6-jolsa@kernel.org>
-In-Reply-To: <20180312134548.31532-1-jolsa@kernel.org>
-References: <20180312134548.31532-1-jolsa@kernel.org>
+        id S1751764AbeCLNq3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:46:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54216 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751695AbeCLNq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:46:27 -0400
+Date: Mon, 12 Mar 2018 13:46:22 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: kernel test robot <fengguang.wu@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infraded.org>,
+        Rik van Riel <riel@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        lkp@01.org
+Subject: Re: 94d3a25408: kernel_BUG_at_kernel/fork.c
+Message-ID: <20180312134621.xao4map7gw3ts6nv@lakrids.cambridge.arm.com>
+References: <20180228121458.2230-1-mark.rutland@arm.com>
+ <20180309211139.24vegrzjmiptdqp5@inn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309211139.24vegrzjmiptdqp5@inn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And rename it to modify_user_hw_breakpoint_check.
+On Sat, Mar 10, 2018 at 05:11:39AM +0800, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 94d3a254089a7cd4f11b7071b4323afd98eea0a6 ("Detect early free of a live mm")
+> url: https://github.com/0day-ci/linux/commits/Mark-Rutland/Detect-early-free-of-a-live-mm/20180303-144149
 
-We are about to use modify_user_hw_breakpoint_check for user space
-breakpoints modification, we must be very strict to check only the
-fields we can change have changed. As Peter explained:
+> [   47.208935] kernel BUG at kernel/fork.c:599!
+> [   47.210365] invalid opcode: 0000 [#1] SMP PTI
+> [   47.211336] Modules linked in:
+> [   47.212145] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0-rc3-00001-g94d3a25 #1
+> [   47.213966] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [   47.215869] RIP: 0010:__mmdrop+0x136/0x170
+> [   47.216866] RSP: 0018:ffffffff82803dd8 EFLAGS: 00010293
+> [   47.218160] RAX: ffffffff82818500 RBX: ffff880115770000 RCX: ffffffff810ae876
+> [   47.219758] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff880115770000
+> [   47.221306] RBP: ffffffff82803e00 R08: 0000000000000001 R09: 0000000000000000
+> [   47.223268] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82818500
+> [   47.224961] R13: ffffffff82a8ce20 R14: ffff88013ff534c0 R15: 00000000000003e7
+> [   47.226716] FS:  0000000000000000(0000) GS:ffff88013b200000(0000) knlGS:0000000000000000
+> [   47.228550] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   47.229884] CR2: 00007fbfc2cc0190 CR3: 0000000002812000 CR4: 00000000000006f0
+> [   47.231580] Call Trace:
+> [   47.232144]  idle_task_exit+0x53/0x60
 
-  Suppose someone does:
-        attr = malloc(sizeof(*attr)); // uninitialized memory
-        attr->type = BP;
-        attr->bp_addr = new_addr;
-        attr->bp_type = bp_type;
-        attr->bp_len = bp_len;
-        ioctl(fd, PERF_IOC_MOD_ATTR, &attr);
+Luckily this is a spurious warning. In idle_task_exit(), we switch to
+the init_mm, but leave active_mm stale before calling mmdrop().
 
-  And feeds absolute shite for the rest of the fields.
-  Then we later want to extend IOC_MOD_ATTR to allow changing
-  attr::sample_type but we can't, because that would break the
-  above application.
+In addition to the WARN_ON[_ONCE] changes, I'll drop the following in:
 
-I'm making this check optional because we already export
-modify_user_hw_breakpoint and with this check we could
-break existing users.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- kernel/events/hw_breakpoint.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index a556aba223da..0c82663395f7 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -456,7 +456,9 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
- }
- EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e7c535eee0a6..0ef844abc2da 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5506,6 +5506,7 @@ void idle_task_exit(void)
  
--static int __modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
-+static int
-+modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
-+			        bool check)
- {
- 	u64 old_addr = bp->attr.bp_addr;
- 	u64 old_len  = bp->attr.bp_len;
-@@ -468,6 +470,9 @@ static int __modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_
- 	bp->attr.bp_type = attr->bp_type;
- 	bp->attr.bp_len  = attr->bp_len;
- 
-+	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
-+		return -EINVAL;
-+
- 	err = validate_hw_breakpoint(bp);
- 	if (!err && modify)
- 		err = modify_bp_slot(bp, old_type);
-@@ -505,7 +510,7 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
- 	else
- 		perf_event_disable(bp);
- 
--	err = __modify_user_hw_breakpoint(bp, attr);
-+	err = modify_user_hw_breakpoint_check(bp, attr, false);
- 
- 	if (err) {
- 		if (!bp->attr.disabled)
--- 
-2.13.6
+        if (mm != &init_mm) {
+                switch_mm(mm, &init_mm, current);
++               current->active_mm = &init_mm;
+                finish_arch_post_lock_switch();
+        }
+        mmdrop(mm);
+
+Thanks,
+Mark.
