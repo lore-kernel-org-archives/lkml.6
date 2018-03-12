@@ -1,47 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932267AbeCLWzH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 18:55:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751312AbeCLWzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:55:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BE1208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Thierry Reding <thierry.reding@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180312070430.GA23060@ulmo>
-Cc: Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
- <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
- <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
- <20180312070430.GA23060@ulmo>
-Message-ID: <152089530498.147033.16290802622553476545@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-Date: Mon, 12 Mar 2018 15:55:04 -0700
+        id S1751462AbeCLW64 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 18:58:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37788 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751312AbeCLW6x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 18:58:53 -0400
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jiandi An <anjiandi@codeaurora.org>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Safford <david.safford@ge.com>
+Date: Mon, 12 Mar 2018 18:58:45 -0400
+In-Reply-To: <20180312215957.GI24717@ziepe.ca>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+         <1520448953.10396.565.camel@linux.vnet.ibm.com>
+         <1520449719.5558.28.camel@HansenPartnership.com>
+         <1520450495.10396.587.camel@linux.vnet.ibm.com>
+         <1520451662.24314.5.camel@HansenPartnership.com>
+         <1520461156.10396.654.camel@linux.vnet.ibm.com>
+         <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+         <1520615461.12216.6.camel@HansenPartnership.com>
+         <1520891598.3547.190.camel@linux.vnet.ibm.com>
+         <20180312215957.GI24717@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031222-0016-0000-0000-00000530A804
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031222-0017-0000-0000-0000286DD71A
+Message-Id: <1520895525.3547.226.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803120250
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Thierry Reding (2018-03-12 00:04:30)
-> On Fri, Mar 09, 2018 at 09:33:06AM -0800, Stephen Boyd wrote:
-> > 
-> > Are you going to send us a PR at some point?
+On Mon, 2018-03-12 at 15:59 -0600, Jason Gunthorpe wrote:
+> On Mon, Mar 12, 2018 at 05:53:18PM -0400, Mimi Zohar wrote:
 > 
-> Yes, I was going to let the patches cook a little in linux-next and send
-> a PR by the end of the week. Does that sound okay?
+> > Using Kconfig to force the TPM to be builtin is not required, but
+> > helpful.  Users interested in IMA-measurement could configure the TPM
+> > as builtin themselves.  Without the TPM builtin, IMA goes into TPM-
+> > bypass mode.
 > 
+> This issues, broadly speaking, we have lots of TPM drivers, selecting
+> only some to actually support IMA shows we have some kind of problem
+> here.
 
-Perfect! Thanks.
+True, IMA is not selecting the older TPM vendor specific modules, but
+only the newer TPM_TIS and now TPM_CRB modules.  That doesn't imply
+that IMA only supports some TPMs.  It means that by default, these
+TPMs are builtin.  Anyone building a kernel, can select the vendor
+specific TPM to be builtin.
+
+Mimi
