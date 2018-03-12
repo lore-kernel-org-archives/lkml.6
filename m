@@ -1,166 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751295AbeCLMgr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:36:47 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33473 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeCLMgp (ORCPT
+        id S1751352AbeCLMhe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:37:34 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37537 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeCLMhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:36:45 -0400
-X-Originating-IP: 2.224.242.101
-Date: Mon, 12 Mar 2018 13:30:42 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] drm: Add LVDS decoder bridge
-Message-ID: <20180312123042.GA12967@w540>
-References: <CGME20180309135207epcas3p32a7d3a0e9c9dae5af8fc855ff3c0e03b@epcas3p3.samsung.com>
- <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
- <81b25fde-63fa-aacc-1bf4-f2a7b60b19ef@samsung.com>
+        Mon, 12 Mar 2018 08:37:32 -0400
+X-Google-Smtp-Source: AG47ELuLdq/SD3VFd6md6bZrO6nfFWjupTDB1cfDVEyZWjIhsrvUsfTV+X1r3ycq4UDgNJI2I5HmiA==
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+ <92084f1b-848a-39e6-7d77-7ceaa6a6f1d3@gmail.com>
+ <20180312071548.GB23060@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5fc86cc6-947f-ec7c-0c57-905f7aecdfbb@gmail.com>
+Date: Mon, 12 Mar 2018 15:37:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Content-Disposition: inline
-In-Reply-To: <81b25fde-63fa-aacc-1bf4-f2a7b60b19ef@samsung.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180312071548.GB23060@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12.03.2018 10:15, Thierry Reding wrote:
+> On Fri, Mar 09, 2018 at 05:35:46PM +0300, Dmitry Osipenko wrote:
+>> On 08.03.2018 17:44, Thierry Reding wrote:
+>>> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+>>>> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+>>>>> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>>>>>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>>>>>> as critical.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Change log:
+>>>>>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>>>>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>>>>>         and Tegra30.
+>>>>>>
+>>>>>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>>>>>         not so critical. Although, I still haven't got a definitive answer
+>>>>>>         about what exact HW functions are affected by the fixed-clocks.
+>>>>>>         Anyway it should be cleaner to correct the actual drivers.
+>>>>>
+>>>>> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+>>>>> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+>>>>> happen to work with the opensource u-boot, but not with the proprietary
+>>>>> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+>>>>> although would be nice to have one problem less.
+>>>>
+>>>> Guys, is there anything I could do to get these patches in linux-next?
+>>>
+>>> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+>>> already have that branch for the MBIST patches which are a dependency
+>>> for the for-4.17/soc branch.
+>>
+>> Thank you very much! Could you please add stable tag to this ("Mark HCLK, SCLK
+>> and EMC as critical") patch? It would be nice to have 4.16 unbroken eventually
+>> for those who (have to) use downstream android bootloader.
+>>
+>> Cc: <stable@vger.kernel.org> # v4.16
+> 
+> Should we add a Fixes: line instead? That way it will get automatically
+> backported to all applicable stable releases.
+> 
+> This is a little complicated because the clocks were introduced in
+> different commits, most of them a very long time ago:
+> 
+> 	a7c8485a0ebbdce303c6709e208bb4fd08aff8ad (sclk)
+> 	2db04f16b589c6c96bd07df3f1ef8558bfdb6810 (emc)
+> 	76ebc134d45d7e6e1dc29fdcef4e539c5bc76eb8 (emc)
+> 	...
+> 
+> So Fixes: is perhaps not desirable after all, but then, so isn't tagging
+> v4.16 specifically because this is a bug since almost forever, so v4.16
+> is fairly arbitrary. Shouldn't we at least get this fixed for the last
+> couple of LTS releases?
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+That issue was masked in earlier kernels and only appears in 4.16, there is no
+need to backport it further. I thought that adding of 'stable' tag is enough to
+get patch backported automatically, so let's add 'fixes' instead:
 
-Hi Andrzej,
+Fixes: 109eba2eb61a ("clk: tegra: Mark APB clock as critical")
 
-On Mon, Mar 12, 2018 at 10:07:27AM +0100, Andrzej Hajda wrote:
-> On 09.03.2018 14:51, Jacopo Mondi wrote:
-> > Hello,
-> >    after some discussion on the proposed bindings for generic lvds decoder and
-> > Thine THC63LVD1024, I decided to drop the THC63 specific part and just live with
-> > a transparent decoder that does not support any configuration from DT.
-> >
-> > Dropping THC63 support to avoid discussion on how to better implement support
-> > for a DRM bridge with 2 input ports and focus on LVDS mode propagation through
-> > bridges as explained in v1 cover letter (for DRM people: please see [1] as why
-> > I find difficult to implement support for bridges with multiple input endpoints)
-> >
-> > Same base branch as v1, with same patches for V3M Eagle applied on top.
-> > git://jmondi.org/linux v3m/v4.16-rc3/base
-> >
-> > Thanks
-> >    j
-> >
-> > v1 -> v2:
-> > - Drop support for THC63LVD1024
-> >
-> > [1] I had a quick at how to model a DRM bridge with multiple input
-> > ports, and I see a blocker in how DRM identifies and matches bridges using
-> > the devices node in place of the endpoint nodes.
-> >
-> > As THC63LVD1024 supports up to 2 LVDS inputs and 2 LVDS outputs, I see only
-> > a few ways to support that:
-> >  1) register 2 drm bridges from the same driver (one for each input/output pair)
-> >     but they would both be matches on the same device node when the preceding
-> >     bridge calls "of_drm_find_bridge()".
-> >  2) register a single bridge with multiple "next bridges", but when the bridge
-> >     gets attached I don't see a way on how to identify on which next bridge
-> >     "drm_bridge_attach()" on, as it depends on the endpoint the current bridge
-> >     has been attached on first, and we don't have that information.
-> >  3) Register more instances of the same chip in DTS, one for each input/output
-> >     pair. They gonna share supplies and gpios, and I don't like that.
-> >
-> > I had a quick look at the currently in mainline bridges and none of them has
-> > multiple input endpoints, except for HDMI audio endpoint, which I haven't found
-> > in use in any DTS. I guess the problem has been already debated and maybe solved
-> > in the past, so feel free to point me to other sources.
->
-> I think this is is a step in wrong direction, IMHO. Your previous
-> patchset was quite OK, at least bindings, IMHO. Few things needed only
-> polishing.
-> Here we have unmanaged/transparent bridge, which is totally different,
-> what happened to regulators and gpios from previous iteration.
-> I do not have schematics of the board, but I guess respective pins of
-> the bridge must be connected somehow.
-> I think the problem you want to avoid (double bridge) should not be a
-> problem at all.
-> I suppose the most important is to have correct bindings - as they need
-> to be stable.
-> If you really must to do hacks better is to put them into driver.
->
-
-I understand. The "transparent bridge" is of no actual use, but I don't see
-how the "double bridge" thing is not an issue if I were to develop
-support for the actual Thine chip.
-
-Please see my reply from yesterday to Archit. I still think having two
-bridges is somehow an issue...
-
-While we clarify that, would it be fine an initial driver version for
-the actualt Thine chip with a single input support[1]? I would ditch this
-transparent bridge and resume working on a THC63LVD1024 driver from
-comments received on v1.
-
-Thanks
-  j
-
-[1] Single input support implies a single input port in DT bindings
-even if the chip supports two, and my understanding was that you
-didn't like this.
-
-
-> Regards
-> Andrzej
->
-> >
-> > Jacopo Mondi (3):
-> >   dt-bindings: display: bridge: Document LVDS to parallel decoder
-> >   drm: bridge: Add LVDS decoder driver
-> >   arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-> >
-> >  .../bindings/display/bridge/lvds-decoder.txt       |  42 ++++++
-> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  31 +++-
-> >  drivers/gpu/drm/bridge/Kconfig                     |   8 ++
-> >  drivers/gpu/drm/bridge/Makefile                    |   1 +
-> >  drivers/gpu/drm/bridge/lvds-decoder.c              | 157 +++++++++++++++++++++
-> >  5 files changed, 237 insertions(+), 2 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-decoder.txt
-> >  create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
-> >
-> > --
-> > 2.7.4
-> >
-> >
-> >
-> >
->
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJapnLyAAoJEHI0Bo8WoVY8i4kP/3TjOqmc4R2Zxj8/FytFa6wC
-4jkRrTZica3Fa9O+lSpmxJ4m71PbjDuMVptWZrpr7MYGfTUrgIERRVi3DxAlmEja
-uWWhBqaYZ1flOUeKr94JMMEw29EedcFbAJb01buf3a0iRUTYWqoov78p4rX8a3B+
-0/JLNryFvOE5GiJoB2ojh0FMHJZ9lJUBQOqfIomkfPA6d9Ifw/khYiBELiXBbr3q
-iZwsmGOVZYVYJaYRRBKCV5r8WzKeIX54EejPhG1r2ZSRdpgBHzlTThn6pumGABg9
-5QcjT1xxQ0yzH8CD2A7nDekxlNGQrK2m83zj4DnPoCuhnANm7GplaOyDdJLmAXox
-wCDF2/PYg09lznQ6OloawZRd4NKbQSTBNzqEnlhuX+kCfd5Gdu1S150vmREJ5da3
-Xfl9DK3YxYwoM5FcRx737QpEbUxEN+vh5y/ut42CKmlWx5vEekhhxVUGsVW32Vf9
-RAywIcdxzmfAAZILy234KHconVyRtRFszYJTSBLlVJxTfdzrhGi/eyBrZqxKYCrp
-vbFbRzyQ/6DxElRVSPx6V6+xYAA8mBoQdSDshGHPQ1h34N537zdLhFB3qsiOrqZa
-fOBkHN2tsW4bLMtqwNxNx/dNbZgTKLeFaEvFslqZ9pTwtHr2P9jB4fHLAtyAfypH
-MhuQW7mAgsy9sPinup1C
-=Kks4
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+This patch applies cleanly to 4.16, everything should be fine.
