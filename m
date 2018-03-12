@@ -1,51 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932480AbeCLVAC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:00:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59474 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932302AbeCLVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:00:00 -0400
-Subject: Re: [PATCH v4 5/6] ipc: Clamp semmni to the real IPCMNI limit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S932498AbeCLVAa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:00:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33628 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932302AbeCLVA3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:00:29 -0400
+Date: Mon, 12 Mar 2018 14:00:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 3/6] sysctl: Warn when a clamped sysctl parameter is
+ set out of range
+Message-Id: <20180312140027.97db31d5dfc5c5f52a7c19a3@linux-foundation.org>
+In-Reply-To: <1520885744-1546-4-git-send-email-longman@redhat.com>
 References: <1520885744-1546-1-git-send-email-longman@redhat.com>
- <1520885744-1546-6-git-send-email-longman@redhat.com>
- <20180312205235.GB4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1a506f57-a91b-aae9-7756-03268b6447f7@redhat.com>
-Date: Mon, 12 Mar 2018 16:59:59 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180312205235.GB4449@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
+        <1520885744-1546-4-git-send-email-longman@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 04:52 PM, Luis R. Rodriguez wrote:
-> On Mon, Mar 12, 2018 at 04:15:43PM -0400, Waiman Long wrote:
->> +	if (clamped)
->> +		pr_warn_once("sysctl: \"sem[3]\" was set out of range [%d, %d], clamped to %d.\n",
->> +			     0, IPCMNI, ns->sc_semmni);
-> Why warn if the kernel already does that? If we can avoid more code on
-> drivers the better.
+On Mon, 12 Mar 2018 16:15:41 -0400 Waiman Long <longman@redhat.com> wrote:
+
+> Even with clamped sysctl parameters, it is still not that straight
+> forward to figure out the exact range of those parameters. One may
+> try to write extreme parameter values to see if they get clamped.
+> To make it easier, a warning with the expected range will now be
+> printed into the kernel ring buffer when a clamped sysctl parameter
+> receives an out of range value.
+> 
+> The pr_warn_ratelimited() macro is used to limit the number of warning
+> messages that can be printed within a given period of time.
+> 
+> ...
 >
->   Luis
+> +#ifdef pr_fmt
+> +#undef pr_fmt
+> +#endif
+> +#define pr_fmt(fmt)	"sysctl: " fmt
 
-As said before, this case is special because "sem" is a collection of 4
-different values. The last one is semmni which I tries to apply the same
-range clamping here, whereas the other 3 are left as they are. The
-standard proc_dointvec_minmax() handler cannot be used here because of
-that. I will clarify that in the commit log.
-
-Cheers,
-Longman
+Why is it necessary to undefine pr_fmt?  That's a somewhat unusual
+thing to do.
