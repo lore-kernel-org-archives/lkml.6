@@ -1,204 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCLISE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:18:04 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41175 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeCLISC (ORCPT
+        id S932237AbeCLITv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:19:51 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:42586 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLITt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:18:02 -0400
-X-Google-Smtp-Source: AG47ELvoyctrtMZGWw4huZcgb1cjYdNvzR9w2iwVsdJwxASABUOcKtmokv5XDfhuuLkzuw+MperCOQQWQmXWShMZ4IU=
+        Mon, 12 Mar 2018 04:19:49 -0400
+X-Google-Smtp-Source: AG47ELuzoRz8/r76Mec9j5qCYcCyf/YKlrBQJptHfwAg+tGSlT6EJeDKV1ps8sDL8eLY/jqjIdDnJoXeV1y03N4QC3M=
 MIME-Version: 1.0
-In-Reply-To: <20180312054412.yqyde34ly3kjoajj@tardis>
-References: <CAJDTihwMgUqjK6YL2M_WZY4VBaifVYgNvdZOF_fNrnk_p27Kvw@mail.gmail.com>
- <20180312054412.yqyde34ly3kjoajj@tardis>
-From: =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
-Date: Mon, 12 Mar 2018 16:18:00 +0800
-Message-ID: <CAJDTihxxhy7zmhTJ-ky4wvMby_o9y8UOcs9R1dABN7NccekAiQ@mail.gmail.com>
-Subject: Re: smp_mb__after_spinlock requirement too strong?
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        Alan Stern <stern@rowland.harvard.edu>, will.deacon@arm.com,
-        torvalds@linux-foundation.org, npiggin@gmail.com, mingo@kernel.org,
-        mpe@ellerman.id.au, oleg@redhat.com, benh@kernel.crashing.org,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
+From: =?UTF-8?Q?Juha_Erkkil=C3=A4?= <Juha.Erkkila@opinsys.fi>
+Date: Mon, 12 Mar 2018 10:19:47 +0200
+Message-ID: <CAJAOB25TAzzLfm+Q7-iCzo4_Vc4zyw0M4RO30GA27PMWvRaAfg@mail.gmail.com>
+Subject: i915: Screen blanking problems with DRRS on HP Elitebook 820
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2C8JwUg030062
 
->> Peter pointed out in this patch https://patchwork.kernel.org/patch/9771921/
->> that the spinning-lock used at __schedule() should be RCsc to ensure
->> visibility of writes prior to __schedule when the task is to be migrated to
->> another CPU.
->>
->> And this is emphasized at the comment of the newly introduced
->> smp_mb__after_spinlock(),
->>
->>  * This barrier must provide two things:
->>  *
->>  *   - it must guarantee a STORE before the spin_lock() is ordered against a
->>  *     LOAD after it, see the comments at its two usage sites.
->>  *
->>  *   - it must ensure the critical section is RCsc.
->>  *
->>  * The latter is important for cases where we observe values written by other
->>  * CPUs in spin-loops, without barriers, while being subject to scheduling.
->>  *
->>  * CPU0         CPU1            CPU2
->>  *
->>  *          for (;;) {
->>  *            if (READ_ONCE(X))
->>  *              break;
->>  *          }
->>  * X=1
->>  *          <sched-out>
->>  *                      <sched-in>
->>  *                      r = X;
->>  *
->>  * without transitivity it could be that CPU1 observes X!=0 breaks the loop,
->>  * we get migrated and CPU2 sees X==0.
->>
->> which is used at,
->>
->> __schedule(bool preempt) {
->>     ...
->>     rq_lock(rq, &rf);
->>     smp_mb__after_spinlock();
->>     ...
->> }
->> .
->>
->> If I didn't miss something, I found this kind of visibility is __not__
->> necessarily
->> depends on the spinning-lock at __schedule being RCsc.
->>
->> In fact, as for runnable task A, the migration would be,
->>
->>  CPU0         CPU1            CPU2
->>
->> <ACCESS before schedule out A>
->>
->> lock(rq0)
->> schedule out A
->> unock(rq0)
->>
->>               lock(rq0)
->>               remove A from rq0
->>               unlock(rq0)
->>
->>               lock(rq2)
->>               add A into rq2
->>               unlock(rq2)
->>                                         lock(rq2)
->>                                         schedule in A
->>                                         unlock(rq2)
->>
->>                                         <ACCESS after schedule in A>
->>
->> <ACCESS before schedule out A> happens-before
->> unlock(rq0) happends-before
->> lock(rq0) happends-before
->> unlock(rq2) happens-before
->> lock(rq2) happens-before
->> <ACCESS after schedule in A>
->>
->
-> But without RCsc lock, you cannot guarantee that a write propagates to
-> CPU 0 and CPU 2 at the same time, so the same write may propagate to
-> CPU0 before <ACCESS before schedule out A> but propagate to CPU 2 after
-> <ACCESS after scheduler in A>. So..
->
-> Regards,
-> Boqun
+Hello folks,
 
-Thank you for pointing out this case, Boqun.
-But this is just one special case that acquire-release chains promise us.
+I am seeing some blank screen issues with some HP machines that have
+a product name "HP Elitebook 820 G1".  The problem does not occur with
+all machines with this product name.  The problem manifests itself thus
+that all of a sudden, maybe after an hour or two of use, the laptop
+screen turns blank, and no user input (on keyboard or on a mouse) turns
+the screen back on.  Whatever is happening on the computer before the
+issue hits does not seem relevant.  The backlight of the screen is on,
+but nothing is shown on the screen.  If laptop is suspended (by closing
+the lid or some such action), and then resumed, the screen returns back
+to normal.
 
-A=B=0 as initial
+Some of these machines advertise support for the DRRS (Dynamic Refresh
+Rate Switching) feature in the i915-driver, some of these do not.
+These machines have been manufactured sometime in the early 2014 I guess.
+The issue occurs only on *some* machines that have support for DRRS.
+That is, if a laptop screen does not support DRRS the problem does
+not occur, and on *some* screens with DRRS support the problem occurs,
+and on some screens with DRRS support it does *not* occur.
 
-  CPU0                CPU1                CPU2                CPU3
- write A=1
-                           read A=1
-                           write B=1
-                           release X
-                                                 acquire X
-                                                 read A=?
-                                                 release Y
+While searching for bug reports regarding this issue I could not find
+much, but this problem seen here is very possibly the same:
 
-    acquire Y
+  https://lists.debian.org/debian-user/2017/09/msg00883.html
 
-    read B=?
+The problem does not manifest itself on the 3.16 kernel, but on 4.9 and
+4.14 it does.  I am testing the current Debian Stable (Stretch) kernels.
+The i915 driver in 3.16 did not have support for DRRS (I believe),
+but 4.9 and 4.14 do.
 
-assurance 1: CPU3 will surely see B=1 writing by CPU1, and
-assurance 2: CPU2 will also see A=1 writing by CPU0 as a special case
+When tracing the problem I could see that it sometimes occurs exactly
+when DRRS-feature slows down the display rate to 40Hz and then raises
+it back again to 60Hz.  That is, it appears to happen sometimes/rarely
+when DRRS does something, and not when DRRS functionality is passive.
 
-The second assurance is both in theory and implemented by real hardware.
+It does seem this is a problem in hardware that can not be recognized
+easily in the kernel, or at least I do not know how.  One solution is
+to add a kernel parameter for turning the DRRS-functionality off, and
+then selectively applying it on problematic machines.  And indeed, the
+problematic machines (in our tests) appear to be functioning properly when
+the following kernel patch is applied and a parameter "i915.enable_drrs=0"
+is provided to the kernel.
 
-As for theory, the C++11 memory model, which is a potential formal model
-for kernel memory model as
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0124r4.html
-descripes, states that:
+Juha Erkkilä
+Opinsys Oy
 
-If a value computation A of an atomic object M happens before a value
-computation B of M, and A takes its value from a side effect X on M, then
-the value computed by B shall either be the value stored by X or the value
-stored by a side effect Y on M, where Y follows X in the modification
-order of M.
+---
 
-at
-$1.10 rule 18, on page 14
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4296.pdf
+Here is a patch to add i915.enable_drrs kernel parameter, which can
+be used to turn DRRS (Dynamic Refresh Rate Switching) on/off for i915.
+Possible values are "0" and "1".  By default it is "1" (on).
+Tested with 4.9.65 kernel sources (on Debian).
 
-As for real hardware, Luc provided detailed test and explanation on
-ARM and POWER in 5.1 Cumulative Barriers for WRC  on page 19
-in this paper:
+diff -ruN linux-4.9.65.orig/drivers/gpu/drm/i915/i915_params.c
+linux-4.9.65/drivers/gpu/drm/i915/i915_params.c
+--- linux-4.9.65.orig/drivers/gpu/drm/i915/i915_params.c
+2017-11-24 09:33:43.000000000 +0200
++++ linux-4.9.65/drivers/gpu/drm/i915/i915_params.c     2018-02-15
+13:34:13.486370208 +0200
+@@ -39,6 +39,7 @@
+        .enable_hangcheck = true,
+        .enable_ppgtt = -1,
+        .enable_psr = -1,
++       .enable_drrs = -1,
+        .preliminary_hw_support =
+IS_ENABLED(CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT),
+        .disable_power_well = -1,
+        .enable_ips = 1,
+@@ -131,6 +132,11 @@
+        "Override execlists usage. "
+        "(-1=auto [default], 0=disabled, 1=enabled)");
 
-A Tutorial Introduction to the ARM and POWER Relaxed Memory Models
-https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test7.pdf
++module_param_named_unsafe(enable_drrs, i915.enable_drrs, int, 0400);
++MODULE_PARM_DESC(enable_drrs, "Enable DSSR "
++       "(0=disabled, 1=enabled) "
++       "(-1=auto [default], 0=disabled, 1=enabled)");
++
+ module_param_named_unsafe(enable_psr, i915.enable_psr, int, 0600);
+ MODULE_PARM_DESC(enable_psr, "Enable PSR "
+                 "(0=disabled, 1=enabled - link mode chosen
+per-platform, 2=force link-standby mode, 3=force link-off mode) "
+diff -ruN linux-4.9.65.orig/drivers/gpu/drm/i915/i915_params.h
+linux-4.9.65/drivers/gpu/drm/i915/i915_params.h
+--- linux-4.9.65.orig/drivers/gpu/drm/i915/i915_params.h
+2017-11-24 09:33:43.000000000 +0200
++++ linux-4.9.65/drivers/gpu/drm/i915/i915_params.h     2018-02-15
+13:35:29.335656880 +0200
+@@ -40,6 +40,7 @@
+        int enable_ppgtt;
+        int enable_execlists;
+        int enable_psr;
++       int enable_drrs;
+        unsigned int preliminary_hw_support;
+        int disable_power_well;
+        int enable_ips;
+diff -ruN linux-4.9.65.orig/drivers/gpu/drm/i915/intel_dp.c
+linux-4.9.65/drivers/gpu/drm/i915/intel_dp.c
+--- linux-4.9.65.orig/drivers/gpu/drm/i915/intel_dp.c   2017-11-24
+09:33:43.000000000 +0200
++++ linux-4.9.65/drivers/gpu/drm/i915/intel_dp.c        2018-02-15
+13:37:06.477318708 +0200
+@@ -5283,6 +5283,11 @@
+                return;
+        }
 
-So, I think we may remove RCsc from smp_mb__after_spinlock which is
-really confusing.
++       if (!i915.enable_drrs) {
++               DRM_DEBUG_KMS("DRRS disabled by flag\n");
++               return;
++       }
++
+        mutex_lock(&dev_priv->drrs.mutex);
+        if (WARN_ON(dev_priv->drrs.dp)) {
+                DRM_ERROR("DRRS already enabled\n");
+@@ -5523,6 +5528,10 @@
+                return NULL;
+        }
 
-Best Regards,
-Trol
-
->
->> And for stopped tasks,
->>
->>  CPU0         CPU1            CPU2
->>
->> <ACCESS before schedule out A>
->>
->> lock(rq0)
->> schedule out A
->> remove A from rq0
->> store-release(A->on_cpu)
->> unock(rq0)
->>
->>               load_acquire(A->on_cpu)
->>               set_task_cpu(A, 2)
->>
->>               lock(rq2)
->>               add A into rq2
->>               unlock(rq2)
->>
->>                                         lock(rq2)
->>                                         schedule in A
->>                                         unlock(rq2)
->>
->>                                         <ACCESS after schedule in A>
->>
->> <ACCESS before schedule out A> happens-before
->> store-release(A->on_cpu)  happens-before
->> load_acquire(A->on_cpu)  happens-before
->> unlock(rq2) happens-before
->> lock(rq2) happens-before
->> <ACCESS after schedule in A>
->>
->> So, I think the only requirement to smp_mb__after_spinlock is
->> to guarantee a STORE before the spin_lock() is ordered
->> against a LOAD after it. So we could remove the RCsc requirement
->> to allow more efficient implementation.
->>
->> Did I miss something or this RCsc requirement does not really matter?
++       /* Per platform default: all enabled. */
++       if (i915.enable_drrs == -1)
++               i915.enable_drrs = 1;
++
+        downclock_mode = intel_find_panel_downclock
+                                        (dev, fixed_mode, connector);
