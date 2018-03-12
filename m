@@ -1,141 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeCLKJH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:09:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:52022 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751881AbeCLKJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:09:04 -0400
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        "cdall@kernel.org" <cdall@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "david.daney@cavium.com" <david.daney@cavium.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
- <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
- <86r2oubho3.wl-marc.zyngier@arm.com> <20180309213612.GD1917@lvm>
- <86k1ukazr0.wl-marc.zyngier@arm.com>
- <CAEDV+g+29ZK6QQEn=2h_77dMZC7wmw+d4MZC-GU-CqeaK_xhMg@mail.gmail.com>
- <20180311121733.643fb1a5@why.wild-wind.fr.eu.org>
- <1520822024.2985.12.camel@hxt-semitech.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <103f560a-d7ad-ba6c-e129-eda172312576@arm.com>
-Date: Mon, 12 Mar 2018 10:09:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752708AbeCLKJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:09:27 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53725 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751961AbeCLKHf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:07:35 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFT][PATCH v4 4/7] cpuidle: Return nohz hint from cpuidle_select()
+Date: Mon, 12 Mar 2018 10:54:18 +0100
+Message-ID: <15847301.VVmNzm1RNz@aspire.rjw.lan>
+In-Reply-To: <2352117.3UUoYAu18A@aspire.rjw.lan>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1520822024.2985.12.camel@hxt-semitech.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/18 02:33, Yang, Shunyong wrote:
-> Hi, Marc,
-> 
-> On Sun, 2018-03-11 at 12:17 +0000, Marc Zyngier wrote:
->> On Sun, 11 Mar 2018 01:55:08 +0000
->> Christoffer Dall <cdall@kernel.org> wrote:
->>
->>>
->>> On Sat, Mar 10, 2018 at 12:20 PM, Marc Zyngier <marc.zyngier@arm.co
->>> m> wrote:
->>>>
->>>> On Fri, 09 Mar 2018 21:36:12 +0000,
->>>> Christoffer Dall wrote:  
->>>>>
->>>>>
->>>>> On Thu, Mar 08, 2018 at 05:28:44PM +0000, Marc Zyngier wrote:  
->>>>>>
->>>>>> I'd be more confident if we did forbid P+A for such
->>>>>> interrupts
->>>>>> altogether, as they really feel like another kind of HW
->>>>>> interrupt.  
->>>>> How about a slightly bigger hammer:  Can we avoid doing P+A for
->>>>> level
->>>>> interrupts completely?  I don't think that really makes much
->>>>> sense, and
->>>>> I think we simply everything if we just come back out and
->>>>> resample the
->>>>> line.  For an edge, something like a network card, there's a
->>>>> potential
->>>>> performance win to appending a new pending state, but I doubt
->>>>> that this
->>>>> is the case for level interrupts.  
->>>> I started implementing the same thing yesterday. Somehow, it
->>>> feels
->>>> slightly better to have the same flow for all level interrupts,
->>>> including the timer, and we only use the MI on EOI as a way to
->>>> trigger
->>>> the next state of injection. Still testing, but looking good so
->>>> far.
->>>>
->>>> I'm still puzzled that we have this level-but-not-quite behaviour
->>>> for
->>>> VFIO interrupts. At some point, it is going to bite us badly.
->>>>  
->>> Where is the departure from level-triggered behavior with VFIO?  As
->>> far as I can tell, the GIC flow of the interrupts will be just a
->>> level
->>> interrupt, 
->> The GIC is fine, I believe. What is not exactly fine is the
->> signalling
->> from the device, which will never be dropped until the EOI has been
->> detected.
->>
->>>
->>> but we just need to make sure the resamplefd mechanism is
->>> supported for both types of interrupts.  Whether or not that's a
->>> decent mechanism seems orthogonal to me, but that's a discussion
->>> for
->>> another day I think.
->> Given that VFIO is built around this mechanism, I don't think we have
->> a
->> choice but to support it. Anyway, I came up with the following patch,
->> which I tested on Seattle with mtty. It also survived my usual
->> hammering of cyclictest, hackbench  and bulk VM installs.
->>
->> Shunyong, could you please give it a go?
->>
->> Thanks,
->>
->> 	M.
->>
-> 
-> I have tested the patch. It works on QDF2400 platform
-> and kvm_notify_acked_irq() is called when state is idle.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks a lot for testing.
+Add a new pointer argument to cpuidle_select() and to the ->select
+cpuidle governor callback to allow a boolean value indicating
+whether or not the tick should be stopped before entering the
+selected state to be returned from there.
 
-> 
-> BTW, I have following questions when I was debugging the issue.
-> Coud you please give me some help?
-> 1)what does "mi" mean in gic code? such as lr_signals_eoi_mi();
+Make the ladder governor ignore that pointer (to preserve its
+current behavior) and make the menu governor return 'false" through
+it if:
+ (1) the idle exit latency is constrained at 0,
+ (2) the selected state is a polling one, or
+ (3) the target residency of the selected state is less than the
+     length of the tick period and there is at least one deeper
+     idle state available within the tick period range.
 
-MI stands for Maintenance Interrupts. Life is too short to write that
-all the time ;-)
+Since the value returned through the new argument pointer is not
+used yet, this change is not expected to alter the functionality of
+the code.
 
-> 2)In some __hyp_text code where printk() will cause "HYP panic:", such
-> as in __kvm_vcpu_run(). How can I output debug information?
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/cpuidle.c          |   10 ++++++++--
+ drivers/cpuidle/governors/ladder.c |    3 ++-
+ drivers/cpuidle/governors/menu.c   |   32 +++++++++++++++++++++++++++++---
+ include/linux/cpuidle.h            |    8 +++++---
+ kernel/sched/idle.c                |    4 +++-
+ 5 files changed, 47 insertions(+), 10 deletions(-)
 
-You can't. None of the kernel is mapped at EL2 on pre-VHE hardware.
-You'll need to find indirect ways of outputting information (store data
-in memory, and output it once you're back to EL1).
-
-Thanks again,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Index: linux-pm/include/linux/cpuidle.h
+===================================================================
+--- linux-pm.orig/include/linux/cpuidle.h
++++ linux-pm/include/linux/cpuidle.h
+@@ -131,7 +131,8 @@ extern bool cpuidle_not_available(struct
+ 				  struct cpuidle_device *dev);
+ 
+ extern int cpuidle_select(struct cpuidle_driver *drv,
+-			  struct cpuidle_device *dev);
++			  struct cpuidle_device *dev,
++			  bool *nohz_ret);
+ extern int cpuidle_enter(struct cpuidle_driver *drv,
+ 			 struct cpuidle_device *dev, int index);
+ extern void cpuidle_reflect(struct cpuidle_device *dev, int index);
+@@ -163,7 +164,7 @@ static inline bool cpuidle_not_available
+ 					 struct cpuidle_device *dev)
+ {return true; }
+ static inline int cpuidle_select(struct cpuidle_driver *drv,
+-				 struct cpuidle_device *dev)
++				 struct cpuidle_device *dev, bool *nohz_ret)
+ {return -ENODEV; }
+ static inline int cpuidle_enter(struct cpuidle_driver *drv,
+ 				struct cpuidle_device *dev, int index)
+@@ -246,7 +247,8 @@ struct cpuidle_governor {
+ 					struct cpuidle_device *dev);
+ 
+ 	int  (*select)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
++					struct cpuidle_device *dev,
++					bool *nohz_ret);
+ 	void (*reflect)		(struct cpuidle_device *dev, int index);
+ };
+ 
+Index: linux-pm/kernel/sched/idle.c
+===================================================================
+--- linux-pm.orig/kernel/sched/idle.c
++++ linux-pm/kernel/sched/idle.c
+@@ -188,13 +188,15 @@ static void cpuidle_idle_call(void)
+ 		next_state = cpuidle_find_deepest_state(drv, dev);
+ 		call_cpuidle(drv, dev, next_state);
+ 	} else {
++		bool nohz = true;
++
+ 		tick_nohz_idle_stop_tick();
+ 		rcu_idle_enter();
+ 
+ 		/*
+ 		 * Ask the cpuidle framework to choose a convenient idle state.
+ 		 */
+-		next_state = cpuidle_select(drv, dev);
++		next_state = cpuidle_select(drv, dev, &nohz);
+ 		entered_state = call_cpuidle(drv, dev, next_state);
+ 		/*
+ 		 * Give the governor an opportunity to reflect on the outcome
+Index: linux-pm/drivers/cpuidle/cpuidle.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/cpuidle.c
++++ linux-pm/drivers/cpuidle/cpuidle.c
+@@ -263,12 +263,18 @@ int cpuidle_enter_state(struct cpuidle_d
+  *
+  * @drv: the cpuidle driver
+  * @dev: the cpuidle device
++ * @nohz_ret: indication on whether or not to stop the tick
+  *
+  * Returns the index of the idle state.  The return value must not be negative.
++ *
++ * The memory location pointed to by @nohz_ret is expected to be written the
++ * 'false' boolean value if the scheduler tick should not be stopped before
++ * entering the returned state.
+  */
+-int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		   bool *nohz_ret)
+ {
+-	return cpuidle_curr_governor->select(drv, dev);
++	return cpuidle_curr_governor->select(drv, dev, nohz_ret);
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/ladder.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/ladder.c
++++ linux-pm/drivers/cpuidle/governors/ladder.c
+@@ -63,9 +63,10 @@ static inline void ladder_do_selection(s
+  * ladder_select_state - selects the next state to enter
+  * @drv: cpuidle driver
+  * @dev: the CPU
++ * @dummy: not used
+  */
+ static int ladder_select_state(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev)
++			       struct cpuidle_device *dev, bool *dummy)
+ {
+ 	struct ladder_device *ldev = this_cpu_ptr(&ladder_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -275,12 +275,16 @@ again:
+ 	goto again;
+ }
+ 
++#define TICK_USEC_HZ   ((USEC_PER_SEC + HZ/2) / HZ)
++
+ /**
+  * menu_select - selects the next idle state to enter
+  * @drv: cpuidle driver containing state data
+  * @dev: the CPU
++ * @nohz_ret: indication on whether or not to stop the tick
+  */
+-static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		       bool *nohz_ret)
+ {
+ 	struct menu_device *data = this_cpu_ptr(&menu_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+@@ -303,8 +307,10 @@ static int menu_select(struct cpuidle_dr
+ 		latency_req = resume_latency;
+ 
+ 	/* Special case when user has set very strict latency requirement */
+-	if (unlikely(latency_req == 0))
++	if (unlikely(latency_req == 0)) {
++		*nohz_ret = false;
+ 		return 0;
++	}
+ 
+ 	/* determine the expected residency time, round up */
+ 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
+@@ -369,7 +375,7 @@ static int menu_select(struct cpuidle_dr
+ 			idx = i; /* first enabled state */
+ 		if (s->target_residency > data->predicted_us)
+ 			break;
+-		if (s->exit_latency > latency_req)
++	        if (s->exit_latency > latency_req)
+ 			break;
+ 
+ 		idx = i;
+@@ -378,6 +384,26 @@ static int menu_select(struct cpuidle_dr
+ 	if (idx == -1)
+ 		idx = 0; /* No states enabled. Must use 0. */
+ 
++	if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING) {
++		*nohz_ret = false;
++	} else if (drv->states[idx].target_residency < TICK_USEC_HZ) {
++		first_idx = idx;
++		for (i = idx + 1; i < drv->state_count; i++)
++			if (!drv->states[i].disabled &&
++			    !dev->states_usage[i].disable) {
++				first_idx = i;
++				break;
++			}
++
++		/*
++		 * Do not stop the tick if there is at least one more state
++		 * within the tick period range that could be used if longer
++		 * idle duration was predicted.
++		 */
++		*nohz_ret = !(first_idx > idx &&
++			      drv->states[first_idx].target_residency < TICK_USEC_HZ);
++	}
++
+ 	data->last_state_idx = idx;
+ 
+ 	return data->last_state_idx;
