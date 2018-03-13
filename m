@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932696AbeCMN1H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:27:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35476 "EHLO
+        id S932963AbeCMNaX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:30:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35594 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932623AbeCMN1D (ORCPT
+        with ESMTP id S932680AbeCMN1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:27:03 -0400
+        Tue, 13 Mar 2018 09:27:07 -0400
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
         linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 45/61] shmem: Convert find_swap_entry to XArray
-Date: Tue, 13 Mar 2018 06:26:23 -0700
-Message-Id: <20180313132639.17387-46-willy@infradead.org>
+Subject: [PATCH v9 54/61] fs: Convert buffer to XArray
+Date: Tue, 13 Mar 2018 06:26:32 -0700
+Message-Id: <20180313132639.17387-55-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
 References: <20180313132639.17387-1-willy@infradead.org>
@@ -25,56 +25,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a 1:1 conversion.
+Mostly comment fixes, but one use of __xa_set_tag.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ fs/buffer.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0af8a439dfad..49f42dc9e1dc 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1076,28 +1076,27 @@ static void shmem_evict_inode(struct inode *inode)
- 	clear_inode(inode);
- }
- 
--static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
-+static unsigned long find_swap_entry(struct xarray *xa, void *item)
- {
--	struct radix_tree_iter iter;
--	void **slot;
--	unsigned long found = -1;
-+	XA_STATE(xas, xa, 0);
- 	unsigned int checked = 0;
-+	void *entry;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		if (*slot == item) {
--			found = iter.index;
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		if (xas_retry(&xas, entry))
-+			continue;
-+		if (entry == item)
- 			break;
--		}
- 		checked++;
--		if ((checked % 4096) != 0)
-+		if ((checked % XA_CHECK_SCHED) != 0)
- 			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
-+		xas_pause(&xas);
- 		cond_resched_rcu();
- 	}
--
- 	rcu_read_unlock();
--	return found;
-+
-+	return xas_invalid(&xas) ? -1 : xas.xa_index;
- }
+diff --git a/fs/buffer.c b/fs/buffer.c
+index f3059f929dd6..5c798ecf7a39 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -585,7 +585,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
+ EXPORT_SYMBOL(mark_buffer_dirty_inode);
  
  /*
+- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
++ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
+  * dirty.
+  *
+  * If warn is true, then emit a warning if the page is not uptodate and has
+@@ -602,8 +602,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
+ 	if (page->mapping) {	/* Race with truncate? */
+ 		WARN_ON_ONCE(warn && !PageUptodate(page));
+ 		account_page_dirtied(page, mapping);
+-		radix_tree_tag_set(&mapping->i_pages,
+-				page_index(page), PAGECACHE_TAG_DIRTY);
++		__xa_set_tag(&mapping->i_pages, page_index(page),
++				PAGECACHE_TAG_DIRTY);
+ 	}
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ }
+@@ -1066,7 +1066,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * The relationship between dirty buffers and dirty pages:
+  *
+  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
+- * the page is tagged dirty in its radix tree.
++ * the page is tagged dirty in the page cache.
+  *
+  * At all times, the dirtiness of the buffers represents the dirtiness of
+  * subsections of the page.  If the page has buffers, the page dirty bit is
+@@ -1089,9 +1089,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * mark_buffer_dirty - mark a buffer_head as needing writeout
+  * @bh: the buffer_head to mark dirty
+  *
+- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
+- * backing page dirty, then tag the page as dirty in its address_space's radix
+- * tree and then attach the address_space's inode to its superblock's dirty
++ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
++ * its backing page dirty, then tag the page as dirty in the page cache
++ * and then attach the address_space's inode to its superblock's dirty
+  * inode list.
+  *
+  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
 -- 
 2.16.1
