@@ -1,105 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932969AbeCMRFW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:05:22 -0400
-Received: from gateway30.websitewelcome.com ([192.185.160.12]:19765 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932808AbeCMRFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:05:19 -0400
-Subject: Re: [PATCH] iio: potentiometer: ds1803: remove VLA usage
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313152343.GA31789@embeddedgus>
- <20180313162454.GA8769@himanshu-Vostro-3559>
- <be9b8f8d-929f-1c0b-334f-583d1c57460c@embeddedor.com>
- <20180313165906.GA11317@himanshu-Vostro-3559>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <33e96dea-1d0d-f958-88bb-7627b867d251@embeddedor.com>
-Date: Tue, 13 Mar 2018 12:05:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932755AbeCMRGT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:06:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50183 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932534AbeCMP14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 11:27:56 -0400
+Date: Tue, 13 Mar 2018 16:27:44 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Harald Geyer <harald@ccbib.org>
+Cc: =?utf-8?B?QW5kcsOp?= Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        info@olimex.com
+Subject: Re: [PATCH 1/5] arm64: dts: allwinner: a64: Add i2c0 pins
+Message-ID: <20180313152744.fb2oo44v6lr4gyha@flea>
+References: <20180312161050.7647-1-harald@ccbib.org>
+ <20180312161050.7647-2-harald@ccbib.org>
+ <5b7f1a15-011f-c386-4813-f0fb8a91dfd8@arm.com>
+ <E1evfa8-0000O7-0e@stardust.g4.wien.funkfeuer.at>
 MIME-Version: 1.0
-In-Reply-To: <20180313165906.GA11317@himanshu-Vostro-3559>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evnMU-003SWn-76
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:53392
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ahr2qnigrxqhluwv"
+Content-Disposition: inline
+In-Reply-To: <E1evfa8-0000O7-0e@stardust.g4.wien.funkfeuer.at>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--ahr2qnigrxqhluwv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 03/13/2018 11:59 AM, Himanshu Jha wrote:
-> On Tue, Mar 13, 2018 at 11:31:19AM -0500, Gustavo A. R. Silva wrote:
->>
->>
->> On 03/13/2018 11:24 AM, Himanshu Jha wrote:
->>> Hi Gustavo,
->>>
->>> On Tue, Mar 13, 2018 at 10:23:43AM -0500, Gustavo A. R. Silva wrote:
->>>> In preparation to enabling -Wvla, remove VLA. In this particular
->>>> case use macro ARRAY_SIZE so the length of array _result_ can be
->>>> computed at preprocessing time.
->>>>
->>>> The use of stack Variable Length Arrays needs to be avoided, as they
->>>> can be a vector for stack exhaustion, which can be both a runtime bug
->>>> or a security flaw. Also, in general, as code evolves it is easy to
->>>> lose track of how big a VLA can get. Thus, we can end up having runtime
->>>> failures that are hard to debug.
->>>>
->>>> Also, fixed as part of the directive to remove all VLAs from
->>>> the kernel: https://lkml.org/lkml/2018/3/7/621
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>> ---
->>>
->>> It is already applied as I had sent the patch few days ago.
->>> https://lkml.org/lkml/2018/3/10/164
->>>
->>> I specifically CC'ed you and Kees to avoid the patch collisions.
->>>
->>
->> I see. Can you please update this spreadsheet:
->>
->> https://docs.google.com/spreadsheets/d/1OcfyKK8pJ24esYhSEsW4Q2boZE7UTGbYsSEEtFXf7U0/edit
-> 
-> Updated!
-> 
-> Also,
-> 
-> drivers/iio/humidity/hts221_i2c.c:43:2: warning: ISO C90
-> forbids variable length array ‘send’ [-Wvla]
-> 
-> This was already removed in recent commit when regmap API was used.
-> 
-> "6217792 iio: humidity: hts221: add regmap API support"
-> 
-> For this I added a short note in the *Notes* column.
-> 
+On Tue, Mar 13, 2018 at 09:46:51AM +0100, Harald Geyer wrote:
+> Andr=E9 Przywara writes:
+> > On 12/03/18 16:10, Harald Geyer wrote:
+> > > Add the proper pin group node to reference in board files.
+> > >=20
+> > > Signed-off-by: Harald Geyer <harald@ccbib.org>
+> >=20
+> > That looks correct to me, so:
+> >=20
+> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> >=20
+> > But out of curiosity, what is this used for? In patch 5/5 I see it being
+> > used, but without a clue for what? Shouldn't enabling an I2C node be
+> > accompanied by some child node, presenting the device on the bus?
+> > I guess this I2C is not on some kind of "header" on that laptop?
+>=20
+> I enabled it because the ANX6345 eDP-bridge is on that bus. There is
+> no linux (mainline) driver for this chip at the moment, the bootloader
+> initializes it. However I'm using the i2c-dev driver to read (and maybe)
+> change some register values from user space.
+>=20
+> i2cdetect sees devices at 0x38, 0x39 and 0x3d - all of which might
+> be the ANX6345. I haven't looked into this in detail.
 
-Awesome.
+That's alright then, just put a comment in the DT on what this bus is
+used for.
 
-Thank you
---
-Gustavo
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ahr2qnigrxqhluwv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqn7fAACgkQ0rTAlCFN
+r3TjTxAAmmzqKb0ju/+hpLfij7Jw0EIG4a0BbeCBwIAm8CmSbN4dXhUH4RmP8AUS
+GXUUNl0iZReFDopjBbEVstQGTSrjytNhcSOb6iQXcKeTBqogU0nw/5gO06Y+wLNI
+EcFUIW99iHyUgZlSLr4CLNJuJEjJJxiZGZ4KDrx3BvluZ+Ha+iyl0qhpf2k8H0EX
+CZ+SNVjlERCCPGoG2k5Uhz9jzRkFO8rJKh42QsWtkll4vshAiawS+KLKsGaB6t+Y
+sh+UAtWWzM1tZqirNR+R4D/kgWVWwFnRDIN2Jtm+kbJQwyzOMmgj3++x/h2t2XhV
+xO77m5LagdO+oWC9vtcZCdNPwKr2VhpKHpWsm7iauyAztxU7gptDEtSKj85GIa8W
+LVD/dN5Ii5pwkT0d1GQ7D3dtyQxoDkbqGBvbfA6J5eCTzAFV9qfgXSLqXXLQuAhI
+WOEqIgjfasXGfFm8/9sGo0RvT6o961qKqZjJZIUySdyeOKra6WS6aN/RKS8SQQ9/
+rLyZvFT1oHuUoQESX1qIdbCgZ3+AHgYxF5JNL+mBIa5v+QDmUiPKJsFLaojmHa5o
+2uUdrlVz02J5EMeQX2RFruFBgZE/5u/sq5I9u5JSUaHSFJNTjkustfHb5MMWrvPU
+QGstQsmK4nuCHkcCLo6PW4/7P1mxPxmOdqGddIPHVh+zVuZuM9A=
+=fJXq
+-----END PGP SIGNATURE-----
+
+--ahr2qnigrxqhluwv--
