@@ -1,55 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751930AbeCMRi5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:38:57 -0400
-Received: from mga12.intel.com ([192.55.52.136]:7823 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751534AbeCMRi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:38:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
-   d="scan'208";a="33512766"
-Date: Tue, 13 Mar 2018 11:40:53 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@fb.com, hch@lst.de,
-        sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] nvme-pci: assign separate irq vectors for adminq and
- ioq1
-Message-ID: <20180313174052.GJ18494@localhost.localdomain>
-References: <1520935088-1343-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180313104452.GA8782@ming.t460p>
+        id S932303AbeCMRjj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:39:39 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:51999 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751696AbeCMRjh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:39:37 -0400
+X-Google-Smtp-Source: AG47ELtP1RsFDeDzjkl66/QgpC7uZh+NT27PaQP3LtBRzGdFEvPkMAyP9HcBIBF4s0wknbHz1dGJi7nP0r7A7ZPA6rc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313104452.GA8782@ming.t460p>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAD=FV=UvT-BrpZcz4RV=cRW4Nf9rBkYvc2JgcQr465NMYjAvJw@mail.gmail.com>
+References: <20180313061109.72629-1-dianders@chromium.org> <20180313061109.72629-3-dianders@chromium.org>
+ <20180313061603.jsgiumet23uqi6hl@gmail.com> <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
+ <CAKwvOdnPSMSOenPiPqBpDf=hf5q5uQ5MF0pOLAea5T5_VPhmaA@mail.gmail.com> <CAD=FV=UvT-BrpZcz4RV=cRW4Nf9rBkYvc2JgcQr465NMYjAvJw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 13 Mar 2018 10:39:36 -0700
+X-Google-Sender-Auth: mkmA12FH_CM31eIefvEz3a5K9YQ
+Message-ID: <CA+55aFzTT5fzz__pY2HhxK=GPnJ8vtpgtok672AAXfSGg+ztuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
+To: Doug Anderson <dianders@chromium.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dave Hansen <dave.hansen@intel.com>, Yang Shi <yang.s@alibaba-inc.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Charlebois <charlebm@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 06:45:00PM +0800, Ming Lei wrote:
-> On Tue, Mar 13, 2018 at 05:58:08PM +0800, Jianchao Wang wrote:
-> > Currently, adminq and ioq1 share the same irq vector which is set
-> > affinity to cpu0. If a system allows cpu0 to be offlined, the adminq
-> > will not be able work any more.
-> > 
-> > To fix this, assign separate irq vectors for adminq and ioq1. Set
-> > .pre_vectors == 1 when allocate irq vectors, then assign the first
-> > one to adminq which will have affinity cpumask with all possible
-> > cpus. On the other hand, if controller has only legacy or single
-> > -message MSI, we will setup adminq and 1 ioq and let them share
-> > the only one irq vector.
-> > 
-> > Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> 
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+On Tue, Mar 13, 2018 at 9:44 AM, Doug Anderson <dianders@chromium.org> wrote:
+>> Is there any issue if I:
+>>
+>> $ make clean
+>> $ make
+>> $ sudo make install
+>> <hack around>
+>> $ make
+>
+> I don't personally know of any problems with the above flow.
 
-Thanks, applied with an updated changelog.
+This is my workflow, and what I suggest people do - only do "make
+install" as root, everything else as a normal user.
 
-Not being able to use the admin queue is a pretty big deal, so it's pushed
-to the next nvme 4.16-rc branch. This may even be good stable material.
+And in fact, it occasionally _has_ broken, when "make install" has
+done more than just install things, and created root-owned files and
+directories (particularly the generated headers).
+
+And then I complain to people, because then things like "make clean"
+as a normal user ends up breaking too when there's some root-owned
+file.
+
+So it can break, but it's pretty rare. Usually it's something like
+"people didn't use the proper sequence to update a file only if it
+changed, and just blindly over-wrote a new version.
+
+Generally, I prefer "make install" not even checking dependencies at
+all, and just blindly copy things. And I'd definitely be ok with an
+error rather than root generating files, although then I'd not
+special-case mkcache, but all the *other* random file changes we do.
+
+If Ingo wants to build as root, maybe we could even make him set some
+environment flag to avoid errors.
+
+(But I don't actually like the patch in question, because I really
+think KBUILD_NOCACHE is much too specific a special case, and it
+should be way more generic).
+
+                Linus
