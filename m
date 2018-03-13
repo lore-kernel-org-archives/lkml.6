@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELurHlK1DKpSvJI3xAsfg2WQenMvI64VJ5GnLUhgmTnIExbDa3f1C2eaEQHE0Yt+vMFTVzzj
-ARC-Seal: i=1; a=rsa-sha256; t=1520955410; cv=none;
+X-Google-Smtp-Source: AG47ELvoFCvIQfo011fuPB4rcmXTIj2x4zsbW9WXTlFgbgIK19CDeaQ+Ywq5cOJPADVCanXfccCJ
+ARC-Seal: i=1; a=rsa-sha256; t=1520955408; cv=none;
         d=google.com; s=arc-20160816;
-        b=G3zrhGQuNNffSP9rqoFS+2+0qsrIoYCBIZeahEjejZ6/nJBmGHXboBdot++kuBG9Av
-         wE0KKyomlHcxgU1Ok9x76/N9PwlNdS1wwFue1e5suLBJJJeB6EJQSsMvNs29kL+XMdoL
-         zDKPbbe6VOrj1l/xGXLSl8bG6/48SQ3MpmWNEzFj2zzGNwV4/Shx8xbcpof7CjZDLP7l
-         ywmJBn5v4jf8WVJLcbYnGAuniuE+zZLhlr30Bv7lX9sMWaoM38uDJlsrk23HfdhNBCXk
-         eP4gVQkWWz73GU5CoFdXlrGMIPGOq1g+l4dlD35rGLJOEE+mC7hvouuEI4gbMbC2xoR0
-         b7vA==
+        b=FbDFQcUOoSj/t02c8kMsYrVrnZV/Gut6Tas7PUxu1vmb57xc8yu92dmMB1db67zVz6
+         /aonEwT2AIpf8sCGLfVvi1WAPgULieh/sbUUhYQFcxTVoMZJOjboWykT6MxgtkLTJSbn
+         ZvwduruSh3IcHj04jm9gEP09tRkMGOD/N/9dDeJ/6G1TvkFyXO8qi+60Nz3lyjfgLHYQ
+         ajcjyvoTmTw4JL6eAMDPO/uuka2Li7S6NKeizCuuK7vJRq02BcDkB36QFFZm0WJrjWQn
+         +majSflF/OKCak60noa2Likjxhw5MPSOGbdsNAukfSHbXA1wmkx4HK89FPSnxgo42Spx
+         hkmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D3z9iGZlAaCm3RoPMo9KFZ8e4MWHGZ49BgeGpCA7udA=;
-        b=G5kTbw6F++55QCXZr/440zsvOP4rmmk1iFNsNp/DI69j67zL8xvvFF/B7gYqrl6ds7
-         UOtE9ZC978ETPSIhtiJPiLr8w3HxK/58Av2Icx2fpXqmYJtyaKMjLp/Vju5i+F1g8Z2A
-         Jl6L24GL9AyJ39Z91OGdgy16gWkHdpbAJrkzu57uxJNOQi+FEGkHuGIJyjVs4PwXuFA6
-         Cw6zlNKKoMUyFWY1Gh+IvRueRiSwOB006FqL8VxftiQO1YP55tA9KRJecuTbAuuvLA9v
-         bcviMasMRB5LEvckzNKkcUn6CM+UfzcJQz6SJuwyf0DRnqmBr+sdel/96d45FJ7JYfLR
-         Z7Hw==
+        bh=KZCOAJSH9GJ6XvhuuRLmaoGXpoFLkdMpB/b1M2vHc6Y=;
+        b=hc0a7yrCpKCtS7nUxaz+Q86y9QptKBuOJhlekIwF3FerXOZd/rz1yNsouHh0pa592y
+         e+R5pzMzGAkC+kVbMlM99zGEMPOq73C/kXQKJUVKkfVqdlgjR6kSBSaIpzRiMLYEyMzu
+         kSVCKajvfH1zOmheLceO1k5sFo9UUphjKccJlJ7AvCikrfShEyl8MFYhf4YG53rNs67B
+         J1gEcoHjlP5g8SzM7vJLxcffTQ4KZ1gbecrQnzhSECId8xGNKxFVbcB+CILRhrDk8Ggw
+         X82meIZ+/M25nhgdsi6SNHJn+ge+khGkqUToVMMK8t6anqUhANiZtmm4yV/7GsMJ7sew
+         fgqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quinn Tran <quinn.tran@cavium.com>,
 	Giridhar Malavali <giridhar.malavali@cavium.com>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 041/140] scsi: qla2xxx: Fix system crash in qlt_plogi_ack_unref
-Date: Tue, 13 Mar 2018 16:24:04 +0100
-Message-Id: <20180313152500.890784748@linuxfoundation.org>
+Subject: [PATCH 4.14 040/140] scsi: qla2xxx: Remove aborting ELS IOCB call issued as part of timeout.
+Date: Tue, 13 Mar 2018 16:24:03 +0100
+Message-Id: <20180313152500.814611494@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837177283038348?=
-X-GMAIL-MSGID: =?utf-8?q?1594837340968932382?=
+X-GMAIL-THRID: =?utf-8?q?1594837174318558817?=
+X-GMAIL-MSGID: =?utf-8?q?1594837338023329408?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,27 +51,23 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Giridhar Malavali <giridhar.malavali@cavium.com>
 
-commit 19759033e0d0beed70421ab9258f5ede79e070ae upstream.
+commit bf07ef86e882013522876f7c834c8eea085f35b4 upstream.
 
-Fix system crash due to NULL pointer access.
+This fix the spinlock recursion issue seen while unloading the driver.
 
-qlt_plogi_ack_t and fc_port structures were not properly bound before
-calling qlt_plogi_ack_unref().
+14 [ffff9f2e21e03db8] native_queued_spin_lock_slowpath at ffffffffad0d8802
+15 [ffff9f2e21e03dc0] do_raw_spin_lock at ffffffffad0d99e4
+16 [ffff9f2e21e03dd8] _raw_spin_lock_irqsave at ffffffffad652471
+17 [ffff9f2e21e03e00] qla2x00_els_dcmd_iocb_timeout at ffffffffc070cd63
+18 [ffff9f2e21e03e40] qla2x00_sp_timeout at ffffffffc06f06d3 [qla2xxx]
+19 [ffff9f2e21e03e68] call_timer_fn at ffffffffad0f97d8
+20 [ffff9f2e21e03ed8] run_timer_softirq at ffffffffad0faf47
+21 [ffff9f2e21e03f68] __softirqentry_text_start at ffffffffad655f32
 
-RIP: 0010:qlt_plogi_ack_unref+0xa1/0x150 [qla2xxx]
-Call Trace:
-qla24xx_create_new_sess+0xb1/0x320 [qla2xxx]
-qla2x00_do_work+0x123/0x260 [qla2xxx]
-qla2x00_iocb_work_fn+0x30/0x40 [qla2xxx]
-process_one_work+0x1f3/0x530
-worker_thread+0x4e/0x480
-kthread+0x10c/0x140
-
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
+Fixes: 6eb54715b54bb ("qla2xxx: Added interface to send explicit LOGO.")
 Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Giridhar Malavali <giridhar.malavali@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Reviewed-by: Hannes Reinecke <hare@suse.com>
@@ -80,25 +75,32 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_os.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/scsi/qla2xxx/qla_iocb.c |   10 ----------
+ 1 file changed, 10 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -4734,11 +4734,11 @@ void qla24xx_create_new_sess(struct scsi
- 		} else {
- 			list_add_tail(&fcport->list, &vha->vp_fcports);
+--- a/drivers/scsi/qla2xxx/qla_iocb.c
++++ b/drivers/scsi/qla2xxx/qla_iocb.c
+@@ -2392,7 +2392,6 @@ qla2x00_els_dcmd_iocb_timeout(void *data
+ 	srb_t *sp = data;
+ 	fc_port_t *fcport = sp->fcport;
+ 	struct scsi_qla_host *vha = sp->vha;
+-	struct qla_hw_data *ha = vha->hw;
+ 	struct srb_iocb *lio = &sp->u.iocb_cmd;
  
--			if (pla) {
--				qlt_plogi_ack_link(vha, pla, fcport,
--				    QLT_PLOGI_LINK_SAME_WWN);
--				pla->ref_count--;
--			}
-+		}
-+		if (pla) {
-+			qlt_plogi_ack_link(vha, pla, fcport,
-+			    QLT_PLOGI_LINK_SAME_WWN);
-+			pla->ref_count--;
- 		}
- 	}
- 	spin_unlock_irqrestore(&vha->hw->tgt.sess_lock, flags);
+ 	ql_dbg(ql_dbg_io, vha, 0x3069,
+@@ -2400,15 +2399,6 @@ qla2x00_els_dcmd_iocb_timeout(void *data
+ 	    sp->name, sp->handle, fcport->d_id.b.domain, fcport->d_id.b.area,
+ 	    fcport->d_id.b.al_pa);
+ 
+-	/* Abort the exchange */
+-	if (ha->isp_ops->abort_command(sp)) {
+-		ql_dbg(ql_dbg_io, vha, 0x3070,
+-		    "mbx abort_command failed.\n");
+-	} else {
+-		ql_dbg(ql_dbg_io, vha, 0x3071,
+-		    "mbx abort_command success.\n");
+-	}
+-
+ 	complete(&lio->u.els_logo.comp);
+ }
+ 
