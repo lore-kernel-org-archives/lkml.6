@@ -1,98 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752549AbeCMJ2Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:28:24 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2905 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752164AbeCMJ2V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:28:21 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 13 Mar 2018 02:28:18 -0700
-Date: Tue, 13 Mar 2018 11:28:16 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Message-ID: <20180313092816.GW6190@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
- <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
- <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
+        id S1752353AbeCMJbj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:31:39 -0400
+Received: from mout.web.de ([212.227.17.11]:47259 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751975AbeCMJbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 05:31:38 -0400
+Subject: Re: hwmon/sch5627: Use common error handling code in sch5627_probe()
+To: Hans de Goede <hdegoede@redhat.com>, linux-hwmon@vger.kernel.org
+Cc: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>, Jonathan Cameron <jic23@kernel.org>,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
+ <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
+ <17810b74-7b72-074e-5fef-b614fcfed738@users.sourceforge.net>
+ <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <4e0856d8-3b2c-35f0-50a5-bfbe34615dfa@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 10:30:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.21.24.170]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
- (10.26.138.13)
+In-Reply-To: <e8a45f50-b625-ccb5-88cc-b888f57d1ca1@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:10LFJeklu7eHWUOxzPlZC/fg7ZNBzBaknHOisVxR+7W1Syqyrto
+ OQY+ZDPENm0+cXSyU4HsTS+p8D+t6srf30gbOGD6UuE827nYXNTAYZGdeYeSg7Hen+KGzqL
+ FVfgXZ2QQ8UGTzugTHZcmRtcFFhSFCMUSgy3wOgny+erEjpJsUCG/kyw82b3E1kZXSE+Ae7
+ Sn0uYw63SOtS0HI1c6R7w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:uJLC7GIYscU=:JObwwJ1C2BkrX7884mtf8J
+ 0QbbI/NHlSuQ+ikqPxtUOFJtsXWTSO8gpPkccBPDJsVQm8WNR10wjq4QZQKz/4kOxwJYPNkof
+ jxSfYvh/CxT8vuCt1+JDiJDrjpsDm8AvY3JBToJcrtBsa7Ueiv7ODtolnDDt8tIUo/fcaZu7q
+ CIFcVGq1UfsBdwCX3xzy9nfoExAvS1UGm/UYXPRfcJMlU55t/DJdEScpvzhV5eMzjmDzXVDB1
+ Z6Hl85KNbQF6E7SWbE5UZDOTQ0mYqIQa24wZbB6xQTB4Lyb+gRiqlSEPEDzdQJD3yDbk01CM7
+ A8/Ru0+vVPaR/vFZGzYcm+dgjacYKDsZcpMCUVsnmkVwilgZdf1/PZ+eRnozUiHVv224Xoy93
+ RfR7I3ls3Rm1/JyBrctZfXzMaLCwhVAKoRVtLA3mrR6z5lu8rTPgjoV9dNiR97/9Ou7F1Jez5
+ fj5lYk/whwQcQqdf/fdRWuYi1F2YRS9hK59QWEZQ4nLAHCG4gosyQjoTrZWg5btLHOdQ/KJIZ
+ V/c5p0WiCId18qd/+VWqbuQrsaiz3gdyI9nKO4gdO9suTi/DSB5JzVh0lGMw9UnnOFLvQEpw2
+ FXkj+CT1IBNn1zkThdqf/Bf9Sv7dsGmBJY01dmh3VrS9zL6Os0VrMkGoq5pxaRyAo1u7ZFu2C
+ SFBF9n+CJJ8tbAKxaEF32tWqRbA0PYROlamA5BZLrN4srf9nRPckChbKqd9LPzwaJyiLXzs8n
+ SPjw1iy+U2ze5fzBrRQ0fgdiggPb5eyUCY8foeRZlQa4f3yPPsJLduirY0m3Wertf5o1cAoyy
+ 5FTJnUDLFLlpBYfLdvdcddWZwKvo57pCVj3kK4fsUS2e9WDy2M=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:14:17AM +0000, Jon Hunter wrote:
+>  1 file changed, 29 insertions(+), 31 deletions(-)
 > 
-> On 09/03/18 08:14, Peter De Schrijver wrote:
-> > On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
-> >>
-> >> On 06/02/18 16:34, Peter De Schrijver wrote:
-> >>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> >>> support in this driver. Also allow for the case where the CPU voltage is
-> >>> controlled directly by the DFLL rather than by a separate regulator object.
-> >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
-> >>>  1 file changed, 8 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> index 4353025..f8e01a8 100644
-> >>> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> >>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >>>  {
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >>>  	clk_disable_unprepare(priv->dfll_clk);
-> >>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>> +	if (priv->vdd_cpu_reg)
-> >>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >>>  }
-> >>>  
-> >>> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >>>  		return -ENODEV;
-> >>>  
-> >>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> >>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> >>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> >>> -		goto out_put_np;
-> >>> -	}
-> >>> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> >>> +		priv->vdd_cpu_reg = NULL;
-> >>> +	else
-> >>> +		return -EPROBE_DEFER;
-> >>
-> >> I am still not sure that we should rely on the fact that the regulator
-> >> is not present in DT to imply that we do not need it. I think that we
-> >> should be checking if we are using I2C mode here.
-> >>
-> > 
-> > The cpufreq driver doesn't know this however. Also the current approach of
-> > setting the same voltage when switching to pll_x is incorrect. The CVB
-> > tables when using pll_x include more margin than when using the DFLL.
-> 
-> Ah yes I see now. However, we are going to need to update the DT doc,
-> because 'vdd-cpu-supply' is listed as required.
-> 
+> So you are asking people to review 60 changed lines to save 2,
 
-Ok.
+A bit of object code reduction might become useful also in this case.
 
-Peter.
+
+> that alone should be the point where you stop yourself from
+> *even* sending this patch.
+
+I proposed just another collateral evolution.
+
+
+> Next time before you send a patch please carefully think if the
+> saving is worth the combination of reviewers time + the risk of
+> regressions (and keep in mind that both the reviewers time and
+> the risk of regressions cost increase for more complex changes).
+
+Source code transformations were integrated in other software areas
+according to such a change pattern.
+
+
+> As for this specific discussion, there are certain "design-patterns"
+> in the kernel, goto style error handling is one of them, the pattern
+> there ALWAYS is:
+…
+> Notice the fall-thoughs those are ALWAYS there, never, ever is
+> there a goto after a cleanup label.
+
+It seems that I present an unusual update suggestion as a software
+design variant.
+
+
+> Your patches black goto magic completely messes this up
+
+You can view the proposal in such a way.
+
+
+> and clearly falls under the CS101 rule: never use goto.
+
+There might a target conflict with information from the section
+“7) Centralized exiting of functions” in the document “coding-style.rst”.
+
+Regards,
+Markus
