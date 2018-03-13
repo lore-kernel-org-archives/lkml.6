@@ -1,140 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeCMMvG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:51:06 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:39882 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751405AbeCMMvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:51:05 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, cdall@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH] KVM: arm/arm64: replacing per-VM's per-CPU variable
-Date: Wed, 14 Mar 2018 05:03:13 +0800
-Message-Id: <1520974993-40423-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-03-13 20:50:59,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-03-13 20:50:50,
-        Serialize complete at 2018-03-13 20:50:50
-X-MAIL: mse01.zte.com.cn w2DCossS097844
+        id S932404AbeCMMvw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:51:52 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:40034 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeCMMvu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:51:50 -0400
+X-Google-Smtp-Source: AG47ELsiqN0TBF9XP4nXpdQ2HnidgD6N1E9CQ7Tn0u/FODa1jq+RjeQ0nVJlntEMqzwROElLbCVTznenm3QePHDi+mM=
+MIME-Version: 1.0
+In-Reply-To: <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+ <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+ <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
+ <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
+ <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
+ <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
+ <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
+ <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com> <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 14:51:49 +0200
+Message-ID: <CAHp75Vdds=iv_aExbAWZBdcrVyR=zzb+BY7_=bNovrrc0oxwsA@mail.gmail.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi <linux-efi@vger.kernel.org>, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using a global per-CPU variable instead of per-VM's per-CPU variable.
+On Tue, Mar 13, 2018 at 9:47 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> On 12-03-18 20:55, Thiebaud Weksteen wrote:
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- arch/arm/include/asm/kvm_host.h   |  3 ---
- arch/arm64/include/asm/kvm_host.h |  3 ---
- virt/kvm/arm/arm.c                | 26 ++++++--------------------
- 3 files changed, 6 insertions(+), 26 deletions(-)
+>> Hans, you said you configured the tablet to use the 32-bit version of grub
+>> instead
+>> of 64. Why's that?
 
-diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-index 248b930..4224f3b 100644
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -59,9 +59,6 @@ struct kvm_arch {
- 	/* VTTBR value associated with below pgd and vmid */
- 	u64    vttbr;
- 
--	/* The last vcpu id that ran on each physical CPU */
--	int __percpu *last_vcpu_ran;
--
- 	/*
- 	 * Anything that is not used directly from assembly code goes
- 	 * here.
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 596f8e4..5035a08 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -67,9 +67,6 @@ struct kvm_arch {
- 	/* VTTBR value associated with above pgd and vmid */
- 	u64    vttbr;
- 
--	/* The last vcpu id that ran on each physical CPU */
--	int __percpu *last_vcpu_ran;
--
- 	/* The maximum number of vCPUs depends on the used GIC model */
- 	int max_vcpus;
- 
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 86941f6..a67ffb0 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -59,6 +59,8 @@
- /* Per-CPU variable containing the currently running vcpu. */
- static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
- 
-+static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_last_ran_vcpu);
-+
- /* The VMID used in the VTTBR */
- static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
- static u32 kvm_next_vmid;
-@@ -115,18 +117,11 @@ void kvm_arch_check_processor_compat(void *rtn)
-  */
- int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- {
--	int ret, cpu;
-+	int ret;
- 
- 	if (type)
- 		return -EINVAL;
- 
--	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
--	if (!kvm->arch.last_vcpu_ran)
--		return -ENOMEM;
--
--	for_each_possible_cpu(cpu)
--		*per_cpu_ptr(kvm->arch.last_vcpu_ran, cpu) = -1;
--
- 	ret = kvm_alloc_stage2_pgd(kvm);
- 	if (ret)
- 		goto out_fail_alloc;
-@@ -147,9 +142,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 	return ret;
- out_free_stage2_pgd:
- 	kvm_free_stage2_pgd(kvm);
--out_fail_alloc:
--	free_percpu(kvm->arch.last_vcpu_ran);
--	kvm->arch.last_vcpu_ran = NULL;
-+out_fail_alloc:
- 	return ret;
- }
- 
-@@ -179,9 +172,6 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
- 
- 	kvm_vgic_destroy(kvm);
- 
--	free_percpu(kvm->arch.last_vcpu_ran);
--	kvm->arch.last_vcpu_ran = NULL;
--
- 	for (i = 0; i < KVM_MAX_VCPUS; ++i) {
- 		if (kvm->vcpus[i]) {
- 			kvm_arch_vcpu_free(kvm->vcpus[i]);
-@@ -343,17 +333,13 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
- 
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
--	int *last_ran;
--
--	last_ran = this_cpu_ptr(vcpu->kvm->arch.last_vcpu_ran);
--
- 	/*
- 	 * We might get preempted before the vCPU actually runs, but
- 	 * over-invalidation doesn't affect correctness.
- 	 */
--	if (*last_ran != vcpu->vcpu_id) {
-+	if (per_cpu(kvm_last_ran_vcpu, cpu) != vcpu) {
- 		kvm_call_hyp(__kvm_tlb_flush_local_vmid, vcpu);
--		*last_ran = vcpu->vcpu_id;
-+		per_cpu(kvm_last_ran_vcpu, cpu) = vcpu;
- 	}
- 
- 	vcpu->cpu = cpu;
+> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
+> UEFI,
+> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
+> were
+> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+
+Almost.
+
+Lenovo Thinkpad 10 tablet has 64-bit firmware.
+
 -- 
-1.8.3.1
+With Best Regards,
+Andy Shevchenko
