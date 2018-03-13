@@ -1,260 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933296AbeCMLyc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:54:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:36504 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933189AbeCMLwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:52:17 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
-        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
-        ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
-        ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v4 14/22] arm64: capabilities: Add support for features enabled early
-Date: Tue, 13 Mar 2018 11:51:12 +0000
-Message-Id: <20180313115120.17256-15-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313115120.17256-1-suzuki.poulose@arm.com>
-References: <20180313115120.17256-1-suzuki.poulose@arm.com>
+        id S933325AbeCMLyy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:54:54 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:32443 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933133AbeCMLyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:54:50 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180313115448epoutp04acccc9261580792a72ce44e499948c90~beMVulben1469714697epoutp04F
+X-AuditID: b6c32a47-187ff7000000100c-79-5aa7bc077dfc
+Subject: Re: [RFC 1/2] pci: dwc: pci-exynos: modify the Kconfig dependency
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, krzk@kernel.org, jingoohan1@gmail.com,
+        kgene@kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Message-id: <39521cb5-07a5-24b5-b545-a01c730f1985@samsung.com>
+Date: Tue, 13 Mar 2018 20:54:46 +0900
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+        Thunderbird/52.5.0
+MIME-version: 1.0
+In-reply-to: <20180313111211.GA15480@e107981-ln.cambridge.arm.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-US
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdljTVJd9z/Iog8+zzS3mHznHarHiy0x2
+        i/7Hr5ktzp/fwG5xedccNouz846zWcw4v4/J4s3vF+wWrXuPsDtweqyZt4bRY+esu+wem1Z1
+        snl83iQXwBKVapORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
+        lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYp2tDQSM/QwFzPyMhIz8Q41srIFKgk
+        ITWjd2FuQS9XxdOpC9kbGLs4uhg5OSQETCSOt05k7GLk4hAS2MEocb7hBRuE851R4uXCX0ww
+        VZfv72OFSGxglLg4YTMzhHOXUaL//2qwKmEBL4nO2QfZQWwRAUOJnlMgcS4OZoHTjBJnHrwE
+        S7AJ6Ehs/3YcrIFXwE7iys+VYHEWAVWJ3fdOM4LYogJhEkdnfmKEqBGU+DH5HguIzSngJNG9
+        ey8biM0soCnx4sskFghbXKK59SaULS+xec1bsOskBO6zSXzuP88O8YOLxJXmeVC2sMSr41ug
+        bGmJZ6s2MkLY7YwSZ2cLQzRPYZRYMaMbGgDGEs8WdjFBbOCT6Dj8F6iZAyjOK9HRJgRR4iFx
+        ZONjqJmOEg+er2OBBNFxRolLbfdZJzDKzULy0CwkT8xC8sQsJE8sYGRZxSiWWlCcm55abFRg
+        rFecmFtcmpeul5yfu4kRnBi13Hcwbjvnc4hRgINRiYfXoHlZlBBrYllxZe4hRgkOZiURXrOe
+        5VFCvCmJlVWpRfnxRaU5qcWHGE2BAT6RWUo0OR+YtPNK4g1NLA1MzMyMzM0sgOlNnLc1wCVK
+        SCA9sSQ1OzW1ILUIpo+Jg1OqgbH6bGqtgavWj/+CJ5fPqdq1ZdG3HHEzUYHURVxnbjgdSlig
+        ZB/08dHkXVPMzgtUb/lw/z/H5LdPeb4vWvugwS25NebE2rXlLlm7jXr6RQ74TyzZtW7Rq98a
+        6xyv/JY57HZoq/8Do2OvJxRWrkta5uYf0GsfN5drjvhltcNCJ51/pN1dJv2Bb52eEktxRqKh
+        FnNRcSIAfLkXoKIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsVy+t9jQV32PcujDO63M1vMP3KO1WLFl5ns
+        Fv2PXzNbnD+/gd3i8q45bBZn5x1ns5hxfh+TxZvfL9gtWvceYXfg9Fgzbw2jx85Zd9k9Nq3q
+        ZPP4vEkugCWKyyYlNSezLLVI3y6BK6N3YW5BL1fF06kL2RsYuzi6GDk5JARMJC7f38faxcjF
+        ISSwjlHi6oF2ZgjnPqPElBmdbCBVwgJeEp2zD7KD2CIChhI9p1YzgRQxC5xmlHjybDsrSEJI
+        4CSjREeLHYjNJqAjsf3bcSYQm1fATuLKz5VgzSwCqhK7751mBLFFBcIkejZdZoSoEZT4Mfke
+        C4jNKeAk0b17L9BiDqAF6hJTpuSChJkFxCWaW2+yQNjyEpvXvGWewCgwC0n3LISOWUg6ZiHp
+        WMDIsopRMrWgODc9t9iowCgvtVyvODG3uDQvXS85P3cTIzAath3W6t/B+HhJ/CFGAQ5GJR7e
+        jtZlUUKsiWXFlbmHGCU4mJVEeM16lkcJ8aYkVlalFuXHF5XmpBYfYpTmYFES5+XPPxYpJJCe
+        WJKanZpakFoEk2Xi4JRqYPSbp3n10zOZjQmuqbfOX1byuXRvTq2YW+BG3wNTpVS+zfK5HpBf
+        G/PXhM9AbeLTtbGii65sMr7i0mAs+HjOlfk6xjV/DNeJXV3XlfJo305GVaElMYatyTeiO7Qm
+        7JwiI9pg2fsp6u0EnuU7E6+FM/KInbpcfvpGepMYR+7zrKvFl8s7Zsnuk1RiKc5INNRiLipO
+        BABIcZpFggIAAA==
+X-CMS-MailID: 20180313115447epcas2p3110ae14ff7c81ca2e29ea9f85c03b503
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20171221121409epcas1p2af291857b9df115d2dec9a3d3300e0aa
+X-RootMTR: 20171221121409epcas1p2af291857b9df115d2dec9a3d3300e0aa
+References: <CGME20171221121409epcas1p2af291857b9df115d2dec9a3d3300e0aa@epcas1p2.samsung.com>
+        <20171221121408.22636-1-jh80.chung@samsung.com>
+        <20180313111211.GA15480@e107981-ln.cambridge.arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel detects and uses some of the features based on the boot
-CPU and expects that all the following CPUs conform to it. e.g,
-with VHE and the boot CPU running at EL2, the kernel decides to
-keep the kernel running at EL2. If another CPU is brought up without
-this capability, we use custom hooks (via check_early_cpu_features())
-to handle it. To handle such capabilities add support for detecting
-and enabling capabilities based on the boot CPU.
+Dear Lorenzo,
 
-A bit is added to indicate if the capability should be detected
-early on the boot CPU. The infrastructure then ensures that such
-capabilities are probed and "enabled" early on in the boot CPU
-and, enabled on the subsequent CPUs.
+On 03/13/2018 08:12 PM, Lorenzo Pieralisi wrote:
+> Hi Jaehoon,
+> 
+> On Thu, Dec 21, 2017 at 09:14:06PM +0900, Jaehoon Chung wrote:
+>> PCI_EXYNOS has the dependency with SOC_EXYNOS5440.
+>> It's modified to ARCH_EXYNOS from SOC_EXYNOS5440, because other
+>> SoCs needs to use this driver.
+>>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> ---
+>>  drivers/pci/dwc/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
+>> index 113e09440f85..0ff9795df8e8 100644
+>> --- a/drivers/pci/dwc/Kconfig
+>> +++ b/drivers/pci/dwc/Kconfig
+>> @@ -65,7 +65,7 @@ config PCIE_DW_PLAT
+>>  config PCI_EXYNOS
+>>  	bool "Samsung Exynos PCIe controller"
+>>  	depends on PCI
+>> -	depends on SOC_EXYNOS5440
+>> +	depends on ARCH_EXYNOS
+>>  	depends on PCI_MSI_IRQ_DOMAIN
+>>  	select PCIEPORTBUS
+>>  	select PCIE_DW_HOST
+> 
+> This patch fell through the cracks, is it still needed ? Please let
+> me know and I will apply it if it is, thank you very much.
 
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/cpufeature.h | 48 +++++++++++++++++++++++++------
- arch/arm64/kernel/cpufeature.c      | 57 ++++++++++++++++++++++++++++---------
- 2 files changed, 83 insertions(+), 22 deletions(-)
+I will resend the patches for supporting exynos5433(TM2 board) without RFC.
+I have already prepared the patches. now i'm doing some more test and cleaning code.
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 4f050259dff3..2f5edefdff99 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -108,7 +108,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *    value of a field in CPU ID feature register or checking the cpu
-  *    model. The capability provides a call back ( @matches() ) to
-  *    perform the check. Scope defines how the checks should be performed.
-- *    There are two cases:
-+ *    There are three cases:
-  *
-  *     a) SCOPE_LOCAL_CPU: check all the CPUs and "detect" if at least one
-  *        matches. This implies, we have to run the check on all the
-@@ -121,6 +121,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *        capability relies on a field in one of the CPU ID feature
-  *        registers, we use the sanitised value of the register from the
-  *        CPU feature infrastructure to make the decision.
-+ *		Or
-+ *     c) SCOPE_BOOT_CPU: Check only on the primary boot CPU to detect the
-+ *        feature. This category is for features that are "finalised"
-+ *        (or used) by the kernel very early even before the SMP cpus
-+ *        are brought up.
-  *
-  *    The process of detection is usually denoted by "update" capability
-  *    state in the code.
-@@ -140,6 +145,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *    CPUs are treated "late CPUs" for capabilities determined by the boot
-  *    CPU.
-  *
-+ *    At the moment there are two passes of finalising the capabilities.
-+ *      a) Boot CPU scope capabilities - Finalised by primary boot CPU via
-+ *         setup_boot_cpu_capabilities().
-+ *      b) Everything except (a) - Run via setup_system_capabilities().
-+ *
-  * 3) Verification: When a CPU is brought online (e.g, by user or by the
-  *    kernel), the kernel should make sure that it is safe to use the CPU,
-  *    by verifying that the CPU is compliant with the state of the
-@@ -148,12 +158,21 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *	secondary_start_kernel()-> check_local_cpu_capabilities()
-  *
-  *    As explained in (2) above, capabilities could be finalised at
-- *    different points in the execution. Each CPU is verified against the
-- *    "finalised" capabilities and if there is a conflict, the kernel takes
-- *    an action, based on the severity (e.g, a CPU could be prevented from
-- *    booting or cause a kernel panic). The CPU is allowed to "affect" the
-- *    state of the capability, if it has not been finalised already.
-- *    See section 5 for more details on conflicts.
-+ *    different points in the execution. Each newly booted CPU is verified
-+ *    against the capabilities that have been finalised by the time it
-+ *    boots.
-+ *
-+ *	a) SCOPE_BOOT_CPU : All CPUs are verified against the capability
-+ *	except for the primary boot CPU.
-+ *
-+ *	b) SCOPE_LOCAL_CPU, SCOPE_SYSTEM: All CPUs hotplugged on by the
-+ *	user after the kernel boot are verified against the capability.
-+ *
-+ *    If there is a conflict, the kernel takes an action, based on the
-+ *    severity (e.g, a CPU could be prevented from booting or cause a
-+ *    kernel panic). The CPU is allowed to "affect" the state of the
-+ *    capability, if it has not been finalised already. See section 5
-+ *    for more details on conflicts.
-  *
-  * 4) Action: As mentioned in (2), the kernel can take an action for each
-  *    detected capability, on all CPUs on the system. Appropriate actions
-@@ -202,15 +221,26 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  */
- 
- 
--/* Decide how the capability is detected. On a local CPU vs System wide */
-+/*
-+ * Decide how the capability is detected.
-+ * On any local CPU vs System wide vs the primary boot CPU
-+ */
- #define ARM64_CPUCAP_SCOPE_LOCAL_CPU		((u16)BIT(0))
- #define ARM64_CPUCAP_SCOPE_SYSTEM		((u16)BIT(1))
-+/*
-+ * The capabilitiy is detected on the Boot CPU and is used by kernel
-+ * during early boot. i.e, the capability should be "detected" and
-+ * "enabled" as early as possibly on all booting CPUs.
-+ */
-+#define ARM64_CPUCAP_SCOPE_BOOT_CPU		((u16)BIT(2))
- #define ARM64_CPUCAP_SCOPE_MASK			\
- 	(ARM64_CPUCAP_SCOPE_SYSTEM	|	\
--	 ARM64_CPUCAP_SCOPE_LOCAL_CPU)
-+	 ARM64_CPUCAP_SCOPE_LOCAL_CPU	|	\
-+	 ARM64_CPUCAP_SCOPE_BOOT_CPU)
- 
- #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
- #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
-+#define SCOPE_BOOT_CPU				ARM64_CPUCAP_SCOPE_BOOT_CPU
- #define SCOPE_ALL				ARM64_CPUCAP_SCOPE_MASK
- 
- /*
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 0bbab4bd7644..e9e81aabfe91 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -507,7 +507,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
- }
- 
- extern const struct arm64_cpu_capabilities arm64_errata[];
--static void update_cpu_capabilities(u16 scope_mask);
-+static void __init setup_boot_cpu_capabilities(void);
- 
- void __init init_cpu_features(struct cpuinfo_arm64 *info)
- {
-@@ -553,10 +553,10 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 	}
- 
- 	/*
--	 * Run the errata work around and local feature checks on the
--	 * boot CPU, once we have initialised the cpu feature infrastructure.
-+	 * Detect and enable early CPU capabilities based on the boot CPU,
-+	 * after we have initialised the CPU feature infrastructure.
- 	 */
--	update_cpu_capabilities(SCOPE_LOCAL_CPU);
-+	setup_boot_cpu_capabilities();
- }
- 
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-@@ -1304,13 +1304,24 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 
- 		if (caps->cpu_enable) {
- 			/*
--			 * Use stop_machine() as it schedules the work allowing
--			 * us to modify PSTATE, instead of on_each_cpu() which
--			 * uses an IPI, giving us a PSTATE that disappears when
--			 * we return.
-+			 * Capabilities with SCOPE_BOOT_CPU scope are finalised
-+			 * before any secondary CPU boots. Thus, each secondary
-+			 * will enable the capability as appropriate via
-+			 * check_local_cpu_capabilities(). The only exception is
-+			 * the boot CPU, for which the capability must be
-+			 * enabled here. This approach avoids costly
-+			 * stop_machine() calls for this case.
-+			 *
-+			 * Otherwise, use stop_machine() as it schedules the
-+			 * work allowing us to modify PSTATE, instead of
-+			 * on_each_cpu() which uses an IPI, giving us a PSTATE
-+			 * that disappears when we return.
- 			 */
--			stop_machine(__enable_cpu_capability, (void *)caps,
--				     cpu_online_mask);
-+			if (scope_mask & SCOPE_BOOT_CPU)
-+				caps->cpu_enable(caps);
-+			else
-+				stop_machine(__enable_cpu_capability,
-+					     (void *)caps, cpu_online_mask);
- 		}
- 	}
- }
-@@ -1393,6 +1404,12 @@ static void check_early_cpu_features(void)
- {
- 	verify_cpu_run_el();
- 	verify_cpu_asid_bits();
-+	/*
-+	 * Early features are used by the kernel already. If there
-+	 * is a conflict, we cannot proceed further.
-+	 */
-+	if (!verify_local_cpu_caps(SCOPE_BOOT_CPU))
-+		cpu_panic_kernel();
- }
- 
- static void
-@@ -1435,7 +1452,12 @@ static void verify_sve_features(void)
-  */
- static void verify_local_cpu_capabilities(void)
- {
--	if (!verify_local_cpu_caps(SCOPE_ALL))
-+	/*
-+	 * The capabilities with SCOPE_BOOT_CPU are checked from
-+	 * check_early_cpu_features(), as they need to be verified
-+	 * on all secondary CPUs.
-+	 */
-+	if (!verify_local_cpu_caps(SCOPE_ALL & ~SCOPE_BOOT_CPU))
- 		cpu_die_early();
- 
- 	verify_local_elf_hwcaps(arm64_elf_hwcaps);
-@@ -1467,6 +1489,14 @@ void check_local_cpu_capabilities(void)
- 		verify_local_cpu_capabilities();
- }
- 
-+static void __init setup_boot_cpu_capabilities(void)
-+{
-+	/* Detect capabilities with either SCOPE_BOOT_CPU or SCOPE_LOCAL_CPU */
-+	update_cpu_capabilities(SCOPE_BOOT_CPU | SCOPE_LOCAL_CPU);
-+	/* Enable the SCOPE_BOOT_CPU capabilities alone right away */
-+	enable_cpu_capabilities(SCOPE_BOOT_CPU);
-+}
-+
- DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
- EXPORT_SYMBOL(arm64_const_caps_ready);
- 
-@@ -1488,10 +1518,11 @@ static void __init setup_system_capabilities(void)
- 	/*
- 	 * We have finalised the system-wide safe feature
- 	 * registers, finalise the capabilities that depend
--	 * on it. Also enable all the available capabilities.
-+	 * on it. Also enable all the available capabilities,
-+	 * that are not enabled already.
- 	 */
- 	update_cpu_capabilities(SCOPE_SYSTEM);
--	enable_cpu_capabilities(SCOPE_ALL);
-+	enable_cpu_capabilities(SCOPE_ALL & ~SCOPE_BOOT_CPU);
- }
- 
- void __init setup_cpu_features(void)
--- 
-2.14.3
+Best Regards,
+Jaehoon Chung
+
+> 
+> Lorenzo
+> 
+> 
+> 
