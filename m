@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuBhpax7g9do9A0WHPPyqd7/7CcPEbwVaHwka5nqgVBaWHUmFND6g5XpQapyk+1z5TlwHfV
-ARC-Seal: i=1; a=rsa-sha256; t=1520955465; cv=none;
+X-Google-Smtp-Source: AG47ELswRNMcA/ZiYlue9W/t4qrjC27zsdBME9mX7d26BaUjZat9r4UjJK5TecTUdYu9CiPTmdxt
+ARC-Seal: i=1; a=rsa-sha256; t=1520955462; cv=none;
         d=google.com; s=arc-20160816;
-        b=qEArwhZDwVE5/zBx9n7hjDl+07E4aGCo91bmJnZSUhcmvO83ET/5BtRN4CoZWWyKbG
-         nHtjrWBlQTk9fcIrvh8tZQ8qZ2i5sCICtNLZkBtX9DZjLpkOSyZc3LAu5hzaHNDg7aVK
-         dVVTiuLjyTccqpwDMeqoyB8zZ0RWHXnOOgi9Uss0Fqd8cujPbxsHfUYlzEkuocFe5f0q
-         pw8USlP78Lkb64N18+HKXMTev2F8soM7LFx9o9Rm0GUk/gAEILKIZ4sRMW+0wVXyq95j
-         hN2zwEUYA+N/DiVGWle41fH3s3I1czkhk7EH0ci9WIiHhbW3jYrsNWXp1DFz+Qt7Vq1h
-         Oh5w==
+        b=gEtHDbPxuckyuGzyzVinwU5A5ziYWqfoXxK9yxuB16XiEK3gc/Rm6mlSyG7svzdVTo
+         yCe6j+Gf6Jjo8jjehmn0LwlrfmaI/IIDs6PclHPtvqssb3QrRjghwgaJre+EW/YDCpOQ
+         U1zANwCO2BV2FQ9ZTz4oq5fXbXh3PtR+j1Aa9xTT25QHPRIdQ7mCjv4FD57dblqJji4M
+         sCTduPe6fEVnN062SqqyETbYIr0K7+WaXavYZZOS0SxarYqBo+/rzzJG3yUidTiIA4lJ
+         uU3ztPvY3FpwnpS3S0fZaJ88RvFS4sM05NFh81ZcGmH32+jkXzSGxB02xC5dwVJ9P35f
+         AGtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=z5gXOdDkEBGFLWhRwIEltBZ052wIYg/842rhaBCI8Bg=;
-        b=F8tbeciQYyLC+wbJOpnM9ZpTEDX7QEoEnQ/0oiB+KHPSEAJ4wDsQ93UaE1zNSkKYBX
-         5nZr2E8QGStpaEux/hvGKJLtF3ymDL4+mYsq2Subi4y31rRGYfoYVCUbldhT5v4whCax
-         08b3Q29rZXYVJAABDR2yJslNxNdPFzKY9grthRRRTGZoZcZ/WcKwyCJ+XLqoZqEvxkUO
-         bJqfbrihrsOHGtU60p+/+5fnYCc5EM5Fiuz6VZtmgo8jCEl1JAU08YV5z3ZLJIpAvVI8
-         yLq3ZTr5gCeGt9TCmJxOB7CJwqTfAjzzh7OIoS29L/9/E3kLXyl8ga0q6jxcQeg/+2jE
-         cFoQ==
+        bh=9Eo0oULG5BqyHHdADhzAGvu1kd+9zHGdVzdi07wapP8=;
+        b=S3SZpC8LONoPjRsh5Bl1Am+sQtClQGkpiBSriojO738prci5101mVaxa3wKUeHQRNO
+         UgcU19mr6AYFfEFVb4O3TkjmPvRwPU3+anhpk2mNdf8mnc6S9LDY/9u0j2ffb7oln+Gn
+         CxKKbpTT1VDhjCfWjS0mZPKshRdp0SZsaXyCMJFTxLX5U5x4yQv+XF+VOJ8BsdIzcStQ
+         MTiYLY2V7UQW5AwKSrG4xZbj1jcHLu3jOXvKlNXaGgGrYWYfmRcXrY6WYUV0u70Ru4RI
+         29FcKATHuEmWG1YLkxivkX1bD3LVhG/Ta/gqmuRzlYi4ylyHPZoZiVCD8li/Z4mk5QaO
+         J2Jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Natanael Copa <ncopa@alpinelinux.org>,
+	Damien Le Moal <damien.lemoal@wdc.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Alexandre Oliva <oliva@gnu.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Hannes Reinecke <hare@suse.com>,
 	Johannes Thumshirn <jthumshirn@suse.de>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 059/140] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
-Date: Tue, 13 Mar 2018 16:24:22 +0100
-Message-Id: <20180313152502.222131015@linuxfoundation.org>
+Subject: [PATCH 4.14 058/140] scsi: core: Avoid that ATA error handling can trigger a kernel hang or oops
+Date: Tue, 13 Mar 2018 16:24:21 +0100
+Message-Id: <20180313152502.166776271@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836882147942861?=
-X-GMAIL-MSGID: =?utf-8?q?1594837398509106558?=
+X-GMAIL-THRID: =?utf-8?q?1594836878897044643?=
+X-GMAIL-MSGID: =?utf-8?q?1594837395351072329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,118 +55,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
+commit 3be8828fc507cdafe7040a3dcf361a2bcd8e305b upstream.
 
-This patch fixes NULL pointer crash due to active timer running for abort
-IOCB.
+Avoid that the recently introduced call_rcu() call in the SCSI core
+triggers a double call_rcu() call.
 
->From crash dump analysis it was discoverd that get_next_timer_interrupt()
-encountered a corrupted entry on the timer list.
-
- #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
-    [exception RIP: get_next_timer_interrupt+440]
-    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
-    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
-    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
-    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
-    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
-    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-
-Looking at the assembly of get_next_timer_interrupt(), address came
-from %r8 (ffff95e1f6451188) which is pointing to list_head with single
-entry at ffff95e5ff621178.
-
- 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
- 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
- 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
- 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
- 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
-
- crash> rd ffff95e1f6451188 10
- ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
- ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
- ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
- ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
- ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
-
- crash> rd ffff95e5ff621178 10
- ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
- ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
- ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
- ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
- ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
-
- ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
-
- CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
- ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
-   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
-   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
-   FREE / [ALLOCATED]
-    ffff95e5ff621080  (cpu 6 cache)
-
-Examining the contents of that memory reveals a pointer to a constant string
-in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
-
- crash> rd ffffffffc059277c 20
- ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
- ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
- ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
- ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
- ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
- ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
- ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
- ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
- ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
- ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
-
- crash> struct -ox srb_iocb
- struct srb_iocb {
-           union {
-               struct {...} logio;
-               struct {...} els_logo;
-               struct {...} tmf;
-               struct {...} fxiocb;
-               struct {...} abt;
-               struct ct_arg ctarg;
-               struct {...} mbx;
-               struct {...} nack;
-    [0x0 ] } u;
-    [0xb8] struct timer_list timer;
-    [0x108] void (*timeout)(void *);
- }
- SIZE: 0x110
-
- crash> ! bc
- ibase=16
- obase=10
- B8+40
- F8
-
-The object is a srb_t, and at offset 0xf8 within that structure
-(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
-
-Cc: <stable@vger.kernel.org> #4.4+
-Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reported-by: Natanael Copa <ncopa@alpinelinux.org>
+Reported-by: Damien Le Moal <damien.lemoal@wdc.com>
+References: https://bugzilla.kernel.org/show_bug.cgi?id=198861
+Fixes: 3bd6f43f5cb3 ("scsi: core: Ensure that the SCSI error handler gets woken up")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Tested-by: Damien Le Moal <damien.lemoal@wdc.com>
+Cc: Natanael Copa <ncopa@alpinelinux.org>
+Cc: Damien Le Moal <damien.lemoal@wdc.com>
+Cc: Alexandre Oliva <oliva@gnu.org>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/hosts.c      |    3 ---
+ drivers/scsi/scsi_error.c |    5 +++--
+ drivers/scsi/scsi_lib.c   |    2 ++
+ include/scsi/scsi_cmnd.h  |    3 +++
+ include/scsi/scsi_host.h  |    2 --
+ 5 files changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1357,6 +1357,7 @@ qla24xx_abort_sp_done(void *ptr, int res
- 	srb_t *sp = ptr;
- 	struct srb_iocb *abt = &sp->u.iocb_cmd;
+--- a/drivers/scsi/hosts.c
++++ b/drivers/scsi/hosts.c
+@@ -328,8 +328,6 @@ static void scsi_host_dev_release(struct
+ 	if (shost->work_q)
+ 		destroy_workqueue(shost->work_q);
  
-+	del_timer(&sp->u.iocb_cmd.timer);
- 	complete(&abt->u.abt.comp);
+-	destroy_rcu_head(&shost->rcu);
+-
+ 	if (shost->shost_state == SHOST_CREATED) {
+ 		/*
+ 		 * Free the shost_dev device name here if scsi_host_alloc()
+@@ -404,7 +402,6 @@ struct Scsi_Host *scsi_host_alloc(struct
+ 	INIT_LIST_HEAD(&shost->starved_list);
+ 	init_waitqueue_head(&shost->host_wait);
+ 	mutex_init(&shost->scan_mutex);
+-	init_rcu_head(&shost->rcu);
+ 
+ 	index = ida_simple_get(&host_index_ida, 0, 0, GFP_KERNEL);
+ 	if (index < 0)
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -222,7 +222,8 @@ static void scsi_eh_reset(struct scsi_cm
+ 
+ static void scsi_eh_inc_host_failed(struct rcu_head *head)
+ {
+-	struct Scsi_Host *shost = container_of(head, typeof(*shost), rcu);
++	struct scsi_cmnd *scmd = container_of(head, typeof(*scmd), rcu);
++	struct Scsi_Host *shost = scmd->device->host;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(shost->host_lock, flags);
+@@ -258,7 +259,7 @@ void scsi_eh_scmd_add(struct scsi_cmnd *
+ 	 * Ensure that all tasks observe the host state change before the
+ 	 * host_failed change.
+ 	 */
+-	call_rcu(&shost->rcu, scsi_eh_inc_host_failed);
++	call_rcu(&scmd->rcu, scsi_eh_inc_host_failed);
  }
+ 
+ /**
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -670,6 +670,7 @@ static bool scsi_end_request(struct requ
+ 	if (!blk_rq_is_scsi(req)) {
+ 		WARN_ON_ONCE(!(cmd->flags & SCMD_INITIALIZED));
+ 		cmd->flags &= ~SCMD_INITIALIZED;
++		destroy_rcu_head(&cmd->rcu);
+ 	}
+ 
+ 	if (req->mq_ctx) {
+@@ -1150,6 +1151,7 @@ void scsi_initialize_rq(struct request *
+ 	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(rq);
+ 
+ 	scsi_req_init(&cmd->req);
++	init_rcu_head(&cmd->rcu);
+ 	cmd->jiffies_at_alloc = jiffies;
+ 	cmd->retries = 0;
+ }
+--- a/include/scsi/scsi_cmnd.h
++++ b/include/scsi/scsi_cmnd.h
+@@ -69,6 +69,9 @@ struct scsi_cmnd {
+ 	struct list_head list;  /* scsi_cmnd participates in queue lists */
+ 	struct list_head eh_entry; /* entry for the host eh_cmd_q */
+ 	struct delayed_work abort_work;
++
++	struct rcu_head rcu;
++
+ 	int eh_eflags;		/* Used by error handlr */
+ 
+ 	/*
+--- a/include/scsi/scsi_host.h
++++ b/include/scsi/scsi_host.h
+@@ -571,8 +571,6 @@ struct Scsi_Host {
+ 		struct blk_mq_tag_set	tag_set;
+ 	};
+ 
+-	struct rcu_head rcu;
+-
+ 	atomic_t host_busy;		   /* commands actually active on low-level */
+ 	atomic_t host_blocked;
  
