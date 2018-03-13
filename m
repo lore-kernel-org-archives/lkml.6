@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsLLKc/ufUYihwVEOE8Yg8jgPD4VY1S/1EHNMJdN5wSFD4FwOD9/AN+RcEcpbPwuBOINWFh
-ARC-Seal: i=1; a=rsa-sha256; t=1520955045; cv=none;
+X-Google-Smtp-Source: AG47ELu+hMYbxUoz/ve8BE+Z3Vx9KoXRuBGCFR0omb0TohtkWCh1kzpq2Ku0P11USlZ8ibv+BPhb
+ARC-Seal: i=1; a=rsa-sha256; t=1520955042; cv=none;
         d=google.com; s=arc-20160816;
-        b=cGnLgmxSKLb3rsYN1OcTJ7UTV6AM2xA5zq69d7dj8fTZdegQ6FQKXiNd/NmhKFeFJ0
-         LwKqLD8gCJxGLk3mtrLq9mxgl6RBh69pal8pTz0uDA8wyoCj5wG1owNRzaeha10ch/MW
-         8UAIOrAqvLLc4ZKuTaKR3Q3H7eaoTO+vDRZqVBkBqBWhoZHOlTO14bxxr8UVxqijOEPY
-         Jl/eRzC9E7QRLYFopH90P2tHn5AqSdy5e4OSDIYwXZFuA6JYKHtOdIrM+y37ZFwCGj1b
-         UfadfL/Ql4pzkyGaRD4oK03MaZhgHpA8SCeK3uhdeodpPI6HR4VY6NJJi8Ry3/SfSEGO
-         umrg==
+        b=sjDZYZnaYFphwGz/CFPFecFKjygL4SCTKsZnl93UAel4KkMSNyIwV9eIUiw64eVwn5
+         pVnR0u3HcuUrhmkX//cRFX/6Fj4xFSAxT2+kdET2P2AsT8fWarX3UU2w/10LPmMJLKsR
+         XXs7RwvekouHPvZgN3LKxnvYei4ogz8xg6m70RGHk4PB6giKkPHdOXqugXYxUC1M0Jr+
+         jVlPt1IA12otzf+eQMF20U+GL/2NsrJFfs0uB+s8iDnA8utJJNtGuJGLC6ydMRaOa4qs
+         Em9wtU9rAfCuwtwMggg1yzPCuyr2OhkBoVngzgdS2G7Q8oy+DApHPIGRSNu1NeWy2E3s
+         pduQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qUdM0u6sCnQKT6bh+catMSGQ9YU74HAvqk2nrohjaOQ=;
-        b=V/Y4dp7VzuUw1MSzyhJeZ/03BJptc7NNBPf+SUz6rfPGvdHO9GHK3f4lE4qZcOBBEa
-         TrhHMlTf/yuoovw2nlPG8pWthchiOVO2G3/S/P4kET6RiLv9268AK/krMKLKmVFYT9p2
-         f6FY6+XC00B+XYloaQZfQFAC2g4CWEzNq3GWo2a8XTLz/dld1HnRntUGegL5pTzg6uiZ
-         xS+mD5krVmygpez7QFPSH+DzSYmwDSHOEzK8HQ9jzOBhZWtDWDSyF6XKQe6GsQiY8IsD
-         Gq7OHRAdaL3bNP2ClozIvDOA2DnTQPzWMIRNM/tdbNEei9BKvzJJYudC/2C1yi1nSlII
-         QDMw==
+        bh=9UTvUJI7G0L2x22hVOYtpxs3cD/GRqj6Z3Em7lKPX1E=;
+        b=HWynEJWBGng1+zQAj/4aUUOjDGskLUwyJdESPyt7QEK8GkrWpsZUCHEHhqumfnHN2y
+         1yFVSV6b/wXeQAQLUDH0vTyoE3FVlCRei1vmns3598W5Ft3LpnS5t/UBPlLXTz7lh+96
+         EkRs57aVy6S/kZT21cLLyh69GxzCM2J/QWnfMQ4RF7cTXBQcLIuojrIW/6uHx5bGT9Ow
+         Ry/Q58TTpizrR+WoCcw614sxIpS5DzjIcMl7juO/0gjGDXskUDe8V5wC3GULVQEzF1+E
+         lQ2n2QzHKJnGljxUlbROuNjr6tmkIjvwDDD0XsIyHMNb6tAbuu/8Ae0HVBrLyz80eKrM
+         r/Xw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Richard Weinberger <richard.weinberger@gmail.com>
-Subject: [PATCH 4.15 046/146] bug: use %pB in BUG and stack protector failure
-Date: Tue, 13 Mar 2018 16:23:33 +0100
-Message-Id: <20180313152324.186566555@linuxfoundation.org>
+	=?UTF-8?q?Richard=20Sch=C3=BCtz?= <rschuetz@uni-koblenz.de>,
+	Arkadiusz Hiler <arkadiusz.hiler@intel.com>,
+	Martin Peres <martin.peres@linux.intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.15 045/146] Revert "Input: synaptics - Lenovo Thinkpad T460p devices should use RMI"
+Date: Tue, 13 Mar 2018 16:23:32 +0100
+Message-Id: <20180313152324.106407771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836957898376024?=
-X-GMAIL-MSGID: =?utf-8?q?1594836957898376024?=
+X-GMAIL-THRID: =?utf-8?q?1594836954416460458?=
+X-GMAIL-MSGID: =?utf-8?q?1594836954416460458?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,51 +51,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
 
-commit 0862ca422b79cb5aa70823ee0f07f6b468f86070 upstream.
+commit 5444a992b4a73aa5246a432c482b20b89bce93a5 upstream.
 
-The BUG and stack protector reports were still using a raw %p.  This
-changes it to %pB for more meaningful output.
+This reverts commit 48282969826b3d3c76e908182f69724d86d995fe which
+caused the following issues:
 
-Link: http://lkml.kernel.org/r/20180301225704.GA34198@beast
-Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>,
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+1. On T460p with BIOS version 2.22 touchpad and trackpoint stop working
+after suspend-resume cycle. Due to strange state of the device another
+suspend is impossible.
+
+The following dmesg errors can be observed:
+thinkpad_acpi: EC reports that Thermal Table has changed
+rmi4_smbus 7-002c: failed to get SMBus version number!
+rmi4_physical rmi4-00: rmi_driver_reset_handler: Failed to read current IRQ mask.
+rmi4_f01 rmi4-00.fn01: Failed to restore normal operation: -16.
+rmi4_f01 rmi4-00.fn01: Resume failed with code -16.
+rmi4_physical rmi4-00: Failed to suspend functions: -16
+rmi4_smbus 7-002c: Failed to resume device: -16
+PM: resume devices took 0.640 seconds
+rmi4_f03 rmi4-00.fn03: rmi_f03_pt_write: Failed to write to F03 TX register (-16).
+rmi4_physical rmi4-00: rmi_driver_clear_irq_bits: Failed to change enabled interrupts!
+rmi4_physical rmi4-00: rmi_driver_set_irq_bits: Failed to change enabled interrupts!
+psmouse: probe of serio3 failed with error -1
+
+2. On another T460p with BIOS version 2.15 two finger scrolling gesture
+on the touchpad stops working after suspend-resume cycle (about 75%
+reproducibility, when it still works, the scrolling gesture becomes
+laggy). Nothing suspicious appears in the dmesg.
+
+Analysis form Richard Schütz:
+
+"RMI is unreliable on the ThinkPad T460p because the device is affected
+by the firmware behavior addressed in a7ae81952cda ("i2c: i801: Allow
+ACPI SystemIO OpRegion to conflict with PCI BAR")."
+
+The affected devices often show:
+
+i801_smbus 0000:00:1f.4: BIOS is accessing SMBus registers
+i801_smbus 0000:00:1f.4: Driver SMBus register access inhibited
+
+Reported-by: Richard Schütz <rschuetz@uni-koblenz.de>
+Signed-off-by: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
+Tested-by: Martin Peres <martin.peres@linux.intel.com>
+Tested-by: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/panic.c |    2 +-
- lib/bug.c      |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/mouse/synaptics.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -640,7 +640,7 @@ device_initcall(register_warn_debugfs);
-  */
- __visible void __stack_chk_fail(void)
- {
--	panic("stack-protector: Kernel stack is corrupted in: %p\n",
-+	panic("stack-protector: Kernel stack is corrupted in: %pB\n",
- 		__builtin_return_address(0));
- }
- EXPORT_SYMBOL(__stack_chk_fail);
---- a/lib/bug.c
-+++ b/lib/bug.c
-@@ -191,7 +191,7 @@ enum bug_trap_type report_bug(unsigned l
- 	if (file)
- 		pr_crit("kernel BUG at %s:%u!\n", file, line);
- 	else
--		pr_crit("Kernel BUG at %p [verbose debug info unavailable]\n",
-+		pr_crit("Kernel BUG at %pB [verbose debug info unavailable]\n",
- 			(void *)bugaddr);
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -173,7 +173,6 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0046", /* X250 */
+ 	"LEN004a", /* W541 */
+ 	"LEN200f", /* T450s */
+-	"LEN2018", /* T460p */
+ 	NULL
+ };
  
- 	return BUG_TRAP_TYPE_BUG;
