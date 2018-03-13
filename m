@@ -1,70 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751842AbeCMRP4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:15:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28635 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751529AbeCMRPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:15:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
-   d="scan'208";a="24876530"
-Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
- multi-pci-segment arches
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Travis, Mike" <mike.travis@hpe.com>,
-        "Banman, Andrew" <abanman@hpe.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
- <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
- <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
- <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com>
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com>
-Date: Tue, 13 Mar 2018 13:15:52 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752307AbeCMRQb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:16:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34205 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751467AbeCMRQ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:16:28 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Vinod Koul <vinod.koul@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1 1/2] dmaengine: stm32-mdma: align TLEN and buffer length on burst
+Date: Tue, 13 Mar 2018 18:16:05 +0100
+Message-ID: <1520961366-27473-2-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520961366-27473-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1520961366-27473-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Both buffer Transfer Length (TLEN if any) and transfer size have to be
+aligned on burst size (burst beats*bus width).
 
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+---
+  Version history:
+    v1:
+       * Initial
+---
+---
+ drivers/dma/stm32-mdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 3/13/2018 12:00 PM, Andy Shevchenko wrote:
-> On Tue, Mar 13, 2018 at 5:58 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>> +#define SKX_CAPID6             0x9c
-> 
->>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
-> 
-> Moreover, this is too non-flexible. Can't you find a capability based
-> on CAP ID  + offset?
-> 
-
-It looks it doesn't use capability.
-
-16:1e.3 System peripheral: Intel Corporation Sky Lake-E PCU Registers 
-(rev 04)
-00: 86 80 83 20 00 00 00 00 04 00 80 08 00 00 80 00
-10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 00 00
-30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-Thanks,
-Kan
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index daa1602..fbcffa2 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -413,7 +413,7 @@ static u32 stm32_mdma_get_best_burst(u32 buf_len, u32 tlen, u32 max_burst,
+ 	u32 best_burst = max_burst;
+ 	u32 burst_len = best_burst * width;
+ 
+-	while ((burst_len > 0) && (tlen % burst_len)) {
++	while ((burst_len > 0) && (((tlen | buf_len) & (burst_len - 1)) != 0)) {
+ 		best_burst = best_burst >> 1;
+ 		burst_len = best_burst * width;
+ 	}
+-- 
+2.7.4
