@@ -1,54 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751466AbeCMEZ6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 00:25:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750903AbeCMEZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 00:25:57 -0400
-Date: Tue, 13 Mar 2018 00:21:15 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
- generate PATH record
-Message-ID: <20180313042115.zcyxhijg3d4yvvch@madcap2.tricolour.ca>
-References: <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
- <201803130221.QotEZsdF%fengguang.wu@intel.com>
+        id S1751620AbeCME3p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 00:29:45 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40085 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbeCME3l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 00:29:41 -0400
+X-Google-Smtp-Source: AG47ELtPDj9uUSve9pc/KC4W4NIOaDSEbEXfcDOgIDxbpovVPwnUZ89AYmTXAatFXgtuAVvVd4v2fG1HQcfWCzpyvP8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201803130221.QotEZsdF%fengguang.wu@intel.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <1520632700-25800-3-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1520632700-25800-1-git-send-email-eajames@linux.vnet.ibm.com> <1520632700-25800-3-git-send-email-eajames@linux.vnet.ibm.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 13 Mar 2018 14:59:20 +1030
+X-Google-Sender-Auth: FkSOmnoFUFv5iXIUQVRa4osYvqo
+Message-ID: <CACPK8XetpM0d9-y4mbm9Q7NoN9gSsjVZ7y0Vm5-BuRH5AQR8jw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] watchdog: aspeed: Allow configuring for alternate boot
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Milton Miller <miltonm@us.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-13 02:22, kbuild test robot wrote:
-> Hi Richard,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16-rc5 next-20180309]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+On Sat, Mar 10, 2018 at 8:28 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> From: Milton Miller <miltonm@us.ibm.com>
+>
+> Allow the device tree to specify a watchdog to fallover to
+> the alternate boot source.
+>
+> The aspeeed watchdog can set a latch directing flash chip select 0 to
+> chip select 1, allowing boot from an alternate media if the watchdog
+> is not reset in time.  On the ast2400 bank 1 also goes to flash bank 1,
+> while on the ast2500 the chip selects are swapped.
+>
+> Signed-off-by: Milton Miller <miltonm@us.ibm.com>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>  drivers/watchdog/aspeed_wdt.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+> index d1987d6..f41d246 100644
+> --- a/drivers/watchdog/aspeed_wdt.c
+> +++ b/drivers/watchdog/aspeed_wdt.c
+> @@ -46,6 +46,7 @@ struct aspeed_wdt_config {
+>  #define WDT_RELOAD_VALUE       0x04
+>  #define WDT_RESTART            0x08
+>  #define WDT_CTRL               0x0C
+> +#define   WDT_CTRL_BOOT_SECONDARY      BIT(7)
+>  #define   WDT_CTRL_RESET_MODE_SOC      (0x00 << 5)
+>  #define   WDT_CTRL_RESET_MODE_FULL_CHIP        (0x01 << 5)
+>  #define   WDT_CTRL_RESET_MODE_ARM_CPU  (0x10 << 5)
+> @@ -245,6 +246,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>         }
+>         if (of_property_read_bool(np, "aspeed,external-signal"))
+>                 wdt->ctrl |= WDT_CTRL_WDT_EXT;
+> +       if (of_property_read_bool(np, "aspeed,alt-boot"))
+> +               wdt->ctrl |= WDT_CTRL_BOOT_SECONDARY;
 
-My fault.  It was applied to a stale tree:
-	git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+If a user sets this property on the only watchdog in the system, then
+they will trigger this behaviour when doing a normal 'reboot'. That
+would not be desirable.
 
-A self-NACKed patch wasn't removed from the upstream tree as hoped.  A
-new patch is already in the works.
+We could mitigate this by:
 
-> url:    https://github.com/0day-ci/linux/commits/Richard-Guy-Briggs/audit-address-ANOM_LINK-excess-records/20180313-015527
-> Note: the linux-review/Richard-Guy-Briggs/audit-address-ANOM_LINK-excess-records/20180313-015527 HEAD 12e8c56bcd359f7d20d4ae011674d37bc832bc4c builds fine.
->       It only hurts bisectibility.
+- not registering the watchdog as a reboot device if this property is enabled
 
-- RGB
+- clearing the WDT_CTRL_BOOT_SECONDARY bit in the aspeed_wdt_restart path
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+The second option is neater as it allows the watchdog to behave
+normally when only one is enabled. The first would be confusing if a
+system didn't have more than one watchdog enabled.
+
+Cheers,
+
+Joel
