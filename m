@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934567AbeCMP6H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:58:07 -0400
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:35079 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932972AbeCMP6D (ORCPT
+        id S1752896AbeCMP6Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:58:24 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:33261 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932425AbeCMP6N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:58:03 -0400
-X-Google-Smtp-Source: AG47ELscQO7ggSNmF+rbGXXE+3dvAE93fM3Tfwrj3da1WvCW8/UGmb/tw5nA0kUQBpcrQaDMCR2k8WUJ+X4GzhqiUAY=
+        Tue, 13 Mar 2018 11:58:13 -0400
+X-Google-Smtp-Source: AG47ELuJRrJ1lgd8ig8GPetdfFGDFCNpa8ImY0uzOK0kT44IVArry953tmdPJAAKwnbVRJc3sh97BMlGOS3qaxGTzMg=
 MIME-Version: 1.0
-In-Reply-To: <20180313183326.0e93f359@canb.auug.org.au>
-References: <20180313183326.0e93f359@canb.auug.org.au>
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Tue, 13 Mar 2018 11:57:40 -0400
-X-Google-Sender-Auth: Q5e8WCRNsBRTLxXSoT7PhRUYjOo
-Message-ID: <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
-Subject: Re: linux-next: Tree for Mar 13
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>
+In-Reply-To: <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 17:58:11 +0200
+Message-ID: <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2DFwADg021767
 
-I had to revert the following commits to get this kernel to build
-(otherwise I got macro expansion errors, using RHEL7
-gcc-4.8.5-28.el7.x86_64):
+On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
 
-beb7eb2 kernelh-skip-single-eval-logic-on-literals-in-min-max-v3
-19ff7e5 kernelh-skip-single-eval-logic-on-literals-in-min-max-v2
-c7c133f kernel.h: skip single-eval logic on literals in min()/max()
+> +#define SKX_CAPID6             0x9c
+> +#define SKX_CHA_BIT_WIDTH      28
+> +
+>  static int skx_count_chabox(void)
+>  {
+> +       struct pci_dev *dev = NULL;
+> +       u32 val = 0;
+>
 
-(it wasn't until I reverted commit c7c133f that the kernel build worked)
+> +       dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
+> +       if (!dev)
+> +               return 0;
 
-Here is a snippet of the errors if commit c7c133f was applied:
+Where is pci_dev_put()?
 
-[root@rhel-storage-02 linux]# make
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CC      kernel/bounds.s
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CC      arch/x86/kernel/asm-offsets.s
-In file included from ./include/linux/crypto.h:21:0,
-                 from arch/x86/kernel/asm-offsets.c:9:
-./include/linux/jiffies.h: In function ‘jiffies_delta_to_clock_t’:
-./include/linux/kernel.h:856:2: error: first argument to
-‘__builtin_choose_expr’ not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro ‘__max’
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/jiffies.h:444:28: note: in expansion of macro ‘max’
-  return jiffies_to_clock_t(max(0L, delta));
-                            ^
-./include/linux/mm.h: In function ‘get_mm_hiwater_rss’:
-./include/linux/kernel.h:856:2: error: first argument to
-‘__builtin_choose_expr’ not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro ‘__max’
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/mm.h:1569:9: note: in expansion of macro ‘max’
-  return max(mm->hiwater_rss, get_mm_rss(mm));
-         ^
-./include/linux/mm.h: In function ‘get_mm_hiwater_vm’:
-./include/linux/kernel.h:856:2: error: first argument to
-‘__builtin_choose_expr’ not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro ‘__max’
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/mm.h:1574:9: note: in expansion of macro ‘max’
-  return max(mm->hiwater_vm, mm->total_vm);
-         ^
-./include/linux/bvec.h: In function ‘bvec_iter_advance’:
-./include/linux/kernel.h:833:2: error: first argument to
-‘__builtin_choose_expr’ not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:847:19: note: in expansion of macro ‘__min’
- #define min(x, y) __min(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/bvec.h:59:2: note: in expansion of macro ‘min’
-  min((iter).bi_size,     \
-  ^
-...
+>
+> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
+> +       return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
+
+UB is here.
+Fix is simple, use unsigned long and drop this ugly casting.
+
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
