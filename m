@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv8aplzw1PKUCU2hIxX3UUtD3ysx/q2kKFdXgzAcFrKGrLkIAwWcxv5pYpXHLVWQtjhoMxx
-ARC-Seal: i=1; a=rsa-sha256; t=1520955193; cv=none;
+X-Google-Smtp-Source: AG47ELt0Fe+M/qA6E8PjTBOQO0KIyWxQ3DO8yJv1k3v5YleEsB3ndI9YMxkZ/eygOzf6e0DEDMDD
+ARC-Seal: i=1; a=rsa-sha256; t=1520955184; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ku4W9ZEyX1C8Ae4X2RGsKmh00N18Y55mJvMEF4Yhn2LMhl4sm90jHvDOLOzelsLwwn
-         RSnVjdZWtoEoSDBPICEbdTeTnz66tXRmn+uCyc42WVlZBgkgMlF17siHM8Eq7JxJGXo3
-         wmtXKtpDDXYVt4W7z0aPS0ilhVLTP6Bz5BVLM9D/26DsQ48W7unFmbr9tGwljY5UfJFS
-         SD7LXvlUT8dmVzb4y/jpjLg/FHppnppjrS5BELd+SfEXfTPSlTCHGc9C7W56rfUkdlDf
-         V3ZFrYboZoXHj0XZf/g6Q7cAwSaJ4KRRmkVMcsDSx1kEfiVATGo82MpaDFBngXqqQeQv
-         e9sw==
+        b=lOxkf8gkpdVXEys8VbiHLdmojgqaSaaqBJ9GJ4uDBfmXbNZcjI1LX9/OwAggV0LRV2
+         /9saVBG6G0DblV5oceBtVEIc8/ceJUvIa0OmfFmLRLL3+Dj6N4IMh2mltwPRS6PhJdxb
+         gwcbu6kAwm21v7cpclHoNYzFk1B2/07z+cM/H+vpnwyAHvPDDmHfdkk6+Y1RK1adoHao
+         qLw1E4qy5fDnCyDUtoeAMy4HPQKabvyCaTs9cTHYAfAsiGnd02ZheZqlEgAiAFkY+ABs
+         6xMDYU4RttAIbGq/wOnpq5vhh3sBhWAeZtiq5dOpuGfS8CzkWokyTRyeLDpG2YLnICch
+         6fGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=e3c7R1BQBtGv10IZfCFrK3uyUEwSU0DTnEOFYwDr/BU=;
-        b=oR0ao29AYLoKBskn588IA/tS/t026Op8piWSOvRefPzreLzxY9Vz12fweJlTyIs2Rm
-         5861f8+hDQ6shTrZgR77w/Ji1eXk7JXr5qi+TzTeMb3I1mS4U5R5oGa7wLK4o+LGuYMI
-         iMhHu6WvjKbw5BlpkNxNQLveolS3SmTornKKEOLwp/5lI4UoBlMfuBcqlajA1q+IHOUR
-         iIYIAVMsK1aTsRVqYI3TkgazcoJ/ESi9G3l79OMKNEnuc6cg0Q374ELvwnzDSn49dlAW
-         JrqMvbagEilQNoQHT+CKeCoVXehHH50nrRgolChOoZeWnt9rXYIqnrnruJKhm8Jdjml2
-         xQ7Q==
+        bh=CwrT9GA/hHsN8sTPkkfYZDL29NX1HTFXT7pdSdG18xw=;
+        b=mam3+FEDrASqQI0mBWUZSWfd4+Ef26iCABAFoJYUOd4VpngEiDGO8SF4BvvYPRFWbd
+         8yvyf8r1NuJRn/R/U8k0Zi43ybaZx2Wvh3Lkme0MfvcZsOlNRR5Cf1MdUGQzwECVC+H6
+         2K8oaekLH+gNLI0c6cYmGU7Dmk/i8VIM2CPToQQgHoXYOsii+TPHgvfarSOMDJzzi6GF
+         DFE8nvaM8N1FagcMVHfiMTu8/orjY/spPGK9EvU4kc1UANdIyUVhL6W8+eU1Sh90dFTs
+         2oLL4b5fXMKixMgd5T7a3CkIL8ELjc3Zelo020Eg9SFj4LjqHo8WdKLQIjtAXQCpTgN4
+         Bevw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Javier Martinez Canillas <javierm@redhat.com>
-Subject: [PATCH 4.15 120/146] tpm: delete the TPM_TIS_CLK_ENABLE flag
-Date: Tue, 13 Mar 2018 16:24:47 +0100
-Message-Id: <20180313152329.551210976@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.15 117/146] netfilter: use skb_to_full_sk in ip6_route_me_harder
+Date: Tue, 13 Mar 2018 16:24:44 +0100
+Message-Id: <20180313152329.376111884@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837112829519145?=
-X-GMAIL-MSGID: =?utf-8?q?1594837112829519145?=
+X-GMAIL-THRID: =?utf-8?q?1594837103220060055?=
+X-GMAIL-MSGID: =?utf-8?q?1594837103220060055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,105 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 764325add6c2ad1641199edde7b2995495fc2d7c upstream.
+commit 7d98386d55a5afaa65de77e1e9197edeb8a42079 upstream.
 
-This flag is only used to warn if CLKRUN_EN wasn't disabled on Braswell
-systems, but the only way this can happen is if the code is not correct.
+For some reason, Florian forgot to apply to ip6_route_me_harder
+the fix that went in commit 29e09229d9f2 ("netfilter: use
+skb_to_full_sk in ip_route_me_harder")
 
-So it's an unnecessary check that just makes the code harder to read.
-
-Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: ca6fb0651883 ("tcp: attach SYNACK messages to request sockets instead of listener") 
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis.c      |   15 ---------------
- drivers/char/tpm/tpm_tis_core.c |    2 --
- drivers/char/tpm/tpm_tis_core.h |    1 -
- 3 files changed, 18 deletions(-)
+ net/ipv6/netfilter.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -138,9 +138,6 @@ static int tpm_tcg_read_bytes(struct tpm
+--- a/net/ipv6/netfilter.c
++++ b/net/ipv6/netfilter.c
+@@ -21,18 +21,19 @@
+ int ip6_route_me_harder(struct net *net, struct sk_buff *skb)
  {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 	const struct ipv6hdr *iph = ipv6_hdr(skb);
++	struct sock *sk = sk_to_full_sk(skb->sk);
+ 	unsigned int hh_len;
+ 	struct dst_entry *dst;
+ 	struct flowi6 fl6 = {
+-		.flowi6_oif = skb->sk ? skb->sk->sk_bound_dev_if : 0,
++		.flowi6_oif = sk ? sk->sk_bound_dev_if : 0,
+ 		.flowi6_mark = skb->mark,
+-		.flowi6_uid = sock_net_uid(net, skb->sk),
++		.flowi6_uid = sock_net_uid(net, sk),
+ 		.daddr = iph->daddr,
+ 		.saddr = iph->saddr,
+ 	};
+ 	int err;
  
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	while (len--)
- 		*result++ = ioread8(phy->iobase + addr);
- 
-@@ -152,9 +149,6 @@ static int tpm_tcg_write_bytes(struct tp
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	while (len--)
- 		iowrite8(*value++, phy->iobase + addr);
- 
-@@ -165,9 +159,6 @@ static int tpm_tcg_read16(struct tpm_tis
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	*result = ioread16(phy->iobase + addr);
- 
- 	return 0;
-@@ -177,9 +168,6 @@ static int tpm_tcg_read32(struct tpm_tis
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	*result = ioread32(phy->iobase + addr);
- 
- 	return 0;
-@@ -189,9 +177,6 @@ static int tpm_tcg_write32(struct tpm_ti
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
--	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
--		WARN(1, "CLKRUN not enabled!\n");
--
- 	iowrite32(value, phy->iobase + addr);
- 
- 	return 0;
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -698,7 +698,6 @@ static void tpm_tis_clkrun_enable(struct
- 		return;
- 
- 	if (value) {
--		data->flags |= TPM_TIS_CLK_ENABLE;
- 		data->clkrun_enabled++;
- 		if (data->clkrun_enabled > 1)
- 			return;
-@@ -729,7 +728,6 @@ static void tpm_tis_clkrun_enable(struct
- 		 * sure LPC clock is running before sending any TPM command.
- 		 */
- 		outb(0xCC, 0x80);
--		data->flags &= ~TPM_TIS_CLK_ENABLE;
- 	}
- }
- 
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -86,7 +86,6 @@ enum tis_defaults {
- 
- enum tpm_tis_flags {
- 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
--	TPM_TIS_CLK_ENABLE		= BIT(1),
- };
- 
- struct tpm_tis_data {
+-	dst = ip6_route_output(net, skb->sk, &fl6);
++	dst = ip6_route_output(net, sk, &fl6);
+ 	err = dst->error;
+ 	if (err) {
+ 		IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTNOROUTES);
+@@ -50,7 +51,7 @@ int ip6_route_me_harder(struct net *net,
+ 	if (!(IP6CB(skb)->flags & IP6SKB_XFRM_TRANSFORMED) &&
+ 	    xfrm_decode_session(skb, flowi6_to_flowi(&fl6), AF_INET6) == 0) {
+ 		skb_dst_set(skb, NULL);
+-		dst = xfrm_lookup(net, dst, flowi6_to_flowi(&fl6), skb->sk, 0);
++		dst = xfrm_lookup(net, dst, flowi6_to_flowi(&fl6), sk, 0);
+ 		if (IS_ERR(dst))
+ 			return PTR_ERR(dst);
+ 		skb_dst_set(skb, dst);
