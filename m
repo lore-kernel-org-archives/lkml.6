@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsKIqtv0pExBQz7q4OB7oGx9mbRX4Tegv3rX4NQavNW38xCwurxuYUlXQsgYllzwRrJOZ+7
-ARC-Seal: i=1; a=rsa-sha256; t=1520955063; cv=none;
+X-Google-Smtp-Source: AG47ELsnEgpa8loMOH/pb9th6lXjYrlIKF+a8Qg0pxF1neJDVzO7wA4+V9LkFAjfKPlOd3T6Zkfa
+ARC-Seal: i=1; a=rsa-sha256; t=1520955059; cv=none;
         d=google.com; s=arc-20160816;
-        b=r0d3vPNZUn8Eo8/qi28BcXtvPjQPa2nFJwAsehgiYLc8JhYyMT+B9qgyXF7SVw/BfY
-         o2dx2TAYf3NAvNakMFmMW2RBfkt4YaLbNZXO0l4j+WGl4kGjo7FatgvVKRbi6H2r4Q1a
-         6D/PrvZdRqdeoe8QkrhkVQ2Y0ddACw04W3ndngCc/bWNSsFG9QL00mlVRRx35slWdfbn
-         me0Cnr/s4Yaxpz2LTu1Y+ah8nJNEdWOG0eZyKdvCUzglLmE7WwGhv0b/OTqrfLSSnfek
-         nae6M9YRjRCpHnkYhWPzcd0302C7LsbrRzLkRUiLcrQx7ONbmUA3xhpphvahonW2U/Xk
-         WXKQ==
+        b=uqs+A99IDwwdBWcxj3uicX0lLL6NTQ/Vi+8AFGdQRkj4xtBRKERlec+ydsPaRwIa1J
+         ez4ZOSWHem4J+LpPtaLEMFt6L0dqzZXUsSjzuJLJL81VolEQYy/uWRLDOsGvY7Pb28kS
+         rP7E+/LZyaVmBi40QP+xpZGUfcV/gRFgHVCqTzQMaW3ldvKZD0tTi8DeywWgLJuJxTby
+         9y8MazqNN8lTjWJvjtpWqJSW0EagHlVzKBqA6A6QcSci03b9o1LN2kds8CcVbdTZOQNv
+         wFsoGZTzGObIXe/75/DN81LSeAYU+41grZshe8enwX9nZB4+O6p5ACbkY9wnkk/a75eC
+         Q5mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xk722ifFwffHNojg4iW2tdaZbJ7n3u0icedOW2OWNvI=;
-        b=on//TYYeJK2ARvGZgRCFQNUdTvrHoSgI+oUefSGDriwQbbbVc60PEF9kG+BubwovVX
-         RjJvj9HywrW0q8ircXTQBYakTWoENwLKEFHSuf16oK2EDevCbBiicI01OzqOrUdlaqAN
-         MH3Geml3bKssA+oFU8rsZR+VOcMurq9Wn2PVH4+Py2AChzK2tu+m+13snT63Q13GgN51
-         lWkVf3rG3Qt326hknpjRZn/r/o+XAvzfgkbh3nQCMYgdC/lSrpSJ6DHUpd0lFOMGLfJL
-         arOk6WjuDjxyF6Vx9rV88FUO9hIkHPyR/HUW4LKDbejtIh7ZvVrhCldRfIdG+frlAzWm
-         4rhg==
+        bh=U2hsjp83iwOXQz3XrEbrjfPxzxqCMDlxDb0vuPJKVe8=;
+        b=WKgN7ORqmhjYol+PPETxuj8DyHxiwJKjQPzxfunxcHmUnlCxCqYEJal74/OPxOtMWG
+         D3XeK/fdfswRQRm2Zx8iNshm1I0eu7GokarbjCvEwva/hF7v1LNf3tVcc7wC0C/HrMHT
+         yN2zA8LfScigCxrflFdrVX960IxaoPw4CDqOGOo1shBXvaFzkeB8EOs5IfgBshWIumAa
+         N46m8B424HPN7wTrf10tpoicOPIuuLn099UN9zdjiSgm9jOJ2oq6+rEA5JCSM+Mxnbye
+         Nox2lrtfZZbKuP/6bRZ8/EzuMzNAjcwTqq1i4QK9uZbx0aChU6qsTk7EJJLEIzsx70Pp
+         jjDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	David Daney <david.daney@cavium.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	"Steven J. Hill" <Steven.Hill@cavium.com>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.15 042/146] MIPS: OCTEON: irq: Check for null return on kzalloc allocation
-Date: Tue, 13 Mar 2018 16:23:29 +0100
-Message-Id: <20180313152323.843219417@linuxfoundation.org>
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christoph Hellwig <hch@lst.de>,
+	Ming Lei <ming.lei@redhat.com>,
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 051/146] loop: Fix lost writes caused by missing flag
+Date: Tue, 13 Mar 2018 16:23:38 +0100
+Message-Id: <20180313152324.585155105@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836976270829589?=
-X-GMAIL-MSGID: =?utf-8?q?1594836976270829589?=
+X-GMAIL-THRID: =?utf-8?q?1594836972706028461?=
+X-GMAIL-MSGID: =?utf-8?q?1594836972706028461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +52,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit 902f4d067a50ccf645a58dd5fb1d113b6e0f9b5b upstream.
+commit 1d037577c323e5090ce281e96bc313ab2eee5be2 upstream.
 
-The allocation of host_data is not null checked, leading to a null
-pointer dereference if the allocation fails. Fix this by adding a null
-check and return with -ENOMEM.
+The following commit:
 
-Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: "Steven J. Hill" <Steven.Hill@cavium.com>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/18658/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+commit aa4d86163e4e ("block: loop: switch to VFS ITER_BVEC")
+
+replaced __do_lo_send_write(), which used ITER_KVEC iterators, with
+lo_write_bvec() which uses ITER_BVEC iterators.  In this change, though,
+the WRITE flag was lost:
+
+-       iov_iter_kvec(&from, ITER_KVEC | WRITE, &kvec, 1, len);
++       iov_iter_bvec(&i, ITER_BVEC, bvec, 1, bvec->bv_len);
+
+This flag is necessary for the DAX case because we make decisions based on
+whether or not the iterator is a READ or a WRITE in dax_iomap_actor() and
+in dax_iomap_rw().
+
+We end up going through this path in configurations where we combine a PMEM
+device with 4k sectors, a loopback device and DAX.  The consequence of this
+missed flag is that what we intend as a write actually turns into a read in
+the DAX code, so no data is ever written.
+
+The very simplest test case is to create a loopback device and try and
+write a small string to it, then hexdump a few bytes of the device to see
+if the write took.  Without this patch you read back all zeros, with this
+you read back the string you wrote.
+
+For XFS this causes us to fail or panic during the following xfstests:
+
+	xfs/074 xfs/078 xfs/216 xfs/217 xfs/250
+
+For ext4 we have a similar issue where writes never happen, but we don't
+currently have any xfstests that use loopback and show this issue.
+
+Fix this by restoring the WRITE flag argument to iov_iter_bvec().  This
+causes the xfstests to all pass.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: stable@vger.kernel.org
+Fixes: commit aa4d86163e4e ("block: loop: switch to VFS ITER_BVEC")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/cavium-octeon/octeon-irq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/loop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/cavium-octeon/octeon-irq.c
-+++ b/arch/mips/cavium-octeon/octeon-irq.c
-@@ -2277,6 +2277,8 @@ static int __init octeon_irq_init_cib(st
- 	}
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -266,7 +266,7 @@ static int lo_write_bvec(struct file *fi
+ 	struct iov_iter i;
+ 	ssize_t bw;
  
- 	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
-+	if (!host_data)
-+		return -ENOMEM;
- 	raw_spin_lock_init(&host_data->lock);
+-	iov_iter_bvec(&i, ITER_BVEC, bvec, 1, bvec->bv_len);
++	iov_iter_bvec(&i, ITER_BVEC | WRITE, bvec, 1, bvec->bv_len);
  
- 	addr = of_get_address(ciu_node, 0, NULL, NULL);
+ 	file_start_write(file);
+ 	bw = vfs_iter_write(file, &i, ppos, 0);
