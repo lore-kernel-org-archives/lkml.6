@@ -1,80 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933061AbeCMLq3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:46:29 -0400
-Received: from gateway20.websitewelcome.com ([192.185.50.28]:45560 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932922AbeCMLq1 (ORCPT
+        id S933023AbeCMLrr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:47:47 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34672 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752274AbeCMLrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:46:27 -0400
-Subject: Re: linux-next: build warning after merge of the net-next tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180313171153.1614c11e@canb.auug.org.au>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <67db5ac6-9816-4bf1-c594-72697c426466@embeddedor.com>
-Date: Tue, 13 Mar 2018 06:46:24 -0500
+        Tue, 13 Mar 2018 07:47:45 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+To: David Laight <David.Laight@ACULAB.COM>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+Date: Tue, 13 Mar 2018 11:47:39 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180313171153.1614c11e@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+In-Reply-To: <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1eviNu-00264u-Qn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:46846
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi David,
 
-On 03/13/2018 01:11 AM, Stephen Rothwell wrote:
-> Hi all,
+On 13/03/18 11:20, David Laight wrote:
+> From: Kieran Bingham
+>> Sent: 09 March 2018 22:04
+>> The kernel provides a __packed definition to abstract away from the
+>> compiler specific attributes tag.
+>>
+>> Convert all packed structures in VSP1 to use it.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+>> index 37e2c984fbf3..382e45c2054e 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+>> @@ -29,19 +29,19 @@
+>>  struct vsp1_dl_header_list {
+>>  	u32 num_bytes;
+>>  	u32 addr;
+>> -} __attribute__((__packed__));
+>> +} __packed;
+>>
+>>  struct vsp1_dl_header {
+>>  	u32 num_lists;
+>>  	struct vsp1_dl_header_list lists[8];
+>>  	u32 next_header;
+>>  	u32 flags;
+>> -} __attribute__((__packed__));
+>> +} __packed;
+>>
+>>  struct vsp1_dl_entry {
+>>  	u32 addr;
+>>  	u32 data;
+>> -} __attribute__((__packed__));
+>> +} __packed;
 > 
-> After merging the net-next tree, today's linux-next build (sparc
-> defconfig) produced this warning:
-> 
-> net/core/pktgen.c: In function 'pktgen_if_write':
-> net/core/pktgen.c:1710:1: warning: the frame size of 1048 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->   }
->   ^
-> 
-> Introduced by commit
-> 
->    35951393bbff ("pktgen: Remove VLA usage")
-> 
+> Do these structures ever actually appear in misaligned memory?
+> If they don't then they shouldn't be marked 'packed'.
 
-Thanks for the report.
+I believe the declaration is to ensure that the struct definition is not altered
+by the compiler as these structures specifically define the layout of how the
+memory is read by the VSP1 hardware.
 
-David:
+Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
+rearranged by the compiler (though I believe it would be free to do so if it
+chose without this attribute), but I think the declaration shows the intent of
+the memory structure.
 
-If this code is not going to be executed very often [1], then I think it 
-is safe to use dynamic memory allocation instead, as this is not going 
-to impact the performance.
+Isn't this a common approach throughout the kernel when dealing with hardware
+defined memory structures ?
 
-What do you think?
-
-[1] https://lkml.org/lkml/2018/3/9/630
-
-Thanks
+Regards
 --
-Gustavo
+Kieran
+
+
+> 
+> 	David
+> 
