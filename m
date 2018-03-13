@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvyFAuW95UWTw0RM7iZGChyE6poMpttRjA6zcOws9NEjpk10tSYITslhtk0INqn2gYBNzFB
-ARC-Seal: i=1; a=rsa-sha256; t=1520955468; cv=none;
+X-Google-Smtp-Source: AG47ELuBhpax7g9do9A0WHPPyqd7/7CcPEbwVaHwka5nqgVBaWHUmFND6g5XpQapyk+1z5TlwHfV
+ARC-Seal: i=1; a=rsa-sha256; t=1520955465; cv=none;
         d=google.com; s=arc-20160816;
-        b=zj5Zjcmmb693i+a7ikAalc+mvxBo0SvdUUlfc3W44E+swBDMuqIdYIIb5QLp/lbfpG
-         idnBRYktHrR0aGn8UslGFF+F1KXb5XXDbuf+oxiI/2Ih9HugYZJfmJDX3U6yjxbNienR
-         w23gRi5wt14HoJLzNJOHoDg0Ziwjf+LGLK7w6eeCmNdeQ5ejKspJDqgK2a5Htg4/trzF
-         4nJGiYx2DXWv2Io6tjeXJbhBdlFARF01/0UEH2N78oRXLxm0ftOKL7Cca1lcc13uxqpJ
-         cp/mBU9XR+fd/PKhEcj64HV1cNymz4s/80HxV8xTply7zd9r8MZYBD2clcKSClbeND6T
-         jNOg==
+        b=qEArwhZDwVE5/zBx9n7hjDl+07E4aGCo91bmJnZSUhcmvO83ET/5BtRN4CoZWWyKbG
+         nHtjrWBlQTk9fcIrvh8tZQ8qZ2i5sCICtNLZkBtX9DZjLpkOSyZc3LAu5hzaHNDg7aVK
+         dVVTiuLjyTccqpwDMeqoyB8zZ0RWHXnOOgi9Uss0Fqd8cujPbxsHfUYlzEkuocFe5f0q
+         pw8USlP78Lkb64N18+HKXMTev2F8soM7LFx9o9Rm0GUk/gAEILKIZ4sRMW+0wVXyq95j
+         hN2zwEUYA+N/DiVGWle41fH3s3I1czkhk7EH0ci9WIiHhbW3jYrsNWXp1DFz+Qt7Vq1h
+         Oh5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LY7Qw90q5nti+PISUGFb/DuRixzwDnVgofQ2i1yJZ+I=;
-        b=v0PhEBHjO6MAkgSgknTReRmB/vCMMjlGliCY9bomqYLa6ZPTfa9wFLhIFQpgX6bbDF
-         XxHcfKn54BTaqBeoFpZ7Hc3nrIZCjP7HUSHrmDfPGa4egVB5yH1shjv8fsiIQwWvoCP7
-         f8h4EVgOIQbfyr+emE82niFbhbtFjz46Q7vUpafNvaPmM/t2xsTb6wPutmXuJ5mSihZY
-         qFoXyR19q5Ea4QqdMVSPMr85PYHn4NLWbUQKuiV7M/ICWEdnhDmann3LZKo5FQKnH0Em
-         rLbAhK1X9v5X1cR6ym7gkWpJhNx5cdsoI7mhh5aMrUgY9L8gzNdEQ0j9Waqw5izZI97Y
-         YvMw==
+        bh=z5gXOdDkEBGFLWhRwIEltBZ052wIYg/842rhaBCI8Bg=;
+        b=F8tbeciQYyLC+wbJOpnM9ZpTEDX7QEoEnQ/0oiB+KHPSEAJ4wDsQ93UaE1zNSkKYBX
+         5nZr2E8QGStpaEux/hvGKJLtF3ymDL4+mYsq2Subi4y31rRGYfoYVCUbldhT5v4whCax
+         08b3Q29rZXYVJAABDR2yJslNxNdPFzKY9grthRRRTGZoZcZ/WcKwyCJ+XLqoZqEvxkUO
+         bJqfbrihrsOHGtU60p+/+5fnYCc5EM5Fiuz6VZtmgo8jCEl1JAU08YV5z3ZLJIpAvVI8
+         yLq3ZTr5gCeGt9TCmJxOB7CJwqTfAjzzh7OIoS29L/9/E3kLXyl8ga0q6jxcQeg/+2jE
+         cFoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Subject: [PATCH 4.14 055/140] drm/i915: Update watermark state correctly in sanitize_watermarks
-Date: Tue, 13 Mar 2018 16:24:18 +0100
-Message-Id: <20180313152501.975207959@linuxfoundation.org>
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 059/140] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+Date: Tue, 13 Mar 2018 16:24:22 +0100
+Message-Id: <20180313152502.222131015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836838276869942?=
-X-GMAIL-MSGID: =?utf-8?q?1594837401626984401?=
+X-GMAIL-THRID: =?utf-8?q?1594836882147942861?=
+X-GMAIL-MSGID: =?utf-8?q?1594837398509106558?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +50,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit 556fe36d09da5f82879e92bafa0371b4b79f7d6f upstream.
+commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
 
-We no longer use intel_crtc->wm.active for watermarks any more,
-which was incorrect. But this uncovered a bug in sanitize_watermarks(),
-which meant that we wrote the correct watermarks, but the next
-update would still use the wrong hw watermarks for calculating.
-This caused all further updates to fail with -EINVAL and the
-log would reveal an error like the one below:
+This patch fixes NULL pointer crash due to active timer running for abort
+IOCB.
 
-[   10.043902] [drm:ilk_validate_wm_level.part.8 [i915]] Sprite WM0 too large 56 (max 0)
-[   10.043960] [drm:ilk_validate_pipe_wm [i915]] LP0 watermark invalid
-[   10.044030] [drm:intel_crtc_atomic_check [i915]] No valid intermediate pipe watermarks are possible
+>From crash dump analysis it was discoverd that get_next_timer_interrupt()
+encountered a corrupted entry on the timer list.
 
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Fixes: b6b178a77210 ("drm/i915: Calculate ironlake intermediate watermarks correctly, v2.")
-Cc: stable@vger.kernel.org #v4.8+
-Link: https://patchwork.freedesktop.org/patch/msgid/20171110113503.16253-1-maarten.lankhorst@linux.intel.com
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+ #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
+    [exception RIP: get_next_timer_interrupt+440]
+    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
+    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
+    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
+    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
+    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
+    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+
+Looking at the assembly of get_next_timer_interrupt(), address came
+from %r8 (ffff95e1f6451188) which is pointing to list_head with single
+entry at ffff95e5ff621178.
+
+ 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
+ 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
+ 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
+ 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
+ 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
+
+ crash> rd ffff95e1f6451188 10
+ ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
+ ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
+ ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
+ ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
+ ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
+
+ crash> rd ffff95e5ff621178 10
+ ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
+ ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
+ ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
+ ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
+ ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
+
+ ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
+
+ CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
+ ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
+   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
+   FREE / [ALLOCATED]
+    ffff95e5ff621080  (cpu 6 cache)
+
+Examining the contents of that memory reveals a pointer to a constant string
+in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
+
+ crash> rd ffffffffc059277c 20
+ ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
+ ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
+ ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
+ ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
+ ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
+ ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
+ ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
+ ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
+ ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
+ ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
+
+ crash> struct -ox srb_iocb
+ struct srb_iocb {
+           union {
+               struct {...} logio;
+               struct {...} els_logo;
+               struct {...} tmf;
+               struct {...} fxiocb;
+               struct {...} abt;
+               struct ct_arg ctarg;
+               struct {...} mbx;
+               struct {...} nack;
+    [0x0 ] } u;
+    [0xb8] struct timer_list timer;
+    [0x108] void (*timeout)(void *);
+ }
+ SIZE: 0x110
+
+ crash> ! bc
+ ibase=16
+ obase=10
+ B8+40
+ F8
+
+The object is a srb_t, and at offset 0xf8 within that structure
+(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
+
+Cc: <stable@vger.kernel.org> #4.4+
+Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_display.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -14498,6 +14498,8 @@ retry:
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1357,6 +1357,7 @@ qla24xx_abort_sp_done(void *ptr, int res
+ 	srb_t *sp = ptr;
+ 	struct srb_iocb *abt = &sp->u.iocb_cmd;
  
- 		cs->wm.need_postvbl_update = true;
- 		dev_priv->display.optimize_watermarks(intel_state, cs);
-+
-+		to_intel_crtc_state(crtc->state)->wm = cs->wm;
- 	}
++	del_timer(&sp->u.iocb_cmd.timer);
+ 	complete(&abt->u.abt.comp);
+ }
  
- put_state:
