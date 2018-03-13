@@ -1,78 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeCMMso (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:48:44 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34424 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeCMMsn (ORCPT
+        id S932279AbeCMMuX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:50:23 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35320 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752252AbeCMMuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:48:43 -0400
-X-Google-Smtp-Source: AG47ELtxfJVQPsn/bu0UhIu8udaDCdDiTaj6sFTFyuYdBdMLVQxPMAWGmFDpNnK3mCoiJZjaEkvMWJpd+A2fYyU4L18=
+        Tue, 13 Mar 2018 08:50:21 -0400
+X-Google-Smtp-Source: AG47ELugwzAFneCeqOwtWoIVjIjD8sEz6FErs1h7eAosg32BJj3779vgMUWT3OeejT3g3Pho+uDXfQ==
+Date: Tue, 13 Mar 2018 15:49:56 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Kai Huang <kai.huang@linux.intel.com>
+Cc: dave.hansen@intel.com, peterz@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        thomas.lendacky@amd.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/mm] x86/tme: Detect if TME and MKTME is activated by
+ BIOS
+Message-ID: <20180313124956.z426zmsr4xl6zomx@node.shutemov.name>
+References: <20180305162610.37510-3-kirill.shutemov@linux.intel.com>
+ <tip-cb06d8e3d020c30fe10ae711c925a5319ab82c88@git.kernel.org>
+ <1520907122.6421.8.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180313114202.1977512-1-arnd@arndb.de>
-References: <20180313114202.1977512-1-arnd@arndb.de>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 12:48:42 +0000
-Message-ID: <CAKv+Gu-6s1tqBzAEgL63WxXrc9SuF2C9PtADqmEcUKWxP8eZUw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: fix undefined reference to 'printk'
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520907122.6421.8.camel@linux.intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 11:41, Arnd Bergmann <arnd@arndb.de> wrote:
-> The printk symbol was intended as a generic address that is always
-> exported, however that turned out to be false with CONFIG_PRINTK=n:
->
-> ERROR: "printk" [arch/arm64/kernel/arm64-reloc-test.ko] undefined!
->
-> This changes the references to memstart_addr, which should be there
-> regardless of configuration.
->
-> Fixes: a257e02579e4 ("arm64/kernel: don't ban ADRP to work around Cortex-A53 erratum #843419")
-> Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Tue, Mar 13, 2018 at 03:12:02PM +1300, Kai Huang wrote:
+> It seems setup_pku() will call get_cpu_cap to restore c->x86_phys_bits
+> later? In which case I think you need to change setup_pku as well.
 
-Acked-by: ^^^
+Thanks for catching this.
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm64/kernel/reloc_test_core.c | 2 +-
->  arch/arm64/kernel/reloc_test_syms.S | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm64/kernel/reloc_test_core.c b/arch/arm64/kernel/reloc_test_core.c
-> index a70489c584c7..5915ce5759cc 100644
-> --- a/arch/arm64/kernel/reloc_test_core.c
-> +++ b/arch/arm64/kernel/reloc_test_core.c
-> @@ -45,7 +45,7 @@ static struct {
->         { "R_AARCH64_MOVW_SABS_Gn",     signed_movw, UL(SYM64_ABS_VAL) },
->         { "R_AARCH64_MOVW_UABS_Gn",     unsigned_movw, UL(SYM64_ABS_VAL) },
->         { "R_AARCH64_ADR_PREL_PG_HI21", relative_adrp, (u64)&sym64_rel },
-> -       { "R_AARCH64_ADR_PREL_PG_HI21", relative_adrp_far, (u64)&printk },
-> +       { "R_AARCH64_ADR_PREL_PG_HI21", relative_adrp_far, (u64)&memstart_addr },
->         { "R_AARCH64_ADR_PREL_LO21",    relative_adr, (u64)&sym64_rel },
->         { "R_AARCH64_PREL64",           relative_data64, (u64)&sym64_rel },
->         { "R_AARCH64_PREL32",           relative_data32, (u64)&sym64_rel },
-> diff --git a/arch/arm64/kernel/reloc_test_syms.S b/arch/arm64/kernel/reloc_test_syms.S
-> index f333b4b7880d..2b8d9cb8b078 100644
-> --- a/arch/arm64/kernel/reloc_test_syms.S
-> +++ b/arch/arm64/kernel/reloc_test_syms.S
-> @@ -54,8 +54,8 @@ ENDPROC(relative_adrp)
->         .align  12
->         .space  0xffc
->  ENTRY(relative_adrp_far)
-> -       adrp    x0, printk
-> -       add     x0, x0, #:lo12:printk
-> +       adrp    x0, memstart_addr
-> +       add     x0, x0, #:lo12:memstart_addr
->         ret
->  ENDPROC(relative_adrp_far)
->
-> --
-> 2.9.0
->
+I think setup_pku() shouldn't call get_cpu_cap().
+
+Any objections against this:
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 348cf4821240..ce10d8ae4cd6 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -362,6 +362,8 @@ static bool pku_disabled;
+
+ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+ {
++       u32 eax, ebx, ecx, edx;
++
+        /* check the boot processor, plus compile options for PKU: */
+        if (!cpu_feature_enabled(X86_FEATURE_PKU))
+                return;
+@@ -377,7 +379,8 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+         * cpuid bit to be set.  We need to ensure that we
+         * update that bit in this CPU's "cpu_info".
+         */
+-       get_cpu_cap(c);
++       cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
++       c->x86_capability[CPUID_7_ECX] = ecx;
+ }
+
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+
+> And for the comments here, I think it can be refined. It is true that
+> VM guest needs to know bits of physical address, but this info is not
+> used only by VM. I think the reason we need to update is this is simply
+> the fact.
+
+Fair enough. Like this?
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index e8ddc6dcfd53..ac45ba7398d9 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -612,11 +612,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ #endif
+
+        /*
+-        * Exclude KeyID bits from physical address bits.
+-        *
+-        * We have to do this even if we are not going to use KeyID bits
+-        * ourself. VM guests still have to know that these bits are not usable
+-        * for physical address.
++        * KeyID bits effectively lower number of physical address bits.
++        * Let's update cpuinfo_x86::x86_phys_bits to reflect the fact.
+         */
+        c->x86_phys_bits -= keyid_bits;
+ }
+-- 
+ Kirill A. Shutemov
