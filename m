@@ -1,90 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933058AbeCMLiQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:38:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42900 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932820AbeCMLiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:38:14 -0400
-From: Takashi Iwai <tiwai@suse.de>
-To: alsa-devel@alsa-project.org
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: pcm: Remove VLA usage
-Date: Tue, 13 Mar 2018 12:37:58 +0100
-Message-Id: <20180313113758.14286-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.2
+        id S932864AbeCMLlo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:41:44 -0400
+Received: from gateway36.websitewelcome.com ([50.116.127.2]:36133 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932503AbeCMLln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:41:43 -0400
+Date: Tue, 13 Mar 2018 06:20:34 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] EDAC, sb_edac: Remove VLA usage
+Message-ID: <20180313112034.GA28234@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1evhyt-001f22-5a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.117.58]:52010
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A helper function used by snd_pcm_hw_refine() still keeps using VLA
-for timestamps of hw constraint rules that are non-fixed size.
+In preparation to enabling -Wvla, remove VLA and replace it
+with a fixed-length array instead.
 
-Let's replace the VLA with a simple kmalloc() array.
+Fixed as part of the directive to remove all VLAs from
+the kernel: https://lkml.org/lkml/2018/3/7/621
 
-Reference: https://lkml.org/lkml/2018/3/7/621
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/core/pcm_native.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+Changes in v2:
+ - Use macro max_t to compute the max of all three array sizes.
+   This change is based on Borislav's feedback.
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 77ba50ddcf9e..756a9a3884a5 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -323,7 +323,7 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_constraints *constrs =
- 					&substream->runtime->hw_constraints;
- 	unsigned int k;
--	unsigned int rstamps[constrs->rules_num];
-+	unsigned int *rstamps;
- 	unsigned int vstamps[SNDRV_PCM_HW_PARAM_LAST_INTERVAL + 1];
- 	unsigned int stamp;
- 	struct snd_pcm_hw_rule *r;
-@@ -331,7 +331,7 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
- 	struct snd_mask old_mask;
- 	struct snd_interval old_interval;
- 	bool again;
--	int changed;
-+	int changed, err = 0;
+ drivers/edac/sb_edac.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index 8721002..196b012 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -110,6 +110,10 @@ static const u32 knl_interleave_list[] = {
+ 	0xdc, 0xe4, 0xec, 0xf4, 0xfc, /* 15-19 */
+ 	0x104, 0x10c, 0x114, 0x11c,   /* 20-23 */
+ };
++#define MAX_INTERLEAVE (max_t(unsigned int, ARRAY_SIZE(sbridge_interleave_list),\
++			max_t(unsigned int, ARRAY_SIZE(ibridge_interleave_list),\
++					    ARRAY_SIZE(knl_interleave_list))))
++
  
- 	/*
- 	 * Each application of rule has own sequence number.
-@@ -339,8 +339,9 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
- 	 * Each member of 'rstamps' array represents the sequence number of
- 	 * recent application of corresponding rule.
- 	 */
--	for (k = 0; k < constrs->rules_num; k++)
--		rstamps[k] = 0;
-+	rstamps = kcalloc(constrs->rules_num, sizeof(unsigned int), GFP_KERNEL);
-+	if (!rstamps)
-+		return -ENOMEM;
- 
- 	/*
- 	 * Each member of 'vstamps' array represents the sequence number of
-@@ -398,8 +399,10 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
- 		}
- 
- 		changed = r->func(params, r);
--		if (changed < 0)
--			return changed;
-+		if (changed < 0) {
-+			err = changed;
-+			goto out;
-+		}
- 
- 		/*
- 		 * When the parameter is changed, notify it to the caller
-@@ -430,7 +433,9 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
- 	if (again)
- 		goto retry;
- 
--	return 0;
-+ out:
-+	kfree(rstamps);
-+	return err;
- }
- 
- static int fixup_unreferenced_params(struct snd_pcm_substream *substream,
+ struct interleave_pkg {
+ 	unsigned char start;
+@@ -1899,7 +1903,7 @@ static int get_memory_error_data(struct mem_ctl_info *mci,
+ 	int			n_rir, n_sads, n_tads, sad_way, sck_xch;
+ 	int			sad_interl, idx, base_ch;
+ 	int			interleave_mode, shiftup = 0;
+-	unsigned		sad_interleave[pvt->info.max_interleave];
++	unsigned int		sad_interleave[MAX_INTERLEAVE];
+ 	u32			reg, dram_rule;
+ 	u8			ch_way, sck_way, pkg, sad_ha = 0;
+ 	u32			tad_offset;
 -- 
-2.16.2
+2.7.4
