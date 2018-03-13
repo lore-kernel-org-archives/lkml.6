@@ -1,92 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeCMJSd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:18:33 -0400
-Received: from h1.radempa.de ([176.9.142.194]:60139 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752332AbeCMJSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:18:32 -0400
-From: Harald Geyer <harald@ccbib.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: [PATCH 3/5] arm64: dts: allwinner: a64: add simplefb for A64 SoC
-In-reply-to: <20180313082724.7optc2xwgqoiibtx@flea>
-References: <20180312161050.7647-1-harald@ccbib.org> <20180312161050.7647-4-harald@ccbib.org> <20180313082724.7optc2xwgqoiibtx@flea>
-Comments: In-reply-to Maxime Ripard <maxime.ripard@bootlin.com>
-   message dated "Tue, 13 Mar 2018 09:27:24 +0100."
+        id S1752254AbeCMJZZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:25:25 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44647 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752074AbeCMJZU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 05:25:20 -0400
+X-Google-Smtp-Source: AG47ELu5FXqv4o4mXrSwZipDMZ30r+1SXyA9YIkOR6+UaEAnbe/fgAKqcFKV/s34H/uW+4EV0QxxYl84jLdBcB4X6Z4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1655.1520932701.1@stardust.g4.wien.funkfeuer.at>
-Date: Tue, 13 Mar 2018 10:18:22 +0100
-Message-Id: <E1evg4e-0000Qj-2w@stardust.g4.wien.funkfeuer.at>
+In-Reply-To: <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com>
+ <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
+ <20180309012458.GD5228@ming.t460p> <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+ <20180309120833.GB30257@ming.t460p> <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
+ <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 Mar 2018 10:25:19 +0100
+X-Google-Sender-Auth: DvQfiePxi_9v50-ad6plfjIvBlA
+Message-ID: <CAJZ5v0hKYJY9W3Gjo-KZzmfXhT7JqBxbe=AGPSQOSd4DCThJVA@mail.gmail.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ming Lei <ming.lei@redhat.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maxime Ripard writes:
-> On Mon, Mar 12, 2018 at 04:10:48PM +0000, Harald Geyer wrote:
->> The A64 SoC features two display pipelines, one has a LCD output, the
->> other has a HDMI output.
+On Tue, Mar 13, 2018 at 4:11 AM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+> Hi Thomas,
+>
+> At 03/09/2018 11:08 PM, Thomas Gleixner wrote:
+> [...]
 >>
->> Add support for simplefb for the LCD output. Tested on Teres I.
 >>
->> This patch was inspired by work of Icenowy Zheng.
+>> I'm not sure if there is a clear indicator whether physcial hotplug is
+>> supported or not, but the ACPI folks (x86) and architecture maintainers
+>
+> +cc Rafael
+>
+>> should be able to answer that question. I have a machine which says:
 >>
->> Signed-off-by: Harald Geyer <harald@ccbib.org>
->> ---
->> arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 ++++++++++++++++++++
->> 1 file changed, 20 insertions(+)
+>>     smpboot: Allowing 128 CPUs, 96 hotplug CPUs
 >>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> index ca1b365bc722..05d5e8def68a 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> @@ -52,6 +52,26 @@
->> 	#address-cells = <1>;
->> 	#size-cells = <1>;
->>
->> +	chosen {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +/*
->> + * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
->> + * However there is no support for this clock on A64 yet, so we depend
->> + * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
->> + */
-> 
-> There's definitely support for the CLK_MIXER0 clock in the DE2 CCU
-> driver, so I guess this would need to be amended / fixed
+>> There is definitely no way to hotplug anything on that machine and sure
+>> the
+>
+>
+> AFAIK, in ACPI based dynamic reconfiguration, there is no clear
+> indicator. In theory, If the ACPI tables have the hotpluggable
+> CPU resources, the OS can support physical hotplug.
 
-AFAIK on the A64 a special sram quirk is necessary, that never got merged:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574303.html
+In order for the ACPI-based CPU hotplug (I mean physical, not just the
+software offline/online we do in the kernel) to work, there have to be
+objects in the ACPI namespace corresponding to all of the processors
+in question.
 
-I asked Icenowy if I should resubmit her patch as part of this series,
-but was told further discussion is necessary. I'm sure she can better
-explain the details than me.
-
-Actually if it wasn't for the sram quirk, there is a simplefb patch by
-her, that could have been merged long ago:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574304.html
-
-Hope that explains,
-Harald
-
-> -- Maxime Ripard, Bootlin (formerly Free Electrons) Embedded Linux and
-> Kernel engineering https://bootlin.com
-> 
->>> application/pgp-signature attachment
-
--- 
-If you want to support my work:
-see http://friends.ccbib.org/harald/supporting/
-or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
-or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
+If they are not present, there is no way to signal insertion and eject
+the processors safely.
