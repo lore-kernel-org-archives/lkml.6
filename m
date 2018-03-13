@@ -1,106 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752625AbeCMTQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:16:58 -0400
-Received: from mout.web.de ([212.227.17.11]:33983 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751997AbeCMTQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:16:55 -0400
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] iio/adc/ad7291: Improve unlocking of a mutex in
- ad7291_read_raw()
-Message-ID: <a53248a9-4422-4436-aa43-bfbd2b60a85f@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 20:16:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752704AbeCMTRt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:17:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751957AbeCMTRs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:17:48 -0400
+Date: Tue, 13 Mar 2018 12:17:42 -0700
+From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: john.garry@huawei.com, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: perf-core build fails on powerpc
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:IftT0/FB8vm1TNcxmuG/gpWMqlg9vvVG5y84y9DhSi6JQf575c6
- eX6OEU/hhzElt2Q2zJl3KQpuiEucjtEEkY4lWOIpDTog+pAL4vJ++qCF+S52NTry1E7LzKl
- qVEVEAdvC/sm1y/Wy3sJtk0Uy1AUaYrqaUs615D3DZj5Av7pG6smtoHqLpo54ySQirNbwBI
- 67n+pv6GVvNx0azcwdd9g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/xEKgIh2J4A=:0iU/9GmaEazpIr+/SK6a9T
- tGi6jUZpBsCRrqNbt+wXHnoEIMP5pi7fowyRZGU80IuMlexwaHot9aPRPpNxhILRCrNJTarci
- /D0wfXg55AIMrk3JO8dgdvGvFULkH0xTrkWNv+U+OZ9uk9Wwwp7Q55JfHL5qNQaqfRDWfII9f
- yoiLWb9Ppv3Y4WqapbTnbCZmpkqKNY+BeS+jHdfxA05rRwji+/w6CdilyL6pSRuz08DM71hJn
- Xt2zF11XigLLZB4xiyUy+6FtOc6Y88hEEb6nZhB2q/qcicZ3IO8abrmjskgrTUZ7J/W+4wbjD
- dUTgazSggptxNiyaerUEHnAIwey+1yGq+fx2ypvbtK8LSuouc20xYHPuC+P/cTBnj/3Ruidt7
- VAgXwKxcSQ5wCZpSNSyNiNmgxn6P6z/+IQw4BNUxl9XVq6TyOADTbUr6ZkId5cGRqDw3OtQ8O
- zW4jTOLvimMAE51NEvJx0qMZXHlCRXYi1NKnQwXsDvLi4C6N6EzxZbLDKfVRGUuFq5R68iLTN
- /xFa+XxVgOw3/K0s93InNnzF0HBPuKKpc/ZyiKlM/JdeKyL4PWOI12uwsFkzeda7fdubJUGNn
- dXN+84RzVV/L2L6PlM/odm3QAAS1oytx14Gb/ifEY5PfEo2yF860cWrE+BySmqadwG5ZnZeX1
- CZH6256NkTJNst+HvMOHhzAwfPJcTnUGPo89DiDf3rX7KgO3TCsAybpsgOEh4nWKi8/n2w5tX
- PDT+E+dNazotlI9iGk8qc7Nwiimg1M587dD1BodcaZv4ce0Yp/O3FF+0JEu5cZt0trxjRGWS2
- THCHutOR4WL5vo9CFyWlnfItd/Thxl5FY8Qwif10eptyrC0Ad4=
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+X-Operating-System: Linux 2.0.32 on an i486
+User-Agent: Mutt/1.7.1 (2016-10-04)
+X-TM-AS-GCONF: 00
+x-cbid: 18031319-0024-0000-0000-000003360677
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008667; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002567; UDB=6.00510150; IPR=6.00781897;
+ MB=3.00020012; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 19:17:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031319-0025-0000-0000-000047512202
+Message-Id: <20180313191742.GA29120@us.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 20:08:40 +0100
 
-* Add a jump target so that a call of the function "mutex_unlock" is stored
-  only once in this function implementation.
 
-* Replace three calls by goto statements.
+Building perf on Powerpc seems broken when using Arnaldo's perf/core branch
+with HEAD as:
 
-This issue was detected by using the Coccinelle software.
+    1b442ed ("perf test: Fix exit code for record+probe_libc_inet_pton.sh")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+It maybe related to this commit:
+
+	commit d596299
+	Author: John Garry <john.garry@huawei.com>
+	Date:   Thu Mar 8 18:58:29 2018 +0800
+
+	    perf vendor events: Add support for pmu events vendor subdirectory
+
+Reverting this hunk from tools/perf/pmu-events/jevents.c, seems to fix the
+problem for me.
+
+@@ -957,8 +963,12 @@ static int process_one_file(const char *fpath, const struct
+ 
+ 
+        /* model directory, reset topic */
++#if 0
+        if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
+            (level == 2 && is_dir)) {
++#else
++       if (level == 1 && is_dir) {
++#endif
+
+
+The problem is that the tools/perf/pmu-events/pmu-events.c file generated by
+the jevents program is missing the "prefix" lines like:
+
+	struct pmu_event pme_power8[] = {
+and 
+	struct pmu_event pme_power9[] = {
+
+
+i.e the pmu-events.c begins like:
 ---
- drivers/iio/adc/ad7291.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7291.c b/drivers/iio/adc/ad7291.c
-index a862b5d8fb4b..b2c3d4c79909 100644
---- a/drivers/iio/adc/ad7291.c
-+++ b/drivers/iio/adc/ad7291.c
-@@ -335,27 +335,27 @@ static int ad7291_read_raw(struct iio_dev *indio_dev,
- 			mutex_lock(&chip->state_lock);
- 			/* If in autocycle mode drop through */
- 			if (chip->command & AD7291_AUTOCYCLE) {
--				mutex_unlock(&chip->state_lock);
--				return -EBUSY;
-+				ret = -EBUSY;
-+				goto unlock;
- 			}
- 			/* Enable this channel alone */
- 			regval = chip->command & (~AD7291_VOLTAGE_MASK);
- 			regval |= BIT(15 - chan->channel);
- 			ret = ad7291_i2c_write(chip, AD7291_COMMAND, regval);
--			if (ret < 0) {
--				mutex_unlock(&chip->state_lock);
--				return ret;
--			}
-+			if (ret < 0)
-+				goto unlock;
-+
- 			/* Read voltage */
- 			ret = i2c_smbus_read_word_swapped(chip->client,
- 							  AD7291_VOLTAGE);
--			if (ret < 0) {
--				mutex_unlock(&chip->state_lock);
--				return ret;
--			}
-+			if (ret < 0)
-+				goto unlock;
-+
- 			*val = ret & AD7291_VALUE_MASK;
-+			ret = IIO_VAL_INT;
-+unlock:
- 			mutex_unlock(&chip->state_lock);
--			return IIO_VAL_INT;
-+			return ret;
- 		case IIO_TEMP:
- 			/* Assumes tsense bit of command register always set */
- 			ret = i2c_smbus_read_word_swapped(chip->client,
--- 
-2.16.2
+#include "../../pmu-events/pmu-events.h"
+{
+        .name = "pm_data_from_dl2l3_mod",
+        .event = "event=0x4c048",
+        .desc = "The processor's data cache was reloaded with Modified (M) data from another chip's L2 or L3 on a different Node or Group (Distant), as this chip due to a demand load",
+        .topic = "cache",
+        .long_desc = "The processor's data cache was reloaded with Modified (M) data from another chip's L2 or L3 on a different Node or Group (Distant), as this chip due to either only demand loads or demand loads plus prefetches if MMCR1[16] is 1",
+},
+
+---
+
+Below is the debug and info messages at the time of failure:
+
+---
+
+  HOSTCC   /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents.o
+  HOSTLD   /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents-in.o
+  LINK     /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents
+  GEN      /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c
+d 0      50 powerpc              pmu-events/arch/powerpc
+d 1    4096 power8               pmu-events/arch/powerpc/power8
+f 2   10275 cache.json           pmu-events/arch/powerpc/power8/cache.json
+f 2     302 floating-point.json  pmu-events/arch/powerpc/power8/floating-point.json
+f 2   29283 marked.json          pmu-events/arch/powerpc/power8/marked.json
+f 2   12028 memory.json          pmu-events/arch/powerpc/power8/memory.json
+f 2  159271 other.json           pmu-events/arch/powerpc/power8/other.json
+f 2   10777 pipeline.json        pmu-events/arch/powerpc/power8/pipeline.json
+f 2    3781 pmc.json             pmu-events/arch/powerpc/power8/pmc.json
+f 2    6664 translation.json     pmu-events/arch/powerpc/power8/translation.json
+f 2   25104 frontend.json        pmu-events/arch/powerpc/power8/frontend.json
+d 1    4096 power9               pmu-events/arch/powerpc/power9
+f 2    1096 floating-point.json  pmu-events/arch/powerpc/power9/floating-point.json
+f 2    5503 cache.json           pmu-events/arch/powerpc/power9/cache.json
+f 2   14885 frontend.json        pmu-events/arch/powerpc/power9/frontend.json
+f 2   27807 marked.json          pmu-events/arch/powerpc/power9/marked.json
+f 2    4820 memory.json          pmu-events/arch/powerpc/power9/memory.json
+f 2   85387 other.json           pmu-events/arch/powerpc/power9/other.json
+f 2   23839 pipeline.json        pmu-events/arch/powerpc/power9/pipeline.json
+f 2    5138 pmc.json             pmu-events/arch/powerpc/power9/pmc.json
+f 2    9897 translation.json     pmu-events/arch/powerpc/power9/translation.json
+f 1     440 mapfile.csv          pmu-events/arch/powerpc/mapfile.csv
+jevents: Processing mapfile pmu-events/arch/powerpc/mapfile.csv
+  CC       /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.o
+/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:2:1: error: expected identifier or ‘(’ before ‘{’ token
+ {
+ ^
+/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:8:2: error: expected identifier or ‘(’ before ‘,’ token
+ },
+  ^
+/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:15:2: error: expected identifier or ‘(’ before ‘,’ token
+ },
+  ^
+/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:22:2: error: expected identifier or ‘(’ before ‘,’ token
+ },
+
+----
