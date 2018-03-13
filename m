@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeCMLwh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:52:37 -0400
-Received: from foss.arm.com ([217.140.101.70]:36584 "EHLO foss.arm.com"
+        id S932986AbeCMLvs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:51:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:36328 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933285AbeCMLwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:52:35 -0400
+        id S932892AbeCMLvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:51:45 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
         ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
+        Andre Przywara <andre.przywara@arm.com>,
+        James Morse <james.morse@arm.com>,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v4 21/22] arm64: Delay enabling hardware DBM feature
-Date: Tue, 13 Mar 2018 11:51:19 +0000
-Message-Id: <20180313115120.17256-22-suzuki.poulose@arm.com>
+Subject: [PATCH v4 01/22] arm64: capabilities: Update prototype for enable call back
+Date: Tue, 13 Mar 2018 11:50:59 +0000
+Message-Id: <20180313115120.17256-2-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313115120.17256-1-suzuki.poulose@arm.com>
 References: <20180313115120.17256-1-suzuki.poulose@arm.com>
@@ -23,164 +25,512 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We enable hardware DBM bit in a capable CPU, very early in the
-boot via __cpu_setup. This doesn't give us a flexibility of
-optionally disable the feature, as the clearing the bit
-is a bit costly as the TLB can cache the settings. Instead,
-we delay enabling the feature until the CPU is brought up
-into the kernel. We use the feature capability mechanism
-to handle it.
+From: Dave Martin <dave.martin@arm.com>
 
-The hardware DBM is a non-conflicting feature. i.e, the kernel
-can safely run with a mix of CPUs with some using the feature
-and the others don't. So, it is safe for a late CPU to have
-this capability and enable it, even if the active CPUs don't.
+We issue the enable() call back for all CPU hwcaps capabilities
+available on the system, on all the CPUs. So far we have ignored
+the argument passed to the call back, which had a prototype to
+accept a "void *" for use with on_each_cpu() and later with
+stop_machine(). However, with commit 0a0d111d40fd1
+("arm64: cpufeature: Pass capability structure to ->enable callback"),
+there are some users of the argument who wants the matching capability
+struct pointer where there are multiple matching criteria for a single
+capability. Clean up the declaration of the call back to make it clear.
 
-To get this handled properly by the infrastructure, we
-unconditionally set the capability and only enable it
-on CPUs which really have the feature. Also, we print the
-feature detection from the "matches" call back to make sure
-we don't mislead the user when none of the CPUs could use the
-feature.
+ 1) Renamed to cpu_enable(), to imply taking necessary actions on the
+    called CPU for the entry.
+ 2) Pass const pointer to the capability, to allow the call back to
+    check the entry. (e.,g to check if any action is needed on the CPU)
+ 3) We don't care about the result of the call back, turning this to
+    a void.
 
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Martin <dave.martin@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Andre Przywara <andre.przywara@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Dave Martin <dave.martin@arm.com>
+[
+ Rebased to for-next/core converting more users, rename call back,
+ drop call back results
+]
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpucaps.h |  3 +-
- arch/arm64/kernel/cpufeature.c   | 71 ++++++++++++++++++++++++++++++++++++++++
- arch/arm64/mm/proc.S             | 13 ++++----
- 3 files changed, 79 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |  7 ++++-
+ arch/arm64/include/asm/fpsimd.h     |  4 ++-
+ arch/arm64/include/asm/processor.h  |  7 ++---
+ arch/arm64/kernel/cpu_errata.c      | 53 +++++++++++++++++--------------------
+ arch/arm64/kernel/cpufeature.c      | 42 ++++++++++++++++-------------
+ arch/arm64/kernel/fpsimd.c          |  5 ++--
+ arch/arm64/kernel/traps.c           |  4 +--
+ arch/arm64/mm/fault.c               |  3 +--
+ 8 files changed, 67 insertions(+), 58 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index ff9fb3aba17b..21bb624e0a7a 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -48,7 +48,8 @@
- #define ARM64_WORKAROUND_843419			27
- #define ARM64_HAS_CACHE_IDC			28
- #define ARM64_HAS_CACHE_DIC			29
-+#define ARM64_HW_DBM				30
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index fbf0aab94d67..cba67cb24b22 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -100,7 +100,12 @@ struct arm64_cpu_capabilities {
+ 	u16 capability;
+ 	int def_scope;			/* default scope */
+ 	bool (*matches)(const struct arm64_cpu_capabilities *caps, int scope);
+-	int (*enable)(void *);		/* Called on all active CPUs */
++	/*
++	 * Take the appropriate actions to enable this capability for this CPU.
++	 * For each successfully booted CPU, this method is called for each
++	 * globally detected capability.
++	 */
++	void (*cpu_enable)(const struct arm64_cpu_capabilities *cap);
+ 	union {
+ 		struct {	/* To be used for erratum handling only */
+ 			u32 midr_model;
+diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+index 8857a0f0d0f7..7623762f7fa6 100644
+--- a/arch/arm64/include/asm/fpsimd.h
++++ b/arch/arm64/include/asm/fpsimd.h
+@@ -83,7 +83,9 @@ extern void sve_save_state(void *state, u32 *pfpsr);
+ extern void sve_load_state(void const *state, u32 const *pfpsr,
+ 			   unsigned long vq_minus_1);
+ extern unsigned int sve_get_vl(void);
+-extern int sve_kernel_enable(void *);
++
++struct arm64_cpu_capabilities;
++extern void sve_kernel_enable(const struct arm64_cpu_capabilities *__unused);
  
--#define ARM64_NCAPS				30
-+#define ARM64_NCAPS				31
+ extern int __ro_after_init sve_max_vl;
  
- #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index fce604e3e599..4fc8867fde4d 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -37,6 +37,7 @@
+ #include <linux/string.h>
+ 
+ #include <asm/alternative.h>
++#include <asm/cpufeature.h>
+ #include <asm/fpsimd.h>
+ #include <asm/hw_breakpoint.h>
+ #include <asm/lse.h>
+@@ -227,9 +228,9 @@ static inline void spin_lock_prefetch(const void *ptr)
+ 
+ #endif
+ 
+-int cpu_enable_pan(void *__unused);
+-int cpu_enable_cache_maint_trap(void *__unused);
+-int cpu_clear_disr(void *__unused);
++void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused);
++void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused);
++void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
+ 
+ /* Userspace interface for PR_SVE_{SET,GET}_VL prctl()s: */
+ #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 186c0fc61dcd..74f058421dd8 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -65,11 +65,11 @@ has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+ 		(arm64_ftr_reg_ctrel0.sys_val & arm64_ftr_reg_ctrel0.strict_mask);
+ }
+ 
+-static int cpu_enable_trap_ctr_access(void *__unused)
++static void
++cpu_enable_trap_ctr_access(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/* Clear SCTLR_EL1.UCT */
+ 	config_sctlr_el1(SCTLR_EL1_UCT, 0);
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+@@ -173,25 +173,25 @@ static void call_hvc_arch_workaround_1(void)
+ 	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+ }
+ 
+-static int enable_smccc_arch_workaround_1(void *data)
++static void
++enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+ {
+-	const struct arm64_cpu_capabilities *entry = data;
+ 	bp_hardening_cb_t cb;
+ 	void *smccc_start, *smccc_end;
+ 	struct arm_smccc_res res;
+ 
+ 	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+-		return 0;
++		return;
+ 
+ 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+-		return 0;
++		return;
+ 
+ 	switch (psci_ops.conduit) {
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if (res.a0)
+-			return 0;
++			return;
+ 		cb = call_hvc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_hvc_start;
+ 		smccc_end = __smccc_workaround_1_hvc_end;
+@@ -201,19 +201,19 @@ static int enable_smccc_arch_workaround_1(void *data)
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if (res.a0)
+-			return 0;
++			return;
+ 		cb = call_smc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_smc_start;
+ 		smccc_end = __smccc_workaround_1_smc_end;
+ 		break;
+ 
+ 	default:
+-		return 0;
++		return;
+ 	}
+ 
+ 	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
+ 
+-	return 0;
++	return;
+ }
+ 
+ static void qcom_link_stack_sanitization(void)
+@@ -228,15 +228,12 @@ static void qcom_link_stack_sanitization(void)
+ 		     : "=&r" (tmp));
+ }
+ 
+-static int qcom_enable_link_stack_sanitization(void *data)
++static void
++qcom_enable_link_stack_sanitization(const struct arm64_cpu_capabilities *entry)
+ {
+-	const struct arm64_cpu_capabilities *entry = data;
+-
+ 	install_bp_hardening_cb(entry, qcom_link_stack_sanitization,
+ 				__qcom_hyp_sanitize_link_stack_start,
+ 				__qcom_hyp_sanitize_link_stack_end);
+-
+-	return 0;
+ }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+ 
+@@ -266,7 +263,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.desc = "ARM errata 826319, 827319, 824069",
+ 		.capability = ARM64_WORKAROUND_CLEAN_CACHE,
+ 		MIDR_RANGE(MIDR_CORTEX_A53, 0x00, 0x02),
+-		.enable = cpu_enable_cache_maint_trap,
++		.cpu_enable = cpu_enable_cache_maint_trap,
+ 	},
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_819472
+@@ -275,7 +272,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.desc = "ARM errata 819472",
+ 		.capability = ARM64_WORKAROUND_CLEAN_CACHE,
+ 		MIDR_RANGE(MIDR_CORTEX_A53, 0x00, 0x01),
+-		.enable = cpu_enable_cache_maint_trap,
++		.cpu_enable = cpu_enable_cache_maint_trap,
+ 	},
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_832075
+@@ -365,7 +362,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
+ 		.matches = has_mismatched_cache_line_size,
+ 		.def_scope = SCOPE_LOCAL_CPU,
+-		.enable = cpu_enable_trap_ctr_access,
++		.cpu_enable = cpu_enable_trap_ctr_access,
+ 	},
+ #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+ 	{
+@@ -404,27 +401,27 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
+-		.enable = qcom_enable_link_stack_sanitization,
++		.cpu_enable = qcom_enable_link_stack_sanitization,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
+@@ -433,7 +430,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
+-		.enable = qcom_enable_link_stack_sanitization,
++		.cpu_enable = qcom_enable_link_stack_sanitization,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
+@@ -442,12 +439,12 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ #endif
+ 	{
+@@ -465,8 +462,8 @@ void verify_local_cpu_errata_workarounds(void)
+ 
+ 	for (; caps->matches; caps++) {
+ 		if (cpus_have_cap(caps->capability)) {
+-			if (caps->enable)
+-				caps->enable((void *)caps);
++			if (caps->cpu_enable)
++				caps->cpu_enable(caps);
+ 		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
+ 			pr_crit("CPU%d: Requires work around for %s, not detected"
+ 					" at boot time\n",
 diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 53273e79f7ce..4e73c610a409 100644
+index bdab55223866..b8821234bc68 100644
 --- a/arch/arm64/kernel/cpufeature.c
 +++ b/arch/arm64/kernel/cpufeature.c
-@@ -954,6 +954,57 @@ static int __init parse_kpti(char *str)
+@@ -906,7 +906,8 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+ 						     ID_AA64PFR0_CSV3_SHIFT);
+ }
+ 
+-static int kpti_install_ng_mappings(void *__unused)
++static void
++kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	typedef void (kpti_remap_fn)(int, int, phys_addr_t);
+ 	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+@@ -916,7 +917,7 @@ static int kpti_install_ng_mappings(void *__unused)
+ 	int cpu = smp_processor_id();
+ 
+ 	if (kpti_applied)
+-		return 0;
++		return;
+ 
+ 	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+ 
+@@ -927,7 +928,7 @@ static int kpti_install_ng_mappings(void *__unused)
+ 	if (!cpu)
+ 		kpti_applied = true;
+ 
+-	return 0;
++	return;
+ }
+ 
+ static int __init parse_kpti(char *str)
+@@ -944,7 +945,7 @@ static int __init parse_kpti(char *str)
  __setup("kpti=", parse_kpti);
  #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
-+#ifdef CONFIG_ARM64_HW_AFDBM
-+static inline void __cpu_enable_hw_dbm(void)
-+{
-+	u64 tcr = read_sysreg(tcr_el1) | TCR_HD;
-+
-+	write_sysreg(tcr, tcr_el1);
-+	isb();
-+}
-+
-+static bool cpu_can_use_dbm(const struct arm64_cpu_capabilities *cap)
-+{
-+	return has_cpuid_feature(cap, SCOPE_LOCAL_CPU);
-+}
-+
-+static void cpu_enable_hw_dbm(struct arm64_cpu_capabilities const *cap)
-+{
-+	if (cpu_can_use_dbm(cap))
-+		__cpu_enable_hw_dbm();
-+}
-+
-+static bool has_hw_dbm(const struct arm64_cpu_capabilities *cap,
-+		       int __unused)
-+{
-+	static bool detected = false;
-+	/*
-+	 * DBM is a non-conflicting feature. i.e, the kernel can safely
-+	 * run a mix of CPUs with and without the feature. So, we
-+	 * unconditionally enable the capability to allow any late CPU
-+	 * to use the feature. We only enable the control bits on the
-+	 * CPU, if it actually supports.
-+	 *
-+	 * We have to make sure we print the "feature" detection only
-+	 * when at least one CPU actually uses it. So check if this CPU
-+	 * can actually use it and print the message exactly once.
-+	 *
-+	 * This is safe as all CPUs (including secondary CPUs - due to the
-+	 * LOCAL_CPU scope - and the hotplugged CPUs - via verification)
-+	 * goes through the "matches" check exactly once. Also if a CPU
-+	 * matches the criteria, it is guaranteed that the CPU will turn
-+	 * the DBM on, as the capability is unconditionally enabled.
-+	 */
-+	if (!detected && cpu_can_use_dbm(cap)) {
-+		detected = true;
-+		pr_info("detected: Hardware dirty bit management\n");
-+	}
-+
-+	return true;
-+}
-+
-+#endif
-+
- static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+-static int cpu_copy_el2regs(void *__unused)
++static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
  {
  	/*
-@@ -1130,6 +1181,26 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
- 		.matches = has_cache_dic,
- 	},
-+#ifdef CONFIG_ARM64_HW_AFDBM
-+	{
-+		/*
-+		 * Since we turn this on always, we don't want the user to
-+		 * think that the feature is available when it may not be.
-+		 * So hide the description.
-+		 *
-+		 * .desc = "Hardware pagetable Dirty Bit Management",
-+		 *
-+		 */
-+		.type = ARM64_CPUCAP_WEAK_LOCAL_CPU_FEATURE,
-+		.capability = ARM64_HW_DBM,
-+		.sys_reg = SYS_ID_AA64MMFR1_EL1,
-+		.sign = FTR_UNSIGNED,
-+		.field_pos = ID_AA64MMFR1_HADBS_SHIFT,
-+		.min_field_value = 2,
-+		.matches = has_hw_dbm,
-+		.cpu_enable = cpu_enable_hw_dbm,
-+	},
-+#endif
- 	{},
- };
- 
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 8f074d64b760..5f9a73a4452c 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -448,16 +448,15 @@ ENTRY(__cpu_setup)
- 	tcr_compute_pa_size x10, #TCR_IPS_SHIFT, x5, x6
- #ifdef CONFIG_ARM64_HW_AFDBM
- 	/*
--	 * Hardware update of the Access and Dirty bits.
-+	 * Enable hardware update of the Access Flags bit.
-+	 * Hardware dirty bit management is enabled later,
-+	 * via capabilities.
+ 	 * Copy register values that aren't redirected by hardware.
+@@ -956,8 +957,6 @@ static int cpu_copy_el2regs(void *__unused)
  	 */
- 	mrs	x9, ID_AA64MMFR1_EL1
- 	and	x9, x9, #0xf
--	cbz	x9, 2f
--	cmp	x9, #2
--	b.lt	1f
--	orr	x10, x10, #TCR_HD		// hardware Dirty flag update
--1:	orr	x10, x10, #TCR_HA		// hardware Access flag update
--2:
-+	cbz	x9, 1f
-+	orr	x10, x10, #TCR_HA		// hardware Access flag update
-+1:
- #endif	/* CONFIG_ARM64_HW_AFDBM */
- 	msr	tcr_el1, x10
- 	ret					// return to head.S
+ 	if (!alternatives_applied)
+ 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
+-
+-	return 0;
+ }
+ 
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+@@ -981,7 +980,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.field_pos = ID_AA64MMFR1_PAN_SHIFT,
+ 		.sign = FTR_UNSIGNED,
+ 		.min_field_value = 1,
+-		.enable = cpu_enable_pan,
++		.cpu_enable = cpu_enable_pan,
+ 	},
+ #endif /* CONFIG_ARM64_PAN */
+ #if defined(CONFIG_AS_LSE) && defined(CONFIG_ARM64_LSE_ATOMICS)
+@@ -1029,7 +1028,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = runs_at_el2,
+-		.enable = cpu_copy_el2regs,
++		.cpu_enable = cpu_copy_el2regs,
+ 	},
+ 	{
+ 		.desc = "32-bit EL0 Support",
+@@ -1053,7 +1052,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = unmap_kernel_at_el0,
+-		.enable = kpti_install_ng_mappings,
++		.cpu_enable = kpti_install_ng_mappings,
+ 	},
+ #endif
+ 	{
+@@ -1084,7 +1083,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.field_pos = ID_AA64PFR0_SVE_SHIFT,
+ 		.min_field_value = ID_AA64PFR0_SVE,
+ 		.matches = has_cpuid_feature,
+-		.enable = sve_kernel_enable,
++		.cpu_enable = sve_kernel_enable,
+ 	},
+ #endif /* CONFIG_ARM64_SVE */
+ #ifdef CONFIG_ARM64_RAS_EXTN
+@@ -1097,7 +1096,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.sign = FTR_UNSIGNED,
+ 		.field_pos = ID_AA64PFR0_RAS_SHIFT,
+ 		.min_field_value = ID_AA64PFR0_RAS_V1,
+-		.enable = cpu_clear_disr,
++		.cpu_enable = cpu_clear_disr,
+ 	},
+ #endif /* CONFIG_ARM64_RAS_EXTN */
+ 	{
+@@ -1253,6 +1252,14 @@ void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+ 	}
+ }
+ 
++static int __enable_cpu_capability(void *arg)
++{
++	const struct arm64_cpu_capabilities *cap = arg;
++
++	cap->cpu_enable(cap);
++	return 0;
++}
++
+ /*
+  * Run through the enabled capabilities and enable() it on all active
+  * CPUs
+@@ -1268,14 +1275,15 @@ void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
+ 		/* Ensure cpus_have_const_cap(num) works */
+ 		static_branch_enable(&cpu_hwcap_keys[num]);
+ 
+-		if (caps->enable) {
++		if (caps->cpu_enable) {
+ 			/*
+ 			 * Use stop_machine() as it schedules the work allowing
+ 			 * us to modify PSTATE, instead of on_each_cpu() which
+ 			 * uses an IPI, giving us a PSTATE that disappears when
+ 			 * we return.
+ 			 */
+-			stop_machine(caps->enable, (void *)caps, cpu_online_mask);
++			stop_machine(__enable_cpu_capability, (void *)caps,
++				     cpu_online_mask);
+ 		}
+ 	}
+ }
+@@ -1318,8 +1326,8 @@ verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
+ 					smp_processor_id(), caps->desc);
+ 			cpu_die_early();
+ 		}
+-		if (caps->enable)
+-			caps->enable((void *)caps);
++		if (caps->cpu_enable)
++			caps->cpu_enable(caps);
+ 	}
+ }
+ 
+@@ -1537,10 +1545,8 @@ static int __init enable_mrs_emulation(void)
+ 
+ core_initcall(enable_mrs_emulation);
+ 
+-int cpu_clear_disr(void *__unused)
++void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/* Firmware may have left a deferred SError in this register. */
+ 	write_sysreg_s(0, SYS_DISR_EL1);
+-
+-	return 0;
+ }
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 65fc87645ec6..fc19e741b5c8 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -40,6 +40,7 @@
+ #include <linux/sysctl.h>
+ 
+ #include <asm/fpsimd.h>
++#include <asm/cpufeature.h>
+ #include <asm/cputype.h>
+ #include <asm/simd.h>
+ #include <asm/sigcontext.h>
+@@ -756,12 +757,10 @@ static void __init sve_efi_setup(void)
+  * Enable SVE for EL1.
+  * Intended for use by the cpufeatures code during CPU boot.
+  */
+-int sve_kernel_enable(void *__always_unused p)
++void sve_kernel_enable(const struct arm64_cpu_capabilities *__always_unused p)
+ {
+ 	write_sysreg(read_sysreg(CPACR_EL1) | CPACR_EL1_ZEN_EL1EN, CPACR_EL1);
+ 	isb();
+-
+-	return 0;
+ }
+ 
+ void __init sve_setup(void)
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 2b478565d774..ba964da31a25 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -38,6 +38,7 @@
+ 
+ #include <asm/atomic.h>
+ #include <asm/bug.h>
++#include <asm/cpufeature.h>
+ #include <asm/daifflags.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/esr.h>
+@@ -407,10 +408,9 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
+ 	force_signal_inject(SIGILL, ILL_ILLOPC, regs->pc);
+ }
+ 
+-int cpu_enable_cache_maint_trap(void *__unused)
++void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	config_sctlr_el1(SCTLR_EL1_UCI, 0);
+-	return 0;
+ }
+ 
+ #define __user_cache_maint(insn, address, res)			\
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 551d044fb31f..4165485e8b6e 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -804,7 +804,7 @@ asmlinkage int __exception do_debug_exception(unsigned long addr,
+ NOKPROBE_SYMBOL(do_debug_exception);
+ 
+ #ifdef CONFIG_ARM64_PAN
+-int cpu_enable_pan(void *__unused)
++void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/*
+ 	 * We modify PSTATE. This won't work from irq context as the PSTATE
+@@ -814,6 +814,5 @@ int cpu_enable_pan(void *__unused)
+ 
+ 	config_sctlr_el1(SCTLR_EL1_SPAN, 0);
+ 	asm(SET_PSTATE_PAN(1));
+-	return 0;
+ }
+ #endif /* CONFIG_ARM64_PAN */
 -- 
 2.14.3
