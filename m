@@ -1,238 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeCMBvD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:51:03 -0400
-Received: from a8-126.smtp-out.amazonses.com ([54.240.8.126]:52500 "EHLO
-        a8-126.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751419AbeCMBvA (ORCPT
+        id S932327AbeCMBzf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:55:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59836 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932211AbeCMBzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:51:00 -0400
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Thiebaud Weksteen <tweek@google.com>, hdegoede@redhat.com
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
- <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
-From: Jeremy Cline <jeremy@jcline.org>
-Message-ID: <010001621d0db0f5-a514b097-9f94-4a25-8d2c-ad22c0ae1a96-000000@email.amazonses.com>
-Date: Tue, 13 Mar 2018 01:50:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Mon, 12 Mar 2018 21:55:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C5F160849
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 08/11] nvme-pci: Use PCI p2pmem subsystem to manage the
+ CMB
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-9-logang@deltatee.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <4b08ec0b-76f4-4b67-a38b-5a1940c4c40d@codeaurora.org>
+Date: Mon, 12 Mar 2018 21:55:27 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+In-Reply-To: <20180312193525.2855-9-logang@deltatee.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.03.13-54.240.8.126
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 03:55 PM, Thiebaud Weksteen wrote:
-> On Mon, Mar 12, 2018 at 7:33 PM Jeremy Cline <jeremy@jcline.org> wrote:
-> 
->> On 03/12/2018 02:29 PM, Thiebaud Weksteen wrote:
->>> On Mon, Mar 12, 2018 at 6:30 PM Ard Biesheuvel <
-> ard.biesheuvel@linaro.org>
->>> wrote:
->>>
->>>> On 12 March 2018 at 17:01, Jeremy Cline <jeremy@jcline.org> wrote:
->>>>> On 03/12/2018 10:56 AM, Ard Biesheuvel wrote:
->>>>>> On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
->>>>>>> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
->>>>>>>> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com>
->>> wrote:
->>>>>>>>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org>
->>> wrote:
->>>>>>>>>
->>>>>>>>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen
-> wrote:
->>>>>>>>>>> Thanks a lot for trying out the patch!
->>>>>>>>>>>
->>>>>>>>>>> Please don't modify your install at this stage, I think we are
->>> hitting a
->>>>>>>>>>> firmware bug and that would be awesome if we can fix how we are
->>>>>>>>> handling it.
->>>>>>>>>>> So, if we reach that stage in the function it could either be
->>> that:
->>>>>>>>>>> * The allocation did not succeed, somehow, but the firmware
-> still
->>>>>>>>> returned
->>>>>>>>>>> EFI_SUCCEED.
->>>>>>>>>>> * The size requested is incorrect (I'm thinking something like a
->>> 1G of
->>>>>>>>>>> log). This would be due to either a miscalculation of log_size
->>>>>>>>> (possible)
->>>>>>>>>>> or; the returned values of GetEventLog are not correct.
->>>>>>>>>>> I'm sending a patch to add checks for these. Could you please
->>> apply and
->>>>>>>>>>> retest?
->>>>>>>>>>> Again, thanks for helping debugging this.
->>>>>>>>>
->>>>>>>>>> No problem, thanks for the help :)
->>>>>>>>>
->>>>>>>>>> With the new patch:
->>>>>>>>>
->>>>>>>>>> Locating the TCG2Protocol
->>>>>>>>>> Calling GetEventLog on TCG2Protocol
->>>>>>>>>> Log returned
->>>>>>>>>> log_location is not empty
->>>>>>>>>> log_size != 0
->>>>>>>>>> log_size < 1M
->>>>>>>>>> Allocating memory for storing the logs
->>>>>>>>>> Returned from memory allocation
->>>>>>>>>> Copying log to new location
->>>>>>>>>
->>>>>>>>>> And then it hangs. I added a couple more print statements:
->>>>>>>>>
->>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->>>>>>>>> b/drivers/firmware/efi/libstub/tpm.c
->>>>>>>>>> index ee3fac109078..1ab5638bc50e 100644
->>>>>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
->>>>>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
->>>>>>>>>> @@ -148,8 +148,11 @@ void
->>>>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>>>>>>>          efi_printk(sys_table_arg, "Copying log to new
->>> location\n");
->>>>>>>>>
->>>>>>>>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->>>>>>>>>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to
->>> 0\n");
->>>>>>>>>>          log_tbl->size = log_size;
->>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
->>>>>>>>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
->>>>>>>>>>          memcpy(log_tbl->log, (void *) first_entry_addr,
-> log_size);
->>>>>>>>>
->>>>>>>>>>          efi_printk(sys_table_arg, "Installing the log into the
->>>>>>>>> configuration table\n");
->>>>>>>>>
->>>>>>>>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) +
->>> log_size);"
->>>>>>>>>
->>>>>>>>> Thanks. Well, it looks like the memory that is supposedly
-> allocated
->>> is not
->>>>>>>>> usable. I'm thinking this is a firmware bug.
->>>>>>>>> Ard, would you agree on this assumption? Thoughts on how to
-> proceed?
->>>>>>>>>
->>>>>>>>
->>>>>>>> I am rather puzzled why the allocate_pool() should succeed and the
->>>>>>>> subsequent memset() should fail. This does not look like an issue
->>> that
->>>>>>>> is intimately related to TPM2 support, rather an issue in the
->>> firmware
->>>>>>>> that happens to get tickled after the change.
->>>>>>>>
->>>>>>>> Would you mind trying replacing EFI_LOADER_DATA with
->>>>>>>> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
->>>>>>>
->>>>>>> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at
->>> the
->>>>>>> memset() call.
->>>>>>>
->>>>>>
->>>>>> Could you try the following please? (attached as well in case gmail
->>> mangles it)
->>>>>>
->>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->>>>>> b/drivers/firmware/efi/libstub/tpm.c
->>>>>> index 2298560cea72..30d960a344b7 100644
->>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
->>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
->>>>>> @@ -70,6 +70,8 @@ void
->>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>>>         size_t log_size, last_entry_size;
->>>>>>         efi_bool_t truncated;
->>>>>>         void *tcg2_protocol;
->>>>>> +       unsigned long num_pages;
->>>>>> +       efi_physical_addr_t log_tbl_alloc;
->>>>>>
->>>>>>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
->>>>>>                                 &tcg2_protocol);
->>>>>> @@ -104,9 +106,12 @@ void
->>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>>>         }
->>>>>>
->>>>>>         /* Allocate space for the logs and copy them. */
->>>>>> -       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
->>>>>> -                               sizeof(*log_tbl) + log_size,
->>>>>> -                               (void **) &log_tbl);
->>>>>> +       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size,
->>> EFI_PAGE_SIZE);
->>>>>> +       status = efi_call_early(allocate_pages,
->>>>>> +                               EFI_ALLOCATE_ANY_PAGES,
->>>>>> +                               EFI_LOADER_DATA,
->>>>>> +                               num_pages,
->>>>>> +                               &log_tbl_alloc);
->>>>>>
->>>>>>         if (status != EFI_SUCCESS) {
->>>>>>                 efi_printk(sys_table_arg,
->>>>>> @@ -114,6 +119,7 @@ void
->>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>>>                 return;
->>>>>>         }
->>>>>>
->>>>>> +       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned
->>> long)log_tbl_alloc;
->>>>>>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->>>>>>         log_tbl->size = log_size;
->>>>>>         log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->>>>>> @@ -126,7 +132,7 @@ void
->>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>>>         return;
->>>>>>
->>>>>>  err_free:
->>>>>> -       efi_call_early(free_pool, log_tbl);
->>>>>> +       efi_call_early(free_pages, log_tbl_alloc, num_pages);
->>>>>>  }
->>>>>>
->>>>>>  void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
->>>>>>
->>>>>
->>>>> Hi Ard,
->>>>>
->>>>> When I apply this, it starts hanging at
->>>>>
->>>>> status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-> tcg2_protocol,
->>>>>                         EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
->>>>>                         &log_location, &log_last_entry, &truncated);
->>>>>
->>>>> rather than at the memset() call.
->>>>>
->>>
->>>> That is *very* surprising, given that the change only affects code
->>>> that executes after that.
->>>
-> 
-> Hans, you said you configured the tablet to use the 32-bit version of grub
-> instead
-> of 64. Why's that?
-> 
-> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
-> your Android install working? (that is, what happens if you boot Boot0000)?
+On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
+> -	if (nvmeq->sq_cmds_io)
 
-It's definitely being built in 64bit mode. The Android install entry is
-a remnant from Hans, but it appears to be a Red Hat grub so it just
-boots to Fedora.
+I think you should keep the code as it is for the case where
+(!nvmeq->sq_cmds_is_io && nvmeq->sq_cmds_io)
 
-Regards,
-Jeremy
+You are changing the behavior for NVMe drives with CMB buffers.
+You can change the if statement here with the statement above.
+
+> -		memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
+> -	else
+> -		memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+> +	memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+>  
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
