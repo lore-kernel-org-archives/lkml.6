@@ -1,81 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932837AbeCMKjU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:39:20 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34526 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932874AbeCMKi0 (ORCPT
+        id S932900AbeCMKiV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:38:21 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:56034 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932568AbeCMKiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:38:26 -0400
-X-Google-Smtp-Source: AG47ELs9m5czBu1TGHGQfBfWZFp0VmkUbE5GhSaXVvA4Qe38J7inmdrs3OB5MbJu8HcWsKxmxNnypw==
+        Tue, 13 Mar 2018 06:38:18 -0400
+X-Google-Smtp-Source: AG47ELvQrgwbuaEUNwuUf8/Fgj/c1URCY+WsjpGoVNLb8I8Y5PaJNPOGuNKz9KmWFpffiHosnVGPCQ==
 From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To: David Howells <dhowells@redhat.com>
 Cc: linux-fs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH 3/5] MODSIGN: load blacklist from MOKx
-Date: Tue, 13 Mar 2018 18:38:01 +0800
-Message-Id: <20180313103803.13388-4-jlee@suse.com>
+        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
+Subject: [PATCH 0/5 v2] Using the hash in MOKx to blacklist kernel module
+Date: Tue, 13 Mar 2018 18:37:58 +0800
+Message-Id: <20180313103803.13388-1-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20180313103803.13388-1-jlee@suse.com>
-References: <20180313103803.13388-1-jlee@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the logic to load the blacklisted hash and
-certificates from MOKx which is maintained by shim bootloader.
+This patch set is base on the efi-lock-down and keys-uefi branchs in
+David Howells's linux-fs git tree.
+    https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-uefi
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Josh Boyer <jwboyer@fedoraproject.org>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- certs/load_uefi.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+The main purpose is using the MOKx to blacklist kernel module.
 
-diff --git a/certs/load_uefi.c b/certs/load_uefi.c
-index f2f372b..dc66a79 100644
---- a/certs/load_uefi.c
-+++ b/certs/load_uefi.c
-@@ -164,8 +164,8 @@ static int __init load_uefi_certs(void)
- {
- 	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
- 	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
--	void *db = NULL, *dbx = NULL, *mok = NULL;
--	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
-+	void *db = NULL, *dbx = NULL, *mok = NULL, *mokx = NULL;
-+	unsigned long dbsize = 0, dbxsize = 0, moksize = 0, mokxsize = 0;
- 	int rc = 0;
- 
- 	if (!efi.get_variable)
-@@ -195,7 +195,7 @@ static int __init load_uefi_certs(void)
- 		kfree(dbx);
- 	}
- 
--	/* the MOK can not be trusted when secure boot is disabled */
-+	/* the MOK and MOKx can not be trusted when secure boot is disabled */
- 	if (!efi_enabled(EFI_SECURE_BOOT))
- 		return 0;
- 
-@@ -208,6 +208,16 @@ static int __init load_uefi_certs(void)
- 		kfree(mok);
- 	}
- 
-+	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize);
-+	if (mokx) {
-+		rc = parse_efi_signature_list("UEFI:mokx",
-+					      mokx, mokxsize,
-+					      get_handler_for_dbx);
-+		if (rc)
-+			pr_err("Couldn't parse MokListXRT signatures: %d\n", rc);
-+		kfree(mokx);
-+	}
-+
- 	return rc;
- }
- late_initcall(load_uefi_certs);
+As the MOK (Machine Owner Key), MOKx is a EFI boot time variable which
+is maintained by shim boot loader. We can enroll the hash of blacklisted
+kernel module (with or without signature) to MOKx by mokutil. Kernel loads
+the hash from MOKx to blacklist keyring when booting. Kernel will prevent
+to load the kernel module when its hash be found in blacklist.
+
+This function is useful to revoke a kernel module that it has exploit. Or
+revoking a kernel module that it was signed by a unsecure key.
+
+Except MOKx, this patch set fixs another two issues: The MOK/MOKx should
+not be loaded when secure boot is disabled. And, modified error message
+prints out appropriate status string for reading by human being.
+
+v2:
+Chekcikng the attributes of db and mok before loading certificates.
+
+Lee, Chun-Yi (5):
+  MODSIGN: do not load mok when secure boot disabled
+  MODSIGN: print appropriate status message when getting UEFI
+    certificates list
+  MODSIGN: load blacklist from MOKx
+  MODSIGN: checking the blacklisted hash before loading a kernel module
+  MODSIGN: check the attributes of db and mok
+
+ certs/load_uefi.c       | 92 +++++++++++++++++++++++++++++++++++--------------
+ include/linux/efi.h     | 25 ++++++++++++++
+ kernel/module_signing.c | 62 +++++++++++++++++++++++++++++++--
+ 3 files changed, 152 insertions(+), 27 deletions(-)
+
 -- 
 2.10.2
