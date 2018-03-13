@@ -1,124 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932850AbeCMMbm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:31:42 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:51417 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752390AbeCMMbj (ORCPT
+        id S932798AbeCMMho (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:37:44 -0400
+Received: from smtp-out4.electric.net ([192.162.216.181]:57801 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752395AbeCMMhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:31:39 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+        Tue, 13 Mar 2018 08:37:42 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'kieran.bingham@ideasonboard.com'" <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+Thread-Topic: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+Thread-Index: AQHTt/Mse9aYYpQGtUaBEbKHbOwP7qPOCieAgAAIH4CAAAymQA==
+Date: Tue, 13 Mar 2018 12:38:33 +0000
+Message-ID: <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+ <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+In-Reply-To: <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Arnd Bergmann <arnd@arndb.de>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "David Airlie" <airlied@linux.ie>
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20180313120848.2658626-1-arnd@arndb.de>
-Cc: "Arnd Bergmann" <arnd@arndb.de>,
-        "Tvrtko Ursulin" <tvrtko.ursulin@intel.com>,
-        "Michal Wajdeczko" <michal.wajdeczko@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180313120848.2658626-1-arnd@arndb.de>
-Message-ID: <152094429237.515.2412380565628307987@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH] drm/i915/pmu: avoid -Wmaybe-uninitialized warning
-Date: Tue, 13 Mar 2018 12:31:32 +0000
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DCbq9H029349
 
-Quoting Arnd Bergmann (2018-03-13 12:08:29)
-> The conditional spinlock confuses gcc into thinking the 'flags' value
-> might contain uninitialized data:
+From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
+> On 13/03/18 11:20, David Laight wrote:
+> > From: Kieran Bingham
+> >> Sent: 09 March 2018 22:04
+> >> The kernel provides a __packed definition to abstract away from the
+> >> compiler specific attributes tag.
+> >>
+> >> Convert all packed structures in VSP1 to use it.
+> >>
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> ---
+> >>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+> >>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+> >> index 37e2c984fbf3..382e45c2054e 100644
+> >> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> >> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> >> @@ -29,19 +29,19 @@
+> >>  struct vsp1_dl_header_list {
+> >>  	u32 num_bytes;
+> >>  	u32 addr;
+> >> -} __attribute__((__packed__));
+> >> +} __packed;
+> >>
+> >>  struct vsp1_dl_header {
+> >>  	u32 num_lists;
+> >>  	struct vsp1_dl_header_list lists[8];
+> >>  	u32 next_header;
+> >>  	u32 flags;
+> >> -} __attribute__((__packed__));
+> >> +} __packed;
+> >>
+> >>  struct vsp1_dl_entry {
+> >>  	u32 addr;
+> >>  	u32 data;
+> >> -} __attribute__((__packed__));
+> >> +} __packed;
+> >
+> > Do these structures ever actually appear in misaligned memory?
+> > If they don't then they shouldn't be marked 'packed'.
 > 
-> drivers/gpu/drm/i915/i915_pmu.c: In function '__i915_pmu_event_read':
-> arch/x86/include/asm/paravirt_types.h:573:3: error: 'flags' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> 
-> The code is correct, but it's easy to see how the compiler gets confused
-> here. This avoids the problem by pulling the lock outside of the function
-> into its only caller.
-> 
-> Fixes: 1fe699e30113 ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/i915/i915_pmu.c | 25 ++++++++++---------------
->  1 file changed, 10 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-> index 4bc7aefa9541..2c8c705d1f18 100644
-> --- a/drivers/gpu/drm/i915/i915_pmu.c
-> +++ b/drivers/gpu/drm/i915/i915_pmu.c
-> @@ -415,7 +415,6 @@ static u64 __get_rc6(struct drm_i915_private *i915)
->  static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+> I believe the declaration is to ensure that the struct definition is not altered
+> by the compiler as these structures specifically define the layout of how the
+> memory is read by the VSP1 hardware.
 
-bool locked is now unused, right?
+The C language and ABI define structure layouts.
 
->  {
->  #if IS_ENABLED(CONFIG_PM)
-> -       unsigned long flags;
->         u64 val;
->  
->         if (intel_runtime_pm_get_if_in_use(i915)) {
-> @@ -428,18 +427,12 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
->                  * previously.
->                  */
->  
-> -               if (!locked)
-> -                       spin_lock_irqsave(&i915->pmu.lock, flags);
-> -
->                 if (val >= i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur) {
->                         i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = 0;
->                         i915->pmu.sample[__I915_SAMPLE_RC6].cur = val;
->                 } else {
->                         val = i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur;
->                 }
-> -
-> -               if (!locked)
-> -                       spin_unlock_irqrestore(&i915->pmu.lock, flags);
->         } else {
->                 struct pci_dev *pdev = i915->drm.pdev;
->                 struct device *kdev = &pdev->dev;
-> @@ -452,9 +445,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
->                  * on top of the last known real value, as the approximated RC6
->                  * counter value.
->                  */
-> -               if (!locked)
-> -                       spin_lock_irqsave(&i915->pmu.lock, flags);
-> -
->                 spin_lock_irqsave(&kdev->power.lock, flags2);
->  
->                 if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
-> @@ -470,9 +460,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
->                 val = jiffies_to_nsecs(val);
->                 val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
->                 i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
-> -
-> -               if (!locked)
-> -                       spin_unlock_irqrestore(&i915->pmu.lock, flags);
->         }
->  
->         return val;
-> @@ -519,8 +506,16 @@ static u64 __i915_pmu_event_read(struct perf_event *event, bool locked)
->                         val = count_interrupts(i915);
->                         break;
->                 case I915_PMU_RC6_RESIDENCY:
-> -                       val = get_rc6(i915, locked);
-> -                       break;
-> +                       if (!locked) {
-> +                               unsigned long flags;
-> +
-> +                               spin_lock_irqsave(&i915->pmu.lock, flags);
-> +                               val = get_rc6(i915, locked);
-> +                               spin_unlock_irqrestore(&i915->pmu.lock, flags);
-> +                               break;
-> +                       } else {
-> +                               val = get_rc6(i915, locked);
-> +                       }
+> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
+> rearranged by the compiler (though I believe it would be free to do so if it
+> chose without this attribute), but I think the declaration shows the intent of
+> the memory structure.
 
-break is now on one path only; should be here.
--Chris
+The language requires the fields be in order and the ABI stops the compiler
+adding 'random' padding.
+
+> Isn't this a common approach throughout the kernel when dealing with hardware
+> defined memory structures ?
+
+Absolutely not.
+__packed tells the compiler that the structure might be on any address boundary.
+On many architectures this means the compiler must use byte accesses with shifts
+and ors for every access.
+The most a hardware defined structure will have is a compile-time assert
+that it is the correct size (to avoid silly errors from changes).
+
+	David
