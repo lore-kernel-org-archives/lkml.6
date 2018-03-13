@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeCMImS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:42:18 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9257 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752143AbeCMImQ (ORCPT
+        id S1752209AbeCMIpO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:45:14 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54333 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751735AbeCMIpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:42:16 -0400
+        Tue, 13 Mar 2018 04:45:12 -0400
 From: Patrice CHOTARD <patrice.chotard@st.com>
 To: Yannick FERTRE <yannick.fertre@st.com>,
         Vikas MANOCHA <vikas.manocha@st.com>,
@@ -29,16 +29,16 @@ To: Yannick FERTRE <yannick.fertre@st.com>,
 CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 10/10] board: Add STM32F769 SoC, discovery board
- support
-Thread-Topic: [PATCH v2 10/10] board: Add STM32F769 SoC, discovery board
- support
-Thread-Index: AQHTsj1aO1n1F69AHk2VsAMU8apINqPN2P8A
-Date: Tue, 13 Mar 2018 08:41:46 +0000
-Message-ID: <060d289d-bba4-13d6-ec15-b2af29efc5ba@st.com>
+Subject: Re: [PATCH v2 01/10] video: stm32: stm32_ltdc: add bridge to display
+ controller
+Thread-Topic: [PATCH v2 01/10] video: stm32: stm32_ltdc: add bridge to display
+ controller
+Thread-Index: AQHTsj1S72nZoEZhn0+9yU4bV7f4F6PN2daA
+Date: Tue, 13 Mar 2018 08:44:48 +0000
+Message-ID: <d1c334a4-9d90-841a-b993-290a441eee31@st.com>
 References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
- <1520005451-23217-11-git-send-email-yannick.fertre@st.com>
-In-Reply-To: <1520005451-23217-11-git-send-email-yannick.fertre@st.com>
+ <1520005451-23217-2-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1520005451-23217-2-git-send-email-yannick.fertre@st.com>
 Accept-Language: fr-FR, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -47,9 +47,9 @@ user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
+x-originating-ip: [10.75.127.47]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <2BF60F8F4659804EA764D33558A7B68A@st.com>
+Content-ID: <D603F2B3E512854DAEF85098D0A0B5C2@st.com>
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
  signatures=0
@@ -57,96 +57,243 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8gNon027845
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8jIru027854
 
 Hi Yannick
 
 On 03/02/2018 04:44 PM, yannick fertre wrote:
-> Signed-off-by: yannick fertre <yannick.fertre@st.com>
-
-Can you add a commit message explaining why you add a specific defconfig 
-for this board. FYI, previously, the same defconfig was used for all 
-STM32F7 boards (ie /stm32f746-disco_defconfig).
-
-You will also need to resync with the last master branch regarding 
-defconfig content.
-
-Thanks
-
-Patrice
-
-> ---
->   configs/stm32f769-disco_defconfig | 63 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 63 insertions(+)
->   create mode 100644 configs/stm32f769-disco_defconfig
+> Manage a bridge insert between the display controller & a panel.
 > 
-> diff --git a/configs/stm32f769-disco_defconfig b/configs/stm32f769-disco_defconfig
-> new file mode 100644
-> index 0000000..ac34076
-> --- /dev/null
-> +++ b/configs/stm32f769-disco_defconfig
-> @@ -0,0 +1,63 @@
-> +CONFIG_ARM=y
-> +CONFIG_STM32=y
-> +CONFIG_SYS_MALLOC_F_LEN=0xC00
-> +CONFIG_STM32F7=y
-> +CONFIG_TARGET_STM32F746_DISCO=y
-> +CONFIG_DEFAULT_DEVICE_TREE="stm32f769-disco"
-> +CONFIG_BOOTDELAY=3
-> +CONFIG_USE_BOOTARGS=y
-> +CONFIG_BOOTARGS="console=ttyS0,115200 earlyprintk consoleblank=0 ignore_loglevel"
-> +# CONFIG_DISPLAY_CPUINFO is not set
-> +# CONFIG_DISPLAY_BOARDINFO is not set
-> +CONFIG_BOARD_EARLY_INIT_F=y
-> +CONFIG_HUSH_PARSER=y
-> +CONFIG_SYS_PROMPT="U-Boot > "
-> +CONFIG_AUTOBOOT_KEYED=y
-> +CONFIG_AUTOBOOT_PROMPT="Hit SPACE in %d seconds to stop autoboot.\n"
-> +CONFIG_AUTOBOOT_STOP_STR=" "
-> +CONFIG_CMD_BOOTZ=y
-> +# CONFIG_CMD_FPGA is not set
-> +CONFIG_CMD_GPT=y
-> +# CONFIG_RANDOM_UUID is not set
-> +CONFIG_CMD_MMC=y
-> +CONFIG_CMD_SF=y
-> +# CONFIG_CMD_SETEXPR is not set
-> +CONFIG_CMD_DHCP=y
-> +CONFIG_CMD_MII=y
-> +CONFIG_CMD_PING=y
-> +CONFIG_CMD_SNTP=y
-> +CONFIG_CMD_DNS=y
-> +CONFIG_CMD_LINK_LOCAL=y
-> +CONFIG_CMD_BMP=y
-> +CONFIG_CMD_TIMER=y
-> +CONFIG_CMD_EXT2=y
-> +CONFIG_CMD_EXT4=y
-> +CONFIG_CMD_FAT=y
-> +CONFIG_CMD_FS_GENERIC=y
-> +# CONFIG_DOS_PARTITION is not set
-> +CONFIG_OF_CONTROL=y
-> +CONFIG_NET_RANDOM_ETHADDR=y
-> +CONFIG_NETCONSOLE=y
-> +# CONFIG_BLK is not set
-> +CONFIG_DM_MMC=y
-> +# CONFIG_SPL_DM_MMC is not set
-> +CONFIG_ARM_PL180_MMCI=y
-> +CONFIG_MTD=y
-> +CONFIG_MTD_NOR_FLASH=y
-> +CONFIG_DM_SPI_FLASH=y
-> +CONFIG_SPI_FLASH=y
-> +CONFIG_SPI_FLASH_STMICRO=y
-> +CONFIG_DM_ETH=y
-> +CONFIG_ETH_DESIGNWARE=y
-> +# CONFIG_PINCTRL_FULL is not set
-> +CONFIG_DM_SPI=y
-> +CONFIG_STM32_QSPI=y
-> +CONFIG_DM_VIDEO=y
-> +CONFIG_BACKLIGHT_GPIO=y
-> +CONFIG_VIDEO_LCD_ORISETECH_OTM8009A=y
-> +CONFIG_VIDEO_STM32=y
-> +CONFIG_VIDEO_STM32_DSI=y
-> +CONFIG_VIDEO_STM32_MAX_XRES=480
-> +CONFIG_VIDEO_STM32_MAX_YRES=800
-> +CONFIG_OF_LIBFDT_OVERLAY=y
-> +# CONFIG_EFI_LOADER is not set
+> Signed-off-by: yannick fertre <yannick.fertre@st.com>
+> ---
+>   drivers/video/stm32/stm32_ltdc.c | 107 ++++++++++++++++++++++++++-------------
+>   1 file changed, 71 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/video/stm32/stm32_ltdc.c b/drivers/video/stm32/stm32_ltdc.c
+> index e160c77..bd9c0de 100644
+> --- a/drivers/video/stm32/stm32_ltdc.c
+> +++ b/drivers/video/stm32/stm32_ltdc.c
+> @@ -8,6 +8,7 @@
+>   
+>   #include <common.h>
+>   #include <clk.h>
+> +#include <display.h>
+>   #include <dm.h>
+>   #include <panel.h>
+>   #include <reset.h>
+> @@ -15,12 +16,12 @@
+>   #include <asm/io.h>
+>   #include <asm/arch/gpio.h>
+>   #include <dm/device-internal.h>
+> +#include <video_bridge.h>
+>   
+>   DECLARE_GLOBAL_DATA_PTR;
+>   
+>   struct stm32_ltdc_priv {
+>   	void __iomem *regs;
+> -	struct display_timing timing;
+>   	enum video_log2_bpp l2bpp;
+>   	u32 bg_col_argb;
+>   	u32 crop_x, crop_y, crop_w, crop_h;
+> @@ -210,23 +211,23 @@ static void stm32_ltdc_enable(struct stm32_ltdc_priv *priv)
+>   	setbits_le32(priv->regs + LTDC_GCR, GCR_LTDCEN);
+>   }
+>   
+> -static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv)
+> +static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv,
+> +				struct display_timing *timings)
+>   {
+>   	void __iomem *regs = priv->regs;
+> -	struct display_timing *timing = &priv->timing;
+>   	u32 hsync, vsync, acc_hbp, acc_vbp, acc_act_w, acc_act_h;
+>   	u32 total_w, total_h;
+>   	u32 val;
+>   
+>   	/* Convert video timings to ltdc timings */
+> -	hsync = timing->hsync_len.typ - 1;
+> -	vsync = timing->vsync_len.typ - 1;
+> -	acc_hbp = hsync + timing->hback_porch.typ;
+> -	acc_vbp = vsync + timing->vback_porch.typ;
+> -	acc_act_w = acc_hbp + timing->hactive.typ;
+> -	acc_act_h = acc_vbp + timing->vactive.typ;
+> -	total_w = acc_act_w + timing->hfront_porch.typ;
+> -	total_h = acc_act_h + timing->vfront_porch.typ;
+> +	hsync = timings->hsync_len.typ - 1;
+> +	vsync = timings->vsync_len.typ - 1;
+> +	acc_hbp = hsync + timings->hback_porch.typ;
+> +	acc_vbp = vsync + timings->vback_porch.typ;
+> +	acc_act_w = acc_hbp + timings->hactive.typ;
+> +	acc_act_h = acc_vbp + timings->vactive.typ;
+> +	total_w = acc_act_w + timings->hfront_porch.typ;
+> +	total_h = acc_act_h + timings->vfront_porch.typ;
+>   
+>   	/* Synchronization sizes */
+>   	val = (hsync << 16) | vsync;
+> @@ -248,14 +249,14 @@ static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv)
+>   
+>   	/* Signal polarities */
+>   	val = 0;
+> -	debug("%s: timing->flags 0x%08x\n", __func__, timing->flags);
+> -	if (timing->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+> +	debug("%s: timing->flags 0x%08x\n", __func__, timings->flags);
+> +	if (timings->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+>   		val |= GCR_HSPOL;
+> -	if (timing->flags & DISPLAY_FLAGS_VSYNC_HIGH)
+> +	if (timings->flags & DISPLAY_FLAGS_VSYNC_HIGH)
+>   		val |= GCR_VSPOL;
+> -	if (timing->flags & DISPLAY_FLAGS_DE_HIGH)
+> +	if (timings->flags & DISPLAY_FLAGS_DE_HIGH)
+>   		val |= GCR_DEPOL;
+> -	if (timing->flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
+> +	if (timings->flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
+>   		val |= GCR_PCPOL;
+>   	clrsetbits_le32(regs + LTDC_GCR,
+>   			GCR_HSPOL | GCR_VSPOL | GCR_DEPOL | GCR_PCPOL, val);
+> @@ -331,7 +332,11 @@ static int stm32_ltdc_probe(struct udevice *dev)
+>   	struct video_uc_platdata *uc_plat = dev_get_uclass_platdata(dev);
+>   	struct video_priv *uc_priv = dev_get_uclass_priv(dev);
+>   	struct stm32_ltdc_priv *priv = dev_get_priv(dev);
+> -	struct udevice *panel;
+> +#ifdef CONFIG_VIDEO_BRIDGE
+> +	struct udevice *bridge = NULL;
+> +#endif
+> +	struct udevice *panel = NULL;
+> +	struct display_timing timings;
+>   	struct clk pclk;
+>   	struct reset_ctl rst;
+>   	int rate, ret;
+> @@ -364,63 +369,93 @@ static int stm32_ltdc_probe(struct udevice *dev)
+>   	/* Reset */
+>   	reset_deassert(&rst);
+>   
+> -	ret = uclass_first_device(UCLASS_PANEL, &panel);
+> +#ifdef CONFIG_VIDEO_BRIDGE
+> +	ret = uclass_get_device(UCLASS_VIDEO_BRIDGE, 0, &bridge);
+>   	if (ret) {
+> -		debug("%s: panel device error %d\n", __func__, ret);
+> -		return ret;
+> +		debug("%s: No video bridge, or no backlight on bridge\n",
+> +		      __func__);
+>   	}
+>   
+> -	ret = panel_enable_backlight(panel);
+> +	if (bridge) {
+> +		ret = video_bridge_attach(bridge);
+> +		if (ret) {
+> +			debug("%s: fail to attach bridge\n", __func__);
+
+I would replace debug by dev_err() here.
+
+> +			return ret;
+> +		}
+> +	}
+> +#endif
+> +	ret = uclass_first_device(UCLASS_PANEL, &panel);
+>   	if (ret) {
+> -		debug("%s: panel %s enable backlight error %d\n",
+> -		      __func__, panel->name, ret);
+> +		debug("%s: panel device error %d\n", __func__, ret);
+
+Ditto
+
+>   		return ret;
+>   	}
+>   
+> -	ret = fdtdec_decode_display_timing(gd->fdt_blob,
+> -					   dev_of_offset(dev), 0,
+> -					   &priv->timing);
+> +	ret = fdtdec_decode_display_timing(gd->fdt_blob, dev_of_offset(panel),
+> +					   0, &timings);
+>   	if (ret) {
+>   		debug("%s: decode display timing error %d\n",
+>   		      __func__, ret);
+> -		return -EINVAL;
+
+Ditto
+
+> +		return ret;
+>   	}
+>   
+> -	rate = clk_set_rate(&pclk, priv->timing.pixelclock.typ);
+> +	rate = clk_set_rate(&pclk, timings.pixelclock.typ);
+>   	if (rate < 0) {
+>   		debug("%s: fail to set pixel clock %d hz %d hz\n",
+> -		      __func__, priv->timing.pixelclock.typ, rate);
+> +		      __func__, timings.pixelclock.typ, rate);
+
+Ditto
+
+>   		return rate;
+>   	}
+>   
+>   	debug("%s: Set pixel clock req %d hz get %d hz\n", __func__,
+> -	      priv->timing.pixelclock.typ, rate);
+> +	      timings.pixelclock.typ, rate);
+>   
+>   	/* TODO Below parameters are hard-coded for the moment... */
+>   	priv->l2bpp = VIDEO_BPP16;
+>   	priv->bg_col_argb = 0xFFFFFFFF; /* white no transparency */
+>   	priv->crop_x = 0;
+>   	priv->crop_y = 0;
+> -	priv->crop_w = priv->timing.hactive.typ;
+> -	priv->crop_h = priv->timing.vactive.typ;
+> +	priv->crop_w = timings.hactive.typ;
+> +	priv->crop_h = timings.vactive.typ;
+>   	priv->alpha = 0xFF;
+>   
+>   	debug("%s: %dx%d %dbpp frame buffer at 0x%lx\n", __func__,
+> -	      priv->timing.hactive.typ, priv->timing.vactive.typ,
+> +	      timings.hactive.typ, timings.vactive.typ,
+>   	      VNBITS(priv->l2bpp), uc_plat->base);
+>   	debug("%s: crop %d,%d %dx%d bg 0x%08x alpha %d\n", __func__,
+>   	      priv->crop_x, priv->crop_y, priv->crop_w, priv->crop_h,
+>   	      priv->bg_col_argb, priv->alpha);
+>   
+>   	/* Configure & start LTDC */
+> -	stm32_ltdc_set_mode(priv);
+> +	stm32_ltdc_set_mode(priv, &timings);
+>   	stm32_ltdc_set_layer1(priv, uc_plat->base);
+>   	stm32_ltdc_enable(priv);
+>   
+> -	uc_priv->xsize = priv->timing.hactive.typ;
+> -	uc_priv->ysize = priv->timing.vactive.typ;
+> +	uc_priv->xsize = timings.hactive.typ;
+> +	uc_priv->ysize = timings.vactive.typ;
+>   	uc_priv->bpix = priv->l2bpp;
+>   
+> +#ifdef CONFIG_VIDEO_BRIDGE
+> +	if (bridge) {
+> +		ret = video_bridge_set_backlight(bridge, 80);
+> +		if (ret) {
+> +			debug("%s: fail to set backlight\n", __func__);
+
+Ditto
+
+> +			return ret;
+> +		}
+> +	} else {
+> +		ret = panel_enable_backlight(panel);
+> +		if (ret) {
+> +			debug("%s: panel %s enable backlight error %d\n",
+> +			      __func__, panel->name, ret);
+
+Ditto
+
+> +			return ret;
+> +		}
+> +	}
+> +#else
+> +	ret = panel_enable_backlight(panel);
+> +	if (ret) {
+> +		debug("%s: panel %s enable backlight error %d\n",
+> +		      __func__, panel->name, ret);
+
+Ditto
+
+> +		return ret;
+> +	}
+> +#endif
+>   	video_set_flush_dcache(dev, true);
+>   
+>   	return 0;
 > 
