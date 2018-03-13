@@ -1,33 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeCMHJo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 03:09:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41455 "EHLO
+        id S1752263AbeCMHKO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 03:10:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44737 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeCMHJm (ORCPT
+        with ESMTP id S1752089AbeCMHKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:09:42 -0400
-Date: Tue, 13 Mar 2018 00:09:08 -0700
+        Tue, 13 Mar 2018 03:10:11 -0400
+Date: Tue, 13 Mar 2018 00:09:34 -0700
 From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-127bfa5f4342e63d83a0b07ece376c2e8878e4a5@git.kernel.org>
-Cc: salyzyn@android.com, john.stultz@linaro.org, kevin@guarana.org,
-        corbet@lwn.net, peterz@infradead.org, mingo@kernel.org,
-        dmitry.torokhov@gmail.com, sergey.senozhatsky@gmail.com,
-        pmladek@suse.com, torvalds@linux-foundation.org, tglx@linutronix.de,
-        prarit@redhat.com, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mtk.manpages@gmail.com
-Reply-To: corbet@lwn.net, kevin@guarana.org, john.stultz@linaro.org,
-        salyzyn@android.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        tglx@linutronix.de, prarit@redhat.com, torvalds@linux-foundation.org,
-        mtk.manpages@gmail.com, hpa@zytor.com, dmitry.torokhov@gmail.com,
-        mingo@kernel.org, peterz@infradead.org, sergey.senozhatsky@gmail.com,
-        pmladek@suse.com
-In-Reply-To: <20180301165150.410218515@linutronix.de>
-References: <20180301165150.410218515@linutronix.de>
+Message-ID: <tip-92af4dcb4e1c5f58dc337bc97bdffd4e853dbc93@git.kernel.org>
+Cc: pmladek@suse.com, tglx@linutronix.de, kevin@guarana.org,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        sergey.senozhatsky@gmail.com, mingo@kernel.org, mtk.manpages@gmail.com,
+        dmitry.torokhov@gmail.com, prarit@redhat.com, hpa@zytor.com,
+        torvalds@linux-foundation.org, salyzyn@android.com, corbet@lwn.net,
+        peterz@infradead.org, john.stultz@linaro.org
+Reply-To: kevin@guarana.org, tglx@linutronix.de, pmladek@suse.com,
+        mtk.manpages@gmail.com, dmitry.torokhov@gmail.com,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, rostedt@goodmis.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, salyzyn@android.com, prarit@redhat.com,
+        john.stultz@linaro.org, peterz@infradead.org, corbet@lwn.net
+In-Reply-To: <20180301165150.489635255@linutronix.de>
+References: <20180301165150.489635255@linutronix.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] hrtimer: Unify MONOTONIC and BOOTTIME clock
- behavior
-Git-Commit-ID: 127bfa5f4342e63d83a0b07ece376c2e8878e4a5
+Subject: [tip:timers/core] tracing: Unify the "boot" and "mono" tracing
+ clocks
+Git-Commit-ID: 92af4dcb4e1c5f58dc337bc97bdffd4e853dbc93
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -40,20 +40,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  127bfa5f4342e63d83a0b07ece376c2e8878e4a5
-Gitweb:     https://git.kernel.org/tip/127bfa5f4342e63d83a0b07ece376c2e8878e4a5
+Commit-ID:  92af4dcb4e1c5f58dc337bc97bdffd4e853dbc93
+Gitweb:     https://git.kernel.org/tip/92af4dcb4e1c5f58dc337bc97bdffd4e853dbc93
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 1 Mar 2018 17:33:37 +0100
+AuthorDate: Thu, 1 Mar 2018 17:33:38 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 13 Mar 2018 07:34:23 +0100
 
-hrtimer: Unify MONOTONIC and BOOTTIME clock behavior
+tracing: Unify the "boot" and "mono" tracing clocks
 
-Now that th MONOTONIC and BOOTTIME clocks are indentical remove all the special
-casing.
-
-The user space visible interfaces still support both clocks, but their behavior
-is identical.
+Unify the "boot" and "mono" tracing clocks and document the new behaviour.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -68,122 +64,66 @@ Cc: Petr Mladek <pmladek@suse.com>
 Cc: Prarit Bhargava <prarit@redhat.com>
 Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
-Link: http://lkml.kernel.org/r/20180301165150.410218515@linutronix.de
+Link: http://lkml.kernel.org/r/20180301165150.489635255@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/hrtimer.h   |  2 --
- kernel/time/hrtimer.c     | 16 ++--------------
- kernel/time/timekeeping.c |  4 +---
- kernel/time/timekeeping.h |  1 -
- 4 files changed, 3 insertions(+), 20 deletions(-)
+ Documentation/trace/ftrace.txt | 14 +++-----------
+ include/linux/timekeeping.h    |  6 ------
+ kernel/trace/trace.c           |  2 +-
+ 3 files changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index c7902ca7c9f4..78f456fcd242 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -161,11 +161,9 @@ struct hrtimer_clock_base {
- enum  hrtimer_base_type {
- 	HRTIMER_BASE_MONOTONIC,
- 	HRTIMER_BASE_REALTIME,
--	HRTIMER_BASE_BOOTTIME,
- 	HRTIMER_BASE_TAI,
- 	HRTIMER_BASE_MONOTONIC_SOFT,
- 	HRTIMER_BASE_REALTIME_SOFT,
--	HRTIMER_BASE_BOOTTIME_SOFT,
- 	HRTIMER_BASE_TAI_SOFT,
- 	HRTIMER_MAX_CLOCK_BASES,
- };
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 23788100e214..9b082ce86325 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -90,11 +90,6 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =
- 			.clockid = CLOCK_REALTIME,
- 			.get_time = &ktime_get_real,
- 		},
--		{
--			.index = HRTIMER_BASE_BOOTTIME,
--			.clockid = CLOCK_BOOTTIME,
--			.get_time = &ktime_get_boottime,
--		},
- 		{
- 			.index = HRTIMER_BASE_TAI,
- 			.clockid = CLOCK_TAI,
-@@ -110,11 +105,6 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =
- 			.clockid = CLOCK_REALTIME,
- 			.get_time = &ktime_get_real,
- 		},
--		{
--			.index = HRTIMER_BASE_BOOTTIME_SOFT,
--			.clockid = CLOCK_BOOTTIME,
--			.get_time = &ktime_get_boottime,
--		},
- 		{
- 			.index = HRTIMER_BASE_TAI_SOFT,
- 			.clockid = CLOCK_TAI,
-@@ -129,7 +119,7 @@ static const int hrtimer_clock_to_base_table[MAX_CLOCKS] = {
+diff --git a/Documentation/trace/ftrace.txt b/Documentation/trace/ftrace.txt
+index d4601df6e72e..bf89f98bfdb9 100644
+--- a/Documentation/trace/ftrace.txt
++++ b/Documentation/trace/ftrace.txt
+@@ -449,17 +449,9 @@ of ftrace. Here is a list of some of the key files:
+ 		which is montonic but is not subject to any rate adjustments
+ 		and ticks at the same rate as the hardware clocksource.
  
- 	[CLOCK_REALTIME]	= HRTIMER_BASE_REALTIME,
- 	[CLOCK_MONOTONIC]	= HRTIMER_BASE_MONOTONIC,
--	[CLOCK_BOOTTIME]	= HRTIMER_BASE_BOOTTIME,
-+	[CLOCK_BOOTTIME]	= HRTIMER_BASE_MONOTONIC,
- 	[CLOCK_TAI]		= HRTIMER_BASE_TAI,
- };
+-	  boot: This is the boot clock (CLOCK_BOOTTIME) and is based on the
+-		fast monotonic clock, but also accounts for time spent in
+-		suspend. Since the clock access is designed for use in
+-		tracing in the suspend path, some side effects are possible
+-		if clock is accessed after the suspend time is accounted before
+-		the fast mono clock is updated. In this case, the clock update
+-		appears to happen slightly sooner than it normally would have.
+-		Also on 32-bit systems, it's possible that the 64-bit boot offset
+-		sees a partial update. These effects are rare and post
+-		processing should be able to handle them. See comments in the
+-		ktime_get_boot_fast_ns() function for more information.
++	  boot: Same as mono. Used to be a separate clock which accounted
++	  	for the time spent in suspend while CLOCK_MONOTONIC did
++		not.
  
-@@ -565,14 +555,12 @@ __hrtimer_get_next_event(struct hrtimer_cpu_base *cpu_base, unsigned int active_
- static inline ktime_t hrtimer_update_base(struct hrtimer_cpu_base *base)
- {
- 	ktime_t *offs_real = &base->clock_base[HRTIMER_BASE_REALTIME].offset;
--	ktime_t *offs_boot = &base->clock_base[HRTIMER_BASE_BOOTTIME].offset;
- 	ktime_t *offs_tai = &base->clock_base[HRTIMER_BASE_TAI].offset;
+ 	To set a clock, simply echo the clock name into this file.
  
- 	ktime_t now = ktime_get_update_offsets_now(&base->clock_was_set_seq,
--					    offs_real, offs_boot, offs_tai);
-+						   offs_real, offs_tai);
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index abb396731332..82c219dfd3bb 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -113,12 +113,6 @@ extern u64 ktime_get_mono_fast_ns(void);
+ extern u64 ktime_get_raw_fast_ns(void);
+ extern u64 ktime_get_real_fast_ns(void);
  
- 	base->clock_base[HRTIMER_BASE_REALTIME_SOFT].offset = *offs_real;
--	base->clock_base[HRTIMER_BASE_BOOTTIME_SOFT].offset = *offs_boot;
- 	base->clock_base[HRTIMER_BASE_TAI_SOFT].offset = *offs_tai;
- 
- 	return now;
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 8355c8803282..ca90219a1e73 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2195,7 +2195,6 @@ void do_timer(unsigned long ticks)
-  * ktime_get_update_offsets_now - hrtimer helper
-  * @cwsseq:	pointer to check and store the clock was set sequence number
-  * @offs_real:	pointer to storage for monotonic -> realtime offset
-- * @offs_boot:	pointer to storage for monotonic -> boottime offset
-  * @offs_tai:	pointer to storage for monotonic -> clock tai offset
-  *
-  * Returns current monotonic time and updates the offsets if the
-@@ -2205,7 +2204,7 @@ void do_timer(unsigned long ticks)
-  * Called from hrtimer_interrupt() or retrigger_next_event()
+-/* Clock BOOTTIME compatibility wrappers */
+-static inline u64 ktime_get_boot_fast_ns(void)
+-{
+-	return ktime_get_mono_fast_ns();
+-}
+-
+ /*
+  * timespec64 interfaces utilizing the ktime based ones
   */
- ktime_t ktime_get_update_offsets_now(unsigned int *cwsseq, ktime_t *offs_real,
--				     ktime_t *offs_boot, ktime_t *offs_tai)
-+				     ktime_t *offs_tai)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 	unsigned int seq;
-@@ -2222,7 +2221,6 @@ ktime_t ktime_get_update_offsets_now(unsigned int *cwsseq, ktime_t *offs_real,
- 		if (*cwsseq != tk->clock_was_set_seq) {
- 			*cwsseq = tk->clock_was_set_seq;
- 			*offs_real = tk->offs_real;
--			*offs_boot = tk->offs_boot;
- 			*offs_tai = tk->offs_tai;
- 		}
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 20a2300ae4e8..300f4ea39646 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1164,7 +1164,7 @@ static struct {
+ 	{ trace_clock,			"perf",		1 },
+ 	{ ktime_get_mono_fast_ns,	"mono",		1 },
+ 	{ ktime_get_raw_fast_ns,	"mono_raw",	1 },
+-	{ ktime_get_boot_fast_ns,	"boot",		1 },
++	{ ktime_get_mono_fast_ns,	"boot",		1 },
+ 	ARCH_TRACE_CLOCKS
+ };
  
-diff --git a/kernel/time/timekeeping.h b/kernel/time/timekeeping.h
-index 7a9b4eb7a1d5..79b67f5e0343 100644
---- a/kernel/time/timekeeping.h
-+++ b/kernel/time/timekeeping.h
-@@ -6,7 +6,6 @@
-  */
- extern ktime_t ktime_get_update_offsets_now(unsigned int *cwsseq,
- 					    ktime_t *offs_real,
--					    ktime_t *offs_boot,
- 					    ktime_t *offs_tai);
- 
- extern int timekeeping_valid_for_hres(void);
