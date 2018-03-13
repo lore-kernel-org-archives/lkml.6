@@ -1,67 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752663AbeCMO0v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:26:51 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6745 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752279AbeCMO0t (ORCPT
+        id S1752723AbeCMO1V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:27:21 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35290 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752163AbeCMO1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:26:49 -0400
-X-IronPort-AV: E=Sophos;i="5.47,465,1515423600";
-   d="scan'208";a="275048083"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Michal Simek <michal.simek@xilinx.com>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2] mmc: sdhci-of-arasan: Add quirk to avoid unexpected interrupt msgs
-Date: Tue, 13 Mar 2018 14:26:40 +0000
-Message-Id: <1520951200-24703-1-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 13 Mar 2018 10:27:20 -0400
+X-Google-Smtp-Source: AG47ELvJCLS8Vx20Co3YcDB+OEG3bKBrG9SaJX0JDLfyuAjMFdtv3cCJTd0cTVCwYn55py3sxCR6cnA9sP9K90IbYFo=
+MIME-Version: 1.0
+In-Reply-To: <357f8fbd-d079-8b75-aec6-96e59f5a9556@arm.com>
+References: <20180313114607.2061209-1-arnd@arndb.de> <20180313114607.2061209-2-arnd@arndb.de>
+ <357f8fbd-d079-8b75-aec6-96e59f5a9556@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 13 Mar 2018 15:27:18 +0100
+X-Google-Sender-Auth: qC_8Jvgk81keuPvNnwqTkC_NbVY
+Message-ID: <CAK8P3a0jXmeNXwNkq+qOcaCvMSkzpVhOoq6QRs=3c2B1DqiaVA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: scmi: add thermal dependency
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On SD 2.00 cards we get lots of these messages:
-"mmc0: Got data interrupt 0x00000002 even though no data operation was in progress"
-By applying the SDHCI_QUIRK2_STOP_WITH_TC quirk, the messages no longer happen.
+On Tue, Mar 13, 2018 at 3:09 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 13/03/18 11:45, Arnd Bergmann wrote:
+>> A built-in scmi cpufreq driver cannot link against a modular
+>> thermal framework:
+>>
+>> drivers/cpufreq/scmi-cpufreq.o: In function `scmi_cpufreq_ready':
+>> scmi-cpufreq.c:(.text+0x40): undefined reference to `of_cpufreq_cooling_register'
+>> drivers/cpufreq/scmi-cpufreq.o: In function `scmi_cpufreq_exit':
+>> scmi-cpufreq.c:(.text+0x88): undefined reference to `cpufreq_cooling_unregister'
+>>
+>> This adds a Kconfig dependency that makes sure this configuration
+>> is not possible, while allowing all configurations that can work.
+>> Note that disabling CPU_THERMAL means we don't care about the
+>> THERMAL dependency.
+>>
+>
+> This newly added entry is only in arm-soc linux-next. Let me know if you
+> want pull request with other possible fixes or you want to merge
+> directly as it might be need to suppress these errors in your build
+> system. For now I assume you will merge this directly in your tree, so
+>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-A single card claiming to be SD 3.00 compliant also generates the interrupts,
-but since the card's manfacturing date is 2002 mar, it's unlikely to really be
-SD 3.00. This card is a 8GB SanDisk 'SU08G' 8.0 (SDHC class 4).
+I've applied it into my next/drivers branch now. Thanks for the Ack.
+I assume the cpufreq maintainers will pick up the other one. I'm not
+sure why I didn't run into that problem earlier, but today I saw both
+for the first time.
 
-This has been reported on Xilinx devices that also use the Arasan IP.
-See https://patchwork.kernel.org/patch/8062871/
-
-This has been tested on the Renesas RZ/ND-DB board with the RZ/N1 SoC. The
-Arasan IP in this device is version 1.39a and uses a max SD clock of 50MHz and
-does not support DDR modes.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Changed commit msg to detail the cards that fail.
- - Provided the IP version and further background info.
----
- drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index c33a5f7..ab66e32 100644
---- a/drivers/mmc/host/sdhci-of-arasan.c
-+++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data sdhci_arasan_pdata = {
- 	.ops = &sdhci_arasan_ops,
- 	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-+			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
-+			SDHCI_QUIRK2_STOP_WITH_TC,
- };
- 
- static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
--- 
-2.7.4
+      Arnd
