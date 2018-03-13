@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtQeJvWq5sECE8liMxO+aPSgfHu+jQlb6OfJtbmhGK/j3eNO5IWJ+DWefIs75t6qrtEjCni
-ARC-Seal: i=1; a=rsa-sha256; t=1520955272; cv=none;
+X-Google-Smtp-Source: AG47ELvZiUWDoF74rOQhIaInbjTHksp0wZn/Ws4Ra3g75tp/JWMs9OTN5mSo3UPULwm5Rpm6p+R+
+ARC-Seal: i=1; a=rsa-sha256; t=1520955269; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZlW3Txqap6POTqxewdS5LmbMS1darrv4LS0SOLJNArD/JU76hT3RmmxwuADgmAaPhj
-         LUKxc9ERGy3a5aVglSrQtlj7UljsZnvQu1hwOktnNw2Nd+f5mJLXYsLle/fN0ojimiRh
-         r7ZNHKNdbuP/D6wzwGcW/NMQKFrzEttAMA6MQGZo0MoTA7KMPaaOjpuRijLvpK1WG92F
-         yscdL0LPj0U0vp5k3Fm0sDqSz/svSxYy0t9YNRsND6CxjkqPNMEAN9B5r71dQq+96Y2M
-         84zo+yKgF595nVsjXpdXrZrr7k/GUfR8vzv/LyLNtNsLTi4gC7X1KrQ+6d5WXRoYPoQd
-         5n3w==
+        b=0OZfv/f8DNqKnlYg79l7YuxlZbMUwzg+M2n3aqL35a1QV31V2c1KOTG2rZjC4srBJQ
+         69QIb5Id3Vc/9Gi+gkkKkwCEnvYs4ZdTIwJJCoPHu7i+4JuD2i8a2xV0hPntbXy9xb+g
+         NtQrDAUGzTXuWorfOXhQejTM81sZi/Kuu6ZrHv8QvMitKOqIzdPC736Mc16UxjDxIPnB
+         2vF1vpmtShYt/cLli6KeexP+2P7OJWDCy0G8FC2O7nqsPAdJJgkus3Uue89uBZicojT0
+         0QyjZqF2UukcC/b3OJOevx0GSH4OemONK9+VHY7kcM3A7aAciAqgDKn+Fi2qkksTowge
+         yMAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j6HtJ6Fa3sjVTMtqs60lk2XEI1WMF3jXXh/LdsJc/mU=;
-        b=AHkiKVKkFD4bmeceJVL4gY61ovur6+AoFXLM04wXGr/F5l1iQ0LDXKib1x7pC2JkAa
-         OqX15UHNWRmidxbWf/oSzbw1VHgkSYQzBZF1e2X5P3Gro3hASQES5G/PBbtznhtwxg8p
-         dww7MtiUTeQ1A7a+/bGFfqEe6+jDJxdT7EhQyJ9llgHWqvrClzhDWVrYvZsZn+OPFecK
-         URmZFargOl+2KRLYQYM8irA5zGW146npmAOLJpp8PydbqzzDrnj4unGCgrtedd/kObjL
-         RWtmrdAsEzIoWu2eX9+qNqgqgNnd6MAmU3L6a8N8JGSKDmwD5weuBtPSQGd8YFzQ23io
-         xKAA==
+        bh=VPuwkOsvHtT5dY4Z2qhSiVHQOrvvmLRP9WScoONf+y8=;
+        b=MU3Bb/JVnActWk/Z2HrLoXCKgGnpYFFyY80Z34ejd+p74FSkvTOsrVfLeyXvOSejJg
+         9KpF38fguYx3k5/WnKhVY37Ei3w47ZTVN3v4OHhQHquFqLu3rvun3dY49CdOgTpHoPP3
+         6FjzGYb9Q7JWN7jXsUvfrW1H8M6K02cuLfyiEt+Zg+0t3XjYrJH2DRIsN11b+WsKP7dO
+         mmJSApm0WT0i8dO+/mhncjAwBdryhoeuiP1+Y1afTO7bnVu8ftSMcnwOd/LGfCwp/R6x
+         LmnR0OyUt9pzhlYmgIPC9YMwN3id5CW4Lo5nDijaYJ2YqNXEnpnuWvFoXrRH3G6czqFF
+         3VcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quinn Tran <quinn.tran@cavium.com>,
-	Himanshu Madhani <himanshu.madhani@cavium.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 128/146] scsi: qla2xxx: Fix re-login for Nport Handle in use
-Date: Tue, 13 Mar 2018 16:24:55 +0100
-Message-Id: <20180313152330.069113806@linuxfoundation.org>
+	Scott Mayhew <smayhew@redhat.com>,
+	Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: [PATCH 4.15 146/146] NFS: Fix unstable write completion
+Date: Tue, 13 Mar 2018 16:25:13 +0100
+Message-Id: <20180313152331.331679814@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837195630540816?=
-X-GMAIL-MSGID: =?utf-8?q?1594837195630540816?=
+X-GMAIL-THRID: =?utf-8?q?1594837192650127949?=
+X-GMAIL-MSGID: =?utf-8?q?1594837192650127949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,151 +49,144 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-commit a084fd68e1d26174c4cc1a13fbb0112f468ff7f4 upstream.
+commit c4f24df942a181699c5bab01b8e5e82b925f77f3 upstream.
 
-When NPort Handle is in use, driver needs to mark the handle as used and
-pick another. Instead, the code clears the handle and re-pick the same
-handle.
+We do want to respect the FLUSH_SYNC argument to nfs_commit_inode() to
+ensure that all outstanding COMMIT requests to the inode in question are
+complete. Currently we may exit early from both nfs_commit_inode() and
+nfs_write_inode() even if there are COMMIT requests in flight, or unstable
+writes on the commit list.
 
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+In order to get the right semantics w.r.t. sync_inode(), we don't need
+to have nfs_commit_inode() reset the inode dirty flags when called from
+nfs_wb_page() and/or nfs_wb_all(). We just need to ensure that
+nfs_write_inode() leaves them in the right state if there are outstanding
+commits, or stable pages.
+
+Reported-by: Scott Mayhew <smayhew@redhat.com>
+Fixes: dc4fd9ab01ab ("nfs: don't wait on commit in nfs_commit_inode()...")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_gs.c   |   16 ++++++++++----
- drivers/scsi/qla2xxx/qla_init.c |   44 ++++++++++++++++++++++++++++++++++++----
- drivers/scsi/qla2xxx/qla_isr.c  |    5 ----
- 3 files changed, 51 insertions(+), 14 deletions(-)
+ fs/nfs/write.c |   83 +++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 43 insertions(+), 40 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -2833,7 +2833,7 @@ void qla24xx_handle_gidpn_event(scsi_qla
- 				}
- 			} else { /* fcport->d_id.b24 != ea->id.b24 */
- 				fcport->d_id.b24 = ea->id.b24;
--				if (fcport->deleted == QLA_SESS_DELETED) {
-+				if (fcport->deleted != QLA_SESS_DELETED) {
- 					ql_dbg(ql_dbg_disc, vha, 0x2021,
- 					    "%s %d %8phC post del sess\n",
- 					    __func__, __LINE__, fcport->port_name);
-@@ -3206,10 +3206,16 @@ static void qla2x00_async_gpnid_sp_done(
- 	struct event_arg ea;
- 	struct qla_work_evt *e;
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1878,40 +1878,43 @@ int nfs_generic_commit_list(struct inode
+ 	return status;
+ }
  
--	ql_dbg(ql_dbg_disc, vha, 0x2066,
--	    "Async done-%s res %x ID %3phC. %8phC\n",
--	    sp->name, res, ct_req->req.port_id.port_id,
--	    ct_rsp->rsp.gpn_id.port_name);
-+	if (res)
-+		ql_dbg(ql_dbg_disc, vha, 0x2066,
-+		    "Async done-%s fail res %x ID %3phC. %8phC\n",
-+		    sp->name, res, ct_req->req.port_id.port_id,
-+		    ct_rsp->rsp.gpn_id.port_name);
-+	else
-+		ql_dbg(ql_dbg_disc, vha, 0x2066,
-+		    "Async done-%s good ID %3phC. %8phC\n",
-+		    sp->name, ct_req->req.port_id.port_id,
-+		    ct_rsp->rsp.gpn_id.port_name);
- 
- 	if (res) {
- 		sp->free(sp);
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1453,6 +1453,8 @@ static void
- qla24xx_handle_plogi_done_event(struct scsi_qla_host *vha, struct event_arg *ea)
+-int nfs_commit_inode(struct inode *inode, int how)
++static int __nfs_commit_inode(struct inode *inode, int how,
++		struct writeback_control *wbc)
  {
- 	port_id_t cid;	/* conflict Nport id */
-+	u16 lid;
-+	struct fc_port *conflict_fcport;
+ 	LIST_HEAD(head);
+ 	struct nfs_commit_info cinfo;
+ 	int may_wait = how & FLUSH_SYNC;
+-	int error = 0;
+-	int res;
++	int ret, nscan;
  
- 	switch (ea->data[0]) {
- 	case MBS_COMMAND_COMPLETE:
-@@ -1468,8 +1470,12 @@ qla24xx_handle_plogi_done_event(struct s
- 			qla24xx_post_prli_work(vha, ea->fcport);
- 		} else {
- 			ql_dbg(ql_dbg_disc, vha, 0x20ea,
--				"%s %d %8phC post gpdb\n",
--				__func__, __LINE__, ea->fcport->port_name);
-+			    "%s %d %8phC LoopID 0x%x in use with %06x. post gnl\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->loop_id, ea->fcport->d_id.b24);
-+
-+			set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
-+			ea->fcport->loop_id = FC_NO_LOOP_ID;
- 			ea->fcport->chip_reset = vha->hw->base_qpair->chip_reset;
- 			ea->fcport->logout_on_delete = 1;
- 			ea->fcport->send_els_logo = 0;
-@@ -1514,8 +1520,38 @@ qla24xx_handle_plogi_done_event(struct s
- 		    ea->fcport->d_id.b.domain, ea->fcport->d_id.b.area,
- 		    ea->fcport->d_id.b.al_pa);
- 
--		qla2x00_clear_loop_id(ea->fcport);
--		qla24xx_post_gidpn_work(vha, ea->fcport);
-+		lid = ea->iop[1] & 0xffff;
-+		qlt_find_sess_invalidate_other(vha,
-+		    wwn_to_u64(ea->fcport->port_name),
-+		    ea->fcport->d_id, lid, &conflict_fcport);
-+
-+		if (conflict_fcport) {
-+			/*
-+			 * Another fcport share the same loop_id/nport id.
-+			 * Conflict fcport needs to finish cleanup before this
-+			 * fcport can proceed to login.
-+			 */
-+			conflict_fcport->conflict = ea->fcport;
-+			ea->fcport->login_pause = 1;
-+
-+			ql_dbg(ql_dbg_disc, vha, 0x20ed,
-+			    "%s %d %8phC NPortId %06x inuse with loopid 0x%x. post gidpn\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->d_id.b24, lid);
-+			qla2x00_clear_loop_id(ea->fcport);
-+			qla24xx_post_gidpn_work(vha, ea->fcport);
-+		} else {
-+			ql_dbg(ql_dbg_disc, vha, 0x20ed,
-+			    "%s %d %8phC NPortId %06x inuse with loopid 0x%x. sched delete\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->d_id.b24, lid);
-+
-+			qla2x00_clear_loop_id(ea->fcport);
-+			set_bit(lid, vha->hw->loop_id_map);
-+			ea->fcport->loop_id = lid;
-+			ea->fcport->keep_nport_handle = 0;
-+			qlt_schedule_sess_for_deletion(ea->fcport, false);
+ 	nfs_init_cinfo_from_inode(&cinfo, inode);
+ 	nfs_commit_begin(cinfo.mds);
+-	res = nfs_scan_commit(inode, &head, &cinfo);
+-	if (res)
+-		error = nfs_generic_commit_list(inode, &head, how, &cinfo);
++	for (;;) {
++		ret = nscan = nfs_scan_commit(inode, &head, &cinfo);
++		if (ret <= 0)
++			break;
++		ret = nfs_generic_commit_list(inode, &head, how, &cinfo);
++		if (ret < 0)
++			break;
++		ret = 0;
++		if (wbc && wbc->sync_mode == WB_SYNC_NONE) {
++			if (nscan < wbc->nr_to_write)
++				wbc->nr_to_write -= nscan;
++			else
++				wbc->nr_to_write = 0;
 +		}
- 		break;
- 	}
- 	return;
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -2369,7 +2369,6 @@ qla2x00_status_entry(scsi_qla_host_t *vh
- 	int res = 0;
- 	uint16_t state_flags = 0;
- 	uint16_t retry_delay = 0;
--	uint8_t no_logout = 0;
++		if (nscan < INT_MAX)
++			break;
++		cond_resched();
++	}
+ 	nfs_commit_end(cinfo.mds);
+-	if (res == 0)
+-		return res;
+-	if (error < 0)
+-		goto out_error;
+-	if (!may_wait)
+-		goto out_mark_dirty;
+-	error = wait_on_commit(cinfo.mds);
+-	if (error < 0)
+-		return error;
+-	return res;
+-out_error:
+-	res = error;
+-	/* Note: If we exit without ensuring that the commit is complete,
+-	 * we must mark the inode as dirty. Otherwise, future calls to
+-	 * sync_inode() with the WB_SYNC_ALL flag set will fail to ensure
+-	 * that the data is on the disk.
+-	 */
+-out_mark_dirty:
+-	__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+-	return res;
++	if (ret || !may_wait)
++		return ret;
++	return wait_on_commit(cinfo.mds);
++}
++
++int nfs_commit_inode(struct inode *inode, int how)
++{
++	return __nfs_commit_inode(inode, how, NULL);
+ }
+ EXPORT_SYMBOL_GPL(nfs_commit_inode);
  
- 	sts = (sts_entry_t *) pkt;
- 	sts24 = (struct sts_entry_24xx *) pkt;
-@@ -2640,7 +2639,6 @@ check_scsi_status:
- 		break;
+@@ -1921,11 +1924,11 @@ int nfs_write_inode(struct inode *inode,
+ 	int flags = FLUSH_SYNC;
+ 	int ret = 0;
  
- 	case CS_PORT_LOGGED_OUT:
--		no_logout = 1;
- 	case CS_PORT_CONFIG_CHG:
- 	case CS_PORT_BUSY:
- 	case CS_INCOMPLETE:
-@@ -2671,9 +2669,6 @@ check_scsi_status:
- 				port_state_str[atomic_read(&fcport->state)],
- 				comp_status);
- 
--			if (no_logout)
--				fcport->logout_on_delete = 0;
+-	/* no commits means nothing needs to be done */
+-	if (!atomic_long_read(&nfsi->commit_info.ncommit))
+-		return ret;
 -
- 			qla2x00_mark_device_lost(fcport->vha, fcport, 1, 1);
- 			qlt_schedule_sess_for_deletion_lock(fcport);
- 		}
+ 	if (wbc->sync_mode == WB_SYNC_NONE) {
++		/* no commits means nothing needs to be done */
++		if (!atomic_long_read(&nfsi->commit_info.ncommit))
++			goto check_requests_outstanding;
++
+ 		/* Don't commit yet if this is a non-blocking flush and there
+ 		 * are a lot of outstanding writes for this mapping.
+ 		 */
+@@ -1936,16 +1939,16 @@ int nfs_write_inode(struct inode *inode,
+ 		flags = 0;
+ 	}
+ 
+-	ret = nfs_commit_inode(inode, flags);
+-	if (ret >= 0) {
+-		if (wbc->sync_mode == WB_SYNC_NONE) {
+-			if (ret < wbc->nr_to_write)
+-				wbc->nr_to_write -= ret;
+-			else
+-				wbc->nr_to_write = 0;
+-		}
+-		return 0;
+-	}
++	ret = __nfs_commit_inode(inode, flags, wbc);
++	if (!ret) {
++		if (flags & FLUSH_SYNC)
++			return 0;
++	} else if (atomic_long_read(&nfsi->commit_info.ncommit))
++		goto out_mark_dirty;
++
++check_requests_outstanding:
++	if (!atomic_read(&nfsi->commit_info.rpcs_out))
++		return ret;
+ out_mark_dirty:
+ 	__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+ 	return ret;
