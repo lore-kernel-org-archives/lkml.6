@@ -1,69 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752895AbeCMNga (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:36:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35498 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932640AbeCMN1D (ORCPT
+        id S932885AbeCMNgj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:36:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55406 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932814AbeCMNgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:27:03 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 47/61] shmem: Convert shmem_alloc_hugepage to XArray
-Date: Tue, 13 Mar 2018 06:26:25 -0700
-Message-Id: <20180313132639.17387-48-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
+        Tue, 13 Mar 2018 09:36:37 -0400
+From: Colin King <colin.king@canonical.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: samsung: remove redundant pointer cpu_dai
+Date: Tue, 13 Mar 2018 13:36:26 +0000
+Message-Id: <20180313133626.31286-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-xa_find() is a slightly easier API to use than
-radix_tree_gang_lookup_slot() because it contains its own RCU locking.
+The pointer cpu_dai is assigned a value but the pointer is never
+read, hence it is redundant and can be removed.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cleans up clang warning:
+sound/soc/samsung/snow.c:45:2: warning: Value stored to 'cpu_dai' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- mm/shmem.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ sound/soc/samsung/snow.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index fb06fb3e644a..a0a354a87f3b 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1416,23 +1416,17 @@ static struct page *shmem_alloc_hugepage(gfp_t gfp,
- 		struct shmem_inode_info *info, pgoff_t index)
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index fc62110f500f..47b904e2b8c3 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -37,12 +37,10 @@ static int snow_late_probe(struct snd_soc_card *card)
  {
- 	struct vm_area_struct pvma;
--	struct inode *inode = &info->vfs_inode;
--	struct address_space *mapping = inode->i_mapping;
--	pgoff_t idx, hindex;
--	void __rcu **results;
-+	struct address_space *mapping = info->vfs_inode.i_mapping;
-+	pgoff_t hindex;
- 	struct page *page;
+ 	struct snd_soc_pcm_runtime *rtd;
+ 	struct snd_soc_dai *codec_dai;
+-	struct snd_soc_dai *cpu_dai;
+ 	int ret;
  
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
- 		return NULL;
+ 	rtd = snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
+ 	codec_dai = rtd->codec_dai;
+-	cpu_dai = rtd->cpu_dai;
  
- 	hindex = round_down(index, HPAGE_PMD_NR);
--	rcu_read_lock();
--	if (radix_tree_gang_lookup_slot(&mapping->i_pages, &results, &idx,
--				hindex, 1) && idx < hindex + HPAGE_PMD_NR) {
--		rcu_read_unlock();
-+	if (xa_find(&mapping->i_pages, &hindex, hindex + HPAGE_PMD_NR - 1,
-+								XA_PRESENT))
- 		return NULL;
--	}
--	rcu_read_unlock();
- 
- 	shmem_pseudo_vma_init(&pvma, info, hindex);
- 	page = alloc_pages_vma(gfp | __GFP_COMP | __GFP_NORETRY | __GFP_NOWARN,
+ 	/* Set the MCLK rate for the codec */
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
 -- 
-2.16.1
+2.15.1
