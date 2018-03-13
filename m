@@ -1,60 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932375AbeCMWMY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:12:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47266 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752052AbeCMWMV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:12:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAAAA60390
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=austinwc@codeaurora.org
-Subject: Re: [PATCH v2 00/13] Major code reorganization to make all i2c
- transfers working
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
- <2a092d8f-6d1a-27e4-01f6-49790f767ae6@codeaurora.org>
- <20180313211758.kv5voneg4akm3rqo@ninjato>
-From: "Christ, Austin" <austinwc@codeaurora.org>
-Message-ID: <cf4b43fc-8051-77d1-c4f0-e46cb209fa49@codeaurora.org>
-Date: Tue, 13 Mar 2018 16:12:19 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932545AbeCMWMr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:12:47 -0400
+Received: from mga03.intel.com ([134.134.136.65]:36113 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932462AbeCMWMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:12:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,466,1515484800";
+   d="scan'208";a="207936778"
+Date: Tue, 13 Mar 2018 15:04:50 -0700
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v6 0/2] x86/devicetree: Enable multiprocessing
+Message-ID: <cover.1520974793.git.ivan.gorinov@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180313211758.kv5voneg4akm3rqo@ninjato>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the miscommunication. I reviewed the patches and tested them 
-on the Centriq 2400 platform.
+Current x86 implementation of Device Tree does not support multiprocessing,
+and the bindings documentation describes the "reg" property as CPU number
+instead of hardware-assigned local APIC ID.
 
-Perhaps the following is the most appropriate.
+v6:
+ * Calling of_property_read_u32() to get Local APIC ID from "reg"
 
-Acked-by: Austin Christ <austinwc@codeaurora.org>
+ * DT documentation changes: corrected CPU node example and changed
+   the "reg" property description
 
+v5:
+ * Using the "reg" property to specify Local APIC ID
 
-On 3/13/2018 3:17 PM, Wolfram Sang wrote:
-> On Tue, Mar 13, 2018 at 03:09:00PM -0600, Christ, Austin wrote:
->> I've tested this v2 series on Centriq 2400. Looks good to me.
->>
->> Reviewed-by: Austin Christ <austinwc@codeaurora.org>
-> 
-> I am a little confused. Do you mean Tested-by or Reviewed-by?
-> 
+Ivan Gorinov (2):
+  of: Documentation: Specify local APIC ID in "reg"
+  x86/devicetree: Use CPU description from Device Tree
+
+ Documentation/devicetree/bindings/x86/ce4100.txt | 37 ++++++++++++++++------
+ arch/x86/kernel/devicetree.c                     | 39 +++++++++++++++++-------
+ 2 files changed, 56 insertions(+), 20 deletions(-)
 
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
