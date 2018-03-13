@@ -1,136 +1,122 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1717065-1521429723-2-3091932141471580422
+X-Cyrus-Session-Id: sloti22d1t05-126535-1520983328-2-15265734610705401387
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521429723; b=cqiUUAsRmeSsJyAnArulXgiPpDn5fLpjuUMkHgy1mHDgBZK
-    e2VE+ZrCHZ90FD9s92ZLaxjCeYuYlUb83bhEztAWkEX3qvDdqDhGvxQjnSF/Yo9q
-    haPGM+33vuhrS1FaP6pskIckq5YDDr0hOe66SEdHYie+q7ZfO575qXX1E1PYfga8
-    bV3KwVwerna9YD2XWMJFZkNbUzqMXoVEa5O2i/bGrDVCw0vPy1HYFc2Ta3UiO/gE
-    9linjF4SGwbogqy3PJoHVju0unJULuD1rkT135S3c0X+Oe4mQPJ3/DnCeBZNKYTJ
-    76E7AuR5NvzFc29qg72UXAzjkIoawfRB5oK0ZRQ==
+    t=1520983327; b=UrUlfhCIkxSNvi1BWe1njlfs3vPDgQOMkBE5B7CdtXWt9O1
+    UGbUYXWhN3l3qu75SAraAbiph5jetjagQTVKmtvtIzOpuvkXlUPdNLKo328lV88J
+    ienNX/JyvoD5vUpjKZzpsDccfubhlAgiZwsotmK6OTlcEZf3pR+dfAgpjjVfQrpL
+    w06bHgfsMCAD3K/54+6ro/q7GzeTElfNqXiLB2+yjjD79k33/IcUut4C1p79V+zP
+    P7MMhhfnOF7otGkjHVmHTPX+ZcphkjLBKOPc6Aji6Htot3DwV/fYzGF18X4YRPb3
+    Fzf/hqViQbnV/IqDeyczCHKvzHSNr5zOoo9B+Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521429723; bh=p61dPo
-    /lSzbyERCYySHHMbf1qzkblTqW/x2PKnSDojg=; b=ZbgGnUgW+FNjVq47ldYj4e
-    OaSlvVIwyT5sWxy4PG79uDBVyj5EiNmr8bjy5Tj43KHN6Fs2yBSt0312bm03M7Ll
-    w8K4emr5JTiVCLGXGDaFC/AvTpng1gr4oIrAXOVBrqESfvbkMTOAhVrATl3TwFn0
-    WAhkezFnCrr51Rb2/E1ksgyGy0aXDzNV/Gl309cSvrZ7Q9MVbK7d+/RyVEZZyJmr
-    VxWkMK4y/r5v31nVuImbE1TcTEK63nuXDXnrkfRAWh30mCeZT35/iC3isTpKxEpr
-    8FWOD2g4v7DZ3JL+Z7ss0pmaSefszU+NYsp6ci0QuXPf4zGJzGPxI1whsHuyC+uw
-    ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520983327; bh=B95KEDVl8ivdt4FYJGHQsoYRu/7v8rF65xZIpAlDj1g=; b=m
+    ByNCxdBE39dGAIEjoxyLiMm+liWEwux5q5qZNWE8gFhXyLrOQxjHBZRN8aZJhfGK
+    LtyZNA8o/RuHOiY6z9XILVqFDRNirZw0AeAFGVWuITitTOJoaI/H3OatS8kKRQK/
+    rnhjv2MQlO1NDzxY6GegUbDQFDl2dnZSoxIlB9AZMXKflzwC+BleCNDmJ8ROb+oV
+    Yw1mrAZ4So++RVfoIML6L+KhzpgaoMqoFFKeBWbjycVRt3/emT6U0aN9HPG8KKOL
+    u5cuBNo2ymbElrIJGdh9+pt0XKxSY3ZXpZhL7VQmymNukct3vn74Q14LmL868hLt
+    cK9kSc7AONG8c5EbR0X7A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O9TKnAon x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LY9pFNGK;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O9TKnAon x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LY9pFNGK;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755127AbeCSDVq (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 18 Mar 2018 23:21:46 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:48049 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754923AbeCSDVp (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Sun, 18 Mar 2018 23:21:45 -0400
-X-UUID: 3beadd9ebd274b16b3c7da121d22c7cf-20180319
-Message-ID: <1521429700.3717.31.camel@mhfsdcap03>
+        id S1752979AbeCMXVV (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 19:21:21 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46172 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbeCMXVT (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 13 Mar 2018 19:21:19 -0400
+X-Google-Smtp-Source: AG47ELvVjYPExUo0NCAmZ6XVrB2DaR9ayO6+bsDB7pXZE5m5uEWXUyYGYEM2tncYUmp5KeROpQnjSQ==
 Subject: Re: [PATCH v2 3/3] dt-bindings: phy-mtk-tphy: add properties for U2
  slew rate calibrate
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Ian Campbell <ijc+devicetree@hellion.org.uk>,
         Ryder Lee <ryder.lee@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-Date: Mon, 19 Mar 2018 11:21:40 +0800
-In-Reply-To: <20180318124838.ruakamqywz4jd6jz@rob-hp-laptop>
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org
 References: <c9679bc6e969ebf0f97a01c6d1aff3bbc0e8e4f7.1520832210.git.chunfeng.yun@mediatek.com>
-         <94a7d3b1240297cd0cac82df52954d0a53d50d36.1520832210.git.chunfeng.yun@mediatek.com>
-         <20180318124838.ruakamqywz4jd6jz@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+ <94a7d3b1240297cd0cac82df52954d0a53d50d36.1520832210.git.chunfeng.yun@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <6810b7b4-3023-2e76-5fbf-7e442067cbc4@gmail.com>
+Date: Wed, 14 Mar 2018 00:21:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23728.001
-X-TM-AS-Result: No-16.330000-8.000000-10
-X-TMASE-MatchedRID: nVQUmLJJeyYOwH4pD14DsPHkpkyUphL9GZjaqakC/Mbm+nS9146HM6Sx
-        VUPqsOdUL74reM0F4+3khxtMKpECzLBAQLqGlKivk3ewifG2MNP54F/2i/DwjQoDY6gYCVOT77/
-        yANhz5Pj2vjmPQvPnDtXbOJOB4P3AlyrPeDQDh/LmAId+2bAQwuU6QztVirNpmyiLZetSf8nJ4y
-        0wP1A6AEl4W8WVUOR/joczmuoPCq2UTGVAhB5EbQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--16.330000-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23728.001
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+In-Reply-To: <94a7d3b1240297cd0cac82df52954d0a53d50d36.1520832210.git.chunfeng.yun@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-03-18 at 07:48 -0500, Rob Herring wrote:
-> On Mon, Mar 12, 2018 at 01:25:40PM +0800, Chunfeng Yun wrote:
-> > Add two properties of ref_clk and coefficient used by U2 slew rate
-> > calibrate which may vary on different SoCs
-> > 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > ---
-> >  Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > index 41e09ed..0d34b2b 100644
-> > --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > @@ -27,6 +27,10 @@ Optional properties (controller (parent) node):
-> >   - reg		: offset and length of register shared by multiple ports,
-> >  		  exclude port's private register. It is needed on mt2701
-> >  		  and mt8173, but not on mt2712.
-> > + - mediatek,src-ref-clk-mhz	: frequency of reference clock for slew rate
-> > +		  calibrate
-> > + - mediatek,src-coef	: coefficient for slew rate calibrate, depends on
-> > +		  SoC process
+
+
+On 03/12/2018 06:25 AM, Chunfeng Yun wrote:
+> Add two properties of ref_clk and coefficient used by U2 slew rate
+> calibrate which may vary on different SoCs
 > 
-> What are valid values? This is one cell?
-Yes, one cell, integer type. If need, I'll send a new patch
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-Thanks
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> ---
+>  Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> >  
-> >  Required properties (port (child) node):
-> >  - reg		: address and length of the register set for the port.
-> > -- 
-> > 1.9.1
-> > 
-
-
+> diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> index 41e09ed..0d34b2b 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> @@ -27,6 +27,10 @@ Optional properties (controller (parent) node):
+>   - reg		: offset and length of register shared by multiple ports,
+>  		  exclude port's private register. It is needed on mt2701
+>  		  and mt8173, but not on mt2712.
+> + - mediatek,src-ref-clk-mhz	: frequency of reference clock for slew rate
+> +		  calibrate
+> + - mediatek,src-coef	: coefficient for slew rate calibrate, depends on
+> +		  SoC process
+>  
+>  Required properties (port (child) node):
+>  - reg		: address and length of the register set for the port.
+> 
