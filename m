@@ -1,72 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932308AbeCMGX4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:23:56 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:37505 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeCMGXx (ORCPT
+        id S1751678AbeCMGcR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:32:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54462 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751402AbeCMGcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:23:53 -0400
-X-Google-Smtp-Source: AG47ELtnvGLgEu5ZNj7A2EO/TGXvTdMCKfZOBmlUhLt5h72jbgV13NsPiY0SxffY00NRxPv4dk9kYjqDYpthPMrG5n8=
+        Tue, 13 Mar 2018 02:32:16 -0400
+Date: Mon, 12 Mar 2018 23:32:13 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Mario.Limonciello@dell.com, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+Message-ID: <20180313063213.GA20710@localhost.localdomain>
+References: <20180312185357.GA1672@light.dominikbrodowski.net>
+ <4cce64d16cab4d499dca9347c1a1f30c@ausx13mpc120.AMER.DELL.COM>
+ <20180313055109.GA14542@light.dominikbrodowski.net>
 MIME-Version: 1.0
-In-Reply-To: <20180313061603.jsgiumet23uqi6hl@gmail.com>
-References: <20180313061109.72629-1-dianders@chromium.org> <20180313061109.72629-3-dianders@chromium.org>
- <20180313061603.jsgiumet23uqi6hl@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 12 Mar 2018 23:23:50 -0700
-X-Google-Sender-Auth: lr_8dkxXp6AtyhaB94A7LupKBbI
-Message-ID: <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dave Hansen <dave.hansen@intel.com>, Yang Shi <yang.s@alibaba-inc.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Charlebois <charlebm@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313055109.GA14542@light.dominikbrodowski.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Mar 13, 2018 at 06:51:09AM +0100, Dominik Brodowski wrote:
+> On Mon, Mar 12, 2018 at 10:42:01PM +0000, Mario.Limonciello@dell.com wrote:
+> > 
+> > 
+> > > -----Original Message-----
+> > > From: Dominik Brodowski [mailto:linux@dominikbrodowski.net]
+> > > Sent: Tuesday, March 13, 2018 2:54 AM
+> > > To: dvhart@infradead.org; Limonciello, Mario <Mario_Limonciello@Dell.com>
+> > > Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+> > > 
+> > > Mario,
+> > > 
+> > > unfortunately, my Dell Inc. XPS 13 9343/0TM99H, BIOS A11 12/08/2016 fails to
+> > > boot v4.16-rc5. More exactly, I could bisect it down to commit 25d47027e10
+> > > ("platform/x86: dell-smbios: Link all dell-smbios-* modules together").
+> > > Usually, I have enabled
+> > > 
+> > > CONFIG_SENSORS_DELL_SMM=y
+> > > CONFIG_DELL_SMBIOS=y
+> > > CONFIG_DELL_SMBIOS_WMI=y
+> > > CONFIG_DELL_SMBIOS_SMM=y
+> > > CONFIG_DELL_LAPTOP=y
+> > > CONFIG_DELL_WMI=y
+> > > CONFIG_DELL_WMI_DESCRIPTOR=y
+> > > # CONFIG_DELL_WMI_AIO is not set
+> > > # CONFIG_DELL_WMI_LED is not set
+> > > # CONFIG_DELL_SMO8800 is not set
+> > > # CONFIG_DELL_RBTN is not set
+> > > # CONFIG_DELL_RBU is not set
+> > > 
+> > > For v4.16-rc5 to work, I need to manually disable DELL_SMBIOS_WMI:
+> > > 
+> > > -CONFIG_DELL_SMBIOS_WMI=y
+> > > +# CONFIG_DELL_SMBIOS_WMI is not set
+> > > 
+> > > Any ideas?
+> > > 
+> > Dominick,
+> > 
+> > Interesting.  Can you please change CONFIG_DELL_SMBIOS to a module
+> > and see if that behavior persists?  If it does, can you please blacklist it on
+> > the kernel command line and try to load it manually and share any
+> > backtrace?
+> 
+> Mario,
+> 
+> building and running it as a *module* works flawlessly. But that was
+> actually expected after a 'grep "initcall"' in drivers/platform/x86:
+> 
+> As Darren pointed out, DELL_SMBIOS_WMI depends on ACPI_WMI, so probably
+> ACPI_WMI needs to be initialized first. However, the all-in-one
+> dell-smbios.o is run as subsys_initcall(), same as wmi.o
+> (subsys_initcall_sync() there).
+> 
+> If both are built-ins, that means that dell-smbios.o is run first, and wmi.o
+> second. Changing dell-smbios.o to run at the later fs_initcall() level
+> instead lets me boot the kernel. HOWEVER:
+> 
+> 1) Is there a reason why both the core and the dell-smbios-smm driver have
+>    to run already at subsys_initcall() time? They did so previous to your
+>    patch. Is it OK to defer these parts opf the all-in-one dell-smbios.o
+>    to fs_initcall(), or even to the default device_initcall()?
+> 
+> 2) dell-smbios-wmi depends on (well, selects) DELL_WMI_DESCRIPTOR. The
+>    dell-smbios-wmi is running at the default device_initcall() time, but
+>    (AFAICS) probably later than the initialization of dell-smbios-wmi.o.
+>    May I presume that this poses no additional problem?
 
-On Mon, Mar 12, 2018 at 11:16 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Douglas Anderson <dianders@chromium.org> wrote:
->
->> +# Don't create Makefile caches if running as root since they can't be deleted
->> +# easily; in the real world we might be root when doing "sudo make install"
->> +ifeq ($(shell id -u),0)
->> +export KBUILD_NOCACHE := 1
->> +endif
->
-> Please don't do this - many prominent kernel developers build their kernels as
-> root - this makes the build slower for them, and also bifurcates testing.
+Nice catch Dominik,
 
-Ah, interesting.  I hadn't realized that!
+There is one other caveat, which you'll find documented in
+dell-laptop.c, namely that dell-laptop needs to init after dell-rbtn
+(I'm starting to appreciate the monolithic thinkpad-acpi driver).
 
-I'm OK with dropping this patch myself.  It was mostly addressing a
-potential problem pointed out by Masahiro Yamada when we were talking
-about .cache.mk, but I don't think anyone has actually experienced the
-problems listed in the CL description.  I suppose the other option
-would be to go back to keying off the "install" target (like v2 of
-this patch did), but it kinda feels like if someone did "sudo make
-install" and then followed up by a non-sudo "make" they probably would
-be able to figure out how to fix it without much trouble (just do a
-"sudo make clean").
+We need things to init in this order (items on the same line have no
+dependency):
 
-In case it's not obvious, though, we should still try to land patch #1
-of this series.  That's a real problems that people reported when the
-.cache.mk stuff first landed and then folks tried to upgrade their
-gcc.
+1. DCDBAS, ACPI_WMI
+2. DELL_SMBIOS, DELL_RBTN
+3. DELL_LAPTOP, DELL_WMI
 
--Doug
+Currently:
+subsys_initcall: ACPI_WMI, DELL_SMBIOS
+module_init: DCDBAS, DELL_WMI
+late_initcall: DELL_LAPTOP
+
+>From a quick naive glance, it appears as though we might be able to
+address this as follows:
+
+subsys_initcall: DCDBAS, ACPI_WMI
+module_init: DELL_SMBIOS, DELL_RBTN
+late_initcall: DELL_LAPTOP, DELL_WMI
+
+e.g. Totally untested...
+
+>From 2dd1191593a46bf8fd1e5be8bbfb98b797e041f8 Mon Sep 17 00:00:00 2001
+Message-Id: <2dd1191593a46bf8fd1e5be8bbfb98b797e041f8.1520922688.git.dvhart@infradead.org>
+From: "Darren Hart (VMware)" <dvhart@infradead.org>
+Date: Mon, 12 Mar 2018 23:28:00 -0700
+Subject: [PATCH] platform/x86: Fix dell driver init order
+
+Update the initcall ordering to satisfy the following dependency
+ordering:
+
+1. DCDBAS, ACPI_WMI
+2. DELL_SMBIOS, DELL_RBTN
+3. DELL_LAPTOP, DELL_WMI
+
+By assigning them to the following initcall levels:
+
+subsys_initcall: DCDBAS, ACPI_WMI
+module_init: DELL_SMBIOS, DELL_RBTN
+late_initcall: DELL_LAPTOP, DELL_WMI
+
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Mario.Limonciello@dell.com
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+---
+ drivers/firmware/dcdbas.c               | 2 +-
+ drivers/platform/x86/dell-smbios-base.c | 2 +-
+ drivers/platform/x86/dell-wmi.c         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
+index c16600f..0bdea60 100644
+--- a/drivers/firmware/dcdbas.c
++++ b/drivers/firmware/dcdbas.c
+@@ -639,7 +639,7 @@ static void __exit dcdbas_exit(void)
+ 	platform_driver_unregister(&dcdbas_driver);
+ }
+ 
+-module_init(dcdbas_init);
++subsys_initcall_sync(dcdbas_init);
+ module_exit(dcdbas_exit);
+ 
+ MODULE_DESCRIPTION(DRIVER_DESCRIPTION " (version " DRIVER_VERSION ")");
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 5bcf8a1..2485c80 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -637,7 +637,7 @@ static void __exit dell_smbios_exit(void)
+ 	mutex_unlock(&smbios_mutex);
+ }
+ 
+-subsys_initcall(dell_smbios_init);
++module_init(dell_smbios_init);
+ module_exit(dell_smbios_exit);
+ 
+ MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
+diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+index 2c99274..8d10219 100644
+--- a/drivers/platform/x86/dell-wmi.c
++++ b/drivers/platform/x86/dell-wmi.c
+@@ -714,7 +714,7 @@ static int __init dell_wmi_init(void)
+ 
+ 	return wmi_driver_register(&dell_wmi_driver);
+ }
+-module_init(dell_wmi_init);
++late_initcall(dell_wmi_init);
+ 
+ static void __exit dell_wmi_exit(void)
+ {
+-- 
+2.9.5
+
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
