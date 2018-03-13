@@ -1,195 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932754AbeCMWqV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:46:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932197AbeCMWqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:46:16 -0400
-Date: Tue, 13 Mar 2018 17:46:13 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
- patches.
-Message-ID: <20180313224613.sdkdkcvhpqv54s6c@treble>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-6-pmladek@suse.com>
+        id S932776AbeCMWqy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:46:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44800 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932197AbeCMWqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:46:53 -0400
+Date: Tue, 13 Mar 2018 15:46:47 -0700
+From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Please pull JSON files for POWR9 PMU events
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180307082039.10196-6-pmladek@suse.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+X-Operating-System: Linux 2.0.32 on an i486
+User-Agent: Mutt/1.7.1 (2016-10-04)
+X-TM-AS-GCONF: 00
+x-cbid: 18031322-0020-0000-0000-00000D964481
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008668; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002637; UDB=6.00510192; IPR=6.00781967;
+ MB=3.00020016; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 22:46:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031322-0021-0000-0000-0000607BB00A
+Message-Id: <20180313224647.GA22960@us.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130250
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 09:20:34AM +0100, Petr Mladek wrote:
-> From: Jason Baron <jbaron@akamai.com>
-> 
-> We are going to add a feature called atomic replace. It will allow to
-> create a patch that would replace all already registered patches.
-> 
-> The replaced patches will stay registered because they are typically
-> unregistered by some package uninstall scripts. But we will remove
-> these patches from @klp_patches list to keep the enabled patch
-> on the bottom of the stack. Otherwise, we would need to implement
-> rather complex logic for moving the patches on the stack. Also
-> it would complicate implementation of the atomic replace feature.
-> It is not worth it.
-> 
-> As a result, we will have patches that are registered but that
-> are no longer usable. Let's get prepared for this and use
-> a better descriptive name for klp_is_patch_registered() function.
-> 
-> Also create separate list for the replaced patches and allow to
-> unregister them. Alternative solution would be to add a flag
-> into struct klp_patch. Note that patch->kobj.state_initialized
-> is not safe because it can be cleared outside klp_mutex.
-> 
-> This patch does not change the existing behavior.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Split and renamed klp_is_patch_usable()]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Acked-by: Miroslav Benes <mbenes@suse.cz>
-> ---
->  kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index ab1f6a371fc8..fd0296859ff4 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
->  
->  static LIST_HEAD(klp_patches);
->  
-> +/*
-> + * List of 'replaced' patches that have been replaced by a patch that has the
-> + * 'replace' bit set. When they are added to this list, they are disabled and
-> + * can not be re-enabled, but they can be unregistered().
-> + */
-> +static LIST_HEAD(klp_replaced_patches);
 
-Can someone remind me why we're permanently disabling replaced patches?
-I seem to remember being involved in that decision, but at least with
-this latest version of the patches, it seems like it would be simpler to
-just let 'replace' patches be rolled back to the previous state when
-they're unpatched.  Then we don't need two lists of patches, the nops
-can become more permanent, the replaced patches remain "enabled" but
-inert, and the unpatching behavior is less surprising to the user, more
-like a normal rollback.
+Hi Arnaldo,
 
-Along those lines, I'd also propose that we constrain our existing patch
-stacking even further.  Right now we allow a new patch to be registered
-on top of a disabled patch, though we don't allow the new patch to be
-enabled until the previous patch gets enabled.  I'd propose we no longer
-allow that condition.  We should instead enforce that all existing
-patches are *enabled* before allowing a new patch to be registered on
-top.  That way the patch stacking is even more sane, and there are less
-"unusual" conditions to worry about.  We have enough of those already.
-Each additional bit of flexibility has a maintenance cost, and this one
-isn't worth it IMO.
+Please pull an update to the JSON files for POWER9 PMU events.
 
-The downside of the above proposals is that now you can't remove an old
-patch after it's been replaced, but IMO that's a small price to pay for
-code sanity.  Every additional bit of flexibility has a maintenance
-cost, and this one isn't worth it IMO.  Just force the user to leave the
-old inert patches loaded.  They shouldn't take up much memory anyway,
-and they might come in handy should a revert be needed.
+The following changes since commit 90d2614c4d10c2f9d0ada9a3b01e5f43ca8d1ae3:
 
-> +
->  static struct kobject *klp_root_kobj;
->  
->  static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
-> @@ -108,17 +115,28 @@ static void klp_find_object_module(struct klp_object *obj)
->  	mutex_unlock(&module_mutex);
->  }
->  
-> -static bool klp_is_patch_registered(struct klp_patch *patch)
-> +static bool klp_is_patch_in_list(struct klp_patch *patch,
-> +				 struct list_head *head)
->  {
->  	struct klp_patch *mypatch;
->  
-> -	list_for_each_entry(mypatch, &klp_patches, list)
-> +	list_for_each_entry(mypatch, head, list)
->  		if (mypatch == patch)
->  			return true;
->  
->  	return false;
->  }
->  
-> +static bool klp_is_patch_usable(struct klp_patch *patch)
-> +{
-> +	return klp_is_patch_in_list(patch, &klp_patches);
-> +}
-> +
-> +static bool klp_is_patch_replaced(struct klp_patch *patch)
-> +{
-> +	return klp_is_patch_in_list(patch, &klp_replaced_patches);
-> +}
-> +
->  static bool klp_initialized(void)
->  {
->  	return !!klp_root_kobj;
-> @@ -375,7 +393,7 @@ int klp_disable_patch(struct klp_patch *patch)
->  
->  	mutex_lock(&klp_mutex);
->  
-> -	if (!klp_is_patch_registered(patch)) {
-> +	if (!klp_is_patch_usable(patch)) {
+  perf test: Fix exit code for record+probe_libc_inet_pton.sh (2018-03-13 15:14:43 -0300)
 
-This is another case where a wrapper function hurts readability.  What
-does "usable" even mean to the reader of this code?  Every time I see
-it, I have to do a double take.  I think getting rid of the wrapper in
-favor of just doing
+are available in the git repository at:
 
-	if (!klp_is_patch_in_list(patch, &klp_patches))
+  https://github.com/sukadev/linux/ p9-json-v5
 
-would be much more obvious.
+for you to fetch changes up to 99c9dff949f2502964005f9afa8d60c89b446f2c:
 
->  		ret = -EINVAL;
->  		goto err;
->  	}
-> @@ -475,7 +493,7 @@ int klp_enable_patch(struct klp_patch *patch)
->  
->  	mutex_lock(&klp_mutex);
->  
-> -	if (!klp_is_patch_registered(patch)) {
-> +	if (!klp_is_patch_usable(patch)) {
->  		ret = -EINVAL;
->  		goto err;
->  	}
-> @@ -516,7 +534,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
->  
->  	mutex_lock(&klp_mutex);
->  
-> -	if (!klp_is_patch_registered(patch)) {
-> +	if (!klp_is_patch_usable(patch)) {
->  		/*
->  		 * Module with the patch could either disappear meanwhile or is
->  		 * not properly initialized yet.
-> @@ -971,7 +989,7 @@ int klp_unregister_patch(struct klp_patch *patch)
->  
->  	mutex_lock(&klp_mutex);
->  
-> -	if (!klp_is_patch_registered(patch)) {
-> +	if (!klp_is_patch_usable(patch) && !klp_is_patch_replaced(patch)) {
->  		ret = -EINVAL;
->  		goto err;
->  	}
-> -- 
-> 2.13.6
-> 
+  perf vendor events: Update POWER9 events (2018-03-13 16:48:12 -0500)
 
--- 
-Josh
+----------------------------------------------------------------
+Sukadev Bhattiprolu (1):
+      perf vendor events: Update POWER9 events
+
+ .../perf/pmu-events/arch/powerpc/power9/cache.json |  25 ---
+ .../pmu-events/arch/powerpc/power9/frontend.json   |  10 -
+ .../pmu-events/arch/powerpc/power9/marked.json     |   5 -
+ .../pmu-events/arch/powerpc/power9/memory.json     |   5 -
+ .../perf/pmu-events/arch/powerpc/power9/other.json | 241 ++++++++++++++-------
+ .../pmu-events/arch/powerpc/power9/pipeline.json   |  50 ++---
+ tools/perf/pmu-events/arch/powerpc/power9/pmc.json |   5 -
+ .../arch/powerpc/power9/translation.json           |  10 +-
+ 8 files changed, 178 insertions(+), 173 deletions(-)
