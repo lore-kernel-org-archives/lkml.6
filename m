@@ -1,65 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeCMOpk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:45:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60579 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752257AbeCMOpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:45:38 -0400
-Date: Tue, 13 Mar 2018 15:45:36 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Jan Kara <jack@suse.cz>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memory-failure: fix section mismatch
-Message-ID: <20180313144536.GC4811@dhcp22.suse.cz>
-References: <20180304071613.16899-1-nick.desaulniers@gmail.com>
+        id S1752665AbeCMOvh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:51:37 -0400
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:47076 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752575AbeCMOvf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:51:35 -0400
+X-Google-Smtp-Source: AG47ELuq/Rg3scycs6l4BrAVm02M11bg8zyp/JgzV1VdaGpDL/D23uIXPHuSeg2XJVaD9T/foWnqDF1ogqsV14adQQo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180304071613.16899-1-nick.desaulniers@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1520928772.28745.53.camel@infradead.org>
+References: <20180312171813.3487.94803.stgit@localhost.localdomain>
+ <20180312172309.3487.76690.stgit@localhost.localdomain> <1520928772.28745.53.camel@infradead.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 13 Mar 2018 07:51:33 -0700
+Message-ID: <CAKgT0UdkUSsHQC7CpJQ0CT77AD8k7P-HeeomWXNJQ-Ek4dJRMQ@mail.gmail.com>
+Subject: Re: [pci PATCH v5 3/4] ena: Migrate over to unmanaged SR-IOV support
+To: David Woodhouse <dwmw2@infradead.org>, Don Dutile <ddutile@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
+        netanel@amazon.com, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 03-03-18 23:16:11, Nick Desaulniers wrote:
-> Clang complains when a variable is declared extern twice, but with two
-> different sections. num_poisoned_pages is marked extern and __read_mostly
-> in include/linux/swapops.h, but only extern in include/linux/mm.h. Some
-> c source files must include both, and thus see the conflicting
-> declarations.
+On Tue, Mar 13, 2018 at 1:12 AM, David Woodhouse <dwmw2@infradead.org> wrote:
+> On Mon, 2018-03-12 at 10:23 -0700, Alexander Duyck wrote:
+>>
+>> -       .sriov_configure = ena_sriov_configure,
+>> +#ifdef CONFIG_PCI_IOV
+>> +       .sriov_configure = pci_sriov_configure_simple,
+>> +#endif
+>>  };
+>
+> I'd like to see that ifdef go away, as discussed. I agree that just
+> #define pci_sriov_configure_simple NULL
+> should suffice. As Christoph points out, it's not going to compile if
+> people try to just invoke it directly.
+>
+> I'd also *really* like to see a way to enable this for PFs which don't
+> have (and don't need) a driver. We seem to have lost that along the
+> way.
 
-Why do we need declarations in both places? This sounds like a mess to
-me.
+Actually the suggestion I had from Don Dutile was that we should be
+looking at creating a pci-stub like driver specifically for those type
+of devices, but without the ability to arbitrarily assign devices.
+Basically we have to white-list it in one device at a time for those
+kind of things.
 
-> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> ---
->  include/linux/mm.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ad06d42adb1a..bd4bd59f02c1 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
->  extern int sysctl_memory_failure_early_kill;
->  extern int sysctl_memory_failure_recovery;
->  extern void shake_page(struct page *p, int access);
-> -extern atomic_long_t num_poisoned_pages;
-> +extern atomic_long_t num_poisoned_pages __read_mostly;
->  extern int soft_offline_page(struct page *page, int flags);
->  
->  
-> -- 
-> 2.14.1
-> 
+If you have the device ID of the thing you wanted to have work with
+pci-stub before I could look at putting together a quick driver and
+adding it to this set.
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks.
+
+- Alex
