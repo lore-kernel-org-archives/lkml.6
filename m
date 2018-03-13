@@ -1,92 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752858AbeCMSgC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:36:02 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46425 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751996AbeCMSgA (ORCPT
+        id S1752973AbeCMShQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:37:16 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27393 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752262AbeCMShO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:36:00 -0400
-X-Google-Smtp-Source: AG47ELugZinUrE2AsWoINHupGRSSvSkRK565Jdm/M/5iG9FbxqEwX48ZvzDHpxrDiOF/6+5wAbh2ew==
-Date: Tue, 13 Mar 2018 11:35:54 -0700 (PDT)
-X-Google-Original-Date: Tue, 13 Mar 2018 11:35:27 PDT (-0700)
-Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
-In-Reply-To: <cover.1520928420.git.zong@andestech.com>
-CC: albert@sifive.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, zong@andestech.com, zongbox@gmail.com,
-        greentime@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: zong@andestech.com, shea@shealevy.com
-Message-ID: <mhng-dcc790fc-8fd7-41c8-84c8-cc4b8bd662ea@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 13 Mar 2018 14:37:14 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 13 Mar 2018 19:37:11 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: broonie@kernel.org, f.fainelli@gmail.com
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
+Date: Tue, 13 Mar 2018 19:36:58 +0100
+Message-Id: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
-> These patches resolve the some issues of loadable module.
->   - symbol out of ranges
->   - unknown relocation types
->
-> The reference of external variable and function symbols
-> cannot exceed 32-bit offset ranges in kernel module.
-> The module only can work on the 32-bit OS or the 64-bit
-> OS with sv32 virtual addressing.
->
-> These patches will generate the .got, .got.plt and
-> .plt sections during loading module, let it can refer
-> to the symbol which locate more than 32-bit offset.
-> These sections depend on the relocation types:
->  - R_RISCV_GOT_HI20
->  - R_RISCV_CALL_PLT
->
-> These patches also support more relocation types
->  - R_RISCV_CALL
->  - R_RISCV_HI20
->  - R_RISCV_LO12_I
->  - R_RISCV_LO12_S
->  - R_RISCV_RVC_BRANCH
->  - R_RISCV_RVC_JUMP
->  - R_RISCV_ALIGN
->  - R_RISCV_ADD32
->  - R_RISCV_SUB32
->
-> Zong Li (11):
->   RISC-V: Add sections of PLT and GOT for kernel module
->   RISC-V: Add section of GOT.PLT for kernel module
->   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
->   RISC-V: Support CALL relocation type in kernel module
->   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
->   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
->   RISC-V: Support ALIGN relocation type in kernel module
->   RISC-V: Support ADD32 relocation type in kernel module
->   RISC-V: Support SUB32 relocation type in kernel module
->   RISC-V: Enable module support in defconfig
->   RISC-V: Add definition of relocation types
->
->  arch/riscv/Kconfig                  |   5 ++
->  arch/riscv/Makefile                 |   3 +
->  arch/riscv/configs/defconfig        |   2 +
->  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
->  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
->  arch/riscv/kernel/Makefile          |   1 +
->  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
->  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
->  arch/riscv/kernel/module.lds        |   8 ++
->  9 files changed, 480 insertions(+), 6 deletions(-)
->  create mode 100644 arch/riscv/include/asm/module.h
->  create mode 100644 arch/riscv/kernel/module-sections.c
->  create mode 100644 arch/riscv/kernel/module.lds
+For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
+in bcm_qspi_probe() in error path") has updated some gotos, but not all of
+them.
 
-This is the second set of patches that turn on modules, and it has the same
-R_RISCV_ALIGN problem as the other one
+This looks spurious, so fix it.
 
-    http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
+Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've added the same Fixes: tag as in commit c0368e4db4a3 even if the patch
+would not cleanly apply on top of it.
+At least commit 4e3b2d236fe0 ("spi: bcm-qspi: Add BSPI spi-nor flash
+controller driver") would also be needed.
 
-It looks like this one uses shared libraries for modules instead of static
-objects.  I think using shared objects is the right thing to do, as it'll allow
-us to place modules anywhere in the address space by having multiple GOTs and
-PLTs.  That's kind of complicated, though, so we can start with something
-simpler like this.
+Also the label names could be improved. But this goes beyond the scope of
+this patch.
+---
+ drivers/spi/spi-bcm-qspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index a172ab299e80..1596d35498c5 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
+ 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(qspi->base[MSPI])) {
+ 			ret = PTR_ERR(qspi->base[MSPI]);
+-			goto qspi_probe_err;
++			goto qspi_resource_err;
+ 		}
+ 	} else {
+ 		goto qspi_resource_err;
+@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
+ 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(qspi->base[BSPI])) {
+ 			ret = PTR_ERR(qspi->base[BSPI]);
+-			goto qspi_probe_err;
++			goto qspi_resource_err;
+ 		}
+ 		qspi->bspi_mode = true;
+ 	} else {
+-- 
+2.14.1
