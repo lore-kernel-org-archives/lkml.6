@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932534AbeCMW0f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:26:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56512 "EHLO mail.kernel.org"
+        id S1753167AbeCMW0u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932197AbeCMW0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:26:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A5520685
+        id S932197AbeCMW0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:26:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9035214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 1/4] PCI/VPD: Move VPD access code to vpd.c
+Subject: [PATCH v1 2/4] PCI/VPD: Move VPD sysfs code to vpd.c
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: linux-pci@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Date: Tue, 13 Mar 2018 17:26:29 -0500
-Message-ID: <152097998938.37832.5388786421000973978.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Tue, 13 Mar 2018 17:26:41 -0500
+Message-ID: <152097999840.37832.2831547542821143769.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152097990638.37832.15000151673990461303.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152097990638.37832.15000151673990461303.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -27,781 +27,207 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Helgaas <bhelgaas@google.com>
 
-Move the VPD-related code from access.c to vpd.c.  The goal is to
+Move the VPD-related sysfs code from pci-sysfs.c to vpd.c.  This follows
+the pattern of pcie_aspm_create_sysfs_dev_files().  The goal is to
 encapsulate all the VPD code and structures in vpd.c.
 
 No functional change intended.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/access.c |  368 --------------------------------------------------
- drivers/pci/vpd.c    |  369 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 369 insertions(+), 368 deletions(-)
+ drivers/pci/pci-sysfs.c |   67 ++---------------------------------------------
+ drivers/pci/pci.h       |    2 +
+ drivers/pci/vpd.c       |   67 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/pci/access.c b/drivers/pci/access.c
-index 5e9a9822d9d4..e080eb74bda0 100644
---- a/drivers/pci/access.c
-+++ b/drivers/pci/access.c
-@@ -1,8 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <linux/delay.h>
- #include <linux/pci.h>
- #include <linux/module.h>
--#include <linux/sched/signal.h>
- #include <linux/slab.h>
- #include <linux/ioport.h>
- #include <linux/wait.h>
-@@ -264,372 +262,6 @@ PCI_USER_WRITE_CONFIG(byte, u8)
- PCI_USER_WRITE_CONFIG(word, u16)
- PCI_USER_WRITE_CONFIG(dword, u32)
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index eb6bee8724cc..4415e624cf7e 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -982,38 +982,6 @@ static ssize_t pci_write_config(struct file *filp, struct kobject *kobj,
+ 	return count;
+ }
  
--/* VPD access through PCI 2.2+ VPD capability */
--
--/**
-- * pci_read_vpd - Read one entry from Vital Product Data
-- * @dev:	pci device struct
-- * @pos:	offset in vpd space
-- * @count:	number of bytes to read
-- * @buf:	pointer to where to store result
-- */
--ssize_t pci_read_vpd(struct pci_dev *dev, loff_t pos, size_t count, void *buf)
+-static ssize_t read_vpd_attr(struct file *filp, struct kobject *kobj,
+-			     struct bin_attribute *bin_attr, char *buf,
+-			     loff_t off, size_t count)
 -{
--	if (!dev->vpd || !dev->vpd->ops)
--		return -ENODEV;
--	return dev->vpd->ops->read(dev, pos, count, buf);
--}
--EXPORT_SYMBOL(pci_read_vpd);
+-	struct pci_dev *dev = to_pci_dev(kobj_to_dev(kobj));
 -
--/**
-- * pci_write_vpd - Write entry to Vital Product Data
-- * @dev:	pci device struct
-- * @pos:	offset in vpd space
-- * @count:	number of bytes to write
-- * @buf:	buffer containing write data
-- */
--ssize_t pci_write_vpd(struct pci_dev *dev, loff_t pos, size_t count, const void *buf)
--{
--	if (!dev->vpd || !dev->vpd->ops)
--		return -ENODEV;
--	return dev->vpd->ops->write(dev, pos, count, buf);
--}
--EXPORT_SYMBOL(pci_write_vpd);
--
--/**
-- * pci_set_vpd_size - Set size of Vital Product Data space
-- * @dev:	pci device struct
-- * @len:	size of vpd space
-- */
--int pci_set_vpd_size(struct pci_dev *dev, size_t len)
--{
--	if (!dev->vpd || !dev->vpd->ops)
--		return -ENODEV;
--	return dev->vpd->ops->set_size(dev, len);
--}
--EXPORT_SYMBOL(pci_set_vpd_size);
--
--#define PCI_VPD_MAX_SIZE (PCI_VPD_ADDR_MASK + 1)
--
--/**
-- * pci_vpd_size - determine actual size of Vital Product Data
-- * @dev:	pci device struct
-- * @old_size:	current assumed size, also maximum allowed size
-- */
--static size_t pci_vpd_size(struct pci_dev *dev, size_t old_size)
--{
--	size_t off = 0;
--	unsigned char header[1+2];	/* 1 byte tag, 2 bytes length */
--
--	while (off < old_size &&
--	       pci_read_vpd(dev, off, 1, header) == 1) {
--		unsigned char tag;
--
--		if (header[0] & PCI_VPD_LRDT) {
--			/* Large Resource Data Type Tag */
--			tag = pci_vpd_lrdt_tag(header);
--			/* Only read length from known tag items */
--			if ((tag == PCI_VPD_LTIN_ID_STRING) ||
--			    (tag == PCI_VPD_LTIN_RO_DATA) ||
--			    (tag == PCI_VPD_LTIN_RW_DATA)) {
--				if (pci_read_vpd(dev, off+1, 2,
--						 &header[1]) != 2) {
--					pci_warn(dev, "invalid large VPD tag %02x size at offset %zu",
--						 tag, off + 1);
--					return 0;
--				}
--				off += PCI_VPD_LRDT_TAG_SIZE +
--					pci_vpd_lrdt_size(header);
--			}
--		} else {
--			/* Short Resource Data Type Tag */
--			off += PCI_VPD_SRDT_TAG_SIZE +
--				pci_vpd_srdt_size(header);
--			tag = pci_vpd_srdt_tag(header);
--		}
--
--		if (tag == PCI_VPD_STIN_END)	/* End tag descriptor */
--			return off;
--
--		if ((tag != PCI_VPD_LTIN_ID_STRING) &&
--		    (tag != PCI_VPD_LTIN_RO_DATA) &&
--		    (tag != PCI_VPD_LTIN_RW_DATA)) {
--			pci_warn(dev, "invalid %s VPD tag %02x at offset %zu",
--				 (header[0] & PCI_VPD_LRDT) ? "large" : "short",
--				 tag, off);
--			return 0;
--		}
--	}
--	return 0;
--}
--
--/*
-- * Wait for last operation to complete.
-- * This code has to spin since there is no other notification from the PCI
-- * hardware. Since the VPD is often implemented by serial attachment to an
-- * EEPROM, it may take many milliseconds to complete.
-- *
-- * Returns 0 on success, negative values indicate error.
-- */
--static int pci_vpd_wait(struct pci_dev *dev)
--{
--	struct pci_vpd *vpd = dev->vpd;
--	unsigned long timeout = jiffies + msecs_to_jiffies(125);
--	unsigned long max_sleep = 16;
--	u16 status;
--	int ret;
--
--	if (!vpd->busy)
--		return 0;
--
--	while (time_before(jiffies, timeout)) {
--		ret = pci_user_read_config_word(dev, vpd->cap + PCI_VPD_ADDR,
--						&status);
--		if (ret < 0)
--			return ret;
--
--		if ((status & PCI_VPD_ADDR_F) == vpd->flag) {
--			vpd->busy = 0;
--			return 0;
--		}
--
--		if (fatal_signal_pending(current))
--			return -EINTR;
--
--		usleep_range(10, max_sleep);
--		if (max_sleep < 1024)
--			max_sleep *= 2;
+-	if (bin_attr->size > 0) {
+-		if (off > bin_attr->size)
+-			count = 0;
+-		else if (count > bin_attr->size - off)
+-			count = bin_attr->size - off;
 -	}
 -
--	pci_warn(dev, "VPD access failed.  This is likely a firmware bug on this device.  Contact the card vendor for a firmware update\n");
--	return -ETIMEDOUT;
+-	return pci_read_vpd(dev, off, count, buf);
 -}
 -
--static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
--			    void *arg)
+-static ssize_t write_vpd_attr(struct file *filp, struct kobject *kobj,
+-			      struct bin_attribute *bin_attr, char *buf,
+-			      loff_t off, size_t count)
 -{
--	struct pci_vpd *vpd = dev->vpd;
--	int ret;
--	loff_t end = pos + count;
--	u8 *buf = arg;
+-	struct pci_dev *dev = to_pci_dev(kobj_to_dev(kobj));
 -
--	if (pos < 0)
--		return -EINVAL;
--
--	if (!vpd->valid) {
--		vpd->valid = 1;
--		vpd->len = pci_vpd_size(dev, vpd->len);
+-	if (bin_attr->size > 0) {
+-		if (off > bin_attr->size)
+-			count = 0;
+-		else if (count > bin_attr->size - off)
+-			count = bin_attr->size - off;
 -	}
 -
--	if (vpd->len == 0)
--		return -EIO;
--
--	if (pos > vpd->len)
--		return 0;
--
--	if (end > vpd->len) {
--		end = vpd->len;
--		count = end - pos;
--	}
--
--	if (mutex_lock_killable(&vpd->lock))
--		return -EINTR;
--
--	ret = pci_vpd_wait(dev);
--	if (ret < 0)
--		goto out;
--
--	while (pos < end) {
--		u32 val;
--		unsigned int i, skip;
--
--		ret = pci_user_write_config_word(dev, vpd->cap + PCI_VPD_ADDR,
--						 pos & ~3);
--		if (ret < 0)
--			break;
--		vpd->busy = 1;
--		vpd->flag = PCI_VPD_ADDR_F;
--		ret = pci_vpd_wait(dev);
--		if (ret < 0)
--			break;
--
--		ret = pci_user_read_config_dword(dev, vpd->cap + PCI_VPD_DATA, &val);
--		if (ret < 0)
--			break;
--
--		skip = pos & 3;
--		for (i = 0;  i < sizeof(u32); i++) {
--			if (i >= skip) {
--				*buf++ = val;
--				if (++pos == end)
--					break;
--			}
--			val >>= 8;
--		}
--	}
--out:
--	mutex_unlock(&vpd->lock);
--	return ret ? ret : count;
+-	return pci_write_vpd(dev, off, count, buf);
 -}
 -
--static ssize_t pci_vpd_write(struct pci_dev *dev, loff_t pos, size_t count,
--			     const void *arg)
--{
--	struct pci_vpd *vpd = dev->vpd;
--	const u8 *buf = arg;
--	loff_t end = pos + count;
--	int ret = 0;
--
--	if (pos < 0 || (pos & 3) || (count & 3))
--		return -EINVAL;
--
--	if (!vpd->valid) {
--		vpd->valid = 1;
--		vpd->len = pci_vpd_size(dev, vpd->len);
--	}
--
--	if (vpd->len == 0)
--		return -EIO;
--
--	if (end > vpd->len)
--		return -EINVAL;
--
--	if (mutex_lock_killable(&vpd->lock))
--		return -EINTR;
--
--	ret = pci_vpd_wait(dev);
--	if (ret < 0)
--		goto out;
--
--	while (pos < end) {
--		u32 val;
--
--		val = *buf++;
--		val |= *buf++ << 8;
--		val |= *buf++ << 16;
--		val |= *buf++ << 24;
--
--		ret = pci_user_write_config_dword(dev, vpd->cap + PCI_VPD_DATA, val);
--		if (ret < 0)
--			break;
--		ret = pci_user_write_config_word(dev, vpd->cap + PCI_VPD_ADDR,
--						 pos | PCI_VPD_ADDR_F);
--		if (ret < 0)
--			break;
--
--		vpd->busy = 1;
--		vpd->flag = 0;
--		ret = pci_vpd_wait(dev);
--		if (ret < 0)
--			break;
--
--		pos += sizeof(u32);
--	}
--out:
--	mutex_unlock(&vpd->lock);
--	return ret ? ret : count;
--}
--
--static int pci_vpd_set_size(struct pci_dev *dev, size_t len)
--{
--	struct pci_vpd *vpd = dev->vpd;
--
--	if (len == 0 || len > PCI_VPD_MAX_SIZE)
--		return -EIO;
--
--	vpd->valid = 1;
--	vpd->len = len;
--
--	return 0;
--}
--
--static const struct pci_vpd_ops pci_vpd_ops = {
--	.read = pci_vpd_read,
--	.write = pci_vpd_write,
--	.set_size = pci_vpd_set_size,
--};
--
--static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
--			       void *arg)
--{
--	struct pci_dev *tdev = pci_get_slot(dev->bus,
--					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
--	ssize_t ret;
--
--	if (!tdev)
--		return -ENODEV;
--
--	ret = pci_read_vpd(tdev, pos, count, arg);
--	pci_dev_put(tdev);
--	return ret;
--}
--
--static ssize_t pci_vpd_f0_write(struct pci_dev *dev, loff_t pos, size_t count,
--				const void *arg)
--{
--	struct pci_dev *tdev = pci_get_slot(dev->bus,
--					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
--	ssize_t ret;
--
--	if (!tdev)
--		return -ENODEV;
--
--	ret = pci_write_vpd(tdev, pos, count, arg);
--	pci_dev_put(tdev);
--	return ret;
--}
--
--static int pci_vpd_f0_set_size(struct pci_dev *dev, size_t len)
--{
--	struct pci_dev *tdev = pci_get_slot(dev->bus,
--					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
--	int ret;
--
--	if (!tdev)
--		return -ENODEV;
--
--	ret = pci_set_vpd_size(tdev, len);
--	pci_dev_put(tdev);
--	return ret;
--}
--
--static const struct pci_vpd_ops pci_vpd_f0_ops = {
--	.read = pci_vpd_f0_read,
--	.write = pci_vpd_f0_write,
--	.set_size = pci_vpd_f0_set_size,
--};
--
--int pci_vpd_init(struct pci_dev *dev)
--{
--	struct pci_vpd *vpd;
--	u8 cap;
--
--	cap = pci_find_capability(dev, PCI_CAP_ID_VPD);
--	if (!cap)
--		return -ENODEV;
--
--	vpd = kzalloc(sizeof(*vpd), GFP_ATOMIC);
--	if (!vpd)
--		return -ENOMEM;
--
--	vpd->len = PCI_VPD_MAX_SIZE;
--	if (dev->dev_flags & PCI_DEV_FLAGS_VPD_REF_F0)
--		vpd->ops = &pci_vpd_f0_ops;
--	else
--		vpd->ops = &pci_vpd_ops;
--	mutex_init(&vpd->lock);
--	vpd->cap = cap;
--	vpd->busy = 0;
--	vpd->valid = 0;
--	dev->vpd = vpd;
--	return 0;
--}
--
--void pci_vpd_release(struct pci_dev *dev)
--{
--	kfree(dev->vpd);
--}
--
+ #ifdef HAVE_PCI_LEGACY
  /**
-  * pci_cfg_access_lock - Lock PCI config reads/writes
-  * @dev:	pci device struct
+  * pci_read_legacy_io - read byte(s) from legacy I/O port space
+@@ -1517,29 +1485,8 @@ static struct device_attribute reset_attr = __ATTR(reset, 0200, NULL, reset_stor
+ static int pci_create_capabilities_sysfs(struct pci_dev *dev)
+ {
+ 	int retval;
+-	struct bin_attribute *attr;
+-
+-	/* If the device has VPD, try to expose it in sysfs. */
+-	if (dev->vpd) {
+-		attr = kzalloc(sizeof(*attr), GFP_ATOMIC);
+-		if (!attr)
+-			return -ENOMEM;
+ 
+-		sysfs_bin_attr_init(attr);
+-		attr->size = 0;
+-		attr->attr.name = "vpd";
+-		attr->attr.mode = S_IRUSR | S_IWUSR;
+-		attr->read = read_vpd_attr;
+-		attr->write = write_vpd_attr;
+-		retval = sysfs_create_bin_file(&dev->dev.kobj, attr);
+-		if (retval) {
+-			kfree(attr);
+-			return retval;
+-		}
+-		dev->vpd->attr = attr;
+-	}
+-
+-	/* Active State Power Management */
++	pcie_vpd_create_sysfs_dev_files(dev);
+ 	pcie_aspm_create_sysfs_dev_files(dev);
+ 
+ 	if (!pci_probe_reset_function(dev)) {
+@@ -1552,11 +1499,7 @@ static int pci_create_capabilities_sysfs(struct pci_dev *dev)
+ 
+ error:
+ 	pcie_aspm_remove_sysfs_dev_files(dev);
+-	if (dev->vpd && dev->vpd->attr) {
+-		sysfs_remove_bin_file(&dev->dev.kobj, dev->vpd->attr);
+-		kfree(dev->vpd->attr);
+-	}
+-
++	pcie_vpd_remove_sysfs_dev_files(dev);
+ 	return retval;
+ }
+ 
+@@ -1630,11 +1573,7 @@ int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
+ 
+ static void pci_remove_capabilities_sysfs(struct pci_dev *dev)
+ {
+-	if (dev->vpd && dev->vpd->attr) {
+-		sysfs_remove_bin_file(&dev->dev.kobj, dev->vpd->attr);
+-		kfree(dev->vpd->attr);
+-	}
+-
++	pcie_vpd_remove_sysfs_dev_files(dev);
+ 	pcie_aspm_remove_sysfs_dev_files(dev);
+ 	if (dev->reset_fn) {
+ 		device_remove_file(&dev->dev, &reset_attr);
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index fcd81911b127..1191320a44d5 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -123,6 +123,8 @@ struct pci_vpd {
+ 
+ int pci_vpd_init(struct pci_dev *dev);
+ void pci_vpd_release(struct pci_dev *dev);
++void pcie_vpd_create_sysfs_dev_files(struct pci_dev *dev);
++void pcie_vpd_remove_sysfs_dev_files(struct pci_dev *dev);
+ 
+ /* PCI /proc functions */
+ #ifdef CONFIG_PROC_FS
 diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-index 70fba57d6103..4596452d58bf 100644
+index 4596452d58bf..55477f24d8b9 100644
 --- a/drivers/pci/vpd.c
 +++ b/drivers/pci/vpd.c
-@@ -7,7 +7,376 @@
-  */
+@@ -378,6 +378,73 @@ void pci_vpd_release(struct pci_dev *dev)
+ 	kfree(dev->vpd);
+ }
  
- #include <linux/pci.h>
-+#include <linux/delay.h>
- #include <linux/export.h>
-+#include <linux/sched/signal.h>
-+#include "pci.h"
-+
-+/* VPD access through PCI 2.2+ VPD capability */
-+
-+/**
-+ * pci_read_vpd - Read one entry from Vital Product Data
-+ * @dev:	pci device struct
-+ * @pos:	offset in vpd space
-+ * @count:	number of bytes to read
-+ * @buf:	pointer to where to store result
-+ */
-+ssize_t pci_read_vpd(struct pci_dev *dev, loff_t pos, size_t count, void *buf)
++static ssize_t read_vpd_attr(struct file *filp, struct kobject *kobj,
++			     struct bin_attribute *bin_attr, char *buf,
++			     loff_t off, size_t count)
 +{
-+	if (!dev->vpd || !dev->vpd->ops)
-+		return -ENODEV;
-+	return dev->vpd->ops->read(dev, pos, count, buf);
-+}
-+EXPORT_SYMBOL(pci_read_vpd);
++	struct pci_dev *dev = to_pci_dev(kobj_to_dev(kobj));
 +
-+/**
-+ * pci_write_vpd - Write entry to Vital Product Data
-+ * @dev:	pci device struct
-+ * @pos:	offset in vpd space
-+ * @count:	number of bytes to write
-+ * @buf:	buffer containing write data
-+ */
-+ssize_t pci_write_vpd(struct pci_dev *dev, loff_t pos, size_t count, const void *buf)
-+{
-+	if (!dev->vpd || !dev->vpd->ops)
-+		return -ENODEV;
-+	return dev->vpd->ops->write(dev, pos, count, buf);
-+}
-+EXPORT_SYMBOL(pci_write_vpd);
-+
-+/**
-+ * pci_set_vpd_size - Set size of Vital Product Data space
-+ * @dev:	pci device struct
-+ * @len:	size of vpd space
-+ */
-+int pci_set_vpd_size(struct pci_dev *dev, size_t len)
-+{
-+	if (!dev->vpd || !dev->vpd->ops)
-+		return -ENODEV;
-+	return dev->vpd->ops->set_size(dev, len);
-+}
-+EXPORT_SYMBOL(pci_set_vpd_size);
-+
-+#define PCI_VPD_MAX_SIZE (PCI_VPD_ADDR_MASK + 1)
-+
-+/**
-+ * pci_vpd_size - determine actual size of Vital Product Data
-+ * @dev:	pci device struct
-+ * @old_size:	current assumed size, also maximum allowed size
-+ */
-+static size_t pci_vpd_size(struct pci_dev *dev, size_t old_size)
-+{
-+	size_t off = 0;
-+	unsigned char header[1+2];	/* 1 byte tag, 2 bytes length */
-+
-+	while (off < old_size &&
-+	       pci_read_vpd(dev, off, 1, header) == 1) {
-+		unsigned char tag;
-+
-+		if (header[0] & PCI_VPD_LRDT) {
-+			/* Large Resource Data Type Tag */
-+			tag = pci_vpd_lrdt_tag(header);
-+			/* Only read length from known tag items */
-+			if ((tag == PCI_VPD_LTIN_ID_STRING) ||
-+			    (tag == PCI_VPD_LTIN_RO_DATA) ||
-+			    (tag == PCI_VPD_LTIN_RW_DATA)) {
-+				if (pci_read_vpd(dev, off+1, 2,
-+						 &header[1]) != 2) {
-+					pci_warn(dev, "invalid large VPD tag %02x size at offset %zu",
-+						 tag, off + 1);
-+					return 0;
-+				}
-+				off += PCI_VPD_LRDT_TAG_SIZE +
-+					pci_vpd_lrdt_size(header);
-+			}
-+		} else {
-+			/* Short Resource Data Type Tag */
-+			off += PCI_VPD_SRDT_TAG_SIZE +
-+				pci_vpd_srdt_size(header);
-+			tag = pci_vpd_srdt_tag(header);
-+		}
-+
-+		if (tag == PCI_VPD_STIN_END)	/* End tag descriptor */
-+			return off;
-+
-+		if ((tag != PCI_VPD_LTIN_ID_STRING) &&
-+		    (tag != PCI_VPD_LTIN_RO_DATA) &&
-+		    (tag != PCI_VPD_LTIN_RW_DATA)) {
-+			pci_warn(dev, "invalid %s VPD tag %02x at offset %zu",
-+				 (header[0] & PCI_VPD_LRDT) ? "large" : "short",
-+				 tag, off);
-+			return 0;
-+		}
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Wait for last operation to complete.
-+ * This code has to spin since there is no other notification from the PCI
-+ * hardware. Since the VPD is often implemented by serial attachment to an
-+ * EEPROM, it may take many milliseconds to complete.
-+ *
-+ * Returns 0 on success, negative values indicate error.
-+ */
-+static int pci_vpd_wait(struct pci_dev *dev)
-+{
-+	struct pci_vpd *vpd = dev->vpd;
-+	unsigned long timeout = jiffies + msecs_to_jiffies(125);
-+	unsigned long max_sleep = 16;
-+	u16 status;
-+	int ret;
-+
-+	if (!vpd->busy)
-+		return 0;
-+
-+	while (time_before(jiffies, timeout)) {
-+		ret = pci_user_read_config_word(dev, vpd->cap + PCI_VPD_ADDR,
-+						&status);
-+		if (ret < 0)
-+			return ret;
-+
-+		if ((status & PCI_VPD_ADDR_F) == vpd->flag) {
-+			vpd->busy = 0;
-+			return 0;
-+		}
-+
-+		if (fatal_signal_pending(current))
-+			return -EINTR;
-+
-+		usleep_range(10, max_sleep);
-+		if (max_sleep < 1024)
-+			max_sleep *= 2;
++	if (bin_attr->size > 0) {
++		if (off > bin_attr->size)
++			count = 0;
++		else if (count > bin_attr->size - off)
++			count = bin_attr->size - off;
 +	}
 +
-+	pci_warn(dev, "VPD access failed.  This is likely a firmware bug on this device.  Contact the card vendor for a firmware update\n");
-+	return -ETIMEDOUT;
++	return pci_read_vpd(dev, off, count, buf);
 +}
 +
-+static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
-+			    void *arg)
++static ssize_t write_vpd_attr(struct file *filp, struct kobject *kobj,
++			      struct bin_attribute *bin_attr, char *buf,
++			      loff_t off, size_t count)
 +{
-+	struct pci_vpd *vpd = dev->vpd;
-+	int ret;
-+	loff_t end = pos + count;
-+	u8 *buf = arg;
++	struct pci_dev *dev = to_pci_dev(kobj_to_dev(kobj));
 +
-+	if (pos < 0)
-+		return -EINVAL;
-+
-+	if (!vpd->valid) {
-+		vpd->valid = 1;
-+		vpd->len = pci_vpd_size(dev, vpd->len);
++	if (bin_attr->size > 0) {
++		if (off > bin_attr->size)
++			count = 0;
++		else if (count > bin_attr->size - off)
++			count = bin_attr->size - off;
 +	}
 +
-+	if (vpd->len == 0)
-+		return -EIO;
++	return pci_write_vpd(dev, off, count, buf);
++}
 +
-+	if (pos > vpd->len)
-+		return 0;
++void pcie_vpd_create_sysfs_dev_files(struct pci_dev *dev)
++{
++	int retval;
++	struct bin_attribute *attr;
 +
-+	if (end > vpd->len) {
-+		end = vpd->len;
-+		count = end - pos;
++	if (!dev->vpd)
++		return;
++
++	attr = kzalloc(sizeof(*attr), GFP_ATOMIC);
++	if (!attr)
++		return;
++
++	sysfs_bin_attr_init(attr);
++	attr->size = 0;
++	attr->attr.name = "vpd";
++	attr->attr.mode = S_IRUSR | S_IWUSR;
++	attr->read = read_vpd_attr;
++	attr->write = write_vpd_attr;
++	retval = sysfs_create_bin_file(&dev->dev.kobj, attr);
++	if (retval) {
++		kfree(attr);
++		return;
 +	}
 +
-+	if (mutex_lock_killable(&vpd->lock))
-+		return -EINTR;
++	dev->vpd->attr = attr;
++}
 +
-+	ret = pci_vpd_wait(dev);
-+	if (ret < 0)
-+		goto out;
-+
-+	while (pos < end) {
-+		u32 val;
-+		unsigned int i, skip;
-+
-+		ret = pci_user_write_config_word(dev, vpd->cap + PCI_VPD_ADDR,
-+						 pos & ~3);
-+		if (ret < 0)
-+			break;
-+		vpd->busy = 1;
-+		vpd->flag = PCI_VPD_ADDR_F;
-+		ret = pci_vpd_wait(dev);
-+		if (ret < 0)
-+			break;
-+
-+		ret = pci_user_read_config_dword(dev, vpd->cap + PCI_VPD_DATA, &val);
-+		if (ret < 0)
-+			break;
-+
-+		skip = pos & 3;
-+		for (i = 0;  i < sizeof(u32); i++) {
-+			if (i >= skip) {
-+				*buf++ = val;
-+				if (++pos == end)
-+					break;
-+			}
-+			val >>= 8;
-+		}
++void pcie_vpd_remove_sysfs_dev_files(struct pci_dev *dev)
++{
++	if (dev->vpd && dev->vpd->attr) {
++		sysfs_remove_bin_file(&dev->dev.kobj, dev->vpd->attr);
++		kfree(dev->vpd->attr);
 +	}
-+out:
-+	mutex_unlock(&vpd->lock);
-+	return ret ? ret : count;
 +}
 +
-+static ssize_t pci_vpd_write(struct pci_dev *dev, loff_t pos, size_t count,
-+			     const void *arg)
-+{
-+	struct pci_vpd *vpd = dev->vpd;
-+	const u8 *buf = arg;
-+	loff_t end = pos + count;
-+	int ret = 0;
-+
-+	if (pos < 0 || (pos & 3) || (count & 3))
-+		return -EINVAL;
-+
-+	if (!vpd->valid) {
-+		vpd->valid = 1;
-+		vpd->len = pci_vpd_size(dev, vpd->len);
-+	}
-+
-+	if (vpd->len == 0)
-+		return -EIO;
-+
-+	if (end > vpd->len)
-+		return -EINVAL;
-+
-+	if (mutex_lock_killable(&vpd->lock))
-+		return -EINTR;
-+
-+	ret = pci_vpd_wait(dev);
-+	if (ret < 0)
-+		goto out;
-+
-+	while (pos < end) {
-+		u32 val;
-+
-+		val = *buf++;
-+		val |= *buf++ << 8;
-+		val |= *buf++ << 16;
-+		val |= *buf++ << 24;
-+
-+		ret = pci_user_write_config_dword(dev, vpd->cap + PCI_VPD_DATA, val);
-+		if (ret < 0)
-+			break;
-+		ret = pci_user_write_config_word(dev, vpd->cap + PCI_VPD_ADDR,
-+						 pos | PCI_VPD_ADDR_F);
-+		if (ret < 0)
-+			break;
-+
-+		vpd->busy = 1;
-+		vpd->flag = 0;
-+		ret = pci_vpd_wait(dev);
-+		if (ret < 0)
-+			break;
-+
-+		pos += sizeof(u32);
-+	}
-+out:
-+	mutex_unlock(&vpd->lock);
-+	return ret ? ret : count;
-+}
-+
-+static int pci_vpd_set_size(struct pci_dev *dev, size_t len)
-+{
-+	struct pci_vpd *vpd = dev->vpd;
-+
-+	if (len == 0 || len > PCI_VPD_MAX_SIZE)
-+		return -EIO;
-+
-+	vpd->valid = 1;
-+	vpd->len = len;
-+
-+	return 0;
-+}
-+
-+static const struct pci_vpd_ops pci_vpd_ops = {
-+	.read = pci_vpd_read,
-+	.write = pci_vpd_write,
-+	.set_size = pci_vpd_set_size,
-+};
-+
-+static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
-+			       void *arg)
-+{
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
-+	ssize_t ret;
-+
-+	if (!tdev)
-+		return -ENODEV;
-+
-+	ret = pci_read_vpd(tdev, pos, count, arg);
-+	pci_dev_put(tdev);
-+	return ret;
-+}
-+
-+static ssize_t pci_vpd_f0_write(struct pci_dev *dev, loff_t pos, size_t count,
-+				const void *arg)
-+{
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
-+	ssize_t ret;
-+
-+	if (!tdev)
-+		return -ENODEV;
-+
-+	ret = pci_write_vpd(tdev, pos, count, arg);
-+	pci_dev_put(tdev);
-+	return ret;
-+}
-+
-+static int pci_vpd_f0_set_size(struct pci_dev *dev, size_t len)
-+{
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
-+	int ret;
-+
-+	if (!tdev)
-+		return -ENODEV;
-+
-+	ret = pci_set_vpd_size(tdev, len);
-+	pci_dev_put(tdev);
-+	return ret;
-+}
-+
-+static const struct pci_vpd_ops pci_vpd_f0_ops = {
-+	.read = pci_vpd_f0_read,
-+	.write = pci_vpd_f0_write,
-+	.set_size = pci_vpd_f0_set_size,
-+};
-+
-+int pci_vpd_init(struct pci_dev *dev)
-+{
-+	struct pci_vpd *vpd;
-+	u8 cap;
-+
-+	cap = pci_find_capability(dev, PCI_CAP_ID_VPD);
-+	if (!cap)
-+		return -ENODEV;
-+
-+	vpd = kzalloc(sizeof(*vpd), GFP_ATOMIC);
-+	if (!vpd)
-+		return -ENOMEM;
-+
-+	vpd->len = PCI_VPD_MAX_SIZE;
-+	if (dev->dev_flags & PCI_DEV_FLAGS_VPD_REF_F0)
-+		vpd->ops = &pci_vpd_f0_ops;
-+	else
-+		vpd->ops = &pci_vpd_ops;
-+	mutex_init(&vpd->lock);
-+	vpd->cap = cap;
-+	vpd->busy = 0;
-+	vpd->valid = 0;
-+	dev->vpd = vpd;
-+	return 0;
-+}
-+
-+void pci_vpd_release(struct pci_dev *dev)
-+{
-+	kfree(dev->vpd);
-+}
- 
  int pci_vpd_find_tag(const u8 *buf, unsigned int off, unsigned int len, u8 rdt)
  {
+ 	int i;
