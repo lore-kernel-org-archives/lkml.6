@@ -1,86 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeCMLCP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:02:15 -0400
-Received: from ozlabs.org ([103.22.144.67]:38211 "EHLO ozlabs.org"
+        id S932680AbeCMLDe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:03:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:35706 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932577AbeCMLCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:02:13 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
-        akshay.adiga@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com,
-        "linux\@roeck-us.net \>\> Guenter Roeck" <linux@roeck-us.net>,
-        Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH] powerpc/powernv : Add support to enable sensor groups
-In-Reply-To: <7b64ac19-5463-5f30-83bb-d5ff0611dc94@linux.vnet.ibm.com>
-References: <1511760988-10377-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <87bmjmzla7.fsf@concordia.ellerman.id.au> <06a771ec-fc79-0515-9166-f2a105eb33d0@linux.vnet.ibm.com> <87609nxfym.fsf@linux.vnet.ibm.com> <7b64ac19-5463-5f30-83bb-d5ff0611dc94@linux.vnet.ibm.com>
-Date: Tue, 13 Mar 2018 22:02:09 +1100
-Message-ID: <87a7vcgrwu.fsf@concordia.ellerman.id.au>
+        id S1752315AbeCMLDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:03:33 -0400
+Date: Tue, 13 Mar 2018 11:03:29 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ivan Gorinov <ivan.gorinov@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v5 2/2] x86/devicetree: Use CPU description from Device
+ Tree
+Message-ID: <20180313110329.rqwqdakuhd6fktlx@lakrids.cambridge.arm.com>
+References: <cover.1520891263.git.ivan.gorinov@intel.com>
+ <789dcb8b2c87d1e370dc68b7058ee4fe0e877b9d.1520891263.git.ivan.gorinov@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <789dcb8b2c87d1e370dc68b7058ee4fe0e877b9d.1520891263.git.ivan.gorinov@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
-> On 12/04/2017 10:11 AM, Stewart Smith wrote:
->> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
->>> On 11/28/2017 05:07 PM, Michael Ellerman wrote:
->>>> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
->>>>
->>>>> Adds support to enable/disable a sensor group. This can be used to
->>>>> select the sensor groups that needs to be copied to main memory by
->>>>> OCC. Sensor groups like power, temperature, current, voltage,
->>>>> frequency, utilization can be enabled/disabled at runtime.
->>>>>
->>>>> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
->>>>> ---
->>>>> The skiboot patch for the opal call is posted below:
->>>>> https://lists.ozlabs.org/pipermail/skiboot/2017-November/009713.html
->>>>
->>>> Can you remind me why we're doing this with a completely bespoke sysfs
->>>> API, rather than using some generic sensors API?
->>>
->>> Disabling/Enabling sensor groups is not supported in the current generic sensors
->>> API. And also we dont export all type of sensors in HWMON as not all of them are
->>> environment sensors (like performance).
->> 
->> Are there barriers to adding such concepts to the generic sensors API?
->
-> Yes.
->
-> HWMON does not support attributes for a sensor-group. If we are to extend HWMON
-> to add new per-sensor attributes to disable/enable, then we need to do either of
-> the below:
->
-> 1) If any one of the sensor is disabled then all the sensors belonging to that
-> group will be disabled. OR
->
-> 2) To disable a sensor group we need to disable all the sensors belonging to
-> that group.
+On Mon, Mar 12, 2018 at 03:22:33PM -0700, Ivan Gorinov wrote:
+> Current x86 Device Tree implementation does not support multiprocessing.
+> Use new DT bindings to describe the processors.
+> 
+> Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+> ---
+>  arch/x86/kernel/devicetree.c | 42 +++++++++++++++++++++++++++++++-----------
+>  1 file changed, 31 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+> index 5cd387f..64671db 100644
+> --- a/arch/x86/kernel/devicetree.c
+> +++ b/arch/x86/kernel/devicetree.c
+> @@ -131,31 +131,49 @@ static void __init dtb_setup_hpet(void)
+>  #endif
+>  }
+>  
+> +static void __init dtb_cpu_setup(void)
+> +{
+> +	struct device_node *dn;
+> +	const void *prop;
+> +	int prop_bytes;
+> +	int apic_id, version;
+> +	int ret;
+> +
+> +	version = GET_APIC_VERSION(apic_read(APIC_LVR));
+> +	for_each_node_by_type(dn, "cpu") {
+> +		prop = of_get_property(dn, "reg", &prop_bytes);
+> +		if (!prop || prop_bytes < sizeof(u32)) {
+> +			pr_warn("%pOF: missing local APIC ID\n", dn);
+> +			continue;
+> +		}
+> +		apic_id = be32_to_cpup(prop);
 
-Either of those sound doable, the first is probably simpler, as long as
-there's some way for userspace to understand that it is modifying the
-state of the whole group.
+Please use of_property_read_u32().
 
-> Another problem is hwmon categorizes the sensor-groups based on the type of
-> sensors like power, temp. If OCC allows multiple groups of the same type then
-> this approach adds some more complexity to the user to identify the sensors
-> belonging to correct group.
-
-I don't really understand this one, what do you mean by "If OCC allows"?
-
-Also do we really expect users to be using this API? Or rather tools?
-
-> And lastly HWMON does not allow platform specific non-standard sensor groups
-> like CSM, job-scheduler, profiler.
-
-Have we actually made specific proposals to the hwmon maintainers on
-adding/changing any of the above? Have they rejected those proposals and
-told us to go away?
-
-cheers
+Thanks,
+Mark.
