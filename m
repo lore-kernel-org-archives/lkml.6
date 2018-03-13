@@ -1,101 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932986AbeCMNa4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:30:56 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.221]:29746 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752779AbeCMNay (ORCPT
+        id S932891AbeCMNbU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:31:20 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35606 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeCMNbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:30:54 -0400
-Subject: Re: [PATCH v2] EDAC, sb_edac: Remove VLA usage
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313112034.GA28234@embeddedgus>
- <20180313102133.7e505e2b@vento.lan>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <4a71e9da-61a1-ca9b-9d60-89f3c63619b9@embeddedor.com>
-Date: Tue, 13 Mar 2018 08:30:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Mar 2018 09:31:17 -0400
+X-Google-Smtp-Source: AG47ELsDKgdjq8wVtEpUH26wEsesmT1WQrZqOfdUZbj52c51/gv+SOo4YnIKzeB9lSxhoefFO11fDg==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v2 0/8] drm/xen-front: Add support for Xen PV display frontend
+Date: Tue, 13 Mar 2018 15:30:59 +0200
+Message-Id: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180313102133.7e505e2b@vento.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evk0z-0041dt-8i
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:48884
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+
+Hello!
+
+This patch series adds support for Xen [1] para-virtualized
+frontend display driver. It implements the protocol from
+include/xen/interface/io/displif.h [2].
+Accompanying backend [3] is implemented as a user-space application
+and its helper library [4], capable of running as a Weston client
+or DRM master.
+Configuration of both backend and frontend is done via 
+Xen guest domain configuration options [5].
+
+*******************************************************************************
+* Driver limitations
+*******************************************************************************
+ 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
+    allocated buffers) below are not supported at the same time.
+
+ 2. Only primary plane without additional properties is supported.
+
+ 3. Only one video mode supported which resolution is configured via XenStore.
+
+ 4. All CRTCs operate at fixed frequency of 60Hz.
+
+*******************************************************************************
+* Driver modes of operation in terms of display buffers used
+*******************************************************************************
+ Depending on the requirements for the para-virtualized environment, namely
+ requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+ host and guest environments, number of operating modes of para-virtualized
+ display driver are supported:
+  - display buffers can be allocated by either frontend driver or backend
+  - display buffers can be allocated to be contiguous in memory or not
+
+ Note! Frontend driver itself has no dependency on contiguous memory for
+       its operation.
+
+*******************************************************************************
+* 1. Buffers allocated by the frontend driver.
+*******************************************************************************
+
+ The below modes of operation are configured at compile-time via
+ frontend driver's kernel configuration.
+
+ 1.1. Front driver configured to use GEM CMA helpers
+      This use-case is useful when used with accompanying DRM/vGPU driver in
+      guest domain which was designed to only work with contiguous buffers,
+      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+      contiguous PRIME buffers, thus requiring frontend driver to provide
+      such. In order to implement this mode of operation para-virtualized
+      frontend driver can be configured to use GEM CMA helpers.
+
+ 1.2. Front driver doesn't use GEM CMA
+      If accompanying drivers can cope with non-contiguous memory then, to
+      lower pressure on CMA subsystem of the kernel, driver can allocate
+      buffers from system memory.
+
+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+   may require IOMMU support on the platform, so accompanying DRM/vGPU
+   hardware can still reach display buffer memory while importing PRIME
+   buffers from the frontend driver.
+
+*******************************************************************************
+* 2. Buffers allocated by the backend
+*******************************************************************************
+
+ This mode of operation is run-time configured via guest domain configuration
+ through XenStore entries.
+
+ For systems which do not provide IOMMU support, but having specific
+ requirements for display buffers it is possible to allocate such buffers
+ at backend side and share those with the frontend.
+ For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+ physically contiguous memory, this allows implementing zero-copying
+ use-cases.
 
 
-On 03/13/2018 08:21 AM, Mauro Carvalho Chehab wrote:
-> Em Tue, 13 Mar 2018 06:20:34 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
-> 
->> In preparation to enabling -Wvla, remove VLA and replace it
->> with a fixed-length array instead.
->>
->> Fixed as part of the directive to remove all VLAs from
->> the kernel: https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->> Changes in v2:
->>   - Use macro max_t to compute the max of all three array sizes.
->>     This change is based on Borislav's feedback.
->>
->>   drivers/edac/sb_edac.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
->> index 8721002..196b012 100644
->> --- a/drivers/edac/sb_edac.c
->> +++ b/drivers/edac/sb_edac.c
->> @@ -110,6 +110,10 @@ static const u32 knl_interleave_list[] = {
->>   	0xdc, 0xe4, 0xec, 0xf4, 0xfc, /* 15-19 */
->>   	0x104, 0x10c, 0x114, 0x11c,   /* 20-23 */
->>   };
->> +#define MAX_INTERLEAVE (max_t(unsigned int, ARRAY_SIZE(sbridge_interleave_list),\
->> +			max_t(unsigned int, ARRAY_SIZE(ibridge_interleave_list),\
->> +					    ARRAY_SIZE(knl_interleave_list))))
->> +
-> 
-> In order to avoid too long lines, it would be better to do it as:
-> 
-> #define MAX_INTERLEAVE						        \
-> 	(max_t(unsigned int, ARRAY_SIZE(sbridge_interleave_list),       \
-> 	       max_t(unsigned int, ARRAY_SIZE(ibridge_interleave_list), \
-> 		     ARRAY_SIZE(knl_interleave_list))))
-> 
+I would like to thank at least, but not at last the following
+people/communities who helped this driver to happen ;)
 
-Yep. I agree.
+1. My team at EPAM for continuous support
+2. Xen community for answering tons of questions on different
+modes of operation of the driver with respect to virtualized
+environment.
+3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
+4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
+5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
 
-> 
-> With that:
-> 
-> Reviewed-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> 
 
-I'll send v3 and add your Reviewed-by.
+Changes since v1:
+*******************************************************************************
+- use SPDX license identifier, set license to GPLv2 OR MIT
+- changed midlayers to direct function calls, removed:
+  - front_ops
+  - gem_ops
+- renamed xenbus_driver callbacks to align with exisitng PV drivers
+- re-worked backend error handling with connector hotplug uevents
+- removed vblank handling so user-space doesn't have an impression
+  we really support that
+- directly use front's mode_set in display enable/disable
+- removed BUG_ON, error handling implemented
+- moved driver documentation into Documentation/gpu
+- other comments from Xen community addressed (Boris and Juergen)
+- squashed Xen and DRM patches for better interrconnection visibility
+- for your convenience driver is available at [11]
 
-Thanks, Mauro.
---
-Gustavo
+Thank you,
+Oleksandr Andrushchenko
+
+
+[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
+[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
+[3] https://github.com/xen-troops/displ_be
+[4] https://github.com/xen-troops/libxenbe
+[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
+[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
+[7] https://www.spinics.net/lists/dri-devel/msg164102.html
+[8] https://www.spinics.net/lists/dri-devel/msg164463.html
+[9] https://patchwork.freedesktop.org/series/38073/
+[10] https://patchwork.freedesktop.org/series/38139/
+[11] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v2
+
+Oleksandr Andrushchenko (8):
+  drm/xen-front: Introduce Xen para-virtualized frontend driver
+  drm/xen-front: Implement Xen bus state handling
+  drm/xen-front: Read driver configuration from Xen store
+  drm/xen-front: Implement Xen event channel handling
+  drm/xen-front: Implement handling of shared display buffers
+  drm/xen-front: Introduce DRM/KMS virtual display driver
+  drm/xen-front: Implement GEM operations and backend communication
+  drm/xen-front: Provide kernel documentation
+
+ Documentation/gpu/index.rst                 |   1 +
+ Documentation/gpu/xen-front.rst             |  77 ++++
+ drivers/gpu/drm/Kconfig                     |   2 +
+ drivers/gpu/drm/Makefile                    |   1 +
+ drivers/gpu/drm/xen/Kconfig                 |  30 ++
+ drivers/gpu/drm/xen/Makefile                |  17 +
+ drivers/gpu/drm/xen/xen_drm_front.c         | 690 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front.h         |  77 ++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  77 ++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  37 ++
+ drivers/gpu/drm/xen/xen_drm_front_conn.c    | 146 ++++++
+ drivers/gpu/drm/xen/xen_drm_front_conn.h    |  27 ++
+ drivers/gpu/drm/xen/xen_drm_front_drv.c     | 239 ++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_drv.h     |  78 ++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 383 +++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  79 ++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     | 335 ++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |  41 ++
+ drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  74 +++
+ drivers/gpu/drm/xen/xen_drm_front_kms.c     | 324 +++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_kms.h     |  25 +
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 432 +++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  72 +++
+ 23 files changed, 3264 insertions(+)
+ create mode 100644 Documentation/gpu/xen-front.rst
+ create mode 100644 drivers/gpu/drm/xen/Kconfig
+ create mode 100644 drivers/gpu/drm/xen/Makefile
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+
+-- 
+2.7.4
