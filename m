@@ -1,150 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932574AbeCMRVm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:21:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:42006 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932474AbeCMRVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:21:16 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 2/3] irqchip/gic-v3: Reset APgRn registers at boot time
-Date: Tue, 13 Mar 2018 17:21:02 +0000
-Message-Id: <20180313172103.24281-3-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180313172103.24281-1-marc.zyngier@arm.com>
-References: <20180313172103.24281-1-marc.zyngier@arm.com>
+        id S932522AbeCMRWs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:22:48 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:38833 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751944AbeCMRWp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:22:45 -0400
+X-Google-Smtp-Source: AG47ELuV9gDI+uiqTbwmzTdktLWccp1tFzQaKwGmBV6I3rJZiArQ7+iahZo3QCfRH6NjZifBsNUwXCEahWcQuoNEREc=
+MIME-Version: 1.0
+In-Reply-To: <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com> <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+ <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com> <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 19:22:44 +0200
+Message-ID: <CAHp75VebU5NYXRDpG4pzYrKDmNLE6prGbecacq3gCyDQBJd=cA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting a crash kernel while in an interrupt handler is likely
-to leave the Active Priority Registers with some state that
-is not relevant to the new kernel, and is likely to lead
-to erratic behaviours such as interrupts not firing as their
-priority is already active.
+On Tue, Mar 13, 2018 at 7:15 PM, Liang, Kan <kan.liang@linux.intel.com> wrote:
+> On 3/13/2018 12:00 PM, Andy Shevchenko wrote:
+>> On Tue, Mar 13, 2018 at 5:58 PM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>>> On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com>
+>>> wrote:
 
-As a sanity measure, wipe the APRs clean on startup. We make
-sure to wipe both group 0 and 1 registers in order to avoid
-any surprise.
+>>>> +#define SKX_CAPID6             0x9c
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/include/asm/arch_gicv3.h | 41 +++++++++++++++++++++++++++++----------
- drivers/irqchip/irq-gic-v3.c      | 23 ++++++++++++++++++++++
- 2 files changed, 54 insertions(+), 10 deletions(-)
+>>>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
 
-diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
-index 1070044f5c3f..27288bdbd840 100644
---- a/arch/arm/include/asm/arch_gicv3.h
-+++ b/arch/arm/include/asm/arch_gicv3.h
-@@ -35,6 +35,18 @@
- #define ICC_IGRPEN1			__ACCESS_CP15(c12, 0, c12, 7)
- #define ICC_BPR1			__ACCESS_CP15(c12, 0, c12, 3)
- 
-+#define __ICC_AP0Rx(x)			__ACCESS_CP15(c12, 0, c8, 4 | x)
-+#define ICC_AP0R0			__ICC_AP0Rx(0)
-+#define ICC_AP0R1			__ICC_AP0Rx(1)
-+#define ICC_AP0R2			__ICC_AP0Rx(2)
-+#define ICC_AP0R3			__ICC_AP0Rx(3)
-+
-+#define __ICC_AP1Rx(x)			__ACCESS_CP15(c12, 0, c9, x)
-+#define ICC_AP1R0			__ICC_AP1Rx(0)
-+#define ICC_AP1R1			__ICC_AP1Rx(1)
-+#define ICC_AP1R2			__ICC_AP1Rx(2)
-+#define ICC_AP1R3			__ICC_AP1Rx(3)
-+
- #define ICC_HSRE			__ACCESS_CP15(c12, 4, c9, 5)
- 
- #define ICH_VSEIR			__ACCESS_CP15(c12, 4, c9, 4)
-@@ -86,17 +98,17 @@
- #define ICH_LRC14			__LRC8(6)
- #define ICH_LRC15			__LRC8(7)
- 
--#define __AP0Rx(x)			__ACCESS_CP15(c12, 4, c8, x)
--#define ICH_AP0R0			__AP0Rx(0)
--#define ICH_AP0R1			__AP0Rx(1)
--#define ICH_AP0R2			__AP0Rx(2)
--#define ICH_AP0R3			__AP0Rx(3)
-+#define __ICH_AP0Rx(x)			__ACCESS_CP15(c12, 4, c8, x)
-+#define ICH_AP0R0			__ICH_AP0Rx(0)
-+#define ICH_AP0R1			__ICH_AP0Rx(1)
-+#define ICH_AP0R2			__ICH_AP0Rx(2)
-+#define ICH_AP0R3			__ICH_AP0Rx(3)
- 
--#define __AP1Rx(x)			__ACCESS_CP15(c12, 4, c9, x)
--#define ICH_AP1R0			__AP1Rx(0)
--#define ICH_AP1R1			__AP1Rx(1)
--#define ICH_AP1R2			__AP1Rx(2)
--#define ICH_AP1R3			__AP1Rx(3)
-+#define __ICH_AP1Rx(x)			__ACCESS_CP15(c12, 4, c9, x)
-+#define ICH_AP1R0			__ICH_AP1Rx(0)
-+#define ICH_AP1R1			__ICH_AP1Rx(1)
-+#define ICH_AP1R2			__ICH_AP1Rx(2)
-+#define ICH_AP1R3			__ICH_AP1Rx(3)
- 
- /* A32-to-A64 mappings used by VGIC save/restore */
- 
-@@ -125,6 +137,15 @@ static inline u64 read_ ## a64(void)		\
- 	return val; 				\
- }
- 
-+CPUIF_MAP(ICC_AP0R0, ICC_AP0R0_EL1)
-+CPUIF_MAP(ICC_AP0R1, ICC_AP0R1_EL1)
-+CPUIF_MAP(ICC_AP0R2, ICC_AP0R2_EL1)
-+CPUIF_MAP(ICC_AP0R3, ICC_AP0R3_EL1)
-+CPUIF_MAP(ICC_AP1R0, ICC_AP1R0_EL1)
-+CPUIF_MAP(ICC_AP1R1, ICC_AP1R1_EL1)
-+CPUIF_MAP(ICC_AP1R2, ICC_AP1R2_EL1)
-+CPUIF_MAP(ICC_AP1R3, ICC_AP1R3_EL1)
-+
- CPUIF_MAP(ICH_HCR, ICH_HCR_EL2)
- CPUIF_MAP(ICH_VTR, ICH_VTR_EL2)
- CPUIF_MAP(ICH_MISR, ICH_MISR_EL2)
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index d99cc07903ec..0ea02504115d 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -532,6 +532,7 @@ static void gic_cpu_sys_reg_init(void)
- 	int i, cpu = smp_processor_id();
- 	u64 mpidr = cpu_logical_map(cpu);
- 	u64 need_rss = MPIDR_RS(mpidr);
-+	u32 val;
- 
- 	/*
- 	 * Need to check that the SRE bit has actually been set. If
-@@ -562,6 +563,28 @@ static void gic_cpu_sys_reg_init(void)
- 		gic_write_ctlr(ICC_CTLR_EL1_EOImode_drop_dir);
- 	}
- 
-+	val = gic_read_ctlr();
-+	val &= ICC_CTLR_EL1_PRI_BITS_MASK;
-+	val >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
-+
-+	switch(val + 1) {
-+	case 8:
-+	case 7:
-+		write_gicreg(0, ICC_AP0R3_EL1);
-+		write_gicreg(0, ICC_AP1R3_EL1);
-+		write_gicreg(0, ICC_AP0R2_EL1);
-+		write_gicreg(0, ICC_AP1R2_EL1);
-+	case 6:
-+		write_gicreg(0, ICC_AP0R1_EL1);
-+		write_gicreg(0, ICC_AP1R1_EL1);
-+	case 5:
-+	case 4:
-+		write_gicreg(0, ICC_AP0R0_EL1);
-+		write_gicreg(0, ICC_AP1R0_EL1);
-+	}
-+
-+	isb();
-+
- 	/* ... and let's hit the road... */
- 	gic_write_grpen1(1);
- 
+>> Moreover, this is too non-flexible. Can't you find a capability based
+>> on CAP ID  + offset?
+>>
+>
+> It looks it doesn't use capability.
+
+See below. It would be sad if it's true. (Will need comment in that case)
+
+> 16:1e.3 System peripheral: Intel Corporation Sky Lake-E PCU Registers (rev
+> 04)
+> 00: 86 80 83 20 00 00 00 00 04 00 80 08 00 00 80 00
+> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 00 00
+> 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Can you instead provide
+% lspci -nk -vvv -xx -s 16:1e.3
+?
+
 -- 
-2.14.2
+With Best Regards,
+Andy Shevchenko
