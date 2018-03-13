@@ -1,46 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv4SNHTFRC46lhdJ7jxPJE5jIBSlmwKTT0pxoyZc/0o5x9VuiMwIqK4d2cx3rOXGyCsgGfA
-ARC-Seal: i=1; a=rsa-sha256; t=1520955634; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0y3pwgJYkOshA2+SEnQIuc0pR1e3K2H95fN4Cl95YelVI4olzJylbjOh+RphXTGlP4
-         mkDJF7nsL+YKcEbMcaEDzv4eQyezLcV8tc7WK9tN8h86y5KST2J5gg2NSSeugNYy0JkH
-         tDAgtmiEFtT/m/QaJEzaBKxMh632jGLKyNarS/3sRQSv8BXF1LOldjnOfRa3LvOyNXoZ
-         RGVUem3Bzdk/VmdUddx+pjnGPm0Q6Yjg0R5a+s9paET6p5eRXm/EC/s7yd+ghBYsOjVI
-         0k52moNkgTcKIzim3VB7HLjLp3IeMjN+1JebiYp8W0mKX9RALdPsazJUo7dR/73cCrr1
-         knJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=l5Hvs/5oqH366Dqn/JBOKdZNaZkAyHXwYdBVmo7+Abo=;
-        b=bQP+JyfWHpHf3bXdjh/PcJAttxr0kN125+fktCgU0uC9QYbU4felMyH9pa3XwUiaeb
-         xjt2Jd66cL3FbaRxs9cNOnQNxIaU8fouh9lClAfKRein4/FIKMxxXqFjyiZFgRe5dGNB
-         n0iDsHlBdtGNkIJG3H5rLeFNjS5alt78I5EHTYLZcgJkFoYcN5Z60YyYJX/uRB9DgnQt
-         AhETDoVU+BxSihxf4PrRgKFgxiKXQ+HsIHl0ZWzuWnQa2i60Ofy/bskEvwLrVfAx333u
-         Wfe6049jZLII2oOw9JahMtBhwScX/XmBLjKTWPl7vV4+fp/OvuOD+MzkVubJbqpM763b
-         8v9A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955633-2-4232046707729848682
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520955632; b=SKXGyB4dL+eFV3lqV8HY/X7zo+1KDK2go2OREnvbhPuyxCw
+    aM9K2X3IMWEyTyt7IUi8SaHvMJLK/LjwVnuFJ3Urik10mqXFjKDLmMnASDTpv5Mf
+    UcYl5r9oAyThdxNAa5TKam8lGNDG+o+VaKfJ9bJ6X2onb9fk9AyF+pqqZ73E8En+
+    Ge668fYbM67VWg38xw2HyburmZ1nK3hfe5nD5z94rdDTOFadKwpC0SuS71jLGGxY
+    e164IbgwnXgsgrjKaonWrDVz5VlDD7wioxU+GAcdeX1WPM4acSS30YEtjOEvZfJq
+    jLgU5te6LK7qqZFeZMyjCxkto2Jap5C/dhWFXZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955632; bh=PwX6Y2d6l7by8uaIxtgOjzvLTL
+    QcN6TSMTTGGu8po8A=; b=MzgHhWtmgOjdHYmCeqlE4Wp34BvsTXAAqglKEzVD6a
+    v8banq5fZPOZSrb3wpG61fspf/cLcBrWetIhsjQKiJsL+Cy3Z8xrF7Ij5UVqr4H8
+    1lZn+/ismAFKWZgcVYBN+EFX60NsrWBs28N4yYUfMh133uvqatuVap9qYtIrWGnZ
+    3vLo0uhBVKgU7zg4vvA/lAYbbCyzFh7HvE9mOEYqHUJkkRRzW1Bg4j65xLB1Tcse
+    VLNQ+O0n+NUtU2lvs5YQiz4TStPGQCH60ims+Hgll5H6Pk1RnKEZGujBGxNTAUf4
+    KO8+q5hympfq9PNqlaNM50QeFRASG3hyobwnDVMY0jKQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934097AbeCMPk1 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:40:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35682 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934884AbeCMPkZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:40:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 117/140] x86/entry: Reduce the code footprint of the idtentry macro
-Date: Tue, 13 Mar 2018 16:25:20 +0100
-Message-Id: <20180313152506.041009029@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Miodrag Dinic <miodrag.dinic@mips.com>,
+        Aleksandar Markovic <aleksandar.markovic@mips.com>,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.14 114/140] MIPS: CPC: Map registers using DT in mips_cpc_default_phys_base()
+Date: Tue, 13 Mar 2018 16:25:17 +0100
+Message-Id: <20180313152505.846604094@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -48,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836994350650853?=
-X-GMAIL-MSGID: =?utf-8?q?1594837575737521230?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,136 +83,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 9e809d15d6b692fa061d74be7aaab1c79f6784b8 upstream.
+commit 791412dafbbfd860e78983d45cf71db603a82f67 upstream.
 
-Play a little trick in the generic PUSH_AND_CLEAR_REGS macro
-to insert the GP registers "above" the original return address.
+Reading mips_cpc_base value from the DT allows each platform to
+define it according to its needs. This is especially convenient
+for MIPS_GENERIC kernel where this kind of information should be
+determined in runtime.
 
-This allows us to (re-)insert the macro in error_entry() and
-paranoid_entry() and to remove it from the idtentry macro. This
-reduces the static footprint significantly:
+Use mti,mips-cpc compatible string with just a reg property to
+specify the register location for your platform.
 
-   text	   data	    bss	    dec	    hex	filename
-  24307	      0	      0	  24307	   5ef3	entry_64.o-orig
-  20987	      0	      0	  20987	   51fb	entry_64.o
-
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180214175924.23065-2-linux@dominikbrodowski.net
-[ Small tweaks to comments. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Miodrag Dinic <miodrag.dinic@mips.com>
+Signed-off-by: Aleksandar Markovic <aleksandar.markovic@mips.com>
+Cc: linux-mips@linux-mips.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Patchwork: https://patchwork.linux-mips.org/patch/18513/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/calling.h  |   11 ++++++++++-
- arch/x86/entry/entry_64.S |   18 ++++++++----------
- 2 files changed, 18 insertions(+), 11 deletions(-)
+ arch/mips/kernel/mips-cpc.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -97,7 +97,7 @@ For 32-bit we have the following convent
+--- a/arch/mips/kernel/mips-cpc.c
++++ b/arch/mips/kernel/mips-cpc.c
+@@ -10,6 +10,8 @@
  
- #define SIZEOF_PTREGS	21*8
+ #include <linux/errno.h>
+ #include <linux/percpu.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/spinlock.h>
  
--.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
-+.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax save_ret=0
- 	/*
- 	 * Push registers and sanitize registers of values that a
- 	 * speculation attack might otherwise want to exploit. The
-@@ -105,8 +105,14 @@ For 32-bit we have the following convent
- 	 * could be put to use in a speculative execution gadget.
- 	 * Interleave XOR with PUSH for better uop scheduling:
- 	 */
-+	.if \save_ret
-+	pushq	%rsi		/* pt_regs->si */
-+	movq	8(%rsp), %rsi	/* temporarily store the return address in %rsi */
-+	movq	%rdi, 8(%rsp)	/* pt_regs->di (overwriting original return address) */
-+	.else
- 	pushq   %rdi		/* pt_regs->di */
- 	pushq   %rsi		/* pt_regs->si */
-+	.endif
- 	pushq	\rdx		/* pt_regs->dx */
- 	pushq   %rcx		/* pt_regs->cx */
- 	pushq   \rax		/* pt_regs->ax */
-@@ -131,6 +137,9 @@ For 32-bit we have the following convent
- 	pushq	%r15		/* pt_regs->r15 */
- 	xorq    %r15, %r15	/* nospec   r15*/
- 	UNWIND_HINT_REGS
-+	.if \save_ret
-+	pushq	%rsi		/* return address on top of stack */
-+	.endif
- .endm
+ #include <asm/mips-cps.h>
+@@ -22,6 +24,17 @@ static DEFINE_PER_CPU_ALIGNED(unsigned l
  
- .macro POP_REGS pop_rdi=1 skip_r11rcx=0
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -867,12 +867,8 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
+ phys_addr_t __weak mips_cpc_default_phys_base(void)
+ {
++	struct device_node *cpc_node;
++	struct resource res;
++	int err;
++
++	cpc_node = of_find_compatible_node(of_root, NULL, "mti,mips-cpc");
++	if (cpc_node) {
++		err = of_address_to_resource(cpc_node, 0, &res);
++		if (!err)
++			return res.start;
++	}
++
+ 	return 0;
+ }
  
--	/* Save all registers in pt_regs */
--	PUSH_AND_CLEAR_REGS
--	ENCODE_FRAME_POINTER
--
- 	.if \paranoid < 2
--	testb	$3, CS(%rsp)			/* If coming from userspace, switch stacks */
-+	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
- 	jnz	.Lfrom_usermode_switch_stack_\@
- 	.endif
- 
-@@ -1117,13 +1113,15 @@ idtentry machine_check		do_mce			has_err
- #endif
- 
- /*
-- * Switch gs if needed.
-+ * Save all registers in pt_regs, and switch gs if needed.
-  * Use slow, but surefire "are we in kernel?" check.
-  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
-  */
- ENTRY(paranoid_entry)
- 	UNWIND_HINT_FUNC
- 	cld
-+	PUSH_AND_CLEAR_REGS save_ret=1
-+	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
- 	movl	$MSR_GS_BASE, %ecx
- 	rdmsr
-@@ -1168,12 +1166,14 @@ ENTRY(paranoid_exit)
- END(paranoid_exit)
- 
- /*
-- * Switch gs if needed.
-+ * Save all registers in pt_regs, and switch GS if needed.
-  * Return: EBX=0: came from user mode; EBX=1: otherwise
-  */
- ENTRY(error_entry)
--	UNWIND_HINT_REGS offset=8
-+	UNWIND_HINT_FUNC
- 	cld
-+	PUSH_AND_CLEAR_REGS save_ret=1
-+	ENCODE_FRAME_POINTER 8
- 	testb	$3, CS+8(%rsp)
- 	jz	.Lerror_kernelspace
- 
-@@ -1564,8 +1564,6 @@ end_repeat_nmi:
- 	 * frame to point back to repeat_nmi.
- 	 */
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
--	PUSH_AND_CLEAR_REGS
--	ENCODE_FRAME_POINTER
- 
- 	/*
- 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
