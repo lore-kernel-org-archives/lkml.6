@@ -1,352 +1,103 @@
-Return-Path: <vitalya@ti.com>
-X-Google-Smtp-Source: AG47ELt+qv/qqtD3J7aiPr2aht2agCAgkZKXBkTK/DvTq6CVo6/ncclZdRE/mSeogrjXdDdTjkLG
-ARC-Seal: i=1; a=rsa-sha256; t=1520962495; cv=none;
+Return-Path: <msuchanek@suse.de>
+X-Google-Smtp-Source: AG47ELvX6ejp1jabSwsxdgsaVO1Q2lhWnyQ5W9aHAvYj4Q/8MQphBwCOMu/2/dZmNXEG28uUXX6p
+ARC-Seal: i=1; a=rsa-sha256; t=1520966031; cv=none;
         d=google.com; s=arc-20160816;
-        b=J0Tnm2fzvPpRH8wU0vQQUNMGh5r9q/nfhzzMrl++0ssxZYoxLa4tJvpHmxhpcEQVN5
-         LxkAql7MKqIzCCRzM0idvsUFvPEBeGp9VtSIwwhPd/oI5kavZ1BzsNKF/jeWZ5QTbKeV
-         xZeLJsgFGXnKA/u1X6JsH0JhTgRncXm4YyXsB+b+Cs4E00zZkCeDXcpEOxMZ1ROu7okp
-         pB+tumhfuPuyLKBasxmJWXNMAKsuKkTLFhHt5DObUOG0UMAIIesp1sZad+YxvVJ8Gjig
-         Cxa2BL7IBwEcYbMvgJ/7PmvnsRPFyxnZDWwZDnprbr20skoOFF1KEjtWFrlR5ypNwdqt
-         CggA==
+        b=yklAtDcJ0JYVPSfHkfLwOv1at+THowTiTjXDzqI/2xvCuzAuc8vtrPLsXLoHHIxpBP
+         cQM1WmHF5S1l3lGvBD2F3L3YyIzOgLEJZ7hs9RwWF2gRd6k3ENkVNoBWJMHUo5JYX3xI
+         4jNQ3HZ5+yZvSnCr88TwnTOXx++Y4fhgnJEooM/1y2cy23VMXPYD2Y+2Sisc3A51ol9R
+         Ctx0gdny8VcdblLP8ooO22KAPUXmjHWEma10xvdE+hnZmPQ3jViT0oZzfkmMgceGqA9K
+         Q7qLTFf+NK4VldbpEu18PWuNUq9pGjQ0N9T4kdMyfYJllqCY3WBlaUMkwk0YPGYDiI77
+         nv9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=1XX2FDzs7FE09ec9Up3QFVAF3nTMU4bQn72JqMk+GIY=;
-        b=cX6w9RJrcYI/4LgjttKSIlblrpoeo+XAsz//RXgU+neU7zOGd69ifJRf7w8nas/DGX
-         AM+THyDEaAWdH0v2gexzACJ3bhl3H7tQER8/z2816+nZtuN+emLLc5l5OnAgWhmTdQN5
-         8wbfQgoKO91m9AE1bCixgvGTayElkRRpHWE/llc7w9B4lmiND5zJ+AXK0P7VxsdsEt0f
-         K4nFLlfybwilHG0V28HpKqJH0Ja0wEqm7oiy55y3oDsM8YG0GK+nzH4XKX6Hf5ouleNN
-         2HRMF43WTKYlUZMmlk+yyQqgXldN21ih0M6ls6kdbzTV632ltASXCCa+Mq6LJXexIwe8
-         O7ng==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=aZ5FTHPU/ylRTZiCgLf/mH9jA0Dpyhx7KIT258nAZfw=;
+        b=sgIUH497fGT8wXTpGxXu1hUGIOtaALR/UcXWcC1+MoCdcVPn5I9FCR521+McJWdpAo
+         Plwa/hsCM8FvZYmf1KlA/6R94NPdNzYiOcE7R9GeueWRSdm2A3FFCxBtVUFOnqAF14OM
+         AWLGjvm1Bj9FW8diTRUez0xHhdxiLydoO2t0EdvsOZk5anLTg849WNnaCU96r67/z+Dy
+         xwz3xWfhEpD08bvphavJO8U+g+kaOkiCsRIugwCamAdUz9RRPYWvXLrkQganytFIW0CQ
+         EHpUBieOd0Kaw+zdXOng6nmZXU5Us5XsQnFa8PHa8iI3xoAy9cAEGEbwjMMJ3XguY1vs
+         LZzA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=OPgghIuI;
-       spf=pass (google.com: domain of vitalya@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=vitalya@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+       spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=OPgghIuI;
-       spf=pass (google.com: domain of vitalya@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=vitalya@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-From: Vitaly Andrianov <vitalya@ti.com>
-To: <mpm@selenic.com>, <herbert@gondor.apana.org.au>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
-CC: <t-kristo@ti.com>, <vitalya@ti.com>, <m-karicheri2@ti.com>
-Subject: [PATCH v2 2/2] hw_random: keystone2: add hw_random driver
-Date: Tue, 13 Mar 2018 13:33:31 -0400
-Message-ID: <1520962411-18208-3-git-send-email-vitalya@ti.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520962411-18208-1-git-send-email-vitalya@ti.com>
-References: <1520962411-18208-1-git-send-email-vitalya@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+       spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
+From: Michal Suchanek <msuchanek@suse.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Tobin C. Harding" <me@tobin.cc>,
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	David Gibson <david@gibson.dropbear.id.au>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Michael Neuling <mikey@neuling.org>,
+	"Oliver O'Halloran" <oohall@gmail.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+	Daniel Axtens <dja@axtens.net>,
+	Russell Currey <ruscur@russell.cc>,
+	Joe Perches <joe@perches.com>,
+	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 0/8] powerpc barrier_nospec
+Date: Tue, 13 Mar 2018 19:32:58 +0100
+Message-Id: <cover.1520965380.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.13.6
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594844769719715557?=
-X-GMAIL-MSGID: =?utf-8?q?1594844769719715557?=
+X-GMAIL-THRID: =?utf-8?q?1594848477176520721?=
+X-GMAIL-MSGID: =?utf-8?q?1594848477176520721?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Keystone Security Accelerator module has a hardware random generator
-sub-module. This commit adds the driver for this sub-module.
+Hello,
 
-Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
-[t-kristo@ti.com: dropped one unnecessary dev_err message]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- drivers/char/hw_random/Kconfig     |   7 +
- drivers/char/hw_random/Makefile    |   1 +
- drivers/char/hw_random/ks-sa-rng.c | 257 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 265 insertions(+)
- create mode 100644 drivers/char/hw_random/ks-sa-rng.c
+this is patchset adding barrier_nospec on powerpc. It is based on the
+out-of-tree gmb() patch and the existing rfi patches.
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 4d0f571..d53541e 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -452,3 +452,10 @@ config UML_RANDOM
- 	  (check your distro, or download from
- 	  http://sourceforge.net/projects/gkernel/).  rngd periodically reads
- 	  /dev/hwrng and injects the entropy into /dev/random.
-+
-+config HW_RANDOM_KEYSTONE
-+	depends on ARCH_KEYSTONE
-+	default HW_RANDOM
-+	tristate "TI Keystone NETCP SA Hardware random number generator"
-+	help
-+	  This option enables Keystone's hardware random generator.
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index b780370..533e913 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_MESON) += meson-rng.o
- obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
-+obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
-diff --git a/drivers/char/hw_random/ks-sa-rng.c b/drivers/char/hw_random/ks-sa-rng.c
-new file mode 100644
-index 0000000..62c6696
---- /dev/null
-+++ b/drivers/char/hw_random/ks-sa-rng.c
-@@ -0,0 +1,257 @@
-+/*
-+ * Random Number Generator driver for the Keystone SOC
-+ *
-+ * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com
-+ *
-+ * Authors:	Sandeep Nair
-+ *		Vitaly Andrianov
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+
-+#include <linux/hw_random.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/err.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/delay.h>
-+
-+#define SA_CMD_STATUS_OFS			0x8
-+
-+/* TRNG enable control in SA System module*/
-+#define SA_CMD_STATUS_REG_TRNG_ENABLE		BIT(3)
-+
-+/* TRNG start control in TRNG module */
-+#define TRNG_CNTL_REG_TRNG_ENABLE		BIT(10)
-+
-+/* Data ready indicator in STATUS register */
-+#define TRNG_STATUS_REG_READY			BIT(0)
-+
-+/* Data ready clear control in INTACK register */
-+#define TRNG_INTACK_REG_READY			BIT(0)
-+
-+/*
-+ * Number of samples taken to gather entropy during startup.
-+ * If value is 0, the number of samples is 2^24 else
-+ * equals value times 2^8.
-+ */
-+#define TRNG_DEF_STARTUP_CYCLES			0
-+#define TRNG_CNTL_REG_STARTUP_CYCLES_SHIFT	16
-+
-+/*
-+ * Minimum number of samples taken to regenerate entropy
-+ * If value is 0, the number of samples is 2^24 else
-+ * equals value times 2^6.
-+ */
-+#define TRNG_DEF_MIN_REFILL_CYCLES		1
-+#define TRNG_CFG_REG_MIN_REFILL_CYCLES_SHIFT	0
-+
-+/*
-+ * Maximum number of samples taken to regenerate entropy
-+ * If value is 0, the number of samples is 2^24 else
-+ * equals value times 2^8.
-+ */
-+#define TRNG_DEF_MAX_REFILL_CYCLES		0
-+#define TRNG_CFG_REG_MAX_REFILL_CYCLES_SHIFT	16
-+
-+/* Number of CLK input cycles between samples */
-+#define TRNG_DEF_CLK_DIV_CYCLES			0
-+#define TRNG_CFG_REG_SAMPLE_DIV_SHIFT		8
-+
-+/* Maximum retries to get rng data */
-+#define SA_MAX_RNG_DATA_RETRIES			5
-+/* Delay between retries (in usecs) */
-+#define SA_RNG_DATA_RETRY_DELAY			5
-+
-+struct trng_regs {
-+	u32	output_l;
-+	u32	output_h;
-+	u32	status;
-+	u32	intmask;
-+	u32	intack;
-+	u32	control;
-+	u32	config;
-+};
-+
-+struct ks_sa_rng {
-+	struct device	*dev;
-+	struct hwrng	rng;
-+	struct clk	*clk;
-+	struct regmap	*regmap_cfg;
-+	struct trng_regs *reg_rng;
-+};
-+
-+static int ks_sa_rng_init(struct hwrng *rng)
-+{
-+	u32 value;
-+	struct device *dev = (struct device *)rng->priv;
-+	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
-+
-+	/* Enable RNG module */
-+	regmap_write_bits(ks_sa_rng->regmap_cfg, SA_CMD_STATUS_OFS,
-+			  SA_CMD_STATUS_REG_TRNG_ENABLE,
-+			  SA_CMD_STATUS_REG_TRNG_ENABLE);
-+
-+	/* Configure RNG module */
-+	writel(0, &ks_sa_rng->reg_rng->control);
-+	value = TRNG_DEF_STARTUP_CYCLES << TRNG_CNTL_REG_STARTUP_CYCLES_SHIFT;
-+	writel(value, &ks_sa_rng->reg_rng->control);
-+
-+	value =	(TRNG_DEF_MIN_REFILL_CYCLES <<
-+		 TRNG_CFG_REG_MIN_REFILL_CYCLES_SHIFT) |
-+		(TRNG_DEF_MAX_REFILL_CYCLES <<
-+		 TRNG_CFG_REG_MAX_REFILL_CYCLES_SHIFT) |
-+		(TRNG_DEF_CLK_DIV_CYCLES <<
-+		 TRNG_CFG_REG_SAMPLE_DIV_SHIFT);
-+
-+	writel(value, &ks_sa_rng->reg_rng->config);
-+
-+	/* Disable all interrupts from TRNG */
-+	writel(0, &ks_sa_rng->reg_rng->intmask);
-+
-+	/* Enable RNG */
-+	value = readl(&ks_sa_rng->reg_rng->control);
-+	value |= TRNG_CNTL_REG_TRNG_ENABLE;
-+	writel(value, &ks_sa_rng->reg_rng->control);
-+
-+	return 0;
-+}
-+
-+static void ks_sa_rng_cleanup(struct hwrng *rng)
-+{
-+	struct device *dev = (struct device *)rng->priv;
-+	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
-+
-+	/* Disable RNG */
-+	writel(0, &ks_sa_rng->reg_rng->control);
-+	regmap_write_bits(ks_sa_rng->regmap_cfg, SA_CMD_STATUS_OFS,
-+			  SA_CMD_STATUS_REG_TRNG_ENABLE, 0);
-+}
-+
-+static int ks_sa_rng_data_read(struct hwrng *rng, u32 *data)
-+{
-+	struct device *dev = (struct device *)rng->priv;
-+	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
-+
-+	/* Read random data */
-+	data[0] = readl(&ks_sa_rng->reg_rng->output_l);
-+	data[1] = readl(&ks_sa_rng->reg_rng->output_h);
-+
-+	writel(TRNG_INTACK_REG_READY, &ks_sa_rng->reg_rng->intack);
-+
-+	return sizeof(u32) * 2;
-+}
-+
-+static int ks_sa_rng_data_present(struct hwrng *rng, int wait)
-+{
-+	struct device *dev = (struct device *)rng->priv;
-+	struct ks_sa_rng *ks_sa_rng = dev_get_drvdata(dev);
-+
-+	u32	ready;
-+	int	j;
-+
-+	for (j = 0; j < SA_MAX_RNG_DATA_RETRIES; j++) {
-+		ready = readl(&ks_sa_rng->reg_rng->status);
-+		ready &= TRNG_STATUS_REG_READY;
-+
-+		if (ready || !wait)
-+			break;
-+
-+		udelay(SA_RNG_DATA_RETRY_DELAY);
-+	}
-+
-+	return ready;
-+}
-+
-+static int ks_sa_rng_probe(struct platform_device *pdev)
-+{
-+	struct ks_sa_rng	*ks_sa_rng;
-+	struct device		*dev = &pdev->dev;
-+	int			ret;
-+	struct resource		*mem;
-+
-+	ks_sa_rng = devm_kzalloc(dev, sizeof(*ks_sa_rng), GFP_KERNEL);
-+	if (!ks_sa_rng)
-+		return -ENOMEM;
-+
-+	ks_sa_rng->dev = dev;
-+	ks_sa_rng->rng = (struct hwrng) {
-+		.name = "ks_sa_hwrng",
-+		.init = ks_sa_rng_init,
-+		.data_read = ks_sa_rng_data_read,
-+		.data_present = ks_sa_rng_data_present,
-+		.cleanup = ks_sa_rng_cleanup,
-+	};
-+	ks_sa_rng->rng.priv = (unsigned long)dev;
-+
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ks_sa_rng->reg_rng = devm_ioremap_resource(dev, mem);
-+	if (IS_ERR(ks_sa_rng->reg_rng))
-+		return PTR_ERR(ks_sa_rng->reg_rng);
-+
-+	ks_sa_rng->regmap_cfg =
-+		syscon_regmap_lookup_by_phandle(dev->of_node,
-+						"ti,syscon-sa-cfg");
-+
-+	if (IS_ERR(ks_sa_rng->regmap_cfg)) {
-+		dev_err(dev, "syscon_node_to_regmap failed\n");
-+		return -EINVAL;
-+	}
-+
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to enable SA power-domain\n");
-+		pm_runtime_disable(dev);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, ks_sa_rng);
-+
-+	return devm_hwrng_register(&pdev->dev, &ks_sa_rng->rng);
-+}
-+
-+static int ks_sa_rng_remove(struct platform_device *pdev)
-+{
-+	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ks_sa_rng_dt_match[] = {
-+	{
-+		.compatible = "ti,keystone-rng",
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, ks_sa_rng_dt_match);
-+
-+static struct platform_driver ks_sa_rng_driver = {
-+	.driver		= {
-+		.name	= "ks-sa-rng",
-+		.of_match_table = ks_sa_rng_dt_match,
-+	},
-+	.probe		= ks_sa_rng_probe,
-+	.remove		= ks_sa_rng_remove,
-+};
-+
-+module_platform_driver(ks_sa_rng_driver);
-+
-+MODULE_DESCRIPTION("Keystone NETCP SA H/W Random Number Generator driver");
-+MODULE_AUTHOR("Vitaly Andrianov <vitalya@ti.com>");
-+MODULE_LICENSE("GPL");
+I do not have the tests for the Spectre/Meltdown issues available so this is
+untested.
+
+Feedback on the general approach as well as actual effectivity is welcome.
+
+Thanks
+
+Michal
+
+
+Michal Suchanek (8):
+  powerpc: Add barrier_nospec
+  powerpc: Use barrier_nospec in copy_from_user
+  powerpc/64: Use barrier_nospec in syscall entry
+  powerpc/64s: Add support for ori barrier_nospec
+  powerpc/64: Patch barrier_nospec in modules
+  powerpc/64: barrier_nospec: Add debugfs trigger
+  powerpc/64s: barrier_nospec: Add hcall triggerr
+  powerpc/64: barrier_nospec: Add commandline trigger
+
+ arch/powerpc/include/asm/barrier.h        |  9 ++++
+ arch/powerpc/include/asm/feature-fixups.h |  9 ++++
+ arch/powerpc/include/asm/setup.h          | 11 +++++
+ arch/powerpc/include/asm/uaccess.h        | 11 ++++-
+ arch/powerpc/kernel/entry_64.S            |  3 ++
+ arch/powerpc/kernel/module.c              |  6 +++
+ arch/powerpc/kernel/setup_64.c            | 72 +++++++++++++++++++++++++++++++
+ arch/powerpc/kernel/vmlinux.lds.S         |  7 +++
+ arch/powerpc/lib/feature-fixups.c         | 38 ++++++++++++++++
+ arch/powerpc/platforms/pseries/setup.c    | 38 ++++++++++------
+ 10 files changed, 190 insertions(+), 14 deletions(-)
+
 -- 
-2.7.4
+2.13.6
