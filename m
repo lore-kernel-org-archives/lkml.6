@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeCMNeI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:34:08 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57814 "EHLO
+        id S1752935AbeCMNfG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:35:06 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57817 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751720AbeCMNeG (ORCPT
+        with ESMTP id S1752497AbeCMNeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:34:06 -0400
+        Tue, 13 Mar 2018 09:34:08 -0400
 From: Tomer Maimon <tmaimon77@gmail.com>
 To: robh+dt@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
         brendanhiggins@google.com, avifishman70@gmail.com,
@@ -15,53 +15,48 @@ To: robh+dt@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
 Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v12 0/3] arm: npcm: add basic support for Nuvoton BMCs
-Date: Tue, 13 Mar 2018 15:32:08 +0200
-Message-Id: <1520947931-15426-1-git-send-email-tmaimon77@gmail.com>
+Subject: [PATCH v12 3/3] MAINTAINERS: Add entry for the Nuvoton NPCM architecture
+Date: Tue, 13 Mar 2018 15:32:11 +0200
+Message-Id: <1520947931-15426-4-git-send-email-tmaimon77@gmail.com>
 X-Mailer: git-send-email 1.8.3.4
+In-Reply-To: <1520947931-15426-1-git-send-email-tmaimon77@gmail.com>
+References: <1520947931-15426-1-git-send-email-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Addressed comments from:
- - Arnd: https://www.spinics.net/lists/arm-kernel/msg639249.html
+Add maintainers and reviewers for the Nuvoton NPCM architecture.
 
-Summary of changes since previous update:
- - Modify mach-npcm Kconfig to support all NPCM7XX family.
- - Modify mach-npcm Makefile.
- - Adding NPCM730 chip support.
- - Adding L2 Cache values to initialize the L2 Cache.
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+---
+ MAINTAINERS | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-All changes tested on Nuvoton NPCM750 EVB.
-
-Tomer Maimon (3):
-  arm: npcm: add basic support for Nuvoton BMCs
-  arm: dts: add Nuvoton NPCM750 device tree
-  MAINTAINERS: Add entry for the Nuvoton NPCM architecture
-
- .../arm/cpu-enable-method/nuvoton,npcm750-smp      |  42 ++++++
- .../devicetree/bindings/arm/npcm/npcm.txt          |   6 +
- MAINTAINERS                                        |  14 ++
- arch/arm/Kconfig                                   |   2 +
- arch/arm/Makefile                                  |   1 +
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/nuvoton-npcm750-evb.dts          |  35 +++++
- arch/arm/boot/dts/nuvoton-npcm750.dtsi             | 165 +++++++++++++++++++++
- arch/arm/mach-npcm/Kconfig                         |  30 ++++
- arch/arm/mach-npcm/Makefile                        |   6 +
- arch/arm/mach-npcm/headsmp.S                       |  17 +++
- arch/arm/mach-npcm/npcm7xx.c                       |  23 +++
- arch/arm/mach-npcm/platsmp.c                       |  81 ++++++++++
- 13 files changed, 424 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp
- create mode 100644 Documentation/devicetree/bindings/arm/npcm/npcm.txt
- create mode 100644 arch/arm/boot/dts/nuvoton-npcm750-evb.dts
- create mode 100644 arch/arm/boot/dts/nuvoton-npcm750.dtsi
- create mode 100644 arch/arm/mach-npcm/Kconfig
- create mode 100644 arch/arm/mach-npcm/Makefile
- create mode 100644 arch/arm/mach-npcm/headsmp.S
- create mode 100644 arch/arm/mach-npcm/npcm7xx.c
- create mode 100644 arch/arm/mach-npcm/platsmp.c
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93a12af4f180..71cccfd9e26f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1700,6 +1700,20 @@ F:	Documentation/devicetree/bindings/arm/ste-*
+ F:	Documentation/devicetree/bindings/arm/ux500/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git
+ 
++ARM/NUVOTON NPCM ARCHITECTURE
++M:	Avi Fishman <avifishman70@gmail.com>
++M:	Tomer Maimon <tmaimon77@gmail.com>
++R:	Patrick Venture <venture@google.com>
++R:	Nancy Yuen <yuenn@google.com>
++R:	Brendan Higgins <brendanhiggins@google.com>
++L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
++S:	Supported
++F:	arch/arm/mach-npcm/
++F:	arch/arm/boot/dts/nuvoton-npcm*
++F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
++F:	drivers/*/*npcm*
++F:	Documentation/*/*npcm*
++
+ ARM/NUVOTON W90X900 ARM ARCHITECTURE
+ M:	Wan ZongShun <mcuos.com@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 -- 
 2.14.1
