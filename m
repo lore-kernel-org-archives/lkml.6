@@ -1,29 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933338AbeCMMLm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:11:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54938 "EHLO mail.kernel.org"
+        id S933197AbeCMMF7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933295AbeCMMGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CDE2176F
+        id S933137AbeCMMFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:05:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4E321778
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
+        Kim Phillips <kim.phillips@arm.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 15/31] perf vendor events arm64: Relocate ThunderX2 JSON to cavium subdirectory
-Date: Tue, 13 Mar 2018 09:04:52 -0300
-Message-Id: <20180313120508.29327-16-acme@kernel.org>
+Subject: [PATCH 10/31] perf tools arm64: Add libdw DWARF post unwind support for ARM64
+Date: Tue, 13 Mar 2018 09:04:47 -0300
+Message-Id: <20180313120508.29327-11-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
 References: <20180313120508.29327-1-acme@kernel.org>
@@ -31,45 +27,179 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Kim Phillips <kim.phillips@arm.com>
 
-Since jevents now supports vendor subdirectory, relocate
-the ThunderX2 JSON to Cavium subdirectory.
+Based on prior work:
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Tested-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+  https://lkml.org/lkml/2014/5/6/395
+
+and on how other arches add libdw unwind support.  Includes support for
+running the unwind test, e.g., on a system with only elfutils' libdw
+0.170, the test now runs, and successfully:
+
+  $ ./perf test unwind
+  56: Test dwarf unwind                 : Ok
+
+Originally-by: Jean Pihet <jean.pihet@linaro.org>
+Reported-by: Christian Hansen <chansen3@cisco.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: William Cohen <wcohen@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1520506716-197429-6-git-send-email-john.garry@huawei.com
+Link: http://lkml.kernel.org/r/20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../cavium/{thunderx2-imp-def.json => thunderx2/core-imp-def.json}      | 0
- tools/perf/pmu-events/arch/arm64/mapfile.csv                            | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename tools/perf/pmu-events/arch/arm64/cavium/{thunderx2-imp-def.json => thunderx2/core-imp-def.json} (100%)
+ tools/perf/Makefile.config                 |  2 +-
+ tools/perf/arch/arm64/include/arch-tests.h | 12 ++++++
+ tools/perf/arch/arm64/tests/Build          |  2 +
+ tools/perf/arch/arm64/tests/arch-tests.c   | 16 ++++++++
+ tools/perf/arch/arm64/util/Build           |  1 +
+ tools/perf/arch/arm64/util/unwind-libdw.c  | 60 ++++++++++++++++++++++++++++++
+ 6 files changed, 92 insertions(+), 1 deletion(-)
+ create mode 100644 tools/perf/arch/arm64/include/arch-tests.h
+ create mode 100644 tools/perf/arch/arm64/tests/arch-tests.c
+ create mode 100644 tools/perf/arch/arm64/util/unwind-libdw.c
 
-diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
-rename to tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index e61c9ca6cf9e..952a05cbf675 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -12,5 +12,5 @@
- #
- #
- #Family-model,Version,Filename,EventType
--0x00000000420f5160,v1,cavium,core
-+0x00000000420f5160,v1,cavium/thunderx2,core
- 0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 89cb2a36b8ff..98ff73648b51 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -75,7 +75,7 @@ endif
+ # Disable it on all other architectures in case libdw unwind
+ # support is detected in system. Add supported architectures
+ # to the check.
+-ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm powerpc s390))
++ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc s390))
+   NO_LIBDW_DWARF_UNWIND := 1
+ endif
+ 
+diff --git a/tools/perf/arch/arm64/include/arch-tests.h b/tools/perf/arch/arm64/include/arch-tests.h
+new file mode 100644
+index 000000000000..90ec4c8cb880
+--- /dev/null
++++ b/tools/perf/arch/arm64/include/arch-tests.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef ARCH_TESTS_H
++#define ARCH_TESTS_H
++
++#ifdef HAVE_DWARF_UNWIND_SUPPORT
++struct thread;
++struct perf_sample;
++#endif
++
++extern struct test arch_tests[];
++
++#endif
+diff --git a/tools/perf/arch/arm64/tests/Build b/tools/perf/arch/arm64/tests/Build
+index b30eff9bcc83..883c57ff0c08 100644
+--- a/tools/perf/arch/arm64/tests/Build
++++ b/tools/perf/arch/arm64/tests/Build
+@@ -1,2 +1,4 @@
+ libperf-y += regs_load.o
+ libperf-y += dwarf-unwind.o
++
++libperf-y += arch-tests.o
+diff --git a/tools/perf/arch/arm64/tests/arch-tests.c b/tools/perf/arch/arm64/tests/arch-tests.c
+new file mode 100644
+index 000000000000..5b1543c98022
+--- /dev/null
++++ b/tools/perf/arch/arm64/tests/arch-tests.c
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <string.h>
++#include "tests/tests.h"
++#include "arch-tests.h"
++
++struct test arch_tests[] = {
++#ifdef HAVE_DWARF_UNWIND_SUPPORT
++	{
++		.desc = "DWARF unwind",
++		.func = test__dwarf_unwind,
++	},
++#endif
++	{
++		.func = NULL,
++	},
++};
+diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
+index c0b8dfef98ba..68f8a8eb3ad0 100644
+--- a/tools/perf/arch/arm64/util/Build
++++ b/tools/perf/arch/arm64/util/Build
+@@ -2,6 +2,7 @@ libperf-y += header.o
+ libperf-y += sym-handling.o
+ libperf-$(CONFIG_DWARF)     += dwarf-regs.o
+ libperf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
++libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
+ 
+ libperf-$(CONFIG_AUXTRACE) += ../../arm/util/pmu.o \
+ 			      ../../arm/util/auxtrace.o \
+diff --git a/tools/perf/arch/arm64/util/unwind-libdw.c b/tools/perf/arch/arm64/util/unwind-libdw.c
+new file mode 100644
+index 000000000000..7623d85e77f3
+--- /dev/null
++++ b/tools/perf/arch/arm64/util/unwind-libdw.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <elfutils/libdwfl.h>
++#include "../../util/unwind-libdw.h"
++#include "../../util/perf_regs.h"
++#include "../../util/event.h"
++
++bool libdw__arch_set_initial_registers(Dwfl_Thread *thread, void *arg)
++{
++	struct unwind_info *ui = arg;
++	struct regs_dump *user_regs = &ui->sample->user_regs;
++	Dwarf_Word dwarf_regs[PERF_REG_ARM64_MAX], dwarf_pc;
++
++#define REG(r) ({						\
++	Dwarf_Word val = 0;					\
++	perf_reg_value(&val, user_regs, PERF_REG_ARM64_##r);	\
++	val;							\
++})
++
++	dwarf_regs[0]  = REG(X0);
++	dwarf_regs[1]  = REG(X1);
++	dwarf_regs[2]  = REG(X2);
++	dwarf_regs[3]  = REG(X3);
++	dwarf_regs[4]  = REG(X4);
++	dwarf_regs[5]  = REG(X5);
++	dwarf_regs[6]  = REG(X6);
++	dwarf_regs[7]  = REG(X7);
++	dwarf_regs[8]  = REG(X8);
++	dwarf_regs[9]  = REG(X9);
++	dwarf_regs[10] = REG(X10);
++	dwarf_regs[11] = REG(X11);
++	dwarf_regs[12] = REG(X12);
++	dwarf_regs[13] = REG(X13);
++	dwarf_regs[14] = REG(X14);
++	dwarf_regs[15] = REG(X15);
++	dwarf_regs[16] = REG(X16);
++	dwarf_regs[17] = REG(X17);
++	dwarf_regs[18] = REG(X18);
++	dwarf_regs[19] = REG(X19);
++	dwarf_regs[20] = REG(X20);
++	dwarf_regs[21] = REG(X21);
++	dwarf_regs[22] = REG(X22);
++	dwarf_regs[23] = REG(X23);
++	dwarf_regs[24] = REG(X24);
++	dwarf_regs[25] = REG(X25);
++	dwarf_regs[26] = REG(X26);
++	dwarf_regs[27] = REG(X27);
++	dwarf_regs[28] = REG(X28);
++	dwarf_regs[29] = REG(X29);
++	dwarf_regs[30] = REG(LR);
++	dwarf_regs[31] = REG(SP);
++
++	if (!dwfl_thread_state_registers(thread, 0, PERF_REG_ARM64_MAX,
++					 dwarf_regs))
++		return false;
++
++	dwarf_pc = REG(PC);
++	dwfl_thread_state_register_pc(thread, dwarf_pc);
++
++	return true;
++}
 -- 
 2.14.3
