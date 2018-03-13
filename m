@@ -1,106 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeCMPAg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:00:36 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:52689 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751496AbeCMPAe (ORCPT
+        id S1751860AbeCMPAw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:00:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37408 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751725AbeCMPAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:00:34 -0400
-X-Google-Smtp-Source: AG47ELvpdbivCFLja5+HAJBoCFgUHPmwX4qkd9WVaDlR+iY15QnT4nLiWEiHnsJQpF3JWFEGr6NuyHN9tsIzgzNOip0=
+        Tue, 13 Mar 2018 11:00:50 -0400
+Date: Tue, 13 Mar 2018 08:00:46 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Shevchenko <andy@infradead.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: dell-smbios: fix DCDBAS dependency, better
+Message-ID: <20180313150046.GB20710@localhost.localdomain>
+References: <20180313114310.1998450-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
- <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
- <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 13 Mar 2018 15:00:22 +0000
-Message-ID: <CA+zpnLdiqvRcsjbVW248LQHr13NBTLd8bo1dY0T_sc+yhh9itg@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, hdegoede@redhat.com,
-        Jeremy Cline <jeremy@jcline.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313114310.1998450-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 2:43 PM Ard Biesheuvel <ard.biesheuvel@linaro.org>
-wrote:
+On Tue, Mar 13, 2018 at 12:42:57PM +0100, Arnd Bergmann wrote:
+> The rework of the dell laptop modules caused a link error:
+> 
+> drivers/platform/x86/dell-smbios-smm.o: In function `dell_smbios_smm_call':
+> dell-smbios-smm.c:(.text+0x77): undefined reference to `dcdbas_smi_request'
+> 
+> We already have a fix for that, but this was only a partial solution,
+> since CONFIG_DELL_LAPTOP and CONFIG_DELL_WMI select CONFIG_DELL_SMBIOS
+> regardless of that dependency.
+> 
+> We can either add the same 'DCDBAS || DCDBAS=n' dependency for those two
+> as well, or replace the 'select' with a 'depends on'. The second approach
+> seems cleaner, so I'm picking that here.
 
-> On 13 March 2018 at 13:41, Jeremy Cline <jeremy@jcline.org> wrote:
-> > On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
-> >> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
-> >>> Hi,
-> >>>
-> >>>
-> >>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
-> >>>>
-> >> ...
-> >>>>
-> >>>> Hans, you said you configured the tablet to use the 32-bit version
-of grub
-> >>>> instead
-> >>>> of 64. Why's that?
-> >>>
-> >>>
-> >>> Because this tablet, like (almost?) all Bay Trail hardware has a 32
-bit
-> >>> UEFI,
-> >>> even though the processor is 64 bit capable (AFAIK 64 bit Windows
-drivers
-> >>> were
-> >>> not ready in time so all Bay Trail devices shipped with a 32 bit
-Windows).
-> >>>
-> >>> So this is running a 32 bit grub which boots a 64 bit kernel.
-> >>>
-> >>>> Jeremy, could you confirm if you are building the kernel in 64bit
-mode? Is
-> >>>> your Android install working? (that is, what happens if you boot
-> >>>> Boot0000)?
-> >>>
-> >>>
-> >>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is
-64 bit.
-> >>>
-> >>> Could the problem perhaps be that the new code for the TPM event-log
-is
-> >>> missing some handling to deal with running on a 32 bit firmware? I
-know the
-> >>> rest of the kernel has special code to deal with this.
-> >>>
-> >>
-> >> That is a very good point, and I missed that this is a 64-bit kernel
-> >> running on 32-bit UEFI.
-> >>
-> >> The TPM code does use efi_call_proto() directly, and now I am thinking
-> >> it is perhaps the allocate_pages() call that simply only initializes
-> >> the low 32-bits of log_tbl.
-> >>
-> >> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-> >> NULL at the start of the function?
-> >>
-> >
-> > That was it, it boots when those are initialized to NULL.
-> >
+Thanks Arnd,
 
-> Thanks for confirming. I'll send out a patch.
+This thing has gotten out of hand. We're working on some additional
+fixes related driver loading order when built-in as well. There is a
+similar dependency on ACPI_WMI too.
 
-Sweet!
-Jeremy, Hans, thanks for the help debugging!
-Ard, thanks for the help fixing the issue!
+I have a patch out pending review/testing on that.
+
+We were trying to avoid having SMBIOS being required to be selected in
+order for Dell Laptop to appear in the menu. Similarly for Dell WMI
+Hotkeys.
+
+I'm awaiting some feedback, but at the moment, it is looking like we
+will have to revert the patches you cite below, and try again in 4.17,
+likely with a DELL_EXTRAS menuconfig which allows us to default things
+like DELL_SMBIOS to m and present a more intuitive config menu.
+
+> 
+> Fixes: 32d7b19bad96 ("platform/x86: dell-smbios: Resolve dependency error on DCDBAS")
+> Fixes: 25d47027e100 ("platform/x86: dell-smbios: Link all dell-smbios-* modules together")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/platform/x86/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 28905793b5e5..0aec62bb5c61 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -151,7 +151,7 @@ config DELL_LAPTOP
+>  	depends on ACPI_VIDEO || ACPI_VIDEO = n
+>  	depends on RFKILL || RFKILL = n
+>  	depends on SERIO_I8042
+> -	select DELL_SMBIOS
+> +	depends on DELL_SMBIOS
+>  	select POWER_SUPPLY
+>  	select LEDS_CLASS
+>  	select NEW_LEDS
+> @@ -165,8 +165,8 @@ config DELL_WMI
+>  	depends on DMI
+>  	depends on INPUT
+>  	depends on ACPI_VIDEO || ACPI_VIDEO = n
+> +	depends on DELL_SMBIOS
+>  	select DELL_WMI_DESCRIPTOR
+> -	select DELL_SMBIOS
+>  	select INPUT_SPARSEKMAP
+>  	---help---
+>  	  Say Y here if you want to support WMI-based hotkeys on Dell laptops.
+> -- 
+> 2.9.0
+> 
+> 
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
