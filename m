@@ -1,213 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753158AbeCMXRf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 19:17:35 -0400
-Received: from ozlabs.org ([103.22.144.67]:47885 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752757AbeCMXRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 19:17:34 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 14 Mar 2018 10:17:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux F2FS Dev Mailing List
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Message-ID: <20180314101704.51aaae7f@canb.auug.org.au>
-In-Reply-To: <20180201092551.759f32be@canb.auug.org.au>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
+        id S932816AbeCMXTO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 19:19:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51036 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbeCMXTM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 19:19:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F8B1605FB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
+ <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <156c24fb-6e27-28f6-0b36-7fd83311ce37@codeaurora.org>
+Date: Tue, 13 Mar 2018 19:19:07 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cQL6WivoQHU9fMUBzUeHdZm"; protocol="application/pgp-signature"
+In-Reply-To: <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/cQL6WivoQHU9fMUBzUeHdZm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/13/2018 6:48 PM, Logan Gunthorpe wrote:
+> 
+> 
+> On 13/03/18 04:29 PM, Sinan Kaya wrote:
+>> If hardware doesn't support it, blacklisting should have been the right
+>> path and I still think that you should remove all switch business from the code.
+>> I did not hear enough justification for having a switch requirement
+>> for P2P.
+> 
+> I disagree.
+> 
+>> You are also saying that root ports have issues not because of functionality but
+>> because of performance. 
+> 
+> No... performance can also be an issue but the main justification for
+> this is that many root ports do not support P2P at all and can fail in
+> different ways (usually just dropping the TLPs).
+> 
+>> What if I come up with a very cheap/crappy switch (something like used in data
+>> mining)?
+> 
+> Good luck. That's not how hardware is designed. PCIe switches that have
+> any hope to compete with the existing market will need features like
+> NTB, non-transparent ports, etc... and that implies a certain symmetry
+> (ie there isn't a special host port because there may be more than one
+> and it may move around) which implies that packets will always be able
+> to forward between each ports which implies P2P will work.
+> 
 
-Hi all,
+It is still a switch it can move packets but, maybe it can move data at
+100kbps speed. 
 
-On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > On 01/31, Stephen Rothwell wrote: =20
-> > >=20
-> > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.org> w=
-rote:   =20
-> > > >
-> > > > Could you please consider the below pull request?
-> > > >=20
-> > > > Thanks,
-> > > >=20
-> > > > The following changes since commit ace52288edf0cb5e7a52b681f057f862=
-24c49c27:
-> > > >=20
-> > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/linux-m=
-td (2017-12-18 16:18:01 -0800)
-> > > >=20
-> > > > are available in the Git repository at:
-> > > >=20
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git ta=
-gs/f2fs-for-4.16-rc1
-> > > >=20
-> > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c334=
-c9d6:
-> > > >=20
-> > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)   =
-=20
-> > >=20
-> > > This has an interesting conflict with the btrfs tree:
-> > >=20
-> > > ---------------------------------------------------------------------=
---
-> > > After merging the f2fs tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >=20
-> > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
-> > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' u=
-ndeclared (first use in this function); did you mean 'S_CGROUPWB'?
-> > >   sb->s_iflags |=3D SB_I_CGROUPWB;
-> > >                   ^~~~~~~~~~~~~
-> > >                   S_CGROUPWB
-> > >=20
-> > > Caused by commit
-> > >=20
-> > >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > >=20
-> > > interacting with commit
-> > >=20
-> > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-in=
-ode S_CGROUPWB"
-> > >=20
-> > > from the btrfs tree.
-> > >=20
-> > > I have reverted the f2fs tree commit for today, but a better resoluti=
-on
-> > > would be appreciated.
-> > > ---------------------------------------------------------------------=
---
-> > >=20
-> > > I have seen no response to the above email and have been reverting th=
-at
-> > > commit since Jan 18.   =20
-> >=20
-> > I think this can be addressed by:
-> >=20
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 89c838bfb067..c743b73976d0 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
-> >                 new_fl |=3D S_DIRSYNC;
-> >         if (f2fs_encrypted_inode(inode))
-> >                 new_fl |=3D S_ENCRYPTED;
-> > +       new_fl |=3D S_CGROUPWB;
-> >         inode_set_flags(inode, new_fl,
-> >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
-> > -                       S_ENCRYPTED);
-> > +                       S_ENCRYPTED|S_CGROUPWB);
-> >  }
-> >=20
-> >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *r=
-i)
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 8173ae688814..ebcd58476fc7 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb=
-, void *data, int silent)
-> >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
-> >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
-> > -       sb->s_iflags |=3D SB_I_CGROUPWB;
-> >=20
-> >         /* init f2fs-specific super block info */
-> >         sbi->valid_super_block =3D valid_super_block;
-> >  =20
->=20
-> I have applied that (by hand) as a merge fix patch for the merge of teh
-> btrfs tree for today.  Thanks for the resolution.
+What prevents that switch from trying P2P and having a bad user experience?
 
-I am still applying this to the merge of the btrfs tree every day ...
+If everything is so broken, I was suggesting to at least list the switches
+you have tested.
 
-Commit
-  578c647879f7 ("f2fs: implement cgroup writeback support")
-was merged into Linus' tree on Jan 31.
+What's the problem with this?
 
-Here is the actual merge fix patch:
+Why do you want to assume that all switches are good and all root ports are
+bad?
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 1 Feb 2018 09:21:06 +1100
-Subject: [PATCH] f2fs: fixup for cgroup/writeback change
+>> I have been doing my best to provide feedback. It feels like you are throwing
+>> them over the wall to be honest.
+>>
+>> You keep implying "not my problem".
+> 
+> Well, the fact of the matter is that extending this in all the ways
+> people like you want face huge problems on all sides. These are not
+> trivial issues and holding back work that works for our problem because
+> it doesn't solve your problem is IMO just going to grind development in
+> this area to a halt. We have to have something we can agree on which is
+> safe to start building on. The building can't just emerge fully formed
+> in one go.
+> 
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/f2fs/inode.c | 3 ++-
- fs/f2fs/super.c | 1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
+What if the design is so canned that you can't change anything? 
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 205add3d0f3a..f34652c4288f 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
- 		new_fl |=3D S_DIRSYNC;
- 	if (f2fs_encrypted_inode(inode))
- 		new_fl |=3D S_ENCRYPTED;
-+	new_fl |=3D S_CGROUPWB;
- 	inode_set_flags(inode, new_fl,
- 			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
--			S_ENCRYPTED);
-+			S_ENCRYPTED|S_CGROUPWB);
- }
-=20
- static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8173ae688814..ebcd58476fc7 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb, vo=
-id *data, int silent)
- 	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
- 	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
--	sb->s_iflags |=3D SB_I_CGROUPWB;
-=20
- 	/* init f2fs-specific super block info */
- 	sbi->valid_super_block =3D valid_super_block;
---=20
-2.15.1
+I have been asking things like getting rid of switch search in ACS
+enablement towards achieving generic P2P. You seem to be pushing back.
+You said yourself P2P and isolation doesn't go together at this point
+but you also care about isolation for other devices that are not doing
+P2P.
 
---=20
-Cheers,
-Stephen Rothwell
+Confusing...
 
---Sig_/cQL6WivoQHU9fMUBzUeHdZm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> P2P proposal go back a long time and have never gotten anywhere because
+> there are limitations and people want it to do things that are hard but
+> don't want to contribute the work to solving those problems.
+> 
+>>> Well, if it's a problem for someone they'll have to solve it. We're
+>>> targeting JBOFs that have no use for ACS / IOMMU groups at all.
+>>
+>> IMO, you (not somebody) should address this one way or the other before this
+>> series land in upstream.
+> 
+> The real way to address this (as I've mentioned before) is with some way
+> of doing ACS and iomem groups dynamically. But this is a huge project in
+> itself and is never going to be part of the P2P patchset.
 
------BEGIN PGP SIGNATURE-----
+fair enough.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoW/AACgkQAVBC80lX
-0GxD9gf+P78jBP1LVwaoqO0jhQw6MoYIFl+WcUMrZyMrSrZZ0o5hAj2bTU+YQUIe
-LSeqTj0h/fonemBa2UTcfxg7pms/lIFwhGzpKQQQ55HO6Lwox0Fvt5+5i+0J6XNj
-Ha3/vgg8s/abaF3qCvfHc863sonUf43xs2Qg8V8L45Td2S0ZS2PLIdXF8PuiRjTe
-lLIpzTZLj149qvUSP3E6x0B+NpN/bZZc3Xj6n3xgYl2BVn8i9C5RiRP7Uwk4sCj2
-676JsKx1XwhfkANGjyXUwleDAISEy2amBxYxztayYa0eUIY5MbRYjZQbP2qGRO0H
-YH76ReMrNANyH8VsJSf4ZXJ6WQZspA==
-=jq5V
------END PGP SIGNATURE-----
+> 
+>> Another assumption: There are other architectures like ARM64 where IOMMU
+>> is enabled by default even if you don't use VMs for security reasons.
+>> IOMMU blocks stray transactions.
+> 
+> True, but it doesn't change my point: ACS is not a requirement for Linux
+> many many systems do not have it on at all or by default.
 
---Sig_/cQL6WivoQHU9fMUBzUeHdZm--
+I don't think so.
+
+It is not a requirement for you but it is a requirement for me (ARM64 guy).
+Linux happens to run on multiple architectures. One exception invalidates your
+point.
+
+> 
+>> Didn't the ACS behavior change suddenly for no good reason when we enabled
+>> your code even though I might not be using the P2P but I happen to have
+>> a kernel with P2P config option?
+> 
+
+If you are assuming that your kernel option should not be used by general
+distributions like Ubuntu/redhat etc. and requires a kernel compilation,
+creating a dependency to EXPERT is the right way to do. 
+
+Distributions assume that no damage is done by enabling PCI bus options
+under normal circumstances.
+
+> Well no, presumably you made a conscious choice to turn the config
+> option on and build a custom kernel for your box. That doesn't seem very
+> sudden and the reason is that the two concepts are very much at odds
+> with each other: you can't have isolation and still have transactions
+> between devices.
+> 
+> Logan
+> 
+> 
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
