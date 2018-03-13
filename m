@@ -1,112 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeCMFmt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 01:42:49 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36046 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbeCMFmr (ORCPT
+        id S1751620AbeCMFnO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 01:43:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750910AbeCMFnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 01:42:47 -0400
-X-Google-Smtp-Source: AG47ELt/F1dYe538y84ycAMoPJHt1vI3eIH6QKaj6GGSKhw55l6XoIXGLrOQWJ+vkmK4Pk3AfzVG6BYAoETmWWoHDDE=
+        Tue, 13 Mar 2018 01:43:13 -0400
+Subject: Re: [PATCH v3] powerpc/kernel/sysfs: Export ldbar spr to sysfs
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        maddy@linux.vnet.ibm.com
+References: <1510232445-10869-1-git-send-email-anju@linux.vnet.ibm.com>
+ <878tb5foqk.fsf@concordia.ellerman.id.au>
+From: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Date: Tue, 13 Mar 2018 11:13:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com> <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Tue, 13 Mar 2018 16:12:26 +1030
-X-Google-Sender-Auth: QZlbXfyQMtre_edPLvN_sV9ZAoE
-Message-ID: <CACPK8XerwPD7Fzb_1k6wgwmd4NjM7KZcj9Wz7CZk_9nKKgNy1A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: aspeed: Prevent reset if clock is enabled
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        sboyd@kernel.org, Lei YU <mine260309@gmail.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <878tb5foqk.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031305-0036-0000-0000-000002CF41F8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008664; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002295; UDB=6.00509987; IPR=6.00781626;
+ MB=3.00020003; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 05:43:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031305-0037-0000-0000-0000439FDFCE
+Message-Id: <dba1f760-2073-f7e0-148f-370f5ead4e76@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130070
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 7:27 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
-> According to the Aspeed specification, the reset and enable sequence
-> should be done when the clock is stopped. The specification doesn't
-> define behavior if the reset is done while the clock is enabled.
->
-> From testing on the AST2500, the LPC Controller has problems if the
-> clock is reset while enabled.
->
-> Therefore, check whether the clock is enabled or not before performing
-> the reset and enable sequence in the Aspeed clock driver.
->
-> Root-caused-by: Lei Yu <mine260309@gmail.com>
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-
-Reviewed-by: Joel Stanley <joel@jms.id.au>
-
-Cheers,
-
-Joel
+Hi,
 
 
-> ---
->  drivers/clk/clk-aspeed.c | 29 +++++++++++++++++------------
->  1 file changed, 17 insertions(+), 12 deletions(-)
+On Tuesday 06 March 2018 04:35 PM, Michael Ellerman wrote:
+> Anju T Sudhakar <anju@linux.vnet.ibm.com> writes:
 >
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 1687771..5eb50c3 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -205,6 +205,18 @@ struct aspeed_clk_soc_data {
->         .calc_pll = aspeed_ast2400_calc_pll,
->  };
+>> diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
+>> index 4437c70..caefb64 100644
+>> --- a/arch/powerpc/kernel/sysfs.c
+>> +++ b/arch/powerpc/kernel/sysfs.c
+>> @@ -757,6 +759,9 @@ static int register_cpu_online(unsigned int cpu)
+>>   			device_create_file(s, &pmc_attrs[i]);
+>>   
+>>   #ifdef CONFIG_PPC64
+>> +	if (cpu_has_feature(CPU_FTR_ARCH_300))
+>> +		device_create_file(s, &dev_attr_ldbar);
+> Is this register readable in supervisor state?
+
+This is a nice catch, thanks. :)
+The guest kernel can not access the register, it is only readable in the 
+hypervisor state.
+I will resend the patch with a condition check so that this spr will not 
+get registered for guest kernel.
+
+
+Regards,
+Anju
 >
-> +static int aspeed_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-> +       u32 clk = BIT(gate->clock_idx);
-> +       u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
-> +       u32 reg;
-> +
-> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-> +
-> +       return ((reg & clk) == enval) ? 1 : 0;
-> +}
-> +
->  static int aspeed_clk_enable(struct clk_hw *hw)
->  {
->         struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-> @@ -215,6 +227,11 @@ static int aspeed_clk_enable(struct clk_hw *hw)
->
->         spin_lock_irqsave(gate->lock, flags);
->
-> +       if (aspeed_clk_is_enabled(hw)) {
-> +               spin_unlock_irqrestore(gate->lock, flags);
-> +               return 0;
-> +       }
-> +
->         if (gate->reset_idx >= 0) {
->                 /* Put IP in reset */
->                 regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-> @@ -255,18 +272,6 @@ static void aspeed_clk_disable(struct clk_hw *hw)
->         spin_unlock_irqrestore(gate->lock, flags);
->  }
->
-> -static int aspeed_clk_is_enabled(struct clk_hw *hw)
-> -{
-> -       struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-> -       u32 clk = BIT(gate->clock_idx);
-> -       u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
-> -       u32 reg;
-> -
-> -       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-> -
-> -       return ((reg & clk) == enval) ? 1 : 0;
-> -}
-> -
->  static const struct clk_ops aspeed_clk_gate_ops = {
->         .enable = aspeed_clk_enable,
->         .disable = aspeed_clk_disable,
-> --
-> 1.8.3.1
+> cheers
 >
