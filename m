@@ -1,72 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933084AbeCMLqb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:46:31 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:45499 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932892AbeCMLq2 (ORCPT
+        id S933061AbeCMLq3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:46:29 -0400
+Received: from gateway20.websitewelcome.com ([192.185.50.28]:45560 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932922AbeCMLq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:46:28 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sudeep Holla <sudeep.holla@arm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cpufreq: scmi: add thermal dependency
-Date: Tue, 13 Mar 2018 12:45:41 +0100
-Message-Id: <20180313114607.2061209-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180313114607.2061209-1-arnd@arndb.de>
-References: <20180313114607.2061209-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:Ub40RA2KrXxyns1AKvX6VG5a8JZPLwXt0AF0rWOdfBRrEwoLee5
- g8z82UyREIC+m2/0qQHxTbARkdPmy95bm0uOCqr6q8D1kEFKIZyUxnR+squm8Rv86oNrqKp
- lnhrLv1I2gTlW0AyQabOccBEi0diJDvrNyt+/r3NsXvkxdkWVMY2uYbe9IZIv88JLElbEzh
- vgAJg5hhcOQDKQl3xuuQQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hZNyBtAC1tA=:6WG+bDIezYeah+7Rt2Jp6i
- fzZ2XqbHzCJNcGkG7UhYZAIA7uhsGChjH2Q7+tXbs67upszKiMzvZ0rF67WnBzyW0l2qG0kLH
- olvxkqKNvmG2pWLACO0a/eMptzl8E0GhgOzYtNDejZrxXoMIaT15iWYFpH3f2nPTCnLzmu6BK
- yS2LAkvdovsyJDE3gcrQNsovT0NxGwuU6jVVGZjko5x1QNLcKM+bG0YSDHDxn8dtI1hmG8GbP
- 0j4bUyoIyARLjfjwL1U3HGHpvAvc0wOQQ2f6vFfu/uYMK1cCBEDV8bD3950NN0js1fMyZpbVJ
- pAU/J+IA8UtyaESpRllPm/t7+2T+OjYPqsJmKA9SN2Z1/+iQAcV7T5Q73z/7VYuVxKNlW1wJF
- ULpgqTuoKJ7Tyvbdu+4ToX4DkSXtWf2leYW9ZtW9jx9dq8LZECdZ77OgvWiv69sRe0wRhpSES
- ykpYkDP161KUsGIlohq33HSrtuJegOoZYOVCi+ASG3SHJJr11uBqcpza3RgNwnHkBR3QcXdP6
- fxV54zpimjQf1is5tCtgssopo/k+ErKm1Kpm3wRsirSduTEWJ3t617Fk7CPQiwj2bwOVDa8lL
- gLZApTEJbN01724Wk+rLUw/MgH0fO3MmT7LoFYcZaL1bNgi5pni1nu7Q0uhh9seIrHYcVKKrY
- Gd+IhiE9TplV5iObTMjtITyuvTuVGCqSlaiCXceMJGE30fAVlrt02ExwE1d9a3iXxnHwSHZbd
- bv+bwKYm21UaCgIPpWKwEQfpFJlAPiylKD7vbg==
+        Tue, 13 Mar 2018 07:46:27 -0400
+Subject: Re: linux-next: build warning after merge of the net-next tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180313171153.1614c11e@canb.auug.org.au>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <67db5ac6-9816-4bf1-c594-72697c426466@embeddedor.com>
+Date: Tue, 13 Mar 2018 06:46:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180313171153.1614c11e@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1eviNu-00264u-Qn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:46846
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A built-in scmi cpufreq driver cannot link against a modular
-thermal framework:
+Hi Stephen,
 
-drivers/cpufreq/scmi-cpufreq.o: In function `scmi_cpufreq_ready':
-scmi-cpufreq.c:(.text+0x40): undefined reference to `of_cpufreq_cooling_register'
-drivers/cpufreq/scmi-cpufreq.o: In function `scmi_cpufreq_exit':
-scmi-cpufreq.c:(.text+0x88): undefined reference to `cpufreq_cooling_unregister'
+On 03/13/2018 01:11 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the net-next tree, today's linux-next build (sparc
+> defconfig) produced this warning:
+> 
+> net/core/pktgen.c: In function 'pktgen_if_write':
+> net/core/pktgen.c:1710:1: warning: the frame size of 1048 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>   }
+>   ^
+> 
+> Introduced by commit
+> 
+>    35951393bbff ("pktgen: Remove VLA usage")
+> 
 
-This adds a Kconfig dependency that makes sure this configuration
-is not possible, while allowing all configurations that can work.
-Note that disabling CPU_THERMAL means we don't care about the
-THERMAL dependency.
+Thanks for the report.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/cpufreq/Kconfig.arm | 1 +
- 1 file changed, 1 insertion(+)
+David:
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index d9457d1e535c..7f56fe5183f2 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -242,6 +242,7 @@ config ARM_SA1110_CPUFREQ
- config ARM_SCMI_CPUFREQ
- 	tristate "SCMI based CPUfreq driver"
- 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-+	depends on !CPU_THERMAL || THERMAL
- 	select PM_OPP
- 	help
- 	  This adds the CPUfreq driver support for ARM platforms using SCMI
--- 
-2.9.0
+If this code is not going to be executed very often [1], then I think it 
+is safe to use dynamic memory allocation instead, as this is not going 
+to impact the performance.
+
+What do you think?
+
+[1] https://lkml.org/lkml/2018/3/9/630
+
+Thanks
+--
+Gustavo
