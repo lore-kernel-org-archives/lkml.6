@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsz/B0lZ1LYtEqbm+y0Ese9mFt7Aq74zc1OS9/wvNDxduqJR6hHURsH+WOiJRECe2QTms7Y
-ARC-Seal: i=1; a=rsa-sha256; t=1520955007; cv=none;
+X-Google-Smtp-Source: AG47ELsQn2lXayEhinnR6MGoiUHIE6hCXQAYGW2DYgNeraPGVSsjJwUZcwMc7+fJ2d9z0OCu+y86
+ARC-Seal: i=1; a=rsa-sha256; t=1520955001; cv=none;
         d=google.com; s=arc-20160816;
-        b=JJJdhKkYpc/bK7X2DbkhVU2mbPeNi9lXAVTiDXiiSHJo18fa8yBKhOxV0BgI2GuIYG
-         dVuaikyvk5dIx4GsV2fAYgF03RZmAJ2HGfXXMuTr/Knk8yVOwOS3imTpSqzI4/xm5M4w
-         wXU4YNp/oqJL6I2B3K6qh5JcmR6od1NaAj9X8BrHbEzV8TLiwbm3MgOpOkpm1DMxTnlN
-         nlFo0cRIM/DGk78oVtB2OtG2aMDOb+DNaa3AllXrBzRBKmac7v18Ci4jpWM7x+Lkasik
-         L3u83yFsCmLHNVwuRZeg7TKc9SagFbZJyoyPu3pUla9NpYB97HGN+FAUuNbMfcRAcPXE
-         qekQ==
+        b=vIGfJRoiQdSKqYzldfYtRUqSp5nYC8JIKrFaC24nTJvNUsdj+xB0JmoIKnAp6EUev6
+         MPnFWsZpCjWh5xpHj0r+iO0z5m7DeBzkkdEvi7rb9/lPfY47HgjE3VKEzX3X8/1q2tPA
+         CNq4PCw8jcMaML9tZz3pfr3vqo47XRBGRhZYVG064Au3wXpwxpNNOtxwxy5rJdplNuf+
+         joYX+0MnNrkMZdkNd+fHBrThpCx/j5JRohRNeT2oLLrW27rqmOTd59cVQNAn2cSHYqIh
+         836RsaIdByBIWddthQOnGm63LZbnzLFd1giK4XqT79752ybZcvzmGMnYGPlUDAqkKgwd
+         jl6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=q6+RHH/XL/RnxLVerK2mTJ4jEsF2SjB69ZoWozUaJnI=;
-        b=BPkLf3XMagilrX2L13M6Ztw1hoUIGANbvvp0LspZ+3i5qxhYig6QuWuCel3+vlUIiy
-         cyfSkOe/ZOfqMz2cxlegmYEodyIGLBDRSGkR8NM5gW+SNbLGotm1FGCHkJI1Howcd4wT
-         4WGr4cJK0bFoBSnscXtN/gGHdEWiJofuR4gC3xrVM4pcOmsxrFKK0uGA4/E/p7hWx0Wz
-         ZGPr89MY0nbyf9J4dAgppi+CaB0bZ7LMHuopB8ODDYry852hE3ZqtWSVD9FrPkVA+uEQ
-         w1GfutKBYxTYTec5jTnxrCbvUPSYu8zZD9wRGsnlMi+Y+Xg5Ft8e8V8l9X1WXsS/nacD
-         QOlQ==
+        bh=vUhRA8dIadr6QCKmvnTMxUTsfIUhcWfhTz5h3M+yqLE=;
+        b=AWYfSSqZKhZ/Z7NhDouwIVTO39m9I8rIKyU8QAjlXKdWGZVp7rCjQo9tmDHtEjumBI
+         tpWjy8trQJr8eJDRQdUCk9MLCozr3WcBF+G0sdx7OxnkqciZ2fegID42kDURA4p6dzxD
+         iOjvtx0GrFbm9IbEpX/XR7snxRIPst8Tcg4J+r5uA0zTFmczLu4RWEolYa6Rheu8af/R
+         6lAYTm0tDwzdDk9tHQFN7NkM9NHTl+k4o7NIhuXHUC9fcX6hhBraG2c/I6Mcu12WTMZ1
+         xT1lLzsvl2Q2y9T0UNV6QjvBbfyMR9i81X8DVAAEZ5NJEvzX/bnMo7OaFHy9QdJSU3DM
+         D5Vg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.15 057/146] kbuild: Handle builtin dtb file names containing hyphens
-Date: Tue, 13 Mar 2018 16:23:44 +0100
-Message-Id: <20180313152325.081990658@linuxfoundation.org>
+	Christoph Hellwig <hch@lst.de>,
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.15 056/146] Revert "nvme: create slaves and holders entries for hidden controllers"
+Date: Tue, 13 Mar 2018 16:23:43 +0100
+Message-Id: <20180313152324.991971050@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836918022534430?=
-X-GMAIL-MSGID: =?utf-8?q?1594836918022534430?=
+X-GMAIL-THRID: =?utf-8?q?1594836912263466557?=
+X-GMAIL-MSGID: =?utf-8?q?1594836912263466557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,68 +50,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Christoph Hellwig <hch@lst.de>
 
-commit 55fe6da9efba102866e2fb5b40b04b6a4b26c19e upstream.
+commit 8a30ecc6e0ecbb9ae95daf499b2680b885ed0349 upstream.
 
-cmd_dt_S_dtb constructs the assembly source to incorporate a devicetree
-FDT (that is, the .dtb file) as binary data in the kernel image. This
-assembly source contains labels before and after the binary data. The
-label names incorporate the file name of the corresponding .dtb file.
-Hyphens are not legal characters in labels, so .dtb files built into the
-kernel with hyphens in the file name result in errors like the
-following:
+This reverts commit e9a48034d7d1318ece7d4a235838a86c94db9d68.
 
-bcm3368-netgear-cvg834g.dtb.S: Assembler messages:
-bcm3368-netgear-cvg834g.dtb.S:5: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:5: Error: junk at end of line, first unrecognized character is `-'
-bcm3368-netgear-cvg834g.dtb.S:6: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_begin:'
-bcm3368-netgear-cvg834g.dtb.S:8: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_end:'
-bcm3368-netgear-cvg834g.dtb.S:9: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:9: Error: junk at end of line, first unrecognized character is `-'
+The slaves and holders link for the hidden gendisks confuse lsblk so that
+it errors out on, or doesn't report the nvme multipath devices.  Given
+that we don't need holder relationships for something that can't even be
+directly accessed we should just stop creating those links.
 
-Fix this by updating cmd_dt_S_dtb to transform all hyphens from the file
-name to underscores when constructing the labels.
-
-As of v4.16-rc2, 1139 .dts files across ARM64, ARM, MIPS and PowerPC
-contain hyphens in their names, but the issue only currently manifests
-on Broadcom MIPS platforms, as that is the only place where such files
-are built into the kernel. For example when CONFIG_DT_NETGEAR_CVG834G=y,
-or on BMIPS kernels when the dtbs target is used (in the latter case it
-admittedly shouldn't really build all the dtb.o files, but thats a
-separate issue).
-
-Fixes: 695835511f96 ("MIPS: BMIPS: rename bcm96358nb4ser to bcm6358-neufbox4-sercom")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reported-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.lib |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/nvme/host/core.c      |    2 --
+ drivers/nvme/host/multipath.c |   30 ------------------------------
+ drivers/nvme/host/nvme.h      |    8 --------
+ 3 files changed, 40 deletions(-)
 
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -287,11 +287,11 @@ cmd_dt_S_dtb=						\
- 	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
- 	echo '.section .dtb.init.rodata,"a"';		\
- 	echo '.balign STRUCT_ALIGNMENT';		\
--	echo '.global __dtb_$(*F)_begin';		\
--	echo '__dtb_$(*F)_begin:';			\
-+	echo '.global __dtb_$(subst -,_,$(*F))_begin';	\
-+	echo '__dtb_$(subst -,_,$(*F))_begin:';		\
- 	echo '.incbin "$<" ';				\
--	echo '__dtb_$(*F)_end:';			\
--	echo '.global __dtb_$(*F)_end';			\
-+	echo '__dtb_$(subst -,_,$(*F))_end:';		\
-+	echo '.global __dtb_$(subst -,_,$(*F))_end';	\
- 	echo '.balign STRUCT_ALIGNMENT'; 		\
- ) > $@
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2950,7 +2950,6 @@ static void nvme_alloc_ns(struct nvme_ct
  
+ 	if (new)
+ 		nvme_mpath_add_disk(ns->head);
+-	nvme_mpath_add_disk_links(ns);
+ 	return;
+  out_unlink_ns:
+ 	mutex_lock(&ctrl->subsys->lock);
+@@ -2970,7 +2969,6 @@ static void nvme_ns_remove(struct nvme_n
+ 		return;
+ 
+ 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
+-		nvme_mpath_remove_disk_links(ns);
+ 		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
+ 					&nvme_ns_id_attr_group);
+ 		if (ns->ndev)
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -245,25 +245,6 @@ void nvme_mpath_add_disk(struct nvme_ns_
+ 			head->disk->disk_name);
+ }
+ 
+-void nvme_mpath_add_disk_links(struct nvme_ns *ns)
+-{
+-	struct kobject *slave_disk_kobj, *holder_disk_kobj;
+-
+-	if (!ns->head->disk)
+-		return;
+-
+-	slave_disk_kobj = &disk_to_dev(ns->disk)->kobj;
+-	if (sysfs_create_link(ns->head->disk->slave_dir, slave_disk_kobj,
+-			kobject_name(slave_disk_kobj)))
+-		return;
+-
+-	holder_disk_kobj = &disk_to_dev(ns->head->disk)->kobj;
+-	if (sysfs_create_link(ns->disk->part0.holder_dir, holder_disk_kobj,
+-			kobject_name(holder_disk_kobj)))
+-		sysfs_remove_link(ns->head->disk->slave_dir,
+-			kobject_name(slave_disk_kobj));
+-}
+-
+ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
+ {
+ 	if (!head->disk)
+@@ -278,14 +259,3 @@ void nvme_mpath_remove_disk(struct nvme_
+ 	blk_cleanup_queue(head->disk->queue);
+ 	put_disk(head->disk);
+ }
+-
+-void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
+-{
+-	if (!ns->head->disk)
+-		return;
+-
+-	sysfs_remove_link(ns->disk->part0.holder_dir,
+-			kobject_name(&disk_to_dev(ns->head->disk)->kobj));
+-	sysfs_remove_link(ns->head->disk->slave_dir,
+-			kobject_name(&disk_to_dev(ns->disk)->kobj));
+-}
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -405,9 +405,7 @@ bool nvme_req_needs_failover(struct requ
+ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
+ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
+ void nvme_mpath_add_disk(struct nvme_ns_head *head);
+-void nvme_mpath_add_disk_links(struct nvme_ns *ns);
+ void nvme_mpath_remove_disk(struct nvme_ns_head *head);
+-void nvme_mpath_remove_disk_links(struct nvme_ns *ns);
+ 
+ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+ {
+@@ -448,12 +446,6 @@ static inline void nvme_mpath_add_disk(s
+ static inline void nvme_mpath_remove_disk(struct nvme_ns_head *head)
+ {
+ }
+-static inline void nvme_mpath_add_disk_links(struct nvme_ns *ns)
+-{
+-}
+-static inline void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
+-{
+-}
+ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+ {
+ }
