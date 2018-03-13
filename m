@@ -1,88 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeCMICG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:02:06 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:35083 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752041AbeCMICC (ORCPT
+        id S1752148AbeCMIEl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:04:41 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:47050 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751943AbeCMIEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:02:02 -0400
-X-Google-Smtp-Source: AG47ELusZ6YKwxhwCsWVdVCxffS3eNlcYVyWYYZAIX4C2kruP/Bw678USBry7JjpEIITvDpzLJLAGnwLH0VeD1tVknQ=
+        Tue, 13 Mar 2018 04:04:39 -0400
+X-Google-Smtp-Source: AG47ELubqCSWNdVCOfbMK/Hj8wyh0repHTpoj/FSaUSV4nn2vfK3loKVjdJCP1jChvYe2PJlZfvLJIvpfKnRVTuqq7c=
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 08:02:01 +0000
-Message-ID: <CAKv+Gu8-Qg3Zdsqxwjms-+VEtVXfOqpfe-PU9hpGruswGLHeNg@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180313075143.b3ymdpt3nj3vnz77@gauss3.secunet.de>
+References: <001a114214fac20a80056746440a@google.com> <20180313075143.b3ymdpt3nj3vnz77@gauss3.secunet.de>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Mar 2018 11:04:18 +0300
+Message-ID: <CACT4Y+YGiXWOCZ3VMWdwJ9N4YAMv5-+dZ5c75VWtK_8GXf=mPg@mail.gmail.com>
+Subject: Re: WARNING in kmalloc_slab (4)
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: syzbot <syzbot+6a7e7ed886bde43469c4@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 07:59, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
->> Hi,
+On Tue, Mar 13, 2018 at 10:51 AM, Steffen Klassert
+<steffen.klassert@secunet.com> wrote:
+> On Tue, Mar 13, 2018 at 12:33:02AM -0700, syzbot wrote:
+>> Hello,
 >>
+>> syzbot hit the following crash on net-next commit
+>> f44b1886a5f876c87b5889df463ad7b97834ba37 (Fri Mar 9 18:10:06 2018 +0000)
+>> Merge branch 's390-qeth-next'
 >>
->> On 12-03-18 20:55, Thiebaud Weksteen wrote:
->>>
-> ...
->>>
->>> Hans, you said you configured the tablet to use the 32-bit version of grub
->>> instead
->>> of 64. Why's that?
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>> Raw console output is attached.
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached.
 >>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+6a7e7ed886bde43469c4@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
 >>
->> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
->> UEFI,
->> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
->> were
->> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+>> WARNING: CPU: 1 PID: 27333 at mm/slab_common.c:1012 kmalloc_slab+0x5d/0x70
+>> mm/slab_common.c:1012
+>> Kernel panic - not syncing: panic_on_warn set ...
 >>
->> So this is running a 32 bit grub which boots a 64 bit kernel.
->>
->>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
->>> your Android install working? (that is, what happens if you boot
->>> Boot0000)?
->>
->>
->> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
->>
->> Could the problem perhaps be that the new code for the TPM event-log is
->> missing some handling to deal with running on a 32 bit firmware? I know the
->> rest of the kernel has special code to deal with this.
->>
+>> syz-executor0: vmalloc: allocation failure: 17045651456 bytes,
+>> mode:0x14080c0(GFP_KERNEL|__GFP_ZERO), nodemask=(null)
+>> CPU: 1 PID: 27333 Comm: syz-executor2 Not tainted 4.16.0-rc4+ #260
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:17 [inline]
+>>  dump_stack+0x194/0x24d lib/dump_stack.c:53
+>>  panic+0x1e4/0x41c kernel/panic.c:183
+>> syz-executor0 cpuset=
+>>  __warn+0x1dc/0x200 kernel/panic.c:547
+>> /
+>>  mems_allowed=0
+>>  report_bug+0x211/0x2d0 lib/bug.c:184
+>>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>>  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+>> RIP: 0010:kmalloc_slab+0x5d/0x70 mm/slab_common.c:1012
+>> RSP: 0018:ffff8801ccfc72f0 EFLAGS: 00010246
+>> RAX: 0000000000000000 RBX: 0000000010000018 RCX: ffffffff84ec4fc8
+>> RDX: 0000000000000ba7 RSI: 0000000000000000 RDI: 0000000010000018
+>> RBP: ffff8801ccfc72f0 R08: 0000000000000000 R09: 1ffff100399f8e21
+>> R10: ffff8801ccfc7040 R11: 0000000000000001 R12: 0000000000000018
+>> R13: ffff8801ccfc7598 R14: 00000000014080c0 R15: ffff8801aebaad80
+>>  __do_kmalloc mm/slab.c:3700 [inline]
+>>  __kmalloc+0x25/0x760 mm/slab.c:3714
+>>  kmalloc include/linux/slab.h:517 [inline]
+>>  kzalloc include/linux/slab.h:701 [inline]
+>>  xfrm_alloc_replay_state_esn net/xfrm/xfrm_user.c:442 [inline]
 >
-> That is a very good point, and I missed that this is a 64-bit kernel
-> running on 32-bit UEFI.
+> This is likely fixed with:
 >
-> The TPM code does use efi_call_proto() directly,
+> commit d97ca5d714a5334aecadadf696875da40f1fbf3e
+> xfrm_user: uncoditionally validate esn replay attribute struct
+>
+> The patch is included in the ipsec pull request for the net
+> tree I've sent this morning.
 
-*correctly*
+Let's tell syzbot:
 
-> and now I am thinking
-> it is perhaps the allocate_pages() call that simply only initializes
-> the low 32-bits of log_tbl.
->
-> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-> NULL at the start of the function?
+#syz fix: xfrm_user: uncoditionally validate esn replay attribute struct
