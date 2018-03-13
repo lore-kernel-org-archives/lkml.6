@@ -1,75 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeCMVSq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:18:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49780 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751903AbeCMVSp (ORCPT
+        id S1752740AbeCMVXA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 17:23:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50998 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752375AbeCMVW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:18:45 -0400
-Date: Tue, 13 Mar 2018 14:18:37 -0700
-From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-To: John Garry <john.garry@huawei.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: Re: perf-core build fails on powerpc
-References: <20180313191742.GA29120@us.ibm.com>
- <152d2ba4-fe57-beab-87d5-554a0fede9ae@huawei.com>
- <20180313201003.GB29120@us.ibm.com>
- <543acf58-520d-e3e2-211e-17068d713a4f@huawei.com>
+        Tue, 13 Mar 2018 17:22:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4389360590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+Date: Tue, 13 Mar 2018 17:22:53 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <543acf58-520d-e3e2-211e-17068d713a4f@huawei.com>
-X-Operating-System: Linux 2.0.32 on an i486
-User-Agent: Mutt/1.7.1 (2016-10-04)
-X-TM-AS-GCONF: 00
-x-cbid: 18031321-0048-0000-0000-0000024A1270
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008668; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01002608; UDB=6.00510174; IPR=6.00781938;
- MB=3.00020014; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 21:18:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031321-0049-0000-0000-0000446D607B
-Message-Id: <20180313211837.GC29120@us.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130236
+In-Reply-To: <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John Garry [john.garry@huawei.com] wrote:
-> On 13/03/2018 20:10, Sukadev Bhattiprolu wrote:
+On 3/13/2018 4:46 PM, Logan Gunthorpe wrote:
 > 
-> > Hi John,
-> > 
-> > I have an xfs file system which seems to have d_type == DT_UNKNOWN for all
-> > entries in 'tools/perf/pmu-events/arch/power8'! readdir(3) says ->d_type
-> > may not be supported by all file systems.
-> > 
-> > Not relying on ->d_type seems to fix it:
-> > 
 > 
-> Hi Sukadev,
+> On 13/03/18 01:53 PM, Sinan Kaya wrote:
+>> I agree disabling globally would be bad. Somebody can always say I have
+>> ten switches on my system. I want to do peer-to-peer on one switch only. Now,
+>> this change weakened security for the other switches that I had no intention
+>> with doing P2P.
+>>
+>> Isn't this a problem?
 > 
-> Thanks for debugging this. Jiri Olsa (cc'ed) warned me on this, so I did add
-> the check for d_type == DT_UNKNOWN.
+> Well, if it's a problem for someone they'll have to solve it. We're
+> targeting JBOFs that have no use for ACS / IOMMU groups at all.
 > 
-> But, if all files have d_type == DT_UNKNOWN, you're code would from visual
-> observation look to be same as mine (apart from check for '.' or '..'
-> filename, which I would say is already covered by stat() and S_ISDIR()). Or
-> is d_type value just unreliable?
+>> Can we specify the BDF of the downstream device we want P2P with during boot via
+>> kernel command line?
+> 
+> That's a painful configuration burden. And then things might stop
+> working if you change your topology at all and now have to change boot
+> parameters.
+> 
 
-In the current code and with DT_UNKNOWN, is_leaf_dir() returns false when
-it sees the "." or ".." entries right? In the new code, we skip those and
-return false only if we find some other directory. 
+It sounds like you have very tight hardware expectations for this to work
+at this moment. You also don't want to generalize this code for others and
+address the shortcomings.
 
-Thanks,
+To get you going, you should limit this change to the switch products that you have
+validated via white-listing PCI vendor/device ids. Please do not enable this feature
+for all other PCI devices or by default.
 
-Sukadev
+I think your code qualifies as a virus until this issue is resolved (so NAK). 
+
+Another option is for your CONFIG to depend on BROKEN/EXPERT.
+
+You are delivering a general purpose P2P code with a lot of holes in it and
+expecting people to jump through it.
+
+Turning security off by default is also not acceptable. Linux requires ACS support
+even though you don't care about it for your particular application.
+
+I'd hate ACS to be broken due to some operating system enabling your CONFIG option.
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
