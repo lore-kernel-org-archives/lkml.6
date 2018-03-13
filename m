@@ -1,92 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933127AbeCMNn0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:43:26 -0400
-Received: from mail-it0-f53.google.com ([209.85.214.53]:52914 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932572AbeCMNnV (ORCPT
+        id S933085AbeCMNnQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:43:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35250 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752434AbeCMN04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:43:21 -0400
-X-Google-Smtp-Source: AG47ELsoWL7ML0guVaPEl2H0+ZGcqcklQWsS7vOuPX1br33J9/kDulof0+yP4hysOLVlnxbaQIZM6lVH4wRafGuqoWc=
-MIME-Version: 1.0
-In-Reply-To: <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
- <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 13:43:19 +0000
-Message-ID: <CAKv+Gu98sgrk8Jn9gNG-g-Ku77scxO_3JuMDSOLCULZCo26XPA@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Mar 2018 09:26:56 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: [PATCH v9 30/61] page cache: Remove stray radix comment
+Date: Tue, 13 Mar 2018 06:26:08 -0700
+Message-Id: <20180313132639.17387-31-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
+References: <20180313132639.17387-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 13:41, Jeremy Cline <jeremy@jcline.org> wrote:
-> On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
->> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
->>> Hi,
->>>
->>>
->>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
->>>>
->> ...
->>>>
->>>> Hans, you said you configured the tablet to use the 32-bit version of grub
->>>> instead
->>>> of 64. Why's that?
->>>
->>>
->>> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
->>> UEFI,
->>> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
->>> were
->>> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
->>>
->>> So this is running a 32 bit grub which boots a 64 bit kernel.
->>>
->>>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
->>>> your Android install working? (that is, what happens if you boot
->>>> Boot0000)?
->>>
->>>
->>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
->>>
->>> Could the problem perhaps be that the new code for the TPM event-log is
->>> missing some handling to deal with running on a 32 bit firmware? I know the
->>> rest of the kernel has special code to deal with this.
->>>
->>
->> That is a very good point, and I missed that this is a 64-bit kernel
->> running on 32-bit UEFI.
->>
->> The TPM code does use efi_call_proto() directly, and now I am thinking
->> it is perhaps the allocate_pages() call that simply only initializes
->> the low 32-bits of log_tbl.
->>
->> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
->> NULL at the start of the function?
->>
->
-> That was it, it boots when those are initialized to NULL.
->
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Thanks for confirming. I'll send out a patch.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 0635e9cdbc06..86c83014c909 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2579,7 +2579,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+ 			put_page(page);
+ 			if (err == -EEXIST)
+ 				goto repeat;
+-			/* Presumably ENOMEM for radix tree node */
++			/* Presumably ENOMEM for xarray node */
+ 			return ERR_PTR(err);
+ 		}
+ 
+-- 
+2.16.1
