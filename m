@@ -1,125 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeCMWtW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:49:22 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:36060 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751300AbeCMWtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:49:19 -0400
-To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
-Date: Tue, 13 Mar 2018 16:48:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753187AbeCMWuR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:50:17 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37905 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751300AbeCMWuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:50:16 -0400
+X-Google-Smtp-Source: AG47ELs2PYZ6BOZCxQkKsycElZoR6s+PSniYxaUWs/qEbxqWJd+174QcPOA+qqbEGvEmuwAdcqfVXQ==
+Date: Tue, 13 Mar 2018 23:50:14 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: yannick fertre <yannick.fertre@st.com>,
+        Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        Simon Glass <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
+        u-boot@lists.denx.de, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 00/10] splash screen on the stm32f769 disco board
+Message-ID: <20180313225013.GB23414@mithrandir>
+References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
+ <20180313152310.GJ4788@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
+Content-Disposition: inline
+In-Reply-To: <20180313152310.GJ4788@phenom.ffwll.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--EuxKj2iCbKjpUGkD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 13/03/18 04:29 PM, Sinan Kaya wrote:
-> If hardware doesn't support it, blacklisting should have been the right
-> path and I still think that you should remove all switch business from the code.
-> I did not hear enough justification for having a switch requirement
-> for P2P.
+On Tue, Mar 13, 2018 at 04:23:10PM +0100, Daniel Vetter wrote:
+> On Tue, Mar 13, 2018 at 02:49:59PM +0100, yannick fertre wrote:
+> > Version 3:
+> > - Replace some pr_error, pr_warn or pr_info by dev_error, dev_warn & de=
+v_info.
+> > - Refresh stm32f769-disco_defconfig with last modification done on v201=
+8.3-rc4.
+> > - rework include files ordering.
+> >=20
+> > Version 2:
+> > - Replace debug log by pr_error, pr_warn or pr_info.
+> > - Rework bridge between ltdc & dsi panel
+> > - Rework backligh management (with or witout gpio)
+> > - Rework panel otm8009a
+> > - Add new panel raydium rm68200
+> >=20
+> > Version 1:
+> > - Initial commit
+> >=20
+> > This serie contains all patchsets needed for displaying a splash screen=
+=20
+> > on the stm32f769 disco board.
+> > A new config has been created configs/stm32f769-disco_defconfig.
+> > This is necessary due to the difference of panels between stm32f769-dis=
+co &
+> > stm32f746-disco boards.
+>=20
+> Shouldn't we patch the drivers/gpu/drm/stm driver instead of the
+> drivers/video one? fbdev is kinda a dead end and not for adding new hw
+> support ...
 
-I disagree.
+This is confusing, but by the looks of it this is code for U-Boot
+display support and has nothing to do with the Linux kernel. I don't
+know why dri-devel was on Cc.
 
-> You are also saying that root ports have issues not because of functionality but
-> because of performance. 
+Yannick, it's not customary to cross-post U-Boot display drivers to
+Linux mailing lists, unless there's some need to coordinate or discuss
+across the boundaries (for example if you were proposing a way to do
+seamless handover from U-Boot to kernel). If you do cross-post, perhaps
+make sure to mark these patches as targetting U-Boot to avoid confusion.
 
-No... performance can also be an issue but the main justification for
-this is that many root ports do not support P2P at all and can fail in
-different ways (usually just dropping the TLPs).
+Thierry
 
-> What if I come up with a very cheap/crappy switch (something like used in data
-> mining)?
+--EuxKj2iCbKjpUGkD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Good luck. That's not how hardware is designed. PCIe switches that have
-any hope to compete with the existing market will need features like
-NTB, non-transparent ports, etc... and that implies a certain symmetry
-(ie there isn't a special host port because there may be more than one
-and it may move around) which implies that packets will always be able
-to forward between each ports which implies P2P will work.
+-----BEGIN PGP SIGNATURE-----
 
-> I have been doing my best to provide feedback. It feels like you are throwing
-> them over the wall to be honest.
-> 
-> You keep implying "not my problem".
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqoVaQACgkQ3SOs138+
+s6ER8xAAgbhmPbQgCLSocTxn6syHSGGwKPmLszMuod6paihH6PHMzt9QuP8HVyFR
+edIleFJ+c+wdadG+zF3VJXTkgqJ+bP4RTs7jAGjHB0TrpGyHUBq05w2yAWS2k2XJ
+YXF58JI78Ms8E4I4Qg4HU8X+imrfGEwXAfdsBM76o2oGaeyZkdugrRAHCCWoBHX+
+XO8szUUJ0sxTCnygWqnv+KIRsM/tAixENAWMsywlon0FgnCnnpwwsOwLk2gR/ana
+WNN8bjTD58M8WT8J8Gl+gu7h2y46rc8rpRHtS4ppxJrVmDfNat/w1SCOE3j6YTAx
+7qjltWwEhfU6kpOqg5DThB5I0KvkWG06cbMKHstkqIp4oGXzvQoV0mpp155+G0n7
+EDTkNrNpJGCrdfk1ekOZU2W0ec3ILxFfsMGZ4lemB5/D4xBgll8GfSfmm6AYKJw6
+PzwaziqT6O4IPRTWj6cvwONdM55I66XyQ7WLn6mNQ2rkES3xzEBp0D97PuXPaWbk
+OwJxmW7i57Lgv62GgUhOaewVN4yyElrTvQIfpr9nq3OqL/ghKnC/sU3KHtUSqSA+
+adne53bmUhR2XzjoZZHd7JwDed+rVoQqt+wSuj0U8km6dVFR1uedcfu+XRyTYpvh
+gSABixzbFZJEO3gmTAP5KBzVDoBKQlWSLoB70ADpvF6Ns+Bxax8=
+=ap0J
+-----END PGP SIGNATURE-----
 
-Well, the fact of the matter is that extending this in all the ways
-people like you want face huge problems on all sides. These are not
-trivial issues and holding back work that works for our problem because
-it doesn't solve your problem is IMO just going to grind development in
-this area to a halt. We have to have something we can agree on which is
-safe to start building on. The building can't just emerge fully formed
-in one go.
-
-P2P proposal go back a long time and have never gotten anywhere because
-there are limitations and people want it to do things that are hard but
-don't want to contribute the work to solving those problems.
-
->> Well, if it's a problem for someone they'll have to solve it. We're
->> targeting JBOFs that have no use for ACS / IOMMU groups at all.
-> 
-> IMO, you (not somebody) should address this one way or the other before this
-> series land in upstream.
-
-The real way to address this (as I've mentioned before) is with some way
-of doing ACS and iomem groups dynamically. But this is a huge project in
-itself and is never going to be part of the P2P patchset.
-
-> Another assumption: There are other architectures like ARM64 where IOMMU
-> is enabled by default even if you don't use VMs for security reasons.
-> IOMMU blocks stray transactions.
-
-True, but it doesn't change my point: ACS is not a requirement for Linux
-many many systems do not have it on at all or by default.
-
-> Didn't the ACS behavior change suddenly for no good reason when we enabled
-> your code even though I might not be using the P2P but I happen to have
-> a kernel with P2P config option?
-
-Well no, presumably you made a conscious choice to turn the config
-option on and build a custom kernel for your box. That doesn't seem very
-sudden and the reason is that the two concepts are very much at odds
-with each other: you can't have isolation and still have transactions
-between devices.
-
-Logan
+--EuxKj2iCbKjpUGkD--
