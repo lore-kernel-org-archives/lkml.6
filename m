@@ -1,77 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752330AbeCMIgA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:36:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51124 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751525AbeCMIf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:35:59 -0400
-Date: Tue, 13 Mar 2018 16:35:41 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-Message-ID: <20180313083535.GA21612@ming.t460p>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <1520515113.20980.31.camel@gmail.com>
- <20180308133440.GA2713@ming.t460p>
- <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
- <20180309012458.GD5228@ming.t460p>
- <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
- <20180309120833.GB30257@ming.t460p>
- <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
- <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
- <1520926721.20980.210.camel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520926721.20980.210.camel@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752343AbeCMIgY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:36:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54674 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbeCMIgW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 04:36:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22BFB60592
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tirupath@codeaurora.org
+From: Tirupathi Reddy <tirupath@codeaurora.org>
+To: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: tirupath@codeaurora.org, linux-input@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2] Input: pm8941-pwrkey: add resin key capabilities
+Date: Tue, 13 Mar 2018 14:05:58 +0530
+Message-Id: <1520930158-5854-1-git-send-email-tirupath@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 09:38:41AM +0200, Artem Bityutskiy wrote:
-> On Tue, 2018-03-13 at 11:11 +0800, Dou Liyang wrote:
-> >  I also
-> > met the situation that BIOS told to ACPI that it could support
-> > physical
-> > CPUs hotplug, But actually, there was no hardware slots in the
-> > machine.
-> > the ACPI tables like user inputs which should be validated when we
-> > use.
-> 
-> This is exactly what happens on Skylake Xeon systems. When I check
-> dmesg or this file:
-> 
-> /sys/devices/system/cpu/possible
-> 
-> on 2S (two socket) and 4S (four socket) systems, I see the same number
-> 432.
-> 
-> This number comes from ACPI MADT. I will speculate (did not see myself)
-> that 8S systems will report the same number as well, because of the
-> Skylake-SP (Scalable Platform) architecture.
-> 
-> Number 432 is good for 8S systems, but it is way too large for 2S and
-> 4S systems - 4x or 2x larger than the theoretical maximum.
-> 
-> I do not know why BIOSes have to report unrealistically high numbers, I
-> am just sharing my observation.
-> 
-> So yes, Linux kernel's possible CPU count knowledge may be too large.
-> If we use that number to evenly spread IRQ vectors among the CPUs, we
-> end up with wasted vectors, and even bugs, as I observe on a 2S
-> Skylake.
+Add resin key support to handle different types of key events
+defined in different platforms.
 
-Then looks this issue need to fix by making possible CPU count accurate
-because there are other resources allocated according to num_possible_cpus(),
-such as percpu variables.
+Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+---
+ .../bindings/input/qcom,pm8941-pwrkey.txt          | 20 ++++++-
+ drivers/input/misc/pm8941-pwrkey.c                 | 65 +++++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 2 deletions(-)
 
-Thanks,
-Ming
+diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+index 07bf55f..f499cf8 100644
+--- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
++++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+@@ -20,6 +20,14 @@ PROPERTIES
+ 		    defined by the binding document describing the node's
+ 		    interrupt parent.
+ 
++- interrupt-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: Interrupt names.  This list must match up 1-to-1 with the
++		    interrupts specified in the 'interrupts' property. "kpdpwr"
++		    must be specified and should be the first entry of the list.
++		    "resin" may be specified for some platforms.
++
+ - debounce:
+ 	Usage: optional
+ 	Value type: <u32>
+@@ -32,12 +40,22 @@ PROPERTIES
+ 	Definition: presence of this property indicates that the KPDPWR_N pin
+ 		    should be configured for pull up.
+ 
++- linux,code:
++	Usage: required for "resin" key
++	Value type: <u32>
++	Definition: The input key-code associated with the resin key.
++		    Use the linux event codes defined in
++		    include/dt-bindings/input/linux-event-codes.h
++
+ EXAMPLE
+ 
+ 	pwrkey@800 {
+ 		compatible = "qcom,pm8941-pwrkey";
+ 		reg = <0x800>;
+-		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
++		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>,
++			     <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
++		interrupt-names = "kpdpwr", "resin";
+ 		debounce = <15625>;
+ 		bias-pull-up;
++		linux,code = <KEY_VOLUMEDOWN>;
+ 	};
+diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
+index 18ad956..2fffc7c 100644
+--- a/drivers/input/misc/pm8941-pwrkey.c
++++ b/drivers/input/misc/pm8941-pwrkey.c
+@@ -28,6 +28,7 @@
+ 
+ #define PON_RT_STS			0x10
+ #define  PON_KPDPWR_N_SET		BIT(0)
++#define  PON_RESIN_N_SET		BIT(1)
+ 
+ #define PON_PS_HOLD_RST_CTL		0x5a
+ #define PON_PS_HOLD_RST_CTL2		0x5b
+@@ -46,6 +47,7 @@
+ struct pm8941_pwrkey {
+ 	struct device *dev;
+ 	int irq;
++	u32 resin_key_code;
+ 	u32 baseaddr;
+ 	struct regmap *regmap;
+ 	struct input_dev *input;
+@@ -130,6 +132,24 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t pm8941_resinkey_irq(int irq, void *_data)
++{
++	struct pm8941_pwrkey *pwrkey = _data;
++	unsigned int sts;
++	int error;
++
++	error = regmap_read(pwrkey->regmap,
++			    pwrkey->baseaddr + PON_RT_STS, &sts);
++	if (error)
++		return IRQ_HANDLED;
++
++	input_report_key(pwrkey->input, pwrkey->resin_key_code,
++			 !!(sts & PON_RESIN_N_SET));
++	input_sync(pwrkey->input);
++
++	return IRQ_HANDLED;
++}
++
+ static int __maybe_unused pm8941_pwrkey_suspend(struct device *dev)
+ {
+ 	struct pm8941_pwrkey *pwrkey = dev_get_drvdata(dev);
+@@ -153,12 +173,40 @@ static int __maybe_unused pm8941_pwrkey_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(pm8941_pwr_key_pm_ops,
+ 			 pm8941_pwrkey_suspend, pm8941_pwrkey_resume);
+ 
++static int pm8941_resin_key_init(struct pm8941_pwrkey *pwrkey, int irq)
++{
++	int error;
++
++	/*
++	 * Get the standard-key parameters. This might not be
++	 * specified if there is no key mapping on the reset line.
++	 */
++	error = of_property_read_u32(pwrkey->dev->of_node, "linux,code",
++			&pwrkey->resin_key_code);
++	if (error) {
++		dev_err(pwrkey->dev, "failed to read key-code for resin key\n");
++		return error;
++	}
++
++	/* Register key configuration */
++	input_set_capability(pwrkey->input, EV_KEY, pwrkey->resin_key_code);
++
++	error = devm_request_threaded_irq(pwrkey->dev, irq, NULL,
++					  pm8941_resinkey_irq, IRQF_ONESHOT,
++					  "pm8941_resinkey", pwrkey);
++	if (error)
++		dev_err(pwrkey->dev, "failed requesting resin key IRQ: %d\n",
++			error);
++
++	return error;
++}
++
+ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ {
+ 	struct pm8941_pwrkey *pwrkey;
+ 	bool pull_up;
+ 	u32 req_delay;
+-	int error;
++	int error, resin_irq;
+ 
+ 	if (of_property_read_u32(pdev->dev.of_node, "debounce", &req_delay))
+ 		req_delay = 15625;
+@@ -241,6 +289,21 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 		return error;
+ 	}
+ 
++	resin_irq = platform_get_irq_byname(pdev, "resin");
++	if (resin_irq < 0 && resin_irq != -ENXIO) {
++		if (resin_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "failed to get resin irq\n");
++		return resin_irq;
++	} else if (resin_irq >= 0) {
++		/* resin key capabilities are defined in device node */
++		error = pm8941_resin_key_init(pwrkey, resin_irq);
++		if (error) {
++			dev_err(&pdev->dev, "failed resin key initialization: %d\n",
++				error);
++			return error;
++		}
++	}
++
+ 	error = input_register_device(pwrkey->input);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register input device: %d\n",
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
