@@ -1,37 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu9zMTXbYnWl+9fNezSbIde3AC5yjWtqz2Ncf14cDXR7a/gOTs9xR49nA0+JOg0x6DW2Wqo
-ARC-Seal: i=1; a=rsa-sha256; t=1520955356; cv=none;
-        d=google.com; s=arc-20160816;
-        b=GtZWHaIytu3yDGPEx4tlm8fEm7z9E9Jo83oU9KeKx0SDGY8xFUQWwPj38X7FtfSkjE
-         LpJtQchQhQyOw6/E00CMLJwLFgRklMdDuTWxZmBkzV+cwN7jtgGa/dLJcL7gZbCQv9e8
-         60BilFJS3/QwFTpEoJxOoEs/thUeKgrnLsPSLzXEHXdDv+N3zvlQBESEh3wgbuEG+RvT
-         iy61umQYpAMgsawC/YW4OdrjEXgzqxkJNhySplWFjCkV/dIDUSqXc23AjvDl0JjYQIb3
-         iUcxYAXy1Fv/KzQvkHNRAKbqf4KLotwCPsz6n0Y278JSDz9zh5CB+lrxppqvXTv9NHVV
-         Q7GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=KnjJ0LmNhpI2/UYWFbwVgBJK8LCf9mb5Fhrp4oNLcgc=;
-        b=wYVOG92y12VATErPGCeYdBC/AaqjqRlicvQQOwHW3lc3kvZE1qptl0u9EAgBb6lcJ7
-         fUqodygjmFP8Z7ftyuFEXM4czEsyuOKjynPvmiww9KgBEdNfspRSPtZLFFS9MauT5zw1
-         rffGA98HZcYp2Xgv90xFqGpThFnEOQt1Jfdj2Txpb3plSJz0CAgz9Z38XTZO5kBFzbt7
-         r9nzMn1WgJAWKx8mZO614lVIRTRjVT3DQbX+dkiE2qMecaviD64ZYhOel4k1A+bQfQVy
-         GUXc3FGkaAk08TN5plXh7Hd9k5rB83QdelSl+eoZBHkCOGAQukUtJVjzPCGmlQ3gXnyD
-         Mw8Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955351-5-11165336738325920892
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520955350; b=mQP+z1SXXpjZU692tEWtj417mYLKPt+0MXKRTjiiOsUzooa
+    NOXPOgJP1PBjxZIg1ULNS5SETc+K5C6ivdV0Zssd9q8AO1KjG1AXg1w50BLA9IDO
+    Ezro8bTgoE2/AnbXaQ7z85Gn7hc7/sUTX/CZuVDb9HjW1uEX8yG95qmW+DabuMQb
+    xV54Oy1vFVmAjzIEZh5Z3Ze5lGK0GkMQc68+XxZ6Ul40YFU4w6uHe87OIOUcwwm7
+    TVfSWQHVast7oosadRIbIHBS3NMcoKCevB6jfuXX4FaJnWLOB1nsC4YP3AkEU2vZ
+    8rwEoGPXLcN02n9N3vBPVvbngN1YSdul/Odn1Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955350; bh=JttMzpu2+V0Ja0dsafD+t1Ss+y
+    YWrPlwlkU7be7EryM=; b=uO97r2amdpWNmF+drWBaq25LUtwxeaQwpcYeRpqNIP
+    en6xSzMB5v49pKrZE8eSCCtBap6aFscuZn9I+MWiytx6KR9YwUo76e9qNe86ZChC
+    wuEiR/CwcAh5qx1l7/lfaRkWwNMQxXWjcZgoVDFQyrzJnJZ700TuvE08IWnKKfGg
+    2HMZOcr/DF+A13XBrAeCvV6WRP8DTnDc81orAHL5/PZKBsDROouY8qLHLOzLBwmo
+    1ekC9SBkAlsI3qeij8o2QKJbgCLz9LOGz0PjIikosxmw6Pzi1fvFJnxkLHXV5o82
+    c1iquBgd2pbO64vtIH1S1hjDf/RUrAAQDhMLYwRtMhlQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933998AbeCMPfc (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:35:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33186 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933991AbeCMPfa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:35:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	James Morris <jmorris@namei.org>
-Subject: [PATCH 4.14 022/140] tpm: remove unused variables
-Date: Tue, 13 Mar 2018 16:23:45 +0100
-Message-Id: <20180313152459.534528444@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com,
+        Paolo Abeni <pabeni@redhat.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 013/140] netfilter: nat: cope with negative port range
+Date: Tue, 13 Mar 2018 16:23:36 +0100
+Message-Id: <20180313152459.003186811@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -39,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837116260369951?=
-X-GMAIL-MSGID: =?utf-8?q?1594837283947939385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +82,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 68021bf4734d15c9a9ed1c1072b9ebcfda3e39cc upstream.
+commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
 
-The CLKRUN fix caused a few harmless compile-time warnings:
+syzbot reported a division by 0 bug in the netfilter nat code:
 
-drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_pnp_remove':
-drivers/char/tpm/tpm_tis.c:274:23: error: unused variable 'priv' [-Werror=unused-variable]
-drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_plat_remove':
-drivers/char/tpm/tpm_tis.c:324:23: error: unused variable 'priv' [-Werror=unused-variable]
+divide error: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88
+RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
+RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
+RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
+RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
+R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
+R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
+FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
+  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
+  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
+  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
+  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
+  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
+  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
+  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
+  nf_nat_ipv6_local_fn+0x33/0x5d0
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
+  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook include/linux/netfilter.h:243 [inline]
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
+  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
+  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
+  dccp_connect+0x369/0x670 net/dccp/output.c:564
+  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
+  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
+  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
+  SYSC_connect+0x213/0x4a0 net/socket.c:1639
+  SyS_connect+0x24/0x30 net/socket.c:1620
+  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x441c69
+RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
+RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
+R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
+Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
+45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
+c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
+RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
 
-This removes the variables that have now become unused.
+The problem is that currently we don't have any check on the
+configured port range. A port range == -1 triggers the bug, while
+other negative values may require a very long time to complete the
+following loop.
 
-Fixes: 6d0866cbc2d3 ("tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: James Morris <jmorris@namei.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This commit addresses the issue swapping the two ends on negative
+ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
+the nft nat loads the port values from nft registers at runtime.
+
+v1 -> v2: use the correct 'Fixes' tag
+v2 -> v3: update commit message, drop unneeded READ_ONCE()
+
+Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
+Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis.c |    2 --
- 1 file changed, 2 deletions(-)
+ net/netfilter/nf_nat_proto_common.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -255,7 +255,6 @@ MODULE_DEVICE_TABLE(pnp, tpm_pnp_tbl);
- static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+--- a/net/netfilter/nf_nat_proto_common.c
++++ b/net/netfilter/nf_nat_proto_common.c
+@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const s
+ 				 const struct nf_conn *ct,
+ 				 u16 *rover)
  {
- 	struct tpm_chip *chip = pnp_get_drvdata(dev);
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+-	unsigned int range_size, min, i;
++	unsigned int range_size, min, max, i;
+ 	__be16 *portptr;
+ 	u_int16_t off;
  
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
-@@ -305,7 +304,6 @@ static int tpm_tis_plat_probe(struct pla
- static int tpm_tis_plat_remove(struct platform_device *pdev)
- {
- 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const s
+ 		}
+ 	} else {
+ 		min = ntohs(range->min_proto.all);
+-		range_size = ntohs(range->max_proto.all) - min + 1;
++		max = ntohs(range->max_proto.all);
++		if (unlikely(max < min))
++			swap(max, min);
++		range_size = max - min + 1;
+ 	}
  
- 	tpm_chip_unregister(chip);
- 	tpm_tis_remove(chip);
+ 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
