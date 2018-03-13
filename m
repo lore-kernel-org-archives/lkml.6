@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974828; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974827; cv=none;
         d=google.com; s=arc-20160816;
-        b=lIsoQtHqpGFW09Vvgb43FxKA3+UfJm4C9prPVI6hEoJ2U0R6L+tCrspQcm8f/CgkNj
-         5puvFWVzdzpj2whvsaSrdpgHZbnU/JEHl1vh3qxU27MEShygyCC2i2EgvCNToGMy3DvX
-         YUPcVatQ6elckT67gJZz9ii4g0bNX+K+HwUZoD7SkXtxaL0XfzeFM891FG/kz2wWaMHg
-         Hp6ndwXy+4sjokhH5UHAyUqo5i6i+ljmMz8lLKU9OTt44WCna+a9cK4DGYjVyNmm3DIo
-         f57q3L/Uz30+inINewqCuOl6gO0V5ddR2isEOsQlC4QCiSXFmzLXYMBykTD9tOwIvwJB
-         o+xA==
+        b=U9vFHct1PdmvcqAjcXFoe/YHJItxunX1tYz50sMeqQrB05vSK10ZxZm45frEIo/QIP
+         980DZwDanHGzML1vVKW7qnXo2o9q3VHkqTm46UHLsbf7WJufU3WD5UZaBqqkJ2cdBnKF
+         7bTgcWDQVcC/otJPm0L6xKQ6RGf00K8SDYdguKi4cH3pppx7Vzr/frmvpHIgO5KJ6ymn
+         XJn8+bcmqFgXGcKcSuC77KtSz+jnWEq9QzOtsqpl8VPuihAB93QcF3AyzMHRqehaag+i
+         npNDylhls0ZEUGTAf1rbUR/7iDqSQpa94dQApp4ouvU20ZTmfRQN4gvlv2F4mzU5jTnB
+         yNqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=+5M2FaP3vfmPSEGTB3GVETrTQCHNNxealc15RUl+u6U=;
-        b=o1YNJxHQYIVB1CCYaS9NUClFj7mj83UKRPqZdQcgvnX4S42RdOso7lTKCFfwbvlkw0
-         B2W8blUQztFokgATyTAwAQrp5sAJpeB5hzRH5heV3xRBVkEEnaDOm6p8zHgrWTkTiC82
-         F1nQK/HofK5RUEfNcg2C0IckbAS3WAnFR3c14BJRROB//yqXsZSwBJjzi6VzO+i1LmU6
-         uKjW5BHn1IKQm6VmpqPygZx+a6Em0LH6wtXms1VN1wAw/uxqaRqJ3xxJTXB6BvHy4ysv
-         KLgMGxA68AAV8CheZuMH+xgU7tZ5Y1T7W0Fd6ODR3ebnaaNXB8EMdwzEIKRS6TVuf9Ey
-         cICg==
+        bh=6MJgsB7Hp0yid3AGqLbnRCCwxImFWzpHvD6YuEEu5kM=;
+        b=Mjvbd+LfFe/0dA2HqNEM3Wql9Shq8pnNx6qJhK4dKbX2lGP6UcNlFuWgqSTzd92l8r
+         pkLYgYeuzjCaN5M+5mmkjwZGc7HxTGe+SEwwPvSgjG/xp+POB1zjmo8NTKRvKxgq4pfv
+         MS25E5oegDToSbVjd+HS4cRTAuFhgozmBEmX0te00Y8EY12/di+Oe2Y9zKl8LXMm1QcH
+         uKxaeYd3PRgLwSD9HSRGdJijPVN75OcJaLHgX4lzquxvAEO1TgU+YfvI+R+URSQrOFIn
+         JwwddCiHC6tG7/6R5w2PyPTi5+0TBI26EDDmUabiRRVZclH+/YtIPIQsNy7J53OstzaB
+         W/ZA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Z5TtevK5;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jPqD9YjO;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Z5TtevK5;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jPqD9YjO;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELuRdmqXLGKKl1PC4PR7zPkPKPxpWZW8c5JHEqNEEob2ZgBQfHXwfDsf2VSvQbsLF6GTrYMnjg==
+X-Google-Smtp-Source: AG47ELu6PtT+lC1xMj/yvbRBqG8AQb7kCLqZsvZMqbTxFCiShmcEaZ5XYqTZhTZ/NV1dYUKGeNzGjg==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,66 +105,41 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 08/27] x86/CPU: Adapt assembly for PIE support
-Date: Tue, 13 Mar 2018 13:59:26 -0700
-Message-Id: <20180313205945.245105-9-thgarnie@google.com>
+Subject: [PATCH v2 07/27] x86: pm-trace - Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:25 -0700
+Message-Id: <20180313205945.245105-8-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857702197693665?=
-X-GMAIL-MSGID: =?utf-8?q?1594857702197693665?=
+X-GMAIL-THRID: =?utf-8?q?1594857700689300786?=
+X-GMAIL-MSGID: =?utf-8?q?1594857700689300786?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible. Use the new _ASM_MOVABS macro instead of
-the 'mov $symbol, %dst' construct.
+Change assembly to use the new _ASM_MOVABS macro instead of _ASM_MOV for
+the assembly to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/processor.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/pm-trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index b0ccd4847a58..1b9488b1018a 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -50,7 +50,7 @@ static inline void *current_text_addr(void)
- {
- 	void *pc;
- 
--	asm volatile("mov $1f, %0; 1:":"=r" (pc));
-+	asm volatile(_ASM_MOVABS " $1f, %0; 1:":"=r" (pc));
- 
- 	return pc;
- }
-@@ -710,6 +710,7 @@ static inline void sync_core(void)
- 		: ASM_CALL_CONSTRAINT : : "memory");
- #else
- 	unsigned int tmp;
-+	unsigned long tmp2;
- 
- 	asm volatile (
- 		UNWIND_HINT_SAVE
-@@ -720,11 +721,13 @@ static inline void sync_core(void)
- 		"pushfq\n\t"
- 		"mov %%cs, %0\n\t"
- 		"pushq %q0\n\t"
--		"pushq $1f\n\t"
-+		"leaq 1f(%%rip), %1\n\t"
-+		"pushq %1\n\t"
- 		"iretq\n\t"
- 		UNWIND_HINT_RESTORE
- 		"1:"
--		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
-+		: "=&r" (tmp), "=&r" (tmp2), ASM_CALL_CONSTRAINT
-+		: : "cc", "memory");
- #endif
- }
- 
+diff --git a/arch/x86/include/asm/pm-trace.h b/arch/x86/include/asm/pm-trace.h
+index bfa32aa428e5..972070806ce9 100644
+--- a/arch/x86/include/asm/pm-trace.h
++++ b/arch/x86/include/asm/pm-trace.h
+@@ -8,7 +8,7 @@
+ do {								\
+ 	if (pm_trace_enabled) {					\
+ 		const void *tracedata;				\
+-		asm volatile(_ASM_MOV " $1f,%0\n"		\
++		asm volatile(_ASM_MOVABS " $1f,%0\n"		\
+ 			     ".section .tracedata,\"a\"\n"	\
+ 			     "1:\t.word %c1\n\t"		\
+ 			     _ASM_PTR " %c2\n"			\
 -- 
 2.16.2.660.g709887971b-goog
