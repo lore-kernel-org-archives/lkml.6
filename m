@@ -1,37 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeCMGV4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:21:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55183 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeCMGVx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752009AbeCMGVx (ORCPT <rfc822;w@1wt.eu>);
         Tue, 13 Mar 2018 02:21:53 -0400
-Date: Mon, 12 Mar 2018 23:20:19 -0700
+Received: from terminus.zytor.com ([198.137.202.136]:57259 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeCMGVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 02:21:51 -0400
+Date: Mon, 12 Mar 2018 23:21:13 -0700
 From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-18ff57b220610a699947f20b156a8245ca7eee98@git.kernel.org>
-Cc: hpa@zytor.com, yao.jin@linux.intel.com, sukadev@linux.vnet.ibm.com,
-        mingo@kernel.org, tglx@linutronix.de, chabbi.milind@gmail.com,
-        mpe@ellerman.id.au, dsahern@gmail.com, kan.liang@intel.com,
-        fweisbec@gmail.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, jolsa@kernel.org, onestero@redhat.com,
-        acme@redhat.com, hbathini@linux.vnet.ibm.com, peterz@infradead.org,
-        will.deacon@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org
-Reply-To: mpe@ellerman.id.au, fweisbec@gmail.com, dsahern@gmail.com,
-        kan.liang@intel.com, jolsa@redhat.com, jolsa@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        hbathini@linux.vnet.ibm.com, peterz@infradead.org, onestero@redhat.com,
-        acme@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, will.deacon@arm.com, sukadev@linux.vnet.ibm.com,
-        yao.jin@linux.intel.com, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, chabbi.milind@gmail.com
-In-Reply-To: <20180312134548.31532-5-jolsa@kernel.org>
-References: <20180312134548.31532-5-jolsa@kernel.org>
+Message-ID: <tip-5f970521d3279d99adcdebf329631e36cb9f0deb@git.kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@kernel.org, jolsa@redhat.com,
+        tglx@linutronix.de, peterz@infradead.org, yao.jin@linux.intel.com,
+        namhyung@kernel.org, mpe@ellerman.id.au,
+        alexander.shishkin@linux.intel.com, hbathini@linux.vnet.ibm.com,
+        hpa@zytor.com, kan.liang@intel.com, dsahern@gmail.com,
+        sukadev@linux.vnet.ibm.com, fweisbec@gmail.com,
+        chabbi.milind@gmail.com, acme@redhat.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, onestero@redhat.com,
+        a.p.zijlstra@chello.nl, jolsa@kernel.org
+Reply-To: mpe@ellerman.id.au, alexander.shishkin@linux.intel.com,
+        hbathini@linux.vnet.ibm.com, hpa@zytor.com,
+        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, jolsa@redhat.com, namhyung@kernel.org,
+        yao.jin@linux.intel.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, onestero@redhat.com,
+        a.p.zijlstra@chello.nl, jolsa@kernel.org, fweisbec@gmail.com,
+        sukadev@linux.vnet.ibm.com, kan.liang@intel.com, dsahern@gmail.com,
+        chabbi.milind@gmail.com, acme@redhat.com
+In-Reply-To: <20180312134548.31532-7-jolsa@kernel.org>
+References: <20180312134548.31532-7-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] hw_breakpoint: Factor out
- __modify_user_hw_breakpoint() function
-Git-Commit-ID: 18ff57b220610a699947f20b156a8245ca7eee98
+Subject: [tip:perf/core] perf/core: Move perf_event_attr::sample_max_stack
+ into perf_copy_attr()
+Git-Commit-ID: 5f970521d3279d99adcdebf329631e36cb9f0deb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -44,19 +46,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  18ff57b220610a699947f20b156a8245ca7eee98
-Gitweb:     https://git.kernel.org/tip/18ff57b220610a699947f20b156a8245ca7eee98
+Commit-ID:  5f970521d3279d99adcdebf329631e36cb9f0deb
+Gitweb:     https://git.kernel.org/tip/5f970521d3279d99adcdebf329631e36cb9f0deb
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 12 Mar 2018 14:45:44 +0100
+AuthorDate: Mon, 12 Mar 2018 14:45:46 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 13 Mar 2018 06:56:08 +0100
 
-hw_breakpoint: Factor out __modify_user_hw_breakpoint() function
+perf/core: Move perf_event_attr::sample_max_stack into perf_copy_attr()
 
-Moving out all the functionality without the events
-disabling/enabling calls, because we want to call another
-disabling/enabling functions in following change.
+Move the sample_max_stack check and setup into perf_copy_attr(),
+so we have all perf_event_attr initial setup in one place
+and can easily compare attrs in the new ioctl introduced
+in following change.
 
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
@@ -71,93 +75,37 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Milind Chabbi <chabbi.milind@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Oleg Nesterov <onestero@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/20180312134548.31532-5-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180312134548.31532-7-jolsa@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/hw_breakpoint.c | 46 +++++++++++++++++++++++++++----------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ kernel/events/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 776948beb4ac..a556aba223da 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -456,6 +456,33 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
- }
- EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 969f865f9f1c..ee145bdee6ed 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10125,6 +10125,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 			ret = -EINVAL;
+ 	}
  
-+static int __modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
-+{
-+	u64 old_addr = bp->attr.bp_addr;
-+	u64 old_len  = bp->attr.bp_len;
-+	int old_type = bp->attr.bp_type;
-+	bool modify  = attr->bp_type != old_type;
-+	int err = 0;
++	if (!attr->sample_max_stack)
++		attr->sample_max_stack = sysctl_perf_event_max_stack;
 +
-+	bp->attr.bp_addr = attr->bp_addr;
-+	bp->attr.bp_type = attr->bp_type;
-+	bp->attr.bp_len  = attr->bp_len;
-+
-+	err = validate_hw_breakpoint(bp);
-+	if (!err && modify)
-+		err = modify_bp_slot(bp, old_type);
-+
-+	if (err) {
-+		bp->attr.bp_addr = old_addr;
-+		bp->attr.bp_type = old_type;
-+		bp->attr.bp_len  = old_len;
-+		return err;
-+	}
-+
-+	bp->attr.disabled = attr->disabled;
-+	return 0;
-+}
-+
- /**
-  * modify_user_hw_breakpoint - modify a user-space hardware breakpoint
-  * @bp: the breakpoint structure to modify
-@@ -465,11 +492,7 @@ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
-  */
- int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
- {
--	u64 old_addr = bp->attr.bp_addr;
--	u64 old_len = bp->attr.bp_len;
--	int old_type = bp->attr.bp_type;
--	bool modify = attr->bp_type != old_type;
--	int err = 0;
-+	int err;
+ 	if (attr->sample_type & PERF_SAMPLE_REGS_INTR)
+ 		ret = perf_reg_validate(attr->sample_regs_intr);
+ out:
+@@ -10338,9 +10341,6 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
  
+-	if (!attr.sample_max_stack)
+-		attr.sample_max_stack = sysctl_perf_event_max_stack;
+-
  	/*
- 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
-@@ -482,18 +505,9 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
- 	else
- 		perf_event_disable(bp);
- 
--	bp->attr.bp_addr = attr->bp_addr;
--	bp->attr.bp_type = attr->bp_type;
--	bp->attr.bp_len = attr->bp_len;
--
--	err = validate_hw_breakpoint(bp);
--	if (!err && modify)
--		err = modify_bp_slot(bp, old_type);
-+	err = __modify_user_hw_breakpoint(bp, attr);
- 
- 	if (err) {
--		bp->attr.bp_addr = old_addr;
--		bp->attr.bp_type = old_type;
--		bp->attr.bp_len = old_len;
- 		if (!bp->attr.disabled)
- 			perf_event_enable(bp);
- 
-@@ -502,8 +516,6 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
- 
- 	if (!attr->disabled)
- 		perf_event_enable(bp);
--
--	bp->attr.disabled = attr->disabled;
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
+ 	 * In cgroup mode, the pid argument is used to pass the fd
+ 	 * opened to the cgroup directory in cgroupfs. The cpu argument
