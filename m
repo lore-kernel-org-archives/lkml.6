@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtOl2f3IBpVf8KPjniW9yAJROdFL9BWhlemz9gDlMEO1UjGjTJotlBnpqU+NElmz6/RW/zc
-ARC-Seal: i=1; a=rsa-sha256; t=1520955022; cv=none;
+X-Google-Smtp-Source: AG47ELskbAHF42u4YhkQJJ51ln+1hUXFaqA6YPVZRdDwTmn1HmEQxfj7oOmr11t1p9jqz3x7zDPZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520955020; cv=none;
         d=google.com; s=arc-20160816;
-        b=Foo71YHinZakvWPfFimudRSU8FaPO3gtQ7aWrA/Shbgm/oMFd7boTefEWJF3ZeoWBU
-         Iu2UnVxHqHLL2KZ7prqVHn83h/aIUTGvkH3m+J2e/eXREdloTNY5bOUvv9PjQKQhhMNp
-         vM2b2bhB9nEHRN4Nv9mPjg7AjWAa/8VYm+teHG+aGW2C26CWzudvabvEt17/suld8x7i
-         nNI/SGlEcytI04HU0N4sTYWxBhcicIKGkhltOi0J+Kyk6D7ba4qwD3VGUJxhiStoBV0P
-         G/SPwe3TXTaRwgbjCirfcK9Nk6qGJ6iX0aa8cjy4b9lKiNPO+2/amnGM1zznCYHCNx3T
-         98Uw==
+        b=AK+FoAIFGrGntyCOLr6QStAd55FwQ5lefPv/tvf/UrUmBPRWvJ16MnnMw1xXbP4gN3
+         6CPFE2AxP7bQcDtwGDJjU8Uo5xAh4606oaUuuZgKUaHMNI9Fdm7IAMd4iFD1zC0cpPiT
+         nuVDDKtRGOVYhsNvcz20DQK/WuTuXwGzTLVQqld1pg/rAXxjNk5CTIZMoL2vDOAsrbz4
+         AQ8EWH3DllxxANyHdpAFgfQfaHjdzKWKkoS8ATNU0qXZ3tI1wFreid35jCmkzWR54GX3
+         sRjfdyGYTGRdyi7wAn3x9p3DhwnuN03UX6PJ1zbpDDn7TBEEnVcQxmiM/BzJF+40Rd0s
+         U65A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=W9HGKjYW3mxWXZJHbACv5ROvJzGPJwABocFNF0lPmjM=;
-        b=fh5WjNuEWS4Up59UjPx9PkLHCnKCju18kT1jaVkStae7T46jTx7oEMWsQiCLBMyAMQ
-         KEnUnDLezaSOxZqn9sMAaI9G27NiSjBtkpGmBdDo9eTBOa9AeVF1YnnfLKnQEr+bk/iu
-         36VhgS+metCGiYZr194DzyCY5p2aGQH7vXIRinTZzs59P2sSQHrKX0TGSzFaIk9EPz0c
-         wYZkRuM58IE94fz33EDRjpiyu38d07w+YlikC71YImUe+qTApKPEbESsXBX95QyI05Si
-         yEL92Uy0ARxIzFsWGeySyEO9exsZYTvPQne3SIPihYbyq/pSNCGA64fNk7TnsOWvXZAj
-         QMHg==
+        bh=VRzZ0RX+KfqMvoBfNyIq4YMAcx7bekYku+RCjIJS7r0=;
+        b=y4q9dM/+yqZ2OL50DzMPZoGgBQD5kg1spLh6A1jR0D/Y8T/ZsntlcypYOiqut6eQXY
+         GZheCGZojVy1Me1ehpNDTYkWyTfXoQ9rgsrd+XsCZITArBN+VbYbN6hssDHE71rk78G9
+         XARO6Z/uzRiwpZqMyyciqsJE2gmPFj3w4tCo6x91e4+pdoBM0N5yz0UdIo+S32Q4C979
+         nTVILNNuGajdchhQY4NX1k3DSqr8eJvFa2HCm+64nBrmq+OPe3XzR/Yk18QcEoQXHt6J
+         MtlJNHMFK4AcDT+t3CLbXIcVs7mt/nGH0eQAtVEtZVQHr5a1EPPjPzl5JOLdwepStNE6
+         AudA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhang Bo <zbsdta@126.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.15 044/146] Input: matrix_keypad - fix race when disabling interrupts
-Date: Tue, 13 Mar 2018 16:23:31 +0100
-Message-Id: <20180313152323.992035956@linuxfoundation.org>
+	Michael Lyle <mlyle@lyle.org>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 061/146] bcache: dont attach backing with duplicate UUID
+Date: Tue, 13 Mar 2018 16:23:48 +0100
+Message-Id: <20180313152325.385945864@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836933161279881?=
-X-GMAIL-MSGID: =?utf-8?q?1594836933161279881?=
+X-GMAIL-THRID: =?utf-8?q?1594836931424200756?=
+X-GMAIL-MSGID: =?utf-8?q?1594836931424200756?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhang Bo <zbsdta@126.com>
+From: Michael Lyle <mlyle@lyle.org>
 
-commit ea4f7bd2aca9f68470e9aac0fc9432fd180b1fe7 upstream.
+commit 86755b7a96faed57f910f9e6b8061e019ac1ec08 upstream.
 
-If matrix_keypad_stop() is executing and the keypad interrupt is triggered,
-disable_row_irqs() may be called by both matrix_keypad_interrupt() and
-matrix_keypad_stop() at the same time, causing interrupts to be disabled
-twice and the keypad being "stuck" after resuming.
+This can happen e.g. during disk cloning.
 
-Take lock when setting keypad->stopped to ensure that ISR will not race
-with matrix_keypad_stop() disabling interrupts.
+This is an incomplete fix: it does not catch duplicate UUIDs earlier
+when things are still unattached.  It does not unregister the device.
+Further changes to cope better with this are planned but conflict with
+Coly's ongoing improvements to handling device errors.  In the meantime,
+one can manually stop the device after this has happened.
 
-Signed-off-by: Zhang Bo <zbsdta@126.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Attempts to attach a duplicate device result in:
+
+[  136.372404] loop: module loaded
+[  136.424461] bcache: register_bdev() registered backing device loop0
+[  136.424464] bcache: bch_cached_dev_attach() Tried to attach loop0 but duplicate UUID already attached
+
+My test procedure is:
+
+  dd if=/dev/sdb1 of=imgfile bs=1024 count=262144
+  losetup -f imgfile
+
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reviewed-by: Tang Junhui <tang.junhui@zte.com.cn>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/keyboard/matrix_keypad.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/md/bcache/super.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -218,8 +218,10 @@ static void matrix_keypad_stop(struct in
- {
- 	struct matrix_keypad *keypad = input_get_drvdata(dev);
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -951,6 +951,7 @@ int bch_cached_dev_attach(struct cached_
+ 	uint32_t rtime = cpu_to_le32(get_seconds());
+ 	struct uuid_entry *u;
+ 	char buf[BDEVNAME_SIZE];
++	struct cached_dev *exist_dc, *t;
  
-+	spin_lock_irq(&keypad->lock);
- 	keypad->stopped = true;
--	mb();
-+	spin_unlock_irq(&keypad->lock);
+ 	bdevname(dc->bdev, buf);
+ 
+@@ -974,6 +975,16 @@ int bch_cached_dev_attach(struct cached_
+ 		return -EINVAL;
+ 	}
+ 
++	/* Check whether already attached */
++	list_for_each_entry_safe(exist_dc, t, &c->cached_devs, list) {
++		if (!memcmp(dc->sb.uuid, exist_dc->sb.uuid, 16)) {
++			pr_err("Tried to attach %s but duplicate UUID already attached",
++				buf);
 +
- 	flush_work(&keypad->work.work);
- 	/*
- 	 * matrix_keypad_scan() will leave IRQs enabled;
++			return -EINVAL;
++		}
++	}
++
+ 	u = uuid_find(c, dc->sb.uuid);
+ 
+ 	if (u &&
