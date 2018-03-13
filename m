@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsuDfvkYPQPbC2VgpjoZY5GgtjB7XCOFbYMN9PRBVz9YCNa4EuW3ZTAJLoRXIz8m0zZpAsD
-ARC-Seal: i=1; a=rsa-sha256; t=1520955602; cv=none;
+X-Google-Smtp-Source: AG47ELskgeHu6Lo1tiQ/cojps/OaBFIobcM5J1+VADfBCyvFWveiJ4doRFNVOf6XyRpoVg7rAMr2
+ARC-Seal: i=1; a=rsa-sha256; t=1520955599; cv=none;
         d=google.com; s=arc-20160816;
-        b=WTS7oncALYFP+QfDwolhF9vmozLgmQiV62iSOZjGEc4XfttWwrG2sStEju8R/NQqyX
-         eNvHzRjHH/Z/Seo5ghBNRKcdGEX/KkmpADwFLg/MFY7xrfM2c1uoFjNmSpFQpaWz0kLz
-         hVjwKkoUYL4yJ9f4IygT5vu8I1YywAVtYXpgb2yaCY8Z1PnWRD+TNAH/DQ7atkLiRdjX
-         MB1WUEPB9v/ZCHHhcK1MEhMXVmDnUPpUj6mvPQ6saNZ8YGUIXKxKeH7kio7dqYgwLNmA
-         Mk1GCW/jHFfmblOa6V1jwLxBO2V7y9q+Q43yce/d+RiYoB/0eWegzUd09j4+S3XsaEHS
-         LQPA==
+        b=jXTsvmzgLMWS8xkxQyyJy1pwwqqPtqVTRXeewHX4sAftQToN/dYXpXR/KBzK4DCHau
+         /m0vF1f1sW/AwxL4AvPF7k+GiryrOkfLQs3VSYFD1J+Q8kx1Hobd9F0mi29eh3VM+MeD
+         Fj7FYcfiH0lXB14ONIFXlFfmDdaBpSzGUfdNvVTugy/X82CNAfieXGhYh5db2yMMpsyM
+         ZDLT7CjRtuGb3cIG0IsyuUHDPs9n62sUzV8ZAo+uF427Kla2hVRol+5KwIbvVay5BlA6
+         aDsOr/WgTbl6Y4lAmdRinpIbyNwtjMW2UD9wGbph+aeerFPx7QWCRcHnBxVB51fRFoCg
+         UOeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SO0Ca4DFVGYkqBt1m2uBR5IL9bqdM1ShvkIvMbZCKwo=;
-        b=HxvBIC3Pzq8ukI6CnLYl1SX1A9/Sj0i9rNA+EQC7RiwVV3bz3aJE4yiK88FxKHgp9h
-         b2etfVc162WUjV//FJYbujfFM1WxVqsk4OSMeYZcQM5Kielnnud9BTh2VFtoDbkh5/Be
-         74y/tHmiVU8NrKeiytH1K7sQ55iEfJc3YS32dC9Z7x2HsLKwnNQHaKorKNUmA5qn5wVk
-         kpsCEZ7t//ZriTeQoMcI8I+YNNyzyVaGhaGPaTXbk8JQHsg5nGzlv5hjHF9DOz3qqb2Q
-         tTgyOjG36/ccyvkaoU4uaDGL6xn0FV6izBved0j3PedO9yoQiKz+BvE5P4UWrDlVfUNQ
-         nBlQ==
+        bh=gMnjfbkoVn+emhAH2P9GR+o9hbeo6xyXxW0436eSCz4=;
+        b=C8ojGkOaSqNXsv291AErTE4U9UkuHoi7FZtpT0MKUFJ98pmRWURUCSzJrLfQHk8upo
+         wVmY2/QyLflvA0QvAq5XJb9G0kgUGT5bH1svca2yjL02nkmbG453idEBf+5IHcANFGtX
+         MzxwloKLZ7cJV4ALL8UPEnoLEXQhsiP7GCoPOdIa41WfRBaeRCWn8TUcVe7gyRDr5kxV
+         JSOIb7yAau/Rot7V9k4s7ulh3sKP3C1kHkEP4ZYUNPa4o5u2aFrvEdFekza5Hl4GQohg
+         pbbouDTQeTBOIGzm4H8JosDTwFvDGHdUS74b/+Ge8F7eMaVb11HvBYEsDm26mSEMp3go
+         brMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kailang Yang <kailang@realtek.com>,
+	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 101/140] ALSA: hda/realtek - Add support headset mode for DELL WYSE
-Date: Tue, 13 Mar 2018 16:25:04 +0100
-Message-Id: <20180313152504.951732213@linuxfoundation.org>
+Subject: [PATCH 4.14 105/140] ALSA: hda/realtek - Make dock sound work on ThinkPad L570
+Date: Tue, 13 Mar 2018 16:25:08 +0100
+Message-Id: <20180313152505.202223395@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836948109180933?=
-X-GMAIL-MSGID: =?utf-8?q?1594837541553306779?=
+X-GMAIL-THRID: =?utf-8?q?1594837011394940891?=
+X-GMAIL-MSGID: =?utf-8?q?1594837538433735793?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,55 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit 5f36413526677b11d3226ebf064f471894ea2e5d upstream.
+commit e4c07b3b66b7d6a24c2fe3b1ddeff5cd9b378b3a upstream.
 
-Enable headset mode support for WYSE platform.
+One version of Lenovo Thinkpad T570 did not use ALC298
+(like other Kaby Lake devices). Instead it uses ALC292.
+In order to make the Lenovo dock working with that codec
+the dock quirk for ALC292 will be used.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -5335,6 +5335,7 @@ enum {
- 	ALC233_FIXUP_EAPD_COEF_AND_MIC_NO_PRESENCE,
- 	ALC233_FIXUP_LENOVO_MULTI_CODECS,
- 	ALC294_FIXUP_LENOVO_MIC_LOCATION,
-+	ALC225_FIXUP_DELL_WYSE_MIC_NO_PRESENCE,
- 	ALC700_FIXUP_INTEL_REFERENCE,
- 	ALC274_FIXUP_DELL_BIND_DACS,
- 	ALC274_FIXUP_DELL_AIO_LINEOUT_VERB,
-@@ -6138,6 +6139,18 @@ static const struct hda_fixup alc269_fix
- 			{ }
- 		},
- 	},
-+	[ALC225_FIXUP_DELL_WYSE_MIC_NO_PRESENCE] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x16, 0x0101102f }, /* Rear Headset HP */
-+			{ 0x19, 0x02a1913c }, /* use as Front headset mic, without its own jack detect */
-+			{ 0x1a, 0x01a19030 }, /* Rear Headset MIC */
-+			{ 0x1b, 0x02011020 },
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
-+	},
- 	[ALC700_FIXUP_INTEL_REFERENCE] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
-@@ -6223,6 +6236,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
- 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
-+	SND_PCI_QUIRK(0x1028, 0x080c, "Dell WYSE", ALC225_FIXUP_DELL_WYSE_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x084b, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
- 	SND_PCI_QUIRK(0x1028, 0x084e, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+@@ -6404,6 +6404,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x2245, "Thinkpad T470", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x2246, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x2247, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
++	SND_PCI_QUIRK(0x17aa, 0x2249, "Thinkpad", ALC292_FIXUP_TPT460),
+ 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
