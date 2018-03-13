@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELskgeHu6Lo1tiQ/cojps/OaBFIobcM5J1+VADfBCyvFWveiJ4doRFNVOf6XyRpoVg7rAMr2
-ARC-Seal: i=1; a=rsa-sha256; t=1520955599; cv=none;
+X-Google-Smtp-Source: AG47ELvKCDexOhR3X0K82Gzl01NMpAwVkU4GuKTeT4jHQs/DL4tlkGH8Z++ruLgRC7jhzyPcK4R/
+ARC-Seal: i=1; a=rsa-sha256; t=1520955596; cv=none;
         d=google.com; s=arc-20160816;
-        b=jXTsvmzgLMWS8xkxQyyJy1pwwqqPtqVTRXeewHX4sAftQToN/dYXpXR/KBzK4DCHau
-         /m0vF1f1sW/AwxL4AvPF7k+GiryrOkfLQs3VSYFD1J+Q8kx1Hobd9F0mi29eh3VM+MeD
-         Fj7FYcfiH0lXB14ONIFXlFfmDdaBpSzGUfdNvVTugy/X82CNAfieXGhYh5db2yMMpsyM
-         ZDLT7CjRtuGb3cIG0IsyuUHDPs9n62sUzV8ZAo+uF427Kla2hVRol+5KwIbvVay5BlA6
-         aDsOr/WgTbl6Y4lAmdRinpIbyNwtjMW2UD9wGbph+aeerFPx7QWCRcHnBxVB51fRFoCg
-         UOeg==
+        b=GFRSrIXfM+gv/JzUa0Pf4ZSU/T0KS4ve+U8ye/rO2+l1iL2WeGa53CMHWmmLuIYyDh
+         v9dCJ3QCdZO5pg0TFY/C2F3QQXy1MVRwBeyOsengR7DawlaVNbASYVk87paBgmVfaU9+
+         aHIiasGfbkqzRNLmJmLWcP/cStC7N70X8u3lME/6Q6yrhIfUyMvTxS9RE/QSbkv/BTSL
+         7XvB5uAs7tyH16vDuNQabP+Dgn+LdNnuIsZLuERDO65mz3geVWcgYjBzToRlHbuw5rj8
+         2ekX2szX89cSjMkuubr7TdUjMJedp2rHS7HRzJzfQd3k2cBC+Tde5sW/HOmvrsO2C+6U
+         foRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gMnjfbkoVn+emhAH2P9GR+o9hbeo6xyXxW0436eSCz4=;
-        b=C8ojGkOaSqNXsv291AErTE4U9UkuHoi7FZtpT0MKUFJ98pmRWURUCSzJrLfQHk8upo
-         wVmY2/QyLflvA0QvAq5XJb9G0kgUGT5bH1svca2yjL02nkmbG453idEBf+5IHcANFGtX
-         MzxwloKLZ7cJV4ALL8UPEnoLEXQhsiP7GCoPOdIa41WfRBaeRCWn8TUcVe7gyRDr5kxV
-         JSOIb7yAau/Rot7V9k4s7ulh3sKP3C1kHkEP4ZYUNPa4o5u2aFrvEdFekza5Hl4GQohg
-         pbbouDTQeTBOIGzm4H8JosDTwFvDGHdUS74b/+Ge8F7eMaVb11HvBYEsDm26mSEMp3go
-         brMA==
+        bh=EViT7BJIcNkz6P/zp8OyML6ofNzjC4PZyjReA8d+JCk=;
+        b=NoMoKcX2y4SnQDMAbeopqVi9B3+uCYBq+jZvl7VKONOgFlOv1REjvTi2UphjgMeodl
+         ePsW7c6AdQBpTyFK8btbwHADDptbtqI6oP1URBi9pecR9A4gn7KHdM3NSmrxFPoIm7FV
+         jRd6wqN8xmyWHX7G3leS+uodOwYhWwp1yMlJQ7WnKRQ9sx5OI1w2hWTK+9pWmtZjrw2v
+         VnxzDNVhEXKC/dNKq587V28B5f68xG5HZZ5MOAVW/cX5vfZiUqAVKHF2dFwVrD8JSaLQ
+         eKCuROYdqU+XnGRwyLipWw8PtaQmzpxVciRZUHHzhwv+/FnENf1PH4Pfu3OgZP1VFUgI
+         GDYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 105/140] ALSA: hda/realtek - Make dock sound work on ThinkPad L570
-Date: Tue, 13 Mar 2018 16:25:08 +0100
-Message-Id: <20180313152505.202223395@linuxfoundation.org>
+Subject: [PATCH 4.14 104/140] ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
+Date: Tue, 13 Mar 2018 16:25:07 +0100
+Message-Id: <20180313152505.138979979@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837011394940891?=
-X-GMAIL-MSGID: =?utf-8?q?1594837538433735793?=
+X-GMAIL-THRID: =?utf-8?q?1594836979266801098?=
+X-GMAIL-MSGID: =?utf-8?q?1594837535685347230?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +48,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e4c07b3b66b7d6a24c2fe3b1ddeff5cd9b378b3a upstream.
+commit e312a869cd726c698a75caca0d9e5c22fd3f1534 upstream.
 
-One version of Lenovo Thinkpad T570 did not use ALC298
-(like other Kaby Lake devices). Instead it uses ALC292.
-In order to make the Lenovo dock working with that codec
-the dock quirk for ALC292 will be used.
+The dock line-out pin (NID 0x17 of ALC3254 codec) on Dell Precision
+7520 may route to three different DACs, 0x02, 0x03 and 0x06.  The
+first two DACS have the volume amp controls while the last one
+doesn't.  And unfortunately, the auto-parser assigns this pin to DAC3,
+resulting in the non-working volume control for the line out.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Fix it by disabling the routing to DAC3 on the corresponding pin.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199029
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -6404,6 +6404,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x2245, "Thinkpad T470", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2246, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2247, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x2249, "Thinkpad", ALC292_FIXUP_TPT460),
- 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+@@ -5129,6 +5129,16 @@ static void alc298_fixup_speaker_volume(
+ 	}
+ }
+ 
++/* disable DAC3 (0x06) selection on NID 0x17 as it has no volume amp control */
++static void alc295_fixup_disable_dac3(struct hda_codec *codec,
++				      const struct hda_fixup *fix, int action)
++{
++	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		hda_nid_t conn[2] = { 0x02, 0x03 };
++		snd_hda_override_conn_list(codec, 0x17, 2, conn);
++	}
++}
++
+ /* Hook to update amp GPIO4 for automute */
+ static void alc280_hp_gpio4_automute_hook(struct hda_codec *codec,
+ 					  struct hda_jack_callback *jack)
+@@ -5321,6 +5331,7 @@ enum {
+ 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
+ 	ALC255_FIXUP_DELL_SPK_NOISE,
+ 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
++	ALC295_FIXUP_DISABLE_DAC3,
+ 	ALC280_FIXUP_HP_HEADSET_MIC,
+ 	ALC221_FIXUP_HP_FRONT_MIC,
+ 	ALC292_FIXUP_TPT460,
+@@ -6055,6 +6066,10 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC298_FIXUP_DELL_AIO_MIC_NO_PRESENCE,
+ 	},
++	[ALC295_FIXUP_DISABLE_DAC3] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc295_fixup_disable_dac3,
++	},
+ 	[ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+@@ -6245,6 +6260,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x0725, "Dell Inspiron 3162", ALC255_FIXUP_DELL_SPK_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
++	SND_PCI_QUIRK(0x1028, 0x07b0, "Dell Precision 7520", ALC295_FIXUP_DISABLE_DAC3),
+ 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
+ 	SND_PCI_QUIRK(0x1028, 0x080c, "Dell WYSE", ALC225_FIXUP_DELL_WYSE_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
