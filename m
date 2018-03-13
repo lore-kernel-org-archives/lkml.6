@@ -1,55 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeCMKYo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:24:44 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34987 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932639AbeCMKYn (ORCPT
+        id S932669AbeCMK14 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:27:56 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34527 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932521AbeCMK1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:24:43 -0400
-X-Google-Smtp-Source: AG47ELtKcGl58J80il/XJBF6dTYTiyoFVEyp/lB9AftoXkei+sHzGli9dm+rYHoMQnzI6RrXQu3eWQ==
-Date: Tue, 13 Mar 2018 19:24:37 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: Re: [PATCHv2 2/2] zram: drop max_zpage_size and use
- zs_huge_class_size()
-Message-ID: <20180313102437.GA5114@jagdpanzerIV>
-References: <20180306070639.7389-1-sergey.senozhatsky@gmail.com>
- <20180306070639.7389-3-sergey.senozhatsky@gmail.com>
- <20180313090249.GA240650@rodete-desktop-imager.corp.google.com>
+        Tue, 13 Mar 2018 06:27:54 -0400
+Subject: Re: [PATCH 09/11] media: vsp1: Provide support for extended command
+ pools
+To: jacopo mondi <jacopo@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <02dcefdd58c734623b9caf2513316380feb9f993.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <20180312163045.GE12967@w540>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <3ba8e871-5218-cac1-19d0-bdaaa182bf45@ideasonboard.com>
+Date: Tue, 13 Mar 2018 10:27:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313090249.GA240650@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180312163045.GE12967@w540>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Minchan,
+Hi Jacopo,
 
-On (03/13/18 18:02), Minchan Kim wrote:
-> Sorry for being late.
-> I love this patchset! Just a minor below.
-
-:)
-
-[..]
-> > +	if (!huge_class_size)
-> > +		huge_class_size = zs_huge_class_size();
+On 12/03/18 16:30, jacopo mondi wrote:
+> Hi Kieran,
+>     just one small thing I noticed below...
 > 
-> If it is static, we can do this in zram_init? I believe it's more readable in that
-> it's never changed betweens zram instances.
+> On Fri, Mar 09, 2018 at 10:04:07PM +0000, Kieran Bingham wrote:
+>> VSPD and VSP-DL devices can provide extended display lists supporting
+>> extended command display list objects.
+>>
+>> These extended commands require their own dma memory areas for a header
+>> and body specific to the command type.
+>>
+>> Implement a command pool to allocate all necessary memory in a single
+>> DMA allocation to reduce pressure on the TLB, and provide convenvient
+>> re-usable command objects for the entities to utilise.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  drivers/media/platform/vsp1/vsp1_dl.c | 189 +++++++++++++++++++++++++++-
+>>  drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
+>>  2 files changed, 192 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+>> index 36440a2a2c8b..6d17b8bfa21c 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+>> @@ -121,6 +121,30 @@ struct vsp1_dl_body_pool {
+>>  };
+>>
+>>  /**
+>> + * struct vsp1_cmd_pool - display list body pool
+>> + * @dma: DMA address of the entries
+>> + * @size: size of the full DMA memory pool in bytes
+>> + * @mem: CPU memory pointer for the pool
+>> + * @bodies: Array of DLB structures for the pool
+>> + * @free: List of free DLB entries
+>> + * @lock: Protects the pool and free list
+>> + * @vsp1: the VSP1 device
+>> + */
+>> +struct vsp1_dl_cmd_pool {
+>> +	/* DMA allocation */
+>> +	dma_addr_t dma;
+>> +	size_t size;
+>> +	void *mem;
+>> +
+>> +	struct vsp1_dl_ext_cmd *cmds;
+>> +	struct list_head free;
+>> +
+>> +	spinlock_t lock;
+>> +
+>> +	struct vsp1_device *vsp1;
+>> +};
+>> +
+>> +/**
+>>   * struct vsp1_dl_list - Display list
+>>   * @list: entry in the display list manager lists
+>>   * @dlm: the display list manager
+>> @@ -176,6 +200,7 @@ struct vsp1_dl_manager {
+>>  	struct vsp1_dl_list *pending;
+>>
+>>  	struct vsp1_dl_body_pool *pool;
+>> +	struct vsp1_dl_cmd_pool *autfld_cmds;
+>>  };
+>>
+>>  /* -----------------------------------------------------------------------------
+>> @@ -339,6 +364,139 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+>>  }
+>>
+>>  /* -----------------------------------------------------------------------------
+>> + * Display List Extended Command Management
+>> + */
+>> +
+>> +enum vsp1_extcmd_type {
+>> +	VSP1_EXTCMD_AUTODISP,
+>> +	VSP1_EXTCMD_AUTOFLD,
+>> +};
+>> +
+>> +struct vsp1_extended_command_info {
+>> +	u16 opcode;
+>> +	size_t body_size;
+>> +} vsp1_extended_commands[] = {
+>> +	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
+>> +	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
+>> +};
+> 
+> How about making this one static and const, since it does not get
+> modified?
 
-We need to have at least one pool, because pool decides where the
-watermark is. At zram_init() stage we don't have a pool yet. We
-zs_create_pool() in zram_meta_alloc() so that's why I put
-zs_huge_class_size() there. I'm not in love with it, but that's
-the only place where we can have it.
+Good spot. Certainly. This is just a static descriptor table of the extended
+command parameter sizes, so it should not change.  (but could be added to in
+later hardware operations I presume).
 
-	-ss
+Cheers
+
+Kieran
+
+
+> 
+> Thanks
+>    j
+> 
