@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752466AbeCMIsb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:48:31 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:15890 "EHLO
+        id S1752443AbeCMIsW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:48:22 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:64433 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752022AbeCMIs3 (ORCPT
+        with ESMTP id S1752022AbeCMIsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:48:29 -0400
+        Tue, 13 Mar 2018 04:48:19 -0400
 From: Zong Li <zong@andestech.com>
 To: <palmer@sifive.com>, <albert@sifive.com>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <zong@andestech.com>, <zongbox@gmail.com>
 CC: <greentime@andestech.com>
-Subject: [PATCH 05/11] RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
-Date: Tue, 13 Mar 2018 16:35:10 +0800
-Message-ID: <390fb9c030aa83ba978070bf1df163bc4f5633e1.1520928420.git.zong@andestech.com>
+Subject: [PATCH 01/11] RISC-V: Add sections of PLT and GOT for kernel module
+Date: Tue, 13 Mar 2018 16:35:06 +0800
+Message-ID: <135c18787ccbe7a87e99d408e49e0df0b510d573.1520928420.git.zong@andestech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1520928420.git.zong@andestech.com>
 References: <cover.1520928420.git.zong@andestech.com>
@@ -22,78 +22,347 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.1.85]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w2D8XK8j025074
+X-MAIL: ATCSQR.andestech.com w2D8X0SM024945
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI20 and LO12_I/LO12_S relocate the absolute address, the range of
-offset must in 32-bit.
+The address of external symbols will locate more than 32-bit offset
+in 64-bit kernel with sv39 or sv48 virtual addressing.
+
+Module loader emits the GOT and PLT entries for data symbols and
+function symbols respectively.
+
+The PLT entry is a trampoline code for jumping to the 64-bit
+real address. The GOT entry is just the data symbol address.
 
 Signed-off-by: Zong Li <zong@andestech.com>
 ---
- arch/riscv/kernel/module.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/riscv/Kconfig                  |   5 ++
+ arch/riscv/Makefile                 |   3 +
+ arch/riscv/include/asm/module.h     | 102 ++++++++++++++++++++++++++
+ arch/riscv/kernel/Makefile          |   1 +
+ arch/riscv/kernel/module-sections.c | 139 ++++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/module.lds        |   7 ++
+ 6 files changed, 257 insertions(+)
+ create mode 100644 arch/riscv/include/asm/module.h
+ create mode 100644 arch/riscv/kernel/module-sections.c
+ create mode 100644 arch/riscv/kernel/module.lds
 
-diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
-index 7e85e5840b4d..654fe7dcd38d 100644
---- a/arch/riscv/kernel/module.c
-+++ b/arch/riscv/kernel/module.c
-@@ -92,6 +92,45 @@ static int apply_r_riscv_pcrel_lo12_s_rela(struct module *me, u32 *location,
- 	return 0;
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 310b9a5d6737..e2ff7c23dfe0 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -135,6 +135,9 @@ choice
+ 		bool "medium any code model"
+ endchoice
  
-+static int apply_r_riscv_hi20_rela(struct module *me, u32 *location,
-+				   Elf_Addr v)
-+{
-+	s32 hi20;
++config MODULE_SECTIONS
++	bool "Support GOT and PLT sections"
 +
-+	if (IS_ENABLED(CMODEL_MEDLOW)) {
-+		pr_err(
-+		  "%s: target %016llx can not be addressed by the 32-bit offset from PC = %p\n",
-+		  me->name, v, location);
-+		return -EINVAL;
+ choice
+ 	prompt "Maximum Physical Memory"
+ 	default MAXPHYSMEM_2GB if 32BIT
+@@ -145,6 +148,8 @@ choice
+ 		bool "2GiB"
+ 	config MAXPHYSMEM_128GB
+ 		depends on 64BIT && CMODEL_MEDANY
++		select MODULE_SECTIONS if MODULES
++		select HAVE_MOD_ARCH_SPECIFIC
+ 		bool "128GiB"
+ endchoice
+ 
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 26892daefa05..d8b4e5c9277f 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -56,6 +56,9 @@ endif
+ ifeq ($(CONFIG_CMODEL_MEDANY),y)
+ 	KBUILD_CFLAGS += -mcmodel=medany
+ endif
++ifeq ($(CONFIG_MODULE_SECTIONS),y)
++	KBUILD_LDFLAGS_MODULE += -T $(srctree)/arch/riscv/kernel/module.lds
++endif
+ 
+ # GCC versions that support the "-mstrict-align" option default to allowing
+ # unaligned accesses.  While unaligned accesses are explicitly allowed in the
+diff --git a/arch/riscv/include/asm/module.h b/arch/riscv/include/asm/module.h
+new file mode 100644
+index 000000000000..bcc48d113deb
+--- /dev/null
++++ b/arch/riscv/include/asm/module.h
+@@ -0,0 +1,102 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2017 Andes Technology Corporation */
++
++#ifndef _ASM_RISCV_MODULE_H
++#define _ASM_RISCV_MODULE_H
++
++#include <asm-generic/module.h>
++
++#define MODULE_ARCH_VERMAGIC    "riscv"
++
++#ifdef CONFIG_MODULE_SECTIONS
++struct mod_section {
++	struct elf64_shdr *shdr;
++	int num_entries;
++	int max_entries;
++};
++
++struct mod_arch_specific {
++	struct mod_section got;
++	struct mod_section plt;
++};
++#endif
++
++u64 module_emit_got_entry(struct module *mod, u64 val);
++u64 module_emit_plt_entry(struct module *mod, u64 val);
++
++struct got_entry {
++	u64 symbol_addr;	/* the real variable address */
++};
++
++static inline struct got_entry emit_got_entry(u64 val)
++{
++	return (struct got_entry) {val};
++}
++
++static inline struct got_entry *get_got_entry(u64 val,
++					      const struct mod_section *sec)
++{
++	struct got_entry *got = (struct got_entry *)sec->shdr->sh_addr;
++	int i;
++	for (i = 0; i < sec->num_entries; i++) {
++		if (got[i].symbol_addr == val)
++			return &got[i];
++	}
++	return NULL;
++}
++
++struct plt_entry {
++	/*
++	 * Trampoline code to real target address. The return address
++	 * should be the original (pc+4) before entring plt entry.
++	 * For 8 byte alignment of symbol_addr,
++	 * don't pack structure to remove the padding.
++	 */
++	u32 insn_auipc;		/* auipc t0, 0x0                       */
++	u32 insn_ld;		/* ld    t1, 0x10(t0)                  */
++	u32 insn_jr;		/* jr    t1                            */
++	u64 symbol_addr;	/* the real jump target address        */
++};
++
++#define OPC_AUIPC  0x0017
++#define OPC_LD     0x3003
++#define OPC_JALR   0x0067
++#define REG_T0     0x5
++#define REG_T1     0x6
++#define IMM_OFFSET 0x10
++
++static inline struct plt_entry emit_plt_entry(u64 val)
++{
++	/*
++	 * U-Type encoding:
++	 * +------------+----------+----------+
++	 * | imm[31:12] | rd[11:7] | opc[6:0] |
++	 * +------------+----------+----------+
++	 *
++	 * I-Type encoding:
++	 * +------------+------------+--------+----------+----------+
++	 * | imm[31:20] | rs1[19:15] | funct3 | rd[11:7] | opc[6:0] |
++	 * +------------+------------+--------+----------+----------+
++	 *
++	 */
++	return (struct plt_entry) {
++		OPC_AUIPC | (REG_T0 << 7),
++		OPC_LD | (IMM_OFFSET << 20) | (REG_T0 << 15) | (REG_T1 << 7),
++		OPC_JALR | (REG_T1 << 15),
++		val
++	};
++}
++
++static inline struct plt_entry *get_plt_entry(u64 val,
++					      const struct mod_section *sec)
++{
++	struct plt_entry *plt = (struct plt_entry *)sec->shdr->sh_addr;
++	int i;
++	for (i = 0; i < sec->num_entries; i++) {
++		if (plt[i].symbol_addr == val)
++			return &plt[i];
++	}
++	return NULL;
++}
++
++#endif /* _ASM_RISCV_MODULE_H */
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index 196f62ffc428..d355e3c18278 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -34,6 +34,7 @@ CFLAGS_setup.o := -mcmodel=medany
+ obj-$(CONFIG_SMP)		+= smpboot.o
+ obj-$(CONFIG_SMP)		+= smp.o
+ obj-$(CONFIG_MODULES)		+= module.o
++obj-$(CONFIG_MODULE_SECTIONS)	+= module-sections.o
+ obj-$(CONFIG_FUNCTION_TRACER)	+= mcount.o
+ obj-$(CONFIG_FUNCTION_GRAPH_TRACER)	+= ftrace.o
+ 
+diff --git a/arch/riscv/kernel/module-sections.c b/arch/riscv/kernel/module-sections.c
+new file mode 100644
+index 000000000000..94ba1551eac3
+--- /dev/null
++++ b/arch/riscv/kernel/module-sections.c
+@@ -0,0 +1,139 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2014-2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
++ *
++ * Copyright (C) 2018 Andes Technology Corporation <zong@andestech.com>
++ */
++
++#include <linux/elf.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++u64 module_emit_got_entry(struct module *mod, u64 val)
++{
++	struct mod_section *got_sec = &mod->arch.got;
++	int i = got_sec->num_entries;
++	struct got_entry *got = get_got_entry(val, got_sec);
++
++	if (got)
++		return (u64)got;
++
++	/* There is no duplicate entry, create a new one */
++	got = (struct got_entry *)got_sec->shdr->sh_addr;
++	got[i] = emit_got_entry(val);
++
++	got_sec->num_entries++;
++	BUG_ON(got_sec->num_entries > got_sec->max_entries);
++
++	return (u64)&got[i];
++}
++
++u64 module_emit_plt_entry(struct module *mod, u64 val)
++{
++	struct mod_section *plt_sec = &mod->arch.plt;
++	struct plt_entry *plt = get_plt_entry(val, plt_sec);
++	int i = plt_sec->num_entries;
++
++	if (plt)
++		return (u64)plt;
++
++	/* There is no duplicate entry, create a new one */
++	plt = (struct plt_entry *)plt_sec->shdr->sh_addr;
++	plt[i] = emit_plt_entry(val);
++
++	plt_sec->num_entries++;
++	BUG_ON(plt_sec->num_entries > plt_sec->max_entries);
++
++	return (u64)&plt[i];
++}
++
++static int is_rela_equal(const Elf64_Rela *x, const Elf64_Rela *y)
++{
++	return x->r_info == y->r_info && x->r_addend == y->r_addend;
++}
++
++static bool duplicate_rela(const Elf64_Rela *rela, int idx)
++{
++	int i;
++	for (i = 0; i < idx; i++) {
++		if (is_rela_equal(&rela[i], &rela[idx]))
++			return true;
++	}
++	return false;
++}
++
++static void count_max_entries(Elf64_Rela *relas, int num,
++			      unsigned int *plts, unsigned int *gots)
++{
++	unsigned int type, i;
++
++	for (i = 0; i < num; i++) {
++		type = ELF64_R_TYPE(relas[i].r_info);
++		if (type == R_RISCV_CALL_PLT) {
++			if (!duplicate_rela(relas, i))
++				(*plts)++;
++		} else if (type == R_RISCV_GOT_HI20) {
++			if (!duplicate_rela(relas, i))
++				(*gots)++;
++		}
++	}
++}
++
++int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
++			      char *secstrings, struct module *mod)
++{
++	unsigned int num_plts = 0;
++	unsigned int num_gots = 0;
++	int i;
++
++	/*
++	 * Find the empty .got and .plt sections.
++	 */
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
++			mod->arch.plt.shdr = sechdrs + i;
++		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".got"))
++			mod->arch.got.shdr = sechdrs + i;
 +	}
 +
-+	hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	*location = (*location & 0xfff) | hi20;
++	if (!mod->arch.plt.shdr) {
++		pr_err("%s: module PLT section(s) missing\n", mod->name);
++		return -ENOEXEC;
++	}
++	if (!mod->arch.got.shdr) {
++		pr_err("%s: module GOT section(s) missing\n", mod->name);
++		return -ENOEXEC;
++	}
++
++	/* Calculate the maxinum number of entries */
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		Elf64_Rela *relas = (void *)ehdr + sechdrs[i].sh_offset;
++		int num_rela = sechdrs[i].sh_size / sizeof(Elf64_Rela);
++		Elf64_Shdr *dst_sec = sechdrs + sechdrs[i].sh_info;
++
++		if (sechdrs[i].sh_type != SHT_RELA)
++			continue;
++
++		/* ignore relocations that operate on non-exec sections */
++		if (!(dst_sec->sh_flags & SHF_EXECINSTR))
++			continue;
++
++		count_max_entries(relas, num_rela, &num_plts, &num_gots);
++	}
++
++	mod->arch.plt.shdr->sh_type = SHT_NOBITS;
++	mod->arch.plt.shdr->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
++	mod->arch.plt.shdr->sh_addralign = L1_CACHE_BYTES;
++	mod->arch.plt.shdr->sh_size = (num_plts + 1) * sizeof(struct plt_entry);
++	mod->arch.plt.num_entries = 0;
++	mod->arch.plt.max_entries = num_plts;
++
++	mod->arch.got.shdr->sh_type = SHT_NOBITS;
++	mod->arch.got.shdr->sh_flags = SHF_ALLOC;
++	mod->arch.got.shdr->sh_addralign = L1_CACHE_BYTES;
++	mod->arch.got.shdr->sh_size = (num_gots + 1) * sizeof(struct got_entry);
++	mod->arch.got.num_entries = 0;
++	mod->arch.got.max_entries = num_gots;
++
 +	return 0;
 +}
+diff --git a/arch/riscv/kernel/module.lds b/arch/riscv/kernel/module.lds
+new file mode 100644
+index 000000000000..7ef580e62883
+--- /dev/null
++++ b/arch/riscv/kernel/module.lds
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2017 Andes Technology Corporation */
 +
-+static int apply_r_riscv_lo12_i_rela(struct module *me, u32 *location,
-+				     Elf_Addr v)
-+{
-+	/* Skip medlow checking because of filtering by HI20 already */
-+	s32 hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	s32 lo12 = ((s32)v - hi20);
-+	*location = (*location & 0xfffff) | ((lo12 & 0xfff) << 20);
-+	return 0;
++SECTIONS {
++	.plt (NOLOAD) : { BYTE(0) }
++	.got (NOLOAD) : { BYTE(0) }
 +}
-+
-+static int apply_r_riscv_lo12_s_rela(struct module *me, u32 *location,
-+				     Elf_Addr v)
-+{
-+	/* Skip medlow checking because of filtering by HI20 already */
-+	s32 hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	s32 lo12 = ((s32)v - hi20);
-+	u32 imm11_5 = (lo12 & 0xfe0) << (31 - 11);
-+	u32 imm4_0 = (lo12 & 0x1f) << (11 - 4);
-+	*location = (*location & 0x1fff07f) | imm11_5 | imm4_0;
-+	return 0;
-+}
-+
- static int apply_r_riscv_got_hi20_rela(struct module *me, u32 *location,
- 				       Elf_Addr v)
- {
-@@ -176,6 +215,9 @@ static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
- 	[R_RISCV_PCREL_HI20]		= apply_r_riscv_pcrel_hi20_rela,
- 	[R_RISCV_PCREL_LO12_I]		= apply_r_riscv_pcrel_lo12_i_rela,
- 	[R_RISCV_PCREL_LO12_S]		= apply_r_riscv_pcrel_lo12_s_rela,
-+	[R_RISCV_HI20]			= apply_r_riscv_hi20_rela,
-+	[R_RISCV_LO12_I]		= apply_r_riscv_lo12_i_rela,
-+	[R_RISCV_LO12_S]		= apply_r_riscv_lo12_s_rela,
- 	[R_RISCV_GOT_HI20]		= apply_r_riscv_got_hi20_rela,
- 	[R_RISCV_CALL_PLT]		= apply_r_riscv_call_plt_rela,
- 	[R_RISCV_CALL]			= apply_r_riscv_call_rela,
 -- 
 2.16.1
