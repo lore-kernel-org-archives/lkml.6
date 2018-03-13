@@ -1,304 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeCMGWZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:22:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42605 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCMGWX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:22:23 -0400
-Date: Mon, 12 Mar 2018 23:21:40 -0700
-From: tip-bot for Milind Chabbi <tipbot@zytor.com>
-Message-ID: <tip-f30b09b7f8aed3180d6e2f2984e32e91c7a7fcd1@git.kernel.org>
-Cc: acme@redhat.com, jolsa@kernel.org, will.deacon@arm.com,
-        chabbi.milind@gmail.com, onestero@redhat.com, dsahern@gmail.com,
-        mpe@ellerman.id.au, fweisbec@gmail.com, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
-        namhyung@kernel.org, sukadev@linux.vnet.ibm.com, peterz@infradead.org,
-        mingo@kernel.org, yao.jin@linux.intel.com, tglx@linutronix.de,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        hbathini@linux.vnet.ibm.com, kan.liang@intel.com
-Reply-To: alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
-        hpa@zytor.com, mpe@ellerman.id.au, fweisbec@gmail.com,
-        dsahern@gmail.com, onestero@redhat.com, jolsa@kernel.org,
-        will.deacon@arm.com, acme@redhat.com, chabbi.milind@gmail.com,
-        jolsa@redhat.com, kan.liang@intel.com, hbathini@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, yao.jin@linux.intel.com,
-        tglx@linutronix.de, peterz@infradead.org, sukadev@linux.vnet.ibm.com,
-        mingo@kernel.org, namhyung@kernel.org
-In-Reply-To: <20180312134548.31532-8-jolsa@kernel.org>
-References: <20180312134548.31532-8-jolsa@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Implement fast breakpoint modification
- via _IOC_MODIFY_ATTRIBUTES
-Git-Commit-ID: f30b09b7f8aed3180d6e2f2984e32e91c7a7fcd1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752170AbeCMGWj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:22:39 -0400
+Received: from mga04.intel.com ([192.55.52.120]:52838 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752096AbeCMGWh (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 02:22:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
+   d="scan'208";a="25162178"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v1 2/4] perf browser: bypass ui_init if in tui dump mode
+Date: Tue, 13 Mar 2018 22:16:52 +0800
+Message-Id: <1520950614-22082-3-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
+References: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f30b09b7f8aed3180d6e2f2984e32e91c7a7fcd1
-Gitweb:     https://git.kernel.org/tip/f30b09b7f8aed3180d6e2f2984e32e91c7a7fcd1
-Author:     Milind Chabbi <chabbi.milind@gmail.com>
-AuthorDate: Mon, 12 Mar 2018 14:45:47 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Mar 2018 06:56:08 +0100
+We create a tui dump mode in previous patch. In tui dump mode, the output
+is written to stdio. We need to bypass ui_init() in setup_browser().
 
-perf/core: Implement fast breakpoint modification via _IOC_MODIFY_ATTRIBUTES
-
-Problem and motivation: Once a breakpoint perf event (PERF_TYPE_BREAKPOINT)
-is created, there is no flexibility to change the breakpoint type
-(bp_type), breakpoint address (bp_addr), or breakpoint length (bp_len). The
-only option is to close the perf event and configure a new breakpoint
-event. This inflexibility has a significant performance overhead. For
-example, sampling-based, lightweight performance profilers (and also
-concurrency bug detection tools),  monitor different addresses for a short
-duration using PERF_TYPE_BREAKPOINT and change the address (bp_addr) to
-another address or change the kind of breakpoint (bp_type) from  "write" to
-a "read" or vice-versa or change the length (bp_len) of the address being
-monitored. The cost of these modifications is prohibitive since it involves
-unmapping the circular buffer associated with the perf event, closing the
-perf event, opening another perf event and mmaping another circular buffer.
-
-Solution: The new ioctl flag for perf events,
-PERF_EVENT_IOC_MODIFY_ATTRIBUTES, introduced in this patch takes a pointer
-to a struct perf_event_attr as an argument to update an old breakpoint
-event with new address, type, and size. This facility allows retaining a
-previous mmaped perf events ring buffer and avoids having to close and
-reopen another perf event.
-
-This patch supports only changing PERF_TYPE_BREAKPOINT event type; future
-implementations can extend this feature. The patch replicates some of its
-functionality of modify_user_hw_breakpoint() in
-kernel/events/hw_breakpoint.c. modify_user_hw_breakpoint cannot be called
-directly since perf_event_ctx_lock() is already held in _perf_ioctl().
-
-Evidence: Experiments show that the baseline (not able to modify an already
-created breakpoint) costs an order of magnitude (~10x) more than the
-suggested optimization (having the ability to dynamically modifying a
-configured breakpoint via ioctl). When the breakpoints typically do not
-trap, the speedup due to the suggested optimization is ~10x; even when the
-breakpoints always trap, the speedup is ~4x due to the suggested
-optimization.
-
-Testing: tests posted at
-https://github.com/linux-contrib/perf_event_modify_bp demonstrate the
-performance significance of this patch. Tests also check the functional
-correctness of the patch.
-
-Signed-off-by: Milind Chabbi <chabbi.milind@gmail.com>
-[ Using modify_user_hw_breakpoint_check function. ]
-[ Reformated PERF_EVENT_IOC_*, so the values are all in one column. ]
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Oleg Nesterov <onestero@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/20180312134548.31532-8-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 ---
- include/linux/hw_breakpoint.h         |  7 +++++
- include/uapi/linux/perf_event.h       | 23 +++++++++--------
- kernel/events/core.c                  | 48 +++++++++++++++++++++++++++++++++++
- kernel/events/hw_breakpoint.c         |  2 +-
- tools/include/uapi/linux/perf_event.h | 23 +++++++++--------
- 5 files changed, 80 insertions(+), 23 deletions(-)
+ tools/perf/builtin-annotate.c | 2 +-
+ tools/perf/builtin-c2c.c      | 2 +-
+ tools/perf/builtin-report.c   | 2 +-
+ tools/perf/builtin-top.c      | 2 +-
+ tools/perf/ui/setup.c         | 9 +++++++--
+ tools/perf/ui/ui.h            | 2 +-
+ 6 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/hw_breakpoint.h b/include/linux/hw_breakpoint.h
-index cf045885a499..abeba094f080 100644
---- a/include/linux/hw_breakpoint.h
-+++ b/include/linux/hw_breakpoint.h
-@@ -53,6 +53,9 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
- /* FIXME: only change from the attr, and don't unregister */
- extern int
- modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr);
-+extern int
-+modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
-+				bool check);
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index ead6ae4..2db5b50 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -576,7 +576,7 @@ int cmd_annotate(int argc, const char **argv)
+ 	else if (annotate.use_gtk)
+ 		use_browser = 2;
  
- /*
-  * Kernel breakpoints are not associated with any particular thread.
-@@ -97,6 +100,10 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
- static inline int
- modify_user_hw_breakpoint(struct perf_event *bp,
- 			  struct perf_event_attr *attr)	{ return -ENOSYS; }
-+static inline int
-+__modify_user_hw_breakpoint(struct perf_event *bp,
-+			    struct perf_event_attr *attr) { return -ENOSYS; }
-+
- static inline struct perf_event *
- register_wide_hw_breakpoint_cpu(struct perf_event_attr *attr,
- 				perf_overflow_handler_t	 triggered,
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 6f873503552d..912b85b52344 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -448,17 +448,18 @@ struct perf_event_query_bpf {
- /*
-  * Ioctls that can be done on a perf event fd:
-  */
--#define PERF_EVENT_IOC_ENABLE		_IO ('$', 0)
--#define PERF_EVENT_IOC_DISABLE		_IO ('$', 1)
--#define PERF_EVENT_IOC_REFRESH		_IO ('$', 2)
--#define PERF_EVENT_IOC_RESET		_IO ('$', 3)
--#define PERF_EVENT_IOC_PERIOD		_IOW('$', 4, __u64)
--#define PERF_EVENT_IOC_SET_OUTPUT	_IO ('$', 5)
--#define PERF_EVENT_IOC_SET_FILTER	_IOW('$', 6, char *)
--#define PERF_EVENT_IOC_ID		_IOR('$', 7, __u64 *)
--#define PERF_EVENT_IOC_SET_BPF		_IOW('$', 8, __u32)
--#define PERF_EVENT_IOC_PAUSE_OUTPUT	_IOW('$', 9, __u32)
--#define PERF_EVENT_IOC_QUERY_BPF	_IOWR('$', 10, struct perf_event_query_bpf *)
-+#define PERF_EVENT_IOC_ENABLE			_IO ('$', 0)
-+#define PERF_EVENT_IOC_DISABLE			_IO ('$', 1)
-+#define PERF_EVENT_IOC_REFRESH			_IO ('$', 2)
-+#define PERF_EVENT_IOC_RESET			_IO ('$', 3)
-+#define PERF_EVENT_IOC_PERIOD			_IOW('$', 4, __u64)
-+#define PERF_EVENT_IOC_SET_OUTPUT		_IO ('$', 5)
-+#define PERF_EVENT_IOC_SET_FILTER		_IOW('$', 6, char *)
-+#define PERF_EVENT_IOC_ID			_IOR('$', 7, __u64 *)
-+#define PERF_EVENT_IOC_SET_BPF			_IOW('$', 8, __u32)
-+#define PERF_EVENT_IOC_PAUSE_OUTPUT		_IOW('$', 9, __u32)
-+#define PERF_EVENT_IOC_QUERY_BPF		_IOWR('$', 10, struct perf_event_query_bpf *)
-+#define PERF_EVENT_IOC_MODIFY_ATTRIBUTES	_IOW('$', 11, struct perf_event_attr *)
+-	setup_browser(true);
++	setup_browser(true, false);
  
- enum perf_event_ioc_flags {
- 	PERF_IOC_FLAG_GROUP		= 1U << 0,
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ee145bdee6ed..3b4c7792a6ac 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2846,6 +2846,41 @@ int perf_event_refresh(struct perf_event *event, int refresh)
- }
- EXPORT_SYMBOL_GPL(perf_event_refresh);
+ 	if (use_browser == 1 && annotate.has_br_stack) {
+ 		sort__mode = SORT_MODE__BRANCH;
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 98d243f..6abc13b 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2618,7 +2618,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	else
+ 		use_browser = 1;
  
-+static int perf_event_modify_breakpoint(struct perf_event *bp,
-+					 struct perf_event_attr *attr)
-+{
-+	int err;
-+
-+	_perf_event_disable(bp);
-+
-+	err = modify_user_hw_breakpoint_check(bp, attr, true);
-+	if (err) {
-+		if (!bp->attr.disabled)
-+			_perf_event_enable(bp);
-+
-+		return err;
-+	}
-+
-+	if (!attr->disabled)
-+		_perf_event_enable(bp);
-+	return 0;
-+}
-+
-+static int perf_event_modify_attr(struct perf_event *event,
-+				  struct perf_event_attr *attr)
-+{
-+	if (event->attr.type != attr->type)
-+		return -EINVAL;
-+
-+	switch (event->attr.type) {
-+	case PERF_TYPE_BREAKPOINT:
-+		return perf_event_modify_breakpoint(event, attr);
-+	default:
-+		/* Place holder for future additions. */
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
- static void ctx_sched_out(struct perf_event_context *ctx,
- 			  struct perf_cpu_context *cpuctx,
- 			  enum event_type_t event_type)
-@@ -4952,6 +4987,8 @@ static int perf_event_set_output(struct perf_event *event,
- 				 struct perf_event *output_event);
- static int perf_event_set_filter(struct perf_event *event, void __user *arg);
- static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd);
-+static int perf_copy_attr(struct perf_event_attr __user *uattr,
-+			  struct perf_event_attr *attr);
+-	setup_browser(false);
++	setup_browser(false, false);
  
- static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned long arg)
- {
-@@ -5024,6 +5061,17 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
- 
- 	case PERF_EVENT_IOC_QUERY_BPF:
- 		return perf_event_query_prog_array(event, (void __user *)arg);
-+
-+	case PERF_EVENT_IOC_MODIFY_ATTRIBUTES: {
-+		struct perf_event_attr new_attr;
-+		int err = perf_copy_attr((struct perf_event_attr __user *)arg,
-+					 &new_attr);
-+
-+		if (err)
-+			return err;
-+
-+		return perf_event_modify_attr(event,  &new_attr);
-+	}
- 	default:
- 		return -ENOTTY;
+ 	err = perf_session__process_events(session);
+ 	if (err) {
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 971ccba..99277b7 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1261,7 +1261,7 @@ int cmd_report(int argc, const char **argv)
  	}
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 0c82663395f7..6253d5519cd8 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -456,7 +456,7 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
+ 
+ 	if (strcmp(input_name, "-") != 0)
+-		setup_browser(true);
++		setup_browser(true, false);
+ 	else
+ 		use_browser = 0;
+ 
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 0a26b56..b7db01a 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1430,7 +1430,7 @@ int cmd_top(int argc, const char **argv)
+ 	else if (top.use_tui)
+ 		use_browser = 1;
+ 
+-	setup_browser(false);
++	setup_browser(false, false);
+ 
+ 	if (setup_sorting(top.evlist) < 0) {
+ 		if (sort_order)
+diff --git a/tools/perf/ui/setup.c b/tools/perf/ui/setup.c
+index 44fe824..8219b2e 100644
+--- a/tools/perf/ui/setup.c
++++ b/tools/perf/ui/setup.c
+@@ -73,9 +73,9 @@ int stdio__config_color(const struct option *opt __maybe_unused,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
  
--static int
-+int
- modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
- 			        bool check)
+-void setup_browser(bool fallback_to_pager)
++void setup_browser(bool fallback_to_pager, bool tui_dump)
  {
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 6f873503552d..912b85b52344 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -448,17 +448,18 @@ struct perf_event_query_bpf {
- /*
-  * Ioctls that can be done on a perf event fd:
-  */
--#define PERF_EVENT_IOC_ENABLE		_IO ('$', 0)
--#define PERF_EVENT_IOC_DISABLE		_IO ('$', 1)
--#define PERF_EVENT_IOC_REFRESH		_IO ('$', 2)
--#define PERF_EVENT_IOC_RESET		_IO ('$', 3)
--#define PERF_EVENT_IOC_PERIOD		_IOW('$', 4, __u64)
--#define PERF_EVENT_IOC_SET_OUTPUT	_IO ('$', 5)
--#define PERF_EVENT_IOC_SET_FILTER	_IOW('$', 6, char *)
--#define PERF_EVENT_IOC_ID		_IOR('$', 7, __u64 *)
--#define PERF_EVENT_IOC_SET_BPF		_IOW('$', 8, __u32)
--#define PERF_EVENT_IOC_PAUSE_OUTPUT	_IOW('$', 9, __u32)
--#define PERF_EVENT_IOC_QUERY_BPF	_IOWR('$', 10, struct perf_event_query_bpf *)
-+#define PERF_EVENT_IOC_ENABLE			_IO ('$', 0)
-+#define PERF_EVENT_IOC_DISABLE			_IO ('$', 1)
-+#define PERF_EVENT_IOC_REFRESH			_IO ('$', 2)
-+#define PERF_EVENT_IOC_RESET			_IO ('$', 3)
-+#define PERF_EVENT_IOC_PERIOD			_IOW('$', 4, __u64)
-+#define PERF_EVENT_IOC_SET_OUTPUT		_IO ('$', 5)
-+#define PERF_EVENT_IOC_SET_FILTER		_IOW('$', 6, char *)
-+#define PERF_EVENT_IOC_ID			_IOR('$', 7, __u64 *)
-+#define PERF_EVENT_IOC_SET_BPF			_IOW('$', 8, __u32)
-+#define PERF_EVENT_IOC_PAUSE_OUTPUT		_IOW('$', 9, __u32)
-+#define PERF_EVENT_IOC_QUERY_BPF		_IOWR('$', 10, struct perf_event_query_bpf *)
-+#define PERF_EVENT_IOC_MODIFY_ATTRIBUTES	_IOW('$', 11, struct perf_event_attr *)
+-	if (use_browser < 2 && (!isatty(1) || dump_trace))
++	if (use_browser < 2 && (!isatty(1) || dump_trace) && !tui_dump)
+ 		use_browser = 0;
  
- enum perf_event_ioc_flags {
- 	PERF_IOC_FLAG_GROUP		= 1U << 0,
+ 	/* default to TUI */
+@@ -92,6 +92,11 @@ void setup_browser(bool fallback_to_pager)
+ 		/* fall through */
+ 	case 1:
+ 		use_browser = 1;
++		if (tui_dump) {
++			setup_pager();
++			break;
++		}
++
+ 		if (ui__init() == 0)
+ 			break;
+ 		/* fall through */
+diff --git a/tools/perf/ui/ui.h b/tools/perf/ui/ui.h
+index 9b6fdf0..020a85b 100644
+--- a/tools/perf/ui/ui.h
++++ b/tools/perf/ui/ui.h
+@@ -11,7 +11,7 @@ extern void *perf_gtk_handle;
+ 
+ extern int use_browser;
+ 
+-void setup_browser(bool fallback_to_pager);
++void setup_browser(bool fallback_to_pager, bool tui_dump);
+ void exit_browser(bool wait_for_ok);
+ 
+ #ifdef HAVE_SLANG_SUPPORT
+-- 
+2.7.4
