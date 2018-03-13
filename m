@@ -1,23 +1,23 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELvr1/Ym4xkk33BqzfxbcyzR9TP3/Zkbh/+R7bYXnwgg9AXDpmMHAAU/njtKYT40eURUp7jd
+X-Google-Smtp-Source: AG47ELs2ZkE3VoxeLjf398XUvvARmkop5LUB+uKrb8OkYDHQg7uMCp5sH2wFEqywfkzK3YTuaylB
 ARC-Seal: i=1; a=rsa-sha256; t=1520966036; cv=none;
         d=google.com; s=arc-20160816;
-        b=eQ93Kqzg4UB4c6XXPSDkp1nP80d1nXBUDtjdr5oFRjOiduR2Du+b0Cu+POcXFAptH+
-         CNq9lin7EJIvf31ZaYrEvMm/dkpRYaYkT/EvPSmQOG0SJGysJyQulH79WUb6JQAqF7g4
-         UduM7GIpnS/8qEDFMYbEWtszL6qaoLjq4tLxStTHfRSieeisIp30DAKcuFGu5RONfNs3
-         mZe/fo0tRay4eMhDzHOCY49O7s+aNn3Ss0x8JgCg8e9Xq9WRN6u+25oMSzVoOWjjLb7e
-         YDqYWR6piLSFVPqhFMsGWyyvROKDMmpydthArptOq8BqlKwAY+VDRZsfdPejeYVsa9ww
-         EtDw==
+        b=y/YHtzmSm2s5kQQOn/aSJH0PFE0yUCNso3qZpUDiD/UXTHGXEYKGdScF0DA516iU6B
+         17iHXOHAM24YZMwStvLCRW2RxBp6X3c4vg2vcbavotPATTO30nrBoJYtEC7otnnjQH38
+         9h0XmggjcO2ai4xqr4GMgl8J0Z3KEJlDCJJxEIj/HyDhjAauuSYH+95qhOOtbe4VsZMX
+         QfPaci0wpe/qPM0MEZ+BDW37/RP42A7EK9nvoTPjMFbSmjHXEJVdYja7ZVamB8HCoarT
+         I4tL0LDoJauKKpqOgm9jum6TRodq4hj8iZ6X1QZDhrtnbLwBRuaEoJJ19mMiA6RkyIHk
+         b0EQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5MbJoKo+c1+tYVpuHyQ2aYrQ4Y0B9cuaEC+XCSoTvXs=;
-        b=dDdmAiZrE+6nsV9Z6L33ZlGUOh6lrIhJwTHwLzAhrCH0mMhLGfmUC9SqXHmffQahzL
-         hJGvLvydmzpBBj3l7MUlgjdPJVXydvlMxcjtBjDSTrwwy4i80r0HebiBI2d5p78ol/ZL
-         3dmQamm6xRVLiZqC+BCBfz7MPZ398alGcqE1umpjwacQ5hgg6qulVKtl3GOsjTGpCJne
-         UB/aGqAKBv7smp44vBNsULFD3rVZWaqvtaJK6mGoajlLnDknQmtGtE9Ces2vvEQ6rnUj
-         ypj0ZEfNtzD/7hJn3ez/9eVZiup9VoFGI27P5fMy8H+i36qvBP6ONSGy1+IXq7dWBBQL
-         fw+A==
+        bh=P3r7K1oneOgRUQO5dPxWxOWV/S+Mk6wT9HTRx0CiJdo=;
+        b=MXDJkilJ4JdyZkmhsRmf8h+9acPpr/r5KJ2vNBn2Md6Cd15oIg7D15+IwnoJs+ziFR
+         aaPB+VdH/tX571yQYk5r2I/zRRWsph1ggV75iE1wZFDecUzeKbL6SADiLbETDwLkp2af
+         FNM2sgM9rAKptJwlSjOG5XNJZDTQTkI0MjrWEhbLZM0lVdNJ1K8knRcM+4pwxPg1GEc7
+         uQAxA1QVEwICC1HaRWxy8sPr69HNsHvdHM4k8kPbIySzwH3gWt3Nac/evWTw0Yc/UOuH
+         3B5/3c0dFQCmEQbIdCjhqAMGm1aY5KpGuBoB3gHm/LzSc+pw08ObU5HK93WFpmmuy2Ts
+         heVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
@@ -54,17 +54,17 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
 	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 7/8] powerpc/64s: barrier_nospec: Add hcall triggerr
-Date: Tue, 13 Mar 2018 19:33:05 +0100
-Message-Id: <1c687d0e029de81ae27465dd4c32036e956f4970.1520965380.git.msuchanek@suse.de>
+Subject: [PATCH RFC 8/8] powerpc/64: barrier_nospec: Add commandline trigger
+Date: Tue, 13 Mar 2018 19:33:06 +0100
+Message-Id: <8639fc8cb02548d478b041c3a00ad9053fdd8bc4.1520965380.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594848482589457573?=
-X-GMAIL-MSGID: =?utf-8?q?1594848482589457573?=
+X-GMAIL-THRID: =?utf-8?q?1594848482819509094?=
+X-GMAIL-MSGID: =?utf-8?q?1594848482819509094?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -72,84 +72,27 @@ Copypasta from rfi implementation
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/platforms/pseries/setup.c | 38 ++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+ arch/powerpc/kernel/setup_64.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
-index 1a527625acf7..b779ddb8e250 100644
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -459,38 +459,50 @@ static void __init find_and_init_phbs(void)
- 	of_pci_check_probe_only();
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 4b67b7b877d9..257f0e6be107 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -840,6 +840,14 @@ static int __init handle_no_pti(char *p)
  }
+ early_param("nopti", handle_no_pti);
  
--static void pseries_setup_rfi_flush(void)
-+static void pseries_setup_rfi_nospec(void)
- {
- 	struct h_cpu_char_result result;
--	enum l1d_flush_type types;
--	bool enable;
-+	enum l1d_flush_type flush_types;
-+	enum spec_barrier_type barrier_type;
-+	bool flush_enable;
-+	bool barrier_enable;
- 	long rc;
- 
- 	/* Enable by default */
--	enable = true;
-+	flush_enable = true;
-+	barrier_enable = true;
-+	/* no fallback if the firmware does not tell us */
-+	barrier_type = SPEC_BARRIER_NONE;
- 
- 	rc = plpar_get_cpu_characteristics(&result);
- 	if (rc == H_SUCCESS) {
--		types = L1D_FLUSH_NONE;
-+		flush_types = L1D_FLUSH_NONE;
- 
- 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
--			types |= L1D_FLUSH_MTTRIG;
-+			flush_types |= L1D_FLUSH_MTTRIG;
- 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
--			types |= L1D_FLUSH_ORI;
-+			flush_types |= L1D_FLUSH_ORI;
-+		if (result.character & H_CPU_CHAR_SPEC_BAR_ORI31)
-+			barrier_type |= SPEC_BARRIER_ORI;
- 
- 		/* Use fallback if nothing set in hcall */
--		if (types == L1D_FLUSH_NONE)
--			types = L1D_FLUSH_FALLBACK;
-+		if (flush_types == L1D_FLUSH_NONE)
-+			flush_types = L1D_FLUSH_FALLBACK;
- 
- 		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
- 		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
--			enable = false;
-+			flush_enable = false;
++static int __init handle_no_nospec(char *p)
++{
++	pr_info("barrier_nospec: disabled on command line.");
++	no_nospec = true;
++	return 0;
++}
++early_param("no_nospec", handle_no_nospec);
 +
-+		if ((!(result.behaviour & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR)) ||
-+		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
-+			barrier_enable = false;
- 	} else {
- 		/* Default to fallback if case hcall is not available */
--		types = L1D_FLUSH_FALLBACK;
-+		flush_types = L1D_FLUSH_FALLBACK;
- 	}
- 
--	setup_rfi_flush(types, enable);
-+	setup_barrier_nospec(barrier_type, barrier_enable);
-+	setup_rfi_flush(flush_types, flush_enable);
- }
- 
- #ifdef CONFIG_PCI_IOV
-@@ -666,7 +678,7 @@ static void __init pSeries_setup_arch(void)
- 
- 	fwnmi_init();
- 
--	pseries_setup_rfi_flush();
-+	pseries_setup_rfi_nospec();
- 
- 	/* By default, only probe PCI (can be overridden by rtas_pci) */
- 	pci_add_flags(PCI_PROBE_ONLY);
+ static void do_nothing(void *unused)
+ {
+ 	/*
 -- 
 2.13.6
