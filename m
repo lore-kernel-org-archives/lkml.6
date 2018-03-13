@@ -1,145 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeCMJP3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:15:29 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:41799 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbeCMJOB (ORCPT
+        id S1752670AbeCMJPn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:15:43 -0400
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:46606 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752411AbeCMJPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:14:01 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIo5016505
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/11] kconfig: tests: test automatic submenu creation
-Date: Tue, 13 Mar 2018 18:12:05 +0900
-Message-Id: <1520932332-2449-5-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 13 Mar 2018 05:15:40 -0400
+X-Google-Smtp-Source: AG47ELsSSj6xZDyoi1fx3ZudzLEDFQbgg4gs7Gp9rQgLDw7fy6MItxhKmdxVWl40dc8DCoIjFDyOVKYNqW1uZdUSNxM=
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
+References: <20180312194715.GA3992@amd> <20180312194944.GA3979@amd>
+ <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
+ <20180312223521.vzccevf6z7ik5ysf@thinkpad> <20180312230407.GA7612@amd>
+ <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
+ <20180312231847.GB7612@amd> <20180313005103.brhhrxlatxfkdw7p@thinkpad> <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 Mar 2018 10:15:39 +0100
+X-Google-Sender-Auth: ySCmza7BLDsShEwPJVfCDrarus0
+Message-ID: <CAJZ5v0jjVAj_B6ex37E9Br+KbRkyOzYwwkX9Rh10=R0Mpdwc+Q@mail.gmail.com>
+Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
+ error in mate
+To: =?UTF-8?Q?Ognjen_Gali=C4=87?= <smclt30p@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        ACPI mailing list <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2D9GKLb031489
 
-If a symbols has dependency on the preceding symbol, the menu entry
-should become the submenu of the preceding one, and displayed with
-deeper indentation.
+On Tue, Mar 13, 2018 at 10:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, Mar 13, 2018 at 1:51 AM, Ognjen Galić <smclt30p@gmail.com> wrote:
+>> On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>> > >> > >> Fully charged
+>>> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
+>>> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
+>>> > >> > >> waiting to charge".
+>>> > >> > >>
+>>> > >>
+>>> > >> For the MATE bug see:
+>>> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
+>>> > >>
+>>> > >> The problem is in the new composite battery system in UPower, it
+>>> > >> "merges" two external batteries into a single one for reporting. That
+>>> > >> battery does not understand "Not Charging" inside the MATE Power
+>>> > >> Manager. The above patch fixes that in MATE.
+>>> > >
+>>> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
+>>> > >
+>>> > > And now, I see that MATE should be improved.
+>>> > >
+>>> > > But what I also see is that kernel is changing its interface in a way
+>>> > > that (while making sense) breaks existing application. And we don't
+>>> > > break existing applications.
+>>> > >
+>>> > > [Now... maybe if the fix for the application is available for long
+>>> > > long time and noone is really looking and everyone already has new
+>>> > > application version, maybe ... But pull request for MATE is 9 days
+>>> > > old, and not even merged. So there is no way this is suitable for
+>>> > > 4.17.]
+>>> >
+>>> > Right.
+>>> >
+>>> > This basically means that we will have to defer the battery changes
+>>> > until user space is ready and not just upstream, but also in distro
+>>> > packages.
+>>>
+>>> Yes please.
+>>>
+>>> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
+>>> anything, the others should be safe AFAICT?
+>>>
+>>>                                                               Pavel
+>>>
+>>
+>> Actually there is a bug in UPower itself, and that reflects the status
+>> icon being broken in almost all desktop environments. I will work on
+>> fixing UPower in the following days. Disregard my previous comment.
+>
+> I have reverted commit 91eea70e5e5ce12e for the time being.
+>
+> Of course, it can be applied again after all of the bus triggered by
+> it have been fixed and the fixes have gone to users.
 
-This is done by restructuring the menu tree in menu_finalize().
-It is a bit complicated computation, so let's add a test case.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-
-Changes in v3: None
-Changes in v2:
-  - shorten directory name  'auto_submenu_creation' -> 'auto_submenu'
-  - coding style clean-up based on PEP8, PEP257
-
- scripts/kconfig/tests/auto_submenu/Kconfig         | 50 ++++++++++++++++++++++
- scripts/kconfig/tests/auto_submenu/__init__.py     | 12 ++++++
- scripts/kconfig/tests/auto_submenu/expected_stdout | 10 +++++
- 3 files changed, 72 insertions(+)
- create mode 100644 scripts/kconfig/tests/auto_submenu/Kconfig
- create mode 100644 scripts/kconfig/tests/auto_submenu/__init__.py
- create mode 100644 scripts/kconfig/tests/auto_submenu/expected_stdout
-
-diff --git a/scripts/kconfig/tests/auto_submenu/Kconfig b/scripts/kconfig/tests/auto_submenu/Kconfig
-new file mode 100644
-index 0000000..c17bf2ca
---- /dev/null
-+++ b/scripts/kconfig/tests/auto_submenu/Kconfig
-@@ -0,0 +1,50 @@
-+config A
-+	bool "A"
-+	default y
-+
-+config A0
-+	bool "A0"
-+	depends on A
-+	default y
-+	help
-+	  This depends on A, so should be a submenu of A.
-+
-+config A0_0
-+	bool "A1_0"
-+	depends on A0
-+	help
-+	  Submenus are created recursively.
-+	  This should be a submenu of A0.
-+
-+config A1
-+	bool "A1"
-+	depends on A
-+	default y
-+	help
-+	  This should line up with A0.
-+
-+choice
-+	prompt "choice"
-+	depends on A1
-+	help
-+	  Choice should become a submenu as well.
-+
-+config A1_0
-+	bool "A1_0"
-+
-+config A1_1
-+	bool "A1_1"
-+
-+endchoice
-+
-+config B
-+	bool "B"
-+	help
-+	  This is independent of A.
-+
-+config C
-+	bool "C"
-+	depends on A
-+	help
-+	  This depends on A, but not a consecutive item, so can/should not
-+	  be a submenu.
-diff --git a/scripts/kconfig/tests/auto_submenu/__init__.py b/scripts/kconfig/tests/auto_submenu/__init__.py
-new file mode 100644
-index 0000000..32e79b8
---- /dev/null
-+++ b/scripts/kconfig/tests/auto_submenu/__init__.py
-@@ -0,0 +1,12 @@
-+"""
-+Create submenu for symbols that depend on the preceding one.
-+
-+If a symbols has dependency on the preceding symbol, the menu entry
-+should become the submenu of the preceding one, and displayed with
-+deeper indentation.
-+"""
-+
-+
-+def test(conf):
-+    assert conf.oldaskconfig() == 0
-+    assert conf.stdout_contains('expected_stdout')
-diff --git a/scripts/kconfig/tests/auto_submenu/expected_stdout b/scripts/kconfig/tests/auto_submenu/expected_stdout
-new file mode 100644
-index 0000000..bf5236f
---- /dev/null
-+++ b/scripts/kconfig/tests/auto_submenu/expected_stdout
-@@ -0,0 +1,10 @@
-+A (A) [Y/n/?] (NEW) 
-+  A0 (A0) [Y/n/?] (NEW) 
-+    A1_0 (A0_0) [N/y/?] (NEW) 
-+  A1 (A1) [Y/n/?] (NEW) 
-+    choice
-+    > 1. A1_0 (A1_0) (NEW)
-+      2. A1_1 (A1_1) (NEW)
-+    choice[1-2?]: 
-+B (B) [N/y/?] (NEW) 
-+C (C) [N/y/?] (NEW) 
--- 
-2.7.4
+s/bus/bugs/ (obviously)
