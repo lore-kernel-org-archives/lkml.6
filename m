@@ -1,199 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeCMFKZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 01:10:25 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:46863 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750784AbeCMFKX (ORCPT
+        id S1751383AbeCMFN2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 01:13:28 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:22937 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750872AbeCMFN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 01:10:23 -0400
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
-        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
-Subject: [PATCH v10] mmc: Export host capabilities to debugfs.
-Date: Tue, 13 Mar 2018 10:40:12 +0530
-Message-ID: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 13 Mar 2018 01:13:26 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180313051325epoutp016a870ad91dadf6dab86db52c567cd539~bYt4fOuoq1567515675epoutp01u
+X-AuditID: b6c32a35-879ff70000001031-8f-5aa75df4747e
+Subject: Re: [PATCH] arm: ubsan: select ARCH_HAS_UBSAN_SANITIZE_ALL
+To: jinb.park@samsung.com,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Message-id: <e279a3cf-c231-65b8-f966-de35e7df3035@samsung.com>
+Date: Tue, 13 Mar 2018 14:13:23 +0900
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+        Thunderbird/52.5.0
+MIME-version: 1.0
+In-reply-to: <20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-US
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTT/dL7PIog5t/hS2+THrHbvF+WQ+j
+        xaLj99ksNj2+xmpxedccNoul1y8yObB5rJm3htFj85J6j74tqxg9Pm+S83i9/xBjAGtUqk1G
+        amJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0AFKCmWJOaVA
+        oYDE4mIlfTubovzSklSFjPziElulaENDIz1DA3M9IyMjPRPjWCsjU6CShNSMS0sXMxb84am4
+        fecpSwPjdq4uRk4OCQETifa+YyxdjFwcQgI7GCUeLTnHBOF8Z5SYuKWfGabq4pEPUFUbGCVe
+        /p3FCuHcBWqZ2MoKUiUs4Cyx+NJzdpCEiMBqRolT55uYQRxmgfmMEr1/3rKBVLEJ6Ehs/3ac
+        CcTmFbCTeLTlI1icRUBV4u39aywgtqhAmMTRmZ8YIWoEJX5MvgcU5+DgFPCTaGrxAwkzC2hK
+        vPgyiQXCFpdobr0JZctLbF7zFmyvhMAJNolpTavZIH5wkVi6tpEdwhaWeHV8CzvITAkBaYlL
+        R20hwu2MEmdnC0P0TmGUWDGjmwkiYSzxbGEXE8QCPol3X3tYIXp5JTrahCBKPCTuLj8MNdJR
+        YuEvTkgATQWGw5YLTBMY5WYh+WYWkhdmIXlhFpIXFjCyrGIUSy0ozk1PLTYsMNQrTswtLs1L
+        10vOz93ECE6AWqY7GKec8znEKMDBqMTD29G6LEqINbGsuDL3EKMEB7OSCK/yf6AQb0piZVVq
+        UX58UWlOavEhRlNgaE9klhJNzgcm57ySeEMTSwMTMyNgYrM0NFQS5w0IcIkSEkhPLEnNTk0t
+        SC2C6WPi4JRqYAzVKXiht2DDr1mfBD48NOM6e2rmzQVX7pz0Lqu6w3rKo/bQL8ncyFk7y33u
+        FO5PYejJ2h7d/+LtHn7nwHTDfaGiBk/1LuyYMIGP02v6paaOY7LfH+xforbsOEeqsKn9vLag
+        A0WrTfe/4dg65f6/Fv/q88o7Lwr+t/cysKznfXfFR/vqm+pdBxmVWIozEg21mIuKEwGmERR7
+        lgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t9jQd0vscujDO6uYbb4Mukdu8X7ZT2M
+        FouO32ez2PT4GqvF5V1z2CyWXr/I5MDmsWbeGkaPzUvqPfq2rGL0+LxJzuP1/kOMAaxRXDYp
+        qTmZZalF+nYJXBmXli5mLPjDU3H7zlOWBsbtXF2MnBwSAiYSF498YOli5OIQEljHKHFp9QVG
+        COc+kPNqKTtIlbCAs8TiS8/ZQRIiAqsZJe6uuwJWxSwwn1HizsNOVoiW6YwSt3ZvZgZpYRPQ
+        kdj+7TgTiM0rYCfxaMtHNhCbRUBV4u39aywgtqhAmETPpsuMEDWCEj8m3wOKc3BwCvhJNLX4
+        gZjMAuoSU6bkglQwC4hLNLfeZIGw5SU2r3nLPIFRYBaS5lkIHbOQdMxC0rGAkWUVo2RqQXFu
+        em6xUYFhXmq5XnFibnFpXrpecn7uJkZg6G87rNW3g/H+kvhDjAIcjEo8vB2ty6KEWBPLiitz
+        DzFKcDArifAq/wcK8aYkVlalFuXHF5XmpBYfYpTmYFES572ddyxSSCA9sSQ1OzW1ILUIJsvE
+        wSnVwOjuPWGZ2r2/+hsSi7p325TnufeUfxPV9fW4t/OJa0KUvVPux4XLjibeSAzz0D/4SjpH
+        YLnmzWtMS+VrHPInyP/Jv9f20qTngsa7trthnq8EWLtr3tnu95ohpt1x+4y/L0u42TaVYNmn
+        Wzyaf0qXuB04vPge871Y66M/97PHtYa+2ceyJmT5dSWW4oxEQy3mouJEAHio5uB5AgAA
+X-CMS-MailID: 20180313051324epcas1p223607eeedce283cf72369f822376fe48
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26
+X-RootMTR: 20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26
+References: <CGME20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
+        <20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports the host capabilities to debugfs
-
-This idea of sharing host capabilities over debugfs
-came up from Abbas Raza <Abbas_Raza@mentor.com>
-Earlier discussions:
-https://lkml.org/lkml/2018/3/5/357
-https://www.spinics.net/lists/linux-mmc/msg48219.html
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
----
-
-Changes in v10:
-- minor review comment addressed. 
-- Added "Reviewed-by" line
-
-Changes in v9
-- More code cleanup as suggested by Andy Shevchenko.
-
-Changes in v8
-- Changes to use for_each_set_bit as suggested by Andy Shevchenko.
-
-Changes in v7
-- Moved additional capabilities also to caps file as mentioned by Ulf Hansson
-- compacting the code with macros
-
-Changes in v6:
-- Used DEFINE_SHOW_ATTRIBUTE
-
-Changes in v5:
-- Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
-- Changed Author
-
-Changes in v4:
-- Moved the creation of nodes to mmc_add_host_debugfs
-- Exported caps2
-- Renamed host_caps to caps
-
-Changes in v3:
-- Removed typecasting of &host->caps to (u32 *)
-
-Changes in v2:
-- Changed Author
-
- drivers/mmc/core/debugfs.c | 107 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
-
-diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-index c51e0c0..826d361 100644
---- a/drivers/mmc/core/debugfs.c
-+++ b/drivers/mmc/core/debugfs.c
-@@ -225,6 +225,110 @@ static int mmc_clock_opt_set(void *data, u64 val)
- DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
- 	"%llu\n");
- 
-+/*
-+ * mmc_host_capabilities - MMC host capabilities
-+ *
-+ * This must be in sync with caps definitions in the mmc/host.h
-+ */
-+static const char * const mmc_host_capabilities[] = {
-+	"4-bit transfers allowed",
-+	"Supports MMC high-speed timing",
-+	"Supports SD high-speed timing",
-+	"Can signal pending SDIO IRQs",
-+	"Talks only SPI protocols",
-+	"Needs polling for card-detection",
-+	"8 bit transfers allowed",
-+	"Suspends (e)MMC/SD at idle",
-+	"Nonremovable",
-+	"Waits while card is busy",
-+	"Allows erase/trim commands",
-+	"Supports DDR mode at 3.3V",
-+	"Supports DDR mode at 1.8V",
-+	"Supports DDR mode at 1.2V",
-+	"Can power off after boot",
-+	"CMD14/CMD19 bus width ok",
-+	"Supports UHS SDR12 mode",
-+	"Supports UHS SDR25 mode",
-+	"Supports UHS SDR50 mode",
-+	"Supports UHS SDR104 mode",
-+	"Supports UHS DDR50 mode",
-+	"Unknown (bit 21)",
-+	"Unknown (bit 22)",
-+	"Supports Driver Type A",
-+	"Supports Driver Type C",
-+	"Supports Driver Type D",
-+	"Unknown (bit 26)",
-+	"RW reqs can be completed within mmc_request_done()",
-+	"Supports Enable card detect wake",
-+	"Can send commands during data transfer",
-+	"CMD23 supported",
-+	"Supports Hardware reset"
-+};
-+
-+/*
-+ * mmc_host_capabilities2 - MMC host additional capabilities
-+ *
-+ * This must be in sync with caps2 definitions in the mmc/host.h
-+ */
-+static const char * const mmc_host_capabilities2[] = {
-+	"No access to Boot partition",
-+	"Unknown (bit 1)",
-+	"Can do full power cycle",
-+	"Unknown (bit 3)",
-+	"Unknown (bit 4)",
-+	"Supports HS200 1.8V SDR",
-+	"Supports HS200 1.2V SDR",
-+	"Unknown (bit 7)",
-+	"Unknown (bit 8)",
-+	"Unknown (bit 9)",
-+	"Card-detect signal active high",
-+	"Write-protect signal active high",
-+	"Unknown (bit 12)",
-+	"Unknown (bit 13)",
-+	"Can do complete power cycle of the card",
-+	"Supports HS400 1.8V",
-+	"Support HS400 1.2V",
-+	"SDIO IRQ - Nothread",
-+	"No physical write protect pin, assume always read-write",
-+	"Do not send SDIO commands during initialization",
-+	"Supports enhanced strobe",
-+	"Do not send SD commands during initialization",
-+	"Do not send (e)MMC commands during initialization",
-+	"Has eMMC command queue engine",
-+	"CQE can issue a direct command",
-+	"Unknown (bit 25)",
-+	"Unknown (bit 26)",
-+	"Unknown (bit 27)",
-+	"Unknown (bit 28)",
-+	"Unknown (bit 29)",
-+	"Unknown (bit 30)",
-+	"Unknown (bit 31)"
-+};
-+
-+static int mmc_caps_show(struct seq_file *s, void *unused)
-+{
-+	struct mmc_host *host = s->private;
-+	unsigned long caps = host->caps;
-+	unsigned long caps2 = host->caps2;
-+	int bit;
-+
-+	seq_puts(s, "MMC Host capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+
-+	for_each_set_bit(bit, &caps, ARRAY_SIZE(mmc_host_capabilities))
-+		seq_printf(s, "%s\n", mmc_host_capabilities[bit]);
-+
-+	seq_puts(s, "=============================================\n");
-+	seq_puts(s, "MMC Host additional capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+
-+	for_each_set_bit(bit, &caps2, ARRAY_SIZE(mmc_host_capabilities2))
-+		seq_printf(s, "%s\n", mmc_host_capabilities2[bit]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(mmc_caps);
-+
- void mmc_add_host_debugfs(struct mmc_host *host)
- {
- 	struct dentry *root;
-@@ -243,6 +347,9 @@ void mmc_add_host_debugfs(struct mmc_host *host)
- 	if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
- 		goto err_node;
- 
-+	if (!debugfs_create_file("caps", 0400, root, host, &mmc_caps_fops))
-+		goto err_node;
-+
- 	if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
- 			&mmc_clock_fops))
- 		goto err_node;
--- 
-1.9.1
+On 03/13/2018 01:53 PM, Jinbum Park wrote:
+> To enable UBSAN on arm, ARCH_HAS_UBSAN_SANITIZE_ALL is needed to be selected.
+> 
+> Basic test has passed on Raspberry Pi2, Raspbian jessi lite with
+> CONFIG_UBSAN_SANITIZE_ALL, CONFIG_UBSAN_NULL.
+> 
+> Signed-off-by: Jinbum Park <jinb.park@samsung.com>
+> ---
+>  arch/arm/Kconfig                  | 1 +
+>  arch/arm/boot/compressed/Makefile | 1 +
+>  arch/arm/vdso/Makefile            | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 1878083..bdd1561 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -7,6 +7,7 @@ config ARM
+>  	select ARCH_HAS_DEBUG_VIRTUAL if MMU
+>  	select ARCH_HAS_DEVMEM_IS_ALLOWED
+>  	select ARCH_HAS_ELF_RANDOMIZE
+> +	select ARCH_HAS_UBSAN_SANITIZE_ALL
+>  	select ARCH_HAS_SET_MEMORY
+>  	select ARCH_HAS_PHYS_TO_DMA
+>  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+> index 45a6b9b..1b374ba 100644
+> --- a/arch/arm/boot/compressed/Makefile
+> +++ b/arch/arm/boot/compressed/Makefile
+> @@ -24,6 +24,7 @@ OBJS		+= hyp-stub.o
+>  endif
+>  
+>  GCOV_PROFILE		:= n
+> +UBSAN_SANITIZE		:= n
+>  
+>  #
+>  # Architecture dependencies
+> diff --git a/arch/arm/vdso/Makefile b/arch/arm/vdso/Makefile
+> index bb411821..05597f7 100644
+> --- a/arch/arm/vdso/Makefile
+> +++ b/arch/arm/vdso/Makefile
+> @@ -29,6 +29,7 @@ CFLAGS_vgettimeofday.o = -O2
+>  
+>  # Disable gcov profiling for VDSO code
+>  GCOV_PROFILE := n
+> +UBSAN_SANITIZE := n
+>  
+>  # Force dependency
+>  $(obj)/vdso.o : $(obj)/vdso.so
+> 
