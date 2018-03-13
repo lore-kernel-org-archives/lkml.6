@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs3E8DLA6aP22/czBV6JyMcs+9OoOX7H1X4oow2sZ/hrqntZkhYi3h1noGcMTUZefOSitwd
-ARC-Seal: i=1; a=rsa-sha256; t=1520955208; cv=none;
+X-Google-Smtp-Source: AG47ELuAWFqhnz0Zb+7s7SAmDEOrCQW/0YsTsg8Zof/z/JeQETFVO0gFJnLn0TnBuMd+C06x1Pdb
+ARC-Seal: i=1; a=rsa-sha256; t=1520955205; cv=none;
         d=google.com; s=arc-20160816;
-        b=r/LyTk11yacLYhCuBrotEnpG/ro5ftpsYSOwAW77lquLscHyAVji72G+eZgAobG9F3
-         pIh7Go4GhRmi+5PTZxrbCnN8xiDq9CaYzMDCqrsOJ/ZZ00Ocu3MTHn9TmAeK3785R558
-         gg7OIJnaWaT7kwKPW2OfH4QzDcuQzW2PXQoWilx7w+9OJgEtYy2pngWHGrKQU/5oBX9L
-         FzDEk23DWYsCLXVZUWQxtsDnEem/FT/ZXjoGfEEY2g1OWstXtyjdvkRjLH5/QU3xn7zP
-         M2m+Hz7lsg5ZR4g2cq7DL9HraWbb8Q5DAXw76kJStrWwrYs3WmxLRsY0oKVsr7mTvcJr
-         ZNmA==
+        b=iQIqFyOlp0ApASYgu5vc5WAlkkoSOnAAjg0gINsF3WGc29Qk6BtjctiH+V8qOywIAF
+         Jn/a8RcMTEU+TGmvH7XC+0WpONZc99jjmwSK5S7ip1yQ+dZPdPWtwnMy+KQU/YRTSSZ6
+         eD46MbokUAjeoif5/5goaXTPlpsNjRbsypmp6xgCgJVGUspQ2Sw9uqP478wTrfBeCSPc
+         PoMQEZsiaP/bhg0Xdza+fCApvrPi4TmYlRYY+p5RWplkMtmyAHnZOqyzE+GDeo/RUN45
+         IaMsSDK1V2pB/4P4f+2QQv8lY2UGp68BEcc6Uh3jdK3Squ80NXk2wb+SwaD2DVYJWAS3
+         ehcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=L5cNd4HnMxs/3gB0HGp63UITxWuj/A7bbhFQfsVxDxE=;
-        b=EKPbhRudSVnfi/r0ngU7LN6vqChjm5aeeqrxTQ0cYMoQZGbv/RkFBYcVGv3BLhrQfn
-         IMJVkPn9TqKm2IR8RZpGrvysziaWE2KSChWpB1awgsQ3bmBWgKK78ogIG9i+sonBiQIX
-         ljLngAA5KL7XsPJV658IHMayPb/EpDkMtv1PrLxsSLMaCgs1ngV1W+TrBDFChQc0W79H
-         e1TwlGE/elGhIb3Jpjtt7V03thUjBRJYOMmReNkwwLiePhVKK/0jZd/3pR3j0D39s0tl
-         a4DLCLcGLyD3Vt5u8dJuYPRixza4Yo3t3kI0z1TCMaKeXNarr9kWxduOzVXa65XoNDlr
-         04iw==
+        bh=BZPK9RX98N76URfxjzYPPdfjXRiK7gCgtaYGy97aqt4=;
+        b=TD3opuNUZcMOnCgK9/KjlTFMNtaPdbcr1sK03Ez/N1732aLNhTR7KbZIx7a744ChDp
+         Tv7lxj07elQvilYKQ8h4Rb2m3O6ZHDbdSwIpLhXYiMNQ/IAUt4Xuzjcmf7uaIfJ6l6Yl
+         gBdcMhT6YD+P9lPktFbr3dBXPum5u7kzxpb8bLTZyGBd4J0JI/VbqzSkdFH7qD11WN1A
+         tX7rwTxEBYiVuhbdWeRFh929/NZAr0IeEMgjuKKG2XEXAj1d43mqoMNZXgYwh842V17V
+         4wXCYNYNuugoC8PsGT5rfFW98k1t9JvDKqcSnF2sBjZjL8DJknb2UffqkxsQy1g+rOS8
+         qqjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 100/146] objtool, retpolines: Integrate objtool with retpoline support more closely
-Date: Tue, 13 Mar 2018 16:24:27 +0100
-Message-Id: <20180313152328.262644942@linuxfoundation.org>
+	Quinn Tran <quinn.tran@cavium.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 124/146] scsi: qla2xxx: Fix system crash for Notify ack timeout handling
+Date: Tue, 13 Mar 2018 16:24:51 +0100
+Message-Id: <20180313152329.799578143@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -49,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837128607912092?=
-X-GMAIL-MSGID: =?utf-8?q?1594837128607912092?=
+X-GMAIL-THRID: =?utf-8?q?1594837125962234805?=
+X-GMAIL-MSGID: =?utf-8?q?1594837125962234805?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,89 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit d5028ba8ee5a18c9d0bb926d883c28b370f89009 upstream.
+commit 2e01d0ba868ec1d4d55ddcba519339e072b0bf4d upstream.
 
-Disable retpoline validation in objtool if your compiler sucks, and otherwise
-select the validation stuff for CONFIG_RETPOLINE=y (most builds would already
-have it set due to ORC).
+Fix NULL pointer crash due to missing timeout handling callback for
+Notify Ack IOCB.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
+Cc: <stable@vger.kernel.org> # 4.10+
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile               |    5 +++++
- arch/x86/Kconfig       |    1 +
- arch/x86/Makefile      |   10 +++-------
- scripts/Makefile.build |    2 ++
- 4 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -487,6 +487,11 @@ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG
- KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- endif
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -665,7 +665,7 @@ int qla24xx_async_notify_ack(scsi_qla_ho
+ 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha)+2);
  
-+RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
-+RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-+export RETPOLINE_CFLAGS
-+
- ifeq ($(config-targets),1)
- # ===========================================================================
- # *config targets only - make sure prerequisites are updated, and descend
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -432,6 +432,7 @@ config GOLDFISH
- config RETPOLINE
- 	bool "Avoid speculative indirect branches in kernel"
- 	default y
-+	select STACK_VALIDATION if HAVE_STACK_VALIDATION
- 	help
- 	  Compile kernel with the retpoline compiler options to guard against
- 	  kernel-to-user data leaks by avoiding speculative indirect
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -232,13 +232,9 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
- 
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
--    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
+ 	sp->u.iocb_cmd.u.nack.ntfy = ntfy;
 -
--    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
--    ifneq ($(RETPOLINE_CFLAGS),)
--        KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
--    endif
-+ifneq ($(RETPOLINE_CFLAGS),)
-+  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-+endif
- endif
++	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
+ 	sp->done = qla2x00_async_nack_sp_done;
  
- archscripts: scripts_basic
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -267,8 +267,10 @@ else
- objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
- endif
- ifdef CONFIG_RETPOLINE
-+ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args += --retpoline
- endif
-+endif
- 
- 
- ifdef CONFIG_MODVERSIONS
+ 	rval = qla2x00_start_sp(sp);
