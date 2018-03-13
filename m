@@ -1,38 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu2a8VgvuJrQ0DOIZytE9v9nYJazTrbieINWEQLH33mV/2fGXvCmlygYyWp7s/nTDmzKwmS
-ARC-Seal: i=1; a=rsa-sha256; t=1520954961; cv=none;
-        d=google.com; s=arc-20160816;
-        b=eZOySQjTJ0fzbMTLb7bZopMN5qftmOzVf94nOX1WqXsXjC//ZiBE7YVXdgkAWD0lXh
-         VPkrUkEEOfBdT6x8kCPndJ2BQ10w9ooT32W+D2VxJxIH7lN6VjVTdPCrrB4BsECWbqbV
-         asl3QGMG/yN4VUPtxuj+O1a+DifWWQtblF/OhSHXq/zMfbmnXzXdW5ocYQzxwtgm3yxJ
-         WuMyJY8YBoZgvWAnA13lEmG53oq7iyZKlN5StSFrE173PGCVExFRKOm/9p4ce9p3hpxr
-         MTpkuUQGWp+wgBSwjDd1zHjZBJ4/icYNEM6MrZ8U/0tgpjqEBDnWI2NdgRn6vf1FQIyh
-         BLzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=lK922/lm+jk6dEQgfcgIDkKyKSWomKOkz/qMHaIZK/Q=;
-        b=L1rNUSoar60ymB1V/le4zcdjreLS/HpLa60EY/K7wlUMG9dYKT2FUCnD2X6laLIsQ9
-         MXYmhp+AdhcfDQ2Rb1YNxfMScvQOrQMIq2nz7yVn5IXOynEny/6b9icRMMgCs47WAXFl
-         gF0O1+5uBQY2h7760bcw2KAYZXMYC6G5sRIQsDHgeNw3i9+rvcJU/poGA4e6gq6udaQk
-         k0lUadzDChYpnOcU14rwPiZjn1ICG4tHDNiXKc4+hAye7jT8/k88SE5J6F+OXrPP8iVk
-         AQj5NEAKi7s15Jfunt8QZjEJ0t5CEHwv5pnPCVz4m4ENpjjkW9AhVCrHhzSAirF24kt5
-         bwMQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520954961-2-7096817737564073641
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520954961; b=dFYZS+5y0b1R1SRcSQ1zQ9z6PPPYZHU2ZedIxRaCS/Rm+Qf
+    0WusnorqI4ebfn614WEGB9/OuHmzE8UosAW4QSHCYtWYK5SJrNSF5eh0kJoRqVtX
+    erKjpinnwjef8pha7tK4UwgM8vFh+kR8qQk3NnFMbPpsQ/caS3VOzzfA0lNYhfrF
+    bGQ6hzOcw7LS3t1c3ZK4r7I6xeY461z65Bed2hfvU/tHyYB+0/FGuDHiP/4gXwaG
+    4h/acWxemo7g1bGTRVl+AOAmz7+7j71kajr1wfNTzT5JhnkfDk1ALeaEm648/Ino
+    Xf3bAO18Qqq0RerEBswmDxc5CO3rhGXbcOal/6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520954961; bh=eG3Bv5ktjvWyMBhv2sZGDfts3D
+    I/sv1oYgfLjWVzcHE=; b=OSDCE2iLSr15QCm5aiksvQ/8ZOixhME5FkKGv6oQy0
+    cYg7f/sKPB3loIJtW1RRKJsKut0ELIBdQ9bmxXoeYu8PbeROGn93Jt9xyADBUIh7
+    wQkDDLY0jWV7fWrUmKpmpUay6xB5I7qj5g0bs2E9KMK67VzjPo5TUo9nK6BXgI+L
+    ObsjlQvuw4SCZPdeSeWg5e+LCkpFruguifTar99RfVPohK9s8Joy/UA564aESM4W
+    XOs5rjLFXmZ55QEnLdzkaWDy0TS5nGlw5nRGCsElz9hwV+iGGtPcxL5z3h1HrBr9
+    5Mh3F7HSdPjt2nHEG/75z8SjV0GxcA2ZuqMOyAmeZDpA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932443AbeCMP3D (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:29:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58226 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932268AbeCMP3A (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:29:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.15 041/146] MIPS: ath25: Check for kzalloc allocation failure
-Date: Tue, 13 Mar 2018 16:23:28 +0100
-Message-Id: <20180313152323.760025151@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Rex Zhu <Rex.Zhu@amd.com>
+Subject: [PATCH 4.15 034/146] drm/amdgpu: Notify sbios device ready before send request
+Date: Tue, 13 Mar 2018 16:23:21 +0100
+Message-Id: <20180313152323.176864899@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836869836230255?=
-X-GMAIL-MSGID: =?utf-8?q?1594836869836230255?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +80,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
+commit 1bced75f4ab04bec55aecb57d99435dc6d0ae5a0 upstream.
 
-Currently there is no null check on a failed allocation of board_data,
-and hence a null pointer dereference will occurr. Fix this by checking
-for the out of memory null pointer.
+it is required if a platform supports PCIe root complex
+core voltage reduction. After receiving this notification,
+SBIOS can apply default PCIe root complex power policy.
 
-Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.19+
-Patchwork: https://patchwork.linux-mips.org/patch/18657/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ath25/board.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/mips/ath25/board.c
-+++ b/arch/mips/ath25/board.c
-@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -540,6 +540,9 @@ int amdgpu_acpi_pcie_performance_request
+ 	size_t size;
+ 	u32 retry = 3;
  
- 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
-+	if (!board_data)
-+		goto error;
- 	ath25_board.config = (struct ath25_boarddata *)board_data;
- 	memcpy_fromio(board_data, bcfg, 0x100);
- 	if (broken_boarddata) {
++	if (amdgpu_acpi_pcie_notify_device_ready(adev))
++		return -EINVAL;
++
+ 	/* Get the device handle */
+ 	handle = ACPI_HANDLE(&adev->pdev->dev);
+ 	if (!handle)
