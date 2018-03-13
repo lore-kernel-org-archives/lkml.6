@@ -1,70 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932568AbeCMSYx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:24:53 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:55586 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752196AbeCMSYv (ORCPT
+        id S932447AbeCMSYm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:24:42 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50484 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeCMSYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:24:51 -0400
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Subject: [bug, bisected] pfifo_fast causes packet reordering
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-Message-ID: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
-Date: Tue, 13 Mar 2018 19:24:44 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Mar 2018 14:24:40 -0400
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
+        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [v6 1/2] mm: disable interrupts while initializing deferred pages
+Date: Tue, 13 Mar 2018 14:23:54 -0400
+Message-Id: <20180313182355.17669-2-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180313182355.17669-1-pasha.tatashin@oracle.com>
+References: <20180313182355.17669-1-pasha.tatashin@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During stress-testing our "ucan" USB/CAN adapter SocketCAN driver on 
-Linux v4.16-rc4-383-ged58d66f60b3 we observed that a small fraction of 
-packets are delivered out-of-order.
+Vlastimil Babka reported about a window issue during which when deferred
+pages are initialized, and the current version of on-demand initialization
+is finished, allocations may fail.  While this is highly unlikely scenario,
+since this kind of allocation request must be large, and must come from
+interrupt handler, we still want to cover it.
 
-We have tracked the problem down to the driver interface level, and it 
-seems that the driver's net_device_ops.ndo_start_xmit() function gets 
-the packets handed over in the wrong order.
+We solve this by initializing deferred pages with interrupts disabled, and
+holding node_size_lock spin lock while pages in the node are being
+initialized. The on-demand deferred page initialization that comes later
+will use the same lock, and thus synchronize with deferred_init_memmap().
 
-This behavior was not observed on Linux v4.15 and I have bisected the 
-problem down to this patch:
+It is unlikely for threads that initialize deferred pages to be
+interrupted.  They run soon after smp_init(), but before modules are
+initialized, and long before user space programs. This is why there is no
+adverse effect of having these threads running with interrupts disabled.
 
-> commit c5ad119fb6c09b0297446be05bd66602fa564758
-> Author: John Fastabend <john.fastabend@gmail.com>
-> Date:   Thu Dec 7 09:58:19 2017 -0800
-> 
->    net: sched: pfifo_fast use skb_array
-> 
->    This converts the pfifo_fast qdisc to use the skb_array data structure
->    and set the lockless qdisc bit. pfifo_fast is the first qdisc to support
->    the lockless bit that can be a child of a qdisc requiring locking. So
->    we add logic to clear the lock bit on initialization in these cases when
->    the qdisc graft operation occurs.
-> 
->    This also removes the logic used to pick the next band to dequeue from
->    and instead just checks a per priority array for packets from top priority
->    to lowest. This might need to be a bit more clever but seems to work
->    for now.
-> 
->    Signed-off-by: John Fastabend <john.fastabend@gmail.com>
->    Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ include/linux/memory_hotplug.h | 53 ++++++++++++++++++++++--------------------
+ include/linux/mmzone.h         |  5 ++--
+ mm/page_alloc.c                | 19 ++++++++-------
+ 3 files changed, 42 insertions(+), 35 deletions(-)
 
-The patch does not revert cleanly, but moving to one commit earlier 
-makes the problem go away.
-
-Selecting the "fq" scheduler instead of "pfifo_fast" makes the problem 
-go away as well.
-
-Is this an unintended side-effect of the patch or is there something the 
-driver has to do to request in-order delivery?
-
-Thanks,
-Jakob
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index aba5f86eb038..2b0265265c28 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -51,24 +51,6 @@ enum {
+ 	MMOP_ONLINE_MOVABLE,
+ };
+ 
+-/*
+- * pgdat resizing functions
+- */
+-static inline
+-void pgdat_resize_lock(struct pglist_data *pgdat, unsigned long *flags)
+-{
+-	spin_lock_irqsave(&pgdat->node_size_lock, *flags);
+-}
+-static inline
+-void pgdat_resize_unlock(struct pglist_data *pgdat, unsigned long *flags)
+-{
+-	spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
+-}
+-static inline
+-void pgdat_resize_init(struct pglist_data *pgdat)
+-{
+-	spin_lock_init(&pgdat->node_size_lock);
+-}
+ /*
+  * Zone resizing functions
+  *
+@@ -246,13 +228,6 @@ extern void clear_zone_contiguous(struct zone *zone);
+ 	___page;				\
+  })
+ 
+-/*
+- * Stub functions for when hotplug is off
+- */
+-static inline void pgdat_resize_lock(struct pglist_data *p, unsigned long *f) {}
+-static inline void pgdat_resize_unlock(struct pglist_data *p, unsigned long *f) {}
+-static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
+-
+ static inline unsigned zone_span_seqbegin(struct zone *zone)
+ {
+ 	return 0;
+@@ -293,6 +268,34 @@ static inline bool movable_node_is_enabled(void)
+ }
+ #endif /* ! CONFIG_MEMORY_HOTPLUG */
+ 
++#if defined(CONFIG_MEMORY_HOTPLUG) || defined(CONFIG_DEFERRED_STRUCT_PAGE_INIT)
++/*
++ * pgdat resizing functions
++ */
++static inline
++void pgdat_resize_lock(struct pglist_data *pgdat, unsigned long *flags)
++{
++	spin_lock_irqsave(&pgdat->node_size_lock, *flags);
++}
++static inline
++void pgdat_resize_unlock(struct pglist_data *pgdat, unsigned long *flags)
++{
++	spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
++}
++static inline
++void pgdat_resize_init(struct pglist_data *pgdat)
++{
++	spin_lock_init(&pgdat->node_size_lock);
++}
++#else /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
++/*
++ * Stub functions for when hotplug is off
++ */
++static inline void pgdat_resize_lock(struct pglist_data *p, unsigned long *f) {}
++static inline void pgdat_resize_unlock(struct pglist_data *p, unsigned long *f) {}
++static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
++#endif /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
++
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ 
+ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7522a6987595..d14168da66a7 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -633,14 +633,15 @@ typedef struct pglist_data {
+ #ifndef CONFIG_NO_BOOTMEM
+ 	struct bootmem_data *bdata;
+ #endif
+-#ifdef CONFIG_MEMORY_HOTPLUG
++#if defined(CONFIG_MEMORY_HOTPLUG) || defined(CONFIG_DEFERRED_STRUCT_PAGE_INIT)
+ 	/*
+ 	 * Must be held any time you expect node_start_pfn, node_present_pages
+ 	 * or node_spanned_pages stay constant.  Holding this will also
+ 	 * guarantee that any pfn_valid() stays that way.
+ 	 *
+ 	 * pgdat_resize_lock() and pgdat_resize_unlock() are provided to
+-	 * manipulate node_size_lock without checking for CONFIG_MEMORY_HOTPLUG.
++	 * manipulate node_size_lock without checking for CONFIG_MEMORY_HOTPLUG
++	 * or CONFIG_DEFERRED_STRUCT_PAGE_INIT.
+ 	 *
+ 	 * Nests above zone->lock and zone->span_seqlock
+ 	 */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 3d974cb2a1a1..cada509e2176 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1506,7 +1506,7 @@ static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
+ 		} else if (!(pfn & nr_pgmask)) {
+ 			deferred_free_range(pfn - nr_free, nr_free);
+ 			nr_free = 1;
+-			cond_resched();
++			touch_nmi_watchdog();
+ 		} else {
+ 			nr_free++;
+ 		}
+@@ -1535,7 +1535,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
+ 			continue;
+ 		} else if (!page || !(pfn & nr_pgmask)) {
+ 			page = pfn_to_page(pfn);
+-			cond_resched();
++			touch_nmi_watchdog();
+ 		} else {
+ 			page++;
+ 		}
+@@ -1552,23 +1552,25 @@ static int __init deferred_init_memmap(void *data)
+ 	int nid = pgdat->node_id;
+ 	unsigned long start = jiffies;
+ 	unsigned long nr_pages = 0;
+-	unsigned long spfn, epfn;
++	unsigned long spfn, epfn, first_init_pfn, flags;
+ 	phys_addr_t spa, epa;
+ 	int zid;
+ 	struct zone *zone;
+-	unsigned long first_init_pfn = pgdat->first_deferred_pfn;
+ 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
+ 	u64 i;
+ 
++	/* Bind memory initialisation thread to a local node if possible */
++	if (!cpumask_empty(cpumask))
++		set_cpus_allowed_ptr(current, cpumask);
++
++	pgdat_resize_lock(pgdat, &flags);
++	first_init_pfn = pgdat->first_deferred_pfn;
+ 	if (first_init_pfn == ULONG_MAX) {
++		pgdat_resize_unlock(pgdat, &flags);
+ 		pgdat_init_report_one_done();
+ 		return 0;
+ 	}
+ 
+-	/* Bind memory initialisation thread to a local node if possible */
+-	if (!cpumask_empty(cpumask))
+-		set_cpus_allowed_ptr(current, cpumask);
+-
+ 	/* Sanity check boundaries */
+ 	BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
+ 	BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
+@@ -1598,6 +1600,7 @@ static int __init deferred_init_memmap(void *data)
+ 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
+ 		deferred_free_pages(nid, zid, spfn, epfn);
+ 	}
++	pgdat_resize_unlock(pgdat, &flags);
+ 
+ 	/* Sanity check that the next zone really is unpopulated */
+ 	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
+-- 
+2.16.2
