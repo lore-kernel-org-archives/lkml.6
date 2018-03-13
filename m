@@ -1,299 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeCMJ5s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:57:48 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:57997 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752254AbeCMJ5o (ORCPT
+        id S1752687AbeCMJ61 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:58:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45308 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbeCMJ6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:57:44 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w2D9uEJx021254
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Petr Vorel <petr.vorel@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tue, 13 Mar 2018 05:58:25 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: ming.lei@redhat.com, linux-nvme@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] kconfig: make unmet dependency warnings readable
-Date: Tue, 13 Mar 2018 18:56:08 +0900
-Message-Id: <1520934968-30406-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH V3] nvme-pci: assign separate irq vectors for adminq and ioq1
+Date: Tue, 13 Mar 2018 17:58:08 +0800
+Message-Id: <1520935088-1343-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520934968-30406-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520934968-30406-1-git-send-email-yamada.masahiro@socionext.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130119
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the unmet dependency warnings end up with endlessly long
-expressions, most of which are false positives.
+Currently, adminq and ioq1 share the same irq vector which is set
+affinity to cpu0. If a system allows cpu0 to be offlined, the adminq
+will not be able work any more.
 
-Here is test code to demonstrate how it currently works.
+To fix this, assign separate irq vectors for adminq and ioq1. Set
+.pre_vectors == 1 when allocate irq vectors, then assign the first
+one to adminq which will have affinity cpumask with all possible
+cpus. On the other hand, if controller has only legacy or single
+-message MSI, we will setup adminq and 1 ioq and let them share
+the only one irq vector.
 
-[Test Case]
-
-  config DEP1
-          def_bool y
-
-  config DEP2
-          bool "DEP2"
-
-  config A
-          bool "A"
-          select E
-
-  config B
-          bool "B"
-          depends on DEP2
-          select E
-
-  config C
-          bool "C"
-          depends on DEP1 && DEP2
-          select E
-
-  config D
-          def_bool n
-          select E
-
-  config E
-          bool
-          depends on DEP1 && DEP2
-
-[Result]
-
-  $ make config
-  scripts/kconfig/conf  --oldaskconfig Kconfig
-  *
-  * Linux Kernel Configuration
-  *
-  DEP2 (DEP2) [N/y/?] (NEW) n
-  A (A) [N/y/?] (NEW) y
-  warning: (A && B && D) selects E which has unmet direct
-  dependencies (DEP1 && DEP2)
-
-Here, I see some points to be improved.
-
-First, '(A || B || D)' would make more sense than '(A && B && D)'.
-I am not sure if this is intentional, but expr_simplify_unmet_dep()
-turns OR expressions into AND, like follows:
-
-        case E_OR:
-                return expr_alloc_and(
-
-Second, we see false positives.  'A' is a real unmet dependency.
-'B' is false positive because 'DEP1' is fixed to 'y', and 'B' depends
-on 'DEP2'.  'C' was correctly dropped by expr_simplify_unmet_dep().
-'D' is also false positive because it has no chance to be enabled.
-Current expr_simplify_unmet_dep() cannot avoid those false positives.
-
-After all, I decided to use the same helpers as used for printing
-reverse dependencies in the help.
-
-With this commit, unreadable warnings (most of the reported symbols are
-false positives) in the real world:
-
-$ make ARCH=score allyesconfig
-scripts/kconfig/conf  --allyesconfig Kconfig
-warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM &&
- DWMAC_IPQ806X && DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP &&
- DWMAC_SOCFPGA && DWMAC_STI && TI_CPSW && PINCTRL_GEMINI &&
- PINCTRL_OXNAS && PINCTRL_ROCKCHIP && PINCTRL_DOVE &&
- PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG &&
- VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 &&
- LPC18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI &&
- COMMON_CLK_ASPEED && COMMON_CLK_NXP && COMMON_CLK_OXNAS &&
- COMMON_CLK_BOSTON && QCOM_ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI &&
- ATMEL_EBI && ST_IRQCHIP && RESET_IMX7 && PHY_HI6220_USB &&
- PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8XX_USB) selects
- MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
-warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS &&
- PINCTRL_PISTACHIO && PINCTRL_PIC32 && PINCTRL_MESON &&
- PINCTRL_NOMADIK && PINCTRL_MTK && PINCTRL_MT7622 && GPIO_TB10X)
- selects OF_GPIO which has unmet direct dependencies (GPIOLIB && OF &&
- HAS_IOMEM)
-warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP)
- selects FRAME_POINTER which has unmet direct dependencies
- (DEBUG_KERNEL && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN ||
- MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS)
-
-will be turned into:
-
-$ make ARCH=score allyesconfig
-scripts/kconfig/conf  --allyesconfig Kconfig
-
-WARNING: unmet direct dependencies detected for MFD_SYSCON
-  Depends on [n]: HAS_IOMEM [=n]
-  Selected by [y]:
-  - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 ||
- COMPILE_TEST [=y]) && OF [=y]
-  - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 ||
- COMPILE_TEST [=y])
-  - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
-  - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 ||
- COMPILE_TEST [=y])
-  - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
-  - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] ||
- COMPILE_TEST [=y])
-
-WARNING: unmet direct dependencies detected for OF_GPIO
-  Depends on [n]: GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
-  Selected by [y]:
-  - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK ||
- COMPILE_TEST [=y]) && OF [=y]
-  - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK ||
- COMPILE_TEST [=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
-
-WARNING: unmet direct dependencies detected for FRAME_POINTER
-  Depends on [n]: DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML ||
- SUPERH || BLACKFIN || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
-  Selected by [y]:
-  - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
- PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
- !ARC && !X86
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
+V2->V3
+ - change changelog based on Ming's insights
+ - some cleanup based on Andy's suggestions
 
-Changes in v4:
-  - Rename sym_warn_unmet_dependency() to sym_warn_unmet_dep()
-  - Shift "Depends on:" and "Selected by" to the right by one space
-  - Display value of "Depends on".  This can be '[m]' or '[n]'.
+V1->V2
+ - add case to handle the scenario where there is only one irq
+   vector
+ - add nvme_ioq_vector to map ioq vector and qid
 
-Changes in v3:
-  - Remove unused expr_get_leftmost_symbol()
-  - Move error message to the same line as 'WARNING'
-  - update test case
+ drivers/nvme/host/pci.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-Changes in v2:
-  - update test case
-
- scripts/kconfig/expr.c   | 42 ------------------------------------------
- scripts/kconfig/expr.h   |  1 -
- scripts/kconfig/symbol.c | 35 +++++++++++++++++++++++------------
- 3 files changed, 23 insertions(+), 55 deletions(-)
-
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 49376e1..e1a39e9 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -1137,48 +1137,6 @@ static int expr_compare_type(enum expr_type t1, enum expr_type t2)
- 	return 0;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index b6f43b7..47c33f4 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -84,6 +84,7 @@ struct nvme_dev {
+ 	struct dma_pool *prp_small_pool;
+ 	unsigned online_queues;
+ 	unsigned max_qid;
++	unsigned int num_vecs;
+ 	int q_depth;
+ 	u32 db_stride;
+ 	void __iomem *bar;
+@@ -139,6 +140,17 @@ static inline struct nvme_dev *to_nvme_dev(struct nvme_ctrl *ctrl)
+ 	return container_of(ctrl, struct nvme_dev, ctrl);
  }
  
--static inline struct expr *
--expr_get_leftmost_symbol(const struct expr *e)
--{
--
--	if (e == NULL)
--		return NULL;
--
--	while (e->type != E_SYMBOL)
--		e = e->left.expr;
--
--	return expr_copy(e);
--}
--
--/*
-- * Given expression `e1' and `e2', returns the leaf of the longest
-- * sub-expression of `e1' not containing 'e2.
-- */
--struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
--{
--	struct expr *ret;
--
--	switch (e1->type) {
--	case E_OR:
--		return expr_alloc_and(
--		    expr_simplify_unmet_dep(e1->left.expr, e2),
--		    expr_simplify_unmet_dep(e1->right.expr, e2));
--	case E_AND: {
--		struct expr *e;
--		e = expr_alloc_and(expr_copy(e1), expr_copy(e2));
--		e = expr_eliminate_dups(e);
--		ret = (!expr_eq(e, e1)) ? e1 : NULL;
--		expr_free(e);
--		break;
--		}
--	default:
--		ret = e1;
--		break;
--	}
--
--	return expr_get_leftmost_symbol(ret);
--}
--
- void expr_print(struct expr *e,
- 		void (*fn)(void *, struct symbol *, const char *),
- 		void *data, int prevtoken)
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 8dbf2a4..94a383b 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -305,7 +305,6 @@ struct expr *expr_transform(struct expr *e);
- int expr_contains_symbol(struct expr *dep, struct symbol *sym);
- bool expr_depends_symbol(struct expr *dep, struct symbol *sym);
- struct expr *expr_trans_compare(struct expr *e, enum expr_type type, struct symbol *sym);
--struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
- 
- void expr_fprint(struct expr *e, FILE *out);
- struct gstr; /* forward */
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index def860b..9e7d742 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -333,6 +333,27 @@ static struct symbol *sym_calc_choice(struct symbol *sym)
- 	return def_sym;
- }
- 
-+static void sym_warn_unmet_dep(struct symbol *sym)
++static inline unsigned int nvme_ioq_vector(struct nvme_dev *dev,
++		unsigned int qid)
 +{
-+	struct gstr gs = str_new();
-+
-+	str_printf(&gs,
-+		   "\nWARNING: unmet direct dependencies detected for %s\n",
-+		   sym->name);
-+	str_printf(&gs,
-+		   "  Depends on [%c]: ",
-+		   sym->dir_dep.tri == mod ? 'm' : 'n');
-+	expr_gstr_print(sym->dir_dep.expr, &gs);
-+	str_printf(&gs, "\n");
-+
-+	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, yes,
-+			       "  Selected by [y]:\n");
-+	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, mod,
-+			       "  Selected by [m]:\n");
-+
-+	fputs(str_get(&gs), stderr);
++	/*
++	 * If controller has only legacy or single-message MSI, there will
++	 * be only 1 irq vector. At the moment, we setup adminq + 1 ioq
++	 * and let them share irq vector.
++	 */
++	return (dev->num_vecs == 1) ? 0 : qid;
 +}
 +
- void sym_calc_value(struct symbol *sym)
+ /*
+  * An NVM Express queue.  Each device has at least two (one for admin
+  * commands and one for I/O commands).
+@@ -1457,7 +1469,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 		nvmeq->sq_cmds_io = dev->cmb + offset;
+ 	}
+ 
+-	nvmeq->cq_vector = qid - 1;
++	nvmeq->cq_vector = nvme_ioq_vector(dev, qid);
+ 	result = adapter_alloc_cq(dev, qid, nvmeq);
+ 	if (result < 0)
+ 		goto release_vector;
+@@ -1628,11 +1640,12 @@ static int nvme_create_io_queues(struct nvme_dev *dev)
  {
- 	struct symbol_value newval, oldval;
-@@ -414,18 +435,8 @@ void sym_calc_value(struct symbol *sym)
- 				}
- 			}
- 		calc_newval:
--			if (sym->dir_dep.tri < sym->rev_dep.tri) {
--				struct expr *e;
--				e = expr_simplify_unmet_dep(sym->rev_dep.expr,
--				    sym->dir_dep.expr);
--				fprintf(stderr, "warning: (");
--				expr_fprint(e, stderr);
--				fprintf(stderr, ") selects %s which has unmet direct dependencies (",
--					sym->name);
--				expr_fprint(sym->dir_dep.expr, stderr);
--				fprintf(stderr, ")\n");
--				expr_free(e);
--			}
-+			if (sym->dir_dep.tri < sym->rev_dep.tri)
-+				sym_warn_unmet_dep(sym);
- 			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
+ 	unsigned i, max;
+ 	int ret = 0;
++	int vec;
+ 
+ 	for (i = dev->ctrl.queue_count; i <= dev->max_qid; i++) {
+-		/* vector == qid - 1, match nvme_create_queue */
++		vec = nvme_ioq_vector(dev, i);
+ 		if (nvme_alloc_queue(dev, i, dev->q_depth,
+-		     pci_irq_get_node(to_pci_dev(dev->dev), i - 1))) {
++		     pci_irq_get_node(to_pci_dev(dev->dev), vec))) {
+ 			ret = -ENOMEM;
+ 			break;
  		}
- 		if (newval.tri == mod &&
+@@ -1913,6 +1926,8 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	int result, nr_io_queues;
+ 	unsigned long size;
++	struct irq_affinity affd = {.pre_vectors = 1};
++	int ret;
+ 
+ 	nr_io_queues = num_possible_cpus();
+ 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+@@ -1949,11 +1964,12 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	 * setting up the full range we need.
+ 	 */
+ 	pci_free_irq_vectors(pdev);
+-	nr_io_queues = pci_alloc_irq_vectors(pdev, 1, nr_io_queues,
+-			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY);
+-	if (nr_io_queues <= 0)
++	ret = pci_alloc_irq_vectors_affinity(pdev, 1, (nr_io_queues + 1),
++			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
++	if (ret <= 0)
+ 		return -EIO;
+-	dev->max_qid = nr_io_queues;
++	dev->num_vecs = ret;
++	dev->max_qid = max(ret - 1, 1);
+ 
+ 	/*
+ 	 * Should investigate if there's a performance win from allocating
 -- 
 2.7.4
