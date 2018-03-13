@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELukbDk8Wtx5PYFRn6a+LaKts0+Y30vXu48nWjEEiF21s2yrk6caXUseDhxKuQxgDFsblfZ5
-ARC-Seal: i=1; a=rsa-sha256; t=1520955399; cv=none;
+X-Google-Smtp-Source: AG47ELt4yMERNc6RUQDr+8lgJXCTMzQqtPqe9CvfU3yIq4fd9VZlWGolapdsEStdSeqdDRL3Dqqu
+ARC-Seal: i=1; a=rsa-sha256; t=1520955396; cv=none;
         d=google.com; s=arc-20160816;
-        b=PfBbOyoUqLBF7hgS/dU1ACmF9/6DF2qkd7iCk02ErTT25am9PYxoBT0BUhIg0VAZNG
-         vUFnQiDVhmE0p2JqPmHW1QfDeL/35djb9GiaXE+LPaD2gl2DeFksyvzu5tYAVd4wBz/P
-         qf/S5vbU5K4Dj8e4H5BK4oLVnYnrCTALx16YdcIkpxekd0szZfPO3ok02sPS9zBIdoky
-         DtJME0xFArbBc/cqyusJvL2fKHkIuPtCotnxQY9Pq5vCh2P6EfWEr3qvCxmhP9VVhSJV
-         KZGWKDn6Kc/f2Oo3bB6PeTuhQ/ZrjtfF6ioWnYzRds9W39YdZAE4TlTGW572f28gOvqN
-         XhSw==
+        b=xKx4PRZLjUYrsfl4MgGyaiphWEjrfHovtUwxBiHl7lqbTB5Dxml0TQffG5FxVdCMXi
+         cpn751p8chK++d9KT5LSWkq6EeR7V5VtpVvMtD6ZroGaMupafK0cl1i7g5VJhXQhvKj4
+         3p8lx2gmQHeVTc5GHjDe1k+oI7iu/4HB358I2nBUUGAi85YW8F679orw4aWGZThTEfqh
+         UTzx+TlHGc/McHeBRBYbBRBO4hHFDH0+wytFGFceak2U2ZuwsVLVC1cawTkPH/30PR/R
+         rtx+soXON0a7L+A63DxpPoiEQVSOZuUjOwNDEgKhPt7jwWrzeubC4miH9PiGoz6vDXs4
+         dFlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ff8gcn3j0iowiPl+13Sj3MEmgE6AU5bzFoWhgaQsm8c=;
-        b=PO3w6pRYo3LojaNtdJp8HXq9CjPn2Xv+Wm6te/OAzNFJ6LP/XyT30PmL3vjhcRDkHg
-         FQoxJuqXH9iAX2XxeZ9Mv+jX+Qwx9X8XnRpx8dWUP9eoVDLY6hvgKgDMKvYoMB8LfV8Y
-         V3alKqbxrwD8Vq17R8jiECENVjIEJMuMcOq5ZYvcmQOQC0HxhRpqDCWaDxJ3xNBf7tSc
-         RR4QvXDhFHAVMI1mi3oIm0CFeBFNcnecfKsDMWybdpGw7YtDTxKJXwLWq8CMG7DHdbj7
-         62Ls8H9Nqar1VE+rQRWzZdv3zlXV00sv2VUQx73ADi6/KYUMRTsxx3f+fOHxyoAfL766
-         sydQ==
+        bh=xuNjnC1m5k1zinVdMmClZTRJ/mnqtYM7Q7a8ru4sFhA=;
+        b=rNzgf1nh7JqI5oIDNHzILU2APQqRXAbNPDC23XX+9oBOM/NQSVwHifkjFoRT2KjyUW
+         zwiZzsX50lbLbnVnpU8NGI+nMNsUyp4ilvA2hbOx5367KursHPTA8WwnjhEouWDsRZhA
+         nFWCM6HD5dZB1fC6Y7zRfGIdcqvl9xqPR1CYLCEDcl+gX8aWyInmqJOHQHT9BcY4NbBm
+         DhzfA8o6gRnyjg1MmkhERe3per2QVdvkRVE07TBr66S+jz0uRh4BKeR+w+/BccB/ntjH
+         /xwmuviUVOs9R9+XbNdhGrFsw+Zm6KFGFZ4UujJR8YPq8Ggjsldu3yfLZ3wPqm6bLX4J
+         UpTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 037/140] scsi: qla2xxx: Fix scan state field for fcport
-Date: Tue, 13 Mar 2018 16:24:00 +0100
-Message-Id: <20180313152500.634088746@linuxfoundation.org>
+Subject: [PATCH 4.14 036/140] scsi: qla2xxx: Replace fcport alloc with qla2x00_alloc_fcport
+Date: Tue, 13 Mar 2018 16:23:59 +0100
+Message-Id: <20180313152500.547323028@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837165411969531?=
-X-GMAIL-MSGID: =?utf-8?q?1594837329031002537?=
+X-GMAIL-THRID: =?utf-8?q?1594837162674464832?=
+X-GMAIL-MSGID: =?utf-8?q?1594837325936376902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,12 +53,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 76f9a2dd4c60183879a1898bcd56a1dbab19a85d upstream.
+commit 063b36d6b0ad74c748d536f5cb47bac2f850a0fa upstream.
 
-Add correct value of scan_state field indicating state of the FC port
+Current code manually allocate an fcport structure that is not properly
+initialize. Replace kzalloc with qla2x00_alloc_fcport, so that all
+fields are initialized.  Also set set scan flag to port found
 
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org> # 4.10+
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Reviewed-by: Hannes Reinecke <hare@suse.com>
@@ -66,16 +67,17 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/qla2xxx/qla_target.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/scsi/qla2xxx/qla_target.c
 +++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -5788,6 +5788,7 @@ static fc_port_t *qlt_get_port_database(
- 		tfcp->port_type = fcport->port_type;
- 		tfcp->supported_classes = fcport->supported_classes;
- 		tfcp->flags |= fcport->flags;
-+		tfcp->scan_state = QLA_FCPORT_FOUND;
+@@ -5759,7 +5759,7 @@ static fc_port_t *qlt_get_port_database(
+ 	unsigned long flags;
+ 	u8 newfcport = 0;
  
- 		del = fcport;
- 		fcport = tfcp;
+-	fcport = kzalloc(sizeof(*fcport), GFP_KERNEL);
++	fcport = qla2x00_alloc_fcport(vha, GFP_KERNEL);
+ 	if (!fcport) {
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf06f,
+ 		    "qla_target(%d): Allocation of tmp FC port failed",
