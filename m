@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeCMSkt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:40:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49791 "EHLO
+        id S1751842AbeCMSmr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:42:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49801 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbeCMSkp (ORCPT
+        with ESMTP id S1751666AbeCMSmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:40:45 -0400
-Date: Tue, 13 Mar 2018 19:40:39 +0100
+        Tue, 13 Mar 2018 14:42:45 -0400
+Date: Tue, 13 Mar 2018 19:42:41 +0100
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: linux-rt-users <linux-rt-users@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -15,10 +15,10 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: [RT PATCH 1/2] Revert "block: blk-mq: Use swait"
-Message-ID: <20180313184039.begptzircgb5ketk@linutronix.de>
-References: <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
- <20180309110418.lwtennjqwqcxh422@linutronix.de>
+Subject: [RT PATCH 2/2] block: blk-mq: move blk_queue_usage_counter_release()
+ into process context
+Message-ID: <20180313184240.ndq2pw2fmvhkwidc@linutronix.de>
+References: <20180309110418.lwtennjqwqcxh422@linutronix.de>
  <20180309174605.GC4064@hirez.programming.kicks-ass.net>
  <20180309202550.j66qphz3txupt55u@linutronix.de>
  <20180309222643.GC5926@hirez.programming.kicks-ass.net>
@@ -27,105 +27,122 @@ References: <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
  <20180312141107.roveviectc6a75s7@linutronix.de>
  <20180312142933.GF4043@hirez.programming.kicks-ass.net>
  <20180312195118.rye5lg2pb26kmavn@linutronix.de>
+ <20180313184039.begptzircgb5ketk@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180312195118.rye5lg2pb26kmavn@linutronix.de>
+In-Reply-To: <20180313184039.begptzircgb5ketk@linutronix.de>
 User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit "block: blk-mq: Use swait". The issue remains but
-will be fixed differently.
+| BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:914
+| in_atomic(): 1, irqs_disabled(): 0, pid: 255, name: kworker/u257:6
+| 5 locks held by kworker/u257:6/255:
+|  #0:  ("events_unbound"){.+.+.+}, at: [<ffffffff8108edf1>] process_one_work+0x171/0x5e0
+|  #1:  ((&entry->work)){+.+.+.}, at: [<ffffffff8108edf1>] process_one_work+0x171/0x5e0
+|  #2:  (&shost->scan_mutex){+.+.+.}, at: [<ffffffffa000faa3>] __scsi_add_device+0xa3/0x130 [scsi_mod]
+|  #3:  (&set->tag_list_lock){+.+...}, at: [<ffffffff812f09fa>] blk_mq_init_queue+0x96a/0xa50
+|  #4:  (rcu_read_lock_sched){......}, at: [<ffffffff8132887d>] percpu_ref_kill_and_confirm+0x1d/0x120
+| Preemption disabled at:[<ffffffff812eff76>] blk_mq_freeze_queue_start+0x56/0x70
+|
+| CPU: 2 PID: 255 Comm: kworker/u257:6 Not tainted 3.18.7-rt0+ #1
+| Workqueue: events_unbound async_run_entry_fn
+|  0000000000000003 ffff8800bc29f998 ffffffff815b3a12 0000000000000000
+|  0000000000000000 ffff8800bc29f9b8 ffffffff8109aa16 ffff8800bc29fa28
+|  ffff8800bc5d1bc8 ffff8800bc29f9e8 ffffffff815b8dd4 ffff880000000000
+| Call Trace:
+|  [<ffffffff815b3a12>] dump_stack+0x4f/0x7c
+|  [<ffffffff8109aa16>] __might_sleep+0x116/0x190
+|  [<ffffffff815b8dd4>] rt_spin_lock+0x24/0x60
+|  [<ffffffff810b6089>] __wake_up+0x29/0x60
+|  [<ffffffff812ee06e>] blk_mq_usage_counter_release+0x1e/0x20
+|  [<ffffffff81328966>] percpu_ref_kill_and_confirm+0x106/0x120
+|  [<ffffffff812eff76>] blk_mq_freeze_queue_start+0x56/0x70
+|  [<ffffffff812f0000>] blk_mq_update_tag_set_depth+0x40/0xd0
+|  [<ffffffff812f0a1c>] blk_mq_init_queue+0x98c/0xa50
+|  [<ffffffffa000dcf0>] scsi_mq_alloc_queue+0x20/0x60 [scsi_mod]
+|  [<ffffffffa000ea35>] scsi_alloc_sdev+0x2f5/0x370 [scsi_mod]
+|  [<ffffffffa000f494>] scsi_probe_and_add_lun+0x9e4/0xdd0 [scsi_mod]
+|  [<ffffffffa000fb26>] __scsi_add_device+0x126/0x130 [scsi_mod]
+|  [<ffffffffa013033f>] ata_scsi_scan_host+0xaf/0x200 [libata]
+|  [<ffffffffa012b5b6>] async_port_probe+0x46/0x60 [libata]
+|  [<ffffffff810978fb>] async_run_entry_fn+0x3b/0xf0
+|  [<ffffffff8108ee81>] process_one_work+0x201/0x5e0
+
+percpu_ref_kill_and_confirm() invokes blk_mq_usage_counter_release() in
+a rcu-sched region. swait based wake queue can't be used due to
+wake_up_all() usage and disabled interrupts in !RT configs (as reported
+by Corey Minyard).
+Uses work_queue() to invoke wake_up_all() in process context.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- block/blk-core.c       | 6 +++---
- block/blk-mq.c         | 8 ++++----
- include/linux/blkdev.h | 2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ block/blk-core.c       | 13 ++++++++++++-
+ include/linux/blkdev.h |  2 ++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/block/blk-core.c b/block/blk-core.c
-index ff1258ca236c..f9ac6f169c67 100644
+index f9ac6f169c67..4db4051724ea 100644
 --- a/block/blk-core.c
 +++ b/block/blk-core.c
-@@ -799,7 +799,7 @@ int blk_queue_enter(struct request_queue *q, bool nowait)
- 		 */
- 		smp_rmb();
+@@ -814,12 +814,20 @@ void blk_queue_exit(struct request_queue *q)
+ 	percpu_ref_put(&q->q_usage_counter);
+ }
  
--		ret = swait_event_interruptible(q->mq_freeze_wq,
-+		ret = wait_event_interruptible(q->mq_freeze_wq,
- 				!atomic_read(&q->mq_freeze_depth) ||
- 				blk_queue_dying(q));
- 		if (blk_queue_dying(q))
-@@ -819,7 +819,7 @@ static void blk_queue_usage_counter_release(struct percpu_ref *ref)
++static void blk_queue_usage_counter_release_swork(struct swork_event *sev)
++{
++	struct request_queue *q =
++		container_of(sev, struct request_queue, mq_pcpu_wake);
++
++	wake_up_all(&q->mq_freeze_wq);
++}
++
+ static void blk_queue_usage_counter_release(struct percpu_ref *ref)
+ {
  	struct request_queue *q =
  		container_of(ref, struct request_queue, q_usage_counter);
  
--	swake_up_all(&q->mq_freeze_wq);
-+	wake_up_all(&q->mq_freeze_wq);
+-	wake_up_all(&q->mq_freeze_wq);
++	swork_queue(&q->mq_pcpu_wake);
  }
  
  static void blk_rq_timed_out_timer(unsigned long data)
-@@ -895,7 +895,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
- 	q->bypass_depth = 1;
+@@ -896,6 +904,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
  	__set_bit(QUEUE_FLAG_BYPASS, &q->queue_flags);
  
--	init_swait_queue_head(&q->mq_freeze_wq);
-+	init_waitqueue_head(&q->mq_freeze_wq);
+ 	init_waitqueue_head(&q->mq_freeze_wq);
++	INIT_SWORK(&q->mq_pcpu_wake, blk_queue_usage_counter_release_swork);
  
  	/*
  	 * Init percpu_ref in atomic mode so that it's faster to shutdown.
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index bbe43d32f71a..c5bd467dd97b 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -132,14 +132,14 @@ EXPORT_SYMBOL_GPL(blk_freeze_queue_start);
+@@ -3623,6 +3632,8 @@ int __init blk_dev_init(void)
+ 	if (!kblockd_workqueue)
+ 		panic("Failed to create kblockd\n");
  
- void blk_mq_freeze_queue_wait(struct request_queue *q)
- {
--	swait_event(q->mq_freeze_wq, percpu_ref_is_zero(&q->q_usage_counter));
-+	wait_event(q->mq_freeze_wq, percpu_ref_is_zero(&q->q_usage_counter));
- }
- EXPORT_SYMBOL_GPL(blk_mq_freeze_queue_wait);
++	BUG_ON(swork_get());
++
+ 	request_cachep = kmem_cache_create("blkdev_requests",
+ 			sizeof(struct request), 0, SLAB_PANIC, NULL);
  
- int blk_mq_freeze_queue_wait_timeout(struct request_queue *q,
- 				     unsigned long timeout)
- {
--	return swait_event_timeout(q->mq_freeze_wq,
-+	return wait_event_timeout(q->mq_freeze_wq,
- 					percpu_ref_is_zero(&q->q_usage_counter),
- 					timeout);
- }
-@@ -182,7 +182,7 @@ void blk_mq_unfreeze_queue(struct request_queue *q)
- 	WARN_ON_ONCE(freeze_depth < 0);
- 	if (!freeze_depth) {
- 		percpu_ref_reinit(&q->q_usage_counter);
--		swake_up_all(&q->mq_freeze_wq);
-+		wake_up_all(&q->mq_freeze_wq);
- 	}
- }
- EXPORT_SYMBOL_GPL(blk_mq_unfreeze_queue);
-@@ -263,7 +263,7 @@ void blk_mq_wake_waiters(struct request_queue *q)
- 	 * dying, we need to ensure that processes currently waiting on
- 	 * the queue are notified as well.
- 	 */
--	swake_up_all(&q->mq_freeze_wq);
-+	wake_up_all(&q->mq_freeze_wq);
- }
- 
- bool blk_mq_can_queue(struct blk_mq_hw_ctx *hctx)
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 6f278f1fd634..b68752bfb645 100644
+index b68752bfb645..49b53ad6d2d6 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -598,7 +598,7 @@ struct request_queue {
- 	struct throtl_data *td;
+@@ -27,6 +27,7 @@
+ #include <linux/percpu-refcount.h>
+ #include <linux/scatterlist.h>
+ #include <linux/blkzoned.h>
++#include <linux/swork.h>
+ 
+ struct module;
+ struct scsi_ioctl_command;
+@@ -599,6 +600,7 @@ struct request_queue {
  #endif
  	struct rcu_head		rcu_head;
--	struct swait_queue_head	mq_freeze_wq;
-+	wait_queue_head_t	mq_freeze_wq;
+ 	wait_queue_head_t	mq_freeze_wq;
++	struct swork_event	mq_pcpu_wake;
  	struct percpu_ref	q_usage_counter;
  	struct list_head	all_q_node;
  
