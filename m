@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtzTxiEQ5nqyRd/hxDhWplMn1ehWKOU5iwyZ0z87NwSCOgFFmnPQwbiROz5dWY7OmE0xXeO
-ARC-Seal: i=1; a=rsa-sha256; t=1520955226; cv=none;
+X-Google-Smtp-Source: AG47ELtip9Bmm8he9U3a84L+WFn2yHNJ8mV8KKhczpAzwPyG0mOMzBKRSKs8IWIz8oGqVCxSqf4v
+ARC-Seal: i=1; a=rsa-sha256; t=1520955223; cv=none;
         d=google.com; s=arc-20160816;
-        b=gt0NTzOJSgT9SwmyVdk6f0SkHHkn1CXl+SuZB56mamap6khdpu8AkrDktTR7vWierl
-         bkg+NiX2WKB68Kzt0VyctB/zihT6j5LUsCmVBIrWQZk1fvkWh2Y1acNd3oO/uo5/51la
-         BM9P0w94FSOdUa32LJwnLvWmSTTct/col9f2a5psVzXsUP4Gw0LCx0jf12uYJKZBWHOa
-         s0H04vwghg/BXk4mh+pHDiTa748rF7Kbl180t9+HhFsER0jwCERS3TIDixUFKfyUeZ9S
-         uGFE9BlEMjYXp3fcWIIO76UNNGQ5HVE4TCy8Z1vwLu7qDKGyd+xWMnbkLfCmLyTZc53B
-         QgUQ==
+        b=P4QEEsi6yH6PI5eEJgNr2NKpQAiPxPOM5YHnhK49I4zVmCUclhk3MZCQtbu1nHj76M
+         6+F39QBY0OcZ8KngWvT+R7GyXjnYf2h6Lyl3UCFTUhjpa1gQW2wGcstT/Lga4BJyQsqg
+         LkxU+JS4uRVQKvp3aDOQpPwLw8Wt8s7mBHruz+da9x8HyHQGjYgVhtnr8AHuMoVIvY04
+         tBGOEML9uy4S76gltG4hbxsx6CMNUIi4eWDHygkheCxtmCYyScDktOgsCdwbwgo8qWre
+         BF5X4enYfSKAuYV4UgD+kRJ617UoQvPV2FUG7YQMnEXcUcWtHtZb/q9Gz54OyqwqJnkZ
+         dXIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rJa5enpvuauSh7Y6GKnJg9a8Ump+zcvo5n2lk3GBt8g=;
-        b=Uyl8ARVmj6nran631KWaNIGvr64v1013hCIrhQR/mTtS5xxJwZu9JtP9ejX8m0W30g
-         6sEY5ETFO2z3b38WATp/5TFiA9JGYk6I+xLpBr7CaayPiVnUk0nSk2RyDorsaZmKX7je
-         tEXb6/UZ2Uvrw79/GF+gjxL3IN4FfkWuV2/nEq/m7+/Cqj1L8FlBgw/GNirTmhzT6ZYm
-         lIjBRjfDwW5z8ipiYaiLlT2iRD2tSLF3ukEavIOPizFQeRqFkP0S716lGNeZyRdw0YBs
-         7ftBoDsir6WWmTUk4kGrd9IOZKERd/9WqWyTiWU+14ilRXITFjXNRPkL+YZS2EjUUisj
-         PawA==
+        bh=EohaFwRcw2i6Snyg/c6EBHjMhy8XjkwcZELeJm0EafI=;
+        b=WWbVbvN+N65/3NrZBLDqHBicdcTu3gqZaS5dAfuCiMf9FVg8N3pWKYBzDXkz1Y6mMC
+         RP6ya8GNnBNp2xZwe1Vioe0r9BAcsGv7+lQl4uPBYeZfGKPBNcwKfD5UujXEqoLJmCyD
+         EMVO8ZYM/1HDsUvR9QFf9Fo1j/Y2bTRspsDwMWagT06IsGDHpTV+fgKwWazDu/5NRelf
+         0CyLlBDTxCtgEG1AAuOxcAcy6P5UR1H0Li9eXwfD0oHQx0MtZrBu8yNQMcLP5kh0pojF
+         aC5/eETk0DHMXJyiEoslDv6wgWbNAQLUKJ8CbId24QF7SfB3a7HQs8JOhEVjr4dHcxgz
+         sFsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
 	Jerry Hoemann <jerry.hoemann@hpe.com>,
 	Guenter Roeck <linux@roeck-us.net>,
 	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.15 106/146] watchdog: hpwdt: fix unused variable warning
-Date: Tue, 13 Mar 2018 16:24:33 +0100
-Message-Id: <20180313152328.603942038@linuxfoundation.org>
+Subject: [PATCH 4.15 105/146] watchdog: hpwdt: Check source of NMI
+Date: Tue, 13 Mar 2018 16:24:32 +0100
+Message-Id: <20180313152328.544025086@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837147473792096?=
-X-GMAIL-MSGID: =?utf-8?q?1594837147473792096?=
+X-GMAIL-THRID: =?utf-8?q?1594837144430189035?=
+X-GMAIL-MSGID: =?utf-8?q?1594837144430189035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-commit aeebc6ba88ba3758ad95467ff6191fabf2074c13 upstream.
+commit 838534e50e2e5c1e644e30ab6cb28da88eb31368 upstream.
 
-The new hpwdt_my_nmi() function is used conditionally, which produces
-a harmless warning in some configurations:
+Do not claim the NMI (i.e. return NMI_DONE) if the source of
+the NMI isn't the iLO watchdog or debug.
 
-drivers/watchdog/hpwdt.c:478:12: error: 'hpwdt_my_nmi' defined but not used [-Werror=unused-function]
-
-This moves it inside of the #ifdef that protects its caller, to silence
-the warning.
-
-Fixes: 621174a92851 ("watchdog: hpwdt: Check source of NMI")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/hpwdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/hpwdt.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 --- a/drivers/watchdog/hpwdt.c
 +++ b/drivers/watchdog/hpwdt.c
-@@ -475,12 +475,12 @@ static int hpwdt_time_left(void)
+@@ -52,6 +52,7 @@ static char expect_release;
+ static unsigned long hpwdt_is_open;
+ 
+ static void __iomem *pci_mem_addr;		/* the PCI-memory address */
++static unsigned long __iomem *hpwdt_nmistat;
+ static unsigned long __iomem *hpwdt_timer_reg;
+ static unsigned long __iomem *hpwdt_timer_con;
+ 
+@@ -474,6 +475,11 @@ static int hpwdt_time_left(void)
  	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
  }
  
-+#ifdef CONFIG_HPWDT_NMI_DECODING
- static int hpwdt_my_nmi(void)
- {
- 	return ioread8(hpwdt_nmistat) & 0x6;
- }
- 
--#ifdef CONFIG_HPWDT_NMI_DECODING
++static int hpwdt_my_nmi(void)
++{
++	return ioread8(hpwdt_nmistat) & 0x6;
++}
++
+ #ifdef CONFIG_HPWDT_NMI_DECODING
  /*
   *	NMI Handler
-  */
+@@ -486,6 +492,9 @@ static int hpwdt_pretimeout(unsigned int
+ 	if (!hpwdt_nmi_decoding)
+ 		return NMI_DONE;
+ 
++	if ((ulReason == NMI_UNKNOWN) && !hpwdt_my_nmi())
++		return NMI_DONE;
++
+ 	spin_lock_irqsave(&rom_lock, rom_pl);
+ 	if (!die_nmi_called && !is_icru && !is_uefi)
+ 		asminline_call(&cmn_regs, cru_rom_addr);
+@@ -842,6 +851,7 @@ static int hpwdt_init_one(struct pci_dev
+ 		retval = -ENOMEM;
+ 		goto error_pci_iomap;
+ 	}
++	hpwdt_nmistat	= pci_mem_addr + 0x6e;
+ 	hpwdt_timer_reg = pci_mem_addr + 0x70;
+ 	hpwdt_timer_con = pci_mem_addr + 0x72;
+ 
