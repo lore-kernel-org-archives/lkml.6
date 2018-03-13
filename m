@@ -1,271 +1,388 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3679101-1520961999-2-13468957125769201498
+X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955352-2-17112049707521182984
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org', XOriginatingCountry='UNK'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520961998; b=qbYp6CiyyCT/2sUaAtjXwYHmIC51nhYx2szBXPFS6y9S3N8
-    d2Z7/nBN+jfAwyZrrlczv6NzGHwA677+QoTIH7Tq5XkWi03+kNC74iehoyxNRxHd
-    ai1+aHUwD/4Pm6yBxT+p5ipfs76XWgBVDcq+kpwQSK44SO6LrvKDk9HAFxpB17E+
-    idc8y91KTDMsOdnzoB6OPXoDWHghhxN+xn4+BO/0/XV4zFfgBo/1YZII+5Ird0xH
-    aiURbrLe1nVEmz/lSXkqTbhBUrHQy4YE5d/PYuUAr7VW7HnoM7buVQJT+wyOWOym
-    9klJbqIkchN2K+mfNcBrKhBda6A9QI8UA6prdPw==
+    t=1520955351; b=d7SqP2ZGm68+/FjV/+uz4bOmPn5/HJ9JMzSaLlYyailnGUy
+    6j5oOKe7azfSC0QKPQzeL+TYw0wAsyRlytL8cDcDZ/jriIXJeycHqsHw1FeT1PQB
+    3kmMNHH5T+L9xs9EENudbFDRWx5E8lvMj/9QSvuPyHWdYnqisr1izRkyVCxlAV7H
+    MVbWv7O40ZbaLh/h9yRXOwjX4AvPQx7oz9WMT1o2F7ZRWEsaKtuPmheEV8KbiMUT
+    LE+mYmd/jMZTIZJWebVQJWdwPIXVfJq0MylEcrW9Nnh7Yw1nDaQHunYt1Q1Jais1
+    0yabYsZh1UKngSh7eKO6i869iORDDYkzkRaqp2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520961998; bh=fkHWu/ZR8a/uYO+YF2MQDjzJvExt2RfcwxCy+H
-    u1h+U=; b=IsClAqnBa8rj1W8WGp/kl4hUj6Ft9J6R7elihttNNdsuBxtXjyXe7r
-    6c8q/XapuH/03jjnoDMrt8IKslyzrJAopHsmuD/eIhyVm5cfmfx2xV26YJDuitAW
-    faIESjHc0JMx9TpVY5BDF2yCr5yM8jBLPDvM7xZvVSm6PRDCV0jVfBzIKo7I5qD1
-    lHtadyd4NwZsALhtGzGwP9HSZIo9YbuAtoFH8ppJMitoHFjFHrOILocHDqndCBUi
-    R8zS4WyyZ6LI41Q8N8hjkDD4+cQ/VZ2vp3njitIXdp+LUsjdQTuPXH/VO9CXPubS
-    8dq4SbV8BIkiU+7wUc9DUkaZrnMOuTJQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=lyle-org.20150623.gappssmtp.com header.i=@lyle-org.20150623.gappssmtp.com header.b=I3KOBuD/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lyle.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955351; bh=wXRSgCnSwYujMpAR0s3SXQrOhD
+    hoDd65U05Fe6/U6xU=; b=UAcsZczriz0MbnBL8IDo4x2StSgOeMyCqOLZZmfF8o
+    CqBjgJhWxTbohNKe9PZ3nIeHYAwVE8p2M36br9ONljZZK/8LwTz0tcxrbSRjwlsk
+    EphCy2vVYR2ZO944k3IxwMQWTHIZNK1PjO9tm0W0CQu6jlwxkl6xbwWWLG8r/0QT
+    5wbK/D91kObdKm213fAqcz4Dgc+sz+TOzizEqyW6HH1D8Iymbe5fl+Kn47QVksxG
+    cD1Bp9WLBO9LiakiOZOAjhTSo4KmotTqT2FseDHfZxuvr+eZ0wgZyT0YQORf0X9k
+    ZSvmhV+8RdlNioOlUWjIy2iEXfrSB1Zykoy+rK9EBTWw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IK+uoIUX;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lyle.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=lyle-org.20150623.gappssmtp.com header.i=@lyle-org.20150623.gappssmtp.com header.b=I3KOBuD/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lyle.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IK+uoIUX;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lyle.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeCMR0g (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 13:26:36 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46623 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbeCMR0f (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 13:26:35 -0400
-X-Google-Smtp-Source: AG47ELuXX5J7bCAU2jvRD6iB7ZGuTsUUHjerVZ23goZmAahpFYbQuX7grEwCvx83BG17AfiTJ+BS/zBxO6UlSyFhhSU=
-MIME-Version: 1.0
-X-Originating-IP: [2600:6c52:6200:9b7::d66]
-In-Reply-To: <20180313161907.tu4afzqrgmkvzzxv@merlins.org>
-References: <20180313152458.201155692@linuxfoundation.org> <20180313152504.537862990@linuxfoundation.org>
- <20180313161907.tu4afzqrgmkvzzxv@merlins.org>
-From: Michael Lyle <mlyle@lyle.org>
-Date: Tue, 13 Mar 2018 10:26:33 -0700
-Message-ID: <CAJ+L6qf8zO6gLkYTpmt0-YsL5GUp-h+W9gwz1u5htu2WmJEhcA@mail.gmail.com>
-Subject: Re: [PATCH 4.14 095/140] bcache: fix crashes in duplicate cache
- device register
-To: Marc MERLIN <marc@merlins.org>
+        id S934079AbeCMPfs (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:35:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33278 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933991AbeCMPfr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:35:47 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        Tang Junhui <tang.junhui@zte.com.cn>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+        stable@vger.kernel.org, Azhar Shaikh <azhar.shaikh@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.14 019/140] tpm_tis: Move ilb_base_addr to tpm_tis_data
+Date: Tue, 13 Mar 2018 16:23:42 +0100
+Message-Id: <20180313152459.380936035@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
+References: <20180313152458.201155692@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Though note you're still not safe from -that-.  If there's duplicate
-UUIDs around because you've duplicated devices, there's just no sane
-way to tell which is the "right one" to attach to.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Mike
+------------------
 
-On Tue, Mar 13, 2018 at 9:19 AM, Marc MERLIN <marc@merlins.org> wrote:
-> On Tue, Mar 13, 2018 at 04:24:58PM +0100, Greg Kroah-Hartman wrote:
->> 4.14-stable review patch.  If anyone has any objections, please let me know.
->
-> Just in case someone is considering whether it's important to merge, the
-> bug did crash my kernel of course, but I'm virtually certain it was also
-> responsible for corrupting my existing bcache device enough that I had
-> to restore it from backup.
->
-> Thanks again to Tang for fixing it.
->
->
->> ------------------
->>
->> From: Tang Junhui <tang.junhui@zte.com.cn>
->>
->> commit cc40daf91bdddbba72a4a8cd0860640e06668309 upstream.
->>
->> Kernel crashed when register a duplicate cache device, the call trace is
->> bellow:
->> [  417.643790] CPU: 1 PID: 16886 Comm: bcache-register Tainted: G
->>    W  OE    4.15.5-amd64-preempt-sysrq-20171018 #2
->> [  417.643861] Hardware name: LENOVO 20ERCTO1WW/20ERCTO1WW, BIOS
->> N1DET41W (1.15 ) 12/31/2015
->> [  417.643870] RIP: 0010:bdevname+0x13/0x1e
->> [  417.643876] RSP: 0018:ffffa3aa9138fd38 EFLAGS: 00010282
->> [  417.643884] RAX: 0000000000000000 RBX: ffff8c8f2f2f8000 RCX: ffffd6701f8
->> c7edf
->> [  417.643890] RDX: ffffa3aa9138fd88 RSI: ffffa3aa9138fd88 RDI: 00000000000
->> 00000
->> [  417.643895] RBP: ffffa3aa9138fde0 R08: ffffa3aa9138fae8 R09: 00000000000
->> 1850e
->> [  417.643901] R10: ffff8c8eed34b271 R11: ffff8c8eed34b250 R12: 00000000000
->> 00000
->> [  417.643906] R13: ffffd6701f78f940 R14: ffff8c8f38f80000 R15: ffff8c8ea7d
->> 90000
->> [  417.643913] FS:  00007fde7e66f500(0000) GS:ffff8c8f61440000(0000) knlGS:
->> 0000000000000000
->> [  417.643919] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [  417.643925] CR2: 0000000000000314 CR3: 00000007e6fa0001 CR4: 00000000003
->> 606e0
->> [  417.643931] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000
->> 00000
->> [  417.643938] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000
->> 00400
->> [  417.643946] Call Trace:
->> [  417.643978]  register_bcache+0x1117/0x1270 [bcache]
->> [  417.643994]  ? slab_pre_alloc_hook+0x15/0x3c
->> [  417.644001]  ? slab_post_alloc_hook.isra.44+0xa/0x1a
->> [  417.644013]  ? kernfs_fop_write+0xf6/0x138
->> [  417.644020]  kernfs_fop_write+0xf6/0x138
->> [  417.644031]  __vfs_write+0x31/0xcc
->> [  417.644043]  ? current_kernel_time64+0x10/0x36
->> [  417.644115]  ? __audit_syscall_entry+0xbf/0xe3
->> [  417.644124]  vfs_write+0xa5/0xe2
->> [  417.644133]  SyS_write+0x5c/0x9f
->> [  417.644144]  do_syscall_64+0x72/0x81
->> [  417.644161]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
->> [  417.644169] RIP: 0033:0x7fde7e1c1974
->> [  417.644175] RSP: 002b:00007fff13009a38 EFLAGS: 00000246 ORIG_RAX: 0000000
->> 000000001
->> [  417.644183] RAX: ffffffffffffffda RBX: 0000000001658280 RCX: 00007fde7e1c
->> 1974
->> [  417.644188] RDX: 000000000000000a RSI: 0000000001658280 RDI: 000000000000
->> 0001
->> [  417.644193] RBP: 000000000000000a R08: 0000000000000003 R09: 000000000000
->> 0077
->> [  417.644198] R10: 000000000000089e R11: 0000000000000246 R12: 000000000000
->> 0001
->> [  417.644203] R13: 000000000000000a R14: 7fffffffffffffff R15: 000000000000
->> 0000
->> [  417.644213] Code: c7 c2 83 6f ee 98 be 20 00 00 00 48 89 df e8 6c 27 3b 0
->> 0 48 89 d8 5b c3 0f 1f 44 00 00 48 8b 47 70 48 89 f2 48 8b bf 80 00 00 00 <8
->> b> b0 14 03 00 00 e9 73 ff ff ff 0f 1f 44 00 00 48 8b 47 40 39
->> [  417.644302] RIP: bdevname+0x13/0x1e RSP: ffffa3aa9138fd38
->> [  417.644306] CR2: 0000000000000314
->>
->> When registering duplicate cache device in register_cache(), after failure
->> on calling register_cache_set(), bch_cache_release() will be called, then
->> bdev will be freed, so bdevname(bdev, name) caused kernel crash.
->>
->> Since bch_cache_release() will free bdev, so in this patch we make sure
->> bdev being freed if register_cache() fail, and do not free bdev again in
->> register_bcache() when register_cache() fail.
->>
->> Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
->> Reported-by: Marc MERLIN <marc@merlins.org>
->> Tested-by: Michael Lyle <mlyle@lyle.org>
->> Reviewed-by: Michael Lyle <mlyle@lyle.org>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>
->> ---
->>  drivers/md/bcache/super.c |   16 ++++++++++------
->>  1 file changed, 10 insertions(+), 6 deletions(-)
->>
->> --- a/drivers/md/bcache/super.c
->> +++ b/drivers/md/bcache/super.c
->> @@ -1181,7 +1181,7 @@ static void register_bdev(struct cache_s
->>
->>       return;
->>  err:
->> -     pr_notice("error opening %s: %s", bdevname(bdev, name), err);
->> +     pr_notice("error %s: %s", bdevname(bdev, name), err);
->>       bcache_device_stop(&dc->disk);
->>  }
->>
->> @@ -1849,6 +1849,8 @@ static int register_cache(struct cache_s
->>       const char *err = NULL; /* must be set for any error case */
->>       int ret = 0;
->>
->> +     bdevname(bdev, name);
->> +
->>       memcpy(&ca->sb, sb, sizeof(struct cache_sb));
->>       ca->bdev = bdev;
->>       ca->bdev->bd_holder = ca;
->> @@ -1857,11 +1859,12 @@ static int register_cache(struct cache_s
->>       ca->sb_bio.bi_io_vec[0].bv_page = sb_page;
->>       get_page(sb_page);
->>
->> -     if (blk_queue_discard(bdev_get_queue(ca->bdev)))
->> +     if (blk_queue_discard(bdev_get_queue(bdev)))
->>               ca->discard = CACHE_DISCARD(&ca->sb);
->>
->>       ret = cache_alloc(ca);
->>       if (ret != 0) {
->> +             blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
->>               if (ret == -ENOMEM)
->>                       err = "cache_alloc(): -ENOMEM";
->>               else
->> @@ -1884,14 +1887,14 @@ static int register_cache(struct cache_s
->>               goto out;
->>       }
->>
->> -     pr_info("registered cache device %s", bdevname(bdev, name));
->> +     pr_info("registered cache device %s", name);
->>
->>  out:
->>       kobject_put(&ca->kobj);
->>
->>  err:
->>       if (err)
->> -             pr_notice("error opening %s: %s", bdevname(bdev, name), err);
->> +             pr_notice("error %s: %s", name, err);
->>
->>       return ret;
->>  }
->> @@ -1980,6 +1983,7 @@ static ssize_t register_bcache(struct ko
->>       if (err)
->>               goto err_close;
->>
->> +     err = "failed to register device";
->>       if (SB_IS_BDEV(sb)) {
->>               struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
->>               if (!dc)
->> @@ -1994,7 +1998,7 @@ static ssize_t register_bcache(struct ko
->>                       goto err_close;
->>
->>               if (register_cache(sb, sb_page, bdev, ca) != 0)
->> -                     goto err_close;
->> +                     goto err;
->>       }
->>  out:
->>       if (sb_page)
->> @@ -2007,7 +2011,7 @@ out:
->>  err_close:
->>       blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
->>  err:
->> -     pr_info("error opening %s: %s", path, err);
->> +     pr_info("error %s: %s", path, err);
->>       ret = -EINVAL;
->>       goto out;
->>  }
->>
->>
->>
->
-> --
-> "A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-> Microsoft is to operating systems ....
->                                       .... what McDonalds is to gourmet cooking
-> Home page: http://marc.merlins.org/                       | PGP 7F55D5F27AAF9D08
+From: Azhar Shaikh <azhar.shaikh@intel.com>
+
+commit c382babccba2c82fe57f9e647f290fb7bf4d130d upstream.
+
+Move static variable ilb_base_addr to tpm_tis_data.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/char/tpm/tpm_tis.c      |   75 ++++++++++++++--------------------------
+ drivers/char/tpm/tpm_tis_core.c |   16 ++++++++
+ drivers/char/tpm/tpm_tis_core.h |   13 ++++++
+ 3 files changed, 56 insertions(+), 48 deletions(-)
+
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -133,33 +133,24 @@ static int check_acpi_tpm2(struct device
+ #endif
+ 
+ #ifdef CONFIG_X86
+-#define INTEL_LEGACY_BLK_BASE_ADDR      0xFED08000
+-#define ILB_REMAP_SIZE			0x100
+-#define LPC_CNTRL_REG_OFFSET            0x84
+-#define LPC_CLKRUN_EN                   (1 << 2)
+-
+-static void __iomem *ilb_base_addr;
+-
+-static inline bool is_bsw(void)
+-{
+-	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
+-}
++#define LPC_CNTRL_OFFSET		0x84
++#define LPC_CLKRUN_EN			(1 << 2)
+ 
+ /**
+  * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
+  */
+-static void tpm_platform_begin_xfer(void)
++static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ {
+ 	u32 clkrun_val;
+ 
+ 	if (!is_bsw())
+ 		return;
+ 
+-	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
+ 
+ 	/* Disable LPC CLKRUN# */
+ 	clkrun_val &= ~LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
+ 
+ 	/*
+ 	 * Write any random value on port 0x80 which is on LPC, to make
+@@ -172,18 +163,18 @@ static void tpm_platform_begin_xfer(void
+ /**
+  * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
+  */
+-static void tpm_platform_end_xfer(void)
++static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+ {
+ 	u32 clkrun_val;
+ 
+ 	if (!is_bsw())
+ 		return;
+ 
+-	clkrun_val = ioread32(ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
+ 
+ 	/* Enable LPC CLKRUN# */
+ 	clkrun_val |= LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, ilb_base_addr + LPC_CNTRL_REG_OFFSET);
++	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
+ 
+ 	/*
+ 	 * Write any random value on port 0x80 which is on LPC, to make
+@@ -193,16 +184,11 @@ static void tpm_platform_end_xfer(void)
+ 
+ }
+ #else
+-static inline bool is_bsw(void)
+-{
+-	return false;
+-}
+-
+-static void tpm_platform_begin_xfer(void)
++static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+ {
+ }
+ 
+-static void tpm_platform_end_xfer(void)
++static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+ {
+ }
+ #endif
+@@ -212,12 +198,12 @@ static int tpm_tcg_read_bytes(struct tpm
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	while (len--)
+ 		*result++ = ioread8(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -227,12 +213,12 @@ static int tpm_tcg_write_bytes(struct tp
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	while (len--)
+ 		iowrite8(*value++, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -241,11 +227,11 @@ static int tpm_tcg_read16(struct tpm_tis
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	*result = ioread16(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -254,11 +240,11 @@ static int tpm_tcg_read32(struct tpm_tis
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	*result = ioread32(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -267,11 +253,11 @@ static int tpm_tcg_write32(struct tpm_ti
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer();
++	tpm_platform_begin_xfer(data);
+ 
+ 	iowrite32(value, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer();
++	tpm_platform_end_xfer(data);
+ 
+ 	return 0;
+ }
+@@ -350,9 +336,13 @@ MODULE_DEVICE_TABLE(pnp, tpm_pnp_tbl);
+ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
+ {
+ 	struct tpm_chip *chip = pnp_get_drvdata(dev);
++	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
++	if (is_bsw())
++		iounmap(priv->ilb_base_addr);
++
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -399,10 +389,14 @@ static int tpm_tis_plat_probe(struct pla
+ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
++	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 
++	if (is_bsw())
++		iounmap(priv->ilb_base_addr);
++
+ 	return 0;
+ }
+ 
+@@ -460,11 +454,6 @@ static int __init init_tis(void)
+ 	if (rc)
+ 		goto err_force;
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+-					ILB_REMAP_SIZE);
+-#endif
+ 	rc = platform_driver_register(&tis_drv);
+ 	if (rc)
+ 		goto err_platform;
+@@ -483,10 +472,6 @@ err_pnp:
+ err_platform:
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+ err_force:
+ 	return rc;
+ }
+@@ -496,10 +481,6 @@ static void __exit cleanup_tis(void)
+ 	pnp_unregister_driver(&tis_pnp_driver);
+ 	platform_driver_unregister(&tis_drv);
+ 
+-#ifdef CONFIG_X86
+-	if (is_bsw())
+-		iounmap(ilb_base_addr);
+-#endif
+ 	if (force_pdev)
+ 		platform_device_unregister(force_pdev);
+ }
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -701,6 +701,13 @@ int tpm_tis_core_init(struct device *dev
+ 	priv->phy_ops = phy_ops;
+ 	dev_set_drvdata(&chip->dev, priv);
+ 
++	if (is_bsw()) {
++		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
++					ILB_REMAP_SIZE);
++		if (!priv->ilb_base_addr)
++			return -ENOMEM;
++	}
++
+ 	if (wait_startup(chip, 0) != 0) {
+ 		rc = -ENODEV;
+ 		goto out_err;
+@@ -791,9 +798,16 @@ int tpm_tis_core_init(struct device *dev
+ 		}
+ 	}
+ 
+-	return tpm_chip_register(chip);
++	rc = tpm_chip_register(chip);
++	if (rc && is_bsw())
++		iounmap(priv->ilb_base_addr);
++
++	return rc;
+ out_err:
+ 	tpm_tis_remove(chip);
++	if (is_bsw())
++		iounmap(priv->ilb_base_addr);
++
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_core_init);
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -79,6 +79,9 @@ enum tis_defaults {
+ #define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
+ #define	TPM_RID(l)			(0x0F04 | ((l) << 12))
+ 
++#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
++#define ILB_REMAP_SIZE			0x100
++
+ enum tpm_tis_flags {
+ 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
+ };
+@@ -89,6 +92,7 @@ struct tpm_tis_data {
+ 	int irq;
+ 	bool irq_tested;
+ 	unsigned int flags;
++	void __iomem *ilb_base_addr;
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
+ 	const struct tpm_tis_phy_ops *phy_ops;
+@@ -144,6 +148,15 @@ static inline int tpm_tis_write32(struct
+ 	return data->phy_ops->write32(data, addr, value);
+ }
+ 
++static inline bool is_bsw(void)
++{
++#ifdef CONFIG_X86
++	return ((boot_cpu_data.x86_model == INTEL_FAM6_ATOM_AIRMONT) ? 1 : 0);
++#else
++	return false;
++#endif
++}
++
+ void tpm_tis_remove(struct tpm_chip *chip);
+ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		      const struct tpm_tis_phy_ops *phy_ops,
