@@ -1,128 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751580AbeCMFSz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 01:18:55 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:14913 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeCMFSx (ORCPT
+        id S1751494AbeCMFYo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 01:24:44 -0400
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:11759 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeCMFYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 01:18:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180313051852epoutp032b8d3d5e44f84aa928bcda30b5e5d214~bYyowNlXC1689116891epoutp03s
-X-AuditID: b6c32a48-9adff70000000ff0-e9-5aa75f3b2245
-Subject: Re: [PATCH] arm: ubsan: select ARCH_HAS_UBSAN_SANITIZE_ALL
-To: jinb.park@samsung.com,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Tue, 13 Mar 2018 01:24:43 -0400
+From: "Kroening, Gary" <gary.kroening@hpe.com>
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>
+CC: "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Message-id: <4eb795d0-42ce-a8e1-00c5-b779a5fe282c@samsung.com>
-Date: Tue, 13 Mar 2018 14:18:45 +0900
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
-        Thunderbird/52.5.0
-MIME-version: 1.0
-In-reply-to: <20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdljTTNc6fnmUwZsXihZfJr1jt3i/rIfR
-        YtHx+2wWmx5fY7W4vGsOm8XS6xeZLGZMfsnmwO6xZt4aRo/NS+o9+rasYvT4vEnO4/X+Q4wB
-        rFGpNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAVygp
-        lCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJWiDQ2N9AwNzPWMjIz0TIxjrYxMgUoSUjM+nbrI
-        XNDAV3Gv4Q9jA+Mi7i5GTg4JAROJST1TmLoYuTiEBHYwSpw79J0VwvnOKHH1w19GmKppu/vZ
-        IRIbGCX6Vp+BarnLKDHt0S5mkCphAWeJxZeeg1WJCKxmlDh1vokZxGEWuMQocXzaByaQKjYB
-        HYnt344D2RwcvAJ2ErOmWICEWQRUJe70nGMHsUUFwiSOzvwEtppXQFDix+R7LCDlnAJ+Ek0t
-        fiBhZgFNiRdfJrFA2OISza03oWx5ic1r3jJDXH2GTeLk1SgI20Xi35/vbBC2sMSr41vYIWxp
-        iWerNkJ92c4ocXa2MMjJEgJTGCVWzOhmgkgYSzxb2MUEsYBPouPwX3aQeyQEeCU62oQgSjwk
-        7i4/DBV2lFj4ixMSPlOBwbDlAtMERrlZSL6ZheSFWUhemIXkhQWMLKsYxVILinPTU4uNCkz0
-        ihNzi0vz0vWS83M3MYIToZbHDsYD53wOMQpwMCrx8Ha0LosSYk0sK67MPcQowcGsJMKr/B8o
-        xJuSWFmVWpQfX1Sak1p8iNEUGNoTmaVEk/OBSTqvJN7QxNLAxMzMyNzMApjaxHnbAlyihATS
-        E0tSs1NTC1KLYPqYODilGhjbe2PfxORNKRD7z9LcftZ2Tez9Te+23JFm6em9lBMj+4HD4pvr
-        mvuLo6P56qy4G3eych075MTiaapzkSfrOsf31Wc4d4YbcsxVjXv/6uoqBbe1ssU3psccPcgi
-        F6yTc2PtnzP75WLeMKo38HOx5Nz/wXby5b4HFvsEb+0WjLvbPlH7jdoxRi4lluKMREMt5qLi
-        RAAb3jcImgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jQV2r+OVRBuvnmFh8mfSO3eL9sh5G
-        i0XH77NZbHp8jdXi8q45bBZLr19kspgx+SWbA7vHmnlrGD02L6n36NuyitHj8yY5j9f7DzEG
-        sEZx2aSk5mSWpRbp2yVwZXw6dZG5oIGv4l7DH8YGxkXcXYycHBICJhLTdvezdzFycQgJrGOU
-        OLGlHcq5zyjRvmgOI0iVsICzxOJLz8ESIgKrGSXurrsClmAWuMIo8exGMUTHdEaJW7s3M4Mk
-        2AR0JLZ/O87UxcjBwStgJzFrigVImEVAVeJOzzl2EFtUIEyiZ9NlsDm8AoISPybfYwEp5xTw
-        k2hq8QMxmQXUJaZMyYXYJC7R3HqTBcKWl9i85i3zBEaBWUiaZyF0zELSMQtJxwJGllWMkqkF
-        xbnpucVGBUZ5qeV6xYm5xaV56XrJ+bmbGIERsO2wVv8OxsdL4g8xCnAwKvHwdrQuixJiTSwr
-        rsw9xCjBwawkwqv8HyjEm5JYWZValB9fVJqTWnyIUZqDRUmclz//WKSQQHpiSWp2ampBahFM
-        lomDU6qB0XZnQb04j0m9SYTiCQ3lctvuM+7P7SNYBK7yv/vmucC1+oDsvZ8HKh6ckOyTNd2W
-        k37LgOHEVwuRxt+MkULmK8qSdnm1MrB0FfYYmm2TENose2H3oY2CttW80Vc52Dn6fCVtPwQZ
-        Ppaf/fOKCc8DkZW32qevSfbp4pX4nXygVc9C8d6mtgdKLMUZiYZazEXFiQAvEO7kfAIAAA==
-X-CMS-MailID: 20180313051850epcas2p115f670f01aa22d1456d9b7e1d072e68b
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26
-X-RootMTR: 20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26
-References: <CGME20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
-        <20180313045357epcms1p34fb1e2ad09a8288017058c414c21ce26@epcms1p3>
+Subject: RE: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+Thread-Topic: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+Thread-Index: AdO2UfB8yN2vSnEwTbiLc015dBFinAEGp+QAAAaS7GAAAP0RwA==
+Date: Tue, 13 Mar 2018 05:24:37 +0000
+Message-ID: <CS1PR84MB0118ACF6D161D3FAA5ADDCD4F6D20@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=gary.kroening@hpe.com;
+x-originating-ip: [192.48.179.6]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CS1PR84MB0117;7:EqsR4rJTUtjOTDouvhDJkpkyGl1xgXhLjLAG+EnX94e8yBi+QYPqA7zCMivWPCVDh9ger4hS+jCSB+6ihFiOeEaN4dWtvBK1Dzh3bE+xHGpL1wtJRbTq3BGowrum1bZQDyy5KH01m2ZigrWJv0PupnoGfpWSzmgdlQBdX36frmPvbNpVZuk/sShnyfkvY3PvRBC7DJcng7BjnyQ88L8dIuRm7WcPufCucB0Urjc/LzkAGtBkvpU1E7FS/yRebKfU
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(199004)(189003)(13464003)(51914003)(74316002)(25786009)(55016002)(68736007)(97736004)(105586002)(14454004)(106356001)(102836004)(3280700002)(478600001)(186003)(53546011)(316002)(5660300001)(54906003)(59450400001)(53936002)(110136005)(6506007)(9686003)(229853002)(6246003)(2906002)(26005)(99286004)(6436002)(3660700001)(66066001)(7736002)(2501003)(33656002)(3846002)(6116002)(81156014)(305945005)(8676002)(2201001)(8936002)(4326008)(86362001)(5250100002)(81166006)(76176011)(7696005)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:CS1PR84MB0117;H:CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9e340afa-82f6-4ccc-5efa-08d588a2b708
+x-microsoft-antispam: UriScan:(222181515654134);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989060)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:CS1PR84MB0117;
+x-ms-traffictypediagnostic: CS1PR84MB0117:
+x-microsoft-antispam-prvs: <CS1PR84MB01176699BDAA8E10E5F407F1F6D20@CS1PR84MB0117.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(227479698468861)(158342451672863)(9452136761055)(222181515654134)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:CS1PR84MB0117;BCL:0;PCL:0;RULEID:;SRVR:CS1PR84MB0117;
+x-forefront-prvs: 0610D16BBE
+x-microsoft-antispam-message-info: g8AKLg4W5KU9ZL0lB7frRe2Y+p+seSaeB8sB+dhvsjnlDw5GQygYkmOOa3uFCO/V1aqR8oPU5L0Rhx5Z7pFRQAFyDBbZcWOB/3RZW643paoooK1o+K1qubvufxw5Entg3I71w7Q0Sb7XbkIfMRPmTpgSFD7Apq+TfyLzE4oLtJO9oaZVAPPtgUxrSqdF5zrZtKQ0SiE/bs4B2/OrgadCq80KZnogRIg/+WYeSEL6m2anAnaVuuX8GJ0d5po0I6ErQzXs9AOHyjNQ/WDtscMerxKQ14t2mV62nsl5TMeHYWMXF7KZKrGOGzcRf2DQ/039g6IUWjzcuYNeZTPH3vUESA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e340afa-82f6-4ccc-5efa-08d588a2b708
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2018 05:24:37.7776
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CS1PR84MB0117
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D5Op12007539
 
-On 03/13/2018 01:53 PM, Jinbum Park wrote:
-> To enable UBSAN on arm, ARCH_HAS_UBSAN_SANITIZE_ALL is needed to be selected.
+Kan -- sorry for my late-night typo. My description for "hubless" should have said "a single segment/domain" rather than single bus. 
+
+> "hubless" -- equivalent to "glueless" or "white box" where our BIOS sets
+> things up with a single bus for all sockets.
+
+******** single segment/domain *********
+Sorry for the spam!
+Gary
+
+
+> -----Original Message-----
+> From: Kroening, Gary
+> Sent: Tuesday, March 13, 2018 12:07 AM
+> To: 'Liang, Kan'; mingo@redhat.com; hpa@zytor.com; tglx@linutronix.de;
+> peterz@infradead.org
+> Cc: Travis, Mike; Banman, Andrew; Sivanich, Dimitri; Anderson, Russ;
+> x86@kernel.org; linux-kernel@vger.kernel.org
+> Subject: RE: [PATCH 1/1] x86/platform/x86: Fix count of CHas on multi-pci-
+> segment arches
 > 
-> Basic test has passed on Raspberry Pi2, Raspbian jessi lite with
-> CONFIG_UBSAN_SANITIZE_ALL, CONFIG_UBSAN_NULL.
-
-This patch had been already sent from Seungwoo.
-
-https://patchwork.kernel.org/patch/9344477/
-
-Best Regards,
-Jaehoon Chung
-
+> Thanks, Kan -- your patch looks good, and cleaner than the previous
+> method!
 > 
-> Signed-off-by: Jinbum Park <jinb.park@samsung.com>
-> ---
->  arch/arm/Kconfig                  | 1 +
->  arch/arm/boot/compressed/Makefile | 1 +
->  arch/arm/vdso/Makefile            | 1 +
->  3 files changed, 3 insertions(+)
+> Tonight, I've tested it on our in-house simulator for the following
+> configurations. The simulator has been matching hardware well for this
+> issue -- we'll do more testing on real hardware, but I'm confident you
+> have it right.
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 1878083..bdd1561 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -7,6 +7,7 @@ config ARM
->  	select ARCH_HAS_DEBUG_VIRTUAL if MMU
->  	select ARCH_HAS_DEVMEM_IS_ALLOWED
->  	select ARCH_HAS_ELF_RANDOMIZE
-> +	select ARCH_HAS_UBSAN_SANITIZE_ALL
->  	select ARCH_HAS_SET_MEMORY
->  	select ARCH_HAS_PHYS_TO_DMA
->  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-> index 45a6b9b..1b374ba 100644
-> --- a/arch/arm/boot/compressed/Makefile
-> +++ b/arch/arm/boot/compressed/Makefile
-> @@ -24,6 +24,7 @@ OBJS		+= hyp-stub.o
->  endif
->  
->  GCOV_PROFILE		:= n
-> +UBSAN_SANITIZE		:= n
->  
->  #
->  # Architecture dependencies
-> diff --git a/arch/arm/vdso/Makefile b/arch/arm/vdso/Makefile
-> index bb411821..05597f7 100644
-> --- a/arch/arm/vdso/Makefile
-> +++ b/arch/arm/vdso/Makefile
-> @@ -29,6 +29,7 @@ CFLAGS_vgettimeofday.o = -O2
->  
->  # Disable gcov profiling for VDSO code
->  GCOV_PROFILE := n
-> +UBSAN_SANITIZE := n
->  
->  # Force dependency
->  $(obj)/vdso.o : $(obj)/vdso.so
+> Terminology:
 > 
+> "hubless" -- equivalent to "glueless" or "white box" where our BIOS sets
+> things up with a single bus for all sockets.
+> 
+> "scalable" -- BIOS assigns a new segment/domain for each socket
+> 
+> Configurations tested so far:
+> - single-socket hubless/scalable
+> - two sockets, scalable
+> - four sockets, hubless
+> - eight sockets, scalable
+> 
+> In all cases, skx_count_chabox() is returning 28 for Skylake server.
+> Thanks for the quick response!
+> Gary
+> 
+> > -----Original Message-----
+> > From: Liang, Kan [mailto:kan.liang@linux.intel.com]
+> > Sent: Monday, March 12, 2018 8:43 PM
+> > To: Kroening, Gary; mingo@redhat.com; hpa@zytor.com; tglx@linutronix.de;
+> > peterz@infradead.org
+> > Cc: Travis, Mike; Banman, Andrew; Sivanich, Dimitri; Anderson, Russ;
+> > x86@kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on multi-
+> pci-
+> > segment arches
+> >
+> >
+> >
+> > On 3/7/2018 3:33 PM, Kroening, Gary wrote:
+> > > For systems with a single PCI segment, it is sufficient to look for
+> the
+> > > bus number to change in order to determine that all of the CHa's have
+> > > been counted for a single socket.
+> > >
+> > > However, for multi PCI segment systems, each socket is given a new
+> > > segment and the bus number does NOT change.  So looking only for the
+> > > bus number to change ends up counting all of the CHa's on all sockets
+> > > in the system.  This leads to writing CPU MSRs beyond a valid range
+> and
+> > > causes an error in ivbep_uncore_msr_init_box().
+> > >
+> > > The fix is to check for either the bus number or segment number to
+> > change.
+> > >
+> >
+> > Hi Gary,
+> >
+> > There is a recommended way in uncore document to query the number of
+> > CHAs on Skylake server.
+> > I have a patch to implement the new way.
+> >
+> > Could you please take a look at the patch and see if it can fix your
+> > issue?
+> >
+> >
+> > Thanks,
+> > Kan
+> >
+> > ------
+> >  From 55f54b2fa3021c691c2fd4f5cfc8f441fd104e91 Mon Sep 17 00:00:00 2001
+> > From: Kan Liang <kan.liang@linux.intel.com>
+> > Date: Mon, 12 Mar 2018 13:03:40 -0700
+> > Subject: [PATCH] perf/x86/intel/uncore: Querying number of CHAs from
+> > CAPID6 register
+> >
+> > The number of CHAs is miscalculated on multi PCI domain systems on
+> > Skylake server
+> >
+> > (From Kroening, Gary:
+> >
+> > For systems with a single PCI segment, it is sufficient to look for the
+> > bus number to change in order to determine that all of the CHa's have
+> > been counted for a single socket.
+> > However, for multi PCI segment systems, each socket is given a new
+> > segment and the bus number does NOT change.  So looking only for the
+> > bus number to change ends up counting all of the CHa's on all sockets
+> > in the system.  This leads to writing CPU MSRs beyond a valid range and
+> > causes an error in ivbep_uncore_msr_init_box().)
+> >
+> > To determine the number of CHAs, it should read bits 27:0 in the CAPID6
+> > register located at Device 30, Function 3, Offset 0x9C. These 28 bits
+> > form a bit vector of available LLC slices and the CHAs that manage those
+> > slices.
+> >
+> > Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore
+> > support")
+> > Reported-by: Kroening, Gary <gary.kroening@hpe.com>
+> > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> > ---
+> >   arch/x86/events/intel/uncore_snbep.c | 24 ++++++++++--------------
+> >   1 file changed, 10 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/arch/x86/events/intel/uncore_snbep.c
+> > b/arch/x86/events/intel/uncore_snbep.c
+> > index d4672ed..a42715b 100644
+> > --- a/arch/x86/events/intel/uncore_snbep.c
+> > +++ b/arch/x86/events/intel/uncore_snbep.c
+> > @@ -3575,24 +3575,20 @@ static struct intel_uncore_type
+> > *skx_msr_uncores[] = {
+> >   	NULL,
+> >   };
+> >
+> > +#define SKX_CAPID6		0x9c
+> > +#define SKX_CHA_BIT_WIDTH	28
+> > +
+> >   static int skx_count_chabox(void)
+> >   {
+> > -	struct pci_dev *chabox_dev = NULL;
+> > -	int bus, count = 0;
+> > +	struct pci_dev *dev = NULL;
+> > +	u32 val = 0;
+> >
+> > -	while (1) {
+> > -		chabox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x208d,
+> > chabox_dev);
+> > -		if (!chabox_dev)
+> > -			break;
+> > -		if (count == 0)
+> > -			bus = chabox_dev->bus->number;
+> > -		if (bus != chabox_dev->bus->number)
+> > -			break;
+> > -		count++;
+> > -	}
+> > +	dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
+> > +	if (!dev)
+> > +		return 0;
+> >
+> > -	pci_dev_put(chabox_dev);
+> > -	return count;
+> > +	pci_read_config_dword(dev, SKX_CAPID6, &val);
+> > +	return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
+> >   }
+> >
+> >   void skx_uncore_cpu_init(void)
+> > --
+> > 2.7.4
