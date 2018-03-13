@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvRP/5iPW5dcNiV830Qw3d4nB9dRW6QkBSLu26i5mSvuy5j4bPzexuhx/Qnir6CF8R5GOm+
-ARC-Seal: i=1; a=rsa-sha256; t=1520955213; cv=none;
+X-Google-Smtp-Source: AG47ELuwQTcRypogvf1q8CIif3qEv9ys27p9/9vB7vW60S1GOUakV/NwM+wZAFsekyJ6d9BRIG1g
+ARC-Seal: i=1; a=rsa-sha256; t=1520955211; cv=none;
         d=google.com; s=arc-20160816;
-        b=KELcddmv3/WovxxaBOWkmQWBlIxoCa1qbBMhQhSzk9n8JADUV+McRkIGd5l2QcIdtL
-         rBBxfuclFuT7OTihqhfbb7NrZ6qwN5No9YoW06SICT2OrrZ6q6PZJTxPn93xIGqkje96
-         097DcCECVJotVFQe3+gClvAC3H5phwS7sevMNh460zZma0+M4p9xgubNXfwrnDBB/OoZ
-         +tY282iyoeF6WusgqVRIhECExzioaA03tT3J7kdi5cr53Z+5fgOCZOGw0XyWsnGeevvJ
-         kFAn/t+Yp75qE8HttZI2x4SVhTRxpClwRzHkalLDJZe8l8QzSp8/zRiMEC+zEkNNJZUn
-         VAzQ==
+        b=ABtrFUv2Kx52WdQ4Fhj9Nmlw0owYdfaRlFbq/iYQ1+ZHPkAdWduhxHvQkS5SW8FtwZ
+         qHNf+uM1MqXO+JerkDZWugmnb3lJgWCucsIqltIJf805i+aYW5CYghOuiiRHe377Hc4g
+         iSoO2Yi5a5onTnGQxDS+Y1QXpuLO+GwBhTA2enfwYH+k6Toxb/uTbL9N3QKHFw+pdtEn
+         j+MGSyblZwum3M5di6N2KJloDFXl89vD75Cp/fvYjmqU0UIo2pTd10dFUE1ZZwlMIsAd
+         Z+g6SuDiKDhhdJf/rzjty+lzvOhe+Mo5/eIm/IGbbcfpzTn1ENnRfwNzp3Ba6eMhRZbP
+         Fbxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yl8VZ4sY+5/BXnxtAhsnMs2pKS4007E2ZL0CD7gPI6E=;
-        b=JmsoM5BfB/SS1BFAcHAb1wynIr1GRdnIIAIGi/yDb5FHpJLDgMNWJEBQVh916cw0Fh
-         6G7KDZz08U/1pAnASz2S5v8yZk3EQ3uXxC3+js+KPI+7u0gQZG3t7jrPd4nvqpS/4+j0
-         1xntK7kg6M9pXR/BX3UrtCFHW9vlADyXGmqb33NN6dz1Ja2J7zwzPYuiO8PUnO615kko
-         iaCCpr4qoyXZOtIuSZzYRkOMRDR1mwQvqUUYY1zWYtf37QKGCWyO6PalNPRAVPezkG1Y
-         k9JNb/wauFELkvmMLY6uuUb2yuLqQhmwzGFQRMetgHlkCN9ytXvYKG2lLH5p4hg1RKb3
-         nyQA==
+        bh=R/db7WB+yL4bHFmGzvpFqZ/zGUxl8EDeb2QJHgX8IYw=;
+        b=PC/G1FrRXAAC7w6OWnOLZ3frHdxd6R0moprugbJNyy8H1spRtQ8s41U4sX0qeL9pM5
+         LGFVvgHQgQFXB2w9zGASp8BdiOFZDRWDkfJt0vtC+lx5ct+JLFlNmSM3itOtXZt4myMQ
+         VoftV9b/YGU6fSnkd4Byxn1bMMgdF6QB2YcAAwn91y2LuE1fsxxn8+19kgz1pjyaLIEk
+         gNVkcsKMmpaT9FRDBDH/ekje16F5H1bvMy0cuDYixcya0vU4NueAqxXd5kioS1KeNHhy
+         J2t+aP7buR+XeLczB49WARqvAtwOiOhF+oQ8JHSfeY7NAyUf5lKDJ1/rp0FcduyYKmC0
+         CvKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sven Joachim <svenjoac@gmx.de>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 102/146] objtool: Fix 32-bit build
-Date: Tue, 13 Mar 2018 16:24:29 +0100
-Message-Id: <20180313152328.377728392@linuxfoundation.org>
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.15 101/146] objtool: Fix another switch table detection issue
+Date: Tue, 13 Mar 2018 16:24:28 +0100
+Message-Id: <20180313152328.313274950@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837134351255647?=
-X-GMAIL-MSGID: =?utf-8?q?1594837134351255647?=
+X-GMAIL-THRID: =?utf-8?q?1594837131189847438?=
+X-GMAIL-MSGID: =?utf-8?q?1594837131189847438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,76 +53,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 63474dc4ac7ed3848a4786b9592dd061901f606d upstream.
+commit 1402fd8ed7e5bda1b3e7613b70780b0db392d1e6 upstream.
 
-Fix the objtool build when cross-compiling a 64-bit kernel on a 32-bit
-host.  This also simplifies read_retpoline_hints() a bit and makes its
-implementation similar to most of the other annotation reading
-functions.
+Continue the switch table detection whack-a-mole.  Add a check to
+distinguish KASAN data reads from switch data reads.  The switch jump
+tables in .rodata have relocations associated with them.
 
-Reported-by: Sven Joachim <svenjoac@gmx.de>
+This fixes the following warning:
+
+  crypto/asymmetric_keys/x509_cert_parser.o: warning: objtool: x509_note_pkey_algo()+0xa4: sibling call from callable instruction with modified stack frame
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b5bc2231b8ad ("objtool: Add retpoline validation")
-Link: http://lkml.kernel.org/r/2ca46c636c23aa9c9d57d53c75de4ee3ddf7a7df.1520380691.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
+ tools/objtool/check.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -1115,42 +1115,29 @@ static int read_unwind_hints(struct objt
+@@ -924,7 +924,11 @@ static struct rela *find_switch_table(st
+ 		if (find_symbol_containing(file->rodata, text_rela->addend))
+ 			continue;
  
- static int read_retpoline_hints(struct objtool_file *file)
- {
--	struct section *sec, *relasec;
-+	struct section *sec;
- 	struct instruction *insn;
- 	struct rela *rela;
--	int i;
+-		return find_rela_by_dest(file->rodata, text_rela->addend);
++		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
++		if (!rodata_rela)
++			continue;
++
++		return rodata_rela;
+ 	}
  
--	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
-+	sec = find_section_by_name(file->elf, ".rela.discard.retpoline_safe");
- 	if (!sec)
- 		return 0;
- 
--	relasec = sec->rela;
--	if (!relasec) {
--		WARN("missing .rela.discard.retpoline_safe section");
--		return -1;
--	}
--
--	if (sec->len % sizeof(unsigned long)) {
--		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
--		return -1;
--	}
--
--	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
--		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
--		if (!rela) {
--			WARN("can't find rela for retpoline_safe[%d]", i);
-+	list_for_each_entry(rela, &sec->rela_list, list) {
-+		if (rela->sym->type != STT_SECTION) {
-+			WARN("unexpected relocation symbol type in %s", sec->name);
- 			return -1;
- 		}
- 
- 		insn = find_insn(file, rela->sym->sec, rela->addend);
- 		if (!insn) {
--			WARN("can't find insn for retpoline_safe[%d]", i);
-+			WARN("bad .discard.retpoline_safe entry");
- 			return -1;
- 		}
- 
- 		if (insn->type != INSN_JUMP_DYNAMIC &&
- 		    insn->type != INSN_CALL_DYNAMIC) {
--			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
-+			WARN_FUNC("retpoline_safe hint not an indirect jump/call",
- 				  insn->sec, insn->offset);
- 			return -1;
- 		}
+ 	return NULL;
