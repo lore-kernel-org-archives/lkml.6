@@ -1,97 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeCMU6b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:58:31 -0400
-Received: from ozlabs.org ([103.22.144.67]:50089 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752592AbeCMU63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:58:29 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 14 Mar 2018 07:58:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20180314075800.49fc10e5@canb.auug.org.au>
-In-Reply-To: <20180313124434.6f91b499b16080e766ab070f@linux-foundation.org>
-References: <20180313205119.6ca3c1aa@canb.auug.org.au>
-        <20180313124434.6f91b499b16080e766ab070f@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m.dZac+qbtJxaFjAizv+2eg"; protocol="application/pgp-signature"
+        id S1753224AbeCMU7T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:59:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60814 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751606AbeCMU7R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 16:59:17 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v2 0/2] hwmon: (ucd9000) Add gpio and debugfs interfaces
+Date: Tue, 13 Mar 2018 15:59:07 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031320-0044-0000-0000-000003F30F71
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008667; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002601; UDB=6.00510170; IPR=6.00781931;
+ MB=3.00020014; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 20:59:13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031320-0045-0000-0000-000008230F81
+Message-Id: <1520974749-5372-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130233
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/m.dZac+qbtJxaFjAizv+2eg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The ucd9000 series chips have gpio pins. Add a gpio chip interface to the ucd
+device so that users can query and set the state of the gpio pins.
 
-Hi Andrew,
+Add a debugfs interface using the existing pmbus debugfs directory to provide
+MFR_STATUS and the status of the gpi faults to users.
 
-On Tue, 13 Mar 2018 12:44:34 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> On Tue, 13 Mar 2018 20:51:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->=20
-> > After merging the akpm-current tree, today's linux-next build (lots of
-> > configuations) failed like this:
-> >=20
-> > (from the i386 defconfig build)
-> >=20
-> > In file included from include/linux/memcontrol.h:29:0,
-> >                  from include/linux/swap.h:9,
-> >                  from include/linux/suspend.h:5,
-> >                  from arch/x86/kernel/asm-offsets.c:13:
-> > include/linux/mm.h: In function 'get_mm_hiwater_rss':
-> > include/linux/mm.h:1569:9: error: first argument to '__builtin_choose_e=
-xpr' not a constant
-> > include/linux/mm.h: In function 'get_mm_hiwater_vm':
-> > include/linux/mm.h:1574:9: error: first argument to '__builtin_choose_e=
-xpr' not a constant
-> >=20
-> > and many more ...
-> >=20
-> > Caused by commit
-> >=20
-> >   c7c133f3d5ff ("kernel.h: skip single-eval logic on literals in min()/=
-max()")
-> > (and perhaps the folloups)
-> >=20
-> > Just a few of my builds actaully worked (including those I do
-> > during the day).  For complete logs see
-> > http://kisskb.ellerman.id.au/kisskb/head/13556/ .
-> >=20
-> > I guess it could be compiler version specific.  The failing ones are
-> > done with gcc 4.6.3.  My successful ones with gcc 7.3.1. =20
->=20
-> Yes, this is being a pain in the butt.  I guess we should drop the
-> patches for now.
+Changes since v1:
+ - dropped dev_err messages
+ - made gpio chip registration conditional on having gpio pins
+ - made mfr_status debugfs attribute more simple
 
-OK, I have removed them from my copy of your tree (rather than add
-reverts on top).
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
 
---=20
-Cheers,
-Stephen Rothwell
+ drivers/hwmon/pmbus/ucd9000.c | 341 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 340 insertions(+), 1 deletion(-)
 
---Sig_/m.dZac+qbtJxaFjAizv+2eg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoO1gACgkQAVBC80lX
-0GwErAf/b9mDemDFZRPlflJQJt/k6uZc20pHlSDz+FtXVmHeGJ8UHir4WYghxhAd
-M1PpSA7TKYJBPt4YR0nrXgsvvpNZOLBcYr3GPp+Qb47t44UA/D4iCUG0nGfbUCrz
-imkwVxonj/BWGR7Bm78mT4ioF0dZ84DfJqQFmLOzDB/9AHGkQHEAGAZ6XPY0mDqA
-JSL7XqLTuzTEkcS9KLhi9dFdlCI6uCAHSbi0RrhJgiv0JPm6ZOZCXvfhqrkviL/E
-zuTyCDImfVLZED/4ZK+/kMULqf7RbfbPMDKO/K60feRoiTeYoyjnnHR0h6LdGwlg
-+4hfXlIKfOhnr3XUGegnyisDa0Nk/Q==
-=oXPu
------END PGP SIGNATURE-----
-
---Sig_/m.dZac+qbtJxaFjAizv+2eg--
+-- 
+1.8.3.1
