@@ -1,95 +1,59 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520960135; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520964163; cv=none;
         d=google.com; s=arc-20160816;
-        b=HXYkMTInsU5SLAQHboeHRAixWWeo6hya6Cjt4Fki9D0sDV8fofaEY0VqwZSy0VtdMO
-         w7qQILIrNfikgaIIZNmdfYd3HbdvUDUl+8jX5TusSfWfsIVHs7HT4Qpaj5E0GXR9ePyZ
-         LoNRN3fzr/PqOBIzW8NC45dnDmdJvi45fJLA+4nF6r6re8AfwEdEpAi90uwweUJMh/rd
-         cbxuqPm3U9UsWnHpRGR1FGpSKvKBLFBaYTFaKdzGQ28smRICcnNLCvwbzZYzYHr2eyQC
-         NkFQ1O1ngw3BDaemX/27+stuTLrC5K5SKmRHSbG3Ok+dl/APgtcMXj7q8fUPvHTeInkm
-         Xqeg==
+        b=oGtYJOFz4Ci/V6Bx9521lyb1TsDApDyHNiO91nZJDl9rBzqCmrdgN/8VgQ2AU1WhXv
+         4rNkHmlrn9n24niXlzueezgtKEvlrPPYB/7Cx41qbbLgsc2IhfXqkgbVTo4XvaMX3PH8
+         Sgu8340+cK2y8qF3VL/eRA9d4iHErAR77nCOP4qe8kTJsmgAn1vhbTYXZonrn6zC3nT5
+         oMukoF7r5P6zf3MOYKx4/sEK/WQMJitj9jjwr3q3orqHXS7U6v2OQ0/RZCUeucoi+AID
+         LA6vgz2bFMyoDfiBd/KxYMxLuTKTqUuF76VF1sN8CbIAAF0PhReUpPI9xkRlroKQFLYT
+         /QGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=MZzD9JURBWXZsEsLOOHfaKXZY18Dk+GnHoxbJC/jYl0=;
-        b=u4EcYZv8iGUV9TCmH5dRFr7pZ+vNtGpYJSKX76Zrl+hMVXqbtXVPbB1BZd2lJRTz6Q
-         xVhyQ4Q+2XjHYA2MGHqXMm6GckTqb6BsG1aUyHvywJAFh+9xW05RwIMfyZrFsEuvGwJ4
-         3n3fZsKo8amrvgPFXP83LTAT8iMuC+QWEUPdc4KVp1vUBSQ+TiURI5t6vb29l8+ruOov
-         V6DOZo09a32F/G+S3JYMDSuQimx4fPMIiGRbPRpLoJBHIV8CB93jZQReQ1hrbiC59Q8W
-         qrmNkfqbRigcXJOEouMdwXKZW0awYJeQPdCaWCi4q91bGkS4Y+iSjbBpk/7CIOO5Xdc7
-         jjOQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=XulWEs7QSAWTs3KcsYIcONYvR1cRa68T2Ok/985BA+k=;
+        b=xrFqxqUhGjdX9r0XoS//sFxTDazbZR7YLpSlzgzzTw2j8xtArYUl0bs7mcF3E/yCgK
+         2po4RNpz1fM3qu68mk07eUIMTjsZTF4RyXyJOSwk8HDk/a5YKdUcOeUPUwfGfF286iHE
+         M4Fawu547p4iPlZ86dwiRJpp2EkIMfZsfhKu+HPrhcFv8yTPC7oheJyWMZuP0tIliEvZ
+         SwSFpf2pHjVJHylzEx9RXaHCIYKqGA+pBsDYgCYSgprE3r9nyWJnN0wW+ORRkQc7PURN
+         SahxeU6wUwTOhUyKlb2cRftf+kF0p7bHK3ETfpqkteYCb8Pa94bWAWd6KNiS9aWce75I
+         uHGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uwMrDtOJ;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=bGWNNlob;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AG47ELvI2C6Ifcek3xs8NCKPyWWx6+orPMZYxSDMJBVlw8S9eZVVrtv9Ood47eQaThpg4gWnq6d0xw==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org,
-	ebiederm@xmission.com,
-	torvalds@linux-foundation.org,
-	gregkh@linuxfoundation.org
-Cc: containers@lists.linux-foundation.org,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 0/4 v5 RESEND] devpts: handle bind-mounts correctly
-Date: Tue, 13 Mar 2018 17:55:23 +0100
-Message-Id: <20180313165527.24038-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uwMrDtOJ;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=bGWNNlob;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELtfxBpXzCgjb+BF0hkBoqTTZvNv7JsfDQQd7WVfyuqXSKT6MfdnCFbb4bi25Gp3TDLIfn79Po3Ttp734+dhSYU=
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <20180313165527.24038-1-christian.brauner@ubuntu.com>
+References: <20180313165527.24038-1-christian.brauner@ubuntu.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 13 Mar 2018 11:02:42 -0700
+X-Google-Sender-Auth: _PcKsQEOFzluZLUCyB2vuezbbL0
+Message-ID: <CA+55aFw3fO1o+w_EPEqYzJ+p4NELK_9g0tFx6fdEZ7mUGV8=mQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4 v5 RESEND] devpts: handle bind-mounts correctly
+To: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Containers <containers@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594842295484827893?=
-X-GMAIL-MSGID: =?utf-8?q?1594842295484827893?=
+X-GMAIL-MSGID: =?utf-8?q?1594846518716706991?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Resending to CC grekh.
+On Tue, Mar 13, 2018 at 9:55 AM, Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> This is the fith iteration of this patch. Per-patch changes are
+> summarized in the individual patches:
 
-Hey everyone,
+I don't see anything I react to any more. So Ack from me.
 
-This is the fith iteration of this patch. Per-patch changes are
-summarized in the individual patches:
-
-ChangeLog v4->v5:
-* added non-functional patch to document devpts_mntget().
-  Reason for putting this in a separate patch is that it allows you,
-  Linus and Eric, to simply drop it if judged useless.
-* reverse error handling logic to further simplify
-* dput() dentry in the non-function patch. This was not really a problem
-  since the following patch included a fix for it. But better to get it
-  right in all individual patches.
-* I did another rewrite of the problem analysis for
-  posterity in the patch "Subject: [PATCH 2/3 v3] devpts: resolve devpts
-  bind-mounts" and in this cover letter.
-
-ChangeLog v3->v4:
-* small logical simplifications
-* add test that bind-mounts of /dev/pts/ptmx to locations that do not
-  resolve to a valid slave pty path under the originating devpts mount
-  fail
-
-ChangeLog v2->v3:
-* rewritten commit message to thoroughly analyse the problem for
-  posterity in the patch "Subject: [PATCH 2/3 v3] devpts: resolve devpts
-  bind-mounts" and in this cover letter.
-* extended selftests to test for correct handling of /dev/pts/ptmx
-  bind-mounts to /dev/ptmx and non-standard devpts mounts such as
-  mount -t devpts devpts /mnt
-
-ChangeLog v1->v2:
-* see individual patches
-ChangeLog v0->v1:
-* see individual patches
-
-Christian Brauner (4):
-  devpts: hoist out check for DEVPTS_SUPER_MAGIC
-  devpts: resolve devpts bind-mounts
-  devpts: comment devpts_mntget()
-  selftests: add devpts selftests
-
- fs/devpts/inode.c                                |  66 +++--
- tools/testing/selftests/Makefile                 |   1 +
- tools/testing/selftests/filesystems/.gitignore   |   1 +
- tools/testing/selftests/filesystems/Makefile     |   2 +-
- tools/testing/selftests/filesystems/devpts_pts.c | 313 +++++++++++++++++++++++
- 5 files changed, 363 insertions(+), 20 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/devpts_pts.c
-
--- 
-2.15.1
+             Linus
