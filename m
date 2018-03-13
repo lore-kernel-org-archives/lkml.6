@@ -1,191 +1,169 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431414-1520247820-2-14208721909934535421
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520247820; b=OZtr9txPVlyv6NUpaNrFO7X6BnDybO8UwfdBrqnlc0xM+zF
-    Versm9WCAp5F8nGQD65w4aU6Goe4J8T5ZjJZ148akKajhBF78aUnkoVpvv93gVUO
-    pcktZQCoLV5WESEoxHId/4A6mRNUQOtkpIEeeTWd/awZielpitlJimX6Vh1r83bR
-    nORDAEDBM/Hv8BCY5ur3x7rL2chDn8YhuFgr6ceR8+vkdP3FZFSY264etj6umcrb
-    IrX1kzH2TiTcbKup4vI6C4UCYxxXhI/IQI+/BwykcWTs3WT5Yy35cTonhiVCYjMb
-    PNt8igHmE8nKxL2IqXKO4Sk16Q5FiSUcybLVIDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520247820; bh=Luvjj/toR2Zy7/Nhm+b0pNneomXeCr23WXMHs3bPJkQ=; b=Y
-    gmN4AB3hpHWh7bAMN7n5CttMtFq8wZ4PXEs1+YGtntbP7Oo3Hu+ykuU7bmsOO3Xk
-    HSSvBEbZD1ZK/UEyv3VL4P0bhe2eQR+x3AoQGLBnx7jRZbDelPFnRgZWOeqSZLsy
-    wHSb+s4IIxPxbAV2lis0X5t2LKVtL8U7U1qzyyKJEOldkOyoxUCHMhOLLA5N0pIp
-    hUABYsKubBHJ5J7lvPmXB6MFLi4AbAE3cCErpslMDMzRAJ9vIDmQ4hc0Lf+sOfCo
-    47mVXSpYeqvTnRCnp8rHINnVpqEpxu5aFsKFSuXe61RWxiQjaa6sfPCSGSwf9EGX
-    g27yErbCNvle/k7BB5RAA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=ZfGzKtEq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=ZfGzKtEq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeCELDf (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 06:03:35 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:55971 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbeCELDe (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 5 Mar 2018 06:03:34 -0500
-Subject: Re: [PATCH] usb: dwc3: Prevent indefinite sleep in _dwc3_set_mode
- during suspend/resume
-To: Baolin Wang <baolin.wang@linaro.org>
-CC: Felipe Balbi <balbi@kernel.org>, USB <linux-usb@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1519730526-22274-1-git-send-email-rogerq@ti.com>
- <87sh9l5z4l.fsf@linux.intel.com>
- <94cd6377-1327-2309-8d69-6ab0de2bdfd4@ti.com>
- <87po4i3o1v.fsf@linux.intel.com>
- <a907787a-dea2-5f15-3d25-693680a42b71@ti.com>
- <CAMz4kuKOnAPckX1=nqVPyF7O5u-0YrekTfMddYwe0WC2-0AFDw@mail.gmail.com>
-From: Roger Quadros <rogerq@ti.com>
-Message-ID: <6e3a58fb-f1d8-610f-d39c-7d1259833911@ti.com>
-Date: Mon, 5 Mar 2018 13:03:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAMz4kuKOnAPckX1=nqVPyF7O5u-0YrekTfMddYwe0WC2-0AFDw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELvFsapHyWVpY8s/+n/wEoi0BH4wjJMQImgvtcvRFRdrDEt8oPJdCU5UA97MOALlGyNlm5RM
+ARC-Seal: i=1; a=rsa-sha256; t=1520945645; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Yk6NptNpD+K3p92r55UE4grPzVc1NPUWhcQ+RizoQlSmYXXHtnIbJ/SDjNNAJnpPx0
+         zWwJh7oV3rhWu3ip0rVCKXtQ466Gh8ou2aUNmh0N5Pqft7aaqIAnWc7W8CzbHPaSag1p
+         ip224+5AoGwfPowIXIkF2JJhHA2x9aNYAWXYAd3jXVs7+wLlczHybGhY90gxISEotOes
+         rCgCLroy3KXFv/o2HbaafgMqqarAFZ8nquFYtVXZJS40dfcwqHkLeU2vuvSFcUjLS4cd
+         aMWSh2SmYpuOvAUlj/lkGoB3h8cbGyZZpEbQAbu5rAw0KBgePy7G7OgRsCGB07YkP4AU
+         QjEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=FMskqqMvqhMbBZ5SZr6ez4Uh8ya5QU0oFGUL8Dwgtvc=;
+        b=zZPnNOqYsI4NYhDfWhtDRKzharwUbATpLV+KVpRkX0t6hOkhK0nHJ1Uf6n7tZ2tXjA
+         SZfiUVNTAfW5ZEY9jKYs+lrLWZ720ondKaEQDO/8qbffqvllZHNL9u77Hn8OiqNfFUWM
+         j8P+/IyQQyRIk9NrUFYaL9GVRWTXqUwdijs9txwZInjKLm1u5+NxICvqJNLqm7QQC3Ms
+         iRqDMVL2UyFbID8oopGDE0ROdWPfQ/H22eTagoLWotEptlC45ZVJNxOzp8S7KacfgG+z
+         RA4h7VoSnU1+gHywyyDNudC9soWv7g1iTklLEpjwMcmYUS0KfZQq3fgGBSZMGk91UOL0
+         jQEw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com
+Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH 0/8] trace_uprobe: Support SDT markers having reference count (semaphore)
+Date: Tue, 13 Mar 2018 18:25:55 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18031312-0008-0000-0000-000004DBFABC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031312-0009-0000-0000-00001E6F2D61
+Message-Id: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130153
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594827101403620100?=
+X-GMAIL-MSGID: =?utf-8?q?1594827101403620100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/03/18 12:41, Baolin Wang wrote:
-> Hi Roger,
-> 
-> On 5 March 2018 at 17:45, Roger Quadros <rogerq@ti.com> wrote:
->> Felipe,
->>
->> On 05/03/18 10:49, Felipe Balbi wrote:
->>>
->>> Hi,
->>>
->>> Roger Quadros <rogerq@ti.com> writes:
->>>>> Roger Quadros <rogerq@ti.com> writes:
->>>>>> In the following test we get stuck by sleeping forever in _dwc3_set_mode()
->>>>>> after which dual-role switching doesn't work.
->>>>>>
->>>>>> On dra7-evm's dual-role port,
->>>>>> - Load g_zero gadget driver and enumerate to host
->>>>>> - suspend to mem
->>>>>> - disconnect USB cable to host and connect otg cable with Pen drive in it.
->>>>>> - resume system
->>>>>> - we sleep indefinitely in _dwc3_set_mode due to.
->>>>>>   dwc3_gadget_exit()->usb_del_gadget_udc()->udc_stop()->
->>>>>>    dwc3_gadget_stop()->wait_event_lock_irq()
->>>>>>
->>>>>> Let's clear the DWC3_EP_END_TRANSFER_PENDING flag on all endpoints
->>>>>> so we don't wait in dwc3_gadget_stop().
->>>>>>
->>>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>>>>> ---
->>>>>>  drivers/usb/dwc3/gadget.c | 14 ++++++++++++++
->>>>>>  1 file changed, 14 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->>>>>> index 2bda4eb..0a360da 100644
->>>>>> --- a/drivers/usb/dwc3/gadget.c
->>>>>> +++ b/drivers/usb/dwc3/gadget.c
->>>>>> @@ -3273,6 +3273,20 @@ int dwc3_gadget_init(struct dwc3 *dwc)
->>>>>>
->>>>>>  void dwc3_gadget_exit(struct dwc3 *dwc)
->>>>>>  {
->>>>>> +  int epnum;
->>>>>> +  unsigned long flags;
->>>>>> +
->>>>>> +  spin_lock_irqsave(&dwc->lock, flags);
->>>>>> +  for (epnum = 2; epnum < DWC3_ENDPOINTS_NUM; epnum++) {
->>>>>> +          struct dwc3_ep  *dep = dwc->eps[epnum];
->>>>>> +
->>>>>> +          if (!dep)
->>>>>> +                  continue;
->>>>>> +
->>>>>> +          dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
->>>>>> +  }
->>>>>> +  spin_unlock_irqrestore(&dwc->lock, flags);
->>>>>> +
->>>>>>    usb_del_gadget_udc(&dwc->gadget);
->>>>>>    dwc3_gadget_free_endpoints(dwc);
->>>>>
->>>>> free endpoints is a better place for this. It's already going to free
->>>>> the memory anyway. Might as well clear all flags to 0 there.
->>>>>
->>>>
->>>> But it won't solve the deadlock issue. Since dwc3_gadget_free_endpoints()
->>>> is called after usb_del_gadget_udc() and the deadlock happens when
->>>>
->>>> usb_del_gadget_udc()->udc_stop()->dwc3_gadget_stop()->wait_event_lock_irq()
->>>>
->>>> and DWC3_EP_END_TRANSFER_PENDING flag is set.
->>>
->>> indeed. Iterating twice over the entire endpoint list seems
->>> wasteful. Perhaps we just shouldn't wait when removing the UDC since
->>> that's essentially what this patch will do, right? If you clear the flag
->>> before calling ->udc_stop(), this means the loop in dwc3_gadget_stop()
->>> will do nothing. Might as well remove it.
->>>
->>
->> This means that we will never wait for DWC3_EP_END_TRANSFER_PENDING to clear
->> in dwc3_gadget_stop() like we used to. This is perfectly fine, right?
->>
->> It makes sense to me as dwc3_gadget_stop() calls __dwc3_gadget_stop() which
->> masks all interrupts and nobody will ever clear that flag if it was set.
-> 
-> I don't think so. It can not mask the endpoint events, please check
-> the events which will be masked in DEVTEN register. The reason why we
+Userspace Statically Defined Tracepoints[1] are dtrace style markers
+inside userspace applications. These markers are added by developer at
+important places in the code. Each marker source expands to a single
+nop instruction in the compiled code but there may be additional
+overhead for computing the marker arguments which expands to couple of
+instructions. In case the overhead is more, execution of it can be
+omitted by runtime if() condition when no one is tracing on the marker:
 
-Correct, endpoint events are not managed by DEVTEN.
+    if (reference_counter > 0) {
+        Execute marker instructions;
+    }   
 
-> should wait for DWC3_EP_END_TRANSFER_PENDING to clear is that,
-> sometimes the DWC3_DEPEVT_EPCMDCMPLT event will be triggered later
-> than 100us, but now we may have freed the gadget irq which will cause
-> crash.
-> 
+Default value of reference counter is 0. Tracer has to increment the 
+reference counter before tracing on a marker and decrement it when
+done with the tracing.
 
-OK. So what is the right approach here?
-In the test case I mentioned in the commit log the endpoint interrupt never
-happens and it waits forever in dwc3_gadget_stop().
+Currently, perf tool has limited supports for SDT markers. I.e. it
+can not trace markers surrounded by reference counter. Also, it's
+not easy to add reference counter logic in userspace tool like perf,
+so basic idea for this patchset is to add reference counter logic in
+the trace_uprobe infrastructure. Ex,[2]
 
-Since we know we're winding up, can we explicitly disable the endpoint events
-here?
+  # cat tick.c
+    ... 
+    for (i = 0; i < 100; i++) {
+	DTRACE_PROBE1(tick, loop1, i);
+        if (TICK_LOOP2_ENABLED()) {
+            DTRACE_PROBE1(tick, loop2, i); 
+        }
+        printf("hi: %d\n", i); 
+        sleep(1);
+    }   
+    ... 
+
+Here tick:loop1 is marker without reference counter where as tick:loop2
+is surrounded by reference counter condition.
+
+  # perf buildid-cache --add /tmp/tick
+  # perf probe sdt_tick:loop1
+  # perf probe sdt_tick:loop2
+
+  # perf stat -e sdt_tick:loop1,sdt_tick:loop2 -- /tmp/tick
+  hi: 0
+  hi: 1
+  hi: 2
+  ^C
+  Performance counter stats for '/tmp/tick':
+             3      sdt_tick:loop1
+             0      sdt_tick:loop2
+     2.747086086 seconds time elapsed
+
+
+Perf failed to record data for tick:loop2. Same experiment with this
+patch series:
+
+  # ./perf buildid-cache --add /tmp/tick
+  # ./perf probe sdt_tick:loop2
+  # ./perf stat -e sdt_tick:loop2 /tmp/tick
+    hi: 0
+    hi: 1
+    hi: 2
+    ^C  
+     Performance counter stats for '/tmp/tick':
+                 3      sdt_tick:loop2
+       2.561851452 seconds time elapsed
+
+[1] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
+[2] https://github.com/iovisor/bcc/issues/327#issuecomment-200576506
+[3] https://lkml.org/lkml/2017/12/6/976
+
+
+Note: 'reference counter' is called as 'semaphore' in original Dtrace
+(or Systemtap, bcc and even in ELF) documentation and code. But the 
+term 'semaphore' is misleading in this context. This is just a counter
+used to hold number of tracers tracing on a marker. This is not really
+used for any synchronization. So we are referring it as 'reference
+counter' in kernel / perf code.
+
+RFC series can be found at:
+  https://lkml.org/lkml/2018/2/28/76
+
+Ravi Bangoria (8):
+  Uprobe: Export vaddr <-> offset conversion functions
+  mm: Prefix vma_ to vaddr_to_offset() and offset_to_vaddr()
+  Uprobe: Rename map_info to uprobe_map_info
+  Uprobe: Export uprobe_map_info along with
+    uprobe_{build/free}_map_info()
+  trace_uprobe: Support SDT markers having reference count (semaphore)
+  trace_uprobe/sdt: Fix multiple update of same reference counter
+  perf probe: Support SDT markers having reference counter (semaphore)
+  trace_uprobe/sdt: Document about reference counter
+
+ Documentation/trace/uprobetracer.txt |  16 +-
+ include/linux/mm.h                   |  12 ++
+ include/linux/uprobes.h              |  11 ++
+ kernel/events/uprobes.c              |  62 ++++----
+ kernel/trace/trace.c                 |   2 +-
+ kernel/trace/trace_uprobe.c          | 273 ++++++++++++++++++++++++++++++++++-
+ tools/perf/util/probe-event.c        |  21 ++-
+ tools/perf/util/probe-event.h        |   1 +
+ tools/perf/util/probe-file.c         |  22 ++-
+ tools/perf/util/symbol-elf.c         |  10 ++
+ tools/perf/util/symbol.h             |   1 +
+ 11 files changed, 382 insertions(+), 49 deletions(-)
 
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.8.3.1
