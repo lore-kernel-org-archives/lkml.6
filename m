@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvEPmu1wegPlkV8gKkcjzr/aZw7GQl9b/UKwkk806zIw604DkcstwQqugwR10ppFLPYp6QJ
-ARC-Seal: i=1; a=rsa-sha256; t=1520954934; cv=none;
+X-Google-Smtp-Source: AG47ELvFoXa8gB83xfKjekewsyp5oqVLcnL5rp/1VE47B5SnWxH5fI3AzYBhQbeYsbZIsLKa4bl+
+ARC-Seal: i=1; a=rsa-sha256; t=1520954931; cv=none;
         d=google.com; s=arc-20160816;
-        b=xx0i4Iy6yZ7OtqL4Omh+etB8Vc+61jqIWHm+65lG4FQ7i/Fj7q/OS5x3dpZEKzAw7n
-         qvunEVBHTvOh/Mn/VBo/WaO1Wv23wePClMsfXGgm63czZLcbfS7q9msvItDXUGJrVq8C
-         6MFK4jEGdgxOAMfxpfq2lDtw6ivlEvQA3pDkwN6eixOz5ZKN4pRF/94M68Np3mgvqiX0
-         2h7UVShOzxa4iXz1xm8C01Ohx6AYxZ0y9iRHYRMNIIluVas7J8+GIdWYuousgoSwDaTH
-         VpyTxhgbbe6g3GZ3e/fUMusg2rioXXE2OEL1PzT+mAp5dqNEtlpMcl5H1M5dwRTCBFNf
-         eyqw==
+        b=NjOtrBL14zc6ctXjL3e74XTEh5f+lZAUcGvNsG0l4+t9RpfYpP9qhoIuPeY+z3qkAY
+         JAvbixNrWXHi18lyrNMzhyuZTwa8HhaK5gH28wQ7K017E/r21kfkaxEtXYhUPWnxalwf
+         1pzcP2JVkfCOv4zeSA01BqG/8leSkO19nhguNZe8MmpskEv3vk0VZwB35Cu21JUPbdVj
+         V6mqO/e1zZS1ysWLuztCBkxhX4sMoD+Tq3ssM3Tkf9lnSVmhnH6mD7RoJB0U5zW5PsJC
+         l+XbfjC7aZWfbCVEhGBIYIzTotnZBhp5WPA6qWI1S8oC+45G8WL+uueEzcyzhagpAETD
+         RJhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R5HgvYStK97cq6mt11JgmlWUK1jqByRrqlw3s7XYy3E=;
-        b=jaAtSCz5hAI6IOUM5CTaOX7ctbyZzb8ckj7NOKrfLi1N2moZK/dz8NHpIBv05JAzHc
-         Qz3Mced1PBwVmnAwmsrH+ZFNbgo5bcgIq5mSKW4pZvBGzvRPXcO+Skg6qmuwZLK/DGN7
-         x+/IfNWz79hr3a9bTWw0O06pLQKOhkQDLaYcbWKsHul66dCdmZ56BF+2d2ITbjVzMA6G
-         e31NJOVuOm03U1ZzmflSc1IYmDaTEylrKz5FDLNkGh9rVPzT4CWCTirCqGAv9kT7buY+
-         GgZNRC5V5/MHHQAnGuonAMJ3UP9EbEzQGN4yqqP+xhly7pzxsPjemFghgn5Iw+np6z+8
-         UPFw==
+        bh=fCSYK03dlA8X5QgqUU9Sl9wjcvnjMyvbnCELxPIWDRE=;
+        b=HjR4gQg3sm58b+T1c6CECFyhMExNcGm9HsiwpBgZi7rbiIAhrFKrwIgUYnpnQro963
+         rgq5743oFsAIgaRY9PoKBvfhYAe9brD5HopfM6jTQKnzOGTuFozb2QS/nEOmLmIso0x4
+         dlfTZMqKToEG59pyCLmzh0K7jJKRPcB3l4lqfMFA7m0JVJk00h6zeOz/sOZga9rVYiKN
+         zH0ThlVOrw7SjAJ0PpDCcUwYpA7YmrhG2ytJKO+DGOYLNKdZm7BfLwDDm1m88MplpKea
+         Evk7INgy+FioObUS16qlNZ8YA8Z6wCO80XbN3Y8QWWFaSq61/1eFInNzlK/6VKl2Xuip
+         EoQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Roman Li <Roman.Li@amd.com>,
-	Tony Cheng <Tony.Cheng@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 032/146] drm/amd/display: Default HDMI6G support to true. Log VBIOS table error.
-Date: Tue, 13 Mar 2018 16:23:19 +0100
-Message-Id: <20180313152323.002850685@linuxfoundation.org>
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Subject: [PATCH 4.15 014/146] drm/i915: Update watermark state correctly in sanitize_watermarks
+Date: Tue, 13 Mar 2018 16:23:01 +0100
+Message-Id: <20180313152321.663661695@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836841238132336?=
-X-GMAIL-MSGID: =?utf-8?q?1594836841238132336?=
+X-GMAIL-THRID: =?utf-8?q?1594836838276869942?=
+X-GMAIL-MSGID: =?utf-8?q?1594836838276869942?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,67 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Harry Wentland <harry.wentland@amd.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-commit caf0a9030d75509f3cacefe466d6d69d26e3dee6 upstream.
+commit 556fe36d09da5f82879e92bafa0371b4b79f7d6f upstream.
 
-There have been many reports of Ellesmere and Baffin systems not being
-able to drive HDMI 4k60 due to the fact that we check the HDMI_6GB_EN
-bit from VBIOS table. Windows seems to not have this issue.
+We no longer use intel_crtc->wm.active for watermarks any more,
+which was incorrect. But this uncovered a bug in sanitize_watermarks(),
+which meant that we wrote the correct watermarks, but the next
+update would still use the wrong hw watermarks for calculating.
+This caused all further updates to fail with -EINVAL and the
+log would reveal an error like the one below:
 
-On some systems we fail to the encoder cap info from VBIOS. In that case
-we should default to enabling HDMI6G support.
+[   10.043902] [drm:ilk_validate_wm_level.part.8 [i915]] Sprite WM0 too large 56 (max 0)
+[   10.043960] [drm:ilk_validate_pipe_wm [i915]] LP0 watermark invalid
+[   10.044030] [drm:intel_crtc_atomic_check [i915]] No valid intermediate pipe watermarks are possible
 
-This was tested by dwagner on
-https://bugs.freedesktop.org/show_bug.cgi?id=102820
-
-Signed-off-by: Harry Wentland <harry.wentland@amd.com>
-Reviewed-by: Roman Li <Roman.Li@amd.com>
-Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
-Acked-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Fixes: b6b178a77210 ("drm/i915: Calculate ironlake intermediate watermarks correctly, v2.")
+Cc: stable@vger.kernel.org #v4.8+
+Link: https://patchwork.freedesktop.org/patch/msgid/20171110113503.16253-1-maarten.lankhorst@linux.intel.com
+Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c |   16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/intel_display.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
-@@ -683,6 +683,7 @@ void dce110_link_encoder_construct(
- {
- 	struct bp_encoder_cap_info bp_cap_info = {0};
- 	const struct dc_vbios_funcs *bp_funcs = init_data->ctx->dc_bios->funcs;
-+	enum bp_result result = BP_RESULT_OK;
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -14463,6 +14463,8 @@ retry:
  
- 	enc110->base.funcs = &dce110_lnk_enc_funcs;
- 	enc110->base.ctx = init_data->ctx;
-@@ -757,15 +758,24 @@ void dce110_link_encoder_construct(
- 		enc110->base.preferred_engine = ENGINE_ID_UNKNOWN;
+ 		cs->wm.need_postvbl_update = true;
+ 		dev_priv->display.optimize_watermarks(intel_state, cs);
++
++		to_intel_crtc_state(crtc->state)->wm = cs->wm;
  	}
  
-+	/* default to one to mirror Windows behavior */
-+	enc110->base.features.flags.bits.HDMI_6GB_EN = 1;
-+
-+	result = bp_funcs->get_encoder_cap_info(enc110->base.ctx->dc_bios,
-+						enc110->base.id, &bp_cap_info);
-+
- 	/* Override features with DCE-specific values */
--	if (BP_RESULT_OK == bp_funcs->get_encoder_cap_info(
--			enc110->base.ctx->dc_bios, enc110->base.id,
--			&bp_cap_info)) {
-+	if (BP_RESULT_OK == result) {
- 		enc110->base.features.flags.bits.IS_HBR2_CAPABLE =
- 				bp_cap_info.DP_HBR2_EN;
- 		enc110->base.features.flags.bits.IS_HBR3_CAPABLE =
- 				bp_cap_info.DP_HBR3_EN;
- 		enc110->base.features.flags.bits.HDMI_6GB_EN = bp_cap_info.HDMI_6GB_EN;
-+	} else {
-+		dm_logger_write(enc110->base.ctx->logger, LOG_WARNING,
-+				"%s: Failed to get encoder_cap_info from VBIOS with error code %d!\n",
-+				__func__,
-+				result);
- 	}
- }
- 
+ put_state:
