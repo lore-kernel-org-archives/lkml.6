@@ -1,152 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933101AbeCMRD4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:03:56 -0400
-Received: from g9t5009.houston.hpe.com ([15.241.48.73]:54202 "EHLO
-        g9t5009.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeCMRDy (ORCPT
+        id S932969AbeCMRFW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:05:22 -0400
+Received: from gateway30.websitewelcome.com ([192.185.160.12]:19765 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932808AbeCMRFT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:03:54 -0400
-From: Toshi Kani <toshi.kani@hpe.com>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: bp@alien8.de, luto@kernel.org, gratian.crisan@ni.com, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Toshi Kani <toshi.kani@hpe.com>
-Subject: [PATCH 2/2] x86/mm: remove pointless checks in vmalloc_fault
-Date: Tue, 13 Mar 2018 11:03:47 -0600
-Message-Id: <20180313170347.3829-3-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313170347.3829-1-toshi.kani@hpe.com>
-References: <20180313170347.3829-1-toshi.kani@hpe.com>
+        Tue, 13 Mar 2018 13:05:19 -0400
+Subject: Re: [PATCH] iio: potentiometer: ds1803: remove VLA usage
+To: Himanshu Jha <himanshujha199640@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313152343.GA31789@embeddedgus>
+ <20180313162454.GA8769@himanshu-Vostro-3559>
+ <be9b8f8d-929f-1c0b-334f-583d1c57460c@embeddedor.com>
+ <20180313165906.GA11317@himanshu-Vostro-3559>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <33e96dea-1d0d-f958-88bb-7627b867d251@embeddedor.com>
+Date: Tue, 13 Mar 2018 12:05:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180313165906.GA11317@himanshu-Vostro-3559>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1evnMU-003SWn-76
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:53392
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmalloc_fault() sets user's pgd or p4d from the kernel page table.
-Once it's set, all tables underneath are identical. There is no point
-of following the same page table with two separate pointers and makes
-sure they see the same with BUG().
 
-Remove the pointless checks in vmalloc_fault(). Also rename the kernel
-pgd/p4d pointers to pgd_k/p4d_k so that their names are consistent in
-the file.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Gratian Crisan <gratian.crisan@ni.com>
----
- arch/x86/mm/fault.c |   56 +++++++++++++++------------------------------------
- 1 file changed, 17 insertions(+), 39 deletions(-)
+On 03/13/2018 11:59 AM, Himanshu Jha wrote:
+> On Tue, Mar 13, 2018 at 11:31:19AM -0500, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 03/13/2018 11:24 AM, Himanshu Jha wrote:
+>>> Hi Gustavo,
+>>>
+>>> On Tue, Mar 13, 2018 at 10:23:43AM -0500, Gustavo A. R. Silva wrote:
+>>>> In preparation to enabling -Wvla, remove VLA. In this particular
+>>>> case use macro ARRAY_SIZE so the length of array _result_ can be
+>>>> computed at preprocessing time.
+>>>>
+>>>> The use of stack Variable Length Arrays needs to be avoided, as they
+>>>> can be a vector for stack exhaustion, which can be both a runtime bug
+>>>> or a security flaw. Also, in general, as code evolves it is easy to
+>>>> lose track of how big a VLA can get. Thus, we can end up having runtime
+>>>> failures that are hard to debug.
+>>>>
+>>>> Also, fixed as part of the directive to remove all VLAs from
+>>>> the kernel: https://lkml.org/lkml/2018/3/7/621
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> ---
+>>>
+>>> It is already applied as I had sent the patch few days ago.
+>>> https://lkml.org/lkml/2018/3/10/164
+>>>
+>>> I specifically CC'ed you and Kees to avoid the patch collisions.
+>>>
+>>
+>> I see. Can you please update this spreadsheet:
+>>
+>> https://docs.google.com/spreadsheets/d/1OcfyKK8pJ24esYhSEsW4Q2boZE7UTGbYsSEEtFXf7U0/edit
+> 
+> Updated!
+> 
+> Also,
+> 
+> drivers/iio/humidity/hts221_i2c.c:43:2: warning: ISO C90
+> forbids variable length array ‘send’ [-Wvla]
+> 
+> This was already removed in recent commit when regmap API was used.
+> 
+> "6217792 iio: humidity: hts221: add regmap API support"
+> 
+> For this I added a short note in the *Notes* column.
+> 
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 25a30b5d6582..e7bc79853538 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -417,11 +417,11 @@ void vmalloc_sync_all(void)
-  */
- static noinline int vmalloc_fault(unsigned long address)
- {
--	pgd_t *pgd, *pgd_ref;
--	p4d_t *p4d, *p4d_ref;
--	pud_t *pud, *pud_ref;
--	pmd_t *pmd, *pmd_ref;
--	pte_t *pte, *pte_ref;
-+	pgd_t *pgd, *pgd_k;
-+	p4d_t *p4d, *p4d_k;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	pte_t *pte;
- 
- 	/* Make sure we are in vmalloc area: */
- 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
-@@ -435,73 +435,51 @@ static noinline int vmalloc_fault(unsigned long address)
- 	 * case just flush:
- 	 */
- 	pgd = (pgd_t *)__va(read_cr3_pa()) + pgd_index(address);
--	pgd_ref = pgd_offset_k(address);
--	if (pgd_none(*pgd_ref))
-+	pgd_k = pgd_offset_k(address);
-+	if (pgd_none(*pgd_k))
- 		return -1;
- 
- 	if (CONFIG_PGTABLE_LEVELS > 4) {
- 		if (pgd_none(*pgd)) {
--			set_pgd(pgd, *pgd_ref);
-+			set_pgd(pgd, *pgd_k);
- 			arch_flush_lazy_mmu_mode();
- 		} else {
--			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_ref));
-+			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_k));
- 		}
- 	}
- 
- 	/* With 4-level paging, copying happens on the p4d level. */
- 	p4d = p4d_offset(pgd, address);
--	p4d_ref = p4d_offset(pgd_ref, address);
--	if (p4d_none(*p4d_ref))
-+	p4d_k = p4d_offset(pgd_k, address);
-+	if (p4d_none(*p4d_k))
- 		return -1;
- 
- 	if (p4d_none(*p4d) && CONFIG_PGTABLE_LEVELS == 4) {
--		set_p4d(p4d, *p4d_ref);
-+		set_p4d(p4d, *p4d_k);
- 		arch_flush_lazy_mmu_mode();
- 	} else {
--		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_ref));
-+		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_k));
- 	}
- 
--	/*
--	 * Below here mismatches are bugs because these lower tables
--	 * are shared:
--	 */
- 	BUILD_BUG_ON(CONFIG_PGTABLE_LEVELS < 4);
- 
- 	pud = pud_offset(p4d, address);
--	pud_ref = pud_offset(p4d_ref, address);
--	if (pud_none(*pud_ref))
-+	if (pud_none(*pud))
- 		return -1;
- 
--	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
--		BUG();
--
- 	if (pud_large(*pud))
- 		return 0;
- 
- 	pmd = pmd_offset(pud, address);
--	pmd_ref = pmd_offset(pud_ref, address);
--	if (pmd_none(*pmd_ref))
-+	if (pmd_none(*pmd))
- 		return -1;
- 
--	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
--		BUG();
--
- 	if (pmd_large(*pmd))
- 		return 0;
- 
--	pte_ref = pte_offset_kernel(pmd_ref, address);
--	if (!pte_present(*pte_ref))
--		return -1;
--
- 	pte = pte_offset_kernel(pmd, address);
--
--	/*
--	 * Don't use pte_page here, because the mappings can point
--	 * outside mem_map, and the NUMA hash lookup cannot handle
--	 * that:
--	 */
--	if (!pte_present(*pte) || pte_pfn(*pte) != pte_pfn(*pte_ref))
--		BUG();
-+	if (!pte_present(*pte))
-+		return -1;
- 
- 	return 0;
- }
+Awesome.
+
+Thank you
+--
+Gustavo
