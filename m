@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtlYBHVzSI985w7h620WsGNgd6ujrcQXbQfmfhAJW8IhbAFs3DtcUTP9PtXV4QSAlORNU1A
-ARC-Seal: i=1; a=rsa-sha256; t=1520955176; cv=none;
+X-Google-Smtp-Source: AG47ELvtF5KG1qhc/3GkRYL3Apsa/JCi6Uu8kLlIe7Ird7twKxdJiISNBKxnLykVtD49d9wYtIuk
+ARC-Seal: i=1; a=rsa-sha256; t=1520955173; cv=none;
         d=google.com; s=arc-20160816;
-        b=em3mqK/FvJ0D8l8XcBo9hUKHzVx9eg54XxTkxNd3/JgBadTpR2SXebipELUasgKrXw
-         fsAL9fL3YRvU9hwsQFkc1/hL28k02J45/hnkH3EGzschwktplXO6Xem1iJZw3kThcVjg
-         6vROWw1RB8WXix0fomL/JAj+z6C5D0aRRWfnPZqe78lQlJ3IQxuFf+HtrFhygwePxio0
-         pZbX3v37dE+uu4h2C/TQAFiBALP01wr+eWTnRJHONYGKZyq68O7UbvFQkhKWedzB0zq6
-         0DiieE0SB7I+QVBdkiJe8h3IAtxCcDJMTu8pnBLQs2DCJLnUxuoC2vrA7fmwEVFg6DOZ
-         J+Zg==
+        b=Gpsm/eSEVWvhkYeWVCNH+Chaa4f6IKgvteGYCxOaB2XTcmYp91DWKfPf+efz9EzRDX
+         VnO04GvjIEaZCX30vmVvVCvUa7ouFZbLU3L7/vPf5FuACDNWH7UuC0F0S2DGXBx5L3z/
+         SanhWQWR6fB+zpn5GPunZ/k4CxZ41n01vzObWxE0Ixu6R9xqF0HFcxMLMgWpOdcy+1rm
+         X9JVlazx5IBZaWsXnmCUWk2W8s5MuEHRRXFwZDWmqC0i/A5dmcuWnVckf1BL3U/dtK72
+         9BjjfVIcMG8gOk3jQmuaAcevol4ZO5HAW0Gz46j5mmm1QiU3l/sL8obqI+pWX0d1MR5F
+         EgKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7amyJLc+X9oABqncWddgiciWta9pZPHOiwjkkpr/iTE=;
-        b=LYtRrxY5OjUWvC4Rw8h2ncK50sbzvOJn8jYogO2cjEJqedDSVTCicP5ruKF0TAzyg1
-         M6IoslOWThGcNI4OfhIICzKmvPZg605vMkIjQpiQDRbdK5edDETC8aj4SuC2uhJqODML
-         86lX9/w9p0Y6rBJ15zQrbgJq+7XH8IQ/KAVEN+L1e8Tro7r/zYA9Z6nn4ef7DvCQi6L7
-         Hcw6tmXucqqvP7l2Yag5S22b+xNEjKSbAqq8Du5J51DYxnii2ItBfDvldV9RcJ/ffKoh
-         DknVrmek51e9V7j6ApDkQJTr9+O+Ft7PNQYjZzFPHOBrn0RxjZzloL8B/4qAYZsV4HXI
-         JdTQ==
+        bh=SdEJvl/f08az14u02qqkxCLX7qcvsJuX+LhopR1Ebjk=;
+        b=alsF7Z18T3blcU2KfcbjGNBoV8hWeWkVkJwuCPto7wwbKmh79H4BRlccu2vM+US1oC
+         F0LLBwpkEZI7K24LiPvxLAirCEVMXPmvK885QdEXv+qV/vK0NdrzdCMXKOEx65oDIJYf
+         h6b3LhyU5ZEwZu4CiW+0Tq9lERl9zZnpMuOSYb0TE6FxvCi9gy7xkFQ1NkOMTbuZ1sk9
+         HXc0WiZRNuAwDwbZW15WWt7P13MDfSJyfcZaj1BFM7okkCuYiQ4xg4oSNtJ9U4vgWXnk
+         EIqSjxSuZNOtTVnap17c4E4LrofIl/IueZ1bnqnhw4CzxyfbG5f7gecoMHThYeHJzZU9
+         Smbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+fe0b19af568972814355@syzkaller.appspotmail.com,
+	syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com,
 	Florian Westphal <fw@strlen.de>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 115/146] netfilter: bridge: ebt_among: add missing match size checks
-Date: Tue, 13 Mar 2018 16:24:42 +0100
-Message-Id: <20180313152329.256652776@linuxfoundation.org>
+Subject: [PATCH 4.15 114/146] netfilter: ebtables: CONFIG_COMPAT: dont trust userland offsets
+Date: Tue, 13 Mar 2018 16:24:41 +0100
+Message-Id: <20180313152329.183444087@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837094668923489?=
-X-GMAIL-MSGID: =?utf-8?q?1594837094668923489?=
+X-GMAIL-THRID: =?utf-8?q?1594837091715728508?=
+X-GMAIL-MSGID: =?utf-8?q?1594837091715728508?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,69 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Florian Westphal <fw@strlen.de>
 
-commit c4585a2823edf4d1326da44d1524ecbfda26bb37 upstream.
+commit b71812168571fa55e44cdd0254471331b9c4c4c6 upstream.
 
-ebt_among is special, it has a dynamic match size and is exempt
-from the central size checks.
+We need to make sure the offsets are not out of range of the
+total size.
+Also check that they are in ascending order.
 
-Therefore it must check that the size of the match structure
-provided from userspace is sane by making sure em->match_size
-is at least the minimum size of the expected structure.
+The WARN_ON triggered by syzkaller (it sets panic_on_warn) is
+changed to also bail out, no point in continuing parsing.
 
-The module has such a check, but its only done after accessing
-a structure that might be out of bounds.
+Briefly tested with simple ruleset of
+-A INPUT --limit 1/s' --log
+plus jump to custom chains using 32bit ebtables binary.
 
-tested with: ebtables -A INPUT ... \
---among-dst fe:fe:fe:fe:fe:fe
---among-dst fe:fe:fe:fe:fe:fe --among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fb,fe:fe:fe:fe:fc:fd,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe
---among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fa,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe,fe:fe:fe:fe:fe:fe
-
-Reported-by: <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>
+Reported-by: <syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com>
 Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebt_among.c |   21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ net/bridge/netfilter/ebtables.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb,
- 	return true;
- }
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2053,7 +2053,9 @@ static int ebt_size_mwt(struct compat_eb
+ 		if (match_kern)
+ 			match_kern->match_size = ret;
  
-+static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
-+{
-+	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
-+}
+-		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
++		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
++			return -EINVAL;
 +
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
- 	const struct ebt_entry_match *em =
- 		container_of(par->matchinfo, const struct ebt_entry_match, data);
--	int expected_length = sizeof(struct ebt_among_info);
-+	unsigned int expected_length = sizeof(struct ebt_among_info);
- 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
- 	int err;
+ 		match32 = (struct compat_ebt_entry_mwt *) buf;
+ 	}
  
-+	if (expected_length > em->match_size)
-+		return -EINVAL;
+@@ -2109,6 +2111,15 @@ static int size_entry_mwt(struct ebt_ent
+ 	 *
+ 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+ 	 */
++	for (i = 0; i < 4 ; ++i) {
++		if (offsets[i] >= *total)
++			return -EINVAL;
++		if (i == 0)
++			continue;
++		if (offsets[i-1] > offsets[i])
++			return -EINVAL;
++	}
 +
- 	wh_dst = ebt_among_wh_dst(info);
--	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_dst))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_dst);
-+	if (expected_length > em->match_size)
-+		return -EINVAL;
-+
-+	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_src))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
+ 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
+ 		struct compat_ebt_entry_mwt *match32;
+ 		unsigned int size;
