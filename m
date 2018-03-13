@@ -1,59 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeCMIyK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:54:10 -0400
-Received: from atl4mhob05.registeredsite.com ([209.17.115.43]:46502 "EHLO
-        atl4mhob05.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752202AbeCMIyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:54:09 -0400
-X-TCPREMOTEIP: 37.74.225.130
-X-Authenticated-UID: mike@milosoftware.com
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk: clk-gpio: Allow GPIO to sleep in set/get_parent
-Date: Tue, 13 Mar 2018 09:54:03 +0100
-Message-Id: <1520931243-29091-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
+        id S1752546AbeCMIyq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:54:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:56763 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751666AbeCMIyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 04:54:45 -0400
+Date: Tue, 13 Mar 2018 09:54:42 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Alexander Duyck <alexander.duyck@gmail.com>, bhelgaas@google.com,
+        alexander.h.duyck@intel.com, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, mheyne@amazon.de,
+        liang-min.wang@intel.com, mark.d.rustad@intel.com
+Subject: Re: [pci PATCH v5 3/4] ena: Migrate over to unmanaged SR-IOV
+        support
+Message-ID: <20180313085442.GA1537@lst.de>
+References: <20180312171813.3487.94803.stgit@localhost.localdomain> <20180312172309.3487.76690.stgit@localhost.localdomain> <1520928772.28745.53.camel@infradead.org> <20180313081628.GA618@lst.de> <1520930719.11412.2.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520930719.11412.2.camel@infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When changing or retrieving clock parents, the caller is in a sleepable
-state (like prepare) so the GPIO operation need not be atomic. Replace
-gpiod_{g|s}et_value with gpiod_{g|s}et_value_cansleep in the {g|s}et_parent
-calls for the GPIO based clock mux.
+On Tue, Mar 13, 2018 at 08:45:19AM +0000, David Woodhouse wrote:
+> 
+> 
+> On Tue, 2018-03-13 at 09:16 +0100, Christoph Hellwig wrote:
+> > On Tue, Mar 13, 2018 at 08:12:52AM +0000, David Woodhouse wrote:
+> > > 
+> > > I'd also *really* like to see a way to enable this for PFs which don't
+> > > have (and don't need) a driver. We seem to have lost that along the
+> > > way.
+> > We've been forth and back on that.  I agree that not having any driver
+> > just seems dangerous.  If your PF really does nothing we should just
+> > have a trivial pf_stub driver that does nothing but wiring up
+> > pci_sriov_configure_simple.  We can then add PCI IDs to it either
+> > statically, or using the dynamic ids mechanism.
+> 
+> Or just add it to the existing pci-stub. What's the point in having a
+> new driver? 
 
-This fixes a "slowpath" warning when the GPIO controller is an I2C expander
-or something similar.
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-gpio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 151513c..40af4fb 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -73,14 +73,14 @@ static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
- {
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
--	return gpiod_get_value(clk->gpiod);
-+	return gpiod_get_value_cansleep(clk->gpiod);
- }
- 
- static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
--	gpiod_set_value(clk->gpiod, index);
-+	gpiod_set_value_cansleep(clk->gpiod, index);
- 
- 	return 0;
- }
--- 
-1.9.1
+Because binding to pci-stub means that you'd now enable the simple
+SR-IOV for any device bound to PCI stub.  Which often might be the wrong
+thing.
