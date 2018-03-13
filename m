@@ -1,84 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeCMPJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:09:57 -0400
-Received: from gateway30.websitewelcome.com ([192.185.160.12]:35835 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751494AbeCMPJy (ORCPT
+        id S1752113AbeCMPKi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:10:38 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44041 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751435AbeCMPKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:09:54 -0400
-Date: Tue, 13 Mar 2018 09:48:12 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/nouveau/secboot: remove VLA usage
-Message-ID: <20180313144812.GA30043@embeddedgus>
+        Tue, 13 Mar 2018 11:10:36 -0400
+X-Google-Smtp-Source: AG47ELuWXFbvb/8j+NLi5/P+khMIHPwqNbdSSDvgEUbKSC/eM8nTwyW0S4q7JKIlFaqogMQJ1sC6BA==
+Subject: Re: [PATCH 1/1] efi/libstub: tpm: zero initialize pointer variables
+ for mixed mode
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: hdegoede@redhat.com, tweek@google.com, jarkko.sakkinen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net
+References: <20180313140922.17266-1-ard.biesheuvel@linaro.org>
+ <20180313140922.17266-2-ard.biesheuvel@linaro.org>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <1a72c53b-76fe-a119-3283-0950b8f758e7@redhat.com>
+Date: Tue, 13 Mar 2018 16:10:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evlDr-0016AN-Bw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:55832
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180313140922.17266-2-ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA. In this particular
-case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
-variable cmdline_size. Also, remove cmdline_size as it is not
-actually useful anymore.
+[adding linux-integrity and tpmdd-devel since this was discussed in these ML too]
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-or a security flaw. Also, in general, as code evolves it is easy to
-lose track of how big a VLA can get. Thus, we can end up having runtime
-failures that are hard to debug.
+On 03/13/2018 03:09 PM, Ard Biesheuvel wrote:
+> As reported by Jeremy, running the new TPM libstub code in mixed mode
+> (i.e., 64-bit kernel on 32-bit UEFI) results in hangs when invoking
+> the TCG2 protocol, or when accessing the log_tbl pool allocation.
+> 
+> The reason turns out to be that in both cases, the 64-bit pointer
+> variables are not fully initialized by the 32-bit EFI code, and so
+> we should take care to zero initialize these variables beforehand,
+> or we'll end up dereferencing bogus pointers.
+> 
+> Reported-by: Jeremy Cline <jeremy@jcline.org>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/firmware/efi/libstub/tpm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+> index da661bf8cb96..13c1edd37e96 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -68,11 +68,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>  	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+>  	efi_status_t status;
+>  	efi_physical_addr_t log_location, log_last_entry;
+> -	struct linux_efi_tpm_eventlog *log_tbl;
+> +	struct linux_efi_tpm_eventlog *log_tbl = NULL;
+>  	unsigned long first_entry_addr, last_entry_addr;
+>  	size_t log_size, last_entry_size;
+>  	efi_bool_t truncated;
+> -	void *tcg2_protocol;
+> +	void *tcg2_protocol = NULL;
+>  
+>  	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+>  				&tcg2_protocol);
+> 
 
-Also, fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+Looks good to me.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-index 6f10b09..2da147b 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-@@ -80,12 +80,12 @@ acr_ls_msgqueue_post_run(struct nvkm_msgqueue *queue,
- 			 struct nvkm_falcon *falcon, u32 addr_args)
- {
- 	struct nvkm_device *device = falcon->owner->device;
--	u32 cmdline_size = NVKM_MSGQUEUE_CMDLINE_SIZE;
--	u8 buf[cmdline_size];
-+	u8 buf[NVKM_MSGQUEUE_CMDLINE_SIZE];
- 
--	memset(buf, 0, cmdline_size);
-+	memset(buf, 0, NVKM_MSGQUEUE_CMDLINE_SIZE);
- 	nvkm_msgqueue_write_cmdline(queue, buf);
--	nvkm_falcon_load_dmem(falcon, buf, addr_args, cmdline_size, 0);
-+	nvkm_falcon_load_dmem(falcon, buf, addr_args,
-+			      NVKM_MSGQUEUE_CMDLINE_SIZE, 0);
- 	/* rearm the queue so it will wait for the init message */
- 	nvkm_msgqueue_reinit(queue);
- 
+Best regards,
 -- 
-2.7.4
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
