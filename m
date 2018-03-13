@@ -1,90 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeCMPIq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:08:46 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44429 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751526AbeCMPIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:08:43 -0400
-X-Google-Smtp-Source: AG47ELsU8fJ6/k7YN12PKGB9ovdW6h0s60Dh0kTGgZN6N1Yq1BUsbtonzD0cgCqxzX6ilIqqr3ZDiw==
-Date: Tue, 13 Mar 2018 16:08:38 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: John Garry <john.garry@huawei.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
- armv8-recommended.json
-Message-ID: <20180313150838.j6mfywse64o5ixhd@gmail.com>
-References: <20180313120508.29327-1-acme@kernel.org>
- <20180313120508.29327-19-acme@kernel.org>
- <20180313142618.36je6syqg6ppwhbp@gmail.com>
- <6c485ee7-87d1-dc51-db34-94169b9ede08@huawei.com>
+        id S1751944AbeCMPJv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:09:51 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10506 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751494AbeCMPJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 11:09:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="34630726"
+Subject: Re: [tip:x86/mm] x86/tme: Detect if TME and MKTME is activated by
+ BIOS
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Kai Huang <kai.huang@linux.intel.com>
+References: <20180305162610.37510-3-kirill.shutemov@linux.intel.com>
+ <tip-cb06d8e3d020c30fe10ae711c925a5319ab82c88@git.kernel.org>
+ <1520907122.6421.8.camel@linux.intel.com>
+ <20180313124956.z426zmsr4xl6zomx@node.shutemov.name>
+Cc: peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        thomas.lendacky@amd.com, linux-tip-commits@vger.kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <7b0ef81b-c46b-5fa2-6a69-c008310b2e94@intel.com>
+Date: Tue, 13 Mar 2018 08:09:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c485ee7-87d1-dc51-db34-94169b9ede08@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180313124956.z426zmsr4xl6zomx@node.shutemov.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* John Garry <john.garry@huawei.com> wrote:
-
-> On 13/03/2018 14:26, Ingo Molnar wrote:
-> > 
-> > * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > > From: John Garry <john.garry@huawei.com>
-> > > 
-> > > Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
-> > > 
-> > > The JSON is copied from ARMv8 architecture reference manual, available
-> > > here:
-> > > 
-> > > 	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
-> > > 
-> > > Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> > > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > > Cc: Andi Kleen <ak@linux.intel.com>
-> > > Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> > > Cc: Jiri Olsa <jolsa@redhat.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > Cc: William Cohen <wcohen@redhat.com>
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: linuxarm@huawei.com
-> > > Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
-> > > Signed-off-by: John Garry <john.garry@huawei.com>
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 
-> > That's not a valid SOB chain, author != first-Signed-off-by.
-> > 
+On 03/13/2018 05:49 AM, Kirill A. Shutemov wrote:
+> On Tue, Mar 13, 2018 at 03:12:02PM +1300, Kai Huang wrote:
+>> It seems setup_pku() will call get_cpu_cap to restore c->x86_phys_bits
+>> later? In which case I think you need to change setup_pku as well.
+> Thanks for catching this.
 > 
-> Right, so my SOB can go first.
-> 
-> Let me know how to help remedy.
+> I think setup_pku() shouldn't call get_cpu_cap().
 
-Well, it depends on what role Shaokun Zhang had in the creation of the patch: if 
-he co-authored the patch and you finished it then you can add him as:
-
-  Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
-
-or if he tested/reviewed the patch then his entry should be Reviewed-by/Acked-by 
-or Tested-by.
-
-Thanks,
-
-	Ingo
+I think if you want to make it illegal to call get_cpu_cap() twice, you
+should enforce that.
