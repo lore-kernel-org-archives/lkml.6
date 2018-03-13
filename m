@@ -1,119 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933244AbeCMMPA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:15:00 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:39845 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932545AbeCMMO5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:14:57 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: rename qcom,pcie devices to pcie
-Date: Tue, 13 Mar 2018 13:13:09 +0100
-Message-Id: <20180313121345.2749183-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:OBr7e6QjaMLY3Wa9gQR9if9vr9DvweYAvk7VIV+JZyLm4g8rfck
- Lq80Op3px502DRrxqidhAecR68TrB+8MQ+sTI1ADP4uQlYblR5ow5B6DMqS+iYZo7BwHvoB
- SWh3cIlZTHkK0lLd6BhBont4jChDVDE3hC3qfeJ8uedzF5dNkQXKbN3Es0MtGt8tc+f3Tq1
- OlGPaaME2LXUu6DzAJj0w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:B8XmgY7R5ag=:G0XBUSbNEUiZAfRhWGhtta
- VkTnhx9KQkw8DDNBj+WD1oDXCkYy7nmdqOdmLhbu5zOYzLoeGdNbDvi8X+CCCCaIsf6b7tBsh
- J2/tR88LHgd5vVxgqPknq7XE9YaYJu1f8c1tvz6s4fgCiRiWb6CqHrzfWHY0df0SScdEbOz6G
- ZtMw5fi6b2y7Z5R4rh671ef0Naxx6FTpjsPvn/uLkzWGiIls2awcpG1T6ei9G3uke6rQ1pBWX
- 2Wo+bCTu2s+1VK8Bl/qvk1vKCQdloS71e664v3ezTpco/DJuWbLE3nws2p+nihbkTTtbJJ6PE
- slu2DIsToiubWSwdbFshYl+K78pEvHtIbW0l+BdNl370MIRY+1iGMhtlRx6Wcpi4XbLE4q/FO
- RGAIqAe95nwIQEUuxYHgDPrKeAhB0N21vaJo3Jk0LtdfC+R4qYxXNuXA3G+y/Prkw6fyYD5SN
- dCVo5hzJgeZ08b/PxWoiZU+9+FWZAr13nCMK8pe4r3Gl5EAo+aRkNTLp7kzPuCdikyTyjD3/E
- FuLPV5SrBr/14s6nUaAVh6DHwPKJ4m7ReO3saTlOZxxqbFDA+p8CiFUDafu/+eMKKBYxuGAyB
- is1AIqM6VU5IK/QP40Mkx6FyYQGyt6uw881Dd3JPRWv0t5qPUFEhVR5oNwl6ymhwJPJjYyLpo
- y3GbvxBuQMxOSlvFgOLFbp9m/r7daF5oBRAgKSMSFrBy0GEtuHryBi3zxCZBJKFy71xlCbeu5
- W4czUPeTBGIY7p0NDoBYRB9UL8zp4sIPkkH94Q==
+        id S933196AbeCMMOp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932948AbeCMMFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:05:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C6F21778
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 02/31] perf tools: Add mem2node object
+Date: Tue, 13 Mar 2018 09:04:39 -0300
+Message-Id: <20180313120508.29327-3-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
+References: <20180313120508.29327-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The node name for a PCIe host bridge must be "pcie" as required by
-the binging. dtc now warns about it:
+From: Jiri Olsa <jolsa@kernel.org>
 
-arch/arm64/boot/dts/qcom/apq8096-db820c.dtb: Warning (pci_bridge): /soc/agnoc@0/qcom,pcie@610000: node name is not "pci" or "pcie"
-arch/arm64/boot/dts/qcom/apq8096-db820c.dtb: Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
-arch/arm64/boot/dts/qcom/msm8996-mtp.dtb: Warning (pci_bridge): /soc/agnoc@0/qcom,pcie@610000: node name is not "pci" or "pcie"
-arch/arm64/boot/dts/qcom/msm8996-mtp.dtb: Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
+Adding mem2node object to allow the easy lookup of the node for the
+physical address.
 
-This renames the nodes as appropriate.
+It has following interface:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+  int  mem2node__init(struct mem2node *map, struct perf_env *env);
+  void mem2node__exit(struct mem2node *map);
+  int  mem2node__node(struct mem2node *map, u64 addr);
+
+The mem2node__toolsinit initialize object from the perf data file
+MEM_TOPOLOGY feature data. Following calls to mem2node__node will return
+node number for given physical address. The mem2node__exit function
+frees the object.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180309101442.9224-3-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 6 +++---
- arch/arm64/boot/dts/qcom/msm8996.dtsi        | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ tools/perf/util/Build      |   1 +
+ tools/perf/util/mem2node.c | 134 +++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/mem2node.h |  19 +++++++
+ 3 files changed, 154 insertions(+)
+ create mode 100644 tools/perf/util/mem2node.c
+ create mode 100644 tools/perf/util/mem2node.h
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 1c8f1b86472d..e82f821a4e0e 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -140,16 +140,16 @@
- 		};
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index ea0a452550b0..8052373bcd6a 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -106,6 +106,7 @@ libperf-y += units.o
+ libperf-y += time-utils.o
+ libperf-y += expr-bison.o
+ libperf-y += branch.o
++libperf-y += mem2node.o
  
- 		agnoc@0 {
--			qcom,pcie@600000 {
-+			pcie@600000 {
- 				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
- 			};
- 
--			qcom,pcie@608000 {
-+			pcie@608000 {
- 				status = "okay";
- 				perst-gpio = <&msmgpio 130 GPIO_ACTIVE_LOW>;
- 			};
- 
--			qcom,pcie@610000 {
-+			pcie@610000 {
- 				status = "okay";
- 				perst-gpio = <&msmgpio 114 GPIO_ACTIVE_LOW>;
- 			};
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 410ae787ebb4..cd08c8c5248e 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -851,7 +851,7 @@
- 			#size-cells = <1>;
- 			ranges;
- 
--			pcie0: qcom,pcie@600000 {
-+			pcie0: pcie@600000 {
- 				compatible = "qcom,pcie-msm8996", "snps,dw-pcie";
- 				status = "disabled";
- 				power-domains = <&gcc PCIE0_GDSC>;
-@@ -904,7 +904,7 @@
- 
- 			};
- 
--			pcie1: qcom,pcie@608000 {
-+			pcie1: pcie@608000 {
- 				compatible = "qcom,pcie-msm8996", "snps,dw-pcie";
- 				power-domains = <&gcc PCIE1_GDSC>;
- 				bus-range = <0x00 0xff>;
-@@ -957,7 +957,7 @@
- 						"bus_slave";
- 			};
- 
--			pcie2: qcom,pcie@610000 {
-+			pcie2: pcie@610000 {
- 				compatible = "qcom,pcie-msm8996", "snps,dw-pcie";
- 				power-domains = <&gcc PCIE2_GDSC>;
- 				bus-range = <0x00 0xff>;
+ libperf-$(CONFIG_LIBBPF) += bpf-loader.o
+ libperf-$(CONFIG_BPF_PROLOGUE) += bpf-prologue.o
+diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
+new file mode 100644
+index 000000000000..c6fd81c02586
+--- /dev/null
++++ b/tools/perf/util/mem2node.c
+@@ -0,0 +1,134 @@
++#include <errno.h>
++#include <inttypes.h>
++#include <linux/bitmap.h>
++#include "mem2node.h"
++#include "util.h"
++
++struct phys_entry {
++	struct rb_node	rb_node;
++	u64	start;
++	u64	end;
++	u64	node;
++};
++
++static void phys_entry__insert(struct phys_entry *entry, struct rb_root *root)
++{
++	struct rb_node **p = &root->rb_node;
++	struct rb_node *parent = NULL;
++	struct phys_entry *e;
++
++	while (*p != NULL) {
++		parent = *p;
++		e = rb_entry(parent, struct phys_entry, rb_node);
++
++		if (entry->start < e->start)
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++
++	rb_link_node(&entry->rb_node, parent, p);
++	rb_insert_color(&entry->rb_node, root);
++}
++
++static void
++phys_entry__init(struct phys_entry *entry, u64 start, u64 bsize, u64 node)
++{
++	entry->start = start;
++	entry->end   = start + bsize;
++	entry->node  = node;
++	RB_CLEAR_NODE(&entry->rb_node);
++}
++
++int mem2node__init(struct mem2node *map, struct perf_env *env)
++{
++	struct memory_node *n, *nodes = &env->memory_nodes[0];
++	struct phys_entry *entries, *tmp_entries;
++	u64 bsize = env->memory_bsize;
++	int i, j = 0, max = 0;
++
++	memset(map, 0x0, sizeof(*map));
++	map->root = RB_ROOT;
++
++	for (i = 0; i < env->nr_memory_nodes; i++) {
++		n = &nodes[i];
++		max += bitmap_weight(n->set, n->size);
++	}
++
++	entries = zalloc(sizeof(*entries) * max);
++	if (!entries)
++		return -ENOMEM;
++
++	for (i = 0; i < env->nr_memory_nodes; i++) {
++		u64 bit;
++
++		n = &nodes[i];
++
++		for (bit = 0; bit < n->size; bit++) {
++			u64 start;
++
++			if (!test_bit(bit, n->set))
++				continue;
++
++			start = bit * bsize;
++
++			/*
++			 * Merge nearby areas, we walk in order
++			 * through the bitmap, so no need to sort.
++			 */
++			if (j > 0) {
++				struct phys_entry *prev = &entries[j - 1];
++
++				if ((prev->end == start) &&
++				    (prev->node == n->node)) {
++					prev->end += bsize;
++					continue;
++				}
++			}
++
++			phys_entry__init(&entries[j++], start, bsize, n->node);
++		}
++	}
++
++	/* Cut unused entries, due to merging. */
++	tmp_entries = realloc(entries, sizeof(*entries) * j);
++	if (tmp_entries)
++		entries = tmp_entries;
++
++	for (i = 0; i < j; i++) {
++		pr_debug("mem2node %03" PRIu64 " [0x%016" PRIx64 "-0x%016" PRIx64 "]\n",
++			 entries[i].node, entries[i].start, entries[i].end);
++
++		phys_entry__insert(&entries[i], &map->root);
++	}
++
++	map->entries = entries;
++	return 0;
++}
++
++void mem2node__exit(struct mem2node *map)
++{
++	zfree(&map->entries);
++}
++
++int mem2node__node(struct mem2node *map, u64 addr)
++{
++	struct rb_node **p, *parent = NULL;
++	struct phys_entry *entry;
++
++	p = &map->root.rb_node;
++	while (*p != NULL) {
++		parent = *p;
++		entry = rb_entry(parent, struct phys_entry, rb_node);
++		if (addr < entry->start)
++			p = &(*p)->rb_left;
++		else if (addr >= entry->end)
++			p = &(*p)->rb_right;
++		else
++			goto out;
++	}
++
++	entry = NULL;
++out:
++	return entry ? (int) entry->node : -1;
++}
+diff --git a/tools/perf/util/mem2node.h b/tools/perf/util/mem2node.h
+new file mode 100644
+index 000000000000..59c4752a2181
+--- /dev/null
++++ b/tools/perf/util/mem2node.h
+@@ -0,0 +1,19 @@
++#ifndef __MEM2NODE_H
++#define __MEM2NODE_H
++
++#include <linux/rbtree.h>
++#include "env.h"
++
++struct phys_entry;
++
++struct mem2node {
++	struct rb_root		 root;
++	struct phys_entry	*entries;
++	int			 cnt;
++};
++
++int  mem2node__init(struct mem2node *map, struct perf_env *env);
++void mem2node__exit(struct mem2node *map);
++int  mem2node__node(struct mem2node *map, u64 addr);
++
++#endif /* __MEM2NODE_H */
 -- 
-2.9.0
+2.14.3
