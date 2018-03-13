@@ -1,88 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932856AbeCMXVs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 19:21:48 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:36276 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932710AbeCMXVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 19:21:46 -0400
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-Cc: Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
- <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
-Date: Tue, 13 Mar 2018 17:21:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, sbates@raithlin.com, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S932741AbeCMXYX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 19:24:23 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37663 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbeCMXYW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 19:24:22 -0400
+X-Google-Smtp-Source: AG47ELvTsbJCIX5uPhVWUEmYGWtwqmfNp39vs43oyYM0iRxaUMTnK6SG5QbKXRHVofd2JGpoFP6PEg==
+Message-ID: <1520983460.24712.3.camel@redhat.com>
+Subject: Re: [PATCH v3 1/5] drm/i915: Move DP modeset retry work into
+ intel_dp
+From: Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Date: Tue, 13 Mar 2018 19:24:20 -0400
+In-Reply-To: <20180312210102.GR5453@intel.com>
+References: <20180308232421.14049-1-lyude@redhat.com>
+         <20180309213232.19855-1-lyude@redhat.com> <20180312210102.GR5453@intel.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 13/03/18 05:08 PM, Bjorn Helgaas wrote:
-> On Tue, Mar 13, 2018 at 10:31:55PM +0000, Stephen  Bates wrote:
-> If it *is* necessary because Root Ports and devices below them behave
-> differently than in conventional PCI, I think you should include a
-> reference to the relevant section of the spec and check directly for a
-> Root Port.  I would prefer that over trying to exclude Root Ports by
-> looking for two upstream bridges.
-
-Well we've established that we don't want to allow root ports.
-
-But we need to, at a minimum, do two pci_upstream_bridge() calls...
-
-Remember, we need to check that a number of devices are behind the same
-switch. So we need to find a _common_ upstream port for several devices.
-Excluding the multifunction device case (which I don't think is
-applicable for reasons we've discussed before), this will *never* be the
-first upstream port for a given device. We need to find the upstream
-port of the switch and ensure all devices share that same port. If a
-device is behind a switch, it's pci_upstream_bridge() is the downstream
-switch port which is unique to that device. So a peer device would have
-a different pci_upstream_bridge() port but share the same
-pci_upstream_bridge(pci_upstream_bridge()) port (assuming they are on
-the same switch).
-
-The alternative, is to walk the entire tree of upstream ports and check
-that all devices have a common port somewhere in the tree that isn't the
-root complex. Arguably this is the right way to do it and would support
-a network of switches but is a fair bit more complex to code.
-
-Logan
+On Mon, 2018-03-12 at 23:01 +0200, Ville Syrjälä wrote:
+> On Fri, Mar 09, 2018 at 04:32:27PM -0500, Lyude Paul wrote:
+> > While having the modeset_retry_work in intel_connector makes sense with
+> > SST, this paradigm doesn't make a whole ton of sense when it comes to
+> > MST since we have to deal with multiple connectors. In most cases, it's
+> > more useful to just use the intel_dp struct since it indicates whether
+> > or not we're dealing with an MST device, along with being able to easily
+> > trace the intel_dp struct back to it's respective connector (if there is
+> > any). So, move the modeset_retry_work function out of the
+> > intel_connector struct and into intel_dp.
+> > 
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
+> > Cc: Manasi Navare <manasi.d.navare@intel.com>
+> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > 
+> > V2:
+> >  - Remove accidental duplicate modeset_retry_work in intel_connector
+> > V3:
+> >  - Also check against eDP in intel_hpd_poll_fini() - mdnavare
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > ---
+> >  drivers/gpu/drm/i915/intel_display.c          | 25 +++++++++++++++++++++++-
+> > -
+> >  drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
+> >  drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
+> >  drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
+> >  4 files changed, 31 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/intel_display.c
+> > b/drivers/gpu/drm/i915/intel_display.c
+> > index f424fff477f6..3b7fa430a84a 100644
+> > --- a/drivers/gpu/drm/i915/intel_display.c
+> > +++ b/drivers/gpu/drm/i915/intel_display.c
+> > @@ -15394,16 +15394,37 @@ static void intel_hpd_poll_fini(struct drm_device
+> > *dev)
+> >  {
+> >  	struct intel_connector *connector;
+> >  	struct drm_connector_list_iter conn_iter;
+> > +	struct work_struct *work;
+> > +	int conn_type;
+> >  
+> >  	/* Kill all the work that may have been queued by hpd. */
+> >  	drm_connector_list_iter_begin(dev, &conn_iter);
+> >  	for_each_intel_connector_iter(connector, &conn_iter) {
+> > -		if (connector->modeset_retry_work.func)
+> > -			cancel_work_sync(&connector->modeset_retry_work);
+> >  		if (connector->hdcp_shim) {
+> >  			cancel_delayed_work_sync(&connector-
+> > >hdcp_check_work);
+> >  			cancel_work_sync(&connector->hdcp_prop_work);
+> >  		}
+> > +
+> > +		conn_type = connector->base.connector_type;
+> > +		if (conn_type != DRM_MODE_CONNECTOR_eDP &&
+> > +		    conn_type != DRM_MODE_CONNECTOR_DisplayPort)
+> > +			continue;
+> > +
+> > +		if (connector->mst_port) {
+> > +			work = &connector->mst_port->modeset_retry_work;
+> > +		} else {
+> > +			struct intel_encoder *intel_encoder =
+> > +				connector->encoder;
+> > +			struct intel_dp *intel_dp;
+> > +
+> > +			if (!intel_encoder)
+> > +				continue;
+> > +
+> > +			intel_dp = enc_to_intel_dp(&intel_encoder->base);
+> > +			work = &intel_dp->modeset_retry_work;
+> > +		}
+> > +
+> > +		cancel_work_sync(work);
+> 
+> Why are we even walking the connectors for this? Can't we just
+> walk the encoders instead?
+We could walk the encoders for this, but seeing as we're already walking the
+connectors for the HDCP prop doesn't it make more sense to just stick our code
+there? or is there a simpler solution for this I'm missing
+> 
+> >  	}
+> >  	drm_connector_list_iter_end(&conn_iter);
+> >  }
+> > diff --git a/drivers/gpu/drm/i915/intel_dp.c
+> > b/drivers/gpu/drm/i915/intel_dp.c
+> > index 4dd1b2287dd6..5abf0c95725a 100644
+> > --- a/drivers/gpu/drm/i915/intel_dp.c
+> > +++ b/drivers/gpu/drm/i915/intel_dp.c
+> > @@ -6261,12 +6261,10 @@ static bool intel_edp_init_connector(struct intel_dp
+> > *intel_dp,
+> >  
+> >  static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
+> >  {
+> > -	struct intel_connector *intel_connector;
+> > -	struct drm_connector *connector;
+> > +	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
+> > +						 modeset_retry_work);
+> > +	struct drm_connector *connector = &intel_dp->attached_connector-
+> > >base;
+> >  
+> > -	intel_connector = container_of(work, typeof(*intel_connector),
+> > -				       modeset_retry_work);
+> > -	connector = &intel_connector->base;
+> >  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
+> >  		      connector->name);
+> >  
+> > @@ -6295,7 +6293,7 @@ intel_dp_init_connector(struct intel_digital_port
+> > *intel_dig_port,
+> >  	int type;
+> >  
+> >  	/* Initialize the work for modeset in case of link train failure */
+> > -	INIT_WORK(&intel_connector->modeset_retry_work,
+> > +	INIT_WORK(&intel_dp->modeset_retry_work,
+> >  		  intel_dp_modeset_retry_work_fn);
+> >  
+> >  	if (WARN(intel_dig_port->max_lanes < 1,
+> > diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c
+> > b/drivers/gpu/drm/i915/intel_dp_link_training.c
+> > index f59b59bb0a21..2cfa58ce1f95 100644
+> > --- a/drivers/gpu/drm/i915/intel_dp_link_training.c
+> > +++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
+> > @@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
+> >  							     intel_dp-
+> > >link_rate,
+> >  							     intel_dp-
+> > >lane_count))
+> >  			/* Schedule a Hotplug Uevent to userspace to start
+> > modeset */
+> > -			schedule_work(&intel_connector-
+> > >modeset_retry_work);
+> > +			schedule_work(&intel_dp->modeset_retry_work);
+> >  	} else {
+> >  		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link
+> > rate = %d, lane count = %d",
+> >  			  intel_connector->base.base.id,
+> > diff --git a/drivers/gpu/drm/i915/intel_drv.h
+> > b/drivers/gpu/drm/i915/intel_drv.h
+> > index 83e5ca889d9c..3f19dc80997f 100644
+> > --- a/drivers/gpu/drm/i915/intel_drv.h
+> > +++ b/drivers/gpu/drm/i915/intel_drv.h
+> > @@ -406,9 +406,6 @@ struct intel_connector {
+> >  
+> >  	struct intel_dp *mst_port;
+> >  
+> > -	/* Work struct to schedule a uevent on link train failure */
+> > -	struct work_struct modeset_retry_work;
+> > -
+> >  	const struct intel_hdcp_shim *hdcp_shim;
+> >  	struct mutex hdcp_mutex;
+> >  	uint64_t hdcp_value; /* protected by hdcp_mutex */
+> > @@ -1135,6 +1132,9 @@ struct intel_dp {
+> >  
+> >  	/* Displayport compliance testing */
+> >  	struct intel_dp_compliance compliance;
+> > +
+> > +	/* Work struct to schedule a uevent on link train failure */
+> > +	struct work_struct modeset_retry_work;
+> >  };
+> >  
+> >  struct intel_lspcon {
+> > -- 
+> > 2.14.3
+> 
+> 
