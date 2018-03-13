@@ -1,65 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752475AbeCMSQw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:16:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751362AbeCMSQv (ORCPT
+        id S1752575AbeCMSSN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:18:13 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:54219 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeCMSSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:16:51 -0400
-Subject: Re: [RFC PATCH linux-next] evm: evm_hmac can be static
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: kbuild test robot <fengguang.wu@intel.com>,
-        =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: kbuild-all@01.org, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 13 Mar 2018 14:16:42 -0400
-In-Reply-To: <20180313174224.GA28779@intel17>
-References: <201803140150.bfjQDiL5%fengguang.wu@intel.com>
-         <20180313174224.GA28779@intel17>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031318-0020-0000-0000-000004040460
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031318-0021-0000-0000-00004298045E
-Message-Id: <1520965002.3547.342.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130205
+        Tue, 13 Mar 2018 14:18:11 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1520885744-1546-1-git-send-email-longman@redhat.com>
+        <1520885744-1546-5-git-send-email-longman@redhat.com>
+Date: Tue, 13 Mar 2018 13:17:24 -0500
+In-Reply-To: <1520885744-1546-5-git-send-email-longman@redhat.com> (Waiman
+        Long's message of "Mon, 12 Mar 2018 16:15:42 -0400")
+Message-ID: <87woyfyh57.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1evoV0-000744-AL;;;mid=<87woyfyh57.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18Z3h07KzWNo676YgUpyelNMkFe4GKA+xc=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Waiman Long <longman@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 184 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.7 (1.5%), b_tie_ro: 1.96 (1.1%), parse: 0.74 (0.4%),
+        extract_message_metadata: 2.8 (1.5%), get_uri_detail_list: 1.24 (0.7%),
+        tests_pri_-1000: 3.3 (1.8%), tests_pri_-950: 1.02 (0.6%), tests_pri_-900:
+        0.82 (0.4%), tests_pri_-400: 19 (10.5%), check_bayes: 18 (10.0%), b_tokenize:
+        6 (3.0%), b_tok_get_all: 6 (3.1%), b_comp_prob: 1.87 (1.0%), b_tok_touch_all:
+        2.7 (1.5%), b_finish: 0.66 (0.4%), tests_pri_0: 144 (78.0%),
+        check_dkim_signature: 0.50 (0.3%), check_dkim_adsp: 2.8 (1.5%),
+        tests_pri_500: 3.2 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v4 4/6] ipc: Clamp msgmni and shmmni to the real IPCMNI limit
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 01:42 +0800, kbuild test robot wrote:
-> Fixes: c49fc264be98 ("evm: Move evm_hmac and evm_hash from evm_main.c to evm_crypto.c")
-> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Waiman Long <longman@redhat.com> writes:
 
-Thanks!
+> A user can write arbitrary integer values to msgmni and shmmni sysctl
+> parameters without getting error, but the actual limit is really
+> IPCMNI (32k). This can mislead users as they think they can get a
+> value that is not real.
+>
+> Enforcing the limit by failing the sysctl parameter write, however,
+> can break existing user applications.
 
+Which applications examples please.
+
+I am seeing this patchset late but it looks like a whole lot of changes
+to avoid a theoretical possibility.
+
+Changes that have an impact on more than just the ipc code you are
+patching.
+
+That makes me feel very uncomfortable with these changes.
+
+Eric
+
+
+> Instead, the range clamping flag
+> is set to enforce the limit without failing existing user code. Users
+> can easily figure out if the sysctl parameter value is out of range
+> by either reading back the parameter value or checking the kernel
+> ring buffer for warning.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  evm_crypto.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-> index fdde9cb..a46fba3 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -37,8 +37,8 @@ static DEFINE_MUTEX(mutex);
-> 
->  static unsigned long evm_set_key_flags;
-> 
-> -char * const evm_hmac = "hmac(sha1)";
-> -char * const evm_hash = "sha1";
-> +static char * const evm_hmac = "hmac(sha1)";
-> +static char * const evm_hash = "sha1";
-> 
->  /**
->   * evm_set_key() - set EVM HMAC key from the kernel
+>  ipc/ipc_sysctl.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+> index 8ad93c2..1955dd4 100644
+> --- a/ipc/ipc_sysctl.c
+> +++ b/ipc/ipc_sysctl.c
+> @@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+>  static int zero;
+>  static int one = 1;
+>  static int int_max = INT_MAX;
+> +static int ipc_mni = IPCMNI;
+>  
+>  static struct ctl_table ipc_kern_table[] = {
+>  	{
+> @@ -120,7 +121,10 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+>  		.data		= &init_ipc_ns.shm_ctlmni,
+>  		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
+>  		.mode		= 0644,
+> -		.proc_handler	= proc_ipc_dointvec,
+> +		.proc_handler	= proc_ipc_dointvec_minmax,
+> +		.extra1		= &zero,
+> +		.extra2		= &ipc_mni,
+> +		.flags		= CTL_FLAGS_CLAMP_RANGE,
+>  	},
+>  	{
+>  		.procname	= "shm_rmid_forced",
+> @@ -147,7 +151,8 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_ipc_dointvec_minmax,
+>  		.extra1		= &zero,
+> -		.extra2		= &int_max,
+> +		.extra2		= &ipc_mni,
+> +		.flags		= CTL_FLAGS_CLAMP_RANGE,
+>  	},
+>  	{
+>  		.procname	= "auto_msgmni",
