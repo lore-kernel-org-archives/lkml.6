@@ -1,93 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeCMRpz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:45:55 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38746 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752004AbeCMRpy (ORCPT
+        id S1752435AbeCMRqw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:46:52 -0400
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:46112 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751362AbeCMRqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:45:54 -0400
-X-Google-Smtp-Source: AG47ELsw4ktj1TIq28UzA/MPldJf93OniXfdCO9PSsX2WG3BSf93kOCVT5Li1ydATqTrzBczf9SIKA==
-Date: Tue, 13 Mar 2018 20:45:50 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH -mm] proc: switch struct proc_dir_entry::count to refcount
-Message-ID: <20180313174550.GA4332@avx2>
+        Tue, 13 Mar 2018 13:46:50 -0400
+X-Google-Smtp-Source: AG47ELuidZBlZktlOSseozoS67no2u1IaM1siaGW4vSkSp3UKNQihmoK4BBZbXoGvNfgzKB5tiyGn3nHKb2pCHKTxBI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <f452e41a-533f-60d5-2e19-9bdbcdc16396@linux.intel.com>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com> <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+ <55123ef5-3287-d4c9-4499-62140c598474@linux.intel.com> <f452e41a-533f-60d5-2e19-9bdbcdc16396@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 19:46:49 +0200
+Message-ID: <CAHp75VcgF11Y5RHFriu+fcuyzRdtGzcVWX5OK5yfOwhoKXS+Eg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-->count is honest reference count unlike ->in_use.
+>>>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
+>>>> +       return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
+>>>
+>>>
+>>> UB is here.
+>>> Fix is simple, use unsigned long and drop this ugly casting.
+>>>
+>
+> Just noticed that we have to do casting anyway.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+No.
 
- fs/proc/generic.c  |    4 ++--
- fs/proc/internal.h |    5 +++--
- fs/proc/root.c     |    2 +-
- 3 files changed, 6 insertions(+), 5 deletions(-)
+> pci_read_config_dword uses u32.
+> bitmap_weight uses unsigned long.
 
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -423,7 +423,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
- 	ent->mode = mode;
- 	ent->nlink = nlink;
- 	ent->subdir = RB_ROOT_CACHED;
--	atomic_set(&ent->count, 1);
-+	refcount_set(&ent->refcnt, 1);
- 	spin_lock_init(&ent->pde_unload_lock);
- 	INIT_LIST_HEAD(&ent->pde_openers);
- 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
-@@ -574,7 +574,7 @@ EXPORT_SYMBOL(proc_set_user);
- 
- void pde_put(struct proc_dir_entry *pde)
- {
--	if (atomic_dec_and_test(&pde->count)) {
-+	if (refcount_dec_and_test(&pde->refcnt)) {
- 		proc_free_inum(pde->low_ino);
- 		pde_free(pde);
- 	}
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/proc_fs.h>
- #include <linux/proc_ns.h>
-+#include <linux/refcount.h>
- #include <linux/spinlock.h>
- #include <linux/atomic.h>
- #include <linux/binfmts.h>
-@@ -36,7 +37,7 @@ struct proc_dir_entry {
- 	 * negative -> it's going away RSN
- 	 */
- 	atomic_t in_use;
--	atomic_t count;		/* use count */
-+	refcount_t refcnt;
- 	struct list_head pde_openers;	/* who did ->open, but not ->release */
- 	/* protects ->pde_openers and all struct pde_opener instances */
- 	spinlock_t pde_unload_lock;
-@@ -168,7 +169,7 @@ int proc_readdir_de(struct file *, struct dir_context *, struct proc_dir_entry *
- 
- static inline struct proc_dir_entry *pde_get(struct proc_dir_entry *pde)
- {
--	atomic_inc(&pde->count);
-+	refcount_inc(&pde->refcnt);
- 	return pde;
- }
- extern void pde_put(struct proc_dir_entry *);
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -199,7 +199,7 @@ struct proc_dir_entry proc_root = {
- 	.namelen	= 5, 
- 	.mode		= S_IFDIR | S_IRUGO | S_IXUGO, 
- 	.nlink		= 2, 
--	.count		= ATOMIC_INIT(1),
-+	.refcnt		= REFCOUNT_INIT(1),
- 	.proc_iops	= &proc_root_inode_operations, 
- 	.proc_fops	= &proc_root_operations,
- 	.parent		= &proc_root,
+...which would lead to UB.
+
+So,
+
+unsigned long bits;
+u32 value;
+
+...(..., &value);
+bits = value;
+...(&bits, ...);
+
+-- 
+With Best Regards,
+Andy Shevchenko
