@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsQ8/6cqsz6mobeIEQQh75f+mqSKS5/pZGerNPaJAbVa9ZD7xbv3Z6bTqVqtkAF3+fYyW6p
-ARC-Seal: i=1; a=rsa-sha256; t=1520955033; cv=none;
+X-Google-Smtp-Source: AG47ELv5KDs9GgpQtmzB/IfOt7NIRE9jyEl+oDdhbyPPB/ZTSGoQ5bWH8XApjelk0f6DQQejrdfE
+ARC-Seal: i=1; a=rsa-sha256; t=1520955030; cv=none;
         d=google.com; s=arc-20160816;
-        b=RyGwruInxn1cmSogDbVu2P455LxKgn+D+fZdWT7uKS8j6vso0fTWq4JmXL08W1FMVP
-         nPwDiT02hOdrcEhOz3noh2Pc8bsdcG7W9YWyIPU8JteA4uoc2lnRbE10tu6YbqwL66O3
-         /CW2bR59Xx7zTxfVB5NK3TMXF6yQu2sk2HkbEcipgHF5QMYvhLj/yGFJdo7xrQDFv1bh
-         K75bRTrsCcbmNtDmgQGwiug9TxA5vjVIysxtxNlPZNLwfCIPatPx+gjRc60LrLAySK6Z
-         ZoL5wfbEG9t+3FkDAiW6g3lXCLBzoTLspaIdfDhRkGZe1uxA5sOUxUET7a90aF9nJz8t
-         wQow==
+        b=hNAlIJ9C7nYGnc0zu6n0yBFexFJa2qVe7ZUdJyRV3xKqCl5KN1mxqutcWHnYh/4nNk
+         xYTucYh8084OqlpHN+l+0d/jnIbrxybakKaOdBNtYfXwBNTAOHVig1DF68LUKqbq+JIh
+         Fony7ZHcYlVS7A47qVq7gkdS7eIqQjusDT6jkWFXvkoeCCSwMj0MoDa+NCewbXjKRwk+
+         Ya31u5xwLdor9rJxDX1JnnrA+NwNC9r97w/+81BG52hAWQd7tCZ4GzZRFVOHbiCHBLaS
+         qEg0+5jZXyNB/84XiH/FJAOqyJDDa95hLWj/5xfVt24TM3nufXpV5Px1NX1tyzRni6Zy
+         Qy9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=n2sDtL28jD8LxC5Zrb+P6i3f7ykOQ/v8THrmJ6pbz7c=;
-        b=I0KH7RtmyrgRNltuKqspinjtE6UJNgyFlkD9qPnepo0pl42qIpeqSKHhzhwFjCSTE4
-         w2sUl9CXzwEaPQPDzQsfy+QYJb+cUJWbBErhSXgYqTQRht7BFj0V6ET8vIQTiDeLAWAS
-         SN0va8d3vLqyJn2jFbzNu+4sLXAPTU445EmLcRb2wzPQSwJiZAttzddrW2GGwhYd+rDY
-         6CC7aUiR/4EbINQFqmeEGGPyQy4ZjL9zYHnX1cSOFoWSIvnGLlIHBojKeyypdDga+KxQ
-         nqbEhKfL3pmttVc7lE0xMqzzuk/BrMFoQIpND5MgZzD1B/laDyqPDLfgTgSnN8cIO11O
-         tzVg==
+        bh=M7wcaG2OZIU+sYZxUb5RIUv0sVul3N2fLQhp4bHJXK0=;
+        b=fl4umSwiqADIc2qQVKyZb9p0uvcJAB03KLfqiLJXAljQ4NPa9aq5iki1Yl7rsdvMa0
+         1dgfIq7qyAZzWm/q8FG/z+9yNa8kTmh5hjFpvXdkfnqRdTCmaKN8gV1aYMT6zTbj12D/
+         t+1SfuI7Zk0LLPrQnHTI3q8WmFaxxAOLDP28Uk4M8rtjmVMk8ayKSQovwP+kXShXME5K
+         hPH9Q3urS88Ll0SJCUoFVGrk4HFMk8sHKcQ7II6q+j2CWNjP3IKjP61cyDCORE0hlMKI
+         vg1p3B7lWTp9lo6SJMxQucIdUnVmJcG94nZrs/WbVABr7QYxBdoiiuJlbjyxYnlmw5gB
+         WW9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <kernellwp@gmail.com>,
-	kvm <kvm@vger.kernel.org>,
-	=?UTF-8?q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.15 065/146] x86/spectre_v2: Dont check microcode versions when running under hypervisors
-Date: Tue, 13 Mar 2018 16:23:52 +0100
-Message-Id: <20180313152325.709436160@linuxfoundation.org>
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Wang Nan <wangnan0@huawei.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.15 064/146] perf tools: Fix trigger class trigger_on()
+Date: Tue, 13 Mar 2018 16:23:51 +0100
+Message-Id: <20180313152325.626383901@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836945138568039?=
-X-GMAIL-MSGID: =?utf-8?q?1594836945138568039?=
+X-GMAIL-THRID: =?utf-8?q?1594836942562590972?=
+X-GMAIL-MSGID: =?utf-8?q?1594836942562590972?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,52 +51,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 36268223c1e9981d6cfc33aff8520b3bde4b8114 upstream.
+commit de19e5c3c51fdb1ff20d0f61d099db902ff7494b upstream.
 
-As:
+trigger_on() means that the trigger is available but not ready, however
+trigger_on() was making it ready. That can segfault if the signal comes
+before trigger_ready(). e.g. (USR2 signal delivery not shown)
 
- 1) It's known that hypervisors lie about the environment anyhow (host
-    mismatch)
+  $ perf record -e intel_pt//u -S sleep 1
+  perf: Segmentation fault
+  Obtained 16 stack frames.
+  /home/ahunter/bin/perf(sighandler_dump_stack+0x40) [0x4ec550]
+  /lib/x86_64-linux-gnu/libc.so.6(+0x36caf) [0x7fa76411acaf]
+  /home/ahunter/bin/perf(perf_evsel__disable+0x26) [0x4b9dd6]
+  /home/ahunter/bin/perf() [0x43a45b]
+  /lib/x86_64-linux-gnu/libc.so.6(+0x36caf) [0x7fa76411acaf]
+  /lib/x86_64-linux-gnu/libc.so.6(__xstat64+0x15) [0x7fa7641d2cc5]
+  /home/ahunter/bin/perf() [0x4ec6c9]
+  /home/ahunter/bin/perf() [0x4ec73b]
+  /home/ahunter/bin/perf() [0x4ec73b]
+  /home/ahunter/bin/perf() [0x4ec73b]
+  /home/ahunter/bin/perf() [0x4eca15]
+  /home/ahunter/bin/perf(machine__create_kernel_maps+0x257) [0x4f0b77]
+  /home/ahunter/bin/perf(perf_session__new+0xc0) [0x4f86f0]
+  /home/ahunter/bin/perf(cmd_record+0x722) [0x43c132]
+  /home/ahunter/bin/perf() [0x4a11ae]
+  /home/ahunter/bin/perf(main+0x5d4) [0x427fb4]
 
- 2) Even if the hypervisor (Xen, KVM, VMWare, etc) provided a valid
-    "correct" value, it all gets to be very murky when migration happens
-    (do you provide the "new" microcode of the machine?).
+Note, for testing purposes, this is hard to hit unless you add some sleep()
+in builtin-record.c before record__open().
 
-And in reality the cloud vendors are the ones that should make sure that
-the microcode that is running is correct and we should just sing lalalala
-and trust them.
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm <kvm@vger.kernel.org>
-Cc: Krčmář <rkrcmar@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226213019.GE9497@char.us.oracle.com
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: stable@vger.kernel.org
+Fixes: 3dcc4436fa6f ("perf tools: Introduce trigger class")
+Link: http://lkml.kernel.org/r/1519807144-30694-1-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/perf/util/trigger.h |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -144,6 +144,13 @@ static bool bad_spectre_microcode(struct
+--- a/tools/perf/util/trigger.h
++++ b/tools/perf/util/trigger.h
+@@ -12,7 +12,7 @@
+  * States and transits:
+  *
+  *
+- *  OFF--(on)--> READY --(hit)--> HIT
++ *  OFF--> ON --> READY --(hit)--> HIT
+  *                 ^               |
+  *                 |            (ready)
+  *                 |               |
+@@ -27,8 +27,9 @@ struct trigger {
+ 	volatile enum {
+ 		TRIGGER_ERROR		= -2,
+ 		TRIGGER_OFF		= -1,
+-		TRIGGER_READY		= 0,
+-		TRIGGER_HIT		= 1,
++		TRIGGER_ON		= 0,
++		TRIGGER_READY		= 1,
++		TRIGGER_HIT		= 2,
+ 	} state;
+ 	const char *name;
+ };
+@@ -50,7 +51,7 @@ static inline bool trigger_is_error(stru
+ static inline void trigger_on(struct trigger *t)
  {
- 	int i;
+ 	TRIGGER_WARN_ONCE(t, TRIGGER_OFF);
+-	t->state = TRIGGER_READY;
++	t->state = TRIGGER_ON;
+ }
  
-+	/*
-+	 * We know that the hypervisor lie to us on the microcode version so
-+	 * we may as well hope that it is running the correct version.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
-+		return false;
-+
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
+ static inline void trigger_ready(struct trigger *t)
