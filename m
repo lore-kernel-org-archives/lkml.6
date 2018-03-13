@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933048AbeCMLvw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:51:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36354 "EHLO
+        id S933201AbeCMLwS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:52:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36494 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932892AbeCMLvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:51:50 -0400
+        id S933051AbeCMLwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:52:15 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
         ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v4 03/22] arm64: capabilities: Move errata processing code
-Date: Tue, 13 Mar 2018 11:51:01 +0000
-Message-Id: <20180313115120.17256-4-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v4 13/22] arm64: capabilities: Restrict KPTI detection to boot-time CPUs
+Date: Tue, 13 Mar 2018 11:51:11 +0000
+Message-Id: <20180313115120.17256-14-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313115120.17256-1-suzuki.poulose@arm.com>
 References: <20180313115120.17256-1-suzuki.poulose@arm.com>
@@ -24,160 +23,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have errata work around processing code in cpu_errata.c,
-which calls back into helpers defined in cpufeature.c. Now
-that we are going to make the handling of capabilities
-generic, by adding the information to each capability,
-move the errata work around specific processing code.
-No functional changes.
+KPTI is treated as a system wide feature and is only detected if all
+the CPUs in the sysetm needs the defense, unless it is forced via kernel
+command line. This leaves a system with a mix of CPUs with and without
+the defense vulnerable. Also, if a late CPU needs KPTI but KPTI was not
+activated at boot time, the CPU is currently allowed to boot, which is a
+potential security vulnerability.
+This patch ensures that the KPTI is turned on if at least one CPU detects
+the capability (i.e, change scope to SCOPE_LOCAL_CPU). Also rejetcs a late
+CPU, if it requires the defense, when the system hasn't enabled it,
 
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
 Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  7 ------
- arch/arm64/kernel/cpu_errata.c      | 33 ----------------------------
- arch/arm64/kernel/cpufeature.c      | 43 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 40 insertions(+), 43 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |  9 +++++++++
+ arch/arm64/kernel/cpufeature.c      | 16 +++++++++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index cba67cb24b22..8efbda2858a8 100644
+index effb1c038221..4f050259dff3 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -245,15 +245,8 @@ static inline bool id_aa64pfr0_sve(u64 pfr0)
- }
- 
- void __init setup_cpu_features(void);
--
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info);
--void enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps);
- void check_local_cpu_capabilities(void);
- 
--void update_cpu_errata_workarounds(void);
--void __init enable_errata_workarounds(void);
--void verify_local_cpu_errata_workarounds(void);
- 
- u64 read_sanitised_ftr_reg(u32 id);
- 
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 74f058421dd8..0de0ab6a874c 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -450,36 +450,3 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	{
- 	}
- };
--
--/*
-- * The CPU Errata work arounds are detected and applied at boot time
-- * and the related information is freed soon after. If the new CPU requires
-- * an errata not detected at boot, fail this CPU.
-- */
--void verify_local_cpu_errata_workarounds(void)
--{
--	const struct arm64_cpu_capabilities *caps = arm64_errata;
--
--	for (; caps->matches; caps++) {
--		if (cpus_have_cap(caps->capability)) {
--			if (caps->cpu_enable)
--				caps->cpu_enable(caps);
--		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
--			pr_crit("CPU%d: Requires work around for %s, not detected"
--					" at boot time\n",
--				smp_processor_id(),
--				caps->desc ? : "an erratum");
--			cpu_die_early();
--		}
--	}
--}
--
--void update_cpu_errata_workarounds(void)
--{
--	update_cpu_capabilities(arm64_errata, "enabling workaround for");
--}
--
--void __init enable_errata_workarounds(void)
--{
--	enable_cpu_capabilities(arm64_errata);
--}
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 14c8348d488a..5fc500c13cfc 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -506,6 +506,9 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
- 	reg->user_mask = user_mask;
- }
- 
-+extern const struct arm64_cpu_capabilities arm64_errata[];
-+static void update_cpu_errata_workarounds(void);
-+
- void __init init_cpu_features(struct cpuinfo_arm64 *info)
- {
- 	/* Before we start using the tables, make sure it is sorted */
-@@ -1245,8 +1248,8 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
- 	return false;
- }
- 
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info)
-+static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-+				    const char *info)
- {
- 	for (; caps->matches; caps++) {
- 		if (!caps->matches(caps, caps->def_scope))
-@@ -1270,7 +1273,8 @@ static int __enable_cpu_capability(void *arg)
-  * Run through the enabled capabilities and enable() it on all active
-  * CPUs
-  */
--void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
-+static void __init
-+enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
- {
- 	for (; caps->matches; caps++) {
- 		unsigned int num = caps->capability;
-@@ -1354,6 +1358,39 @@ static void verify_sve_features(void)
- 	/* Add checks on other ZCR bits here if necessary */
- }
+@@ -248,6 +248,15 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+ 	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
+ 	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
  
 +/*
-+ * The CPU Errata work arounds are detected and applied at boot time
-+ * and the related information is freed soon after. If the new CPU requires
-+ * an errata not detected at boot, fail this CPU.
++ * CPU feature detected at boot time, on one or more CPUs. A late CPU
++ * is not allowed to have the capability when the system doesn't have it.
++ * It is Ok for a late CPU to miss the feature.
 + */
-+static void verify_local_cpu_errata_workarounds(void)
-+{
-+	const struct arm64_cpu_capabilities *caps = arm64_errata;
++#define ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE	\
++	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
++	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
 +
-+	for (; caps->matches; caps++) {
-+		if (cpus_have_cap(caps->capability)) {
-+			if (caps->cpu_enable)
-+				caps->cpu_enable(caps);
-+		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+			pr_crit("CPU%d: Requires work around for %s, not detected"
-+					" at boot time\n",
-+				smp_processor_id(),
-+				caps->desc ? : "an erratum");
-+			cpu_die_early();
-+		}
-+	}
-+}
-+
-+static void update_cpu_errata_workarounds(void)
-+{
-+	update_cpu_capabilities(arm64_errata, "enabling workaround for");
-+}
-+
-+static void __init enable_errata_workarounds(void)
-+{
-+	enable_cpu_capabilities(arm64_errata);
-+}
-+
- /*
-  * Run through the enabled system capabilities and enable() it on this CPU.
-  * The capabilities were decided based on the available CPUs at the boot time.
+ struct arm64_cpu_capabilities {
+ 	const char *desc;
+ 	u16 capability;
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 0955e02fa638..0bbab4bd7644 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -877,10 +877,9 @@ static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
+ static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+ 
+ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+-				int __unused)
++				int scope)
+ {
+ 	char const *str = "command line option";
+-	u64 pfr0 = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
+ 
+ 	/*
+ 	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
+@@ -911,8 +910,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+ 	}
+ 
+ 	/* Defer to CPU feature registers */
+-	return !cpuid_feature_extract_unsigned_field(pfr0,
+-						     ID_AA64PFR0_CSV3_SHIFT);
++	return !has_cpuid_feature(entry, scope);
+ }
+ 
+ static void
+@@ -1059,7 +1057,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "Kernel page table isolation (KPTI)",
+ 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+-		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
++		/*
++		 * The ID feature fields below are used to indicate that
++		 * the CPU doesn't need KPTI. See unmap_kernel_at_el0 for
++		 * more details.
++		 */
++		.sys_reg = SYS_ID_AA64PFR0_EL1,
++		.field_pos = ID_AA64PFR0_CSV3_SHIFT,
++		.min_field_value = 1,
+ 		.matches = unmap_kernel_at_el0,
+ 		.cpu_enable = kpti_install_ng_mappings,
+ 	},
 -- 
 2.14.3
