@@ -1,65 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932536AbeCMIu0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:50:26 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35451 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752471AbeCMIuV (ORCPT
+        id S932555AbeCMIvN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:51:13 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:61727 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752450AbeCMIsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:50:21 -0400
-X-Google-Smtp-Source: AG47ELtseRflFiRnpxtmo6xLXUPX9Sop5vAK/eq0igveiGK3fFkiSnDKLJST/XFIxmDXJf6GnUZUe964QUFa4uUWZbc=
+        Tue, 13 Mar 2018 04:48:31 -0400
+From: Zong Li <zong@andestech.com>
+To: <palmer@sifive.com>, <albert@sifive.com>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <zong@andestech.com>, <zongbox@gmail.com>
+CC: <greentime@andestech.com>
+Subject: [PATCH 06/11] RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+Date: Tue, 13 Mar 2018 16:35:11 +0800
+Message-ID: <9d8d903506742753f38158a7c995a61586f9b460.1520928420.git.zong@andestech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1520928420.git.zong@andestech.com>
+References: <cover.1520928420.git.zong@andestech.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
-References: <20180220205638.1959033-1-arnd@arndb.de> <20180228211514.GC13394@ziepe.ca>
- <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
- <20180306234539.GB1037@ziepe.ca> <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
- <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 13 Mar 2018 09:50:20 +0100
-X-Google-Sender-Auth: 3ovC3UH9oMhC9b4AcpV0bIvNVTI
-Message-ID: <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Eddie Wai <eddie.wai@broadcom.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w2D8XPmA025099
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 11:12 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Mar 7, 2018 at 10:05 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->
->> A small complication is that I wrote the changelog for the build warning
->> on 32-bit architectures, which is more elaborate. kernelci.org for
->> some reasons currently skips the allmodconfig build on all 32-bit
->> architectures (I should ask the kernelci maintainers to change that),
->
-> I see that Olof's build bot does have build results for arm32
-> allmodconfig, which is also big-endian, and reports the same
-> errors that I described in the patch changelog.
->
-> See
->
-> http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/
-> http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/buildall.arm.allmodconfig.log.passed
->
-> for today's results.
->
-> This bot reports one other warning for arm32, but it's
-> specific to the toolchain version used on that bot.
-> I have a fix for that one as well, but there was some
-> discussion on what the best approach would be.
+Signed-off-by: Zong Li <zong@andestech.com>
+---
+ arch/riscv/kernel/module.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Any update on this? This is now the only remaining gcc warning we get on
-allmodconfig builds for arm (both 32-bit and 64-bit) in linux-4.16-rc.
-
-
-     Arnd
+diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+index 654fe7dcd38d..e23c051dfc62 100644
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -49,6 +49,39 @@ static int apply_r_riscv_jal_rela(struct module *me, u32 *location,
+ 	return 0;
+ }
+ 
++static int apply_r_riscv_rcv_branch_rela(struct module *me, u32 *location,
++					 Elf_Addr v)
++{
++	s64 offset = (void *)v - (void *)location;
++	u16 imm8 = (offset & 0x100) << (12 - 8);
++	u16 imm7_6 = (offset & 0xc0) >> (6 - 5);
++	u16 imm5 = (offset & 0x20) >> (5 - 2);
++	u16 imm4_3 = (offset & 0x18) << (12 - 5);
++	u16 imm2_1 = (offset & 0x6) << (12 - 10);
++
++	*(u16 *)location = (*(u16 *)location & 0xe383) |
++		    imm8 | imm7_6 | imm5 | imm4_3 | imm2_1;
++	return 0;
++}
++
++static int apply_r_riscv_rvc_jump_rela(struct module *me, u32 *location,
++				       Elf_Addr v)
++{
++	s64 offset = (void *)v - (void *)location;
++	u16 imm11 = (offset & 0x800) << (12 - 11);
++	u16 imm10 = (offset & 0x400) >> (10 - 8);
++	u16 imm9_8 = (offset & 0x300) << (12 - 11);
++	u16 imm7 = (offset & 0x80) >> (7 - 6);
++	u16 imm6 = (offset & 0x40) << (12 - 11);
++	u16 imm5 = (offset & 0x20) >> (5 - 2);
++	u16 imm4 = (offset & 0x10) << (12 - 5);
++	u16 imm3_1 = (offset & 0xe) << (12 - 10);
++
++	*(u16 *)location = (*(u16 *)location & 0xe003) |
++		    imm11 | imm10 | imm9_8 | imm7 | imm6 | imm5 | imm4 | imm3_1;
++	return 0;
++}
++
+ static int apply_r_riscv_pcrel_hi20_rela(struct module *me, u32 *location,
+ 					 Elf_Addr v)
+ {
+@@ -212,6 +245,8 @@ static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
+ 	[R_RISCV_64]			= apply_r_riscv_64_rela,
+ 	[R_RISCV_BRANCH]		= apply_r_riscv_branch_rela,
+ 	[R_RISCV_JAL]			= apply_r_riscv_jal_rela,
++	[R_RISCV_RVC_BRANCH]		= apply_r_riscv_rcv_branch_rela,
++	[R_RISCV_RVC_JUMP]		= apply_r_riscv_rvc_jump_rela,
+ 	[R_RISCV_PCREL_HI20]		= apply_r_riscv_pcrel_hi20_rela,
+ 	[R_RISCV_PCREL_LO12_I]		= apply_r_riscv_pcrel_lo12_i_rela,
+ 	[R_RISCV_PCREL_LO12_S]		= apply_r_riscv_pcrel_lo12_s_rela,
+-- 
+2.16.1
