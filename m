@@ -1,81 +1,81 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELscr25kaL5x5YNezQ3T+rWPqicsvdqAFZmU7eZfSWrltiGStnHAvdjWLbdinieV9NZ4GLnY
-ARC-Seal: i=1; a=rsa-sha256; t=1521186968; cv=none;
+Return-Path: <sergeev917@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520969689; cv=none;
         d=google.com; s=arc-20160816;
-        b=iKN97h9nOjnmhg7VdZS69F/N1pqsDXg1h8kzfOY9hMYe/Al341U8WR+mIkbEgGGaG+
-         cR63y35wjF6AANw8whpi16Hl/KgsI0jlUL5QQzv5zim6kqjCKQVj50UMDFxA2i6U+KPn
-         wIr3fGImSqz0qHs/76uwgWtmiqmjrp4OBWdT22hNJWOEzDMb9ZpDwjhB2hd/BjBdxCIf
-         tBf0qctohSLsQQe/yBZjOjA6o27Tcpk/lKsbV5NGMXDAG4WjZ3TJAicDovE4vVs/ky9y
-         vHCf/cLqQ0IGX8sJ8OqBZlosZYnNnuVXeg2376EYsVVV/UfeQB2mnTgxsB2vBokTo6I8
-         bCmA==
+        b=PyALZh/IC7VKpVnjGad78sngl9Ceok8UdZfcy18o73j/IT2tt8e7Cqb8gLhWYMNseB
+         rxX6Vr62DXiBs3jQOPyN3iz5NPDkHpYrHCCcvQk0IaIID2fNAUBUTZcwrs+u1sPnPqnx
+         2MIyMHmMwsIJPoOkWvXgY/Yz+FKL3WO3vmRDEJ/dsDsZTujiLHiUib8Llr13jTxRJz5t
+         hsyyP1D7nuyC5iO07Isz3np3rokKxAIopQZYnlxQUggj1tQw2TfrEDivbJJD3nEXzfs4
+         JT5owmx4rzl6H2CXRUZZSpmehYxqXE1KgMdTmYXJuFHaepwaP/z3vQZLeftrxr+DRYN+
+         pUsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:in-reply-to
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=W8zI6HNgef0M8OzoeQPog31j8LPrV3/mqz8celSbRXg=;
-        b=ZLacWfQTedqs49FW8X9mWGiIJf26skKXQr7BM2+8y9gQw5dab6HUFMWDajI39FxKOe
-         TYPoHHyNg+oLr/HH/AhRGKopkT+e2SRgiyW3UrP/ENLe5DGrKRKGPBqEm9uLuDhJleDK
-         a3XjbLCmL9swcw6/xWF7Aa/MT1VCnAz8kKpycIYMJoX8PUROLiHPaqtPXEjwNhGzRlHH
-         M4Dkod9DzaN3o2dWj2+CpjTu8uJqPwSptsL1Prq4AmCz7Ovf2V+l6m7/ZKL8lz6lbdNp
-         MR9iBfVryA/eA74qGp1GimpnBBZBsc9PMwXXaIHrXvK/D8z0j4OOtQqtSQVxxnjr0+iy
-         aRPw==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=k8lX/8xPrE56sqAhoxyyalOONJvnQBsAKxw3lkAtbpA=;
+        b=uclkeUVT0SUhncHdTvAUGSKaEZ8q1AKPb2Qe4KI+N+WQxjjNYhyeVP69fbZZo4jMoz
+         p6qj/ENzYdPS2nKJKSQQyeYxpEuPODGX7OI7DhQhKbcxb2/6BwXrcbe73BDpcl4nJr0H
+         vmYNb0nzk5H3TU9JiaRBQmXmPx4jC42VZYfRnmWWGt5+zFwMassWldp7ZI+jRhyO+mqC
+         sUWmDgtIduaqDkYw4YTRkhzA0MqY1dCeUSR+Fagc0zJetdBAwiu4xPUcTLIrmD8APYEg
+         b8Jr6N+NkroMc1jc/i34XP4PQM0Zk0QGRCoYVXVofYvYKGoEgVxrpHJKLGn4WUMZA0CY
+         JcAg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oDfmfHBB;
+       spf=pass (google.com: domain of sergeev917@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sergeev917@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752997AbeCPHzz (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 16 Mar 2018 03:55:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41416 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbeCPHzy (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:55:54 -0400
-Date: Fri, 16 Mar 2018 08:55:53 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, qemu-devel@nongnu.org,
-        David Airlie <airlied@linux.ie>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK"
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v2] Add udmabuf misc device
-Message-ID: <20180316075553.GA11982@kroah.com>
-References: <20180316074650.5415-1-kraxel@redhat.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oDfmfHBB;
+       spf=pass (google.com: domain of sergeev917@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=sergeev917@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuFElN7cnT0dVPouvR7tzJhVOqu93Ewxf8NwRcvf983QRLUVJGlmwvWnJJYoFt+qBXNrqs0vg==
+Date: Tue, 13 Mar 2018 22:38:56 +0300
+From: Alexander Sergeyev <sergeev917@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>, Kyle Huey <me@kylehuey.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/speculation: Remove Skylake C2 from Speculation Control
+ microcode blacklist
+Message-ID: <20180313193856.GA8580@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180316074650.5415-1-kraxel@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+User-Agent: mtt
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595079572079958094?=
-X-GMAIL-MSGID: =?utf-8?q?1595080146968654395?=
+X-GMAIL-THRID: =?utf-8?q?1594852313515913739?=
+X-GMAIL-MSGID: =?utf-8?q?1594852313515913739?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 08:46:49AM +0100, Gerd Hoffmann wrote:
-> --- /dev/null
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -0,0 +1,261 @@
-> +/*
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
+In accordance with Intel's microcode revision guidance from March 6 MCU
+rev 0xc2 is cleared on both Skylake H/S and Skylake Xeon E3 processors
+that share CPUID 506E3.
 
-No SPDX line or copyright here?  You put it in the .h file :(
+Signed-off-by: Alexander Sergeyev <sergeev917@gmail.com>
+---
+ arch/x86/kernel/cpu/intel.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-thanks,
-
-greg k-h
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b862067bb33c..3f8d7a3b6447 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -105,7 +105,7 @@ static void probe_xeon_phi_r3mwait(struct cpuinfo_x86 *c)
+ /*
+  * Early microcode releases for the Spectre v2 mitigation were broken.
+  * Information taken from;
+- * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/01/microcode-update-guidance.pdf
++ * - https://newsroom.intel.com/wp-content/uploads/sites/11/2018/03/microcode-update-guidance.pdf
+  * - https://kb.vmware.com/s/article/52345
+  * - Microcode revisions observed in the wild
+  * - Release note from 20180108 microcode release
+@@ -123,7 +123,6 @@ static const struct sku_microcode spectre_bad_microcodes[] = {
+ 	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
+ 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
+-	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
+ 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
+ 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
+ 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+-- 
+2.16.1
