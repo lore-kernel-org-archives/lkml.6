@@ -1,73 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeCMSKU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:10:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41066 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751529AbeCMSKT (ORCPT
+        id S932345AbeCMSLa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:11:30 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43732 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751997AbeCMSL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:10:19 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Tue, 13 Mar 2018 14:11:27 -0400
+X-Google-Smtp-Source: AG47ELtJKbffJ4YuYDayl99gS6lN4ctKAgoS4ZOUbJKd46FGT9a6dUmzrmq/aJaGIZu2vuAOvtrrlq4c75kmQgbVHFs=
+MIME-Version: 1.0
+In-Reply-To: <20180313063630.zxebyb7gczeiovyf@gmail.com>
+References: <20180301163331.987775783@linutronix.de> <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com>
+ <20180313063630.zxebyb7gczeiovyf@gmail.com>
+From: John Stultz <john.stultz@linaro.org>
+Date: Tue, 13 Mar 2018 11:11:25 -0700
+Message-ID: <CALAqxLXJw-QOztJvt1sBSyxDg4NFz5KXmPv3PjF4VEChz20BGA@mail.gmail.com>
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Prarit Bhargava <prarit@redhat.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: [PATCH v9 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
-Date: Tue, 13 Mar 2018 18:59:31 +0100
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18031318-0012-0000-0000-000005BE006B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031317-0013-0000-0000-0000193A0055
-Message-Id: <1520963994-28477-2-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130203
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kevin Easton <kevin@guarana.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This configuration variable will be used to build the code needed to
-handle speculative page fault.
+On Mon, Mar 12, 2018 at 11:36 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+>> On Thu, Mar 1, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> >
+>> > This really needs lot of testing, documentation updates and more input from
+>> > userspace folks to make a final decision.
+>>
+>> Honestly, I don't think we'd get the testing this kind of change needs
+>> except by just trying it.
+>>
+>> I'm willing to merge this in the 4.17 merge window, with the
+>> understanding that if people end up reporting issues, we may just have
+>> to revert it all, and chalk it up to a learning experience - and add
+>> the appropriate commentary in the kernel code about exactly what it
+>> was that depended on that MONO/BOOT difference.
+>>
+>> One non-technical thing I would ask: use some other word than
+>> "conflate". Maybe just "combine". Or better yet, "unify".
+>
+> Ok, I have edited all the changelogs accordingly (and also flipped around the
+> 'clock MONOTONIC' language to the more readable 'the MONOTONIC clock' variant),
+> the resulting titles are (in order):
+>
+>  72199320d49d: timekeeping: Add the new CLOCK_MONOTONIC_ACTIVE clock
+>  d6ed449afdb3: timekeeping: Make the MONOTONIC clock behave like the BOOTTIME clock
+>  f2d6fdbfd238: Input: Evdev - unify MONOTONIC and BOOTTIME clock behavior
+>  d6c7270e913d: timekeeping: Remove boot time specific code
+>  7250a4047aa6: posix-timers: Unify MONOTONIC and BOOTTIME clock behavior
+>  127bfa5f4342: hrtimer: Unify MONOTONIC and BOOTTIME clock behavior
+>  92af4dcb4e1c: tracing: Unify the "boot" and "mono" tracing clocks
+>
+> I'll push these out after testing.
 
-By default it is turned off, and activated depending on architecture
-support.
+I'm still anxious about userspace effects given how much I've seen the
+current behavior documented, and wouldn't pushed for this myself (I'm
+a worrier), but at least I'm not seeing any failures in initial
+testing w/ kselftest so far.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
----
- mm/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/mm/Kconfig b/mm/Kconfig
-index abefa573bcd8..07c566c88faf 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -759,3 +759,6 @@ config GUP_BENCHMARK
- 	  performance of get_user_pages_fast().
- 
- 	  See tools/testing/selftests/vm/gup_benchmark.c
-+
-+config SPECULATIVE_PAGE_FAULT
-+       bool
--- 
-2.7.4
+thanks
+-john
