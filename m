@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974839; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974837; cv=none;
         d=google.com; s=arc-20160816;
-        b=jFEdUHjLBhnf0B0i3s+BEwUv6AKg3SCi+cPK6zdDRUFA9wX0Brk1sikBiD9Be6hG2a
-         XxsWOieFZ6XLQZDKB7GpDU6mdvWkIXMjDS5d3tK4h9ej+/9xmhVLe3xcRdZXDmnf89JK
-         GD99B8Nch/idFutnC8O9P+zjPnAeqcQHq0zPr4wgPZRUkeEQqncSWWvvxq7YBAcUmLN/
-         aBlIvtNhsCrTjYNiMypVl0pCWbzJm1P6H3VjeuqYgZ03iZCBdTu4TSJ8P0TkAnK81fZa
-         b49mg5YJyojFA1txeiht8j1QlnYx9hk9rV3KIO5S4A1zJjCcBiicIDlLtqRaA/QT8JHl
-         IgAQ==
+        b=vsFLvV3FN/MJgTAFkxHNXOgiuhPC+ZxP9Ow+2xMh+JT847M+kMExvcopj9dOageF40
+         rVbg8UcFAiqGY8pXwCVq/2BQqupKAf9uEr2eCXKKOcprNL47Ji4zZlVubZbqHBfPt80c
+         LZk2Mze6cVHu7Ij6hKRspY3spjo8VgYmjEeCoqPuLdBHFJAQBY4TpTBZ/opakGct9S6D
+         Fv+oBpChdlilrSU1Pmhkaa3INDyXo3X4HhHvL7zWrh+ST3SgE81Z88DGEEbUSe0yCa84
+         cVcbg68FG/VFUb2JOf2W7doOMvpmtVuO+QDdunO/7QAoHnqgy3cXgWSpUlUgNtapzUX0
+         EL1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=DZsEq1zFEG7w9tiVZ8nBqBYJOHCVzWGdhc4pdAiMld8=;
-        b=d+fSmvEcbDLBsltCoyXKD2yzeZjIivZ1nyt+2ZDFVK0kZqr6buRrSRThpAfuH8c8nU
-         BrMtnuKnOhv2F1yTQ9uCWshQf3qmQQe9UoNcpXNHMdge3dsLmF4iK+7aFF8TD0i5Rl4y
-         DimbIZs0JpNgFdSV9+Fe++0bYNmj2Nax3N3bPk4YQlJp5fK1uQMLWvvg8fOAHC8YRj1M
-         jYWVEV+6ItXzMQhR+wO1R9FU8uH4wcnjW0KIKwNIcJ3AwjPOUL8sL9LbFqUvkF15zQmT
-         nJLUJOgu7TCtGbM3Tp+zLc34Re1Lt9/cglvKegFlGv3Vxdm/Mk/1xoalM+L3tZnfD3+f
-         hPiA==
+        bh=p1dT/bzscdZuc8cFz+1XZ1AKc5yvTh+Ysm8sQadR/rg=;
+        b=OBnWHsR3mTZscTBrmXIH9XLYa0UmbtLLZhjUtyMcni0kRlpG2660bdjs/YHDRfGlVZ
+         /9DOlroEgmwQGmapcd2Dltw7j9zmti51lLQVYxjn28t38Ixg6dujFvH4mAy+Oa1oF342
+         T3Ub0SnwRxF01BmQCeaa0TzOGE0fR4SNO7lXKG/vQzuM2/Z2B7sElDqdMQKgjRlAnlcc
+         Vyif4MZ2a2NK2rHMAK7hMaxv8u69UEdyKkXO/co1KSwcQm+b8rV8rZPbHEsRqXeVrnNt
+         bouysnqOIOajGHY8OQDC41O28aLkPxUhEGR27z7x5/sJvIRNrCjkH28MioOhpzkEmAWe
+         ax0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=my7DXLCg;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=AoGyG8Ct;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=my7DXLCg;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=AoGyG8Ct;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELt4TdcVakLAqPXDdnHvEFhN0XdsVDyKDPPQLqvkFilmMxK+MwPG4q9vj6jNW7PpKic5ac+AIg==
+X-Google-Smtp-Source: AG47ELtZYVW1WxSD+KZXpGD5xD2RMVULM9KT/XC4AIX9AomTwtEg1EVLAztxAnHaK1hQ3BBeHtzNgw==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,61 +105,50 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 12/27] x86/paravirt: Adapt assembly for PIE support
-Date: Tue, 13 Mar 2018 13:59:30 -0700
-Message-Id: <20180313205945.245105-13-thgarnie@google.com>
+Subject: [PATCH v2 11/27] x86/power/64: Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:29 -0700
+Message-Id: <20180313205945.245105-12-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857713119854492?=
-X-GMAIL-MSGID: =?utf-8?q?1594857713119854492?=
+X-GMAIL-THRID: =?utf-8?q?1594857711918861539?=
+X-GMAIL-MSGID: =?utf-8?q?1594857711918861539?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-if PIE is enabled, switch the paravirt assembly constraints to be
-compatible. The %c/i constrains generate smaller code so is kept by
-default.
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/power/hibernate_asm_64.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..140747a98d94 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -337,9 +337,17 @@ extern struct pv_lock_ops pv_lock_ops;
- #define PARAVIRT_PATCH(x)					\
- 	(offsetof(struct paravirt_patch_template, x) / sizeof(void *))
+diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
+index ce8da3a0412c..6fdd7bbc3c33 100644
+--- a/arch/x86/power/hibernate_asm_64.S
++++ b/arch/x86/power/hibernate_asm_64.S
+@@ -24,7 +24,7 @@
+ #include <asm/frame.h>
  
-+#ifdef CONFIG_X86_PIE
-+#define paravirt_opptr_call "a"
-+#define paravirt_opptr_type "p"
-+#else
-+#define paravirt_opptr_call "c"
-+#define paravirt_opptr_type "i"
-+#endif
-+
- #define paravirt_type(op)				\
- 	[paravirt_typenum] "i" (PARAVIRT_PATCH(op)),	\
--	[paravirt_opptr] "i" (&(op))
-+	[paravirt_opptr] paravirt_opptr_type (&(op))
- #define paravirt_clobber(clobber)		\
- 	[paravirt_clobber] "i" (clobber)
+ ENTRY(swsusp_arch_suspend)
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	%rsp, pt_regs_sp(%rax)
+ 	movq	%rbp, pt_regs_bp(%rax)
+ 	movq	%rsi, pt_regs_si(%rax)
+@@ -115,7 +115,7 @@ ENTRY(restore_registers)
+ 	movq	%rax, %cr4;  # turn PGE back on
  
-@@ -395,7 +403,7 @@ int paravirt_disable_iospace(void);
-  */
- #define PARAVIRT_CALL					\
- 	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
-+	"call *%" paravirt_opptr_call "[paravirt_opptr];"
- 
- /*
-  * These macros are intended to wrap calls through one of the paravirt
+ 	/* We don't restore %rax, it must be 0 anyway */
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	pt_regs_sp(%rax), %rsp
+ 	movq	pt_regs_bp(%rax), %rbp
+ 	movq	pt_regs_si(%rax), %rsi
 -- 
 2.16.2.660.g709887971b-goog
