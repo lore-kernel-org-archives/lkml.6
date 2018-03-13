@@ -1,84 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933571AbeCMQtj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:49:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40390 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932729AbeCMQtg (ORCPT
+        id S933623AbeCMQuo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:50:44 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:34930 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933368AbeCMQul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:49:36 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Olivier Moysan <olivier.moysan@st.com>
-Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@stlinux.com, linux-kernel@vger.kernel.org,
-        olivier.moysan@st.com, jsarha@ti.com, arnaud.pouliquen@st.com,
-        benjamin.gaignard@st.com, rmk@arm.linux.org.uk,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dmaengine_pcm: document process callback" to the asoc tree
-In-Reply-To: <1520958428-10930-4-git-send-email-olivier.moysan@st.com>
-Message-Id: <20180313164709.D352C440079@finisterre.ee.mobilebroadband>
-Date: Tue, 13 Mar 2018 16:47:09 +0000 (GMT)
+        Tue, 13 Mar 2018 12:50:41 -0400
+X-Google-Smtp-Source: AG47ELsw1sWk6Yccwbw4SNOy0rpq3Ta3AHXPYC2P09kgK97/LE6PPPGOBN7mH+VEBOQe5dcDI6vlxRFVK4uN+pPhaiM=
+MIME-Version: 1.0
+In-Reply-To: <20180313164444.19881-4-thierry.escande@linaro.org>
+References: <20180313164444.19881-1-thierry.escande@linaro.org> <20180313164444.19881-4-thierry.escande@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 18:50:39 +0200
+Message-ID: <CAHp75Vc0hgh89JABVPHJO+RaNqkY_RpsytkDWf=F+Dh=XtZprg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] Bluetooth: hci_qca: Add serdev support
+To: Thierry Escande <thierry.escande@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Mar 13, 2018 at 6:44 PM, Thierry Escande
+<thierry.escande@linaro.org> wrote:
+> Add support for Qualcomm serial slave devices. Probe the serial device,
+> retrieve its maximum speed and register a new hci uart device.
 
-   ASoC: dmaengine_pcm: document process callback
+> +#include <linux/of.h>
 
-has been applied to the asoc tree at
+What exactly this is used for?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> +       qcadev->bt_en = devm_gpiod_get(&serdev->dev, "bt-disable-n",
+> +                                      GPIOD_OUT_LOW);
+> +       if (IS_ERR(qcadev->bt_en)) {
+> +               dev_err(&serdev->dev, "failed to acquire bt-disable-n gpio\n");
+> +               return PTR_ERR(qcadev->bt_en);
+> +       }
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> +       gpiod_set_value(qcadev->bt_en, 0);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Redundant.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> +       clk_set_rate(qcadev->divclk4, DIVCLK4_RATE_32KHZ);
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> +       clk_prepare_enable(qcadev->divclk4);
 
-Thanks,
-Mark
+This may fail.
 
->From 2e78a5562ebc2e4bbdfd7f7729385b3acc94c36e Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Tue, 13 Mar 2018 17:27:08 +0100
-Subject: [PATCH] ASoC: dmaengine_pcm: document process callback
+> +       return hci_uart_register_device(&qcadev->serdev_hu, &qca_proto);
+> +}
 
-Add missing description of process callback.
+> +       clk_disable(qcadev->divclk4);
+> +       clk_unprepare(qcadev->divclk4);
 
-Fixes: 78648092ef46 ("ASoC: dmaengine_pcm: add processing support")
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/dmaengine_pcm.h | 2 ++
- 1 file changed, 2 insertions(+)
+One call.
 
-diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-index 47ef486852ed..e3481eebdd98 100644
---- a/include/sound/dmaengine_pcm.h
-+++ b/include/sound/dmaengine_pcm.h
-@@ -118,6 +118,8 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
-  *   PCM substream. Will be called from the PCM drivers hwparams callback.
-  * @compat_request_channel: Callback to request a DMA channel for platforms
-  *   which do not use devicetree.
-+ * @process: Callback used to apply processing on samples transferred from/to
-+ *   user space.
-  * @compat_filter_fn: Will be used as the filter function when requesting a
-  *  channel for platforms which do not use devicetree. The filter parameter
-  *  will be the DAI's DMA data.
+> +}
+
+> +static const struct of_device_id qca_bluetooth_of_match[] = {
+> +       { .compatible = "qcom,qca6174-bt" },
+
+> +       { },
+
+No comma.
+
+> +};
+
 -- 
-2.16.2
+With Best Regards,
+Andy Shevchenko
