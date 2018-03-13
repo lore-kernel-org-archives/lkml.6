@@ -1,166 +1,218 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974815; cv=none;
-        d=google.com; s=arc-20160816;
-        b=l1GHwy0ugXbB1UhaB0jrHYjrkqGTVg0r0FWemn1iXvB8agDYvyb0s3BboBQFMaNP2f
-         hhiDnUr3DK/Uoih9PNvUzvvUdoMvaRengK/1jPirzRGjpM4R4TzwUrSOVppFpVIKoi/1
-         jU0XbNg0LPsFF4//g1+pwUVbNUCf4vPjQZhVc7st5dJt9/ZxQ0R4B3xG5XhTdYHZW3pH
-         VFhTGtIlJEFE1Su3s893DYNiG9MGeHr8Y3kgoQG1Jj/oLZZ3yVmjf7I2/UBBfnb6/sqN
-         IIpLtKUB7Px8eqs/6YmDA0573JgOJbHhAIbmAjfiOjcoBWeSZUdu4zzc7A444Ulq+GV1
-         q4iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=JDJTtzcoRNEvliJ/DjvgIIip8G/Jp1zdHEdCN2F23XY=;
-        b=aUQ48xMECIws/4bjKwnpk/bJlu4/g56ipOYAnYtw4Z/GdwZ9e7ND6+yuXZvRVUEOHs
-         292l0o20nfHrJ9wUBP84ROvTACPCFuNpxHaoJX+lAEONG4pE+i0Fj5KlZag7mCv8VDFI
-         52tRBgfKbmhH0ckmw78dW5S4rveK7lRVWKKUP0PQSZcF89elY+76QXKBnwgriiW4LnAq
-         AiP51bfN2FMpskppcBD0AVFlHdWMop+TGlm8jKYqBHVaqdz4HEskLijCg/UFu+wbz+uw
-         xaDXVK9qbSsjhHJUIomAzvp7Q4G/YIpgj23yupWh8wZ63evrCpvz+p4aX5KMQTzjQRBU
-         JOVg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELuwsAwnMW+U0jFahSzx90q/ow19E4yNRFSstMMmNoEGgXDo7qAZEgGTltPCHLLQ1mcIJ2HSbg==
-Message-ID: <5aa83bdd.12691c0a.bd45d.96f5@mx.google.com>
-Date: Tue, 13 Mar 2018 14:00:13 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Kernel: v4.14.26-141-g7ba3c4cdde59
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955886-2-11827563844829551139
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520955885; b=AVMEcfHjq6+Wl5wjdZ3Z3Dyof3CTexizyTwqSdngDSw4A0J
+    fH5WOqrd5irbomXQtKB/E7tZ13B3GE7G71UQ7/e6jsbXf6TaIg1a4s3LFRAxp33E
+    1wh320gDgBgLF3sXYpM3XJDemFznOhArQS5lAJSX82qyQJQN1Nlt5qBBKeVr+VL3
+    I4TDwCIdzcQ1YpmOVWCzG//SZncUlimhyHymzJfZbylcETcQfgEOkLJ8aEB/mxJP
+    n+tJhUMkiAnlW7lrcYQVKwsH4deBh3fu+jJuBuYutToK86YT+0+rA6SQiyB8coDg
+    CmwGHO2X9WvIZl3BvoluzJ4StUo8mYYVlTAc0Gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955885; bh=o3zv9hpt4s/bGOyCOb7IZHaUdG
+    ghaWoRpCyDt92jLsg=; b=qeNJgNUXddjiW/iSNyXq/DW3J1a26Dnj7iXmbxjhIN
+    eCK73w6/R7wtYiNQTBhjWvXWyJIHJaxDvbUiE7H4Rw8QE0lIRmGp1HJu7iAt+4PM
+    dOdAWBSI/d1Q5pf4ZQrjDQQPTZCzDwc+YWHOY9bthRd8SkvMEs6Yv3TKx5mAEk1w
+    sWajEoRIDJMw9cElgCvw1QNevCPcLaLxDSNFsJUd5Hx4ZyE3pPEQgg3AIgaEkECU
+    hXbXdI1bvD7ckY4qxQAbny9tWbrNlGZ9dfW0pfnQr1cREFEo2A9Kad3U9ay5Jgpe
+    L6nLlJ/cYih+ihXeqzkzMqRta4eHw/2911rWkn3iWWJw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934823AbeCMPof (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:44:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37004 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935005AbeCMPle (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:34 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 131/140] objtool: Use existing global variables for options
+Date: Tue, 13 Mar 2018 16:25:34 +0100
+Message-Id: <20180313152506.977582248@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/140] 4.14.27-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594837222777113471?=
-X-GMAIL-MSGID: =?utf-8?q?1594857687975407745?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 144 boots: 7 failed, 113 passed with 21 offlin=
-e, 2 untried/unknown, 1 conflict (v4.14.26-141-g7ba3c4cdde59)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.26-141-g7ba3c4cdde59/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.26-141-g7ba3c4cdde59/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.26-141-g7ba3c4cdde59
-Git Commit: 7ba3c4cdde59100ec5cae9f4537ec8bd8709ab59
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 77 unique boards, 22 SoC families, 17 builds out of 185
+From: Peter Zijlstra <peterz@infradead.org>
 
-Boot Regressions Detected:
+commit 43a4525f80534530077683f6472d8971646b0ace upstream.
 
-arm:
+Use the existing global variables instead of passing them around and
+creating duplicate global variables.
 
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.14.25-=
-10-gcf6424f29452 - first fail: v4.14.26)
-
-    sunxi_defconfig:
-        sun5i-gr8-chip-pro:
-            lab-free-electrons: new failure (last pass: v4.14.26)
-
-arm64:
-
-    defconfig:
-        apq8016-sbc:
-            lab-mhart: new failure (last pass: v4.14.26)
-        meson-gxbb-p200:
-            lab-baylibre-seattle: new failure (last pass: v4.14.25)
-        meson-gxl-s905d-p230:
-            lab-baylibre-seattle: new failure (last pass: v4.14.26)
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre: new failure (last pass: v4.14.26)
-            lab-baylibre-seattle: new failure (last pass: v4.14.25)
-        meson-gxl-s905x-p212:
-            lab-baylibre-seattle: new failure (last pass: v4.14.26)
-
-Boot Failures Detected:
-
-arm:
-
-    sunxi_defconfig
-        sun5i-gr8-chip-pro: 1 failed lab
-
-arm64:
-
-    defconfig
-        apq8016-sbc: 1 failed lab
-        meson-gxbb-p200: 1 failed lab
-        meson-gxl-s905d-p230: 1 failed lab
-        meson-gxl-s905x-khadas-vim: 2 failed labs
-        meson-gxl-s905x-p212: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        mt7622-rfb1: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-collabora: PASS
-            lab-baylibre-seattle: FAIL
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ tools/objtool/builtin-check.c |    2 +-
+ tools/objtool/builtin-orc.c   |    6 +-----
+ tools/objtool/builtin.h       |    5 +++++
+ tools/objtool/check.c         |    5 ++---
+ tools/objtool/check.h         |    2 +-
+ 5 files changed, 10 insertions(+), 10 deletions(-)
+
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -53,5 +53,5 @@ int cmd_check(int argc, const char **arg
+ 
+ 	objname = argv[0];
+ 
+-	return check(objname, no_fp, no_unreachable, false);
++	return check(objname, false);
+ }
+--- a/tools/objtool/builtin-orc.c
++++ b/tools/objtool/builtin-orc.c
+@@ -25,7 +25,6 @@
+  */
+ 
+ #include <string.h>
+-#include <subcmd/parse-options.h>
+ #include "builtin.h"
+ #include "check.h"
+ 
+@@ -36,9 +35,6 @@ static const char *orc_usage[] = {
+ 	NULL,
+ };
+ 
+-extern const struct option check_options[];
+-extern bool no_fp, no_unreachable;
+-
+ int cmd_orc(int argc, const char **argv)
+ {
+ 	const char *objname;
+@@ -54,7 +50,7 @@ int cmd_orc(int argc, const char **argv)
+ 
+ 		objname = argv[0];
+ 
+-		return check(objname, no_fp, no_unreachable, true);
++		return check(objname, true);
+ 	}
+ 
+ 	if (!strcmp(argv[0], "dump")) {
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -17,6 +17,11 @@
+ #ifndef _BUILTIN_H
+ #define _BUILTIN_H
+ 
++#include <subcmd/parse-options.h>
++
++extern const struct option check_options[];
++extern bool no_fp, no_unreachable;
++
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
+ 
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -18,6 +18,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ 
++#include "builtin.h"
+ #include "check.h"
+ #include "elf.h"
+ #include "special.h"
+@@ -33,7 +34,6 @@ struct alternative {
+ };
+ 
+ const char *objname;
+-static bool no_fp;
+ struct cfi_state initial_func_cfi;
+ 
+ struct instruction *find_insn(struct objtool_file *file,
+@@ -2021,13 +2021,12 @@ static void cleanup(struct objtool_file
+ 	elf_close(file->elf);
+ }
+ 
+-int check(const char *_objname, bool _no_fp, bool no_unreachable, bool orc)
++int check(const char *_objname, bool orc)
+ {
+ 	struct objtool_file file;
+ 	int ret, warnings = 0;
+ 
+ 	objname = _objname;
+-	no_fp = _no_fp;
+ 
+ 	file.elf = elf_open(objname, orc ? O_RDWR : O_RDONLY);
+ 	if (!file.elf)
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -63,7 +63,7 @@ struct objtool_file {
+ 	bool ignore_unreachables, c_file, hints;
+ };
+ 
+-int check(const char *objname, bool no_fp, bool no_unreachable, bool orc);
++int check(const char *objname, bool orc);
+ 
+ struct instruction *find_insn(struct objtool_file *file,
+ 			      struct section *sec, unsigned long offset);
