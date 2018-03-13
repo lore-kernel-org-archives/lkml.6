@@ -1,49 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752663AbeCMNZD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:25:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752084AbeCMNZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:25:02 -0400
-Subject: Re: [PATCH 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
-References: <20180312140300.6166-1-vkuznets@redhat.com>
- <20180312140300.6166-2-vkuznets@redhat.com>
- <327f3194-715c-7aa7-f1bb-9ee1073f5b99@redhat.com>
- <87ina0cdto.fsf@vitty.brq.redhat.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <cec32ec2-6f71-0f51-8411-8d6a94881f55@redhat.com>
-Date: Tue, 13 Mar 2018 14:24:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <87ina0cdto.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752768AbeCMN0v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:26:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34964 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751723AbeCMN0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:26:43 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: [PATCH v9 01/61] mac80211_hwsim: Use DEFINE_IDA
+Date: Tue, 13 Mar 2018 06:25:39 -0700
+Message-Id: <20180313132639.17387-2-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
+References: <20180313132639.17387-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/03/2018 14:20, Vitaly Kuznetsov wrote:
-> vmcs_writel() I guess ... and, just to make sure I follow your
-> suggestion, this is for x86_64 only, right? x86_32 does
-> 
-> vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
-> 
-> and I think it needs to stay.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Yes.
+This is preferred to opencoding an IDA_INIT.
 
-> (personally, I'm rather for exporting save_fsgs(), dropping
-> savesegment() and getting all we need from current to avoid propagating
-> assumptions but I'm flexible)
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/net/wireless/mac80211_hwsim.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, that's fine too, as long as it's not mix and match. :)
-
-Paolo
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 7b6c3640a94f..8bffd6ebc03e 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -253,7 +253,7 @@ static inline void hwsim_clear_chanctx_magic(struct ieee80211_chanctx_conf *c)
+ 
+ static unsigned int hwsim_net_id;
+ 
+-static struct ida hwsim_netgroup_ida = IDA_INIT;
++static DEFINE_IDA(hwsim_netgroup_ida);
+ 
+ struct hwsim_net {
+ 	int netgroup;
+-- 
+2.16.1
