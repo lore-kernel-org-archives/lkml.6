@@ -1,151 +1,145 @@
-Return-Path: <jarkko.sakkinen@intel.com>
-X-Google-Smtp-Source: AG47ELs1C+RsOnNWf7ml3C5DZ1E+MxBpTKGvvTDue3sBai5SLC87I8vdadXcVZuhoj5juZMIHH0a
-ARC-Seal: i=1; a=rsa-sha256; t=1520268992; cv=none;
-        d=google.com; s=arc-20160816;
-        b=b0zsgralyQ6BCb2bNbz82Y7/mJPUxs6lAX4/+NWrPU8nd6H/QwLGAirne60DEd68ZU
-         McvcoabL/jLT8g6ZLnwmDiixNkKr3HVVB0x87hv5p+fbYei7BWmh+wvmOTI0REk8mbqn
-         KsW3jRoTvew2w+DUuWn4KRC0JzE5GIAqOukZD+xP3FVvtVDp6J8V1+/zRK+5E1hKMEzt
-         mKwTaUdvx8QkAt+FBlKPLJnh9ELKvWcJ69rO80viA2GMnHVAkjv9GL0glJ6PUrmGFVKO
-         QdthGsM/Iez1JUYt+pyQgwQTrR6Qbj80rOfBNGg5uoPLDFErux1Do3lSjCUjSvehVKfZ
-         kPAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=bHMPeEj0//l/ks4Dln0NUjIK9sgUzoTUIdLtOvl6KJk=;
-        b=MVeCEsPbdgocyKpSzHfpeRYMmIYq1ep7Jk1eVNuteZcYgmH/X1p8r64WFlNjwYyjXT
-         FV17zXzIho838M6HnxEPVdI5fo4+45pYu+5XrL/6LB7ABQg3VTA+epN8nFGUSE99Xamf
-         iY/0aYr0mabfORko+H3lbpZjzUTrhgW2MfFaU6ddsms2z0Gf1yjOfNF54w8eOab3onbZ
-         VQkitvRbexBG/JF+kAvfLl0KEuuV4WS8upO6d0FWtgCUDlk7VdaBl3wDFgQOGdpJejaP
-         tJENMTIP5rKzcDZdnngpTx2EHabbPo4y7nNOdzZ4PcR+hgt3DgcyZyMKIZpo4cp+UZBY
-         pTxw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="35627909"
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-Date: Mon,  5 Mar 2018 18:56:11 +0200
-Message-Id: <20180305165614.5469-3-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520954839-2-761606917025847464
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520954838; b=gbA+ta4MFOFZddaYs9EboTEYPHkpJLqQ8j9XX9b29O4mCQJ
+    3U6duyLMIuoIaSx/2rSI3uNYxCPaLl0By4bsgz5sOB6AJk8AIGJsPMEqrphDSG4L
+    y2JNDgRUDerYV5SCdxPocL9mB0Zgm00LDLpWd7FQy+wPGV9/V6/aSanxmu+QToT1
+    B3QzAH1rm2e2yRDI2tQhMCWFe9X+/of8Z1DERZshwnEuI6ghL2fVzNra+f91XlVE
+    z4BK1OlGVDFOZZyumlLYwE7KLBzPAptsx+REVyf5Xo9Exrtdfley7T6tN1N+Ua+G
+    NEGsHuuGp74PSWwgoGdHqEjTJTA/vlzp+mllABA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520954838; bh=BBWxNM4HuVukkmbVygLyaHrOQw
+    b9BHvdMqDskuoJgUE=; b=QvPwkzTjNi+FpE4NjJ07tGHetFMMpy3P4QgHMO6F93
+    V0Lo+Jxdsi6KGD4Dy/UK6/qGlfWeioigd0g3dQLZSypNDwf0GiZLP5Atdj7HvYyf
+    624wSPy45447Uy3GAiQiWGmjFMBdpTv3wH3uCRFha+TcCxJUkqgdNem8dq5QG8su
+    47oGsEFO4HR6giM92idD7F30W5s2H+/t5mDp9u8kXKz94L8vTTlGuV+yb0f0tv8c
+    IGJbT73tx5yir8Wg5Q2ET1RI+nWPSW2UxlVdd8CPBH0amupl+yoIWRCbjBW8gyW7
+    iIhXWHye4Mi/ccjy5M25nAEXHVw6LQ5Qm15dJdmorm+g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=egMlzsLM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=thvtfBAB;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=egMlzsLM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=thvtfBAB;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751727AbeCMP1P (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:27:15 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36732 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751596AbeCMP1P (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:27:15 -0400
+X-Google-Smtp-Source: AG47ELu9yp4EyxV9QzXJxuaM4pfu6L4utdqnffednPIHNXT+c1RsMuKMFFS3/t/Q6YiYgUQWeeXhXQ==
+From: Richard Genoud <richard.genoud@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Richard Genoud <richard.genoud@gmail.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] clk: mvebu: armada-38x: add support for missing clocks
+Date: Tue, 13 Mar 2018 16:27:02 +0100
+Message-Id: <20180313152702.21070-1-richard.genoud@gmail.com>
+X-Mailer: git-send-email 2.16.1
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594108954042776434?=
-X-GMAIL-MSGID: =?utf-8?q?1594117578975772535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In order to make struct tpm_buf the first class object for constructing TPM
-commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-prints an error message.
+Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+or 1333MHz (industrial).
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+They have also some dip-switches to select a different clock (666, 800,
+1066, 1200).
+
+The funny thing is that the recovery button is on the MPP34 fq selector.
+So, when booting an industrial board with this button down, the frequency
+666MHz is selected (and the kernel didn't boot).
+
+This patch add all the missing clocks.
+
+The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+
+Fixes: 0e85aeced4d6 ("clk: mvebu: add clock support for Armada 380/385")
+Cc: <stable@vger.kernel.org> # 3.16.x: 9593f4f56cf5: clk: mvebu: armada-38x: add support for 1866MHz variants
+Cc: <stable@vger.kernel.org> # 3.16.x
+
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+ drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 89a5397b18d2..abe6ef4a7a0b 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
- 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+index 394aa6f03f01..9ff4ea63932d 100644
+--- a/drivers/clk/mvebu/armada-38x.c
++++ b/drivers/clk/mvebu/armada-38x.c
+@@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+ }
+ 
+ static const u32 armada_38x_cpu_frequencies[] __initconst = {
+-	0, 0, 0, 0,
+-	1066 * 1000 * 1000, 0, 0, 0,
++	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
++	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+ 	1332 * 1000 * 1000, 0, 0, 0,
+ 	1600 * 1000 * 1000, 0, 0, 0,
+-	1866 * 1000 * 1000,
++	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
  };
  
--struct tpm2_startup_in {
--	__be16	startup_type;
--} __packed;
--
- struct tpm2_get_tpm_pt_in {
- 	__be32	cap_id;
- 	__be32	property_id;
-@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
- } __packed;
+ static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+@@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+ };
  
- union tpm2_cmd_params {
--	struct	tpm2_startup_in		startup_in;
- 	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
- 	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
- 	struct	tpm2_get_random_in	getrandom_in;
-@@ -410,11 +405,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 	int rc;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
--	if (rc) {
--		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
--			 handle);
-+	if (rc)
- 		return;
--	}
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
-@@ -760,40 +752,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
- }
- EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
- 
--#define TPM2_SHUTDOWN_IN_SIZE \
--	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_startup_in))
--
--static const struct tpm_input_header tpm2_shutdown_header = {
--	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
--};
--
- /**
-  * tpm2_shutdown() - send shutdown command to the TPM chip
-  *
-+ * In places where shutdown command is sent there's no much we can do except
-+ * print the error code on a system failure.
-+ *
-  * @chip:		TPM chip to use.
-  * @shutdown_type:	shutdown type. The value is either
-  *			TPM_SU_CLEAR or TPM_SU_STATE.
-  */
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- {
--	struct tpm2_cmd cmd;
-+	struct tpm_buf buf;
- 	int rc;
- 
--	cmd.header.in = tpm2_shutdown_header;
--	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
--
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
--			      "stopping the TPM");
--
--	/* In places where shutdown command is sent there's no much we can do
--	 * except print the error code on a system failure.
--	 */
--	if (rc < 0 && rc != -EPIPE)
--		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
--			 rc);
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-+	if (rc)
-+		return;
-+	tpm_buf_append_u16(&buf, shutdown_type);
-+	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			 "stopping the TPM");
-+	tpm_buf_destroy(&buf);
- }
- 
- /*
--- 
-2.15.1
+ static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+-	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+@@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
