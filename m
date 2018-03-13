@@ -1,81 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933623AbeCMQuo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:50:44 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34930 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933368AbeCMQul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:50:41 -0400
-X-Google-Smtp-Source: AG47ELsw1sWk6Yccwbw4SNOy0rpq3Ta3AHXPYC2P09kgK97/LE6PPPGOBN7mH+VEBOQe5dcDI6vlxRFVK4uN+pPhaiM=
-MIME-Version: 1.0
-In-Reply-To: <20180313164444.19881-4-thierry.escande@linaro.org>
-References: <20180313164444.19881-1-thierry.escande@linaro.org> <20180313164444.19881-4-thierry.escande@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 18:50:39 +0200
-Message-ID: <CAHp75Vc0hgh89JABVPHJO+RaNqkY_RpsytkDWf=F+Dh=XtZprg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] Bluetooth: hci_qca: Add serdev support
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
+        id S1752830AbeCMQvi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:51:38 -0400
+Received: from h1.radempa.de ([176.9.142.194]:40714 "EHLO mail.cosmopool.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751615AbeCMQvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:51:36 -0400
+From: Harald Geyer <harald@ccbib.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
+Subject: Re: [PATCH 3/5] arm64: dts: allwinner: a64: add simplefb for A64 SoC
+In-reply-to: <20180313153522.haeemlqbtuei5zb3@flea>
+References: <20180312161050.7647-1-harald@ccbib.org> <20180312161050.7647-4-harald@ccbib.org> <20180313082724.7optc2xwgqoiibtx@flea> <E1evg4e-0000Qj-2w@stardust.g4.wien.funkfeuer.at> <20180313153522.haeemlqbtuei5zb3@flea>
+Comments: In-reply-to Maxime Ripard <maxime.ripard@bootlin.com>
+   message dated "Tue, 13 Mar 2018 16:35:22 +0100."
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1858.1520959889.1@stardust.g4.wien.funkfeuer.at>
+Date: Tue, 13 Mar 2018 17:51:29 +0100
+Message-Id: <E1evn97-0000U0-Fp@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 6:44 PM, Thierry Escande
-<thierry.escande@linaro.org> wrote:
-> Add support for Qualcomm serial slave devices. Probe the serial device,
-> retrieve its maximum speed and register a new hci uart device.
+Maxime Ripard writes:
+> Hi,
+> 
+> On Tue, Mar 13, 2018 at 10:18:22AM +0100, Harald Geyer wrote:
+>> Maxime Ripard writes:
+>>> On Mon, Mar 12, 2018 at 04:10:48PM +0000, Harald Geyer wrote:
+>>>> The A64 SoC features two display pipelines, one has a LCD output, the
+>>>> other has a HDMI output.
+>>>>
+>>>> Add support for simplefb for the LCD output. Tested on Teres I.
+>>>>
+>>>> This patch was inspired by work of Icenowy Zheng.
+>>>>
+>>>> Signed-off-by: Harald Geyer <harald@ccbib.org>
+>>>> ---
+>>>> arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 ++++++++++++++++++++
+>>>> 1 file changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> index ca1b365bc722..05d5e8def68a 100644
+>>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> @@ -52,6 +52,26 @@
+>>>> 	#address-cells = <1>;
+>>>> 	#size-cells = <1>;
+>>>>
+>>>> +	chosen {
+>>>> +		#address-cells = <1>;
+>>>> +		#size-cells = <1>;
+>>>> +		ranges;
+>>>> +
+>>>> +/*
+>>>> + * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
+>>>> + * However there is no support for this clock on A64 yet, so we depend
+>>>> + * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
+>>>> + */
+>>> 
+>>> There's definitely support for the CLK_MIXER0 clock in the DE2 CCU
+>>> driver, so I guess this would need to be amended / fixed
+>> 
+>> AFAIK on the A64 a special sram quirk is necessary, that never got merged:
+>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574303.html
+>> 
+>> I asked Icenowy if I should resubmit her patch as part of this series,
+>> but was told further discussion is necessary. I'm sure she can better
+>> explain the details than me.
+>> 
+>> Actually if it wasn't for the sram quirk, there is a simplefb patch by
+>> her, that could have been merged long ago:
+>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574304.html
+> 
+> The issue with your patch is that, as soon as that clock is
+> functional, the DT with the node you were introducing here will no
+> longer be.
+> 
+> And since people use their firmware DT or put them in NOR these days,
+> you can't really expect them to update them every release either.
 
-> +#include <linux/of.h>
+How is this a problem? - The clock can't be functional without adding
+a DT node for it's driver. So the breakage can only happen on DT update,
+which means we can avoid it, by moving the clocks to the proper places
+when we add the node actually using them for real.
 
-What exactly this is used for?
+> I guess a proper solution would be to respin that patch.
 
-> +       qcadev->bt_en = devm_gpiod_get(&serdev->dev, "bt-disable-n",
-> +                                      GPIOD_OUT_LOW);
-> +       if (IS_ERR(qcadev->bt_en)) {
-> +               dev_err(&serdev->dev, "failed to acquire bt-disable-n gpio\n");
-> +               return PTR_ERR(qcadev->bt_en);
-> +       }
+Sure, but as mentioned above I offered to do that and was told not to.
 
-> +       gpiod_set_value(qcadev->bt_en, 0);
+As a compromise I could also move the simple framebuffer node from the
+A64 dtsi to the teres-i dts, where we know that the DT can be updated
+easily?
 
-Redundant.
-
-> +       clk_set_rate(qcadev->divclk4, DIVCLK4_RATE_32KHZ);
-
-> +       clk_prepare_enable(qcadev->divclk4);
-
-This may fail.
-
-> +       return hci_uart_register_device(&qcadev->serdev_hu, &qca_proto);
-> +}
-
-> +       clk_disable(qcadev->divclk4);
-> +       clk_unprepare(qcadev->divclk4);
-
-One call.
-
-> +}
-
-> +static const struct of_device_id qca_bluetooth_of_match[] = {
-> +       { .compatible = "qcom,qca6174-bt" },
-
-> +       { },
-
-No comma.
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks for your consideration,
+Harald
