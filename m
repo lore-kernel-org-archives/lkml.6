@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvU8o6XIg/AeqQfrnta1TZ+Z8Iu1k65nEQxLCEgUnw67vKhpLzBC2I0NJDLC2YOWmYaYdP
-ARC-Seal: i=1; a=rsa-sha256; t=1520954993; cv=none;
+X-Google-Smtp-Source: AG47ELv/yM9rSJWoRjhs8U1RfhHL11BUCTtTnWnMDQrbEC/3LezE45hNMRAZIzbn5Bq5MjjIfe55
+ARC-Seal: i=1; a=rsa-sha256; t=1520954990; cv=none;
         d=google.com; s=arc-20160816;
-        b=G7jyESGBzEUw+tPoNN+eR7KU1MswCmAnoO/msk+uKCxo5a5+V56e05hoJalIW2hQyj
-         qzrqBxigVV6qb242GyQPK4hnWmZGSgSp9UvN/P6H4s/vTHs9w1RkcBgvR4uBg8SH7tBa
-         gIZ2b5etc+dgc9m5EF1sbyfgv/hRPBElH+tNmp/mslaP7/oAK+NRKi0TVPbfkQCwgtoC
-         yQ3ApGMgPJN2bbJM3YX9tYnLGaWsxNZUH4WR2GTrYyPwUkZp7oHGb7vJsCCIcVj8vAHM
-         89lDjk4XBIq88zRlFhlNY/Qj/ZBLAorIYrm+JBPT8uENvoTQAA5GrdHmWIK0Vq3HVO3g
-         FR+A==
+        b=qrRwxd73L+wrm6mnuVVpE87/H0Ws0EzZmJX2jGFSnHaBfaFky1K93QqV5IeecFXNYc
+         uHu4n78v2VJsQP6Gm8QoQXVqAagQ3adXQL1u+BImrKBoubUhGy6upVrZpIi9je4epWfW
+         55dznt2/vxvkFioQExXU+ampRVzlBNH0JUB+Xj3xgdo+DljiVVxFUJVHRYDqwE3NCJjf
+         Fj/Qga+xzLqHLMPoBruUGIBJ+NcJJZAnf5vwZcvw8JrbwqvsfgF8KYSkBxDDC6aiuiwl
+         wwXaf5JvLU4H37LDbgdeAwcZ2Jsr7hxLPtP0CK4ycP6Y0jiHaFVl4QWBG5PmMAwx2u93
+         Xidw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gjE0g4KPD8S22Y9gMWeel5XM5l+6Om1tyahMvELWnoc=;
-        b=jsNtp9A0GWk+ZalZCgqcIai/PL/aMA6nJuaC3JejK0SI8XBccSOzfUV+dv6tvNm9mP
-         ImpsxAl39ZcyUYu41Rt8BrhYXkTMYaCNEBzH5LDqykbwXRUCvZPQ44GUx5yQDeTT+al7
-         5slia16Br+JCwppNMBnvdnHjy0PITgefc+RyHW+dhpkoWbgzqQ4Iqt7xnrUnW6Qs8tuN
-         DmiiRw9Clm7mBf8FQN9YmJrclazhrYrC307UrwxEZbip9L1wn54WdhNTQpOEl/udsvYZ
-         KLr+h8VMSIoKGjff5ip4F7O677D9pMc4NwXOmRW7CIHdvg2RX6fX9v9g28LOIud9Gbtp
-         YmnA==
+        bh=tRkkHVmgO6KY/9xVGGxh0Q6LhihdAasCBmmof/EzqWs=;
+        b=jDkhDcu9F794Bju5P4Vka59ny2x3dMxDwAVMoYOMVJw16+LCZ8LMwWaYWiDOwv60vy
+         pi/n/SmOeUdDLOfDrdjoZLkwtt5NLU1Jgicb8XjJRdjOZ7RKbAw9mK236iQlNpxq1kvu
+         rUzeNPOGZ9F9xqHzRTaNpomyh2QpfFftGwhkMcW8bMKpvujTJXCU3evyEzy0CH0VZWWI
+         owuF0HJeqXVQGntCTs3GOjNS5d80b/qLCvDOH58/a894mMkeCA2/4s0oO9f9TCmhXFtt
+         xTEV5809leHhYOS9w7QZ5XeUJe4YY4+x2WVqKEup37dxerIi+F8+QiU5smeAVLGcOXtR
+         Kh7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH 4.15 053/146] KVM: s390: fix memory overwrites when not using SCA entries
-Date: Tue, 13 Mar 2018 16:23:40 +0100
-Message-Id: <20180313152324.733971401@linuxfoundation.org>
+	Andy Lutomirski <luto@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Tiwei Bie <tiwei.bie@intel.com>
+Subject: [PATCH 4.15 052/146] virtio_ring: fix num_free handling in error case
+Date: Tue, 13 Mar 2018 16:23:39 +0100
+Message-Id: <20180313152324.669281046@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836903307298402?=
-X-GMAIL-MSGID: =?utf-8?q?1594836903307298402?=
+X-GMAIL-THRID: =?utf-8?q?1594836899953232634?=
+X-GMAIL-MSGID: =?utf-8?q?1594836899953232634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,41 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Tiwei Bie <tiwei.bie@intel.com>
 
-commit f07afa0462b76a5b9c4f3a43d5ac24fdb86a90c2 upstream.
+commit e82df670235138575b37ff0ec24412a471efd97f upstream.
 
-Even if we don't have extended SCA support, we can have more than 64 CPUs
-if we don't enable any HW features that might use the SCA entries.
+The vq->vq.num_free hasn't been changed when error happens,
+so it shouldn't be changed when handling the error.
 
-Now, this works just fine, but we missed a return, which is why we
-would actually store the SCA entries. If we have more than 64 CPUs, this
-means writing outside of the basic SCA - bad.
-
-Let's fix this. This allows > 64 CPUs when running nested (under vSIE)
-without random crashes.
-
-Fixes: a6940674c384 ("KVM: s390: allow 255 VCPUs when sca entries aren't used")
-Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20180306132758.21034-1-david@redhat.com>
+Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Michael S. Tsirkin <mst@redhat.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kvm/kvm-s390.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/virtio/virtio_ring.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2118,6 +2118,7 @@ static void sca_add_vcpu(struct kvm_vcpu
- 		/* we still need the basic sca for the ipte control */
- 		vcpu->arch.sie_block->scaoh = (__u32)(((__u64)sca) >> 32);
- 		vcpu->arch.sie_block->scaol = (__u32)(__u64)sca;
-+		return;
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -428,8 +428,6 @@ unmap_release:
+ 		i = virtio16_to_cpu(_vq->vdev, vq->vring.desc[i].next);
  	}
- 	read_lock(&vcpu->kvm->arch.sca_lock);
- 	if (vcpu->kvm->arch.use_esca) {
+ 
+-	vq->vq.num_free += total_sg;
+-
+ 	if (indirect)
+ 		kfree(desc);
+ 
