@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvs7VzbQOaopIgucghUGNA70ziL6a3N9ZhTbEwfw1d0c0XSe04Qf03z02T8vnflhMpVaXCm
-ARC-Seal: i=1; a=rsa-sha256; t=1520955448; cv=none;
+X-Google-Smtp-Source: AG47ELvBxFPKK5Mh6fRFRhcMcS6N5QON3HWZfw14+qnWa2bgCYeW4S6Tcb+ft3zlHSqTds4hHzEa
+ARC-Seal: i=1; a=rsa-sha256; t=1520955353; cv=none;
         d=google.com; s=arc-20160816;
-        b=nCHJfjCR3MpU0f4olTNjFnHV8qCP9/5jf2Ia5LPHEPOYAcoS4OKXEc8Q4zAdJ9ttl4
-         nYWqF6xxh56N3KTGNDIt8mIaD3twnJz0R0wFZyCvQdM9/4aR20SMQ190bz3bekEkZR+x
-         S+7iR8m8nQiTi0rpXduKogv7mgSoJaVkr5R/KPieC1H3Cwv+tnoHToih8F/M+BMq3kYO
-         EKpBPAJNcNlRHhb0vR9pkdw55EnuDzCh8+OwhwgoImyJ5jDRNfNb1u1wmORXfKJNOKM7
-         sjzzp4oW8hOOht4rzopi+xnYSrn8U51zCP8DIfdB0wUDfRX1UvpK+pXe2pBQauzRoiOj
-         3sMg==
+        b=ZdCcz6/VGIRkQO54Pk1gNT9tplgu3sBDkky58734YvrehYhmuUqzaJz4K7QS2fYVzz
+         grvVc5KCw3N7KKSvCzh/zb1mbTOJpzozHyOYoGr6Ui88IS5htK3jsp2F9vQS/oIthzjG
+         /ko2fpjiFocshmXqVDFhYWuvLbNRzRAD2ow4eXgXbogQ/NiIREivLLzA8SKcVSUyvYic
+         HJB1ks4AAVmPeN7aMzUSN6fen+QKGdlAdY24iZDJ1PnzbV6Jn1OVg5OW+HaahehcwTm9
+         JRTHsUuSwevFKkxq21Wc0ooilc8W93AeQbY43k89D8uydCrNNUobnOV5IJ0hFAnc+3+7
+         Nmmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PCLkEZc4W03UhBmR5C3yLfNLbC1kMI2EdCvjx+95Nuo=;
-        b=PaALwPz13bVCmzPXaimVpX2RoxL7LPxNKbIkWnhDKnd4skscE6BZLfmD4iPXd0bFeA
-         YOg4kCSpHZFvQ/5e5cpSLg1V/wFw30j58rDfReidlOgcWfqfkSG5AtwPegwcf5QTjNnY
-         wDa/CR/IMps6j0P/lUzT3pvlfzJp5su/rsN37zCSq6TcVXAxhNgjUssK7gA8e9kpdwzm
-         kT2EBuL/eUmNwXOsn1YsqbPYoavrVfLqh4cFfexmXkTEeqCmF7rXmCM4IxCiJIcmiVpK
-         /ckvn5zfvNPpiZVJ/sLr51ZME0w2zKo9apdP84yWp2G9HBdELYeq6M4cYtO/CpDwEzRj
-         xMCQ==
+        bh=rtE2mJCLpT+XjzJTffP4pOOxLGmnGU6kmzM6NL4M2CI=;
+        b=dvi2zOp0EiWEq8xlpHsErHuhk6w0Sua+12p15mtkWWrKiEuB+jOxec4MMcaGNTaBD2
+         bFTWnlBvO0OesgFPH3rtzDq4wh0tj7TFHg9HyH6ok/4kWQSpEuxSB+BnpCLkZcA4KQov
+         G7e3+5uk0NxrJmwxcuKQOw6JbRqLTqmGpE2HHGKH4qHlPxO9y0WJIqKQh3iywgp86x54
+         qW4RZqm/svU7bVEKtWo8KXW0s1jGaRLi8w3uakMXlPOFb8pmp5OZ9wXeWmaYmFBsiRL3
+         vPxEssOL0WX9K0zXhcn7O48A2j+clopP5a7mHkCklUcRze97UDUCu/WhtO9wAXG5ce0s
+         fXUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.14 053/140] drm/i915: Clear the in-use marker on execbuf failure
-Date: Tue, 13 Mar 2018 16:24:16 +0100
-Message-Id: <20180313152501.815279876@linuxfoundation.org>
+	syzbot+fe0b19af568972814355@syzkaller.appspotmail.com,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 016/140] netfilter: bridge: ebt_among: add missing match size checks
+Date: Tue, 13 Mar 2018 16:23:39 +0100
+Message-Id: <20180313152459.210233474@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836894035930650?=
-X-GMAIL-MSGID: =?utf-8?q?1594837379827263593?=
+X-GMAIL-THRID: =?utf-8?q?1594837094668923489?=
+X-GMAIL-MSGID: =?utf-8?q?1594837280698142182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +50,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Florian Westphal <fw@strlen.de>
 
-commit e659d14ed48096f87a678e7ebbdf286a817b4d0e upstream.
+commit c4585a2823edf4d1326da44d1524ecbfda26bb37 upstream.
 
-If we fail to unbind the vma (due to a signal on an active buffer that
-needs to be moved for the next execbuf), then we need to clear the
-persistent tracking state we setup for this execbuf.
+ebt_among is special, it has a dynamic match size and is exempt
+from the central size checks.
 
-Fixes: c7c6e46f913b ("drm/i915: Convert execbuf to use struct-of-array packing for critical fields")
-Testcase: igt/gem_fenced_exec_thrash/no-spare-fences-busy*
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.14+
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180219140144.24004-1-chris@chris-wilson.co.uk
-(cherry picked from commit ed2f3532321083cf40e4da4e36234880e0136136)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Therefore it must check that the size of the match structure
+provided from userspace is sane by making sure em->match_size
+is at least the minimum size of the expected structure.
+
+The module has such a check, but its only done after accessing
+a structure that might be out of bounds.
+
+tested with: ebtables -A INPUT ... \
+--among-dst fe:fe:fe:fe:fe:fe
+--among-dst fe:fe:fe:fe:fe:fe --among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fb,fe:fe:fe:fe:fc:fd,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe
+--among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fa,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe,fe:fe:fe:fe:fe:fe
+
+Reported-by: <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem_execbuffer.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/bridge/netfilter/ebt_among.c |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -499,6 +499,8 @@ eb_add_vma(struct i915_execbuffer *eb, u
- 		list_add_tail(&vma->exec_link, &eb->unbound);
- 		if (drm_mm_node_allocated(&vma->node))
- 			err = i915_vma_unbind(vma);
-+		if (unlikely(err))
-+			vma->exec_flags = NULL;
- 	}
- 	return err;
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb,
+ 	return true;
  }
+ 
++static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
++{
++	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+ 	const struct ebt_entry_match *em =
+ 		container_of(par->matchinfo, const struct ebt_entry_match, data);
+-	int expected_length = sizeof(struct ebt_among_info);
++	unsigned int expected_length = sizeof(struct ebt_among_info);
+ 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
+ 	int err;
+ 
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+-	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_dst))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_dst);
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
++	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_src))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
+ 
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
