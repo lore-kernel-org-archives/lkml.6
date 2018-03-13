@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974837; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974832; cv=none;
         d=google.com; s=arc-20160816;
-        b=vsFLvV3FN/MJgTAFkxHNXOgiuhPC+ZxP9Ow+2xMh+JT847M+kMExvcopj9dOageF40
-         rVbg8UcFAiqGY8pXwCVq/2BQqupKAf9uEr2eCXKKOcprNL47Ji4zZlVubZbqHBfPt80c
-         LZk2Mze6cVHu7Ij6hKRspY3spjo8VgYmjEeCoqPuLdBHFJAQBY4TpTBZ/opakGct9S6D
-         Fv+oBpChdlilrSU1Pmhkaa3INDyXo3X4HhHvL7zWrh+ST3SgE81Z88DGEEbUSe0yCa84
-         cVcbg68FG/VFUb2JOf2W7doOMvpmtVuO+QDdunO/7QAoHnqgy3cXgWSpUlUgNtapzUX0
-         EL1Q==
+        b=wgLQ09XACdRTwbJcp9q6YxHyh71y7e4kNiPSoeEW2BIC5bgrbRFUtllrtvFNvT5r6T
+         Sri41HB1UEr8+hKSsWkObYmm8ZcUhw14zedXqo1KY7ZJHRgOpGzFfDFazLSgV37A9vsP
+         sqc9y2TNy3DyxaS4kIF7qYD1L94JMlb7ztKWi01KiRTrZ1YI9ofzVg5pDWKXZRg2krfN
+         U1tvevVE5Ty4b7IQ4BIUjD1xG24wjmG5x/OePKsizbXWOEJvVT2lgmJPJunCmrxcLeTe
+         46vUkfXa4uH+6oIfPK/1WRzyTysRyu3OefAdLI2VwHfnob3MtaWnL6a+95VUJdhSGCwg
+         jHEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=p1dT/bzscdZuc8cFz+1XZ1AKc5yvTh+Ysm8sQadR/rg=;
-        b=OBnWHsR3mTZscTBrmXIH9XLYa0UmbtLLZhjUtyMcni0kRlpG2660bdjs/YHDRfGlVZ
-         /9DOlroEgmwQGmapcd2Dltw7j9zmti51lLQVYxjn28t38Ixg6dujFvH4mAy+Oa1oF342
-         T3Ub0SnwRxF01BmQCeaa0TzOGE0fR4SNO7lXKG/vQzuM2/Z2B7sElDqdMQKgjRlAnlcc
-         Vyif4MZ2a2NK2rHMAK7hMaxv8u69UEdyKkXO/co1KSwcQm+b8rV8rZPbHEsRqXeVrnNt
-         bouysnqOIOajGHY8OQDC41O28aLkPxUhEGR27z7x5/sJvIRNrCjkH28MioOhpzkEmAWe
-         ax0w==
+        bh=eQdfHSyL7AbE7TzHHG42nf8EeTOIWyarQ4Ux7nBg5B8=;
+        b=uZEwGblsHSdTcfxZs/YcMeBN5jfDEuQgvf81lb22hTrTXvkoe1lZurfHKJr0Rfnakp
+         t6CzoWA7q24t35ybORjaFhDrhVx/f6MpSGBpGnbNBXubEuMoFlihW87Oa2PuvnY26Fdn
+         lY5mZ4u/zNe+zg1kyqUt3vu2Nw5Or/MYOYGcYUxg3nzzAt8yTVOKucVwkYKM+/WdK5Da
+         tRXButJ7DRcn2H3DF2U1vtqLzVjgIZLot28cXWDlVWNnXgV6mdkAbGG7wfGyJnE4D2fm
+         IbvhOJkJdemzFzmLavVJRwrCg7RbVCszbuH15pkx0vCRH11Mmg1zC0czP3ztgwokZ7fw
+         HQvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=AoGyG8Ct;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iiQVUdPc;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=AoGyG8Ct;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iiQVUdPc;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELtZYVW1WxSD+KZXpGD5xD2RMVULM9KT/XC4AIX9AomTwtEg1EVLAztxAnHaK1hQ3BBeHtzNgw==
+X-Google-Smtp-Source: AG47ELuOiyvGXklA6FKJYQ7NaM2KHPy4UF5jT2e2wQvWE83YTwJ/PZd7Lo9eVaFht4V2uAc+OQeLtA==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,50 +105,104 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 11/27] x86/power/64: Adapt assembly for PIE support
-Date: Tue, 13 Mar 2018 13:59:29 -0700
-Message-Id: <20180313205945.245105-12-thgarnie@google.com>
+Subject: [PATCH v2 10/27] x86/boot/64: Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:28 -0700
+Message-Id: <20180313205945.245105-11-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857711918861539?=
-X-GMAIL-MSGID: =?utf-8?q?1594857711918861539?=
+X-GMAIL-THRID: =?utf-8?q?1594857706486774509?=
+X-GMAIL-MSGID: =?utf-8?q?1594857706486774509?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
+Early at boot, the kernel is mapped at a temporary address while preparing
+the page table. To know the changes needed for the page table with KASLR,
+the boot code calculate the difference between the expected address of the
+kernel and the one chosen by KASLR. It does not work with PIE because all
+symbols in code are relatives. Instead of getting the future relocated
+virtual address, you will get the current temporary mapping. The solution
+is using global variables that will be relocated as expected.
+
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/power/hibernate_asm_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/head_64.S | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
-index ce8da3a0412c..6fdd7bbc3c33 100644
---- a/arch/x86/power/hibernate_asm_64.S
-+++ b/arch/x86/power/hibernate_asm_64.S
-@@ -24,7 +24,7 @@
- #include <asm/frame.h>
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 48385c1074a5..48652f3ec46a 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -89,8 +89,9 @@ startup_64:
+ 	popq	%rsi
  
- ENTRY(swsusp_arch_suspend)
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -115,7 +115,7 @@ ENTRY(restore_registers)
- 	movq	%rax, %cr4;  # turn PGE back on
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(early_top_pgt - __START_KERNEL_map), %rax
++	addq    _early_top_pgt_offset(%rip), %rax
+ 	jmp 1f
++
+ ENTRY(secondary_startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+@@ -119,7 +120,7 @@ ENTRY(secondary_startup_64)
+ 	popq	%rsi
  
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	pt_regs_sp(%rax), %rsp
- 	movq	pt_regs_bp(%rax), %rbp
- 	movq	pt_regs_si(%rax), %rsi
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(init_top_pgt - __START_KERNEL_map), %rax
++	addq    _init_top_offset(%rip), %rax
+ 1:
+ 
+ 	/* Enable PAE mode, PGE and LA57 */
+@@ -137,7 +138,7 @@ ENTRY(secondary_startup_64)
+ 	movq	%rax, %cr3
+ 
+ 	/* Ensure I am executing from virtual addresses */
+-	movq	$1f, %rax
++	movabs  $1f, %rax
+ 	ANNOTATE_RETPOLINE_SAFE
+ 	jmp	*%rax
+ 1:
+@@ -234,11 +235,12 @@ ENTRY(secondary_startup_64)
+ 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
+ 	 *		address given in m16:64.
+ 	 */
+-	pushq	$.Lafter_lret	# put return address on stack for unwinder
++	leaq	.Lafter_lret(%rip), %rax
++	pushq	%rax		# put return address on stack for unwinder
+ 	xorq	%rbp, %rbp	# clear frame pointer
+-	movq	initial_code(%rip), %rax
++	leaq	initial_code(%rip), %rax
+ 	pushq	$__KERNEL_CS	# set correct cs
+-	pushq	%rax		# target address in negative space
++	pushq	(%rax)		# target address in negative space
+ 	lretq
+ .Lafter_lret:
+ END(secondary_startup_64)
+@@ -342,6 +344,18 @@ END(early_idt_handler_common)
+ GLOBAL(early_recursion_flag)
+ 	.long 0
+ 
++	/*
++	 * Position Independent Code takes only relative references in code
++	 * meaning a global variable address is relative to RIP and not its
++	 * future virtual address. Global variables can be used instead as they
++	 * are still relocated on the expected kernel mapping address.
++	 */
++	.align 8
++_early_top_pgt_offset:
++	.quad early_top_pgt - __START_KERNEL_map
++_init_top_offset:
++	.quad init_top_pgt - __START_KERNEL_map
++
+ #define NEXT_PAGE(name) \
+ 	.balign	PAGE_SIZE; \
+ GLOBAL(name)
 -- 
 2.16.2.660.g709887971b-goog
