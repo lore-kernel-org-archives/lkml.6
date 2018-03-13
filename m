@@ -1,53 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932847AbeCMKtN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:49:13 -0400
-Received: from mga03.intel.com ([134.134.136.65]:64144 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932514AbeCMKtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:49:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
-   d="scan'208";a="27634185"
-From: changbin.du@intel.com
-To: acme@kernel.org, jolsa@redhat.com
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH] perf trace: remove redundant ')'
-Date: Tue, 13 Mar 2018 18:40:01 +0800
-Message-Id: <1520937601-24952-1-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S932956AbeCMKvZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:51:25 -0400
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:33563 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932639AbeCMKvY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 06:51:24 -0400
+X-Google-Smtp-Source: AG47ELvxAm+VWAy7T7EDwl7grj+t9/1KxdRqtOzIJfuD8OFEeR9sWtQ97NuSGI3McgO1m9mYuCUqzg==
+Subject: Re: [PATCH] drm/meson: Add support for DMT modes on HDMI
+To: Jerome Brunet <jbrunet@baylibre.com>, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1520935670-14187-1-git-send-email-narmstrong@baylibre.com>
+ <1520937363.4264.47.camel@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <2db1d871-2cbf-a2f7-0bea-45e7841ff338@baylibre.com>
+Date: Tue, 13 Mar 2018 11:51:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520937363.4264.47.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@intel.com>
+On 13/03/2018 11:36, Jerome Brunet wrote:
+> On Tue, 2018-03-13 at 11:07 +0100, Neil Armstrong wrote:
+>> This patch adds support for DMT display modes over HDMI.
+>> The modes timings configurations are from the Amlogic Vendor linux tree
+>> and tested over multiples monitors.
+>> Previously only a selected number of CEA modes were supported.
+>>
+>> Only these following modes are supported with these changes:
+>> - 640x480@60Hz
+>> - 800x600@60Hz
+>> - 1024x768@60Hz
+>> - 1152x864@75Hz
+>> - 1280x1024@60Hz
+>> - 1600x1200@60Hz
+>> - 1920x1080@60Hz
+>>
+>> The associated code to handle the clock rates is also added.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Looks good to me
+> 
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
 
-There is a redundant ')' at the tail of each event. So remove it.
-$ sudo perf trace --no-syscalls -e 'kmem:*' -a
-   899.342 kmem:kfree:(vfs_writev+0xb9) call_site=ffffffff9c453979 ptr=(nil))
-   899.344 kmem:kfree:(___sys_recvmsg+0x188) call_site=ffffffff9c9b8b88 ptr=(nil))
+Pushed to drm-misc-next,
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- tools/perf/builtin-trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index e7f1b18..7273f5f 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1959,7 +1959,7 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
- 				      trace->output);
- 	}
- 
--	fprintf(trace->output, ")\n");
-+	fprintf(trace->output, "\n");
- 
- 	if (callchain_ret > 0)
- 		trace__fprintf_callchain(trace, sample);
--- 
-2.7.4
+Neil
