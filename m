@@ -1,68 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520954961-2-7096817737564073641
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520954961; b=dFYZS+5y0b1R1SRcSQ1zQ9z6PPPYZHU2ZedIxRaCS/Rm+Qf
-    0WusnorqI4ebfn614WEGB9/OuHmzE8UosAW4QSHCYtWYK5SJrNSF5eh0kJoRqVtX
-    erKjpinnwjef8pha7tK4UwgM8vFh+kR8qQk3NnFMbPpsQ/caS3VOzzfA0lNYhfrF
-    bGQ6hzOcw7LS3t1c3ZK4r7I6xeY461z65Bed2hfvU/tHyYB+0/FGuDHiP/4gXwaG
-    4h/acWxemo7g1bGTRVl+AOAmz7+7j71kajr1wfNTzT5JhnkfDk1ALeaEm648/Ino
-    Xf3bAO18Qqq0RerEBswmDxc5CO3rhGXbcOal/6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520954961; bh=eG3Bv5ktjvWyMBhv2sZGDfts3D
-    I/sv1oYgfLjWVzcHE=; b=OSDCE2iLSr15QCm5aiksvQ/8ZOixhME5FkKGv6oQy0
-    cYg7f/sKPB3loIJtW1RRKJsKut0ELIBdQ9bmxXoeYu8PbeROGn93Jt9xyADBUIh7
-    wQkDDLY0jWV7fWrUmKpmpUay6xB5I7qj5g0bs2E9KMK67VzjPo5TUo9nK6BXgI+L
-    ObsjlQvuw4SCZPdeSeWg5e+LCkpFruguifTar99RfVPohK9s8Joy/UA564aESM4W
-    XOs5rjLFXmZ55QEnLdzkaWDy0TS5nGlw5nRGCsElz9hwV+iGGtPcxL5z3h1HrBr9
-    5Mh3F7HSdPjt2nHEG/75z8SjV0GxcA2ZuqMOyAmeZDpA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932443AbeCMP3D (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:29:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58226 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932268AbeCMP3A (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:29:00 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELunkQvJkGYRYRbIe7rYq5+2DF84orEV+9XmL9D/uZi9o39cKyp4IxOVH9EJ2KbZXJ/kN30y
+ARC-Seal: i=1; a=rsa-sha256; t=1520954958; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pZm9ObSJUCb9tioa7gXM7teFzAh8jyK4rQnhqfeznxauzAGzkYUwo7Jxe0wmuvuU7w
+         I3ApU8zDNu3GNy4STDrO8DGaU2m0ZA8FJYyPyfkgMEWp/Z0DjUSlm1rxqYu1nQcdKF3G
+         tnLMt77fUoqkfg+FkgALYuaxnFsgDxqFtrtUCr2vGllGhkMtT6sqXHCeuB8cLMyZd5DG
+         Zz4NXOhmw92HP931K3l0xK2OcQ08wR8JMpbAJcTZeSJiv8oT/lN7jzOMWgtiLUu8QtOY
+         egqHx10MrWZz5XOi1MEJw5r/ekN2dneIWSAGRqEi7kQE/Et3f7/1IaX3dhqVb4SONOl/
+         4pZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=1peRJdrevGxhu4qChfcHYTGQ+77AZo3DDIRUNJ3NzdU=;
+        b=Dg69fOfgoEu/PMGP24Caqh31hTq/1u2gB8HE1AW3gmnfGIxH3XyUqu7VzWPn7d2qSz
+         agZMt5JDIaHNtHcgQc6xxRpZHmBz+k83s2ZzwO/4lu7CQY/0FKxo7L07FeiePLqzj+06
+         bbNp68J0dqjYfFZc8NpSkaRsPoZ2QR4XSvcYjjAlekC89ZCk/SxPN8F8BeETmQRnOZm9
+         fEYqYumysXpK5tCiNXpdU2I7W5MeiE3QZnWRpbyrq+6n+A+RDEBz4k08mtXZ/BUoKdZW
+         EaFI1h3izb9J8ZWVa88J6V0346Ee7RjWRTUmukzfNlPl06BKQRavSEQB/K0RW2YBkTNA
+         GzVg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>
-Subject: [PATCH 4.15 034/146] drm/amdgpu: Notify sbios device ready before send request
-Date: Tue, 13 Mar 2018 16:23:21 +0100
-Message-Id: <20180313152323.176864899@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Justin Chen <justinpopo6@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.15 040/146] MIPS: BMIPS: Do not mask IPIs during suspend
+Date: Tue, 13 Mar 2018 16:23:27 +0100
+Message-Id: <20180313152323.668121514@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -70,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594836867198175596?=
+X-GMAIL-MSGID: =?utf-8?q?1594836867198175596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,33 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: Justin Chen <justinpopo6@gmail.com>
 
-commit 1bced75f4ab04bec55aecb57d99435dc6d0ae5a0 upstream.
+commit 06a3f0c9f2725f5d7c63c4203839373c9bd00c28 upstream.
 
-it is required if a platform supports PCIe root complex
-core voltage reduction. After receiving this notification,
-SBIOS can apply default PCIe root complex power policy.
+Commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on CPU IRQs") fixes an
+issue where disable_irq did not actually disable the irq. The bug caused
+our IPIs to not be disabled, which actually is the correct behavior.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+With the addition of commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on
+CPU IRQs"), the IPIs were getting disabled going into suspend, thus
+schedule_ipi() was not being called. This caused deadlocks where
+schedulable task were not being scheduled and other cpus were waiting
+for them to do something.
+
+Add the IRQF_NO_SUSPEND flag so an irq_disable will not be called on the
+IPIs during suspend.
+
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+Fixes: a3e6c1eff548 ("MIPS: IRQ: Fix disabled_irq on CPU IRQs")
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-mips@linux-mips.org
 Cc: stable@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/17385/
+[jhogan@kernel.org: checkpatch: wrap long lines and fix commit refs]
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/mips/kernel/smp-bmips.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -540,6 +540,9 @@ int amdgpu_acpi_pcie_performance_request
- 	size_t size;
- 	u32 retry = 3;
+--- a/arch/mips/kernel/smp-bmips.c
++++ b/arch/mips/kernel/smp-bmips.c
+@@ -168,11 +168,11 @@ static void bmips_prepare_cpus(unsigned
+ 		return;
+ 	}
  
-+	if (amdgpu_acpi_pcie_notify_device_ready(adev))
-+		return -EINVAL;
-+
- 	/* Get the device handle */
- 	handle = ACPI_HANDLE(&adev->pdev->dev);
- 	if (!handle)
+-	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi0", NULL))
++	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
+ 		panic("Can't request IPI0 interrupt");
+-	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
+-			"smp_ipi1", NULL))
++	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
++			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
+ 		panic("Can't request IPI1 interrupt");
+ }
+ 
