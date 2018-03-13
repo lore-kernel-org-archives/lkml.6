@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933004AbeCMNbX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:31:23 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36388 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932756AbeCMNbU (ORCPT
+        id S933026AbeCMNbb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:31:31 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34566 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932756AbeCMNbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:31:20 -0400
-X-Google-Smtp-Source: AG47ELvSuIvBhXvXXNidmvmzcueQU75BowgSSIsE5L9SZNsz5dQtbroxRKKrhofWENqPBhevyNlc9g==
+        Tue, 13 Mar 2018 09:31:24 -0400
+X-Google-Smtp-Source: AG47ELurAQopYAI8bmxCU5plSnQZm/jai7+Iv9ZegM9L57DtDdx7QBjJl3N9v7Xm8hvR30CPOHdiSw==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 2/8] drm/xen-front: Implement Xen bus state handling
-Date: Tue, 13 Mar 2018 15:31:01 +0200
-Message-Id: <1520947867-32514-3-git-send-email-andr2000@gmail.com>
+Subject: [PATCH v2 4/8] drm/xen-front: Implement Xen event channel handling
+Date: Tue, 13 Mar 2018 15:31:03 +0200
+Message-Id: <1520947867-32514-5-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
 References: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
@@ -27,171 +27,507 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Initial handling for Xen bus states: implement
-Xen bus state machine for the frontend driver according to
-the state diagram and recovery flow from display para-virtualized
-protocol: xen/interface/io/displif.h.
+Handle Xen event channels:
+  - create for all configured connectors and publish
+    corresponding ring references and event channels in Xen store,
+    so backend can connect
+  - implement event channels interrupt handlers
+  - create and destroy event channels with respect to Xen bus state
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/gpu/drm/xen/xen_drm_front.c | 124 +++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/xen/xen_drm_front.h |  18 ++++++
- 2 files changed, 141 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
+ drivers/gpu/drm/xen/Makefile                |   1 +
+ drivers/gpu/drm/xen/xen_drm_front.c         |  12 +-
+ drivers/gpu/drm/xen/xen_drm_front.h         |  16 ++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 381 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  79 ++++++
+ 5 files changed, 488 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
 
+diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+index d3ec8c8589e0..8417332f3b58 100644
+--- a/drivers/gpu/drm/xen/Makefile
++++ b/drivers/gpu/drm/xen/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0 OR MIT
+ 
+ drm_xen_front-objs := xen_drm_front.o \
++		      xen_drm_front_evtchnl.o \
+ 		      xen_drm_front_cfg.o
+ 
+ obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
 diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-index 03bc50b128fd..520b5b34520b 100644
+index ca42ceb24a40..8312dab862e2 100644
 --- a/drivers/gpu/drm/xen/xen_drm_front.c
 +++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -16,19 +16,141 @@
- 
+@@ -17,9 +17,11 @@
  #include <xen/interface/io/displif.h>
  
-+#include "xen_drm_front.h"
-+
-+static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
-+{
-+}
-+
-+static int displback_initwait(struct xen_drm_front_info *front_info)
-+{
-+	return 0;
-+}
-+
-+static int displback_connect(struct xen_drm_front_info *front_info)
-+{
-+	return 0;
-+}
-+
-+static void displback_disconnect(struct xen_drm_front_info *front_info)
-+{
-+	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
-+}
-+
- static void displback_changed(struct xenbus_device *xb_dev,
- 		enum xenbus_state backend_state)
+ #include "xen_drm_front.h"
++#include "xen_drm_front_evtchnl.h"
+ 
+ static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
  {
-+	struct xen_drm_front_info *front_info = dev_get_drvdata(&xb_dev->dev);
-+	int ret;
-+
-+	DRM_DEBUG("Backend state is %s, front is %s\n",
-+			xenbus_strstate(backend_state),
-+			xenbus_strstate(xb_dev->state));
-+
-+	switch (backend_state) {
-+	case XenbusStateReconfiguring:
-+		/* fall through */
-+	case XenbusStateReconfigured:
-+		/* fall through */
-+	case XenbusStateInitialised:
-+		break;
-+
-+	case XenbusStateInitialising:
-+		/* recovering after backend unexpected closure */
-+		displback_disconnect(front_info);
-+		break;
-+
-+	case XenbusStateInitWait:
-+		/* recovering after backend unexpected closure */
-+		displback_disconnect(front_info);
-+		if (xb_dev->state != XenbusStateInitialising)
-+			break;
-+
-+		ret = displback_initwait(front_info);
-+		if (ret < 0)
-+			xenbus_dev_fatal(xb_dev, ret,
-+					"initializing frontend");
-+		else
-+			xenbus_switch_state(xb_dev, XenbusStateInitialised);
-+		break;
-+
-+	case XenbusStateConnected:
-+		if (xb_dev->state != XenbusStateInitialised)
-+			break;
-+
-+		ret = displback_connect(front_info);
-+		if (ret < 0)
-+			xenbus_dev_fatal(xb_dev, ret,
-+					"initializing DRM driver");
-+		else
-+			xenbus_switch_state(xb_dev, XenbusStateConnected);
-+		break;
-+
-+	case XenbusStateClosing:
-+		/*
-+		 * in this state backend starts freeing resources,
-+		 * so let it go into closed state, so we can also
-+		 * remove ours
-+		 */
-+		break;
-+
-+	case XenbusStateUnknown:
-+		/* fall through */
-+	case XenbusStateClosed:
-+		if (xb_dev->state == XenbusStateClosed)
-+			break;
-+
-+		displback_disconnect(front_info);
-+		break;
-+	}
++	xen_drm_front_evtchnl_free_all(front_info);
  }
  
- static int xen_drv_probe(struct xenbus_device *xb_dev,
- 		const struct xenbus_device_id *id)
- {
+ static int displback_initwait(struct xen_drm_front_info *front_info)
+@@ -33,16 +35,23 @@ static int displback_initwait(struct xen_drm_front_info *front_info)
+ 		return ret;
+ 
+ 	DRM_INFO("Have %d conector(s)\n", cfg->num_connectors);
 -	return 0;
-+	struct xen_drm_front_info *front_info;
++	/* Create event channels for all connectors and publish */
++	ret = xen_drm_front_evtchnl_create_all(front_info);
++	if (ret < 0)
++		return ret;
 +
-+	front_info = devm_kzalloc(&xb_dev->dev,
-+			sizeof(*front_info), GFP_KERNEL);
-+	if (!front_info)
-+		return -ENOMEM;
-+
-+	front_info->xb_dev = xb_dev;
-+	dev_set_drvdata(&xb_dev->dev, front_info);
-+	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
++	return xen_drm_front_evtchnl_publish_all(front_info);
  }
  
- static int xen_drv_remove(struct xenbus_device *dev)
+ static int displback_connect(struct xen_drm_front_info *front_info)
  {
-+	struct xen_drm_front_info *front_info = dev_get_drvdata(&dev->dev);
-+	int to = 100;
-+
-+	xenbus_switch_state(dev, XenbusStateClosing);
-+
-+	/*
-+	 * On driver removal it is disconnected from XenBus,
-+	 * so no backend state change events come via .otherend_changed
-+	 * callback. This prevents us from exiting gracefully, e.g.
-+	 * signaling the backend to free event channels, waiting for its
-+	 * state to change to XenbusStateClosed and cleaning at our end.
-+	 * Normally when front driver removed backend will finally go into
-+	 * XenbusStateInitWait state.
-+	 *
-+	 * Workaround: read backend's state manually and wait with time-out.
-+	 */
-+	while ((xenbus_read_unsigned(front_info->xb_dev->otherend,
-+			"state", XenbusStateUnknown) != XenbusStateInitWait) &&
-+			to--)
-+		msleep(10);
-+
-+	if (!to)
-+		DRM_ERROR("Backend state is %s while removing driver\n",
-+			xenbus_strstate(xenbus_read_unsigned(
-+					front_info->xb_dev->otherend,
-+					"state", XenbusStateUnknown)));
-+
-+	xen_drv_remove_internal(front_info);
-+	xenbus_frontend_closed(dev);
++	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_CONNECTED);
  	return 0;
  }
  
+ static void displback_disconnect(struct xen_drm_front_info *front_info)
+ {
++	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_DISCONNECTED);
+ 	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
+ }
+ 
+@@ -125,6 +134,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
+ 		return -ENOMEM;
+ 
+ 	front_info->xb_dev = xb_dev;
++	spin_lock_init(&front_info->io_lock);
+ 	dev_set_drvdata(&xb_dev->dev, front_info);
+ 	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
+ }
 diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
-new file mode 100644
-index 000000000000..8b8d4d1e0816
---- /dev/null
+index 034a3987657e..4adb6101c889 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.h
 +++ b/drivers/gpu/drm/xen/xen_drm_front.h
-@@ -0,0 +1,18 @@
+@@ -13,8 +13,24 @@
+ 
+ #include "xen_drm_front_cfg.h"
+ 
++#ifndef GRANT_INVALID_REF
++/*
++ * Note on usage of grant reference 0 as invalid grant reference:
++ * grant reference 0 is valid, but never exposed to a PV driver,
++ * because of the fact it is already in use/reserved by the PV console.
++ */
++#define GRANT_INVALID_REF	0
++#endif
++
+ struct xen_drm_front_info {
+ 	struct xenbus_device *xb_dev;
++	/* to protect data between backend IO code and interrupt handler */
++	spinlock_t io_lock;
++	/* virtual DRM platform device */
++	struct platform_device *drm_pdev;
++
++	int num_evt_pairs;
++	struct xen_drm_front_evtchnl_pair *evt_pairs;
+ 	struct xen_drm_front_cfg cfg;
+ };
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+new file mode 100644
+index 000000000000..fd9289a6a1c8
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+@@ -0,0 +1,381 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++
++/*
++ *  Xen para-virtual DRM device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#include <drm/drmP.h>
++
++#include <linux/errno.h>
++#include <linux/irq.h>
++
++#include <xen/xenbus.h>
++#include <xen/events.h>
++#include <xen/grant_table.h>
++
++#include "xen_drm_front.h"
++#include "xen_drm_front_evtchnl.h"
++
++static irqreturn_t evtchnl_interrupt_ctrl(int irq, void *dev_id)
++{
++	struct xen_drm_front_evtchnl *evtchnl = dev_id;
++	struct xen_drm_front_info *front_info = evtchnl->front_info;
++	struct xendispl_resp *resp;
++	RING_IDX i, rp;
++	unsigned long flags;
++
++	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
++		return IRQ_HANDLED;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++
++again:
++	rp = evtchnl->u.req.ring.sring->rsp_prod;
++	/* ensure we see queued responses up to rp */
++	virt_rmb();
++
++	for (i = evtchnl->u.req.ring.rsp_cons; i != rp; i++) {
++		resp = RING_GET_RESPONSE(&evtchnl->u.req.ring, i);
++		if (unlikely(resp->id != evtchnl->evt_id))
++			continue;
++
++		switch (resp->operation) {
++		case XENDISPL_OP_PG_FLIP:
++		case XENDISPL_OP_FB_ATTACH:
++		case XENDISPL_OP_FB_DETACH:
++		case XENDISPL_OP_DBUF_CREATE:
++		case XENDISPL_OP_DBUF_DESTROY:
++		case XENDISPL_OP_SET_CONFIG:
++			evtchnl->u.req.resp_status = resp->status;
++			complete(&evtchnl->u.req.completion);
++			break;
++
++		default:
++			DRM_ERROR("Operation %d is not supported\n",
++				resp->operation);
++			break;
++		}
++	}
++
++	evtchnl->u.req.ring.rsp_cons = i;
++
++	if (i != evtchnl->u.req.ring.req_prod_pvt) {
++		int more_to_do;
++
++		RING_FINAL_CHECK_FOR_RESPONSES(&evtchnl->u.req.ring,
++				more_to_do);
++		if (more_to_do)
++			goto again;
++	} else
++		evtchnl->u.req.ring.sring->rsp_event = i + 1;
++
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
++{
++	struct xen_drm_front_evtchnl *evtchnl = dev_id;
++	struct xen_drm_front_info *front_info = evtchnl->front_info;
++	struct xendispl_event_page *page = evtchnl->u.evt.page;
++	uint32_t cons, prod;
++	unsigned long flags;
++
++	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
++		return IRQ_HANDLED;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++
++	prod = page->in_prod;
++	/* ensure we see ring contents up to prod */
++	virt_rmb();
++	if (prod == page->in_cons)
++		goto out;
++
++	for (cons = page->in_cons; cons != prod; cons++) {
++		struct xendispl_evt *event;
++
++		event = &XENDISPL_IN_RING_REF(page, cons);
++		if (unlikely(event->id != evtchnl->evt_id++))
++			continue;
++
++		switch (event->type) {
++		case XENDISPL_EVT_PG_FLIP:
++			/* placeholder */
++			break;
++		}
++	}
++	page->in_cons = cons;
++	/* ensure ring contents */
++	virt_wmb();
++
++out:
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++	return IRQ_HANDLED;
++}
++
++static void evtchnl_free(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_evtchnl *evtchnl)
++{
++	unsigned long page = 0;
++
++	if (evtchnl->type == EVTCHNL_TYPE_REQ)
++		page = (unsigned long)evtchnl->u.req.ring.sring;
++	else if (evtchnl->type == EVTCHNL_TYPE_EVT)
++		page = (unsigned long)evtchnl->u.evt.page;
++	if (!page)
++		return;
++
++	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
++
++	if (evtchnl->type == EVTCHNL_TYPE_REQ) {
++		/* release all who still waits for response if any */
++		evtchnl->u.req.resp_status = -EIO;
++		complete_all(&evtchnl->u.req.completion);
++	}
++
++	if (evtchnl->irq)
++		unbind_from_irqhandler(evtchnl->irq, evtchnl);
++
++	if (evtchnl->port)
++		xenbus_free_evtchn(front_info->xb_dev, evtchnl->port);
++
++	/* end access and free the page */
++	if (evtchnl->gref != GRANT_INVALID_REF)
++		gnttab_end_foreign_access(evtchnl->gref, 0, page);
++
++	memset(evtchnl, 0, sizeof(*evtchnl));
++}
++
++static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
++		struct xen_drm_front_evtchnl *evtchnl,
++		enum xen_drm_front_evtchnl_type type)
++{
++	struct xenbus_device *xb_dev = front_info->xb_dev;
++	unsigned long page;
++	grant_ref_t gref;
++	irq_handler_t handler;
++	int ret;
++
++	memset(evtchnl, 0, sizeof(*evtchnl));
++	evtchnl->type = type;
++	evtchnl->index = index;
++	evtchnl->front_info = front_info;
++	evtchnl->state = EVTCHNL_STATE_DISCONNECTED;
++	evtchnl->gref = GRANT_INVALID_REF;
++
++	page = get_zeroed_page(GFP_NOIO | __GFP_HIGH);
++	if (!page) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	if (type == EVTCHNL_TYPE_REQ) {
++		struct xen_displif_sring *sring;
++
++		init_completion(&evtchnl->u.req.completion);
++		sring = (struct xen_displif_sring *)page;
++		SHARED_RING_INIT(sring);
++		FRONT_RING_INIT(&evtchnl->u.req.ring,
++				sring, XEN_PAGE_SIZE);
++
++		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
++		if (ret < 0)
++			goto fail;
++
++		handler = evtchnl_interrupt_ctrl;
++	} else {
++		evtchnl->u.evt.page = (struct xendispl_event_page *)page;
++
++		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
++				virt_to_gfn((void *)page), 0);
++		if (ret < 0)
++			goto fail;
++
++		gref = ret;
++		handler = evtchnl_interrupt_evt;
++	}
++	evtchnl->gref = gref;
++
++	ret = xenbus_alloc_evtchn(xb_dev, &evtchnl->port);
++	if (ret < 0)
++		goto fail;
++
++	ret = bind_evtchn_to_irqhandler(evtchnl->port,
++			handler, 0, xb_dev->devicetype, evtchnl);
++	if (ret < 0)
++		goto fail;
++
++	evtchnl->irq = ret;
++	return 0;
++
++fail:
++	DRM_ERROR("Failed to allocate ring: %d\n", ret);
++	return ret;
++}
++
++int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info)
++{
++	struct xen_drm_front_cfg *cfg;
++	int ret, conn;
++
++	cfg = &front_info->cfg;
++
++	front_info->evt_pairs = devm_kcalloc(&front_info->xb_dev->dev,
++			cfg->num_connectors,
++			sizeof(struct xen_drm_front_evtchnl_pair), GFP_KERNEL);
++	if (!front_info->evt_pairs) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	for (conn = 0; conn < cfg->num_connectors; conn++) {
++		ret = evtchnl_alloc(front_info, conn,
++				&front_info->evt_pairs[conn].req,
++				EVTCHNL_TYPE_REQ);
++		if (ret < 0) {
++			DRM_ERROR("Error allocating control channel\n");
++			goto fail;
++		}
++
++		ret = evtchnl_alloc(front_info, conn,
++				&front_info->evt_pairs[conn].evt,
++				EVTCHNL_TYPE_EVT);
++		if (ret < 0) {
++			DRM_ERROR("Error allocating in-event channel\n");
++			goto fail;
++		}
++	}
++	front_info->num_evt_pairs = cfg->num_connectors;
++	return 0;
++
++fail:
++	xen_drm_front_evtchnl_free_all(front_info);
++	return ret;
++}
++
++static int evtchnl_publish(struct xenbus_transaction xbt,
++		struct xen_drm_front_evtchnl *evtchnl, const char *path,
++		const char *node_ring, const char *node_chnl)
++{
++	struct xenbus_device *xb_dev = evtchnl->front_info->xb_dev;
++	int ret;
++
++	/* write control channel ring reference */
++	ret = xenbus_printf(xbt, path, node_ring, "%u", evtchnl->gref);
++	if (ret < 0) {
++		xenbus_dev_error(xb_dev, ret, "writing ring-ref");
++		return ret;
++	}
++
++	/* write event channel ring reference */
++	ret = xenbus_printf(xbt, path, node_chnl, "%u", evtchnl->port);
++	if (ret < 0) {
++		xenbus_dev_error(xb_dev, ret, "writing event channel");
++		return ret;
++	}
++
++	return 0;
++}
++
++int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info)
++{
++	struct xenbus_transaction xbt;
++	struct xen_drm_front_cfg *plat_data;
++	int ret, conn;
++
++	plat_data = &front_info->cfg;
++
++again:
++	ret = xenbus_transaction_start(&xbt);
++	if (ret < 0) {
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				"starting transaction");
++		return ret;
++	}
++
++	for (conn = 0; conn < plat_data->num_connectors; conn++) {
++		ret = evtchnl_publish(xbt,
++				&front_info->evt_pairs[conn].req,
++				plat_data->connectors[conn].xenstore_path,
++				XENDISPL_FIELD_REQ_RING_REF,
++				XENDISPL_FIELD_REQ_CHANNEL);
++		if (ret < 0)
++			goto fail;
++
++		ret = evtchnl_publish(xbt,
++				&front_info->evt_pairs[conn].evt,
++				plat_data->connectors[conn].xenstore_path,
++				XENDISPL_FIELD_EVT_RING_REF,
++				XENDISPL_FIELD_EVT_CHANNEL);
++		if (ret < 0)
++			goto fail;
++	}
++
++	ret = xenbus_transaction_end(xbt, 0);
++	if (ret < 0) {
++		if (ret == -EAGAIN)
++			goto again;
++
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				"completing transaction");
++		goto fail_to_end;
++	}
++
++	return 0;
++
++fail:
++	xenbus_transaction_end(xbt, 1);
++
++fail_to_end:
++	xenbus_dev_fatal(front_info->xb_dev, ret, "writing Xen store");
++	return ret;
++}
++
++void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl)
++{
++	int notify;
++
++	evtchnl->u.req.ring.req_prod_pvt++;
++	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&evtchnl->u.req.ring, notify);
++	if (notify)
++		notify_remote_via_irq(evtchnl->irq);
++}
++
++void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
++		enum xen_drm_front_evtchnl_state state)
++{
++	unsigned long flags;
++	int i;
++
++	if (!front_info->evt_pairs)
++		return;
++
++	spin_lock_irqsave(&front_info->io_lock, flags);
++	for (i = 0; i < front_info->num_evt_pairs; i++) {
++		front_info->evt_pairs[i].req.state = state;
++		front_info->evt_pairs[i].evt.state = state;
++	}
++	spin_unlock_irqrestore(&front_info->io_lock, flags);
++
++}
++
++void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info)
++{
++	int i;
++
++	if (!front_info->evt_pairs)
++		return;
++
++	for (i = 0; i < front_info->num_evt_pairs; i++) {
++		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
++		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
++	}
++
++	devm_kfree(&front_info->xb_dev->dev, front_info->evt_pairs);
++	front_info->evt_pairs = NULL;
++}
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+new file mode 100644
+index 000000000000..8faacf9444e6
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+@@ -0,0 +1,79 @@
 +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +
 +/*
@@ -202,13 +538,74 @@ index 000000000000..8b8d4d1e0816
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#ifndef __XEN_DRM_FRONT_H_
-+#define __XEN_DRM_FRONT_H_
++#ifndef __XEN_DRM_FRONT_EVTCHNL_H_
++#define __XEN_DRM_FRONT_EVTCHNL_H_
 +
-+struct xen_drm_front_info {
-+	struct xenbus_device *xb_dev;
++#include <linux/completion.h>
++#include <linux/types.h>
++
++#include <xen/interface/io/ring.h>
++#include <xen/interface/io/displif.h>
++
++/*
++ * All operations which are not connector oriented use this ctrl event channel,
++ * e.g. fb_attach/destroy which belong to a DRM device, not to a CRTC.
++ */
++#define GENERIC_OP_EVT_CHNL	0
++
++enum xen_drm_front_evtchnl_state {
++	EVTCHNL_STATE_DISCONNECTED,
++	EVTCHNL_STATE_CONNECTED,
 +};
 +
-+#endif /* __XEN_DRM_FRONT_H_ */
++enum xen_drm_front_evtchnl_type {
++	EVTCHNL_TYPE_REQ,
++	EVTCHNL_TYPE_EVT,
++};
++
++struct xen_drm_front_drm_info;
++
++struct xen_drm_front_evtchnl {
++	struct xen_drm_front_info *front_info;
++	int gref;
++	int port;
++	int irq;
++	int index;
++	enum xen_drm_front_evtchnl_state state;
++	enum xen_drm_front_evtchnl_type type;
++	/* either response id or incoming event id */
++	uint16_t evt_id;
++	/* next request id or next expected event id */
++	uint16_t evt_next_id;
++	union {
++		struct {
++			struct xen_displif_front_ring ring;
++			struct completion completion;
++			/* latest response status */
++			int resp_status;
++		} req;
++		struct {
++			struct xendispl_event_page *page;
++		} evt;
++	} u;
++};
++
++struct xen_drm_front_evtchnl_pair {
++	struct xen_drm_front_evtchnl req;
++	struct xen_drm_front_evtchnl evt;
++};
++
++int xen_drm_front_evtchnl_create_all(struct xen_drm_front_info *front_info);
++
++int xen_drm_front_evtchnl_publish_all(struct xen_drm_front_info *front_info);
++
++void xen_drm_front_evtchnl_flush(struct xen_drm_front_evtchnl *evtchnl);
++
++void xen_drm_front_evtchnl_set_state(struct xen_drm_front_info *front_info,
++		enum xen_drm_front_evtchnl_state state);
++
++void xen_drm_front_evtchnl_free_all(struct xen_drm_front_info *front_info);
++
++#endif /* __XEN_DRM_FRONT_EVTCHNL_H_ */
 -- 
 2.7.4
