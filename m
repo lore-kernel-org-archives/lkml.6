@@ -1,80 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeCMLI5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:08:57 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:11307 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932713AbeCMLIz (ORCPT
+        id S932874AbeCMLIu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:08:50 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45953 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932713AbeCMLIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:08:55 -0400
-Subject: Re: [PATCH] EDAC, sb_edac: Remove VLA usage
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180309235654.GA9887@embeddedor.com>
- <20180310140434.GC8261@pd.tnic>
- <f875ba4f-65d0-0f13-850d-f323306b8e13@embeddedor.com>
- <20180313104811.GA23568@pd.tnic>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <99aa9024-ea78-70a0-bb22-222f53b00029@embeddedor.com>
-Date: Tue, 13 Mar 2018 06:08:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Mar 2018 07:08:35 -0400
+X-Google-Smtp-Source: AG47ELu/oEwQ8LFA1DVPoy5hOPNgzRWKePpp9ol47dHSalqVXJlYav+eidsqsUwBpQJj4txAam5ZLMyWcEv6EItE+vQ=
 MIME-Version: 1.0
-In-Reply-To: <20180313104811.GA23568@pd.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evhnZ-001S8p-Sz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:46432
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180313104652.GK4043@hirez.programming.kicks-ass.net>
+References: <201803122219.vHl3IwRo%fengguang.wu@intel.com> <CACT4Y+Yscqe6M1jXSkcuvw+5-27YzZn4AXwKzU1oJCNhUrj1Ng@mail.gmail.com>
+ <CACT4Y+ayA+maaG3uddxpy3w24Jyppsxmyu5R_rEsvm3JjtZkRQ@mail.gmail.com> <20180313104652.GK4043@hirez.programming.kicks-ass.net>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Mar 2018 14:08:13 +0300
+Message-ID: <CACT4Y+b+ECV+6hky_cq1tg2BbYbsv1c_xGYrgzjiLfSbx21rVA@mail.gmail.com>
+Subject: Re: [tip:locking/core 9/11] include/asm-generic/atomic-instrumented.h:288:24:
+ sparse: cast truncates bits from constant value (100 becomes 0)
+To: Peter Zijlstra <peterz@infradead.org>, linux-sparse@vger.kernel.org,
+        Christopher Li <sparse@chrisli.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
+        LKML <linux-kernel@vger.kernel.org>, tipbuild@zytor.com,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 13, 2018 at 1:46 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Mar 13, 2018 at 11:49:17AM +0300, Dmitry Vyukov wrote:
+>> On Mon, Mar 12, 2018 at 6:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> > On Mon, Mar 12, 2018 at 5:52 PM, kbuild test robot
+>> >>    kernel/locking/qspinlock.c:418:22: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
+>> >>    kernel/locking/qspinlock.c:418:22:    expected struct mcs_spinlock *prev
+>> >>    kernel/locking/qspinlock.c:418:22:    got struct mcs_spinlock [pure] *
+>
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  283  static __always_inline unsigned long
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  284  cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  285  {
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  286         switch (size) {
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  287         case 1:
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29 @288                 return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  289         case 2:
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  290                 return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  291         case 4:
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  292                 return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  293         case 8:
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  294                 BUILD_BUG_ON(sizeof(unsigned long) != 8);
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  295                 return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  296         }
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  297         BUILD_BUG();
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  298         return 0;
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  299  }
+>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  300
+>
+>> It seems that this is due to this guy:
+>>
+>> static __always_inline int trylock_clear_pending(struct qspinlock *lock)
+>> {
+>>         struct __qspinlock *l = (void *)lock;
+>>
+>>         return !READ_ONCE(l->locked) &&
+>>                (cmpxchg_acquire(&l->locked_pending, _Q_PENDING_VAL,
+>>                                 _Q_LOCKED_VAL) == _Q_PENDING_VAL);
+>> }
+>>
+>> _Q_PENDING_VAL is 0x100. However, locked_pending is 2 bytes. So it
+>> seems that compiler checks all switch cases, this inevitably will lead
+>> to such warnings.
+>>
+>> Any suggestion on how to resolve this? Leave as is?
+>
+> I'm not sure I understand what it thinks is wrong. Can't we fix sparse
+> to not be stupid? The actual compilers don't seem to a have a problem
+> with this.
 
+That would be best of course. +sparse mailing list and Christopher.
 
-On 03/13/2018 05:48 AM, Borislav Petkov wrote:
-> On Mon, Mar 12, 2018 at 05:52:13PM -0500, Gustavo A. R. Silva wrote:
->> Do you mean just adding a code comment?
-> 
-> No, I mean
-> 
-> #define MAX_INTERLEAVE (max_t(unsigned int, ARRAY_SIZE(knl_interleave_list), ...
-> 
-> which computes the max of all three array sizes.
-> 
-> Thx.
-> 
-
-I got it.
-
-Exactly this:
-
-#define MAX_INTERLEAVE (max_t(unsigned int, 
-ARRAY_SIZE(knl_interleave_list),\
-                         max_t(unsigned int, 
-ARRAY_SIZE(ibridge_interleave_list),\
- 
-ARRAY_SIZE(sbridge_interleave_list))))
-
-
-I'll send v2 shortly.
-
-Thanks!
---
-Gustavo
+>> Off the top of my head I can think of the following solution:
+>>
+>>         switch (size) {
+>>         case 1:
+>>                 return arch_cmpxchg((u8 *)ptr, (u8)(old * (size !=
+>> 1)), (u8)(new * (size != 1)));
+>>         case 2:
+>>                 return arch_cmpxchg((u16 *)ptr, (u16)(old * (size !=
+>> 2)), (u16)(new * (size != 2)));
+>>
+>> But it's too ugly.
+>
+> Yes agreed, that's horrendous.
