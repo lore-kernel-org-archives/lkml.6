@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuF/+RuUAiLuH5LNtj94ViVWaUdOtZbXLpqCDce0plxx+UFzjKXpR3O/LynrL9gA+CL1Zm6
-ARC-Seal: i=1; a=rsa-sha256; t=1520955326; cv=none;
+X-Google-Smtp-Source: AG47ELs+yFVE090zMNdXNOrEEf68YBhurCBjv6CKGeDcr+9iYytjnkuiCHkZYvPgblh8SNMmFd99
+ARC-Seal: i=1; a=rsa-sha256; t=1520955322; cv=none;
         d=google.com; s=arc-20160816;
-        b=DyhLlCSrCLsIFk7CzhOtZ6EeFY7lfi/yfwMeJaSVy1GC3VJcjIUeHionmxX+h6Jnlh
-         UdcCiyf+a8giGNoX1Y+d0Zicg9+XMi50RkNgbi/RjatGESgWom3fRdfobvd5qOewO0Td
-         JTyfBfW7KgD0SsOtURuCHctufft02dc+FG3PLdWwrC7SW9CcX4m5UerIx+x8DooAAvYR
-         bdp8cHCz0liEjgerfqWkH9UKKPYHevBbCwrTeUHlWK6WNb45q7ZCrXmZfUbm9JwM+jtq
-         AkBz4zzKzmeKi3Q8S+XTtRQkdBt6a93Z0/p1n9FmQuce+PJ4IXk1y7ZYKHnJaY+N5H7f
-         8Nxw==
+        b=EFQMQcaijlAFFY5cB2kTlt4Uch+fRECR7kxSVusy5HoAeFmR16b+E51kWKDS2PRs4n
+         lGL67u81LHMn3z8RIIj/EkD/1aDwGmiaelw8o61L4dCuZF9OTHktzpAplVXynAZw4CaF
+         CFNA1srSiQiqY3QHZksqfQw9C//uKsFZEmVIeFRfnMaprBDwNjf2Jj2V5Up3KPA3J3S0
+         i/k3AUwDJ8sfC2+masdgf/S9iaC3f7RgkcmEaVwqUf8tQFRwDTeyW8fGldfhr84ZTGnY
+         /q1qBpli8dJRUGnYtHxADjENZp6ka76s/O9feKSuiyegeRXV47bYlLHZFMxgkAo2/OVE
+         Estw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tcyzTHtWfaspblRfQoz9R/oIiDYcSubRPAqcIC2F/68=;
-        b=VZEv1d97yqjHLe3G5rUxBIfVOd8E8GioZ2hlwcgNWp6uVQWs+IMY/gLcyogHFfWHda
-         5wG05xWjY/vJV+ca3HENUHr8Lx32ygWG3JaCjpDDlNSKQ43OWvT7+2q3mdlSJhzxWc9g
-         mnTfvsRQzM5s1dk9uTIiE/2KpD9AQ7o0wzXOgDdhaT+0BIcqR6MzHer1csuO1vm0X4LH
-         7WkYqwE7EVluntRtyWs/XnDmiu8H2A2nXjWayGkwjNnDz+XkZAwVSX41QLdYx1uTiv8G
-         OA5I+R0onX6ZHsTL+x2XFgEboMbdCClT/9DppyH/ZguSyMRlHFKnBby0klgCE043ozL4
-         1pFg==
+        bh=BuKetAszhdWL0BFzucOfWdQQic/cU2B55877HErNGhE=;
+        b=V89E86ZRkUfSMw+F8CIDNY6Sg6B848q069XY7K1mbsOm5AVMqj4O7XRVyyW82arDX0
+         I2Pn3PJtGIYo0Su/PsGkPXu3jKHOn978mDjbgcQfo3RdjchL9KbUzY2Ma975cpE1nLlw
+         H2JjmTMxvsk1nXmXggidiZa9uWbNdX7ymozqOiC5JllMc6NVnWwDa18UnQ0NfysHmIhu
+         lTVJTz9DN2f4pWyLU/F/4cv3bfkk8wUg8zv7YB5/RsEhH+VqzCv1JsB0fS/Dx6nk3CV+
+         W003iLBkaSig403ZJaVh3jv6KL6M79wA/JXc5Ia8JVa+K/lw0kVyDZCKAO4v/GMC7+8f
+         KhQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 011/140] netfilter: xt_hashlimit: fix lock imbalance
-Date: Tue, 13 Mar 2018 16:23:34 +0100
-Message-Id: <20180313152458.875947864@linuxfoundation.org>
+	syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH 4.14 010/140] netfilter: ipt_CLUSTERIP: fix a race condition of proc file creation
+Date: Tue, 13 Mar 2018 16:23:33 +0100
+Message-Id: <20180313152458.810866282@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837079823728325?=
-X-GMAIL-MSGID: =?utf-8?q?1594837252234186370?=
+X-GMAIL-THRID: =?utf-8?q?1594837076516274876?=
+X-GMAIL-MSGID: =?utf-8?q?1594837247593495530?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +52,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit de526f401284e1638d4c97cb5a4c292ac3f37655 upstream.
+commit b3e456fce9f51d6276e576d00271e2813c1b8b67 upstream.
 
-syszkaller found that rcu was not held in hashlimit_mt_common()
+There is a race condition between clusterip_config_entry_put()
+and clusterip_config_init(), after we release the spinlock in
+clusterip_config_entry_put(), a new proc file with a same IP could
+be created immediately since it is already removed from the configs
+list, therefore it triggers this warning:
 
-We only need to enable BH at this point.
+------------[ cut here ]------------
+proc_dir_entry 'ipt_CLUSTERIP/172.20.0.170' already registered
+WARNING: CPU: 1 PID: 4152 at fs/proc/generic.c:330 proc_register+0x2a4/0x370 fs/proc/generic.c:329
+Kernel panic - not syncing: panic_on_warn set ...
 
-Fixes: bea74641e378 ("netfilter: xt_hashlimit: add rate match mode")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzkaller <syzkaller@googlegroups.com>
+As a quick fix, just move the proc_remove() inside the spinlock.
+
+Reported-by: <syzbot+03218bcdba6aa76441a3@syzkaller.appspotmail.com>
+Fixes: 6c5d5cfbe3c5 ("netfilter: ipt_CLUSTERIP: check duplicate config when initializing")
+Tested-by: Paolo Abeni <pabeni@redhat.com>
+Cc: Xin Long <lucien.xin@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_hashlimit.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -774,7 +774,7 @@ hashlimit_mt_common(const struct sk_buff
- 		if (!dh->rateinfo.prev_window &&
- 		    (dh->rateinfo.current_rate <= dh->rateinfo.burst)) {
- 			spin_unlock(&dh->lock);
--			rcu_read_unlock_bh();
-+			local_bh_enable();
- 			return !(cfg->mode & XT_HASHLIMIT_INVERT);
- 		} else {
- 			goto overlimit;
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -107,12 +107,6 @@ clusterip_config_entry_put(struct net *n
+ 
+ 	local_bh_disable();
+ 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
+-		list_del_rcu(&c->list);
+-		spin_unlock(&cn->lock);
+-		local_bh_enable();
+-
+-		unregister_netdevice_notifier(&c->notifier);
+-
+ 		/* In case anyone still accesses the file, the open/close
+ 		 * functions are also incrementing the refcount on their own,
+ 		 * so it's safe to remove the entry even if it's in use. */
+@@ -120,6 +114,12 @@ clusterip_config_entry_put(struct net *n
+ 		if (cn->procdir)
+ 			proc_remove(c->pde);
+ #endif
++		list_del_rcu(&c->list);
++		spin_unlock(&cn->lock);
++		local_bh_enable();
++
++		unregister_netdevice_notifier(&c->notifier);
++
+ 		return;
+ 	}
+ 	local_bh_enable();
