@@ -1,128 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933991AbeCMQPE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:15:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50497 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934015AbeCMPfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:35:34 -0400
-Date: Tue, 13 Mar 2018 16:35:22 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Harald Geyer <harald@ccbib.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: [PATCH 3/5] arm64: dts: allwinner: a64: add simplefb for A64 SoC
-Message-ID: <20180313153522.haeemlqbtuei5zb3@flea>
-References: <20180312161050.7647-1-harald@ccbib.org>
- <20180312161050.7647-4-harald@ccbib.org>
- <20180313082724.7optc2xwgqoiibtx@flea>
- <E1evg4e-0000Qj-2w@stardust.g4.wien.funkfeuer.at>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ku77t5fsink4ymvn"
-Content-Disposition: inline
-In-Reply-To: <E1evg4e-0000Qj-2w@stardust.g4.wien.funkfeuer.at>
-User-Agent: NeoMutt/20180223
+        id S1752782AbeCMQQi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:16:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:46347 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752281AbeCMQQg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:16:36 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>, Martin Sebor <msebor@gcc.gnu.org>,
+        Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+        Paul Blakey <paulb@mellanox.com>, Tom Herbert <tom@quantonium.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] test_rhashtable: avoid gcc-8 -Wformat-overflow warning
+Date: Tue, 13 Mar 2018 17:15:57 +0100
+Message-Id: <20180313161606.471699-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <CAK8P3a2mkLfkmEgg7GbeS=QkXvzjt86fNiUuuHGa54HyULkMng@mail.gmail.com>
+References: <CAK8P3a2mkLfkmEgg7GbeS=QkXvzjt86fNiUuuHGa54HyULkMng@mail.gmail.com>
+X-Provags-ID: V03:K0:nhNJXHvXCbgs5Ywo38egMkugqqGfU5pAXmeGU+fl5UzT4YagbO+
+ ZQQb+twsw4YTuDM/p8EQpQWMk6gVw9yfbqUe5/77tyTPXATVkceawBQHLUnuRdcNTquNDh3
+ CNM9oB6mSYCk2EidBeK68JoYPjyRcag+Yz+7wS+6y3z9jZKNrkMYAWYc44s7yMn3Enb5xOY
+ qv7RckbxDEPsBgQeXQtjw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:N7PRzOSjRHo=:vmg4AkGA/iJcYmQgFCMJZC
+ tlHKe15DpF67SGEpqGL1FB85psN3JeA24NM2/nyAVeFAcuQFePezjTg7zAw0F15dwVBio7uC4
+ +x9AScSH7tmJdy0m552veW/qJQezq+MYFoI8szkox2Fn9kLmuwEzLuDKZ8bEC2SG0Ej9C7yL1
+ Bh+JjSJ0457/HJuuMxQaPvcQFx1dBSAAps6WbuygrncOEjsldttRamnWv6Hs6FvnRagiFt2mQ
+ apAGBfvcqVXgp8FcghwCjJk2LCssh4hEXaeTGa3iqs+Jan86M8N7BNm7ZIU4VeWAFIl1RCWYG
+ dVvNTAfkOgdiXnvz9bZSPtUofFFI1eJaw8wzYwySaroMTaK1EWUAxlZcHjHjAo3wUQAA4vTCO
+ COfpeSXaEEWmcwxB8Ler8E80+uCL83R/s7v+l6D+DG078pXulkCjheBRvL2NqXPgNjBlcDYCg
+ +nf77YEJ/jDDD84pH1fnNPx4DRilUec4O0KGuvRy2NAZgSHre7WISAGRfGxHk7Um21QbpS/8r
+ L9SjQPqSYAK7AxgLl5PzZ/8HYttaNdHxt4NjB+kZxWytznJDN4Rh0biG69t4NPnnX6cIxIQiZ
+ jliT/p7rgeNP+dnt45+zDk8crauzuHTIEgwCQEU4T6/Lu3gpY2rs6tZqUduDH8g9C90w8XYEG
+ 3lQGYEOBAb8fM5M2MBqudYwwatoe1bMbwIgfloAI1yxpOd+x+4x6aPtPvYrFvhNnEIALv6Dkx
+ YM+nUuQtFCasDZzLtJI1ichWKVd5J6i+BEcznA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+gcc-8 warns about a code pattern that is used in the newly added
+test_rhashtable code:
 
---ku77t5fsink4ymvn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+lib/test_rhashtable.c: In function 'print_ht':
+lib/test_rhashtable.c:511:21: error: '
+bucket[' directive writing 8 bytes into a region of size between 1 and 512 [-Werror=format-overflow=]
+    sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
+                     ^~~~~~~~~
+lib/test_rhashtable.c:511:4: note: 'sprintf' output between 15 and 536 bytes into a destination of size 512
+    sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hi,
+The problem here is using the same fixed-length buffer as input and output
+of snprintf(), which for an unbounded loop has an actual potential to
+overflow the buffer. The '512' byte length was apparently chosen to
+be "long enough" to prevent that in practice, but without any specific
+guarantees of being the smallest safe size.
 
-On Tue, Mar 13, 2018 at 10:18:22AM +0100, Harald Geyer wrote:
-> Maxime Ripard writes:
-> > On Mon, Mar 12, 2018 at 04:10:48PM +0000, Harald Geyer wrote:
-> >> The A64 SoC features two display pipelines, one has a LCD output, the
-> >> other has a HDMI output.
-> >>
-> >> Add support for simplefb for the LCD output. Tested on Teres I.
-> >>
-> >> This patch was inspired by work of Icenowy Zheng.
-> >>
-> >> Signed-off-by: Harald Geyer <harald@ccbib.org>
-> >> ---
-> >> arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 ++++++++++++++++++++
-> >> 1 file changed, 20 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> index ca1b365bc722..05d5e8def68a 100644
-> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> @@ -52,6 +52,26 @@
-> >> 	#address-cells =3D <1>;
-> >> 	#size-cells =3D <1>;
-> >>
-> >> +	chosen {
-> >> +		#address-cells =3D <1>;
-> >> +		#size-cells =3D <1>;
-> >> +		ranges;
-> >> +
-> >> +/*
-> >> + * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
-> >> + * However there is no support for this clock on A64 yet, so we depend
-> >> + * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
-> >> + */
-> >=20
-> > There's definitely support for the CLK_MIXER0 clock in the DE2 CCU
-> > driver, so I guess this would need to be amended / fixed
->=20
-> AFAIK on the A64 a special sram quirk is necessary, that never got merged:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574303.html
->=20
-> I asked Icenowy if I should resubmit her patch as part of this series,
-> but was told further discussion is necessary. I'm sure she can better
-> explain the details than me.
->=20
-> Actually if it wasn't for the sram quirk, there is a simplefb patch by
-> her, that could have been merged long ago:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574304.html
+I can see three possible ways to avoid this warning:
 
-The issue with your patch is that, as soon as that clock is
-functional, the DT with the node you were introducing here will no
-longer be.
+- rewrite the code to use pointer arithmetic to forward the buffer,
+  rather than copying the buffer itself. This is a more conventional
+  use of sprintf(), and it avoids the warning, but is not any more
+  safe than the original code.
+- Rewrite the function in a safe way that avoids both the potential
+  overflow and the warning.
+- Ask the gcc developers to not warn for this pattern if we consider
+  the warning to be inappropriate.
 
-And since people use their firmware DT or put them in NOR these days,
-you can't really expect them to update them every release either.
+This patch implements the second of the above, using scnprintf()
+as Rasmus suggested.
 
-I guess a proper solution would be to respin that patch.
+Fixes: 499ac3b60f65 ("test_rhashtable: add test case for rhltable with duplicate objects")
+Cc: Martin Sebor <msebor@gcc.gnu.org>
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+My patch is still untested, please try it out before applying.
+---
+ lib/test_rhashtable.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ku77t5fsink4ymvn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqn77kACgkQ0rTAlCFN
-r3Shjw/+NpX/NkKxJFJG0MdVnCvHjms5XDB/izbk/MNgzVBOtIAO9Wr39VxZXS0k
-h1OuISa/GLitGXjW6LTxO6RzivfzuLhY/wOooorJtpNBUiTDL8hrwTTjrVj6ga/7
-X1pTWNv6YKS05uzHr4X68KZekEhsPXiJB7UIRz2ny4vjXHoMyeWlkelIcYdWfZ8Y
-cL+IPhOXw4dWg0zyINM7hTgIYQtngCt3FyLKhewwAfz4mJU+jqcp0YWSzCgeRZDj
-AARc84qAjegL2kYaEPG717ya3sYt5Jljrzt59WAtHyphyOCCkcFGPFuknxpGsVV1
-frVmfxXksFvHoUolEJWPXDYbOgGOEy5VKBf1rCRDGm/s0x8OOmLLxt34wZyJeY4g
-CJM79t6ZhoL1i39UFG+IJhzki3dV7HAWMf2KbgfF0VplZwJvOKKMRspCKbZ/J0Tr
-eouICwDYCxQHva5QAlGN91WYcglzwyc25WhnoCX4TGbQmxBJJokmUQ4JOhrrRdcN
-Yq5wSkN9drDlhb8ZfjpGyqh7wfTeZjl8vrYo7cIuBgrEoyd1dV6noVcudF/hmGDd
-mu6z99WUnYDtZtFsLvznd1ACPFyfNVgyAfx05FSf7trPRkK/gVe7+3/f7F6IncAI
-dXakAvntGg1rMoZRlytbO+9bUxcYBRFxWe2Y7JNgYdJRHiZHylM=
-=Nbua
------END PGP SIGNATURE-----
-
---ku77t5fsink4ymvn--
+diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
+index f4000c137dbe..fa865a953176 100644
+--- a/lib/test_rhashtable.c
++++ b/lib/test_rhashtable.c
+@@ -496,6 +496,7 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
+ 	struct rhashtable *ht;
+ 	const struct bucket_table *tbl;
+ 	char buff[512] = "";
++	size_t len = 0;
+ 	unsigned int i, cnt = 0;
+ 
+ 	ht = &rhlt->ht;
+@@ -508,19 +509,19 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
+ 		next = !rht_is_a_nulls(pos) ? rht_dereference(pos->next, ht) : NULL;
+ 
+ 		if (!rht_is_a_nulls(pos)) {
+-			sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
++			len += scnprintf(buff + len, sizeof(buff) - len, "\nbucket[%d] -> ", i);
+ 		}
+ 
+ 		while (!rht_is_a_nulls(pos)) {
+ 			struct rhlist_head *list = container_of(pos, struct rhlist_head, rhead);
+-			sprintf(buff, "%s[[", buff);
++			len += scnprintf(buff + len, sizeof(buff) - len, "[[");
+ 			do {
+ 				pos = &list->rhead;
+ 				list = rht_dereference(list->next, ht);
+ 				p = rht_obj(ht, pos);
+ 
+-				sprintf(buff, "%s val %d (tid=%d)%s", buff, p->value.id, p->value.tid,
+-					list? ", " : " ");
++				len += scnprintf(buff + len, sizeof(buff) - len, " val %d (tid=%d)%s",
++						 p->value.id, p->value.tid, list? ", " : " ");
+ 				cnt++;
+ 			} while (list);
+ 
+@@ -528,7 +529,8 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
+ 			next = !rht_is_a_nulls(pos) ?
+ 				rht_dereference(pos->next, ht) : NULL;
+ 
+-			sprintf(buff, "%s]]%s", buff, !rht_is_a_nulls(pos) ? " -> " : "");
++			len += scnprintf(buff + len, sizeof(buff) - len, "]]%s",
++					 !rht_is_a_nulls(pos) ? " -> " : "");
+ 		}
+ 	}
+ 	printk(KERN_ERR "\n---- ht: ----%s\n-------------\n", buff);
+-- 
+2.9.0
