@@ -1,98 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932521AbeCMJuv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:50:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932292AbeCMJuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:50:50 -0400
-Date: Tue, 13 Mar 2018 10:50:45 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCHv3 0/8] hw_breakpoint: Breakpoint modification fixes and
- new modify ioctl
-Message-ID: <20180313095045.GC16389@krava>
-References: <20180312134548.31532-1-jolsa@kernel.org>
- <20180313063747.b4bw2j25cvtgjk5b@gmail.com>
- <20180313092801.GB16389@krava>
+        id S932555AbeCMJvZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:51:25 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5513 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932292AbeCMJvX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 05:51:23 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 13 Mar 2018 02:51:22 -0700
+Date: Tue, 13 Mar 2018 11:51:17 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+ <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180313092801.GB16389@krava>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 10:28:01AM +0100, Jiri Olsa wrote:
-> On Tue, Mar 13, 2018 at 07:37:47AM +0100, Ingo Molnar wrote:
-> > 
-> > * Jiri Olsa <jolsa@kernel.org> wrote:
-> > 
-> > > Jiri Olsa (7):
-> > >       hw_breakpoint: Pass bp_type directly as find_slot_idx argument
-> > >       hw_breakpoint: Pass bp_type argument to __reserve_bp_slot|__release_bp_slot
-> > >       hw_breakpoint: Add modify_bp_slot function
-> > >       hw_breakpoint: Factor out __modify_user_hw_breakpoint function
-> > >       hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint
-> > >       perf/core: Move perf_event_attr::sample_max_stack into perf_copy_attr
-> > >       perf tests: Add breakpoint accounting/modify test
-> > > 
-> > > Milind Chabbi (1):
-> > >       perf/core: fast breakpoint modification via _IOC_MODIFY_ATTRIBUTES.
-> > > 
-> > >  include/linux/hw_breakpoint.h         |   7 +++++
-> > >  include/uapi/linux/perf_event.h       |  23 ++++++++-------
-> > >  kernel/events/core.c                  |  54 ++++++++++++++++++++++++++++++++--
-> > >  kernel/events/hw_breakpoint.c         | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---------------------
-> > >  tools/include/uapi/linux/perf_event.h |  23 ++++++++-------
-> > >  tools/perf/tests/Build                |   1 +
-> > >  tools/perf/tests/bp_account.c         | 195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  tools/perf/tests/builtin-test.c       |   4 +++
-> > >  tools/perf/tests/tests.h              |   1 +
-> > >  9 files changed, 365 insertions(+), 58 deletions(-)
-> > >  create mode 100644 tools/perf/tests/bp_account.c
-> > 
-> > Note, there's a new PARISC build failure:
-> > 
-> >  home/mingo/tip/kernel/events/core.c:2858:2: error: implicit declaration of function 'modify_user_hw_breakpoint_check' [-Werror=implicit-function-declaration]
-> >    err = modify_user_hw_breakpoint_check(bp, attr, true);
-> > 
-> > will only be able to push it out to -next once this is fixed.
+On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
 > 
-> ok, checking on that
+> On 06/02/18 16:34, Peter De Schrijver wrote:
+> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > support in this driver. Also allow for the case where the CPU voltage is
+> > controlled directly by the DFLL rather than by a separate regulator object.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > index 4353025..f8e01a8 100644
+> > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >  {
+> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >  	clk_disable_unprepare(priv->dfll_clk);
+> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > +	if (priv->vdd_cpu_reg)
+> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >  }
+> 
+> OK, so this bit does not make sense to me. In the above we are switching
+> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
+> are operating at the correct voltage after disabling the DFLL we need to
+> sync the voltage. Seems we would need to do this for all devices, no?
+> How is the different between Tegra124 and Tegra210?
 
-should be this one.. I'm checking on s390 which is also
-without breakpoint support, I'll send full patch after
+Yes. So in case of i2c the regulator framework will reapply the voltage it
+knows which in our case is the boot voltage for VDD_CPU because noone else
+from a regulator framework pov has ever changed the voltage. In case of PWM
+putting the PWM output pad in tri state will cause the OVR regulator to output
+a hardware defined voltage. This is done as part of the dfll_clk_disable()
+function. To summarize:
 
-jirka
+switch from pll_x to DFLL for i2c regulator:
 
+entry: voltage is boot voltage set bootloader
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will switch to closed loop mode and start controlling
+   the voltage via i2c, however because we are below Fmax@Vmin there's no
+   V/f curve violation.
+4) change parent from pll_x to DFLL
 
----
-diff --git a/include/linux/hw_breakpoint.h b/include/linux/hw_breakpoint.h
-index abeba094f080..6058c3844a76 100644
---- a/include/linux/hw_breakpoint.h
-+++ b/include/linux/hw_breakpoint.h
-@@ -101,8 +101,8 @@ static inline int
- modify_user_hw_breakpoint(struct perf_event *bp,
- 			  struct perf_event_attr *attr)	{ return -ENOSYS; }
- static inline int
--__modify_user_hw_breakpoint(struct perf_event *bp,
--			    struct perf_event_attr *attr) { return -ENOSYS; }
-+modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
-+				bool check)	{ return -ENOSYS; }
- 
- static inline struct perf_event *
- register_wide_hw_breakpoint_cpu(struct perf_event_attr *attr,
+switch from DFLL to pll_x for i2c regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the voltage to be the last value programmed
+   by the DFLL.
+3) go back to the voltage as programmed by the boot loader using
+   regulator_sync_voltage().
+4) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
+
+switch from pll_x to DFLL for PWM regulator:
+
+entry: voltage is boot voltage set by hardware because PWM pin is in tristate
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will set the PWM pad to output, switch to closed loop mode
+   and start controlling the voltage via PWM, however because we are below
+   Fmax@Vmin there's no V/f curve violation.
+4) change parent from pll_x to DFLL
+
+switch from DFLL to pll_x for PWM regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the PWM pad to be programmed to tristate
+   and the voltage to change back to the hardware defined voltage.
+3) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
+
+Peter.
