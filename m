@@ -1,89 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752594AbeCMOMj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:12:39 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45718 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752202AbeCMOMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:12:38 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Yannick FERTRE <yannick.fertre@st.com>,
-        Vikas MANOCHA <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philippe CORNU <philippe.cornu@st.com>,
-        Patrick DELAUNAY <patrick.delaunay@st.com>,
-        Christophe KERELLO <christophe.kerello@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        "Andrzej Hajda" <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        "Brian Norris" <briannorris@chromium.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Albert Aribaud <albert.u.boot@aribaud.net>,
-        Simon Glass <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 04/10] otm
-Thread-Topic: [PATCH v3 04/10] otm
-Thread-Index: AQHTutJIGdqIKiNUrUiEl2XLTYzuaqPOJCwA
-Date: Tue, 13 Mar 2018 14:12:17 +0000
-Message-ID: <34cdaaf5-7d9b-f8af-bdc2-3c022778d7f4@st.com>
-References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
- <1520949014-21468-8-git-send-email-yannick.fertre@st.com>
-In-Reply-To: <1520949014-21468-8-git-send-email-yannick.fertre@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F92E731C5554BF42BA29535FD9730295@st.com>
+        id S1752692AbeCMOMs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45008 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752372AbeCMOMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:12:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D92C20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 13 Mar 2018 10:12:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH 3/3] tracing: Rewrite filter logic to be simpler and
+ faster
+Message-ID: <20180313101244.7350c00a@vmware.local.home>
+In-Reply-To: <20180313101401.GD16389@krava>
+References: <20180310023442.791997138@goodmis.org>
+        <20180310023907.798690563@goodmis.org>
+        <20180312151017.GE23111@krava>
+        <20180312144001.788380fa@vmware.local.home>
+        <20180312185414.GA13138@krava>
+        <20180312195245.346cef71@vmware.local.home>
+        <20180313101401.GD16389@krava>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
- signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DEChTN011109
 
-Hi Yannick
+On Tue, 13 Mar 2018 11:14:01 +0100
+Jiri Olsa <jolsa@redhat.com> wrote:
 
-There is a problem with patch 4. I received two patches 04/10, this one 
-and [PATCH v3 04/10] video: add support of panel OTM8009A.
-
-Patrice
-
-On 03/13/2018 02:50 PM, yannick fertre wrote:
-> ---
->   drivers/video/orisetech_otm8009a.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+> > Jiri, If you apply the below, does it fix it for you?  
 > 
-> diff --git a/drivers/video/orisetech_otm8009a.c b/drivers/video/orisetech_otm8009a.c
-> index 81b11d7..aa8139a 100644
-> --- a/drivers/video/orisetech_otm8009a.c
-> +++ b/drivers/video/orisetech_otm8009a.c
-> @@ -289,9 +289,11 @@ static int otm8009a_panel_probe(struct udevice *dev)
->   	struct otm8009a_panel_priv *priv = dev_get_priv(dev);
->   	int ret;
->   
-> -	/* reset panel must be done before probe */
-> +	/* reset panel */
->   	dm_gpio_set_value(&priv->reset, true);
->   
-> +	mdelay(1);
-> +
->   	if (IS_ENABLED(CONFIG_DM_REGULATOR) && priv->reg) {
->   		dev_err(dev, "enable regulator '%s'\n", priv->reg->name);
->   		ret = regulator_set_enable(priv->reg, true);
+> yes, the crash is gone and I can set filter ftrace/function,
+
+Great!
+
+> but I'm still having some issues put that filter through perf
 > 
+>   # perf record -e ftrace:function --filter "ip == 0xffffffffa41e8490" ls
+> 
+> but I might be just missing something.. it's been a while ;-) I'm looking to that
+
+I have to ask. Did that work with the old code? The ftrace filter was
+special in the old code and I tried to simulate it in the new code.
+I'm not sure I checked if ip can take an address, but from what the code
+looked like, it wouldn't. It looked like it required a name of a
+function. Something that gets passed into "set_ftrace_filter" which is
+not an address.
+
+So instead of doing something like:
+
+ perf record -e ftrace:function --filter "ip == 0xffffffff810ccfa0" ls
+
+You would need to do
+
+ perf record -e ftrace:function --filter "ip == schedule_tail" ls
+
+because perf doesn't use the filter for the function, it uses the
+ftrace_ops->hash tables. If it would simply take the address, we could
+just use the trace_events_filter logic, and not make it a special case.
+
+-- Steve
