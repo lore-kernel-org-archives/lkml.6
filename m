@@ -1,67 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932680AbeCMLDe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:03:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:35706 "EHLO foss.arm.com"
+        id S932779AbeCMLE5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:04:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62095 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752315AbeCMLDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:03:33 -0400
-Date: Tue, 13 Mar 2018 11:03:29 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Ivan Gorinov <ivan.gorinov@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v5 2/2] x86/devicetree: Use CPU description from Device
- Tree
-Message-ID: <20180313110329.rqwqdakuhd6fktlx@lakrids.cambridge.arm.com>
-References: <cover.1520891263.git.ivan.gorinov@intel.com>
- <789dcb8b2c87d1e370dc68b7058ee4fe0e877b9d.1520891263.git.ivan.gorinov@intel.com>
+        id S1752396AbeCMLE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:04:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
+   d="scan'208,223";a="36897407"
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+To: x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
+        anshuman.gupta@intel.com, linux-kernel@vger.kernel.org,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] x86: i8237: Register based on FADT legacy boot flag
+Date: Tue, 13 Mar 2018 16:29:47 +0530
+Message-Id: <1520938787-14861-1-git-send-email-rajneesh.bhardwaj@intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <789dcb8b2c87d1e370dc68b7058ee4fe0e877b9d.1520891263.git.ivan.gorinov@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 03:22:33PM -0700, Ivan Gorinov wrote:
-> Current x86 Device Tree implementation does not support multiprocessing.
-> Use new DT bindings to describe the processors.
-> 
-> Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
-> ---
->  arch/x86/kernel/devicetree.c | 42 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 31 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-> index 5cd387f..64671db 100644
-> --- a/arch/x86/kernel/devicetree.c
-> +++ b/arch/x86/kernel/devicetree.c
-> @@ -131,31 +131,49 @@ static void __init dtb_setup_hpet(void)
->  #endif
->  }
->  
-> +static void __init dtb_cpu_setup(void)
-> +{
-> +	struct device_node *dn;
-> +	const void *prop;
-> +	int prop_bytes;
-> +	int apic_id, version;
-> +	int ret;
-> +
-> +	version = GET_APIC_VERSION(apic_read(APIC_LVR));
-> +	for_each_node_by_type(dn, "cpu") {
-> +		prop = of_get_property(dn, "reg", &prop_bytes);
-> +		if (!prop || prop_bytes < sizeof(u32)) {
-> +			pr_warn("%pOF: missing local APIC ID\n", dn);
-> +			continue;
-> +		}
-> +		apic_id = be32_to_cpup(prop);
+>From Skylake onwards, the platform controller hub (Sunrisepoint PCH) does
+not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh, 8Fh.
+Currently this driver registers as syscore ops and its resume function is
+called on every resume from S3. On Skylake and Kabylake, this causes a
+resume delay of around 100ms due to port IO operations, which is a problem.
 
-Please use of_property_read_u32().
+This change allows to load the driver only when the platform bios
+explicitly supports such devices or has a cut-off date earlier than 2017.
 
-Thanks,
-Mark.
+Please refer to chapter 21 of 6th Generation Intel® Core™ Processor
+Platform Controller Hub Family: BIOS Specification.
+
+https://www.intel.in/content/www/in/en/embedded/products/skylake/u-mobile/software-and-drivers.html
+
+Cc: Alan Cox <alan@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+---
+
+This depends on recently introduced dmi_get_bios_year() helper.
+https://patchwork.kernel.org/patch/10252151/
+
+ arch/x86/kernel/i8237.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/x86/kernel/i8237.c b/arch/x86/kernel/i8237.c
+index 8eeaa81de066..5c7a0dea7e19 100644
+--- a/arch/x86/kernel/i8237.c
++++ b/arch/x86/kernel/i8237.c
+@@ -9,6 +9,7 @@
+  * your option) any later version.
+  */
+ 
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/syscore_ops.h>
+ 
+@@ -49,6 +50,30 @@ static struct syscore_ops i8237_syscore_ops = {
+ 
+ static int __init i8237A_init_ops(void)
+ {
++	/*
++	 * From SKL PCH onwards, the port 0x61 bit 4 would stop toggle and
++	 * the legacy DMA device is removed in which the I/O ports (81h-83h,
++	 * 87h, 89h-8Bh, 8Fh)  related to it are removed as well. All
++	 * removed ports must return 0xff for a inb() request.
++	 *
++	 * Note: DMA_PAGE_2 (port 0x81) should not be checked for detecting
++	 * the presence of DMA device since it may be used by BIOS to decode
++	 * LPC traffic for POST codes. Original LPC only decodes one byte of
++	 * port 0x80 but some BIOS may choose to enhance PCH LPC port 0x8x
++	 * decoding.
++	 */
++	if (inb(DMA_PAGE_0) == 0xFF)
++		return -ENODEV;
++
++	/*
++	 * It should be OK to not load this driver as newer SoC may not
++	 * support 8237 DMA or bus mastering from LPC. Platform firmware
++	 * must announce the support for such legacy devices via
++	 * ACPI_FADT_LEGACY_DEVICES field in FADT table.
++	 */
++	if (!x86_platform.legacy.devices.pnpbios && dmi_get_bios_year() >= 2017)
++		return -ENODEV;
++
+ 	register_syscore_ops(&i8237_syscore_ops);
+ 	return 0;
+ }
+-- 
+2.7.4
