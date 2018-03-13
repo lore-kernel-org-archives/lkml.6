@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933651AbeCMQm7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:42:59 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22736 "EHLO
+        id S933625AbeCMQm5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:42:57 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58761 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933454AbeCMQmt (ORCPT
+        by vger.kernel.org with ESMTP id S933464AbeCMQmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Mar 2018 12:42:49 -0400
 From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
@@ -17,16 +17,16 @@ To: Vinod Koul <vinod.koul@intel.com>, Rob Herring <robh+dt@kernel.org>,
         <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 2/8] dmaengine: stm32-dma: threshold manages with bitfield feature
-Date: Tue, 13 Mar 2018 17:42:01 +0100
-Message-ID: <1520959327-25760-3-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v1 4/8] dmaengine: stm32-dma: fix DMA IRQ status handling
+Date: Tue, 13 Mar 2018 17:42:03 +0100
+Message-ID: <1520959327-25760-5-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE2.st.com
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
  signatures=0
@@ -34,7 +34,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From now on, DMA bitfield is to manage DMA FIFO Threshold.
+Update the way Transfer Complete and Half Transfer Complete status are
+acknowledge. Even if HTI is not enabled its status is shown when reading
+registers, driver has to clear it gently and not raise an error.
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
@@ -43,70 +45,61 @@ Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
        * Initial
 ---
 ---
- drivers/dma/stm32-dma.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/dma/stm32-dma.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index 786fc8f..4099948 100644
+index a7edd6d..0685961 100644
 --- a/drivers/dma/stm32-dma.c
 +++ b/drivers/dma/stm32-dma.c
-@@ -116,6 +116,10 @@
- #define STM32_DMA_MAX_DATA_PARAM	0x03
- #define STM32_DMA_MAX_BURST		16
+@@ -34,9 +34,14 @@
+ #define STM32_DMA_LIFCR			0x0008 /* DMA Low Int Flag Clear Reg */
+ #define STM32_DMA_HIFCR			0x000c /* DMA High Int Flag Clear Reg */
+ #define STM32_DMA_TCI			BIT(5) /* Transfer Complete Interrupt */
++#define STM32_DMA_HTI			BIT(4) /* Half Transfer Interrupt */
+ #define STM32_DMA_TEI			BIT(3) /* Transfer Error Interrupt */
+ #define STM32_DMA_DMEI			BIT(2) /* Direct Mode Error Interrupt */
+ #define STM32_DMA_FEI			BIT(0) /* FIFO Error Interrupt */
++#define STM32_DMA_MASKI			(STM32_DMA_TCI \
++					 | STM32_DMA_TEI \
++					 | STM32_DMA_DMEI \
++					 | STM32_DMA_FEI)
  
-+/* DMA Features */
-+#define STM32_DMA_THRESHOLD_FTR_MASK	GENMASK(1, 0)
-+#define STM32_DMA_THRESHOLD_FTR_GET(n)	((n) & STM32_DMA_THRESHOLD_FTR_MASK)
-+
- enum stm32_dma_width {
- 	STM32_DMA_BYTE,
- 	STM32_DMA_HALF_WORD,
-@@ -129,11 +133,18 @@ enum stm32_dma_burst_size {
- 	STM32_DMA_BURST_INCR16,
- };
+ /* DMA Stream x Configuration Register */
+ #define STM32_DMA_SCR(x)		(0x0010 + 0x18 * (x)) /* x = 0..7 */
+@@ -637,13 +642,29 @@ static irqreturn_t stm32_dma_chan_irq(int irq, void *devid)
+ 	status = stm32_dma_irq_status(chan);
+ 	scr = stm32_dma_read(dmadev, STM32_DMA_SCR(chan->id));
  
-+/**
-+ * struct stm32_dma_cfg - STM32 DMA custom configuration
-+ * @channel_id: channel ID
-+ * @request_line: DMA request
-+ * @stream_config: 32bit mask specifying the DMA channel configuration
-+ * @features: 32bit mask specifying the DMA Feature list
-+ */
- struct stm32_dma_cfg {
- 	u32 channel_id;
- 	u32 request_line;
- 	u32 stream_config;
--	u32 threshold;
-+	u32 features;
- };
+-	if ((status & STM32_DMA_TCI) && (scr & STM32_DMA_SCR_TCIE)) {
++	if (status & STM32_DMA_TCI) {
+ 		stm32_dma_irq_clear(chan, STM32_DMA_TCI);
+-		stm32_dma_handle_chan_done(chan);
+-
+-	} else {
++		if (scr & STM32_DMA_SCR_TCIE)
++			stm32_dma_handle_chan_done(chan);
++		status &= ~STM32_DMA_TCI;
++	}
++	if (status & STM32_DMA_HTI) {
++		stm32_dma_irq_clear(chan, STM32_DMA_HTI);
++		status &= ~STM32_DMA_HTI;
++	}
++	if (status & STM32_DMA_FEI) {
++		stm32_dma_irq_clear(chan, STM32_DMA_FEI);
++		status &= ~STM32_DMA_FEI;
++		if (!(scr & STM32_DMA_SCR_EN))
++			dev_err(chan2dev(chan), "FIFO Error\n");
++		else
++			dev_dbg(chan2dev(chan), "FIFO over/underrun\n");
++	}
++	if (status) {
+ 		stm32_dma_irq_clear(chan, status);
+ 		dev_err(chan2dev(chan), "DMA error: status=0x%08x\n", status);
++		if (!(scr & STM32_DMA_SCR_EN))
++			dev_err(chan2dev(chan), "chan disabled by HW\n");
+ 	}
  
- struct stm32_dma_chan_reg {
-@@ -171,6 +182,7 @@ struct stm32_dma_chan {
- 	u32 next_sg;
- 	struct dma_slave_config	dma_sconfig;
- 	struct stm32_dma_chan_reg chan_reg;
-+	u32 threshold;
- };
- 
- struct stm32_dma_device {
-@@ -976,7 +988,8 @@ static void stm32_dma_set_config(struct stm32_dma_chan *chan,
- 	/* Enable Interrupts  */
- 	chan->chan_reg.dma_scr |= STM32_DMA_SCR_TEIE | STM32_DMA_SCR_TCIE;
- 
--	chan->chan_reg.dma_sfcr = cfg->threshold & STM32_DMA_SFCR_FTH_MASK;
-+	chan->threshold = STM32_DMA_THRESHOLD_FTR_GET(cfg->features);
-+	chan->chan_reg.dma_sfcr = STM32_DMA_SFCR_FTH(chan->threshold);
- }
- 
- static struct dma_chan *stm32_dma_of_xlate(struct of_phandle_args *dma_spec,
-@@ -996,7 +1009,7 @@ static struct dma_chan *stm32_dma_of_xlate(struct of_phandle_args *dma_spec,
- 	cfg.channel_id = dma_spec->args[0];
- 	cfg.request_line = dma_spec->args[1];
- 	cfg.stream_config = dma_spec->args[2];
--	cfg.threshold = dma_spec->args[3];
-+	cfg.features = dma_spec->args[3];
- 
- 	if ((cfg.channel_id >= STM32_DMA_MAX_CHANNELS) ||
- 	    (cfg.request_line >= STM32_DMA_MAX_REQUEST_ID)) {
+ 	spin_unlock(&chan->vchan.lock);
 -- 
 2.7.4
