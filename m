@@ -1,36 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeCMGUX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:20:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50157 "EHLO
+        id S1751944AbeCMGVk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:21:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46779 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751391AbeCMGUW (ORCPT
+        with ESMTP id S1751469AbeCMGVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:20:22 -0400
-Date: Mon, 12 Mar 2018 23:19:53 -0700
+        Tue, 13 Mar 2018 02:21:38 -0400
+Date: Mon, 12 Mar 2018 23:20:47 -0700
 From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-ea6a9d530c1779b9bd30944b803820c462f01eac@git.kernel.org>
-Cc: will.deacon@arm.com, chabbi.milind@gmail.com, fweisbec@gmail.com,
-        yao.jin@linux.intel.com, jolsa@kernel.org, onestero@redhat.com,
-        tglx@linutronix.de, kan.liang@intel.com, namhyung@kernel.org,
-        dsahern@gmail.com, mpe@ellerman.id.au, hbathini@linux.vnet.ibm.com,
-        jolsa@redhat.com, sukadev@linux.vnet.ibm.com,
+Message-ID: <tip-705feaf321c37e4dca3637fd5cb3b275f17a06c9@git.kernel.org>
+Cc: hbathini@linux.vnet.ibm.com, a.p.zijlstra@chello.nl, hpa@zytor.com,
+        kan.liang@intel.com, onestero@redhat.com, mpe@ellerman.id.au,
+        peterz@infradead.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, will.deacon@arm.com,
         alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, acme@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org
-Reply-To: kan.liang@intel.com, mpe@ellerman.id.au, dsahern@gmail.com,
-        namhyung@kernel.org, jolsa@kernel.org, onestero@redhat.com,
-        tglx@linutronix.de, yao.jin@linux.intel.com, fweisbec@gmail.com,
-        will.deacon@arm.com, chabbi.milind@gmail.com,
-        hbathini@linux.vnet.ibm.com, sukadev@linux.vnet.ibm.com,
-        mingo@kernel.org, alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        acme@redhat.com, torvalds@linux-foundation.org
-In-Reply-To: <20180312134548.31532-4-jolsa@kernel.org>
-References: <20180312134548.31532-4-jolsa@kernel.org>
+        torvalds@linux-foundation.org, namhyung@kernel.org, acme@redhat.com,
+        dsahern@gmail.com, tglx@linutronix.de, chabbi.milind@gmail.com,
+        sukadev@linux.vnet.ibm.com, yao.jin@linux.intel.com,
+        fweisbec@gmail.com
+Reply-To: alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        jolsa@redhat.com, mpe@ellerman.id.au, peterz@infradead.org,
+        hpa@zytor.com, kan.liang@intel.com, a.p.zijlstra@chello.nl,
+        onestero@redhat.com, hbathini@linux.vnet.ibm.com,
+        yao.jin@linux.intel.com, fweisbec@gmail.com,
+        sukadev@linux.vnet.ibm.com, chabbi.milind@gmail.com,
+        tglx@linutronix.de, dsahern@gmail.com, acme@redhat.com,
+        namhyung@kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20180312134548.31532-6-jolsa@kernel.org>
+References: <20180312134548.31532-6-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] hw_breakpoint: Add modify_bp_slot() function
-Git-Commit-ID: ea6a9d530c1779b9bd30944b803820c462f01eac
+Subject: [tip:perf/core] hw_breakpoint: Add perf_event_attr fields check in
+ __modify_user_hw_breakpoint()
+Git-Commit-ID: 705feaf321c37e4dca3637fd5cb3b275f17a06c9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -43,21 +46,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ea6a9d530c1779b9bd30944b803820c462f01eac
-Gitweb:     https://git.kernel.org/tip/ea6a9d530c1779b9bd30944b803820c462f01eac
+Commit-ID:  705feaf321c37e4dca3637fd5cb3b275f17a06c9
+Gitweb:     https://git.kernel.org/tip/705feaf321c37e4dca3637fd5cb3b275f17a06c9
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 12 Mar 2018 14:45:43 +0100
+AuthorDate: Mon, 12 Mar 2018 14:45:45 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Mar 2018 06:56:07 +0100
+CommitDate: Tue, 13 Mar 2018 06:56:08 +0100
 
-hw_breakpoint: Add modify_bp_slot() function
+hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint()
 
-Add the modify_bp_slot() function to keep slot numbers
-correct when changing the breakpoint type.
+And rename it to modify_user_hw_breakpoint_check().
 
-Using existing __release_bp_slot()/__reserve_bp_slot()
-call sequence to update the slot counts.
+We are about to use modify_user_hw_breakpoint_check() for user space
+breakpoints modification, we must be very strict to check only the
+fields we can change have changed. As Peter explained:
 
+ "Suppose someone does:
+
+        attr = malloc(sizeof(*attr)); // uninitialized memory
+        attr->type = BP;
+        attr->bp_addr = new_addr;
+        attr->bp_type = bp_type;
+        attr->bp_len = bp_len;
+        ioctl(fd, PERF_IOC_MOD_ATTR, &attr);
+
+  And feeds absolute shite for the rest of the fields.
+  Then we later want to extend IOC_MOD_ATTR to allow changing
+  attr::sample_type but we can't, because that would break the
+  above application."
+
+I'm making this check optional because we already export
+modify_user_hw_breakpoint() and with this check we could
+break existing users.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
@@ -72,100 +94,47 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Milind Chabbi <chabbi.milind@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Oleg Nesterov <onestero@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/20180312134548.31532-4-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180312134548.31532-6-jolsa@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/hw_breakpoint.c | 46 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 39 insertions(+), 7 deletions(-)
+ kernel/events/hw_breakpoint.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 9b31fbcc3305..776948beb4ac 100644
+index a556aba223da..0c82663395f7 100644
 --- a/kernel/events/hw_breakpoint.c
 +++ b/kernel/events/hw_breakpoint.c
-@@ -44,6 +44,7 @@
- #include <linux/list.h>
- #include <linux/cpu.h>
- #include <linux/smp.h>
-+#include <linux/bug.h>
- 
- #include <linux/hw_breakpoint.h>
- /*
-@@ -344,6 +345,38 @@ void release_bp_slot(struct perf_event *bp)
- 	mutex_unlock(&nr_bp_mutex);
+@@ -456,7 +456,9 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
  }
+ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
  
-+static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
-+{
-+	int err;
-+
-+	__release_bp_slot(bp, old_type);
-+
-+	err = __reserve_bp_slot(bp, bp->attr.bp_type);
-+	if (err) {
-+		/*
-+		 * Reserve the old_type slot back in case
-+		 * there's no space for the new type.
-+		 *
-+		 * This must succeed, because we just released
-+		 * the old_type slot in the __release_bp_slot
-+		 * call above. If not, something is broken.
-+		 */
-+		WARN_ON(__reserve_bp_slot(bp, old_type));
-+	}
-+
-+	return err;
-+}
-+
-+static int modify_bp_slot(struct perf_event *bp, u64 old_type)
-+{
-+	int ret;
-+
-+	mutex_lock(&nr_bp_mutex);
-+	ret = __modify_bp_slot(bp, old_type);
-+	mutex_unlock(&nr_bp_mutex);
-+	return ret;
-+}
-+
- /*
-  * Allow the kernel debugger to reserve breakpoint slots without
-  * taking a lock using the dbg_* variant of for the reserve and
-@@ -435,6 +468,7 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+-static int __modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
++static int
++modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
++			        bool check)
+ {
  	u64 old_addr = bp->attr.bp_addr;
- 	u64 old_len = bp->attr.bp_len;
- 	int old_type = bp->attr.bp_type;
-+	bool modify = attr->bp_type != old_type;
- 	int err = 0;
- 
- 	/*
-@@ -452,12 +486,9 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	u64 old_len  = bp->attr.bp_len;
+@@ -468,6 +470,9 @@ static int __modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_
  	bp->attr.bp_type = attr->bp_type;
- 	bp->attr.bp_len = attr->bp_len;
+ 	bp->attr.bp_len  = attr->bp_len;
  
--	if (attr->disabled)
--		goto end;
--
++	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
++		return -EINVAL;
++
  	err = validate_hw_breakpoint(bp);
--	if (!err)
--		perf_event_enable(bp);
-+	if (!err && modify)
-+		err = modify_bp_slot(bp, old_type);
+ 	if (!err && modify)
+ 		err = modify_bp_slot(bp, old_type);
+@@ -505,7 +510,7 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	else
+ 		perf_event_disable(bp);
+ 
+-	err = __modify_user_hw_breakpoint(bp, attr);
++	err = modify_user_hw_breakpoint_check(bp, attr, false);
  
  	if (err) {
- 		bp->attr.bp_addr = old_addr;
-@@ -469,9 +500,10 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
- 		return err;
- 	}
- 
--end:
--	bp->attr.disabled = attr->disabled;
-+	if (!attr->disabled)
-+		perf_event_enable(bp);
- 
-+	bp->attr.disabled = attr->disabled;
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
+ 		if (!bp->attr.disabled)
