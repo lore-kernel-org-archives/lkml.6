@@ -1,299 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752209AbeCMIpO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:45:14 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54333 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751735AbeCMIpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:45:12 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Yannick FERTRE <yannick.fertre@st.com>,
-        Vikas MANOCHA <vikas.manocha@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philippe CORNU <philippe.cornu@st.com>,
-        Patrick DELAUNAY <patrick.delaunay@st.com>,
-        Christophe KERELLO <christophe.kerello@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Albert Aribaud <albert.u.boot@aribaud.net>,
-        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 01/10] video: stm32: stm32_ltdc: add bridge to display
- controller
-Thread-Topic: [PATCH v2 01/10] video: stm32: stm32_ltdc: add bridge to display
- controller
-Thread-Index: AQHTsj1S72nZoEZhn0+9yU4bV7f4F6PN2daA
-Date: Tue, 13 Mar 2018 08:44:48 +0000
-Message-ID: <d1c334a4-9d90-841a-b993-290a441eee31@st.com>
-References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
- <1520005451-23217-2-git-send-email-yannick.fertre@st.com>
-In-Reply-To: <1520005451-23217-2-git-send-email-yannick.fertre@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D603F2B3E512854DAEF85098D0A0B5C2@st.com>
+        id S1752232AbeCMIrB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:47:01 -0400
+Received: from h1.radempa.de ([176.9.142.194]:54280 "EHLO mail.cosmopool.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751729AbeCMIrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 04:47:00 -0400
+From: Harald Geyer <harald@ccbib.org>
+To: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        info@olimex.com
+Subject: Re: [PATCH 1/5] arm64: dts: allwinner: a64: Add i2c0 pins
+In-reply-to: <5b7f1a15-011f-c386-4813-f0fb8a91dfd8@arm.com>
+References: <20180312161050.7647-1-harald@ccbib.org> <20180312161050.7647-2-harald@ccbib.org> <5b7f1a15-011f-c386-4813-f0fb8a91dfd8@arm.com>
+Comments: In-reply-to =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+   message dated "Tue, 13 Mar 2018 01:35:39 +0000."
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
- signatures=0
+Content-Type: text/plain; charset="UTF-8"
+Content-ID: <1493.1520930811.1@stardust.g4.wien.funkfeuer.at>
+Content-Transfer-Encoding: 8BIT
+Date: Tue, 13 Mar 2018 09:46:51 +0100
+Message-Id: <E1evfa8-0000O7-0e@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8jIru027854
 
-Hi Yannick
-
-On 03/02/2018 04:44 PM, yannick fertre wrote:
-> Manage a bridge insert between the display controller & a panel.
+André Przywara writes:
+> On 12/03/18 16:10, Harald Geyer wrote:
+> > Add the proper pin group node to reference in board files.
+> > 
+> > Signed-off-by: Harald Geyer <harald@ccbib.org>
 > 
-> Signed-off-by: yannick fertre <yannick.fertre@st.com>
-> ---
->   drivers/video/stm32/stm32_ltdc.c | 107 ++++++++++++++++++++++++++-------------
->   1 file changed, 71 insertions(+), 36 deletions(-)
+> That looks correct to me, so:
 > 
-> diff --git a/drivers/video/stm32/stm32_ltdc.c b/drivers/video/stm32/stm32_ltdc.c
-> index e160c77..bd9c0de 100644
-> --- a/drivers/video/stm32/stm32_ltdc.c
-> +++ b/drivers/video/stm32/stm32_ltdc.c
-> @@ -8,6 +8,7 @@
->   
->   #include <common.h>
->   #include <clk.h>
-> +#include <display.h>
->   #include <dm.h>
->   #include <panel.h>
->   #include <reset.h>
-> @@ -15,12 +16,12 @@
->   #include <asm/io.h>
->   #include <asm/arch/gpio.h>
->   #include <dm/device-internal.h>
-> +#include <video_bridge.h>
->   
->   DECLARE_GLOBAL_DATA_PTR;
->   
->   struct stm32_ltdc_priv {
->   	void __iomem *regs;
-> -	struct display_timing timing;
->   	enum video_log2_bpp l2bpp;
->   	u32 bg_col_argb;
->   	u32 crop_x, crop_y, crop_w, crop_h;
-> @@ -210,23 +211,23 @@ static void stm32_ltdc_enable(struct stm32_ltdc_priv *priv)
->   	setbits_le32(priv->regs + LTDC_GCR, GCR_LTDCEN);
->   }
->   
-> -static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv)
-> +static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv,
-> +				struct display_timing *timings)
->   {
->   	void __iomem *regs = priv->regs;
-> -	struct display_timing *timing = &priv->timing;
->   	u32 hsync, vsync, acc_hbp, acc_vbp, acc_act_w, acc_act_h;
->   	u32 total_w, total_h;
->   	u32 val;
->   
->   	/* Convert video timings to ltdc timings */
-> -	hsync = timing->hsync_len.typ - 1;
-> -	vsync = timing->vsync_len.typ - 1;
-> -	acc_hbp = hsync + timing->hback_porch.typ;
-> -	acc_vbp = vsync + timing->vback_porch.typ;
-> -	acc_act_w = acc_hbp + timing->hactive.typ;
-> -	acc_act_h = acc_vbp + timing->vactive.typ;
-> -	total_w = acc_act_w + timing->hfront_porch.typ;
-> -	total_h = acc_act_h + timing->vfront_porch.typ;
-> +	hsync = timings->hsync_len.typ - 1;
-> +	vsync = timings->vsync_len.typ - 1;
-> +	acc_hbp = hsync + timings->hback_porch.typ;
-> +	acc_vbp = vsync + timings->vback_porch.typ;
-> +	acc_act_w = acc_hbp + timings->hactive.typ;
-> +	acc_act_h = acc_vbp + timings->vactive.typ;
-> +	total_w = acc_act_w + timings->hfront_porch.typ;
-> +	total_h = acc_act_h + timings->vfront_porch.typ;
->   
->   	/* Synchronization sizes */
->   	val = (hsync << 16) | vsync;
-> @@ -248,14 +249,14 @@ static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv)
->   
->   	/* Signal polarities */
->   	val = 0;
-> -	debug("%s: timing->flags 0x%08x\n", __func__, timing->flags);
-> -	if (timing->flags & DISPLAY_FLAGS_HSYNC_HIGH)
-> +	debug("%s: timing->flags 0x%08x\n", __func__, timings->flags);
-> +	if (timings->flags & DISPLAY_FLAGS_HSYNC_HIGH)
->   		val |= GCR_HSPOL;
-> -	if (timing->flags & DISPLAY_FLAGS_VSYNC_HIGH)
-> +	if (timings->flags & DISPLAY_FLAGS_VSYNC_HIGH)
->   		val |= GCR_VSPOL;
-> -	if (timing->flags & DISPLAY_FLAGS_DE_HIGH)
-> +	if (timings->flags & DISPLAY_FLAGS_DE_HIGH)
->   		val |= GCR_DEPOL;
-> -	if (timing->flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
-> +	if (timings->flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
->   		val |= GCR_PCPOL;
->   	clrsetbits_le32(regs + LTDC_GCR,
->   			GCR_HSPOL | GCR_VSPOL | GCR_DEPOL | GCR_PCPOL, val);
-> @@ -331,7 +332,11 @@ static int stm32_ltdc_probe(struct udevice *dev)
->   	struct video_uc_platdata *uc_plat = dev_get_uclass_platdata(dev);
->   	struct video_priv *uc_priv = dev_get_uclass_priv(dev);
->   	struct stm32_ltdc_priv *priv = dev_get_priv(dev);
-> -	struct udevice *panel;
-> +#ifdef CONFIG_VIDEO_BRIDGE
-> +	struct udevice *bridge = NULL;
-> +#endif
-> +	struct udevice *panel = NULL;
-> +	struct display_timing timings;
->   	struct clk pclk;
->   	struct reset_ctl rst;
->   	int rate, ret;
-> @@ -364,63 +369,93 @@ static int stm32_ltdc_probe(struct udevice *dev)
->   	/* Reset */
->   	reset_deassert(&rst);
->   
-> -	ret = uclass_first_device(UCLASS_PANEL, &panel);
-> +#ifdef CONFIG_VIDEO_BRIDGE
-> +	ret = uclass_get_device(UCLASS_VIDEO_BRIDGE, 0, &bridge);
->   	if (ret) {
-> -		debug("%s: panel device error %d\n", __func__, ret);
-> -		return ret;
-> +		debug("%s: No video bridge, or no backlight on bridge\n",
-> +		      __func__);
->   	}
->   
-> -	ret = panel_enable_backlight(panel);
-> +	if (bridge) {
-> +		ret = video_bridge_attach(bridge);
-> +		if (ret) {
-> +			debug("%s: fail to attach bridge\n", __func__);
-
-I would replace debug by dev_err() here.
-
-> +			return ret;
-> +		}
-> +	}
-> +#endif
-> +	ret = uclass_first_device(UCLASS_PANEL, &panel);
->   	if (ret) {
-> -		debug("%s: panel %s enable backlight error %d\n",
-> -		      __func__, panel->name, ret);
-> +		debug("%s: panel device error %d\n", __func__, ret);
-
-Ditto
-
->   		return ret;
->   	}
->   
-> -	ret = fdtdec_decode_display_timing(gd->fdt_blob,
-> -					   dev_of_offset(dev), 0,
-> -					   &priv->timing);
-> +	ret = fdtdec_decode_display_timing(gd->fdt_blob, dev_of_offset(panel),
-> +					   0, &timings);
->   	if (ret) {
->   		debug("%s: decode display timing error %d\n",
->   		      __func__, ret);
-> -		return -EINVAL;
-
-Ditto
-
-> +		return ret;
->   	}
->   
-> -	rate = clk_set_rate(&pclk, priv->timing.pixelclock.typ);
-> +	rate = clk_set_rate(&pclk, timings.pixelclock.typ);
->   	if (rate < 0) {
->   		debug("%s: fail to set pixel clock %d hz %d hz\n",
-> -		      __func__, priv->timing.pixelclock.typ, rate);
-> +		      __func__, timings.pixelclock.typ, rate);
-
-Ditto
-
->   		return rate;
->   	}
->   
->   	debug("%s: Set pixel clock req %d hz get %d hz\n", __func__,
-> -	      priv->timing.pixelclock.typ, rate);
-> +	      timings.pixelclock.typ, rate);
->   
->   	/* TODO Below parameters are hard-coded for the moment... */
->   	priv->l2bpp = VIDEO_BPP16;
->   	priv->bg_col_argb = 0xFFFFFFFF; /* white no transparency */
->   	priv->crop_x = 0;
->   	priv->crop_y = 0;
-> -	priv->crop_w = priv->timing.hactive.typ;
-> -	priv->crop_h = priv->timing.vactive.typ;
-> +	priv->crop_w = timings.hactive.typ;
-> +	priv->crop_h = timings.vactive.typ;
->   	priv->alpha = 0xFF;
->   
->   	debug("%s: %dx%d %dbpp frame buffer at 0x%lx\n", __func__,
-> -	      priv->timing.hactive.typ, priv->timing.vactive.typ,
-> +	      timings.hactive.typ, timings.vactive.typ,
->   	      VNBITS(priv->l2bpp), uc_plat->base);
->   	debug("%s: crop %d,%d %dx%d bg 0x%08x alpha %d\n", __func__,
->   	      priv->crop_x, priv->crop_y, priv->crop_w, priv->crop_h,
->   	      priv->bg_col_argb, priv->alpha);
->   
->   	/* Configure & start LTDC */
-> -	stm32_ltdc_set_mode(priv);
-> +	stm32_ltdc_set_mode(priv, &timings);
->   	stm32_ltdc_set_layer1(priv, uc_plat->base);
->   	stm32_ltdc_enable(priv);
->   
-> -	uc_priv->xsize = priv->timing.hactive.typ;
-> -	uc_priv->ysize = priv->timing.vactive.typ;
-> +	uc_priv->xsize = timings.hactive.typ;
-> +	uc_priv->ysize = timings.vactive.typ;
->   	uc_priv->bpix = priv->l2bpp;
->   
-> +#ifdef CONFIG_VIDEO_BRIDGE
-> +	if (bridge) {
-> +		ret = video_bridge_set_backlight(bridge, 80);
-> +		if (ret) {
-> +			debug("%s: fail to set backlight\n", __func__);
-
-Ditto
-
-> +			return ret;
-> +		}
-> +	} else {
-> +		ret = panel_enable_backlight(panel);
-> +		if (ret) {
-> +			debug("%s: panel %s enable backlight error %d\n",
-> +			      __func__, panel->name, ret);
-
-Ditto
-
-> +			return ret;
-> +		}
-> +	}
-> +#else
-> +	ret = panel_enable_backlight(panel);
-> +	if (ret) {
-> +		debug("%s: panel %s enable backlight error %d\n",
-> +		      __func__, panel->name, ret);
-
-Ditto
-
-> +		return ret;
-> +	}
-> +#endif
->   	video_set_flush_dcache(dev, true);
->   
->   	return 0;
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 > 
+> But out of curiosity, what is this used for? In patch 5/5 I see it being
+> used, but without a clue for what? Shouldn't enabling an I2C node be
+> accompanied by some child node, presenting the device on the bus?
+> I guess this I2C is not on some kind of "header" on that laptop?
+
+I enabled it because the ANX6345 eDP-bridge is on that bus. There is
+no linux (mainline) driver for this chip at the moment, the bootloader
+initializes it. However I'm using the i2c-dev driver to read (and maybe)
+change some register values from user space.
+
+i2cdetect sees devices at 0x38, 0x39 and 0x3d - all of which might
+be the ANX6345. I haven't looked into this in detail.
+
+Since you are asking: Actually the teres has a "header" with usb-otg,
+spi, i2c1 and some gpios, but it isn't exposed on the exterior of the
+case and nothing is connected to it. So I didn't bother with adding
+nodes for this in DT. Curious what olimex are planning to do with that.
+
+Thanks for your review,
+Harald
+
+> Cheers,
+> Andre.
+> 
+> > ---
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > index 1b6dc31e7d91..64e452a758fa 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > @@ -309,6 +309,11 @@
+> >  			interrupt-controller;
+> >  			#interrupt-cells = <3>;
+> >  
+> > +			i2c0_pins: i2c0_pins {
+> > +				pins = "PH0", "PH1";
+> > +				function = "i2c0";
+> > +			};
+> > +
+> >  			i2c1_pins: i2c1_pins {
+> >  				pins = "PH2", "PH3";
+> >  				function = "i2c1";
+> > 
+> 
+
+-- 
+If you want to support my work:
+see http://friends.ccbib.org/harald/supporting/
+or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
