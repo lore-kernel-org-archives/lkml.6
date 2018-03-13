@@ -1,108 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752991AbeCMVYP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:24:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55528 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752946AbeCMVYO (ORCPT
+        id S932546AbeCMV0F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 17:26:05 -0400
+Received: from smtprelay0041.hostedemail.com ([216.40.44.41]:35039 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932257AbeCMV0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:24:14 -0400
-Date: Tue, 13 Mar 2018 14:24:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        m.mizuma@jp.fujitsu.com, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [v5 1/2] mm: disable interrupts while initializing deferred
- pages
-Message-Id: <20180313142412.d373318b81164c4cb4b864b3@linux-foundation.org>
-In-Reply-To: <ff16234e-eb45-ca99-bfec-6d33967e9c8f@oracle.com>
-References: <20180309220807.24961-1-pasha.tatashin@oracle.com>
-        <20180309220807.24961-2-pasha.tatashin@oracle.com>
-        <20180312130410.e2fce8e5e38bc2086c7fd924@linux-foundation.org>
-        <20180313160430.hbjnyiazadt3jwa6@xakep.localdomain>
-        <20180313115549.7badec1c6b85eb5a1cf21eb6@linux-foundation.org>
-        <20180313194546.k62tni4g4gnds2nx@xakep.localdomain>
-        <20180313131156.f156abe1822a79ec01c4800a@linux-foundation.org>
-        <ff16234e-eb45-ca99-bfec-6d33967e9c8f@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Mar 2018 17:26:04 -0400
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 2,-10,0,,d41d8cd98f00b204,shea@shealevy.com,::::::::::::::,RULES_HIT:41:334:355:368:369:379:599:800:871:960:967:973:988:989:1000:1260:1263:1313:1314:1345:1359:1437:1516:1518:1535:1543:1575:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2559:2567:2682:2685:2693:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3355:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4362:4605:4860:5007:6117:6119:6261:6506:6747:7281:7875:7903:7909:7974:8531:8660:9010:9025:9040:9388:10004:10049:10848:11026:11232:11473:11658:11914:12043:12048:12050:12291:12379:12438:12555:12683:12776:12895:13148:13161:13229:13230:14096:14106:14107:14180:14181:14721:14849:21063:21080:21325:21433:21451:21627:21740:30054:30060:30089:30090,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: dime70_34c3d92a9e637
+X-Filterd-Recvd-Size: 5423
+From: Shea Levy <shea@shealevy.com>
+To: Zong Li <zong@andestech.com>, palmer@sifive.com, albert@sifive.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zong@andestech.com, zongbox@gmail.com
+Cc: greentime@andestech.com
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <cover.1520928420.git.zong@andestech.com>
+References: <cover.1520928420.git.zong@andestech.com>
+Date: Tue, 13 Mar 2018 17:26:01 -0400
+Message-ID: <87vadzzmza.fsf@xps13.shealevy.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 16:43:47 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > Soft lockup: kernel has run for too long without rescheduling
-> > Hard lockup: kernel has run for too long with interrupts disabled
-> > 
-> > Both of these are detected by the NMI watchdog handler.
-> > 
-> > 9b6e63cbf85b89b2d fixes a soft lockup by adding a manual rescheduling
-> > point.  Replacing that with touch_nmi_watchdog() won't work (I think). 
-> > Presumably calling touch_softlockup_watchdog() will "work", in that it
-> > suppresses the warning.  But it won't fix the thing which the warning
-> > is actually warning about: starvation of the CPU scheduler.  That's
-> > what the cond_resched() does.
-> 
-> But, unlike memmap_init_zone(), which can be used after boot, here we do
-> not worry about kernel running for too long.  This is because we are
-> booting, and no user programs are running.
-> 
-> So, it is acceptable to have a long uninterruptible span, as long
-> as we making a useful progress. BTW, the boot CPU still has
-> interrupts enabled during this span.
-> 
-> Comment in: include/linux/nmi.h, states:
-> 
->  * If the architecture supports the NMI watchdog, touch_nmi_watchdog()
->  * may be used to reset the timeout - for code which intentionally
->  * disables interrupts for a long time. This call is stateless.
-> 
-> Which is exactly what we are trying to do here, now that these threads
-> run with interrupts disabled.
-> 
-> Before, where they were running with interrupts enabled, and
-> cond_resched() was enough to satisfy soft lockups.
+Hello!
 
-hm, maybe.  But I'm not sure that touch_nmi_watchdog() will hold off a
-soft lockup warning.  Maybe it will.
+You may be interested in my recent patchset [1], which has known issues
+but addresses the same problems yours does. It differs in the approach
+taken here in that, rather than supporting GOT/PLT handling which we
+can't really take advantage of anyway, we simply build non-PIC modules
+instead [2]. Additionally, I see your patchset has the same concern mine
+does, which is that ignoring ALIGN relaxations is not actually an option
+[3]. The approach I plan to take is outlined by Palmer at [4].
 
-And please let's get the above thoughts into the changlog.
+As of now I hope to get back to my patchset this weekend, but if you're
+close to a complete implementation by then maybe I can avoid duplicating
+the work ;)
 
-> > 
-> > I'm not sure what to suggest, really.  Your changelog isn't the best:
-> > "Vlastimil Babka reported about a window issue during which when
-> > deferred pages are initialized, and the current version of on-demand
-> > initialization is finished, allocations may fail".  Well...  where is
-> > ths mysterious window?  Without such detail it's hard for others to
-> > suggest alternative approaches.
-> 
-> Here is hopefully a better description of the problem:
-> 
-> Currently, during boot we preinitialize some number of struct pages to satisfy all boot allocations. Even if these allocations happen when we initialize the reset of deferred pages in page_alloc_init_late(). The problem is that we do not know how much kernel will need, and it also depends on various options.
-> 
-> So, with this work, we are changing this behavior to initialize struct pages on-demand, only when allocations happen.
-> 
-> During boot, when we try to allocate memory, the on-demand struct page initialization code takes care of it. But, once the deferred pages are initializing in:
-> 
-> page_alloc_init_late()
->    for_each_node_state(nid, N_MEMORY)
->       kthread_run(deferred_init_memmap())
-> 
-> We cannot use on-demand initialization, as these threads resize pgdat.
-> 
-> This whole thing is to take care of this time.
-> 
-> My first version of on-demand deferred page initialization would simply fail to allocate memory during this period of time. But, this new version waits for threads to finish initializing deferred memory, and successfully perform the allocation.
-> 
-> Because interrupt handler would wait for pgdat resize lock.
+Thanks,
+Shea
 
-OK, thanks.  Please also add to changelog.
+[1]: http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.=
+html
+[2]: http://lists.infradead.org/pipermail/linux-riscv/2018-February/000080.=
+html
+[3]: http://lists.infradead.org/pipermail/linux-riscv/2018-February/000105.=
+html
+[4]: http://lists.infradead.org/pipermail/linux-riscv/2018-March/000147.html
+Zong Li <zong@andestech.com> writes:
+
+> These patches resolve the some issues of loadable module.
+>   - symbol out of ranges
+>   - unknown relocation types
+>
+> The reference of external variable and function symbols
+> cannot exceed 32-bit offset ranges in kernel module.
+> The module only can work on the 32-bit OS or the 64-bit
+> OS with sv32 virtual addressing.
+>
+> These patches will generate the .got, .got.plt and
+> .plt sections during loading module, let it can refer
+> to the symbol which locate more than 32-bit offset.
+> These sections depend on the relocation types:
+>  - R_RISCV_GOT_HI20
+>  - R_RISCV_CALL_PLT
+>
+> These patches also support more relocation types
+>  - R_RISCV_CALL
+>  - R_RISCV_HI20
+>  - R_RISCV_LO12_I
+>  - R_RISCV_LO12_S
+>  - R_RISCV_RVC_BRANCH
+>  - R_RISCV_RVC_JUMP
+>  - R_RISCV_ALIGN
+>  - R_RISCV_ADD32
+>  - R_RISCV_SUB32
+>
+> Zong Li (11):
+>   RISC-V: Add sections of PLT and GOT for kernel module
+>   RISC-V: Add section of GOT.PLT for kernel module
+>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>   RISC-V: Support CALL relocation type in kernel module
+>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>   RISC-V: Support ALIGN relocation type in kernel module
+>   RISC-V: Support ADD32 relocation type in kernel module
+>   RISC-V: Support SUB32 relocation type in kernel module
+>   RISC-V: Enable module support in defconfig
+>   RISC-V: Add definition of relocation types
+>
+>  arch/riscv/Kconfig                  |   5 ++
+>  arch/riscv/Makefile                 |   3 +
+>  arch/riscv/configs/defconfig        |   2 +
+>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>  arch/riscv/kernel/Makefile          |   1 +
+>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++=
+++
+>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++=
+++++--
+>  arch/riscv/kernel/module.lds        |   8 ++
+>  9 files changed, 480 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/module.h
+>  create mode 100644 arch/riscv/kernel/module-sections.c
+>  create mode 100644 arch/riscv/kernel/module.lds
+>
+> --=20
+> 2.16.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6ESKvwKkwnxgMLnaXAvWlX2G/icFAlqoQekACgkQXAvWlX2G
+/icQMg//Veuyxbf/COwIXZiii1KT+useeuSQjczLLKn90qwPc/5zeI2slINzxVWl
+LWEjZ7P4KYwXjvGBpqpjUeJGR6M6lQgtVoF4n7srqibLox03f4P5E6nOZ4fRSqo+
+wcLVNt2hzPJAfNjwh1/BInl3VwzvAKsXvGbVOEAXlXwYy4r3MlJ1+qoK5bQ+9JGT
+6sRAyOt+9PV8NKwrvvfwhoqTFfFRh3lXSoRPBYV8FezyJ9cia7868tlSKydig4CS
+6MxYTfYkc1q3N1Fn1/jZ8JbcHteWIQTLDatBsTWcuO0lcCdMN9QuFiBz3KwxCtuo
+iblZcE3VBqn7MNnFtdTOZZk0sC9fNBC9hbp+TCwXtuWA3AhCk6dPC7a9AGC1iz8z
+gll10K585IYBwy4u+HAzV7kBNhuEC93yf1LSQ83vXlSVSl/roycOluYLBV3rif82
+ATuPptNGYdjPoIHBEAZ2szeIazOHYtxtiNDoIp9/pi32Qv6kQnMIaeC7EL4lMw9S
+4FClEOMTIyaKIG1qvG11dkBFkPkXda0tVwmghPBB9SScBuHJD54CTSaFVuWy8SFy
+Y/6G5DyLBXAfNJf7FakHV0gADfAkSzo5X46hYqMKQP4WrfUhPVX1JKcvrmERQu7k
+bYpk+VMJYfjswIDjv32fCa+jddsMhIMD7o36clepefL2i38rf6s=
+=lysD
+-----END PGP SIGNATURE-----
+--=-=-=--
