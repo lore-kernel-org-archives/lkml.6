@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeCMNvN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:51:13 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48043 "EHLO
+        id S1753032AbeCMNv3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:51:29 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27257 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752942AbeCMNu5 (ORCPT
+        by vger.kernel.org with ESMTP id S1752906AbeCMNuy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:50:57 -0400
+        Tue, 13 Mar 2018 09:50:54 -0400
 From: yannick fertre <yannick.fertre@st.com>
 To: Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
@@ -29,9 +29,9 @@ To: Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
         Thierry Reding <thierry.reding@gmail.com>
 CC: <u-boot@lists.denx.de>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 10/10] board: Add STM32F769 SoC, discovery board support
-Date: Tue, 13 Mar 2018 14:50:13 +0100
-Message-ID: <1520949014-21468-15-git-send-email-yannick.fertre@st.com>
+Subject: [PATCH v3 08/10] arm: dts: stm32: add dsi for STM32F746
+Date: Tue, 13 Mar 2018 14:50:11 +0100
+Message-ID: <1520949014-21468-13-git-send-email-yannick.fertre@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
 References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
@@ -44,82 +44,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add mipi dsi bridge node in device-tree.
+
 Signed-off-by: yannick fertre <yannick.fertre@st.com>
 ---
- configs/stm32f769-disco_defconfig | 65 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 configs/stm32f769-disco_defconfig
+ arch/arm/dts/stm32f746.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/configs/stm32f769-disco_defconfig b/configs/stm32f769-disco_defconfig
-new file mode 100644
-index 0000000..01b3b51
---- /dev/null
-+++ b/configs/stm32f769-disco_defconfig
-@@ -0,0 +1,65 @@
-+CONFIG_ARM=y
-+CONFIG_STM32=y
-+CONFIG_SYS_TEXT_BASE=0x08008000
-+CONFIG_SYS_MALLOC_F_LEN=0xC00
-+CONFIG_STM32F7=y
-+CONFIG_TARGET_STM32F746_DISCO=y
-+CONFIG_DEFAULT_DEVICE_TREE="stm32f769-disco"
-+CONFIG_ENV_VARS_UBOOT_CONFIG=y
-+CONFIG_BOOTDELAY=3
-+CONFIG_USE_BOOTARGS=y
-+CONFIG_BOOTARGS="console=ttyS0,115200 earlyprintk consoleblank=0 ignore_loglevel"
-+# CONFIG_DISPLAY_CPUINFO is not set
-+# CONFIG_DISPLAY_BOARDINFO is not set
-+CONFIG_BOARD_EARLY_INIT_F=y
-+CONFIG_HUSH_PARSER=y
-+CONFIG_SYS_PROMPT="U-Boot > "
-+CONFIG_AUTOBOOT_KEYED=y
-+CONFIG_AUTOBOOT_PROMPT="Hit SPACE in %d seconds to stop autoboot.\n"
-+CONFIG_AUTOBOOT_STOP_STR=" "
-+CONFIG_CMD_BOOTZ=y
-+CONFIG_CMD_GPT=y
-+# CONFIG_RANDOM_UUID is not set
-+CONFIG_CMD_MMC=y
-+CONFIG_CMD_SF=y
-+# CONFIG_CMD_SETEXPR is not set
-+CONFIG_CMD_DHCP=y
-+CONFIG_CMD_MII=y
-+CONFIG_CMD_PING=y
-+CONFIG_CMD_SNTP=y
-+CONFIG_CMD_DNS=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_BMP=y
-+CONFIG_CMD_TIMER=y
-+CONFIG_CMD_EXT2=y
-+CONFIG_CMD_EXT4=y
-+CONFIG_CMD_FAT=y
-+CONFIG_CMD_FS_GENERIC=y
-+# CONFIG_DOS_PARTITION is not set
-+# CONFIG_SPL_EFI_PARTITION is not set
-+CONFIG_OF_CONTROL=y
-+CONFIG_NET_RANDOM_ETHADDR=y
-+CONFIG_NETCONSOLE=y
-+# CONFIG_BLK is not set
-+CONFIG_DM_MMC=y
-+# CONFIG_SPL_DM_MMC is not set
-+CONFIG_ARM_PL180_MMCI=y
-+CONFIG_MTD=y
-+CONFIG_MTD_NOR_FLASH=y
-+CONFIG_DM_SPI_FLASH=y
-+CONFIG_SPI_FLASH=y
-+CONFIG_SPI_FLASH_STMICRO=y
-+CONFIG_DM_ETH=y
-+CONFIG_ETH_DESIGNWARE=y
-+# CONFIG_PINCTRL_FULL is not set
-+CONFIG_DM_SPI=y
-+CONFIG_STM32_QSPI=y
-+CONFIG_DM_VIDEO=y
-+CONFIG_BACKLIGHT_GPIO=y
-+CONFIG_VIDEO_LCD_ORISETECH_OTM8009A=y
-+CONFIG_VIDEO_STM32=y
-+CONFIG_VIDEO_STM32_DSI=y
-+CONFIG_VIDEO_STM32_MAX_XRES=480
-+CONFIG_VIDEO_STM32_MAX_YRES=800
-+CONFIG_OF_LIBFDT_OVERLAY=y
-+# CONFIG_EFI_LOADER is not set
+diff --git a/arch/arm/dts/stm32f746.dtsi b/arch/arm/dts/stm32f746.dtsi
+index 8581df9..3b8af67 100644
+--- a/arch/arm/dts/stm32f746.dtsi
++++ b/arch/arm/dts/stm32f746.dtsi
+@@ -339,6 +339,18 @@
+ 			u-boot,dm-pre-reloc;
+ 			status = "disabled";
+ 		};
++
++		dsi: dsi@40016c00 {
++			compatible = "st,stm32-dsi";
++			reg = <0x40016C00 0x800>;
++			resets = <&rcc STM32F7_APB2_RESET(DSI)>;
++			clocks =  <&rcc 0 STM32F7_APB2_CLOCK(DSI)>,
++				  <&rcc 0 STM32F7_APB2_CLOCK(LTDC)>,
++				  <&clk_hse>;
++			clock-names = "pclk", "px_clk", "ref";
++			u-boot,dm-pre-reloc;
++			status = "disabled";
++		};
+ 	};
+ };
+ 
 -- 
 1.9.1
