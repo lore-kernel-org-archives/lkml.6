@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974844; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974841; cv=none;
         d=google.com; s=arc-20160816;
-        b=KxlgLeoTg58zR3ZAI1xHkdkUjEd4pVR5Dnkf+xviM+bK4erBsTblKD5SI9wZxjoolG
-         vGPdDTJoX87NWM/DLAbWITcUIuhC27BItvS0PVHIzNu5qPBl4090COr/5TmaOjRmVwt6
-         Kqn3MJfnsKKyc027paEKo3k7xm7iVwuvYt7qc8d8di2/9tru5mV0VX5/iRP9gFJhBz/L
-         c7BlmPM8yPohQnvZcW0G83qVYZDHpxZulfOSdHO4Hze/Vuzg+h4PoOQ2G34Sj90JvBgC
-         /pFKY7MNiLFw2Ns/4AUyis18OdryhHFLA1t3Hj3MxS6AMKb6k+3loQmy2n8guSFrOMUJ
-         JD1A==
+        b=C/GY1aeY+lkbHFnkUvwHnYYzdtjMJSaY2DlfFbbB85MNjKrmavfTdyCQOeKSeVHjlY
+         BJ//SOXM71SZxibDhZMom3ibEqUKgV8cJNaai4eThOcHO5Ifa2doTswcY2XgyOTkm5yU
+         SJvxx5hYZF+P1U8hHWShqOvN2fzcW/w2VoIHevcAVCElFuYIyN6j4Hru5HV7qL5wLpOi
+         6v6E4pXWFLePuSMUU6BECc7iWzgs2badUI/PqIJcxgo49Z5zg0WsNwQYjPNDJdIwSZr0
+         6UwZo5+BEwnMWdlZv0R/+0sXwZ1h3WtWgT5jiJlBVp0fNrsbG0TtBXg1gp0UAVhr8lwF
+         /7Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=2R3+b5kQv464Cvv6Ut0q6JxMSxeora4f0vAEmykSms0=;
-        b=ZB5g5k4L8wdiwJSHPVQ5GiVonhv0KHi05qH508ti5+dUkOGEYK71a46/VNFY8YpLuq
-         mDOiXDOrr8LdDIlMu/fR6Bhjb6NpoWlCoIe2lZR+/VDK6I73r6FYdwJa/WZxZPgDrvqD
-         uvOlfqfkRZ/KHSqy/Qaii7pCrC7cmV9D8OGVMNuin4pZ0mZVRUYFKb+i76IydkFbZq6p
-         NpA6cs6Ogn6Y7GKOsNxW7T2Stjzd/PRyQH7vTUgb+6FGP/B2GXJFV783P8zMOwjprrOO
-         MqJF3EOvD8j9w8TuYD1kFogr/lb7W4WhLfGnRcUun7U8VoZh9wLQWuvWrc0Po5aqY43B
-         8M+A==
+        bh=8Z0HoSlEr/r8ueDJF32+0PobUO6ef1mKRTWK6wqcoxI=;
+        b=End0UGOPdXsLmu8wJj+Ts1uVXlwKYVewbySk9M22qWJEDC7WCqIPtwAmFvne52w6/9
+         c9We1+VAr+DbpevWCeNjH/Z9krVCugYJiki6v7s58pq8IDYpFh6AnpB0MvHB99sDYKfS
+         49XGWNsVbPDWnsHkWA76RcOD1u5KmzfKw6jp5jX77nz8jG5iTGBmkzVjjVRofNtOadjj
+         oJWabzVHZwXdQ8P6EJrCi/ZnIK6Q9m6zQr7c8S393i3/SqPUWm5sr3q8iiwASoncxSpd
+         TP7HShY3qLaWrZotLt91syd4hSCXGDskDGpZQo4noxDCH8GJT4bvSW4itU+9C64RLFZ3
+         jeMA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=v/I8n5DN;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=hSXI/bun;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=v/I8n5DN;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=hSXI/bun;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELvURsd1I4ov3EEA2/3HCS2l3aUZt8T1NKHcr3zqBgZsO6WbsluZG338hVXgoenaJ16v4Yetpg==
+X-Google-Smtp-Source: AG47ELv+64jFuN1zct6gdaeKaUsiiaPumXOOe0sZC84Ouz0jwCqAqJ8KYCtnnmRIi0TBaZBs505ZPA==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,338 +105,68 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 14/27] x86/percpu: Adapt percpu for PIE support
-Date: Tue, 13 Mar 2018 13:59:32 -0700
-Message-Id: <20180313205945.245105-15-thgarnie@google.com>
+Subject: [PATCH v2 13/27] x86/boot/64: Build head64.c as mcmodel large when PIE is enabled
+Date: Tue, 13 Mar 2018 13:59:31 -0700
+Message-Id: <20180313205945.245105-14-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857718634183352?=
-X-GMAIL-MSGID: =?utf-8?q?1594857718634183352?=
+X-GMAIL-THRID: =?utf-8?q?1594857715399097934?=
+X-GMAIL-MSGID: =?utf-8?q?1594857715399097934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Perpcu uses a clever design where the .percu ELF section has a virtual
-address of zero and the relocation code avoid relocating specific
-symbols. It makes the code simple and easily adaptable with or without
-SMP support.
+The __startup_64 function assumes all symbols have relocated addresses
+instead of the current boot virtual address. PIE generated code favor
+relative addresses making all virtual and physical address math incorrect.
+If PIE is enabled, build head64.c as mcmodel large instead to ensure absolute
+references on all memory access. Add a global __force_order variable required
+when using a large model with read_cr* functions.
 
-This design is incompatible with PIE because generated code always try to
-access the zero virtual address relative to the default mapping address.
-It becomes impossible when KASLR is configured to go below -2G. This
-patch solves this problem by removing the zero mapping and adapting the GS
-base to be relative to the expected address. These changes are done only
-when PIE is enabled. The original implementation is kept as-is
-by default.
-
-The assembly and PER_CPU macros are changed to use relative references
-when PIE is enabled.
-
-The KALLSYMS_ABSOLUTE_PERCPU configuration is disabled with PIE given
-percpu symbols are not absolute in this case.
+To build head64.c as mcmodel=large, disable the retpoline gcc flags.
+This code is used at early boot and removed later, it doesn't need
+retpoline mitigation.
 
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/entry/calling.h       |  2 +-
- arch/x86/entry/entry_64.S      |  4 ++--
- arch/x86/include/asm/percpu.h  | 25 +++++++++++++++++++------
- arch/x86/kernel/cpu/common.c   |  4 +++-
- arch/x86/kernel/head_64.S      |  4 ++++
- arch/x86/kernel/setup_percpu.c |  2 +-
- arch/x86/kernel/vmlinux.lds.S  | 13 +++++++++++--
- arch/x86/lib/cmpxchg16b_emu.S  |  8 ++++----
- arch/x86/xen/xen-asm.S         | 12 ++++++------
- init/Kconfig                   |  2 +-
- 10 files changed, 52 insertions(+), 24 deletions(-)
+ arch/x86/kernel/Makefile | 6 ++++++
+ arch/x86/kernel/head64.c | 3 +++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index be63330c5511..7b48d97111b5 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -216,7 +216,7 @@ For 32-bit we have the following conventions - kernel is built with
- .endm
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 29786c87e864..1ff6be34de66 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -22,6 +22,12 @@ CFLAGS_REMOVE_early_printk.o = -pg
+ CFLAGS_REMOVE_head64.o = -pg
+ endif
  
- #define THIS_CPU_user_pcid_flush_mask   \
--	PER_CPU_VAR(cpu_tlbstate) + TLB_STATE_user_pcid_flush_mask
-+	PER_CPU_VAR(cpu_tlbstate + TLB_STATE_user_pcid_flush_mask)
- 
- .macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req
- 	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index c53123468364..d34794368e20 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -358,7 +358,7 @@ ENTRY(__switch_to_asm)
- 
- #ifdef CONFIG_CC_STACKPROTECTOR
- 	movq	TASK_stack_canary(%rsi), %rbx
--	movq	%rbx, PER_CPU_VAR(irq_stack_union)+stack_canary_offset
-+	movq	%rbx, PER_CPU_VAR(irq_stack_union + stack_canary_offset)
- #endif
- 
- #ifdef CONFIG_RETPOLINE
-@@ -896,7 +896,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
- /*
-  * Exception entry points.
-  */
--#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
-+#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw + (TSS_ist + ((x) - 1) * 8))
- 
- .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
- ENTRY(\sym)
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index a06b07399d17..7d1271b536ea 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -5,9 +5,11 @@
- #ifdef CONFIG_X86_64
- #define __percpu_seg		gs
- #define __percpu_mov_op		movq
-+#define __percpu_rel		(%rip)
- #else
- #define __percpu_seg		fs
- #define __percpu_mov_op		movl
-+#define __percpu_rel
- #endif
- 
- #ifdef __ASSEMBLY__
-@@ -28,10 +30,14 @@
- #define PER_CPU(var, reg)						\
- 	__percpu_mov_op %__percpu_seg:this_cpu_off, reg;		\
- 	lea var(reg), reg
--#define PER_CPU_VAR(var)	%__percpu_seg:var
-+/* Compatible with Position Independent Code */
-+#define PER_CPU_VAR(var)		%__percpu_seg:(var)##__percpu_rel
-+/* Rare absolute reference */
-+#define PER_CPU_VAR_ABS(var)		%__percpu_seg:var
- #else /* ! SMP */
- #define PER_CPU(var, reg)	__percpu_mov_op $var, reg
--#define PER_CPU_VAR(var)	var
-+#define PER_CPU_VAR(var)	(var)##__percpu_rel
-+#define PER_CPU_VAR_ABS(var)	var
- #endif	/* SMP */
- 
- #ifdef CONFIG_X86_64_SMP
-@@ -209,27 +215,34 @@ do {									\
- 	pfo_ret__;					\
- })
- 
-+/* Position Independent code uses relative addresses only */
-+#ifdef CONFIG_X86_PIE
-+#define __percpu_stable_arg __percpu_arg(a1)
-+#else
-+#define __percpu_stable_arg __percpu_arg(P1)
-+#endif
++ifdef CONFIG_X86_PIE
++# Remove PIE and retpoline flags that are incompatible with mcmodel=large
++CFLAGS_REMOVE_head64.o += -fPIE -mindirect-branch=thunk-extern -mindirect-branch-register
++CFLAGS_head64.o = -mcmodel=large
++endif
 +
- #define percpu_stable_op(op, var)			\
- ({							\
- 	typeof(var) pfo_ret__;				\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b "__percpu_arg(P1)",%0"	\
-+		asm(op "b "__percpu_stable_arg ",%0"	\
- 		    : "=q" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 2:						\
--		asm(op "w "__percpu_arg(P1)",%0"	\
-+		asm(op "w "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 4:						\
--		asm(op "l "__percpu_arg(P1)",%0"	\
-+		asm(op "l "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 8:						\
--		asm(op "q "__percpu_arg(P1)",%0"	\
-+		asm(op "q "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 348cf4821240..0e9a87a34f76 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -487,7 +487,9 @@ void load_percpu_segment(int cpu)
- 	loadsegment(fs, __KERNEL_PERCPU);
- #else
- 	__loadsegment_simple(gs, 0);
--	wrmsrl(MSR_GS_BASE, (unsigned long)per_cpu(irq_stack_union.gs_base, cpu));
-+	wrmsrl(MSR_GS_BASE,
-+	       (unsigned long)per_cpu(irq_stack_union.gs_base, cpu) -
-+	       (unsigned long)__per_cpu_start);
- #endif
- 	load_stack_canary_segment();
- }
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 48652f3ec46a..87624e1fe22f 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -266,7 +266,11 @@ ENDPROC(start_cpu0)
- 	GLOBAL(initial_code)
- 	.quad	x86_64_start_kernel
- 	GLOBAL(initial_gs)
-+#ifdef CONFIG_X86_PIE
-+	.quad	0
-+#else
- 	.quad	INIT_PER_CPU_VAR(irq_stack_union)
-+#endif
- 	GLOBAL(initial_stack)
- 	/*
- 	 * The SIZEOF_PTREGS gap is a convention which helps the in-kernel
-diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
-index ea554f812ee1..f7655979f19a 100644
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -26,7 +26,7 @@
- DEFINE_PER_CPU_READ_MOSTLY(int, cpu_number);
- EXPORT_PER_CPU_SYMBOL(cpu_number);
+ KASAN_SANITIZE_head$(BITS).o				:= n
+ KASAN_SANITIZE_dumpstack.o				:= n
+ KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c855deee165..2fe60e661227 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -64,6 +64,9 @@ EXPORT_SYMBOL(vmemmap_base);
  
--#ifdef CONFIG_X86_64
-+#if defined(CONFIG_X86_64) && !defined(CONFIG_X86_PIE)
- #define BOOT_PERCPU_OFFSET ((unsigned long)__per_cpu_load)
- #else
- #define BOOT_PERCPU_OFFSET 0
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 1c43a2e839fa..4a5957900dcc 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -209,9 +209,14 @@ SECTIONS
- 	/*
- 	 * percpu offsets are zero-based on SMP.  PERCPU_VADDR() changes the
- 	 * output PHDR, so the next output section - .init.text - should
--	 * start another segment - init.
-+	 * start another segment - init. For Position Independent Code, the
-+	 * per-cpu section cannot be zero-based because everything is relative.
- 	 */
-+#ifdef CONFIG_X86_PIE
-+	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
-+#else
- 	PERCPU_VADDR(INTERNODE_CACHE_BYTES, 0, :percpu)
-+#endif
- 	ASSERT(SIZEOF(.data..percpu) < CONFIG_PHYSICAL_START,
- 	       "per-CPU data too large - increase CONFIG_PHYSICAL_START")
- #endif
-@@ -387,7 +392,11 @@ SECTIONS
-  * Per-cpu symbols which need to be offset from __per_cpu_load
-  * for the boot processor.
-  */
-+#ifdef CONFIG_X86_PIE
-+#define INIT_PER_CPU(x) init_per_cpu__##x = x
-+#else
- #define INIT_PER_CPU(x) init_per_cpu__##x = x + __per_cpu_load
-+#endif
- INIT_PER_CPU(gdt_page);
- INIT_PER_CPU(irq_stack_union);
+ #define __head	__section(.head.text)
  
-@@ -397,7 +406,7 @@ INIT_PER_CPU(irq_stack_union);
- . = ASSERT((_end - _text <= KERNEL_IMAGE_SIZE),
- 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
- 
--#ifdef CONFIG_SMP
-+#if defined(CONFIG_SMP) && !defined(CONFIG_X86_PIE)
- . = ASSERT((irq_stack_union == 0),
-            "irq_stack_union is not at start of per-cpu area");
- #endif
-diff --git a/arch/x86/lib/cmpxchg16b_emu.S b/arch/x86/lib/cmpxchg16b_emu.S
-index 9b330242e740..254950604ae4 100644
---- a/arch/x86/lib/cmpxchg16b_emu.S
-+++ b/arch/x86/lib/cmpxchg16b_emu.S
-@@ -33,13 +33,13 @@ ENTRY(this_cpu_cmpxchg16b_emu)
- 	pushfq
- 	cli
- 
--	cmpq PER_CPU_VAR((%rsi)), %rax
-+	cmpq PER_CPU_VAR_ABS((%rsi)), %rax
- 	jne .Lnot_same
--	cmpq PER_CPU_VAR(8(%rsi)), %rdx
-+	cmpq PER_CPU_VAR_ABS(8(%rsi)), %rdx
- 	jne .Lnot_same
- 
--	movq %rbx, PER_CPU_VAR((%rsi))
--	movq %rcx, PER_CPU_VAR(8(%rsi))
-+	movq %rbx, PER_CPU_VAR_ABS((%rsi))
-+	movq %rcx, PER_CPU_VAR_ABS(8(%rsi))
- 
- 	popfq
- 	mov $1, %al
-diff --git a/arch/x86/xen/xen-asm.S b/arch/x86/xen/xen-asm.S
-index 8019edd0125c..a5d73d3218be 100644
---- a/arch/x86/xen/xen-asm.S
-+++ b/arch/x86/xen/xen-asm.S
-@@ -21,7 +21,7 @@
- ENTRY(xen_irq_enable_direct)
- 	FRAME_BEGIN
- 	/* Unmask events */
--	movb $0, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	movb $0, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 
- 	/*
- 	 * Preempt here doesn't matter because that will deal with any
-@@ -30,7 +30,7 @@ ENTRY(xen_irq_enable_direct)
- 	 */
- 
- 	/* Test for pending */
--	testb $0xff, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_pending
-+	testb $0xff, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_pending)
- 	jz 1f
- 
- 	call check_events
-@@ -45,7 +45,7 @@ ENTRY(xen_irq_enable_direct)
-  * non-zero.
-  */
- ENTRY(xen_irq_disable_direct)
--	movb $1, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	movb $1, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	ret
- ENDPROC(xen_irq_disable_direct)
- 
-@@ -59,7 +59,7 @@ ENDPROC(xen_irq_disable_direct)
-  * x86 use opposite senses (mask vs enable).
-  */
- ENTRY(xen_save_fl_direct)
--	testb $0xff, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	testb $0xff, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	setz %ah
- 	addb %ah, %ah
- 	ret
-@@ -80,7 +80,7 @@ ENTRY(xen_restore_fl_direct)
- #else
- 	testb $X86_EFLAGS_IF>>8, %ah
- #endif
--	setz PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	setz PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	/*
- 	 * Preempt here doesn't matter because that will deal with any
- 	 * pending interrupts.  The pending check may end up being run
-@@ -88,7 +88,7 @@ ENTRY(xen_restore_fl_direct)
- 	 */
- 
- 	/* check for unmasked and pending */
--	cmpw $0x0001, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_pending
-+	cmpw $0x0001, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_pending)
- 	jnz 1f
- 	call check_events
- 1:
-diff --git a/init/Kconfig b/init/Kconfig
-index 221cac95044f..acc9087546ac 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1365,7 +1365,7 @@ config KALLSYMS_ALL
- config KALLSYMS_ABSOLUTE_PERCPU
- 	bool
- 	depends on KALLSYMS
--	default X86_64 && SMP
-+	default X86_64 && SMP && !X86_PIE
- 
- config KALLSYMS_BASE_RELATIVE
- 	bool
++/* Required for read_cr3 when building as PIE */
++unsigned long __force_order;
++
+ static void __head *fixup_pointer(void *ptr, unsigned long physaddr)
+ {
+ 	return ptr - (void *)_text + (void *)physaddr;
 -- 
 2.16.2.660.g709887971b-goog
