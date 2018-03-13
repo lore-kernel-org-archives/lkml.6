@@ -1,97 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeCMQvv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:51:51 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:49118 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752384AbeCMQvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:51:48 -0400
-Date: Tue, 13 Mar 2018 17:51:33 +0100
-From: Christian Brauner <christian.brauner@mailbox.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>,
-        containers@lists.linux-foundation.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4 v5] devpts: handle bind-mounts correctly
-Message-ID: <20180313165133.GA17319@mailbox.org>
-References: <20180313121713.32551-1-christian.brauner@ubuntu.com>
- <87y3iw0vz7.fsf@xmission.com>
+        id S933289AbeCMQwM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:52:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57434 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751936AbeCMQwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:52:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6929E60853
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87y3iw0vz7.fsf@xmission.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [RESEND] rsi: Remove stack VLA usage
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1520819022-15238-1-git-send-email-me@tobin.cc>
+References: <1520819022-15238-1-git-send-email-me@tobin.cc>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: "Tobin C. Harding" <me@tobin.cc>, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180313165208.07EFA60A24@smtp.codeaurora.org>
+Date: Tue, 13 Mar 2018 16:52:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:41:00AM -0500, Eric W. Biederman wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> 
-> > Hey everyone,
-> >
-> > This is the fith iteration of this patch. Per-patch changes are
-> > summarized in the individual patches:
-> 
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> I guess we need to answer the question do I pick up this series or does
-> gregkh.  This series would seem to fit in his tty tree.
-> 
-> You haven't copied gregkh so you may need to resend and do that.
+"Tobin C. Harding" <me@tobin.cc> wrote:
 
-I'll resend and CC grekh now.
+> The kernel would like to have all stack VLA usage removed[1].  rsi uses
+> a VLA based on 'blksize'.  Elsewhere in the SDIO code maximum block size
+> is defined using a magic number.  We can use a pre-processor defined
+> constant and declare the array to maximum size.  We add a check before
+> accessing the array in case of programmer error.
+> 
+> [1]: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
 
-Christian
+There were conflicts. Can you rebase on top of wireless-drivers-next and
+resend, please?
 
-> 
-> Eric
-> 
-> 
-> > ChangeLog v4->v5:
-> > * added non-functional patch to document devpts_mntget().
-> >   Reason for putting this in a separate patch is that it allows you,
-> >   Linus and Eric, to simply drop it if judged useless.
-> > * reverse error handling logic to further simplify
-> > * dput() dentry in the non-function patch. This was not really a problem
-> >   since the following patch included a fix for it. But better to get it
-> >   right in all individual patches.
-> > * I did another rewrite of the problem analysis for
-> >   posterity in the patch "Subject: [PATCH 2/3 v3] devpts: resolve devpts
-> >   bind-mounts" and in this cover letter.
-> >
-> > ChangeLog v3->v4:
-> > * small logical simplifications
-> > * add test that bind-mounts of /dev/pts/ptmx to locations that do not
-> >   resolve to a valid slave pty path under the originating devpts mount
-> >   fail
-> >
-> > ChangeLog v2->v3:
-> > * rewritten commit message to thoroughly analyse the problem for
-> >   posterity in the patch "Subject: [PATCH 2/3 v3] devpts: resolve devpts
-> >   bind-mounts" and in this cover letter.
-> > * extended selftests to test for correct handling of /dev/pts/ptmx
-> >   bind-mounts to /dev/ptmx and non-standard devpts mounts such as
-> >   mount -t devpts devpts /mnt
-> >
-> > ChangeLog v1->v2:
-> > * see individual patches
-> > ChangeLog v0->v1:
-> > * see individual patches
-> >
-> > Christian Brauner (4):
-> >   devpts: hoist out check for DEVPTS_SUPER_MAGIC
-> >   devpts: resolve devpts bind-mounts
-> >   devpts: comment devpts_mntget()
-> >   selftests: add devpts selftests
-> >
-> >  fs/devpts/inode.c                                |  66 +++--
-> >  tools/testing/selftests/Makefile                 |   1 +
-> >  tools/testing/selftests/filesystems/.gitignore   |   1 +
-> >  tools/testing/selftests/filesystems/Makefile     |   2 +-
-> >  tools/testing/selftests/filesystems/devpts_pts.c | 313 +++++++++++++++++++++++
-> >  5 files changed, 363 insertions(+), 20 deletions(-)
-> >  create mode 100644 tools/testing/selftests/filesystems/devpts_pts.c
-> _______________________________________________
-> Containers mailing list
-> Containers@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/containers
+Recorded preimage for 'drivers/net/wireless/rsi/rsi_91x_sdio.c'
+error: Failed to merge in the changes.
+Applying: rsi: Remove stack VLA usage
+Using index info to reconstruct a base tree...
+M	drivers/net/wireless/rsi/rsi_91x_hal.c
+M	drivers/net/wireless/rsi/rsi_91x_sdio.c
+Falling back to patching base and 3-way merge...
+Auto-merging drivers/net/wireless/rsi/rsi_91x_sdio.c
+CONFLICT (content): Merge conflict in drivers/net/wireless/rsi/rsi_91x_sdio.c
+Auto-merging drivers/net/wireless/rsi/rsi_91x_hal.c
+Patch failed at 0001 rsi: Remove stack VLA usage
+The copy of the patch that failed is found in: .git/rebase-apply/patch
+
+Patch set to Changes Requested.
+
+-- 
+https://patchwork.kernel.org/patch/10274983/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
