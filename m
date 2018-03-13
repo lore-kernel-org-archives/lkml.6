@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955784-2-1858732361861742457
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955765-2-11696188490774045317
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955783; b=u2Z3TXgdTgdR2KhhrIX3rWYxsfQvNxvwL1sStPg0ep2l7pw
-    R/WqjkzstgI4xWITdjRaikhT7FmkAd/LYJfNUieUTHtMeYQiFA/Ur5IQfecr/J5K
-    6kLFtnnwgmgL3VBoqUKBanX3qRbzHhD1pydNRzBle4m1FslDS+OFo9Z4RRfQeorg
-    ARFRAJoNGt33zX90CkeCSdKJxYtnvIHWc13ySYLW743kIv/YOiexvj7bKej5aMit
-    KhcvGjqWv7WylpbhzLs2GdUXGoRtYM89/NiqWc/+ODoscfSK7Hdrt4p6yG+rtO/k
-    nIMR5/RoaSXONE+SVx87rcZu1mQrpufS1yDFiRg==
+    t=1520955764; b=ET6d5ipAR3DgiYCx1pQQxYlgbVh2P3di2jxgziLYIC06qq9
+    74HBNWyMThcSPPfFeYrcIDGKhYNqnvrPqVouhnhpqMMOwBG5+s8lKfMmp0B+TxMs
+    +sxm0LWtEH9fOeSw8/qkbaX/Q1N2UOLQB8kngVN3NMmuCphJmgOiH81u+gd+W4h7
+    rz3nlDPmINW2qNNDM+ZmAe4uCsjx34BzNPOn/wHACmUjkgn2H31+exl2XWr+fN2Z
+    KVz8ESgTyXd57DrnXRTIK0zCpzqqPdyN2wsbNOygAi69FPUh11EOqhEKAMqjMsSp
+    j+klGr965nh+75EwAu3x/2LftA5SEhlE8JvJV7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955783; bh=BsZEwWCChHKrWvCIlX67/R9l5u
-    byGwlgpTBSWk/OEsA=; b=LNdV8M2vWS/2d3gRNp5kwWQFKy+Qv8iCevbRC2y6IG
-    XZsMMTFExgUp5CdtCOiINAfvobV250p0ICZr9T//wNc/D9P/9OBA5xnnlrgEk9Tw
-    uPv6X3rxMqNu+h58Tr/uTgLkvkETfLn/U7x5a53QjITzjylamspXQ4UiZTX5+m2v
-    2dzhRh1fUiy9+ly5AL6Z2LISi55Axbdue25ERfQ8rAxk/Ov5t/NWZvPLiw3BCzIb
-    du6ZzRQJEcHQ/5wS6w9gFd8c7YxuNLVkE6NO5wE+vnY9ZgLzHJARluxUoOKw602L
-    a9sIhOdr67JCXE+DxC0oYeNdRqotspLwzeDs8NdPY3Yg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520955764; bh=/9TXWOjWI8E0raK5XKs9G1mD3Z
+    Kqk20WuJHYjNqmv+c=; b=Pg36TJxyDfKhPyS+tIf8b6v/+kCaH352cnXRgnhHus
+    VrldZ5MmUW0anEozCjQ5T3pE579NQr0Ls7EryaQQgmhKzKbAyaNVhYW86bSvCTPR
+    T6qHEaOzLeKvVa/ealr2HJuDLCqyFSgNBPKDj+nYj+yoa6jVHthRcXvvgEZbWF12
+    b7L+0OvDtJpTAJAsAmAeRCcHK+tUEhOizzwzcczNGkqgeMR9KRsFDB6YGpIRZP5x
+    2/kkOPmPfSlLHCfTwNlGpN7D1RY2LME+O0jCkAdKBbKWR1RACTgsDqYgd+myztFz
+    Am/SH+Ji1LCbeuYLOcdae0dB3HvD6S8SsF2EyDPo0OiA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934569AbeCMPmr (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:42:47 -0400
+        id S934680AbeCMPm2 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:42:28 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:37084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964857AbeCMPln (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:43 -0400
+        with ESMTP id S964864AbeCMPlo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Fries <cfries@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.14 134/140] kbuild: Set KBUILD_CFLAGS before incl. arch Makefile
-Date: Tue, 13 Mar 2018 16:25:37 +0100
-Message-Id: <20180313152507.186381599@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 140/140] x86/kprobes: Fix kernel crash when probing .entry_trampoline code
+Date: Tue, 13 Mar 2018 16:25:43 +0100
+Message-Id: <20180313152507.583580756@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -82,105 +91,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Fries <cfries@google.com>
+From: Francis Deslauriers <francis.deslauriers@efficios.com>
 
-commit ae6b289a37890909fea0e4a1666e19377fa0ed2c upstream.
+commit c07a8f8b08ba683ea24f3ac9159f37ae94daf47f upstream.
 
-Set the clang KBUILD_CFLAGS up before including arch/ Makefiles,
-so that ld-options (etc.) can work correctly.
+Disable the kprobe probing of the entry trampoline:
 
-This fixes errors with clang such as ld-options trying to CC
-against your host architecture, but LD trying to link against
-your target architecture.
+.entry_trampoline is a code area that is used to ensure page table
+isolation between userspace and kernelspace.
 
-Signed-off-by: Chris Fries <cfries@google.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+At the beginning of the execution of the trampoline, we load the
+kernel's CR3 register. This has the effect of enabling the translation
+of the kernel virtual addresses to physical addresses. Before this
+happens most kernel addresses can not be translated because the running
+process' CR3 is still used.
+
+If a kprobe is placed on the trampoline code before that change of the
+CR3 register happens the kernel crashes because int3 handling pages are
+not accessible.
+
+To fix this, add the .entry_trampoline section to the kprobe blacklist
+to prohibit the probing of code before all the kernel pages are
+accessible.
+
+Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: mathieu.desnoyers@efficios.com
+Cc: mhiramat@kernel.org
+Link: http://lkml.kernel.org/r/1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile |   64 +++++++++++++++++++++++++++++++--------------------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ arch/x86/include/asm/sections.h |    1 +
+ arch/x86/kernel/kprobes/core.c  |   10 +++++++++-
+ arch/x86/kernel/vmlinux.lds.S   |    2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -482,6 +482,38 @@ ifneq ($(KBUILD_SRC),)
- 	    $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
- endif
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -10,6 +10,7 @@ extern struct exception_table_entry __st
  
-+ifeq ($(cc-name),clang)
-+ifneq ($(CROSS_COMPILE),)
-+CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
-+GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
-+endif
-+ifneq ($(GCC_TOOLCHAIN),)
-+CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
-+endif
-+KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
-+KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
-+KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
-+KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
-+KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
-+KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
-+KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
-+# Quiet clang warning: comparison of unsigned expression < 0 is always false
-+KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
-+# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
-+# source of a reference will be _MergedGlobals and not on of the whitelisted names.
-+# See modpost pattern 2
-+KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
-+KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
-+KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
-+KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
-+else
-+
-+# These warnings generated too much noise in a regular build.
-+# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-+KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
-+KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
-+endif
-+
- ifeq ($(config-targets),1)
- # ===========================================================================
- # *config targets only - make sure prerequisites are updated, and descend
-@@ -692,38 +724,6 @@ ifdef CONFIG_CC_STACKPROTECTOR
- endif
- KBUILD_CFLAGS += $(stackp-flag)
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
++extern char __entry_trampoline_start[], __entry_trampoline_end[];
+ #endif
  
--ifeq ($(cc-name),clang)
--ifneq ($(CROSS_COMPILE),)
--CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
--GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
--endif
--ifneq ($(GCC_TOOLCHAIN),)
--CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
--endif
--KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
--KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
--KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
--KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
--KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
--KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
--# Quiet clang warning: comparison of unsigned expression < 0 is always false
--KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
--# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
--# source of a reference will be _MergedGlobals and not on of the whitelisted names.
--# See modpost pattern 2
--KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
--KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
--KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
--KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
--else
--
--# These warnings generated too much noise in a regular build.
--# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
--endif
--
- ifdef CONFIG_FRAME_POINTER
- KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
- else
+ #endif	/* _ASM_X86_SECTIONS_H */
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1149,10 +1149,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
+ 
+ bool arch_within_kprobe_blacklist(unsigned long addr)
+ {
++	bool is_in_entry_trampoline_section = false;
++
++#ifdef CONFIG_X86_64
++	is_in_entry_trampoline_section =
++		(addr >= (unsigned long)__entry_trampoline_start &&
++		 addr < (unsigned long)__entry_trampoline_end);
++#endif
+ 	return  (addr >= (unsigned long)__kprobes_text_start &&
+ 		 addr < (unsigned long)__kprobes_text_end) ||
+ 		(addr >= (unsigned long)__entry_text_start &&
+-		 addr < (unsigned long)__entry_text_end);
++		 addr < (unsigned long)__entry_text_end) ||
++		is_in_entry_trampoline_section;
+ }
+ 
+ int __init arch_init_kprobes(void)
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -118,9 +118,11 @@ SECTIONS
+ 
+ #ifdef CONFIG_X86_64
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
+ 		_entry_trampoline = .;
+ 		*(.entry_trampoline)
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
+ 		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+ #endif
+ 
