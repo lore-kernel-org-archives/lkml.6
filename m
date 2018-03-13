@@ -1,78 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeCMTKy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:10:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56548 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeCMTKw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:10:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 492BD60592
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
-Date: Tue, 13 Mar 2018 15:10:48 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752475AbeCMTNa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:13:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752000AbeCMTN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:13:28 -0400
+Date: Tue, 13 Mar 2018 20:12:42 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+        x86@kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on
+ Hyper-V
+Message-ID: <20180313191242.GB13426@flask>
+References: <20180309140249.2840-1-vkuznets@redhat.com>
+ <20180309140249.2840-8-vkuznets@redhat.com>
+ <alpine.DEB.2.21.1803091507300.1364@nanos.tec.linutronix.de>
+ <87r2opcr6u.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87r2opcr6u.fsf@vitty.brq.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/2018 2:44 PM, Logan Gunthorpe wrote:
->> Do you think you can keep a pointer to the parent bridge instead of querying it
->> via get_upstream_bridge_port() here so that we can reuse your
->> pci_p2pdma_disable_acs() in the future.
+2018-03-12 15:19+0100, Vitaly Kuznetsov:
+> Thomas Gleixner <tglx@linutronix.de> writes:
 > 
-> Keep a pointer where? pci_p2pdma_disable_acs() and pci_p2pdma_add_client() are used in completely different cases on completely different devices. There really is no overlap and no obvious place to store the port pointer (except in the struct pci_dev itself, in which case why not just call the function again).
+> > On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
+> >
+> >> Enlightened VMCS is just a structure in memory, the main benefit
+> >> besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
+> >> mask: we tell the underlying hypervisor which fields were modified
+> >> since VMEXIT so there's no need to inspect them all.
+> >> 
+> >> Tight CPUID loop test shows significant speedup:
+> >> Before: 18890 cycles
+> >> After: 8304 cycles
+> >> 
+> >> Static key is being used to avoid performance penalty for non-Hyper-V
+> >> deployments. Tests show we add around 3 (three) CPU cycles on each
+> >> VMEXIT (1077.5 cycles before, 1080.7 cycles after for the same CPUID
+> >> loop on bare metal). We can probably avoid one test/jmp in vmx_vcpu_run()
+> >> but I don't see a clean way to use static key in assembly.
+> >
+> > STATIC_JUMP_IF_TRUE, STATIC_JUMP_IF_FALSE are your friends.
+> >
+> 
+> Thanks for the tip,
+> 
+> with a single kernel user of these APIs it was easy to miss :-)
 
-I was thinking of this for the pci_p2pdma_add_client() case for the
-parent pointer.
+Indeed, I had no idea.
 
-+struct pci_p2pdma_client {
-+	struct list_head list;
-+	struct pci_dev *client;
-+	struct pci_dev *provider;
-+};
+> Unfortunately, these APIs are only present if HAVE_JUMP_LABEL and
+> (afaiu) we still care about KVM on !HAVE_JUMP_LABEL builds. It would be
+> nice if we can make them behave the same way static_branch_likely() and
+> friends do: compile into something else when !HAVE_JUMP_LABEL so we can
+> avoid nasty #ifdefs in C code.
+> 
+> That said I'd like to defer the question to KVM maintainers: Paolo,
+> Radim, what would you like me to do? Use STATIC_JUMP_IF_TRUE/FALSE as
+> they are, try to make them work for !HAVE_JUMP_LABEL and use them or
+> maybe we can commit the series as-is and have it as a future
+> optimization (e.g. when HAVE_JUMP_LABEL becomes mandatory)?
 
-You are right second code seems to be there to disable ACS altogether
-when this kernel configuration is selected.
+Please take a look into making a macro that uses STATIC_JUMP_IF_FALSE or
+reads the value from provided static_key and does a test-jump, depending
+on HAVE_JUMP_LABEL.
+It doesn't need to be suited for general use, just something that moves
+the ugliness away from vmx_vcpu_run.
+(Although having it in jump_label.h would be great. I think the main
+ obstacle is clobbering of flags.)
 
-It doesn't have any relationship to the client code.
+If it were still looking horrible, I'm ok with the series as-is,
 
-But then, Why bother searching for the switch at all?
-
-Even if the switch is there, there is no guarantee that it is currently
-being used for P2P.
-
-It seems that we are going with the assumption that enabling this config
-option implies you want P2P, then we can simplify this code as well.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+thanks.
