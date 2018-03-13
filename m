@@ -1,109 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeCMRQv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:16:51 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:35678 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeCMRQp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:16:45 -0400
-X-Google-Smtp-Source: AG47ELsWURopPfe291VeVNtVnHxIO73w8iMQ2JGWeVjv05Ag/V3LfF6bVDlA3IMiWsXEXE3BwGSmbFKSDxUaMSCXEOY=
+        id S1752551AbeCMRRA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:17:00 -0400
+Received: from mga11.intel.com ([192.55.52.93]:26462 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752136AbeCMRQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:16:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="207843765"
+Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+ <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <55123ef5-3287-d4c9-4499-62140c598474@linux.intel.com>
+Date: Tue, 13 Mar 2018 13:16:54 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
-References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com> <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 19:16:44 +0200
-Message-ID: <CAHp75VdK6qFopBE4rD4yNO5GHccxyte=GhYU7YGcWOEYSCyX8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iommu/amd - Add debugfs support
-To: Gary R Hook <gary.hook@amd.com>
-Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 2:50 AM, Gary R Hook <gary.hook@amd.com> wrote:
-
-> +       default n
-
-Redundant
 
 
-> +#include <linux/pci.h>
-> +#include <linux/iommu.h>
-> +#include <linux/debugfs.h>
+On 3/13/2018 11:58 AM, Andy Shevchenko wrote:
+> On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
+> 
+>> +#define SKX_CAPID6             0x9c
+>> +#define SKX_CHA_BIT_WIDTH      28
+>> +
+>>   static int skx_count_chabox(void)
+>>   {
+>> +       struct pci_dev *dev = NULL;
+>> +       u32 val = 0;
+>>
+> 
+>> +       dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
+>> +       if (!dev)
+>> +               return 0;
+> 
+> Where is pci_dev_put()?
+> 
+>>
+>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
+>> +       return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
+> 
+> UB is here.
+> Fix is simple, use unsigned long and drop this ugly casting.
+> 
 
-Keep in order?
+Thanks.
+I will fix them in V2.
 
-> +#include "amd_iommu_proto.h"
-> +#include "amd_iommu_types.h"
-
-> +/* DebugFS helpers */
-> +#define        OBUFP           (obuf + oboff)
-> +#define        OBUFLEN         obuflen
-> +#define        OBUFSPC         (OBUFLEN - oboff)
-> +#define        OSCNPRINTF(fmt, ...) \
-> +               scnprintf(OBUFP, OBUFSPC, fmt, ## __VA_ARGS__)
-
-I don't see any advantages of this. Other way around, they will simple
-makes things hard to read an understand in place.
-
-
-> +       for (i = start ; i <= end ; i++)
-
-Missed {}
-
-> +               if ((amd_iommu_dev_table[i].data[0] ^ 0x3)
-> +                   || amd_iommu_dev_table[i].data[1])
-> +                       n++;
-> +       return n;
-> +}
-
-> +
-> +static ssize_t amd_iommu_debugfs_dtecount_read(struct file *filp,
-> +                                         char __user *ubuf,
-> +                                         size_t count, loff_t *offp)
-> +{
-> +       struct amd_iommu *iommu = filp->private_data;
-
-> +       unsigned int obuflen = 512;
-
-Sounds like way too much.
-
-> +       if (!iommu)
-> +               return 0;
-
-When this possible?
-
-> +       obuf = kmalloc(OBUFLEN, GFP_KERNEL);
-> +       if (!obuf)
-> +               return -ENOMEM;
-> +
-> +       n = amd_iommu_count_valid_dtes(0, 0xFFFF);
-> +       oboff += OSCNPRINTF("%d\n", n);
-
-> +       return ret;
-> +}
-
-
-> @@ -89,6 +89,7 @@
->  #define ACPI_DEVFLAG_ATSDIS             0x10000000
->
->  #define LOOP_TIMEOUT   100000
-> +
->  /*
->   * ACPI table definitions
->   *
-
-Doesn't belong to the patch.
-
-> +#endif
-> +
-> +
-
-Extra unneeded line.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Kan
