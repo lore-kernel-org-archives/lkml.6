@@ -1,60 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752497AbeCMJfc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:35:32 -0400
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:42840 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752462AbeCMJfb (ORCPT
+        id S1752565AbeCMJgJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:36:09 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39224 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeCMJgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:35:31 -0400
-X-Google-Smtp-Source: AG47ELs7abY+JVuuKnY+xJ1UAfPD7bGgDT9YTJfJP7sT59VevCdXGjxtsT8TuZk+rT3ipxLJie9yRrxZ/UQz7wbFvhg=
+        Tue, 13 Mar 2018 05:36:06 -0400
+X-Google-Smtp-Source: AG47ELulhdVWGPVvfvgAfYgTsnGFXu7D+w1s4NvxWrGV+0PLXNRGj/Bjwreg910dGMZjdu7rA1/7Dg==
+Subject: Re: [PATCH 3/3] drm/meson: Fix some error handling paths in
+ 'meson_drv_bind_master()'
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie,
+        carlo@caione.org, khilman@baylibre.com
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
+ <df47e03d36c2cf7bc37ec3105fc47c16555bd946.1520885192.git.christophe.jaillet@wanadoo.fr>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <ed8b162c-ac19-bdbb-4da9-e891a4855d2d@baylibre.com>
+Date: Tue, 13 Mar 2018 10:36:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1520930375.20980.213.camel@gmail.com>
-References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com>
- <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
- <20180309012458.GD5228@ming.t460p> <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
- <20180309120833.GB30257@ming.t460p> <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
- <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com> <1520926721.20980.210.camel@gmail.com>
- <20180313083535.GA21612@ming.t460p> <1520930375.20980.213.camel@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Mar 2018 10:35:30 +0100
-X-Google-Sender-Auth: SeitA16DRFwuPp9fU5VqGs1PPuk
-Message-ID: <CAJZ5v0gcmkKVcgDBdt-aePgU0zvQwyf1yX5Qi_zRc1JfzaA5fg@mail.gmail.com>
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <df47e03d36c2cf7bc37ec3105fc47c16555bd946.1520885192.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 9:39 AM, Artem Bityutskiy <dedekind1@gmail.com> wrote:
-> On Tue, 2018-03-13 at 16:35 +0800, Ming Lei wrote:
->> Then looks this issue need to fix by making possible CPU count
->> accurate
->> because there are other resources allocated according to
->> num_possible_cpus(),
->> such as percpu variables.
->
-> Short term the regression should be fixed. It is already v4.16-rc6, we
-> have little time left.
+On 12/03/2018 21:15, Christophe JAILLET wrote:
+> If one of these functions fail, we whould free 'drm', as alreadry done in
+> the other error handling paths, below and above.
+> 
+> Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/meson/meson_drv.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+> index 6ee3dd7fa450..3baceb744beb 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -189,35 +189,43 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vpu");
+>  	regs = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(regs))
+> -		return PTR_ERR(regs);
+> +	if (IS_ERR(regs)) {
+> +		ret = PTR_ERR(regs);
+> +		goto free_drm;
+> +	}
+>  
+>  	priv->io_base = regs;
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+>  	/* Simply ioremap since it may be a shared register zone */
+>  	regs = devm_ioremap(dev, res->start, resource_size(res));
+> -	if (!regs)
+> -		return -EADDRNOTAVAIL;
+> +	if (!regs) {
+> +		ret = -EADDRNOTAVAIL;
+> +		goto free_drm;
+> +	}
+>  
+>  	priv->hhi = devm_regmap_init_mmio(dev, regs,
+>  					  &meson_regmap_config);
+>  	if (IS_ERR(priv->hhi)) {
+>  		dev_err(&pdev->dev, "Couldn't create the HHI regmap\n");
+> -		return PTR_ERR(priv->hhi);
+> +		ret = PTR_ERR(priv->hhi);
+> +		goto free_drm;
+>  	}
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
+>  	/* Simply ioremap since it may be a shared register zone */
+>  	regs = devm_ioremap(dev, res->start, resource_size(res));
+> -	if (!regs)
+> -		return -EADDRNOTAVAIL;
+> +	if (!regs) {
+> +		ret = -EADDRNOTAVAIL;
+> +		goto free_drm;
+> +	}
+>  
+>  	priv->dmc = devm_regmap_init_mmio(dev, regs,
+>  					  &meson_regmap_config);
+>  	if (IS_ERR(priv->dmc)) {
+>  		dev_err(&pdev->dev, "Couldn't create the DMC regmap\n");
+> -		return PTR_ERR(priv->dmc);
+> +		ret = PTR_ERR(priv->dmc);
+> +		goto free_drm;
+>  	}
+>  
+>  	priv->vsync_irq = platform_get_irq(pdev, 0);
+> 
 
-Right.
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-> Longer term, yeah, I agree. Kernel's notion of possible CPU count
-> should be realistic.
-
-I agree.
-
-Moreover, there are not too many systems where physical CPU hotplug
-actually works in practice AFAICS, so IMO we should default to "no
-physical CPU hotplug" and only change that default in special cases
-(which may be hard to figure out, but that's a different matter).
-
-What platform firmware tells us may be completely off.
+Thanks,
+Neil
