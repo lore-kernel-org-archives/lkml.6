@@ -1,99 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933559AbeCMMI5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:08:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53142 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932527AbeCMMIx (ORCPT
+        id S933573AbeCMMJE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:09:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:42593 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933497AbeCMMJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:08:53 -0400
-From: Colin King <colin.king@canonical.com>
-To: James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: lpfc: make several unions static, fix non-ANSI prototype
-Date: Tue, 13 Mar 2018 12:08:49 +0000
-Message-Id: <20180313120849.30128-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 13 Mar 2018 08:09:02 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Michal Wajdeczko <michal.wajdeczko@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915/pmu: avoid -Wmaybe-uninitialized warning
+Date: Tue, 13 Mar 2018 13:08:29 +0100
+Message-Id: <20180313120848.2658626-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:1C9NSNSxaU5N/FWz8jy8lnk6fXnxY6XUaKse+PTo0KLES56ylvw
+ p+AqT5dDoee9LaW5p6Ge64fMdihWff1Z9yB2iWSVuLq7LCmtr5yMTeaIRIFF8vxOdWhkKhw
+ K4vAzfdq5/uyF+tnauv5ajaiRDDL7tJcWRyzMR7dOoWAbR7iu3fZ7LT+bjsXWNqJqBWn0AE
+ vI7AxxElhk+vo8ieoD/VA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ax2aEcaHqPA=:C5PvGOiPe8pAJh266/fS19
+ 3EKLEEJ31orGyHP2V0BPS42o66jZek0SLoYIjPVqVlP2hEidQzc1hgPa8KFFq1aKvSSil347W
+ mUGAgLzNp2E485VTpxBv8zaSmrNS2kdIggms8JYbeXaX9T8Mrgg1xDU2BOjJgA1XYH0iGK3JG
+ pAmhvxVnL50HadG8/Rm3hPxN4RLP1/tp11pLDofkHC9a5HBFS9a2gsF9QfIEDG+2ABt47aiGq
+ /zqQTZoB3jUNt6QDueUerFUFfcV9jhr7aFWHPU4AM18P/NLUHPRINDF3cpdHAg31Hc2Xp+Ujh
+ kM1H0UjnNcnXToJPSzXPNFV0zqY4VZmdo7gSgaBg054GbFJ05fBryZMukQRFIMF4tn+JoHPD+
+ g/DLki/v99o8RX+iiVh7HuiXTnx6FttobUIWqJLch8o+Sjv/o9C/11cEE4wLrZsdxw+iKRsTc
+ JDNq1Jlk466lQ7U+5tmAg9j6Jzi1Mc/Xd1bGlL4+zQE+Ljo64ZkYkUYfSfHxgbeA9g5QINv0i
+ 3z0VdBzE02AQW5gpxCABYTpxgpzlZn+Kes6gmRejZ57dt4q79W8ULpJsAl2YpfOGzADWzelk6
+ M1D2+3HyKnRWOY2H/dzwm5MDI9vB9iKkrntICw5ozFT1TTIqf6XdnF7KiV068HQ+fdc9tX25g
+ TypPDNbeaeLZIK7duXxvliVfMg9XV6vG31ERv7+/xr1QhyELkXQhG3ENHw8+zeAMlg3sYZb/8
+ l9h4DsIIbshLsIdSGk/NU94tPLsmTr9eKr2p4g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The conditional spinlock confuses gcc into thinking the 'flags' value
+might contain uninitialized data:
 
-There are several unions that are local to the source and do not need
-to be in global scope, so make them static. Also add in a missing void
-parameter to functions lpfc_nvme_cmd_template and
-lpfc_nvmet_cmd_template to clean up non-ANSI warning.
+drivers/gpu/drm/i915/i915_pmu.c: In function '__i915_pmu_event_read':
+arch/x86/include/asm/paravirt_types.h:573:3: error: 'flags' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Cleans up sparse warnings:
-drivers/scsi/lpfc/lpfc_nvme.c:68:19: warning: symbol
-'lpfc_iread_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvme.c:69:19: warning: symbol
-'lpfc_iwrite_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvme.c:70:19: warning: symbol
-'lpfc_icmnd_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvme.c:74:24: warning: non-ANSI function
-'lpfc_tsend_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvmet.c:78:19: warning: symbol
-'lpfc_treceive_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvmet.c:79:19: warning: symbol
-'lpfc_trsp_cmd_template' was not declared. Should it be static?
-drivers/scsi/lpfc/lpfc_nvmet.c:83:25: warning: non-ANSI function
-declaration of function 'lpfc_nvmet_cmd_template'
+The code is correct, but it's easy to see how the compiler gets confused
+here. This avoids the problem by pulling the lock outside of the function
+into its only caller.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 1fe699e30113 ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/scsi/lpfc/lpfc_nvme.c  | 8 ++++----
- drivers/scsi/lpfc/lpfc_nvmet.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/i915/i915_pmu.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-index 52dd9479b538..378dca40ca20 100644
---- a/drivers/scsi/lpfc/lpfc_nvme.c
-+++ b/drivers/scsi/lpfc/lpfc_nvme.c
-@@ -65,13 +65,13 @@ lpfc_release_nvme_buf(struct lpfc_hba *, struct lpfc_nvme_buf *);
- 
- static struct nvme_fc_port_template lpfc_nvme_template;
- 
--union lpfc_wqe128 lpfc_iread_cmd_template;
--union lpfc_wqe128 lpfc_iwrite_cmd_template;
--union lpfc_wqe128 lpfc_icmnd_cmd_template;
-+static union lpfc_wqe128 lpfc_iread_cmd_template;
-+static union lpfc_wqe128 lpfc_iwrite_cmd_template;
-+static union lpfc_wqe128 lpfc_icmnd_cmd_template;
- 
- /* Setup WQE templates for NVME IOs */
- void
--lpfc_nvme_cmd_template()
-+lpfc_nvme_cmd_template(void)
+diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+index 4bc7aefa9541..2c8c705d1f18 100644
+--- a/drivers/gpu/drm/i915/i915_pmu.c
++++ b/drivers/gpu/drm/i915/i915_pmu.c
+@@ -415,7 +415,6 @@ static u64 __get_rc6(struct drm_i915_private *i915)
+ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
  {
- 	union lpfc_wqe128 *wqe;
+ #if IS_ENABLED(CONFIG_PM)
+-	unsigned long flags;
+ 	u64 val;
  
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index 07f89524c320..7271c9d885dd 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -74,13 +74,13 @@ static int lpfc_nvmet_unsol_ls_issue_abort(struct lpfc_hba *,
- static void lpfc_nvmet_wqfull_flush(struct lpfc_hba *, struct lpfc_queue *,
- 				    struct lpfc_nvmet_rcv_ctx *);
+ 	if (intel_runtime_pm_get_if_in_use(i915)) {
+@@ -428,18 +427,12 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+ 		 * previously.
+ 		 */
  
--union lpfc_wqe128 lpfc_tsend_cmd_template;
--union lpfc_wqe128 lpfc_treceive_cmd_template;
--union lpfc_wqe128 lpfc_trsp_cmd_template;
-+static union lpfc_wqe128 lpfc_tsend_cmd_template;
-+static union lpfc_wqe128 lpfc_treceive_cmd_template;
-+static union lpfc_wqe128 lpfc_trsp_cmd_template;
+-		if (!locked)
+-			spin_lock_irqsave(&i915->pmu.lock, flags);
+-
+ 		if (val >= i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur) {
+ 			i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = 0;
+ 			i915->pmu.sample[__I915_SAMPLE_RC6].cur = val;
+ 		} else {
+ 			val = i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur;
+ 		}
+-
+-		if (!locked)
+-			spin_unlock_irqrestore(&i915->pmu.lock, flags);
+ 	} else {
+ 		struct pci_dev *pdev = i915->drm.pdev;
+ 		struct device *kdev = &pdev->dev;
+@@ -452,9 +445,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+ 		 * on top of the last known real value, as the approximated RC6
+ 		 * counter value.
+ 		 */
+-		if (!locked)
+-			spin_lock_irqsave(&i915->pmu.lock, flags);
+-
+ 		spin_lock_irqsave(&kdev->power.lock, flags2);
  
- /* Setup WQE templates for NVME IOs */
- void
--lpfc_nvmet_cmd_template()
-+lpfc_nvmet_cmd_template(void)
- {
- 	union lpfc_wqe128 *wqe;
+ 		if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
+@@ -470,9 +460,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+ 		val = jiffies_to_nsecs(val);
+ 		val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
+ 		i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
+-
+-		if (!locked)
+-			spin_unlock_irqrestore(&i915->pmu.lock, flags);
+ 	}
+ 
+ 	return val;
+@@ -519,8 +506,16 @@ static u64 __i915_pmu_event_read(struct perf_event *event, bool locked)
+ 			val = count_interrupts(i915);
+ 			break;
+ 		case I915_PMU_RC6_RESIDENCY:
+-			val = get_rc6(i915, locked);
+-			break;
++			if (!locked) {
++				unsigned long flags;
++
++				spin_lock_irqsave(&i915->pmu.lock, flags);
++				val = get_rc6(i915, locked);
++				spin_unlock_irqrestore(&i915->pmu.lock, flags);
++				break;
++			} else {
++				val = get_rc6(i915, locked);
++			}
+ 		}
+ 	}
  
 -- 
-2.15.1
+2.9.0
