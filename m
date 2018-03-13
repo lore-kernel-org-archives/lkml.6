@@ -1,138 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752704AbeCMTRt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:17:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49354 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751957AbeCMTRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:17:48 -0400
-Date: Tue, 13 Mar 2018 12:17:42 -0700
-From: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: john.garry@huawei.com, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: perf-core build fails on powerpc
+        id S1752381AbeCMTTz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:19:55 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:34656 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751534AbeCMTTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:19:54 -0400
+To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+Date: Tue, 13 Mar 2018 13:19:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-X-Operating-System: Linux 2.0.32 on an i486
-User-Agent: Mutt/1.7.1 (2016-10-04)
-X-TM-AS-GCONF: 00
-x-cbid: 18031319-0024-0000-0000-000003360677
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008667; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01002567; UDB=6.00510150; IPR=6.00781897;
- MB=3.00020012; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 19:17:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031319-0025-0000-0000-000047512202
-Message-Id: <20180313191742.GA29120@us.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130215
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Building perf on Powerpc seems broken when using Arnaldo's perf/core branch
-with HEAD as:
+On 13/03/18 01:10 PM, Sinan Kaya wrote:
+> I was thinking of this for the pci_p2pdma_add_client() case for the
+> parent pointer.
+> 
+> +struct pci_p2pdma_client {
+> +	struct list_head list;
+> +	struct pci_dev *client;
+> +	struct pci_dev *provider;
+> +};
 
-    1b442ed ("perf test: Fix exit code for record+probe_libc_inet_pton.sh")
+Yeah, that structure only exists in a list owned by the client and we
+only check the upstream bridge once per entry so I don't see the point.
 
-It maybe related to this commit:
+> But then, Why bother searching for the switch at all?
 
-	commit d596299
-	Author: John Garry <john.garry@huawei.com>
-	Date:   Thu Mar 8 18:58:29 2018 +0800
+Huh? We have to make sure all the client and provider devices are behind
+the same switch. How can we do that without "searching" for the switch?
 
-	    perf vendor events: Add support for pmu events vendor subdirectory
+In the ACS case, we only disable ACS on downstream ports of switches. No
+sense disabling it globally as that's worse from an isolation point of
+view and not worth it given we require all P2P transactions to be behind
+a switch.
 
-Reverting this hunk from tools/perf/pmu-events/jevents.c, seems to fix the
-problem for me.
+> Even if the switch is there, there is no guarantee that it is currently
+> being used for P2P.
 
-@@ -957,8 +963,12 @@ static int process_one_file(const char *fpath, const struct
- 
- 
-        /* model directory, reset topic */
-+#if 0
-        if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
-            (level == 2 && is_dir)) {
-+#else
-+       if (level == 1 && is_dir) {
-+#endif
+IOMMU groups are set at boot time and, at present, there's no way to
+dynamically change ACS bits without messing up the groups. So switches
+not used for P2P will not have ACS enabled when CONFIG_PCI_P2PDMA is set
+and I don't know of any good solution to that. Please see the ACS
+discussions in v1 and v2.
 
+> It seems that we are going with the assumption that enabling this config
+> option implies you want P2P, then we can simplify this code as well.
 
-The problem is that the tools/perf/pmu-events/pmu-events.c file generated by
-the jevents program is missing the "prefix" lines like:
+How so?
 
-	struct pmu_event pme_power8[] = {
-and 
-	struct pmu_event pme_power9[] = {
-
-
-i.e the pmu-events.c begins like:
----
-
-#include "../../pmu-events/pmu-events.h"
-{
-        .name = "pm_data_from_dl2l3_mod",
-        .event = "event=0x4c048",
-        .desc = "The processor's data cache was reloaded with Modified (M) data from another chip's L2 or L3 on a different Node or Group (Distant), as this chip due to a demand load",
-        .topic = "cache",
-        .long_desc = "The processor's data cache was reloaded with Modified (M) data from another chip's L2 or L3 on a different Node or Group (Distant), as this chip due to either only demand loads or demand loads plus prefetches if MMCR1[16] is 1",
-},
-
----
-
-Below is the debug and info messages at the time of failure:
-
----
-
-  HOSTCC   /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents.o
-  HOSTLD   /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents-in.o
-  LINK     /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/jevents
-  GEN      /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c
-d 0      50 powerpc              pmu-events/arch/powerpc
-d 1    4096 power8               pmu-events/arch/powerpc/power8
-f 2   10275 cache.json           pmu-events/arch/powerpc/power8/cache.json
-f 2     302 floating-point.json  pmu-events/arch/powerpc/power8/floating-point.json
-f 2   29283 marked.json          pmu-events/arch/powerpc/power8/marked.json
-f 2   12028 memory.json          pmu-events/arch/powerpc/power8/memory.json
-f 2  159271 other.json           pmu-events/arch/powerpc/power8/other.json
-f 2   10777 pipeline.json        pmu-events/arch/powerpc/power8/pipeline.json
-f 2    3781 pmc.json             pmu-events/arch/powerpc/power8/pmc.json
-f 2    6664 translation.json     pmu-events/arch/powerpc/power8/translation.json
-f 2   25104 frontend.json        pmu-events/arch/powerpc/power8/frontend.json
-d 1    4096 power9               pmu-events/arch/powerpc/power9
-f 2    1096 floating-point.json  pmu-events/arch/powerpc/power9/floating-point.json
-f 2    5503 cache.json           pmu-events/arch/powerpc/power9/cache.json
-f 2   14885 frontend.json        pmu-events/arch/powerpc/power9/frontend.json
-f 2   27807 marked.json          pmu-events/arch/powerpc/power9/marked.json
-f 2    4820 memory.json          pmu-events/arch/powerpc/power9/memory.json
-f 2   85387 other.json           pmu-events/arch/powerpc/power9/other.json
-f 2   23839 pipeline.json        pmu-events/arch/powerpc/power9/pipeline.json
-f 2    5138 pmc.json             pmu-events/arch/powerpc/power9/pmc.json
-f 2    9897 translation.json     pmu-events/arch/powerpc/power9/translation.json
-f 1     440 mapfile.csv          pmu-events/arch/powerpc/mapfile.csv
-jevents: Processing mapfile pmu-events/arch/powerpc/mapfile.csv
-  CC       /home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.o
-/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:2:1: error: expected identifier or ‘(’ before ‘{’ token
- {
- ^
-/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:8:2: error: expected identifier or ‘(’ before ‘,’ token
- },
-  ^
-/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:15:2: error: expected identifier or ‘(’ before ‘,’ token
- },
-  ^
-/home/suka/linux-acme.git/tools/perf/perf-obj/pmu-events/pmu-events.c:22:2: error: expected identifier or ‘(’ before ‘,’ token
- },
-
-----
+Logan
