@@ -1,70 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753086AbeCMUrE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:47:04 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35256 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752414AbeCMUrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:47:02 -0400
-To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
-Date: Tue, 13 Mar 2018 14:46:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932527AbeCMUrM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:47:12 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50084 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753096AbeCMUrI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 16:47:08 -0400
+From: John Ogness <john.ogness@linutronix.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent() breakage when used from shrink_dentry_list())
+References: <20180223035814.GZ30522@ZenIV.linux.org.uk>
+        <20180223040814.GA30522@ZenIV.linux.org.uk>
+        <87h8q7erlo.fsf@linutronix.de>
+        <20180223150928.GC30522@ZenIV.linux.org.uk>
+        <20180223174216.GD30522@ZenIV.linux.org.uk>
+        <20180223201317.GG30522@ZenIV.linux.org.uk>
+        <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+        <20180224002248.GH30522@ZenIV.linux.org.uk>
+        <20180225073950.GI30522@ZenIV.linux.org.uk>
+        <87bmgbnhar.fsf_-_@linutronix.de>
+        <20180312191351.GN30522@ZenIV.linux.org.uk>
+Date: Tue, 13 Mar 2018 21:46:48 +0100
+In-Reply-To: <20180312191351.GN30522@ZenIV.linux.org.uk> (Al Viro's message of
+        "Mon, 12 Mar 2018 19:13:51 +0000")
+Message-ID: <87zi3bn1on.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-12, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>> If someone else has grabbed a reference, it shouldn't be added to the
+>> lru list. Only decremented.
+>> 
+>> if (entry->d_lockref.count == 1)
+>
+> Nah, better handle that in retain_dentry() itself.  See updated
+> #work.dcache.
+>
+> +	if (unlikely(dentry->d_lockref.count != 1)) {
+> +		dentry->d_lockref.count--;
+> +	} else if (likely(!retain_dentry(dentry))) {
+> +		__dentry_kill(dentry);
+> +		return parent;
+> +	}
 
+Although the updated version is correct (and saves on lines of code), I
+find putting the deref and lru_add code in the "true" case of
+retain_dentry() to be pretty tricky. IMHO the code is easier to
+understand if it looks like this:
 
-On 13/03/18 01:53 PM, Sinan Kaya wrote:
-> I agree disabling globally would be bad. Somebody can always say I have
-> ten switches on my system. I want to do peer-to-peer on one switch only. Now,
-> this change weakened security for the other switches that I had no intention
-> with doing P2P.
-> 
-> Isn't this a problem?
+	if (unlikely(dentry->d_lockref.count != 1)) {
+		dentry->d_lockref.count--;
+	} else if (likely(!retain_dentry(dentry))) {
+		__dentry_kill(dentry);
+		return parent;
+	} else {
+		dentry->d_lockref.count--;
+		dentry_lru_add(dentry);
+	}
 
-Well, if it's a problem for someone they'll have to solve it. We're
-targeting JBOFs that have no use for ACS / IOMMU groups at all.
+This is what your version is doing, but that final else is hiding in the
+retain_dentry() "true" case.
 
-> Can we specify the BDF of the downstream device we want P2P with during boot via
-> kernel command line?
+My suggestion is to revert 7479f57fecd2a4837b5c79ce1cf0dcf284db54be (and
+then fixup dput() to deref before calling dentry_lru_add()).
 
-That's a painful configuration burden. And then things might stop
-working if you change your topology at all and now have to change boot
-parameters.
+> FWIW, there's another trylock loop on dentries - one in
+> autofs get_next_positive_dentry().  Any plans re dealing
+> with that one?
 
-Logan
+I will need to dig into it a bit deeper (I am unfamiliar with autofs),
+but it looks like it is trying to do basically the same thing as the
+ascend loop in d_walk().
+
+> I'd spent the last couple of weeks (when not being too sick
+> for any work) going through dcache.c and related code; hopefully
+> this time I will get the documentation into postable shape ;-/
+
+Thank you for all your help in getting these changes cleaned and
+correctly implemented so quickly.
+
+I've reviewed your latest trylock loop removal patches and found only 1
+minor issue. I'll post that separately.
+
+John Ogness
