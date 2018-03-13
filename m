@@ -1,49 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932394AbeCMPY0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:24:26 -0400
-Received: from omr-m001e.mx.aol.com ([204.29.186.1]:35019 "EHLO
-        omr-m001e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeCMPYY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:24:24 -0400
-Subject: Re: [PATCH] perf annotate: Don't prepend symfs path to
- build_id_filename
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180211191937.9703-1-jpmv27@aim.com>
- <20180309190715.GB25111@kernel.org>
-From: Martin Vuille <jpmv27@aim.com>
-Message-ID: <e036d7fc-7787-3005-93f5-19ebfa339882@aim.com>
-Date: Tue, 13 Mar 2018 11:24:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S932303AbeCMP0P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:26:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:45102 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751620AbeCMP0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 11:26:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="38435155"
+Date: Tue, 13 Mar 2018 09:01:02 -0600
+From: Scott Bauer <scott.bauer@intel.com>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Cc: Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/8] block: sed-opal: unify cmd start and finalize
+Message-ID: <20180313150102.g47bzsqyy2ueazqu@sbauer-Z170X-UD5>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <0d64b284cd6e78d61b1c8ef5a49ae13bd4b1dfee.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 MIME-Version: 1.0
-In-Reply-To: <20180309190715.GB25111@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1add4e5aa7ed26691c
-X-AOL-IP: 99.246.128.134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d64b284cd6e78d61b1c8ef5a49ae13bd4b1dfee.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/18 14:07, Arnaldo Carvalho de Melo wrote:
-> Em Sun, Feb 11, 2018 at 02:19:37PM -0500, Martin Vuille escreveu:
->> build_id_filename already contains symfs path if applicable, so
->> don't prepend it a second time.
-> Where is the analysis that shows that that is the case? I looked here at
-> the implementation for dso__build_id_filename() and couldn't find where
-> was it that the symfs would be appended, can you clarify?
->
-> - Arnaldo
->   
-Patch resubmitted with additional details in commit message:
+On Tue, Mar 13, 2018 at 02:08:56PM +0100, Jonas Rabenstein wrote:
+> Every step starts with resetting the cmd buffer as well as the comid and
+> constructs the appropriate OPAL_CALL command. Consequently, those
+> actions may be combined into one generic function.
+> 
+> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> ---
+>  block/sed-opal.c | 243 +++++++++++++++----------------------------------------
+>  1 file changed, 63 insertions(+), 180 deletions(-)
+> 
+> diff --git a/block/sed-opal.c b/block/sed-opal.c
+> index a228a13f0a08..22dbea7cf4d1 100644
+> --- a/block/sed-opal.c
+> +++ b/block/sed-opal.c
+> @@ -659,6 +659,7 @@ static int cmd_finalize(struct opal_dev *cmd, u32 hsn, u32 tsn)
+>  	struct opal_header *hdr;
+>  	int err = 0;
+>  
+> +	add_token_u8(&err, cmd, OPAL_ENDLIST);
+>  	add_token_u8(&err, cmd, OPAL_ENDOFDATA);
+>  	add_token_u8(&err, cmd, OPAL_STARTLIST);
+>  	add_token_u8(&err, cmd, 0);
+> @@ -1001,6 +1002,21 @@ static void clear_opal_cmd(struct opal_dev *dev)
+>  	memset(dev->cmd, 0, IO_BUFFER_LENGTH);
+>  }
+>  
+> +static int start_opal_cmd(struct opal_dev *dev, const u8 *uid, const u8 *method)
+> +{
+> +	int err = 0;
+> +
+> +	clear_opal_cmd(dev);
+> +	set_comid(dev, dev->comid);
+> +
+> +	add_token_u8(&err, dev, OPAL_CALL);
+> +	add_token_bytestring(&err, dev, uid, OPAL_UID_LENGTH);
+> +	add_token_bytestring(&err, dev, method, OPAL_METHOD_LENGTH);
+> +	add_token_u8(&err, dev, OPAL_STARTLIST);
 
-https://patchwork.kernel.org/patch/10279077/
+Can you resend this patch (in a bit I'm revewing the rest) with a comment here and
+in cmd_finalize explaining that the start_list here gets terminiated by the new
+opal_endlist in cmd_finalize.
 
-Regards,
-MV
+I'm not a huge fan of having the start/list and end/list in separate functions
+since those are used to specify a parameter list for a opal method. I can get over it
+since it cleans the code up, as long as there are comments on both sides reminding me
+what they're opening/closing off.
