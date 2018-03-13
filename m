@@ -1,75 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752405AbeCMJer (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:34:47 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39879 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeCMJeq (ORCPT
+        id S1752497AbeCMJfc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:35:32 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:42840 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbeCMJfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:34:46 -0400
-X-Google-Smtp-Source: AG47ELtdwqj3z9iUtAyjKfE779fNsUDI6J+QlPgsfe+ZLvCHQRVw5NgKVArB2iNwwCldrX48v8sH4A==
-Subject: Re: [PATCH 2/3] drm/meson: Use drm_dev_put() instead of
- drm_dev_unref()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie,
-        carlo@caione.org, khilman@baylibre.com
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
- <d4ce46077d3ada7149c4555acfdda8ade4a6cf50.1520885192.git.christophe.jaillet@wanadoo.fr>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-Message-ID: <0f801ea3-79e0-9942-2c18-6294e2c769cb@baylibre.com>
-Date: Tue, 13 Mar 2018 10:34:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Mar 2018 05:35:31 -0400
+X-Google-Smtp-Source: AG47ELs7abY+JVuuKnY+xJ1UAfPD7bGgDT9YTJfJP7sT59VevCdXGjxtsT8TuZk+rT3ipxLJie9yRrxZ/UQz7wbFvhg=
 MIME-Version: 1.0
-In-Reply-To: <d4ce46077d3ada7149c4555acfdda8ade4a6cf50.1520885192.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1520930375.20980.213.camel@gmail.com>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com>
+ <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
+ <20180309012458.GD5228@ming.t460p> <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+ <20180309120833.GB30257@ming.t460p> <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
+ <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com> <1520926721.20980.210.camel@gmail.com>
+ <20180313083535.GA21612@ming.t460p> <1520930375.20980.213.camel@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 Mar 2018 10:35:30 +0100
+X-Google-Sender-Auth: SeitA16DRFwuPp9fU5VqGs1PPuk
+Message-ID: <CAJZ5v0gcmkKVcgDBdt-aePgU0zvQwyf1yX5Qi_zRc1JfzaA5fg@mail.gmail.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Ming Lei <ming.lei@redhat.com>, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 21:15, Christophe JAILLET wrote:
-> According to 'drivers/gpu/drm/drm_drv.c', 'drm_dev_unref()' is just a
-> compatibility alias for 'drm_dev_put()'. So use the latter instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/drm/meson/meson_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> index 02b0886debc0..6ee3dd7fa450 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -284,7 +284,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
->  	return 0;
->  
->  free_drm:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return ret;
->  }
-> @@ -303,7 +303,7 @@ static void meson_drv_unbind(struct device *dev)
->  	drm_kms_helper_poll_fini(drm);
->  	drm_fbdev_cma_fini(priv->fbdev);
->  	drm_mode_config_cleanup(drm);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  }
->  
-> 
+On Tue, Mar 13, 2018 at 9:39 AM, Artem Bityutskiy <dedekind1@gmail.com> wrote:
+> On Tue, 2018-03-13 at 16:35 +0800, Ming Lei wrote:
+>> Then looks this issue need to fix by making possible CPU count
+>> accurate
+>> because there are other resources allocated according to
+>> num_possible_cpus(),
+>> such as percpu variables.
+>
+> Short term the regression should be fixed. It is already v4.16-rc6, we
+> have little time left.
 
-It's not useless, there is a clear statement :
- * This is a compatibility alias for drm_dev_put() and should not be used by new
- * code.
+Right.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> Longer term, yeah, I agree. Kernel's notion of possible CPU count
+> should be realistic.
 
-Thanks,
-Neil
+I agree.
+
+Moreover, there are not too many systems where physical CPU hotplug
+actually works in practice AFAICS, so IMO we should default to "no
+physical CPU hotplug" and only change that default in special cases
+(which may be hard to figure out, but that's a different matter).
+
+What platform firmware tells us may be completely off.
