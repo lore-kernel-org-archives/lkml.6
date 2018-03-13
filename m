@@ -1,84 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeCMLnd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:43:33 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:55459 "EHLO
+        id S932904AbeCMLpr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:45:47 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:37319 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752089AbeCMLnb (ORCPT
+        with ESMTP id S1752089AbeCMLpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:43:31 -0400
+        Tue, 13 Mar 2018 07:45:45 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: dell-smbios: fix DCDBAS dependency, better
-Date: Tue, 13 Mar 2018 12:42:57 +0100
-Message-Id: <20180313114310.1998450-1-arnd@arndb.de>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Jiri Pirko <jiri@mellanox.com>, Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: fix sysctl_fb_tunnels_only_for_init_net link error
+Date: Tue, 13 Mar 2018 12:44:53 +0100
+Message-Id: <20180313114515.2037554-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:nybxwbCgdeoYPYu5te2q5jHQI7RjJkfqfdp3CNv/kyXCK2RjRYO
- GZzu9A0q5jTa5xYysPhmNK2gRR2MV8HgzaqU6AmKdHZ0o0RE7t56sAsMx90Vj61P8Ojg5nH
- FDu6adS3RezNwRzKgKT6VWsrmY66PT2+tZXJJ3Pc7/iF7L83iO+VbWOtJSWZSv7TW5OYHnU
- C5r9A8bjdktCHYjvoEjCg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vJNa4cm7w7E=:8R8UzOkJcO3V2PeoFM80Lz
- dUABFE/7qr3Z/33VM+kAaoWdzlk9CZN+3akLmzfmfvuk/Pqah5EFisYQtpw/iVfmEOQ6Op3Tz
- GUXFtaaMpeE0EUol2oOj7ABeBJYVYTfrHtagX3OyYi3K/p3RN/VvzxSb1iyMy/Kll0h8/GD+X
- 5gE59TYzHm2WVmoch1xyC4ZUChxyeNQCm6kzXez7dF9YKRrNPYyGDa1d+pYXOqbSNZRwM7nrk
- Go0liaQ1q1QHMJmmyJV2s3GWUKlpQbO28zabEncOTCqDZWv75NoMx7qHdyHlAPWJVwt+6u0SE
- DkStD50vF6uxsFvK4BmN5mHpFm6untMGqn2A1vK43GsMJGzFw1uIAgHVZuwFdOyrxC79deZuP
- LUVcolhWl9+4nwAhamkfkhyYJN3c9cQtAiFo3ZgsCQon6u5mkRfV6fB+pD8J07wjRy7fPyZR1
- SGSX3qRnz+ODB7udvDkXg52quKyTbstD+ObSfwFOBv6R97k1beJgWAqDZ/uD2C9PtpqEtW5VE
- rhsXrQq8uCtlI8dsHV1Tll5GzdHgI9hzF2aLSqeElUJ0h44UBeksdOS5FrkcadJhSDSYw7R3S
- 0TYk2w2PmS2YdYIPJ/iioUlmTLLKZ5NMNKyBbywVsD1hXeARXqHFEHq60N5CeS+bRA1ZMoZuL
- PiXhZvqVxKMotqyaTm2LgZwtsMIGGzAthvRAVeVGqvbj39m+xuGJ3P+RjLbfyFBPTNci0QOIN
- v1IA2h82sDcvL9LQac6xUu6H1+dYDZbGSCbvgg==
+X-Provags-ID: V03:K0:6GKFQz2FBZp0L1y7yRaZlARK7cwF3DFXy9LUswsE3edCC1OrWNS
+ K/RYdSngrBuxIFGQ9EInbBF9eJLAOIDjGdXnQaK3UtqnBmtuc8F6SxRoNAvq1RCJVUD5MTS
+ WTmiBMuf/T4Ue3dMIW8vYnOcEGRMQQDbpGhH8jpmSWsGOJxIA3bu+lZ/qdJFWcFZp4ZtRbF
+ nneJnQZOPrHOeBePfNQ0g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LMjkRuVy+8c=:WkxZZBRSHBSrwjiujxsJ69
+ dDOFIUhfSaP/PkKO0a08UVCMcgkCXMNAjMnzMUFusEWpEdg9weLY4P047VXXCN6mGvjeVXwu6
+ vUuxt5TA5q+wZkzfqmZ0ahK2kV6gzR8k3wBOLl3y3K2oYOio16VpCF5K27Mc1JP1y54jQXnoi
+ yGXwd94rMm3zxzJ9biiZuvzXucIYeHjWjEU9NKkqEPLdZmrAHedt7s9DeDI4u1CHRlD6yvP3Q
+ 7fBrnuqj94YIoRJE8o2I9WXX7aa5yljWJZNEAKuh76JgoochOd46Q1tTq036k6JjPMHD6M5nM
+ 6Ycgxf4ff+DvlREATmHs6fQR70+grXTn/gUEIUS6U3pcrAl0eT+eXwHvIKNkzQBvjWaGl9lAY
+ YDhSTjeY1VI2fdiZEX7Ge5nAeWg/BNr19ImtWKAFSr6jqWI6MVo2q0uaIgo+7Bjrn8e7abtVh
+ 4jyKWDYQh9x2wsQqeobIKr/R05GculyrnDbg6+NTmafIcrCLDn6ePmZMIQK63dSdEhQideSbv
+ PmocCLN1sqMQvX74nykhp3yfY9UmVlFK3QT4Ps6gVlOXP/xH+EB+iVqqxDWDl49sSQQnTUUTw
+ vu75QOBpt0CVj7xnTVSkE2bXGO6uH5y1sI88zLpH8veCA8Zot1eBCkcubLHZypypeOdiAnqJK
+ AArNox13e5JPWbPDk2N1V4jK47VQ7IzFi1G48jxv4GjMkP3lTFf0/rxxHTJbaQqSH6dm6xTg0
+ 4h184YeRNMZs8Y9Jw17/3d5en8EYmGpN7UN6rA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rework of the dell laptop modules caused a link error:
+The new variable is only available when CONFIG_SYSCTL is enabled,
+otherwise we get a link error:
 
-drivers/platform/x86/dell-smbios-smm.o: In function `dell_smbios_smm_call':
-dell-smbios-smm.c:(.text+0x77): undefined reference to `dcdbas_smi_request'
+net/ipv4/ip_tunnel.o: In function `ip_tunnel_init_net':
+ip_tunnel.c:(.text+0x278b): undefined reference to `sysctl_fb_tunnels_only_for_init_net'
+net/ipv6/sit.o: In function `sit_init_net':
+sit.c:(.init.text+0x4c): undefined reference to `sysctl_fb_tunnels_only_for_init_net'
+net/ipv6/ip6_tunnel.o: In function `ip6_tnl_init_net':
+ip6_tunnel.c:(.init.text+0x39): undefined reference to `sysctl_fb_tunnels_only_for_init_net'
 
-We already have a fix for that, but this was only a partial solution,
-since CONFIG_DELL_LAPTOP and CONFIG_DELL_WMI select CONFIG_DELL_SMBIOS
-regardless of that dependency.
+This adds an extra condition, keeping the traditional behavior when
+CONFIG_SYSCTL is disabled.
 
-We can either add the same 'DCDBAS || DCDBAS=n' dependency for those two
-as well, or replace the 'select' with a 'depends on'. The second approach
-seems cleaner, so I'm picking that here.
-
-Fixes: 32d7b19bad96 ("platform/x86: dell-smbios: Resolve dependency error on DCDBAS")
-Fixes: 25d47027e100 ("platform/x86: dell-smbios: Link all dell-smbios-* modules together")
+Fixes: 79134e6ce2c9 ("net: do not create fallback tunnels for non-default namespaces")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/platform/x86/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/netdevice.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 28905793b5e5..0aec62bb5c61 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -151,7 +151,7 @@ config DELL_LAPTOP
- 	depends on ACPI_VIDEO || ACPI_VIDEO = n
- 	depends on RFKILL || RFKILL = n
- 	depends on SERIO_I8042
--	select DELL_SMBIOS
-+	depends on DELL_SMBIOS
- 	select POWER_SUPPLY
- 	select LEDS_CLASS
- 	select NEW_LEDS
-@@ -165,8 +165,8 @@ config DELL_WMI
- 	depends on DMI
- 	depends on INPUT
- 	depends on ACPI_VIDEO || ACPI_VIDEO = n
-+	depends on DELL_SMBIOS
- 	select DELL_WMI_DESCRIPTOR
--	select DELL_SMBIOS
- 	select INPUT_SPARSEKMAP
- 	---help---
- 	  Say Y here if you want to support WMI-based hotkeys on Dell laptops.
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 5fbb9f1da7fd..913b1cc882cf 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -589,7 +589,9 @@ extern int sysctl_fb_tunnels_only_for_init_net;
+ 
+ static inline bool net_has_fallback_tunnels(const struct net *net)
+ {
+-	return net == &init_net || !sysctl_fb_tunnels_only_for_init_net;
++	return net == &init_net ||
++	       !IS_ENABLED(CONFIG_SYSCTL) ||
++	       !sysctl_fb_tunnels_only_for_init_net;
+ }
+ 
+ static inline int netdev_queue_numa_node_read(const struct netdev_queue *q)
 -- 
 2.9.0
