@@ -1,335 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeCMGXK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:23:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38131 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752173AbeCMGWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:22:43 -0400
-Date: Mon, 12 Mar 2018 23:22:14 -0700
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-5acc575fec9f424f0b557844dbda8aed57baae1e@git.kernel.org>
-Cc: peterz@infradead.org, yao.jin@linux.intel.com, jolsa@redhat.com,
-        mingo@kernel.org, fweisbec@gmail.com, kan.liang@intel.com,
-        onestero@redhat.com, hpa@zytor.com, hbathini@linux.vnet.ibm.com,
-        acme@redhat.com, sukadev@linux.vnet.ibm.com,
-        torvalds@linux-foundation.org, will.deacon@arm.com,
-        alexander.shishkin@linux.intel.com, mpe@ellerman.id.au,
-        tglx@linutronix.de, chabbi.milind@gmail.com, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, namhyung@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org, jolsa@kernel.org,
-        chabbi.milind@gmail.com, tglx@linutronix.de, mpe@ellerman.id.au,
-        dsahern@gmail.com, will.deacon@arm.com,
-        alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
-        sukadev@linux.vnet.ibm.com, acme@redhat.com,
-        hbathini@linux.vnet.ibm.com, hpa@zytor.com, onestero@redhat.com,
-        jolsa@redhat.com, fweisbec@gmail.com, kan.liang@intel.com,
-        mingo@kernel.org, peterz@infradead.org, yao.jin@linux.intel.com
-In-Reply-To: <20180312134548.31532-9-jolsa@kernel.org>
-References: <20180312134548.31532-9-jolsa@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests: Add breakpoint accounting/modify test
-Git-Commit-ID: 5acc575fec9f424f0b557844dbda8aed57baae1e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752110AbeCMGWf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:22:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:52838 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751402AbeCMGWd (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 02:22:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
+   d="scan'208";a="25162161"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v1 0/4] perf annotate: Create a new '--tui-dump' option
+Date: Tue, 13 Mar 2018 22:16:50 +0800
+Message-Id: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5acc575fec9f424f0b557844dbda8aed57baae1e
-Gitweb:     https://git.kernel.org/tip/5acc575fec9f424f0b557844dbda8aed57baae1e
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 12 Mar 2018 14:45:48 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Mar 2018 06:56:09 +0100
+There is a requirement to let perf annotate support displaying the IPC/Cycle.
+In previous patch, this is supported in TUI mode. While it's not convenient
+for users since they have to take screen shots and copy/paste data.
 
-perf tests: Add breakpoint accounting/modify test
+This patch series introduces a new option '--tui-dump' in perf annotate to
+dump the TUI output to stdio.
 
-Adding test that:
+User can easily use the command line like:
+'perf annotate --tui-dump > /tmp/log.txt' 
+ 
+For example:
+    $ perf annotate compute_flag --tui-dump
 
-  - detects the number of watch/break-points,
-    skip test if any is missing
-  - detects PERF_EVENT_IOC_MODIFY_ATTRIBUTES ioctl,
-    skip test if it's missing
-  - detects if watchpoints and breakpoints share
-    same slots
-  - create all possible watchpoints on cpu 0
-  - change one of it to breakpoint
-  - in case wp and bp do not share slots,
-    we create another watchpoint to ensure
-    the slot accounting is correct
+    Percent  IPC Cycle
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Milind Chabbi <chabbi.milind@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Oleg Nesterov <onestero@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/20180312134548.31532-9-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/perf/tests/Build          |   1 +
- tools/perf/tests/bp_account.c   | 195 ++++++++++++++++++++++++++++++++++++++++
- tools/perf/tests/builtin-test.c |   4 +
- tools/perf/tests/tests.h        |   1 +
- 4 files changed, 201 insertions(+)
+                            Disassembly of section .text:
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 87bf3edb037c..62ca0174d5e1 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -20,6 +20,7 @@ perf-y += hists_cumulate.o
- perf-y += python-use.o
- perf-y += bp_signal.o
- perf-y += bp_signal_overflow.o
-+perf-y += bp_account.o
- perf-y += task-exit.o
- perf-y += sw-clock.o
- perf-y += mmap-thread-lookup.o
-diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
-new file mode 100644
-index 000000000000..2f75fa0c4fef
---- /dev/null
-+++ b/tools/perf/tests/bp_account.c
-@@ -0,0 +1,195 @@
-+/*
-+ * Powerpc needs __SANE_USERSPACE_TYPES__ before <linux/types.h> to select
-+ * 'int-ll64.h' and avoid compile warnings when printing __u64 with %llu.
-+ */
-+#define __SANE_USERSPACE_TYPES__
-+
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <time.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <sys/mman.h>
-+#include <linux/compiler.h>
-+#include <linux/hw_breakpoint.h>
-+#include <sys/ioctl.h>
-+
-+#include "tests.h"
-+#include "debug.h"
-+#include "perf.h"
-+#include "cloexec.h"
-+
-+volatile long the_var;
-+
-+static noinline int test_function(void)
-+{
-+	return 0;
-+}
-+
-+static int __event(bool is_x, void *addr, struct perf_event_attr *attr)
-+{
-+	int fd;
-+
-+	memset(attr, 0, sizeof(struct perf_event_attr));
-+	attr->type = PERF_TYPE_BREAKPOINT;
-+	attr->size = sizeof(struct perf_event_attr);
-+
-+	attr->config = 0;
-+	attr->bp_type = is_x ? HW_BREAKPOINT_X : HW_BREAKPOINT_W;
-+	attr->bp_addr = (unsigned long) addr;
-+	attr->bp_len = sizeof(long);
-+
-+	attr->sample_period = 1;
-+	attr->sample_type = PERF_SAMPLE_IP;
-+
-+	attr->exclude_kernel = 1;
-+	attr->exclude_hv = 1;
-+
-+	fd = sys_perf_event_open(attr, -1, 0, -1,
-+				 perf_event_open_cloexec_flag());
-+	if (fd < 0) {
-+		pr_debug("failed opening event %llx\n", attr->config);
-+		return TEST_FAIL;
-+	}
-+
-+	return fd;
-+}
-+
-+static int wp_event(void *addr, struct perf_event_attr *attr)
-+{
-+	return __event(false, addr, attr);
-+}
-+
-+static int bp_event(void *addr, struct perf_event_attr *attr)
-+{
-+	return __event(true, addr, attr);
-+}
-+
-+static int bp_accounting(int wp_cnt, int share)
-+{
-+	struct perf_event_attr attr, attr_mod, attr_new;
-+	int i, fd[wp_cnt], fd_wp, ret;
-+
-+	for (i = 0; i < wp_cnt; i++) {
-+		fd[i] = wp_event((void *)&the_var, &attr);
-+		TEST_ASSERT_VAL("failed to create wp\n", fd[i] != -1);
-+		pr_debug("wp %d created\n", i);
-+	}
-+
-+	attr_mod = attr;
-+	attr_mod.bp_type = HW_BREAKPOINT_X;
-+	attr_mod.bp_addr = (unsigned long) test_function;
-+
-+	ret = ioctl(fd[0], PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &attr_mod);
-+	TEST_ASSERT_VAL("failed to modify wp\n", ret == 0);
-+
-+	pr_debug("wp 0 modified to bp\n");
-+
-+	if (!share) {
-+		fd_wp = wp_event((void *)&the_var, &attr_new);
-+		TEST_ASSERT_VAL("failed to create max wp\n", fd_wp != -1);
-+		pr_debug("wp max created\n");
-+	}
-+
-+	for (i = 0; i < wp_cnt; i++)
-+		close(fd[i]);
-+
-+	return 0;
-+}
-+
-+static int detect_cnt(bool is_x)
-+{
-+	struct perf_event_attr attr;
-+	void *addr = is_x ? test_function : (void *) &the_var;
-+	int fd[100], cnt = 0, i;
-+
-+	while (1) {
-+		fd[cnt] = __event(is_x, addr, &attr);
-+
-+		if (fd[cnt] < 0)
-+			break;
-+
-+		if (cnt == 100) {
-+			pr_debug("way too many debug registers, fix the test\n");
-+			return 0;
-+		}
-+
-+		cnt++;
-+	}
-+
-+	for (i = 0; i < cnt; i++)
-+		close(fd[i]);
-+
-+	return cnt;
-+}
-+
-+static int detect_ioctl(void)
-+{
-+	struct perf_event_attr attr;
-+	int fd, ret = 1;
-+
-+	fd = wp_event((void *) &the_var, &attr);
-+	if (fd > 0) {
-+		ret = ioctl(fd, PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &attr);
-+		close(fd);
-+	}
-+
-+	return ret ? 0 : 1;
-+}
-+
-+static int detect_share(int wp_cnt, int bp_cnt)
-+{
-+	struct perf_event_attr attr;
-+	int i, fd[wp_cnt + bp_cnt], ret;
-+
-+	for (i = 0; i < wp_cnt; i++) {
-+		fd[i] = wp_event((void *)&the_var, &attr);
-+		TEST_ASSERT_VAL("failed to create wp\n", fd[i] != -1);
-+	}
-+
-+	for (; i < (bp_cnt + wp_cnt); i++) {
-+		fd[i] = bp_event((void *)test_function, &attr);
-+		if (fd[i] == -1)
-+			break;
-+	}
-+
-+	ret = i != (bp_cnt + wp_cnt);
-+
-+	while (i--)
-+		close(fd[i]);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test does following:
-+ *   - detects the number of watch/break-points,
-+ *     skip test if any is missing
-+ *   - detects PERF_EVENT_IOC_MODIFY_ATTRIBUTES ioctl,
-+ *     skip test if it's missing
-+ *   - detects if watchpoints and breakpoints share
-+ *     same slots
-+ *   - create all possible watchpoints on cpu 0
-+ *   - change one of it to breakpoint
-+ *   - in case wp and bp do not share slots,
-+ *     we create another watchpoint to ensure
-+ *     the slot accounting is correct
-+ */
-+int test__bp_accounting(struct test *test __maybe_unused, int subtest __maybe_unused)
-+{
-+	int has_ioctl = detect_ioctl();
-+	int wp_cnt = detect_cnt(false);
-+	int bp_cnt = detect_cnt(true);
-+	int share  = detect_share(wp_cnt, bp_cnt);
-+
-+	pr_debug("watchpoints count %d, breakpoints count %d, has_ioctl %d, share %d\n",
-+		 wp_cnt, bp_cnt, has_ioctl, share);
-+
-+	if (!wp_cnt || !bp_cnt || !has_ioctl)
-+		return TEST_SKIP;
-+
-+	return bp_accounting(wp_cnt, share);
-+}
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index fafa014240cd..38bf109ce106 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -115,6 +115,10 @@ static struct test generic_tests[] = {
- 		.func = test__bp_signal_overflow,
- 		.is_supported = test__bp_signal_is_supported,
- 	},
-+	{
-+		.desc = "Breakpoint accounting",
-+		.func = test__bp_accounting,
-+	},
- 	{
- 		.desc = "Number of exit events of a simple workload",
- 		.func = test__task_exit,
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index 2862b80bc288..9f51edac44ae 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -58,6 +58,7 @@ int test__hists_link(struct test *test, int subtest);
- int test__python_use(struct test *test, int subtest);
- int test__bp_signal(struct test *test, int subtest);
- int test__bp_signal_overflow(struct test *test, int subtest);
-+int test__bp_accounting(struct test *test, int subtest);
- int test__task_exit(struct test *test, int subtest);
- int test__mem(struct test *test, int subtest);
- int test__sw_clock_freq(struct test *test, int subtest);
+                            0000000000400640 <compute_flag>:
+                            compute_flag():
+                            volatile int count;
+                            static unsigned int s_randseed;
+
+                            __attribute__((noinline))
+                            int compute_flag()
+                            {
+     23.00  1.16              sub    $0x8,%rsp
+                                    int i;
+
+                                    i = rand() % 2;
+     23.06  1.16     1        callq  rand@plt
+
+                                    return i;
+     27.01  3.38              mov    %eax,%edx
+                            }
+            3.38              add    $0x8,%rsp
+                            {
+                                    int i;
+
+                                    i = rand() % 2;
+
+                                    return i;
+            3.38              shr    $0x1f,%edx
+            3.38              add    %edx,%eax
+            3.38              and    $0x1,%eax
+            3.38              sub    %edx,%eax
+                            }
+     26.93  3.38     2        retq
+
+The '--stdio' option is still kept now. Maybe in future, we can only
+maintain the TUI routines and drop the lagacy stdio code. But right
+now we'd better keep it until the '--tui-dump' option is good enough.
+
+Jin Yao (4):
+  perf browser: Add a new 'dump' flag
+  perf browser: bypass ui_init if in tui dump mode
+  perf annotate: Process the new switch flag tui_dump
+  perf annotate: Enable the '--tui-dump' mode
+
+ tools/perf/Documentation/perf-annotate.txt |  3 +++
+ tools/perf/builtin-annotate.c              | 12 +++++++--
+ tools/perf/builtin-c2c.c                   |  2 +-
+ tools/perf/builtin-report.c                |  2 +-
+ tools/perf/builtin-top.c                   |  2 +-
+ tools/perf/ui/browser.c                    | 38 +++++++++++++++++++++++----
+ tools/perf/ui/browser.h                    |  1 +
+ tools/perf/ui/browsers/annotate.c          | 41 +++++++++++++++++++++---------
+ tools/perf/ui/browsers/hists.c             |  2 +-
+ tools/perf/ui/setup.c                      |  9 +++++--
+ tools/perf/ui/ui.h                         |  2 +-
+ tools/perf/util/annotate.h                 |  6 +++--
+ tools/perf/util/hist.h                     | 11 +++++---
+ 13 files changed, 99 insertions(+), 32 deletions(-)
+
+-- 
+2.7.4
