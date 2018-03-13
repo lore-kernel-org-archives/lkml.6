@@ -1,272 +1,366 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752523AbeCMSV3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:21:29 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39462 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeCMSV0 (ORCPT
+        id S932498AbeCMSYo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:24:44 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44464 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbeCMSYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:21:26 -0400
-X-Google-Smtp-Source: AG47ELthpP1ANR5+Yk+tGKuXij8hGG5stiYW8IfJjUUymiiPrC04XHg99CcANW3u9T6aNIB51jT8zT1MgCkw07RtqUU=
-MIME-Version: 1.0
-In-Reply-To: <1520855584-10079-2-git-send-email-wanpengli@tencent.com>
-References: <1520855584-10079-1-git-send-email-wanpengli@tencent.com> <1520855584-10079-2-git-send-email-wanpengli@tencent.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Tue, 13 Mar 2018 11:21:25 -0700
-Message-ID: <CALMp9eT3R-RzA5mOPZos0uVenSNxjF=dEcFen77CBkw5CLShVw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] KVM: X86: Provides userspace with a capability to
- not intercept MWAIT
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        =?UTF-8?B?SmFuIEggLiBTY2jDtm5oZXJy?= <jschoenh@amazon.de>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Mar 2018 14:24:40 -0400
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
+        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [v6 2/2] mm: initialize pages on demand during boot
+Date: Tue, 13 Mar 2018 14:23:55 -0400
+Message-Id: <20180313182355.17669-3-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180313182355.17669-1-pasha.tatashin@oracle.com>
+References: <20180313182355.17669-1-pasha.tatashin@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2DILXSj004965
 
-Is there a need for a new API for yielding MONITOR/MWAIT to the guest?
-Why not just tie this to the guest CPUID.01H:ECX[MWAIT] being set?
+Deferred page initialization allows the boot cpu to initialize a small
+subset of the system's pages early in boot, with other cpus doing the rest
+later on.
 
-On Mon, Mar 12, 2018 at 4:53 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
->
-> Allowing a guest to execute MWAIT without interception enables a guest
-> to put a (physical) CPU into a power saving state, where it takes
-> longer to return from than what may be desired by the host.
->
-> Don't give a guest that power over a host by default. (Especially,
-> since nothing prevents a guest from using MWAIT even when it is not
-> advertised via CPUID.)
->
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Jan H. Schönherr <jschoenh@amazon.de>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  Documentation/virtual/kvm/api.txt | 23 ++++++++++++++---------
->  arch/x86/include/asm/kvm_host.h   |  2 ++
->  arch/x86/kvm/svm.c                |  2 +-
->  arch/x86/kvm/vmx.c                |  9 +++++----
->  arch/x86/kvm/x86.c                | 24 ++++++++++++++++++++----
->  arch/x86/kvm/x86.h                | 10 +++++-----
->  include/uapi/linux/kvm.h          |  2 +-
->  tools/include/uapi/linux/kvm.h    |  2 +-
->  8 files changed, 49 insertions(+), 25 deletions(-)
->
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index 98de506..76e5a15 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -4358,6 +4358,20 @@ enables QEMU to build error log and branch to guest kernel registered
->  machine check handling routine. Without this capability KVM will
->  branch to guests' 0x200 interrupt vector.
->
-> +7.13 KVM_CAP_X86_DISABLE_EXITS
-> +
-> +Architectures: x86
-> +Parameters: args[0] defines which exits are disabled
-> +Returns: 0 on success, -EINVAL when args[0] contains invalid exits
-> +
-> +Valid exits in args[0] are
-> +
-> +#define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
-> +
-> +Enabling this capability on a VM provides userspace with a way to no
-> +longer intercepts some instructions for improved latency in some
-> +workloads.
-> +
->  8. Other capabilities.
->  ----------------------
->
-> @@ -4470,15 +4484,6 @@ reserved.
->      Both registers and addresses are 64-bits wide.
->      It will be possible to run 64-bit or 32-bit guest code.
->
-> -8.8 KVM_CAP_X86_GUEST_MWAIT
-> -
-> -Architectures: x86
-> -
-> -This capability indicates that guest using memory monotoring instructions
-> -(MWAIT/MWAITX) to stop the virtual CPU will not cause a VM exit.  As such time
-> -spent while virtual CPU is halted in this way will then be accounted for as
-> -guest running time on the host (as opposed to e.g. HLT).
-> -
->  8.9 KVM_CAP_ARM_USER_IRQ
->
->  Architectures: arm, arm64
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 0395c35..e107171 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -811,6 +811,8 @@ struct kvm_arch {
->
->         gpa_t wall_clock;
->
-> +       bool mwait_in_guest;
-> +
->         bool ept_identity_pagetable_done;
->         gpa_t ept_identity_map_addr;
->
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index be9c839..321b3fd 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1390,7 +1390,7 @@ static void init_vmcb(struct vcpu_svm *svm)
->         set_intercept(svm, INTERCEPT_XSETBV);
->         set_intercept(svm, INTERCEPT_RSM);
->
-> -       if (!kvm_mwait_in_guest()) {
-> +       if (!kvm_mwait_in_guest(svm->vcpu.kvm)) {
->                 set_intercept(svm, INTERCEPT_MONITOR);
->                 set_intercept(svm, INTERCEPT_MWAIT);
->         }
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 6cefd7b..2302ae2 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -3733,13 +3733,11 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
->               CPU_BASED_UNCOND_IO_EXITING |
->               CPU_BASED_MOV_DR_EXITING |
->               CPU_BASED_USE_TSC_OFFSETING |
-> +             CPU_BASED_MWAIT_EXITING |
-> +             CPU_BASED_MONITOR_EXITING |
->               CPU_BASED_INVLPG_EXITING |
->               CPU_BASED_RDPMC_EXITING;
->
-> -       if (!kvm_mwait_in_guest())
-> -               min |= CPU_BASED_MWAIT_EXITING |
-> -                       CPU_BASED_MONITOR_EXITING;
-> -
->         opt = CPU_BASED_TPR_SHADOW |
->               CPU_BASED_USE_MSR_BITMAPS |
->               CPU_BASED_ACTIVATE_SECONDARY_CONTROLS;
-> @@ -5531,6 +5529,9 @@ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
->                 exec_control |= CPU_BASED_CR3_STORE_EXITING |
->                                 CPU_BASED_CR3_LOAD_EXITING  |
->                                 CPU_BASED_INVLPG_EXITING;
-> +       if (kvm_mwait_in_guest(vmx->vcpu.kvm))
-> +               exec_control &= ~(CPU_BASED_MWAIT_EXITING |
-> +                               CPU_BASED_MONITOR_EXITING);
->         return exec_control;
->  }
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 36ef3d8..5fae476 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2809,9 +2809,15 @@ static int msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs __user *user_msrs,
->         return r;
->  }
->
-> +static inline bool kvm_can_mwait_in_guest(void)
-> +{
-> +       return boot_cpu_has(X86_FEATURE_MWAIT) &&
-> +               !boot_cpu_has_bug(X86_BUG_MONITOR);
-> +}
-> +
->  int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->  {
-> -       int r;
-> +       int r = 0;
->
->         switch (ext) {
->         case KVM_CAP_IRQCHIP:
-> @@ -2867,8 +2873,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->         case KVM_CAP_ADJUST_CLOCK:
->                 r = KVM_CLOCK_TSC_STABLE;
->                 break;
-> -       case KVM_CAP_X86_GUEST_MWAIT:
-> -               r = kvm_mwait_in_guest();
-> +       case KVM_CAP_X86_DISABLE_EXITS:
-> +               if(kvm_can_mwait_in_guest())
-> +                       r |= KVM_X86_DISABLE_EXITS_MWAIT;
->                 break;
->         case KVM_CAP_X86_SMM:
->                 /* SMBASE is usually relocated above 1M on modern chipsets,
-> @@ -2909,7 +2916,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->                 r = KVM_X2APIC_API_VALID_FLAGS;
->                 break;
->         default:
-> -               r = 0;
->                 break;
->         }
->         return r;
-> @@ -4214,6 +4220,16 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->
->                 r = 0;
->                 break;
-> +       case KVM_CAP_X86_DISABLE_EXITS:
-> +               r = -EINVAL;
-> +               if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
-> +                       break;
-> +
-> +               if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
-> +                       kvm_can_mwait_in_guest())
-> +                       kvm->arch.mwait_in_guest = true;
-> +               r = 0;
-> +               break;
->         default:
->                 r = -EINVAL;
->                 break;
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index b91215d..cd1215e 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -2,8 +2,6 @@
->  #ifndef ARCH_X86_KVM_X86_H
->  #define ARCH_X86_KVM_X86_H
->
-> -#include <asm/processor.h>
-> -#include <asm/mwait.h>
->  #include <linux/kvm_host.h>
->  #include <asm/pvclock.h>
->  #include "kvm_cache_regs.h"
-> @@ -264,10 +262,12 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
->             __rem;                                              \
->          })
->
-> -static inline bool kvm_mwait_in_guest(void)
-> +#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
-> +#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT)
-> +
-> +static inline bool kvm_mwait_in_guest(struct kvm *kvm)
->  {
-> -       return boot_cpu_has(X86_FEATURE_MWAIT) &&
-> -               !boot_cpu_has_bug(X86_BUG_MONITOR);
-> +       return kvm->arch.mwait_in_guest;
->  }
->
->  #endif
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 088c2c9..1065006 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -929,7 +929,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_S390_GS 140
->  #define KVM_CAP_S390_AIS 141
->  #define KVM_CAP_SPAPR_TCE_VFIO 142
-> -#define KVM_CAP_X86_GUEST_MWAIT 143
-> +#define KVM_CAP_X86_DISABLE_EXITS 143
->  #define KVM_CAP_ARM_USER_IRQ 144
->  #define KVM_CAP_S390_CMMA_MIGRATION 145
->  #define KVM_CAP_PPC_FWNMI 146
-> diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-> index 0fb5ef9..b13c257 100644
-> --- a/tools/include/uapi/linux/kvm.h
-> +++ b/tools/include/uapi/linux/kvm.h
-> @@ -924,7 +924,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_S390_GS 140
->  #define KVM_CAP_S390_AIS 141
->  #define KVM_CAP_SPAPR_TCE_VFIO 142
-> -#define KVM_CAP_X86_GUEST_MWAIT 143
-> +#define KVM_CAP_X86_DISABLE_EXITS 143
->  #define KVM_CAP_ARM_USER_IRQ 144
->  #define KVM_CAP_S390_CMMA_MIGRATION 145
->  #define KVM_CAP_PPC_FWNMI 146
-> --
-> 2.7.4
->
+It is, however, problematic to know how many pages the kernel needs during
+boot.  Different modules and kernel parameters may change the requirement,
+so the boot cpu either initializes too many pages or runs out of memory.
+
+To fix that, initialize early pages on demand.  This ensures the kernel
+does the minimum amount of work to initialize pages during boot and leaves
+the rest to be divided in the multithreaded initialization path
+(deferred_init_memmap).
+
+The on-demand code is permanently disabled using static branching once
+deferred pages are initialized.  After the static branch is changed to
+false, the overhead is up-to two branch-always instructions if the zone
+watermark check fails or if rmqueue fails.
+
+Sergey Senozhatsky noticed that while deferred pages currently make sense
+only on NUMA machines (we start one thread per latency node), CONFIG_NUMA
+is not a requirement for CONFIG_DEFERRED_STRUCT_PAGE_INIT, so that is also
+must be addressed in the patch.
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Reviewed-by: Steven Sistare <steven.sistare@oracle.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Acked-by: Mel Gorman <mgorman@suse.de>
+---
+ include/linux/memblock.h |  10 ---
+ mm/memblock.c            |  23 ------
+ mm/page_alloc.c          | 183 +++++++++++++++++++++++++++++++++++++----------
+ 3 files changed, 144 insertions(+), 72 deletions(-)
+
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 8be5077efb5f..6c305afd95ab 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -417,21 +417,11 @@ static inline void early_memtest(phys_addr_t start, phys_addr_t end)
+ {
+ }
+ #endif
+-
+-extern unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
+-		phys_addr_t end_addr);
+ #else
+ static inline phys_addr_t memblock_alloc(phys_addr_t size, phys_addr_t align)
+ {
+ 	return 0;
+ }
+-
+-static inline unsigned long memblock_reserved_memory_within(phys_addr_t start_addr,
+-		phys_addr_t end_addr)
+-{
+-	return 0;
+-}
+-
+ #endif /* CONFIG_HAVE_MEMBLOCK */
+ 
+ #endif /* __KERNEL__ */
+diff --git a/mm/memblock.c b/mm/memblock.c
+index b6ba6b7adadc..80a12c64b203 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1778,29 +1778,6 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
+ 	}
+ }
+ 
+-extern unsigned long __init_memblock
+-memblock_reserved_memory_within(phys_addr_t start_addr, phys_addr_t end_addr)
+-{
+-	struct memblock_region *rgn;
+-	unsigned long size = 0;
+-	int idx;
+-
+-	for_each_memblock_type(idx, (&memblock.reserved), rgn) {
+-		phys_addr_t start, end;
+-
+-		if (rgn->base + rgn->size < start_addr)
+-			continue;
+-		if (rgn->base > end_addr)
+-			continue;
+-
+-		start = rgn->base;
+-		end = start + rgn->size;
+-		size += end - start;
+-	}
+-
+-	return size;
+-}
+-
+ void __init_memblock __memblock_dump_all(void)
+ {
+ 	pr_info("MEMBLOCK configuration:\n");
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cada509e2176..529e2dce7d16 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -292,40 +292,6 @@ EXPORT_SYMBOL(nr_online_nodes);
+ int page_group_by_mobility_disabled __read_mostly;
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+-
+-/*
+- * Determine how many pages need to be initialized during early boot
+- * (non-deferred initialization).
+- * The value of first_deferred_pfn will be set later, once non-deferred pages
+- * are initialized, but for now set it ULONG_MAX.
+- */
+-static inline void reset_deferred_meminit(pg_data_t *pgdat)
+-{
+-	phys_addr_t start_addr, end_addr;
+-	unsigned long max_pgcnt;
+-	unsigned long reserved;
+-
+-	/*
+-	 * Initialise at least 2G of a node but also take into account that
+-	 * two large system hashes that can take up 1GB for 0.25TB/node.
+-	 */
+-	max_pgcnt = max(2UL << (30 - PAGE_SHIFT),
+-			(pgdat->node_spanned_pages >> 8));
+-
+-	/*
+-	 * Compensate the all the memblock reservations (e.g. crash kernel)
+-	 * from the initial estimation to make sure we will initialize enough
+-	 * memory to boot.
+-	 */
+-	start_addr = PFN_PHYS(pgdat->node_start_pfn);
+-	end_addr = PFN_PHYS(pgdat->node_start_pfn + max_pgcnt);
+-	reserved = memblock_reserved_memory_within(start_addr, end_addr);
+-	max_pgcnt += PHYS_PFN(reserved);
+-
+-	pgdat->static_init_pgcnt = min(max_pgcnt, pgdat->node_spanned_pages);
+-	pgdat->first_deferred_pfn = ULONG_MAX;
+-}
+-
+ /* Returns true if the struct page for the pfn is uninitialised */
+ static inline bool __meminit early_page_uninitialised(unsigned long pfn)
+ {
+@@ -361,10 +327,6 @@ static inline bool update_defer_init(pg_data_t *pgdat,
+ 	return true;
+ }
+ #else
+-static inline void reset_deferred_meminit(pg_data_t *pgdat)
+-{
+-}
+-
+ static inline bool early_page_uninitialised(unsigned long pfn)
+ {
+ 	return false;
+@@ -1611,6 +1573,117 @@ static int __init deferred_init_memmap(void *data)
+ 	pgdat_init_report_one_done();
+ 	return 0;
+ }
++
++/*
++ * During boot we initialize deferred pages on-demand, as needed, but once
++ * page_alloc_init_late() has finished, the deferred pages are all initialized,
++ * and we can permanently disable that path.
++ */
++static DEFINE_STATIC_KEY_TRUE(deferred_pages);
++
++/*
++ * If this zone has deferred pages, try to grow it by initializing enough
++ * deferred pages to satisfy the allocation specified by order, rounded up to
++ * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
++ * of SECTION_SIZE bytes by initializing struct pages in increments of
++ * PAGES_PER_SECTION * sizeof(struct page) bytes.
++ *
++ * Return true when zone was grown, otherwise return false. We return true even
++ * when we grow less than requested, to let the caller decide if there are
++ * enough pages to satisfy the allocation.
++ *
++ * Note: We use noinline because this function is needed only during boot, and
++ * it is called from a __ref function _deferred_grow_zone. This way we are
++ * making sure that it is not inlined into permanent text section.
++ */
++static noinline bool __init
++deferred_grow_zone(struct zone *zone, unsigned int order)
++{
++	int zid = zone_idx(zone);
++	int nid = zone_to_nid(zone);
++	pg_data_t *pgdat = NODE_DATA(nid);
++	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
++	unsigned long nr_pages = 0;
++	unsigned long first_init_pfn, spfn, epfn, t, flags;
++	unsigned long first_deferred_pfn = pgdat->first_deferred_pfn;
++	phys_addr_t spa, epa;
++	u64 i;
++
++	/* Only the last zone may have deferred pages */
++	if (zone_end_pfn(zone) != pgdat_end_pfn(pgdat))
++		return false;
++
++	pgdat_resize_lock(pgdat, &flags);
++
++	/*
++	 * If deferred pages have been initialized while we were waiting for
++ 	 * the lock, return true, as the zone was grown.  The caller will retry
++	 * this zone.  We won't return to this function since the caller also
++	 * has this static branch.
++	 */
++	if (!static_branch_unlikely(&deferred_pages)) {
++		pgdat_resize_unlock(pgdat, &flags);
++		return true;
++	}
++
++	/*
++	 * If someone grew this zone while we were waiting for spinlock, return
++	 * true, as there might be enough pages already.
++	 */
++	if (first_deferred_pfn != pgdat->first_deferred_pfn) {
++		pgdat_resize_unlock(pgdat, &flags);
++		return true;
++	}
++
++	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
++
++	if (first_init_pfn >= pgdat_end_pfn(pgdat)) {
++		pgdat_resize_unlock(pgdat, &flags);
++		return false;
++	}
++
++	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
++		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
++		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
++
++		while (spfn < epfn && nr_pages < nr_pages_needed) {
++			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
++			first_deferred_pfn = min(t, epfn);
++			nr_pages += deferred_init_pages(nid, zid, spfn,
++							first_deferred_pfn);
++			spfn = first_deferred_pfn;
++		}
++
++		if (nr_pages >= nr_pages_needed)
++			break;
++	}
++
++	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
++		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
++		epfn = min_t(unsigned long, first_deferred_pfn, PFN_DOWN(epa));
++		deferred_free_pages(nid, zid, spfn, epfn);
++
++		if (first_deferred_pfn == epfn)
++			break;
++	}
++	pgdat->first_deferred_pfn = first_deferred_pfn;
++	pgdat_resize_unlock(pgdat, &flags);
++
++	return nr_pages > 0;
++}
++
++/*
++ * deferred_grow_zone() is __init, but it is called from
++ * get_page_from_freelist() during early boot until deferred_pages permanently
++ * disables this call. This is why we have refdata wrapper to avoid warning,
++ * and to ensure that the function body gets unloaded.
++ */
++static bool __ref
++_deferred_grow_zone(struct zone *zone, unsigned int order)
++{
++	return deferred_grow_zone(zone, order);
++}
++
+ #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+ 
+ void __init page_alloc_init_late(void)
+@@ -1629,6 +1702,12 @@ void __init page_alloc_init_late(void)
+ 	/* Block until all are initialised */
+ 	wait_for_completion(&pgdat_init_all_done_comp);
+ 
++	/*
++	 * We initialized the rest of the deferred pages.  Permanently disable
++	 * on-demand struct page initialization.
++	 */
++	static_branch_disable(&deferred_pages);
++
+ 	/* Reinit limits that are based on free pages after the kernel is up */
+ 	files_maxfiles_init();
+ #endif
+@@ -3206,6 +3285,16 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 				       ac_classzone_idx(ac), alloc_flags)) {
+ 			int ret;
+ 
++#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++			/*
++			 * Watermark failed for this zone, but see if we can
++			 * grow this zone if it contains deferred pages.
++			 */
++			if (static_branch_unlikely(&deferred_pages)) {
++				if (_deferred_grow_zone(zone, order))
++					goto try_this_zone;
++			}
++#endif
+ 			/* Checked here to keep the fast path fast */
+ 			BUILD_BUG_ON(ALLOC_NO_WATERMARKS < NR_WMARK);
+ 			if (alloc_flags & ALLOC_NO_WATERMARKS)
+@@ -3247,6 +3336,14 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 				reserve_highatomic_pageblock(page, zone, order);
+ 
+ 			return page;
++		} else {
++#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++			/* Try again if zone has deferred pages */
++			if (static_branch_unlikely(&deferred_pages)) {
++				if (_deferred_grow_zone(zone, order))
++					goto try_this_zone;
++			}
++#endif
+ 		}
+ 	}
+ 
+@@ -6259,7 +6356,15 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+ 
+ 	alloc_node_mem_map(pgdat);
+ 
+-	reset_deferred_meminit(pgdat);
++#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++	/*
++	 * We start only with one section of pages, more pages are added as
++	 * needed until the rest of deferred pages are initialized.
++	 */
++	pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
++					 pgdat->node_spanned_pages);
++	pgdat->first_deferred_pfn = ULONG_MAX;
++#endif
+ 	free_area_init_core(pgdat);
+ }
+ 
+-- 
+2.16.2
