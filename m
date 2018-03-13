@@ -1,75 +1,111 @@
-Return-Path: <kernel-hardening-return-12501-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtJljxwgNTzEIuRD75HOO+H61vhHS6bo8ic2YFrfiyXyEVzgDux5AR9vfmY0QjiC92yzBiL
-ARC-Seal: i=1; a=rsa-sha256; t=1520932080; cv=none;
-        d=google.com; s=arc-20160816;
-        b=R0Ps0mrWzC4LOjRNnliNOPD1JzY3d7GtxAPblflHknKEHTTZDstUnhJ8xbYfNV5+56
-         j4HycLTHqILHxHk4eX3FrEPTp7DR82PI7/k9yVYnHq0Vto03BvbA5WwkMfKWXN4vtn4k
-         awgnrsDXkEbJUS1hh9dk5RLW7U7gk3UWcTWVXax6K7F1cv70/Vo0WninUZd3zE3qmScL
-         veboobJbYarmjwJ7skUs9wKj3MmhQ9NkugN49Pb/ao23rl0L3estPipeq27Mx8pJ5Sm2
-         CPO3IVePwnymoC340jJSULGXuWzrUnqIeGxVbOu9IY61T3d5RJkli40ZGPd0fr54CG5v
-         sW1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=wISaWCO7LeztUeQIPmaPstZ1dTlAVRKd7dF5rtTjaws=;
-        b=UCtn+5+zDlnnMK1JL0CflSqGMTjZcTHAQ05IsiEPkPlsIYuHq8mGjMG+UdYU3L8qh6
-         bI7FncVz+gj+iBWnD6hjeunJFng+zZ4Bk198Wcm9fh9KdIuJvgz8DLaFa1BdOP2KUYSr
-         nA1hVyfuzhEjPey7flTPvOFCVw2nt1GCeZktL+kbADEZ22XVmWENNGkiBef+IAhNr3ZA
-         gonNCxwXdX75r7Te0hQyLT62kcgz0ehpuH8tPDsVmYZZaENUo1nmPey+5mSCq4PWUAuj
-         VKmTtnuXvzdwbFOJWDEx1U2Fp/QbQroNOhuc1HSQywXrbXojEMDEBdAbOplYKdyJNcUN
-         O49Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=CDQQsHRD;
-       spf=pass (google.com: domain of kernel-hardening-return-12501-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12501-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=CDQQsHRD;
-       spf=pass (google.com: domain of kernel-hardening-return-12501-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12501-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Tue, 13 Mar 2018 02:05:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"Tobin C. Harding" <tobin@apporbit.com>,
-	Arthur Marsh <arthur.marsh@internode.on.net>,
-	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	Linux SCSI List <linux-scsi@vger.kernel.org>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-	Dario Ballabio <ballabio_dario@emc.com>,
-	Kees Cook <keescook@chromium.org>, kernelnewbies@kernelnewbies.org
-Subject: Re: [PATCH] scsi: eata: drop VLA in reorder()
-Message-ID: <20180313090540.GA4810@infradead.org>
+Return-Path: <kernelnewbies-bounces@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-9491-1520978720-2-34051750529990629
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_NONE -0.0001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: kernelnewbies-bounces@kernelnewbies.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520978719; b=LpdesYBje9YbYsHGGKRoKjua4Q7hZnEjptT12EvdepCYfVN
+    dcbTCiFpW1ddSIykth4MiUemZF9RMRj6+8vtvkefUrxhQWKP0i2TIo0Rb+Db2Yef
+    ZZorRAg8HH2dup49UZZ9hZStWC3TSUBU1mWPz34HYBOiyK40SXSfSJuMsPvlLrUy
+    NTfNGQK1LhtWbl8IKW5G83dNrM9uGyxW2FYG8AgFhE/hRirxEOXEiYYF9q4nM4qD
+    iICTgaP7IE77Igbar1eeQPY2x+hU7pNfeOhj1nXhjqTW76nX5KWxXmW9sKfERh0V
+    N0/UCK1LIXuOXVk3JcpQvRi4naVCMNu92l0W0jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding; s=arctest; t=1520978719; bh=k4utSUTP
+    IstZ8xQikxPCR/KxSmbhPzYL4CmJfAPWDxM=; b=O0pOmRBUhfiahKDz/fw3kIDh
+    itANiltJ4iSoWTDvFCPlrXQDYDlRr0QTUXmJV1PgNayioxLNDuGXYYGY9jyf0WoZ
+    hzFkeGoiP9Pai8KPAwFJDlc1PdYthby5xAsjTvCM8Zvp52hpROsYYmL7VIW+ta/E
+    eGuxe28ezVJJYV8p5X/onlj6ZHebMrZV3A3xlQubNoj28cvJAzUia+KqXPh+FO7S
+    26Q1EyC9a0dM9XZOJRtD+IK3OHsNp0xF4b+bva0Djpmqaa0/MyrKyvt5/lTHUcwy
+    /3LJAulBAZApA1t34TIt/fDST8L9OxDn0r09936ewKl3HuvXNUE5RoPJ7ryW2g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vXhab4UM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Co1XY+Zz;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vXhab4UM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Co1XY+Zz;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELsWxoHa2Hfe5NeXvJYCADGSPUxXpsA6K4+T8rMC1sQceXWWKmHFj4n8BV3wBGCdo20OOTg0tLMZEdP0PUf4aHo=
+MIME-Version: 1.0
+In-Reply-To: <20180313090540.GA4810@infradead.org>
 References: <1520802418-17284-1-git-send-email-s.mesoraca16@gmail.com>
  <20180312030834.GC8631@eros>
  <CA+55aFww=otC4Wv40enadF+9NAyWG4Hotzjvv2EKb+_wGFui-w@mail.gmail.com>
- <yq1y3iwem87.fsf@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1y3iwem87.fsf@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+ <yq1y3iwem87.fsf@oracle.com> <20180313090540.GA4810@infradead.org>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date: Tue, 13 Mar 2018 23:04:21 +0100
+Message-ID: <CAJHCu1+XPPmCcrP+89zc9Lg7k_t78LzfJbY7aC8Mt+ANeuVWdA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: eata: drop VLA in reorder()
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+ Linux SCSI List <linux-scsi@vger.kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Tobin C. Harding" <tobin@apporbit.com>, kernelnewbies@kernelnewbies.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Dario Ballabio <ballabio_dario@emc.com>,
+ Arthur Marsh <arthur.marsh@internode.on.net>,
+ Kees Cook <keescook@chromium.org>
+X-BeenThere: kernelnewbies@kernelnewbies.org
+X-Mailman-Version: 2.1.15
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594676969721761588?=
-X-GMAIL-MSGID: =?utf-8?q?1594812876942154810?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 10:35:36PM -0400, Martin K. Petersen wrote:
-> No objections to Salvatore's patch but I have a slight affinity for
-> retiring unused code over patching it. So unless there are objections...
+2018-03-13 10:05 GMT+01:00 Christoph Hellwig <hch@infradead.org>:
+> On Mon, Mar 12, 2018 at 10:35:36PM -0400, Martin K. Petersen wrote:
+>> No objections to Salvatore's patch but I have a slight affinity for
+>> retiring unused code over patching it. So unless there are objections...
+>
+> Lets kill it.  And the not DMA capable eata_pio driver with it for
+> good riddance.
 
-Lets kill it.  And the not DMA capable eata_pio driver with it for
-good riddance.
+Good, I'll send a patch to remove eata & friends.
+Thank you for your time,
 
-> 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
----end quoted text---
+Salvatore
+
+_______________________________________________
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
