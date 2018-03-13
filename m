@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933312AbeCMLyD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:54:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:36534 "EHLO foss.arm.com"
+        id S933296AbeCMLyc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:54:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:36504 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932954AbeCMLwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:52:25 -0400
+        id S933189AbeCMLwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:52:17 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
         ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v4 17/22] arm64: Add helpers for checking CPU MIDR against a range
-Date: Tue, 13 Mar 2018 11:51:15 +0000
-Message-Id: <20180313115120.17256-18-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v4 14/22] arm64: capabilities: Add support for features enabled early
+Date: Tue, 13 Mar 2018 11:51:12 +0000
+Message-Id: <20180313115120.17256-15-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313115120.17256-1-suzuki.poulose@arm.com>
 References: <20180313115120.17256-1-suzuki.poulose@arm.com>
@@ -23,133 +24,237 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add helpers for checking if the given CPU midr falls in a range
-of variants/revisions for a given model.
+The kernel detects and uses some of the features based on the boot
+CPU and expects that all the following CPUs conform to it. e.g,
+with VHE and the boot CPU running at EL2, the kernel decides to
+keep the kernel running at EL2. If another CPU is brought up without
+this capability, we use custom hooks (via check_early_cpu_features())
+to handle it. To handle such capabilities add support for detecting
+and enabling capabilities based on the boot CPU.
 
+A bit is added to indicate if the capability should be detected
+early on the boot CPU. The infrastructure then ensures that such
+capabilities are probed and "enabled" early on in the boot CPU
+and, enabled on the subsequent CPUs.
+
+Cc: Julien Thierry <julien.thierry@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  4 ++--
- arch/arm64/include/asm/cputype.h    | 30 ++++++++++++++++++++++++++++++
- arch/arm64/kernel/cpu_errata.c      | 16 +++++-----------
- 3 files changed, 37 insertions(+), 13 deletions(-)
+ arch/arm64/include/asm/cpufeature.h | 48 +++++++++++++++++++++++++------
+ arch/arm64/kernel/cpufeature.c      | 57 ++++++++++++++++++++++++++++---------
+ 2 files changed, 83 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 6a1280493f57..cd245871b578 100644
+index 4f050259dff3..2f5edefdff99 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -10,6 +10,7 @@
- #define __ASM_CPUFEATURE_H
- 
- #include <asm/cpucaps.h>
-+#include <asm/cputype.h>
- #include <asm/fpsimd.h>
- #include <asm/hwcap.h>
- #include <asm/sigcontext.h>
-@@ -306,8 +307,7 @@ struct arm64_cpu_capabilities {
- 	void (*cpu_enable)(const struct arm64_cpu_capabilities *cap);
- 	union {
- 		struct {	/* To be used for erratum handling only */
--			u32 midr_model;
--			u32 midr_range_min, midr_range_max;
-+			struct midr_range midr_range;
- 			const struct arm64_midr_revidr {
- 				u32 midr_rv;		/* revision/variant */
- 				u32 revidr_mask;
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 350c76a1d15b..bf6cfdab743f 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -117,6 +117,36 @@
- 
- #define read_cpuid(reg)			read_sysreg_s(SYS_ ## reg)
- 
-+/*
-+ * Represent a range of MIDR values for a given CPU model and a
-+ * range of variant/revision values.
+@@ -108,7 +108,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  *    value of a field in CPU ID feature register or checking the cpu
+  *    model. The capability provides a call back ( @matches() ) to
+  *    perform the check. Scope defines how the checks should be performed.
+- *    There are two cases:
++ *    There are three cases:
+  *
+  *     a) SCOPE_LOCAL_CPU: check all the CPUs and "detect" if at least one
+  *        matches. This implies, we have to run the check on all the
+@@ -121,6 +121,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  *        capability relies on a field in one of the CPU ID feature
+  *        registers, we use the sanitised value of the register from the
+  *        CPU feature infrastructure to make the decision.
++ *		Or
++ *     c) SCOPE_BOOT_CPU: Check only on the primary boot CPU to detect the
++ *        feature. This category is for features that are "finalised"
++ *        (or used) by the kernel very early even before the SMP cpus
++ *        are brought up.
+  *
+  *    The process of detection is usually denoted by "update" capability
+  *    state in the code.
+@@ -140,6 +145,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  *    CPUs are treated "late CPUs" for capabilities determined by the boot
+  *    CPU.
+  *
++ *    At the moment there are two passes of finalising the capabilities.
++ *      a) Boot CPU scope capabilities - Finalised by primary boot CPU via
++ *         setup_boot_cpu_capabilities().
++ *      b) Everything except (a) - Run via setup_system_capabilities().
 + *
-+ * @model	- CPU model as defined by MIDR_CPU_MODEL
-+ * @rv_min	- Minimum value for the revision/variant as defined by
-+ *		  MIDR_CPU_VAR_REV
-+ * @rv_max	- Maximum value for the variant/revision for the range.
+  * 3) Verification: When a CPU is brought online (e.g, by user or by the
+  *    kernel), the kernel should make sure that it is safe to use the CPU,
+  *    by verifying that the CPU is compliant with the state of the
+@@ -148,12 +158,21 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  *	secondary_start_kernel()-> check_local_cpu_capabilities()
+  *
+  *    As explained in (2) above, capabilities could be finalised at
+- *    different points in the execution. Each CPU is verified against the
+- *    "finalised" capabilities and if there is a conflict, the kernel takes
+- *    an action, based on the severity (e.g, a CPU could be prevented from
+- *    booting or cause a kernel panic). The CPU is allowed to "affect" the
+- *    state of the capability, if it has not been finalised already.
+- *    See section 5 for more details on conflicts.
++ *    different points in the execution. Each newly booted CPU is verified
++ *    against the capabilities that have been finalised by the time it
++ *    boots.
++ *
++ *	a) SCOPE_BOOT_CPU : All CPUs are verified against the capability
++ *	except for the primary boot CPU.
++ *
++ *	b) SCOPE_LOCAL_CPU, SCOPE_SYSTEM: All CPUs hotplugged on by the
++ *	user after the kernel boot are verified against the capability.
++ *
++ *    If there is a conflict, the kernel takes an action, based on the
++ *    severity (e.g, a CPU could be prevented from booting or cause a
++ *    kernel panic). The CPU is allowed to "affect" the state of the
++ *    capability, if it has not been finalised already. See section 5
++ *    for more details on conflicts.
+  *
+  * 4) Action: As mentioned in (2), the kernel can take an action for each
+  *    detected capability, on all CPUs on the system. Appropriate actions
+@@ -202,15 +221,26 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  */
+ 
+ 
+-/* Decide how the capability is detected. On a local CPU vs System wide */
++/*
++ * Decide how the capability is detected.
++ * On any local CPU vs System wide vs the primary boot CPU
 + */
-+struct midr_range {
-+	u32 model;
-+	u32 rv_min;
-+	u32 rv_max;
-+};
-+
-+#define MIDR_RANGE(m, v_min, r_min, v_max, r_max)		\
-+	{							\
-+		.model = m,					\
-+		.rv_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
-+		.rv_max = MIDR_CPU_VAR_REV(v_max, r_max),	\
-+	}
-+
-+#define MIDR_ALL_VERSIONS(m) MIDR_RANGE(m, 0, 0, 0xf, 0xf)
-+
-+static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
-+{
-+	return MIDR_IS_CPU_MODEL_RANGE(midr, range->model,
-+				 range->rv_min, range->rv_max);
-+}
-+
+ #define ARM64_CPUCAP_SCOPE_LOCAL_CPU		((u16)BIT(0))
+ #define ARM64_CPUCAP_SCOPE_SYSTEM		((u16)BIT(1))
++/*
++ * The capabilitiy is detected on the Boot CPU and is used by kernel
++ * during early boot. i.e, the capability should be "detected" and
++ * "enabled" as early as possibly on all booting CPUs.
++ */
++#define ARM64_CPUCAP_SCOPE_BOOT_CPU		((u16)BIT(2))
+ #define ARM64_CPUCAP_SCOPE_MASK			\
+ 	(ARM64_CPUCAP_SCOPE_SYSTEM	|	\
+-	 ARM64_CPUCAP_SCOPE_LOCAL_CPU)
++	 ARM64_CPUCAP_SCOPE_LOCAL_CPU	|	\
++	 ARM64_CPUCAP_SCOPE_BOOT_CPU)
+ 
+ #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
+ #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
++#define SCOPE_BOOT_CPU				ARM64_CPUCAP_SCOPE_BOOT_CPU
+ #define SCOPE_ALL				ARM64_CPUCAP_SCOPE_MASK
+ 
  /*
-  * The CPU ID never changes at run time, so we might as well tell the
-  * compiler that it's constant.  Use this function to read the CPU ID
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 9ea14954972c..3c0bb6c4ed02 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -28,9 +28,7 @@ is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
- 	u32 midr = read_cpuid_id(), revidr;
- 
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	if (!MIDR_IS_CPU_MODEL_RANGE(midr, entry->midr_model,
--				     entry->midr_range_min,
--				     entry->midr_range_max))
-+	if (!is_midr_in_range(midr, &entry->midr_range))
- 		return false;
- 
- 	midr &= MIDR_REVISION_MASK | MIDR_VARIANT_MASK;
-@@ -53,7 +51,7 @@ is_kryo_midr(const struct arm64_cpu_capabilities *entry, int scope)
- 	model &= MIDR_IMPLEMENTOR_MASK | (0xf00 << MIDR_PARTNUM_SHIFT) |
- 		 MIDR_ARCHITECTURE_MASK;
- 
--	return model == entry->midr_model;
-+	return model == entry->midr_range.model;
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 0bbab4bd7644..e9e81aabfe91 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -507,7 +507,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
  }
  
- static bool
-@@ -239,15 +237,11 @@ qcom_enable_link_stack_sanitization(const struct arm64_cpu_capabilities *entry)
+ extern const struct arm64_cpu_capabilities arm64_errata[];
+-static void update_cpu_capabilities(u16 scope_mask);
++static void __init setup_boot_cpu_capabilities(void);
  
- #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
- 	.matches = is_affected_midr_range,			\
--	.midr_model = model,					\
--	.midr_range_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
--	.midr_range_max = MIDR_CPU_VAR_REV(v_max, r_max)
-+	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ {
+@@ -553,10 +553,10 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ 	}
  
- #define CAP_MIDR_ALL_VERSIONS(model)					\
- 	.matches = is_affected_midr_range,				\
--	.midr_model = model,						\
--	.midr_range_min = MIDR_CPU_VAR_REV(0, 0),			\
--	.midr_range_max = (MIDR_VARIANT_MASK | MIDR_REVISION_MASK)
-+	.midr_range = MIDR_ALL_VERSIONS(model)
+ 	/*
+-	 * Run the errata work around and local feature checks on the
+-	 * boot CPU, once we have initialised the cpu feature infrastructure.
++	 * Detect and enable early CPU capabilities based on the boot CPU,
++	 * after we have initialised the CPU feature infrastructure.
+ 	 */
+-	update_cpu_capabilities(SCOPE_LOCAL_CPU);
++	setup_boot_cpu_capabilities();
+ }
  
- #define MIDR_FIXED(rev, revidr_mask) \
- 	.fixed_revs = (struct arm64_midr_revidr[]){{ (rev), (revidr_mask) }, {}}
-@@ -390,7 +384,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 		.desc = "Qualcomm Technologies Kryo erratum 1003",
- 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
--		.midr_model = MIDR_QCOM_KRYO,
-+		.midr_range.model = MIDR_QCOM_KRYO,
- 		.matches = is_kryo_midr,
- 	},
- #endif
+ static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+@@ -1304,13 +1304,24 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+ 
+ 		if (caps->cpu_enable) {
+ 			/*
+-			 * Use stop_machine() as it schedules the work allowing
+-			 * us to modify PSTATE, instead of on_each_cpu() which
+-			 * uses an IPI, giving us a PSTATE that disappears when
+-			 * we return.
++			 * Capabilities with SCOPE_BOOT_CPU scope are finalised
++			 * before any secondary CPU boots. Thus, each secondary
++			 * will enable the capability as appropriate via
++			 * check_local_cpu_capabilities(). The only exception is
++			 * the boot CPU, for which the capability must be
++			 * enabled here. This approach avoids costly
++			 * stop_machine() calls for this case.
++			 *
++			 * Otherwise, use stop_machine() as it schedules the
++			 * work allowing us to modify PSTATE, instead of
++			 * on_each_cpu() which uses an IPI, giving us a PSTATE
++			 * that disappears when we return.
+ 			 */
+-			stop_machine(__enable_cpu_capability, (void *)caps,
+-				     cpu_online_mask);
++			if (scope_mask & SCOPE_BOOT_CPU)
++				caps->cpu_enable(caps);
++			else
++				stop_machine(__enable_cpu_capability,
++					     (void *)caps, cpu_online_mask);
+ 		}
+ 	}
+ }
+@@ -1393,6 +1404,12 @@ static void check_early_cpu_features(void)
+ {
+ 	verify_cpu_run_el();
+ 	verify_cpu_asid_bits();
++	/*
++	 * Early features are used by the kernel already. If there
++	 * is a conflict, we cannot proceed further.
++	 */
++	if (!verify_local_cpu_caps(SCOPE_BOOT_CPU))
++		cpu_panic_kernel();
+ }
+ 
+ static void
+@@ -1435,7 +1452,12 @@ static void verify_sve_features(void)
+  */
+ static void verify_local_cpu_capabilities(void)
+ {
+-	if (!verify_local_cpu_caps(SCOPE_ALL))
++	/*
++	 * The capabilities with SCOPE_BOOT_CPU are checked from
++	 * check_early_cpu_features(), as they need to be verified
++	 * on all secondary CPUs.
++	 */
++	if (!verify_local_cpu_caps(SCOPE_ALL & ~SCOPE_BOOT_CPU))
+ 		cpu_die_early();
+ 
+ 	verify_local_elf_hwcaps(arm64_elf_hwcaps);
+@@ -1467,6 +1489,14 @@ void check_local_cpu_capabilities(void)
+ 		verify_local_cpu_capabilities();
+ }
+ 
++static void __init setup_boot_cpu_capabilities(void)
++{
++	/* Detect capabilities with either SCOPE_BOOT_CPU or SCOPE_LOCAL_CPU */
++	update_cpu_capabilities(SCOPE_BOOT_CPU | SCOPE_LOCAL_CPU);
++	/* Enable the SCOPE_BOOT_CPU capabilities alone right away */
++	enable_cpu_capabilities(SCOPE_BOOT_CPU);
++}
++
+ DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
+ EXPORT_SYMBOL(arm64_const_caps_ready);
+ 
+@@ -1488,10 +1518,11 @@ static void __init setup_system_capabilities(void)
+ 	/*
+ 	 * We have finalised the system-wide safe feature
+ 	 * registers, finalise the capabilities that depend
+-	 * on it. Also enable all the available capabilities.
++	 * on it. Also enable all the available capabilities,
++	 * that are not enabled already.
+ 	 */
+ 	update_cpu_capabilities(SCOPE_SYSTEM);
+-	enable_cpu_capabilities(SCOPE_ALL);
++	enable_cpu_capabilities(SCOPE_ALL & ~SCOPE_BOOT_CPU);
+ }
+ 
+ void __init setup_cpu_features(void)
 -- 
 2.14.3
