@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuP7Y3YeRgYxj7X/2e5VYJCKTXLA1ByFCUSBecRXqtaL56oUSnK6Z3oHLDZfUSbKXzwqMIq
-ARC-Seal: i=1; a=rsa-sha256; t=1520955567; cv=none;
+X-Google-Smtp-Source: AG47ELteo589p6MuNLW4OYl67Lch5tKEy4Fn5VaKJV6BXbql/q7MBDnLQkwfmpG4OBxHyZFNSHVM
+ARC-Seal: i=1; a=rsa-sha256; t=1520955564; cv=none;
         d=google.com; s=arc-20160816;
-        b=TEooJL6YRJ2JggKHVI8up9M7A6GzTaFmh1Jf25pixh2aYBLS4PNMqsy9bwWQjtc84z
-         kihOxc0kFHenJ8wHtpdJdqWp++AJBQM5cj8CHDKVNjBuzLXK+Z+JF7f/6ELoEtlRGKoG
-         5ntAZ181yzxk3NUolntDK2/Fn4A3hIdroSM8jtdNl1bRS1hOBKXUNf0LVpaPcTn7watU
-         h4pBQSFQZrLWXNo+hBAxiKXS9kMk/IJ7ES23N/ul+PpJPW3u2KI17eKktZkpU18YSHxP
-         RHTpD6qATzvvReidt81oWT7SySaRGM6WgngFsuIAOffraldbTc0JBqWSkrklUhVBr1VB
-         1xRA==
+        b=vclUhp4UR0+5ciZvQi1WFI8DMv7USUE66abhpzHSqCocqR4Y2/qVb5WXsuYz7/KBZD
+         gMlozch3jqsAbP+2Y1Kr6jr/ruh6mX2FWIAVMkaP0CkusGzrPyHUexifIv6t7mKokDXw
+         Diofq+s72sn5bcN5ff6plabt6ZGPJnmwZ650lJmfyCKDlBfPD6PjGSlfnkTt5aMRXhZA
+         uB6IaTTWpPTDjVEhsN+Wnrtt0KG0iQjqTu40tJBnvaLjyDUUSYRQUvY1ic/vhALpMJhQ
+         ZaVKhZehNtc1hQjSjuWF7xz2MzxKHkmimetf67cToRqgMnaS2S6jfTDbWFUJhtsEZ8TH
+         m3qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yS82jN29y5PYxT0Q8sQIuKCBbSxAewLnLPli8ck7CU4=;
-        b=uDrhswiZelGU2xmQuw6zvyTI3l29u/d6VRPyvq+E00eNkj/pxeiBBEos8gxML6wi4o
-         aDyU4ilx8jDbFPZdqx6lA2Wk29vB6i2VgNCgYe38e3bEUw7vLgi2lgldyDzcbBHQwEoQ
-         +bIcFvWLW924DaIXSKfkfEHxWX6D5a5VEYnmPILKQhV1gdRhE5Nq2NAYyqurdeyaoBJD
-         qcbWlxRUxASwoSn+9f7kmjHIbwv4hj27h3tMMJkUtXpXS9yYlofDK75edsPUqKvuebTB
-         OzxvhMxs7+3+B9f9ldGE1sRFkKUumrRkG+OrgrIb44zCudJBr9HOdDa0cn3sClnZVjjs
-         0Smw==
+        bh=zwMT6G2CIjo0qgVSMWf8qnx3PULdAhWaTlv5BOE9uVI=;
+        b=UmnPGyVHJnrjvuZ89ztFxDusArZ5zLFt6JWbrJjhrZBR9v6Glwox3BosET06Tj0aPb
+         aJIgxlpOXzlmyrweGHvW6EWXyhgCP9P+Rdtmr8nTjUUVILK5V1qn5plLSdKp8lnHHNr4
+         lDvykzpZj5sweopXCeIh78btFHkmzQzY/oOrGQSuX9TIbgElSAN+wXQwpCm/lIbR8GMf
+         MyqvADnuBeQ4M0WwGJj9vD1dYNPR4YAQ2SQcT2Zz1G5Kk/9TguFWRliSakS5dg0XOrGG
+         Gs+7ZkG9f8VpoTvFTPrWCZ0sqsOfRjpbhhz5dCPvxW1fydI9gJs7H2NrRZ+FOPVJePuj
+         m9Ow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sergey Gorenko <sergeygo@mellanox.com>,
-	Laurence Oberman <loberman@redhat.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 094/140] IB/mlx5: Fix incorrect size of klms in the memory region
-Date: Tue, 13 Mar 2018 16:24:57 +0100
-Message-Id: <20180313152504.485294946@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 093/140] dm bufio: avoid false-positive Wmaybe-uninitialized warning
+Date: Tue, 13 Mar 2018 16:24:56 +0100
+Message-Id: <20180313152504.405779344@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836924185487286?=
-X-GMAIL-MSGID: =?utf-8?q?1594837504759502564?=
+X-GMAIL-THRID: =?utf-8?q?1594836920413426807?=
+X-GMAIL-MSGID: =?utf-8?q?1594837501882016046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +49,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergey Gorenko <sergeygo@mellanox.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit da343b6d90e11132f1e917d865d88ee35d6e6d00 upstream.
+commit 590347e4000356f55eb10b03ced2686bd74dab40 upstream.
 
-The value of mr->ndescs greater than mr->max_descs is set in the
-function mlx5_ib_sg_to_klms() if sg_nents is greater than
-mr->max_descs. This is an invalid value and it causes the
-following error when registering mr:
+gcc-6.3 and earlier show a new warning after a seemingly unrelated
+change to the arm64 PAGE_KERNEL definition:
 
-mlx5_0:dump_cqe:276:(pid 193): dump error cqe
-00000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00000030: 00 00 00 00 0f 00 78 06 25 00 00 8b 08 1e 8f d3
+In file included from drivers/md/dm-bufio.c:14:0:
+drivers/md/dm-bufio.c: In function 'alloc_buffer':
+include/linux/sched/mm.h:182:56: warning: 'noio_flag' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  current->flags = (current->flags & ~PF_MEMALLOC_NOIO) | flags;
+                                                        ^
 
-Cc: <stable@vger.kernel.org> # 4.5
-Fixes: b005d3164713 ("mlx5: Add arbitrary sg list support")
-Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The same warning happened earlier on linux-3.18 for MIPS and I did a
+workaround for that, but now it's come back.
+
+gcc-7 and newer are apparently smart enough to figure this out, and
+other architectures don't show it, so the best I could come up with is
+to rework the caller slightly in a way that makes it obvious enough to
+all arm64 compilers what is happening here.
+
+Fixes: 41acec624087 ("arm64: kpti: Make use of nG dependent on arm64_kernel_unmapped_at_el0()")
+Link: https://patchwork.kernel.org/patch/9692829/
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[snitzer: moved declarations inside conditional, altered vmalloc return]
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/mr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-bufio.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1813,7 +1813,6 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -386,9 +386,6 @@ static void __cache_size_refresh(void)
+ static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+ 			       enum data_mode *data_mode)
+ {
+-	unsigned noio_flag;
+-	void *ptr;
+-
+ 	if (c->block_size <= DM_BUFIO_BLOCK_SIZE_SLAB_LIMIT) {
+ 		*data_mode = DATA_MODE_SLAB;
+ 		return kmem_cache_alloc(DM_BUFIO_CACHE(c), gfp_mask);
+@@ -412,16 +409,15 @@ static void *alloc_buffer_data(struct dm
+ 	 * all allocations done by this process (including pagetables) are done
+ 	 * as if GFP_NOIO was specified.
+ 	 */
++	if (gfp_mask & __GFP_NORETRY) {
++		unsigned noio_flag = memalloc_noio_save();
++		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
  
- 	mr->ibmr.iova = sg_dma_address(sg) + sg_offset;
- 	mr->ibmr.length = 0;
--	mr->ndescs = sg_nents;
+-	if (gfp_mask & __GFP_NORETRY)
+-		noio_flag = memalloc_noio_save();
+-
+-	ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+-
+-	if (gfp_mask & __GFP_NORETRY)
+ 		memalloc_noio_restore(noio_flag);
++		return ptr;
++	}
  
- 	for_each_sg(sgl, sg, sg_nents, i) {
- 		if (unlikely(i >= mr->max_descs))
-@@ -1825,6 +1824,7 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
+-	return ptr;
++	return __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+ }
  
- 		sg_offset = 0;
- 	}
-+	mr->ndescs = i;
- 
- 	if (sg_offset_p)
- 		*sg_offset_p = sg_offset;
+ /*
