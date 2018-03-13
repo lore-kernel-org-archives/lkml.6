@@ -1,69 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932933AbeCML7R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:59:17 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36516 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeCML7Q (ORCPT
+        id S932957AbeCMMAV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:00:21 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32944 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752373AbeCMMAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:59:16 -0400
-X-Google-Smtp-Source: AG47ELuQmF44D/HUX6yFadrAm/ChXOcxvXxeuGnQNDbRaJJ4D4q8mYvI3zIfpWhLRJpJp66n7U3B7g==
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH] ipmi:pci: Blacklist a Realtek "IPMI" device
-To: Daniel Drake <drake@endlessm.com>
-Cc: Chris Chiu <chiu@endlessm.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        openipmi-developer@lists.sourceforge.net,
-        Corey Minyard <cminyard@mvista.com>
-References: <CAB4CAwebQRJcjP8W0vyHgr-k=rqXpLo-PCxBKB3Zu4GSonmaJw@mail.gmail.com>
- <1519613406-32237-1-git-send-email-minyard@acm.org>
- <CAD8Lp45pebxPSbPHXi_fT0Yg+mC01S12P-6cX2MWyQZwRbheMQ@mail.gmail.com>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <7630b31f-0b6a-6725-aac0-3c06c142d557@acm.org>
-Date: Tue, 13 Mar 2018 06:59:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Mar 2018 08:00:20 -0400
+X-Google-Smtp-Source: AG47ELsnf9Fe3I50pbAOb2p1BmPW1HeklbCay08g+m9Sw++4qFZSkPAW+MHmhgc/0R7BVsskOInm0ITaNHL5XTQyUlo=
 MIME-Version: 1.0
-In-Reply-To: <CAD8Lp45pebxPSbPHXi_fT0Yg+mC01S12P-6cX2MWyQZwRbheMQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+In-Reply-To: <20180312155753.9478-2-codekipper@gmail.com>
+References: <20180312155753.9478-1-codekipper@gmail.com> <20180312155753.9478-2-codekipper@gmail.com>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Tue, 13 Mar 2018 22:59:58 +1100
+Message-ID: <CAGRGNgURstWzK9vgSTxHiKfu4=wKEt67geKn407ahh_vnqniLw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 1/6] ASoC: sun4i-i2s: Add slot width override
+To: Code Kipper <codekipper@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/13/2018 02:27 AM, Daniel Drake wrote:
-> Hi,
->
-> On Mon, Feb 26, 2018 at 10:50 AM,  <minyard@acm.org> wrote:
->> From: Corey Minyard <cminyard@mvista.com>
->>
->> Realtek has some sort of "Virtual" IPMI device on the PCI bus as a
->> KCS controller, but whatever it is, it's not one.  Ignore it if seen.
->>
->> Reported-by: Chris Chiu <chiu@endlessm.com>
->> Signed-off-by: Corey Minyard <cminyard@mvista.com>
->> ---
->>
->> I haven't heard anything from you on this.  Here is a patch that should
->> blacklist that device, though I don't have a way to easily test it.
->> If you would prefer this, could you test it?
-> Sorry for the slow response, and thanks for the patch!
->
-> We have tested it here and it seems to be working fine now - the IPMI
-> stuff no longer initializes system interfaces, and hence doesn't get
-> in the way when going into suspend or reboot later.
+Hi Marcus,
 
-Ok, thanks, I will add it with a "Tested-by" from you, if that is ok.
-
--corey
-
+On Tue, Mar 13, 2018 at 2:57 AM,  <codekipper@gmail.com> wrote:
+> From: Marcus Cooper <codekipper@gmail.com>
 >
-> This is a consumer desktop platform, so if some kind of IPMI
-> functionality is really present in the hardware then it is not really
-> going to be relevant for the ordinary user. So it should be fine to
-> just ignore the hardware as you have done.
+> Some codecs require a different amount of a bit clocks per frame
+> than what is calculated by using the sample width. Use a slot
+> width override property to provide this mechanism.
 >
-> Thanks
-> Daniel
+> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/sound/sun4i-i2s.txt |  5 +++++
+>  sound/soc/sunxi/sun4i-i2s.c                           | 15 ++++++++++++---
+>  2 files changed, 17 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> index b9d50d6cdef3..48addef65b8f 100644
+> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> @@ -28,6 +28,11 @@ Required properties for the following compatibles:
+>         - "allwinner,sun8i-h3-i2s"
+>  - resets: phandle to the reset line for this codec
+>
+> +Optional properties:
+> +- allwinner,slot-width-override:if this property is present then the dai is
+> +                               configured to extend the slot width to the
+> +                               value specified. Min 8, Max 32.
+> +
+
+This sounds like something that would be useful for other I2S controllers.
+
+Thanks,
+
+-- 
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
