@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuhxdiaqjBBddXwGWZZ662T8cKRIxmBPkYfLp5nsQJeLhJl9Ys5dqy1unxGOvRVPty1nwZ9
-ARC-Seal: i=1; a=rsa-sha256; t=1520955153; cv=none;
+X-Google-Smtp-Source: AG47ELsxBlr+V0GMvDVf4jR7EP0v45DGJd4yr0TasXlGo/S+7t95L+svglGTnNmyLLhE8qz07Xo6
+ARC-Seal: i=1; a=rsa-sha256; t=1520955150; cv=none;
         d=google.com; s=arc-20160816;
-        b=Byw4878fJOXdMrNQ9IkKCdEgMdXyEXPKe50k9fviUr7YXif8tSf6VqD/Skpeb4o3Pq
-         2r4wy+I5/fW7Z18W96Y84OukRhggHl7Qle52M7mzDkNpiZ/novaJYOnijIEgXlLrclJR
-         XzlxUvh6kRveb5HaYcHmkPJ6d5naFdwc6bEcm8vgkQ9+B1wiTRMU8sFYf4xaMKFyxS8Q
-         P5AvAuw2h2pxR8OpKekTHKW6LIsIAKyX8YL7ffKqro+UJiN5mTLmT3NylRnbkxatV5G1
-         /y89Kpde/Hpx54n5mBsixltlX+nPMwzh8tAmOH2ReOjDucyltj9+vju1QtuSriTTgRAN
-         KIHQ==
+        b=KZ6x4VDq3yNlzh1uMmz9ie80C+4l1fZDWEtKVReC0IpMU5WXpInhd4augSwMaR2KrJ
+         nhVfNn4Iagg9dIQtFhmPHIZf++biJAzBWCeKt+q+aYOpzUXeafy3GjIApn9OXGymk7vC
+         E+BqwfWQmvYOATEeoKyjqR1s3//Q/5LL0kfTZMCFtFKbXRmmPoSmYrgXv+3/I3+ac1mP
+         gaaSVK8Ept+la9Ag1Fk2088KzW8QKVUuO6XFoxnHYcbWAFLVRYN18nuZ0anodYlkxdSl
+         /HSFuhlGc9kzN/DlfhngkBrnCgGCOvSLAWmNp5lX4DVCJu0Qh0KXvtqaYZs8vxePGMtQ
+         bigA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r8O8020jO8Uq9XC0puuHqr/lMjmplbL3i23rvRKMbrg=;
-        b=rz+AXaVqPUHHs4WXB9Fwfq7v0sEupVscFC7gmJILP1f02dXXnq9bOduEpAdcWETrsl
-         gtskGQ7JpUlhI+UUCs6xCZP3XTP9HtS8zG9R3YITe6NS6vlwAZHiC6Q88nl2oIXZw/XR
-         clAj8aUYNPIKQ3Bz4/B8X7rEY2FCuuoRQfWpAqVU4BkBsZgdPb7xVMOWmVMorWViCG49
-         Am3kw3v8/P/YgFoBK0syKDOoDQ4McdqWBbZaNDL8vfzmpaMVf7hQmmApqbkk4OkqS2K+
-         +c27WfpvefvVhs+jcOCFdy8flZ2ZdG7EVV61OkJzGeih+iqcErzrPl9wcVK6sc+Whmf6
-         gz4w==
+        bh=g6J/usBJ0Q0CI5oLKVLjLkmLFm3gghFUysmKA2WRz/I=;
+        b=EFBdGuH8XPjl+7JuC7Ae9Np59kE9MG4vPcHMbAqTLZgxHKkCpWZsREzXrowoHygwsE
+         +keiqd6RMsoYblVIZ8JGyS1Zr1/6icDNa2SKOgpqE/bEwuZq1cINYynxRbYlIwYwdWej
+         ybP4lu4m08vHVly4Ymf5LehyM3yvfIbTtzGvo6RfjovTxfqHiUCKBQOJ4W5JIYS4jSmD
+         BAL7Tm6+2ozSs7JB06YxlrsmFp69FFBpSLW67hP4NEJg69WRSXgVedRGnVZbX1v3V8vX
+         e7vYYCAFrQDUMZvlyX8CKicCZjtAWUMh2z869aTqax4bpFPRsZvEzL+d7Ya0Eexg7frm
+         5AYA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jerry Hoemann <jerry.hoemann@hpe.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.15 107/146] watchdog: hpwdt: Remove legacy NMI sourcing.
-Date: Tue, 13 Mar 2018 16:24:34 +0100
-Message-Id: <20180313152328.664017913@linuxfoundation.org>
+	David Woodhouse <dwmw2@infradead.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 098/146] objtool: Add retpoline validation
+Date: Tue, 13 Mar 2018 16:24:25 +0100
+Message-Id: <20180313152328.145234083@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837070745753802?=
-X-GMAIL-MSGID: =?utf-8?q?1594837070745753802?=
+X-GMAIL-THRID: =?utf-8?q?1594837067702875910?=
+X-GMAIL-MSGID: =?utf-8?q?1594837067702875910?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,623 +59,221 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 2b3d89b402b085b08498e896c65267a145bed486 upstream.
+commit b5bc2231b8ad4387c9641f235ca0ad8cd300b6df upstream.
 
-Gen8 and prior Proliant systems supported the "CRU" interface
-to firmware.  This interfaces allows linux to "call back" into firmware
-to source the cause of an NMI.  This feature isn't fully utilized
-as the actual source of the NMI isn't printed, the driver only
-indicates that the source couldn't be determined when the call
-fails.
+David requested a objtool validation pass for CONFIG_RETPOLINE=y enabled
+builds, where it validates no unannotated indirect  jumps or calls are
+left.
 
-With the advent of Gen9, iCRU replaces the CRU. The call back
-feature is no longer available in firmware.  To be compatible and
-not attempt to call back into firmware on system not supporting CRU,
-the SMBIOS table is consulted to determine if it is safe to
-make the call back or not.
+Add an additional .discard.retpoline_safe section to allow annotating
+the few indirect sites that are required and safe.
 
-This results in about half of the driver code being devoted
-to either making CRU calls or determing if it is safe to make
-CRU calls.  As noted, the driver isn't really using the results of
-the CRU calls.
-
-Furthermore, as a consequence of the Spectre security issue, the
-BIOS/EFI calls are being wrapped into Spectre-disabling section.
-Removing the call back in hpwdt_pretimeout assists in this effort.
-
-As the CRU sourcing of the NMI isn't required for handling the
-NMI and there are security concerns with making the call back, remove
-the legacy (pre Gen9) NMI sourcing and the DMI code to determine if
-the system had the CRU interface.
-
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Requested-by: David Woodhouse <dwmw2@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/hpwdt.c |  501 -----------------------------------------------
- 1 file changed, 9 insertions(+), 492 deletions(-)
+ scripts/Makefile.build        |    4 +
+ tools/objtool/builtin-check.c |    3 -
+ tools/objtool/builtin.h       |    2 
+ tools/objtool/check.c         |   86 +++++++++++++++++++++++++++++++++++++++++-
+ tools/objtool/check.h         |    1 
+ 5 files changed, 93 insertions(+), 3 deletions(-)
 
---- a/drivers/watchdog/hpwdt.c
-+++ b/drivers/watchdog/hpwdt.c
-@@ -28,16 +28,7 @@
- #include <linux/types.h>
- #include <linux/uaccess.h>
- #include <linux/watchdog.h>
--#ifdef CONFIG_HPWDT_NMI_DECODING
--#include <linux/dmi.h>
--#include <linux/spinlock.h>
--#include <linux/nmi.h>
--#include <linux/kdebug.h>
--#include <linux/notifier.h>
--#include <asm/set_memory.h>
--#endif /* CONFIG_HPWDT_NMI_DECODING */
- #include <asm/nmi.h>
--#include <asm/frame.h>
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -264,6 +264,10 @@ objtool_args += --no-unreachable
+ else
+ objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
+ endif
++ifdef CONFIG_RETPOLINE
++  objtool_args += --retpoline
++endif
++
  
- #define HPWDT_VERSION			"1.4.0"
- #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
-@@ -48,6 +39,9 @@
- static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
- static unsigned int reload;			/* the computed soft_margin */
- static bool nowayout = WATCHDOG_NOWAYOUT;
-+#ifdef CONFIG_HPWDT_NMI_DECODING
-+static unsigned int allow_kdump = 1;
-+#endif
- static char expect_release;
- static unsigned long hpwdt_is_open;
+ ifdef CONFIG_MODVERSIONS
+ objtool_o = $(@D)/.tmp_$(@F)
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -29,7 +29,7 @@
+ #include "builtin.h"
+ #include "check.h"
  
-@@ -63,373 +57,6 @@ static const struct pci_device_id hpwdt_
+-bool no_fp, no_unreachable;
++bool no_fp, no_unreachable, retpoline;
+ 
+ static const char * const check_usage[] = {
+ 	"objtool check [<options>] file.o",
+@@ -39,6 +39,7 @@ static const char * const check_usage[]
+ const struct option check_options[] = {
+ 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
+ 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
++	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
+ 	OPT_END(),
  };
- MODULE_DEVICE_TABLE(pci, hpwdt_devices);
  
--#ifdef CONFIG_HPWDT_NMI_DECODING
--#define PCI_BIOS32_SD_VALUE		0x5F32335F	/* "_32_" */
--#define CRU_BIOS_SIGNATURE_VALUE	0x55524324
--#define PCI_BIOS32_PARAGRAPH_LEN	16
--#define PCI_ROM_BASE1			0x000F0000
--#define ROM_SIZE			0x10000
--
--struct bios32_service_dir {
--	u32 signature;
--	u32 entry_point;
--	u8 revision;
--	u8 length;
--	u8 checksum;
--	u8 reserved[5];
--};
--
--/* type 212 */
--struct smbios_cru64_info {
--	u8 type;
--	u8 byte_length;
--	u16 handle;
--	u32 signature;
--	u64 physical_address;
--	u32 double_length;
--	u32 double_offset;
--};
--#define SMBIOS_CRU64_INFORMATION	212
--
--/* type 219 */
--struct smbios_proliant_info {
--	u8 type;
--	u8 byte_length;
--	u16 handle;
--	u32 power_features;
--	u32 omega_features;
--	u32 reserved;
--	u32 misc_features;
--};
--#define SMBIOS_ICRU_INFORMATION		219
--
--
--struct cmn_registers {
--	union {
--		struct {
--			u8 ral;
--			u8 rah;
--			u16 rea2;
--		};
--		u32 reax;
--	} u1;
--	union {
--		struct {
--			u8 rbl;
--			u8 rbh;
--			u8 reb2l;
--			u8 reb2h;
--		};
--		u32 rebx;
--	} u2;
--	union {
--		struct {
--			u8 rcl;
--			u8 rch;
--			u16 rec2;
--		};
--		u32 recx;
--	} u3;
--	union {
--		struct {
--			u8 rdl;
--			u8 rdh;
--			u16 red2;
--		};
--		u32 redx;
--	} u4;
--
--	u32 resi;
--	u32 redi;
--	u16 rds;
--	u16 res;
--	u32 reflags;
--}  __attribute__((packed));
--
--static unsigned int hpwdt_nmi_decoding;
--static unsigned int allow_kdump = 1;
--static unsigned int is_icru;
--static unsigned int is_uefi;
--static DEFINE_SPINLOCK(rom_lock);
--static void *cru_rom_addr;
--static struct cmn_registers cmn_regs;
--
--extern asmlinkage void asminline_call(struct cmn_registers *pi86Regs,
--						unsigned long *pRomEntry);
--
--#ifdef CONFIG_X86_32
--/* --32 Bit Bios------------------------------------------------------------ */
--
--#define HPWDT_ARCH	32
--
--asm(".text                          \n\t"
--    ".align 4                       \n\t"
--    ".globl asminline_call	    \n"
--    "asminline_call:                \n\t"
--    "pushl       %ebp               \n\t"
--    "movl        %esp, %ebp         \n\t"
--    "pusha                          \n\t"
--    "pushf                          \n\t"
--    "push        %es                \n\t"
--    "push        %ds                \n\t"
--    "pop         %es                \n\t"
--    "movl        8(%ebp),%eax       \n\t"
--    "movl        4(%eax),%ebx       \n\t"
--    "movl        8(%eax),%ecx       \n\t"
--    "movl        12(%eax),%edx      \n\t"
--    "movl        16(%eax),%esi      \n\t"
--    "movl        20(%eax),%edi      \n\t"
--    "movl        (%eax),%eax        \n\t"
--    "push        %cs                \n\t"
--    "call        *12(%ebp)          \n\t"
--    "pushf                          \n\t"
--    "pushl       %eax               \n\t"
--    "movl        8(%ebp),%eax       \n\t"
--    "movl        %ebx,4(%eax)       \n\t"
--    "movl        %ecx,8(%eax)       \n\t"
--    "movl        %edx,12(%eax)      \n\t"
--    "movl        %esi,16(%eax)      \n\t"
--    "movl        %edi,20(%eax)      \n\t"
--    "movw        %ds,24(%eax)       \n\t"
--    "movw        %es,26(%eax)       \n\t"
--    "popl        %ebx               \n\t"
--    "movl        %ebx,(%eax)        \n\t"
--    "popl        %ebx               \n\t"
--    "movl        %ebx,28(%eax)      \n\t"
--    "pop         %es                \n\t"
--    "popf                           \n\t"
--    "popa                           \n\t"
--    "leave                          \n\t"
--    "ret                            \n\t"
--    ".previous");
--
--
--/*
-- *	cru_detect
-- *
-- *	Routine Description:
-- *	This function uses the 32-bit BIOS Service Directory record to
-- *	search for a $CRU record.
-- *
-- *	Return Value:
-- *	0        :  SUCCESS
-- *	<0       :  FAILURE
-- */
--static int cru_detect(unsigned long map_entry,
--	unsigned long map_offset)
--{
--	void *bios32_map;
--	unsigned long *bios32_entrypoint;
--	unsigned long cru_physical_address;
--	unsigned long cru_length;
--	unsigned long physical_bios_base = 0;
--	unsigned long physical_bios_offset = 0;
--	int retval = -ENODEV;
--
--	bios32_map = ioremap(map_entry, (2 * PAGE_SIZE));
--
--	if (bios32_map == NULL)
--		return -ENODEV;
--
--	bios32_entrypoint = bios32_map + map_offset;
--
--	cmn_regs.u1.reax = CRU_BIOS_SIGNATURE_VALUE;
--
--	set_memory_x((unsigned long)bios32_map, 2);
--	asminline_call(&cmn_regs, bios32_entrypoint);
--
--	if (cmn_regs.u1.ral != 0) {
--		pr_warn("Call succeeded but with an error: 0x%x\n",
--			cmn_regs.u1.ral);
--	} else {
--		physical_bios_base = cmn_regs.u2.rebx;
--		physical_bios_offset = cmn_regs.u4.redx;
--		cru_length = cmn_regs.u3.recx;
--		cru_physical_address =
--			physical_bios_base + physical_bios_offset;
--
--		/* If the values look OK, then map it in. */
--		if ((physical_bios_base + physical_bios_offset)) {
--			cru_rom_addr =
--				ioremap(cru_physical_address, cru_length);
--			if (cru_rom_addr) {
--				set_memory_x((unsigned long)cru_rom_addr & PAGE_MASK,
--					(cru_length + PAGE_SIZE - 1) >> PAGE_SHIFT);
--				retval = 0;
--			}
--		}
--
--		pr_debug("CRU Base Address:   0x%lx\n", physical_bios_base);
--		pr_debug("CRU Offset Address: 0x%lx\n", physical_bios_offset);
--		pr_debug("CRU Length:         0x%lx\n", cru_length);
--		pr_debug("CRU Mapped Address: %p\n", &cru_rom_addr);
--	}
--	iounmap(bios32_map);
--	return retval;
--}
--
--/*
-- *	bios_checksum
-- */
--static int bios_checksum(const char __iomem *ptr, int len)
--{
--	char sum = 0;
--	int i;
--
--	/*
--	 * calculate checksum of size bytes. This should add up
--	 * to zero if we have a valid header.
--	 */
--	for (i = 0; i < len; i++)
--		sum += ptr[i];
--
--	return ((sum == 0) && (len > 0));
--}
--
--/*
-- *	bios32_present
-- *
-- *	Routine Description:
-- *	This function finds the 32-bit BIOS Service Directory
-- *
-- *	Return Value:
-- *	0        :  SUCCESS
-- *	<0       :  FAILURE
-- */
--static int bios32_present(const char __iomem *p)
--{
--	struct bios32_service_dir *bios_32_ptr;
--	int length;
--	unsigned long map_entry, map_offset;
--
--	bios_32_ptr = (struct bios32_service_dir *) p;
--
--	/*
--	 * Search for signature by checking equal to the swizzled value
--	 * instead of calling another routine to perform a strcmp.
--	 */
--	if (bios_32_ptr->signature == PCI_BIOS32_SD_VALUE) {
--		length = bios_32_ptr->length * PCI_BIOS32_PARAGRAPH_LEN;
--		if (bios_checksum(p, length)) {
--			/*
--			 * According to the spec, we're looking for the
--			 * first 4KB-aligned address below the entrypoint
--			 * listed in the header. The Service Directory code
--			 * is guaranteed to occupy no more than 2 4KB pages.
--			 */
--			map_entry = bios_32_ptr->entry_point & ~(PAGE_SIZE - 1);
--			map_offset = bios_32_ptr->entry_point - map_entry;
--
--			return cru_detect(map_entry, map_offset);
--		}
--	}
--	return -ENODEV;
--}
--
--static int detect_cru_service(void)
--{
--	char __iomem *p, *q;
--	int rc = -1;
--
--	/*
--	 * Search from 0x0f0000 through 0x0fffff, inclusive.
--	 */
--	p = ioremap(PCI_ROM_BASE1, ROM_SIZE);
--	if (p == NULL)
--		return -ENOMEM;
--
--	for (q = p; q < p + ROM_SIZE; q += 16) {
--		rc = bios32_present(q);
--		if (!rc)
--			break;
--	}
--	iounmap(p);
--	return rc;
--}
--/* ------------------------------------------------------------------------- */
--#endif /* CONFIG_X86_32 */
--#ifdef CONFIG_X86_64
--/* --64 Bit Bios------------------------------------------------------------ */
--
--#define HPWDT_ARCH	64
--
--asm(".text                      \n\t"
--    ".align 4                   \n\t"
--    ".globl asminline_call	\n\t"
--    ".type asminline_call, @function \n\t"
--    "asminline_call:            \n\t"
--    FRAME_BEGIN
--    "pushq      %rax            \n\t"
--    "pushq      %rbx            \n\t"
--    "pushq      %rdx            \n\t"
--    "pushq      %r12            \n\t"
--    "pushq      %r9             \n\t"
--    "movq       %rsi, %r12      \n\t"
--    "movq       %rdi, %r9       \n\t"
--    "movl       4(%r9),%ebx     \n\t"
--    "movl       8(%r9),%ecx     \n\t"
--    "movl       12(%r9),%edx    \n\t"
--    "movl       16(%r9),%esi    \n\t"
--    "movl       20(%r9),%edi    \n\t"
--    "movl       (%r9),%eax      \n\t"
--    "call       *%r12           \n\t"
--    "pushfq                     \n\t"
--    "popq        %r12           \n\t"
--    "movl       %eax, (%r9)     \n\t"
--    "movl       %ebx, 4(%r9)    \n\t"
--    "movl       %ecx, 8(%r9)    \n\t"
--    "movl       %edx, 12(%r9)   \n\t"
--    "movl       %esi, 16(%r9)   \n\t"
--    "movl       %edi, 20(%r9)   \n\t"
--    "movq       %r12, %rax      \n\t"
--    "movl       %eax, 28(%r9)   \n\t"
--    "popq       %r9             \n\t"
--    "popq       %r12            \n\t"
--    "popq       %rdx            \n\t"
--    "popq       %rbx            \n\t"
--    "popq       %rax            \n\t"
--    FRAME_END
--    "ret                        \n\t"
--    ".previous");
--
--/*
-- *	dmi_find_cru
-- *
-- *	Routine Description:
-- *	This function checks whether or not a SMBIOS/DMI record is
-- *	the 64bit CRU info or not
-- */
--static void dmi_find_cru(const struct dmi_header *dm, void *dummy)
--{
--	struct smbios_cru64_info *smbios_cru64_ptr;
--	unsigned long cru_physical_address;
--
--	if (dm->type == SMBIOS_CRU64_INFORMATION) {
--		smbios_cru64_ptr = (struct smbios_cru64_info *) dm;
--		if (smbios_cru64_ptr->signature == CRU_BIOS_SIGNATURE_VALUE) {
--			cru_physical_address =
--				smbios_cru64_ptr->physical_address +
--				smbios_cru64_ptr->double_offset;
--			cru_rom_addr = ioremap(cru_physical_address,
--				smbios_cru64_ptr->double_length);
--			set_memory_x((unsigned long)cru_rom_addr & PAGE_MASK,
--				smbios_cru64_ptr->double_length >> PAGE_SHIFT);
--		}
--	}
--}
--
--static int detect_cru_service(void)
--{
--	cru_rom_addr = NULL;
--
--	dmi_walk(dmi_find_cru, NULL);
--
--	/* if cru_rom_addr has been set then we found a CRU service */
--	return ((cru_rom_addr != NULL) ? 0 : -ENODEV);
--}
--/* ------------------------------------------------------------------------- */
--#endif /* CONFIG_X86_64 */
--#endif /* CONFIG_HPWDT_NMI_DECODING */
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -20,7 +20,7 @@
+ #include <subcmd/parse-options.h>
  
- /*
-  *	Watchdog operations
-@@ -486,30 +113,12 @@ static int hpwdt_my_nmi(void)
-  */
- static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
- {
--	unsigned long rom_pl;
--	static int die_nmi_called;
--
--	if (!hpwdt_nmi_decoding)
--		return NMI_DONE;
--
- 	if ((ulReason == NMI_UNKNOWN) && !hpwdt_my_nmi())
- 		return NMI_DONE;
+ extern const struct option check_options[];
+-extern bool no_fp, no_unreachable;
++extern bool no_fp, no_unreachable, retpoline;
  
--	spin_lock_irqsave(&rom_lock, rom_pl);
--	if (!die_nmi_called && !is_icru && !is_uefi)
--		asminline_call(&cmn_regs, cru_rom_addr);
--	die_nmi_called = 1;
--	spin_unlock_irqrestore(&rom_lock, rom_pl);
--
- 	if (allow_kdump)
- 		hpwdt_stop();
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -496,6 +496,7 @@ static int add_jump_destinations(struct
+ 			 * disguise, so convert them accordingly.
+ 			 */
+ 			insn->type = INSN_JUMP_DYNAMIC;
++			insn->retpoline_safe = true;
+ 			continue;
+ 		} else {
+ 			/* sibling call */
+@@ -547,7 +548,8 @@ static int add_call_destinations(struct
+ 			if (!insn->call_dest && !insn->ignore) {
+ 				WARN_FUNC("unsupported intra-function call",
+ 					  insn->sec, insn->offset);
+-				WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
++				if (retpoline)
++					WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
+ 				return -1;
+ 			}
  
--	if (!is_icru && !is_uefi) {
--		if (cmn_regs.u1.ral == 0) {
--			nmi_panic(regs, "An NMI occurred, but unable to determine source.\n");
--			return NMI_HANDLED;
--		}
--	}
- 	nmi_panic(regs, "An NMI occurred. Depending on your system the reason "
- 		"for the NMI is logged in any one of the following "
- 		"resources:\n"
-@@ -675,84 +284,11 @@ static struct miscdevice hpwdt_miscdev =
-  *	Init & Exit
-  */
+@@ -1107,6 +1109,54 @@ static int read_unwind_hints(struct objt
+ 	return 0;
+ }
  
--#ifdef CONFIG_HPWDT_NMI_DECODING
--#ifdef CONFIG_X86_LOCAL_APIC
--static void hpwdt_check_nmi_decoding(struct pci_dev *dev)
--{
--	/*
--	 * If nmi_watchdog is turned off then we can turn on
--	 * our nmi decoding capability.
--	 */
--	hpwdt_nmi_decoding = 1;
--}
--#else
--static void hpwdt_check_nmi_decoding(struct pci_dev *dev)
--{
--	dev_warn(&dev->dev, "NMI decoding is disabled. "
--		"Your kernel does not support a NMI Watchdog.\n");
--}
--#endif /* CONFIG_X86_LOCAL_APIC */
--
--/*
-- *	dmi_find_icru
-- *
-- *	Routine Description:
-- *	This function checks whether or not we are on an iCRU-based server.
-- *	This check is independent of architecture and needs to be made for
-- *	any ProLiant system.
-- */
--static void dmi_find_icru(const struct dmi_header *dm, void *dummy)
--{
--	struct smbios_proliant_info *smbios_proliant_ptr;
--
--	if (dm->type == SMBIOS_ICRU_INFORMATION) {
--		smbios_proliant_ptr = (struct smbios_proliant_info *) dm;
--		if (smbios_proliant_ptr->misc_features & 0x01)
--			is_icru = 1;
--		if (smbios_proliant_ptr->misc_features & 0x1400)
--			is_uefi = 1;
--	}
--}
- 
- static int hpwdt_init_nmi_decoding(struct pci_dev *dev)
- {
-+#ifdef CONFIG_HPWDT_NMI_DECODING
- 	int retval;
--
--	/*
--	 * On typical CRU-based systems we need to map that service in
--	 * the BIOS. For 32 bit Operating Systems we need to go through
--	 * the 32 Bit BIOS Service Directory. For 64 bit Operating
--	 * Systems we get that service through SMBIOS.
--	 *
--	 * On systems that support the new iCRU service all we need to
--	 * do is call dmi_walk to get the supported flag value and skip
--	 * the old cru detect code.
--	 */
--	dmi_walk(dmi_find_icru, NULL);
--	if (!is_icru && !is_uefi) {
--
--		/*
--		* We need to map the ROM to get the CRU service.
--		* For 32 bit Operating Systems we need to go through the 32 Bit
--		* BIOS Service Directory
--		* For 64 bit Operating Systems we get that service through SMBIOS.
--		*/
--		retval = detect_cru_service();
--		if (retval < 0) {
--			dev_warn(&dev->dev,
--				"Unable to detect the %d Bit CRU Service.\n",
--				HPWDT_ARCH);
--			return retval;
--		}
--
--		/*
--		* We know this is the only CRU call we need to make so lets keep as
--		* few instructions as possible once the NMI comes in.
--		*/
--		cmn_regs.u1.rah = 0x0D;
--		cmn_regs.u1.ral = 0x02;
--	}
--
- 	/*
- 	 * Only one function can register for NMI_UNKNOWN
- 	 */
-@@ -780,45 +316,26 @@ error:
- 	dev_warn(&dev->dev,
- 		"Unable to register a die notifier (err=%d).\n",
- 		retval);
--	if (cru_rom_addr)
--		iounmap(cru_rom_addr);
- 	return retval;
-+#endif	/* CONFIG_HPWDT_NMI_DECODING */
++static int read_retpoline_hints(struct objtool_file *file)
++{
++	struct section *sec, *relasec;
++	struct instruction *insn;
++	struct rela *rela;
++	int i;
++
++	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
++	if (!sec)
++		return 0;
++
++	relasec = sec->rela;
++	if (!relasec) {
++		WARN("missing .rela.discard.retpoline_safe section");
++		return -1;
++	}
++
++	if (sec->len % sizeof(unsigned long)) {
++		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
++		return -1;
++	}
++
++	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
++		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
++		if (!rela) {
++			WARN("can't find rela for retpoline_safe[%d]", i);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("can't find insn for retpoline_safe[%d]", i);
++			return -1;
++		}
++
++		if (insn->type != INSN_JUMP_DYNAMIC &&
++		    insn->type != INSN_CALL_DYNAMIC) {
++			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
++				  insn->sec, insn->offset);
++			return -1;
++		}
++
++		insn->retpoline_safe = true;
++	}
++
 +	return 0;
++}
++
+ static int decode_sections(struct objtool_file *file)
+ {
+ 	int ret;
+@@ -1145,6 +1195,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
+ 
++	ret = read_retpoline_hints(file);
++	if (ret)
++		return ret;
++
+ 	return 0;
  }
  
- static void hpwdt_exit_nmi_decoding(void)
- {
-+#ifdef CONFIG_HPWDT_NMI_DECODING
- 	unregister_nmi_handler(NMI_UNKNOWN, "hpwdt");
- 	unregister_nmi_handler(NMI_SERR, "hpwdt");
- 	unregister_nmi_handler(NMI_IO_CHECK, "hpwdt");
--	if (cru_rom_addr)
--		iounmap(cru_rom_addr);
--}
--#else /* !CONFIG_HPWDT_NMI_DECODING */
--static void hpwdt_check_nmi_decoding(struct pci_dev *dev)
--{
--}
--
--static int hpwdt_init_nmi_decoding(struct pci_dev *dev)
--{
--	return 0;
-+#endif
+@@ -1890,6 +1944,29 @@ static int validate_unwind_hints(struct
+ 	return warnings;
  }
  
--static void hpwdt_exit_nmi_decoding(void)
--{
--}
--#endif /* CONFIG_HPWDT_NMI_DECODING */
--
- static int hpwdt_init_one(struct pci_dev *dev,
- 					const struct pci_device_id *ent)
++static int validate_retpoline(struct objtool_file *file)
++{
++	struct instruction *insn;
++	int warnings = 0;
++
++	for_each_insn(file, insn) {
++		if (insn->type != INSN_JUMP_DYNAMIC &&
++		    insn->type != INSN_CALL_DYNAMIC)
++			continue;
++
++		if (insn->retpoline_safe)
++			continue;
++
++		WARN_FUNC("indirect %s found in RETPOLINE build",
++			  insn->sec, insn->offset,
++			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
++
++		warnings++;
++	}
++
++	return warnings;
++}
++
+ static bool is_kasan_insn(struct instruction *insn)
  {
- 	int retval;
+ 	return (insn->type == INSN_CALL &&
+@@ -2050,6 +2127,13 @@ int check(const char *_objname, bool orc
+ 	if (list_empty(&file.insn_list))
+ 		goto out;
  
- 	/*
--	 * Check if we can do NMI decoding or not
--	 */
--	hpwdt_check_nmi_decoding(dev);
--
--	/*
- 	 * First let's find out if we are on an iLO2+ server. We will
- 	 * not run on a legacy ASM box.
- 	 * So we only support the G5 ProLiant servers and higher.
-@@ -922,6 +439,6 @@ MODULE_PARM_DESC(nowayout, "Watchdog can
- #ifdef CONFIG_HPWDT_NMI_DECODING
- module_param(allow_kdump, int, 0);
- MODULE_PARM_DESC(allow_kdump, "Start a kernel dump after NMI occurs");
--#endif /* !CONFIG_HPWDT_NMI_DECODING */
-+#endif /* CONFIG_HPWDT_NMI_DECODING */
- 
- module_pci_driver(hpwdt_driver);
++	if (retpoline) {
++		ret = validate_retpoline(&file);
++		if (ret < 0)
++			return ret;
++		warnings += ret;
++	}
++
+ 	ret = validate_functions(&file);
+ 	if (ret < 0)
+ 		goto out;
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -45,6 +45,7 @@ struct instruction {
+ 	unsigned char type;
+ 	unsigned long immediate;
+ 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
++	bool retpoline_safe;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct instruction *first_jump_src;
