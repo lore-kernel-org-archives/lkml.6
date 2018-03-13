@@ -1,255 +1,528 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-220671-1520988187-2-1238186173350419529
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955369-2-15746934086013049273
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520988186; b=NTfn/GVCzL2zPOxq7uTtAcELNaxgSVqBjHjN4UOIGB4MyMi
-    y+gvpK4AH5X08WcrckwweAF9YCA09Px/fit2zcoxCya9rs3kzQktbklyjMf2y9Lx
-    uONlcx1yUMyOTsHnUN/qDBbmURP/mncc873hhQtsKx6xSUXDtOh9BaowwRMvvpSk
-    +TgxtZvXDRkbymR3hx3tKnEcAJiIL1ap2KrOVytnVIKjKg82SrDhN6KaNHxV3fdL
-    eir0Ct592tti6H/RuYRGnI/exFhmdTqWBmbJURRXNvJZAcQHLYLutPtrM7ZsmQ64
-    VaacF2o7jOXq21EQrktxMI2gWoPsdNOxopVlk2w==
+    t=1520955368; b=mg3EcUWLXB0ECuyrsLm89RtBTWspSdG/Ovi0BTnmQBsETS9
+    9nNS6QZlnZHv4vytPG1+KBMUw5RtasDEIuYUvlQlcl8znwzjFr7wYZMZD6nnmHkm
+    cWbUwuDeo3pdKTTrbNBq4RS6SDGf3UoN9IPlKeHNO7iNMW0vODUQBV4Fn0L1IqNr
+    N7BqZIq8ETKBwPLaRSfwYD+9jJOViOd2w4fylVFlRx9KpQXWtVuNY8dSmkGpc9bV
+    zJ3vK8v7s03kodFcbGsYEjTN7HzgqixPyelwkKUUPaspf7oK6LeDZDwbqi+zpJWY
+    WllisKmDRGytHV+/wRJ4wJMeJC2usr5/eCIlozQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520988186; bh=Jwm2L+
-    2owMMPhhoVdzLaBBrWSeka8Is+TbAENI9DKK0=; b=Gtks8N5509KO+lZD9x7E5u
-    3ZgB0O7eKFjeca7Sjsgc87kY/NOTay0Hag+44m88rbaeP1pEXc0gclBpG2V9DrpA
-    Qi80b5peDXrQRUp/TB2/fO5JpHGqEN2sXQVPEiU0w/ySgEjnK7BmNb41rQU2YFx1
-    7NHoY/MXgjArYbjztZNsyJziWVyR9b91BtAiTpGZB43pIPPB0U03n6KU5QJwZvNQ
-    SBnSr6I0HtLBslvKk2pD2yU6+E/oSmBzsW7OKoVXtDwhZpo4oUBl3i45YarD+YxA
-    Z+FZUnZfEa1PyFU9kRVOWvFRDHKBLzE0393hn0MwEkPw/1B69H2GbwvODowX9lRw
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955368; bh=lJWanP6gnG0qzE8TawkiSBNS4B
+    p5zZwAgXISVsr9SMA=; b=vpylqAKS18+X19rXZDczuW3xrjl1Gbh2trugXypYpr
+    XDeJTkdTmqEnakRnCIu95DtYril4LXuUz8kCzW0V6W8u1DwEuMVjXM3UGHjASnkf
+    s+lFQ7C48wCsH6uikwNWi019QKqY24aWba8juvsQwGtSli8VZS3zd9dY1XWUMNZh
+    Ttgr5D1FryOsMSVsmCU3ZlmyNfqbiD6XRqTyHLU7lI6AQwAxLKgm+WMBRk+qKir5
+    lJkNimH4V7yy60YgYvJlwqKUsOqZ5HprUItIZUGg2g18GBTA2R0Q2vvClYukjNbZ
+    r5fBQ/1Ish7lubTbAkthKsJ7IUTgDqT3GUoMZjkUBB/A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933057AbeCNAmt (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 20:42:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22553 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932636AbeCNAms (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 13 Mar 2018 20:42:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,466,1515484800";
-   d="scan'208";a="41767238"
-From: "Shaikh, Azhar" <azhar.shaikh@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        id S933484AbeCMPfy (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:35:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33286 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934094AbeCMPfu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:35:50 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Azhar Shaikh <azhar.shaikh@intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: RE: [PATCH 4.14 019/140] tpm_tis: Move ilb_base_addr to tpm_tis_data
-Thread-Topic: [PATCH 4.14 019/140] tpm_tis: Move ilb_base_addr to
- tpm_tis_data
-Thread-Index: AQHTuuEBMZB7H9DONEGTGy38wWwfPKPO5NOQ
-Date: Wed, 14 Mar 2018 00:42:30 +0000
-Message-ID: <5FFFAD06ADE1CA4381B3F0F7C6AF58280769BC16@ORSMSX109.amr.corp.intel.com>
+Subject: [PATCH 4.14 020/140] tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+Date: Tue, 13 Mar 2018 16:23:43 +0100
+Message-Id: <20180313152459.429147192@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
- <20180313152459.380936035@linuxfoundation.org>
-In-Reply-To: <20180313152459.380936035@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTkxOGUxZWEtYmI2Mi00MzQxLTkyMzctZDgyYTNiOWUxYmI2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJoejRObGFybm5rUVwvSzdsSVV1aTI5V0lnUzYzckZTWUVmSTFoMUt2U3JJRjEwV1RaV3BHR3Y0M0V4Nys2Mm0xRyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Tm8gb2JqZWN0aW9ucyBmcm9tIG15IHNpZGUuDQoNClBsZWFzZSBtZXJnZS4NCg0KUmVnYXJkcywN
-CkF6aGFyIFNoYWlraA0KDQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9tOiBHcmVn
-IEtyb2FoLUhhcnRtYW4gW21haWx0bzpncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ10NCj5TZW50
-OiBUdWVzZGF5LCBNYXJjaCAxMywgMjAxOCA4OjI0IEFNDQo+VG86IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmcNCj5DYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0
-aW9uLm9yZz47DQo+c3RhYmxlQHZnZXIua2VybmVsLm9yZzsgU2hhaWtoLCBBemhhciA8YXpoYXIu
-c2hhaWtoQGludGVsLmNvbT47IEphcmtrbw0KPlNha2tpbmVuIDxqYXJra28uc2Fra2luZW5AbGlu
-dXguaW50ZWwuY29tPg0KPlN1YmplY3Q6IFtQQVRDSCA0LjE0IDAxOS8xNDBdIHRwbV90aXM6IE1v
-dmUgaWxiX2Jhc2VfYWRkciB0byB0cG1fdGlzX2RhdGENCj4NCj40LjE0LXN0YWJsZSByZXZpZXcg
-cGF0Y2guICBJZiBhbnlvbmUgaGFzIGFueSBvYmplY3Rpb25zLCBwbGVhc2UgbGV0IG1lIGtub3cu
-DQo+DQo+LS0tLS0tLS0tLS0tLS0tLS0tDQo+DQo+RnJvbTogQXpoYXIgU2hhaWtoIDxhemhhci5z
-aGFpa2hAaW50ZWwuY29tPg0KPg0KPmNvbW1pdCBjMzgyYmFiY2NiYTJjODJmZTU3ZjllNjQ3ZjI5
-MGZiN2JmNGQxMzBkIHVwc3RyZWFtLg0KPg0KPk1vdmUgc3RhdGljIHZhcmlhYmxlIGlsYl9iYXNl
-X2FkZHIgdG8gdHBtX3Rpc19kYXRhLg0KPg0KPkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQo+
-U2lnbmVkLW9mZi1ieTogQXpoYXIgU2hhaWtoIDxhemhhci5zaGFpa2hAaW50ZWwuY29tPg0KPlJl
-dmlld2VkLWJ5OiBKYXJra28gU2Fra2luZW4gIDxqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwu
-Y29tPg0KPlRlc3RlZC1ieTogSmFya2tvIFNha2tpbmVuICA8amFya2tvLnNha2tpbmVuQGxpbnV4
-LmludGVsLmNvbT4NCj5TaWduZWQtb2ZmLWJ5OiBKYXJra28gU2Fra2luZW4gIDxqYXJra28uc2Fr
-a2luZW5AbGludXguaW50ZWwuY29tPg0KPlNpZ25lZC1vZmYtYnk6IEdyZWcgS3JvYWgtSGFydG1h
-biA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+DQo+LS0tDQo+IGRyaXZlcnMvY2hhci90
-cG0vdHBtX3Rpcy5jICAgICAgfCAgIDc1ICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCj4gZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYyB8ICAgMTYgKysrKysr
-KysNCj4gZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuaCB8ICAgMTMgKysrKysrDQo+IDMg
-ZmlsZXMgY2hhbmdlZCwgNTYgaW5zZXJ0aW9ucygrKSwgNDggZGVsZXRpb25zKC0pDQo+DQo+LS0t
-IGEvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzLmMNCj4rKysgYi9kcml2ZXJzL2NoYXIvdHBtL3Rw
-bV90aXMuYw0KPkBAIC0xMzMsMzMgKzEzMywyNCBAQCBzdGF0aWMgaW50IGNoZWNrX2FjcGlfdHBt
-MihzdHJ1Y3QgZGV2aWNlICAjZW5kaWYNCj4NCj4gI2lmZGVmIENPTkZJR19YODYNCj4tI2RlZmlu
-ZSBJTlRFTF9MRUdBQ1lfQkxLX0JBU0VfQUREUiAgICAgIDB4RkVEMDgwMDANCj4tI2RlZmluZSBJ
-TEJfUkVNQVBfU0laRQkJCTB4MTAwDQo+LSNkZWZpbmUgTFBDX0NOVFJMX1JFR19PRkZTRVQgICAg
-ICAgICAgICAweDg0DQo+LSNkZWZpbmUgTFBDX0NMS1JVTl9FTiAgICAgICAgICAgICAgICAgICAo
-MSA8PCAyKQ0KPi0NCj4tc3RhdGljIHZvaWQgX19pb21lbSAqaWxiX2Jhc2VfYWRkcjsNCj4tDQo+
-LXN0YXRpYyBpbmxpbmUgYm9vbCBpc19ic3codm9pZCkNCj4tew0KPi0JcmV0dXJuICgoYm9vdF9j
-cHVfZGF0YS54ODZfbW9kZWwgPT0NCj5JTlRFTF9GQU02X0FUT01fQUlSTU9OVCkgPyAxIDogMCk7
-DQo+LX0NCj4rI2RlZmluZSBMUENfQ05UUkxfT0ZGU0VUCQkweDg0DQo+KyNkZWZpbmUgTFBDX0NM
-S1JVTl9FTgkJCSgxIDw8IDIpDQo+DQo+IC8qKg0KPiAgKiB0cG1fcGxhdGZvcm1fYmVnaW5feGZl
-cigpIC0gY2xlYXIgTFBDIENMS1JVTl9FTiBpLmUuIGNsb2NrcyB3aWxsIGJlDQo+cnVubmluZw0K
-PiAgKi8NCj4tc3RhdGljIHZvaWQgdHBtX3BsYXRmb3JtX2JlZ2luX3hmZXIodm9pZCkNCj4rc3Rh
-dGljIHZvaWQgdHBtX3BsYXRmb3JtX2JlZ2luX3hmZXIoc3RydWN0IHRwbV90aXNfZGF0YSAqZGF0
-YSkNCj4gew0KPiAJdTMyIGNsa3J1bl92YWw7DQo+DQo+IAlpZiAoIWlzX2JzdygpKQ0KPiAJCXJl
-dHVybjsNCj4NCj4tCWNsa3J1bl92YWwgPSBpb3JlYWQzMihpbGJfYmFzZV9hZGRyICsgTFBDX0NO
-VFJMX1JFR19PRkZTRVQpOw0KPisJY2xrcnVuX3ZhbCA9IGlvcmVhZDMyKGRhdGEtPmlsYl9iYXNl
-X2FkZHIgKyBMUENfQ05UUkxfT0ZGU0VUKTsNCj4NCj4gCS8qIERpc2FibGUgTFBDIENMS1JVTiMg
-Ki8NCj4gCWNsa3J1bl92YWwgJj0gfkxQQ19DTEtSVU5fRU47DQo+LQlpb3dyaXRlMzIoY2xrcnVu
-X3ZhbCwgaWxiX2Jhc2VfYWRkciArIExQQ19DTlRSTF9SRUdfT0ZGU0VUKTsNCj4rCWlvd3JpdGUz
-MihjbGtydW5fdmFsLCBkYXRhLT5pbGJfYmFzZV9hZGRyICsgTFBDX0NOVFJMX09GRlNFVCk7DQo+
-DQo+IAkvKg0KPiAJICogV3JpdGUgYW55IHJhbmRvbSB2YWx1ZSBvbiBwb3J0IDB4ODAgd2hpY2gg
-aXMgb24gTFBDLCB0byBtYWtlIEBAIC0NCj4xNzIsMTggKzE2MywxOCBAQCBzdGF0aWMgdm9pZCB0
-cG1fcGxhdGZvcm1fYmVnaW5feGZlcih2b2lkDQo+IC8qKg0KPiAgKiB0cG1fcGxhdGZvcm1fZW5k
-X3hmZXIoKSAtIHNldCBMUEMgQ0xLUlVOX0VOIGkuZS4gY2xvY2tzIGNhbiBiZSB0dXJuZWQNCj5v
-ZmYNCj4gICovDQo+LXN0YXRpYyB2b2lkIHRwbV9wbGF0Zm9ybV9lbmRfeGZlcih2b2lkKQ0KPitz
-dGF0aWMgdm9pZCB0cG1fcGxhdGZvcm1fZW5kX3hmZXIoc3RydWN0IHRwbV90aXNfZGF0YSAqZGF0
-YSkNCj4gew0KPiAJdTMyIGNsa3J1bl92YWw7DQo+DQo+IAlpZiAoIWlzX2JzdygpKQ0KPiAJCXJl
-dHVybjsNCj4NCj4tCWNsa3J1bl92YWwgPSBpb3JlYWQzMihpbGJfYmFzZV9hZGRyICsgTFBDX0NO
-VFJMX1JFR19PRkZTRVQpOw0KPisJY2xrcnVuX3ZhbCA9IGlvcmVhZDMyKGRhdGEtPmlsYl9iYXNl
-X2FkZHIgKyBMUENfQ05UUkxfT0ZGU0VUKTsNCj4NCj4gCS8qIEVuYWJsZSBMUEMgQ0xLUlVOIyAq
-Lw0KPiAJY2xrcnVuX3ZhbCB8PSBMUENfQ0xLUlVOX0VOOw0KPi0JaW93cml0ZTMyKGNsa3J1bl92
-YWwsIGlsYl9iYXNlX2FkZHIgKyBMUENfQ05UUkxfUkVHX09GRlNFVCk7DQo+Kwlpb3dyaXRlMzIo
-Y2xrcnVuX3ZhbCwgZGF0YS0+aWxiX2Jhc2VfYWRkciArIExQQ19DTlRSTF9PRkZTRVQpOw0KPg0K
-PiAJLyoNCj4gCSAqIFdyaXRlIGFueSByYW5kb20gdmFsdWUgb24gcG9ydCAweDgwIHdoaWNoIGlz
-IG9uIExQQywgdG8gbWFrZSBAQCAtDQo+MTkzLDE2ICsxODQsMTEgQEAgc3RhdGljIHZvaWQgdHBt
-X3BsYXRmb3JtX2VuZF94ZmVyKHZvaWQpDQo+DQo+IH0NCj4gI2Vsc2UNCj4tc3RhdGljIGlubGlu
-ZSBib29sIGlzX2Jzdyh2b2lkKQ0KPi17DQo+LQlyZXR1cm4gZmFsc2U7DQo+LX0NCj4tDQo+LXN0
-YXRpYyB2b2lkIHRwbV9wbGF0Zm9ybV9iZWdpbl94ZmVyKHZvaWQpDQo+K3N0YXRpYyB2b2lkIHRw
-bV9wbGF0Zm9ybV9iZWdpbl94ZmVyKHN0cnVjdCB0cG1fdGlzX2RhdGEgKmRhdGEpDQo+IHsNCj4g
-fQ0KPg0KPi1zdGF0aWMgdm9pZCB0cG1fcGxhdGZvcm1fZW5kX3hmZXIodm9pZCkNCj4rc3RhdGlj
-IHZvaWQgdHBtX3BsYXRmb3JtX2VuZF94ZmVyKHN0cnVjdCB0cG1fdGlzX2RhdGEgKmRhdGEpDQo+
-IHsNCj4gfQ0KPiAjZW5kaWYNCj5AQCAtMjEyLDEyICsxOTgsMTIgQEAgc3RhdGljIGludCB0cG1f
-dGNnX3JlYWRfYnl0ZXMoc3RydWN0IHRwbSAgew0KPiAJc3RydWN0IHRwbV90aXNfdGNnX3BoeSAq
-cGh5ID0gdG9fdHBtX3Rpc190Y2dfcGh5KGRhdGEpOw0KPg0KPi0JdHBtX3BsYXRmb3JtX2JlZ2lu
-X3hmZXIoKTsNCj4rCXRwbV9wbGF0Zm9ybV9iZWdpbl94ZmVyKGRhdGEpOw0KPg0KPiAJd2hpbGUg
-KGxlbi0tKQ0KPiAJCSpyZXN1bHQrKyA9IGlvcmVhZDgocGh5LT5pb2Jhc2UgKyBhZGRyKTsNCj4N
-Cj4tCXRwbV9wbGF0Zm9ybV9lbmRfeGZlcigpOw0KPisJdHBtX3BsYXRmb3JtX2VuZF94ZmVyKGRh
-dGEpOw0KPg0KPiAJcmV0dXJuIDA7DQo+IH0NCj5AQCAtMjI3LDEyICsyMTMsMTIgQEAgc3RhdGlj
-IGludCB0cG1fdGNnX3dyaXRlX2J5dGVzKHN0cnVjdCB0cCAgew0KPiAJc3RydWN0IHRwbV90aXNf
-dGNnX3BoeSAqcGh5ID0gdG9fdHBtX3Rpc190Y2dfcGh5KGRhdGEpOw0KPg0KPi0JdHBtX3BsYXRm
-b3JtX2JlZ2luX3hmZXIoKTsNCj4rCXRwbV9wbGF0Zm9ybV9iZWdpbl94ZmVyKGRhdGEpOw0KPg0K
-PiAJd2hpbGUgKGxlbi0tKQ0KPiAJCWlvd3JpdGU4KCp2YWx1ZSsrLCBwaHktPmlvYmFzZSArIGFk
-ZHIpOw0KPg0KPi0JdHBtX3BsYXRmb3JtX2VuZF94ZmVyKCk7DQo+Kwl0cG1fcGxhdGZvcm1fZW5k
-X3hmZXIoZGF0YSk7DQo+DQo+IAlyZXR1cm4gMDsNCj4gfQ0KPkBAIC0yNDEsMTEgKzIyNywxMSBA
-QCBzdGF0aWMgaW50IHRwbV90Y2dfcmVhZDE2KHN0cnVjdCB0cG1fdGlzICB7DQo+IAlzdHJ1Y3Qg
-dHBtX3Rpc190Y2dfcGh5ICpwaHkgPSB0b190cG1fdGlzX3RjZ19waHkoZGF0YSk7DQo+DQo+LQl0
-cG1fcGxhdGZvcm1fYmVnaW5feGZlcigpOw0KPisJdHBtX3BsYXRmb3JtX2JlZ2luX3hmZXIoZGF0
-YSk7DQo+DQo+IAkqcmVzdWx0ID0gaW9yZWFkMTYocGh5LT5pb2Jhc2UgKyBhZGRyKTsNCj4NCj4t
-CXRwbV9wbGF0Zm9ybV9lbmRfeGZlcigpOw0KPisJdHBtX3BsYXRmb3JtX2VuZF94ZmVyKGRhdGEp
-Ow0KPg0KPiAJcmV0dXJuIDA7DQo+IH0NCj5AQCAtMjU0LDExICsyNDAsMTEgQEAgc3RhdGljIGlu
-dCB0cG1fdGNnX3JlYWQzMihzdHJ1Y3QgdHBtX3RpcyAgew0KPiAJc3RydWN0IHRwbV90aXNfdGNn
-X3BoeSAqcGh5ID0gdG9fdHBtX3Rpc190Y2dfcGh5KGRhdGEpOw0KPg0KPi0JdHBtX3BsYXRmb3Jt
-X2JlZ2luX3hmZXIoKTsNCj4rCXRwbV9wbGF0Zm9ybV9iZWdpbl94ZmVyKGRhdGEpOw0KPg0KPiAJ
-KnJlc3VsdCA9IGlvcmVhZDMyKHBoeS0+aW9iYXNlICsgYWRkcik7DQo+DQo+LQl0cG1fcGxhdGZv
-cm1fZW5kX3hmZXIoKTsNCj4rCXRwbV9wbGF0Zm9ybV9lbmRfeGZlcihkYXRhKTsNCj4NCj4gCXJl
-dHVybiAwOw0KPiB9DQo+QEAgLTI2NywxMSArMjUzLDExIEBAIHN0YXRpYyBpbnQgdHBtX3RjZ193
-cml0ZTMyKHN0cnVjdCB0cG1fdGkgIHsNCj4gCXN0cnVjdCB0cG1fdGlzX3RjZ19waHkgKnBoeSA9
-IHRvX3RwbV90aXNfdGNnX3BoeShkYXRhKTsNCj4NCj4tCXRwbV9wbGF0Zm9ybV9iZWdpbl94ZmVy
-KCk7DQo+Kwl0cG1fcGxhdGZvcm1fYmVnaW5feGZlcihkYXRhKTsNCj4NCj4gCWlvd3JpdGUzMih2
-YWx1ZSwgcGh5LT5pb2Jhc2UgKyBhZGRyKTsNCj4NCj4tCXRwbV9wbGF0Zm9ybV9lbmRfeGZlcigp
-Ow0KPisJdHBtX3BsYXRmb3JtX2VuZF94ZmVyKGRhdGEpOw0KPg0KPiAJcmV0dXJuIDA7DQo+IH0N
-Cj5AQCAtMzUwLDkgKzMzNiwxMyBAQCBNT0RVTEVfREVWSUNFX1RBQkxFKHBucCwgdHBtX3BucF90
-YmwpOyAgc3RhdGljDQo+dm9pZCB0cG1fdGlzX3BucF9yZW1vdmUoc3RydWN0IHBucF9kZXYgKmRl
-dikgIHsNCj4gCXN0cnVjdCB0cG1fY2hpcCAqY2hpcCA9IHBucF9nZXRfZHJ2ZGF0YShkZXYpOw0K
-PisJc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiA9IGRldl9nZXRfZHJ2ZGF0YSgmY2hpcC0+ZGV2
-KTsNCj4NCj4gCXRwbV9jaGlwX3VucmVnaXN0ZXIoY2hpcCk7DQo+IAl0cG1fdGlzX3JlbW92ZShj
-aGlwKTsNCj4rCWlmIChpc19ic3coKSkNCj4rCQlpb3VubWFwKHByaXYtPmlsYl9iYXNlX2FkZHIp
-Ow0KPisNCj4gfQ0KPg0KPiBzdGF0aWMgc3RydWN0IHBucF9kcml2ZXIgdGlzX3BucF9kcml2ZXIg
-PSB7IEBAIC0zOTksMTAgKzM4OSwxNCBAQCBzdGF0aWMgaW50DQo+dHBtX3Rpc19wbGF0X3Byb2Jl
-KHN0cnVjdCBwbGEgIHN0YXRpYyBpbnQgdHBtX3Rpc19wbGF0X3JlbW92ZShzdHJ1Y3QNCj5wbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpICB7DQo+IAlzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAgPSBkZXZfZ2V0
-X2RydmRhdGEoJnBkZXYtPmRldik7DQo+KwlzdHJ1Y3QgdHBtX3Rpc19kYXRhICpwcml2ID0gZGV2
-X2dldF9kcnZkYXRhKCZjaGlwLT5kZXYpOw0KPg0KPiAJdHBtX2NoaXBfdW5yZWdpc3RlcihjaGlw
-KTsNCj4gCXRwbV90aXNfcmVtb3ZlKGNoaXApOw0KPg0KPisJaWYgKGlzX2JzdygpKQ0KPisJCWlv
-dW5tYXAocHJpdi0+aWxiX2Jhc2VfYWRkcik7DQo+Kw0KPiAJcmV0dXJuIDA7DQo+IH0NCj4NCj5A
-QCAtNDYwLDExICs0NTQsNiBAQCBzdGF0aWMgaW50IF9faW5pdCBpbml0X3Rpcyh2b2lkKQ0KPiAJ
-aWYgKHJjKQ0KPiAJCWdvdG8gZXJyX2ZvcmNlOw0KPg0KPi0jaWZkZWYgQ09ORklHX1g4Ng0KPi0J
-aWYgKGlzX2JzdygpKQ0KPi0JCWlsYl9iYXNlX2FkZHIgPSBpb3JlbWFwKElOVEVMX0xFR0FDWV9C
-TEtfQkFTRV9BRERSLA0KPi0JCQkJCUlMQl9SRU1BUF9TSVpFKTsNCj4tI2VuZGlmDQo+IAlyYyA9
-IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmdGlzX2Rydik7DQo+IAlpZiAocmMpDQo+IAkJZ290
-byBlcnJfcGxhdGZvcm07DQo+QEAgLTQ4MywxMCArNDcyLDYgQEAgZXJyX3BucDoNCj4gZXJyX3Bs
-YXRmb3JtOg0KPiAJaWYgKGZvcmNlX3BkZXYpDQo+IAkJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0
-ZXIoZm9yY2VfcGRldik7DQo+LSNpZmRlZiBDT05GSUdfWDg2DQo+LQlpZiAoaXNfYnN3KCkpDQo+
-LQkJaW91bm1hcChpbGJfYmFzZV9hZGRyKTsNCj4tI2VuZGlmDQo+IGVycl9mb3JjZToNCj4gCXJl
-dHVybiByYzsNCj4gfQ0KPkBAIC00OTYsMTAgKzQ4MSw2IEBAIHN0YXRpYyB2b2lkIF9fZXhpdCBj
-bGVhbnVwX3Rpcyh2b2lkKQ0KPiAJcG5wX3VucmVnaXN0ZXJfZHJpdmVyKCZ0aXNfcG5wX2RyaXZl
-cik7DQo+IAlwbGF0Zm9ybV9kcml2ZXJfdW5yZWdpc3RlcigmdGlzX2Rydik7DQo+DQo+LSNpZmRl
-ZiBDT05GSUdfWDg2DQo+LQlpZiAoaXNfYnN3KCkpDQo+LQkJaW91bm1hcChpbGJfYmFzZV9hZGRy
-KTsNCj4tI2VuZGlmDQo+IAlpZiAoZm9yY2VfcGRldikNCj4gCQlwbGF0Zm9ybV9kZXZpY2VfdW5y
-ZWdpc3Rlcihmb3JjZV9wZGV2KTsNCj4gfQ0KPi0tLSBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rp
-c19jb3JlLmMNCj4rKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jDQo+QEAgLTcw
-MSw2ICs3MDEsMTMgQEAgaW50IHRwbV90aXNfY29yZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldg0K
-PiAJcHJpdi0+cGh5X29wcyA9IHBoeV9vcHM7DQo+IAlkZXZfc2V0X2RydmRhdGEoJmNoaXAtPmRl
-diwgcHJpdik7DQo+DQo+KwlpZiAoaXNfYnN3KCkpIHsNCj4rCQlwcml2LT5pbGJfYmFzZV9hZGRy
-ID0NCj5pb3JlbWFwKElOVEVMX0xFR0FDWV9CTEtfQkFTRV9BRERSLA0KPisJCQkJCUlMQl9SRU1B
-UF9TSVpFKTsNCj4rCQlpZiAoIXByaXYtPmlsYl9iYXNlX2FkZHIpDQo+KwkJCXJldHVybiAtRU5P
-TUVNOw0KPisJfQ0KPisNCj4gCWlmICh3YWl0X3N0YXJ0dXAoY2hpcCwgMCkgIT0gMCkgew0KPiAJ
-CXJjID0gLUVOT0RFVjsNCj4gCQlnb3RvIG91dF9lcnI7DQo+QEAgLTc5MSw5ICs3OTgsMTYgQEAg
-aW50IHRwbV90aXNfY29yZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldg0KPiAJCX0NCj4gCX0NCj4N
-Cj4tCXJldHVybiB0cG1fY2hpcF9yZWdpc3RlcihjaGlwKTsNCj4rCXJjID0gdHBtX2NoaXBfcmVn
-aXN0ZXIoY2hpcCk7DQo+KwlpZiAocmMgJiYgaXNfYnN3KCkpDQo+KwkJaW91bm1hcChwcml2LT5p
-bGJfYmFzZV9hZGRyKTsNCj4rDQo+KwlyZXR1cm4gcmM7DQo+IG91dF9lcnI6DQo+IAl0cG1fdGlz
-X3JlbW92ZShjaGlwKTsNCj4rCWlmIChpc19ic3coKSkNCj4rCQlpb3VubWFwKHByaXYtPmlsYl9i
-YXNlX2FkZHIpOw0KPisNCj4gCXJldHVybiByYzsNCj4gfQ0KPiBFWFBPUlRfU1lNQk9MX0dQTCh0
-cG1fdGlzX2NvcmVfaW5pdCk7DQo+LS0tIGEvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUu
-aA0KPisrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmgNCj5AQCAtNzksNiArNzks
-OSBAQCBlbnVtIHRpc19kZWZhdWx0cyB7DQo+ICNkZWZpbmUJVFBNX0RJRF9WSUQobCkJCQkoMHgw
-RjAwIHwgKChsKSA8PCAxMikpDQo+ICNkZWZpbmUJVFBNX1JJRChsKQkJCSgweDBGMDQgfCAoKGwp
-IDw8IDEyKSkNCj4NCj4rI2RlZmluZSBJTlRFTF9MRUdBQ1lfQkxLX0JBU0VfQUREUgkweEZFRDA4
-MDAwDQo+KyNkZWZpbmUgSUxCX1JFTUFQX1NJWkUJCQkweDEwMA0KPisNCj4gZW51bSB0cG1fdGlz
-X2ZsYWdzIHsNCj4gCVRQTV9USVNfSVRQTV9XT1JLQVJPVU5ECQk9IEJJVCgwKSwNCj4gfTsNCj5A
-QCAtODksNiArOTIsNyBAQCBzdHJ1Y3QgdHBtX3Rpc19kYXRhIHsNCj4gCWludCBpcnE7DQo+IAli
-b29sIGlycV90ZXN0ZWQ7DQo+IAl1bnNpZ25lZCBpbnQgZmxhZ3M7DQo+Kwl2b2lkIF9faW9tZW0g
-KmlsYl9iYXNlX2FkZHI7DQo+IAl3YWl0X3F1ZXVlX2hlYWRfdCBpbnRfcXVldWU7DQo+IAl3YWl0
-X3F1ZXVlX2hlYWRfdCByZWFkX3F1ZXVlOw0KPiAJY29uc3Qgc3RydWN0IHRwbV90aXNfcGh5X29w
-cyAqcGh5X29wczsgQEAgLTE0NCw2ICsxNDgsMTUgQEANCj5zdGF0aWMgaW5saW5lIGludCB0cG1f
-dGlzX3dyaXRlMzIoc3RydWN0DQo+IAlyZXR1cm4gZGF0YS0+cGh5X29wcy0+d3JpdGUzMihkYXRh
-LCBhZGRyLCB2YWx1ZSk7ICB9DQo+DQo+K3N0YXRpYyBpbmxpbmUgYm9vbCBpc19ic3codm9pZCkN
-Cj4rew0KPisjaWZkZWYgQ09ORklHX1g4Ng0KPisJcmV0dXJuICgoYm9vdF9jcHVfZGF0YS54ODZf
-bW9kZWwgPT0NCj5JTlRFTF9GQU02X0FUT01fQUlSTU9OVCkgPyAxIDogMCk7DQo+KyNlbHNlDQo+
-KwlyZXR1cm4gZmFsc2U7DQo+KyNlbmRpZg0KPit9DQo+Kw0KPiB2b2lkIHRwbV90aXNfcmVtb3Zl
-KHN0cnVjdCB0cG1fY2hpcCAqY2hpcCk7ICBpbnQgdHBtX3Rpc19jb3JlX2luaXQoc3RydWN0DQo+
-ZGV2aWNlICpkZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEsDQo+IAkJICAg
-ICAgY29uc3Qgc3RydWN0IHRwbV90aXNfcGh5X29wcyAqcGh5X29wcywNCj4NCg0K
+4.14-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Azhar Shaikh <azhar.shaikh@intel.com>
+
+commit b3e958ce4c585bf666de249dc794971ebc62d2d3 upstream.
+
+Commit 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell
+systems") disabled CLKRUN protocol during TPM transactions and re-enabled
+once the transaction is completed. But there were still some corner cases
+observed where, reading of TPM header failed for savestate command
+while going to suspend, which resulted in suspend failure.
+To fix this issue keep the CLKRUN protocol disabled for the entire
+duration of a single TPM command and not disabling and re-enabling
+again for every TPM transaction. For the other TPM accesses outside
+TPM command flow, add a higher level of disabling and re-enabling
+the CLKRUN protocol, instead of doing for every TPM transaction.
+
+Fixes: 5e572cab92f0bb5 ("tpm: Enable CLKRUN protocol for Braswell systems")
+Signed-off-by: Azhar Shaikh <azhar.shaikh@intel.com>
+Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/char/tpm/tpm-interface.c |    6 ++
+ drivers/char/tpm/tpm_tis.c       |   92 +++------------------------------
+ drivers/char/tpm/tpm_tis_core.c  |  108 +++++++++++++++++++++++++++++++++++----
+ drivers/char/tpm/tpm_tis_core.h  |    4 +
+ include/linux/tpm.h              |    1 
+ 5 files changed, 119 insertions(+), 92 deletions(-)
+
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -413,6 +413,9 @@ ssize_t tpm_transmit(struct tpm_chip *ch
+ 	if (chip->dev.parent)
+ 		pm_runtime_get_sync(chip->dev.parent);
+ 
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, true);
++
+ 	/* Store the decision as chip->locality will be changed. */
+ 	need_locality = chip->locality == -1;
+ 
+@@ -489,6 +492,9 @@ out:
+ 		chip->locality = -1;
+ 	}
+ out_no_locality:
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, false);
++
+ 	if (chip->dev.parent)
+ 		pm_runtime_put_sync(chip->dev.parent);
+ 
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -132,79 +132,17 @@ static int check_acpi_tpm2(struct device
+ }
+ #endif
+ 
+-#ifdef CONFIG_X86
+-#define LPC_CNTRL_OFFSET		0x84
+-#define LPC_CLKRUN_EN			(1 << 2)
+-
+-/**
+- * tpm_platform_begin_xfer() - clear LPC CLKRUN_EN i.e. clocks will be running
+- */
+-static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+-{
+-	u32 clkrun_val;
+-
+-	if (!is_bsw())
+-		return;
+-
+-	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
+-
+-	/* Disable LPC CLKRUN# */
+-	clkrun_val &= ~LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
+-
+-	/*
+-	 * Write any random value on port 0x80 which is on LPC, to make
+-	 * sure LPC clock is running before sending any TPM command.
+-	 */
+-	outb(0xCC, 0x80);
+-
+-}
+-
+-/**
+- * tpm_platform_end_xfer() - set LPC CLKRUN_EN i.e. clocks can be turned off
+- */
+-static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+-{
+-	u32 clkrun_val;
+-
+-	if (!is_bsw())
+-		return;
+-
+-	clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
+-
+-	/* Enable LPC CLKRUN# */
+-	clkrun_val |= LPC_CLKRUN_EN;
+-	iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
+-
+-	/*
+-	 * Write any random value on port 0x80 which is on LPC, to make
+-	 * sure LPC clock is running before sending any TPM command.
+-	 */
+-	outb(0xCC, 0x80);
+-
+-}
+-#else
+-static void tpm_platform_begin_xfer(struct tpm_tis_data *data)
+-{
+-}
+-
+-static void tpm_platform_end_xfer(struct tpm_tis_data *data)
+-{
+-}
+-#endif
+-
+ static int tpm_tcg_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ 			      u8 *result)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer(data);
++	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
++		WARN(1, "CLKRUN not enabled!\n");
+ 
+ 	while (len--)
+ 		*result++ = ioread8(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer(data);
+-
+ 	return 0;
+ }
+ 
+@@ -213,13 +151,12 @@ static int tpm_tcg_write_bytes(struct tp
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer(data);
++	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
++		WARN(1, "CLKRUN not enabled!\n");
+ 
+ 	while (len--)
+ 		iowrite8(*value++, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer(data);
+-
+ 	return 0;
+ }
+ 
+@@ -227,12 +164,11 @@ static int tpm_tcg_read16(struct tpm_tis
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer(data);
++	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
++		WARN(1, "CLKRUN not enabled!\n");
+ 
+ 	*result = ioread16(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer(data);
+-
+ 	return 0;
+ }
+ 
+@@ -240,12 +176,11 @@ static int tpm_tcg_read32(struct tpm_tis
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer(data);
++	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
++		WARN(1, "CLKRUN not enabled!\n");
+ 
+ 	*result = ioread32(phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer(data);
+-
+ 	return 0;
+ }
+ 
+@@ -253,12 +188,11 @@ static int tpm_tcg_write32(struct tpm_ti
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+-	tpm_platform_begin_xfer(data);
++	if (is_bsw() && !(data->flags & TPM_TIS_CLK_ENABLE))
++		WARN(1, "CLKRUN not enabled!\n");
+ 
+ 	iowrite32(value, phy->iobase + addr);
+ 
+-	tpm_platform_end_xfer(data);
+-
+ 	return 0;
+ }
+ 
+@@ -340,9 +274,6 @@ static void tpm_tis_pnp_remove(struct pn
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ }
+ 
+ static struct pnp_driver tis_pnp_driver = {
+@@ -394,9 +325,6 @@ static int tpm_tis_plat_remove(struct pl
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+ 
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+-
+ 	return 0;
+ }
+ 
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -31,6 +31,8 @@
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
++static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value);
++
+ /* Before we attempt to access the TPM we must see that the valid bit is set.
+  * The specification says that this bit is 0 at reset and remains 0 until the
+  * 'TPM has gone through its self test and initialization and has established
+@@ -422,19 +424,28 @@ static bool tpm_tis_update_timeouts(stru
+ 	int i, rc;
+ 	u32 did_vid;
+ 
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, true);
++
+ 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
+ 	if (rc < 0)
+-		return rc;
++		goto out;
+ 
+ 	for (i = 0; i != ARRAY_SIZE(vendor_timeout_overrides); i++) {
+ 		if (vendor_timeout_overrides[i].did_vid != did_vid)
+ 			continue;
+ 		memcpy(timeout_cap, vendor_timeout_overrides[i].timeout_us,
+ 		       sizeof(vendor_timeout_overrides[i].timeout_us));
+-		return true;
++		rc = true;
+ 	}
+ 
+-	return false;
++	rc = false;
++
++out:
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, false);
++
++	return rc;
+ }
+ 
+ /*
+@@ -654,14 +665,74 @@ void tpm_tis_remove(struct tpm_chip *chi
+ 	u32 interrupt;
+ 	int rc;
+ 
++	tpm_tis_clkrun_enable(chip, true);
++
+ 	rc = tpm_tis_read32(priv, reg, &interrupt);
+ 	if (rc < 0)
+ 		interrupt = 0;
+ 
+ 	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
++
++	tpm_tis_clkrun_enable(chip, false);
++
++	if (priv->ilb_base_addr)
++		iounmap(priv->ilb_base_addr);
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_remove);
+ 
++/**
++ * tpm_tis_clkrun_enable() - Keep clkrun protocol disabled for entire duration
++ *                           of a single TPM command
++ * @chip:	TPM chip to use
++ * @value:	1 - Disable CLKRUN protocol, so that clocks are free running
++ *		0 - Enable CLKRUN protocol
++ * Call this function directly in tpm_tis_remove() in error or driver removal
++ * path, since the chip->ops is set to NULL in tpm_chip_unregister().
++ */
++static void tpm_tis_clkrun_enable(struct tpm_chip *chip, bool value)
++{
++	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
++	u32 clkrun_val;
++
++	if (!IS_ENABLED(CONFIG_X86) || !is_bsw())
++		return;
++
++	if (value) {
++		data->flags |= TPM_TIS_CLK_ENABLE;
++		data->clkrun_enabled++;
++		if (data->clkrun_enabled > 1)
++			return;
++		clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
++
++		/* Disable LPC CLKRUN# */
++		clkrun_val &= ~LPC_CLKRUN_EN;
++		iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
++
++		/*
++		 * Write any random value on port 0x80 which is on LPC, to make
++		 * sure LPC clock is running before sending any TPM command.
++		 */
++		outb(0xCC, 0x80);
++	} else {
++		data->clkrun_enabled--;
++		if (data->clkrun_enabled)
++			return;
++
++		clkrun_val = ioread32(data->ilb_base_addr + LPC_CNTRL_OFFSET);
++
++		/* Enable LPC CLKRUN# */
++		clkrun_val |= LPC_CLKRUN_EN;
++		iowrite32(clkrun_val, data->ilb_base_addr + LPC_CNTRL_OFFSET);
++
++		/*
++		 * Write any random value on port 0x80 which is on LPC, to make
++		 * sure LPC clock is running before sending any TPM command.
++		 */
++		outb(0xCC, 0x80);
++		data->flags &= ~TPM_TIS_CLK_ENABLE;
++	}
++}
++
+ static const struct tpm_class_ops tpm_tis = {
+ 	.flags = TPM_OPS_AUTO_STARTUP,
+ 	.status = tpm_tis_status,
+@@ -674,6 +745,7 @@ static const struct tpm_class_ops tpm_ti
+ 	.req_canceled = tpm_tis_req_canceled,
+ 	.request_locality = request_locality,
+ 	.relinquish_locality = release_locality,
++	.clk_enable = tpm_tis_clkrun_enable,
+ };
+ 
+ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+@@ -708,6 +780,9 @@ int tpm_tis_core_init(struct device *dev
+ 			return -ENOMEM;
+ 	}
+ 
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, true);
++
+ 	if (wait_startup(chip, 0) != 0) {
+ 		rc = -ENODEV;
+ 		goto out_err;
+@@ -799,14 +874,18 @@ int tpm_tis_core_init(struct device *dev
+ 	}
+ 
+ 	rc = tpm_chip_register(chip);
+-	if (rc && is_bsw())
+-		iounmap(priv->ilb_base_addr);
++	if (rc)
++		goto out_err;
+ 
+-	return rc;
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, false);
++
++	return 0;
+ out_err:
++	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
++		chip->ops->clk_enable(chip, false);
++
+ 	tpm_tis_remove(chip);
+-	if (is_bsw())
+-		iounmap(priv->ilb_base_addr);
+ 
+ 	return rc;
+ }
+@@ -819,22 +898,31 @@ static void tpm_tis_reenable_interrupts(
+ 	u32 intmask;
+ 	int rc;
+ 
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, true);
++
+ 	/* reenable interrupts that device may have lost or
+ 	 * BIOS/firmware may have disabled
+ 	 */
+ 	rc = tpm_tis_write8(priv, TPM_INT_VECTOR(priv->locality), priv->irq);
+ 	if (rc < 0)
+-		return;
++		goto out;
+ 
+ 	rc = tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
+ 	if (rc < 0)
+-		return;
++		goto out;
+ 
+ 	intmask |= TPM_INTF_CMD_READY_INT
+ 	    | TPM_INTF_LOCALITY_CHANGE_INT | TPM_INTF_DATA_AVAIL_INT
+ 	    | TPM_INTF_STS_VALID_INT | TPM_GLOBAL_INT_ENABLE;
+ 
+ 	tpm_tis_write32(priv, TPM_INT_ENABLE(priv->locality), intmask);
++
++out:
++	if (chip->ops->clk_enable != NULL)
++		chip->ops->clk_enable(chip, false);
++
++	return;
+ }
+ 
+ int tpm_tis_resume(struct device *dev)
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -79,11 +79,14 @@ enum tis_defaults {
+ #define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
+ #define	TPM_RID(l)			(0x0F04 | ((l) << 12))
+ 
++#define LPC_CNTRL_OFFSET		0x84
++#define LPC_CLKRUN_EN			(1 << 2)
+ #define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
+ #define ILB_REMAP_SIZE			0x100
+ 
+ enum tpm_tis_flags {
+ 	TPM_TIS_ITPM_WORKAROUND		= BIT(0),
++	TPM_TIS_CLK_ENABLE		= BIT(1),
+ };
+ 
+ struct tpm_tis_data {
+@@ -93,6 +96,7 @@ struct tpm_tis_data {
+ 	bool irq_tested;
+ 	unsigned int flags;
+ 	void __iomem *ilb_base_addr;
++	u16 clkrun_enabled;
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
+ 	const struct tpm_tis_phy_ops *phy_ops;
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -50,6 +50,7 @@ struct tpm_class_ops {
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+ 	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
