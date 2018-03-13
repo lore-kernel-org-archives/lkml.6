@@ -1,60 +1,73 @@
-Return-Path: <rjw@rjwysocki.net>
-X-Google-Smtp-Source: AIpwx49uL03RKycwixnBlj36xj6G2gOEcXcq9mVuF2M1c3MTH/zqo8nQCU0z11Xo6oxVhuEBKCmT
-ARC-Seal: i=1; a=rsa-sha256; t=1522360476; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520959188; cv=none;
         d=google.com; s=arc-20160816;
-        b=IGWU/Rdm8G6PVhywjaqUXKB3LEC6B1nUinWFvoAaFZHwDccGiI/YVOYQ8ZpSg4V6SH
-         e51Pi46lj7Pn3DJT/pXjuzURto0OngFsiuRfzuc8gymdP3L6O0HHtoS8LVxUbrVGgOvA
-         eWHc4n2nSFF92PTf5wUgWL2GkYwXEZkWQeRKgvnGHdhanBmaz1PMmEa+Gx83Xoc4HrVM
-         O3ebAhKKKQG6ewizfzOhWcd0gjmCVdWnNeEIoTwYu1ASCJC1/J/qDRJs2sx5BqSz5ov/
-         5409XFXS9M5b/tdD32X344bx++/A85j4eDR/uaVD76wNtpxPGHhrgwRRCDjfnVXAOZg9
-         qxuA==
+        b=ltQ/UAm5LzKvmT2yNLd+lwJ+npX5h+/DpN96XQiZE5INM9gFwBShtNRUfZ4vAL4Lz8
+         krWykT+nJMACNfmbiVVGpsJQdLYXLYR3adp7PA1W5fmWBg8RYcoe3j/AvFNSVBC0eLKt
+         yJ6o9TRI0HZMtm7AFZUEMm7CXtHCUf/wXe8SEDZYtbwfayBhBkEK55Oqbxhk1kHGiNYI
+         xPOqjmyce53UC+E8F/3a028Mb5VGGuw56cIzIpoE2kk9riKiZYIc2gMVEGHAiiZkgBTS
+         Tpzm2X1EEx2nZzKz9YxvHwgycQlFGfHTExmpD/uKauGlPg4GTIdQZC2j928iKnuLLRDf
+         DCng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=qbmuuB1ab72NBNBRMPjW9d+t19tOIMzsxw8lVaRunA0=;
-        b=AAuAZo/DT3jS+h3YgauguGBcXPHItiSnhPMT4XWfzSaVDmgn9S/6Ye478mGoizlJEs
-         3J27xlXeQr8LTgWrg1YuTVJhtZCYZHaQh+HpkqOgsawRu/VfByhpf2qLu+XVfFQUAzDl
-         jGjY+5upMfapeR82vsow3N8lF+nxycqam4qjm+K/mKCFOAW+Mid6VHKSVjeGfPXG1vrI
-         Fc6cRr4OWqnndaaxcgWt6WSHlWojEm0zD5tp09MtcQnF3wK9uidFzXaKw0ICLECOgS/D
-         5u4rZ1eCfmz+tuDgBYCYicuKXGie+sWxB6kVAcEEgD1VwJeLP+LWzNW33MqWw11bkDRY
-         P2Cw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=achoZEZ1KvVp+nKjWNHUrfgF8IHVoA1V+jQch3tOHE0=;
+        b=fskK8ogwEa6WX6lswa7gqs8SQcWOw+8L3x1+S7nulY6HWDBkM9fjs2L3pRBSJnUI1N
+         3rqbifnDZM/rX7HumG/1T6K7m5x+OADriBPXDtguHDJkEZ3h2kSrs4IrXex2STaXBLmB
+         sJDgndSV78kehJy1oGEoJnU4ZprJdMHah/FQIG6Px0hF5H+TPs53W37lYiOfiApXqcc5
+         WlsqUFLdyvMAYFxddjxaqbZTED1SfEnDl+esH5ihXq3RkIdHza/ztkzLnkvoK0mHlm2D
+         ut9AvpfotWvTthww5qdr89EqHClK/uB/ncV+InyXVrAJoGVzWRfk3I7fSRdEmRVianCC
+         lyxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TKSOSOAX;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PM / wakeup: use seq_open() to show wakeup stats
-Date: Thu, 29 Mar 2018 23:54:55 +0200
-Message-ID: <16373191.Y168Qu1tFx@aspire.rjw.lan>
-In-Reply-To: <CADAEsF8j4yfuzDSfyO4VtqSP6rGY2r6L_AEn6MEhhhAUdo+7dA@mail.gmail.com>
-References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com> <CADAEsF8j4yfuzDSfyO4VtqSP6rGY2r6L_AEn6MEhhhAUdo+7dA@mail.gmail.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TKSOSOAX;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELupGHOvWU35i81rrsIbAZbe9ugR8kx0o34VwQ/KR7xhF2Oyx5JTyiYeWyXjcEWTefXManYagLiVyz7qgVMXXtA=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
+References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 18:39:47 +0200
+Message-ID: <CAHp75VeNco97BovnVTcd=RH9zsK_gO=jmPALytP-sTFjK5Cq0Q@mail.gmail.com>
+Subject: Re: [PATCH v2] PM / wakeup: use seq_open() to show wakeup stats
+To: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, "Brown, Len" <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594086852232118519?=
-X-GMAIL-MSGID: =?utf-8?q?1596310659299395677?=
+X-GMAIL-MSGID: =?utf-8?q?1594841302149972083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thursday, March 29, 2018 9:49:43 AM CEST Ganesh Mahendran wrote:
-> ping.
-> 
-> 2018-03-05 16:47 GMT+08:00 Ganesh Mahendran <opensource.ganesh@gmail.com>:
-> > single_open() interface requires that the whole output must
-> > fit into a single buffer. This will lead to timeout when
-> > system memory is not in a good situation.
-> >
-> > This patch use seq_open() to show wakeup stats. This method
-> > need only one page, so timeout will not be observed.
-> 
-> We have resolved the watchdog timeout issue by this patch.
-> Please help to review.
+On Mon, Mar 5, 2018 at 10:47 AM, Ganesh Mahendran
+<opensource.ganesh@gmail.com> wrote:
+> single_open() interface requires that the whole output must
+> fit into a single buffer. This will lead to timeout when
+> system memory is not in a good situation.
+>
+> This patch use seq_open() to show wakeup stats. This method
+> need only one page, so timeout will not be observed.
 
-Sorry for the delay.
+> +       if (n == 0) {
+> +               seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+> +                       "expire_count\tactive_since\ttotal_time\tmax_time\t"
+> +                       "last_change\tprevent_suspend_time\n");
+> +       }
 
-I'll have a look tomorrow if possible.
+Can't you do this once at ->open() stage, for example?
 
-Thanks!
+>  static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+>  {
+> -       return single_open(file, wakeup_sources_stats_show, NULL);
+> +       return seq_open_private(file, &wakeup_sources_stats_seq_ops, sizeof(int));
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
