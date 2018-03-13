@@ -1,131 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752890AbeCMVoB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:44:01 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41405 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752757AbeCMVnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:43:43 -0400
-X-Google-Smtp-Source: AG47ELtbUdqG6laEcf650wgm6iLcRo89m5VKwI5+5qbWc2fYe9NbYKYrH4F0J34+rzVjMJz71ghaIQ==
-From: Joel Fernandes <joelaf@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Joel Fernandes <joelaf@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH v1 2/2] tracepoint: Prevent false-positive lockdep warnings
-Date: Tue, 13 Mar 2018 14:43:27 -0700
-Message-Id: <20180313214327.37475-3-joelaf@google.com>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
-In-Reply-To: <20180313214327.37475-1-joelaf@google.com>
-References: <20180313214327.37475-1-joelaf@google.com>
+        id S1752994AbeCMVpx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 17:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751344AbeCMVpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 17:45:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE25205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Mikael Starvik <starvik@axis.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-am33-list@redhat.com
+Date: Tue, 13 Mar 2018 16:45:49 -0500
+Message-ID: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the last patch, lockdep hooks for irqs on/off will use the
-tracepoint infrastructure. This can however cause false lockdep
-warnings triggered by RCU code that does lockdep asserts.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-There are 2 cases:
-1) trace_hardirqs_off calls the lockdep_hardirqs_off hook, however
-this call happens only after rcu_irq_enter_irqsoff. Due to this,
-the lockdep assert that happens in the RCU path will think that
-IRQs are kept on and will print a warning.
+If a device already has MSI or MSI-X enabled, there's no need to set up its
+legacy INTx interrupt.
 
-[    0.001000] ------------[ cut here ]------------
-[    0.001000] IRQs not disabled as expected
-[    0.001000] WARNING: CPU: 0 PID: 0 at kernel/rcu/tree.c:1039
-				rcu_irq_enter+0x56/0x5d
-[    0.001000] Call Trace:
-[    0.001000]  rcu_irq_enter_irqson+0x21/0x47
-[    0.001000]  trace_hardirqs_off+0x53/0xcc
-[    0.001000]  __down_trylock_console_sem+0x27/0x9d
-[    0.001000]  console_trylock+0x10/0x50
-[    0.001000]  vprintk_emit+0x2a8/0x400
-[    0.001000]  printk+0x43/0x4b
-[    0.001000]  lockdep_init+0x38/0xe3
-[    0.001000]  start_kernel+0x326/0x446
-[    0.001000]  secondary_startup_64+0xa5/0xb0
+bba6f6fc68e7 ("[PATCH] MSI-X: fix resume crash") changed the cris, frv,
+x86, and ia64 arches to skip INTx setup when MSI is enabled.
 
-2) trace_hardirqs_on calls the lockdep_hardirqs_on hook, however
-interrupts are enabled only after trace_hardirqs_on. In the meanwhile
-lockdep falsely sets its state to hardirqs are enabled. For this reason,
-rcu_irq_enter_irqson prints the following false warning claiming IRQs
-are not disabled:
+16cf0ebc35dd ("x86/PCI: Do not use interrupt links for devices using
+MSI-X") extended that by changing x86 to also skip INTx setup when MSI-X is
+enabled.
 
-[    0.001000] ------------[ cut here ]------------
-[    0.001000] IRQs not disabled as expected
-[    0.001000] WARNING: CPU: 0 PID: 0 at kernel/rcu/tree.c:886
-rcu_irq_exit+0x56/0x5d
-[    0.001000] Call Trace:
-[    0.001000]  rcu_irq_exit_irqson+0x21/0x47
-[    0.001000]  trace_hardirqs_on+0xb9/0xd7
-[    0.001000]  vprintk_emit+0x287/0x400
-[    0.001000]  printk+0x43/0x4b
-[    0.001000]  lockdep_init+0x38/0xe3
-[    0.001000]  start_kernel+0x326/0x446
-[    0.001000]  secondary_startup_64+0xa5/0xb0
+Change the remaining arches (cris, frv, and ia64) to skip INTx setup when
+either MSI or MSI-X is enabled.
 
-To fix it, just disable lockdep checks before and enable it after
-rcu_irq_exit_irqson.
+Also update mn10300 (which didn't exist at the time of bba6f6fc68e7) to
+follow the same pattern.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zilstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Joel Fernandes <joelaf@google.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- include/linux/tracepoint.h | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ arch/cris/arch-v32/drivers/pci/bios.c |    2 +-
+ arch/frv/mb93090-mb00/pci-vdk.c       |    2 +-
+ arch/ia64/pci/pci.c                   |    4 ++--
+ arch/mn10300/unit-asb2305/pci.c       |    8 +++++---
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index c94f466d57ef..81eac3562787 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -137,8 +137,17 @@ extern void syscall_unregfunc(void);
- 									\
- 		if (!(cond))						\
- 			return;						\
--		if (rcucheck)						\
-+									\
-+		/*							\
-+		 * lockdep hook for irqsoff may run only after		\
-+		 * rcu_irq_enter_irqson so in the meanwhile don't do	\
-+		 * lockdep checks to prevent false lockdep warnings	\
-+		 */							\
-+		if (rcucheck) {						\
-+			lockdep_off();					\
- 			rcu_irq_enter_irqson();				\
-+			lockdep_on();					\
-+		}							\
- 		rcu_read_lock_sched_notrace();				\
- 		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
- 		if (it_func_ptr) {					\
-@@ -149,8 +158,18 @@ extern void syscall_unregfunc(void);
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
- 		rcu_read_unlock_sched_notrace();			\
--		if (rcucheck)						\
-+									\
-+		/*							\
-+		 * Turn off lockdep before calling rcu_irq_exit_irqson  \
-+		 * since the lockdep irqson hook may have just run	\
-+		 * but irqs are only after trace_hardirqs_off returns.  \
-+		 * This can cause false lockdep warnings.		\
-+		 */							\
-+		if (rcucheck) {						\
-+			lockdep_off();					\
- 			rcu_irq_exit_irqson();				\
-+			lockdep_on();					\
-+		}							\
- 	} while (0)
+diff --git a/arch/cris/arch-v32/drivers/pci/bios.c b/arch/cris/arch-v32/drivers/pci/bios.c
+index 6b9e6cfaa29e..c2bed0cc060b 100644
+--- a/arch/cris/arch-v32/drivers/pci/bios.c
++++ b/arch/cris/arch-v32/drivers/pci/bios.c
+@@ -68,7 +68,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+ 	if ((err = pcibios_enable_resources(dev, mask)) < 0)
+ 		return err;
  
- #ifndef MODULE
--- 
-2.16.2.660.g709887971b-goog
+-	if (!dev->msi_enabled)
++	if (!pci_dev_msi_enabled(dev))
+ 		pcibios_enable_irq(dev);
+ 	return 0;
+ }
+diff --git a/arch/frv/mb93090-mb00/pci-vdk.c b/arch/frv/mb93090-mb00/pci-vdk.c
+index f211839e2cae..4a55d1b82d21 100644
+--- a/arch/frv/mb93090-mb00/pci-vdk.c
++++ b/arch/frv/mb93090-mb00/pci-vdk.c
+@@ -413,7 +413,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+ 
+ 	if ((err = pci_enable_resources(dev, mask)) < 0)
+ 		return err;
+-	if (!dev->msi_enabled)
++	if (!pci_dev_msi_enabled(dev))
+ 		pcibios_enable_irq(dev);
+ 	return 0;
+ }
+diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
+index f5ec736100ee..7ccc64d5fe3e 100644
+--- a/arch/ia64/pci/pci.c
++++ b/arch/ia64/pci/pci.c
+@@ -398,7 +398,7 @@ pcibios_enable_device (struct pci_dev *dev, int mask)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (!dev->msi_enabled)
++	if (!pci_dev_msi_enabled(dev))
+ 		return acpi_pci_irq_enable(dev);
+ 	return 0;
+ }
+@@ -407,7 +407,7 @@ void
+ pcibios_disable_device (struct pci_dev *dev)
+ {
+ 	BUG_ON(atomic_read(&dev->enable_cnt));
+-	if (!dev->msi_enabled)
++	if (!pci_dev_msi_enabled(dev))
+ 		acpi_pci_irq_disable(dev);
+ }
+ 
+diff --git a/arch/mn10300/unit-asb2305/pci.c b/arch/mn10300/unit-asb2305/pci.c
+index 3dfe2d31c67b..4d36ea517679 100644
+--- a/arch/mn10300/unit-asb2305/pci.c
++++ b/arch/mn10300/unit-asb2305/pci.c
+@@ -399,10 +399,12 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+ {
+ 	int err;
+ 
+-	err = pci_enable_resources(dev, mask);
+-	if (err == 0)
++	if ((err = pci_enable_resources(dev, mask)) < 0)
++		return err;
++
++	if (!pci_dev_msi_enabled(dev))
+ 		pcibios_enable_irq(dev);
+-	return err;
++	return 0;
+ }
+ 
+ /*
