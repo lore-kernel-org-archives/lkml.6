@@ -1,51 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753012AbeCMV5z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:57:55 -0400
-Received: from mail-ua0-f170.google.com ([209.85.217.170]:43671 "EHLO
-        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751379AbeCMV5x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:57:53 -0400
-X-Google-Smtp-Source: AG47ELtX8A1DrvNPVp0aS95mrELfq8d26lxKDOlZtuMEMZ4FGA4Qvdsz1IfphPkZfIhrO6paQfYqqKHB2Sf0lKMH0Ac=
+        id S1753142AbeCMWBV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:01:21 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:35702 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751502AbeCMWBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:01:19 -0400
+To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+Date: Tue, 13 Mar 2018 16:00:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180313203719.75639-1-dbasehore@chromium.org>
-References: <20180313203719.75639-1-dbasehore@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 13 Mar 2018 14:57:51 -0700
-X-Google-Sender-Auth: YYOvzKzeUqx-Q869xp5MhqTZWS8
-Message-ID: <CAD=FV=UK-Rnto+iH8TSuTyzt010HT8Ujk0TX74hA1D5Lh4HfOQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Add 1.6GHz PLL rate
-To: Derek Basehore <dbasehore@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, sboyd@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Tue, Mar 13, 2018 at 1:37 PM, Derek Basehore <dbasehore@chromium.org> wrote:
-> We need this rate to generate 100, 200, and 228.57MHz from the same
-> PLL. 228.57MHz is useful for a pixel clock when the VPLL is used for
-> and external display.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 1 +
->  1 file changed, 1 insertion(+)
 
-Looks good to me.  I spent a little bit of time poking at this and I
-agreed it's the best way to make 1.6 GHz in
-<http://crosreview.com/956677>.  Lin Huang at Rockchip also said:
+On 13/03/18 03:22 PM, Sinan Kaya wrote:
+> It sounds like you have very tight hardware expectations for this to work
+> at this moment. You also don't want to generalize this code for others and
+> address the shortcomings.
 
-> yes, we also use this setting for 1.6GHz in our internal branch.
+No, that's the way the community has pushed this work. Our original work
+was very general and we were told it was unacceptable to put the onus on
+the user and have things break if the hardware doesn't support it. I
+think that's a reasonable requirement. So the hardware use-cases were
+wittled down to the ones we can be confident about and support with
+reasonable changes to the kernel today.
 
-...and they seem to agree this is a sane setting.  Thus:
+> To get you going, you should limit this change to the switch products that you have
+> validated via white-listing PCI vendor/device ids. Please do not enable this feature
+> for all other PCI devices or by default.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+This doesn't seem necessary. We know that all PCIe switches available
+today support P2P and we are highly confident that any switch that would
+ever be produced would support P2P. As long as devices are behind a
+switch you don't need any white listing. This is what the current patch
+set implements. If you want to start including root ports then you will
+need a white list (and solve all the other problems I mentioned earlier).
+
+> I think your code qualifies as a virus until this issue is resolved (so NAK). 
+
+That seems a bit hyperbolic... "a virus"??!... please keep things
+constructive.
+
+> You are delivering a general purpose P2P code with a lot of holes in it and
+> expecting people to jump through it.
+No, the code prevents users from screwing it up. It just requires a
+switch in the hardware which is hardly a high bar to jump through
+(provided you are putting some design thought into your hardware). And
+given it requires semi-custom hardware today, it's not something that
+needs to be on by default in any distributor kernel.
+
+> Turning security off by default is also not acceptable. Linux requires ACS support
+> even though you don't care about it for your particular application.
+
+That's not true. Linux does not require ACS support. In fact it's
+already off by default until you specifically turn on the IOMMU. (Which
+is not always the most obvious thing to enable.) And the only thing it
+really supports is enforcing isolation between VMs that are using
+different pieces of hardware in the system.
+
+> I'd hate ACS to be broken due to some operating system enabling your CONFIG option.
+
+ACS isn't "broken" by enabling the config option. It just makes the
+IOMMU groups and isolation less granular. (ie. devices behind a switch
+will be in the same group and not isolated from each-other).
+
+Logan
