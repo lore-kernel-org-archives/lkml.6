@@ -1,133 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeCMQQi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:16:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:46347 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752281AbeCMQQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:16:36 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>, Martin Sebor <msebor@gcc.gnu.org>,
-        Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-        Paul Blakey <paulb@mellanox.com>, Tom Herbert <tom@quantonium.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] test_rhashtable: avoid gcc-8 -Wformat-overflow warning
-Date: Tue, 13 Mar 2018 17:15:57 +0100
-Message-Id: <20180313161606.471699-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <CAK8P3a2mkLfkmEgg7GbeS=QkXvzjt86fNiUuuHGa54HyULkMng@mail.gmail.com>
-References: <CAK8P3a2mkLfkmEgg7GbeS=QkXvzjt86fNiUuuHGa54HyULkMng@mail.gmail.com>
-X-Provags-ID: V03:K0:nhNJXHvXCbgs5Ywo38egMkugqqGfU5pAXmeGU+fl5UzT4YagbO+
- ZQQb+twsw4YTuDM/p8EQpQWMk6gVw9yfbqUe5/77tyTPXATVkceawBQHLUnuRdcNTquNDh3
- CNM9oB6mSYCk2EidBeK68JoYPjyRcag+Yz+7wS+6y3z9jZKNrkMYAWYc44s7yMn3Enb5xOY
- qv7RckbxDEPsBgQeXQtjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:N7PRzOSjRHo=:vmg4AkGA/iJcYmQgFCMJZC
- tlHKe15DpF67SGEpqGL1FB85psN3JeA24NM2/nyAVeFAcuQFePezjTg7zAw0F15dwVBio7uC4
- +x9AScSH7tmJdy0m552veW/qJQezq+MYFoI8szkox2Fn9kLmuwEzLuDKZ8bEC2SG0Ej9C7yL1
- Bh+JjSJ0457/HJuuMxQaPvcQFx1dBSAAps6WbuygrncOEjsldttRamnWv6Hs6FvnRagiFt2mQ
- apAGBfvcqVXgp8FcghwCjJk2LCssh4hEXaeTGa3iqs+Jan86M8N7BNm7ZIU4VeWAFIl1RCWYG
- dVvNTAfkOgdiXnvz9bZSPtUofFFI1eJaw8wzYwySaroMTaK1EWUAxlZcHjHjAo3wUQAA4vTCO
- COfpeSXaEEWmcwxB8Ler8E80+uCL83R/s7v+l6D+DG078pXulkCjheBRvL2NqXPgNjBlcDYCg
- +nf77YEJ/jDDD84pH1fnNPx4DRilUec4O0KGuvRy2NAZgSHre7WISAGRfGxHk7Um21QbpS/8r
- L9SjQPqSYAK7AxgLl5PzZ/8HYttaNdHxt4NjB+kZxWytznJDN4Rh0biG69t4NPnnX6cIxIQiZ
- jliT/p7rgeNP+dnt45+zDk8crauzuHTIEgwCQEU4T6/Lu3gpY2rs6tZqUduDH8g9C90w8XYEG
- 3lQGYEOBAb8fM5M2MBqudYwwatoe1bMbwIgfloAI1yxpOd+x+4x6aPtPvYrFvhNnEIALv6Dkx
- YM+nUuQtFCasDZzLtJI1ichWKVd5J6i+BEcznA==
+        id S934024AbeCMQRm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:17:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60131 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752864AbeCMQRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:17:38 -0400
+Subject: Re: [pci PATCH v5 3/4] ena: Migrate over to unmanaged SR-IOV support
+To: David Woodhouse <dwmw2@infradead.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
+        netanel@amazon.com, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180312171813.3487.94803.stgit@localhost.localdomain>
+ <20180312172309.3487.76690.stgit@localhost.localdomain>
+ <1520928772.28745.53.camel@infradead.org>
+ <CAKgT0UdkUSsHQC7CpJQ0CT77AD8k7P-HeeomWXNJQ-Ek4dJRMQ@mail.gmail.com>
+ <1520953463.20126.15.camel@infradead.org>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <3d291517-fc7d-53ea-66b4-27137bdb14e5@redhat.com>
+Date: Tue, 13 Mar 2018 12:17:34 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <1520953463.20126.15.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-8 warns about a code pattern that is used in the newly added
-test_rhashtable code:
+On 03/13/2018 11:04 AM, David Woodhouse wrote:
+> On Tue, 2018-03-13 at 07:51 -0700, Alexander Duyck wrote:
+> 
+>> Actually the suggestion I had from Don Dutile was that we should be
+>> looking at creating a pci-stub like driver specifically for those type
+>> of devices, but without the ability to arbitrarily assign devices.
+>> Basically we have to white-list it in one device at a time for those
+>> kind of things.
+> 
+> It's still not clear what the point of that would be.
+> 
+A PF-stub to do device-assignment(-like) ops preserves the current security model,
+and allows one to add pci-quirks at a device-level as well -- when the usual ACS
+structs aren't properly added for a device, which happens quite frequently -- which
+retains that common workaround as well.
+Yet-another-method for VF assignment w/o even a simple PF driver stub
+created multiple failure cases/configs when we were hashing the multiple options
+a few weeks ago.
+It's just simpler to implement a PF stub w/VF enablement ... b/c it's simple...
 
-lib/test_rhashtable.c: In function 'print_ht':
-lib/test_rhashtable.c:511:21: error: '
-bucket[' directive writing 8 bytes into a region of size between 1 and 512 [-Werror=format-overflow=]
-    sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
-                     ^~~~~~~~~
-lib/test_rhashtable.c:511:4: note: 'sprintf' output between 15 and 536 bytes into a destination of size 512
-    sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The problem here is using the same fixed-length buffer as input and output
-of snprintf(), which for an unbounded loop has an actual potential to
-overflow the buffer. The '512' byte length was apparently chosen to
-be "long enough" to prevent that in practice, but without any specific
-guarantees of being the smallest safe size.
-
-I can see three possible ways to avoid this warning:
-
-- rewrite the code to use pointer arithmetic to forward the buffer,
-  rather than copying the buffer itself. This is a more conventional
-  use of sprintf(), and it avoids the warning, but is not any more
-  safe than the original code.
-- Rewrite the function in a safe way that avoids both the potential
-  overflow and the warning.
-- Ask the gcc developers to not warn for this pattern if we consider
-  the warning to be inappropriate.
-
-This patch implements the second of the above, using scnprintf()
-as Rasmus suggested.
-
-Fixes: 499ac3b60f65 ("test_rhashtable: add test case for rhltable with duplicate objects")
-Cc: Martin Sebor <msebor@gcc.gnu.org>
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-My patch is still untested, please try it out before applying.
----
- lib/test_rhashtable.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
-index f4000c137dbe..fa865a953176 100644
---- a/lib/test_rhashtable.c
-+++ b/lib/test_rhashtable.c
-@@ -496,6 +496,7 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
- 	struct rhashtable *ht;
- 	const struct bucket_table *tbl;
- 	char buff[512] = "";
-+	size_t len = 0;
- 	unsigned int i, cnt = 0;
- 
- 	ht = &rhlt->ht;
-@@ -508,19 +509,19 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
- 		next = !rht_is_a_nulls(pos) ? rht_dereference(pos->next, ht) : NULL;
- 
- 		if (!rht_is_a_nulls(pos)) {
--			sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
-+			len += scnprintf(buff + len, sizeof(buff) - len, "\nbucket[%d] -> ", i);
- 		}
- 
- 		while (!rht_is_a_nulls(pos)) {
- 			struct rhlist_head *list = container_of(pos, struct rhlist_head, rhead);
--			sprintf(buff, "%s[[", buff);
-+			len += scnprintf(buff + len, sizeof(buff) - len, "[[");
- 			do {
- 				pos = &list->rhead;
- 				list = rht_dereference(list->next, ht);
- 				p = rht_obj(ht, pos);
- 
--				sprintf(buff, "%s val %d (tid=%d)%s", buff, p->value.id, p->value.tid,
--					list? ", " : " ");
-+				len += scnprintf(buff + len, sizeof(buff) - len, " val %d (tid=%d)%s",
-+						 p->value.id, p->value.tid, list? ", " : " ");
- 				cnt++;
- 			} while (list);
- 
-@@ -528,7 +529,8 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
- 			next = !rht_is_a_nulls(pos) ?
- 				rht_dereference(pos->next, ht) : NULL;
- 
--			sprintf(buff, "%s]]%s", buff, !rht_is_a_nulls(pos) ? " -> " : "");
-+			len += scnprintf(buff + len, sizeof(buff) - len, "]]%s",
-+					 !rht_is_a_nulls(pos) ? " -> " : "");
- 		}
- 	}
- 	printk(KERN_ERR "\n---- ht: ----%s\n-------------\n", buff);
--- 
-2.9.0
+>> If you have the device ID of the thing you wanted to have work with
+>> pci-stub before I could look at putting together a quick driver and
+>> adding it to this set.
+> 
+> 1d0f:0053 would be an example.
+> 
