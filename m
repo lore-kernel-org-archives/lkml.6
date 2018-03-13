@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt0Fe+M/qA6E8PjTBOQO0KIyWxQ3DO8yJv1k3v5YleEsB3ndI9YMxkZ/eygOzf6e0DEDMDD
-ARC-Seal: i=1; a=rsa-sha256; t=1520955184; cv=none;
+X-Google-Smtp-Source: AG47ELuVfOOlPla2Dm4NEJy2znI34qzo8dfL3cex3jzCLOyPNci2Sj73fx7Bk31CmnCaaY2/z303
+ARC-Seal: i=1; a=rsa-sha256; t=1520955181; cv=none;
         d=google.com; s=arc-20160816;
-        b=lOxkf8gkpdVXEys8VbiHLdmojgqaSaaqBJ9GJ4uDBfmXbNZcjI1LX9/OwAggV0LRV2
-         /9saVBG6G0DblV5oceBtVEIc8/ceJUvIa0OmfFmLRLL3+Dj6N4IMh2mltwPRS6PhJdxb
-         gwcbu6kAwm21v7cpclHoNYzFk1B2/07z+cM/H+vpnwyAHvPDDmHfdkk6+Y1RK1adoHao
-         qLw1E4qy5fDnCyDUtoeAMy4HPQKabvyCaTs9cTHYAfAsiGnd02ZheZqlEgAiAFkY+ABs
-         6xMDYU4RttAIbGq/wOnpq5vhh3sBhWAeZtiq5dOpuGfS8CzkWokyTRyeLDpG2YLnICch
-         6fGA==
+        b=nxFDL5XUDUph20Udmg/8enXfGlIuM3rZUNOEMBNYn+9xg3nOP8OhnOTrau0QC19eeR
+         iNRja9QsnEXk8Wqo4Gx2OBg0xF26JIguSP+PSOT0CLAUogTJhytueK/kFb0jeXGqtb3N
+         ovV5KT19r/a8dhBEBnYruQMfksPYDAaM5JaENdQFcmId/eJ9FHp8Ap5ZbszTElR61oxF
+         PBR71kUGcjsKKG5Hcdx+EHqCFpUn4gWAcCX3je2dQNPohrwYFQVZzHGkVvj+aTz1JBoH
+         NN2DCn3hwQRk/bsKoEL7HZr5Z+RMegNtBvPAy9f3wXSTrlAbOX5xS7dmXMIr5q22FU7x
+         Sizg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CwrT9GA/hHsN8sTPkkfYZDL29NX1HTFXT7pdSdG18xw=;
-        b=mam3+FEDrASqQI0mBWUZSWfd4+Ef26iCABAFoJYUOd4VpngEiDGO8SF4BvvYPRFWbd
-         8yvyf8r1NuJRn/R/U8k0Zi43ybaZx2Wvh3Lkme0MfvcZsOlNRR5Cf1MdUGQzwECVC+H6
-         2K8oaekLH+gNLI0c6cYmGU7Dmk/i8VIM2CPToQQgHoXYOsii+TPHgvfarSOMDJzzi6GF
-         DFE8nvaM8N1FagcMVHfiMTu8/orjY/spPGK9EvU4kc1UANdIyUVhL6W8+eU1Sh90dFTs
-         2oLL4b5fXMKixMgd5T7a3CkIL8ELjc3Zelo020Eg9SFj4LjqHo8WdKLQIjtAXQCpTgN4
-         Bevw==
+        bh=0Zuln8lux42M1TFUCPUul6c/P0aEIcrx6GHxTnBm+cc=;
+        b=sVvdKu1T733KIZgJWbNKQaoG1Ru1yXYBDCfnFkA+5tt1k6QDTD4goIMeBG6e5h2xJT
+         cxpzgo5M6fDiit64MwQcxBn+dw/msK3NFZ5gViqqWWOcF2Ju+01j5S5s6QAHSSTq1KS2
+         tZ+KS2PW11FFjfOyvvzd3K3OO0M6+wSGzjGQdqO3LdlZ3TJmQDHhEOD4E29CbSt8/kE6
+         LYyvZurfQ19UrNVm1gDI/bSAC/C4lOH+zVCy14PW3czTHFZuDPdngKqH6+lZmvsQn8jO
+         MgbiScvQccZpbn+fAui0XTSExFZ34Ev2SRiXqY8x2KcW8wcWYkmWk+hZ3zMKwWVdaOmD
+         xmPA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 117/146] netfilter: use skb_to_full_sk in ip6_route_me_harder
-Date: Tue, 13 Mar 2018 16:24:44 +0100
-Message-Id: <20180313152329.376111884@linuxfoundation.org>
+	David Woodhouse <dwmw2@infradead.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 099/146] objtool: Add module specific retpoline rules
+Date: Tue, 13 Mar 2018 16:24:26 +0100
+Message-Id: <20180313152328.204751220@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837103220060055?=
-X-GMAIL-MSGID: =?utf-8?q?1594837103220060055?=
+X-GMAIL-THRID: =?utf-8?q?1594837100802362123?=
+X-GMAIL-MSGID: =?utf-8?q?1594837100802362123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,55 +58,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 7d98386d55a5afaa65de77e1e9197edeb8a42079 upstream.
+commit ca41b97ed9124fd62323a162de5852f6e28f94b8 upstream.
 
-For some reason, Florian forgot to apply to ip6_route_me_harder
-the fix that went in commit 29e09229d9f2 ("netfilter: use
-skb_to_full_sk in ip_route_me_harder")
+David allowed retpolines in .init.text, except for modules, which will
+trip up objtool retpoline validation, fix that.
 
-Fixes: ca6fb0651883 ("tcp: attach SYNACK messages to request sockets instead of listener") 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Requested-by: David Woodhouse <dwmw2@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv6/netfilter.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ scripts/Makefile.build        |    2 ++
+ tools/objtool/builtin-check.c |    3 ++-
+ tools/objtool/builtin.h       |    2 +-
+ tools/objtool/check.c         |    9 +++++++++
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/netfilter.c
-+++ b/net/ipv6/netfilter.c
-@@ -21,18 +21,19 @@
- int ip6_route_me_harder(struct net *net, struct sk_buff *skb)
- {
- 	const struct ipv6hdr *iph = ipv6_hdr(skb);
-+	struct sock *sk = sk_to_full_sk(skb->sk);
- 	unsigned int hh_len;
- 	struct dst_entry *dst;
- 	struct flowi6 fl6 = {
--		.flowi6_oif = skb->sk ? skb->sk->sk_bound_dev_if : 0,
-+		.flowi6_oif = sk ? sk->sk_bound_dev_if : 0,
- 		.flowi6_mark = skb->mark,
--		.flowi6_uid = sock_net_uid(net, skb->sk),
-+		.flowi6_uid = sock_net_uid(net, sk),
- 		.daddr = iph->daddr,
- 		.saddr = iph->saddr,
- 	};
- 	int err;
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -256,6 +256,8 @@ __objtool_obj := $(objtree)/tools/objtoo
  
--	dst = ip6_route_output(net, skb->sk, &fl6);
-+	dst = ip6_route_output(net, sk, &fl6);
- 	err = dst->error;
- 	if (err) {
- 		IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTNOROUTES);
-@@ -50,7 +51,7 @@ int ip6_route_me_harder(struct net *net,
- 	if (!(IP6CB(skb)->flags & IP6SKB_XFRM_TRANSFORMED) &&
- 	    xfrm_decode_session(skb, flowi6_to_flowi(&fl6), AF_INET6) == 0) {
- 		skb_dst_set(skb, NULL);
--		dst = xfrm_lookup(net, dst, flowi6_to_flowi(&fl6), skb->sk, 0);
-+		dst = xfrm_lookup(net, dst, flowi6_to_flowi(&fl6), sk, 0);
- 		if (IS_ERR(dst))
- 			return PTR_ERR(dst);
- 		skb_dst_set(skb, dst);
+ objtool_args = $(if $(CONFIG_UNWINDER_ORC),orc generate,check)
+ 
++objtool_args += $(if $(part-of-module), --module,)
++
+ ifndef CONFIG_FRAME_POINTER
+ objtool_args += --no-fp
+ endif
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -29,7 +29,7 @@
+ #include "builtin.h"
+ #include "check.h"
+ 
+-bool no_fp, no_unreachable, retpoline;
++bool no_fp, no_unreachable, retpoline, module;
+ 
+ static const char * const check_usage[] = {
+ 	"objtool check [<options>] file.o",
+@@ -40,6 +40,7 @@ const struct option check_options[] = {
+ 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
+ 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
+ 	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
++	OPT_BOOLEAN('m', "module", &module, "Indicates the object will be part of a kernel module"),
+ 	OPT_END(),
+ };
+ 
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -20,7 +20,7 @@
+ #include <subcmd/parse-options.h>
+ 
+ extern const struct option check_options[];
+-extern bool no_fp, no_unreachable, retpoline;
++extern bool no_fp, no_unreachable, retpoline, module;
+ 
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1957,6 +1957,15 @@ static int validate_retpoline(struct obj
+ 		if (insn->retpoline_safe)
+ 			continue;
+ 
++		/*
++		 * .init.text code is ran before userspace and thus doesn't
++		 * strictly need retpolines, except for modules which are
++		 * loaded late, they very much do need retpoline in their
++		 * .init.text
++		 */
++		if (!strcmp(insn->sec->name, ".init.text") && !module)
++			continue;
++
+ 		WARN_FUNC("indirect %s found in RETPOLINE build",
+ 			  insn->sec, insn->offset,
+ 			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
