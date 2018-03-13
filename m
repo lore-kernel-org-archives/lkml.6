@@ -1,145 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751554AbeCMBml (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:42:41 -0400
-Received: from mga03.intel.com ([134.134.136.65]:42254 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751394AbeCMBmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:42:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
-   d="scan'208";a="33302538"
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
- multi-pci-segment arches
-To: "Kroening, Gary" <gary.kroening@hpe.com>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>
-Cc: "Travis, Mike" <mike.travis@hpe.com>,
-        "Banman, Andrew" <abanman@hpe.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
-Message-ID: <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
-Date: Mon, 12 Mar 2018 21:42:36 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S932292AbeCMBr5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:47:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:42592 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751419AbeCMBr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:47:56 -0400
+Subject: Re: [PATCH V2] nvme-pci: assign separate irq vectors for adminq and
+ ioq0
+To: Keith Busch <keith.busch@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1519832921-13915-1-git-send-email-jianchao.w.wang@oracle.com>
+ <CAHp75Vet0gt0RW4eu+TCE8qBSk2ymMKkG5=SuM9ytzO3-6Y+Mg@mail.gmail.com>
+ <616adf0c-5023-0e66-cc59-504d52d76e44@oracle.com>
+ <20180312185932.GH18494@localhost.localdomain>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <77263447-ffdd-ebe4-9cf9-8f0b2d9b2503@oracle.com>
+Date: Tue, 13 Mar 2018 09:47:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180312185932.GH18494@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=814
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130022
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Keith
 
+Thanks for your precious time for testing and reviewing.
+I will send out V3 next.
 
-On 3/7/2018 3:33 PM, Kroening, Gary wrote:
-> For systems with a single PCI segment, it is sufficient to look for the
-> bus number to change in order to determine that all of the CHa's have
-> been counted for a single socket.
+Sincerely
+Jianchao
+
+On 03/13/2018 02:59 AM, Keith Busch wrote:
+> Hi Jianchao,
 > 
-> However, for multi PCI segment systems, each socket is given a new
-> segment and the bus number does NOT change.  So looking only for the
-> bus number to change ends up counting all of the CHa's on all sockets
-> in the system.  This leads to writing CPU MSRs beyond a valid range and
-> causes an error in ivbep_uncore_msr_init_box().
+> The patch tests fine on all hardware I had. I'd like to queue this up
+> for the next 4.16-rc. Could you send a v3 with the cleanup changes Andy
+> suggested and a changelog aligned with Ming's insights?
 > 
-> The fix is to check for either the bus number or segment number to change.
+> Thanks,
+> Keith
 > 
-
-Hi Gary,
-
-There is a recommended way in uncore document to query the number of 
-CHAs on Skylake server.
-I have a patch to implement the new way.
-
-Could you please take a look at the patch and see if it can fix your issue?
-
-
-Thanks,
-Kan
-
-------
- From 55f54b2fa3021c691c2fd4f5cfc8f441fd104e91 Mon Sep 17 00:00:00 2001
-From: Kan Liang <kan.liang@linux.intel.com>
-Date: Mon, 12 Mar 2018 13:03:40 -0700
-Subject: [PATCH] perf/x86/intel/uncore: Querying number of CHAs from 
-CAPID6 register
-
-The number of CHAs is miscalculated on multi PCI domain systems on
-Skylake server
-
-(From Kroening, Gary:
-
-For systems with a single PCI segment, it is sufficient to look for the
-bus number to change in order to determine that all of the CHa's have
-been counted for a single socket.
-However, for multi PCI segment systems, each socket is given a new
-segment and the bus number does NOT change.  So looking only for the
-bus number to change ends up counting all of the CHa's on all sockets
-in the system.  This leads to writing CPU MSRs beyond a valid range and
-causes an error in ivbep_uncore_msr_init_box().)
-
-To determine the number of CHAs, it should read bits 27:0 in the CAPID6
-register located at Device 30, Function 3, Offset 0x9C. These 28 bits
-form a bit vector of available LLC slices and the CHAs that manage those
-slices.
-
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore
-support")
-Reported-by: Kroening, Gary <gary.kroening@hpe.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-  arch/x86/events/intel/uncore_snbep.c | 24 ++++++++++--------------
-  1 file changed, 10 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore_snbep.c 
-b/arch/x86/events/intel/uncore_snbep.c
-index d4672ed..a42715b 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3575,24 +3575,20 @@ static struct intel_uncore_type 
-*skx_msr_uncores[] = {
-  	NULL,
-  };
-
-+#define SKX_CAPID6		0x9c
-+#define SKX_CHA_BIT_WIDTH	28
-+
-  static int skx_count_chabox(void)
-  {
--	struct pci_dev *chabox_dev = NULL;
--	int bus, count = 0;
-+	struct pci_dev *dev = NULL;
-+	u32 val = 0;
-
--	while (1) {
--		chabox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x208d, chabox_dev);
--		if (!chabox_dev)
--			break;
--		if (count == 0)
--			bus = chabox_dev->bus->number;
--		if (bus != chabox_dev->bus->number)
--			break;
--		count++;
--	}
-+	dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
-+	if (!dev)
-+		return 0;
-
--	pci_dev_put(chabox_dev);
--	return count;
-+	pci_read_config_dword(dev, SKX_CAPID6, &val);
-+	return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
-  }
-
-  void skx_uncore_cpu_init(void)
--- 
-2.7.4
