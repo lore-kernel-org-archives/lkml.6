@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933290AbeCMMGK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:06:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54834 "EHLO mail.kernel.org"
+        id S933370AbeCMMGe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:06:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933266AbeCMMGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1617121796
+        id S933352AbeCMMGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:06:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB3D21799
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         John Garry <john.garry@huawei.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
         Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/31] perf vendor events: Drop support for unused topic directories
-Date: Tue, 13 Mar 2018 09:04:50 -0300
-Message-Id: <20180313120508.29327-14-acme@kernel.org>
+Subject: [PATCH 18/31] perf vendor events arm64: Add armv8-recommended.json
+Date: Tue, 13 Mar 2018 09:04:55 -0300
+Message-Id: <20180313120508.29327-19-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
 References: <20180313120508.29327-1-acme@kernel.org>
@@ -34,25 +34,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Garry <john.garry@huawei.com>
 
-Currently a topic subdirectory is supported in the pmu-events dir, in
-the following sample structure: /arch/platform/subtopic/mysubtopic.json
+Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
 
-Upto 256 levels of topic subdirectories are supported. So this means
-that JSONs may be located in a topic dir as well as the platform dir.
+The JSON is copied from ARMv8 architecture reference manual, available
+here:
 
-This topic subdirectory causes problems if we want to add support for a
-vendor dir in the pmu-events structure (in the form
-arch/platform/vendor), in that we cannot differentiate between a vendor
-dir and a topic dir.
+	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
 
-Since the topic dir feature is not used, drop it so it does not block
-adding vendor subdirectory support.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
@@ -60,85 +53,471 @@ Cc: Will Deacon <will.deacon@arm.com>
 Cc: William Cohen <wcohen@redhat.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1520506716-197429-4-git-send-email-john.garry@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
+Signed-off-by: John Garry <john.garry@huawei.com>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/pmu-events/jevents.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+ .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
+ 1 file changed, 452 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/armv8-recommended.json
 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index edff989fbcea..1d02fafdc34d 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -256,25 +256,18 @@ static const char *field_to_perf(struct map *table, char *map, jsmntok_t *val)
- 	goto out_free;						\
- } } while (0)
- 
--#define TOPIC_DEPTH 256
--static char *topic_array[TOPIC_DEPTH];
--static int   topic_level;
-+static char *topic;
- 
- static char *get_topic(void)
- {
--	char *tp_old, *tp = NULL;
-+	char *tp;
- 	int i;
- 
--	for (i = 0; i < topic_level + 1; i++) {
--		int n;
--
--		tp_old = tp;
--		n = asprintf(&tp, "%s%s", tp ?: "", topic_array[i]);
--		if (n < 0) {
--			pr_info("%s: asprintf() error %s\n", prog);
--			return NULL;
--		}
--		free(tp_old);
-+	/* tp is free'd in process_one_file() */
-+	i = asprintf(&tp, "%s", topic);
-+	if (i < 0) {
-+		pr_info("%s: asprintf() error %s\n", prog);
-+		return NULL;
- 	}
- 
- 	for (i = 0; i < (int) strlen(tp); i++) {
-@@ -291,25 +284,15 @@ static char *get_topic(void)
- 	return tp;
- }
- 
--static int add_topic(int level, char *bname)
-+static int add_topic(char *bname)
- {
--	char *topic;
--
--	level -= 2;
--
--	if (level >= TOPIC_DEPTH)
--		return -EINVAL;
--
-+	free(topic);
- 	topic = strdup(bname);
- 	if (!topic) {
- 		pr_info("%s: strdup() error %s for file %s\n", prog,
- 				strerror(errno), bname);
- 		return -ENOMEM;
- 	}
--
--	free(topic_array[topic_level]);
--	topic_array[topic_level] = topic;
--	topic_level              = level;
- 	return 0;
- }
- 
-@@ -824,7 +807,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
- 		}
- 	}
- 
--	if (level > 1 && add_topic(level, bname))
-+	if (level > 1 && add_topic(bname))
- 		return -ENOMEM;
- 
- 	/*
+diff --git a/tools/perf/pmu-events/arch/arm64/armv8-recommended.json b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+new file mode 100644
+index 000000000000..6328828c018c
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+@@ -0,0 +1,452 @@
++[
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, read",
++        "EventCode": "0x40",
++        "EventName": "L1D_CACHE_RD",
++        "BriefDescription": "L1D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache access, write",
++        "EventCode": "0x41",
++        "EventName": "L1D_CACHE_WR",
++        "BriefDescription": "L1D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, read",
++        "EventCode": "0x42",
++        "EventName": "L1D_CACHE_REFILL_RD",
++        "BriefDescription": "L1D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, write",
++        "EventCode": "0x43",
++        "EventName": "L1D_CACHE_REFILL_WR",
++        "BriefDescription": "L1D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, inner",
++        "EventCode": "0x44",
++        "EventName": "L1D_CACHE_REFILL_INNER",
++        "BriefDescription": "L1D cache refill, inner"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache refill, outer",
++        "EventCode": "0x45",
++        "EventName": "L1D_CACHE_REFILL_OUTER",
++        "BriefDescription": "L1D cache refill, outer"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache Write-Back, victim",
++        "EventCode": "0x46",
++        "EventName": "L1D_CACHE_WB_VICTIM",
++        "BriefDescription": "L1D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 1 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x47",
++        "EventName": "L1D_CACHE_WB_CLEAN",
++        "BriefDescription": "L1D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data cache invalidate",
++        "EventCode": "0x48",
++        "EventName": "L1D_CACHE_INVAL",
++        "BriefDescription": "L1D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, read",
++        "EventCode": "0x4C",
++        "EventName": "L1D_TLB_REFILL_RD",
++        "BriefDescription": "L1D tlb refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data TLB refill, write",
++        "EventCode": "0x4D",
++        "EventName": "L1D_TLB_REFILL_WR",
++        "BriefDescription": "L1D tlb refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
++        "EventCode": "0x4E",
++        "EventName": "L1D_TLB_RD",
++        "BriefDescription": "L1D tlb access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
++        "EventCode": "0x4F",
++        "EventName": "L1D_TLB_WR",
++        "BriefDescription": "L1D tlb access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, read",
++        "EventCode": "0x50",
++        "EventName": "L2D_CACHE_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache access, write",
++        "EventCode": "0x51",
++        "EventName": "L2D_CACHE_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, read",
++        "EventCode": "0x52",
++        "EventName": "L2D_CACHE_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache refill, write",
++        "EventCode": "0x53",
++        "EventName": "L2D_CACHE_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache Write-Back, victim",
++        "EventCode": "0x56",
++        "EventName": "L2D_CACHE_WB_VICTIM",
++        "BriefDescription": "L2D cache Write-Back, victim"
++    },
++    {
++        "PublicDescription": "Level 2 data cache Write-Back, cleaning and coherency",
++        "EventCode": "0x57",
++        "EventName": "L2D_CACHE_WB_CLEAN",
++        "BriefDescription": "L2D cache Write-Back, cleaning and coherency"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data cache invalidate",
++        "EventCode": "0x58",
++        "EventName": "L2D_CACHE_INVAL",
++        "BriefDescription": "L2D cache invalidate"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, read",
++        "EventCode": "0x5c",
++        "EventName": "L2D_TLB_REFILL_RD",
++        "BriefDescription": "L2D cache refill, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB refill, write",
++        "EventCode": "0x5d",
++        "EventName": "L2D_TLB_REFILL_WR",
++        "BriefDescription": "L2D cache refill, write"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, read",
++        "EventCode": "0x5e",
++        "EventName": "L2D_TLB_RD",
++        "BriefDescription": "L2D cache access, read"
++    },
++    {
++        "PublicDescription": "Attributable Level 2 data or unified TLB access, write",
++        "EventCode": "0x5f",
++        "EventName": "L2D_TLB_WR",
++        "BriefDescription": "L2D cache access, write"
++    },
++    {
++        "PublicDescription": "Bus access read",
++        "EventCode": "0x60",
++        "EventName": "BUS_ACCESS_RD",
++        "BriefDescription": "Bus access read"
++   },
++   {
++        "PublicDescription": "Bus access write",
++        "EventCode": "0x61",
++        "EventName": "BUS_ACCESS_WR",
++        "BriefDescription": "Bus access write"
++   }
++   {
++        "PublicDescription": "Bus access, Normal, Cacheable, Shareable",
++        "EventCode": "0x62",
++        "EventName": "BUS_ACCESS_SHARED",
++        "BriefDescription": "Bus access, Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, not Normal, Cacheable, Shareable",
++        "EventCode": "0x63",
++        "EventName": "BUS_ACCESS_NOT_SHARED",
++        "BriefDescription": "Bus access, not Normal, Cacheable, Shareable"
++   }
++   {
++        "PublicDescription": "Bus access, Normal",
++        "EventCode": "0x64",
++        "EventName": "BUS_ACCESS_NORMAL",
++        "BriefDescription": "Bus access, Normal"
++   }
++   {
++        "PublicDescription": "Bus access, peripheral",
++        "EventCode": "0x65",
++        "EventName": "BUS_ACCESS_PERIPH",
++        "BriefDescription": "Bus access, peripheral"
++   }
++   {
++        "PublicDescription": "Data memory access, read",
++        "EventCode": "0x66",
++        "EventName": "MEM_ACCESS_RD",
++        "BriefDescription": "Data memory access, read"
++   }
++   {
++        "PublicDescription": "Data memory access, write",
++        "EventCode": "0x67",
++        "EventName": "MEM_ACCESS_WR",
++        "BriefDescription": "Data memory access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access, read",
++        "EventCode": "0x68",
++        "EventName": "UNALIGNED_LD_SPEC",
++        "BriefDescription": "Unaligned access, read"
++   }
++   {
++        "PublicDescription": "Unaligned access, write",
++        "EventCode": "0x69",
++        "EventName": "UNALIGNED_ST_SPEC",
++        "BriefDescription": "Unaligned access, write"
++   }
++   {
++        "PublicDescription": "Unaligned access",
++        "EventCode": "0x6a",
++        "EventName": "UNALIGNED_LDST_SPEC",
++        "BriefDescription": "Unaligned access"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, LDREX or LDX",
++        "EventCode": "0x6c",
++        "EventName": "LDREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, LDREX or LDX"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX pass",
++        "EventCode": "0x6d",
++        "EventName": "STREX_PASS_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX pass"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX fail",
++        "EventCode": "0x6e",
++        "EventName": "STREX_FAIL_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX fail"
++   }
++   {
++        "PublicDescription": "Exclusive operation speculatively executed, STREX or STX",
++        "EventCode": "0x6f",
++        "EventName": "STREX_SPEC",
++        "BriefDescription": "Exclusive operation speculatively executed, STREX or STX"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load",
++        "EventCode": "0x70",
++        "EventName": "LD_SPEC",
++        "BriefDescription": "Operation speculatively executed, load"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, store"
++        "EventCode": "0x71",
++        "EventName": "ST_SPEC",
++        "BriefDescription": "Operation speculatively executed, store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, load or store",
++        "EventCode": "0x72",
++        "EventName": "LDST_SPEC",
++        "BriefDescription": "Operation speculatively executed, load or store"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, integer data processing",
++        "EventCode": "0x73",
++        "EventName": "DP_SPEC",
++        "BriefDescription": "Operation speculatively executed, integer data processing"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Advanced SIMD instruction",
++        "EventCode": "0x74",
++        "EventName": "ASE_SPEC",
++        "BriefDescription": "Operation speculatively executed, Advanced SIMD instruction",
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, floating-point instruction",
++        "EventCode": "0x75",
++        "EventName": "VFP_SPEC",
++        "BriefDescription": "Operation speculatively executed, floating-point instruction"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, software change of the PC",
++        "EventCode": "0x76",
++        "EventName": "PC_WRITE_SPEC",
++        "BriefDescription": "Operation speculatively executed, software change of the PC"
++   }
++   {
++        "PublicDescription": "Operation speculatively executed, Cryptographic instruction",
++        "EventCode": "0x77",
++        "EventName": "CRYPTO_SPEC",
++        "BriefDescription": "Operation speculatively executed, Cryptographic instruction"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, immediate branch"
++        "EventCode": "0x78",
++        "EventName": "BR_IMMED_SPEC",
++        "BriefDescription": "Branch speculatively executed, immediate branch"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, procedure return"
++        "EventCode": "0x79",
++        "EventName": "BR_RETURN_SPEC",
++        "BriefDescription": "Branch speculatively executed, procedure return"
++   }
++   {
++        "PublicDescription": "Branch speculatively executed, indirect branch"
++        "EventCode": "0x7a",
++        "EventName": "BR_INDIRECT_SPEC",
++        "BriefDescription": "Branch speculatively executed, indirect branch"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, ISB"
++        "EventCode": "0x7c",
++        "EventName": "ISB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, ISB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DSB"
++        "EventCode": "0x7d",
++        "EventName": "DSB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DSB"
++   }
++   {
++        "PublicDescription": "Barrier speculatively executed, DMB"
++        "EventCode": "0x7e",
++        "EventName": "DMB_SPEC",
++        "BriefDescription": "Barrier speculatively executed, DMB"
++   }
++   {
++        "PublicDescription": "Exception taken, Other synchronous"
++        "EventCode": "0x81",
++        "EventName": "EXC_UNDEF",
++        "BriefDescription": "Exception taken, Other synchronous"
++   }
++   {
++        "PublicDescription": "Exception taken, Supervisor Call"
++        "EventCode": "0x82",
++        "EventName": "EXC_SVC",
++        "BriefDescription": "Exception taken, Supervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort"
++        "EventCode": "0x83",
++        "EventName": "EXC_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort and SError"
++        "EventCode": "0x84",
++        "EventName": "EXC_DABORT",
++        "BriefDescription": "Exception taken, Data Abort and SError"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ"
++        "EventCode": "0x86",
++        "EventName": "EXC_IRQ",
++        "BriefDescription": "Exception taken, IRQ"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ"
++        "EventCode": "0x87",
++        "EventName": "EXC_FIQ",
++        "BriefDescription": "Exception taken, FIQ"
++   }
++   {
++        "PublicDescription": "Exception taken, Secure Monitor Call"
++        "EventCode": "0x88",
++        "EventName": "EXC_SMC",
++        "BriefDescription": "Exception taken, Secure Monitor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Hypervisor Call"
++        "EventCode": "0x8a",
++        "EventName": "EXC_HVC",
++        "BriefDescription": "Exception taken, Hypervisor Call"
++   }
++   {
++        "PublicDescription": "Exception taken, Instruction Abort not taken locally"
++        "EventCode": "0x8b",
++        "EventName": "EXC_TRAP_PABORT",
++        "BriefDescription": "Exception taken, Instruction Abort not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Data Abort or SError not taken locally"
++        "EventCode": "0x8c",
++        "EventName": "EXC_TRAP_DABORT",
++        "BriefDescription": "Exception taken, Data Abort or SError not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, Other traps not taken locally"
++        "EventCode": "0x8d",
++        "EventName": "EXC_TRAP_OTHER",
++        "BriefDescription": "Exception taken, Other traps not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, IRQ not taken locally"
++        "EventCode": "0x8e",
++        "EventName": "EXC_TRAP_IRQ",
++        "BriefDescription": "Exception taken, IRQ not taken locally"
++   }
++   {
++        "PublicDescription": "Exception taken, FIQ not taken locally"
++        "EventCode": "0x8f",
++        "EventName": "EXC_TRAP_FIQ",
++        "BriefDescription": "Exception taken, FIQ not taken locally"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Load-Acquire"
++        "EventCode": "0x90",
++        "EventName": "RC_LD_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Load-Acquire"
++   }
++   {
++        "PublicDescription": "Release consistency operation speculatively executed, Store-Release"
++        "EventCode": "0x91",
++        "EventName": "RC_ST_SPEC",
++        "BriefDescription": "Release consistency operation speculatively executed, Store-Release"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, read"
++        "EventCode": "0xa0",
++        "EventName": "L3D_CACHE_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, write"
++        "EventCode": "0xa1",
++        "EventName": "L3D_CACHE_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, read"
++        "EventCode": "0xa2",
++        "EventName": "L3D_CACHE_REFILL_RD",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, read"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache refill, write"
++        "EventCode": "0xa3",
++        "EventName": "L3D_CACHE_REFILL_WR",
++        "BriefDescription": "Attributable Level 3 data or unified cache refill, write"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++        "EventCode": "0xa6",
++        "EventName": "L3D_CACHE_WB_VICTIM",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, victim"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++        "EventCode": "0xa7",
++        "EventName": "L3D_CACHE_WB_CLEAN",
++        "BriefDescription": "Attributable Level 3 data or unified cache Write-Back, cache clean"
++   }
++   {
++        "PublicDescription": "Attributable Level 3 data or unified cache access, invalidate"
++        "EventCode": "0xa8",
++        "EventName": "L3D_CACHE_INVAL",
++        "BriefDescription": "Attributable Level 3 data or unified cache access, invalidate"
++   }
++]
 -- 
 2.14.3
