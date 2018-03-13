@@ -1,164 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752605AbeCMTeA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:34:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43596 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751534AbeCMTd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:33:58 -0400
-Subject: Re: [PATCH] KVM: arm/arm64: replacing per-VM's per-CPU variable
-To: Marc Zyngier <marc.zyngier@arm.com>, Peng Hao <peng.hao2@zte.com.cn>,
-        linux@armlinux.org.uk, catalin.marinas@arm.com, will.deacon@arm.com,
-        cdall@kernel.org
-Cc: kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1520974993-40423-1-git-send-email-peng.hao2@zte.com.cn>
- <37d19d6c-8787-d190-0ef0-c6709cb9e976@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <01c88eaa-e863-1103-8bb1-b723b4d3ab87@arm.com>
-Date: Tue, 13 Mar 2018 19:33:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752757AbeCMTeR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:34:17 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36315 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752625AbeCMTeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:34:15 -0400
+X-Google-Smtp-Source: AG47ELuhd55DjZ6JgWfevoVjkj9/veh+0RY/2PM+zqxGN+IGSUiyGIwYwWmhgLuQPL8OxiMjWibKMw==
+Date: Tue, 13 Mar 2018 22:34:10 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: peterz@infradead.org
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org
+Subject: [PATCH] refcount: trim headers
+Message-ID: <20180313193410.GA12260@avx2>
 MIME-Version: 1.0
-In-Reply-To: <37d19d6c-8787-d190-0ef0-c6709cb9e976@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/03/18 13:01, Marc Zyngier wrote:
-> [You're repeatedly posting to the kvmarm mailing list without being
-> subscribed to it. I've flushed the queue now, but please consider
-> subscribing to the list, it will help everyone]
-> 
-> On 13/03/18 21:03, Peng Hao wrote:
->> Using a global per-CPU variable instead of per-VM's per-CPU variable.
->>
->> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
->> ---
->>   arch/arm/include/asm/kvm_host.h   |  3 ---
->>   arch/arm64/include/asm/kvm_host.h |  3 ---
->>   virt/kvm/arm/arm.c                | 26 ++++++--------------------
->>   3 files changed, 6 insertions(+), 26 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
->> index 248b930..4224f3b 100644
->> --- a/arch/arm/include/asm/kvm_host.h
->> +++ b/arch/arm/include/asm/kvm_host.h
->> @@ -59,9 +59,6 @@ struct kvm_arch {
->>   	/* VTTBR value associated with below pgd and vmid */
->>   	u64    vttbr;
->>   
->> -	/* The last vcpu id that ran on each physical CPU */
->> -	int __percpu *last_vcpu_ran;
->> -
->>   	/*
->>   	 * Anything that is not used directly from assembly code goes
->>   	 * here.
->> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
->> index 596f8e4..5035a08 100644
->> --- a/arch/arm64/include/asm/kvm_host.h
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -67,9 +67,6 @@ struct kvm_arch {
->>   	/* VTTBR value associated with above pgd and vmid */
->>   	u64    vttbr;
->>   
->> -	/* The last vcpu id that ran on each physical CPU */
->> -	int __percpu *last_vcpu_ran;
->> -
->>   	/* The maximum number of vCPUs depends on the used GIC model */
->>   	int max_vcpus;
->>   
->> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
->> index 86941f6..a67ffb0 100644
->> --- a/virt/kvm/arm/arm.c
->> +++ b/virt/kvm/arm/arm.c
->> @@ -59,6 +59,8 @@
->>   /* Per-CPU variable containing the currently running vcpu. */
->>   static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
->>   
->> +static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_last_ran_vcpu);
->> +
->>   /* The VMID used in the VTTBR */
->>   static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
->>   static u32 kvm_next_vmid;
->> @@ -115,18 +117,11 @@ void kvm_arch_check_processor_compat(void *rtn)
->>    */
->>   int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>   {
->> -	int ret, cpu;
->> +	int ret;
->>   
->>   	if (type)
->>   		return -EINVAL;
->>   
->> -	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
->> -	if (!kvm->arch.last_vcpu_ran)
->> -		return -ENOMEM;
->> -
->> -	for_each_possible_cpu(cpu)
->> -		*per_cpu_ptr(kvm->arch.last_vcpu_ran, cpu) = -1;
->> -
->>   	ret = kvm_alloc_stage2_pgd(kvm);
->>   	if (ret)
->>   		goto out_fail_alloc;
->> @@ -147,9 +142,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>   	return ret;
->>   out_free_stage2_pgd:
->>   	kvm_free_stage2_pgd(kvm);
->> -out_fail_alloc:
->> -	free_percpu(kvm->arch.last_vcpu_ran);
->> -	kvm->arch.last_vcpu_ran = NULL;
->> +out_fail_alloc:
->>   	return ret;
->>   }
->>   
->> @@ -179,9 +172,6 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->>   
->>   	kvm_vgic_destroy(kvm);
->>   
->> -	free_percpu(kvm->arch.last_vcpu_ran);
->> -	kvm->arch.last_vcpu_ran = NULL;
->> -
->>   	for (i = 0; i < KVM_MAX_VCPUS; ++i) {
->>   		if (kvm->vcpus[i]) {
->>   			kvm_arch_vcpu_free(kvm->vcpus[i]);
->> @@ -343,17 +333,13 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
->>   
->>   void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->>   {
->> -	int *last_ran;
->> -
->> -	last_ran = this_cpu_ptr(vcpu->kvm->arch.last_vcpu_ran);
->> -
->>   	/*
->>   	 * We might get preempted before the vCPU actually runs, but
->>   	 * over-invalidation doesn't affect correctness.
->>   	 */
->> -	if (*last_ran != vcpu->vcpu_id) {
->> +	if (per_cpu(kvm_last_ran_vcpu, cpu) != vcpu) {
->>   		kvm_call_hyp(__kvm_tlb_flush_local_vmid, vcpu);
->> -		*last_ran = vcpu->vcpu_id;
->> +		per_cpu(kvm_last_ran_vcpu, cpu) = vcpu;
->>   	}
->>   
->>   	vcpu->cpu = cpu;
->>
-> 
-> Have you read and understood what this code is about? The whole point of
-> this code is to track physical CPUs on a per-VM basis. Making it global
-> completely defeats the point, and can result in guest memory corruption.
-> Please see commit 94d0e5980d67.
+kernel.h is not needed, but compiler.h is.
 
-I won't comment on the patch itself (AFAICS it is rather broken), but I 
-suppose there is a grain of sense in the general idea, since the set of 
-physical CPUs itself is fundamentally a global thing. Given a large 
-number of pCPUs and a large number of VMs it could well be more 
-space-efficient to keep a single per-pCPU record of a {vmid,vcpu_id} 
-tuple or some other *globally-unique* vCPU namespace (I guess just the 
-struct kvm_vcpu pointer might work, but then it would be hard to avoid 
-unnecessary invalidation when switching VMIDs entirely).
+mutex.h is not needed only a forward declaration.
 
-Robin.
+spinlock.h is not needed, spinlock_types.h is enough.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ include/linux/refcount.h |    7 ++++---
+ lib/refcount.c           |    2 ++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+--- a/include/linux/refcount.h
++++ b/include/linux/refcount.h
+@@ -3,9 +3,10 @@
+ #define _LINUX_REFCOUNT_H
+ 
+ #include <linux/atomic.h>
+-#include <linux/mutex.h>
+-#include <linux/spinlock.h>
+-#include <linux/kernel.h>
++#include <linux/compiler.h>
++#include <linux/spinlock_types.h>
++
++struct mutex;
+ 
+ /**
+  * struct refcount_t - variant of atomic_t specialized for reference counts
+--- a/lib/refcount.c
++++ b/lib/refcount.c
+@@ -35,7 +35,9 @@
+  *
+  */
+ 
++#include <linux/mutex.h>
+ #include <linux/refcount.h>
++#include <linux/spinlock.h>
+ #include <linux/bug.h>
+ 
+ #ifdef CONFIG_REFCOUNT_FULL
