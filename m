@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvdH//Fm7yoNOycny3MHxrSupnNBUba5Ubs7q9Pu5jeHH21ojZfYbGMpB7tsjGy1xgdeE4g
-ARC-Seal: i=1; a=rsa-sha256; t=1520955613; cv=none;
+X-Google-Smtp-Source: AG47ELspjaUg5hYc3hy2OiW6aQtv7UoJGEm5JLIcRk8tdY+A7LdStaMwTzQ3rYUETKpHL+0gdHPE
+ARC-Seal: i=1; a=rsa-sha256; t=1520955611; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y8qSE9tkoqHCC9FNTlXNfvmQmtlv7o2CEVrmqifL4x9oHD+mgAGMU+H6M9kEa9xw6z
-         lp5LWLNUed9uADDGEyjiTMCDW2rlHv7O066P5jKdgKGiskOQKuVshA+Mn+nLlKj43+Oc
-         sB9slDMCOljwS+4vlzQW3YBiNmKZQxWzhGNRGDF3TWSyjbyRwMWVmaRCmqUo2eP3515P
-         Lt9bxkD/5772ovP9M0dvQfobDbunLUbFhN+/sXpg/ApKOrjvYDL6aDFyOEUiGImHQkZK
-         dfBcv3njV7EecK+2CS6f5pXcPC5i+qgRn3+/mDy9TYc4s5JrAcpdgcqrmvCxLhTklZyd
-         ETIw==
+        b=SwuuuTi5waga1Ds7pM1MWH/DzJJhhHM91LhYbs+6B2DQ08k55ZPiYy3E952vGfxj+U
+         7XYWlJhwkYorwqLgqVJoneGPUYSYkFz9aozK3rQvs9UP9X+WUKZ83I10HOEnnBoDZruq
+         qL4U0nHh1ehWHMSBuSLIOclgTRsiOu0ILLxpid30AxW8wgBpdlOA+RFbTjcV5WU2P6vA
+         ppkKmpT4DYQEw4n3SUVb8gD0PLAcTLtT51gvcnuX66DYPpEKlBXkVJH3dJJZcwYGK+UB
+         /C89ON/Z4xYEQzRuy8v+Yr7sKUy0zO+Whchk023dpb2F3DGLmGwh5QN5JpmvwBli6s59
+         2q5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=v0/rTAbV/wOwXL97rCDb3k+OTqkQgh/bIAqfmtrA7Ag=;
-        b=v/smGV2+CQ9CiOxw5FogL1n/vwKrA2/m76LY2HGnZfvcabiUM04s4muRKsYeadYVgN
-         j4JtVVDlJWKHr61Xv6N0+Yw6WoeY0Z3kIWoLSaRhnOiOvw7Yfm6oOG/JbsejHsSr6cCV
-         FQkgL6PNWqSfRJiPoKAhLfjgQv0BvbXXdffI4uWcd0LtJ//mTzuWlfpW3sWPU9zqNYBm
-         j9bPY22chSJjxOTdGhxXWQRGzHc1OOqLaimvAaiNO40Jf3iPKD5+2OpP7eu77WNz7szo
-         WNVDQTSz+SmMUuqIp46d2bwOneCIH33Rj1iwx2/abmoQ33VC0D9r7o8JPqS+zElASpDH
-         jWUA==
+        bh=xT27f+RYKNr3v4AVPMO0iXq4Vg41INI0yWQ5seAi87E=;
+        b=LOSkV8df6bdoNC06r+J0MAe9OicNt4mk9UO5oqp9jOhi9Aai4u7qDzPbLdIWy2M5ci
+         ytq1PzzAstaZ4/CNz/kK7/A7lUmVemjx1G9YyDkCkWr3H94kpCTv8yotMGsMrX+3vjaC
+         4PIIJDr+iSxkJVfGCA7lTKYUabnOJ+EC66yJOJnXwrYAHkSHGul6dmcCf6LneAFVU0cM
+         cqYdJ0mpfC4GqQLLb7ZaJRvqVJa+7Kana/jSOSYowGKDk+8cYpsFK//mMKR8thscBQcf
+         t15svmiarEefDHbBj5+YFmvZMsIwOPx6JwgLPsMae1XklSTSQGxiW+NDQKpMqztJw84u
+         Cijw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 110/140] ALSA: hda: add dock and led support for HP ProBook 640 G2
-Date: Tue, 13 Mar 2018 16:25:13 +0100
-Message-Id: <20180313152505.548545055@linuxfoundation.org>
+Subject: [PATCH 4.14 109/140] ALSA: hda: add dock and led support for HP EliteBook 820 G3
+Date: Tue, 13 Mar 2018 16:25:12 +0100
+Message-Id: <20180313152505.472170744@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837055589542138?=
-X-GMAIL-MSGID: =?utf-8?q?1594837553639416482?=
+X-GMAIL-THRID: =?utf-8?q?1594837052681762818?=
+X-GMAIL-MSGID: =?utf-8?q?1594837550609366715?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,11 +51,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit 099fd6ca0ad25bc19c5ade2ea4b25b8fadaa11b3 upstream.
+commit aea808172018ca01abf53db808323aed23281835 upstream.
 
 This patch adds missing initialisation for HP 2013 UltraSlim Dock
 Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP ProBook 640 G2
+for HP EliteBook 820 G3
 
 Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Cc: <stable@vger.kernel.org>
@@ -68,11 +68,11 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/sound/pci/hda/patch_conexant.c
 +++ b/sound/pci/hda/patch_conexant.c
-@@ -958,6 +958,7 @@ static const struct snd_pci_quirk cxt506
+@@ -957,6 +957,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x1025, 0x054c, "Acer Aspire 3830TG", CXT_FIXUP_ASPIRE_DMIC),
  	SND_PCI_QUIRK(0x1025, 0x054f, "Acer Aspire 4830T", CXT_FIXUP_ASPIRE_DMIC),
  	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
  	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
  	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
