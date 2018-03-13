@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtPAn/x4PQbl9t7iYfAEJquX4XLJtn/k6G/UJWj56MLcI3aQ/MXULZMmfxHRu5AmVKHi0gr
-ARC-Seal: i=1; a=rsa-sha256; t=1520955232; cv=none;
+X-Google-Smtp-Source: AG47ELu/Wo1KQywU1KRFQ6cJNX4h5Ra1uJrReRZZ2+5mXELLfYuVhEF8s+6JBErK+K/akD7hHX2U
+ARC-Seal: i=1; a=rsa-sha256; t=1520955229; cv=none;
         d=google.com; s=arc-20160816;
-        b=wKdIKepxF2+4RRh8ouRUX62X9XU5u4xZT0m0L+DN+U+XIW0DEo2DUWe/nFOYxoqoA0
-         qzU7likoSRYgVrssEYfDhQ+HL7AeuTqC/AxZ0nVrNa+KPh2uaFzoczIzJQyl0mYY5bIs
-         wwuOe+XJfsXI9kGvXZrVvFpcjwl+o2i1bAiW/YA7Gav9d71kjnN8kaXIGR/OscDKirNG
-         SIPsM1rr0uqAwL5NuF4htc+XShdKlZ3CCHCAi+QgTP8pgyapTNa6G7As9X89FQl/qit8
-         kH57/jgPeeaPPZW/FDq1qbzhx7tPZHJMt7wPg6TxgVQ1Dd5YEknylp9rrFiDmG0XzI46
-         F11w==
+        b=O6ywyO8e+IJMLYKHam6BDGOQsx0/OHmTC55m7FX0HFyeTe22hDAb7j1DHjlDV0pVhO
+         65CLbyKbEpHHXK/CaqcRj9TUDO2rzcf9ojTuupJx0mkF7VtJQzcR4zrTSzn4WOudvTip
+         AdIP7WNZpurovPa/7D40esD9iKoI5B4bCnGGNrKIGzubw0ffGkA56dFBMV6gejg9Dro5
+         MHNNeP2KGE8gMuLU6yzyD+ZcDcHMydRS2QKJraiMi3sySny2fsLbL8VHtyuY3np56ehd
+         Y+dH5BaulmUxwXQY7XUazsjxl3WYItz6+ZqphbdPcAMqcBCGkQxtIO0yVzSoX//u4YVT
+         rYpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PQWBLImWdY/RPIZC6Fbp9fvUxOhIqxrkhpOiBel+Y6A=;
-        b=KXSORUqMhQEwUGfUiQeRbS+mzfzNFa+unfync+9QBMX+i/QT3iBxNU4Xco3poMKorL
-         AsXlr9ieB4JUlif7qUstL0C+epjT0+RDAQLHe4oUI8hdpF4JGzPPZVDhdKky83f67+Ur
-         Uvc+Y6RLJEHJojvPp0xTEpntugS/9nadxMOKe9CisgBzBZLGKFUqbQBpWNNUkeoXWdsR
-         ivlYVU/K20vRUEVGXRny2p+cxvxmvSfONMopsdWFWvwcJuZZBkIUsGYT+gJXG7s7gOlg
-         mMba7l6AKfYbpHUvStvtNDL2xFwr/hHbPKyMTdjkI/ES50vQJwnvnouKKRlzR7tRXCBH
-         Gd+Q==
+        bh=7jjI1BQJYiaWvX73Hm+KV+XWvqi0zOueWSban2UrhRU=;
+        b=HH2yyFC+t/aYgchIPgb8LjJwQ6QsPjpH5NERIYKCW2gFJG54XfrNLOHopfqxR5C1KF
+         gaDjXmpxmjMMbrQvtXiWrjYVFwW8ZZLTaDt8U9MH/cBy5A+r58BFTqecx1Z/Sjn4NTl4
+         656/k0hMiKHWzWBthrfBgPNtN1BhFwR96PJFnFpJLbNgYkm+IwxUXYqGBlI/jNpnswj1
+         skoNC4TLuTZ+984o26CHfJyCtGxFcAk3MyWFQWbJnPANk8fc8ox/y+mnzOdUdE67Wh31
+         9umm7DBkRQD06qsBtzx81xCOIc27MzJEz+/30OzRdumgd6ODN036MFXTr7OfUE0E4guk
+         DU5A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quinn Tran <quinn.tran@cavium.com>,
-	Himanshu Madhani <himanshu.madhani@cavium.com>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 126/146] scsi: qla2xxx: Move session delete to driver work queue
-Date: Tue, 13 Mar 2018 16:24:53 +0100
-Message-Id: <20180313152329.929849171@linuxfoundation.org>
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 097/146] objtool: Use existing global variables for options
+Date: Tue, 13 Mar 2018 16:24:24 +0100
+Message-Id: <20180313152328.077420804@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837153104620653?=
-X-GMAIL-MSGID: =?utf-8?q?1594837153104620653?=
+X-GMAIL-THRID: =?utf-8?q?1594837149906583259?=
+X-GMAIL-MSGID: =?utf-8?q?1594837149906583259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +58,129 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit a01c77d2cbc45ba527e884e5c30363a1200a4130 upstream.
+commit 43a4525f80534530077683f6472d8971646b0ace upstream.
 
-Move session delete from system work queue to driver's work queue for in
-time processing.
+Use the existing global variables instead of passing them around and
+creating duplicate global variables.
 
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_os.c     |    3 ++-
- drivers/scsi/qla2xxx/qla_target.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ tools/objtool/builtin-check.c |    2 +-
+ tools/objtool/builtin-orc.c   |    6 +-----
+ tools/objtool/builtin.h       |    5 +++++
+ tools/objtool/check.c         |    5 ++---
+ tools/objtool/check.h         |    2 +-
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3190,10 +3190,11 @@ qla2x00_probe_one(struct pci_dev *pdev,
- 	    host->can_queue, base_vha->req,
- 	    base_vha->mgmt_svr_loop_id, host->sg_tablesize);
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -53,5 +53,5 @@ int cmd_check(int argc, const char **arg
  
-+	ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
+ 	objname = argv[0];
+ 
+-	return check(objname, no_fp, no_unreachable, false);
++	return check(objname, false);
+ }
+--- a/tools/objtool/builtin-orc.c
++++ b/tools/objtool/builtin-orc.c
+@@ -25,7 +25,6 @@
+  */
+ 
+ #include <string.h>
+-#include <subcmd/parse-options.h>
+ #include "builtin.h"
+ #include "check.h"
+ 
+@@ -36,9 +35,6 @@ static const char *orc_usage[] = {
+ 	NULL,
+ };
+ 
+-extern const struct option check_options[];
+-extern bool no_fp, no_unreachable;
+-
+ int cmd_orc(int argc, const char **argv)
+ {
+ 	const char *objname;
+@@ -54,7 +50,7 @@ int cmd_orc(int argc, const char **argv)
+ 
+ 		objname = argv[0];
+ 
+-		return check(objname, no_fp, no_unreachable, true);
++		return check(objname, true);
+ 	}
+ 
+ 	if (!strcmp(argv[0], "dump")) {
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -17,6 +17,11 @@
+ #ifndef _BUILTIN_H
+ #define _BUILTIN_H
+ 
++#include <subcmd/parse-options.h>
 +
- 	if (ha->mqenable) {
- 		bool mq = false;
- 		bool startit = false;
--		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
++extern const struct option check_options[];
++extern bool no_fp, no_unreachable;
++
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
  
- 		if (QLA_TGT_MODE_ENABLED()) {
- 			mq = true;
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1205,7 +1205,8 @@ void qlt_schedule_sess_for_deletion(stru
- 	ql_dbg(ql_dbg_tgt, sess->vha, 0xe001,
- 	    "Scheduling sess %p for deletion\n", sess);
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -18,6 +18,7 @@
+ #include <string.h>
+ #include <stdlib.h>
  
--	schedule_work(&sess->del_work);
-+	INIT_WORK(&sess->del_work, qla24xx_delete_sess_fn);
-+	queue_work(sess->vha->hw->wq, &sess->del_work);
++#include "builtin.h"
+ #include "check.h"
+ #include "elf.h"
+ #include "special.h"
+@@ -33,7 +34,6 @@ struct alternative {
+ };
+ 
+ const char *objname;
+-static bool no_fp;
+ struct cfi_state initial_func_cfi;
+ 
+ struct instruction *find_insn(struct objtool_file *file,
+@@ -2021,13 +2021,12 @@ static void cleanup(struct objtool_file
+ 	elf_close(file->elf);
  }
  
- void qlt_schedule_sess_for_deletion_lock(struct fc_port *sess)
+-int check(const char *_objname, bool _no_fp, bool no_unreachable, bool orc)
++int check(const char *_objname, bool orc)
+ {
+ 	struct objtool_file file;
+ 	int ret, warnings = 0;
+ 
+ 	objname = _objname;
+-	no_fp = _no_fp;
+ 
+ 	file.elf = elf_open(objname, orc ? O_RDWR : O_RDONLY);
+ 	if (!file.elf)
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -63,7 +63,7 @@ struct objtool_file {
+ 	bool ignore_unreachables, c_file, hints;
+ };
+ 
+-int check(const char *objname, bool no_fp, bool no_unreachable, bool orc);
++int check(const char *objname, bool orc);
+ 
+ struct instruction *find_insn(struct objtool_file *file,
+ 			      struct section *sec, unsigned long offset);
