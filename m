@@ -1,64 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933264AbeCMMGI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:06:08 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:40713 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933209AbeCMMGC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:02 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: v4l: omap_vout: vrfb: remove an unused variable
-Date: Tue, 13 Mar 2018 13:05:36 +0100
-Message-Id: <20180313120548.2603484-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:jOoLuxAQsM6wfRNs80xOOcGcdIAaoC3BaeJpgIXMxcnrrc50ZNk
- SINJtHZuhDkiqeEVVZIHHaA7J12zSr/BjnzbyJwOqXNbhoSE5+EFeCfD7m7JP6Oh76MlMVd
- OKAzTPWowUmymLtTRXnK5OLvOjE5bn9D65RKNmO2irKQIB8bJTTjTzwG4AX7ob5O8K1AJ6Q
- y7ZjSwJTO1XkR+lCg6jzw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:DXJVmhvn5RY=:TQJVEJTGIWx1QUUnmHyr4G
- 1+KQB4Phf5G1Xq8JK0M4tprGXLlvUbL6LAL72c+jVhu25q7/dytt7mRY5ruRITqP4yhRkUs7R
- 0e/V1fNoOA5UpRQ0UW1wsgQh4iri2Le8SoUcm9msLpvl+UR/hym32bCqIBFCHbNzUgveFpPxp
- lLrnDrg3+eRqqO91CdXgeTInZxQOdc2eE/YNhkruTvIyFK7wQgQlY21/ipRUUQnj5wJK6rTqm
- L3/Yi5ktD0AbHtDw83chD2DmmZh/kshzCPZYBhCLqLanDUJ/JFd+zCrvoWUlV+38dnqnyG7DP
- 38lBIcse0Osfens8eoZFgM8q9vr0XaoVr6OMGLLicOnQsqnXzGnBFvrTExAIk5J3IfHzY2U6T
- dviNDm9G+VDTgtOOx3gw11cSohBqRFpQjtGpRS2V7uMZnHFkYIdbgwJ2TaH5e+rQ17FqI6vX0
- L5AJNvUBW61odByfR4OgAzQ3lgFrXP6FcA7lW/xejFhqIuQrdzb4J7C0ekjxsPhZyXMg9WYaU
- sd2rk7f8WMzR/qohbdL1JaTfZqIOQHvRotewMBqX6kUXkIRZuuB0KB+vssSp/RY48YiIkBITp
- Ibwq7/4PpyWmstjtqSVNUbdjG7FQ3Q3M0ZLoxMtlf8xB2RCWgysS3hTpu6I5XPCmdyAx6KIfk
- dWTI0IbylSgbfJugc9uVui22+6GcF9G8cYDdTIC3xIEoOEM2Nhd+VA73Ioi9gTw9aUXzlxKAN
- mbI9442gEx513QVrJDqOUQbSopW/sZdQjdb/9Q==
+        id S933338AbeCMMLm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54938 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933295AbeCMMGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:06:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CDE2176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        John Garry <john.garry@huawei.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 15/31] perf vendor events arm64: Relocate ThunderX2 JSON to cavium subdirectory
+Date: Tue, 13 Mar 2018 09:04:52 -0300
+Message-Id: <20180313120508.29327-16-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
+References: <20180313120508.29327-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now get a warning after the 'dmadev' variable is no longer used:
+From: John Garry <john.garry@huawei.com>
 
-drivers/media/platform/omap/omap_vout_vrfb.c: In function 'omap_vout_prepare_vrfb':
-drivers/media/platform/omap/omap_vout_vrfb.c:239:21: error: unused variable 'dmadev' [-Werror=unused-variable]
+Since jevents now supports vendor subdirectory, relocate
+the ThunderX2 JSON to Cavium subdirectory.
 
-Fixes: 8f0aa38292f2 ("media: v4l: omap_vout: vrfb: Use the wrapper for prep_interleaved_dma()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Tested-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxarm@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-6-git-send-email-john.garry@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/media/platform/omap/omap_vout_vrfb.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../cavium/{thunderx2-imp-def.json => thunderx2/core-imp-def.json}      | 0
+ tools/perf/pmu-events/arch/arm64/mapfile.csv                            | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename tools/perf/pmu-events/arch/arm64/cavium/{thunderx2-imp-def.json => thunderx2/core-imp-def.json} (100%)
 
-diff --git a/drivers/media/platform/omap/omap_vout_vrfb.c b/drivers/media/platform/omap/omap_vout_vrfb.c
-index 72c0ac2cbf3d..1d8508237220 100644
---- a/drivers/media/platform/omap/omap_vout_vrfb.c
-+++ b/drivers/media/platform/omap/omap_vout_vrfb.c
-@@ -236,7 +236,6 @@ int omap_vout_prepare_vrfb(struct omap_vout_device *vout,
- 	struct dma_async_tx_descriptor *tx;
- 	enum dma_ctrl_flags flags = DMA_PREP_INTERRUPT | DMA_CTRL_ACK;
- 	struct dma_chan *chan = vout->vrfb_dma_tx.chan;
--	struct dma_device *dmadev = chan->device;
- 	struct dma_interleaved_template *xt = vout->vrfb_dma_tx.xt;
- 	dma_cookie_t cookie;
- 	enum dma_status status;
+diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+similarity index 100%
+rename from tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
+rename to tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+index e61c9ca6cf9e..952a05cbf675 100644
+--- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
++++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+@@ -12,5 +12,5 @@
+ #
+ #
+ #Family-model,Version,Filename,EventType
+-0x00000000420f5160,v1,cavium,core
++0x00000000420f5160,v1,cavium/thunderx2,core
+ 0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
 -- 
-2.9.0
+2.14.3
