@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeCMGWj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:22:39 -0400
+        id S1752148AbeCMGWg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:22:36 -0400
 Received: from mga04.intel.com ([192.55.52.120]:52838 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752096AbeCMGWh (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:22:37 -0400
+        id S1752096AbeCMGWf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 02:22:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
-   d="scan'208";a="25162178"
+   d="scan'208";a="25162166"
 From: Jin Yao <yao.jin@linux.intel.com>
 To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
         mingo@redhat.com, alexander.shishkin@linux.intel.com
 Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
         yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 2/4] perf browser: bypass ui_init if in tui dump mode
-Date: Tue, 13 Mar 2018 22:16:52 +0800
-Message-Id: <1520950614-22082-3-git-send-email-yao.jin@linux.intel.com>
+Subject: [PATCH v1 1/4] perf browser: Add a new 'dump' flag
+Date: Tue, 13 Mar 2018 22:16:51 +0800
+Message-Id: <1520950614-22082-2-git-send-email-yao.jin@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
 References: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
@@ -26,111 +26,102 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We create a tui dump mode in previous patch. In tui dump mode, the output
-is written to stdio. We need to bypass ui_init() in setup_browser().
+We have a new requirement to provide the TUI output option for
+non-interactive mode. For example, write the TUI output to stdio directly.
+
+This patch creates a new flag 'dump' in struct ui_browser. Once it's on,
+for the formatted buffer, we just print it on stdio.
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 ---
- tools/perf/builtin-annotate.c | 2 +-
- tools/perf/builtin-c2c.c      | 2 +-
- tools/perf/builtin-report.c   | 2 +-
- tools/perf/builtin-top.c      | 2 +-
- tools/perf/ui/setup.c         | 9 +++++++--
- tools/perf/ui/ui.h            | 2 +-
- 6 files changed, 12 insertions(+), 7 deletions(-)
+ tools/perf/ui/browser.c | 38 +++++++++++++++++++++++++++++++++-----
+ tools/perf/ui/browser.h |  1 +
+ 2 files changed, 34 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index ead6ae4..2db5b50 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -576,7 +576,7 @@ int cmd_annotate(int argc, const char **argv)
- 	else if (annotate.use_gtk)
- 		use_browser = 2;
- 
--	setup_browser(true);
-+	setup_browser(true, false);
- 
- 	if (use_browser == 1 && annotate.has_br_stack) {
- 		sort__mode = SORT_MODE__BRANCH;
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 98d243f..6abc13b 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2618,7 +2618,7 @@ static int perf_c2c__report(int argc, const char **argv)
- 	else
- 		use_browser = 1;
- 
--	setup_browser(false);
-+	setup_browser(false, false);
- 
- 	err = perf_session__process_events(session);
- 	if (err) {
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 971ccba..99277b7 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1261,7 +1261,7 @@ int cmd_report(int argc, const char **argv)
- 	}
- 
- 	if (strcmp(input_name, "-") != 0)
--		setup_browser(true);
-+		setup_browser(true, false);
- 	else
- 		use_browser = 0;
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 0a26b56..b7db01a 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1430,7 +1430,7 @@ int cmd_top(int argc, const char **argv)
- 	else if (top.use_tui)
- 		use_browser = 1;
- 
--	setup_browser(false);
-+	setup_browser(false, false);
- 
- 	if (setup_sorting(top.evlist) < 0) {
- 		if (sort_order)
-diff --git a/tools/perf/ui/setup.c b/tools/perf/ui/setup.c
-index 44fe824..8219b2e 100644
---- a/tools/perf/ui/setup.c
-+++ b/tools/perf/ui/setup.c
-@@ -73,9 +73,9 @@ int stdio__config_color(const struct option *opt __maybe_unused,
- 	return 0;
+diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
+index 63399af..3534c6c 100644
+--- a/tools/perf/ui/browser.c
++++ b/tools/perf/ui/browser.c
+@@ -41,8 +41,13 @@ int ui_browser__set_color(struct ui_browser *browser, int color)
+ void ui_browser__set_percent_color(struct ui_browser *browser,
+ 				   double percent, bool current)
+ {
+-	 int color = ui_browser__percent_color(browser, percent, current);
+-	 ui_browser__set_color(browser, color);
++	int color;
++
++	if (browser->dump)
++		return;
++
++	color = ui_browser__percent_color(browser, percent, current);
++	ui_browser__set_color(browser, color);
  }
  
--void setup_browser(bool fallback_to_pager)
-+void setup_browser(bool fallback_to_pager, bool tui_dump)
- {
--	if (use_browser < 2 && (!isatty(1) || dump_trace))
-+	if (use_browser < 2 && (!isatty(1) || dump_trace) && !tui_dump)
- 		use_browser = 0;
+ void ui_browser__gotorc(struct ui_browser *browser, int y, int x)
+@@ -50,10 +55,27 @@ void ui_browser__gotorc(struct ui_browser *browser, int y, int x)
+ 	SLsmg_gotorc(browser->y + y, browser->x + x);
+ }
  
- 	/* default to TUI */
-@@ -92,6 +92,11 @@ void setup_browser(bool fallback_to_pager)
- 		/* fall through */
- 	case 1:
- 		use_browser = 1;
-+		if (tui_dump) {
-+			setup_pager();
-+			break;
-+		}
++static void write_nstring(const char *msg, unsigned int width)
++{
++	unsigned int len = strlen(msg);
++	unsigned int i = 0;
 +
- 		if (ui__init() == 0)
- 			break;
- 		/* fall through */
-diff --git a/tools/perf/ui/ui.h b/tools/perf/ui/ui.h
-index 9b6fdf0..020a85b 100644
---- a/tools/perf/ui/ui.h
-+++ b/tools/perf/ui/ui.h
-@@ -11,7 +11,7 @@ extern void *perf_gtk_handle;
++	while (i < len && i < width) {
++		putchar(msg[i]);
++		i++;
++	}
++
++	while (i++ < width)
++		putchar(' ');
++}
++
+ void ui_browser__write_nstring(struct ui_browser *browser __maybe_unused, const char *msg,
+ 			       unsigned int width)
+ {
+-	slsmg_write_nstring(msg, width);
++	if (browser->dump)
++		write_nstring(msg, width);
++	else
++		slsmg_write_nstring(msg, width);
+ }
  
- extern int use_browser;
+ void ui_browser__printf(struct ui_browser *browser __maybe_unused, const char *fmt, ...)
+@@ -61,7 +83,10 @@ void ui_browser__printf(struct ui_browser *browser __maybe_unused, const char *f
+ 	va_list args;
  
--void setup_browser(bool fallback_to_pager);
-+void setup_browser(bool fallback_to_pager, bool tui_dump);
- void exit_browser(bool wait_for_ok);
+ 	va_start(args, fmt);
+-	slsmg_vprintf(fmt, args);
++	if (browser->dump)
++		vprintf(fmt, args);
++	else
++		slsmg_vprintf(fmt, args);
+ 	va_end(args);
+ }
  
- #ifdef HAVE_SLANG_SUPPORT
+@@ -496,7 +521,10 @@ unsigned int ui_browser__list_head_refresh(struct ui_browser *browser)
+ 
+ 	list_for_each_from(pos, head) {
+ 		if (!browser->filter || !browser->filter(browser, pos)) {
+-			ui_browser__gotorc(browser, row, 0);
++			if (!browser->dump)
++				ui_browser__gotorc(browser, row, 0);
++			else if (row > 0)
++				printf("\n");
+ 			browser->write(browser, pos, row);
+ 			if (++row == browser->rows)
+ 				break;
+diff --git a/tools/perf/ui/browser.h b/tools/perf/ui/browser.h
+index 03e1734..66d9405 100644
+--- a/tools/perf/ui/browser.h
++++ b/tools/perf/ui/browser.h
+@@ -28,6 +28,7 @@ struct ui_browser {
+ 	u32	      nr_entries;
+ 	bool	      navkeypressed;
+ 	bool	      use_navkeypressed;
++	bool	      dump;
+ };
+ 
+ int  ui_browser__set_color(struct ui_browser *browser, int color);
 -- 
 2.7.4
