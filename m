@@ -1,66 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932354AbeCMAuP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:50:15 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60046 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932190AbeCMAuN (ORCPT
+        id S1751618AbeCMAvM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:51:12 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:42416 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751496AbeCMAvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:50:13 -0400
-Date: Tue, 13 Mar 2018 00:50:11 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
- breakage when used from shrink_dentry_list())
-Message-ID: <20180313005010.GV30522@ZenIV.linux.org.uk>
-References: <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
- <20180224002248.GH30522@ZenIV.linux.org.uk>
- <20180225073950.GI30522@ZenIV.linux.org.uk>
- <87bmgbnhar.fsf_-_@linutronix.de>
- <20180312191351.GN30522@ZenIV.linux.org.uk>
- <877eqhcab3.fsf@xmission.com>
- <20180312203916.GQ30522@ZenIV.linux.org.uk>
- <87woygan6p.fsf@xmission.com>
- <87tvtk97i8.fsf@xmission.com>
- <20180313003751.GT30522@ZenIV.linux.org.uk>
+        Mon, 12 Mar 2018 20:51:09 -0400
+X-Google-Smtp-Source: AG47ELtqxQ3GAHc3JEbE72cEoYKSwNv+B1gQ8d1v1H2NA1KthICe520qtJcqPNzLwVymTblCHtALTg==
+Date: Tue, 13 Mar 2018 01:51:03 +0100
+From: Ognjen =?utf-8?B?R2FsacSH?= <smclt30p@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        ACPI mailing list <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sebastian Reichel <sre@kernel.org>
+Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
+ error in mate
+Message-ID: <20180313005103.brhhrxlatxfkdw7p@thinkpad>
+References: <20180312194715.GA3992@amd>
+ <20180312194944.GA3979@amd>
+ <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
+ <20180312223521.vzccevf6z7ik5ysf@thinkpad>
+ <20180312230407.GA7612@amd>
+ <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
+ <20180312231847.GB7612@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313003751.GT30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180312231847.GB7612@amd>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 12:37:51AM +0000, Al Viro wrote:
-> On Mon, Mar 12, 2018 at 06:52:31PM -0500, Eric W. Biederman wrote:
+On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
+> Hi!
 > 
-> > Ah.  I see now there is now the s_roots list that handles
-> > that bit of strangeness.
+> > >> > >> Fully charged
+> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
+> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
+> > >> > >> waiting to charge".
+> > >> > >>
+> > >>
+> > >> For the MATE bug see:
+> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
+> > >>
+> > >> The problem is in the new composite battery system in UPower, it
+> > >> "merges" two external batteries into a single one for reporting. That
+> > >> battery does not understand "Not Charging" inside the MATE Power
+> > >> Manager. The above patch fixes that in MATE.
+> > >
+> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
+> > >
+> > > And now, I see that MATE should be improved.
+> > >
+> > > But what I also see is that kernel is changing its interface in a way
+> > > that (while making sense) breaks existing application. And we don't
+> > > break existing applications.
+> > >
+> > > [Now... maybe if the fix for the application is available for long
+> > > long time and noone is really looking and everyone already has new
+> > > application version, maybe ... But pull request for MATE is 9 days
+> > > old, and not even merged. So there is no way this is suitable for
+> > > 4.17.]
 > > 
-> > So one path is to simply remove the heuristic from
-> > path_connected.
+> > Right.
 > > 
-> > Another path is to have nfsv2 and nfsv3 not set s_root at all.
-> > Leaving the heuristic working for the rest of the filesystems,
-> > and generally simplifying the code.
-> > 
-> > Something like the diff below I should think.
+> > This basically means that we will have to defer the battery changes
+> > until user space is ready and not just upstream, but also in distro
+> > packages.
 > 
-> > +	/* Leave nfsv2 and nfsv3 s_root == NULL */
+> Yes please.
 > 
-> Now, grep fs/super.c for s_root.  Or try to boot it, for that
-> matter...
+> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
+> anything, the others should be safe AFAICT?
+> 
+> 								Pavel
+> 
 
-BTW, if rename happens on server and we step into directory
-we'd already seen in one subtree while doing a lookup in
-another, we will get it moved around.  Without having the
-subtrees ever connected in dcache on client.  So adding
-&& IS_ROOT(sb->s_root) to the test also won't work.
+Actually there is a bug in UPower itself, and that reflects the status
+icon being broken in almost all desktop environments. I will work on
+fixing UPower in the following days. Disregard my previous comment.
+
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
