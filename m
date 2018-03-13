@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt12gc/Csvj3O0OPHOgmN5Q6OE7JO9SA+rNZW6FZRugZVfMRiJLAhITqRyEO5WL7uCzx8O/
-ARC-Seal: i=1; a=rsa-sha256; t=1520955532; cv=none;
+X-Google-Smtp-Source: AG47ELsba2rreyjVtZE8ahKEq+RrgAWPmuFI4BIM/eIc8JtZgG4fJLWfLvPyBO2985tS0sZDdy0W
+ARC-Seal: i=1; a=rsa-sha256; t=1520955529; cv=none;
         d=google.com; s=arc-20160816;
-        b=e2WM2R+7mbcGPS+DAABmnmvWTLWkOujB4rAvYfiaGmumoB36JRR8yVsiX0ypOajCsD
-         cTN0wnHdTdaPjScz43jTmdRupjVb4+P9S81owo5mMlXiAuKULFdRGRTbaYBKnvr6ggLe
-         ahcH9sPa+YsHpDSd/AmqS4BSjf6ECw5AcmKK5OwbrINPhzyGSbxw9ulCyEAwMFr3Unjq
-         Xmb0SQriYhsImsBT1b7Wd2TMoDtflXrImEaWvveYeXj7PQCdHB12jGZ6cmewF+8C0Qsl
-         XgfzMUOZ40pCXQS19MpemVu6OcmgFj9AqDwEyd/Fdt7ghcEW8QHJyL/Eppy7e5Ff7H0u
-         SPsg==
+        b=xbPPTcOSbN1qajw8JVUdTbZwf7XjD0AIu998fydiowLsqZxCF7A0DDYLORZV+bTk59
+         SpmXRjPfHWn9rujEulwm3YbuSp/uOEx6l/xCDaIqhLKYNAbntkhtXXBaCS6ICg5wZmjl
+         nJQx/4XSzzQ7Lt1cmDLBPN7lHyB5dtfXC1eQbV2xL4nAnVseHANxKYkpk0VYr2fsOwGd
+         55tETCvoKxinnBfgedEp4SfUeINLg/Si49e+sm6hC6EUf06j5ET6xWrTLLQ+aOxcrVBA
+         Rc7drOnzXfqCa+oPT5G6LdD1Mq5LVOSwWWJPXMnOD82OXRXCxbq4HF2JrHi0k5zJ8k7V
+         AywQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+8xFpde2mBouwcTbMpS+i2eo7IA8KZg8mE92Z/ZXgJk=;
-        b=tbudRx/N9fF6cDkcJE6895ux+iUouWf0BFN7jrIBvPgtltK++WHtrS/Yv5tnkMvike
-         /yJbMB/E380yGiaWVp0Jlf1noAejVa22g2kohELrVqBOE0xoP84msVwn/T41bSGXsYHy
-         SZ37BuwNCX59UdIt26k7pBytuVRfTm4GLo0YpFUGLYEKdZ7pMZNDa3Wv6HIYUT+eU8MD
-         vBWcVljW6Wlw2QGpSR6rYLlST0qtYaruwekhT6NVeMEwCTgdp8wgx/m8XCwWDpPFBElY
-         K72fezsuY0bLjWeHHY+mkIdvNMWQqgvI4FAK5tCr3f6Ct7u/zp+Sb7rGfMetI9HxsKks
-         +SFQ==
+        bh=OnX9acv58X1u+XJ8lCkFxMwEj25/OOk7rlRplXn7eKU=;
+        b=zNCV+B2ulh5XLfO1Qn5xy1bGJRqOHm1EtB/gNODc/prhnerxyOMCGRxOnJB9sPpcV2
+         WtWXT9lF1zqldy+FEWMcFzkKR86S9eFYFcuUOYikGKGKV8qIt35J2+7t48Elw9E9wXPe
+         PqsYY74r9hhB4ZaqqCpb4gh1zS4lTUwiKKZQisRY9AJhX7XoODm4YLb2hB9IUvZUpOsG
+         gRRXqaaCKlnu9s8jBXThJNMzuqTgzYfRSW/N7sdygZGoEHhkjXwH4LSR6iAwGeSDlhYy
+         JrzUqyomT0yUxfoPO8WySs8BiPMrVtHh1Po0pjznKlgSfMGP4wPPUktQRQRMooReevTI
+         GjZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,33 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Justin Chen <justinpopo6@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 078/140] MIPS: BMIPS: Do not mask IPIs during suspend
-Date: Tue, 13 Mar 2018 16:24:41 +0100
-Message-Id: <20180313152503.380862971@linuxfoundation.org>
+	Niklas Cassel <niklas.cassel@axis.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Koen Vandeputte <koen.vandeputte@ncentric.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Minghuan Lian <minghuan.Lian@freescale.com>,
+	Mingkai Hu <mingkai.hu@freescale.com>,
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Roy Zang <tie-fei.zang@freescale.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Stanimir Varbanov <svarbanov@mm-sol.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [PATCH 4.14 081/140] PCI: dwc: Fix enumeration end when reaching root subordinate
+Date: Tue, 13 Mar 2018 16:24:44 +0100
+Message-Id: <20180313152503.578260954@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +62,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836867198175596?=
-X-GMAIL-MSGID: =?utf-8?q?1594837468732798858?=
+X-GMAIL-THRID: =?utf-8?q?1594836897125787265?=
+X-GMAIL-MSGID: =?utf-8?q?1594837465788097269?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +71,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Justin Chen <justinpopo6@gmail.com>
+From: Koen Vandeputte <koen.vandeputte@ncentric.com>
 
-commit 06a3f0c9f2725f5d7c63c4203839373c9bd00c28 upstream.
+commit fc110ebdd014dd1368c98e7685b47789c31fab42 upstream.
 
-Commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on CPU IRQs") fixes an
-issue where disable_irq did not actually disable the irq. The bug caused
-our IPIs to not be disabled, which actually is the correct behavior.
+The subordinate value indicates the highest bus number which can be
+reached downstream though a certain device.
 
-With the addition of commit a3e6c1eff548 ("MIPS: IRQ: Fix disable_irq on
-CPU IRQs"), the IPIs were getting disabled going into suspend, thus
-schedule_ipi() was not being called. This caused deadlocks where
-schedulable task were not being scheduled and other cpus were waiting
-for them to do something.
+Commit a20c7f36bd3d ("PCI: Do not allocate more buses than available in
+parent") ensures that downstream devices cannot assign busnumbers higher
+than the upstream device subordinate number, which was indeed illogical.
 
-Add the IRQF_NO_SUSPEND flag so an irq_disable will not be called on the
-IPIs during suspend.
+By default, dw_pcie_setup_rc() inits the Root Complex subordinate to a
+value of 0x01.
 
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
-Fixes: a3e6c1eff548 ("MIPS: IRQ: Fix disabled_irq on CPU IRQs")
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/17385/
-[jhogan@kernel.org: checkpatch: wrap long lines and fix commit refs]
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Due to this combined with above commit, enumeration stops digging deeper
+downstream as soon as bus num 0x01 has been assigned, which is always the
+case for a bridge device.
+
+This results in all devices behind a bridge bus remaining undetected, as
+these would be connected to bus 0x02 or higher.
+
+Fix this by initializing the RC to a subordinate value of 0xff, which is
+not altering hardware behaviour in any way, but informs probing function
+pci_scan_bridge() later on which reads this value back from register.
+
+The following nasty errors during boot are also fixed by this:
+
+  pci_bus 0000:02: busn_res: can not insert [bus 02-ff] under [bus 01] (conflicts with (null) [bus 01])
+  ...
+  pci_bus 0000:03: [bus 03] partially hidden behind bridge 0000:01 [bus 01]
+  ...
+  pci_bus 0000:04: [bus 04] partially hidden behind bridge 0000:01 [bus 01]
+  ...
+  pci_bus 0000:05: [bus 05] partially hidden behind bridge 0000:01 [bus 01]
+  pci_bus 0000:02: busn_res: [bus 02-ff] end is updated to 05
+  pci_bus 0000:02: busn_res: can not insert [bus 02-05] under [bus 01] (conflicts with (null) [bus 01])
+  pci_bus 0000:02: [bus 02-05] partially hidden behind bridge 0000:01 [bus 01]
+
+Fixes: a20c7f36bd3d ("PCI: Do not allocate more buses than available in
+parent")
+Tested-by: Niklas Cassel <niklas.cassel@axis.com>
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+Tested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+Cc: stable@vger.kernel.org	# v4.15+
+Cc: Binghui Wang <wangbinghui@hisilicon.com>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Minghuan Lian <minghuan.Lian@freescale.com>
+Cc: Mingkai Hu <mingkai.hu@freescale.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: Roy Zang <tie-fei.zang@freescale.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>
+Cc: Zhou Wang <wangzhou1@hisilicon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/smp-bmips.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/dwc/pcie-designware-host.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -168,11 +168,11 @@ static void bmips_prepare_cpus(unsigned
- 		return;
- 	}
+--- a/drivers/pci/dwc/pcie-designware-host.c
++++ b/drivers/pci/dwc/pcie-designware-host.c
+@@ -607,7 +607,7 @@ void dw_pcie_setup_rc(struct pcie_port *
+ 	/* setup bus numbers */
+ 	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+ 	val &= 0xff000000;
+-	val |= 0x00010100;
++	val |= 0x00ff0100;
+ 	dw_pcie_writel_dbi(pci, PCI_PRIMARY_BUS, val);
  
--	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi0", NULL))
-+	if (request_irq(IPI0_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi0", NULL))
- 		panic("Can't request IPI0 interrupt");
--	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt, IRQF_PERCPU,
--			"smp_ipi1", NULL))
-+	if (request_irq(IPI1_IRQ, bmips_ipi_interrupt,
-+			IRQF_PERCPU | IRQF_NO_SUSPEND, "smp_ipi1", NULL))
- 		panic("Can't request IPI1 interrupt");
- }
- 
+ 	/* setup command register */
