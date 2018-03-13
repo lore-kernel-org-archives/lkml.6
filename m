@@ -1,74 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955689-2-8726869305117950918
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955689; b=DH0T4ECELJFnXpDcSt43w/ftu4IWKORr6qOPH6qy1rgFuA6
-    8rxqAEYHBKPRWiUIgzoXecCvtiUeB+b1v5sf3WGa9kr92vB9AiJw0F5OkPH63U96
-    JWsFkHNtmx7O30xQM2wmSfwCYSfhNoaDGCl2qUFHdPL1K20SInajoR5++9nHM76L
-    pii3ruk7DFSLkj/fPxvZB9oQ0IsEEcOJjuElp/eba63tO7VB3/CGpUycZLOIrMF6
-    NfvYUyocQMtoMfJzl3/Qt32AayKHPiHvIQEKEI5JVGwY2iLQGpgeYvOS0HFORvGm
-    tWpkVWFvY4dFdTJZbH+guie2jtj3yP05WAQRJ2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955689; bh=bQKjSmF9rcBBcOEsA6WckxktE9
-    T1R5M44FN8ahRlGgY=; b=kvx5pPea51b1I8N0bV+hRx9hsQS3dVUOuY9dGiUb+S
-    py8+BN0zqD8iE3o5/M2ZaUw8XcoEHOH8yzT3BFFWW8Udl5HfWCh3LlZXKlqkpoYW
-    SL9lPkSKO32Cs7+xYgbB2UBHqPY6gTKdyHu3reRwX76cd3ru2vJYnFrJ+g9lqrwS
-    r2o3hhaQp6SmRiiikac7/un1eWK5P1HAKhLPEdciCZcqzSEo0Cgc9BTacUOpj8nB
-    RKu+un/4vOWKWcR8hYqLKEVpaQBFUYM0eXAMqS2SUucqolV9DcapkjVl24XmRZP9
-    ceBUsdhIaFYPRJ2z5/ZfFno8ZBnP9eYNiSf80I/78nHQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934570AbeCMPlY (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:41:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36832 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934398AbeCMPlW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:22 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuVEVaqRDPJ3Mf2VAW2nTdZQueqGVBTSYYFUz7WSkBVY7ui48uawbdLJfQsFSVbCX7lETmz
+ARC-Seal: i=1; a=rsa-sha256; t=1520955686; cv=none;
+        d=google.com; s=arc-20160816;
+        b=S//W7UQVbSXlYijfR5V+vf2kcxEOqxE7H1Lm2vhGRIBy5YvaqS4qqI21YOkhQ50CFD
+         /IvlYnIzQhstuMmeKIEQx3EYH19Pl6dYqHEVQxYaJr2MXzmrlnkt5QGR3WgwZz1TygtE
+         ICNnGMSFq5h97U/f/YKl8i/vw8feYxktthslL5Bky2Ba1EFXXwoMP8i34Fuf32MO2GMX
+         QXaifGrnZZn2xfZGLqXenM77PC429dDdVo+S2PzBf19tjPsBMS8TPX0OXMbJ7XfFNy6s
+         Mvu5ofAiz+tzJ0pcnttkz8pLU8Ruohs9Tchem1i3cssLKqgpYxa8bN48lK4mxslFNx9M
+         L01g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=fUAa5uTkLJKWJ+p3tF3MfRMA7+s+/bWd4pIsYXtzXv4=;
+        b=AXe52s6OIyXi9NWYnuGWMZ88KFLvg8fuNMpVkj1aBgE7bGp7UkSwYzQMdsRicRa7Xh
+         CksDIJjxeFflqBOiep+EGC1EGGArDXLqzLW4sVmpaFWgsUJI0a6oTxqULZOSBtqMfvhH
+         4kv62NvglMb48Z08oVHCAQDtRe2x1qHpOUZ64fYhTwJaIS1nAupyKMgQMz+5Ue+UL47t
+         BZEjqIlrKO98ZAv4wKSwRz2YwYn/dKvxdNPT4J1JQjg+2fIqOLWlicRvptIJs7OgMcUc
+         Tq0ynugp4LSsFDwccly39kbTj4ot0YGI/wI06t4RUCB8fbXjzfAby2gX0os2Taxr0QhY
+         NREQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        arjan.van.de.ven@intel.com, bp@alien8.de, dave.hansen@intel.com,
-        jmattson@google.com, karahmed@amazon.de, kvm@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 124/140] x86/speculation: Use IBRS if available before calling into firmware
-Date: Tue, 13 Mar 2018 16:25:27 +0100
-Message-Id: <20180313152506.499694976@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 128/140] x86/paravirt, objtool: Annotate indirect calls
+Date: Tue, 13 Mar 2018 16:25:31 +0100
+Message-Id: <20180313152506.781439357@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -76,9 +48,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594837033233057464?=
+X-GMAIL-MSGID: =?utf-8?q?1594837630341935563?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -86,219 +59,126 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit dd84441a797150dcc49298ec95c459a8891d8bb1 upstream.
+commit 3010a0663fd949d122eca0561b06b0a9453f7866 upstream.
 
-Retpoline means the kernel is safe because it has no indirect branches.
-But firmware isn't, so use IBRS for firmware calls if it's available.
+Paravirt emits indirect calls which get flagged by objtool retpoline
+checks, annotate it away because all these indirect calls will be
+patched out before we start userspace.
 
-Block preemption while IBRS is set, although in practice the call sites
-already had to be doing that.
+This patching happens through alternative_instructions() ->
+apply_paravirt() -> pv_init_ops.patch() which will eventually end up
+in paravirt_patch_default(). This function _will_ write direct
+alternatives.
 
-Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
-code, from an NMI handler. I don't want to touch that with a bargepole.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/apm.h           |    6 +++++
- arch/x86/include/asm/cpufeatures.h   |    1 
- arch/x86/include/asm/efi.h           |   17 +++++++++++++--
- arch/x86/include/asm/nospec-branch.h |   39 ++++++++++++++++++++++++++---------
- arch/x86/kernel/cpu/bugs.c           |   12 +++++++++-
- 5 files changed, 63 insertions(+), 12 deletions(-)
+ arch/x86/include/asm/paravirt.h       |   17 +++++++++++++----
+ arch/x86/include/asm/paravirt_types.h |    5 ++++-
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/apm.h
-+++ b/arch/x86/include/asm/apm.h
-@@ -7,6 +7,8 @@
- #ifndef _ASM_X86_MACH_DEFAULT_APM_H
- #define _ASM_X86_MACH_DEFAULT_APM_H
- 
-+#include <asm/nospec-branch.h>
-+
- #ifdef APM_ZERO_SEGS
- #	define APM_DO_ZERO_SEGS \
- 		"pushl %%ds\n\t" \
-@@ -32,6 +34,7 @@ static inline void apm_bios_call_asm(u32
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -44,6 +47,7 @@ static inline void apm_bios_call_asm(u32
- 		  "=S" (*esi)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- }
- 
- static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
-@@ -56,6 +60,7 @@ static inline bool apm_bios_call_simple_
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -68,6 +73,7 @@ static inline bool apm_bios_call_simple_
- 		  "=S" (si)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- 	return error;
- }
- 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -211,6 +211,7 @@
- #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
- 
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -6,6 +6,7 @@
- #include <asm/pgtable.h>
- #include <asm/processor-flags.h>
- #include <asm/tlb.h>
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -7,6 +7,7 @@
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/pgtable_types.h>
+ #include <asm/asm.h>
 +#include <asm/nospec-branch.h>
  
- /*
-  * We map the EFI regions needed for runtime services non-contiguously,
-@@ -36,8 +37,18 @@
+ #include <asm/paravirt_types.h>
  
- extern asmlinkage unsigned long efi_call_phys(void *, ...);
+@@ -879,23 +880,27 @@ extern void default_banner(void);
  
--#define arch_efi_call_virt_setup()	kernel_fpu_begin()
--#define arch_efi_call_virt_teardown()	kernel_fpu_end()
-+#define arch_efi_call_virt_setup()					\
-+({									\
-+	kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
-+})
-+
-+#define arch_efi_call_virt_teardown()					\
-+({									\
-+	firmware_restrict_branch_speculation_end();			\
-+	kernel_fpu_end();						\
-+})
-+
+ #define INTERRUPT_RETURN						\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret), CLBR_NONE,	\
+-		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret))
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret);)
  
- /*
-  * Wrap all the virtual calls in a way that forces the parameters on the stack.
-@@ -73,6 +84,7 @@ struct efi_scratch {
- 	efi_sync_low_kernel_mappings();					\
- 	preempt_disable();						\
- 	__kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (efi_scratch.use_pgd) {					\
- 		efi_scratch.prev_cr3 = __read_cr3();			\
-@@ -91,6 +103,7 @@ struct efi_scratch {
- 		__flush_tlb_all();					\
- 	}								\
- 									\
-+	firmware_restrict_branch_speculation_end();			\
- 	__kernel_fpu_end();						\
- 	preempt_enable();						\
- })
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -219,17 +219,38 @@ static inline void vmexit_fill_RSB(void)
+ #define DISABLE_INTERRUPTS(clobbers)					\
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable), clobbers, \
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_disable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #define ENABLE_INTERRUPTS(clobbers)					\
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable), clobbers,	\
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_enable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #ifdef CONFIG_X86_32
+ #define GET_CR0_INTO_EAX				\
+ 	push %ecx; push %edx;				\
++	ANNOTATE_RETPOLINE_SAFE;				\
+ 	call PARA_INDIRECT(pv_cpu_ops+PV_CPU_read_cr0);	\
+ 	pop %edx; pop %ecx
+ #else	/* !CONFIG_X86_32 */
+@@ -917,21 +922,25 @@ extern void default_banner(void);
+  */
+ #define SWAPGS								\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
+-		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs)		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs);		\
+ 		 )
+ 
+ #define GET_CR2_INTO_RAX				\
+-	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2)
++	ANNOTATE_RETPOLINE_SAFE;				\
++	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2);
+ 
+ #define USERGS_SYSRET64							\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_usergs_sysret64),	\
+ 		  CLBR_NONE,						\
+-		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64))
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64);)
+ 
+ #ifdef CONFIG_DEBUG_ENTRY
+ #define SAVE_FLAGS(clobbers)                                        \
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl), clobbers, \
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);        \
++		  ANNOTATE_RETPOLINE_SAFE;				    \
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_save_fl);    \
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
  #endif
- }
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -43,6 +43,7 @@
+ #include <asm/desc_defs.h>
+ #include <asm/kmap_types.h>
+ #include <asm/pgtable_types.h>
++#include <asm/nospec-branch.h>
  
-+#define alternative_msr_write(_msr, _val, _feature)		\
-+	asm volatile(ALTERNATIVE("",				\
-+				 "movl %[msr], %%ecx\n\t"	\
-+				 "movl %[val], %%eax\n\t"	\
-+				 "movl $0, %%edx\n\t"		\
-+				 "wrmsr",			\
-+				 _feature)			\
-+		     : : [msr] "i" (_msr), [val] "i" (_val)	\
-+		     : "eax", "ecx", "edx", "memory")
-+
- static inline void indirect_branch_prediction_barrier(void)
- {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
-+			      X86_FEATURE_USE_IBPB);
-+}
-+
-+/*
-+ * With retpoline, we must use IBRS to restrict branch prediction
-+ * before calling into firmware.
-+ */
-+static inline void firmware_restrict_branch_speculation_start(void)
-+{
-+	preempt_disable();
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-+			      X86_FEATURE_USE_IBRS_FW);
-+}
-+
-+static inline void firmware_restrict_branch_speculation_end(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+			      X86_FEATURE_USE_IBRS_FW);
-+	preempt_enable();
- }
+ struct page;
+ struct thread_struct;
+@@ -392,7 +393,9 @@ int paravirt_disable_iospace(void);
+  * offset into the paravirt_patch_template structure, and can therefore be
+  * freely converted back into a structure offset.
+  */
+-#define PARAVIRT_CALL	"call *%c[paravirt_opptr];"
++#define PARAVIRT_CALL					\
++	ANNOTATE_RETPOLINE_SAFE				\
++	"call *%c[paravirt_opptr];"
  
- #endif /* __ASSEMBLY__ */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -300,6 +300,15 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
- 	}
-+
-+	/*
-+	 * Retpoline means the kernel is safe because it has no indirect
-+	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
-+		pr_info("Enabling Restricted Speculation for firmware calls\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -326,8 +335,9 @@ ssize_t cpu_show_spectre_v2(struct devic
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 		       spectre_v2_module_string());
- }
- #endif
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
