@@ -1,103 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932496AbeCMRZd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:25:33 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55902 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeCMRZb (ORCPT
+        id S1752224AbeCMRZr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:25:47 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35980 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeCMRZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:25:31 -0400
-X-Google-Smtp-Source: AG47ELvwrGbZhtbktMdZXkuxzXsouX3uTSisgHAiUq3NHM40x+UgckziNZC0dkiFYo2C8KVp44P8D211pbkPMT8t1yk=
+        Tue, 13 Mar 2018 13:25:40 -0400
+X-Google-Smtp-Source: AG47ELsld1q+JaIYbtAzle9denatB7/8JyZfC2C7GmNNDTcOmLt2/eycSbtCoQBeuEhLWi0SCQbrXg==
+Date: Tue, 13 Mar 2018 10:25:36 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Thierry Escande <thierry.escande@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: net: bluetooth: Add
+ qualcomm-bluetooth
+Message-ID: <20180313172536.GT18510@minitux>
+References: <20180313164444.19881-1-thierry.escande@linaro.org>
+ <20180313164444.19881-3-thierry.escande@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180313103803.13388-2-jlee@suse.com>
-References: <20180313103803.13388-1-jlee@suse.com> <20180313103803.13388-2-jlee@suse.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 17:25:30 +0000
-Message-ID: <CAKv+Gu_1+8AOy4Fj_yD6iEJQvjw3hA4KW11agU+ozujxMNQHVA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] MODSIGN: do not load mok when secure boot disabled
-To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, linux-fs@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Josh Boyer <jwboyer@fedoraproject.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313164444.19881-3-thierry.escande@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 10:37, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> The mok can not be trusted when the secure boot is disabled. Which
-> means that the kernel embedded certificate is the only trusted key.
->
-> Due to db/dbx are authenticated variables, they needs manufacturer's
-> KEK for update. So db/dbx are secure when secureboot disabled.
->
+On Tue 13 Mar 09:44 PDT 2018, Thierry Escande wrote:
 
-Did you consider the case where secure boot is not implemented? I
-don't think db/dbx are secure in that case, although perhaps it may
-not matter (a bit more information on the purpose of these patches and
-all the shim lingo etc would be appreciated)
+> Add binding document for serial bluetooth chips using Qualcomm protocol.
+> 
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
 
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Josh Boyer <jwboyer@fedoraproject.org>
-> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  certs/load_uefi.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
->
-> diff --git a/certs/load_uefi.c b/certs/load_uefi.c
-> index 3d88459..d6de4d0 100644
-> --- a/certs/load_uefi.c
-> +++ b/certs/load_uefi.c
-> @@ -164,17 +164,6 @@ static int __init load_uefi_certs(void)
->                 }
->         }
->
-> -       mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+Looks good, just two minor things.
 
-Which tree does this apply to? My tree doesn't have get_cert_list()
-
-> -       if (!mok) {
-> -               pr_info("MODSIGN: Couldn't get UEFI MokListRT\n");
-> -       } else {
-> -               rc = parse_efi_signature_list("UEFI:MokListRT",
-> -                                             mok, moksize, get_handler_for_db);
-> -               if (rc)
-> -                       pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
-> -               kfree(mok);
-> -       }
-> -
->         dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
->         if (!dbx) {
->                 pr_info("MODSIGN: Couldn't get UEFI dbx list\n");
-> @@ -187,6 +176,21 @@ static int __init load_uefi_certs(void)
->                 kfree(dbx);
->         }
->
-> +       /* the MOK can not be trusted when secure boot is disabled */
-> +       if (!efi_enabled(EFI_SECURE_BOOT))
-> +               return 0;
+[..]
+> +Required properties:
 > +
-> +       mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
-> +       if (!mok) {
-> +               pr_info("MODSIGN: Couldn't get UEFI MokListRT\n");
-> +       } else {
-> +               rc = parse_efi_signature_list("UEFI:MokListRT",
-> +                                             mok, moksize, get_handler_for_db);
-> +               if (rc)
-> +                       pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
-> +               kfree(mok);
-> +       }
+> + - compatible: should contain one of the following:
+> +   * "qcom,qca6174-bt"
 > +
->         return rc;
->  }
->  late_initcall(load_uefi_certs);
-> --
-> 2.10.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+You're missing the "susclk" clock.
+
+> +Optional properties:
+> +
+> + - bt-disable-n-gpios: GPIO specifier, used to enable chip during probe
+
+Is this really optional?
+
+Regards,
+Bjorn
