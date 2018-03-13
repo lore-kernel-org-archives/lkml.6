@@ -1,99 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933023AbeCMLrr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:47:47 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34672 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeCMLrp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:47:45 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
-To: David Laight <David.Laight@ACULAB.COM>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
-Date: Tue, 13 Mar 2018 11:47:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S932862AbeCMLvn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:51:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36302 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751965AbeCMLvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:51:42 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
+        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
+        ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
+        ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v4 00/22] arm64: Rework cpu capabilities handling
+Date: Tue, 13 Mar 2018 11:50:58 +0000
+Message-Id: <20180313115120.17256-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+This series reworks the arm64 CPU capabilities handling (which
+manages the system features and errata). The current infrastructure
+doesn't allow fine control for handling different features or errata.
+There is one rule for features and another rule for errata.
 
-On 13/03/18 11:20, David Laight wrote:
-> From: Kieran Bingham
->> Sent: 09 March 2018 22:04
->> The kernel provides a __packed definition to abstract away from the
->> compiler specific attributes tag.
->>
->> Convert all packed structures in VSP1 to use it.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
->> index 37e2c984fbf3..382e45c2054e 100644
->> --- a/drivers/media/platform/vsp1/vsp1_dl.c
->> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
->> @@ -29,19 +29,19 @@
->>  struct vsp1_dl_header_list {
->>  	u32 num_bytes;
->>  	u32 addr;
->> -} __attribute__((__packed__));
->> +} __packed;
->>
->>  struct vsp1_dl_header {
->>  	u32 num_lists;
->>  	struct vsp1_dl_header_list lists[8];
->>  	u32 next_header;
->>  	u32 flags;
->> -} __attribute__((__packed__));
->> +} __packed;
->>
->>  struct vsp1_dl_entry {
->>  	u32 addr;
->>  	u32 data;
->> -} __attribute__((__packed__));
->> +} __packed;
-> 
-> Do these structures ever actually appear in misaligned memory?
-> If they don't then they shouldn't be marked 'packed'.
+* Features are checked only once, after all the boot time CPUs are
+   activated. Any new CPU that is brought up is prevented from booting
+   if it misses a feature already established. If the new CPU has a
+   feature not enabled already, it is allowed to boot.
 
-I believe the declaration is to ensure that the struct definition is not altered
-by the compiler as these structures specifically define the layout of how the
-memory is read by the VSP1 hardware.
+* Errata checks are performed on all the CPUs and any new CPU is
+   OK to miss the capability. However if a late CPU requires a work around,
+   then we fail the CPU.
 
-Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
-rearranged by the compiler (though I believe it would be free to do so if it
-chose without this attribute), but I think the declaration shows the intent of
-the memory structure.
+   This doesn't always apply to some features. e.g, KPTI is a security
+   feature which should be applied when at least one CPU needs it. So,
+   the tests should be performed on all the booting CPUs individually.
+   Also, if a CPU that needs this security feature is brought up later,
+   when the system has not enabled it, the CPU can boot making the system
+   insecure. Another exception is the hardware DBM for page tables. The
+   kernel can safely run with a mix of CPUs that have the feature turned
+   on and off. This again causes problem when a new CPU is brought up
+   which may not have the feature, which is killed.
 
-Isn't this a common approach throughout the kernel when dealing with hardware
-defined memory structures ?
+   Also there are other features like, GICV3 system register access,
+   which now need to be enabled very early based on the boot CPU to
+   allow the use of Priority handling to implement NMI.
 
-Regards
---
-Kieran
+This calls for finer level of control per capability and the series
+implements the same by defining how to deal with a conflict of a
+given capability on a CPU with that of the system level state. It
+also consolidates the handling of features and errata into generic
+helpers. The table of features and errata are left as they are to
+allow easier look up for a given type.
+
+The series also gets rid of duplicate entries for a single capability
+by introducing a wrapper entry which takes care of managing a list
+of entries with distinct matches/enable pair.
+
+We also cleans up the MIDR range handling and cleans up some of the
+errata checks where the entries were duplicated for checking different
+CPU models. Finally it also implements a work around for Arm Cortex-A55
+erratum 1024718 based on the new infrastructure.
+
+Applies on arm64 for-next/core. The tree is available at :
+
+    git://linux-arm.org/linux-skp.git cpu-cap-rework/v4
 
 
-> 
-> 	David
-> 
+Changes since V3
+ - Rebased to for-next/core (twice internally huh!)
+ - Address review comments from Dave
+ - Rename cap_list => match_list in Shared capability handling.
+ - Rename cpu_has_erratum_1024718() to cpu_has_broken_dbm() in
+   Patch 22, Erratum 1024718, for sharing the routine for different
+   CPUs which could be affected.
+
+Changes since V2
+ - Mostly address review comments from Dave
+ - Drop "Change the type for BP hardening to accept late CPUs"
+   as we can't fake the capability, which is exposed to KVM guests.
+ - Split the "arm64: capabilities: Group handling of features and
+   errata" to smaller patches.
+ - Add tags from Dave.
+ - Use SCOPE_* in the Code instead of the ARM64_CPUCAP_SCOPE_* version.
+ - Hide description for DBM feature, as we turn the capability on always
+   irrespective of whether the CPUs have it or not.
+
+Changes since V1
+ - Pickup almost all suggestions by Dave.
+ - Rename flags for handling conflicts
+ - Rename the "enable" call back to cpu_enable
+ - Update prototype for cpu_enable to void.
+ - Handle capabilities with multiple table entries, simplifying the
+   core logic.
+ - Add capabilities based on Boot CPU.
+ - Change the type for BP Hardening to accept late CPUs.
+ - More usersfor midr_range list.
+ - More commentary in the code.
+ - Flip type of Software prefetching capability to Weak from Strict.
+
+
+Dave Martin (1):
+  arm64: capabilities: Update prototype for enable call back
+
+Suzuki K Poulose (21):
+  arm64: capabilities: Move errata work around check on boot CPU
+  arm64: capabilities: Move errata processing code
+  arm64: capabilities: Prepare for fine grained capabilities
+  arm64: capabilities: Add flags to handle the conflicts on late CPU
+  arm64: capabilities: Unify the verification
+  arm64: capabilities: Filter the entries based on a given mask
+  arm64: capabilities: Prepare for grouping features and errata work
+    arounds
+  arm64: capabilities: Split the processing of errata work arounds
+  arm64: capabilities: Allow features based on local CPU scope
+  arm64: capabilities: Group handling of features and errata workarounds
+  arm64: capabilities: Introduce weak features based on local CPU
+  arm64: capabilities: Restrict KPTI detection to boot-time CPUs
+  arm64: capabilities: Add support for features enabled early
+  arm64: capabilities: Change scope of VHE to Boot CPU feature
+  arm64: capabilities: Clean up midr range helpers
+  arm64: Add helpers for checking CPU MIDR against a range
+  arm64: capabilities: Add support for checks based on a list of MIDRs
+  arm64: capabilities: Handle shared entries
+  arm64: Add MIDR encoding for Arm Cortex-A55 and Cortex-A35
+  arm64: Delay enabling hardware DBM feature
+  arm64: Add work around for Arm Cortex-A55 Erratum 1024718
+
+ Documentation/arm64/silicon-errata.txt |   1 +
+ arch/arm64/Kconfig                     |  14 ++
+ arch/arm64/include/asm/cpucaps.h       |   3 +-
+ arch/arm64/include/asm/cpufeature.h    | 258 ++++++++++++++++++++--
+ arch/arm64/include/asm/cputype.h       |  43 ++++
+ arch/arm64/include/asm/fpsimd.h        |   4 +-
+ arch/arm64/include/asm/processor.h     |   7 +-
+ arch/arm64/include/asm/virt.h          |   6 -
+ arch/arm64/kernel/cpu_errata.c         | 294 +++++++++++++------------
+ arch/arm64/kernel/cpufeature.c         | 381 +++++++++++++++++++++++++--------
+ arch/arm64/kernel/fpsimd.c             |   5 +-
+ arch/arm64/kernel/smp.c                |  44 ----
+ arch/arm64/kernel/traps.c              |   4 +-
+ arch/arm64/mm/fault.c                  |   3 +-
+ arch/arm64/mm/proc.S                   |  13 +-
+ 15 files changed, 769 insertions(+), 311 deletions(-)
+
+-- 
+2.14.3
