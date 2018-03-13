@@ -1,192 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934522AbeCMQAz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:00:55 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36878 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933306AbeCMQAt (ORCPT
+        id S934561AbeCMQCh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:02:37 -0400
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:44931 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932425AbeCMQCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:00:49 -0400
-X-Google-Smtp-Source: AG47ELso7UKKMDwYTMc24aBjXJK82IUxvuH4iweuRrN96PBGryVa734oyZHNKu5Y78f8LVAsTlYAuA==
-Date: Tue, 13 Mar 2018 09:00:47 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] hwmon/sch5627: Use common error handling code in
- sch5627_probe()
-Message-ID: <20180313160047.GA8834@roeck-us.net>
-References: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
- <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
+        Tue, 13 Mar 2018 12:02:34 -0400
+X-Google-Smtp-Source: AG47ELux8YIW8PYwrbr3NeFLf05zEEZTfMWmK3t3YyU2ulTiJkSh6x8HWEH7+u88J0NiXLKgob9lgnFxIlkqZgUu7/U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0cc0ab31-550b-fa34-aaa5-164f6ae7f7a9@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <0ab7c9f6-e677-3bc9-df05-9895870a3c32@rasmusvillemoes.dk>
+References: <20180313132155.203220-1-arnd@arndb.de> <0ab7c9f6-e677-3bc9-df05-9895870a3c32@rasmusvillemoes.dk>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 13 Mar 2018 17:02:32 +0100
+X-Google-Sender-Auth: djcNs0Es21ztUb9N2D8IUp82qsU
+Message-ID: <CAK8P3a2mkLfkmEgg7GbeS=QkXvzjt86fNiUuuHGa54HyULkMng@mail.gmail.com>
+Subject: Re: [PATCH] test_rhashtable: avoid gcc-8 -Wformat-overflow warning
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Blakey <paulb@mellanox.com>, Martin Sebor <msebor@gcc.gnu.org>,
+        Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+        Tom Herbert <tom@quantonium.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 09:19:22AM +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 12-03-18 22:23, SF Markus Elfring wrote:
-> >From: Markus Elfring <elfring@users.sourceforge.net>
-> >Date: Mon, 12 Mar 2018 22:15:59 +0100
-> >
-> >Adjust jump targets so that a bit of exception handling can be better
-> >reused at the end of this function.
-> >
-> >This issue was detected by using the Coccinelle software.
-> >
-> >Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> So now we have a goto set_error_code with the code at the set_error_code
-> doing something and then doing another goto. No, just no. goto-s going to
-> a label calling another goto is completely unreadable.
-> 
-> I really do not see any reason for the proposed changes, they may remove
-> a small amount of code duplication, but at a hugh cost wrt readability.
+On Tue, Mar 13, 2018 at 3:41 PM, Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+> On 2018-03-13 14:21, Arnd Bergmann wrote:
+>> gcc-8 warns about a code pattern that is used in the newly added
+>> test_rhashtable code:
+>>
+>> lib/test_rhashtable.c: In function 'print_ht':
+>> lib/test_rhashtable.c:511:21: error: '
+>> bucket[' directive writing 8 bytes into a region of size between 1 and 512 [-Werror=format-overflow=]
+>>     sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
+>>                      ^~~~~~~~~
+>> lib/test_rhashtable.c:511:4: note: 'sprintf' output between 15 and 536 bytes into a destination of size 512
+>>     sprintf(buff, "%s\nbucket[%d] -> ", buff, i);
+>>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> The problem here is using the same fixed-length buffer as input and output
+>> of snprintf(), which for an unbounded loop has an actual potential to
+>> overflow the buffer. The '512' byte length was apparently chosen to
+>> be "long enough" to prevent that in practice, but without any specific
+>> guarantees of being the smallest safe size.
 >
-> TL;DR: NACK
-> 
-Fully agree. NACK confirmed.
+> well, 1024 would certainly be enough, because the result is anyway
+> passed to printk() which formats into a buffer of that size, so anything
+> more would certainly just be thrown away...
 
-Guenter
+I was only worried about overflowing the stack here, not about the
+output making sense ;-)
 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> >---
-> >  drivers/hwmon/sch5627.c | 60 ++++++++++++++++++++++++-------------------------
-> >  1 file changed, 29 insertions(+), 31 deletions(-)
-> >
-> >diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
-> >index 91544f2312e6..e7a2a974ab74 100644
-> >--- a/drivers/hwmon/sch5627.c
-> >+++ b/drivers/hwmon/sch5627.c
-> >@@ -480,72 +480,64 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	platform_set_drvdata(pdev, data);
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_HWMON_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_HWMON_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "hwmon",
-> >  		       val, SCH5627_HWMON_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_COMPANY_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_COMPANY_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "company",
-> >  		       val, SCH5627_COMPANY_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_PRIMARY_ID);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	if (val != SCH5627_PRIMARY_ID) {
-> >  		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "primary",
-> >  		       val, SCH5627_PRIMARY_ID);
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	build_code = sch56xx_read_virtual_reg(data->addr,
-> >  					      SCH5627_REG_BUILD_CODE);
-> >  	if (build_code < 0) {
-> >  		err = build_code;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	build_id = sch56xx_read_virtual_reg16(data->addr,
-> >  					      SCH5627_REG_BUILD_ID);
-> >  	if (build_id < 0) {
-> >  		err = build_id;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	hwmon_rev = sch56xx_read_virtual_reg(data->addr,
-> >  					     SCH5627_REG_HWMON_REV);
-> >  	if (hwmon_rev < 0) {
-> >  		err = hwmon_rev;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_CTRL);
-> >-	if (val < 0) {
-> >-		err = val;
-> >-		goto error;
-> >-	}
-> >+	if (val < 0)
-> >+		goto set_error_code;
-> >+
-> >  	data->control = val;
-> >  	if (!(data->control & 0x01)) {
-> >  		pr_err("hardware monitoring not enabled\n");
-> >-		err = -ENODEV;
-> >-		goto error;
-> >+		goto e_nodev;
-> >  	}
-> >  	/* Trigger a Vbat voltage measurement, so that we get a valid reading
-> >  	   the first time we read Vbat */
-> >@@ -559,7 +551,7 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	 */
-> >  	err = sch5627_read_limits(data);
-> >  	if (err)
-> >-		goto error;
-> >+		goto remove_device;
-> >  	pr_info("found %s chip at %#hx\n", DEVNAME, data->addr);
-> >  	pr_info("firmware build: code 0x%02X, id 0x%04X, hwmon: rev 0x%02X\n",
-> >@@ -568,13 +560,13 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	/* Register sysfs interface files */
-> >  	err = sysfs_create_group(&pdev->dev.kobj, &sch5627_group);
-> >  	if (err)
-> >-		goto error;
-> >+		goto remove_device;
-> >  	data->hwmon_dev = hwmon_device_register(&pdev->dev);
-> >  	if (IS_ERR(data->hwmon_dev)) {
-> >  		err = PTR_ERR(data->hwmon_dev);
-> >  		data->hwmon_dev = NULL;
-> >-		goto error;
-> >+		goto remove_device;
-> >  	}
-> >  	/* Note failing to register the watchdog is not a fatal error */
-> >@@ -584,7 +576,13 @@ static int sch5627_probe(struct platform_device *pdev)
-> >  	return 0;
-> >-error:
-> >+set_error_code:
-> >+	err = val;
-> >+	goto remove_device;
-> >+
-> >+e_nodev:
-> >+	err = -ENODEV;
-> >+remove_device:
-> >  	sch5627_remove(pdev);
-> >  	return err;
-> >  }
-> >
+>> I can see three possible ways to avoid this warning:
+>>
+>> - rewrite the code to use pointer arithmetic to forward the buffer,
+>>   rather than copying the buffer itself. This is a more conventional
+>>   use of sprintf(), and it avoids the warning, but is not any more
+>>   safe than the original code.
+>> - Rewrite the function in a safe way that avoids both the potential
+>>   overflow and the warning.
+>> - Ask the gcc developers to not warn for this pattern if we consider
+>>   the warning to be inappropriate.
+>>
+>> This patch implements the first of the above, as an illustration of
+>> the problem, and the simplest workaround.
+>
+> If you use scnprintf() and forward the printed length you can get rid of
+> the potential buffer overrun:
+>
+> len = 0;
+> ...
+> len += scnprintf(buf + len, sizeof(buf) - len, fmt, args...)
+>
+> scnprintf has the property that if you pass in a positive value, you get
+> back something that is strictly less, so with the above pattern, we
+> might eventually have sizeof(buf)-len==1, so all subsequent scnprintfs
+> return 0, but we never overflow the buffer. The effect is thus the same
+> as if you had done all the formatting with a single snprintf() call.
+
+Right, that was my second proposal above. Using scnprintf(),
+that's probably easier than I first thought.
+
+> FWIW, I sent an RFC [1] two years ago trying to get rid of all
+> snprintf(buf, ..., "%s...", buf, ...), because I think it's too fragile
+> (it obviously breaks horribly if anything precedes the %s with buf as
+> its argument), but others disagreed and said that the kernel's
+> vsnprintf() instead should be documented to support that special case of
+> overlapping src and dst. I don't really recall what happened with the
+> patches, perhaps some got applied, but if not, maybe gcc-8 will now warn
+> about those places.
+>
+> [1]
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1096481.html
+
+It looks useful, but not all seem to have landed. I think you
+are referring to Andrew's feedback in
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1097554.html
+here as the concern about whether it did the right thing, but I'm not
+actually sure what his reply meant.
+
+In the case of the analog_name() function that Andrew commented on,
+Dmitry later fixed the overflow in a different way in commit
+10ca4c0a622a ("Input: fix potential overflows in driver/input/joystick").
+
+>> +                     buffp += sprintf(buffp, "[[");
+>>                       do {
+>>                               pos = &list->rhead;
+>>                               list = rht_dereference(list->next, ht);
+>>                               p = rht_obj(ht, pos);
+>>
+>> -                             sprintf(buff, "%s val %d (tid=%d)%s", buff, p->value.id, p->value.tid,
+>> +                             buffp += sprintf(buffp, "val %d (tid=%d)%s", p->value.id, p->value.tid,
+>>                                       list? ", " : " ");
+>
+> this removes a space before val, not sure that was intended?
+
+It was not, I'll fix it up. Thanks for taking a closer look!
+
+     Arnd
