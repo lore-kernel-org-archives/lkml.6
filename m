@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELttTYab30X4fwlFnf+pmlh6jB5d4PSyVWL82UjeTr4VdeAjUoergGSecgJMl3sL1yWwjP8i
-ARC-Seal: i=1; a=rsa-sha256; t=1520955477; cv=none;
+X-Google-Smtp-Source: AG47ELvOvX4BmV18Xnx+qj9H/a/ecdTk3VsuNDsIZOizSTkBleWMBAUuqigljdEzbLP4PFxOxtd5
+ARC-Seal: i=1; a=rsa-sha256; t=1520955474; cv=none;
         d=google.com; s=arc-20160816;
-        b=QA7VBK4vpujAaAsYjaoMpDiDNmjwuJyWA4c2sD9v8XB1naD4gEXX4qNsiIqEfTotP8
-         QwkVz1bQLzqXgVa3p6yD5NDvPf92oTw6jYgeaU5yY8MZdvAU0yfgJrNAHDHE5/LxWrcW
-         0Fq+xLh8kZY08vEBImABrC0ow3xLGfdAH4vUZm5PG4Mba+ftUHPpNK5IItes7T8rVgo3
-         lFR1XDTdGOSpPV54yukYX+ZXft9SK4LoYVt3XhLGmKhjsGyneuxQuchNKnyp1fQN4pPx
-         u4mV3rtnEuIsGKyJGOMmINUkuQEjP0wfGateR06BMUWYaUvvbPBxm3yFtYIuf5pNAZbF
-         mEFA==
+        b=bnIPacBSn9HY/oCrwS9bP6BfVsr1ZdcNbuPDfyf1+LTg/iz6lILxigq55viMCsyu7+
+         oMGkvCgJlQe69X6w4Wu6LZg1+sOP7Wm0WJPElOeI8z57ZFMM+MmpfXCJWPcvocYmFZkQ
+         a3MPYzceTOoOVkcRrvzBy8IBig3WC6Oumx31ivyDKU+LJiISeokpKCkpJdYc3yHElFco
+         J4BXzRQ2CIHwIjCVOFud0CHTK4DclZeCBv4FJiVS74bPrw7egKYW6HgaxBo3VtuoKeTs
+         v0nqixDUdA2oAPVhND18S8SIFNu4SbB+WmHr+X2/cIKhHXjEnpBIJTI3Booah8nsLGdG
+         80qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5bn7jQGXNDlENiCbNnWFyxZUVP5pDvLADoQhGmUZoW4=;
-        b=tAzRgy6A1bvizlRZmNgU9qhI6R7Jv1FXdxl0TK9mmDDHndlwy5tVfwnc4B3bKMRXjs
-         kvM3TKnhDR8RmsrEAODRPV/haDXLjw7UOwjDD/uXAttcXi2mI0z3up2If09eikApVzJY
-         zp5mw12O1qapivZVCr5pTPI4Jghm7qNKEiHTMj/zUBE1+8LM0nHsG8dy2BMZBhbU34Tk
-         MwfxlpjWZj+r36xJ9yT9zB96M01RmHqMPvou/kRjd3o1YLnQ9jAiRRVZHfBzssM6LrF7
-         /TgzpxD9QJoZjF0pAi7enmA+ZWYqMzSvAMpCTQhSNz7aJZtsCKJ4XnalEYdSd6uCWimp
-         QUdQ==
+        bh=Ph4cQRAlhHymM1mK4vbzQm7c22AA0G/W3pWGIW+QaR4=;
+        b=e9CkMB5vEZqBhM2+I5Mh442WXWRZyNOYdb8rSniEOy8KAg8xFVZLI4iaB/yRGAS9mz
+         FvxmdjOUjVo2GXXxM/GnEcsix+LUIE3u4WCgguwogOkdMZlKXD4fMx7OOSuAJa3SI4+d
+         Q+SD9IBztVQD1uKh8QANRlLj+nXF6/OqxH0iOP+ZUiSKovZcN8oWOibG4gbkJx6uOZ4g
+         xM7xGkrxIIBgWOLTXSsNWHlN4/7q+THFftS2aYav5CnRLQLlfJ3lLF0BejOQbJzFJUs0
+         22qH5NfT69Tm4SFIu5i6TZT6iRZjRfaDWyF8s7qFobfHFseoWm9w8i/pLaBjr8z2hhyF
+         UEqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Skeggs <bskeggs@redhat.com>,
 	Dave Airlie <airlied@redhat.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Lyude Paul <lyude@redhat.com>,
 	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 4.14 063/140] drm/nouveau: Fix deadlock on runtime suspend
-Date: Tue, 13 Mar 2018 16:24:26 +0100
-Message-Id: <20180313152502.457394455@linuxfoundation.org>
+Subject: [PATCH 4.14 062/140] drm: Allow determining if current task is output poll worker
+Date: Tue, 13 Mar 2018 16:24:25 +0100
+Message-Id: <20180313152502.407258743@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836807146444009?=
-X-GMAIL-MSGID: =?utf-8?q?1594837410343565321?=
+X-GMAIL-THRID: =?utf-8?q?1594836890653561030?=
+X-GMAIL-MSGID: =?utf-8?q?1594837407948020754?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,111 +54,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit d61a5c1063515e855bedb1b81e20e50b0ac3541e upstream.
+commit 25c058ccaf2ebbc3e250ec1e199e161f91fe27d4 upstream.
 
-nouveau's ->runtime_suspend hook calls drm_kms_helper_poll_disable(),
-which waits for the output poll worker to finish if it's running.
+Introduce a helper to determine if the current task is an output poll
+worker.
 
-The output poll worker meanwhile calls pm_runtime_get_sync() in
-nouveau_connector_detect() which waits for the ongoing suspend to finish,
-causing a deadlock.
+This allows us to fix a long-standing deadlock in several DRM drivers
+wherein the ->runtime_suspend callback waits for the output poll worker
+to finish and the worker in turn calls a ->detect callback which waits
+for runtime suspend to finish.  The ->detect callback is invoked from
+multiple call sites and waiting for runtime suspend to finish is the
+correct thing to do except if it's executing in the context of the
+worker.
 
-Fix by not acquiring a runtime PM ref if nouveau_connector_detect() is
-called in the output poll worker's context.  This is safe because
-the poll worker is only enabled while runtime active and we know that
-->runtime_suspend waits for it to finish.
+v2: Expand kerneldoc to specifically mention deadlock between
+    output poll worker and autosuspend worker as use case. (Lyude)
 
-Other contexts calling nouveau_connector_detect() do require a runtime
-PM ref, these comprise:
-
-  status_store() drm sysfs interface
-  ->fill_modes drm callback
-  drm_fb_helper_probe_connector_modes()
-  drm_mode_getconnector()
-  nouveau_connector_hotplug()
-  nouveau_display_hpd_work()
-  nv17_tv_set_property()
-
-Stack trace for posterity:
-
-  INFO: task kworker/0:1:58 blocked for more than 120 seconds.
-  Workqueue: events output_poll_execute [drm_kms_helper]
-  Call Trace:
-   schedule+0x28/0x80
-   rpm_resume+0x107/0x6e0
-   __pm_runtime_resume+0x47/0x70
-   nouveau_connector_detect+0x7e/0x4a0 [nouveau]
-   nouveau_connector_detect_lvds+0x132/0x180 [nouveau]
-   drm_helper_probe_detect_ctx+0x85/0xd0 [drm_kms_helper]
-   output_poll_execute+0x11e/0x1c0 [drm_kms_helper]
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
-
-  INFO: task kworker/0:2:252 blocked for more than 120 seconds.
-  Workqueue: pm pm_runtime_work
-  Call Trace:
-   schedule+0x28/0x80
-   schedule_timeout+0x1e3/0x370
-   wait_for_completion+0x123/0x190
-   flush_work+0x142/0x1c0
-   nouveau_pmops_runtime_suspend+0x7e/0xd0 [nouveau]
-   pci_pm_runtime_suspend+0x5c/0x180
-   vga_switcheroo_runtime_suspend+0x1e/0xa0
-   __rpm_callback+0xc1/0x200
-   rpm_callback+0x1f/0x70
-   rpm_suspend+0x13c/0x640
-   pm_runtime_work+0x6e/0x90
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
-
-Bugzilla: https://bugs.archlinux.org/task/53497
-Bugzilla: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=870523
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=70388#c33
-Fixes: 5addcf0a5f0f ("nouveau: add runtime PM support (v0.9)")
-Cc: stable@vger.kernel.org # v3.12+: 27d4ee03078a: workqueue: Allow retrieval of current task's work struct
-Cc: stable@vger.kernel.org # v3.12+: 25c058ccaf2e: drm: Allow determining if current task is output poll worker
-Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Dave Airlie <airlied@redhat.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/b7d2cbb609a80f59ccabfdf479b9d5907c603ea1.1518338789.git.lukas@wunner.de
+Link: https://patchwork.freedesktop.org/patch/msgid/3549ce32e7f1467102e70d3e9cbf70c46bfe108e.1518593424.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_probe_helper.c |   20 ++++++++++++++++++++
+ include/drm/drm_crtc_helper.h      |    1 +
+ 2 files changed, 21 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -570,9 +570,15 @@ nouveau_connector_detect(struct drm_conn
- 		nv_connector->edid = NULL;
- 	}
- 
--	ret = pm_runtime_get_sync(connector->dev->dev);
--	if (ret < 0 && ret != -EACCES)
--		return conn_status;
-+	/* Outputs are only polled while runtime active, so acquiring a
-+	 * runtime PM ref here is unnecessary (and would deadlock upon
-+	 * runtime suspend because it waits for polling to finish).
-+	 */
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		ret = pm_runtime_get_sync(connector->dev->dev);
-+		if (ret < 0 && ret != -EACCES)
-+			return conn_status;
-+	}
- 
- 	nv_encoder = nouveau_connector_ddc_detect(connector);
- 	if (nv_encoder && (i2c = nv_encoder->i2c) != NULL) {
-@@ -647,8 +653,10 @@ detect_analog:
- 
-  out:
- 
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return conn_status;
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -672,6 +672,26 @@ out:
  }
+ 
+ /**
++ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
++ *
++ * Determine if %current task is an output poll worker.  This can be used
++ * to select distinct code paths for output polling versus other contexts.
++ *
++ * One use case is to avoid a deadlock between the output poll worker and
++ * the autosuspend worker wherein the latter waits for polling to finish
++ * upon calling drm_kms_helper_poll_disable(), while the former waits for
++ * runtime suspend to finish upon calling pm_runtime_get_sync() in a
++ * connector ->detect hook.
++ */
++bool drm_kms_helper_is_poll_worker(void)
++{
++	struct work_struct *work = current_work();
++
++	return work && work->func == output_poll_execute;
++}
++EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
++
++/**
+  * drm_kms_helper_poll_disable - disable output polling
+  * @dev: drm_device
+  *
+--- a/include/drm/drm_crtc_helper.h
++++ b/include/drm/drm_crtc_helper.h
+@@ -77,5 +77,6 @@ void drm_kms_helper_hotplug_event(struct
+ 
+ void drm_kms_helper_poll_disable(struct drm_device *dev);
+ void drm_kms_helper_poll_enable(struct drm_device *dev);
++bool drm_kms_helper_is_poll_worker(void);
+ 
+ #endif
