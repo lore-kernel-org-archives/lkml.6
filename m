@@ -1,81 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeCMOVy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:21:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:39038 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751740AbeCMOVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:21:52 -0400
-Subject: Re: [3/3] irqchip/gic-v3: Bounds check redistributor accesses
-To: Lokesh Vutla <lokeshvutla@ti.com>,
-        Punit Agrawal <punit.agrawal@arm.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, "Menon, Nishanth" <nm@ti.com>
-References: <20171011094148.15674-4-punit.agrawal@arm.com>
- <28f9c1cd-e1df-f4db-32b4-c9ca0f0f256a@ti.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <8366ba39-a5a1-7734-752e-f3dce18e8007@arm.com>
-Date: Tue, 13 Mar 2018 14:21:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932572AbeCMOX7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:23:59 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30155 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752279AbeCMOXz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:23:55 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <jic23@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <benjamin.gaignard@linaro.org>, <arnaud.pouliquen@st.com>
+Subject: [PATCH 1/2] iio: adc: stm32-dfsdm: fix successive oversampling settings
+Date: Tue, 13 Mar 2018 15:23:05 +0100
+Message-ID: <1520950986-23116-2-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520950986-23116-1-git-send-email-fabrice.gasnier@st.com>
+References: <1520950986-23116-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <28f9c1cd-e1df-f4db-32b4-c9ca0f0f256a@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lokesh,
+When doing successive oversampling settings, it may fail to update filter
+parameters silently:
+- First time oversampling is being set, it will be successful, as fl->res
+is 0 initially.
+- Next attempts with various oversamp value may return 0 (success), but
+keep previous filter parameters, due to 'res' never reaches above or
+equal current 'fl->res'.
 
-On 13/03/18 13:38, Lokesh Vutla wrote:
-> Hi All,
-> 
-> On Wednesday 11 October 2017 03:11 PM, Punit Agrawal wrote:
->> The kernel crashes while iterating over a redistributor that is
->> in-correctly sized by the platform firmware or doesn't contain the last
->> record.
->>
->> Prevent the crash by checking accesses against the size of the region
->> provided by the firmware. While we are at it, warn the user about
->> incorrect region size.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> Sorry to bring up an old thread. Just wanted to check what is the status
-> on this series.
+This is particularly true when setting sampling frequency (that relies on
+oversamp). Typical failure without error:
+- run 1st test @16kHz samp freq will succeed
+- run new test @8kHz will succeed as well
+- run new test @16kHz (again): sample rate will remain 8kHz without error
 
-So far, I wasn't inclined to merge it, as it only allowed you to detect
-a broken system, as opposed to help with a working one.
+Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
 
-> This will also be useful when we try to boot linux + hypervisor with
-> less number of cores than the SoC supports. For example:
-> - SoC has 4 cores and Linux tries to boot with 2 cores.
-> - then a type-2 hypervisor gets installed.
-> - Hypervisor tries to boot a VM with linux on core 1.
-> 
-> Now the VM boot will fail while it iterates over all the GICR regions
-> till GICR_TYPER is found. Hypervisor will trap any accesses to GICR
-> regions of any invalid cpus(cpu 2, cpu 3 in this case).
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/iio/adc/stm32-dfsdm-adc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It you're passing the redistributors to a guest, you're doing something
-terribly wrong. You're putting the guest in a position to do a DoS on
-the hypervisor (disabling its timer interrupt, for example). Not the
-greatest move. There is a number of other gotchas with this approach
-(virtual interrupts, distributor virtualization...).
-
-> If the $patch is not the right approach, can you suggest on how to
-> handle the above scenario?
-
-The proper way to handle this is to virtualize the distributor and
-redistributor by trap/emulate. The only thing you can safely pass to a
-guest is the CPU interface, either as system registers or in its MMIO
-form (if you have the GICv2 compatibility interface).
-
-Thanks,
-
-	M.
+diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+index 01422d1..dc911b6 100644
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -144,6 +144,7 @@ static int stm32_dfsdm_set_osrs(struct stm32_dfsdm_filter *fl,
+ 	 * Leave as soon as if exact resolution if reached.
+ 	 * Otherwise the higher resolution below 32 bits is kept.
+ 	 */
++	fl->res = 0;
+ 	for (fosr = 1; fosr <= DFSDM_MAX_FL_OVERSAMPLING; fosr++) {
+ 		for (iosr = 1; iosr <= DFSDM_MAX_INT_OVERSAMPLING; iosr++) {
+ 			if (fast)
+@@ -193,7 +194,7 @@ static int stm32_dfsdm_set_osrs(struct stm32_dfsdm_filter *fl,
+ 		}
+ 	}
+ 
+-	if (!fl->fosr)
++	if (!fl->res)
+ 		return -EINVAL;
+ 
+ 	return 0;
 -- 
-Jazz is not dead. It just smells funny...
+1.9.1
