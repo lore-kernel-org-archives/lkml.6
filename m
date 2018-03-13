@@ -1,419 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934215AbeCMQKn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:10:43 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38207 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933466AbeCMQKk (ORCPT
+        id S934135AbeCMQMk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:12:40 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52158 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932850AbeCMQMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:10:40 -0400
-X-Google-Smtp-Source: AG47ELufUf/jLUUUv15ANi6KzrfJZQHMwn/uHc7xR4xn+jYVothCz/UJHrYU3TK+PjnOtmRmWXsJTA==
-Date: Tue, 13 Mar 2018 17:10:35 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel@lists.freedesktop.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180313161035.GL4788@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com>
+        Tue, 13 Mar 2018 12:12:36 -0400
+X-Google-Smtp-Source: AG47ELuzBSGSzS1ecfQaxs7avY6D9sFqUxP3WL2LKwocv7wkSZQEz76yEo7wh5MRFGzBlmq+01+XqQgKDb3dd9yPSD4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180313154826.20436-1-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180313135314.18780-3-alexander.sverdlin@nokia.com>
+References: <20180313135314.18780-1-alexander.sverdlin@nokia.com> <20180313135314.18780-3-alexander.sverdlin@nokia.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Tue, 13 Mar 2018 16:12:34 +0000
+Message-ID: <CAKv+Gu-g+2y6Ej0cvLcz0R571HAnj2VXXDF0agWizDzReYMymg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] ARM: ftrace: Add MODULE_PLTS support
+To: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 04:48:26PM +0100, Gerd Hoffmann wrote:
-> A driver to let userspace turn iovecs into dma-bufs.
-> 
-> Use case:  Allows qemu pass around dmabufs for the guest framebuffer.
-> https://www.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf has an
-> experimental patch.
-> 
-> Also allows qemu to export guest virtio-gpu resources as host dmabufs.
-> Should be possible to use it to display guest wayland windows on the
-> host display server.  virtio-gpu ressources can be chunked so we will
-> actually need multiple iovec entries.  UNTESTED.
-> 
-> Want collect some feedback on the general approach with this RfC series.
-> Can this work?  If not, better ideas?
-> 
-> Question:  Must this be hooked into some kind of mlock accounting, to
-> limit the amout of memory userspace is allowed to pin this way?  Or will
-> get_user_pages_fast() handle that for me?
-
-Either mlock account (because it's mlocked defacto), and get_user_pages
-won't do that for you.
-
-Or you write the full-blown userptr implementation, including mmu_notifier
-support (see i915 or amdgpu), but that also requires Christian Königs
-latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
-buffers is a no-go).
-
-> 
-> Known issue:  Driver API isn't complete yet.  Need add some flags, for
-> example to support read-only buffers.
-
-dma-buf has no concept of read-only. I don't think we can even enforce
-that (not many iommus can enforce this iirc), so pretty much need to
-require r/w memory.
-
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-
-btw there's also the hyperdmabuf stuff from the xen folks, but imo their
-solution of forwarding the entire dma-buf api is over the top. This here
-looks _much_ better, pls cc all the hyperdmabuf people on your next
-version.
-
-Overall I like the idea, but too lazy to review. Can maybe be bribed :-)
-
-Oh, some kselftests for this stuff would be lovely.
--Daniel
+On 13 March 2018 at 13:53, Alexander Sverdlin
+<alexander.sverdlin@nokia.com> wrote:
+> Teach ftrace_make_call() and ftrace_make_nop() about PLTs.
+> Teach PLT code about FTRACE and all its callbacks.
+> Otherwise the following might happen:
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 14 PID: 2265 at .../arch/arm/kernel/insn.c:14 __arm_gen_branch+0x83/0x8c()
+> ...
+> Hardware name: LSI Axxia AXM55XX
+> [<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
+> [<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
+> [<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
+> [<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
+> [<c03218f3>] (warn_slowpath_null) from [<c03143cf>] (__arm_gen_branch+0x83/0x8c)
+> [<c03143cf>] (__arm_gen_branch) from [<c0314337>] (ftrace_make_nop+0xf/0x24)
+> [<c0314337>] (ftrace_make_nop) from [<c038ebcb>] (ftrace_process_locs+0x27b/0x3e8)
+> [<c038ebcb>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
+> [<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
+> [<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
+> ---[ end trace e1b64ced7a89adcc ]---
+> ------------[ cut here ]------------
+> WARNING: CPU: 14 PID: 2265 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1b1/0x234()
+> ...
+> Hardware name: LSI Axxia AXM55XX
+> [<c0314a49>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
+> [<c03115e9>] (show_stack) from [<c0519f51>] (dump_stack+0x81/0xa8)
+> [<c0519f51>] (dump_stack) from [<c032185d>] (warn_slowpath_common+0x69/0x90)
+> [<c032185d>] (warn_slowpath_common) from [<c03218f3>] (warn_slowpath_null+0x17/0x1c)
+> [<c03218f3>] (warn_slowpath_null) from [<c038e87d>] (ftrace_bug+0x1b1/0x234)
+> [<c038e87d>] (ftrace_bug) from [<c038ebd5>] (ftrace_process_locs+0x285/0x3e8)
+> [<c038ebd5>] (ftrace_process_locs) from [<c0378d79>] (load_module+0x11e9/0x1a44)
+> [<c0378d79>] (load_module) from [<c037974d>] (SyS_finit_module+0x59/0x84)
+> [<c037974d>] (SyS_finit_module) from [<c030e981>] (ret_fast_syscall+0x1/0x18)
+> ---[ end trace e1b64ced7a89adcd ]---
+> ftrace failed to modify [<e9ef7006>] 0xe9ef7006
+> actual: 02:f0:3b:fa
+> ftrace record flags: 0
+> (0) expected tramp: c0314265
+>
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 > ---
->  include/uapi/linux/udmabuf.h |  21 ++++
->  drivers/dma-buf/udmabuf.c    | 250 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/dma-buf/Kconfig      |   7 ++
->  drivers/dma-buf/Makefile     |   1 +
->  4 files changed, 279 insertions(+)
->  create mode 100644 include/uapi/linux/udmabuf.h
->  create mode 100644 drivers/dma-buf/udmabuf.c
-> 
-> diff --git a/include/uapi/linux/udmabuf.h b/include/uapi/linux/udmabuf.h
-> new file mode 100644
-> index 0000000000..fd2fa441fe
-> --- /dev/null
-> +++ b/include/uapi/linux/udmabuf.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_UDMABUF_H
-> +#define _UAPI_LINUX_UDMABUF_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +struct udmabuf_iovec {
-> +	__u64 base;
-> +	__u64 len;
+>  arch/arm/include/asm/ftrace.h |  3 +++
+>  arch/arm/include/asm/module.h |  1 +
+>  arch/arm/kernel/ftrace.c      | 62 ++++++++++++++++++++++++++++++++++++-------
+>  arch/arm/kernel/module-plts.c | 47 +++++++++++++++++++++++++++++---
+>  4 files changed, 100 insertions(+), 13 deletions(-)
+>
+...
+> diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
+> index f272711..0951270 100644
+> --- a/arch/arm/kernel/module-plts.c
+> +++ b/arch/arm/kernel/module-plts.c
+> @@ -7,6 +7,7 @@
+>   */
+>
+>  #include <linux/elf.h>
+> +#include <linux/ftrace.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/sort.h>
+> @@ -22,18 +23,54 @@
+>                                                     (PLT_ENT_STRIDE - 8))
+>  #endif
+>
+> +static const u32 fixed_plts[] = {
+> +#ifdef CONFIG_FUNCTION_TRACER
+> +       FTRACE_ADDR,
+> +       MCOUNT_ADDR,
+> +#ifdef CONFIG_OLD_MCOUNT
+> +       (unsigned long)ftrace_caller_old,
+> +       (unsigned long)mcount,
+> +#endif
+> +#endif
 > +};
 > +
-> +struct udmabuf_create {
-> +	__u32 flags;
-> +	__u32 niov;
-> +	struct udmabuf_iovec iovs[];
-> +};
-> +
-> +#define UDMABUF_CREATE _IOW(0x42, 0x23, struct udmabuf_create)
-> +
-> +#endif /* _UAPI_LINUX_UDMABUF_H */
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> new file mode 100644
-> index 0000000000..ec012d7ac7
-> --- /dev/null
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -0,0 +1,250 @@
-> +/*
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/dma-buf.h>
-> +#include <linux/highmem.h>
-> +
-> +#include <uapi/linux/udmabuf.h>
-> +
-> +struct udmabuf {
-> +	u32 pagecount;
-> +	struct page **pages;
-> +};
-> +
-> +static int udmabuf_vm_fault(struct vm_fault *vmf)
+>  static bool in_init(const struct module *mod, unsigned long loc)
+>  {
+>         return loc - (u32)mod->init_layout.base < mod->init_layout.size;
+>  }
+>
+> +static void prealloc_fixed(struct mod_plt_sec *pltsec, struct plt_entries *plt)
 > +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +	struct udmabuf *ubuf = vma->vm_private_data;
+> +       int i;
 > +
-> +	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
-> +		return VM_FAULT_SIGBUS;
+> +       if (!ARRAY_SIZE(fixed_plts))
+> +               return;
 > +
-> +	vmf->page = ubuf->pages[vmf->pgoff];
-> +	get_page(vmf->page);
-> +	return 0;
-> +}
-> +
-> +static const struct vm_operations_struct udmabuf_vm_ops = {
-> +	.fault = udmabuf_vm_fault,
-> +};
-> +
-> +static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
-> +{
-> +	struct udmabuf *ubuf = buf->priv;
-> +
-> +	if ((vma->vm_flags & VM_SHARED) == 0)
-> +		return -EINVAL;
-> +
-> +	vma->vm_ops = &udmabuf_vm_ops;
-> +	vma->vm_private_data = ubuf;
-> +	return 0;
-> +}
-> +
-> +static struct sg_table *map_udmabuf(struct dma_buf_attachment *at,
-> +				    enum dma_data_direction direction)
-> +{
-> +	struct udmabuf *ubuf = at->dmabuf->priv;
-> +	struct sg_table *sg;
-> +
-> +	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
-> +	if (!sg)
-> +		goto err1;
-> +	if (sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->pagecount,
-> +				      0, ubuf->pagecount << PAGE_SHIFT,
-> +				      GFP_KERNEL) < 0)
-> +		goto err2;
-> +	if (!dma_map_sg(at->dev, sg->sgl, sg->nents, direction))
-> +		goto err3;
-> +
-> +	return sg;
-> +
-> +err3:
-> +	sg_free_table(sg);
-> +err2:
-> +	kfree(sg);
-> +err1:
-> +	return ERR_PTR(-ENOMEM);
-> +}
-> +
-> +static void unmap_udmabuf(struct dma_buf_attachment *at,
-> +			  struct sg_table *sg,
-> +			  enum dma_data_direction direction)
-> +{
-> +	sg_free_table(sg);
-> +	kfree(sg);
-> +}
-> +
-> +static void release_udmabuf(struct dma_buf *buf)
-> +{
-> +	struct udmabuf *ubuf = buf->priv;
-> +	pgoff_t pg;
-> +
-> +	for (pg = 0; pg < ubuf->pagecount; pg++)
-> +		put_page(ubuf->pages[pg]);
-> +	kfree(ubuf->pages);
-> +	kfree(ubuf);
-> +}
-> +
-> +static void *kmap_atomic_udmabuf(struct dma_buf *buf, unsigned long offset)
-> +{
-> +	struct udmabuf *ubuf = buf->priv;
-> +	struct page *page = ubuf->pages[offset >> PAGE_SHIFT];
-> +
-> +	return kmap_atomic(page);
-> +}
-> +
-> +static void *kmap_udmabuf(struct dma_buf *buf, unsigned long offset)
-> +{
-> +	struct udmabuf *ubuf = buf->priv;
-> +	struct page *page = ubuf->pages[offset >> PAGE_SHIFT];
-> +
-> +	return kmap(page);
-> +}
-> +
-> +static struct dma_buf_ops udmabuf_ops = {
-> +	.map_dma_buf	  = map_udmabuf,
-> +	.unmap_dma_buf	  = unmap_udmabuf,
-> +	.release	  = release_udmabuf,
-> +	.map_atomic	  = kmap_atomic_udmabuf,
-> +	.map		  = kmap_udmabuf,
-> +	.mmap		  = mmap_udmabuf,
-> +};
-> +
-> +static long udmabuf_ioctl_create(struct file *filp, unsigned long arg)
-> +{
-> +	struct udmabuf_create create;
-> +	struct udmabuf_iovec *iovs;
-> +	struct udmabuf *ubuf;
-> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-> +	struct dma_buf *buf;
-> +	pgoff_t pgoff, pgcnt;
-> +	u32 iov;
-> +	int ret;
-> +
-> +	if (copy_from_user(&create, (void __user *)arg,
-> +			   sizeof(struct udmabuf_create)))
-> +		return -EFAULT;
-> +
-> +	iovs = kmalloc_array(create.niov, sizeof(struct udmabuf_iovec),
-> +			     GFP_KERNEL);
-> +	if (!iovs)
-> +		return -ENOMEM;
-> +
-> +	arg += offsetof(struct udmabuf_create, iovs);
-> +	ret = -EFAULT;
-> +	if (copy_from_user(iovs, (void __user *)arg,
-> +			   create.niov * sizeof(struct udmabuf_iovec)))
-> +		goto err_free_iovs;
-> +
-> +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
-> +	if (!ubuf)
-> +		goto err_free_iovs;
-> +
-> +	ret = -EINVAL;
-> +	for (iov = 0; iov < create.niov; iov++) {
-> +		if (!IS_ALIGNED(iovs[iov].base, PAGE_SIZE))
-> +			goto err_free_iovs;
-> +		if (!IS_ALIGNED(iovs[iov].len, PAGE_SIZE))
-> +			goto err_free_iovs;
-> +		ubuf->pagecount += iovs[iov].len >> PAGE_SHIFT;
-> +	}
-> +
-> +	ret = -ENOMEM;
-> +	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page*),
-> +				    GFP_KERNEL);
-> +	if (!ubuf->pages)
-> +		goto err_free_buf;
-> +
-> +	pgoff = 0;
-> +	for (iov = 0; iov < create.niov; iov++) {
-> +		pgcnt = iovs[iov].len >> PAGE_SHIFT;
-> +		while (pgcnt > 0) {
-> +			ret = get_user_pages_fast(iovs[iov].base, pgcnt,
-> +						  true, /* write */
-> +						  ubuf->pages + pgoff);
-> +			if (ret < 0)
-> +				goto err_put_pages;
-> +			pgoff += ret;
-> +			pgcnt -= ret;
-> +		}
-> +	}
-> +
-> +	exp_info.ops  = &udmabuf_ops;
-> +	exp_info.size = ubuf->pagecount << PAGE_SHIFT;
-> +	exp_info.priv = ubuf;
-> +
-> +	buf = dma_buf_export(&exp_info);
-> +	if (IS_ERR(buf)) {
-> +		ret = PTR_ERR(buf);
-> +		goto err_put_pages;
-> +	}
-> +
-> +	kfree(iovs);
-> +	return dma_buf_fd(buf, 0);
-> +
-> +err_put_pages:
-> +	while (pgoff > 0)
-> +		put_page(ubuf->pages[--pgoff]);
-> +err_free_buf:
-> +	kfree(ubuf->pages);
-> +	kfree(ubuf);
-> +err_free_iovs:
-> +	kfree(iovs);
-> +	return ret;
-> +}
-> +
-> +static long udmabuf_ioctl(struct file *filp, unsigned int ioctl,
-> +				  unsigned long arg)
-> +{
-> +	long ret;
-> +
-> +	switch (ioctl) {
-> +	case UDMABUF_CREATE:
-> +		ret = udmabuf_ioctl_create(filp, arg);
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations udmabuf_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.unlocked_ioctl = udmabuf_ioctl,
-> +};
-> +
-> +static struct miscdevice udmabuf_misc = {
-> +	.minor          = MISC_DYNAMIC_MINOR,
-> +	.name           = "udmabuf",
-> +	.fops           = &udmabuf_fops,
-> +};
-> +
-> +static int __init udmabuf_dev_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = misc_register(&udmabuf_misc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static void __exit udmabuf_dev_exit(void)
-> +{
-> +	misc_deregister(&udmabuf_misc);
-> +}
-> +
-> +module_init(udmabuf_dev_init)
-> +module_exit(udmabuf_dev_exit)
-> +
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-> index ed3b785bae..5876b52554 100644
-> --- a/drivers/dma-buf/Kconfig
-> +++ b/drivers/dma-buf/Kconfig
-> @@ -30,4 +30,11 @@ config SW_SYNC
->  	  WARNING: improper use of this can result in deadlocking kernel
->  	  drivers from userspace. Intended for test and debug only.
->  
-> +config UDMABUF
-> +	tristate "userspace dmabuf misc driver"
-> +	default n
-> +	depends on DMA_SHARED_BUFFER
-> +	---help---
-> +	  A driver to let userspace turn iovs into dma-bufs.
-> +
->  endmenu
-> diff --git a/drivers/dma-buf/Makefile b/drivers/dma-buf/Makefile
-> index c33bf88631..0913a6ccab 100644
-> --- a/drivers/dma-buf/Makefile
-> +++ b/drivers/dma-buf/Makefile
-> @@ -1,3 +1,4 @@
->  obj-y := dma-buf.o dma-fence.o dma-fence-array.o reservation.o seqno-fence.o
->  obj-$(CONFIG_SYNC_FILE)		+= sync_file.o
->  obj-$(CONFIG_SW_SYNC)		+= sw_sync.o sync_debug.o
-> +obj-$(CONFIG_UDMABUF)		+= udmabuf.o
-> -- 
-> 2.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> +       for (i = 0; i < ARRAY_SIZE(plt->ldr); ++i)
+> +               plt->ldr[i] = PLT_ENT_LDR;
+> +       memcpy(plt->lit, fixed_plts, sizeof(fixed_plts));
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+This is slightly dodgy. You are assuming that sizeof(plt->lit) >=
+sizeof(fixed_plts), which may change depending on configuration or
+future changes.
+
+Could you add a BUILD_BUG_ON() here to ensure that this remains the case?
+
+> +       pltsec->plt_count = ARRAY_SIZE(fixed_plts);
+> +}
+> +
+>  u32 get_module_plt(struct module *mod, unsigned long loc, Elf32_Addr val)
+>  {
+>         struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+>                                                           &mod->arch.init;
+> +       struct plt_entries *plt;
+> +       int idx;
+>
+> -       struct plt_entries *plt = (struct plt_entries *)pltsec->plt->sh_addr;
+> -       int idx = 0;
+> +       /* cache the address, ELF header is available only during module load */
+> +       if (!pltsec->plt_ent)
+> +               pltsec->plt_ent = (struct plt_entries *)pltsec->plt->sh_addr;
+> +       plt = pltsec->plt_ent;
+> +
+
+Where is plt_ent ever used?
+
+> +       if (!pltsec->plt_count)
+> +               prealloc_fixed(pltsec, plt);
+> +
+
+Please move the if () check into prealloc_fixed(), and only keep the loop below
+
+
+> +       idx = ARRAY_SIZE(fixed_plts);
+> +       while (idx)
+> +               if (plt->lit[--idx] == val)
+> +                       return (u32)&plt->ldr[idx];
+
+Please use a normal for loop here and iterate upward starting at 0
+
+
+>
+>         /*
+>          * Look for an existing entry pointing to 'val'. Given that the
+> @@ -182,8 +219,8 @@ static unsigned int count_plts(const Elf32_Sym *syms, Elf32_Addr base,
+>  int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>                               char *secstrings, struct module *mod)
+>  {
+> -       unsigned long core_plts = 0;
+> -       unsigned long init_plts = 0;
+> +       unsigned long core_plts = ARRAY_SIZE(fixed_plts);
+> +       unsigned long init_plts = ARRAY_SIZE(fixed_plts);
+>         Elf32_Shdr *s, *sechdrs_end = sechdrs + ehdr->e_shnum;
+>         Elf32_Sym *syms = NULL;
+>
+> @@ -238,6 +275,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>         mod->arch.core.plt->sh_size = round_up(core_plts * PLT_ENT_SIZE,
+>                                                sizeof(struct plt_entries));
+>         mod->arch.core.plt_count = 0;
+> +       mod->arch.core.plt_ent = NULL;
+>
+>         mod->arch.init.plt->sh_type = SHT_NOBITS;
+>         mod->arch.init.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> @@ -245,6 +283,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>         mod->arch.init.plt->sh_size = round_up(init_plts * PLT_ENT_SIZE,
+>                                                sizeof(struct plt_entries));
+>         mod->arch.init.plt_count = 0;
+> +       mod->arch.init.plt_ent = NULL;
+>
+>         pr_debug("%s: plt=%x, init.plt=%x\n", __func__,
+>                  mod->arch.core.plt->sh_size, mod->arch.init.plt->sh_size);
+> --
+> 2.4.6
+>
