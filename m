@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuEL5PH1g2QbhdnrFJVcFZvIcBxMFxyBvfPUdWGyWmbRELiZXX9qGpOOvIHjDjt3Y4+4gqI
-ARC-Seal: i=1; a=rsa-sha256; t=1520955216; cv=none;
+X-Google-Smtp-Source: AG47ELvRP/5iPW5dcNiV830Qw3d4nB9dRW6QkBSLu26i5mSvuy5j4bPzexuhx/Qnir6CF8R5GOm+
+ARC-Seal: i=1; a=rsa-sha256; t=1520955213; cv=none;
         d=google.com; s=arc-20160816;
-        b=a59v3sZmi1rnrI0BkCBY1HYDfOH5l0JIp5djVYqm2mQ6zVQ+jMhwacBrsTQ65Na6Ke
-         wReAJI2LXV2K4Ru/3f+rTdKLWRfEzn5+Pr1pEMqyhqn+9AxeLgxKMQvZoTNv3jN2rXmD
-         TO4WhdgJ3JXDHefdNjvOnyeAO/Rrei3OBNNIsR9q8k6uHm6oAjx+FtEQQdsgHukkG8Z3
-         WTRP6uEbBRWuiIzKXhQg/oYse5QsGPwfQr8H+muOdo2uBcPk0OltZao5nGStxRfFCPci
-         OZ2WG+UQrRkfqvPZUhTcH66YMo9wEZY94Ng5HJYq3vdo3e7P1qMqmezo8/QiBzxnI1tR
-         7/YQ==
+        b=KELcddmv3/WovxxaBOWkmQWBlIxoCa1qbBMhQhSzk9n8JADUV+McRkIGd5l2QcIdtL
+         rBBxfuclFuT7OTihqhfbb7NrZ6qwN5No9YoW06SICT2OrrZ6q6PZJTxPn93xIGqkje96
+         097DcCECVJotVFQe3+gClvAC3H5phwS7sevMNh460zZma0+M4p9xgubNXfwrnDBB/OoZ
+         +tY282iyoeF6WusgqVRIhECExzioaA03tT3J7kdi5cr53Z+5fgOCZOGw0XyWsnGeevvJ
+         kFAn/t+Yp75qE8HttZI2x4SVhTRxpClwRzHkalLDJZe8l8QzSp8/zRiMEC+zEkNNJZUn
+         VAzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Rok51aOSWl2qk0gzhjMnt1NPOXRFgH8ojcNyLTIsoHA=;
-        b=n10ecgHnLN9mS7Re0vR6orCgSA5LrzjFbWvJasMGau/tfw8wNdJJI7y8HFG7Bl6Rro
-         r6PeSDYXuQoi9pB5sS8E38aoRopcq/gFwP46Il2uLOn7Le68SHoaiOZQTcqkIfxc/V0C
-         9S+8bcZ0u/a8litlrFiekDVbz2+mkqIasLskFKrmD5PQOcFNTKBiA50W1voQPwPbINuL
-         1rUfEI/Kkr8UCUmAlTM/3q2EPBsNAcrRS65Kxejd1fkhZRLhxZio7gtMA+kdjYNha8wS
-         weiqWSeHHY0201ftCHSaCH2ZMycnLFF5ZaQiDONCoTG6n+pD8qh+74US6gqSM2EyyQ0v
-         /1Hw==
+        bh=yl8VZ4sY+5/BXnxtAhsnMs2pKS4007E2ZL0CD7gPI6E=;
+        b=JmsoM5BfB/SS1BFAcHAb1wynIr1GRdnIIAIGi/yDb5FHpJLDgMNWJEBQVh916cw0Fh
+         6G7KDZz08U/1pAnASz2S5v8yZk3EQ3uXxC3+js+KPI+7u0gQZG3t7jrPd4nvqpS/4+j0
+         1xntK7kg6M9pXR/BX3UrtCFHW9vlADyXGmqb33NN6dz1Ja2J7zwzPYuiO8PUnO615kko
+         iaCCpr4qoyXZOtIuSZzYRkOMRDR1mwQvqUUYY1zWYtf37QKGCWyO6PalNPRAVPezkG1Y
+         k9JNb/wauFELkvmMLY6uuUb2yuLqQhmwzGFQRMetgHlkCN9ytXvYKG2lLH5p4hg1RKb3
+         nyQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Francis Deslauriers <francis.deslauriers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	Sven Joachim <svenjoac@gmx.de>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	mathieu.desnoyers@efficios.com,
-	mhiramat@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 103/146] x86/kprobes: Fix kernel crash when probing .entry_trampoline code
-Date: Tue, 13 Mar 2018 16:24:30 +0100
-Message-Id: <20180313152328.429220906@linuxfoundation.org>
+Subject: [PATCH 4.15 102/146] objtool: Fix 32-bit build
+Date: Tue, 13 Mar 2018 16:24:29 +0100
+Message-Id: <20180313152328.377728392@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -51,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837137341636186?=
-X-GMAIL-MSGID: =?utf-8?q?1594837137341636186?=
+X-GMAIL-THRID: =?utf-8?q?1594837134351255647?=
+X-GMAIL-MSGID: =?utf-8?q?1594837134351255647?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,94 +53,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Francis Deslauriers <francis.deslauriers@efficios.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit c07a8f8b08ba683ea24f3ac9159f37ae94daf47f upstream.
+commit 63474dc4ac7ed3848a4786b9592dd061901f606d upstream.
 
-Disable the kprobe probing of the entry trampoline:
+Fix the objtool build when cross-compiling a 64-bit kernel on a 32-bit
+host.  This also simplifies read_retpoline_hints() a bit and makes its
+implementation similar to most of the other annotation reading
+functions.
 
-.entry_trampoline is a code area that is used to ensure page table
-isolation between userspace and kernelspace.
-
-At the beginning of the execution of the trampoline, we load the
-kernel's CR3 register. This has the effect of enabling the translation
-of the kernel virtual addresses to physical addresses. Before this
-happens most kernel addresses can not be translated because the running
-process' CR3 is still used.
-
-If a kprobe is placed on the trampoline code before that change of the
-CR3 register happens the kernel crashes because int3 handling pages are
-not accessible.
-
-To fix this, add the .entry_trampoline section to the kprobe blacklist
-to prohibit the probing of code before all the kernel pages are
-accessible.
-
-Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Reported-by: Sven Joachim <svenjoac@gmx.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: mathieu.desnoyers@efficios.com
-Cc: mhiramat@kernel.org
-Link: http://lkml.kernel.org/r/1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: b5bc2231b8ad ("objtool: Add retpoline validation")
+Link: http://lkml.kernel.org/r/2ca46c636c23aa9c9d57d53c75de4ee3ddf7a7df.1520380691.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/sections.h |    1 +
- arch/x86/kernel/kprobes/core.c  |   10 +++++++++-
- arch/x86/kernel/vmlinux.lds.S   |    2 ++
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ tools/objtool/check.c |   27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
---- a/arch/x86/include/asm/sections.h
-+++ b/arch/x86/include/asm/sections.h
-@@ -10,6 +10,7 @@ extern struct exception_table_entry __st
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1115,42 +1115,29 @@ static int read_unwind_hints(struct objt
  
- #if defined(CONFIG_X86_64)
- extern char __end_rodata_hpage_align[];
-+extern char __entry_trampoline_start[], __entry_trampoline_end[];
- #endif
- 
- #endif	/* _ASM_X86_SECTIONS_H */
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -1168,10 +1168,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
- 
- bool arch_within_kprobe_blacklist(unsigned long addr)
+ static int read_retpoline_hints(struct objtool_file *file)
  {
-+	bool is_in_entry_trampoline_section = false;
-+
-+#ifdef CONFIG_X86_64
-+	is_in_entry_trampoline_section =
-+		(addr >= (unsigned long)__entry_trampoline_start &&
-+		 addr < (unsigned long)__entry_trampoline_end);
-+#endif
- 	return  (addr >= (unsigned long)__kprobes_text_start &&
- 		 addr < (unsigned long)__kprobes_text_end) ||
- 		(addr >= (unsigned long)__entry_text_start &&
--		 addr < (unsigned long)__entry_text_end);
-+		 addr < (unsigned long)__entry_text_end) ||
-+		is_in_entry_trampoline_section;
- }
+-	struct section *sec, *relasec;
++	struct section *sec;
+ 	struct instruction *insn;
+ 	struct rela *rela;
+-	int i;
  
- int __init arch_init_kprobes(void)
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -118,9 +118,11 @@ SECTIONS
+-	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
++	sec = find_section_by_name(file->elf, ".rela.discard.retpoline_safe");
+ 	if (!sec)
+ 		return 0;
  
- #ifdef CONFIG_X86_64
- 		. = ALIGN(PAGE_SIZE);
-+		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
- 		_entry_trampoline = .;
- 		*(.entry_trampoline)
- 		. = ALIGN(PAGE_SIZE);
-+		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
- 		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
- #endif
+-	relasec = sec->rela;
+-	if (!relasec) {
+-		WARN("missing .rela.discard.retpoline_safe section");
+-		return -1;
+-	}
+-
+-	if (sec->len % sizeof(unsigned long)) {
+-		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
+-		return -1;
+-	}
+-
+-	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
+-		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
+-		if (!rela) {
+-			WARN("can't find rela for retpoline_safe[%d]", i);
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
+ 			return -1;
+ 		}
  
+ 		insn = find_insn(file, rela->sym->sec, rela->addend);
+ 		if (!insn) {
+-			WARN("can't find insn for retpoline_safe[%d]", i);
++			WARN("bad .discard.retpoline_safe entry");
+ 			return -1;
+ 		}
+ 
+ 		if (insn->type != INSN_JUMP_DYNAMIC &&
+ 		    insn->type != INSN_CALL_DYNAMIC) {
+-			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
++			WARN_FUNC("retpoline_safe hint not an indirect jump/call",
+ 				  insn->sec, insn->offset);
+ 			return -1;
+ 		}
