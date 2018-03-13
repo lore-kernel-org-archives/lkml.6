@@ -1,136 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934002AbeCMQV3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:21:29 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43462 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933946AbeCMQVY (ORCPT
+        id S933952AbeCMQVn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:21:43 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35450 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933487AbeCMQVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:21:24 -0400
-X-Google-Smtp-Source: AG47ELu4w+ejLGTQlv+hvBodVjHZqx3OU+hNUO640mUShkM0rN+aR2IdpNYhBxBfxzWQXsKDOguHZg==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH RESEND v2 2/2] drm/xen-front: Provide kernel documentation
-Date: Tue, 13 Mar 2018 18:21:06 +0200
-Message-Id: <1520958066-22875-3-git-send-email-andr2000@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
-References: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
+        Tue, 13 Mar 2018 12:21:39 -0400
+X-Google-Smtp-Source: AG47ELuPBWAtR82/rs524j1n/qopr2w6lG+BduvUeKMO2P1TpV3PlTT02/3nvRggZUnu3rKrMR1vhQ==
+Message-ID: <1520958095.2686.0.camel@arista.com>
+Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
+From: Dmitry Safonov <dima@arista.com>
+To: linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
+Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Date: Tue, 13 Mar 2018 16:21:35 +0000
+In-Reply-To: <1520262026.2743.4.camel@arista.com>
+References: <20180215191729.15777-1-dima@arista.com>
+         <1520262026.2743.4.camel@arista.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Gentle ping?
 
-Provide kernel documentation for the Xen para-virtualized
-frontend DRM driver.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- Documentation/gpu/index.rst     |  1 +
- Documentation/gpu/xen-front.rst | 77 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 Documentation/gpu/xen-front.rst
-
-diff --git a/Documentation/gpu/index.rst b/Documentation/gpu/index.rst
-index c36586dad29d..e31684af0a20 100644
---- a/Documentation/gpu/index.rst
-+++ b/Documentation/gpu/index.rst
-@@ -20,6 +20,7 @@ Linux GPU Driver Developer's Guide
-    vga-switcheroo
-    vgaarbiter
-    bridge/dw-hdmi
-+   xen-front
-    todo
- 
- .. only::  subproject and html
-diff --git a/Documentation/gpu/xen-front.rst b/Documentation/gpu/xen-front.rst
-new file mode 100644
-index 000000000000..6ac0b75373c4
---- /dev/null
-+++ b/Documentation/gpu/xen-front.rst
-@@ -0,0 +1,77 @@
-+====================================
-+Xen para-virtualized frontend driver
-+====================================
-+This frontend driver implements Xen para-virtualized display
-+according to the display protocol described at
-+include/xen/interface/io/displif.h
-+
-+Driver modes of operation in terms of display buffers used
-+==========================================================
-+
-+Depending on the requirements for the para-virtualized environment, namely
-+requirements dictated by the accompanying DRM/(v)GPU drivers running in both
-+host and guest environments, number of operating modes of para-virtualized
-+display driver are supported:
-+
-+- display buffers can be allocated by either frontend driver or backend
-+- display buffers can be allocated to be contiguous in memory or not
-+
-+Note! Frontend driver itself has no dependency on contiguous memory for
-+its operation.
-+
-+Buffers allocated by the frontend driver
-+----------------------------------------
-+
-+The below modes of operation are configured at compile-time via
-+frontend driver's kernel configuration:
-+
-+With GEM CMA helpers
-+~~~~~~~~~~~~~~~~~~~~
-+ This use-case is useful when used with accompanying DRM/vGPU driver in
-+ guest domain which was designed to only work with contiguous buffers,
-+ e.g. DRM driver based on GEM CMA helpers: such drivers can only import
-+ contiguous PRIME buffers, thus requiring frontend driver to provide
-+ such. In order to implement this mode of operation para-virtualized
-+ frontend driver can be configured to use GEM CMA helpers.
-+
-+Without GEM CMA helpers
-+~~~~~~~~~~~~~~~~~~~~~~~
-+ If accompanying drivers can cope with non-contiguous memory then, to
-+ lower pressure on CMA subsystem of the kernel, driver can allocate
-+ buffers from system memory.
-+
-+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
-+ may require IOMMU support on the platform, so accompanying DRM/vGPU
-+ hardware can still reach display buffer memory while importing PRIME
-+ buffers from the frontend driver.
-+
-+Buffers allocated by the backend
-+--------------------------------
-+
-+This mode of operation is run-time configured via guest domain configuration
-+through XenStore entries.
-+
-+For systems which do not provide IOMMU support, but having specific
-+requirements for display buffers it is possible to allocate such buffers
-+at backend side and share those with the frontend.
-+For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
-+physically contiguous memory, this allows implementing zero-copying
-+use-cases.
-+
-+Note, while using this scenario the following should be considered:
-+
-+#. If guest domain dies then pages/grants received from the backend
-+   cannot be claimed back
-+
-+#. Misbehaving guest may send too many requests to the
-+   backend exhausting its grant references and memory
-+   (consider this from security POV).
-+
-+Driver limitations
-+==================
-+
-+#. Only primary plane without additional properties is supported.
-+
-+#. Only one video mode per connector supported which is configured via XenStore.
-+
-+#. All CRTCs operate at fixed frequency of 60Hz.
--- 
-2.7.4
+On Mon, 2018-03-05 at 15:00 +0000, Dmitry Safonov wrote:
+> Hi Joerg,
+> 
+> What do you think about v3?
+> It looks like, I can solve my softlookups with just a bit more proper
+> ratelimiting..
+> 
+> On Thu, 2018-02-15 at 19:17 +0000, Dmitry Safonov wrote:
+> > There is a ratelimit for printing, but it's incremented each time
+> > the
+> > cpu recives dmar fault interrupt. While one interrupt may signal
+> > about
+> > *many* faults.
+> > So, measuring the impact it turns out that reading/clearing one
+> > fault
+> > takes < 1 usec, and printing info about the fault takes ~170 msec.
+> > 
+> > Having in mind that maximum number of fault recording registers per
+> > remapping hardware unit is 256.. IRQ handler may run for (170*256)
+> > msec.
+> > And as fault-serving loop runs without a time limit, during
+> > servicing
+> > new faults may occur..
+> > 
+> > Ratelimit each fault printing rather than each irq printing.
+> > 
+> > Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
+> > 
+> > BUG: spinlock lockup suspected on CPU#0, CliShell/9903
+> >  lock: 0xffffffff81a47440, .magic: dead4ead, .owner:
+> > kworker/u16:2/8915, .owner_cpu: 6
+> > CPU: 0 PID: 9903 Comm: CliShell
+> > Call Trace:$\n'
+> > [..] dump_stack+0x65/0x83$\n'
+> > [..] spin_dump+0x8f/0x94$\n'
+> > [..] do_raw_spin_lock+0x123/0x170$\n'
+> > [..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
+> > [..] uart_chars_in_buffer+0x20/0x4d$\n'
+> > [..] tty_chars_in_buffer+0x18/0x1d$\n'
+> > [..] n_tty_poll+0x1cb/0x1f2$\n'
+> > [..] tty_poll+0x5e/0x76$\n'
+> > [..] do_select+0x363/0x629$\n'
+> > [..] compat_core_sys_select+0x19e/0x239$\n'
+> > [..] compat_SyS_select+0x98/0xc0$\n'
+> > [..] sysenter_dispatch+0x7/0x25$\n'
+> > [..]
+> > NMI backtrace for cpu 6
+> > CPU: 6 PID: 8915 Comm: kworker/u16:2
+> > Workqueue: dmar_fault dmar_fault_work
+> > Call Trace:$\n'
+> > [..] wait_for_xmitr+0x26/0x8f$\n'
+> > [..] serial8250_console_putchar+0x1c/0x2c$\n'
+> > [..] uart_console_write+0x40/0x4b$\n'
+> > [..] serial8250_console_write+0xe6/0x13f$\n'
+> > [..] call_console_drivers.constprop.13+0xce/0x103$\n'
+> > [..] console_unlock+0x1f8/0x39b$\n'
+> > [..] vprintk_emit+0x39e/0x3e6$\n'
+> > [..] printk+0x4d/0x4f$\n'
+> > [..] dmar_fault+0x1a8/0x1fc$\n'
+> > [..] dmar_fault_work+0x15/0x17$\n'
+> > [..] process_one_work+0x1e8/0x3a9$\n'
+> > [..] worker_thread+0x25d/0x345$\n'
+> > [..] kthread+0xea/0xf2$\n'
+> > [..] ret_from_fork+0x58/0x90$\n'
+> > 
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: David Woodhouse <dwmw2@infradead.org>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Joerg Roedel <joro@8bytes.org>
+> > Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> > Cc: iommu@lists.linux-foundation.org
+> > Signed-off-by: Dmitry Safonov <dima@arista.com>
+> > ---
+> > Maybe it's worth to limit while(1) cycle.
+> > If IOMMU generates faults with equal speed as irq handler cleans
+> > them, it may turn into long-irq-disabled region again.
+> > Not sure if it can happen anyway.
+> > 
+> >  drivers/iommu/dmar.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> > index accf58388bdb..6c4ea32ee6a9 100644
+> > --- a/drivers/iommu/dmar.c
+> > +++ b/drivers/iommu/dmar.c
+> > @@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void
+> > *dev_id)
+> >  	int reg, fault_index;
+> >  	u32 fault_status;
+> >  	unsigned long flag;
+> > -	bool ratelimited;
+> >  	static DEFINE_RATELIMIT_STATE(rs,
+> >  				      DEFAULT_RATELIMIT_INTERVAL,
+> >  				      DEFAULT_RATELIMIT_BURST);
+> >  
+> > -	/* Disable printing, simply clear the fault when
+> > ratelimited
+> > */
+> > -	ratelimited = !__ratelimit(&rs);
+> > -
+> >  	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+> >  	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+> > -	if (fault_status && !ratelimited)
+> > +	if (fault_status && __ratelimit(&rs))
+> >  		pr_err("DRHD: handling fault status reg %x\n",
+> > fault_status);
+> >  
+> >  	/* TBD: ignore advanced fault log currently */
+> > @@ -1638,6 +1634,8 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+> >  	fault_index = dma_fsts_fault_record_index(fault_status);
+> >  	reg = cap_fault_reg_offset(iommu->cap);
+> >  	while (1) {
+> > +		/* Disable printing, simply clear the fault when
+> > ratelimited */
+> > +		bool ratelimited = !__ratelimit(&rs);
+> >  		u8 fault_reason;
+> >  		u16 source_id;
+> >  		u64 guest_addr;
