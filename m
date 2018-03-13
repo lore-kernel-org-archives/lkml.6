@@ -1,149 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeCMTPm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:15:42 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:33097 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbeCMTPk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:15:40 -0400
-X-Google-Smtp-Source: AG47ELtilkxsxTtfcwW+NjMppQ2vuL8BRr1fdaxIBlu9c3JIGG8IlxbB9FSsz1j97MSFpiCkXPaSPg==
-Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, daniel.thompson@linaro.org,
-        linux-pm@vger.kernel.org
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
- <20180223073432.GF26947@vireshk-i7>
- <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
- <20180226043021.GK26947@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a16ade5e-2584-af75-ac60-c352edf1d7ec@linaro.org>
-Date: Tue, 13 Mar 2018 20:15:36 +0100
+        id S1752625AbeCMTQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:16:58 -0400
+Received: from mout.web.de ([212.227.17.11]:33983 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751997AbeCMTQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:16:55 -0400
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] iio/adc/ad7291: Improve unlocking of a mutex in
+ ad7291_read_raw()
+Message-ID: <a53248a9-4422-4436-aa43-bfbd2b60a85f@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 20:16:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180226043021.GK26947@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:IftT0/FB8vm1TNcxmuG/gpWMqlg9vvVG5y84y9DhSi6JQf575c6
+ eX6OEU/hhzElt2Q2zJl3KQpuiEucjtEEkY4lWOIpDTog+pAL4vJ++qCF+S52NTry1E7LzKl
+ qVEVEAdvC/sm1y/Wy3sJtk0Uy1AUaYrqaUs615D3DZj5Av7pG6smtoHqLpo54ySQirNbwBI
+ 67n+pv6GVvNx0azcwdd9g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:/xEKgIh2J4A=:0iU/9GmaEazpIr+/SK6a9T
+ tGi6jUZpBsCRrqNbt+wXHnoEIMP5pi7fowyRZGU80IuMlexwaHot9aPRPpNxhILRCrNJTarci
+ /D0wfXg55AIMrk3JO8dgdvGvFULkH0xTrkWNv+U+OZ9uk9Wwwp7Q55JfHL5qNQaqfRDWfII9f
+ yoiLWb9Ppv3Y4WqapbTnbCZmpkqKNY+BeS+jHdfxA05rRwji+/w6CdilyL6pSRuz08DM71hJn
+ Xt2zF11XigLLZB4xiyUy+6FtOc6Y88hEEb6nZhB2q/qcicZ3IO8abrmjskgrTUZ7J/W+4wbjD
+ dUTgazSggptxNiyaerUEHnAIwey+1yGq+fx2ypvbtK8LSuouc20xYHPuC+P/cTBnj/3Ruidt7
+ VAgXwKxcSQ5wCZpSNSyNiNmgxn6P6z/+IQw4BNUxl9XVq6TyOADTbUr6ZkId5cGRqDw3OtQ8O
+ zW4jTOLvimMAE51NEvJx0qMZXHlCRXYi1NKnQwXsDvLi4C6N6EzxZbLDKfVRGUuFq5R68iLTN
+ /xFa+XxVgOw3/K0s93InNnzF0HBPuKKpc/ZyiKlM/JdeKyL4PWOI12uwsFkzeda7fdubJUGNn
+ dXN+84RzVV/L2L6PlM/odm3QAAS1oytx14Gb/ifEY5PfEo2yF860cWrE+BySmqadwG5ZnZeX1
+ CZH6256NkTJNst+HvMOHhzAwfPJcTnUGPo89DiDf3rX7KgO3TCsAybpsgOEh4nWKi8/n2w5tX
+ PDT+E+dNazotlI9iGk8qc7Nwiimg1M587dD1BodcaZv4ce0Yp/O3FF+0JEu5cZt0trxjRGWS2
+ THCHutOR4WL5vo9CFyWlnfItd/Thxl5FY8Qwif10eptyrC0Ad4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2018 05:30, Viresh Kumar wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 20:08:40 +0100
 
-[ ... ]
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only once in this function implementation.
 
->>>> +		/*
->>>> +		 * The last CPU waking up is in charge of setting the
->>>> +		 * timer. If the CPU is hotplugged, the timer will
->>>> +		 * move to another CPU (which may not belong to the
->>>> +		 * same cluster) but that is not a problem as the
->>>> +		 * timer will be set again by another CPU belonging to
->>>> +		 * the cluster, so this mechanism is self adaptive and
->>>> +		 * does not require any hotplugging dance.
->>>> +		 */
->>>
->>> Well this depends on how CPU hotplug really happens. What happens to
->>> the per-cpu-tasks which are in the middle of something when hotplug
->>> happens?  Does hotplug wait for those per-cpu-tasks to finish ?
-> 
-> Missed this one ?
+* Replace three calls by goto statements.
 
-To be frank, I don't know. I have been through the hp code and didn't
-find the answer. AFAICT, the sched/core.c sched_cpu_dying() disables the
-rq and then migrates the tasks. I assume this kthread is not migrated
-and stays in sleeping state until the rq is online again. As the wakeup
-callback discards offline cpus, the kthread is not wakeup at any moment.
+This issue was detected by using the Coccinelle software.
 
-I created a situation where that happens: mitigation (raised with
-dhrystone) + cpu hotplugging (offline/online loop) and never hit any issue.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/adc/ad7291.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-However, I'm wondering if using the 'struct smp_hotplug_thread'
-infra-stucture (git show f97f8f06) shouldn't be used.
-
-
->>>> +int cpuidle_cooling_register(void)
->>>> +{
->>>> +	struct cpuidle_cooling_device *idle_cdev = NULL;
->>>> +	struct thermal_cooling_device *cdev;
->>>> +	struct cpuidle_cooling_tsk *cct;
->>>> +	struct task_struct *tsk;
->>>> +	struct device_node *np;
->>>> +	cpumask_t *cpumask;
->>>> +	char dev_name[THERMAL_NAME_LENGTH];
->>>> +	int ret = -ENOMEM, cpu;
->>>> +	int index = 0;
->>>> +
->>>> +	for_each_possible_cpu(cpu) {
->>>> +		cpumask = topology_core_cpumask(cpu);
->>>> +
->>>> +		cct = per_cpu_ptr(&cpuidle_cooling_tsk, cpu);
->>>> +
->>>> +		/*
->>>> +		 * This condition makes the first cpu belonging to the
->>>> +		 * cluster to create a cooling device and allocates
->>>> +		 * the structure. Others CPUs belonging to the same
->>>> +		 * cluster will just increment the refcount on the
->>>> +		 * cooling device structure and initialize it.
->>>> +		 */
->>>> +		if (cpu == cpumask_first(cpumask)) {
->>>
->>> Your function still have few assumptions of cpu numbering and it will
->>> break in few cases. What if the CPUs on a big Little system (4x4) are
->>> present in this order: B L L L L B B B  ??
->>>
->>> This configuration can happen if CPUs in DT are marked as: 0-3 LITTLE,
->>> 4-7 big and a big CPU is used by the boot loader to bring up Linux.
->>
->> Ok, how can I sort it out ?
-> 
-> I would do something like this:
-> 
->         cpumask_copy(possible, cpu_possible_mask);
->         
->         while (!cpumask_empty(possible)) {
->                 first = cpumask_first(possible);
->                 cpumask = topology_core_cpumask(first);
->                 cpumask_andnot(possible, possible, cpumask);
->         
->                 allocate_cooling_dev(first); //This is most of this function in your patch.
->         
->                 while (!cpumask_empty(cpumask)) {
->                         temp = cpumask_first(possible);
->                         //rest init "temp"
->                         cpumask_clear_cpu(temp, cpumask);
->                 }
->         
->                 //Everything done, register cooling device for cpumask.
->         }
-> 
->>>> +			np = of_cpu_device_node_get(cpu);
->>>> +
->>>> +			idle_cdev = kzalloc(sizeof(*idle_cdev), GFP_KERNEL);
->>>> +			if (!idle_cdev)
->>>> +				goto out_fail;
->>>> +
->>>> +			idle_cdev->idle_cycle = DEFAULT_IDLE_TIME_US;
->>>> +
->>>> +			atomic_set(&idle_cdev->count, 0);
->>>
->>> This should already be 0, isn't it ?
->>
->> Yes.
-> 
-> I read it as, "I will drop it" :)
-> 
-
-
+diff --git a/drivers/iio/adc/ad7291.c b/drivers/iio/adc/ad7291.c
+index a862b5d8fb4b..b2c3d4c79909 100644
+--- a/drivers/iio/adc/ad7291.c
++++ b/drivers/iio/adc/ad7291.c
+@@ -335,27 +335,27 @@ static int ad7291_read_raw(struct iio_dev *indio_dev,
+ 			mutex_lock(&chip->state_lock);
+ 			/* If in autocycle mode drop through */
+ 			if (chip->command & AD7291_AUTOCYCLE) {
+-				mutex_unlock(&chip->state_lock);
+-				return -EBUSY;
++				ret = -EBUSY;
++				goto unlock;
+ 			}
+ 			/* Enable this channel alone */
+ 			regval = chip->command & (~AD7291_VOLTAGE_MASK);
+ 			regval |= BIT(15 - chan->channel);
+ 			ret = ad7291_i2c_write(chip, AD7291_COMMAND, regval);
+-			if (ret < 0) {
+-				mutex_unlock(&chip->state_lock);
+-				return ret;
+-			}
++			if (ret < 0)
++				goto unlock;
++
+ 			/* Read voltage */
+ 			ret = i2c_smbus_read_word_swapped(chip->client,
+ 							  AD7291_VOLTAGE);
+-			if (ret < 0) {
+-				mutex_unlock(&chip->state_lock);
+-				return ret;
+-			}
++			if (ret < 0)
++				goto unlock;
++
+ 			*val = ret & AD7291_VALUE_MASK;
++			ret = IIO_VAL_INT;
++unlock:
+ 			mutex_unlock(&chip->state_lock);
+-			return IIO_VAL_INT;
++			return ret;
+ 		case IIO_TEMP:
+ 			/* Assumes tsense bit of command register always set */
+ 			ret = i2c_smbus_read_word_swapped(chip->client,
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.16.2
