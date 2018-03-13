@@ -1,150 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeCMODz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:03:55 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751808AbeCMODx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:03:53 -0400
-Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
-To: David Laight <David.Laight@ACULAB.COM>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
- <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
- <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
-Date: Tue, 13 Mar 2018 15:03:47 +0100
+        id S1752672AbeCMOGr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:06:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38838 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752332AbeCMOGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:06:45 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cpufreq: scpi: add thermal dependency
+To: Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+References: <20180313114607.2061209-1-arnd@arndb.de>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <882eb475-4cb7-98dd-8c16-dbab8df04d24@arm.com>
+Date: Tue, 13 Mar 2018 14:06:41 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+In-Reply-To: <20180313114607.2061209-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
 
-On 13/03/18 13:38, David Laight wrote:
-> From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
->> On 13/03/18 11:20, David Laight wrote:
->>> From: Kieran Bingham
->>>> Sent: 09 March 2018 22:04
->>>> The kernel provides a __packed definition to abstract away from the
->>>> compiler specific attributes tag.
->>>>
->>>> Convert all packed structures in VSP1 to use it.
->>>>
->>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>> ---
->>>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
->>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
->>>> index 37e2c984fbf3..382e45c2054e 100644
->>>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
->>>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
->>>> @@ -29,19 +29,19 @@
->>>>  struct vsp1_dl_header_list {
->>>>  	u32 num_bytes;
->>>>  	u32 addr;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>>
->>>>  struct vsp1_dl_header {
->>>>  	u32 num_lists;
->>>>  	struct vsp1_dl_header_list lists[8];
->>>>  	u32 next_header;
->>>>  	u32 flags;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>>
->>>>  struct vsp1_dl_entry {
->>>>  	u32 addr;
->>>>  	u32 data;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>
->>> Do these structures ever actually appear in misaligned memory?
->>> If they don't then they shouldn't be marked 'packed'.
->>
->> I believe the declaration is to ensure that the struct definition is not altered
->> by the compiler as these structures specifically define the layout of how the
->> memory is read by the VSP1 hardware.
+
+On 13/03/18 11:45, Arnd Bergmann wrote:
+> A built-in scpi cpufreq driver cannot link against a modular
+> thermal framework:
 > 
-> The C language and ABI define structure layouts.
+> drivers/cpufreq/scpi-cpufreq.o: In function `scpi_cpufreq_ready':
+> scpi-cpufreq.c:(.text+0x4c): undefined reference to `of_cpufreq_cooling_register'
+> drivers/cpufreq/scpi-cpufreq.o: In function `scpi_cpufreq_exit':
+> scpi-cpufreq.c:(.text+0x9c): undefined reference to `cpufreq_cooling_unregister'
 > 
->> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
->> rearranged by the compiler (though I believe it would be free to do so if it
->> chose without this attribute), but I think the declaration shows the intent of
->> the memory structure.
+> This adds a Kconfig dependency that makes sure this configuration
+> is not possible, while allowing all configurations that can work.
+> Note that disabling CPU_THERMAL means we don't care about the
+> THERMAL dependency.
 > 
-> The language requires the fields be in order and the ABI stops the compiler
-> adding 'random' padding.
-> 
->> Isn't this a common approach throughout the kernel when dealing with hardware
->> defined memory structures ?
-> 
-> Absolutely not.
-> __packed tells the compiler that the structure might be on any address boundary.
-> On many architectures this means the compiler must use byte accesses with shifts
-> and ors for every access.
-> The most a hardware defined structure will have is a compile-time assert
-> that it is the correct size (to avoid silly errors from changes).
 
+Makes sense,
 
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Ok - interesting, I see what you're saying - and certainly don't want the
-compiler to be performing byte accesses on the structures unnecessarily.
-
-I'm trying to distinguish the difference here. Is the single point that
- __packed
-
-causes byte-access, where as
-
-__attribute__((__packed__));
-
-does not?
-
-Looking at the GCC docs [0]: I see that  __attribute__((__packed__)) tells the
-compiler that the "structure or union is placed to minimize the memory required".
-
-However, the keil compiler docs[1] do certainly declare that __packed causes
-byte alignment.
-
-I was confused/thrown off here by the Kernel defining __packed as
-__attribute__((packed)) at [2].
-
-Do __attribute__((packed)) and __attribute__((__packed__)) differ ?
-
-In which case, from what I've read so far I wish "__packed" was "__unaligned"...
-
-
-[0]
-https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
-
-[1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
-
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
-
-
-Regards
-
-Kieran
-
-
-> 	David
-> 
+-- 
+Regards,
+Sudeep
