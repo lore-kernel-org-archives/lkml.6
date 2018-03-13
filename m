@@ -1,75 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751930AbeCMGhx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:37:53 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36009 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbeCMGhw (ORCPT
+        id S1751899AbeCMGnz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:43:55 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:41518 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCMGny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:37:52 -0400
-X-Google-Smtp-Source: AG47ELsNYaSIJtp18GKGPMLsvk43NpTzJsXiF7dFzvM2Rrf2OLNHWlPRMEQQaZEGhRsuF43VaHp1jg==
-Date: Tue, 13 Mar 2018 07:37:47 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCHv3 0/8] hw_breakpoint: Breakpoint modification fixes and
- new modify ioctl
-Message-ID: <20180313063747.b4bw2j25cvtgjk5b@gmail.com>
-References: <20180312134548.31532-1-jolsa@kernel.org>
+        Tue, 13 Mar 2018 02:43:54 -0400
+Date: Tue, 13 Mar 2018 07:43:34 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Mario.Limonciello@dell.com, Darren Hart <dvhart@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+Message-ID: <20180313064334.GA1743@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312134548.31532-1-jolsa@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180313063213.GA20710@localhost.localdomain>
+ <f78e97a8f037461ca7f5a60cb351e1af@ausx13mpc120.AMER.DELL.COM>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Jiri Olsa <jolsa@kernel.org> wrote:
-
-> Jiri Olsa (7):
->       hw_breakpoint: Pass bp_type directly as find_slot_idx argument
->       hw_breakpoint: Pass bp_type argument to __reserve_bp_slot|__release_bp_slot
->       hw_breakpoint: Add modify_bp_slot function
->       hw_breakpoint: Factor out __modify_user_hw_breakpoint function
->       hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint
->       perf/core: Move perf_event_attr::sample_max_stack into perf_copy_attr
->       perf tests: Add breakpoint accounting/modify test
+On Tue, Mar 13, 2018 at 06:12:04AM +0000, Mario.Limonciello@dell.com wrote:
+> As long as they're ready before dell-laptop's initialization which uses
+> late_initcall that should be fine.
 > 
-> Milind Chabbi (1):
->       perf/core: fast breakpoint modification via _IOC_MODIFY_ATTRIBUTES.
+> Am I correct to presume you're going to propose a patch you can test and
+> confirm your hypothesis rather than Darren reverting my patch to bring
+> them together?
+
+Thanks for the input; a draft patch (which works fine on my system) is
+attached below.
+
+On Mon, Mar 12, 2018 at 11:32:13PM -0700, Darren Hart wrote:
+> There is one other caveat, which you'll find documented in
+> dell-laptop.c, namely that dell-laptop needs to init after dell-rbtn
+> (I'm starting to appreciate the monolithic thinkpad-acpi driver).
 > 
->  include/linux/hw_breakpoint.h         |   7 +++++
->  include/uapi/linux/perf_event.h       |  23 ++++++++-------
->  kernel/events/core.c                  |  54 ++++++++++++++++++++++++++++++++--
->  kernel/events/hw_breakpoint.c         | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---------------------
->  tools/include/uapi/linux/perf_event.h |  23 ++++++++-------
->  tools/perf/tests/Build                |   1 +
->  tools/perf/tests/bp_account.c         | 195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/tests/builtin-test.c       |   4 +++
->  tools/perf/tests/tests.h              |   1 +
->  9 files changed, 365 insertions(+), 58 deletions(-)
->  create mode 100644 tools/perf/tests/bp_account.c
+> We need things to init in this order (items on the same line have no
+> dependency):
+> 
+> 1. DCDBAS, ACPI_WMI
+> 2. DELL_SMBIOS, DELL_RBTN
+> 3. DELL_LAPTOP, DELL_WMI
+> 
+> Currently:
+> subsys_initcall: ACPI_WMI, DELL_SMBIOS
+> module_init: DCDBAS, DELL_WMI
+> late_initcall: DELL_LAPTOP
+> 
+> From a quick naive glance, it appears as though we might be able to
+> address this as follows:
+> 
+> subsys_initcall: DCDBAS, ACPI_WMI
+> module_init: DELL_SMBIOS, DELL_RBTN
+> late_initcall: DELL_LAPTOP, DELL_WMI
 
-Note, there's a new PARISC build failure:
+Hmmm. I do not yet understand why you propose to
 
- home/mingo/tip/kernel/events/core.c:2858:2: error: implicit declaration of function 'modify_user_hw_breakpoint_check' [-Werror=implicit-function-declaration]
-   err = modify_user_hw_breakpoint_check(bp, attr, true);
+a) advance the DCDBAS initialization to subsys_initcall, as only DELL_LAPTOP
+   (running as a late_initcall) requires it to be up and running, and
 
-will only be able to push it out to -next once this is fixed.
+b) delay DELL_WMI to late_initcall, as it can safely be initialized as long
+   as ACPI_WMI is ready.
+
+What do I miss?
+
+Attached patch *seems* to work fine on my system.
 
 Thanks,
+	Dominik
 
-	Ingo
+----
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Date: Tue, 13 Mar 2018 07:27:41 +0100
+Subject: [PATCH] platform/x86: dell-smbios: wait for WMI initialization
+
+If DELL_SMBIOS_WMI is enabled, the combined dell-smbios driver
+needs to wait for ACPI_WMI to be initialized, which occurs at the
+subsys_initcall() level. As the dell-smbios driver only needs to
+be up and running by the time the dell-laptop module is initialized,
+which occurs at the late_initcall() level, it is sufficient to
+initialize the dell-smbios driver at the default device_initcall()
+level.
+
+Fixes: 25d47027e100 ("platform/x86: dell-smbios: Link all dell-smbios-* modules together")
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 5bcf8a18f785..2485c80a9fdd 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -637,7 +637,7 @@ static void __exit dell_smbios_exit(void)
+ 	mutex_unlock(&smbios_mutex);
+ }
+ 
+-subsys_initcall(dell_smbios_init);
++module_init(dell_smbios_init);
+ module_exit(dell_smbios_exit);
+ 
+ MODULE_AUTHOR("Matthew Garrett <mjg@redhat.com>");
