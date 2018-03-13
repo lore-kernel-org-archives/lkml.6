@@ -1,49 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752934AbeCMSIQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:08:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34432 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbeCMSIM (ORCPT
+        id S1753048AbeCMSFk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:05:40 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41727 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751996AbeCMSFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:08:12 -0400
-Date: Tue, 13 Mar 2018 19:08:06 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>, linux-sparse@vger.kernel.org,
-        Christopher Li <sparse@chrisli.org>,
-        kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
-        LKML <linux-kernel@vger.kernel.org>, tipbuild@zytor.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [tip:locking/core 9/11]
- include/asm-generic/atomic-instrumented.h:288:24: sparse: cast truncates
- bits from constant value (100 becomes 0)
-Message-ID: <20180313180806.GO4043@hirez.programming.kicks-ass.net>
-References: <201803122219.vHl3IwRo%fengguang.wu@intel.com>
- <CACT4Y+Yscqe6M1jXSkcuvw+5-27YzZn4AXwKzU1oJCNhUrj1Ng@mail.gmail.com>
- <CACT4Y+ayA+maaG3uddxpy3w24Jyppsxmyu5R_rEsvm3JjtZkRQ@mail.gmail.com>
- <20180313104652.GK4043@hirez.programming.kicks-ass.net>
- <CACT4Y+b+ECV+6hky_cq1tg2BbYbsv1c_xGYrgzjiLfSbx21rVA@mail.gmail.com>
- <20180313180016.5axdobx6a624snpp@ltop.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313180016.5axdobx6a624snpp@ltop.local>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 13 Mar 2018 14:05:37 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 01/11] media: vsp1: drm: Fix minor grammar error
+Date: Tue, 13 Mar 2018 19:05:17 +0100
+Message-Id: <fb63b62b1d6c42f887e2dd8cf7652f14b87d1bd1.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 07:00:17PM +0100, Luc Van Oostenryck wrote:
-> The issue here is that sparse has a whole class of warnings that are
-> given very early (here at expansion of constant expressions), before
-> eliminating code from branches that are never taken (which, surprise,
-> need itself to have constant expressions already expanded).
-> 
-> It's often annoying like the case here.
-> OTOH, I don't think it's always a bad thing. Sometimes we want to
-> have warnings even from code we know will not be executed (in this
-> config but maybe it will in another one).
+The pixel format is 'unsupported'. Fix the small debug message which
+incorrectly declares this.
 
-Is that really a valid concern with all the automated randconfig
-building going on today?
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 3c8b1952799d..0459b970e9da 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -363,7 +363,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	 */
+ 	fmtinfo = vsp1_get_format_info(vsp1, cfg->pixelformat);
+ 	if (!fmtinfo) {
+-		dev_dbg(vsp1->dev, "Unsupport pixel format %08x for RPF\n",
++		dev_dbg(vsp1->dev, "Unsupported pixel format %08x for RPF\n",
+ 			cfg->pixelformat);
+ 		return -EINVAL;
+ 	}
+-- 
+git-series 0.9.1
