@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932481AbeCMSF4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:05:56 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41766 "EHLO
+        id S932539AbeCMSGD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:06:03 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41775 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753098AbeCMSFw (ORCPT
+        with ESMTP id S932496AbeCMSF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:05:52 -0400
+        Tue, 13 Mar 2018 14:05:58 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -14,9 +14,9 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 08/11] media: vsp1: Add support for extended display list headers
-Date: Tue, 13 Mar 2018 19:05:24 +0100
-Message-Id: <fab4e7a73fcaebdf221497c30cd3ae944a951d3d.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 10/11] media: vsp1: Support Interlaced display pipelines
+Date: Tue, 13 Mar 2018 19:05:26 +0100
+Message-Id: <132d7535d8a70bd443c567b77183bbad14444739.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
@@ -26,297 +26,240 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extended display list headers allow pre and post command lists to be
-executed by the VSP pipeline. This provides the base support for
-features such as AUTO_FLD (for interlaced support) and AUTO_DISP (for
-supporting continuous camera preview pipelines.
+Calculate the top and bottom fields for the interlaced frames and
+utilise the extended display list command feature to implement the
+auto-field operations. This allows the DU to update the VSP2 registers
+dynamically based upon the currently processing field.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 ---
 
 v2:
- - remove __packed attributes
+ - fix erroneous BIT value which enabled interlaced
+ - fix field handling at frame_end interrupt
 
- drivers/media/platform/vsp1/vsp1.h      |  1 +-
- drivers/media/platform/vsp1/vsp1_dl.c   | 83 +++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.h   | 29 ++++++++-
- drivers/media/platform/vsp1/vsp1_drv.c  |  7 +-
- drivers/media/platform/vsp1/vsp1_regs.h |  5 +-
- 5 files changed, 116 insertions(+), 9 deletions(-)
+ drivers/media/platform/vsp1/vsp1_dl.c   | 10 ++++-
+ drivers/media/platform/vsp1/vsp1_drm.c  | 11 ++++-
+ drivers/media/platform/vsp1/vsp1_regs.h |  1 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c  | 72 ++++++++++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_rwpf.h |  1 +-
+ include/media/vsp1.h                    |  1 +-
+ 6 files changed, 93 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index 1c080538c993..bb3b32795206 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -55,6 +55,7 @@ struct vsp1_uds;
- #define VSP1_HAS_HGO		(1 << 7)
- #define VSP1_HAS_HGT		(1 << 8)
- #define VSP1_HAS_BRS		(1 << 9)
-+#define VSP1_HAS_EXT_DL		(1 << 10)
- 
- struct vsp1_device_info {
- 	u32 version;
 diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 5f5706f8a84c..cd91b50deed1 100644
+index d8392bd866f1..08715ce6db1e 100644
 --- a/drivers/media/platform/vsp1/vsp1_dl.c
 +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -26,6 +26,9 @@
- #define VSP1_DLH_INT_ENABLE		(1 << 1)
- #define VSP1_DLH_AUTO_START		(1 << 0)
- 
-+#define VSP1_DLH_EXT_PRE_CMD_EXEC	(1 << 9)
-+#define VSP1_DLH_EXT_POST_CMD_EXEC	(1 << 8)
-+
- struct vsp1_dl_header_list {
- 	u32 num_bytes;
- 	u32 addr;
-@@ -38,11 +41,34 @@ struct vsp1_dl_header {
- 	u32 flags;
- };
- 
-+struct vsp1_dl_ext_header {
-+	u32 reserved0;		/* alignment padding */
-+
-+	u16 pre_ext_cmd_qty;
-+	u16 flags;
-+	u32 pre_ext_cmd_plist;
-+
-+	u32 post_ext_cmd_qty;
-+	u32 post_ext_cmd_plist;
-+};
-+
-+struct vsp1_dl_header_extended {
-+	struct vsp1_dl_header header;
-+	struct vsp1_dl_ext_header ext;
-+};
-+
- struct vsp1_dl_entry {
- 	u32 addr;
- 	u32 data;
- };
- 
-+struct vsp1_dl_ext_cmd_header {
-+	u32 cmd;
-+	u32 flags;
-+	u32 data;
-+	u32 reserved;
-+};
-+
- /**
-  * struct vsp1_dl_body - Display list body
-  * @list: entry in the display list list of bodies
-@@ -99,9 +125,12 @@ struct vsp1_dl_body_pool {
-  * @list: entry in the display list manager lists
-  * @dlm: the display list manager
-  * @header: display list header
-+ * @extended: extended display list header. NULL for normal lists
-  * @dma: DMA address for the header
-  * @body0: first display list body
-  * @bodies: list of extra display list bodies
-+ * @pre_cmd: pre cmd to be issued through extended dl header
-+ * @post_cmd: post cmd to be issued through extended dl header
-  * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
+@@ -889,7 +889,9 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
   */
-@@ -110,11 +139,15 @@ struct vsp1_dl_list {
- 	struct vsp1_dl_manager *dlm;
- 
- 	struct vsp1_dl_header *header;
-+	struct vsp1_dl_ext_header *extended;
- 	dma_addr_t dma;
- 
- 	struct vsp1_dl_body *body0;
- 	struct list_head bodies;
- 
-+	struct vsp1_dl_ext_cmd *pre_cmd;
-+	struct vsp1_dl_ext_cmd *post_cmd;
-+
- 	bool has_chain;
- 	struct list_head chain;
- };
-@@ -498,6 +531,14 @@ int vsp1_dl_list_add_chain(struct vsp1_dl_list *head,
- 	return 0;
- }
- 
-+static void vsp1_dl_ext_cmd_fill_header(struct vsp1_dl_ext_cmd *cmd)
-+{
-+	cmd->cmds[0].cmd = cmd->cmd_opcode;
-+	cmd->cmds[0].flags = cmd->flags;
-+	cmd->cmds[0].data = cmd->data_dma;
-+	cmd->cmds[0].reserved = 0;
-+}
-+
- static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
+ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
  {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
-@@ -550,6 +591,27 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
- 		 */
- 		dl->header->flags = VSP1_DLH_INT_ENABLE;
- 	}
-+
-+	if (!dl->extended)
-+		return;
-+
-+	dl->extended->flags = 0;
-+
-+	if (dl->pre_cmd) {
-+		dl->extended->pre_ext_cmd_plist = dl->pre_cmd->cmd_dma;
-+		dl->extended->pre_ext_cmd_qty = dl->pre_cmd->num_cmds;
-+		dl->extended->flags |= VSP1_DLH_EXT_PRE_CMD_EXEC;
-+
-+		vsp1_dl_ext_cmd_fill_header(dl->pre_cmd);
-+	}
-+
-+	if (dl->post_cmd) {
-+		dl->extended->pre_ext_cmd_plist = dl->post_cmd->cmd_dma;
-+		dl->extended->pre_ext_cmd_qty = dl->post_cmd->num_cmds;
-+		dl->extended->flags |= VSP1_DLH_EXT_POST_CMD_EXEC;
-+
-+		vsp1_dl_ext_cmd_fill_header(dl->pre_cmd);
-+	}
- }
++	struct vsp1_device *vsp1 = dlm->vsp1;
+ 	bool completed = false;
++	u32 status = vsp1_read(vsp1, VI6_STATUS);
  
- static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
-@@ -715,14 +777,20 @@ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- }
+ 	spin_lock(&dlm->lock);
  
- /* Hardware Setup */
--void vsp1_dlm_setup(struct vsp1_device *vsp1)
-+void vsp1_dlm_setup(struct vsp1_device *vsp1, unsigned int index)
- {
- 	u32 ctrl = (256 << VI6_DL_CTRL_AR_WAIT_SHIFT)
- 		 | VI6_DL_CTRL_DC2 | VI6_DL_CTRL_DC1 | VI6_DL_CTRL_DC0
- 		 | VI6_DL_CTRL_DLE;
+@@ -914,6 +916,14 @@ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ 		goto done;
  
-+	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL))
-+		vsp1_write(vsp1, VI6_DL_EXT_CTRL(index),
-+			   (0x02 << VI6_DL_EXT_CTRL_POLINT_SHIFT) |
-+			   VI6_DL_EXT_CTRL_DLPRI | VI6_DL_EXT_CTRL_EXT);
+ 	/*
++	 * Progressive streams report only TOP fields. If we have a BOTTOM
++	 * field, we are interlaced, and expect the frame to complete on the
++	 * next frame end interrupt.
++	 */
++	if (status & VI6_STATUS_FLD_STD(dlm->index))
++		goto done;
 +
- 	vsp1_write(vsp1, VI6_DL_CTRL, ctrl);
--	vsp1_write(vsp1, VI6_DL_SWAP, VI6_DL_SWAP_LWS);
-+	vsp1_write(vsp1, VI6_DL_SWAP(index), VI6_DL_SWAP_LWS |
-+			 ((index == 1) ? VI6_DL_SWAP_IND : 0));
- }
- 
- void vsp1_dlm_reset(struct vsp1_dl_manager *dlm)
-@@ -767,7 +835,11 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 	 * fragmentation, with the header located right after the body in
- 	 * memory.
++	/*
+ 	 * The device starts processing the queued display list right after the
+ 	 * frame end interrupt. The display list thus becomes active.
  	 */
--	header_size = ALIGN(sizeof(struct vsp1_dl_header), 8);
-+	header_size = vsp1_feature(vsp1, VSP1_HAS_EXT_DL) ?
-+			sizeof(struct vsp1_dl_header_extended) :
-+			sizeof(struct vsp1_dl_header);
-+
-+	header_size = ALIGN(header_size, 8);
- 
- 	dlm->pool = vsp1_dl_body_pool_create(vsp1, prealloc,
- 					     VSP1_DL_NUM_ENTRIES, header_size);
-@@ -783,6 +855,11 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 			return NULL;
- 		}
- 
-+		/* The extended header immediately follows the header */
-+		if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL))
-+			dl->extended = (void *)dl->header
-+				     + sizeof(*dl->header);
-+
- 		list_add_tail(&dl->list, &dlm->free);
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 0459b970e9da..a714c53601b6 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -368,6 +368,17 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 		return -EINVAL;
  	}
  
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index 5ad2cec5cad9..4898b21dc840 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -21,7 +21,34 @@ struct vsp1_dl_body_pool;
- struct vsp1_dl_list;
- struct vsp1_dl_manager;
- 
--void vsp1_dlm_setup(struct vsp1_device *vsp1);
-+/**
-+ * struct vsp1_dl_ext_cmd - Extended Display command
-+ * @free: entry in the pool of free commands list
-+ * @cmd_opcode: command type opcode
-+ * @flags: flags used by the command
-+ * @cmds: array of command bodies for this extended cmd
-+ * @num_cmds: quantity of commands in @cmds array
-+ * @cmd_dma: DMA address of the command bodies
-+ * @data: memory allocation for command specific data
-+ * @data_dma: DMA address for command specific data
-+ * @data_size: size of the @data_dma memory in bytes
-+ */
-+struct vsp1_dl_ext_cmd {
-+	struct list_head free;
++	if (!(vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) && cfg->interlaced) {
++		/*
++		 * Interlaced support requires extended display lists to
++		 * provide the auto-fld feature with the DU.
++		 */
++		dev_dbg(vsp1->dev, "Interlaced unsupported on this output\n");
++		return -EINVAL;
++	}
 +
-+	u8 cmd_opcode;
-+	u32 flags;
++	rpf->interlaced = cfg->interlaced;
 +
-+	struct vsp1_dl_ext_cmd_header *cmds;
-+	unsigned int num_cmds;
-+	dma_addr_t cmd_dma;
-+
-+	void *data;
-+	dma_addr_t data_dma;
-+	size_t data_size;
-+};
-+
-+void vsp1_dlm_setup(struct vsp1_device *vsp1, unsigned int index);
- 
- struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 					unsigned int index,
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 6fa0019ffc6e..73d9b1a44bdb 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -532,7 +532,8 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
- 	vsp1_write(vsp1, VI6_DPR_HGT_SMPPT, (7 << VI6_DPR_SMPPT_TGW_SHIFT) |
- 		   (VI6_DPR_NODE_UNUSED << VI6_DPR_SMPPT_PT_SHIFT));
- 
--	vsp1_dlm_setup(vsp1);
-+	for (i = 0; i < vsp1->info->wpf_count; ++i)
-+		vsp1_dlm_setup(vsp1, i);
- 
- 	return 0;
- }
-@@ -741,7 +742,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.model = "VSP2-D",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP | VSP1_HAS_EXT_DL,
- 		.lif_count = 1,
- 		.rpf_count = 5,
- 		.wpf_count = 2,
-@@ -759,7 +760,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPDL_GEN3,
- 		.model = "VSP2-DL",
- 		.gen = 3,
--		.features = VSP1_HAS_BRS | VSP1_HAS_BRU,
-+		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_EXT_DL,
- 		.lif_count = 2,
- 		.rpf_count = 5,
- 		.wpf_count = 2,
+ 	rpf->fmtinfo = fmtinfo;
+ 	rpf->format.num_planes = fmtinfo->planes;
+ 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
 diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index dae0c1901297..43ad68ff3167 100644
+index 43ad68ff3167..e2dffbe82809 100644
 --- a/drivers/media/platform/vsp1/vsp1_regs.h
 +++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -70,12 +70,13 @@
+@@ -31,6 +31,7 @@
+ #define VI6_SRESET_SRTS(n)		(1 << (n))
  
- #define VI6_DL_HDR_ADDR(n)		(0x0104 + (n) * 4)
+ #define VI6_STATUS			0x0038
++#define VI6_STATUS_FLD_STD(n)		(1 << ((n) + 28))
+ #define VI6_STATUS_SYS_ACT(n)		(1 << ((n) + 8))
  
--#define VI6_DL_SWAP			0x0114
-+#define VI6_DL_SWAP(n)			(0x0114 + (n) * 56)
-+#define VI6_DL_SWAP_IND			(1 << 31)
- #define VI6_DL_SWAP_LWS			(1 << 2)
- #define VI6_DL_SWAP_WDS			(1 << 1)
- #define VI6_DL_SWAP_BTS			(1 << 0)
+ #define VI6_WPF_IRQ_ENB(n)		(0x0048 + (n) * 12)
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index 67f2fb3e0611..86ac8f488b7a 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -24,6 +24,20 @@
+ #define RPF_MAX_WIDTH				8190
+ #define RPF_MAX_HEIGHT				8190
  
--#define VI6_DL_EXT_CTRL			0x011c
-+#define VI6_DL_EXT_CTRL(n)		(0x011c + (n) * 36)
- #define VI6_DL_EXT_CTRL_NWE		(1 << 16)
- #define VI6_DL_EXT_CTRL_POLINT_MASK	(0x3f << 8)
- #define VI6_DL_EXT_CTRL_POLINT_SHIFT	8
++/* Pre extended display list command data structure */
++struct vsp1_extcmd_auto_fld_body {
++	u32 top_y0;
++	u32 bottom_y0;
++	u32 top_c0;
++	u32 bottom_c0;
++	u32 top_c1;
++	u32 bottom_c1;
++	u32 reserved0;
++	u32 reserved1;
++} __packed;
++
++#define VSP1_DL_EXT_AUTOFLD_INT		BIT(0)
++
+ /* -----------------------------------------------------------------------------
+  * Device Access
+  */
+@@ -68,6 +82,14 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		pstride |= format->plane_fmt[1].bytesperline
+ 			<< VI6_RPF_SRCM_PSTRIDE_C_SHIFT;
+ 
++	/*
++	 * pstride has both STRIDE_Y and STRIDE_C, but multiplying the whole
++	 * of pstride by 2 is conveniently OK here as we are multiplying both
++	 * values.
++	 */
++	if (rpf->interlaced)
++		pstride *= 2;
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_PSTRIDE, pstride);
+ 
+ 	/* Format */
+@@ -104,6 +126,9 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		top = compose->top;
+ 	}
+ 
++	if (rpf->interlaced)
++		top /= 2;
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_LOC,
+ 		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
+ 		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
+@@ -173,6 +198,31 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 
+ }
+ 
++static void vsp1_rpf_configure_autofld(struct vsp1_rwpf *rpf,
++				       struct vsp1_dl_ext_cmd *cmd)
++{
++	const struct v4l2_pix_format_mplane *format = &rpf->format;
++	struct vsp1_extcmd_auto_fld_body *auto_fld = cmd->data;
++	u32 offset_y, offset_c;
++
++	/* Re-index our auto_fld to match the current RPF */
++	auto_fld = &auto_fld[rpf->entity.index];
++
++	auto_fld->top_y0 = rpf->mem.addr[0];
++	auto_fld->top_c0 = rpf->mem.addr[1];
++	auto_fld->top_c1 = rpf->mem.addr[2];
++
++	offset_y = format->plane_fmt[0].bytesperline;
++	offset_c = format->plane_fmt[1].bytesperline;
++
++	auto_fld->bottom_y0 = rpf->mem.addr[0] + offset_y;
++	auto_fld->bottom_c0 = rpf->mem.addr[1] + offset_c;
++	auto_fld->bottom_c1 = rpf->mem.addr[2] + offset_c;
++
++	cmd->flags |= VSP1_DL_EXT_AUTOFLD_INT;
++	cmd->flags |= BIT(16 + rpf->entity.index);
++}
++
+ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 				struct vsp1_pipeline *pipe,
+ 				struct vsp1_dl_list *dl,
+@@ -182,6 +232,7 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 	struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
+ 	struct vsp1_rwpf_memory mem = rpf->mem;
+ 	struct vsp1_device *vsp1 = rpf->entity.vsp1;
++	struct vsp1_dl_ext_cmd *cmd;
+ 	const struct vsp1_format_info *fmtinfo = rpf->fmtinfo;
+ 	const struct v4l2_pix_format_mplane *format = &rpf->format;
+ 	struct v4l2_rect crop;
+@@ -220,6 +271,11 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 		crop.left += pipe->partition->rpf.left;
+ 	}
+ 
++	if (rpf->interlaced) {
++		crop.height = round_down(crop.height / 2, fmtinfo->vsub);
++		crop.top = round_down(crop.top / 2, fmtinfo->vsub);
++	}
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRC_BSIZE,
+ 		       (crop.width << VI6_RPF_SRC_BSIZE_BHSIZE_SHIFT) |
+ 		       (crop.height << VI6_RPF_SRC_BSIZE_BVSIZE_SHIFT));
+@@ -248,11 +304,21 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 	    fmtinfo->swap_uv)
+ 		swap(mem.addr[1], mem.addr[2]);
+ 
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	/*
++	 * Interlaced pipelines will use the extended pre-cmd to process
++	 * SRCM_ADDR_{Y,C0,C1}
++	 */
++	if (rpf->interlaced) {
++		cmd = vsp1_dlm_get_autofld_cmd(dl);
++		vsp1_rpf_configure_autofld(rpf, cmd);
++	} else {
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	}
+ }
+ 
++
+ static void rpf_partition(struct vsp1_entity *entity,
+ 			  struct vsp1_pipeline *pipe,
+ 			  struct vsp1_partition *partition,
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
+index 58215a7ab631..27ada15e8f00 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.h
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+@@ -47,6 +47,7 @@ struct vsp1_rwpf {
+ 
+ 	struct v4l2_pix_format_mplane format;
+ 	const struct vsp1_format_info *fmtinfo;
++	bool interlaced;
+ 	unsigned int bru_input;
+ 
+ 	unsigned int alpha;
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 68a8abe4fac5..1f7e1dfe0c12 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -49,6 +49,7 @@ struct vsp1_du_atomic_config {
+ 	struct v4l2_rect dst;
+ 	unsigned int alpha;
+ 	unsigned int zpos;
++	bool interlaced;
+ };
+ 
+ void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index);
 -- 
 git-series 0.9.1
