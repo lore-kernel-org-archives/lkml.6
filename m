@@ -1,100 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeCMJQJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:16:09 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:56747 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752344AbeCMJP2 (ORCPT
+        id S1752504AbeCMJOA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:14:00 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:41660 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752302AbeCMJN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:15:28 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: Atheros 1525/QCA6174 BT issue
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <s5ha7vcfjfi.wl-tiwai@suse.de>
-Date: Tue, 13 Mar 2018 10:15:26 +0100
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ivan Levshin <ivan.levshin@microfocus.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0B0DDAD9-2379-4084-9FB3-8F9884786C6B@holtmann.org>
-References: <s5hd10fkm49.wl-tiwai@suse.de>
- <184DA6FB-F23C-4C37-B89B-FE865DC9731C@holtmann.org>
- <s5h1sgvkjup.wl-tiwai@suse.de> <s5hfu54fljg.wl-tiwai@suse.de>
- <2D7B44D5-BF8C-42EE-A315-64DE11D25C79@holtmann.org>
- <s5hd108fkaa.wl-tiwai@suse.de>
- <D8E4DA1B-060E-45F4-9B26-E3FAEE652D03@holtmann.org>
- <s5ha7vcfjfi.wl-tiwai@suse.de>
-To: Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Tue, 13 Mar 2018 05:13:56 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIo2016505
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/11] kbuild: add PYTHON2 and PYTHON3 variables
+Date: Tue, 13 Mar 2018 18:12:02 +0900
+Message-Id: <1520932332-2449-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Takashi,
+The variable 'PYTHON' allows users to specify a proper executable
+name in case the default 'python' does not work.  However, this does
+not address the case where both Python 2.x and 3.x scripts are used
+in one source tree.
 
->>>>>>>> we've got a but report about the broken Atheros BT on the recent
->>>>>>>> kernels:
->>>>>>>> http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
->>>>>>>> 
->>>>>>>> In short, btusb can't load the patch ar3k/AthrBT_0x00000200.dfu, and
->>>>>>>> this could be worked around by the patch to move 0cf3:3004 blacklist
->>>>>>>> entry to use BTUSB_QCA_ROM instead of BTUSB_ATH3012.
->>>>>>>> 
->>>>>>>> And this looks like a long-standing problem, at least for over two
->>>>>>>> years.  Many web pages suggest the same patch, but it's never merged
->>>>>>>> to upstream.
->>>>>>>> 
->>>>>>>> So this made me wonder what's going on.  I see that the BTUSB_ATH3012
->>>>>>>> quirk was originally introduced just for this chip id (0cf3:3004).
->>>>>>>> Is it a different variant from the original chip that causes a
->>>>>>>> problem?
->>>>>>> 
->>>>>>> not all patches from distro kernel are sent upstream. I have not heard of this specific issues, but happy to accept patches to get it fixed.
->>>>>> 
->>>>>> OK, basically it's like below.
->>>>>> But, as mentioned, this made me wonder whether it's the right fix.
->>>>>> The BTUSB_ATH3012 quirk was introduced exactly for this chip ID
->>>>>> (0cf3:3004), and now this chip is moved to another quirk...
->>>>>> 
->>>>>> If this is the right move, I can re-submit via git-send-email, too.
->>>>>> Just let me know.
->>>>> 
->>>>> Marcel, could you take a look at this?
->>>>> If it sucks, let's seek for a better solution.
->>>> 
->>>> wasn’t the confusion that this is fixed with a recent kernel? I am lost in this thread. I mean if people add Tested-by, then I can take this as well. Otherwise we might need someone from Qualcomm to shed some light into these.
->>> 
->>> Well, *this* thread is likely different from the recent other
->>> threads.
->>> 
->>> Isn't 4.15.7 recent enough?  At least, it already contains the
->>> backport of relevant fixes:
->>>   Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
->>>   Bluetooth: btusb: Restore QCA Rome suspend/resume fix with a
->>>     "rewritten" version
->>> 
->>> (And it's not Yoga but MSI GS40 laptop, so DMI doesn't matter.)
->>> According to Ivan, the reporter of the bug (now Cc'ed), 4.15.7 didn't
->>> work without the patch, so the problem is still there, as it seems.
->>> 
->>> In anyway, I'm going to build a kernel with my patch on top of 4.15.9
->>> for testing again.  Maybe also a patched 4.16-rc5 kernel, too.  If
->>> it's confirmed, will report back with tested-by tag.
->> 
->> I think there are two patches that are not yet in Linus’ tree and waiting in Dave’s net tree. We actually removed the Yoga DMI entry again since it was found that it is not needed. However there is a Dell OptiPlex entry that was needed.
->> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=0c6e526646c04ce31d4aaa280ed2237dd1cd774c
-> 
-> In our case, the target machine is a MSI laptop, so these changes
-> should be irrelevant.  Or do you suggest to try the same DMI reset
-> quirk matching with the MSI machine?
+PEP 394 (https://www.python.org/dev/peps/pep-0394/) provides a
+convention for Python scripts portability.  Here is a quotation:
 
-that is maybe needed. I honestly do not know. Someone needs to root cause this. And obviously bi-secting a root-cause git commit would be helpful as well.
+  In order to tolerate differences across platforms, all new code
+  that needs to invoke the Python interpreter should not specify
+  'python', but rather should specify either 'python2' or 'python3'.
+  This distinction should be made in shebangs, when invoking from a
+  shell script, when invoking via the system() call, or when invoking
+  in any other context.
+  One exception to this is scripts that are deliberately written to
+  be source compatible with both Python 2.x and 3.x. Such scripts may
+  continue to use python on their shebang line without affecting their
+  portability.
 
-Regards
+To meet this requirement, this commit adds new variables 'PYTHON2'
+and 'PYTHON3'.
 
-Marcel
+arch/ia64/scripts/unwcheck.py is the only script that has ever used
+$(PYTHON).  Recent commit bd5edbe67794 ("ia64: convert unwcheck.py to
+python3") converted it to be compatible with both Python 2.x and 3.x,
+so this is the exceptional case where the use of 'python' is allowed.
+So, I did not touch arch/ia64/Makefile.
+
+tools/perf/Makefile.config sets PYTHON and PYTHON2 by itself, so it
+is not affected by this commit.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v3:
+  - Keep PYTHON as-is because ia64 recently converted its script
+    compatible with Python 3.x
+
+Changes in v2:
+  - Add backward compatibility for PYTHON
+
+ Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index e02d092..7a5f85e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -385,6 +385,8 @@ INSTALLKERNEL  := installkernel
+ DEPMOD		= /sbin/depmod
+ PERL		= perl
+ PYTHON		= python
++PYTHON2		= python2
++PYTHON3		= python3
+ CHECK		= sparse
+ 
+ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
+@@ -430,7 +432,7 @@ GCC_PLUGINS_CFLAGS :=
+ 
+ export ARCH SRCARCH CONFIG_SHELL HOSTCC HOSTCFLAGS CROSS_COMPILE AS LD CC
+ export CPP AR NM STRIP OBJCOPY OBJDUMP HOSTLDFLAGS HOST_LOADLIBES
+-export MAKE LEX YACC AWK GENKSYMS INSTALLKERNEL PERL PYTHON UTS_MACHINE
++export MAKE LEX YACC AWK GENKSYMS INSTALLKERNEL PERL PYTHON PYTHON2 PYTHON3 UTS_MACHINE
+ export HOSTCXX HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+ 
+ export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
+-- 
+2.7.4
