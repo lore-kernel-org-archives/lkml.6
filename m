@@ -1,90 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751655AbeCMMlj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:41:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57426 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750796AbeCMMlh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:41:37 -0400
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: virtio-gpu: Hang on shutdown after suspend/resume with virtio
-To: Gerd Hoffmann <kraxel@redhat.com>, kvm list <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Tue, 13 Mar 2018 13:41:28 +0100
+        id S1751764AbeCMMrr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:47:47 -0400
+Received: from mout.web.de ([212.227.17.11]:36615 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750903AbeCMMrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:47:45 -0400
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] iio/accel/kxcjk-1013: Improve unlocking of a mutex in three
+ functions
+Message-ID: <a4522ea5-78dc-4746-054a-7477d395630f@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 13:47:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031312-0040-0000-0000-0000043EF9E3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031312-0041-0000-0000-000020E22C18
-Message-Id: <92144051-e8ac-de5d-3fac-87dfd0e8270b@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130151
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:w4J00DZxUzxovB92QQDzo1xBUnfQNYk0uQarQvBhDUYcKRWQmjc
+ D1nMOeXPNcRvn/kmSsemdaIbCHkjbP0t6Y42ziy0rTBAX+3E1O6w44W6oaR+WSeFBpYAFZ1
+ R23f80nzgVaheeIanoo4U+8sLxdtt4pl+EvkR4yE0IH1hviI+702K40A7Z3LvFDjhPGdccS
+ Ww+f0dV2NbtQmHDwI518g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:G3f3aCWzbIM=:bPT2EHbwHw5dxyKAQGCnxs
+ lgwKRF+rri3TNJDcVUmIUvmM8T89orL37jpKsTz5U3e8tRyaLD0q9Pq1qYmdXhHArZg6mOJar
+ Uvug83FniFRcLIp5S/6dHA3Gppq7rP3kvbZ2PRPMe9Tz3RwCDaRdYJO4F0ukuyr9ZWo4BQdYm
+ +v071xtKQSzMx6yQRsALihzFjimg+73DQ+YivP9rUHzaR8V071aTjUV+qNvKW51RRlFiqzOg0
+ MD1/OFerQUwtI1t63qwMfNrkt2TgsYo+30ICl7jxgkwdqS2fGUBUchuH9LWP7z/gU4iJXMUVJ
+ x5h2R9qsaoeaqHJLqp1R3yxbBkpavZrQHHBQAyvt3y1Rv4pCMeD9AKAETEieWMkeui/7X9Qwy
+ kC5AQ363PSXjRexVbYcKFvt3quIT3qq2krpeWrFBUDj033XwSXWqOxB9VpPtrGPFM4gVt6/pg
+ hNrTi4bCb815G1uALJq098UucfrHdzlqZSr6GxkgaYNn6F9t+m6QpjCBMB2NikVYawO48FDH7
+ R+kzT7EZi1uVNh2IWLiLnI6Up8VZ0qHyWrNIb1if1bQFW6d2CJ0xhxkAVBS4rgRv8EU6BDN1a
+ VonxQz24CijmjI3fpAVbqp4G62TITqonoZdcx2b9H93u3GW1yk2k7/exqWNPNlblCxFmGlS8D
+ vpMf4eswvhQqWoMylEW6qi9Y29DhPeVZ4+OWn6533BhRS+oRNhnSPqKMTtcOtEq8jBT4G4u9f
+ fgOr88dSpsmhI8TlQujaCNCvtyae3HIYt5crTBQUPavGuoSoJlWAxaN8ElT+ZhfAfE+GselpQ
+ lTf04Lt4yNgWPxNZFZsoklI7V8EQ5xs6PfZFCxI6u/rQk5ShWE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gerd,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 13:40:12 +0100
 
-another thing with virtio-gpu.
+* Add jump targets so that a call of the function "mutex_unlock" is stored
+  less often in these function implementations.
 
-I can successfully do suspend/resume (echo disk > /sys/power/state) on my system. As soon as I have a
-virtio-gpu the system hangs on reboot/shutdown:
+* Replace eight calls by goto statements.
 
-e.g.
+This issue was detected by using the Coccinelle software.
 
-crash> bt 1
-PID: 1      TASK: 6bef0000          CPU: 4   COMMAND: "systemd"
- #0 [6beef4c0] __schedule at a55d60
- #1 [6beef530] schedule at a563f2
- #2 [6beef548] virtio_gpu_queue_ctrl_buffer_locked at 7ea708
- #3 [6beef650] virtio_gpu_queue_ctrl_buffer at 7ea830
- #4 [6beef680] virtio_gpu_primary_plane_update at 7ed5ee
- #5 [6beef710] drm_atomic_helper_commit_planes at 7a2b46
- #6 [6beef760] vgdev_atomic_commit_tail at 7e9dbc
- #7 [6beef790] commit_tail at 7a7126
- #8 [6beef7c0] drm_atomic_helper_commit at 7a73fe
- #9 [6beef800] restore_fbdev_mode_atomic at 7aa38a
-#10 [6beef8a0] drm_fb_helper_pan_display at 7ab7aa
-#11 [6beef8f0] fb_pan_display at 74a248
-#12 [6beef928] bit_update_start at 7573c0
-#13 [6beef958] fbcon_switch at 7542b4
-#14 [6beefa50] redraw_screen at 77b2b8
-#15 [6beefaa0] csi_J at 77b476
-#16 [6beefad8] do_con_trol at 77ee12
-#17 [6beefb40] do_con_write at 77f80c
-#18 [6beefc10] con_write at 78003c
-#19 [6beefc40] n_tty_write at 7662d4
-#20 [6beefce0] tty_write at 761734
-#21 [6beefd48] __vfs_write at 3483cc
-#22 [6beefe00] vfs_write at 3486e8
-#23 [6beefe60] sys_write at 3489de
-#24 [6beefea8] system_call at a5b6a8
- PSW:  0705100180000000 000003ff8111251c (user space)
- GPRS: 0000000000000000 000003ff00000002 000000000000000e 000003ff80deaef0 
-       000000000000000a 0000000000000000 000000000000000f 00000000000003ef 
-       0000000000000000 000000000000000e 000003ff80deaef0 000000000000000a 
-       000003ff81228f58 000000000000000e 000003ff81112510 000003fffdefedf8 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/accel/kxcjk-1013.c | 46 ++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 26 deletions(-)
 
-
-
-
-Turns out that the virtio-gpu console (via vnc) prints the image loading but then
-stops and show no login prompt. (but agetty is running on tty1) So I assume it 
-already hangs after resume (and I am working on the serial sclp console).
-
-Does suspend resume works for you with virtio-gpu on x86? If yes, then I would
-not to look into the s390 code (virtio-blk and net seems to work fine). Otherwise
-it would be good if you could have a look.
-
-Christian
+diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+index af53a1084ee5..4adf38b6d939 100644
+--- a/drivers/iio/accel/kxcjk-1013.c
++++ b/drivers/iio/accel/kxcjk-1013.c
+@@ -765,19 +765,18 @@ static int kxcjk1013_read_raw(struct iio_dev *indio_dev,
+ 			ret = -EBUSY;
+ 		else {
+ 			ret = kxcjk1013_set_power_state(data, true);
+-			if (ret < 0) {
+-				mutex_unlock(&data->mutex);
+-				return ret;
+-			}
++			if (ret < 0)
++				goto unlock;
++
+ 			ret = kxcjk1013_get_acc_reg(data, chan->scan_index);
+ 			if (ret < 0) {
+ 				kxcjk1013_set_power_state(data, false);
+-				mutex_unlock(&data->mutex);
+-				return ret;
++				goto unlock;
+ 			}
+ 			*val = sign_extend32(ret >> 4, 11);
+ 			ret = kxcjk1013_set_power_state(data, false);
+ 		}
++unlock:
+ 		mutex_unlock(&data->mutex);
+ 
+ 		if (ret < 0)
+@@ -905,8 +904,8 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
+ 
+ 	if (!state && data->motion_trigger_on) {
+ 		data->ev_enable_state = 0;
+-		mutex_unlock(&data->mutex);
+-		return 0;
++		ret = 0;
++		goto unlock;
+ 	}
+ 
+ 	/*
+@@ -919,23 +918,20 @@ static int kxcjk1013_write_event_config(struct iio_dev *indio_dev,
+ 	 * is always on so sequence doesn't matter
+ 	 */
+ 	ret = kxcjk1013_set_power_state(data, state);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	ret =  kxcjk1013_setup_any_motion_interrupt(data, state);
+ 	if (ret < 0) {
+ 		kxcjk1013_set_power_state(data, false);
+ 		data->ev_enable_state = 0;
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	data->ev_enable_state = state;
++unlock:
+ 	mutex_unlock(&data->mutex);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static int kxcjk1013_buffer_preenable(struct iio_dev *indio_dev)
+@@ -1086,32 +1082,30 @@ static int kxcjk1013_data_rdy_trigger_set_state(struct iio_trigger *trig,
+ 
+ 	if (!state && data->ev_enable_state && data->motion_trigger_on) {
+ 		data->motion_trigger_on = false;
+-		mutex_unlock(&data->mutex);
+-		return 0;
++		ret = 0;
++		goto unlock;
+ 	}
+ 
+ 	ret = kxcjk1013_set_power_state(data, state);
+-	if (ret < 0) {
+-		mutex_unlock(&data->mutex);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
++
+ 	if (data->motion_trig == trig)
+ 		ret = kxcjk1013_setup_any_motion_interrupt(data, state);
+ 	else
+ 		ret = kxcjk1013_setup_new_data_interrupt(data, state);
+ 	if (ret < 0) {
+ 		kxcjk1013_set_power_state(data, false);
+-		mutex_unlock(&data->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 	if (data->motion_trig == trig)
+ 		data->motion_trigger_on = state;
+ 	else
+ 		data->dready_trigger_on = state;
+ 
++unlock:
+ 	mutex_unlock(&data->mutex);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static const struct iio_trigger_ops kxcjk1013_trigger_ops = {
+-- 
+2.16.2
