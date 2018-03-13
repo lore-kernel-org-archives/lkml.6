@@ -1,101 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeCMSAX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:00:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39696 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752402AbeCMSAT (ORCPT
+        id S1753210AbeCMSFt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:05:49 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41730 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753052AbeCMSFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:00:19 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: [PATCH v9 05/24] mm: Introduce pte_spinlock for FAULT_FLAG_SPECULATIVE
-Date: Tue, 13 Mar 2018 18:59:35 +0100
+        Tue, 13 Mar 2018 14:05:42 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 02/11] media: vsp1: Remove packed attributes from aligned structures
+Date: Tue, 13 Mar 2018 19:05:18 +0100
+Message-Id: <30abb41033b9670c06a54ff484d61d25d3c6e5cd.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18031318-0016-0000-0000-00000532018C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031318-0017-0000-0000-0000286F0182
-Message-Id: <1520963994-28477-6-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130203
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When handling page fault without holding the mmap_sem the fetch of the
-pte lock pointer and the locking will have to be done while ensuring
-that the VMA is not touched in our back.
+The use of the packed attribute can cause a performance penalty for
+all accesses to the struct members, as the compiler will assume that the
+structure has the potential to have an unaligned base.
 
-So move the fetch and locking operations in a dedicated function.
+These structures are all correctly aligned and contain no holes, thus
+the attribute is redundant and negatively impacts performance, so we
+remove the attributes entirely.
 
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- mm/memory.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+v2
+ - Remove attributes entirely
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 8ac241b9f370..21b1212a0892 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2288,6 +2288,13 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(apply_to_page_range);
+ drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 37e2c984fbf3..85795b55a357 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -29,19 +29,19 @@
+ struct vsp1_dl_header_list {
+ 	u32 num_bytes;
+ 	u32 addr;
+-} __attribute__((__packed__));
++};
  
-+static bool pte_spinlock(struct vm_fault *vmf)
-+{
-+	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
-+	spin_lock(vmf->ptl);
-+	return true;
-+}
-+
- static bool pte_map_lock(struct vm_fault *vmf)
- {
- 	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
-@@ -3798,8 +3805,8 @@ static int do_numa_page(struct vm_fault *vmf)
- 	 * validation through pte_unmap_same(). It's of NUMA type but
- 	 * the pfn may be screwed if the read is non atomic.
- 	 */
--	vmf->ptl = pte_lockptr(vma->vm_mm, vmf->pmd);
--	spin_lock(vmf->ptl);
-+	if (!pte_spinlock(vmf))
-+		return VM_FAULT_RETRY;
- 	if (unlikely(!pte_same(*vmf->pte, vmf->orig_pte))) {
- 		pte_unmap_unlock(vmf->pte, vmf->ptl);
- 		goto out;
-@@ -3992,8 +3999,8 @@ static int handle_pte_fault(struct vm_fault *vmf)
- 	if (pte_protnone(vmf->orig_pte) && vma_is_accessible(vmf->vma))
- 		return do_numa_page(vmf);
+ struct vsp1_dl_header {
+ 	u32 num_lists;
+ 	struct vsp1_dl_header_list lists[8];
+ 	u32 next_header;
+ 	u32 flags;
+-} __attribute__((__packed__));
++};
  
--	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
--	spin_lock(vmf->ptl);
-+	if (!pte_spinlock(vmf))
-+		return VM_FAULT_RETRY;
- 	entry = vmf->orig_pte;
- 	if (unlikely(!pte_same(*vmf->pte, entry)))
- 		goto unlock;
+ struct vsp1_dl_entry {
+ 	u32 addr;
+ 	u32 data;
+-} __attribute__((__packed__));
++};
+ 
+ /**
+  * struct vsp1_dl_body - Display list body
 -- 
-2.7.4
+git-series 0.9.1
