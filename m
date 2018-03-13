@@ -1,99 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932839AbeCMN77 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:59:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752197AbeCMN0n (ORCPT
+        id S1752738AbeCMOAx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:00:53 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53510 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752531AbeCMOAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:26:43 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 05/61] Export __set_page_dirty
-Date: Tue, 13 Mar 2018 06:25:43 -0700
-Message-Id: <20180313132639.17387-6-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
+        Tue, 13 Mar 2018 10:00:51 -0400
+Date: Tue, 13 Mar 2018 16:59:57 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: devel@driverdev.osuosl.org, Graff Yang <graff.yang@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>, daniel.baluta@nxp.com,
+        Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH 3/3] staging:iio:ad2s1210: Add write_raw to handle
+ frequency
+Message-ID: <20180313135957.jfgxmq7gtcfgwdhe@mwanda>
+References: <cover.1520878492.git.rodrigosiqueiramelo@gmail.com>
+ <ae60ca5cf37d1678cb6b498450f75f93f3d498d2.1520878492.git.rodrigosiqueiramelo@gmail.com>
+ <20180313090249.cdurikolfwc5qyol@mwanda>
+ <20180313130629.c6zmvoy5o7a5ax2c@smtp.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313130629.c6zmvoy5o7a5ax2c@smtp.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=978
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130167
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, Mar 13, 2018 at 10:06:29AM -0300, Rodrigo Siqueira wrote:
+> On 03/13, Dan Carpenter wrote:
+>
+> > Ah...  I see why you did the ERROR_MESSAGE define, to get around the 80
+> > character limit.  Don't do that.  Just go over 80 characters if you need
+> > to.
+> > 
+> > 
+> > > +					"fclkin");
+> > > +				ret = -EINVAL;
+> > > +				goto error_ret;
+> > 
+> > Direct returns are better.  Less chance of bugs statistically.
+> 
+> I totally get your point here, and I will fix it. However, just for
+> curiosity, why goto in this situation has more chance to generate bugs
+> statically?
+> 
 
-XFS currently contains a copy-and-paste of __set_page_dirty().  Export
-it from buffer.c instead.
+This is a do-nothing goto.  I normally consider do-nothing gotos and
+do-everything gotos basically cousins but in this case it's probably
+unfair since it already has other labels.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Acked-by: Jeff Layton <jlayton@kernel.org>
----
- fs/buffer.c        |  3 ++-
- fs/xfs/xfs_aops.c  | 15 ++-------------
- include/linux/mm.h |  1 +
- 3 files changed, 5 insertions(+), 14 deletions(-)
+Do-everything gotos are the most error prone way of doing error
+handling.  I've reviewed a lot of static checker warnings and it really
+is true.  I can't give you like a percent figure but do-everything error
+handling is a lot buggier than normal kernel style.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 17f13191a552..62bf5445c921 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -594,7 +594,7 @@ EXPORT_SYMBOL(mark_buffer_dirty_inode);
-  *
-  * The caller must hold lock_page_memcg().
-  */
--static void __set_page_dirty(struct page *page, struct address_space *mapping,
-+void __set_page_dirty(struct page *page, struct address_space *mapping,
- 			     int warn)
- {
- 	unsigned long flags;
-@@ -608,6 +608,7 @@ static void __set_page_dirty(struct page *page, struct address_space *mapping,
- 	}
- 	spin_unlock_irqrestore(&mapping->tree_lock, flags);
- }
-+EXPORT_SYMBOL_GPL(__set_page_dirty);
- 
- /*
-  * Add a page to the dirty page list.
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index a0afb6411417..f51350cb98a7 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -1473,19 +1473,8 @@ xfs_vm_set_page_dirty(
- 	newly_dirty = !TestSetPageDirty(page);
- 	spin_unlock(&mapping->private_lock);
- 
--	if (newly_dirty) {
--		/* sigh - __set_page_dirty() is static, so copy it here, too */
--		unsigned long flags;
--
--		spin_lock_irqsave(&mapping->tree_lock, flags);
--		if (page->mapping) {	/* Race with truncate? */
--			WARN_ON_ONCE(!PageUptodate(page));
--			account_page_dirtied(page, mapping);
--			radix_tree_tag_set(&mapping->page_tree,
--					page_index(page), PAGECACHE_TAG_DIRTY);
--		}
--		spin_unlock_irqrestore(&mapping->tree_lock, flags);
--	}
-+	if (newly_dirty)
-+		__set_page_dirty(page, mapping, 1);
- 	unlock_page_memcg(page);
- 	if (newly_dirty)
- 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4d02524a7998..7f7bb4c28497 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1456,6 +1456,7 @@ extern int try_to_release_page(struct page * page, gfp_t gfp_mask);
- extern void do_invalidatepage(struct page *page, unsigned int offset,
- 			      unsigned int length);
- 
-+void __set_page_dirty(struct page *, struct address_space *, int warn);
- int __set_page_dirty_nobuffers(struct page *page);
- int __set_page_dirty_no_writeback(struct page *page);
- int redirty_page_for_writepage(struct writeback_control *wbc,
--- 
-2.16.1
+This style of error handling is supposed to prevent returning without
+unlocking bugs.  I once looked through the git log and counted missing
+unlock bugs and my conclusion was that it basically doesn't work for
+preventing bugs.  The kind of people who just add random returns will do
+it regardless of the error handling style.  There was even one driver
+that indented locked code like this:
+
+	lock(); {
+		blah blah blah;
+	} unlock();
+
+When the driver was first submitted, it already had a missing unlock
+bug.  I don't think style helps slow people down who are in a hurry.
+
+The other thing about do-nothing gotos is that you introduce the
+possibility of "forgot to set the error code" bugs which wasn't there
+before.
+
+regards,
+dan carpenter
+
+
+
+
+
+
+
+
+So actually "error_ret" seems like a pretty reasonable name for a
+do-nothing goto.  I no
+
+I've looked at a lot of error handling and this kind of error handling
+is more error prone.  The single exit path thing is supposed to prevent
+bugs like not dropping the lock on exit and I've looked through the logs
+and counted bugs to see if it works and I don't think it does.  The
+people who forget to unlock will forget to unlock regardless of the
+error handling style.
+
+
+
+
+
+> I will send a v2 with your recommendantions.
+> Thanks for the review and feedbacks :)
+>  
+> > regards,
+> > dan carpenter
+> > 
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
