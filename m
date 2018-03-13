@@ -1,154 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932763AbeCMNkj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:40:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35376 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932520AbeCMN07 (ORCPT
+        id S932898AbeCMNlG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:41:06 -0400
+Received: from a8-53.smtp-out.amazonses.com ([54.240.8.53]:45090 "EHLO
+        a8-53.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752261AbeCMNlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:26:59 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 38/61] mm: Convert page migration to XArray
-Date: Tue, 13 Mar 2018 06:26:16 -0700
-Message-Id: <20180313132639.17387-39-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
+        Tue, 13 Mar 2018 09:41:03 -0400
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: Thiebaud Weksteen <tweek@google.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+ <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+ <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
+ <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
+ <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
+ <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
+ <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
+ <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+ <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+ <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+From: Jeremy Cline <jeremy@jcline.org>
+Message-ID: <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
+Date: Tue, 13 Mar 2018 13:41:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SES-Outgoing: 2018.03.13-54.240.8.53
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
+> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
+>> Hi,
+>>
+>>
+>> On 12-03-18 20:55, Thiebaud Weksteen wrote:
+>>>
+> ...
+>>>
+>>> Hans, you said you configured the tablet to use the 32-bit version of grub
+>>> instead
+>>> of 64. Why's that?
+>>
+>>
+>> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
+>> UEFI,
+>> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
+>> were
+>> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+>>
+>> So this is running a 32 bit grub which boots a 64 bit kernel.
+>>
+>>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
+>>> your Android install working? (that is, what happens if you boot
+>>> Boot0000)?
+>>
+>>
+>> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
+>>
+>> Could the problem perhaps be that the new code for the TPM event-log is
+>> missing some handling to deal with running on a 32 bit firmware? I know the
+>> rest of the kernel has special code to deal with this.
+>>
+> 
+> That is a very good point, and I missed that this is a 64-bit kernel
+> running on 32-bit UEFI.
+> 
+> The TPM code does use efi_call_proto() directly, and now I am thinking
+> it is perhaps the allocate_pages() call that simply only initializes
+> the low 32-bits of log_tbl.
+> 
+> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
+> NULL at the start of the function?
+> 
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/migrate.c | 41 ++++++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
+That was it, it boots when those are initialized to NULL.
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 740b71857898..9a15d27768a0 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -322,7 +322,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
- 	page = migration_entry_to_page(entry);
- 
- 	/*
--	 * Once radix-tree replacement of page migration started, page_count
-+	 * Once page cache replacement of page migration started, page_count
- 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
- 	 * against a page without get_page().
- 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
-@@ -437,10 +437,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 		struct buffer_head *head, enum migrate_mode mode,
- 		int extra_count)
- {
-+	XA_STATE(xas, &mapping->i_pages, page_index(page));
- 	struct zone *oldzone, *newzone;
- 	int dirty;
- 	int expected_count = 1 + extra_count;
--	void **pslot;
- 
- 	/*
- 	 * Device public or private pages have an extra refcount as they are
-@@ -466,21 +466,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	oldzone = page_zone(page);
- 	newzone = page_zone(newpage);
- 
--	xa_lock_irq(&mapping->i_pages);
--
--	pslot = radix_tree_lookup_slot(&mapping->i_pages,
-- 					page_index(page));
-+	xas_lock_irq(&xas);
- 
- 	expected_count += 1 + page_has_private(page);
--	if (page_count(page) != expected_count ||
--		radix_tree_deref_slot_protected(pslot,
--					&mapping->i_pages.xa_lock) != page) {
--		xa_unlock_irq(&mapping->i_pages);
-+	if (page_count(page) != expected_count || xas_load(&xas) != page) {
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -494,7 +489,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	if (mode == MIGRATE_ASYNC && head &&
- 			!buffer_migrate_lock_buffers(head, mode)) {
- 		page_ref_unfreeze(page, expected_count);
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -522,7 +517,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 		SetPageDirty(newpage);
- 	}
- 
--	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	xas_store(&xas, newpage);
- 
- 	/*
- 	 * Drop cache reference from old page by unfreezing
-@@ -531,7 +526,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	 */
- 	page_ref_unfreeze(page, expected_count - 1);
- 
--	xa_unlock(&mapping->i_pages);
-+	xas_unlock(&xas);
- 	/* Leave irq disabled to prevent preemption while updating stats */
- 
- 	/*
-@@ -571,22 +566,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
- int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				   struct page *newpage, struct page *page)
- {
-+	XA_STATE(xas, &mapping->i_pages, page_index(page));
- 	int expected_count;
--	void **pslot;
--
--	xa_lock_irq(&mapping->i_pages);
--
--	pslot = radix_tree_lookup_slot(&mapping->i_pages, page_index(page));
- 
-+	xas_lock_irq(&xas);
- 	expected_count = 2 + page_has_private(page);
--	if (page_count(page) != expected_count ||
--		radix_tree_deref_slot_protected(pslot, &mapping->i_pages.xa_lock) != page) {
--		xa_unlock_irq(&mapping->i_pages);
-+	if (page_count(page) != expected_count || xas_load(&xas) != page) {
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -595,11 +586,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 
- 	get_page(newpage);
- 
--	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	xas_store(&xas, newpage);
- 
- 	page_ref_unfreeze(page, expected_count - 1);
- 
--	xa_unlock_irq(&mapping->i_pages);
-+	xas_unlock_irq(&xas);
- 
- 	return MIGRATEPAGE_SUCCESS;
- }
--- 
-2.16.1
+Regards,
+Jeremy
