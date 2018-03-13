@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuHaJC7qFXlLv4DSdU7Z7ozbFreETx+OgyDLABxmjURrsXTXDpoGY2ut+kbPYcWD0QSLffG
-ARC-Seal: i=1; a=rsa-sha256; t=1520955167; cv=none;
+X-Google-Smtp-Source: AG47ELvNsgyBMKCneFkcPB64YHFt/txkSpZqEpXK/XhGLI52ooklEXZYgDQI6XGVOMrp/LbHwt8P
+ARC-Seal: i=1; a=rsa-sha256; t=1520955164; cv=none;
         d=google.com; s=arc-20160816;
-        b=iyOmHukDhZjDk1LrKsQJsX8501qfQqEJhJEg3pKbzqUvPDRip3vnnjQ7WKS+bZWTX4
-         Uq59DSdPcSVx77YhNU5iGlVUqi78CTCWceyDdmDuIvLWiLSM4CBN1pMGHnnNZQ5MLRlB
-         nUOieE4cgTzdT8xkHSbZ4I1LUAj69My8/NaKQDI7KlrKCbQ+bkbf45Q8vGLb+XssocWD
-         QWcONVhRp1wDB5abPAeqYkZzxFY3ukSJ82+fvh4Bwsn3aHVaSmjOG5dEuXFXwt0pLiUT
-         TkQ1XtfE1qBsp52SDCZVWJySzTAteGrxXlYbkyk8ZSgJglcVSK13aw+C1cB2zz1DxhiV
-         1Kng==
+        b=ime+4CFLdfNoYiAxpCmzt1lYWaNk6jf3gDkl91i7a8aB5yUs+cQLqyjfLpsAad8iLj
+         Q7XliIdDfXWYhtLURAcMnfKjm+Qhnwzl3Gjgx+xAUcwSzD3UaYEu7KgzwOg8mKxCuXee
+         g11In3sFLDVho5mhp5oINyGw2PT4mzVbK2vl6Nn1LqF8JXXkIznKQxx+Vv+TgKf7TLsq
+         RdP4o2ZLJwl6SEVqDj1AC709SeVFs4llb48ictad6xn68aJZH0jA5207ssRlzYRoGyxE
+         /QeVGiVNAMf+BppaQnZ3tV9QvrucXBKHbgJXOwktdTqbpdVQ0rZP/ywszzLW+Lf+8mCW
+         7jBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tvhNz1c60qPZEQNIV/IuAzPefw47yI6Xd56MN+WAFrU=;
-        b=Z0LITRwWwUXkHREUSdcfrmBZT8tY91L2Z3QU9e7iGtl4CH+ec5squhqwn9r+vH8xQ0
-         wAb+wUs9l+qJNOemwsF5brn/UbPfyESsIa/1APKJGR8KyLJP6FQXkFuAI2Mgjf5xddTC
-         ylRZl6IA0VIRReKteHwaw5pbjEy1ObYNqYpa5oVDnLwvfHl5de+jYVO+SGxcXsoFfWYa
-         S8fU1R6xkSsNz7eh8Bd2NuQh+B9rUTY1GRWUqGBSlnbXpEQAj4cY/+Hsd2J6vvetopJd
-         gF/7TkZPdwShqJuV4yg9Uwb2axWM71WwpbRFb0dz1DI7ssxsJipGxs3drlJmcykxGj9k
-         jPfQ==
+        bh=a7z6OXlyFm5GyMdPt4L0r+E2QQo48Ylhgt26VW7msKg=;
+        b=0DMTaz4FHPDPTpmUVl7rZPxQA8DAiNAJGyDkUV2IzxdyMsTt7deR/sST/4D40tu8w2
+         1d4yK+n+jDCdw2SFQihLCkrhD9LANBYwWfRZs24yGMuyUGs1LKFpfR4o0N+FcusKe8Bv
+         yBIAR83QUm86vAeYARqeYm7PbUhFujkDLR7sGEEADtON7WOTXHs0lPg/1pCZ/fexlGD1
+         Mpv/5hrZRqhiXt9Tjk5haxYKVzne2j8wsHomMBLM7hzUyctgTvd90YiY3+ViNGdp2b06
+         f4j7CJY67pnUx7qzbLgIgp4MSxNinhl///fSua6Uidajj64Eo3xIOZEBAtAOAedov4Fi
+         ivdg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com,
+	syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com,
 	Paolo Abeni <pabeni@redhat.com>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 112/146] netfilter: nat: cope with negative port range
-Date: Tue, 13 Mar 2018 16:24:39 +0100
-Message-Id: <20180313152329.057701050@linuxfoundation.org>
+Subject: [PATCH 4.15 111/146] netfilter: x_tables: fix missing timer initialization in xt_LED
+Date: Tue, 13 Mar 2018 16:24:38 +0100
+Message-Id: <20180313152328.983597937@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837085844904312?=
-X-GMAIL-MSGID: =?utf-8?q?1594837085844904312?=
+X-GMAIL-THRID: =?utf-8?q?1594837082696506724?=
+X-GMAIL-MSGID: =?utf-8?q?1594837082696506724?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,112 +52,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Paolo Abeni <pabeni@redhat.com>
 
-commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
+commit 10414014bc085aac9f787a5890b33b5605fbcfc4 upstream.
 
-syzbot reported a division by 0 bug in the netfilter nat code:
+syzbot reported that xt_LED may try to use the ledinternal->timer
+without previously initializing it:
 
-divide error: 0000 [#1] SMP KASAN
+------------[ cut here ]------------
+kernel BUG at kernel/time/timer.c:958!
+invalid opcode: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Modules linked in:
-CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
+CPU: 1 PID: 1826 Comm: kworker/1:2 Not tainted 4.15.0+ #306
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 Google 01/01/2011
-RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88
-RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
-RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
-RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
-RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
-R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
-R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
-FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:__mod_timer kernel/time/timer.c:958 [inline]
+RIP: 0010:mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102
+RSP: 0018:ffff8801d24fe9f8 EFLAGS: 00010293
+RAX: ffff8801d25246c0 RBX: ffff8801aec6cb50 RCX: ffffffff816052c6
+RDX: 0000000000000000 RSI: 00000000fffbd14b RDI: ffff8801aec6cb68
+RBP: ffff8801d24fec98 R08: 0000000000000000 R09: 1ffff1003a49fd6c
+R10: ffff8801d24feb28 R11: 0000000000000005 R12: dffffc0000000000
+R13: ffff8801d24fec70 R14: 00000000fffbd14b R15: ffff8801af608f90
+FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
+CR2: 00000000206d6fd0 CR3: 0000000006a22001 CR4: 00000000001606e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
-  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
-  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
-  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
-  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
+  led_tg+0x1db/0x2e0 net/netfilter/xt_LED.c:75
   ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
-  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
-  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
-  nf_nat_ipv6_local_fn+0x33/0x5d0
-net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
-  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
+  ip6table_raw_hook+0x65/0x80 net/ipv6/netfilter/ip6table_raw.c:42
   nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
   nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
-  nf_hook include/linux/netfilter.h:243 [inline]
+  nf_hook.constprop.27+0x3f6/0x830 include/linux/netfilter.h:243
   NF_HOOK include/linux/netfilter.h:286 [inline]
-  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
-  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
-  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
-  dccp_connect+0x369/0x670 net/dccp/output.c:564
-  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
-  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
-  SYSC_connect+0x213/0x4a0 net/socket.c:1639
-  SyS_connect+0x24/0x30 net/socket.c:1620
-  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x26/0x9b
-RIP: 0033:0x441c69
-RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
-RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
-R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
-Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
-45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
-c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
-RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
+  ndisc_send_skb+0xa51/0x1370 net/ipv6/ndisc.c:491
+  ndisc_send_ns+0x38a/0x870 net/ipv6/ndisc.c:633
+  addrconf_dad_work+0xb9e/0x1320 net/ipv6/addrconf.c:4008
+  process_one_work+0xbbf/0x1af0 kernel/workqueue.c:2113
+  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
+Code: 85 2a 0b 00 00 4d 8b 3c 24 4d 85 ff 75 9f 4c 8b bd 60 fd ff ff e8 bb
+57 10 00 65 ff 0d 94 9a a1 7e e9 d9 fc ff ff e8 aa 57 10 00 <0f> 0b e8 a3
+57 10 00 e9 14 fb ff ff e8 99 57 10 00 4c 89 bd 70
+RIP: __mod_timer kernel/time/timer.c:958 [inline] RSP: ffff8801d24fe9f8
+RIP: mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102 RSP: ffff8801d24fe9f8
+---[ end trace f661ab06f5dd8b3d ]---
 
-The problem is that currently we don't have any check on the
-configured port range. A port range == -1 triggers the bug, while
-other negative values may require a very long time to complete the
-following loop.
+The ledinternal struct can be shared between several different
+xt_LED targets, but the related timer is currently initialized only
+if the first target requires it. Fix it by unconditionally
+initializing the timer struct.
 
-This commit addresses the issue swapping the two ends on negative
-ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
-the nft nat loads the port values from nft registers at runtime.
+v1 -> v2: call del_timer_sync() unconditionally, too.
 
-v1 -> v2: use the correct 'Fixes' tag
-v2 -> v3: update commit message, drop unneeded READ_ONCE()
-
-Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
-Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
+Fixes: 268cb38e1802 ("netfilter: x_tables: add LED trigger target")
+Reported-by: syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_nat_proto_common.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/netfilter/xt_LED.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/netfilter/nf_nat_proto_common.c
-+++ b/net/netfilter/nf_nat_proto_common.c
-@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const s
- 				 const struct nf_conn *ct,
- 				 u16 *rover)
- {
--	unsigned int range_size, min, i;
-+	unsigned int range_size, min, max, i;
- 	__be16 *portptr;
- 	u_int16_t off;
- 
-@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const s
- 		}
- 	} else {
- 		min = ntohs(range->min_proto.all);
--		range_size = ntohs(range->max_proto.all) - min + 1;
-+		max = ntohs(range->max_proto.all);
-+		if (unlikely(max < min))
-+			swap(max, min);
-+		range_size = max - min + 1;
+--- a/net/netfilter/xt_LED.c
++++ b/net/netfilter/xt_LED.c
+@@ -142,9 +142,10 @@ static int led_tg_check(const struct xt_
+ 		goto exit_alloc;
  	}
  
- 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
+-	/* See if we need to set up a timer */
+-	if (ledinfo->delay > 0)
+-		timer_setup(&ledinternal->timer, led_timeout_callback, 0);
++	/* Since the letinternal timer can be shared between multiple targets,
++	 * always set it up, even if the current target does not need it
++	 */
++	timer_setup(&ledinternal->timer, led_timeout_callback, 0);
+ 
+ 	list_add_tail(&ledinternal->list, &xt_led_triggers);
+ 
+@@ -181,8 +182,7 @@ static void led_tg_destroy(const struct
+ 
+ 	list_del(&ledinternal->list);
+ 
+-	if (ledinfo->delay > 0)
+-		del_timer_sync(&ledinternal->timer);
++	del_timer_sync(&ledinternal->timer);
+ 
+ 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
+ 
