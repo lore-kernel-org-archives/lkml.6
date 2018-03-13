@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtzO+Zwk543PloEolXAYD/XxHmJ+P1deHvIq1pKPLv4wGW6vCw+Jo4DBc6QXo7QyjRfcNKF
-ARC-Seal: i=1; a=rsa-sha256; t=1520955573; cv=none;
+X-Google-Smtp-Source: AG47ELuP7Y3YeRgYxj7X/2e5VYJCKTXLA1ByFCUSBecRXqtaL56oUSnK6Z3oHLDZfUSbKXzwqMIq
+ARC-Seal: i=1; a=rsa-sha256; t=1520955567; cv=none;
         d=google.com; s=arc-20160816;
-        b=ffExZxRM7w8RYIoRDD7PcaWE5qLlY9bBZENmSDunG5Fi/RwQxHc/3CM0BGzoeJHzB0
-         IWVSFoj5C7NnySCBKYcU1ojJ2TZThxDH15G+wam+GxMHDBNivetDhC9ZqntylF8UvS6T
-         Cen4/2MsFxV3LXePWOHcLInK7U91hNyfibyc71cUS9EvPnIHLoO1d2Unr5zMyi3mgC43
-         XyNomiFK2Bck/S+M1UmnmVLTsLngCJmQaDN5n43qqM8cIypV4ZtPZqGwMuDS+xPRg1wd
-         fCYphspXuwH7Uolq8ea52U0ecAoKzyvL4aieRmywBQJOaafgUyzz3Ik4sHmIMNCNha7i
-         sTUA==
+        b=TEooJL6YRJ2JggKHVI8up9M7A6GzTaFmh1Jf25pixh2aYBLS4PNMqsy9bwWQjtc84z
+         kihOxc0kFHenJ8wHtpdJdqWp++AJBQM5cj8CHDKVNjBuzLXK+Z+JF7f/6ELoEtlRGKoG
+         5ntAZ181yzxk3NUolntDK2/Fn4A3hIdroSM8jtdNl1bRS1hOBKXUNf0LVpaPcTn7watU
+         h4pBQSFQZrLWXNo+hBAxiKXS9kMk/IJ7ES23N/ul+PpJPW3u2KI17eKktZkpU18YSHxP
+         RHTpD6qATzvvReidt81oWT7SySaRGM6WgngFsuIAOffraldbTc0JBqWSkrklUhVBr1VB
+         1xRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/Q74BKxKpEMCw6sciqwseBX0VmuKGEG1JsAJx1fZjus=;
-        b=tSXhcPcY/xBcSnm2a19aTfC7fTBxk18+UPf/riFekLOaHzoQCotxfm/ub5hb0OCfmY
-         LgLtRDvl55bZQEHbtDCXAhAZFqtgjickZ146925MJDaL8+Mw1/isSNtSkVAxu0rBqPaF
-         QPxriTUNT+hyIQpcRt8lAgtB9BtkQNqc/TMeM3rEpfimysiqhSaRocyzt2lvtS7xdsgS
-         SLEf5bP3Rii3XwtT2frjscivMytQuMdA/YZRy8cCtAs76wWvu4OxlQc0QXIy/pBNdp6j
-         Wa1w9510vMXYgiLYAdEgleNc4PivZ2MVHaKKZgeh/3nJ/qRETOz9DW/FtvP4eQd4c8LW
-         FQ2Q==
+        bh=yS82jN29y5PYxT0Q8sQIuKCBbSxAewLnLPli8ck7CU4=;
+        b=uDrhswiZelGU2xmQuw6zvyTI3l29u/d6VRPyvq+E00eNkj/pxeiBBEos8gxML6wi4o
+         aDyU4ilx8jDbFPZdqx6lA2Wk29vB6i2VgNCgYe38e3bEUw7vLgi2lgldyDzcbBHQwEoQ
+         +bIcFvWLW924DaIXSKfkfEHxWX6D5a5VEYnmPILKQhV1gdRhE5Nq2NAYyqurdeyaoBJD
+         qcbWlxRUxASwoSn+9f7kmjHIbwv4hj27h3tMMJkUtXpXS9yYlofDK75edsPUqKvuebTB
+         OzxvhMxs7+3+B9f9ldGE1sRFkKUumrRkG+OrgrIb44zCudJBr9HOdDa0cn3sClnZVjjs
+         0Smw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Jurgens <danielj@mellanox.com>,
-	Parav Pandit <parav@mellanox.com>,
+	Sergey Gorenko <sergeygo@mellanox.com>,
+	Laurence Oberman <loberman@redhat.com>,
 	Leon Romanovsky <leon@kernel.org>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 091/140] IB/core: Fix missing RDMA cgroups release in case of failure to register device
-Date: Tue, 13 Mar 2018 16:24:54 +0100
-Message-Id: <20180313152504.242468275@linuxfoundation.org>
+Subject: [PATCH 4.14 094/140] IB/mlx5: Fix incorrect size of klms in the memory region
+Date: Tue, 13 Mar 2018 16:24:57 +0100
+Message-Id: <20180313152504.485294946@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836909323251121?=
-X-GMAIL-MSGID: =?utf-8?q?1594837510739026332?=
+X-GMAIL-THRID: =?utf-8?q?1594836924185487286?=
+X-GMAIL-MSGID: =?utf-8?q?1594837504759502564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,51 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Sergey Gorenko <sergeygo@mellanox.com>
 
-commit 2fb4f4eadd180a50112618dd9c5fef7fc50d4f08 upstream.
+commit da343b6d90e11132f1e917d865d88ee35d6e6d00 upstream.
 
-During IB device registration process, if query_device() fails or if
-ib_core fails to registers sysfs entries, rdma cgroup cleanup is
-skipped.
+The value of mr->ndescs greater than mr->max_descs is set in the
+function mlx5_ib_sg_to_klms() if sg_nents is greater than
+mr->max_descs. This is an invalid value and it causes the
+following error when registering mr:
 
-Cc: <stable@vger.kernel.org> # v4.2+
-Fixes: 4be3a4fa51f4 ("IB/core: Fix kernel crash during fail to initialize device")
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
+mlx5_0:dump_cqe:276:(pid 193): dump error cqe
+00000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000030: 00 00 00 00 0f 00 78 06 25 00 00 8b 08 1e 8f d3
+
+Cc: <stable@vger.kernel.org> # 4.5
+Fixes: b005d3164713 ("mlx5: Add arbitrary sg list support")
+Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
 Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/device.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -534,14 +534,14 @@ int ib_register_device(struct ib_device
- 	ret = device->query_device(device, &device->attrs, &uhw);
- 	if (ret) {
- 		pr_warn("Couldn't query the device attributes\n");
--		goto cache_cleanup;
-+		goto cg_cleanup;
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1813,7 +1813,6 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
+ 
+ 	mr->ibmr.iova = sg_dma_address(sg) + sg_offset;
+ 	mr->ibmr.length = 0;
+-	mr->ndescs = sg_nents;
+ 
+ 	for_each_sg(sgl, sg, sg_nents, i) {
+ 		if (unlikely(i >= mr->max_descs))
+@@ -1825,6 +1824,7 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
+ 
+ 		sg_offset = 0;
  	}
++	mr->ndescs = i;
  
- 	ret = ib_device_register_sysfs(device, port_callback);
- 	if (ret) {
- 		pr_warn("Couldn't register device %s with driver model\n",
- 			device->name);
--		goto cache_cleanup;
-+		goto cg_cleanup;
- 	}
- 
- 	device->reg_state = IB_DEV_REGISTERED;
-@@ -557,6 +557,8 @@ int ib_register_device(struct ib_device
- 	mutex_unlock(&device_mutex);
- 	return 0;
- 
-+cg_cleanup:
-+	ib_device_unregister_rdmacg(device);
- cache_cleanup:
- 	ib_cache_cleanup_one(device);
- 	ib_cache_release_one(device);
+ 	if (sg_offset_p)
+ 		*sg_offset_p = sg_offset;
