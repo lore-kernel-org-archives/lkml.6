@@ -1,108 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752787AbeCMObg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:31:36 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60459 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbeCMOay (ORCPT
+        id S1752819AbeCMObz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:31:55 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:42408 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752793AbeCMObx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:30:54 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Tue, 13 Mar 2018 15:30:23 +0100
-Message-Id: <1520951425-13843-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 13 Mar 2018 10:31:53 -0400
+Date: Tue, 13 Mar 2018 09:31:51 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/vc4_validate: Remove VLA usage
+Message-ID: <20180313143151.GA27486@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1evky1-000mkS-0B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.117.58]:55664
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+In preparation to enabling -Wvla, remove VLA. In this particular
+case use macro ARRAY_SIZE so the length of array _bo_ can be
+computed at preprocessing time.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+The use of stack Variable Length Arrays needs to be avoided, as they
+can be a vector for stack exhaustion, which can be both a runtime bug
+or a security flaw. Also, in general, as code evolves it is easy to
+lose track of how big a VLA can get. Thus, we can end up having runtime
+failures that are hard to debug.
+
+Also, fixed as part of the directive to remove all VLAs from
+the kernel: https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- .../bindings/display/bridge/thine,thc63lvd1024.txt | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ drivers/gpu/drm/vc4/vc4_validate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-new file mode 100644
-index 0000000..5b5afcd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -0,0 +1,63 @@
-+Thine Electronics THC63LVD1024 LVDS decoder
-+-------------------------------------------
-+
-+The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-+to parallel data outputs. The chip supports single/dual input/output modes,
-+handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-+
-+Required properties:
-+- compatible: Shall be "thine,thc63lvd1024",
-+
-+Optional properties:
-+- vcc-supply: Power supply for TTL output and digital circuitry
-+- cvcc-supply: Power supply for TTL CLOCKOUT signal
-+- lvcc-supply: Power supply for LVDS inputs
-+- pvcc-supply: Power supply for PLL circuitry
-+- pwnd-gpios: Power down GPIO signal. Active low.
-+- oe-gpios: Output enable GPIO signal. Active high.
-+
-+The THC63LVD1024 video port connections are modeled according
-+to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-+
-+Required video port nodes:
-+- Port@0: First LVDS input port
-+- Port@2: First digital CMOS/TTL parallel output
-+
-+Optional video port nodes:
-+- Port@1: Second LVDS input port
-+- Port@3: Second digital CMOS/TTL parallel output
-+
-+Example:
-+--------
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&reg_lvds_vcc>;
-+		lvcc-supply = <&reg_lvds_lvcc>;
-+
-+		pwdn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in_0: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				lvds_dec_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
+diff --git a/drivers/gpu/drm/vc4/vc4_validate.c b/drivers/gpu/drm/vc4/vc4_validate.c
+index 2db485a..eec76af 100644
+--- a/drivers/gpu/drm/vc4/vc4_validate.c
++++ b/drivers/gpu/drm/vc4/vc4_validate.c
+@@ -753,7 +753,7 @@ validate_gl_shader_rec(struct drm_device *dev,
+ 		28, /* cs */
+ 	};
+ 	uint32_t shader_reloc_count = ARRAY_SIZE(shader_reloc_offsets);
+-	struct drm_gem_cma_object *bo[shader_reloc_count + 8];
++	struct drm_gem_cma_object *bo[ARRAY_SIZE(shader_reloc_offsets) + 8];
+ 	uint32_t nr_attributes, nr_relocs, packet_size;
+ 	int i;
+ 
 -- 
 2.7.4
