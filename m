@@ -1,110 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933477AbeCMMJj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:09:39 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:54759 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932682AbeCMMJg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:09:36 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Martin Sebor <msebor@gmail.com>,
-        Toshihiko Matsumoto <Toshihiko.Matsumoto@sony.com>,
-        Kota Yonezawa <Kota.Yonezawa@sony.com>,
-        Satoshi Watanabe <Satoshi.C.Watanabe@sony.com>,
-        Masayuki Yamamoto <Masayuki.Yamamoto@sony.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cxd2880-spi: avoid out-of-bounds access warning
-Date: Tue, 13 Mar 2018 13:09:11 +0100
-Message-Id: <20180313120931.2667235-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:S+RFW9etdNDC9M0CHb7K1B1lRqYbNXjaHzikiIkxk41IBs0W2ML
- V6J+6ziBK8bHpW6fpH83s3zVPmzQ/8c9vcefKMNK/24BB1pobR3/PXmCbI+QYRwx9DB5oxq
- nOOrU6R3UjgXmhPlQUIti2buGE3UmE0oq9H3qqgwr7aGif5NvzPHVcSTp77mjYqJ9pwey7K
- tY+86ec7VUtdBPdPSHKDQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Czu44b+jZZs=:Z6FllyUz9tfSDwWjX9iETa
- hz1fs75nZiFgNGQUOf5tIey9058JcnGzqCMt8FiHUpjVhVdODb7iZsjs1/z1KGLV/CFimvDr+
- D7P2I6YTSzZHkC+Ec2i+/wx2IzM9vwLrgksARHE5RZB3EY0yF8Ezx5oJtEsSWpWcNj1eHv7Wr
- DE84agqIkROpkcI5+M6aN0bg4+gotQCRYBfiaQktfzWSmR+zWw730JnupxpJZwyr7y4LnzxTx
- 65daJub+u9VsvHlo0ZlUelZfxamWNZRZBSR5omYigWx9jlCjCIQ4Ybdk0hmPn78vxyMcbRoDO
- UPmkdPCzjwmH+wBOb/DyCFcmrtthBbBdzOjQntOSFpYhKAZsKvAArvNojWt5LjeT80QF32A2y
- A61M9VzRJdRVhaCjUkuVnzmEbohbVrPUJjh2LQUQEGkKNbcESj40mXFo2jjmWxXr0sbyob5hk
- UvvU8NuMJfG3Nzntj1cEkSZa6OwgcYyicugWFFVXaL0Q12jSibCagQeB8FEONWHuAtlYs966J
- AxX1QY5ap/o5NytehYOKS9X0JZM+mPBhXFHdgMfP3KCk/KsgCixDcC0X68J68/UOm/DBdjxhG
- iIIpdZd/+rET5ygIk6H8cnhfFNQlMvDGSb5Ao/21IY15lKD54pkw2eaOmwbf+KRjjF3dsCDem
- QRi2bl+nJFDl1r+/R4TEmybEKWpAh2z6NZrrRQHJsfKoMmjSMcEzl14s/wRrgDSaxzR2Ir8Ou
- 1y9Iqc7b3C1k0KqIDwjN6KDd2p6DMrPHg+htjw==
+        id S933441AbeCMMKM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:10:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933416AbeCMMGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:06:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349012179F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 22/31] perf stat: Fix core dump when flag T is used
+Date: Tue, 13 Mar 2018 09:04:59 -0300
+Message-Id: <20180313120508.29327-23-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
+References: <20180313120508.29327-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The -Warray-bounds warning in gcc-8 triggers for a newly added file:
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-drivers/media/spi/cxd2880-spi.c: In function 'cxd2880_write_reg':
-drivers/media/spi/cxd2880-spi.c:111:3: error: 'memcpy' forming offset [133, 258] is out of the bounds [0, 132] of object 'send_data' with type 'u8[132]' {aka 'unsigned char[132]'} [-Werror=array-bounds]
+Executing command 'perf stat -T -- ls' dumps core on x86 and s390.
 
-The problem appears to be that we have two range checks in this function,
-first comparing against BURST_WRITE_MAX (128) and then comparing against
-a literal '255'. The logic checking the buffer size looks at the second
-one and decides that this might be the actual maximum data length.
+Here is the call back chain (done on x86):
 
-This is understandable behavior from the compiler, but the code is actually
-safe. Since the first check is already shorter, we can remove the loop
-and only leave that. To be on the safe side in case BURST_WRITE_MAX might
-be increased, I'm leaving the check against U8_MAX.
+ # gdb ./perf
+ ....
+ (gdb) r stat -T -- ls
+...
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff56d1963 in vasprintf () from /lib64/libc.so.6
+(gdb) where
+ #0  0x00007ffff56d1963 in vasprintf () from /lib64/libc.so.6
+ #1  0x00007ffff56ae484 in asprintf () from /lib64/libc.so.6
+ #2  0x00000000004f1982 in __parse_events_add_pmu (parse_state=0x7fffffffd580,
+    list=0xbfb970, name=0xbf3ef0 "cpu",
+    head_config=0xbfb930, auto_merge_stats=false) at util/parse-events.c:1233
+ #3  0x00000000004f1c8e in parse_events_add_pmu (parse_state=0x7fffffffd580,
+    list=0xbfb970, name=0xbf3ef0 "cpu",
+    head_config=0xbfb930) at util/parse-events.c:1288
+ #4  0x0000000000537ce3 in parse_events_parse (_parse_state=0x7fffffffd580,
+    scanner=0xbf4210) at util/parse-events.y:234
+ #5  0x00000000004f2c7a in parse_events__scanner (str=0x6b66c0
+    "task-clock,{instructions,cycles,cpu/cycles-t/,cpu/tx-start/}",
+    parse_state=0x7fffffffd580, start_token=258) at util/parse-events.c:1673
+ #6  0x00000000004f2e23 in parse_events (evlist=0xbe9990, str=0x6b66c0
+    "task-clock,{instructions,cycles,cpu/cycles-t/,cpu/tx-start/}", err=0x0)
+    at util/parse-events.c:1713
+ #7  0x000000000044e137 in add_default_attributes () at builtin-stat.c:2281
+ #8  0x000000000044f7b5 in cmd_stat (argc=1, argv=0x7fffffffe3b0) at
+    builtin-stat.c:2828
+ #9  0x00000000004c8b0f in run_builtin (p=0xab01a0 <commands+288>, argc=4,
+    argv=0x7fffffffe3b0) at perf.c:297
+ #10 0x00000000004c8d7c in handle_internal_command (argc=4,
+    argv=0x7fffffffe3b0) at perf.c:349
+ #11 0x00000000004c8ece in run_argv (argcp=0x7fffffffe20c,
+   argv=0x7fffffffe200) at perf.c:393
+ #12 0x00000000004c929c in main (argc=4, argv=0x7fffffffe3b0) at perf.c:537
+(gdb)
 
-Fixes: bd24fcddf6b8 ("media: cxd2880-spi: Add support for CXD2880 SPI interface")
-Cc: Martin Sebor <msebor@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+It turns out that a NULL pointer is referenced. Here are the
+function calls:
+
+  ...
+  cmd_stat()
+  +---> add_default_attributes()
+	+---> parse_events(evsel_list, transaction_attrs, NULL);
+	             3rd parameter set to NULL
+
+Function parse_events(xx, xx, struct parse_events_error *err) dives
+into a bison generated scanner and creates
+parser state information for it first:
+
+   struct parse_events_state parse_state = {
+                .list   = LIST_HEAD_INIT(parse_state.list),
+                .idx    = evlist->nr_entries,
+                .error  = err,   <--- NULL POINTER !!!
+                .evlist = evlist,
+        };
+
+Now various functions inside the bison scanner are called to end up in
+__parse_events_add_pmu(struct parse_events_state *parse_state, ..) with
+first parameter being a pointer to above structure definition.
+
+Now the PMU event name is not found (because being executed in a VM) and
+this function tries to create an error message with
+
+   asprintf(&parse_state->error.str, ....)
+
+which references a NULL pointer and dumps core.
+
+Fix this by providing a pointer to the necessary error information
+instead of NULL. Technically only the else part is needed to avoid the
+core dump, just lets be safe...
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180308145735.64717-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/media/spi/cxd2880-spi.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ tools/perf/builtin-stat.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-index 4df3bd312f48..011a37c2f272 100644
---- a/drivers/media/spi/cxd2880-spi.c
-+++ b/drivers/media/spi/cxd2880-spi.c
-@@ -88,7 +88,7 @@ static int cxd2880_write_reg(struct spi_device *spi,
- 		pr_err("invalid arg\n");
- 		return -EINVAL;
- 	}
--	if (size > BURST_WRITE_MAX) {
-+	if (size > BURST_WRITE_MAX || size > U8_MAX) {
- 		pr_err("data size > WRITE_MAX\n");
- 		return -EINVAL;
- 	}
-@@ -101,24 +101,14 @@ static int cxd2880_write_reg(struct spi_device *spi,
- 	send_data[0] = 0x0e;
- 	write_data_top = data;
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 0fa9ea3a6d92..f5c454855908 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2331,11 +2331,16 @@ static int add_default_attributes(void)
+ 		return 0;
  
--	while (size > 0) {
--		send_data[1] = sub_address;
--		if (size > 255)
--			send_data[2] = 255;
--		else
--			send_data[2] = (u8)size;
-+	send_data[1] = sub_address;
-+	send_data[2] = (u8)size;
- 
--		memcpy(&send_data[3], write_data_top, send_data[2]);
-+	memcpy(&send_data[3], write_data_top, send_data[2]);
- 
--		ret = cxd2880_write_spi(spi, send_data, send_data[2] + 3);
--		if (ret) {
--			pr_err("write spi failed %d\n", ret);
--			break;
--		}
--		sub_address += send_data[2];
--		write_data_top += send_data[2];
--		size -= send_data[2];
--	}
-+	ret = cxd2880_write_spi(spi, send_data, send_data[2] + 3);
-+	if (ret)
-+		pr_err("write spi failed %d\n", ret);
- 
- 	return ret;
- }
+ 	if (transaction_run) {
++		struct parse_events_error errinfo;
++
+ 		if (pmu_have_event("cpu", "cycles-ct") &&
+ 		    pmu_have_event("cpu", "el-start"))
+-			err = parse_events(evsel_list, transaction_attrs, NULL);
++			err = parse_events(evsel_list, transaction_attrs,
++					   &errinfo);
+ 		else
+-			err = parse_events(evsel_list, transaction_limited_attrs, NULL);
++			err = parse_events(evsel_list,
++					   transaction_limited_attrs,
++					   &errinfo);
+ 		if (err) {
+ 			fprintf(stderr, "Cannot set up transaction events\n");
+ 			return -1;
 -- 
-2.9.0
+2.14.3
