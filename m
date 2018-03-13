@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-12552-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvFZkqtBwUX0WeyeprfL8ztl+om7QbicR7eZUYgvGFMVPcmmykwLpxdxHc6IFuYu4nPDGRz
-ARC-Seal: i=1; a=rsa-sha256; t=1520977639; cv=none;
+Return-Path: <kernel-hardening-return-12558-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtTnDvtQ1YX3JLZb9lCPaG5k7UEw2suxzBrjN16clIpe9Msv1mduVb+ahtrGtNw9rJ9QBrf
+ARC-Seal: i=1; a=rsa-sha256; t=1520977917; cv=none;
         d=google.com; s=arc-20160816;
-        b=V3PKUGHQfpmfUosSmq1sgxLRIYJwE2mhT/5axMtoG7iH7ZW69FPTJ/PBSKKbl2hpHh
-         PbSa74FHngv/TYukqvvhlBGMYC5Nuh/3mDK1RdCzMnlB2accGqB0PFWNoZ1HtzPAQ+YK
-         CtaC+9GlFg9s7aghO4iOB37GuaxWb5540aHZpAheeDCx1N7JRB2XxWdz1Xa/FUqKprgK
-         tqDqSxU17HW+GKeqnyRW0TDjyhKEhjk18WjJSlqNF6fcfGi4cCnZzS4254aHLsk/SK3G
-         vVGGBXL7dwMLahrx0qdlAlN4bX2MbpDPuWrpr8J7K2ask8SmVh+FemEk7XW2Z4iXOxVJ
-         7N4A==
+        b=wBau4QGf9jNJTroF59eXv9EKNIPveo06ClwvWly2Mw/9LV55YTq7TbQmTz3nZLLBlQ
+         Jbi0ojT2kDepQYqtZjM3BbvqsdKcpofDDOZZtz4siLsqR4y0+K5l8IQI3YMiNereI2fH
+         05Omqd94DB6yso4HTvyoE4C4XQ/SsoH03TC/60G9XlxthFpFAgPm66TfTOKmvAM8SZv/
+         TkOSOHsqmqdTjFwXaCCMLiMCnxQZ9VZrlE8c6ftdEDIl/Ay4s25RSAA7M8ye3fTssodg
+         +rcqHY73mY0c6SxzJJTQzJVXPXUF7166nIOI+cHRGijJ9MW5yZlrBCDfC9TXPISDt7vc
+         oIaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=YUnOBgn7cEFzX6W8/Al+7BDebc644rxBHnUzqagykeU=;
-        b=n3OJqb+pNsPbxrKzGmPvKDPk5SVFhNdEkXs/hRaFpSKozqmNwpFzFcbnNFE8qmAy39
-         p0NsrhTahHIcX2oXvqU1+6mGELXwrXIGbMLsFzJYyZ8bWLBte8ylqCbBa8B4HzYz7NIZ
-         CR73lCpVzszqFUJ8jUWE/Nf7U7vv7i2GJmDgZ73ZazK8CQpYteQtkrDlhTP+Qxl+H1IK
-         XiZ8hLaRTzaVyIPfvTcGYKiPjweIsaB/tiD9x8fLWGBd96P+ONb/rpX0uEpncer+CRR5
-         1wl53s0ZTX+cr6TvkumpZiwtxdA670D0wvCRwR997RCocW+Cx87ZqNHl3yLw6euyctYa
-         ptdA==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=zp2/cd00hoz0TXoJDSYrauHXClPnfh7JCN8TWUsTpUY=;
+        b=hHyeXfr1aICkLE79P9yYtczFdbhXAGve4UTjT4hoJoIQQ0X1gylfdYjpVa+nsEkfYG
+         Rfc+zCm/K/q9SW5jDEdmrQtWnUjhp/62BrqbPkS4kazd1tWkmU2K7Lskcu9QpoGf3CLG
+         4Y1aPCZld8TWLCxO8JN/P6vRRukdpCeMp5l0hiPGH4vozhtZwRISPQ2MxE7UJFw6csgx
+         GzRppFYivhXDK9uvgBff783yQqoE2Yk7LzVFo5qrdmK2MHVUhEE7Zvns9qiQwuJMkhUn
+         /cDBq0/qryCcaeFjLc8dQcXLgUOCqltB8u0IgFOsxDi3TBV3dSk3Qvj7hMX8zxH+kCvx
+         ZgUg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12552-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12552-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12558-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12558-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12552-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12552-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12558-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12558-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -34,119 +34,362 @@ To: <david@fromorbit.com>, <willy@infradead.org>, <rppt@linux.vnet.ibm.com>,
 CC: <labbott@redhat.com>, <linux-security-module@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
 	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
-Date: Tue, 13 Mar 2018 23:45:46 +0200
-Message-ID: <20180313214554.28521-1-igor.stoppa@huawei.com>
+Subject: [PATCH 6/8] Pmalloc selftest
+Date: Tue, 13 Mar 2018 23:45:52 +0200
+Message-ID: <20180313214554.28521-7-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180313214554.28521-1-igor.stoppa@huawei.com>
+References: <20180313214554.28521-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594860649725336168?=
-X-GMAIL-MSGID: =?utf-8?q?1594860649725336168?=
+X-GMAIL-THRID: =?utf-8?q?1594860941197895401?=
+X-GMAIL-MSGID: =?utf-8?q?1594860941197895401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch-set introduces the possibility of protecting memory that has
-been allocated dynamically.
+Add basic self-test functionality for pmalloc.
 
-The memory is managed in pools: when a memory pool is turned into R/O,
-all the memory that is part of it, will become R/O.
+The testing is introduced as early as possible, right after the main
+dependency, genalloc, has passed successfully, so that it can help
+diagnosing failures in pmalloc users.
 
-A R/O pool can be destroyed, to recover its memory, but it cannot be
-turned back into R/W mode.
-
-This is intentional. This feature is meant for data that doesn't need
-further modifications after initialization.
-
-However the data might need to be released, for example as part of module
-unloading.
-To do this, the memory must first be freed, then the pool can be destroyed.
-
-An example is provided, in the form of self-testing.
-
-Changes since v18:
-
-[http://www.openwall.com/lists/kernel-hardening/2018/02/28/21]
-
-* Code refactoring in pmalloc & genalloc:
-  - simplify the logic for handling pools before and after sysf init
-  - reduced section holding mutex on pmalloc list, when adding a pool
-  - reduced the steps in finding length of an existing allocation
-  - split various functions into smaller ones
-* clarified in the comments the need for pfree()
-* Various fixes to the documentation:
-  - remove kerneldoc duplicates
-  - added cross-reference lables
-  - miscellaneous typos
-* improved error notifications: use WARNs with specific messages
-* added missing tests for possible error conditions
-
-
-Discussion topics that are unclear if they are closed and would need
-comment from those who initiated them, if my answers are accepted or not:
-
-* @Kees Cook proposed to have first self testing for genalloc, to
-  validate the following patch, adding tracing of allocations
-  My answer was that such tests would also need patching, therefore they 
-  could not certify that the functionality is corect both before and
-  after the genalloc bitmap modification.
-
-* @Kees Cook proposed to turn the self testing into modules.
-  My answer was that the functionality is intentionally tested very early
-  in the boot phase, to prevent unexplainable errors, should the feature
-  really fail.
-
-* @Matthew Wilcox proposed to use a different mechanism for th genalloc
-  bitmap: 2 bitmaps, one for occupation and one for start.
-  And possibly use an rbtree for the starts.
-  My answer was that this solution is less optimized, because it scatters
-  the data of one allocation across multiple words/pages, plus is not
-  a transaction anymore. And the particular distribution of sizes of
-  allocation is likely to eat up much more memory than the bitmap.
-
-Igor Stoppa (8):
-  genalloc: track beginning of allocations
-  Add label to genalloc.rst for cross reference
-  genalloc: selftest
-  struct page: add field for vm_struct
-  Protectable Memory
-  Pmalloc selftest
-  lkdtm: crash on overwriting protected pmalloc var
-  Documentation for Pmalloc
-
- Documentation/core-api/genalloc.rst |   2 +
- Documentation/core-api/index.rst    |   1 +
- Documentation/core-api/pmalloc.rst  | 111 ++++++
- drivers/misc/lkdtm.h                |   1 +
- drivers/misc/lkdtm_core.c           |   3 +
- drivers/misc/lkdtm_perms.c          |  28 ++
- include/linux/genalloc.h            | 116 +++---
- include/linux/mm_types.h            |   1 +
- include/linux/pmalloc.h             | 163 ++++++++
- include/linux/test_genalloc.h       |  26 ++
- include/linux/test_pmalloc.h        |  24 ++
- include/linux/vmalloc.h             |   1 +
- init/main.c                         |   4 +
- lib/Kconfig                         |  15 +
- lib/Makefile                        |   1 +
- lib/genalloc.c                      | 765 ++++++++++++++++++++++++++----------
- lib/test_genalloc.c                 | 410 +++++++++++++++++++
- mm/Kconfig                          |  17 +
- mm/Makefile                         |   2 +
- mm/pmalloc.c                        | 643 ++++++++++++++++++++++++++++++
- mm/test_pmalloc.c                   | 238 +++++++++++
- mm/usercopy.c                       |  33 ++
- mm/vmalloc.c                        |   2 +
- 23 files changed, 2352 insertions(+), 255 deletions(-)
- create mode 100644 Documentation/core-api/pmalloc.rst
- create mode 100644 include/linux/pmalloc.h
- create mode 100644 include/linux/test_genalloc.h
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ include/linux/test_pmalloc.h |  24 +++++
+ init/main.c                  |   2 +
+ mm/Kconfig                   |  10 ++
+ mm/Makefile                  |   1 +
+ mm/test_pmalloc.c            | 238 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 275 insertions(+)
  create mode 100644 include/linux/test_pmalloc.h
- create mode 100644 lib/test_genalloc.c
- create mode 100644 mm/pmalloc.c
  create mode 100644 mm/test_pmalloc.c
 
+diff --git a/include/linux/test_pmalloc.h b/include/linux/test_pmalloc.h
+new file mode 100644
+index 000000000000..c7e2e451c17c
+--- /dev/null
++++ b/include/linux/test_pmalloc.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * test_pmalloc.h
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
++
++#ifndef __LINUX_TEST_PMALLOC_H
++#define __LINUX_TEST_PMALLOC_H
++
++
++#ifdef CONFIG_TEST_PROTECTABLE_MEMORY
++
++void test_pmalloc(void);
++
++#else
++
++static inline void test_pmalloc(void){};
++
++#endif
++
++#endif
+diff --git a/init/main.c b/init/main.c
+index 2bf1312fd2fe..ea44c940070a 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -91,6 +91,7 @@
+ #include <linux/rodata_test.h>
+ #include <linux/jump_label.h>
+ #include <linux/test_genalloc.h>
++#include <linux/test_pmalloc.h>
+ 
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -663,6 +664,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	mem_encrypt_init();
+ 
+ 	test_genalloc();
++	test_pmalloc();
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	if (initrd_start && !initrd_below_start_ok &&
+ 	    page_to_pfn(virt_to_page((void *)initrd_start)) < min_low_pfn) {
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 016d29b9400b..47b0843b02d2 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -767,3 +767,13 @@ config PROTECTABLE_MEMORY
+     depends on ARCH_HAS_SET_MEMORY
+     select GENERIC_ALLOCATOR
+     default y
++
++config TEST_PROTECTABLE_MEMORY
++	bool "Run self test for pmalloc memory allocator"
++        depends on MMU
++	depends on ARCH_HAS_SET_MEMORY
++	select PROTECTABLE_MEMORY
++	default n
++	help
++	  Tries to verify that pmalloc works correctly and that the memory
++	  is effectively protected.
+diff --git a/mm/Makefile b/mm/Makefile
+index 959fdbdac118..1de4be5fd0bc 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -66,6 +66,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
+ obj-$(CONFIG_SLOB) += slob.o
+ obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
+ obj-$(CONFIG_PROTECTABLE_MEMORY) += pmalloc.o
++obj-$(CONFIG_TEST_PROTECTABLE_MEMORY) += test_pmalloc.o
+ obj-$(CONFIG_KSM) += ksm.o
+ obj-$(CONFIG_PAGE_POISONING) += page_poison.o
+ obj-$(CONFIG_SLAB) += slab.o
+diff --git a/mm/test_pmalloc.c b/mm/test_pmalloc.c
+new file mode 100644
+index 000000000000..598119ffb0ed
+--- /dev/null
++++ b/mm/test_pmalloc.c
+@@ -0,0 +1,238 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * test_pmalloc.c
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
++#include <linux/pmalloc.h>
++#include <linux/mm.h>
++#include <linux/test_pmalloc.h>
++#include <linux/bug.h>
++
++#define SIZE_1 (PAGE_SIZE * 3)
++#define SIZE_2 1000
++
++static struct gen_pool *pool_unprot;
++static struct gen_pool *pool_prot;
++static struct gen_pool *pool_pre;
++
++static void *var_prot;
++static void *var_unprot;
++static void *var_vmall;
++
++/**
++ * validate_alloc() - wrapper for is_pmalloc_object with messages
++ * @expected: whether if the test is supposed to be ok or not
++ * @addr: base address of the range to test
++ * @size: length of he range to test
++ */
++static inline bool validate_alloc(bool expected, void *addr,
++				  unsigned long size)
++{
++	bool test;
++
++	test = is_pmalloc_object(addr, size) > 0;
++	pr_notice("must be %s: %s",
++		  expected ? "ok" : "no", test ? "ok" : "no");
++	return test == expected;
++}
++
++
++#define is_alloc_ok(variable, size)	\
++	validate_alloc(true, variable, size)
++
++
++#define is_alloc_no(variable, size)	\
++	validate_alloc(false, variable, size)
++
++/**
++ * create_pools() - tries to instantiate the pools needed for the test
++ *
++ * Creates the respective instances for each pool used in the test.
++ * In case of error, it rolls back whatever previous step passed
++ * successfully.
++ *
++ * Return:
++ * * true	- success
++ * * false	- something failed
++ */
++static bool create_pools(void)
++{
++	pr_notice("Testing pool creation capability");
++
++	pool_pre = pmalloc_create_pool("preallocated", 0);
++	if (unlikely(!pool_pre))
++		goto err_pre;
++
++	pool_unprot = pmalloc_create_pool("unprotected", 0);
++	if (unlikely(!pool_unprot))
++		goto err_unprot;
++
++	pool_prot = pmalloc_create_pool("protected", 0);
++	if (unlikely(!(pool_prot)))
++		goto err_prot;
++	return true;
++err_prot:
++	pmalloc_destroy_pool(pool_unprot);
++err_unprot:
++	pmalloc_destroy_pool(pool_pre);
++err_pre:
++	WARN(true, "Unable to allocate memory for pmalloc selftest.");
++	return false;
++}
++
++
++/**
++ * destroy_pools() - tears down the instances of the pools in use
++ *
++ * Mostly used on the path for error recovery, when something goes wrong,
++ * the pools allocated are dropped.
++ */
++static void destroy_pools(void)
++{
++	pmalloc_destroy_pool(pool_prot);
++	pmalloc_destroy_pool(pool_unprot);
++	pmalloc_destroy_pool(pool_pre);
++}
++
++
++/**
++ * test_alloc() - verifies that it's possible to allocate from the pools
++ *
++ * Each of the pools declared must be available for allocation, at this
++ * point. There is also a small allocation from generic vmallco memory.
++ */
++static bool test_alloc(void)
++{
++	pr_notice("Testing allocation capability");
++
++	var_vmall = vmalloc(SIZE_2);
++	if (unlikely(!var_vmall))
++		goto err_vmall;
++
++	var_unprot = pmalloc(pool_unprot,  SIZE_1 - 1, GFP_KERNEL);
++	if (unlikely(!var_unprot))
++		goto err_unprot;
++
++	var_prot = pmalloc(pool_prot,  SIZE_1, GFP_KERNEL);
++	if (unlikely(!var_prot))
++		goto err_prot;
++
++	return true;
++err_prot:
++	pfree(pool_unprot, var_unprot);
++err_unprot:
++	vfree(var_vmall);
++err_vmall:
++	WARN(true, "Unable to allocate memory for pmalloc selftest.");
++	return false;
++}
++
++
++/**
++ * test_is_pmalloc_object() - tests the identification of pmalloc ranges
++ *
++ * Positive and negative test of potential pmalloc objects.
++ *
++ * Return:
++ * * true	- success
++ * * false	- error
++ */
++static bool test_is_pmalloc_object(void)
++{
++	pr_notice("Test correctness of is_pmalloc_object()");
++	if (WARN_ON(unlikely(!is_alloc_ok(var_unprot, 10))) ||
++	    WARN_ON(unlikely(!is_alloc_ok(var_unprot, SIZE_1))) ||
++	    WARN_ON(unlikely(!is_alloc_ok(var_unprot, PAGE_SIZE))) ||
++	    WARN_ON(unlikely(!is_alloc_no(var_unprot, SIZE_1 + 1))) ||
++	    WARN_ON(unlikely(!is_alloc_no(var_vmall, 10))))
++		return false;
++	return true;
++}
++
++
++/**
++ * test_protected_allocation() - allocation from protected pool must fail
++ *
++ * Once the pool is protected, the pages associated with it become
++ * read-only and any further attempt to allocate data will be declined.
++ *
++ * Return:
++ * * true	- success
++ * * false	- error
++ */
++static bool test_protected_allocation(void)
++{
++	pmalloc_protect_pool(pool_prot);
++	/*
++	 * This will intentionally trigger a WARN, because the pool being
++	 * allocated from is already protected.
++	 */
++	pr_notice("Test allocation from a protected pool. It will WARN.");
++	return !WARN(unlikely(pmalloc(pool_prot, 10, GFP_KERNEL)),
++		     "no memory from a protected pool");
++}
++
++
++/**
++ * test_destroy_pool() - destroying an unprotected pool must WARN
++ *
++ * Attempting to destroy an unprotected pool will issue a warning, while
++ * destroying a protected pool is considered to be the normal behavior.
++ */
++static void test_destroy_pools(void)
++{
++	/*
++	 * This will intentionally trigger a WARN because the pool being
++	 * destroyed is not protected, which is unusual and should happen
++	 * on error paths only, where probably other warnings are already
++	 * displayed.
++	 */
++	pr_notice("pmalloc-selftest: WARN in pmalloc_pool_set_protection.");
++	pmalloc_destroy_pool(pool_unprot);
++	pr_notice("pmalloc-selftest: point for expected WARN passed.");
++
++	/* This must not cause WARNings */
++	pr_notice("pmalloc-selftest: Expect no WARN below.");
++	pmalloc_destroy_pool(pool_prot);
++	pr_notice("pmalloc-selftest: passed point for unexpected WARN.");
++}
++
++
++/**
++ * test_pmalloc() - main entry point for running the test cases
++ *
++ * Performs various tests, each step subordinate to the successful
++ * execution of the previous.
++ */
++void test_pmalloc(void)
++{
++
++	pr_notice("pmalloc-selftest");
++
++	if (unlikely(!create_pools()))
++		return;
++
++	if (unlikely(!test_alloc()))
++		goto err_alloc;
++
++
++	if (unlikely(!test_is_pmalloc_object()))
++		goto err_is_object;
++
++	*(int *)var_prot = 0;
++	pfree(pool_unprot, var_unprot);
++	vfree(var_vmall);
++
++	if (unlikely(!test_protected_allocation()))
++		goto err_prot_all;
++
++	test_destroy_pools();
++	return;
++err_prot_all:
++err_is_object:
++err_alloc:
++	destroy_pools();
++}
 -- 
 2.14.1
