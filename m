@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuRTpG+NSz+ACzkszX0pN3v1pcvJUipZtll5Hrw/Lm93Bpx4AsZEsY6T1D0AsZy795Ltc8N
-ARC-Seal: i=1; a=rsa-sha256; t=1520955561; cv=none;
+X-Google-Smtp-Source: AG47ELshbaDQOfoOHughnZm2AJWSq/0J4f80KnCN/sl0WNPJcIHsM334RzKUuf0v997yHmwMVE31
+ARC-Seal: i=1; a=rsa-sha256; t=1520955558; cv=none;
         d=google.com; s=arc-20160816;
-        b=tqyo7BGv9KNl1JQLS/GJj95mbKZkbsosc4oPTcZMmdGHFE+R4WWYIoOBBgpT0vSb5X
-         +XyjlFiN4sPbni+sK29bhZSoAg5E41giWSOEf+mGi6n/17WLABTtqOoCweU4Jo1yzo2s
-         28L8EhNm+/gKQ2dLk4jHgbTqXp4poNy0+9H4sInF8ieECN5MN1yNGavc1upF5n69xRkl
-         MYKtYPEK5hkf2ZXguj8LTXgWacKTTskA3uHFXcuyxbHmwhwXRnWrCq5N5btQ1iMcFwn0
-         XoYIZh491IeNrP7FDqGO8T2ebx3YjS/usAfg5gG1nKpIVfqkmIABWZsOjd+P93nbTRDM
-         //DQ==
+        b=d5hn8pFJmDB5su1JxywjTie0KyPTF5hoiZVX7b8UsgUXgWTyK0YOg50H0PF8vEXXbI
+         GdW8aHsiIV2vM2JZ2TslvNXA0GPlWEP5f1L2vL0ZK2OIVGlYkDtWdgL+qTIMes5hAh4I
+         5xrsFpRiv/Kg03SFprKi6JFE4VpKHUM98PhtoxN/dO14zQIihm0pl4UtblGFcF5MBIIP
+         ZKkTrvP/E0yeyVUjP/EsQqwvorBXJNX74YIRKtzn2ijhHiLUIIhp1cal2NcXTORY/H6E
+         3+gKyXcCXQymOnX1k9OQnL7PSK134/w6Gf3ons1Q84VlLX2HNqRMUa3Te6QUrny8FaOC
+         ahmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yRzxHCWqYwplSn6+BYPYgmi8s75edpQmx95379VS9+0=;
-        b=Cof2wzS5ZBM3JeD2Fz5qnru3f4FOW3ASM0sXa/l0pKXIjiyR+WdHjDMOWmXzKlobaM
-         7J914gsAsKQnRskNJRDnM5aWnQglfQeGxix/e5ZN2n7xK/ozTwc4krqoKnIZ73XnERSi
-         PfO9wrh4TY+UI4/XS50C2uGGwOB0//Hga38EhFrUknWLxXnVUDyGjcfpWWvDz02DkizY
-         zDCILXrN1fPkKxjUNHtNpfBW3nxWnVUyFWylCsI8gjffcDoJeq0+wq9tjfUKF2Eg8W+4
-         WtxB+GtlV62X4CibTm0DU7eQGQ47Z/DH7s+pontRTA2Y8SNio2WvXn7J1yUOY9JetRRn
-         2D3A==
+        bh=qEEtOXAZJHOBPrIJjDAi5AjDfCICYYXwZugM04dmcZ8=;
+        b=dpX/aspfi2HQpQTq2eS9rzNBtvMt3Ec2rtBSE2jv9jt/fZjg+N5hWSAovtttL+m1ZR
+         9rcNUW/mh/rlejWWriG1KyEDCPN/uT+ICDnPICinE9l1NjF5jiZYwUTkagUMnhevUPXP
+         1dIg/Ik7cNEOhrlyGeBsRbbTZ6I8QpGZn52mygorU62jxnhGr43MY1jAxUtNL2Mx/jVi
+         BBkaqI5D14oThHFUWpJTyJqpV5XW7bsUZerQ/E407COCxdTxDp87EZvqqeHUY97V9Urk
+         SuH6NfdACl6EzaRuBJ/J2aNcfM7o4jQeDNOrD1Pj7628GWKcv7zJRzmqSwA6q7Zzc6Ly
+         ZWgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.14 092/140] kbuild: Handle builtin dtb file names containing hyphens
-Date: Tue, 13 Mar 2018 16:24:55 +0100
-Message-Id: <20180313152504.330557286@linuxfoundation.org>
+	Jani Nikula <jani.nikula@intel.com>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 4.14 086/140] Documentation/sphinx: Fix Directive import error
+Date: Tue, 13 Mar 2018 16:24:49 +0100
+Message-Id: <20180313152503.932572367@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836918022534430?=
-X-GMAIL-MSGID: =?utf-8?q?1594837498943256715?=
+X-GMAIL-THRID: =?utf-8?q?1594836969757914659?=
+X-GMAIL-MSGID: =?utf-8?q?1594837496237987915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,68 +50,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit 55fe6da9efba102866e2fb5b40b04b6a4b26c19e upstream.
+commit ff690eeed804f112242f9a0614eafdf559f9276a upstream.
 
-cmd_dt_S_dtb constructs the assembly source to incorporate a devicetree
-FDT (that is, the .dtb file) as binary data in the kernel image. This
-assembly source contains labels before and after the binary data. The
-label names incorporate the file name of the corresponding .dtb file.
-Hyphens are not legal characters in labels, so .dtb files built into the
-kernel with hyphens in the file name result in errors like the
-following:
+Sphinx 1.7 removed sphinx.util.compat.Directive so people
+who have upgraded cannot build the documentation.  Switch to
+docutils.parsers.rst.Directive which has been available since
+docutils 0.5 released in 2009.
 
-bcm3368-netgear-cvg834g.dtb.S: Assembler messages:
-bcm3368-netgear-cvg834g.dtb.S:5: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:5: Error: junk at end of line, first unrecognized character is `-'
-bcm3368-netgear-cvg834g.dtb.S:6: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_begin:'
-bcm3368-netgear-cvg834g.dtb.S:8: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_end:'
-bcm3368-netgear-cvg834g.dtb.S:9: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:9: Error: junk at end of line, first unrecognized character is `-'
-
-Fix this by updating cmd_dt_S_dtb to transform all hyphens from the file
-name to underscores when constructing the labels.
-
-As of v4.16-rc2, 1139 .dts files across ARM64, ARM, MIPS and PowerPC
-contain hyphens in their names, but the issue only currently manifests
-on Broadcom MIPS platforms, as that is the only place where such files
-are built into the kernel. For example when CONFIG_DT_NETGEAR_CVG834G=y,
-or on BMIPS kernels when the dtbs target is used (in the latter case it
-admittedly shouldn't really build all the dtb.o files, but thats a
-separate issue).
-
-Fixes: 695835511f96 ("MIPS: BMIPS: rename bcm96358nb4ser to bcm6358-neufbox4-sercom")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
+Co-developed-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.lib |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/sphinx/kerneldoc.py |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -294,11 +294,11 @@ cmd_dt_S_dtb=						\
- 	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
- 	echo '.section .dtb.init.rodata,"a"';		\
- 	echo '.balign STRUCT_ALIGNMENT';		\
--	echo '.global __dtb_$(*F)_begin';		\
--	echo '__dtb_$(*F)_begin:';			\
-+	echo '.global __dtb_$(subst -,_,$(*F))_begin';	\
-+	echo '__dtb_$(subst -,_,$(*F))_begin:';		\
- 	echo '.incbin "$<" ';				\
--	echo '__dtb_$(*F)_end:';			\
--	echo '.global __dtb_$(*F)_end';			\
-+	echo '__dtb_$(subst -,_,$(*F))_end:';		\
-+	echo '.global __dtb_$(subst -,_,$(*F))_end';	\
- 	echo '.balign STRUCT_ALIGNMENT'; 		\
- ) > $@
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -36,8 +36,7 @@ import glob
  
+ from docutils import nodes, statemachine
+ from docutils.statemachine import ViewList
+-from docutils.parsers.rst import directives
+-from sphinx.util.compat import Directive
++from docutils.parsers.rst import directives, Directive
+ from sphinx.ext.autodoc import AutodocReporter
+ 
+ __version__  = '1.0'
