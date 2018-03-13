@@ -1,104 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeCMGWf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:22:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:52838 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751402AbeCMGWd (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:22:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
-   d="scan'208";a="25162161"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 0/4] perf annotate: Create a new '--tui-dump' option
-Date: Tue, 13 Mar 2018 22:16:50 +0800
-Message-Id: <1520950614-22082-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S932308AbeCMGX4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:23:56 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37505 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbeCMGXx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 02:23:53 -0400
+X-Google-Smtp-Source: AG47ELtnvGLgEu5ZNj7A2EO/TGXvTdMCKfZOBmlUhLt5h72jbgV13NsPiY0SxffY00NRxPv4dk9kYjqDYpthPMrG5n8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180313061603.jsgiumet23uqi6hl@gmail.com>
+References: <20180313061109.72629-1-dianders@chromium.org> <20180313061109.72629-3-dianders@chromium.org>
+ <20180313061603.jsgiumet23uqi6hl@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 12 Mar 2018 23:23:50 -0700
+X-Google-Sender-Auth: lr_8dkxXp6AtyhaB94A7LupKBbI
+Message-ID: <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dave Hansen <dave.hansen@intel.com>, Yang Shi <yang.s@alibaba-inc.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Charlebois <charlebm@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a requirement to let perf annotate support displaying the IPC/Cycle.
-In previous patch, this is supported in TUI mode. While it's not convenient
-for users since they have to take screen shots and copy/paste data.
+Hi,
 
-This patch series introduces a new option '--tui-dump' in perf annotate to
-dump the TUI output to stdio.
+On Mon, Mar 12, 2018 at 11:16 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Douglas Anderson <dianders@chromium.org> wrote:
+>
+>> +# Don't create Makefile caches if running as root since they can't be deleted
+>> +# easily; in the real world we might be root when doing "sudo make install"
+>> +ifeq ($(shell id -u),0)
+>> +export KBUILD_NOCACHE := 1
+>> +endif
+>
+> Please don't do this - many prominent kernel developers build their kernels as
+> root - this makes the build slower for them, and also bifurcates testing.
 
-User can easily use the command line like:
-'perf annotate --tui-dump > /tmp/log.txt' 
- 
-For example:
-    $ perf annotate compute_flag --tui-dump
+Ah, interesting.  I hadn't realized that!
 
-    Percent  IPC Cycle
+I'm OK with dropping this patch myself.  It was mostly addressing a
+potential problem pointed out by Masahiro Yamada when we were talking
+about .cache.mk, but I don't think anyone has actually experienced the
+problems listed in the CL description.  I suppose the other option
+would be to go back to keying off the "install" target (like v2 of
+this patch did), but it kinda feels like if someone did "sudo make
+install" and then followed up by a non-sudo "make" they probably would
+be able to figure out how to fix it without much trouble (just do a
+"sudo make clean").
 
-                            Disassembly of section .text:
+In case it's not obvious, though, we should still try to land patch #1
+of this series.  That's a real problems that people reported when the
+.cache.mk stuff first landed and then folks tried to upgrade their
+gcc.
 
-                            0000000000400640 <compute_flag>:
-                            compute_flag():
-                            volatile int count;
-                            static unsigned int s_randseed;
-
-                            __attribute__((noinline))
-                            int compute_flag()
-                            {
-     23.00  1.16              sub    $0x8,%rsp
-                                    int i;
-
-                                    i = rand() % 2;
-     23.06  1.16     1        callq  rand@plt
-
-                                    return i;
-     27.01  3.38              mov    %eax,%edx
-                            }
-            3.38              add    $0x8,%rsp
-                            {
-                                    int i;
-
-                                    i = rand() % 2;
-
-                                    return i;
-            3.38              shr    $0x1f,%edx
-            3.38              add    %edx,%eax
-            3.38              and    $0x1,%eax
-            3.38              sub    %edx,%eax
-                            }
-     26.93  3.38     2        retq
-
-The '--stdio' option is still kept now. Maybe in future, we can only
-maintain the TUI routines and drop the lagacy stdio code. But right
-now we'd better keep it until the '--tui-dump' option is good enough.
-
-Jin Yao (4):
-  perf browser: Add a new 'dump' flag
-  perf browser: bypass ui_init if in tui dump mode
-  perf annotate: Process the new switch flag tui_dump
-  perf annotate: Enable the '--tui-dump' mode
-
- tools/perf/Documentation/perf-annotate.txt |  3 +++
- tools/perf/builtin-annotate.c              | 12 +++++++--
- tools/perf/builtin-c2c.c                   |  2 +-
- tools/perf/builtin-report.c                |  2 +-
- tools/perf/builtin-top.c                   |  2 +-
- tools/perf/ui/browser.c                    | 38 +++++++++++++++++++++++----
- tools/perf/ui/browser.h                    |  1 +
- tools/perf/ui/browsers/annotate.c          | 41 +++++++++++++++++++++---------
- tools/perf/ui/browsers/hists.c             |  2 +-
- tools/perf/ui/setup.c                      |  9 +++++--
- tools/perf/ui/ui.h                         |  2 +-
- tools/perf/util/annotate.h                 |  6 +++--
- tools/perf/util/hist.h                     | 11 +++++---
- 13 files changed, 99 insertions(+), 32 deletions(-)
-
--- 
-2.7.4
+-Doug
