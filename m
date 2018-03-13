@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvVTBaQsK2IwnGOAVkALqPEl8tKtrIJNgfvhk0yGvBYSh3Lktb8+zvblhqRmOyWy2975rw/
-ARC-Seal: i=1; a=rsa-sha256; t=1520955246; cv=none;
+X-Google-Smtp-Source: AG47ELvFEJDcq0VCUOsSWoXFBXTyE0xe/h7JEA/bbv1IA/nDCax0A/tP+tL57lYnuwYUCDJ7ktQY
+ARC-Seal: i=1; a=rsa-sha256; t=1520955243; cv=none;
         d=google.com; s=arc-20160816;
-        b=cJ3bTK6mkoskb6vJ0Ht9PuMIx7/Aj4GKu6GRwAmfT0MAIIcMXx5I5peh48bkitA1HV
-         PeP0P7oe2jEQGLcEzDHyZSoCZ5ScfqDOXuyl9123sZAZcn2D3nGMIORfUE0xdUSNe+xg
-         pgIdAXJ45RoxjTHC+WVv3yrZ7jEJ+KOG9mBE0bRrnbpxQ1YPoFLu6PItjDTi5Q3YABPs
-         CamA2WKiMyqXLsJvsTGh/WHUk/60QLHG2w0bv81C+HWk/jQudEtrUAfwW6+anACaaxvz
-         RHQSt1RoirQbavweT5zJFy1xGf+x+AS4jF0UFBcYHKSxgqDf4ZrgsWrpImNpHpTDKgkK
-         A7gg==
+        b=w/HxRXHRqgxVWt+yVIIt93b6MXZYa9ZqRy0M7ZyJnTl5yLJ057WxLYRHtcLExk/BLP
+         cLg0RKpqc6q9/dyVuYuipZjRcEWItec41S5s81bm8zQoHmIBEY4dJecC4UGFoPq4yYmr
+         o76MJrh1hR5n/fb+akYB0qb8knGULLOypiXUnlgC4YLiEDOrP4q4Vx7eJRZfNzNus2Lj
+         w/xuNfIRl/3wDAuSObibQZ8apEyeSv2lojXwlI1qA1fHCzlokRnO7/tc9GxRGEpx9RLB
+         xv1/SCr86is2jhIRY9ndav2Nn8sWln5aiX6R2lyK0UUReUkzwDbUsp20DbKSO/00mAIS
+         Yd2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vGNvtNDgeZifWbcY3Cwn1/IcbkyjPdzppZfbfZhS4Wc=;
-        b=xp9r+N3Vmsj6PEOQ+mp8IxBGrQd4z9V8qpC1/67gYp9FLbR7VyC7Hs5Wt6eK4Q6ngx
-         HCJHs8r7dp19ddIUMb1oguMEclfMeDyp6ujI4v9a7Zb2m1mVoBKv1f8Apf9k9m2yMFPf
-         gPWwnv/mfW20qZLdJvPvXk2PLYJtFlEDk8owjRIVDORAE7Erik5EAKINRMpcgYksneVa
-         LRj+yV9ujyjPnpV6Vuo7NccqQmCJ3BqSCr2c938oZj0XoKhkFuPYjFxnkVbxjLSVstKy
-         KVxh1CO6a7LFXx8cPxoWEmxHQoiorSgkXeA6AxELyim1mMIanb7vCq7xBx0LQwZkm/0o
-         wKmw==
+        bh=sIBLHixZXeSj8iEo89qFATsepaEQwk+dWFiS9QYM868=;
+        b=LxYXKCO+xE6LEEl3TgfVYF5LHPQRQ9P8+ge/Szsl37QoUq7G9UcUw5XYxaOKMlwcpd
+         DWMDoX6r6WWqup1jJKL8b1ovEaBG0hw4Q48j+hLK6HfcS+1+x/Cl4ywu2IrVjE4PMKkF
+         l1yrULggrbOhuKi4U0KY5ptbjXPq+W9b8fmHve+/VC4GwCIC6Cdi8rRtVi7EZ7Shsdp/
+         bMZDsB02Il3JcBmCI1sdZ5Wqu43FVj91Juay4sM2OzqGU0Rqysb0s9+ghMCBwmC0kf26
+         66yryJPp0K0n9IC4gRAm172czGsvRjs2HShmklBVjgquefGt6b+YUWVMw9QMMVmLf+zE
+         TB+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 139/146] scsi: qla2xxx: Clear loop id after delete
-Date: Tue, 13 Mar 2018 16:25:06 +0100
-Message-Id: <20180313152330.794011766@linuxfoundation.org>
+Subject: [PATCH 4.15 138/146] scsi: qla2xxx: Fix scan state field for fcport
+Date: Tue, 13 Mar 2018 16:25:05 +0100
+Message-Id: <20180313152330.721572922@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837168245563924?=
-X-GMAIL-MSGID: =?utf-8?q?1594837168245563924?=
+X-GMAIL-THRID: =?utf-8?q?1594837165411969531?=
+X-GMAIL-MSGID: =?utf-8?q?1594837165411969531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,10 +53,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit ba743f9148e951abe1c94f89c174ec8e44fb145b upstream.
+commit 76f9a2dd4c60183879a1898bcd56a1dbab19a85d upstream.
 
-Clear loop id after delete to prevent session invalidation of stale
-session.
+Add correct value of scan_state field indicating state of the FC port
 
 Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
@@ -67,39 +66,16 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/scsi/qla2xxx/qla_target.c
 +++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -985,7 +985,7 @@ static void qlt_free_session_done(struct
- 			qlt_send_first_logo(vha, &logo);
- 		}
+@@ -5811,6 +5811,7 @@ static fc_port_t *qlt_get_port_database(
+ 		tfcp->port_type = fcport->port_type;
+ 		tfcp->supported_classes = fcport->supported_classes;
+ 		tfcp->flags |= fcport->flags;
++		tfcp->scan_state = QLA_FCPORT_FOUND;
  
--		if (sess->logout_on_delete) {
-+		if (sess->logout_on_delete && sess->loop_id != FC_NO_LOOP_ID) {
- 			int rc;
- 
- 			rc = qla2x00_post_async_logout_work(vha, sess, NULL);
-@@ -1044,8 +1044,7 @@ static void qlt_free_session_done(struct
- 		sess->login_succ = 0;
- 	}
- 
--	if (sess->chip_reset != ha->base_qpair->chip_reset)
--		qla2x00_clear_loop_id(sess);
-+	qla2x00_clear_loop_id(sess);
- 
- 	if (sess->conflict) {
- 		sess->conflict->login_pause = 0;
-@@ -4599,9 +4598,9 @@ qlt_find_sess_invalidate_other(scsi_qla_
- 				    "Invalidating sess %p loop_id %d wwn %llx.\n",
- 				    other_sess, other_sess->loop_id, other_wwn);
- 
--
- 				other_sess->keep_nport_handle = 1;
--				*conflict_sess = other_sess;
-+				if (other_sess->disc_state != DSC_DELETED)
-+					*conflict_sess = other_sess;
- 				qlt_schedule_sess_for_deletion(other_sess,
- 				    true);
- 			}
+ 		del = fcport;
+ 		fcport = tfcp;
