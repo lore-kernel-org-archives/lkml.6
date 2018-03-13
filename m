@@ -1,81 +1,101 @@
-Return-Path: <kernel-hardening-return-12631-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELs5y91QVbNrfKNoQETtwuKA4+CRJF1dLBWRDBRSWHxmB1Wc7AF3ePlXOPxw5XufPJJrYVK2
-ARC-Seal: i=1; a=rsa-sha256; t=1521121452; cv=none;
+Return-Path: <kernel-hardening-return-12556-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELs1IhJF5xyRAnNjJlIPFb8/QpZ9I8eK10esWuIVI9jOqVktQMl2i3ZE+5s2W5EhWCFuuuRg
+ARC-Seal: i=1; a=rsa-sha256; t=1520977862; cv=none;
         d=google.com; s=arc-20160816;
-        b=BxYSdZ4fIZXP/CJk/mnaeqtjBaqggsmOsXtK6Jhylwt27+K+usFPY5Q5UsHAYwl85j
-         LN6gBmtqsPZ+Vs8y6Nu5Urr0BFfutsKsI6LKRTV9EWdBjFavcNFN/qid43kT3xGUGTcH
-         O56u5zwWQn98SG7s7ATt1Z6+WCLJob0YRuVbDC1db4B2eQmK0nYBU2+lbCeVXO4z90dK
-         nhq/Dek6v0UrZ9lDa8jWCpUsGpdMBEtwYGQpGvrlH+VB5RcjWgBF3O9iCyl6MAsRpkio
-         aDRcdaygyZvvTCOhqcpyCS29DLCXp+I3XAD2upM1BgWRVTxxi0q9fPf6wdBF7DRlrdKO
-         dLZw==
+        b=t+nfSwC6TDh1T4JMikzvp7RseRpPG7uXi4V3vNqtQOrGW4HXz2g+PrCSUMBEXcdupr
+         7hQkIpjJdtfVqqcGM3GZifgSeFHKY6VKTOamAKGGxtRPn9iVteYNA7FI9w+votV2arcO
+         16JH+XL3YbW5gQI+0QKS3ArIJJgupBRn16jz/miBlutqqNWqNOss1/jncPKT3mn9+tQn
+         EylPuucV7zy0GmXoBFCXYLLAt2xYQltEgbfkxXpnaVbesW544OiOpVIDbPxteEIiY8d0
+         0quTqSrM87Xk9EeCau2WbW8B1v5f+9vNLxCzVjCDpc3OzX01n/FfRvD8V3BucvCBqRdt
+         OgIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=mhzmoVQIKxpTlzndIFNjuvLSvWIFosd4AzwrRb6B744=;
-        b=Cm9d7KQTDUc+jXzRe6sHT9nujMnKtNJ6Fc8QJSlq1/M+AptlnOXLAu6UVx8D8T2b1b
-         qX+ERlVOMqFKgLhnl9hlyxh3YJugqaLKolBXEeebtOUrdL4c2RY7hnTXICpFhSl5HGoA
-         2BQn63c8tT535W+2US6tIR6Y5Cz3MS/Qr/enmDfgu8SXBhrWwW795ETRjK+toq7FUZ5g
-         KkC9R7axsOfykZtLjIaAqAjkQqHtzi4eIpLoOa5xUj+3LLDbU2rCPhfduqP2NNsg6DHr
-         jO14TPkD+2KVGrCret4VsQcOGwdJH6UMDQweUoc6sECAtgS/5IMKyyWkzj1EJTVUqm2B
-         jkHg==
+        bh=0ZPkcyfim2K9mLs2OIErsKfhv9YVlWEcOMnBP2fHwcA=;
+        b=I/55a7uFu+l0eKy5QPAWFlMMg79uTvFsnwPr/vRQJpqKSVANzKn+O3bmeCVs2mTrBp
+         D/CYQLPxRSZMuUE9fjyFddG0N/3Mdy/38VcT+PS24tqp+HF3LGhKlXXHBZxx/SZoRR9A
+         VSyf+8QNQ0E9K8+0fOXuodhc7JtkaqA1rEn+CMq2yDye02JE+8Sz/CuV3YXCAQfNXmxA
+         AFWUTFK0XLDrPSUj4dHRa9vEAfDfB/Vr6tQTwM/nl47569HPkaKP0EWq8Vr6Zm9ysEUB
+         J8Q/IP+XTsVug2WdHiM1DulmX9Mia1nA2kvx7o8JicRonhMwcKrrNPkdlJEFHcicT8r3
+         43aw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12631-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12631-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12556-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12556-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12631-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12631-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12556-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12556-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [RFC PATCH v19 0/8] mm: security: ro protection for dynamic data
-To: Matthew Wilcox <willy@infradead.org>
-CC: <keescook@chromium.org>, <david@fromorbit.com>, <rppt@linux.vnet.ibm.com>,
-	<mhocko@kernel.org>, <labbott@redhat.com>,
-	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>
-References: <20180313214554.28521-1-igor.stoppa@huawei.com>
- <a9bfc57f-1591-21b6-1676-b60341a2fadd@huawei.com>
- <20180314115653.GD29631@bombadil.infradead.org>
- <8623382b-cdbe-8862-8c2f-fa5bc6a1213a@huawei.com>
- <20180314130418.GG29631@bombadil.infradead.org>
- <9623b0d1-4ace-b3e7-b861-edba03b8a8cd@huawei.com>
- <20180314173343.GJ29631@bombadil.infradead.org>
 From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <fc984bf4-c46a-976c-ec74-ad89dc3d150e@huawei.com>
-Date: Thu, 15 Mar 2018 15:43:49 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+To: <david@fromorbit.com>, <willy@infradead.org>, <rppt@linux.vnet.ibm.com>,
+	<keescook@chromium.org>, <mhocko@kernel.org>
+CC: <labbott@redhat.com>, <linux-security-module@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [PATCH 4/8] struct page: add field for vm_struct
+Date: Tue, 13 Mar 2018 23:45:50 +0200
+Message-ID: <20180313214554.28521-5-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180313214554.28521-1-igor.stoppa@huawei.com>
+References: <20180313214554.28521-1-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180314173343.GJ29631@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.185.64]
+Content-Type: text/plain
+X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594860649725336168?=
-X-GMAIL-MSGID: =?utf-8?q?1595011448225409893?=
+X-GMAIL-THRID: =?utf-8?q?1594860882497845479?=
+X-GMAIL-MSGID: =?utf-8?q?1594860882497845479?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+When a page is used for virtual memory, it is often necessary to obtain
+a handler to the corresponding vm_struct, which refers to the virtually
+continuous area generated when invoking vmalloc.
 
+The struct page has a "mapping" field, which can be re-used, to store a
+pointer to the parent area.
 
-On 14/03/2018 19:33, Matthew Wilcox wrote:
-> On Wed, Mar 14, 2018 at 06:11:22PM +0200, Igor Stoppa wrote:
+This will avoid more expensive searches, later on.
 
-[...]
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ include/linux/mm_types.h | 1 +
+ mm/vmalloc.c             | 2 ++
+ 2 files changed, 3 insertions(+)
 
->> Probably page_frag does well with relatively large allocations, while
->> genalloc seems to be better for small (few allocation units) allocations.
-> 
-> I don't understand why you would think that.  If you allocate 4096 1-byte
-> elements, page_frag will just use up a page.  Doing the same thing with
-> genalloc requires allocating two bits per byte (1kB of bitmap), plus
-> other overheads.
-
-I had misunderstood the amount of page_frag structures needed.
-
---
-igor
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index fd1af6b9591d..c3a4825e10c0 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -84,6 +84,7 @@ struct page {
+ 		void *s_mem;			/* slab first object */
+ 		atomic_t compound_mapcount;	/* first tail page */
+ 		/* page_deferred_list().next	 -- second tail page */
++		struct vm_struct *area;
+ 	};
+ 
+ 	/* Second double word */
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ebff729cc956..61a1ca22b0f6 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1536,6 +1536,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			struct page *page = area->pages[i];
+ 
+ 			BUG_ON(!page);
++			page->area = NULL;
+ 			__free_pages(page, 0);
+ 		}
+ 
+@@ -1705,6 +1706,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 			area->nr_pages = i;
+ 			goto fail;
+ 		}
++		page->area = area;
+ 		area->pages[i] = page;
+ 		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+ 			cond_resched();
+-- 
+2.14.1
