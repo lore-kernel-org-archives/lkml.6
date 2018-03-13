@@ -1,35 +1,37 @@
-Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELvFzRjJSOgq7GmiJcWBcWHV7l4Pmxk2xP8oWbpzPGdXVk9QLDmMRgy+nouiiu8Lmg1Oc8+6
-ARC-Seal: i=1; a=rsa-sha256; t=1520966031; cv=none;
+Return-Path: <peterz@infradead.org>
+X-Google-Smtp-Source: AG47ELtKnLS7CMXO2S2Izmh9kE/e3YiIZ5ZqadAWQysN5h6mYcm5br6Pt1kTyLOg8fR+2D2uPSWj
+ARC-Seal: i=1; a=rsa-sha256; t=1520971286; cv=none;
         d=google.com; s=arc-20160816;
-        b=TBzkzM0UJ1RRZTNY7UQxSCohYj0+02QbTdXfMbKbNRfhVKOLWbsODYGJSDqT/KR4vQ
-         il61g5P6T1im0o0aar14Ww/PoJiVjhlYz4ipOZ/6dTsWK15AFsF1ShZj41YvS1yBW0Cm
-         eLHkSLoDSsNlBOF2VTSunElYq3grk/7L92WQzGZsJuPFmp/4S5iKJtkOy7qtSktouSul
-         TNTWcfF18XqF5z6f9VDKGawhOO2X+pLnDoIs9KEwrSqefcD8WyRdVMqtcdQzrIhCzkUk
-         2CZeSXxtmdLBiCLCItEMb+GfkclqHIYbvfMw06Er2dzjYut0g/hLV6ujukl1cc7XNHej
-         /0Gg==
+        b=TM/mdAADUMcoZcVQqtK/FWVxMNpH5Z3fyaC8JFL3aSSMoSrEoDiWYPdw4of3N6HuQz
+         PCr7MRuQg2/+T3sMbjkBg9hjren43sTXwvBLj8sGNIbPBR563PlAFoq2R/v9S1Mnhj1F
+         IZQ/rnI0KxEAmPo8MJmu9u2B60x3t8d+9OCdz4jRUOYHlNW18OzRn6JBN4kC7clqgJs0
+         s56FaKxKrUAmK+5QlHG106dug7tozjxfRTk7ERe8+U4IyoMuw9Jov/nIzK+G5Umxl3ka
+         0cv9LVCVr4q8hFuBunuEerhaN7/wx2dR4IbVggLlYO2VorjViJiSrS6QEZQZA+O21u83
+         UbKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=CN2Hm4f5djlUFuxMhAT1GFUgEANS34LJuCBgen3LaDw=;
-        b=DdaKetw7Gt9ETWJSKb5sQs9KgtaFlaidOe1KpuIwF6r57nIjSb33lBtVH3a82Ls79G
-         MkOY/TDVUVNPWA5IvnUc3wnix1g+vd0emOactO0WwSBeCbBdI4oWaLDa5rz3Radz1Jp9
-         ltMu/y0RprBmzGMw01hAFBB8BrmoflfGpJnyo5aLbx6oaL7Tog66iqrZDUYVtcMutDXQ
-         auOaoYyBUsaVxMXEv0YEUDlpJq3YcWriuvUCQ/kqDXwRlbYlvSL0bU5MunfzAJ3QUysT
-         hblL89uXoil9jQj+KM9bMTYcYjlnT9jlsNgR5Bi7zcKIECOlvEgqY6UvRZv0/vo5rDRh
-         ZFJQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=4073UvbHtxh7g7p/AJHA37wnkyKab9l3524bhBZvlCQ=;
+        b=crOOASZYiDb+nR+HfzD6UQ10iurKp+0YHZJiySD/fNf3yR0Z4KRWRpIUbBqgK0zEJ+
+         tcmcLhXZrDYVeDAmG9IEXcwha0cKysMKR1Vbjryg5uUVtxv5aLmy90Kl5pDa7ZkLNz/o
+         eeFvK1VXxu06PkDBRfRgA4MYUS64bqykvwkCQwuNgAVa1sNs8mRslrsryXvakKV2JXBT
+         iy6XsTg/zeIiJQwu/xCKZgGSvi3/4cdc16sQJDjOPFwkXeTx0bOzxT9uxWAr6g3+bGHj
+         3GcHp35zuyiK3NM0HzLkDL/CG6fX+7qXLDQfYQErx+p97JQMq44Wr1trqOSEiMbUz1jq
+         LX7g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=DK5TuIeT;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Michal Suchanek <msuchanek@suse.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=DK5TuIeT;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Date: Tue, 13 Mar 2018 21:01:08 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Michal Suchanek <msuchanek@suse.de>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	Paul Mackerras <paulus@samba.org>,
 	Michael Ellerman <mpe@ellerman.id.au>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Michal Suchanek <msuchanek@suse.de>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -39,7 +41,7 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	David Gibson <david@gibson.dropbear.id.au>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	Michael Neuling <mikey@neuling.org>,
-	"Oliver O'Halloran" <oohall@gmail.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
 	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
 	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
@@ -48,52 +50,28 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
 	Christophe Leroy <christophe.leroy@c-s.fr>,
 	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-	Daniel Axtens <dja@axtens.net>,
-	Russell Currey <ruscur@russell.cc>,
+	Daniel Axtens <dja@axtens.net>, Russell Currey <ruscur@russell.cc>,
 	Joe Perches <joe@perches.com>,
 	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	=?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 1/8] powerpc: Add barrier_nospec
-Date: Tue, 13 Mar 2018 19:32:59 +0100
-Message-Id: <e1c146e5d43e8b2605af6e1330167d8e18d36f44.1520965380.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
+Subject: Re: [PATCH RFC 1/8] powerpc: Add barrier_nospec
+Message-ID: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
 References: <cover.1520965380.git.msuchanek@suse.de>
-In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
-References: <cover.1520965380.git.msuchanek@suse.de>
+ <e1c146e5d43e8b2605af6e1330167d8e18d36f44.1520965380.git.msuchanek@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1c146e5d43e8b2605af6e1330167d8e18d36f44.1520965380.git.msuchanek@suse.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594848477585828051?=
-X-GMAIL-MSGID: =?utf-8?q?1594848477585828051?=
+X-GMAIL-MSGID: =?utf-8?q?1594853987931433698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Copypasta from original gmb() and rfi implementation
+On Tue, Mar 13, 2018 at 07:32:59PM +0100, Michal Suchanek wrote:
+> Copypasta from original gmb() and rfi implementation
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/include/asm/barrier.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
-index 10daa1d56e0a..8e47b3abe405 100644
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -75,6 +75,15 @@ do {									\
- 	___p1;								\
- })
- 
-+/* TODO: add patching so this can be disabled */
-+/* Prevent speculative execution past this barrier. */
-+#define barrier_nospec_asm ori 31,31,0
-+#ifdef __ASSEMBLY__
-+#define barrier_nospec barrier_nospec_asm
-+#else
-+#define barrier_nospec() __asm__ __volatile__ (stringify_in_c(barrier_nospec_asm) : : :)
-+#endif
-+
- #include <asm-generic/barrier.h>
- 
- #endif /* _ASM_POWERPC_BARRIER_H */
--- 
-2.13.6
+Actual real changelogs would be very welcome. Seeing as I've not seen
+these mythical RFI patches, this leaves one quite puzzled :-)
