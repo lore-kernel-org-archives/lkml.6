@@ -1,95 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933248AbeCMMGG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:06:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933198AbeCMMGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52DE21783
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/31] perf vendor events: Fix error code in json_events()
-Date: Tue, 13 Mar 2018 09:04:49 -0300
-Message-Id: <20180313120508.29327-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
+        id S933421AbeCMMMD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:12:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:55341 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932659AbeCMMMB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:12:01 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mailbox: tegra: relax TEGRA_HSP_MBOX Kconfig dependencies
+Date: Tue, 13 Mar 2018 13:11:43 +0100
+Message-Id: <20180313121154.2715591-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:55bKbO9KTwwGRebdIoTAYBtHTs81GxsiNW/tiWZXVLJL7UxeU97
+ UhZ80ts8dYrO06DH4tPO9TUHzLhyAYLKV1AJYmL9uP0knePbM/YPs5+GVtKCsImdM2biMG7
+ mHHrntDKs0qftx3vl+REIdjAaPIytHbNRHExZMHSc1Gc2WL8I34yuJXIpWVJybjVEiz5/a0
+ Piuzk7FLE9rpFAbhmFuiw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NiVmr7X4Vp8=:wc8GSLGoA1zxPMPK6rMVYS
+ eq3bTktFH3BWEsp7/nmSeuDLtNcdHy2aky3pSyq+OsTlTfZVkMBug/Fn80GWrzjQM7jLZm005
+ UPAoIJ20RNAfUidvXOZGQUOaTxiF59HB6R0UOFcb6h8tppHAcKyeaPTl84YmDDXiyWzqCbKNF
+ Zb0dp2GMmXcWJKWWFj9/LMxmeTgFbWDTfI8QTqK2rKKQYjpJVwFKxVyGNf++h2gGeHboQZmlF
+ 0Qr0jBDF+sAuGfJQsXs9jZ5Mur1ktESPXmA4Wu7ItQgSN6JN/hGeDavWEMdXaUI8016Gg/HZC
+ Ed5yXmBywP3bafnqGKBzgi6URJeCp2mppnI4LAB3fW+lbCik3NTxXW0qoTZivPa5sMnp7PH9y
+ GQwPXYY1hv+G67HaZCqAaPadRhRR2ZMGiFCx2NzW75ciN2C8CUEzt1f/IoEHIUF5xzVzepJYo
+ v5x5p4eCsaaQIm+N62FgUWVAdhvkOX/oHETNxy8NnbZQnqWymAFD2dX3qMN3/tosAxvZNlRqc
+ tJ8XO7t217p0uuz/CViCATt7VSE525TDXUAIhz6ou9ThiEzY8g6s6WR+IYankV2YD21EZKV1I
+ JhSKD3d5UiEc+EUBboEXQiDstYHryrkrI8ogvt5sXHpzxnQY1Ful/7WmUKDo8XAKMx58x9BPd
+ ocL3Cmt3/VP/VBFwavhchf+fP8UbfOzafIzVMn3c/kwzpXgnjMxp5NMKIpz5AGKzKeWeDUtk0
+ urMWJEBoIWGMivRyJXsXKxUz1EJHLssReURs6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+With the addition of the ARCH_TEGRA_194_SOC driver, we get a new Kconfig warning:
 
-When EXPECT macro fails an assertion, the error code is not properly set
-after the first loop of tokens in function json_events().
+warning: (ARCH_TEGRA_186_SOC && ARCH_TEGRA_194_SOC) selects TEGRA_HSP_MBOX which has unmet direct dependencies (MAILBOX && ARCH_TEGRA_186_SOC)
 
-This is because err is set to the return value from func function
-pointer call, which must be 0 to continue to loop, yet it is not reset
-for for each loop. I assume that this was not the intention, so change
-the code so err is set appropriately in EXPECT macro itself.
+It looks like the dependency is a bit too strict here, allowing the driver to
+be built for any Tegra chip avoids the problem.
 
-In addition to this, the indention in EXPECT macro is tidied. The
-current indention alludes that the 2 statements following the if
-statement are in the body, which is not true.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: William Cohen <wcohen@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1520506716-197429-3-git-send-email-john.garry@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 6f9ed07fde03 ("soc/tegra: Add Tegra194 SoC configuration option")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/perf/pmu-events/jevents.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/mailbox/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 9e0a21e74a67..edff989fbcea 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -249,9 +249,10 @@ static const char *field_to_perf(struct map *table, char *map, jsmntok_t *val)
- 	jsmntok_t *loc = (t);					\
- 	if (!(t)->start && (t) > tokens)			\
- 		loc = (t) - 1;					\
--		pr_err("%s:%d: " m ", got %s\n", fn,		\
--			json_line(map, loc),			\
--			json_name(t));				\
-+	pr_err("%s:%d: " m ", got %s\n", fn,			\
-+	       json_line(map, loc),				\
-+	       json_name(t));					\
-+	err = -EIO;						\
- 	goto out_free;						\
- } } while (0)
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index ba2f1525f4ee..7c24900554a7 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -134,7 +134,7 @@ config QCOM_APCS_IPC
  
-@@ -416,7 +417,7 @@ int json_events(const char *fn,
- 		      char *metric_name, char *metric_group),
- 	  void *data)
- {
--	int err = -EIO;
-+	int err;
- 	size_t size;
- 	jsmntok_t *tokens, *tok;
- 	int i, j, len;
+ config TEGRA_HSP_MBOX
+ 	bool "Tegra HSP (Hardware Synchronization Primitives) Driver"
+-	depends on ARCH_TEGRA_186_SOC
++	depends on ARCH_TEGRA
+ 	help
+ 	  The Tegra HSP driver is used for the interprocessor communication
+ 	  between different remote processors and host processors on Tegra186
 -- 
-2.14.3
+2.9.0
