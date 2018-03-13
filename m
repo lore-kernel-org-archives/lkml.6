@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933505AbeCMMKh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:10:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55246 "EHLO mail.kernel.org"
+        id S933248AbeCMMGG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933395AbeCMMGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D7321796
+        id S933198AbeCMMGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:06:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52DE21783
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -16,15 +16,15 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Shaokun Zhang <zhangshaokun@hisilicon.com>,
         Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 21/31] perf vendor events arm64: add HiSilicon hip08 JSON file
-Date: Tue, 13 Mar 2018 09:04:58 -0300
-Message-Id: <20180313120508.29327-22-acme@kernel.org>
+Subject: [PATCH 12/31] perf vendor events: Fix error code in json_events()
+Date: Tue, 13 Mar 2018 09:04:49 -0300
+Message-Id: <20180313120508.29327-13-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
 References: <20180313120508.29327-1-acme@kernel.org>
@@ -34,14 +34,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Garry <john.garry@huawei.com>
 
-This patch adds the HiSilicon hip08 JSON file. This platform follows the
-ARMv8 recommended IMPLEMENTATION DEFINED events, where applicable.
+When EXPECT macro fails an assertion, the error code is not properly set
+after the first loop of tokens in function json_events().
+
+This is because err is set to the return value from func function
+pointer call, which must be 0 to continue to loop, yet it is not reset
+for for each loop. I assume that this was not the intention, so change
+the code so err is set appropriately in EXPECT macro itself.
+
+In addition to this, the indention in EXPECT macro is tidied. The
+current indention alludes that the 2 statements following the if
+statement are in the body, which is not true.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
@@ -49,150 +58,38 @@ Cc: Will Deacon <will.deacon@arm.com>
 Cc: William Cohen <wcohen@redhat.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linuxarm@huawei.com
-Link: http://lkml.kernel.org/r/1520506716-197429-12-git-send-email-john.garry@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-3-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 122 +++++++++++++++++++++
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |   1 +
- 2 files changed, 123 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+ tools/perf/pmu-events/jevents.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
-new file mode 100644
-index 000000000000..9f0f15d15f75
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
-@@ -0,0 +1,122 @@
-+[
-+    {
-+        "ArchStdEvent": "L1D_CACHE_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WB_VICTIM",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_WB_CLEAN",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_CACHE_INVAL",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L1D_TLB_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_REFILL_RD",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_REFILL_WR",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WB_VICTIM",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_WB_CLEAN",
-+    },
-+    {
-+        "ArchStdEvent": "L2D_CACHE_INVAL",
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache prefetch access count",
-+        "EventCode": "0x102e",
-+        "EventName": "L1I_CACHE_PRF",
-+        "BriefDescription": "L1I cache prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Level 1 instruction cache miss due to prefetch access count",
-+        "EventCode": "0x102f",
-+        "EventName": "L1I_CACHE_PRF_REFILL",
-+        "BriefDescription": "L1I cache miss due to prefetch access count",
-+    },
-+    {
-+        "PublicDescription": "Instruction queue is empty",
-+        "EventCode": "0x1043",
-+        "EventName": "IQ_IS_EMPTY",
-+        "BriefDescription": "Instruction queue is empty",
-+    },
-+    {
-+        "PublicDescription": "Instruction fetch stall cycles",
-+        "EventCode": "0x1044",
-+        "EventName": "IF_IS_STALL",
-+        "BriefDescription": "Instruction fetch stall cycles",
-+    },
-+    {
-+        "PublicDescription": "Instructions can receive, but not send",
-+        "EventCode": "0x2014",
-+        "EventName": "FETCH_BUBBLE",
-+        "BriefDescription": "Instructions can receive, but not send",
-+    },
-+    {
-+        "PublicDescription": "Prefetch request from LSU",
-+        "EventCode": "0x6013",
-+        "EventName": "PRF_REQ",
-+        "BriefDescription": "Prefetch request from LSU",
-+    },
-+    {
-+        "PublicDescription": "Hit on prefetched data",
-+        "EventCode": "0x6014",
-+        "EventName": "HIT_ON_PRF",
-+        "BriefDescription": "Hit on prefetched data",
-+    },
-+    {
-+        "PublicDescription": "Cycles of that the number of issuing micro operations are less than 4",
-+        "EventCode": "0x7001",
-+        "EventName": "EXE_STALL_CYCLE",
-+        "BriefDescription": "Cycles of that the number of issue ups are less than 4",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+        "EventCode": "0x7004",
-+        "EventName": "MEM_STALL_ANYLOAD",
-+        "BriefDescription": "No any micro operation is issued and meanwhile any load operation is not resolved",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+        "EventCode": "0x7006",
-+        "EventName": "MEM_STALL_L1MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing L1 cache and pending data refill",
-+    },
-+    {
-+        "PublicDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+        "EventCode": "0x7007",
-+        "EventName": "MEM_STALL_L2MISS",
-+        "BriefDescription": "No any micro operation is issued and meanwhile there is any load operation missing both L1 and L2 cache and pending data refill from L3 cache",
-+    },
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index cf14e23b6404..8f11aeb003a9 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -14,3 +14,4 @@
- #Family-model,Version,Filename,EventType
- 0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
-+0x00000000480fd010,v1,hisilicon/hip08,core
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 9e0a21e74a67..edff989fbcea 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -249,9 +249,10 @@ static const char *field_to_perf(struct map *table, char *map, jsmntok_t *val)
+ 	jsmntok_t *loc = (t);					\
+ 	if (!(t)->start && (t) > tokens)			\
+ 		loc = (t) - 1;					\
+-		pr_err("%s:%d: " m ", got %s\n", fn,		\
+-			json_line(map, loc),			\
+-			json_name(t));				\
++	pr_err("%s:%d: " m ", got %s\n", fn,			\
++	       json_line(map, loc),				\
++	       json_name(t));					\
++	err = -EIO;						\
+ 	goto out_free;						\
+ } } while (0)
+ 
+@@ -416,7 +417,7 @@ int json_events(const char *fn,
+ 		      char *metric_name, char *metric_group),
+ 	  void *data)
+ {
+-	int err = -EIO;
++	int err;
+ 	size_t size;
+ 	jsmntok_t *tokens, *tok;
+ 	int i, j, len;
 -- 
 2.14.3
