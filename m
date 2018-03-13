@@ -1,53 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeCMOS6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:18:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752647AbeCMOS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:18:56 -0400
-Date: Tue, 13 Mar 2018 15:18:53 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
-Message-ID: <20180313141853.GA26382@krava>
-References: <20180312094313.18738-1-jolsa@kernel.org>
- <20180312094313.18738-12-jolsa@kernel.org>
- <20180313013529.GD10004@kernel.org>
+        id S1752351AbeCMOVy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:21:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:39038 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751740AbeCMOVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:21:52 -0400
+Subject: Re: [3/3] irqchip/gic-v3: Bounds check redistributor accesses
+To: Lokesh Vutla <lokeshvutla@ti.com>,
+        Punit Agrawal <punit.agrawal@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, "Menon, Nishanth" <nm@ti.com>
+References: <20171011094148.15674-4-punit.agrawal@arm.com>
+ <28f9c1cd-e1df-f4db-32b4-c9ca0f0f256a@ti.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <8366ba39-a5a1-7734-752e-f3dce18e8007@arm.com>
+Date: Tue, 13 Mar 2018 14:21:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313013529.GD10004@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <28f9c1cd-e1df-f4db-32b4-c9ca0f0f256a@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:35:29PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa escreveu:
-> > +#elif defined(__s390x__)
-> > +	#define bpf_target_s930x
+Hi Lokesh,
+
+On 13/03/18 13:38, Lokesh Vutla wrote:
+> Hi All,
 > 
->     bpf_target_s390x
-
-eagle eyes ;-) must be problem in samples/bpf where I stoled it from ;-)
-
-thanks,
-jirka
-
+> On Wednesday 11 October 2017 03:11 PM, Punit Agrawal wrote:
+>> The kernel crashes while iterating over a redistributor that is
+>> in-correctly sized by the platform firmware or doesn't contain the last
+>> record.
+>>
+>> Prevent the crash by checking accesses against the size of the region
+>> provided by the firmware. While we are at it, warn the user about
+>> incorrect region size.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > 
-> > +#elif defined(__aarch64__)
-> > +	#define bpf_target_arm64
-> > +#elif defined(__mips__)
-> > +	#define bpf_target_mips
-> > +#elif defined(__powerpc__)
-> > +	#define bpf_target_powerpc
-> > +#elif defined(__sparc__)
-> > +	#define bpf_target_sparc
-> > +#endif
-> > +#endif
+> Sorry to bring up an old thread. Just wanted to check what is the status
+> on this series.
+
+So far, I wasn't inclined to merge it, as it only allowed you to detect
+a broken system, as opposed to help with a working one.
+
+> This will also be useful when we try to boot linux + hypervisor with
+> less number of cores than the SoC supports. For example:
+> - SoC has 4 cores and Linux tries to boot with 2 cores.
+> - then a type-2 hypervisor gets installed.
+> - Hypervisor tries to boot a VM with linux on core 1.
+> 
+> Now the VM boot will fail while it iterates over all the GICR regions
+> till GICR_TYPER is found. Hypervisor will trap any accesses to GICR
+> regions of any invalid cpus(cpu 2, cpu 3 in this case).
+
+It you're passing the redistributors to a guest, you're doing something
+terribly wrong. You're putting the guest in a position to do a DoS on
+the hypervisor (disabling its timer interrupt, for example). Not the
+greatest move. There is a number of other gotchas with this approach
+(virtual interrupts, distributor virtualization...).
+
+> If the $patch is not the right approach, can you suggest on how to
+> handle the above scenario?
+
+The proper way to handle this is to virtualize the distributor and
+redistributor by trap/emulate. The only thing you can safely pass to a
+guest is the CPU interface, either as system registers or in its MMIO
+form (if you have the GICv2 compatibility interface).
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
