@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu71TUF1wChBsWw/8sRYQ8eVAn5AulWntVjuU6Azq+rNQVb9Mx/pEY6UMRVNGHrEH/mJc9F
-ARC-Seal: i=1; a=rsa-sha256; t=1520955361; cv=none;
+X-Google-Smtp-Source: AG47ELt2pjWbTrEBsartI6ycHJJ+NVYQFI1GeuhpiECF9/LKi/aBkV7woajEXO/CMGtctLSz+I9z
+ARC-Seal: i=1; a=rsa-sha256; t=1520955359; cv=none;
         d=google.com; s=arc-20160816;
-        b=zbXs/MGgtYmzWatVeQ9knglF8R4xN9mpRA9kJZSWtAbJAIVJcpjgcUZS4u51mEEymR
-         4O51OmZ0Fgpu65EQ75+Y0WO1KVyJL8Nrp+cd7au5/Fb+vv+MS6axXikA1Q3nBS4BM1dU
-         Wv7ztkor9cJiYRC2tmu9sliBOIbeX34nOEVFwHchiV9TOIB4iV1OtoimKGy5JCKteFZf
-         a5qgJARM911ay54MI8J8DnbH0uQCyAgq2nnpEzhDjYBJAUr7YoebbjXKoXWo8KLlqllw
-         PJvHz8eZGDCp3580wa7xw0WocyRbAzUdI+5p2AnDBm6DQo/TaAKf1HGNbxU4bs2WpTAe
-         WGKA==
+        b=ECwp9ptlMjErZ3niwZo3y6Rsai3LfhHxur0tr+gV3nirr/NLyFw7teeKY9lZkqhmQn
+         i17WK2FlVuZNIKqOoNdyqz6I3jcZ0IXP8JllKCo9qYswMqm2majWIzQF8tGQjvfXRCWN
+         2CoPg40wC+PwGyh38XtUtMQxDd7l3uhWDF3Soz7n9tzusBqy/UWUkVG5TC9caTGydMlc
+         0/mnidwYBHYpvJBhiSnQBFEPafCWHv/RbY+ECNJ9YaO/7BEU6CR981aRy/r+2o3R2sib
+         PFoAqgqmhT5vcNDLjLQr7cnIFDM1MCH4R+PCAibAlaQ7YXr8hR0FYYbnaFSycGtCluek
+         cpwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FBnpQGYtsqitQieVpi9Qovb5nNiG/ZxKYzfwH+jwTjA=;
-        b=pB1ToaPqZIwToCOr97hx2WPFKEKmmoTYQUHVQ1Y7VkLOhFQEtY0WWUnOb2o73LH3IH
-         bwdLgxXMGs3ZabisCfLHIpPh7L0b0vVG8lisUotwHVQzu0ggMTFKszXKi+250WfcvjYO
-         1zxzU7d1Mmh6lrRFadZL5Z7XVKQqKFaSqrXzFQo4x+5QsGrn5zZ6FUXBHzcRkLHnRe+1
-         oYMRQd2KtERd1q/+xWojOvD3wgZQqsoIqeAyU+qwbrGdxGLOzuBa8ds5AOmWzDhBVIzt
-         kzCU+OneocqHe//axlVECnjxtNUOJNpozygiDc/JpiJx3p9JFFcJR7u/HtqAwRd97COZ
-         t7tQ==
+        bh=J3h6SIFl7jEHj9u29YNLjg5SosV0188jxJM3pVWfAxY=;
+        b=A8aD1Dn1VwnKFzQX3HO83rv9KSrWyJ5TUCz0Al60JuclPIuKysyhxg+vBUYAl2BfO0
+         jAd5XDn3tTQLlOP0UISkt/fSQeM0OZPjGRSmWxzYgsuNhrJi5+08GQ+qoOVCKxCr7zHd
+         Hi4n2D9pmbNoqeYFCYJmmXH4rinzNUkEqhwVXh4oRsN8ODLPbN7Qf0my5OYzIVnKuzD1
+         5tLwu1A+M3kDRguNxYD5uNILUI8oVHCG6S2DWwaGUG3Hs5Mw0TFp6Q00PgD1VyDwYiNq
+         7lQvsUnx34irJfxbfsXXlXkWj5ZbgnN+0WtdH4S7xUdIVUAXiGxQQNeX6C6/ezmpNhwe
+         gu+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quinn Tran <quinn.tran@cavium.com>,
-	Himanshu Madhani <himanshu.madhani@cavium.com>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 024/140] scsi: qla2xxx: Fix system crash for Notify ack timeout handling
-Date: Tue, 13 Mar 2018 16:23:47 +0100
-Message-Id: <20180313152459.636616080@linuxfoundation.org>
+	Javier Martinez Canillas <javierm@redhat.com>,
+	James Ettle <james@ettle.org.uk>,
+	Jeffery Miller <jmiller@neverware.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.14 023/140] tpm: only attempt to disable the LPC CLKRUN if is already enabled
+Date: Tue, 13 Mar 2018 16:23:46 +0100
+Message-Id: <20180313152459.591519822@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837125962234805?=
-X-GMAIL-MSGID: =?utf-8?q?1594837289947362220?=
+X-GMAIL-THRID: =?utf-8?q?1594837119781067640?=
+X-GMAIL-MSGID: =?utf-8?q?1594837286750767049?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
-commit 2e01d0ba868ec1d4d55ddcba519339e072b0bf4d upstream.
+commit 6c9f0ce0dffe64da2204f38b0fd90f3ae2a8903c upstream.
 
-Fix NULL pointer crash due to missing timeout handling callback for
-Notify Ack IOCB.
+Commit 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
+added logic in the TPM TIS driver to disable the Low Pin Count CLKRUN
+signal during TPM transactions.
 
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Unfortunately this breaks other devices that are attached to the LPC bus
+like for example PS/2 mouse and keyboards.
+
+One flaw with the logic is that it assumes that the CLKRUN is always
+enabled, and so it unconditionally enables it after a TPM transaction.
+
+But it could be that the CLKRUN# signal was already disabled in the LPC
+bus and so after the driver probes, CLKRUN_EN will remain enabled which
+may break other devices that are attached to the LPC bus but don't have
+support for the CLKRUN protocol.
+
+Fixes: 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Tested-by: James Ettle <james@ettle.org.uk>
+Tested-by: Jeffery Miller <jmiller@neverware.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -665,7 +665,7 @@ int qla24xx_async_notify_ack(scsi_qla_ho
- 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha)+2);
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -694,7 +694,8 @@ static void tpm_tis_clkrun_enable(struct
+ 	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
+ 	u32 clkrun_val;
  
- 	sp->u.iocb_cmd.u.nack.ntfy = ntfy;
--
-+	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
- 	sp->done = qla2x00_async_nack_sp_done;
+-	if (!IS_ENABLED(CONFIG_X86) || !is_bsw())
++	if (!IS_ENABLED(CONFIG_X86) || !is_bsw() ||
++	    !data->ilb_base_addr)
+ 		return;
  
- 	rval = qla2x00_start_sp(sp);
+ 	if (value) {
+@@ -751,6 +752,7 @@ int tpm_tis_core_init(struct device *dev
+ 		      acpi_handle acpi_dev_handle)
+ {
+ 	u32 vendor, intfcaps, intmask;
++	u32 clkrun_val;
+ 	u8 rid;
+ 	int rc, probe;
+ 	struct tpm_chip *chip;
+@@ -776,6 +778,13 @@ int tpm_tis_core_init(struct device *dev
+ 					ILB_REMAP_SIZE);
+ 		if (!priv->ilb_base_addr)
+ 			return -ENOMEM;
++
++		clkrun_val = ioread32(priv->ilb_base_addr + LPC_CNTRL_OFFSET);
++		/* Check if CLKRUN# is already not enabled in the LPC bus */
++		if (!(clkrun_val & LPC_CLKRUN_EN)) {
++			iounmap(priv->ilb_base_addr);
++			priv->ilb_base_addr = NULL;
++		}
+ 	}
+ 
+ 	if (chip->ops->clk_enable != NULL)
