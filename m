@@ -1,111 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeCMUXR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:23:17 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:40475 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752392AbeCMUXQ (ORCPT
+        id S1752834AbeCMUYw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:24:52 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37731 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752196AbeCMUYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:23:16 -0400
-X-Google-Smtp-Source: AG47ELs9xi1/LRqwgdz5Sf9tiDX0GV+55GlhLbiexFyhQqZAyDvEIJBJBBS/yrpIlLLT5BgjTgZWKUL0j0LwrOQ6qqo=
+        Tue, 13 Mar 2018 16:24:51 -0400
+X-Google-Smtp-Source: AG47ELuW4JNzOmB3oTOkDTX07gvyamp+QaEXFHyms73SsQZ8HlQl7xrs6r+6/dTZEnQV6cO43s6IFjwvj5Un6cnnqc4=
 MIME-Version: 1.0
-In-Reply-To: <30bd9559-0e44-bd18-6b9a-ec35bc8276f3@amd.com>
-References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com>
- <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
- <CAHp75VdK6qFopBE4rD4yNO5GHccxyte=GhYU7YGcWOEYSCyX8Q@mail.gmail.com> <30bd9559-0e44-bd18-6b9a-ec35bc8276f3@amd.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 22:23:15 +0200
-Message-ID: <CAHp75VeySPBEeJKRXzmqfPey56J3rwr2-dPRzSYx+7a7TAC5rw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iommu/amd - Add debugfs support
-To: Gary R Hook <gary.hook@amd.com>
-Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com> <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
+ <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
+ <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca> <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
+ <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca> <20180313093517.28c99b48@ivy-bridge>
+ <20180313101108.s6o7jec57rsxpsmc@madcap2.tricolour.ca> <20180313113815.187da185@ivy-bridge>
+ <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 13 Mar 2018 16:24:48 -0400
+Message-ID: <CAHC9VhQ+JwGd3FOU_oZVgQRt=MAcyeDxDiZv8GWtXF3bYLp+dQ@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Steve Grubb <sgrubb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 8:54 PM, Gary R Hook <gary.hook@amd.com> wrote:
-> On 03/13/2018 12:16 PM, Andy Shevchenko wrote:
->> On Fri, Mar 9, 2018 at 2:50 AM, Gary R Hook <gary.hook@amd.com> wrote:
-
->>> +#include <linux/pci.h>
->>> +#include <linux/iommu.h>
->>> +#include <linux/debugfs.h>
+On Tue, Mar 13, 2018 at 6:52 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-03-13 11:38, Steve Grubb wrote:
+>> On Tue, 13 Mar 2018 06:11:08 -0400
+>> Richard Guy Briggs <rgb@redhat.com> wrote:
 >>
+>> > On 2018-03-13 09:35, Steve Grubb wrote:
+>> > > On Mon, 12 Mar 2018 11:52:56 -0400
+>> > > Richard Guy Briggs <rgb@redhat.com> wrote:
+>> > >
+>> > > > On 2018-03-12 11:53, Paul Moore wrote:
+>> > > > > On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs
+>> > > > > <rgb@redhat.com> wrote:
+>> > > > > > On 2018-03-12 11:12, Paul Moore wrote:
+>> > > > > >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs
+>> > > > > >> <rgb@redhat.com> wrote:
+>> > > > > >> > Audit link denied events for symlinks had duplicate PATH
+>> > > > > >> > records rather than just updating the existing PATH record.
+>> > > > > >> > Update the symlink's PATH record with the current dentry
+>> > > > > >> > and inode information.
+>> > > > > >> >
+>> > > > > >> > See: https://github.com/linux-audit/audit-kernel/issues/21
+>> > > > > >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > > > > >> > ---
+>> > > > > >> >  fs/namei.c | 1 +
+>> > > > > >> >  1 file changed, 1 insertion(+)
+>> > > > > >>
+>> > > > > >> Why didn't you include this in patch 4/4 like I asked during
+>> > > > > >> the previous review?
+>> > > > > >
+>> > > > > > Please see the last comment of:
+>> > > > > > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
+>> > > > >
+>> > > > > Yes, I just saw that ... I hadn't seen your replies on the v1
+>> > > > > patches until I had finished reviewing v2.  I just replied to
+>> > > > > that mail in the v1 thread, but basically you need to figure
+>> > > > > out what is necessary here and let us know.  If I have to
+>> > > > > figure it out it likely isn't going to get done with enough
+>> > > > > soak time prior to the upcoming merge window.
+>> > > >
+>> > > > Steve?  I was hoping you could chime in here.
+>> > >
+>> > > If the CWD record will always be the same as the PARENT record,
+>> > > then we do not need the parent record. Duplicate information is
+>> > > bad. Like all the duplicate SYSCALL information.
+>> >
+>> > The CWD record could be different from the PARENT record, since I
+>> > could have SYMLINK=/tmp/test/symlink, CWD=/tmp, PARENT=/tmp/test.
+>> > Does the parent record even matter since it might not be a directory
+>> > operation like creat, unlink or rename?
 >>
->> Keep in order?
-
-> What order would that be? These few needed files are listed in the same
-> order as which they appear in amd_iommu.c. I'm gonna need a preference
-> spelled out, please (and a rationale, so I may better understand).
-
-To increase readability and avoid potential header duplication (here
-is can bus protocol implementation where the problem exists for real,
-even in new code!)
-
->>> +/* DebugFS helpers */
->>> +#define        OBUFP           (obuf + oboff)
->>> +#define        OBUFLEN         obuflen
->>> +#define        OBUFSPC         (OBUFLEN - oboff)
->>> +#define        OSCNPRINTF(fmt, ...) \
->>> +               scnprintf(OBUFP, OBUFSPC, fmt, ## __VA_ARGS__)
->>
->>
->> I don't see any advantages of this. Other way around, they will simple
->> makes things hard to read an understand in place.
+>> There's 2 issues. One is creating the path if what we have is relative.
+>> In this situation CWD should be enough. But if the question is whether
+>> the PARENT directory should be included...what if the PARENT
+>> permissions do not allow the successful name resolution? In that case
+>> we might only get a PARENT record no? In that case we would need it.
 >
+> I think in the case of symlink creation, normal file create code path
+> would be in effect, and would properly log parent and symlink source
+> file paths (if a rule to log it was in effect) which is not something
+> that would trigger a symlink link denied error.  Symlink link denied
+> happens only when trying to actually follow the link before
+> resolving the target path of a read/write/exec of the symlink target.
 >
-> I used this technique in the CCP driver code (where it was accepted), in an
-> effort to do the opposite of what you claim: make the code more readable.
-> Given the 80 column limit, a large number of arguments, and very long
-> statements, IMO something needs to give. I don't find the use of #defines to
-> be obfuscating.
->
-> I'm not trying to argue, but rather simply state the perspective / reasoning
-> I used to create a source file I feel is manageable. I have 17 more iommu
-> patches built upon this strategy, and this seems to be advantageous for all
-> of them.
+> If the parent permissions of the link's target don't allow successful
+> name resolution then the symlink link denied condition isn't met, but
+> rather any other rule that applies to the target path.
 
-It's fine to me as long as it's fine to maintainer, but honestly
-speaking I would avoid such code as much as possible. Imagine that
-your "advantage" basically becomes disadvantage to everyone else who
-is not familiar with the code.
-
-Each time I see macro in the code, I would need to at least step on
-it, run cscope, read, and come back. And at this point of time I
-already forgot what this code is doing, it does use sNprintf() or
-sCNprintf() or whatever wrapper on top of either...
-
->>> +       for (i = start ; i <= end ; i++)
-
->> Missed {}
-
-> Wasn't sure about the M.O. given that the body of this loop is a single if
-> statement. And I don't see anywhere in
-> https://www.kernel.org/doc/html/latest/process/coding-style.html
-> in section 3.1 where curly braces are called for in this situation. May I
-> ask for clarification on the style rule, please?
-
-You can do nothing, though I'm guided by the end of section 3.0
-(though it tells only about 'if' case).
-
->>> @@ -89,6 +89,7 @@
->>>   #define ACPI_DEVFLAG_ATSDIS             0x10000000
->>>
->>>   #define LOOP_TIMEOUT   100000
->>> +
->>>   /*
->>>    * ACPI table definitions
->>>    *
-
->> Doesn't belong to the patch.
-
-> I'm sorry, I don't understand. The added blank line doesn't belong to the
-> patch?
-
-Correct.
+I'm guessing you are in the process of tracking all this down, but if
+not, lets get to a point where we can answer this definitively and not
+guess :)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+paul moore
+www.paul-moore.com
