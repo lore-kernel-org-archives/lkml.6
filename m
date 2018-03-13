@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELufhViI2sZ0+l69FKPdPc91M0UjYi7A1Fh1pbnpzAbfeVmkU9xgol5+Dj/HI+jf1EcAZ8gA
-ARC-Seal: i=1; a=rsa-sha256; t=1520955102; cv=none;
+X-Google-Smtp-Source: AG47ELvtopFtz5vsCjniYyezNzDeSe5d8eqIDIBXb2vlFZkqUlsrlhobp+gTjo2ei5atV+k46w/y
+ARC-Seal: i=1; a=rsa-sha256; t=1520955097; cv=none;
         d=google.com; s=arc-20160816;
-        b=sxFj36a8mi8dqaeIWIARTAf/hzRxPDhLvzj3batJGapiPdFiFcxnwJftLFZlliHHIY
-         UBGM0QqanlvF1lhTDgX1MCZGa5XWXn6Pvp1/V4k+gv7KFL219mxhSK5D0YrbYX4vQ8ir
-         J4tUUSb9X16MNQpRyYWbLVE+KZk8mfviKikVhGm1Fjiy/L02m2t1beIulw/1iHqfjhMK
-         NUFuFMGrVmyxruDHDn0/xEYzb0ZQiTdPx8j/isHt8hYwQRQoOapbOYQQBSaMNI98Q5On
-         7mJT+qBeaq/8Lghi05B0cHeyslY8IwK2yOO0+t+DcsVAoeL7CnYgsL0eNYzlH+wDTRoG
-         lfHQ==
+        b=y46Ibt+cE6ugeu4QWeDByDohi/H8hWZMLQqse1aNP8C77qX6cA/5Wnr4ghNJqC7W9U
+         66rD+G4Vx+2/uNn5YPn3W6MH9ltdat8XkkL3kgecCXpjfoj/Hqb3gLw55HyXEaRspLGt
+         XAgO3UEqPQbEkuKVLibl0oM9gZxtR2v9pqY2WqXQfe+t374jyzyRW/5bOjTmXsuGevH7
+         gBTaGnb5uMg+crMzMXNkrZdKGiiBFHfOufOdeBIWxPIQrPZ7bbrELRTMRKkUYUxEWT85
+         wNDDC9BNLvUjrI6xc6H+GZWs0fMYx7jyTXqFtT6umDoA9eZ4kEH8uET70jV8yMHiuUgo
+         dLBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=f1OPBNtAPzuccWaH8DOhI82Utp5SavPROicZmZuHjTw=;
-        b=pyu44+RcJu4BFbhtriNCe0OBjtk1LsWFGI0GuKQuaNGDhz91hSaKTWqH+ProPwYIhH
-         3hUGJUPnbJE/EtxEJhBE4A2LHEl+hJHU76mmEzcXZXj8DQxdhgcsHRxtOizLecOGP1Yl
-         NBgoDD4QbjEOSvDPgGhZBV80GnDDfpg/PWlwwIBg3R9Uy+30ZfO7DFPQyVtygswvwQmD
-         6sAPV8l8qZfuCkTAogoJNNv6CnQ9hVcVABymNYoB81HXwSVNJEgBsmQ+r8K2duPXpvcj
-         nFk4Bwzm8YzranQDTzVBXCP2iNy4LbrKsfDhFWEt6nuvIhj0F1Np4vTtj3aRZ1XerVuQ
-         3p6g==
+        bh=6pLBFAgZ7VB8fYuAQLTAiLE7EcxCB801uKVdyCEohA8=;
+        b=Lzw9HowToYQlV3uFakZZBqG2ZK8Bsok1Xzz6DK85XhtgBH1FCEu3o1MA/ab6mqE9fC
+         wP4aadD38qp3qtCNUGQC2nxh7Laofr2jV3920GAj5GWELWSmRslD0JOY8BQEZ+l84WBv
+         /FUuPJiQbIGnRaGB7fdrCPZtbi8nKtUZE6p9RGRKQm/79AuY4hbeW9bERQsxiGTZdHBI
+         rQKHnq8WChr9iMzUCl5Yr8ZLo6aOFLOpFOEvKGIoTvMkOGdl/LhfhSkfq4NklSs+TgqJ
+         sbxU64IlzSh5CESRGodHq5uzbijdLrEkyWwk7NoC1wM9O0bAoB8osSUTF17v7TXOE+GR
+         DLQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	arjan.van.de.ven@intel.com,
-	bp@alien8.de,
-	dave.hansen@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 089/146] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
-Date: Tue, 13 Mar 2018 16:24:16 +0100
-Message-Id: <20180313152327.599114367@linuxfoundation.org>
+	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.15 070/146] ALSA: hda/realtek - Make dock sound work on ThinkPad L570
+Date: Tue, 13 Mar 2018 16:23:57 +0100
+Message-Id: <20180313152326.140137650@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -51,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837018277263377?=
-X-GMAIL-MSGID: =?utf-8?q?1594837018277263377?=
+X-GMAIL-THRID: =?utf-8?q?1594837011394940891?=
+X-GMAIL-MSGID: =?utf-8?q?1594837011394940891?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,249 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit d1c99108af3c5992640aa2afa7d2e88c3775c06e upstream.
+commit e4c07b3b66b7d6a24c2fe3b1ddeff5cd9b378b3a upstream.
 
-This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
-the RSB filling out of line and calling it, we waste one RSB slot for
-returning from the function itself, which means one fewer actual function
-call we can make if we're doing the Skylake abomination of call-depth
-counting.
+One version of Lenovo Thinkpad T570 did not use ALC298
+(like other Kaby Lake devices). Instead it uses ALC292.
+In order to make the Lenovo dock working with that codec
+the dock quirk for ALC292 will be used.
 
-It also changed the number of RSB stuffings we do on vmexit from 32,
-which was correct, to 16. Let's just stop with the bikeshedding; it
-didn't actually *fix* anything anyway.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-4-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_32.S             |    3 -
- arch/x86/entry/entry_64.S             |    3 -
- arch/x86/include/asm/asm-prototypes.h |    3 -
- arch/x86/include/asm/nospec-branch.h  |   70 ++++++++++++++++++++++++++++++----
- arch/x86/lib/Makefile                 |    1 
- arch/x86/lib/retpoline.S              |   56 ---------------------------
- 6 files changed, 65 insertions(+), 71 deletions(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	/* Clobbers %ebx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	/* Clobbers %rbx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
--asmlinkage void __fill_rsb(void);
--asmlinkage void __clear_rsb(void);
--
- #endif /* CONFIG_RETPOLINE */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -8,6 +8,50 @@
- #include <asm/cpufeatures.h>
- #include <asm/msr-index.h>
- 
-+/*
-+ * Fill the CPU return stack buffer.
-+ *
-+ * Each entry in the RSB, if used for a speculative 'ret', contains an
-+ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-+ *
-+ * This is required in various cases for retpoline and IBRS-based
-+ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-+ * eliminate potentially bogus entries from the RSB, and sometimes
-+ * purely to ensure that it doesn't get empty, which on some CPUs would
-+ * allow predictions from other (unwanted!) sources to be used.
-+ *
-+ * We define a CPP macro such that it can be used from both .S files and
-+ * inline assembly. It's possible to do a .macro and then include that
-+ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-+ */
-+
-+#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
-+#define RSB_FILL_LOOPS		16	/* To avoid underflow */
-+
-+/*
-+ * Google experimented with loop-unrolling and this turned out to be
-+ * the optimal version — two calls, each with their own speculation
-+ * trap should their return address end up getting used, in a loop.
-+ */
-+#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
-+	mov	$(nr/2), reg;			\
-+771:						\
-+	call	772f;				\
-+773:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	773b;				\
-+772:						\
-+	call	774f;				\
-+775:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	775b;				\
-+774:						\
-+	dec	reg;				\
-+	jnz	771b;				\
-+	add	$(BITS_PER_LONG/8) * nr, sp;
-+
- #ifdef __ASSEMBLY__
- 
- /*
-@@ -78,10 +122,17 @@
- #endif
- .endm
- 
--/* This clobbers the BX register */
--.macro FILL_RETURN_BUFFER nr:req ftr:req
-+ /*
-+  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
-+  * monstrosity above, manually.
-+  */
-+.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ALTERNATIVE "", "call __clear_rsb", \ftr
-+	ANNOTATE_NOSPEC_ALTERNATIVE
-+	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
-+		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
-+		\ftr
-+.Lskip_rsb_\@:
- #endif
- .endm
- 
-@@ -156,10 +207,15 @@ extern char __indirect_thunk_end[];
- static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
--	alternative_input("",
--			  "call __fill_rsb",
--			  X86_FEATURE_RETPOLINE,
--			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
-+	unsigned long loops;
-+
-+	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
-+		      ALTERNATIVE("jmp 910f",
-+				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
-+				  X86_FEATURE_RETPOLINE)
-+		      "910:"
-+		      : "=r" (loops), ASM_CALL_CONSTRAINT
-+		      : : "memory" );
- #endif
- }
- 
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -27,7 +27,6 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
- lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
- lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
--OBJECT_FILES_NON_STANDARD_retpoline.o :=y
- 
- obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
- 
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -7,7 +7,6 @@
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
--#include <asm/bitsperlong.h>
- 
- .macro THUNK reg
- 	.section .text.__x86.indirect_thunk
-@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
- #endif
--
--/*
-- * Fill the CPU return stack buffer.
-- *
-- * Each entry in the RSB, if used for a speculative 'ret', contains an
-- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-- *
-- * This is required in various cases for retpoline and IBRS-based
-- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-- * eliminate potentially bogus entries from the RSB, and sometimes
-- * purely to ensure that it doesn't get empty, which on some CPUs would
-- * allow predictions from other (unwanted!) sources to be used.
-- *
-- * Google experimented with loop-unrolling and this turned out to be
-- * the optimal version - two calls, each with their own speculation
-- * trap should their return address end up getting used, in a loop.
-- */
--.macro STUFF_RSB nr:req sp:req
--	mov	$(\nr / 2), %_ASM_BX
--	.align 16
--771:
--	call	772f
--773:						/* speculation trap */
--	pause
--	lfence
--	jmp	773b
--	.align 16
--772:
--	call	774f
--775:						/* speculation trap */
--	pause
--	lfence
--	jmp	775b
--	.align 16
--774:
--	dec	%_ASM_BX
--	jnz	771b
--	add	$((BITS_PER_LONG/8) * \nr), \sp
--.endm
--
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
--
--ENTRY(__fill_rsb)
--	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
--	ret
--END(__fill_rsb)
--EXPORT_SYMBOL_GPL(__fill_rsb)
--
--#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--
--ENTRY(__clear_rsb)
--	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
--	ret
--END(__clear_rsb)
--EXPORT_SYMBOL_GPL(__clear_rsb)
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6427,6 +6427,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x2245, "Thinkpad T470", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x2246, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x2247, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
++	SND_PCI_QUIRK(0x17aa, 0x2249, "Thinkpad", ALC292_FIXUP_TPT460),
+ 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
