@@ -1,48 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeCMBfu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:35:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60800 "EHLO mail.kernel.org"
+        id S1751620AbeCMBfz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:35:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:60488 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751390AbeCMBft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:35:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9332173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 12 Mar 2018 22:35:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
-Message-ID: <20180313013529.GD10004@kernel.org>
-References: <20180312094313.18738-1-jolsa@kernel.org>
- <20180312094313.18738-12-jolsa@kernel.org>
+        id S1751526AbeCMBfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:35:51 -0400
+Subject: Re: [PATCH 1/5] arm64: dts: allwinner: a64: Add i2c0 pins
+To: Harald Geyer <harald@ccbib.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <20180312161050.7647-1-harald@ccbib.org>
+ <20180312161050.7647-2-harald@ccbib.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        info@olimex.com
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Organization: ARM Ltd.
+Message-ID: <5b7f1a15-011f-c386-4813-f0fb8a91dfd8@arm.com>
+Date: Tue, 13 Mar 2018 01:35:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312094313.18738-12-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180312161050.7647-2-harald@ccbib.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa escreveu:
-> +#elif defined(__s390x__)
-> +	#define bpf_target_s930x
+On 12/03/18 16:10, Harald Geyer wrote:
+> Add the proper pin group node to reference in board files.
+> 
+> Signed-off-by: Harald Geyer <harald@ccbib.org>
 
-    bpf_target_s390x
+That looks correct to me, so:
 
-> +#elif defined(__aarch64__)
-> +	#define bpf_target_arm64
-> +#elif defined(__mips__)
-> +	#define bpf_target_mips
-> +#elif defined(__powerpc__)
-> +	#define bpf_target_powerpc
-> +#elif defined(__sparc__)
-> +	#define bpf_target_sparc
-> +#endif
-> +#endif
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+But out of curiosity, what is this used for? In patch 5/5 I see it being
+used, but without a clue for what? Shouldn't enabling an I2C node be
+accompanied by some child node, presenting the device on the bus?
+I guess this I2C is not on some kind of "header" on that laptop?
+
+Cheers,
+Andre.
+
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index 1b6dc31e7d91..64e452a758fa 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -309,6 +309,11 @@
+>  			interrupt-controller;
+>  			#interrupt-cells = <3>;
+>  
+> +			i2c0_pins: i2c0_pins {
+> +				pins = "PH0", "PH1";
+> +				function = "i2c0";
+> +			};
+> +
+>  			i2c1_pins: i2c1_pins {
+>  				pins = "PH2", "PH3";
+>  				function = "i2c1";
+> 
