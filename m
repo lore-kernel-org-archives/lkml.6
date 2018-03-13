@@ -1,79 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933013AbeCMNjv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:39:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53190 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932982AbeCMNjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:39:49 -0400
-Date: Tue, 13 Mar 2018 14:39:46 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Gaurav Kohli <gkohli@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [patch] mm, oom: remove 3% bonus for CAP_SYS_ADMIN processes
-Message-ID: <20180313133946.GT12772@dhcp22.suse.cz>
-References: <alpine.DEB.2.20.1803071548510.6996@chino.kir.corp.google.com>
+        id S933023AbeCMNj7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:39:59 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:13231 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752381AbeCMNjy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:39:54 -0400
+Subject: Re: [3/3] irqchip/gic-v3: Bounds check redistributor accesses
+To: Punit Agrawal <punit.agrawal@arm.com>, <linux-kernel@vger.kernel.org>
+CC: <marc.zyngier@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        "Menon, Nishanth" <nm@ti.com>
+References: <20171011094148.15674-4-punit.agrawal@arm.com>
+From: Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <28f9c1cd-e1df-f4db-32b4-c9ca0f0f256a@ti.com>
+Date: Tue, 13 Mar 2018 19:08:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803071548510.6996@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20171011094148.15674-4-punit.agrawal@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-03-18 15:52:15, David Rientjes wrote:
-> Since the 2.6 kernel, the oom killer has slightly biased away from 
-> CAP_SYS_ADMIN processes by discounting some of its memory usage in 
-> comparison to other processes.
-> 
-> This has always been implicit and nothing exactly relies on the behavior.
-> 
-> Gaurav notices that __task_cred() can dereference a potentially freed 
-> pointer if the task under consideration is exiting because a reference to 
-> the task_struct is not held.
-> 
-> Remove the CAP_SYS_ADMIN bias so that all processes are treated equally.
-> 
-> If any CAP_SYS_ADMIN process would like to be biased against, it is always 
-> allowed to adjust /proc/pid/oom_score_adj.
-> 
-> Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
-> Signed-off-by: David Rientjes <rientjes@google.com>
+Hi All,
 
-This is simpler than playing reference counting tricks and whatnot.
-Moreover I do agree that this heuristic is questionable on its own. The
-bias is basically random and invisible to the userspace. We already have
-a way to tune the same thing by oom_score_adj
+On Wednesday 11 October 2017 03:11 PM, Punit Agrawal wrote:
+> The kernel crashes while iterating over a redistributor that is
+> in-correctly sized by the platform firmware or doesn't contain the last
+> record.
+> 
+> Prevent the crash by checking accesses against the size of the region
+> provided by the firmware. While we are at it, warn the user about
+> incorrect region size.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Sorry to bring up an old thread. Just wanted to check what is the status
+on this series.
+
+This will also be useful when we try to boot linux + hypervisor with
+less number of cores than the SoC supports. For example:
+- SoC has 4 cores and Linux tries to boot with 2 cores.
+- then a type-2 hypervisor gets installed.
+- Hypervisor tries to boot a VM with linux on core 1.
+
+Now the VM boot will fail while it iterates over all the GICR regions
+till GICR_TYPER is found. Hypervisor will trap any accesses to GICR
+regions of any invalid cpus(cpu 2, cpu 3 in this case).
+
+If the $patch is not the right approach, can you suggest on how to
+handle the above scenario?
+
+Thanks and regards,
+Lokesh
 
 > ---
->  mm/oom_kill.c | 7 -------
->  1 file changed, 7 deletions(-)
+>  drivers/irqchip/irq-gic-v3.c | 48 ++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 40 insertions(+), 8 deletions(-)
 > 
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -224,13 +224,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
->  		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
->  	task_unlock(p);
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 881d327c53fa..754d936c95e5 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -429,11 +429,21 @@ static int gic_iterate_rdists(int (*fn)(struct redist_region *, void __iomem *))
+>  	int i;
 >  
-> -	/*
-> -	 * Root processes get 3% bonus, just like the __vm_enough_memory()
-> -	 * implementation used by LSMs.
-> -	 */
-> -	if (has_capability_noaudit(p, CAP_SYS_ADMIN))
-> -		points -= (points * 3) / 100;
-> -
->  	/* Normalize to oom_score_adj units */
->  	adj *= totalpages / 1000;
->  	points += adj;
-
--- 
-Michal Hocko
-SUSE Labs
+>  	for (i = 0; i < gic_data.nr_redist_regions; i++) {
+> -		void __iomem *ptr = gic_data.redist_regions[i].redist_base;
+>  		struct resource *res = &gic_data.redist_regions[i].res;
+> -		u64 typer;
+> +		void __iomem *ptr, *base;
+> +		u64 typer, size, stride;
+>  		u32 reg;
+>  
+> +		ptr = base = gic_data.redist_regions[i].redist_base;
+> +		size = resource_size(res);
+> +
+> +		stride = gic_data.redist_stride ?: SZ_64K * 2;
+> +		if (ptr + stride > base + size) {
+> +			pr_warn("Insufficient size for redistributor region @%llx. Skipping\n",
+> +				res->start);
+> +			continue;
+> +		}
+> +
+>  		reg = readl_relaxed(ptr + GICR_PIDR2) & GIC_PIDR2_ARCH_MASK;
+>  		if (reg != GIC_PIDR2_ARCH_GICv3 &&
+>  		    reg != GIC_PIDR2_ARCH_GICv4) { /* We're in trouble... */
+> @@ -442,7 +452,28 @@ static int gic_iterate_rdists(int (*fn)(struct redist_region *, void __iomem *))
+>  		}
+>  
+>  		do {
+> +			/*
+> +			 * We can access GICR_TYPER as we have already
+> +			 * checked that we have atleast 128kB or
+> +			 * redist_stride
+> +			 */
+>  			typer = gic_read_typer(ptr + GICR_TYPER);
+> +			if (!gic_data.redist_stride &&
+> +			    (typer & GICR_TYPER_VLPIS)) {
+> +				/* VLPI_base + reserved page */
+> +				stride += SZ_64K * 2;
+> +
+> +				/*
+> +				 * We are larger than we thought, do
+> +				 * we still fit?
+> +				 */
+> +				if (ptr + stride > base + size) {
+> +					pr_warn("No last record found in redistributor region @%llx\n",
+> +						gic_data.redist_regions[i].res.start);
+> +					break;
+> +				}
+> +			}
+> +
+>  			ret = fn(gic_data.redist_regions + i, ptr);
+>  			if (!ret)
+>  				return 0;
+> @@ -450,12 +481,13 @@ static int gic_iterate_rdists(int (*fn)(struct redist_region *, void __iomem *))
+>  			if (gic_data.redist_regions[i].single_redist)
+>  				break;
+>  
+> -			if (gic_data.redist_stride) {
+> -				ptr += gic_data.redist_stride;
+> -			} else {
+> -				ptr += SZ_64K * 2; /* Skip RD_base + SGI_base */
+> -				if (typer & GICR_TYPER_VLPIS)
+> -					ptr += SZ_64K * 2; /* Skip VLPI_base + reserved page */
+> +			ptr += stride;
+> +
+> +			stride = gic_data.redist_stride ?: SZ_64K * 2;
+> +			if (ptr + stride > base + size) {
+> +				pr_warn("No last record found in redistributor region @%llx\n",
+> +					gic_data.redist_regions[i].res.start);
+> +				break;
+>  			}
+>  		} while (!(typer & GICR_TYPER_LAST));
+>  	}
+> 
