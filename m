@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974811; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974824; cv=none;
         d=google.com; s=arc-20160816;
-        b=y/1b9/KAtXFiwY83p5Gfiy6/wqtpCU8PQ9PqzhDaIVDTKSXIV1Ec2XLXKUbvGvlPWT
-         5vE4F/BBZ0gBfllHgA2iiItDo6GJ+rsL1lXVZr4GzM4pFN274oIZkOi80dt/oCsYYqgv
-         +gxXuoK2mHlUW8EmOCXZaf7eV4zDrsWPa0n1rVNk4F0O918bt5DpnJVqyd/vGCAuK3ee
-         KHNI4ux11pnG6WKqT8MOI6u+jQ0jnuLDGqSgTxDJoqQtBmIB2HIe91U0QcFN9voYd/o6
-         lFbnOqYgNjB6SObIeGBeXGrFkvXiIfGlXQt27u1BBXdF0QE8jIdwEs4G8/mr1/zhagHU
-         NwXA==
+        b=F9v+oJFpUxbbrW05hFFejOm4AprqvNChv8i8tOwiu/tTDlIuRW4Rx6Fhlo2E6qDehZ
+         YpoKmMgWrvJOFcD70TrL0VXBtoyKj3avz30jOgiEQT3yLK5Fbd5ad2gLrNCeSNmc7wdL
+         fGur9eLuihXA3cxOdB/EaLiFh3yNLNlm1KUlJs9M+0jDJb5GBqTUYUT0emd1qpN1ESW9
+         P42VorSy6JY6kqCfeXG9tEOpj2jos8AicwSPfHhacAorsZGxn1TCEo26Vf2tm3OgVJym
+         qxGxuTg0vdlUR/jsIxoc2uW4xb0llg47DM6Je4KsI36VZr4yQ3nG+Em4bc2UU2V+jv8c
+         F+2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=+Z0I+Rbg3nmUTm+emVXn/AAop6lpLB5a9aV/ZXPykuY=;
-        b=IdmJASoPjqrtIU9zEdkhrVDSYtpQM88PDRAn3Ce/OJ+76xDeIS6m06Z8r69RsEfjn6
-         LopPjoLvKxEj1xUPQ52+H8r7OLFprQpxrR0EKPOTcRiemb4J6KB33m+5za9YwJ+uvl2+
-         jaBII2bvwGergCzoWr1Y/hhzDbr8DOK3UlG4uNMQumD1Nc3ppukvfT5hcF5giwJD6A6U
-         3QM7BjtaklqsiIUeX6XkrHUHaNPTCgFGPdHyhp8+5+Veb1yOvgN6RJXLXhrqusjWoJ47
-         LJ7q22OerFPXvyMDCRF5NfoTl3Zd3jrJtxlPQGbr+EXe1dlxmiZclwlCyTP1Ggq0Ak6Q
-         tR7Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=69Xr9AMcNB4SUeH9q6UB0j4ueTVORy5jZDvOPigSCO8=;
+        b=MaWgrI61+9nOk145AjsqRD905E+xSgBfBaEyBRJGMT6IKRR1GbWeO55SFlSM8YuBmL
+         rdxSW6nnMaFgas/PM7CcBsGJTXzlTUbdXwv+q9wHb29xKLV7DCTT30B7480/tgXBG+HE
+         xxRM18YC33pAxruxUQFXDKjlAcQxEK415oKbJ9Sfoh4PhFlQJgas9Z+6V3VF+fUZwyO6
+         +TTwj1pvIb14mn5Pl58AZ6+YTCseU6huHrzD/GtvliEzYWMFCc7dF9SjfF/T+AB2s5vc
+         4Tan+8vBvn4lF+q3gb4iM0N/4hTz8ulQPlZuFbWRrS3j0Pvf9ZumeSYBzJKLO0We0Ovv
+         HXjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=iEx+Oq1V;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iQqNTC3N;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=iEx+Oq1V;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iQqNTC3N;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELt7p5bTSiCVSOk7KCrhQILTuRRXMohYvVE1pQDkage7G5NXFlBnoUs6s7i/k4OFV6TiSEJLAw==
+X-Google-Smtp-Source: AG47ELuogBYIcucRvZ9Y+OppyLMBHYLboAgOIwTSCLOtWt95y/D/sXkfaKrwsk2nzB9H8h0lw3ZekQ==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,180 +105,105 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 00/27] x86: PIE support and option to extend KASLR randomization
-Date: Tue, 13 Mar 2018 13:59:18 -0700
-Message-Id: <20180313205945.245105-1-thgarnie@google.com>
+Subject: [PATCH v2 06/27] x86/entry/64: Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:24 -0700
+Message-Id: <20180313205945.245105-7-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
+References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857684125982930?=
-X-GMAIL-MSGID: =?utf-8?q?1594857684125982930?=
+X-GMAIL-THRID: =?utf-8?q?1594857697760354422?=
+X-GMAIL-MSGID: =?utf-8?q?1594857697760354422?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Changes:
- - patch v2:
-   - Adapt patch to work post KPTI and compiler changes
-   - Redo all performance testing with latest configs and compilers
-   - Simplify mov macro on PIE (MOVABS now)
-   - Reduce GOT footprint
- - patch v1:
-   - Simplify ftrace implementation.
-   - Use gcc mstack-protector-guard-reg=%gs with PIE when possible.
- - rfc v3:
-   - Use --emit-relocs instead of -pie to reduce dynamic relocation space on
-     mapped memory. It also simplifies the relocation process.
-   - Move the start the module section next to the kernel. Remove the need for
-     -mcmodel=large on modules. Extends module space from 1 to 2G maximum.
-   - Support for XEN PVH as 32-bit relocations can be ignored with
-     --emit-relocs.
-   - Support for GOT relocations previously done automatically with -pie.
-   - Remove need for dynamic PLT in modules.
-   - Support dymamic GOT for modules.
- - rfc v2:
-   - Add support for global stack cookie while compiler default to fs without
-     mcmodel=kernel
-   - Change patch 7 to correctly jump out of the identity mapping on kexec load
-     preserve.
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible.
 
-These patches make the changes necessary to build the kernel as Position
-Independent Executable (PIE) on x86_64. A PIE kernel can be relocated below
-the top 2G of the virtual address space. It allows to optionally extend the
-KASLR randomization range from 1G to 3G.
+Position Independent Executable (PIE) support will allow to extended the
+KASLR randomization range below the -2G memory limit.
 
-Thanks a lot to Ard Biesheuvel & Kees Cook on their feedback on compiler
-changes, PIE support and KASLR in general. Thanks to Roland McGrath on his
-feedback for using -pie versus --emit-relocs and details on compiler code
-generation.
+Signed-off-by: Thomas Garnier <thgarnie@google.com>
+---
+ arch/x86/entry/entry_64.S            | 16 ++++++++++------
+ arch/x86/kernel/relocate_kernel_64.S |  8 +++-----
+ 2 files changed, 13 insertions(+), 11 deletions(-)
 
-The patches:
- - 1-3, 5-13, 18-19: Change in assembly code to be PIE compliant.
- - 4: Add a new _ASM_GET_PTR macro to fetch a symbol address generically.
- - 14: Adapt percpu design to work correctly when PIE is enabled.
- - 15: Provide an option to default visibility to hidden except for key symbols.
-       It removes errors between compilation units.
- - 16: Add PROVIDE_HIDDEN replacement on the linker script for weak symbols to
-       reduce GOT footprint.
- - 17: Adapt relocation tool to handle PIE binary correctly.
- - 20: Add support for global cookie.
- - 21: Support ftrace with PIE (used on Ubuntu config).
- - 22: Add option to move the module section just after the kernel.
- - 23: Adapt module loading to support PIE with dynamic GOT.
- - 24: Make the GOT read-only.
- - 25: Add the CONFIG_X86_PIE option (off by default).
- - 26: Adapt relocation tool to generate a 64-bit relocation table.
- - 27: Add the CONFIG_RANDOMIZE_BASE_LARGE option to increase relocation range
-       from 1G to 3G (off by default).
-
-Performance/Size impact:
-
-Size of vmlinux (Default configuration):
- File size:
- - PIE disabled: +0.18%
- - PIE enabled: -1.977% (less relocations)
- .text section:
- - PIE disabled: same
- - PIE enabled: same
-
-Size of vmlinux (Ubuntu configuration):
- File size:
- - PIE disabled: +0.21%
- - PIE enabled: +10%
- .text section:
- - PIE disabled: same
- - PIE enabled: +0.001%
-
-The size increase is mainly due to not having access to the 32-bit signed
-relocation that can be used with mcmodel=kernel. A small part is due to reduced
-optimization for PIE code. This bug [1] was opened with gcc to provide a better
-code generation for kernel PIE.
-
-Hackbench (50% and 1600% on thread/process for pipe/sockets):
- - PIE disabled: no significant change (avg -/+ 0.5% on latest test).
- - PIE enabled: between -1% to +1% in average (default and Ubuntu config).
-
-Kernbench (average of 10 Half and Optimal runs):
- Elapsed Time:
- - PIE disabled: no significant change (avg -0.5%)
- - PIE enabled: average -0.5% to +0.5%
- System Time:
- - PIE disabled: no significant change (avg -0.1%)
- - PIE enabled: average -0.4% to +0.4%.
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82303
-
-diffstat:
- Documentation/x86/x86_64/mm.txt              |    3 
- arch/x86/Kconfig                             |   45 ++++++
- arch/x86/Makefile                            |   58 ++++++++
- arch/x86/boot/boot.h                         |    2 
- arch/x86/boot/compressed/Makefile            |    5 
- arch/x86/boot/compressed/misc.c              |   10 +
- arch/x86/crypto/aes-x86_64-asm_64.S          |   45 ++++--
- arch/x86/crypto/aesni-intel_asm.S            |    8 -
- arch/x86/crypto/aesni-intel_avx-x86_64.S     |    6 
- arch/x86/crypto/camellia-aesni-avx-asm_64.S  |   42 +++---
- arch/x86/crypto/camellia-aesni-avx2-asm_64.S |   44 +++---
- arch/x86/crypto/camellia-x86_64-asm_64.S     |    8 -
- arch/x86/crypto/cast5-avx-x86_64-asm_64.S    |   50 ++++---
- arch/x86/crypto/cast6-avx-x86_64-asm_64.S    |   44 +++---
- arch/x86/crypto/des3_ede-asm_64.S            |   96 +++++++++-----
- arch/x86/crypto/ghash-clmulni-intel_asm.S    |    4 
- arch/x86/crypto/glue_helper-asm-avx.S        |    4 
- arch/x86/crypto/glue_helper-asm-avx2.S       |    6 
- arch/x86/crypto/sha256-avx2-asm.S            |   23 ++-
- arch/x86/entry/calling.h                     |    2 
- arch/x86/entry/entry_32.S                    |    3 
- arch/x86/entry/entry_64.S                    |   23 ++-
- arch/x86/include/asm/asm.h                   |    1 
- arch/x86/include/asm/bug.h                   |    2 
- arch/x86/include/asm/ftrace.h                |    6 
- arch/x86/include/asm/jump_label.h            |    8 -
- arch/x86/include/asm/kvm_host.h              |    6 
- arch/x86/include/asm/module.h                |   11 +
- arch/x86/include/asm/page_64_types.h         |    9 +
- arch/x86/include/asm/paravirt_types.h        |   12 +
- arch/x86/include/asm/percpu.h                |   25 ++-
- arch/x86/include/asm/pgtable_64_types.h      |    6 
- arch/x86/include/asm/pm-trace.h              |    2 
- arch/x86/include/asm/processor.h             |   12 +
- arch/x86/include/asm/sections.h              |    8 +
- arch/x86/include/asm/setup.h                 |    2 
- arch/x86/include/asm/stackprotector.h        |   19 ++
- arch/x86/kernel/Makefile                     |    6 
- arch/x86/kernel/acpi/wakeup_64.S             |   31 ++--
- arch/x86/kernel/asm-offsets.c                |    3 
- arch/x86/kernel/asm-offsets_32.c             |    3 
- arch/x86/kernel/asm-offsets_64.c             |    3 
- arch/x86/kernel/cpu/common.c                 |    7 -
- arch/x86/kernel/cpu/microcode/core.c         |    4 
- arch/x86/kernel/ftrace.c                     |   42 +++++-
- arch/x86/kernel/head64.c                     |   23 ++-
- arch/x86/kernel/head_32.S                    |    3 
- arch/x86/kernel/head_64.S                    |   41 +++++-
- arch/x86/kernel/kvm.c                        |    6 
- arch/x86/kernel/module.c                     |  181 ++++++++++++++++++++++++++-
- arch/x86/kernel/module.lds                   |    3 
- arch/x86/kernel/process.c                    |    5 
- arch/x86/kernel/relocate_kernel_64.S         |   16 +-
- arch/x86/kernel/setup_percpu.c               |    2 
- arch/x86/kernel/vmlinux.lds.S                |   13 +
- arch/x86/kvm/svm.c                           |    4 
- arch/x86/lib/cmpxchg16b_emu.S                |    8 -
- arch/x86/mm/dump_pagetables.c                |    3 
- arch/x86/power/hibernate_asm_64.S            |    4 
- arch/x86/tools/relocs.c                      |  169 +++++++++++++++++++++++--
- arch/x86/tools/relocs.h                      |    4 
- arch/x86/tools/relocs_common.c               |   15 +-
- arch/x86/xen/xen-asm.S                       |   12 -
- arch/x86/xen/xen-head.S                      |   11 -
- arch/x86/xen/xen-pvh.S                       |   13 +
- drivers/base/firmware_class.c                |    4 
- include/asm-generic/sections.h               |    6 
- include/asm-generic/vmlinux.lds.h            |   12 +
- include/linux/compiler.h                     |    7 +
- init/Kconfig                                 |   16 ++
- kernel/kallsyms.c                            |   16 +-
- kernel/trace/trace.h                         |    4 
- lib/dynamic_debug.c                          |    4 
- scripts/link-vmlinux.sh                      |   14 ++
- 74 files changed, 1063 insertions(+), 315 deletions(-)
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index bd53c57617e6..c53123468364 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -191,7 +191,7 @@ ENTRY(entry_SYSCALL_64_trampoline)
+ 	 * spill RDI and restore it in a second-stage trampoline.
+ 	 */
+ 	pushq	%rdi
+-	movq	$entry_SYSCALL_64_stage2, %rdi
++	movabsq	$entry_SYSCALL_64_stage2, %rdi
+ 	JMP_NOSPEC %rdi
+ END(entry_SYSCALL_64_trampoline)
+ 
+@@ -1275,7 +1275,8 @@ ENTRY(error_entry)
+ 	movl	%ecx, %eax			/* zero extend */
+ 	cmpq	%rax, RIP+8(%rsp)
+ 	je	.Lbstep_iret
+-	cmpq	$.Lgs_change, RIP+8(%rsp)
++	leaq	.Lgs_change(%rip), %rcx
++	cmpq	%rcx, RIP+8(%rsp)
+ 	jne	.Lerror_entry_done
+ 
+ 	/*
+@@ -1480,10 +1481,10 @@ ENTRY(nmi)
+ 	 * resume the outer NMI.
+ 	 */
+ 
+-	movq	$repeat_nmi, %rdx
++	leaq	repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	1f
+-	movq	$end_repeat_nmi, %rdx
++	leaq	end_repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	nested_nmi_out
+ 1:
+@@ -1537,7 +1538,8 @@ nested_nmi:
+ 	pushq	%rdx
+ 	pushfq
+ 	pushq	$__KERNEL_CS
+-	pushq	$repeat_nmi
++	leaq	repeat_nmi(%rip), %rdx
++	pushq	%rdx
+ 
+ 	/* Put stack back */
+ 	addq	$(6*8), %rsp
+@@ -1576,7 +1578,9 @@ first_nmi:
+ 	addq	$8, (%rsp)	/* Fix up RSP */
+ 	pushfq			/* RFLAGS */
+ 	pushq	$__KERNEL_CS	/* CS */
+-	pushq	$1f		/* RIP */
++	pushq	%rax		/* Support Position Independent Code */
++	leaq	1f(%rip), %rax	/* RIP */
++	xchgq	%rax, (%rsp)	/* Restore RAX, put 1f */
+ 	iretq			/* continues at repeat_nmi below */
+ 	UNWIND_HINT_IRET_REGS
+ 1:
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index a7227dfe1a2b..0c0fc259a4e2 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -208,11 +208,9 @@ identity_mapped:
+ 	movq	%rax, %cr3
+ 	lea	PAGE_SIZE(%r8), %rsp
+ 	call	swap_pages
+-	jmp	*virtual_mapped_addr(%rip)
+-
+-	/* Absolute value for PIE support */
+-virtual_mapped_addr:
+-	.quad virtual_mapped
++	movabsq $virtual_mapped, %rax
++	pushq	%rax
++	ret
+ 
+ virtual_mapped:
+ 	movq	RSP(%r8), %rsp
+-- 
+2.16.2.660.g709887971b-goog
