@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955790-2-13396242381868620624
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955784-2-1858732361861742457
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955789; b=XSPpbUNMyV99mS441hQZQQMnDNOOHfoduvWlJF5SNUWuj7r
-    XW1G8SeL/PMf/HJXQ9AslH7kLvbD5V2R8trSfpSo53Sm3pxvQYCsQDnXqs6OISx/
-    D5IMP1miMudYVH4HXbgqB1Y8NLaKB6CnlshpVgBOeNZ8MPPuuayX12iEno00+SaR
-    Su2y4/kqZOpQyAsE8XQh11LFMjqFNS37FkpWsBZuQPe14fZnJOkzuCjW8prJxzz2
-    k6+US1mcGk6rbR8HTRyLPd/LBr3m8GPqR9/zjAZZufjQi9vsOc6Fui9OjXMcFizv
-    bGVrLHRzoMynRvN49bIWsDjUi3LqqqWyfqshKfw==
+    t=1520955783; b=u2Z3TXgdTgdR2KhhrIX3rWYxsfQvNxvwL1sStPg0ep2l7pw
+    R/WqjkzstgI4xWITdjRaikhT7FmkAd/LYJfNUieUTHtMeYQiFA/Ur5IQfecr/J5K
+    6kLFtnnwgmgL3VBoqUKBanX3qRbzHhD1pydNRzBle4m1FslDS+OFo9Z4RRfQeorg
+    ARFRAJoNGt33zX90CkeCSdKJxYtnvIHWc13ySYLW743kIv/YOiexvj7bKej5aMit
+    KhcvGjqWv7WylpbhzLs2GdUXGoRtYM89/NiqWc/+ODoscfSK7Hdrt4p6yG+rtO/k
+    nIMR5/RoaSXONE+SVx87rcZu1mQrpufS1yDFiRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955789; bh=fa2ujxQgZjjzJQIDpp5JvocgQq
-    xCOyiJLRrEVpiGB0w=; b=jeIMBjxqOG+9OEvXziPmbYaNUvVDWvAYS8gUGtu7B+
-    XdhFS6piS9kFfIXS0jbHw4nhWBjVGb+9h+R8F+dPSPbnCH3tni56VQcDyJXJavfH
-    erHuGjBgmEQrixvkY/bfvHAXkL1wJS636J5h1oY8vdyfCE1Nzvmv9Ta5OYSg7MtJ
-    wDhMyMteZxEjTgrcN3BWowRfasgqiV7bmwcODliFQRgSfZvK/dJ27R5Gqr33fBe5
-    O99DSZgXp2k020pUXXxVsIgUh1x4XNwFEb3iAsFHDhzSPf6Uy6unGjGAnIl8NjAA
-    xbhi3N+nyOUmamzzAExMOUY4plNgjAX2Rpqhr3FRI+WA==
+    :list-id; s=arctest; t=1520955783; bh=BsZEwWCChHKrWvCIlX67/R9l5u
+    byGwlgpTBSWk/OEsA=; b=LNdV8M2vWS/2d3gRNp5kwWQFKy+Qv8iCevbRC2y6IG
+    XZsMMTFExgUp5CdtCOiINAfvobV250p0ICZr9T//wNc/D9P/9OBA5xnnlrgEk9Tw
+    uPv6X3rxMqNu+h58Tr/uTgLkvkETfLn/U7x5a53QjITzjylamspXQ4UiZTX5+m2v
+    2dzhRh1fUiy9+ly5AL6Z2LISi55Axbdue25ERfQ8rAxk/Ov5t/NWZvPLiw3BCzIb
+    du6ZzRQJEcHQ/5wS6w9gFd8c7YxuNLVkE6NO5wE+vnY9ZgLzHJARluxUoOKw602L
+    a9sIhOdr67JCXE+DxC0oYeNdRqotspLwzeDs8NdPY3Yg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933276AbeCMPnH (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:43:07 -0400
+        id S934569AbeCMPmr (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:42:47 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:37084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934720AbeCMPlm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:42 -0400
+        with ESMTP id S964857AbeCMPln (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.14 138/140] objtool: Fix another switch table detection issue
-Date: Tue, 13 Mar 2018 16:25:41 +0100
-Message-Id: <20180313152507.445017149@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Fries <cfries@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.14 134/140] kbuild: Set KBUILD_CFLAGS before incl. arch Makefile
+Date: Tue, 13 Mar 2018 16:25:37 +0100
+Message-Id: <20180313152507.186381599@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -82,42 +82,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Chris Fries <cfries@google.com>
 
-commit 1402fd8ed7e5bda1b3e7613b70780b0db392d1e6 upstream.
+commit ae6b289a37890909fea0e4a1666e19377fa0ed2c upstream.
 
-Continue the switch table detection whack-a-mole.  Add a check to
-distinguish KASAN data reads from switch data reads.  The switch jump
-tables in .rodata have relocations associated with them.
+Set the clang KBUILD_CFLAGS up before including arch/ Makefiles,
+so that ld-options (etc.) can work correctly.
 
-This fixes the following warning:
+This fixes errors with clang such as ld-options trying to CC
+against your host architecture, but LD trying to link against
+your target architecture.
 
-  crypto/asymmetric_keys/x509_cert_parser.o: warning: objtool: x509_note_pkey_algo()+0xa4: sibling call from callable instruction with modified stack frame
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com
+Signed-off-by: Chris Fries <cfries@google.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Makefile |   64 +++++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -924,7 +924,11 @@ static struct rela *find_switch_table(st
- 		if (find_symbol_containing(file->rodata, text_rela->addend))
- 			continue;
+--- a/Makefile
++++ b/Makefile
+@@ -482,6 +482,38 @@ ifneq ($(KBUILD_SRC),)
+ 	    $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
+ endif
  
--		return find_rela_by_dest(file->rodata, text_rela->addend);
-+		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
-+		if (!rodata_rela)
-+			continue;
++ifeq ($(cc-name),clang)
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
++GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
++endif
++ifneq ($(GCC_TOOLCHAIN),)
++CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
++endif
++KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
++KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
++KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
++KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
++# Quiet clang warning: comparison of unsigned expression < 0 is always false
++KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
++# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
++# source of a reference will be _MergedGlobals and not on of the whitelisted names.
++# See modpost pattern 2
++KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
++KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
++KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
++KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
++else
 +
-+		return rodata_rela;
- 	}
++# These warnings generated too much noise in a regular build.
++# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
++endif
++
+ ifeq ($(config-targets),1)
+ # ===========================================================================
+ # *config targets only - make sure prerequisites are updated, and descend
+@@ -692,38 +724,6 @@ ifdef CONFIG_CC_STACKPROTECTOR
+ endif
+ KBUILD_CFLAGS += $(stackp-flag)
  
- 	return NULL;
+-ifeq ($(cc-name),clang)
+-ifneq ($(CROSS_COMPILE),)
+-CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
+-GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
+-endif
+-ifneq ($(GCC_TOOLCHAIN),)
+-CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
+-endif
+-KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+-KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+-KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+-KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+-KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+-KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+-# Quiet clang warning: comparison of unsigned expression < 0 is always false
+-KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+-# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+-# source of a reference will be _MergedGlobals and not on of the whitelisted names.
+-# See modpost pattern 2
+-KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+-KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+-KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+-KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+-else
+-
+-# These warnings generated too much noise in a regular build.
+-# Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+-endif
+-
+ ifdef CONFIG_FRAME_POINTER
+ KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+ else
