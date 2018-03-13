@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs533IaQLvR2e4/k9ZHqz0njw3/43irJlOnbpir5j+VIBlDvgThgrg/OEtZc83+4uLPXtON
-ARC-Seal: i=1; a=rsa-sha256; t=1520955405; cv=none;
+X-Google-Smtp-Source: AG47ELuTT2f6s49f1q25REqYyinH1MGk0wp6GJPQP5zVS9/DwSQlNvEfHmkWjxeNEGrFdeq0SOMA
+ARC-Seal: i=1; a=rsa-sha256; t=1520955402; cv=none;
         d=google.com; s=arc-20160816;
-        b=zSrOWH+yW47n+0RfhuRw/UarolRzzpdqVe1uy+7H/X90GrgSlMa5N6hQreevb9OUww
-         V5elwZdbFxdjJRs+kGRy4PhV4S9Ysx4zZJhJ7hzLAQ9TTMao5bTethvmkHJQbRCBz2Xt
-         m6WAcPuWKvvnZnEIw0d1hrjENE7uPet6AnXr7Crx4lSSUbhI4EnaPflY1SCFcNRdlMOr
-         axIp6YBAsncmTDBf+74fIfqVUOPMIItnlZIs4FaRoKDjPTgykgYkRuP9LZQkVqzrFnzQ
-         tXPRg4avMEGqGM6gh8J77k6rnf5M9AIiP/UXLJbd7ycw1ahyuQ41SIPsifiS8T5YB4jf
-         YTpA==
+        b=rRGtwNXMzWM4w/ToEv8i9PwKan3jeTJkBNbLQvjxv9ozcOY05e9QqBDeYePbKoDEdy
+         +/1gx9LEzEXd2rJKuTWipMURJ9RS1yxvlEqj6AlpEyJhWCPPwEEZ5QjtZr48sAz7G/Bm
+         Az3DSM5bY26DpcXauQP0dpLpceXhc7AGToeZ7HAwcvdBK1X2wthd1UYBiWuYoVO0W6u/
+         rxR7lKRF8kHYalyKhulUN0EM6+bVRiZ9GE1NAhVYn3ARsYst4EPJyu9rfAdX73HYY6x6
+         zz7XNKvMxIObVf1nx2c1iO2iRmbPKP7YIiyvwXtz9NTnoi9y5V5xKtpP8qU7dMFx6fA+
+         FmrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=18isc3DHP5tf/ToO+eLXV/InokEKttd86HsOWnfmop8=;
-        b=Jyq1L7dvakDNJxj1hJ4z1jiLgZUD5U+7OtOzYBvect+OhlezkeeOria6DmBRm3dSlu
-         WUgBOBqeDAhgxlpDh2gjUS0y9MRQLEEXqVMj7FGBk8dguM6Jlnm25QvnAMgnpEfngyTa
-         vbY4dOQ6cw8eRxh+OcfNsvx1RAGQuoBz94Ydi6lYpAoFuNFPLXoRQRvdUm+DIxrKVEfH
-         M2uo+u6kn7k/SMxFILvIQuZ3ddt0GnaqMlb0VTsc8a7xTvJNasQaz+BXtNqF9NBXRMOv
-         aLS6WEvcqLCxz8ZDojrPRJa59PYnAcMDDc3V+LuG4/CbD4Gveka9i6BZt6HeqEnxxXL3
-         AhiQ==
+        bh=EXFhv/75ALu9z0jSdXWSbVCcT1fLUEUN2w7W7f5Sn20=;
+        b=ppnDBHbyzs+/DnhgWOb6xy+7Obcv/rxz5mWSAhSmqQfjh+yq1NrlWyyqlgQ6ieUw1G
+         AIQ5RCcSjDgrcYhrC67vwBP2AMmPnHzyrWMGn3hO5/hQZanRexG7XlzN4gcr/OgbMGdc
+         VNS9fJvHN0jEuF5YhB1nHBrLCQMnnsNEtlCxJcWe7HlbNes4p8tyJrmpJQLeb4T8HCYp
+         nWHF8z+rWFniWh8c4UiyuFwGxZbxlgxLeLt4aN4HCtAZqJjZRp82HCM5x0a/JdW97awV
+         jWvtvkCP8SvJwXFQunAvA6NpzYXStlOQ7EAoRy96vrJnkvygugb9y4z1fm3CyMGBZb35
+         Nk9w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 035/140] scsi: qla2xxx: Fix abort command deadlock due to spinlock
-Date: Tue, 13 Mar 2018 16:23:58 +0100
-Message-Id: <20180313152500.479425073@linuxfoundation.org>
+Subject: [PATCH 4.14 038/140] scsi: qla2xxx: Clear loop id after delete
+Date: Tue, 13 Mar 2018 16:24:01 +0100
+Message-Id: <20180313152500.698718331@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837159270569546?=
-X-GMAIL-MSGID: =?utf-8?q?1594837334784955605?=
+X-GMAIL-THRID: =?utf-8?q?1594837168245563924?=
+X-GMAIL-MSGID: =?utf-8?q?1594837332196353801?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,15 +53,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit b0dcce746b32ac573343ad39cb3dc485030de95e upstream.
+commit ba743f9148e951abe1c94f89c174ec8e44fb145b upstream.
 
-Original code acquires hardware_lock to add Abort IOCB onto driver
-request queue for processing. However, abort_command() will also acquire
-hardware lock to look up sp pointer before issuing abort IOCB command
-resulting into a deadlock. This patch safely removes the possible
-deadlock scenario by removing extra spinlock.
+Clear loop id after delete to prevent session invalidation of stale
+session.
 
-Fixes: 6eb54715b54bb ("qla2xxx: Added interface to send explicit LOGO.")
+Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
@@ -70,32 +67,39 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_iocb.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_target.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_iocb.c
-+++ b/drivers/scsi/qla2xxx/qla_iocb.c
-@@ -2394,7 +2394,6 @@ qla2x00_els_dcmd_iocb_timeout(void *data
- 	struct scsi_qla_host *vha = sp->vha;
- 	struct qla_hw_data *ha = vha->hw;
- 	struct srb_iocb *lio = &sp->u.iocb_cmd;
--	unsigned long flags = 0;
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -974,7 +974,7 @@ static void qlt_free_session_done(struct
+ 			qlt_send_first_logo(vha, &logo);
+ 		}
  
- 	ql_dbg(ql_dbg_io, vha, 0x3069,
- 	    "%s Timeout, hdl=%x, portid=%02x%02x%02x\n",
-@@ -2402,7 +2401,6 @@ qla2x00_els_dcmd_iocb_timeout(void *data
- 	    fcport->d_id.b.al_pa);
+-		if (sess->logout_on_delete) {
++		if (sess->logout_on_delete && sess->loop_id != FC_NO_LOOP_ID) {
+ 			int rc;
  
- 	/* Abort the exchange */
--	spin_lock_irqsave(&ha->hardware_lock, flags);
- 	if (ha->isp_ops->abort_command(sp)) {
- 		ql_dbg(ql_dbg_io, vha, 0x3070,
- 		    "mbx abort_command failed.\n");
-@@ -2410,7 +2408,6 @@ qla2x00_els_dcmd_iocb_timeout(void *data
- 		ql_dbg(ql_dbg_io, vha, 0x3071,
- 		    "mbx abort_command success.\n");
+ 			rc = qla2x00_post_async_logout_work(vha, sess, NULL);
+@@ -1033,8 +1033,7 @@ static void qlt_free_session_done(struct
+ 		sess->login_succ = 0;
  	}
--	spin_unlock_irqrestore(&ha->hardware_lock, flags);
  
- 	complete(&lio->u.els_logo.comp);
- }
+-	if (sess->chip_reset != ha->base_qpair->chip_reset)
+-		qla2x00_clear_loop_id(sess);
++	qla2x00_clear_loop_id(sess);
+ 
+ 	if (sess->conflict) {
+ 		sess->conflict->login_pause = 0;
+@@ -4588,9 +4587,9 @@ qlt_find_sess_invalidate_other(scsi_qla_
+ 				    "Invalidating sess %p loop_id %d wwn %llx.\n",
+ 				    other_sess, other_sess->loop_id, other_wwn);
+ 
+-
+ 				other_sess->keep_nport_handle = 1;
+-				*conflict_sess = other_sess;
++				if (other_sess->disc_state != DSC_DELETED)
++					*conflict_sess = other_sess;
+ 				qlt_schedule_sess_for_deletion(other_sess,
+ 				    true);
+ 			}
