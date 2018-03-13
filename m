@@ -1,45 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvCav2Wf47oyNXmLXkZyJ+EgG9j58lZ5IP/RS2Bc6Io67HadPUETdnTo5UWjRUg+CNQITjR
-ARC-Seal: i=1; a=rsa-sha256; t=1520955656; cv=none;
-        d=google.com; s=arc-20160816;
-        b=owx0P1FuEWE3vkI2zCCD5Na3AWyDHga76QLjNKzmCyWGFzPbh5AYiXnSa43nrhHiGr
-         zxLbb8X+57f7rk2BFGJHEWjpyqKUpHl9Tn8n1moWAZXkHZZEhSBHILy/mr0q1/ffhveP
-         RqfSeosyLzP2QezPnDa3JWXRUp2/1MctZzJ9lcAezAH0L4KJ2Oe5KzuQvYEyB95dF8DF
-         DML+BpT5AR16JSmZtHyxjaz7YmqGkxdScylCzLWik+2xQNrWQXj0ExBCQehWKs3F3p5D
-         Q6gPHv2+4/AF3btLSCTQviBh99uYlk12V5+1lpEVpBZLLpOsSTrVQiInUvA0XpI6tQYE
-         KujQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=zYKgMXooVifRP8Q1x4BaAZIBaQA2zU6oNYSVDolI6HU=;
-        b=OSUbnlZjAdP7BMVKi/WELznqFP7dnsvKM2gNBTqMazbPoFE9BIREPnFmfHAV2HaqAb
-         HVSaDUQIxmLYMFzli4P+tdE0qDVaT7/mLT/QfbV5T41yGJTWPADAnyn6Ut0Jgh4uhV7o
-         ctEOdJhbOhwhb8lBjVHbMimb6YagMlbU0Sq9iX2ZMaym0fknhaN4oRYRNbQgnTGinmzH
-         RBa6c2FRw04Vi5Wcp+LgY47rut8dxX1Mv4RAaqnkX6h0bUHghsle3zxpiH2v/0oRaJXl
-         TyKhEygi9eWE2jniakGFRME1W+TU1V3zOi/1Y+htTsTJtw/tz0WJyRouzSuN9QpoojUS
-         TZnQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955655-2-15774466837498680375
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520955654; b=kzGZcecoU8eAjswG+Yah4KvY2ZGV1j3eZ+bIWknmxVpp5uX
+    0JE/wgfdXoDqLV4CvrMEy5idJspJgIhE+pX1Dzsl/uDfVi4AuEoYsE5dIsAy0V0l
+    zUPX/V3AkSqoZIyM08wUR+2xXUQPO49470XUo5b662EqflKdq8cyakHnDJYfR/Ks
+    qwXIlg+uJghUteK4GPlgrm3ZSCKCoJqlPwtEYX1StU/3t49stTJVUZf/9GD2kmeA
+    bzRvwv/a+Ky/5PW36fHEopX6Uc7ZE8rllHHPUke3g92vsvMxzyXWIWrcwr8oNmHn
+    p7ZMmyr/r5Qq/bx3lY1XpdNdF+OhTmqXXqKG5Kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520955654; bh=e7bwfUiKF0DPOGXyU18IOhPCXP
+    iamT8MElV8p0LyJf8=; b=KCllCZRCdVyC1kZy4nz1eEq3cn3Ytj+pUI3SuGRswI
+    a2YGrKsVucZQyRTJixuXStztmVdqxbUtu4ZAagCtzy7TYcaTK9B/mf7M9v1eA6jz
+    4GtM/RcB2Gngi8rVIzs1y+uyDYmaDterPtX3uB0uzRRJoS6J/ybtRP0Cxsf6ftqo
+    8qAEYfO1bNKIPntqZhW7+TSFulCHPxiRuYmchdcToz+JHZEyCvgkVou/6/LTEaz9
+    PSQ0YxyhNDCIZRFecTbwNbljBcZmhqxC0jIhqH0DkrAia7nYMZsFd1TdTVo+/vpJ
+    4uTh7pZc2dEVjE2fmblOeFZK+4uiFpsrZn3xvEjLipig==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934537AbeCMPks (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:40:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36118 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934371AbeCMPkp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:40:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jan Beulich <jbeulich@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 121/140] x86/LDT: Avoid warning in 32-bit builds with older gcc
-Date: Tue, 13 Mar 2018 16:25:24 +0100
-Message-Id: <20180313152506.315282732@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 116/140] nospec: Include <asm/barrier.h> dependency
+Date: Tue, 13 Mar 2018 16:25:19 +0100
+Message-Id: <20180313152505.978882805@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -47,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837008892044685?=
-X-GMAIL-MSGID: =?utf-8?q?1594837597713496349?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,38 +92,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Beulich <JBeulich@suse.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit f2f18b16c779978ece4a04f304a92ff9ac8fbce5 upstream.
+commit eb6174f6d1be16b19cfa43dac296bfed003ce1a6 upstream.
 
-BUG() doesn't always imply "no return", and hence should be followed by
-a return statement even if that's obviously (to a human) unreachable.
+The nospec.h header expects the per-architecture header file
+<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
+that dependency to prevent inadvertent fallback to the default
+array_index_mask_nospec() implementation.
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+The default implementation may not provide a full mitigation
+on architectures that perform data value speculation.
+
+Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/5A8AF2AA02000078001A91E9@prv-mh.provo.novell.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/mmu_context.h |    1 +
+ include/linux/nospec.h |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -74,6 +74,7 @@ static inline void *ldt_slot_va(int slot
- 	return (void *)(LDT_BASE_ADDR + LDT_SLOT_STRIDE * slot);
- #else
- 	BUG();
-+	return (void *)fix_to_virt(FIX_HOLE);
- #endif
- }
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -5,6 +5,7 @@
  
+ #ifndef _LINUX_NOSPEC_H
+ #define _LINUX_NOSPEC_H
++#include <asm/barrier.h>
+ 
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
