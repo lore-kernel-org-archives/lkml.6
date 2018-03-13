@@ -1,99 +1,166 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-9491-1520980058-2-2622149578898029507
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520980058; b=pIKBArn95PLR7Ko2QVkzme17EEQ89Mm/UHtsZsFwBS+uZZf
-    /EmEI5pbRGMncMAOtyeTV5ZK5kKXCLQy2WGiKps7yiaoYHrzQ4ejNOOZD32HHtHe
-    r4mCDF5dw/MqkS9lWEkbptxPtecpH0kxMCx19TJNhUqZXeVVcNVeoYThmYO5DnsB
-    5ezcOc8pfEjKkp2afHvqNWlzYC/q+mS9Kff3cAJ8utYrVyAeiyZtPFTt3V0Xib+O
-    oqa2veAhQMsdYDk880DMQLmoPDmrFlEGHee3/eZB5zp8wjOkAJ06b2gEWExJLCSt
-    KqKaZKcsrvn57lTV3FP+sTNJ2gOVXWg/7NiAHfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520980058; bh=syIcKxPduwTmqN8rCFqHNtd7pT
-    mA+Mv1LJ6mh9FgAKk=; b=hMDGeCLWyuoWFeN0owgJJXPDKko7q+DP+cqAffwCzu
-    ZECQzOB72hm+vklnkzma1JPyu6mU6A52Gg51zclHTa9YWFwln+B5O03rKk1m5/NN
-    /uzcMY3jRxudZEHPFqHPFIv5K2IifToq/bhEC4wVjFnDHaX14FAt5hi4umqBaDoC
-    72RTsxlMD2fK278sKcJy9Q2mFuCityDHkXux46g95NnSFdwEi9KRjvuRTPL/U4jp
-    W/F7Kl0gjm7osFFOURzZ6FKarlR3p/7olFFRNwzP3Z9+crXm/1AIMssSxI9HCS2i
-    5baVgwf5ScdWbapi/b1TIAnJzle91istEf0VJURUOh4g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=e8W7fXJG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gEm4QF0I;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=e8W7fXJG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gEm4QF0I;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932718AbeCMW1Z (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 18:27:25 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:46660 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932528AbeCMW1W (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 18:27:22 -0400
-X-Google-Smtp-Source: AG47ELt0v4WEVnW//xf3Rk2JjDSmaKSEm43y845bQCQSQJjANztb1Fyg/ggojyhbWLcyDE5vD/6UIQ==
-Date: Tue, 13 Mar 2018 15:27:20 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/140] 4.14.27-stable review
-Message-ID: <20180313222720.GA4113@roeck-us.net>
-References: <20180313152458.201155692@linuxfoundation.org>
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1520974815; cv=none;
+        d=google.com; s=arc-20160816;
+        b=l1GHwy0ugXbB1UhaB0jrHYjrkqGTVg0r0FWemn1iXvB8agDYvyb0s3BboBQFMaNP2f
+         hhiDnUr3DK/Uoih9PNvUzvvUdoMvaRengK/1jPirzRGjpM4R4TzwUrSOVppFpVIKoi/1
+         jU0XbNg0LPsFF4//g1+pwUVbNUCf4vPjQZhVc7st5dJt9/ZxQ0R4B3xG5XhTdYHZW3pH
+         VFhTGtIlJEFE1Su3s893DYNiG9MGeHr8Y3kgoQG1Jj/oLZZ3yVmjf7I2/UBBfnb6/sqN
+         IIpLtKUB7Px8eqs/6YmDA0573JgOJbHhAIbmAjfiOjcoBWeSZUdu4zzc7A444Ulq+GV1
+         q4iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=JDJTtzcoRNEvliJ/DjvgIIip8G/Jp1zdHEdCN2F23XY=;
+        b=aUQ48xMECIws/4bjKwnpk/bJlu4/g56ipOYAnYtw4Z/GdwZ9e7ND6+yuXZvRVUEOHs
+         292l0o20nfHrJ9wUBP84ROvTACPCFuNpxHaoJX+lAEONG4pE+i0Fj5KlZag7mCv8VDFI
+         52tRBgfKbmhH0ckmw78dW5S4rveK7lRVWKKUP0PQSZcF89elY+76QXKBnwgriiW4LnAq
+         AiP51bfN2FMpskppcBD0AVFlHdWMop+TGlm8jKYqBHVaqdz4HEskLijCg/UFu+wbz+uw
+         xaDXVK9qbSsjhHJUIomAzvp7Q4G/YIpgj23yupWh8wZ63evrCpvz+p4aX5KMQTzjQRBU
+         JOVg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AG47ELuwsAwnMW+U0jFahSzx90q/ow19E4yNRFSstMMmNoEGgXDo7qAZEgGTltPCHLLQ1mcIJ2HSbg==
+Message-ID: <5aa83bdd.12691c0a.bd45d.96f5@mx.google.com>
+Date: Tue, 13 Mar 2018 14:00:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Kernel: v4.14.26-141-g7ba3c4cdde59
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180313152458.201155692@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/140] 4.14.27-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594837222777113471?=
+X-GMAIL-MSGID: =?utf-8?q?1594857687975407745?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 04:23:23PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.27 release.
-> There are 140 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Mar 15 15:24:23 UTC 2018.
-> Anything received after that time might be too late.
-> 
+stable-rc/linux-4.14.y boot: 144 boots: 7 failed, 113 passed with 21 offlin=
+e, 2 untried/unknown, 1 conflict (v4.14.26-141-g7ba3c4cdde59)
 
-Build results:
-	total: 145 pass: 145 fail: 0
-Qemu test results:
-	total: 141 pass: 141 fail: 0
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.26-141-g7ba3c4cdde59/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.26-141-g7ba3c4cdde59/
 
-Details are available at http://kerneltests.org/builders.
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.26-141-g7ba3c4cdde59
+Git Commit: 7ba3c4cdde59100ec5cae9f4537ec8bd8709ab59
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 77 unique boards, 22 SoC families, 17 builds out of 185
 
-Guenter
+Boot Regressions Detected:
+
+arm:
+
+    exynos_defconfig:
+        exynos5800-peach-pi:
+            lab-baylibre-seattle: failing since 1 day (last pass: v4.14.25-=
+10-gcf6424f29452 - first fail: v4.14.26)
+
+    sunxi_defconfig:
+        sun5i-gr8-chip-pro:
+            lab-free-electrons: new failure (last pass: v4.14.26)
+
+arm64:
+
+    defconfig:
+        apq8016-sbc:
+            lab-mhart: new failure (last pass: v4.14.26)
+        meson-gxbb-p200:
+            lab-baylibre-seattle: new failure (last pass: v4.14.25)
+        meson-gxl-s905d-p230:
+            lab-baylibre-seattle: new failure (last pass: v4.14.26)
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre: new failure (last pass: v4.14.26)
+            lab-baylibre-seattle: new failure (last pass: v4.14.25)
+        meson-gxl-s905x-p212:
+            lab-baylibre-seattle: new failure (last pass: v4.14.26)
+
+Boot Failures Detected:
+
+arm:
+
+    sunxi_defconfig
+        sun5i-gr8-chip-pro: 1 failed lab
+
+arm64:
+
+    defconfig
+        apq8016-sbc: 1 failed lab
+        meson-gxbb-p200: 1 failed lab
+        meson-gxl-s905d-p230: 1 failed lab
+        meson-gxl-s905x-khadas-vim: 2 failed labs
+        meson-gxl-s905x-p212: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
+
+    multi_v7_defconfig:
+        alpine-db: 1 offline lab
+        am335x-boneblack: 1 offline lab
+        at91-sama5d4_xplained: 1 offline lab
+        exynos5410-odroidxu: 1 offline lab
+        meson8b-odroidc1: 1 offline lab
+        socfpga_cyclone5_de0_sockit: 1 offline lab
+        sun5i-r8-chip: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
+        vf610-colibri-eval-v3: 1 offline lab
+
+    sunxi_defconfig:
+        sun5i-r8-chip: 1 offline lab
+
+    imx_v6_v7_defconfig:
+        vf610-colibri-eval-v3: 1 offline lab
+
+    sama5_defconfig:
+        at91-sama5d4_xplained: 1 offline lab
+
+    exynos_defconfig:
+        exynos5410-odroidxu: 1 offline lab
+
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
+
+    omap2plus_defconfig:
+        am335x-boneblack: 1 offline lab
+
+arm64:
+
+    defconfig:
+        apq8016-sbc: 1 offline lab
+        juno-r2: 1 offline lab
+        meson-gxbb-odroidc2: 1 offline lab
+        meson-gxl-s905x-nexbox-a95x: 1 offline lab
+        mt7622-rfb1: 1 offline lab
+
+Conflicting Boot Failure Detected: (These likely are not failures as other =
+labs are reporting PASS. Needs review.)
+
+arm:
+
+    exynos_defconfig:
+        exynos5800-peach-pi:
+            lab-collabora: PASS
+            lab-baylibre-seattle: FAIL
+
+---
+For more info write to <info@kernelci.org>
