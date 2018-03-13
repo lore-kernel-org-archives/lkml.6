@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974861; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974858; cv=none;
         d=google.com; s=arc-20160816;
-        b=TCUGf80B9HGvq/PMmQn1b/HfuUVi/k70vEaHupo4CCoAVbB02qwQc2bXGkEabBgipD
-         GDe9rfxqz8w+9WsYDdxXXwuA8XDi/GEZraYOpSQFtiV59qkLTdKVq3UCTPtLVknQFLnr
-         NpOb0jmO934Tltkc6NfwL6VbKXWulebyPWwI5B4WI2zKiIf72KSZOWFJjLgNmcVym1Ul
-         wBtdxVGYekQ6RiKMTYCZc8eLOv2AGVyVfyofJF3r0wzBzkowO0fJ5H0gHfiiIaGCjNsF
-         AyNDOSqcqiUgVg0APHp5KyoC6YMDOlo5aAVXFsMIqIAYugpQwrNYdHjvBwmWEKKzEDc/
-         g7Ow==
+        b=Lo6g6qjVUNtoEjY9eqOwGa9nAIuZNdZItVi47R9mWURRgSJ5IuHu9UqVNLI1cF7dX2
+         vOHbdhc7IwfBjBS0X9slDb51W+FsmreKM3AP+J3uvv1cXFUW2n3o7pDV1imG0K8CzS1O
+         zV0GJgN+1do3mQUnGvoG539gi2g16M43jKjor+prRrkJHFzSiwIvgEsllOcg/r/bh3WI
+         Ir2q6YJdFWkyKiIj1JQ6+VjeRnpyBq1Sg7pNMRJVasbdR5y1FG7DHguQHvTDY6WQBW+x
+         7r2FlM+dfgoluhcBT7ZgZQsy02h2mjKH/Js8AcG40cwrQ80UO4xLG/0Dx60FIwoHVaSx
+         Ic/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=rlr53OdH0sphfmSd4xJhwh6ORHhK9BkcznUgDBjICCk=;
-        b=QKHcSyqniTs/iHHwnsfowiDVMnsS3CrY0IJ620hPV8vqRVIUZOSokjpeRa4hpBhWMz
-         onfbPr13HWK3K2cNEFijJkDSHbWezlPXMxENlIGiU0cUNklaFLMgjnt16rgrotlimwuK
-         yLqG4o0G3Yg6oVu4Fk2PqxjtBOHOlXOkyC2J9cJ+yfFKAZAPGYbUnzXigknHkoK/ffe4
-         fHIpWF0cve8BCGOee/PrhshFerJB89JPe92mnRAvkXPiwIoHZTQKtFtrCyJGwgqKyrEV
-         CgOBE7ZcDd3mks5vSeEi8FWoxLlx8ubfvPAmON12DpV0SL/l5gMAVJQ635kyJpgsbC9D
-         EZwA==
+        bh=c3oPSVAVgFpZKN/1mpdxEhHaxGgyIRs/6tQkwihvkXA=;
+        b=FIPI/Sn00xMBFbAWV5/MMJ4ecYnfZdHQ2puPoEuWomD0Zk2l8Kio/OTlXHLnRPEwec
+         KCDQgeAvM3OzL9g/8s8BF576pUxmNQpb8a+jkdf26Iw73y+0LBxtmouPUnhpRfpVV88q
+         cwGbgLzSpGQvj9JLOrfRE/UNpge/tJNWVCL31IKeMGhFDVXge8Fz+3oWGCLptw+kf4tS
+         6jyH6lGZGdln8ODxQqJe8ASfqLf4/hzikOWthUFK2bKDSesJdBxYMm5D88u5O2+mxvyv
+         3VDYLgOy61QkJtVfbSODVfJ4P4KSAWhyWM24/u8iwtfD775HQ4P592d7q689ptq7PdMx
+         H0yQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=cVZz71r/;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=CnoUQUrs;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=cVZz71r/;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=CnoUQUrs;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELuhDzyO9bqrIHiqE+LHydaRGZVJ+4CYwmUb49ZV057TmuBiOvxyX+PD7/Jx5J4plgYUpUHAyg==
+X-Google-Smtp-Source: AG47ELszyghX67BZHlm8pBva/bAoU533tREnYz+DrGciFImvE5egio15X6IPJ9LaM+/kBqFSvxSHBw==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,85 +105,132 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 19/27] kvm: Adapt assembly for PIE support
-Date: Tue, 13 Mar 2018 13:59:37 -0700
-Message-Id: <20180313205945.245105-20-thgarnie@google.com>
+Subject: [PATCH v2 18/27] xen: Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:36 -0700
+Message-Id: <20180313205945.245105-19-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857736565238273?=
-X-GMAIL-MSGID: =?utf-8?q?1594857736565238273?=
+X-GMAIL-THRID: =?utf-8?q?1594857733307043911?=
+X-GMAIL-MSGID: =?utf-8?q?1594857733307043911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible. The new __ASM_MOVABS macro is used to
-get the address of a symbol on both 32 and 64-bit with PIE support.
+Change the assembly code to use the new _ASM_MOVABS macro which get a
+symbol reference while being PIE compatible. Adapt the relocation tool
+to ignore 32-bit Xen code.
 
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/kvm_host.h | 6 ++++--
- arch/x86/kernel/kvm.c           | 6 ++++--
- arch/x86/kvm/svm.c              | 4 ++--
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ arch/x86/tools/relocs.c | 16 +++++++++++++++-
+ arch/x86/xen/xen-head.S | 11 ++++++-----
+ arch/x86/xen/xen-pvh.S  | 13 +++++++++----
+ 3 files changed, 30 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index b605a5b6a30c..7bd6ba79e778 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1380,9 +1380,11 @@ asmlinkage void kvm_spurious_fault(void);
- 	".pushsection .fixup, \"ax\" \n" \
- 	"667: \n\t" \
- 	cleanup_insn "\n\t"		      \
--	"cmpb $0, kvm_rebooting \n\t"	      \
-+	"cmpb $0, kvm_rebooting" __ASM_SEL(,(%%rip)) " \n\t" \
- 	"jne 668b \n\t"      		      \
--	__ASM_SIZE(push) " $666b \n\t"	      \
-+	__ASM_SIZE(push) "%%" _ASM_AX " \n\t"		\
-+	_ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"	\
-+	"xchg %%" _ASM_AX ", (%%" _ASM_SP ") \n\t"	\
- 	"call kvm_spurious_fault \n\t"	      \
- 	".popsection \n\t" \
- 	_ASM_EXTABLE(666b, 667b)
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index bc1a27280c4b..5e4dd958ea95 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -711,8 +711,10 @@ asm(
- ".global __raw_callee_save___kvm_vcpu_is_preempted;"
- ".type __raw_callee_save___kvm_vcpu_is_preempted, @function;"
- "__raw_callee_save___kvm_vcpu_is_preempted:"
--"movq	__per_cpu_offset(,%rdi,8), %rax;"
--"cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
-+"leaq	__per_cpu_offset(%rip), %rax;"
-+"movq	(%rax,%rdi,8), %rax;"
-+"addq	" __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rax;"
-+"cmpb	$0, (%rax);"
- "setne	%al;"
- "ret;"
- ".popsection");
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index be9c839e2c89..6835a2ce02e5 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -626,12 +626,12 @@ static u32 svm_msrpm_offset(u32 msr)
- 
- static inline void clgi(void)
- {
--	asm volatile (__ex(SVM_CLGI));
-+	asm volatile (__ex(SVM_CLGI) : :);
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index a35cc337f883..29283ad3950f 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -832,6 +832,16 @@ static int is_percpu_sym(ElfW(Sym) *sym, const char *symname)
+ 		strncmp(symname, "init_per_cpu_", 13);
  }
  
- static inline void stgi(void)
- {
--	asm volatile (__ex(SVM_STGI));
-+	asm volatile (__ex(SVM_STGI) : :);
- }
++/*
++ * Check if the 32-bit relocation is within the xenpvh 32-bit code.
++ * If so, ignores it.
++ */
++static int is_in_xenpvh_assembly(ElfW(Addr) offset)
++{
++	ElfW(Sym) *sym = sym_lookup("pvh_start_xen");
++	return sym && (offset >= sym->st_value) &&
++		(offset < (sym->st_value + sym->st_size));
++}
  
- static inline void invlpga(unsigned long addr, u32 asid)
+ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		      const char *symname)
+@@ -895,8 +905,12 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		 * the relocations are processed.
+ 		 * Make sure that the offset will fit.
+ 		 */
+-		if (r_type != R_X86_64_64 && (int32_t)offset != (int64_t)offset)
++		if (r_type != R_X86_64_64 &&
++		    (int32_t)offset != (int64_t)offset) {
++			if (is_in_xenpvh_assembly(offset))
++				break;
+ 			die("Relocation offset doesn't fit in 32 bits\n");
++		}
+ 
+ 		if (r_type == R_X86_64_64)
+ 			add_reloc(&relocs64, offset);
+diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+index 96f26e026783..210568e63c84 100644
+--- a/arch/x86/xen/xen-head.S
++++ b/arch/x86/xen/xen-head.S
+@@ -28,14 +28,15 @@ ENTRY(startup_xen)
+ 
+ 	/* Clear .bss */
+ 	xor %eax,%eax
+-	mov $__bss_start, %_ASM_DI
+-	mov $__bss_stop, %_ASM_CX
++	_ASM_MOVABS $__bss_start, %_ASM_DI
++	_ASM_MOVABS $__bss_stop, %_ASM_CX
+ 	sub %_ASM_DI, %_ASM_CX
+ 	shr $__ASM_SEL(2, 3), %_ASM_CX
+ 	rep __ASM_SIZE(stos)
+ 
+-	mov %_ASM_SI, xen_start_info
+-	mov $init_thread_union+THREAD_SIZE, %_ASM_SP
++	_ASM_MOVABS $xen_start_info, %_ASM_AX
++	_ASM_MOV %_ASM_SI, (%_ASM_AX)
++	_ASM_MOVABS $init_thread_union+THREAD_SIZE, %_ASM_SP
+ 
+ #ifdef CONFIG_X86_64
+ 	/* Set up %gs.
+@@ -46,7 +47,7 @@ ENTRY(startup_xen)
+ 	 * init data section till per cpu areas are set up.
+ 	 */
+ 	movl	$MSR_GS_BASE,%ecx
+-	movq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
++	movabsq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
+ 	cdq
+ 	wrmsr
+ #endif
+diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+index e1a5fbeae08d..43e234c7c2de 100644
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -101,8 +101,8 @@ ENTRY(pvh_start_xen)
+ 	call xen_prepare_pvh
+ 
+ 	/* startup_64 expects boot_params in %rsi. */
+-	mov $_pa(pvh_bootparams), %rsi
+-	mov $_pa(startup_64), %rax
++	movabs $_pa(pvh_bootparams), %rsi
++	movabs $_pa(startup_64), %rax
+ 	jmp *%rax
+ 
+ #else /* CONFIG_X86_64 */
+@@ -137,10 +137,15 @@ END(pvh_start_xen)
+ 
+ 	.section ".init.data","aw"
+ 	.balign 8
++	/*
++	 * Use a quad for _pa(gdt_start) because PIE does not understand a
++	 * long is enough. The resulting value will still be in the lower long
++	 * part.
++	 */
+ gdt:
+ 	.word gdt_end - gdt_start
+-	.long _pa(gdt_start)
+-	.word 0
++	.quad _pa(gdt_start)
++	.balign 8
+ gdt_start:
+ 	.quad 0x0000000000000000            /* NULL descriptor */
+ 	.quad 0x0000000000000000            /* reserved */
 -- 
 2.16.2.660.g709887971b-goog
