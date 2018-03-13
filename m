@@ -1,163 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932767AbeCMKc7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:32:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40086 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932574AbeCMKc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:32:56 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
-References: <20180308090300.23544-1-richard.genoud@gmail.com>
-        <87h8pq4s92.fsf@bootlin.com> <877eqm4s68.fsf@bootlin.com>
-        <ce834e07-5151-bb5a-b880-244e44e2ef08@gmail.com>
-Date: Tue, 13 Mar 2018 11:32:29 +0100
-In-Reply-To: <ce834e07-5151-bb5a-b880-244e44e2ef08@gmail.com> (Richard
-        Genoud's message of "Tue, 13 Mar 2018 11:20:35 +0100")
-Message-ID: <87k1ug1d1e.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S932789AbeCMKgB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:36:01 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51099 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932778AbeCMKf4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 06:35:56 -0400
+X-Google-Smtp-Source: AG47ELtF9UqalW1IDb1/PPn1cvJZvRabUY8nMlVHtYr04wxdZZloYcS/CoMgpQco9/CUfNh43RRg/Xe4WFhmHzNwCss=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <cover.1520928420.git.zong@andestech.com>
+References: <cover.1520928420.git.zong@andestech.com>
+From: Zong Li <zongbox@gmail.com>
+Date: Tue, 13 Mar 2018 18:35:55 +0800
+Message-ID: <CA+ZOyaj6hb5M6pwGR=9vRr_D8j=Xa1wBHK94A6Qpbb9+RbkwRQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+To: Zong Li <zong@andestech.com>, palmer@sifive.com, albert@sifive.com,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greentime@andestech.com, patches@groups.riscv.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
- 
- On mar., mars 13 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
-
-> On 08/03/2018 14:23, Gregory CLEMENT wrote:
->> Hi,
->>  
->>  On jeu., mars 08 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
->> 
->>> Hi Richard,
->>>  
->>>  On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
->>>
->>>> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
->>>> or 1333MHz (industrial).
->>>>
->>>> They have also some dip-switches to select a different clock (666, 800,
->>>> 1066, 1200).
->>>
->>> The patch looks goo and it will also be usefull for any other board
->>> using these frequencies, thanks for this. I have only one small comment,
->>> see below.
->> 
->> 
->> I forgot to mention that you can add my
->> 
->> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> 
->> Thanks,
->> 
->> Gregory
->> 
->>>
->>>
->>>>
->>>> The funny thing is that the recovery button is on the MPP34 fq selector.
->>>> So, when booting an industrial board with this button down, the frequency
->>>> 666MHz is selected (and the kernel didn't boot).
->>>>
->>>> This patch add all the missing clocks.
->>>>
->>>> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
->>>>
->>>> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
->>>> ---
->>>>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
->>>>  1 file changed, 7 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
->>>> index 394aa6f03f01..9ff4ea63932d 100644
->>>> --- a/drivers/clk/mvebu/armada-38x.c
->>>> +++ b/drivers/clk/mvebu/armada-38x.c
->>>> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
->>>>  }
->>>>  
->>>>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
->>>> -	0, 0, 0, 0,
->>>> -	1066 * 1000 * 1000, 0, 0, 0,
->>>> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
->>>> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
->>>>  	1332 * 1000 * 1000, 0, 0, 0,
->>>>  	1600 * 1000 * 1000, 0, 0, 0,
->>>> -	1866 * 1000 * 1000,
->>>> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
->>>
->>> Maybe you could add a comment here to say that the 2GHz mode didn't have
->>> been tested.
-> Well, if I add a comment there saying "2GHz mode hasn't been tested",
-> I'm afraid it will stay there forever, even after being tested.
-> (if it's working, nobody will look at it, and if it's not, it's in the
-> commit message anyway).
-
-OK fair enough.
-
+2018-03-13 16:35 GMT+08:00 Zong Li <zong@andestech.com>:
 >
-> I was also thinking that this could go in -stable since it fixes a hang.
-> In this case, commit 9593f4f56cf5 ("clk: mvebu: armada-38x: add support for 1866MHz variants")
-> should also go with it.
-
-In this case you have to send a new version of your patch with the cc:
-stabale and Fixes: tags.
-
-Gregory
-
+> These patches resolve the some issues of loadable module.
+>   - symbol out of ranges
+>   - unknown relocation types
 >
+> The reference of external variable and function symbols
+> cannot exceed 32-bit offset ranges in kernel module.
+> The module only can work on the 32-bit OS or the 64-bit
+> OS with sv32 virtual addressing.
 >
+> These patches will generate the .got, .got.plt and
+> .plt sections during loading module, let it can refer
+> to the symbol which locate more than 32-bit offset.
+> These sections depend on the relocation types:
+>  - R_RISCV_GOT_HI20
+>  - R_RISCV_CALL_PLT
 >
-> Thanks !
+> These patches also support more relocation types
+>  - R_RISCV_CALL
+>  - R_RISCV_HI20
+>  - R_RISCV_LO12_I
+>  - R_RISCV_LO12_S
+>  - R_RISCV_RVC_BRANCH
+>  - R_RISCV_RVC_JUMP
+>  - R_RISCV_ALIGN
+>  - R_RISCV_ADD32
+>  - R_RISCV_SUB32
 >
->>>
->>> Thanks,
->>> Gregory
->>>
->>>
->>>>  };
->>>>  
->>>>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
->>>> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
->>>>  };
->>>>  
->>>>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
->>>> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->>>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
->>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>
->>> -- 
->>> Gregory Clement, Bootlin (formerly Free Electrons)
->>> Embedded Linux and Kernel engineering
->>> http://bootlin.com
->> 
+> Zong Li (11):
+>   RISC-V: Add sections of PLT and GOT for kernel module
+>   RISC-V: Add section of GOT.PLT for kernel module
+>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>   RISC-V: Support CALL relocation type in kernel module
+>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>   RISC-V: Support ALIGN relocation type in kernel module
+>   RISC-V: Support ADD32 relocation type in kernel module
+>   RISC-V: Support SUB32 relocation type in kernel module
+>   RISC-V: Enable module support in defconfig
+>   RISC-V: Add definition of relocation types
+>
+>  arch/riscv/Kconfig                  |   5 ++
+>  arch/riscv/Makefile                 |   3 +
+>  arch/riscv/configs/defconfig        |   2 +
+>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>  arch/riscv/kernel/Makefile          |   1 +
+>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
+>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
+>  arch/riscv/kernel/module.lds        |   8 ++
+>  9 files changed, 480 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/module.h
+>  create mode 100644 arch/riscv/kernel/module-sections.c
+>  create mode 100644 arch/riscv/kernel/module.lds
+>
+> --
+> 2.16.1
 >
 
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+This is the list of testing modules:
+
+# lsmod
+btrfs 7876158 0 - Live 0xffffffd00745d000
+ramoops 90806 0 - Live 0xffffffd0024b8000
+lzo 10554 0 - Live 0xffffffd002050000
+zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+zram 101300 0 - Live 0xffffffd0021b8000
+xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+xor 33246 1 btrfs, Live 0xffffffd002042000
+xfs 4395343 0 - Live 0xffffffd00399e000
+tun 252041 0 - Live 0xffffffd0038e0000
+test_user_copy 5265 0 - Live 0xffffffd003783000
+test_static_keys 19606 0 - Live 0xffffffd003717000
+test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+test_module 1557 0 - Live 0xffffffd003646000
+test_kmod 49100 0 - Live 0xffffffd0035f2000
+test_bpf 1599301 0 - Live 0xffffffd003000000
+test_bitmap 4403 0 - Live 0xffffffd002dd8000
+reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+netdevsim 65401 0 - Live 0xffffffd002910000
+lzo_decompress 9580 2 btrfs,lzo, Live 0xffffffd002813000
+lzo_compress 21527 2 btrfs,lzo, Live 0xffffffd0027d9000
+libcrc32c 2730 1 xfs, Live 0xffffffd00273c000
+fuse 676371 0 - Live 0xffffffd0024d0000
+exportfs 24850 1 xfs, Live 0xffffffd0020c7000
+echainiv 11953 0 - Live 0xffffffd00205a000
