@@ -1,79 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932303AbeCMP0P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:26:15 -0400
-Received: from mga17.intel.com ([192.55.52.151]:45102 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751620AbeCMP0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:26:14 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
-   d="scan'208";a="38435155"
-Date: Tue, 13 Mar 2018 09:01:02 -0600
-From: Scott Bauer <scott.bauer@intel.com>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc: Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] block: sed-opal: unify cmd start and finalize
-Message-ID: <20180313150102.g47bzsqyy2ueazqu@sbauer-Z170X-UD5>
-References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
- <0d64b284cd6e78d61b1c8ef5a49ae13bd4b1dfee.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+        id S932448AbeCMP13 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:27:29 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37452 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932408AbeCMP11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 11:27:27 -0400
+Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
+ armv8-recommended.json
+To: Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <20180313120508.29327-1-acme@kernel.org>
+ <20180313120508.29327-19-acme@kernel.org>
+ <20180313142618.36je6syqg6ppwhbp@gmail.com>
+ <6c485ee7-87d1-dc51-db34-94169b9ede08@huawei.com>
+ <20180313150838.j6mfywse64o5ixhd@gmail.com>
+CC: Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-perf-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Namhyung Kim <namhyung@kernel.org>, William Cohen <wcohen@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, <linux-arm-kernel@lists.infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <3ea1dc12-3cf1-39a5-ccb8-6ab85bce6f3d@huawei.com>
+Date: Tue, 13 Mar 2018 15:27:05 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d64b284cd6e78d61b1c8ef5a49ae13bd4b1dfee.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180313150838.j6mfywse64o5ixhd@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 02:08:56PM +0100, Jonas Rabenstein wrote:
-> Every step starts with resetting the cmd buffer as well as the comid and
-> constructs the appropriate OPAL_CALL command. Consequently, those
-> actions may be combined into one generic function.
-> 
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> ---
->  block/sed-opal.c | 243 +++++++++++++++----------------------------------------
->  1 file changed, 63 insertions(+), 180 deletions(-)
-> 
-> diff --git a/block/sed-opal.c b/block/sed-opal.c
-> index a228a13f0a08..22dbea7cf4d1 100644
-> --- a/block/sed-opal.c
-> +++ b/block/sed-opal.c
-> @@ -659,6 +659,7 @@ static int cmd_finalize(struct opal_dev *cmd, u32 hsn, u32 tsn)
->  	struct opal_header *hdr;
->  	int err = 0;
->  
-> +	add_token_u8(&err, cmd, OPAL_ENDLIST);
->  	add_token_u8(&err, cmd, OPAL_ENDOFDATA);
->  	add_token_u8(&err, cmd, OPAL_STARTLIST);
->  	add_token_u8(&err, cmd, 0);
-> @@ -1001,6 +1002,21 @@ static void clear_opal_cmd(struct opal_dev *dev)
->  	memset(dev->cmd, 0, IO_BUFFER_LENGTH);
->  }
->  
-> +static int start_opal_cmd(struct opal_dev *dev, const u8 *uid, const u8 *method)
-> +{
-> +	int err = 0;
-> +
-> +	clear_opal_cmd(dev);
-> +	set_comid(dev, dev->comid);
-> +
-> +	add_token_u8(&err, dev, OPAL_CALL);
-> +	add_token_bytestring(&err, dev, uid, OPAL_UID_LENGTH);
-> +	add_token_bytestring(&err, dev, method, OPAL_METHOD_LENGTH);
-> +	add_token_u8(&err, dev, OPAL_STARTLIST);
+On 13/03/2018 15:08, Ingo Molnar wrote:
+>
+> * John Garry <john.garry@huawei.com> wrote:
+>
+>> On 13/03/2018 14:26, Ingo Molnar wrote:
+>>>
+>>> * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+>>>
+>>>> From: John Garry <john.garry@huawei.com>
+>>>>
+>>>> Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
+>>>>
+>>>> The JSON is copied from ARMv8 architecture reference manual, available
+>>>> here:
+>>>>
+>>>> 	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
+>>>>
+>>>> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-Can you resend this patch (in a bit I'm revewing the rest) with a comment here and
-in cmd_finalize explaining that the start_list here gets terminiated by the new
-opal_endlist in cmd_finalize.
+Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-I'm not a huge fan of having the start/list and end/list in separate functions
-since those are used to specify a parameter list for a opal method. I can get over it
-since it cleans the code up, as long as there are comments on both sides reminding me
-what they're opening/closing off.
+>>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>>> Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>>> Cc: Jiri Olsa <jolsa@redhat.com>
+>>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>> Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Cc: William Cohen <wcohen@redhat.com>
+>>>> Cc: linux-arm-kernel@lists.infradead.org
+>>>> Cc: linuxarm@huawei.com
+>>>> Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
+>>>> Signed-off-by: John Garry <john.garry@huawei.com>
+>>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>>
+>>> That's not a valid SOB chain, author != first-Signed-off-by.
+>>>
+>>
+>> Right, so my SOB can go first.
+>>
+>> Let me know how to help remedy.
+>
+> Well, it depends on what role Shaokun Zhang had in the creation of the patch: if
+> he co-authored the patch and you finished it then you can add him as:
+>
+>   Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
+>
+> or if he tested/reviewed the patch then his entry should be Reviewed-by/Acked-by
+> or Tested-by.
+>
+
+Hi Ingo, Arnaldo,
+
+I think it would be fair to say the former, that is: "he co-authored the 
+patch and you finished it".
+
+Thanks,
+John
+
+> Thanks,
+>
+> 	Ingo
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
