@@ -1,45 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932495AbeCMCGt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 22:06:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49292 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932266AbeCMCGs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 22:06:48 -0400
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: jazz_esp, sun3x_esp: Pass struct device pointer in dma calls
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <S1751076AbeCGG4t/20180307065702Z+42@vger.kernel.org>
-Date: Mon, 12 Mar 2018 22:06:06 -0400
-In-Reply-To: <S1751076AbeCGG4t/20180307065702Z+42@vger.kernel.org> (Finn
-        Thain's message of "Wed, 07 Mar 2018 17:56:41 +1100")
-Message-ID: <yq13714g25t.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S932379AbeCMCKi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 22:10:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37239 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932246AbeCMCKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 22:10:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
+   d="scan'208";a="24095291"
+Date: Tue, 13 Mar 2018 10:11:41 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
+Message-ID: <20180313021141.GA13782@intel.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-2-aaron.lu@intel.com>
+ <a541716e-b55c-bb75-eab9-eb46a08d5ffa@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=884
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803130025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a541716e-b55c-bb75-eab9-eb46a08d5ffa@suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 12, 2018 at 02:22:28PM +0100, Vlastimil Babka wrote:
+> On 03/01/2018 07:28 AM, Aaron Lu wrote:
+> > Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+> > update pcp->count immediately after so it's natural to do it inside
+> > free_pcppages_bulk().
+> > 
+> > No functionality or performance change is expected from this patch.
+> 
+> Well, it's N decrements instead of one decrement by N / assignment of
+> zero. But I assume the difference is negligible anyway, right?
 
-Finn,
+Yes.
 
-> In jazz_esp and sun3x_esp, the esp_driver_ops methods pass esp->dev
-> in dma api calls as if it was a pointer to a struct device. But
-> it actually points to a struct platform_device. Fix this.
+> 
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Applied to 4.17/scsi-queue, thanks!
+Thanks!
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> > ---
+> >  mm/page_alloc.c | 10 +++-------
+> >  1 file changed, 3 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index cb416723538f..faa33eac1635 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  			page = list_last_entry(list, struct page, lru);
+> >  			/* must delete as __free_one_page list manipulates */
+> >  			list_del(&page->lru);
+> > +			pcp->count--;
+> >  
+> >  			mt = get_pcppage_migratetype(page);
+> >  			/* MIGRATE_ISOLATE page should not go to pcplists */
+> > @@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+> >  	local_irq_save(flags);
+> >  	batch = READ_ONCE(pcp->batch);
+> >  	to_drain = min(pcp->count, batch);
+> > -	if (to_drain > 0) {
+> > +	if (to_drain > 0)
+> >  		free_pcppages_bulk(zone, to_drain, pcp);
+> > -		pcp->count -= to_drain;
+> > -	}
+> >  	local_irq_restore(flags);
+> >  }
+> >  #endif
+> > @@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+> >  	pset = per_cpu_ptr(zone->pageset, cpu);
+> >  
+> >  	pcp = &pset->pcp;
+> > -	if (pcp->count) {
+> > +	if (pcp->count)
+> >  		free_pcppages_bulk(zone, pcp->count, pcp);
+> > -		pcp->count = 0;
+> > -	}
+> >  	local_irq_restore(flags);
+> >  }
+> >  
+> > @@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
+> >  	if (pcp->count >= pcp->high) {
+> >  		unsigned long batch = READ_ONCE(pcp->batch);
+> >  		free_pcppages_bulk(zone, batch, pcp);
+> > -		pcp->count -= batch;
+> >  	}
+> >  }
+> >  
+> > 
+> 
