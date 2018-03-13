@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELusicuk7p7s7przDH7aJI8hMuN8BsKRFFsl80UJ65gTujUhkIuu/PJ8cqnG4F9sxs0NRoZ3
-ARC-Seal: i=1; a=rsa-sha256; t=1520955364; cv=none;
+X-Google-Smtp-Source: AG47ELu71TUF1wChBsWw/8sRYQ8eVAn5AulWntVjuU6Azq+rNQVb9Mx/pEY6UMRVNGHrEH/mJc9F
+ARC-Seal: i=1; a=rsa-sha256; t=1520955361; cv=none;
         d=google.com; s=arc-20160816;
-        b=RkJONQDo1+aeETTqWAj1gR1Wcf2+2HtPoHx+VHxHUMtkgMburrG+En4hVJPcUkRy3D
-         y6eZNEezR87ucdTG/qZggucM05UKxGZ4HE96hizpKlDDaK/EAImEH1j0VUJ8iNxEpYEI
-         qF832uypVbu7Bo8tgnXxV789s3LGW08G9dZA29hPLUtDyEvAR+3/N09axM7v7eHU8Ur3
-         7PAnlEIXHk03D+WEfIUGyeap4XYUpMl/8eDgn0rgy9U0gFJOkG2zYUy86EWetSSzhhEG
-         dDkR6UMPQ9Rri3BITplWSwBf14jh3iVEJX4eum6ztLj0YLeBfMFwGksipGMTn/fNStxU
-         Slkg==
+        b=zbXs/MGgtYmzWatVeQ9knglF8R4xN9mpRA9kJZSWtAbJAIVJcpjgcUZS4u51mEEymR
+         4O51OmZ0Fgpu65EQ75+Y0WO1KVyJL8Nrp+cd7au5/Fb+vv+MS6axXikA1Q3nBS4BM1dU
+         Wv7ztkor9cJiYRC2tmu9sliBOIbeX34nOEVFwHchiV9TOIB4iV1OtoimKGy5JCKteFZf
+         a5qgJARM911ay54MI8J8DnbH0uQCyAgq2nnpEzhDjYBJAUr7YoebbjXKoXWo8KLlqllw
+         PJvHz8eZGDCp3580wa7xw0WocyRbAzUdI+5p2AnDBm6DQo/TaAKf1HGNbxU4bs2WpTAe
+         WGKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Sq1sZ6hFugLrI5SfisLZtlf0OIZ42YAAVuGoXjloIiA=;
-        b=eZDvPUe5zRWMpKG1UaCEQ3+bn8ggWqqqRotITESazPUosVQHCBiilKd/U5RSbKRZ/A
-         M53Xb93YrkTS+mkVc28mpi9w6t+JXYGa/iTBwXmIlTY9uhwIVKXLhAZF5V5S1gwQynsj
-         q3zJ2wLYzP83VcpcnhILzSCoHq8yHVgL+LnnxnrKic8jGbNAam8f1F3CGmt7F9h+muVW
-         Ydc3wNl0pAt/u2cCRmI+MIiXXjnXjkZYAqTXQNTq3u0etpJ6qx4/rdr/SBZdo9cukszo
-         doCRRMZUtHOEtkIKiHRgb7lG2hrY0r1MDKTeNFkaN9XtIM5t05hYSecm0v9ak0tpikEh
-         0tJw==
+        bh=FBnpQGYtsqitQieVpi9Qovb5nNiG/ZxKYzfwH+jwTjA=;
+        b=pB1ToaPqZIwToCOr97hx2WPFKEKmmoTYQUHVQ1Y7VkLOhFQEtY0WWUnOb2o73LH3IH
+         bwdLgxXMGs3ZabisCfLHIpPh7L0b0vVG8lisUotwHVQzu0ggMTFKszXKi+250WfcvjYO
+         1zxzU7d1Mmh6lrRFadZL5Z7XVKQqKFaSqrXzFQo4x+5QsGrn5zZ6FUXBHzcRkLHnRe+1
+         oYMRQd2KtERd1q/+xWojOvD3wgZQqsoIqeAyU+qwbrGdxGLOzuBa8ds5AOmWzDhBVIzt
+         kzCU+OneocqHe//axlVECnjxtNUOJNpozygiDc/JpiJx3p9JFFcJR7u/HtqAwRd97COZ
+         t7tQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 025/140] scsi: qla2xxx: Fix gpnid error processing
-Date: Tue, 13 Mar 2018 16:23:48 +0100
-Message-Id: <20180313152459.702051245@linuxfoundation.org>
+Subject: [PATCH 4.14 024/140] scsi: qla2xxx: Fix system crash for Notify ack timeout handling
+Date: Tue, 13 Mar 2018 16:23:47 +0100
+Message-Id: <20180313152459.636616080@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837216880835269?=
-X-GMAIL-MSGID: =?utf-8?q?1594837292943040180?=
+X-GMAIL-THRID: =?utf-8?q?1594837125962234805?=
+X-GMAIL-MSGID: =?utf-8?q?1594837289947362220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,9 +53,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 22e786ea47f8795c561e1a01b6a66bb2cae2fc20 upstream.
+commit 2e01d0ba868ec1d4d55ddcba519339e072b0bf4d upstream.
 
-Stop GPNID command from advancing if command has failed.
+Fix NULL pointer crash due to missing timeout handling callback for
+Notify Ack IOCB.
 
 Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
@@ -66,20 +67,17 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_gs.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/qla2xxx/qla_target.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3211,6 +3211,11 @@ static void qla2x00_async_gpnid_sp_done(
- 	    sp->name, res, ct_req->req.port_id.port_id,
- 	    ct_rsp->rsp.gpn_id.port_name);
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -665,7 +665,7 @@ int qla24xx_async_notify_ack(scsi_qla_ho
+ 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha)+2);
  
-+	if (res) {
-+		sp->free(sp);
-+		return;
-+	}
-+
- 	memset(&ea, 0, sizeof(ea));
- 	memcpy(ea.port_name, ct_rsp->rsp.gpn_id.port_name, WWN_SIZE);
- 	ea.sp = sp;
+ 	sp->u.iocb_cmd.u.nack.ntfy = ntfy;
+-
++	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
+ 	sp->done = qla2x00_async_nack_sp_done;
+ 
+ 	rval = qla2x00_start_sp(sp);
