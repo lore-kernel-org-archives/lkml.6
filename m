@@ -1,88 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753109AbeCMUUh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:20:37 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:34163 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751984AbeCMUUe (ORCPT
+        id S1752857AbeCMUXR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:23:17 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40475 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbeCMUXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:20:34 -0400
-X-Google-Smtp-Source: AG47ELv7REyiWqFd9pXeOGx65BZSMABij+/tYBxT/K9+ORHUsdK5kjGoomwf+P+p1a7e3nbR1c6a2w==
-Date: Tue, 13 Mar 2018 16:20:27 -0400
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH 3/8] gpio: pci-idio-16: Implement get_multiple callback
-Message-ID: <20180313202027.GA14944@sophia>
-References: <cover.1520886945.git.vilhelm.gray@gmail.com>
- <e6a13288c45f824ba23ee8d1410cf0bf9c55fe60.1520886945.git.vilhelm.gray@gmail.com>
- <CAHp75Vf9+=rie5oqmAp7yW3_AirGuvBtxGS=6y9UBHzjpvD9ww@mail.gmail.com>
+        Tue, 13 Mar 2018 16:23:16 -0400
+X-Google-Smtp-Source: AG47ELs9xi1/LRqwgdz5Sf9tiDX0GV+55GlhLbiexFyhQqZAyDvEIJBJBBS/yrpIlLLT5BgjTgZWKUL0j0LwrOQ6qqo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf9+=rie5oqmAp7yW3_AirGuvBtxGS=6y9UBHzjpvD9ww@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <30bd9559-0e44-bd18-6b9a-ec35bc8276f3@amd.com>
+References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com>
+ <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
+ <CAHp75VdK6qFopBE4rD4yNO5GHccxyte=GhYU7YGcWOEYSCyX8Q@mail.gmail.com> <30bd9559-0e44-bd18-6b9a-ec35bc8276f3@amd.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 22:23:15 +0200
+Message-ID: <CAHp75VeySPBEeJKRXzmqfPey56J3rwr2-dPRzSYx+7a7TAC5rw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] iommu/amd - Add debugfs support
+To: Gary R Hook <gary.hook@amd.com>
+Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 06:04:33PM +0200, Andy Shevchenko wrote:
->On Mon, Mar 12, 2018 at 10:49 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
->> +       unsigned long *mask, unsigned long *bits)
->> +{
->
->
->> +       /* clear bits array to a clean slate */
->> +       for (i = 0; i < chip->ngpio; i += BITS_PER_LONG)
->> +               bits[i / BITS_PER_LONG] = 0;
->
->bitmap_clear() or bitmap_zero()
+On Tue, Mar 13, 2018 at 8:54 PM, Gary R Hook <gary.hook@amd.com> wrote:
+> On 03/13/2018 12:16 PM, Andy Shevchenko wrote:
+>> On Fri, Mar 9, 2018 at 2:50 AM, Gary R Hook <gary.hook@amd.com> wrote:
 
-bitmap_zero() would be perfect for this situation. I'll submit a version
-2 of this patchset with this change for the various drivers herein.
+>>> +#include <linux/pci.h>
+>>> +#include <linux/iommu.h>
+>>> +#include <linux/debugfs.h>
+>>
+>>
+>> Keep in order?
 
->
->> +       /* get bits are evaluated a gpio register size at a time */
->> +       for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
->> +               bit_word_offset = i % BITS_PER_LONG;
->> +               bits_mask = mask[BIT_WORD(i)] & (reg_mask << bit_word_offset);
->> +               if (!bits_mask) {
->> +                       /* no get bits in this register so skip to next one */
->> +                       continue;
->> +               }
->
->for_each_set_bit() ?
->
->> +               /* store acquired bits */
->> +               bits[BIT_WORD(i)] |= port_state << bit_word_offset;
->
->__set_bit()
->__clear_bit()
+> What order would that be? These few needed files are listed in the same
+> order as which they appear in amd_iommu.c. I'm gonna need a preference
+> spelled out, please (and a rationale, so I may better understand).
 
-I'm not sure for_each_set_bit() and __set_bit()/__clear_bit() would be
-good for this particular situation since I'm working with the entire
-register word (8 bits for this specific device) at a time.
+To increase readability and avoid potential header duplication (here
+is can bus protocol implementation where the problem exists for real,
+even in new code!)
 
-Since I know each register word is 8-bits, I can make 8-bit jumps and
-skips rather than evaluating each bit individually. Similarly, it seems
-more efficient to store the input 8 bits at a time rather than breaking
-it up to individual bits.
-
-However, I do see how all these inline bitwise operations could make it
-difficult to follow the code, so perhaps I can break it up across more
-lines so that the logic of the loop becomes easier to read.
-
-William Breathitt Gray
-
+>>> +/* DebugFS helpers */
+>>> +#define        OBUFP           (obuf + oboff)
+>>> +#define        OBUFLEN         obuflen
+>>> +#define        OBUFSPC         (OBUFLEN - oboff)
+>>> +#define        OSCNPRINTF(fmt, ...) \
+>>> +               scnprintf(OBUFP, OBUFSPC, fmt, ## __VA_ARGS__)
+>>
+>>
+>> I don't see any advantages of this. Other way around, they will simple
+>> makes things hard to read an understand in place.
 >
->We have bitmap API for *ages*. Is it too hard to check?
 >
->-- 
->With Best Regards,
->Andy Shevchenko
+> I used this technique in the CCP driver code (where it was accepted), in an
+> effort to do the opposite of what you claim: make the code more readable.
+> Given the 80 column limit, a large number of arguments, and very long
+> statements, IMO something needs to give. I don't find the use of #defines to
+> be obfuscating.
+>
+> I'm not trying to argue, but rather simply state the perspective / reasoning
+> I used to create a source file I feel is manageable. I have 17 more iommu
+> patches built upon this strategy, and this seems to be advantageous for all
+> of them.
+
+It's fine to me as long as it's fine to maintainer, but honestly
+speaking I would avoid such code as much as possible. Imagine that
+your "advantage" basically becomes disadvantage to everyone else who
+is not familiar with the code.
+
+Each time I see macro in the code, I would need to at least step on
+it, run cscope, read, and come back. And at this point of time I
+already forgot what this code is doing, it does use sNprintf() or
+sCNprintf() or whatever wrapper on top of either...
+
+>>> +       for (i = start ; i <= end ; i++)
+
+>> Missed {}
+
+> Wasn't sure about the M.O. given that the body of this loop is a single if
+> statement. And I don't see anywhere in
+> https://www.kernel.org/doc/html/latest/process/coding-style.html
+> in section 3.1 where curly braces are called for in this situation. May I
+> ask for clarification on the style rule, please?
+
+You can do nothing, though I'm guided by the end of section 3.0
+(though it tells only about 'if' case).
+
+>>> @@ -89,6 +89,7 @@
+>>>   #define ACPI_DEVFLAG_ATSDIS             0x10000000
+>>>
+>>>   #define LOOP_TIMEOUT   100000
+>>> +
+>>>   /*
+>>>    * ACPI table definitions
+>>>    *
+
+>> Doesn't belong to the patch.
+
+> I'm sorry, I don't understand. The added blank line doesn't belong to the
+> patch?
+
+Correct.
+
+-- 
+With Best Regards,
+Andy Shevchenko
