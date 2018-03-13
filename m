@@ -1,174 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932526AbeCMJPa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:15:30 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:41800 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbeCMJOB (ORCPT
+        id S1752604AbeCMJQJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:16:09 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:56747 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752344AbeCMJP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:14:01 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIoA016505
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/11] kconfig: tests: test randconfig for choice in choice
-Date: Tue, 13 Mar 2018 18:12:10 +0900
-Message-Id: <1520932332-2449-10-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 13 Mar 2018 05:15:28 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: Atheros 1525/QCA6174 BT issue
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <s5ha7vcfjfi.wl-tiwai@suse.de>
+Date: Tue, 13 Mar 2018 10:15:26 +0100
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ivan Levshin <ivan.levshin@microfocus.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0B0DDAD9-2379-4084-9FB3-8F9884786C6B@holtmann.org>
+References: <s5hd10fkm49.wl-tiwai@suse.de>
+ <184DA6FB-F23C-4C37-B89B-FE865DC9731C@holtmann.org>
+ <s5h1sgvkjup.wl-tiwai@suse.de> <s5hfu54fljg.wl-tiwai@suse.de>
+ <2D7B44D5-BF8C-42EE-A315-64DE11D25C79@holtmann.org>
+ <s5hd108fkaa.wl-tiwai@suse.de>
+ <D8E4DA1B-060E-45F4-9B26-E3FAEE652D03@holtmann.org>
+ <s5ha7vcfjfi.wl-tiwai@suse.de>
+To: Takashi Iwai <tiwai@suse.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 3b9a19e08960 ("kconfig: loop as long as we changed some symbols
-in randconfig") fixed randconfig where a choice contains a sub-choice.
-Prior to that commit, the sub-choice values were not set.
+Hi Takashi,
 
-I am not sure whether this is an intended feature or just something
-people discovered works, but it is used in the real world;
-drivers/usb/gadget/legacy/Kconfig is source'd in a choice context,
-then creates a sub-choice in it.
+>>>>>>>> we've got a but report about the broken Atheros BT on the recent
+>>>>>>>> kernels:
+>>>>>>>> http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
+>>>>>>>> 
+>>>>>>>> In short, btusb can't load the patch ar3k/AthrBT_0x00000200.dfu, and
+>>>>>>>> this could be worked around by the patch to move 0cf3:3004 blacklist
+>>>>>>>> entry to use BTUSB_QCA_ROM instead of BTUSB_ATH3012.
+>>>>>>>> 
+>>>>>>>> And this looks like a long-standing problem, at least for over two
+>>>>>>>> years.  Many web pages suggest the same patch, but it's never merged
+>>>>>>>> to upstream.
+>>>>>>>> 
+>>>>>>>> So this made me wonder what's going on.  I see that the BTUSB_ATH3012
+>>>>>>>> quirk was originally introduced just for this chip id (0cf3:3004).
+>>>>>>>> Is it a different variant from the original chip that causes a
+>>>>>>>> problem?
+>>>>>>> 
+>>>>>>> not all patches from distro kernel are sent upstream. I have not heard of this specific issues, but happy to accept patches to get it fixed.
+>>>>>> 
+>>>>>> OK, basically it's like below.
+>>>>>> But, as mentioned, this made me wonder whether it's the right fix.
+>>>>>> The BTUSB_ATH3012 quirk was introduced exactly for this chip ID
+>>>>>> (0cf3:3004), and now this chip is moved to another quirk...
+>>>>>> 
+>>>>>> If this is the right move, I can re-submit via git-send-email, too.
+>>>>>> Just let me know.
+>>>>> 
+>>>>> Marcel, could you take a look at this?
+>>>>> If it sucks, let's seek for a better solution.
+>>>> 
+>>>> wasn’t the confusion that this is fixed with a recent kernel? I am lost in this thread. I mean if people add Tested-by, then I can take this as well. Otherwise we might need someone from Qualcomm to shed some light into these.
+>>> 
+>>> Well, *this* thread is likely different from the recent other
+>>> threads.
+>>> 
+>>> Isn't 4.15.7 recent enough?  At least, it already contains the
+>>> backport of relevant fixes:
+>>>   Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
+>>>   Bluetooth: btusb: Restore QCA Rome suspend/resume fix with a
+>>>     "rewritten" version
+>>> 
+>>> (And it's not Yoga but MSI GS40 laptop, so DMI doesn't matter.)
+>>> According to Ivan, the reporter of the bug (now Cc'ed), 4.15.7 didn't
+>>> work without the patch, so the problem is still there, as it seems.
+>>> 
+>>> In anyway, I'm going to build a kernel with my patch on top of 4.15.9
+>>> for testing again.  Maybe also a patched 4.16-rc5 kernel, too.  If
+>>> it's confirmed, will report back with tested-by tag.
+>> 
+>> I think there are two patches that are not yet in Linus’ tree and waiting in Dave’s net tree. We actually removed the Yoga DMI entry again since it was found that it is not needed. However there is a Dell OptiPlex entry that was needed.
+>> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=0c6e526646c04ce31d4aaa280ed2237dd1cd774c
+> 
+> In our case, the target machine is a MSI laptop, so these changes
+> should be irrelevant.  Or do you suggest to try the same DMI reset
+> quirk matching with the MSI machine?
 
-For the test case in this commit, there are 3 possible results.
+that is maybe needed. I honestly do not know. Someone needs to root cause this. And obviously bi-secting a root-cause git commit would be helpful as well.
 
-Case 1:
-  CONFIG_A=y
-  # CONFIG_B is not set
+Regards
 
-Case 2:
-  # CONFIG_A is not set
-  CONFIG_B=y
-  CONFIG_C=y
-  # CONFIG_D is not set
-
-Case 3:
-  # CONFIG_A is not set
-  CONFIG_B=y
-  # CONFIG_C is not set
-  CONFIG_D=y
-  CONFIG_E=y
-
-So, this test iterates several times, and checks if the result is
-either of the three.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-
-Changes in v3:
-  - Fix typos
-
-Changes in v2:
-  - Newly added
-
- scripts/kconfig/tests/rand_nested_choice/Kconfig   | 33 ++++++++++++++++++++++
- .../kconfig/tests/rand_nested_choice/__init__.py   | 16 +++++++++++
- .../tests/rand_nested_choice/expected_stdout0      |  2 ++
- .../tests/rand_nested_choice/expected_stdout1      |  4 +++
- .../tests/rand_nested_choice/expected_stdout2      |  5 ++++
- 5 files changed, 60 insertions(+)
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/Kconfig
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/__init__.py
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout0
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout1
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout2
-
-diff --git a/scripts/kconfig/tests/rand_nested_choice/Kconfig b/scripts/kconfig/tests/rand_nested_choice/Kconfig
-new file mode 100644
-index 0000000..c591d51
---- /dev/null
-+++ b/scripts/kconfig/tests/rand_nested_choice/Kconfig
-@@ -0,0 +1,33 @@
-+choice
-+	prompt "choice"
-+
-+config A
-+	bool "A"
-+
-+config B
-+	bool "B"
-+
-+if B
-+choice
-+	prompt "sub choice"
-+
-+config C
-+	bool "C"
-+
-+config D
-+	bool "D"
-+
-+if D
-+choice
-+	prompt "subsub choice"
-+
-+config E
-+	bool "E"
-+
-+endchoice
-+endif # D
-+
-+endchoice
-+endif # B
-+
-+endchoice
-diff --git a/scripts/kconfig/tests/rand_nested_choice/__init__.py b/scripts/kconfig/tests/rand_nested_choice/__init__.py
-new file mode 100644
-index 0000000..e729a4e
---- /dev/null
-+++ b/scripts/kconfig/tests/rand_nested_choice/__init__.py
-@@ -0,0 +1,16 @@
-+"""
-+Set random values recursively in nested choices.
-+
-+Kconfig can create a choice-in-choice structure by using 'if' statement.
-+randconfig should correctly set random choice values.
-+
-+Related Linux commit: 3b9a19e08960e5cdad5253998637653e592a3c29
-+"""
-+
-+
-+def test(conf):
-+    for i in range(20):
-+        assert conf.randconfig() == 0
-+        assert (conf.config_contains('expected_stdout0') or
-+                conf.config_contains('expected_stdout1') or
-+                conf.config_contains('expected_stdout2'))
-diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout0 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
-new file mode 100644
-index 0000000..05450f3
---- /dev/null
-+++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
-@@ -0,0 +1,2 @@
-+CONFIG_A=y
-+# CONFIG_B is not set
-diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout1 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
-new file mode 100644
-index 0000000..37ab295
---- /dev/null
-+++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
-@@ -0,0 +1,4 @@
-+# CONFIG_A is not set
-+CONFIG_B=y
-+CONFIG_C=y
-+# CONFIG_D is not set
-diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout2 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
-new file mode 100644
-index 0000000..849ff47
---- /dev/null
-+++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
-@@ -0,0 +1,5 @@
-+# CONFIG_A is not set
-+CONFIG_B=y
-+# CONFIG_C is not set
-+CONFIG_D=y
-+CONFIG_E=y
--- 
-2.7.4
+Marcel
