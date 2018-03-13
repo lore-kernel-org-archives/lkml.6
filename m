@@ -1,79 +1,248 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeCMHqk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 03:46:40 -0400
-Received: from mout.web.de ([212.227.17.11]:43767 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751647AbeCMHqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:46:37 -0400
-Subject: Re: [3/5] Bluetooth: btmrvl: One check less in
- btmrvl_sdio_card_to_host()
-To: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
- <a988a80d-12c0-a414-ab81-ff4ab075855c@users.sourceforge.net>
- <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <09cd7314-d053-3a6d-a9e1-d666a00ddb55@users.sourceforge.net>
-Date: Tue, 13 Mar 2018 08:46:33 +0100
+        id S1752208AbeCMHrQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 03:47:16 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37990 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751943AbeCMHrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 03:47:14 -0400
+X-Google-Smtp-Source: AG47ELvg3uoIwj4Zx6/0u7Z4+1+aLdF3YHBFz6XsHQNBl7JBZGaeKUX1OITETiIP2Fxp3Osxr3ksOQ==
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
+ <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+ <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+ <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
+ <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
+ <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
+ <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
+ <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
+ <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
+Date: Tue, 13 Mar 2018 08:47:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <609D1B28-2B75-4AB5-B707-FDB5D0500F1A@holtmann.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:BgQ3o6MukFjCCCihBBsIPPbLaL7F1j8m7AKmxRirfnbd6pRBdXe
- QdUC1dTDrbTaQ4NaAjU9RxzH81fP5ugczVR+lphgWd8mrPDTpdjNOPNNPmCTm6UCu6j5AD5
- zZVmDdBIz8SwHOMd70XmgNI2xNlIDDexsVGFwn/kFvkwc68ns9qc4wWF1fU+vrfgasSm5/P
- /wWqUHYKXN0NqSOdCNT6Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZE5hotaex9s=:YqTHt26ypi5QjSy80AYPUO
- hmSSVho4CGTJ1axxddgS3eUS5jfm11pxFEdpztnPrCbhFdHxzOsERqPB2M7UxA4yMJeDaq5SI
- 2eKtwieZ91Ty1K+MPjJPP+N7+6PWvmdT8S18O6O6iINo2ser+yAOe99yo3WPtmN3wUAYEy+xc
- i+K6TzRFgQA7k7iKmXGDGXjOuWPIVHZTBYnw36tP5eudocuz7ijBOfAA8tIjmyH8I7AA8MvkC
- ptAiMr40VKPh9s50q5RQ0UrVqeQBEiw4eIa4eznhi6EIBGDV3DZzZystO+ScxvvMsZQcy9tml
- 3cCAY1rxAROmmFBtQrXo1QsNO85NAhSbGHbGDKUM2n+Lfo43mom/KG3l/+QYpV8m2J7BERCR5
- 1t2wfU6UAc8Z/Uf53QRGidqoC+ansy/caQECMYIyQJTn7oatjaTQ/HNKexHJ69hKt3Kk6YDvN
- QCd+FpLcb4N7SMPiVrfVSnNNugH3vjis4RlFDRox8IlzlmDlAJ3VPazZU7+E0gS0sN+/77ev4
- 1aqdWznmhw+caAqNJnJN5vA+b0thkiVEOENE5IRMmrXngTAcMc/m6/ztV7I5SIeVTkDe4m+Ys
- dEMNnne9Gbnoiok/qWoMKcjquvGPoBfPR7NNkOBQ0etDG1ahFJBrvcj4GQJdrOH4JVvgeWHmy
- 369UGkYWPryTfI+a53tsULOoyEmM6bbdZrSMv0Ede7W3SvOWfksibWXR+njv1bdUglSTMjqWa
- skJ1IlUcFHmXhUz0v6NZ5zuG76TPCXkhQklJFgJkc63DzF+OivH6FjieSphVjAhH9u2rsV9M4
- DPOkfA5QTcorsukKvIB03sAH35kJCJFiED/D1QKr5cAHAD7AlA=
+In-Reply-To: <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> @@ -797,12 +792,18 @@ static int btmrvl_sdio_card_to_host(struct btmrvl_private *priv)
->> 		break;
->> 	}
->>
->> -exit:
->> -	if (ret) {
->> -		hdev->stat.err_rx++;
->> -		kfree_skb(skb);
->> -	}
->> +	return 0;
->> +
->> +free_skb:
->> +	kfree_skb(skb);
->> +e_io:
->> +	ret = -EIO;
->> +	goto increment_counter;
->>
->> +e_inval:
->> +	ret = -EINVAL;
->> +increment_counter:
->> +	hdev->stat.err_rx++;
->> 	return ret;
-> 
-> Nope!
-> 
-> This is not easier to read for me. This goto exit jumping and I hate that.
+Hi,
 
-Can the software design direction become feasible to omit the repeated check
-for the variable “ret” (and further initialisations)?
+On 12-03-18 20:55, Thiebaud Weksteen wrote:
+> On Mon, Mar 12, 2018 at 7:33 PM Jeremy Cline <jeremy@jcline.org> wrote:
+> 
+>> On 03/12/2018 02:29 PM, Thiebaud Weksteen wrote:
+>>> On Mon, Mar 12, 2018 at 6:30 PM Ard Biesheuvel <
+> ard.biesheuvel@linaro.org>
+>>> wrote:
+>>>
+>>>> On 12 March 2018 at 17:01, Jeremy Cline <jeremy@jcline.org> wrote:
+>>>>> On 03/12/2018 10:56 AM, Ard Biesheuvel wrote:
+>>>>>> On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
+>>>>>>> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
+>>>>>>>> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com>
+>>> wrote:
+>>>>>>>>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org>
+>>> wrote:
+>>>>>>>>>
+>>>>>>>>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen
+> wrote:
+>>>>>>>>>>> Thanks a lot for trying out the patch!
+>>>>>>>>>>>
+>>>>>>>>>>> Please don't modify your install at this stage, I think we are
+>>> hitting a
+>>>>>>>>>>> firmware bug and that would be awesome if we can fix how we are
+>>>>>>>>> handling it.
+>>>>>>>>>>> So, if we reach that stage in the function it could either be
+>>> that:
+>>>>>>>>>>> * The allocation did not succeed, somehow, but the firmware
+> still
+>>>>>>>>> returned
+>>>>>>>>>>> EFI_SUCCEED.
+>>>>>>>>>>> * The size requested is incorrect (I'm thinking something like a
+>>> 1G of
+>>>>>>>>>>> log). This would be due to either a miscalculation of log_size
+>>>>>>>>> (possible)
+>>>>>>>>>>> or; the returned values of GetEventLog are not correct.
+>>>>>>>>>>> I'm sending a patch to add checks for these. Could you please
+>>> apply and
+>>>>>>>>>>> retest?
+>>>>>>>>>>> Again, thanks for helping debugging this.
+>>>>>>>>>
+>>>>>>>>>> No problem, thanks for the help :)
+>>>>>>>>>
+>>>>>>>>>> With the new patch:
+>>>>>>>>>
+>>>>>>>>>> Locating the TCG2Protocol
+>>>>>>>>>> Calling GetEventLog on TCG2Protocol
+>>>>>>>>>> Log returned
+>>>>>>>>>> log_location is not empty
+>>>>>>>>>> log_size != 0
+>>>>>>>>>> log_size < 1M
+>>>>>>>>>> Allocating memory for storing the logs
+>>>>>>>>>> Returned from memory allocation
+>>>>>>>>>> Copying log to new location
+>>>>>>>>>
+>>>>>>>>>> And then it hangs. I added a couple more print statements:
+>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>> b/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> index ee3fac109078..1ab5638bc50e 100644
+>>>>>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
+>>>>>>>>>> @@ -148,8 +148,11 @@ void
+>>>>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>>>>>           efi_printk(sys_table_arg, "Copying log to new
+>>> location\n");
+>>>>>>>>>
+>>>>>>>>>>           memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to
+>>> 0\n");
+>>>>>>>>>>           log_tbl->size = log_size;
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+>>>>>>>>>>           log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+>>>>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+>>>>>>>>>>           memcpy(log_tbl->log, (void *) first_entry_addr,
+> log_size);
+>>>>>>>>>
+>>>>>>>>>>           efi_printk(sys_table_arg, "Installing the log into the
+>>>>>>>>> configuration table\n");
+>>>>>>>>>
+>>>>>>>>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) +
+>>> log_size);"
+>>>>>>>>>
+>>>>>>>>> Thanks. Well, it looks like the memory that is supposedly
+> allocated
+>>> is not
+>>>>>>>>> usable. I'm thinking this is a firmware bug.
+>>>>>>>>> Ard, would you agree on this assumption? Thoughts on how to
+> proceed?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I am rather puzzled why the allocate_pool() should succeed and the
+>>>>>>>> subsequent memset() should fail. This does not look like an issue
+>>> that
+>>>>>>>> is intimately related to TPM2 support, rather an issue in the
+>>> firmware
+>>>>>>>> that happens to get tickled after the change.
+>>>>>>>>
+>>>>>>>> Would you mind trying replacing EFI_LOADER_DATA with
+>>>>>>>> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
+>>>>>>>
+>>>>>>> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at
+>>> the
+>>>>>>> memset() call.
+>>>>>>>
+>>>>>>
+>>>>>> Could you try the following please? (attached as well in case gmail
+>>> mangles it)
+>>>>>>
+>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
+>>>>>> b/drivers/firmware/efi/libstub/tpm.c
+>>>>>> index 2298560cea72..30d960a344b7 100644
+>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
+>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
+>>>>>> @@ -70,6 +70,8 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>          size_t log_size, last_entry_size;
+>>>>>>          efi_bool_t truncated;
+>>>>>>          void *tcg2_protocol;
+>>>>>> +       unsigned long num_pages;
+>>>>>> +       efi_physical_addr_t log_tbl_alloc;
+>>>>>>
+>>>>>>          status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+>>>>>>                                  &tcg2_protocol);
+>>>>>> @@ -104,9 +106,12 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>          }
+>>>>>>
+>>>>>>          /* Allocate space for the logs and copy them. */
+>>>>>> -       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+>>>>>> -                               sizeof(*log_tbl) + log_size,
+>>>>>> -                               (void **) &log_tbl);
+>>>>>> +       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size,
+>>> EFI_PAGE_SIZE);
+>>>>>> +       status = efi_call_early(allocate_pages,
+>>>>>> +                               EFI_ALLOCATE_ANY_PAGES,
+>>>>>> +                               EFI_LOADER_DATA,
+>>>>>> +                               num_pages,
+>>>>>> +                               &log_tbl_alloc);
+>>>>>>
+>>>>>>          if (status != EFI_SUCCESS) {
+>>>>>>                  efi_printk(sys_table_arg,
+>>>>>> @@ -114,6 +119,7 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>                  return;
+>>>>>>          }
+>>>>>>
+>>>>>> +       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned
+>>> long)log_tbl_alloc;
+>>>>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+>>>>>>          log_tbl->size = log_size;
+>>>>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+>>>>>> @@ -126,7 +132,7 @@ void
+>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>>>>>>          return;
+>>>>>>
+>>>>>>   err_free:
+>>>>>> -       efi_call_early(free_pool, log_tbl);
+>>>>>> +       efi_call_early(free_pages, log_tbl_alloc, num_pages);
+>>>>>>   }
+>>>>>>
+>>>>>>   void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+>>>>>>
+>>>>>
+>>>>> Hi Ard,
+>>>>>
+>>>>> When I apply this, it starts hanging at
+>>>>>
+>>>>> status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+> tcg2_protocol,
+>>>>>                          EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+>>>>>                          &log_location, &log_last_entry, &truncated);
+>>>>>
+>>>>> rather than at the memset() call.
+>>>>>
+>>>
+>>>> That is *very* surprising, given that the change only affects code
+>>>> that executes after that.
+>>>
+> 
+> Hans, you said you configured the tablet to use the 32-bit version of grub
+> instead
+> of 64. Why's that?
+
+Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit UEFI,
+even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers were
+not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
+
+So this is running a 32 bit grub which boots a 64 bit kernel.
+
+> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
+> your Android install working? (that is, what happens if you boot Boot0000)?
+
+AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
+
+Could the problem perhaps be that the new code for the TPM event-log is
+missing some handling to deal with running on a 32 bit firmware? I know the
+rest of the kernel has special code to deal with this.
 
 Regards,
-Markus
+
+Hans
