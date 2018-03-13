@@ -1,77 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3463848-1520955109-3-13837031895003584882
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955108; b=g8dTa9yhuWLGrWkLcg5sU0fd7RoA/+Af4F68mfARHCXsBIw
-    18ELzBZeZrf4RDu9nsWShgbNLUryRA+sLkg7nv10VVHQAWrwiipp7nNF0BrdedBC
-    1iZ1B6b7vTVweZykNErT5IY6g9lgOsDfgnYOCGEnQZ2WT3MAmNEFTkh8fbkVg11h
-    WrOucCipjN6R6l7ukHlDK2txHegNS1vZL8K7zg8ARCA2e0mYuoguOwX7ET2DSX8T
-    jRNU17rqr/1PLi12fkK4Bg+HdGZ511GzfPhfbAeYr5MFIJtAOUc3/xrBL7akZiT5
-    F8hwaL9XvUcEOob/CNG9XuDKnKz9qt43bjTB8DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955108; bh=qLvpK0rYEw1a6AJ6Gur3ogPTbM
-    vHOT+o2IksyWMiuIM=; b=v1g2nttTGbtNi7v/iEeA++faeYedbHbkGv0h7kOtvg
-    Tn+kT3CxgLvp2mj31nMj29ntn8VQD9SGYmIF3sl3A/qGbt6n20+VnKnrGjT8Qhfv
-    rqxrJIeUHIS9ezZ0CGiYKHl0wd3d6frfYbevSH10WN68rxkt7/kIOqj5v3PZxqhL
-    E2mDFpQts61WpSiwJbEDahlXjpXxnTaa5QrP8uBFI0PaZTBnN7iHRVcw9z99GGPs
-    MT75glkTdMEUMz1LpHQWdmiGC+dM8X0n88pifbjs/6tgl2tOyyPUO9vO5cu5weKd
-    TkXDeuVRbqr5fqf3csAW7l5+Wt4SKLUGq5Q4uhUv155Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933384AbeCMPbl (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:31:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59376 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933380AbeCMPbk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:31:40 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuKpwA7QMSm9+sGtE7uXFLZce8lxHaEUkPT6KaDwWIg7bao0p8FkuZIVRPKJ5J/BxXxrOdp
+ARC-Seal: i=1; a=rsa-sha256; t=1520955108; cv=none;
+        d=google.com; s=arc-20160816;
+        b=HHXOLm/FN0M4drr3gpO2i6yjrasMMp4lnS2RvxvvWxS4zgK+Qk2yGyKDsYk6kl+JC5
+         hmBCvZvNYgVmqBWSQsD4dFrLLZrW19B1r2zIvYbGcPy/ajozVT6k9bZWy8fd4eIA0QXs
+         4D6fRpLbGadBSgflgR/tfotg56lJ+3kAY8oxvpD1zCoQFuxZacCcsdMsZBnkgaZTICMO
+         79C4igc3nSCSq0zJOCEWiYOIs5EEXct25C5/dhGxwMHIQHrAqYkgesEZIdNy4COgqAyV
+         5p5ZCMC9GTjgi+Fp9sxTx6DpLI3iUx6WIfGwmjYXGXLZ4vQG6t2VUI3sQeBcJSkfFJye
+         0u/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=jCA/zebqQAE58sMLIAFHP525SFBFZZpsfzuQTtIZ+AQ=;
+        b=hUOE9QVRRyRSecEZfEhdBvb03qow/5BHDrz6Z/SkplXeyhHqTfiq4ZBPaEnGoTlAKu
+         +7R1ARHLvMoBv1hAcOJbdsGk0OuY7uawedwNWPl6E6wb23il4L5ki8HhIJ3XhODjriX8
+         6BsYBZUYYeKX/B4Tb1/WiQFb97EWlW4BjP7zAcXz1+OgsaK4Nas0nGoZFe60hPBSsnn9
+         4KbKaVzxsnEQTxuZ11Xq74QOkBdIyOhHF+CEJAcFy45gSzrndwyImEkSAodaMiRDkWwA
+         jIco0mEJAtB+WK12rVE67K/1fnhiEFOKOXzhnwRcDX6GCifTFBLFAt15GvWVKIwcDbhz
+         R+dw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 088/146] x86-64/realmode: Add instruction suffix
-Date: Tue, 13 Mar 2018 16:24:15 +0100
-Message-Id: <20180313152327.534551008@linuxfoundation.org>
+	stable@vger.kernel.org,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	arjan.van.de.ven@intel.com,
+	bp@alien8.de,
+	dave.hansen@intel.com,
+	jmattson@google.com,
+	karahmed@amazon.de,
+	kvm@vger.kernel.org,
+	pbonzini@redhat.com,
+	rkrcmar@redhat.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 091/146] x86/retpoline: Support retpoline builds with Clang
+Date: Tue, 13 Mar 2018 16:24:18 +0100
+Message-Id: <20180313152327.711568974@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -79,9 +49,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594837024182823103?=
+X-GMAIL-MSGID: =?utf-8?q?1594837024182823103?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -89,41 +60,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Beulich <JBeulich@suse.com>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 8554004a0231dedf44d4d62147fb3d6a6db489aa upstream.
+commit 87358710c1fb4f1bf96bbe2349975ff9953fc9b2 upstream.
 
-Omitting suffixes from instructions in AT&T mode is bad practice when
-operand size cannot be determined by the assembler from register
-operands, and is likely going to be warned about by upstream GAS in the
-future (mine does already). Add the single missing suffix here.
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/5A8AF5F602000078001A9230@prv-mh.provo.novell.com
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1519037457-7643-5-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/realmode/rm/trampoline_64.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/Makefile              |    5 ++++-
+ include/linux/compiler-clang.h |    5 +++++
+ include/linux/compiler-gcc.h   |    4 ++++
+ include/linux/init.h           |    8 ++++----
+ 4 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/arch/x86/realmode/rm/trampoline_64.S
-+++ b/arch/x86/realmode/rm/trampoline_64.S
-@@ -102,7 +102,7 @@ ENTRY(startup_32)
- 	 * don't we'll eventually crash trying to execute encrypted
- 	 * instructions.
- 	 */
--	bt	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
-+	btl	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
- 	jnc	.Ldone
- 	movl	$MSR_K8_SYSCFG, %ecx
- 	rdmsr
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -232,7 +232,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
+ 
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
++    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++
++    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+     ifneq ($(RETPOLINE_CFLAGS),)
+         KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
+     endif
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -19,3 +19,8 @@
+ 
+ #define randomized_struct_fields_start	struct {
+ #define randomized_struct_fields_end	};
++
++/* Clang doesn't have a way to turn it off per-function, yet. */
++#ifdef __noretpoline
++#undef __noretpoline
++#endif
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -93,6 +93,10 @@
+ #define __weak		__attribute__((weak))
+ #define __alias(symbol)	__attribute__((alias(#symbol)))
+ 
++#ifdef RETPOLINE
++#define __noretpoline __attribute__((indirect_branch("keep")))
++#endif
++
+ /*
+  * it doesn't make sense on ARM (currently the only user of __naked)
+  * to trace naked functions because then mcount is called without
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -6,10 +6,10 @@
+ #include <linux/types.h>
+ 
+ /* Built-in __init functions needn't be compiled with retpoline */
+-#if defined(RETPOLINE) && !defined(MODULE)
+-#define __noretpoline __attribute__((indirect_branch("keep")))
++#if defined(__noretpoline) && !defined(MODULE)
++#define __noinitretpoline __noretpoline
+ #else
+-#define __noretpoline
++#define __noinitretpoline
+ #endif
+ 
+ /* These macros are used to mark some functions or 
+@@ -47,7 +47,7 @@
+ 
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+-#define __init		__section(.init.text) __cold  __latent_entropy __noretpoline
++#define __init		__section(.init.text) __cold  __latent_entropy __noinitretpoline
+ #define __initdata	__section(.init.data)
+ #define __initconst	__section(.init.rodata)
+ #define __exitdata	__section(.exit.data)
