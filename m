@@ -1,99 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeCMR3p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:29:45 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:39132 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeCMR3l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:29:41 -0400
-X-Google-Smtp-Source: AG47ELtXhO6wsCjrR0meGg5hVlL1biTHdRSl4wsTn7pOfT6TDrmrwNKBfikB5eB2zXnNxvwCwknCgZ8Ni6DeZ5IOlq0=
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b+ECV+6hky_cq1tg2BbYbsv1c_xGYrgzjiLfSbx21rVA@mail.gmail.com>
-References: <201803122219.vHl3IwRo%fengguang.wu@intel.com> <CACT4Y+Yscqe6M1jXSkcuvw+5-27YzZn4AXwKzU1oJCNhUrj1Ng@mail.gmail.com>
- <CACT4Y+ayA+maaG3uddxpy3w24Jyppsxmyu5R_rEsvm3JjtZkRQ@mail.gmail.com>
- <20180313104652.GK4043@hirez.programming.kicks-ass.net> <CACT4Y+b+ECV+6hky_cq1tg2BbYbsv1c_xGYrgzjiLfSbx21rVA@mail.gmail.com>
-From: Christopher Li <sparse@chrisli.org>
-Date: Tue, 13 Mar 2018 10:29:40 -0700
-X-Google-Sender-Auth: ZglCEQh5n-IFE3B0E7xZeGVlhok
-Message-ID: <CANeU7QkrC0M4P6MrDKU8+ZOf9nU+DtKYxoAdvfx76K3MTMEajA@mail.gmail.com>
-Subject: Re: [tip:locking/core 9/11] include/asm-generic/atomic-instrumented.h:288:24:
- sparse: cast truncates bits from constant value (100 becomes 0)
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux-Sparse <linux-sparse@vger.kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
-        LKML <linux-kernel@vger.kernel.org>, tipbuild@zytor.com,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752201AbeCMRa0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:30:26 -0400
+Received: from anholt.net ([50.246.234.109]:40834 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751537AbeCMRaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:30:25 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>
+Subject: [GIT PULL] bcm2835-dt-next-2018-03-13
+Date: Tue, 13 Mar 2018 10:30:22 -0700
+Message-Id: <20180313173022.30314-1-eric@anholt.net>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 4:08 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Tue, Mar 13, 2018 at 1:46 PM, Peter Zijlstra <peterz@infradead.org> wrote:
->>
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  283  static __always_inline unsigned long
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  284  cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  285  {
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  286         switch (size) {
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  287         case 1:
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29 @288                 return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  289         case 2:
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  290                 return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  291         case 4:
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  292                 return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  293         case 8:
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  294                 BUILD_BUG_ON(sizeof(unsigned long) != 8);
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  295                 return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  296         }
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  297         BUILD_BUG();
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  298         return 0;
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  299  }
->>> >> b06ed71a6 Dmitry Vyukov 2018-01-29  300
->>
->>> It seems that this is due to this guy:
->>>
->>> static __always_inline int trylock_clear_pending(struct qspinlock *lock)
->>> {
->>>         struct __qspinlock *l = (void *)lock;
->>>
->>>         return !READ_ONCE(l->locked) &&
->>>                (cmpxchg_acquire(&l->locked_pending, _Q_PENDING_VAL,
->>>                                 _Q_LOCKED_VAL) == _Q_PENDING_VAL);
->>> }
->>>
->>> _Q_PENDING_VAL is 0x100. However, locked_pending is 2 bytes. So it
->>> seems that compiler checks all switch cases, this inevitably will lead
->>> to such warnings.
+Hi Florian,
 
-So you are saying cmpxchg_size() was call with a size==2,
-however sparse did not do the constant propagation or evaluation
-properly. So that it did not eliminate the other branch of size==1
-case statement.
+The following changes since commit bcc76c4014dce4e3834dbd5b7f6593cbcfbfebe0:
 
-Can you do a "sparse -E" on the original file, then save the
-result to a new file. That will take care of the pre-processing.
-Then run the sparse on the pre-processed file to get a smaller
-test case?
+  ARM: dts: bcm2835-rpi-zero-w: Enable OTG mode (2018-02-26 15:02:23 -0800)
 
-Having a smaller test case would make it easier to reproduce
-what exactly IR was issued during that warning.
+are available in the Git repository at:
 
->>> Off the top of my head I can think of the following solution:
->>>
->>>         switch (size) {
->>>         case 1:
->>>                 return arch_cmpxchg((u8 *)ptr, (u8)(old * (size !=
->>> 1)), (u8)(new * (size != 1)));
->>>         case 2:
->>>                 return arch_cmpxchg((u16 *)ptr, (u16)(old * (size !=
->>> 2)), (u16)(new * (size != 2)));
->>>
->>> But it's too ugly.
->>
->> Yes agreed, that's horrendous.
+  git://github.com/anholt/linux tags/bcm2835-dt-next-2018-03-13
 
-Let's not do that. If it is a sparse problem, let's try to fix this sparse.
+for you to fetch changes up to ae67cfc4f6abb379e5bbe9a5616f00b23bbecb01:
 
-Chris
+  ARM: bcm2835: Add the DPI hardware to the device tree. (2018-03-12 11:44:29 -0700)
+
+----------------------------------------------------------------
+This pull request brings in one last patch to add the BCM2835 DPI
+controller to the device tree.
+
+----------------------------------------------------------------
+Eric Anholt (1):
+      ARM: bcm2835: Add the DPI hardware to the device tree.
+
+ arch/arm/boot/dts/bcm283x.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
