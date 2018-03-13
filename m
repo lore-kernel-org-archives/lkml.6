@@ -1,60 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932900AbeCMKiV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:38:21 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:56034 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932568AbeCMKiS (ORCPT
+        id S932735AbeCMKoj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:44:39 -0400
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:34244 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932566AbeCMKog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:38:18 -0400
-X-Google-Smtp-Source: AG47ELvQrgwbuaEUNwuUf8/Fgj/c1URCY+WsjpGoVNLb8I8Y5PaJNPOGuNKz9KmWFpffiHosnVGPCQ==
-From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-fs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
-Subject: [PATCH 0/5 v2] Using the hash in MOKx to blacklist kernel module
-Date: Tue, 13 Mar 2018 18:37:58 +0800
-Message-Id: <20180313103803.13388-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+        Tue, 13 Mar 2018 06:44:36 -0400
+X-Google-Smtp-Source: AG47ELtcTSdzlSdTiYE8Wp+EPLt/2glDN72GtOF9n2y9o3tqUZ4QQwsnFxb/Nq7rJrryfuwlPnUlFwLJS7nq9aL5x0Y=
+MIME-Version: 1.0
+In-Reply-To: <001a113ec036450c260567464832@google.com>
+References: <001a113ec036450c260567464832@google.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Tue, 13 Mar 2018 18:44:35 +0800
+Message-ID: <CADvbK_ctXVom8WDMZ1kRURSFfGZ_wJFtWrJdrnpgpg3=7_7nUg@mail.gmail.com>
+Subject: Re: BUG: corrupted list in sctp_association_free
+To: syzbot <syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com>
+Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set is base on the efi-lock-down and keys-uefi branchs in
-David Howells's linux-fs git tree.
-    https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-uefi
-
-The main purpose is using the MOKx to blacklist kernel module.
-
-As the MOK (Machine Owner Key), MOKx is a EFI boot time variable which
-is maintained by shim boot loader. We can enroll the hash of blacklisted
-kernel module (with or without signature) to MOKx by mokutil. Kernel loads
-the hash from MOKx to blacklist keyring when booting. Kernel will prevent
-to load the kernel module when its hash be found in blacklist.
-
-This function is useful to revoke a kernel module that it has exploit. Or
-revoking a kernel module that it was signed by a unsecure key.
-
-Except MOKx, this patch set fixs another two issues: The MOK/MOKx should
-not be loaded when secure boot is disabled. And, modified error message
-prints out appropriate status string for reading by human being.
-
-v2:
-Chekcikng the attributes of db and mok before loading certificates.
-
-Lee, Chun-Yi (5):
-  MODSIGN: do not load mok when secure boot disabled
-  MODSIGN: print appropriate status message when getting UEFI
-    certificates list
-  MODSIGN: load blacklist from MOKx
-  MODSIGN: checking the blacklisted hash before loading a kernel module
-  MODSIGN: check the attributes of db and mok
-
- certs/load_uefi.c       | 92 +++++++++++++++++++++++++++++++++++--------------
- include/linux/efi.h     | 25 ++++++++++++++
- kernel/module_signing.c | 62 +++++++++++++++++++++++++++++++--
- 3 files changed, 152 insertions(+), 27 deletions(-)
-
--- 
-2.10.2
+On Tue, Mar 13, 2018 at 3:34 PM, syzbot
+<syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot hit the following crash on net-next commit
+> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
+> Merge tag 'mlx5-updates-2018-02-28-2' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+> selinux_nlmsg_perm: 1 callbacks suppressed
+> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
+> sclass=netlink_route_socket pig=12502 comm=syz-executor3
+> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
+> sclass=netlink_route_socket pig=12528 comm=syz-executor3
+> list_del corruption, 00000000fcc5fb27->next is LIST_POISON1
+> (00000000cb16e51d)
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:47!
+> invalid opcode: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 12537 Comm: syz-executor2 Not tainted 4.16.0-rc4+ #258
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45
+> RSP: 0018:ffff8801b6387778 EFLAGS: 00010286
+> RAX: 000000000000004e RBX: dead000000000200 RCX: 0000000000000000
+> RDX: 000000000000004e RSI: ffffc90002ed6000 RDI: ffffed0036c70ee3
+> RBP: ffff8801b6387790 R08: 1ffff10036c70e3b R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: dead000000000100
+> R13: ffff8801d3164000 R14: ffff8801d8502220 R15: ffff8801b6387c58
+> FS:  00007ff42042f700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff42040ddb8 CR3: 00000001bd840003 CR4: 00000000001606f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __list_del_entry include/linux/list.h:117 [inline]
+>  list_del include/linux/list.h:125 [inline]
+>  sctp_association_free+0x133/0x930 net/sctp/associola.c:341
+>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
+>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+>  sock_sendmsg_nosec net/socket.c:629 [inline]
+>  sock_sendmsg+0xca/0x110 net/socket.c:639
+>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
+>  SyS_sendto+0x40/0x50 net/socket.c:1716
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x453e69
+> RSP: 002b:00007ff42042ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00007ff42042f6d4 RCX: 0000000000453e69
+> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000015
+> RBP: 000000000072c0c8 R08: 00000000204d9000 R09: 000000000000001c
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 00000000000004cd R14: 00000000006f73d8 R15: 0000000000000003
+> Code: 8f 00 00 00 49 8b 54 24 08 48 39 f2 75 3b 48 83 c4 08 b8 01 00 00 00
+> 5b 41 5c 5d c3 4c 89 e2 48 c7 c7 c0 7c 40 86 e8 75 f6 fb fe <0f> 0b 48 c7 c7
+> 20 7d 40 86 e8 67 f6 fb fe 0f 0b 48 c7 c7 80 7d
+> RIP: __list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45 RSP:
+> ffff8801b6387778
+> ---[ end trace a6b157f61f9bd43a ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+I'd think the patch Neil just posted would fix it.
