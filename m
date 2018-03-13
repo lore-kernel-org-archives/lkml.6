@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsM5IdqFW4oR5I8qIbUXKEUxXzH+xzS/Nf1HgPUdUyK/tzM2AXTxJH9n4dgNT8K0J+ZV/X+
-ARC-Seal: i=1; a=rsa-sha256; t=1520954964; cv=none;
+X-Google-Smtp-Source: AG47ELu2a8VgvuJrQ0DOIZytE9v9nYJazTrbieINWEQLH33mV/2fGXvCmlygYyWp7s/nTDmzKwmS
+ARC-Seal: i=1; a=rsa-sha256; t=1520954961; cv=none;
         d=google.com; s=arc-20160816;
-        b=djmIoNiAngtpBxC43X7ox5LScwUajntfK2Rkgutm8PeNfQxHukjJwTGQ7OVINJKeSe
-         AO6F9x65by4eyBUzaMWwsILKkC4sKMva2d8QJD1W1vNv8Qod61+rvYEAnMMl+FQsE4+G
-         obTGqI+uxRpc8O6c0Wo5CuQDvT0gDTEDOYMv5QWts0B9GK1b7YWKfPaEXkUmCabpF+Qj
-         qnvZkSJZ0hdDJNdPRVe6XbyNrEbtX/FeH7lSayPEP3IY/askMFKZfSJjB3YUDPQ6uREe
-         aLNYFsua+94nnqUxzl5r/GmK6ACggA1zB6jsYGR7PMoRzjIkiOyOsOJ72B63//A3rVcM
-         1EHA==
+        b=eZOySQjTJ0fzbMTLb7bZopMN5qftmOzVf94nOX1WqXsXjC//ZiBE7YVXdgkAWD0lXh
+         VPkrUkEEOfBdT6x8kCPndJ2BQ10w9ooT32W+D2VxJxIH7lN6VjVTdPCrrB4BsECWbqbV
+         asl3QGMG/yN4VUPtxuj+O1a+DifWWQtblF/OhSHXq/zMfbmnXzXdW5ocYQzxwtgm3yxJ
+         WuMyJY8YBoZgvWAnA13lEmG53oq7iyZKlN5StSFrE173PGCVExFRKOm/9p4ce9p3hpxr
+         MTpkuUQGWp+wgBSwjDd1zHjZBJ4/icYNEM6MrZ8U/0tgpjqEBDnWI2NdgRn6vf1FQIyh
+         BLzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j6dpp8T2xaauaBlSjCboUqxWulS0NMKeRK0mJ6ADaw8=;
-        b=tnnvnMkWkfcJCmRX/mct2fbGpec8SCxw2cLS7JT5c0rDbvVid/n/lTm/WjwMPqJXf8
-         731rFCLGBjT1/9q4C8PC4aRO0vdPuHfBqjzg3//EhqEZsDZ61EfpwuQVJv9rl9sTXUVN
-         mf2/9O4sdI0AeSQUTPx/CkmFh9hCnTd6wd8s43EIr1LGMhzucnYTmfAm/QcSQt/iL+J2
-         wR1KV6SjqKyM9uXKJmsJwhuS++dB3gkSdNV1VWHq2GceQpzwY8UWloAmdM1trggVp/Ax
-         9PypcM4dwSSEK7Shgjs/jhx16qMLrgWojD1cfAKcmzMoxhBEfRW+7UDvkFXhZA2Yl/dZ
-         Sm4Q==
+        bh=lK922/lm+jk6dEQgfcgIDkKyKSWomKOkz/qMHaIZK/Q=;
+        b=L1rNUSoar60ymB1V/le4zcdjreLS/HpLa60EY/K7wlUMG9dYKT2FUCnD2X6laLIsQ9
+         MXYmhp+AdhcfDQ2Rb1YNxfMScvQOrQMIq2nz7yVn5IXOynEny/6b9icRMMgCs47WAXFl
+         gF0O1+5uBQY2h7760bcw2KAYZXMYC6G5sRIQsDHgeNw3i9+rvcJU/poGA4e6gq6udaQk
+         k0lUadzDChYpnOcU14rwPiZjn1ICG4tHDNiXKc4+hAye7jT8/k88SE5J6F+OXrPP8iVk
+         AQj5NEAKi7s15Jfunt8QZjEJ0t5CEHwv5pnPCVz4m4ENpjjkW9AhVCrHhzSAirF24kt5
+         bwMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.15 015/146] drm/i915: Try EDID bitbanging on HDMI after failed read
-Date: Tue, 13 Mar 2018 16:23:02 +0100
-Message-Id: <20180313152321.718926821@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.15 041/146] MIPS: ath25: Check for kzalloc allocation failure
+Date: Tue, 13 Mar 2018 16:23:28 +0100
+Message-Id: <20180313152323.760025151@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836873021113405?=
-X-GMAIL-MSGID: =?utf-8?q?1594836873021113405?=
+X-GMAIL-THRID: =?utf-8?q?1594836869836230255?=
+X-GMAIL-MSGID: =?utf-8?q?1594836869836230255?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 90024a5951029685acc5396258f1b0de9b23cf4a upstream.
+commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
 
-The ACK/NACK implementation as found in e.g. the G965 has the falling
-clock edge and the release of the data line after the ACK for the received
-byte happen at the same time.
+Currently there is no null check on a failed allocation of board_data,
+and hence a null pointer dereference will occurr. Fix this by checking
+for the out of memory null pointer.
 
-This is conformant with the I2C specification, which allows a zero hold
-time, see footnote [3]: "A device must internally provide a hold time of
-at least 300 ns for the SDA signal (with respect to the V IH(min) of the
-SCL signal) to bridge the undefined region of the falling edge of SCL."
-
-Some HDMI-to-VGA converters apparently fail to adhere to this requirement
-and latch SDA at the falling clock edge, so instead of an ACK
-sometimes a NACK is read and the slave (i.e. the EDID ROM) ends the
-transfer.
-
-The bitbanging releases the data line for the ACK only 1/4 bit time after
-the falling clock edge, so a slave will see the correct value no matter
-if it samples at the rising or the falling clock edge or in the center.
-
-Fallback to bitbanging is already done for the CRT connector.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=92685
-Signed-off-by: Stefan Brüns <stefan.bruens@rwth-aachen.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/a39f080b-81a5-4c93-b3f7-7cb0a58daca3@rwthex-w2-a.rwth-ad.de
-(cherry picked from commit cfb926e148e99acc02351d72e8b85e32b5f786ef)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.19+
+Patchwork: https://patchwork.linux-mips.org/patch/18657/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_hdmi.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/mips/ath25/board.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1573,12 +1573,20 @@ intel_hdmi_set_edid(struct drm_connector
- 	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
- 	struct edid *edid;
- 	bool connected = false;
-+	struct i2c_adapter *i2c;
+--- a/arch/mips/ath25/board.c
++++ b/arch/mips/ath25/board.c
+@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
+ 	}
  
- 	intel_display_power_get(dev_priv, POWER_DOMAIN_GMBUS);
- 
--	edid = drm_get_edid(connector,
--			    intel_gmbus_get_adapter(dev_priv,
--			    intel_hdmi->ddc_bus));
-+	i2c = intel_gmbus_get_adapter(dev_priv, intel_hdmi->ddc_bus);
-+
-+	edid = drm_get_edid(connector, i2c);
-+
-+	if (!edid && !intel_gmbus_is_forced_bit(i2c)) {
-+		DRM_DEBUG_KMS("HDMI GMBUS EDID read failed, retry using GPIO bit-banging\n");
-+		intel_gmbus_force_bit(i2c, true);
-+		edid = drm_get_edid(connector, i2c);
-+		intel_gmbus_force_bit(i2c, false);
-+	}
- 
- 	intel_hdmi_dp_dual_mode_detect(connector, edid != NULL);
- 
+ 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
++	if (!board_data)
++		goto error;
+ 	ath25_board.config = (struct ath25_boarddata *)board_data;
+ 	memcpy_fromio(board_data, bcfg, 0x100);
+ 	if (broken_boarddata) {
