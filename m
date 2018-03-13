@@ -1,176 +1,85 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520972390; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuCN/uo0xOEBugaLAstnnKVSpHsiCw6ix7jpAg3kvq2F7OkfOawJtoTbWZftEe8TBzJgbRd
+ARC-Seal: i=1; a=rsa-sha256; t=1520955292; cv=none;
         d=google.com; s=arc-20160816;
-        b=CDQT6lvVUcClwUMPLK5b0cjQcBxfWXZZZIaupXkidQsIUDi4wZNjEnQYTkmah2JMfv
-         yn0FHjG0i+JdQhDfngLyR5JrEljWgrI7zBcwQIya3Q1R2jwkmv3xpbIxoJVGMG+yhdAe
-         7LlQRqsBfdV51QTbrMXFscE6b6a4LJ8utucOGnmOH6o0/NorndtfOPTJi0gaJIzQdFIj
-         pqb8TiuSX239VEHMs+9rU8oZT6SsAO+O2QXi2kN7ujKuv+iE3cvh2qscKY3uklhgm0CA
-         nwjVUHXjjHxOIbTdYUDPDhJJ1J+naXi+EFN5bmm5XToPAdc/WAEdR3YOs+7HbdqMB0v7
-         wB9A==
+        b=vz35nf3FrzLg30DYRYLdpuvKLKrpArBN3OXS6Rsd66MYYwz/qycDoEb8gNNhHRVM5f
+         AECoLrloHbOiAWqJSXYmdw5jwCBXcQVPDjrvZUqisLo/Ji5jdHR6wRQXgcbqBVfI+Ym0
+         Kf/mLXFaP13acDtA7TigvZJC62fxMNGVWOKVT+jNajLnjlb5QvY8ORvfMY7bH4HFtlL/
+         iOmiU6lAMlYFMwfNSW0Hv10V4GfqJzFDzyxIasMBL8HNx7Nd1cV1dyQWoE4OQPNrlP4F
+         YZvGlA5YtL0sgsN2tqg8+gurxzBHc0QF7l2Rqz1rBnNCzbRix4mnhl6kCSiOqcO7Z35V
+         zsVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=5t46UAWgA4Vp/TWRvDDatuVqtFkHO4iIncHFboQk5kI=;
-        b=xrY8zySYwi/s6hzDA5Kp4lPh25pgD/ChFS9Mq0q6c4wFDcNXqhkG8+kIX1v+kvuowW
-         ju9Yosm52MjGhhUxMYcLCZxayP7AJddeOLp21HlpZxG/5XtgQP0EY+m5r1rS42KyrEGz
-         Wrgcvl6dCC4drGrzYy8q1AhJbZOfHopFerhfFGLdg5XiMefw2AJu3uIAqkbRjADqbdPr
-         jqffrXHfd75AnVNXpBMsUCTVlZlnv2oCTeUSW3eLfHcFT2aJzH9WMxz/oEirHznXWore
-         l8JPM5KnsgpmPljkJOxVEdxaZxBys+GyEg0PLP/0Yh1qf6GxVyYYnUL5AtTz6Qb+gHSC
-         4Gmg==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=GE3myyTBuCjJ3Xo/jcBqWQUeiZUspG1wGbVippm94Tw=;
+        b=YJM+/Qg/s7VKNQcfuHFRyMw7kc3anMtF2Wn5Q/mYU9zgvqEMZ8CzYTZl1sCmVDU9Wp
+         uGz+e8tbBRX+ooVXGIcKvVagJVLNon2XMI+ouk4pEr1w4CIl66uLGDeeqgpNvVGkQ5Oh
+         YZa9KuJULJfU9jD/Ec9I2UIV/xz/m07MmktMf1ZpO9Jt7f+cuHh3v3IB2d8h+7Xecye1
+         n89f9AWxvXFJatABe1TrBUXju2cWjo4NP4sSrw6RParBMqRjpq8wIAib/sC0I3UqC07o
+         c5SycLanqK4ywiPjna8qKdxRax/4yY7yvY+h8Ef0WUYMq9UkFvXNaL6PiudhhrVuunxq
+         KBUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELsmIH9Qs51zi5OnY+HrEVANLJ9my6Z8GZqlpkA/Z7KHszfSwHoCbqGySxjOsZIrxjCZ66rneA==
-Message-ID: <5aa83265.2990df0a.e592d.4135@mx.google.com>
-Date: Tue, 13 Mar 2018 13:19:49 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.15.y
-X-Kernelci-Kernel: v4.15.9-147-g478762923754
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Quinn Tran <quinn.tran@cavium.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 125/146] scsi: qla2xxx: Fix gpnid error processing
+Date: Tue, 13 Mar 2018 16:24:52 +0100
+Message-Id: <20180313152329.854024033@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
-Subject: Re: [PATCH 4.15 000/146] 4.15.10-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594836801301255765?=
-X-GMAIL-MSGID: =?utf-8?q?1594855145992294791?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594837216880835269?=
+X-GMAIL-MSGID: =?utf-8?q?1594837216880835269?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.15.y boot: 144 boots: 8 failed, 112 passed with 21 offlin=
-e, 2 untried/unknown, 1 conflict (v4.15.9-147-g478762923754)
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.15.y/kernel/v4.15.9-147-g478762923754/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.15.=
-y/kernel/v4.15.9-147-g478762923754/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.15.y
-Git Describe: v4.15.9-147-g478762923754
-Git Commit: 47876292375471e74934c42b819483362073feb2
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 77 unique boards, 22 SoC families, 17 builds out of 185
+From: Quinn Tran <quinn.tran@cavium.com>
 
-Boot Regressions Detected:
+commit 22e786ea47f8795c561e1a01b6a66bb2cae2fc20 upstream.
 
-arm:
+Stop GPNID command from advancing if command has failed.
 
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.15.8-1=
-2-g212dd4bb587d - first fail: v4.15.9)
-
-    multi_v7_defconfig:
-        meson8b-odroidc1:
-            lab-baylibre-seattle: new failure (last pass: v4.15.8)
-        sun8i-a33-sinlinx-sina33:
-            lab-free-electrons: new failure (last pass: v4.15.9)
-
-    mvebu_v7_defconfig:
-        armada-375-db:
-            lab-free-electrons: new failure (last pass: v4.15.9)
-
-arm64:
-
-    defconfig:
-        apq8016-sbc:
-            lab-mhart: new failure (last pass: v4.15.9)
-        meson-gxbb-p200:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.15.8 -=
- first fail: v4.15.9)
-        meson-gxl-s905d-p230:
-            lab-baylibre-seattle: new failure (last pass: v4.15.9)
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre: new failure (last pass: v4.15.9)
-        meson-gxl-s905x-p212:
-            lab-baylibre-seattle: new failure (last pass: v4.15.9)
-
-Boot Failures Detected:
-
-arm:
-
-    mvebu_v7_defconfig
-        armada-375-db: 1 failed lab
-
-    multi_v7_defconfig
-        meson8b-odroidc1: 1 failed lab
-        sun8i-a33-sinlinx-sina33: 1 failed lab
-
-arm64:
-
-    defconfig
-        apq8016-sbc: 1 failed lab
-        meson-gxbb-p200: 1 failed lab
-        meson-gxl-s905d-p230: 1 failed lab
-        meson-gxl-s905x-khadas-vim: 1 failed lab
-        meson-gxl-s905x-p212: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905x-khadas-vim: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        mt7622-rfb1: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-collabora: PASS
-            lab-baylibre-seattle: FAIL
+Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
+Cc: <stable@vger.kernel.org> # 4.10+
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/scsi/qla2xxx/qla_gs.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3211,6 +3211,11 @@ static void qla2x00_async_gpnid_sp_done(
+ 	    sp->name, res, ct_req->req.port_id.port_id,
+ 	    ct_rsp->rsp.gpn_id.port_name);
+ 
++	if (res) {
++		sp->free(sp);
++		return;
++	}
++
+ 	memset(&ea, 0, sizeof(ea));
+ 	memcpy(ea.port_name, ct_rsp->rsp.gpn_id.port_name, WWN_SIZE);
+ 	ea.sp = sp;
