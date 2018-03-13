@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932327AbeCMBzf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:55:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59836 "EHLO
+        id S932316AbeCMB62 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:58:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33206 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932211AbeCMBzc (ORCPT
+        with ESMTP id S1751397AbeCMB60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:55:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C5F160849
+        Mon, 12 Mar 2018 21:58:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE3EC60390
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCH v3 08/11] nvme-pci: Use PCI p2pmem subsystem to manage the
@@ -26,13 +26,14 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Alex Williamson <alex.williamson@redhat.com>
 References: <20180312193525.2855-1-logang@deltatee.com>
  <20180312193525.2855-9-logang@deltatee.com>
+ <4b08ec0b-76f4-4b67-a38b-5a1940c4c40d@codeaurora.org>
 From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <4b08ec0b-76f4-4b67-a38b-5a1940c4c40d@codeaurora.org>
-Date: Mon, 12 Mar 2018 21:55:27 -0400
+Message-ID: <08950833-d199-fd2b-06f6-9e585c183b86@codeaurora.org>
+Date: Mon, 12 Mar 2018 21:58:21 -0400
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180312193525.2855-9-logang@deltatee.com>
+In-Reply-To: <4b08ec0b-76f4-4b67-a38b-5a1940c4c40d@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -40,20 +41,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
-> -	if (nvmeq->sq_cmds_io)
+On 3/12/2018 9:55 PM, Sinan Kaya wrote:
+> On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
+>> -	if (nvmeq->sq_cmds_io)
+> 
+> I think you should keep the code as it is for the case where
+> (!nvmeq->sq_cmds_is_io && nvmeq->sq_cmds_io)
 
-I think you should keep the code as it is for the case where
-(!nvmeq->sq_cmds_is_io && nvmeq->sq_cmds_io)
+Never mind. I misunderstood the code.
 
-You are changing the behavior for NVMe drives with CMB buffers.
-You can change the if statement here with the statement above.
 
-> -		memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
-> -	else
-> -		memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
-> +	memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
->  
+> 
+> You are changing the behavior for NVMe drives with CMB buffers.
+> You can change the if statement here with the statement above.
+> 
+>> -		memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
+>> -	else
+>> -		memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+>> +	memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+>>  
+> 
+> 
 
 
 -- 
