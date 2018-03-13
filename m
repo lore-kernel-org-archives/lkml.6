@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuwQTcRypogvf1q8CIif3qEv9ys27p9/9vB7vW60S1GOUakV/NwM+wZAFsekyJ6d9BRIG1g
-ARC-Seal: i=1; a=rsa-sha256; t=1520955211; cv=none;
+X-Google-Smtp-Source: AG47ELs3E8DLA6aP22/czBV6JyMcs+9OoOX7H1X4oow2sZ/hrqntZkhYi3h1noGcMTUZefOSitwd
+ARC-Seal: i=1; a=rsa-sha256; t=1520955208; cv=none;
         d=google.com; s=arc-20160816;
-        b=ABtrFUv2Kx52WdQ4Fhj9Nmlw0owYdfaRlFbq/iYQ1+ZHPkAdWduhxHvQkS5SW8FtwZ
-         qHNf+uM1MqXO+JerkDZWugmnb3lJgWCucsIqltIJf805i+aYW5CYghOuiiRHe377Hc4g
-         iSoO2Yi5a5onTnGQxDS+Y1QXpuLO+GwBhTA2enfwYH+k6Toxb/uTbL9N3QKHFw+pdtEn
-         j+MGSyblZwum3M5di6N2KJloDFXl89vD75Cp/fvYjmqU0UIo2pTd10dFUE1ZZwlMIsAd
-         Z+g6SuDiKDhhdJf/rzjty+lzvOhe+Mo5/eIm/IGbbcfpzTn1ENnRfwNzp3Ba6eMhRZbP
-         Fbxg==
+        b=r/LyTk11yacLYhCuBrotEnpG/ro5ftpsYSOwAW77lquLscHyAVji72G+eZgAobG9F3
+         pIh7Go4GhRmi+5PTZxrbCnN8xiDq9CaYzMDCqrsOJ/ZZ00Ocu3MTHn9TmAeK3785R558
+         gg7OIJnaWaT7kwKPW2OfH4QzDcuQzW2PXQoWilx7w+9OJgEtYy2pngWHGrKQU/5oBX9L
+         FzDEk23DWYsCLXVZUWQxtsDnEem/FT/ZXjoGfEEY2g1OWstXtyjdvkRjLH5/QU3xn7zP
+         M2m+Hz7lsg5ZR4g2cq7DL9HraWbb8Q5DAXw76kJStrWwrYs3WmxLRsY0oKVsr7mTvcJr
+         ZNmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R/db7WB+yL4bHFmGzvpFqZ/zGUxl8EDeb2QJHgX8IYw=;
-        b=PC/G1FrRXAAC7w6OWnOLZ3frHdxd6R0moprugbJNyy8H1spRtQ8s41U4sX0qeL9pM5
-         LGFVvgHQgQFXB2w9zGASp8BdiOFZDRWDkfJt0vtC+lx5ct+JLFlNmSM3itOtXZt4myMQ
-         VoftV9b/YGU6fSnkd4Byxn1bMMgdF6QB2YcAAwn91y2LuE1fsxxn8+19kgz1pjyaLIEk
-         gNVkcsKMmpaT9FRDBDH/ekje16F5H1bvMy0cuDYixcya0vU4NueAqxXd5kioS1KeNHhy
-         J2t+aP7buR+XeLczB49WARqvAtwOiOhF+oQ8JHSfeY7NAyUf5lKDJ1/rp0FcduyYKmC0
-         CvKw==
+        bh=L5cNd4HnMxs/3gB0HGp63UITxWuj/A7bbhFQfsVxDxE=;
+        b=EKPbhRudSVnfi/r0ngU7LN6vqChjm5aeeqrxTQ0cYMoQZGbv/RkFBYcVGv3BLhrQfn
+         IMJVkPn9TqKm2IR8RZpGrvysziaWE2KSChWpB1awgsQ3bmBWgKK78ogIG9i+sonBiQIX
+         ljLngAA5KL7XsPJV658IHMayPb/EpDkMtv1PrLxsSLMaCgs1ngV1W+TrBDFChQc0W79H
+         e1TwlGE/elGhIb3Jpjtt7V03thUjBRJYOMmReNkwwLiePhVKK/0jZd/3pR3j0D39s0tl
+         a4DLCLcGLyD3Vt5u8dJuYPRixza4Yo3t3kI0z1TCMaKeXNarr9kWxduOzVXa65XoNDlr
+         04iw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.15 101/146] objtool: Fix another switch table detection issue
-Date: Tue, 13 Mar 2018 16:24:28 +0100
-Message-Id: <20180313152328.313274950@linuxfoundation.org>
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 100/146] objtool, retpolines: Integrate objtool with retpoline support more closely
+Date: Tue, 13 Mar 2018 16:24:27 +0100
+Message-Id: <20180313152328.262644942@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837131189847438?=
-X-GMAIL-MSGID: =?utf-8?q?1594837131189847438?=
+X-GMAIL-THRID: =?utf-8?q?1594837128607912092?=
+X-GMAIL-MSGID: =?utf-8?q?1594837128607912092?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +58,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 1402fd8ed7e5bda1b3e7613b70780b0db392d1e6 upstream.
+commit d5028ba8ee5a18c9d0bb926d883c28b370f89009 upstream.
 
-Continue the switch table detection whack-a-mole.  Add a check to
-distinguish KASAN data reads from switch data reads.  The switch jump
-tables in .rodata have relocations associated with them.
+Disable retpoline validation in objtool if your compiler sucks, and otherwise
+select the validation stuff for CONFIG_RETPOLINE=y (most builds would already
+have it set due to ORC).
 
-This fixes the following warning:
-
-  crypto/asymmetric_keys/x509_cert_parser.o: warning: objtool: x509_note_pkey_algo()+0xa4: sibling call from callable instruction with modified stack frame
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/d7c8853022ad47d158cb81e953a40469fc08a95e.1519784382.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Makefile               |    5 +++++
+ arch/x86/Kconfig       |    1 +
+ arch/x86/Makefile      |   10 +++-------
+ scripts/Makefile.build |    2 ++
+ 4 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -924,7 +924,11 @@ static struct rela *find_switch_table(st
- 		if (find_symbol_containing(file->rodata, text_rela->addend))
- 			continue;
+--- a/Makefile
++++ b/Makefile
+@@ -487,6 +487,11 @@ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG
+ KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+ endif
  
--		return find_rela_by_dest(file->rodata, text_rela->addend);
-+		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
-+		if (!rodata_rela)
-+			continue;
++RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
++export RETPOLINE_CFLAGS
 +
-+		return rodata_rela;
- 	}
+ ifeq ($(config-targets),1)
+ # ===========================================================================
+ # *config targets only - make sure prerequisites are updated, and descend
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -432,6 +432,7 @@ config GOLDFISH
+ config RETPOLINE
+ 	bool "Avoid speculative indirect branches in kernel"
+ 	default y
++	select STACK_VALIDATION if HAVE_STACK_VALIDATION
+ 	help
+ 	  Compile kernel with the retpoline compiler options to guard against
+ 	  kernel-to-user data leaks by avoiding speculative indirect
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -232,13 +232,9 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
  
- 	return NULL;
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
+-    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
+-
+-    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+-    ifneq ($(RETPOLINE_CFLAGS),)
+-        KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
+-    endif
++ifneq ($(RETPOLINE_CFLAGS),)
++  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
++endif
+ endif
+ 
+ archscripts: scripts_basic
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -267,8 +267,10 @@ else
+ objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
+ endif
+ ifdef CONFIG_RETPOLINE
++ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args += --retpoline
+ endif
++endif
+ 
+ 
+ ifdef CONFIG_MODVERSIONS
