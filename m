@@ -1,75 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeCMHir (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 03:38:47 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50680 "EHLO mga02.intel.com"
+        id S1752136AbeCMHoJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 03:44:09 -0400
+Received: from verein.lst.de ([213.95.11.211]:56466 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751525AbeCMHip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:38:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
-   d="scan'208";a="41486922"
-Message-ID: <1520926721.20980.210.camel@gmail.com>
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Mar 2018 09:38:41 +0200
-In-Reply-To: <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
-         <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p>
-         <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
-         <20180309012458.GD5228@ming.t460p>
-         <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
-         <20180309120833.GB30257@ming.t460p>
-         <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
-         <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751830AbeCMHoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 03:44:07 -0400
+Date: Tue, 13 Mar 2018 08:44:05 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, netanel@amazon.com,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [pci PATCH v5 1/4] pci: Add pci_sriov_configure_simple for PFs
+        that don't manage VF resources
+Message-ID: <20180313074405.GA32480@lst.de>
+References: <20180312171813.3487.94803.stgit@localhost.localdomain> <20180312172031.3487.20651.stgit@localhost.localdomain> <20180312174012.GE18494@localhost.localdomain> <CAKgT0UdWc=Sz-xgd4H3bTDt5d17=-PY8VPWz6A3mAciWV6=97w@mail.gmail.com> <20180312182321.GG18494@localhost.localdomain> <CAKgT0UfH+xXk__R_hEtFMsm7qkBG02hWC-S=8MgYkeeEx5zweA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UfH+xXk__R_hEtFMsm7qkBG02hWC-S=8MgYkeeEx5zweA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-03-13 at 11:11 +0800, Dou Liyang wrote:
->  I also
-> met the situation that BIOS told to ACPI that it could support
-> physical
-> CPUs hotplug, But actually, there was no hardware slots in the
-> machine.
-> the ACPI tables like user inputs which should be validated when we
-> use.
+On Mon, Mar 12, 2018 at 01:17:00PM -0700, Alexander Duyck wrote:
+> No, I am aware of those. The problem is they aren't accessed as
+> function pointers. As such converting them to static inline functions
+> is easy. As I am sure you are aware an "inline" function doesn't
+> normally generate a function pointer.
 
-This is exactly what happens on Skylake Xeon systems. When I check
-dmesg or this file:
+I think Keith's original idea of defining them to NULL is right.  That
+takes care of all the current trivial assign to struct cases.
 
-/sys/devices/system/cpu/possible
-
-on 2S (two socket) and 4S (four socket) systems, I see the same number
-432.
-
-This number comes from ACPI MADT. I will speculate (did not see myself)
-that 8S systems will report the same number as well, because of the
-Skylake-SP (Scalable Platform) architecture.
-
-Number 432 is good for 8S systems, but it is way too large for 2S and
-4S systems - 4x or 2x larger than the theoretical maximum.
-
-I do not know why BIOSes have to report unrealistically high numbers, I
-am just sharing my observation.
-
-So yes, Linux kernel's possible CPU count knowledge may be too large.
-If we use that number to evenly spread IRQ vectors among the CPUs, we
-end up with wasted vectors, and even bugs, as I observe on a 2S
-Skylake.
-
-Artem.
+If someone wants to call these functions they'll still need the ifdef
+around the call as those won't otherwise compile, but they probably
+want the ifdef around the whole caller anyway.
