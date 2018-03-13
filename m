@@ -1,60 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeCMSfM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:35:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:43122 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752164AbeCMSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:35:09 -0400
-Subject: Re: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-References: <20180313172103.24281-1-marc.zyngier@arm.com>
- <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
-Date: Tue, 13 Mar 2018 18:35:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752819AbeCMSfu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:35:50 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:40813 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeCMSfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 14:35:47 -0400
+X-Google-Smtp-Source: AG47ELs4U3Nj8XPUMICd+enSDgufzvv/xabtkw0FQg2mHomDxPxJU+usYiVL3xrAQxhSsSJLPgvknAcGBrwlnrBRknU=
 MIME-Version: 1.0
-In-Reply-To: <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
+References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
+From: Dave Taht <dave.taht@gmail.com>
+Date: Tue, 13 Mar 2018 11:35:46 -0700
+Message-ID: <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
+Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2DIZtj1005949
 
-On 13/03/18 17:51, Mark Rutland wrote:
-> On Tue, Mar 13, 2018 at 05:21:00PM +0000, Marc Zyngier wrote:
->> As kexec and kdump are getting used a bit more intensively, I've been
->> made aware of a number of shortcomings.
+On Tue, Mar 13, 2018 at 11:24 AM, Jakob Unterwurzacher
+<jakob.unterwurzacher@theobroma-systems.com> wrote:
+> During stress-testing our "ucan" USB/CAN adapter SocketCAN driver on Linux
+> v4.16-rc4-383-ged58d66f60b3 we observed that a small fraction of packets are
+> delivered out-of-order.
+>
+> We have tracked the problem down to the driver interface level, and it seems
+> that the driver's net_device_ops.ndo_start_xmit() function gets the packets
+> handed over in the wrong order.
+>
+> This behavior was not observed on Linux v4.15 and I have bisected the
+> problem down to this patch:
+>
+>> commit c5ad119fb6c09b0297446be05bd66602fa564758
+>> Author: John Fastabend <john.fastabend@gmail.com>
+>> Date:   Thu Dec 7 09:58:19 2017 -0800
 >>
->> The main gripe is from folks trying to launch a kdump kernel from
->> within an interrupt handler. If using EOImode==1, things work as
->> expected. If using EOImode==0 (such as in a guest), the secondary
->> kernel hangs as the previous interrupt hasn't been EOI'd, and the
->> active priority is still set. The first two patches are addressing
->> this situation for both GICv2 and GICv3 by reseting the APRs to their
->> default value.
-> 
-> As a more general thing, if irqchip drivers have state that needs to be
-> reset in their init code, can we live all this irqchip reset to the
-> crashdump kernel, and kill machine_kexec_mask_interrupts() entirely?
+>>    net: sched: pfifo_fast use skb_array
+>>
+>>    This converts the pfifo_fast qdisc to use the skb_array data structure
+>>    and set the lockless qdisc bit. pfifo_fast is the first qdisc to
+>> support
+>>    the lockless bit that can be a child of a qdisc requiring locking. So
+>>    we add logic to clear the lock bit on initialization in these cases
+>> when
+>>    the qdisc graft operation occurs.
+>>
+>>    This also removes the logic used to pick the next band to dequeue from
+>>    and instead just checks a per priority array for packets from top
+>> priority
+>>    to lowest. This might need to be a bit more clever but seems to work
+>>    for now.
+>>
+>>    Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+>>    Signed-off-by: David S. Miller <davem@davemloft.net>
+>
+>
+> The patch does not revert cleanly, but moving to one commit earlier makes
+> the problem go away.
+>
+> Selecting the "fq" scheduler instead of "pfifo_fast" makes the problem go
+> away as well.
 
-We could, once we know for sure that all the potential irqchips have
-been fixed. Or we could just remove it immediately, and see what breaks.
+I am of course, a fan of obsoleting pfifo_fast. There's no good reason
+for it anymore.
 
-> That would avoid some work (including pointer chasing on potentially
-> corrupt memory) in the kernel that crashed, making it more likely that
-> we get to the crashkernel intact...
+>
+> Is this an unintended side-effect of the patch or is there something the
+> driver has to do to request in-order delivery?
+>
+> Thanks,
+> Jakob
 
-Seems perfectly sensible to me.
 
-	M.
+
 -- 
-Jazz is not dead. It just smells funny...
+
+Dave Täht
+CEO, TekLibre, LLC
+http://www.teklibre.com
+Tel: 1-669-226-2619
