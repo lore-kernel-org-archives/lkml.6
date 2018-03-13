@@ -1,676 +1,126 @@
-Return-Path: <heikki.krogerus@linux.intel.com>
-X-Google-Smtp-Source: AG47ELu6IsLm3mFN1ARhXHIQzKbDzeGYXUiFjZPemi5+ZrYRMwcM4ReFCFuzKetRyNdRfzP5MISH
-ARC-Seal: i=1; a=rsa-sha256; t=1520865283; cv=none;
-        d=google.com; s=arc-20160816;
-        b=esqEfzKEwkQVqIkLVpyz/lZPbWwwqZEU4VNFPFGdx1XwkLrQVfYTbpxX5RI/IuHAQW
-         /rjABvYUnVAS3X/lByWVgRlcuLlxVMAQipJ2gjAcINSLpAsRZUdMHKzI09B7cScZTW9H
-         mQDoh7KwCCTyjEqdxJR8pFMzYpiOS+4/8ndNcWOm0xI+PCvZBMkIqDn+SpOuc9T9jMS/
-         6CI/K8YAeOl7QxIHmvi1N0Wxmlo1Zp2wupAlvMpeBmuKOQ2BSDIZew3+KEbR1gEeS4tW
-         iJPPlP8o8pyHTBVobnl+yqI/jmW20+ppZtapUy6LihZfcPD8MfTKc7Np3iZ46TTJGnw3
-         szXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=EuC9rYDbh+gPCc7elugWLtRRb9SDA6j/ylnzG5UQKCw=;
-        b=pe9Pr49maL/AV+e2jBsTRGTH417OOB1aGdl+QqOHYrCu57ILCn9b71qvcvxUIOm3ek
-         SeHj3JFT71FPTS5cAf3/988Ug/C1T3bABR/PJ7wnXL2h+q17wdNrhsnJfUz9ZoLIu2ZP
-         0hgdVWqqtGL7LnrvQeApQIdPvaOnft75zkzpb8bE6uBgSv/l3I7q1sHQF4JrWv1olDeB
-         VtziQPvD8a+l63eFos4XoBFI6XV2X2XcaTMV2/KXPsTW/zzJwsKloyL9IoF3/HneX/cl
-         d9Qt+LY3X2B4lKhV7vgUKvxFhrIazkmfUE2emKuAHKuq8RY9TQpGKDXlocA1Iiki91nJ
-         LQ0Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
-   d="scan'208";a="37470787"
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-	Andy Shevchenko <andy@infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jun Li <jun.li@nxp.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v7 02/12] usb: typec: API for controlling USB Type-C Multiplexers
-Date: Mon, 12 Mar 2018 17:34:21 +0300
-Message-Id: <20180312143431.82396-3-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
-References: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3086335-1520945398-5-10278891755122190600
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520945397; b=Yppoy+oooE/RR9g2HFbVQpzez2R0pONC7ui0Ri6famn1ktI
+    QiZe0l2HNwovc5lXzrvwIO07+uiLioIgUqz7xCiybZ8YeOZJcfF32S73YubJT6He
+    H5z8DrgzcugBOamh8hl2RwautdIo4c0nwryx0R/stgkKvDQCXrdJW5/HQ8lFykRm
+    DtW09iw9tU4BeRpIloO3NDTm6lFW4bai0vBOpCC/La0X2tiMxDYNA7atKA5zBsFF
+    8ooIDOh5jLL16jy1WDCtQXeZmsELrlVYEQr+7GSVyJTCM4UqidXQKzRPYwYAPfHi
+    t9v1fa2sw00+e72TAvuQ8XeeKzfZFwU05WqjkfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520945397; bh=k
+    N0U61BzISX7124beJUeKC2S5qt2rWIzp53wN3AbvCY=; b=ZWd1kTwZW4E7OdCNj
+    zHCsXcgiMhCeC6zCkyberPopIUBnNYJA2Xkgr9UeQhOZppI9W8zK28NHzkRa9ueD
+    2nj2+N65RouCk/yMZMRvLOujCwm+hrd4X7jsuAxjONotWR1iDfGq76foZNas52Ta
+    mTVv3JnegqEf32OKPHy/WLYz2m5o1fbkgANGu6hmSVZtD3+HVN0Pf7lYO2Vf7YP5
+    42FwqJmd6Puz+mXjSzOuJG+WguxLYMwvKwtvvpbGqx9YwmbyIMOHX5P4vQZQGH10
+    Kk50LVWmYwU7pYr+Mi7KLDkp2BAcIJf9QkPxitQHc9BRjeIA4K64lIFkXAvqE7aq
+    ad0Mg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=kYj6iNdz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tb/JiFxE;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=kYj6iNdz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tb/JiFxE;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELtc81EAZMnA4E8GsBM6dE2vGQelw4x2OZzGrHDR6ZFg0auI8PqVuwlM+wMflKs1fRVdE/WHbw==
+From: hariprasath.elango@gmail.com
+To: aditya.shankar@microchip.com,
+	ganesh.krishna@microchip.com
+Subject: [PATCH] staging: wilc1000: use kmemdup to replace kmalloc/memcpy
+Date: Tue, 13 Mar 2018 18:19:32 +0530
+Message-Id: <20180313124932.15038-1-hariprasath.elango@gmail.com>
+X-Mailer: git-send-email 2.10.0.GIT
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ hariprasath.elango@gmail.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594742835132228164?=
-X-GMAIL-MSGID: =?utf-8?q?1594742835132228164?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-USB Type-C connectors consist of various muxes and switches
-that route the pins on the connector to the right locations.
-The USB Type-C drivers need to be able to control the muxes,
-as they are the ones that know things like the cable plug
-orientation, and the current mode that was negotiated with
-the partner.
+From: HariPrasath Elango <hariprasath.elango@gmail.com>
 
-This introduces a small API for registering and controlling
-cable plug orientation switches, and separate small API for
-registering and controlling pin multiplexer/demultiplexer
-switches that are needed with Accessory/Alternate Modes.
+kmalloc followed by memcpy can be replaced by kmemdup.Also added the
+related error handling part
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
 ---
-Changes in v4:
--Add Andy's Reviewed-by
+ drivers/staging/wilc1000/host_interface.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Changes in v3:
--Add #include-s for a few missing headers to drivers/usb/typec/mux.c
--Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
----
- Documentation/driver-api/usb/typec.rst |  73 +++++++++++--
- drivers/usb/typec/Makefile             |   1 +
- drivers/usb/typec/{typec.c => class.c} |  70 ++++++++++++
- drivers/usb/typec/mux.c                | 191 +++++++++++++++++++++++++++++++++
- include/linux/usb/typec.h              |  14 +++
- include/linux/usb/typec_mux.h          |  55 ++++++++++
- 6 files changed, 393 insertions(+), 11 deletions(-)
- rename drivers/usb/typec/{typec.c => class.c} (95%)
- create mode 100644 drivers/usb/typec/mux.c
- create mode 100644 include/linux/usb/typec_mux.h
-
-diff --git a/Documentation/driver-api/usb/typec.rst b/Documentation/driver-api/usb/typec.rst
-index 8a7249f2ff04..feb31946490b 100644
---- a/Documentation/driver-api/usb/typec.rst
-+++ b/Documentation/driver-api/usb/typec.rst
-@@ -61,7 +61,7 @@ Registering the ports
- The port drivers will describe every Type-C port they control with struct
- typec_capability data structure, and register them with the following API:
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 0fac8e1..4ae2da6 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -992,9 +992,13 @@ static s32 handle_connect(struct wilc_vif *vif,
  
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_register_port typec_unregister_port
- 
- When registering the ports, the prefer_role member in struct typec_capability
-@@ -80,7 +80,7 @@ typec_partner_desc. The class copies the details of the partner during
- registration. The class offers the following API for registering/unregistering
- partners.
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_register_partner typec_unregister_partner
- 
- The class will provide a handle to struct typec_partner if the registration was
-@@ -92,7 +92,7 @@ should include handle to struct usb_pd_identity instance. The class will then
- create a sysfs directory for the identity under the partner device. The result
- of Discover Identity command can then be reported with the following API:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_partner_set_identity
- 
- Registering Cables
-@@ -113,7 +113,7 @@ typec_cable_desc and about a plug in struct typec_plug_desc. The class copies
- the details during registration. The class offers the following API for
- registering/unregistering cables and their plugs:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_register_cable typec_unregister_cable typec_register_plug typec_unregister_plug
- 
- The class will provide a handle to struct typec_cable and struct typec_plug if
-@@ -125,7 +125,7 @@ include handle to struct usb_pd_identity instance. The class will then create a
- sysfs directory for the identity under the cable device. The result of Discover
- Identity command can then be reported with the following API:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_cable_set_identity
- 
- Notifications
-@@ -135,7 +135,7 @@ When the partner has executed a role change, or when the default roles change
- during connection of a partner or cable, the port driver must use the following
- APIs to report it to the class:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_set_data_role typec_set_pwr_role typec_set_vconn_role typec_set_pwr_opmode
- 
- Alternate Modes
-@@ -150,7 +150,7 @@ and struct typec_altmode_desc which is a container for all the supported modes.
- Ports that support Alternate Modes need to register each SVID they support with
- the following API:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_port_register_altmode
- 
- If a partner or cable plug provides a list of SVIDs as response to USB Power
-@@ -159,12 +159,12 @@ registered.
- 
- API for the partners:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_partner_register_altmode
- 
- API for the Cable Plugs:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_plug_register_altmode
- 
- So ports, partners and cable plugs will register the alternate modes with their
-@@ -172,11 +172,62 @@ own functions, but the registration will always return a handle to struct
- typec_altmode on success, or NULL. The unregistration will happen with the same
- function:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_unregister_altmode
- 
- If a partner or cable plug enters or exits a mode, the port driver needs to
- notify the class with the following API:
- 
--.. kernel-doc:: drivers/usb/typec/typec.c
-+.. kernel-doc:: drivers/usb/typec/class.c
-    :functions: typec_altmode_update_active
-+
-+Multiplexer/DeMultiplexer Switches
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+USB Type-C connectors may have one or more mux/demux switches behind them. Since
-+the plugs can be inserted right-side-up or upside-down, a switch is needed to
-+route the correct data pairs from the connector to the USB controllers. If
-+Alternate or Accessory Modes are supported, another switch is needed that can
-+route the pins on the connector to some other component besides USB. USB Type-C
-+Connector Class supplies an API for registering those switches.
-+
-+.. kernel-doc:: drivers/usb/typec/mux.c
-+   :functions: typec_switch_register typec_switch_unregister typec_mux_register typec_mux_unregister
-+
-+In most cases the same physical mux will handle both the orientation and mode.
-+However, as the port drivers will be responsible for the orientation, and the
-+alternate mode drivers for the mode, the two are always separated into their
-+own logical components: "mux" for the mode and "switch" for the orientation.
-+
-+When a port is registered, USB Type-C Connector Class requests both the mux and
-+the switch for the port. The drivers can then use the following API for
-+controlling them:
-+
-+.. kernel-doc:: drivers/usb/typec/class.c
-+   :functions: typec_set_orientation typec_set_mode
-+
-+If the connector is dual-role capable, there may also be a switch for the data
-+role. USB Type-C Connector Class does not supply separate API for them. The
-+port drivers can use USB Role Class API with those.
-+
-+Illustration of the muxes behind a connector that supports an alternate mode:
-+
-+                     ------------------------
-+                     |       Connector      |
-+                     ------------------------
-+                            |         |
-+                     ------------------------
-+                      \     Orientation    /
-+                       --------------------
-+                                |
-+                       --------------------
-+                      /        Mode        \
-+                     ------------------------
-+                         /              \
-+      ------------------------        --------------------
-+      |       Alt Mode       |       /      USB Role      \
-+      ------------------------      ------------------------
-+                                         /            \
-+                     ------------------------      ------------------------
-+                     |       USB Host       |      |       USB Device     |
-+                     ------------------------      ------------------------
-diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-index bb3138a6eaac..56b2e9516ec1 100644
---- a/drivers/usb/typec/Makefile
-+++ b/drivers/usb/typec/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_TYPEC)		+= typec.o
-+typec-y				:= class.o mux.o
- obj-$(CONFIG_TYPEC_TCPM)	+= tcpm.o
- obj-y				+= fusb302/
- obj-$(CONFIG_TYPEC_WCOVE)	+= typec_wcove.o
-diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/class.c
-similarity index 95%
-rename from drivers/usb/typec/typec.c
-rename to drivers/usb/typec/class.c
-index dc28ad868d93..2620a694704f 100644
---- a/drivers/usb/typec/typec.c
-+++ b/drivers/usb/typec/class.c
-@@ -11,6 +11,7 @@
- #include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/usb/typec.h>
-+#include <linux/usb/typec_mux.h>
- 
- struct typec_mode {
- 	int				index;
-@@ -70,6 +71,10 @@ struct typec_port {
- 	enum typec_port_type		port_type;
- 	struct mutex			port_type_lock;
- 
-+	enum typec_orientation		orientation;
-+	struct typec_switch		*sw;
-+	struct typec_mux		*mux;
-+
- 	const struct typec_capability	*cap;
- };
- 
-@@ -92,6 +97,7 @@ static const struct device_type typec_port_dev_type;
- static DEFINE_IDA(typec_index_ida);
- static struct class *typec_class;
- 
-+/* ------------------------------------------------------------------------- */
- /* Common attributes */
- 
- static const char * const typec_accessory_modes[] = {
-@@ -1137,6 +1143,8 @@ static void typec_release(struct device *dev)
- 	struct typec_port *port = to_typec_port(dev);
- 
- 	ida_simple_remove(&typec_index_ida, port->id);
-+	typec_switch_put(port->sw);
-+	typec_mux_put(port->mux);
- 	kfree(port);
- }
- 
-@@ -1246,6 +1254,47 @@ void typec_set_pwr_opmode(struct typec_port *port,
- }
- EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
- 
-+/* ------------------------------------------ */
-+/* API for Multiplexer/DeMultiplexer Switches */
-+
-+/**
-+ * typec_set_orientation - Set USB Type-C cable plug orientation
-+ * @port: USB Type-C Port
-+ * @orientation: USB Type-C cable plug orientation
-+ *
-+ * Set cable plug orientation for @port.
-+ */
-+int typec_set_orientation(struct typec_port *port,
-+			  enum typec_orientation orientation)
-+{
-+	int ret;
-+
-+	if (port->sw) {
-+		ret = port->sw->set(port->sw, orientation);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	port->orientation = orientation;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(typec_set_orientation);
-+
-+/**
-+ * typec_set_mode - Set mode of operation for USB Type-C connector
-+ * @port: USB Type-C port for the connector
-+ * @mode: Operation mode for the connector
-+ *
-+ * Set mode @mode for @port. This function will configure the muxes needed to
-+ * enter @mode.
-+ */
-+int typec_set_mode(struct typec_port *port, int mode)
-+{
-+	return port->mux ? port->mux->set(port->mux, mode) : 0;
-+}
-+EXPORT_SYMBOL_GPL(typec_set_mode);
-+
- /* --------------------------------------- */
- 
- /**
-@@ -1293,6 +1342,18 @@ struct typec_port *typec_register_port(struct device *parent,
- 		return ERR_PTR(id);
+ 	if (memcmp("DIRECT-", pstrHostIFconnectAttr->ssid, 7)) {
+ 		info_element_size = hif_drv->usr_conn_req.ies_len;
+-		info_element = kmalloc(info_element_size, GFP_KERNEL);
+-		memcpy(info_element, hif_drv->usr_conn_req.ies,
+-				info_element_size);
++		info_element = kmemdup(hif_drv->usr_conn_req.ies,
++				       info_element_size,
++				       GFP_KERNEL);
++		if (!info_element) {
++			result = -ENOMEM;
++			goto ERRORHANDLER;
++		}
  	}
  
-+	port->sw = typec_switch_get(cap->fwnode ? &port->dev : parent);
-+	if (IS_ERR(port->sw)) {
-+		ret = PTR_ERR(port->sw);
-+		goto err_switch;
-+	}
-+
-+	port->mux = typec_mux_get(cap->fwnode ? &port->dev : parent);
-+	if (IS_ERR(port->mux)) {
-+		ret = PTR_ERR(port->mux);
-+		goto err_mux;
-+	}
-+
- 	if (cap->type == TYPEC_PORT_DFP)
- 		role = TYPEC_SOURCE;
- 	else if (cap->type == TYPEC_PORT_UFP)
-@@ -1330,6 +1391,15 @@ struct typec_port *typec_register_port(struct device *parent,
- 	}
- 
- 	return port;
-+
-+err_mux:
-+	typec_switch_put(port->sw);
-+
-+err_switch:
-+	ida_simple_remove(&typec_index_ida, port->id);
-+	kfree(port);
-+
-+	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(typec_register_port);
- 
-diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
-new file mode 100644
-index 000000000000..f89093bd7185
---- /dev/null
-+++ b/drivers/usb/typec/mux.c
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * USB Type-C Multiplexer/DeMultiplexer Switch support
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ *         Hans de Goede <hdegoede@redhat.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/list.h>
-+#include <linux/mutex.h>
-+#include <linux/usb/typec_mux.h>
-+
-+static DEFINE_MUTEX(switch_lock);
-+static DEFINE_MUTEX(mux_lock);
-+static LIST_HEAD(switch_list);
-+static LIST_HEAD(mux_list);
-+
-+static void *typec_switch_match(struct device_connection *con, int ep,
-+				void *data)
-+{
-+	struct typec_switch *sw;
-+
-+	list_for_each_entry(sw, &switch_list, entry)
-+		if (!strcmp(con->endpoint[ep], dev_name(sw->dev)))
-+			return sw;
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the switch to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * typec_switch_get - Find USB Type-C orientation switch
-+ * @dev: The caller device
-+ *
-+ * Finds a switch linked with @dev. Returns a reference to the switch on
-+ * success, NULL if no matching connection was found, or
-+ * ERR_PTR(-EPROBE_DEFER) when a connection was found but the switch
-+ * has not been enumerated yet.
-+ */
-+struct typec_switch *typec_switch_get(struct device *dev)
-+{
-+	struct typec_switch *sw;
-+
-+	mutex_lock(&switch_lock);
-+	sw = device_connection_find_match(dev, "typec-switch", NULL,
-+					  typec_switch_match);
-+	if (!IS_ERR_OR_NULL(sw))
-+		get_device(sw->dev);
-+	mutex_unlock(&switch_lock);
-+
-+	return sw;
-+}
-+EXPORT_SYMBOL_GPL(typec_switch_get);
-+
-+/**
-+ * typec_put_switch - Release USB Type-C orientation switch
-+ * @sw: USB Type-C orientation switch
-+ *
-+ * Decrement reference count for @sw.
-+ */
-+void typec_switch_put(struct typec_switch *sw)
-+{
-+	if (!IS_ERR_OR_NULL(sw))
-+		put_device(sw->dev);
-+}
-+EXPORT_SYMBOL_GPL(typec_switch_put);
-+
-+/**
-+ * typec_switch_register - Register USB Type-C orientation switch
-+ * @sw: USB Type-C orientation switch
-+ *
-+ * This function registers a switch that can be used for routing the correct
-+ * data pairs depending on the cable plug orientation from the USB Type-C
-+ * connector to the USB controllers. USB Type-C plugs can be inserted
-+ * right-side-up or upside-down.
-+ */
-+int typec_switch_register(struct typec_switch *sw)
-+{
-+	mutex_lock(&switch_lock);
-+	list_add_tail(&sw->entry, &switch_list);
-+	mutex_unlock(&switch_lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(typec_switch_register);
-+
-+/**
-+ * typec_switch_unregister - Unregister USB Type-C orientation switch
-+ * @sw: USB Type-C orientation switch
-+ *
-+ * Unregister switch that was registered with typec_switch_register().
-+ */
-+void typec_switch_unregister(struct typec_switch *sw)
-+{
-+	mutex_lock(&switch_lock);
-+	list_del(&sw->entry);
-+	mutex_unlock(&switch_lock);
-+}
-+EXPORT_SYMBOL_GPL(typec_switch_unregister);
-+
-+/* ------------------------------------------------------------------------- */
-+
-+static void *typec_mux_match(struct device_connection *con, int ep, void *data)
-+{
-+	struct typec_mux *mux;
-+
-+	list_for_each_entry(mux, &mux_list, entry)
-+		if (!strcmp(con->endpoint[ep], dev_name(mux->dev)))
-+			return mux;
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the switch to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * typec_mux_get - Find USB Type-C Multiplexer
-+ * @dev: The caller device
-+ *
-+ * Finds a mux linked to the caller. This function is primarily meant for the
-+ * Type-C drivers. Returns a reference to the mux on success, NULL if no
-+ * matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a connection
-+ * was found but the mux has not been enumerated yet.
-+ */
-+struct typec_mux *typec_mux_get(struct device *dev)
-+{
-+	struct typec_mux *mux;
-+
-+	mutex_lock(&mux_lock);
-+	mux = device_connection_find_match(dev, "typec-mux", NULL,
-+					   typec_mux_match);
-+	if (!IS_ERR_OR_NULL(mux))
-+		get_device(mux->dev);
-+	mutex_unlock(&mux_lock);
-+
-+	return mux;
-+}
-+EXPORT_SYMBOL_GPL(typec_mux_get);
-+
-+/**
-+ * typec_mux_put - Release handle to a Multiplexer
-+ * @mux: USB Type-C Connector Multiplexer/DeMultiplexer
-+ *
-+ * Decrements reference count for @mux.
-+ */
-+void typec_mux_put(struct typec_mux *mux)
-+{
-+	if (!IS_ERR_OR_NULL(mux))
-+		put_device(mux->dev);
-+}
-+EXPORT_SYMBOL_GPL(typec_mux_put);
-+
-+/**
-+ * typec_mux_register - Register Multiplexer routing USB Type-C pins
-+ * @mux: USB Type-C Connector Multiplexer/DeMultiplexer
-+ *
-+ * USB Type-C connectors can be used for alternate modes of operation besides
-+ * USB when Accessory/Alternate Modes are supported. With some of those modes,
-+ * the pins on the connector need to be reconfigured. This function registers
-+ * multiplexer switches routing the pins on the connector.
-+ */
-+int typec_mux_register(struct typec_mux *mux)
-+{
-+	mutex_lock(&mux_lock);
-+	list_add_tail(&mux->entry, &mux_list);
-+	mutex_unlock(&mux_lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(typec_mux_register);
-+
-+/**
-+ * typec_mux_unregister - Unregister Multiplexer Switch
-+ * @sw: USB Type-C Connector Multiplexer/DeMultiplexer
-+ *
-+ * Unregister mux that was registered with typec_mux_register().
-+ */
-+void typec_mux_unregister(struct typec_mux *mux)
-+{
-+	mutex_lock(&mux_lock);
-+	list_del(&mux->entry);
-+	mutex_unlock(&mux_lock);
-+}
-+EXPORT_SYMBOL_GPL(typec_mux_unregister);
-diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
-index 0d44ce6af08f..2408e5c2ed91 100644
---- a/include/linux/usb/typec.h
-+++ b/include/linux/usb/typec.h
-@@ -60,6 +60,12 @@ enum typec_accessory {
- 
- #define TYPEC_MAX_ACCESSORY	3
- 
-+enum typec_orientation {
-+	TYPEC_ORIENTATION_NONE,
-+	TYPEC_ORIENTATION_NORMAL,
-+	TYPEC_ORIENTATION_REVERSE,
-+};
-+
- /*
-  * struct usb_pd_identity - USB Power Delivery identity data
-  * @id_header: ID Header VDO
-@@ -185,6 +191,8 @@ struct typec_partner_desc {
-  * @pd_revision: USB Power Delivery Specification revision if supported
-  * @prefer_role: Initial role preference
-  * @accessory: Supported Accessory Modes
-+ * @sw: Cable plug orientation switch
-+ * @mux: Multiplexer switch for Alternate/Accessory Modes
-  * @fwnode: Optional fwnode of the port
-  * @try_role: Set data role preference for DRP port
-  * @dr_set: Set Data Role
-@@ -202,6 +210,8 @@ struct typec_capability {
- 	int			prefer_role;
- 	enum typec_accessory	accessory[TYPEC_MAX_ACCESSORY];
- 
-+	struct typec_switch	*sw;
-+	struct typec_mux	*mux;
- 	struct fwnode_handle	*fwnode;
- 
- 	int		(*try_role)(const struct typec_capability *,
-@@ -245,4 +255,8 @@ void typec_set_pwr_role(struct typec_port *port, enum typec_role role);
- void typec_set_vconn_role(struct typec_port *port, enum typec_role role);
- void typec_set_pwr_opmode(struct typec_port *port, enum typec_pwr_opmode mode);
- 
-+int typec_set_orientation(struct typec_port *port,
-+			  enum typec_orientation orientation);
-+int typec_set_mode(struct typec_port *port, int mode);
-+
- #endif /* __LINUX_USB_TYPEC_H */
-diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
-new file mode 100644
-index 000000000000..12c1b057834b
---- /dev/null
-+++ b/include/linux/usb/typec_mux.h
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#ifndef __USB_TYPEC_MUX
-+#define __USB_TYPEC_MUX
-+
-+#include <linux/list.h>
-+#include <linux/usb/typec.h>
-+
-+struct device;
-+
-+/**
-+ * struct typec_switch - USB Type-C cable orientation switch
-+ * @dev: Switch device
-+ * @entry: List entry
-+ * @set: Callback to the driver for setting the orientation
-+ *
-+ * USB Type-C pin flipper switch routing the correct data pairs from the
-+ * connector to the USB controller depending on the orientation of the cable
-+ * plug.
-+ */
-+struct typec_switch {
-+	struct device *dev;
-+	struct list_head entry;
-+
-+	int (*set)(struct typec_switch *sw, enum typec_orientation orientation);
-+};
-+
-+/**
-+ * struct typec_switch - USB Type-C connector pin mux
-+ * @dev: Mux device
-+ * @entry: List entry
-+ * @set: Callback to the driver for setting the state of the mux
-+ *
-+ * Pin Multiplexer/DeMultiplexer switch routing the USB Type-C connector pins to
-+ * different components depending on the requested mode of operation. Used with
-+ * Accessory/Alternate modes.
-+ */
-+struct typec_mux {
-+	struct device *dev;
-+	struct list_head entry;
-+
-+	int (*set)(struct typec_mux *mux, int state);
-+};
-+
-+struct typec_switch *typec_switch_get(struct device *dev);
-+void typec_switch_put(struct typec_switch *sw);
-+int typec_switch_register(struct typec_switch *sw);
-+void typec_switch_unregister(struct typec_switch *sw);
-+
-+struct typec_mux *typec_mux_get(struct device *dev);
-+void typec_mux_put(struct typec_mux *mux);
-+int typec_mux_register(struct typec_mux *mux);
-+void typec_mux_unregister(struct typec_mux *mux);
-+
-+#endif /* __USB_TYPEC_MUX */
+ 	wid_list[wid_cnt].id = (u16)WID_11I_MODE;
 -- 
-2.16.1
+2.10.0.GIT
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
