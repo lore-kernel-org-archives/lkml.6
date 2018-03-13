@@ -1,143 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeCMK5j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:57:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932566AbeCMK5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:57:38 -0400
-Date: Tue, 13 Mar 2018 06:52:51 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
-Message-ID: <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
-References: <cover.1520835596.git.rgb@redhat.com>
- <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
- <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
- <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca>
- <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
- <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca>
- <20180313093517.28c99b48@ivy-bridge>
- <20180313101108.s6o7jec57rsxpsmc@madcap2.tricolour.ca>
- <20180313113815.187da185@ivy-bridge>
+        id S932796AbeCMLCD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:02:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:35684 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932577AbeCMLCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:02:01 -0400
+Date: Tue, 13 Mar 2018 11:01:54 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ivan Gorinov <ivan.gorinov@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v5 1/2] of: Documentation: Specify local APIC ID in "reg"
+Message-ID: <20180313110153.vdtgljcvsbwiixwx@lakrids.cambridge.arm.com>
+References: <cover.1520891263.git.ivan.gorinov@intel.com>
+ <a0a0aff3befabf74a65361d0b7b7e5bc9d00176d.1520891263.git.ivan.gorinov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313113815.187da185@ivy-bridge>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <a0a0aff3befabf74a65361d0b7b7e5bc9d00176d.1520891263.git.ivan.gorinov@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-13 11:38, Steve Grubb wrote:
-> On Tue, 13 Mar 2018 06:11:08 -0400
-> Richard Guy Briggs <rgb@redhat.com> wrote:
+On Mon, Mar 12, 2018 at 03:21:48PM -0700, Ivan Gorinov wrote:
+> Set the "reg" property to the processor's local APIC ID.
+> Local APIC ID is assigned by hardware and may differ from CPU number.
 > 
-> > On 2018-03-13 09:35, Steve Grubb wrote:
-> > > On Mon, 12 Mar 2018 11:52:56 -0400
-> > > Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >   
-> > > > On 2018-03-12 11:53, Paul Moore wrote:  
-> > > > > On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs
-> > > > > <rgb@redhat.com> wrote:    
-> > > > > > On 2018-03-12 11:12, Paul Moore wrote:    
-> > > > > >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs
-> > > > > >> <rgb@redhat.com> wrote:    
-> > > > > >> > Audit link denied events for symlinks had duplicate PATH
-> > > > > >> > records rather than just updating the existing PATH record.
-> > > > > >> > Update the symlink's PATH record with the current dentry
-> > > > > >> > and inode information.
-> > > > > >> >
-> > > > > >> > See: https://github.com/linux-audit/audit-kernel/issues/21
-> > > > > >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > >> > ---
-> > > > > >> >  fs/namei.c | 1 +
-> > > > > >> >  1 file changed, 1 insertion(+)    
-> > > > > >>
-> > > > > >> Why didn't you include this in patch 4/4 like I asked during
-> > > > > >> the previous review?    
-> > > > > >
-> > > > > > Please see the last comment of:
-> > > > > > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html    
-> > > > > 
-> > > > > Yes, I just saw that ... I hadn't seen your replies on the v1
-> > > > > patches until I had finished reviewing v2.  I just replied to
-> > > > > that mail in the v1 thread, but basically you need to figure
-> > > > > out what is necessary here and let us know.  If I have to
-> > > > > figure it out it likely isn't going to get done with enough
-> > > > > soak time prior to the upcoming merge window.    
-> > > > 
-> > > > Steve?  I was hoping you could chime in here.  
-> > > 
-> > > If the CWD record will always be the same as the PARENT record,
-> > > then we do not need the parent record. Duplicate information is
-> > > bad. Like all the duplicate SYSCALL information.  
-> > 
-> > The CWD record could be different from the PARENT record, since I
-> > could have SYMLINK=/tmp/test/symlink, CWD=/tmp, PARENT=/tmp/test.
-> > Does the parent record even matter since it might not be a directory
-> > operation like creat, unlink or rename?
+> Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+> ---
+>  Documentation/devicetree/bindings/x86/ce4100.txt | 38 ++++++++++++++++++------
+>  1 file changed, 29 insertions(+), 9 deletions(-)
 > 
-> There's 2 issues. One is creating the path if what we have is relative.
-> In this situation CWD should be enough. But if the question is whether
-> the PARENT directory should be included...what if the PARENT
-> permissions do not allow the successful name resolution? In that case
-> we might only get a PARENT record no? In that case we would need it.
+> diff --git a/Documentation/devicetree/bindings/x86/ce4100.txt b/Documentation/devicetree/bindings/x86/ce4100.txt
+> index b49ae59..5a4bd83 100644
+> --- a/Documentation/devicetree/bindings/x86/ce4100.txt
+> +++ b/Documentation/devicetree/bindings/x86/ce4100.txt
+> @@ -7,17 +7,37 @@ Many of the "generic" devices like HPET or IO APIC have the ce4100
+>  name in their compatible property because they first appeared in this
+>  SoC.
+>  
+> -The CPU node
+> -------------
+> -	cpu@0 {
+> -		device_type = "cpu";
+> -		compatible = "intel,ce4100";
+> -		reg = <0>;
+> -		lapic = <&lapic0>;
+> +The CPU nodes
+> +-------------
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "intel,ce4100";
+> +			reg = <0x00>;
+> +		};
+> +
+> +		cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "intel,ce4100";
+> +			reg = <0x02>;
+> +		};
 
-I think in the case of symlink creation, normal file create code path
-would be in effect, and would properly log parent and symlink source
-file paths (if a rule to log it was in effect) which is not something
-that would trigger a symlink link denied error.  Symlink link denied
-happens only when trying to actually follow the link before
-resolving the target path of a read/write/exec of the symlink target.
+The unit-address (the bit after the '@' in the node name) should match
+the reg, so this node should be named cpu@2.
 
-If the parent permissions of the link's target don't allow successful
-name resolution then the symlink link denied condition isn't met, but
-rather any other rule that applies to the target path.
+If there's another ID associated with each CPU, then this should be
+described in another property.
 
-> -Steve
+>  	};
+>  
+> -The reg property describes the CPU number. The lapic property points to
+> -the local APIC timer.
+
+Why was the lapic phandle removed?
+
+Thanks,
+Mark.
+
+> +A "cpu" node describes one logical processor (hardware thread).
+> +
+> +Required properties:
+> +
+> +- device_type
+> +	Device type, must be "cpu".
+> +
+> +- reg
+> +	Local APIC ID, a unique number assigned to each processor by
+> +	hardware. This ID is used to specify the destination of interrupt
+> +	messages with "physical" destination mode, including startup IPI.
+>  
+>  The SoC node
+>  ------------
+> -- 
+> 2.7.4
 > 
-> > > > I'd just include it for completeness unless Steve thinks it will
-> > > > stand on its own and doesn't want the overhead.
-> > > >   
-> > > > > >> > diff --git a/fs/namei.c b/fs/namei.c
-> > > > > >> > index 50d2533..00f5041 100644
-> > > > > >> > --- a/fs/namei.c
-> > > > > >> > +++ b/fs/namei.c
-> > > > > >> > @@ -945,6 +945,7 @@ static inline int
-> > > > > >> > may_follow_link(struct nameidata *nd) if (nd->flags &
-> > > > > >> > LOOKUP_RCU) return -ECHILD;
-> > > > > >> >
-> > > > > >> > +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
-> > > > > >> >         audit_log_link_denied("follow_link",
-> > > > > >> > &nd->stack[0].link); return -EACCES;
-> > > > > >> >  }    
-> > > > > >>
-> > > > > >> paul moore    
-> > > > > >
-> > > > > > - RGB    
-> > > > > 
-> > > > > paul moore    
-> > > > 
-> > > > - RGB  
-> > 
-> > - RGB
-> > 
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
