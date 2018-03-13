@@ -1,58 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeCMApj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:45:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59946 "EHLO
+        id S932354AbeCMAuP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:50:15 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60046 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932266AbeCMApi (ORCPT
+        with ESMTP id S932190AbeCMAuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:45:38 -0400
-Date: Tue, 13 Mar 2018 00:45:32 +0000
+        Mon, 12 Mar 2018 20:50:13 -0400
+Date: Tue, 13 Mar 2018 00:50:11 +0000
 From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-ID: <20180313004532.GU30522@ZenIV.linux.org.uk>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-5-guro@fb.com>
- <20180312211742.GR30522@ZenIV.linux.org.uk>
- <20180312223632.GA6124@castle>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: John Ogness <john.ogness@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
+ breakage when used from shrink_dentry_list())
+Message-ID: <20180313005010.GV30522@ZenIV.linux.org.uk>
+References: <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+ <20180224002248.GH30522@ZenIV.linux.org.uk>
+ <20180225073950.GI30522@ZenIV.linux.org.uk>
+ <87bmgbnhar.fsf_-_@linutronix.de>
+ <20180312191351.GN30522@ZenIV.linux.org.uk>
+ <877eqhcab3.fsf@xmission.com>
+ <20180312203916.GQ30522@ZenIV.linux.org.uk>
+ <87woygan6p.fsf@xmission.com>
+ <87tvtk97i8.fsf@xmission.com>
+ <20180313003751.GT30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312223632.GA6124@castle>
+In-Reply-To: <20180313003751.GT30522@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:36:38PM +0000, Roman Gushchin wrote:
-
-> Ah, I see...
+On Tue, Mar 13, 2018 at 12:37:51AM +0000, Al Viro wrote:
+> On Mon, Mar 12, 2018 at 06:52:31PM -0500, Eric W. Biederman wrote:
 > 
-> I think, it's better to account them when we're actually freeing,
-> otherwise we will have strange path:
-> (indirectly) reclaimable -> unreclaimable -> free
+> > Ah.  I see now there is now the s_roots list that handles
+> > that bit of strangeness.
+> > 
+> > So one path is to simply remove the heuristic from
+> > path_connected.
+> > 
+> > Another path is to have nfsv2 and nfsv3 not set s_root at all.
+> > Leaving the heuristic working for the rest of the filesystems,
+> > and generally simplifying the code.
+> > 
+> > Something like the diff below I should think.
 > 
-> Do you agree?
+> > +	/* Leave nfsv2 and nfsv3 s_root == NULL */
+> 
+> Now, grep fs/super.c for s_root.  Or try to boot it, for that
+> matter...
 
-> +static void __d_free_external_name(struct rcu_head *head)
-> +{
-> +	struct external_name *name;
-> +
-> +	name = container_of(head, struct external_name, u.head);
-> +
-> +	mod_node_page_state(page_pgdat(virt_to_page(name)),
-> +			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
-> +			    -ksize(name));
-> +
-> +	kfree(name);
-> +}
-
-Maybe, but then you want to call that from __d_free_external() and from
-failure path in __d_alloc() as well.  Duplicating something that convoluted
-and easy to get out of sync is just asking for trouble.
+BTW, if rename happens on server and we step into directory
+we'd already seen in one subtree while doing a lookup in
+another, we will get it moved around.  Without having the
+subtrees ever connected in dcache on client.  So adding
+&& IS_ROOT(sb->s_root) to the test also won't work.
