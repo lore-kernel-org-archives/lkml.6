@@ -1,316 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932472AbeCMA61 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:58:27 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34443 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932308AbeCMA55 (ORCPT
+        id S1751512AbeCMBCQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:02:16 -0400
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:38356 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751377AbeCMBCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:57:57 -0400
-X-Google-Smtp-Source: AG47ELvT9WjQdCJlSSDG5OkfgdJxcf1MlEv3QgiyqopOCEdffslgHyqu1AdDhzyAJgCrFXkcf8XlGw==
-Date: Mon, 12 Mar 2018 17:57:55 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-cc: Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [patch -mm v3 2/3] mm, memcg: replace cgroup aware oom killer mount
- option with tunable
-In-Reply-To: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.20.1803121757220.192200@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 12 Mar 2018 21:02:14 -0400
+X-Google-Smtp-Source: AG47ELsD6oLjOEsf6LWLnZZN0iA1TNsYteuIKWR92n5NeRSxHy/acu9YG7U5tvElDjvQ4Iv9L8I8gw==
+Date: Mon, 12 Mar 2018 21:02:10 -0400
+From: Vivek Unune <npcomplete13@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>, Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: BCM5301X: Fix NAND ECC parameters for Linksys
+ Panamera
+Message-ID: <20180313010210.ws4dugy3rrpqwzmk@osboxes>
+References: <20180310171244.70299-1-npcomplete13@gmail.com>
+ <CACna6rz1TeRbPq-60HkHz9A0TDn+iXtmXniE6FCiANpUmV-qrw@mail.gmail.com>
+ <20180311100313.znonhesgh462rz65@osboxes>
+ <2ef6e4fc-cce7-372e-e35f-578fd6ada9ca@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ef6e4fc-cce7-372e-e35f-578fd6ada9ca@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that each mem cgroup on the system has a memory.oom_policy tunable to
-specify oom kill selection behavior, remove the needless "groupoom" mount
-option that requires (1) the entire system to be forced, perhaps
-unnecessarily, perhaps unexpectedly, into a single oom policy that
-differs from the traditional per process selection, and (2) a remount to
-change.
+Hi Florian,
 
-Instead of enabling the cgroup aware oom killer with the "groupoom" mount
-option, set the mem cgroup subtree's memory.oom_policy to "cgroup".
+On Mon, Mar 12, 2018 at 03:52:27PM -0700, Florian Fainelli wrote:
+> On 03/11/2018 03:03 AM, Vivek Unune wrote:
+> > Hi Rafał,
+> > 
+> > On Sat, Mar 10, 2018 at 10:41:04PM +0100, Rafał Miłecki wrote:
+> >> On 10 March 2018 at 18:12, Vivek Unune <npcomplete13@gmail.com> wrote:
+> >>> Using BCH8 gives ecc errors and makes the router unsuable.
+> >>> Switching to BCH1 fixes these errors.
+> >>
+> >> Can you provide CFE's log messages starting with
+> >> "Decompressing...done" and up to the "Press Ctrl+C to stop in CFE"
+> >> please? I'd like to see what NAND info CFE prints there.
+> > 
+> > See below. It does say BCH-8, however I can't get it to work.
+> > 
+> > CFE log:
+> > 
+> > Decompressing...done
+> > Found a Toshiba NAND flash:
+> > Total size:  128MB
+> > Block size:  128KB
+> > Page Size:   2048B
+> > OOB Size:    64B
+> > Sector size: 512B
+> > Spare size:  16B
+> > ECC level:   8 (8-bit)
+> > Device ID: 0x98 0xf1 0x80 0x15 0xf2 0x16
+> > find_devinfo: devinfo block found at 0x00180000!
+> > 
+> > Press Ctrl+C to stop in CFE
+> 
+> What kind of error are you getting in Linux with BCH-8?
 
-The heuristic used to select a process or cgroup to kill from is
-controlled by the oom mem cgroup's memory.oom_policy.  This means that if
-a descendant mem cgroup has an oom policy of "none", for example, and an
-oom condition originates in an ancestor with an oom policy of "cgroup",
-the selection logic will treat all descendant cgroups as indivisible
-memory consumers.
+See below:
 
-For example, consider an example where each mem cgroup has "memory" set
-in cgroup.controllers:
+[   12.941850] Generic PHY dsa-1.0:03: attached PHY driver [Generic PHY] (mii_bus:phy_addr=dsa-1.0:03, irq=POLL)
+[   12.991851] Generic PHY dsa-1.0:04: attached PHY driver [Generic PHY] (mii_bus:phy_addr=dsa-1.0:04, irq=POLL)
+[   13.032404] UBI: auto-attach mtd5
+[   13.035731] ubi0: attaching mtd5
+[   13.115701] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 113:0, read only 64 bytes, retry
+[   13.127630] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 113:0, read only 64 bytes, retry
+[   13.139524] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 113:0, read only 64 bytes, retry
+[   13.151419] ubi0 error: 0xc037ca08: error -74 (ECC error) while reading 64 bytes from PEB 113:0, read 64 bytes
+[   13.161448] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.14.25 #0
+[   13.167460] Hardware name: BCM5301X
+[   13.170951] Backtrace:
+[   13.173398] Function entered at [<c0105ccc>] from [<c0105fb4>]
+[   13.179240]  r7:00000000 r6:60000013 r5:00000000 r4:c081d988
+[   13.184903] Function entered at [<c0105f9c>] from [<c04f29a8>]
+[   13.190744] Function entered at [<c04f2918>] from [<c037ca0c>]
+[   13.196586]  r7:00000000 r6:00000040 r5:c7954000 r4:ffffffb6
+[   13.202251] Function entered at [<c037c7dc>] from [<c037cd1c>]
+[   13.208095]  r10:00000000 r9:00000040 r8:00000071 r7:c7954000 r6:c7979000 r5:c7036180
+[   13.215941]  r4:c7b72900
+[   13.218475] Function entered at [<c037cca4>] from [<c0381c5c>]
+[   13.224318]  r10:00000000 r9:c7979800 r8:c7954000 r7:c7979000 r6:00000071 r5:c7036180
+[   13.232157]  r4:c7b72900
+[   13.234690] Function entered at [<c0381a84>] from [<c0376d74>]
+[   13.240534]  r10:c7954040 r9:00000840 r8:c702e400 r7:00000000 r6:c702e400 r5:c7954000
+[   13.248381]  r4:fffff800
+[   13.250914] Function entered at [<c0376720>] from [<c0717b9c>]
+[   13.256759]  r10:c0813a88 r9:c0651c18 r8:c0651bec r7:c084ff48 r6:c081e440 r5:c7823ea4
+[   13.264605]  r4:c702e400
+[   13.267139] Function entered at [<c0717954>] from [<c0101a8c>]
+[   13.272983]  r10:c072e83c r9:c07366b8 r8:c0717954 r7:c072e838 r6:c081e440 r5:00000000
+[   13.280830]  r4:c0803c08
+[   13.283363] Function entered at [<c01019dc>] from [<c0700e38>]
+[   13.289206]  r9:c07366b8 r8:c0700594 r7:c072e838 r6:c081e440 r5:c081e440 r4:00000008
+[   13.296958] Function entered at [<c0700cf8>] from [<c0506adc>]
+[   13.302802]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0506acc
+[   13.310641]  r4:00000000
+[   13.313175] Function entered at [<c0506acc>] from [<c0102788>]
+[   13.319015]  r5:c0506acc r4:00000000
+[   13.323289] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 114:0, read only 64 bytes, retry
+[   13.335178] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 114:0, read only 64 bytes, retry
+[   13.347066] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 114:0, read only 64 bytes, retry
+[   13.358956] ubi0 error: 0xc037ca08: error -74 (ECC error) while reading 64 bytes from PEB 114:0, read 64 bytes
+[   13.368989] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.14.25 #0
+[   13.375007] Hardware name: BCM5301X
+[   13.378496] Backtrace:
+[   13.380943] Function entered at [<c0105ccc>] from [<c0105fb4>]
+[   13.386787]  r7:00000000 r6:60000013 r5:00000000 r4:c081d988
+[   13.392450] Function entered at [<c0105f9c>] from [<c04f29a8>]
+[   13.398291] Function entered at [<c04f2918>] from [<c037ca0c>]
+[   13.404133]  r7:00000000 r6:00000040 r5:c7954000 r4:ffffffb6
+[   13.409797] Function entered at [<c037c7dc>] from [<c037cd1c>]
+[   13.415641]  r10:00000000 r9:00000040 r8:00000072 r7:c7954000 r6:c7979000 r5:c7036180
+[   13.423488]  r4:c7b72900
+[   13.426021] Function entered at [<c037cca4>] from [<c0381c5c>]
+[   13.431865]  r10:00000000 r9:c7979800 r8:c7954000 r7:c7979000 r6:00000072 r5:c7036180
+[   13.439704]  r4:c7b72900
+[   13.442237] Function entered at [<c0381a84>] from [<c0376d74>]
+[   13.448081]  r10:c7954040 r9:00000840 r8:c702e400 r7:00000000 r6:c702e400 r5:c7954000
+[   13.455928]  r4:fffff800
+[   13.458461] Function entered at [<c0376720>] from [<c0717b9c>]
+[   13.464305]  r10:c0813a88 r9:c0651c18 r8:c0651bec r7:c084ff48 r6:c081e440 r5:c7823ea4
+[   13.472152]  r4:c702e400
+[   13.474685] Function entered at [<c0717954>] from [<c0101a8c>]
+[   13.480529]  r10:c072e83c r9:c07366b8 r8:c0717954 r7:c072e838 r6:c081e440 r5:00000000
+[   13.488376]  r4:c0803c08
+[   13.490909] Function entered at [<c01019dc>] from [<c0700e38>]
+[   13.496754]  r9:c07366b8 r8:c0700594 r7:c072e838 r6:c081e440 r5:c081e440 r4:00000008
+[   13.504514] Function entered at [<c0700cf8>] from [<c0506adc>]
+[   13.510358]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0506acc
+[   13.518197]  r4:00000000
+[   13.520730] Function entered at [<c0506acc>] from [<c0102788>]
+[   13.526570]  r5:c0506acc r4:00000000
+[   13.530863] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 115:0, read only 64 bytes, retry
+[   13.542763] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 115:0, read only 64 bytes, retry
+[   13.554659] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 115:0, read only 64 bytes, retry
+[   13.566548] ubi0 error: 0xc037ca08: error -74 (ECC error) while reading 64 bytes from PEB 115:0, read 64 bytes
+[   13.576574] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.25 #0
+[   13.582589] Hardware name: BCM5301X
+[   13.586078] Backtrace:
+[   13.588526] Function entered at [<c0105ccc>] from [<c0105fb4>]
+[   13.594368]  r7:00000000 r6:60000013 r5:00000000 r4:c081d988
+[   13.600032] Function entered at [<c0105f9c>] from [<c04f29a8>]
+[   13.605872] Function entered at [<c04f2918>] from [<c037ca0c>]
+[   13.611714]  r7:00000000 r6:00000040 r5:c7954000 r4:ffffffb6
+[   13.617378] Function entered at [<c037c7dc>] from [<c037cd1c>]
+[   13.623223]  r10:00000000 r9:00000040 r8:00000073 r7:c7954000 r6:c7979000 r5:c7036180
+[   13.631071]  r4:c7b72900
+[   13.633604] Function entered at [<c037cca4>] from [<c0381c5c>]
+[   13.639447]  r10:00000000 r9:c7979800 r8:c7954000 r7:c7979000 r6:00000073 r5:c7036180
+[   13.647286]  r4:c7b72900
+[   13.649819] Function entered at [<c0381a84>] from [<c0376d74>]
+[   13.655663]  r10:c7954040 r9:00000840 r8:c702e400 r7:00000000 r6:c702e400 r5:c7954000
+[   13.663510]  r4:fffff800
+[   13.666042] Function entered at [<c0376720>] from [<c0717b9c>]
+[   13.671886]  r10:c0813a88 r9:c0651c18 r8:c0651bec r7:c084ff48 r6:c081e440 r5:c7823ea4
+[   13.679725]  r4:c702e400
+[   13.682258] Function entered at [<c0717954>] from [<c0101a8c>]
+[   13.688103]  r10:c072e83c r9:c07366b8 r8:c0717954 r7:c072e838 r6:c081e440 r5:00000000
+[   13.695949]  r4:c0803c08
+[   13.698482] Function entered at [<c01019dc>] from [<c0700e38>]
+[   13.704327]  r9:c07366b8 r8:c0700594 r7:c072e838 r6:c081e440 r5:c081e440 r4:00000008
+[   13.712087] Function entered at [<c0700cf8>] from [<c0506adc>]
+[   13.717930]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0506acc
+[   13.725769]  r4:00000000
+[   13.728303] Function entered at [<c0506acc>] from [<c0102788>]
+[   13.734144]  r5:c0506acc r4:00000000
+[   13.738425] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 116:0, read only 64 bytes, retry
+[   13.750319] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 116:0, read only 64 bytes, retry
+[   13.762213] ubi0 warning: 0xc037c9e4: error -74 (ECC error) while reading 64 bytes from PEB 116:0, read only 64 bytes, retry
+[   13.774103] ubi0 error: 0xc037ca08: error -74 (ECC error) while reading 64 bytes from PEB 116:0, read 64 bytes
+[   13.784130] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.25 #0
 
-	mem cgroup	cgroup.procs
-	==========	============
-	/cg1		1 process consuming 250MB
-	/cg2		3 processes consuming 100MB each
-	/cg3/cg31	2 processes consuming 100MB each
-	/cg3/cg32	2 processes consuming 100MB each
+Thanks,
 
-If the root mem cgroup's memory.oom_policy is "none", the process from
-/cg1 is chosen as the victim.  If memory.oom_policy is "cgroup", a process
-from /cg2 is chosen because it is in the single indivisible memory
-consumer with the greatest usage.  This policy of "cgroup" is identical to
-to the current "groupoom" mount option, now removed.
-
-Note that /cg3 is not the chosen victim when the oom mem cgroup policy is
-"cgroup" because cgroups are treated individually without regard to
-hierarchical /cg3/memory.current usage.  This will be addressed in a
-follow-up patch.
-
-This has the added benefit of allowing descendant cgroups to control their
-own oom policies if they have memory.oom_policy file permissions without
-being restricted to the system-wide policy.  In the above example, /cg2
-and /cg3 can be either "none" or "cgroup" with the same results: the
-selection heuristic depends only on the policy of the oom mem cgroup.  If
-/cg2 or /cg3 themselves are oom, however, the policy is controlled by
-their own oom policies, either process aware or cgroup aware.
-
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- Documentation/cgroup-v2.txt | 78 +++++++++++++++++++------------------
- include/linux/cgroup-defs.h |  5 ---
- include/linux/memcontrol.h  |  5 +++
- kernel/cgroup/cgroup.c      | 13 +------
- mm/memcontrol.c             | 17 ++++----
- 5 files changed, 55 insertions(+), 63 deletions(-)
-
-diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
---- a/Documentation/cgroup-v2.txt
-+++ b/Documentation/cgroup-v2.txt
-@@ -1076,6 +1076,17 @@ PAGE_SIZE multiple when read back.
- 	Documentation/filesystems/proc.txt).  This is the same policy as if
- 	memory cgroups were not even mounted.
- 
-+	If "cgroup", the OOM killer will compare mem cgroups as indivisible
-+	memory consumers; that is, they will compare mem cgroup usage rather
-+	than process memory footprint.  See the "OOM Killer" section below.
-+
-+	When an OOM condition occurs, the policy is dictated by the mem
-+	cgroup that is OOM (the root mem cgroup for a system-wide OOM
-+	condition).  If a descendant mem cgroup has a policy of "none", for
-+	example, for an OOM condition in a mem cgroup with policy "cgroup",
-+	the heuristic will still compare mem cgroups as indivisible memory
-+	consumers.
-+
-   memory.events
- 	A read-only flat-keyed file which exists on non-root cgroups.
- 	The following entries are defined.  Unless specified
-@@ -1282,43 +1293,36 @@ belonging to the affected files to ensure correct memory ownership.
- OOM Killer
- ~~~~~~~~~~
- 
--Cgroup v2 memory controller implements a cgroup-aware OOM killer.
--It means that it treats cgroups as first class OOM entities.
--
--Cgroup-aware OOM logic is turned off by default and requires
--passing the "groupoom" option on mounting cgroupfs. It can also
--by remounting cgroupfs with the following command::
--
--  # mount -o remount,groupoom $MOUNT_POINT
--
--Under OOM conditions the memory controller tries to make the best
--choice of a victim, looking for a memory cgroup with the largest
--memory footprint, considering leaf cgroups and cgroups with the
--memory.oom_group option set, which are considered to be an indivisible
--memory consumers.
--
--By default, OOM killer will kill the biggest task in the selected
--memory cgroup. A user can change this behavior by enabling
--the per-cgroup memory.oom_group option. If set, it causes
--the OOM killer to kill all processes attached to the cgroup,
--except processes with oom_score_adj set to -1000.
--
--This affects both system- and cgroup-wide OOMs. For a cgroup-wide OOM
--the memory controller considers only cgroups belonging to the sub-tree
--of the OOM'ing cgroup.
--
--Leaf cgroups and cgroups with oom_group option set are compared based
--on their cumulative memory usage. The root cgroup is treated as a
--leaf memory cgroup as well, so it is compared with other leaf memory
--cgroups. Due to internal implementation restrictions the size of
--the root cgroup is the cumulative sum of oom_badness of all its tasks
--(in other words oom_score_adj of each task is obeyed). Relying on
--oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can lead to over- or
--underestimation of the root cgroup consumption and it is therefore
--discouraged. This might change in the future, however.
--
--If there are no cgroups with the enabled memory controller,
--the OOM killer is using the "traditional" process-based approach.
-+Cgroup v2 memory controller implements an optional cgroup-aware out of
-+memory killer, which treats cgroups as indivisible OOM entities.
-+
-+This policy is controlled by memory.oom_policy.  When a memory cgroup is
-+out of memory, its memory.oom_policy will dictate how the OOM killer will
-+select a process, or cgroup, to kill.  Likewise, when the system is OOM,
-+the policy is dictated by the root mem cgroup.
-+
-+There are currently two available oom policies:
-+
-+ - "none": default, choose the largest single memory hogging process to
-+   oom kill, as traditionally the OOM killer has always done.
-+
-+ - "cgroup": choose the cgroup with the largest memory footprint from the
-+   subtree as an OOM victim and kill at least one process, depending on
-+   memory.oom_group, from it.
-+
-+When selecting a cgroup as a victim, the OOM killer will kill the process
-+with the largest memory footprint.  A user can control this behavior by
-+enabling the per-cgroup memory.oom_group option.  If set, it causes the
-+OOM killer to kill all processes attached to the cgroup, except processes
-+with /proc/pid/oom_score_adj set to -1000 (oom disabled).
-+
-+The root cgroup is treated as a leaf memory cgroup as well, so it is
-+compared with other leaf memory cgroups. Due to internal implementation
-+restrictions the size of the root cgroup is the cumulative sum of
-+oom_badness of all its tasks (in other words oom_score_adj of each task
-+is obeyed). Relying on oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can
-+lead to over- or underestimation of the root cgroup consumption and it is
-+therefore discouraged. This might change in the future, however.
- 
- Please, note that memory charges are not migrating if tasks
- are moved between different memory cgroups. Moving tasks with
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -81,11 +81,6 @@ enum {
- 	 * Enable cpuset controller in v1 cgroup to use v2 behavior.
- 	 */
- 	CGRP_ROOT_CPUSET_V2_MODE = (1 << 4),
--
--	/*
--	 * Enable cgroup-aware OOM killer.
--	 */
--	CGRP_GROUP_OOM = (1 << 5),
- };
- 
- /* cftype->flags */
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -64,6 +64,11 @@ enum memcg_oom_policy {
- 	 * oom_badness()
- 	 */
- 	MEMCG_OOM_POLICY_NONE,
-+	/*
-+	 * Local cgroup usage is used to select a target cgroup, treating each
-+	 * mem cgroup as an indivisible consumer
-+	 */
-+	MEMCG_OOM_POLICY_CGROUP,
- };
- 
- struct mem_cgroup_reclaim_cookie {
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1732,9 +1732,6 @@ static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
- 		if (!strcmp(token, "nsdelegate")) {
- 			*root_flags |= CGRP_ROOT_NS_DELEGATE;
- 			continue;
--		} else if (!strcmp(token, "groupoom")) {
--			*root_flags |= CGRP_GROUP_OOM;
--			continue;
- 		}
- 
- 		pr_err("cgroup2: unknown option \"%s\"\n", token);
-@@ -1751,11 +1748,6 @@ static void apply_cgroup_root_flags(unsigned int root_flags)
- 			cgrp_dfl_root.flags |= CGRP_ROOT_NS_DELEGATE;
- 		else
- 			cgrp_dfl_root.flags &= ~CGRP_ROOT_NS_DELEGATE;
--
--		if (root_flags & CGRP_GROUP_OOM)
--			cgrp_dfl_root.flags |= CGRP_GROUP_OOM;
--		else
--			cgrp_dfl_root.flags &= ~CGRP_GROUP_OOM;
- 	}
- }
- 
-@@ -1763,8 +1755,6 @@ static int cgroup_show_options(struct seq_file *seq, struct kernfs_root *kf_root
- {
- 	if (cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
- 		seq_puts(seq, ",nsdelegate");
--	if (cgrp_dfl_root.flags & CGRP_GROUP_OOM)
--		seq_puts(seq, ",groupoom");
- 	return 0;
- }
- 
-@@ -5932,8 +5922,7 @@ static struct kobj_attribute cgroup_delegate_attr = __ATTR_RO(delegate);
- static ssize_t features_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "nsdelegate\n"
--					"groupoom\n");
-+	return snprintf(buf, PAGE_SIZE, "nsdelegate\n");
- }
- static struct kobj_attribute cgroup_features_attr = __ATTR_RO(features);
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2811,14 +2811,14 @@ bool mem_cgroup_select_oom_victim(struct oom_control *oc)
- 	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		return false;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return false;
--
- 	if (oc->memcg)
- 		root = oc->memcg;
- 	else
- 		root = root_mem_cgroup;
- 
-+	if (root->oom_policy != MEMCG_OOM_POLICY_CGROUP)
-+		return false;
-+
- 	select_victim_memcg(root, oc);
- 
- 	return oc->chosen_memcg;
-@@ -5425,9 +5425,6 @@ static int memory_oom_group_show(struct seq_file *m, void *v)
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
- 	bool oom_group = memcg->oom_group;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return -ENOTSUPP;
--
- 	seq_printf(m, "%d\n", oom_group);
- 
- 	return 0;
-@@ -5441,9 +5438,6 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
- 	int oom_group;
- 	int err;
- 
--	if (!(cgrp_dfl_root.flags & CGRP_GROUP_OOM))
--		return -ENOTSUPP;
--
- 	err = kstrtoint(strstrip(buf), 0, &oom_group);
- 	if (err)
- 		return err;
-@@ -5554,6 +5548,9 @@ static int memory_oom_policy_show(struct seq_file *m, void *v)
- 	enum memcg_oom_policy policy = READ_ONCE(memcg->oom_policy);
- 
- 	switch (policy) {
-+	case MEMCG_OOM_POLICY_CGROUP:
-+		seq_puts(m, "cgroup\n");
-+		break;
- 	case MEMCG_OOM_POLICY_NONE:
- 	default:
- 		seq_puts(m, "none\n");
-@@ -5570,6 +5567,8 @@ static ssize_t memory_oom_policy_write(struct kernfs_open_file *of,
- 	buf = strstrip(buf);
- 	if (!memcmp("none", buf, min(sizeof("none")-1, nbytes)))
- 		memcg->oom_policy = MEMCG_OOM_POLICY_NONE;
-+	else if (!memcmp("cgroup", buf, min(sizeof("cgroup")-1, nbytes)))
-+		memcg->oom_policy = MEMCG_OOM_POLICY_CGROUP;
- 	else
- 		ret = -EINVAL;
- 
+Vivek
