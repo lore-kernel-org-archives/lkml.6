@@ -1,93 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeCMJPn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:15:43 -0400
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:46606 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeCMJPk (ORCPT
+        id S932526AbeCMJPa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:15:30 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:41800 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752483AbeCMJOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:15:40 -0400
-X-Google-Smtp-Source: AG47ELsSSj6xZDyoi1fx3ZudzLEDFQbgg4gs7Gp9rQgLDw7fy6MItxhKmdxVWl40dc8DCoIjFDyOVKYNqW1uZdUSNxM=
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
-References: <20180312194715.GA3992@amd> <20180312194944.GA3979@amd>
- <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
- <20180312223521.vzccevf6z7ik5ysf@thinkpad> <20180312230407.GA7612@amd>
- <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
- <20180312231847.GB7612@amd> <20180313005103.brhhrxlatxfkdw7p@thinkpad> <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Mar 2018 10:15:39 +0100
-X-Google-Sender-Auth: ySCmza7BLDsShEwPJVfCDrarus0
-Message-ID: <CAJZ5v0jjVAj_B6ex37E9Br+KbRkyOzYwwkX9Rh10=R0Mpdwc+Q@mail.gmail.com>
-Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
- error in mate
-To: =?UTF-8?Q?Ognjen_Gali=C4=87?= <smclt30p@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        ACPI mailing list <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Mar 2018 05:14:01 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIoA016505
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 09/11] kconfig: tests: test randconfig for choice in choice
+Date: Tue, 13 Mar 2018 18:12:10 +0900
+Message-Id: <1520932332-2449-10-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2D9GKLb031489
 
-On Tue, Mar 13, 2018 at 10:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, Mar 13, 2018 at 1:51 AM, Ognjen Galić <smclt30p@gmail.com> wrote:
->> On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
->>> Hi!
->>>
->>> > >> > >> Fully charged
->>> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
->>> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
->>> > >> > >> waiting to charge".
->>> > >> > >>
->>> > >>
->>> > >> For the MATE bug see:
->>> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
->>> > >>
->>> > >> The problem is in the new composite battery system in UPower, it
->>> > >> "merges" two external batteries into a single one for reporting. That
->>> > >> battery does not understand "Not Charging" inside the MATE Power
->>> > >> Manager. The above patch fixes that in MATE.
->>> > >
->>> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
->>> > >
->>> > > And now, I see that MATE should be improved.
->>> > >
->>> > > But what I also see is that kernel is changing its interface in a way
->>> > > that (while making sense) breaks existing application. And we don't
->>> > > break existing applications.
->>> > >
->>> > > [Now... maybe if the fix for the application is available for long
->>> > > long time and noone is really looking and everyone already has new
->>> > > application version, maybe ... But pull request for MATE is 9 days
->>> > > old, and not even merged. So there is no way this is suitable for
->>> > > 4.17.]
->>> >
->>> > Right.
->>> >
->>> > This basically means that we will have to defer the battery changes
->>> > until user space is ready and not just upstream, but also in distro
->>> > packages.
->>>
->>> Yes please.
->>>
->>> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
->>> anything, the others should be safe AFAICT?
->>>
->>>                                                               Pavel
->>>
->>
->> Actually there is a bug in UPower itself, and that reflects the status
->> icon being broken in almost all desktop environments. I will work on
->> fixing UPower in the following days. Disregard my previous comment.
->
-> I have reverted commit 91eea70e5e5ce12e for the time being.
->
-> Of course, it can be applied again after all of the bus triggered by
-> it have been fixed and the fixes have gone to users.
+Commit 3b9a19e08960 ("kconfig: loop as long as we changed some symbols
+in randconfig") fixed randconfig where a choice contains a sub-choice.
+Prior to that commit, the sub-choice values were not set.
 
-s/bus/bugs/ (obviously)
+I am not sure whether this is an intended feature or just something
+people discovered works, but it is used in the real world;
+drivers/usb/gadget/legacy/Kconfig is source'd in a choice context,
+then creates a sub-choice in it.
+
+For the test case in this commit, there are 3 possible results.
+
+Case 1:
+  CONFIG_A=y
+  # CONFIG_B is not set
+
+Case 2:
+  # CONFIG_A is not set
+  CONFIG_B=y
+  CONFIG_C=y
+  # CONFIG_D is not set
+
+Case 3:
+  # CONFIG_A is not set
+  CONFIG_B=y
+  # CONFIG_C is not set
+  CONFIG_D=y
+  CONFIG_E=y
+
+So, this test iterates several times, and checks if the result is
+either of the three.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+
+Changes in v3:
+  - Fix typos
+
+Changes in v2:
+  - Newly added
+
+ scripts/kconfig/tests/rand_nested_choice/Kconfig   | 33 ++++++++++++++++++++++
+ .../kconfig/tests/rand_nested_choice/__init__.py   | 16 +++++++++++
+ .../tests/rand_nested_choice/expected_stdout0      |  2 ++
+ .../tests/rand_nested_choice/expected_stdout1      |  4 +++
+ .../tests/rand_nested_choice/expected_stdout2      |  5 ++++
+ 5 files changed, 60 insertions(+)
+ create mode 100644 scripts/kconfig/tests/rand_nested_choice/Kconfig
+ create mode 100644 scripts/kconfig/tests/rand_nested_choice/__init__.py
+ create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout0
+ create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout1
+ create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout2
+
+diff --git a/scripts/kconfig/tests/rand_nested_choice/Kconfig b/scripts/kconfig/tests/rand_nested_choice/Kconfig
+new file mode 100644
+index 0000000..c591d51
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/Kconfig
+@@ -0,0 +1,33 @@
++choice
++	prompt "choice"
++
++config A
++	bool "A"
++
++config B
++	bool "B"
++
++if B
++choice
++	prompt "sub choice"
++
++config C
++	bool "C"
++
++config D
++	bool "D"
++
++if D
++choice
++	prompt "subsub choice"
++
++config E
++	bool "E"
++
++endchoice
++endif # D
++
++endchoice
++endif # B
++
++endchoice
+diff --git a/scripts/kconfig/tests/rand_nested_choice/__init__.py b/scripts/kconfig/tests/rand_nested_choice/__init__.py
+new file mode 100644
+index 0000000..e729a4e
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/__init__.py
+@@ -0,0 +1,16 @@
++"""
++Set random values recursively in nested choices.
++
++Kconfig can create a choice-in-choice structure by using 'if' statement.
++randconfig should correctly set random choice values.
++
++Related Linux commit: 3b9a19e08960e5cdad5253998637653e592a3c29
++"""
++
++
++def test(conf):
++    for i in range(20):
++        assert conf.randconfig() == 0
++        assert (conf.config_contains('expected_stdout0') or
++                conf.config_contains('expected_stdout1') or
++                conf.config_contains('expected_stdout2'))
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout0 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
+new file mode 100644
+index 0000000..05450f3
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
+@@ -0,0 +1,2 @@
++CONFIG_A=y
++# CONFIG_B is not set
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout1 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
+new file mode 100644
+index 0000000..37ab295
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
+@@ -0,0 +1,4 @@
++# CONFIG_A is not set
++CONFIG_B=y
++CONFIG_C=y
++# CONFIG_D is not set
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout2 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
+new file mode 100644
+index 0000000..849ff47
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
+@@ -0,0 +1,5 @@
++# CONFIG_A is not set
++CONFIG_B=y
++# CONFIG_C is not set
++CONFIG_D=y
++CONFIG_E=y
+-- 
+2.7.4
