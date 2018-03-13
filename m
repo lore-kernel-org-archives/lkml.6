@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932891AbeCMNbU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:31:20 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35606 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932721AbeCMNbR (ORCPT
+        id S933004AbeCMNbX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:31:23 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36388 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932756AbeCMNbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:31:17 -0400
-X-Google-Smtp-Source: AG47ELsDKgdjq8wVtEpUH26wEsesmT1WQrZqOfdUZbj52c51/gv+SOo4YnIKzeB9lSxhoefFO11fDg==
+        Tue, 13 Mar 2018 09:31:20 -0400
+X-Google-Smtp-Source: AG47ELvSuIvBhXvXXNidmvmzcueQU75BowgSSIsE5L9SZNsz5dQtbroxRKKrhofWENqPBhevyNlc9g==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -15,194 +15,200 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 0/8] drm/xen-front: Add support for Xen PV display frontend
-Date: Tue, 13 Mar 2018 15:30:59 +0200
-Message-Id: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
+Subject: [PATCH v2 2/8] drm/xen-front: Implement Xen bus state handling
+Date: Tue, 13 Mar 2018 15:31:01 +0200
+Message-Id: <1520947867-32514-3-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
+References: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Hello!
+Initial handling for Xen bus states: implement
+Xen bus state machine for the frontend driver according to
+the state diagram and recovery flow from display para-virtualized
+protocol: xen/interface/io/displif.h.
 
-This patch series adds support for Xen [1] para-virtualized
-frontend display driver. It implements the protocol from
-include/xen/interface/io/displif.h [2].
-Accompanying backend [3] is implemented as a user-space application
-and its helper library [4], capable of running as a Weston client
-or DRM master.
-Configuration of both backend and frontend is done via 
-Xen guest domain configuration options [5].
-
-*******************************************************************************
-* Driver limitations
-*******************************************************************************
- 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
-    allocated buffers) below are not supported at the same time.
-
- 2. Only primary plane without additional properties is supported.
-
- 3. Only one video mode supported which resolution is configured via XenStore.
-
- 4. All CRTCs operate at fixed frequency of 60Hz.
-
-*******************************************************************************
-* Driver modes of operation in terms of display buffers used
-*******************************************************************************
- Depending on the requirements for the para-virtualized environment, namely
- requirements dictated by the accompanying DRM/(v)GPU drivers running in both
- host and guest environments, number of operating modes of para-virtualized
- display driver are supported:
-  - display buffers can be allocated by either frontend driver or backend
-  - display buffers can be allocated to be contiguous in memory or not
-
- Note! Frontend driver itself has no dependency on contiguous memory for
-       its operation.
-
-*******************************************************************************
-* 1. Buffers allocated by the frontend driver.
-*******************************************************************************
-
- The below modes of operation are configured at compile-time via
- frontend driver's kernel configuration.
-
- 1.1. Front driver configured to use GEM CMA helpers
-      This use-case is useful when used with accompanying DRM/vGPU driver in
-      guest domain which was designed to only work with contiguous buffers,
-      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
-      contiguous PRIME buffers, thus requiring frontend driver to provide
-      such. In order to implement this mode of operation para-virtualized
-      frontend driver can be configured to use GEM CMA helpers.
-
- 1.2. Front driver doesn't use GEM CMA
-      If accompanying drivers can cope with non-contiguous memory then, to
-      lower pressure on CMA subsystem of the kernel, driver can allocate
-      buffers from system memory.
-
- Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
-   may require IOMMU support on the platform, so accompanying DRM/vGPU
-   hardware can still reach display buffer memory while importing PRIME
-   buffers from the frontend driver.
-
-*******************************************************************************
-* 2. Buffers allocated by the backend
-*******************************************************************************
-
- This mode of operation is run-time configured via guest domain configuration
- through XenStore entries.
-
- For systems which do not provide IOMMU support, but having specific
- requirements for display buffers it is possible to allocate such buffers
- at backend side and share those with the frontend.
- For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
- physically contiguous memory, this allows implementing zero-copying
- use-cases.
-
-
-I would like to thank at least, but not at last the following
-people/communities who helped this driver to happen ;)
-
-1. My team at EPAM for continuous support
-2. Xen community for answering tons of questions on different
-modes of operation of the driver with respect to virtualized
-environment.
-3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
-4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
-5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
-
-
-Changes since v1:
-*******************************************************************************
-- use SPDX license identifier, set license to GPLv2 OR MIT
-- changed midlayers to direct function calls, removed:
-  - front_ops
-  - gem_ops
-- renamed xenbus_driver callbacks to align with exisitng PV drivers
-- re-worked backend error handling with connector hotplug uevents
-- removed vblank handling so user-space doesn't have an impression
-  we really support that
-- directly use front's mode_set in display enable/disable
-- removed BUG_ON, error handling implemented
-- moved driver documentation into Documentation/gpu
-- other comments from Xen community addressed (Boris and Juergen)
-- squashed Xen and DRM patches for better interrconnection visibility
-- for your convenience driver is available at [11]
-
-Thank you,
-Oleksandr Andrushchenko
-
-
-[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
-[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
-[3] https://github.com/xen-troops/displ_be
-[4] https://github.com/xen-troops/libxenbe
-[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
-[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
-[7] https://www.spinics.net/lists/dri-devel/msg164102.html
-[8] https://www.spinics.net/lists/dri-devel/msg164463.html
-[9] https://patchwork.freedesktop.org/series/38073/
-[10] https://patchwork.freedesktop.org/series/38139/
-[11] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v2
-
-Oleksandr Andrushchenko (8):
-  drm/xen-front: Introduce Xen para-virtualized frontend driver
-  drm/xen-front: Implement Xen bus state handling
-  drm/xen-front: Read driver configuration from Xen store
-  drm/xen-front: Implement Xen event channel handling
-  drm/xen-front: Implement handling of shared display buffers
-  drm/xen-front: Introduce DRM/KMS virtual display driver
-  drm/xen-front: Implement GEM operations and backend communication
-  drm/xen-front: Provide kernel documentation
-
- Documentation/gpu/index.rst                 |   1 +
- Documentation/gpu/xen-front.rst             |  77 ++++
- drivers/gpu/drm/Kconfig                     |   2 +
- drivers/gpu/drm/Makefile                    |   1 +
- drivers/gpu/drm/xen/Kconfig                 |  30 ++
- drivers/gpu/drm/xen/Makefile                |  17 +
- drivers/gpu/drm/xen/xen_drm_front.c         | 690 ++++++++++++++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front.h         |  77 ++++
- drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  77 ++++
- drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  37 ++
- drivers/gpu/drm/xen/xen_drm_front_conn.c    | 146 ++++++
- drivers/gpu/drm/xen/xen_drm_front_conn.h    |  27 ++
- drivers/gpu/drm/xen/xen_drm_front_drv.c     | 239 ++++++++++
- drivers/gpu/drm/xen/xen_drm_front_drv.h     |  78 ++++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 383 +++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  79 ++++
- drivers/gpu/drm/xen/xen_drm_front_gem.c     | 335 ++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_gem.h     |  41 ++
- drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  74 +++
- drivers/gpu/drm/xen/xen_drm_front_kms.c     | 324 +++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_kms.h     |  25 +
- drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 432 +++++++++++++++++
- drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  72 +++
- 23 files changed, 3264 insertions(+)
- create mode 100644 Documentation/gpu/xen-front.rst
- create mode 100644 drivers/gpu/drm/xen/Kconfig
- create mode 100644 drivers/gpu/drm/xen/Makefile
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+---
+ drivers/gpu/drm/xen/xen_drm_front.c | 124 +++++++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/xen/xen_drm_front.h |  18 ++++++
+ 2 files changed, 141 insertions(+), 1 deletion(-)
  create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
- create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+index 03bc50b128fd..520b5b34520b 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -16,19 +16,141 @@
+ 
+ #include <xen/interface/io/displif.h>
+ 
++#include "xen_drm_front.h"
++
++static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
++{
++}
++
++static int displback_initwait(struct xen_drm_front_info *front_info)
++{
++	return 0;
++}
++
++static int displback_connect(struct xen_drm_front_info *front_info)
++{
++	return 0;
++}
++
++static void displback_disconnect(struct xen_drm_front_info *front_info)
++{
++	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
++}
++
+ static void displback_changed(struct xenbus_device *xb_dev,
+ 		enum xenbus_state backend_state)
+ {
++	struct xen_drm_front_info *front_info = dev_get_drvdata(&xb_dev->dev);
++	int ret;
++
++	DRM_DEBUG("Backend state is %s, front is %s\n",
++			xenbus_strstate(backend_state),
++			xenbus_strstate(xb_dev->state));
++
++	switch (backend_state) {
++	case XenbusStateReconfiguring:
++		/* fall through */
++	case XenbusStateReconfigured:
++		/* fall through */
++	case XenbusStateInitialised:
++		break;
++
++	case XenbusStateInitialising:
++		/* recovering after backend unexpected closure */
++		displback_disconnect(front_info);
++		break;
++
++	case XenbusStateInitWait:
++		/* recovering after backend unexpected closure */
++		displback_disconnect(front_info);
++		if (xb_dev->state != XenbusStateInitialising)
++			break;
++
++		ret = displback_initwait(front_info);
++		if (ret < 0)
++			xenbus_dev_fatal(xb_dev, ret,
++					"initializing frontend");
++		else
++			xenbus_switch_state(xb_dev, XenbusStateInitialised);
++		break;
++
++	case XenbusStateConnected:
++		if (xb_dev->state != XenbusStateInitialised)
++			break;
++
++		ret = displback_connect(front_info);
++		if (ret < 0)
++			xenbus_dev_fatal(xb_dev, ret,
++					"initializing DRM driver");
++		else
++			xenbus_switch_state(xb_dev, XenbusStateConnected);
++		break;
++
++	case XenbusStateClosing:
++		/*
++		 * in this state backend starts freeing resources,
++		 * so let it go into closed state, so we can also
++		 * remove ours
++		 */
++		break;
++
++	case XenbusStateUnknown:
++		/* fall through */
++	case XenbusStateClosed:
++		if (xb_dev->state == XenbusStateClosed)
++			break;
++
++		displback_disconnect(front_info);
++		break;
++	}
+ }
+ 
+ static int xen_drv_probe(struct xenbus_device *xb_dev,
+ 		const struct xenbus_device_id *id)
+ {
+-	return 0;
++	struct xen_drm_front_info *front_info;
++
++	front_info = devm_kzalloc(&xb_dev->dev,
++			sizeof(*front_info), GFP_KERNEL);
++	if (!front_info)
++		return -ENOMEM;
++
++	front_info->xb_dev = xb_dev;
++	dev_set_drvdata(&xb_dev->dev, front_info);
++	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
+ }
+ 
+ static int xen_drv_remove(struct xenbus_device *dev)
+ {
++	struct xen_drm_front_info *front_info = dev_get_drvdata(&dev->dev);
++	int to = 100;
++
++	xenbus_switch_state(dev, XenbusStateClosing);
++
++	/*
++	 * On driver removal it is disconnected from XenBus,
++	 * so no backend state change events come via .otherend_changed
++	 * callback. This prevents us from exiting gracefully, e.g.
++	 * signaling the backend to free event channels, waiting for its
++	 * state to change to XenbusStateClosed and cleaning at our end.
++	 * Normally when front driver removed backend will finally go into
++	 * XenbusStateInitWait state.
++	 *
++	 * Workaround: read backend's state manually and wait with time-out.
++	 */
++	while ((xenbus_read_unsigned(front_info->xb_dev->otherend,
++			"state", XenbusStateUnknown) != XenbusStateInitWait) &&
++			to--)
++		msleep(10);
++
++	if (!to)
++		DRM_ERROR("Backend state is %s while removing driver\n",
++			xenbus_strstate(xenbus_read_unsigned(
++					front_info->xb_dev->otherend,
++					"state", XenbusStateUnknown)));
++
++	xen_drv_remove_internal(front_info);
++	xenbus_frontend_closed(dev);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+new file mode 100644
+index 000000000000..8b8d4d1e0816
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++
++/*
++ *  Xen para-virtual DRM device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#ifndef __XEN_DRM_FRONT_H_
++#define __XEN_DRM_FRONT_H_
++
++struct xen_drm_front_info {
++	struct xenbus_device *xb_dev;
++};
++
++#endif /* __XEN_DRM_FRONT_H_ */
 -- 
 2.7.4
