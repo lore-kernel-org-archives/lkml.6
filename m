@@ -1,137 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932669AbeCMK14 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:27:56 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34527 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932521AbeCMK1y (ORCPT
+        id S932722AbeCMKax (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:30:53 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:35921 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932540AbeCMKat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:27:54 -0400
-Subject: Re: [PATCH 09/11] media: vsp1: Provide support for extended command
- pools
-To: jacopo mondi <jacopo@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <02dcefdd58c734623b9caf2513316380feb9f993.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
- <20180312163045.GE12967@w540>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <3ba8e871-5218-cac1-19d0-bdaaa182bf45@ideasonboard.com>
-Date: Tue, 13 Mar 2018 10:27:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Tue, 13 Mar 2018 06:30:49 -0400
+X-Google-Smtp-Source: AG47ELtmTyZQDreXGr8MwcJ6rWBL5ccXbpKceU36nrpQrhs1sBvuoWgO3QoamvAFYOr3O1ANzxhp1Hz73UJhLvlpoUk=
 MIME-Version: 1.0
-In-Reply-To: <20180312163045.GE12967@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+zpnLeyu4MQA2mgdLkEscTx9cfUp4Qcw-0cgfRa4cdLCRVwkg@mail.gmail.com>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+ <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+ <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
+ <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
+ <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
+ <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
+ <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
+ <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
+ <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
+ <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
+ <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
+ <CA+zpnLeyu4MQA2mgdLkEscTx9cfUp4Qcw-0cgfRa4cdLCRVwkg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Tue, 13 Mar 2018 10:30:47 +0000
+Message-ID: <CAKv+Gu_EN2djoJQQ_QAxUQenD5=kKtyS8TFKg7cZaz+6xsbDRg@mail.gmail.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Jeremy Cline <jeremy@jcline.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On 13 March 2018 at 10:23, Thiebaud Weksteen <tweek@google.com> wrote:
+> On Tue, Mar 13, 2018 at 8:59 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> wrote:
+>
+>> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
+...
+>> > Could the problem perhaps be that the new code for the TPM event-log is
+>> > missing some handling to deal with running on a 32 bit firmware? I know
+> the
+>> > rest of the kernel has special code to deal with this.
+>> >
+>
+> Yes, that was my guess as well.
+>
+>> That is a very good point, and I missed that this is a 64-bit kernel
+>> running on 32-bit UEFI.
+>
+>> The TPM code does use efi_call_proto() directly, and now I am thinking
+>> it is perhaps the allocate_pages() call that simply only initializes
+>> the low 32-bits of log_tbl.
+>
+> That make sense. Would you know what happens to the arguments of the
+> function in this case? (I'm thinking &log_location ?)
 
-On 12/03/18 16:30, jacopo mondi wrote:
-> Hi Kieran,
->     just one small thing I noticed below...
-> 
-> On Fri, Mar 09, 2018 at 10:04:07PM +0000, Kieran Bingham wrote:
->> VSPD and VSP-DL devices can provide extended display lists supporting
->> extended command display list objects.
->>
->> These extended commands require their own dma memory areas for a header
->> and body specific to the command type.
->>
->> Implement a command pool to allocate all necessary memory in a single
->> DMA allocation to reduce pressure on the TLB, and provide convenvient
->> re-usable command objects for the entities to utilise.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/platform/vsp1/vsp1_dl.c | 189 +++++++++++++++++++++++++++-
->>  drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
->>  2 files changed, 192 insertions(+)
->>
->> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
->> index 36440a2a2c8b..6d17b8bfa21c 100644
->> --- a/drivers/media/platform/vsp1/vsp1_dl.c
->> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
->> @@ -121,6 +121,30 @@ struct vsp1_dl_body_pool {
->>  };
->>
->>  /**
->> + * struct vsp1_cmd_pool - display list body pool
->> + * @dma: DMA address of the entries
->> + * @size: size of the full DMA memory pool in bytes
->> + * @mem: CPU memory pointer for the pool
->> + * @bodies: Array of DLB structures for the pool
->> + * @free: List of free DLB entries
->> + * @lock: Protects the pool and free list
->> + * @vsp1: the VSP1 device
->> + */
->> +struct vsp1_dl_cmd_pool {
->> +	/* DMA allocation */
->> +	dma_addr_t dma;
->> +	size_t size;
->> +	void *mem;
->> +
->> +	struct vsp1_dl_ext_cmd *cmds;
->> +	struct list_head free;
->> +
->> +	spinlock_t lock;
->> +
->> +	struct vsp1_device *vsp1;
->> +};
->> +
->> +/**
->>   * struct vsp1_dl_list - Display list
->>   * @list: entry in the display list manager lists
->>   * @dlm: the display list manager
->> @@ -176,6 +200,7 @@ struct vsp1_dl_manager {
->>  	struct vsp1_dl_list *pending;
->>
->>  	struct vsp1_dl_body_pool *pool;
->> +	struct vsp1_dl_cmd_pool *autfld_cmds;
->>  };
->>
->>  /* -----------------------------------------------------------------------------
->> @@ -339,6 +364,139 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
->>  }
->>
->>  /* -----------------------------------------------------------------------------
->> + * Display List Extended Command Management
->> + */
->> +
->> +enum vsp1_extcmd_type {
->> +	VSP1_EXTCMD_AUTODISP,
->> +	VSP1_EXTCMD_AUTOFLD,
->> +};
->> +
->> +struct vsp1_extended_command_info {
->> +	u16 opcode;
->> +	size_t body_size;
->> +} vsp1_extended_commands[] = {
->> +	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
->> +	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
->> +};
-> 
-> How about making this one static and const, since it does not get
-> modified?
+log_location and log_last_entry are always 64-bit quantities, and
+efi_bool_t is always u8, so that shouldn't matter.
 
-Good spot. Certainly. This is just a static descriptor table of the extended
-command parameter sizes, so it should not change.  (but could be added to in
-later hardware operations I presume).
+> Would it be safer to skip the code completely on EFI_MIXED systems?
+>
 
-Cheers
-
-Kieran
-
-
-> 
-> Thanks
->    j
-> 
+Obviously, but I would like to avoid that if possible. Let's see first
+if we've pinpointed it now.
