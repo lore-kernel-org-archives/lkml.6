@@ -1,141 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeCMSj2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:39:28 -0400
-Received: from mail-cys01nam02on0083.outbound.protection.outlook.com ([104.47.37.83]:56672
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751996AbeCMSjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:39:24 -0400
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Rob Herring <robh@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Shubhrajyoti Datta <shubhraj@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rajan Vaja <RAJANV@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Thread-Topic: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Thread-Index: AQHTsONzi5kT5xZmx0aJGWwSpBvQuKPCd+2AgALw7dCAACyGAIAI+snw
-Date: Tue, 13 Mar 2018 18:39:13 +0000
-Message-ID: <DM2PR0201MB0767FFBAECF3A0B30251DBB8B8D20@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
- <1519856861-31384-3-git-send-email-jollys@xilinx.com>
- <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
- <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
-In-Reply-To: <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-x-originating-ip: [149.199.62.254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM2PR0201MB0862;7:WfcFzY0F+ecgKE6GWEGyqvjRLiVZNDzLEI+Cqe3M5szpiltSIBRZCvIvWDTsSwtPX8/XfVk6ZtXSD2Ji64YlWQvrGDDqAJ5T3IXmDZGtVM6jlOshldo4NYExactaPWdRX6GVi42hkxQ4Fel8gnzNwU/68ixpw1Of6YcbQpMtl+wdHb7TOvKS5TMKPXZ7mr6QH4j7Qd99EO/y44oFba1wUsoG9ZCh/CAkbqllkwZWQskJUounFOnkv5aFWl3PyCcU
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(39380400002)(346002)(376002)(199004)(189003)(13464003)(26005)(6436002)(54906003)(229853002)(4326008)(3280700002)(9686003)(186003)(2906002)(76176011)(3660700001)(5250100002)(93886005)(55016002)(105586002)(5660300001)(68736007)(7696005)(316002)(6916009)(86362001)(6506007)(53546011)(2950100002)(99286004)(72206003)(33656002)(102836004)(2900100001)(8936002)(66066001)(478600001)(305945005)(97736004)(74316002)(14454004)(7736002)(25786009)(6116002)(8676002)(106356001)(3846002)(6246003)(81156014)(53936002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0201MB0862;H:DM2PR0201MB0767.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b09e9136-0444-46c4-dfbb-08d58911b80b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM2PR0201MB0862;
-x-ms-traffictypediagnostic: DM2PR0201MB0862:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com;
-x-microsoft-antispam-prvs: <DM2PR0201MB086212E4B68CC48E8A1D0BC9B8D20@DM2PR0201MB0862.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501244)(52105095)(10201501046)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM2PR0201MB0862;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0201MB0862;
-x-forefront-prvs: 0610D16BBE
-x-microsoft-antispam-message-info: LhX2IfVUkFoolyjWSFTrO3Dfif+PkXx4gZ2pj9r7RyA5tNOcJ0siwQ/FwUR9ogfEWxeKlgcDwZ9jmcSGk9/Jk6X+G65LkY9d2u39T0XfJeVsmkrl448Y4gKSu0zDfcQFCkfQPc+thccVu/A8hZx9IyCsQKxzDAOlAhTIElWZRv7b8u8tDSzttc1T8Fdt1naHqcenvVpwHFdK310ATSXTg5hGPXJd+JcEytibgcBnWGmQTP/On3JQwc8Sw8RquRQNOuqzbgIpR0Fif4D+81r4K8JqDJhL5EuG0U1rzWcjv2o5G+AZpVUSNT8LaseOsl/5R8HRO3KKa0KDtRG5eJAvUQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1752917AbeCMSjw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:39:52 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37725 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752382AbeCMSib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 14:38:31 -0400
+X-Google-Smtp-Source: AG47ELuNr5a190WgF6Ix20wfRmnUS2j/r++uS7Y+eK0wZITTYfawf09CGrfZzbPo5cgFqzb3G9kfSg==
+From: Thierry Escande <thierry.escande@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] arm64: dts: apq8096-db820c: enable bluetooth node
+Date: Tue, 13 Mar 2018 19:38:05 +0100
+Message-Id: <20180313183807.6701-2-thierry.escande@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180313183807.6701-1-thierry.escande@linaro.org>
+References: <20180313183807.6701-1-thierry.escande@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b09e9136-0444-46c4-dfbb-08d58911b80b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2018 18:39:13.5997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0201MB0862
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DIdVes006471
 
-Hi Rob,
+Add a new serial node for the Qualcomm BT controller QCA6174. This
+allows automatic probing and hci registration through the serdev
+framework instead of relying on the userspace helpers.
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Wednesday, March 07, 2018 5:20 PM
-> To: Jolly Shah <JOLLYS@xilinx.com>
-> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
-> michal.simek@xilinx.com; mark.rutland@arm.com; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; Shubhrajyoti Datta <shubhraj@xilinx.com>; linux-
-> kernel@vger.kernel.org; Rajan Vaja <RAJANV@xilinx.com>; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
-> driver
-> 
-> On Wed, Mar 7, 2018 at 4:47 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
-> > Hi Rob,
-> >
-> >
-> >> -----Original Message-----
-> >> From: Rob Herring [mailto:robh@kernel.org]
-> >> Sent: Monday, March 05, 2018 5:46 PM
-> >> To: Jolly Shah <JOLLYS@xilinx.com>
-> >> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
-> >> michal.simek@xilinx.com; mark.rutland@arm.com;
-> >> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; Shubhrajyoti
-> >> Datta <shubhraj@xilinx.com>; linux- kernel@vger.kernel.org; Jolly
-> >> Shah <JOLLYS@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>;
-> >> linux-arm-kernel@lists.infradead.org
-> >> Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP
-> >> clock driver
-> >>
-> >> On Wed, Feb 28, 2018 at 02:27:40PM -0800, Jolly Shah wrote:
-> >> > Add documentation to describe Xilinx ZynqMP clock driver bindings.
-> >> >
-> >> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> >> > Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> >> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> >> > ---
-> 
-> >> > +95         dpll_post_src
-> >> > +96         vpll_int
-> >> > +97         vpll_pre_src
-> >> > +98         vpll_half
-> >> > +99         vpll_int_mux
-> >> > +100                vpll_post_src
-> >> > +101                can0_mio
-> >> > +102                can1_mio
-> >> > +
-> >> > +Example:
-> >> > +
-> >> > +clk: clk {
-> >> > +   #clock-cells = <1>;
-> >> > +   compatible = "xlnx,zynqmp-clk";
-> >>
-> >> How do you control the clocks?
-> >
-> > Clocks are controlled by a dedicated platform management controller. Above
-> clock ids are used to identify clocks between master and PMU.
-> 
-> What is the interface to the "platform management controller"? Because you
-> have no registers, I'm guessing a firmware interface? If so, then just define the
-> firmware node as a clock provider.
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  | 14 ++++++++++
+ .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    | 17 ++++++++++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       | 32 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 10 +++++++
+ 4 files changed, 73 insertions(+)
 
-Yes it is firmware interface. Along with clocks, firmware interface also controls power and pinctrl operations as major.
-I am not sure if I understand you correctly. Do you suggest to register clocks through Firmware driver or just use firmware DT node as clock provider and clock driver DT node can reference clocks from FW node to register same?
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
+index 24552f19b3fa..172165d84669 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
+@@ -36,4 +36,18 @@
+ 			drive-strength = <2>;	/* 2 MA */
+ 		};
+ 	};
++
++	blsp1_uart1_default: blsp1_uart1_default {
++		function = "blsp_uart2";
++		pins = "gpio41", "gpio42", "gpio43", "gpio44";
++		drive-strength = <16>;
++		bias-disable;
++	};
++
++	blsp1_uart1_sleep: blsp1_uart1_sleep {
++		function = "gpio";
++		pins = "gpio41", "gpio42", "gpio43", "gpio44";
++		drive-strength = <2>;
++		bias-disable;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+index 59b29ddfb6e9..f8d2a3b10b1f 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+@@ -26,6 +26,23 @@
+ 		};
+ 	};
  
-> 
-> Rob
++	divclk4_pin_a: divclk4 {
++		pins = "gpio18";
++		function = "func2";
++
++		bias-disable;
++		power-source = <PM8994_GPIO_S4>;
++	};
++
++	bt_en_pin_a: bt-en-active {
++		pins = "gpio19";
++		function = "normal";
++
++		output-low;
++		power-source = <PM8994_GPIO_S4>;
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
++	};
++
+ 	usb3_vbus_det_gpio: pm8996_gpio22 {
+ 		pinconf {
+ 			pins = "gpio22";
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 1c8f1b86472d..b05d6bc0b856 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -23,6 +23,7 @@
+ 	aliases {
+ 		serial0 = &blsp2_uart1;
+ 		serial1 = &blsp2_uart2;
++		serial2 = &blsp1_uart1;
+ 		i2c0	= &blsp1_i2c2;
+ 		i2c1	= &blsp2_i2c1;
+ 		i2c2	= &blsp2_i2c0;
+@@ -34,7 +35,38 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	clocks {
++		divclk4: divclk4 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "divclk4";
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&divclk4_pin_a>;
++		};
++	};
++
+ 	soc {
++		serial@7570000 {
++			label = "BT-UART";
++			status = "okay";
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&blsp1_uart1_default>;
++			pinctrl-1 = <&blsp1_uart1_sleep>;
++
++			bluetooth {
++				compatible = "qcom,qca6174-bt";
++
++				bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
++
++				pinctrl-names = "default";
++				pinctrl-0 = <&bt_en_pin_a>;
++
++				clocks = <&divclk4>;
++			};
++		};
++
+ 		serial@75b0000 {
+ 			label = "LS-UART1";
+ 			status = "okay";
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 0a6f7952bbb1..2d54a86a027f 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -408,6 +408,16 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		blsp1_uart1: serial@7570000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x07570000 0x1000>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
+ 		blsp1_spi0: spi@7575000 {
+ 			compatible = "qcom,spi-qup-v2.2.1";
+ 			reg = <0x07575000 0x600>;
+-- 
+2.14.1
