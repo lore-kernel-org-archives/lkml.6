@@ -1,113 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeCMACV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:02:21 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36987 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932211AbeCMABm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:01:42 -0400
-X-Google-Smtp-Source: AG47ELuUEofWj7X4IDUNmJVoVESEVygO0GBAP02D2HZdXZhtBT8Vsyj/o+iSs02xZpeKIBpF06uqxg==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, torvalds@linux-foundation.org
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 1/3 v4] devpts: hoist out check for DEVPTS_SUPER_MAGIC
-Date: Tue, 13 Mar 2018 01:01:29 +0100
-Message-Id: <20180313000131.28971-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180313000131.28971-1-christian.brauner@ubuntu.com>
-References: <20180313000131.28971-1-christian.brauner@ubuntu.com>
+        id S932407AbeCMAFU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:05:20 -0400
+Received: from ozlabs.org ([103.22.144.67]:33489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751512AbeCMAFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 20:05:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 13 Mar 2018 11:04:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brad Mouring <brad.mouring@ni.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180313110451.384886eb@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Fm/Z6NMU1vj.usZZALOpR5k"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hoist the check whether we have already found a suitable devpts filesystem
-out of devpts_ptmx_path() in preparation for the devpts bind-mount
-resolution patch. This is a non-functional change.
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
- ---
-ChangeLog v3->v4:
-* patch unchanged
-ChangeLog v2->v3:
-* patch unchanged
-ChangeLog v1->v2:
-* patch added
-ChangeLog v0->v1:
-* patch not present
----
- fs/devpts/inode.c | 35 ++++++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 15 deletions(-)
+Hi all,
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index e31d6ed3ec32..d3ddbb888874 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
- 	struct super_block *sb;
- 	int err;
- 
--	/* Has the devpts filesystem already been found? */
--	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
--		return 0;
--
- 	/* Is a devpts filesystem at "pts" in the same directory? */
- 	err = path_pts(path);
- 	if (err)
-@@ -159,17 +155,22 @@ static int devpts_ptmx_path(struct path *path)
- struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
- {
- 	struct path path;
--	int err;
- 
- 	path = filp->f_path;
- 	path_get(&path);
- 
--	err = devpts_ptmx_path(&path);
--	dput(path.dentry);
--	if (err) {
--		mntput(path.mnt);
--		return ERR_PTR(err);
-+	/* Has the devpts filesystem already been found? */
-+	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-+		int err;
-+
-+		err = devpts_ptmx_path(&path);
-+		dput(path.dentry);
-+		if (err) {
-+			mntput(path.mnt);
-+			return ERR_PTR(err);
-+		}
- 	}
-+
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
- 		return ERR_PTR(-ENODEV);
-@@ -182,15 +183,19 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
- 	struct pts_fs_info *result;
- 	struct path path;
- 	struct super_block *sb;
--	int err;
- 
- 	path = filp->f_path;
- 	path_get(&path);
- 
--	err = devpts_ptmx_path(&path);
--	if (err) {
--		result = ERR_PTR(err);
--		goto out;
-+	/* Has the devpts filesystem already been found? */
-+	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-+		int err;
-+
-+		err = devpts_ptmx_path(&path);
-+		if (err) {
-+			result = ERR_PTR(err);
-+			goto out;
-+		}
- 	}
- 
- 	/*
--- 
-2.15.1
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  drivers/net/phy/phy.c
+
+between commit:
+
+  a2c054a896b8 ("net: phy: Tell caller result of phy_change()")
+
+from the net tree and commit:
+
+  4fff2d33c707 ("net: phy: remove phy_error from phy_disable_interrupts")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/phy/phy.c
+index 9aabfa1a455a,c2d9027be863..000000000000
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@@ -617,77 -617,6 +617,68 @@@ static void phy_error(struct phy_devic
+  	phy_trigger_machine(phydev, false);
+  }
+ =20
+ +/**
+ + * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
+ + * @phydev: target phy_device struct
+ + */
+ +static int phy_disable_interrupts(struct phy_device *phydev)
+ +{
+ +	int err;
+ +
+ +	/* Disable PHY interrupts */
+ +	err =3D phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
+ +	if (err)
+- 		goto phy_err;
+++		return err;
+ +
+ +	/* Clear the interrupt */
+- 	err =3D phy_clear_interrupt(phydev);
+- 	if (err)
+- 		goto phy_err;
+-=20
+- 	return 0;
+-=20
+- phy_err:
+- 	phy_error(phydev);
+-=20
+- 	return err;
+++	return phy_clear_interrupt(phydev);
+ +}
+ +
+ +/**
+ + * phy_change - Called by the phy_interrupt to handle PHY changes
+ + * @phydev: phy_device struct that interrupted
+ + */
+ +static irqreturn_t phy_change(struct phy_device *phydev)
+ +{
+ +	if (phy_interrupt_is_valid(phydev)) {
+ +		if (phydev->drv->did_interrupt &&
+ +		    !phydev->drv->did_interrupt(phydev))
+ +			return IRQ_NONE;
+ +
+ +		if (phydev->state =3D=3D PHY_HALTED)
+ +			if (phy_disable_interrupts(phydev))
+ +				goto phy_err;
+ +	}
+ +
+ +	mutex_lock(&phydev->lock);
+ +	if ((PHY_RUNNING =3D=3D phydev->state) || (PHY_NOLINK =3D=3D phydev->sta=
+te))
+ +		phydev->state =3D PHY_CHANGELINK;
+ +	mutex_unlock(&phydev->lock);
+ +
+ +	/* reschedule state queue work to run as soon as possible */
+ +	phy_trigger_machine(phydev, true);
+ +
+ +	if (phy_interrupt_is_valid(phydev) && phy_clear_interrupt(phydev))
+ +		goto phy_err;
+ +	return IRQ_HANDLED;
+ +
+ +phy_err:
+ +	phy_error(phydev);
+ +	return IRQ_NONE;
+ +}
+ +
+ +/**
+ + * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY cha=
+nges
+ + * @work: work_struct that describes the work to be done
+ + */
+ +void phy_change_work(struct work_struct *work)
+ +{
+ +	struct phy_device *phydev =3D
+ +		container_of(work, struct phy_device, phy_queue);
+ +
+ +	phy_change(phydev);
+ +}
+ +
+  /**
+   * phy_interrupt - PHY interrupt handler
+   * @irq: interrupt line
+
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnFaMACgkQAVBC80lX
+0Gyywwf/WyvZVTF9G3nBjHuszibU4akTAi9hAsnEvCtBTKXx7W0gGC0Bnk24Vy7L
+Wl3iTM2JUGtRDTNgLDfX5GatNti+1u3k4fBIva51lYfQzQysQcuIqo22ojiidsth
+0xk1QOwxXjOBZhXUCoh7dl61DFvZsgolbpeo4qMpOvMAuKvRuZNeIlTkC3MK8WR2
+vEsvJoB8cGoejfjuli2A/BO5IAQRqyxlR/xTUzAa9ZzMtKldUH8szvJpeCE1Khbs
+qbXkI45klWJ/fzAgrwtbimJ6ep/nsgl8IVxzGrpkvEY6iRlunwN5eMCuZBKLwkuc
+6JOTPrpBQJcFWpKYuTQhk+0IGKKn3w==
+=nSOI
+-----END PGP SIGNATURE-----
+
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k--
