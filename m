@@ -1,82 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeCMH7h (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 03:59:37 -0400
-Received: from mail-io0-f181.google.com ([209.85.223.181]:35781 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751944AbeCMH7f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:59:35 -0400
-X-Google-Smtp-Source: AG47ELtFJ7FoX8fiHFMo7muBRcehDMITieNrEyf7yG5IzxAjXidP1pdkU+F55JqJRWq4HshPLWnV2y83/4oSDW1Mqto=
+        id S1752307AbeCMIAj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:00:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36164 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751903AbeCMIAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 04:00:38 -0400
+Date: Tue, 13 Mar 2018 09:00:26 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: codekipper@gmail.com
+Cc: wens@csie.org, linux-sunxi@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
+Subject: Re: [PATCH v2 4/6] ASoC: sun4i-i2s: Add multi-lane functionality
+Message-ID: <20180313080026.jtag4w46koxzeqe2@flea>
+References: <20180312155753.9478-1-codekipper@gmail.com>
+ <20180312155753.9478-5-codekipper@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com> <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 13 Mar 2018 07:59:33 +0000
-Message-ID: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nh7dgmyajoxjq4ck"
+Content-Disposition: inline
+In-Reply-To: <20180312155753.9478-5-codekipper@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
->
-> On 12-03-18 20:55, Thiebaud Weksteen wrote:
->>
-...
->>
->> Hans, you said you configured the tablet to use the 32-bit version of grub
->> instead
->> of 64. Why's that?
->
->
-> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
-> UEFI,
-> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
-> were
-> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
->
-> So this is running a 32 bit grub which boots a 64 bit kernel.
->
->> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
->> your Android install working? (that is, what happens if you boot
->> Boot0000)?
->
->
-> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
->
-> Could the problem perhaps be that the new code for the TPM event-log is
-> missing some handling to deal with running on a 32 bit firmware? I know the
-> rest of the kernel has special code to deal with this.
->
 
-That is a very good point, and I missed that this is a 64-bit kernel
-running on 32-bit UEFI.
+--nh7dgmyajoxjq4ck
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The TPM code does use efi_call_proto() directly, and now I am thinking
-it is perhaps the allocate_pages() call that simply only initializes
-the low 32-bits of log_tbl.
+On Mon, Mar 12, 2018 at 04:57:51PM +0100, codekipper@gmail.com wrote:
+> From: Marcus Cooper <codekipper@gmail.com>
+>=20
+> The i2s block supports multi-lane i2s output however this functionality
+> is only possible in earlier SoCs where the pins are exposed and for
+> the i2s block used for HDMI audio on the later SoCs.
+>=20
+> To enable this functionality, an optional property has been added to
+> the bindings.
+>=20
+> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+> ---
+>  .../devicetree/bindings/sound/sun4i-i2s.txt        |  3 ++
+>  sound/soc/sunxi/sun4i-i2s.c                        | 48 ++++++++++++++++=
++-----
+>  2 files changed, 41 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Docu=
+mentation/devicetree/bindings/sound/sun4i-i2s.txt
+> index 48addef65b8f..3f966ac61b9e 100644
+> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> @@ -33,6 +33,9 @@ Optional properties:
+>  				configured to extend the slot width to the
+>  				value specified. Min 8, Max 32.
+> =20
+> +- allwinner,playback-channels:  if this property is present then the num=
+ber
+> +				of available channels is extended and the
+> +				outputs enabled.
 
-Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-NULL at the start of the function?
+Isn't it something that is fixed for each generation of SoCs? Can't we
+attach it to the compatible?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nh7dgmyajoxjq4ck
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqnhRkACgkQ0rTAlCFN
+r3S+3w//ZH9+Cn0CVP0kX4Z6rnxQ2/llxBEqFjSV31AvMAFKWJoHS6ns0Q1Oxewr
+tlFdL2vqxwxfIXghHCo0ODyrAQY6eDP1hM/5YPjVXEHn97OMPWDD2QkTre/cW1TX
+ISlPe2O5kp856G/g7NLxCx1mZATHgW/lUTxR7ucuM15iFjnXkq3ERhc5NEWZPBuD
+DWIOU7YZXO8nU3fMR96pFgRvLI+m68z1yhG8EIR+TlJ8ThyLuZIev2emBNctECV9
++SugvmLmNf7+awlB3Tou2WIgKQf+xRS/hu8jzycCqtFPYycMz2IcH8duFGVVYIL5
+UlfInicoc+RNUHOsVoVQdO34+blDXqRs+r46pn0R81iJ/JJ+9DlO375SSQ5Bs3dY
+0jO7nKtgo2Pi7k+wzVaRvyqk2jOvOet0/pm5D82Ntp0/BB+NYxuwxRdaOvgEq1po
+m1Iympg2i8R7qpw0aaufreLwbtY9FYRZiXNb6sVTtGq+tRtzMdPx5sKw1nasKUpR
+Uyd+9ZajkiBu+d/ZgFUEv7lzISiyP2FJeo9t87Ro7Hx1HbLVmCY8ZVIADd//FENm
+KQdLrmMOqu3GEDs6jkMk1MZcQ55HVeuz8RGHc97su7tNbXQsfQZYYGnr9rlLU8Jm
+RFVK9jGdcFJK3S8GE1jv9wqcMZJHle52OGBUjP6CXlf5NTlK4Dc=
+=un5m
+-----END PGP SIGNATURE-----
+
+--nh7dgmyajoxjq4ck--
