@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELspjaUg5hYc3hy2OiW6aQtv7UoJGEm5JLIcRk8tdY+A7LdStaMwTzQ3rYUETKpHL+0gdHPE
-ARC-Seal: i=1; a=rsa-sha256; t=1520955611; cv=none;
+X-Google-Smtp-Source: AG47ELt7EderrxfGsv+YgZT3x+hbkzkymzQ2cM1YpXkgSQDtDHjq9V1pOKQrHf1zSkrGkCeCuCVy
+ARC-Seal: i=1; a=rsa-sha256; t=1520955608; cv=none;
         d=google.com; s=arc-20160816;
-        b=SwuuuTi5waga1Ds7pM1MWH/DzJJhhHM91LhYbs+6B2DQ08k55ZPiYy3E952vGfxj+U
-         7XYWlJhwkYorwqLgqVJoneGPUYSYkFz9aozK3rQvs9UP9X+WUKZ83I10HOEnnBoDZruq
-         qL4U0nHh1ehWHMSBuSLIOclgTRsiOu0ILLxpid30AxW8wgBpdlOA+RFbTjcV5WU2P6vA
-         ppkKmpT4DYQEw4n3SUVb8gD0PLAcTLtT51gvcnuX66DYPpEKlBXkVJH3dJJZcwYGK+UB
-         /C89ON/Z4xYEQzRuy8v+Yr7sKUy0zO+Whchk023dpb2F3DGLmGwh5QN5JpmvwBli6s59
-         2q5w==
+        b=0J0iEndW5pW/cDDvCtiuujlnN71WYA0KE4pUqqjvKpilCAZs3V5Z4ZMpAE30wZtMc0
+         QMH2MVQCNM7mETf4aKtV6KTbWHYTB1wqMeYFp6aTBZHwH1nFnRK0XtnDZslbtAx+Gx3U
+         HwC3GZV9vNYAO6t7LHMgOrA48CaRYiKatD7OS3q+Q6QOu5zdIxJooDkSL6aseot1Iwx9
+         2c4CBsKbD/Jz31O8pyA7Z4fUSw9wmGS9A8Q7OU0kGGzMc9JKNzfiM5+684g5zei2whyv
+         exDFEkf4FmIc7doitaCXOAmovkqdZ3B3z1v3ohMmF3o9By6QyPRh/Pq7CdlBlJcv0vAt
+         DqgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xT27f+RYKNr3v4AVPMO0iXq4Vg41INI0yWQ5seAi87E=;
-        b=LOSkV8df6bdoNC06r+J0MAe9OicNt4mk9UO5oqp9jOhi9Aai4u7qDzPbLdIWy2M5ci
-         ytq1PzzAstaZ4/CNz/kK7/A7lUmVemjx1G9YyDkCkWr3H94kpCTv8yotMGsMrX+3vjaC
-         4PIIJDr+iSxkJVfGCA7lTKYUabnOJ+EC66yJOJnXwrYAHkSHGul6dmcCf6LneAFVU0cM
-         cqYdJ0mpfC4GqQLLb7ZaJRvqVJa+7Kana/jSOSYowGKDk+8cYpsFK//mMKR8thscBQcf
-         t15svmiarEefDHbBj5+YFmvZMsIwOPx6JwgLPsMae1XklSTSQGxiW+NDQKpMqztJw84u
-         Cijw==
+        bh=nJscDpThZE3DXP0ppY45sOcMrX7JUJOnC2y6VuaNrYQ=;
+        b=WSbWxTpMLjjIEFaxr2jIj3C1V5noc4Yoi7mDaTs8olPdrCFgN94sl1QU1S3+t7FtXW
+         BTVisBgr3272HZIqtuEJk6hsWPOVkXm565CQLaYYYacg6xd6ADBkTIYz0cUX/N4114uB
+         S8XypJXgYs9huNWy+3xvA+9/7pFh+KXAKNBfehnTdcTBL1V7vY9EZrFpJGoaiYmaGa6+
+         eDsVjbk0R+A0T6yy5bqfhedQDW2rvGXmPne068RbVrrwTPROtVSMcnnjFlFXXJg+CGXr
+         3X0Q9eyJ8nrxORQsB7r8JShRp/rRG1PmNFQZ3ZF0GSqB4bQokiNQrbqL+j55ZFO2RHIA
+         0olw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+	Kailang Yang <kailang@realtek.com>,
+	Hui Wang <hui.wang@canonical.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 109/140] ALSA: hda: add dock and led support for HP EliteBook 820 G3
-Date: Tue, 13 Mar 2018 16:25:12 +0100
-Message-Id: <20180313152505.472170744@linuxfoundation.org>
+Subject: [PATCH 4.14 108/140] ALSA: hda - Fix a wrong FIXUP for alc289 on Dell machines
+Date: Tue, 13 Mar 2018 16:25:11 +0100
+Message-Id: <20180313152505.396668101@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837052681762818?=
-X-GMAIL-MSGID: =?utf-8?q?1594837550609366715?=
+X-GMAIL-THRID: =?utf-8?q?1594837049220618613?=
+X-GMAIL-MSGID: =?utf-8?q?1594837548145768920?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit aea808172018ca01abf53db808323aed23281835 upstream.
+commit d5078193e56bb24f4593f00102a3b5e07bb84ee0 upstream.
 
-This patch adds missing initialisation for HP 2013 UltraSlim Dock
-Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP EliteBook 820 G3
+With the alc289, the Pin 0x1b is Headphone-Mic, so we should assign
+ALC269_FIXUP_DELL4_MIC_NO_PRESENCE rather than
+ALC225_FIXUP_DELL1_MIC_NO_PRESENCE to it. And this change is suggested
+by Kailang of Realtek and is verified on the machine.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Fixes: 3f2f7c553d07 ("ALSA: hda - Fix headset mic detection problem for two Dell machines")
+Cc: Kailang Yang <kailang@realtek.com>
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -957,6 +957,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x1025, 0x054c, "Acer Aspire 3830TG", CXT_FIXUP_ASPIRE_DMIC),
- 	SND_PCI_QUIRK(0x1025, 0x054f, "Acer Aspire 4830T", CXT_FIXUP_ASPIRE_DMIC),
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6765,7 +6765,7 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60120},
+ 		{0x14, 0x90170110},
+ 		{0x21, 0x0321101f}),
+-	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
++	SND_HDA_PIN_QUIRK(0x10ec0289, 0x1028, "Dell", ALC269_FIXUP_DELL4_MIC_NO_PRESENCE,
+ 		{0x12, 0xb7a60130},
+ 		{0x14, 0x90170110},
+ 		{0x21, 0x04211020}),
