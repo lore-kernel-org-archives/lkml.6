@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuVEVaqRDPJ3Mf2VAW2nTdZQueqGVBTSYYFUz7WSkBVY7ui48uawbdLJfQsFSVbCX7lETmz
-ARC-Seal: i=1; a=rsa-sha256; t=1520955686; cv=none;
+X-Google-Smtp-Source: AG47ELtG+Iyjh0CaSQ/DnKZwobEbhXhQ3jxa0Wg0lYat+WqslCwbrx656hzvFOP1R7VqKEevHnor
+ARC-Seal: i=1; a=rsa-sha256; t=1520955685; cv=none;
         d=google.com; s=arc-20160816;
-        b=S//W7UQVbSXlYijfR5V+vf2kcxEOqxE7H1Lm2vhGRIBy5YvaqS4qqI21YOkhQ50CFD
-         /IvlYnIzQhstuMmeKIEQx3EYH19Pl6dYqHEVQxYaJr2MXzmrlnkt5QGR3WgwZz1TygtE
-         ICNnGMSFq5h97U/f/YKl8i/vw8feYxktthslL5Bky2Ba1EFXXwoMP8i34Fuf32MO2GMX
-         QXaifGrnZZn2xfZGLqXenM77PC429dDdVo+S2PzBf19tjPsBMS8TPX0OXMbJ7XfFNy6s
-         Mvu5ofAiz+tzJ0pcnttkz8pLU8Ruohs9Tchem1i3cssLKqgpYxa8bN48lK4mxslFNx9M
-         L01g==
+        b=TW5g6BUuo52TeDkdBcL/ylr4vZeiYsoG0k9fjU5kt/GJ0FMPth3Z54kP93g59PFNjp
+         Ky95NQw8gk3+heEFDD+bQxRu6Zmd1+KFz2hvXQFif7qbLXUTkc0V9H8UjRQTAAtlAV/j
+         QE+FuXMYXFDUrM48M2XIBLVcsS9mnGXoOWwHGKXUw1k9QuJlKuFgVIHmCpa34SqwUgWE
+         6NEckq6ipxQcX92ly6nm/KnY61fkw+KYnZ6KrJ99jcoX9+gjemaDMXUphf/X1lTmzmOO
+         DLhVTF0JZ5esmDfiUkXjOrMEyyZP0rOAIRUfgYSkOQuCXKauANBkvvvqeKeLE97PbFia
+         cPUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fUAa5uTkLJKWJ+p3tF3MfRMA7+s+/bWd4pIsYXtzXv4=;
-        b=AXe52s6OIyXi9NWYnuGWMZ88KFLvg8fuNMpVkj1aBgE7bGp7UkSwYzQMdsRicRa7Xh
-         CksDIJjxeFflqBOiep+EGC1EGGArDXLqzLW4sVmpaFWgsUJI0a6oTxqULZOSBtqMfvhH
-         4kv62NvglMb48Z08oVHCAQDtRe2x1qHpOUZ64fYhTwJaIS1nAupyKMgQMz+5Ue+UL47t
-         BZEjqIlrKO98ZAv4wKSwRz2YwYn/dKvxdNPT4J1JQjg+2fIqOLWlicRvptIJs7OgMcUc
-         Tq0ynugp4LSsFDwccly39kbTj4ot0YGI/wI06t4RUCB8fbXjzfAby2gX0os2Taxr0QhY
-         NREQ==
+        bh=qqdTLy3x0uqVPPuwsQeAhdD6jKFHF9JqKQ/pHfwQN5A=;
+        b=DXU8TBS0dgXTHVymcoTfPuvPhmkyK91fQStPzrkRXJQpQy6EKb8jpMMq+5d33MPQBB
+         HpgoGtA/sD01IcqtWa1q5203jnMfRGS/JP2Zpip+hdxd7b839PsQGk0wIAnbSQ7H7DBG
+         HAOfRFRjIEWsR+gN+DkNRQfq6NPEC9TMQtNQT4+XF+L3tJNDF0kuHtRZXkP47ONxW4XH
+         RcyJfCBC3KCL+3jYgM03Zi9/Uu82F9koYFOWBHm4dHUjvCdokqtt/hFVZ6vPc/JH7eAO
+         6N9oUM6HxxUmOX1zhqXyRBGFuXBnukKsK9mjJuICWEDUxk5IVNlAyUjP7rx9+uTT6D7f
+         e6Pw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
 	David Woodhouse <dwmw@amazon.co.uk>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	arjan.van.de.ven@intel.com,
+	bp@alien8.de,
+	dave.hansen@intel.com,
+	jmattson@google.com,
+	karahmed@amazon.de,
+	kvm@vger.kernel.org,
+	pbonzini@redhat.com,
+	rkrcmar@redhat.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 128/140] x86/paravirt, objtool: Annotate indirect calls
-Date: Tue, 13 Mar 2018 16:25:31 +0100
-Message-Id: <20180313152506.781439357@linuxfoundation.org>
+Subject: [PATCH 4.14 127/140] x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
+Date: Tue, 13 Mar 2018 16:25:30 +0100
+Message-Id: <20180313152506.718774430@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -50,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837033233057464?=
-X-GMAIL-MSGID: =?utf-8?q?1594837630341935563?=
+X-GMAIL-THRID: =?utf-8?q?1594837030265260567?=
+X-GMAIL-MSGID: =?utf-8?q?1594837628675283979?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,126 +60,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit 3010a0663fd949d122eca0561b06b0a9453f7866 upstream.
+commit d72f4e29e6d84b7ec02ae93088aa459ac70e733b upstream.
 
-Paravirt emits indirect calls which get flagged by objtool retpoline
-checks, annotate it away because all these indirect calls will be
-patched out before we start userspace.
+firmware_restrict_branch_speculation_*() recently started using
+preempt_enable()/disable(), but those are relatively high level
+primitives and cause build failures on some 32-bit builds.
 
-This patching happens through alternative_instructions() ->
-apply_paravirt() -> pv_init_ops.patch() which will eventually end up
-in paravirt_patch_default(). This function _will_ write direct
-alternatives.
+Since we want to keep <asm/nospec-branch.h> low level, convert
+them to macros to avoid header hell...
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/paravirt.h       |   17 +++++++++++++----
- arch/x86/include/asm/paravirt_types.h |    5 ++++-
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -7,6 +7,7 @@
- #ifdef CONFIG_PARAVIRT
- #include <asm/pgtable_types.h>
- #include <asm/asm.h>
-+#include <asm/nospec-branch.h>
- 
- #include <asm/paravirt_types.h>
- 
-@@ -879,23 +880,27 @@ extern void default_banner(void);
- 
- #define INTERRUPT_RETURN						\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret), CLBR_NONE,	\
--		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret))
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret);)
- 
- #define DISABLE_INTERRUPTS(clobbers)					\
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable), clobbers, \
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_disable);	\
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
- 
- #define ENABLE_INTERRUPTS(clobbers)					\
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable), clobbers,	\
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_enable);	\
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
- 
- #ifdef CONFIG_X86_32
- #define GET_CR0_INTO_EAX				\
- 	push %ecx; push %edx;				\
-+	ANNOTATE_RETPOLINE_SAFE;				\
- 	call PARA_INDIRECT(pv_cpu_ops+PV_CPU_read_cr0);	\
- 	pop %edx; pop %ecx
- #else	/* !CONFIG_X86_32 */
-@@ -917,21 +922,25 @@ extern void default_banner(void);
-  */
- #define SWAPGS								\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
--		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs)		\
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs);		\
- 		 )
- 
- #define GET_CR2_INTO_RAX				\
--	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2)
-+	ANNOTATE_RETPOLINE_SAFE;				\
-+	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2);
- 
- #define USERGS_SYSRET64							\
- 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_usergs_sysret64),	\
- 		  CLBR_NONE,						\
--		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64))
-+		  ANNOTATE_RETPOLINE_SAFE;					\
-+		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64);)
- 
- #ifdef CONFIG_DEBUG_ENTRY
- #define SAVE_FLAGS(clobbers)                                        \
- 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl), clobbers, \
- 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);        \
-+		  ANNOTATE_RETPOLINE_SAFE;				    \
- 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_save_fl);    \
- 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
- #endif
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -43,6 +43,7 @@
- #include <asm/desc_defs.h>
- #include <asm/kmap_types.h>
- #include <asm/pgtable_types.h>
-+#include <asm/nospec-branch.h>
- 
- struct page;
- struct thread_struct;
-@@ -392,7 +393,9 @@ int paravirt_disable_iospace(void);
-  * offset into the paravirt_patch_template structure, and can therefore be
-  * freely converted back into a structure offset.
-  */
--#define PARAVIRT_CALL	"call *%c[paravirt_opptr];"
-+#define PARAVIRT_CALL					\
-+	ANNOTATE_RETPOLINE_SAFE				\
-+	"call *%c[paravirt_opptr];"
- 
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -257,20 +257,22 @@ static inline void indirect_branch_predi
  /*
-  * These macros are intended to wrap calls through one of the paravirt
+  * With retpoline, we must use IBRS to restrict branch prediction
+  * before calling into firmware.
++ *
++ * (Implemented as CPP macros due to header hell.)
+  */
+-static inline void firmware_restrict_branch_speculation_start(void)
+-{
+-	preempt_disable();
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+-			      X86_FEATURE_USE_IBRS_FW);
+-}
++#define firmware_restrict_branch_speculation_start()			\
++do {									\
++	preempt_disable();						\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
++			      X86_FEATURE_USE_IBRS_FW);			\
++} while (0)
+ 
+-static inline void firmware_restrict_branch_speculation_end(void)
+-{
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+-			      X86_FEATURE_USE_IBRS_FW);
+-	preempt_enable();
+-}
++#define firmware_restrict_branch_speculation_end()			\
++do {									\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
++			      X86_FEATURE_USE_IBRS_FW);			\
++	preempt_enable();						\
++} while (0)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
