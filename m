@@ -1,15 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932469AbeCMNJZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:09:25 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:45583 "EHLO
+        id S1752556AbeCMNJi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:09:38 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:40317 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750796AbeCMNJX (ORCPT
+        by vger.kernel.org with ESMTP id S932484AbeCMNJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:09:23 -0400
+        Tue, 13 Mar 2018 09:09:30 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
+X-Quarantine-ID: <9mIWoGAQP-yN>
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-RRZE-Flag: Not-Spam
 X-RRZE-Submit-IP: 2003:d5:3c2:e00:dbd1:5c46:f440:b630
 From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
@@ -18,53 +20,82 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] block: sed-opal: support write to shadow mbr
-Date: Tue, 13 Mar 2018 14:08:53 +0100
-Message-Id: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH 2/8] block: sed-opal: unify space check in add_token_*
+Date: Tue, 13 Mar 2018 14:08:55 +0100
+Message-Id: <946b37d9bba3d72c6a5e616452976fa7889b3e82.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-this patchset adds support to write data into the shadow mbr of sed-opal
-enabled devices. They apply cleanly on today next-tree (next-20180313)
-and requires the u64 short atom length fix from [0] as that is still
-missing in that tree. As I only can test on my only sed-opal enabled
-Samsung 850 Evo on amd64, tests on other hardware would be appreciated.
+All add_token_* functions have a common set of conditions that have to
+be checked. Use a common function for those checks in order to avoid
+different behaviour.
 
-The first six patches provide helper functions that are used in the
-following up patches as well as do some refactoring and unification of
-the existing code.
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+---
+ block/sed-opal.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-With the seventh patch, a new ioctl is added to mark the shadow mbr as
-done without having to enable/disable the shadow mbr feature as a whole.
-
-Finally, the last patch adds an ioctl to write data into the shadow mbr.
-
-A modified version of the user space tools with support for those ioctls
-can be found at [1].
-
-Looking forward to feedback and suggestions for improvement,
- Jonas
-
-[0] https://lkml.org/lkml/2018/3/7/534
-[1] https://github.com/ghostav/sed-opal-temp
-
-Jonas Rabenstein (8):
-  block: sed-opal: use correct macro for method length
-  block: sed-opal: unify space check in add_token_*
-  block: sed-opal: unify cmd start and finalize
-  block: sed-opal: unify error handling of responses
-  block: sed-opal: print failed function address
-  block: sed-opal: split generation of bytestring header and content
-  block: sed-opal: add ioctl for done-mark of shadow mbr
-  block: sed-opal: ioctl for writing to shadow mbr
-
- block/sed-opal.c              | 432 +++++++++++++++++++++---------------------
- include/linux/sed-opal.h      |   2 +
- include/uapi/linux/sed-opal.h |   9 +
- 3 files changed, 223 insertions(+), 220 deletions(-)
-
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index f9d94ce64b08..a228a13f0a08 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -510,15 +510,24 @@ static int opal_discovery0(struct opal_dev *dev, void *data)
+ 	return opal_discovery0_end(dev);
+ }
+ 
+-static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++static bool can_add(int *err, struct opal_dev *cmd, size_t len)
+ {
+ 	if (*err)
+-		return;
+-	if (cmd->pos >= IO_BUFFER_LENGTH - 1) {
+-		pr_debug("Error adding u8: end of buffer.\n");
++		return false;
++
++	if (len > IO_BUFFER_LENGTH || cmd->pos >= IO_BUFFER_LENGTH - len) {
++		pr_debug("Error adding %zu bytes: end of buffer.\n", len);
+ 		*err = -ERANGE;
+-		return;
++		return false;
+ 	}
++
++	return true;
++}
++
++static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++{
++	if (!can_add(err, cmd, 1))
++		return;
+ 	cmd->cmd[cmd->pos++] = tok;
+ }
+ 
+@@ -564,9 +573,8 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
+ 	msb = fls(number);
+ 	len = DIV_ROUND_UP(msb, 4);
+ 
+-	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
++	if (!can_add(err, cmd, len + 1)) {
+ 		pr_debug("Error adding u64: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
+ 	}
+ 	add_short_atom_header(cmd, false, false, len);
+@@ -590,9 +598,8 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
+ 		is_short_atom = false;
+ 	}
+ 
+-	if (len >= IO_BUFFER_LENGTH - cmd->pos - header_len) {
++	if (!can_add(err, cmd, header_len + len)) {
+ 		pr_debug("Error adding bytestring: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
+ 	}
+ 
 -- 
 2.16.1
