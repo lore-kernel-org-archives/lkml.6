@@ -1,51 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751613AbeCMGQJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 02:16:09 -0400
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:39977 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeCMGQH (ORCPT
+        id S1751700AbeCMGRn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 02:17:43 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38357 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751217AbeCMGRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 02:16:07 -0400
-X-Google-Smtp-Source: AG47ELvME66uSjJJenPvX8meqaUB68wKj8VXaiuGRH6us9t0aZxF8Xvt9AP6Mrm08VeEq8TqOOW4Zg==
-Date: Tue, 13 Mar 2018 07:16:03 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, malat@debian.org,
-        dave.hansen@intel.com, yang.s@alibaba-inc.com, linux@roeck-us.net,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Charlebois <charlebm@gmail.com>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
-Message-ID: <20180313061603.jsgiumet23uqi6hl@gmail.com>
-References: <20180313061109.72629-1-dianders@chromium.org>
- <20180313061109.72629-3-dianders@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313061109.72629-3-dianders@chromium.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 13 Mar 2018 02:17:41 -0400
+X-Google-Smtp-Source: AG47ELsAtQdjFCtyIJxEEhbT5iy6PC0arrD58gVv3sKS80JOMxdRvbKyvrbM86C7YHilB+3scL51Nw==
+From: Joel Stanley <joel@jms.id.au>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+Subject: [PATCH v4 0/2] watchdog: Add Nuvoton NPCM (Poleg) driver
+Date: Tue, 13 Mar 2018 16:47:24 +1030
+Message-Id: <20180313061726.21601-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+v4: Fix comments from Guenter
+v3: Address comments from Guenter and Tomer, add Rob's review
+v2: Address comments from Guenter and Marcus
 
-* Douglas Anderson <dianders@chromium.org> wrote:
+This is a driver for the Poleg board that is in the process of being
+upstreamed. I have tested it on an evaluation board.
 
-> +# Don't create Makefile caches if running as root since they can't be deleted
-> +# easily; in the real world we might be root when doing "sudo make install"
-> +ifeq ($(shell id -u),0)
-> +export KBUILD_NOCACHE := 1
-> +endif
+The watchdog is a single register inside of the timer IP. This made me
+think about how to describe the device tree bindings for a while, but
+after some discussion I settled on describing the watchdog separately,
+and giving it's own compatible string, and it's own driver.
 
-Please don't do this - many prominent kernel developers build their kernels as 
-root - this makes the build slower for them, and also bifurcates testing.
+The timer is being reviewed over here:
 
-Thanks,
+ https://lkml.org/lkml/2018/2/26/492
 
-	Ingo
+
+Joel Stanley (2):
+  dt-bindings: watchdog: Add Nuvoton NPCM description
+  watchdog: Add Nuvoton NPCM watchdog driver
+
+ .../bindings/watchdog/nuvoton,npcm-wdt.txt         |  28 +++
+ drivers/watchdog/Kconfig                           |  11 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/npcm_wdt.c                        | 254 +++++++++++++++++++++
+ 4 files changed, 294 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+ create mode 100644 drivers/watchdog/npcm_wdt.c
+
+-- 
+2.15.1
