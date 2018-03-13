@@ -1,71 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeCMO0Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:26:24 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41059 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeCMO0W (ORCPT
+        id S1752663AbeCMO0v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:26:51 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:6745 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752279AbeCMO0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:26:22 -0400
-X-Google-Smtp-Source: AG47ELs9eu0gEYiZtxBewM+gmYoqcljV4modsYlgpdiYhavPq4fMlgYuw2Sk2ZWNs8/4RG6Llrr/CA==
-Date: Tue, 13 Mar 2018 15:26:18 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
- armv8-recommended.json
-Message-ID: <20180313142618.36je6syqg6ppwhbp@gmail.com>
-References: <20180313120508.29327-1-acme@kernel.org>
- <20180313120508.29327-19-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313120508.29327-19-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 13 Mar 2018 10:26:49 -0400
+X-IronPort-AV: E=Sophos;i="5.47,465,1515423600";
+   d="scan'208";a="275048083"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Michal Simek <michal.simek@xilinx.com>, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2] mmc: sdhci-of-arasan: Add quirk to avoid unexpected interrupt msgs
+Date: Tue, 13 Mar 2018 14:26:40 +0000
+Message-Id: <1520951200-24703-1-git-send-email-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On SD 2.00 cards we get lots of these messages:
+"mmc0: Got data interrupt 0x00000002 even though no data operation was in progress"
+By applying the SDHCI_QUIRK2_STOP_WITH_TC quirk, the messages no longer happen.
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+A single card claiming to be SD 3.00 compliant also generates the interrupts,
+but since the card's manfacturing date is 2002 mar, it's unlikely to really be
+SD 3.00. This card is a 8GB SanDisk 'SU08G' 8.0 (SDHC class 4).
 
-> From: John Garry <john.garry@huawei.com>
-> 
-> Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
-> 
-> The JSON is copied from ARMv8 architecture reference manual, available
-> here:
-> 
-> 	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
-> 
-> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: William Cohen <wcohen@redhat.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linuxarm@huawei.com
-> Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This has been reported on Xilinx devices that also use the Arasan IP.
+See https://patchwork.kernel.org/patch/8062871/
 
-That's not a valid SOB chain, author != first-Signed-off-by.
+This has been tested on the Renesas RZ/ND-DB board with the RZ/N1 SoC. The
+Arasan IP in this device is version 1.39a and uses a max SD clock of 50MHz and
+does not support DDR modes.
 
-Thanks,
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+v2:
+ - Changed commit msg to detail the cards that fail.
+ - Provided the IP version and further background info.
+---
+ drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-	Ingo
+diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+index c33a5f7..ab66e32 100644
+--- a/drivers/mmc/host/sdhci-of-arasan.c
++++ b/drivers/mmc/host/sdhci-of-arasan.c
+@@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data sdhci_arasan_pdata = {
+ 	.ops = &sdhci_arasan_ops,
+ 	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+-			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
++			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN |
++			SDHCI_QUIRK2_STOP_WITH_TC,
+ };
+ 
+ static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
+-- 
+2.7.4
