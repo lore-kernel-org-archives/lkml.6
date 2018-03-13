@@ -1,133 +1,348 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeCMNyJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:54:09 -0400
-Received: from mail-eopbgr20095.outbound.protection.outlook.com ([40.107.2.95]:3417
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932748AbeCMNxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:53:39 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com;
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 1/2] ARM: PLT: Move struct plt_entries definition to header
-Date: Tue, 13 Mar 2018 14:53:13 +0100
-Message-Id: <20180313135314.18780-2-alexander.sverdlin@nokia.com>
-X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20180313135314.18780-1-alexander.sverdlin@nokia.com>
-References: <20180313135314.18780-1-alexander.sverdlin@nokia.com>
+        id S932904AbeCMN4P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:56:15 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36097 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932435AbeCMN4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:56:13 -0400
+X-Google-Smtp-Source: AG47ELtjgRb4oFe414sUvOAMPqg18PNwgJ9FPmjxYbpoxcSJGQ/4F0MSMhLarFTd/yNryEDZ4M5gtQ==
+Date: Tue, 13 Mar 2018 14:56:08 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
+ rcu-fence
+Message-ID: <20180313135608.GB10273@andrea>
+References: <Pine.LNX.4.44L0.1802281511320.1421-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [131.228.2.20]
-X-ClientProxiedBy: HE1PR0202CA0002.eurprd02.prod.outlook.com
- (2603:10a6:3:8c::12) To DB5PR07MB1319.eurprd07.prod.outlook.com
- (2a01:111:e400:599b::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 82b6519b-7450-4df7-8ffa-08d588e9d045
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DB5PR07MB1319;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;3:v76sdmtc5EytL1uAb6r7Da59RUhk6G89l4DxaM50Mdm3ZolXw9paI0jB3znDPge8iGFMbH4Wn4KXTfeJrZSXnae/yGcIToz/LtJkyYgrEy+qH0XWIVdIwCHNHP/aRu7UYj+84NxnSe5pMxT02DbPF9wA3yAGLXnoTVw2myRYoRbMoUmCyKTiAOUCYY99bfdwMCt6QW7ciM5oNY0MGbJz+YpaRFduaLTpD6l1OF7HAxupoz6HrB3mRk5bYBcLi4eA;25:6wbZMFsOAWIlgyYc4ak8kqnjMV9qI6AzDZUU5JYUw2XIEHpIWaFdIk9ml/aiRggIGstTMv7lfY0ynX+Mf6BjIKi8OxihtPFnD9suC9ZX7erst22mtI78SzJsizzWDZ4GkTLJSYPfbphesagSmTPImR015MVZZqjapLLHzpx+bOSC7Xz1ayckXZSrzabB773+r+JrN9jzxzQeGnxTXQ7rrOwcYqT8sjf9tUma2DQjfuziF+UVv2mDOrcot5EwxRVEqSsGnLe/D5JavRNSV3y6axs/wq3TLKSNZJpuusIlHdtI+6Ivm6QC21AlanXAIfOfHn6+R+U3MWA09Bfp3QEZGw==;31:rzaHmQzGPSebZIX+xaQ2RFiXbattqsC3E3Cp/wbTCd/R5NxwXDiAh7/P1PaYH2tV2dU621e1WBkfmHfSOfFXwiNZNjVrndp4lZ2nOp7k00U6Sv1uTH7T/RdBD4XcWyMSccT9E87bAc0BnOYrRrzW4ERK8mQInc0wVYV3vT5GItZKcW2e8kpPShJcV2nEMIJv4hXxVndC6UdV0zpXXS009/RrJU6EFPtFfPLDLFLy45A=
-X-MS-TrafficTypeDiagnostic: DB5PR07MB1319:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;20:NQlljlFv13JgGpLqobpx1W7SHDuUmf9D/JIKX0uGCPSPJlncxjAr9NSZIsT5jR6KLIs45XBPVJHlOs7yYi8kpdk/opDTxbRC0lyho2hUSRuz5UFgbXKhMTIjfnbRSJOC6OZagzaiZ5mSYIXTrIAt3rMBY1y1ob3nc0Il6Dr6RaW96fw5wFvKRDonETl1WUKfN8GqNHIntMRk3+Xz1xWrASrqimQLl4nBP4COsO2PYeuMK44+RZnLi5s3xncowFjBnySU8FYZODw0P/zF7F1s49XTVolBPALUO/Jowls/KbgRIneS9BYhNFPID72ChzKd007zndWPc+ZcUmKiMUf+H/XGLpo+ptZYbVZCP07C5NlejsrMMdeH8URwjflPxku0Jn/oFgPT0Pvdss6kqQRIcbKPRy0SN7vT3uyxdicR8bPooKgcgcDf3gVD/05hxNEvwpOZ0xBPdSr1lxNjqu8KM1sqUUuoM/ZdzEwZqmIlKgb8n0OVY0u2iOqu+JGQsoNSbdl8dKHauVHab5peIScqVr09HOZuvSLd3gIJaA6R80sJtl6blk9azmV52qSutWo86ZTrnLSScjDI8rX0NnTrzWcqCEd3qYPGgX37c2QfC1A=;4:Ptt6XmNIR7snyR/yanZzCe36cltfRkcRCZ4dwJiiQwhq+lujU04nzPULBtUTEClcgu44sZLlJnR2EjAlIfHiKWxmO8ClTEch6yG22ipebVmqesL9osDijDLUcdFRYI3gL9YwK9YTOQ1S44ljxeeE3gG0gGfEX2jH3p6Secwy4uHVOAp3x6R0OT5sTRYyo9t5uuY31DquTbvWgLVIgMyqR+msjrLd9J2xKJVkYy/UtySXxwdYXxAPLdaW/qY/rhkEDHe/AIwvYzTfDeDR06MqiJO6GIDwVFzl3LSJrtyW3tPEHlb8OdNO3yskJxNsFEqN
-X-Microsoft-Antispam-PRVS: <DB5PR07MB13191AE20CDE0139B54FD8D888D20@DB5PR07MB1319.eurprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(82608151540597);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231221)(11241501184)(806099)(944501244)(52105095)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DB5PR07MB1319;BCL:0;PCL:0;RULEID:;SRVR:DB5PR07MB1319;
-X-Forefront-PRVS: 0610D16BBE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39860400002)(396003)(346002)(376002)(189003)(199004)(16526019)(53936002)(2950100002)(52116002)(186003)(76176011)(2361001)(2351001)(47776003)(36756003)(86362001)(575784001)(54906003)(81156014)(81166006)(8676002)(6916009)(7736002)(6666003)(6486002)(6512007)(97736004)(50226002)(2906002)(105586002)(16586007)(305945005)(48376002)(8936002)(4326008)(5660300001)(25786009)(26005)(106356001)(51416003)(386003)(6506007)(50466002)(478600001)(316002)(1076002)(66066001)(3846002)(68736007)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB5PR07MB1319;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR07MB1319;23:rYbBEitra/q6YDLtnLvwp/1shI82XGiU27xGGNf6U?=
- =?us-ascii?Q?ywVGVFIAxDmtOShYVtubXm8ZpZkJ3DduydDCKfIFvV/EPbQm65MSkWU2pJBQ?=
- =?us-ascii?Q?iPTA4c6WQJg4ZMpxbDQBbPBIpug/ujIKV4p+JcsCU8a0d/cDYIZwqAlR+fVU?=
- =?us-ascii?Q?/P65PkoHzFOevTp+gV3L71qwHMngjDoUX/t6Ix4bAgvR0XxDcHuZIJusTWVo?=
- =?us-ascii?Q?wQkgiFiAWvDcu+lFOnaMiTjV7Iifny1aoZkGbNGtfcccbSAlQAUOVDffVsAb?=
- =?us-ascii?Q?pZjFHy2dP9yZhxIBFQD5qeXl58wugkEbdYtjTzTBRZiEc112ZCiJDflCKLjE?=
- =?us-ascii?Q?g2REIxWxw8oCBv6dWj/JOSAWqolednteQUsqkZruwSM2kNDN+YWcvMw8H5py?=
- =?us-ascii?Q?FlMynBvQ0kkrnEw6cII9eLmnHk7J/cO6DBiGsbpcIfTXm+Di9BqTlZbZvk3y?=
- =?us-ascii?Q?cABnT7755T3HNVPsR+Tj+0LlV24IMYSpP3lsEg0YE4cDXjkuTqj/IT3Rmeo0?=
- =?us-ascii?Q?RP/JEvBQ9Lfs7zcLKMdtyztuDaG8pQ6P2lmok8OBhGcaTb2k+hpg/8S9js+2?=
- =?us-ascii?Q?KuhbVM0S8JyH6hwbQXCMLrL0obOlrXtHKic7WKuqCftChEIHPfy90DeXRi+N?=
- =?us-ascii?Q?EiLkT6GqK3OOfNXNqS+fB1FFnmq1+hLH+6hNnnnQbqbj35A9cErblb7aGVp0?=
- =?us-ascii?Q?x3rHsz4RzcnJGecDkjw8SYpMt/2yT5fYOnxrUaV6c6FUfAnrD0fx0E/gfP4Y?=
- =?us-ascii?Q?wUt1ZEmA0oIgam4UHI69oP73TyKHI60b6l7ZiJlmEQdbJeffwvBMxQbjqAM1?=
- =?us-ascii?Q?2Zuq3onqdrt0S8OQL2U3Jy6ShMq3W7uhzNC3LI2TdohqOV3zz9ohsb8MXW+7?=
- =?us-ascii?Q?8QLCn2yAeXBvJ1Dq94uSZqbZT/5IYz/07vbSA8alXVjPYUO4ml9mODqdnj/X?=
- =?us-ascii?Q?xCW37vI72iT2AXTjKvuM3ktz7cOS5Fe6WX/HrVTKk+CNwVHhYJXQ51wU33m6?=
- =?us-ascii?Q?VUdz/XiNKgg23tZ+0vLTFCgNTIfJ7DE2uSVO1Yh7JCHWK3LXlz5rfhJhamQk?=
- =?us-ascii?Q?eXpnuYdvS6gWYM6/X3/n0cjP/ufuaheN8xm+tF/pp/jF7JVdYN2+MpwCrANA?=
- =?us-ascii?Q?JGrwaLCuWaJ3UFuunB+NKyBd9L9tlThznNP3UGyOS439vfFlcYVPDfoC8wpS?=
- =?us-ascii?Q?PxPVwAbK2ko9GlshaUICgVHS4VN6aPVBNjZ?=
-X-Microsoft-Antispam-Message-Info: AqVbJMeSFWJT/e+AhVMPWS23/mcGkxEco+w8UruSZLxg6bkaPne67neDZL0IHpTYOyYG42CLeQ+vwe3rm9XN2XaP8S6OczCklKaedOHB8pbTgwL5AWtmaI6RLTmmRDZ6rgkeSb+KwoD/eOLJxF8hdl64ZiNcougT2hZXtObhVSw66UB63WwVt6QWTnJ6i12g0DKyL92Z8bFl/7tSOYLz20OaWd/U06qyTIWsremYBk8=
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1319;6:Cj9smgy5XoUEJGVjSScKME6h+6mWQa6BIhtfQijAZn9CwW7+Zsmx2ILd7skWDn/qRUMwkNkvysbifiDNZtItz6ciu1AV34gdcRSTbP27hmd7ED1GNf89SpinVygOLtWx6TEe8LdPmjTiVxqwIRxeLWe5w+DdBZnAPQT2RAlET4VFSDfz81sB51Jhk15MTGW3EDxJQL1t1yYY1E3tRXMjywj9iL6Ih1A6F+gdl1V3lZ5VvwLv5/Uxraxupkf3oB2X5FafwjfailRrjbTgRTOxXnPXj4vIO603+nMJYug70VFtcVYHWBAKL9rqk+AumiL68FVqANJ8CaNRY/DqIWd1ysKUd0fXz/ypr6DLJjZ/4Mo=;5:oi9/XdAOTAKPbhSzBXaNN9680Mczjs5UL7Ken715OLHVlhKdHVGeA55lHfF1UBN2Gr84x/unKmCNncGD1VLcyWFYq7ga5kVfGqUGqxAEzaRZDzFH8kR1OEZ0Uec6iXa2Tq84P4kHDNJLl7lXO32VDNZS0VIvtmMqy3I+InHTYuA=;24:RT3gwiJAeXVXdwC3Fj5j0n80+4H7K7sM8ziOc7jTOA5uECGg1C0rkd4GNlEE3ozckbAncFFce5c15M7VSaEeYroa/XamRELP1h1W3BPisew=;7:/vW8G0UWIX/mg6P6KPQXPvKPGVnXb3fgt8kJz/mrfL/pp3quYEJCCu4lnJK9mUhCh12/BjqpWDWSr4/kmjhwFF4E1pUu6aDcFuevFbeNQb7xNYWuCGb2uuj6Fm8uVQmza/yz4ALJAKx2QMdzYo4KPPSBHAWlpvIKsLDNQJox5AFAJ2eyzenb1QuOEBuosBPjIg9LIXReGoJmnEnJIyg96gOu6Mxg9GCv1u0UMvO45w1eppitUEVEaZXZiX/ubeR2
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2018 13:53:33.8163 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82b6519b-7450-4df7-8ffa-08d588e9d045
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR07MB1319
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1802281511320.1421-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change, later it will be re-used in several files.
+On Wed, Feb 28, 2018 at 03:13:54PM -0500, Alan Stern wrote:
+> This patch reorganizes the definition of rb in the Linux Kernel Memory
+> Consistency Model.  The relation is now expressed in terms of
+> rcu-fence, which consists of a sequence of gp and rscs links separated
+> by rcu-link links, in which the number of occurrences of gp is >= the
+> number of occurrences of rscs.
+> 
+> Arguments similar to those published in
+> http://diy.inria.fr/linux/long.pdf show that rcu-fence behaves like an
+> inter-CPU strong fence.  Furthermore, the definition of rb in terms of
+> rcu-fence is highly analogous to the definition of pb in terms of
+> strong-fence, which can help explain why rcu-path expresses a form of
+> temporal ordering.
+> 
+> This change should not affect the semantics of the memory model, just
+> its internal organization.
+> 
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
----
- arch/arm/include/asm/module.h | 9 +++++++++
- arch/arm/kernel/module-plts.c | 9 ---------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+I like Boqun's suggestion of "reducing rcu-fence" and using "acyclic".
 
-diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
-index 89ad059..6996405 100644
---- a/arch/arm/include/asm/module.h
-+++ b/arch/arm/include/asm/module.h
-@@ -19,6 +19,15 @@ enum {
- };
- #endif
- 
-+#define PLT_ENT_STRIDE		L1_CACHE_BYTES
-+#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
-+#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
-+
-+struct plt_entries {
-+	u32	ldr[PLT_ENT_COUNT];
-+	u32	lit[PLT_ENT_COUNT];
-+};
-+
- struct mod_plt_sec {
- 	struct elf32_shdr	*plt;
- 	int			plt_count;
-diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
-index 3d0c2e4..f272711 100644
---- a/arch/arm/kernel/module-plts.c
-+++ b/arch/arm/kernel/module-plts.c
-@@ -14,10 +14,6 @@
- #include <asm/cache.h>
- #include <asm/opcodes.h>
- 
--#define PLT_ENT_STRIDE		L1_CACHE_BYTES
--#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
--#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
--
- #ifdef CONFIG_THUMB2_KERNEL
- #define PLT_ENT_LDR		__opcode_to_mem_thumb32(0xf8dff000 | \
- 							(PLT_ENT_STRIDE - 4))
-@@ -26,11 +22,6 @@
- 						    (PLT_ENT_STRIDE - 8))
- #endif
- 
--struct plt_entries {
--	u32	ldr[PLT_ENT_COUNT];
--	u32	lit[PLT_ENT_COUNT];
--};
--
- static bool in_init(const struct module *mod, unsigned long loc)
- {
- 	return loc - (u32)mod->init_layout.base < mod->init_layout.size;
--- 
-2.4.6
+IIRC, time ago we discussed "enlarging" hb, pb by defining them to be
+transitive closed (and using "irreflexive" everywhere); however, this
+resulted in slightly longer simulation times...
+
+For this patch,
+
+Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
+
+  Andrea
+
+
+> 
+> ---
+> 
+> v2: Rebase on top of the preceding patch which renames "link" to
+> "rcu-link" and "rcu-path" to "rb".  Add back the missing "rec" keyword
+> in the definition of rcu-fence.  Minor editing improvements in
+> explanation.txt.
+> 
+> Index: usb-4.x/tools/memory-model/linux-kernel.cat
+> ===================================================================
+> --- usb-4.x.orig/tools/memory-model/linux-kernel.cat
+> +++ usb-4.x/tools/memory-model/linux-kernel.cat
+> @@ -102,20 +102,27 @@ let rscs = po ; crit^-1 ; po?
+>   *)
+>  let rcu-link = hb* ; pb* ; prop
+>  
+> -(* Chains that affect the RCU grace-period guarantee *)
+> -let gp-link = gp ; rcu-link
+> -let rscs-link = rscs ; rcu-link
+> -
+>  (*
+> - * A cycle containing at least as many grace periods as RCU read-side
+> - * critical sections is forbidden.
+> + * Any sequence containing at least as many grace periods as RCU read-side
+> + * critical sections (joined by rcu-link) acts as a generalized strong fence.
+>   *)
+> -let rec rb =
+> -	gp-link |
+> -	(gp-link ; rscs-link) |
+> -	(rscs-link ; gp-link) |
+> -	(rb ; rb) |
+> -	(gp-link ; rb ; rscs-link) |
+> -	(rscs-link ; rb ; gp-link)
+> +let rec rcu-fence = gp |
+> +	(gp ; rcu-link ; rscs) |
+> +	(rscs ; rcu-link ; gp) |
+> +	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
+> +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
+> +	(rcu-fence ; rcu-link ; rcu-fence)
+> +
+> +(* rb orders instructions just as pb does *)
+> +let rb = prop ; rcu-fence ; hb* ; pb*
+>  
+>  irreflexive rb as rcu
+> +
+> +(*
+> + * The happens-before, propagation, and rcu constraints are all
+> + * expressions of temporal ordering.  They could be replaced by
+> + * a single constraint on an "executes-before" relation, xb:
+> + *
+> + * let xb = hb | pb | rb
+> + * acyclic xb as executes-before
+> + *)
+> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+> ===================================================================
+> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
+> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+> @@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory C
+>    19. AND THEN THERE WAS ALPHA
+>    20. THE HAPPENS-BEFORE RELATION: hb
+>    21. THE PROPAGATES-BEFORE RELATION: pb
+> -  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
+> +  22. RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
+>    23. ODDS AND ENDS
+>  
+>  
+> @@ -1451,8 +1451,8 @@ they execute means that it cannot have c
+>  the content of the LKMM's "propagation" axiom.
+>  
+>  
+> -RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
+> ----------------------------------------------------
+> +RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
+> +----------------------------------------------------
+>  
+>  RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
+>  rests on two concepts: grace periods and read-side critical sections.
+> @@ -1537,49 +1537,100 @@ relation, and the details don't matter u
+>  a somewhat lengthy formal proof.  Pretty much all you need to know
+>  about rcu-link is the information in the preceding paragraph.
+>  
+> -The LKMM goes on to define the gp-link and rscs-link relations.  They
+> -bring grace periods and read-side critical sections into the picture,
+> -in the following way:
+> -
+> -	E ->gp-link F means there is a synchronize_rcu() fence event S
+> -	and an event X such that E ->po S, either S ->po X or S = X,
+> -	and X ->rcu-link F.  In other words, E and F are linked by a
+> -	grace period followed by an instance of rcu-link.
+> -
+> -	E ->rscs-link F means there is a critical section delimited by
+> -	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
+> -	and an event X such that E ->po U, either L ->po X or L = X,
+> -	and X ->rcu-link F.  Roughly speaking, this says that some
+> -	event in the same critical section as E is linked by rcu-link
+> -	to F.
+> +The LKMM also defines the gp and rscs relations.  They bring grace
+> +periods and read-side critical sections into the picture, in the
+> +following way:
+> +
+> +	E ->gp F means there is a synchronize_rcu() fence event S such
+> +	that E ->po S and either S ->po F or S = F.  In simple terms,
+> +	there is a grace period po-between E and F.
+> +
+> +	E ->rscs F means there is a critical section delimited by an
+> +	rcu_read_lock() fence L and an rcu_read_unlock() fence U, such
+> +	that E ->po U and either L ->po F or L = F.  You can think of
+> +	this as saying that E and F are in the same critical section
+> +	(in fact, it also allows E to be po-before the start of the
+> +	critical section and F to be po-after the end).
+>  
+>  If we think of the rcu-link relation as standing for an extended
+> -"before", then E ->gp-link F says that E executes before a grace
+> -period which ends before F executes.  (In fact it covers more than
+> -this, because it also includes cases where E executes before a grace
+> -period and some store propagates to F's CPU before F executes and
+> -doesn't propagate to some other CPU until after the grace period
+> -ends.)  Similarly, E ->rscs-link F says that E is part of (or before
+> -the start of) a critical section which starts before F executes.
+> +"before", then X ->gp Y ->rcu-link Z says that X executes before a
+> +grace period which ends before Z executes.  (In fact it covers more
+> +than this, because it also includes cases where X executes before a
+> +grace period and some store propagates to Z's CPU before Z executes
+> +but doesn't propagate to some other CPU until after the grace period
+> +ends.)  Similarly, X ->rscs Y ->rcu-link Z says that X is part of (or
+> +before the start of) a critical section which starts before Z
+> +executes.
+> +
+> +The LKMM goes on to define the rcu-fence relation as a sequence of gp
+> +and rscs links separated by rcu-link links, in which the number of gp
+> +links is >= the number of rscs links.  For example:
+> +
+> +	X ->gp Y ->rcu-link Z ->rscs T ->rcu-link U ->gp V
+> +
+> +would imply that X ->rcu-fence V, because this sequence contains two
+> +gp links and only one rscs link.  (It also implies that X ->rcu-fence T
+> +and Z ->rcu-fence V.)  On the other hand:
+> +
+> +	X ->rscs Y ->rcu-link Z ->rscs T ->rcu-link U ->gp V
+> +
+> +does not imply X ->rcu-fence V, because the sequence contains only
+> +one gp link but two rscs links.
+> +
+> +The rcu-fence relation is important because the Grace Period Guarantee
+> +means that rcu-fence acts kind of like a strong fence.  In particular,
+> +if W is a write and we have W ->rcu-fence Z, the Guarantee says that W
+> +will propagate to every CPU before Z executes.
+> +
+> +To prove this in full generality requires some intellectual effort.
+> +We'll consider just a very simple case:
+> +
+> +	W ->gp X ->rcu-link Y ->rscs Z.
+> +
+> +This formula means that there is a grace period G and a critical
+> +section C such that:
+> +
+> +	1. W is po-before G;
+> +
+> +	2. X is equal to or po-after G;
+> +
+> +	3. X comes "before" Y in some sense;
+> +
+> +	4. Y is po-before the end of C;
+> +
+> +	5. Z is equal to or po-after the start of C.
+> +
+> +From 2 - 4 we deduce that the grace period G ends before the critical
+> +section C.  Then the second part of the Grace Period Guarantee says
+> +not only that G starts before C does, but also that W (which executes
+> +on G's CPU before G starts) must propagate to every CPU before C
+> +starts.  In particular, W propagates to every CPU before Z executes
+> +(or finishes executing, in the case where Z is equal to the
+> +rcu_read_lock() fence event which starts C.)  This sort of reasoning
+> +can be expanded to handle all the situations covered by rcu-fence.
+> +
+> +Finally, the LKMM defines the RCU-before (rb) relation in terms of
+> +rcu-fence.  This is done in essentially the same way as the pb
+> +relation was defined in terms of strong-fence.  We will omit the
+> +details; the end result is that E ->rb F implies E must execute before
+> +F, just as E ->pb F does (and for much the same reasons).
+>  
+>  Putting this all together, the LKMM expresses the Grace Period
+> -Guarantee by requiring that there are no cycles consisting of gp-link
+> -and rscs-link links in which the number of gp-link instances is >= the
+> -number of rscs-link instances.  It does this by defining the rb
+> -relation to link events E and F whenever it is possible to pass from E
+> -to F by a sequence of gp-link and rscs-link links with at least as
+> -many of the former as the latter.  The LKMM's "rcu" axiom then says
+> -that there are no events E with E ->rb E.
+> -
+> -Justifying this axiom takes some intellectual effort, but it is in
+> -fact a valid formalization of the Grace Period Guarantee.  We won't
+> -attempt to go through the detailed argument, but the following
+> -analysis gives a taste of what is involved.  Suppose we have a
+> -violation of the first part of the Guarantee: A critical section
+> -starts before a grace period, and some store propagates to the
+> -critical section's CPU before the end of the critical section but
+> -doesn't propagate to some other CPU until after the end of the grace
+> -period.
+> +Guarantee by requiring that the rb relation does not contain a cycle.
+> +Equivalently, this "rcu" axiom requires that there are no events E and
+> +F with E ->rcu-link F ->rcu-fence E.  Or to put it a third way, the
+> +axiom requires that there are no cycles consisting of gp and rscs
+> +alternating with rcu-link, where the number of gp links is >= the
+> +number of rscs links.
+> +
+> +Justifying the axiom isn't easy, but it is in fact a valid
+> +formalization of the Grace Period Guarantee.  We won't attempt to go
+> +through the detailed argument, but the following analysis gives a
+> +taste of what is involved.  Suppose we have a violation of the first
+> +part of the Guarantee: A critical section starts before a grace
+> +period, and some store propagates to the critical section's CPU before
+> +the end of the critical section but doesn't propagate to some other
+> +CPU until after the end of the grace period.
+>  
+>  Putting symbols to these ideas, let L and U be the rcu_read_lock() and
+>  rcu_read_unlock() fence events delimiting the critical section in
+> @@ -1606,11 +1657,14 @@ by rcu-link, yielding:
+>  
+>  	S ->po X ->rcu-link Z ->po U.
+>  
+> -The formulas say that S is po-between F and X, hence F ->gp-link Z
+> -via X.  They also say that Z comes before the end of the critical
+> -section and E comes after its start, hence Z ->rscs-link F via E.  But
+> -now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
+> -"rcu" axiom rules out this violation of the Grace Period Guarantee.
+> +The formulas say that S is po-between F and X, hence F ->gp X.  They
+> +also say that Z comes before the end of the critical section and E
+> +comes after its start, hence Z ->rscs E.  From all this we obtain:
+> +
+> +	F ->gp X ->rcu-link Z ->rscs E ->rcu-link F,
+> +
+> +a forbidden cycle.  Thus the "rcu" axiom rules out this violation of
+> +the Grace Period Guarantee.
+>  
+>  For something a little more down-to-earth, let's see how the axiom
+>  works out in practice.  Consider the RCU code example from above, this
+> @@ -1639,15 +1693,15 @@ time with statement labels added to the
+>  If r2 = 0 at the end then P0's store at X overwrites the value that
+>  P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
+>  In addition, there is a synchronize_rcu() between Y and Z, so therefore
+> -we have Y ->gp-link X.
+> +we have Y ->gp Z.
+>  
+>  If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
+>  so we have W ->rcu-link Y.  In addition, W and X are in the same critical
+> -section, so therefore we have X ->rscs-link Y.
+> +section, so therefore we have X ->rscs W.
+>  
+> -This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
+> -and one rscs-link, violating the "rcu" axiom.  Hence the outcome is
+> -not allowed by the LKMM, as we would expect.
+> +Then X ->rscs W ->rcu-link Y ->gp Z ->rcu-link X is a forbidden cycle,
+> +violating the "rcu" axiom.  Hence the outcome is not allowed by the
+> +LKMM, as we would expect.
+>  
+>  For contrast, let's see what can happen in a more complicated example:
+>  
+> @@ -1683,15 +1737,11 @@ For contrast, let's see what can happen
+>  	}
+>  
+>  If r0 = r1 = r2 = 1 at the end, then similar reasoning to before shows
+> -that W ->rscs-link Y via X, Y ->gp-link U via Z, and U ->rscs-link W
+> -via V.  And just as before, this gives a cycle:
+> -
+> -	W ->rscs-link Y ->gp-link U ->rscs-link W.
+> -
+> -However, this cycle has fewer gp-link instances than rscs-link
+> -instances, and consequently the outcome is not forbidden by the LKMM.
+> -The following instruction timing diagram shows how it might actually
+> -occur:
+> +that W ->rscs X ->rcu-link Y ->gp Z ->rcu-link U ->rscs V ->rcu-link W.
+> +However this cycle is not forbidden, because the sequence of relations
+> +contains fewer instances of gp (one) than of rscs (two).  Consequently
+> +the outcome is allowed by the LKMM.  The following instruction timing
+> +diagram shows how it might actually occur:
+>  
+>  P0			P1			P2
+>  --------------------	--------------------	--------------------
+> 
+> 
