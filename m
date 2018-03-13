@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6fQv1+jsmMcqkhElvk3jsRQVvC9wYQLN/GgKD++DyRURcXUoGa2ed49+ZT8gX7iYiJ+NL
-ARC-Seal: i=1; a=rsa-sha256; t=1520954892; cv=none;
+X-Google-Smtp-Source: AG47ELvJk0YYERX2yzBdzGVk6vtnalpgvD9byPNyGMhKcUG0i5b4fHORoBxOncxn2htFYdVodvQf
+ARC-Seal: i=1; a=rsa-sha256; t=1520954889; cv=none;
         d=google.com; s=arc-20160816;
-        b=IZACf8Uu8lqdaVbyuA49IUstcMwTP1+5mI6lyvcKc3g6QVtabdo7TOEjF1aL9e8sCD
-         sS+e+Y1gHq8FqDniYmA7lW0tTtPycx+L1qPf3w2M74UkQeWxwVu/UqbU7MTPZ+lNneWA
-         dM/eLRy8++x0H7H9GK6sdCYpGjzjM/1lgn1TamBShk4O9YTF9ZQC0Dn5OroUnXhwvB/t
-         8K2pjXuEBfaWBPxgwO0zyKjg0mU2gPFwqze3uig20AMragh1mI89zf3UFnRAkBFQ+ooN
-         42XBVoqchIk0b1mTx/+0NRiPozaTIkiTU/NKQKRBLQbbUfXAxK8JUs9RZ9FHkFE9K2zn
-         hjPQ==
+        b=icd5YDMC9StfM4g60PEkXCwmiUmdgssQ2KrDAADqqgpZPtSyWpT5NyIP1KtS+I+iiW
+         8ukUC7FhNwYWZYIpmsgCtw7kdI4rPo5qHk9j4P1xlUwIIHBVeAq5j2ftKcDQcEmV4IEJ
+         uw/BeTBIFlD75U2bwbPbjTxOzE2s/4JgEoc5xqaWwULrSh2wpqzhnMUxb/gzBjDPF9h4
+         N3dz7fn6siv7blF4ZTr/OVMNA7gGRI8atowEMasDyop5frivZmUp8LfV9lfoVdPXXviO
+         mHwA9u46u89ESWPVMC8q/kH88lRJ/VLWoQsTb2JhyS9w1J2rnmWrbKSY42R7exUNnpLc
+         lVHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zRdBfLbG5Z3zfvNGxnAd0cxzMq8HKKCcxRaEnyXBZ2I=;
-        b=AEZRag4ElI0/Je04e85BU1oCgw7p80f/fxKV8gXiWaQkhQ+9SixpSO69dYD9DswuKM
-         8ryT+zf0M2hNsHjadh/LN9hYGqfYwi0mE2ESr2e5Tnf411AWnIowzCzf4yZ8+c5b1Aax
-         Ohb/GJYcKJvrwcFjQZC/XRRO1RqxvYT7t53wy1j4PqzwqEgFUyO9JyaATUGw21ddz6Lc
-         zqsXkD97yzBYW+Eu+DNwPo4TuG17cb1v36GrPMX+2FSuhrKIVFSM2V/sHwYAKplL9jpr
-         C3sdOWOiUwjuoW2mmeQ7hwWuCbMPC0wSkEzZhHr3amUc3UZaXGKXoCWDKPoFYVgi8Oe2
-         v+bw==
+        bh=9rphx8PBOSSwXUoELe2gcAp3+07qASwgUKr5gOUqjfI=;
+        b=C0ZyU79DCdk90H6u8bu6ZbXTdnYrwpNVY8R3DlRD84eeFOOeBOEN7btELvaNsrZFMT
+         w9vcGSypgvnxvfGeAwBi5HSTI7l1YtcFHCpEY8ujQwwVT/P/2VQCpdA7qyFMLflCCb6H
+         O49DNqvcIMYrGUkKjMZEZWND0/HeAZ7yd0pbvX2jrbrNtsM4xGO3/W+P9Dti83qMnJZG
+         HZ+WniQVctbVeulQJDF7O23x1wf8DB4pHkpYmZolqVEvvI8qYMhpxN341MV2flgS7t1M
+         XgHNXE/NsbCDaRoZjkU6QepUtBHneK2yX4e8e+LDf+Y9ujXiTEiO2hzXuHc9zsjcJjM+
+         2MCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jaswinder Singh Rajput <jaswinder@perfectintelligent.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Mika Kahola <mika.kahola@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.15 009/146] drm/i915: Check for fused or unused pipes
-Date: Tue, 13 Mar 2018 16:22:56 +0100
-Message-Id: <20180313152321.327491132@linuxfoundation.org>
+	Fabrice Gasnier <fabrice.gasnier@st.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.15 008/146] regulator: stm32-vrefbuf: fix check on ready flag
+Date: Tue, 13 Mar 2018 16:22:55 +0100
+Message-Id: <20180313152321.251254349@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836797675864034?=
-X-GMAIL-MSGID: =?utf-8?q?1594836797675864034?=
+X-GMAIL-THRID: =?utf-8?q?1594836794091924222?=
+X-GMAIL-MSGID: =?utf-8?q?1594836794091924222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,41 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mika Kahola <mika.kahola@intel.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-commit 9965db26ac0548648309f506dc155a92daa2158f upstream.
+commit f63248fac563125fd5a2f0bc780ce7a299872cab upstream.
 
-We may have fused or unused pipes in our system. Let's check that the pipe
-in question is within limits of accessible pipes. In case, that we are not
-able to access the pipe, we return early with a warning.
+stm32_vrefbuf_enable() wrongly checks VRR bit: 0 stands for not ready,
+1 for ready. It currently checks the opposite.
+This makes enable routine to exit immediately without waiting for ready
+flag.
 
-v2: Rephrasing of the commit message (Jani)
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103206
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jaswinder Singh Rajput <jaswinder@perfectintelligent.com>
-Suggested-by: Jani Nikula <jani.nikula@intel.com>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Mika Kahola <mika.kahola@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1513584243-12607-1-git-send-email-mika.kahola@intel.com
-(cherry picked from commit 0b7029b7e43fda1304c181a3ade0b429b9edcd9d)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: <stable@vger.kernel.org> # v4.10+
+Fixes: 0cdbf481e927 ("regulator: Add support for stm32-vrefbuf")
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_audio.c |    2 +-
+ drivers/regulator/stm32-vrefbuf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -754,7 +754,7 @@ static struct intel_encoder *get_saved_e
- {
- 	struct intel_encoder *encoder;
- 
--	if (WARN_ON(pipe >= INTEL_INFO(dev_priv)->num_pipes))
-+	if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
- 		return NULL;
- 
- 	/* MST */
+--- a/drivers/regulator/stm32-vrefbuf.c
++++ b/drivers/regulator/stm32-vrefbuf.c
+@@ -51,7 +51,7 @@ static int stm32_vrefbuf_enable(struct r
+ 	 * arbitrary timeout.
+ 	 */
+ 	ret = readl_poll_timeout(priv->base + STM32_VREFBUF_CSR, val,
+-				 !(val & STM32_VRR), 650, 10000);
++				 val & STM32_VRR, 650, 10000);
+ 	if (ret) {
+ 		dev_err(&rdev->dev, "stm32 vrefbuf timed out!\n");
+ 		val = readl_relaxed(priv->base + STM32_VREFBUF_CSR);
