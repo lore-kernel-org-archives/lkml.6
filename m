@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvnMRnW9uNo2yv6tSMdjzusW18wlUXO3O9guSimS2XKZzWB+CLdrZyY5qdtXNkxbZwc/5nE
-ARC-Seal: i=1; a=rsa-sha256; t=1520955681; cv=none;
+X-Google-Smtp-Source: AG47ELuZjwXP1+hIKRZzARY42m+g9drFbeVtmNOPYXSeZgLOgxFDexYZsg4t213BPoxXS0r5hCar
+ARC-Seal: i=1; a=rsa-sha256; t=1520955669; cv=none;
         d=google.com; s=arc-20160816;
-        b=BpQ4BQgtb0KpxkX/LIIbNH5PuYRVArBlEbHeZ60UrXbxTUg1xt7byvT3VXcmJLnm1Z
-         2wLTpKZJaYA89V8b9UZBGqks++jXMmfkhl9vZ5MZR+ceKRxujUtY8aPrVFE0ZVgcLuUx
-         gMXE8oUcyjIYV2wmmpsXekHvE7gYfHpsvB5dY8dOs8Q9t1vZVoeJMtcEcCUb+3zGuVSY
-         VUMY7iWzdQEeH6t8415K0IutOnufgDpmQAIa6RlytL6/fZ6tRIxijCOocMSLBxI52oRN
-         YPltJn6iz0RU2T574I735cS7Zy6ac73F81JMxS+i9nZslCYAlpYNOWFE4WwUcNRX+v8Q
-         o48w==
+        b=uMXRAfKR+RGTUO4Gev7mcsICNNNWmwG6mtGR1GW1tPBcum7mJeG+fPztwBieo9PmYN
+         3EMd5zbvMAs9fqGEuwLpup5MwegB+VpY2AEC63xnCxisHPaT8cYCc9CMiUiDa44ZD51s
+         HuCyHzP/0aZjGtDSk7rMYgsoj29s5kyWikD6dPyvmc+ewyIR7lznS8kEwR7EAe5zVT17
+         w9YaAy2w5Ay2zEqo3ym+yJfqkw9FMr2Nj97sq/TDFRl7no8PfUDqPVEIKHJMDwS2dKf1
+         UkajYTyV6R37VOeCcVAxyYBvDTok1a4es0kKAkifqlDqT8QvEQe8/xMkGFkrxEpn0CvZ
+         SoVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uLw1pysXvRcN6iYdyztWciYJxhMYr7zC0la4eV6Hmpo=;
-        b=GIB4DMAMoMOsMZeDrIZ9yijreedQnxgxKJ/JzYGWa8O7Gw64slW3sICK6R00JDABpj
-         38x+fTG0es7ewQTreFMASUP1oqnRoJGTXkLkKL+OpmDlOesmuaOScg7tZUHQJborCLXX
-         5JRCDjPTXaF1BoYwEueULi6oiL/5nYNnErh9zr0V215PqMOganq63BgHI0eICEjffGrU
-         nMqTiWtTChGWu73dU8v4JRD5GHJi1StO/ZXAEh4Ek7TyVeXmk8lQBRXkxNtOOpgiwgJM
-         4HHey+HBy+ZAsydWpdirKvHdXDrxVujM4Im3KF0AFCxRByYr/3HgPidyvgFmvs4Ms6AF
-         RXCA==
+        bh=iYOWtFyNnU/P9FF7XJm8z4D+ISBBIfBS4OWLQJF2HbY=;
+        b=cPcY8LZLhD5nHSeyNMSIfJyO/kFB0UvA8VXYjbYnxTrbjEyWhEX3G1N9wH6P64HgXC
+         iKwY/SsraycDgiCaTnMvr/3Le7a6gW/nSZojncWpN/+UO7Oc5N3pxCb1H2AOPppC3sUI
+         zKthvVGProN6EuuHn2Fv7WmSph43uKCyS2vwQwm/Xxx5RIQXt+SB+Qdr6PLiUBLzoNma
+         P0iDkhJ8x98G6N+kv3rZHKSNRNWeGCdzX5SJ/4pD0ksHZmhkMFZwJC401zK3DixqSOPS
+         r1pDln30D2mtPy46A5hjZdX+4TFty/tPDiPowyeZSwhVI73qryoezF6kY580A+2gzi4t
+         Yh9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>,
+	Jan Beulich <jbeulich@suse.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	arjan.van.de.ven@intel.com,
-	bp@alien8.de,
-	dave.hansen@intel.com,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 123/140] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
-Date: Tue, 13 Mar 2018 16:25:26 +0100
-Message-Id: <20180313152506.439985421@linuxfoundation.org>
+Subject: [PATCH 4.14 122/140] x86-64/realmode: Add instruction suffix
+Date: Tue, 13 Mar 2018 16:25:25 +0100
+Message-Id: <20180313152506.375980644@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -51,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837018277263377?=
-X-GMAIL-MSGID: =?utf-8?q?1594837624791976829?=
+X-GMAIL-THRID: =?utf-8?q?1594837015003164026?=
+X-GMAIL-MSGID: =?utf-8?q?1594837611757053327?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,249 +58,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Jan Beulich <JBeulich@suse.com>
 
-commit d1c99108af3c5992640aa2afa7d2e88c3775c06e upstream.
+commit 8554004a0231dedf44d4d62147fb3d6a6db489aa upstream.
 
-This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
-the RSB filling out of line and calling it, we waste one RSB slot for
-returning from the function itself, which means one fewer actual function
-call we can make if we're doing the Skylake abomination of call-depth
-counting.
+Omitting suffixes from instructions in AT&T mode is bad practice when
+operand size cannot be determined by the assembler from register
+operands, and is likely going to be warned about by upstream GAS in the
+future (mine does already). Add the single missing suffix here.
 
-It also changed the number of RSB stuffings we do on vmexit from 32,
-which was correct, to 16. Let's just stop with the bikeshedding; it
-didn't actually *fix* anything anyway.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-4-git-send-email-dwmw@amazon.co.uk
+Link: http://lkml.kernel.org/r/5A8AF5F602000078001A9230@prv-mh.provo.novell.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_32.S             |    3 -
- arch/x86/entry/entry_64.S             |    3 -
- arch/x86/include/asm/asm-prototypes.h |    3 -
- arch/x86/include/asm/nospec-branch.h  |   70 ++++++++++++++++++++++++++++++----
- arch/x86/lib/Makefile                 |    1 
- arch/x86/lib/retpoline.S              |   56 ---------------------------
- 6 files changed, 65 insertions(+), 71 deletions(-)
+ arch/x86/realmode/rm/trampoline_64.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
+--- a/arch/x86/realmode/rm/trampoline_64.S
++++ b/arch/x86/realmode/rm/trampoline_64.S
+@@ -102,7 +102,7 @@ ENTRY(startup_32)
+ 	 * don't we'll eventually crash trying to execute encrypted
+ 	 * instructions.
  	 */
--	/* Clobbers %ebx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -360,8 +360,7 @@ ENTRY(__switch_to_asm)
- 	 * exist, overwrite the RSB with entries which capture
- 	 * speculative execution to prevent attack.
- 	 */
--	/* Clobbers %rbx */
--	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
-+	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
- #endif
- 
- 	/* restore callee-saved registers */
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
- INDIRECT_THUNK(si)
- INDIRECT_THUNK(di)
- INDIRECT_THUNK(bp)
--asmlinkage void __fill_rsb(void);
--asmlinkage void __clear_rsb(void);
--
- #endif /* CONFIG_RETPOLINE */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -8,6 +8,50 @@
- #include <asm/cpufeatures.h>
- #include <asm/msr-index.h>
- 
-+/*
-+ * Fill the CPU return stack buffer.
-+ *
-+ * Each entry in the RSB, if used for a speculative 'ret', contains an
-+ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-+ *
-+ * This is required in various cases for retpoline and IBRS-based
-+ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-+ * eliminate potentially bogus entries from the RSB, and sometimes
-+ * purely to ensure that it doesn't get empty, which on some CPUs would
-+ * allow predictions from other (unwanted!) sources to be used.
-+ *
-+ * We define a CPP macro such that it can be used from both .S files and
-+ * inline assembly. It's possible to do a .macro and then include that
-+ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-+ */
-+
-+#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
-+#define RSB_FILL_LOOPS		16	/* To avoid underflow */
-+
-+/*
-+ * Google experimented with loop-unrolling and this turned out to be
-+ * the optimal version — two calls, each with their own speculation
-+ * trap should their return address end up getting used, in a loop.
-+ */
-+#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
-+	mov	$(nr/2), reg;			\
-+771:						\
-+	call	772f;				\
-+773:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	773b;				\
-+772:						\
-+	call	774f;				\
-+775:	/* speculation trap */			\
-+	pause;					\
-+	lfence;					\
-+	jmp	775b;				\
-+774:						\
-+	dec	reg;				\
-+	jnz	771b;				\
-+	add	$(BITS_PER_LONG/8) * nr, sp;
-+
- #ifdef __ASSEMBLY__
- 
- /*
-@@ -78,10 +122,17 @@
- #endif
- .endm
- 
--/* This clobbers the BX register */
--.macro FILL_RETURN_BUFFER nr:req ftr:req
-+ /*
-+  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
-+  * monstrosity above, manually.
-+  */
-+.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ALTERNATIVE "", "call __clear_rsb", \ftr
-+	ANNOTATE_NOSPEC_ALTERNATIVE
-+	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
-+		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
-+		\ftr
-+.Lskip_rsb_\@:
- #endif
- .endm
- 
-@@ -156,10 +207,15 @@ extern char __indirect_thunk_end[];
- static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
--	alternative_input("",
--			  "call __fill_rsb",
--			  X86_FEATURE_RETPOLINE,
--			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
-+	unsigned long loops;
-+
-+	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
-+		      ALTERNATIVE("jmp 910f",
-+				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
-+				  X86_FEATURE_RETPOLINE)
-+		      "910:"
-+		      : "=r" (loops), ASM_CALL_CONSTRAINT
-+		      : : "memory" );
- #endif
- }
- 
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -27,7 +27,6 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=
- lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
- lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
- lib-$(CONFIG_RETPOLINE) += retpoline.o
--OBJECT_FILES_NON_STANDARD_retpoline.o :=y
- 
- obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
- 
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -7,7 +7,6 @@
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
--#include <asm/bitsperlong.h>
- 
- .macro THUNK reg
- 	.section .text.__x86.indirect_thunk
-@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
- #endif
--
--/*
-- * Fill the CPU return stack buffer.
-- *
-- * Each entry in the RSB, if used for a speculative 'ret', contains an
-- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
-- *
-- * This is required in various cases for retpoline and IBRS-based
-- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
-- * eliminate potentially bogus entries from the RSB, and sometimes
-- * purely to ensure that it doesn't get empty, which on some CPUs would
-- * allow predictions from other (unwanted!) sources to be used.
-- *
-- * Google experimented with loop-unrolling and this turned out to be
-- * the optimal version - two calls, each with their own speculation
-- * trap should their return address end up getting used, in a loop.
-- */
--.macro STUFF_RSB nr:req sp:req
--	mov	$(\nr / 2), %_ASM_BX
--	.align 16
--771:
--	call	772f
--773:						/* speculation trap */
--	pause
--	lfence
--	jmp	773b
--	.align 16
--772:
--	call	774f
--775:						/* speculation trap */
--	pause
--	lfence
--	jmp	775b
--	.align 16
--774:
--	dec	%_ASM_BX
--	jnz	771b
--	add	$((BITS_PER_LONG/8) * \nr), \sp
--.endm
--
--#define RSB_FILL_LOOPS		16	/* To avoid underflow */
--
--ENTRY(__fill_rsb)
--	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
--	ret
--END(__fill_rsb)
--EXPORT_SYMBOL_GPL(__fill_rsb)
--
--#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
--
--ENTRY(__clear_rsb)
--	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
--	ret
--END(__clear_rsb)
--EXPORT_SYMBOL_GPL(__clear_rsb)
+-	bt	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
++	btl	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
+ 	jnc	.Ldone
+ 	movl	$MSR_K8_SYSCFG, %ecx
+ 	rdmsr
