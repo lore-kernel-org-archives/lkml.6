@@ -1,60 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932800AbeCMNg2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:36:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35522 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932647AbeCMN1E (ORCPT
+        id S932755AbeCMNhG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:37:06 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17818 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeCMNhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:27:04 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 48/61] shmem: Convert shmem_free_swap to XArray
-Date: Tue, 13 Mar 2018 06:26:26 -0700
-Message-Id: <20180313132639.17387-49-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
+        Tue, 13 Mar 2018 09:37:05 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 13 Mar 2018 06:37:02 -0700
+Date: Tue, 13 Mar 2018 14:36:58 +0100
+From: Thierry Reding <treding@nvidia.com>
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Jassi Brar <jassisinghbrar@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mailbox: tegra: relax TEGRA_HSP_MBOX Kconfig dependencies
+Message-ID: <20180313133654.GA5374@ulmo>
+References: <20180313121154.2715591-1-arnd@arndb.de>
+MIME-Version: 1.0
+In-Reply-To: <20180313121154.2715591-1-arnd@arndb.de>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.21.62.192]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is a perfect use for xa_cmpxchg().  Note the use of 0 for GFP
-flags; we won't be allocating memory.
+On Tue, Mar 13, 2018 at 01:11:43PM +0100, Arnd Bergmann wrote:
+> With the addition of the ARCH_TEGRA_194_SOC driver, we get a new Kconfig =
+warning:
+>=20
+> warning: (ARCH_TEGRA_186_SOC && ARCH_TEGRA_194_SOC) selects TEGRA_HSP_MBO=
+X which has unmet direct dependencies (MAILBOX && ARCH_TEGRA_186_SOC)
+>=20
+> It looks like the dependency is a bit too strict here, allowing the drive=
+r to
+> be built for any Tegra chip avoids the problem.
+>=20
+> Fixes: 6f9ed07fde03 ("soc/tegra: Add Tegra194 SoC configuration option")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/mailbox/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+The HSP does not exist on any chip prior to Tegra186, which is what the
+dependency reflects. However, I agree that there is little point for an
+exact list of per-chip dependencies. We don't really support non-multi-
+platform kernels anymore, or at least they don't get any testing, so
+relaxing the dependency is fine with me.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index a0a354a87f3b..cfbffb4b47a2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -635,16 +635,13 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- }
- 
- /*
-- * Remove swap entry from radix tree, free the swap and its page cache.
-+ * Remove swap entry from page cache, free the swap and its page cache.
-  */
- static int shmem_free_swap(struct address_space *mapping,
- 			   pgoff_t index, void *radswap)
- {
--	void *old;
-+	void *old = xa_cmpxchg(&mapping->i_pages, index, radswap, NULL, 0);
- 
--	xa_lock_irq(&mapping->i_pages);
--	old = radix_tree_delete_item(&mapping->i_pages, index, radswap);
--	xa_unlock_irq(&mapping->i_pages);
- 	if (old != radswap)
- 		return -ENOENT;
- 	free_swap_and_cache(radix_to_swp_entry(radswap));
--- 
-2.16.1
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+Thanks for fixing this,
+Thierry
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqn0+MACgkQ3SOs138+
+s6HwChAAjK4QWoQQVt9W/SrGaal40X37AzJEkMgkZXoB97d5h3tvCaKDXRLoqJED
+DYMRiO8muoNEY6glxf9YAPxXKq2NVvDxAUfuaVxgbw3c73XtWG7u+mS2gtLxhZLn
+30IhG9T9urckxZIRrkN9HUcSYB2ZD7hXOGHSNshtFtvs3FLuRVMX5ee45X95eMPJ
+rpHEZx846W2FwB3zkiSyT2Kt3flz1LYHh1nu98ysRgAEreiXbaN0BqT+ZuCPtt80
+m1T4pFzMEfNuLYmPJlnsMwwDKIV4kiqNxkRZ0a+JjiR9Bsf1Of19FLQjlt5pyVHA
+KnJXA0KjA7vEC8h30EUCqiI0Cfle6INbjAFiY0GzfMyWpxHzcDVpVzMdxaACD9In
+u3CA4Gy3tkJm42q2hbrsIEPmXVj1OHBCAz9WkgVJ6qGUJAJDf4tZQWCFNz9GbwsY
+UTlF70dXxcuEJQMyLiGrtvx722ucmhjF3P2xheiPaDfl06x77oaNikv1UbvN8Nsx
+anyB76ptEHbba7B0a3V9Of+oeDizk+G+8qjzkupF49NiM4fcVUE0t4UNbNTquScR
+L9ycZCROkLCchF+Cl5ajr39E/a2hLuydIQ3Or9FKR2XEdPijP+n+p+L2LUctcIkO
+DFBmXB//5CJhMBbUulPwgUE+txk/ax+4xtV/Fk7z0tZmGCHXNI4=
+=NcWs
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
