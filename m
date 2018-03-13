@@ -1,49 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932806AbeCMKgK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:36:10 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:41009 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932489AbeCMKgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:36:06 -0400
-X-Google-Smtp-Source: AG47ELsaLl2XZCRuEh3GqIwgepghcGQHypTXCIlyBlgCg5soZ2BqZmav5qY48SwFK9NzNBwCSr/4Sg==
-Message-ID: <1520937363.4264.47.camel@baylibre.com>
-Subject: Re: [PATCH] drm/meson: Add support for DMT modes on HDMI
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 13 Mar 2018 11:36:03 +0100
-In-Reply-To: <1520935670-14187-1-git-send-email-narmstrong@baylibre.com>
-References: <1520935670-14187-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932858AbeCMKg2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:36:28 -0400
+Received: from victor.provo.novell.com ([137.65.250.26]:55113 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932828AbeCMKgV (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 13 Mar 2018 06:36:21 -0400
+From: "Lee, Chun-Yi" <jlee@suse.com>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] MODSIGN: print appropriate status message when getting UEFI certificates list
+Date: Tue, 13 Mar 2018 18:35:56 +0800
+Message-Id: <20180313103559.13032-3-jlee@suse.com>
+X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20180313103559.13032-1-jlee@suse.com>
+References: <20180313103559.13032-1-jlee@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-03-13 at 11:07 +0100, Neil Armstrong wrote:
-> This patch adds support for DMT display modes over HDMI.
-> The modes timings configurations are from the Amlogic Vendor linux tree
-> and tested over multiples monitors.
-> Previously only a selected number of CEA modes were supported.
-> 
-> Only these following modes are supported with these changes:
-> - 640x480@60Hz
-> - 800x600@60Hz
-> - 1024x768@60Hz
-> - 1152x864@75Hz
-> - 1280x1024@60Hz
-> - 1600x1200@60Hz
-> - 1920x1080@60Hz
-> 
-> The associated code to handle the clock rates is also added.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+When getting certificates list from UEFI variable, the original error
+message shows the state number from UEFI firmware. It's hard to be read
+by human. This patch changed the error message to show the appropriate
+string.
 
-Looks good to me
+The message will be showed as:
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+[    0.788529] MODSIGN: Couldn't get UEFI MokListRT: EFI_NOT_FOUND
+[    0.788537] MODSIGN: Couldn't get UEFI MokListXRT: EFI_NOT_FOUND
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Josh Boyer <jwboyer@fedoraproject.org>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Lee, Chun-Yi <jlee@suse.com>
+---
+ certs/load_uefi.c   | 43 ++++++++++++++++++++++++++++++-------------
+ include/linux/efi.h | 25 +++++++++++++++++++++++++
+ 2 files changed, 55 insertions(+), 13 deletions(-)
+
+diff --git a/certs/load_uefi.c b/certs/load_uefi.c
+index d6de4d0..f2f372b 100644
+--- a/certs/load_uefi.c
++++ b/certs/load_uefi.c
+@@ -4,6 +4,7 @@
+ #include <linux/err.h>
+ #include <linux/efi.h>
+ #include <linux/slab.h>
++#include <linux/ucs2_string.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include "internal.h"
+@@ -32,6 +33,24 @@ static __init bool uefi_check_ignore_db(void)
+ 	return status == EFI_SUCCESS;
+ }
+ 
++static __init void print_get_fail(efi_char16_t *char16_str, efi_status_t status)
++{
++	char *utf8_str;
++	unsigned long utf8_size;
++
++	if (!char16_str)
++		return;
++	utf8_size = ucs2_utf8size(char16_str) + 1;
++	utf8_str = kmalloc(utf8_size, GFP_KERNEL);
++	if (!utf8_str)
++		return;
++	ucs2_as_utf8(utf8_str, char16_str, utf8_size);
++
++	pr_info("MODSIGN: Couldn't get UEFI %s: %s\n",
++		utf8_str, efi_status_to_str(status));
++	kfree(utf8_str);
++}
++
+ /*
+  * Get a certificate list blob from the named EFI variable.
+  */
+@@ -45,25 +64,29 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+ 
+ 	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+ 	if (status != EFI_BUFFER_TOO_SMALL) {
+-		pr_err("Couldn't get size: 0x%lx\n", status);
+-		return NULL;
++		if (status != EFI_NOT_FOUND)
++			pr_err("Couldn't get size: 0x%lx\n", status);
++		goto err;
+ 	}
+ 
+ 	db = kmalloc(lsize, GFP_KERNEL);
+ 	if (!db) {
+ 		pr_err("Couldn't allocate memory for uefi cert list\n");
+-		return NULL;
++		goto err;
+ 	}
+ 
+ 	status = efi.get_variable(name, guid, NULL, &lsize, db);
+ 	if (status != EFI_SUCCESS) {
+ 		kfree(db);
+ 		pr_err("Error reading db var: 0x%lx\n", status);
+-		return NULL;
++		goto err;
+ 	}
+ 
+ 	*size = lsize;
+ 	return db;
++err:
++	print_get_fail(name, status);
++	return NULL;
+ }
+ 
+ /*
+@@ -153,9 +176,7 @@ static int __init load_uefi_certs(void)
+ 	 */
+ 	if (!uefi_check_ignore_db()) {
+ 		db = get_cert_list(L"db", &secure_var, &dbsize);
+-		if (!db) {
+-			pr_err("MODSIGN: Couldn't get UEFI db list\n");
+-		} else {
++		if (db) {
+ 			rc = parse_efi_signature_list("UEFI:db",
+ 						      db, dbsize, get_handler_for_db);
+ 			if (rc)
+@@ -165,9 +186,7 @@ static int __init load_uefi_certs(void)
+ 	}
+ 
+ 	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
+-	if (!dbx) {
+-		pr_info("MODSIGN: Couldn't get UEFI dbx list\n");
+-	} else {
++	if (dbx) {
+ 		rc = parse_efi_signature_list("UEFI:dbx",
+ 					      dbx, dbxsize,
+ 					      get_handler_for_dbx);
+@@ -181,9 +200,7 @@ static int __init load_uefi_certs(void)
+ 		return 0;
+ 
+ 	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+-	if (!mok) {
+-		pr_info("MODSIGN: Couldn't get UEFI MokListRT\n");
+-	} else {
++	if (mok) {
+ 		rc = parse_efi_signature_list("UEFI:MokListRT",
+ 					      mok, moksize, get_handler_for_db);
+ 		if (rc)
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 2729d6f..c44946c 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1600,4 +1600,29 @@ struct linux_efi_random_seed {
+ 	u8	bits[];
+ };
+ 
++#define EFI_STATUS_STR(_status)				\
++	case EFI_##_status:				\
++		return "EFI_" __stringify(_status);	\
++
++static inline char *
++efi_status_to_str(efi_status_t status)
++{
++	switch (status) {
++	EFI_STATUS_STR(SUCCESS)
++	EFI_STATUS_STR(LOAD_ERROR)
++	EFI_STATUS_STR(INVALID_PARAMETER)
++	EFI_STATUS_STR(UNSUPPORTED)
++	EFI_STATUS_STR(BAD_BUFFER_SIZE)
++	EFI_STATUS_STR(BUFFER_TOO_SMALL)
++	EFI_STATUS_STR(NOT_READY)
++	EFI_STATUS_STR(DEVICE_ERROR)
++	EFI_STATUS_STR(WRITE_PROTECTED)
++	EFI_STATUS_STR(OUT_OF_RESOURCES)
++	EFI_STATUS_STR(NOT_FOUND)
++	EFI_STATUS_STR(ABORTED)
++	EFI_STATUS_STR(SECURITY_VIOLATION)
++	}
++
++	return "";
++}
+ #endif /* _LINUX_EFI_H */
+-- 
+2.10.2
