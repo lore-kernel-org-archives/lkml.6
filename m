@@ -1,145 +1,162 @@
-Return-Path: <jglisse@redhat.com>
-X-Google-Smtp-Source: AG47ELs6C9jXHK/2FgpiwKE/Fx7SP3QW06mzhvkscqiP5OE7uvCs3Bathx3IGm0XEgNHGYak2JYo
-ARC-Seal: i=1; a=rsa-sha256; t=1520973632; cv=none;
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELs++f6Oh+dfqASfUMtJrZagEZ9P0Ls6P2b9xIaRs9bv8g8eA4Udx1purcpKFWYccu2jv7s4
+ARC-Seal: i=1; a=rsa-sha256; t=1520945709; cv=none;
         d=google.com; s=arc-20160816;
-        b=dzSnU+cS1lL30+rQS4E+HG9QpOtLGmcbMyEFZiD8LTp5mOsoyOpsl1a/Ma4gYeKJ85
-         K/COYyGglNXAIpdV2pUgq9lJBkeQUDyTK1QZS0KqsxRZY7k/qRNdi4mSrZp4GFm9CZLm
-         5lRkmE0/4QLOiqMo0hNvhPESqr9jsXyaTpCJw8D624HksUTt3c5zwmOsRay/otz1ht8P
-         lho3M7I+US0RP5CF5nP/lLI7ddLUA2A6huKDcUZJ6FpWl+BzAnYqF71KghCvGXpIYCyu
-         R1ZTcSrBUNzUKi9wS5Ayo38zNuBi4Kzw/50qZ+Ivmi6Zagg7ORIzFZcxlghKbeumfBPX
-         voYg==
+        b=FcQT3qjmDZ8L1UN0cCEhT0GdENJlm7lXoJ8x1Mb4MubhVHCev8hQmr59q+abarD/4n
+         HPyfIMs0BhaTbvfLfkoD/6f0fBnG72lusKnY4a8RN6HR2DRcaQWPqQqglaraDnVM3NY4
+         nQH9cjaqYmJ0LRYlRuQ/OFv8M2xf3GGouZBedBB+I23KQsu2/koNZ5XpF4N67yMuIQSm
+         Kz7Ny3piA8aIY5tUOGtaDpQog0yhJMPK6A2QGVeXfjvU//1X+yA3xTlDLfNMIIJF8D8T
+         gX7VAa/ji6LWXc9NeXYl2VrqfVtyQC2amYlmk0dH0sWQNEQ6JTnQbjhCxHkifoUBtRZL
+         WjqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=VRwfZojKpGUIQiHt2dY2LP6pFodr3goutHh/hV6oSQA=;
-        b=s406219YTniNsPz0Cv6ouUwMcvQl8fbaTbXe9HUJZ+6zFCUDR1eLU97aDn2DMdLPmE
-         yy3VOVKZ/ByGt4rZMMZ7ngYGiFEeMBFBh62eUeqqbWWGlFD3zb1Y4EAAo9HKaKlEAFHW
-         7JmSYI0ocRJ0PCP0+ISG3UmAh2GpJjV734jQ5U3B5l3R8YpXO6SzC0Wgilhj4m4Re0Il
-         5/9bk/ObFVz8kqdJ6k6FqysEBp5ssyQruPuII1wuQdsAhJ1Bsp5PXU+77FBoIDND4sOH
-         jwJsFxkJaOD9ZL90QuTtquAh2FEZCcRa4yXT/31fLSK72ckIGuF5kTW8bCKdPEb6PwNM
-         bfbg==
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=XmFyYaNCgKjTzxY/rkhTPkuYAYswHJQtj+vWWYSq1Nc=;
+        b=nIeP1mk01HhKaIUXMeM8vmVJIIv2GiTrBFAaeeIUgfy/aed0dGoXBDh5NWLzyRTtTt
+         R52WCu4N6dMjfoyLFqNAs0YwQ2UUipfeFqdmlbG5FZh8OBEkHsrxA+SJ7hl0BDF1tulZ
+         AgSHYNTqqWDXPPrMZvBDDumeHOOxv1HO97rhoAJd6AVdanVE4qB2BR4P/TQNQgeuxHmh
+         u89EwXXvQ15eEBhCkZ1tiv9fWBiOf1qxaVpgOycA+ZOnSaYqfuR83XasPqR79DqC0+g9
+         SNYu3eUqTBplBiAhkCvxJ0XL9XLw1ss/npi+e4/HGFHg2FiRNJkq4rTEAV+49xLBIAb2
+         dSuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jglisse@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jglisse@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jglisse@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jglisse@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 13 Mar 2018 16:40:25 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	srikar@linux.vnet.ibm.com, acme@kernel.org,
-	ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-	alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-	corbet@lwn.net, dan.j.williams@intel.com,
-	gregkh@linuxfoundation.org, huawei.libin@huawei.com,
-	hughd@google.com, jack@suse.cz, jolsa@redhat.com,
-	kan.liang@intel.com, kirill.shutemov@linux.intel.com,
-	kjlx@templeofstupid.com, kstewart@linuxfoundation.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, mhocko@suse.com, milian.wolff@kdab.com,
-	mingo@redhat.com, namhyung@kernel.org,
-	naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com,
-	pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
-	tmricht@linux.vnet.ibm.com, willy@infradead.org,
-	yao.jin@linux.intel.com, fengguang.wu@intel.com
-Subject: Re: [PATCH 4/8] Uprobe: Export uprobe_map_info along with
- uprobe_{build/free}_map_info()
-Message-ID: <20180313204024.GJ3828@redhat.com>
+       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com
+Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH 2/8] mm: Prefix vma_ to vaddr_to_offset() and offset_to_vaddr()
+Date: Tue, 13 Mar 2018 18:25:57 +0530
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180313125603.19819-5-ravi.bangoria@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180313125603.19819-5-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18031312-0040-0000-0000-0000043EFB37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031312-0041-0000-0000-000020E22D7E
+Message-Id: <20180313125603.19819-3-ravi.bangoria@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130154
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594827156987945249?=
-X-GMAIL-MSGID: =?utf-8?q?1594856447452913573?=
+X-GMAIL-THRID: =?utf-8?q?1594827168615885864?=
+X-GMAIL-MSGID: =?utf-8?q?1594827168615885864?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 06:25:59PM +0530, Ravi Bangoria wrote:
-> These exported data structure and functions will be used by other
-> files in later patches.
-> 
-> No functionality changes.
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+No functionality changes.
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+---
+ include/linux/mm.h      |  4 ++--
+ kernel/events/uprobes.c | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-> ---
->  include/linux/uprobes.h |  9 +++++++++
->  kernel/events/uprobes.c | 14 +++-----------
->  2 files changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index 0a294e9..7bd2760 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -109,12 +109,19 @@ enum rp_check {
->  	RP_CHECK_RET,
->  };
->  
-> +struct address_space;
->  struct xol_area;
->  
->  struct uprobes_state {
->  	struct xol_area		*xol_area;
->  };
->  
-> +struct uprobe_map_info {
-> +	struct uprobe_map_info *next;
-> +	struct mm_struct *mm;
-> +	unsigned long vaddr;
-> +};
-> +
->  extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
->  extern bool is_swbp_insn(uprobe_opcode_t *insn);
-> @@ -149,6 +156,8 @@ struct uprobes_state {
->  extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
->  extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
->  					 void *src, unsigned long len);
-> +extern struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info);
-> +extern struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping, loff_t offset, bool is_register);
->  #else /* !CONFIG_UPROBES */
->  struct uprobes_state {
->  };
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 081b88c1..e7830b8 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -695,23 +695,15 @@ static void delete_uprobe(struct uprobe *uprobe)
->  	put_uprobe(uprobe);
->  }
->  
-> -struct uprobe_map_info {
-> -	struct uprobe_map_info *next;
-> -	struct mm_struct *mm;
-> -	unsigned long vaddr;
-> -};
-> -
-> -static inline struct uprobe_map_info *
-> -uprobe_free_map_info(struct uprobe_map_info *info)
-> +struct uprobe_map_info *uprobe_free_map_info(struct uprobe_map_info *info)
->  {
->  	struct uprobe_map_info *next = info->next;
->  	kfree(info);
->  	return next;
->  }
->  
-> -static struct uprobe_map_info *
-> -uprobe_build_map_info(struct address_space *mapping, loff_t offset,
-> -		      bool is_register)
-> +struct uprobe_map_info *uprobe_build_map_info(struct address_space *mapping,
-> +					      loff_t offset, bool is_register)
->  {
->  	unsigned long pgoff = offset >> PAGE_SHIFT;
->  	struct vm_area_struct *vma;
-> -- 
-> 1.8.3.1
-> 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 95909f2..d7ee526 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2275,13 +2275,13 @@ struct vm_unmapped_area_info {
+ }
+ 
+ static inline unsigned long
+-offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
++vma_offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
+ {
+ 	return vma->vm_start + offset - ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+ }
+ 
+ static inline loff_t
+-vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
++vma_vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
+ {
+ 	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
+ }
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index bd6f230..535fd39 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -748,7 +748,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
+ 		curr = info;
+ 
+ 		info->mm = vma->vm_mm;
+-		info->vaddr = offset_to_vaddr(vma, offset);
++		info->vaddr = vma_offset_to_vaddr(vma, offset);
+ 	}
+ 	i_mmap_unlock_read(mapping);
+ 
+@@ -807,7 +807,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
+ 			goto unlock;
+ 
+ 		if (vma->vm_start > info->vaddr ||
+-		    vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
++		    vma_vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
+ 			goto unlock;
+ 
+ 		if (is_register) {
+@@ -977,7 +977,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ 		    uprobe->offset >= offset + vma->vm_end - vma->vm_start)
+ 			continue;
+ 
+-		vaddr = offset_to_vaddr(vma, uprobe->offset);
++		vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
+ 		err |= remove_breakpoint(uprobe, mm, vaddr);
+ 	}
+ 	up_read(&mm->mmap_sem);
+@@ -1023,7 +1023,7 @@ static void build_probe_list(struct inode *inode,
+ 	struct uprobe *u;
+ 
+ 	INIT_LIST_HEAD(head);
+-	min = vaddr_to_offset(vma, start);
++	min = vma_vaddr_to_offset(vma, start);
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+@@ -1076,7 +1076,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 	list_for_each_entry_safe(uprobe, u, &tmp_list, pending_list) {
+ 		if (!fatal_signal_pending(current) &&
+ 		    filter_chain(uprobe, UPROBE_FILTER_MMAP, vma->vm_mm)) {
+-			unsigned long vaddr = offset_to_vaddr(vma, uprobe->offset);
++			unsigned long vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
+ 			install_breakpoint(uprobe, vma->vm_mm, vma, vaddr);
+ 		}
+ 		put_uprobe(uprobe);
+@@ -1095,7 +1095,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 
+ 	inode = file_inode(vma->vm_file);
+ 
+-	min = vaddr_to_offset(vma, start);
++	min = vma_vaddr_to_offset(vma, start);
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+@@ -1730,7 +1730,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 	if (vma && vma->vm_start <= bp_vaddr) {
+ 		if (valid_vma(vma, false)) {
+ 			struct inode *inode = file_inode(vma->vm_file);
+-			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
++			loff_t offset = vma_vaddr_to_offset(vma, bp_vaddr);
+ 
+ 			uprobe = find_uprobe(inode, offset);
+ 		}
+-- 
+1.8.3.1
