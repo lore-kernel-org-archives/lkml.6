@@ -1,102 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932485AbeCMDLx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 23:11:53 -0400
-Received: from ozlabs.org ([103.22.144.67]:42391 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932294AbeCMDLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 23:11:51 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 13 Mar 2018 14:11:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: linux-next: manual merge of the tip tree with the arm-soc tree
-Message-ID: <20180313141118.41cd6419@canb.auug.org.au>
+        id S932469AbeCMDQU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 23:16:20 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.250]:13192 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932294AbeCMDQT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 23:16:19 -0400
+Date: Mon, 12 Mar 2018 22:16:17 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH v2] netfilter: nf_tables: remove VLA usage
+Message-ID: <20180313031617.GA2204@embeddedgus>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/62QK8zv9iQLslRFcHWl.Fux"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1evaQE-0031A3-Br
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.117.58]:49622
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/62QK8zv9iQLslRFcHWl.Fux
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In preparation to enabling -Wvla, remove VLA and replace it
+with dynamic memory allocation.
 
-Hi all,
+>From a security viewpoint, the use of Variable Length Arrays can be
+a vector for stack overflow attacks. Also, in general, as the code
+evolves it is easy to lose track of how big a VLA can get. Thus, we
+can end up having segfaults that are hard to debug.
 
-Today's linux-next merge of the tip tree got a conflict in:
+Also, fixed as part of the directive to remove all VLAs from
+the kernel: https://lkml.org/lkml/2018/3/7/621
 
-  drivers/bus/arm-cci.c
-
-between commit:
-
-  3de6be7a3dd8 ("drivers/bus: Split Arm CCI driver")
-
-from the arm-soc tree and commit:
-
-  8343aae66167 ("perf/core: Remove perf_event::group_entry")
-
-from the tip tree.
-
-I fixed it up (I have added the following merge fix patch) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 13 Mar 2018 14:08:01 +1100
-Subject: [PATCH] perf/core: merge fix for "drivers/bus: Split Arm CCI drive=
-r"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/perf/arm-cci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+ - Use kmalloc_array instead of kcalloc.
 
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 67a74c48c7c2..192d23b760a0 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1265,7 +1265,7 @@ static int validate_group(struct perf_event *event)
- 	if (!validate_event(event->pmu, &fake_pmu, leader))
- 		return -EINVAL;
-=20
--	list_for_each_entry(sibling, &leader->sibling_list, group_entry) {
-+	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
- 		if (!validate_event(event->pmu, &fake_pmu, sibling))
- 			return -EINVAL;
+ net/netfilter/nf_tables_api.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 3f815b6..5a42e97 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4357,16 +4357,20 @@ static struct nft_object *nft_obj_init(const struct nft_ctx *ctx,
+ 				       const struct nft_object_type *type,
+ 				       const struct nlattr *attr)
+ {
+-	struct nlattr *tb[type->maxattr + 1];
++	struct nlattr **tb;
+ 	const struct nft_object_ops *ops;
+ 	struct nft_object *obj;
+-	int err;
++	int err = -ENOMEM;
++
++	tb = kmalloc_array(type->maxattr + 1, sizeof(*tb), GFP_KERNEL);
++	if (!tb)
++		goto err1;
+ 
+ 	if (attr) {
+ 		err = nla_parse_nested(tb, type->maxattr, attr, type->policy,
+ 				       NULL);
+ 		if (err < 0)
+-			goto err1;
++			goto err2;
+ 	} else {
+ 		memset(tb, 0, sizeof(tb[0]) * (type->maxattr + 1));
  	}
---=20
-2.16.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/62QK8zv9iQLslRFcHWl.Fux
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnQVYACgkQAVBC80lX
-0Gxc6Qf9H3xh6Frqe6kdcZIek9QjZ7wJIlKK42WzXFVR6OVlPZ5OkLZfjmWzt+8n
-MWNb18KJPW2H0aUYId2nDQ95G8SPizE5x3DtWKLaBOUN5Gqk7skr7t9jEHphHyrV
-2MKJYoE42kTzp+srjLDZ1jJ3LjGl1giH2fpcQKx5RE74IbRSsoy5cuGXuiAlIvjq
-EtTwBTLiu92LXmqmzeyRh/w6dsV2zeaUvy6mdNUfRGfQTZVlTPOzx8Dt4whHaTbX
-25fmDfyVOM5z3KGPl9+IQ+yonahVFFdTcj839wDB6/rMzG47Lquj1m1hLPNOiN3N
-qG9xKYtN4nJm7KjMVKZkVX1/a33zBQ==
-=7QJ0
------END PGP SIGNATURE-----
-
---Sig_/62QK8zv9iQLslRFcHWl.Fux--
+@@ -4375,7 +4379,7 @@ static struct nft_object *nft_obj_init(const struct nft_ctx *ctx,
+ 		ops = type->select_ops(ctx, (const struct nlattr * const *)tb);
+ 		if (IS_ERR(ops)) {
+ 			err = PTR_ERR(ops);
+-			goto err1;
++			goto err2;
+ 		}
+ 	} else {
+ 		ops = type->ops;
+@@ -4383,18 +4387,21 @@ static struct nft_object *nft_obj_init(const struct nft_ctx *ctx,
+ 
+ 	err = -ENOMEM;
+ 	obj = kzalloc(sizeof(*obj) + ops->size, GFP_KERNEL);
+-	if (obj == NULL)
+-		goto err1;
++	if (!obj)
++		goto err2;
+ 
+ 	err = ops->init(ctx, (const struct nlattr * const *)tb, obj);
+ 	if (err < 0)
+-		goto err2;
++		goto err3;
+ 
+ 	obj->ops = ops;
+ 
++	kfree(tb);
+ 	return obj;
+-err2:
++err3:
+ 	kfree(obj);
++err2:
++	kfree(tb);
+ err1:
+ 	return ERR_PTR(err);
+ }
+-- 
+2.7.4
