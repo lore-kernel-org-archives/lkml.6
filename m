@@ -1,94 +1,75 @@
-Return-Path: <fbarrat@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AG47ELsf+8gRdSMMpyImfSqMZAf7oqWLMP6Iruq66Y4f0Scel2obBQCPejHfaxLfwBMRmJxuHy2R
-ARC-Seal: i=1; a=rsa-sha256; t=1520933916; cv=none;
+Return-Path: <andrew.donnellan@au1.ibm.com>
+X-Google-Smtp-Source: AG47ELvu2eekciOFgzAcylH2SVzQfSNDaMErvngNk6hkYtPMLfoJwWNzCqO5QypxMZnz/I32J9E0
+ARC-Seal: i=1; a=rsa-sha256; t=1520900794; cv=none;
         d=google.com; s=arc-20160816;
-        b=BkucdmQzEiINGbpvU4/YSQDhg61g+CWi1Kws8aTG8LVt0emCV8Sua/rEhGpNP+XToe
-         5jjj9ZAy4wj0IpbKCTTo93H4zaEkQQhSB/D4tVkp2PgvY/QQtRuv1pK0AYeR4bj3EqTa
-         c5EeQ9jI8Vj27QYnpMQKM774MNH4t6V4EqpdaDVzA+FbOlvtvZ62J7d+37nChxtovuQj
-         bEROMh8AhicONLpLFIfEYLQnMOr45MwzDLBbv+5Wd0SpxxeGx8fM6lJ48m0KDb433DDv
-         TbdekRU/CgsdP9wMHApY7MLNA7o7LRPyTo231LY6cmhy7myUXA6RzYxBUEISPv8OlBKe
-         piRA==
+        b=sp9xxJ9Tll2PBi3vi9zwGq7hdDtU4HWXKX3rbJOz5UZJcDkEFgBJ2Uak3aYZkoyfsz
+         hAFE28D0fxBVs0uGnS/ggSSXaK4UFYSoWroPm9uGYezb28SHURKmisiugs70lRAgvMdT
+         0nnsq43RZUAYT/TwK9id6W3cYjsMO0MODaXY0s7Ok08fB5+zBWeGOVqEFVaTyZT5V1gy
+         DlAnJRBk1+yERcRZzBEYzwIk0QNbYzIi++bXbmc9z80rRKG9aUkqmIe+Vk77RXnpzWzw
+         1JLPD2sC7ZapAZuYtJK7BucCqeu8cDQYR6j4nWRLxt+D1HUkc5p93PFOMeSsoU4dyXDM
+         7Umg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:content-transfer-encoding:content-language:in-reply-to
          :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=NWFTxcmWodLH2MRTjj6cTEfxLq/YzfAhNT3OQUukdsQ=;
-        b=cPPaEEV38KR6SnCM4At0VoZMsiQ25EsslwlNju+oqRRNJpxReMYlBx9UvlMQet7XB7
-         rDaz21n+av7gIXepBytoWtZ1wBOF0VBXiYIynAOiC4C87mUBnZB0eJBXlrVYPa3/1B4w
-         51HagGmMFQFZbnS7X2msMwq+q9nclenVSozxO88Sh5NJMdhPbjv2ra6tgP58tS0nd2Em
-         C0juZjZ9BLxCMlwXAbXLUEvHjmnS91EI2euLeueuqkjAzoqV6TMRiHHh3V9QsSkiujvZ
-         /12JPFl3LqCx91wG5qVyz33OGSn8G06RgixLaQ4cNdxRBmgxkDfoaXM7Xj54QvUTpCxC
-         +kkw==
+        bh=ZgKLzytDz2LMAJjI88aCnDGsCbUUJ6kG4FsxWXKG0Qc=;
+        b=YYZeLAsULOjsowPktQKDJkAUPxLm3X76h7crw+3dpVYP/nldXLClg58R5JGg3vVpcU
+         S8r7is+MvizEYSRPJyutN+tLbdJffm/15e4jxk3vhhv1njVENFHhPaHiTpWVAmv146LB
+         g7t2YCVVvNnfeuC4CMFPPQ6rlb886QgPCOwXU+KbQMqCqcfFOYAiAF7mZLQ/bD2Z2W/s
+         0/lWe8kI8WTQjlnkjuCAjuKlE4r9D4+sXLrtFs3YjF8pb2oVEcr3OYK3QDtc0sdDZs5c
+         TxqFTGi02i+aRw/iP66QtIzbFg9nWTt6fBP4UMQk3qVXz/Tzj9mUXTSvc962OUfQc+fc
+         B6FQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of fbarrat@linux.vnet.ibm.com) smtp.mailfrom=fbarrat@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of fbarrat@linux.vnet.ibm.com) smtp.mailfrom=fbarrat@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Subject: Re: [PATCH 2/2] misc: ocxl: use put_device() instead of
  device_unregister()
 To: Arvind Yadav <arvind.yadav.cs@gmail.com>, sudeep.dutt@intel.com,
         ashutosh.dixit@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        andrew.donnellan@au1.ibm.com
+        fbarrat@linux.vnet.ibm.com
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 References: <cover.1520849284.git.arvind.yadav.cs@gmail.com>
  <8c4d28703e408b71284af68d07c117e7b8c8a75a.1520849284.git.arvind.yadav.cs@gmail.com>
-From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Date: Tue, 13 Mar 2018 10:38:27 +0100
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Tue, 13 Mar 2018 11:26:25 +1100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
 In-Reply-To: <8c4d28703e408b71284af68d07c117e7b8c8a75a.1520849284.git.arvind.yadav.cs@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18031309-0040-0000-0000-0000041EEA54
+x-cbid: 18031300-0008-0000-0000-000004DBAF19
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031309-0041-0000-0000-000026221428
-Message-Id: <c1b768e0-c5d6-a0bf-f756-6f7bff159bea@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
+x-cbparentid: 18031300-0009-0000-0000-00001E6EDF19
+Message-Id: <c4f9c9c3-465a-8f95-ff62-4984d556cf20@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_14:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130117
+ definitions=main-1803130004
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594731716562305768?=
-X-GMAIL-MSGID: =?utf-8?q?1594814801890541309?=
+X-GMAIL-MSGID: =?utf-8?q?1594780071640275576?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-Le 12/03/2018 à 12:36, Arvind Yadav a écrit :
+On 12/03/18 22:36, Arvind Yadav wrote:
 > if device_register() returned an error! Always use put_device()
 > to give up the reference initialized.
 > 
 > Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
 
-OK, device_unregister() calls put_device() but also other actions that 
-we can skip in this case.
+This looks right, thanks for picking it up.
 
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
-
->   drivers/misc/ocxl/pci.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ocxl/pci.c b/drivers/misc/ocxl/pci.c
-> index 0051d9e..21f4254 100644
-> --- a/drivers/misc/ocxl/pci.c
-> +++ b/drivers/misc/ocxl/pci.c
-> @@ -519,7 +519,7 @@ static struct ocxl_fn *init_function(struct pci_dev *dev)
->   	rc = device_register(&fn->dev);
->   	if (rc) {
->   		deconfigure_function(fn);
-> -		device_unregister(&fn->dev);
-> +		put_device(&fn->dev);
->   		return ERR_PTR(rc);
->   	}
->   	return fn;
-> 
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
