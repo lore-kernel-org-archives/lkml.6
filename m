@@ -1,66 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933304AbeCMLxl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:53:41 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:52579 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933217AbeCMLw3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:52:29 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pci: tegra: add MSI dependency
-Date: Tue, 13 Mar 2018 12:52:05 +0100
-Message-Id: <20180313115218.2246372-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:cSaM6c3zLVUmhnkNvqteFkaZRFZszFy0XdCG0oDakvYBb7OkGEK
- 1eN/oIgfK/Y94e4vLwuFOSKEF8c+TYBQMZerIVXmCuQg5+XmEr9nHlyDQ0cRrimDHy1nIUw
- q13kfwEFa0lJ5m3HYg2yFM0cRRPop9TuZp5XkoVSXDdJ9ZV9xfv21/6r88b3YcWXYjXIP/o
- +gwmAudW0yliNPWIbuzZQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:h3OKVbByFmc=:8CNfB9hk/0DHwmngC5ZEHS
- I89RMYRO5iK2lTUvdrrN6HXmbBCFJhHWGv6kUaF112EKwvKwYPCSqdOL14zvvs4I5EdKQ3oCk
- y/X8aUvLfdylCALIJiCC8VSrYRpOXselAxgsjJNGZr2/wT21S56SRX16oS8UjaK2J6AHM0iWR
- zf2huJRJ6yx/mfCI8kmtRdh9sifU4gZpn8H6obhWzaDM2xbe5uYsi3m8Tx1Pl3fPMOKVpU9ac
- SvH8lo0maxb+ApTavTJzUC+OpKPNDcD9srcGaPCuNDoyi2qnfb25jgCLsMlgyjH8+omks009L
- tx8QA0naBVTX++jPY9aRZXXTMbm02vkQzA2zDKNQ9EWwj7DBLCUCy6ZKS30BUFrq+e8OkQ4nI
- 5jGj3rHyrvhhrfD7rpJ4N6Pwhf+e4z/gX0+kEatuesUvRO46dyaPhvXvzltypaHUL8QEuQb7U
- dxJA00hlZrQPDn1oI3ek+KcCyDJKLgIwSw09+g3FMEUEZYCkpbmm99RtSxIBGBR2xZjtRxIHd
- +MpbG6tyzUM0QQ1eq4UcxqPs7ppqH1UYxngglqowk5gyHNraN+57po4eIQA2U5VxOfDa4Mdci
- 3o4CwIfOMNBqfSB+Ylo41fZUm8Us+dGVGFOZppSb1K3cAHHrIuJd477jOl/jFwkIWOBPDh1CF
- Mw0WL4qZVGn2X2tdV3RX6SCM2UnHKp7Y50O5b5etzwcrGbSvd/3vOtMPbyax9+mRpoYArM4Hk
- 1yzEUei+09rUqAvAN4yX4GubW95Sae5weY7wpg==
+        id S933286AbeCMLwf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:52:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:36566 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933269AbeCMLwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:52:32 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
+        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
+        ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
+        ckadabi@codeaurora.org, robin.murphy@arm.com, shankerd@codeaurora.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v4 20/22] arm64: Add MIDR encoding for Arm Cortex-A55 and Cortex-A35
+Date: Tue, 13 Mar 2018 11:51:18 +0000
+Message-Id: <20180313115120.17256-21-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313115120.17256-1-suzuki.poulose@arm.com>
+References: <20180313115120.17256-1-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building the tegra PCIe host driver without MSI results in a link
-failure:
+Update the MIDR encodings for the Cortex-A55 and Cortex-A35
 
-drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_msi_unmask_irq'
-drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_msi_mask_irq'
-
-This adds the same dependency that everyone else uses.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/pci/host/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/include/asm/cputype.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-index 1fcdc890acc7..65b4afb8d11d 100644
---- a/drivers/pci/host/Kconfig
-+++ b/drivers/pci/host/Kconfig
-@@ -38,6 +38,7 @@ config PCI_FTPCI100
- config PCI_TEGRA
- 	bool "NVIDIA Tegra PCIe controller"
- 	depends on ARCH_TEGRA && MMU
-+	depends on PCI_MSI_IRQ_DOMAIN
- 	help
- 	  Say Y here if you want support for the PCIe host controller found
- 	  on NVIDIA Tegra SoCs.
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index e86e65c187f8..30014a9f8f2b 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -83,6 +83,8 @@
+ #define ARM_CPU_PART_CORTEX_A53		0xD03
+ #define ARM_CPU_PART_CORTEX_A73		0xD09
+ #define ARM_CPU_PART_CORTEX_A75		0xD0A
++#define ARM_CPU_PART_CORTEX_A35		0xD04
++#define ARM_CPU_PART_CORTEX_A55		0xD05
+ 
+ #define APM_CPU_PART_POTENZA		0x000
+ 
+@@ -102,6 +104,8 @@
+ #define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
+ #define MIDR_CORTEX_A73 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A73)
+ #define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
++#define MIDR_CORTEX_A35 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A35)
++#define MIDR_CORTEX_A55 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
+ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
+ #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
+ #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
 -- 
-2.9.0
+2.14.3
