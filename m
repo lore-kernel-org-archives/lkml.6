@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuNayJu/lwr4Of33Q/ai28/PrGVLTb2z9TgFgmFbXS2EGzxkYci7UKT1sR7Xg3i8n35yhID
-ARC-Seal: i=1; a=rsa-sha256; t=1520955457; cv=none;
+X-Google-Smtp-Source: AG47ELtULwQf56XJHnb8sc0YX46dUpsJ548WpbQlAAyPmn5UR26RvjsJKiU4VuoFLR0h5lV5XdK1
+ARC-Seal: i=1; a=rsa-sha256; t=1520955454; cv=none;
         d=google.com; s=arc-20160816;
-        b=fae2f/b7B4dh30vqzDjWeOdHg6k8KqacDJe0awpZpwGlslh48xpAHwxUMn4HVckTkh
-         NoCReUqJ9d8J8Qw1sv4VAIQb5xFPXXViCc2Ws42EpraJj3XEJuHD3hUCkebc7Nbi42jz
-         fRmtv+9zjCbL9f78Do40pCQNqFVN+wYqydg2lE0ZQgDqsIvc2JNug6BFNusObNOd3nZ9
-         KhlFBtOe3rehn/c7Wzpm6hTg+vuI03zSdjEEsa3M53tH5wvckiicU7bYNkMBgrep9oaR
-         d4DOrEy6p7gRyT0aoKCYLjrA675NVjiZwMtSF4St8pbKybZCykS2V7rtASOtpyPv8ZnP
-         f7mA==
+        b=0/cqd40C+By7uSDKLVG0Ajs3GU0hSWySlwaOqN3C+77Funm3dcWTgW5xsB7ZbQa0vc
+         rvPmRLTEPma68In2oIu3CNyhk5WFmIjtsTPq1FmzJ3D2g8kF1Kws7DwH6vGqIQ5rLM23
+         3nEkmRVOmZ+D9yUsNdCDh3+PkSSISwXezwHWFG4V5QA3h8APi/AXb04zGExfQh8SgTWA
+         SqjkEIs9hZrjyYPUfPZBOYCY04RSDXIbIN7z3rKYhjOskwtxbYKNZ2Yn3iF0yQ//jtYz
+         yCQ1jVVt5NBkg/Rh/htfxeFWktxT/kCJD3h4gWKvYwKsx/VgpqM1Xvj74F4cIBCY+izf
+         7w8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Hllg1702Oge3+kEJUrkXDLUPjC/itjDEf+HwDVI+oBk=;
-        b=G6JODfCBX2XhKhOAVUx55ihWhR2uMQbxk/HUBsmiA8VIx7Ioc9/EPBrPbcXlvtpLOy
-         ocNpaGeoXiNuo95YEU0iFYAgYK9I0ainVWz2MwVHt52EezVyAEni5DsEiiWzn+1OK3tz
-         1NkLTS17FjJk2bR47PkJQxoNTO/BJrZdqcA9F/Y76Vwy/bWpekzE99W/qwozqCtWhb4I
-         rQGpZbC58a8EN/h7zsub1nsbKytBdmHLx65qckZB+YvR9TAb7YNOE0OuNyENuTALSOMa
-         dpLmHPJDWJNmUioknEsvuqmCUHXPxF6+3oqWVRorzqvP+o3S/7uQ/4eajHdldGg+eSUM
-         dU0w==
+        bh=muwtJ7cjVsfUbJvjWlE6UElxdKJbwuHmp50Pgi9zKbs=;
+        b=O4EXBoLVAmk95+ix8DzICetR8ojQ0biQbGXkXOY71oUhXTO9B3RCzKliw6wcWFTNiq
+         y7fJA6H4yKMGikxIS1+ECMmQwX+dqRgtt8tv0ry30eJLPwnrWA08CwF+GwaJO7H5qXFq
+         65EpiXw4zhoqReQc9qVaVGrZDz3sD4Q9xPWf1egjeGljx3IVe0r4ahHmAc1QDSEATYie
+         J5GLHFNjfMU2JF+oBxH/meZi2NybpBdV9WGbnqFkGgIFSGD0SodRWKR7GNumwoGzU5iX
+         AfL93Q260vTr6hRctYT+ruZHn7KV/EzQWa9pfSJCk7SPd2z1hSzeJkKnxB460SNnzcUk
+         Di4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.14 056/140] drm/i915: Try EDID bitbanging on HDMI after failed read
-Date: Tue, 13 Mar 2018 16:24:19 +0100
-Message-Id: <20180313152502.031100233@linuxfoundation.org>
+	Davide Caratti <dcaratti@redhat.com>,
+	Ursula Braun <ubraun@linux.vnet.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 050/140] net/smc: fix NULL pointer dereference on sock_create_kern() error path
+Date: Tue, 13 Mar 2018 16:24:13 +0100
+Message-Id: <20180313152501.638918999@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836873021113405?=
-X-GMAIL-MSGID: =?utf-8?q?1594837389804207508?=
+X-GMAIL-THRID: =?utf-8?q?1594836790781623415?=
+X-GMAIL-MSGID: =?utf-8?q?1594837386318429005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +50,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+From: Davide Caratti <dcaratti@redhat.com>
 
-commit 90024a5951029685acc5396258f1b0de9b23cf4a upstream.
+commit a5dcb73b96a9d21431048bdaac02d9e96f386da3 upstream.
 
-The ACK/NACK implementation as found in e.g. the G965 has the falling
-clock edge and the release of the data line after the ACK for the received
-byte happen at the same time.
+when sock_create_kern(..., a) returns an error, 'a' might not be a valid
+pointer, so it shouldn't be dereferenced to read a->sk->sk_sndbuf and
+and a->sk->sk_rcvbuf; not doing that caused the following crash:
 
-This is conformant with the I2C specification, which allows a zero hold
-time, see footnote [3]: "A device must internally provide a hold time of
-at least 300 ns for the SDA signal (with respect to the V IH(min) of the
-SCL signal) to bridge the undefined region of the falling edge of SCL."
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4254 Comm: syzkaller919713 Not tainted 4.16.0-rc1+ #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:smc_create+0x14e/0x300 net/smc/af_smc.c:1410
+RSP: 0018:ffff8801b06afbc8 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8801b63457c0 RCX: ffffffff85a3e746
+RDX: 0000000000000004 RSI: 00000000ffffffff RDI: 0000000000000020
+RBP: ffff8801b06afbf0 R08: 00000000000007c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff8801b6345c08 R14: 00000000ffffffe9 R15: ffffffff8695ced0
+FS:  0000000001afb880(0000) GS:ffff8801db200000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000040 CR3: 00000001b0721004 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __sock_create+0x4d4/0x850 net/socket.c:1285
+  sock_create net/socket.c:1325 [inline]
+  SYSC_socketpair net/socket.c:1409 [inline]
+  SyS_socketpair+0x1c0/0x6f0 net/socket.c:1366
+  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x4404b9
+RSP: 002b:00007fff44ab6908 EFLAGS: 00000246 ORIG_RAX: 0000000000000035
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004404b9
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000002b
+RBP: 00007fff44ab6910 R08: 0000000000000002 R09: 00007fff44003031
+R10: 0000000020000040 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000006 R14: 0000000000000000 R15: 0000000000000000
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 b3 01 00 00 4c 8b a3 48 04 00 00 48
+b8
+00 00 00 00 00 fc ff df 49 8d 7c 24 20 48 89 fa 48 c1 ea 03 <80> 3c 02
+00
+0f 85 82 01 00 00 4d 8b 7c 24 20 48 b8 00 00 00 00
+RIP: smc_create+0x14e/0x300 net/smc/af_smc.c:1410 RSP: ffff8801b06afbc8
 
-Some HDMI-to-VGA converters apparently fail to adhere to this requirement
-and latch SDA at the falling clock edge, so instead of an ACK
-sometimes a NACK is read and the slave (i.e. the EDID ROM) ends the
-transfer.
-
-The bitbanging releases the data line for the ACK only 1/4 bit time after
-the falling clock edge, so a slave will see the correct value no matter
-if it samples at the rising or the falling clock edge or in the center.
-
-Fallback to bitbanging is already done for the CRT connector.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=92685
-Signed-off-by: Stefan Brüns <stefan.bruens@rwth-aachen.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/a39f080b-81a5-4c93-b3f7-7cb0a58daca3@rwthex-w2-a.rwth-ad.de
-(cherry picked from commit cfb926e148e99acc02351d72e8b85e32b5f786ef)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes: cd6851f30386 smc: remote memory buffers (RMBs)
+Reported-and-tested-by: syzbot+aa0227369be2dcc26ebe@syzkaller.appspotmail.com
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_hdmi.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ net/smc/af_smc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1563,12 +1563,20 @@ intel_hdmi_set_edid(struct drm_connector
- 	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
- 	struct edid *edid;
- 	bool connected = false;
-+	struct i2c_adapter *i2c;
- 
- 	intel_display_power_get(dev_priv, POWER_DOMAIN_GMBUS);
- 
--	edid = drm_get_edid(connector,
--			    intel_gmbus_get_adapter(dev_priv,
--			    intel_hdmi->ddc_bus));
-+	i2c = intel_gmbus_get_adapter(dev_priv, intel_hdmi->ddc_bus);
-+
-+	edid = drm_get_edid(connector, i2c);
-+
-+	if (!edid && !intel_gmbus_is_forced_bit(i2c)) {
-+		DRM_DEBUG_KMS("HDMI GMBUS EDID read failed, retry using GPIO bit-banging\n");
-+		intel_gmbus_force_bit(i2c, true);
-+		edid = drm_get_edid(connector, i2c);
-+		intel_gmbus_force_bit(i2c, false);
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -1351,8 +1351,10 @@ static int smc_create(struct net *net, s
+ 	smc->use_fallback = false; /* assume rdma capability first */
+ 	rc = sock_create_kern(net, PF_INET, SOCK_STREAM,
+ 			      IPPROTO_TCP, &smc->clcsock);
+-	if (rc)
++	if (rc) {
+ 		sk_common_release(sk);
++		goto out;
 +	}
- 
- 	intel_hdmi_dp_dual_mode_detect(connector, edid != NULL);
+ 	smc->sk.sk_sndbuf = max(smc->clcsock->sk->sk_sndbuf, SMC_BUF_MIN_SIZE);
+ 	smc->sk.sk_rcvbuf = max(smc->clcsock->sk->sk_rcvbuf, SMC_BUF_MIN_SIZE);
  
