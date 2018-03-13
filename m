@@ -1,239 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933196AbeCMMOp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
+        id S932864AbeCMMQm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:16:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35051 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932948AbeCMMFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:05:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C6F21778
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/31] perf tools: Add mem2node object
-Date: Tue, 13 Mar 2018 09:04:39 -0300
-Message-Id: <20180313120508.29327-3-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
+        id S1752390AbeCMMQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:16:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
+   d="scan'208";a="37766580"
+Message-ID: <1520943394.10722.610.camel@linux.intel.com>
+Subject: Re: [PATCH] x86: i8237: Register based on FADT legacy boot flag
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>, x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
+        anshuman.gupta@intel.com, linux-kernel@vger.kernel.org,
+        Alan Cox <alan@linux.intel.com>
+Date: Tue, 13 Mar 2018 14:16:34 +0200
+In-Reply-To: <1520938787-14861-1-git-send-email-rajneesh.bhardwaj@intel.com>
+References: <1520938787-14861-1-git-send-email-rajneesh.bhardwaj@intel.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+On Tue, 2018-03-13 at 16:29 +0530, Rajneesh Bhardwaj wrote:
+> From Skylake onwards, the platform controller hub (Sunrisepoint PCH)
+> does
+> not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh,
+> 8Fh.
+> Currently this driver registers as syscore ops and its resume function
+> is
+> called on every resume from S3. On Skylake and Kabylake, this causes a
+> resume delay of around 100ms due to port IO operations, which is a
+> problem.
+> 
+> This change allows to load the driver only when the platform bios
+> explicitly supports such devices or has a cut-off date earlier than
+> 2017.
+> 
+> Please refer to chapter 21 of 6th Generation Intel® Core™ Processor
+> Platform Controller Hub Family: BIOS Specification.
+> 
+> https://www.intel.in/content/www/in/en/embedded/products/skylake/u-mob
+> ile/software-and-drivers.html
+> 
 
-Adding mem2node object to allow the easy lookup of the node for the
-physical address.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-It has following interface:
+One comment below.
 
-  int  mem2node__init(struct mem2node *map, struct perf_env *env);
-  void mem2node__exit(struct mem2node *map);
-  int  mem2node__node(struct mem2node *map, u64 addr);
+> Cc: Alan Cox <alan@linux.intel.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+> ---
+> 
+> This depends on recently introduced dmi_get_bios_year() helper.
+> https://patchwork.kernel.org/patch/10252151/
+> 
+>  arch/x86/kernel/i8237.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/i8237.c b/arch/x86/kernel/i8237.c
+> index 8eeaa81de066..5c7a0dea7e19 100644
+> --- a/arch/x86/kernel/i8237.c
+> +++ b/arch/x86/kernel/i8237.c
+> @@ -9,6 +9,7 @@
+>   * your option) any later version.
+>   */
+>  
+> +#include <linux/dmi.h>
+>  #include <linux/init.h>
+>  #include <linux/syscore_ops.h>
+>  
+> @@ -49,6 +50,30 @@ static struct syscore_ops i8237_syscore_ops = {
+>  
+>  static int __init i8237A_init_ops(void)
+>  {
+> +	/*
+> +	 * From SKL PCH onwards, the port 0x61 bit 4 would stop
+> toggle and
+> +	 * the legacy DMA device is removed in which the I/O ports
+> (81h-83h,
+> +	 * 87h, 89h-8Bh, 8Fh)  related to it are removed as well. All
+> +	 * removed ports must return 0xff for a inb() request.
+> +	 *
+> +	 * Note: DMA_PAGE_2 (port 0x81) should not be checked for
+> detecting
+> +	 * the presence of DMA device since it may be used by BIOS to
+> decode
+> +	 * LPC traffic for POST codes. Original LPC only decodes one
+> byte of
+> +	 * port 0x80 but some BIOS may choose to enhance PCH LPC port
+> 0x8x
+> +	 * decoding.
+> +	 */
 
-The mem2node__toolsinit initialize object from the perf data file
-MEM_TOPOLOGY feature data. Following calls to mem2node__node will return
-node number for given physical address. The mem2node__exit function
-frees the object.
+> +	if (inb(DMA_PAGE_0) == 0xFF)
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180309101442.9224-3-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/Build      |   1 +
- tools/perf/util/mem2node.c | 134 +++++++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/mem2node.h |  19 +++++++
- 3 files changed, 154 insertions(+)
- create mode 100644 tools/perf/util/mem2node.c
- create mode 100644 tools/perf/util/mem2node.h
+To be consistent with the rest of the code, this should be dma_inb().
 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index ea0a452550b0..8052373bcd6a 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -106,6 +106,7 @@ libperf-y += units.o
- libperf-y += time-utils.o
- libperf-y += expr-bison.o
- libperf-y += branch.o
-+libperf-y += mem2node.o
- 
- libperf-$(CONFIG_LIBBPF) += bpf-loader.o
- libperf-$(CONFIG_BPF_PROLOGUE) += bpf-prologue.o
-diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
-new file mode 100644
-index 000000000000..c6fd81c02586
---- /dev/null
-+++ b/tools/perf/util/mem2node.c
-@@ -0,0 +1,134 @@
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <linux/bitmap.h>
-+#include "mem2node.h"
-+#include "util.h"
-+
-+struct phys_entry {
-+	struct rb_node	rb_node;
-+	u64	start;
-+	u64	end;
-+	u64	node;
-+};
-+
-+static void phys_entry__insert(struct phys_entry *entry, struct rb_root *root)
-+{
-+	struct rb_node **p = &root->rb_node;
-+	struct rb_node *parent = NULL;
-+	struct phys_entry *e;
-+
-+	while (*p != NULL) {
-+		parent = *p;
-+		e = rb_entry(parent, struct phys_entry, rb_node);
-+
-+		if (entry->start < e->start)
-+			p = &(*p)->rb_left;
-+		else
-+			p = &(*p)->rb_right;
-+	}
-+
-+	rb_link_node(&entry->rb_node, parent, p);
-+	rb_insert_color(&entry->rb_node, root);
-+}
-+
-+static void
-+phys_entry__init(struct phys_entry *entry, u64 start, u64 bsize, u64 node)
-+{
-+	entry->start = start;
-+	entry->end   = start + bsize;
-+	entry->node  = node;
-+	RB_CLEAR_NODE(&entry->rb_node);
-+}
-+
-+int mem2node__init(struct mem2node *map, struct perf_env *env)
-+{
-+	struct memory_node *n, *nodes = &env->memory_nodes[0];
-+	struct phys_entry *entries, *tmp_entries;
-+	u64 bsize = env->memory_bsize;
-+	int i, j = 0, max = 0;
-+
-+	memset(map, 0x0, sizeof(*map));
-+	map->root = RB_ROOT;
-+
-+	for (i = 0; i < env->nr_memory_nodes; i++) {
-+		n = &nodes[i];
-+		max += bitmap_weight(n->set, n->size);
-+	}
-+
-+	entries = zalloc(sizeof(*entries) * max);
-+	if (!entries)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < env->nr_memory_nodes; i++) {
-+		u64 bit;
-+
-+		n = &nodes[i];
-+
-+		for (bit = 0; bit < n->size; bit++) {
-+			u64 start;
-+
-+			if (!test_bit(bit, n->set))
-+				continue;
-+
-+			start = bit * bsize;
-+
-+			/*
-+			 * Merge nearby areas, we walk in order
-+			 * through the bitmap, so no need to sort.
-+			 */
-+			if (j > 0) {
-+				struct phys_entry *prev = &entries[j - 1];
-+
-+				if ((prev->end == start) &&
-+				    (prev->node == n->node)) {
-+					prev->end += bsize;
-+					continue;
-+				}
-+			}
-+
-+			phys_entry__init(&entries[j++], start, bsize, n->node);
-+		}
-+	}
-+
-+	/* Cut unused entries, due to merging. */
-+	tmp_entries = realloc(entries, sizeof(*entries) * j);
-+	if (tmp_entries)
-+		entries = tmp_entries;
-+
-+	for (i = 0; i < j; i++) {
-+		pr_debug("mem2node %03" PRIu64 " [0x%016" PRIx64 "-0x%016" PRIx64 "]\n",
-+			 entries[i].node, entries[i].start, entries[i].end);
-+
-+		phys_entry__insert(&entries[i], &map->root);
-+	}
-+
-+	map->entries = entries;
-+	return 0;
-+}
-+
-+void mem2node__exit(struct mem2node *map)
-+{
-+	zfree(&map->entries);
-+}
-+
-+int mem2node__node(struct mem2node *map, u64 addr)
-+{
-+	struct rb_node **p, *parent = NULL;
-+	struct phys_entry *entry;
-+
-+	p = &map->root.rb_node;
-+	while (*p != NULL) {
-+		parent = *p;
-+		entry = rb_entry(parent, struct phys_entry, rb_node);
-+		if (addr < entry->start)
-+			p = &(*p)->rb_left;
-+		else if (addr >= entry->end)
-+			p = &(*p)->rb_right;
-+		else
-+			goto out;
-+	}
-+
-+	entry = NULL;
-+out:
-+	return entry ? (int) entry->node : -1;
-+}
-diff --git a/tools/perf/util/mem2node.h b/tools/perf/util/mem2node.h
-new file mode 100644
-index 000000000000..59c4752a2181
---- /dev/null
-+++ b/tools/perf/util/mem2node.h
-@@ -0,0 +1,19 @@
-+#ifndef __MEM2NODE_H
-+#define __MEM2NODE_H
-+
-+#include <linux/rbtree.h>
-+#include "env.h"
-+
-+struct phys_entry;
-+
-+struct mem2node {
-+	struct rb_root		 root;
-+	struct phys_entry	*entries;
-+	int			 cnt;
-+};
-+
-+int  mem2node__init(struct mem2node *map, struct perf_env *env);
-+void mem2node__exit(struct mem2node *map);
-+int  mem2node__node(struct mem2node *map, u64 addr);
-+
-+#endif /* __MEM2NODE_H */
+> +		return -ENODEV;
+> +
+> +	/*
+> +	 * It should be OK to not load this driver as newer SoC may
+> not
+> +	 * support 8237 DMA or bus mastering from LPC. Platform
+> firmware
+> +	 * must announce the support for such legacy devices via
+> +	 * ACPI_FADT_LEGACY_DEVICES field in FADT table.
+> +	 */
+> +	if (!x86_platform.legacy.devices.pnpbios &&
+> dmi_get_bios_year() >= 2017)
+> +		return -ENODEV;
+> +
+>  	register_syscore_ops(&i8237_syscore_ops);
+>  	return 0;
+>  }
+
 -- 
-2.14.3
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
