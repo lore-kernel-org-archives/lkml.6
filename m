@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932447AbeCMSYm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:24:42 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:50484 "EHLO
+        id S932608AbeCMSZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:25:26 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50488 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeCMSYk (ORCPT
+        with ESMTP id S1751806AbeCMSYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:24:40 -0400
+        Tue, 13 Mar 2018 14:24:41 -0400
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
@@ -16,14 +16,12 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         richard.weiyang@gmail.com, paul.burton@mips.com,
         miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
         hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [v6 1/2] mm: disable interrupts while initializing deferred pages
-Date: Tue, 13 Mar 2018 14:23:54 -0400
-Message-Id: <20180313182355.17669-2-pasha.tatashin@oracle.com>
+Subject: [v6 0/2] initialize pages on demand during boot
+Date: Tue, 13 Mar 2018 14:23:53 -0400
+Message-Id: <20180313182355.17669-1-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180313182355.17669-1-pasha.tatashin@oracle.com>
-References: <20180313182355.17669-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803130205
@@ -31,190 +29,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vlastimil Babka reported about a window issue during which when deferred
-pages are initialized, and the current version of on-demand initialization
-is finished, allocations may fail.  While this is highly unlikely scenario,
-since this kind of allocation request must be large, and must come from
-interrupt handler, we still want to cover it.
+Change log:
+	v5 - v6
+	- Fixed issues found by Andrew Morton: replaced cond_resched() with
+	  touch_nmi_watchdog(), instead of simply deleting it.
+	- Removed useless pgdata_resize_lock_irq(), as regular
+	  pgdata_resize_lock() does exactly what is needed.
+	- Included fixes to comments by Andrew from
+	  mm-initialize-pages-on-demand-during-boot-v5-fix.patch.
 
-We solve this by initializing deferred pages with interrupts disabled, and
-holding node_size_lock spin lock while pages in the node are being
-initialized. The on-demand deferred page initialization that comes later
-will use the same lock, and thus synchronize with deferred_init_memmap().
+	v4 - v5
+	- Fix issue reported by Vlasimil Babka:
+	  > I've noticed that this function first disables the
+	  > on-demand initialization, and then runs the kthreads.
+	  > Doesn't that leave a window where allocations can fail? The
+	  > chances are probably small, but I think it would be better
+	  > to avoid it completely, rare failures suck.
+	  >
+	  > Fixing that probably means rethinking the whole
+	  > synchronization more dramatically though :/
+	- Introduced a new patch that uses node resize lock to synchronize
+	  on-demand deferred page initialization, and regular deferred page
+	  initialization.
 
-It is unlikely for threads that initialize deferred pages to be
-interrupted.  They run soon after smp_init(), but before modules are
-initialized, and long before user space programs. This is why there is no
-adverse effect of having these threads running with interrupts disabled.
+	v3 - v4
+	- Fix !CONFIG_NUMA issue.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- include/linux/memory_hotplug.h | 53 ++++++++++++++++++++++--------------------
- include/linux/mmzone.h         |  5 ++--
- mm/page_alloc.c                | 19 ++++++++-------
- 3 files changed, 42 insertions(+), 35 deletions(-)
+	v2 - v3
+	Andrew Morton's comments:
+	- Moved read of pgdat->first_deferred_pfn into
+	  deferred_zone_grow_lock, thus got rid of READ_ONCE()/WRITE_ONCE()
+	- Replaced spin_lock() with spin_lock_irqsave() in
+	  deferred_grow_zone
+	- Updated comments for deferred_zone_grow_lock
+	- Updated comment before deferred_grow_zone() explaining return
+	  value, and also noinline specifier.
+	- Fixed comment before _deferred_grow_zone().
 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index aba5f86eb038..2b0265265c28 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -51,24 +51,6 @@ enum {
- 	MMOP_ONLINE_MOVABLE,
- };
- 
--/*
-- * pgdat resizing functions
-- */
--static inline
--void pgdat_resize_lock(struct pglist_data *pgdat, unsigned long *flags)
--{
--	spin_lock_irqsave(&pgdat->node_size_lock, *flags);
--}
--static inline
--void pgdat_resize_unlock(struct pglist_data *pgdat, unsigned long *flags)
--{
--	spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
--}
--static inline
--void pgdat_resize_init(struct pglist_data *pgdat)
--{
--	spin_lock_init(&pgdat->node_size_lock);
--}
- /*
-  * Zone resizing functions
-  *
-@@ -246,13 +228,6 @@ extern void clear_zone_contiguous(struct zone *zone);
- 	___page;				\
-  })
- 
--/*
-- * Stub functions for when hotplug is off
-- */
--static inline void pgdat_resize_lock(struct pglist_data *p, unsigned long *f) {}
--static inline void pgdat_resize_unlock(struct pglist_data *p, unsigned long *f) {}
--static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
--
- static inline unsigned zone_span_seqbegin(struct zone *zone)
- {
- 	return 0;
-@@ -293,6 +268,34 @@ static inline bool movable_node_is_enabled(void)
- }
- #endif /* ! CONFIG_MEMORY_HOTPLUG */
- 
-+#if defined(CONFIG_MEMORY_HOTPLUG) || defined(CONFIG_DEFERRED_STRUCT_PAGE_INIT)
-+/*
-+ * pgdat resizing functions
-+ */
-+static inline
-+void pgdat_resize_lock(struct pglist_data *pgdat, unsigned long *flags)
-+{
-+	spin_lock_irqsave(&pgdat->node_size_lock, *flags);
-+}
-+static inline
-+void pgdat_resize_unlock(struct pglist_data *pgdat, unsigned long *flags)
-+{
-+	spin_unlock_irqrestore(&pgdat->node_size_lock, *flags);
-+}
-+static inline
-+void pgdat_resize_init(struct pglist_data *pgdat)
-+{
-+	spin_lock_init(&pgdat->node_size_lock);
-+}
-+#else /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
-+/*
-+ * Stub functions for when hotplug is off
-+ */
-+static inline void pgdat_resize_lock(struct pglist_data *p, unsigned long *f) {}
-+static inline void pgdat_resize_unlock(struct pglist_data *p, unsigned long *f) {}
-+static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
-+#endif /* !(CONFIG_MEMORY_HOTPLUG || CONFIG_DEFERRED_STRUCT_PAGE_INIT) */
-+
- #ifdef CONFIG_MEMORY_HOTREMOVE
- 
- extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 7522a6987595..d14168da66a7 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -633,14 +633,15 @@ typedef struct pglist_data {
- #ifndef CONFIG_NO_BOOTMEM
- 	struct bootmem_data *bdata;
- #endif
--#ifdef CONFIG_MEMORY_HOTPLUG
-+#if defined(CONFIG_MEMORY_HOTPLUG) || defined(CONFIG_DEFERRED_STRUCT_PAGE_INIT)
- 	/*
- 	 * Must be held any time you expect node_start_pfn, node_present_pages
- 	 * or node_spanned_pages stay constant.  Holding this will also
- 	 * guarantee that any pfn_valid() stays that way.
- 	 *
- 	 * pgdat_resize_lock() and pgdat_resize_unlock() are provided to
--	 * manipulate node_size_lock without checking for CONFIG_MEMORY_HOTPLUG.
-+	 * manipulate node_size_lock without checking for CONFIG_MEMORY_HOTPLUG
-+	 * or CONFIG_DEFERRED_STRUCT_PAGE_INIT.
- 	 *
- 	 * Nests above zone->lock and zone->span_seqlock
- 	 */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3d974cb2a1a1..cada509e2176 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1506,7 +1506,7 @@ static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
- 		} else if (!(pfn & nr_pgmask)) {
- 			deferred_free_range(pfn - nr_free, nr_free);
- 			nr_free = 1;
--			cond_resched();
-+			touch_nmi_watchdog();
- 		} else {
- 			nr_free++;
- 		}
-@@ -1535,7 +1535,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
- 			continue;
- 		} else if (!page || !(pfn & nr_pgmask)) {
- 			page = pfn_to_page(pfn);
--			cond_resched();
-+			touch_nmi_watchdog();
- 		} else {
- 			page++;
- 		}
-@@ -1552,23 +1552,25 @@ static int __init deferred_init_memmap(void *data)
- 	int nid = pgdat->node_id;
- 	unsigned long start = jiffies;
- 	unsigned long nr_pages = 0;
--	unsigned long spfn, epfn;
-+	unsigned long spfn, epfn, first_init_pfn, flags;
- 	phys_addr_t spa, epa;
- 	int zid;
- 	struct zone *zone;
--	unsigned long first_init_pfn = pgdat->first_deferred_pfn;
- 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
- 	u64 i;
- 
-+	/* Bind memory initialisation thread to a local node if possible */
-+	if (!cpumask_empty(cpumask))
-+		set_cpus_allowed_ptr(current, cpumask);
-+
-+	pgdat_resize_lock(pgdat, &flags);
-+	first_init_pfn = pgdat->first_deferred_pfn;
- 	if (first_init_pfn == ULONG_MAX) {
-+		pgdat_resize_unlock(pgdat, &flags);
- 		pgdat_init_report_one_done();
- 		return 0;
- 	}
- 
--	/* Bind memory initialisation thread to a local node if possible */
--	if (!cpumask_empty(cpumask))
--		set_cpus_allowed_ptr(current, cpumask);
--
- 	/* Sanity check boundaries */
- 	BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
- 	BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
-@@ -1598,6 +1600,7 @@ static int __init deferred_init_memmap(void *data)
- 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
- 		deferred_free_pages(nid, zid, spfn, epfn);
- 	}
-+	pgdat_resize_unlock(pgdat, &flags);
- 
- 	/* Sanity check that the next zone really is unpopulated */
- 	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
+	v1 - v2
+	Added Tested-by: Masayoshi Mizuma
+
+This change helps for three reasons:
+
+1. Insufficient amount of reserved memory due to arguments provided by
+user. User may request some buffers, increased hash tables sizes etc.
+Currently, machine panics during boot if it can't allocate memory due
+to insufficient amount of reserved memory. With this change, it will
+be able to grow zone before deferred pages are initialized.
+
+One observed example is described in the linked discussion [1] Mel
+Gorman writes:
+
+"
+Yasuaki Ishimatsu reported a premature OOM when trace_buf_size=100m was
+specified on a machine with many CPUs. The kernel tried to allocate 38.4GB
+but only 16GB was available due to deferred memory initialisation.
+"
+
+The allocations in the above scenario happen per-cpu in smp_init(),
+and before deferred pages are initialized. So, there is no way to
+predict how much memory we should put aside to boot successfully with
+deferred page initialization feature compiled in.
+
+2. The second reason is future proof. The kernel memory requirements
+may change, and we do not want to constantly update
+reset_deferred_meminit() to satisfy the new requirements. In addition,
+this function is currently in common code, but potentially would need
+to be split into arch specific variants, as more arches will start
+taking advantage of deferred page initialization feature.
+
+3. On demand initialization of reserved pages guarantees that we will
+initialize only as many pages early in boot using only one thread as
+needed, the rest are going to be efficiently initialized in parallel.
+
+[1] https://www.spinics.net/lists/linux-mm/msg139087.html
+
+Pavel Tatashin (2):
+  mm: disable interrupts while initializing deferred pages
+  mm: initialize pages on demand during boot
+
+ include/linux/memblock.h       |  10 --
+ include/linux/memory_hotplug.h |  53 ++++++-----
+ include/linux/mmzone.h         |   5 +-
+ mm/memblock.c                  |  23 -----
+ mm/page_alloc.c                | 202 +++++++++++++++++++++++++++++++----------
+ 5 files changed, 186 insertions(+), 107 deletions(-)
+
 -- 
 2.16.2
