@@ -1,69 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeCMRWs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:22:48 -0400
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:38833 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751944AbeCMRWp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:22:45 -0400
-X-Google-Smtp-Source: AG47ELuV9gDI+uiqTbwmzTdktLWccp1tFzQaKwGmBV6I3rJZiArQ7+iahZo3QCfRH6NjZifBsNUwXCEahWcQuoNEREc=
+        id S932439AbeCMRY2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751769AbeCMRY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:24:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B03204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 13 Mar 2018 17:24:02 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-mips@linux-mips.org, david.daney@cavium.com,
+        paul.burton@mips.com, Ralf Baechle <ralf@linux-mips.org>,
+        Kevin Cernekee <cernekee@gmail.com>, Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Doug Ledford <dledford@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] MIPS: Allow including mach-generic/dma-coherence.h
+Message-ID: <20180313172401.GI21642@saruman>
+References: <1516758010-7641-1-git-send-email-f.fainelli@gmail.com>
+ <1516758010-7641-2-git-send-email-f.fainelli@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com>
-References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
- <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com> <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
- <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com> <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 19:22:44 +0200
-Message-ID: <CAHp75VebU5NYXRDpG4pzYrKDmNLE6prGbecacq3gCyDQBJd=cA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
- multi-pci-segment arches
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Travis, Mike" <mike.travis@hpe.com>,
-        "Banman, Andrew" <abanman@hpe.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SdaPbLtAangIkrMZ"
+Content-Disposition: inline
+In-Reply-To: <1516758010-7641-2-git-send-email-f.fainelli@gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 7:15 PM, Liang, Kan <kan.liang@linux.intel.com> wrote:
-> On 3/13/2018 12:00 PM, Andy Shevchenko wrote:
->> On Tue, Mar 13, 2018 at 5:58 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>> On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com>
->>> wrote:
 
->>>> +#define SKX_CAPID6             0x9c
+--SdaPbLtAangIkrMZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
+On Tue, Jan 23, 2018 at 05:40:09PM -0800, Florian Fainelli wrote:
+> @@ -71,15 +83,19 @@ static inline void plat_post_dma_flush(struct device =
+*dev)
+>  #endif
+> =20
+>  #ifdef CONFIG_SWIOTLB
+> +#ifndef phys_to_dma
+>  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t pad=
+dr)
+>  {
+>  	return paddr;
+>  }
+> +#endif
+> =20
+> +#ifndef dma_to_phys
+>  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dad=
+dr)
+>  {
+>  	return daddr;
+>  }
+>  #endif
+> +#endif /* CONFIG_SWIOTLB */
 
->> Moreover, this is too non-flexible. Can't you find a capability based
->> on CAP ID  + offset?
->>
->
-> It looks it doesn't use capability.
+FYI these were removed in commit ea8c64ace866 ("dma-mapping: move
+swiotlb arch helpers to a new header"), and are only implemented by
+platforms which select ARCH_HAS_PHYS_TO_DMA.
 
-See below. It would be sad if it's true. (Will need comment in that case)
+Cheers
+James
 
-> 16:1e.3 System peripheral: Intel Corporation Sky Lake-E PCU Registers (rev
-> 04)
-> 00: 86 80 83 20 00 00 00 00 04 00 80 08 00 00 80 00
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 00 00
-> 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+--SdaPbLtAangIkrMZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Can you instead provide
-% lspci -nk -vvv -xx -s 16:1e.3
-?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-With Best Regards,
-Andy Shevchenko
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqoCTEACgkQbAtpk944
+dnr4XQ/+P/hlLOz1TJoV4zY10qxuWZQskRFZREwiQ7TvPMdAlNnf546QZ0IRZebd
+rFjjiJW3cKPTy/Fdr6lCXxvZRS/KBuIqWec4D0UbPoKTJQQO+lxxzqzuLEET4MAi
+jdiSqIbRLrCpD1owEU6pcqjbP8dblKwwRowxlORATh8VB0Pxolj7dM6m6NUFQfA2
+zAsJLFxVHScqaiPYbM+UzLXPgYTs2TrllDqZZn+68hiq68KEhOaxTTJ6Pn9GkKZy
+rE2oPPS2gVNczM/snhZ6SCcB3YAngVCzjeHd0EbFSB0a744d2sByQ4bxu/0CWcrX
+w/Pvnar9FW4zqIdhitc5sXBKajhk4F6jhHscpLedSyXbttHHBflMQVXZOxx2WXzt
+Zl8cQC5WPioNv1d0GT5bR+MLCpEu4z+hJD3SvJp3jC80K9wtSzDYsv0jN/kMkr9G
+Eo1nTjUfaaA6MDPkIh5BnY26Gt3UgMDSHmOPqy+Uwuhi45k5y+/k2zairKrNobcv
+5uC4dOMcmgN4CMl5hBwfNXgRYfjkLtUD7+9rqYV2LW8vNOI/69v+HtyOSDMQmlS9
+qiOZFXNhzp7CodhARzy8nE3mBDgSGFaXIAcBILKkCZXKGpjv1oFzFs0YxTXM4NKU
+qwHASZP6hpxqMLRmQBNQ3QxnpZumA822ibJeGjuTD7EUUv1MYDg=
+=l0CC
+-----END PGP SIGNATURE-----
+
+--SdaPbLtAangIkrMZ--
