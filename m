@@ -1,135 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933924AbeCMQUN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:20:13 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:47723 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932951AbeCMQUI (ORCPT
+        id S933954AbeCMQVX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:21:23 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40574 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752509AbeCMQVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:20:08 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Wajdeczko <michal.wajdeczko@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] drm/i915/pmu: avoid -Wmaybe-uninitialized warning
-Date: Tue, 13 Mar 2018 17:19:31 +0100
-Message-Id: <20180313161952.552083-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:u65WKnmySMO/FelMrDXo7VnOyCqGV8M3jI0/A5LNAT6pJqaUZE0
- wcUi2Wr0wQ7+FbaU3A5pcUFwLUqjd2464PjfemppuaVVIyhmTwWAAfRbE29D+O1S1KgPCZ/
- Sv1rP1MzDm9vkV5BU+nb/M5YcxKYIPoWlGLHc5U+qTcA9qhKY4BUO7lY+HouW9SAZFZmUgT
- tmZ1YGFWQ2or4DjeM2MHw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cCVg6YZBdAQ=:y60Ch4LNUKUSaCE8hl3C4M
- uSPAnz02uWMQoT5WPV2Gt8kugZNS8cG6zSZOl+Sfmmm6sVbFgYZvmXd7ZDK7fWYiwVVdH52n2
- +RVqR+HGwKU4GP1b/VsyfhtwA/wEuqp+HRk+3rX0JAZpYHnGm5aN4wpOnpR9QdHTk/S6ZP/G2
- +/f2o2CDIZDtqoRxt4E54XgbtRXQ86IWaj1Esp80d0sb3yotSbpLM2mneijjLT1VJ+MbAFZfk
- ncFG6Yqa1OUg54FmF2c+WMn/roVbusU2dMNnXlvH9YJO1JNoT1H+eOVOLgLk5qXolWGIvKQv5
- jSWsvYgCRto7dlP9KlfZgW2ad7SECpOVwRdheycFjizU+TViWsldxFYLFUVuL3ZU6iOBvqjhv
- 0anlHTzifYQz0nARmDmCAXYt3eAGs1nbfFFQNaO6V5WCjAEYmrhFWm+MUBi/WKOY3+0zFXWFA
- uuVZLRAXKUAQ23YJ3e2mi/hXP8X1hpC89K0T8747ag1gMso/CHJY00vllmDqqBTMHbrA7pdhd
- Eiu0w5T4oNpvcDhvBEkRXikQQFmGe0qAuYUHkJSGrL70GWlnSByMuvJod/iijyzpEUhrQhhfy
- caO6q3xirPN7RHAOgbdfyslQrisZ0v7pOE+FROpVW1gufBIDBSfXgidGwhp79bgrFGQu2yIhe
- cSAiS082pt5Nmrynv7rUy0CZUhI1PgJahVRsaXobp7f+wllA3MXr8oNk/Tv+QfEsAFP18U9Yl
- JSo/FPGVIKlUa7FKKwc+BfNl1e4KJSgwHX/vWg==
+        Tue, 13 Mar 2018 12:21:20 -0400
+X-Google-Smtp-Source: AG47ELs/O2mnUGqTNHw1HzzANduuCZ/A1vpbG/RIDtHbTItfuvLiPHvkr23nGH3a3yQ/uFFBcbxIKg==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH RESEND v2 0/2] drm/xen-front: Add support for Xen PV display frontend
+Date: Tue, 13 Mar 2018 18:21:04 +0200
+Message-Id: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The conditional spinlock confuses gcc into thinking the 'flags' value
-might contain uninitialized data:
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-drivers/gpu/drm/i915/i915_pmu.c: In function '__i915_pmu_event_read':
-arch/x86/include/asm/paravirt_types.h:573:3: error: 'flags' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Hello!
 
-The code is correct, but it's easy to see how the compiler gets confused
-here. This avoids the problem by pulling the lock outside of the function
-into its only caller.
+Resending with all the patches squashed on Daniel's request.
 
-Fixes: 1fe699e30113 ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: removed unused function argument, fixed 'break' statement.
----
- drivers/gpu/drm/i915/i915_pmu.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+This patch series adds support for Xen [1] para-virtualized
+frontend display driver. It implements the protocol from
+include/xen/interface/io/displif.h [2].
+Accompanying backend [3] is implemented as a user-space application
+and its helper library [4], capable of running as a Weston client
+or DRM master.
+Configuration of both backend and frontend is done via 
+Xen guest domain configuration options [5].
 
-diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index 4bc7aefa9541..d6b9b6b5fb98 100644
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -412,10 +412,9 @@ static u64 __get_rc6(struct drm_i915_private *i915)
- 	return val;
- }
- 
--static u64 get_rc6(struct drm_i915_private *i915, bool locked)
-+static u64 get_rc6(struct drm_i915_private *i915)
- {
- #if IS_ENABLED(CONFIG_PM)
--	unsigned long flags;
- 	u64 val;
- 
- 	if (intel_runtime_pm_get_if_in_use(i915)) {
-@@ -428,18 +427,12 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		 * previously.
- 		 */
- 
--		if (!locked)
--			spin_lock_irqsave(&i915->pmu.lock, flags);
--
- 		if (val >= i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur) {
- 			i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = 0;
- 			i915->pmu.sample[__I915_SAMPLE_RC6].cur = val;
- 		} else {
- 			val = i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur;
- 		}
--
--		if (!locked)
--			spin_unlock_irqrestore(&i915->pmu.lock, flags);
- 	} else {
- 		struct pci_dev *pdev = i915->drm.pdev;
- 		struct device *kdev = &pdev->dev;
-@@ -452,9 +445,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		 * on top of the last known real value, as the approximated RC6
- 		 * counter value.
- 		 */
--		if (!locked)
--			spin_lock_irqsave(&i915->pmu.lock, flags);
--
- 		spin_lock_irqsave(&kdev->power.lock, flags2);
- 
- 		if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
-@@ -470,9 +460,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		val = jiffies_to_nsecs(val);
- 		val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
- 		i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
--
--		if (!locked)
--			spin_unlock_irqrestore(&i915->pmu.lock, flags);
- 	}
- 
- 	return val;
-@@ -519,7 +506,15 @@ static u64 __i915_pmu_event_read(struct perf_event *event, bool locked)
- 			val = count_interrupts(i915);
- 			break;
- 		case I915_PMU_RC6_RESIDENCY:
--			val = get_rc6(i915, locked);
-+			if (!locked) {
-+				unsigned long flags;
-+
-+				spin_lock_irqsave(&i915->pmu.lock, flags);
-+				val = get_rc6(i915);
-+				spin_unlock_irqrestore(&i915->pmu.lock, flags);
-+			} else {
-+				val = get_rc6(i915);
-+			}
- 			break;
- 		}
- 	}
+*******************************************************************************
+* Driver limitations
+*******************************************************************************
+ 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
+    allocated buffers) below are not supported at the same time.
+
+ 2. Only primary plane without additional properties is supported.
+
+ 3. Only one video mode supported which resolution is configured via XenStore.
+
+ 4. All CRTCs operate at fixed frequency of 60Hz.
+
+*******************************************************************************
+* Driver modes of operation in terms of display buffers used
+*******************************************************************************
+ Depending on the requirements for the para-virtualized environment, namely
+ requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+ host and guest environments, number of operating modes of para-virtualized
+ display driver are supported:
+  - display buffers can be allocated by either frontend driver or backend
+  - display buffers can be allocated to be contiguous in memory or not
+
+ Note! Frontend driver itself has no dependency on contiguous memory for
+       its operation.
+
+*******************************************************************************
+* 1. Buffers allocated by the frontend driver.
+*******************************************************************************
+
+ The below modes of operation are configured at compile-time via
+ frontend driver's kernel configuration.
+
+ 1.1. Front driver configured to use GEM CMA helpers
+      This use-case is useful when used with accompanying DRM/vGPU driver in
+      guest domain which was designed to only work with contiguous buffers,
+      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+      contiguous PRIME buffers, thus requiring frontend driver to provide
+      such. In order to implement this mode of operation para-virtualized
+      frontend driver can be configured to use GEM CMA helpers.
+
+ 1.2. Front driver doesn't use GEM CMA
+      If accompanying drivers can cope with non-contiguous memory then, to
+      lower pressure on CMA subsystem of the kernel, driver can allocate
+      buffers from system memory.
+
+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+   may require IOMMU support on the platform, so accompanying DRM/vGPU
+   hardware can still reach display buffer memory while importing PRIME
+   buffers from the frontend driver.
+
+*******************************************************************************
+* 2. Buffers allocated by the backend
+*******************************************************************************
+
+ This mode of operation is run-time configured via guest domain configuration
+ through XenStore entries.
+
+ For systems which do not provide IOMMU support, but having specific
+ requirements for display buffers it is possible to allocate such buffers
+ at backend side and share those with the frontend.
+ For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+ physically contiguous memory, this allows implementing zero-copying
+ use-cases.
+
+
+I would like to thank at least, but not at last the following
+people/communities who helped this driver to happen ;)
+
+1. My team at EPAM for continuous support
+2. Xen community for answering tons of questions on different
+modes of operation of the driver with respect to virtualized
+environment.
+3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
+4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
+5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
+
+
+Changes since v1:
+*******************************************************************************
+- use SPDX license identifier, set license to GPLv2 OR MIT
+- changed midlayers to direct function calls, removed:
+  - front_ops
+  - gem_ops
+- renamed xenbus_driver callbacks to align with exisitng PV drivers
+- re-worked backend error handling with connector hotplug uevents
+- removed vblank handling so user-space doesn't have an impression
+  we really support that
+- directly use front's mode_set in display enable/disable
+- removed BUG_ON, error handling implemented
+- moved driver documentation into Documentation/gpu
+- other comments from Xen community addressed (Boris and Juergen)
+- squashed Xen and DRM patches for better interrconnection visibility
+- for your convenience driver is available at [11]
+
+Thank you,
+Oleksandr Andrushchenko
+
+
+[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
+[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
+[3] https://github.com/xen-troops/displ_be
+[4] https://github.com/xen-troops/libxenbe
+[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
+[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
+[7] https://www.spinics.net/lists/dri-devel/msg164102.html
+[8] https://www.spinics.net/lists/dri-devel/msg164463.html
+[9] https://patchwork.freedesktop.org/series/38073/
+[10] https://patchwork.freedesktop.org/series/38139/
+[11] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v2
+
+
+Oleksandr Andrushchenko (2):
+  drm/xen-front: Add support for Xen PV display frontend
+  drm/xen-front: Provide kernel documentation
+
+ Documentation/gpu/index.rst                 |   1 +
+ Documentation/gpu/xen-front.rst             |  77 ++++
+ drivers/gpu/drm/Kconfig                     |   2 +
+ drivers/gpu/drm/Makefile                    |   1 +
+ drivers/gpu/drm/xen/Kconfig                 |  30 ++
+ drivers/gpu/drm/xen/Makefile                |  17 +
+ drivers/gpu/drm/xen/xen_drm_front.c         | 690 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front.h         |  77 ++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  77 ++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  37 ++
+ drivers/gpu/drm/xen/xen_drm_front_conn.c    | 146 ++++++
+ drivers/gpu/drm/xen/xen_drm_front_conn.h    |  27 ++
+ drivers/gpu/drm/xen/xen_drm_front_drv.c     | 239 ++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_drv.h     |  78 ++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 383 +++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  79 ++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     | 335 ++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |  41 ++
+ drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  74 +++
+ drivers/gpu/drm/xen/xen_drm_front_kms.c     | 324 +++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_kms.h     |  25 +
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 432 +++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  72 +++
+ 23 files changed, 3264 insertions(+)
+ create mode 100644 Documentation/gpu/xen-front.rst
+ create mode 100644 drivers/gpu/drm/xen/Kconfig
+ create mode 100644 drivers/gpu/drm/xen/Makefile
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+
 -- 
-2.9.0
+2.7.4
