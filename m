@@ -1,111 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeCMIkM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:40:12 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:50216 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751880AbeCMIkL (ORCPT
+        id S1752318AbeCMImS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:42:18 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9257 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752143AbeCMImQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:40:11 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2D8e4XG014099
-X-Nifty-SrcIP: [209.85.213.53]
-X-Google-Smtp-Source: AG47ELtGDwNHp/QG/3Fh2JwK/dZsOLGEycdsTiAIJAVTJnSe8TVjk/CC0Hjd9t73IDisYJEleiV3ugAuox8JbU+smuw=
+        Tue, 13 Mar 2018 04:42:16 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Yannick FERTRE <yannick.fertre@st.com>,
+        Vikas MANOCHA <vikas.manocha@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 10/10] board: Add STM32F769 SoC, discovery board
+ support
+Thread-Topic: [PATCH v2 10/10] board: Add STM32F769 SoC, discovery board
+ support
+Thread-Index: AQHTsj1aO1n1F69AHk2VsAMU8apINqPN2P8A
+Date: Tue, 13 Mar 2018 08:41:46 +0000
+Message-ID: <060d289d-bba4-13d6-ec15-b2af29efc5ba@st.com>
+References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
+ <1520005451-23217-11-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1520005451-23217-11-git-send-email-yannick.fertre@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2BF60F8F4659804EA764D33558A7B68A@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1519301715-31798-6-git-send-email-yamada.masahiro@socionext.com>
-References: <1519301715-31798-1-git-send-email-yamada.masahiro@socionext.com> <1519301715-31798-6-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 13 Mar 2018 17:39:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR+Bio=ukXGMJYT=YrZ7k0XfkxRv4fPbbvNi33RLLToSQ@mail.gmail.com>
-Message-ID: <CAK7LNAR+Bio=ukXGMJYT=YrZ7k0XfkxRv4fPbbvNi33RLLToSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] linux/const.h: move BIT(_ULL) to linux/const.h for
- use in assembly
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8gNon027845
 
-Hi Andrew,
+Hi Yannick
 
-2018-02-22 21:15 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Commit 2fc016c5bd8a ("linux/const.h: Add _BITUL() and _BITULL()")
-> introduced _BITUL() and _BITULL().  Its git-log says the difference
-> from the already existing BIT() are:
->
->   1. The namespace is such that they can be used in uapi definitions.
->   2. The type is set with the _AC() macro to allow it to be used in
->      assembly.
->   3. The type is explicitly specified to be UL or ULL.
->
-> However, I found _BITUL() is mostly used in kernel-space since it is
-> handy to share headers between C and assembly.  If we only need '2.',
-> we can improve the existing BIT() for use in assembly, allowing us to
-> avoid unnecessary underscore prefixes.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On 03/02/2018 04:44 PM, yannick fertre wrote:
+> Signed-off-by: yannick fertre <yannick.fertre@st.com>
 
-This patch conflicts with the one from Will Deacon.
-(https://patchwork.kernel.org/patch/10242531/)
+Can you add a commit message explaining why you add a specific defconfig 
+for this board. FYI, previously, the same defconfig was used for all 
+STM32F7 boards (ie /stm32f746-disco_defconfig).
 
-I think his patch is better than mine.
-
-So, could you drop this one from your tree, please?
-(only this one from the series.)
+You will also need to resync with the last master branch regarding 
+defconfig content.
 
 Thanks
 
+Patrice
 
-
-
-> V2: https://patchwork.kernel.org/patch/9498271/
->
-> Changes in v3: None
-> Changes in v2: None
->
->  include/linux/bitops.h | 3 +--
->  include/linux/const.h  | 3 +++
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> index 4cac4e1..8a856be 100644
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -1,11 +1,10 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  #ifndef _LINUX_BITOPS_H
->  #define _LINUX_BITOPS_H
-> +#include <linux/const.h>
->  #include <asm/types.h>
->
->  #ifdef __KERNEL__
-> -#define BIT(nr)                        (1UL << (nr))
-> -#define BIT_ULL(nr)            (1ULL << (nr))
->  #define BIT_MASK(nr)           (1UL << ((nr) % BITS_PER_LONG))
->  #define BIT_WORD(nr)           ((nr) / BITS_PER_LONG)
->  #define BIT_ULL_MASK(nr)       (1ULL << ((nr) % BITS_PER_LONG_LONG))
-> diff --git a/include/linux/const.h b/include/linux/const.h
-> index 7b55a55..200892d 100644
-> --- a/include/linux/const.h
-> +++ b/include/linux/const.h
-> @@ -6,4 +6,7 @@
->  #define UL(x)          (_UL(x))
->  #define ULL(x)         (_ULL(x))
->
-> +#define BIT(x)         (_BITUL(x))
-> +#define BIT_ULL(x)     (_BITULL(x))
-> +
->  #endif /* _LINUX_CONST_H */
-> --
-> 2.7.4
->
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> ---
+>   configs/stm32f769-disco_defconfig | 63 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 63 insertions(+)
+>   create mode 100644 configs/stm32f769-disco_defconfig
+> 
+> diff --git a/configs/stm32f769-disco_defconfig b/configs/stm32f769-disco_defconfig
+> new file mode 100644
+> index 0000000..ac34076
+> --- /dev/null
+> +++ b/configs/stm32f769-disco_defconfig
+> @@ -0,0 +1,63 @@
+> +CONFIG_ARM=y
+> +CONFIG_STM32=y
+> +CONFIG_SYS_MALLOC_F_LEN=0xC00
+> +CONFIG_STM32F7=y
+> +CONFIG_TARGET_STM32F746_DISCO=y
+> +CONFIG_DEFAULT_DEVICE_TREE="stm32f769-disco"
+> +CONFIG_BOOTDELAY=3
+> +CONFIG_USE_BOOTARGS=y
+> +CONFIG_BOOTARGS="console=ttyS0,115200 earlyprintk consoleblank=0 ignore_loglevel"
+> +# CONFIG_DISPLAY_CPUINFO is not set
+> +# CONFIG_DISPLAY_BOARDINFO is not set
+> +CONFIG_BOARD_EARLY_INIT_F=y
+> +CONFIG_HUSH_PARSER=y
+> +CONFIG_SYS_PROMPT="U-Boot > "
+> +CONFIG_AUTOBOOT_KEYED=y
+> +CONFIG_AUTOBOOT_PROMPT="Hit SPACE in %d seconds to stop autoboot.\n"
+> +CONFIG_AUTOBOOT_STOP_STR=" "
+> +CONFIG_CMD_BOOTZ=y
+> +# CONFIG_CMD_FPGA is not set
+> +CONFIG_CMD_GPT=y
+> +# CONFIG_RANDOM_UUID is not set
+> +CONFIG_CMD_MMC=y
+> +CONFIG_CMD_SF=y
+> +# CONFIG_CMD_SETEXPR is not set
+> +CONFIG_CMD_DHCP=y
+> +CONFIG_CMD_MII=y
+> +CONFIG_CMD_PING=y
+> +CONFIG_CMD_SNTP=y
+> +CONFIG_CMD_DNS=y
+> +CONFIG_CMD_LINK_LOCAL=y
+> +CONFIG_CMD_BMP=y
+> +CONFIG_CMD_TIMER=y
+> +CONFIG_CMD_EXT2=y
+> +CONFIG_CMD_EXT4=y
+> +CONFIG_CMD_FAT=y
+> +CONFIG_CMD_FS_GENERIC=y
+> +# CONFIG_DOS_PARTITION is not set
+> +CONFIG_OF_CONTROL=y
+> +CONFIG_NET_RANDOM_ETHADDR=y
+> +CONFIG_NETCONSOLE=y
+> +# CONFIG_BLK is not set
+> +CONFIG_DM_MMC=y
+> +# CONFIG_SPL_DM_MMC is not set
+> +CONFIG_ARM_PL180_MMCI=y
+> +CONFIG_MTD=y
+> +CONFIG_MTD_NOR_FLASH=y
+> +CONFIG_DM_SPI_FLASH=y
+> +CONFIG_SPI_FLASH=y
+> +CONFIG_SPI_FLASH_STMICRO=y
+> +CONFIG_DM_ETH=y
+> +CONFIG_ETH_DESIGNWARE=y
+> +# CONFIG_PINCTRL_FULL is not set
+> +CONFIG_DM_SPI=y
+> +CONFIG_STM32_QSPI=y
+> +CONFIG_DM_VIDEO=y
+> +CONFIG_BACKLIGHT_GPIO=y
+> +CONFIG_VIDEO_LCD_ORISETECH_OTM8009A=y
+> +CONFIG_VIDEO_STM32=y
+> +CONFIG_VIDEO_STM32_DSI=y
+> +CONFIG_VIDEO_STM32_MAX_XRES=480
+> +CONFIG_VIDEO_STM32_MAX_YRES=800
+> +CONFIG_OF_LIBFDT_OVERLAY=y
+> +# CONFIG_EFI_LOADER is not set
+> 
