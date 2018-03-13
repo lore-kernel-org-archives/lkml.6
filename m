@@ -1,67 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933135AbeCMMFp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:05:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933116AbeCMMFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:05:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4590021796
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Joe Mario <jmario@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/31] perf c2c report: Call calc_width() only for displayed entries
-Date: Tue, 13 Mar 2018 09:04:43 -0300
-Message-Id: <20180313120508.29327-7-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
+        id S933281AbeCMMN1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:13:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51564 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932739AbeCMMNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:13:24 -0400
+Date: Tue, 13 Mar 2018 13:13:47 +0100
+From: Steve Grubb <sgrubb@redhat.com>
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
+Message-ID: <20180313131347.726f12a0@ivy-bridge>
+In-Reply-To: <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com>
+        <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
+        <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
+        <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca>
+        <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
+        <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca>
+        <20180313093517.28c99b48@ivy-bridge>
+        <20180313101108.s6o7jec57rsxpsmc@madcap2.tricolour.ca>
+        <20180313113815.187da185@ivy-bridge>
+        <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+On Tue, 13 Mar 2018 06:52:51 -0400
+Richard Guy Briggs <rgb@redhat.com> wrote:
 
-There's no need to calculate column widths for entries that are not
-going to be displayed.
+> On 2018-03-13 11:38, Steve Grubb wrote:
+> > On Tue, 13 Mar 2018 06:11:08 -0400
+> > Richard Guy Briggs <rgb@redhat.com> wrote:
+> >   
+> > > On 2018-03-13 09:35, Steve Grubb wrote:  
+> > > > On Mon, 12 Mar 2018 11:52:56 -0400
+> > > > Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > >     
+> > > > > On 2018-03-12 11:53, Paul Moore wrote:    
+> > > > > > On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs
+> > > > > > <rgb@redhat.com> wrote:      
+> > > > > > > On 2018-03-12 11:12, Paul Moore wrote:      
+> > > > > > >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs
+> > > > > > >> <rgb@redhat.com> wrote:      
+> > > > > > >> > Audit link denied events for symlinks had duplicate
+> > > > > > >> > PATH records rather than just updating the existing
+> > > > > > >> > PATH record. Update the symlink's PATH record with the
+> > > > > > >> > current dentry and inode information.
+> > > > > > >> >
+> > > > > > >> > See:
+> > > > > > >> > https://github.com/linux-audit/audit-kernel/issues/21
+> > > > > > >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com> ---
+> > > > > > >> >  fs/namei.c | 1 +
+> > > > > > >> >  1 file changed, 1 insertion(+)      
+> > > > > > >>
+> > > > > > >> Why didn't you include this in patch 4/4 like I asked
+> > > > > > >> during the previous review?      
+> > > > > > >
+> > > > > > > Please see the last comment of:
+> > > > > > > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html      
+> > > > > > 
+> > > > > > Yes, I just saw that ... I hadn't seen your replies on the
+> > > > > > v1 patches until I had finished reviewing v2.  I just
+> > > > > > replied to that mail in the v1 thread, but basically you
+> > > > > > need to figure out what is necessary here and let us know.
+> > > > > > If I have to figure it out it likely isn't going to get
+> > > > > > done with enough soak time prior to the upcoming merge
+> > > > > > window.      
+> > > > > 
+> > > > > Steve?  I was hoping you could chime in here.    
+> > > > 
+> > > > If the CWD record will always be the same as the PARENT record,
+> > > > then we do not need the parent record. Duplicate information is
+> > > > bad. Like all the duplicate SYSCALL information.    
+> > > 
+> > > The CWD record could be different from the PARENT record, since I
+> > > could have SYMLINK=/tmp/test/symlink, CWD=/tmp, PARENT=/tmp/test.
+> > > Does the parent record even matter since it might not be a
+> > > directory operation like creat, unlink or rename?  
+> > 
+> > There's 2 issues. One is creating the path if what we have is
+> > relative. In this situation CWD should be enough. But if the
+> > question is whether the PARENT directory should be included...what
+> > if the PARENT permissions do not allow the successful name
+> > resolution? In that case we might only get a PARENT record no? In
+> > that case we would need it.  
+> 
+> I think in the case of symlink creation, normal file create code path
+> would be in effect, and would properly log parent and symlink source
+> file paths (if a rule to log it was in effect) which is not something
+> that would trigger a symlink link denied error.  Symlink link denied
+> happens only when trying to actually follow the link before
+> resolving the target path of a read/write/exec of the symlink target.
+> 
+> If the parent permissions of the link's target don't allow successful
+> name resolution then the symlink link denied condition isn't met, but
+> rather any other rule that applies to the target path.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Joe Mario <jmario@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180309101442.9224-7-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-c2c.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Then I guess the PARENT record is not needed.
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 43ce55550c9d..821112e8ba97 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -1873,12 +1873,11 @@ static int resort_cl_cb(struct hist_entry *he)
- 	c2c_he = container_of(he, struct c2c_hist_entry, he);
- 	c2c_hists = c2c_he->hists;
- 
--	calc_width(c2c_he);
--
- 	if (display && c2c_hists) {
- 		static unsigned int idx;
- 
- 		c2c_he->cacheline_idx = idx++;
-+		calc_width(c2c_he);
- 
- 		c2c_hists__reinit(c2c_hists, c2c.cl_output, c2c.cl_resort);
- 
--- 
-2.14.3
+-Steve
+
+> > > > > I'd just include it for completeness unless Steve thinks it
+> > > > > will stand on its own and doesn't want the overhead.
+> > > > >     
+> > > > > > >> > diff --git a/fs/namei.c b/fs/namei.c
+> > > > > > >> > index 50d2533..00f5041 100644
+> > > > > > >> > --- a/fs/namei.c
+> > > > > > >> > +++ b/fs/namei.c
+> > > > > > >> > @@ -945,6 +945,7 @@ static inline int
+> > > > > > >> > may_follow_link(struct nameidata *nd) if (nd->flags &
+> > > > > > >> > LOOKUP_RCU) return -ECHILD;
+> > > > > > >> >
+> > > > > > >> > +       audit_inode(nd->name,
+> > > > > > >> > nd->stack[0].link.dentry, 0);
+> > > > > > >> > audit_log_link_denied("follow_link",
+> > > > > > >> > &nd->stack[0].link); return -EACCES; }      
+> > > > > > >>
+> > > > > > >> paul moore      
+> > > > > > >
+> > > > > > > - RGB      
+> > > > > > 
+> > > > > > paul moore      
+> > > > > 
+> > > > > - RGB    
+> > > 
+> > > - RGB
+> > > 
+> > > --
+> > > Richard Guy Briggs <rgb@redhat.com>
+> > > Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> > > Remote, Ottawa, Red Hat Canada
+> > > IRC: rgb, SunRaycer
+> > > Voice: +1.647.777.2635, Internal: (81) 32635  
+> >   
+> 
+> - RGB
+> 
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
