@@ -1,70 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955391-2-5558178548526906368
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955390; b=SQ4D4RrkZp9BzxWqlbiLOqVuy15Cd1hyZ8gqzJap4R9LIjk
-    RlabcwFr9Hk1PsBaw7F/wTMfI2BUKMaiYt7fotTX4j1tvWOC2zQOq8siWwO2J4OM
-    s9O1VV5/W0Lvlzt4Me1zfbAMiDmz+QsVnEM4rUPbgAHIUvpWACfUfVJlBe1kB2Hh
-    4iGz2qCBqkwc1GT4xicHjeRzUFimgjnZ9Uja/BT099W22+sHKWttjJEm/vbLlkis
-    M4bkCNhciI2tZqRBbkTomVXSgxiT51LLjEJFPkc7w0eeNjSkfEP3iE4MhAGOwcfa
-    qGJuehfXPhYkLHx44dtsmbQfIXlNSIHNdYHDPEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955390; bh=pEboMKG3St6a5XmqXWtDidioyg
-    UaZgghDzqhTXsyb74=; b=owTzaFO52DyqJOcMHPImSouVy349jln3mhUI8DkubF
-    yjtNuSk7A5fF+9NDYYl79tFeL8EoKOGrJF1ShL8fLSg8nInc7aXyyzhcOwPRrXUi
-    fTB4l0WGvMpyylqGS+rPysZOh2hdg+6277XoCiuA9bXkpdnXzKT5ZeoAAdRMoWDJ
-    hLz8LAbt2AOd5HbF5F7+TqqVVGfQn0uCMdpwqshtmAzZS2Ze6edgfyeUx880wDRf
-    yC9a0322VmBstLbMmSmD3kaPHtsA+A3Pkp4GAiBekZ+Imj7cNHNhQJd0s1L3OfjL
-    hLMnIoNj9J4iW/lHrfx34FGdmJdqsnlS63Vg/AXq/9yQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934203AbeCMPg0 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:36:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33556 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934168AbeCMPgZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:36:25 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuT/obwZa+2MmqarW7RtuZNN++XkWWTkk7zagXQhBc/y9McvXr/GXS4PDF/n5ZWdHzoGNyM
+ARC-Seal: i=1; a=rsa-sha256; t=1520955390; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bigw5XOh32vKvSipsANAaUyy91NNrQXP0PU1HG45owTPmpdfyGnxaATRNMCbU4LVZz
+         20eScVsiuZ+pAPtdKLTguOgDJgDwcEAWzWlFy00zwvoiIUtUNPY5mRNnOYCr1pBcfyan
+         hhD3xcvia09tRENEqsuZDMRdURLx9/ta2BYOXl4snfd+c/7996l5CkN86OpvZtPFqUYh
+         OUhszVippG40vuI8B8cheGieibxxAghFixIJUDtfBGKTDILoRG5XFY6yc5bxiWcnS1/j
+         TiV1P4bKOh+/2yySaNDilIEtAppr6XsYL3HTsceIen6yN/78xEkWsWzCfhDoGF+5qGmW
+         zmMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=+J2r3llMWQJKm9c6vyjKBAsYDDxtFKVG7Kjn5jJkGcA=;
+        b=jQNGpE7no+5bgqHUcQGW+Rpwk14+zYhuN/E6LnrwK8FUVmdpHuAbcATqtRoPnhr47R
+         P6hsCDPE3EdJyl9mpRxV7iPwOGkJSKDWuds0na+pGia5UBI2m0Zst4N67Yk0w3FAhzmE
+         A/tHPh4CjITv/jAv2Ew0QfJNYDmOoc9qh+M0rDvISsQVtnK4WcerIXOkgC0A0i1vLhOB
+         KFiuLrIiY6Kcqbt7G2VtTLIA+t5tkm4ey1BppDXaB1NMbXd5Thlf/w1Td75cP4CNcaEj
+         ojhf+kpvg5vDbzAGRjPYSX0Vv9+ElDBxPp/WgC+EFoZgJVfRbvL9ozVBwEBAMwYb229i
+         Om6g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sawan Chandak <sawan.chandak@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 032/140] scsi: qla2xxx: Fix NPIV host cleanup in target mode
-Date: Tue, 13 Mar 2018 16:23:55 +0100
-Message-Id: <20180313152500.263801807@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Quinn Tran <quinn.tran@cavium.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 034/140] scsi: qla2xxx: Fix PRLI state check
+Date: Tue, 13 Mar 2018 16:23:57 +0100
+Message-Id: <20180313152500.418550144@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -72,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594837156721217729?=
+X-GMAIL-MSGID: =?utf-8?q?1594837319688748557?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,38 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sawan Chandak <sawan.chandak@cavium.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 3be63b1e1838e35ce93e83f19573e949f4b389b4 upstream.
+commit 23c645595dab7b414f23639d0a428a07515807df upstream.
 
-Add check to make sure we are cleaning up global target host list only
-for NPIV hosts
+Get Port Database MBX cmd is to validate current Login state upon PRLI
+completion. Current code looks at the last login state for re-validation
+which was incorrect. This patch removed incorrect state check.
 
-Fixes: bdbe24de281e2 ("scsi: qla2xxx: Cleanup NPIV host in target mode during config teardown")
+Fixes: 15f30a5752287 ("qla2xxx: Use IOCB interface to submit non-critical MBX.")
 Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Sawan Chandak <sawan.chandak@cavium.com>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_mbx.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1561,8 +1561,11 @@ static void qlt_release(struct qla_tgt *
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -6078,8 +6078,7 @@ int __qla24xx_parse_gpdb(struct scsi_qla
+ 	}
  
- 	btree_destroy64(&tgt->lun_qpair_map);
- 
--	if (ha->tgt.tgt_ops && ha->tgt.tgt_ops->remove_target)
--		ha->tgt.tgt_ops->remove_target(vha);
-+	if (vha->vp_idx)
-+		if (ha->tgt.tgt_ops &&
-+		    ha->tgt.tgt_ops->remove_target &&
-+		    vha->vha_tgt.target_lport_ptr)
-+			ha->tgt.tgt_ops->remove_target(vha);
- 
- 	vha->vha_tgt.qla_tgt = NULL;
- 
+ 	/* Check for logged in state. */
+-	if (current_login_state != PDS_PRLI_COMPLETE &&
+-	    last_login_state != PDS_PRLI_COMPLETE) {
++	if (current_login_state != PDS_PRLI_COMPLETE) {
+ 		ql_dbg(ql_dbg_mbx, vha, 0x119a,
+ 		    "Unable to verify login-state (%x/%x) for loop_id %x.\n",
+ 		    current_login_state, last_login_state, fcport->loop_id);
