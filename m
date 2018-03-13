@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELszMydVaTKM7AfDVOM1zR26WhjhKOT6DR1cbEBCExdH4AK/xF/PohBAHU+20vq6tp6McN8r
-ARC-Seal: i=1; a=rsa-sha256; t=1520954956; cv=none;
+X-Google-Smtp-Source: AG47ELuTZqmU1TjEZLcj6cQjGyD56EaCEiOmLjGUnrHCHpk3pnpAcHsHnlABCDOLNNLKOMmeJQKT
+ARC-Seal: i=1; a=rsa-sha256; t=1520954953; cv=none;
         d=google.com; s=arc-20160816;
-        b=rEw51Nt+7gFaPQkMA/5BkRGFfWqzFC0nhoNIGQ1lNtZAtNK40FcST77DjNairGlzVF
-         rJhsW2GkU4WvzegvqZvPy+NvpgmdcQKnCC2iOxAwnuyfgvAaubo+UX9Ftj2jUgDOsSPh
-         oLhmbQojka+uzHeMw1L3sim1w2K9yNiljyY2xB97Sjkvy4qAnpZyyT2bym41uUWbjCnq
-         1zT2QEmctLkKQIYF0BbYvLw++mo/uzB+Hy5gab4SY/1fS8DCrJLyT397IBMgbeXWBwXy
-         Gc2WbKVtCJJHNB92VY47kNgsZpvCbk5kJXgGllVtxgY9mDrwiC1OnFsdXBWtP2w04nzO
-         xtJQ==
+        b=whwSTK2mpUpty9UXp5E0ICXJseDz4PkR/RhTE0aGCOmVuyyB/2yP8WJwuutfQ1iCGc
+         3m6gczcvHtkt+Ofr2uftUOtz5mMKJ1ar0fMxyvw+nOIcCBGpYc0gTLlZCgAUWF/8z7cw
+         9dq+pn6MsOm1z8vBKb23n7ZaluscV50lTabR2czihLbhcsxZyF315SJTnb6a/481DlWA
+         D6ujcy3FVNK4Pyt+0JjFQuk3U44Ql64LIGMJ4vnOFxFNXyHco/DDqp0pcRxqVswz90Eq
+         r1cSS9IkFiWRvmv2pBnkY0A7tgakIBKE2DOvVwGSKsK7K2klRc7JayJBGT47+f4UHNgU
+         OCzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0KASJQq3ughfwExoPbrLnwE76SElaDesH36gSt200SA=;
-        b=jJaNuVWVb/VmDZW11BaRyl6B7dACAkUv1+vMQbucJty414fJ1KWQCBDkll7POCExr3
-         8J315y7FcozY7rQnIN+6Unhqew+Wf0lbW2Nmo0avWR5MVTst9WwDWo8Od2aiRtf5xfKl
-         Us5QZNtVHlUmpjHk2/9mK2sq+T1/9758SP99p4M4enRLOu2CMrxJGVfW969sZxcPeD8/
-         uHJnvQmYydDquXYJJXypoO4gZVUMNvBliQkEfeXDiSbFgec4ISSOTd3MjfcBVV5aNfg8
-         XMb8bPCAdk+I3iX0Oz9iK5ZnK7mO3RD6HTbJjsa3ueBVw5WHpvvnEKLo+X4DvbOV73Wh
-         XAdQ==
+        bh=qfK749L/vvAhKFBf6Y09p7cYxXhgHpX61RaeWtzoNcY=;
+        b=ZvxwzInLIo4P+cvrsE632ChD+gv2CLDpSDu/xoCkS/1Z2axS7k7yjSxinlXUbYwlb2
+         4L7Qbu5KIzJM6jrNQNBk25AwclonfsYj0nLcEfxzSahWwz7LnWXCI2BFyDjDWOVBb+UI
+         GRedFNRTRoZWXlMY2SmArj8GAVJOF39691F8hdbt+MoLsFq9kv1aB6vKn9mD+j58LARz
+         XDaOoh3rJJlFFsfcePoTHfs//HytSj0ef7bJxJeUj5tV+rxewI1TinF+ihISApbCf7fb
+         FhJ+9vUT1vRQ/GTH+8+hCrQunNQotuUXKQuVC8OM9iMGN1K/6A+nZ9v1vTNtKDdv9Sw8
+         Zl+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.15 039/146] ovl: redirect_dir=nofollow should not follow redirect for opaque lower
-Date: Tue, 13 Mar 2018 16:23:26 +0100
-Message-Id: <20180313152323.579717003@linuxfoundation.org>
+	James Zhu <James.Zhu@amd.com>,
+	Leo Liu <leo.liu@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.15 038/146] drm/amdgpu:Always save uvd vcpu_bo in VM Mode
+Date: Tue, 13 Mar 2018 16:23:25 +0100
+Message-Id: <20180313152323.484999456@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836863914943271?=
-X-GMAIL-MSGID: =?utf-8?q?1594836863914943271?=
+X-GMAIL-THRID: =?utf-8?q?1594836860732334519?=
+X-GMAIL-MSGID: =?utf-8?q?1594836860732334519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,68 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vivek Goyal <vgoyal@redhat.com>
+From: James Zhu <James.Zhu@amd.com>
 
-commit d1fe96c0e4de78ba0cd336ea3df3b850d06b9b9a upstream.
+commit f8bee6135e167f5b35b7789c74c2956dad14d0d5 upstream.
 
-redirect_dir=nofollow should not follow a redirect. But in a specific
-configuration it can still follow it.  For example try this.
+When UVD is in VM mode, there is not uvd handle exchanged,
+uvd.handles are always 0. So vcpu_bo always need save,
+Otherwise amdgpu driver will fail during suspend/resume.
 
-$ mkdir -p lower0 lower1/foo upper work merged
-$ touch lower1/foo/lower-file.txt
-$ setfattr -n "trusted.overlay.opaque" -v "y" lower1/foo
-$ mount -t overlay -o lowerdir=lower1:lower0,workdir=work,upperdir=upper,redirect_dir=on none merged
-$ cd merged
-$ mv foo foo-renamed
-$ umount merged
-
-# mount again. This time with redirect_dir=nofollow
-$ mount -t overlay -o lowerdir=lower1:lower0,workdir=work,upperdir=upper,redirect_dir=nofollow none merged
-$ ls merged/foo-renamed/
-# This lists lower-file.txt, while it should not have.
-
-Basically, we are doing redirect check after we check for d.stop. And
-if this is not last lower, and we find an opaque lower, d.stop will be
-set.
-
-ovl_lookup_single()
-        if (!d->last && ovl_is_opaquedir(this)) {
-                d->stop = d->opaque = true;
-                goto out;
-        }
-
-To fix this, first check redirect is allowed. And after that check if
-d.stop has been set or not.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Fixes: 438c84c2f0c7 ("ovl: don't follow redirects if redirect_dir=off")
-Cc: <stable@vger.kernel.org> #v4.15
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105021
+Signed-off-by: James Zhu <James.Zhu@amd.com>
+Reviewed-by: Leo Liu <leo.liu@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/namei.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -678,9 +678,6 @@ struct dentry *ovl_lookup(struct inode *
- 		stack[ctr].layer = lower.layer;
- 		ctr++;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -297,12 +297,15 @@ int amdgpu_uvd_suspend(struct amdgpu_dev
+ 	if (adev->uvd.vcpu_bo == NULL)
+ 		return 0;
  
--		if (d.stop)
+-	for (i = 0; i < adev->uvd.max_handles; ++i)
+-		if (atomic_read(&adev->uvd.handles[i]))
 -			break;
--
- 		/*
- 		 * Following redirects can have security consequences: it's like
- 		 * a symlink into the lower layer without the permission checks.
-@@ -697,6 +694,9 @@ struct dentry *ovl_lookup(struct inode *
- 			goto out_put;
- 		}
++	/* only valid for physical mode */
++	if (adev->asic_type < CHIP_POLARIS10) {
++		for (i = 0; i < adev->uvd.max_handles; ++i)
++			if (atomic_read(&adev->uvd.handles[i]))
++				break;
  
-+		if (d.stop)
-+			break;
-+
- 		if (d.redirect && d.redirect[0] == '/' && poe != roe) {
- 			poe = roe;
+-	if (i == adev->uvd.max_handles)
+-		return 0;
++		if (i == adev->uvd.max_handles)
++			return 0;
++	}
+ 
+ 	cancel_delayed_work_sync(&adev->uvd.idle_work);
  
