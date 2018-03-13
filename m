@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974849; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974847; cv=none;
         d=google.com; s=arc-20160816;
-        b=AzGg18UYpx0yr4U4VcwmgXqPAtVS8cwaxBEJcpKdE7/KH5aoSFwup7XbAFt7IEWudh
-         fvvIBGyXku0O5W+V0CRWtXu+Bzxfu9CMy0slgCATosQq9KiyjSTynrELOCQ4SAOaiFX5
-         OP/Npumm3YIt8CAbvU4mmWqGYmsC2wOwQd1B2xAMs7HIP6kjswExBn46flpHlrRGK6aw
-         4iV3FgKIRBzfJ6jUjxMcnzOekEpF3F+A+omxxuuWIFjCgUd6qZuFEMI+3rFvrlIo3T1+
-         g1g05eT+hxtxFuCvMS8+7p70Xup5iREJnoSfZnIC2Rn8LFdU4MN+5oTvTw2/zsZwLOvl
-         w2+g==
+        b=XCrblK9mhjUGG6+ZwDi3P+n93kDMF+3ookEzsXtIT2W/MjHIg2fVflo4JmAb0OrFIn
+         Gto2OptZgXsd0YsFsHRnt4W/eYAQ6WklCzGLlkmoD6/ABvHoCrFXVBlbkFHMZ4QUuMxU
+         Wyg8kVgQ1c/m4JofGZxkej3tR1sVBNvRHe0FTXwC2VF/30hZroPe5fJX3ibTBnVxYP2g
+         97mTW+aHjQP77krWeG3H1TLYwAmq1SfOWVPnspQQraMO9N/W7b9tYU8ej94fMzjLIY29
+         jC7vlHq1p+crqJPFIKoyYNTP3i41NyozKABhQsYx2JAiMF1Rajhcwv6q4JokBjqe16Hv
+         63mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=1pv1TCYX38Prk84i54e1XzmGAYVvBJdF3eg5DouhUXg=;
-        b=incHjjj3KpiXaqN+mmax3PsKs+CgftV+avcvn0nawUXwNnEfh/6u0B+krCY2ijxJmQ
-         Q2iy7FNW0qt7OmZqjllU5odFvMLPdG+Y4zDhiuoP4Z4UvA7CYpX9ht1X8BmMruN7/djQ
-         dpbS4zqFzQ6MZdZTIVG4td5eLmSmILOv546KNC0KrhEIBkkpdeQb6iFLBxieZ+WSpo29
-         m9fijepJwaWa/IGg3TE5SJVzi9xfzcqhJaKPP1C5SdgWqfKBauhWdriJlSzClYl34QRt
-         DFdDLb/7TgS+KKharrFQPGxOo22ZgYN9BPq/Rh+3QnwJHSJIVPjeL/O5KGaSZ5p5maca
-         zyEA==
+        bh=c8qD1KiibZTkGA/FCtb/7LkTH6iqYoL56JQMr1OhEoo=;
+        b=MYTvpPxjpfxF670i815C5/BBIruYkWR79HPfzl5z9lPLYilRK+NO2N37EwMDNfwvQI
+         nC4UL5xUsC6eA9iVxBVJdU87MgvtpYOTgudOQibwzvZdLGxF2dVrFYXdQgY7wf7kJsdb
+         pmSk/yBOQWmAUiqCHN/VfX3ofyg3JM9iyqTadqxDXlj973D7ojoCk973DBlHgwVhbvkQ
+         rOURVtM+1MpdEpIdUdxkwy66/5MBEKtLtC+plcxVoZKc+2x68MXdXSNCOp1EQSkQ7W8I
+         VcQ9opjAQd7R9XnGfqo6+5HljQiO7Me/qbmAWhEadJFDXbChro03iHLl/XjFe8zcnVlt
+         n9XA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Ib/hdzeF;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iD7EYDCv;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Ib/hdzeF;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=iD7EYDCv;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELvC9ii+0/P5pnq3bQVzPZktfrjo0njQPAjbs124XCd7nqJi9aJQE++F1ji5jf2JIUoOXxyDTw==
+X-Google-Smtp-Source: AG47ELtPBWwzHcmX55RdLimTjGf2RTD+b6ZW7GTT1ZnTDu6MO7Hdr4CmqQ5l5hlesDI4mA+oThkmUQ==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,78 +105,223 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 16/27] compiler: Option to add PROVIDE_HIDDEN replacement for weak symbols
-Date: Tue, 13 Mar 2018 13:59:34 -0700
-Message-Id: <20180313205945.245105-17-thgarnie@google.com>
+Subject: [PATCH v2 15/27] compiler: Option to default to hidden symbols
+Date: Tue, 13 Mar 2018 13:59:33 -0700
+Message-Id: <20180313205945.245105-16-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857723684834572?=
-X-GMAIL-MSGID: =?utf-8?q?1594857723684834572?=
+X-GMAIL-THRID: =?utf-8?q?1594857721266924732?=
+X-GMAIL-MSGID: =?utf-8?q?1594857721266924732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Provide an option to have a PROVIDE_HIDDEN (linker script) entry for
-each weak symbol. This option solve an error in x86_64 where the linker
-optimizes pie generate code to be non-pie because --emit-relocs was used
-instead of -pie (to reduce dynamic relocations).
+Provide an option to default visibility to hidden except for key
+symbols. This option is disabled by default and will be used by x86_64
+PIE support to remove errors between compilation units.
+
+The default visibility is also enabled for external symbols that are
+compared as they maybe equals (start/end of sections). In this case,
+older versions of GCC will remove the comparison if the symbols are
+hidden. This issue exists at least on gcc 4.9 and before.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- init/Kconfig            |  7 +++++++
- scripts/link-vmlinux.sh | 14 ++++++++++++++
- 2 files changed, 21 insertions(+)
+ arch/x86/boot/boot.h                 |  2 +-
+ arch/x86/include/asm/setup.h         |  2 +-
+ arch/x86/kernel/cpu/microcode/core.c |  4 ++--
+ drivers/base/firmware_class.c        |  4 ++--
+ include/asm-generic/sections.h       |  6 ++++++
+ include/linux/compiler.h             |  7 +++++++
+ init/Kconfig                         |  7 +++++++
+ kernel/kallsyms.c                    | 16 ++++++++--------
+ kernel/trace/trace.h                 |  4 ++--
+ lib/dynamic_debug.c                  |  4 ++--
+ 10 files changed, 38 insertions(+), 18 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index c924babc6d47..fe9f9ada4db0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1927,6 +1927,13 @@ config ASN1
- 	  inform it as to what tags are to be expected in a stream and what
- 	  functions to call on what tags.
- 
-+config WEAK_PROVIDE_HIDDEN
-+	bool
-+	help
-+	  Generate linker script PROVIDE_HIDDEN entries for all weak symbols. It
-+	  allows to prevent non-pie code being replaced by the linker if the
-+	  emit-relocs option is used instead of pie (useful for x86_64 pie).
-+
- source "kernel/Kconfig.locks"
- 
- config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 08ca08e9105c..c015f5142ecf 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -146,6 +146,17 @@ kallsyms()
- 	${CC} ${aflags} -c -o ${2} ${afile}
+diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
+index ef5a9cc66fb8..d726c35bdd96 100644
+--- a/arch/x86/boot/boot.h
++++ b/arch/x86/boot/boot.h
+@@ -193,7 +193,7 @@ static inline bool memcmp_gs(const void *s1, addr_t s2, size_t len)
  }
  
-+gen_weak_provide_hidden()
-+{
-+        if [ -n "${CONFIG_WEAK_PROVIDE_HIDDEN}" ]; then
-+                local pattern="s/^\s\+ w \(\w\+\)$/PROVIDE_HIDDEN(\1 = .);/gp"
-+                echo -e "SECTIONS {\n. = _end;" > .tmp_vmlinux_hiddenld
-+                ${NM} ${1} | sed -n "${pattern}" >> .tmp_vmlinux_hiddenld
-+                echo "}" >> .tmp_vmlinux_hiddenld
-+                LDFLAGS_vmlinux="${LDFLAGS_vmlinux} -T .tmp_vmlinux_hiddenld"
-+        fi
-+}
-+
- # Create map file with all symbols from ${1}
- # See mksymap for additional details
- mksysmap()
-@@ -230,6 +241,9 @@ modpost_link vmlinux.o
- # modpost vmlinux.o to check for section mismatches
- ${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
+ /* Heap -- available for dynamic lists. */
+-extern char _end[];
++extern char _end[] __default_visibility;
+ extern char *HEAP;
+ extern char *heap_end;
+ #define RESET_HEAP() ((void *)( HEAP = _end ))
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index 3108e297d87d..dfba64fe1c7e 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -70,7 +70,7 @@ static inline void x86_ce4100_early_setup(void) { }
+  * This is set up by the setup-routine at boot-time
+  */
+ extern struct boot_params boot_params;
+-extern char _text[];
++extern char _text[] __default_visibility;
  
-+# Generate weak linker script
-+gen_weak_provide_hidden vmlinux.o
+ static inline bool kaslr_enabled(void)
+ {
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index aa1b9a422f2b..ed5675db6e82 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -141,8 +141,8 @@ static bool __init check_loader_disabled_bsp(void)
+ 	return *res;
+ }
+ 
+-extern struct builtin_fw __start_builtin_fw[];
+-extern struct builtin_fw __end_builtin_fw[];
++extern struct builtin_fw __start_builtin_fw[] __default_visibility;
++extern struct builtin_fw __end_builtin_fw[] __default_visibility;
+ 
+ bool get_builtin_firmware(struct cpio_data *cd, const char *name)
+ {
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 7dd36ace6152..939a1952d0ab 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -136,8 +136,8 @@ static struct firmware_cache fw_cache;
+ 
+ #ifdef CONFIG_FW_LOADER
+ 
+-extern struct builtin_fw __start_builtin_fw[];
+-extern struct builtin_fw __end_builtin_fw[];
++extern struct builtin_fw __start_builtin_fw[] __default_visibility;
++extern struct builtin_fw __end_builtin_fw[] __default_visibility;
+ 
+ static void fw_copy_to_prealloc_buf(struct firmware *fw,
+ 				    void *buf, size_t size)
+diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+index 849cd8eb5ca0..0a0e23405ddd 100644
+--- a/include/asm-generic/sections.h
++++ b/include/asm-generic/sections.h
+@@ -32,6 +32,9 @@
+  *	__softirqentry_text_start, __softirqentry_text_end
+  *	__start_opd, __end_opd
+  */
++#ifdef CONFIG_DEFAULT_HIDDEN
++#pragma GCC visibility push(default)
++#endif
+ extern char _text[], _stext[], _etext[];
+ extern char _data[], _sdata[], _edata[];
+ extern char __bss_start[], __bss_stop[];
+@@ -49,6 +52,9 @@ extern char __start_once[], __end_once[];
+ 
+ /* Start and end of .ctors section - used for constructor calls. */
+ extern char __ctors_start[], __ctors_end[];
++#ifdef CONFIG_DEFAULT_HIDDEN
++#pragma GCC visibility pop
++#endif
+ 
+ /* Start and end of .opd section - used for function descriptors. */
+ extern char __start_opd[], __end_opd[];
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c63601..a9ac84e37af9 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -278,6 +278,13 @@ unsigned long read_word_at_a_time(const void *addr)
+ 	__u.__val;					\
+ })
+ 
++#ifdef CONFIG_DEFAULT_HIDDEN
++#pragma GCC visibility push(hidden)
++#define __default_visibility  __attribute__((visibility ("default")))
++#else
++#define __default_visibility
++#endif
 +
- kallsymso=""
- kallsyms_vmlinux=""
- if [ -n "${CONFIG_KALLSYMS}" ]; then
+ #endif /* __KERNEL__ */
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/init/Kconfig b/init/Kconfig
+index acc9087546ac..c924babc6d47 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1667,6 +1667,13 @@ config PROFILING
+ config TRACEPOINTS
+ 	bool
+ 
++#
++# Default to hidden visibility for all symbols.
++# Useful for Position Independent Code to reduce global references.
++#
++config DEFAULT_HIDDEN
++	bool
++
+ source "arch/Kconfig"
+ 
+ endmenu		# General setup
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index a23e21ada81b..f4e58b7a6daf 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -29,24 +29,24 @@
+  * These will be re-linked against their real values
+  * during the second link stage.
+  */
+-extern const unsigned long kallsyms_addresses[] __weak;
+-extern const int kallsyms_offsets[] __weak;
+-extern const u8 kallsyms_names[] __weak;
++extern const unsigned long kallsyms_addresses[] __weak __default_visibility;
++extern const int kallsyms_offsets[] __weak __default_visibility;
++extern const u8 kallsyms_names[] __weak __default_visibility;
+ 
+ /*
+  * Tell the compiler that the count isn't in the small data section if the arch
+  * has one (eg: FRV).
+  */
+ extern const unsigned long kallsyms_num_syms
+-__attribute__((weak, section(".rodata")));
++__attribute__((weak, section(".rodata"))) __default_visibility;
+ 
+ extern const unsigned long kallsyms_relative_base
+-__attribute__((weak, section(".rodata")));
++__attribute__((weak, section(".rodata"))) __default_visibility;
+ 
+-extern const u8 kallsyms_token_table[] __weak;
+-extern const u16 kallsyms_token_index[] __weak;
++extern const u8 kallsyms_token_table[] __weak __default_visibility;
++extern const u16 kallsyms_token_index[] __weak __default_visibility;
+ 
+-extern const unsigned long kallsyms_markers[] __weak;
++extern const unsigned long kallsyms_markers[] __weak __default_visibility;
+ 
+ /*
+  * Expand a compressed symbol data into the resulting uncompressed string,
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 2a6d0325a761..5aebb0dcecba 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1741,8 +1741,8 @@ extern int trace_event_enable_disable(struct trace_event_file *file,
+ 				      int enable, int soft_disable);
+ extern int tracing_alloc_snapshot(void);
+ 
+-extern const char *__start___trace_bprintk_fmt[];
+-extern const char *__stop___trace_bprintk_fmt[];
++extern const char *__start___trace_bprintk_fmt[] __default_visibility;
++extern const char *__stop___trace_bprintk_fmt[] __default_visibility;
+ 
+ extern const char *__start___tracepoint_str[];
+ extern const char *__stop___tracepoint_str[];
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index c7c96bc7654a..40b752b53627 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -37,8 +37,8 @@
+ #include <linux/device.h>
+ #include <linux/netdevice.h>
+ 
+-extern struct _ddebug __start___verbose[];
+-extern struct _ddebug __stop___verbose[];
++extern struct _ddebug __start___verbose[] __default_visibility;
++extern struct _ddebug __stop___verbose[] __default_visibility;
+ 
+ struct ddebug_table {
+ 	struct list_head link;
 -- 
 2.16.2.660.g709887971b-goog
