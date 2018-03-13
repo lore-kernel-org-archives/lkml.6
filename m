@@ -1,67 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933249AbeCMQsB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:48:01 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59844 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752776AbeCMQmj (ORCPT
+        id S933358AbeCMQsP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:48:15 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43106 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752391AbeCMQsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:42:39 -0400
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Vinod Koul <vinod.koul@intel.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 0/8] Append several fixes and improvements in STM32 DMA
-Date: Tue, 13 Mar 2018 17:41:59 +0100
-Message-ID: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 13 Mar 2018 12:48:12 -0400
+X-Google-Smtp-Source: AG47ELtqm+2q+eAClPUpwBwlBVCLZKK2u7dO/HI4gdpgDVgU8sDugFeEV8jhVCXa3hX59DY2mEL8ag==
+Date: Tue, 13 Mar 2018 09:48:09 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: Add Nuvoton NPCM
+ description
+Message-ID: <20180313164809.GA13835@roeck-us.net>
+References: <20180313061726.21601-1-joel@jms.id.au>
+ <20180313061726.21601-2-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313061726.21601-2-joel@jms.id.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset appends several fixes and some improvements for STM32 DMAv2.
-This includes:
-        * Introduce DMA features bitfield
-        * Threshold manages with bitfield feature
-        * Improve memory burst management
-        * Improve DMA IRQ status handling
-        * Fix max items per transfer to match FIFO Size
-        * Properly mask irq bits to avoid overlaping
-        * Fix incomplete configuration in cyclic mode
-        * Fix typo and reported checkpatch warnings
+On Tue, Mar 13, 2018 at 04:47:25PM +1030, Joel Stanley wrote:
+> These bindings describe the watchdog IP as used by the Nuvoton NPCM750
+> (Poleg) BMC SoC.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
----
-  Version history:
-    v1:
-        * Initial
----
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Pierre-Yves MORDRET (8):
-  dt-bindings: stm32-dma: introduce DMA features bitfield
-  dmaengine: stm32-dma: threshold manages with bitfield feature
-  dmaengine: stm32-dma: Improve memory burst management
-  dmaengine: stm32-dma: fix DMA IRQ status handling
-  dmaengine: stm32-dma: fix max items per transfer
-  dmaengine: stm32-dma: properly mask irq bits
-  dmaengine: stm32-dma: fix incomplete configuration in cyclic mode
-  dmaengine: stm32-dma: fix typo and reported checkpatch warnings
-
- .../devicetree/bindings/dma/stm32-dma.txt          |   6 +-
- drivers/dma/stm32-dma.c                            | 287 +++++++++++++++++----
- 2 files changed, 243 insertions(+), 50 deletions(-)
-
--- 
-2.7.4
+> ---
+> V2: Add optional timeout property
+> v3:
+>  - Fix address in example
+>  - Add Rob's reviewed-by
+> ---
+>  .../bindings/watchdog/nuvoton,npcm-wdt.txt         | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+> new file mode 100644
+> index 000000000000..6d593003c933
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+> @@ -0,0 +1,28 @@
+> +Nuvoton NPCM Watchdog
+> +
+> +Nuvoton NPCM timer module provides five 24-bit timer counters, and a watchdog.
+> +The watchdog supports a pre-timeout interrupt that fires 10ms before the
+> +expiry.
+> +
+> +Required properties:
+> +- compatible      : "nuvoton,npcm750-wdt" for NPCM750 (Poleg).
+> +- reg             : Offset and length of the register set for the device.
+> +- interrupts      : Contain the timer interrupt with flags for
+> +                    falling edge.
+> +
+> +Required clocking property, have to be one of:
+> +- clocks          : phandle of timer reference clock.
+> +- clock-frequency : The frequency in Hz of the clock that drives the NPCM7xx
+> +                    timer (usually 25000000).
+> +
+> +Optional properties:
+> +- timeout-sec : Contains the watchdog timeout in seconds
+> +
+> +Example:
+> +
+> +timer@f000801c {
+> +    compatible = "nuvoton,npcm750-wdt";
+> +    interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+> +    reg = <0xf000801c 0x4>;
+> +    clocks = <&clk NPCM7XX_CLK_TIMER>;
+> +};
+> -- 
+> 2.15.1
+> 
