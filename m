@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955709-2-6563414985371691079
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955708-5-9324152878354995159
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955708; b=OiXa9TnZSOhyKUth+py9olH/gDh++NFi44ELL36U/zMs5Kt
-    7Ogmk9jSlC6sWwRqBr/BclLqYLIkZJUusjMpk2sh9u4ZhPqaS6G73ADOAdtzrUkR
-    8qOQgUuMcdu7dsGYHRPoOT4SKCYfEBixvmdzhDMm+scWIoJnwEkXMZ6hfF6ITvAe
-    qekEqPraFcmlTJ2FgSgUQLicXLSn9tNE29RCtohg/c3P7X1qUWFObSI6dnxUNsTx
-    1G2Pj0p7zm6+cPz+g+AnJfA96E+cs/S0L/w/Oz5KjKuGUn+5or7ygfbYjBuvGiQn
-    qhx6OUr4GsjaUfncXckpnS3JVfKbYFgSrdNBYAw==
+    t=1520955707; b=aoq/svdar5WK2m5AJBGsb2wjcyAYNI9CR+omA4/rxRtHYRP
+    2ufHwT1ZKeVm8vQATIyVKedh+2JS4xWtWvbiA++uegyeuEdyyTnftcd3FJSTriLk
+    M2KkKS/wjTbdkDTXvSr17/qHvsHv9Xy6Nltrg/bBNijlM3U4MlTAgIF1TbbZbkPL
+    TqmOyj8CpKPIbURI+AzXOWQyuWXjO0Z2bye6bnrknNUeB4RdmgnqXYvpPQ/sFDRd
+    v0zua5o0eK0EvkmgHLnzNPsO6mXfnoFWar3SUVANFkQm7FCF5k+fv5nYPgcIR4Ae
+    CqIySzDlKr/3PUPhI7NQbt4vk3Pd48QH1BbZ4QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955708; bh=ktU1i38EF0XodHOZOm5xF+x1If
-    Djf7SKxUzqbl77NOg=; b=LJfjoTtKkIh/shB/4hxYt9ys/tBUBKQkaxRbvC9T7y
-    CYZIgp+XyC8JkNx1teXYPU99ptTPwdw/64uCHVJGodL79x3uohcIhfHCCJWcT+8U
-    3XKtuSX7Jn0RxCD/gyGuD5Aqvjy/+RCTD8+eSLO4zEgbQlsBabrGsAA4McEdwJR/
-    QnYJonlpzHQ/ChacEd1s1Obqy3FlbiXiWNBRcPnougqhjuSVUBvi7mQB0ch4o/RU
-    P9iiIM7YsfVvqXxEplyYnFtMN4hJytVvvhhNTjRF1ktCM7PShjsInZzEVEyOttjc
-    cSqbi9MIudKh9Ce9b6czfwS/QlAI6pvB8jJm4379TmnA==
+    :list-id; s=arctest; t=1520955707; bh=9AUif9dsnAAYz7OdmsDuO0ysXO
+    WYalTgPEZKg2aYeME=; b=GxvHOf8xy0r/ieIsB11YiZJqlvMGTmq3fEYtNZ1OV+
+    ejLmvEdx1v01hMorZfKhrAQKZ9LS5fsOTVKvT+/BtL/7vgyyNUuzsLo2z9ooDFMb
+    eySMmsEuMlVI8QXzyDLTSG6hbcJibnoNkPx5aZ64NCbU0u7RDFm6dn2cvlahV6l9
+    L7auvmDQdxWR8EGycvdyVKSsMX4ES2KETqTepUWY6hXQ2kDq+8Qf+TjgTsMKScly
+    BqX57Z4qXAd7pfWBdbFL/lekLXlljox1jebqjGk77nKXSsD49g7YhJz3+Mn5VZCT
+    GWvpgPMplUZFSVcOFA480tjOCSeDxd/iNlZadT8gNmAA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,30 +49,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964843AbeCMPlk (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:41:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37034 "EHLO
+        id S935000AbeCMPld (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:41:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36962 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934523AbeCMPlg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:36 -0400
+        with ESMTP id S934523AbeCMPla (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:41:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        stable@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        arjan.van.de.ven@intel.com, bp@alien8.de, dave.hansen@intel.com,
+        jmattson@google.com, karahmed@amazon.de, kvm@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 132/140] objtool: Add retpoline validation
-Date: Tue, 13 Mar 2018 16:25:35 +0100
-Message-Id: <20180313152507.046143471@linuxfoundation.org>
+Subject: [PATCH 4.14 125/140] x86/retpoline: Support retpoline builds with Clang
+Date: Tue, 13 Mar 2018 16:25:28 +0100
+Message-Id: <20180313152506.573655067@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -90,221 +86,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit b5bc2231b8ad4387c9641f235ca0ad8cd300b6df upstream.
+commit 87358710c1fb4f1bf96bbe2349975ff9953fc9b2 upstream.
 
-David requested a objtool validation pass for CONFIG_RETPOLINE=y enabled
-builds, where it validates no unannotated indirect  jumps or calls are
-left.
-
-Add an additional .discard.retpoline_safe section to allow annotating
-the few indirect sites that are required and safe.
-
-Requested-by: David Woodhouse <dwmw2@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1519037457-7643-5-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.build        |    4 +
- tools/objtool/builtin-check.c |    3 -
- tools/objtool/builtin.h       |    2 
- tools/objtool/check.c         |   86 +++++++++++++++++++++++++++++++++++++++++-
- tools/objtool/check.h         |    1 
- 5 files changed, 93 insertions(+), 3 deletions(-)
+ arch/x86/Makefile              |    5 ++++-
+ include/linux/compiler-clang.h |    5 +++++
+ include/linux/compiler-gcc.h   |    4 ++++
+ include/linux/init.h           |    8 ++++----
+ 4 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -269,6 +269,10 @@ objtool_args += --no-unreachable
- else
- objtool_args += $(call cc-ifversion, -lt, 0405, --no-unreachable)
- endif
-+ifdef CONFIG_RETPOLINE
-+  objtool_args += --retpoline
-+endif
-+
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -232,7 +232,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
  
- ifdef CONFIG_MODVERSIONS
- objtool_o = $(@D)/.tmp_$(@F)
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -29,7 +29,7 @@
- #include "builtin.h"
- #include "check.h"
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
++    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++
++    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+     ifneq ($(RETPOLINE_CFLAGS),)
+         KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
+     endif
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -19,3 +19,8 @@
  
--bool no_fp, no_unreachable;
-+bool no_fp, no_unreachable, retpoline;
+ #define randomized_struct_fields_start	struct {
+ #define randomized_struct_fields_end	};
++
++/* Clang doesn't have a way to turn it off per-function, yet. */
++#ifdef __noretpoline
++#undef __noretpoline
++#endif
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -93,6 +93,10 @@
+ #define __weak		__attribute__((weak))
+ #define __alias(symbol)	__attribute__((alias(#symbol)))
  
- static const char * const check_usage[] = {
- 	"objtool check [<options>] file.o",
-@@ -39,6 +39,7 @@ static const char * const check_usage[]
- const struct option check_options[] = {
- 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
- 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
-+	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
- 	OPT_END(),
- };
++#ifdef RETPOLINE
++#define __noretpoline __attribute__((indirect_branch("keep")))
++#endif
++
+ /*
+  * it doesn't make sense on ARM (currently the only user of __naked)
+  * to trace naked functions because then mcount is called without
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -6,10 +6,10 @@
+ #include <linux/types.h>
  
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -20,7 +20,7 @@
- #include <subcmd/parse-options.h>
+ /* Built-in __init functions needn't be compiled with retpoline */
+-#if defined(RETPOLINE) && !defined(MODULE)
+-#define __noretpoline __attribute__((indirect_branch("keep")))
++#if defined(__noretpoline) && !defined(MODULE)
++#define __noinitretpoline __noretpoline
+ #else
+-#define __noretpoline
++#define __noinitretpoline
+ #endif
  
- extern const struct option check_options[];
--extern bool no_fp, no_unreachable;
-+extern bool no_fp, no_unreachable, retpoline;
+ /* These macros are used to mark some functions or 
+@@ -47,7 +47,7 @@
  
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -496,6 +496,7 @@ static int add_jump_destinations(struct
- 			 * disguise, so convert them accordingly.
- 			 */
- 			insn->type = INSN_JUMP_DYNAMIC;
-+			insn->retpoline_safe = true;
- 			continue;
- 		} else {
- 			/* sibling call */
-@@ -547,7 +548,8 @@ static int add_call_destinations(struct
- 			if (!insn->call_dest && !insn->ignore) {
- 				WARN_FUNC("unsupported intra-function call",
- 					  insn->sec, insn->offset);
--				WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
-+				if (retpoline)
-+					WARN("If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.");
- 				return -1;
- 			}
- 
-@@ -1107,6 +1109,54 @@ static int read_unwind_hints(struct objt
- 	return 0;
- }
- 
-+static int read_retpoline_hints(struct objtool_file *file)
-+{
-+	struct section *sec, *relasec;
-+	struct instruction *insn;
-+	struct rela *rela;
-+	int i;
-+
-+	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
-+	if (!sec)
-+		return 0;
-+
-+	relasec = sec->rela;
-+	if (!relasec) {
-+		WARN("missing .rela.discard.retpoline_safe section");
-+		return -1;
-+	}
-+
-+	if (sec->len % sizeof(unsigned long)) {
-+		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
-+		return -1;
-+	}
-+
-+	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
-+		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
-+		if (!rela) {
-+			WARN("can't find rela for retpoline_safe[%d]", i);
-+			return -1;
-+		}
-+
-+		insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!insn) {
-+			WARN("can't find insn for retpoline_safe[%d]", i);
-+			return -1;
-+		}
-+
-+		if (insn->type != INSN_JUMP_DYNAMIC &&
-+		    insn->type != INSN_CALL_DYNAMIC) {
-+			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
-+				  insn->sec, insn->offset);
-+			return -1;
-+		}
-+
-+		insn->retpoline_safe = true;
-+	}
-+
-+	return 0;
-+}
-+
- static int decode_sections(struct objtool_file *file)
- {
- 	int ret;
-@@ -1145,6 +1195,10 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
-+	ret = read_retpoline_hints(file);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -1890,6 +1944,29 @@ static int validate_unwind_hints(struct
- 	return warnings;
- }
- 
-+static int validate_retpoline(struct objtool_file *file)
-+{
-+	struct instruction *insn;
-+	int warnings = 0;
-+
-+	for_each_insn(file, insn) {
-+		if (insn->type != INSN_JUMP_DYNAMIC &&
-+		    insn->type != INSN_CALL_DYNAMIC)
-+			continue;
-+
-+		if (insn->retpoline_safe)
-+			continue;
-+
-+		WARN_FUNC("indirect %s found in RETPOLINE build",
-+			  insn->sec, insn->offset,
-+			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
-+
-+		warnings++;
-+	}
-+
-+	return warnings;
-+}
-+
- static bool is_kasan_insn(struct instruction *insn)
- {
- 	return (insn->type == INSN_CALL &&
-@@ -2050,6 +2127,13 @@ int check(const char *_objname, bool orc
- 	if (list_empty(&file.insn_list))
- 		goto out;
- 
-+	if (retpoline) {
-+		ret = validate_retpoline(&file);
-+		if (ret < 0)
-+			return ret;
-+		warnings += ret;
-+	}
-+
- 	ret = validate_functions(&file);
- 	if (ret < 0)
- 		goto out;
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -45,6 +45,7 @@ struct instruction {
- 	unsigned char type;
- 	unsigned long immediate;
- 	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
-+	bool retpoline_safe;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
- 	struct instruction *first_jump_src;
+ /* These are for everybody (although not all archs will actually
+    discard it in modules) */
+-#define __init		__section(.init.text) __cold __inittrace __latent_entropy __noretpoline
++#define __init		__section(.init.text) __cold __inittrace __latent_entropy __noinitretpoline
+ #define __initdata	__section(.init.data)
+ #define __initconst	__section(.init.rodata)
+ #define __exitdata	__section(.exit.data)
