@@ -1,93 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932279AbeCMMuX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:50:23 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35320 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752252AbeCMMuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:50:21 -0400
-X-Google-Smtp-Source: AG47ELugwzAFneCeqOwtWoIVjIjD8sEz6FErs1h7eAosg32BJj3779vgMUWT3OeejT3g3Pho+uDXfQ==
-Date: Tue, 13 Mar 2018 15:49:56 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Kai Huang <kai.huang@linux.intel.com>
-Cc: dave.hansen@intel.com, peterz@infradead.org, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        thomas.lendacky@amd.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/mm] x86/tme: Detect if TME and MKTME is activated by
- BIOS
-Message-ID: <20180313124956.z426zmsr4xl6zomx@node.shutemov.name>
-References: <20180305162610.37510-3-kirill.shutemov@linux.intel.com>
- <tip-cb06d8e3d020c30fe10ae711c925a5319ab82c88@git.kernel.org>
- <1520907122.6421.8.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520907122.6421.8.camel@linux.intel.com>
-User-Agent: NeoMutt/20180223
+        id S1752281AbeCMMvG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:51:06 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:39882 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751405AbeCMMvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:51:05 -0400
+From: Peng Hao <peng.hao2@zte.com.cn>
+To: marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, cdall@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH] KVM: arm/arm64: replacing per-VM's per-CPU variable
+Date: Wed, 14 Mar 2018 05:03:13 +0800
+Message-Id: <1520974993-40423-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-03-13 20:50:59,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-03-13 20:50:50,
+        Serialize complete at 2018-03-13 20:50:50
+X-MAIL: mse01.zte.com.cn w2DCossS097844
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 03:12:02PM +1300, Kai Huang wrote:
-> It seems setup_pku() will call get_cpu_cap to restore c->x86_phys_bits
-> later? In which case I think you need to change setup_pku as well.
+Using a global per-CPU variable instead of per-VM's per-CPU variable.
 
-Thanks for catching this.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/arm/include/asm/kvm_host.h   |  3 ---
+ arch/arm64/include/asm/kvm_host.h |  3 ---
+ virt/kvm/arm/arm.c                | 26 ++++++--------------------
+ 3 files changed, 6 insertions(+), 26 deletions(-)
 
-I think setup_pku() shouldn't call get_cpu_cap().
-
-Any objections against this:
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 348cf4821240..ce10d8ae4cd6 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -362,6 +362,8 @@ static bool pku_disabled;
-
- static __always_inline void setup_pku(struct cpuinfo_x86 *c)
- {
-+       u32 eax, ebx, ecx, edx;
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index 248b930..4224f3b 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -59,9 +59,6 @@ struct kvm_arch {
+ 	/* VTTBR value associated with below pgd and vmid */
+ 	u64    vttbr;
+ 
+-	/* The last vcpu id that ran on each physical CPU */
+-	int __percpu *last_vcpu_ran;
+-
+ 	/*
+ 	 * Anything that is not used directly from assembly code goes
+ 	 * here.
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 596f8e4..5035a08 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -67,9 +67,6 @@ struct kvm_arch {
+ 	/* VTTBR value associated with above pgd and vmid */
+ 	u64    vttbr;
+ 
+-	/* The last vcpu id that ran on each physical CPU */
+-	int __percpu *last_vcpu_ran;
+-
+ 	/* The maximum number of vCPUs depends on the used GIC model */
+ 	int max_vcpus;
+ 
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 86941f6..a67ffb0 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -59,6 +59,8 @@
+ /* Per-CPU variable containing the currently running vcpu. */
+ static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
+ 
++static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_last_ran_vcpu);
 +
-        /* check the boot processor, plus compile options for PKU: */
-        if (!cpu_feature_enabled(X86_FEATURE_PKU))
-                return;
-@@ -377,7 +379,8 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
-         * cpuid bit to be set.  We need to ensure that we
-         * update that bit in this CPU's "cpu_info".
-         */
--       get_cpu_cap(c);
-+       cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
-+       c->x86_capability[CPUID_7_ECX] = ecx;
+ /* The VMID used in the VTTBR */
+ static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
+ static u32 kvm_next_vmid;
+@@ -115,18 +117,11 @@ void kvm_arch_check_processor_compat(void *rtn)
+  */
+ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ {
+-	int ret, cpu;
++	int ret;
+ 
+ 	if (type)
+ 		return -EINVAL;
+ 
+-	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
+-	if (!kvm->arch.last_vcpu_ran)
+-		return -ENOMEM;
+-
+-	for_each_possible_cpu(cpu)
+-		*per_cpu_ptr(kvm->arch.last_vcpu_ran, cpu) = -1;
+-
+ 	ret = kvm_alloc_stage2_pgd(kvm);
+ 	if (ret)
+ 		goto out_fail_alloc;
+@@ -147,9 +142,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 	return ret;
+ out_free_stage2_pgd:
+ 	kvm_free_stage2_pgd(kvm);
+-out_fail_alloc:
+-	free_percpu(kvm->arch.last_vcpu_ran);
+-	kvm->arch.last_vcpu_ran = NULL;
++out_fail_alloc:
+ 	return ret;
  }
-
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-
-> And for the comments here, I think it can be refined. It is true that
-> VM guest needs to know bits of physical address, but this info is not
-> used only by VM. I think the reason we need to update is this is simply
-> the fact.
-
-Fair enough. Like this?
-
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index e8ddc6dcfd53..ac45ba7398d9 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -612,11 +612,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
- #endif
-
-        /*
--        * Exclude KeyID bits from physical address bits.
--        *
--        * We have to do this even if we are not going to use KeyID bits
--        * ourself. VM guests still have to know that these bits are not usable
--        * for physical address.
-+        * KeyID bits effectively lower number of physical address bits.
-+        * Let's update cpuinfo_x86::x86_phys_bits to reflect the fact.
-         */
-        c->x86_phys_bits -= keyid_bits;
- }
+ 
+@@ -179,9 +172,6 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+ 
+ 	kvm_vgic_destroy(kvm);
+ 
+-	free_percpu(kvm->arch.last_vcpu_ran);
+-	kvm->arch.last_vcpu_ran = NULL;
+-
+ 	for (i = 0; i < KVM_MAX_VCPUS; ++i) {
+ 		if (kvm->vcpus[i]) {
+ 			kvm_arch_vcpu_free(kvm->vcpus[i]);
+@@ -343,17 +333,13 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
+ 
+ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ {
+-	int *last_ran;
+-
+-	last_ran = this_cpu_ptr(vcpu->kvm->arch.last_vcpu_ran);
+-
+ 	/*
+ 	 * We might get preempted before the vCPU actually runs, but
+ 	 * over-invalidation doesn't affect correctness.
+ 	 */
+-	if (*last_ran != vcpu->vcpu_id) {
++	if (per_cpu(kvm_last_ran_vcpu, cpu) != vcpu) {
+ 		kvm_call_hyp(__kvm_tlb_flush_local_vmid, vcpu);
+-		*last_ran = vcpu->vcpu_id;
++		per_cpu(kvm_last_ran_vcpu, cpu) = vcpu;
+ 	}
+ 
+ 	vcpu->cpu = cpu;
 -- 
- Kirill A. Shutemov
+1.8.3.1
