@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuVfOOlPla2Dm4NEJy2znI34qzo8dfL3cex3jzCLOyPNci2Sj73fx7Bk31CmnCaaY2/z303
-ARC-Seal: i=1; a=rsa-sha256; t=1520955181; cv=none;
+X-Google-Smtp-Source: AG47ELuRVq2oA/fYtAxZK5cGozmbI8GMNDF6whQw5vSgAy7CeHih1bfZKs96QAa4iqo3QpL0XNv9
+ARC-Seal: i=1; a=rsa-sha256; t=1520955178; cv=none;
         d=google.com; s=arc-20160816;
-        b=nxFDL5XUDUph20Udmg/8enXfGlIuM3rZUNOEMBNYn+9xg3nOP8OhnOTrau0QC19eeR
-         iNRja9QsnEXk8Wqo4Gx2OBg0xF26JIguSP+PSOT0CLAUogTJhytueK/kFb0jeXGqtb3N
-         ovV5KT19r/a8dhBEBnYruQMfksPYDAaM5JaENdQFcmId/eJ9FHp8Ap5ZbszTElR61oxF
-         PBR71kUGcjsKKG5Hcdx+EHqCFpUn4gWAcCX3je2dQNPohrwYFQVZzHGkVvj+aTz1JBoH
-         NN2DCn3hwQRk/bsKoEL7HZr5Z+RMegNtBvPAy9f3wXSTrlAbOX5xS7dmXMIr5q22FU7x
-         Sizg==
+        b=0cxwE4WIgWnWUbGKj3EfEMwYMI+mVbrnM2ju3vs0zRLj3rjb7GvIxkWuipw/gRuNtN
+         HUw5Xda3qC/P6BgB80YjEZ1EIMcZtHg1N7JZoDBSEh/QynXGN1TrsdB6m0zTLC9R4LER
+         t7s27qPzHHlHbo0m0FOTKf4t3ng7aDh8u9n2ibPcHH1vqR+yOS2HO6cDbOh35/5JaSyA
+         cc8EANQrkeHZ7Y5k0Kjdbwnv28IewG3W/ZIIBOvitLbGdfu4olOBsr0MgM/+WFQc3YQ0
+         GHTd3NDqt5sVw6edhuKI/+x2rcRk4VDJ3krbFwBq573/UJPaT43iLkcXhuEv28EigzUU
+         3clQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0Zuln8lux42M1TFUCPUul6c/P0aEIcrx6GHxTnBm+cc=;
-        b=sVvdKu1T733KIZgJWbNKQaoG1Ru1yXYBDCfnFkA+5tt1k6QDTD4goIMeBG6e5h2xJT
-         cxpzgo5M6fDiit64MwQcxBn+dw/msK3NFZ5gViqqWWOcF2Ju+01j5S5s6QAHSSTq1KS2
-         tZ+KS2PW11FFjfOyvvzd3K3OO0M6+wSGzjGQdqO3LdlZ3TJmQDHhEOD4E29CbSt8/kE6
-         LYyvZurfQ19UrNVm1gDI/bSAC/C4lOH+zVCy14PW3czTHFZuDPdngKqH6+lZmvsQn8jO
-         MgbiScvQccZpbn+fAui0XTSExFZ34Ev2SRiXqY8x2KcW8wcWYkmWk+hZ3zMKwWVdaOmD
-         xmPA==
+        bh=S2XJiGkkXOqirTvmYY92cCUJ5kdBB2Cu5a45EDEaQ0s=;
+        b=qD55fCgbJk7ypmtY7kS4B5J5G9d1YXGXAc3pugXL+rPDEAVCro6ZeqbXHwVi6P5QbB
+         ISQ3xZ8mKwVC+H2hQIHi6iirKz9kd0tRbFLHyeth/dv/u2YfMfSfSZOGjEg39O8nvbIV
+         imNP2N4qMjMzAkdroJWfAYhbKHCFs0/tad4WsJeY4rpmd8AM/MKLCBkE2RKkjASztSnt
+         g7yeOdimhmjdalImYCxXEpLau+A/pVo0v3vP9LBn6ieRfLrXhXj2yW926kv5tkhOl/4O
+         XSaeov0+JAmqBz4v/J619OVD36k9ib8SO32d0pCosJEmJpj3Sv/h6eCbp1aqADm6CNc+
+         KgfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 099/146] objtool: Add module specific retpoline rules
-Date: Tue, 13 Mar 2018 16:24:26 +0100
-Message-Id: <20180313152328.204751220@linuxfoundation.org>
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.15 116/146] netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
+Date: Tue, 13 Mar 2018 16:24:43 +0100
+Message-Id: <20180313152329.316873638@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -49,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837100802362123?=
-X-GMAIL-MSGID: =?utf-8?q?1594837100802362123?=
+X-GMAIL-THRID: =?utf-8?q?1594837097451945704?=
+X-GMAIL-MSGID: =?utf-8?q?1594837097451945704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,92 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit ca41b97ed9124fd62323a162de5852f6e28f94b8 upstream.
+commit b078556aecd791b0e5cb3a59f4c3a14273b52121 upstream.
 
-David allowed retpolines in .init.text, except for modules, which will
-trip up objtool retpoline validation, fix that.
+l4proto->manip_pkt() can cause reallocation of skb head so pointer
+to the ipv6 header must be reloaded.
 
-Requested-by: David Woodhouse <dwmw2@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-and-tested-by: <syzbot+10005f4292fc9cc89de7@syzkaller.appspotmail.com>
+Fixes: 58a317f1061c89 ("netfilter: ipv6: add IPv6 NAT support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.build        |    2 ++
- tools/objtool/builtin-check.c |    3 ++-
- tools/objtool/builtin.h       |    2 +-
- tools/objtool/check.c         |    9 +++++++++
- 4 files changed, 14 insertions(+), 2 deletions(-)
+ net/ipv6/netfilter/nf_nat_l3proto_ipv6.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -256,6 +256,8 @@ __objtool_obj := $(objtree)/tools/objtoo
- 
- objtool_args = $(if $(CONFIG_UNWINDER_ORC),orc generate,check)
- 
-+objtool_args += $(if $(part-of-module), --module,)
+--- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+@@ -99,6 +99,10 @@ static bool nf_nat_ipv6_manip_pkt(struct
+ 	    !l4proto->manip_pkt(skb, &nf_nat_l3proto_ipv6, iphdroff, hdroff,
+ 				target, maniptype))
+ 		return false;
 +
- ifndef CONFIG_FRAME_POINTER
- objtool_args += --no-fp
- endif
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -29,7 +29,7 @@
- #include "builtin.h"
- #include "check.h"
- 
--bool no_fp, no_unreachable, retpoline;
-+bool no_fp, no_unreachable, retpoline, module;
- 
- static const char * const check_usage[] = {
- 	"objtool check [<options>] file.o",
-@@ -40,6 +40,7 @@ const struct option check_options[] = {
- 	OPT_BOOLEAN('f', "no-fp", &no_fp, "Skip frame pointer validation"),
- 	OPT_BOOLEAN('u', "no-unreachable", &no_unreachable, "Skip 'unreachable instruction' warnings"),
- 	OPT_BOOLEAN('r', "retpoline", &retpoline, "Validate retpoline assumptions"),
-+	OPT_BOOLEAN('m', "module", &module, "Indicates the object will be part of a kernel module"),
- 	OPT_END(),
- };
- 
---- a/tools/objtool/builtin.h
-+++ b/tools/objtool/builtin.h
-@@ -20,7 +20,7 @@
- #include <subcmd/parse-options.h>
- 
- extern const struct option check_options[];
--extern bool no_fp, no_unreachable, retpoline;
-+extern bool no_fp, no_unreachable, retpoline, module;
- 
- extern int cmd_check(int argc, const char **argv);
- extern int cmd_orc(int argc, const char **argv);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1957,6 +1957,15 @@ static int validate_retpoline(struct obj
- 		if (insn->retpoline_safe)
- 			continue;
- 
-+		/*
-+		 * .init.text code is ran before userspace and thus doesn't
-+		 * strictly need retpolines, except for modules which are
-+		 * loaded late, they very much do need retpoline in their
-+		 * .init.text
-+		 */
-+		if (!strcmp(insn->sec->name, ".init.text") && !module)
-+			continue;
++	/* must reload, offset might have changed */
++	ipv6h = (void *)skb->data + iphdroff;
 +
- 		WARN_FUNC("indirect %s found in RETPOLINE build",
- 			  insn->sec, insn->offset,
- 			  insn->type == INSN_JUMP_DYNAMIC ? "jump" : "call");
+ manip_addr:
+ 	if (maniptype == NF_NAT_MANIP_SRC)
+ 		ipv6h->saddr = target->src.u3.in6;
