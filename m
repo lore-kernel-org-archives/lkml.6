@@ -1,51 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932308AbeCMAgw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:36:52 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59688 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751394AbeCMAgv (ORCPT
+        id S932478AbeCMAhV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:37:21 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:41447 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932261AbeCMAhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:36:51 -0400
-Date: Tue, 13 Mar 2018 00:36:47 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
- breakage when used from shrink_dentry_list())
-Message-ID: <20180313003647.GS30522@ZenIV.linux.org.uk>
-References: <20180223174216.GD30522@ZenIV.linux.org.uk>
- <20180223201317.GG30522@ZenIV.linux.org.uk>
- <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
- <20180224002248.GH30522@ZenIV.linux.org.uk>
- <20180225073950.GI30522@ZenIV.linux.org.uk>
- <87bmgbnhar.fsf_-_@linutronix.de>
- <20180312191351.GN30522@ZenIV.linux.org.uk>
- <877eqhcab3.fsf@xmission.com>
- <20180312203916.GQ30522@ZenIV.linux.org.uk>
- <87woygan6p.fsf@xmission.com>
+        Mon, 12 Mar 2018 20:37:16 -0400
+X-Google-Smtp-Source: AG47ELuN/ZYrn7ff8HgXsXCmiwxYiJzkb7vFOPeWCcr8UUkK0dlpUp5BZeTJ6eNeju3tqyQlvmaCnzRQtFwVfB2kpgE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87woygan6p.fsf@xmission.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180313000131.28971-3-christian.brauner@ubuntu.com>
+References: <20180313000131.28971-1-christian.brauner@ubuntu.com> <20180313000131.28971-3-christian.brauner@ubuntu.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 12 Mar 2018 17:37:14 -0700
+X-Google-Sender-Auth: __VmzQ-5xm28UUehmvhU_aIxRzU
+Message-ID: <CA+55aFwZ5ef0EAM4XqTpGQ39iBGF0Ff45aH6k7BfSKXXVJcrzg@mail.gmail.com>
+Subject: Re: [PATCH 2/3 v4] devpts: resolve devpts bind-mounts
+To: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 06:28:30PM -0500, Eric W. Biederman wrote:
+On Mon, Mar 12, 2018 at 5:01 PM, Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> ChangeLog v3->v4:
+> * simplify if condition
 
-> Given that nfs_kill_super calls generic_shutdown_super and
-> generic_shutdown_super calls shrink_dcache_for_umount
-> I would argue that nfsv2 and nfsv3 are buggy in the same
-> case, as shrink_dcache_for_umount is called on something
-> that is not the root of the filesystem's dentry tree.
+Ok, I definitely prefer this simpler version.
 
-That's not a problem - it will simply evict a subtree first,
-then go through ->s_roots and kill each piece.
+We could simplify it even more, though. That end could be just
+
+        ...
+        dput(path.dentry);
+        if (!err) {
+                if (DEVPTS_SB(path.mnt->mnt_sb) == fsi)
+                        return path.mnt;
+                err = -ENODEV;
+        }
+
+        mntput(path.mnt);
+        return ERR_PTR(err);
+
+instead.
+
+And it might be worth adding a comment that devpts_ptmx_path() always
+returns a DEVPTS filesystem of an error. I already wrote out "that's
+not right, you can't do DEVPTS_SB() without checking s_magic", but
+devpts_ptmx_path() will have done that already.
+
+             Linus
