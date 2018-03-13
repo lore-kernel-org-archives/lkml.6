@@ -1,100 +1,78 @@
-Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELuJ4ZytJneBuc0YaM1ldZ0e13noRLK06Vz/ClI28l3LTW1mW8mt8qxD7kN5WtCt1FXxFIV3
-ARC-Seal: i=1; a=rsa-sha256; t=1520691337; cv=none;
+Return-Path: <kubakici@wp.pl>
+X-Google-Smtp-Source: AG47ELu2lOBuXRsNQpf6XZ3FKT6zkWS6vnm4APbpPGqDO1yo7jDlgNi0XXbi8iKqlxAvSlATd0H0
+ARC-Seal: i=1; a=rsa-sha256; t=1520916205; cv=none;
         d=google.com; s=arc-20160816;
-        b=EBqLDJ1ln+NfQ3dXrReLpBB97m2U9w1yzxUrm7tRjHMTg2VkQijH1ZfPOmS/oBHxdT
-         hrn0B13OQS2xBwhfyfxDWN/kN/NxchO+02RKbSfr5x20NouV+cu68EehZA4gMddoDkL9
-         fN0UOcpfbA7d2uigjRm0adfPfBKYgtLR6gPRs2iM0q6jX6LM+QYhsWSzbLwMRFViA80m
-         AIHZ5JbI5H6kXZDP+TsLo0vYoFuuJAb/GAn62HxOgsqZD0LgKp4kY8JVtZqbK7PZOFc2
-         kx69LNw9D2NVcFRaSLgiKsOypBs74Hq15dgZul/ZA1Txh9nyKlX8sfBayhCQ3pdBYwDi
-         pWUw==
+        b=i2Zg4Yzn00gfswKxV5iA6y8DqnUM4W869yBDNyqDf0bUDG/gWeo1ubolJ8h7CiT4Wm
+         4V2/VRSPWQJfiapZf86Q5KFPQ19bDQgLxfIS9jzaBdjFopeArMfJIm01sVBKtTLTAxQm
+         Rr4gynDE9XG0CNinldhtTFjV1jTX08qJNBV3P2nNQJEZp2pBt+bsmCFZ7l8pUQXc+tkF
+         qGQJqlWzGAohcYeFqSAe4uGSIb7swTEIROnr7WVi8+SimF1MnIMa/q1FpXShInEb/Hbb
+         YrRIUKfQ2a23D6yxOckDIkZpOnigHWJRc0IBeumwOPfdH4LNqyxV/nFkvcdk3HbxtQ1i
+         dzQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=8Mf4fjkkTPfisMzcJXsrCH8sa9cWfALOowm9x+HqpvE=;
-        b=bB9EHlplRUaifmDcPLS+Pgfu/cDPUp2Tac7fXWKsgK6dJ4tHaMnMNB7dvX2NplmhL9
-         FWwCuXGmfs9u/Zi14aw9NyzqX46VBd5vyrFaHtGW1+ZlBgfhi0b0OMyn4mP/YTEozJ4t
-         a/S8gkzdVZUVu82vQvzvmQ6vtWEjLaK+FnmPy6ZrEa3Ff9CCS+GGoPjiH6m8mI3SG85a
-         OzJJV7YG5XKzK6McdiFXt5UZE+yv1uHYS+ymFRwVNQikomaeOvGrMCdQ0UVu+j8jA0kd
-         R2ghJGmAzTiCtnN6wM+9ApIe9k6T6CxWcVh2ndGAgNlqAP+rORdy3Th+o1GCJX+TKrRy
-         mkFQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=f9ZBtsQD91eWOuDXt6DX6rDPnh0Cn/qE5eF3umnHhvU=;
+        b=hmBu2UFXYN4V0vO2pyqAEiglwcdJNvNiENC4ZPHNjF94WaRQN4Kmj5mAA0WfUople2
+         l06CiSoMQm/cBtnfJ5p/lygTbN4ZExde4ma3WfKvIFMVTALANuF/xSue1eGnT5cIbXM1
+         R2sP3YWLIlEe9zEsMIV7BwJmdey+SydK/O8QliiJfk7WBv6VHraRg/n7Eq+v/iP1gRdb
+         2jRZkvfLbqmi+OujMo8XcG+cv9Gw9WMeSPm3m2Az+NMVskfiwYARSbME4gDng3LMamcD
+         YU+0/dEOx3J39Oz0Ocp+3twFY2hbENMG7nuYJH2LZUe+CARtyftqgD5ltjvgXtwH669W
+         yqhA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+       dkim=pass (test mode) header.i=@wp.pl header.s=1024a header.b=h4rOb27O;
+       spf=pass (google.com: domain of kubakici@wp.pl designates 212.77.101.12 as permitted sender) smtp.mailfrom=kubakici@wp.pl
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC5221837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	cantabile.desu@gmail.com,
-	kubakici@wp.pl,
-	linux-wireless@vger.kernel.org,
-	keescook@chromium.org,
-	shuah@kernel.org,
-	mfuzzey@parkeon.com,
-	zohar@linux.vnet.ibm.com,
-	dhowells@redhat.com,
-	pali.rohar@gmail.com,
-	tiwai@suse.de,
-	arend.vanspriel@broadcom.com,
-	zajec5@gmail.com,
-	nbroeking@me.com,
-	markivx@codeaurora.org,
-	broonie@kernel.org,
-	dmitry.torokhov@gmail.com,
-	dwmw2@infradead.org,
-	torvalds@linux-foundation.org,
-	Abhay_Salunke@dell.com,
-	bjorn.andersson@linaro.org,
-	jewalt@lgsinnovations.com,
-	oneukum@suse.com,
-	ast@fb.com,
-	andresx7@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 20/20] mt7601u: use request_firmware_cache() to address cache on reboot
-Date: Sat, 10 Mar 2018 06:15:01 -0800
-Message-Id: <20180310141501.2214-21-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
+       dkim=pass (test mode) header.i=@wp.pl header.s=1024a header.b=h4rOb27O;
+       spf=pass (google.com: domain of kubakici@wp.pl designates 212.77.101.12 as permitted sender) smtp.mailfrom=kubakici@wp.pl
+Date: Mon, 12 Mar 2018 21:43:14 -0700
+From: Jakub Kicinski <kubakici@wp.pl>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+ cantabile.desu@gmail.com, linux-wireless@vger.kernel.org,
+ keescook@chromium.org, shuah@kernel.org, mfuzzey@parkeon.com,
+ zohar@linux.vnet.ibm.com, dhowells@redhat.com, pali.rohar@gmail.com,
+ tiwai@suse.de, arend.vanspriel@broadcom.com, zajec5@gmail.com,
+ nbroeking@me.com, markivx@codeaurora.org, broonie@kernel.org,
+ dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+ torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+ bjorn.andersson@linaro.org, jewalt@lgsinnovations.com, oneukum@suse.com,
+ ast@fb.com, andresx7@gmail.com, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 20/20] mt7601u: use request_firmware_cache() to
+ address cache on reboot
+Message-ID: <20180312214314.481b142a@cakuba.netronome.com>
+In-Reply-To: <20180310141501.2214-21-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
+	<20180310141501.2214-21-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-WP-MailID: 4dea43fb46a5b2b41a52dd67ecbfbf84
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [wTPU]                               
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594560440032815779?=
-X-GMAIL-MSGID: =?utf-8?q?1594560440032815779?=
+X-GMAIL-MSGID: =?utf-8?q?1594796231269226207?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-request_firmware_cache() will ensure the firmware is available on resume
-from suspend if on reboot the device retains the firmware.
+On Sat, 10 Mar 2018 06:15:01 -0800, Luis R. Rodriguez wrote:
+> request_firmware_cache() will ensure the firmware is available on resume
+> from suspend if on reboot the device retains the firmware.
+> 
+> This optimization is in place given otherwise on reboot we have to
+> reload the firmware, the opmization saves us about max 1s, minimum 10ms.
+> 
+> Cantabile has reported back this fixes his woes with both suspend and
+> hibernation.
+> 
+> Reported-by: Cantabile <cantabile.desu@gmail.com>
+> Tested-by: Cantabile <cantabile.desu@gmail.com>
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-This optimization is in place given otherwise on reboot we have to
-reload the firmware, the opmization saves us about max 1s, minimum 10ms.
+FWIW:
 
-Cantabile has reported back this fixes his woes with both suspend and
-hibernation.
+Acked-by: Jakub Kicinski <kubakici@wp.pl>
 
-Reported-by: Cantabile <cantabile.desu@gmail.com>
-Tested-by: Cantabile <cantabile.desu@gmail.com>
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- drivers/net/wireless/mediatek/mt7601u/mcu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt7601u/mcu.c b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-index 65a8004418ea..b90456a4b4d7 100644
---- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-@@ -421,7 +421,7 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
- 					 MT_USB_DMA_CFG_TX_BULK_EN));
- 
- 	if (firmware_running(dev))
--		return 0;
-+		return request_firmware_cache(dev->dev, MT7601U_FIRMWARE);
- 
- 	ret = request_firmware(&fw, MT7601U_FIRMWARE, dev->dev);
- 	if (ret)
--- 
-2.16.2
+Thanks Luis!!
