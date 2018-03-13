@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752896AbeCMP6Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:58:24 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:33261 "EHLO
+        id S934588AbeCMQAa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:00:30 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:46559 "EHLO
         mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932425AbeCMP6N (ORCPT
+        with ESMTP id S934427AbeCMQA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:58:13 -0400
-X-Google-Smtp-Source: AG47ELuJRrJ1lgd8ig8GPetdfFGDFCNpa8ImY0uzOK0kT44IVArry953tmdPJAAKwnbVRJc3sh97BMlGOS3qaxGTzMg=
+        Tue, 13 Mar 2018 12:00:27 -0400
+X-Google-Smtp-Source: AG47ELuhlrOVasEt++/acyUZfysqKnaOFj+hmGpR13dqvymY40zu36TtUtwumtvQ2nEpOgZkkNbIAIeIwsnt3PzQlaM=
 MIME-Version: 1.0
-In-Reply-To: <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+In-Reply-To: <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
 References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
- <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+ <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com> <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 17:58:11 +0200
-Message-ID: <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
+Date: Tue, 13 Mar 2018 18:00:25 +0200
+Message-ID: <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com>
 Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
  multi-pci-segment arches
 To: "Liang, Kan" <kan.liang@linux.intel.com>
@@ -33,31 +33,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
-
-> +#define SKX_CAPID6             0x9c
-> +#define SKX_CHA_BIT_WIDTH      28
-> +
->  static int skx_count_chabox(void)
->  {
-> +       struct pci_dev *dev = NULL;
-> +       u32 val = 0;
+On Tue, Mar 13, 2018 at 5:58 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Mar 13, 2018 at 3:42 AM, Liang, Kan <kan.liang@linux.intel.com> wrote:
 >
+>> +#define SKX_CAPID6             0x9c
 
-> +       dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
-> +       if (!dev)
-> +               return 0;
+>> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
 
-Where is pci_dev_put()?
-
->
-> +       pci_read_config_dword(dev, SKX_CAPID6, &val);
-> +       return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
-
-UB is here.
-Fix is simple, use unsigned long and drop this ugly casting.
-
->  }
+Moreover, this is too non-flexible. Can't you find a capability based
+on CAP ID  + offset?
 
 -- 
 With Best Regards,
