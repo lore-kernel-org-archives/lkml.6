@@ -1,49 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeCMRwB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:52:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42510 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751394AbeCMRwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:52:00 -0400
-Date: Tue, 13 Mar 2018 17:51:56 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-Subject: Re: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
-Message-ID: <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
-References: <20180313172103.24281-1-marc.zyngier@arm.com>
+        id S1752224AbeCMRxt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:53:49 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:36347 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751394AbeCMRxq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:53:46 -0400
+Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <e6864131-adab-382b-617b-35e9329f00d0@pengutronix.de>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <872c1fca-df7c-84c1-e14b-0f7d60d0bafe@theobroma-systems.com>
+Date: Tue, 13 Mar 2018 18:53:43 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313172103.24281-1-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <e6864131-adab-382b-617b-35e9329f00d0@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 05:21:00PM +0000, Marc Zyngier wrote:
-> As kexec and kdump are getting used a bit more intensively, I've been
-> made aware of a number of shortcomings.
+On 13.03.18 18:44, Marc Kleine-Budde wrote:
+> On 03/13/2018 06:35 PM, Jakob Unterwurzacher wrote:
 > 
-> The main gripe is from folks trying to launch a kdump kernel from
-> within an interrupt handler. If using EOImode==1, things work as
-> expected. If using EOImode==0 (such as in a guest), the secondary
-> kernel hangs as the previous interrupt hasn't been EOI'd, and the
-> active priority is still set. The first two patches are addressing
-> this situation for both GICv2 and GICv3 by reseting the APRs to their
-> default value.
+> [...]
+> 
+> Please mark all multibyte values going over the USB as either le or be.
 
-As a more general thing, if irqchip drivers have state that needs to be
-reset in their init code, can we live all this irqchip reset to the
-crashdump kernel, and kill machine_kexec_mask_interrupts() entirely?
+This is documented in can_ucan_protocol.rst,
 
-That would avoid some work (including pointer chasing on potentially
-corrupt memory) in the kernel that crashed, making it more likely that
-we get to the crashkernel intact...
+     All multi-byte integers are encoded as Little Endian.
+
+but it's probably worth mentioning here as well.
+
+> 
+> Please use standard 'net' comment style:
+> 
+>  /* this is a multiline
+>   * comment
+>   */
+> 
+>> +	struct ucan_ctl_cmd_start cmd_start;
+>> +	/***************************************************
+>> +	 * Setup Bittiming
+>> +	 * bmRequest == UCAN_COMMAND_SET_BITTIMING
+>> +	 ***************************************************/
+
+Understood.
 
 Thanks,
-Mark
+Jakob
