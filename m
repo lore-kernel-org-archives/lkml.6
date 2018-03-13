@@ -1,112 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeCMHI2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 03:08:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52223 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeCMHI1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:08:27 -0400
-Date: Tue, 13 Mar 2018 00:07:45 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-f2d6fdbfd2389a38598d448cb8dc09d946c1b87e@git.kernel.org>
-Cc: tglx@linutronix.de, dmitry.torokhov@gmail.com,
-        sergey.senozhatsky@gmail.com, mingo@kernel.org, prarit@redhat.com,
-        john.stultz@linaro.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        corbet@lwn.net, linux-kernel@vger.kernel.org, salyzyn@android.com,
-        peterz@infradead.org, mtk.manpages@gmail.com, pmladek@suse.com,
-        kevin@guarana.org, rostedt@goodmis.org
-Reply-To: john.stultz@linaro.org, prarit@redhat.com, mingo@kernel.org,
-        sergey.senozhatsky@gmail.com, tglx@linutronix.de,
-        dmitry.torokhov@gmail.com, rostedt@goodmis.org, kevin@guarana.org,
-        pmladek@suse.com, mtk.manpages@gmail.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, salyzyn@android.com, corbet@lwn.net,
-        torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <20180301165150.155899327@linutronix.de>
-References: <20180301165150.155899327@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] Input: Evdev - unify MONOTONIC and BOOTTIME clock
- behavior
-Git-Commit-ID: f2d6fdbfd2389a38598d448cb8dc09d946c1b87e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752146AbeCMHIh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 03:08:37 -0400
+Received: from mout.web.de ([217.72.192.78]:60547 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751892AbeCMHIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 03:08:34 -0400
+Subject: Re: [2/9] um/drivers/vector_user: Less checks in user_init_raw_fds()
+ after error detection
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: user-mode-linux-devel@lists.sourceforge.net,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+ <d68574df-868c-3a9a-b1fb-2e95b1a452a4@users.sourceforge.net>
+Message-ID: <fa32bc3f-b860-aab1-1e84-262add39e24c@users.sourceforge.net>
+Date: Tue, 13 Mar 2018 08:08:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <d68574df-868c-3a9a-b1fb-2e95b1a452a4@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Provags-ID: V03:K0:Yl2lAMqJDewEh4ri1zrLMnLs98GSsLuxo03rrEU7CVA+DtnbmY3
+ pF17V6fOPjOtEkJqBKmxHgC41PsaxWS/XmEVWuUysDOBrgUqi094w/wBS1JfGGlz26RwBl8
+ msTTCqPCYgNU6lw5E4XVsxVQe7TnEukId2GpOoXRKDCuBx78xl+3Qk8PmyUJ712P0Kl1MRe
+ QyDFac35C43eXdB+evaJw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BV05YNK2AMI=:dsI03Mn8z7q7CQut49HAbP
+ LpvpA5aAp/LXWKm6UmeuJbOgjMi6FfjmYEPki1+r8jXU5YFvw/g3FAIyNYjdyiK3fOZ5PH/vR
+ mF0+yMTNqTlimJu7SfIjVKsbcwYgfwqthTNwhxxxoneKyot/YdxH0CvWOTSWeXqr3Ks+2L3b5
+ DMe3iY/GBLfesy0CY710BVb4HJYrBO+G8QDdRkL2OkquQUZp55p6nT7dUKblFyhPcgHbM2ekj
+ ngBBCZsQpCMAZLVLOV4CGVS8Lf8xMltotiw21G9YKrKvX3WDCbhSyCfYYD4nwvEqg1N9A5uVM
+ AloYfRSyCjvQAoef0+3X4MiAtQib6NlBPj2vM1yEyOviZQDsvFsQSlHsOMnghwWdUti3oykJy
+ 8tdK+JQncsnIMdSy96b4S/W66Zrv2tBzhm4+/kJKbXohhmEWGMoFWMhi9scT6y07+RmnOQwN0
+ litMyJIUwMnoGZW/9qMWiokw7bR5YsCLVom4x/eCCtj3Bju3nfS4FmoqfcGsLdjWfvtCOGxbO
+ wOTEGRDua+gRoa9NvzLxCLwLA54jsQFtxCyc9Ib9F8sNTAYfnNKGK3oQBpId+SacmO7FlfDWi
+ B1su7HEObQnhUSpC0T6SPgrtnTncOAAH5iu59fRyoS1vzDubGCUKAegEYNms3SEzkYlbveo37
+ Cm3e+9rJfGLRHPpMOzKamI64DtS6hNkvf698WMjaz4XJ/LR+UNE1Ul18LJtr+anuhI0C6EVce
+ 9AspAE8nvP8Ck2DkZ7K0qu2tWeNgLAT+QmuTtVmQX1k/yBckc4zY85wCZngwuY+ZJDx3Ph82m
+ 82PvbiBRGjpn1LjpJyND+yCmsxJpyvd2OnZ4ce7N5jn7hl7kJM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f2d6fdbfd2389a38598d448cb8dc09d946c1b87e
-Gitweb:     https://git.kernel.org/tip/f2d6fdbfd2389a38598d448cb8dc09d946c1b87e
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 1 Mar 2018 17:33:34 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Mar 2018 07:34:22 +0100
+> +set_error_code:
+> +	err = -errno;
+> +	os_close_file(rxfd);
 
-Input: Evdev - unify MONOTONIC and BOOTTIME clock behavior
+I have taken another look at this change idea.
+Now I notice that I should have preserved a sanity check there.
 
-Now that the MONOTONIC and BOOTTIME clocks are indentical, remove all the
-special casing.
+	if (rxfd >= 0)
+		os_close_file(rxfd);
 
-The user space visible interfaces still support both clocks, but their behavior
-is identical.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kevin Easton <kevin@guarana.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-input@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180301165150.155899327@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- drivers/input/evdev.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index c81c79d01d93..46115a392098 100644
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -31,7 +31,6 @@
- enum evdev_clock_type {
- 	EV_CLK_REAL = 0,
- 	EV_CLK_MONO,
--	EV_CLK_BOOT,
- 	EV_CLK_MAX
- };
- 
-@@ -198,12 +197,10 @@ static int evdev_set_clk_type(struct evdev_client *client, unsigned int clkid)
- 	case CLOCK_REALTIME:
- 		clk_type = EV_CLK_REAL;
- 		break;
-+	case CLOCK_BOOTTIME:
- 	case CLOCK_MONOTONIC:
- 		clk_type = EV_CLK_MONO;
- 		break;
--	case CLOCK_BOOTTIME:
--		clk_type = EV_CLK_BOOT;
--		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -314,8 +311,6 @@ static void evdev_events(struct input_handle *handle,
- 
- 	ev_time[EV_CLK_MONO] = ktime_get();
- 	ev_time[EV_CLK_REAL] = ktime_mono_to_real(ev_time[EV_CLK_MONO]);
--	ev_time[EV_CLK_BOOT] = ktime_mono_to_any(ev_time[EV_CLK_MONO],
--						 TK_OFFS_BOOT);
- 
- 	rcu_read_lock();
- 
+Regards,
+Markus
