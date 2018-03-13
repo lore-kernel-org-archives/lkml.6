@@ -1,23 +1,23 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELs2ZkE3VoxeLjf398XUvvARmkop5LUB+uKrb8OkYDHQg7uMCp5sH2wFEqywfkzK3YTuaylB
-ARC-Seal: i=1; a=rsa-sha256; t=1520966036; cv=none;
+X-Google-Smtp-Source: AG47ELsY8qi+mL/avW/qEngYXNDUdRg0TCI6pKILDkaAnCX09fE5k6rIpEuDFLTbaKpQjjn9TGzl
+ARC-Seal: i=1; a=rsa-sha256; t=1520966035; cv=none;
         d=google.com; s=arc-20160816;
-        b=y/YHtzmSm2s5kQQOn/aSJH0PFE0yUCNso3qZpUDiD/UXTHGXEYKGdScF0DA516iU6B
-         17iHXOHAM24YZMwStvLCRW2RxBp6X3c4vg2vcbavotPATTO30nrBoJYtEC7otnnjQH38
-         9h0XmggjcO2ai4xqr4GMgl8J0Z3KEJlDCJJxEIj/HyDhjAauuSYH+95qhOOtbe4VsZMX
-         QfPaci0wpe/qPM0MEZ+BDW37/RP42A7EK9nvoTPjMFbSmjHXEJVdYja7ZVamB8HCoarT
-         I4tL0LDoJauKKpqOgm9jum6TRodq4hj8iZ6X1QZDhrtnbLwBRuaEoJJ19mMiA6RkyIHk
-         b0EQ==
+        b=ER8kEHlOBn7rAJ1MHxD/sna3iKgIWX1Kdp0qC1hRBfYdxTHE7Evr8XeKhKLCQGiVFx
+         Sqj2CdsW7oJZL8URiT8Hg31U3F8UHJWCA/ccJHe3ajrRlyQw7H7AsTU3Djnw440RzkC2
+         G7f+p5OtjFPnlKIyna1ofz7ImBS6GM4wTRaZyjoUlETRy3EOMwivpTDrt08vMwtY1B8l
+         du5CrNqOQxOsCQfaOtMTjcQBToGjAPkqeCHI9OxkgO5Fl+sRrM/YCukysgKpJEU7bUuw
+         +tA12+qokRbpmwvss47ysGigusEPj2AETTq8Er2IyfxY6bNLm4s6/tchYXjAtY4fA4Oz
+         u+Zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=P3r7K1oneOgRUQO5dPxWxOWV/S+Mk6wT9HTRx0CiJdo=;
-        b=MXDJkilJ4JdyZkmhsRmf8h+9acPpr/r5KJ2vNBn2Md6Cd15oIg7D15+IwnoJs+ziFR
-         aaPB+VdH/tX571yQYk5r2I/zRRWsph1ggV75iE1wZFDecUzeKbL6SADiLbETDwLkp2af
-         FNM2sgM9rAKptJwlSjOG5XNJZDTQTkI0MjrWEhbLZM0lVdNJ1K8knRcM+4pwxPg1GEc7
-         uQAxA1QVEwICC1HaRWxy8sPr69HNsHvdHM4k8kPbIySzwH3gWt3Nac/evWTw0Yc/UOuH
-         3B5/3c0dFQCmEQbIdCjhqAMGm1aY5KpGuBoB3gHm/LzSc+pw08ObU5HK93WFpmmuy2Ts
-         heVA==
+        bh=9xqgUluudFFO5C1nUSkvzdpWoO4JVF+wgannQeY73nY=;
+        b=XqBmKh5FMN93h2wpCywX2HmCxhoQBtaBoydGIHvAY94CUWwzZ2o4M55W3lX8KWCc8R
+         L2zQN6VzHXkuXARh4eaWStptvbZ9yV7I6QkwN3Ox6q/rxjRtwI2WfGb/az/QjPckO7YI
+         Rb5TfQfnkON9MHVCqC95H/yfOrVNc90X9EH1wP1qqOdQVMtTGq4wl0zfhokb/2w5zfUL
+         u7EIXSrjMrJiiElKJhHeYoBUF0R30gMNSTJajColDRBPrOhiNK9uN+TRcljoBEPtFVT6
+         RWqyKPhnsvtEAYvBOnOoFQ8+osT/oQKP9tpPzuhG3Ycy+gPzrm0BS2sifZwy4VYJ62SW
+         XUFA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
@@ -54,17 +54,17 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
 	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 8/8] powerpc/64: barrier_nospec: Add commandline trigger
-Date: Tue, 13 Mar 2018 19:33:06 +0100
-Message-Id: <8639fc8cb02548d478b041c3a00ad9053fdd8bc4.1520965380.git.msuchanek@suse.de>
+Subject: [PATCH RFC 6/8] powerpc/64: barrier_nospec: Add debugfs trigger
+Date: Tue, 13 Mar 2018 19:33:04 +0100
+Message-Id: <614dfe0abb78fffd35f127d0ba78e644e1a0570a.1520965380.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594848482819509094?=
-X-GMAIL-MSGID: =?utf-8?q?1594848482819509094?=
+X-GMAIL-THRID: =?utf-8?q?1594848481057518187?=
+X-GMAIL-MSGID: =?utf-8?q?1594848481057518187?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -72,27 +72,54 @@ Copypasta from rfi implementation
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/kernel/setup_64.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/powerpc/kernel/setup_64.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
 diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 4b67b7b877d9..257f0e6be107 100644
+index d1d9f047161e..4b67b7b877d9 100644
 --- a/arch/powerpc/kernel/setup_64.c
 +++ b/arch/powerpc/kernel/setup_64.c
-@@ -840,6 +840,14 @@ static int __init handle_no_pti(char *p)
+@@ -955,6 +955,41 @@ static __init int rfi_flush_debugfs_init(void)
+ 	return 0;
  }
- early_param("nopti", handle_no_pti);
- 
-+static int __init handle_no_nospec(char *p)
+ device_initcall(rfi_flush_debugfs_init);
++
++static int barrier_nospec_set(void *data, u64 val)
 +{
-+	pr_info("barrier_nospec: disabled on command line.");
-+	no_nospec = true;
++	switch (val) {
++	case 0:
++	case 1:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (!!val == !!barrier_nospec_enabled)
++		return 0;
++
++	barrier_nospec_enable(!!val);
++
 +	return 0;
 +}
-+early_param("no_nospec", handle_no_nospec);
 +
- static void do_nothing(void *unused)
- {
- 	/*
++static int barrier_nospec_get(void *data, u64 *val)
++{
++	*val = barrier_nospec_enabled ? 1 : 0;
++	return 0;
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
++			barrier_nospec_get, barrier_nospec_set, "%llu\n");
++
++static __init int barrier_nospec_debugfs_init(void)
++{
++	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
++			    &fops_barrier_nospec);
++	return 0;
++}
++device_initcall(barrier_nospec_debugfs_init);
+ #endif
+ 
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
 -- 
 2.13.6
