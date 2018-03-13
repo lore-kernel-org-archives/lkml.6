@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvSgddMKaWrrzGfxfY2czYfRAytiy6YMAtnCERdFpjfD7KSJo3tOi0ASRs6MlSvJLE0pH/D
-ARC-Seal: i=1; a=rsa-sha256; t=1520955524; cv=none;
+X-Google-Smtp-Source: AG47ELt5rXmOzKh1YcNXG5km0aJ9DbrB6PZyiGIYueM/mh/CsOSdFHskoWnMqwKmSI9RXwJD3O3Z
+ARC-Seal: i=1; a=rsa-sha256; t=1520955521; cv=none;
         d=google.com; s=arc-20160816;
-        b=tVXCdraQKdSmer3fkztjY4ULjVFo8xueOoD7JjnDQx35MJnzo0ahQrtwER3H95Q9bQ
-         KUSIrZZ2NPdOkrOetk6QBaBza0T0Ui7ZMy4mlEnxnUuZYf1jhEAV3oYnv/+QNwEuVIXX
-         B4u61SQBnM/+hncRdqAbKkig6SD1BLX2GDpaGaI9cv6qrfDh4JdIdq0QavSImKvNcnup
-         ++WSXbyQmxO+Ybg57fGIvfs5HZDim34IoSzXLbmKtHzEic72yGY9x3umOfXdkukL+zBV
-         4QA61nkcI8sPAXdBi9XtNc9/6GzOVWoDGk2UF+glAEP1DBovHxjaD9Ve07K4/yUA0pDn
-         mwdw==
+        b=paqw6rh6GM3TaBbIRJRYKUYOpEffHyrT3jJYuHG1noilk/OEt1PTSaOA0+aaLhcYoC
+         H6s//3BoBztzItD6227+lb83tgGVzlGyIZYcdNPPvhs9fUYicFrUc4Cx2TdpCojaT6KU
+         mJ/6Ev+kMalXF4i9DR7Qe6ivCajFEFfL3/ER18EZ1fRUn5k/xDrM0pATOTQVoSE+yd8O
+         qR1038XLm5hjPw/wsgmsi+v9n6Q5USNtgvFijFXK6lKE3ff/Vj7BaatKetXuhKAROHEQ
+         7uVq8uK5OLRhXFaC6cpWCKtBwIjqI9dDOCVGHzF8MDv6mcbp3vQiXi9EeNan3J4JZH/+
+         sIOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fm6AodDvrgzLgXBYtUU5uHUdRl6LqCpCHN7ZgQUroV0=;
-        b=dojuJimMCPyuNJics2hPS+WoqBY+xxldBUQskeus3/pE+zt/WqkgUEWfh2LO9Sm/1A
-         NB1WkCQfm6A6j3/b/ukSZC5PaN195ES8flRMW18My54imst4HYXEHndkXIolhmNMxyas
-         z7/vns4u/3hLhkRaXCHDDhRgf5siH0256HPg8TgbYG54soMeC9yg4LzUTm86tYBha9Iq
-         nXjMAFWATqdw09LBNDrSs8JAsNGfduboIf4NI0ymy/jei8TUivNPX5p0iQMwaO2kEe+P
-         B3OpDiE16lTQ3Q8qhHNTa8DrXBKwcNVHX2yZ8X7wAIUOrcyMha0A1JHgRK+3ub+jWYig
-         1YvQ==
+        bh=dKqaGho5QKyKOMKZxo19NL170uYea5LCvxNn+Gsl4h8=;
+        b=AGIbySEluFObTHVjZqdKzQenTIw6xLW3Wm8Cyw3Bi4Y5uq5XZTlI8uVl37LqXM2DVr
+         Cp16J42MDVeGvGG8j7P7/duwfA7lghlqrutyHq0Un2ms3VvObv5rkdmNoIrG36xiX7wG
+         2dpUxL4iPlyUGNWGbM2tsRlviaza4+jLgspQZiqYqJ4B8oNC9Gf8Eijib9DxQYTDhtt/
+         1zxGTj0vee1XTOFUFR0TqtVPnttrQDLLE6AUbnKp8msPFqJhGz+bjN6Dmls4tN+OBitV
+         3LEajFvZqHf8oQd50oe7JLuZqtdpjZ00bjXqGwK0+klQRFpH2YRLab8JAJOFefygNkzP
+         Z2gQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 079/140] MIPS: ath25: Check for kzalloc allocation failure
-Date: Tue, 13 Mar 2018 16:24:42 +0100
-Message-Id: <20180313152503.444009904@linuxfoundation.org>
+	Alex Deucher <alexander.deucher@amd.com>,
+	Rex Zhu <Rex.Zhu@amd.com>
+Subject: [PATCH 4.14 073/140] drm/amdgpu: Notify sbios device ready before send request
+Date: Tue, 13 Mar 2018 16:24:36 +0100
+Message-Id: <20180313152503.081983970@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836869836230255?=
-X-GMAIL-MSGID: =?utf-8?q?1594837459806456940?=
+X-GMAIL-THRID: =?utf-8?q?1594836847207625734?=
+X-GMAIL-MSGID: =?utf-8?q?1594837456426051919?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
+commit 1bced75f4ab04bec55aecb57d99435dc6d0ae5a0 upstream.
 
-Currently there is no null check on a failed allocation of board_data,
-and hence a null pointer dereference will occurr. Fix this by checking
-for the out of memory null pointer.
+it is required if a platform supports PCIe root complex
+core voltage reduction. After receiving this notification,
+SBIOS can apply default PCIe root complex power policy.
 
-Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.19+
-Patchwork: https://patchwork.linux-mips.org/patch/18657/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ath25/board.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/mips/ath25/board.c
-+++ b/arch/mips/ath25/board.c
-@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -540,6 +540,9 @@ int amdgpu_acpi_pcie_performance_request
+ 	size_t size;
+ 	u32 retry = 3;
  
- 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
-+	if (!board_data)
-+		goto error;
- 	ath25_board.config = (struct ath25_boarddata *)board_data;
- 	memcpy_fromio(board_data, bcfg, 0x100);
- 	if (broken_boarddata) {
++	if (amdgpu_acpi_pcie_notify_device_ready(adev))
++		return -EINVAL;
++
+ 	/* Get the device handle */
+ 	handle = ACPI_HANDLE(&adev->pdev->dev);
+ 	if (!handle)
