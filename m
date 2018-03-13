@@ -1,188 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeCMJOC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:14:02 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:41651 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752395AbeCMJN4 (ORCPT
+        id S1752623AbeCMJOr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:14:47 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:46903 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752252AbeCMJOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:13:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIo1016505
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/11] Add Kconfig unit tests
-Date: Tue, 13 Mar 2018 18:12:01 +0900
-Message-Id: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 13 Mar 2018 05:14:44 -0400
+X-Google-Smtp-Source: AG47ELteR7QQZ+EvAKRZyT95XpaaOYB+atOP2s5y4abiy8cs8B9Za+UAHL4DA+1J+y9DbVPrWi5/0pvlHm+RkBxJ0xc=
+MIME-Version: 1.0
+In-Reply-To: <20180313005103.brhhrxlatxfkdw7p@thinkpad>
+References: <20180312194715.GA3992@amd> <20180312194944.GA3979@amd>
+ <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
+ <20180312223521.vzccevf6z7ik5ysf@thinkpad> <20180312230407.GA7612@amd>
+ <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
+ <20180312231847.GB7612@amd> <20180313005103.brhhrxlatxfkdw7p@thinkpad>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 Mar 2018 10:14:43 +0100
+X-Google-Sender-Auth: 4gmv8tgdVuavYCEJ2f27heoO8HY
+Message-ID: <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
+Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
+ error in mate
+To: =?UTF-8?Q?Ognjen_Gali=C4=87?= <smclt30p@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        ACPI mailing list <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2D9Exgg031468
 
-I am applying various cleanups to Kconfig these days.
+On Tue, Mar 13, 2018 at 1:51 AM, Ognjen Galić <smclt30p@gmail.com> wrote:
+> On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
+>> Hi!
+>>
+>> > >> > >> Fully charged
+>> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
+>> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
+>> > >> > >> waiting to charge".
+>> > >> > >>
+>> > >>
+>> > >> For the MATE bug see:
+>> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
+>> > >>
+>> > >> The problem is in the new composite battery system in UPower, it
+>> > >> "merges" two external batteries into a single one for reporting. That
+>> > >> battery does not understand "Not Charging" inside the MATE Power
+>> > >> Manager. The above patch fixes that in MATE.
+>> > >
+>> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
+>> > >
+>> > > And now, I see that MATE should be improved.
+>> > >
+>> > > But what I also see is that kernel is changing its interface in a way
+>> > > that (while making sense) breaks existing application. And we don't
+>> > > break existing applications.
+>> > >
+>> > > [Now... maybe if the fix for the application is available for long
+>> > > long time and noone is really looking and everyone already has new
+>> > > application version, maybe ... But pull request for MATE is 9 days
+>> > > old, and not even merged. So there is no way this is suitable for
+>> > > 4.17.]
+>> >
+>> > Right.
+>> >
+>> > This basically means that we will have to defer the battery changes
+>> > until user space is ready and not just upstream, but also in distro
+>> > packages.
+>>
+>> Yes please.
+>>
+>> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
+>> anything, the others should be safe AFAICT?
+>>
+>>                                                               Pavel
+>>
+>
+> Actually there is a bug in UPower itself, and that reflects the status
+> icon being broken in almost all desktop environments. I will work on
+> fixing UPower in the following days. Disregard my previous comment.
 
-However, I fear regressions.  I have been thinking of unit-tests.
+I have reverted commit 91eea70e5e5ce12e for the time being.
 
-There are various cryptic parts in Kconfig and corner cases where
-it is difficult to notice breakage.  If unit-tests cover those,
-I will be able to apply changes more confidently.
-
-This series introduces a unit-tests.  The framework is written based
-on pytest.  Also, this is written in Python 3.  Python 2 will retire
-in 2020.  So, I believe new python tools should be written in Python 3.
-
-This is my Python 3 and pytest versions.
-
-$ python3 --version
-Python 3.5.2
-$ python3 -m pytest --version
-This is pytest version 3.4.1, imported from /home/masahiro/.local/lib/python3.5/site-packages/pytest.py
-
-How to use?
------------
-
-Please make sure Python3 and pytest are installed on your system.
-
-Then, run "make testconfig"
-
-The result looks like as follows:
-
-$ make testconfig
-python3 -B -m pytest ./scripts/kconfig/tests \
--o cache_dir=/home/masahiro/workspace/bsp/linux-yamada/scripts/kconfig/tests/.cache \
-
-================================= test session starts =================================
-platform linux -- Python 3.5.2, pytest-3.4.1, py-1.5.2, pluggy-0.6.0 -- /usr/bin/python3
-cachedir: scripts/kconfig/tests/.cache
-rootdir: /home/masahiro/workspace/bsp/linux-yamada/scripts/kconfig/tests, inifile: pytest.ini
-collected 14 items
-
-scripts/kconfig/tests/auto_submenu/__init__.py::test PASSED                     [  7%]
-scripts/kconfig/tests/choice/__init__.py::test_oldask0 PASSED                   [ 14%]
-scripts/kconfig/tests/choice/__init__.py::test_oldask1 PASSED                   [ 21%]
-scripts/kconfig/tests/choice/__init__.py::test_allyes PASSED                    [ 28%]
-scripts/kconfig/tests/choice/__init__.py::test_allmod PASSED                    [ 35%]
-scripts/kconfig/tests/choice/__init__.py::test_allno PASSED                     [ 42%]
-scripts/kconfig/tests/choice/__init__.py::test_alldef PASSED                    [ 50%]
-scripts/kconfig/tests/choice_value_with_m_dep/__init__.py::test PASSED          [ 57%]
-scripts/kconfig/tests/err_recursive_inc/__init__.py::test PASSED                [ 64%]
-scripts/kconfig/tests/inter_choice/__init__.py::test PASSED                     [ 71%]
-scripts/kconfig/tests/new_choice_with_dep/__init__.py::test PASSED              [ 78%]
-scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py::test PASSED            [ 85%]
-scripts/kconfig/tests/rand_nested_choice/__init__.py::test PASSED               [ 92%]
-scripts/kconfig/tests/warn_recursive_dep/__init__.py::test PASSED               [100%]
-
-
-Masahiro Yamada (11):
-  kbuild: add PYTHON2 and PYTHON3 variables
-  kconfig: tests: add framework for Kconfig unit testing
-  kconfig: tests: add basic choice tests
-  kconfig: tests: test automatic submenu creation
-  kconfig: tests: test if new symbols in choice are asked
-  kconfig: tests: check unneeded "is not set" with unmet dependency
-  kconfig: tests: check visibility of tristate choice values in y choice
-  kconfig: tests: test defconfig when two choices interact
-  kconfig: tests: test randconfig for choice in choice
-  kconfig: tests: test if recursive dependencies are detected
-  kconfig: tests: test if recursive inclusion is detected
-
- Makefile                                           |   4 +-
- scripts/kconfig/Makefile                           |   8 +
- scripts/kconfig/tests/auto_submenu/Kconfig         |  50 ++++
- scripts/kconfig/tests/auto_submenu/__init__.py     |  12 +
- scripts/kconfig/tests/auto_submenu/expected_stdout |  10 +
- scripts/kconfig/tests/choice/Kconfig               |  54 ++++
- scripts/kconfig/tests/choice/__init__.py           |  40 +++
- .../kconfig/tests/choice/alldef_expected_config    |   5 +
- .../kconfig/tests/choice/allmod_expected_config    |   9 +
- scripts/kconfig/tests/choice/allno_expected_config |   5 +
- .../kconfig/tests/choice/allyes_expected_config    |   9 +
- .../kconfig/tests/choice/oldask0_expected_stdout   |  10 +
- scripts/kconfig/tests/choice/oldask1_config        |   2 +
- .../kconfig/tests/choice/oldask1_expected_stdout   |  15 ++
- .../kconfig/tests/choice_value_with_m_dep/Kconfig  |  19 ++
- .../tests/choice_value_with_m_dep/__init__.py      |  15 ++
- .../kconfig/tests/choice_value_with_m_dep/config   |   2 +
- .../tests/choice_value_with_m_dep/expected_config  |   3 +
- .../tests/choice_value_with_m_dep/expected_stdout  |   4 +
- scripts/kconfig/tests/conftest.py                  | 291 +++++++++++++++++++++
- scripts/kconfig/tests/err_recursive_inc/Kconfig    |   1 +
- scripts/kconfig/tests/err_recursive_inc/Kconfig2   |   1 +
- scripts/kconfig/tests/err_recursive_inc/Kconfig3   |   1 +
- .../kconfig/tests/err_recursive_inc/__init__.py    |  10 +
- .../tests/err_recursive_inc/expected_stderr        |   5 +
- scripts/kconfig/tests/inter_choice/Kconfig         |  23 ++
- scripts/kconfig/tests/inter_choice/__init__.py     |  14 +
- scripts/kconfig/tests/inter_choice/defconfig       |   1 +
- scripts/kconfig/tests/inter_choice/expected_config |   4 +
- scripts/kconfig/tests/new_choice_with_dep/Kconfig  |  37 +++
- .../kconfig/tests/new_choice_with_dep/__init__.py  |  14 +
- scripts/kconfig/tests/new_choice_with_dep/config   |   3 +
- .../tests/new_choice_with_dep/expected_stdout      |  10 +
- .../kconfig/tests/no_write_if_dep_unmet/Kconfig    |  14 +
- .../tests/no_write_if_dep_unmet/__init__.py        |  19 ++
- scripts/kconfig/tests/no_write_if_dep_unmet/config |   1 +
- .../tests/no_write_if_dep_unmet/expected_config    |   5 +
- scripts/kconfig/tests/pytest.ini                   |   7 +
- scripts/kconfig/tests/rand_nested_choice/Kconfig   |  33 +++
- .../kconfig/tests/rand_nested_choice/__init__.py   |  16 ++
- .../tests/rand_nested_choice/expected_stdout0      |   2 +
- .../tests/rand_nested_choice/expected_stdout1      |   4 +
- .../tests/rand_nested_choice/expected_stdout2      |   5 +
- scripts/kconfig/tests/warn_recursive_dep/Kconfig   |  62 +++++
- .../kconfig/tests/warn_recursive_dep/__init__.py   |   9 +
- .../tests/warn_recursive_dep/expected_stderr       |  30 +++
- 46 files changed, 897 insertions(+), 1 deletion(-)
- create mode 100644 scripts/kconfig/tests/auto_submenu/Kconfig
- create mode 100644 scripts/kconfig/tests/auto_submenu/__init__.py
- create mode 100644 scripts/kconfig/tests/auto_submenu/expected_stdout
- create mode 100644 scripts/kconfig/tests/choice/Kconfig
- create mode 100644 scripts/kconfig/tests/choice/__init__.py
- create mode 100644 scripts/kconfig/tests/choice/alldef_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allmod_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allno_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allyes_expected_config
- create mode 100644 scripts/kconfig/tests/choice/oldask0_expected_stdout
- create mode 100644 scripts/kconfig/tests/choice/oldask1_config
- create mode 100644 scripts/kconfig/tests/choice/oldask1_expected_stdout
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/config
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/expected_config
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/expected_stdout
- create mode 100644 scripts/kconfig/tests/conftest.py
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig2
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig3
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/__init__.py
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/expected_stderr
- create mode 100644 scripts/kconfig/tests/inter_choice/Kconfig
- create mode 100644 scripts/kconfig/tests/inter_choice/__init__.py
- create mode 100644 scripts/kconfig/tests/inter_choice/defconfig
- create mode 100644 scripts/kconfig/tests/inter_choice/expected_config
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/config
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/expected_stdout
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/config
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/expected_config
- create mode 100644 scripts/kconfig/tests/pytest.ini
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/Kconfig
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/__init__.py
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout0
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout1
- create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout2
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/expected_stderr
-
--- 
-2.7.4
+Of course, it can be applied again after all of the bus triggered by
+it have been fixed and the fixes have gone to users.
