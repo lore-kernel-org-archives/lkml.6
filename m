@@ -1,73 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932359AbeCMBQA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:16:00 -0400
-Received: from ozlabs.org ([103.22.144.67]:39239 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932231AbeCMBP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:15:59 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 13 Mar 2018 12:15:28 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Huang <JinHuiEric.Huang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20180313121528.36120e37@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wrPZgJZxY4WI2A2sGLGYPP+"; protocol="application/pgp-signature"
+        id S932415AbeCMBUO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:20:14 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:39278 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932211AbeCMBUM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:20:12 -0400
+Date: Mon, 12 Mar 2018 21:20:10 -0400 (EDT)
+Message-Id: <20180312.212010.215262612578386966.davem@davemloft.net>
+To: niklas.cassel@axis.com
+Cc: Jose.Abreu@synopsys.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, pavel@ucw.cz, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: stmmac: remove superfluous wmb() memory
+ barriers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180312085541.GA406@axis.com>
+References: <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+        <20180309.101520.1551234308448290917.davem@davemloft.net>
+        <20180312085541.GA406@axis.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/wrPZgJZxY4WI2A2sGLGYPP+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Niklas Cassel <niklas.cassel@axis.com>
+Date: Mon, 12 Mar 2018 09:55:42 +0100
 
-Hi all,
+> Jose is simply responding to the commit message description of this patch.
+> 
+> You explained that there is an implicit memory barrier between physical memory
+> writes and those to MMIO register space, as long as you used writel().
+> 
+> I assumed that you meant writel() vs writel_relaxed(), where there latter
+> does not do an implicit barrier.
+> 
+> I also found this from you:
+> https://lwn.net/Articles/198995/
+> 
+> If my assumption was incorrect, please correct me.
+> 
+> As you seem to possess knowledge regarding this, you are probably the most
+> suited person to know if this patch simply needs a commit message rewrite,
+> or if it should be dropped completely.
 
-Today's linux-next merge of the drm tree got a conflict in:
+Yes, I have always argued that the non-relaxed {read,write}{b,w,l}()
+interfaces should imply barriers wrt. physical memory accesses.
 
-  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+Without that, drivers are harder to write.  Specifically, drivers that
+work properly on all architectures will be very hard to write.
 
-between commit:
+But looking at some drivers, probably this isn't fully the case right
+now.  Which is unfortunate, but we must code to reality.
 
-  a0aaa03062be ("drm/amd/powerplay: fix power over limit on Fiji")
+For example, looking at drivers/net/ethernet/broadcom/tg3.c, we have
+tg3_start_xmit() going:
 
-from the Linus' and commit:
+	write descriptors
+	...
+	/* Sync BD data before updating mailbox */
+	wmb();
+	...
+		/* Packets are ready, update Tx producer idx on card. */
+		tw32_tx_mbox(tnapi->prodmbox, entry);
 
-  a5278e511dce ("drm/amd/pp: Revert gfx/compute profile switch sysfs")
+so it really seems to be necessary.
 
-from the drm tree.
+So this stmmac revert is not valid.
 
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wrPZgJZxY4WI2A2sGLGYPP+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnJjAACgkQAVBC80lX
-0GzVYgf+PdWjze0sLpZoFAOIfJSZRRiYeI2e7jk+LnQErOnbJV89MK/8yGm+7Cr4
-lx3KHXqsuSRVJUdFTUokAA5/bhOzWafs8D+3owWQfZ8AiI+MxaRbDqrDhoFfj3tb
-dmMjmyEDu9oI670vKvmTdDzAEL5/eqqA2M/Uh948fE3Wy70B1gjTqS9A1xih0WAK
-drfcblR94dm0RjqOPmCYtmGHzGLpxB99D/13mMiOdZfKCdjXe97BY3Ez5WZV1EfH
-C7Qd3xhcaHkIBnHYHVCJs3WZw3A13ph9O6RNsvg5zlRhjrTuY1Deh88fFXNPQcbB
-GJ5KHRGN542tf8q33G3JTTPKNG4QLQ==
-=rwMR
------END PGP SIGNATURE-----
-
---Sig_/wrPZgJZxY4WI2A2sGLGYPP+--
+Sorry for all the confusion.  I guess it's a lot of wishful thinking on
+my part :-)
