@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvOd/a8t5vDL5LlXfZeR6F66WqAw6K5Jm+N3Cj6oKLo4pUdE6IgqX0w8tc74cxe8gqX/Rx9
-ARC-Seal: i=1; a=rsa-sha256; t=1520955373; cv=none;
+X-Google-Smtp-Source: AG47ELtx8Emjtxxr/dEvG/CtSeHupQGMlFdMkmkletDprQh7pS8w9ML0iANFYEkvZ8iq8UJpJd35
+ARC-Seal: i=1; a=rsa-sha256; t=1520955370; cv=none;
         d=google.com; s=arc-20160816;
-        b=VbfyovO5WHTxZEDTvbxlnp52Ld22Tpu19VAACBpY83yC6e57iJp7fUKvPi+j+kWeIf
-         wtw+FtbIBUrTr62FsuLSmTQ/7Y04iMHgQ0djyIDToWSFmsKkq3XaPL/Rgf6Qe++f9tqx
-         rvHgwVWg8e4/lKHdj+fDhp4vYLGjbYFTlyOiip03pPe1lAAUHyd4/thEeZ8GUuf2hnyP
-         hO68xdngLr0L8d8zq5OZ6rY11EVYdn3bpRRtr70rLw3Kt0zbulK1reF/dhY6ESm0iu5P
-         YoksUMb0uqm2tpcyhoVmX9k50hqdBgihs54iCiiJmcP2iVEpRgwDrp8Cyo8OkT1J1VM+
-         NyHg==
+        b=ux3MVb+/CxHDa+58wrx5BejFkoQ4AADq+T26hFeqC+Ps+AMNsrxHGmqVRtKGKM0ITs
+         S/JjCrFWDJPKAx7yWqQD3RX/j27uSdgDbsuWDMzs7W2KqwkdACvjSRJ/XkTogWAQTXPm
+         dtiW4vLqjiIPsI94gKhmKbrsX1tUDvnvqlQZO47ysAEMJMJlMHZ64lMrq6JAp0ikH8Bz
+         MSv+/pKKXvu9FSviIg+M5tR4+Tdewat+i/zPuZUGJYPj57RL++AS79ZzkXuU0VD9ZpR1
+         AJxt7ucSZfk6n0f3EKdjB5D25aDQNZOVaK53d5MWiltq3ieF1mtrSZmnLC/eKIluvQEV
+         jj3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fT5YRGUsp3UQDncsiAq1LGfpJoF8FBrrF+dmUxcpD5Q=;
-        b=SSpBHNekUczmGecO4Fjsfq2nO0m3ekrVvC5smk8VFnH87PkuG0UDK/asSknuIgsS+1
-         zz/bnt1KY0d3+g1uJ7qrGHoDv2MCga1vrEuXQ4lBvAU81wcbOfpCO28F3IsUk23JcHyg
-         GCmaXMH2iQWAqLiUqQqlSooJLARa/rWjkQA1b9FxRMrz0Z5dqVJFI11ARQnLYKL5DRf2
-         VxA/gYgAKvFXUSQ0ylbmX0Q/mpf4NDww2QZxUNnVWN05DPp2m93QXxhMLlXLhSED8xw8
-         FRsfFTIZY12Dve9grYWDpTKKr7EoWUL5CHJTZcIjGv4iLRlkFe3yK8whaswN5uOBC/Or
-         9R9g==
+        bh=ssgE8BzjIyKwWAheXpn+PWqx5Ziaq/cQeNIE6s9IY5k=;
+        b=Q2pxIM226//jGFP2CZSUPvQeKFOX7MWL24LWbPr/2gZaxGTtQCfbux5pIEl5wZ5+Tw
+         Z6X3tUBs2udP3bT66ZKR2YmlABEZrdSOjBtjYhWjgUZ2j+pcY7hf4OvrkhdajnRwgSWh
+         Z9IwL6KpTwkmeRzEUSX24HGd5kOOHpCSYM5fQDZaMZ6KlXY7Pe+0DZYCW8y1wr0HW1mi
+         tp3ku2EZkRBGvR6yNQw5m9fRfnZZI3LvCXJpYE8/5CIwAU+++zMIihYMZKcS6BGqM3j0
+         rw/eGwy/5Me9XA4r7GenBzDymn44ECPPMdiHShkOocvplP5nEYiyOmB6buMCW5qP0M63
+         cOxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,10 +28,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Quinn Tran <quinn.tran@cavium.com>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 028/140] scsi: qla2xxx: Fix re-login for Nport Handle in use
-Date: Tue, 13 Mar 2018 16:23:51 +0100
-Message-Id: <20180313152459.929076983@linuxfoundation.org>
+Subject: [PATCH 4.14 027/140] scsi: qla2xxx: Skip IRQ affinity for Target QPairs
+Date: Tue, 13 Mar 2018 16:23:50 +0100
+Message-Id: <20180313152459.847294951@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837195630540816?=
-X-GMAIL-MSGID: =?utf-8?q?1594837301707757342?=
+X-GMAIL-THRID: =?utf-8?q?1594837186728182201?=
+X-GMAIL-MSGID: =?utf-8?q?1594837298866061749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,149 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit a084fd68e1d26174c4cc1a13fbb0112f468ff7f4 upstream.
+commit d68b850e1bfb9afb24b888a946165a186a710195 upstream.
 
-When NPort Handle is in use, driver needs to mark the handle as used and
-pick another. Instead, the code clears the handle and re-pick the same
-handle.
+Fix co-existence between Block MQ and Target Mode. Block MQ and
+initiator mode requires midlayer queue mapping to check for IRQ to be
+affinitized. For target mode, it's not the case.
 
-Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org> # 4.10+
+Fixes: 09620eeb62c41 ("scsi: qla2xxx: Add debug knob for user control workload")
+Cc: <stable@vger.kernel.org> # 4.12+
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_gs.c   |   16 ++++++++++----
- drivers/scsi/qla2xxx/qla_init.c |   44 ++++++++++++++++++++++++++++++++++++----
- drivers/scsi/qla2xxx/qla_isr.c  |    5 ----
- 3 files changed, 51 insertions(+), 14 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -2833,7 +2833,7 @@ void qla24xx_handle_gidpn_event(scsi_qla
- 				}
- 			} else { /* fcport->d_id.b24 != ea->id.b24 */
- 				fcport->d_id.b24 = ea->id.b24;
--				if (fcport->deleted == QLA_SESS_DELETED) {
-+				if (fcport->deleted != QLA_SESS_DELETED) {
- 					ql_dbg(ql_dbg_disc, vha, 0x2021,
- 					    "%s %d %8phC post del sess\n",
- 					    __func__, __LINE__, fcport->port_name);
-@@ -3206,10 +3206,16 @@ static void qla2x00_async_gpnid_sp_done(
- 	struct event_arg ea;
- 	struct qla_work_evt *e;
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -6592,9 +6592,14 @@ qla83xx_disable_laser(scsi_qla_host_t *v
  
--	ql_dbg(ql_dbg_disc, vha, 0x2066,
--	    "Async done-%s res %x ID %3phC. %8phC\n",
--	    sp->name, res, ct_req->req.port_id.port_id,
--	    ct_rsp->rsp.gpn_id.port_name);
-+	if (res)
-+		ql_dbg(ql_dbg_disc, vha, 0x2066,
-+		    "Async done-%s fail res %x ID %3phC. %8phC\n",
-+		    sp->name, res, ct_req->req.port_id.port_id,
-+		    ct_rsp->rsp.gpn_id.port_name);
-+	else
-+		ql_dbg(ql_dbg_disc, vha, 0x2066,
-+		    "Async done-%s good ID %3phC. %8phC\n",
-+		    sp->name, ct_req->req.port_id.port_id,
-+		    ct_rsp->rsp.gpn_id.port_name);
- 
- 	if (res) {
- 		sp->free(sp);
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1445,6 +1445,8 @@ static void
- qla24xx_handle_plogi_done_event(struct scsi_qla_host *vha, struct event_arg *ea)
+ static int qla2xxx_map_queues(struct Scsi_Host *shost)
  {
- 	port_id_t cid;	/* conflict Nport id */
-+	u16 lid;
-+	struct fc_port *conflict_fcport;
++	int rc;
+ 	scsi_qla_host_t *vha = (scsi_qla_host_t *)shost->hostdata;
  
- 	switch (ea->data[0]) {
- 	case MBS_COMMAND_COMPLETE:
-@@ -1460,8 +1462,12 @@ qla24xx_handle_plogi_done_event(struct s
- 			qla24xx_post_prli_work(vha, ea->fcport);
- 		} else {
- 			ql_dbg(ql_dbg_disc, vha, 0x20ea,
--				"%s %d %8phC post gpdb\n",
--				__func__, __LINE__, ea->fcport->port_name);
-+			    "%s %d %8phC LoopID 0x%x in use with %06x. post gnl\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->loop_id, ea->fcport->d_id.b24);
-+
-+			set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
-+			ea->fcport->loop_id = FC_NO_LOOP_ID;
- 			ea->fcport->chip_reset = vha->hw->base_qpair->chip_reset;
- 			ea->fcport->logout_on_delete = 1;
- 			ea->fcport->send_els_logo = 0;
-@@ -1506,8 +1512,38 @@ qla24xx_handle_plogi_done_event(struct s
- 		    ea->fcport->d_id.b.domain, ea->fcport->d_id.b.area,
- 		    ea->fcport->d_id.b.al_pa);
+-	return blk_mq_pci_map_queues(&shost->tag_set, vha->hw->pdev);
++	if (USER_CTRL_IRQ(vha->hw))
++		rc = blk_mq_map_queues(&shost->tag_set);
++	else
++		rc = blk_mq_pci_map_queues(&shost->tag_set, vha->hw->pdev);
++	return rc;
+ }
  
--		qla2x00_clear_loop_id(ea->fcport);
--		qla24xx_post_gidpn_work(vha, ea->fcport);
-+		lid = ea->iop[1] & 0xffff;
-+		qlt_find_sess_invalidate_other(vha,
-+		    wwn_to_u64(ea->fcport->port_name),
-+		    ea->fcport->d_id, lid, &conflict_fcport);
-+
-+		if (conflict_fcport) {
-+			/*
-+			 * Another fcport share the same loop_id/nport id.
-+			 * Conflict fcport needs to finish cleanup before this
-+			 * fcport can proceed to login.
-+			 */
-+			conflict_fcport->conflict = ea->fcport;
-+			ea->fcport->login_pause = 1;
-+
-+			ql_dbg(ql_dbg_disc, vha, 0x20ed,
-+			    "%s %d %8phC NPortId %06x inuse with loopid 0x%x. post gidpn\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->d_id.b24, lid);
-+			qla2x00_clear_loop_id(ea->fcport);
-+			qla24xx_post_gidpn_work(vha, ea->fcport);
-+		} else {
-+			ql_dbg(ql_dbg_disc, vha, 0x20ed,
-+			    "%s %d %8phC NPortId %06x inuse with loopid 0x%x. sched delete\n",
-+			    __func__, __LINE__, ea->fcport->port_name,
-+			    ea->fcport->d_id.b24, lid);
-+
-+			qla2x00_clear_loop_id(ea->fcport);
-+			set_bit(lid, vha->hw->loop_id_map);
-+			ea->fcport->loop_id = lid;
-+			ea->fcport->keep_nport_handle = 0;
-+			qlt_schedule_sess_for_deletion(ea->fcport, false);
-+		}
- 		break;
- 	}
- 	return;
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -2341,7 +2341,6 @@ qla2x00_status_entry(scsi_qla_host_t *vh
- 	int res = 0;
- 	uint16_t state_flags = 0;
- 	uint16_t retry_delay = 0;
--	uint8_t no_logout = 0;
- 
- 	sts = (sts_entry_t *) pkt;
- 	sts24 = (struct sts_entry_24xx *) pkt;
-@@ -2612,7 +2611,6 @@ check_scsi_status:
- 		break;
- 
- 	case CS_PORT_LOGGED_OUT:
--		no_logout = 1;
- 	case CS_PORT_CONFIG_CHG:
- 	case CS_PORT_BUSY:
- 	case CS_INCOMPLETE:
-@@ -2643,9 +2641,6 @@ check_scsi_status:
- 				port_state_str[atomic_read(&fcport->state)],
- 				comp_status);
- 
--			if (no_logout)
--				fcport->logout_on_delete = 0;
--
- 			qla2x00_mark_device_lost(fcport->vha, fcport, 1, 1);
- 			qlt_schedule_sess_for_deletion_lock(fcport);
- 		}
+ static const struct pci_error_handlers qla2xxx_err_handler = {
