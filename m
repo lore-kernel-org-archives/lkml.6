@@ -1,70 +1,83 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4106523-1520978225-2-5020975921830730800
+X-Cyrus-Session-Id: sloti22d1t05-3186171-1520946382-2-6743256626534971132
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520978225; b=j4K0n198sqkhlspzxJcyIgSf5DvgEYDfQ97kzJP4yK4c+hH
-    lkSbJ9C9/CxlOY6hq05DR7M0xwWRetw6mTHRQphLDfVfPRvOrWPWCuv4mp4UMy5X
-    ixq2CcrF5VTEfXaBl83kN859NdrEVQavuSpppVmwz2DmJtseMP6z3rsxMoikAAvN
-    Pv00EmWVdcWaAQR+Z2D5ljB5EU6VpQMBpzMi+TdbuvqHzFHIzvp0oWn7XB2PYFvK
-    FQrTs9ephn/HXfMBkL6frzJirwE5UTGbJp5OaqWPuQY3e/V3ImjQAiR68/WCibyh
-    GcjFjM7PtBMxOPOYhpHNevb7y4SkPd4VZNkuEeA==
+    t=1520946382; b=UA1b7OKErtubi0Pq2zoS2Td+H72rVC0KzZTHzaRqUYa9zDZ
+    7eet9yScuAFJNP9oDWksdrNnBpmNHK/9yUvgkAKZ1Hw6ZWhNykm25HMD0VxAvSTK
+    am0D4q3Qm3lBMjWohjNMJyNmPBnYcSyf0c6Ha2J2Kl8gQH9qt2ynhw/YEFuf8SD0
+    WXw9Z2Tn82dzJDfnx3p5ctIC2O0jVgk4TkgyuWGJI/rt/CFIpeUpHDdS1ZnObwqU
+    zXiNnZkO7Rhtiovm2YFq0kMvm94FG7tINPpCS0Av9l5oIq+1tKhBMQfciLQ8wyNi
+    9T/6JvqezU8UV+5RQ1nK1dArR9zLVMyZKTQxBSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:in-reply-to
-    :references:message-id:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1520978225; bh=brV5aPeXp/+bdSZeQjDclmSeQ2Z
-    pvVvVOCYlYzAMxVw=; b=wg42p6gdAI2EMvamZzNBNfPL82US7cOAKWILKr0pHS9
-    I05kvTatADGFvlfqXd2S1U9mAaRp/xMx6HElOzB6fsGt2dvCYGWpumpZ81BGW5mR
-    KidmGpnEFcqjSX2gi9GYxb6KqJtZhnpcvR7ioNyHJmhfflrENN4jRlldEloHcMMM
-    n3zpcpgApLnlw/2nAUyt7zAtkzur8+v3OyHT445/nbmjCaPeGKWUsfmKXf+iCtTQ
-    /b7lGzXSxcZv5rRzJrDBbBRSi+pF59RiXrcFYw7kMkE8w/4ASsmvbEQ2kVe4W0Ov
-    lvTC1nNVLVwdcX3PodDo7NU/tWPCHX+gIzdKXNDtTjw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520946382; bh=M
+    yQRhJ/VZRg+PzDBV2NFEn+XO6relnL1Vi06AtmbWbA=; b=SYL5dNIkExbPPfjcO
+    wFrUDS38n1Wg2Ai+/dVZhDU04/0J4Ke4a5+0oIExuedVD8qvGISgKOZ8Xd8Wb9nH
+    w3m6yvxudQp2feUY8OYm5lGF3zvs2A92OFFOc59vr7hKoMfer2+lkmShwOVTM8F2
+    rTSSfsYvHJ2zgifQK5/BaFYny0r/2uV0/Lhhob4aCgnQU7cq9HMi6H29Lj+ncQK5
+    17XhsHTYsb8x8RILPeFrt/6hdydeiNDR0vW9iRY9ZgLxp9xWs8hbTB24K2vwpxwz
+    OuW5qGcZQhRplVn9gf+OR4clSHfSMRF392VSNxz0406bEMpbsWNeGmRuvNx8zEaZ
+    rYBww==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neilb@suse.com>
-To: Arnd Bergmann <arnd@arndb.de>, Oleg Drokin <oleg.drokin@intel.com>,
+From: Arnd Bergmann <arnd@arndb.de>
+To: Oleg Drokin <oleg.drokin@intel.com>,
  Andreas Dilger <andreas.dilger@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 14 Mar 2018 08:56:45 +1100
-Subject: Re: [PATCH] staging: lustre: use module_name() macro for debug printf
-In-Reply-To: <20180313130425.3975930-1-arnd@arndb.de>
-References: <20180313130425.3975930-1-arnd@arndb.de>
-Message-ID: <87in9zd4gy.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
+Subject: [PATCH] staging: lustre: fid: avoid false-positive uninitialized
+ variable warning
+Date: Tue, 13 Mar 2018 14:05:16 +0100
+Message-Id: <20180313130532.4015402-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:2HlTolkLrD6qrWoM//2uMBdGVTyl5E7EPcgynasDVSIxBHLYO/F
+ 6Dp9mQq7Tgig/SuJd3M4TlAmMBbMMMhAhJ2nfplrkEEimIYQiOLTUXhoR1gwnWsn/I+m5wd
+ PJKd1MUVc8nSjCod+0iUKE5fD5zeGRkS+7mDEPHLSRRC7gJjahEiQHokkkP13ATHtMdBfcE
+ 5ghCxctF5znTP3DYmE41A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HzjFsWE9PMs=:0HVzQaehV5S5sApoPalP3P
+ 0ZV0vMRhkeBJHrmwhHb+rwTiouzKgYIFiNHOcetD2xsoBZfcbKtehdwGJ7fBssyRFCXh4m1UT
+ hBlCT4PZmi/Wc1s+TXmYG+yxFf+p9b/O0GRwsZzOUE4T8tD8464B5UYAvmmsDkoofErqm1BuW
+ NLllO+cxaEf7uaI769KoiSucTjCNXduNV4DtToDqTDFV+Li1gaTbhbLbvTEo3OdtqqmbD3jR5
+ pftw2qYxZ1LMQi0S6g9mYiw4+hDn2labthb+m6pJWUTw1628iR74N/FxV2iW+qSTs3tujjW9y
+ iHB6GojWhIbkbc0CzVScDJQaaQbadEjA3isouMMClnfoSs9Lbnknr1Ala0O56CpAuG19tTG7S
+ yp81RWerCYOPRYb5hAFSSQUjafGQvmR2VHPjY+oooaGyIaV1VGO2PkWdEV50IIzcgrv7YjtOG
+ CIsDt8He1+vvQbgxNB79jBc8+UvtBdqgceQnBfapONU1FD4yKJSAg9E1MkD1gHyS1KS29ycQ1
+ 9XxrWn1n+hvjepvfqi7EwnD1pOaw4B0CVpHmL7tDdB33M6NvAwF8QYmQPwCPBeDMzL+NAy/5Q
+ ccAFwbrjO5raqnB7RtXLjQ+vj1w7d2uauNNpa5XAoJrf10aRX34f5QExWDpV2WwN71sNANLiK
+ ADOdbaFU0Rzx9SeZn2dakZ2NHWHtRmvjjoL7QB3N3uiIZBuV2YCGYQ840M3XVnOqQLDxzUNjd
+ QORD6ZgP0oO0TVC9UKQeZ/WHMGRTeq+iusR15A==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -75,114 +88,53 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Aliaksei Karaliou <akaraliou.dev@gmail.com>,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+ NeilBrown <neilb@suse.com>, Arnd Bergmann <arnd@arndb.de>,
  lustre-devel@lists.lustre.org
-Content-Type: multipart/mixed; boundary="===============1755472846114048386=="
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---===============1755472846114048386==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+One of Neil's recent cleanups apparently has led the code to get
+to a state where gcc tracks the 'seqnr' variable just enough to
+see that it is sometimes initialized in seq_client_alloc_seq(),
+but not enough that it can prove this initialization to be reliable
+before the use of that variable:
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+drivers/staging/lustre/lustre/fid/fid_request.c: In function 'seq_client_alloc_fid':
+drivers/staging/lustre/lustre/fid/fid_request.c:245:22: error: 'seqnr' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-On Tue, Mar 13 2018, Arnd Bergmann wrote:
+The code seems to be otherwise correct, and I could not come
+up with a good way to simplify it further, so this adds a fake
+initialization to shut up that warning.
 
-> We now allow lustre to be built when CONFIG_MODULES is disabled,
-> but that causes a build failure:
->
-> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.=
-h:42,
->                  from drivers/staging/lustre/lustre/obdclass/lu_object.c:=
-44:
-> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_conte=
-xt_key_degister':
-> drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: derefe=
-rencing pointer to incomplete type 'struct module'
->
-> This particular case can be avoided by using the module_name()
-> macro that was designed exactly to handle printing the name of
-> a module in all configurations.
-
-Learn something new every day :-)
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Reviewed-by: NeilBrown <neilb@suse.com>
+---
+ drivers/staging/lustre/lustre/fid/fid_request.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-NeilBrown
-
->
-> Cc: NeilBrown <neilb@suse.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/staging/lustre/lustre/obdclass/lu_object.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers=
-/staging/lustre/lustre/obdclass/lu_object.c
-> index 8ddf23b82a2c..3ae16e8501c2 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-> @@ -1407,7 +1407,7 @@ void lu_context_key_degister(struct lu_context_key =
-*key)
->  	while (atomic_read(&key->lct_used) > 1) {
->  		spin_unlock(&lu_keys_guard);
->  		CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
-> -		       __func__, key->lct_owner ? key->lct_owner->name : "",
-> +		       __func__, module_name(key->lct_owner),
->  		       key, atomic_read(&key->lct_used));
->  		schedule();
->  		spin_lock(&lu_keys_guard);
-> @@ -1547,7 +1547,7 @@ void lu_context_key_quiesce(struct lu_context_key *=
-key)
->  			spin_unlock(&lu_keys_guard);
->  			CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
->  			       __func__,
-> -			       key->lct_owner ? key->lct_owner->name : "",
-> +			       module_name(key->lct_owner),
->  			       key, atomic_read(&key->lct_used),
->  			atomic_read(&lu_key_initing_cnt));
->  			schedule();
-> --=20
-> 2.9.0
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqoSR0ACgkQOeye3VZi
-gbk8jg/8DWxkF6SXJ6X9TbEAskcsaaY9YQQNED6ocVUC+dcBtXmvchgYwEpfVqiI
-uxmfSkl7dzlMtVAsQz8hif/LOrZ9SbpFJkV0fMywBJnjvLvoSWzEU3TjbjmSrBm1
-1uiIVO38t473XF63dXTGFlwhGMiLsfoVNFUJZVNUyhHl0ugfJ/vySWlOpe6hxkr/
-RW9RVEmP6SfASNw+AEl2Wq5iaZdfeO58btEWTav43UdIoOrljzHFzRT9rxRFD3V1
-qzq/QkEsqG+/OdZTBiY29HqkBSzdf7iVY4rSobwRq03d5XypJ4JgoP7Nx43QwFHp
-fSIJm1IPneMYzSEvJaHFCc0xC29is+ekD6C/msVJfV/LIMkRXgVjHZu74uC7vuFv
-40rIv95SvxfL/lcR9oDdpOF4hPofERLr26VolFMlHhzlv8+p8b8QE5jTIuTOMHR4
-xoQsgZgUfhxbKyQiejsjPLClMq+yGxQpg9/uvx7puoz2Vu5jBxi2zbkih9TE/M/C
-p+NmOOkP1s1svkNIQciTHfi9to20NkErHHbzTTOAupSjYvGfpzCkRSSfbHxE9Ls6
-c0fUM7UywZLC9OMoFExerg3DwruwJU38cPi8mhYQiKxw/a/3RbUX3+5hCz+o0oa1
-5EhxCLnnMW8UrYNR1hpN0/wqL6sBpZ31jvO6jd0/lePNo0nvW9Q=
-=ba3u
------END PGP SIGNATURE-----
---=-=-=--
-
---===============1755472846114048386==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+diff --git a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
+index fa23423eb8b3..030680f37c79 100644
+--- a/drivers/staging/lustre/lustre/fid/fid_request.c
++++ b/drivers/staging/lustre/lustre/fid/fid_request.c
+@@ -174,6 +174,7 @@ static int seq_client_alloc_seq(const struct lu_env *env,
+ 		if (rc) {
+ 			CERROR("%s: Can't allocate new meta-sequence, rc %d\n",
+ 			       seq->lcs_name, rc);
++			*seqnr = U64_MAX;
+ 			return rc;
+ 		}
+ 		CDEBUG(D_INFO, "%s: New range - " DRANGE "\n",
+-- 
+2.9.0
 
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
 http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============1755472846114048386==--
