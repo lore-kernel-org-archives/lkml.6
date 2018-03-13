@@ -1,120 +1,532 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeCMItl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:49:41 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33394 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeCMIti (ORCPT
+        id S1752606AbeCMIuE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:50:04 -0400
+Received: from atl4mhfb01.myregisteredsite.com ([209.17.115.55]:54138 "EHLO
+        atl4mhfb01.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752059AbeCMIuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:49:38 -0400
-X-Google-Smtp-Source: AG47ELtRRHyMpuPQecSV1Evwe/A8qlfGZ6AmBW5DxXBMtkYGEdnrsHwe36Gi93vEHMdr8JEwrNyeSbiko458qxHvx0Q=
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Yscqe6M1jXSkcuvw+5-27YzZn4AXwKzU1oJCNhUrj1Ng@mail.gmail.com>
-References: <201803122219.vHl3IwRo%fengguang.wu@intel.com> <CACT4Y+Yscqe6M1jXSkcuvw+5-27YzZn4AXwKzU1oJCNhUrj1Ng@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 13 Mar 2018 11:49:17 +0300
-Message-ID: <CACT4Y+ayA+maaG3uddxpy3w24Jyppsxmyu5R_rEsvm3JjtZkRQ@mail.gmail.com>
-Subject: Re: [tip:locking/core 9/11] include/asm-generic/atomic-instrumented.h:288:24:
- sparse: cast truncates bits from constant value (100 becomes 0)
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
-        tipbuild@zytor.com, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Mar 2018 04:50:02 -0400
+X-TCPREMOTEIP: 37.74.225.130
+X-Authenticated-UID: mike@milosoftware.com
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH] clk: Add driver for the si544 clock generator chip
+Date: Tue, 13 Mar 2018 09:43:59 +0100
+Message-Id: <1520930639-11642-1-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 6:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Mon, Mar 12, 2018 at 5:52 PM, kbuild test robot
-> <fengguang.wu@intel.com> wrote:
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
->> head:   ac605bee0bfab40fd5d11964705e907d2d5a32de
->> commit: 8bf705d130396e69c04cd8e6e010244ad2ce71f4 [9/11] locking/atomic/x86: Switch atomic.h to use atomic-instrumented.h
->> reproduce:
->>         # apt-get install sparse
->>         git checkout 8bf705d130396e69c04cd8e6e010244ad2ce71f4
->>         make ARCH=x86_64 allmodconfig
->>         make C=1 CF=-D__CHECK_ENDIAN__
->>
->>
->> sparse warnings: (new ones prefixed by >>)
->>
->>    kernel/locking/qspinlock.c:418:22: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
->>    kernel/locking/qspinlock.c:418:22:    expected struct mcs_spinlock *prev
->>    kernel/locking/qspinlock.c:418:22:    got struct mcs_spinlock [pure] *
->>    kernel/locking/qspinlock_paravirt.h:519:1: sparse: symbol '__pv_queued_spin_unlock_slowpath' was not declared. Should it be static?
->>    kernel/locking/qspinlock.c:418:22: sparse: incorrect type in assignment (different modifiers) @@    expected struct mcs_spinlock *prev @@    got struct struct mcs_spinlock *prev @@
->>    kernel/locking/qspinlock.c:418:22:    expected struct mcs_spinlock *prev
->>    kernel/locking/qspinlock.c:418:22:    got struct mcs_spinlock [pure] *
->>>> include/asm-generic/atomic-instrumented.h:288:24: sparse: cast truncates bits from constant value (100 becomes 0)
->>
->> vim +288 include/asm-generic/atomic-instrumented.h
->>
->> b06ed71a6 Dmitry Vyukov 2018-01-29  282
->> b06ed71a6 Dmitry Vyukov 2018-01-29  283  static __always_inline unsigned long
->> b06ed71a6 Dmitry Vyukov 2018-01-29  284  cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
->> b06ed71a6 Dmitry Vyukov 2018-01-29  285  {
->> b06ed71a6 Dmitry Vyukov 2018-01-29  286         switch (size) {
->> b06ed71a6 Dmitry Vyukov 2018-01-29  287         case 1:
->> b06ed71a6 Dmitry Vyukov 2018-01-29 @288                 return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
->> b06ed71a6 Dmitry Vyukov 2018-01-29  289         case 2:
->> b06ed71a6 Dmitry Vyukov 2018-01-29  290                 return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
->> b06ed71a6 Dmitry Vyukov 2018-01-29  291         case 4:
->> b06ed71a6 Dmitry Vyukov 2018-01-29  292                 return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
->> b06ed71a6 Dmitry Vyukov 2018-01-29  293         case 8:
->> b06ed71a6 Dmitry Vyukov 2018-01-29  294                 BUILD_BUG_ON(sizeof(unsigned long) != 8);
->> b06ed71a6 Dmitry Vyukov 2018-01-29  295                 return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
->> b06ed71a6 Dmitry Vyukov 2018-01-29  296         }
->> b06ed71a6 Dmitry Vyukov 2018-01-29  297         BUILD_BUG();
->> b06ed71a6 Dmitry Vyukov 2018-01-29  298         return 0;
->> b06ed71a6 Dmitry Vyukov 2018-01-29  299  }
->> b06ed71a6 Dmitry Vyukov 2018-01-29  300
->>
->> :::::: The code at line 288 was first introduced by commit
->> :::::: b06ed71a624ba088a3e3e3ac7d4185f48c7c1660 locking/atomic, asm-generic: Add asm-generic/atomic-instrumented.h
->>
->> :::::: TO: Dmitry Vyukov <dvyukov@google.com>
->> :::::: CC: Ingo Molnar <mingo@kernel.org>
->
->
-> I will take a look tomorrow.
+This patch adds the driver and devicetree documentation for the
+Silicon Labs SI544 clock generator chip. This is an I2C controlled
+oscillator capable of generating clock signals ranging from 200kHz
+to 1500MHz.
 
-It seems that this is due to this guy:
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
+ drivers/clk/Kconfig                                |  10 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-si544.c                            | 421 +++++++++++++++++++++
+ 4 files changed, 457 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
+ create mode 100644 drivers/clk/clk-si544.c
 
-static __always_inline int trylock_clear_pending(struct qspinlock *lock)
-{
-        struct __qspinlock *l = (void *)lock;
-
-        return !READ_ONCE(l->locked) &&
-               (cmpxchg_acquire(&l->locked_pending, _Q_PENDING_VAL,
-                                _Q_LOCKED_VAL) == _Q_PENDING_VAL);
-}
-
-_Q_PENDING_VAL is 0x100. However, locked_pending is 2 bytes. So it
-seems that compiler checks all switch cases, this inevitably will lead
-to such warnings.
-
-Any suggestion on how to resolve this? Leave as is?
-
-Off the top of my head I can think of the following solution:
-
-        switch (size) {
-        case 1:
-                return arch_cmpxchg((u8 *)ptr, (u8)(old * (size !=
-1)), (u8)(new * (size != 1)));
-        case 2:
-                return arch_cmpxchg((u16 *)ptr, (u16)(old * (size !=
-2)), (u16)(new * (size != 2)));
-
-But it's too ugly.
-
-
-FTR, the following was helpful to find invocations with particular size:
-
- #define cmpxchg(ptr, old, new)                                         \
- ({                                                                     \
-+       BUILD_BUG_ON(sizeof(*(ptr)) == 1);                              \
-        ((__typeof__(*(ptr)))cmpxchg_size((ptr), (unsigned long)(old),  \
-                (unsigned long)(new), sizeof(*(ptr))));                 \
- })
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+new file mode 100644
+index 0000000..eec1787
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+@@ -0,0 +1,25 @@
++Binding for Silicon Labs 544 programmable I2C clock generator.
++
++Reference
++This binding uses the common clock binding[1]. Details about the device can be
++found in the datasheet[2].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Si544 datasheet
++    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
++
++Required properties:
++ - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
++               to the speed grade of the chip.
++ - reg: I2C device address.
++ - #clock-cells: From common clock bindings: Shall be 0.
++
++Optional properties:
++ - clock-output-names: From common clock bindings. Recommended to be "si544".
++
++Example:
++	si544: clock-generator@55 {
++		reg = <0x55>;
++		#clock-cells = <0>;
++		compatible = "silabs,si544b";
++	};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc..5c7dc8e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -91,6 +91,16 @@ config COMMON_CLK_SI514
+ 	  This driver supports the Silicon Labs 514 programmable clock
+ 	  generator.
+ 
++config COMMON_CLK_SI544
++	tristate "Clock driver for SiLabs 544 devices"
++	depends on I2C
++	depends on OF
++	select REGMAP_I2C
++	help
++	---help---
++	  This driver supports the Silicon Labs 544 programmable clock
++	  generator.
++
+ config COMMON_CLK_SI570
+ 	tristate "Clock driver for SiLabs 570 and compatible devices"
+ 	depends on I2C
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e..bde614a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
++obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
+diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
+new file mode 100644
+index 0000000..1947e48
+--- /dev/null
++++ b/drivers/clk/clk-si544.c
+@@ -0,0 +1,421 @@
++/*
++ * Driver for Silicon Labs Si544 Programmable Oscillator
++ *
++ * Copyright (C) 2018 Topic Embedded Products
++ *
++ * Author: Mike Looijmans <mike.looijmans@topic.nl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/i2c.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++/* I2C registers (decimal as in datasheet) */
++#define SI544_REG_CONTROL	7
++#define SI544_REG_OE_STATE	17
++#define SI544_REG_HS_DIV	23
++#define SI544_REG_LS_HS_DIV	24
++#define SI544_REG_FBDIV0	26
++#define SI544_REG_FBDIV8	27
++#define SI544_REG_FBDIV16	28
++#define SI544_REG_FBDIV24	29
++#define SI544_REG_FBDIV32	30
++#define SI544_REG_FBDIV40	31
++#define SI544_REG_FCAL_OVR	69
++#define SI544_REG_ADPLL_DELTA_M0	231
++#define SI544_REG_ADPLL_DELTA_M8	232
++#define SI544_REG_ADPLL_DELTA_M16	233
++#define SI544_REG_PAGE_SELECT	255
++
++/* Register values */
++#define SI544_CONTROL_RESET	BIT(7)
++#define SI544_CONTROL_MS_ICAL2	BIT(3)
++
++#define SI544_OE_STATE_ODC_OE	BIT(0)
++
++/* Max freq depends on speed grade */
++#define SI544_MIN_FREQ	    200000U
++
++/* Si544 Internal oscilator runs at 55.05 MHz */
++#define FXO		  55050000U
++
++/* VCO range is 10.8 .. 12.1 GHz, max depends on speed grade */
++#define FVCO_MIN       10800000000ULL
++
++#define HS_DIV_MAX	2046
++#define HS_DIV_MAX_ODD	33
++
++enum si544_speed_grade {
++	si544a,
++	si544b,
++	si544c,
++};
++
++struct clk_si544 {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	struct i2c_client *i2c_client;
++	enum si544_speed_grade speed_grade;
++};
++#define to_clk_si544(_hw)	container_of(_hw, struct clk_si544, hw)
++
++/* Multiplier/divider settings */
++struct clk_si544_muldiv {
++	u32 fb_div_frac;  /* Integer part of feedback divider (32 bits) */
++	u16 fb_div_int;  /* Fractional part of feedback divider (11 bits) */
++	u16 hs_div; /* 1st divider, 5..2046, must be even when >33 */
++	u8 ls_div_bits; /* 2nd divider, as 2^x, range 0..5 */
++};
++
++/* Enables or disables the output driver */
++static int si544_enable_output(struct clk_si544 *data, bool enable)
++{
++	return regmap_update_bits(data->regmap, SI544_REG_OE_STATE,
++		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
++}
++
++/* Retrieve clock multiplier and dividers from hardware */
++static int si544_get_muldiv(struct clk_si544 *data,
++	struct clk_si544_muldiv *settings)
++{
++	int err;
++	u8 reg[6];
++
++	err = regmap_bulk_read(data->regmap, SI544_REG_HS_DIV, reg, 2);
++	if (err)
++		return err;
++
++	settings->ls_div_bits = (reg[1] >> 4) & 0x07;
++	settings->hs_div = (reg[1] & 0x07) << 8 | reg[0];
++
++	err = regmap_bulk_read(data->regmap, SI544_REG_FBDIV0, reg, 6);
++	if (err)
++		return err;
++
++	settings->fb_div_int = reg[4] | (reg[5] & 0x07) << 8;
++	settings->fb_div_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
++				reg[3] << 24;
++	return 0;
++}
++
++static int si544_set_muldiv(struct clk_si544 *data,
++	struct clk_si544_muldiv *settings)
++{
++	int err;
++	u8 reg[6];
++
++	reg[0] = settings->hs_div;
++	reg[1] = settings->hs_div >> 8 | settings->ls_div_bits << 4;
++
++	err = regmap_bulk_write(data->regmap, SI544_REG_HS_DIV, reg, 2);
++	if (err < 0)
++		return err;
++
++	reg[0] = settings->fb_div_frac;
++	reg[1] = settings->fb_div_frac >> 8;
++	reg[2] = settings->fb_div_frac >> 16;
++	reg[3] = settings->fb_div_frac >> 24;
++	reg[4] = settings->fb_div_int;
++	reg[5] = settings->fb_div_int >> 8;
++
++	/*
++	 * Writing to SI544_REG_FBDIV40 triggers the clock change, so that
++	 * must be written last
++	 */
++	return regmap_bulk_write(data->regmap, SI544_REG_FBDIV0, reg, 6);
++}
++
++static bool is_valid_frequency(const struct clk_si544 *data,
++	unsigned long frequency)
++{
++	unsigned long max_freq;
++
++	if (frequency < SI544_MIN_FREQ)
++		return false;
++
++	switch (data->speed_grade) {
++	case si544a:
++		max_freq = 1500000000;
++		break;
++	case si544b:
++		max_freq = 800000000;
++		break;
++	case si544c:
++		max_freq = 350000000;
++		break;
++	default:
++		return false;
++	}
++
++	if (frequency > max_freq)
++		return false;
++
++	return true;
++}
++
++/* Calculate divider settings for a given frequency */
++static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
++	unsigned long frequency)
++{
++	u64 vco;
++	u32 ls_freq;
++	u32 tmp;
++	u8 res;
++
++	/* Determine the minimum value of LS_DIV and resulting target freq. */
++	ls_freq = frequency;
++	settings->ls_div_bits = 0;
++
++	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
++		settings->ls_div_bits = 0;
++	else {
++		res = 1;
++		tmp = 2 * HS_DIV_MAX;
++		while (tmp <= (HS_DIV_MAX * 32)) {
++			if ((frequency * tmp) >= FVCO_MIN)
++				break;
++			++res;
++			tmp <<= 1;
++		}
++		settings->ls_div_bits = res;
++		ls_freq = frequency << res;
++	}
++
++	/* Determine minimum HS_DIV by rounding up */
++	vco = FVCO_MIN + ls_freq - 1;
++	do_div(vco, ls_freq);
++	settings->hs_div = vco;
++	/* round up to even number if needed */
++	if ((settings->hs_div > HS_DIV_MAX_ODD) && (settings->hs_div & 1))
++		++settings->hs_div;
++	/* Calculate VCO frequency (in 10..12GHz range) */
++	vco = (u64)ls_freq * settings->hs_div;
++	/* Calculate the integer part of the feedback divider */
++	tmp = do_div(vco, FXO);
++	settings->fb_div_int = vco;
++	/* And the fractional bits using the remainder */
++	vco = (u64)tmp << 32;
++	do_div(vco, FXO);
++	settings->fb_div_frac = vco;
++
++	return 0;
++}
++
++/* Calculate resulting frequency given the register settings */
++static unsigned long si544_calc_rate(struct clk_si544_muldiv *settings)
++{
++	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
++	u64 vco;
++
++	/* Calculate VCO while preventing overflow */
++	vco = (u64)settings->fb_div_int * FXO;
++	vco += (((u64)settings->fb_div_frac * FXO) + (FXO / 2)) >> 32;
++
++	do_div(vco, d);
++
++	return vco;
++}
++
++static unsigned long si544_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	err = si544_get_muldiv(data, &settings);
++	if (err) {
++		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
++		return 0;
++	}
++
++	return si544_calc_rate(&settings);
++}
++
++static long si544_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	if (!rate)
++		return 0;
++
++	if (!is_valid_frequency(data, rate))
++		return -EINVAL;
++
++	err = si544_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	return si544_calc_rate(&settings);
++}
++
++/*
++ * Update output frequency for "big" frequency changes
++ */
++static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	if (!is_valid_frequency(data, rate))
++		return -EINVAL;
++
++	err = si544_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	si544_enable_output(data, false);
++
++	/* Allow FCAL for this frequency update */
++	err = regmap_write(data->regmap, SI544_REG_FCAL_OVR, 0);
++	if (err < 0)
++		return err;
++
++
++	err = si544_set_muldiv(data, &settings);
++	if (err < 0)
++		return err; /* Undefined state now, best to leave disabled */
++
++	/* Trigger calibration */
++	err = regmap_write(data->regmap, SI544_REG_CONTROL,
++			   SI544_CONTROL_MS_ICAL2);
++	if (err < 0)
++		return err;
++
++	/* Applying a new frequency can take up to 10ms */
++	usleep_range(10000, 12000);
++
++	si544_enable_output(data, true);
++
++	return err;
++}
++
++static const struct clk_ops si544_clk_ops = {
++	.recalc_rate = si544_recalc_rate,
++	.round_rate = si544_round_rate,
++	.set_rate = si544_set_rate,
++};
++
++static bool si544_regmap_is_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case SI544_REG_CONTROL:
++	case SI544_REG_FCAL_OVR:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config si544_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.cache_type = REGCACHE_RBTREE,
++	.max_register = SI544_REG_PAGE_SELECT,
++	.volatile_reg = si544_regmap_is_volatile,
++};
++
++static int si544_probe(struct i2c_client *client,
++		const struct i2c_device_id *id)
++{
++	struct clk_si544 *data;
++	struct clk_init_data init;
++	int err;
++
++	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	init.ops = &si544_clk_ops;
++	init.flags = 0;
++	init.num_parents = 0;
++	data->hw.init = &init;
++	data->i2c_client = client;
++	data->speed_grade = id->driver_data;
++
++	if (of_property_read_string(client->dev.of_node, "clock-output-names",
++			&init.name))
++		init.name = client->dev.of_node->name;
++
++	data->regmap = devm_regmap_init_i2c(client, &si544_regmap_config);
++	if (IS_ERR(data->regmap)) {
++		dev_err(&client->dev, "failed to allocate register map\n");
++		return PTR_ERR(data->regmap);
++	}
++
++	i2c_set_clientdata(client, data);
++
++	/* Select page 0, just to be sure, there appear to be no more */
++	err = regmap_write(data->regmap, SI544_REG_PAGE_SELECT, 0);
++	if (err < 0)
++		return err;
++
++	err = devm_clk_hw_register(&client->dev, &data->hw);
++	if (err) {
++		dev_err(&client->dev, "clock registration failed\n");
++		return err;
++	}
++	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
++				     &data->hw);
++	if (err) {
++		dev_err(&client->dev, "unable to add clk provider\n");
++		return err;
++	}
++
++	return 0;
++}
++
++static int si544_remove(struct i2c_client *client)
++{
++	of_clk_del_provider(client->dev.of_node);
++	return 0;
++}
++
++static const struct i2c_device_id si544_id[] = {
++	{ "si544a", si544a },
++	{ "si544b", si544b },
++	{ "si544c", si544c },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, si544_id);
++
++static const struct of_device_id clk_si544_of_match[] = {
++	{ .compatible = "silabs,si544a" },
++	{ .compatible = "silabs,si544b" },
++	{ .compatible = "silabs,si544c" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, clk_si544_of_match);
++
++static struct i2c_driver si544_driver = {
++	.driver = {
++		.name = "si544",
++		.of_match_table = clk_si544_of_match,
++	},
++	.probe		= si544_probe,
++	.remove		= si544_remove,
++	.id_table	= si544_id,
++};
++module_i2c_driver(si544_driver);
++
++MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
++MODULE_DESCRIPTION("Si544 driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
