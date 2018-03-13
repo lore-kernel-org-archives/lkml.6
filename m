@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvXyD4RVYGbTG7YS3NYgiTk45UsxOvH1rGEvkYshSz3882bOj00A0JoHVkw+UY5sBUJKmzG
-ARC-Seal: i=1; a=rsa-sha256; t=1520955416; cv=none;
+X-Google-Smtp-Source: AG47ELtLbonk0ymb2yxZmPXeL8l33tW9CVH+FcboEExIkdcP++XjkMGEua7TJNQ64t1MNipTCEMZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520955413; cv=none;
         d=google.com; s=arc-20160816;
-        b=wRHrfaoeE/n7t63i63T834yo/wESESHVcSJF+HQ32mWsIs6/hwD1uqIZC3rNj58oxu
-         TgNrtk+iY1dsGpKkBQMCnrhDUWcEUxPOVHwBCRFbOMjv55D9BjK2fH/S2okAmsJ22Ey7
-         TavVDLZs+uAFdsh3nStiJjpmDfWgsw70vcblm//T7D+Dlo+dZVA/B9/eIaMPsaH2Gx5Y
-         wla6E0FleQbHYd5hpw7hQnNVdQ5EO5XsqhAUzuYBRocawGZyqep8y9aZ1d5bp2Q6/kzo
-         r5fByhKbqDtrkuGC3ksfRAWJD65U6VS1TwKd2DLXwCJJCQ1zYLGcSokI3b4osQR3TVfP
-         bYIw==
+        b=IiKjc8idHm5pW92imlcBbuB61sy5QPNx0LQR3IPPzF6gHCXWTstgG3PlrrjsF4VFqq
+         LMky54knxS69ToXaUF5osUS1D24cGuS93kr5Os8fzJILShyu/XeVDHKbm0/1eMw3x41S
+         n94R8UrYq+KBDEfg78MeF0T0VAC+khVRowWgfnkSnRr1VD+u4af1fceh9rOautHRmwVn
+         8TqLPn+rpYMoq+iEoL63czpfKIU2uAELpI/lD9TtzjGwYJhybEybsTB38zi8tG7Utdcd
+         I4z2qu4jti7rmNhtzjyZ1OHcFCUOwMqqf+ccXpS6LBBKjSooMaGu95yBLLjk6hn4jZ5d
+         RAUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=v6Gp4k19qwebfVqjXf0zSeDYGPyifnckjDj06Yn2X4U=;
-        b=bloyj6ufEM6nK9nKypc+hN5TSt9TY9uRlutOHDGzEb3QutNr50M3lw+bY2DDytdAbh
-         5GbUEbP1nTuYxKtdwJiwmdMrqphOGNDH4yKqnUCCh3gMdT8Okl0ukjjq5w+eDUuDabiA
-         WmyAH9HBOoDiMC9yhRRqnfWhBx5ayDvvJnu7eSwsX7YXzowqPZBKqGV2LuYK0aRsWYiM
-         YC3GaDNuyS1zRc3TSii6/R4OzPg/zRDoPImwrbypKwf7q6d+6MSwA8ykwQNm0bRvXHoc
-         yym0H0YKt7DgGNER3c5FwfKLGdOCYHZmEYmHtxpNhXBamf1Y0fkgFK34q1Bi9FfrXPiW
-         jBoQ==
+        bh=1UZrpghtiDRftR7DiDU+LjyPXbb436zfjNhHEI1NpD4=;
+        b=JdkoCkFjlmevEhcKar9kE8IpDuRtYL7FqUwKMoAsnY+sTO163uqfBid2lv4Y1IRVMk
+         mRr7pAe1XOKZWeFnLNrG++aSoOroxiy/HpFEq1cVgkmg3EHDge4Cp14BDLMwL2oj8ZmT
+         UoHhTsv9kiyC8kBmEmqQiGq5QEzArYQZ7z74gOqi0RujgIeKaVWkmsBL0JEgXpkRtsjB
+         cyb0dwAtGLaTsvP5DZXTuP8Ywb2WGtC3B89zIOES1J+2hziy/yz7WFTN32+iOOswzlo/
+         qxgqTH3y8JUvqDnvkqWVbCbguEQpCMuUZpFQOR/AmakV8Yll4Wi6jgprts8OfwkSV2Pl
+         e1sQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.14 043/140] NFS: Fix an incorrect type in struct nfs_direct_req
-Date: Tue, 13 Mar 2018 16:24:06 +0100
-Message-Id: <20180313152501.006471826@linuxfoundation.org>
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 042/140] scsi: qla2xxx: Fix memory leak in dual/target mode
+Date: Tue, 13 Mar 2018 16:24:05 +0100
+Message-Id: <20180313152500.944485328@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -39,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837183712933568?=
-X-GMAIL-MSGID: =?utf-8?q?1594837347307091194?=
+X-GMAIL-THRID: =?utf-8?q?1594837180805822140?=
+X-GMAIL-MSGID: =?utf-8?q?1594837343868346931?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,32 +50,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit d9ee65539d3eabd9ade46cca1780e3309ad0f907 upstream.
+commit 7867b98dceb7741065c9c1b645136facad5c2e93 upstream.
 
-The start offset needs to be of type loff_t.
+When driver is loaded in Target/Dual mode, it creates QPair to support
+MQ and allocates resources for each QPair. This Qpair initialization is
+delayed until the FW personality is changed to Dual/Target mode by
+issuing chip reset. At the time of chip reset firmware is re-initilized
+in correct personality all the QPairs are initialized by sending
+MBC_INITIALIZE_MULTIQ (001Fh).
 
-Fixed: 5fadeb47dcc5c ("nfs: count DIO good bytes correctly with mirroring")
-Cc: stable@vger.kernel.org # v4.0+
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+This patch fixes memory leak by adding check to issue
+MBC_INITIALIZE_MULTIQ command only while deleting rsp/req queue when the
+flag is set for initiator mode, and clean up QPair resources correctly
+during the driver unload. This MBX does not need to be issued for
+Target/Dual mode because chip reset will reset ISP.
+
+Fixes: d65237c7f0860 ("scsi: qla2xxx: Fix mailbox failure while deleting Queue pairs")
+Cc: <stable@vger.kernel.org> # 4.10+
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/direct.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_init.c |    4 +---
+ drivers/scsi/qla2xxx/qla_mid.c  |   18 ++++++++++--------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -86,10 +86,10 @@ struct nfs_direct_req {
- 	struct nfs_direct_mirror mirrors[NFS_PAGEIO_DESCRIPTOR_MIRROR_MAX];
- 	int			mirror_count;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -8092,9 +8092,6 @@ int qla2xxx_delete_qpair(struct scsi_qla
+ 	int ret = QLA_FUNCTION_FAILED;
+ 	struct qla_hw_data *ha = qpair->hw;
  
-+	loff_t			io_start;	/* Start offset for I/O */
- 	ssize_t			count,		/* bytes actually processed */
- 				max_count,	/* max expected count */
- 				bytes_left,	/* bytes left to be sent */
--				io_start,	/* start of IO */
- 				error;		/* any reported error */
- 	struct completion	completion;	/* wait for i/o completion */
+-	if (!vha->flags.qpairs_req_created && !vha->flags.qpairs_rsp_created)
+-		goto fail;
+-
+ 	qpair->delete_in_progress = 1;
+ 	while (atomic_read(&qpair->ref_count))
+ 		msleep(500);
+@@ -8102,6 +8099,7 @@ int qla2xxx_delete_qpair(struct scsi_qla
+ 	ret = qla25xx_delete_req_que(vha, qpair->req);
+ 	if (ret != QLA_SUCCESS)
+ 		goto fail;
++
+ 	ret = qla25xx_delete_rsp_que(vha, qpair->rsp);
+ 	if (ret != QLA_SUCCESS)
+ 		goto fail;
+--- a/drivers/scsi/qla2xxx/qla_mid.c
++++ b/drivers/scsi/qla2xxx/qla_mid.c
+@@ -575,14 +575,15 @@ qla25xx_free_rsp_que(struct scsi_qla_hos
+ int
+ qla25xx_delete_req_que(struct scsi_qla_host *vha, struct req_que *req)
+ {
+-	int ret = -1;
++	int ret = QLA_SUCCESS;
  
+-	if (req) {
++	if (req && vha->flags.qpairs_req_created) {
+ 		req->options |= BIT_0;
+ 		ret = qla25xx_init_req_que(vha, req);
++		if (ret != QLA_SUCCESS)
++			return QLA_FUNCTION_FAILED;
+ 	}
+-	if (ret == QLA_SUCCESS)
+-		qla25xx_free_req_que(vha, req);
++	qla25xx_free_req_que(vha, req);
+ 
+ 	return ret;
+ }
+@@ -590,14 +591,15 @@ qla25xx_delete_req_que(struct scsi_qla_h
+ int
+ qla25xx_delete_rsp_que(struct scsi_qla_host *vha, struct rsp_que *rsp)
+ {
+-	int ret = -1;
++	int ret = QLA_SUCCESS;
+ 
+-	if (rsp) {
++	if (rsp && vha->flags.qpairs_rsp_created) {
+ 		rsp->options |= BIT_0;
+ 		ret = qla25xx_init_rsp_que(vha, rsp);
++		if (ret != QLA_SUCCESS)
++			return QLA_FUNCTION_FAILED;
+ 	}
+-	if (ret == QLA_SUCCESS)
+-		qla25xx_free_rsp_que(vha, rsp);
++	qla25xx_free_rsp_que(vha, rsp);
+ 
+ 	return ret;
+ }
