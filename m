@@ -1,342 +1,335 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeCMNe2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:34:28 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51872 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752283AbeCMNeY (ORCPT
+        id S1752926AbeCMNef (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:34:35 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57825 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752904AbeCMNe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:34:24 -0400
-Subject: Re: [PATCH V4 3/5] nvme-pci: avoid nvme_dev_disable to be invoked in
- nvme_timeout
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
- <1520489971-31174-4-git-send-email-jianchao.w.wang@oracle.com>
- <5e60e6bc-d0cc-9ea9-1a35-ed5031904da6@oracle.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <200f5d7c-77f6-d90b-a409-08fad712139d@oracle.com>
-Date: Tue, 13 Mar 2018 21:29:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <5e60e6bc-d0cc-9ea9-1a35-ed5031904da6@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803130161
+        Tue, 13 Mar 2018 09:34:29 -0400
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: robh+dt@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
+        brendanhiggins@google.com, avifishman70@gmail.com,
+        julien.thierry@arm.com, pombredanne@nexb.com, arnd@arndb.de,
+        olof@lixom.net, khilman@kernel.org, joel@jms.id.au
+Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v12 2/3] arm: dts: add Nuvoton NPCM750 device tree
+Date: Tue, 13 Mar 2018 15:32:10 +0200
+Message-Id: <1520947931-15426-3-git-send-email-tmaimon77@gmail.com>
+X-Mailer: git-send-email 1.8.3.4
+In-Reply-To: <1520947931-15426-1-git-send-email-tmaimon77@gmail.com>
+References: <1520947931-15426-1-git-send-email-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keith
+Add a common device tree for all Nuvoton NPCM750 BMCs and a board
+specific device tree for the NPCM750 (Poleg) evaluation board.
 
-Would you please take a look at this patch.
-I really need your suggestion on this.
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Tested-by: Avi Fishman <avifishman70@gmail.com>
+Tested-by: Joel Stanley <joel@jms.id.au>
+---
+ .../arm/cpu-enable-method/nuvoton,npcm750-smp      |  42 ++++++
+ .../devicetree/bindings/arm/npcm/npcm.txt          |   6 +
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/nuvoton-npcm750-evb.dts          |  35 +++++
+ arch/arm/boot/dts/nuvoton-npcm750.dtsi             | 165 +++++++++++++++++++++
+ 5 files changed, 250 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp
+ create mode 100644 Documentation/devicetree/bindings/arm/npcm/npcm.txt
+ create mode 100644 arch/arm/boot/dts/nuvoton-npcm750-evb.dts
+ create mode 100644 arch/arm/boot/dts/nuvoton-npcm750.dtsi
 
-Sincerely
-Jianchao
-
-On 03/09/2018 10:01 AM, jianchao.wang wrote:
-> Hi Keith
-> 
-> Can I have the honor of getting your comment on this patch?
-> 
-> Thanks in advance
-> Jianchao
-> 
-> On 03/08/2018 02:19 PM, Jianchao Wang wrote:
->> nvme_dev_disable will issue command on adminq to clear HMB and
->> delete io cq/sqs, maybe more in the future. When adminq no response,
->> it has to depends on timeout path. However, nvme_timeout has to
->> invoke nvme_dev_disable before return, so that the DMA mappings
->> could be released safely. This will introduce dangerous circular
->> dependence. Moreover, the whole nvme_dev_disable is under
->> shutdown_lock even waiting for the command, this makes things
->> worse.
->>
->> To avoid this, this patch refactors the nvme_timeout. The basic
->> principle is:
->>  - When need to schedule reset_work, hand over expired requests
->>    to nvme_dev_disable. They will be completed after the controller
->>    is disabled/shtudown.
->>  - When requests from nvme_dev_disable and nvme_reset_work expires,
->>    disable the controller directly then the request could be completed
->>    to wakeup the waiter. nvme_pci_disable_ctrl_directly is introduced
->>    for this, it doesn't send commands on adminq and the shutdown_lock
->>    is not needed here, because the nvme_abort_requests_sync in
->>    nvme_dev_disable could synchronize with nvme_timeout.
->>
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->> ---
->>  drivers/nvme/host/pci.c | 199 ++++++++++++++++++++++++++++++++----------------
->>  1 file changed, 134 insertions(+), 65 deletions(-)
->>
->> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
->> index e186158..ce09057 100644
->> --- a/drivers/nvme/host/pci.c
->> +++ b/drivers/nvme/host/pci.c
->> @@ -70,6 +70,7 @@ struct nvme_queue;
->>  
->>  static void nvme_process_cq(struct nvme_queue *nvmeq);
->>  static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
->> +static void nvme_pci_disable_ctrl_directly(struct nvme_dev *dev);
->>  
->>  /*
->>   * Represents an NVM Express device.  Each nvme_dev is a PCI function.
->> @@ -98,6 +99,7 @@ struct nvme_dev {
->>  	u32 cmbloc;
->>  	struct nvme_ctrl ctrl;
->>  	struct completion ioq_wait;
->> +	bool inflight_flushed;
->>  
->>  	/* shadow doorbell buffer support: */
->>  	u32 *dbbuf_dbs;
->> @@ -1180,73 +1182,13 @@ static void nvme_warn_reset(struct nvme_dev *dev, u32 csts)
->>  			 csts, result);
->>  }
->>  
->> -static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
->> +static enum blk_eh_timer_return nvme_pci_abort_io_req(struct request *req)
->>  {
->>  	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->>  	struct nvme_queue *nvmeq = iod->nvmeq;
->>  	struct nvme_dev *dev = nvmeq->dev;
->> -	struct request *abort_req;
->>  	struct nvme_command cmd;
->> -	u32 csts = readl(dev->bar + NVME_REG_CSTS);
->> -
->> -	/*
->> -	 * Reset immediately if the controller is failed
->> -	 */
->> -	if (nvme_should_reset(dev, csts)) {
->> -		nvme_warn_reset(dev, csts);
->> -		nvme_dev_disable(dev, false);
->> -		nvme_reset_ctrl(&dev->ctrl);
->> -		return BLK_EH_HANDLED;
->> -	}
->> -
->> -	/*
->> -	 * Did we miss an interrupt?
->> -	 */
->> -	if (__nvme_poll(nvmeq, req->tag)) {
->> -		dev_warn(dev->ctrl.device,
->> -			 "I/O %d QID %d timeout, completion polled\n",
->> -			 req->tag, nvmeq->qid);
->> -		return BLK_EH_HANDLED;
->> -	}
->> -
->> -	/*
->> -	 * Shutdown immediately if controller times out while starting. The
->> -	 * reset work will see the pci device disabled when it gets the forced
->> -	 * cancellation error. All outstanding requests are completed on
->> -	 * shutdown, so we return BLK_EH_HANDLED.
->> -	 */
->> -	switch (dev->ctrl.state) {
->> -	case NVME_CTRL_CONNECTING:
->> -	case NVME_CTRL_RESETTING:
->> -		dev_warn(dev->ctrl.device,
->> -			 "I/O %d QID %d timeout, disable controller\n",
->> -			 req->tag, nvmeq->qid);
->> -		nvme_dev_disable(dev, false);
->> -		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
->> -		return BLK_EH_HANDLED;
->> -	default:
->> -		break;
->> -	}
->> -
->> -	/*
->> - 	 * Shutdown the controller immediately and schedule a reset if the
->> - 	 * command was already aborted once before and still hasn't been
->> - 	 * returned to the driver, or if this is the admin queue.
->> -	 */
->> -	if (!nvmeq->qid || iod->aborted) {
->> -		dev_warn(dev->ctrl.device,
->> -			 "I/O %d QID %d timeout, reset controller\n",
->> -			 req->tag, nvmeq->qid);
->> -		nvme_dev_disable(dev, false);
->> -		nvme_reset_ctrl(&dev->ctrl);
->> -
->> -		/*
->> -		 * Mark the request as handled, since the inline shutdown
->> -		 * forces all outstanding requests to complete.
->> -		 */
->> -		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
->> -		return BLK_EH_HANDLED;
->> -	}
->> +	struct request *abort_req;
->>  
->>  	if (atomic_dec_return(&dev->ctrl.abort_limit) < 0) {
->>  		atomic_inc(&dev->ctrl.abort_limit);
->> @@ -1282,6 +1224,105 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
->>  	return BLK_EH_RESET_TIMER;
->>  }
->>  
->> +static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
->> +{
->> +	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->> +	struct nvme_queue *nvmeq = iod->nvmeq;
->> +	struct nvme_dev *dev = nvmeq->dev;
->> +	u32 csts = readl(dev->bar + NVME_REG_CSTS);
->> +	enum {ABORT, RESET, DISABLE} action;
->> +	enum blk_eh_timer_return ret;
->> +	/*
->> +	 * This is for nvme_abort_req. This request will be completed
->> +	 * by nvme_flush_aborted_requests after the controller is
->> +	 * disabled/shutdown
->> +	 */
->> +	if (test_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags))
->> +		return BLK_EH_NOT_HANDLED;
->> +
->> +	/*
->> +	 * Reset immediately if the controller is failed.
->> +	 * Defer the completion to nvme_flush_aborted_requests.
->> +	 */
->> +	if (nvme_should_reset(dev, csts)) {
->> +		nvme_warn_reset(dev, csts);
->> +		nvme_reset_ctrl(&dev->ctrl);
->> +		return BLK_EH_RESET_TIMER;
->> +	}
->> +
->> +	/*
->> +	 * Did we miss an interrupt?
->> +	 */
->> +	if (__nvme_poll(nvmeq, req->tag)) {
->> +		dev_warn(dev->ctrl.device,
->> +			 "I/O %d QID %d timeout, completion polled\n",
->> +			 req->tag, nvmeq->qid);
->> +		return BLK_EH_HANDLED;
->> +	}
->> +
->> +	if (nvmeq->qid) {
->> +		if (dev->ctrl.state == NVME_CTRL_RESETTING ||
->> +				iod->aborted)
->> +			action = RESET;
->> +		else
->> +			action = ABORT;
->> +	} else {
->> +		/*
->> +		 * Disable immediately if controller times out while disabling/
->> +		 * shuting down/starting. The nvme_dev_disable/nvme_reset_work
->> +		 * will see the error.
->> +		 * Note: inflight_flushed is set in nvme_dev_disable when it
->> +		 * abort all the inflight requests. Introducing this flag is due
->> +		 * to there is no state to represent the shutdown procedure.
->> +		 */
->> +		if (dev->ctrl.state == NVME_CTRL_CONNECTING ||
->> +			dev->inflight_flushed)
->> +			action = DISABLE;
->> +		else
->> +			action = RESET;
->> +	}
->> +
->> +	switch (action) {
->> +	case ABORT:
->> +		ret = nvme_pci_abort_io_req(req);
->> +		break;
->> +	case RESET:
->> +		dev_warn(dev->ctrl.device,
->> +			 "I/O %d QID %d timeout, reset controller\n",
->> +			 req->tag, nvmeq->qid);
->> +		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
->> +		nvme_reset_ctrl(&dev->ctrl);
->> +		/*
->> +		 * The reset work will take over this request. nvme_abort_req
->> +		 * employs blk_abort_request to force the request to be timed
->> +		 * out. So we need to return BLK_EH_RESET_TIMER then the
->> +		 * RQF_MQ_TIMEOUT_EXPIRED could be cleared.
->> +		 */
->> +		ret = BLK_EH_RESET_TIMER;
->> +		break;
->> +	case DISABLE:
->> +		/*
->> +		 * We disable the controller directly here so that we could
->> +		 * complete the request safely to wake up the nvme_dev_disable/
->> +		 * nvme_reset_work who is waiting on adminq. We cannot return
->> +		 * BLK_EH_RESET_TIMER to depend on error recovery procedure
->> +		 * because it is waiting for timeout path.
->> +		 */
->> +		dev_warn(dev->ctrl.device,
->> +			 "I/O %d QID %d timeout, disable controller\n",
->> +			 req->tag, nvmeq->qid);
->> +		nvme_pci_disable_ctrl_directly(dev);
->> +		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
->> +		ret = BLK_EH_HANDLED;
->> +		break;
->> +	default:
->> +		WARN_ON(1);
->> +		break;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->>  static void nvme_free_queue(struct nvme_queue *nvmeq)
->>  {
->>  	dma_free_coherent(nvmeq->q_dmadev, CQ_SIZE(nvmeq->q_depth),
->> @@ -2169,6 +2210,33 @@ static void nvme_pci_disable(struct nvme_dev *dev)
->>  	}
->>  }
->>  
->> +/*
->> + * This is only invoked by nvme_timeout. shutdown_lock is not needed
->> + * here because nvme_abort_requests_sync in nvme_dev_disable will
->> + * synchronize with the timeout path.
->> + */
->> +static void nvme_pci_disable_ctrl_directly(struct nvme_dev *dev)
->> +{
->> +	int i;
->> +	struct pci_dev *pdev = to_pci_dev(dev->dev);
->> +	bool dead = true;
->> +
->> +	if (pci_is_enabled(pdev)) {
->> +		u32 csts = readl(dev->bar + NVME_REG_CSTS);
->> +
->> +		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
->> +			pdev->error_state  != pci_channel_io_normal);
->> +
->> +		if (!dead)
->> +			nvme_disable_ctrl(&dev->ctrl, dev->ctrl.cap);
->> +	}
->> +
->> +	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
->> +		nvme_suspend_queue(&dev->queues[i]);
->> +
->> +	nvme_pci_disable(dev);
->> +}
->> +
->>  static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->>  {
->>  	int i;
->> @@ -2205,6 +2273,8 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->>  
->>  	}
->>  	nvme_stop_queues(&dev->ctrl);
->> +	nvme_abort_requests_sync(&dev->ctrl);
->> +	dev->inflight_flushed = true;
->>  
->>  	if (!dead) {
->>  		nvme_disable_io_queues(dev);
->> @@ -2215,9 +2285,8 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->>  
->>  	nvme_pci_disable(dev);
->>  
->> -	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
->> -	blk_mq_tagset_busy_iter(&dev->admin_tagset, nvme_cancel_request, &dev->ctrl);
->> -
->> +	nvme_flush_aborted_requests(&dev->ctrl);
->> +	dev->inflight_flushed = false;
->>  	/*
->>  	 * The driver will not be starting up queues again if shutting down so
->>  	 * must flush all entered requests to their failed completion to avoid
->>
-> 
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=5Mw5gjePWHT_YZ77OroeGMhDmXLF0LW6EtV-hBMRYas&s=VM31J1nvWkmoWzuZIHV0f5nlrSW0ZTKUQ1TjLwbB18g&e=
-> 
+diff --git a/Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp b/Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp
+new file mode 100644
+index 000000000000..8e043301e28e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp
+@@ -0,0 +1,42 @@
++=========================================================
++Secondary CPU enable-method "nuvoton,npcm750-smp" binding
++=========================================================
++
++To apply to all CPUs, a single "nuvoton,npcm750-smp" enable method should be
++defined in the "cpus" node.
++
++Enable method name:	"nuvoton,npcm750-smp"
++Compatible machines:	"nuvoton,npcm750"
++Compatible CPUs:	"arm,cortex-a9"
++Related properties:	(none)
++
++Note:
++This enable method needs valid nodes compatible with "arm,cortex-a9-scu" and
++"nuvoton,npcm750-gcr".
++
++Example:
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		enable-method = "nuvoton,npcm750-smp";
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			clocks = <&clk NPCM7XX_CLK_CPU>;
++			clock-names = "clk_cpu";
++			reg = <0>;
++			next-level-cache = <&L2>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			clocks = <&clk NPCM7XX_CLK_CPU>;
++			clock-names = "clk_cpu";
++			reg = <1>;
++			next-level-cache = <&L2>;
++		};
++	};
++
+diff --git a/Documentation/devicetree/bindings/arm/npcm/npcm.txt b/Documentation/devicetree/bindings/arm/npcm/npcm.txt
+new file mode 100644
+index 000000000000..2d87d9ecea85
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/npcm/npcm.txt
+@@ -0,0 +1,6 @@
++NPCM Platforms Device Tree Bindings
++-----------------------------------
++NPCM750 SoC
++Required root node properties:
++	- compatible = "nuvoton,npcm750";
++
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index ade7a38543dc..eeab5dac50ab 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -304,6 +304,8 @@ dtb-$(CONFIG_ARCH_LPC18XX) += \
+ dtb-$(CONFIG_ARCH_LPC32XX) += \
+ 	lpc3250-ea3250.dtb \
+ 	lpc3250-phy3250.dtb
++dtb-$(CONFIG_ARCH_NPCM750) += \
++	nuvoton-npcm750-evb.dtb
+ dtb-$(CONFIG_MACH_MESON6) += \
+ 	meson6-atv1200.dtb
+ dtb-$(CONFIG_MACH_MESON8) += \
+diff --git a/arch/arm/boot/dts/nuvoton-npcm750-evb.dts b/arch/arm/boot/dts/nuvoton-npcm750-evb.dts
+new file mode 100644
+index 000000000000..cabde3d5be8a
+--- /dev/null
++++ b/arch/arm/boot/dts/nuvoton-npcm750-evb.dts
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 Nuvoton Technology corporation.
++// Copyright 2018 Google, Inc.
++
++/dts-v1/;
++#include "nuvoton-npcm750.dtsi"
++
++/ {
++	model = "Nuvoton npcm750 Development Board (Device Tree)";
++	compatible = "nuvoton,npcm750";
++
++	chosen {
++		stdout-path = &serial3;
++	};
++
++	memory {
++		reg = <0 0x40000000>;
++	};
++};
++
++&serial0 {
++	status = "okay";
++};
++
++&serial1 {
++	status = "okay";
++};
++
++&serial2 {
++	status = "okay";
++};
++
++&serial3 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/nuvoton-npcm750.dtsi b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
+new file mode 100644
+index 000000000000..839e45cfd695
+--- /dev/null
++++ b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
+@@ -0,0 +1,165 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 Nuvoton Technology corporation.
++// Copyright 2018 Google, Inc.
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		enable-method = "nuvoton,npcm750-smp";
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			clocks = <&clk 10>;
++			clock-names = "clk_cpu";
++			reg = <0>;
++			next-level-cache = <&l2>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			clocks = <&clk 10>;
++			clock-names = "clk_cpu";
++			reg = <1>;
++			next-level-cache = <&l2>;
++		};
++	};
++
++	/* external clock signal rg1refck, supplied by the phy */
++	clk-rg1refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++	};
++
++	/* external clock signal rg2refck, supplied by the phy */
++	clk-rg2refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++	};
++
++	clk-xin {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges = <0x0 0xf0000000 0x00900000>;
++
++		gcr: gcr@800000 {
++			compatible = "nuvoton,npcm750-gcr", "syscon",
++				"simple-mfd";
++			reg = <0x800000 0x1000>;
++		};
++
++		scu: scu@3fe000 {
++			compatible = "arm,cortex-a9-scu";
++			reg = <0x3fe000 0x1000>;
++		};
++
++		l2: cache-controller@3fc000 {
++			compatible = "arm,pl310-cache";
++			reg = <0x3fc000 0x1000>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			cache-unified;
++			cache-level = <2>;
++			clocks = <&clk 22>;
++			arm,shared-override;
++		};
++
++		gic: interrupt-controller@3ff000 {
++			compatible = "arm,cortex-a9-gic";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x3ff000 0x1000>,
++			    <0x3fe100 0x100>;
++		};
++
++		timer@3fe600 {
++			compatible = "arm,cortex-a9-twd-timer";
++			reg = <0x3fe600 0x20>;
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&clk 15>;
++		};
++	};
++
++	ahb {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		clk: clock-controller@f0801000 {
++			compatible = "nuvoton,npcm750-clk";
++			#clock-cells = <1>;
++			reg = <0xf0801000 0x1000>;
++		};
++
++		apb {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "simple-bus";
++			interrupt-parent = <&gic>;
++			ranges = <0x0 0xf0000000 0x00300000>;
++
++			timer0: timer@8000 {
++				compatible = "nuvoton,npcm750-timer";
++				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x8000 0x1000>;
++				clocks = <&clk 15>;
++			};
++
++			serial0: serial@1000 {
++				compatible = "ns16550a";
++				reg = <0x1000 0x1000>;
++				clocks = <&clk 14>;
++				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++				reg-shift = <2>;
++				status = "disabled";
++			};
++
++			serial1: serial@2000 {
++				compatible = "ns16550a";
++				reg = <0x2000 0x1000>;
++				clocks = <&clk 14>;
++				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++				reg-shift = <2>;
++				status = "disabled";
++			};
++
++			serial2: serial@3000 {
++				compatible = "ns16550a";
++				reg = <0x3000 0x1000>;
++				clocks = <&clk 14>;
++				interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++				reg-shift = <2>;
++				status = "disabled";
++			};
++
++			serial3: serial@4000 {
++				compatible = "ns16550a";
++				reg = <0x4000 0x1000>;
++				clocks = <&clk 14>;
++				interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++				reg-shift = <2>;
++				status = "disabled";
++			};
++		};
++	};
++};
+-- 
+2.14.1
