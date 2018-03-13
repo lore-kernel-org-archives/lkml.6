@@ -1,348 +1,521 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932904AbeCMN4P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:56:15 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36097 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932435AbeCMN4N (ORCPT
+        id S932956AbeCMN4d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:56:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43257 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752762AbeCMNux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:56:13 -0400
-X-Google-Smtp-Source: AG47ELtjgRb4oFe414sUvOAMPqg18PNwgJ9FPmjxYbpoxcSJGQ/4F0MSMhLarFTd/yNryEDZ4M5gtQ==
-Date: Tue, 13 Mar 2018 14:56:08 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
- rcu-fence
-Message-ID: <20180313135608.GB10273@andrea>
-References: <Pine.LNX.4.44L0.1802281511320.1421-100000@iolanthe.rowland.org>
+        Tue, 13 Mar 2018 09:50:53 -0400
+From: yannick fertre <yannick.fertre@st.com>
+To: Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Patrice Chotard" <patrice.chotard@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: <u-boot@lists.denx.de>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 06/10] video: add support of STM32 MIPI DSI controller driver
+Date: Tue, 13 Mar 2018 14:50:09 +0100
+Message-ID: <1520949014-21468-11-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
+References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802281511320.1421-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.68]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 03:13:54PM -0500, Alan Stern wrote:
-> This patch reorganizes the definition of rb in the Linux Kernel Memory
-> Consistency Model.  The relation is now expressed in terms of
-> rcu-fence, which consists of a sequence of gp and rscs links separated
-> by rcu-link links, in which the number of occurrences of gp is >= the
-> number of occurrences of rscs.
-> 
-> Arguments similar to those published in
-> http://diy.inria.fr/linux/long.pdf show that rcu-fence behaves like an
-> inter-CPU strong fence.  Furthermore, the definition of rb in terms of
-> rcu-fence is highly analogous to the definition of pb in terms of
-> strong-fence, which can help explain why rcu-path expresses a form of
-> temporal ordering.
-> 
-> This change should not affect the semantics of the memory model, just
-> its internal organization.
-> 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Add the STM32 DSI controller driver that uses the Synopsys DesignWare
+MIPI DSI host controller bridge.
 
-I like Boqun's suggestion of "reducing rcu-fence" and using "acyclic".
+Signed-off-by: yannick fertre <yannick.fertre@st.com>
+---
+ drivers/video/stm32/Kconfig     |  10 +
+ drivers/video/stm32/Makefile    |   1 +
+ drivers/video/stm32/stm32_dsi.c | 426 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 437 insertions(+)
+ create mode 100644 drivers/video/stm32/stm32_dsi.c
 
-IIRC, time ago we discussed "enlarging" hb, pb by defining them to be
-transitive closed (and using "irreflexive" everywhere); however, this
-resulted in slightly longer simulation times...
-
-For this patch,
-
-Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
-
-  Andrea
-
-
-> 
-> ---
-> 
-> v2: Rebase on top of the preceding patch which renames "link" to
-> "rcu-link" and "rcu-path" to "rb".  Add back the missing "rec" keyword
-> in the definition of rcu-fence.  Minor editing improvements in
-> explanation.txt.
-> 
-> Index: usb-4.x/tools/memory-model/linux-kernel.cat
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/linux-kernel.cat
-> +++ usb-4.x/tools/memory-model/linux-kernel.cat
-> @@ -102,20 +102,27 @@ let rscs = po ; crit^-1 ; po?
->   *)
->  let rcu-link = hb* ; pb* ; prop
->  
-> -(* Chains that affect the RCU grace-period guarantee *)
-> -let gp-link = gp ; rcu-link
-> -let rscs-link = rscs ; rcu-link
-> -
->  (*
-> - * A cycle containing at least as many grace periods as RCU read-side
-> - * critical sections is forbidden.
-> + * Any sequence containing at least as many grace periods as RCU read-side
-> + * critical sections (joined by rcu-link) acts as a generalized strong fence.
->   *)
-> -let rec rb =
-> -	gp-link |
-> -	(gp-link ; rscs-link) |
-> -	(rscs-link ; gp-link) |
-> -	(rb ; rb) |
-> -	(gp-link ; rb ; rscs-link) |
-> -	(rscs-link ; rb ; gp-link)
-> +let rec rcu-fence = gp |
-> +	(gp ; rcu-link ; rscs) |
-> +	(rscs ; rcu-link ; gp) |
-> +	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
-> +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
-> +	(rcu-fence ; rcu-link ; rcu-fence)
-> +
-> +(* rb orders instructions just as pb does *)
-> +let rb = prop ; rcu-fence ; hb* ; pb*
->  
->  irreflexive rb as rcu
-> +
-> +(*
-> + * The happens-before, propagation, and rcu constraints are all
-> + * expressions of temporal ordering.  They could be replaced by
-> + * a single constraint on an "executes-before" relation, xb:
-> + *
-> + * let xb = hb | pb | rb
-> + * acyclic xb as executes-before
-> + *)
-> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-> ===================================================================
-> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-> @@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory C
->    19. AND THEN THERE WAS ALPHA
->    20. THE HAPPENS-BEFORE RELATION: hb
->    21. THE PROPAGATES-BEFORE RELATION: pb
-> -  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-> +  22. RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
->    23. ODDS AND ENDS
->  
->  
-> @@ -1451,8 +1451,8 @@ they execute means that it cannot have c
->  the content of the LKMM's "propagation" axiom.
->  
->  
-> -RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-> ----------------------------------------------------
-> +RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
-> +----------------------------------------------------
->  
->  RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
->  rests on two concepts: grace periods and read-side critical sections.
-> @@ -1537,49 +1537,100 @@ relation, and the details don't matter u
->  a somewhat lengthy formal proof.  Pretty much all you need to know
->  about rcu-link is the information in the preceding paragraph.
->  
-> -The LKMM goes on to define the gp-link and rscs-link relations.  They
-> -bring grace periods and read-side critical sections into the picture,
-> -in the following way:
-> -
-> -	E ->gp-link F means there is a synchronize_rcu() fence event S
-> -	and an event X such that E ->po S, either S ->po X or S = X,
-> -	and X ->rcu-link F.  In other words, E and F are linked by a
-> -	grace period followed by an instance of rcu-link.
-> -
-> -	E ->rscs-link F means there is a critical section delimited by
-> -	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
-> -	and an event X such that E ->po U, either L ->po X or L = X,
-> -	and X ->rcu-link F.  Roughly speaking, this says that some
-> -	event in the same critical section as E is linked by rcu-link
-> -	to F.
-> +The LKMM also defines the gp and rscs relations.  They bring grace
-> +periods and read-side critical sections into the picture, in the
-> +following way:
-> +
-> +	E ->gp F means there is a synchronize_rcu() fence event S such
-> +	that E ->po S and either S ->po F or S = F.  In simple terms,
-> +	there is a grace period po-between E and F.
-> +
-> +	E ->rscs F means there is a critical section delimited by an
-> +	rcu_read_lock() fence L and an rcu_read_unlock() fence U, such
-> +	that E ->po U and either L ->po F or L = F.  You can think of
-> +	this as saying that E and F are in the same critical section
-> +	(in fact, it also allows E to be po-before the start of the
-> +	critical section and F to be po-after the end).
->  
->  If we think of the rcu-link relation as standing for an extended
-> -"before", then E ->gp-link F says that E executes before a grace
-> -period which ends before F executes.  (In fact it covers more than
-> -this, because it also includes cases where E executes before a grace
-> -period and some store propagates to F's CPU before F executes and
-> -doesn't propagate to some other CPU until after the grace period
-> -ends.)  Similarly, E ->rscs-link F says that E is part of (or before
-> -the start of) a critical section which starts before F executes.
-> +"before", then X ->gp Y ->rcu-link Z says that X executes before a
-> +grace period which ends before Z executes.  (In fact it covers more
-> +than this, because it also includes cases where X executes before a
-> +grace period and some store propagates to Z's CPU before Z executes
-> +but doesn't propagate to some other CPU until after the grace period
-> +ends.)  Similarly, X ->rscs Y ->rcu-link Z says that X is part of (or
-> +before the start of) a critical section which starts before Z
-> +executes.
-> +
-> +The LKMM goes on to define the rcu-fence relation as a sequence of gp
-> +and rscs links separated by rcu-link links, in which the number of gp
-> +links is >= the number of rscs links.  For example:
-> +
-> +	X ->gp Y ->rcu-link Z ->rscs T ->rcu-link U ->gp V
-> +
-> +would imply that X ->rcu-fence V, because this sequence contains two
-> +gp links and only one rscs link.  (It also implies that X ->rcu-fence T
-> +and Z ->rcu-fence V.)  On the other hand:
-> +
-> +	X ->rscs Y ->rcu-link Z ->rscs T ->rcu-link U ->gp V
-> +
-> +does not imply X ->rcu-fence V, because the sequence contains only
-> +one gp link but two rscs links.
-> +
-> +The rcu-fence relation is important because the Grace Period Guarantee
-> +means that rcu-fence acts kind of like a strong fence.  In particular,
-> +if W is a write and we have W ->rcu-fence Z, the Guarantee says that W
-> +will propagate to every CPU before Z executes.
-> +
-> +To prove this in full generality requires some intellectual effort.
-> +We'll consider just a very simple case:
-> +
-> +	W ->gp X ->rcu-link Y ->rscs Z.
-> +
-> +This formula means that there is a grace period G and a critical
-> +section C such that:
-> +
-> +	1. W is po-before G;
-> +
-> +	2. X is equal to or po-after G;
-> +
-> +	3. X comes "before" Y in some sense;
-> +
-> +	4. Y is po-before the end of C;
-> +
-> +	5. Z is equal to or po-after the start of C.
-> +
-> +From 2 - 4 we deduce that the grace period G ends before the critical
-> +section C.  Then the second part of the Grace Period Guarantee says
-> +not only that G starts before C does, but also that W (which executes
-> +on G's CPU before G starts) must propagate to every CPU before C
-> +starts.  In particular, W propagates to every CPU before Z executes
-> +(or finishes executing, in the case where Z is equal to the
-> +rcu_read_lock() fence event which starts C.)  This sort of reasoning
-> +can be expanded to handle all the situations covered by rcu-fence.
-> +
-> +Finally, the LKMM defines the RCU-before (rb) relation in terms of
-> +rcu-fence.  This is done in essentially the same way as the pb
-> +relation was defined in terms of strong-fence.  We will omit the
-> +details; the end result is that E ->rb F implies E must execute before
-> +F, just as E ->pb F does (and for much the same reasons).
->  
->  Putting this all together, the LKMM expresses the Grace Period
-> -Guarantee by requiring that there are no cycles consisting of gp-link
-> -and rscs-link links in which the number of gp-link instances is >= the
-> -number of rscs-link instances.  It does this by defining the rb
-> -relation to link events E and F whenever it is possible to pass from E
-> -to F by a sequence of gp-link and rscs-link links with at least as
-> -many of the former as the latter.  The LKMM's "rcu" axiom then says
-> -that there are no events E with E ->rb E.
-> -
-> -Justifying this axiom takes some intellectual effort, but it is in
-> -fact a valid formalization of the Grace Period Guarantee.  We won't
-> -attempt to go through the detailed argument, but the following
-> -analysis gives a taste of what is involved.  Suppose we have a
-> -violation of the first part of the Guarantee: A critical section
-> -starts before a grace period, and some store propagates to the
-> -critical section's CPU before the end of the critical section but
-> -doesn't propagate to some other CPU until after the end of the grace
-> -period.
-> +Guarantee by requiring that the rb relation does not contain a cycle.
-> +Equivalently, this "rcu" axiom requires that there are no events E and
-> +F with E ->rcu-link F ->rcu-fence E.  Or to put it a third way, the
-> +axiom requires that there are no cycles consisting of gp and rscs
-> +alternating with rcu-link, where the number of gp links is >= the
-> +number of rscs links.
-> +
-> +Justifying the axiom isn't easy, but it is in fact a valid
-> +formalization of the Grace Period Guarantee.  We won't attempt to go
-> +through the detailed argument, but the following analysis gives a
-> +taste of what is involved.  Suppose we have a violation of the first
-> +part of the Guarantee: A critical section starts before a grace
-> +period, and some store propagates to the critical section's CPU before
-> +the end of the critical section but doesn't propagate to some other
-> +CPU until after the end of the grace period.
->  
->  Putting symbols to these ideas, let L and U be the rcu_read_lock() and
->  rcu_read_unlock() fence events delimiting the critical section in
-> @@ -1606,11 +1657,14 @@ by rcu-link, yielding:
->  
->  	S ->po X ->rcu-link Z ->po U.
->  
-> -The formulas say that S is po-between F and X, hence F ->gp-link Z
-> -via X.  They also say that Z comes before the end of the critical
-> -section and E comes after its start, hence Z ->rscs-link F via E.  But
-> -now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
-> -"rcu" axiom rules out this violation of the Grace Period Guarantee.
-> +The formulas say that S is po-between F and X, hence F ->gp X.  They
-> +also say that Z comes before the end of the critical section and E
-> +comes after its start, hence Z ->rscs E.  From all this we obtain:
-> +
-> +	F ->gp X ->rcu-link Z ->rscs E ->rcu-link F,
-> +
-> +a forbidden cycle.  Thus the "rcu" axiom rules out this violation of
-> +the Grace Period Guarantee.
->  
->  For something a little more down-to-earth, let's see how the axiom
->  works out in practice.  Consider the RCU code example from above, this
-> @@ -1639,15 +1693,15 @@ time with statement labels added to the
->  If r2 = 0 at the end then P0's store at X overwrites the value that
->  P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
->  In addition, there is a synchronize_rcu() between Y and Z, so therefore
-> -we have Y ->gp-link X.
-> +we have Y ->gp Z.
->  
->  If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
->  so we have W ->rcu-link Y.  In addition, W and X are in the same critical
-> -section, so therefore we have X ->rscs-link Y.
-> +section, so therefore we have X ->rscs W.
->  
-> -This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
-> -and one rscs-link, violating the "rcu" axiom.  Hence the outcome is
-> -not allowed by the LKMM, as we would expect.
-> +Then X ->rscs W ->rcu-link Y ->gp Z ->rcu-link X is a forbidden cycle,
-> +violating the "rcu" axiom.  Hence the outcome is not allowed by the
-> +LKMM, as we would expect.
->  
->  For contrast, let's see what can happen in a more complicated example:
->  
-> @@ -1683,15 +1737,11 @@ For contrast, let's see what can happen
->  	}
->  
->  If r0 = r1 = r2 = 1 at the end, then similar reasoning to before shows
-> -that W ->rscs-link Y via X, Y ->gp-link U via Z, and U ->rscs-link W
-> -via V.  And just as before, this gives a cycle:
-> -
-> -	W ->rscs-link Y ->gp-link U ->rscs-link W.
-> -
-> -However, this cycle has fewer gp-link instances than rscs-link
-> -instances, and consequently the outcome is not forbidden by the LKMM.
-> -The following instruction timing diagram shows how it might actually
-> -occur:
-> +that W ->rscs X ->rcu-link Y ->gp Z ->rcu-link U ->rscs V ->rcu-link W.
-> +However this cycle is not forbidden, because the sequence of relations
-> +contains fewer instances of gp (one) than of rscs (two).  Consequently
-> +the outcome is allowed by the LKMM.  The following instruction timing
-> +diagram shows how it might actually occur:
->  
->  P0			P1			P2
->  --------------------	--------------------	--------------------
-> 
-> 
+diff --git a/drivers/video/stm32/Kconfig b/drivers/video/stm32/Kconfig
+index 113a2bb..2ea6f18 100644
+--- a/drivers/video/stm32/Kconfig
++++ b/drivers/video/stm32/Kconfig
+@@ -15,6 +15,16 @@ menuconfig VIDEO_STM32
+ 	  DSI. This option enables these supports which can be used on
+ 	  devices which have RGB TFT or DSI display connected.
+ 
++config VIDEO_STM32_DSI
++	bool "Enable STM32 DSI video support"
++	depends on VIDEO_STM32
++	select VIDEO_MIPI_DSI
++	select VIDEO_BRIDGE
++	select VIDEO_DW_MIPI_DSI
++	help
++	  This option enables support DSI internal bridge which can be used on
++	  devices which have DSI display connected.
++
+ config VIDEO_STM32_MAX_XRES
+ 	int "Maximum horizontal resolution (for memory allocation purposes)"
+ 	depends on VIDEO_STM32
+diff --git a/drivers/video/stm32/Makefile b/drivers/video/stm32/Makefile
+index 372a2e1..f8c3ff7 100644
+--- a/drivers/video/stm32/Makefile
++++ b/drivers/video/stm32/Makefile
+@@ -8,3 +8,4 @@
+ #
+ 
+ obj-${CONFIG_VIDEO_STM32} = stm32_ltdc.o
++obj-${CONFIG_VIDEO_STM32_DSI} += stm32_dsi.o
+diff --git a/drivers/video/stm32/stm32_dsi.c b/drivers/video/stm32/stm32_dsi.c
+new file mode 100644
+index 0000000..949db4f
+--- /dev/null
++++ b/drivers/video/stm32/stm32_dsi.c
+@@ -0,0 +1,426 @@
++/*
++ * Copyright (C) 2018 STMicroelectronics - All Rights Reserved
++ * Author(s): Philippe Cornu <philippe.cornu@st.com> for STMicroelectronics.
++ *	      Yannick Fertre <yannick.fertre@st.com> for STMicroelectronics.
++ *
++ * This driver is based on the mipi dsi driver from
++ * drivers/gpu/drm/stm/dw_mipi_dsi-stm.c (kernel linux).
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++#include <common.h>
++#include <clk.h>
++#include <dm.h>
++#include <dw_mipi_dsi.h>
++#include <mipi_display.h>
++#include <panel.h>
++#include <reset.h>
++#include <video.h>
++#include <video_bridge.h>
++#include <asm/io.h>
++#include <asm/arch/gpio.h>
++#include <dm/device-internal.h>
++#include <linux/iopoll.h>
++
++#define HWVER_130			0x31333000	/* IP version 1.30 */
++#define HWVER_131			0x31333100	/* IP version 1.31 */
++
++/* DSI digital registers & bit definitions */
++#define DSI_VERSION			0x00
++#define VERSION				GENMASK(31, 8)
++
++/*
++ * DSI wrapper registers & bit definitions
++ * Note: registers are named as in the Reference Manual
++ */
++#define DSI_WCFGR	0x0400		/* Wrapper ConFiGuration Reg */
++#define WCFGR_DSIM	BIT(0)		/* DSI Mode */
++#define WCFGR_COLMUX	GENMASK(3, 1)	/* COLor MUltipleXing */
++
++#define DSI_WCR		0x0404		/* Wrapper Control Reg */
++#define WCR_DSIEN	BIT(3)		/* DSI ENable */
++
++#define DSI_WISR	0x040C		/* Wrapper Interrupt and Status Reg */
++#define WISR_PLLLS	BIT(8)		/* PLL Lock Status */
++#define WISR_RRS	BIT(12)		/* Regulator Ready Status */
++
++#define DSI_WPCR0	0x0418		/* Wrapper Phy Conf Reg 0 */
++#define WPCR0_UIX4	GENMASK(5, 0)	/* Unit Interval X 4 */
++#define WPCR0_TDDL	BIT(16)		/* Turn Disable Data Lanes */
++
++#define DSI_WRPCR	0x0430		/* Wrapper Regulator & Pll Ctrl Reg */
++#define WRPCR_PLLEN	BIT(0)		/* PLL ENable */
++#define WRPCR_NDIV	GENMASK(8, 2)	/* pll loop DIVision Factor */
++#define WRPCR_IDF	GENMASK(14, 11)	/* pll Input Division Factor */
++#define WRPCR_ODF	GENMASK(17, 16)	/* pll Output Division Factor */
++#define WRPCR_REGEN	BIT(24)		/* REGulator ENable */
++#define WRPCR_BGREN	BIT(28)		/* BandGap Reference ENable */
++#define IDF_MIN		1
++#define IDF_MAX		7
++#define NDIV_MIN	10
++#define NDIV_MAX	125
++#define ODF_MIN		1
++#define ODF_MAX		8
++
++/* dsi color format coding according to the datasheet */
++enum dsi_color {
++	DSI_RGB565_CONF1,
++	DSI_RGB565_CONF2,
++	DSI_RGB565_CONF3,
++	DSI_RGB666_CONF1,
++	DSI_RGB666_CONF2,
++	DSI_RGB888,
++};
++
++#define LANE_MIN_KBPS	31250
++#define LANE_MAX_KBPS	500000
++
++/* Timeout for regulator on/off, pll lock/unlock & fifo empty */
++#define TIMEOUT_US	200000
++
++struct stm32_dsi_priv {
++	struct mipi_dsi_device device;
++	void __iomem *base;
++	struct udevice *panel;
++	u32 pllref_clk;
++	u32 hw_version;
++	int lane_min_kbps;
++	int lane_max_kbps;
++};
++
++static inline void dsi_write(struct stm32_dsi_priv *dsi, u32 reg, u32 val)
++{
++	writel(val, dsi->base + reg);
++}
++
++static inline u32 dsi_read(struct stm32_dsi_priv *dsi, u32 reg)
++{
++	return readl(dsi->base + reg);
++}
++
++static inline void dsi_set(struct stm32_dsi_priv *dsi, u32 reg, u32 mask)
++{
++	dsi_write(dsi, reg, dsi_read(dsi, reg) | mask);
++}
++
++static inline void dsi_clear(struct stm32_dsi_priv *dsi, u32 reg, u32 mask)
++{
++	dsi_write(dsi, reg, dsi_read(dsi, reg) & ~mask);
++}
++
++static inline void dsi_update_bits(struct stm32_dsi_priv *dsi, u32 reg,
++				   u32 mask, u32 val)
++{
++	dsi_write(dsi, reg, (dsi_read(dsi, reg) & ~mask) | val);
++}
++
++static enum dsi_color dsi_color_from_mipi(u32 fmt)
++{
++	switch (fmt) {
++	case MIPI_DSI_FMT_RGB888:
++		return DSI_RGB888;
++	case MIPI_DSI_FMT_RGB666:
++		return DSI_RGB666_CONF2;
++	case MIPI_DSI_FMT_RGB666_PACKED:
++		return DSI_RGB666_CONF1;
++	case MIPI_DSI_FMT_RGB565:
++		return DSI_RGB565_CONF1;
++	default:
++		pr_err("MIPI color invalid, so we use rgb888\n");
++	}
++	return DSI_RGB888;
++}
++
++static int dsi_pll_get_clkout_khz(int clkin_khz, int idf, int ndiv, int odf)
++{
++	int divisor = idf * odf;
++
++	/* prevent from division by 0 */
++	if (!divisor)
++		return 0;
++
++	return DIV_ROUND_CLOSEST(clkin_khz * ndiv, divisor);
++}
++
++static int dsi_pll_get_params(struct stm32_dsi_priv *dsi,
++			      int clkin_khz, int clkout_khz,
++			      int *idf, int *ndiv, int *odf)
++{
++	int i, o, n, n_min, n_max;
++	int fvco_min, fvco_max, delta, best_delta; /* all in khz */
++
++	/* Early checks preventing division by 0 & odd results */
++	if (clkin_khz <= 0 || clkout_khz <= 0)
++		return -EINVAL;
++
++	fvco_min = dsi->lane_min_kbps * 2 * ODF_MAX;
++	fvco_max = dsi->lane_max_kbps * 2 * ODF_MIN;
++
++	best_delta = 1000000; /* big started value (1000000khz) */
++
++	for (i = IDF_MIN; i <= IDF_MAX; i++) {
++		/* Compute ndiv range according to Fvco */
++		n_min = ((fvco_min * i) / (2 * clkin_khz)) + 1;
++		n_max = (fvco_max * i) / (2 * clkin_khz);
++
++		/* No need to continue idf loop if we reach ndiv max */
++		if (n_min >= NDIV_MAX)
++			break;
++
++		/* Clamp ndiv to valid values */
++		if (n_min < NDIV_MIN)
++			n_min = NDIV_MIN;
++		if (n_max > NDIV_MAX)
++			n_max = NDIV_MAX;
++
++		for (o = ODF_MIN; o <= ODF_MAX; o *= 2) {
++			n = DIV_ROUND_CLOSEST(i * o * clkout_khz, clkin_khz);
++			/* Check ndiv according to vco range */
++			if (n < n_min || n > n_max)
++				continue;
++			/* Check if new delta is better & saves parameters */
++			delta = dsi_pll_get_clkout_khz(clkin_khz, i, n, o) -
++				clkout_khz;
++			if (delta < 0)
++				delta = -delta;
++			if (delta < best_delta) {
++				*idf = i;
++				*ndiv = n;
++				*odf = o;
++				best_delta = delta;
++			}
++			/* fast return in case of "perfect result" */
++			if (!delta)
++				return 0;
++		}
++	}
++
++	return 0;
++}
++
++static int dsi_phy_init(void *priv_data)
++{
++	struct mipi_dsi_device *device = priv_data;
++	struct udevice *dev = device->dev;
++	struct stm32_dsi_priv *dsi = dev_get_priv(dev);
++	u32 val;
++	int ret;
++
++	/* Enable the regulator */
++	dsi_set(dsi, DSI_WRPCR, WRPCR_REGEN | WRPCR_BGREN);
++	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_RRS,
++				 TIMEOUT_US);
++	if (ret) {
++		dev_err(dev, "!TIMEOUT! waiting REGU\n");
++		return ret;
++	}
++
++	/* Enable the DSI PLL & wait for its lock */
++	dsi_set(dsi, DSI_WRPCR, WRPCR_PLLEN);
++	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_PLLLS,
++				 TIMEOUT_US);
++	if (ret) {
++		dev_err(dev, "!TIMEOUT! waiting PLL\n");
++		return ret;
++	}
++
++	/* Enable the DSI wrapper */
++	dsi_set(dsi, DSI_WCR, WCR_DSIEN);
++
++	return 0;
++}
++
++static int dsi_get_lane_mbps(void *priv_data, struct display_timing *timings,
++			     u32 lanes, u32 format, unsigned int *lane_mbps)
++{
++	struct mipi_dsi_device *device = priv_data;
++	struct udevice *dev = device->dev;
++	struct stm32_dsi_priv *dsi = dev_get_priv(dev);
++	int idf, ndiv, odf, pll_in_khz, pll_out_khz;
++	int ret, bpp;
++	u32 val;
++
++	/* Update lane capabilities according to hw version */
++	dsi->hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
++	dsi->lane_min_kbps = LANE_MIN_KBPS;
++	dsi->lane_max_kbps = LANE_MAX_KBPS;
++	if (dsi->hw_version == HWVER_131) {
++		dsi->lane_min_kbps *= 2;
++		dsi->lane_max_kbps *= 2;
++	}
++
++	pll_in_khz = dsi->pllref_clk / 1000;
++
++	/* Compute requested pll out */
++	bpp = mipi_dsi_pixel_format_to_bpp(format);
++	pll_out_khz = (timings->pixelclock.typ / 1000) * bpp / lanes;
++	/* Add 20% to pll out to be higher than pixel bw (burst mode only) */
++	pll_out_khz = (pll_out_khz * 12) / 10;
++	if (pll_out_khz > dsi->lane_max_kbps) {
++		pll_out_khz = dsi->lane_max_kbps;
++		dev_warn(dev, "Warning max phy mbps is used\n");
++	}
++	if (pll_out_khz < dsi->lane_min_kbps) {
++		pll_out_khz = dsi->lane_min_kbps;
++		dev_warn(dev, "Warning min phy mbps is used\n");
++	}
++
++	/* Compute best pll parameters */
++	idf = 0;
++	ndiv = 0;
++	odf = 0;
++	ret = dsi_pll_get_params(dsi, pll_in_khz, pll_out_khz,
++				 &idf, &ndiv, &odf);
++	if (ret) {
++		dev_err(dev, "Warning dsi_pll_get_params(): bad params\n");
++		return ret;
++	}
++
++	/* Get the adjusted pll out value */
++	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
++
++	/* Set the PLL division factors */
++	dsi_update_bits(dsi, DSI_WRPCR,	WRPCR_NDIV | WRPCR_IDF | WRPCR_ODF,
++			(ndiv << 2) | (idf << 11) | ((ffs(odf) - 1) << 16));
++
++	/* Compute uix4 & set the bit period in high-speed mode */
++	val = 4000000 / pll_out_khz;
++	dsi_update_bits(dsi, DSI_WPCR0, WPCR0_UIX4, val);
++
++	/* Select video mode by resetting DSIM bit */
++	dsi_clear(dsi, DSI_WCFGR, WCFGR_DSIM);
++
++	/* Select the color coding */
++	dsi_update_bits(dsi, DSI_WCFGR, WCFGR_COLMUX,
++			dsi_color_from_mipi(format) << 1);
++
++	*lane_mbps = pll_out_khz / 1000;
++
++	dev_info(dev, "pll_in %ukHz pll_out %ukHz lane_mbps %uMHz\n",
++		 pll_in_khz, pll_out_khz, *lane_mbps);
++
++	return 0;
++}
++
++static const struct dw_mipi_dsi_phy_ops dw_mipi_dsi_stm_phy_ops = {
++	.init = dsi_phy_init,
++	.get_lane_mbps = dsi_get_lane_mbps,
++};
++
++static int stm32_dsi_attach(struct udevice *dev)
++{
++	struct stm32_dsi_priv *priv = dev_get_priv(dev);
++	struct dw_mipi_dsi_plat_data *platdata = dev_get_platdata(dev);
++	struct mipi_dsi_device *device = &priv->device;
++	int ret;
++
++	platdata->max_data_lanes = 2;
++	platdata->phy_ops = &dw_mipi_dsi_stm_phy_ops;
++
++	ret = uclass_first_device(UCLASS_PANEL, &platdata->panel);
++	if (ret) {
++		dev_err(dev, "panel device error %d\n", ret);
++		return ret;
++	}
++
++	ret = dw_mipi_dsi_init_bridge(device);
++	if (ret) {
++		dev_err(dev, "failed to initialize mipi dsi host\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int stm32_dsi_set_backlight(struct udevice *dev, int percent)
++{
++	struct dw_mipi_dsi_plat_data *dplat = dev_get_platdata(dev);
++	struct stm32_dsi_priv *priv = dev_get_priv(dev);
++	struct mipi_dsi_device *device = &priv->device;
++	struct udevice *panel = dplat->panel;
++	struct mipi_dsi_panel_plat *mplat;
++	int ret;
++
++	mplat = dev_get_platdata(panel);
++	mplat->device = device;
++
++	ret = panel_enable_backlight(panel);
++	if (ret) {
++		dev_err(dev, "panel %s enable backlight error %d\n",
++			panel->name, ret);
++		return ret;
++	}
++
++	dw_mipi_dsi_bridge_enable(device);
++
++	return 0;
++}
++
++static int stm32_dsi_probe(struct udevice *dev)
++{
++	struct stm32_dsi_priv *priv = dev_get_priv(dev);
++	struct mipi_dsi_device *device = &priv->device;
++	struct reset_ctl rst;
++	struct clk clk;
++	int ret;
++
++	device->dev = dev;
++
++	priv->base = (void *)dev_read_addr(dev);
++	if ((fdt_addr_t)priv->base == FDT_ADDR_T_NONE) {
++		dev_err(dev, "dsi dt register address error\n");
++		return -EINVAL;
++	}
++
++	ret = clk_get_by_name(device->dev, "pclk", &clk);
++	if (ret) {
++		dev_err(dev, "peripheral clock get error %d\n", ret);
++		return -ENODEV;
++	}
++
++	ret = clk_enable(&clk);
++	if (ret) {
++		dev_err(dev, "peripheral clock enable error %d\n", ret);
++		return -ENODEV;
++	}
++
++	ret = clk_get_by_name(dev, "ref", &clk);
++	if (ret) {
++		dev_err(dev, "pll reference clock get error %d\n", ret);
++		return ret;
++	}
++
++	priv->pllref_clk = (unsigned int)clk_get_rate(&clk);
++
++	ret = reset_get_by_index(device->dev, 0, &rst);
++	if (ret) {
++		dev_err(dev, "missing dsi hardware reset\n");
++		return -ENODEV;
++	}
++
++	/* Reset */
++	reset_deassert(&rst);
++
++	return 0;
++}
++
++struct video_bridge_ops stm32_dsi_ops = {
++	.attach = stm32_dsi_attach,
++	.set_backlight = stm32_dsi_set_backlight,
++};
++
++static const struct udevice_id stm32_dsi_ids[] = {
++	{ .compatible = "st,stm32-dsi"},
++	{ }
++};
++
++U_BOOT_DRIVER(stm32_dsi) = {
++	.name				= "stm32-display-dsi",
++	.id				= UCLASS_VIDEO_BRIDGE,
++	.of_match			= stm32_dsi_ids,
++	.bind				= dm_scan_fdt_dev,
++	.probe				= stm32_dsi_probe,
++	.ops				= &stm32_dsi_ops,
++	.priv_auto_alloc_size		= sizeof(struct stm32_dsi_priv),
++	.platdata_auto_alloc_size	= sizeof(struct dw_mipi_dsi_plat_data),
++};
+-- 
+1.9.1
