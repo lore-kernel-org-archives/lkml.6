@@ -1,96 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932898AbeCMNlG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:41:06 -0400
-Received: from a8-53.smtp-out.amazonses.com ([54.240.8.53]:45090 "EHLO
-        a8-53.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752261AbeCMNlD (ORCPT
+        id S933062AbeCMNl1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:41:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35328 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932445AbeCMN06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:41:03 -0400
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc: Thiebaud Weksteen <tweek@google.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com>
- <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-From: Jeremy Cline <jeremy@jcline.org>
-Message-ID: <010001621f97c0bb-898ceaeb-668d-4543-8835-dc374ba02539-000000@email.amazonses.com>
-Date: Tue, 13 Mar 2018 13:41:02 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.03.13-54.240.8.53
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+        Tue, 13 Mar 2018 09:26:58 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: [PATCH v9 35/61] mm: Convert add_to_swap_cache to XArray
+Date: Tue, 13 Mar 2018 06:26:13 -0700
+Message-Id: <20180313132639.17387-36-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
+References: <20180313132639.17387-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/13/2018 03:59 AM, Ard Biesheuvel wrote:
-> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
->> Hi,
->>
->>
->> On 12-03-18 20:55, Thiebaud Weksteen wrote:
->>>
-> ...
->>>
->>> Hans, you said you configured the tablet to use the 32-bit version of grub
->>> instead
->>> of 64. Why's that?
->>
->>
->> Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
->> UEFI,
->> even though the processor is 64 bit capable (AFAIK 64 bit Windows drivers
->> were
->> not ready in time so all Bay Trail devices shipped with a 32 bit Windows).
->>
->> So this is running a 32 bit grub which boots a 64 bit kernel.
->>
->>> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
->>> your Android install working? (that is, what happens if you boot
->>> Boot0000)?
->>
->>
->> AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64 bit.
->>
->> Could the problem perhaps be that the new code for the TPM event-log is
->> missing some handling to deal with running on a 32 bit firmware? I know the
->> rest of the kernel has special code to deal with this.
->>
-> 
-> That is a very good point, and I missed that this is a 64-bit kernel
-> running on 32-bit UEFI.
-> 
-> The TPM code does use efi_call_proto() directly, and now I am thinking
-> it is perhaps the allocate_pages() call that simply only initializes
-> the low 32-bits of log_tbl.
-> 
-> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-> NULL at the start of the function?
-> 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-That was it, it boots when those are initialized to NULL.
+Combine __add_to_swap_cache and add_to_swap_cache into one function
+since there is no more need to preload.
 
-Regards,
-Jeremy
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/swap_state.c | 93 ++++++++++++++++++---------------------------------------
+ 1 file changed, 29 insertions(+), 64 deletions(-)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index fe079756bb18..53e27894c1bc 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -107,14 +107,15 @@ void show_swap_cache_info(void)
+ }
+ 
+ /*
+- * __add_to_swap_cache resembles add_to_page_cache_locked on swapper_space,
++ * add_to_swap_cache resembles add_to_page_cache_locked on swapper_space,
+  * but sets SwapCache flag and private instead of mapping and index.
+  */
+-int __add_to_swap_cache(struct page *page, swp_entry_t entry)
++int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
+ {
+-	int error, i, nr = hpage_nr_pages(page);
+-	struct address_space *address_space;
++	struct address_space *address_space = swap_address_space(entry);
+ 	pgoff_t idx = swp_offset(entry);
++	XA_STATE(xas, &address_space->i_pages, idx);
++	unsigned long i, nr = 1UL << compound_order(page);
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageSwapCache(page), page);
+@@ -123,50 +124,30 @@ int __add_to_swap_cache(struct page *page, swp_entry_t entry)
+ 	page_ref_add(page, nr);
+ 	SetPageSwapCache(page);
+ 
+-	address_space = swap_address_space(entry);
+-	xa_lock_irq(&address_space->i_pages);
+-	for (i = 0; i < nr; i++) {
+-		set_page_private(page + i, entry.val + i);
+-		error = radix_tree_insert(&address_space->i_pages,
+-					  idx + i, page + i);
+-		if (unlikely(error))
+-			break;
+-	}
+-	if (likely(!error)) {
++	do {
++		xas_lock_irq(&xas);
++		xas_create_range(&xas, idx + nr - 1);
++		if (xas_error(&xas))
++			goto unlock;
++		for (i = 0; i < nr; i++) {
++			VM_BUG_ON_PAGE(xas.xa_index != idx + i, page);
++			set_page_private(page + i, entry.val + i);
++			xas_store(&xas, page + i);
++			xas_next(&xas);
++		}
+ 		address_space->nrpages += nr;
+ 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
+ 		ADD_CACHE_INFO(add_total, nr);
+-	} else {
+-		/*
+-		 * Only the context which have set SWAP_HAS_CACHE flag
+-		 * would call add_to_swap_cache().
+-		 * So add_to_swap_cache() doesn't returns -EEXIST.
+-		 */
+-		VM_BUG_ON(error == -EEXIST);
+-		set_page_private(page + i, 0UL);
+-		while (i--) {
+-			radix_tree_delete(&address_space->i_pages, idx + i);
+-			set_page_private(page + i, 0UL);
+-		}
+-		ClearPageSwapCache(page);
+-		page_ref_sub(page, nr);
+-	}
+-	xa_unlock_irq(&address_space->i_pages);
++unlock:
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, gfp));
+ 
+-	return error;
+-}
+-
+-
+-int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp_mask)
+-{
+-	int error;
++	if (!xas_error(&xas))
++		return 0;
+ 
+-	error = radix_tree_maybe_preload_order(gfp_mask, compound_order(page));
+-	if (!error) {
+-		error = __add_to_swap_cache(page, entry);
+-		radix_tree_preload_end();
+-	}
+-	return error;
++	ClearPageSwapCache(page);
++	page_ref_sub(page, nr);
++	return xas_error(&xas);
+ }
+ 
+ /*
+@@ -220,7 +201,7 @@ int add_to_swap(struct page *page)
+ 		goto fail;
+ 
+ 	/*
+-	 * Radix-tree node allocations from PF_MEMALLOC contexts could
++	 * XArray node allocations from PF_MEMALLOC contexts could
+ 	 * completely exhaust the page allocator. __GFP_NOMEMALLOC
+ 	 * stops emergency reserves from being allocated.
+ 	 *
+@@ -232,7 +213,6 @@ int add_to_swap(struct page *page)
+ 	 */
+ 	err = add_to_swap_cache(page, entry,
+ 			__GFP_HIGH|__GFP_NOMEMALLOC|__GFP_NOWARN);
+-	/* -ENOMEM radix-tree allocation failure */
+ 	if (err)
+ 		/*
+ 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
+@@ -426,19 +406,11 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 				break;		/* Out of memory */
+ 		}
+ 
+-		/*
+-		 * call radix_tree_preload() while we can wait.
+-		 */
+-		err = radix_tree_maybe_preload(gfp_mask & GFP_KERNEL);
+-		if (err)
+-			break;
+-
+ 		/*
+ 		 * Swap entry may have been freed since our caller observed it.
+ 		 */
+ 		err = swapcache_prepare(entry);
+ 		if (err == -EEXIST) {
+-			radix_tree_preload_end();
+ 			/*
+ 			 * We might race against get_swap_page() and stumble
+ 			 * across a SWAP_HAS_CACHE swap_map entry whose page
+@@ -446,26 +418,19 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 			 */
+ 			cond_resched();
+ 			continue;
+-		}
+-		if (err) {		/* swp entry is obsolete ? */
+-			radix_tree_preload_end();
++		} else if (err)		/* swp entry is obsolete ? */
+ 			break;
+-		}
+ 
+-		/* May fail (-ENOMEM) if radix-tree node allocation failed. */
++		/* May fail (-ENOMEM) if XArray node allocation failed. */
+ 		__SetPageLocked(new_page);
+ 		__SetPageSwapBacked(new_page);
+-		err = __add_to_swap_cache(new_page, entry);
++		err = add_to_swap_cache(new_page, entry, gfp_mask & GFP_KERNEL);
+ 		if (likely(!err)) {
+-			radix_tree_preload_end();
+-			/*
+-			 * Initiate read into locked page and return.
+-			 */
++			/* Initiate read into locked page */
+ 			lru_cache_add_anon(new_page);
+ 			*new_page_allocated = true;
+ 			return new_page;
+ 		}
+-		radix_tree_preload_end();
+ 		__ClearPageLocked(new_page);
+ 		/*
+ 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
+-- 
+2.16.1
