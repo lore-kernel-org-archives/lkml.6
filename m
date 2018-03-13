@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsausWLB9SDUxA7nmhQSPdNem8+niaphH3ktyGNGH26WGMKoUA+f+OrIFWTw193Ai+LJYq0
-ARC-Seal: i=1; a=rsa-sha256; t=1520954925; cv=none;
+X-Google-Smtp-Source: AG47ELsagL+vW6iRZIbKW+yNwICCjZRqvB0VVqKVisR7033vXDUkMRWuVuyOD0iptd208a+xxunC
+ARC-Seal: i=1; a=rsa-sha256; t=1520954922; cv=none;
         d=google.com; s=arc-20160816;
-        b=W5xRT7UJL7L3Ji05goOAAYXmb98s86/ifVM/uT0000Noc2uN9T07/h+YSw25VuPJdZ
-         i2UlW2ZDkbmaIHgWA1l+WAB69xq08rBUN2xItc8DvHpug946EmWxYuJEFgZJohpd2qEa
-         j2+Wn8HYi1jBh9zTNb/r+OdTfrQhHbXQeBHJChlj+AtD1oEvPLPekQ9TdqTWAq3sSolY
-         GWj5m1IXnwKlV53nd2e+I9LIRzoNS8KKOWaIDQLKZC07rG5WCPHskRHb5GnMuFv6gZuM
-         fhbsQHEFSbgOuIqtC2hkh718p/pAs7G+lX6PzosFmHfDl574VqAbdq1Yh0PkKzrdtqkc
-         QYnw==
+        b=Q6nm4Qf3qI3VFemzSJl71Xt2OiD4NoQOLPhGNTbutrNfZvJ389BKjNUVwL3sYeqZFu
+         tSpdHrbhziWdG8ws01pNLEMRI9wBLHCTKE9yv/tLyahnsFfE3ec4aXO/rGFCO4kT4JPP
+         CflP7gzLJGZCukpaHSPVeYCuMmLZdKRSm+IWSXB24eoSh06sia0iSoatjuQumA3j+VgX
+         cqqFbVmQ/7TF79iZmGW/oaa6M0IdkRXlzjRnzpooLg285+akbBmMSckfgpuiZObBzOpc
+         CVKd1n6ruqK+/Zsa0XXKGRhNGSUIa63P7sc2F2OXn3MHlvAnBdryKGkz5gNHY6MFRLH6
+         f6Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=V3qQXPiWVFASPxZ0hyLcX8p370Jpz8hYXEo1JjFSnNY=;
-        b=T0a8oGN4hYYsggrFt2aPCE6rmdAqGyGrj3kRGxgOxo0JbVsxvdD6KUZJi4oX5bjnDI
-         4qk0QUhFI3QTb9ihb6yhQGH0GV5kSJeTvo1fAXrDZnF1U/xnfEDz2PhaYIREZxBadbd+
-         rHeBe+F9AEfyqhd4FWCf06jmv2EbPP/rH1qEs0CSLGed1LgR+2kYtuFgOjwZH7pU47I6
-         3Hd1QsJ+mZIxjQ7Bu+i9HLjN0Kc4pRdo+Wan2Nh9czS0ggrO2gV24wDwVkKoAztnU8px
-         H4hEGGHewoFBnbjcqr66D3ZjlTAJtV3wFFrAe+hPU3s0cx78B1/2CS4XNsSy7P3Z8smF
-         PwSg==
+        bh=1bGI0z9DGhfbH/c5b/BVHa3AlUAXtWUcPHoAtttE/mQ=;
+        b=jIjPoK6N+1gHTxdcX7SM1q08s/h+IoEzvBi7Tx0T2y7N1QsM2+Ogb/APR9jnVQuhx1
+         S3HrFOG5FMlaUbIyZHRXcLrEzaUxlQ80ktrizV+2HNHwVb3W+7xk6kfBjwtz4DSXEhb9
+         yoHom1RHb9qIXYK9uAlib6qCqKts903UMo8U/h9I5yydGDvfd6KXnd9RGc7VMaUuH/Ap
+         jCXI6jTulmiC5i4YHIXQxetELacr6JKW4yOLWH+kici3vjnKBcH0+uR62DuEywirs/T3
+         KkMqOashqXffVqLQjnR3IWuiGfPsBHd6BUlBT6dBvTv+hk/KIs6Z4Rl2A9mrORAQ9HsH
+         AkHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Crocker <bcrocker@redhat.com>,
+	Shirish S <shirish.s@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 030/146] drm/radeon: insist on 32-bit DMA for Cedar on PPC64/PPC64LE
-Date: Tue, 13 Mar 2018 16:23:17 +0100
-Message-Id: <20180313152322.864927717@linuxfoundation.org>
+Subject: [PATCH 4.15 029/146] drm/amd/display: check for ipp before calling cursor operations
+Date: Tue, 13 Mar 2018 16:23:16 +0100
+Message-Id: <20180313152322.764598321@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836831659709602?=
-X-GMAIL-MSGID: =?utf-8?q?1594836831659709602?=
+X-GMAIL-THRID: =?utf-8?q?1594836828563293329?=
+X-GMAIL-MSGID: =?utf-8?q?1594836828563293329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Crocker <bcrocker@redhat.com>
+From: Shirish S <shirish.s@amd.com>
 
-commit 2c83029cda55a5e7665c7c6326909427d6a01350 upstream.
+commit d6b6669762898dfc99e9273b8d8603bc47014aa9 upstream.
 
-In radeon_device_init, set the need_dma32 flag for Cedar chips
-(e.g. FirePro 2270).  This fixes, or at least works around, a bug
-on PowerPC exposed by last year's commits
+Currently all cursor related functions are made to all
+pipes that are attached to a particular stream.
+This is not applicable to pipes that do not have cursor plane
+initialised like underlay.
+Hence this patch allows cursor related operations on a pipe
+only if ipp in available on that particular pipe.
 
-8e3f1b1d8255105f31556aacf8aeb6071b00d469 (Russell Currey)
+The check is added to set_cursor_position & set_cursor_attribute.
 
-and
-
-253fd51e2f533552ae35a0c661705da6c4842c1b (Alistair Popple)
-
-which enabled the 64-bit DMA iommu bypass.
-
-This caused the device to freeze, in some cases unrecoverably, and is
-the subject of several bug reports internal to Red Hat.
-
-Signed-off-by: Ben Crocker <bcrocker@redhat.com>
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/radeon_device.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/amd/display/dc/core/dc_stream.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/radeon/radeon_device.c
-+++ b/drivers/gpu/drm/radeon/radeon_device.c
-@@ -1397,6 +1397,10 @@ int radeon_device_init(struct radeon_dev
- 	if ((rdev->flags & RADEON_IS_PCI) &&
- 	    (rdev->family <= CHIP_RS740))
- 		rdev->need_dma32 = true;
-+#ifdef CONFIG_PPC64
-+	if (rdev->family == CHIP_CEDAR)
-+		rdev->need_dma32 = true;
-+#endif
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c
+@@ -200,7 +200,8 @@ bool dc_stream_set_cursor_attributes(
+ 	for (i = 0; i < MAX_PIPES; i++) {
+ 		struct pipe_ctx *pipe_ctx = &res_ctx->pipe_ctx[i];
  
- 	dma_bits = rdev->need_dma32 ? 32 : 40;
- 	r = pci_set_dma_mask(rdev->pdev, DMA_BIT_MASK(dma_bits));
+-		if (pipe_ctx->stream != stream || (!pipe_ctx->plane_res.xfm && !pipe_ctx->plane_res.dpp))
++		if (pipe_ctx->stream != stream || (!pipe_ctx->plane_res.xfm &&
++		    !pipe_ctx->plane_res.dpp) || !pipe_ctx->plane_res.ipp)
+ 			continue;
+ 		if (pipe_ctx->top_pipe && pipe_ctx->plane_state != pipe_ctx->top_pipe->plane_state)
+ 			continue;
+@@ -276,7 +277,8 @@ bool dc_stream_set_cursor_position(
+ 		if (pipe_ctx->stream != stream ||
+ 				(!pipe_ctx->plane_res.mi  && !pipe_ctx->plane_res.hubp) ||
+ 				!pipe_ctx->plane_state ||
+-				(!pipe_ctx->plane_res.xfm && !pipe_ctx->plane_res.dpp))
++				(!pipe_ctx->plane_res.xfm && !pipe_ctx->plane_res.dpp) ||
++				!pipe_ctx->plane_res.ipp)
+ 			continue;
+ 
+ 		if (pipe_ctx->plane_state->address.type
