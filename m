@@ -1,93 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932327AbeCMCax (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 22:30:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49462 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932211AbeCMCaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 22:30:52 -0400
-To: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] kbuild: check for pkg-config on make {menu,n,g,x}config
-Message-ID: <9e9438b0-568a-8dc0-dad6-d29b6e39e53a@infradead.org>
-Date: Mon, 12 Mar 2018 19:30:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751588AbeCMCma (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 22:42:30 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20450 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751442AbeCMCm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 22:42:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
+   d="asc'?scan'208";a="36780208"
+Date: Tue, 13 Mar 2018 10:34:42 +0800
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][drm-next] drm/i915/gvt: fix spelling mistake:
+ "destoried" -> "destroyed"
+Message-ID: <20180313023442.g7i2cyudsvqf7l6k@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20180312114358.24456-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zkgfnu4cdiknmifa"
+Content-Disposition: inline
+In-Reply-To: <20180312114358.24456-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
-that other required files are present, but none of these check that
-pkg-config itself is present.  Add a check for all 4 of these targets.
+--zkgfnu4cdiknmifa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes kernel bugzilla #77511:
-https://bugzilla.kernel.org/show_bug.cgi?id=77511
+On 2018.03.12 12:43:58 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to spelling mistake in gvt_err error message text.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-v2: use 'command -v' instead of 'which'
+Thanks Colin, will pick up.
 
-I'm also OK with just documenting the pkg-config requirement in
-Documentation/Changes (= Documentation/process/changes.rst).
+>  drivers/gpu/drm/i915/gvt/gtt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
+t.c
+> index 0a100a288e6d..8eb76becd676 100644
+> --- a/drivers/gpu/drm/i915/gvt/gtt.c
+> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
+> @@ -2046,7 +2046,7 @@ static void intel_vgpu_destroy_all_ppgtt_mm(struct =
+intel_vgpu *vgpu)
+>  	}
+> =20
+>  	if (GEM_WARN_ON(!list_empty(&vgpu->gtt.ppgtt_mm_list_head)))
+> -		gvt_err("vgpu ppgtt mm is not fully destoried\n");
+> +		gvt_err("vgpu ppgtt mm is not fully destroyed\n");
+> =20
+>  	if (GEM_WARN_ON(!radix_tree_empty(&vgpu->gtt.spt_tree))) {
+>  		gvt_err("Why we still has spt not freed?\n");
+> --=20
+> 2.15.1
+>=20
 
- scripts/kconfig/Makefile           |   15 ++++++++++++++-
- scripts/kconfig/check-pkgconfig.sh |   12 ++++++++++++
- 2 files changed, 26 insertions(+), 1 deletion(-)
+--=20
+Open Source Technology Center, Intel ltd.
 
---- lnx-416-rc3.orig/scripts/kconfig/Makefile
-+++ lnx-416-rc3/scripts/kconfig/Makefile
-@@ -160,6 +160,9 @@ help:
- 	@echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
- 	@echo  '  tinyconfig	  - Configure the tiniest possible kernel'
- 
-+# pkg-config check
-+check-pkgconfig  := $(srctree)/$(src)/check-pkgconfig.sh
-+
- # lxdialog stuff
- check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
- 
-@@ -205,7 +208,17 @@ $(addprefix $(obj)/, mconf.o $(lxdialog)
- $(obj)/dochecklxdialog:
- 	$(Q)$(CONFIG_SHELL) $(check-lxdialog) -check $(HOSTCC) $(HOST_EXTRACFLAGS) $(HOSTLOADLIBES_mconf)
- 
--always := dochecklxdialog
-+# Check that we have pkg-config (used by each of menu/n/g/xconfig)
-+PHONY += $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, mconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, nconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, gconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, qconf.o): $(obj)/docheckpkgconfig
-+
-+$(obj)/docheckpkgconfig:
-+	$(Q)$(CONFIG_SHELL) $(check-pkgconfig)
-+
-+always := docheckpkgconfig dochecklxdialog
- 
- # Add environment specific flags
- HOST_EXTRACFLAGS += $(shell $(CONFIG_SHELL) $(srctree)/$(src)/check.sh $(HOSTCC) $(HOSTCFLAGS))
---- /dev/null
-+++ lnx-416-rc3/scripts/kconfig/check-pkgconfig.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Check for pkg-config presence
-+
-+pkgcfg=`command -v pkg-config`
-+
-+if [ "$pkgcfg" = "" ]; then
-+	echo "'make *config' requires 'pkg-config'. Please install it." 1>&2
-+	exit 1		# error
-+fi
-+
-+exit 0
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--zkgfnu4cdiknmifa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCWqc4wgAKCRCxBBozTXgY
+J8MCAJ4rhkHtaLw/o3jDxpLeMnewA7qXowCfbrXOUcjnuVC5LfsV4uu6/UEVqac=
+=Wm9f
+-----END PGP SIGNATURE-----
+
+--zkgfnu4cdiknmifa--
