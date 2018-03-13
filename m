@@ -1,74 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752698AbeCMNGn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:06:43 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:51383 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752148AbeCMNGj (ORCPT
+        id S932385AbeCMNI1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:08:27 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:57177 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751720AbeCMNIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:06:39 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Scheller <d.scheller@gmx.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Binoy Jayan <binoy.jayan@linaro.org>,
-        Jasmin Jessich <jasmin@anw.at>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: ngene: avoid unused variable warning
-Date: Tue, 13 Mar 2018 14:06:03 +0100
-Message-Id: <20180313130620.4040088-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:Myv6Px8M0WMU6D8ZJUfRw2C7jtFb+5aD4cEwDiK1xgDuxE4/V+0
- WcFrWYK+NGQq8TyjwIdoUOzQQYYfj7oiunNLEl23XYYJfeY1+5tGTO+wDMQLeib1lG0jXlF
- 9srCiZGImcgRbCwEMrvR1Geyn+r9ckrggM1QhdwEg4aLr3Oid42NiMopM9gQaCwnK+n/FY/
- VGRXP+we/EJovJBYK6AFw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:opZVlE3RE5c=:c/2RwKTPE5+mETkklB3zQ6
- gA+L9gP/VehaXxIEotS+g4gJFnfIpvPze5HGXUgXoYf74yJXEYicz5O1XNUluZUnohw2PV5wP
- a5ab2ataLBHGQvj3qXKi3BGYW98JSsSWUCfLnNcZ2KasP+bVwIohuXjn34xqvtMg1A7Q7l7ST
- CgJlYeXbe+62+q0neKIbrBnVtR3oo1s8C3wGEA4pUYktHKebGdeQKqps3wb4/fXatulEUa3iM
- 7rsz3uB5DnqFttyitF6vw9duFQ5ky+8AD5xjMWsEIr/MlwcFsYGED84ILSsneh+C0yKM0VbMn
- 34nFviO4Fff/QF4AQ2henfv/X8kb6H6zYcrx6K1HWLdu6bcMYVNRiXKA1IogTinROLHKXyOoF
- xkA5gMHlWa4jteODp3QCs+R/3de2myhKl93OPEYqhx6f6Bkv5aMVWe1+TM5HWzdwYX18v7tRK
- O4uSj8v5fcYkpTE5NngADZv4yaqwO+NUJyyju5yiOV9yfdpqxmxeomkcnVH/zwawLSYvgfhnz
- 6Xeqb8u82Iey0slV8kbEYhYZ7bArMdum2dl21htYRdQTyJCpPj3VS39rMh3dmUaRYebrlUSyf
- +62dDpyQh8CX32qu2t+fSzxIA9RPavCWcCmhP0vG4KqrfltyGWCipVXt7W1c6nGLawmob1F7E
- 1FOlUnfrk3CwXaUHvAJSuVLUjOs6SOt++XEIYUISzOyjwBozQLAgKVK3xsl/wy3Db9tAT+pO7
- KvEg4ybCYoKb42+2/gasE2DBY5NpjKXSJDlDYw==
+        Tue, 13 Mar 2018 09:08:25 -0400
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
+Date: Tue, 13 Mar 2018 14:08:23 +0100
+Message-ID: <2276139.2HCKFmVDEL@merkaba>
+In-Reply-To: <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
+References: <27165802.vQ9JbjrmvU@merkaba> <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added pdev variable is only used in an #ifdef, causing a
-build warning without CONFIG_PCI_MSI, unless we move the declaration
-inside the same #ifdef:
+Hans de Goede - 11.03.18, 15:37:
+> Hi Martin,
+> 
+> On 11-03-18 09:20, Martin Steigerwald wrote:
+> > Hello.
+> > 
+> > Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+> > with SMART checks occassionally failing like this:
+> > 
+> > smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending checks
+> > udisksd[24408]: Error performing housekeeping for drive
+> > /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
+> > SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
+> > data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
+> > 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00  00
+> > 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
+> > udisksd[24408]: Error performing housekeeping for drive
+> > /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error updating
+> > SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected sense
+> > data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
+> > 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00 
+> > 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+> > 
+> > (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
+> > 
+> > However when I then check manually with smartctl -a | -x | -H the device
+> > reports SMART data just fine.
+> > 
+> > As smartd correctly detects that device is in sleep mode, this may be an
+> > userspace issue in udisksd.
+> > 
+> > Also at some boot attempts the boot hangs with a message like "could not
+> > connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
+> > on to LVs (each on one of the SSDs). A configuration that requires a
+> > manual
+> > adaption to InitRAMFS in order to boot (basically vgchange -ay before
+> > btrfs device scan).
+> > 
+> > I wonder whether that has to do with the new SATA LPM policy stuff, but as
+> > I had issues with
+> > 
+> >   3 => Medium power with Device Initiated PM enabled
+> > 
+> > (machine did not boot, which could also have been caused by me
+> > accidentally
+> > removing all TCP/IP network support in the kernel with that setting)
+> > 
+> > I set it back to
+> > 
+> > CONFIG_SATA_MOBILE_LPM_POLICY=0
+> > 
+> > (firmware settings)
+> 
+> Right, so at that settings the LPM policy changes are effectively
+> disabled and cannot explain your SMART issues.
 
-drivers/media/pci/ngene/ngene-core.c: In function 'ngene_start':
-drivers/media/pci/ngene/ngene-core.c:1328:17: error: unused variable 'pdev' [-Werror=unused-variable]
+Yes, I now good a photo of one of those boot failures I mentioned, at it seems 
+to be related to blk-mq, as the backtrace contains "blk_mq_terminate_expired".
 
-Fixes: 6795bf626482 ("media: ngene: convert kernellog printing from printk() to dev_*() macros")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/pci/ngene/ngene-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I add the screenshot to my bug report.
 
-diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
-index 3b9a1bfaf6c0..25f16833a475 100644
---- a/drivers/media/pci/ngene/ngene-core.c
-+++ b/drivers/media/pci/ngene/ngene-core.c
-@@ -1325,7 +1325,6 @@ static int ngene_buffer_config(struct ngene *dev)
- 
- static int ngene_start(struct ngene *dev)
- {
--	struct device *pdev = &dev->pci_dev->dev;
- 	int stat;
- 	int i;
- 
-@@ -1359,6 +1358,7 @@ static int ngene_start(struct ngene *dev)
- #ifdef CONFIG_PCI_MSI
- 	/* enable MSI if kernel and card support it */
- 	if (pci_msi_enabled() && dev->card_info->msi_supported) {
-+		struct device *pdev = &dev->pci_dev->dev;
- 		unsigned long flags;
- 
- 		ngwritel(0, NGENE_INT_ENABLE);
+[Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and 
+boot failures with blk_mq_terminate_expired in backtrace
+https://bugzilla.kernel.org/show_bug.cgi?id=199077
+
+Hans, I will test your LPM policy horkage for Crucial m500 patch at a later 
+time. I first wanted to add the photo of the boot failure to the bug report.
+
+Ming and Bart, I added you to cc, cause I had to do with you about another 
+blk-mq report, please feel free to adapt.
+
+Thanks,
 -- 
-2.9.0
+Martin
