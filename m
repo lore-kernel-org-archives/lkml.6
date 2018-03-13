@@ -1,118 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932565AbeCMTxZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:53:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48404 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932498AbeCMTxX (ORCPT
+        id S1752402AbeCMTzd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:55:33 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:1930 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751903AbeCMTzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:53:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C18A60591
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
-Date: Tue, 13 Mar 2018 15:53:18 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Mar 2018 15:55:32 -0400
+From: Ronak Doshi <doshir@vmware.com>
+To: <netdev@vger.kernel.org>
+CC: <ntanaka@vmware.com>, Ronak Doshi <doshir@vmware.com>,
+        Shrikrishna Khare <skhare@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH net 1/2] vmxnet3: avoid xmit reset due to a race in vmxnet3
+Date: Tue, 13 Mar 2018 12:40:08 -0700
+Message-ID: <20180313194008.12852-1-doshir@vmware.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/2018 3:19 PM, Logan Gunthorpe wrote:
-> 
-> 
-> On 13/03/18 01:10 PM, Sinan Kaya wrote:
->> I was thinking of this for the pci_p2pdma_add_client() case for the
->> parent pointer.
->>
->> +struct pci_p2pdma_client {
->> +	struct list_head list;
->> +	struct pci_dev *client;
->> +	struct pci_dev *provider;
->> +};
-> 
-> Yeah, that structure only exists in a list owned by the client and we
-> only check the upstream bridge once per entry so I don't see the point.
-> 
->> But then, Why bother searching for the switch at all?
-> 
-> Huh? We have to make sure all the client and provider devices are behind
-> the same switch. How can we do that without "searching" for the switch?
-> 
+The field txNumDeferred is used by the driver to keep track of the number
+of packets it has pushed to the emulation. The driver increments it on
+pushing the packet to the emulation and the emulation resets it to 0 at
+the end of the transmit.
 
-Sorry, I was thinking of ACS case you described below. The only thing code
-cares is if the device is behind a switch or not at this moment.
+There is a possibility of a race either when (a) ESX is under heavy load or
+(b) workload inside VM is of low packet rate.
 
-> In the ACS case, we only disable ACS on downstream ports of switches. No
-> sense disabling it globally as that's worse from an isolation point of
-> view and not worth it given we require all P2P transactions to be behind
-> a switch.
+This race results in xmit hangs when network coalescing is disabled. This
+change creates a local copy of txNumDeferred and uses it to perform ring
+arithmetic.
 
-I agree disabling globally would be bad. Somebody can always say I have
-ten switches on my system. I want to do peer-to-peer on one switch only. Now,
-this change weakened security for the other switches that I had no intention
-with doing P2P.
+Reported-by: Noriho Tanaka <ntanaka@vmware.com>
+Signed-off-by: Ronak Doshi <doshir@vmware.com>
+Acked-by: Shrikrishna Khare <skhare@vmware.com>
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c | 13 ++++++++-----
+ drivers/net/vmxnet3/vmxnet3_int.h |  4 ++--
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-Isn't this a problem?
-
-Can we specify the BDF of the downstream device we want P2P with during boot via
-kernel command line?
-
-> 
->> Even if the switch is there, there is no guarantee that it is currently
->> being used for P2P.
-> 
-> IOMMU groups are set at boot time and, at present, there's no way to
-> dynamically change ACS bits without messing up the groups. So switches
-> not used for P2P will not have ACS enabled when CONFIG_PCI_P2PDMA is set
-> and I don't know of any good solution to that. Please see the ACS
-> discussions in v1 and v2.
-
-Given the implementation limitations, this might be OK as a short-term
-solution. 
-
-It depends on if Alex is comfortable with this.
-
-> 
->> It seems that we are going with the assumption that enabling this config
->> option implies you want P2P, then we can simplify this code as well.
-> 
-> How so?
-> 
-> Logan
-> 
-> 
-> 
-
-
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 8b39c160743d..052eef2f729f 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -977,6 +977,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ {
+ 	int ret;
+ 	u32 count;
++	int numPkts;
++	int localTxNumDeferred;
+ 	unsigned long flags;
+ 	struct vmxnet3_tx_ctx ctx;
+ 	union Vmxnet3_GenericDesc *gdesc;
+@@ -1075,12 +1077,12 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ #else
+ 	gdesc = ctx.sop_txd;
+ #endif
++	localTxNumDeferred = le32_to_cpu(tq->shared->txNumDeferred);
+ 	if (ctx.mss) {
+ 		gdesc->txd.hlen = ctx.eth_ip_hdr_size + ctx.l4_hdr_size;
+ 		gdesc->txd.om = VMXNET3_OM_TSO;
+ 		gdesc->txd.msscof = ctx.mss;
+-		le32_add_cpu(&tq->shared->txNumDeferred, (skb->len -
+-			     gdesc->txd.hlen + ctx.mss - 1) / ctx.mss);
++		numPkts = (skb->len - gdesc->txd.hlen + ctx.mss - 1) / ctx.mss;
+ 	} else {
+ 		if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 			gdesc->txd.hlen = ctx.eth_ip_hdr_size;
+@@ -1091,8 +1093,10 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ 			gdesc->txd.om = 0;
+ 			gdesc->txd.msscof = 0;
+ 		}
+-		le32_add_cpu(&tq->shared->txNumDeferred, 1);
++		numPkts = 1;
+ 	}
++	le32_add_cpu(&tq->shared->txNumDeferred, numPkts);
++	localTxNumDeferred += numPkts;
+ 
+ 	if (skb_vlan_tag_present(skb)) {
+ 		gdesc->txd.ti = 1;
+@@ -1118,8 +1122,7 @@ vmxnet3_tq_xmit(struct sk_buff *skb, struct vmxnet3_tx_queue *tq,
+ 
+ 	spin_unlock_irqrestore(&tq->tx_lock, flags);
+ 
+-	if (le32_to_cpu(tq->shared->txNumDeferred) >=
+-					le32_to_cpu(tq->shared->txThreshold)) {
++	if (localTxNumDeferred >= le32_to_cpu(tq->shared->txThreshold)) {
+ 		tq->shared->txNumDeferred = 0;
+ 		VMXNET3_WRITE_BAR0_REG(adapter,
+ 				       VMXNET3_REG_TXPROD + tq->qid * 8,
+diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
+index 5ba222920e80..b94fdfd0b6f1 100644
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,10 +69,10 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.11.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.12.0-k"
+ 
+ /* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040b00
++#define VMXNET3_DRIVER_VERSION_NUM      0x01040c00
+ 
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.11.0
