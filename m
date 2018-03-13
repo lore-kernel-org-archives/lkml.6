@@ -1,63 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeCMRxt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:53:49 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:36347 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751394AbeCMRxq (ORCPT
+        id S1752302AbeCMRzZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:55:25 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36713 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751612AbeCMRzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:53:46 -0400
-Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
- devices
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
- <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
- <e6864131-adab-382b-617b-35e9329f00d0@pengutronix.de>
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Message-ID: <872c1fca-df7c-84c1-e14b-0f7d60d0bafe@theobroma-systems.com>
-Date: Tue, 13 Mar 2018 18:53:43 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Tue, 13 Mar 2018 13:55:23 -0400
+X-Google-Smtp-Source: AG47ELvua7C+4U5kNKnK3KrXRpmTY9PLEM6H9GDJechC2zOC/OCznYUPGIRq7LM6SN4cweaHKNVxVvgiWNyX2SMe5FY=
 MIME-Version: 1.0
-In-Reply-To: <e6864131-adab-382b-617b-35e9329f00d0@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180313134902.GW12772@dhcp22.suse.cz>
+References: <20180221223757.127213-1-shakeelb@google.com> <20180221223757.127213-2-shakeelb@google.com>
+ <20180313134902.GW12772@dhcp22.suse.cz>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Tue, 13 Mar 2018 10:55:18 -0700
+Message-ID: <CALvZod5XFKLfQiHN1g3KWJ-DEJPt8gX6QJD=x22x_eyDN88RYg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: memcg: remote memcg charging for kmem allocations
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.03.18 18:44, Marc Kleine-Budde wrote:
-> On 03/13/2018 06:35 PM, Jakob Unterwurzacher wrote:
-> 
+On Tue, Mar 13, 2018 at 6:49 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Wed 21-02-18 14:37:56, Shakeel Butt wrote:
 > [...]
-> 
-> Please mark all multibyte values going over the USB as either le or be.
+>> +#ifdef CONFIG_MEMCG
+>> +static inline struct mem_cgroup *memalloc_memcg_save(struct mem_cgroup *memcg)
+>> +{
+>> +     struct mem_cgroup *old_memcg = current->target_memcg;
+>> +     current->target_memcg = memcg;
+>> +     return old_memcg;
+>> +}
+>
+> So you are relying that the caller will handle the reference counting
+> properly? I do not think this is a good idea.
 
-This is documented in can_ucan_protocol.rst,
+For the fsnotify use-case, this assumption makes sense as fsnotify has
+an abstraction of fsnotify_group which is created by the
+person/process interested in the events and thus can be used to hold
+the reference to the person/process's memcg. Another use-case I have
+in mind is the filesystem mount. Basically attaching a mount with a
+memcg and thus all user pages and kmem allocations (inodes, dentries)
+for that mount will be charged to the attached memcg. In this use-case
+the super_block is the perfect structure to hold the reference to the
+memcg.
 
-     All multi-byte integers are encoded as Little Endian.
+If in future we find a use-case where this assumption does not make
+sense we can evolve the API and since this is kernel internal API, it
+should not be hard to evolve.
 
-but it's probably worth mentioning here as well.
+> Also do we need some kind
+> of debugging facility to detect unbalanced save/restore scopes?
+>
 
-> 
-> Please use standard 'net' comment style:
-> 
->  /* this is a multiline
->   * comment
->   */
-> 
->> +	struct ucan_ctl_cmd_start cmd_start;
->> +	/***************************************************
->> +	 * Setup Bittiming
->> +	 * bmRequest == UCAN_COMMAND_SET_BITTIMING
->> +	 ***************************************************/
+I am not sure, I didn't find other similar patterns (like PF_MEMALLOC)
+having debugging facility. Maybe we can add such debugging facility
+when we find more users other than kmalloc & kmem_cache_alloc. Vmalloc
+may be one but I could not think of a use-case for vmalloc for remote
+charging, so, no need to add more code at this time.
 
-Understood.
+> [...]
+>> @@ -2260,7 +2269,10 @@ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep)
+>>       if (current->memcg_kmem_skip_account)
+>>               return cachep;
+>>
+>> -     memcg = get_mem_cgroup_from_mm(current->mm);
+>> +     if (current->target_memcg)
+>> +             memcg = get_mem_cgroup(current->target_memcg);
+>> +     if (!memcg)
+>> +             memcg = get_mem_cgroup_from_mm(current->mm);
+>>       kmemcg_id = READ_ONCE(memcg->kmemcg_id);
+>>       if (kmemcg_id < 0)
+>>               goto out;
+>
+> You are also adding one branch for _each_ charge path even though the
+> usecase is rather limited.
+>
 
-Thanks,
-Jakob
+I understand the concern but the charging path, IMO, is much complex
+than just one or couple of additional branches. I can run a simple
+microbenchmark to see if there is anything noticeable here.
+
+> I will have to think about this approach more. It is clearly less code
+> than your previous attempt but I cannot say I would be really impressed.
+>
+
+Thanks for your time.
