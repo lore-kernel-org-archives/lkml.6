@@ -1,106 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeCMNXG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:23:06 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47676 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752370AbeCMNTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:19:18 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
-CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 0/9] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
-Date: Tue, 13 Mar 2018 13:18:55 +0000
-Message-ID: <20180313131904.13700-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        id S1752663AbeCMNZD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:25:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752084AbeCMNZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:25:02 -0400
+Subject: Re: [PATCH 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
+References: <20180312140300.6166-1-vkuznets@redhat.com>
+ <20180312140300.6166-2-vkuznets@redhat.com>
+ <327f3194-715c-7aa7-f1bb-9ee1073f5b99@redhat.com>
+ <87ina0cdto.fsf@vitty.brq.redhat.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <cec32ec2-6f71-0f51-8411-8d6a94881f55@redhat.com>
+Date: Tue, 13 Mar 2018 14:24:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=534 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1803130157
+In-Reply-To: <87ina0cdto.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NOTE: Compared to older versions of this chain I have removed patches at the
-end of the chain that were being ignored until the earlier patches had been
-merged - an impossible circular dependency. There were too many moving targets
-to keep the whole chain up-to-date and so patches that were already acked were
-getting stale. The subset of patches here are all acked or close-to-acked, and
-can be built and used as they are to produce a working pinctrl and gpio.
+On 13/03/2018 14:20, Vitaly Kuznetsov wrote:
+> vmcs_writel() I guess ... and, just to make sure I follow your
+> suggestion, this is for x86_64 only, right? x86_32 does
+> 
+> vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
+> 
+> and I think it needs to stay.
 
-The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
-devices. In addition to the core audio capability they have onboard GPIO,
-regulators, DSPs and interrupt controller and a large register map space
-accessed over SPI or I2C. This family of codecs is based around common IP
-blocks and they are managed by a set of common drivers referred to as "Madera".
+Yes.
 
-Richard Fitzgerald (9):
-  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
-  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-  mfd: madera: Add common support for Cirrus Logic Madera codecs
-  mfd: madera: Register map tables for Cirrus Logic CS47L35
-  mfd: madera: Register map tables for Cirrus Logic CS47L85
-  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
-  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
-  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
-  gpio: madera: Support Cirrus Logic Madera class codecs
+> (personally, I'm rather for exporting save_fsgs(), dropping
+> savesegment() and getting all we need from current to avoid propagating
+> assumptions but I'm flexible)
 
- Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
- .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
- MAINTAINERS                                        |   16 +
- drivers/gpio/Kconfig                               |    6 +
- drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-madera.c                         |  206 +
- drivers/mfd/Kconfig                                |   50 +
- drivers/mfd/Makefile                               |   14 +
- drivers/mfd/cs47l35-tables.c                       | 1609 ++++++++
- drivers/mfd/cs47l85-tables.c                       | 3009 +++++++++++++++
- drivers/mfd/cs47l90-tables.c                       | 2674 +++++++++++++
- drivers/mfd/madera-core.c                          |  600 +++
- drivers/mfd/madera-i2c.c                           |  139 +
- drivers/mfd/madera-spi.c                           |  138 +
- drivers/mfd/madera.h                               |   44 +
- drivers/pinctrl/Kconfig                            |    1 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/cirrus/Kconfig                     |   15 +
- drivers/pinctrl/cirrus/Makefile                    |   13 +
- drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   45 +
- drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   59 +
- drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   57 +
- drivers/pinctrl/cirrus/pinctrl-madera-core.c       | 1074 ++++++
- drivers/pinctrl/cirrus/pinctrl-madera.h            |   41 +
- include/linux/mfd/madera/core.h                    |  187 +
- include/linux/mfd/madera/pdata.h                   |   63 +
- include/linux/mfd/madera/registers.h               | 3917 ++++++++++++++++++++
- 27 files changed, 14180 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
- create mode 100644 drivers/gpio/gpio-madera.c
- create mode 100644 drivers/mfd/cs47l35-tables.c
- create mode 100644 drivers/mfd/cs47l85-tables.c
- create mode 100644 drivers/mfd/cs47l90-tables.c
- create mode 100644 drivers/mfd/madera-core.c
- create mode 100644 drivers/mfd/madera-i2c.c
- create mode 100644 drivers/mfd/madera-spi.c
- create mode 100644 drivers/mfd/madera.h
- create mode 100644 drivers/pinctrl/cirrus/Kconfig
- create mode 100644 drivers/pinctrl/cirrus/Makefile
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera-core.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
- create mode 100644 include/linux/mfd/madera/core.h
- create mode 100644 include/linux/mfd/madera/pdata.h
- create mode 100644 include/linux/mfd/madera/registers.h
+Yes, that's fine too, as long as it's not mix and match. :)
 
--- 
-2.11.0
+Paolo
