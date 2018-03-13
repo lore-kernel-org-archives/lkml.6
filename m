@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv96/kmM3eYWBYMI0UYg7KUMw964W59Dqt9sEpS/sBOiXGozN55PzlXf5MIccvwxpvTKFr9
-ARC-Seal: i=1; a=rsa-sha256; t=1520955234; cv=none;
+X-Google-Smtp-Source: AG47ELtPAn/x4PQbl9t7iYfAEJquX4XLJtn/k6G/UJWj56MLcI3aQ/MXULZMmfxHRu5AmVKHi0gr
+ARC-Seal: i=1; a=rsa-sha256; t=1520955232; cv=none;
         d=google.com; s=arc-20160816;
-        b=IwWNTN2zpRJbvoEgEqysohFGXsoTN77cJ7sg9r0V6bfp6hdPgSy1n5WDaUHBW/o8v/
-         ycjIp6uCe4xxJt3QGigiKX+84fdctRBASjoCXNXDqSEo9kTqT3tHdPUn9cdx+72dOigJ
-         V5qWnlD2RLjHuacBTmOCCBEN6KJ8vRoxTznm6+BplIBLkRe2l2AV10ByWsYG6qohTWn1
-         +K0yXRgBJyeVv2wtZO6iAiJeYuw5HqquDq2SKpHhYont04+o0s9PXAaQ/mtZWQJa8r6C
-         ZZNo/pqhftU184aZ9Jzpy8gnXWjXqUxk1Uo2sK2s/ApTDTv/mrbn0yu9QMt183LM4iFT
-         HxPw==
+        b=wKdIKepxF2+4RRh8ouRUX62X9XU5u4xZT0m0L+DN+U+XIW0DEo2DUWe/nFOYxoqoA0
+         qzU7likoSRYgVrssEYfDhQ+HL7AeuTqC/AxZ0nVrNa+KPh2uaFzoczIzJQyl0mYY5bIs
+         wwuOe+XJfsXI9kGvXZrVvFpcjwl+o2i1bAiW/YA7Gav9d71kjnN8kaXIGR/OscDKirNG
+         SIPsM1rr0uqAwL5NuF4htc+XShdKlZ3CCHCAi+QgTP8pgyapTNa6G7As9X89FQl/qit8
+         kH57/jgPeeaPPZW/FDq1qbzhx7tPZHJMt7wPg6TxgVQ1Dd5YEknylp9rrFiDmG0XzI46
+         F11w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qA8+IyFxpjAch4a7LEMb2WmXbpCv3ZNBGYTdjB4j4b8=;
-        b=N5W440wSo5ANLy2o0yEFtcZvK9Jq/ODkvX6ygyD43H+RV4+zRnzDXlvdh7xml0LLFb
-         c4C6ed48H6FYdUyZhJg08RQ+sVHdYfJPt0an4RECCs53HwHvuVlUGdGgDYWBDbBvMwgi
-         PR4vZymn14xN0LLRLg4qCJSenL+PTqwZSrgjukNL09ADL8zWTbgmxDSWcqAvCtWU/8XL
-         YqJhxLCf3+Avg4rG6EP6Ioh4UDFDj6W/biCEyA4Q21UOV2Ofr/mzuBvB6sSfKwAcmyC7
-         WkKjDo5rmQLm9mMXO2TcLHZlH/ViIb0qLMIrQ8hKMdeR8X/WEg9a9lXwDeVCi4qTks2p
-         +KCg==
+        bh=PQWBLImWdY/RPIZC6Fbp9fvUxOhIqxrkhpOiBel+Y6A=;
+        b=KXSORUqMhQEwUGfUiQeRbS+mzfzNFa+unfync+9QBMX+i/QT3iBxNU4Xco3poMKorL
+         AsXlr9ieB4JUlif7qUstL0C+epjT0+RDAQLHe4oUI8hdpF4JGzPPZVDhdKky83f67+Ur
+         Uvc+Y6RLJEHJojvPp0xTEpntugS/9nadxMOKe9CisgBzBZLGKFUqbQBpWNNUkeoXWdsR
+         ivlYVU/K20vRUEVGXRny2p+cxvxmvSfONMopsdWFWvwcJuZZBkIUsGYT+gJXG7s7gOlg
+         mMba7l6AKfYbpHUvStvtNDL2xFwr/hHbPKyMTdjkI/ES50vQJwnvnouKKRlzR7tRXCBH
+         Gd+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 135/146] scsi: qla2xxx: Fix PRLI state check
-Date: Tue, 13 Mar 2018 16:25:02 +0100
-Message-Id: <20180313152330.543531830@linuxfoundation.org>
+Subject: [PATCH 4.15 126/146] scsi: qla2xxx: Move session delete to driver work queue
+Date: Tue, 13 Mar 2018 16:24:53 +0100
+Message-Id: <20180313152329.929849171@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837156721217729?=
-X-GMAIL-MSGID: =?utf-8?q?1594837156721217729?=
+X-GMAIL-THRID: =?utf-8?q?1594837153104620653?=
+X-GMAIL-MSGID: =?utf-8?q?1594837153104620653?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,13 +53,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 23c645595dab7b414f23639d0a428a07515807df upstream.
+commit a01c77d2cbc45ba527e884e5c30363a1200a4130 upstream.
 
-Get Port Database MBX cmd is to validate current Login state upon PRLI
-completion. Current code looks at the last login state for re-validation
-which was incorrect. This patch removed incorrect state check.
+Move session delete from system work queue to driver's work queue for in
+time processing.
 
-Fixes: 15f30a5752287 ("qla2xxx: Use IOCB interface to submit non-critical MBX.")
+Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
@@ -68,18 +67,34 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c     |    3 ++-
+ drivers/scsi/qla2xxx/qla_target.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -6160,8 +6160,7 @@ int __qla24xx_parse_gpdb(struct scsi_qla
- 	}
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3190,10 +3190,11 @@ qla2x00_probe_one(struct pci_dev *pdev,
+ 	    host->can_queue, base_vha->req,
+ 	    base_vha->mgmt_svr_loop_id, host->sg_tablesize);
  
- 	/* Check for logged in state. */
--	if (current_login_state != PDS_PRLI_COMPLETE &&
--	    last_login_state != PDS_PRLI_COMPLETE) {
-+	if (current_login_state != PDS_PRLI_COMPLETE) {
- 		ql_dbg(ql_dbg_mbx, vha, 0x119a,
- 		    "Unable to verify login-state (%x/%x) for loop_id %x.\n",
- 		    current_login_state, last_login_state, fcport->loop_id);
++	ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
++
+ 	if (ha->mqenable) {
+ 		bool mq = false;
+ 		bool startit = false;
+-		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
+ 
+ 		if (QLA_TGT_MODE_ENABLED()) {
+ 			mq = true;
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1205,7 +1205,8 @@ void qlt_schedule_sess_for_deletion(stru
+ 	ql_dbg(ql_dbg_tgt, sess->vha, 0xe001,
+ 	    "Scheduling sess %p for deletion\n", sess);
+ 
+-	schedule_work(&sess->del_work);
++	INIT_WORK(&sess->del_work, qla24xx_delete_sess_fn);
++	queue_work(sess->vha->hw->wq, &sess->del_work);
+ }
+ 
+ void qlt_schedule_sess_for_deletion_lock(struct fc_port *sess)
