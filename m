@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974818; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974817; cv=none;
         d=google.com; s=arc-20160816;
-        b=hhx8jR8pG1s+FGR78EIrPpL3+yIGlXAU8WMKSlPOV8BwCFZeMbpy4jmgr8k3dS9RiJ
-         Q9XpGXNXR7gUC4QOKE2e5UtLSVkOeQE7XjrQfEHGhiMEzWXCOkeI9bBZ3ZKOjll+y2vA
-         2haROLoy9bPr5yFh9EbnFhYfphSReBZqmZcJa5RpotIDoBMYK5FZExrE72bIq80JE5qs
-         T1GJCF05Kkyl0R54a3pgweN6MISVXpfO7Rq3V5MoSJbEbcS2lpgTGe4e/FTK4x279XOk
-         sdCeh5Q4Udadskw6m5IALMClxT4i/T3esQVcJfo9/Osm9QPSsq55JDeP8A0Sll5hRTrO
-         57HA==
+        b=EuaWyQdP7+ZKMnSAzVp2CoEeGs/yG8U8BefEmVcu647J/ArQg3MT3X62YhtnRLIf2Q
+         KlB+J6wa51zX1U/EwEuJDPHgAPVTlkN9/hWNxxMTYGYhHpUFavvdfvHrbXwEVUZhTOCn
+         iHTm4oGsh961dl60skU5JuFT8L8KA6wk/+EGbbqOnJdqTUlpuu+lqasIef36nZQ4E003
+         9S67dkAku6L9O74fBhKAP0OKIYXwayoLKM7A3l/xb+a+tmFsIgG7U+gQKvkVN05BtipM
+         5nb4BL4XPVlvMnjEc76ewoUyU09fCF+JbxYtQqjl2zSdKLS9Ore4dq1WZJ24l0Ri83LP
+         Jptg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=LaPxxOEIYMftdT45XyC1plS51rUTXkZYDl6NTTG7gQs=;
-        b=U9oblFNNAezLXS97wES1KmFbbLFLrXJ31cEm6P23CH7bFz4W44Y9rVOY98FslILzpl
-         r2GlPCt02Y5WGqJLHZd1sksT0+YQkICNnvKvRHQ24L9uy8JWIgSSKZoM1qujAIoCeghj
-         7TGnXcs5437w8uzI40LTN71eOrj1UicZoFIV2mxxntOdZASVd6Bd6FinaW2VRP+vwf8S
-         4cPtKARCQKvrjKGEwB0jUYC0RVNeitMogcFvnmIiJI5Do+fCBiLbgq3Tkpyd7L4wwtt5
-         YgE6IIqDCOh0bJMKzMBFTC47pCrvV/mP9Nix+T3FsP7W9LOLuvTT/huIA+pJLy+2nsSI
-         Fqvg==
+        bh=ahWj7TFSzN26kCwJKtJajoqrxWswy2RHrVUiaeTyoDo=;
+        b=mfKjPzsV07GEyGYqoeEtiFLBCBCJMxtBd2uzTk0fqof84FjXFA/kgulF6Iotvg62WN
+         HLZrPJ+T4y9cz7VjrSGhf0rejA6FpEJRuWySCFyArC1As20RjSDG+7EeSrXAVJGINc3V
+         nWZudYy+fMoc5+vcw6jaNHC+VamwhOLk2HBgZT7wxprAADq/YF+lV3PfoAHTB7nqThXM
+         QtqGlQPqPM8P/ISZqkzzMu4F1x4PPc6ucxIRj9oCooOtKN1Pdr4UQbpYdWBF56F6rVu7
+         /tn9XXAIjx14C1+VMbkvxhc834UOu/+hmFhSHPHujweO+yOikfWAsB0VCHaRjRAY9/ML
+         Am4g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=VRvt15wY;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=a8mykL3J;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=VRvt15wY;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=a8mykL3J;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELsuWhEt6B4LcwnCbfv59W+UDf5cXEogNEPvwU3kFimhVuRWTC+5mgLsFApfKn49pnCoS5TtKw==
+X-Google-Smtp-Source: AG47ELvCA5rkIARERRKcHw8VNyxTncut5k0IBuEAzUqKJKEBZvq+YsJVJqpO+aW0hbOqxUzETRoUbw==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,15 +105,15 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 03/27] x86: Use symbol name in jump table for PIE support
-Date: Tue, 13 Mar 2018 13:59:21 -0700
-Message-Id: <20180313205945.245105-4-thgarnie@google.com>
+Subject: [PATCH v2 02/27] x86: Use symbol name on bug table for PIE support
+Date: Tue, 13 Mar 2018 13:59:20 -0700
+Message-Id: <20180313205945.245105-3-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857690711832074?=
-X-GMAIL-MSGID: =?utf-8?q?1594857690711832074?=
+X-GMAIL-THRID: =?utf-8?q?1594857689023705224?=
+X-GMAIL-MSGID: =?utf-8?q?1594857689023705224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -125,36 +125,21 @@ KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/jump_label.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/bug.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 8c0de4282659..dfdcdc39604a 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -37,9 +37,9 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
- 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
- 		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
-+		: :  "X" (&((char *)key)[branch]) : : l_yes);
- 
- 	return false;
- l_yes:
-@@ -53,9 +53,9 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
- 		"2:\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
- 		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
-+		: :  "X" (&((char *)key)[branch]) : : l_yes);
- 
- 	return false;
- l_yes:
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..3d690a4abf50 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -35,7 +35,7 @@ do {									\
+ 	asm volatile("1:\t" ins "\n"					\
+ 		     ".pushsection __bug_table,\"aw\"\n"		\
+ 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
++		     "\t"  __BUG_REL(%P0) "\t# bug_entry::file\n"	\
+ 		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+ 		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+ 		     "\t.org 2b+%c3\n"					\
 -- 
 2.16.2.660.g709887971b-goog
