@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeCMNJx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:09:53 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:57675 "EHLO
+        id S932612AbeCMNKE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:10:04 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:51789 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932553AbeCMNJv (ORCPT
+        by vger.kernel.org with ESMTP id S932553AbeCMNKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:09:51 -0400
+        Tue, 13 Mar 2018 09:10:02 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
-X-Quarantine-ID: <wD5hXW_kRzoS>
+X-Quarantine-ID: <aPsVc68Mq4d6>
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-RRZE-Flag: Not-Spam
 X-RRZE-Submit-IP: 2003:d5:3c2:e00:dbd1:5c46:f440:b630
@@ -20,9 +20,9 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] block: sed-opal: split generation of bytestring header and content
-Date: Tue, 13 Mar 2018 14:08:59 +0100
-Message-Id: <cbd0b525838e696deb75ae2e538eb856a7fe6ecd.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH 7/8] block: sed-opal: add ioctl for done-mark of shadow mbr
+Date: Tue, 13 Mar 2018 14:09:00 +0100
+Message-Id: <f130c3075e74406bb9d0a53d65468970e960a018.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
@@ -32,67 +32,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split the header generation from the (normal) memcpy part if a
-bytestring is copied into the command buffer. This allows in-place
-generation of the bytestring content. For example, copy_from_user may be
-used without an intermediate buffer.
+Enable users to mark the shadow mbr as done without completely
+deactivating the shadow mbr feature. This may be useful on reboots,
+when the power to the disk is not disconnected in between and the shadow
+mbr stores the required boot files. Of course, this saves also the
+(few) commands required to enable the feature if it is already enabled
+and one only wants to mark the shadow mbr as done.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
- block/sed-opal.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ block/sed-opal.c              | 33 +++++++++++++++++++++++++++++++--
+ include/linux/sed-opal.h      |  1 +
+ include/uapi/linux/sed-opal.h |  1 +
+ 3 files changed, 33 insertions(+), 2 deletions(-)
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index f7925e6f607c..f169e621279a 100644
+index f169e621279a..b201c96d23a3 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -584,14 +584,11 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 	}
- }
- 
--static void add_token_bytestring(int *err, struct opal_dev *cmd,
--				 const u8 *bytestring, size_t len)
-+static u8 *add_bytestring_header(int *err, struct opal_dev *cmd, size_t len)
+@@ -1987,13 +1987,39 @@ static int opal_erase_locking_range(struct opal_dev *dev,
+ static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
+ 					  struct opal_mbr_data *opal_mbr)
  {
- 	size_t header_len = 1;
- 	bool is_short_atom = true;
--
--	if (*err)
--		return;
-+	char *start;
- 
- 	if (len & ~SHORT_ATOM_LEN_MASK) {
- 		header_len = 2;
-@@ -600,17 +597,27 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
- 
- 	if (!can_add(err, cmd, header_len + len)) {
- 		pr_debug("Error adding bytestring: end of buffer.\n");
--		return;
-+		return NULL;
- 	}
- 
- 	if (is_short_atom)
- 		add_short_atom_header(cmd, true, false, len);
- 	else
- 		add_medium_atom_header(cmd, true, false, len);
--
--	memcpy(&cmd->cmd[cmd->pos], bytestring, len);
-+	start = &cmd->cmd[cmd->pos];
- 	cmd->pos += len;
-+	return start;
-+}
- 
-+static void add_token_bytestring(int *err, struct opal_dev *cmd,
-+				 const u8 *bytestring, size_t len)
-+{
-+	u8 *start;
++	u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
++		? OPAL_TRUE : OPAL_FALSE;
+ 	const struct opal_step mbr_steps[] = {
+ 		{ opal_discovery0, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_done, &opal_mbr->enable_disable },
++		{ set_mbr_done, &token },
+ 		{ end_opal_session, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_enable_disable, &opal_mbr->enable_disable },
++		{ set_mbr_enable_disable, &token },
++		{ end_opal_session, },
++		{ NULL, }
++	};
++	int ret;
 +
-+	start = add_bytestring_header(err, cmd, len);
-+	if (!start)
-+		return;
-+	memcpy(start, bytestring, len);
- }
++	if (opal_mbr->enable_disable != OPAL_MBR_ENABLE &&
++	    opal_mbr->enable_disable != OPAL_MBR_DISABLE)
++		return -EINVAL;
++
++	mutex_lock(&dev->dev_lock);
++	setup_opal_dev(dev, mbr_steps);
++	ret = next(dev);
++	mutex_unlock(&dev->dev_lock);
++	return ret;
++}
++
++static int opal_mbr_status(struct opal_dev *dev, struct opal_mbr_data *opal_mbr)
++{
++	u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
++		? OPAL_TRUE : OPAL_FALSE;
++	const struct opal_step mbr_steps[] = {
++		{ opal_discovery0, },
++		{ start_admin1LSP_opal_session, &opal_mbr->key },
++		{ set_mbr_done, &token },
+ 		{ end_opal_session, },
+ 		{ NULL, }
+ 	};
+@@ -2339,6 +2365,9 @@ int sed_ioctl(struct opal_dev *dev, unsigned int cmd, void __user *arg)
+ 	case IOC_OPAL_ENABLE_DISABLE_MBR:
+ 		ret = opal_enable_disable_shadow_mbr(dev, p);
+ 		break;
++	case IOC_OPAL_MBR_STATUS:
++		ret = opal_mbr_status(dev, p);
++		break;
+ 	case IOC_OPAL_ERASE_LR:
+ 		ret = opal_erase_locking_range(dev, p);
+ 		break;
+diff --git a/include/linux/sed-opal.h b/include/linux/sed-opal.h
+index 04b124fca51e..b38dc602cae3 100644
+--- a/include/linux/sed-opal.h
++++ b/include/linux/sed-opal.h
+@@ -47,6 +47,7 @@ static inline bool is_sed_ioctl(unsigned int cmd)
+ 	case IOC_OPAL_ENABLE_DISABLE_MBR:
+ 	case IOC_OPAL_ERASE_LR:
+ 	case IOC_OPAL_SECURE_ERASE_LR:
++	case IOC_OPAL_MBR_STATUS:
+ 		return true;
+ 	}
+ 	return false;
+diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
+index 627624d35030..0cb9890cdc04 100644
+--- a/include/uapi/linux/sed-opal.h
++++ b/include/uapi/linux/sed-opal.h
+@@ -116,5 +116,6 @@ struct opal_mbr_data {
+ #define IOC_OPAL_ENABLE_DISABLE_MBR _IOW('p', 229, struct opal_mbr_data)
+ #define IOC_OPAL_ERASE_LR           _IOW('p', 230, struct opal_session_info)
+ #define IOC_OPAL_SECURE_ERASE_LR    _IOW('p', 231, struct opal_session_info)
++#define IOC_OPAL_MBR_STATUS         _IOW('p', 232, struct opal_mbr_data)
  
- static int build_locking_range(u8 *buffer, size_t length, u8 lr)
+ #endif /* _UAPI_SED_OPAL_H */
 -- 
 2.16.1
