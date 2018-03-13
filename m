@@ -1,97 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932683AbeCMKXn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 06:23:43 -0400
-Received: from mail-io0-f174.google.com ([209.85.223.174]:42092 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932564AbeCMKXl (ORCPT
+        id S932718AbeCMKYd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 06:24:33 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45775 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932704AbeCMKY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 06:23:41 -0400
-X-Google-Smtp-Source: AG47ELv3NgK74gILtD+K0aCokAsI2PZKr5IHqYR9iwrB7nlx5wdXfgrdM8ZZNhJ8seXUwW50C/lLKPbZhyFyMFP7zJ0=
+        Tue, 13 Mar 2018 06:24:29 -0400
+X-Google-Smtp-Source: AG47ELv+sbo/J55azrC5drSHpetA+NeFUQlRrM5Jy2xWS6ViV2gPpn6bM1MIJitB2Ilq/MrXfc/bkw==
 MIME-Version: 1.0
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
- <bf12c497-db2a-f1f0-efc3-07e6a6ee9daa@redhat.com> <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9_rYv_XocRwTLdH+P7dVq+3=CQRJ9O9kKyry_=Ekz0aQ@mail.gmail.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 13 Mar 2018 10:23:28 +0000
-Message-ID: <CA+zpnLeyu4MQA2mgdLkEscTx9cfUp4Qcw-0cgfRa4cdLCRVwkg@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: hdegoede@redhat.com, Jeremy Cline <jeremy@jcline.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+In-Reply-To: <1520606128.15946.22.camel@bootlin.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com> <CAPBb6MUeUaHZj9y1N7wJk9yS8QL+zTqWCGvujcKCY0YpdeiyWg@mail.gmail.com>
+ <1520606128.15946.22.camel@bootlin.com>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Tue, 13 Mar 2018 19:24:05 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWAXjCWJB6x-osFKZ-wGzMiucL6oa1ZHEzTgscpJTs35Q@mail.gmail.com>
+Message-ID: <CAPBb6MWAXjCWJB6x-osFKZ-wGzMiucL6oa1ZHEzTgscpJTs35Q@mail.gmail.com>
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 8:59 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>
-wrote:
+On Fri, Mar 9, 2018 at 11:35 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+> Hi,
+>
+> On Thu, 2018-03-08 at 22:48 +0900, Alexandre Courbot wrote:
+>> Hi Paul!
+>>
+>> Thanks a lot for taking the time to try this! I am also working on
+>> getting it to work with an actual driver, but you apparently found
+>> rough edges that I missed.
+>>
+>> On Thu, Mar 8, 2018 at 1:37 AM, Paul Kocialkowski
+>> <paul.kocialkowski@bootlin.com> wrote:
+>> > Hi,
+>> >
+>> > First off, I'd like to take the occasion to say thank-you for your
+>> > work.
+>> > This is a major piece of plumbing that is required for me to add
+>> > support
+>> > for the Allwinner CedarX VPU hardware in upstream Linux. Other
+>> > drivers,
+>> > such as tegra-vde (that was recently merged in staging) are also
+>> > badly
+>> > in need of this API.
+>> >
+>> > I have a few comments based on my experience integrating this
+>> > request
+>> > API with the Cedrus VPU driver (and the associated libva backend),
+>> > that
+>> > also concern the vim2m driver.
+>> >
+>> > On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
+>> > > Set the necessary ops for supporting requests in vim2m.
+>> > >
+>> > > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+>> > > ---
+>> > >  drivers/media/platform/Kconfig |  1 +
+>> > >  drivers/media/platform/vim2m.c | 75
+>> > > ++++++++++++++++++++++++++++++++++
+>> > >  2 files changed, 76 insertions(+)
+>> > >
+>> > > diff --git a/drivers/media/platform/Kconfig
+>> > > b/drivers/media/platform/Kconfig
+>> > > index 614fbef08ddc..09be0b5f9afe 100644
+>> > > --- a/drivers/media/platform/Kconfig
+>> > > +++ b/drivers/media/platform/Kconfig
+>> >
+>> > [...]
+>> >
+>> > > +static int vim2m_request_submit(struct media_request *req,
+>> > > +                             struct media_request_entity_data
+>> > > *_data)
+>> > > +{
+>> > > +     struct v4l2_request_entity_data *data;
+>> > > +
+>> > > +     data = to_v4l2_entity_data(_data);
+>> >
+>> > We need to call v4l2_m2m_try_schedule here so that m2m scheduling
+>> > can
+>> > happen when only 2 buffers were queued and no other action was taken
+>> > from usespace. In that scenario, m2m scheduling currently doesn't
+>> > happen.
+>>
+>> I don't think I understand the sequence of events that results in
+>> v4l2_m2m_try_schedule() not being called. Do you mean something like:
+>>
+>> *
+>> * QBUF on output queue with request set
+>> * QBUF on capture queue
+>> * SUBMIT_REQUEST
+>>
+>> ?
+>>
+>> The call to vb2_request_submit() right after should trigger
+>> v4l2_m2m_try_schedule(), since the buffers associated to the request
+>> will enter the vb2 queue and be passed to the m2m framework, which
+>> will then call v4l2_m2m_try_schedule(). Or maybe you are thinking
+>> about a different sequence of events?
+>
+> This is indeed the sequence of events that I'm seeing, but the
+> scheduling call simply did not happen on vb2_request_submit. I suppose I will need to investigate some more to find out exactly why.
+>
+> IIRC, the m2m qbuf function is called (and fails to schedule) when the
+> ioctl happens, not when the task is submitted.
+>
+> This issue is seen with vim2m as well as the rencently-submitted sunxi-
+> cedrus driver (with the in-driver calls to v4l2_m2m_try_schedule
+> removed, obviously). If needs be, I could provide a standalone test
+> program to reproduce it.
 
-> On 13 March 2018 at 07:47, Hans de Goede <hdegoede@redhat.com> wrote:
-> > Hi,
-> >
-> >
-> > On 12-03-18 20:55, Thiebaud Weksteen wrote:
-> >>
-> ...
-> >>
-> >> Hans, you said you configured the tablet to use the 32-bit version of
-grub
-> >> instead
-> >> of 64. Why's that?
-> >
-> >
-> > Because this tablet, like (almost?) all Bay Trail hardware has a 32 bit
-> > UEFI,
-> > even though the processor is 64 bit capable (AFAIK 64 bit Windows
-drivers
-> > were
-> > not ready in time so all Bay Trail devices shipped with a 32 bit
-Windows).
-> >
-> > So this is running a 32 bit grub which boots a 64 bit kernel.
-> >
-> >> Jeremy, could you confirm if you are building the kernel in 64bit
-mode? Is
-> >> your Android install working? (that is, what happens if you boot
-> >> Boot0000)?
-> >
-> >
-> > AFAIK the kernel on Jeremy's tablet (which I initially installed) is 64
-bit.
-> >
-> > Could the problem perhaps be that the new code for the TPM event-log is
-> > missing some handling to deal with running on a 32 bit firmware? I know
-the
-> > rest of the kernel has special code to deal with this.
-> >
+If you have a standalone program that can reproduce this on vim2m,
+then I would like to see it indeed, if only to understand what I have
+missed.
 
-Yes, that was my guess as well.
-
-> That is a very good point, and I missed that this is a 64-bit kernel
-> running on 32-bit UEFI.
-
-> The TPM code does use efi_call_proto() directly, and now I am thinking
-> it is perhaps the allocate_pages() call that simply only initializes
-> the low 32-bits of log_tbl.
-
-That make sense. Would you know what happens to the arguments of the
-function in this case? (I'm thinking &log_location ?)
-Would it be safer to skip the code completely on EFI_MIXED systems?
-
-> Jeremy, could you please try initializing tcg2_protocol and log_tbl to
-> NULL at the start of the function?
+Thanks,
+Alex.
