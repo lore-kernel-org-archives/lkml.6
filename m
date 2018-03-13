@@ -1,82 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932864AbeCMLlo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 07:41:44 -0400
-Received: from gateway36.websitewelcome.com ([50.116.127.2]:36133 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932503AbeCMLln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:41:43 -0400
-Date: Tue, 13 Mar 2018 06:20:34 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] EDAC, sb_edac: Remove VLA usage
-Message-ID: <20180313112034.GA28234@embeddedgus>
+        id S933033AbeCMLmW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 07:42:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:7115 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932669AbeCMLmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 07:42:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
+   d="scan'208";a="24198981"
+Date: Tue, 13 Mar 2018 13:42:17 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>
+Subject: Re: [PATCH v2 2/2] media: ov2680: Add Omnivision OV2680 sensor driver
+Message-ID: <20180313114216.vmqmcrdkfz64aedv@paasikivi.fi.intel.com>
+References: <20180228152723.26392-1-rui.silva@linaro.org>
+ <20180228152723.26392-3-rui.silva@linaro.org>
+ <20180309092153.psb5zcs53brlrrep@paasikivi.fi.intel.com>
+ <m3r2ootecu.fsf@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evhyt-001f22-5a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:52010
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <m3r2ootecu.fsf@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA and replace it
-with a fixed-length array instead.
+On Tue, Mar 13, 2018 at 11:16:33AM +0000, Rui Miguel Silva wrote:
+...
+> > > +static int ov2680_gain_set(struct ov2680_dev *sensor, bool
+> > > auto_gain)
+> > > +{
+> > > +	struct ov2680_ctrls *ctrls = &sensor->ctrls;
+> > > +	u32 gain;
+> > > +	int ret;
+> > > +
+> > > +	ret = ov2680_mod_reg(sensor, OV2680_REG_R_MANUAL, BIT(1),
+> > > +			     auto_gain ? 0 : BIT(1));
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	if (auto_gain || !ctrls->gain->is_new)
+> > > +		return 0;
+> > > +
+> > > +	gain = ctrls->gain->val;
+> > > +
+> > > +	ret = ov2680_write_reg16(sensor, OV2680_REG_GAIN_PK, gain);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int ov2680_gain_get(struct ov2680_dev *sensor)
+> > > +{
+> > > +	u32 gain;
+> > > +	int ret;
+> > > +
+> > > +	ret = ov2680_read_reg16(sensor, OV2680_REG_GAIN_PK, &gain);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	return gain;
+> > > +}
+> > > +
+> > > +static int ov2680_auto_gain_enable(struct ov2680_dev *sensor)
+> > > +{
+> > > +	return ov2680_gain_set(sensor, true);
+> > 
+> > Just call ov2780_gain_set() in the caller.
+> 
+> Here if you do not mind I would like to have it this way, on the caller
+> side makes explicit that we are disabling/enabling the auto gain,
+> instead of going and search what that bool parameter means.
+> 
+> but, if you do mind... ;)
 
-Fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+How about renaming that function as e.g. ov2680_autogain_set()? That's what
+it does, doesn't it?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Use macro max_t to compute the max of all three array sizes.
-   This change is based on Borislav's feedback.
+Right now you have these functions doing nothing really useful, cluttering
+up the code.
 
- drivers/edac/sb_edac.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+...
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 8721002..196b012 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -110,6 +110,10 @@ static const u32 knl_interleave_list[] = {
- 	0xdc, 0xe4, 0xec, 0xf4, 0xfc, /* 15-19 */
- 	0x104, 0x10c, 0x114, 0x11c,   /* 20-23 */
- };
-+#define MAX_INTERLEAVE (max_t(unsigned int, ARRAY_SIZE(sbridge_interleave_list),\
-+			max_t(unsigned int, ARRAY_SIZE(ibridge_interleave_list),\
-+					    ARRAY_SIZE(knl_interleave_list))))
-+
- 
- struct interleave_pkg {
- 	unsigned char start;
-@@ -1899,7 +1903,7 @@ static int get_memory_error_data(struct mem_ctl_info *mci,
- 	int			n_rir, n_sads, n_tads, sad_way, sck_xch;
- 	int			sad_interl, idx, base_ch;
- 	int			interleave_mode, shiftup = 0;
--	unsigned		sad_interleave[pvt->info.max_interleave];
-+	unsigned int		sad_interleave[MAX_INTERLEAVE];
- 	u32			reg, dram_rule;
- 	u8			ch_way, sck_way, pkg, sad_ha = 0;
- 	u32			tad_offset;
+> > > +static const struct i2c_device_id ov2680_id[] = {
+> > > +	{"ov2680", 0},
+> > > +	{ },
+> > 
+> > You can remove the i2c_device_id table if you use the probe_new callback
+> > (instead of probe) below.
+> 
+> Well this one was hard to debug, so removing the device id table made
+> the module not to be auto loaded, and after some debug I found the root
+> cause and it looks it is addressed by this [0]. With that patch removing
+> the device_id and use probe_new works as expected.
+> 
+> I will be sending v3 soon.
+
+Great, thanks!
+
 -- 
-2.7.4
+Sakari Ailus
+sakari.ailus@linux.intel.com
