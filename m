@@ -1,60 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeCMNK0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:10:26 -0400
-Received: from verein.lst.de ([213.95.11.211]:57831 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932618AbeCMNKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:10:07 -0400
-Date: Tue, 13 Mar 2018 14:10:05 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] dma-direct: handle the memory encryption bit in
-        common code
-Message-ID: <20180313131005.GA6260@lst.de>
-References: <20180305174655.9878-1-hch@lst.de> <20180305174655.9878-12-hch@lst.de> <114e27be-5814-4258-4985-af08763c8a74@amd.com> <0c9d3e4a-8407-282a-73eb-21d28047e0e3@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c9d3e4a-8407-282a-73eb-21d28047e0e3@amd.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S932647AbeCMNKJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:10:09 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:48496 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932553AbeCMNKF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:10:05 -0400
+Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-Quarantine-ID: <5uvBVUCH5tc7>
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2003:d5:3c2:e00:dbd1:5c46:f440:b630
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Scott Bauer <scott.bauer@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 8/8] block: sed-opal: ioctl for writing to shadow mbr
+Date: Tue, 13 Mar 2018 14:09:01 +0100
+Message-Id: <b0b34fc0132312c09629c868d33b74fe5a19854e.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 02:48:51PM -0500, Tom Lendacky wrote:
-> Ok, I found one issue that allows this to work when the IOMMU isn't
-> enabled (see below).
+Allow modification of the shadow mbr. If the shadow mbr is not marked as
+done, this data will be presented read only as the device content. Only
+after marking the shadow mbr as done and unlocking a locking range the
+actual content is accessible.
 
-Thanks, folded!
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+---
+ block/sed-opal.c              | 74 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sed-opal.h      |  1 +
+ include/uapi/linux/sed-opal.h |  8 +++++
+ 3 files changed, 83 insertions(+)
 
-> But the bigger issue is when the IOMMU is enabled.  The IOMMU code uses
-> a common mapping routine to create the I/O page tables.  This routine
-> assumes that all memory being mapped is encrypted and therefore sets the
-> encryption bit in the I/O page tables.  With this patch, the call to
-> dma_alloc_direct() now returns un-encrypted memory which results in an
-> encryption mis-match.  I think keeping dma_alloc_direct() as it was prior
-> to this patch is the way to go.  It allows SME DMA allocations to remain
-> encrypted and avoids added complexity in the amd_iommu.c file.  This
-> would mean that SEV would still have special DMA operations (so that the
-> alloc/free can change the memory to un-encrypted).
-> 
-> What do you think?
-
-In terms of logic you are right.  I still don't like keeping a just
-slightly tweaked version of dma_alloc_direct around just for this, it
-will be perpetually out of sync in terms of features and bug fixes.
-
-What do you think about this version that does the decision at runtime:
-
-	http://git.infradead.org/users/hch/misc.git/commitdiff/b89f24dc856595dc7610d672bf077195ab0dabf4
-
-The full tree is available here for testing:
-
-	git://git.infradead.org/users/hch/misc.git dma-direct-x86
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index b201c96d23a3..1ec3734af656 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -1491,6 +1491,52 @@ static int set_mbr_enable_disable(struct opal_dev *dev, void *data)
+ 	return finalize_and_send(dev, parse_and_check_status);
+ }
+ 
++static int write_shadow_mbr(struct opal_dev *dev, void *data)
++{
++	struct opal_shadow_mbr *shadow = data;
++	size_t off;
++	u64 len;
++	int err = 0;
++	u8 *payload;
++
++	/* FIXME: this is the maximum we can use for IO_BUFFER_LENGTH=2048.
++	 *        Instead of having constant, it would be nice to compute the
++	 *        actual value depending on IO_BUFFER_LENGTH
++	 */
++	len = 1950;
++
++	/* do the actual transmission(s) */
++	for (off = 0 ; off < shadow->size; off += len) {
++		len = min(len, shadow->size - off);
++
++		pr_debug("MBR: write bytes %zu+%llu/%llu\n",
++			 off, len, shadow->size);
++		err = start_opal_cmd(dev, opaluid[OPAL_MBR],
++				     opalmethod[OPAL_SET]);
++		add_token_u8(&err, dev, OPAL_STARTNAME);
++		add_token_u8(&err, dev, OPAL_WHERE);
++		add_token_u64(&err, dev, shadow->offset + off);
++		add_token_u8(&err, dev, OPAL_ENDNAME);
++
++		add_token_u8(&err, dev, OPAL_STARTNAME);
++		add_token_u8(&err, dev, OPAL_VALUES);
++		payload = add_bytestring_header(&err, dev, len);
++		if (!payload)
++			break;
++		if (copy_from_user(payload, shadow->data + off, len))
++			err = -EFAULT;
++
++		add_token_u8(&err, dev, OPAL_ENDNAME);
++		if (err)
++			break;
++
++		err = finalize_and_send(dev, parse_and_check_status);
++		if (err)
++			break;
++	}
++	return err;
++}
++
+ static int generic_pw_cmd(u8 *key, size_t key_len, u8 *cpin_uid,
+ 			  struct opal_dev *dev)
+ {
+@@ -2036,6 +2082,31 @@ static int opal_mbr_status(struct opal_dev *dev, struct opal_mbr_data *opal_mbr)
+ 	return ret;
+ }
+ 
++static int opal_write_shadow_mbr(struct opal_dev *dev,
++				 struct opal_shadow_mbr *info)
++{
++	const struct opal_step mbr_steps[] = {
++		{ opal_discovery0, },
++		{ start_admin1LSP_opal_session, &info->key },
++		{ write_shadow_mbr, info },
++		{ end_opal_session, },
++		{ NULL, }
++	};
++	int ret;
++
++	if (info->size == 0)
++		return 0;
++
++	if (!access_ok(VERIFY_READ, info->data, info->size))
++		return -EINVAL;
++
++	mutex_lock(&dev->dev_lock);
++	setup_opal_dev(dev, mbr_steps);
++	ret = next(dev);
++	mutex_unlock(&dev->dev_lock);
++	return ret;
++}
++
+ static int opal_save(struct opal_dev *dev, struct opal_lock_unlock *lk_unlk)
+ {
+ 	struct opal_suspend_data *suspend;
+@@ -2368,6 +2439,9 @@ int sed_ioctl(struct opal_dev *dev, unsigned int cmd, void __user *arg)
+ 	case IOC_OPAL_MBR_STATUS:
+ 		ret = opal_mbr_status(dev, p);
+ 		break;
++	case IOC_OPAL_WRITE_SHADOW_MBR:
++		ret = opal_write_shadow_mbr(dev, p);
++		break;
+ 	case IOC_OPAL_ERASE_LR:
+ 		ret = opal_erase_locking_range(dev, p);
+ 		break;
+diff --git a/include/linux/sed-opal.h b/include/linux/sed-opal.h
+index b38dc602cae3..cf08cdc13cbd 100644
+--- a/include/linux/sed-opal.h
++++ b/include/linux/sed-opal.h
+@@ -47,6 +47,7 @@ static inline bool is_sed_ioctl(unsigned int cmd)
+ 	case IOC_OPAL_ENABLE_DISABLE_MBR:
+ 	case IOC_OPAL_ERASE_LR:
+ 	case IOC_OPAL_SECURE_ERASE_LR:
++	case IOC_OPAL_WRITE_SHADOW_MBR:
+ 	case IOC_OPAL_MBR_STATUS:
+ 		return true;
+ 	}
+diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
+index 0cb9890cdc04..c2669ebff681 100644
+--- a/include/uapi/linux/sed-opal.h
++++ b/include/uapi/linux/sed-opal.h
+@@ -104,6 +104,13 @@ struct opal_mbr_data {
+ 	__u8 __align[7];
+ };
+ 
++struct opal_shadow_mbr {
++	struct opal_key key;
++	const __u8 *data;
++	__u64 offset;
++	__u64 size;
++};
++
+ #define IOC_OPAL_SAVE		    _IOW('p', 220, struct opal_lock_unlock)
+ #define IOC_OPAL_LOCK_UNLOCK	    _IOW('p', 221, struct opal_lock_unlock)
+ #define IOC_OPAL_TAKE_OWNERSHIP	    _IOW('p', 222, struct opal_key)
+@@ -117,5 +124,6 @@ struct opal_mbr_data {
+ #define IOC_OPAL_ERASE_LR           _IOW('p', 230, struct opal_session_info)
+ #define IOC_OPAL_SECURE_ERASE_LR    _IOW('p', 231, struct opal_session_info)
+ #define IOC_OPAL_MBR_STATUS         _IOW('p', 232, struct opal_mbr_data)
++#define IOC_OPAL_WRITE_SHADOW_MBR   _IOW('p', 233, struct opal_shadow_mbr)
+ 
+ #endif /* _UAPI_SED_OPAL_H */
+-- 
+2.16.1
