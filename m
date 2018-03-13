@@ -1,83 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933587AbeCMQbY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:31:24 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.95]:25669 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933305AbeCMQbV (ORCPT
+        id S933669AbeCMQbi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:31:38 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38304 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933305AbeCMQbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:31:21 -0400
-Subject: Re: [PATCH] iio: potentiometer: ds1803: remove VLA usage
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313152343.GA31789@embeddedgus>
- <20180313162454.GA8769@himanshu-Vostro-3559>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <be9b8f8d-929f-1c0b-334f-583d1c57460c@embeddedor.com>
-Date: Tue, 13 Mar 2018 11:31:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180313162454.GA8769@himanshu-Vostro-3559>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evmpc-002tm3-Ic
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:52046
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 13 Mar 2018 12:31:33 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Support Opensource <support.opensource@diasemi.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: da7219: clkdev_drop usage depends on CONFIG_COMMON_CLK" to the asoc tree
+In-Reply-To: <20180313090755.030AA3FBD3@swsrvapps-01.diasemi.com>
+Message-Id: <20180313163125.96EFF44007C@finisterre.ee.mobilebroadband>
+Date: Tue, 13 Mar 2018 16:31:25 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
+   ASoC: da7219: clkdev_drop usage depends on CONFIG_COMMON_CLK
 
-On 03/13/2018 11:24 AM, Himanshu Jha wrote:
-> Hi Gustavo,
-> 
-> On Tue, Mar 13, 2018 at 10:23:43AM -0500, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wvla, remove VLA. In this particular
->> case use macro ARRAY_SIZE so the length of array _result_ can be
->> computed at preprocessing time.
->>
->> The use of stack Variable Length Arrays needs to be avoided, as they
->> can be a vector for stack exhaustion, which can be both a runtime bug
->> or a security flaw. Also, in general, as code evolves it is easy to
->> lose track of how big a VLA can get. Thus, we can end up having runtime
->> failures that are hard to debug.
->>
->> Also, fixed as part of the directive to remove all VLAs from
->> the kernel: https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
-> 
-> It is already applied as I had sent the patch few days ago.
-> https://lkml.org/lkml/2018/3/10/164
-> 
-> I specifically CC'ed you and Kees to avoid the patch collisions.
-> 
+has been applied to the asoc tree at
 
-I see. Can you please update this spreadsheet:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-https://docs.google.com/spreadsheets/d/1OcfyKK8pJ24esYhSEsW4Q2boZE7UTGbYsSEEtFXf7U0/edit
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Thanks
---
-Gustavo
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0f9d0e355d7c3fa5756313765a77961074017845 Mon Sep 17 00:00:00 2001
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date: Tue, 13 Mar 2018 09:07:54 +0000
+Subject: [PATCH] ASoC: da7219: clkdev_drop usage depends on CONFIG_COMMON_CLK
+
+Fixes: ASoC: da7219: Add common clock usage for providing DAI clks
+
+clkdev_drop usage in the codec remove function should be dependent
+on if CONFIG_COMMON_CLK is defined for the platform, otherwise it
+can cause build failures for platforms that do not support this.
+The clkdev_* functions are still defined for those platforms, in
+headers and source but the functions are not linked in.
+
+This patch resolves this issue, so clkdev_drop is only used if
+CONFIG_COMMON_CLK is defined.
+
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/da7219.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index 441215997273..08f55d7a11ba 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -1966,8 +1966,10 @@ static void da7219_remove(struct snd_soc_component *component)
+ 
+ 	da7219_aad_exit(component);
+ 
++#ifdef CONFIG_COMMON_CLK
+ 	if (da7219->dai_clks_lookup)
+ 		clkdev_drop(da7219->dai_clks_lookup);
++#endif
+ 
+ 	/* Supplies */
+ 	regulator_bulk_disable(DA7219_NUM_SUPPLIES, da7219->supplies);
+-- 
+2.16.2
