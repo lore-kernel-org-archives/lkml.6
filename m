@@ -1,441 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752965AbeCMWoW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:44:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41576 "EHLO mx1.redhat.com"
+        id S932646AbeCMWpq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:45:46 -0400
+Received: from mail-eopbgr660118.outbound.protection.outlook.com ([40.107.66.118]:26395
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751300AbeCMWoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:44:20 -0400
-Date: Tue, 13 Mar 2018 17:44:17 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 03/10] livepatch: Initial support for dynamic
- structures
-Message-ID: <20180313224417.h7akqufvjxuwxp5e@treble>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-4-pmladek@suse.com>
+        id S932222AbeCMWpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:45:44 -0400
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Sinan Kaya <okaya@codeaurora.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Index: AQHTujlZo8bTZRn+4ECdETRRU1rPhqPNgjSAgADeTICAABJggIAAD1YAgAAHVACAAAJxAIAACW8AgAAO3oCAAAopgIAACqIAgAAIBID//5/mAA==
+Date: Tue, 13 Mar 2018 22:45:41 +0000
+Message-ID: <47F026DE-AFD0-4F63-8D39-375D3684C7B1@raithlin.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
+In-Reply-To: <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.b.0.180311
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.224.121]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB0719;7:BhKBblJMypkZAS5JQ4XLlzKxS4MumcuNlcqa8e8Vvc9kXOQXXqi0F7gI429JP8qeGExFWVA8q5iS6sOtgXuqDY0HeEVxPsbm18Pxo45ciVbQupegl4Mlkzs4x1g5/Q+0TqPZk2xvBUsNsgCjreRE/ms7xKUR1b5LrCY0xLbRTO+6GGUa3UEy9qJMrSQBArpO5hltBzueWp13kG930QOSKsn2SEJiX1OOTw8iKEfiiX8Ie7KA6brG3zPHFB0we0wk
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: e0f11e0e-0a7f-49c8-1209-08d58934263b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(3008032)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB0719;
+x-ms-traffictypediagnostic: YTXPR0101MB0719:
+x-microsoft-antispam-prvs: <YTXPR0101MB07192051AFDC313BB827DE51AAD20@YTXPR0101MB0719.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231221)(944501244)(52105095)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(2016111802025)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB0719;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB0719;
+x-forefront-prvs: 0610D16BBE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39380400002)(39830400003)(396003)(199004)(189003)(6436002)(8676002)(110136005)(68736007)(6246003)(6486002)(54906003)(106356001)(316002)(229853002)(36756003)(58126008)(99286004)(81156014)(83716003)(25786009)(6506007)(53936002)(81166006)(3280700002)(4326008)(2201001)(66066001)(86362001)(102836004)(8936002)(186003)(76176011)(82746002)(305945005)(7736002)(3846002)(105586002)(97736004)(26005)(33656002)(2900100001)(14454004)(478600001)(2501003)(93886005)(6512007)(5250100002)(2906002)(7416002)(3660700001)(5660300001)(6116002)(2950100002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB0719;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: PQW947wsKap9m+r1Yxtu0ywGzX175D5mpm95/T9wRYcM+yBgMy2ys2UvtxlQSvL8Ces2aG94mgraCc2ffZzPUu1Yb50JcyAbXGr0vQyzOQZoSp3i14BtY5Cjxm60rDOt0RsoqKfPT043AGZNWZPT4YwFrhzZqOAUArr3j0E+RVVAwx4KXRMbqBCHII2XvPoiR+fQv3qzWiZx9hQRIHUjdyzo5Z1ackj4q/3YpX1Jog8OFCPMIR6xh2Ny2fLaOKe3bVQdJQGbCjwutG8a8vq5Iu5APpYMT0E4erQ5VX3F7laHEt1NQWZc87MpHfnqLlDQmu2ngDQlRuRbAR0N417eEw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CBB285235DCCC44AADEE04E9322EF6A5@CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180307082039.10196-4-pmladek@suse.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0f11e0e-0a7f-49c8-1209-08d58934263b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2018 22:45:41.4409
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB0719
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DMjrvU002370
 
-On Wed, Mar 07, 2018 at 09:20:32AM +0100, Petr Mladek wrote:
-> From: Jason Baron <jbaron@akamai.com>
-> 
-> We are going to add a feature called atomic replace. It will allow to
-> create a patch that would replace all already registered patches.
-> For this, we will need to dynamically create funcs and objects
-> for functions that are no longer patched.
-> 
-> This patch adds basic framework to handle such dynamic structures.
-> 
-> It adds enum klp_func_type that allows to distinguish the dynamically
-> allocated funcs' structures. Note that objects' structures do not have
-> a clear type. Namely the static objects' structures might list both static
-> and dynamic funcs' structures.
-> 
-> The function type is then used to limit klp_free() functions. We will
-> want to free the dynamic structures separately when they are no longer
-> needed. At the same time, we also want to make our life easier,
-> and introduce _any_ type that will allow to process all existing
-> structures in one go.
-> 
-> We need to be careful here. First, objects' structures must be freed
-> only when all listed funcs' structures are freed. Also we must avoid
-> double free. Both problems are solved by removing the freed structures
-> from the list.
-> 
-> Also note that klp_free*() functions are called also in klp_init_patch()
-> error path when only some kobjects have been initialized. The other
-> dynamic structures must be freed immediately by calling the respective
-> klp_free_*_dynamic() functions.
-> 
-> Finally, the dynamic objects' structures are generic. The respective
-> klp_allocate_object_dynamic() and klp_free_object_dynamic() can
-> be implemented here. On the other hand, klp_free_func_dynamic()
-> is empty. It must be updated when a particular dynamic
-> klp_func_type is introduced.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Converted into a generic API]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Acked-by: Miroslav Benes <mbenes@suse.cz>
+Hi Sinan
 
-I appreciate the split out patches, but I feel like they're split up
-*too* much.  I found that it was hard to make sense of patches 3-5
-without looking at patch 6.  So I'd suggest combining 3-6 into a single
-patch.
+>    If hardware doesn't support it, blacklisting should have been the right
+>    path and I still think that you should remove all switch business from the code.
+>    I did not hear enough justification for having a switch requirement
+>    for P2P.
+  
+We disagree. As does the community based on feedback on previous version of this patch set.
+  
+> You are also saying that root ports have issues not because of functionality but
+> because of performance. 
 
-Also, since patches 7-8 seem to be bug fixes for patch 6, they should be
-squashed in, so we don't break bisectability unnecessarily.
+I have seen both.  Some systems fail in entirety to route TLPs across route ports. Others do route but with poor performance. Having a requirement for a switch is therefore a reasonable and sensible minimum criteria for enabling p2p.
+    
+> If you know what is bad, create a list and keep adding it. You can't assume
+> universally that all root ports are broken/ have bad performance.
 
-> ---
->  include/linux/livepatch.h |  37 +++++++++++-
->  kernel/livepatch/core.c   | 141 +++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 163 insertions(+), 15 deletions(-)
-> 
-> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> index e5db2ba7e2a5..7fb76e7d2693 100644
-> --- a/include/linux/livepatch.h
-> +++ b/include/linux/livepatch.h
-> @@ -35,12 +35,22 @@
->  #define KLP_UNPATCHED	 0
->  #define KLP_PATCHED	 1
->  
-> +/*
-> + * Function type is used to distinguish dynamically allocated structures
-> + * and limit some operations.
-> + */
-> +enum klp_func_type {
-> +	KLP_FUNC_ANY = -1,	/* Substitute any type */
-> +	KLP_FUNC_STATIC = 0,    /* Original statically defined structure */
-> +};
-> +
->  /**
->   * struct klp_func - function structure for live patching
->   * @old_name:	name of the function to be patched
->   * @new_func:	pointer to the patched function code
->   * @old_sympos: a hint indicating which symbol position the old function
->   *		can be found (optional)
-> + * @ftype:	distinguish static and dynamic structures
+I actually wanted to do a blacklist originally but that idea was not accepted by the community. 
+    
+>    What if I come up with a very cheap/crappy switch (something like used in data
+>    mining)?
+> What guarantees that P2P will work with this device? You are making an
+> assumption here that all switches have good performance.
 
-The "f" in ftype is redundant because it's already in a klp_func struct.
+A switch must support P2P or it is in violation of the PCIe specification.
+    
+>    I have been doing my best to provide feedback. It feels like you are throwing
+>    them over the wall to be honest.
 
-Also, I wonder if a 'dynamic' bool would be cleaner / more legible than
-the enum.  Instead of e.g.
+I think one issue Sinan is that a lot of your ideas have been discussed in previous versions of the series. So you are asking us to make changes which, in some cases, we know are not acceptable to others in the community. The input is welcome but it flies in the face of other input we have received. 
 
-  klp_free_objects(patch, KLP_FUNC_ANY);
-  klp_free_objects(patch, KLP_FUNC_NOP);
+However if other developers feel strongly about the blacklist/whitelist and switch criteria please speak up! ;-)
 
-it could be
+Stephen
 
-  klp_free_objects(patch)
-  klp_free_objects_dynamic(patch);
-
-with the klp_free_objects*() functions calling a __klp_free_objects()
-helper which takes a bool as an argument.
-
-There would need to be other changes, so I'm not sure it would be
-better, but it could be worth trying out and seeing if it's cleaner.
-
->   * @old_addr:	the address of the function being patched
->   * @kobj:	kobject for sysfs resources
->   * @stack_node:	list node for klp_ops func_stack list
-> @@ -79,6 +89,7 @@ struct klp_func {
->  	unsigned long old_sympos;
->  
->  	/* internal */
-> +	enum klp_func_type ftype;
->  	unsigned long old_addr;
->  	struct kobject kobj;
->  	struct list_head stack_node;
-> @@ -164,17 +175,41 @@ struct klp_patch {
->  #define klp_for_each_object_static(patch, obj) \
->  	for (obj = patch->objs; obj->funcs || obj->name; obj++)
->  
-> +#define klp_for_each_object_safe(patch, obj, tmp_obj)		\
-> +	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, obj_entry)
-> +
->  #define klp_for_each_object(patch, obj)	\
->  	list_for_each_entry(obj, &patch->obj_list, obj_entry)
->  
-> +/* Support also dynamically allocated struct klp_object */
->  #define klp_for_each_func_static(obj, func) \
->  	for (func = obj->funcs; \
-> -	     func->old_name || func->new_func || func->old_sympos; \
-> +	     func && (func->old_name || func->new_func || func->old_sympos); \
->  	     func++)
->  
-> +#define klp_for_each_func_safe(obj, func, tmp_func)			\
-> +	list_for_each_entry_safe(func, tmp_func, &obj->func_list, func_entry)
-> +
->  #define klp_for_each_func(obj, func)	\
->  	list_for_each_entry(func, &obj->func_list, func_entry)
->  
-> +static inline bool klp_is_object_dynamic(struct klp_object *obj)
-> +{
-> +	return !obj->funcs;
-> +}
-> +
-> +static inline bool klp_is_func_dynamic(struct klp_func *func)
-> +{
-> +	WARN_ON_ONCE(func->ftype == KLP_FUNC_ANY);
-
-This seems like a silly warning.  Surely such a condition wouldn't get
-past code review :-)
-
-> +	return func->ftype != KLP_FUNC_STATIC;
-> +}
-
-I think this would be clearer:
-
-	return func->ftype == KLP_FUNC_NOP;
-
-and perhaps KLP_FUNC_NOP should be renamed to KLP_FUNC_DYNAMIC?
-
-	return func->ftype == KLP_FUNC_DYNAMIC;
-
-(though I realize this patch doesn't have KLP_FUNC_NOP yet)
-
-> +
-> +static inline bool klp_is_func_type(struct klp_func *func,
-> +				    enum klp_func_type ftype)
-> +{
-> +	return ftype == KLP_FUNC_ANY || ftype == func->ftype;
-> +}
-> +
->  int klp_register_patch(struct klp_patch *);
->  int klp_unregister_patch(struct klp_patch *);
->  int klp_enable_patch(struct klp_patch *);
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index 69bde95e76f8..a47c26147c17 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -124,6 +124,26 @@ static bool klp_initialized(void)
->  	return !!klp_root_kobj;
->  }
->  
-> +static struct klp_object *klp_find_object(struct klp_patch *patch,
-> +					  struct klp_object *old_obj)
-> +{
-> +	struct klp_object *obj;
-> +	bool mod = klp_is_module(old_obj);
-> +
-> +	klp_for_each_object(patch, obj) {
-> +		if (mod) {
-
-The 'mod' variable is a bit confusing here, as it's not clear that it
-refers to the old object.  For clarity, maybe just do the
-klp_is_module(old_obj) check here.
-
-> +			if (klp_is_module(obj) &&
-> +			    strcmp(old_obj->name, obj->name) == 0) {
-> +				return obj;
-> +			}
-> +		} else if (!klp_is_module(obj)) {
-> +			return obj;
-> +		}
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  struct klp_find_arg {
->  	const char *objname;
->  	const char *name;
-> @@ -621,6 +641,66 @@ static struct attribute *klp_patch_attrs[] = {
->  	NULL
->  };
->  
-> +/*
-> + * Dynamically allocated objects and functions.
-> + */
-> +static void klp_free_func_dynamic(struct klp_func *func)
-> +{
-> +}
-> +
-> +static void klp_free_object_dynamic(struct klp_object *obj)
-> +{
-> +	kfree(obj->name);
-> +	kfree(obj);
-> +}
-> +
-> +static struct klp_object *klp_alloc_object_dynamic(const char *name)
-> +{
-> +	struct klp_object *obj;
-> +
-> +	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
-> +	if (!obj)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	if (name) {
-> +		obj->name = kstrdup(name, GFP_KERNEL);
-> +		if (!obj->name) {
-> +			kfree(obj);
-> +			return ERR_PTR(-ENOMEM);
-> +		}
-> +	}
-> +
-> +	return obj;
-> +}
-> +
-> +static struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
-> +						struct klp_object *old_obj)
-> +{
-> +	struct klp_object *obj;
-> +
-> +	obj = klp_find_object(patch, old_obj);
-> +	if (obj)
-> +		return obj;
-> +
-> +	obj = klp_alloc_object_dynamic(old_obj->name);
-> +	if (IS_ERR(obj))
-> +		return obj;
-> +
-> +	klp_init_object_list(patch, obj);
-> +	return obj;
-> +}
-> +
-> +/*
-> + * Patch release framework must support the following scenarios:
-> + *
-> + *   + Asynchonous release is used when kobjects are initialized.
-> + *
-> + *   + Direct release is used in error paths for structures that
-> + *     have not had kobj initialized yet.
-> + *
-> + *   + Allow to release dynamic structures of the given type when
-> + *     they are not longer needed.
-> + */
->  static void klp_kobj_release_patch(struct kobject *kobj)
->  {
->  	struct klp_patch *patch;
-> @@ -637,6 +717,12 @@ static struct kobj_type klp_ktype_patch = {
->  
->  static void klp_kobj_release_object(struct kobject *kobj)
->  {
-> +	struct klp_object *obj;
-> +
-> +	obj = container_of(kobj, struct klp_object, kobj);
-> +
-> +	if (klp_is_object_dynamic(obj))
-> +		klp_free_object_dynamic(obj);
->  }
->  
->  static struct kobj_type klp_ktype_object = {
-> @@ -646,6 +732,12 @@ static struct kobj_type klp_ktype_object = {
->  
->  static void klp_kobj_release_func(struct kobject *kobj)
->  {
-> +	struct klp_func *func;
-> +
-> +	func = container_of(kobj, struct klp_func, kobj);
-> +
-> +	if (klp_is_func_dynamic(func))
-> +		klp_free_func_dynamic(func);
-
-It's a bit difficult to review the code here in this patch, when dynamic
-funcs don't exist yet.  Again it seems to me the patches are split up
-too much.
-
->  }
->  
->  static struct kobj_type klp_ktype_func = {
-> @@ -653,14 +745,26 @@ static struct kobj_type klp_ktype_func = {
->  	.sysfs_ops = &kobj_sysfs_ops,
->  };
->  
-> -/* Free all funcs that have the kobject initialized. */
-> -static void klp_free_funcs(struct klp_object *obj)
-> +/*
-> + * Free all funcs of the given ftype. Use the kobject when it has already
-> + * been initialized. Otherwise, do it directly.
-> + */
-> +static void klp_free_funcs(struct klp_object *obj,
-> +			   enum klp_func_type ftype)
->  {
-> -	struct klp_func *func;
-> +	struct klp_func *func, *tmp_func;
-> +
-> +	klp_for_each_func_safe(obj, func, tmp_func) {
-> +		if (!klp_is_func_type(func, ftype))
-> +			continue;
-> +
-> +		/* Avoid double free and allow to detect empty objects. */
-> +		list_del(&func->func_entry);
->  
-> -	klp_for_each_func(obj, func) {
->  		if (func->kobj.state_initialized)
->  			kobject_put(&func->kobj);
-> +		else if (klp_is_func_dynamic(func))
-> +			klp_free_func_dynamic(func);
-
-Here it's not obvious why the else condition is needed, since dynamic
-objects also have kobjects.  I *think* it's only needed for the case
-where initialization fails before the kobject has been added.  A comment
-would help.
-
->  	}
->  }
->  
-> @@ -675,22 +779,34 @@ static void klp_free_object_loaded(struct klp_object *obj)
->  		func->old_addr = 0;
->  }
->  
-> -/* Free all funcs and objects that have the kobject initialized. */
-> -static void klp_free_objects(struct klp_patch *patch)
-> +/*
-> + * Free all linked funcs of the given ftype. Then free empty objects.
-> + * Use the kobject when it has already been initialized. Otherwise,
-> + * do it directly.
-> + */
-> +static void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
->  {
-> -	struct klp_object *obj;
-> +	struct klp_object *obj, *tmp_obj;
->  
-> -	klp_for_each_object(patch, obj) {
-> -		klp_free_funcs(obj);
-> +	klp_for_each_object_safe(patch, obj, tmp_obj) {
-> +		klp_free_funcs(obj, ftype);
-> +
-> +		if (!list_empty(&obj->func_list))
-> +			continue;
-> +
-> +		/* Avoid freeing the object twice. */
-> +		list_del(&obj->obj_entry);
->  
->  		if (obj->kobj.state_initialized)
->  			kobject_put(&obj->kobj);
-> +		else if (klp_is_object_dynamic(obj))
-> +			klp_free_object_dynamic(obj);
-
-A comment is also needed for this else condition.
-
->  	}
->  }
->  
->  static void klp_free_patch(struct klp_patch *patch)
->  {
-> -	klp_free_objects(patch);
-> +	klp_free_objects(patch, KLP_FUNC_ANY);
->  
->  	if (!list_empty(&patch->list))
->  		list_del(&patch->list);
-> @@ -771,9 +887,6 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
->  	int ret;
->  	const char *name;
->  
-> -	if (!obj->funcs)
-> -		return -EINVAL;
-> -
->  	obj->patched = false;
->  	obj->mod = NULL;
->  
-> @@ -834,7 +947,7 @@ static int klp_init_patch(struct klp_patch *patch)
->  	return 0;
->  
->  free:
-> -	klp_free_objects(patch);
-> +	klp_free_objects(patch, KLP_FUNC_ANY);
->  
->  	mutex_unlock(&klp_mutex);
->  
-> -- 
-> 2.13.6
-> 
-
--- 
-Josh
+    
