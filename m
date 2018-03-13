@@ -1,88 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeCMODS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:03:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47393 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751808AbeCMODP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:03:15 -0400
-Date: Tue, 13 Mar 2018 15:03:03 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chris Obbard <chris@64studio.com>
-Cc: broonie@sirena.org.uk, Code Kipper <codekipper@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        be17068@iperbole.bo.it
-Subject: Re: [linux-sunxi] Re: [PATCH v2 6/6] ASoC: sun4i-i2s: Add support
- for loopback
-Message-ID: <20180313140303.wkwsxhhm5lxbzp5a@flea>
-References: <20180312155753.9478-1-codekipper@gmail.com>
- <20180312155753.9478-7-codekipper@gmail.com>
- <20180312183521.GP2186@sirena.org.uk>
- <CAP03XeoaYcMrzv3+K83wGUaDn6ZcCDzePdVNcjAqJ4QrF-WLSA@mail.gmail.com>
+        id S1752773AbeCMODz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:03:55 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35488 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751808AbeCMODx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 10:03:53 -0400
+Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+To: David Laight <David.Laight@ACULAB.COM>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+ <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+ <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
+Date: Tue, 13 Mar 2018 15:03:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2x7byyr6nyfj2hcd"
-Content-Disposition: inline
-In-Reply-To: <CAP03XeoaYcMrzv3+K83wGUaDn6ZcCDzePdVNcjAqJ4QrF-WLSA@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi David,
 
---2x7byyr6nyfj2hcd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13/03/18 13:38, David Laight wrote:
+> From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
+>> On 13/03/18 11:20, David Laight wrote:
+>>> From: Kieran Bingham
+>>>> Sent: 09 March 2018 22:04
+>>>> The kernel provides a __packed definition to abstract away from the
+>>>> compiler specific attributes tag.
+>>>>
+>>>> Convert all packed structures in VSP1 to use it.
+>>>>
+>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>>> ---
+>>>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>> index 37e2c984fbf3..382e45c2054e 100644
+>>>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+>>>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>> @@ -29,19 +29,19 @@
+>>>>  struct vsp1_dl_header_list {
+>>>>  	u32 num_bytes;
+>>>>  	u32 addr;
+>>>> -} __attribute__((__packed__));
+>>>> +} __packed;
+>>>>
+>>>>  struct vsp1_dl_header {
+>>>>  	u32 num_lists;
+>>>>  	struct vsp1_dl_header_list lists[8];
+>>>>  	u32 next_header;
+>>>>  	u32 flags;
+>>>> -} __attribute__((__packed__));
+>>>> +} __packed;
+>>>>
+>>>>  struct vsp1_dl_entry {
+>>>>  	u32 addr;
+>>>>  	u32 data;
+>>>> -} __attribute__((__packed__));
+>>>> +} __packed;
+>>>
+>>> Do these structures ever actually appear in misaligned memory?
+>>> If they don't then they shouldn't be marked 'packed'.
+>>
+>> I believe the declaration is to ensure that the struct definition is not altered
+>> by the compiler as these structures specifically define the layout of how the
+>> memory is read by the VSP1 hardware.
+> 
+> The C language and ABI define structure layouts.
+> 
+>> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
+>> rearranged by the compiler (though I believe it would be free to do so if it
+>> chose without this attribute), but I think the declaration shows the intent of
+>> the memory structure.
+> 
+> The language requires the fields be in order and the ABI stops the compiler
+> adding 'random' padding.
+> 
+>> Isn't this a common approach throughout the kernel when dealing with hardware
+>> defined memory structures ?
+> 
+> Absolutely not.
+> __packed tells the compiler that the structure might be on any address boundary.
+> On many architectures this means the compiler must use byte accesses with shifts
+> and ors for every access.
+> The most a hardware defined structure will have is a compile-time assert
+> that it is the correct size (to avoid silly errors from changes).
 
-On Tue, Mar 13, 2018 at 01:39:44PM +0000, Chris Obbard wrote:
-> >> +- loopback:  if this property is present then the dai is configured in
-> >> +             loopback mode where the output fifo is redirected to the=
- input
-> >> +             fifo.
-> >
-> > This really doesn't seem like something that ought to go into the DT
-> > and hence ABI given that there's obviously no reason to use this in
-> > production.  Just make it be a #define in the code or something.
->=20
-> It would be nice to have this as an optional devicetree property so
-> when testing JACK latency etc I don't have to manually re-compile a
-> kernel...
 
-Another one might also argue that having to recompile the DT and
-reflash the whole firmware or EEPROM is overkill for just testing JACK
-latency.
 
-Can't we create a module parameter for it?
+Ok - interesting, I see what you're saying - and certainly don't want the
+compiler to be performing byte accesses on the structures unnecessarily.
 
-Maxime
+I'm trying to distinguish the difference here. Is the single point that
+ __packed
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+causes byte-access, where as
 
---2x7byyr6nyfj2hcd
-Content-Type: application/pgp-signature; name="signature.asc"
+__attribute__((__packed__));
 
------BEGIN PGP SIGNATURE-----
+does not?
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqn2hYACgkQ0rTAlCFN
-r3S1DRAAjhIduewFI9H4p3wDEAaXqYFAOsodCtcThLZpIZOuUHufQ2XPvhH/4LjH
-e9jyynK2jmzXK/THayoEr2WkG9TsIU5pgt7tGUcTjYqC4JR4XlkeNAS7Th8XFP/Q
-+mFOjIefCpEyj1acT1HWjFyuoTKK3CacYWaHbn2wr5ovqwr1p3hG9zX8KgxxGe2k
-yQ6WSKDu1EfdPYeP/N2JNdfWYAPS6HC6I8LRJ2e1g0cA3t7LUbR/rd8ynTiWh2Rb
-yJiS6EDgRqGBCsPr5PPz579HZRQ8JUsL6h3FWv2ZTd9QGtkynvXwY3YnfIXzk4se
-qUPsT0jwg5BBEsjB6DPMrOl/hPW1TL7oaN1zn7VTsgjW1xyYEQXYanQRaZawb4Rl
-yepNYVLlhDiXBTxMW4KMUM6NHCfQ5Za/HqSUNB3Chma+rODTUBPzm/MFF9wqucdc
-7b/tmGsEFSxP6IXuUbQ+iCzUfSeM6TYrzYir+LnKZIFV/FB7iwiqcpwU+iIE9zWP
-n4fSbHXOqeHFnSTJbWd/iuYiJmi0C2TmmjUJxV5iGrt6aTL1jx/D3X2ZUeZk/hQq
-w+cSg56449LXrJ3xV5O2kDAMU4ZtTqc6SoHwVLM4lF82YazaNYC8yzKl9piQoakq
-CS41wsLktRvvbatVsbx2LpyYRLvQK9ZVQBZdf9lmsQqZ1WiOhpw=
-=b85g
------END PGP SIGNATURE-----
+Looking at the GCC docs [0]: I see that  __attribute__((__packed__)) tells the
+compiler that the "structure or union is placed to minimize the memory required".
 
---2x7byyr6nyfj2hcd--
+However, the keil compiler docs[1] do certainly declare that __packed causes
+byte alignment.
+
+I was confused/thrown off here by the Kernel defining __packed as
+__attribute__((packed)) at [2].
+
+Do __attribute__((packed)) and __attribute__((__packed__)) differ ?
+
+In which case, from what I've read so far I wish "__packed" was "__unaligned"...
+
+
+[0]
+https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
+
+[1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
+
+[2]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
+
+
+Regards
+
+Kieran
+
+
+> 	David
+> 
