@@ -1,40 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753113AbeCMSCQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:02:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37860 "EHLO
+        id S1753095AbeCMSCO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:02:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60266 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752840AbeCMSAy (ORCPT
+        by vger.kernel.org with ESMTP id S1753069AbeCMSCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:00:54 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: [PATCH v9 21/24] perf tools: Add support for the SPF perf event
-Date: Tue, 13 Mar 2018 18:59:51 +0100
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+        Tue, 13 Mar 2018 14:02:11 -0400
+Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+To: James Morris <jmorris@namei.org>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+ <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+ <20170725175317.GA727@mail.hallyn.com>
+ <1501008554.3689.30.camel@HansenPartnership.com>
+ <20170725190406.GA1883@mail.hallyn.com>
+ <1501009739.3689.33.camel@HansenPartnership.com>
+ <1501012082.27413.17.camel@linux.vnet.ibm.com>
+ <645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
+ <20170725204622.GA4969@mail.hallyn.com>
+ <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
+ <20180309025942.GA15295@mail.hallyn.com>
+ <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+ <alpine.LRH.2.21.1803120953310.26512@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        Yuqiong Sun <sunyuqiong1988@gmail.com>,
+        containers <containers@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Safford <david.safford@ge.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        ima-devel <linux-ima-devel@lists.sourceforge.net>,
+        Yuqiong Sun <suny@us.ibm.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Tue, 13 Mar 2018 14:02:02 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.LRH.2.21.1803120953310.26512@namei.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18031318-0016-0000-0000-0000053201A9
+x-cbid: 18031318-0008-0000-0000-00000973D5A0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008667; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002542; UDB=6.00510135; IPR=6.00781872;
+ MB=3.00020011; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 18:02:07
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031318-0017-0000-0000-0000286F019F
-Message-Id: <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18031318-0009-0000-0000-00004660553C
+Message-Id: <c39350db-046f-ea70-15e4-210884548b1e@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,79 +61,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the new speculative faults event.
+On 03/11/2018 06:58 PM, James Morris wrote:
+> On Fri, 9 Mar 2018, Stefan Berger wrote:
+>
+>> Yuqiong is publishing a paper in this area. I believe the conference is only
+>> later this year.
+>>
+>> Our goals are to enable IMA measurements, appraisal, and auditing inside a
+>> container using namespaces.
+> This is excellent to have -- can you include this requirements analysis as
+> a file Documentation/security on the next posting?
+>
+> Also, if you need a public space for managing these kinds of documents,
+> consider utilizing
+> http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
 
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
----
- tools/include/uapi/linux/perf_event.h | 1 +
- tools/perf/util/evsel.c               | 1 +
- tools/perf/util/parse-events.c        | 4 ++++
- tools/perf/util/parse-events.l        | 1 +
- tools/perf/util/python.c              | 1 +
- 5 files changed, 8 insertions(+)
+Thanks for the pointer. I tried creating an account, but the interface 
+wouldn't let me. Who is managing it?
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 6f873503552d..a6ddab9edeec 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -112,6 +112,7 @@ enum perf_sw_ids {
- 	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
- 	PERF_COUNT_SW_DUMMY			= 9,
- 	PERF_COUNT_SW_BPF_OUTPUT		= 10,
-+	PERF_COUNT_SW_SPF			= 11,
- 
- 	PERF_COUNT_SW_MAX,			/* non-ABI */
- };
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ef351688b797..45b954019118 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -428,6 +428,7 @@ const char *perf_evsel__sw_names[PERF_COUNT_SW_MAX] = {
- 	"alignment-faults",
- 	"emulation-faults",
- 	"dummy",
-+	"speculative-faults",
- };
- 
- static const char *__perf_evsel__sw_name(u64 config)
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 34589c427e52..2a8189c6d5fc 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -140,6 +140,10 @@ struct event_symbol event_symbols_sw[PERF_COUNT_SW_MAX] = {
- 		.symbol = "bpf-output",
- 		.alias  = "",
- 	},
-+	[PERF_COUNT_SW_SPF] = {
-+		.symbol = "speculative-faults",
-+		.alias	= "spf",
-+	},
- };
- 
- #define __PERF_EVENT_FIELD(config, name) \
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 655ecff636a8..5d6782426b30 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -308,6 +308,7 @@ emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EM
- dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
- duration_time					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
- bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
-+speculative-faults|spf				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_SPF); }
- 
- 	/*
- 	 * We have to handle the kernel PMU event cycles-ct/cycles-t/mem-loads/mem-stores separately.
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 2918cac7a142..00dd227959e6 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1174,6 +1174,7 @@ static struct {
- 	PERF_CONST(COUNT_SW_ALIGNMENT_FAULTS),
- 	PERF_CONST(COUNT_SW_EMULATION_FAULTS),
- 	PERF_CONST(COUNT_SW_DUMMY),
-+	PERF_CONST(COUNT_SW_SPF),
- 
- 	PERF_CONST(SAMPLE_IP),
- 	PERF_CONST(SAMPLE_TID),
--- 
-2.7.4
+    Stefan
+
+>
+>
+> - James
