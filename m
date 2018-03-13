@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtwyhA07U/3Oaw3g/bHHH9HthfStakExMKd7NsYKsftUOLbzNqpPSXfdPdj6kr0Z7q8wNgc
-ARC-Seal: i=1; a=rsa-sha256; t=1520955382; cv=none;
+X-Google-Smtp-Source: AG47ELsmSouMI7bQc0Wl25d/WQKURvhuB3P4qUiu/lAoIjPvKllg31PsCtxy8S2FxynKXxrlzMY6
+ARC-Seal: i=1; a=rsa-sha256; t=1520955379; cv=none;
         d=google.com; s=arc-20160816;
-        b=SgEuYc6RnO4ml6fwjSGSt4gFQibKL9SuwgvrQtpCm4CK+nuF7OwWV3gzu8gOvh3A6n
-         31sYye/p8jaaJ8Crkk0z3oB+6X8z4Nj/ena4x+FaNxCIJCzQJemHeOrMeieZBO+5N+e4
-         z5OllE1WZR/M5VhE2+aa6neOpZoVTGGFik9k+R05gkcSSe+MS9w7feHB5AgudFzwxWyd
-         JM0P6FpumUd2dKjGr/+31E7FQfpkRuB/AlKYTqEHSCJn1Zd/l8KST6EekhOtymdCHrap
-         /nGzjvwnkpQ0HPZbz47KbCjHYwuUVIO41ARoWO7nuhWgyopsmRUonGUt+BYKvV+bnMM8
-         uE/Q==
+        b=rhJ7Gf3auO49/voHo83yYJOMPUdR0atBCEl5j+pR763qu6Ifk/0UjCotNvg2i2+7gs
+         qStX2dZCxVygqQcuzMnnB/B+NPEnST1xGo5zg5/Mf3egwo6K0IZy/Ka/wJv0Kc3svKSL
+         HndC1R4DrblGw3dEa3t1lpNoMli0ksNzFVIpTTqmSynna/BNjvmIc/zlW0QOu7K+SzDw
+         J4Tc7W5WO2g5mOjoeazXvUBlOrYUMyOpUkNyehJHM8YMy1f1DLXZvr8KX4D4RM+XDnby
+         e5dy/MS4eECwduNHRWLD34kJLWA0JFoFO95VGuaoCXyVXJaRmY0oXG9mPMwWMp4LBoeO
+         Y0aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bej/QXWtf6/G+FYbOkf7YB0F77BpUjKTCqIJWTmk5O4=;
-        b=IM/GE6XeTKrdQZ8SuycPEa4kUNY3SpiUHIaau434hakIOeKumPSHno+jxi2uRxw6gf
-         odLAmYJ/uuiB61BRTWi9bU90VpjCweT3aA4nONza/3rRdS9lBaMVSMW50p0M0U7+9o6O
-         ZmoboeLdnDD4DEtpg7RLg6P54W2uxQEme9v7kG06VlHY3VNdN+EAf7sri4Aga1wfeWDf
-         br0BcWkVy1j+AZblR4VChwecS5gglo+b9QbVTlbsI6DranCK+Hk4ojJGaMBUUauS4PJs
-         BmROUV3SmbgzZvoYs7Q3Jz1ptBuw8eGhSg8gpFoYycjrSHicsgVcoLpR3+2ZJ+XBPlIX
-         wVBA==
+        bh=Fv0jtHECIzveoyDenDDor5yvvPZ3KrrJSzkIsjIw0Jg=;
+        b=b+39P7rJAQrkwXiO+ycgmXmztv0aqyrXbSJGnBf/ctrIxW1DTc8AxQK2z3ld+snFFN
+         UWRVHb/hJwndNw0unwD0GauPgHcPi0kt/RaPt4NWnqC53U2o54iiWslz3vCu2DechbNf
+         DgjJCj9kfiAgaBsj6VedhfcD6kRbj+xJoH/vZPRw/Xeb4MAoSvt1ub146oOJIGioH142
+         XT79qCpARLw7rFda8WBikGV8bw46rWKUWCgXbRItAEJfRUFnThd3aBgXBpt4+2lVpEdq
+         I3hJ3QLqX3HVAm2AeFLlV8E/Cr94xgK57pq+TRFYHxzeIB3d1x9nHXGoIiv0oCkG3jtT
+         njtg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 031/140] scsi: qla2xxx: Fix login state machine stuck at GPDB
-Date: Tue, 13 Mar 2018 16:23:54 +0100
-Message-Id: <20180313152500.172736062@linuxfoundation.org>
+Subject: [PATCH 4.14 026/140] scsi: qla2xxx: Move session delete to driver work queue
+Date: Tue, 13 Mar 2018 16:23:49 +0100
+Message-Id: <20180313152459.771533935@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837204781255664?=
-X-GMAIL-MSGID: =?utf-8?q?1594837310553562008?=
+X-GMAIL-THRID: =?utf-8?q?1594837153104620653?=
+X-GMAIL-MSGID: =?utf-8?q?1594837307825574162?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,9 +53,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 414d9ff3f8039f85d23f619dcbbd1ba2628a1a67 upstream.
+commit a01c77d2cbc45ba527e884e5c30363a1200a4130 upstream.
 
-This patch returns discovery state machine back to Login Complete.
+Move session delete from system work queue to driver's work queue for in
+time processing.
 
 Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
@@ -66,40 +67,34 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_os.c     |    3 ++-
+ drivers/scsi/qla2xxx/qla_target.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -864,6 +864,7 @@ void qla24xx_handle_gpdb_event(scsi_qla_
- 	int rval = ea->rc;
- 	fc_port_t *fcport = ea->fcport;
- 	unsigned long flags;
-+	u16 opt = ea->sp->u.iocb_cmd.u.mbx.out_mb[10];
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3177,10 +3177,11 @@ qla2x00_probe_one(struct pci_dev *pdev,
+ 	    host->can_queue, base_vha->req,
+ 	    base_vha->mgmt_svr_loop_id, host->sg_tablesize);
  
- 	fcport->flags &= ~FCF_ASYNC_SENT;
++	ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
++
+ 	if (ha->mqenable) {
+ 		bool mq = false;
+ 		bool startit = false;
+-		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 0);
  
-@@ -894,7 +895,8 @@ void qla24xx_handle_gpdb_event(scsi_qla_
- 	}
+ 		if (QLA_TGT_MODE_ENABLED()) {
+ 			mq = true;
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1205,7 +1205,8 @@ void qlt_schedule_sess_for_deletion(stru
+ 	ql_dbg(ql_dbg_tgt, sess->vha, 0xe001,
+ 	    "Scheduling sess %p for deletion\n", sess);
  
- 	spin_lock_irqsave(&vha->hw->tgt.sess_lock, flags);
--	ea->fcport->login_gen++;
-+	if (opt != PDO_FORCE_ADISC)
-+		ea->fcport->login_gen++;
- 	ea->fcport->deleted = 0;
- 	ea->fcport->logout_on_delete = 1;
+-	schedule_work(&sess->del_work);
++	INIT_WORK(&sess->del_work, qla24xx_delete_sess_fn);
++	queue_work(sess->vha->hw->wq, &sess->del_work);
+ }
  
-@@ -918,6 +920,13 @@ void qla24xx_handle_gpdb_event(scsi_qla_
- 
- 			qla24xx_post_gpsc_work(vha, fcport);
- 		}
-+	} else if (ea->fcport->login_succ) {
-+		/*
-+		 * We have an existing session. A late RSCN delivery
-+		 * must have triggered the session to be re-validate.
-+		 * session is still valid.
-+		 */
-+		fcport->disc_state = DSC_LOGIN_COMPLETE;
- 	}
- 	spin_unlock_irqrestore(&vha->hw->tgt.sess_lock, flags);
- } /* gpdb event */
+ void qlt_schedule_sess_for_deletion_lock(struct fc_port *sess)
