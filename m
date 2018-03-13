@@ -1,62 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753116AbeCMVwW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:52:22 -0400
-Received: from namei.org ([65.99.196.166]:52894 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752100AbeCMVwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:52:20 -0400
-Date: Wed, 14 Mar 2018 08:51:48 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-cc: "Serge E. Hallyn" <serge@hallyn.com>,
-        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        Yuqiong Sun <sunyuqiong1988@gmail.com>,
-        containers <containers@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Safford <david.safford@ge.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        ima-devel <linux-ima-devel@lists.sourceforge.net>,
-        Yuqiong Sun <suny@us.ibm.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
-In-Reply-To: <c39350db-046f-ea70-15e4-210884548b1e@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1803140851120.13609@namei.org>
-References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com> <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com> <20170725175317.GA727@mail.hallyn.com> <1501008554.3689.30.camel@HansenPartnership.com> <20170725190406.GA1883@mail.hallyn.com>
- <1501009739.3689.33.camel@HansenPartnership.com> <1501012082.27413.17.camel@linux.vnet.ibm.com> <645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com> <20170725204622.GA4969@mail.hallyn.com> <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
- <20180309025942.GA15295@mail.hallyn.com> <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com> <alpine.LRH.2.21.1803120953310.26512@namei.org> <c39350db-046f-ea70-15e4-210884548b1e@linux.vnet.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1753193AbeCMVwl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 17:52:41 -0400
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:36738 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753080AbeCMVwj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 17:52:39 -0400
+X-Google-Smtp-Source: AG47ELtIhfcK1D8MN+PVAenfjUQKHLgue0ANKMvCiu5Nk52v/13pnKCfJCigBRL1ouNofijzUSf8ZVj0HXDDdvyud4c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180313140037.7717460162192c99775b135e@linux-foundation.org>
+References: <20180312233952.niz2cuz7psv4fe2s@gmail.com> <20180313140037.7717460162192c99775b135e@linux-foundation.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 13 Mar 2018 22:52:17 +0100
+Message-ID: <CANiq72nKXXV7SDTmCwvizWA3ubdczNZV8qT2-PoGAQnDfX9qtg@mail.gmail.com>
+Subject: Re: [PATCH] clang-format: add configuration file
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Robo Bot <apw@canonical.com>,
+        Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Stefan Berger wrote:
+On Tue, Mar 13, 2018 at 10:00 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Tue, 13 Mar 2018 00:39:52 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+>
+>> --- a/Documentation/process/4.Coding.rst
+>> +++ b/Documentation/process/4.Coding.rst
+>> @@ -58,6 +58,12 @@ can never be transgressed.  If there is a good reason to go against the
+>>  style (a line which becomes far less readable if split to fit within the
+>>  80-column limit, for example), just do it.
+>>
+>> +Note that you can use the clang-format tool to help you with these rules
+>> +and to quickly re-format parts of your code automatically. It is specially
+>> +useful for new files/code and to spot coding style mistakes. It is also
+>> +useful to sort #includes, to align variables or comments, to reflow text
+>> +and other similar tasks.
+>
+> It would be rather helpful to tell people how to invoke clang-format.
+> Is it just "clang-format foo.c" or what?
+>
 
-> On 03/11/2018 06:58 PM, James Morris wrote:
-> > On Fri, 9 Mar 2018, Stefan Berger wrote:
-> > 
-> > > Yuqiong is publishing a paper in this area. I believe the conference is
-> > > only
-> > > later this year.
-> > > 
-> > > Our goals are to enable IMA measurements, appraisal, and auditing inside a
-> > > container using namespaces.
-> > This is excellent to have -- can you include this requirements analysis as
-> > a file Documentation/security on the next posting?
-> > 
-> > Also, if you need a public space for managing these kinds of documents,
-> > consider utilizing
-> > http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
-> 
-> Thanks for the pointer. I tried creating an account, but the interface
-> wouldn't let me. Who is managing it?
+Indeed! I will add more information. Here is some more we can put (I
+will properly rewrite it, but you can see it as a draft and as the
+answer to your question! :-)
 
-Email me for an account, per the note on the front page.
+You can call "clang-format foo.c" and it will output to the standard
+output the formatted file (using the configuration file automatically
+if it is any of the parents, a la git). The -i does the replacements
+inline. However, for the kernel, it is best to use it with one of the
+editor integrations: the issue is that clang-format does not format
+everything perfectly as we want for the kernel [*], so it is best used
+to either 1) format portions of files or 2) check patches.
 
+  - For formatting portions of files, you just select inside your text
+editor something and press your favorite key binding to re-format it
+(clang-format has some parameters that the editor passes when invoking
+it). Since it is very fast, it works very well. Integrations with vim
+and emacs come with the tool; for most other popular editors, you can
+usually find a plugin or similar in the manager of such editor.
 
--- 
-James Morris
-<jmorris@namei.org>
+  - For checking patches, since it comes with support to read unified
+diffs, it is very easy to use it for patches and for commits. What you
+will see is both things that could be improved because there was a
+typo/mistake by the patch author, and things that you should ignore
+because clang-format does not format those cases -- it is very easy to
+know which are which if you use the tool a few times, specially if you
+are looking at the difference with git diff.
+
+When I was testing clang-format to come with the configuration, I was
+running the tool against full files, and while there were many cases
+that have to be ignored, like [*], it is also very easy to see some
+mistakes in the code. If it gets popular, I am sure people will come
+up with ready-to-be-used scripts/hooks and things like that, but for
+the moment I thought the best was to at least have the basic
+configuration in and iterate from there. At least there is *one*
+person (what an audience! :-) using it currently, since if you grep
+for "clang-format" you will see one staging driver with one comment in
+the code to turn off the formatting in a block. I also thought that
+the sooner we define how we will use it (e.g. whether we allow those
+"don't-format-this" marks, the name for those marks -- it is
+configurable, etc.), the best.
+
+[*] For instance, it does not support alignment of one-line #defines
+-- but it aligns multiline #defines quite well, though. So you won't
+run it for full files typically, but for groups of things. Another
+simple case where it is best for selections and not for full files (at
+least existing files) is the sorting of #includes i.e. It is great if
+you use it when selecting a bunch of them that you know will look
+better if sorted, but probably you don't want to sort ALL of them
+(even if it respects the grouping, which it does); expect if you are
+writing a new file.
+
+Cheers,
+Miguel
