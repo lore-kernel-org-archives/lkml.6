@@ -1,181 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932828AbeCMN12 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:27:28 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:3494 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932649AbeCMN1S (ORCPT
+        id S1752782AbeCMN1t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:27:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35690 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932746AbeCMN1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:27:18 -0400
-From: Luc Maranget <luc.maranget@inria.fr>
-X-IronPort-AV: E=Sophos;i="5.47,464,1515452400";
-   d="scan'208";a="317824754"
-Date: Tue, 13 Mar 2018 14:27:16 +0100
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>, Palmer Dabbelt <palmer@sifive.com>,
-        parri.andrea@gmail.com, albert@sifive.com, stern@rowland.harvard.edu,
-        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, paulmck@linux.vnet.ibm.com, akiyks@gmail.com,
-        mingo@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] riscv/atomic: Strengthen implementations with
- fences
-Message-ID: <20180313132716.tjtgjtsax5vfnvtn@yquem.inria.fr>
-References: <mhng-a5cc1e9d-00d5-49e7-8acd-173277f28381@palmer-si-x1c4>
- <d7f08bbb-3afb-b745-640a-b720971c68d4@nvidia.com>
- <20180312061353.g3czcr4fcdgct36a@tardis>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180312061353.g3czcr4fcdgct36a@tardis>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 13 Mar 2018 09:27:10 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: [PATCH v9 60/61] page cache: Finish XArray conversion
+Date: Tue, 13 Mar 2018 06:26:38 -0700
+Message-Id: <20180313132639.17387-61-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
+References: <20180313132639.17387-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Fri, Mar 09, 2018 at 04:21:37PM -0800, Daniel Lustig wrote:
-> > On 3/9/2018 2:57 PM, Palmer Dabbelt wrote:
-> > > On Fri, 09 Mar 2018 13:30:08 PST (-0800), parri.andrea@gmail.com wrote:
-> > >> On Fri, Mar 09, 2018 at 10:54:27AM -0800, Palmer Dabbelt wrote:
-> > >>> On Fri, 09 Mar 2018 10:36:44 PST (-0800), parri.andrea@gmail.com wrote:
-> > >>
-> > >> [...]
-> > >>
-> > >>> >This proposal relies on the generic definition,
-> > >>> >
-> > >>> >   include/linux/atomic.h ,
-> > >>> >
-> > >>> >and on the
-> > >>> >
-> > >>> >   __atomic_op_acquire()
-> > >>> >   __atomic_op_release()
-> > >>> >
-> > >>> >above to build the acquire/release atomics (except for the xchg,cmpxchg,
-> > >>> >where the ACQUIRE_BARRIER is inserted conditionally/on success).
-> > >>>
-> > >>> I thought we wanted to use the AQ and RL bits for AMOs, just not for LR/SC
-> > >>> sequences.  IIRC the AMOs are safe with the current memory model, but I might
-> > >>> just have some version mismatches in my head.
-> > >>
-> > >> AMO.aqrl are "safe" w.r.t. the LKMM (as they provide "full-ordering"); OTOH,
-> > >> AMO.aq and AMO.rl present weaknesses that LKMM (and some kernel developers)
-> > >> do not "expect".  I was probing this issue in:
-> > >>
-> > >>   https://marc.info/?l=linux-kernel&m=151930201102853&w=2
-> > >>
-> > >> (c.f., e.g., test "RISCV-unlock-lock-read-ordering" from that post).
-> > >>
-> > >> Quoting from the commit message of my patch 1/2:
-> > >>
-> > >>   "Referring to the "unlock-lock-read-ordering" test reported below,
-> > >>    Daniel wrote:
-> > >>
-> > >>      I think an RCpc interpretation of .aq and .rl would in fact
-> > >>      allow the two normal loads in P1 to be reordered [...]
-> > >>
-> > >>      [...]
-> > >>
-> > >>      Likewise even if the unlock()/lock() is between two stores.
-> > >>      A control dependency might originate from the load part of
-> > >>      the amoswap.w.aq, but there still would have to be something
-> > >>      to ensure that this load part in fact performs after the store
-> > >>      part of the amoswap.w.rl performs globally, and that's not
-> > >>      automatic under RCpc.
-> > >>
-> > >>    Simulation of the RISC-V memory consistency model confirmed this
-> > >>    expectation."
-> > >>
-> > >> I have just (re)checked these observations against the latest specification,
-> > >> and my results _confirmed_ these verdicts.
-> > > 
-> > > Thanks, I must have just gotten confused about a draft spec or something.  I'm
-> > > pulling these on top or your other memory model related patch.  I've renamed
-> > > the branch "next-mm" to be a bit more descriptiove.
-> > 
-> > (Sorry for being out of the loop this week, I was out to deal with
-> > a family matter.)
-> > 
-> > I assume you're using the herd model?  Luc's doing a great job with
-> > that, but even so, nothing is officially confirmed until we ratify
-> > the model.  In other words, the herd model may end up changing too.
-> > If something is broken on our end, there's still time to fix it.
-> > 
-> > Regarding AMOs, let me copy from something I wrote in a previous
-> > offline conversation:
-> > 
-> > > it seems to us that pairing a store-release of "amoswap.rl" with
-> > > a "ld; fence r,rw" doesn't actually give us the RC semantics we've
-> > > been discussing for LKMM.  For example:
-> > > 
-> > > (a) sd t0,0(s0)
-> > > (b) amoswap.d.rl x0,t1,0(s1)
-> > >     ...
-> > > (c) ld a0,0(s1)
-> > > (d) fence r,rw
-> > > (e) sd t2,0(s2)
-> > > 
-> > > There, we won't get (a) ordered before (e) regardless of whether
-> > > (b) is RCpc or RCsc.  Do you agree?
-> > 
-> > At the moment, only the load part of (b) is in the predecessor
-> > set of (d), but the store part of (b) is not.  Likewise, the
-> > .rl annotation applies only to the store part of (b), not the
-> > load part.
-> > 
-> > This gets back to a question Linus asked last week about
-> > whether the AMO is a single unit or whether it can be
-> 
-> You mean AMO or RmW atomic operations?
-> 
-> > considered to split into a load and a store part (which still
-> > perform atomically).  For RISC-V, for right now at least, the
-> > answer is the latter.  Is it still the latter for Linux too?
-> > 
-> 
-> I think for RmW atomics it's still the latter, the acquire or release is
-> for the load part or the store part of an RmW. For example, ppc uses
-> lwsync as acquire/release barriers, and lwsync could not order
-> write->read. 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-You are correct LKMM represent read-modify-write constructs with 2 events,
-one read and one write. Those are connected by the special "rmw" relation.
+With no more radix tree API users left, we can drop the GFP flags
+and use xa_init() instead of INIT_RADIX_TREE().
 
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/inode.c      | 2 +-
+ mm/swap_state.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
-> 
-> Regards,
-> Boqun
-
-Regards,
-
---Luc
-
-
-> 
-> > https://lkml.org/lkml/2018/2/26/606
-> > 
-> > > So I think we'll need to make sure we pair .rl with .aq, or that
-> > > we pair fence-based mappings with fence-based mappings, in order
-> > > to make the acquire/release operations work.
-> > 
-> > This assumes we'll say that .aq and .rl are RCsc, not RCpc.
-> > But in this case, I think .aq and .rl could still be safe to use,
-> > as long as you don't ever try to mix in a fence-based mapping
-> > on the same data structure like in the example above.  That
-> > might be important if we want to find the most compact legal
-> > implementation, and hence do want to use .aq and .rl after all.
-> > 
-> > > And since we don't have native "ld.aq" today in RISC-V, that
-> > > would mean smp_store_release would have to remain implemented
-> > > as "fence rw,w; s{w|d}", rather than "amoswap.{w|d}.rl", for
-> > > example.
-> > 
-> > Thoughts?
-> > 
-> > Thanks,
-> > Dan
-> > 
-> > > 
-> > > Thanks!
+diff --git a/fs/inode.c b/fs/inode.c
+index 13ceb98c3bd3..d40c1c16febe 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -348,7 +348,7 @@ EXPORT_SYMBOL(inc_nlink);
+ 
+ static void __address_space_init_once(struct address_space *mapping)
+ {
+-	INIT_RADIX_TREE(&mapping->i_pages, GFP_ATOMIC | __GFP_ACCOUNT);
++	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index a0a562fbc65f..208a95ad00e6 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -599,7 +599,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
+ 		return -ENOMEM;
+ 	for (i = 0; i < nr; i++) {
+ 		space = spaces + i;
+-		INIT_RADIX_TREE(&space->i_pages, GFP_ATOMIC|__GFP_NOWARN);
++		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
+ 		atomic_set(&space->i_mmap_writable, 0);
+ 		space->a_ops = &swap_aops;
+ 		/* swap cache doesn't use writeback related tags */
+-- 
+2.16.1
