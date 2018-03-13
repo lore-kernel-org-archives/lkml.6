@@ -1,91 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeCMJOr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:14:47 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:46903 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752252AbeCMJOo (ORCPT
+        id S1752594AbeCMJOQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:14:16 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:41835 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752511AbeCMJOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:14:44 -0400
-X-Google-Smtp-Source: AG47ELteR7QQZ+EvAKRZyT95XpaaOYB+atOP2s5y4abiy8cs8B9Za+UAHL4DA+1J+y9DbVPrWi5/0pvlHm+RkBxJ0xc=
-MIME-Version: 1.0
-In-Reply-To: <20180313005103.brhhrxlatxfkdw7p@thinkpad>
-References: <20180312194715.GA3992@amd> <20180312194944.GA3979@amd>
- <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
- <20180312223521.vzccevf6z7ik5ysf@thinkpad> <20180312230407.GA7612@amd>
- <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
- <20180312231847.GB7612@amd> <20180313005103.brhhrxlatxfkdw7p@thinkpad>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Mar 2018 10:14:43 +0100
-X-Google-Sender-Auth: 4gmv8tgdVuavYCEJ2f27heoO8HY
-Message-ID: <CAJZ5v0i6sEcDQ8fCgPSdt6MpLm5BCKY4Aam6zxQi-s0WY9Qq_A@mail.gmail.com>
-Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
- error in mate
-To: =?UTF-8?Q?Ognjen_Gali=C4=87?= <smclt30p@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        ACPI mailing list <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Mar 2018 05:14:01 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIo7016505
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 06/11] kconfig: tests: check unneeded "is not set" with unmet dependency
+Date: Tue, 13 Mar 2018 18:12:07 +0900
+Message-Id: <1520932332-2449-7-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2D9Exgg031468
 
-On Tue, Mar 13, 2018 at 1:51 AM, Ognjen Galić <smclt30p@gmail.com> wrote:
-> On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
->> Hi!
->>
->> > >> > >> Fully charged
->> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
->> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
->> > >> > >> waiting to charge".
->> > >> > >>
->> > >>
->> > >> For the MATE bug see:
->> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
->> > >>
->> > >> The problem is in the new composite battery system in UPower, it
->> > >> "merges" two external batteries into a single one for reporting. That
->> > >> battery does not understand "Not Charging" inside the MATE Power
->> > >> Manager. The above patch fixes that in MATE.
->> > >
->> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
->> > >
->> > > And now, I see that MATE should be improved.
->> > >
->> > > But what I also see is that kernel is changing its interface in a way
->> > > that (while making sense) breaks existing application. And we don't
->> > > break existing applications.
->> > >
->> > > [Now... maybe if the fix for the application is available for long
->> > > long time and noone is really looking and everyone already has new
->> > > application version, maybe ... But pull request for MATE is 9 days
->> > > old, and not even merged. So there is no way this is suitable for
->> > > 4.17.]
->> >
->> > Right.
->> >
->> > This basically means that we will have to defer the battery changes
->> > until user space is ready and not just upstream, but also in distro
->> > packages.
->>
->> Yes please.
->>
->> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
->> anything, the others should be safe AFAICT?
->>
->>                                                               Pavel
->>
->
-> Actually there is a bug in UPower itself, and that reflects the status
-> icon being broken in almost all desktop environments. I will work on
-> fixing UPower in the following days. Disregard my previous comment.
+Commit cb67ab2cd2b8 ("kconfig: do not write choice values when their
+dependency becomes n") fixed a problem where "# CONFIG_... is not set"
+for choice values are wrongly written into the .config file when they
+are once visible, then become invisible later.
 
-I have reverted commit 91eea70e5e5ce12e for the time being.
+Add a test for this naive case.
 
-Of course, it can be applied again after all of the bus triggered by
-it have been fixed and the fixes have gone to users.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
+
+Changes in v3: None
+Changes in v2:
+  - coding style clean-up based on PEP8, PEP257
+
+ scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig   | 14 ++++++++++++++
+ .../kconfig/tests/no_write_if_dep_unmet/__init__.py   | 19 +++++++++++++++++++
+ scripts/kconfig/tests/no_write_if_dep_unmet/config    |  1 +
+ .../tests/no_write_if_dep_unmet/expected_config       |  5 +++++
+ 4 files changed, 39 insertions(+)
+ create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig
+ create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
+ create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/config
+ create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/expected_config
+
+diff --git a/scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig b/scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig
+new file mode 100644
+index 0000000..c00b8fe
+--- /dev/null
++++ b/scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig
+@@ -0,0 +1,14 @@
++config A
++	bool "A"
++
++choice
++	prompt "Choice ?"
++	depends on A
++
++config CHOICE_B
++	bool "Choice B"
++
++config CHOICE_C
++	bool "Choice C"
++
++endchoice
+diff --git a/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py b/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
+new file mode 100644
+index 0000000..207261b
+--- /dev/null
++++ b/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
+@@ -0,0 +1,19 @@
++"""
++Do not write choice values to .config if the dependency is unmet.
++
++"# CONFIG_... is not set" should not be written into the .config file
++for symbols with unmet dependency.
++
++This was not working correctly for choice values because choice needs
++a bit different symbol computation.
++
++This checks that no unneeded "# COFIG_... is not set" is contained in
++the .config file.
++
++Related Linux commit: cb67ab2cd2b8abd9650292c986c79901e3073a59
++"""
++
++
++def test(conf):
++    assert conf.oldaskconfig('config', 'n') == 0
++    assert conf.config_matches('expected_config')
+diff --git a/scripts/kconfig/tests/no_write_if_dep_unmet/config b/scripts/kconfig/tests/no_write_if_dep_unmet/config
+new file mode 100644
+index 0000000..abd280e
+--- /dev/null
++++ b/scripts/kconfig/tests/no_write_if_dep_unmet/config
+@@ -0,0 +1 @@
++CONFIG_A=y
+diff --git a/scripts/kconfig/tests/no_write_if_dep_unmet/expected_config b/scripts/kconfig/tests/no_write_if_dep_unmet/expected_config
+new file mode 100644
+index 0000000..0d15e41
+--- /dev/null
++++ b/scripts/kconfig/tests/no_write_if_dep_unmet/expected_config
+@@ -0,0 +1,5 @@
++#
++# Automatically generated file; DO NOT EDIT.
++# Linux Kernel Configuration
++#
++# CONFIG_A is not set
+-- 
+2.7.4
