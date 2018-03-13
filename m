@@ -1,510 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932815AbeCMWsJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:48:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932739AbeCMWsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:48:08 -0400
-Date: Tue, 13 Mar 2018 17:48:04 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 06/10] livepatch: Add atomic replace
-Message-ID: <20180313224804.hvqngflltznjtttw@treble>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-7-pmladek@suse.com>
+        id S1753074AbeCMWtW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:49:22 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:36060 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751300AbeCMWtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:49:19 -0400
+To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
+Date: Tue, 13 Mar 2018 16:48:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180307082039.10196-7-pmladek@suse.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 09:20:35AM +0100, Petr Mladek wrote:
-> From: Jason Baron <jbaron@akamai.com>
+
+
+On 13/03/18 04:29 PM, Sinan Kaya wrote:
+> If hardware doesn't support it, blacklisting should have been the right
+> path and I still think that you should remove all switch business from the code.
+> I did not hear enough justification for having a switch requirement
+> for P2P.
+
+I disagree.
+
+> You are also saying that root ports have issues not because of functionality but
+> because of performance. 
+
+No... performance can also be an issue but the main justification for
+this is that many root ports do not support P2P at all and can fail in
+different ways (usually just dropping the TLPs).
+
+> What if I come up with a very cheap/crappy switch (something like used in data
+> mining)?
+
+Good luck. That's not how hardware is designed. PCIe switches that have
+any hope to compete with the existing market will need features like
+NTB, non-transparent ports, etc... and that implies a certain symmetry
+(ie there isn't a special host port because there may be more than one
+and it may move around) which implies that packets will always be able
+to forward between each ports which implies P2P will work.
+
+> I have been doing my best to provide feedback. It feels like you are throwing
+> them over the wall to be honest.
 > 
-> Sometimes we would like to revert a particular fix. Currently, this
-> is not easy because we want to keep all other fixes active and we
-> could revert only the last applied patch.
+> You keep implying "not my problem".
+
+Well, the fact of the matter is that extending this in all the ways
+people like you want face huge problems on all sides. These are not
+trivial issues and holding back work that works for our problem because
+it doesn't solve your problem is IMO just going to grind development in
+this area to a halt. We have to have something we can agree on which is
+safe to start building on. The building can't just emerge fully formed
+in one go.
+
+P2P proposal go back a long time and have never gotten anywhere because
+there are limitations and people want it to do things that are hard but
+don't want to contribute the work to solving those problems.
+
+>> Well, if it's a problem for someone they'll have to solve it. We're
+>> targeting JBOFs that have no use for ACS / IOMMU groups at all.
 > 
-> One solution would be to apply new patch that implemented all
-> the reverted functions like in the original code. It would work
-> as expected but there will be unnecessary redirections. In addition,
-> it would also require knowing which functions need to be reverted at
-> build time.
-> 
-> Another problem is when there are many patches that touch the same
-> functions. There might be dependencies between patches that are
-> not enforced on the kernel side. Also it might be pretty hard to
-> actually prepare the patch and ensure compatibility with
-> the other patches.
-> 
-> A better solution would be to create cumulative patch and say that
-> it replaces all older ones.
-> 
-> This patch adds a new "replace" flag to struct klp_patch. When it is
-> enabled, a set of 'nop' klp_func will be dynamically created for all
-> functions that are already being patched but that will no longer be
-> modified by the new patch. They are temporarily used as a new target
-> during the patch transition.
-> 
-> There are used several simplifications:
-> 
->   + nops' structures are generated already when the patch is registered.
->     All registered patches are taken into account, even the disabled ones.
->     As a result, there might be more nops than are really needed when
->     the patch is enabled and some disabled patches were removed before.
->     But we are on the safe side and it simplifies the implementation.
->     Especially we could reuse the existing init() functions. Also freeing
->     is easier because the same nops are created and removed only once.
+> IMO, you (not somebody) should address this one way or the other before this
+> series land in upstream.
 
-This quirk would go away with my patch stacking proposal to disallow
-registering on top of a disabled patch.
+The real way to address this (as I've mentioned before) is with some way
+of doing ACS and iomem groups dynamically. But this is a huge project in
+itself and is never going to be part of the P2P patchset.
 
->     Alternative solution would be to create nops when the patch is enabled.
->     But then any reusing of the init() functions and error paths would be
->     complicated. Also it would increase the risk of errors because of
->     late kobject initialization. Finally, it would need tricky waiting
->     for freed kobjects when finalizing a reverted enable transaction.
-> 
->   + The replaced patches are removed from the stack and cannot longer
->     be enabled directly. Otherwise, we would need to implement a more
->     complex logic of handling the stack of patches. It might be hard
->     to come with a reasonable semantic.
-> 
->     A fallback is to remove (rmmod) the replaced patches and register
->     (insmod) them again.
+> Another assumption: There are other architectures like ARM64 where IOMMU
+> is enabled by default even if you don't use VMs for security reasons.
+> IOMMU blocks stray transactions.
 
-Hopefully this quirk can also go away.
+True, but it doesn't change my point: ACS is not a requirement for Linux
+many many systems do not have it on at all or by default.
 
->   + Nops are handled like normal function patches. It reduces changes
->     in the existing code.
-> 
->     It would be possible to copy internal values when they are allocated
->     and make short cuts in init() functions. It would be possible to use
->     the fact that old_func and new_func point to the same function and
->     do not init new_func and new_size at all. It would be possible to
->     detect nop func in ftrace handler and just leave. But all these would
->     just complicate the code and maintenance.
-> 
->   + The callbacks from the replaced patches are not called. It would be
->     pretty hard to define a reasonable semantic and implement it.
-> 
->     It might even be counter-productive. The new patch is cumulative.
->     It is supposed to include most of the changes from older patches.
->     In most cases, it will not want to call pre_unpatch() post_unpatch()
->     callbacks from the replaced patches. It would disable/break things
->     for no good reasons. Also it should be easier to handle various
->     scenarios in a single script in the new patch than think about
->     interactions caused by running many scripts from older patches.
->     No to say that the old scripts even would not expect to be called
->     in this situation.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Split, reuse existing code, simplified]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Acked-by: Miroslav Benes <mbenes@suse.cz>
-> ---
->  include/linux/livepatch.h     |   3 +
->  kernel/livepatch/core.c       | 162 +++++++++++++++++++++++++++++++++++++++++-
->  kernel/livepatch/core.h       |   4 ++
->  kernel/livepatch/transition.c |  39 ++++++++++
->  4 files changed, 206 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> index 7fb76e7d2693..ed598d849029 100644
-> --- a/include/linux/livepatch.h
-> +++ b/include/linux/livepatch.h
-> @@ -42,6 +42,7 @@
->  enum klp_func_type {
->  	KLP_FUNC_ANY = -1,	/* Substitute any type */
->  	KLP_FUNC_STATIC = 0,    /* Original statically defined structure */
-> +	KLP_FUNC_NOP,		/* Dynamically allocated NOP function patch */
->  };
->  
->  /**
-> @@ -153,6 +154,7 @@ struct klp_object {
->   * struct klp_patch - patch structure for live patching
->   * @mod:	reference to the live patch module
->   * @objs:	object entries for kernel objects to be patched
-> + * @replace:	replace all already registered patches
->   * @list:	list node for global list of registered patches
->   * @kobj:	kobject for sysfs resources
->   * @obj_list:	head of list for struct klp_object
-> @@ -163,6 +165,7 @@ struct klp_patch {
->  	/* external */
->  	struct module *mod;
->  	struct klp_object *objs;
-> +	bool replace;
->  
->  	/* internal */
->  	struct list_head list;
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index fd0296859ff4..ad508a86b2f9 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -142,6 +142,21 @@ static bool klp_initialized(void)
->  	return !!klp_root_kobj;
->  }
->  
-> +static struct klp_func *klp_find_func(struct klp_object *obj,
-> +				      struct klp_func *old_func)
-> +{
-> +	struct klp_func *func;
-> +
-> +	klp_for_each_func(obj, func) {
-> +		if ((strcmp(old_func->old_name, func->old_name) == 0) &&
-> +		    (old_func->old_sympos == func->old_sympos)) {
-> +			return func;
-> +		}
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static struct klp_object *klp_find_object(struct klp_patch *patch,
->  					  struct klp_object *old_obj)
->  {
-> @@ -342,6 +357,39 @@ static int klp_write_object_relocations(struct module *pmod,
->  	return ret;
->  }
->  
-> +/*
-> + * This function removes replaced patches from both func_stack
-> + * and klp_patches stack.
-> + *
-> + * We could be pretty aggressive here. It is called in situation
-> + * when these structures are no longer accessible. All functions
+> Didn't the ACS behavior change suddenly for no good reason when we enabled
+> your code even though I might not be using the P2P but I happen to have
+> a kernel with P2P config option?
 
-"in the situation where"
+Well no, presumably you made a conscious choice to turn the config
+option on and build a custom kernel for your box. That doesn't seem very
+sudden and the reason is that the two concepts are very much at odds
+with each other: you can't have isolation and still have transactions
+between devices.
 
-> + * are redirected using the klp_transition_patch. They use either
-> + * a new code or they are in the original code because of the special
-> + * nop function patches.
-> + */
-> +void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
-> +				     bool keep_module)
-> +{
-> +	struct klp_patch *old_patch, *tmp_patch;
-> +
-> +	list_for_each_entry_safe(old_patch, tmp_patch, &klp_patches, list) {
-> +		if (old_patch == new_patch)
-> +			return;
-> +
-> +		klp_unpatch_objects(old_patch, KLP_FUNC_ANY);
-> +		old_patch->enabled = false;
-> +
-> +		/*
-> +		 * Replaced patches could not get re-enabled to keep
-> +		 * the code sane.
-> +		 */
-> +		list_move(&old_patch->list, &klp_replaced_patches);
-> +
-> +		if (!keep_module)
-> +			module_put(old_patch->mod);
-> +	}
-> +}
-
-As I said before, hopefully this function can go away.  But if not, I
-would s/throw_away/discard/ to be clearer.
-
-> +
->  static int __klp_disable_patch(struct klp_patch *patch)
->  {
->  	struct klp_object *obj;
-> @@ -537,7 +585,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
->  	if (!klp_is_patch_usable(patch)) {
->  		/*
->  		 * Module with the patch could either disappear meanwhile or is
-> -		 * not properly initialized yet.
-> +		 * not properly initialized yet or the patch was just replaced.
->  		 */
->  		ret = -EINVAL;
->  		goto err;
-> @@ -662,8 +710,16 @@ static struct attribute *klp_patch_attrs[] = {
->  /*
->   * Dynamically allocated objects and functions.
->   */
-> +static void klp_free_func_nop(struct klp_func *func)
-> +{
-> +	kfree(func->old_name);
-> +	kfree(func);
-> +}
-> +
->  static void klp_free_func_dynamic(struct klp_func *func)
->  {
-> +	if (func->ftype == KLP_FUNC_NOP)
-> +		klp_free_func_nop(func);
->  }
-
-The conditional check isn't needed, because its callers already do the
-check.  In fact, to reduce functionitis I would get rid of this function
-and rename klp_free_func_nop() to klp_free_func_dynamic().
-
->  
->  static void klp_free_object_dynamic(struct klp_object *obj)
-> @@ -708,6 +764,102 @@ static struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
->  	return obj;
->  }
->  
-> +static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
-> +					   struct klp_object *obj)
-> +{
-> +	struct klp_func *func;
-> +
-> +	func = kzalloc(sizeof(*func), GFP_KERNEL);
-> +	if (!func)
-> +		return ERR_PTR(-ENOMEM);
-
-I don't see a need for ERR_PTR, here or elsewhere.  Just return NULL,
-and the caller should know that means -ENOMEM.
-
-> +
-> +	if (old_func->old_name) {
-> +		func->old_name = kstrdup(old_func->old_name, GFP_KERNEL);
-> +		if (!func->old_name) {
-> +			kfree(func);
-> +			return ERR_PTR(-ENOMEM);
-> +		}
-> +	}
-> +	func->old_sympos = old_func->old_sympos;
-> +	/* NOP func is the same as using the original implementation. */
-> +	func->new_func = (void *)old_func->old_addr;
-> +	func->ftype = KLP_FUNC_NOP;
-> +
-> +	return func;
-> +}
-> +
-> +static int klp_add_func_nop(struct klp_object *obj,
-> +			    struct klp_func *old_func)
-> +{
-> +	struct klp_func *func;
-> +
-> +	func = klp_find_func(obj, old_func);
-> +
-> +	if (func)
-> +		return 0;
-> +
-> +	func = klp_alloc_func_nop(old_func, obj);
-> +	if (IS_ERR(func))
-> +		return PTR_ERR(func);
-> +
-> +	klp_init_func_list(obj, func);
-> +
-> +	return 0;
-> +}
-> +
-> +static int klp_add_object_nops(struct klp_patch *patch,
-> +			       struct klp_object *old_obj)
-> +{
-> +	struct klp_object *obj;
-> +	struct klp_func *old_func;
-> +	int err = 0;
-> +
-> +	obj = klp_get_or_add_object(patch, old_obj);
-> +	if (IS_ERR(obj))
-> +		return PTR_ERR(obj);
-> +
-> +	klp_for_each_func(old_obj, old_func) {
-> +		err = klp_add_func_nop(obj, old_func);
-> +		if (err)
-> +			return err;
-> +	}
-
-The functionality seems correct, but it's a bit confusing that it's
-calling klp_add_func_nop() for *all* funcs.  I think it would be clearer
-to do the klp_find_func() check here in klp_add_object_nops() instead of
-in klp_add_func_nop().
-
-And also that might make klp_add_func_nop() small enough that you can
-just inline it.
-
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Add 'nop' functions which simply return to the caller to run
-> + * the original function. The 'nop' functions are added to a
-> + * patch to facilitate a 'replace' mode
-
-Missing period at the end of the sentence.
-
-> + *
-> + * The nops are generated for all patches on the stack when
-> + * the new patch is initialized. It is safe even though some
-> + * older patches might get disabled and removed before the
-> + * new one is enabled. In the worst case, there might be nops
-> + * which will not be really needed. But it does not harm and
-> + * simplifies the implementation a lot. Especially we could
-> + * use the init functions as is.
-
-Hopefully most of this comment can be removed, if we do my proposal to
-further constrain patch stacking.
-
-> + */
-> +static int klp_add_nops(struct klp_patch *patch)
-> +{
-> +	struct klp_patch *old_patch;
-> +	struct klp_object *old_obj;
-> +	int err = 0;
-> +
-> +	if (WARN_ON(!patch->replace))
-> +		return -EINVAL;
-
-IMO, this is another one of those overly paranoid warnings that isn't
-really needed.  Why would we call klp_add_nops() for a non-replace
-patch?
-
-> +
-> +	list_for_each_entry(old_patch, &klp_patches, list) {
-> +		klp_for_each_object(old_patch, old_obj) {
-> +			err = klp_add_object_nops(patch, old_obj);
-> +			if (err)
-> +				return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Patch release framework must support the following scenarios:
->   *
-> @@ -802,7 +954,7 @@ static void klp_free_object_loaded(struct klp_object *obj)
->   * Use the kobject when it has already been initialized. Otherwise,
->   * do it directly.
->   */
-> -static void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
-> +void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
->  {
->  	struct klp_object *obj, *tmp_obj;
->  
-> @@ -952,6 +1104,12 @@ static int klp_init_patch(struct klp_patch *patch)
->  		return ret;
->  	}
->  
-> +	if (patch->replace) {
-> +		ret = klp_add_nops(patch);
-> +		if (ret)
-> +			goto free;
-> +	}
-> +
->  	klp_for_each_object(patch, obj) {
->  		ret = klp_init_object(patch, obj);
->  		if (ret)
-> diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
-> index 48a83d4364cf..43184a5318d8 100644
-> --- a/kernel/livepatch/core.h
-> +++ b/kernel/livepatch/core.h
-> @@ -6,6 +6,10 @@
->  
->  extern struct mutex klp_mutex;
->  
-> +void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
-> +				     bool keep_module);
-> +void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype);
-> +
->  static inline bool klp_is_object_loaded(struct klp_object *obj)
->  {
->  	return !obj->name || obj->mod;
-> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-> index 6917100fbe79..d6af190865d2 100644
-> --- a/kernel/livepatch/transition.c
-> +++ b/kernel/livepatch/transition.c
-> @@ -87,6 +87,36 @@ static void klp_complete_transition(void)
->  		 klp_transition_patch->mod->name,
->  		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
->  
-> +	/*
-> +	 * For replace patches, we disable all previous patches, and replace
-> +	 * the dynamic no-op functions by removing the ftrace hook.
-> +	 */
-> +	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
-> +		/*
-> +		 * Make sure that no ftrace handler accesses any older patch
-> +		 * on the stack.  This might happen when the user forced the
-> +		 * transaction while some running tasks were still falling
-> +		 * back to the old code.  There might even still be ftrace
-> +		 * handlers that have not seen the last patch on the stack yet.
-> +		 *
-> +		 * It probably is not necessary because of the rcu-safe access.
-> +		 * But better be safe than sorry.
-> +		 */
-> +		if (klp_forced)
-> +			klp_synchronize_transition();
-
-I don't like this.  Hopefully we can get just rid of it, if we also get
-rid of the concept of "throwing away" patches like I proposed.
-
-> +
-> +		klp_throw_away_replaced_patches(klp_transition_patch,
-> +						klp_forced);
-> +
-> +		/*
-> +		 * There is no need to synchronize the transition after removing
-> +		 * nops. They must be the last on the func_stack. Ftrace
-> +		 * gurantees that nobody will stay in the trampoline after
-
-"guarantees"
-
-> +		 * the ftrace handler is unregistered.
-> +		 */
-> +		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_NOP);
-> +	}
-> +
->  	if (klp_target_state == KLP_UNPATCHED) {
->  		/*
->  		 * All tasks have transitioned to KLP_UNPATCHED so we can now
-> @@ -143,6 +173,15 @@ static void klp_complete_transition(void)
->  	if (!klp_forced && klp_target_state == KLP_UNPATCHED)
->  		module_put(klp_transition_patch->mod);
->  
-> +	/*
-> +	 * We do not need to wait until the objects are really freed.
-> +	 * The patch must be on the bottom of the stack. Therefore it
-> +	 * will never replace anything else. The only important thing
-> +	 * is that we wait when the patch is being unregistered.
-> +	 */
-> +	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED)
-> +		klp_free_objects(klp_transition_patch, KLP_FUNC_NOP);
-> +
-
-This makes me a bit nervous.  What happens if the patch is enabled, then
-disabled, then enabled again?  Then klp_free_objects() wouldn't do
-anything, because the ops would already be freed.  I guess it would be
-fine, as klp_free_objects() is smart enough to not do anything in that
-case.  However I wonder if there are other cases which make assumptions
-based on patch->replace, which might no longer be relevant if the patch
-is re-enabled.  I also wonder if it makes sense to set patch->replace to
-false here, since it would no longer be replacing anything if it were
-disabled or re-enabled.
-
-Either way, I guess freeing the nops is optional here, since they would
-also get freed on patch unregister?
-
-Anyway, all my points here would be moot if we made the nops more
-permanent and allowedd the 'replace' patch to be rolled back to the
-previous patch.  Which seems like it would make a lot of cases simpler,
-as there would be fewer special cases associated with atomic replace,
-and it would act more like a normal patch.
-
->  	klp_target_state = KLP_UNDEFINED;
->  	klp_transition_patch = NULL;
->  }
-> -- 
-> 2.13.6
-> 
-
--- 
-Josh
+Logan
