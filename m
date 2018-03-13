@@ -1,40 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932501AbeCMDYB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 23:24:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:34531 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932294AbeCMDX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 23:23:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
-   d="scan'208";a="23776822"
-From: Andi Kleen <ak@linux.intel.com>
-To: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf stat: Add support for s390 transaction counters
-References: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com>
-Date: Mon, 12 Mar 2018 20:23:42 -0700
-In-Reply-To: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com> (Thomas
-        Richter's message of "Mon, 12 Mar 2018 11:38:06 +0100")
-Message-ID: <87tvtk64ld.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S932493AbeCMD2Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 23:28:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51232 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932294AbeCMD2X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 23:28:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E5D86070A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+Date: Mon, 12 Mar 2018 23:28:17 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180312193525.2855-2-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Richter <tmricht@linux.vnet.ibm.com> writes:
+On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
+> +int pci_p2pdma_add_client(struct list_head *head, struct device *dev)
 
-> Right now there is only hard coded support for x86.
+It feels like code tried to be a generic p2pdma provider first. Then got
+converted to PCI, yet all dev parameters are still struct device.
 
-That's not true. There is support for generic transaction events in perf.
+Maybe, dev parameter should also be struct pci_dev so that you can get rid of
+all to_pci_dev() calls in this code including find_parent_pci_dev() function.
 
-As far as I can tell your events would map 1:1 to the generic tx-* events.
+Regarding the switch business, It is amazing how much trouble you went into
+limit this functionality into very specific hardware.
 
--Andi
+I thought that we reached to an agreement that code would not impose
+any limits on what user wants.
+
+What happened to all the emails we exchanged?
+
+I understand you are coming from what you tested. Considering that you
+are singing up for providing a generic PCI functionality into the kernel,
+why don't you just blacklist the products that you had problems with and
+yet still allow other architectures to use your code with their root ports?
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
