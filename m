@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuiZYp5zIM5DDPX9jSzdSVKZKzevIxQMzr0UVasBYIJanqzPnxb3EvuXXmLL275IAnsDArH
-ARC-Seal: i=1; a=rsa-sha256; t=1520955065; cv=none;
+X-Google-Smtp-Source: AG47ELsKIqtv0pExBQz7q4OB7oGx9mbRX4Tegv3rX4NQavNW38xCwurxuYUlXQsgYllzwRrJOZ+7
+ARC-Seal: i=1; a=rsa-sha256; t=1520955063; cv=none;
         d=google.com; s=arc-20160816;
-        b=lanyaJfTIjf8GjhjthsQ5rClfOzQPTlgrgSDQtR8h7UchE2PE6SvpKPxdvncm7atKC
-         9FgA6daA7AAyUn3iO2cfmsP/edTHkCRUaI3rfEf19eoSnoY6ID+MBpmaI2Fp0JVaHShD
-         IFtJz+sS/HVM6o5mN5npfGjYM/YO0y+D6ZRQM5yi/uJHqZL6IsI9Cc+XrlwTpICHL+B0
-         tdnCXpYTtoLub0YtJr3uAbZjMzf9QDuSNntq6i7juJPVT0KwHvVCWqFg2kzFvKHt7prt
-         Dq0yUPljxg3usQUyYXEQkvtXPkNg/z12seBZCxpVBn637sZQp/vWrFCq5CI7f0xNIrBq
-         WBuQ==
+        b=r0d3vPNZUn8Eo8/qi28BcXtvPjQPa2nFJwAsehgiYLc8JhYyMT+B9qgyXF7SVw/BfY
+         o2dx2TAYf3NAvNakMFmMW2RBfkt4YaLbNZXO0l4j+WGl4kGjo7FatgvVKRbi6H2r4Q1a
+         6D/PrvZdRqdeoe8QkrhkVQ2Y0ddACw04W3ndngCc/bWNSsFG9QL00mlVRRx35slWdfbn
+         me0Cnr/s4Yaxpz2LTu1Y+ah8nJNEdWOG0eZyKdvCUzglLmE7WwGhv0b/OTqrfLSSnfek
+         nae6M9YRjRCpHnkYhWPzcd0302C7LsbrRzLkRUiLcrQx7ONbmUA3xhpphvahonW2U/Xk
+         WXKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BOuzddrBKmraR4VIm6vUhBpdVSKvMkku8B6PoJZ9/1A=;
-        b=e6Onb3tqDKSOHdizSU0oD1zWpLO1zjvdNBBWtKbTx+kEyvCqKGh6s3rEx2OiscVpds
-         77JIWTTn9rhlZ7cYXCU8FR3ii0mhkFMEpaKsKWtZBYfTTezM3ImWXfj3fhizMJ5IuRRZ
-         w9Cl+VEJAjFOF0A/myH+qn1UP1yYj868ODWVlYEiMgWsrTQNOnC/D0Vgqec4R2qNrPR4
-         iKIduZNApdg4pEyWIaoQWF+BSzSuYjV0MmIqrmVxbCeKHb6g+O9dCs8heR0PDdEvqwPJ
-         rHOGdLaNxTVrjJh+qRrjbF/os2AtPL7lxJc7jL7+cUD3vAZcY2Lb7wfNPkIkLqgQVRiA
-         GA8w==
+        bh=xk722ifFwffHNojg4iW2tdaZbJ7n3u0icedOW2OWNvI=;
+        b=on//TYYeJK2ARvGZgRCFQNUdTvrHoSgI+oUefSGDriwQbbbVc60PEF9kG+BubwovVX
+         RjJvj9HywrW0q8ircXTQBYakTWoENwLKEFHSuf16oK2EDevCbBiicI01OzqOrUdlaqAN
+         MH3Geml3bKssA+oFU8rsZR+VOcMurq9Wn2PVH4+Py2AChzK2tu+m+13snT63Q13GgN51
+         lWkVf3rG3Qt326hknpjRZn/r/o+XAvzfgkbh3nQCMYgdC/lSrpSJ6DHUpd0lFOMGLfJL
+         arOk6WjuDjxyF6Vx9rV88FUO9hIkHPyR/HUW4LKDbejtIh7ZvVrhCldRfIdG+frlAzWm
+         4rhg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 069/146] ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
-Date: Tue, 13 Mar 2018 16:23:56 +0100
-Message-Id: <20180313152326.050379537@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>,
+	David Daney <david.daney@cavium.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	"Steven J. Hill" <Steven.Hill@cavium.com>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.15 042/146] MIPS: OCTEON: irq: Check for null return on kzalloc allocation
+Date: Tue, 13 Mar 2018 16:23:29 +0100
+Message-Id: <20180313152323.843219417@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -39,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836979266801098?=
-X-GMAIL-MSGID: =?utf-8?q?1594836979266801098?=
+X-GMAIL-THRID: =?utf-8?q?1594836976270829589?=
+X-GMAIL-MSGID: =?utf-8?q?1594836976270829589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,70 +53,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit e312a869cd726c698a75caca0d9e5c22fd3f1534 upstream.
+commit 902f4d067a50ccf645a58dd5fb1d113b6e0f9b5b upstream.
 
-The dock line-out pin (NID 0x17 of ALC3254 codec) on Dell Precision
-7520 may route to three different DACs, 0x02, 0x03 and 0x06.  The
-first two DACS have the volume amp controls while the last one
-doesn't.  And unfortunately, the auto-parser assigns this pin to DAC3,
-resulting in the non-working volume control for the line out.
+The allocation of host_data is not null checked, leading to a null
+pointer dereference if the allocation fails. Fix this by adding a null
+check and return with -ENOMEM.
 
-Fix it by disabling the routing to DAC3 on the corresponding pin.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199029
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: David Daney <david.daney@cavium.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: "Steven J. Hill" <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.0+
+Patchwork: https://patchwork.linux-mips.org/patch/18658/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/mips/cavium-octeon/octeon-irq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5152,6 +5152,16 @@ static void alc298_fixup_speaker_volume(
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2277,6 +2277,8 @@ static int __init octeon_irq_init_cib(st
  	}
- }
  
-+/* disable DAC3 (0x06) selection on NID 0x17 as it has no volume amp control */
-+static void alc295_fixup_disable_dac3(struct hda_codec *codec,
-+				      const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-+		hda_nid_t conn[2] = { 0x02, 0x03 };
-+		snd_hda_override_conn_list(codec, 0x17, 2, conn);
-+	}
-+}
-+
- /* Hook to update amp GPIO4 for automute */
- static void alc280_hp_gpio4_automute_hook(struct hda_codec *codec,
- 					  struct hda_jack_callback *jack)
-@@ -5344,6 +5354,7 @@ enum {
- 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
- 	ALC255_FIXUP_DELL_SPK_NOISE,
- 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
-+	ALC295_FIXUP_DISABLE_DAC3,
- 	ALC280_FIXUP_HP_HEADSET_MIC,
- 	ALC221_FIXUP_HP_FRONT_MIC,
- 	ALC292_FIXUP_TPT460,
-@@ -6078,6 +6089,10 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC298_FIXUP_DELL_AIO_MIC_NO_PRESENCE,
- 	},
-+	[ALC295_FIXUP_DISABLE_DAC3] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc295_fixup_disable_dac3,
-+	},
- 	[ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
-@@ -6268,6 +6283,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1028, 0x0725, "Dell Inspiron 3162", ALC255_FIXUP_DELL_SPK_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
-+	SND_PCI_QUIRK(0x1028, 0x07b0, "Dell Precision 7520", ALC295_FIXUP_DISABLE_DAC3),
- 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
- 	SND_PCI_QUIRK(0x1028, 0x080c, "Dell WYSE", ALC225_FIXUP_DELL_WYSE_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
+ 	host_data = kzalloc(sizeof(*host_data), GFP_KERNEL);
++	if (!host_data)
++		return -ENOMEM;
+ 	raw_spin_lock_init(&host_data->lock);
+ 
+ 	addr = of_get_address(ciu_node, 0, NULL, NULL);
