@@ -1,86 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752475AbeCMTNa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:13:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752000AbeCMTN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:13:28 -0400
-Date: Tue, 13 Mar 2018 20:12:42 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-        x86@kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-Message-ID: <20180313191242.GB13426@flask>
-References: <20180309140249.2840-1-vkuznets@redhat.com>
- <20180309140249.2840-8-vkuznets@redhat.com>
- <alpine.DEB.2.21.1803091507300.1364@nanos.tec.linutronix.de>
- <87r2opcr6u.fsf@vitty.brq.redhat.com>
+        id S1752515AbeCMTPm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:15:42 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:33097 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751534AbeCMTPk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 15:15:40 -0400
+X-Google-Smtp-Source: AG47ELtilkxsxTtfcwW+NjMppQ2vuL8BRr1fdaxIBlu9c3JIGG8IlxbB9FSsz1j97MSFpiCkXPaSPg==
+Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, daniel.thompson@linaro.org,
+        linux-pm@vger.kernel.org
+References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
+ <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
+ <20180223073432.GF26947@vireshk-i7>
+ <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
+ <20180226043021.GK26947@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a16ade5e-2584-af75-ac60-c352edf1d7ec@linaro.org>
+Date: Tue, 13 Mar 2018 20:15:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r2opcr6u.fsf@vitty.brq.redhat.com>
+In-Reply-To: <20180226043021.GK26947@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-12 15:19+0100, Vitaly Kuznetsov:
-> Thomas Gleixner <tglx@linutronix.de> writes:
+On 26/02/2018 05:30, Viresh Kumar wrote:
+
+[ ... ]
+
+>>>> +		/*
+>>>> +		 * The last CPU waking up is in charge of setting the
+>>>> +		 * timer. If the CPU is hotplugged, the timer will
+>>>> +		 * move to another CPU (which may not belong to the
+>>>> +		 * same cluster) but that is not a problem as the
+>>>> +		 * timer will be set again by another CPU belonging to
+>>>> +		 * the cluster, so this mechanism is self adaptive and
+>>>> +		 * does not require any hotplugging dance.
+>>>> +		 */
+>>>
+>>> Well this depends on how CPU hotplug really happens. What happens to
+>>> the per-cpu-tasks which are in the middle of something when hotplug
+>>> happens?  Does hotplug wait for those per-cpu-tasks to finish ?
 > 
-> > On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
-> >
-> >> Enlightened VMCS is just a structure in memory, the main benefit
-> >> besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
-> >> mask: we tell the underlying hypervisor which fields were modified
-> >> since VMEXIT so there's no need to inspect them all.
-> >> 
-> >> Tight CPUID loop test shows significant speedup:
-> >> Before: 18890 cycles
-> >> After: 8304 cycles
-> >> 
-> >> Static key is being used to avoid performance penalty for non-Hyper-V
-> >> deployments. Tests show we add around 3 (three) CPU cycles on each
-> >> VMEXIT (1077.5 cycles before, 1080.7 cycles after for the same CPUID
-> >> loop on bare metal). We can probably avoid one test/jmp in vmx_vcpu_run()
-> >> but I don't see a clean way to use static key in assembly.
-> >
-> > STATIC_JUMP_IF_TRUE, STATIC_JUMP_IF_FALSE are your friends.
-> >
+> Missed this one ?
+
+To be frank, I don't know. I have been through the hp code and didn't
+find the answer. AFAICT, the sched/core.c sched_cpu_dying() disables the
+rq and then migrates the tasks. I assume this kthread is not migrated
+and stays in sleeping state until the rq is online again. As the wakeup
+callback discards offline cpus, the kthread is not wakeup at any moment.
+
+I created a situation where that happens: mitigation (raised with
+dhrystone) + cpu hotplugging (offline/online loop) and never hit any issue.
+
+However, I'm wondering if using the 'struct smp_hotplug_thread'
+infra-stucture (git show f97f8f06) shouldn't be used.
+
+
+>>>> +int cpuidle_cooling_register(void)
+>>>> +{
+>>>> +	struct cpuidle_cooling_device *idle_cdev = NULL;
+>>>> +	struct thermal_cooling_device *cdev;
+>>>> +	struct cpuidle_cooling_tsk *cct;
+>>>> +	struct task_struct *tsk;
+>>>> +	struct device_node *np;
+>>>> +	cpumask_t *cpumask;
+>>>> +	char dev_name[THERMAL_NAME_LENGTH];
+>>>> +	int ret = -ENOMEM, cpu;
+>>>> +	int index = 0;
+>>>> +
+>>>> +	for_each_possible_cpu(cpu) {
+>>>> +		cpumask = topology_core_cpumask(cpu);
+>>>> +
+>>>> +		cct = per_cpu_ptr(&cpuidle_cooling_tsk, cpu);
+>>>> +
+>>>> +		/*
+>>>> +		 * This condition makes the first cpu belonging to the
+>>>> +		 * cluster to create a cooling device and allocates
+>>>> +		 * the structure. Others CPUs belonging to the same
+>>>> +		 * cluster will just increment the refcount on the
+>>>> +		 * cooling device structure and initialize it.
+>>>> +		 */
+>>>> +		if (cpu == cpumask_first(cpumask)) {
+>>>
+>>> Your function still have few assumptions of cpu numbering and it will
+>>> break in few cases. What if the CPUs on a big Little system (4x4) are
+>>> present in this order: B L L L L B B B  ??
+>>>
+>>> This configuration can happen if CPUs in DT are marked as: 0-3 LITTLE,
+>>> 4-7 big and a big CPU is used by the boot loader to bring up Linux.
+>>
+>> Ok, how can I sort it out ?
 > 
-> Thanks for the tip,
+> I would do something like this:
 > 
-> with a single kernel user of these APIs it was easy to miss :-)
-
-Indeed, I had no idea.
-
-> Unfortunately, these APIs are only present if HAVE_JUMP_LABEL and
-> (afaiu) we still care about KVM on !HAVE_JUMP_LABEL builds. It would be
-> nice if we can make them behave the same way static_branch_likely() and
-> friends do: compile into something else when !HAVE_JUMP_LABEL so we can
-> avoid nasty #ifdefs in C code.
+>         cpumask_copy(possible, cpu_possible_mask);
+>         
+>         while (!cpumask_empty(possible)) {
+>                 first = cpumask_first(possible);
+>                 cpumask = topology_core_cpumask(first);
+>                 cpumask_andnot(possible, possible, cpumask);
+>         
+>                 allocate_cooling_dev(first); //This is most of this function in your patch.
+>         
+>                 while (!cpumask_empty(cpumask)) {
+>                         temp = cpumask_first(possible);
+>                         //rest init "temp"
+>                         cpumask_clear_cpu(temp, cpumask);
+>                 }
+>         
+>                 //Everything done, register cooling device for cpumask.
+>         }
 > 
-> That said I'd like to defer the question to KVM maintainers: Paolo,
-> Radim, what would you like me to do? Use STATIC_JUMP_IF_TRUE/FALSE as
-> they are, try to make them work for !HAVE_JUMP_LABEL and use them or
-> maybe we can commit the series as-is and have it as a future
-> optimization (e.g. when HAVE_JUMP_LABEL becomes mandatory)?
+>>>> +			np = of_cpu_device_node_get(cpu);
+>>>> +
+>>>> +			idle_cdev = kzalloc(sizeof(*idle_cdev), GFP_KERNEL);
+>>>> +			if (!idle_cdev)
+>>>> +				goto out_fail;
+>>>> +
+>>>> +			idle_cdev->idle_cycle = DEFAULT_IDLE_TIME_US;
+>>>> +
+>>>> +			atomic_set(&idle_cdev->count, 0);
+>>>
+>>> This should already be 0, isn't it ?
+>>
+>> Yes.
+> 
+> I read it as, "I will drop it" :)
+> 
 
-Please take a look into making a macro that uses STATIC_JUMP_IF_FALSE or
-reads the value from provided static_key and does a test-jump, depending
-on HAVE_JUMP_LABEL.
-It doesn't need to be suited for general use, just something that moves
-the ugliness away from vmx_vcpu_run.
-(Although having it in jump_label.h would be great. I think the main
- obstacle is clobbering of flags.)
 
-If it were still looking horrible, I'm ok with the series as-is,
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-thanks.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
