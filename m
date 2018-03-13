@@ -1,129 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932932AbeCMXqO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 19:46:14 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:36406 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932349AbeCMXqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 19:46:12 -0400
-To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
- <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
- <156c24fb-6e27-28f6-0b36-7fd83311ce37@codeaurora.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <932bbf48-9d86-97ec-17bb-052099aff99e@deltatee.com>
-Date: Tue, 13 Mar 2018 17:45:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932890AbeCMX7f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 19:59:35 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42590 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932649AbeCMX7d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 19:59:33 -0400
+Date: Tue, 13 Mar 2018 23:59:30 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
+ breakage when used from shrink_dentry_list())
+Message-ID: <20180313235930.GX30522@ZenIV.linux.org.uk>
+References: <20180223150928.GC30522@ZenIV.linux.org.uk>
+ <20180223174216.GD30522@ZenIV.linux.org.uk>
+ <20180223201317.GG30522@ZenIV.linux.org.uk>
+ <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+ <20180224002248.GH30522@ZenIV.linux.org.uk>
+ <20180225073950.GI30522@ZenIV.linux.org.uk>
+ <87bmgbnhar.fsf_-_@linutronix.de>
+ <20180312191351.GN30522@ZenIV.linux.org.uk>
+ <87zi3bn1on.fsf@linutronix.de>
+ <87lgevn0ss.fsf@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <156c24fb-6e27-28f6-0b36-7fd83311ce37@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lgevn0ss.fsf@linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 13, 2018 at 10:05:55PM +0100, John Ogness wrote:
 
-
-On 13/03/18 05:19 PM, Sinan Kaya wrote:
-> It is still a switch it can move packets but, maybe it can move data at
-> 100kbps speed. 
-
-As Stephen pointed out, it's a requirement of the PCIe spec that a
-switch supports P2P. If you want to sell a switch that does P2P with bad
-performance then that's on you to deal with.
-
-> What prevents that switch from trying P2P and having a bad user experience?
-
-The fact that no one would buy such a switch as it would have a bad user
-experience with regular PCI transfers. A P2P TLP is not special on a
-switch as it's routed in just the same way as any others. There'd also
-be no cost gain in making such a broken-by-design device.
-
-> If everything is so broken, I was suggesting to at least list the switches
-> you have tested.
+> > +	rcu_read_lock();		/* to protect parent */
+> > +	spin_unlock(&dentry->d_lock);
+> > +	parent = READ_ONCE(dentry->d_parent);
 > 
-> What's the problem with this?
+> The preceeding line should be removed. We already have a "parent" from
+> before we did the most recent trylock().
 
-More complexity for zero gain.
+Nope.  We have parent, yes, but it had been fetched outside of rcu_read_lock().
+So the object it used to point to might have been already freed and we
+can't do this:
 
-> Why do you want to assume that all switches are good and all root ports are
-> bad?
+> > +	spin_lock(&parent->d_lock);
 
-Because the assumption that all switches are good is more than
-reasonable and simplifies the code and maintenance significantly. No one
-wants to maintain a white list when they don't have to.
+To get rid of that reread we'd need to do this:
+	rcu_read_lock();
+        parent = dentry->d_parent;
+        if (IS_ROOT(dentry) || likely(spin_trylock(&parent->d_lock))) {
+		rcu_read_unlock();
+                return true;
+	}
+        spin_unlock(&dentry->d_lock);
+        spin_lock(&parent->d_lock);
+        if (unlikely(parent != dentry->d_parent)) {
+		....
 
-> What if the design is so canned that you can't change anything? 
+Come to think of that, it might make sense to lift rcu_read_lock() all the
+way out of that sucker.  Objections?  Below is the incremental I'd fold into
+that commit:
 
-Based on the feedback we've got so far and the developers that have
-participated in getting it to where it is, it is not "canned".
-
-> I have been asking things like getting rid of switch search in ACS
-> enablement towards achieving generic P2P. You seem to be pushing back.
-> You said yourself P2P and isolation doesn't go together at this point
-> but you also care about isolation for other devices that are not doing
-> P2P.
-
-P2P and isolation will never be compatible at any point. They are two
-opposite concepts. So we could just disable isolation across the whole
-system and for our purposes that would be fine. But it's relatively
-simple to limit this and only disable it behind switches. So why
-wouldn't we? It enables use cases like having an isolated card on the
-root complex used in a VM while having P2P on cards behind switches. I
-personally have no interest in doing this but I also have no reason to
-prevent it with my code.
-
-> It is not a requirement for you but it is a requirement for me (ARM64 guy).
-> Linux happens to run on multiple architectures. One exception invalidates your
-> point.
-
-It is not a requirement of an architecture or people that use a specific
-architecture. It is a requirement of the use-case and you have not said
-any use case or how we could do better. If you're running VMs that
-require isolation you will need to be *very* careful if you also want to
-do P2P between cards which requires no isolation. But, based on my
-understanding, most people will want to do one or the other -- not both.
-If you want to do P2P you enable the P2P config option, if you want
-isolation you don't.
-
-> If you are assuming that your kernel option should not be used by general
-> distributions like Ubuntu/redhat etc. and requires a kernel compilation,
-> creating a dependency to EXPERT is the right way to do. 
-
-I don't have a problem adding EXPERT as a dependency. We can do that for
-v4. I'd rather hope that distros actually read and understand the
-kconfig help text before enabling an off-by-default option. But maybe
-I'm asking too much.
-
-Logan
+diff --git a/fs/dcache.c b/fs/dcache.c
+index f0e73c93182b..0d1dac750c0a 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1000,7 +1000,6 @@ static bool shrink_lock_dentry(struct dentry *dentry)
+ 
+ 	inode = dentry->d_inode;
+ 	if (inode && unlikely(!spin_trylock(&inode->i_lock))) {
+-		rcu_read_lock();	/* to protect inode */
+ 		spin_unlock(&dentry->d_lock);
+ 		spin_lock(&inode->i_lock);
+ 		spin_lock(&dentry->d_lock);
+@@ -1009,16 +1008,14 @@ static bool shrink_lock_dentry(struct dentry *dentry)
+ 		/* changed inode means that somebody had grabbed it */
+ 		if (unlikely(inode != dentry->d_inode))
+ 			goto out;
+-		rcu_read_unlock();
+ 	}
+ 
+ 	parent = dentry->d_parent;
++	/* parent will stay allocated until we drop rcu_read_lock */
+ 	if (IS_ROOT(dentry) || likely(spin_trylock(&parent->d_lock)))
+ 		return true;
+ 
+-	rcu_read_lock();		/* to protect parent */
+ 	spin_unlock(&dentry->d_lock);
+-	parent = READ_ONCE(dentry->d_parent);
+ 	spin_lock(&parent->d_lock);
+ 	if (unlikely(parent != dentry->d_parent)) {
+ 		spin_unlock(&parent->d_lock);
+@@ -1026,14 +1023,11 @@ static bool shrink_lock_dentry(struct dentry *dentry)
+ 		goto out;
+ 	}
+ 	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+-	if (likely(!dentry->d_lockref.count)) {
+-		rcu_read_unlock();
++	if (likely(!dentry->d_lockref.count))
+ 		return true;
+-	}
+ 	spin_unlock(&parent->d_lock);
+ out:
+ 	spin_unlock(&inode->i_lock);
+-	rcu_read_unlock();
+ 	return false;
+ }
+ 
+@@ -1044,8 +1038,10 @@ static void shrink_dentry_list(struct list_head *list)
+ 
+ 		dentry = list_entry(list->prev, struct dentry, d_lru);
+ 		spin_lock(&dentry->d_lock);
++		rcu_read_lock();
+ 		if (!shrink_lock_dentry(dentry)) {
+ 			bool can_free = false;
++			rcu_read_unlock();
+ 			d_shrink_del(dentry);
+ 			if (dentry->d_lockref.count < 0)
+ 				can_free = dentry->d_flags & DCACHE_MAY_FREE;
+@@ -1054,6 +1050,7 @@ static void shrink_dentry_list(struct list_head *list)
+ 				dentry_free(dentry);
+ 			continue;
+ 		}
++		rcu_read_unlock();
+ 		d_shrink_del(dentry);
+ 		parent = dentry->d_parent;
+ 		__dentry_kill(dentry);
