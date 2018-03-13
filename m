@@ -1,100 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933193AbeCMQzA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:55:00 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33636 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751903AbeCMQy5 (ORCPT
+        id S933469AbeCMQz5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:55:57 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60862 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752163AbeCMQzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:54:57 -0400
-X-Google-Smtp-Source: AG47ELuCPlja8+l3Ok1Imlr5loi5q7qSO5DP1zvLpihPg3xnhVT8EDOGVuB/JH/VwbSXwAagvRl+EA==
-From: Shakeel Butt <shakeelb@google.com>
-To: Suleiman Souhlal <suleiman@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] slab, slub: remove size disparity on debug kernel
-Date: Tue, 13 Mar 2018 09:54:28 -0700
-Message-Id: <20180313165428.58699-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+        Tue, 13 Mar 2018 12:55:55 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Vinod Koul <vinod.koul@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1 1/1] dmaengine: stm32-dmamux: fix a potential buffer overflow
+Date: Tue, 13 Mar 2018 17:55:35 +0100
+Message-ID: <1520960135-26575-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have noticed on debug kernel with SLAB, the size of some non-root
-slabs were larger than their corresponding root slabs.
+The bitfield dma_inuse is allocated of size dma_requests bits, thus a
+valid bit address is from 0 to (dma_requests - 1).
+When find_first_zero_bit() fails, it returns dma_requests as invalid
+address.
+Using such address for the following set_bit() is incorrect and, if
+dma_requests is a multiple of BITS_PER_LONG, it will cause a buffer
+overflow.
+Currently this driver is only used in DT stm32h743.dtsi where a safe value
+dma_requests=16 is not triggering the buffer overflow.
 
-e.g. for radix_tree_node:
-$cat /proc/slabinfo | grep radix
-name     <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> ...
-radix_tree_node 15052    15075      4096         1             1 ...
+Fixed by checking the return value of find_first_zero_bit() _before_
+using it.
 
-$cat /cgroup/memory/temp/memory.kmem.slabinfo | grep radix
-name     <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> ...
-radix_tree_node 1581      158       4120         1             2 ...
-
-However for SLUB in debug kernel, the sizes were same. On further
-inspection it is found that SLUB always use kmem_cache.object_size to
-measure the kmem_cache.size while SLAB use the given kmem_cache.size. In
-the debug kernel the slab's size can be larger than its object_size.
-Thus in the creation of non-root slab, the SLAB uses the root's size as
-base to calculate the non-root slab's size and thus non-root slab's size
-can be larger than the root slab's size. For SLUB, the non-root slab's
-size is measured based on the root's object_size and thus the size will
-remain same for root and non-root slab.
-
-This patch makes slab's object_size the default base to measure the
-slab's size.
-
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
- mm/slab_common.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+  Version history:
+    v1:
+       * Initial
+---
+---
+ drivers/dma/stm32-dmamux.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index e41cbc18c57d..61ab2ca8bea7 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -379,7 +379,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
- }
+diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
+index 4dbb30c..b922db9 100644
+--- a/drivers/dma/stm32-dmamux.c
++++ b/drivers/dma/stm32-dmamux.c
+@@ -118,14 +118,15 @@ static void *stm32_dmamux_route_allocate(struct of_phandle_args *dma_spec,
+ 	spin_lock_irqsave(&dmamux->lock, flags);
+ 	mux->chan_id = find_first_zero_bit(dmamux->dma_inuse,
+ 					   dmamux->dma_requests);
+-	set_bit(mux->chan_id, dmamux->dma_inuse);
+-	spin_unlock_irqrestore(&dmamux->lock, flags);
  
- static struct kmem_cache *create_cache(const char *name,
--		unsigned int object_size, unsigned int size, unsigned int align,
-+		unsigned int object_size, unsigned int align,
- 		slab_flags_t flags, unsigned int useroffset,
- 		unsigned int usersize, void (*ctor)(void *),
- 		struct mem_cgroup *memcg, struct kmem_cache *root_cache)
-@@ -396,8 +396,7 @@ static struct kmem_cache *create_cache(const char *name,
- 		goto out;
- 
- 	s->name = name;
--	s->object_size = object_size;
--	s->size = size;
-+	s->size = s->object_size = object_size;
- 	s->align = align;
- 	s->ctor = ctor;
- 	s->useroffset = useroffset;
-@@ -503,7 +502,7 @@ kmem_cache_create_usercopy(const char *name,
- 		goto out_unlock;
+ 	if (mux->chan_id == dmamux->dma_requests) {
++		spin_unlock_irqrestore(&dmamux->lock, flags);
+ 		dev_err(&pdev->dev, "Run out of free DMA requests\n");
+ 		ret = -ENOMEM;
+-		goto error;
++		goto error_chan_id;
  	}
++	set_bit(mux->chan_id, dmamux->dma_inuse);
++	spin_unlock_irqrestore(&dmamux->lock, flags);
  
--	s = create_cache(cache_name, size, size,
-+	s = create_cache(cache_name, size,
- 			 calculate_alignment(flags, align, size),
- 			 flags, useroffset, usersize, ctor, NULL, NULL);
- 	if (IS_ERR(s)) {
-@@ -650,7 +649,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
- 		goto out_unlock;
+ 	/* Look for DMA Master */
+ 	for (i = 1, min = 0, max = dmamux->dma_reqs[i];
+@@ -173,6 +174,8 @@ static void *stm32_dmamux_route_allocate(struct of_phandle_args *dma_spec,
  
- 	s = create_cache(cache_name, root_cache->object_size,
--			 root_cache->size, root_cache->align,
-+			 root_cache->align,
- 			 root_cache->flags & CACHE_CREATE_MASK,
- 			 root_cache->useroffset, root_cache->usersize,
- 			 root_cache->ctor, memcg, root_cache);
+ error:
+ 	clear_bit(mux->chan_id, dmamux->dma_inuse);
++
++error_chan_id:
+ 	kfree(mux);
+ 	return ERR_PTR(ret);
+ }
 -- 
-2.16.2.660.g709887971b-goog
+2.7.4
