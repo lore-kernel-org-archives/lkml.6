@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520975186; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974877; cv=none;
         d=google.com; s=arc-20160816;
-        b=P4ndzrROMo0TimJB1NmeJH0Axawm9VjrL8NpD8zmUFgNXRRN3rE+7NIhp+t+7cq5iR
-         kpwFaeZ90Ocw9ZsKa7RZ8wKqtvUDh3nzLzniz1xzn0My1nQRW16wtibobAKg8yaKcI6o
-         bKlE9EL2QZV/QehtFSdJ4OaD6YdXuUiJVR+zbsQIf5gsn8WfyhEvcFIifHReTVHZNbPc
-         AqwMALimmfV8UrlnX+RjveA/sXVHq+o+eNupsuDY2nfH9opPS9dGEoyQ1o0X960M5bi4
-         AuhqtX3yRfBFL9Ct1i0UWNLPNdQSmy+xZKpgfZrJ9vDdRjhCdS+mtF6NLe1xbuJTZf0b
-         ZFqw==
+        b=SFskV01wRot7nNqG9B4hOLlSP9wkmkZIE/DNXFPAUhunKaQm5JkLbOQ0boFeIGEjO5
+         LShqp9QP3XE5gRnofV8sDdZ4joDSaShTDrVHOIHarqOXSC0BpPc8mjvBEtsM31uKcTFc
+         4q1lIXTgtzVmjJ/Vetkq6GpzfcAbE13R4rjTIQ5ymL13yxOPeEojwKdjwaKfgwCyi+if
+         vdQr4PwCo1YcHTj6AqUt9/7kHCcrHLRkWX70RHkx1404pxAIlUOJ+cM5dtQBwC+Hs+6W
+         6BdXzuebXko/+7DOVjyW6VnjJbj0KwVr1C9uH+J9K6Ssb2xrPFJhN8LhzM3E2Kb3oS/k
+         fMhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=SqWcnckQp9D2CggSkscr4SEbv2FWMjOmI4So6GXEZQ8=;
-        b=Fi4XbH94Cu9Um7Nordjzqlj1YcD94tl/B041u/g+zCizt0PoB2+vHBD8BeeW2biCYR
-         1har/uMG6vFtgYnlfWZg2wws9vf25xljNI9fFrQTDavAqIzFnrkfjf0wkc+ps5oyxO4S
-         3SqRFBPqqez16un/dd5nA7gopecRPiqVf9Z56jvBkFzHbd7sxB4OCt/CaisHb4Q3EZC/
-         HEL8pEXXRwDiyh3RgPQ25hYgEVO+a67Qj87V6IhrYpeKjEmwwU1k0NdHNkxCRx1VN0Jc
-         ykKHCs9iwM/OSXksMmlm7wFykuEqXoNUZjJs39Yb6fo3GMsDFprZ3UM1rRgqzrpD4h22
-         xM1Q==
+        bh=BcWZe0Rr5RwfvH1hVbfKDU5JvGsd0U9Mi/STRcOvWlY=;
+        b=pm7rZYCnldEMcI0Y1ZMp4VfLtWEKpb05NZsJ9ts8dRkDk2yX3FJ6o+mtGDTU4Jld5R
+         rcNSWT8ukJHr4m2Hq3VRKdOfb8SA4bwmCAsKGwdt7w9SI8aF99BY74rS1k8puXoxxByq
+         g30EJFAr5+FebMfT5PJE4oF4+f6kCubXJMNtjA9Kzy7K6p33V4DHwLjSRIaO76MuYPJn
+         dHH+aSaZhZ5ooOTQLwZ8RaIRTp464wscbGAUASo9aGr+OC0e5j+B9c0Jic5gdvg5Rqj6
+         huo3QSmWJkPM4hBaqmitpzYCEQCyRS9qoDHk/SpqBCr90kvGveatixqJcnpube1G4yBi
+         He1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kCnNSA+J;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=s6dvV/O6;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kCnNSA+J;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=s6dvV/O6;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELsU/M/zWq/U/SA2gBeW9EDj/KKt9LIKMoXr8yJqN8ym+tVxMTc4yGKGGGLCEERItnPKrKFldQ==
+X-Google-Smtp-Source: AG47ELvd1M3rWm2xbTC+LIjuegixv182PSVn85xHMg/FZ1wYEm7uQ4rItY7n6TSSz+9mJ6RZ7dAj8Q==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,58 +105,231 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 24/27] x86/mm: Make the x86 GOT read-only
-Date: Tue, 13 Mar 2018 13:59:42 -0700
-Message-Id: <20180313205945.245105-25-thgarnie@google.com>
+Subject: [PATCH v2 27/27] x86/kaslr: Add option to extend KASLR range from 1GB to 3GB
+Date: Tue, 13 Mar 2018 13:59:45 -0700
+Message-Id: <20180313205945.245105-28-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594858077429197753?=
-X-GMAIL-MSGID: =?utf-8?q?1594858077429197753?=
+X-GMAIL-THRID: =?utf-8?q?1594857753559939238?=
+X-GMAIL-MSGID: =?utf-8?q?1594857753559939238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The GOT is changed during early boot when relocations are applied. Make
-it read-only directly. This table exists only for PIE binary.
+Add a new CONFIG_RANDOMIZE_BASE_LARGE option to benefit from PIE
+support. It increases the KASLR range from 1GB to 3GB. The new range
+stars at 0xffffffff00000000 just above the EFI memory region. This
+option is off by default.
 
-Position Independent Executable (PIE) support will allow to extended the
-KASLR randomization range below the -2G memory limit.
+The boot code is adapted to create the appropriate page table spanning
+three PUD pages.
+
+The relocation table uses 64-bit integers generated with the updated
+relocation tool with the large-reloc option.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- include/asm-generic/vmlinux.lds.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/x86/Kconfig                     | 21 +++++++++++++++++++++
+ arch/x86/boot/compressed/Makefile    |  5 +++++
+ arch/x86/boot/compressed/misc.c      | 10 +++++++++-
+ arch/x86/include/asm/page_64_types.h |  9 +++++++++
+ arch/x86/kernel/head64.c             | 15 ++++++++++++---
+ arch/x86/kernel/head_64.S            | 11 ++++++++++-
+ 6 files changed, 66 insertions(+), 5 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 1ab0e520d6fc..89398d042f78 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -295,6 +295,17 @@
- 	VMLINUX_SYMBOL(__end_ro_after_init) = .;
- #endif
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4b1615e661d6..7ea69cb0153f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2260,6 +2260,27 @@ config X86_PIE
+ 	select DYNAMIC_MODULE_BASE
+ 	select MODULE_REL_CRCS if MODVERSIONS
  
-+#ifdef CONFIG_X86_PIE
-+#define RO_GOT_X86							\
-+	.got        : AT(ADDR(.got) - LOAD_OFFSET) {			\
-+		VMLINUX_SYMBOL(__start_got) = .;			\
-+		*(.got);						\
-+		VMLINUX_SYMBOL(__end_got) = .;				\
-+	}
++config RANDOMIZE_BASE_LARGE
++	bool "Increase the randomization range of the kernel image"
++	depends on X86_64 && RANDOMIZE_BASE
++	select X86_PIE
++	select X86_MODULE_PLTS if MODULES
++	default n
++	---help---
++	  Build the kernel as a Position Independent Executable (PIE) and
++	  increase the available randomization range from 1GB to 3GB.
++
++	  This option impacts performance on kernel CPU intensive workloads up
++	  to 10% due to PIE generated code. Impact on user-mode processes and
++	  typical usage would be significantly less (0.50% when you build the
++	  kernel).
++
++	  The kernel and modules will generate slightly more assembly (1 to 2%
++	  increase on the .text sections). The vmlinux binary will be
++	  significantly smaller due to less relocations.
++
++	  If unsure say N
++
+ config HOTPLUG_CPU
+ 	bool "Support for hot-pluggable CPUs"
+ 	depends on SMP
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 1f734cd98fd3..fb72f53defd0 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -116,7 +116,12 @@ $(obj)/vmlinux.bin: vmlinux FORCE
+ 
+ targets += $(patsubst $(obj)/%,%,$(vmlinux-objs-y)) vmlinux.bin.all vmlinux.relocs
+ 
++# Large randomization require bigger relocation table
++ifeq ($(CONFIG_RANDOMIZE_BASE_LARGE),y)
++CMD_RELOCS = arch/x86/tools/relocs --large-reloc
++else
+ CMD_RELOCS = arch/x86/tools/relocs
++endif
+ quiet_cmd_relocs = RELOCS  $@
+       cmd_relocs = $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs $<
+ $(obj)/vmlinux.relocs: vmlinux FORCE
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index b50c42455e25..746a968690d5 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -170,10 +170,18 @@ void __puthex(unsigned long value)
+ }
+ 
+ #if CONFIG_X86_NEED_RELOCS
++
++/* Large randomization go lower than -2G and use large relocation table */
++#ifdef CONFIG_RANDOMIZE_BASE_LARGE
++typedef long rel_t;
 +#else
-+#define RO_GOT_X86
++typedef int rel_t;
 +#endif
 +
- /*
-  * Read only Data
+ static void handle_relocations(void *output, unsigned long output_len,
+ 			       unsigned long virt_addr)
+ {
+-	int *reloc;
++	rel_t *reloc;
+ 	unsigned long delta, map, ptr;
+ 	unsigned long min_addr = (unsigned long)output;
+ 	unsigned long max_addr = min_addr + (VO___bss_start - VO__text);
+diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+index 2c5a966dc222..85ea681421d2 100644
+--- a/arch/x86/include/asm/page_64_types.h
++++ b/arch/x86/include/asm/page_64_types.h
+@@ -46,7 +46,11 @@
+ #define __PAGE_OFFSET           __PAGE_OFFSET_BASE_L4
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
++#ifdef CONFIG_RANDOMIZE_BASE_LARGE
++#define __START_KERNEL_map	_AC(0xffffffff00000000, UL)
++#else
+ #define __START_KERNEL_map	_AC(0xffffffff80000000, UL)
++#endif /* CONFIG_RANDOMIZE_BASE_LARGE */
+ 
+ /* See Documentation/x86/x86_64/mm.txt for a description of the memory map. */
+ 
+@@ -64,9 +68,14 @@
+  * 512MiB by default, leaving 1.5GiB for modules once the page tables
+  * are fully set up. If kernel ASLR is configured, it can extend the
+  * kernel page table mapping, reducing the size of the modules area.
++ * On PIE, we relocate the binary 2G lower so add this extra space.
   */
-@@ -351,6 +362,7 @@
- 		VMLINUX_SYMBOL(__end_builtin_fw) = .;			\
- 	}								\
- 									\
-+	RO_GOT_X86							\
- 	TRACEDATA							\
- 									\
- 	/* Kernel symbol table: Normal symbols */			\
+ #if defined(CONFIG_RANDOMIZE_BASE)
++#ifdef CONFIG_RANDOMIZE_BASE_LARGE
++#define KERNEL_IMAGE_SIZE	(_AC(3, UL) * 1024 * 1024 * 1024)
++#else
+ #define KERNEL_IMAGE_SIZE	(1024 * 1024 * 1024)
++#endif
+ #else
+ #define KERNEL_IMAGE_SIZE	(512 * 1024 * 1024)
+ #endif
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index ea4c498369d8..577b47381ba2 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -63,6 +63,7 @@ EXPORT_SYMBOL(vmemmap_base);
+ #endif
+ 
+ #define __head	__section(.head.text)
++#define pud_count(x)   (((x + (PUD_SIZE - 1)) & ~(PUD_SIZE - 1)) >> PUD_SHIFT)
+ 
+ /* Required for read_cr3 when building as PIE */
+ unsigned long __force_order;
+@@ -112,6 +113,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ {
+ 	unsigned long load_delta, *p;
+ 	unsigned long pgtable_flags;
++	unsigned long level3_kernel_start, level3_kernel_count;
++	unsigned long level3_fixmap_start;
+ 	pgdval_t *pgd;
+ 	p4dval_t *p4d;
+ 	pudval_t *pud;
+@@ -142,6 +145,11 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	/* Include the SME encryption mask in the fixup value */
+ 	load_delta += sme_get_me_mask();
+ 
++	/* Look at the randomization spread to adapt page table used */
++	level3_kernel_start = pud_index(__START_KERNEL_map);
++	level3_kernel_count = pud_count(KERNEL_IMAGE_SIZE);
++	level3_fixmap_start = level3_kernel_start + level3_kernel_count;
++
+ 	/* Fixup the physical addresses in the page table */
+ 
+ 	pgd = fixup_pointer(&early_top_pgt, physaddr);
+@@ -158,8 +166,9 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	}
+ 
+ 	pud = fixup_pointer(&level3_kernel_pgt, physaddr);
+-	pud[510] += load_delta;
+-	pud[511] += load_delta;
++	for (i = 0; i < level3_kernel_count; i++)
++		pud[level3_kernel_start + i] += load_delta;
++	pud[level3_fixmap_start] += load_delta;
+ 
+ 	pmd = fixup_pointer(level2_fixmap_pgt, physaddr);
+ 	pmd[506] += load_delta;
+@@ -214,7 +223,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	 */
+ 
+ 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
+-	for (i = 0; i < PTRS_PER_PMD; i++) {
++	for (i = 0; i < PTRS_PER_PMD * level3_kernel_count; i++) {
+ 		if (pmd[i] & _PAGE_PRESENT)
+ 			pmd[i] += load_delta;
+ 	}
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 87624e1fe22f..c86d9262015f 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -41,12 +41,16 @@
+ 
+ #define l4_index(x)	(((x) >> 39) & 511)
+ #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
++#define pud_count(x)   (((x + (PUD_SIZE - 1)) & ~(PUD_SIZE - 1)) >> PUD_SHIFT)
+ 
+ L4_PAGE_OFFSET = l4_index(__PAGE_OFFSET_BASE_L4)
+ L4_START_KERNEL = l4_index(__START_KERNEL_map)
+ 
+ L3_START_KERNEL = pud_index(__START_KERNEL_map)
+ 
++/* Adapt page table L3 space based on range of randomization */
++L3_KERNEL_ENTRY_COUNT = pud_count(KERNEL_IMAGE_SIZE)
++
+ 	.text
+ 	__HEAD
+ 	.code64
+@@ -436,7 +440,12 @@ NEXT_PAGE(level4_kernel_pgt)
+ NEXT_PAGE(level3_kernel_pgt)
+ 	.fill	L3_START_KERNEL,8,0
+ 	/* (2^48-(2*1024*1024*1024)-((2^39)*511))/(2^30) = 510 */
+-	.quad	level2_kernel_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
++	i = 0
++	.rept	L3_KERNEL_ENTRY_COUNT
++	.quad	level2_kernel_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC \
++		+ PAGE_SIZE*i
++	i = i + 1
++	.endr
+ 	.quad	level2_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+ 
+ NEXT_PAGE(level2_kernel_pgt)
 -- 
 2.16.2.660.g709887971b-goog
