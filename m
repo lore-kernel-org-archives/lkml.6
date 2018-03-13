@@ -1,47 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeCMOJt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 10:09:49 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38802 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbeCMOJr (ORCPT
+        id S1752811AbeCMOJx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 10:09:53 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36945 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbeCMOJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:09:47 -0400
-X-Google-Smtp-Source: AG47ELv0rOE/Ms0XpMTXCMQlzePdHflyhKkKKZlMDTvx+NSFiNaRYcM5/Uk57bGiMQh36Rcz1H89Yw==
+        Tue, 13 Mar 2018 10:09:50 -0400
+X-Google-Smtp-Source: AG47ELvRx5+IR67Kfh7X2Or845c78kiq+rIE+1lYS7KxYnlH8h8UgTQpaS8FbAbZ6ZPAJ5GfYDaKVA==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc: hdegoede@redhat.com, tweek@google.com, javierm@redhat.com,
         jarkko.sakkinen@linux.intel.com,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, Jeremy Cline <jeremy@jcline.org>
-Subject: [GIT PULL 0/1] EFI fix for v4.16
-Date: Tue, 13 Mar 2018 14:09:20 +0000
-Message-Id: <20180313140922.17266-1-ard.biesheuvel@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] efi/libstub: tpm: zero initialize pointer variables for mixed mode
+Date: Tue, 13 Mar 2018 14:09:21 +0000
+Message-Id: <20180313140922.17266-2-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180313140922.17266-1-ard.biesheuvel@linaro.org>
+References: <20180313140922.17266-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+As reported by Jeremy, running the new TPM libstub code in mixed mode
+(i.e., 64-bit kernel on 32-bit UEFI) results in hangs when invoking
+the TCG2 protocol, or when accessing the log_tbl pool allocation.
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+The reason turns out to be that in both cases, the 64-bit pointer
+variables are not fully initialized by the 32-bit EFI code, and so
+we should take care to zero initialize these variables beforehand,
+or we'll end up dereferencing bogus pointers.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
-
-for you to fetch changes up to 5c4d724b7ccfa934b95c5c49fab770035a425950:
-
-  efi/libstub: tpm: zero initialize pointer variables for mixed mode (2018-03-13 13:48:25 +0000)
-
-----------------------------------------------------------------
-EFI fix for v4.16:
-- fix an issue in the mixed mode handling of the new TPM libstub code
-
-----------------------------------------------------------------
-Ard Biesheuvel (1):
-      efi/libstub: tpm: zero initialize pointer variables for mixed mode
-
+Reported-by: Jeremy Cline <jeremy@jcline.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
  drivers/firmware/efi/libstub/tpm.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index da661bf8cb96..13c1edd37e96 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -68,11 +68,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+ 	efi_status_t status;
+ 	efi_physical_addr_t log_location, log_last_entry;
+-	struct linux_efi_tpm_eventlog *log_tbl;
++	struct linux_efi_tpm_eventlog *log_tbl = NULL;
+ 	unsigned long first_entry_addr, last_entry_addr;
+ 	size_t log_size, last_entry_size;
+ 	efi_bool_t truncated;
+-	void *tcg2_protocol;
++	void *tcg2_protocol = NULL;
+ 
+ 	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+ 				&tcg2_protocol);
+-- 
+2.15.1
