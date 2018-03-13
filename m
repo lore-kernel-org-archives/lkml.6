@@ -1,105 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753142AbeCMWBV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:01:21 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35702 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeCMWBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:01:19 -0400
-To: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
-Date: Tue, 13 Mar 2018 16:00:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1753202AbeCMWCV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:02:21 -0400
+Received: from smtprelay0150.hostedemail.com ([216.40.44.150]:46117 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751379AbeCMWCU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:02:20 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:2:41:69:355:379:541:800:960:968:973:988:989:1260:1345:1437:1535:1605:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3865:3867:3868:3870:3871:3874:4049:4118:4321:4559:4605:5007:6119:6261:7903:8603:9592:10004:10848:11026:11473:11657:11658:11914:12043:12048:12291:12296:12438:12555:12679:12895:12986:14394:21080:21451:21611:21627:30029:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: horn65_4e3b4b21e3146
+X-Filterd-Recvd-Size: 7174
+From: Joe Perches <joe@perches.com>
+To: Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org
+Subject: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
+Date: Tue, 13 Mar 2018 15:02:15 -0700
+Message-Id: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
+arguments that can be removed by creating separate functins.
 
+Create specific functions for these calls to reduce x86/64 defconfig
+size by ~20k.
 
-On 13/03/18 03:22 PM, Sinan Kaya wrote:
-> It sounds like you have very tight hardware expectations for this to work
-> at this moment. You also don't want to generalize this code for others and
-> address the shortcomings.
+Modify the existing macros to use the specific calls.
 
-No, that's the way the community has pushed this work. Our original work
-was very general and we were told it was unacceptable to put the onus on
-the user and have things break if the hardware doesn't support it. I
-think that's a reasonable requirement. So the hardware use-cases were
-wittled down to the ones we can be confident about and support with
-reasonable changes to the kernel today.
+new:
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+1876562	  44542	    995	1922099	 1d5433	(TOTALS)
 
-> To get you going, you should limit this change to the switch products that you have
-> validated via white-listing PCI vendor/device ids. Please do not enable this feature
-> for all other PCI devices or by default.
+old:
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+1897565	  44542	    995	1943102	 1da63e	(TOTALS)
 
-This doesn't seem necessary. We know that all PCIe switches available
-today support P2P and we are highly confident that any switch that would
-ever be produced would support P2P. As long as devices are behind a
-switch you don't need any white listing. This is what the current patch
-set implements. If you want to start including root ports then you will
-need a white list (and solve all the other problems I mentioned earlier).
+Miscellanea:
 
-> I think your code qualifies as a virus until this issue is resolved (so NAK). 
+o intel_display requires a change to use the specific calls.
 
-That seems a bit hyperbolic... "a virus"??!... please keep things
-constructive.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/gpu/drm/drm_print.c          | 28 +++++++++++++++++++++-------
+ drivers/gpu/drm/i915/intel_display.c | 15 ++++-----------
+ include/drm/drm_print.h              | 27 ++++++++++++++-------------
+ 3 files changed, 39 insertions(+), 31 deletions(-)
 
-> You are delivering a general purpose P2P code with a lot of holes in it and
-> expecting people to jump through it.
-No, the code prevents users from screwing it up. It just requires a
-switch in the hardware which is hardly a high bar to jump through
-(provided you are putting some design thought into your hardware). And
-given it requires semi-custom hardware today, it's not something that
-needs to be on by default in any distributor kernel.
-
-> Turning security off by default is also not acceptable. Linux requires ACS support
-> even though you don't care about it for your particular application.
-
-That's not true. Linux does not require ACS support. In fact it's
-already off by default until you specifically turn on the IOMMU. (Which
-is not always the most obvious thing to enable.) And the only thing it
-really supports is enforcing isolation between VMs that are using
-different pieces of hardware in the system.
-
-> I'd hate ACS to be broken due to some operating system enabling your CONFIG option.
-
-ACS isn't "broken" by enabling the config option. It just makes the
-IOMMU groups and isolation less granular. (ie. devices behind a switch
-will be in the same group and not isolated from each-other).
-
-Logan
+diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+index 781518fd88e3..79abf6d5b4db 100644
+--- a/drivers/gpu/drm/drm_print.c
++++ b/drivers/gpu/drm/drm_print.c
+@@ -89,23 +89,37 @@ void drm_dev_printk(const struct device *dev, const char *level,
+ }
+ EXPORT_SYMBOL(drm_dev_printk);
+ 
+-void drm_printk(const char *level, unsigned int category,
+-		const char *format, ...)
++void drm_dbg(unsigned int category, const char *format, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
+ 
+-	if (category != DRM_UT_NONE && !(drm_debug & category))
++	if (!(drm_debug & category))
+ 		return;
+ 
+ 	va_start(args, format);
+ 	vaf.fmt = format;
+ 	vaf.va = &args;
+ 
+-	printk("%s" "[" DRM_NAME ":%ps]%s %pV",
+-	       level, __builtin_return_address(0),
+-	       strcmp(level, KERN_ERR) == 0 ? " *ERROR*" : "", &vaf);
++	printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
++	       __builtin_return_address(0), &vaf);
++
++	va_end(args);
++}
++EXPORT_SYMBOL(drm_dbg);
++
++void drm_err(const char *format, ...)
++{
++	struct va_format vaf;
++	va_list args;
++
++	va_start(args, format);
++	vaf.fmt = format;
++	vaf.va = &args;
++
++	printk(KERN_ERR "[" DRM_NAME ":%ps] *ERROR* %pV",
++	       __builtin_return_address(0), &vaf);
+ 
+ 	va_end(args);
+ }
+-EXPORT_SYMBOL(drm_printk);
++EXPORT_SYMBOL(drm_err);
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 2933ad38094f..d8e522e3cd39 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -11059,24 +11059,17 @@ intel_compare_link_m_n(const struct intel_link_m_n *m_n,
+ static void __printf(3, 4)
+ pipe_config_err(bool adjust, const char *name, const char *format, ...)
+ {
+-	char *level;
+-	unsigned int category;
+ 	struct va_format vaf;
+ 	va_list args;
+ 
+-	if (adjust) {
+-		level = KERN_DEBUG;
+-		category = DRM_UT_KMS;
+-	} else {
+-		level = KERN_ERR;
+-		category = DRM_UT_NONE;
+-	}
+-
+ 	va_start(args, format);
+ 	vaf.fmt = format;
+ 	vaf.va = &args;
+ 
+-	drm_printk(level, category, "mismatch in %s %pV", name, &vaf);
++	if (adjust)
++		drm_dbg(DRM_UT_KMS, "mismatch in %s %pV", name, &vaf);
++	else
++		drm_err("mismatch in %s %pV", name, &vaf);
+ 
+ 	va_end(args);
+ }
+diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+index 2a4a42e59a47..3a40c5a3a5fa 100644
+--- a/include/drm/drm_print.h
++++ b/include/drm/drm_print.h
+@@ -200,9 +200,10 @@ __printf(6, 7)
+ void drm_dev_printk(const struct device *dev, const char *level,
+ 		    unsigned int category, const char *function_name,
+ 		    const char *prefix, const char *format, ...);
+-__printf(3, 4)
+-void drm_printk(const char *level, unsigned int category,
+-		const char *format, ...);
++__printf(2, 3)
++void drm_dbg(unsigned int category, const char *format, ...);
++__printf(1, 2)
++void drm_err(const char *format, ...);
+ 
+ /* Macros to make printk easier */
+ 
+@@ -236,7 +237,7 @@ void drm_printk(const char *level, unsigned int category,
+ 	drm_dev_printk(dev, KERN_ERR, DRM_UT_NONE, __func__, " *ERROR*",\
+ 		       fmt, ##__VA_ARGS__)
+ #define DRM_ERROR(fmt, ...)						\
+-	drm_printk(KERN_ERR, DRM_UT_NONE, fmt,	##__VA_ARGS__)
++	drm_err(fmt, ##__VA_ARGS__)
+ 
+ /**
+  * Rate limited error output.  Like DRM_ERROR() but won't flood the log.
+@@ -279,40 +280,40 @@ void drm_printk(const char *level, unsigned int category,
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_CORE, __func__, "", fmt,	\
+ 		       ##args)
+ #define DRM_DEBUG(fmt, ...)						\
+-	drm_printk(KERN_DEBUG, DRM_UT_CORE, fmt, ##__VA_ARGS__)
++	drm_dbg(DRM_UT_CORE, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_DEBUG_DRIVER(dev, fmt, args...)				\
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_DRIVER, __func__, "",	\
+ 		       fmt, ##args)
+ #define DRM_DEBUG_DRIVER(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
++	drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_DEBUG_KMS(dev, fmt, args...)				\
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_KMS, __func__, "", fmt,	\
+ 		       ##args)
+-#define DRM_DEBUG_KMS(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_KMS, fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_KMS(fmt, ...)						\
++	drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_DEBUG_PRIME(dev, fmt, args...)				\
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_PRIME, __func__, "",	\
+ 		       fmt, ##args)
+ #define DRM_DEBUG_PRIME(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_PRIME, fmt, ##__VA_ARGS__)
++	drm_dbg(DRM_UT_PRIME, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_DEBUG_ATOMIC(dev, fmt, args...)				\
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ATOMIC, __func__, "",	\
+ 		       fmt, ##args)
+ #define DRM_DEBUG_ATOMIC(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
++	drm_dbg(DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_DEBUG_VBL(dev, fmt, args...)				\
+ 	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_VBL, __func__, "", fmt,	\
+ 		       ##args)
+-#define DRM_DEBUG_VBL(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_VBL, fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_VBL(fmt, ...)						\
++	drm_dbg(DRM_UT_VBL, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEBUG_LEASE(fmt, ...)					\
+-	drm_printk(KERN_DEBUG, DRM_UT_LEASE, fmt, ##__VA_ARGS__)
++	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
+ 
+ #define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, level, fmt, args...)	\
+ ({									\
+-- 
+2.15.0
