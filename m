@@ -1,95 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932480AbeCMWcB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:32:01 -0400
-Received: from mail-eopbgr660108.outbound.protection.outlook.com ([40.107.66.108]:6604
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751300AbeCMWb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:31:58 -0400
-From: "Stephen  Bates" <sbates@raithlin.com>
-To: Logan Gunthorpe <logang@deltatee.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-CC: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Index: AQHTujlZo8bTZRn+4ECdETRRU1rPhqPNgjSAgADeTICAABJggIAAD1YAgAAHVACAAAJxAIAACW8AgAAO3oCAAAopgIAACqIA//+kE4A=
-Date: Tue, 13 Mar 2018 22:31:55 +0000
-Message-ID: <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
-In-Reply-To: <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.b.0.180311
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.224.121]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1728;7:Q6Bav6F/JZ8v1o30hZGqHjp1k/vc6xwS+aTEtxnzA+p+oA0yZGWzldGWgTv8QpLt+AUx8mVgH0QYbkWAcNpIiiIzw3CbtmGQx6/yY85lceZGRmDxQd6+sRfBU5er3rVeihQp9Jo2mSEu00Bu7RHtFIfgNQVdU6zTP39MEUCo/TVW/aT04IG7ZcWvwUCiLmxzD84XDg3o/hY41X4CQsie6VstufPw28DfOQ8RzKf6lPTMAyF0lJzXjzNmUxKl6hx/
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 45753547-d9d3-495e-a897-08d589323a29
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(3008032)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB1728;
-x-ms-traffictypediagnostic: YTXPR0101MB1728:
-x-microsoft-antispam-prvs: <YTXPR0101MB172807E48D3E11EFDA777D1AAAD20@YTXPR0101MB1728.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123558120)(2016111802025)(20161123562045)(20161123560045)(20161123564045)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB1728;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1728;
-x-forefront-prvs: 0610D16BBE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(376002)(346002)(366004)(39380400002)(69224002)(189003)(199004)(316002)(83716003)(102836004)(81166006)(93886005)(82746002)(81156014)(2950100002)(26005)(14454004)(76176011)(86362001)(54906003)(68736007)(6506007)(2906002)(186003)(2201001)(229853002)(5660300001)(478600001)(99286004)(110136005)(105586002)(106356001)(7736002)(305945005)(33656002)(7416002)(97736004)(3660700001)(6116002)(8676002)(58126008)(3846002)(2900100001)(4326008)(2501003)(3280700002)(6486002)(25786009)(36756003)(5250100002)(8936002)(53936002)(6246003)(6512007)(66066001)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1728;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: MLJgZQ7Z+/7QvoZvR/XPu1uREIvKnCTl06Sz9+ZSBrR3qHOdDWogX9nLvTZwGZMI+Su1h236mNRbhmIJ7RUffnUrIeL1vwNFOSsHI+QaQwPnkuTfYce0f8aFQEgheoQAiX328IUAnkDv/FGGVtzW7zEaGK7C22kCm+vuj+/7xEI0WdG27G+QNDja1wKrBOjsoZbDjLzIXTDnQStVyZy6vBdSyGDHC1liQw2AfQQqdf/qTmgo557pjrsl146x6NhhWEHOkA0yDRI6zIYCFP1221q7PLm91c7GdYvDN7bAiYRnVWSa4JcijfU33qltcQESRwE0BlCsBgOrSbm4M3pdFQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EFD005DA0C72A448A2E37DC6C4BFB51D@CANPRD01.PROD.OUTLOOK.COM>
+        id S1753022AbeCMWeQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:34:16 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42403 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbeCMWeO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 18:34:14 -0400
+Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+ <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+ <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+ <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <a7a5de70-1042-e819-f3b8-52287348397f@ideasonboard.com>
+Date: Tue, 13 Mar 2018 23:34:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45753547-d9d3-495e-a897-08d589323a29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2018 22:31:55.8878
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1728
+In-Reply-To: <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DMW6Rs002300
 
->> It sounds like you have very tight hardware expectations for this to work
->> at this moment. You also don't want to generalize this code for others and
->> address the shortcomings.
->  No, that's the way the community has pushed this work
+Hi David,
 
-Hi Sinan
+Just for reference here, I've posted a v2 of this patch now titled:
+[PATCH v2 02/11] media: vsp1: Remove packed attributes from aligned structures
 
-Thanks for all the input. As Logan has pointed out the switch requirement is something that has evolved over time based on input from the community. You are more than welcome to have an opinion on this (and you have made that opinion clear ;-)). Over time the patchset may evolve from its current requirements but right now we are aligned with the feedback from the community.
+which removes the attributes instead of modifying them.
 
-Cheers
+Thanks for the pointers!
 
-Stephen
- 
+Regards
+
+Kieran
+
+On 13/03/18 15:03, Kieran Bingham wrote:
+> Hi David,
+> 
+> On 13/03/18 13:38, David Laight wrote:
+>> From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
+>>> On 13/03/18 11:20, David Laight wrote:
+>>>> From: Kieran Bingham
+>>>>> Sent: 09 March 2018 22:04
+>>>>> The kernel provides a __packed definition to abstract away from the
+>>>>> compiler specific attributes tag.
+>>>>>
+>>>>> Convert all packed structures in VSP1 to use it.
+>>>>>
+>>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>>>> ---
+>>>>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> index 37e2c984fbf3..382e45c2054e 100644
+>>>>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> @@ -29,19 +29,19 @@
+>>>>>  struct vsp1_dl_header_list {
+>>>>>  	u32 num_bytes;
+>>>>>  	u32 addr;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>>
+>>>>>  struct vsp1_dl_header {
+>>>>>  	u32 num_lists;
+>>>>>  	struct vsp1_dl_header_list lists[8];
+>>>>>  	u32 next_header;
+>>>>>  	u32 flags;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>>
+>>>>>  struct vsp1_dl_entry {
+>>>>>  	u32 addr;
+>>>>>  	u32 data;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>
+>>>> Do these structures ever actually appear in misaligned memory?
+>>>> If they don't then they shouldn't be marked 'packed'.
+>>>
+>>> I believe the declaration is to ensure that the struct definition is not altered
+>>> by the compiler as these structures specifically define the layout of how the
+>>> memory is read by the VSP1 hardware.
+>>
+>> The C language and ABI define structure layouts.
+>>
+>>> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
+>>> rearranged by the compiler (though I believe it would be free to do so if it
+>>> chose without this attribute), but I think the declaration shows the intent of
+>>> the memory structure.
+>>
+>> The language requires the fields be in order and the ABI stops the compiler
+>> adding 'random' padding.
+>>
+>>> Isn't this a common approach throughout the kernel when dealing with hardware
+>>> defined memory structures ?
+>>
+>> Absolutely not.
+>> __packed tells the compiler that the structure might be on any address boundary.
+>> On many architectures this means the compiler must use byte accesses with shifts
+>> and ors for every access.
+>> The most a hardware defined structure will have is a compile-time assert
+>> that it is the correct size (to avoid silly errors from changes).
+> 
+> 
+> 
+> Ok - interesting, I see what you're saying - and certainly don't want the
+> compiler to be performing byte accesses on the structures unnecessarily.
+> 
+> I'm trying to distinguish the difference here. Is the single point that
+>  __packed
+> 
+> causes byte-access, where as
+> 
+> __attribute__((__packed__));
+> 
+> does not?
+> 
+> Looking at the GCC docs [0]: I see that  __attribute__((__packed__)) tells the
+> compiler that the "structure or union is placed to minimize the memory required".
+> 
+> However, the keil compiler docs[1] do certainly declare that __packed causes
+> byte alignment.
+> 
+> I was confused/thrown off here by the Kernel defining __packed as
+> __attribute__((packed)) at [2].
+> 
+> Do __attribute__((packed)) and __attribute__((__packed__)) differ ?
+> 
+> In which case, from what I've read so far I wish "__packed" was "__unaligned"...
+> 
+> 
+> [0]
+> https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
+> 
+> [1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
+> 
+> [2]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
+> 
+> 
+> Regards
+> 
+> Kieran
+> 
+> 
+>> 	David
+>>
