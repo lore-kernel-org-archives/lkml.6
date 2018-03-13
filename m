@@ -1,71 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520955633-2-4232046707729848682
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520955632; b=SKXGyB4dL+eFV3lqV8HY/X7zo+1KDK2go2OREnvbhPuyxCw
-    aM9K2X3IMWEyTyt7IUi8SaHvMJLK/LjwVnuFJ3Urik10mqXFjKDLmMnASDTpv5Mf
-    UcYl5r9oAyThdxNAa5TKam8lGNDG+o+VaKfJ9bJ6X2onb9fk9AyF+pqqZ73E8En+
-    Ge668fYbM67VWg38xw2HyburmZ1nK3hfe5nD5z94rdDTOFadKwpC0SuS71jLGGxY
-    e164IbgwnXgsgrjKaonWrDVz5VlDD7wioxU+GAcdeX1WPM4acSS30YEtjOEvZfJq
-    jLgU5te6LK7qqZFeZMyjCxkto2Jap5C/dhWFXZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520955632; bh=PwX6Y2d6l7by8uaIxtgOjzvLTL
-    QcN6TSMTTGGu8po8A=; b=MzgHhWtmgOjdHYmCeqlE4Wp34BvsTXAAqglKEzVD6a
-    v8banq5fZPOZSrb3wpG61fspf/cLcBrWetIhsjQKiJsL+Cy3Z8xrF7Ij5UVqr4H8
-    1lZn+/ismAFKWZgcVYBN+EFX60NsrWBs28N4yYUfMh133uvqatuVap9qYtIrWGnZ
-    3vLo0uhBVKgU7zg4vvA/lAYbbCyzFh7HvE9mOEYqHUJkkRRzW1Bg4j65xLB1Tcse
-    VLNQ+O0n+NUtU2lvs5YQiz4TStPGQCH60ims+Hgll5H6Pk1RnKEZGujBGxNTAUf4
-    KO8+q5hympfq9PNqlaNM50QeFRASG3hyobwnDVMY0jKQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934097AbeCMPk1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:40:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35682 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934884AbeCMPkZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:40:25 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvrviQzA6mbZPWYxDRCKPWslKhRLhlGANd5/kc/7FhL83cHLaIR5R9Y+k1t3cE+ZoYoFq15
+ARC-Seal: i=1; a=rsa-sha256; t=1520955631; cv=none;
+        d=google.com; s=arc-20160816;
+        b=EUa2hcsTEV/ToggSEOHeN/y7dbFVIX4nnKW5eqOEsNcxvH2zjlQ/QCR6A2fg0IVXU4
+         dKa1NuBUuULfQP08qmIihUkc6/VSjDi+uljpM3cxBnrMyE2yKUKohw/uR+stJ3zIIXFX
+         xUESLrWNhWJINu/SNdPqobuZIX3F95vQ7Eu7X/6Jj81rAYEpj8dvcxzi+Mem3j6uMEQp
+         fAd7AKIecZ8VqHqIKFDUj+QT9G3jmuvYXiqF3051HdShL+WEDvSHcRyUGTrjMp2uOeLl
+         UoeQ/JJoIOTUMPT4YCV8Cv1bhLqQsu3CXGWbYhXDeRpaSWGGtd4H7+xih0IOVz6V37lg
+         5Ihw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=eMklzGWc8EQ2+DUxFGI5fIhOe6MKMYy0o5B0Em6drTY=;
+        b=agtp1QO9qrGpnZkWT/Iw422o7712XOWFl/SE/1vrLpZfKtuebq6SNykNmIYg2Y5uLv
+         0ZhpRw0wWL/adAZ02Qg3qBXoAqOcDy4wJAVQNSmdiHgHAUbdTll1DrESyOOXOPVPloyg
+         AfeDJiKdfdfntqyPrE7eanYv9tq9gfh07QcA6aiBPuEKJqR0qMMMPi9grcwYvOeoN7Rx
+         Wtjpr2IgFnwrS+lZEVPHKW93kw33Gw9NiFyp52qq3No7SenF1G7aTURT6449hxIN9Blm
+         G1o+N/+mDD18G4oVwpkOnaLpyfnmLdkjF/UERztBVmXDMnj54bK7torUKqozKbc51M6Z
+         D6Cw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Miodrag Dinic <miodrag.dinic@mips.com>,
-        Aleksandar Markovic <aleksandar.markovic@mips.com>,
-        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 114/140] MIPS: CPC: Map registers using DT in mips_cpc_default_phys_base()
-Date: Tue, 13 Mar 2018 16:25:17 +0100
-Message-Id: <20180313152505.846604094@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 111/140] scsi: qla2xxx: Fix NULL pointer crash due to probe failure
+Date: Tue, 13 Mar 2018 16:25:14 +0100
+Message-Id: <20180313152505.614917029@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -73,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594837058075181473?=
+X-GMAIL-MSGID: =?utf-8?q?1594837571998071069?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -83,57 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit 791412dafbbfd860e78983d45cf71db603a82f67 upstream.
+commit d64d6c5671db5e693a0caaee79f2571b098749c9 upstream.
 
-Reading mips_cpc_base value from the DT allows each platform to
-define it according to its needs. This is especially convenient
-for MIPS_GENERIC kernel where this kind of information should be
-determined in runtime.
+This patch fixes regression added by commit d74595278f4ab
+("scsi: qla2xxx: Add multiple queue pair functionality.").
 
-Use mti,mips-cpc compatible string with just a reg property to
-specify the register location for your platform.
+When driver is not able to get reqeusted IRQs from the system, driver will
+attempt tp clean up memory before failing hardware probe. During this cleanup,
+driver assigns NULL value to the pointer which has not been allocated by
+driver yet. This results in a NULL pointer access.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Miodrag Dinic <miodrag.dinic@mips.com>
-Signed-off-by: Aleksandar Markovic <aleksandar.markovic@mips.com>
-Cc: linux-mips@linux-mips.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Patchwork: https://patchwork.linux-mips.org/patch/18513/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Log file will show following message and stack trace
+
+qla2xxx [0000:a3:00.1]-00c7:21: MSI-X: Failed to enable support, giving up -- 32/-1.
+qla2xxx [0000:a3:00.1]-0037:21: Falling back-to MSI mode --1.
+qla2xxx [0000:a3:00.1]-003a:21: Failed to reserve interrupt 821 already in use.
+BUG: unable to handle kernel NULL pointer dereference at (null)
+IP: [<ffffffffc010c4b6>] qla2x00_probe_one+0x18b6/0x2730 [qla2xxx]
+PGD 0
+Oops: 0002 [#1] SMP
+
+Fixes: d74595278f4ab ("scsi: qla2xxx: Add multiple queue pair functionality.").
+Cc: <stable@vger.kernel.org> # 4.10
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/mips-cpc.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/scsi/qla2xxx/qla_os.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/mips/kernel/mips-cpc.c
-+++ b/arch/mips/kernel/mips-cpc.c
-@@ -10,6 +10,8 @@
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3003,9 +3003,6 @@ qla2x00_probe_one(struct pci_dev *pdev,
+ 	base_vha = qla2x00_create_host(sht, ha);
+ 	if (!base_vha) {
+ 		ret = -ENOMEM;
+-		qla2x00_mem_free(ha);
+-		qla2x00_free_req_que(ha, req);
+-		qla2x00_free_rsp_que(ha, rsp);
+ 		goto probe_hw_failed;
+ 	}
  
- #include <linux/errno.h>
- #include <linux/percpu.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/spinlock.h>
+@@ -3066,7 +3063,7 @@ qla2x00_probe_one(struct pci_dev *pdev,
+ 	/* Set up the irqs */
+ 	ret = qla2x00_request_irqs(ha, rsp);
+ 	if (ret)
+-		goto probe_init_failed;
++		goto probe_hw_failed;
  
- #include <asm/mips-cps.h>
-@@ -22,6 +24,17 @@ static DEFINE_PER_CPU_ALIGNED(unsigned l
+ 	/* Alloc arrays of request and response ring ptrs */
+ 	if (!qla2x00_alloc_queues(ha, req, rsp)) {
+@@ -3375,6 +3372,9 @@ probe_failed:
+ 	scsi_host_put(base_vha->host);
  
- phys_addr_t __weak mips_cpc_default_phys_base(void)
- {
-+	struct device_node *cpc_node;
-+	struct resource res;
-+	int err;
-+
-+	cpc_node = of_find_compatible_node(of_root, NULL, "mti,mips-cpc");
-+	if (cpc_node) {
-+		err = of_address_to_resource(cpc_node, 0, &res);
-+		if (!err)
-+			return res.start;
-+	}
-+
- 	return 0;
- }
+ probe_hw_failed:
++	qla2x00_mem_free(ha);
++	qla2x00_free_req_que(ha, req);
++	qla2x00_free_rsp_que(ha, rsp);
+ 	qla2x00_clear_drv_active(ha);
  
+ iospace_config_failed:
