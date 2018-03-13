@@ -1,116 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeCMWuR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 18:50:17 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37905 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751300AbeCMWuQ (ORCPT
+        id S932730AbeCMWuv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 18:50:51 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:39259 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932481AbeCMWut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 18:50:16 -0400
-X-Google-Smtp-Source: AG47ELs2PYZ6BOZCxQkKsycElZoR6s+PSniYxaUWs/qEbxqWJd+174QcPOA+qqbEGvEmuwAdcqfVXQ==
-Date: Tue, 13 Mar 2018 23:50:14 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: yannick fertre <yannick.fertre@st.com>,
-        Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Patrick DELAUNAY <patrick.delaunay@st.com>,
-        Christophe KERELLO <christophe.kerello@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Albert Aribaud <albert.u.boot@aribaud.net>,
-        Simon Glass <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
-        u-boot@lists.denx.de, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/10] splash screen on the stm32f769 disco board
-Message-ID: <20180313225013.GB23414@mithrandir>
-References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
- <20180313152310.GJ4788@phenom.ffwll.local>
+        Tue, 13 Mar 2018 18:50:49 -0400
+X-Google-Smtp-Source: AG47ELvAb9ZEjA2Gr/q4hQ8zRhS1QNNfZF2rWBgnN+R85gB2wr2Ttmrmz1rnHaeCAWXpfNw1FF/ToxOFzA7vCo3pMuk=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
-Content-Disposition: inline
-In-Reply-To: <20180313152310.GJ4788@phenom.ffwll.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From: David Chen <tuxoko@gmail.com>
+Date: Tue, 13 Mar 2018 15:50:47 -0700
+Message-ID: <CAK1sfuYAQf0irGzGxusNg-PdqLSzJ6tSHMENG2Vp8gH1c0FG9w@mail.gmail.com>
+Subject: blk_mq_freeze_queue hang and possible race in percpu-refcount
+To: Tejun Heo <tj@kernel.org>, Shaohua Li <shli@fb.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tejun,
 
---EuxKj2iCbKjpUGkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We recently hit an issue where several tasks hung in blk_mq_freeze_queue_wait.
+All the task have the same stack trace as the one below, which is
+doing fput on loop device.
+Which is strange because the task should be no more than a open(2), a
+couple pread(2),
+and close(2) on a loop device.
 
-On Tue, Mar 13, 2018 at 04:23:10PM +0100, Daniel Vetter wrote:
-> On Tue, Mar 13, 2018 at 02:49:59PM +0100, yannick fertre wrote:
-> > Version 3:
-> > - Replace some pr_error, pr_warn or pr_info by dev_error, dev_warn & de=
-v_info.
-> > - Refresh stm32f769-disco_defconfig with last modification done on v201=
-8.3-rc4.
-> > - rework include files ordering.
-> >=20
-> > Version 2:
-> > - Replace debug log by pr_error, pr_warn or pr_info.
-> > - Rework bridge between ltdc & dsi panel
-> > - Rework backligh management (with or witout gpio)
-> > - Rework panel otm8009a
-> > - Add new panel raydium rm68200
-> >=20
-> > Version 1:
-> > - Initial commit
-> >=20
-> > This serie contains all patchsets needed for displaying a splash screen=
-=20
-> > on the stm32f769 disco board.
-> > A new config has been created configs/stm32f769-disco_defconfig.
-> > This is necessary due to the difference of panels between stm32f769-dis=
-co &
-> > stm32f746-disco boards.
->=20
-> Shouldn't we patch the drivers/gpu/drm/stm driver instead of the
-> drivers/video one? fbdev is kinda a dead end and not for adding new hw
-> support ...
+====
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+zpool           D    0 32416  32156 0x00000080
+ffff967e4b0a1740 ffff967e4b0a1740 ffff967dcdd50000 ffff967dcd8825c0
+ffff967eafad9780 ffffb7ab84c5fd18 ffffffff938789dc 0000000000000286
+0000000000000286 ffff967dcdd50000 ffff967ea7d691e8 ffff967ea6df2528
+Call Trace:
+[<ffffffff938789dc>] ? __schedule+0x21c/0x680
+[<ffffffff93878e76>] schedule+0x36/0x80
+[<ffffffff933d1cfc>] blk_mq_freeze_queue_wait+0x3c/0x90
+[<ffffffff930ecd50>] ? prepare_to_wait_event+0x110/0x110
+[<ffffffff933d3bda>] blk_mq_freeze_queue+0x1a/0x20
+[<ffffffff935b9631>] lo_release+0x61/0x70
+[<ffffffff9328c095>] __blkdev_put+0x225/0x280
+[<ffffffff9328c8fc>] blkdev_put+0x4c/0x110
+[<ffffffff9328ca75>] blkdev_close+0x25/0x30
+[<ffffffff93253137>] __fput+0xe7/0x220
+[<ffffffff932532ae>] ____fput+0xe/0x10
+[<ffffffff930c53f3>] task_work_run+0x83/0xb0
+[<ffffffff930a21e7>] exit_to_usermode_loop+0x66/0x92
+[<ffffffff93003a95>] do_syscall_64+0x165/0x180
+[<ffffffff9387d5ab>] entry_SYSCALL64_slow_path+0x25/0x25
+====
 
-This is confusing, but by the looks of it this is code for U-Boot
-display support and has nothing to do with the Linux kernel. I don't
-know why dri-devel was on Cc.
+I look into the percpu-refcount code, and found a place that might
+have a race that might cause this.
+Consider a concurrent percpu_ref_kill and percpu_ref_tryget_live:
 
-Yannick, it's not customary to cross-post U-Boot display drivers to
-Linux mailing lists, unless there's some need to coordinate or discuss
-across the boundaries (for example if you were proposing a way to do
-seamless handover from U-Boot to kernel). If you do cross-post, perhaps
-make sure to mark these patches as targetting U-Boot to avoid confusion.
+====
+CPU A                           CPU B
+-----                           -----
+percpu_ref_kill()               percpu_ref_tryget_live()
+{
+                                if (__ref_is_percpu())
+  set __PERCPU_REF_DEAD;
+  __percpu_ref_switch_mode();
+   ^ sum up current percpu_count
+                                this_cpu_inc(*percpu_count); <- this
+increment got leaked.
 
-Thierry
+====
 
---EuxKj2iCbKjpUGkD
-Content-Type: application/pgp-signature; name="signature.asc"
+So if later CPU B later does percpu_ref_put, it will cause ref->count
+to drop to -1.
+And thus causing the above hung task issue.
 
------BEGIN PGP SIGNATURE-----
+Do you think this theory is correct, or am I missing something?
+Please tell me what do you think.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqoVaQACgkQ3SOs138+
-s6ER8xAAgbhmPbQgCLSocTxn6syHSGGwKPmLszMuod6paihH6PHMzt9QuP8HVyFR
-edIleFJ+c+wdadG+zF3VJXTkgqJ+bP4RTs7jAGjHB0TrpGyHUBq05w2yAWS2k2XJ
-YXF58JI78Ms8E4I4Qg4HU8X+imrfGEwXAfdsBM76o2oGaeyZkdugrRAHCCWoBHX+
-XO8szUUJ0sxTCnygWqnv+KIRsM/tAixENAWMsywlon0FgnCnnpwwsOwLk2gR/ana
-WNN8bjTD58M8WT8J8Gl+gu7h2y46rc8rpRHtS4ppxJrVmDfNat/w1SCOE3j6YTAx
-7qjltWwEhfU6kpOqg5DThB5I0KvkWG06cbMKHstkqIp4oGXzvQoV0mpp155+G0n7
-EDTkNrNpJGCrdfk1ekOZU2W0ec3ILxFfsMGZ4lemB5/D4xBgll8GfSfmm6AYKJw6
-PzwaziqT6O4IPRTWj6cvwONdM55I66XyQ7WLn6mNQ2rkES3xzEBp0D97PuXPaWbk
-OwJxmW7i57Lgv62GgUhOaewVN4yyElrTvQIfpr9nq3OqL/ghKnC/sU3KHtUSqSA+
-adne53bmUhR2XzjoZZHd7JwDed+rVoQqt+wSuj0U8km6dVFR1uedcfu+XRyTYpvh
-gSABixzbFZJEO3gmTAP5KBzVDoBKQlWSLoB70ADpvF6Ns+Bxax8=
-=ap0J
------END PGP SIGNATURE-----
-
---EuxKj2iCbKjpUGkD--
+Thanks,
+David
