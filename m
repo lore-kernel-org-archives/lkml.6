@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt2pjWbTrEBsartI6ycHJJ+NVYQFI1GeuhpiECF9/LKi/aBkV7woajEXO/CMGtctLSz+I9z
-ARC-Seal: i=1; a=rsa-sha256; t=1520955359; cv=none;
+X-Google-Smtp-Source: AG47ELu9zMTXbYnWl+9fNezSbIde3AC5yjWtqz2Ncf14cDXR7a/gOTs9xR49nA0+JOg0x6DW2Wqo
+ARC-Seal: i=1; a=rsa-sha256; t=1520955356; cv=none;
         d=google.com; s=arc-20160816;
-        b=ECwp9ptlMjErZ3niwZo3y6Rsai3LfhHxur0tr+gV3nirr/NLyFw7teeKY9lZkqhmQn
-         i17WK2FlVuZNIKqOoNdyqz6I3jcZ0IXP8JllKCo9qYswMqm2majWIzQF8tGQjvfXRCWN
-         2CoPg40wC+PwGyh38XtUtMQxDd7l3uhWDF3Soz7n9tzusBqy/UWUkVG5TC9caTGydMlc
-         0/mnidwYBHYpvJBhiSnQBFEPafCWHv/RbY+ECNJ9YaO/7BEU6CR981aRy/r+2o3R2sib
-         PFoAqgqmhT5vcNDLjLQr7cnIFDM1MCH4R+PCAibAlaQ7YXr8hR0FYYbnaFSycGtCluek
-         cpwQ==
+        b=GtZWHaIytu3yDGPEx4tlm8fEm7z9E9Jo83oU9KeKx0SDGY8xFUQWwPj38X7FtfSkjE
+         LpJtQchQhQyOw6/E00CMLJwLFgRklMdDuTWxZmBkzV+cwN7jtgGa/dLJcL7gZbCQv9e8
+         60BilFJS3/QwFTpEoJxOoEs/thUeKgrnLsPSLzXEHXdDv+N3zvlQBESEh3wgbuEG+RvT
+         iy61umQYpAMgsawC/YW4OdrjEXgzqxkJNhySplWFjCkV/dIDUSqXc23AjvDl0JjYQIb3
+         iUcxYAXy1Fv/KzQvkHNRAKbqf4KLotwCPsz6n0Y278JSDz9zh5CB+lrxppqvXTv9NHVV
+         Q7GA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J3h6SIFl7jEHj9u29YNLjg5SosV0188jxJM3pVWfAxY=;
-        b=A8aD1Dn1VwnKFzQX3HO83rv9KSrWyJ5TUCz0Al60JuclPIuKysyhxg+vBUYAl2BfO0
-         jAd5XDn3tTQLlOP0UISkt/fSQeM0OZPjGRSmWxzYgsuNhrJi5+08GQ+qoOVCKxCr7zHd
-         Hi4n2D9pmbNoqeYFCYJmmXH4rinzNUkEqhwVXh4oRsN8ODLPbN7Qf0my5OYzIVnKuzD1
-         5tLwu1A+M3kDRguNxYD5uNILUI8oVHCG6S2DWwaGUG3Hs5Mw0TFp6Q00PgD1VyDwYiNq
-         7lQvsUnx34irJfxbfsXXlXkWj5ZbgnN+0WtdH4S7xUdIVUAXiGxQQNeX6C6/ezmpNhwe
-         gu+Q==
+        bh=KnjJ0LmNhpI2/UYWFbwVgBJK8LCf9mb5Fhrp4oNLcgc=;
+        b=wYVOG92y12VATErPGCeYdBC/AaqjqRlicvQQOwHW3lc3kvZE1qptl0u9EAgBb6lcJ7
+         fUqodygjmFP8Z7ftyuFEXM4czEsyuOKjynPvmiww9KgBEdNfspRSPtZLFFS9MauT5zw1
+         rffGA98HZcYp2Xgv90xFqGpThFnEOQt1Jfdj2Txpb3plSJz0CAgz9Z38XTZO5kBFzbt7
+         r9nzMn1WgJAWKx8mZO614lVIRTRjVT3DQbX+dkiE2qMecaviD64ZYhOel4k1A+bQfQVy
+         GUXc3FGkaAk08TN5plXh7Hd9k5rB83QdelSl+eoZBHkCOGAQukUtJVjzPCGmlQ3gXnyD
+         Mw8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	James Ettle <james@ettle.org.uk>,
-	Jeffery Miller <jmiller@neverware.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.14 023/140] tpm: only attempt to disable the LPC CLKRUN if is already enabled
-Date: Tue, 13 Mar 2018 16:23:46 +0100
-Message-Id: <20180313152459.591519822@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	James Morris <jmorris@namei.org>
+Subject: [PATCH 4.14 022/140] tpm: remove unused variables
+Date: Tue, 13 Mar 2018 16:23:45 +0100
+Message-Id: <20180313152459.534528444@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837119781067640?=
-X-GMAIL-MSGID: =?utf-8?q?1594837286750767049?=
+X-GMAIL-THRID: =?utf-8?q?1594837116260369951?=
+X-GMAIL-MSGID: =?utf-8?q?1594837283947939385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 6c9f0ce0dffe64da2204f38b0fd90f3ae2a8903c upstream.
+commit 68021bf4734d15c9a9ed1c1072b9ebcfda3e39cc upstream.
 
-Commit 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
-added logic in the TPM TIS driver to disable the Low Pin Count CLKRUN
-signal during TPM transactions.
+The CLKRUN fix caused a few harmless compile-time warnings:
 
-Unfortunately this breaks other devices that are attached to the LPC bus
-like for example PS/2 mouse and keyboards.
+drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_pnp_remove':
+drivers/char/tpm/tpm_tis.c:274:23: error: unused variable 'priv' [-Werror=unused-variable]
+drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_plat_remove':
+drivers/char/tpm/tpm_tis.c:324:23: error: unused variable 'priv' [-Werror=unused-variable]
 
-One flaw with the logic is that it assumes that the CLKRUN is always
-enabled, and so it unconditionally enables it after a TPM transaction.
+This removes the variables that have now become unused.
 
-But it could be that the CLKRUN# signal was already disabled in the LPC
-bus and so after the driver probes, CLKRUN_EN will remain enabled which
-may break other devices that are attached to the LPC bus but don't have
-support for the CLKRUN protocol.
-
-Fixes: 5e572cab92f0 ("tpm: Enable CLKRUN protocol for Braswell systems")
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Tested-by: James Ettle <james@ettle.org.uk>
-Tested-by: Jeffery Miller <jmiller@neverware.com>
+Fixes: 6d0866cbc2d3 ("tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: James Morris <jmorris@namei.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis_core.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -694,7 +694,8 @@ static void tpm_tis_clkrun_enable(struct
- 	struct tpm_tis_data *data = dev_get_drvdata(&chip->dev);
- 	u32 clkrun_val;
- 
--	if (!IS_ENABLED(CONFIG_X86) || !is_bsw())
-+	if (!IS_ENABLED(CONFIG_X86) || !is_bsw() ||
-+	    !data->ilb_base_addr)
- 		return;
- 
- 	if (value) {
-@@ -751,6 +752,7 @@ int tpm_tis_core_init(struct device *dev
- 		      acpi_handle acpi_dev_handle)
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -255,7 +255,6 @@ MODULE_DEVICE_TABLE(pnp, tpm_pnp_tbl);
+ static void tpm_tis_pnp_remove(struct pnp_dev *dev)
  {
- 	u32 vendor, intfcaps, intmask;
-+	u32 clkrun_val;
- 	u8 rid;
- 	int rc, probe;
- 	struct tpm_chip *chip;
-@@ -776,6 +778,13 @@ int tpm_tis_core_init(struct device *dev
- 					ILB_REMAP_SIZE);
- 		if (!priv->ilb_base_addr)
- 			return -ENOMEM;
-+
-+		clkrun_val = ioread32(priv->ilb_base_addr + LPC_CNTRL_OFFSET);
-+		/* Check if CLKRUN# is already not enabled in the LPC bus */
-+		if (!(clkrun_val & LPC_CLKRUN_EN)) {
-+			iounmap(priv->ilb_base_addr);
-+			priv->ilb_base_addr = NULL;
-+		}
- 	}
+ 	struct tpm_chip *chip = pnp_get_drvdata(dev);
+-	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
  
- 	if (chip->ops->clk_enable != NULL)
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
+@@ -305,7 +304,6 @@ static int tpm_tis_plat_probe(struct pla
+ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(&pdev->dev);
+-	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_chip_unregister(chip);
+ 	tpm_tis_remove(chip);
