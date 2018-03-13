@@ -1,177 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932816AbeCMXTO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 19:19:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51036 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752757AbeCMXTM (ORCPT
+        id S932678AbeCMXSH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 19:18:07 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43920 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932240AbeCMXSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 19:19:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F8B1605FB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
- <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
- <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
- <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
- <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <156c24fb-6e27-28f6-0b36-7fd83311ce37@codeaurora.org>
-Date: Tue, 13 Mar 2018 19:19:07 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Mar 2018 19:18:06 -0400
+X-Google-Smtp-Source: AG47ELtzd+xrHrbqBMF9i4/EeFvekIDZL799C8tjP4TWxdqiw3ZFOJKvdL+OrboC8LRz/57tytokHw==
+Message-ID: <1520983083.24712.1.camel@redhat.com>
+Subject: Re: [PATCH v3 2/5] drm/i915: Only use one link bw config for MST
+ topologies
+From: Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To: Manasi Navare <manasi.d.navare@intel.com>
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Date: Tue, 13 Mar 2018 19:18:03 -0400
+In-Reply-To: <20180312204526.GA3022@intel.com>
+References: <20180308232421.14049-1-lyude@redhat.com>
+         <20180309213232.19855-1-lyude@redhat.com>
+         <20180309213232.19855-2-lyude@redhat.com> <20180312204526.GA3022@intel.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/2018 6:48 PM, Logan Gunthorpe wrote:
+On Mon, 2018-03-12 at 13:45 -0700, Manasi Navare wrote:
+> On Fri, Mar 09, 2018 at 04:32:28PM -0500, Lyude Paul wrote:
+> > When a DP MST link needs retraining, sometimes the hub will detect that
+> > the current link bw config is impossible and will update it's RX caps in
+> > the DPCD to reflect the new maximum link rate. Currently, we make the
+> > assumption that the RX caps in the dpcd will never change like this.
+> > This means if the sink changes it's RX caps after we've already set up
+> > an MST link and we attempt to add or remove another sink from the
+> > topology, we could put ourselves into an invalid state where we've tried
+> > to configure different sinks on the same MST topology with different
+> > link rates. We could also run into this situation if a sink reports a
+> > higher link rate after suspend, usually from us having trained it with a
+> > fallback bw configuration before suspending.
+> > 
+> > So: "lock" the bw config by only using the max DP link rate/lane count
+> > on the first modeset for an MST topology. For every modeset following,
+> > we instead use the last configured link bw for this topology. We only
+> > unlock the bw config when we've detected a new MST sink.
+> > 
 > 
+> Just a nit here on commit message about where we unlock the link bw. So we
+> also unlock it
+> meaning set the mst_link_bw_locked to false when we read the dpcd again
+> and obtain the fallback values since at that time the RX cap could have
+> changed and so we do unlock the link_bw so that during retraining it reads
+> the new max link rate and lane count during the mst compute config.
+> Isnt that the case or am I missing something here?
+I'm not sure I understand what you mean, are you talking about how we unlock the
+link bw when retraining fails and we decide to fallback? If so, that's probably
+something we should just mention in the patch that implements the actual
+retraining as opposed to this patch.
 > 
-> On 13/03/18 04:29 PM, Sinan Kaya wrote:
->> If hardware doesn't support it, blacklisting should have been the right
->> path and I still think that you should remove all switch business from the code.
->> I did not hear enough justification for having a switch requirement
->> for P2P.
+> Manasi
 > 
-> I disagree.
-> 
->> You are also saying that root ports have issues not because of functionality but
->> because of performance. 
-> 
-> No... performance can also be an issue but the main justification for
-> this is that many root ports do not support P2P at all and can fail in
-> different ways (usually just dropping the TLPs).
-> 
->> What if I come up with a very cheap/crappy switch (something like used in data
->> mining)?
-> 
-> Good luck. That's not how hardware is designed. PCIe switches that have
-> any hope to compete with the existing market will need features like
-> NTB, non-transparent ports, etc... and that implies a certain symmetry
-> (ie there isn't a special host port because there may be more than one
-> and it may move around) which implies that packets will always be able
-> to forward between each ports which implies P2P will work.
-> 
-
-It is still a switch it can move packets but, maybe it can move data at
-100kbps speed. 
-
-What prevents that switch from trying P2P and having a bad user experience?
-
-If everything is so broken, I was suggesting to at least list the switches
-you have tested.
-
-What's the problem with this?
-
-Why do you want to assume that all switches are good and all root ports are
-bad?
-
->> I have been doing my best to provide feedback. It feels like you are throwing
->> them over the wall to be honest.
->>
->> You keep implying "not my problem".
-> 
-> Well, the fact of the matter is that extending this in all the ways
-> people like you want face huge problems on all sides. These are not
-> trivial issues and holding back work that works for our problem because
-> it doesn't solve your problem is IMO just going to grind development in
-> this area to a halt. We have to have something we can agree on which is
-> safe to start building on. The building can't just emerge fully formed
-> in one go.
-> 
-
-What if the design is so canned that you can't change anything? 
-
-I have been asking things like getting rid of switch search in ACS
-enablement towards achieving generic P2P. You seem to be pushing back.
-You said yourself P2P and isolation doesn't go together at this point
-but you also care about isolation for other devices that are not doing
-P2P.
-
-Confusing...
-
-> P2P proposal go back a long time and have never gotten anywhere because
-> there are limitations and people want it to do things that are hard but
-> don't want to contribute the work to solving those problems.
-> 
->>> Well, if it's a problem for someone they'll have to solve it. We're
->>> targeting JBOFs that have no use for ACS / IOMMU groups at all.
->>
->> IMO, you (not somebody) should address this one way or the other before this
->> series land in upstream.
-> 
-> The real way to address this (as I've mentioned before) is with some way
-> of doing ACS and iomem groups dynamically. But this is a huge project in
-> itself and is never going to be part of the P2P patchset.
-
-fair enough.
-
-> 
->> Another assumption: There are other architectures like ARM64 where IOMMU
->> is enabled by default even if you don't use VMs for security reasons.
->> IOMMU blocks stray transactions.
-> 
-> True, but it doesn't change my point: ACS is not a requirement for Linux
-> many many systems do not have it on at all or by default.
-
-I don't think so.
-
-It is not a requirement for you but it is a requirement for me (ARM64 guy).
-Linux happens to run on multiple architectures. One exception invalidates your
-point.
-
-> 
->> Didn't the ACS behavior change suddenly for no good reason when we enabled
->> your code even though I might not be using the P2P but I happen to have
->> a kernel with P2P config option?
-> 
-
-If you are assuming that your kernel option should not be used by general
-distributions like Ubuntu/redhat etc. and requires a kernel compilation,
-creating a dependency to EXPERT is the right way to do. 
-
-Distributions assume that no damage is done by enabling PCI bus options
-under normal circumstances.
-
-> Well no, presumably you made a conscious choice to turn the config
-> option on and build a custom kernel for your box. That doesn't seem very
-> sudden and the reason is that the two concepts are very much at odds
-> with each other: you can't have isolation and still have transactions
-> between devices.
-> 
-> Logan
-> 
-> 
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > Cc: Manasi Navare <manasi.d.navare@intel.com>
+> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > ---
+> >  drivers/gpu/drm/i915/intel_dp.c     | 11 +++++++++--
+> >  drivers/gpu/drm/i915/intel_dp_mst.c | 22 +++++++++++++++-------
+> >  drivers/gpu/drm/i915/intel_drv.h    |  6 ++++++
+> >  3 files changed, 30 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/intel_dp.c
+> > b/drivers/gpu/drm/i915/intel_dp.c
+> > index 5abf0c95725a..5645a194de92 100644
+> > --- a/drivers/gpu/drm/i915/intel_dp.c
+> > +++ b/drivers/gpu/drm/i915/intel_dp.c
+> > @@ -3871,18 +3871,25 @@ intel_dp_can_mst(struct intel_dp *intel_dp)
+> >  static void
+> >  intel_dp_configure_mst(struct intel_dp *intel_dp)
+> >  {
+> > +	bool was_mst;
+> > +
+> >  	if (!i915_modparams.enable_dp_mst)
+> >  		return;
+> >  
+> >  	if (!intel_dp->can_mst)
+> >  		return;
+> >  
+> > +	was_mst = intel_dp->is_mst;
+> >  	intel_dp->is_mst = intel_dp_can_mst(intel_dp);
+> >  
+> > -	if (intel_dp->is_mst)
+> > +	if (intel_dp->is_mst) {
+> >  		DRM_DEBUG_KMS("Sink is MST capable\n");
+> > -	else
+> > +
+> > +		if (!was_mst)
+> > +			intel_dp->mst_bw_locked = false;
+> > +	} else {
+> >  		DRM_DEBUG_KMS("Sink is not MST capable\n");
+> > +	}
+> >  
+> >  	drm_dp_mst_topology_mgr_set_mst(&intel_dp->mst_mgr,
+> >  					intel_dp->is_mst);
+> > diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c
+> > b/drivers/gpu/drm/i915/intel_dp_mst.c
+> > index c3de0918ee13..c0553456b18e 100644
+> > --- a/drivers/gpu/drm/i915/intel_dp_mst.c
+> > +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+> > @@ -42,7 +42,7 @@ static bool intel_dp_mst_compute_config(struct
+> > intel_encoder *encoder,
+> >  		to_intel_connector(conn_state->connector);
+> >  	struct drm_atomic_state *state = pipe_config->base.state;
+> >  	int bpp;
+> > -	int lane_count, slots;
+> > +	int lane_count, link_rate, slots;
+> >  	const struct drm_display_mode *adjusted_mode = &pipe_config-
+> > >base.adjusted_mode;
+> >  	int mst_pbn;
+> >  	bool reduce_m_n = drm_dp_has_quirk(&intel_dp->desc,
+> > @@ -56,16 +56,22 @@ static bool intel_dp_mst_compute_config(struct
+> > intel_encoder *encoder,
+> >  			      bpp);
+> >  	}
+> >  	/*
+> > -	 * for MST we always configure max link bw - the spec doesn't
+> > -	 * seem to suggest we should do otherwise.
+> > +	 * for MST we always configure max link bw if we don't know better
+> > -
+> > +	 * the spec doesn't seem to suggest we should do otherwise. But,
+> > +	 * ensure it always stays consistent with the rest of this hub's
+> > +	 * state.
+> >  	 */
+> > -	lane_count = intel_dp_max_lane_count(intel_dp);
+> > +	if (intel_dp->mst_bw_locked) {
+> > +		lane_count = intel_dp->lane_count;
+> > +		link_rate = intel_dp->link_rate;
+> > +	} else {
+> > +		lane_count = intel_dp_max_lane_count(intel_dp);
+> > +		link_rate = intel_dp_max_link_rate(intel_dp);
+> > +	}
+> >  
+> >  	pipe_config->lane_count = lane_count;
+> > -
+> >  	pipe_config->pipe_bpp = bpp;
+> > -
+> > -	pipe_config->port_clock = intel_dp_max_link_rate(intel_dp);
+> > +	pipe_config->port_clock = link_rate;
+> >  
+> >  	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, connector->port))
+> >  		pipe_config->has_audio = true;
+> > @@ -221,6 +227,8 @@ static void intel_mst_pre_enable_dp(struct intel_encoder
+> > *encoder,
+> >  	connector->encoder = encoder;
+> >  	intel_mst->connector = connector;
+> >  
+> > +	intel_dp->mst_bw_locked = true;
+> > +
+> >  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
+> >  
+> >  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
+> > true);
+> > diff --git a/drivers/gpu/drm/i915/intel_drv.h
+> > b/drivers/gpu/drm/i915/intel_drv.h
+> > index 3f19dc80997f..fc338529e918 100644
+> > --- a/drivers/gpu/drm/i915/intel_drv.h
+> > +++ b/drivers/gpu/drm/i915/intel_drv.h
+> > @@ -1107,6 +1107,12 @@ struct intel_dp {
+> >  	bool can_mst; /* this port supports mst */
+> >  	bool is_mst;
+> >  	int active_mst_links;
+> > +	/* Set when we've already decided on a link bw for mst, to prevent
+> > us
+> > +	 * from setting different link bandwiths if the hub tries to
+> > confuse
+> > +	 * us by changing it later
+> > +	 */
+> > +	bool mst_bw_locked;
+> > +
+> >  	/* connector directly attached - won't be use for modeset in mst
+> > world */
+> >  	struct intel_connector *attached_connector;
+> >  
+> > -- 
+> > 2.14.3
+> > 
