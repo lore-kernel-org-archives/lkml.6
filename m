@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeCMSAj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:00:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36576 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752451AbeCMSAf (ORCPT
+        id S1752761AbeCMSAp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:00:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56894 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752451AbeCMSAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:00:35 -0400
+        Tue, 13 Mar 2018 14:00:41 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v9 09/24] mm: protect mremap() against SPF hanlder
-Date: Tue, 13 Mar 2018 18:59:39 +0100
+Subject: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
+Date: Tue, 13 Mar 2018 18:59:45 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18031318-0020-0000-0000-0000040402A1
+x-cbid: 18031318-0016-0000-0000-00000532019A
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031318-0021-0000-0000-000042980293
-Message-Id: <1520963994-28477-10-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18031318-0017-0000-0000-0000286F018F
+Message-Id: <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,223 +46,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a thread is remapping an area while another one is faulting on the
-destination area, the SPF handler may fetch the vma from the RB tree before
-the pte has been moved by the other thread. This means that the moved ptes
-will overwrite those create by the page fault handler leading to page
-leaked.
+When dealing with the speculative fault path we should use the VMA's field
+cached value stored in the vm_fault structure.
 
-	CPU 1				CPU2
-	enter mremap()
-	unmap the dest area
-	copy_vma()			Enter speculative page fault handler
-	   >> at this time the dest area is present in the RB tree
-					fetch the vma matching dest area
-					create a pte as the VMA matched
-					Exit the SPF handler
-					<data written in the new page>
-	move_ptes()
-	  > it is assumed that the dest area is empty,
- 	  > the move ptes overwrite the page mapped by the CPU2.
+Currently vm_normal_page() is using the pointer to the VMA to fetch the
+vm_flags value. This patch provides a new __vm_normal_page() which is
+receiving the vm_flags flags value as parameter.
 
-To prevent that, when the VMA matching the dest area is extended or created
-by copy_vma(), it should be marked as non available to the SPF handler.
-The usual way to so is to rely on vm_write_begin()/end().
-This is already in __vma_adjust() called by copy_vma() (through
-vma_merge()). But __vma_adjust() is calling vm_write_end() before returning
-which create a window for another thread.
-This patch adds a new parameter to vma_merge() which is passed down to
-vma_adjust().
-The assumption is that copy_vma() is returning a vma which should be
-released by calling vm_raw_write_end() by the callee once the ptes have
-been moved.
+Note: The speculative path is turned on for architecture providing support
+for special PTE flag. So only the first block of vm_normal_page is used
+during the speculative path.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h | 16 ++++++++++++----
- mm/mmap.c          | 47 ++++++++++++++++++++++++++++++++++++-----------
- mm/mremap.c        | 13 +++++++++++++
- 3 files changed, 61 insertions(+), 15 deletions(-)
+ include/linux/mm.h |  7 +++++--
+ mm/memory.c        | 18 ++++++++++--------
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 88042d843668..ef6ef0627090 100644
+index a84ddc218bbd..73b8b99f482b 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -2189,16 +2189,24 @@ void anon_vma_interval_tree_verify(struct anon_vma_chain *node);
- extern int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin);
- extern int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert,
--	struct vm_area_struct *expand);
-+	struct vm_area_struct *expand, bool keep_locked);
- static inline int vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert)
- {
--	return __vma_adjust(vma, start, end, pgoff, insert, NULL);
-+	return __vma_adjust(vma, start, end, pgoff, insert, NULL, false);
- }
--extern struct vm_area_struct *vma_merge(struct mm_struct *,
-+extern struct vm_area_struct *__vma_merge(struct mm_struct *,
- 	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
- 	unsigned long vm_flags, struct anon_vma *, struct file *, pgoff_t,
--	struct mempolicy *, struct vm_userfaultfd_ctx);
-+	struct mempolicy *, struct vm_userfaultfd_ctx, bool keep_locked);
-+static inline struct vm_area_struct *vma_merge(struct mm_struct *vma,
-+	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
-+	unsigned long vm_flags, struct anon_vma *anon, struct file *file,
-+	pgoff_t off, struct mempolicy *pol, struct vm_userfaultfd_ctx uff)
-+{
-+	return __vma_merge(vma, prev, addr, end, vm_flags, anon, file, off,
-+			   pol, uff, false);
-+}
- extern struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *);
- extern int __split_vma(struct mm_struct *, struct vm_area_struct *,
- 	unsigned long addr, int new_below);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index d6533cb85213..ac32b577a0c9 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -684,7 +684,7 @@ static inline void __vma_unlink_prev(struct mm_struct *mm,
-  */
- int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
- 	unsigned long end, pgoff_t pgoff, struct vm_area_struct *insert,
--	struct vm_area_struct *expand)
-+	struct vm_area_struct *expand, bool keep_locked)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct vm_area_struct *next = vma->vm_next, *orig_vma = vma;
-@@ -996,7 +996,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+@@ -1263,8 +1263,11 @@ struct zap_details {
+ 	pgoff_t last_index;			/* Highest page->index to unmap */
+ };
  
- 	if (next && next != vma)
- 		vm_raw_write_end(next);
--	vm_raw_write_end(vma);
-+	if (!keep_locked)
-+		vm_raw_write_end(vma);
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device);
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags);
++#define _vm_normal_page(vma, addr, pte, with_public_device) \
++	__vm_normal_page(vma, addr, pte, with_public_device, (vma)->vm_flags)
+ #define vm_normal_page(vma, addr, pte) _vm_normal_page(vma, addr, pte, false)
  
- 	validate_mm(mm);
- 
-@@ -1132,12 +1133,13 @@ can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
-  * parameter) may establish ptes with the wrong permissions of NNNN
-  * instead of the right permissions of XXXX.
-  */
--struct vm_area_struct *vma_merge(struct mm_struct *mm,
-+struct vm_area_struct *__vma_merge(struct mm_struct *mm,
- 			struct vm_area_struct *prev, unsigned long addr,
- 			unsigned long end, unsigned long vm_flags,
- 			struct anon_vma *anon_vma, struct file *file,
- 			pgoff_t pgoff, struct mempolicy *policy,
--			struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-+			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+			bool keep_locked)
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+diff --git a/mm/memory.c b/mm/memory.c
+index af0338fbc34d..184a0d663a76 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -826,8 +826,9 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+ #else
+ # define HAVE_PTE_SPECIAL 0
+ #endif
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags)
  {
- 	pgoff_t pglen = (end - addr) >> PAGE_SHIFT;
- 	struct vm_area_struct *area, *next;
-@@ -1185,10 +1187,11 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 							/* cases 1, 6 */
- 			err = __vma_adjust(prev, prev->vm_start,
- 					 next->vm_end, prev->vm_pgoff, NULL,
--					 prev);
-+					 prev, keep_locked);
- 		} else					/* cases 2, 5, 7 */
- 			err = __vma_adjust(prev, prev->vm_start,
--					 end, prev->vm_pgoff, NULL, prev);
-+					   end, prev->vm_pgoff, NULL, prev,
-+					   keep_locked);
- 		if (err)
+ 	unsigned long pfn = pte_pfn(pte);
+ 
+@@ -836,7 +837,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			goto check_pfn;
+ 		if (vma->vm_ops && vma->vm_ops->find_special_page)
+ 			return vma->vm_ops->find_special_page(vma, addr);
+-		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
++		if (vma_flags & (VM_PFNMAP | VM_MIXEDMAP))
  			return NULL;
- 		khugepaged_enter_vma_merge(prev, vm_flags);
-@@ -1205,10 +1208,12 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 					     vm_userfaultfd_ctx)) {
- 		if (prev && addr < prev->vm_end)	/* case 4 */
- 			err = __vma_adjust(prev, prev->vm_start,
--					 addr, prev->vm_pgoff, NULL, next);
-+					 addr, prev->vm_pgoff, NULL, next,
-+					 keep_locked);
- 		else {					/* cases 3, 8 */
- 			err = __vma_adjust(area, addr, next->vm_end,
--					 next->vm_pgoff - pglen, NULL, next);
-+					 next->vm_pgoff - pglen, NULL, next,
-+					 keep_locked);
- 			/*
- 			 * In case 3 area is already equal to next and
- 			 * this is a noop, but in case 8 "area" has
-@@ -3163,9 +3168,20 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 		if (is_zero_pfn(pfn))
+ 			return NULL;
+@@ -868,8 +869,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
  
- 	if (find_vma_links(mm, addr, addr + len, &prev, &rb_link, &rb_parent))
- 		return NULL;	/* should never get here */
--	new_vma = vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
--			    vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
--			    vma->vm_userfaultfd_ctx);
-+
-+	/* There is 3 cases to manage here in
-+	 *     AAAA            AAAA              AAAA              AAAA
-+	 * PPPP....      PPPP......NNNN      PPPP....NNNN      PP........NN
-+	 * PPPPPPPP(A)   PPPP..NNNNNNNN(B)   PPPPPPPPPPPP(1)       NULL
-+	 *                                   PPPPPPPPNNNN(2)
-+	 *				     PPPPNNNNNNNN(3)
-+	 *
-+	 * new_vma == prev in case A,1,2
-+	 * new_vma == next in case B,3
-+	 */
-+	new_vma = __vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
-+			      vma->anon_vma, vma->vm_file, pgoff,
-+			      vma_policy(vma), vma->vm_userfaultfd_ctx, true);
- 	if (new_vma) {
+ 	/* !HAVE_PTE_SPECIAL case follows: */
+ 
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
++	if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
++		if (vma_flags & VM_MIXEDMAP) {
+ 			if (!pfn_valid(pfn))
+ 				return NULL;
+ 			goto out;
+@@ -878,7 +879,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+ 			if (pfn == vma->vm_pgoff + off)
+ 				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
++			if (!is_cow_mapping(vma_flags))
+ 				return NULL;
+ 		}
+ 	}
+@@ -2742,7 +2743,8 @@ static int do_wp_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 
+-	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
++	vmf->page = __vm_normal_page(vma, vmf->address, vmf->orig_pte, false,
++				     vmf->vma_flags);
+ 	if (!vmf->page) {
  		/*
- 		 * Source vma may have been merged into new_vma
-@@ -3205,6 +3221,15 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
- 			get_file(new_vma->vm_file);
- 		if (new_vma->vm_ops && new_vma->vm_ops->open)
- 			new_vma->vm_ops->open(new_vma);
-+		/*
-+		 * As the VMA is linked right now, it may be hit by the
-+		 * speculative page fault handler. But we don't want it to
-+		 * to start mapping page in this area until the caller has
-+		 * potentially move the pte from the moved VMA. To prevent
-+		 * that we protect it right now, and let the caller unprotect
-+		 * it once the move is done.
-+		 */
-+		vm_raw_write_begin(new_vma);
- 		vma_link(mm, new_vma, prev, rb_link, rb_parent);
- 		*need_rmap_locks = false;
- 	}
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 049470aa1e3e..8ed1a1d6eaed 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -302,6 +302,14 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	if (!new_vma)
- 		return -ENOMEM;
+ 		 * VM_MIXEDMAP !pfn_valid() case, or VM_SOFTDIRTY clear on a
+@@ -3839,7 +3841,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
+ 	update_mmu_cache(vma, vmf->address, vmf->pte);
  
-+	/* new_vma is returned protected by copy_vma, to prevent speculative
-+	 * page fault to be done in the destination area before we move the pte.
-+	 * Now, we must also protect the source VMA since we don't want pages
-+	 * to be mapped in our back while we are copying the PTEs.
-+	 */
-+	if (vma != new_vma)
-+		vm_raw_write_begin(vma);
-+
- 	moved_len = move_page_tables(vma, old_addr, new_vma, new_addr, old_len,
- 				     need_rmap_locks);
- 	if (moved_len < old_len) {
-@@ -318,6 +326,8 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 		 */
- 		move_page_tables(new_vma, new_addr, vma, old_addr, moved_len,
- 				 true);
-+		if (vma != new_vma)
-+			vm_raw_write_end(vma);
- 		vma = new_vma;
- 		old_len = new_len;
- 		old_addr = new_addr;
-@@ -326,7 +336,10 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 		mremap_userfaultfd_prep(new_vma, uf);
- 		arch_remap(mm, old_addr, old_addr + old_len,
- 			   new_addr, new_addr + new_len);
-+		if (vma != new_vma)
-+			vm_raw_write_end(vma);
- 	}
-+	vm_raw_write_end(new_vma);
- 
- 	/* Conceal VM_ACCOUNT so old reservation is not undone */
- 	if (vm_flags & VM_ACCOUNT) {
+-	page = vm_normal_page(vma, vmf->address, pte);
++	page = __vm_normal_page(vma, vmf->address, pte, false, vmf->vma_flags);
+ 	if (!page) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		return 0;
 -- 
 2.7.4
