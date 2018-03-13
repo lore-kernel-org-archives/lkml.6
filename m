@@ -1,97 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752333AbeCMJLo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:11:44 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35866 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbeCMJLm (ORCPT
+        id S932308AbeCMJOR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:14:17 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:41805 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752488AbeCMJOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:11:42 -0400
-X-Google-Smtp-Source: AG47ELvPm1uj/Y81Iguik+rL/D86u71ZkSzNaxkT/v6D1QC6yr1NwVfX2MLtEhWDZnwaJinRvyprsw==
-From: Alexandre Courbot <acourbot@chromium.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [PATCH] venus: vdec: fix format enumeration
-Date: Tue, 13 Mar 2018 18:11:35 +0900
-Message-Id: <20180313091135.145589-1-acourbot@chromium.org>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+        Tue, 13 Mar 2018 05:14:01 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIoB016505
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 10/11] kconfig: tests: test if recursive dependencies are detected
+Date: Tue, 13 Mar 2018 18:12:11 +0900
+Message-Id: <1520932332-2449-11-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_format_by_index() stops enumerating formats as soon as the index
-matches, and returns NULL if venus_helper_check_codec() finds out that
-the format is not supported. This prevents formats to be properly
-enumerated if a non-supported format is present, as the enumeration will
-end with it.
+Recursive dependency should be detected and warned.  Test this.
 
-Fix this by moving the call to venus_helper_check_codec() into the loop,
-and keep enumerating when it fails.
+This indirectly tests the line number increments.
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-
-Change-Id: I4ff66e0b85172598efa59a6f01da8cb60597a6a5
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
- drivers/media/platform/qcom/venus/vdec.c | 13 +++++++------
- drivers/media/platform/qcom/venus/venc.c |  9 +++++++--
- 2 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index c9e9576bb08a..3677302cfe43 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -135,20 +135,21 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
- 		return NULL;
- 
- 	for (i = 0; i < size; i++) {
-+		bool valid;
+Changes in v3: None
+Changes in v2:
+  - Fix missing end quote
+  - coding style clean-up based on PEP8, PEP257
+
+ scripts/kconfig/tests/warn_recursive_dep/Kconfig   | 62 ++++++++++++++++++++++
+ .../kconfig/tests/warn_recursive_dep/__init__.py   |  9 ++++
+ .../tests/warn_recursive_dep/expected_stderr       | 30 +++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/Kconfig
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/__init__.py
+ create mode 100644 scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/Kconfig b/scripts/kconfig/tests/warn_recursive_dep/Kconfig
+new file mode 100644
+index 0000000..a65bfcb
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/Kconfig
+@@ -0,0 +1,62 @@
++# depends on itself
 +
- 		if (fmt[i].type != type)
- 			continue;
--		if (k == index)
-+		valid = (type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE ||
-+			 venus_helper_check_codec(inst, fmt[i].pixfmt));
-+		if (k == index && valid)
- 			break;
--		k++;
-+		if (valid)
-+			k++;
- 	}
- 
- 	if (i == size)
- 		return NULL;
- 
--	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
--	    !venus_helper_check_codec(inst, fmt[i].pixfmt))
--		return NULL;
--
- 	return &fmt[i];
- }
- 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index e3a10a852cad..5eba4c7cd52e 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -120,11 +120,16 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
- 		return NULL;
- 
- 	for (i = 0; i < size; i++) {
-+		bool valid;
++config A
++	bool "A"
++	depends on A
 +
- 		if (fmt[i].type != type)
- 			continue;
--		if (k == index)
-+		valid = (type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ||
-+			 venus_helper_check_codec(inst, fmt[i].pixfmt));
-+		if (k == index && valid)
- 			break;
--		k++;
-+		if (valid)
-+			k++;
- 	}
- 
- 	if (i == size)
++# select itself
++
++config B
++	bool
++	select B
++
++# depends on each other
++
++config C1
++	bool "C1"
++	depends on C2
++
++config C2
++	bool "C2"
++	depends on C1
++
++# depends on and select
++
++config D1
++	bool "D1"
++	depends on D2
++	select D2
++
++config D2
++	bool
++
++# depends on and imply
++# This is not recursive dependency
++
++config E1
++	bool "E1"
++	depends on E2
++	imply E2
++
++config E2
++	bool "E2"
++
++# property
++
++config F1
++	bool "F1"
++	default F2
++
++config F2
++	bool "F2"
++	depends on F1
++
++# menu
++
++menu "menu depending on its content"
++	depends on G
++
++config G
++	bool "G"
++
++endmenu
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/__init__.py b/scripts/kconfig/tests/warn_recursive_dep/__init__.py
+new file mode 100644
+index 0000000..adb2195
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/__init__.py
+@@ -0,0 +1,9 @@
++"""
++Warn recursive inclusion.
++
++Recursive dependency should be warned.
++"""
++
++def test(conf):
++    assert conf.oldaskconfig() == 0
++    assert conf.stderr_contains('expected_stderr')
+diff --git a/scripts/kconfig/tests/warn_recursive_dep/expected_stderr b/scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+new file mode 100644
+index 0000000..3de807d
+--- /dev/null
++++ b/scripts/kconfig/tests/warn_recursive_dep/expected_stderr
+@@ -0,0 +1,30 @@
++Kconfig:9:error: recursive dependency detected!
++Kconfig:9:	symbol B is selected by B
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:3:error: recursive dependency detected!
++Kconfig:3:	symbol A depends on A
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:15:error: recursive dependency detected!
++Kconfig:15:	symbol C1 depends on C2
++Kconfig:19:	symbol C2 depends on C1
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:30:error: recursive dependency detected!
++Kconfig:30:	symbol D2 is selected by D1
++Kconfig:25:	symbol D1 depends on D2
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:59:error: recursive dependency detected!
++Kconfig:59:	symbol G depends on G
++For a resolution refer to Documentation/kbuild/kconfig-language.txt
++subsection "Kconfig recursive dependency limitations"
++
++Kconfig:50:error: recursive dependency detected!
++Kconfig:50:	symbol F2 depends on F1
++Kconfig:48:	symbol F1 default value contains F2
 -- 
-2.16.2.660.g709887971b-goog
+2.7.4
