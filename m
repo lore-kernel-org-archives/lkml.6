@@ -1,136 +1,126 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520960136; cv=none;
-        d=google.com; s=arc-20160816;
-        b=G2mE/LJtr2vIxrJioNy0RZpZwaQYN7sAQWF8u0eSvFM3mFE80f+0Wk6DZ/+Y9AZEep
-         DXDkVri4kei8ugPjfoXUrx+pqf0xYvhv7chWh3re6tdGcR7UY+Dn8gQsNGf6/T/Z/YXC
-         QAKyblOZJxr+Ex4okwobadYma6JlPBbj6DMDqMDc5MgLUH2ahfe+oA5nWw6tZGLUvhcG
-         VfUGefvj6A9qeiLVie5jYALWc0KrXBTgYzbjFK7aPcRK/qIrsjR1bjNUkuvJfWn5zD/L
-         fWtzk2y11I++Ep66qIxOMteum+6ueMLeSiPWuw9artTx8b3NN+GOUT7SsIez3zT9PuB8
-         /VoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=bv+oQvsOje9d6G3OSc9VuGO1o+H11KuvSeNs2NTn+mw=;
-        b=yReQlnPxSkndz2d0dpzoWVIgKLSBwJuqjVjrjoyu+PjgXbkqQXMHTp/TZE1nISdfZt
-         RcH8zbco824xeRh/swrlnzKX7+O4HmfWEkPHk/0ixVsXyPSgsMkaxZuc00WpFwZq+/C1
-         CETAliBqHEnQzkndS3t4Mp5rdJDuquUYyW742AUCMqZybLCjhrO5IoN3iUmZ3MbEBg1I
-         08CO0OpVLyovgw9BT/aExxbGUpDbdeIVdB33cQTwsj6oDI4cHTTMF5B/RvlqUSkHozCE
-         C4eAZbsjwbq4z/82O+Fr/I+x3vSPOr4paL0svsKgPpmvaW/5EOChuM37DW4Z2BHqSeGW
-         wfZw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AG47ELtWhCfJuLtZBynd29AGTzTG4W4o3hB/a9BxjCER1v74KCTeai6VI98e4MFChklLaaaWBGNzLg==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org,
-	ebiederm@xmission.com,
-	torvalds@linux-foundation.org,
-	gregkh@linuxfoundation.org
-Cc: containers@lists.linux-foundation.org,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 1/4 v5 RESEND] devpts: hoist out check for DEVPTS_SUPER_MAGIC
-Date: Tue, 13 Mar 2018 17:55:24 +0100
-Message-Id: <20180313165527.24038-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180313165527.24038-1-christian.brauner@ubuntu.com>
-References: <20180313165527.24038-1-christian.brauner@ubuntu.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3628988-1520960651-2-3408671246406174681
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520960650; b=q+Nz51tjrMYZKXcKi3BDJUEV5gy4rJdJQYJSn7XKlCUnvAd
+    zBgsTOyUt7Nf3lZn3cQqgF/xs8Mg62+DyXb43Ug9/5izVfvHJKCyaQQNjFUlMiDX
+    Wgl8LEwCpPMuoMwYTjA+g1ADAw7kHnU34gz3NeLm46sHuCLXoE4V8p1IAgKZFK40
+    ehNGV6G8eI8QKpTa2s8kl4QQFdpCQ3GQPgQRRzomrLlu/AV8htWOigFDeePOa3RV
+    Bg7XQzIdpdi6ItDjf+qqgQYQaTP0g+aYg/knctfCJANsI8KbawfBSlaUZvkYRpxT
+    FQUbuXQx4mwVNNK2rLFqoB70mEZ/BA2fzIy7cqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520960650;
+    bh=jDQIR12hhTdGYeJe1og7QQ4rDMbB+zxrKgBKaRyT3PY=; b=MC+0q6b0oKA8
+    wbU+Y5sjB9c3FmxeQ7lxyN+WCeGE9oVKEt9do7yOnZgwsjItbJ56HQHQqUUxQnmU
+    Eo9zrHYgf65n+u0mfouWfdSu+/ZkdC9C7u5kG9Tf5fjTUNJU1mvBpFRWiURDCH0l
+    gwXIOw/V4glF6mTkSKSCFMiu0AEsA57SvIYvfh42gMZJqb2L6bZb7R1r48wO4Maf
+    40M1Bn+ua4+ZCjKSJdH2CahxhPFpJSIgY8LlyqqIu1D+Dl5tX0QFsXJtNMD4YVV+
+    IO033RjURryfDqmmUT2dJWVY6NYNW5oPeu0BSAI4t94OgksZCMHhAZMPipFNFl+E
+    xA6P1VT4TQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933082AbeCMRDz (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 13:03:55 -0400
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:38416 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932303AbeCMRDx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 13:03:53 -0400
+From: Toshi Kani <toshi.kani@hpe.com>
+To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Cc: bp@alien8.de, luto@kernel.org, gratian.crisan@ni.com,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Toshi Kani <toshi.kani@hpe.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] x86/mm: fix vmalloc_fault to use pXd_large
+Date: Tue, 13 Mar 2018 11:03:46 -0600
+Message-Id: <20180313170347.3829-2-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313170347.3829-1-toshi.kani@hpe.com>
+References: <20180313170347.3829-1-toshi.kani@hpe.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594842296498151684?=
-X-GMAIL-MSGID: =?utf-8?q?1594842296498151684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hoist the check whether we have already found a suitable devpts filesystem
-out of devpts_ptmx_path() in preparation for the devpts bind-mount
-resolution patch. This is a non-functional change.
+Gratian Crisan reported that vmalloc_fault() crashes when
+CONFIG_HUGETLBFS is not set since the function inadvertently
+uses pXn_huge(), which always return 0 in this case.  ioremap()
+does not depend on CONFIG_HUGETLBFS.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
----
-ChangeLog v4->v5:
-* dput() dentry
-ChangeLog v3->v4:
-* patch unchanged
-ChangeLog v2->v3:
-* patch unchanged
-ChangeLog v1->v2:
-* patch added
-ChangeLog v0->v1:
-* patch not present
----
- fs/devpts/inode.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+Fix vmalloc_fault() to call pXd_large() instead.
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index e31d6ed3ec32..71b901936113 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
- 	struct super_block *sb;
- 	int err;
+fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
+Reported-by: Gratian Crisan <gratian.crisan@ni.com>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Gratian Crisan <gratian.crisan@ni.com>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/mm/fault.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index c88573d90f3e..25a30b5d6582 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -330,7 +330,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (!pmd_k)
+ 		return -1;
  
--	/* Has the devpts filesystem already been found? */
--	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
--		return 0;
--
- 	/* Is a devpts filesystem at "pts" in the same directory? */
- 	err = path_pts(path);
- 	if (err)
-@@ -159,21 +155,25 @@ static int devpts_ptmx_path(struct path *path)
- struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
- {
- 	struct path path;
--	int err;
-+	int err = 0;
+-	if (pmd_huge(*pmd_k))
++	if (pmd_large(*pmd_k))
+ 		return 0;
  
- 	path = filp->f_path;
- 	path_get(&path);
+ 	pte_k = pte_offset_kernel(pmd_k, address);
+@@ -475,7 +475,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
+ 		BUG();
  
--	err = devpts_ptmx_path(&path);
-+	/* Has the devpts filesystem already been found? */
-+	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC)
-+		err = devpts_ptmx_path(&path);
- 	dput(path.dentry);
- 	if (err) {
- 		mntput(path.mnt);
- 		return ERR_PTR(err);
- 	}
-+
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
- 		return ERR_PTR(-ENODEV);
- 	}
-+
- 	return path.mnt;
- }
+-	if (pud_huge(*pud))
++	if (pud_large(*pud))
+ 		return 0;
  
-@@ -182,15 +182,19 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
- 	struct pts_fs_info *result;
- 	struct path path;
- 	struct super_block *sb;
--	int err;
+ 	pmd = pmd_offset(pud, address);
+@@ -486,7 +486,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
+ 		BUG();
  
- 	path = filp->f_path;
- 	path_get(&path);
+-	if (pmd_huge(*pmd))
++	if (pmd_large(*pmd))
+ 		return 0;
  
--	err = devpts_ptmx_path(&path);
--	if (err) {
--		result = ERR_PTR(err);
--		goto out;
-+	/* Has the devpts filesystem already been found? */
-+	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-+		int err;
-+
-+		err = devpts_ptmx_path(&path);
-+		if (err) {
-+			result = ERR_PTR(err);
-+			goto out;
-+		}
- 	}
- 
- 	/*
--- 
-2.15.1
+ 	pte_ref = pte_offset_kernel(pmd_ref, address);
