@@ -1,112 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932448AbeCMP13 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 11:27:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37452 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932408AbeCMP11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:27:27 -0400
-Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
- armv8-recommended.json
-To: Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
- <20180313120508.29327-19-acme@kernel.org>
- <20180313142618.36je6syqg6ppwhbp@gmail.com>
- <6c485ee7-87d1-dc51-db34-94169b9ede08@huawei.com>
- <20180313150838.j6mfywse64o5ixhd@gmail.com>
-CC: Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-perf-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Namhyung Kim <namhyung@kernel.org>, William Cohen <wcohen@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, <linux-arm-kernel@lists.infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <3ea1dc12-3cf1-39a5-ccb8-6ab85bce6f3d@huawei.com>
-Date: Tue, 13 Mar 2018 15:27:05 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S934436AbeCMPhk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 11:37:40 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:34976 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932486AbeCMPhe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 11:37:34 -0400
+X-Google-Smtp-Source: AG47ELv426y2jyCNwT30p2hdjJa1nZVh9fYbN+JZhg4sWe+WEGMRCv5yOUL7U48OcZF+WGGhsuLY3upHev2NC+HFjEY=
 MIME-Version: 1.0
-In-Reply-To: <20180313150838.j6mfywse64o5ixhd@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1520949014-21468-4-git-send-email-yannick.fertre@st.com>
+References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com> <1520949014-21468-4-git-send-email-yannick.fertre@st.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Tue, 13 Mar 2018 09:30:37 -0600
+X-Google-Sender-Auth: M_zgEqmvy9DJgbav3QiecSsgQZM
+Message-ID: <CAPnjgZ3NF9v8YZxWS4BQEfy2YC41w0Fp1ogNkWt7Z19DRxvyPg@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] video: add support of MIPI DSI interface
+To: yannick fertre <yannick.fertre@st.com>
+Cc: Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        Anatolij Gustschin <agust@denx.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        U-Boot Mailing List <u-boot@lists.denx.de>,
+        dri-devel@lists.freedesktop.org, lk <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/03/2018 15:08, Ingo Molnar wrote:
->
-> * John Garry <john.garry@huawei.com> wrote:
->
->> On 13/03/2018 14:26, Ingo Molnar wrote:
->>>
->>> * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
->>>
->>>> From: John Garry <john.garry@huawei.com>
->>>>
->>>> Add JSON for ARMv8 IMPLEMENTATION DEFINED recommended events.
->>>>
->>>> The JSON is copied from ARMv8 architecture reference manual, available
->>>> here:
->>>>
->>>> 	https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
->>>>
->>>> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Hi,
 
-Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
+On 13 March 2018 at 07:50, yannick fertre <yannick.fertre@st.com> wrote:
+>
+> Mipi_display.c contains a set of dsi helpers.
+> This file is a copy of file drm_mipi_dsi.c (linux kernel).
+>
+> Signed-off-by: yannick fertre <yannick.fertre@st.com>
+> ---
+>  drivers/video/Kconfig        |   7 +
+>  drivers/video/Makefile       |   1 +
+>  drivers/video/mipi_display.c | 807 +++++++++++++++++++++++++++++++++++++++++++
+>  include/mipi_display.h       | 257 +++++++++++++-
 
->>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>>> Cc: Andi Kleen <ak@linux.intel.com>
->>>> Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>> Cc: Jiri Olsa <jolsa@redhat.com>
->>>> Cc: Namhyung Kim <namhyung@kernel.org>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>> Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
->>>> Cc: Will Deacon <will.deacon@arm.com>
->>>> Cc: William Cohen <wcohen@redhat.com>
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linuxarm@huawei.com
->>>> Link: http://lkml.kernel.org/r/1520506716-197429-9-git-send-email-john.garry@huawei.com
->>>> Signed-off-by: John Garry <john.garry@huawei.com>
->>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->>>
->>> That's not a valid SOB chain, author != first-Signed-off-by.
->>>
->>
->> Right, so my SOB can go first.
->>
->> Let me know how to help remedy.
->
-> Well, it depends on what role Shaokun Zhang had in the creation of the patch: if
-> he co-authored the patch and you finished it then you can add him as:
->
->   Originally-from: Shaokun Zhang <zhangshaokun@hisilicon.com>
->
-> or if he tested/reviewed the patch then his entry should be Reviewed-by/Acked-by
-> or Tested-by.
->
+Please add function comments for the functions in this file,
+explaining args and what the functions do.
 
-Hi Ingo, Arnaldo,
+Shouldn't DSI be its own uclass? We normally separate drivers for
+different peripherals in U-Boot.
 
-I think it would be fair to say the former, that is: "he co-authored the 
-patch and you finished it".
+>  4 files changed, 1071 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/video/mipi_display.c
+>
+> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> index 2fc0def..1981298 100644
+> --- a/drivers/video/Kconfig
+> +++ b/drivers/video/Kconfig
+> @@ -75,6 +75,13 @@ config VIDEO_ANSI
+>           Enable ANSI escape sequence decoding for a more fully functional
+>           console.
+>
+> +config VIDEO_MIPI_DSI
+> +       bool "Support MIPI DSI interface"
+> +       depends on DM_VIDEO
+> +       default y if DM_VIDEO
+> +       help
+> +         Support MIPI DSI interface for driving a MIPI compatible LCD panel.
 
-Thanks,
-John
-
-> Thanks,
->
-> 	Ingo
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
+Please expand out what MIPI stands for and what it is, same with DSI.
