@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933211AbeCMMHv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:07:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55560 "EHLO mail.kernel.org"
+        id S933509AbeCMMHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:07:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752344AbeCMMHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:07:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321E0217A7
+        id S932629AbeCMMHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:07:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56FC204EF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 29/31] perf stat: Make function perf_stat_evsel_id_init static
-Date: Tue, 13 Mar 2018 09:05:06 -0300
-Message-Id: <20180313120508.29327-30-acme@kernel.org>
+Subject: [PATCH 30/31] perf machine: Fix mmap name setup
+Date: Tue, 13 Mar 2018 09:05:07 -0300
+Message-Id: <20180313120508.29327-31-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
 References: <20180313120508.29327-1-acme@kernel.org>
@@ -27,47 +27,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-Function perf_stat_evsel_id_init() has global linkage but is only used
-in util/stat.c. Make it static.
+Leo reported broken -k option behavior. The reason is that we used
+symbol_conf.vmlinux_name as a source for mmap event name, but in fact
+it's a vmlinux path.
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180312103807.45069-2-tmricht@linux.vnet.ibm.com
+Moving the symbol_conf.vmlinux_name check for both host and guest to the
+proper place and out of the machine__set_mmap_name function.
+
+Reported-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: commit ("8c7f1bb37b29 perf machine: Move kernel mmap name into struct machine")
+Link: http://lkml.kernel.org/r/20180312152406.10141-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat.c | 2 +-
- tools/perf/util/stat.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ tools/perf/util/machine.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 32235657c1ac..a0061e0b0fad 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -92,7 +92,7 @@ static const char *id_str[PERF_STAT_EVSEL_ID__MAX] = {
- };
- #undef ID
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 43fbbee409ec..2eca8478e24f 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -50,21 +50,13 @@ static void machine__threads_init(struct machine *machine)
  
--void perf_stat_evsel_id_init(struct perf_evsel *evsel)
-+static void perf_stat_evsel_id_init(struct perf_evsel *evsel)
+ static int machine__set_mmap_name(struct machine *machine)
  {
- 	struct perf_stat_evsel *ps = evsel->stats;
- 	int i;
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 2f44e386a0e8..8f56ba4fd258 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -128,8 +128,6 @@ bool __perf_evsel_stat__is(struct perf_evsel *evsel,
- #define perf_stat_evsel__is(evsel, id) \
- 	__perf_evsel_stat__is(evsel, PERF_STAT_EVSEL_ID__ ## id)
+-	if (machine__is_host(machine)) {
+-		if (symbol_conf.vmlinux_name)
+-			machine->mmap_name = strdup(symbol_conf.vmlinux_name);
+-		else
+-			machine->mmap_name = strdup("[kernel.kallsyms]");
+-	} else if (machine__is_default_guest(machine)) {
+-		if (symbol_conf.default_guest_vmlinux_name)
+-			machine->mmap_name = strdup(symbol_conf.default_guest_vmlinux_name);
+-		else
+-			machine->mmap_name = strdup("[guest.kernel.kallsyms]");
+-	} else {
+-		if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
+-			 machine->pid) < 0)
+-			machine->mmap_name = NULL;
+-	}
++	if (machine__is_host(machine))
++		machine->mmap_name = strdup("[kernel.kallsyms]");
++	else if (machine__is_default_guest(machine))
++		machine->mmap_name = strdup("[guest.kernel.kallsyms]");
++	else if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
++			  machine->pid) < 0)
++		machine->mmap_name = NULL;
  
--void perf_stat_evsel_id_init(struct perf_evsel *evsel);
--
- extern struct runtime_stat rt_stat;
- extern struct stats walltime_nsecs_stats;
+ 	return machine->mmap_name ? 0 : -ENOMEM;
+ }
+@@ -794,9 +786,15 @@ static struct dso *machine__get_kernel(struct machine *machine)
+ 	struct dso *kernel;
  
+ 	if (machine__is_host(machine)) {
++		if (symbol_conf.vmlinux_name)
++			vmlinux_name = symbol_conf.vmlinux_name;
++
+ 		kernel = machine__findnew_kernel(machine, vmlinux_name,
+ 						 "[kernel]", DSO_TYPE_KERNEL);
+ 	} else {
++		if (symbol_conf.default_guest_vmlinux_name)
++			vmlinux_name = symbol_conf.default_guest_vmlinux_name;
++
+ 		kernel = machine__findnew_kernel(machine, vmlinux_name,
+ 						 "[guest.kernel]",
+ 						 DSO_TYPE_GUEST_KERNEL);
 -- 
 2.14.3
