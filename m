@@ -1,85 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933612AbeCMQeE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:34:04 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44951 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933504AbeCMQeB (ORCPT
+        id S933652AbeCMQfA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:35:00 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18310 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933455AbeCMQez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:34:01 -0400
-X-Google-Smtp-Source: AG47ELv263hQqMXWltGyMsVBP0Z5rRlRHSO0wRmu+rH0Fs5aX7DLxctR2GW2ZblynQcPshuYfrguGlm/gyGAgLUj+b8=
+        Tue, 13 Mar 2018 12:34:55 -0400
+From: <gabriel.fernandez@st.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, <gabriel.fernandez@st.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <gabriel.fernandez.st@gmail.com>, Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+Subject: [PATCH 1/2] dt-bindings: reset: add STM32MP1 resets
+Date: Tue, 13 Mar 2018 17:34:18 +0100
+Message-ID: <1520958859-27911-2-git-send-email-gabriel.fernandez@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-References: <20180313061109.72629-1-dianders@chromium.org> <20180313061109.72629-3-dianders@chromium.org>
- <20180313061603.jsgiumet23uqi6hl@gmail.com> <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
-In-Reply-To: <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Tue, 13 Mar 2018 16:33:48 +0000
-Message-ID: <CAKwvOdnPSMSOenPiPqBpDf=hf5q5uQ5MF0pOLAea5T5_VPhmaA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
-To: Doug Anderson <dianders@chromium.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>, malat@debian.org,
-        dave.hansen@intel.com, yang.s@alibaba-inc.com, linux@roeck-us.net,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Charlebois <charlebm@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>, a.p.zijlstra@chello.nl,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG4NODE2.st.com
+ (10.75.127.11)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 11:23 PM Doug Anderson <dianders@chromium.org>
-wrote:
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-> Hi,
+This patch adds the reset binding entry for STM32MP1
 
-> On Mon, Mar 12, 2018 at 11:16 PM, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Douglas Anderson <dianders@chromium.org> wrote:
-> >
-> >> +# Don't create Makefile caches if running as root since they can't be
-deleted
-> >> +# easily; in the real world we might be root when doing "sudo make
-install"
-> >> +ifeq ($(shell id -u),0)
-> >> +export KBUILD_NOCACHE := 1
-> >> +endif
-> >
-> > Please don't do this - many prominent kernel developers build their
-kernels as
-> > root - this makes the build slower for them, and also bifurcates
-testing.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ include/dt-bindings/reset/stm32mp1-resets.h | 108 ++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
 
-> Ah, interesting.  I hadn't realized that!
-
-> I'm OK with dropping this patch myself.  It was mostly addressing a
-> potential problem pointed out by Masahiro Yamada when we were talking
-> about .cache.mk, but I don't think anyone has actually experienced the
-> problems listed in the CL description.
-
->    /bin/sh: ./.cache.mk: Permission denied
-
-I feel like I've definitely seen that permission error before.
-
-Is there any issue if I:
-
-$ make clean
-$ make
-$ sudo make install
-<hack around>
-$ make
-
-Or it's only a problem if:
-
-$ make clean
-$ sudo make install
-<hack around>
-$ make
---
-Thanks,
-~Nick Desaulniers
+diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
+new file mode 100644
+index 0000000..177e658
+--- /dev/null
++++ b/include/dt-bindings/reset/stm32mp1-resets.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ */
++
++#ifndef _DT_BINDINGS_STM32MP1_RESET_H_
++#define _DT_BINDINGS_STM32MP1_RESET_H_
++
++#define	LTDC_R		3072
++#define	DSI_R		3076
++#define DDRPERFM_R	3080
++#define	USBPHY_R	3088
++#define	SPI6_R		3136
++#define	I2C4_R		3138
++#define	I2C6_R		3139
++#define	USART1_R	3140
++#define	STGEN_R		3156
++#define	GPIOZ_R		3200
++#define	CRYP1_R		3204
++#define	HASH1_R		3205
++#define	RNG1_R		3206
++#define AXIM_R		3216
++#define	GPU_R		3269
++#define	ETHMAC_R	3274
++#define	FMC_R		3276
++#define	QSPI_R		3278
++#define	SDMMC1_R	3280
++#define	SDMMC2_R	3281
++#define	CRC1_R		3284
++#define	USBH_R		3288
++#define	MDMA_R		3328
++#define MCU_R		8225
++#define	TIM2_R		19456
++#define	TIM3_R		19457
++#define	TIM4_R		19458
++#define	TIM5_R		19459
++#define	TIM6_R		19460
++#define	TIM7_R		19461
++#define	TIM12_R		16462
++#define	TIM13_R		16463
++#define	TIM14_R		16464
++#define	LPTIM1_R	19465
++#define	SPI2_R		19467
++#define	SPI3_R		19468
++#define	USART2_R	19470
++#define	USART3_R	19471
++#define	UART4_R		19472
++#define	UART5_R		19473
++#define	UART7_R		19474
++#define	UART8_R		19475
++#define	I2C1_R		19477
++#define	I2C2_R		19478
++#define	I2C3_R		19479
++#define	I2C5_R		19480
++#define	SPDIF_R		19482
++#define	CEC_R		19483
++#define	DAC12_R		19485
++#define	MDIO_R		19847
++#define	TIM1_R		19520
++#define	TIM8_R		19521
++#define	TIM15_R		19522
++#define	TIM16_R		19523
++#define	TIM17_R		19524
++#define	SPI1_R		19528
++#define	SPI4_R		19529
++#define	SPI5_R		19530
++#define	USART6_R	19533
++#define	SAI1_R		19536
++#define	SAI2_R		19537
++#define	SAI3_R		19538
++#define	DFSDM_R		19540
++#define	FDCAN_R		19544
++#define	LPTIM2_R	19584
++#define	LPTIM3_R	19585
++#define	LPTIM4_R	19586
++#define	LPTIM5_R	19587
++#define	SAI4_R		19592
++#define	SYSCFG_R	19595
++#define	VREF_R		19597
++#define	TMPSENS_R	19600
++#define	PMBCTRL_R	19601
++#define	DMA1_R		19648
++#define	DMA2_R		19649
++#define	DMAMUX_R	19650
++#define	ADC12_R		19653
++#define	USBO_R		19656
++#define	SDMMC3_R	19664
++#define	CAMITF_R	19712
++#define	CRYP2_R		19716
++#define	HASH2_R		19717
++#define	RNG2_R		19718
++#define	CRC2_R		19719
++#define	HSEM_R		19723
++#define	MBOX_R		19724
++#define	GPIOA_R		19776
++#define	GPIOB_R		19777
++#define	GPIOC_R		19778
++#define	GPIOD_R		19779
++#define	GPIOE_R		19780
++#define	GPIOF_R		19781
++#define	GPIOG_R		19782
++#define	GPIOH_R		19783
++#define	GPIOI_R		19784
++#define	GPIOJ_R		19785
++#define	GPIOK_R		19786
++
++#endif /* _DT_BINDINGS_STM32MP1_RESET_H_ */
+-- 
+1.9.1
