@@ -1,48 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsTsjo9+Y55OT1dUMuxtBIkbXVBqYVgzC/856/7EPQPJY/JH6+gFtyJfPmCnMKK+QWCG9iG
-ARC-Seal: i=1; a=rsa-sha256; t=1520954868; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QXa3NFE3yczW1s8EOfbpbcEGJPOuYafwRXQuisu1Ea3QG35KzUjoGiCtPFsjW1HsYi
-         LF6sTwlkerUCD+7AnzE/YZODo1lfX2yw/CFMkQCq44OK2TC5Twrl6NtO7kPJWXg3F/KI
-         XJkDiOeIz4OuuspBfIHeC0XABjTZCpIcDP+WHM1vuJ6g/xSaysoh2VjfAbc0HsAoHTJT
-         A582BLTbCT6rNwKjR2gu5RxjIoRveWcXLi6vcxCMo1DWGjEnATkp+8C0qrO5x2y4c14X
-         09JoB9M/7atcVMrurOJ2ua6g5qha9Wd+RGIys0N+m7ChjPNRUr7RzHRmLKzK0+yIOjF/
-         r4Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=fl5HsHLbKLAYdc/W3l+4d56kmiD7uG77cDA7IUmAzHU=;
-        b=f6WdnU25HUg59iwY6v9AEAr/stM8KAnuC+V3BtJhvyVagIbBNFAqlEOeWebjdETbOS
-         UxE4zf4xVS2QYvWiWtYtLyxe66MFmReUOjBHX/inAoMWpb/nauDxfc04XrU37OQEklnE
-         u0xxhMlVBWzwYYJG5BAwP1+KM8zCMZpHJX/SCA/TlBn+dYx8d5MBxDt5yMh7xsYUfpM7
-         9P4P1tzxqUXgLUwycwe9vLRZxRayOpuWGTkVz+tpZP835d7Eaklz1OcPI/UjybWk7yj4
-         /9tLUfzPVTHbzHxst2Z5Az6ym0Ff6iW01h202JJEJ5nJeNd7Rg+nJIEWZUKNQLgkv+nw
-         FY7g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3447179-1520954867-2-1560729548250028460
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520954867; b=N7jy65+kgpBU3u+sDmdjJfZSdtCOJdu2OTHP7Wo3/4//0kE
+    lMeBOR1nRUHDHqjzU4v4eNV+5r/qt/cdXpgKm2dSKiOWDKvc/H2gZb0CQC/dNQc/
+    L0UVsB347yMVan+qHl05dl89VXN4mZLUmju2Y+eIgVpwI9psRhBQ/3nVxR5QEumu
+    /epMJb1urX4G8JXNF9u+fXd0l7ph/Dbq+JH8ZASsvNvQTm8LGONeaKOzyytyUvjQ
+    UyqDrYJ3dGg0zpcU+2u74Cl/GQNIWZT7xDBNgSsIXm/TTvm9IwuTMdqf6YXMfhyI
+    usu1O8FMbAi7h70DUhMq3KOFzEQxmUw/6flF//Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520954867; bh=2qXlx6umLFNkmH2X4Ud1qQLZ1R
+    /auvVZp19FkiS+Eao=; b=Kprs8ataQmufa4vvvob1Kd7IkCas27gk0DJ783zegw
+    o3x4sNWnNBOgYrdD2uRPJeHcx4JqpGPYHER1ve2EgSPUrZLno81r6lYcr6hAaTYm
+    bxgaPmNFpRMRnIA/0ih0n4WyJiO11pxDcagZz1pIalVTL7DqMy8LmcorBlzq/HN3
+    +lV9sICwugei55hA+HKyjuwXmngZ7YhIowRyUwenxbn2rTbkUI1S0MI8A8RnKxPP
+    72qMr8lSaX9fljfiwUvHMM2ZmqdeTOFe1or9H/LLNCE62N8CJdSSG/gvI65uLwM+
+    MDIZZxmZue2IcutJpcIHCiepTBE+O2zztK7h68GxLpRw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932376AbeCMP1n (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:27:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57252 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932277AbeCMP1m (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:27:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.15 011/146] drm/i915: Fix rsvd2 mask when out-fence is returned
-Date: Tue, 13 Mar 2018 16:22:58 +0100
-Message-Id: <20180313152321.479544833@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.15 001/146] RDMA/ucma: Limit possible option size
+Date: Tue, 13 Mar 2018 16:22:48 +0100
+Message-Id: <20180313152320.681030850@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836771599824180?=
-X-GMAIL-MSGID: =?utf-8?q?1594836771599824180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +81,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit b1b13780ab06ef8c770dd9cbe31dac549a11630e upstream.
+commit 6a21dfc0d0db7b7e0acedce67ca533a6eb19283c upstream.
 
-GENMASK_ULL wants the high bit of the mask first. The current value
-cancels the in-fence when an out-fence is returned.
+Users of ucma are supposed to provide size of option level,
+in most paths it is supposed to be equal to u8 or u16, but
+it is not the case for the IB path record, where it can be
+multiple of struct ib_path_rec_data.
 
-Fixes: fec0445caa273 ("drm/i915: Support explicit fencing for execbuf")
-Testcase: igt/gem_exec_fence/keep-in-fence*
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180214191827.8465-1-daniele.ceraolospurio@intel.com
-Cc: <stable@vger.kernel.org> # v4.12+
-(cherry picked from commit b6a88e4a804cf5a71159906e16df2c1fc7196f92)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+This patch takes simplest possible approach and prevents providing
+values more than possible to allocate.
+
+Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
+Fixes: 7ce86409adcd ("RDMA/ucma: Allow user space to set service type")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem_execbuffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -2419,7 +2419,7 @@ err_request:
- 	if (out_fence) {
- 		if (err == 0) {
- 			fd_install(out_fence_fd, out_fence->file);
--			args->rsvd2 &= GENMASK_ULL(0, 31); /* keep in-fence */
-+			args->rsvd2 &= GENMASK_ULL(31, 0); /* keep in-fence */
- 			args->rsvd2 |= (u64)out_fence_fd << 32;
- 			out_fence_fd = -1;
- 		} else {
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1293,6 +1293,9 @@ static ssize_t ucma_set_option(struct uc
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
++	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
++		return -EINVAL;
++
+ 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
+ 			     cmd.optlen);
+ 	if (IS_ERR(optval)) {
