@@ -1,70 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752523AbeCMSrL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:47:11 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40577 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbeCMSrI (ORCPT
+        id S1752690AbeCMSrZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:47:25 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:52445 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbeCMSrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:47:08 -0400
-X-Google-Smtp-Source: AG47ELt5HgBcJwsMVwjn67y6fN0XOeQMIB1C36BF8zYXXTWuvSSOrUzEUCb1wlZplg1MQa1vg6Shpg==
-Date: Tue, 13 Mar 2018 19:46:52 +0100
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Burton <paul.burton@mips.com>, Willy Tarreau <w@1wt.eu>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] auxdisplay for v4.16-rc6
-Message-ID: <20180313184652.dzjmoxs7zl4ocrfw@gmail.com>
+        Tue, 13 Mar 2018 14:47:23 -0400
+Date: Tue, 13 Mar 2018 19:47:19 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car
+ V3M Eagle
+Message-ID: <20180313184719.rkcaae7th4lhgd6o@verge.net.au>
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520951425-13843-4-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: elm/2
+In-Reply-To: <1520951425-13843-4-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Mar 13, 2018 at 03:30:25PM +0100, Jacopo Mondi wrote:
+> The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
+> decoder, connected to the on-chip LVDS encoder output on one side
+> and to HDMI encoder ADV7511w on the other one.
+> 
+> As the decoder does not need any configuration it has been so-far
+> omitted from DTS. Now that a driver is available, describe it in DT
+> as well.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Please pull these small changes to silence a few warnings in auxdisplay.
-
-This is my first pull request, so if there is anything wrong, please let
-me know!
-
-Also, note that for the moment my PGP/GPG key is only signed by 2 other
-kernel maintainers and that we did it over email/Skype. I used GitHub
-as well for the same reason.
-
-Cheers,
-Miguel Ojeda
-
-The following changes since commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
-
-  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
-
-are available in the git repository at:
-
-  https://github.com/ojeda/linux.git tags/auxdisplay-for-linus-v4.16-rc6
-
-for you to fetch changes up to 26a2c54d03bd514fb3d3520706f911b3ca56b011:
-
-  auxdisplay: img-ascii-lcd: Silence 2 uninitialized warnings (2018-03-13 18:16:38 +0100)
-
-----------------------------------------------------------------
-Silence a few warnings in auxdisplay.
-
-  - A couple of uninitialized warnings reported by the build service.
-
-  - A doc comment warning under W=1.
-
-  - Three fall through comments not recognized under W=1.
-
-----------------------------------------------------------------
-Miguel Ojeda (3):
-      auxdisplay: panel: Change comments to silence fallthrough warnings
-      auxdisplay: img-ascii-lcd: Fix doc comment to silence warnings
-      auxdisplay: img-ascii-lcd: Silence 2 uninitialized warnings
-
- drivers/auxdisplay/img-ascii-lcd.c | 6 +++---
- drivers/auxdisplay/panel.c         | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+I have marked this as deferred pending acceptance of the new binding.
+Please repost or ping me once that has happened.
