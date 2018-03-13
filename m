@@ -1,102 +1,188 @@
-Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AG47ELsL2yDf9FfcVOd6MRd5O1EARcHHI7FZL2XE6CMjIQW5ScXXs5swocBfd3thzuWQmKhSsykp
-ARC-Seal: i=1; a=rsa-sha256; t=1520946279; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QI4oxxysHOfcaQNS8rz0wWMbKZQTUjqkVedPCyMiBkkSihjOzwZ8FoctQNicwwHX1j
-         lxCgZqIVQegjwpON5DZNh1JXnEp/Ygv+XyedCJG5P2GETNLaPBdh2A7UTOZhu7A2u1uG
-         9rA/eMYwO+N+TzG4kx4jx+kiYvDjbrRB2CVXHc5dz7SpPqYOV6+7AAg1sLMpRLr6u7XQ
-         2GuCZl8hWUThEmqgI5ZdGBOi26pI1aRqVdTtvLAuymGL1Rtxat3bMabVrjes6hYcqClq
-         uM6mp01BGJTvRAQv1CVWWIZ5FN6DuT/UUUDyPpLeZSJTJdoHnYa68KJxrr4t8ensT29B
-         JfuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=mYwu6PYiPbZCshEsng96HBd+bJFkDhrLUYWRbU28HIM=;
-        b=GPrFih1rroeTVjZKmORYfNmZsQk/P0Y4P06B6bc7hGleeTFl+wErJAo6KpXp7PVAhH
-         70WFEtMMmS0yuU8pkgJXqVH/R1z3c7qRriLzfpLZryuzaoEHs6BNd553mXLXmnVBPBnH
-         hdEGeVw9WyJXMYRcIkNMGAz4H8v9KDM1iwEPd02ElkrLFV8O36SOZTkXRKbF5Fryp/7j
-         UqtZgid3aYgn9fYwEJUYCOQbmjf42bRzhVtiGyIbN7qLUIwp9hnDISLf9oDRj/WtyPal
-         FN5wZZO5osLi3OAnJeR7v4NhJKi1abF6SiNu9L8KJjZOiSw5PrFBq0VOPxL+lyGrinGe
-         hCUg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 212.227.126.131 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 212.227.126.131 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-From: Arnd Bergmann <arnd@arndb.de>
-To: Oleg Drokin <oleg.drokin@intel.com>,
-	Andreas Dilger <andreas.dilger@intel.com>,
-	James Simmons <jsimmons@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	NeilBrown <neilb@suse.com>,
-	Aliaksei Karaliou <akaraliou.dev@gmail.com>,
-	lustre-devel@lists.lustre.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: lustre: use module_name() macro for debug printf
-Date: Tue, 13 Mar 2018 14:03:44 +0100
-Message-Id: <20180313130425.3975930-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:fc9YuYrJ713TPvQg3TjkQhYpocT9qT4sZK/RGiGJBhoLJ8x2vff
- JzcZw0h5dcFiRY+K8OtQZawBxjMYUuqFyIABgxQ+mJ+bTU7eYsVIqClOC0o6qL7W2xWlJJ3
- hJhZs0dkdal8WfeuB/LPFrCWSAemHv5oGhTH6pmAiyY0ZebPkKVR1ODixUYi4620jvHroUe
- BqHzS8VfGJluZ/28tAbEA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8zzGvBnANzc=:E3pIG0k8Be2vcqYy9CH7pr
- XU2DyWW2Vb0xlgmQm0xPVHGunW1saxiQIfDPjDuI2tuzJVglHyhXs/KWRfxARpnx8pW6pp3bY
- OviE9JxlfgG+yCZVhN9Lv+QtFDfxF6gmXN9449U88ek6jzb2mxrvCHsh9sm0BWzOAFR5EBA+I
- Sqj7v5ExAmzKMwle9A8kbuflDSXdwiQxKmfI8nE0uN7Tnv5C838qAnvdWlo9atlist2tOKsqC
- 7lGXtbEdgLSVddRDtK3ld6RYNv+PAchTAHgplffIQMosx7S6RTV+IDlNfQhUjPtcisR4VObk8
- pi13pi4JM9LGiw5H4cy15eA1gZ7mcSom5Ut5e4tpMtamx/fJFfL/Xy4R7LPGoww5kYz1QqQw5
- DigiAM2DGstNO0CNxJRUJYSiUvtT0Cui+0Ueca2I3kd3PvQWDmGjOwIlWZygKCohW5/XIWaLg
- Qha7iFO7MmzbwRBNvqP/XnggtiXus9n/ePJASzGHHepUC0T+rPlF6y6N1syXwDNnztBSMr0Ph
- B9SLYydSW4zavIoUXFSDRvQnL8zZZBSH18qgZAI0SmET0NVDRA47D2FpanF/xVyIh2sODExL3
- TgYGYXe/0I7Mn1AXArVg21kD6e+vfKpXhRy7jJMUklCOozRIs9ZRpr+hF3IaUXnTNNqtXxsbs
- J4CDxJjQwMerpa5HDf342QzeV4ur5kpDhCBlmwPLqJ09nexAb4kpa194syXjtb7Tr3NquO9Ut
- MXjJU8jlNAy9nEEbTr1AK/x2EXCX8DMHHjS8RA==
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4106523-1520978225-2-5020975921830730800
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520978225; b=j4K0n198sqkhlspzxJcyIgSf5DvgEYDfQ97kzJP4yK4c+hH
+    lkSbJ9C9/CxlOY6hq05DR7M0xwWRetw6mTHRQphLDfVfPRvOrWPWCuv4mp4UMy5X
+    ixq2CcrF5VTEfXaBl83kN859NdrEVQavuSpppVmwz2DmJtseMP6z3rsxMoikAAvN
+    Pv00EmWVdcWaAQR+Z2D5ljB5EU6VpQMBpzMi+TdbuvqHzFHIzvp0oWn7XB2PYFvK
+    FQrTs9ephn/HXfMBkL6frzJirwE5UTGbJp5OaqWPuQY3e/V3ImjQAiR68/WCibyh
+    GcjFjM7PtBMxOPOYhpHNevb7y4SkPd4VZNkuEeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:date:subject:in-reply-to
+    :references:message-id:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :sender; s=arctest; t=1520978225; bh=brV5aPeXp/+bdSZeQjDclmSeQ2Z
+    pvVvVOCYlYzAMxVw=; b=wg42p6gdAI2EMvamZzNBNfPL82US7cOAKWILKr0pHS9
+    I05kvTatADGFvlfqXd2S1U9mAaRp/xMx6HElOzB6fsGt2dvCYGWpumpZ81BGW5mR
+    KidmGpnEFcqjSX2gi9GYxb6KqJtZhnpcvR7ioNyHJmhfflrENN4jRlldEloHcMMM
+    n3zpcpgApLnlw/2nAUyt7zAtkzur8+v3OyHT445/nbmjCaPeGKWUsfmKXf+iCtTQ
+    /b7lGzXSxcZv5rRzJrDBbBRSi+pF59RiXrcFYw7kMkE8w/4ASsmvbEQ2kVe4W0Ov
+    lvTC1nNVLVwdcX3PodDo7NU/tWPCHX+gIzdKXNDtTjw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: NeilBrown <neilb@suse.com>
+To: Arnd Bergmann <arnd@arndb.de>, Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 14 Mar 2018 08:56:45 +1100
+Subject: Re: [PATCH] staging: lustre: use module_name() macro for debug printf
+In-Reply-To: <20180313130425.3975930-1-arnd@arndb.de>
+References: <20180313130425.3975930-1-arnd@arndb.de>
+Message-ID: <87in9zd4gy.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Aliaksei Karaliou <akaraliou.dev@gmail.com>,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ lustre-devel@lists.lustre.org
+Content-Type: multipart/mixed; boundary="===============1755472846114048386=="
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594827765427449356?=
-X-GMAIL-MSGID: =?utf-8?q?1594827765427449356?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We now allow lustre to be built when CONFIG_MODULES is disabled,
-but that causes a build failure:
+--===============1755472846114048386==
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 
-In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:42,
-                 from drivers/staging/lustre/lustre/obdclass/lu_object.c:44:
-drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_degister':
-drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: dereferencing pointer to incomplete type 'struct module'
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This particular case can be avoided by using the module_name()
-macro that was designed exactly to handle printing the name of
-a module in all configurations.
+On Tue, Mar 13 2018, Arnd Bergmann wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> We now allow lustre to be built when CONFIG_MODULES is disabled,
+> but that causes a build failure:
+>
+> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.=
+h:42,
+>                  from drivers/staging/lustre/lustre/obdclass/lu_object.c:=
+44:
+> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_conte=
+xt_key_degister':
+> drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: derefe=
+rencing pointer to incomplete type 'struct module'
+>
+> This particular case can be avoided by using the module_name()
+> macro that was designed exactly to handle printing the name of
+> a module in all configurations.
+
+Learn something new every day :-)
+
 Reviewed-by: NeilBrown <neilb@suse.com>
----
- drivers/staging/lustre/lustre/obdclass/lu_object.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-index 8ddf23b82a2c..3ae16e8501c2 100644
---- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-@@ -1407,7 +1407,7 @@ void lu_context_key_degister(struct lu_context_key *key)
- 	while (atomic_read(&key->lct_used) > 1) {
- 		spin_unlock(&lu_keys_guard);
- 		CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
--		       __func__, key->lct_owner ? key->lct_owner->name : "",
-+		       __func__, module_name(key->lct_owner),
- 		       key, atomic_read(&key->lct_used));
- 		schedule();
- 		spin_lock(&lu_keys_guard);
-@@ -1547,7 +1547,7 @@ void lu_context_key_quiesce(struct lu_context_key *key)
- 			spin_unlock(&lu_keys_guard);
- 			CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
- 			       __func__,
--			       key->lct_owner ? key->lct_owner->name : "",
-+			       module_name(key->lct_owner),
- 			       key, atomic_read(&key->lct_used),
- 			atomic_read(&lu_key_initing_cnt));
- 			schedule();
--- 
-2.9.0
+Thanks,
+NeilBrown
+
+>
+> Cc: NeilBrown <neilb@suse.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/staging/lustre/lustre/obdclass/lu_object.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers=
+/staging/lustre/lustre/obdclass/lu_object.c
+> index 8ddf23b82a2c..3ae16e8501c2 100644
+> --- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
+> +++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+> @@ -1407,7 +1407,7 @@ void lu_context_key_degister(struct lu_context_key =
+*key)
+>  	while (atomic_read(&key->lct_used) > 1) {
+>  		spin_unlock(&lu_keys_guard);
+>  		CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
+> -		       __func__, key->lct_owner ? key->lct_owner->name : "",
+> +		       __func__, module_name(key->lct_owner),
+>  		       key, atomic_read(&key->lct_used));
+>  		schedule();
+>  		spin_lock(&lu_keys_guard);
+> @@ -1547,7 +1547,7 @@ void lu_context_key_quiesce(struct lu_context_key *=
+key)
+>  			spin_unlock(&lu_keys_guard);
+>  			CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
+>  			       __func__,
+> -			       key->lct_owner ? key->lct_owner->name : "",
+> +			       module_name(key->lct_owner),
+>  			       key, atomic_read(&key->lct_used),
+>  			atomic_read(&lu_key_initing_cnt));
+>  			schedule();
+> --=20
+> 2.9.0
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqoSR0ACgkQOeye3VZi
+gbk8jg/8DWxkF6SXJ6X9TbEAskcsaaY9YQQNED6ocVUC+dcBtXmvchgYwEpfVqiI
+uxmfSkl7dzlMtVAsQz8hif/LOrZ9SbpFJkV0fMywBJnjvLvoSWzEU3TjbjmSrBm1
+1uiIVO38t473XF63dXTGFlwhGMiLsfoVNFUJZVNUyhHl0ugfJ/vySWlOpe6hxkr/
+RW9RVEmP6SfASNw+AEl2Wq5iaZdfeO58btEWTav43UdIoOrljzHFzRT9rxRFD3V1
+qzq/QkEsqG+/OdZTBiY29HqkBSzdf7iVY4rSobwRq03d5XypJ4JgoP7Nx43QwFHp
+fSIJm1IPneMYzSEvJaHFCc0xC29is+ekD6C/msVJfV/LIMkRXgVjHZu74uC7vuFv
+40rIv95SvxfL/lcR9oDdpOF4hPofERLr26VolFMlHhzlv8+p8b8QE5jTIuTOMHR4
+xoQsgZgUfhxbKyQiejsjPLClMq+yGxQpg9/uvx7puoz2Vu5jBxi2zbkih9TE/M/C
+p+NmOOkP1s1svkNIQciTHfi9to20NkErHHbzTTOAupSjYvGfpzCkRSSfbHxE9Ls6
+c0fUM7UywZLC9OMoFExerg3DwruwJU38cPi8mhYQiKxw/a/3RbUX3+5hCz+o0oa1
+5EhxCLnnMW8UrYNR1hpN0/wqL6sBpZ31jvO6jd0/lePNo0nvW9Q=
+=ba3u
+-----END PGP SIGNATURE-----
+--=-=-=--
+
+--===============1755472846114048386==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============1755472846114048386==--
