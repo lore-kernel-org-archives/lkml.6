@@ -1,101 +1,463 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752352AbeCMI7F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:59:05 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52534 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeCMI7E (ORCPT
+        id S1752567AbeCMI7c (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:59:32 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4418 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752193AbeCMI7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:59:04 -0400
-X-Google-Smtp-Source: AG47ELtlu8fy8c1kPIGw7iIBgMqWramKrB/A7RItgmScZFqjTVCEUSSa528m8JZVKjrOLfmUksOXcsDKHkdkh2OPMag=
+        Tue, 13 Mar 2018 04:59:30 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Yannick FERTRE <yannick.fertre@st.com>,
+        Vikas MANOCHA <vikas.manocha@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/10] video: add support of panel rm68200
+Thread-Topic: [PATCH v2 07/10] video: add support of panel rm68200
+Thread-Index: AQHTsj1YRLN8r/s05UCbYulZdjqfWKPN3dkA
+Date: Tue, 13 Mar 2018 08:59:08 +0000
+Message-ID: <84026f08-f91e-a477-841f-e981c0ed0640@st.com>
+References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
+ <1520005451-23217-8-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1520005451-23217-8-git-send-email-yannick.fertre@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3684E8B771FA2C44B669D1ED2AE2F741@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180313082337.zekrzyx5utx5lkj6@flea>
-References: <20180312155753.9478-1-codekipper@gmail.com> <20180312155753.9478-5-codekipper@gmail.com>
- <20180313080026.jtag4w46koxzeqe2@flea> <CAEKpxBkE_Aipa3Z6r0HnVNuU-kmfr1zandotZzQ9Z0AkShR=rw@mail.gmail.com>
- <20180313082337.zekrzyx5utx5lkj6@flea>
-From: Code Kipper <codekipper@gmail.com>
-Date: Tue, 13 Mar 2018 09:59:03 +0100
-Message-ID: <CAEKpxBn6Zxy5nuMPYkPU_UweCqBm+P4M2fd2UqepdojBiOErbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] ASoC: sun4i-i2s: Add multi-lane functionality
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8xaGQ031405
 
-On 13 March 2018 at 09:23, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Tue, Mar 13, 2018 at 09:15:49AM +0100, Code Kipper wrote:
->> On 13 March 2018 at 09:00, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->> > On Mon, Mar 12, 2018 at 04:57:51PM +0100, codekipper@gmail.com wrote:
->> >> From: Marcus Cooper <codekipper@gmail.com>
->> >>
->> >> The i2s block supports multi-lane i2s output however this functionality
->> >> is only possible in earlier SoCs where the pins are exposed and for
->> >> the i2s block used for HDMI audio on the later SoCs.
->> >>
->> >> To enable this functionality, an optional property has been added to
->> >> the bindings.
->> >>
->> >> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
->> >> ---
->> >>  .../devicetree/bindings/sound/sun4i-i2s.txt        |  3 ++
->> >>  sound/soc/sunxi/sun4i-i2s.c                        | 48 +++++++++++++++++-----
->> >>  2 files changed, 41 insertions(+), 10 deletions(-)
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> >> index 48addef65b8f..3f966ac61b9e 100644
->> >> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> >> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> >> @@ -33,6 +33,9 @@ Optional properties:
->> >>                               configured to extend the slot width to the
->> >>                               value specified. Min 8, Max 32.
->> >>
->> >> +- allwinner,playback-channels:  if this property is present then the number
->> >> +                             of available channels is extended and the
->> >> +                             outputs enabled.
->> >
->> > Isn't it something that is fixed for each generation of SoCs? Can't we
->> > attach it to the compatible?
->>
->> I'm not sure as the documentation is pretty poor. It looks like it is
->> supported by all of the variations that we've seen but only exposed as
->> pins on A10 and A20. I'm also not sure who would ever use it with
->> external devices.
->
-> Well, you were saying that it was the case on the older SoCs in your
-> commit log, so this needs to be figured out.
->
->> The reason why I've added it is that it is required by HDMI for
->> supporting surround sound on the newer SoCs.
->
-> Why isn't that mentionned in your commit log?
->
-> Can you post the whole set of changes needed for HDMI audio? this
-> would make things much easier to see where you're going.
+Hi yannick
 
-Maybe we should drop this change for now as basic HDMI audio for two
-channels doesn't require it. I've also not tested multi-channel audio
-yet.
+On 03/02/2018 04:44 PM, yannick fertre wrote:
+> Support for Raydium rm68200 720p dsi 2dl video mode panel.
+> 
+> Signed-off-by: yannick fertre <yannick.fertre@st.com>
+> ---
+>   drivers/video/Kconfig           |   8 +
+>   drivers/video/Makefile          |   1 +
+>   drivers/video/raydium-rm68200.c | 329 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 338 insertions(+)
+>   create mode 100644 drivers/video/raydium-rm68200.c
+> 
+> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> index 0f641d7..2561c59 100644
+> --- a/drivers/video/Kconfig
+> +++ b/drivers/video/Kconfig
+> @@ -328,6 +328,14 @@ config VIDEO_LCD_ORISETECH_OTM8009A
+>   	---help---
+>   	Support for Orise Tech otm8009a 480p dsi 2dl video mode panel.
+>   
+> +config VIDEO_LCD_RAYDIUM_RM68200
+> +	bool "RM68200 DSI LCD panel support"
+> +	depends on DM_VIDEO
+> +	select VIDEO_MIPI_DSI
+> +	default n
+> +	---help---
+> +	Support for Raydium rm68200 720x1280 dsi 2dl video mode panel.
+> +
+>   config VIDEO_LCD_SSD2828
+>   	bool "SSD2828 bridge chip"
+>   	default n
+> diff --git a/drivers/video/Makefile b/drivers/video/Makefile
+> index 50be569..1a6c8d3 100644
+> --- a/drivers/video/Makefile
+> +++ b/drivers/video/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_VIDEO_DA8XX) += da8xx-fb.o videomodes.o
+>   obj-$(CONFIG_VIDEO_LCD_ANX9804) += anx9804.o
+>   obj-$(CONFIG_VIDEO_LCD_HITACHI_TX18D42VM) += hitachi_tx18d42vm_lcd.o
+>   obj-$(CONFIG_VIDEO_LCD_ORISETECH_OTM8009A) += orisetech_otm8009a.o
+> +obj-$(CONFIG_VIDEO_LCD_RAYDIUM_RM68200) += raydium-rm68200.o
+>   obj-$(CONFIG_VIDEO_LCD_SSD2828) += ssd2828.o
+>   obj-$(CONFIG_VIDEO_MB862xx) += mb862xx.o videomodes.o
+>   obj-$(CONFIG_VIDEO_MX3) += mx3fb.o videomodes.o
+> diff --git a/drivers/video/raydium-rm68200.c b/drivers/video/raydium-rm68200.c
+> new file mode 100644
+> index 0000000..46afb58
+> --- /dev/null
+> +++ b/drivers/video/raydium-rm68200.c
+> @@ -0,0 +1,329 @@
+> +/*
+> + * Copyright (C) 2018 STMicroelectronics - All Rights Reserved
+> + * Author(s): Yannick Fertre <yannick.fertre@st.com> for STMicroelectronics.
+> + *	      Philippe Cornu <philippe.cornu@st.com> for STMicroelectronics.
+> + *
+> + * This rm68200 panel driver is based on the panel driver from
+> + * drivers/gpu/drm/panel/panel-raydium-rm68200.c (kernel linux)
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +#include <asm/gpio.h>
+> +#include <backlight.h>
+> +#include <common.h>
+> +#include <dm.h>
+> +#include <panel.h>
+> +#include <power/regulator.h>
+> +#include <mipi_display.h>
+> +
+> +DECLARE_GLOBAL_DATA_PTR;
+> +
+> +#define DRV_NAME "raydium_rm68200"
+> +
+> +/*** Manufacturer Command Set ***/
+> +#define MCS_CMD_MODE_SW	0xFE /* CMD Mode Switch */
+> +#define MCS_CMD1_UCS	0x00 /* User Command Set (UCS = CMD1) */
+> +#define MCS_CMD2_P0	0x01 /* Manufacture Command Set Page0 (CMD2 P0) */
+> +#define MCS_CMD2_P1	0x02 /* Manufacture Command Set Page1 (CMD2 P1) */
+> +#define MCS_CMD2_P2	0x03 /* Manufacture Command Set Page2 (CMD2 P2) */
+> +#define MCS_CMD2_P3	0x04 /* Manufacture Command Set Page3 (CMD2 P3) */
+> +
+> +/* CMD2 P0 commands (Display Options and Power) */
+> +#define MCS_STBCTR	0x12 /* TE1 Output Setting Zig-Zag Connection */
+> +#define MCS_SGOPCTR	0x16 /* Source Bias Current */
+> +#define MCS_SDCTR	0x1A /* Source Output Delay Time */
+> +#define MCS_INVCTR	0x1B /* Inversion Type */
+> +#define MCS_EXT_PWR_IC	0x24 /* External PWR IC Control */
+> +#define MCS_SETAVDD	0x27 /* PFM Control for AVDD Output */
+> +#define MCS_SETAVEE	0x29 /* PFM Control for AVEE Output */
+> +#define MCS_BT2CTR	0x2B /* DDVDL Charge Pump Control */
+> +#define MCS_BT3CTR	0x2F /* VGH Charge Pump Control */
+> +#define MCS_BT4CTR	0x34 /* VGL Charge Pump Control */
+> +#define MCS_VCMCTR	0x46 /* VCOM Output Level Control */
+> +#define MCS_SETVGN	0x52 /* VG M/S N Control */
+> +#define MCS_SETVGP	0x54 /* VG M/S P Control */
+> +#define MCS_SW_CTRL	0x5F /* Interface Control for PFM and MIPI */
+> +
+> +/* CMD2 P2 commands (GOA Timing Control) - no description in datasheet */
+> +#define GOA_VSTV1	0x00
+> +#define GOA_VSTV2	0x07
+> +#define GOA_VCLK1	0x0E
+> +#define GOA_VCLK2	0x17
+> +#define GOA_VCLK_OPT1	0x20
+> +#define GOA_BICLK1	0x2A
+> +#define GOA_BICLK2	0x37
+> +#define GOA_BICLK3	0x44
+> +#define GOA_BICLK4	0x4F
+> +#define GOA_BICLK_OPT1	0x5B
+> +#define GOA_BICLK_OPT2	0x60
+> +#define MCS_GOA_GPO1	0x6D
+> +#define MCS_GOA_GPO2	0x71
+> +#define MCS_GOA_EQ	0x74
+> +#define MCS_GOA_CLK_GALLON 0x7C
+> +#define MCS_GOA_FS_SEL0	0x7E
+> +#define MCS_GOA_FS_SEL1	0x87
+> +#define MCS_GOA_FS_SEL2	0x91
+> +#define MCS_GOA_FS_SEL3	0x9B
+> +#define MCS_GOA_BS_SEL0	0xAC
+> +#define MCS_GOA_BS_SEL1	0xB5
+> +#define MCS_GOA_BS_SEL2	0xBF
+> +#define MCS_GOA_BS_SEL3	0xC9
+> +#define MCS_GOA_BS_SEL4	0xD3
+> +
+> +/* CMD2 P3 commands (Gamma) */
+> +#define MCS_GAMMA_VP	0x60 /* Gamma VP1~VP16 */
+> +#define MCS_GAMMA_VN	0x70 /* Gamma VN1~VN16 */
+> +
+> +struct rm68200_panel_priv {
+> +	struct udevice *reg;
+> +	struct udevice *backlight;
+> +	struct gpio_desc reset;
+> +};
+> +
+> +static void rm68200_dcs_write_buf(struct udevice *dev, const void *data,
+> +				  size_t len)
+> +{
+> +	struct mipi_dsi_panel_plat *plat = dev_get_platdata(dev);
+> +	struct mipi_dsi_device *device = plat->device;
+> +
+> +	if (mipi_dsi_dcs_write_buffer(device, data, len) < 0)
+> +		pr_err("mipi dsi dcs write buffer failed\n");
 
-To get HDMI audio working the following patches are required for the dts
-https://github.com/codekipper/linux-sunxi/commit/997c622ae10ef136bae0a35a0e9bf9c6dd27910a
-and
-https://github.com/codekipper/linux-sunxi/commit/4a81676d30a0262c57ffc0827e46c7934fb3b358
+pr_err()
 
-they don't need this patch but do need the slot-width-override patch.
+> +}
+> +
+> +static void rm68200_dcs_write_cmd(struct udevice *dev, u8 cmd, u8 value)
+> +{
+> +	struct mipi_dsi_panel_plat *plat = dev_get_platdata(dev);
+> +	struct mipi_dsi_device *device = plat->device;
+> +
+> +	if (mipi_dsi_dcs_write(device, cmd, &value, 1) < 0)
+> +		pr_err("mipi dsi dcs write failed\n");
 
-CK
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+ditto
+
+> +}
+> +
+> +#define dcs_write_seq(ctx, seq...)				\
+> +({								\
+> +	static const u8 d[] = { seq };				\
+> +	rm68200_dcs_write_buf(ctx, d, ARRAY_SIZE(d));		\
+> +})
+> +
+> +/*
+> + * This panel is not able to auto-increment all cmd addresses so for some of
+> + * them, we need to send them one by one...
+> + */
+> +#define dcs_write_cmd_seq(ctx, cmd, seq...)			\
+> +({								\
+> +	static const u8 d[] = { seq };				\
+> +	static int i;						\
+> +	for (i = 0; i < ARRAY_SIZE(d) ; i++)			\
+> +		rm68200_dcs_write_cmd(ctx, cmd + i, d[i]);	\
+> +})
+> +
+> +static int rm68200_init_sequence(struct udevice *dev)
+> +{
+> +	/* Enter CMD2 with page 0 */
+> +	dcs_write_seq(dev, MCS_CMD_MODE_SW, MCS_CMD2_P0);
+> +	dcs_write_cmd_seq(dev, MCS_EXT_PWR_IC, 0xC0, 0x53, 0x00);
+> +	dcs_write_seq(dev, MCS_BT2CTR, 0xE5);
+> +	dcs_write_seq(dev, MCS_SETAVDD, 0x0A);
+> +	dcs_write_seq(dev, MCS_SETAVEE, 0x0A);
+> +	dcs_write_seq(dev, MCS_SGOPCTR, 0x52);
+> +	dcs_write_seq(dev, MCS_BT3CTR, 0x53);
+> +	dcs_write_seq(dev, MCS_BT4CTR, 0x5A);
+> +	dcs_write_seq(dev, MCS_INVCTR, 0x00);
+> +	dcs_write_seq(dev, MCS_STBCTR, 0x0A);
+> +	dcs_write_seq(dev, MCS_SDCTR, 0x06);
+> +	dcs_write_seq(dev, MCS_VCMCTR, 0x56);
+> +	dcs_write_seq(dev, MCS_SETVGN, 0xA0, 0x00);
+> +	dcs_write_seq(dev, MCS_SETVGP, 0xA0, 0x00);
+> +	dcs_write_seq(dev, MCS_SW_CTRL, 0x11); /* 2 data lanes, see doc */
+> +
+> +	dcs_write_seq(dev, MCS_CMD_MODE_SW, MCS_CMD2_P2);
+> +	dcs_write_seq(dev, GOA_VSTV1, 0x05);
+> +	dcs_write_seq(dev, 0x02, 0x0B);
+> +	dcs_write_seq(dev, 0x03, 0x0F);
+> +	dcs_write_seq(dev, 0x04, 0x7D, 0x00, 0x50);
+> +	dcs_write_cmd_seq(dev, GOA_VSTV2, 0x05, 0x16, 0x0D, 0x11, 0x7D, 0x00,
+> +			  0x50);
+> +	dcs_write_cmd_seq(dev, GOA_VCLK1, 0x07, 0x08, 0x01, 0x02, 0x00, 0x7D,
+> +			  0x00, 0x85, 0x08);
+> +	dcs_write_cmd_seq(dev, GOA_VCLK2, 0x03, 0x04, 0x05, 0x06, 0x00, 0x7D,
+> +			  0x00, 0x85, 0x08);
+> +	dcs_write_seq(dev, GOA_VCLK_OPT1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		      0x00, 0x00, 0x00, 0x00);
+> +	dcs_write_cmd_seq(dev, GOA_BICLK1, 0x07, 0x08);
+> +	dcs_write_seq(dev, 0x2D, 0x01);
+> +	dcs_write_seq(dev, 0x2F, 0x02, 0x00, 0x40, 0x05, 0x08, 0x54, 0x7D,
+> +		      0x00);
+> +	dcs_write_cmd_seq(dev, GOA_BICLK2, 0x03, 0x04, 0x05, 0x06, 0x00);
+> +	dcs_write_seq(dev, 0x3D, 0x40);
+> +	dcs_write_seq(dev, 0x3F, 0x05, 0x08, 0x54, 0x7D, 0x00);
+> +	dcs_write_seq(dev, GOA_BICLK3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		      0x00, 0x00, 0x00, 0x00, 0x00);
+> +	dcs_write_seq(dev, GOA_BICLK4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		      0x00, 0x00);
+> +	dcs_write_seq(dev, 0x58, 0x00, 0x00, 0x00);
+> +	dcs_write_seq(dev, GOA_BICLK_OPT1, 0x00, 0x00, 0x00, 0x00, 0x00);
+> +	dcs_write_seq(dev, GOA_BICLK_OPT2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+> +	dcs_write_seq(dev, MCS_GOA_GPO1, 0x00, 0x00, 0x00, 0x00);
+> +	dcs_write_seq(dev, MCS_GOA_GPO2, 0x00, 0x20, 0x00);
+> +	dcs_write_seq(dev, MCS_GOA_EQ, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+> +		      0x00, 0x00);
+> +	dcs_write_seq(dev, MCS_GOA_CLK_GALLON, 0x00, 0x00);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_FS_SEL0, 0xBF, 0x02, 0x06, 0x14, 0x10,
+> +			  0x16, 0x12, 0x08, 0x3F);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_FS_SEL1, 0x3F, 0x3F, 0x3F, 0x3F, 0x0C,
+> +			  0x0A, 0x0E, 0x3F, 0x3F, 0x00);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_FS_SEL2, 0x04, 0x3F, 0x3F, 0x3F, 0x3F,
+> +			  0x05, 0x01, 0x3F, 0x3F, 0x0F);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_FS_SEL3, 0x0B, 0x0D, 0x3F, 0x3F, 0x3F,
+> +			  0x3F);
+> +	dcs_write_cmd_seq(dev, 0xA2, 0x3F, 0x09, 0x13, 0x17, 0x11, 0x15);
+> +	dcs_write_cmd_seq(dev, 0xA9, 0x07, 0x03, 0x3F);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_BS_SEL0, 0x3F, 0x05, 0x01, 0x17, 0x13,
+> +			  0x15, 0x11, 0x0F, 0x3F);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_BS_SEL1, 0x3F, 0x3F, 0x3F, 0x3F, 0x0B,
+> +			  0x0D, 0x09, 0x3F, 0x3F, 0x07);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_BS_SEL2, 0x03, 0x3F, 0x3F, 0x3F, 0x3F,
+> +			  0x02, 0x06, 0x3F, 0x3F, 0x08);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_BS_SEL3, 0x0C, 0x0A, 0x3F, 0x3F, 0x3F,
+> +			  0x3F, 0x3F, 0x0E, 0x10, 0x14);
+> +	dcs_write_cmd_seq(dev, MCS_GOA_BS_SEL4, 0x12, 0x16, 0x00, 0x04, 0x3F);
+> +	dcs_write_seq(dev, 0xDC, 0x02);
+> +	dcs_write_seq(dev, 0xDE, 0x12);
+> +
+> +	dcs_write_seq(dev, MCS_CMD_MODE_SW, 0x0E); /* No documentation */
+> +	dcs_write_seq(dev, 0x01, 0x75);
+> +
+> +	dcs_write_seq(dev, MCS_CMD_MODE_SW, MCS_CMD2_P3);
+> +	dcs_write_cmd_seq(dev, MCS_GAMMA_VP, 0x00, 0x0C, 0x12, 0x0E, 0x06,
+> +			  0x12, 0x0E, 0x0B, 0x15, 0x0B, 0x10, 0x07, 0x0F,
+> +			  0x12, 0x0C, 0x00);
+> +	dcs_write_cmd_seq(dev, MCS_GAMMA_VN, 0x00, 0x0C, 0x12, 0x0E, 0x06,
+> +			  0x12, 0x0E, 0x0B, 0x15, 0x0B, 0x10, 0x07, 0x0F,
+> +			  0x12, 0x0C, 0x00);
+> +
+> +	/* Exit CMD2 */
+> +	dcs_write_seq(dev, MCS_CMD_MODE_SW, MCS_CMD1_UCS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rm68200_panel_enable_backlight(struct udevice *dev)
+> +{
+> +	struct mipi_dsi_panel_plat *plat = dev_get_platdata(dev);
+> +	struct mipi_dsi_device *device = plat->device;
+> +	struct rm68200_panel_priv *priv = dev_get_priv(dev);
+> +	int ret;
+> +
+> +	device->lanes = 2;
+> +	device->format = MIPI_DSI_FMT_RGB888;
+> +	device->mode_flags = MIPI_DSI_MODE_VIDEO |
+> +			     MIPI_DSI_MODE_VIDEO_BURST |
+> +			     MIPI_DSI_MODE_LPM;
+> +
+> +	ret = mipi_dsi_attach(device);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	pr_info("%s: initialize panel\n", __func__);
+
+debug() ?
+
+> +
+> +	ret = rm68200_init_sequence(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mipi_dsi_dcs_exit_sleep_mode(device);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mdelay(125);
+> +
+> +	ret = mipi_dsi_dcs_set_display_on(device);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mdelay(20);
+> +
+> +	pr_info("%s: start, backlight = '%s'\n", __func__,
+> +		priv->backlight->name);
+> +
+
+debug() ?
+
+> +	ret = backlight_enable(priv->backlight);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rm68200_panel_ofdata_to_platdata(struct udevice *dev)
+> +{
+> +	struct rm68200_panel_priv *priv = dev_get_priv(dev);
+> +	int ret;
+> +
+> +	if (IS_ENABLED(CONFIG_DM_REGULATOR)) {
+> +		ret = uclass_get_device_by_phandle(UCLASS_REGULATOR, dev,
+> +						   "power-supply", &priv->reg);
+> +		if (ret) {
+> +			pr_info("%s: Warning: cannot get power supply\n",
+> +				__func__);
+
+dev_info()
+
+> +			if (ret != -ENOENT)
+> +				return ret;
+> +		}
+> +	}
+> +
+> +	ret = gpio_request_by_name(dev, "reset-gpios", 0, &priv->reset,
+> +				   GPIOD_IS_OUT);
+> +	if (ret) {
+> +		pr_info("%s: Warning: cannot get reset GPIO\n", __func__);
+
+ditto
+
+> +		if (ret != -ENOENT)
+> +			return ret;
+> +	}
+> +
+> +	/* reset panel must be done before probe */
+> +	dm_gpio_set_value(&priv->reset, true);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rm68200_panel_probe(struct udevice *dev)
+> +{
+> +	struct rm68200_panel_priv *priv = dev_get_priv(dev);
+> +	int ret;
+> +
+> +	if (IS_ENABLED(CONFIG_DM_REGULATOR) && priv->reg) {
+> +		pr_info("%s: Enable regulator '%s'\n", __func__,
+> +			priv->reg->name);
+
+debug() ?
+
+> +		ret = regulator_set_enable(priv->reg, true);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	dm_gpio_set_value(&priv->reset, false);
+> +
+> +	ret = uclass_get_device_by_phandle(UCLASS_PANEL_BACKLIGHT, dev,
+> +					   "backlight", &priv->backlight);
+> +	if (ret) {
+> +		pr_info("%s: Cannot get backlight: ret=%d\n", __func__, ret);
+
+dev_err()
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct panel_ops rm68200_panel_ops = {
+> +	.enable_backlight = rm68200_panel_enable_backlight,
+> +};
+> +
+> +static const struct udevice_id rm68200_panel_ids[] = {
+> +	{ .compatible = "raydium,rm68200" },
+> +	{ }
+> +};
+> +
+> +U_BOOT_DRIVER(rm68200_panel) = {
+> +	.name			  = "rm68200_panel",
+> +	.id			  = UCLASS_PANEL,
+> +	.of_match		  = rm68200_panel_ids,
+> +	.ops			  = &rm68200_panel_ops,
+> +	.ofdata_to_platdata	  = rm68200_panel_ofdata_to_platdata,
+> +	.probe			  = rm68200_panel_probe,
+> +	.platdata_auto_alloc_size = sizeof(struct mipi_dsi_panel_plat),
+> +	.priv_auto_alloc_size	= sizeof(struct rm68200_panel_priv),
+> +};
+> 
