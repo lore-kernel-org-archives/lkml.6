@@ -1,96 +1,91 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuy8hG3HE/FmLiJIlFhLzUWRd1JSehRR74JE29Kro3Ypl9tJlv8gryt7UuhZ4raalLADT9R
-ARC-Seal: i=1; a=rsa-sha256; t=1520955295; cv=none;
+Return-Path: <kernel-hardening-return-12514-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtav7Tk/vFtSzaRxSNmnofX/Bjte4XjyyDjF+Dqcmy1yFZzAxoXTbtfRnqPUKWY3fYSDpOY
+ARC-Seal: i=1; a=rsa-sha256; t=1520970657; cv=none;
         d=google.com; s=arc-20160816;
-        b=pi3+PeV9Fe6A9FCzvOiZ8hBnyUABpreX5u8UmU1w69QvM8xqgKXiGcG2Y1KA4nJ43j
-         OWJ6GxcBxVnCATSyFurVx19snhTkjIztwqlODYjXo5YXmAXC4EDrSswskcCeWnnL4cNi
-         eXpbfII+2CPfjk+MuHrJ9g8u6JArL1VXQGOq5fmJrtDCBzDsI0MblNTBVrj+CVvzIoWc
-         nTGJuuO98xpYKxkCl/Nk2pPRWFvJ+yRmDvYHX2Cnhr4dAchWc8vLMABfSFla2Mgc3DkW
-         aKp9MR3K5Sj8UPLjmczRwPd/fUzQqAtHZPsAJ/1ZkpaDH7E/2eNZca0B85KffiSc8mzx
-         c1cw==
+        b=PDVcMzYWvAzgDS3v9v+SwQFl8xEQ9UgIklG2QI0+VV/jDWFhHn1/y3K0L500j2EFXy
+         tPD5w1/mZr8DgoK0MPLNYC8nxUzmTfPyGriVbdsnp3Oscq1AZoVd5wIOj6KQbpV0vz61
+         bKvAGZiflszHbE/4otsGdzykMip4s9lh9QCqUJrVVzUiOmdj8yDBY43FykqLAQ6WMipJ
+         8nEeCvezsVN+w0JhdSOe8Uz7jiMHSQtNnsNiuWL82tvlKzOZajq3nivSxVxshTaBw+kR
+         3P8Af1vd0FyWpTgByDYswzxfqIPBLe29PG+K+ZjS+MP7xGVOc3p2nFUhNxCpHStCUqRr
+         ImEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6l3xEn/oJCTACo50JzJUGPxEDszrBAynRr2yJDpR+EY=;
-        b=TFzWGCyv/GjHKNiiyIUkwVaRBaOOdjjYPVzB0Qm4GgzkJqzmRMe3C347E9rZGWZHgl
-         EHthsMert0HGmQ2LXMqIMoPmdN44WT/tZu1b8slZAa4turDqa3cpg1OWwffoih+l94gO
-         ukvDBsUlmBf0X/YeNOwRfouhaYQgoazT46fIQzM6WG8bckMTw84jXrkfRgY/MBxMl7/D
-         TB1E3U2Oucie453Ycv/MedBlF1JzhgsnF6ScQiQ3JBtUFEcj25Jn0zPocPurfKBYDICc
-         ENyVCSVSquMwr0YaMm3GTsvJ0IYVPhYmyvveSpn5l2dmqCuPY0WyR4YVt0pgfURWVTji
-         yl6A==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=z3LpzP0/rt/gJXoQPm132osZo5pA7pNwvqGehVEpDeI=;
+        b=QK44QTP0L3+kRm4nY4m90tLLdrBuZeemjqBoZ6TwHOtNMs/0+hBVWiUeG1Xs88VUqY
+         j/xCJzocoZPf2RuxOgQbUsV+9NqUBPKP5jWdJVt82XL9rXIvqI2RYzG3wfhEXjWjyezw
+         Ru7oNuiM70usvDLj8UOKWLf6OlTwioAat76b2zytnP9cWR0kx4R0CM1L70qNKaUSMoCA
+         +FHOSFJJQeopYgxTh34MuAgT8TRNN1VuWyWrmyFGwfJP69hHWnX39XFd7Q7ETQu5ATIN
+         81x4QOc7NVpg4euMpKBWUXcX1YpTvZds/WuyJ2m9FQ0VA7K1uPGknfM2sqf30u8LWM4N
+         4spQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RrfBxtQd;
+       spf=pass (google.com: domain of kernel-hardening-return-12514-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12514-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RrfBxtQd;
+       spf=pass (google.com: domain of kernel-hardening-return-12514-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12514-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH 4.14 001/140] kbuild: move "_all" target out of $(KBUILD_SRC) conditional
-Date: Tue, 13 Mar 2018 16:23:24 +0100
-Message-Id: <20180313152458.279778612@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
-References: <20180313152458.201155692@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc: kernel-hardening@lists.openwall.com,
+	linux-btrfs@vger.kernel.org,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	Josef Bacik <jbacik@fb.com>,
+	Kees Cook <keescook@chromium.org>,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Subject: [PATCH] Btrfs: drop a VLA in btrfs_check_super_csum()
+Date: Tue, 13 Mar 2018 20:50:22 +0100
+Message-Id: <1520970622-19535-1-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837219769510497?=
-X-GMAIL-MSGID: =?utf-8?q?1594837219769510497?=
+X-GMAIL-THRID: =?utf-8?q?1594853328339341486?=
+X-GMAIL-MSGID: =?utf-8?q?1594853328339341486?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Avoid a VLA[1] by using a real constant expression instead of a variable.
+The compiler should be able to optimize the original code and avoid using
+an actual VLA. Anyway this change is useful because it will avoid a false
+positive with -Wvla, it might also help the compiler generating better
+code.
 
-------------------
+[1] https://lkml.org/lkml/2018/3/7/621
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-commit ba634eceb535d95e87ef09caae7814b3687c6036 upstream.
-
-The first "_all" occurrence around line 120 is only visible when
-KBUILD_SRC is unset.
-
-If O=... is specified, the working directory is relocated, then the
-only second occurrence around line 193 is visible, that is not set
-to PHONY.
-
-Move the first one to an always visible place.  This clarifies "_all"
-is our default target and it is always set to PHONY.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- Makefile |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/btrfs/disk-io.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -11,6 +11,10 @@ NAME = Petit Gorille
- # Comments in this file are targeted only to the developer, do not
- # expect to learn how to build the kernel reading this file.
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 21f34ad..88cef92 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -403,8 +403,7 @@ static int btrfs_check_super_csum(struct btrfs_fs_info *fs_info,
  
-+# That's our default target when none is given on the command line
-+PHONY := _all
-+_all:
-+
- # o Do not use make's built-in rules and variables
- #   (this increases performance and avoids hard-to-debug behaviour);
- # o Look for make include files relative to root of kernel src
-@@ -117,10 +121,6 @@ ifeq ("$(origin O)", "command line")
-   KBUILD_OUTPUT := $(O)
- endif
+ 	if (csum_type == BTRFS_CSUM_TYPE_CRC32) {
+ 		u32 crc = ~(u32)0;
+-		const int csum_size = sizeof(crc);
+-		char result[csum_size];
++		char result[sizeof(crc)];
  
--# That's our default target when none is given on the command line
--PHONY := _all
--_all:
--
- # Cancel implicit rules on top Makefile
- $(CURDIR)/Makefile Makefile: ;
+ 		/*
+ 		 * The super_block structure does not span the whole
+@@ -415,7 +414,7 @@ static int btrfs_check_super_csum(struct btrfs_fs_info *fs_info,
+ 				crc, BTRFS_SUPER_INFO_SIZE - BTRFS_CSUM_SIZE);
+ 		btrfs_csum_final(crc, result);
  
+-		if (memcmp(raw_disk_sb, result, csum_size))
++		if (memcmp(raw_disk_sb, result, sizeof(result)))
+ 			ret = 1;
+ 	}
+ 
+-- 
+1.9.1
