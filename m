@@ -1,389 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeCMSeg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:34:36 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35502 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751529AbeCMSed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:34:33 -0400
-X-Google-Smtp-Source: AG47ELtz5oxoViyN+aG1rq8dvp2HqhFiA3aUe4BPEVNu3ncQrpVbyYtBzqerTEDHDzRIhdIEyAHgPA==
-From: Frank Mori Hess <fmh6jj@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] dmaengine: pl330: flush before wait, and add dev burst support.
-Date: Tue, 13 Mar 2018 14:34:26 -0400
-Message-ID: <2863317.1ZoR41yQkl@bear>
-User-Agent: KMail/5.2.3 (Linux/4.9.0-6-amd64; KDE/5.28.0; x86_64; ; )
-In-Reply-To: <20180311150151.GB15443@localhost>
+        id S1752805AbeCMSfM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:35:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:43122 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752164AbeCMSfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 14:35:09 -0400
+Subject: Re: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>
+References: <20180313172103.24281-1-marc.zyngier@arm.com>
+ <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
+Date: Tue, 13 Mar 2018 18:35:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do DMAFLUSHP _before_ the first DMAWFP to ensure controller
-and peripheral are in agreement about dma request state before first
-transfer.  Add support for burst transfers to/from peripherals. In the new
-scheme, the controller does as many burst transfers as it can then
-transfers the remaining dregs with either single transfers for
-peripherals, or with a reduced size burst for memory-to-memory transfers.
+On 13/03/18 17:51, Mark Rutland wrote:
+> On Tue, Mar 13, 2018 at 05:21:00PM +0000, Marc Zyngier wrote:
+>> As kexec and kdump are getting used a bit more intensively, I've been
+>> made aware of a number of shortcomings.
+>>
+>> The main gripe is from folks trying to launch a kdump kernel from
+>> within an interrupt handler. If using EOImode==1, things work as
+>> expected. If using EOImode==0 (such as in a guest), the secondary
+>> kernel hangs as the previous interrupt hasn't been EOI'd, and the
+>> active priority is still set. The first two patches are addressing
+>> this situation for both GICv2 and GICv3 by reseting the APRs to their
+>> default value.
+> 
+> As a more general thing, if irqchip drivers have state that needs to be
+> reset in their init code, can we live all this irqchip reset to the
+> crashdump kernel, and kill machine_kexec_mask_interrupts() entirely?
 
-Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
-Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
----
+We could, once we know for sure that all the potential irqchips have
+been fixed. Or we could just remove it immediately, and see what breaks.
 
-I tested dma transfers to peripherals with v3 patch and designware serial 
-port (drivers/tty/serial/8250/8250_dw.c) and a GPIB interface
-(https://github.com/fmhess/fmh_gpib_core).  I tested memory-to-memory
-transfers using the dmatest module.
+> That would avoid some work (including pointer chasing on potentially
+> corrupt memory) in the kernel that crashed, making it more likely that
+> we get to the crashkernel intact...
 
-v3 of this patch should be the same as v2 except with checkpatch.pl
-warnings and errors cleaned up.
+Seems perfectly sensible to me.
 
-v4 addresses cosmetic complaints about v3, should be functionally unchanged.
-
- drivers/dma/pl330.c | 209 +++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 159 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index d7327fd5f445..819a578e317f 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -27,6 +27,7 @@
- #include <linux/of_dma.h>
- #include <linux/err.h>
- #include <linux/pm_runtime.h>
-+#include <linux/bug.h>
- 
- #include "dmaengine.h"
- #define PL330_MAX_CHAN		8
-@@ -1094,51 +1095,96 @@ static inline int _ldst_memtomem(unsigned dry_run, u8 buf[],
- 	return off;
- }
- 
--static inline int _ldst_devtomem(struct pl330_dmac *pl330, unsigned dry_run,
--				 u8 buf[], const struct _xfer_spec *pxs,
--				 int cyc)
-+static u32 _emit_load(unsigned int dry_run, u8 buf[],
-+	enum pl330_cond cond, enum dma_transfer_direction direction,
-+	u8 peri)
- {
- 	int off = 0;
--	enum pl330_cond cond;
- 
--	if (pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
--		cond = BURST;
--	else
--		cond = SINGLE;
-+	switch (direction) {
-+	case DMA_MEM_TO_MEM:
-+		/* fall through */
-+	case DMA_MEM_TO_DEV:
-+		off += _emit_LD(dry_run, &buf[off], cond);
-+		break;
- 
--	while (cyc--) {
--		off += _emit_WFP(dry_run, &buf[off], cond, pxs->desc->peri);
--		off += _emit_LDP(dry_run, &buf[off], cond, pxs->desc->peri);
--		off += _emit_ST(dry_run, &buf[off], ALWAYS);
-+	case DMA_DEV_TO_MEM:
-+		if (cond == ALWAYS) {
-+			off += _emit_LDP(dry_run, &buf[off], SINGLE,
-+				peri);
-+			off += _emit_LDP(dry_run, &buf[off], BURST,
-+				peri);
-+		} else {
-+			off += _emit_LDP(dry_run, &buf[off], cond,
-+				peri);
-+		}
-+		break;
- 
--		if (!(pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP))
--			off += _emit_FLUSHP(dry_run, &buf[off],
--					    pxs->desc->peri);
-+	default:
-+		/* this code should be unreachable */
-+		WARN_ON(1);
-+		break;
- 	}
- 
- 	return off;
- }
- 
--static inline int _ldst_memtodev(struct pl330_dmac *pl330,
-+static inline u32 _emit_store(unsigned int dry_run, u8 buf[],
-+	enum pl330_cond cond, enum dma_transfer_direction direction,
-+	u8 peri)
-+{
-+	int off = 0;
-+
-+	switch (direction) {
-+	case DMA_MEM_TO_MEM:
-+		/* fall through */
-+	case DMA_DEV_TO_MEM:
-+		off += _emit_ST(dry_run, &buf[off], cond);
-+		break;
-+
-+	case DMA_MEM_TO_DEV:
-+		if (cond == ALWAYS) {
-+			off += _emit_STP(dry_run, &buf[off], SINGLE,
-+				peri);
-+			off += _emit_STP(dry_run, &buf[off], BURST,
-+				peri);
-+		} else {
-+			off += _emit_STP(dry_run, &buf[off], cond,
-+				peri);
-+		}
-+		break;
-+
-+	default:
-+		/* this code should be unreachable */
-+		WARN_ON(1);
-+		break;
-+	}
-+
-+	return off;
-+}
-+
-+static inline int _ldst_peripheral(struct pl330_dmac *pl330,
- 				 unsigned dry_run, u8 buf[],
--				 const struct _xfer_spec *pxs, int cyc)
-+				 const struct _xfer_spec *pxs, int cyc,
-+				 enum pl330_cond cond)
- {
- 	int off = 0;
--	enum pl330_cond cond;
- 
- 	if (pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
- 		cond = BURST;
--	else
--		cond = SINGLE;
- 
-+	/*
-+	 * do FLUSHP at beginning to clear any stale dma requests before the
-+	 * first WFP.
-+	 */
-+	if (!(pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP))
-+		off += _emit_FLUSHP(dry_run, &buf[off], pxs->desc->peri);
- 	while (cyc--) {
- 		off += _emit_WFP(dry_run, &buf[off], cond, pxs->desc->peri);
--		off += _emit_LD(dry_run, &buf[off], ALWAYS);
--		off += _emit_STP(dry_run, &buf[off], cond, pxs->desc->peri);
--
--		if (!(pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP))
--			off += _emit_FLUSHP(dry_run, &buf[off],
--					    pxs->desc->peri);
-+		off += _emit_load(dry_run, &buf[off], cond, pxs->desc->rqtype,
-+			pxs->desc->peri);
-+		off += _emit_store(dry_run, &buf[off], cond, pxs->desc->rqtype,
-+			pxs->desc->peri);
- 	}
- 
- 	return off;
-@@ -1148,19 +1194,65 @@ static int _bursts(struct pl330_dmac *pl330, unsigned dry_run, u8 buf[],
- 		const struct _xfer_spec *pxs, int cyc)
- {
- 	int off = 0;
-+	enum pl330_cond cond = BRST_LEN(pxs->ccr) > 1 ? BURST : SINGLE;
- 
- 	switch (pxs->desc->rqtype) {
- 	case DMA_MEM_TO_DEV:
--		off += _ldst_memtodev(pl330, dry_run, &buf[off], pxs, cyc);
--		break;
-+		/* fall through */
- 	case DMA_DEV_TO_MEM:
--		off += _ldst_devtomem(pl330, dry_run, &buf[off], pxs, cyc);
-+		off += _ldst_peripheral(pl330, dry_run, &buf[off], pxs, cyc,
-+			cond);
- 		break;
-+
- 	case DMA_MEM_TO_MEM:
- 		off += _ldst_memtomem(dry_run, &buf[off], pxs, cyc);
- 		break;
-+
-+	default:
-+		/* this code should be unreachable */
-+		WARN_ON(1);
-+		break;
-+	}
-+
-+	return off;
-+}
-+
-+/*
-+ * transfer dregs with single transfers to peripheral, or a reduced size burst
-+ * for mem-to-mem.
-+ */
-+static int _dregs(struct pl330_dmac *pl330, unsigned int dry_run, u8 buf[],
-+		const struct _xfer_spec *pxs, int transfer_length)
-+{
-+	int off = 0;
-+	int dregs_ccr;
-+
-+	if (transfer_length == 0)
-+		return off;
-+
-+	switch (pxs->desc->rqtype) {
-+	case DMA_MEM_TO_DEV:
-+		/* fall through */
-+	case DMA_DEV_TO_MEM:
-+		off += _ldst_peripheral(pl330, dry_run, &buf[off], pxs,
-+			transfer_length, SINGLE);
-+		break;
-+
-+	case DMA_MEM_TO_MEM:
-+		dregs_ccr = pxs->ccr;
-+		dregs_ccr &= ~((0xf << CC_SRCBRSTLEN_SHFT) |
-+			(0xf << CC_DSTBRSTLEN_SHFT));
-+		dregs_ccr |= (((transfer_length - 1) & 0xf) <<
-+			CC_SRCBRSTLEN_SHFT);
-+		dregs_ccr |= (((transfer_length - 1) & 0xf) <<
-+			CC_DSTBRSTLEN_SHFT);
-+		off += _emit_MOV(dry_run, &buf[off], CCR, dregs_ccr);
-+		off += _ldst_memtomem(dry_run, &buf[off], pxs, 1);
-+		break;
-+
- 	default:
--		off += 0x40000000; /* Scare off the Client */
-+		/* this code should be unreachable */
-+		WARN_ON(1);
- 		break;
- 	}
- 
-@@ -1256,6 +1348,8 @@ static inline int _setup_loops(struct pl330_dmac *pl330,
- 	struct pl330_xfer *x = &pxs->desc->px;
- 	u32 ccr = pxs->ccr;
- 	unsigned long c, bursts = BYTE_TO_BURST(x->bytes, ccr);
-+	int num_dregs = (x->bytes - BURST_TO_BYTE(bursts, ccr)) /
-+		BRST_SIZE(ccr);
- 	int off = 0;
- 
- 	while (bursts) {
-@@ -1263,6 +1357,7 @@ static inline int _setup_loops(struct pl330_dmac *pl330,
- 		off += _loop(pl330, dry_run, &buf[off], &c, pxs);
- 		bursts -= c;
- 	}
-+	off += _dregs(pl330, dry_run, &buf[off], pxs, num_dregs);
- 
- 	return off;
- }
-@@ -1294,7 +1389,6 @@ static int _setup_req(struct pl330_dmac *pl330, unsigned dry_run,
- 		      struct _xfer_spec *pxs)
- {
- 	struct _pl330_req *req = &thrd->req[index];
--	struct pl330_xfer *x;
- 	u8 *buf = req->mc_cpu;
- 	int off = 0;
- 
-@@ -1303,11 +1397,6 @@ static int _setup_req(struct pl330_dmac *pl330, unsigned dry_run,
- 	/* DMAMOV CCR, ccr */
- 	off += _emit_MOV(dry_run, &buf[off], CCR, pxs->ccr);
- 
--	x = &pxs->desc->px;
--	/* Error if xfer length is not aligned at burst size */
--	if (x->bytes % (BRST_SIZE(pxs->ccr) * BRST_LEN(pxs->ccr)))
--		return -EINVAL;
--
- 	off += _setup_xfer(pl330, dry_run, &buf[off], pxs);
- 
- 	/* DMASEV peripheral/event */
-@@ -1365,6 +1454,20 @@ static int pl330_submit_req(struct pl330_thread *thrd,
- 	u32 ccr;
- 	int ret = 0;
- 
-+	switch (desc->rqtype) {
-+	case DMA_MEM_TO_DEV:
-+		break;
-+
-+	case DMA_DEV_TO_MEM:
-+		break;
-+
-+	case DMA_MEM_TO_MEM:
-+		break;
-+
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
- 	if (pl330->state == DYING
- 		|| pl330->dmac_tbd.reset_chan & (1 << thrd->id)) {
- 		dev_info(thrd->dmac->ddma.dev, "%s:%d\n",
-@@ -2104,6 +2207,18 @@ static bool pl330_prep_slave_fifo(struct dma_pl330_chan *pch,
- 	return true;
- }
- 
-+static int fixup_burst_len(int max_burst_len, int quirks)
-+{
-+	if (quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
-+		return 1;
-+	else if (max_burst_len > PL330_MAX_BURST)
-+		return PL330_MAX_BURST;
-+	else if (max_burst_len < 1)
-+		return 1;
-+	else
-+		return max_burst_len;
-+}
-+
- static int pl330_config(struct dma_chan *chan,
- 			struct dma_slave_config *slave_config)
- {
-@@ -2115,15 +2230,15 @@ static int pl330_config(struct dma_chan *chan,
- 			pch->fifo_addr = slave_config->dst_addr;
- 		if (slave_config->dst_addr_width)
- 			pch->burst_sz = __ffs(slave_config->dst_addr_width);
--		if (slave_config->dst_maxburst)
--			pch->burst_len = slave_config->dst_maxburst;
-+		pch->burst_len = fixup_burst_len(slave_config->dst_maxburst,
-+			pch->dmac->quirks);
- 	} else if (slave_config->direction == DMA_DEV_TO_MEM) {
- 		if (slave_config->src_addr)
- 			pch->fifo_addr = slave_config->src_addr;
- 		if (slave_config->src_addr_width)
- 			pch->burst_sz = __ffs(slave_config->src_addr_width);
--		if (slave_config->src_maxburst)
--			pch->burst_len = slave_config->src_maxburst;
-+		pch->burst_len = fixup_burst_len(slave_config->src_maxburst,
-+			pch->dmac->quirks);
- 	}
- 
- 	return 0;
-@@ -2517,14 +2632,8 @@ static inline int get_burst_len(struct dma_pl330_desc *desc, size_t len)
- 	burst_len >>= desc->rqcfg.brst_size;
- 
- 	/* src/dst_burst_len can't be more than 16 */
--	if (burst_len > 16)
--		burst_len = 16;
--
--	while (burst_len > 1) {
--		if (!(len % (burst_len << desc->rqcfg.brst_size)))
--			break;
--		burst_len--;
--	}
-+	if (burst_len > PL330_MAX_BURST)
-+		burst_len = PL330_MAX_BURST;
- 
- 	return burst_len;
- }
-@@ -2596,7 +2705,7 @@ static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
- 
- 		desc->rqtype = direction;
- 		desc->rqcfg.brst_size = pch->burst_sz;
--		desc->rqcfg.brst_len = 1;
-+		desc->rqcfg.brst_len = pch->burst_len;
- 		desc->bytes_requested = period_len;
- 		fill_px(&desc->px, dst, src, period_len);
- 
-@@ -2741,7 +2850,7 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 		}
- 
- 		desc->rqcfg.brst_size = pch->burst_sz;
--		desc->rqcfg.brst_len = 1;
-+		desc->rqcfg.brst_len = pch->burst_len;
- 		desc->rqtype = direction;
- 		desc->bytes_requested = sg_dma_len(sg);
- 	}
+	M.
 -- 
-2.11.0
+Jazz is not dead. It just smells funny...
