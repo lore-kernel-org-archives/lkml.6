@@ -1,108 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932709AbeCMNg0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:36:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35546 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932651AbeCMN1F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:27:05 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH v9 50/61] memfd: Convert shmem_tag_pins to XArray
-Date: Tue, 13 Mar 2018 06:26:28 -0700
-Message-Id: <20180313132639.17387-51-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313132639.17387-1-willy@infradead.org>
-References: <20180313132639.17387-1-willy@infradead.org>
+        id S932908AbeCMNhg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:37:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52964 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752372AbeCMNhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:37:34 -0400
+Date: Tue, 13 Mar 2018 14:37:32 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: gkohli@codeaurora.org, rientjes@google.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] mm: oom: Fix race condition between oom_badness and
+ do_exit of task
+Message-ID: <20180313133732.GS12772@dhcp22.suse.cz>
+References: <1520427454-22813-1-git-send-email-gkohli@codeaurora.org>
+ <alpine.DEB.2.20.1803071254410.165297@chino.kir.corp.google.com>
+ <22ebd655-ece4-37e5-5a98-e9750cb20665@codeaurora.org>
+ <d73682f9-f214-64c4-ce09-fd1ff3ffe252@I-love.SAKURA.ne.jp>
+ <14ba6c44-d444-bd0a-0bac-0c6851b19344@codeaurora.org>
+ <201803091948.FBC21396.LHOMSFFOVFtQJO@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803091948.FBC21396.LHOMSFFOVFtQJO@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+[Sorry about the slow response but I was offline for almost two weeks
+and catching up with a tsunami in my inbox now]
 
-Simplify the locking by taking the spinlock while we walk the tree on
-the assumption that many acquires and releases of the lock will be
-worse than holding the lock for a (potentially) long time.
+On Fri 09-03-18 19:48:46, Tetsuo Handa wrote:
+> Kohli, Gaurav wrote:
+> > > t->alloc_lock is still held when leaving find_lock_task_mm(), which means
+> > > that t->mm != NULL. But nothing prevents t from setting t->mm = NULL at
+> > > exit_mm() from do_exit() and calling exit_creds() from __put_task_struct(t)
+> > > after task_unlock(t) is called. Seems difficult to trigger race window. Maybe
+> > > something has preempted because oom_badness() becomes outside of RCU grace
+> > > period upon leaving find_lock_task_mm() when called from proc_oom_score().
+> > 
+> > Hi Tetsuo,
+> > 
+> > Yes it is not easy to reproduce seen twice till now and i agree with
+> > your analysis. But David has already fixing this in different way,
+> > So that also looks better to me:
+> > 
+> > https://patchwork.kernel.org/patch/10265641/
+> > 
+> 
+> Yes, I'm aware of that patch.
+> 
+> > But if need to keep that code, So we have to bump up the task
+> > reference that's only i can think of now.
+> 
+> I don't think so, for I think it is safe to call
+> has_capability_noaudit(p) with p->alloc_lock held.
 
-We could replicate the same locking behaviour with the xarray, but would
-have to be careful that the xa_node wasn't RCU-freed under us before we
-took the lock.
+This however adds a subtle assumption on locking here and we should
+rather not do so. The scope of alloc_lock is quite messy already and
+adding on top is definitely not an improvement.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/memfd.c | 43 ++++++++++++++++++-------------------------
- 1 file changed, 18 insertions(+), 25 deletions(-)
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index f2e7dfb..4efcfb8 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -222,7 +222,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+>  	 */
+>  	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
+>  		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
+> -	task_unlock(p);
+>  
+>  	/*
+>  	 * Root processes get 3% bonus, just like the __vm_enough_memory()
+> @@ -230,6 +229,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+>  	 */
+>  	if (has_capability_noaudit(p, CAP_SYS_ADMIN))
+>  		points -= (points * 3) / 100;
+> +	task_unlock(p);
+>  
+>  	/* Normalize to oom_score_adj units */
+>  	adj *= totalpages / 1000;
 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 4cf7401cb09c..3b299d72df78 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -21,7 +21,7 @@
- #include <uapi/linux/memfd.h>
- 
- /*
-- * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
-+ * We need a tag: a new tag would expand every xa_node by 8 bytes,
-  * so reuse a tag which we firmly believe is never set or cleared on shmem.
-  */
- #define SHMEM_TAG_PINNED        PAGECACHE_TAG_TOWRITE
-@@ -29,35 +29,28 @@
- 
- static void shmem_tag_pins(struct address_space *mapping)
- {
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	pgoff_t start;
-+	XA_STATE(xas, &mapping->i_pages, 0);
- 	struct page *page;
-+	unsigned int tagged = 0;
- 
- 	lru_add_drain();
--	start = 0;
--	rcu_read_lock();
--
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--		page = radix_tree_deref_slot(slot);
--		if (!page || radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--		} else if (page_count(page) - page_mapcount(page) > 1) {
--			xa_lock_irq(&mapping->i_pages);
--			radix_tree_tag_set(&mapping->i_pages, iter.index,
--					   SHMEM_TAG_PINNED);
--			xa_unlock_irq(&mapping->i_pages);
--		}
- 
--		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
--			cond_resched_rcu();
--		}
-+	xas_lock_irq(&xas);
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		if (xa_is_value(page))
-+			continue;
-+		if (page_count(page) - page_mapcount(page) > 1)
-+			xas_set_tag(&xas, SHMEM_TAG_PINNED);
-+
-+		if (++tagged % XA_CHECK_SCHED)
-+			continue;
-+
-+		xas_pause(&xas);
-+		xas_unlock_irq(&xas);
-+		cond_resched();
-+		xas_lock_irq(&xas);
- 	}
--	rcu_read_unlock();
-+	xas_unlock_irq(&xas);
- }
- 
- /*
 -- 
-2.16.1
+Michal Hocko
+SUSE Labs
