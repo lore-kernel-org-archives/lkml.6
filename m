@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvSHmJ6RhOI6s+FZAC2/O89ZKlbFga/pU7R7/T3oq8Q1fmSLQUIgEIVTYmx0p7Tlgksld+F
-ARC-Seal: i=1; a=rsa-sha256; t=1520955312; cv=none;
+X-Google-Smtp-Source: AG47ELs72VT7F5LkUkYoNPrF4mMMOE9ID9IRxAndVOiboU0c28inMXzjJqSP5l9V+XK3y6pVY4jc
+ARC-Seal: i=1; a=rsa-sha256; t=1520955310; cv=none;
         d=google.com; s=arc-20160816;
-        b=M/4kPqiR5LXcLsqBXwIAgpvlvYLllwaWEFAfV/fDxMxibX0DXzkG6or36jZ4M7gSHV
-         6Xt5E3GkgzoKR062nH6aLwnU03QJXDU6OlfbPKelJvuWFTzOrPJ2Jk5fxXe7vI7/3ATl
-         7rNDEtgu2oTW8l/rRjHO80dj4xsYrKvodqoXT4H6LU00Owlzqhi0JQS6KK1KGPzITz/0
-         tbZkjX4VkQVF+HmLuRctQATxQre9SUf5tq/Qv2em/QXrXj6WtR9qYfyq95WLbR9joYFT
-         E39Ib7OhiK89jxIqvRxxl1CHAZS642wYXzbNhIKbzFNOSPz34L4RgoclBaMHlz7souJf
-         2FKQ==
+        b=mrmrCdO3/R8r1dpfObPOAxJf1QIRSHhfPrjEhU8gr63KynBtjNahC6kY/O6N8FwGST
+         N5+dsqWiOs4gGlThH9Jay29UrT3+J7aOKJwmWr3XwGYgxWDDQPYbmXOM2bie3T+H1hRi
+         z0W+R+YWieK278/3qIxdd0tVuD8/sgC2YPcGRr5N1Ijdl5Ls2KyotMN8KCblUjJSUjAF
+         fzI3buvEX20lll5u9d7ESJ3Q/0x8I7sCBvzXrB/Ih0osyNN1/eHWTZsM8c7CU8cdRIkG
+         MdDUYDVL/IaX8upwb89ftVdlFwP/zjrDyPnIZc6f0wy9N5jaarsX/tI1HQf4bL04jBrK
+         jHyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gIVJsblirOuGSy5nj/ehveKZjH3jreUBeO42p4dUaCE=;
-        b=AJ8kxgIlximbCQT48YCezrDF1+xUa0YMStImB7Gld0shdyzkBFnFQBwb6Rpv77YGQp
-         DRUkNzy8LHkGOpTAGmEuxBFEzf6R7BZ8EPYIQrexCGXLiElQ+5ZrVC9nmP8vIQoxGpBu
-         dbBpNxutx02je2cevw+sKlGt+IFfGgWJPqTskpFXZKT47BCChf4OeCRjprmpUmNmwWSK
-         mLRWe35ZjHwG2dx9fRPZn98Uzn6ybU4U2zUwtnDkwCICRTmPhc4BYXOPJ4yOicgI+Hc7
-         yR7ehQobCf6RXGMx/053n4qk6TPNpy6Jsr7G0KXuR0KIbl6rrlQCdo/G8l4rZUAEjNhI
-         KMcQ==
+        bh=SLoM55vpuxBg+fd0AHGeriYXjv1LKCr/lfAVgG+YwJI=;
+        b=DVtnfGkKafHrOecNVVJt49mNmTLqo6VGH+2e7iTDk0elXiOIMGA7YirdiQndn4PBhM
+         mVecLZg2Hh+llsSUIVaAhp/SJ/FD0PgWax1ECdEw9ZQ50m5noZLqnR0OPesHvalT1TVc
+         ADL9jpbFPBh24CH1sZ6EAkkzxSu3b08DByJ2W1Ck/b6Zean84I0ljb5MaURpCyxear2w
+         JUZgM3yJLcjFje2curuNUb7f1bQKXe4lO/Sv+z6VobznP2rZKwFwKhynmZ3I8UnhO13x
+         kTqvhmh7rWagj79NaLx64f88nl62e2Fl6n78rORv7xPym20wwr/aFwe2gGsGblaKNTua
+         jt5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jerry Hoemann <jerry.hoemann@hpe.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.14 002/140] watchdog: hpwdt: SMBIOS check
-Date: Tue, 13 Mar 2018 16:23:25 +0100
-Message-Id: <20180313152458.356548266@linuxfoundation.org>
+	Tony Lindgren <tony@atomide.com>,
+	Dan Murphy <dmurphy@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 006/140] ARM: omap2: hide omap3_save_secure_ram on non-OMAP3 builds
+Date: Tue, 13 Mar 2018 16:23:29 +0100
+Message-Id: <20180313152458.583753794@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837141192924323?=
-X-GMAIL-MSGID: =?utf-8?q?1594837238411650170?=
+X-GMAIL-THRID: =?utf-8?q?1594837235580148592?=
+X-GMAIL-MSGID: =?utf-8?q?1594837235580148592?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit c42cbe41727a138905a28f8e0b00c147be77ee93 upstream.
+commit 863204cfdae98626a92535ac928ad79f4d6b74ff upstream.
 
-This corrects:
-commit cce78da76601 ("watchdog: hpwdt: Add check for UEFI bits")
+In configurations without CONFIG_OMAP3 but with secure RAM support,
+we now run into a link failure:
 
-The test on HPE SMBIOS extension type 219 record "Misc Features"
-bits for UEFI support is incorrect.  The definition of the Misc Features
-bits in the HPE SMBIOS OEM Extensions specification (and related
-firmware) was changed to use a different pair of bits to
-represent UEFI supported.  Howerver, a corresponding change
-to Linux was missed.
+arch/arm/mach-omap2/omap-secure.o: In function `omap3_save_secure_ram':
+omap-secure.c:(.text+0x130): undefined reference to `save_secure_ram_context'
 
-Current code/platform work because the iCRU test is working.
-But purpose of cce78da766 is to ensure correct functionality
-on future systems where iCRU isn't supported.
+The omap3_save_secure_ram() function is only called from the OMAP34xx
+power management code, so we can simply hide that function in the
+appropriate #ifdef.
 
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Fixes: d09220a887f7 ("ARM: OMAP2+: Fix SRAM virt to phys translation for save_secure_ram_context")
+Acked-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/hpwdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap2/omap-secure.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/watchdog/hpwdt.c
-+++ b/drivers/watchdog/hpwdt.c
-@@ -700,7 +700,7 @@ static void dmi_find_icru(const struct d
- 		smbios_proliant_ptr = (struct smbios_proliant_info *) dm;
- 		if (smbios_proliant_ptr->misc_features & 0x01)
- 			is_icru = 1;
--		if (smbios_proliant_ptr->misc_features & 0x408)
-+		if (smbios_proliant_ptr->misc_features & 0x1400)
- 			is_uefi = 1;
- 	}
+--- a/arch/arm/mach-omap2/omap-secure.c
++++ b/arch/arm/mach-omap2/omap-secure.c
+@@ -73,6 +73,7 @@ phys_addr_t omap_secure_ram_mempool_base
+ 	return omap_secure_memblock_base;
  }
+ 
++#if defined(CONFIG_ARCH_OMAP3) && defined(CONFIG_PM)
+ u32 omap3_save_secure_ram(void __iomem *addr, int size)
+ {
+ 	u32 ret;
+@@ -91,6 +92,7 @@ u32 omap3_save_secure_ram(void __iomem *
+ 
+ 	return ret;
+ }
++#endif
+ 
+ /**
+  * rx51_secure_dispatcher: Routine to dispatch secure PPA API calls
