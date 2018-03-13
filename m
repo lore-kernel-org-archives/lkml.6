@@ -1,136 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933661AbeCMQf2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:35:28 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59181 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933517AbeCMQe5 (ORCPT
+        id S933696AbeCMQfg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:35:36 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46604 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933069AbeCMQfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:34:57 -0400
-From: <gabriel.fernandez@st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, <gabriel.fernandez@st.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <gabriel.fernandez.st@gmail.com>, Loic PALLARDY <loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH 2/2] reset: simple: Enable stm32mp1 reset driver
-Date: Tue, 13 Mar 2018 17:34:19 +0100
-Message-ID: <1520958859-27911-3-git-send-email-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
+        Tue, 13 Mar 2018 12:35:34 -0400
+X-Google-Smtp-Source: AG47ELt22rKOEF9foU/myetHez0Io1vpmWej94BztZ4y+OlGskW5nZeF02Ct755tCNi52O1jiZLuJ7TSK4s53g655iA=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
- signatures=0
+In-Reply-To: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
+References: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 18:35:32 +0200
+Message-ID: <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: dwapb: Add support for a bus clock
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Mon, Mar 12, 2018 at 8:30 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> Enable an optional bus clock provided by DT.
 
-The stm32mp1 reset driver is quite similar to simple reset driver.
-The difference is that stm32mp1 has a reset SET register and
-a reset CLEAR register.
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Writing '0' on reset SET register has no effect
-Writing '1' on reset SET register
-	activates the reset of the corresponding peripheral
+(Assuming it has been tested on clock-less cases)
 
-Writing '0' on reset CLEAR register	has no effect
-Writing '1' on reset CLEAR register
-	releases the reset of the corresponding peripheral
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v2:
+>  - Fix include order.
+>  - Use a clock name.
+>  - Check errors from clk_prepare_enable()
+>  - Add calls to enable/disable the clock in PM
+> ---
+>  drivers/gpio/gpio-dwapb.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index b0704a8..226977f 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -8,8 +8,9 @@
+>   * All enquiries to support@picochip.com
+>   */
+>  #include <linux/acpi.h>
+> -#include <linux/gpio/driver.h>
+> +#include <linux/clk.h>
+>  #include <linux/err.h>
+> +#include <linux/gpio/driver.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> @@ -98,6 +99,7 @@ struct dwapb_gpio {
+>         struct irq_domain       *domain;
+>         unsigned int            flags;
+>         struct reset_control    *rst;
+> +       struct clk              *clk;
+>  };
+>
+>  static inline u32 gpio_reg_v2_convert(unsigned int offset)
+> @@ -670,6 +672,16 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+>         if (IS_ERR(gpio->regs))
+>                 return PTR_ERR(gpio->regs);
+>
+> +       /* Optional bus clock */
+> +       gpio->clk = devm_clk_get(&pdev->dev, "bus");
+> +       if (!IS_ERR(gpio->clk)) {
+> +               err = clk_prepare_enable(gpio->clk);
+> +               if (err) {
+> +                       dev_info(&pdev->dev, "Cannot enable clock\n");
+> +                       return err;
+> +               }
+> +       }
+> +
+>         gpio->flags = 0;
+>         if (dev->of_node) {
+>                 const struct of_device_id *of_devid;
+> @@ -712,6 +724,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+>         dwapb_gpio_unregister(gpio);
+>         dwapb_irq_teardown(gpio);
+>         reset_control_assert(gpio->rst);
+> +       clk_disable_unprepare(gpio->clk);
+>
+>         return 0;
+>  }
+> @@ -757,6 +770,8 @@ static int dwapb_gpio_suspend(struct device *dev)
+>         }
+>         spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+>
+> +       clk_disable_unprepare(gpio->clk);
+> +
+>         return 0;
+>  }
+>
+> @@ -768,6 +783,9 @@ static int dwapb_gpio_resume(struct device *dev)
+>         unsigned long flags;
+>         int i;
+>
+> +       if (!IS_ERR(gpio->clk))
+> +               clk_prepare_enable(gpio->clk);
+> +
+>         spin_lock_irqsave(&gc->bgpio_lock, flags);
+>         for (i = 0; i < gpio->nr_ports; i++) {
+>                 unsigned int offset;
+> --
+> 2.7.4
+>
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/reset/reset-simple.c | 27 +++++++++++++++++++++------
- drivers/reset/reset-simple.h |  1 +
- 2 files changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
-index f7ce891..57ecb49 100644
---- a/drivers/reset/reset-simple.c
-+++ b/drivers/reset/reset-simple.c
-@@ -41,15 +41,23 @@ static int reset_simple_update(struct reset_controller_dev *rcdev,
- 	int offset = id % (reg_width * BITS_PER_BYTE);
- 	unsigned long flags;
- 	u32 reg;
-+	void __iomem *addr;
- 
- 	spin_lock_irqsave(&data->lock, flags);
- 
--	reg = readl(data->membase + (bank * reg_width));
--	if (assert ^ data->active_low)
--		reg |= BIT(offset);
--	else
--		reg &= ~BIT(offset);
--	writel(reg, data->membase + (bank * reg_width));
-+	addr = data->membase + (bank * reg_width);
-+	if (data->clr_offset) {
-+		reg = BIT(offset);
-+		if (!assert)
-+			addr += data->clr_offset;
-+	} else {
-+		reg = readl(addr);
-+		if (assert ^ data->active_low)
-+			reg |= BIT(offset);
-+		else
-+			reg &= ~BIT(offset);
-+	}
-+	writel(reg, addr);
- 
- 	spin_unlock_irqrestore(&data->lock, flags);
- 
-@@ -103,6 +111,7 @@ struct reset_simple_devdata {
- 	u32 nr_resets;
- 	bool active_low;
- 	bool status_active_low;
-+	u32 clr_offset;
- };
- 
- #define SOCFPGA_NR_BANKS	8
-@@ -118,9 +127,14 @@ struct reset_simple_devdata {
- 	.status_active_low = true,
- };
- 
-+struct reset_simple_devdata reset_stm32mp1 = {
-+	.clr_offset = 0x4,
-+};
-+
- static const struct of_device_id reset_simple_dt_ids[] = {
- 	{ .compatible = "altr,rst-mgr", .data = &reset_simple_socfpga },
- 	{ .compatible = "st,stm32-rcc", },
-+	{ .compatible = "st,stm32mp1-rcc", .data = &reset_stm32mp1},
- 	{ .compatible = "allwinner,sun6i-a31-clock-reset",
- 		.data = &reset_simple_active_low },
- 	{ .compatible = "zte,zx296718-reset",
-@@ -163,6 +177,7 @@ static int reset_simple_probe(struct platform_device *pdev)
- 			data->rcdev.nr_resets = devdata->nr_resets;
- 		data->active_low = devdata->active_low;
- 		data->status_active_low = devdata->status_active_low;
-+		data->clr_offset = devdata->clr_offset;
- 	}
- 
- 	if (of_device_is_compatible(dev->of_node, "altr,rst-mgr") &&
-diff --git a/drivers/reset/reset-simple.h b/drivers/reset/reset-simple.h
-index 8a49602..0bbdd34 100644
---- a/drivers/reset/reset-simple.h
-+++ b/drivers/reset/reset-simple.h
-@@ -38,6 +38,7 @@ struct reset_simple_data {
- 	struct reset_controller_dev	rcdev;
- 	bool				active_low;
- 	bool				status_active_low;
-+	u32				clr_offset;
- };
- 
- extern const struct reset_control_ops reset_simple_ops;
+
 -- 
-1.9.1
+With Best Regards,
+Andy Shevchenko
