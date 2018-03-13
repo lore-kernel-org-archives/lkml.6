@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752808AbeCMNbv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:31:51 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:36415 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933016AbeCMNbb (ORCPT
+        id S1752858AbeCMNcR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:32:17 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39698 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932895AbeCMNbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:31:31 -0400
-X-Google-Smtp-Source: AG47ELvLKnqbv6JAosbTgNk6OEgHPlq6GtS2WgEIWay3/XrmS3qMTLROgzq+YvSa5ALH49tp/rB/5A==
+        Tue, 13 Mar 2018 09:31:22 -0400
+X-Google-Smtp-Source: AG47ELu1ZgSuUbovkUPm9zUSP9QmGHTcmqtV6fnJHt1qfq3mbhywsY1YCKUFEOS1uYRTjEcmCCCW2w==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 8/8] drm/xen-front: Provide kernel documentation
-Date: Tue, 13 Mar 2018 15:31:07 +0200
-Message-Id: <1520947867-32514-9-git-send-email-andr2000@gmail.com>
+Subject: [PATCH v2 3/8] drm/xen-front: Read driver configuration from Xen store
+Date: Tue, 13 Mar 2018 15:31:02 +0200
+Message-Id: <1520947867-32514-4-git-send-email-andr2000@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
 References: <1520947867-32514-1-git-send-email-andr2000@gmail.com>
@@ -27,110 +27,195 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Provide kernel documentation for the Xen para-virtualized
-frontend DRM driver.
+Read configuration values from Xen store according
+to xen/interface/io/displif.h protocol:
+  - read connector(s) configuration
+  - read buffer allocation mode (backend/frontend)
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- Documentation/gpu/index.rst     |  1 +
- Documentation/gpu/xen-front.rst | 77 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 Documentation/gpu/xen-front.rst
+ drivers/gpu/drm/xen/Makefile            |  3 +-
+ drivers/gpu/drm/xen/xen_drm_front.c     |  9 ++++
+ drivers/gpu/drm/xen/xen_drm_front.h     |  3 ++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.c | 77 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.h | 37 ++++++++++++++++
+ 5 files changed, 128 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
 
-diff --git a/Documentation/gpu/index.rst b/Documentation/gpu/index.rst
-index c36586dad29d..e31684af0a20 100644
---- a/Documentation/gpu/index.rst
-+++ b/Documentation/gpu/index.rst
-@@ -20,6 +20,7 @@ Linux GPU Driver Developer's Guide
-    vga-switcheroo
-    vgaarbiter
-    bridge/dw-hdmi
-+   xen-front
-    todo
+diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+index 3283e104c7bb..d3ec8c8589e0 100644
+--- a/drivers/gpu/drm/xen/Makefile
++++ b/drivers/gpu/drm/xen/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0 OR MIT
  
- .. only::  subproject and html
-diff --git a/Documentation/gpu/xen-front.rst b/Documentation/gpu/xen-front.rst
+-drm_xen_front-objs := xen_drm_front.o
++drm_xen_front-objs := xen_drm_front.o \
++		      xen_drm_front_cfg.o
+ 
+ obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+index 520b5b34520b..ca42ceb24a40 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -24,6 +24,15 @@ static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
+ 
+ static int displback_initwait(struct xen_drm_front_info *front_info)
+ {
++	struct xen_drm_front_cfg *cfg = &front_info->cfg;
++	int ret;
++
++	cfg->front_info = front_info;
++	ret = xen_drm_front_cfg_card(front_info, cfg);
++	if (ret < 0)
++		return ret;
++
++	DRM_INFO("Have %d conector(s)\n", cfg->num_connectors);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+index 8b8d4d1e0816..034a3987657e 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.h
++++ b/drivers/gpu/drm/xen/xen_drm_front.h
+@@ -11,8 +11,11 @@
+ #ifndef __XEN_DRM_FRONT_H_
+ #define __XEN_DRM_FRONT_H_
+ 
++#include "xen_drm_front_cfg.h"
++
+ struct xen_drm_front_info {
+ 	struct xenbus_device *xb_dev;
++	struct xen_drm_front_cfg cfg;
+ };
+ 
+ #endif /* __XEN_DRM_FRONT_H_ */
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_cfg.c b/drivers/gpu/drm/xen/xen_drm_front_cfg.c
 new file mode 100644
-index 000000000000..6ac0b75373c4
+index 000000000000..9a0b2b8e6169
 --- /dev/null
-+++ b/Documentation/gpu/xen-front.rst
++++ b/drivers/gpu/drm/xen/xen_drm_front_cfg.c
 @@ -0,0 +1,77 @@
-+====================================
-+Xen para-virtualized frontend driver
-+====================================
-+This frontend driver implements Xen para-virtualized display
-+according to the display protocol described at
-+include/xen/interface/io/displif.h
++// SPDX-License-Identifier: GPL-2.0 OR MIT
 +
-+Driver modes of operation in terms of display buffers used
-+==========================================================
++/*
++ *  Xen para-virtual DRM device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
 +
-+Depending on the requirements for the para-virtualized environment, namely
-+requirements dictated by the accompanying DRM/(v)GPU drivers running in both
-+host and guest environments, number of operating modes of para-virtualized
-+display driver are supported:
++#include <drm/drmP.h>
 +
-+- display buffers can be allocated by either frontend driver or backend
-+- display buffers can be allocated to be contiguous in memory or not
++#include <linux/device.h>
 +
-+Note! Frontend driver itself has no dependency on contiguous memory for
-+its operation.
++#include <xen/interface/io/displif.h>
++#include <xen/xenbus.h>
 +
-+Buffers allocated by the frontend driver
-+----------------------------------------
++#include "xen_drm_front.h"
++#include "xen_drm_front_cfg.h"
 +
-+The below modes of operation are configured at compile-time via
-+frontend driver's kernel configuration:
++static int cfg_connector(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_cfg_connector *connector,
++		const char *path, int index)
++{
++	char *connector_path;
 +
-+With GEM CMA helpers
-+~~~~~~~~~~~~~~~~~~~~
-+ This use-case is useful when used with accompanying DRM/vGPU driver in
-+ guest domain which was designed to only work with contiguous buffers,
-+ e.g. DRM driver based on GEM CMA helpers: such drivers can only import
-+ contiguous PRIME buffers, thus requiring frontend driver to provide
-+ such. In order to implement this mode of operation para-virtualized
-+ frontend driver can be configured to use GEM CMA helpers.
++	connector_path = devm_kasprintf(&front_info->xb_dev->dev,
++			GFP_KERNEL, "%s/%d", path, index);
++	if (!connector_path)
++		return -ENOMEM;
 +
-+Without GEM CMA helpers
-+~~~~~~~~~~~~~~~~~~~~~~~
-+ If accompanying drivers can cope with non-contiguous memory then, to
-+ lower pressure on CMA subsystem of the kernel, driver can allocate
-+ buffers from system memory.
++	if (xenbus_scanf(XBT_NIL, connector_path, XENDISPL_FIELD_RESOLUTION,
++			"%d" XENDISPL_RESOLUTION_SEPARATOR "%d",
++			&connector->width, &connector->height) < 0) {
++		/* either no entry configured or wrong resolution set */
++		connector->width = 0;
++		connector->height = 0;
++		return -EINVAL;
++	}
 +
-+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
-+ may require IOMMU support on the platform, so accompanying DRM/vGPU
-+ hardware can still reach display buffer memory while importing PRIME
-+ buffers from the frontend driver.
++	connector->xenstore_path = connector_path;
 +
-+Buffers allocated by the backend
-+--------------------------------
++	DRM_INFO("Connector %s: resolution %dx%d\n",
++			connector_path, connector->width, connector->height);
++	return 0;
++}
 +
-+This mode of operation is run-time configured via guest domain configuration
-+through XenStore entries.
++int xen_drm_front_cfg_card(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_cfg *cfg)
++{
++	struct xenbus_device *xb_dev = front_info->xb_dev;
++	int ret, i;
 +
-+For systems which do not provide IOMMU support, but having specific
-+requirements for display buffers it is possible to allocate such buffers
-+at backend side and share those with the frontend.
-+For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
-+physically contiguous memory, this allows implementing zero-copying
-+use-cases.
++	if (xenbus_read_unsigned(front_info->xb_dev->nodename,
++			XENDISPL_FIELD_BE_ALLOC, 0)) {
++		DRM_INFO("Backend can provide display buffers\n");
++		cfg->be_alloc = true;
++	}
 +
-+Note, while using this scenario the following should be considered:
++	cfg->num_connectors = 0;
++	for (i = 0; i < ARRAY_SIZE(cfg->connectors); i++) {
++		ret = cfg_connector(front_info,
++				&cfg->connectors[i], xb_dev->nodename, i);
++		if (ret < 0)
++			break;
++		cfg->num_connectors++;
++	}
 +
-+#. If guest domain dies then pages/grants received from the backend
-+   cannot be claimed back
++	if (!cfg->num_connectors) {
++		DRM_ERROR("No connector(s) configured at %s\n",
++				xb_dev->nodename);
++		return -ENODEV;
++	}
 +
-+#. Misbehaving guest may send too many requests to the
-+   backend exhausting its grant references and memory
-+   (consider this from security POV).
++	return 0;
++}
 +
-+Driver limitations
-+==================
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_cfg.h b/drivers/gpu/drm/xen/xen_drm_front_cfg.h
+new file mode 100644
+index 000000000000..6e7af670f8cd
+--- /dev/null
++++ b/drivers/gpu/drm/xen/xen_drm_front_cfg.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +
-+#. Only primary plane without additional properties is supported.
++/*
++ *  Xen para-virtual DRM device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
 +
-+#. Only one video mode per connector supported which is configured via XenStore.
++#ifndef __XEN_DRM_FRONT_CFG_H_
++#define __XEN_DRM_FRONT_CFG_H_
 +
-+#. All CRTCs operate at fixed frequency of 60Hz.
++#include <linux/types.h>
++
++#define XEN_DRM_FRONT_MAX_CRTCS	4
++
++struct xen_drm_front_cfg_connector {
++	int width;
++	int height;
++	char *xenstore_path;
++};
++
++struct xen_drm_front_cfg {
++	struct xen_drm_front_info *front_info;
++	/* number of connectors in this configuration */
++	int num_connectors;
++	/* connector configurations */
++	struct xen_drm_front_cfg_connector connectors[XEN_DRM_FRONT_MAX_CRTCS];
++	/* set if dumb buffers are allocated externally on backend side */
++	bool be_alloc;
++};
++
++int xen_drm_front_cfg_card(struct xen_drm_front_info *front_info,
++		struct xen_drm_front_cfg *cfg);
++
++#endif /* __XEN_DRM_FRONT_CFG_H_ */
 -- 
 2.7.4
