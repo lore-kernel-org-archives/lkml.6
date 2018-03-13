@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvNppmUCsNdM1QOUR6tXOfagG4B1he2kpeop1D5tRiowcg5Q5l2Wpr27mXXUyJVvEh4l4c2
-ARC-Seal: i=1; a=rsa-sha256; t=1520955120; cv=none;
+X-Google-Smtp-Source: AG47ELtSblWS52sPb9Vdc5yA/4XYtUPbs81b74Yp1Ez8ARyyBpZa8IizPH7FT2Gm0wB4fouc4o5c
+ARC-Seal: i=1; a=rsa-sha256; t=1520955117; cv=none;
         d=google.com; s=arc-20160816;
-        b=wuFb6dh8v2ilgaF2euHiaFYMG4A+EWlf27hqOZZJ/ulUoW2JFsl3s5Jnr0CHuv4NZh
-         bxXDzLFwFGYllzuJEjPyx/bLJzv2mOujvyZOD5xT3/oskIWXyCWhbyTKtYDMt1zIHRKZ
-         G09ucspxkKJUQgdKtOSBxyy1DQAHWpug6w9nwCsS8BJ9S7mtqixlzP27maGmQAfktZVE
-         8NGs6MDlyzyPyCW8ExmplBbpEXw5q55RDlIk+AX7SjWVIyaMlzTj4sMfvrc9OlIA+HtD
-         IsszYyC/GdiD9LGkWWJ5Lt0e3n+rf2MBrdh6ODlmU0+MSgrmt4C/0/yEmAlH0h0YIAgE
-         NICQ==
+        b=uHCwTGin+flTpVJP1E+WVa+2PPThmnDCmcFNKaoSk0aGxie3wirncZwsgkOnPscSEm
+         ZUfI/dYs7Cs+rPKKk6+iSbD0MfK8lUpqURVBW0numJYfX9EAriag9xV+oo/TexUEIhsF
+         iWJqWHTLTQ7ksGOuq3qWjMRZS4ssFvdLcaIGxGPepVkZ4yiwXW8AlvKl/fpyvbo1KB83
+         GYUptVyiidTJ70PF4T8JxrUpidM/mf9MI2k8nUGnOb4Xa8AsZUjabCSmb7Z52yVUhMdg
+         NB/aDArhGV15u6281r0yz7m/82Ahm3CKQ4biiu2ZaYm4QhhO/wu2mNuDUmMi24oAq8cR
+         dPng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZPRlVdaozkAwZ6C7GsGI01PU3apm9UtSuqYY2fA0A1w=;
-        b=oolWq3tFHjPO/eqAC/1Udg8MYMsTCgUca13iuDiUZDTzC9egP+TkLZpkJhXxpReAZu
-         uf17YZEovsg38RjxE4wr4mLobIEZZ5SzGC8BbMFxYmlXxAUhxpRvLzoWnx022UJvwnzz
-         wW51xvGMFBgzbhzF7O5tBTlgVQn5WO1ajsedNL4FzjIoB2E5tRDdWkfRCVC8FEuP7Y0J
-         vTuHFvxCmU+d0fMbCpHJD8EX56505/TM0Ub0g4amA4DecN/cAKBeSGAvmcEjTasB6jeX
-         VhtDJ3wogTzdwZkXrVmaSrSubEmSYLrsT2SEoMDfFx1isvb+0zoFAN6VjmDI+H27gF5h
-         6hrQ==
+        bh=PhqKEppZLA03t6bMVQ8JVO1LQu+udFVO5ce8KEDbjnY=;
+        b=e73ioCjX0Kt5m/qvKciT+zEt4madUDfo8zXnN4vpfXkXyPDH/4oeCl7BxJoe7caF6c
+         0E0i5gSp4EW1qXA16NFmVZRIVpWyIQEkoY1TzMHFAgi7qH0Mmlp9t3g0pAMc7PuXUG1u
+         WcCeXxGsPLUD9sCwLgSps9zJmMP9UZO8MfHRABqH9C7SJmX0FTqUy5NLJFnX3N/v69tE
+         Koae6tgjB7aBiogCGtoPNXhvEeVY036CSc995ZTWz/wPA7yWW0jSwBra+D9w2ERC5WHD
+         6JRACHmhSus4fouT+HeubUSS1Isip6D6yuWMt7Gr0UnXmtJ1ChwCl3P/lK9rHCg+jB4J
+         0NpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	David Woodhouse <dwmw2@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 095/146] x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
-Date: Tue, 13 Mar 2018 16:24:22 +0100
-Message-Id: <20180313152327.961496713@linuxfoundation.org>
+Subject: [PATCH 4.15 094/146] x86/paravirt, objtool: Annotate indirect calls
+Date: Tue, 13 Mar 2018 16:24:21 +0100
+Message-Id: <20180313152327.906719352@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837036467128835?=
-X-GMAIL-MSGID: =?utf-8?q?1594837036467128835?=
+X-GMAIL-THRID: =?utf-8?q?1594837033233057464?=
+X-GMAIL-MSGID: =?utf-8?q?1594837033233057464?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,11 +61,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit bd89004f6305cbf7352238f61da093207ee518d6 upstream.
+commit 3010a0663fd949d122eca0561b06b0a9453f7866 upstream.
 
-The objtool retpoline validation found this indirect jump. Seeing how
-it's on CPU bringup before we run userspace it should be safe, annotate
-it.
+Paravirt emits indirect calls which get flagged by objtool retpoline
+checks, annotate it away because all these indirect calls will be
+patched out before we start userspace.
+
+This patching happens through alternative_instructions() ->
+apply_paravirt() -> pv_init_ops.patch() which will eventually end up
+in paravirt_patch_default(). This function _will_ write direct
+alternatives.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
@@ -84,24 +89,96 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/head_64.S |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/include/asm/paravirt.h       |   17 +++++++++++++----
+ arch/x86/include/asm/paravirt_types.h |    5 ++++-
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -23,6 +23,7 @@
- #include <asm/nops.h>
- #include "../entry/calling.h"
- #include <asm/export.h>
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -7,6 +7,7 @@
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/pgtable_types.h>
+ #include <asm/asm.h>
 +#include <asm/nospec-branch.h>
  
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -134,6 +135,7 @@ ENTRY(secondary_startup_64)
+ #include <asm/paravirt_types.h>
  
- 	/* Ensure I am executing from virtual addresses */
- 	movq	$1f, %rax
-+	ANNOTATE_RETPOLINE_SAFE
- 	jmp	*%rax
- 1:
- 	UNWIND_HINT_EMPTY
+@@ -879,23 +880,27 @@ extern void default_banner(void);
+ 
+ #define INTERRUPT_RETURN						\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret), CLBR_NONE,	\
+-		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret))
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret);)
+ 
+ #define DISABLE_INTERRUPTS(clobbers)					\
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable), clobbers, \
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_disable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #define ENABLE_INTERRUPTS(clobbers)					\
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable), clobbers,	\
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_enable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #ifdef CONFIG_X86_32
+ #define GET_CR0_INTO_EAX				\
+ 	push %ecx; push %edx;				\
++	ANNOTATE_RETPOLINE_SAFE;				\
+ 	call PARA_INDIRECT(pv_cpu_ops+PV_CPU_read_cr0);	\
+ 	pop %edx; pop %ecx
+ #else	/* !CONFIG_X86_32 */
+@@ -917,21 +922,25 @@ extern void default_banner(void);
+  */
+ #define SWAPGS								\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
+-		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs)		\
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs);		\
+ 		 )
+ 
+ #define GET_CR2_INTO_RAX				\
+-	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2)
++	ANNOTATE_RETPOLINE_SAFE;				\
++	call PARA_INDIRECT(pv_mmu_ops+PV_MMU_read_cr2);
+ 
+ #define USERGS_SYSRET64							\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_usergs_sysret64),	\
+ 		  CLBR_NONE,						\
+-		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64))
++		  ANNOTATE_RETPOLINE_SAFE;					\
++		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64);)
+ 
+ #ifdef CONFIG_DEBUG_ENTRY
+ #define SAVE_FLAGS(clobbers)                                        \
+ 	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl), clobbers, \
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);        \
++		  ANNOTATE_RETPOLINE_SAFE;				    \
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_save_fl);    \
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ #endif
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -43,6 +43,7 @@
+ #include <asm/desc_defs.h>
+ #include <asm/kmap_types.h>
+ #include <asm/pgtable_types.h>
++#include <asm/nospec-branch.h>
+ 
+ struct page;
+ struct thread_struct;
+@@ -392,7 +393,9 @@ int paravirt_disable_iospace(void);
+  * offset into the paravirt_patch_template structure, and can therefore be
+  * freely converted back into a structure offset.
+  */
+-#define PARAVIRT_CALL	"call *%c[paravirt_opptr];"
++#define PARAVIRT_CALL					\
++	ANNOTATE_RETPOLINE_SAFE				\
++	"call *%c[paravirt_opptr];"
+ 
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
