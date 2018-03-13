@@ -1,272 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752402AbeCMRQo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:16:44 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34207 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752196AbeCMRQa (ORCPT
+        id S1752485AbeCMRQv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:16:51 -0400
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:35678 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751362AbeCMRQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:16:30 -0400
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 2/2] dmaengine: stm32-mdma: Fix incomplete Hw descriptors allocator
-Date: Tue, 13 Mar 2018 18:16:06 +0100
-Message-ID: <1520961366-27473-3-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520961366-27473-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1520961366-27473-1-git-send-email-pierre-yves.mordret@st.com>
+        Tue, 13 Mar 2018 13:16:45 -0400
+X-Google-Smtp-Source: AG47ELsWURopPfe291VeVNtVnHxIO73w8iMQ2JGWeVjv05Ag/V3LfF6bVDlA3IMiWsXEXE3BwGSmbFKSDxUaMSCXEOY=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
- signatures=0
+In-Reply-To: <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
+References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com> <152055664720.63229.16209149030018336339.stgit@sosxen2.amd.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 19:16:44 +0200
+Message-ID: <CAHp75VdK6qFopBE4rD4yNO5GHccxyte=GhYU7YGcWOEYSCyX8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] iommu/amd - Add debugfs support
+To: Gary R Hook <gary.hook@amd.com>
+Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only 1 Hw Descriptor is allocated. Loop over required Hw descriptor for
-proper allocation.
+On Fri, Mar 9, 2018 at 2:50 AM, Gary R Hook <gary.hook@amd.com> wrote:
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v1:
-       * Initial
----
----
- drivers/dma/stm32-mdma.c | 90 ++++++++++++++++++++++++++++++------------------
- 1 file changed, 56 insertions(+), 34 deletions(-)
+> +       default n
 
-diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
-index fbcffa2..ab7d174 100644
---- a/drivers/dma/stm32-mdma.c
-+++ b/drivers/dma/stm32-mdma.c
-@@ -252,13 +252,17 @@ struct stm32_mdma_hwdesc {
- 	u32 cmdr;
- } __aligned(64);
- 
-+struct stm32_mdma_desc_node {
-+	struct stm32_mdma_hwdesc *hwdesc;
-+	dma_addr_t hwdesc_phys;
-+};
-+
- struct stm32_mdma_desc {
- 	struct virt_dma_desc vdesc;
- 	u32 ccr;
--	struct stm32_mdma_hwdesc *hwdesc;
--	dma_addr_t hwdesc_phys;
- 	bool cyclic;
- 	u32 count;
-+	struct stm32_mdma_desc_node node[];
- };
- 
- struct stm32_mdma_chan {
-@@ -344,30 +348,43 @@ static struct stm32_mdma_desc *stm32_mdma_alloc_desc(
- 		struct stm32_mdma_chan *chan, u32 count)
- {
- 	struct stm32_mdma_desc *desc;
-+	int i;
- 
--	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
-+	desc = kzalloc(sizeof(*desc) +
-+		       sizeof(struct stm32_mdma_desc_node) * count, GFP_NOWAIT);
- 	if (!desc)
- 		return NULL;
- 
--	desc->hwdesc = dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
--				      &desc->hwdesc_phys);
--	if (!desc->hwdesc) {
--		dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
--		kfree(desc);
--		return NULL;
-+	for (i = 0; i < count; i++) {
-+		desc->node[i].hwdesc =
-+			dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
-+				       &desc->node[i].hwdesc_phys);
-+		if (!desc->node[i].hwdesc)
-+			goto err;
- 	}
- 
- 	desc->count = count;
- 
- 	return desc;
-+
-+err:
-+	dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
-+	while (--i >= 0)
-+		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
-+			      desc->node[i].hwdesc_phys);
-+	kfree(desc);
-+	return NULL;
- }
- 
- static void stm32_mdma_desc_free(struct virt_dma_desc *vdesc)
- {
- 	struct stm32_mdma_desc *desc = to_stm32_mdma_desc(vdesc);
- 	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(vdesc->tx.chan);
-+	int i;
- 
--	dma_pool_free(chan->desc_pool, desc->hwdesc, desc->hwdesc_phys);
-+	for (i = 0; i < desc->count; i++)
-+		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
-+			      desc->node[i].hwdesc_phys);
- 	kfree(desc);
- }
- 
-@@ -669,18 +686,18 @@ static int stm32_mdma_set_xfer_param(struct stm32_mdma_chan *chan,
- }
- 
- static void stm32_mdma_dump_hwdesc(struct stm32_mdma_chan *chan,
--				   struct stm32_mdma_hwdesc *hwdesc)
-+				   struct stm32_mdma_desc_node *node)
- {
--	dev_dbg(chan2dev(chan), "hwdesc:  0x%p\n", hwdesc);
--	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", hwdesc->ctcr);
--	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", hwdesc->cbndtr);
--	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", hwdesc->csar);
--	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", hwdesc->cdar);
--	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", hwdesc->cbrur);
--	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", hwdesc->clar);
--	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", hwdesc->ctbr);
--	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", hwdesc->cmar);
--	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", hwdesc->cmdr);
-+	dev_dbg(chan2dev(chan), "hwdesc:  0x%08x\n", node->hwdesc_phys);
-+	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", node->hwdesc->ctcr);
-+	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", node->hwdesc->cbndtr);
-+	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", node->hwdesc->csar);
-+	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", node->hwdesc->cdar);
-+	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", node->hwdesc->cbrur);
-+	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", node->hwdesc->clar);
-+	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", node->hwdesc->ctbr);
-+	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", node->hwdesc->cmar);
-+	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", node->hwdesc->cmdr);
- }
- 
- static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
-@@ -694,7 +711,7 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
- 	struct stm32_mdma_hwdesc *hwdesc;
- 	u32 next = count + 1;
- 
--	hwdesc = &desc->hwdesc[count];
-+	hwdesc = desc->node[count].hwdesc;
- 	hwdesc->ctcr = ctcr;
- 	hwdesc->cbndtr &= ~(STM32_MDMA_CBNDTR_BRC_MK |
- 			STM32_MDMA_CBNDTR_BRDUM |
-@@ -704,19 +721,20 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
- 	hwdesc->csar = src_addr;
- 	hwdesc->cdar = dst_addr;
- 	hwdesc->cbrur = 0;
--	hwdesc->clar = desc->hwdesc_phys + next * sizeof(*hwdesc);
- 	hwdesc->ctbr = ctbr;
- 	hwdesc->cmar = config->mask_addr;
- 	hwdesc->cmdr = config->mask_data;
- 
- 	if (is_last) {
- 		if (is_cyclic)
--			hwdesc->clar = desc->hwdesc_phys;
-+			hwdesc->clar = desc->node[0].hwdesc_phys;
- 		else
- 			hwdesc->clar = 0;
-+	} else {
-+		hwdesc->clar = desc->node[next].hwdesc_phys;
- 	}
- 
--	stm32_mdma_dump_hwdesc(chan, hwdesc);
-+	stm32_mdma_dump_hwdesc(chan, &desc->node[count]);
- }
- 
- static int stm32_mdma_setup_xfer(struct stm32_mdma_chan *chan,
-@@ -780,7 +798,7 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
- {
- 	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(c);
- 	struct stm32_mdma_desc *desc;
--	int ret;
-+	int i, ret;
- 
- 	/*
- 	 * Once DMA is in setup cyclic mode the channel we cannot assign this
-@@ -806,7 +824,9 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
- 	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
- 
- xfer_setup_err:
--	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
-+	for (i = 0; i < desc->count; i++)
-+		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
-+			      desc->node[i].hwdesc_phys);
- 	kfree(desc);
- 	return NULL;
- }
-@@ -895,7 +915,9 @@ stm32_mdma_prep_dma_cyclic(struct dma_chan *c, dma_addr_t buf_addr,
- 	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
- 
- xfer_setup_err:
--	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
-+	for (i = 0; i < desc->count; i++)
-+		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
-+			      desc->node[i].hwdesc_phys);
- 	kfree(desc);
- 	return NULL;
- }
-@@ -1009,7 +1031,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
- 			ctcr |= STM32_MDMA_CTCR_PKE;
- 
- 		/* Prepare hardware descriptor */
--		hwdesc = desc->hwdesc;
-+		hwdesc = desc->node[0].hwdesc;
- 		hwdesc->ctcr = ctcr;
- 		hwdesc->cbndtr = cbndtr;
- 		hwdesc->csar = src;
-@@ -1020,7 +1042,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
- 		hwdesc->cmar = 0;
- 		hwdesc->cmdr = 0;
- 
--		stm32_mdma_dump_hwdesc(chan, hwdesc);
-+		stm32_mdma_dump_hwdesc(chan, &desc->node[0]);
- 	} else {
- 		/* Setup a LLI transfer */
- 		ctcr |= STM32_MDMA_CTCR_TRGM(STM32_MDMA_LINKED_LIST) |
-@@ -1120,7 +1142,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
- 	}
- 
- 	chan->desc = to_stm32_mdma_desc(vdesc);
--	hwdesc = chan->desc->hwdesc;
-+	hwdesc = chan->desc->node[0].hwdesc;
- 	chan->curr_hwdesc = 0;
- 
- 	stm32_mdma_write(dmadev, STM32_MDMA_CCR(id), chan->desc->ccr);
-@@ -1198,7 +1220,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
- 	unsigned long flags;
- 	u32 status, reg;
- 
--	hwdesc = &chan->desc->hwdesc[chan->curr_hwdesc];
-+	hwdesc = chan->desc->node[chan->curr_hwdesc].hwdesc;
- 
- 	spin_lock_irqsave(&chan->vchan.lock, flags);
- 
-@@ -1268,13 +1290,13 @@ static size_t stm32_mdma_desc_residue(struct stm32_mdma_chan *chan,
- 				      u32 curr_hwdesc)
- {
- 	struct stm32_mdma_device *dmadev = stm32_mdma_get_dev(chan);
-+	struct stm32_mdma_hwdesc *hwdesc = desc->node[0].hwdesc;
- 	u32 cbndtr, residue, modulo, burst_size;
- 	int i;
- 
- 	residue = 0;
- 	for (i = curr_hwdesc + 1; i < desc->count; i++) {
--		struct stm32_mdma_hwdesc *hwdesc = &desc->hwdesc[i];
--
-+		hwdesc = desc->node[i].hwdesc;
- 		residue += STM32_MDMA_CBNDTR_BNDT(hwdesc->cbndtr);
- 	}
- 	cbndtr = stm32_mdma_read(dmadev, STM32_MDMA_CBNDTR(chan->id));
+Redundant
+
+
+> +#include <linux/pci.h>
+> +#include <linux/iommu.h>
+> +#include <linux/debugfs.h>
+
+Keep in order?
+
+> +#include "amd_iommu_proto.h"
+> +#include "amd_iommu_types.h"
+
+> +/* DebugFS helpers */
+> +#define        OBUFP           (obuf + oboff)
+> +#define        OBUFLEN         obuflen
+> +#define        OBUFSPC         (OBUFLEN - oboff)
+> +#define        OSCNPRINTF(fmt, ...) \
+> +               scnprintf(OBUFP, OBUFSPC, fmt, ## __VA_ARGS__)
+
+I don't see any advantages of this. Other way around, they will simple
+makes things hard to read an understand in place.
+
+
+> +       for (i = start ; i <= end ; i++)
+
+Missed {}
+
+> +               if ((amd_iommu_dev_table[i].data[0] ^ 0x3)
+> +                   || amd_iommu_dev_table[i].data[1])
+> +                       n++;
+> +       return n;
+> +}
+
+> +
+> +static ssize_t amd_iommu_debugfs_dtecount_read(struct file *filp,
+> +                                         char __user *ubuf,
+> +                                         size_t count, loff_t *offp)
+> +{
+> +       struct amd_iommu *iommu = filp->private_data;
+
+> +       unsigned int obuflen = 512;
+
+Sounds like way too much.
+
+> +       if (!iommu)
+> +               return 0;
+
+When this possible?
+
+> +       obuf = kmalloc(OBUFLEN, GFP_KERNEL);
+> +       if (!obuf)
+> +               return -ENOMEM;
+> +
+> +       n = amd_iommu_count_valid_dtes(0, 0xFFFF);
+> +       oboff += OSCNPRINTF("%d\n", n);
+
+> +       return ret;
+> +}
+
+
+> @@ -89,6 +89,7 @@
+>  #define ACPI_DEVFLAG_ATSDIS             0x10000000
+>
+>  #define LOOP_TIMEOUT   100000
+> +
+>  /*
+>   * ACPI table definitions
+>   *
+
+Doesn't belong to the patch.
+
+> +#endif
+> +
+> +
+
+Extra unneeded line.
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
