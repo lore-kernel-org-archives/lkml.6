@@ -1,88 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934036AbeCMQS1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:18:27 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:37427 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933466AbeCMQSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:18:08 -0400
-Subject: Re: [PATCH] drm/nouveau/secboot: remove VLA usage
-To: David Laight <David.Laight@ACULAB.COM>,
-        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180313144812.GA30043@embeddedgus>
- <6977788dfbac4b70b54fd56310cc27fe@AcuMS.aculab.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <ba264656-6e56-e907-97c0-8cdd28ce8340@embeddedor.com>
-Date: Tue, 13 Mar 2018 11:18:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934041AbeCMQSw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:18:52 -0400
+Received: from mga02.intel.com ([134.134.136.20]:23448 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752281AbeCMQSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:18:49 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="24166277"
+Date: Tue, 13 Mar 2018 09:53:38 -0600
+From: Scott Bauer <scott.bauer@intel.com>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Cc: Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] block: sed-opal: support write to shadow mbr
+Message-ID: <20180313155337.uz6uxdpeonbjwa2l@sbauer-Z170X-UD5>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 MIME-Version: 1.0
-In-Reply-To: <6977788dfbac4b70b54fd56310cc27fe@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evmcp-002fVM-Cl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:51778
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Tue, Mar 13, 2018 at 02:08:53PM +0100, Jonas Rabenstein wrote:
+> Hi,
+> this patchset adds support to write data into the shadow mbr of sed-opal
+> enabled devices. They apply cleanly on today next-tree (next-20180313)
+> and requires the u64 short atom length fix from [0] as that is still
+> missing in that tree. As I only can test on my only sed-opal enabled
+> Samsung 850 Evo on amd64, tests on other hardware would be appreciated.
 
-On 03/13/2018 11:10 AM, David Laight wrote:
-> From: Gustavo A. R. Silva
->> Sent: 13 March 2018 14:48
->> In preparation to enabling -Wvla, remove VLA. In this particular
->> case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
->> variable cmdline_size. Also, remove cmdline_size as it is not
->> actually useful anymore.
-> ...
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
->> b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
->> index 6f10b09..2da147b 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
->> @@ -80,12 +80,12 @@ acr_ls_msgqueue_post_run(struct nvkm_msgqueue *queue,
->>   			 struct nvkm_falcon *falcon, u32 addr_args)
->>   {
->>   	struct nvkm_device *device = falcon->owner->device;
->> -	u32 cmdline_size = NVKM_MSGQUEUE_CMDLINE_SIZE;
->> -	u8 buf[cmdline_size];
->> +	u8 buf[NVKM_MSGQUEUE_CMDLINE_SIZE];
->>
->> -	memset(buf, 0, cmdline_size);
->> +	memset(buf, 0, NVKM_MSGQUEUE_CMDLINE_SIZE);
->>   	nvkm_msgqueue_write_cmdline(queue, buf);
->> -	nvkm_falcon_load_dmem(falcon, buf, addr_args, cmdline_size, 0);
->> +	nvkm_falcon_load_dmem(falcon, buf, addr_args,
->> +			      NVKM_MSGQUEUE_CMDLINE_SIZE, 0);
-> 
-> I think I'd use 'sizeof (buf)' in both those lines.
-> 
-
-Yeah. I like it.
-
-I'll send v2 with that change shortly.
-
-Thanks
---
-Gustavo
+Generally the series looks fine, there are a few nits I've sent out.
+I will test and get back to you in the next day or two. With any further
+comments.
