@@ -1,23 +1,23 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELt7J62p3k9BsOiRbDDp40Q6zZTpDC962IJ3u6IhCMGYb9Dd9eoUrHcK1UrAEhevn1QAReVj
-ARC-Seal: i=1; a=rsa-sha256; t=1521141382; cv=none;
+X-Google-Smtp-Source: AG47ELvr1/Ym4xkk33BqzfxbcyzR9TP3/Zkbh/+R7bYXnwgg9AXDpmMHAAU/njtKYT40eURUp7jd
+ARC-Seal: i=1; a=rsa-sha256; t=1520966036; cv=none;
         d=google.com; s=arc-20160816;
-        b=RDL7EZpVpvFAd8Ge8paqeWJd6ZxA1Vk06785460BT9xoVQKtTberVwU3Ul7sNZ48tN
-         eIL0KyxdddRPJuoX1FuXk4M698nxl139SGXj5uHzeS8WK/jfNgU+wy0ZN4us2qVFaetr
-         cBM30QgnyJWDv7xcqy0Qmy2nCtyukuSarVeZCEN5rUs1GIKOSa7QrubfGBUn6GUXH+xY
-         5JDyjI3DVJWf4lO3LbzfVugyXUR0Sl1+DXUuELHcAuYZzhssPprSvd2PlJRSln6sTepS
-         5RmBlsoHgvwJ+hfNSqfQo2AhPiHNKPDst/+0elpN41aezqbdin3P0zXkhQvhj71JmamW
-         3u1g==
+        b=eQ93Kqzg4UB4c6XXPSDkp1nP80d1nXBUDtjdr5oFRjOiduR2Du+b0Cu+POcXFAptH+
+         CNq9lin7EJIvf31ZaYrEvMm/dkpRYaYkT/EvPSmQOG0SJGysJyQulH79WUb6JQAqF7g4
+         UduM7GIpnS/8qEDFMYbEWtszL6qaoLjq4tLxStTHfRSieeisIp30DAKcuFGu5RONfNs3
+         mZe/fo0tRay4eMhDzHOCY49O7s+aNn3Ss0x8JgCg8e9Xq9WRN6u+25oMSzVoOWjjLb7e
+         YDqYWR6piLSFVPqhFMsGWyyvROKDMmpydthArptOq8BqlKwAY+VDRZsfdPejeYVsa9ww
+         EtDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MjeQH6/o+pSQUiPMo6susXjsjdsbYhgfwRnxrq1rbxc=;
-        b=ci0Rk9sHMsR0U8oOtXISfm0AUAjeeFxIWRe8MHQ2iGwNozPonN3Qz0dCR/9zGRJN/5
-         ZEJcqWKvMoLHl9RwRzXqpn4BYwxno1NEuDdJjmrR5R9aCqPGIOsJBBD2GRhr3/Fe5Hy1
-         3BaDypRJt+rkdj4o4MDbkLR+QpRDZReIYaIqqcWJk8Vi80rL3hd4FPkUNQ11JYO7pK7R
-         6MEyC4elmEd5k3arxUT5Qzd5L1TvHAdQ1/3LY2dd8KoZcAJlJeRsdfBgyEnXmrT+aiG6
-         WUtILtueLuFH+FNeoCELzY7b280zIS0d8sihPEAg+QHHis2CBcbfXaek9g4Wp56I9sVN
-         cdDQ==
+        bh=5MbJoKo+c1+tYVpuHyQ2aYrQ4Y0B9cuaEC+XCSoTvXs=;
+        b=dDdmAiZrE+6nsV9Z6L33ZlGUOh6lrIhJwTHwLzAhrCH0mMhLGfmUC9SqXHmffQahzL
+         hJGvLvydmzpBBj3l7MUlgjdPJVXydvlMxcjtBjDSTrwwy4i80r0HebiBI2d5p78ol/ZL
+         3dmQamm6xRVLiZqC+BCBfz7MPZ398alGcqE1umpjwacQ5hgg6qulVKtl3GOsjTGpCJne
+         UB/aGqAKBv7smp44vBNsULFD3rVZWaqvtaJK6mGoajlLnDknQmtGtE9Ces2vvEQ6rnUj
+         ypj0ZEfNtzD/7hJn3ez/9eVZiup9VoFGI27P5fMy8H+i36qvBP6ONSGy1+IXq7dWBBQL
+         fw+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
@@ -25,74 +25,131 @@ Authentication-Results: mx.google.com;
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Michal Suchanek <msuchanek@suse.de>
 To: linuxppc-dev@lists.ozlabs.org
-Cc: Kate Stewart <kstewart@linuxfoundation.org>,
-	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	Paul Mackerras <paulus@samba.org>,
-	Michael Neuling <mikey@neuling.org>,
-	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-	Daniel Axtens <dja@axtens.net>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	David Gibson <david@gibson.dropbear.id.au>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
-	Joe Perches <joe@perches.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
 	"Tobin C. Harding" <me@tobin.cc>,
-	Michal Suchanek <msuchanek@suse.de>
-Subject: [PATCH RFC rebase 1/9] powerpc: Add barrier_nospec
-Date: Thu, 15 Mar 2018 20:15:50 +0100
-Message-Id: <8cb7d41beef9bdd351120d0512f73ac3bfada168.1521141122.git.msuchanek@suse.de>
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	David Gibson <david@gibson.dropbear.id.au>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Michael Neuling <mikey@neuling.org>,
+	"Oliver O'Halloran" <oohall@gmail.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+	Daniel Axtens <dja@axtens.net>,
+	Russell Currey <ruscur@russell.cc>,
+	Joe Perches <joe@perches.com>,
+	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 7/8] powerpc/64s: barrier_nospec: Add hcall triggerr
+Date: Tue, 13 Mar 2018 19:33:05 +0100
+Message-Id: <1c687d0e029de81ae27465dd4c32036e956f4970.1520965380.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
-References: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
- <cover.1521141122.git.msuchanek@suse.de>
-In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
-References: <cover.1521141122.git.msuchanek@suse.de>
+In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
+References: <cover.1520965380.git.msuchanek@suse.de>
+In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
+References: <cover.1520965380.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594848477585828051?=
-X-GMAIL-MSGID: =?utf-8?q?1595032346073305379?=
+X-GMAIL-THRID: =?utf-8?q?1594848482589457573?=
+X-GMAIL-MSGID: =?utf-8?q?1594848482589457573?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When the firmware supports it an otherwise useless combination of ORI
-instruction arguments is interpreted as speculation barrier. Implement
-barrier_nospec using this instruction.
-
-Based on the out-of-tree gmb() implementation.
+Copypasta from rfi implementation
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/include/asm/barrier.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/powerpc/platforms/pseries/setup.c | 38 ++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
-index 10daa1d56e0a..8e47b3abe405 100644
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -75,6 +75,15 @@ do {									\
- 	___p1;								\
- })
+diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+index 1a527625acf7..b779ddb8e250 100644
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -459,38 +459,50 @@ static void __init find_and_init_phbs(void)
+ 	of_pci_check_probe_only();
+ }
  
-+/* TODO: add patching so this can be disabled */
-+/* Prevent speculative execution past this barrier. */
-+#define barrier_nospec_asm ori 31,31,0
-+#ifdef __ASSEMBLY__
-+#define barrier_nospec barrier_nospec_asm
-+#else
-+#define barrier_nospec() __asm__ __volatile__ (stringify_in_c(barrier_nospec_asm) : : :)
-+#endif
+-static void pseries_setup_rfi_flush(void)
++static void pseries_setup_rfi_nospec(void)
+ {
+ 	struct h_cpu_char_result result;
+-	enum l1d_flush_type types;
+-	bool enable;
++	enum l1d_flush_type flush_types;
++	enum spec_barrier_type barrier_type;
++	bool flush_enable;
++	bool barrier_enable;
+ 	long rc;
+ 
+ 	/* Enable by default */
+-	enable = true;
++	flush_enable = true;
++	barrier_enable = true;
++	/* no fallback if the firmware does not tell us */
++	barrier_type = SPEC_BARRIER_NONE;
+ 
+ 	rc = plpar_get_cpu_characteristics(&result);
+ 	if (rc == H_SUCCESS) {
+-		types = L1D_FLUSH_NONE;
++		flush_types = L1D_FLUSH_NONE;
+ 
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
+-			types |= L1D_FLUSH_MTTRIG;
++			flush_types |= L1D_FLUSH_MTTRIG;
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
+-			types |= L1D_FLUSH_ORI;
++			flush_types |= L1D_FLUSH_ORI;
++		if (result.character & H_CPU_CHAR_SPEC_BAR_ORI31)
++			barrier_type |= SPEC_BARRIER_ORI;
+ 
+ 		/* Use fallback if nothing set in hcall */
+-		if (types == L1D_FLUSH_NONE)
+-			types = L1D_FLUSH_FALLBACK;
++		if (flush_types == L1D_FLUSH_NONE)
++			flush_types = L1D_FLUSH_FALLBACK;
+ 
+ 		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
+ 		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
+-			enable = false;
++			flush_enable = false;
 +
- #include <asm-generic/barrier.h>
++		if ((!(result.behaviour & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR)) ||
++		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
++			barrier_enable = false;
+ 	} else {
+ 		/* Default to fallback if case hcall is not available */
+-		types = L1D_FLUSH_FALLBACK;
++		flush_types = L1D_FLUSH_FALLBACK;
+ 	}
  
- #endif /* _ASM_POWERPC_BARRIER_H */
+-	setup_rfi_flush(types, enable);
++	setup_barrier_nospec(barrier_type, barrier_enable);
++	setup_rfi_flush(flush_types, flush_enable);
+ }
+ 
+ #ifdef CONFIG_PCI_IOV
+@@ -666,7 +678,7 @@ static void __init pSeries_setup_arch(void)
+ 
+ 	fwnmi_init();
+ 
+-	pseries_setup_rfi_flush();
++	pseries_setup_rfi_nospec();
+ 
+ 	/* By default, only probe PCI (can be overridden by rtas_pci) */
+ 	pci_add_flags(PCI_PROBE_ONLY);
 -- 
 2.13.6
