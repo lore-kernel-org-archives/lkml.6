@@ -1,157 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752349AbeCMNBI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:01:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:37858 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751512AbeCMNBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:01:07 -0400
-Subject: Re: [PATCH] KVM: arm/arm64: replacing per-VM's per-CPU variable
-To: Peng Hao <peng.hao2@zte.com.cn>, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, cdall@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-References: <1520974993-40423-1-git-send-email-peng.hao2@zte.com.cn>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <37d19d6c-8787-d190-0ef0-c6709cb9e976@arm.com>
-Date: Tue, 13 Mar 2018 13:01:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752632AbeCMNEa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:04:30 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48825 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752156AbeCMNE3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 09:04:29 -0400
+X-ME-Sender: <xms:XMynWshEoPFk3ahOqjytSxc2nR57E7APY7wNnwt9zQCgWx7M5NYIbg>
+Message-Id: <1520946268.2518488.1301423472.4D7861CD@webmail.messagingengine.com>
+From: "Jacob S. Moroni" <mail@jakemoroni.com>
+To: linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <1520974993-40423-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-54087d22
+Date: Tue, 13 Mar 2018 09:04:28 -0400
+Subject: Should the VM_PFNMAP flag be cleared after a call to dma_mmap_coherent?
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[You're repeatedly posting to the kvmarm mailing list without being
-subscribed to it. I've flushed the queue now, but please consider
-subscribing to the list, it will help everyone]
+Hello,
 
-On 13/03/18 21:03, Peng Hao wrote:
-> Using a global per-CPU variable instead of per-VM's per-CPU variable.
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  arch/arm/include/asm/kvm_host.h   |  3 ---
->  arch/arm64/include/asm/kvm_host.h |  3 ---
->  virt/kvm/arm/arm.c                | 26 ++++++--------------------
->  3 files changed, 6 insertions(+), 26 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-> index 248b930..4224f3b 100644
-> --- a/arch/arm/include/asm/kvm_host.h
-> +++ b/arch/arm/include/asm/kvm_host.h
-> @@ -59,9 +59,6 @@ struct kvm_arch {
->  	/* VTTBR value associated with below pgd and vmid */
->  	u64    vttbr;
->  
-> -	/* The last vcpu id that ran on each physical CPU */
-> -	int __percpu *last_vcpu_ran;
-> -
->  	/*
->  	 * Anything that is not used directly from assembly code goes
->  	 * here.
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 596f8e4..5035a08 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -67,9 +67,6 @@ struct kvm_arch {
->  	/* VTTBR value associated with above pgd and vmid */
->  	u64    vttbr;
->  
-> -	/* The last vcpu id that ran on each physical CPU */
-> -	int __percpu *last_vcpu_ran;
-> -
->  	/* The maximum number of vCPUs depends on the used GIC model */
->  	int max_vcpus;
->  
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 86941f6..a67ffb0 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -59,6 +59,8 @@
->  /* Per-CPU variable containing the currently running vcpu. */
->  static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_arm_running_vcpu);
->  
-> +static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_last_ran_vcpu);
-> +
->  /* The VMID used in the VTTBR */
->  static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
->  static u32 kvm_next_vmid;
-> @@ -115,18 +117,11 @@ void kvm_arch_check_processor_compat(void *rtn)
->   */
->  int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  {
-> -	int ret, cpu;
-> +	int ret;
->  
->  	if (type)
->  		return -EINVAL;
->  
-> -	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
-> -	if (!kvm->arch.last_vcpu_ran)
-> -		return -ENOMEM;
-> -
-> -	for_each_possible_cpu(cpu)
-> -		*per_cpu_ptr(kvm->arch.last_vcpu_ran, cpu) = -1;
-> -
->  	ret = kvm_alloc_stage2_pgd(kvm);
->  	if (ret)
->  		goto out_fail_alloc;
-> @@ -147,9 +142,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  	return ret;
->  out_free_stage2_pgd:
->  	kvm_free_stage2_pgd(kvm);
-> -out_fail_alloc:
-> -	free_percpu(kvm->arch.last_vcpu_ran);
-> -	kvm->arch.last_vcpu_ran = NULL;
-> +out_fail_alloc:
->  	return ret;
->  }
->  
-> @@ -179,9 +172,6 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->  
->  	kvm_vgic_destroy(kvm);
->  
-> -	free_percpu(kvm->arch.last_vcpu_ran);
-> -	kvm->arch.last_vcpu_ran = NULL;
-> -
->  	for (i = 0; i < KVM_MAX_VCPUS; ++i) {
->  		if (kvm->vcpus[i]) {
->  			kvm_arch_vcpu_free(kvm->vcpus[i]);
-> @@ -343,17 +333,13 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
->  
->  void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->  {
-> -	int *last_ran;
-> -
-> -	last_ran = this_cpu_ptr(vcpu->kvm->arch.last_vcpu_ran);
-> -
->  	/*
->  	 * We might get preempted before the vCPU actually runs, but
->  	 * over-invalidation doesn't affect correctness.
->  	 */
-> -	if (*last_ran != vcpu->vcpu_id) {
-> +	if (per_cpu(kvm_last_ran_vcpu, cpu) != vcpu) {
->  		kvm_call_hyp(__kvm_tlb_flush_local_vmid, vcpu);
-> -		*last_ran = vcpu->vcpu_id;
-> +		per_cpu(kvm_last_ran_vcpu, cpu) = vcpu;
->  	}
->  
->  	vcpu->cpu = cpu;
-> 
+First, let me just say that this is more of a question rather than a proposal.
 
-Have you read and understood what this code is about? The whole point of
-this code is to track physical CPUs on a per-VM basis. Making it global
-completely defeats the point, and can result in guest memory corruption.
-Please see commit 94d0e5980d67.
+I have a question regarding the behavior of the dma_mmap_coherent routine, and
+the VM_PFNMAP flag in general.
 
-Thanks,
+Right now, it seems like the dma_mmap_coherent routine is essentially just a
+wrapper for remap_pfn_range, which itself sets the VM_PFNMAP and VM_IO flags.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+However, dma_mmap_coherent is explicitly designed to map in buffers that have
+been previously allocated with dma_alloc_coherent, which therefore means that
+there is always a struct page backing for the entire buffer, right?
+
+The reason this matters is because when the VM_PFNMAP flag is set, the user
+can't make any calls that end up doing a get_user_pages. The main case I can
+think of is direct IO. Consider the case where there's some specialized hardware
+that is generating raw file data and placing it in host memory, which is then
+mapped in to an application. It would be beneficial to be able to do a
+direct IO write straight from the mapping in user space to avoid an unnecessary
+copy. This matters more on some embedded systems where the PCIe bandwidth
+is in the same ballpark as the memcpy bandwidth.
+
+This can be accomplished by more manual mapping methods, but it would be nice
+if it could be done with the standard dma_alloc/mmap_coherent pair.
+
+Is there a reason this flag should not be cleared before returning from
+dma_mmap_coherent?
+
+Is there a benefit of this flag being set? Perhaps performance?
+
+I understand that the flag indicates that there's no struct page behind a
+given page, but is there a reason to have this flag be set when all pages
+are in fact true RAM?
+
+Would there be any issues if I were to just clear these flags myself after
+dma_mmap_coherent returns?
+
+Also, in my attempts to understand this, I have found what may be a few bugs,
+primarily in some GPU drivers.
+
+For example, in the "exynox_drm_gem_mmap_buffer" function in
+drivers/gpu/drm/exynos/exynos_drm_gem.c, the VM_PFNMAP flag is explicitly
+cleared, but then it goes on to call dma_mmap_attrs, which I think ends up just
+re-setting the flag.
+
+This is found in a few other places as well. Thoughts?
+
+Any advice would be appreciated.
+
+Thanks!
+
+Jake Moroni
