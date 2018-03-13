@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeCMRUB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:20:01 -0400
-Received: from resqmta-po-12v.sys.comcast.net ([96.114.154.171]:59012 "EHLO
-        resqmta-po-12v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752431AbeCMRT7 (ORCPT
+        id S1752435AbeCMRUp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:20:45 -0400
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:37314 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751731AbeCMRUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:19:59 -0400
-Date: Tue, 13 Mar 2018 12:19:56 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Shakeel Butt <shakeelb@google.com>
-cc: Suleiman Souhlal <suleiman@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab, slub: remove size disparity on debug kernel
-In-Reply-To: <20180313165428.58699-1-shakeelb@google.com>
-Message-ID: <alpine.DEB.2.20.1803131217200.9367@nuc-kabylake>
-References: <20180313165428.58699-1-shakeelb@google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 13 Mar 2018 13:20:44 -0400
+X-Google-Smtp-Source: AG47ELvq+GdyHV01XHqGPyMgRLd8eW4y2o4vNWPJKw9uh95A+gLt9poEWVU26E5KDHl67NsF7iidwU2P2ApSMHw1B1U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfDdbdPP1WxYGakki9wc8rhD3URHN9u0G7rv6e0MBjMfViurbRWTd+z46PAwehEANjNICRhU+iz3HMiqIqb3wgK219thwM1aR+DbG45MlIACVlMcyiOPA
- SspaW4JjuITVnbgoOrqfhAgL4Ci0dpcavgna6TdnJHFq+7NC1al1APNKnGb4kYmc2vezqFaUdXUGt19afysoxKy+2VEuHIU2bHtH6+9R9E0FPEmP/3NYI62s
- sMfnzK+brwbS6rZHWS9/JwMWYM12KqtNAFKTynGIBWGHhgyZIimtlPFC3G5h+UPVjNWAjdVgDIfdsQ6FPpYydJ5pC3LOuP7DrRyGyfAIEX6Y9/2EWSdqASjw
- BJ5KdcB6dVzY6ztlgfSQg72le271qyErrWYYzKjJdY6RhL25mySnrBeTd5DcdkWq1bJkG5ra
+In-Reply-To: <152055669123.63229.1692099069085978884.stgit@sosxen2.amd.com>
+References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com> <152055669123.63229.1692099069085978884.stgit@sosxen2.amd.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 19:20:42 +0200
+Message-ID: <CAHp75Vfc+JTjU2P0GCedVFcHYniXoVcmRC3n4cFsLMr9sx6eyA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] iommu/amd - Add a debugfs entry to specify a IOMMU
+ device table entry
+To: Gary R Hook <gary.hook@amd.com>
+Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Shakeel Butt wrote:
+On Fri, Mar 9, 2018 at 2:51 AM, Gary R Hook <gary.hook@amd.com> wrote:
+> Initially (at boot) the device table values dumped are all of the
+> active devices.  Add a devid debugfs file to allow the user to select a
+> single device table entry to dump (active or not). Let any devid value
+> greater than the maximum allowable PCI ID (0xFFFF) restore the
+> behavior to that effective at boot.
 
-> However for SLUB in debug kernel, the sizes were same. On further
-> inspection it is found that SLUB always use kmem_cache.object_size to
-> measure the kmem_cache.size while SLAB use the given kmem_cache.size. In
-> the debug kernel the slab's size can be larger than its object_size.
-> Thus in the creation of non-root slab, the SLAB uses the root's size as
-> base to calculate the non-root slab's size and thus non-root slab's size
-> can be larger than the root slab's size. For SLUB, the non-root slab's
-> size is measured based on the root's object_size and thus the size will
-> remain same for root and non-root slab.
+> +               oboff += OSCNPRINTF("%02x:%02x:%x (%u / %04x)\n",
+> +                                   PCI_BUS_NUM(amd_iommu_devid),
+> +                                   PCI_SLOT(amd_iommu_devid),
+> +                                   PCI_FUNC(amd_iommu_devid),
 
-Note that the object_size and size may differ for SLUB based on kernel
-parameters and slab configuration. For SLAB these are compilation options.
+Perhaps at some point we will have an extension to %p to print PCI BDFs.
 
-> @@ -379,7 +379,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
->  }
->
->  static struct kmem_cache *create_cache(const char *name,
-> -		unsigned int object_size, unsigned int size, unsigned int align,
-> +		unsigned int object_size, unsigned int align,
->  		slab_flags_t flags, unsigned int useroffset,
+> +       if (strnchr(obuf, OBUFLEN, ':'))
+> +       {
 
-Why was both the size and object_size passed during cache creation in the
-first place? From the flags etc the slab logic should be able to compute
-the actual bytes required for each object and its metadata.
+Style
+
+> +       } else if (obuf[0] == '0' && obuf[1] == 'x') {
+> +               n = sscanf(obuf, "%x", &amd_iommu_devid);
+> +       } else {
+> +               n = sscanf(obuf, "%d", &amd_iommu_devid);
+> +       }
+
+kstrtoint() ?
+
+-- 
+With Best Regards,
+Andy Shevchenko
