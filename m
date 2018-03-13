@@ -1,118 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933438AbeCMQmq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:42:46 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59850 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752892AbeCMQmm (ORCPT
+        id S1753178AbeCMQrE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:47:04 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36022 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752815AbeCMQrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:42:42 -0400
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Vinod Koul <vinod.koul@intel.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 5/8] dmaengine: stm32-dma: fix max items per transfer
-Date: Tue, 13 Mar 2018 17:42:04 +0100
-Message-ID: <1520959327-25760-6-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
- signatures=0
+        Tue, 13 Mar 2018 12:47:01 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: dapm: add support to pinctrl dapm" to the asoc tree
+In-Reply-To: <20180310023727.27077-1-srinivas.kandagatla@linaro.org>
+Message-Id: <20180313164654.4F7FC440079@finisterre.ee.mobilebroadband>
+Date: Tue, 13 Mar 2018 16:46:54 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having 0 in item counter register is valid and stands for a "No or Ended
-transfer". Therefore valid transfer starts from @+0 to @+0xFFFE leading to
-unaligned scatter gather at boundary. Thus it's safer to round down this
-value on its FIFO size (16 Bytes).
+The patch
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v1:
-       * Initial
----
----
- drivers/dma/stm32-dma.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+   ASoC: dapm: add support to pinctrl dapm
 
-diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index 0685961..f9d3c84 100644
---- a/drivers/dma/stm32-dma.c
-+++ b/drivers/dma/stm32-dma.c
-@@ -38,10 +38,6 @@
- #define STM32_DMA_TEI			BIT(3) /* Transfer Error Interrupt */
- #define STM32_DMA_DMEI			BIT(2) /* Direct Mode Error Interrupt */
- #define STM32_DMA_FEI			BIT(0) /* FIFO Error Interrupt */
--#define STM32_DMA_MASKI			(STM32_DMA_TCI \
--					 | STM32_DMA_TEI \
--					 | STM32_DMA_DMEI \
--					 | STM32_DMA_FEI)
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5b2d15bbd1eeb3d787c8e6459a8cb2645f336050 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Sat, 10 Mar 2018 02:37:27 +0000
+Subject: [PATCH] ASoC: dapm: add support to pinctrl dapm
+
+Purpose of having pinctrl dapm is to dynamically put the pins in
+low power state when they are not actively used by the audio and
+saving power.
+
+Without this each driver has to set the pinctrl states, either
+during probe or dynamically depending on the callbacks received
+from ASoC core.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/soc-dapm.h | 16 ++++++++++++++++
+ sound/soc/soc-dapm.c     | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
+
+diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
+index 344b96c206a3..a6ce2de4e20a 100644
+--- a/include/sound/soc-dapm.h
++++ b/include/sound/soc-dapm.h
+@@ -269,6 +269,13 @@ struct device;
+ 	.reg = SND_SOC_NOPM, .shift = wdelay, .event = dapm_regulator_event, \
+ 	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD, \
+ 	.on_val = wflags}
++#define SND_SOC_DAPM_PINCTRL(wname, active, sleep) \
++{	.id = snd_soc_dapm_pinctrl, .name = wname, \
++	.priv = (&(struct snd_soc_dapm_pinctrl_priv) \
++		{ .active_state = active, .sleep_state = sleep,}), \
++	.reg = SND_SOC_NOPM, .event = dapm_pinctrl_event, \
++	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD }
++
  
- /* DMA Stream x Configuration Register */
- #define STM32_DMA_SCR(x)		(0x0010 + 0x18 * (x)) /* x = 0..7 */
-@@ -117,6 +113,13 @@
- #define STM32_DMA_FIFO_THRESHOLD_FULL			0x03
  
- #define STM32_DMA_MAX_DATA_ITEMS	0xffff
+ /* dapm kcontrol types */
+@@ -374,6 +381,8 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
+ 			 struct snd_kcontrol *kcontrol, int event);
+ int dapm_clock_event(struct snd_soc_dapm_widget *w,
+ 			 struct snd_kcontrol *kcontrol, int event);
++int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
++			 struct snd_kcontrol *kcontrol, int event);
+ 
+ /* dapm controls */
+ int snd_soc_dapm_put_volsw(struct snd_kcontrol *kcontrol,
+@@ -500,6 +509,7 @@ enum snd_soc_dapm_type {
+ 	snd_soc_dapm_pre,			/* machine specific pre widget - exec first */
+ 	snd_soc_dapm_post,			/* machine specific post widget - exec last */
+ 	snd_soc_dapm_supply,		/* power/clock supply */
++	snd_soc_dapm_pinctrl,		/* pinctrl */
+ 	snd_soc_dapm_regulator_supply,	/* external regulator */
+ 	snd_soc_dapm_clock_supply,	/* external clock */
+ 	snd_soc_dapm_aif_in,		/* audio interface input */
+@@ -581,6 +591,7 @@ struct snd_soc_dapm_widget {
+ 
+ 	void *priv;				/* widget specific data */
+ 	struct regulator *regulator;		/* attached regulator */
++	struct pinctrl *pinctrl;		/* attached pinctrl */
+ 	const struct snd_soc_pcm_stream *params; /* params for dai links */
+ 	unsigned int num_params; /* number of params for dai links */
+ 	unsigned int params_select; /* currently selected param for dai link */
+@@ -683,6 +694,11 @@ struct snd_soc_dapm_stats {
+ 	int neighbour_checks;
+ };
+ 
++struct snd_soc_dapm_pinctrl_priv {
++	const char *active_state;
++	const char *sleep_state;
++};
++
+ /**
+  * snd_soc_dapm_init_bias_level() - Initialize DAPM bias level
+  * @dapm: The DAPM context to initialize
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 92894d9cac19..a5fb4d404c99 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -35,6 +35,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <sound/core.h>
+@@ -72,6 +73,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ static int dapm_up_seq[] = {
+ 	[snd_soc_dapm_pre] = 0,
+ 	[snd_soc_dapm_regulator_supply] = 1,
++	[snd_soc_dapm_pinctrl] = 1,
+ 	[snd_soc_dapm_clock_supply] = 1,
+ 	[snd_soc_dapm_supply] = 2,
+ 	[snd_soc_dapm_micbias] = 3,
+@@ -121,6 +123,7 @@ static int dapm_down_seq[] = {
+ 	[snd_soc_dapm_dai_link] = 11,
+ 	[snd_soc_dapm_supply] = 12,
+ 	[snd_soc_dapm_clock_supply] = 13,
++	[snd_soc_dapm_pinctrl] = 13,
+ 	[snd_soc_dapm_regulator_supply] = 13,
+ 	[snd_soc_dapm_post] = 14,
+ };
+@@ -1289,6 +1292,31 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
+ }
+ EXPORT_SYMBOL_GPL(dapm_regulator_event);
+ 
 +/*
-+ * Valid transfer starts from @0 to @0xFFFE leading to unaligned scatter
-+ * gather at boundary. Thus it's safer to round down this value on FIFO
-+ * size (16 Bytes)
++ * Handler for pinctrl widget.
 + */
-+#define STM32_DMA_ALIGNED_MAX_DATA_ITEMS	\
-+	ALIGN_DOWN(STM32_DMA_MAX_DATA_ITEMS, 16)
- #define STM32_DMA_MAX_CHANNELS		0x08
- #define STM32_DMA_MAX_REQUEST_ID	0x08
- #define STM32_DMA_MAX_DATA_PARAM	0x03
-@@ -864,7 +867,7 @@ static struct dma_async_tx_descriptor *stm32_dma_prep_slave_sg(
- 		desc->sg_req[i].len = sg_dma_len(sg);
- 
- 		nb_data_items = desc->sg_req[i].len / buswidth;
--		if (nb_data_items > STM32_DMA_MAX_DATA_ITEMS) {
-+		if (nb_data_items > STM32_DMA_ALIGNED_MAX_DATA_ITEMS) {
- 			dev_err(chan2dev(chan), "nb items not supported\n");
- 			goto err;
++int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
++		       struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_dapm_pinctrl_priv *priv = w->priv;
++	struct pinctrl *p = w->pinctrl;
++	struct pinctrl_state *s;
++
++	if (!p || !priv)
++		return -EIO;
++
++	if (SND_SOC_DAPM_EVENT_ON(event))
++		s = pinctrl_lookup_state(p, priv->active_state);
++	else
++		s = pinctrl_lookup_state(p, priv->sleep_state);
++
++	if (IS_ERR(s))
++		return PTR_ERR(s);
++
++	return pinctrl_select_state(p, s);
++}
++EXPORT_SYMBOL_GPL(dapm_pinctrl_event);
++
+ /*
+  * Handler for clock supply widget.
+  */
+@@ -1902,6 +1930,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
+ 				break;
+ 			case snd_soc_dapm_supply:
+ 			case snd_soc_dapm_regulator_supply:
++			case snd_soc_dapm_pinctrl:
+ 			case snd_soc_dapm_clock_supply:
+ 			case snd_soc_dapm_micbias:
+ 				if (d->target_bias_level < SND_SOC_BIAS_STANDBY)
+@@ -2315,6 +2344,7 @@ static ssize_t dapm_widget_show_component(struct snd_soc_component *cmpnt,
+ 		case snd_soc_dapm_mixer_named_ctl:
+ 		case snd_soc_dapm_supply:
+ 		case snd_soc_dapm_regulator_supply:
++		case snd_soc_dapm_pinctrl:
+ 		case snd_soc_dapm_clock_supply:
+ 			if (w->name)
+ 				count += sprintf(buf + count, "%s: %s\n",
+@@ -3464,6 +3494,17 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 					 w->name, ret);
  		}
-@@ -930,7 +933,7 @@ static struct dma_async_tx_descriptor *stm32_dma_prep_dma_cyclic(
- 		return NULL;
- 
- 	nb_data_items = period_len / buswidth;
--	if (nb_data_items > STM32_DMA_MAX_DATA_ITEMS) {
-+	if (nb_data_items > STM32_DMA_ALIGNED_MAX_DATA_ITEMS) {
- 		dev_err(chan2dev(chan), "number of items not supported\n");
- 		return NULL;
- 	}
-@@ -980,7 +983,7 @@ static struct dma_async_tx_descriptor *stm32_dma_prep_dma_memcpy(
- 	u32 num_sgs, best_burst, dma_burst, threshold;
- 	int i;
- 
--	num_sgs = DIV_ROUND_UP(len, STM32_DMA_MAX_DATA_ITEMS);
-+	num_sgs = DIV_ROUND_UP(len, STM32_DMA_ALIGNED_MAX_DATA_ITEMS);
- 	desc = stm32_dma_alloc_desc(num_sgs);
- 	if (!desc)
- 		return NULL;
-@@ -989,7 +992,7 @@ static struct dma_async_tx_descriptor *stm32_dma_prep_dma_memcpy(
- 
- 	for (offset = 0, i = 0; offset < len; offset += xfer_count, i++) {
- 		xfer_count = min_t(size_t, len - offset,
--				   STM32_DMA_MAX_DATA_ITEMS);
-+				   STM32_DMA_ALIGNED_MAX_DATA_ITEMS);
- 
- 		/* Compute best burst size */
- 		max_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+ 		break;
++	case snd_soc_dapm_pinctrl:
++		w->pinctrl = devm_pinctrl_get(dapm->dev);
++		if (IS_ERR_OR_NULL(w->pinctrl)) {
++			ret = PTR_ERR(w->pinctrl);
++			if (ret == -EPROBE_DEFER)
++				return ERR_PTR(ret);
++			dev_err(dapm->dev, "ASoC: Failed to request %s: %d\n",
++				w->name, ret);
++			return NULL;
++		}
++		break;
+ 	case snd_soc_dapm_clock_supply:
+ #ifdef CONFIG_CLKDEV_LOOKUP
+ 		w->clk = devm_clk_get(dapm->dev, w->name);
+@@ -3543,6 +3584,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 		break;
+ 	case snd_soc_dapm_supply:
+ 	case snd_soc_dapm_regulator_supply:
++	case snd_soc_dapm_pinctrl:
+ 	case snd_soc_dapm_clock_supply:
+ 	case snd_soc_dapm_kcontrol:
+ 		w->is_supply = 1;
 -- 
-2.7.4
+2.16.2
