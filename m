@@ -1,63 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeCMRhP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:37:15 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:39577 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752079AbeCMRhJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:37:09 -0400
-X-Google-Smtp-Source: AG47ELvIyJgKD4eK7TPJOl1VGMHWUBA13dtis2pBZhZRtkGAk6FNHmm7I/XfPYcGM0E17aqz8Hj8e0NbPPAeB2xgzgU=
+        id S1751930AbeCMRi5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:38:57 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7823 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751534AbeCMRi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:38:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="33512766"
+Date: Tue, 13 Mar 2018 11:40:53 -0600
+From: Keith Busch <keith.busch@intel.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@fb.com, hch@lst.de,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] nvme-pci: assign separate irq vectors for adminq and
+ ioq1
+Message-ID: <20180313174052.GJ18494@localhost.localdomain>
+References: <1520935088-1343-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180313104452.GA8782@ming.t460p>
 MIME-Version: 1.0
-In-Reply-To: <c3e09140-8a5b-0fdd-82cc-03700be3b5a0@linux.intel.com>
-References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
- <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com> <CAHp75VdYG+i+m12yotuUa2JwW4ndMMXTV0ZSs_qOS5EAw7=M4w@mail.gmail.com>
- <CAHp75Vex+m-HqVD-H=B7zh=TFWR2Jbw2zSUwhApeY7xBb8pcvg@mail.gmail.com>
- <23d70b0d-ec19-32c8-e636-4cc36f1eec47@linux.intel.com> <CAHp75VebU5NYXRDpG4pzYrKDmNLE6prGbecacq3gCyDQBJd=cA@mail.gmail.com>
- <c3e09140-8a5b-0fdd-82cc-03700be3b5a0@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 19:31:39 +0200
-Message-ID: <CAHp75Vdvmbhj9kb+D7qSbBQFD52n=rHWukvAJgGXxCbcnNSCyg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
- multi-pci-segment arches
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: "Kroening, Gary" <gary.kroening@hpe.com>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Travis, Mike" <mike.travis@hpe.com>,
-        "Banman, Andrew" <abanman@hpe.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313104452.GA8782@ming.t460p>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 7:28 PM, Liang, Kan <kan.liang@linux.intel.com> wrote:
+On Tue, Mar 13, 2018 at 06:45:00PM +0800, Ming Lei wrote:
+> On Tue, Mar 13, 2018 at 05:58:08PM +0800, Jianchao Wang wrote:
+> > Currently, adminq and ioq1 share the same irq vector which is set
+> > affinity to cpu0. If a system allows cpu0 to be offlined, the adminq
+> > will not be able work any more.
+> > 
+> > To fix this, assign separate irq vectors for adminq and ioq1. Set
+> > .pre_vectors == 1 when allocate irq vectors, then assign the first
+> > one to adminq which will have affinity cpumask with all possible
+> > cpus. On the other hand, if controller has only legacy or single
+> > -message MSI, we will setup adminq and 1 ioq and let them share
+> > the only one irq vector.
+> > 
+> > Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> 
+> Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
->>>>>> +#define SKX_CAPID6             0x9c
+Thanks, applied with an updated changelog.
 
-^^^ This needs a comment.
-
->>> It looks it doesn't use capability.
-
-> $ lspci -nk -vvv -xx -s 16:1e.3
-> 16:1e.3 0880: 8086:2083 (rev 04)
->         Subsystem: 8086:0000
->         Control: I/O- Mem- BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr-
-> Stepping- SERR- FastB2B- DisINTx-
->         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-> <TAbort- <MAbort- >SERR- <PERR- INTx-
-> 00: 86 80 83 20 00 00 00 00 04 00 80 08 00 00 80 00
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 00 00
-> 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-Pity.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Not being able to use the admin queue is a pretty big deal, so it's pushed
+to the next nvme 4.16-rc branch. This may even be good stable material.
