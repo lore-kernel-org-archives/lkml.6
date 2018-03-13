@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu6kasgjLLdMU4hccN0gJBbOVZ5TaHpJvfDlQuVXf/H3ueiICty3zsb4Lr61/zlS8ThyQ2x
-ARC-Seal: i=1; a=rsa-sha256; t=1520955085; cv=none;
+X-Google-Smtp-Source: AG47ELu/tMounxAjdu/iyo8vHjGSeQaHM5SZfT9A8CT2C7SFmKMcRNXeUEX/rPY8wCN+QdB3XqAE
+ARC-Seal: i=1; a=rsa-sha256; t=1520955082; cv=none;
         d=google.com; s=arc-20160816;
-        b=a5DTjcTr/vxsC9HIYi5Q9aLq5EGU6GJ32lomq1q6oZUkOhKY/DKnExNO0wN2o1433t
-         bD3czCsG8pbSfBKQNTGtRC3L4G8E7iAO6jYyGxJ8p29U3VfKo3VGFJKRg336VXQyDkCj
-         e861dqcirJ3GSGQOTJ7v73/RG7POtimUxjGMZicD5Y9RXG/ZW8OVYZNGfOdkRfTzzoP2
-         a5KdgqhOicg678RoA/2UeHXqRIBL7szU5xxB1qgKNYoy2Lv+sbzfGzoAVOEVcH7Uh1Yj
-         J8KG3XZzjQzQDEjqL5zYfqyT4tyjugcwraImGCk/ILJyZLFtea7e4kzOY+jbYe1m9Mtj
-         npSQ==
+        b=NAOcaNo4njNk5YtNX4OrBTgbGVwitkHYxetgupZWhOYU6VBAXmthK/1gmKJqb9Fj/j
+         autiyx8XzTuoANsmH6FxyQgRRuxxu9O9tUvAW/kY/nRs1m2h9wLEj2EfitsXCDdZOFm5
+         nfWGKv7jjcpTymzgmZIcEZLWbxxw2MN3H4nCJc+lX2CNbwPL21c39rV046LGQg6q2KBS
+         yUsOX9+zCYTrlATU3ENDGFFILfXywiucFFCfrysDqgGpv4J841R6yElG2H8lBuBrskFD
+         SMNf316jrLt/sPm2cjhwKZkfQDYCk2xipW0b9qQQXcDHjjdiVc8rKieMctigAYs8+AxZ
+         y5cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=96JPtcrfuam8tPFLk5rLV0VNZ/S0Tz0Ri5QdUY0k82Y=;
-        b=wNW4hkMgb2M4Qjii4OgOG39/iMK9+0XQQG7Z3nUEGPt52gdXdKacALLerNYIACdWOV
-         8+AK6pDp/HWaRewVf7aQ2YXxDq3Xpip/YJg5TjQLPZAEXXeotT4v+40l5HpVBA8RFFgL
-         KmSkm0MGyFhZrGkd9QKVnLXSDwEj5UTsIN+YthvJAqii76ChuqArEZBF/0fA++wnVOwn
-         2kZLErQJBYHzVC+7hxeHdXqzC7thN1XhWm7MgXaeP8m7Mzq9oS3LcdWTvKQt+snKF/vk
-         yT0lj19RJy0gAeKJZC29XCRce2/olCU5Q6Wm+siD5wYlqqvPWSsh+0drHadV2iuU91lz
-         IJHg==
+        bh=3DP1zcCeMyVI8ogLgwM4k+rr12Sggx530XKbaYLoJoc=;
+        b=TNasYf60jaNjVK2pnqtuUhLVRq6T85CEZx4Hz2xvcSf5YatvI6BYFTZtrVQoT4YrzX
+         GtxvRKVEdPtUU32XaGQ89+HTil4u0FAgwgHaLillzlNaxRYGo/dsw96uv2iJbFG1Ookq
+         1JoXYppMlEq7EBqOaHlAgrWySes5yb7RJhm5hdJJvqCVdJudh3tMheoP9fE0AzqhrGg+
+         jJzDCe9tuZGlriverNRHOvKdkxRzngbU+yeJbNSmahEfVCXbn7EHciwj8JsSn3D8ea71
+         RqNpNtChhf12+hrTaNisa2bBP7H0Fmr0kOUnfepNIG7bbjPeUOktlEnP7q1MSdY0d4ML
+         iW/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
 	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 084/146] x86/mm: Remove stale comment about KMEMCHECK
-Date: Tue, 13 Mar 2018 16:24:11 +0100
-Message-Id: <20180313152327.298574843@linuxfoundation.org>
+Subject: [PATCH 4.15 083/146] x86/entry/64: Use xorl for faster register clearing
+Date: Tue, 13 Mar 2018 16:24:10 +0100
+Message-Id: <20180313152327.222302164@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -49,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836999611273830?=
-X-GMAIL-MSGID: =?utf-8?q?1594836999611273830?=
+X-GMAIL-THRID: =?utf-8?q?1594836996970474110?=
+X-GMAIL-MSGID: =?utf-8?q?1594836996970474110?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,43 +60,196 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
 
-commit 3b3a9268bba62b35a29bafe0931715b1725fdf26 upstream.
+commit ced5d0bf603fa0baee8ea889e1d70971fd210894 upstream.
 
-This comment referred to a conditional call to kmemcheck_hide() that was
-here until commit 4950276672fc ("kmemcheck: remove annotations").
+On some x86 CPU microarchitectures using 'xorq' to clear general-purpose
+registers is slower than 'xorl'. As 'xorl' is sufficient to clear all
+64 bits of these registers due to zero-extension [*], switch the x86
+64-bit entry code to use 'xorl'.
 
-Now that kmemcheck has been removed, it doesn't make sense anymore.
+No change in functionality and no change in code size.
 
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+[*] According to Intel 64 and IA-32 Architecture Software Developer's
+    Manual, section 3.4.1.1, the result of 32-bit operands are "zero-
+    extended to a 64-bit result in the destination general-purpose
+    register." The AMD64 Architecture Programmer’s Manual Volume 3,
+    Appendix B.1, describes the same behaviour.
+
+Suggested-by: Denys Vlasenko <dvlasenk@redhat.com>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180219175039.253089-1-jannh@google.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180214175924.23065-3-linux@dominikbrodowski.net
+[ Improved on the changelog a bit. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/entry/calling.h         |   16 +++++------
+ arch/x86/entry/entry_64_compat.S |   54 +++++++++++++++++++--------------------
+ 2 files changed, 35 insertions(+), 35 deletions(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1248,10 +1248,6 @@ __do_page_fault(struct pt_regs *regs, un
- 	tsk = current;
- 	mm = tsk->mm;
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -117,25 +117,25 @@ For 32-bit we have the following convent
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   \rax		/* pt_regs->ax */
+ 	pushq   %r8		/* pt_regs->r8 */
+-	xorq    %r8, %r8	/* nospec   r8 */
++	xorl	%r8d, %r8d	/* nospec   r8 */
+ 	pushq   %r9		/* pt_regs->r9 */
+-	xorq    %r9, %r9	/* nospec   r9 */
++	xorl	%r9d, %r9d	/* nospec   r9 */
+ 	pushq   %r10		/* pt_regs->r10 */
+-	xorq    %r10, %r10	/* nospec   r10 */
++	xorl	%r10d, %r10d	/* nospec   r10 */
+ 	pushq   %r11		/* pt_regs->r11 */
+-	xorq    %r11, %r11	/* nospec   r11*/
++	xorl	%r11d, %r11d	/* nospec   r11*/
+ 	pushq	%rbx		/* pt_regs->rbx */
+ 	xorl    %ebx, %ebx	/* nospec   rbx*/
+ 	pushq	%rbp		/* pt_regs->rbp */
+ 	xorl    %ebp, %ebp	/* nospec   rbp*/
+ 	pushq	%r12		/* pt_regs->r12 */
+-	xorq    %r12, %r12	/* nospec   r12*/
++	xorl	%r12d, %r12d	/* nospec   r12*/
+ 	pushq	%r13		/* pt_regs->r13 */
+-	xorq    %r13, %r13	/* nospec   r13*/
++	xorl	%r13d, %r13d	/* nospec   r13*/
+ 	pushq	%r14		/* pt_regs->r14 */
+-	xorq    %r14, %r14	/* nospec   r14*/
++	xorl	%r14d, %r14d	/* nospec   r14*/
+ 	pushq	%r15		/* pt_regs->r15 */
+-	xorq    %r15, %r15	/* nospec   r15*/
++	xorl	%r15d, %r15d	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+ 	.if \save_ret
+ 	pushq	%rsi		/* return address on top of stack */
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -85,25 +85,25 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
+-	xorq	%r8, %r8		/* nospec   r8 */
++	xorl	%r8d, %r8d		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
+-	xorq	%r9, %r9		/* nospec   r9 */
++	xorl	%r9d, %r9d		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
+-	xorq	%r10, %r10		/* nospec   r10 */
++	xorl	%r10d, %r10d		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
+-	xorq	%r11, %r11		/* nospec   r11 */
++	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
+ 	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   $0			/* pt_regs->r12 = 0 */
+-	xorq	%r12, %r12		/* nospec   r12 */
++	xorl	%r12d, %r12d		/* nospec   r12 */
+ 	pushq   $0			/* pt_regs->r13 = 0 */
+-	xorq	%r13, %r13		/* nospec   r13 */
++	xorl	%r13d, %r13d		/* nospec   r13 */
+ 	pushq   $0			/* pt_regs->r14 = 0 */
+-	xorq	%r14, %r14		/* nospec   r14 */
++	xorl	%r14d, %r14d		/* nospec   r14 */
+ 	pushq   $0			/* pt_regs->r15 = 0 */
+-	xorq	%r15, %r15		/* nospec   r15 */
++	xorl	%r15d, %r15d		/* nospec   r15 */
+ 	cld
  
--	/*
--	 * Detect and handle instructions that would cause a page fault for
--	 * both a tracked kernel page and a userspace page.
--	 */
- 	prefetchw(&mm->mmap_sem);
+ 	/*
+@@ -224,25 +224,25 @@ GLOBAL(entry_SYSCALL_compat_after_hwfram
+ 	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
+-	xorq	%r8, %r8		/* nospec   r8 */
++	xorl	%r8d, %r8d		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
+-	xorq	%r9, %r9		/* nospec   r9 */
++	xorl	%r9d, %r9d		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
+-	xorq	%r10, %r10		/* nospec   r10 */
++	xorl	%r10d, %r10d		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
+-	xorq	%r11, %r11		/* nospec   r11 */
++	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp (will be overwritten) */
+ 	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   $0			/* pt_regs->r12 = 0 */
+-	xorq	%r12, %r12		/* nospec   r12 */
++	xorl	%r12d, %r12d		/* nospec   r12 */
+ 	pushq   $0			/* pt_regs->r13 = 0 */
+-	xorq	%r13, %r13		/* nospec   r13 */
++	xorl	%r13d, %r13d		/* nospec   r13 */
+ 	pushq   $0			/* pt_regs->r14 = 0 */
+-	xorq	%r14, %r14		/* nospec   r14 */
++	xorl	%r14d, %r14d		/* nospec   r14 */
+ 	pushq   $0			/* pt_regs->r15 = 0 */
+-	xorq	%r15, %r15		/* nospec   r15 */
++	xorl	%r15d, %r15d		/* nospec   r15 */
  
- 	if (unlikely(kmmio_fault(regs, address)))
+ 	/*
+ 	 * User mode is traced as though IRQs are on, and SYSENTER
+@@ -298,9 +298,9 @@ sysret32_from_system_call:
+ 	 */
+ 	SWITCH_TO_USER_CR3_NOSTACK scratch_reg=%r8 scratch_reg2=%r9
+ 
+-	xorq	%r8, %r8
+-	xorq	%r9, %r9
+-	xorq	%r10, %r10
++	xorl	%r8d, %r8d
++	xorl	%r9d, %r9d
++	xorl	%r10d, %r10d
+ 	swapgs
+ 	sysretl
+ END(entry_SYSCALL_compat)
+@@ -358,25 +358,25 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+ 	pushq   $0			/* pt_regs->r8  = 0 */
+-	xorq	%r8, %r8		/* nospec   r8 */
++	xorl	%r8d, %r8d		/* nospec   r8 */
+ 	pushq   $0			/* pt_regs->r9  = 0 */
+-	xorq	%r9, %r9		/* nospec   r9 */
++	xorl	%r9d, %r9d		/* nospec   r9 */
+ 	pushq   $0			/* pt_regs->r10 = 0 */
+-	xorq	%r10, %r10		/* nospec   r10 */
++	xorl	%r10d, %r10d		/* nospec   r10 */
+ 	pushq   $0			/* pt_regs->r11 = 0 */
+-	xorq	%r11, %r11		/* nospec   r11 */
++	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+ 	pushq   %rbp                    /* pt_regs->rbp */
+ 	xorl	%ebp, %ebp		/* nospec   rbp */
+ 	pushq   %r12                    /* pt_regs->r12 */
+-	xorq	%r12, %r12		/* nospec   r12 */
++	xorl	%r12d, %r12d		/* nospec   r12 */
+ 	pushq   %r13                    /* pt_regs->r13 */
+-	xorq	%r13, %r13		/* nospec   r13 */
++	xorl	%r13d, %r13d		/* nospec   r13 */
+ 	pushq   %r14                    /* pt_regs->r14 */
+-	xorq	%r14, %r14		/* nospec   r14 */
++	xorl	%r14d, %r14d		/* nospec   r14 */
+ 	pushq   %r15                    /* pt_regs->r15 */
+-	xorq	%r15, %r15		/* nospec   r15 */
++	xorl	%r15d, %r15d		/* nospec   r15 */
+ 	cld
+ 
+ 	/*
