@@ -1,82 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeCMJvz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:51:55 -0400
-Received: from ozlabs.org ([103.22.144.67]:38223 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752275AbeCMJvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:51:54 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 13 Mar 2018 20:51:19 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20180313205119.6ca3c1aa@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9BBFIhizv9ofbGLUrbIy8xR"; protocol="application/pgp-signature"
+        id S1752652AbeCMJ5u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:57:50 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:57996 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752261AbeCMJ5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 05:57:44 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w2D9uEJw021254
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Petr Vorel <petr.vorel@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] kconfig: warn unmet direct dependency of tristate symbols selected by y
+Date: Tue, 13 Mar 2018 18:56:07 +0900
+Message-Id: <1520934968-30406-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9BBFIhizv9ofbGLUrbIy8xR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit 246cf9c26bf1 ("kbuild: Warn on selecting symbols with unmet
+direct dependencies") forcibly promoted ->dir_dep.tri to yes from mod.
+So, the unmet direct dependencies of tristate symbols are not reported.
 
-Hi Andrew,
+[Test Case]
 
-After merging the akpm-current tree, today's linux-next build (lots of
-configuations) failed like this:
+  config MODULES
+          def_bool y
+          option modules
 
-(from the i386 defconfig build)
+  config A
+          def_bool y
+          select B
 
-In file included from include/linux/memcontrol.h:29:0,
-                 from include/linux/swap.h:9,
-                 from include/linux/suspend.h:5,
-                 from arch/x86/kernel/asm-offsets.c:13:
-include/linux/mm.h: In function 'get_mm_hiwater_rss':
-include/linux/mm.h:1569:9: error: first argument to '__builtin_choose_expr'=
- not a constant
-include/linux/mm.h: In function 'get_mm_hiwater_vm':
-include/linux/mm.h:1574:9: error: first argument to '__builtin_choose_expr'=
- not a constant
+  config B
+          tristate "B"
+          depends on m
 
-and many more ...
+This causes unmet dependency because 'B' is forced 'y' ignoring
+'depends on m'.  This should be warned.
 
-Caused by commit
+On the other hand, the following case ('B' is bool) should not be
+warned, so 'depends on m' for bool symbols should be naturally treated
+as 'depends on y'.
 
-  c7c133f3d5ff ("kernel.h: skip single-eval logic on literals in min()/max(=
-)")
-(and perhaps the folloups)
+[Test Case2 (not unmet dependency)]
 
-Just a few of my builds actaully worked (including those I do
-during the day).  For complete logs see
-http://kisskb.ellerman.id.au/kisskb/head/13556/ .
+  config MODULES
+          def_bool y
+          option modules
 
-I guess it could be compiler version specific.  The failing ones are
-done with gcc 4.6.3.  My successful ones with gcc 7.3.1.
+  config A
+          def_bool y
+          select B
 
---=20
-Cheers,
-Stephen Rothwell
+  config B
+          bool "B"
+          depends on m
 
---Sig_/9BBFIhizv9ofbGLUrbIy8xR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
------BEGIN PGP SIGNATURE-----
+Changes in v4:
+  - newly added
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnnxgACgkQAVBC80lX
-0Gz3JggAowomfSVljr6M6qFqE/Eoa2rb7wJLq3KrB81NDc4G0s4Q2W4sIrop44IV
-KuNybNR2LvduG8/dw9aFVQKQRzT4ClPmI8oj8uAnK1sC52lDteKrDQ3wnRMN2tLv
-AE1zMyT+ttUKU8QUC7M/bqMZkb5yfAf/vnrUvspS23ZZFcvUtukrYZ/J2jTukbEg
-kwxNcKwXjvy0vvbIaQ/Ne9ws/F0UzvIxpyAVKZ8GvnSxAG5c+9do0O37aW9WRb/I
-R5OVrVuFbQj/jBd5GzV5RUpKP64o3j6zPt8EfhB3ql7SA7fUnAQVTlB1fWP9Qae9
-naJBhfEUU2850jEG5TyQ++CJumYb5A==
-=Skke
------END PGP SIGNATURE-----
 
---Sig_/9BBFIhizv9ofbGLUrbIy8xR--
+ scripts/kconfig/symbol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 0f7eba7..def860b 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -243,7 +243,7 @@ static void sym_calc_visibility(struct symbol *sym)
+ 	tri = yes;
+ 	if (sym->dir_dep.expr)
+ 		tri = expr_calc_value(sym->dir_dep.expr);
+-	if (tri == mod)
++	if (sym->type == S_BOOLEAN && tri == mod)
+ 		tri = yes;
+ 	if (sym->dir_dep.tri != tri) {
+ 		sym->dir_dep.tri = tri;
+@@ -414,7 +414,7 @@ void sym_calc_value(struct symbol *sym)
+ 				}
+ 			}
+ 		calc_newval:
+-			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
++			if (sym->dir_dep.tri < sym->rev_dep.tri) {
+ 				struct expr *e;
+ 				e = expr_simplify_unmet_dep(sym->rev_dep.expr,
+ 				    sym->dir_dep.expr);
+-- 
+2.7.4
