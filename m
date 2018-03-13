@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELthrVHgGaYi59vjEsmNt7CPWFZI9eJK3gsdEa7AtCU+Rc0TR89VXykZ2tXvsUu+tyvTDXIO
-ARC-Seal: i=1; a=rsa-sha256; t=1520955590; cv=none;
+X-Google-Smtp-Source: AG47ELsm0IKkUDhjf1nj6A6tRyfuCxSz8YmjoFuTpCcCefhDBf6YHexHQ0k7Aowbq2MB9w3qFYcP
+ARC-Seal: i=1; a=rsa-sha256; t=1520955587; cv=none;
         d=google.com; s=arc-20160816;
-        b=KYsn0UIqPMmxfgYWW4v477L6ZIFZ71jYb0MT5kGITBvosMZKLMLNeCJdfFG+Zrnsw+
-         KvxWNjbvao7wQ9CqYny8nl0RPMxVxloC9sbZWodHiH+1KiHKU7uGDASNZtxUPbOjMpCz
-         YtzqamnirpTWd8IyOs9BXK1dVyft+sXQy6xHsiy0XNx4iXL5cC6EbYbGLOTUxnEgfk75
-         Pobw9PsOGf33QB0vzAmbK/bcmsNaKTjL1cfyMiTIxRAYfPI91Vk7j4C6ThcEl5A1r8PH
-         v7pJojwumTwpA3dvdVNtF9oIlbotzK2A3r4NAl+R2IJpC8SDvDdQVDbOk7t3VDx1zpZ+
-         SUww==
+        b=a5V0FRemZYBIaPDhtj5Pkuw3Yf+qcx5oSKEH9UlQzyrQbNGR0V+4HvNNQJhb98AZqJ
+         OK1D9OIuSMI/RGD+C1DxEovkEpUL9ANaJtVzA2N/snyctrI6nvnp1XEbi6d/NMxqvYtx
+         HCAUU2PaNHtCOlXkRCDFwFPIiI9N1qseURy9Lz1B9m1PB6m+mN52tkufw4MS5uu8B0VI
+         Dl7VIWOHPfI0bG/V3LjMw+ZNx90OCyblHC5O1SuI9X9xMJObyi+ebSGmwLWFCScx/SyA
+         0cGs7o/S5/0WETSN0tcRvE+kWgr5fM6XbnT2F+kE3H6GQturiOtiCzBea+7RhqYwkKjI
+         HT5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YOjl0fm+GRRGKdJojoVqvBGbY3i2KoYpls1GZ4pIkss=;
-        b=eFGKdxtQC6ogy1/zQm69TXYQvDhGH2lUgFeHYcmFp9x+hiUZrR62VokWku6oFsms2k
-         oPLKTauG1B30xBH7mtQUu7d5tHEDg3/2hMUEtLyB1Z1TEkhuNDci0LlizokB3wm3OYZn
-         +Hfz3EPhmeTJZDZtB0q+lX0po6IfJL/suXlPKCREFdF9PiGMr3Al4t2hafwOeBsTC5X2
-         i9TcAbt2sRwXhkkgQ28fGA3EA/rUAp30rzUoYGh85FffY0iNh5g12MmBbOTLrHtmyD4C
-         z78fI6zKiuaDaGZLM+jSEL2hksaYc/gOXNHEM7wffWCH0QrX/edw0svQnrl31YDbcD1u
-         n0Gg==
+        bh=k2cPhOCsekz1gFFEajo9kMCmd8ihTGT00haOZPCU+Bw=;
+        b=cRtGZKzZh7y/FYkwXnn19fRjjuQtd4GqX7t/tWzE3A8myHajZ0eu4Opa2Rgh2NB1F+
+         wF18gber5p8fh67VxJiIytW4mTqkWs3BAi7KSaOMfmnNe+QkwKqp6/W3oj1lTPV6uRBZ
+         2iG80knmpgj8WZrDl9dp2LJb3FI/bOH2nzwy3j3tgUSL41uHKgoPq9bJtiaUhQ0zvMkb
+         9qhfKKdqR+1mkNrzY4wImfQ09H7zfE0mdXZU8uAN558lFlZn2sO6dYdtb2j+QZkQr+qT
+         gDi/DcL0qK9V3YfYluCdnLSlDTxmTDxfqGVi++cayfmYhPcBr0skfltMy6Rfy1L98c1R
+         N99Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kailang Yang <kailang@realtek.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 102/140] ALSA: hda/realtek - Add headset mode support for Dell laptop
-Date: Tue, 13 Mar 2018 16:25:05 +0100
-Message-Id: <20180313152505.002561006@linuxfoundation.org>
+	Michael Lyle <mlyle@lyle.org>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 096/140] bcache: dont attach backing with duplicate UUID
+Date: Tue, 13 Mar 2018 16:24:59 +0100
+Message-Id: <20180313152504.603720689@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836950945436949?=
-X-GMAIL-MSGID: =?utf-8?q?1594837528960620766?=
+X-GMAIL-THRID: =?utf-8?q?1594836931424200756?=
+X-GMAIL-MSGID: =?utf-8?q?1594837526557280664?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,67 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Michael Lyle <mlyle@lyle.org>
 
-commit ae104a21e52b1f9aab342cf6924405177b720069 upstream.
+commit 86755b7a96faed57f910f9e6b8061e019ac1ec08 upstream.
 
-This platform was only one phone Jack.
-Add dummy lineout verb to fix automute mode disable.
-This just the workaround.
+This can happen e.g. during disk cloning.
 
-[ More background information:
-  since the platform has only a headphone jack without speaker, the
-  driver doesn't create the auto-mute control.  Meanwhile we do update
-  the headset mode via the automute hook in the driver, thus with this
-  setup, the headset won't be updated any longer.
+This is an incomplete fix: it does not catch duplicate UUIDs earlier
+when things are still unattached.  It does not unregister the device.
+Further changes to cope better with this are planned but conflict with
+Coly's ongoing improvements to handling device errors.  In the meantime,
+one can manually stop the device after this has happened.
 
-  By adding a dummy line-out pin here, the auto-mute is added by the
-  driver, and the headset update is triggered properly.
+Attempts to attach a duplicate device result in:
 
-  Note that this is different from the other
-  ALC274_FIXUP_DELL_AIO_LINEOUT_VERB, which has the real line-out pin,
-  while this quirk adds a dummy line-out pin.  -- tiwai ]
+[  136.372404] loop: module loaded
+[  136.424461] bcache: register_bdev() registered backing device loop0
+[  136.424464] bcache: bch_cached_dev_attach() Tried to attach loop0 but duplicate UUID already attached
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+My test procedure is:
+
+  dd if=/dev/sdb1 of=imgfile bs=1024 count=262144
+  losetup -f imgfile
+
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reviewed-by: Tang Junhui <tang.junhui@zte.com.cn>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   11 +++++++++++
+ drivers/md/bcache/super.c |   11 +++++++++++
  1 file changed, 11 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5340,6 +5340,7 @@ enum {
- 	ALC274_FIXUP_DELL_BIND_DACS,
- 	ALC274_FIXUP_DELL_AIO_LINEOUT_VERB,
- 	ALC298_FIXUP_TPT470_DOCK,
-+	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
- };
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -938,6 +938,7 @@ int bch_cached_dev_attach(struct cached_
+ 	uint32_t rtime = cpu_to_le32(get_seconds());
+ 	struct uuid_entry *u;
+ 	char buf[BDEVNAME_SIZE];
++	struct cached_dev *exist_dc, *t;
  
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6187,6 +6188,15 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC293_FIXUP_LENOVO_SPK_NOISE
- 	},
-+	[ALC255_FIXUP_DUMMY_LINEOUT_VERB] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x14, 0x0201101f },
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
-+	},
- };
+ 	bdevname(dc->bdev, buf);
  
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -6240,6 +6250,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
- 	SND_PCI_QUIRK(0x1028, 0x084b, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
- 	SND_PCI_QUIRK(0x1028, 0x084e, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
-+	SND_PCI_QUIRK(0x1028, 0x0873, "Dell Precision 3930", ALC255_FIXUP_DUMMY_LINEOUT_VERB),
- 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
+@@ -961,6 +962,16 @@ int bch_cached_dev_attach(struct cached_
+ 		return -EINVAL;
+ 	}
+ 
++	/* Check whether already attached */
++	list_for_each_entry_safe(exist_dc, t, &c->cached_devs, list) {
++		if (!memcmp(dc->sb.uuid, exist_dc->sb.uuid, 16)) {
++			pr_err("Tried to attach %s but duplicate UUID already attached",
++				buf);
++
++			return -EINVAL;
++		}
++	}
++
+ 	u = uuid_find(c, dc->sb.uuid);
+ 
+ 	if (u &&
