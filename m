@@ -1,87 +1,299 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeCMU7e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:59:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:32881 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeCMU7c (ORCPT
+        id S1753260AbeCMU76 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:59:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753215AbeCMU7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:59:32 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>, Dmitry Safonov <dima@arista.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pktgen: use dynamic allocation for debug print buffer
-Date: Tue, 13 Mar 2018 21:58:39 +0100
-Message-Id: <20180313205856.3309750-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:gYPnWXSgfjW9oWtrgm3ai6EMJ+l6x8vwrYFPhfHrDIyB/3JMAHT
- EnJMnbGTwEQDBbeVNgkBmmZ9irwis6umRG7FWSb3qBxBn0ijHQXV1/pal/KYBbcw3SQqhnC
- DmdMNbJ5+ddONIM3Wyjv7S48dJXfDJ7iMzBTU/Bs6LSYvQYYOKf79kcincZ6RnksmCXl4qN
- VukMX/oe7sJO2Bs8MTo7w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:tMqcks/Hy3U=:6s5tbNLixJoAduYSOOQtnA
- 9jJtesmpS78tWJ5BN+5OTszYvYQKO4lW8a9yMz/CRtHGZpH4rfYMC8t+JI/WpCxTqZ4quTL0p
- ONT9AsOvtzEPTq7CE8cb67JnZF3siRpQEBcvwKeSayrurDtYGbX7Sf5yFOSeXU5UrDhqWCZgD
- FLMTq0hExDk7GfevTlXG7jK4eN04joD5A06UGOzkeQe7kvbFfQAeTeUopER7W1Z6a3gZYLcaC
- T4pipcpuns8AS5H3+fhZVTqUfeGKWuxPYh08q2H9NN44dJzbJwHmU1pn7u+mmJMaguHMPJVmb
- /UT60Ff+0td9bzc0jc2SbAVR47L0/haEQacmbilePhQGu43rav2GwWB9IeHHWNZ9fwAg/5Fgy
- ylWMX58tfIHr9gS2E9NPr58Ygg3ZRbruEaiAKEMEMpC6l9E490tyPExMrlQMvlDP51qng0IkO
- mlW7Ck/1IyWJIcA7RhWisRsrGqGNhBD1cvLVFtLZGu2+fDmW/Iw13yAIzOlWHMydQqGPlMyYG
- j3ahcukKZza+JLNnfAF3LlnHQWlKqA6rYOtclJtPhYVINZSeyN6Mg/gvKqRH5lX1P+v2nPhzI
- +g/jbVwGR2QKcHUiqHs89XP1vKcAZuY29I7GhwgkKiYwFJ9vQodVei0jobBspw69ClpLc9lAQ
- 20wmTeR/D63EDuuysvJcW4wmN0fhQxFXHQmzqcdJ7ruZS0Z9A1vEz5okCcq8Imm7CuIvJ9rf0
- fTO9Plj58yVLud5QaeAVB7k2L7qiVug/Ij2KyA==
+        Tue, 13 Mar 2018 16:59:18 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v2 1/2] hwmon: (ucd9000) Add gpio chip interface
+Date: Tue, 13 Mar 2018 15:59:08 -0500
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1520974749-5372-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1520974749-5372-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18031320-0056-0000-0000-0000042D0EBE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008667; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002601; UDB=6.00510170; IPR=6.00781931;
+ MB=3.00020014; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-13 20:59:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031320-0057-0000-0000-0000086F0ED1
+Message-Id: <1520974749-5372-2-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130233
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the removal of the VLA, we get a harmless warning about a large
-stack frame:
+From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 
-net/core/pktgen.c: In function 'pktgen_if_write':
-net/core/pktgen.c:1710:1: error: the frame size of 1076 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+Add a struct gpio_chip and define some methods so that this device's
+I/O can be accessed via /sys/class/gpio.
 
-The function was previously shown to be safe despite hitting
-the 1024 bye warning level. To get rid of the annoyging warning,
-while keeping it readable, this changes it to use strndup_user().
-
-Obviously this is not a fast path, so the kmalloc() overhead
-can be disregarded.
-
-Fixes: 35951393bbff ("pktgen: Remove VLA usage")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- net/core/pktgen.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/hwmon/pmbus/ucd9000.c | 201 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 201 insertions(+)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index de17a9f3e1f6..9216cf99b5a0 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -906,13 +906,14 @@ static ssize_t pktgen_if_write(struct file *file,
- 	i += len;
+diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+index b74dbec..023fb9e 100644
+--- a/drivers/hwmon/pmbus/ucd9000.c
++++ b/drivers/hwmon/pmbus/ucd9000.c
+@@ -27,6 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
+ #include <linux/pmbus.h>
++#include <linux/gpio.h>
+ #include "pmbus.h"
  
- 	if (debug) {
--		size_t copy = min_t(size_t, count, 1023);
--		char tb[1024];
--		if (copy_from_user(tb, user_buffer, copy))
--			return -EFAULT;
--		tb[copy] = 0;
--		pr_debug("%s,%lu  buffer -:%s:-\n",
--			 name, (unsigned long)count, tb);
-+		size_t copy = min_t(size_t, count + 1, 1024);
-+		char *tp = strndup_user(user_buffer, copy);
+ enum chips { ucd9000, ucd90120, ucd90124, ucd90160, ucd9090, ucd90910 };
+@@ -35,8 +36,18 @@
+ #define UCD9000_NUM_PAGES		0xd6
+ #define UCD9000_FAN_CONFIG_INDEX	0xe7
+ #define UCD9000_FAN_CONFIG		0xe8
++#define UCD9000_GPIO_SELECT		0xfa
++#define UCD9000_GPIO_CONFIG		0xfb
+ #define UCD9000_DEVICE_ID		0xfd
+ 
++/* GPIO CONFIG bits */
++#define UCD9000_GPIO_CONFIG_ENABLE	BIT(0)
++#define UCD9000_GPIO_CONFIG_OUT_ENABLE	BIT(1)
++#define UCD9000_GPIO_CONFIG_OUT_VALUE	BIT(2)
++#define UCD9000_GPIO_CONFIG_STATUS	BIT(3)
++#define UCD9000_GPIO_INPUT		0
++#define UCD9000_GPIO_OUTPUT		1
 +
-+		if (IS_ERR(tp))
-+			return PTR_ERR(tp);
+ #define UCD9000_MON_TYPE(x)	(((x) >> 5) & 0x07)
+ #define UCD9000_MON_PAGE(x)	((x) & 0x0f)
+ 
+@@ -47,9 +58,15 @@
+ 
+ #define UCD9000_NUM_FAN		4
+ 
++#define UCD9000_GPIO_NAME_LEN	16
++#define UCD9090_NUM_GPIOS	23
++#define UCD901XX_NUM_GPIOS	26
++#define UCD90910_NUM_GPIOS	26
 +
-+		pr_debug("%s,%zu  buffer -:%s:-\n", name, count, tp);
-+		kfree(buf);
+ struct ucd9000_data {
+ 	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
+ 	struct pmbus_driver_info info;
++	struct gpio_chip gpio;
+ };
+ #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
+ 
+@@ -149,6 +166,146 @@ static int ucd9000_read_byte_data(struct i2c_client *client, int page, int reg)
+ };
+ MODULE_DEVICE_TABLE(of, ucd9000_of_match);
+ 
++static int ucd9000_gpio_read_config(struct i2c_client *client,
++				    unsigned int offset)
++{
++	int ret;
++
++	/* No page set required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_SELECT, offset);
++	if (ret < 0)
++		return ret;
++
++	return i2c_smbus_read_byte_data(client, UCD9000_GPIO_CONFIG);
++}
++
++static int ucd9000_gpio_get(struct gpio_chip *gc, unsigned int offset)
++{
++	struct i2c_client *client  = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	return !!(ret & UCD9000_GPIO_CONFIG_STATUS);
++}
++
++static void ucd9000_gpio_set(struct gpio_chip *gc, unsigned int offset,
++			     int value)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0) {
++		dev_dbg(&client->dev, "failed to read GPIO %d config: %d\n",
++			offset, ret);
++		return;
++	}
++
++	if (value) {
++		if (ret & UCD9000_GPIO_CONFIG_STATUS)
++			return;
++
++		ret |= UCD9000_GPIO_CONFIG_STATUS;
++	} else {
++		if (!(ret & UCD9000_GPIO_CONFIG_STATUS))
++			return;
++
++		ret &= ~UCD9000_GPIO_CONFIG_STATUS;
++	}
++
++	ret |= UCD9000_GPIO_CONFIG_ENABLE;
++
++	/* Page set not required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
++	if (ret < 0) {
++		dev_dbg(&client->dev, "Failed to write GPIO %d config: %d\n",
++			offset, ret);
++		return;
++	}
++
++	ret &= ~UCD9000_GPIO_CONFIG_ENABLE;
++
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
++	if (ret < 0)
++		dev_dbg(&client->dev, "Failed to write GPIO %d config: %d\n",
++			offset, ret);
++}
++
++static int ucd9000_gpio_get_direction(struct gpio_chip *gc,
++				      unsigned int offset)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	return !(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE);
++}
++
++static int ucd9000_gpio_set_direction(struct gpio_chip *gc,
++				      unsigned int offset, bool direction_out,
++				      int requested_out)
++{
++	struct i2c_client *client = gpiochip_get_data(gc);
++	int ret, config, out_val;
++
++	ret = ucd9000_gpio_read_config(client, offset);
++	if (ret < 0)
++		return ret;
++
++	if (direction_out) {
++		out_val = requested_out ? UCD9000_GPIO_CONFIG_OUT_VALUE : 0;
++
++		if (ret & UCD9000_GPIO_CONFIG_OUT_ENABLE) {
++			if ((ret & UCD9000_GPIO_CONFIG_OUT_VALUE) == out_val)
++				return 0;
++		} else {
++			ret |= UCD9000_GPIO_CONFIG_OUT_ENABLE;
++		}
++
++		if (out_val)
++			ret |= UCD9000_GPIO_CONFIG_OUT_VALUE;
++		else
++			ret &= ~UCD9000_GPIO_CONFIG_OUT_VALUE;
++
++	} else {
++		if (!(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE))
++			return 0;
++
++		ret &= ~UCD9000_GPIO_CONFIG_OUT_ENABLE;
++	}
++
++	ret |= UCD9000_GPIO_CONFIG_ENABLE;
++	config = ret;
++
++	/* Page set not required */
++	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
++	if (ret < 0)
++		return ret;
++
++	config &= ~UCD9000_GPIO_CONFIG_ENABLE;
++
++	return i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
++}
++
++static int ucd9000_gpio_direction_input(struct gpio_chip *gc,
++					unsigned int offset)
++{
++	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_INPUT, 0);
++}
++
++static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
++					 unsigned int offset, int val)
++{
++	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_OUTPUT,
++					  val);
++}
++
+ static int ucd9000_probe(struct i2c_client *client,
+ 			 const struct i2c_device_id *id)
+ {
+@@ -263,6 +420,50 @@ static int ucd9000_probe(struct i2c_client *client,
+ 		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
  	}
  
- 	if (!strcmp(name, "min_pkt_size")) {
++	/*
++	 * Note:
++	 *
++	 * Pinmux support has not been added to the new gpio_chip.
++	 * This support should be added when possible given the mux
++	 * behavior of these IO devices.
++	 */
++	data->gpio.label = (const char *)&client->name;
++	data->gpio.get_direction = ucd9000_gpio_get_direction;
++	data->gpio.direction_input = ucd9000_gpio_direction_input;
++	data->gpio.direction_output = ucd9000_gpio_direction_output;
++	data->gpio.get = ucd9000_gpio_get;
++	data->gpio.set = ucd9000_gpio_set;
++	data->gpio.can_sleep = 1;
++	data->gpio.base = -1;
++
++	switch (mid->driver_data) {
++	case ucd9090:
++		data->gpio.ngpio = UCD9090_NUM_GPIOS;
++		break;
++	case ucd90120:
++	case ucd90124:
++	case ucd90160:
++		data->gpio.ngpio = UCD901XX_NUM_GPIOS;
++		break;
++	case ucd90910:
++		data->gpio.ngpio = UCD90910_NUM_GPIOS;
++		break;
++	default:
++		break;
++	}
++
++	data->gpio.parent = &client->dev;
++	data->gpio.owner = THIS_MODULE;
++	data->gpio.of_node = client->dev.of_node;
++
++	if (data->gpio.ngpio) {
++		ret = devm_gpiochip_add_data(&client->dev, &data->gpio,
++					     client);
++		if (ret)
++			dev_warn(&client->dev, "Could not add gpiochip: %d\n",
++				 ret);
++	}
++
+ 	return pmbus_do_probe(client, mid, info);
+ }
+ 
 -- 
-2.9.0
+1.8.3.1
