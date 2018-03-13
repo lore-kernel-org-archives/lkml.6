@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu+hMYbxUoz/ve8BE+Z3Vx9KoXRuBGCFR0omb0TohtkWCh1kzpq2Ku0P11USlZ8ibv+BPhb
-ARC-Seal: i=1; a=rsa-sha256; t=1520955042; cv=none;
+X-Google-Smtp-Source: AG47ELuGW8gPySc92S3Fbw14cyDGNEisPOYkIKpgULnEx0hCQHrHvzS1cgae5945UP1F13+ne0ZN
+ARC-Seal: i=1; a=rsa-sha256; t=1520955039; cv=none;
         d=google.com; s=arc-20160816;
-        b=sjDZYZnaYFphwGz/CFPFecFKjygL4SCTKsZnl93UAel4KkMSNyIwV9eIUiw64eVwn5
-         pVnR0u3HcuUrhmkX//cRFX/6Fj4xFSAxT2+kdET2P2AsT8fWarX3UU2w/10LPmMJLKsR
-         XXs7RwvekouHPvZgN3LKxnvYei4ogz8xg6m70RGHk4PB6giKkPHdOXqugXYxUC1M0Jr+
-         jVlPt1IA12otzf+eQMF20U+GL/2NsrJFfs0uB+s8iDnA8utJJNtGuJGLC6ydMRaOa4qs
-         Em9wtU9rAfCuwtwMggg1yzPCuyr2OhkBoVngzgdS2G7Q8oy+DApHPIGRSNu1NeWy2E3s
-         pduQ==
+        b=tuW9+eMscRkzzRgA2vYleExgXnoOVZo0agwiMVcc0RxcAtocJSU63hFKp4t/JNMg4w
+         MBTeRgmfG0C/rYAzKZ0RZeaSlf8qbgZM5rwYJeGS85D9XbMKuwqZd6Y2O1DcmCnt7w7d
+         NHxJVKoVfx/kfDyqKuy3U/nIdfBgWJ/SR8rPjgeOzPOsz0AOCXq5uHYfOWtq+MB9FmXt
+         M6L/5lo22yH5UBaLEcc/lX2I/Z6iHnplSRBjxKGuc3yDJ7wzVXj4XxcqJJdwnWkhzCEQ
+         rbejw570pnN11UfaGmeOVjzTuBsyTU+ygMR0SU06cMm+pMubq8z+LQK4N72wVCmVK2ZW
+         Yd4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9UTvUJI7G0L2x22hVOYtpxs3cD/GRqj6Z3Em7lKPX1E=;
-        b=HWynEJWBGng1+zQAj/4aUUOjDGskLUwyJdESPyt7QEK8GkrWpsZUCHEHhqumfnHN2y
-         1yFVSV6b/wXeQAQLUDH0vTyoE3FVlCRei1vmns3598W5Ft3LpnS5t/UBPlLXTz7lh+96
-         EkRs57aVy6S/kZT21cLLyh69GxzCM2J/QWnfMQ4RF7cTXBQcLIuojrIW/6uHx5bGT9Ow
-         Ry/Q58TTpizrR+WoCcw614sxIpS5DzjIcMl7juO/0gjGDXskUDe8V5wC3GULVQEzF1+E
-         lQ2n2QzHKJnGljxUlbROuNjr6tmkIjvwDDD0XsIyHMNb6tAbuu/8Ae0HVBrLyz80eKrM
-         r/Xw==
+        bh=YIc4XwpZyneC72dAn5Sfb7PqTF4iJ4wAJ7YxOUg8NWU=;
+        b=oozsJ9hYPnV3f0f6IrYHZev1nDoIu47NTKTrZW9O4tFvzlxQ3EV9Wy27qR4/SWtzsx
+         TPMfQOAQ2rvry5n/KnXDLkvfuUATVuwB7hzb/r65e7VYdoA1BiaCljdOswRC+8XyMoug
+         32LvVzbEmcGSrRLHb1/ZbG4L2tn+95oPz0KRizRkpnMX1TRXfAFavI8YUEPBgvhYwQ3s
+         Um0XFCnEFo0w+K5NDRU2LKWc5eaPpidND2OD6iZDm53b71EfJmCae21xxcZ3e94eBXFL
+         faPreqVWy1yTfXlMaxtnGZhW4VvZ0VJfNa3gIqlVxbAml3Lu+1kOAD60ttoyUKAD1xBT
+         ln7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Richard=20Sch=C3=BCtz?= <rschuetz@uni-koblenz.de>,
-	Arkadiusz Hiler <arkadiusz.hiler@intel.com>,
-	Martin Peres <martin.peres@linux.intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.15 045/146] Revert "Input: synaptics - Lenovo Thinkpad T460p devices should use RMI"
-Date: Tue, 13 Mar 2018 16:23:32 +0100
-Message-Id: <20180313152324.106407771@linuxfoundation.org>
+	Kailang Yang <kailang@realtek.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.15 067/146] ALSA: hda/realtek - Add headset mode support for Dell laptop
+Date: Tue, 13 Mar 2018 16:23:54 +0100
+Message-Id: <20180313152325.905795457@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836954416460458?=
-X-GMAIL-MSGID: =?utf-8?q?1594836954416460458?=
+X-GMAIL-THRID: =?utf-8?q?1594836950945436949?=
+X-GMAIL-MSGID: =?utf-8?q?1594836950945436949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,66 +49,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 5444a992b4a73aa5246a432c482b20b89bce93a5 upstream.
+commit ae104a21e52b1f9aab342cf6924405177b720069 upstream.
 
-This reverts commit 48282969826b3d3c76e908182f69724d86d995fe which
-caused the following issues:
+This platform was only one phone Jack.
+Add dummy lineout verb to fix automute mode disable.
+This just the workaround.
 
-1. On T460p with BIOS version 2.22 touchpad and trackpoint stop working
-after suspend-resume cycle. Due to strange state of the device another
-suspend is impossible.
+[ More background information:
+  since the platform has only a headphone jack without speaker, the
+  driver doesn't create the auto-mute control.  Meanwhile we do update
+  the headset mode via the automute hook in the driver, thus with this
+  setup, the headset won't be updated any longer.
 
-The following dmesg errors can be observed:
-thinkpad_acpi: EC reports that Thermal Table has changed
-rmi4_smbus 7-002c: failed to get SMBus version number!
-rmi4_physical rmi4-00: rmi_driver_reset_handler: Failed to read current IRQ mask.
-rmi4_f01 rmi4-00.fn01: Failed to restore normal operation: -16.
-rmi4_f01 rmi4-00.fn01: Resume failed with code -16.
-rmi4_physical rmi4-00: Failed to suspend functions: -16
-rmi4_smbus 7-002c: Failed to resume device: -16
-PM: resume devices took 0.640 seconds
-rmi4_f03 rmi4-00.fn03: rmi_f03_pt_write: Failed to write to F03 TX register (-16).
-rmi4_physical rmi4-00: rmi_driver_clear_irq_bits: Failed to change enabled interrupts!
-rmi4_physical rmi4-00: rmi_driver_set_irq_bits: Failed to change enabled interrupts!
-psmouse: probe of serio3 failed with error -1
+  By adding a dummy line-out pin here, the auto-mute is added by the
+  driver, and the headset update is triggered properly.
 
-2. On another T460p with BIOS version 2.15 two finger scrolling gesture
-on the touchpad stops working after suspend-resume cycle (about 75%
-reproducibility, when it still works, the scrolling gesture becomes
-laggy). Nothing suspicious appears in the dmesg.
+  Note that this is different from the other
+  ALC274_FIXUP_DELL_AIO_LINEOUT_VERB, which has the real line-out pin,
+  while this quirk adds a dummy line-out pin.  -- tiwai ]
 
-Analysis form Richard Schütz:
-
-"RMI is unreliable on the ThinkPad T460p because the device is affected
-by the firmware behavior addressed in a7ae81952cda ("i2c: i801: Allow
-ACPI SystemIO OpRegion to conflict with PCI BAR")."
-
-The affected devices often show:
-
-i801_smbus 0000:00:1f.4: BIOS is accessing SMBus registers
-i801_smbus 0000:00:1f.4: Driver SMBus register access inhibited
-
-Reported-by: Richard Schütz <rschuetz@uni-koblenz.de>
-Signed-off-by: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
-Tested-by: Martin Peres <martin.peres@linux.intel.com>
-Tested-by: Arkadiusz Hiler <arkadiusz.hiler@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    1 -
- 1 file changed, 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -173,7 +173,6 @@ static const char * const smbus_pnp_ids[
- 	"LEN0046", /* X250 */
- 	"LEN004a", /* W541 */
- 	"LEN200f", /* T450s */
--	"LEN2018", /* T460p */
- 	NULL
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5363,6 +5363,7 @@ enum {
+ 	ALC274_FIXUP_DELL_BIND_DACS,
+ 	ALC274_FIXUP_DELL_AIO_LINEOUT_VERB,
+ 	ALC298_FIXUP_TPT470_DOCK,
++	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
  };
  
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6210,6 +6211,15 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC293_FIXUP_LENOVO_SPK_NOISE
+ 	},
++	[ALC255_FIXUP_DUMMY_LINEOUT_VERB] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x14, 0x0201101f },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6263,6 +6273,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x084b, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x084e, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
++	SND_PCI_QUIRK(0x1028, 0x0873, "Dell Precision 3930", ALC255_FIXUP_DUMMY_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
