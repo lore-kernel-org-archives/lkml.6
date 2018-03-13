@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752834AbeCMSAy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:00:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46400 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752805AbeCMSAv (ORCPT
+        id S1753113AbeCMSCQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:02:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752840AbeCMSAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:00:51 -0400
+        Tue, 13 Mar 2018 14:00:54 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v9 20/24] perf: Add a speculative page fault sw event
-Date: Tue, 13 Mar 2018 18:59:50 +0100
+Subject: [PATCH v9 21/24] perf tools: Add support for the SPF perf event
+Date: Tue, 13 Mar 2018 18:59:51 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18031318-0008-0000-0000-000004DD01A1
+x-cbid: 18031318-0016-0000-0000-0000053201A9
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031318-0009-0000-0000-00001E700195
-Message-Id: <1520963994-28477-21-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18031318-0017-0000-0000-0000286F019F
+Message-Id: <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,17 +46,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new software event to count succeeded speculative page faults.
+Add support for the new speculative faults event.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/uapi/linux/perf_event.h | 1 +
- 1 file changed, 1 insertion(+)
+ tools/include/uapi/linux/perf_event.h | 1 +
+ tools/perf/util/evsel.c               | 1 +
+ tools/perf/util/parse-events.c        | 4 ++++
+ tools/perf/util/parse-events.l        | 1 +
+ tools/perf/util/python.c              | 1 +
+ 5 files changed, 8 insertions(+)
 
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
 index 6f873503552d..a6ddab9edeec 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
 @@ -112,6 +112,7 @@ enum perf_sw_ids {
  	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
  	PERF_COUNT_SW_DUMMY			= 9,
@@ -65,5 +69,56 @@ index 6f873503552d..a6ddab9edeec 100644
  
  	PERF_COUNT_SW_MAX,			/* non-ABI */
  };
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ef351688b797..45b954019118 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -428,6 +428,7 @@ const char *perf_evsel__sw_names[PERF_COUNT_SW_MAX] = {
+ 	"alignment-faults",
+ 	"emulation-faults",
+ 	"dummy",
++	"speculative-faults",
+ };
+ 
+ static const char *__perf_evsel__sw_name(u64 config)
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 34589c427e52..2a8189c6d5fc 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -140,6 +140,10 @@ struct event_symbol event_symbols_sw[PERF_COUNT_SW_MAX] = {
+ 		.symbol = "bpf-output",
+ 		.alias  = "",
+ 	},
++	[PERF_COUNT_SW_SPF] = {
++		.symbol = "speculative-faults",
++		.alias	= "spf",
++	},
+ };
+ 
+ #define __PERF_EVENT_FIELD(config, name) \
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index 655ecff636a8..5d6782426b30 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -308,6 +308,7 @@ emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EM
+ dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
+ duration_time					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
+ bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
++speculative-faults|spf				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_SPF); }
+ 
+ 	/*
+ 	 * We have to handle the kernel PMU event cycles-ct/cycles-t/mem-loads/mem-stores separately.
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 2918cac7a142..00dd227959e6 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -1174,6 +1174,7 @@ static struct {
+ 	PERF_CONST(COUNT_SW_ALIGNMENT_FAULTS),
+ 	PERF_CONST(COUNT_SW_EMULATION_FAULTS),
+ 	PERF_CONST(COUNT_SW_DUMMY),
++	PERF_CONST(COUNT_SW_SPF),
+ 
+ 	PERF_CONST(SAMPLE_IP),
+ 	PERF_CONST(SAMPLE_TID),
 -- 
 2.7.4
