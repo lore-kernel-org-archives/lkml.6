@@ -1,71 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeCMNXE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:23:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:33707 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752391AbeCMNTT (ORCPT
+        id S1752763AbeCMNXG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:23:06 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47676 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752370AbeCMNTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:19:19 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Waiman Long <longman@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] debugobjects: avoid another unused variable warning.
-Date: Tue, 13 Mar 2018 14:18:46 +0100
-Message-Id: <20180313131857.158876-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:Y0R+d5wy/OEQ52CnrUhtAamEQPfBMlTSBNnkqBSBxFqJn5gYQfV
- dKRzakRHYfFKfVeQWIda60ytm+v6oL1xI/iAXeip0UwxasvDY0DOe5LVHzJXdDvqDHsqIcp
- QUpH4qs7nTUtvRybbI3o8wfwyFyT2T3d5/cfkbGZW4sMBKovRjwRtSJ/5qKyh0lAL0c8NF3
- uYmbAGdBxuqVWw4RGt6Xg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Nu3siHqP9fg=:R4GoMU7fv2U1yKgWUMTMy1
- 2Yi3IzATZylh4rHOC+TcNFJbFVQDXPAjQ35PzYay80/Elrpt5f/xka8cOppzLiZeTEMvfxV0b
- 01d0MhJUfaqvfSoZ03D6/UP0DH2+z63ISw3QmUh1dy4nCtishHsFGXKidquEpzRjEE1XDKe/j
- gqvOcpSTbKhdYHdGFAEEDQhGGW3w08IZqgYwGgoICVDHC4zq9BbwINk3j2fpF94BvCvVWaQxZ
- B1NVN4zFjnpxm4+pNwPN5ixredSVhxsT4ySvBKVdtMh9ySYNRhZ9hLLBEHexv9pMjMggeyb3L
- HLz1wdtjxP3w+py42aqj0BiMG3mav8RhMvKQaGRfmYQVqd8ppPuxlfAx+Ltm52foUJJH/trDg
- 9U7DIlgGnQEn/omvtCArZC96yxcsAjd2GvDJK+OVJ3a8SCkKy/dmKuLqqt+NnIlrSVqY08Nrr
- yLCANsGtgOCAbnhuCyE47b0587yBneXZ9/016PK2RWzQUnW0xkhwONzCf2jo2IHRASF5j4+Ms
- Co6fkAtR08W8YC2LMIYV62mpSz6SqQ5qEDJ7WxNphSOwGZf8yuPqWuT5vgM8ZMmR0yeM6xNH+
- TZEXHPY5LG7jXgNrYJ0riFL96CgBzB3jsxPjW+wLyMl7XoxcZ+tDjlPSMTuLB2teatZ5kMUU0
- Tg2onMb17B9xJfvhLTTA3/NBKrVTWnwUTH6AgMWtRfz3wH0vSA8eXovFt5YfOEgQo0VCxy5WR
- DRcUMIhyKIkgq8P+Ssw+7fr/YR360LXoeS11EQ==
+        Tue, 13 Mar 2018 09:19:18 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
+        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
+CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 0/9] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
+Date: Tue, 13 Mar 2018 13:18:55 +0000
+Message-ID: <20180313131904.13700-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=534 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1803130157
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-debug_objects_maxchecked is only updated in __debug_check_no_obj_freed(),
-and only read in debug_objects_maxchecked, unfortunately both of
-these are optional and depend on different Kconfig symbols. When both
-CONFIG_DEBUG_OBJECTS_FREE and CONFIG_DEBUG_FS are disabled, we get
-this warning:
+NOTE: Compared to older versions of this chain I have removed patches at the
+end of the chain that were being ignored until the earlier patches had been
+merged - an impossible circular dependency. There were too many moving targets
+to keep the whole chain up-to-date and so patches that were already acked were
+getting stale. The subset of patches here are all acked or close-to-acked, and
+can be built and used as they are to produce a working pinctrl and gpio.
 
-lib/debugobjects.c:56:14: error: 'debug_objects_maxchecked' defined but not used [-Werror=unused-variable]
+The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
+devices. In addition to the core audio capability they have onboard GPIO,
+regulators, DSPs and interrupt controller and a large register map space
+accessed over SPI or I2C. This family of codecs is based around common IP
+blocks and they are managed by a set of common drivers referred to as "Madera".
 
-Rather than trying to add more complex #ifdef protections, this marks
-the variable as __maybe_unused so it can be silently dropped when
-usused.
+Richard Fitzgerald (9):
+  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
+  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
+  mfd: madera: Add common support for Cirrus Logic Madera codecs
+  mfd: madera: Register map tables for Cirrus Logic CS47L35
+  mfd: madera: Register map tables for Cirrus Logic CS47L85
+  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
+  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
+  gpio: madera: Support Cirrus Logic Madera class codecs
 
-Fixes: bd9dcd046509 ("debugobjects: Export max loops counter")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- lib/debugobjects.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
+ MAINTAINERS                                        |   16 +
+ drivers/gpio/Kconfig                               |    6 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-madera.c                         |  206 +
+ drivers/mfd/Kconfig                                |   50 +
+ drivers/mfd/Makefile                               |   14 +
+ drivers/mfd/cs47l35-tables.c                       | 1609 ++++++++
+ drivers/mfd/cs47l85-tables.c                       | 3009 +++++++++++++++
+ drivers/mfd/cs47l90-tables.c                       | 2674 +++++++++++++
+ drivers/mfd/madera-core.c                          |  600 +++
+ drivers/mfd/madera-i2c.c                           |  139 +
+ drivers/mfd/madera-spi.c                           |  138 +
+ drivers/mfd/madera.h                               |   44 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/cirrus/Kconfig                     |   15 +
+ drivers/pinctrl/cirrus/Makefile                    |   13 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   45 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   59 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   57 +
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c       | 1074 ++++++
+ drivers/pinctrl/cirrus/pinctrl-madera.h            |   41 +
+ include/linux/mfd/madera/core.h                    |  187 +
+ include/linux/mfd/madera/pdata.h                   |   63 +
+ include/linux/mfd/madera/registers.h               | 3917 ++++++++++++++++++++
+ 27 files changed, 14180 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+ create mode 100644 drivers/gpio/gpio-madera.c
+ create mode 100644 drivers/mfd/cs47l35-tables.c
+ create mode 100644 drivers/mfd/cs47l85-tables.c
+ create mode 100644 drivers/mfd/cs47l90-tables.c
+ create mode 100644 drivers/mfd/madera-core.c
+ create mode 100644 drivers/mfd/madera-i2c.c
+ create mode 100644 drivers/mfd/madera-spi.c
+ create mode 100644 drivers/mfd/madera.h
+ create mode 100644 drivers/pinctrl/cirrus/Kconfig
+ create mode 100644 drivers/pinctrl/cirrus/Makefile
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera-core.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
+ create mode 100644 include/linux/mfd/madera/core.h
+ create mode 100644 include/linux/mfd/madera/pdata.h
+ create mode 100644 include/linux/mfd/madera/registers.h
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 105ecfc47d8c..994be4805cec 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -53,7 +53,7 @@ static int			obj_nr_tofree;
- static struct kmem_cache	*obj_cache;
- 
- static int			debug_objects_maxchain __read_mostly;
--static int			debug_objects_maxchecked __read_mostly;
-+static int __maybe_unused	debug_objects_maxchecked __read_mostly;
- static int			debug_objects_fixups __read_mostly;
- static int			debug_objects_warnings __read_mostly;
- static int			debug_objects_enabled __read_mostly
 -- 
-2.9.0
+2.11.0
