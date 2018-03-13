@@ -1,60 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752907AbeCMVFQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 17:05:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39653 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752431AbeCMVFO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 17:05:14 -0400
-X-Google-Smtp-Source: AG47ELvav4k7a22afrFpKqORvXI5L+pD6aznUzRB3s5VT8+0NdnbYPnTxM4J3okxOmntN7FZ+0vfTw==
+        id S1753012AbeCMVGF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 17:06:05 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:44892 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751714AbeCMVGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 17:06:03 -0400
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH v3 0/9] x86/microcode/AMD: check microcode file sanity before
+ loading it
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <dcbfabaa-741f-5fc4-a6a4-6440f2786202@maciej.szmigiero.name>
+Date: Tue, 13 Mar 2018 22:05:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180313214737.62ef82c8@crub>
-References: <1520949014-21468-1-git-send-email-yannick.fertre@st.com>
- <20180313152310.GJ4788@phenom.ffwll.local> <20180313214737.62ef82c8@crub>
-From: Brian Norris <briannorris@chromium.org>
-Date: Tue, 13 Mar 2018 14:00:04 -0700
-X-Gmail-Original-Message-ID: <CA+ASDXNJ6pq5FZfg+KDNNFQVv+r=FAimkeW5C8tJ9VQTb4xhMg@mail.gmail.com>
-Message-ID: <CA+ASDXNJ6pq5FZfg+KDNNFQVv+r=FAimkeW5C8tJ9VQTb4xhMg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] splash screen on the stm32f769 disco board
-To: Anatolij Gustschin <agust@denx.de>
-Cc: Daniel Vetter <daniel@ffwll.ch>,
-        yannick fertre <yannick.fertre@st.com>,
-        Vikas Manocha <vikas.manocha@st.com>, Tom Rini <trini@konsulko.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Patrick DELAUNAY <patrick.delaunay@st.com>,
-        Christophe KERELLO <christophe.kerello@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>, Simon Glass <sjg@chromium.org>,
-        u-boot@lists.denx.de, Linux Kernel <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 1:50 PM, Anatolij Gustschin <agust@denx.de> wrote:
-> On Tue, 13 Mar 2018 16:23:10 +0100
-> Daniel Vetter daniel@ffwll.ch wrote:
-> ...
->> Shouldn't we patch the drivers/gpu/drm/stm driver instead of the
->> drivers/video one? fbdev is kinda a dead end and not for adding new hw
->> support ...
->
-> this patch series adds display driver to U-Boot project, I don't know
-> why it was submitted to the Linux kernel and dri-devel mailing lists.
->
-> Yannick, please don't send this to linux-kernel and dri-devel lists
-> and also please don't Cc kernel developers when resubmitting the
-> patch series.
+Currently, it is very easy to make the AMD microcode update driver crash
+or spin on a malformed microcode container file since it does very little
+consistency checking on data loaded from such file.
 
-I couldn't agree more! I mentioned this on the previous confusing post
-(where I had the same objection as Daniel, before realizing this was
-just a poorly-documented, ill-targeted U-Boot patch series).
+This series introduces various checks, mostly on length-type fields,
+so all corrupted microcode container files are (hopefully) correctly
+rejected instead.
+This largely matches what the Intel microcode update driver already does.
 
-Brian
+It also tries to make the behavior consistent between the early and late
+loaders.
+
+Please note that this isn't about verifying the actual microcode update,
+that is, the blob that gets sent to the CPU as the new microcode.
+Such verification is (hopefully) done by the CPU itself.
+
+It is about verifying a driver-specific container file that includes
+many microcode updates for different CPUs of a particular CPU family,
+along with metadata that helps the driver select the right microcode
+update to actually send to the CPU.
+
+There are purposely-corrupted test files available at
+https://pastebin.com/XkKUSmMp
+One has to enable KASAN in the kernel config and rename a particular
+test file to name appropriate to the running CPU family to test its
+loading.
+
+Changes from v1: Capitalize a comment, rename 'eqsize' and 'bufsize'
+to 'eq_size' and 'buf_size', respectively, attach a comment about
+checking the equivalence table header to its first size check, rename
+'equiv{_cpu,}_table_size' to 'equiv{_cpu,}_table_entries'.
+
+Changes from v2: Split the patch into separate commits, remove explicit
+CPU equivalence table size limit, make install_equiv_cpu_table() return
+a size_t instead of a (signed) int so no overflow can occur there,
+automatically compute the PATCH_MAX_SIZE macro and use it for checking
+a patch size, make the late loader behavior with respect to late parse
+failures consistent with what the early loader does. 
+
+ arch/x86/include/asm/microcode_amd.h |   2 -
+ arch/x86/kernel/cpu/microcode/amd.c  | 164 ++++++++++++++++++++++++-----------
+ 2 files changed, 114 insertions(+), 52 deletions(-)
