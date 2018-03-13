@@ -1,78 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933422AbeCMMGr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:06:47 -0400
-Received: from ozlabs.org ([103.22.144.67]:34853 "EHLO ozlabs.org"
+        id S933317AbeCMMGR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:06:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933158AbeCMMGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:06:41 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        pasha.tatashin@oracle.com, takahiro.akashi@linaro.org,
-        gi-oh.kim@profitbricks.com, npiggin@gmail.com,
-        baiyaowei@cmss.chinamobile.com, bob.picco@oracle.com,
-        ard.biesheuvel@linaro.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc: Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org
-Subject: OK to merge via powerpc? (was Re: [PATCH 05/14] mm: make memblock_alloc_base_nid non-static)
-In-Reply-To: <20180213150824.27689-6-npiggin@gmail.com>
-References: <20180213150824.27689-1-npiggin@gmail.com> <20180213150824.27689-6-npiggin@gmail.com>
-Date: Tue, 13 Mar 2018 23:06:35 +1100
-Message-ID: <873714goxg.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S933209AbeCMMGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:06:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7797421778
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        John Garry <john.garry@huawei.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 14/31] perf vendor events: Add support for pmu events vendor subdirectory
+Date: Tue, 13 Mar 2018 09:04:51 -0300
+Message-Id: <20180313120508.29327-15-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
+References: <20180313120508.29327-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anyone object to us merging the following patch via the powerpc tree?
+From: John Garry <john.garry@huawei.com>
 
-Full series is here if anyone's interested:
-  http://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=28377&state=*
+For some architectures (like arm), it is required to support a vendor
+subdirectory and not locate all the JSONs for a specific vendor in the
+same folder.
 
-cheers
+This is because all the events for the same vendor will be placed in the
+same pmu events table, which may cause conflict.  This conflict would be
+in the instance that a vendor's custom implemented events do have the
+same meaning on different platforms, so events in the pmu table would
+conflict. In addition, per list command may show events which are not
+even supported for a given platform.
 
-Nicholas Piggin <npiggin@gmail.com> writes:
-> This will be used by powerpc to allocate per-cpu stacks and other
-> data structures node-local where possible.
->
-> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-> ---
->  include/linux/memblock.h | 5 ++++-
->  mm/memblock.c            | 2 +-
->  2 files changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 8be5077efb5f..8cab51398705 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -316,9 +316,12 @@ static inline bool memblock_bottom_up(void)
->  #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
->  #define MEMBLOCK_ALLOC_ACCESSIBLE	0
->  
-> -phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
-> +phys_addr_t memblock_alloc_range(phys_addr_t size, phys_addr_t align,
->  					phys_addr_t start, phys_addr_t end,
->  					ulong flags);
-> +phys_addr_t memblock_alloc_base_nid(phys_addr_t size,
-> +					phys_addr_t align, phys_addr_t max_addr,
-> +					int nid, ulong flags);
->  phys_addr_t memblock_alloc_base(phys_addr_t size, phys_addr_t align,
->  				phys_addr_t max_addr);
->  phys_addr_t __memblock_alloc_base(phys_addr_t size, phys_addr_t align,
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 5a9ca2a1751b..cea2af494da0 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1190,7 +1190,7 @@ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
->  					flags);
->  }
->  
-> -static phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
-> +phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
->  					phys_addr_t align, phys_addr_t max_addr,
->  					int nid, ulong flags)
->  {
-> -- 
-> 2.16.1
+This patch adds support for a arch/vendor/platform directory hierarchy,
+while maintaining backwards-compatibility for existing arch/platform
+structure. In this, each platform would always have its own pmu events
+table.
+
+In generated file pmu_events.c, each platform table name is in the
+format pme{_vendor}_platform, like this:
+
+struct pmu_events_map pmu_events_map[] = {
+{
+	.cpuid = "0x00000000420f5160",
+	.version = "v1",
+	.type = "core",
+	.table = pme_cavium_thunderx2
+},
+{
+	.cpuid = 0,
+	.version = 0,
+	.type = 0,
+	.table = 0,
+},
+};
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxarm@huawei.com
+Link: http://lkml.kernel.org/r/1520506716-197429-5-git-send-email-john.garry@huawei.com
+[ Add missing limits.h include, fixing the build on at least all Alpine Linux versions tested (3.4 to 3.7 + edge) ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/pmu-events/README    |  4 +++
+ tools/perf/pmu-events/jevents.c | 65 +++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 63 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
+index 2407abc1d441..655286ff8767 100644
+--- a/tools/perf/pmu-events/README
++++ b/tools/perf/pmu-events/README
+@@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
+ 	Cache.json 	Memory.json 	Virtual-Memory.json
+ 	Frontend.json 	Pipeline.json
+ 
++The JSONs folder for a CPU model/family may be placed in the root arch
++folder, or may be placed in a vendor sub-folder under the arch folder
++for instances where the arch and vendor are not the same.
++
+ Using the JSON files and the mapfile, 'jevents' generates the C source file,
+ 'pmu-events.c', which encodes the two sets of tables:
+ 
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 1d02fafdc34d..b08dffeac4bd 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -39,6 +39,7 @@
+ #include <unistd.h>
+ #include <stdarg.h>
+ #include <libgen.h>
++#include <limits.h>
+ #include <dirent.h>
+ #include <sys/time.h>			/* getrlimit */
+ #include <sys/resource.h>		/* getrlimit */
+@@ -572,7 +573,7 @@ static char *file_name_to_table_name(char *fname)
+ 	 * Derive rest of table name from basename of the JSON file,
+ 	 * replacing hyphens and stripping out .json suffix.
+ 	 */
+-	n = asprintf(&tblname, "pme_%s", basename(fname));
++	n = asprintf(&tblname, "pme_%s", fname);
+ 	if (n < 0) {
+ 		pr_info("%s: asprintf() error %s for file %s\n", prog,
+ 				strerror(errno), fname);
+@@ -582,7 +583,7 @@ static char *file_name_to_table_name(char *fname)
+ 	for (i = 0; i < strlen(tblname); i++) {
+ 		c = tblname[i];
+ 
+-		if (c == '-')
++		if (c == '-' || c == '/')
+ 			tblname[i] = '_';
+ 		else if (c == '.') {
+ 			tblname[i] = '\0';
+@@ -739,25 +740,77 @@ static int get_maxfds(void)
+ static FILE *eventsfp;
+ static char *mapfile;
+ 
++static int is_leaf_dir(const char *fpath)
++{
++	DIR *d;
++	struct dirent *dir;
++	int res = 1;
++
++	d = opendir(fpath);
++	if (!d)
++		return 0;
++
++	while ((dir = readdir(d)) != NULL) {
++		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
++			res = 0;
++			break;
++		} else if (dir->d_type == DT_UNKNOWN) {
++			char path[PATH_MAX];
++			struct stat st;
++
++			sprintf(path, "%s/%s", fpath, dir->d_name);
++			if (stat(path, &st))
++				break;
++
++			if (S_ISDIR(st.st_mode)) {
++				res = 0;
++				break;
++			}
++		}
++	}
++
++	closedir(d);
++
++	return res;
++}
++
+ static int process_one_file(const char *fpath, const struct stat *sb,
+ 			    int typeflag, struct FTW *ftwbuf)
+ {
+-	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
++	char *tblname, *bname;
+ 	int is_dir  = typeflag == FTW_D;
+ 	int is_file = typeflag == FTW_F;
+ 	int level   = ftwbuf->level;
+ 	int err = 0;
+ 
++	if (level == 2 && is_dir) {
++		/*
++		 * For level 2 directory, bname will include parent name,
++		 * like vendor/platform. So search back from platform dir
++		 * to find this.
++		 */
++		bname = (char *) fpath + ftwbuf->base - 2;
++		for (;;) {
++			if (*bname == '/')
++				break;
++			bname--;
++		}
++		bname++;
++	} else
++		bname = (char *) fpath + ftwbuf->base;
++
+ 	pr_debug("%s %d %7jd %-20s %s\n",
+ 		 is_file ? "f" : is_dir ? "d" : "x",
+ 		 level, sb->st_size, bname, fpath);
+ 
+-	/* base dir */
+-	if (level == 0)
++	/* base dir or too deep */
++	if (level == 0 || level > 3)
+ 		return 0;
+ 
++
+ 	/* model directory, reset topic */
+-	if (level == 1 && is_dir) {
++	if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
++	    (level == 2 && is_dir)) {
+ 		if (close_table)
+ 			print_events_table_suffix(eventsfp);
+ 
+-- 
+2.14.3
