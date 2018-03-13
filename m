@@ -1,47 +1,99 @@
-Date: Wed, 14 Mar 2018 11:51:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	lkft-triage@lists.linaro.org,
-	linux- stable <stable@vger.kernel.org>,
-	Daniel Vacek <neelx@redhat.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-14183-1520980098-2-4409473532985568174
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520980098; b=MI0Vom8ZprkQl3O6UUAg4Lk/cPy3jfTc3o+7s8K6EoveBPI
+    J16n1nuJZQJ+KSxxhRA0eBRu5CDRmuS7HnVgmEIlw7CNmqTmWU44XbtxQL1wBRFM
+    KmjMpiH/Wyg5p/sMtaDwM7H+Cw70rxuDpZrsQwA1+vZxUjnFr9Z4dFPzj4l/EDOs
+    qbLDlD6W+nGg6n1lQCN9GqysyalsSU4YjEg3I463BEirSWpbGJXVPpWDl52UzGRU
+    EQUevS5HceliwjZZQKQFaKsZ/7T81GQ+lEuKwGHhcMyX3z/mcmZSrOuAMfQiAnJq
+    FWs9GiVaZ7Cpio+Buk0BbvywblLvKJlRNnOYPTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520980098; bh=c+MxZ69bXigUVHfrvZGA8+ENum
+    inHBmiflfKagNS8Cc=; b=EHzBGJ84AiJwIfiXehzr8SSqQHUOqtG+N/GOzghwcc
+    G4U4Vmq9uRYD/U5hPYwpfmUBex3krnd7qT7rAQSqindF3mFW2rCPu6awSFiCDD4d
+    OJU1CGeKscl26I9ey7gEYJsUDzTY2u9jsELsXgM3f7t9+cKoBk9LBVGHrk0O9xVq
+    OufrP9TGyMZ0rxCsvmAZKXrLL0NBOIlKCszQL1igC5DyXDw40LzWwHVYrCoChfGW
+    kuVQMJL19p2XKw40CU4xlFCJgImXNeI5RmyhtkNg24U5z6F7wqcAu1NhHYwvHBXH
+    MF466dbdi0s1993Yvthl2XduzUg/cY+6NrtvPp8EKP/g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ELnfBzJx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=txuJbkps;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ELnfBzJx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=txuJbkps;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752209AbeCMW2E (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 18:28:04 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:43637 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932222AbeCMW2C (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 18:28:02 -0400
+X-Google-Smtp-Source: AG47ELtQ3YQMmZiyoRq9haPJ69XmI/fHMGU4A1X+Snr3y/Jau/25II5kITKuu8urr/cVFNGtN1mm8g==
+Date: Tue, 13 Mar 2018 15:28:00 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 4.15 000/146] 4.15.10-stable review
-Message-ID: <20180314105133.GD32615@kroah.com>
+Message-ID: <20180313222800.GB4113@roeck-us.net>
 References: <20180313152320.439085687@linuxfoundation.org>
- <CA+G9fYspDG9qukkn__sLVpsWkXDhwQ-sOLn6p7R_G0E4xa4vFA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYspDG9qukkn__sLVpsWkXDhwQ-sOLn6p7R_G0E4xa4vFA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 03:50:56PM +0530, Naresh Kamboju wrote:
-> On 13 March 2018 at 20:52, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > Daniel Vacek <neelx@redhat.com>
-> >     mm/page_alloc: fix memmap_init_zone pageblock alignment
+On Tue, Mar 13, 2018 at 04:22:47PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.15.10 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
+> Responses should be made by Thu Mar 15 15:22:37 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> On 4.14 and 4.15, this patch breaks booting on dragonboard 410c and
-> hikey 620 (both arm64). The fix has been proposed and tested but is not
-> yet in mainline per https://lkml.org/lkml/2018/3/12/710
-> 
-> A new fix proposed by Daniel is under review,
-> mm/page_alloc: fix boot hang in memmap_init_zone
-> https://lkml.org/lkml/2018/3/13/1422
 
-Yeah, I think I'm going to drop this patch now, and add it for the next
-round.
+Build results:
+        total: 147 pass: 147 fail: 0
+Qemu test results:
+        total: 141 pass: 141 fail: 0
+		        
+Details are available at http://kerneltests.org/builders.
 
-And please learn to trim your email context...
-
-thanks,
-
-greg k-h
+Guenter
