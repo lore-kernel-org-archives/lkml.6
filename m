@@ -1,160 +1,576 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeCMI4n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 04:56:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39378 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbeCMI4k (ORCPT
+        id S1752676AbeCMI5A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 04:57:00 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40272 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752663AbeCMI47 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 04:56:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA6EC609EF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com, will.deacon@arm.com, robdclark@gmail.com,
-        tfiga@chromium.org, sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        vivek.gautam@codeaurora.org
-Subject: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date: Tue, 13 Mar 2018 14:25:34 +0530
-Message-Id: <20180313085534.11650-6-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+        Tue, 13 Mar 2018 04:56:59 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Yannick FERTRE <yannick.fertre@st.com>,
+        Vikas MANOCHA <vikas.manocha@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Patrick DELAUNAY <patrick.delaunay@st.com>,
+        Christophe KERELLO <christophe.kerello@st.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Brian Norris <briannorris@chromium.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: "u-boot@lists.denx.de" <u-boot@lists.denx.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 06/10] video: add support of STM32 MIPI DSI controller
+ driver
+Thread-Topic: [PATCH v2 06/10] video: add support of STM32 MIPI DSI controller
+ driver
+Thread-Index: AQHTsj1WUAcHOkO7Z06Y5FrFHkgZFKPN3RwA
+Date: Tue, 13 Mar 2018 08:56:34 +0000
+Message-ID: <2453d72e-8c38-2d55-7e54-359ab4e9ffc5@st.com>
+References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
+ <1520005451-23217-7-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1520005451-23217-7-git-send-email-yannick.fertre@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <67E9045F25978541AA7B75ABDCF7C08B@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2D8v5Ya031394
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements. This smmu core is used with
-multiple masters on msm8996, viz. mdss, video, etc.
-Add bindings for the same.
+Hi yannick
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
----
- .../devicetree/bindings/iommu/arm,smmu.txt         | 42 ++++++++++++++++++++++
- drivers/iommu/arm-smmu.c                           | 14 ++++++++
- 2 files changed, 56 insertions(+)
+On 03/02/2018 04:44 PM, yannick fertre wrote:
+> Add the STM32 DSI controller driver that uses the Synopsys DesignWare
+> MIPI DSI host controller bridge.
+> 
+> Signed-off-by: yannick fertre <yannick.fertre@st.com>
+> ---
+>   drivers/video/stm32/Kconfig     |  10 +
+>   drivers/video/stm32/Makefile    |   1 +
+>   drivers/video/stm32/stm32_dsi.c | 427 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 438 insertions(+)
+>   create mode 100644 drivers/video/stm32/stm32_dsi.c
+> 
+> diff --git a/drivers/video/stm32/Kconfig b/drivers/video/stm32/Kconfig
+> index 113a2bb..2ea6f18 100644
+> --- a/drivers/video/stm32/Kconfig
+> +++ b/drivers/video/stm32/Kconfig
+> @@ -15,6 +15,16 @@ menuconfig VIDEO_STM32
+>   	  DSI. This option enables these supports which can be used on
+>   	  devices which have RGB TFT or DSI display connected.
+>   
+> +config VIDEO_STM32_DSI
+> +	bool "Enable STM32 DSI video support"
+> +	depends on VIDEO_STM32
+> +	select VIDEO_MIPI_DSI
+> +	select VIDEO_BRIDGE
+> +	select VIDEO_DW_MIPI_DSI
+> +	help
+> +	  This option enables support DSI internal bridge which can be used on
+> +	  devices which have DSI display connected.
+> +
+>   config VIDEO_STM32_MAX_XRES
+>   	int "Maximum horizontal resolution (for memory allocation purposes)"
+>   	depends on VIDEO_STM32
+> diff --git a/drivers/video/stm32/Makefile b/drivers/video/stm32/Makefile
+> index 372a2e1..f8c3ff7 100644
+> --- a/drivers/video/stm32/Makefile
+> +++ b/drivers/video/stm32/Makefile
+> @@ -8,3 +8,4 @@
+>   #
+>   
+>   obj-${CONFIG_VIDEO_STM32} = stm32_ltdc.o
+> +obj-${CONFIG_VIDEO_STM32_DSI} += stm32_dsi.o
+> diff --git a/drivers/video/stm32/stm32_dsi.c b/drivers/video/stm32/stm32_dsi.c
+> new file mode 100644
+> index 0000000..3e26433
+> --- /dev/null
+> +++ b/drivers/video/stm32/stm32_dsi.c
+> @@ -0,0 +1,427 @@
+> +/*
+> + * Copyright (C) 2018 STMicroelectronics - All Rights Reserved
+> + * Author(s): Philippe Cornu <philippe.cornu@st.com> for STMicroelectronics.
+> + *	      Yannick Fertre <yannick.fertre@st.com> for STMicroelectronics.
+> + *
+> + * This driver is based on the mipi dsi driver from
+> + * drivers/gpu/drm/stm/dw_mipi_dsi-stm.c (kernel linux).
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +#include <asm/io.h>
+> +#include <asm/arch/gpio.h>
+> +#include <common.h>
+> +#include <clk.h>
+> +#include <dm.h>
+> +#include <dm/device-internal.h>
+> +#include <mipi_display.h>
+> +#include <dw_mipi_dsi.h>
+> +#include <linux/iopoll.h>
+> +#include <panel.h>
+> +#include <reset.h>
+> +#include <video.h>
+> +#include <video_bridge.h>
+> +
+> +DECLARE_GLOBAL_DATA_PTR;
+> +
+> +#define HWVER_130			0x31333000	/* IP version 1.30 */
+> +#define HWVER_131			0x31333100	/* IP version 1.31 */
+> +
+> +/* DSI digital registers & bit definitions */
+> +#define DSI_VERSION			0x00
+> +#define VERSION				GENMASK(31, 8)
+> +
+> +/*
+> + * DSI wrapper registers & bit definitions
+> + * Note: registers are named as in the Reference Manual
+> + */
+> +#define DSI_WCFGR	0x0400		/* Wrapper ConFiGuration Reg */
+> +#define WCFGR_DSIM	BIT(0)		/* DSI Mode */
+> +#define WCFGR_COLMUX	GENMASK(3, 1)	/* COLor MUltipleXing */
+> +
+> +#define DSI_WCR		0x0404		/* Wrapper Control Reg */
+> +#define WCR_DSIEN	BIT(3)		/* DSI ENable */
+> +
+> +#define DSI_WISR	0x040C		/* Wrapper Interrupt and Status Reg */
+> +#define WISR_PLLLS	BIT(8)		/* PLL Lock Status */
+> +#define WISR_RRS	BIT(12)		/* Regulator Ready Status */
+> +
+> +#define DSI_WPCR0	0x0418		/* Wrapper Phy Conf Reg 0 */
+> +#define WPCR0_UIX4	GENMASK(5, 0)	/* Unit Interval X 4 */
+> +#define WPCR0_TDDL	BIT(16)		/* Turn Disable Data Lanes */
+> +
+> +#define DSI_WRPCR	0x0430		/* Wrapper Regulator & Pll Ctrl Reg */
+> +#define WRPCR_PLLEN	BIT(0)		/* PLL ENable */
+> +#define WRPCR_NDIV	GENMASK(8, 2)	/* pll loop DIVision Factor */
+> +#define WRPCR_IDF	GENMASK(14, 11)	/* pll Input Division Factor */
+> +#define WRPCR_ODF	GENMASK(17, 16)	/* pll Output Division Factor */
+> +#define WRPCR_REGEN	BIT(24)		/* REGulator ENable */
+> +#define WRPCR_BGREN	BIT(28)		/* BandGap Reference ENable */
+> +#define IDF_MIN		1
+> +#define IDF_MAX		7
+> +#define NDIV_MIN	10
+> +#define NDIV_MAX	125
+> +#define ODF_MIN		1
+> +#define ODF_MAX		8
+> +
+> +/* dsi color format coding according to the datasheet */
+> +enum dsi_color {
+> +	DSI_RGB565_CONF1,
+> +	DSI_RGB565_CONF2,
+> +	DSI_RGB565_CONF3,
+> +	DSI_RGB666_CONF1,
+> +	DSI_RGB666_CONF2,
+> +	DSI_RGB888,
+> +};
+> +
+> +#define LANE_MIN_KBPS	31250
+> +#define LANE_MAX_KBPS	500000
+> +
+> +/* Timeout for regulator on/off, pll lock/unlock & fifo empty */
+> +#define TIMEOUT_US	200000
+> +
+> +struct stm32_dsi_priv {
+> +	struct mipi_dsi_device device;
+> +	void __iomem *base;
+> +	struct udevice *panel;
+> +	u32 pllref_clk;
+> +	u32 hw_version;
+> +	int lane_min_kbps;
+> +	int lane_max_kbps;
+> +};
+> +
+> +static inline void dsi_write(struct stm32_dsi_priv *dsi, u32 reg, u32 val)
+> +{
+> +	writel(val, dsi->base + reg);
+> +}
+> +
+> +static inline u32 dsi_read(struct stm32_dsi_priv *dsi, u32 reg)
+> +{
+> +	return readl(dsi->base + reg);
+> +}
+> +
+> +static inline void dsi_set(struct stm32_dsi_priv *dsi, u32 reg, u32 mask)
+> +{
+> +	dsi_write(dsi, reg, dsi_read(dsi, reg) | mask);
+> +}
+> +
+> +static inline void dsi_clear(struct stm32_dsi_priv *dsi, u32 reg, u32 mask)
+> +{
+> +	dsi_write(dsi, reg, dsi_read(dsi, reg) & ~mask);
+> +}
+> +
+> +static inline void dsi_update_bits(struct stm32_dsi_priv *dsi, u32 reg,
+> +				   u32 mask, u32 val)
+> +{
+> +	dsi_write(dsi, reg, (dsi_read(dsi, reg) & ~mask) | val);
+> +}
+> +
+> +static enum dsi_color dsi_color_from_mipi(u32 fmt)
+> +{
+> +	switch (fmt) {
+> +	case MIPI_DSI_FMT_RGB888:
+> +		return DSI_RGB888;
+> +	case MIPI_DSI_FMT_RGB666:
+> +		return DSI_RGB666_CONF2;
+> +	case MIPI_DSI_FMT_RGB666_PACKED:
+> +		return DSI_RGB666_CONF1;
+> +	case MIPI_DSI_FMT_RGB565:
+> +		return DSI_RGB565_CONF1;
+> +	default:
+> +		pr_err("MIPI color invalid, so we use rgb888\n");
+> +	}
+> +	return DSI_RGB888;
+> +}
+> +
+> +static int dsi_pll_get_clkout_khz(int clkin_khz, int idf, int ndiv, int odf)
+> +{
+> +	int divisor = idf * odf;
+> +
+> +	/* prevent from division by 0 */
+> +	if (!divisor)
+> +		return 0;
+> +
+> +	return DIV_ROUND_CLOSEST(clkin_khz * ndiv, divisor);
+> +}
+> +
+> +static int dsi_pll_get_params(struct stm32_dsi_priv *dsi,
+> +			      int clkin_khz, int clkout_khz,
+> +			      int *idf, int *ndiv, int *odf)
+> +{
+> +	int i, o, n, n_min, n_max;
+> +	int fvco_min, fvco_max, delta, best_delta; /* all in khz */
+> +
+> +	/* Early checks preventing division by 0 & odd results */
+> +	if (clkin_khz <= 0 || clkout_khz <= 0)
+> +		return -EINVAL;
+> +
+> +	fvco_min = dsi->lane_min_kbps * 2 * ODF_MAX;
+> +	fvco_max = dsi->lane_max_kbps * 2 * ODF_MIN;
+> +
+> +	best_delta = 1000000; /* big started value (1000000khz) */
+> +
+> +	for (i = IDF_MIN; i <= IDF_MAX; i++) {
+> +		/* Compute ndiv range according to Fvco */
+> +		n_min = ((fvco_min * i) / (2 * clkin_khz)) + 1;
+> +		n_max = (fvco_max * i) / (2 * clkin_khz);
+> +
+> +		/* No need to continue idf loop if we reach ndiv max */
+> +		if (n_min >= NDIV_MAX)
+> +			break;
+> +
+> +		/* Clamp ndiv to valid values */
+> +		if (n_min < NDIV_MIN)
+> +			n_min = NDIV_MIN;
+> +		if (n_max > NDIV_MAX)
+> +			n_max = NDIV_MAX;
+> +
+> +		for (o = ODF_MIN; o <= ODF_MAX; o *= 2) {
+> +			n = DIV_ROUND_CLOSEST(i * o * clkout_khz, clkin_khz);
+> +			/* Check ndiv according to vco range */
+> +			if (n < n_min || n > n_max)
+> +				continue;
+> +			/* Check if new delta is better & saves parameters */
+> +			delta = dsi_pll_get_clkout_khz(clkin_khz, i, n, o) -
+> +				clkout_khz;
+> +			if (delta < 0)
+> +				delta = -delta;
+> +			if (delta < best_delta) {
+> +				*idf = i;
+> +				*ndiv = n;
+> +				*odf = o;
+> +				best_delta = delta;
+> +			}
+> +			/* fast return in case of "perfect result" */
+> +			if (!delta)
+> +				return 0;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int dsi_phy_init(void *priv_data)
+> +{
+> +	struct mipi_dsi_device *device = priv_data;
+> +	struct stm32_dsi_priv *dsi = dev_get_priv(device->dev);
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* Enable the regulator */
+> +	dsi_set(dsi, DSI_WRPCR, WRPCR_REGEN | WRPCR_BGREN);
+> +	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_RRS,
+> +				 TIMEOUT_US);
+> +	if (ret) {
+> +		pr_err("!TIMEOUT! waiting REGU\n");
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 8a6ffce12af5..7c71a6ed465a 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -17,10 +17,19 @@ conditions.
-                         "arm,mmu-401"
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-+                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
- 
-+                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
-+                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
-+                  string that should be present along with the "qcom,smmu-v2"
-+                  to facilitate SoC specific clocks/power connections and to
-+                  address specific bug fixes.
-+                  An example string would be -
-+                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
-@@ -71,6 +80,22 @@ conditions.
-                   or using stream matching with #iommu-cells = <2>, and
-                   may be ignored if present in such cases.
- 
-+- clock-names:    List of the names of clocks input to the device. The
-+                  required list depends on particular implementation and
-+                  is as follows:
-+                  - for "qcom,smmu-v2":
-+                    - "bus": clock required for downstream bus access and
-+                             for the smmu ptw,
-+                    - "iface": clock required to access smmu's registers
-+                               through the TCU's programming interface.
-+                  - unspecified for other implementations.
-+
-+- clocks:         Specifiers for all clocks listed in the clock-names property,
-+                  as per generic clock bindings.
-+
-+- power-domains:  Specifiers for power domains required to be powered on for
-+                  the SMMU to operate, as per generic power domain bindings.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -137,3 +162,20 @@ conditions.
-                 iommu-map = <0 &smmu3 0 0x400>;
-                 ...
-         };
-+
-+	/* Qcom's arm,smmu-v2 implementation */
-+	smmu4: iommu {
-+		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-+		reg = <0xd00000 0x10000>;
-+
-+		#global-interrupts = <1>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-+		#iommu-cells = <1>;
-+		power-domains = <&mmcc MDSS_GDSC>;
-+
-+		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-+			 <&mmcc SMMU_MDP_AHB_CLK>;
-+		clock-names = "bus", "iface";
-+	};
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 64953ff2281f..1ef6ac56a347 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
- 
- struct arm_smmu_s2cr {
-@@ -2000,6 +2001,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
- 
-+static const char * const qcom_smmuv2_clks[] = {
-+	"bus", "iface",
-+};
-+
-+static const struct arm_smmu_match_data qcom_smmuv2 = {
-+	.version = ARM_SMMU_V2,
-+	.model = QCOM_SMMUV2,
-+	.clks = qcom_smmuv2_clks,
-+	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-@@ -2007,6 +2019,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-@@ -2381,6 +2394,7 @@ IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
- IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
- IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
- IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
-+IOMMU_OF_DECLARE(qcom_smmuv2, "qcom,smmu-v2");
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+dev_err()
+
+> +		return ret;
+> +	}
+> +
+> +	/* Enable the DSI PLL & wait for its lock */
+> +	dsi_set(dsi, DSI_WRPCR, WRPCR_PLLEN);
+> +	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_PLLLS,
+> +				 TIMEOUT_US);
+> +	if (ret) {
+> +		pr_err("!TIMEOUT! waiting PLL\n");
+
+dev_err()
+
+> +		return ret;
+> +	}
+> +
+> +	/* Enable the DSI wrapper */
+> +	dsi_set(dsi, DSI_WCR, WCR_DSIEN);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dsi_get_lane_mbps(void *priv_data, struct display_timing *timings,
+> +			     u32 lanes, u32 format, unsigned int *lane_mbps)
+> +{
+> +	struct mipi_dsi_device *device = priv_data;
+> +	struct stm32_dsi_priv *dsi = dev_get_priv(device->dev);
+> +	int idf, ndiv, odf, pll_in_khz, pll_out_khz;
+> +	int ret, bpp;
+> +	u32 val;
+> +
+> +	/* Update lane capabilities according to hw version */
+> +	dsi->hw_version = dsi_read(dsi, DSI_VERSION) & VERSION;
+> +	dsi->lane_min_kbps = LANE_MIN_KBPS;
+> +	dsi->lane_max_kbps = LANE_MAX_KBPS;
+> +	if (dsi->hw_version == HWVER_131) {
+> +		dsi->lane_min_kbps *= 2;
+> +		dsi->lane_max_kbps *= 2;
+> +	}
+> +
+> +	pll_in_khz = dsi->pllref_clk / 1000;
+> +
+> +	/* Compute requested pll out */
+> +	bpp = mipi_dsi_pixel_format_to_bpp(format);
+> +	pll_out_khz = (timings->pixelclock.typ / 1000) * bpp / lanes;
+> +	/* Add 20% to pll out to be higher than pixel bw (burst mode only) */
+> +	pll_out_khz = (pll_out_khz * 12) / 10;
+> +	if (pll_out_khz > dsi->lane_max_kbps) {
+> +		pll_out_khz = dsi->lane_max_kbps;
+> +		pr_warn("Warning max phy mbps is used\n");
+> +	}
+> +	if (pll_out_khz < dsi->lane_min_kbps) {
+> +		pll_out_khz = dsi->lane_min_kbps;
+> +		pr_warn("Warning min phy mbps is used\n");
+> +	}
+> +
+> +	/* Compute best pll parameters */
+> +	idf = 0;
+> +	ndiv = 0;
+> +	odf = 0;
+> +	ret = dsi_pll_get_params(dsi, pll_in_khz, pll_out_khz,
+> +				 &idf, &ndiv, &odf);
+> +	if (ret) {
+> +		pr_warn("Warning dsi_pll_get_params(): bad params\n");
+
+dev_warn() or dev_err() ?
+
+> +		return ret;
+> +	}
+> +
+> +	/* Get the adjusted pll out value */
+> +	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
+> +
+> +	/* Set the PLL division factors */
+> +	dsi_update_bits(dsi, DSI_WRPCR,	WRPCR_NDIV | WRPCR_IDF | WRPCR_ODF,
+> +			(ndiv << 2) | (idf << 11) | ((ffs(odf) - 1) << 16));
+> +
+> +	/* Compute uix4 & set the bit period in high-speed mode */
+> +	val = 4000000 / pll_out_khz;
+> +	dsi_update_bits(dsi, DSI_WPCR0, WPCR0_UIX4, val);
+> +
+> +	/* Select video mode by resetting DSIM bit */
+> +	dsi_clear(dsi, DSI_WCFGR, WCFGR_DSIM);
+> +
+> +	/* Select the color coding */
+> +	dsi_update_bits(dsi, DSI_WCFGR, WCFGR_COLMUX,
+> +			dsi_color_from_mipi(format) << 1);
+> +
+> +	*lane_mbps = pll_out_khz / 1000;
+> +
+> +	pr_info("pll_in %ukHz pll_out %ukHz lane_mbps %uMHz\n",
+> +		pll_in_khz, pll_out_khz, *lane_mbps);
+
+is it useful to print this each time ? or is it for debug purpose ? in 
+this case use debug()
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dw_mipi_dsi_phy_ops dw_mipi_dsi_stm_phy_ops = {
+> +	.init = dsi_phy_init,
+> +	.get_lane_mbps = dsi_get_lane_mbps,
+> +};
+> +
+> +static int stm32_dsi_attach(struct udevice *dev)
+> +{
+> +	struct stm32_dsi_priv *priv = dev_get_priv(dev);
+> +	struct dw_mipi_dsi_plat_data *platdata = dev_get_platdata(dev);
+> +	struct mipi_dsi_device *device = &priv->device;
+> +	int ret;
+> +
+> +	platdata->max_data_lanes = 2;
+> +	platdata->phy_ops = &dw_mipi_dsi_stm_phy_ops;
+> +
+> +	ret = uclass_first_device(UCLASS_PANEL, &platdata->panel);
+> +	if (ret) {
+> +		pr_err("%s: panel device error %d\n", __func__, ret);
+
+dev_err()
+
+> +		return ret;
+> +	}
+> +
+> +	ret = dw_mipi_dsi_init_bridge(device);
+> +	if (ret) {
+> +		pr_err("Failed to initialize mipi dsi host\n");
+
+ditto
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_dsi_set_backlight(struct udevice *dev, int percent)
+> +{
+> +	struct dw_mipi_dsi_plat_data *dplat = dev_get_platdata(dev);
+> +	struct stm32_dsi_priv *priv = dev_get_priv(dev);
+> +	struct mipi_dsi_device *device = &priv->device;
+> +	struct udevice *panel = dplat->panel;
+> +	struct mipi_dsi_panel_plat *mplat;
+> +	int ret;
+> +
+> +	mplat = dev_get_platdata(panel);
+> +	mplat->device = device;
+> +
+> +	ret = panel_enable_backlight(panel);
+> +	if (ret) {
+> +		pr_err("%s: panel %s enable backlight error %d\n",
+> +		       __func__, panel->name, ret);
+
+ditto
+
+> +		return ret;
+> +	}
+> +
+> +	dw_mipi_dsi_bridge_enable(device);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_dsi_probe(struct udevice *dev)
+> +{
+> +	struct stm32_dsi_priv *priv = dev_get_priv(dev);
+> +	struct mipi_dsi_device *device = &priv->device;
+> +	struct reset_ctl rst;
+> +	struct clk clk;
+> +	int ret;
+> +
+> +	device->dev = dev;
+> +
+> +	priv->base = (void *)dev_read_addr(dev);
+> +	if ((fdt_addr_t)priv->base == FDT_ADDR_T_NONE) {
+> +		pr_err("%s: dsi dt register address error\n", __func__);
+
+ditto
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = clk_get_by_name(device->dev, "pclk", &clk);
+> +	if (ret) {
+> +		pr_err("%s: peripheral clock get error %d\n", __func__, ret);
+
+ditto
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = clk_enable(&clk);
+> +	if (ret) {
+> +		pr_err("%s: peripheral clock enable error %d\n", __func__, ret);
+
+ditto
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = clk_get_by_name(dev, "ref", &clk);
+> +	if (ret) {
+> +		pr_err("%s: pll reference clock get error %d\n", __func__, ret);
+
+ditto
+
+> +		return ret;
+> +	}
+> +
+> +	priv->pllref_clk = (unsigned int)clk_get_rate(&clk);
+> +
+> +	ret = reset_get_by_index(device->dev, 0, &rst);
+> +	if (ret) {
+> +		pr_err("%s: missing dsi hardware reset\n", __func__);
+
+ditto
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Reset */
+> +	reset_deassert(&rst);
+> +
+> +	return 0;
+> +}
+> +
+> +struct video_bridge_ops stm32_dsi_ops = {
+> +	.attach = stm32_dsi_attach,
+> +	.set_backlight = stm32_dsi_set_backlight,
+> +};
+> +
+> +static const struct udevice_id stm32_dsi_ids[] = {
+> +	{ .compatible = "st,stm32-dsi"},
+> +	{ }
+> +};
+> +
+> +U_BOOT_DRIVER(stm32_dsi) = {
+> +	.name				= "stm32-display-dsi",
+> +	.id				= UCLASS_VIDEO_BRIDGE,
+> +	.of_match			= stm32_dsi_ids,
+> +	.bind				= dm_scan_fdt_dev,
+> +	.probe				= stm32_dsi_probe,
+> +	.ops				= &stm32_dsi_ops,
+> +	.priv_auto_alloc_size		= sizeof(struct stm32_dsi_priv),
+> +	.platdata_auto_alloc_size	= sizeof(struct dw_mipi_dsi_plat_data),
+> +};
+> 
