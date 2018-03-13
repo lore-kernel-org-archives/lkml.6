@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELskEtNoZ5RMy10ToS6yvwGMoREyvblplw9t3CFZE1eCZDV8xGRMtUKNZphnjxYGsNVLC5YA
-ARC-Seal: i=1; a=rsa-sha256; t=1520954937; cv=none;
+X-Google-Smtp-Source: AG47ELvEPmu1wegPlkV8gKkcjzr/aZw7GQl9b/UKwkk806zIw604DkcstwQqugwR10ppFLPYp6QJ
+ARC-Seal: i=1; a=rsa-sha256; t=1520954934; cv=none;
         d=google.com; s=arc-20160816;
-        b=dnI10Ja2K4Qgcl+zSsdYsRULUsxjP65YTV3m4+g8Gv82iU7xfYaW/zhiHMrhahm+p1
-         p5QRDpNnDz1PXqWBERsDu9GxlmlAoKp2eB8vpVqQLvvmpErkNxjGZkQdwtvZMey+Xcph
-         70GCviIKj+rXLXqRcbEJ6LS/n2+DkpIakZNOeW9fOEQaVXL2RDEIa/ye/ZgFMgqKGrNp
-         2Pb4LIydPFFW2cAq6ADCMxDHOHtktsm365gxBmXn4JTyoq0dnRWo4ygInF3Ukq9Sbwbj
-         qYYQ8M4+kyTWQsB0XBCJM/lqb5hHAwDtgr3LBHRLdajT7Wn7KFcWbt30eIthr1u5CjKp
-         0oEA==
+        b=xx0i4Iy6yZ7OtqL4Omh+etB8Vc+61jqIWHm+65lG4FQ7i/Fj7q/OS5x3dpZEKzAw7n
+         qvunEVBHTvOh/Mn/VBo/WaO1Wv23wePClMsfXGgm63czZLcbfS7q9msvItDXUGJrVq8C
+         6MFK4jEGdgxOAMfxpfq2lDtw6ivlEvQA3pDkwN6eixOz5ZKN4pRF/94M68Np3mgvqiX0
+         2h7UVShOzxa4iXz1xm8C01Ohx6AYxZ0y9iRHYRMNIIluVas7J8+GIdWYuousgoSwDaTH
+         VpyTxhgbbe6g3GZ3e/fUMusg2rioXXE2OEL1PzT+mAp5dqNEtlpMcl5H1M5dwRTCBFNf
+         eyqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=s3zHKmdFFQSYrntGldO5/FRuwG7mGlDedRdTcPOQnLQ=;
-        b=jYMNYZW8uLblYsg4wGrnExvE5cfnQl48Gja5cwbibQqYMvPPTL3j7HPOIcZ/2U6YSd
-         teGuA2ivj5t3blT2pPqzSNr7zia1AyNpzdu/+KAhllZEtpi8zE0l2kTTLGk/ifRzYR15
-         6OCxU+o/Y6vURnr6Bz9nWhJ7EJJWgIzxGVaX+J3VdBiVeg04UsgJis1mO7U8HDdr0v+5
-         vBMzvDofZ0NhKPpHW1/bGNGbEAxZlbp7zTxiibWmEGuACNIGN6jmWU4nUuuhOFKcCOUH
-         fqTrYa9E8X2z17PE147657knJrSWoSJQrVKsfNLAZnt0sKLnHOWoTNtP8XxcpyivJA6e
-         Nkxg==
+        bh=R5HgvYStK97cq6mt11JgmlWUK1jqByRrqlw3s7XYy3E=;
+        b=jaAtSCz5hAI6IOUM5CTaOX7ctbyZzb8ckj7NOKrfLi1N2moZK/dz8NHpIBv05JAzHc
+         Qz3Mced1PBwVmnAwmsrH+ZFNbgo5bcgIq5mSKW4pZvBGzvRPXcO+Skg6qmuwZLK/DGN7
+         x+/IfNWz79hr3a9bTWw0O06pLQKOhkQDLaYcbWKsHul66dCdmZ56BF+2d2ITbjVzMA6G
+         e31NJOVuOm03U1ZzmflSc1IYmDaTEylrKz5FDLNkGh9rVPzT4CWCTirCqGAv9kT7buY+
+         GgZNRC5V5/MHHQAnGuonAMJ3UP9EbEzQGN4yqqP+xhly7pzxsPjemFghgn5Iw+np6z+8
+         UPFw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Rex Zhu <rezhu@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Roman Li <Roman.Li@amd.com>,
+	Tony Cheng <Tony.Cheng@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.15 033/146] drm/amdgpu: used cached pcie gen info for SI (v2)
-Date: Tue, 13 Mar 2018 16:23:20 +0100
-Message-Id: <20180313152323.077863648@linuxfoundation.org>
+Subject: [PATCH 4.15 032/146] drm/amd/display: Default HDMI6G support to true. Log VBIOS table error.
+Date: Tue, 13 Mar 2018 16:23:19 +0100
+Message-Id: <20180313152323.002850685@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836844086230221?=
-X-GMAIL-MSGID: =?utf-8?q?1594836844086230221?=
+X-GMAIL-THRID: =?utf-8?q?1594836841238132336?=
+X-GMAIL-MSGID: =?utf-8?q?1594836841238132336?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,190 +51,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Harry Wentland <harry.wentland@amd.com>
 
-commit 05656e5e4917a08296300dc0530aed1539202c25 upstream.
+commit caf0a9030d75509f3cacefe466d6d69d26e3dee6 upstream.
 
-Rather than querying it every time we need it.
-Also fixes a crash in VM pass through if there is no
-root bridge because the cached value fetch already checks
-this properly.
+There have been many reports of Ellesmere and Baffin systems not being
+able to drive HDMI 4k60 due to the fact that we check the HDMI_6GB_EN
+bit from VBIOS table. Windows seems to not have this issue.
 
-v2: fix includes
+On some systems we fail to the encoder cap info from VBIOS. In that case
+we should default to enabling HDMI6G support.
 
-Fixes: https://bugs.freedesktop.org/show_bug.cgi?id=105244
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Rex Zhu<rezhu@amd.com>
+This was tested by dwagner on
+https://bugs.freedesktop.org/show_bug.cgi?id=102820
+
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+Reviewed-by: Roman Li <Roman.Li@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Harry Wentland <harry.wentland@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/si.c     |   22 +++++++--------
- drivers/gpu/drm/amd/amdgpu/si_dpm.c |   50 +++++++++---------------------------
- 2 files changed, 23 insertions(+), 49 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/si.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si.c
-@@ -31,6 +31,7 @@
- #include "amdgpu_uvd.h"
- #include "amdgpu_vce.h"
- #include "atom.h"
-+#include "amd_pcie.h"
- #include "amdgpu_powerplay.h"
- #include "sid.h"
- #include "si_ih.h"
-@@ -1461,8 +1462,8 @@ static void si_pcie_gen3_enable(struct a
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c
+@@ -683,6 +683,7 @@ void dce110_link_encoder_construct(
  {
- 	struct pci_dev *root = adev->pdev->bus->self;
- 	int bridge_pos, gpu_pos;
--	u32 speed_cntl, mask, current_data_rate;
--	int ret, i;
-+	u32 speed_cntl, current_data_rate;
-+	int i;
- 	u16 tmp16;
+ 	struct bp_encoder_cap_info bp_cap_info = {0};
+ 	const struct dc_vbios_funcs *bp_funcs = init_data->ctx->dc_bios->funcs;
++	enum bp_result result = BP_RESULT_OK;
  
- 	if (pci_is_root_bus(adev->pdev->bus))
-@@ -1474,23 +1475,20 @@ static void si_pcie_gen3_enable(struct a
- 	if (adev->flags & AMD_IS_APU)
- 		return;
+ 	enc110->base.funcs = &dce110_lnk_enc_funcs;
+ 	enc110->base.ctx = init_data->ctx;
+@@ -757,15 +758,24 @@ void dce110_link_encoder_construct(
+ 		enc110->base.preferred_engine = ENGINE_ID_UNKNOWN;
+ 	}
  
--	ret = drm_pcie_get_speed_cap_mask(adev->ddev, &mask);
--	if (ret != 0)
--		return;
--
--	if (!(mask & (DRM_PCIE_SPEED_50 | DRM_PCIE_SPEED_80)))
-+	if (!(adev->pm.pcie_gen_mask & (CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2 |
-+					CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)))
- 		return;
- 
- 	speed_cntl = RREG32_PCIE_PORT(PCIE_LC_SPEED_CNTL);
- 	current_data_rate = (speed_cntl & LC_CURRENT_DATA_RATE_MASK) >>
- 		LC_CURRENT_DATA_RATE_SHIFT;
--	if (mask & DRM_PCIE_SPEED_80) {
-+	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3) {
- 		if (current_data_rate == 2) {
- 			DRM_INFO("PCIE gen 3 link speeds already enabled\n");
- 			return;
- 		}
- 		DRM_INFO("enabling PCIE gen 3 link speeds, disable with amdgpu.pcie_gen2=0\n");
--	} else if (mask & DRM_PCIE_SPEED_50) {
-+	} else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2) {
- 		if (current_data_rate == 1) {
- 			DRM_INFO("PCIE gen 2 link speeds already enabled\n");
- 			return;
-@@ -1506,7 +1504,7 @@ static void si_pcie_gen3_enable(struct a
- 	if (!gpu_pos)
- 		return;
- 
--	if (mask & DRM_PCIE_SPEED_80) {
-+	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3) {
- 		if (current_data_rate != 2) {
- 			u16 bridge_cfg, gpu_cfg;
- 			u16 bridge_cfg2, gpu_cfg2;
-@@ -1589,9 +1587,9 @@ static void si_pcie_gen3_enable(struct a
- 
- 	pci_read_config_word(adev->pdev, gpu_pos + PCI_EXP_LNKCTL2, &tmp16);
- 	tmp16 &= ~0xf;
--	if (mask & DRM_PCIE_SPEED_80)
-+	if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN3)
- 		tmp16 |= 3;
--	else if (mask & DRM_PCIE_SPEED_50)
-+	else if (adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_GEN2)
- 		tmp16 |= 2;
- 	else
- 		tmp16 |= 1;
---- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-@@ -26,6 +26,7 @@
- #include "amdgpu_pm.h"
- #include "amdgpu_dpm.h"
- #include "amdgpu_atombios.h"
-+#include "amd_pcie.h"
- #include "sid.h"
- #include "r600_dpm.h"
- #include "si_dpm.h"
-@@ -3331,29 +3332,6 @@ static void btc_apply_voltage_delta_rule
++	/* default to one to mirror Windows behavior */
++	enc110->base.features.flags.bits.HDMI_6GB_EN = 1;
++
++	result = bp_funcs->get_encoder_cap_info(enc110->base.ctx->dc_bios,
++						enc110->base.id, &bp_cap_info);
++
+ 	/* Override features with DCE-specific values */
+-	if (BP_RESULT_OK == bp_funcs->get_encoder_cap_info(
+-			enc110->base.ctx->dc_bios, enc110->base.id,
+-			&bp_cap_info)) {
++	if (BP_RESULT_OK == result) {
+ 		enc110->base.features.flags.bits.IS_HBR2_CAPABLE =
+ 				bp_cap_info.DP_HBR2_EN;
+ 		enc110->base.features.flags.bits.IS_HBR3_CAPABLE =
+ 				bp_cap_info.DP_HBR3_EN;
+ 		enc110->base.features.flags.bits.HDMI_6GB_EN = bp_cap_info.HDMI_6GB_EN;
++	} else {
++		dm_logger_write(enc110->base.ctx->logger, LOG_WARNING,
++				"%s: Failed to get encoder_cap_info from VBIOS with error code %d!\n",
++				__func__,
++				result);
  	}
  }
- 
--static enum amdgpu_pcie_gen r600_get_pcie_gen_support(struct amdgpu_device *adev,
--					       u32 sys_mask,
--					       enum amdgpu_pcie_gen asic_gen,
--					       enum amdgpu_pcie_gen default_gen)
--{
--	switch (asic_gen) {
--	case AMDGPU_PCIE_GEN1:
--		return AMDGPU_PCIE_GEN1;
--	case AMDGPU_PCIE_GEN2:
--		return AMDGPU_PCIE_GEN2;
--	case AMDGPU_PCIE_GEN3:
--		return AMDGPU_PCIE_GEN3;
--	default:
--		if ((sys_mask & DRM_PCIE_SPEED_80) && (default_gen == AMDGPU_PCIE_GEN3))
--			return AMDGPU_PCIE_GEN3;
--		else if ((sys_mask & DRM_PCIE_SPEED_50) && (default_gen == AMDGPU_PCIE_GEN2))
--			return AMDGPU_PCIE_GEN2;
--		else
--			return AMDGPU_PCIE_GEN1;
--	}
--	return AMDGPU_PCIE_GEN1;
--}
--
- static void r600_calculate_u_and_p(u32 i, u32 r_c, u32 p_b,
- 			    u32 *p, u32 *u)
- {
-@@ -5028,10 +5006,11 @@ static int si_populate_smc_acpi_state(st
- 							      table->ACPIState.levels[0].vddc.index,
- 							      &table->ACPIState.levels[0].std_vddc);
- 		}
--		table->ACPIState.levels[0].gen2PCIE = (u8)r600_get_pcie_gen_support(adev,
--										    si_pi->sys_pcie_mask,
--										    si_pi->boot_pcie_gen,
--										    AMDGPU_PCIE_GEN1);
-+		table->ACPIState.levels[0].gen2PCIE =
-+			(u8)amdgpu_get_pcie_gen_support(adev,
-+							si_pi->sys_pcie_mask,
-+							si_pi->boot_pcie_gen,
-+							AMDGPU_PCIE_GEN1);
- 
- 		if (si_pi->vddc_phase_shed_control)
- 			si_populate_phase_shedding_value(adev,
-@@ -7172,10 +7151,10 @@ static void si_parse_pplib_clock_info(st
- 	pl->vddc = le16_to_cpu(clock_info->si.usVDDC);
- 	pl->vddci = le16_to_cpu(clock_info->si.usVDDCI);
- 	pl->flags = le32_to_cpu(clock_info->si.ulFlags);
--	pl->pcie_gen = r600_get_pcie_gen_support(adev,
--						 si_pi->sys_pcie_mask,
--						 si_pi->boot_pcie_gen,
--						 clock_info->si.ucPCIEGen);
-+	pl->pcie_gen = amdgpu_get_pcie_gen_support(adev,
-+						   si_pi->sys_pcie_mask,
-+						   si_pi->boot_pcie_gen,
-+						   clock_info->si.ucPCIEGen);
- 
- 	/* patch up vddc if necessary */
- 	ret = si_get_leakage_voltage_from_leakage_index(adev, pl->vddc,
-@@ -7330,7 +7309,6 @@ static int si_dpm_init(struct amdgpu_dev
- 	struct si_power_info *si_pi;
- 	struct atom_clock_dividers dividers;
- 	int ret;
--	u32 mask;
- 
- 	si_pi = kzalloc(sizeof(struct si_power_info), GFP_KERNEL);
- 	if (si_pi == NULL)
-@@ -7340,11 +7318,9 @@ static int si_dpm_init(struct amdgpu_dev
- 	eg_pi = &ni_pi->eg;
- 	pi = &eg_pi->rv7xx;
- 
--	ret = drm_pcie_get_speed_cap_mask(adev->ddev, &mask);
--	if (ret)
--		si_pi->sys_pcie_mask = 0;
--	else
--		si_pi->sys_pcie_mask = mask;
-+	si_pi->sys_pcie_mask =
-+		(adev->pm.pcie_gen_mask & CAIL_PCIE_LINK_SPEED_SUPPORT_MASK) >>
-+		CAIL_PCIE_LINK_SPEED_SUPPORT_SHIFT;
- 	si_pi->force_pcie_gen = AMDGPU_PCIE_GEN_INVALID;
- 	si_pi->boot_pcie_gen = si_get_current_pcie_speed(adev);
  
