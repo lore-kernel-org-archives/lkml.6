@@ -1,76 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeCMNEa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 09:04:30 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48825 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752156AbeCMNE3 (ORCPT
+        id S1752698AbeCMNGn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 09:06:43 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:51383 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752148AbeCMNGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 09:04:29 -0400
-X-ME-Sender: <xms:XMynWshEoPFk3ahOqjytSxc2nR57E7APY7wNnwt9zQCgWx7M5NYIbg>
-Message-Id: <1520946268.2518488.1301423472.4D7861CD@webmail.messagingengine.com>
-From: "Jacob S. Moroni" <mail@jakemoroni.com>
-To: linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-54087d22
-Date: Tue, 13 Mar 2018 09:04:28 -0400
-Subject: Should the VM_PFNMAP flag be cleared after a call to dma_mmap_coherent?
+        Tue, 13 Mar 2018 09:06:39 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Scheller <d.scheller@gmx.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Binoy Jayan <binoy.jayan@linaro.org>,
+        Jasmin Jessich <jasmin@anw.at>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] media: ngene: avoid unused variable warning
+Date: Tue, 13 Mar 2018 14:06:03 +0100
+Message-Id: <20180313130620.4040088-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:Myv6Px8M0WMU6D8ZJUfRw2C7jtFb+5aD4cEwDiK1xgDuxE4/V+0
+ WcFrWYK+NGQq8TyjwIdoUOzQQYYfj7oiunNLEl23XYYJfeY1+5tGTO+wDMQLeib1lG0jXlF
+ 9srCiZGImcgRbCwEMrvR1Geyn+r9ckrggM1QhdwEg4aLr3Oid42NiMopM9gQaCwnK+n/FY/
+ VGRXP+we/EJovJBYK6AFw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:opZVlE3RE5c=:c/2RwKTPE5+mETkklB3zQ6
+ gA+L9gP/VehaXxIEotS+g4gJFnfIpvPze5HGXUgXoYf74yJXEYicz5O1XNUluZUnohw2PV5wP
+ a5ab2ataLBHGQvj3qXKi3BGYW98JSsSWUCfLnNcZ2KasP+bVwIohuXjn34xqvtMg1A7Q7l7ST
+ CgJlYeXbe+62+q0neKIbrBnVtR3oo1s8C3wGEA4pUYktHKebGdeQKqps3wb4/fXatulEUa3iM
+ 7rsz3uB5DnqFttyitF6vw9duFQ5ky+8AD5xjMWsEIr/MlwcFsYGED84ILSsneh+C0yKM0VbMn
+ 34nFviO4Fff/QF4AQ2henfv/X8kb6H6zYcrx6K1HWLdu6bcMYVNRiXKA1IogTinROLHKXyOoF
+ xkA5gMHlWa4jteODp3QCs+R/3de2myhKl93OPEYqhx6f6Bkv5aMVWe1+TM5HWzdwYX18v7tRK
+ O4uSj8v5fcYkpTE5NngADZv4yaqwO+NUJyyju5yiOV9yfdpqxmxeomkcnVH/zwawLSYvgfhnz
+ 6Xeqb8u82Iey0slV8kbEYhYZ7bArMdum2dl21htYRdQTyJCpPj3VS39rMh3dmUaRYebrlUSyf
+ +62dDpyQh8CX32qu2t+fSzxIA9RPavCWcCmhP0vG4KqrfltyGWCipVXt7W1c6nGLawmob1F7E
+ 1FOlUnfrk3CwXaUHvAJSuVLUjOs6SOt++XEIYUISzOyjwBozQLAgKVK3xsl/wy3Db9tAT+pO7
+ KvEg4ybCYoKb42+2/gasE2DBY5NpjKXSJDlDYw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The newly added pdev variable is only used in an #ifdef, causing a
+build warning without CONFIG_PCI_MSI, unless we move the declaration
+inside the same #ifdef:
 
-First, let me just say that this is more of a question rather than a proposal.
+drivers/media/pci/ngene/ngene-core.c: In function 'ngene_start':
+drivers/media/pci/ngene/ngene-core.c:1328:17: error: unused variable 'pdev' [-Werror=unused-variable]
 
-I have a question regarding the behavior of the dma_mmap_coherent routine, and
-the VM_PFNMAP flag in general.
+Fixes: 6795bf626482 ("media: ngene: convert kernellog printing from printk() to dev_*() macros")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/pci/ngene/ngene-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Right now, it seems like the dma_mmap_coherent routine is essentially just a
-wrapper for remap_pfn_range, which itself sets the VM_PFNMAP and VM_IO flags.
-
-However, dma_mmap_coherent is explicitly designed to map in buffers that have
-been previously allocated with dma_alloc_coherent, which therefore means that
-there is always a struct page backing for the entire buffer, right?
-
-The reason this matters is because when the VM_PFNMAP flag is set, the user
-can't make any calls that end up doing a get_user_pages. The main case I can
-think of is direct IO. Consider the case where there's some specialized hardware
-that is generating raw file data and placing it in host memory, which is then
-mapped in to an application. It would be beneficial to be able to do a
-direct IO write straight from the mapping in user space to avoid an unnecessary
-copy. This matters more on some embedded systems where the PCIe bandwidth
-is in the same ballpark as the memcpy bandwidth.
-
-This can be accomplished by more manual mapping methods, but it would be nice
-if it could be done with the standard dma_alloc/mmap_coherent pair.
-
-Is there a reason this flag should not be cleared before returning from
-dma_mmap_coherent?
-
-Is there a benefit of this flag being set? Perhaps performance?
-
-I understand that the flag indicates that there's no struct page behind a
-given page, but is there a reason to have this flag be set when all pages
-are in fact true RAM?
-
-Would there be any issues if I were to just clear these flags myself after
-dma_mmap_coherent returns?
-
-Also, in my attempts to understand this, I have found what may be a few bugs,
-primarily in some GPU drivers.
-
-For example, in the "exynox_drm_gem_mmap_buffer" function in
-drivers/gpu/drm/exynos/exynos_drm_gem.c, the VM_PFNMAP flag is explicitly
-cleared, but then it goes on to call dma_mmap_attrs, which I think ends up just
-re-setting the flag.
-
-This is found in a few other places as well. Thoughts?
-
-Any advice would be appreciated.
-
-Thanks!
-
-Jake Moroni
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index 3b9a1bfaf6c0..25f16833a475 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -1325,7 +1325,6 @@ static int ngene_buffer_config(struct ngene *dev)
+ 
+ static int ngene_start(struct ngene *dev)
+ {
+-	struct device *pdev = &dev->pci_dev->dev;
+ 	int stat;
+ 	int i;
+ 
+@@ -1359,6 +1358,7 @@ static int ngene_start(struct ngene *dev)
+ #ifdef CONFIG_PCI_MSI
+ 	/* enable MSI if kernel and card support it */
+ 	if (pci_msi_enabled() && dev->card_info->msi_supported) {
++		struct device *pdev = &dev->pci_dev->dev;
+ 		unsigned long flags;
+ 
+ 		ngwritel(0, NGENE_INT_ENABLE);
+-- 
+2.9.0
