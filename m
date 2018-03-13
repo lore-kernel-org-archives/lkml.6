@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt5rXmOzKh1YcNXG5km0aJ9DbrB6PZyiGIYueM/mh/CsOSdFHskoWnMqwKmSI9RXwJD3O3Z
-ARC-Seal: i=1; a=rsa-sha256; t=1520955521; cv=none;
+X-Google-Smtp-Source: AG47ELtZypCDgqjjaOlpkiL2yfsPTCkYJqrTgOc+l+qd/PuQr/xj15ViJLG2cHzbxc2b/dAwUp5P
+ARC-Seal: i=1; a=rsa-sha256; t=1520955518; cv=none;
         d=google.com; s=arc-20160816;
-        b=paqw6rh6GM3TaBbIRJRYKUYOpEffHyrT3jJYuHG1noilk/OEt1PTSaOA0+aaLhcYoC
-         H6s//3BoBztzItD6227+lb83tgGVzlGyIZYcdNPPvhs9fUYicFrUc4Cx2TdpCojaT6KU
-         mJ/6Ev+kMalXF4i9DR7Qe6ivCajFEFfL3/ER18EZ1fRUn5k/xDrM0pATOTQVoSE+yd8O
-         qR1038XLm5hjPw/wsgmsi+v9n6Q5USNtgvFijFXK6lKE3ff/Vj7BaatKetXuhKAROHEQ
-         7uVq8uK5OLRhXFaC6cpWCKtBwIjqI9dDOCVGHzF8MDv6mcbp3vQiXi9EeNan3J4JZH/+
-         sIOA==
+        b=xGw1GoYj35qb0ZduqsIuZreFvOGcv4p8zOIecKDaPmzPlw1m9euPIfZ6ymVDjw0f/X
+         4Yo24rQiW3SbBa50CRs2rltX7RrYZylgKcuM3t/jHQzisEnDGY09l6ifYV0NRBQyGJyr
+         aIKExRMxEUOl3ReXWAyEY1Iro64R0rT4ooPJOo5jiMwTYMnswmojSKBk30XZjYE2N8bD
+         aDzFsXKBj16Egom6GHJrbOjZdN2Nj/JfKd2ZEgwh4N5Kc2IHtiOA7oTyQYXyYtGgUcmB
+         oLW5QIUJxlegkhEntqUH0XBtzj6kdUiJl4+fGTAApQGdOU/aGxfFaqqFO9UCoKei2bwR
+         kVYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dKqaGho5QKyKOMKZxo19NL170uYea5LCvxNn+Gsl4h8=;
-        b=AGIbySEluFObTHVjZqdKzQenTIw6xLW3Wm8Cyw3Bi4Y5uq5XZTlI8uVl37LqXM2DVr
-         Cp16J42MDVeGvGG8j7P7/duwfA7lghlqrutyHq0Un2ms3VvObv5rkdmNoIrG36xiX7wG
-         2dpUxL4iPlyUGNWGbM2tsRlviaza4+jLgspQZiqYqJ4B8oNC9Gf8Eijib9DxQYTDhtt/
-         1zxGTj0vee1XTOFUFR0TqtVPnttrQDLLE6AUbnKp8msPFqJhGz+bjN6Dmls4tN+OBitV
-         3LEajFvZqHf8oQd50oe7JLuZqtdpjZ00bjXqGwK0+klQRFpH2YRLab8JAJOFefygNkzP
-         Z2gQ==
+        bh=wBxfw7eeDfZHAIXp5Ru0AWcacuzaKeCHCfg6JtLXImI=;
+        b=qiA9IFaSjbb9BCtmqGPlUXCSCFy8+hAI2aJZyCfba4ELYJ29Ueq1BmLWeACG3T0gVm
+         itZtD62o8cOBVOgiCNwD54p+nxWC7tDMzsXY+IxuygrK7956hMRUOshbw53L/wk3EnjK
+         cFnIDGIDbTvB7YjoLd6Yw8hCtzPIDwGmbeFyDiNfidb3LAuH6L0aBINWy75LaHi+3/RW
+         2aBQv6vNdr5RJcObbHVsJWYJryeYqvWAgaLHPCq4HEpbLAfRHGXUKoKB5pa298/tK2nZ
+         jGmVdVSLQx6mXvnF+c/0bxkmCVbvMfaQPcZrxgK20LcYjO7f5qk6phCT1B9dSoGOB78P
+         MUnA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Rex Zhu <Rex.Zhu@amd.com>
-Subject: [PATCH 4.14 073/140] drm/amdgpu: Notify sbios device ready before send request
-Date: Tue, 13 Mar 2018 16:24:36 +0100
-Message-Id: <20180313152503.081983970@linuxfoundation.org>
+	James Zhu <James.Zhu@amd.com>,
+	Leo Liu <leo.liu@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 077/140] drm/amdgpu:Always save uvd vcpu_bo in VM Mode
+Date: Tue, 13 Mar 2018 16:24:40 +0100
+Message-Id: <20180313152503.326313512@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836847207625734?=
-X-GMAIL-MSGID: =?utf-8?q?1594837456426051919?=
+X-GMAIL-THRID: =?utf-8?q?1594836860732334519?=
+X-GMAIL-MSGID: =?utf-8?q?1594837453589284412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: James Zhu <James.Zhu@amd.com>
 
-commit 1bced75f4ab04bec55aecb57d99435dc6d0ae5a0 upstream.
+commit f8bee6135e167f5b35b7789c74c2956dad14d0d5 upstream.
 
-it is required if a platform supports PCIe root complex
-core voltage reduction. After receiving this notification,
-SBIOS can apply default PCIe root complex power policy.
+When UVD is in VM mode, there is not uvd handle exchanged,
+uvd.handles are always 0. So vcpu_bo always need save,
+Otherwise amdgpu driver will fail during suspend/resume.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105021
+Signed-off-by: James Zhu <James.Zhu@amd.com>
+Reviewed-by: Leo Liu <leo.liu@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -540,6 +540,9 @@ int amdgpu_acpi_pcie_performance_request
- 	size_t size;
- 	u32 retry = 3;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -293,12 +293,15 @@ int amdgpu_uvd_suspend(struct amdgpu_dev
+ 	if (adev->uvd.vcpu_bo == NULL)
+ 		return 0;
  
-+	if (amdgpu_acpi_pcie_notify_device_ready(adev))
-+		return -EINVAL;
-+
- 	/* Get the device handle */
- 	handle = ACPI_HANDLE(&adev->pdev->dev);
- 	if (!handle)
+-	for (i = 0; i < adev->uvd.max_handles; ++i)
+-		if (atomic_read(&adev->uvd.handles[i]))
+-			break;
++	/* only valid for physical mode */
++	if (adev->asic_type < CHIP_POLARIS10) {
++		for (i = 0; i < adev->uvd.max_handles; ++i)
++			if (atomic_read(&adev->uvd.handles[i]))
++				break;
+ 
+-	if (i == adev->uvd.max_handles)
+-		return 0;
++		if (i == adev->uvd.max_handles)
++			return 0;
++	}
+ 
+ 	cancel_delayed_work_sync(&adev->uvd.idle_work);
+ 
