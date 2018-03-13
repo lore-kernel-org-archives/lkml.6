@@ -1,147 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932444AbeCMA1M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:27:12 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:59091 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932405AbeCMA1L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:27:11 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-References: <20180313000131.28971-1-christian.brauner@ubuntu.com>
-        <20180313000131.28971-2-christian.brauner@ubuntu.com>
-Date: Mon, 12 Mar 2018 19:26:24 -0500
-In-Reply-To: <20180313000131.28971-2-christian.brauner@ubuntu.com> (Christian
-        Brauner's message of "Tue, 13 Mar 2018 01:01:29 +0100")
-Message-ID: <87o9js95xr.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S932405AbeCMAaK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:30:10 -0400
+Received: from ozlabs.org ([103.22.144.67]:50839 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932102AbeCMAaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 20:30:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 13 Mar 2018 11:29:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Petr Machata <petrm@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180313112941.7971ba0c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1evXmX-00087t-Hy;;;mid=<87o9js95xr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/Sl4KTCTBJUs/UrueCPnEz9lZxu764plc=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Christian Brauner <christian.brauner@ubuntu.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 546 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.1 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.31 (0.2%),
-        extract_message_metadata: 31 (5.6%), get_uri_detail_list: 3.3 (0.6%),
-        tests_pri_-1000: 12 (2.3%), tests_pri_-950: 2.1 (0.4%), tests_pri_-900: 1.61
-        (0.3%), tests_pri_-400: 30 (5.4%), check_bayes: 28 (5.1%), b_tokenize: 12
-        (2.2%), b_tok_get_all: 7 (1.2%), b_comp_prob: 3.4 (0.6%), b_tok_touch_all:
-        3.0 (0.5%), b_finish: 0.74 (0.1%), tests_pri_0: 453 (82.9%),
-        check_dkim_signature: 1.64 (0.3%), check_dkim_adsp: 4.5 (0.8%),
-        tests_pri_500: 8 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3 v4] devpts: hoist out check for DEVPTS_SUPER_MAGIC
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/frLOy=jyCYIrEK1ptviZ+79"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
+--Sig_/frLOy=jyCYIrEK1ptviZ+79
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hoist the check whether we have already found a suitable devpts filesystem
-> out of devpts_ptmx_path() in preparation for the devpts bind-mount
-> resolution patch. This is a non-functional change.
->
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Hi all,
 
->  ---
-> ChangeLog v3->v4:
-> * patch unchanged
-> ChangeLog v2->v3:
-> * patch unchanged
-> ChangeLog v1->v2:
-> * patch added
-> ChangeLog v0->v1:
-> * patch not present
-> ---
->  fs/devpts/inode.c | 35 ++++++++++++++++++++---------------
->  1 file changed, 20 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-> index e31d6ed3ec32..d3ddbb888874 100644
-> --- a/fs/devpts/inode.c
-> +++ b/fs/devpts/inode.c
-> @@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
->  	struct super_block *sb;
->  	int err;
->  
-> -	/* Has the devpts filesystem already been found? */
-> -	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
-> -		return 0;
-> -
->  	/* Is a devpts filesystem at "pts" in the same directory? */
->  	err = path_pts(path);
->  	if (err)
-> @@ -159,17 +155,22 @@ static int devpts_ptmx_path(struct path *path)
->  struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
->  {
->  	struct path path;
-> -	int err;
->  
->  	path = filp->f_path;
->  	path_get(&path);
->  
-> -	err = devpts_ptmx_path(&path);
-> -	dput(path.dentry);
-> -	if (err) {
-> -		mntput(path.mnt);
-> -		return ERR_PTR(err);
-> +	/* Has the devpts filesystem already been found? */
-> +	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-> +		int err;
-> +
-> +		err = devpts_ptmx_path(&path);
-> +		dput(path.dentry);
-> +		if (err) {
-> +			mntput(path.mnt);
-> +			return ERR_PTR(err);
-> +		}
->  	}
-> +
->  	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
->  		mntput(path.mnt);
->  		return ERR_PTR(-ENODEV);
-> @@ -182,15 +183,19 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
->  	struct pts_fs_info *result;
->  	struct path path;
->  	struct super_block *sb;
-> -	int err;
->  
->  	path = filp->f_path;
->  	path_get(&path);
->  
-> -	err = devpts_ptmx_path(&path);
-> -	if (err) {
-> -		result = ERR_PTR(err);
-> -		goto out;
-> +	/* Has the devpts filesystem already been found? */
-> +	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-> +		int err;
-> +
-> +		err = devpts_ptmx_path(&path);
-> +		if (err) {
-> +			result = ERR_PTR(err);
-> +			goto out;
-> +		}
->  	}
->  
->  	/*
+Today's linux-next merge of the net-next tree got conflicts in:
+
+  drivers/net/ethernet/mellanox/mlxsw/spectrum.h
+  drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+
+between commit:
+
+  663f1b26f9c1 ("mlxsw: spectrum: Prevent duplicate mirrors")
+
+from the net tree and commit:
+
+  a629ef210d89 ("mlxsw: spectrum: Move SPAN code to separate module")
+
+from the net-next tree.
+
+I fixed it up (the code changed in the former was moved in the latter -
+I applied the below merge fix patch) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Mar 2018 11:25:13 +1100
+Subject: [PATCH] mlxsw: merge fix for move of SPAN code
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ .../net/ethernet/mellanox/mlxsw/spectrum_span.c    | 28 ++++++++++++++++++=
+----
+ .../net/ethernet/mellanox/mlxsw/spectrum_span.h    |  3 +++
+ 2 files changed, 27 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c b/drivers/=
+net/ethernet/mellanox/mlxsw/spectrum_span.c
+index ae22a3daffbf..4d6ed207b4af 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
+@@ -600,13 +600,17 @@ int mlxsw_sp_span_port_mtu_update(struct mlxsw_sp_por=
+t *port, u16 mtu)
+ }
+=20
+ static struct mlxsw_sp_span_inspected_port *
+-mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_port *port,
+-				    struct mlxsw_sp_span_entry *span_entry)
++mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_span_entry *span_entry,
++				    enum mlxsw_sp_span_type type,
++				    struct mlxsw_sp_port *port,
++				    bool bind)
+ {
+ 	struct mlxsw_sp_span_inspected_port *p;
+=20
+ 	list_for_each_entry(p, &span_entry->bound_ports_list, list)
+-		if (port->local_port =3D=3D p->local_port)
++		if (type =3D=3D p->type &&
++		    port->local_port =3D=3D p->local_port &&
++		    bind =3D=3D p->bound)
+ 			return p;
+ 	return NULL;
+ }
+@@ -636,8 +640,22 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port =
+*port,
+ 	struct mlxsw_sp_span_inspected_port *inspected_port;
+ 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
+ 	char sbib_pl[MLXSW_REG_SBIB_LEN];
++	int i;
+ 	int err;
+=20
++	/* A given (source port, direction) can only be bound to one analyzer,
++	 * so if a binding is requested, check for conflicts.
++	 */
++	if (bind)
++		for (i =3D 0; i < mlxsw_sp->span.entries_count; i++) {
++			struct mlxsw_sp_span_entry *curr =3D
++				&mlxsw_sp->span.entries[i];
++
++			if (mlxsw_sp_span_entry_bound_port_find(curr, type,
++								port, bind))
++				return -EEXIST;
++		}
++
+ 	/* if it is an egress SPAN, bind a shared buffer to it */
+ 	if (type =3D=3D MLXSW_SP_SPAN_EGRESS) {
+ 		u32 buffsize =3D mlxsw_sp_span_mtu_to_buffsize(mlxsw_sp,
+@@ -665,6 +683,7 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port *=
+port,
+ 	}
+ 	inspected_port->local_port =3D port->local_port;
+ 	inspected_port->type =3D type;
++	inspected_port->bound =3D bind;
+ 	list_add_tail(&inspected_port->list, &span_entry->bound_ports_list);
+=20
+ 	return 0;
+@@ -691,7 +710,8 @@ mlxsw_sp_span_inspected_port_del(struct mlxsw_sp_port *=
+port,
+ 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
+ 	char sbib_pl[MLXSW_REG_SBIB_LEN];
+=20
+-	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(port, span_entry);
++	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(span_entry, type,
++							     port, bind);
+ 	if (!inspected_port)
+ 		return;
+=20
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h b/drivers/=
+net/ethernet/mellanox/mlxsw/spectrum_span.h
+index 948aceb512c5..4b87ec20e658 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
+@@ -51,6 +51,9 @@ struct mlxsw_sp_span_inspected_port {
+ 	struct list_head list;
+ 	enum mlxsw_sp_span_type type;
+ 	u8 local_port;
++
++	/* Whether this is a directly bound mirror (port-to-port) or an ACL. */
++	bool bound;
+ };
+=20
+ struct mlxsw_sp_span_parms {
+--=20
+2.16.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/frLOy=jyCYIrEK1ptviZ+79
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnG3UACgkQAVBC80lX
+0GykGggAiiuHOkzeoNqW1nqtpCRLsMTYjDvCIjnsLpgPjBXTHvqzOPqk0u0pvNVR
+QMWo76yIgW9wUc9vkdE2I4ZYi4ax6yju3NVSFbJvfGLNkBwQnQIsuhDL3mHoKBiv
++dWcHfJy8a84D0mY4AMgq9ZGfBocZR4p9oKbwhTnrpSXmSaY98d/FArsEqNdR73F
+s+tk5+9OEDKdOmKerk9gwJ+LupARC2v036GjsjojcWbu6721AT6VkvMXiCTLsEme
+5/hys4jOPWIX6pkZ3TuZ5P1Zu9q4/uPw0XrquCJ0wlDlIe6dKythCP5VYB4XvG4/
+U8S8yIGjrlPytfqpXhRnlqnDWvLPog==
+=ltqn
+-----END PGP SIGNATURE-----
+
+--Sig_/frLOy=jyCYIrEK1ptviZ+79--
