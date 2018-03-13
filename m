@@ -1,56 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752435AbeCMRUp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 13:20:45 -0400
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:37314 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751731AbeCMRUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 13:20:44 -0400
-X-Google-Smtp-Source: AG47ELvq+GdyHV01XHqGPyMgRLd8eW4y2o4vNWPJKw9uh95A+gLt9poEWVU26E5KDHl67NsF7iidwU2P2ApSMHw1B1U=
-MIME-Version: 1.0
-In-Reply-To: <152055669123.63229.1692099069085978884.stgit@sosxen2.amd.com>
-References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com> <152055669123.63229.1692099069085978884.stgit@sosxen2.amd.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 19:20:42 +0200
-Message-ID: <CAHp75Vfc+JTjU2P0GCedVFcHYniXoVcmRC3n4cFsLMr9sx6eyA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] iommu/amd - Add a debugfs entry to specify a IOMMU
- device table entry
-To: Gary R Hook <gary.hook@amd.com>
-Cc: iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S932465AbeCMRVO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 13:21:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:41976 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751496AbeCMRVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 13:21:13 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
+Date: Tue, 13 Mar 2018 17:21:00 +0000
+Message-Id: <20180313172103.24281-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 2:51 AM, Gary R Hook <gary.hook@amd.com> wrote:
-> Initially (at boot) the device table values dumped are all of the
-> active devices.  Add a devid debugfs file to allow the user to select a
-> single device table entry to dump (active or not). Let any devid value
-> greater than the maximum allowable PCI ID (0xFFFF) restore the
-> behavior to that effective at boot.
+As kexec and kdump are getting used a bit more intensively, I've been
+made aware of a number of shortcomings.
 
-> +               oboff += OSCNPRINTF("%02x:%02x:%x (%u / %04x)\n",
-> +                                   PCI_BUS_NUM(amd_iommu_devid),
-> +                                   PCI_SLOT(amd_iommu_devid),
-> +                                   PCI_FUNC(amd_iommu_devid),
+The main gripe is from folks trying to launch a kdump kernel from
+within an interrupt handler. If using EOImode==1, things work as
+expected. If using EOImode==0 (such as in a guest), the secondary
+kernel hangs as the previous interrupt hasn't been EOI'd, and the
+active priority is still set. The first two patches are addressing
+this situation for both GICv2 and GICv3 by reseting the APRs to their
+default value.
 
-Perhaps at some point we will have an extension to %p to print PCI BDFs.
+The last patch is introduced to workaround an annoying shortcoming on
+some GICv3 implementations, where LPIs cannot be disabled once they've
+been enabled. This completely kills the whole kexec story, as the
+secondary kernel will not be able to configure LPIs, and may
+experience random single bit corruption due to interrupts being made
+pending in the now reallocated pending tables. Fun!
 
-> +       if (strnchr(obuf, OBUFLEN, ':'))
-> +       {
+This is quite annoying in those (limited) situations where you'd like
+Linux to act as your bootloader. For this particular use case, we
+introduce a kernel command line option "irqchip.gicv3_nolpi=1", which
+will force the kernel to ignore LPIs altogether, leaving them intact
+to the secondary kernel to enjoy. This has proved to be quite useful
+on my Chromebook.
 
-Style
+I'd welcome any testing and reviewing. If nobody fundamentaly
+disagrees with this, I plan to get it merged in 4.17.
 
-> +       } else if (obuf[0] == '0' && obuf[1] == 'x') {
-> +               n = sscanf(obuf, "%x", &amd_iommu_devid);
-> +       } else {
-> +               n = sscanf(obuf, "%d", &amd_iommu_devid);
-> +       }
+Marc Zyngier (3):
+  irqchip/gic-v2: Reset APRn registers at boot time
+  irqchip/gic-v3: Reset APgRn registers at boot time
+  irqchip/gic-v3: Allow LPIs to be disabled from the command line
 
-kstrtoint() ?
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++++
+ arch/arm/include/asm/arch_gicv3.h               | 41 +++++++++++++++++++------
+ drivers/irqchip/irq-gic-v3.c                    | 33 +++++++++++++++++++-
+ drivers/irqchip/irq-gic.c                       | 17 ++++++----
+ 4 files changed, 82 insertions(+), 17 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.2
