@@ -1,407 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeCMJR0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 05:17:26 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:41654 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752218AbeCMJN4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 05:13:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2D9CIo3016505
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 02/11] kconfig: tests: add framework for Kconfig unit testing
-Date: Tue, 13 Mar 2018 18:12:03 +0900
-Message-Id: <1520932332-2449-3-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520932332-2449-1-git-send-email-yamada.masahiro@socionext.com>
+        id S1752528AbeCMJSd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 05:18:33 -0400
+Received: from h1.radempa.de ([176.9.142.194]:60139 "EHLO mail.cosmopool.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752332AbeCMJSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 05:18:32 -0400
+From: Harald Geyer <harald@ccbib.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
+Subject: Re: [PATCH 3/5] arm64: dts: allwinner: a64: add simplefb for A64 SoC
+In-reply-to: <20180313082724.7optc2xwgqoiibtx@flea>
+References: <20180312161050.7647-1-harald@ccbib.org> <20180312161050.7647-4-harald@ccbib.org> <20180313082724.7optc2xwgqoiibtx@flea>
+Comments: In-reply-to Maxime Ripard <maxime.ripard@bootlin.com>
+   message dated "Tue, 13 Mar 2018 09:27:24 +0100."
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1655.1520932701.1@stardust.g4.wien.funkfeuer.at>
+Date: Tue, 13 Mar 2018 10:18:22 +0100
+Message-Id: <E1evg4e-0000Qj-2w@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many parts in Kconfig are so cryptic and need refactoring.  However,
-its complexity prevents us from moving forward.  There are several
-naive corner cases where it is difficult to notice breakage.  If
-those are covered by unit tests, we will be able to touch the code
-with more confidence.
+Maxime Ripard writes:
+> On Mon, Mar 12, 2018 at 04:10:48PM +0000, Harald Geyer wrote:
+>> The A64 SoC features two display pipelines, one has a LCD output, the
+>> other has a HDMI output.
+>>
+>> Add support for simplefb for the LCD output. Tested on Teres I.
+>>
+>> This patch was inspired by work of Icenowy Zheng.
+>>
+>> Signed-off-by: Harald Geyer <harald@ccbib.org>
+>> ---
+>> arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 ++++++++++++++++++++
+>> 1 file changed, 20 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> index ca1b365bc722..05d5e8def68a 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> @@ -52,6 +52,26 @@
+>> 	#address-cells = <1>;
+>> 	#size-cells = <1>;
+>>
+>> +	chosen {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges;
+>> +
+>> +/*
+>> + * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
+>> + * However there is no support for this clock on A64 yet, so we depend
+>> + * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
+>> + */
+> 
+> There's definitely support for the CLK_MIXER0 clock in the DE2 CCU
+> driver, so I guess this would need to be amended / fixed
 
-Here is a simple test framework based on pytest.  The conftest.py
-provides a fixture useful to run commands such as 'oldaskconfig' etc.
-and to compare the resulted .config, stdout, stderr with expectations.
+AFAIK on the A64 a special sram quirk is necessary, that never got merged:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574303.html
 
-How to add test cases?
-----------------------
+I asked Icenowy if I should resubmit her patch as part of this series,
+but was told further discussion is necessary. I'm sure she can better
+explain the details than me.
 
-For each test case, you should create a subdirectory under
-scripts/kconfig/tests/ (so test cases are separated from each other).
-Every test case directory should contain the following files:
+Actually if it wasn't for the sram quirk, there is a simplefb patch by
+her, that could have been merged long ago:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1574304.html
 
- - __init__.py: describes test functions
- - Kconfig: the top level Kconfig file for the test
+Hope that explains,
+Harald
 
-To do a useful job, test cases generally need additional data like
-input .config and information about expected results.
+> -- Maxime Ripard, Bootlin (formerly Free Electrons) Embedded Linux and
+> Kernel engineering https://bootlin.com
+> 
+>>> application/pgp-signature attachment
 
-How to run tests?
------------------
-
-You need python3 and pytest.  Then, run "make testconfig".  O= option
-is supported.  If V=1 is given, detailed logs captured during tests
-are displayed.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
----
-
-Changes in v3: None
-Changes in v2:
-  - Add 'randconfig' support
-  - Add docstring
-  - Fix various style errors detected by 'pep8' and 'pep257'
-
- scripts/kconfig/Makefile          |   8 ++
- scripts/kconfig/tests/conftest.py | 291 ++++++++++++++++++++++++++++++++++++++
- scripts/kconfig/tests/pytest.ini  |   7 +
- 3 files changed, 306 insertions(+)
- create mode 100644 scripts/kconfig/tests/conftest.py
- create mode 100644 scripts/kconfig/tests/pytest.ini
-
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index cb3ec53..c5d1d1a 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -135,6 +135,14 @@ PHONY += tinyconfig
- tinyconfig:
- 	$(Q)$(MAKE) -f $(srctree)/Makefile allnoconfig tiny.config
- 
-+# CHECK: -o cache_dir=<path> working?
-+PHONY += testconfig
-+testconfig: $(obj)/conf
-+	$(PYTHON3) -B -m pytest $(srctree)/$(src)/tests \
-+	-o cache_dir=$(abspath $(obj)/tests/.cache) \
-+	$(if $(findstring 1,$(KBUILD_VERBOSE)),--capture=no)
-+clean-dirs += tests/.cache
-+
- # Help text used by make help
- help:
- 	@echo  '  config	  - Update current config utilising a line-oriented program'
-diff --git a/scripts/kconfig/tests/conftest.py b/scripts/kconfig/tests/conftest.py
-new file mode 100644
-index 0000000..0345ef6
---- /dev/null
-+++ b/scripts/kconfig/tests/conftest.py
-@@ -0,0 +1,291 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) 2018 Masahiro Yamada <yamada.masahiro@socionext.com>
-+#
-+
-+"""
-+Kconfig unit testing framework.
-+
-+This provides fixture functions commonly used from test files.
-+"""
-+
-+import os
-+import pytest
-+import shutil
-+import subprocess
-+import tempfile
-+
-+CONF_PATH = os.path.abspath(os.path.join('scripts', 'kconfig', 'conf'))
-+
-+
-+class Conf:
-+    """Kconfig runner and result checker.
-+
-+    This class provides methods to run text-based interface of Kconfig
-+    (scripts/kconfig/conf) and retrieve the resulted configuration,
-+    stdout, and stderr.  It also provides methods to compare those
-+    results with expectations.
-+    """
-+
-+    def __init__(self, request):
-+        """Create a new Conf instance.
-+
-+        request: object to introspect the requesting test module
-+        """
-+        # the directory of the test being run
-+        self._test_dir = os.path.dirname(str(request.fspath))
-+
-+    # runners
-+    def _run_conf(self, mode, dot_config=None, out_file='.config',
-+                  interactive=False, in_keys=None, extra_env={}):
-+        """Run text-based Kconfig executable and save the result.
-+
-+        mode: input mode option (--oldaskconfig, --defconfig=<file> etc.)
-+        dot_config: .config file to use for configuration base
-+        out_file: file name to contain the output config data
-+        interactive: flag to specify the interactive mode
-+        in_keys: key inputs for interactive modes
-+        extra_env: additional environments
-+        returncode: exit status of the Kconfig executable
-+        """
-+        command = [CONF_PATH, mode, 'Kconfig']
-+
-+        # Override 'srctree' environment to make the test as the top directory
-+        extra_env['srctree'] = self._test_dir
-+
-+        # Run Kconfig in a temporary directory.
-+        # This directory is automatically removed when done.
-+        with tempfile.TemporaryDirectory() as temp_dir:
-+
-+            # if .config is given, copy it to the working directory
-+            if dot_config:
-+                shutil.copyfile(os.path.join(self._test_dir, dot_config),
-+                                os.path.join(temp_dir, '.config'))
-+
-+            ps = subprocess.Popen(command,
-+                                  stdin=subprocess.PIPE,
-+                                  stdout=subprocess.PIPE,
-+                                  stderr=subprocess.PIPE,
-+                                  cwd=temp_dir,
-+                                  env=dict(os.environ, **extra_env))
-+
-+            # If input key sequence is given, feed it to stdin.
-+            if in_keys:
-+                ps.stdin.write(in_keys.encode('utf-8'))
-+
-+            while ps.poll() is None:
-+                # For interactive modes such as oldaskconfig, oldconfig,
-+                # send 'Enter' key until the program finishes.
-+                if interactive:
-+                    ps.stdin.write(b'\n')
-+
-+            self.retcode = ps.returncode
-+            self.stdout = ps.stdout.read().decode()
-+            self.stderr = ps.stderr.read().decode()
-+
-+            # Retrieve the resulted config data only when .config is supposed
-+            # to exist.  If the command fails, the .config does not exist.
-+            # 'listnewconfig' does not produce .config in the first place.
-+            if self.retcode == 0 and out_file:
-+                with open(os.path.join(temp_dir, out_file)) as f:
-+                    self.config = f.read()
-+            else:
-+                self.config = None
-+
-+        # Logging:
-+        # Pytest captures the following information by default.  In failure
-+        # of tests, the captured log will be displayed.  This will be useful to
-+        # figure out what has happened.
-+
-+        print("[command]\n{}\n".format(' '.join(command)))
-+
-+        print("[retcode]\n{}\n".format(self.retcode))
-+
-+        print("[stdout]")
-+        print(self.stdout)
-+
-+        print("[stderr]")
-+        print(self.stderr)
-+
-+        if self.config is not None:
-+            print("[output for '{}']".format(out_file))
-+            print(self.config)
-+
-+        return self.retcode
-+
-+    def oldaskconfig(self, dot_config=None, in_keys=None):
-+        """Run oldaskconfig.
-+
-+        dot_config: .config file to use for configuration base (optional)
-+        in_key: key inputs (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._run_conf('--oldaskconfig', dot_config=dot_config,
-+                              interactive=True, in_keys=in_keys)
-+
-+    def oldconfig(self, dot_config=None, in_keys=None):
-+        """Run oldconfig.
-+
-+        dot_config: .config file to use for configuration base (optional)
-+        in_key: key inputs (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._run_conf('--oldconfig', dot_config=dot_config,
-+                              interactive=True, in_keys=in_keys)
-+
-+    def olddefconfig(self, dot_config=None):
-+        """Run olddefconfig.
-+
-+        dot_config: .config file to use for configuration base (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._run_conf('--olddefconfig', dot_config=dot_config)
-+
-+    def defconfig(self, defconfig):
-+        """Run defconfig.
-+
-+        defconfig: defconfig file for input
-+        returncode: exit status of the Kconfig executable
-+        """
-+        defconfig_path = os.path.join(self._test_dir, defconfig)
-+        return self._run_conf('--defconfig={}'.format(defconfig_path))
-+
-+    def _allconfig(self, mode, all_config):
-+        if all_config:
-+            all_config_path = os.path.join(self._test_dir, all_config)
-+            extra_env = {'KCONFIG_ALLCONFIG': all_config_path}
-+        else:
-+            extra_env = {}
-+
-+        return self._run_conf('--{}config'.format(mode), extra_env=extra_env)
-+
-+    def allyesconfig(self, all_config=None):
-+        """Run allyesconfig.
-+
-+        all_config: fragment config file for KCONFIG_ALLCONFIG (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._allconfig('allyes', all_config)
-+
-+    def allmodconfig(self, all_config=None):
-+        """Run allmodconfig.
-+
-+        all_config: fragment config file for KCONFIG_ALLCONFIG (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._allconfig('allmod', all_config)
-+
-+    def allnoconfig(self, all_config=None):
-+        """Run allnoconfig.
-+
-+        all_config: fragment config file for KCONFIG_ALLCONFIG (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._allconfig('allno', all_config)
-+
-+    def alldefconfig(self, all_config=None):
-+        """Run alldefconfig.
-+
-+        all_config: fragment config file for KCONFIG_ALLCONFIG (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._allconfig('alldef', all_config)
-+
-+    def randconfig(self, all_config=None):
-+        """Run randconfig.
-+
-+        all_config: fragment config file for KCONFIG_ALLCONFIG (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._allconfig('rand', all_config)
-+
-+    def savedefconfig(self, dot_config):
-+        """Run savedefconfig.
-+
-+        dot_config: .config file for input
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._run_conf('--savedefconfig', out_file='defconfig')
-+
-+    def listnewconfig(self, dot_config=None):
-+        """Run listnewconfig.
-+
-+        dot_config: .config file to use for configuration base (optional)
-+        returncode: exit status of the Kconfig executable
-+        """
-+        return self._run_conf('--listnewconfig', dot_config=dot_config,
-+                              out_file=None)
-+
-+    # checkers
-+    def _read_and_compare(self, compare, expected):
-+        """Compare the result with expectation.
-+
-+        compare: function to compare the result with expectation
-+        expected: file that contains the expected data
-+        """
-+        with open(os.path.join(self._test_dir, expected)) as f:
-+            expected_data = f.read()
-+        return compare(self, expected_data)
-+
-+    def _contains(self, attr, expected):
-+        return self._read_and_compare(
-+                                    lambda s, e: getattr(s, attr).find(e) >= 0,
-+                                    expected)
-+
-+    def _matches(self, attr, expected):
-+        return self._read_and_compare(lambda s, e: getattr(s, attr) == e,
-+                                      expected)
-+
-+    def config_contains(self, expected):
-+        """Check if resulted configuration contains expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result contains the expected data, False otherwise
-+        """
-+        return self._contains('config', expected)
-+
-+    def config_matches(self, expected):
-+        """Check if resulted configuration exactly matches expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result matches the expected data, False otherwise
-+        """
-+        return self._matches('config', expected)
-+
-+    def stdout_contains(self, expected):
-+        """Check if resulted stdout contains expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result contains the expected data, False otherwise
-+        """
-+        return self._contains('stdout', expected)
-+
-+    def stdout_matches(self, expected):
-+        """Check if resulted stdout exactly matches expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result matches the expected data, False otherwise
-+        """
-+        return self._matches('stdout', expected)
-+
-+    def stderr_contains(self, expected):
-+        """Check if resulted stderr contains expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result contains the expected data, False otherwise
-+        """
-+        return self._contains('stderr', expected)
-+
-+    def stderr_matches(self, expected):
-+        """Check if resulted stderr exactly matches expected data.
-+
-+        expected: file that contains the expected data
-+        returncode: True if result matches the expected data, False otherwise
-+        """
-+        return self._matches('stderr', expected)
-+
-+
-+@pytest.fixture(scope="module")
-+def conf(request):
-+    """Create a Conf instance and provide it to test functions."""
-+    return Conf(request)
-diff --git a/scripts/kconfig/tests/pytest.ini b/scripts/kconfig/tests/pytest.ini
-new file mode 100644
-index 0000000..85d7ce8
---- /dev/null
-+++ b/scripts/kconfig/tests/pytest.ini
-@@ -0,0 +1,7 @@
-+[pytest]
-+addopts = --verbose
-+
-+# Pytest requires that test files have unique names, because pytest imports
-+# them as top-level modules.  It is silly to prefix or suffix a test file with
-+# the directory name that contains it.  Use __init__.py for all test files.
-+python_files = __init__.py
 -- 
-2.7.4
+If you want to support my work:
+see http://friends.ccbib.org/harald/supporting/
+or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
