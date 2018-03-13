@@ -1,131 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933573AbeCMMJE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:09:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:42593 "EHLO
+        id S933477AbeCMMJj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:09:39 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:54759 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933497AbeCMMJC (ORCPT
+        with ESMTP id S932682AbeCMMJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:09:02 -0400
+        Tue, 13 Mar 2018 08:09:36 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Wajdeczko <michal.wajdeczko@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/pmu: avoid -Wmaybe-uninitialized warning
-Date: Tue, 13 Mar 2018 13:08:29 +0100
-Message-Id: <20180313120848.2658626-1-arnd@arndb.de>
+To: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Martin Sebor <msebor@gmail.com>,
+        Toshihiko Matsumoto <Toshihiko.Matsumoto@sony.com>,
+        Kota Yonezawa <Kota.Yonezawa@sony.com>,
+        Satoshi Watanabe <Satoshi.C.Watanabe@sony.com>,
+        Masayuki Yamamoto <Masayuki.Yamamoto@sony.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cxd2880-spi: avoid out-of-bounds access warning
+Date: Tue, 13 Mar 2018 13:09:11 +0100
+Message-Id: <20180313120931.2667235-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:1C9NSNSxaU5N/FWz8jy8lnk6fXnxY6XUaKse+PTo0KLES56ylvw
- p+AqT5dDoee9LaW5p6Ge64fMdihWff1Z9yB2iWSVuLq7LCmtr5yMTeaIRIFF8vxOdWhkKhw
- K4vAzfdq5/uyF+tnauv5ajaiRDDL7tJcWRyzMR7dOoWAbR7iu3fZ7LT+bjsXWNqJqBWn0AE
- vI7AxxElhk+vo8ieoD/VA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ax2aEcaHqPA=:C5PvGOiPe8pAJh266/fS19
- 3EKLEEJ31orGyHP2V0BPS42o66jZek0SLoYIjPVqVlP2hEidQzc1hgPa8KFFq1aKvSSil347W
- mUGAgLzNp2E485VTpxBv8zaSmrNS2kdIggms8JYbeXaX9T8Mrgg1xDU2BOjJgA1XYH0iGK3JG
- pAmhvxVnL50HadG8/Rm3hPxN4RLP1/tp11pLDofkHC9a5HBFS9a2gsF9QfIEDG+2ABt47aiGq
- /zqQTZoB3jUNt6QDueUerFUFfcV9jhr7aFWHPU4AM18P/NLUHPRINDF3cpdHAg31Hc2Xp+Ujh
- kM1H0UjnNcnXToJPSzXPNFV0zqY4VZmdo7gSgaBg054GbFJ05fBryZMukQRFIMF4tn+JoHPD+
- g/DLki/v99o8RX+iiVh7HuiXTnx6FttobUIWqJLch8o+Sjv/o9C/11cEE4wLrZsdxw+iKRsTc
- JDNq1Jlk466lQ7U+5tmAg9j6Jzi1Mc/Xd1bGlL4+zQE+Ljo64ZkYkUYfSfHxgbeA9g5QINv0i
- 3z0VdBzE02AQW5gpxCABYTpxgpzlZn+Kes6gmRejZ57dt4q79W8ULpJsAl2YpfOGzADWzelk6
- M1D2+3HyKnRWOY2H/dzwm5MDI9vB9iKkrntICw5ozFT1TTIqf6XdnF7KiV068HQ+fdc9tX25g
- TypPDNbeaeLZIK7duXxvliVfMg9XV6vG31ERv7+/xr1QhyELkXQhG3ENHw8+zeAMlg3sYZb/8
- l9h4DsIIbshLsIdSGk/NU94tPLsmTr9eKr2p4g==
+X-Provags-ID: V03:K0:S+RFW9etdNDC9M0CHb7K1B1lRqYbNXjaHzikiIkxk41IBs0W2ML
+ V6J+6ziBK8bHpW6fpH83s3zVPmzQ/8c9vcefKMNK/24BB1pobR3/PXmCbI+QYRwx9DB5oxq
+ nOOrU6R3UjgXmhPlQUIti2buGE3UmE0oq9H3qqgwr7aGif5NvzPHVcSTp77mjYqJ9pwey7K
+ tY+86ec7VUtdBPdPSHKDQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Czu44b+jZZs=:Z6FllyUz9tfSDwWjX9iETa
+ hz1fs75nZiFgNGQUOf5tIey9058JcnGzqCMt8FiHUpjVhVdODb7iZsjs1/z1KGLV/CFimvDr+
+ D7P2I6YTSzZHkC+Ec2i+/wx2IzM9vwLrgksARHE5RZB3EY0yF8Ezx5oJtEsSWpWcNj1eHv7Wr
+ DE84agqIkROpkcI5+M6aN0bg4+gotQCRYBfiaQktfzWSmR+zWw730JnupxpJZwyr7y4LnzxTx
+ 65daJub+u9VsvHlo0ZlUelZfxamWNZRZBSR5omYigWx9jlCjCIQ4Ybdk0hmPn78vxyMcbRoDO
+ UPmkdPCzjwmH+wBOb/DyCFcmrtthBbBdzOjQntOSFpYhKAZsKvAArvNojWt5LjeT80QF32A2y
+ A61M9VzRJdRVhaCjUkuVnzmEbohbVrPUJjh2LQUQEGkKNbcESj40mXFo2jjmWxXr0sbyob5hk
+ UvvU8NuMJfG3Nzntj1cEkSZa6OwgcYyicugWFFVXaL0Q12jSibCagQeB8FEONWHuAtlYs966J
+ AxX1QY5ap/o5NytehYOKS9X0JZM+mPBhXFHdgMfP3KCk/KsgCixDcC0X68J68/UOm/DBdjxhG
+ iIIpdZd/+rET5ygIk6H8cnhfFNQlMvDGSb5Ao/21IY15lKD54pkw2eaOmwbf+KRjjF3dsCDem
+ QRi2bl+nJFDl1r+/R4TEmybEKWpAh2z6NZrrRQHJsfKoMmjSMcEzl14s/wRrgDSaxzR2Ir8Ou
+ 1y9Iqc7b3C1k0KqIDwjN6KDd2p6DMrPHg+htjw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The conditional spinlock confuses gcc into thinking the 'flags' value
-might contain uninitialized data:
+The -Warray-bounds warning in gcc-8 triggers for a newly added file:
 
-drivers/gpu/drm/i915/i915_pmu.c: In function '__i915_pmu_event_read':
-arch/x86/include/asm/paravirt_types.h:573:3: error: 'flags' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/media/spi/cxd2880-spi.c: In function 'cxd2880_write_reg':
+drivers/media/spi/cxd2880-spi.c:111:3: error: 'memcpy' forming offset [133, 258] is out of the bounds [0, 132] of object 'send_data' with type 'u8[132]' {aka 'unsigned char[132]'} [-Werror=array-bounds]
 
-The code is correct, but it's easy to see how the compiler gets confused
-here. This avoids the problem by pulling the lock outside of the function
-into its only caller.
+The problem appears to be that we have two range checks in this function,
+first comparing against BURST_WRITE_MAX (128) and then comparing against
+a literal '255'. The logic checking the buffer size looks at the second
+one and decides that this might be the actual maximum data length.
 
-Fixes: 1fe699e30113 ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+This is understandable behavior from the compiler, but the code is actually
+safe. Since the first check is already shorter, we can remove the loop
+and only leave that. To be on the safe side in case BURST_WRITE_MAX might
+be increased, I'm leaving the check against U8_MAX.
+
+Fixes: bd24fcddf6b8 ("media: cxd2880-spi: Add support for CXD2880 SPI interface")
+Cc: Martin Sebor <msebor@gmail.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/i915/i915_pmu.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ drivers/media/spi/cxd2880-spi.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index 4bc7aefa9541..2c8c705d1f18 100644
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -415,7 +415,6 @@ static u64 __get_rc6(struct drm_i915_private *i915)
- static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- {
- #if IS_ENABLED(CONFIG_PM)
--	unsigned long flags;
- 	u64 val;
- 
- 	if (intel_runtime_pm_get_if_in_use(i915)) {
-@@ -428,18 +427,12 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		 * previously.
- 		 */
- 
--		if (!locked)
--			spin_lock_irqsave(&i915->pmu.lock, flags);
--
- 		if (val >= i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur) {
- 			i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = 0;
- 			i915->pmu.sample[__I915_SAMPLE_RC6].cur = val;
- 		} else {
- 			val = i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur;
- 		}
--
--		if (!locked)
--			spin_unlock_irqrestore(&i915->pmu.lock, flags);
- 	} else {
- 		struct pci_dev *pdev = i915->drm.pdev;
- 		struct device *kdev = &pdev->dev;
-@@ -452,9 +445,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		 * on top of the last known real value, as the approximated RC6
- 		 * counter value.
- 		 */
--		if (!locked)
--			spin_lock_irqsave(&i915->pmu.lock, flags);
--
- 		spin_lock_irqsave(&kdev->power.lock, flags2);
- 
- 		if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
-@@ -470,9 +460,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
- 		val = jiffies_to_nsecs(val);
- 		val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
- 		i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
--
--		if (!locked)
--			spin_unlock_irqrestore(&i915->pmu.lock, flags);
+diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
+index 4df3bd312f48..011a37c2f272 100644
+--- a/drivers/media/spi/cxd2880-spi.c
++++ b/drivers/media/spi/cxd2880-spi.c
+@@ -88,7 +88,7 @@ static int cxd2880_write_reg(struct spi_device *spi,
+ 		pr_err("invalid arg\n");
+ 		return -EINVAL;
  	}
+-	if (size > BURST_WRITE_MAX) {
++	if (size > BURST_WRITE_MAX || size > U8_MAX) {
+ 		pr_err("data size > WRITE_MAX\n");
+ 		return -EINVAL;
+ 	}
+@@ -101,24 +101,14 @@ static int cxd2880_write_reg(struct spi_device *spi,
+ 	send_data[0] = 0x0e;
+ 	write_data_top = data;
  
- 	return val;
-@@ -519,8 +506,16 @@ static u64 __i915_pmu_event_read(struct perf_event *event, bool locked)
- 			val = count_interrupts(i915);
- 			break;
- 		case I915_PMU_RC6_RESIDENCY:
--			val = get_rc6(i915, locked);
+-	while (size > 0) {
+-		send_data[1] = sub_address;
+-		if (size > 255)
+-			send_data[2] = 255;
+-		else
+-			send_data[2] = (u8)size;
++	send_data[1] = sub_address;
++	send_data[2] = (u8)size;
+ 
+-		memcpy(&send_data[3], write_data_top, send_data[2]);
++	memcpy(&send_data[3], write_data_top, send_data[2]);
+ 
+-		ret = cxd2880_write_spi(spi, send_data, send_data[2] + 3);
+-		if (ret) {
+-			pr_err("write spi failed %d\n", ret);
 -			break;
-+			if (!locked) {
-+				unsigned long flags;
-+
-+				spin_lock_irqsave(&i915->pmu.lock, flags);
-+				val = get_rc6(i915, locked);
-+				spin_unlock_irqrestore(&i915->pmu.lock, flags);
-+				break;
-+			} else {
-+				val = get_rc6(i915, locked);
-+			}
- 		}
- 	}
+-		}
+-		sub_address += send_data[2];
+-		write_data_top += send_data[2];
+-		size -= send_data[2];
+-	}
++	ret = cxd2880_write_spi(spi, send_data, send_data[2] + 3);
++	if (ret)
++		pr_err("write spi failed %d\n", ret);
  
+ 	return ret;
+ }
 -- 
 2.9.0
