@@ -1,122 +1,101 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4013363-1520715597-2-9743359974792086020
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3504153-1520956255-2-16652785107960820244
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520715597; b=Lgp90/8hVxdE8XIPZS6Ht5rxA7TDo/Oma4Qg7s9n7Gh+8Dy
-    P5SifbcZzz+Q/A9EHE5kQyT/t9qtSDoEzm8N27p1ngiwuRppYFVI7sCBgnfc3EpI
-    OaoOvR4ZYXASPpJxh9eJdISKxcNqV6vTBjO7oNq26L6vnUakqzouMzBn0PGL6iXx
-    PLL+00aU5NMS5scXDZEVDJ9rszOzegpCh7M3XAlZIi3SD3Ix8OXdc0CUliZIEUKO
-    uaQG1ubg6oqiMvTpaXJoL/MqpVWLhyDhEWS2LtmrKhc1gNRPZLCqZ3i/AtiUQ6Bs
-    doo8kL+IHWCjql4lhaCF62CdgQ2wD+2ehG1Hd2w==
+    t=1520956255; b=hPHO+CfQWvmv1nvbcduOA5c6655nezqT2iqxwR16nGyMLXN
+    DME2n1yuNPFVHVSYiCcLF938dEtoO/YffC8nHTfA98b0WTuPm88d7roBS9fZCZoD
+    972SAC6lN52OEnxgtTHIIqoolyEqRkpenLLAgGUaaj9f/XGWklCCAMUjnutyHVv/
+    J70OCY+OpGtCgaq8TIY93jLa610mhBkrk6PD44MvhtK7VIEceY6eMnvmqAjOSvm7
+    1AxyP8j+t9e7SCZEWEyb4+LneyxFCi0jLdW1yFKZAdwv5CJlsTW0XQyUejGusdDV
+    c6Bme8QwlPu553BoAXHfQOy7ALOrfzL6MkDSTSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id:mime-version
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520715597; bh=pHJVQNYqs1sXbADiibO58VinVL1cJ5NpRUW9hf9w1xs=; b=p
-    t8Tkf7Vd4FuysBa7M8uf8ll3F9Q/emWLzF0BG8Grg2CFmYGGgPk17UJkdyvAr64i
-    1DFsLt/z8kfB5QGxun7g2I9guMJrbUnQwBUX2w+OP/L5Wu8LbBV742LPCqOeTKLV
-    HFGu3CXlw9dcsP9xVXQ94kF4hyxtq8932rg+TbAGFaduW4XJZblrjenfxhPP+Gh1
-    3PWXFZrqbHNhCjN6Xs1HNESV33P3hi5H6xM9NOzxbl1wflsyw6lvgt9lgDlcmYVG
-    g0+t9T2KPttLXvZwm0uBwsl7fr37eAvXofDL187cDAq08rUmIYwV6gRNnpRYwDfL
-    EiGXa38LFr4qiBEKiDD2A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim-adsp=discard (ADSP policy from amazon.co.uk);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=E4M/vj8W x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1520956255; bh=QvmGux6T71i84c07NYTsnUiGNZ
+    1dr3mhDecFEyL3DXE=; b=wyb0XRbPAunbrAMQmZb27aqlOMk9t36bSC1w3lxOl9
+    B4y0hG42QtgyxoZcPXAm8vnrZ0HXaawJSa4wJOD/r3uvcq/WnmGqQpgXIPU5V15W
+    DrkYU470IlELjm7HpItgHno7RjGfGxBY71Jso7H/4yMp3jEKGTqnRMWxBH6pH/CS
+    Qg1/MIVP26GOVTR/LKkYvCl7oiCPXmB5YQhOUbcVjULWUDLQkE4yjeC8B1AoDaEi
+    NdsQYs08Ni0SG2vKut1d2F7bkb89hNMqXUfw+cXugdSuHZD1b4Ldv/sF9T/bJjfl
+    xVtlnp50Fpts1lPZPVZA04FIHo28eChsTsWz3aXQfpmg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim-adsp=discard (ADSP policy from amazon.co.uk);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=E4M/vj8W x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751161AbeCJU7y (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Mar 2018 15:59:54 -0500
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:9949 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751145AbeCJU7x (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Sat, 10 Mar 2018 15:59:53 -0500
-X-IronPort-AV: E=Sophos;i="5.47,452,1515456000";
-   d="scan'208";a="335194601"
-From: "Tautschnig, Michael" <tautschn@amazon.co.uk>
-To: "x86@kernel.org" <x86@kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86: always use SYSCALL_DEFINE*
-Thread-Topic: [PATCH] x86: always use SYSCALL_DEFINE*
-Thread-Index: AQHTuLIpRQ4EwEJShkmMNsa2rpeMXKPJ9BKA
-Date: Sat, 10 Mar 2018 20:59:46 +0000
-Message-ID: <6490B647-209A-4CE6-BFDC-5EC2F62B466D@amazon.com>
-References: <14A5C8D0-3F9D-486F-A20C-55849D70FC80@amazon.com>
-In-Reply-To: <14A5C8D0-3F9D-486F-A20C-55849D70FC80@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.246]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7E3E0FFC7CEC3645BBC232E601217066@amazon.com>
+        id S964789AbeCMPuj (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 11:50:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33188 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934795AbeCMPu0 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 13 Mar 2018 11:50:26 -0400
+From: Colin King <colin.king@canonical.com>
+To: John Youn <johnyoun@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][usb-next] usb: dwc2: ix spelling mistake: "genereted" -> "generated"
+Date: Tue, 13 Mar 2018 15:50:24 +0000
+Message-Id: <20180313155024.1195-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 10 Mar 2018, at 20:55, Tautschnig, Michael <tautschn@amazon.co.uk> wrote:
-> =
+From: Colin Ian King <colin.king@canonical.com>
 
-> All syscall arguments are passed in as types of the same byte size as
-> unsigned long (width of full registers). Using a smaller type without a
-> cast may result in losing bits of information. SYSCALL_DEFINE* introduce
-> adequate type casts. All definitions of syscalls in x86 except for those
-> patched here have already been using the appropriate SYSCALL_DEFINE*.
-[...]
+Trivial fix to spelling mistake in dev_warn warning message text.
 
-Additional context: I had previously made an attempt to ensure type
-consistency of sys_ioperm as "Syscall arguments are unsigned long (full
-registers)" (https://lkml.org/lkml/2016/7/4/336). I hope the new proposal
-is more acceptable.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/dwc2/hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best,
-Michael
-
-
-
-Amazon Web Services UK Limited. Registered in England and Wales with regist=
-ration number 08650665 with its registered office at 1 Principal Place, Wor=
-ship Street, London, EC2A 2FA, United Kingdom.
-
-
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index dcfda5eb4cac..190f95964000 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -5433,7 +5433,7 @@ int dwc2_host_enter_hibernation(struct dwc2_hsotg *hsotg)
+ 
+ 	/* Wait for the HPRT0.PrtSusp register field to be set */
+ 	if (dwc2_hsotg_wait_bit_set(hsotg, HPRT0, HPRT0_SUSP, 300))
+-		dev_warn(hsotg->dev, "Suspend wasn't genereted\n");
++		dev_warn(hsotg->dev, "Suspend wasn't generated\n");
+ 
+ 	/*
+ 	 * We need to disable interrupts to prevent servicing of any IRQ
+-- 
+2.15.1
 
