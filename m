@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtdhdwgv9U6WxAI3p2QvbOz/X6b4IsxnLdOhvNIeom064v/lBWElmPlVlU1Pf+EUjjlbig6
-ARC-Seal: i=1; a=rsa-sha256; t=1520955336; cv=none;
+X-Google-Smtp-Source: AG47ELuU8AmQJJRf6HFFLMvOXziOzTim+dyfuBb2R/F0nZeUhs1L66Lt8lZx5JNGEMQ69rPk2gdu
+ARC-Seal: i=1; a=rsa-sha256; t=1520955334; cv=none;
         d=google.com; s=arc-20160816;
-        b=S3Ln9HckDUQTNXyruv/8W4mVsfxAZ2DGacnsT8UnvVgOZ5NFTPNMPi0dD+y4Dv0FG3
-         c6mB4Eaw4Ya6y+3l9Ha3MfzVGInacUbHikT2+X+riXPRjQe4eFu93ey1IiQHcKQbpbkI
-         AuPqHYyElJEyNpywEFJuAZpkNi+rXXydbPLHlcwQRLot2lxWIjQ0Wsw+wlmv7/9Oayjw
-         XDxNuNmz+gIrSLVUZFAoG2zwmGVSRN7Qu2CweLdygVgh6snXilW5p13x3dLxoFnIMSxm
-         teyQr//vnCU//N9VGdDCeUaK0vf2g07Gw8AOjzVALeavR752yGJhqzD2a6rvT8ziB+4b
-         CqYA==
+        b=aEybH3TASM5Ub3Fjl0ydwvTtmeVBiXiJzKGBMgVgZFs83QPNE9TvUxaQCbFNL1thJB
+         tDxrpjcYECuxQ0U62s7j0MB8oXFbBYexINMrOTphS1Jn1lrMbSVEiyCvd19+QU4A1sxx
+         CAtAo4UjyToS47rKs8kGDoo2szJfqpVoU1GuuSPzkWARmR0ACCSF4yNXAV6wLImwWQ7F
+         YTXm4yrXaRi77rG1+T00SQr8b/ZnwYxjU1KvNmXAoFaXqEuPRsNnG8OQyonh7BzjEwMn
+         miPzZ0L4FZOZXnuU/FayeVMTjZlhplfmGQVB9jPx/dVV7/53zoc7Ot/yZO9wPkljfZ8n
+         2aiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=b//iNS/R6SvqNr+VAquxk/3U5YoqUMyMFTkB5Nl6sSo=;
-        b=1GP4iK3/wjhuzINNUaavK2eyU/E2qENsa/8ja5mQrhEIAZpepPHS5EdKWxhkkC8MZs
-         WnZ839lSp6cMn52OJWmABFCzwGvhGKXNdJEdBBUDlt2zC5rUWyKL3HStg/vPgUWPMSDw
-         hK9KqDHv4AV2eLN/K6ZpU4h1Ibi3Zd0gKT5mGdtuLoZa30I6e9/cSTJZxVvqmhWlupNz
-         QKwDk0cH5ug8rGk0XteKYLgF7xGExeneAbYEY4qvBP4NQJFkpVeiOhbSvtO3ML1//g/V
-         K5EdvpsYW/BXBXXdMvNZTv6/TgMlM8ldOOBXr1PvAsojEmr658HX0GnBycGjBFMJakmd
-         U0Yw==
+        bh=Civ0x//i//183Ch37NsBOyQdD1X8WYb209+hB7iQBxk=;
+        b=ckSNSSusTja592M+/aBTj6DiS8f9n5yVwCMlC7CugRR8qzxctGM7vXLQVlTJcrDB9a
+         rou6jFIogh9YFfCJYpIcOIFFAo6sGmXlThx13KRaTx5Z3Ct8AskXbTYI3P1MwJ+Qtilh
+         +QOMZiEL+XxtfDz9noNwq2ys4PFA7J6q9ODUPnS0jISrIGhOyPrATCXN+jZGM2siJe7m
+         4pWneakwfEoZkIQ4dEXTKaN2fWD9tN44xgknlJSY6ne/h07u4A6m2ANgWMnAdjgMjG0H
+         xBkhWtszXPPBAXYQBbymAgERYRNWRKu5BH3LTWxB41/2ezT1cu4Ir7bcpQSrCDvbGIHm
+         pXoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com,
-	Florian Westphal <fw@strlen.de>,
+	Eric Dumazet <edumazet@google.com>,
+	syzkaller <syzkaller@googlegroups.com>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 015/140] netfilter: ebtables: CONFIG_COMPAT: dont trust userland offsets
-Date: Tue, 13 Mar 2018 16:23:38 +0100
-Message-Id: <20180313152459.139448737@linuxfoundation.org>
+Subject: [PATCH 4.14 014/140] netfilter: IDLETIMER: be syzkaller friendly
+Date: Tue, 13 Mar 2018 16:23:37 +0100
+Message-Id: <20180313152459.068221388@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837091715728508?=
-X-GMAIL-MSGID: =?utf-8?q?1594837262769098018?=
+X-GMAIL-THRID: =?utf-8?q?1594837088521748829?=
+X-GMAIL-MSGID: =?utf-8?q?1594837260870521433?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +50,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit b71812168571fa55e44cdd0254471331b9c4c4c6 upstream.
+commit cfc2c740533368b96e2be5e0a4e8c3cace7d9814 upstream.
 
-We need to make sure the offsets are not out of range of the
-total size.
-Also check that they are in ascending order.
+We had one report from syzkaller [1]
 
-The WARN_ON triggered by syzkaller (it sets panic_on_warn) is
-changed to also bail out, no point in continuing parsing.
+First issue is that INIT_WORK() should be done before mod_timer()
+or we risk timer being fired too soon, even with a 1 second timer.
 
-Briefly tested with simple ruleset of
--A INPUT --limit 1/s' --log
-plus jump to custom chains using 32bit ebtables binary.
+Second issue is that we need to reject too big info->timeout
+to avoid overflows in msecs_to_jiffies(info->timeout * 1000), or
+risk looping, if result after overflow is 0.
 
-Reported-by: <syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
+[1]
+WARNING: CPU: 1 PID: 5129 at kernel/workqueue.c:1444 __queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 5129 Comm: syzkaller159866 Not tainted 4.16.0-rc1+ #230
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x257 lib/dump_stack.c:53
+ panic+0x1e4/0x41c kernel/panic.c:183
+ __warn+0x1dc/0x200 kernel/panic.c:547
+ report_bug+0x211/0x2d0 lib/bug.c:184
+ fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+ fixup_bug arch/x86/kernel/traps.c:247 [inline]
+ do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+ invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
+RIP: 0010:__queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
+RSP: 0018:ffff8801db507538 EFLAGS: 00010006
+RAX: ffff8801aeb46080 RBX: ffff8801db530200 RCX: ffffffff81481404
+RDX: 0000000000000100 RSI: ffffffff86b42640 RDI: 0000000000000082
+RBP: ffff8801db507758 R08: 1ffff1003b6a0de5 R09: 000000000000000c
+R10: ffff8801db5073f0 R11: 0000000000000020 R12: 1ffff1003b6a0eb6
+R13: ffff8801b1067ae0 R14: 00000000000001f8 R15: dffffc0000000000
+ queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1488
+ queue_work include/linux/workqueue.h:488 [inline]
+ schedule_work include/linux/workqueue.h:546 [inline]
+ idletimer_tg_expired+0x44/0x60 net/netfilter/xt_IDLETIMER.c:116
+ call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
+ expire_timers kernel/time/timer.c:1363 [inline]
+ __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
+ run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+ invoke_softirq kernel/softirq.c:365 [inline]
+ irq_exit+0x1cc/0x200 kernel/softirq.c:405
+ exiting_irq arch/x86/include/asm/apic.h:541 [inline]
+ smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
+ apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:777 [inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x5e/0xba kernel/locking/spinlock.c:184
+RSP: 0018:ffff8801c20173c8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
+RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000006
+RDX: 1ffffffff0d592cd RSI: 1ffff10035d68d23 RDI: 0000000000000282
+RBP: ffff8801c20173d8 R08: 1ffff10038402e47 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8820e5c8
+R13: ffff8801b1067ad8 R14: ffff8801aea7c268 R15: ffff8801aea7c278
+ __debug_object_init+0x235/0x1040 lib/debugobjects.c:378
+ debug_object_init+0x17/0x20 lib/debugobjects.c:391
+ __init_work+0x2b/0x60 kernel/workqueue.c:506
+ idletimer_tg_create net/netfilter/xt_IDLETIMER.c:152 [inline]
+ idletimer_tg_checkentry+0x691/0xb00 net/netfilter/xt_IDLETIMER.c:213
+ xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
+ check_target net/ipv6/netfilter/ip6_tables.c:533 [inline]
+ find_check_entry.isra.7+0x935/0xcf0 net/ipv6/netfilter/ip6_tables.c:575
+ translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:744
+ do_replace net/ipv6/netfilter/ip6_tables.c:1160 [inline]
+ do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1686
+ nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+ nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+ ipv6_setsockopt+0x10b/0x130 net/ipv6/ipv6_sockglue.c:927
+ udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
+ sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2976
+ SYSC_setsockopt net/socket.c:1850 [inline]
+ SyS_setsockopt+0x189/0x360 net/socket.c:1829
+ do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+
+Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzkaller <syzkaller@googlegroups.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebtables.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ net/netfilter/xt_IDLETIMER.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2053,7 +2053,9 @@ static int ebt_size_mwt(struct compat_eb
- 		if (match_kern)
- 			match_kern->match_size = ret;
+--- a/net/netfilter/xt_IDLETIMER.c
++++ b/net/netfilter/xt_IDLETIMER.c
+@@ -147,11 +147,11 @@ static int idletimer_tg_create(struct id
+ 		    (unsigned long) info->timer);
+ 	info->timer->refcnt = 1;
  
--		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
-+		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
-+			return -EINVAL;
++	INIT_WORK(&info->timer->work, idletimer_tg_work);
 +
- 		match32 = (struct compat_ebt_entry_mwt *) buf;
+ 	mod_timer(&info->timer->timer,
+ 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+ 
+-	INIT_WORK(&info->timer->work, idletimer_tg_work);
+-
+ 	return 0;
+ 
+ out_free_attr:
+@@ -192,7 +192,10 @@ static int idletimer_tg_checkentry(const
+ 		pr_debug("timeout value is zero\n");
+ 		return -EINVAL;
  	}
- 
-@@ -2109,6 +2111,15 @@ static int size_entry_mwt(struct ebt_ent
- 	 *
- 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
- 	 */
-+	for (i = 0; i < 4 ; ++i) {
-+		if (offsets[i] >= *total)
-+			return -EINVAL;
-+		if (i == 0)
-+			continue;
-+		if (offsets[i-1] > offsets[i])
-+			return -EINVAL;
+-
++	if (info->timeout >= INT_MAX / 1000) {
++		pr_debug("timeout value is too big\n");
++		return -EINVAL;
 +	}
-+
- 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
- 		struct compat_ebt_entry_mwt *match32;
- 		unsigned int size;
+ 	if (info->label[0] == '\0' ||
+ 	    strnlen(info->label,
+ 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
