@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuGbA5hE7vF14y6wJqb3hhJU86YvqDl3mu9RjPDMXACRegDOYTr04LV8/P87qfhaq9Jg59V
-ARC-Seal: i=1; a=rsa-sha256; t=1520955147; cv=none;
+X-Google-Smtp-Source: AG47ELvF5rmgnaTjIXd8FdSu9i2cEai0AocoueGZEwfcIgLYtIdIocYmU8oIWQvLLuB5FZWKODIR
+ARC-Seal: i=1; a=rsa-sha256; t=1520955144; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bj8Q2+UwowvKV+HOrgG9+/MyNRpN3EcsR674sl/JKK8ATHh6P2qvvkHA4mrwxWvzfr
-         Q7vDZkrLYZM8Hoe3DmnP9qopi5k6v53tyWxwd2Qi0nByW/gd1WnfD2MXv5K8BP/EbG/p
-         wGBphD9j6Fm1cpGZ+IT0C+cJcwBOjFNOHy1DYZhouAKkNAkFSEgDcZqyBIIC0h4Spx4d
-         TfHJtvmg9FLZvhRLiQEw6BwUicGKk5U+CqPAycjbzu7VKQwOP41RFX9Pz0bzGRruOlGg
-         Ozgkfd/HwD8vuTBcxfXjz4lVy150dOH+EKaBaocJjDJM9FZBU3NiGGOn/Btz0LlKs0Mz
-         6wXg==
+        b=oth+rUxxvvgt+JCyVPsP2BB63YGVjvn11KBUllbagZsjSV+OcSmyAc562SGDAJ66Jn
+         KI0oEBqW6A+uhRjXgCCL9T4LIhS3a6agqbbeXBBciRJHrII3Kfl7QG7B3ZiVfgK6JBuf
+         HKqWIpu3qvlCgSPAOS+AVKtlOFptr/h9WZhAg6agukf60TkygugMrCQ3l5wkY0SF/fc0
+         3yRbBooM2hQ7HPKj6tNCE9G//Hq8040AFLke2iTmJa9u0OeQcGTVRJHpBEFmCht1JlAj
+         8kbqAe73ncj2nU/pLwHaXASaodHRi//LtPehDq6kLRc8yOLROvvUooMQf4rC26aiEluE
+         PNlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Vxsfuoio71X3Blu63cKtLQn9MYqq5JWjH1ydSt6aOmc=;
-        b=aKR0EH2WBXURSLI+Ukb5jTeYMOiClxsE/NmuDDjYvmKuEvLiUNlH1hev6AJ2fuzVJJ
-         RTD2xdRrDucyCEHy5V5Yxcb5n2Y8aGrdhRrfgzeep1T+pYsY1Mj9pPkMhiOYSSNlLv8s
-         ea/Hq/UoNYpH+ANkBwfjawm+aviBjOjbxdZ0e2JLx9A+Htme4onjKxUG1POra+HdeiE4
-         RAbhSwKmhUcErAUTOyUAT81IhiayXAO3kumzWprMOrdbrrH698+AzP3Jc+RPM5hysdg0
-         txgqliXY70Veb74hrhsIzCogcqWZoUxG4H0Tn5HIU7Co592dbHGkGyx8yBPBgqBEtH/v
-         TaCA==
+        bh=+YRqUcJNkw+723YDgXPuoQUDQnVys+cYC+JRiIlD8JA=;
+        b=kxlHpl0vgIDNfWCb0A479+Q/qdywj2rOqS0uMFgjiT6znKvsX2pWK6mLnuD8urYfL9
+         CoZiHqDjs44/PFeJXNiJN1X0Ss3wk4E52DhvkCYyQw9SerKe3rgL5WUb8kVR3rEUPsFr
+         HCTcVcWKOo3/e5Ac+H7bkQ9m5YgOX80h4f3jBItghBqKdrPttmtHBOAtdw+gBcpPcWaO
+         VzYmROVkPTxgOXHSsmT5jrDW1rExbCxqkrFppPmrPVcRL3RR3QBsK4XnJ7qCtBvyiPUC
+         oiGHmlqTAaoZx+eEvKOyUBGamRC880+k6trpyJ2rTmYD7By9df+Rbq96kEh4V7WNmbP7
+         08rg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Benjamin Berg <bberg@redhat.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 068/146] ALSA: hda/realtek: Limit mic boost on T480
-Date: Tue, 13 Mar 2018 16:23:55 +0100
-Message-Id: <20180313152325.982727192@linuxfoundation.org>
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 077/146] scsi: qla2xxx: Fix recursion while sending terminate exchange
+Date: Tue, 13 Mar 2018 16:24:04 +0100
+Message-Id: <20180313152326.691593049@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837064026507308?=
-X-GMAIL-MSGID: =?utf-8?q?1594837064026507308?=
+X-GMAIL-THRID: =?utf-8?q?1594837061465280113?=
+X-GMAIL-MSGID: =?utf-8?q?1594837061465280113?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Berg <bberg@redhat.com>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit 85981dfd6b0a0fd9ed87ca4a525981b67c21f098 upstream.
+commit 3efc31f76dd7fc8a71cd86683909f637e9b7cadb upstream.
 
-The internal mic boost on the T480 is too high. Fix this by applying the
-ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the machine to limit the gain.
+During error test case where switch port status is toggled from enable to
+disable, following stack trace is seen which indicates recursion trying to
+send terminate exchange.  This regression was introduced by commit
+82de802ad46e ("scsi: qla2xxx: Preparation for Target MQ.")
 
-Signed-off-by: Benjamin Berg <bberg@redhat.com>
-Tested-by: Benjamin Berg <bberg@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+BUG: stack guard page was hit at ffffb96488383ff8 (stack is ffffb96488384000..ffffb96488387fff)
+BUG: stack guard page was hit at ffffb964886c3ff8 (stack is ffffb964886c4000..ffffb964886c7fff)
+kernel stack overflow (double-fault): 0000 [#1] SMP
+qlt_term_ctio_exchange+0x9c/0xb0 [qla2xxx]
+qlt_term_ctio_exchange+0x9c/0xb0 [qla2xxx]
+qlt_term_ctio_exchange+0x9c/0xb0 [qla2xxx]
+qlt_term_ctio_exchange+0x9c/0xb0 [qla2xxx]
+qlt_term_ctio_exchange+0x9c/0xb0 [qla2xxx]
+
+Fixes: 82de802ad46e ("scsi: qla2xxx: Preparation for Target MQ.")
+Cc: <stable@vger.kernel.org> #4.10
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/qla2xxx/qla_target.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6414,6 +6414,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x225d, "Thinkpad T480", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3708,7 +3708,7 @@ static int qlt_term_ctio_exchange(struct
+ 		term = 1;
+ 
+ 	if (term)
+-		qlt_term_ctio_exchange(qpair, ctio, cmd, status);
++		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1, 0);
+ 
+ 	return term;
+ }
