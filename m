@@ -1,168 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933517AbeCMQmt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:42:49 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:63955 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752842AbeCMQml (ORCPT
+        id S1752799AbeCMQo7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:44:59 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53391 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933452AbeCMQmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:42:41 -0400
-X-IronPort-AV: E=Sophos;i="5.47,465,1515423600";
-   d="scan'208";a="275056969"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] gpio: dwapb: Add support for a bus clock
-Thread-Topic: [PATCH v2] gpio: dwapb: Add support for a bus clock
-Thread-Index: AQHTujBNFru8uMrR90aBczGFMPozw6POXjsAgAAARiA=
-Date: Tue, 13 Mar 2018 16:42:35 +0000
-Message-ID: <HK2PR0601MB1393163460D31B07FF347D59F5D20@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
- <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
-In-Reply-To: <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR0601MB1329;7:ntCnYh9JEDu34TUUTPlsJcl5XpruriT9/XqvW2juhYS7180kzjRE1cFwb1oB73/37S/Vbq2RH+diizlSJE1/bc6EBI4kbvE/StdkcJ2A0FeLm4aFjZLamb++5yM5Emq3k+o9Lf9juugECbKNw2LknzF+UobTstrG1xaCI9ndjwH0unJxjXSI74BhWW4tThq51d6ALx9tkYUpcP81YBv3u0pVPxr4JvEdiYVUrOzJTffU0yYHcsoxF57CB8xAlhrc;20:9BhUue3gMhrTnpokLxMzSb+vxU3D9js0tH0SJckQn8sRZgiNftGkr8i1hU0jU65DojWy62/apS4cvGfs6eUMlynA8gqozOd82amM2/RoEfhYqGreMaPuCxx2qvNHfnYFpnSJJP9Cq7ZGfgcNgWi6AHFg0hkqoYaL4TO/g3AZI/o=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 01cafcb8-6f24-4f84-fa78-08d589016d49
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HK2PR0601MB1329;
-x-ms-traffictypediagnostic: HK2PR0601MB1329:
-x-microsoft-antispam-prvs: <HK2PR0601MB13291AEC74F5709DBCFACDD1F5D20@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501244)(52105095)(6055026)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:HK2PR0601MB1329;BCL:0;PCL:0;RULEID:;SRVR:HK2PR0601MB1329;
-x-forefront-prvs: 0610D16BBE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(39860400002)(346002)(376002)(366004)(189003)(199004)(54906003)(6506007)(9686003)(229853002)(7696005)(14454004)(2950100002)(6116002)(2900100001)(3846002)(186003)(55016002)(6916009)(68736007)(6436002)(478600001)(2906002)(97736004)(105586002)(106356001)(59450400001)(6246003)(316002)(76176011)(3280700002)(53936002)(5250100002)(53546011)(99286004)(102836004)(66066001)(39060400002)(8936002)(3660700001)(25786009)(305945005)(81166006)(74316002)(81156014)(7736002)(8676002)(26005)(4326008)(86362001)(33656002)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR0601MB1329;H:HK2PR0601MB1393.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: AQohO5f/q/zEcr4LcE5/HM4v8zOeJ/X/uIdCYjai/zmE623cYhdQw4QC1m5tOMrtBSlrk5XiXJoQEIRqD4ekwuLODJZk7t2HSUopauylCKIB2pEUaFhv1CJFqMd6WfKGLGGD7n5hPFsBElK9+R6gWwo7yXvB3MNHE/c4QrtC5isH1bIYrRSWumhR2vzLHI7PcV8EqLdPsevOivBv4W53kVmS3z+ca4HZPoAsMa9bFlncTFQ8Co06AgISuphmwN/VH1Xl5HOjWz9cgW6qpfQpXtmB2Niiajmbidoxrclmr9phDwNFSiPnIhXrv9NoPESshOLT5vGef7oUusqq2KPc6Q==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        Tue, 13 Mar 2018 12:42:49 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Vinod Koul <vinod.koul@intel.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1 6/8] dmaengine: stm32-dma: properly mask irq bits
+Date: Tue, 13 Mar 2018 17:42:05 +0100
+Message-ID: <1520959327-25760-7-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1520959327-25760-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01cafcb8-6f24-4f84-fa78-08d589016d49
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2018 16:42:36.3339
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR0601MB1329
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2DGj1AR024930
 
-Hi Andy,
+A single register of the controller holds the information for four dma
+channels.
+The functions stm32_dma_irq_status() don't mask the relevant bits after
+the shift, thus adjacent channel's status is also reported in the returned
+value.
+Fixed by masking the value before returning it.
 
-On 13 March 2018 16:36, Andy Shevchenko wrote:
-> On Mon, Mar 12, 2018 at 8:30 PM, Phil Edworthy
-> <phil.edworthy@renesas.com> wrote:
-> > Enable an optional bus clock provided by DT.
-> 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Thanks!
+Similarly, the function stm32_dma_irq_clear() don't mask the input value
+before shifting it, thus an incorrect input value could disable the
+interrupts of adjacent channels.
+Fixed by masking the input value before using it.
+
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+---
+  Version history:
+    v1:
+       * Initial
+---
+---
+ drivers/dma/stm32-dma.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
+index f9d3c84..a11cbee 100644
+--- a/drivers/dma/stm32-dma.c
++++ b/drivers/dma/stm32-dma.c
+@@ -38,6 +38,10 @@
+ #define STM32_DMA_TEI			BIT(3) /* Transfer Error Interrupt */
+ #define STM32_DMA_DMEI			BIT(2) /* Direct Mode Error Interrupt */
+ #define STM32_DMA_FEI			BIT(0) /* FIFO Error Interrupt */
++#define STM32_DMA_MASKI			(STM32_DMA_TCI \
++					 | STM32_DMA_TEI \
++					 | STM32_DMA_DMEI \
++					 | STM32_DMA_FEI)
  
-> (Assuming it has been tested on clock-less cases)
-I hacked together a test where the bus clock for the device I have
-is always on, and the clock for this driver is not present in the DTB.
-Whilst not ideal, it does test the clock-less case.
-
-Thanks
-Phil
+ /* DMA Stream x Configuration Register */
+ #define STM32_DMA_SCR(x)		(0x0010 + 0x18 * (x)) /* x = 0..7 */
+@@ -404,7 +408,7 @@ static u32 stm32_dma_irq_status(struct stm32_dma_chan *chan)
  
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > ---
-> > v2:
-> >  - Fix include order.
-> >  - Use a clock name.
-> >  - Check errors from clk_prepare_enable()
-> >  - Add calls to enable/disable the clock in PM
-> > ---
-> >  drivers/gpio/gpio-dwapb.c | 20 +++++++++++++++++++-
-> >  1 file changed, 19 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> > index b0704a8..226977f 100644
-> > --- a/drivers/gpio/gpio-dwapb.c
-> > +++ b/drivers/gpio/gpio-dwapb.c
-> > @@ -8,8 +8,9 @@
-> >   * All enquiries to support@picochip.com
-> >   */
-> >  #include <linux/acpi.h>
-> > -#include <linux/gpio/driver.h>
-> > +#include <linux/clk.h>
-> >  #include <linux/err.h>
-> > +#include <linux/gpio/driver.h>
-> >  #include <linux/init.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/io.h>
-> > @@ -98,6 +99,7 @@ struct dwapb_gpio {
-> >         struct irq_domain       *domain;
-> >         unsigned int            flags;
-> >         struct reset_control    *rst;
-> > +       struct clk              *clk;
-> >  };
-> >
-> >  static inline u32 gpio_reg_v2_convert(unsigned int offset) @@ -670,6
-> > +672,16 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
-> >         if (IS_ERR(gpio->regs))
-> >                 return PTR_ERR(gpio->regs);
-> >
-> > +       /* Optional bus clock */
-> > +       gpio->clk = devm_clk_get(&pdev->dev, "bus");
-> > +       if (!IS_ERR(gpio->clk)) {
-> > +               err = clk_prepare_enable(gpio->clk);
-> > +               if (err) {
-> > +                       dev_info(&pdev->dev, "Cannot enable clock\n");
-> > +                       return err;
-> > +               }
-> > +       }
-> > +
-> >         gpio->flags = 0;
-> >         if (dev->of_node) {
-> >                 const struct of_device_id *of_devid; @@ -712,6 +724,7
-> > @@ static int dwapb_gpio_remove(struct platform_device *pdev)
-> >         dwapb_gpio_unregister(gpio);
-> >         dwapb_irq_teardown(gpio);
-> >         reset_control_assert(gpio->rst);
-> > +       clk_disable_unprepare(gpio->clk);
-> >
-> >         return 0;
-> >  }
-> > @@ -757,6 +770,8 @@ static int dwapb_gpio_suspend(struct device *dev)
-> >         }
-> >         spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-> >
-> > +       clk_disable_unprepare(gpio->clk);
-> > +
-> >         return 0;
-> >  }
-> >
-> > @@ -768,6 +783,9 @@ static int dwapb_gpio_resume(struct device *dev)
-> >         unsigned long flags;
-> >         int i;
-> >
-> > +       if (!IS_ERR(gpio->clk))
-> > +               clk_prepare_enable(gpio->clk);
-> > +
-> >         spin_lock_irqsave(&gc->bgpio_lock, flags);
-> >         for (i = 0; i < gpio->nr_ports; i++) {
-> >                 unsigned int offset;
-> > --
-> > 2.7.4
-> >
-> 
-> 
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
+ 	flags = dma_isr >> (((chan->id & 2) << 3) | ((chan->id & 1) * 6));
+ 
+-	return flags;
++	return flags & STM32_DMA_MASKI;
+ }
+ 
+ static void stm32_dma_irq_clear(struct stm32_dma_chan *chan, u32 flags)
+@@ -419,6 +423,7 @@ static void stm32_dma_irq_clear(struct stm32_dma_chan *chan, u32 flags)
+ 	 * If (ch % 4) is 2 or 3, left shift the mask by 16 bits.
+ 	 * If (ch % 4) is 1 or 3, additionally left shift the mask by 6 bits.
+ 	 */
++	flags &= STM32_DMA_MASKI;
+ 	dma_ifcr = flags << (((chan->id & 2) << 3) | ((chan->id & 1) * 6));
+ 
+ 	if (chan->id & 4)
+-- 
+2.7.4
