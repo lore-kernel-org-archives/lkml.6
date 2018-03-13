@@ -1,54 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932387AbeCMAUZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:20:25 -0400
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:40593 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbeCMAUY (ORCPT
+        id S932385AbeCMA0y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:26:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34460 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932274AbeCMA0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:20:24 -0400
-X-Google-Smtp-Source: AG47ELtO5gq6TvbjgyYkxhjjPED+5sWk32U6KttMGnb3PrrSX3gFBcgvrFecs0z49BrPgIhOWRXuNnkseRUxAJE9F/c=
+        Mon, 12 Mar 2018 20:26:52 -0400
+Subject: Re: [PATCH v5 06/36] drm/rockchip: Only wait for panel ACK on PSR
+ entry
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
+        kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
+        Sonny Rao <sonnyrao@chromium.org>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+ <20180309222327.18689-7-enric.balletbo@collabora.com>
+ <1909495.WV5cT3kS9W@diego>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <804ab508-40b8-71fa-c40b-b54f70fcc453@collabora.com>
+Date: Tue, 13 Mar 2018 01:26:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAOFm3uEEfonZnYWEO+T53+JkpkfBwgHQZv6upWGeJm1QNH0nZA@mail.gmail.com>
-References: <20180217193955.shfhvp3afwiurzfm@gmail.com> <CAOFm3uHHzfV3R3Q9AyhzDLp0uKNHpSTp2MsY3uSL+YsBL6w+dg@mail.gmail.com>
- <CAMuHMdUpRpa7HtbvMxv3yThMb54-aEiVtvD3QFpdnmVi-uBLfQ@mail.gmail.com>
- <1518985080.1894.40.camel@perches.com> <CAOFm3uEEfonZnYWEO+T53+JkpkfBwgHQZv6upWGeJm1QNH0nZA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 13 Mar 2018 01:20:02 +0100
-Message-ID: <CANiq72kOfaaF6FCinKeXb+XEa6Nso_3tThMDOGonN8Y+QXw-QQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: Replace licenses with SPDX identifiers
-To: paul.burton@imgtec.com, Paul Burton <paul.burton@mips.com>,
-        paulburton89@gmail.com
-Cc: Joe Perches <joe@perches.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Willy Tarreau <w@1wt.eu>,
-        Linus Walleij <triad@df.lth.se>,
-        Robin van der Gracht <robin@protonic.nl>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1909495.WV5cT3kS9W@diego>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 8:41 AM, Philippe Ombredanne
-<pombredanne@nexb.com> wrote:
-> On Sun, Feb 18, 2018 at 9:18 PM, Joe Perches <joe@perches.com> wrote:
->> On Sun, 2018-02-18 at 20:37 +0100, Geert Uytterhoeven wrote:
->>> Hi Philippe,
->>>
->>> On Sun, Feb 18, 2018 at 8:04 PM, Philippe Ombredanne
->>> <pombredanne@nexb.com> wrote:
->>> > On Sat, Feb 17, 2018 at 8:39 PM, Miguel Ojeda
->>> > <miguel.ojeda.sandonis@gmail.com> wrote:
->>> > > Cc: Willy Tarreau <w@1wt.eu>
->>> > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->>> > > Cc: Linus Walleij <triad@df.lth.se>
->>> > > Cc: Robin van der Gracht <robin@protonic.nl>
->>> > > Cc: Paul Burton <paul.burton@mips.com>
->>> > > Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->>> > > ---
 
-Pinging Paul Burton in a couple of emails more...
 
-Cheers,
-Miguel
+On 12/03/18 17:58, Heiko Stübner wrote:
+> Hi,
+> 
+> the subject is misleading I think, as this is touching only the generic
+> bridge code and not anything Rockchip-related, so should probably
+> be "drm/bridge"?
+> 
+
+Right, I'll fix this when I need to send another version, I'll wait, for now, a
+bit more for reviews on the other patches.
+
+Thanks
+  Enric
+
+> Am Freitag, 9. März 2018, 23:22:57 CET schrieb Enric Balletbo i Serra:
+>> From: zain wang <wzz@rock-chips.com>
+>>
+>> We currently wait for the panel to mirror our intended PSR state
+>> before continuing on both PSR enter and PSR exit. This is really
+>> only important to do when we're entering PSR, since we want to
+>> be sure the last frame we pushed is being served from the panel's
+>> internal fb before shutting down the soc blocks (vop/analogix).
+>>
+>> This patch changes the behavior such that we only wait for the
+>> panel to complete the PSR transition when we're entering PSR, and
+>> to skip verification when we're exiting.
+>>
+>> Cc: Stéphane Marchesin <marcheu@chromium.org>
+>> Cc: Sonny Rao <sonnyrao@chromium.org>
+>> Signed-off-by: zain wang <wzz@rock-chips.com>
+>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> change itself looks good, so
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> 
