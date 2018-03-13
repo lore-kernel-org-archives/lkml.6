@@ -1,113 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934174AbeCMQN6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:13:58 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38305 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932449AbeCMQNw (ORCPT
+        id S934184AbeCMQOR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:14:17 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34456 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932901AbeCMQNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:13:52 -0400
-X-Google-Smtp-Source: AG47ELu3R5ezLr16USTuwDmPTIBJ5r8LdgwldBpCIfSOaiZXziQo9k032eZIjjaNvsh49LBlrf1LiA==
-Date: Tue, 13 Mar 2018 09:13:49 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        ego@linux.vnet.ibm.com, akshay.adiga@linux.vnet.ibm.com,
-        svaidy@linux.vnet.ibm.com, Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH] powerpc/powernv : Add support to enable sensor groups
-Message-ID: <20180313161349.GB8834@roeck-us.net>
-References: <1511760988-10377-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <87bmjmzla7.fsf@concordia.ellerman.id.au>
- <06a771ec-fc79-0515-9166-f2a105eb33d0@linux.vnet.ibm.com>
- <87609nxfym.fsf@linux.vnet.ibm.com>
- <7b64ac19-5463-5f30-83bb-d5ff0611dc94@linux.vnet.ibm.com>
- <87a7vcgrwu.fsf@concordia.ellerman.id.au>
+        Tue, 13 Mar 2018 12:13:55 -0400
+Date: Tue, 13 Mar 2018 18:13:46 +0200
+From: Yuval Shaia <yuval.shaia@oracle.com>
+To: Liran Alon <liran.alon@oracle.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, idan.brown@oracle.com
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+Message-ID: <20180313161345.GC4023@yuvallap>
+References: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a7vcgrwu.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803130189
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 10:02:09PM +1100, Michael Ellerman wrote:
-> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
-> > On 12/04/2017 10:11 AM, Stewart Smith wrote:
-> >> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
-> >>> On 11/28/2017 05:07 PM, Michael Ellerman wrote:
-> >>>> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
-> >>>>
-> >>>>> Adds support to enable/disable a sensor group. This can be used to
-> >>>>> select the sensor groups that needs to be copied to main memory by
-> >>>>> OCC. Sensor groups like power, temperature, current, voltage,
-> >>>>> frequency, utilization can be enabled/disabled at runtime.
-> >>>>>
-> >>>>> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> >>>>> ---
-> >>>>> The skiboot patch for the opal call is posted below:
-> >>>>> https://lists.ozlabs.org/pipermail/skiboot/2017-November/009713.html
-> >>>>
-> >>>> Can you remind me why we're doing this with a completely bespoke sysfs
-> >>>> API, rather than using some generic sensors API?
-> >>>
-> >>> Disabling/Enabling sensor groups is not supported in the current generic sensors
-> >>> API. And also we dont export all type of sensors in HWMON as not all of them are
-> >>> environment sensors (like performance).
-> >> 
-> >> Are there barriers to adding such concepts to the generic sensors API?
-> >
-> > Yes.
-> >
-> > HWMON does not support attributes for a sensor-group. If we are to extend HWMON
-> > to add new per-sensor attributes to disable/enable, then we need to do either of
-> > the below:
-> >
-> > 1) If any one of the sensor is disabled then all the sensors belonging to that
-> > group will be disabled. OR
-> >
-> > 2) To disable a sensor group we need to disable all the sensors belonging to
-> > that group.
+On Tue, Mar 13, 2018 at 05:07:22PM +0200, Liran Alon wrote:
+> Before this commit, dev_forward_skb() always cleared packet's
+> per-network-namespace info. Even if the packet doesn't cross
+> network namespaces.
 > 
-> Either of those sound doable, the first is probably simpler, as long as
-> there's some way for userspace to understand that it is modifying the
-> state of the whole group.
+> The comment above dev_forward_skb() describes that this is done
+> because the receiving device may be in another network namespace.
+> However, this case can easily be tested for and therefore we can
+> scrub packet's per-network-namespace info only when receiving device
+> is indeed in another network namespace.
 > 
-> > Another problem is hwmon categorizes the sensor-groups based on the type of
-> > sensors like power, temp. If OCC allows multiple groups of the same type then
-> > this approach adds some more complexity to the user to identify the sensors
-> > belonging to correct group.
+> Therefore, this commit changes ____dev_forward_skb() to tell
+> skb_scrub_packet() that skb has crossed network-namespace only in case
+> transmitting device (skb->dev) network namespace is different then
+> receiving device (dev) network namespace.
 > 
-> I don't really understand this one, what do you mean by "If OCC allows"?
+> An example of a netdev that use skb_forward_skb() is veth.
+> Thus, before this commit a packet transmitted from one veth peer to
+> another when both veth peers are on same network namespace will lose
+> it's skb->mark. The bug could easily be demonstrated by the following:
 > 
-> Also do we really expect users to be using this API? Or rather tools?
+> ip netns add test
+> ip netns exec test bash
+> ip link add veth-a type veth peer name veth-b
+> ip link set veth-a up
+> ip link set veth-b up
+> ip addr add dev veth-a 12.0.0.1/24
+> tc qdisc add dev veth-a root handle 1 prio
+> tc qdisc add dev veth-b ingress
+> tc filter add dev veth-a parent 1: u32 match u32 0 0 action skbedit mark 1337
+> tc filter add dev veth-b parent ffff: basic match 'meta(nf_mark eq 1337)' action simple "skb->mark 1337!"
+> dmesg -C
+> ping 12.0.0.2
+> dmesg
 > 
-> > And lastly HWMON does not allow platform specific non-standard sensor groups
-> > like CSM, job-scheduler, profiler.
-> 
-> Have we actually made specific proposals to the hwmon maintainers on
-> adding/changing any of the above? Have they rejected those proposals and
-> told us to go away?
-> 
-Those don't really sound like sensor groups at all. What does "job-scheduler"
-or "profiler" have to do with hardware monitoring ? We do allow additional
-attributes if it makes sense, but those should be hardware monitoring related.
-We also allow registration with other subsystems (such as gpio) if a hardware
-monitoring device also has gpio pins and it seems to cumbersome to request
-that an mfd driver is written. However, I am not convinced that completely
-unrelated attributes should be handled through the hwmon subsystem; if this
-is deemed necessary, it rather seems that hardware monitoring is one of many
-functionalities of a given chip, and such functionality should be handled
-elsewhere.
+> Before this change, the above will print nothing to dmesg.
+> After this change, "skb->mark 1337!" will be printed as necessary.
 
-For the rest (enabling or disabling sensors dynamically), I am not specifically
-opposed to improving the hwmon core to add such support, but someone would have
-to make a specific proposal. One key problem is that the hwmon API assumes
-'static' sensor allocation. The behavior of sensors appearng or disappearing
-at runtime (even though it happens) is not well defined. Any proposal along
-that line will need to ensure that userspace behavior is well documented.
+Hi Liran,
 
-Thanks,
-Guenter
+> 
+> Signed-off-by: Liran Alon <liran.alon@oracle.com>
+> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+> Signed-off-by: Yuval Shaia <yuval.shaia@oracle.com>
+
+I did not earned the credits for SOB, only r-b.
+
+Yuval
+
+> ---
+>  include/linux/netdevice.h | 2 +-
+>  net/core/dev.c            | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 5eef6c8e2741..5908f1e31ee2 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -3371,7 +3371,7 @@ static __always_inline int ____dev_forward_skb(struct net_device *dev,
+>  		return NET_RX_DROP;
+>  	}
+>  
+> -	skb_scrub_packet(skb, true);
+> +	skb_scrub_packet(skb, !net_eq(dev_net(dev), dev_net(skb->dev)));
+>  	skb->priority = 0;
+>  	return 0;
+>  }
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 2cedf520cb28..087787dd0a50 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -1877,9 +1877,9 @@ int __dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
+>   * start_xmit function of one device into the receive queue
+>   * of another device.
+>   *
+> - * The receiving device may be in another namespace, so
+> - * we have to clear all information in the skb that could
+> - * impact namespace isolation.
+> + * The receiving device may be in another namespace.
+> + * In that case, we have to clear all information in the
+> + * skb that could impact namespace isolation.
+>   */
+>  int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
+>  {
+> -- 
+> 1.9.1
+> 
