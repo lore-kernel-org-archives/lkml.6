@@ -1,72 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752793AbeCMTq0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 15:46:26 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53360 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752731AbeCMTqZ (ORCPT
+        id S932481AbeCMTwp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 15:52:45 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33059 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeCMTwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:46:25 -0400
-Date: Tue, 13 Mar 2018 15:45:46 -0400
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        m.mizuma@jp.fujitsu.com, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [v5 1/2] mm: disable interrupts while initializing deferred pages
-Message-ID: <20180313194546.k62tni4g4gnds2nx@xakep.localdomain>
-References: <20180309220807.24961-1-pasha.tatashin@oracle.com>
- <20180309220807.24961-2-pasha.tatashin@oracle.com>
- <20180312130410.e2fce8e5e38bc2086c7fd924@linux-foundation.org>
- <20180313160430.hbjnyiazadt3jwa6@xakep.localdomain>
- <20180313115549.7badec1c6b85eb5a1cf21eb6@linux-foundation.org>
+        Tue, 13 Mar 2018 15:52:43 -0400
+X-Google-Smtp-Source: AG47ELsuRJI2lypJJhrjLNpDQUttgPhF5JStdfPeeKCTQztJT14KpXyzVrFkLIqiYDX3p2X+VDf9BT5POLXdLDWBkbk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313115549.7badec1c6b85eb5a1cf21eb6@linux-foundation.org>
-User-Agent: NeoMutt/20180223
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803130220
+In-Reply-To: <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
+References: <20180313183326.0e93f359@canb.auug.org.au> <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 13 Mar 2018 12:52:42 -0700
+X-Google-Sender-Auth: YAPJfXS11m8XSl3rpuHVJZ24jfI
+Message-ID: <CAGXu5jK=SMR3UsnwuEX3WwQd8WdjgR=94xXzHdBMEGALRr_JOQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Mar 13
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > 
-> > We must remove cond_resched() because we can't sleep anymore. They were
-> > added to fight NMI timeouts, so I will replace them with
-> > touch_nmi_watchdog() in a follow-up fix.
-> 
-> This makes no sense.  Any code section where we can add cond_resched()
-> was never subject to NMI timeouts because that code cannot be running with
-> disabled interrupts.
-> 
+On Tue, Mar 13, 2018 at 8:57 AM, Mike Snitzer <snitzer@redhat.com> wrote:
+> I had to revert the following commits to get this kernel to build
+> (otherwise I got macro expansion errors, using RHEL7
+> gcc-4.8.5-28.el7.x86_64):
+>
+> beb7eb2 kernelh-skip-single-eval-logic-on-literals-in-min-max-v3
+> 19ff7e5 kernelh-skip-single-eval-logic-on-literals-in-min-max-v2
+> c7c133f kernel.h: skip single-eval logic on literals in min()/max()
 
-Hi Andrew,
+Yeah, these need to be dropped from -mm. There isn't a sane solution
+at the moment that works fully for all compiler versions. :(
 
-I was talking about this patch:
+-Kees
 
-9b6e63cbf85b89b2dbffa4955dbf2df8250e5375
-mm, page_alloc: add scheduling point to memmap_init_zone
-
-Which adds cond_resched() to memmap_init_zone() to avoid NMI timeouts.
-
-memmap_init_zone() is used both, early in boot, when non-deferred struct
-pages are initialized, but also may be used later, during memory hotplug.
-
-As I understand, the later case could cause the timeout on non-preemptible
-kernels.
-
-My understanding, is that the same logic was used here when cond_resched()s
-were added.
-
-Please correct me if I am wrong.
-
-Thank you,
-Pavel
+-- 
+Kees Cook
+Pixel Security
