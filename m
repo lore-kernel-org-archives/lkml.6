@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeCMShQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 14:37:16 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27393 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752262AbeCMShO (ORCPT
+        id S1752729AbeCMSie (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 14:38:34 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37721 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751871AbeCMSia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:37:14 -0400
-X-ME-Helo: linux.numericable.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 13 Mar 2018 19:37:11 +0100
-X-ME-IP: 77.198.79.136
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: broonie@kernel.org, f.fainelli@gmail.com
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
-Date: Tue, 13 Mar 2018 19:36:58 +0100
-Message-Id: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
+        Tue, 13 Mar 2018 14:38:30 -0400
+X-Google-Smtp-Source: AG47ELtKo8osQKVEKiW2uGzbQtTgB96RhTxTJ8bOs9Dpa6Y5+ABWS294sxZfNYxGpD+0JgtCsj6ayw==
+From: Thierry Escande <thierry.escande@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Bluetooth: hci_qca: Add serdev support
+Date: Tue, 13 Mar 2018 19:38:04 +0100
+Message-Id: <20180313183807.6701-1-thierry.escande@linaro.org>
 X-Mailer: git-send-email 2.14.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
-in bcm_qspi_probe() in error path") has updated some gotos, but not all of
-them.
+Hi,
 
-This looks spurious, so fix it.
+This patchset enables the Qualcomm BT controller QCA6174 node in the
+device tree of the db820c board. This allows the bluetooth chipset to
+be probed and registered against the hci layer by using the serdev
+framework.
 
-Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I've added the same Fixes: tag as in commit c0368e4db4a3 even if the patch
-would not cleanly apply on top of it.
-At least commit 4e3b2d236fe0 ("spi: bcm-qspi: Add BSPI spi-nor flash
-controller driver") would also be needed.
+This patchset also contains the documentation for the compatible
+string "qcom,qca6174-bt" related to this chipset.
 
-Also the label names could be improved. But this goes beyond the scope of
-this patch.
----
- drivers/spi/spi-bcm-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3:
+- Address comments for patch #3 (details in patch)
 
-diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index a172ab299e80..1596d35498c5 100644
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[MSPI])) {
- 			ret = PTR_ERR(qspi->base[MSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 	} else {
- 		goto qspi_resource_err;
-@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[BSPI])) {
- 			ret = PTR_ERR(qspi->base[BSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 		qspi->bspi_mode = true;
- 	} else {
+v2:
+- Fix author email
+
+Thierry Escande (3):
+  arm64: dts: apq8096-db820c: enable bluetooth node
+  dt-bindings: net: bluetooth: Add qualcomm-bluetooth
+  Bluetooth: hci_qca: Add serdev support
+
+ .../devicetree/bindings/net/qualcomm-bluetooth.txt |  34 +++++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  |  14 +++
+ .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    |  17 ++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |  32 ++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  10 ++
+ drivers/bluetooth/Kconfig                          |   2 +-
+ drivers/bluetooth/hci_qca.c                        | 109 ++++++++++++++++++++-
+ 7 files changed, 215 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+
 -- 
 2.14.1
