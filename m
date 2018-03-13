@@ -1,121 +1,229 @@
-Return-Path: <jglisse@redhat.com>
-X-Google-Smtp-Source: AG47ELvxYbdZ3hKa8x+YhqbzHD9Lfb+o3zlCxrOsM80gd4pzbjUpq/A0jD3PZi3QKGdGEQ+30O9Y
-ARC-Seal: i=1; a=rsa-sha256; t=1520973425; cv=none;
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELtgwDdbmZVo36BOsTvQMs0XVvXxEj/ArH6CWZO/+PqXhUpMf7zqxksvOznWPLeIMx0mMegc
+ARC-Seal: i=1; a=rsa-sha256; t=1520945740; cv=none;
         d=google.com; s=arc-20160816;
-        b=x6gDw0w/00Laa5igxcOVdmw9uAdtzPryGFAsO9hq12qMpgSQJ3XYCTUqHpIwJkoAAh
-         arig32NRa6BkXcSEuYOmQ9z3q58ePX/IxEG5VtRWqhz91qNkpr7bgE7qsUyMX5izA9cv
-         gpNRhHwYy9z8O0MU11MBHLfyIB8go7t8l/Yf/HTr/3cxa9tcdSdoS/qNBcx2s4h6YKJn
-         Xt929deufubernjzuKOmhotKW5Uxr7/on9FcYBZuXTqeuz2Rn/9xo3Nj5WATraGdp9lj
-         ffnOQxs6KwMaeHvQHMU3K+mQZnCqZDejDY+KNxbknO0zuIXjw+mzYu9tncJszqvEQOKF
-         6NcQ==
+        b=RDRGtuQ+Vv9SnKst8btfNePy996LDU7rllWCrN4IJTpbjSkp6e7p+JJ1DrDw6kDcyG
+         J7P7UBJMQ1NKG3NzlpLjEDfJrLcZW95mEt7KyV8yRETEVpbatnm48nNP9iMO3XVdisey
+         TRAfXNnmldJt4b8qkuzUUBc/r0TNikNRTdz1lAk2t1GlxB2CM1loxEFSZqkS2P6InL+J
+         unWFU6TH8bOSGCH+G7ZuN/KdyekduzZU8shsHUhpIEwwoKFKXzLIkqUrIM2K+V+BcPaD
+         GJddaY5ANkj2W9JvEob2QQ4Zins68892+ZGYHYmuxT2LfAvURuHg914C+uSmagJtu5Tu
+         iBfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=T2xh95kiqzQb9maceUwX4mSbBLBoEnn7SIOiBquWiMA=;
-        b=bwL/91zhUJzav089cyEXAFl5U5uAKn4qfz3dBJd6Oh4TEB/ChxlA/ERDkEEZJuFW42
-         kRKqwDm0GKIsP7Chx20WrsuaXXCE5j1AjuEBVzcv6PfYsAla9VTp/lEi4OVR6+ELICWE
-         QdmCNK3jHXg3Hgqp1uBcFQXdnOJByqExyzWWDJJ9MXBJO7HUcxTyt5AABjazEHXvyszb
-         7tTzV8Xao6Km8aUrYxlLDLbs4XFRHQKWPryg/EhRo0O4oSDloSu9c345R/Sk+1nCkqHm
-         Eosv1CaH4kBj/TVTaKO5xi7hmGzlkiV6j2ZFDWqkIYlyNeeKqA9IcujHTk6IbDUq7Cqs
-         qi7A==
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=qpbJBXI1HDBlINj5lpvL2THZB0yP4nBX8rLFMAK5Y4A=;
+        b=s9HJ1BZ0lQTdE0eeeE1E8CkMRMtm9iSG6T8mJ9as+zAAKeJqn9PasKiqaLV9Pzry84
+         StoPIs+9NCX7dhIXn8dItyA+zPxpJQJCMIMLH/R3bwdMEU/JX7e98uYTtQVGSHujC4JT
+         hzZaIrCWnLeYBmi5q/j1+aMnHjUKmkOkjSWGf6PNK487Itgb03LHzGAFzdYahOJ74VMT
+         oPIwsjDBBGI0sgwffBwGjzHOlcOUMeF5NTNU7EPW7d7nFbGvhRHuChpq/FEiXJEwhEG9
+         0sDxc+9vOYP7ZRAy2BDp5H0Sc6q44RDheNYHetjmIHYOSfuMtdmq1X8G0OHuaXXQC1/k
+         GzpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jglisse@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jglisse@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jglisse@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jglisse@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 13 Mar 2018 16:36:57 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	srikar@linux.vnet.ibm.com, acme@kernel.org,
-	ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-	alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-	corbet@lwn.net, dan.j.williams@intel.com,
-	gregkh@linuxfoundation.org, huawei.libin@huawei.com,
-	hughd@google.com, jack@suse.cz, jolsa@redhat.com,
-	kan.liang@intel.com, kirill.shutemov@linux.intel.com,
-	kjlx@templeofstupid.com, kstewart@linuxfoundation.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, mhocko@suse.com, milian.wolff@kdab.com,
-	mingo@redhat.com, namhyung@kernel.org,
-	naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com,
-	pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
-	tmricht@linux.vnet.ibm.com, willy@infradead.org,
-	yao.jin@linux.intel.com, fengguang.wu@intel.com
-Subject: Re: [PATCH 1/8] Uprobe: Export vaddr <-> offset conversion functions
-Message-ID: <20180313203657.GG3828@redhat.com>
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com
+Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH 7/8] perf probe: Support SDT markers having reference counter (semaphore)
+Date: Tue, 13 Mar 2018 18:26:02 +0530
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180313125603.19819-2-ravi.bangoria@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180313125603.19819-2-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18031312-0040-0000-0000-0000041F00A3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031312-0041-0000-0000-000026222B87
+Message-Id: <20180313125603.19819-8-ravi.bangoria@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130154
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594827116225046806?=
-X-GMAIL-MSGID: =?utf-8?q?1594856230713962077?=
+X-GMAIL-THRID: =?utf-8?q?1594827200789621673?=
+X-GMAIL-MSGID: =?utf-8?q?1594827200789621673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 06:25:56PM +0530, Ravi Bangoria wrote:
-> No functionality changes.
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+With this, perf buildid-cache will save SDT markers with reference
+counter in probe cache. Perf probe will be able to probe markers
+having reference counter. Ex,
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+  # readelf -n /tmp/tick | grep -A1 loop2
+    Name: loop2
+    ... Semaphore: 0x0000000010020036
 
-> ---
->  include/linux/mm.h      | 12 ++++++++++++
->  kernel/events/uprobes.c | 10 ----------
->  2 files changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ad06d42..95909f2 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2274,6 +2274,18 @@ struct vm_unmapped_area_info {
->  		return unmapped_area(info);
->  }
->  
-> +static inline unsigned long
-> +offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
-> +{
-> +	return vma->vm_start + offset - ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> +}
-> +
-> +static inline loff_t
-> +vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
-> +{
-> +	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
-> +}
-> +
->  /* truncate.c */
->  extern void truncate_inode_pages(struct address_space *, loff_t);
->  extern void truncate_inode_pages_range(struct address_space *,
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index ce6848e..bd6f230 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -130,16 +130,6 @@ static bool valid_vma(struct vm_area_struct *vma, bool is_register)
->  	return vma->vm_file && (vma->vm_flags & flags) == VM_MAYEXEC;
->  }
->  
-> -static unsigned long offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
-> -{
-> -	return vma->vm_start + offset - ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> -}
-> -
-> -static loff_t vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
-> -{
-> -	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
-> -}
-> -
->  /**
->   * __replace_page - replace page in vma by new page.
->   * based on replace_page in mm/ksm.c
-> -- 
-> 1.8.3.1
-> 
+  # ./perf buildid-cache --add /tmp/tick
+  # ./perf probe sdt_tick:loop2
+  # ./perf stat -e sdt_tick:loop2 /tmp/tick
+    hi: 0
+    hi: 1
+    hi: 2
+    ^C
+     Performance counter stats for '/tmp/tick':
+                 3      sdt_tick:loop2
+       2.561851452 seconds time elapsed
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+---
+ tools/perf/util/probe-event.c | 21 +++++++++++++++++----
+ tools/perf/util/probe-event.h |  1 +
+ tools/perf/util/probe-file.c  | 22 +++++++++++++++++++---
+ tools/perf/util/symbol-elf.c  | 10 ++++++++++
+ tools/perf/util/symbol.h      |  1 +
+ 5 files changed, 48 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index e1dbc98..2cbe68a 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1832,6 +1832,12 @@ int parse_probe_trace_command(const char *cmd, struct probe_trace_event *tev)
+ 			tp->offset = strtoul(fmt2_str, NULL, 10);
+ 	}
+ 
++	if (tev->uprobes) {
++		fmt2_str = strchr(p, '(');
++		if (fmt2_str)
++			tp->ref_ctr_offset = strtoul(fmt2_str + 1, NULL, 0);
++	}
++
+ 	tev->nargs = argc - 2;
+ 	tev->args = zalloc(sizeof(struct probe_trace_arg) * tev->nargs);
+ 	if (tev->args == NULL) {
+@@ -2054,15 +2060,22 @@ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
+ 	}
+ 
+ 	/* Use the tp->address for uprobes */
+-	if (tev->uprobes)
+-		err = strbuf_addf(&buf, "%s:0x%lx", tp->module, tp->address);
+-	else if (!strncmp(tp->symbol, "0x", 2))
++	if (tev->uprobes) {
++		if (tp->ref_ctr_offset)
++			err = strbuf_addf(&buf, "%s:0x%lx(0x%lx)", tp->module,
++					  tp->address, tp->ref_ctr_offset);
++		else
++			err = strbuf_addf(&buf, "%s:0x%lx", tp->module,
++					  tp->address);
++	} else if (!strncmp(tp->symbol, "0x", 2)) {
+ 		/* Absolute address. See try_to_find_absolute_address() */
+ 		err = strbuf_addf(&buf, "%s%s0x%lx", tp->module ?: "",
+ 				  tp->module ? ":" : "", tp->address);
+-	else
++	} else {
+ 		err = strbuf_addf(&buf, "%s%s%s+%lu", tp->module ?: "",
+ 				tp->module ? ":" : "", tp->symbol, tp->offset);
++	}
++
+ 	if (err)
+ 		goto error;
+ 
+diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+index 45b14f0..15a98c3 100644
+--- a/tools/perf/util/probe-event.h
++++ b/tools/perf/util/probe-event.h
+@@ -27,6 +27,7 @@ struct probe_trace_point {
+ 	char		*symbol;	/* Base symbol */
+ 	char		*module;	/* Module name */
+ 	unsigned long	offset;		/* Offset from symbol */
++	unsigned long	ref_ctr_offset;	/* SDT reference counter offset */
+ 	unsigned long	address;	/* Actual address of the trace point */
+ 	bool		retprobe;	/* Return probe flag */
+ };
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index 4ae1123..08ba3a6 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -701,6 +701,12 @@ static unsigned long long sdt_note__get_addr(struct sdt_note *note)
+ 		 : (unsigned long long)note->addr.a64[0];
+ }
+ 
++static unsigned long long sdt_note__get_ref_ctr_offset(struct sdt_note *note)
++{
++	return note->bit32 ? (unsigned long long)note->addr.a32[2]
++		: (unsigned long long)note->addr.a64[2];
++}
++
+ static const char * const type_to_suffix[] = {
+ 	":s64", "", "", "", ":s32", "", ":s16", ":s8",
+ 	"", ":u8", ":u16", "", ":u32", "", "", "", ":u64"
+@@ -776,14 +782,24 @@ static char *synthesize_sdt_probe_command(struct sdt_note *note,
+ {
+ 	struct strbuf buf;
+ 	char *ret = NULL, **args;
+-	int i, args_count;
++	int i, args_count, err;
++	unsigned long long ref_ctr_offset;
+ 
+ 	if (strbuf_init(&buf, 32) < 0)
+ 		return NULL;
+ 
+-	if (strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
++	ref_ctr_offset = sdt_note__get_ref_ctr_offset(note);
++
++	if (ref_ctr_offset)
++		err = strbuf_addf(&buf, "p:%s/%s %s:0x%llx(0x%llx)",
+ 				sdtgrp, note->name, pathname,
+-				sdt_note__get_addr(note)) < 0)
++				sdt_note__get_addr(note), ref_ctr_offset);
++	else
++		err = strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
++				sdtgrp, note->name, pathname,
++				sdt_note__get_addr(note));
++
++	if (err < 0)
+ 		goto error;
+ 
+ 	if (!note->args)
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 2de7705..76c7b54 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1928,6 +1928,16 @@ static int populate_sdt_note(Elf **elf, const char *data, size_t len,
+ 		}
+ 	}
+ 
++	/* Adjust reference counter offset */
++	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_PROBES_SCN, NULL)) {
++		if (shdr.sh_offset) {
++			if (tmp->bit32)
++				tmp->addr.a32[2] -= (shdr.sh_addr - shdr.sh_offset);
++			else
++				tmp->addr.a64[2] -= (shdr.sh_addr - shdr.sh_offset);
++		}
++	}
++
+ 	list_add_tail(&tmp->note_list, sdt_notes);
+ 	return 0;
+ 
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 70c16741..ad0c4f2 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -384,6 +384,7 @@ struct sdt_note {
+ int cleanup_sdt_note_list(struct list_head *sdt_notes);
+ int sdt_notes__get_count(struct list_head *start);
+ 
++#define SDT_PROBES_SCN ".probes"
+ #define SDT_BASE_SCN ".stapsdt.base"
+ #define SDT_NOTE_SCN  ".note.stapsdt"
+ #define SDT_NOTE_TYPE 3
+-- 
+1.8.3.1
