@@ -1,69 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932560AbeCMDbw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 23:31:52 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45843 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932294AbeCMDbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 23:31:51 -0400
-X-Google-Smtp-Source: AG47ELsDxiNdHXsDS0F7JdHaHMYQY3RWAq4Bje6xagzry9FDgpq2//g5q6V36dXFkKtQW8NinVUoQA==
-From: Moritz Fischer <mdf@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org, palmer@sifive.com, albert@sifive.com,
-        olof@lixom.net, Moritz Fischer <mdf@kernel.org>,
-        Trung Tran <trung.tran@ettus.com>
-Subject: [RFC/PATCH] risc-v: Fix issue ignoring CONFIG_CMDLINE_OVERRIDE
-Date: Mon, 12 Mar 2018 20:26:09 -0700
-Message-Id: <20180313032609.405-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.16.2
+        id S932578AbeCMDdu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 23:33:50 -0400
+Received: from mga17.intel.com ([192.55.52.151]:15104 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932294AbeCMDdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 23:33:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
+   d="scan'208";a="37652467"
+Date: Tue, 13 Mar 2018 11:34:53 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when
+ picking pages to free
+Message-ID: <20180313033453.GB13782@intel.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-3-aaron.lu@intel.com>
+ <9cad642d-9fe5-b2c3-456c-279065c32337@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9cad642d-9fe5-b2c3-456c-279065c32337@suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix issue where CONFIG_CMDLINE_OVERRIDE is being
-ignored.
+On Mon, Mar 12, 2018 at 03:22:53PM +0100, Vlastimil Babka wrote:
+> On 03/01/2018 07:28 AM, Aaron Lu wrote:
+> > When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
+> > the zone->lock is held and then pages are chosen from PCP's migratetype
+> > list. While there is actually no need to do this 'choose part' under
+> > lock since it's PCP pages, the only CPU that can touch them is us and
+> > irq is also disabled.
+> > 
+> > Moving this part outside could reduce lock held time and improve
+> > performance. Test with will-it-scale/page_fault1 full load:
+> > 
+> > kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
+> > v4.16-rc2+  9034215        7971818       13667135       15677465
+> > this patch  9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
+> > 
+> > What the test does is: starts $nr_cpu processes and each will repeatedly
+> > do the following for 5 minutes:
+> > 1 mmap 128M anonymouse space;
+> > 2 write access to that space;
+> > 3 munmap.
+> > The score is the aggregated iteration.
+> > 
+> > https://github.com/antonblanchard/will-it-scale/blob/master/tests/page_fault1.c
+> > 
+> > Acked-by: Mel Gorman <mgorman@techsingularity.net>
+> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> > ---
+> >  mm/page_alloc.c | 39 +++++++++++++++++++++++----------------
+> >  1 file changed, 23 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index faa33eac1635..dafdcdec9c1f 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1116,12 +1116,10 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  	int migratetype = 0;
+> >  	int batch_free = 0;
+> >  	bool isolated_pageblocks;
+> > -
+> > -	spin_lock(&zone->lock);
+> > -	isolated_pageblocks = has_isolate_pageblock(zone);
+> > +	struct page *page, *tmp;
+> > +	LIST_HEAD(head);
+> >  
+> >  	while (count) {
+> > -		struct page *page;
+> >  		struct list_head *list;
+> >  
+> >  		/*
+> > @@ -1143,27 +1141,36 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  			batch_free = count;
+> >  
+> >  		do {
+> > -			int mt;	/* migratetype of the to-be-freed page */
+> > -
+> >  			page = list_last_entry(list, struct page, lru);
+> > -			/* must delete as __free_one_page list manipulates */
+> > +			/* must delete to avoid corrupting pcp list */
+> >  			list_del(&page->lru);
+> 
+> Well, since bulkfree_pcp_prepare() doesn't care about page->lru, you
+> could maybe use list_move_tail() instead of list_del() +
+> list_add_tail()? That avoids temporarily writing poison values.
 
-Signed-off-by: Trung Tran <trung.tran@ettus.com>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
+Good point, except bulkfree_pcp_prepare() could return error and then
+the page will need to be removed from the to-be-freed list, like this:
 
-Hi all,
+		do {
+			page = list_last_entry(list, struct page, lru);
+			list_move_tail(&page->lru, &head);
+			pcp->count--;
 
-not sure this is the right fix, hopefully someone
-can chime in and come up with the correct solution.
+			if (bulkfree_pcp_prepare(page))
+				list_del(&page->lru);
+		} while (--count && --batch_free && !list_empty(list));
 
-Thanks,
-
-Moritz
----
- arch/riscv/kernel/setup.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 09f7064e898c..e24191a0c244 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -38,6 +38,8 @@
- #include <asm/tlbflush.h>
- #include <asm/thread_info.h>
+Considering bulkfree_pcp_prepare() returning error is the rare case,
+this list_del() should rarely happen. At the same time, this part is
+outside of zone->lock and can hardly impact performance...so I'm not
+sure.
  
-+static char default_command_line[COMMAND_LINE_SIZE] __initdata = CONFIG_CMDLINE;
-+
- #ifdef CONFIG_DUMMY_CONSOLE
- struct screen_info screen_info = {
- 	.orig_video_lines	= 30,
-@@ -194,7 +196,11 @@ static void __init setup_bootmem(void)
- 
- void __init setup_arch(char **cmdline_p)
- {
-+#if defined(CONFIG_CMDLINE_OVERRIDE)
-+	*cmdline_p = default_command_line;
-+#else
- 	*cmdline_p = boot_command_line;
-+#endif
- 
- 	parse_early_param();
- 
--- 
-2.16.2
+> Hm actually, you are reversing the list in the process, because page is
+> obtained by list_last_entry and you use list_add_tail. That could have
+> unintended performance consequences?
+
+True the order is changed when these to-be-freed pages are in this
+temporary list, but then they are iterated and freed one by one from
+head to tail so the order they landed in free_list is the same as
+before the patch(also the same as they are in pcp list).
+
+> 
+> Also maybe list_cut_position() could be faster than shuffling pages one
+> by one? I guess not really, because batch_free will be generally low?
+
+We will need to know where to cut if list_cut_position() is to be used
+and to find that out, the list will need to be iterated first. I guess
+that's too much trouble.
+
+Since this part of code is per-cpu(outside of zone->lock) and these
+pages are in pcp(meaning their cachelines are not likely in remote),
+I didn't worry too much about not being able to list_cut_position() but
+iterate. On allocation side though, when manipulating the global
+free_list under zone->lock, this is a big problem since pages there are
+freed from different CPUs and the cache could be cold for the allocating
+CPU. That is why I'm proposing clusted allocation sometime ago as an RFC
+patch where list_cut_position() is so good that it could eliminate the
+cacheline miss issue since we do not need to iterate cold pages one by
+one.
+
+I wish there is a data structure that has the flexibility of list while
+at the same time we can locate the Nth element in the list without the
+need to iterate. That's what I'm looking for when developing clustered
+allocation for order 0 pages. In the end, I had to use another place to
+record where the Nth element is. I hope to send out v2 of that RFC
+series soon but I'm still collecting data for it. I would appreciate if
+people could take a look then :-)
+
+batch_free's value depends on what the system is doing. When user
+application is making use of memory, the common case is, only
+migratetype of MIGRATE_MOVABLE has pages to free and then batch_free
+will be 1 in the first round and (pcp->batch-1) in the 2nd round.
+
+Here is some data I collected recently on how often only MIGRATE_MOVABLE
+list has pages to free in free_pcppages_bulk():
+
+On my desktop, after boot:
+
+free_pcppages_bulk:     6268
+single_mt_movable:      2566 (41%)
+
+free_pcppages_bulk means the number of time this function gets called.     
+single_mt_movable means number of times when only MIGRATE_MOVABLE list
+has pages to free.
+                                       
+After kbuild with a distro kconfig:
+
+free_pcppages_bulk:     9100508
+single_mt_movable:      8435483 (92.75%)
+
+If we change the initial value of migratetype in free_pcppages_bulk()
+from 0(MIGRATE_UNMOVABLE) to 1(MIGRATE_MOVABLE), then batch_free will be
+pcp->batch in the 1st round and we can save something but the saving is
+negligible when running a workload so I didn't send a patch for it yet.
+
+> >  			pcp->count--;
+> >  
+> > -			mt = get_pcppage_migratetype(page);
+> > -			/* MIGRATE_ISOLATE page should not go to pcplists */
+> > -			VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
+> > -			/* Pageblock could have been isolated meanwhile */
+> > -			if (unlikely(isolated_pageblocks))
+> > -				mt = get_pageblock_migratetype(page);
+> > -
+> >  			if (bulkfree_pcp_prepare(page))
+> >  				continue;
+> >  
+> > -			__free_one_page(page, page_to_pfn(page), zone, 0, mt);
+> > -			trace_mm_page_pcpu_drain(page, 0, mt);
+> > +			list_add_tail(&page->lru, &head);
+> >  		} while (--count && --batch_free && !list_empty(list));
+> >  	}
+> > +
+> > +	spin_lock(&zone->lock);
+> > +	isolated_pageblocks = has_isolate_pageblock(zone);
+> > +
+> > +	/*
+> > +	 * Use safe version since after __free_one_page(),
+> > +	 * page->lru.next will not point to original list.
+> > +	 */
+> > +	list_for_each_entry_safe(page, tmp, &head, lru) {
+> > +		int mt = get_pcppage_migratetype(page);
+> > +		/* MIGRATE_ISOLATE page should not go to pcplists */
+> > +		VM_BUG_ON_PAGE(is_migrate_isolate(mt), page);
+> > +		/* Pageblock could have been isolated meanwhile */
+> > +		if (unlikely(isolated_pageblocks))
+> > +			mt = get_pageblock_migratetype(page);
+> > +
+> > +		__free_one_page(page, page_to_pfn(page), zone, 0, mt);
+> > +		trace_mm_page_pcpu_drain(page, 0, mt);
+> > +	}
+> >  	spin_unlock(&zone->lock);
+> >  }
+> >  
+> > 
+> 
