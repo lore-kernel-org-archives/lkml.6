@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu18JisEYa25JGQO4N0kNSIbbnce80owpId3jPYUtG1XQ5JltGSSeTrGeI2YKWzrfI0Az74
-ARC-Seal: i=1; a=rsa-sha256; t=1520955315; cv=none;
+X-Google-Smtp-Source: AG47ELvSHmJ6RhOI6s+FZAC2/O89ZKlbFga/pU7R7/T3oq8Q1fmSLQUIgEIVTYmx0p7Tlgksld+F
+ARC-Seal: i=1; a=rsa-sha256; t=1520955312; cv=none;
         d=google.com; s=arc-20160816;
-        b=TCaS7UnZLoo2kvA7sgJsJeAMvQWJUouopwhdn1ODvDVbvPXtnVN6XGDZIAEQhzldqv
-         j3Bm1DmxxG9TJAJFrCzMJv/+QWtEXxVfzko519Kafiya8bq2uXuHg1Fx2O4s1wXs6DpW
-         1CTfkeelPKKMj86fasU7S5MXwxHLTvicAvc19Inw6dJz/0ddtXyt5s7bf7qsP+MFufxX
-         lDcCqPichionM0inkTbrakz6sAJ5mdPt1NW6qPBAMzhUPG8SrJcJLen2zwnRXyf8KCmZ
-         r5eit9SYS44RgxRMdsZ1/+KRov1MJd1zwAumHaSMzZRT3SlT4hRrIochaiFpEHJ0OxtS
-         M2Jw==
+        b=M/4kPqiR5LXcLsqBXwIAgpvlvYLllwaWEFAfV/fDxMxibX0DXzkG6or36jZ4M7gSHV
+         6Xt5E3GkgzoKR062nH6aLwnU03QJXDU6OlfbPKelJvuWFTzOrPJ2Jk5fxXe7vI7/3ATl
+         7rNDEtgu2oTW8l/rRjHO80dj4xsYrKvodqoXT4H6LU00Owlzqhi0JQS6KK1KGPzITz/0
+         tbZkjX4VkQVF+HmLuRctQATxQre9SUf5tq/Qv2em/QXrXj6WtR9qYfyq95WLbR9joYFT
+         E39Ib7OhiK89jxIqvRxxl1CHAZS642wYXzbNhIKbzFNOSPz34L4RgoclBaMHlz7souJf
+         2FKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5cj3xWaia00Xbdjk381vZuUfeEAfOvL8DFAoYi14QFk=;
-        b=VsatYfe2HioTsW8BGEihfuegTiLBMhiZywHjM1TqlTm7SbYmNAGKW4KzJtmQkQ9nQJ
-         hrrsZNtfr59bNKaO0G2Wb0R6qzBRSxMUylBiCotnmpG/fayeoSohEpq4glGtDgk/Uf9N
-         /BKP48yS1J6hmPr1vLTnG/SEVnGn0crFfmNQg4qe9lhGE4T5M+7OtAbXfUfUCku9PPKI
-         +zQGTmSab3BHRcXy2JzZHCNCr5fTl5M8ns3QbyBMyvXodrJ/jYPhi6kc4CJyatr3jTFU
-         2c8EPdE6oCjVZ24TVwnOu6N84ICUNfqvPQpUDJ3zyQ/1L07mzRqWsMXRyKAawkNtjfYQ
-         MSyA==
+        bh=gIVJsblirOuGSy5nj/ehveKZjH3jreUBeO42p4dUaCE=;
+        b=AJ8kxgIlximbCQT48YCezrDF1+xUa0YMStImB7Gld0shdyzkBFnFQBwb6Rpv77YGQp
+         DRUkNzy8LHkGOpTAGmEuxBFEzf6R7BZ8EPYIQrexCGXLiElQ+5ZrVC9nmP8vIQoxGpBu
+         dbBpNxutx02je2cevw+sKlGt+IFfGgWJPqTskpFXZKT47BCChf4OeCRjprmpUmNmwWSK
+         mLRWe35ZjHwG2dx9fRPZn98Uzn6ybU4U2zUwtnDkwCICRTmPhc4BYXOPJ4yOicgI+Hc7
+         yR7ehQobCf6RXGMx/053n4qk6TPNpy6Jsr7G0KXuR0KIbl6rrlQCdo/G8l4rZUAEjNhI
+         KMcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 008/140] ASoC: Intel: kbl: fix jack name
-Date: Tue, 13 Mar 2018 16:23:31 +0100
-Message-Id: <20180313152458.694653311@linuxfoundation.org>
+	Jerry Hoemann <jerry.hoemann@hpe.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.14 002/140] watchdog: hpwdt: SMBIOS check
+Date: Tue, 13 Mar 2018 16:23:25 +0100
+Message-Id: <20180313152458.356548266@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837240795273528?=
-X-GMAIL-MSGID: =?utf-8?q?1594837240795273528?=
+X-GMAIL-THRID: =?utf-8?q?1594837141192924323?=
+X-GMAIL-MSGID: =?utf-8?q?1594837238411650170?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vinod Koul <vinod.koul@intel.com>
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-commit cedb6415f9ece6d3368aa0ac8a433caff799792a upstream.
+commit c42cbe41727a138905a28f8e0b00c147be77ee93 upstream.
 
-Commit d1c4cb447a7e ("ASoC: Intel: Skylake: Fix jack name format
-substitution") added Jack name but erroneously added a space as well,
-so remove the space in Jack name.
+This corrects:
+commit cce78da76601 ("watchdog: hpwdt: Add check for UEFI bits")
 
-Fixes: d1c4cb447a7e ("ASoC: Intel: Skylake: Fix jack name format substitution")
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+The test on HPE SMBIOS extension type 219 record "Misc Features"
+bits for UEFI support is incorrect.  The definition of the Misc Features
+bits in the HPE SMBIOS OEM Extensions specification (and related
+firmware) was changed to use a different pair of bits to
+represent UEFI supported.  Howerver, a corresponding change
+to Linux was missed.
+
+Current code/platform work because the iCRU test is working.
+But purpose of cce78da766 is to ensure correct functionality
+on future systems where iCRU isn't supported.
+
+Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c |    2 +-
+ drivers/watchdog/hpwdt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-+++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
-@@ -605,7 +605,7 @@ static int kabylake_card_late_probe(stru
- 	list_for_each_entry(pcm, &ctx->hdmi_pcm_list, head) {
- 		codec = pcm->codec_dai->codec;
- 		snprintf(jack_name, sizeof(jack_name),
--			"HDMI/DP, pcm=%d Jack", pcm->device);
-+			"HDMI/DP,pcm=%d Jack", pcm->device);
- 		err = snd_soc_card_jack_new(card, jack_name,
- 				SND_JACK_AVOUT, &ctx->kabylake_hdmi[i],
- 				NULL, 0);
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -700,7 +700,7 @@ static void dmi_find_icru(const struct d
+ 		smbios_proliant_ptr = (struct smbios_proliant_info *) dm;
+ 		if (smbios_proliant_ptr->misc_features & 0x01)
+ 			is_icru = 1;
+-		if (smbios_proliant_ptr->misc_features & 0x408)
++		if (smbios_proliant_ptr->misc_features & 0x1400)
+ 			is_uefi = 1;
+ 	}
+ }
