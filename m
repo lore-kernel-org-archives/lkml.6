@@ -1,91 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933469AbeCMQz5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:55:57 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60862 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752163AbeCMQzz (ORCPT
+        id S933594AbeCMQ4Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:56:25 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43569 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933522AbeCMQ4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:55:55 -0400
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 1/1] dmaengine: stm32-dmamux: fix a potential buffer overflow
-Date: Tue, 13 Mar 2018 17:55:35 +0100
-Message-ID: <1520960135-26575-1-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 13 Mar 2018 12:56:18 -0400
+X-Google-Smtp-Source: AG47ELuTA8a32vwxUwRENetle7kDoNLrkSdVYq4S9XVPRbkzl6FVM7jApRmEk0YpG5a1nmWVQl29mucDrFqCkVLgbdw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_07:,,
- signatures=0
+In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Mar 2018 18:56:16 +0200
+Message-ID: <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
+ and pcal9555a
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bitfield dma_inuse is allocated of size dma_requests bits, thus a
-valid bit address is from 0 to (dma_requests - 1).
-When find_first_zero_bit() fails, it returns dma_requests as invalid
-address.
-Using such address for the following set_bit() is incorrect and, if
-dma_requests is a multiple of BITS_PER_LONG, it will cause a buffer
-overflow.
-Currently this driver is only used in DT stm32h743.dtsi where a safe value
-dma_requests=16 is not triggering the buffer overflow.
+On Sat, Mar 10, 2018 at 1:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> The Pyra-Handheld originally used the tca6424 but recently we have
+> replaced it by the pin and package compatible pcal6524. So let's
+> add this to the bindings and the driver.
+>
+> And while we are at it, the pcal9555a does not have a compatible entry
+> either but is already supported by the device id table.
 
-Fixed by checking the return value of find_first_zero_bit() _before_
-using it.
 
-Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v1:
-       * Initial
----
----
- drivers/dma/stm32-dmamux.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> +       { "pcal6524", 24 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+>         { "pcal9555a", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
 
-diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
-index 4dbb30c..b922db9 100644
---- a/drivers/dma/stm32-dmamux.c
-+++ b/drivers/dma/stm32-dmamux.c
-@@ -118,14 +118,15 @@ static void *stm32_dmamux_route_allocate(struct of_phandle_args *dma_spec,
- 	spin_lock_irqsave(&dmamux->lock, flags);
- 	mux->chan_id = find_first_zero_bit(dmamux->dma_inuse,
- 					   dmamux->dma_requests);
--	set_bit(mux->chan_id, dmamux->dma_inuse);
--	spin_unlock_irqrestore(&dmamux->lock, flags);
- 
- 	if (mux->chan_id == dmamux->dma_requests) {
-+		spin_unlock_irqrestore(&dmamux->lock, flags);
- 		dev_err(&pdev->dev, "Run out of free DMA requests\n");
- 		ret = -ENOMEM;
--		goto error;
-+		goto error_chan_id;
- 	}
-+	set_bit(mux->chan_id, dmamux->dma_inuse);
-+	spin_unlock_irqrestore(&dmamux->lock, flags);
- 
- 	/* Look for DMA Master */
- 	for (i = 1, min = 0, max = dmamux->dma_reqs[i];
-@@ -173,6 +174,8 @@ static void *stm32_dmamux_route_allocate(struct of_phandle_args *dma_spec,
- 
- error:
- 	clear_bit(mux->chan_id, dmamux->dma_inuse);
-+
-+error_chan_id:
- 	kfree(mux);
- 	return ERR_PTR(ret);
- }
+So, from your description I can get that PCA_PCAL is redundant for
+6524. Is it correct? What does L means in the model code?
+Perhaps we need to rename PCA_PCAL to be more specific?
+
+
+> +       { .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
+> +       { .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
+
+Other way around, you missed PCA_PCAL in the second case.
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
