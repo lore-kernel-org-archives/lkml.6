@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvH2i92JC2hnkZVl1A3Ob+W3WBg6SV8DQGSbXxLpwV58lJLiDkSBQPpjj/J0hU+t/EfH+Lj
-ARC-Seal: i=1; a=rsa-sha256; t=1520955170; cv=none;
+X-Google-Smtp-Source: AG47ELuHaJC7qFXlLv4DSdU7Z7ozbFreETx+OgyDLABxmjURrsXTXDpoGY2ut+kbPYcWD0QSLffG
+ARC-Seal: i=1; a=rsa-sha256; t=1520955167; cv=none;
         d=google.com; s=arc-20160816;
-        b=FWQnfbPczhYT1uy/++IJUBo9ky6vD4qgmALfknV1x4OtJasjBczyrxlt01nWp2tR0W
-         43J5GqswXbixceWP33jADYnBho6DfpLkDS2ntVJhqNqaWTkSZoxBmSlRj8xWgreLAIFO
-         WZSrjFhs3V3i5AdNYyVQDBawoNeSo/+eYFYhfvZJRPcDlBSc/YeDTkGJm4q6MrzYuOg0
-         i+Y+Y8nMWyl6HA5lDt10Ooa3ZQBbZd0vNbmao6wKgS+DiujV/gMf6mXPSfYi0EiWmMHF
-         zfYzmZjweUgAvkoCzTKqG7tmoA6TgKO03dsYJ5RkS0yhdXQbghS3xw+MMKIYrez0ay0a
-         ctiw==
+        b=iyOmHukDhZjDk1LrKsQJsX8501qfQqEJhJEg3pKbzqUvPDRip3vnnjQ7WKS+bZWTX4
+         Uq59DSdPcSVx77YhNU5iGlVUqi78CTCWceyDdmDuIvLWiLSM4CBN1pMGHnnNZQ5MLRlB
+         nUOieE4cgTzdT8xkHSbZ4I1LUAj69My8/NaKQDI7KlrKCbQ+bkbf45Q8vGLb+XssocWD
+         QWcONVhRp1wDB5abPAeqYkZzxFY3ukSJ82+fvh4Bwsn3aHVaSmjOG5dEuXFXwt0pLiUT
+         TkQ1XtfE1qBsp52SDCZVWJySzTAteGrxXlYbkyk8ZSgJglcVSK13aw+C1cB2zz1DxhiV
+         1Kng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=m6rXTnCiTaRpU1Epczk45u8z/ltcRCx8tI7zN8WGi9Q=;
-        b=kxYCFcRp82j4wM7Sr+VE6iP7ZlHARf3NAr74ZlKeu7cIadGtUZ8NMaQ93yMHv00W/+
-         iGWN8Tv0PF98kR8Ere2Bda1jo2Nc5qGCbzm1a5irf9IAxSZIw+9hV/bg+lia1/sqcMCM
-         OmTy5hk3x5hW5FDaaePYh9mlzfNVo4DXUleaHKGcND5ini+HmWg1fYbYWQDtn9WdX/eA
-         R7GcSvYPWtku47nTlOATnp0voe5pwjsfVZZzC9pzmG4aPbSIjJEvUzRYT3xkzU1KTutx
-         AYZ+nRIaQGNFwiDOXeApzORetuC34wtUrAw7pX00qzzZ+PsHdu8bsSdjZM5cm45vJmIF
-         ex0w==
+        bh=tvhNz1c60qPZEQNIV/IuAzPefw47yI6Xd56MN+WAFrU=;
+        b=Z0LITRwWwUXkHREUSdcfrmBZT8tY91L2Z3QU9e7iGtl4CH+ec5squhqwn9r+vH8xQ0
+         wAb+wUs9l+qJNOemwsF5brn/UbPfyESsIa/1APKJGR8KyLJP6FQXkFuAI2Mgjf5xddTC
+         ylRZl6IA0VIRReKteHwaw5pbjEy1ObYNqYpa5oVDnLwvfHl5de+jYVO+SGxcXsoFfWYa
+         S8fU1R6xkSsNz7eh8Bd2NuQh+B9rUTY1GRWUqGBSlnbXpEQAj4cY/+Hsd2J6vvetopJd
+         gF/7TkZPdwShqJuV4yg9Uwb2axWM71WwpbRFb0dz1DI7ssxsJipGxs3drlJmcykxGj9k
+         jPfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
+	syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
 	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 113/146] netfilter: IDLETIMER: be syzkaller friendly
-Date: Tue, 13 Mar 2018 16:24:40 +0100
-Message-Id: <20180313152329.122416584@linuxfoundation.org>
+Subject: [PATCH 4.15 112/146] netfilter: nat: cope with negative port range
+Date: Tue, 13 Mar 2018 16:24:39 +0100
+Message-Id: <20180313152329.057701050@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837088521748829?=
-X-GMAIL-MSGID: =?utf-8?q?1594837088521748829?=
+X-GMAIL-THRID: =?utf-8?q?1594837085844904312?=
+X-GMAIL-MSGID: =?utf-8?q?1594837085844904312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,123 +50,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit cfc2c740533368b96e2be5e0a4e8c3cace7d9814 upstream.
+commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
 
-We had one report from syzkaller [1]
+syzbot reported a division by 0 bug in the netfilter nat code:
 
-First issue is that INIT_WORK() should be done before mod_timer()
-or we risk timer being fired too soon, even with a 1 second timer.
-
-Second issue is that we need to reject too big info->timeout
-to avoid overflows in msecs_to_jiffies(info->timeout * 1000), or
-risk looping, if result after overflow is 0.
-
-[1]
-WARNING: CPU: 1 PID: 5129 at kernel/workqueue.c:1444 __queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 5129 Comm: syzkaller159866 Not tainted 4.16.0-rc1+ #230
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+divide error: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88
+RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
+RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
+RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
+RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
+R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
+R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
+FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x257 lib/dump_stack.c:53
- panic+0x1e4/0x41c kernel/panic.c:183
- __warn+0x1dc/0x200 kernel/panic.c:547
- report_bug+0x211/0x2d0 lib/bug.c:184
- fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
- fixup_bug arch/x86/kernel/traps.c:247 [inline]
- do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
- do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
- invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
-RIP: 0010:__queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-RSP: 0018:ffff8801db507538 EFLAGS: 00010006
-RAX: ffff8801aeb46080 RBX: ffff8801db530200 RCX: ffffffff81481404
-RDX: 0000000000000100 RSI: ffffffff86b42640 RDI: 0000000000000082
-RBP: ffff8801db507758 R08: 1ffff1003b6a0de5 R09: 000000000000000c
-R10: ffff8801db5073f0 R11: 0000000000000020 R12: 1ffff1003b6a0eb6
-R13: ffff8801b1067ae0 R14: 00000000000001f8 R15: dffffc0000000000
- queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1488
- queue_work include/linux/workqueue.h:488 [inline]
- schedule_work include/linux/workqueue.h:546 [inline]
- idletimer_tg_expired+0x44/0x60 net/netfilter/xt_IDLETIMER.c:116
- call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:541 [inline]
- smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:777 [inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x5e/0xba kernel/locking/spinlock.c:184
-RSP: 0018:ffff8801c20173c8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000006
-RDX: 1ffffffff0d592cd RSI: 1ffff10035d68d23 RDI: 0000000000000282
-RBP: ffff8801c20173d8 R08: 1ffff10038402e47 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8820e5c8
-R13: ffff8801b1067ad8 R14: ffff8801aea7c268 R15: ffff8801aea7c278
- __debug_object_init+0x235/0x1040 lib/debugobjects.c:378
- debug_object_init+0x17/0x20 lib/debugobjects.c:391
- __init_work+0x2b/0x60 kernel/workqueue.c:506
- idletimer_tg_create net/netfilter/xt_IDLETIMER.c:152 [inline]
- idletimer_tg_checkentry+0x691/0xb00 net/netfilter/xt_IDLETIMER.c:213
- xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
- check_target net/ipv6/netfilter/ip6_tables.c:533 [inline]
- find_check_entry.isra.7+0x935/0xcf0 net/ipv6/netfilter/ip6_tables.c:575
- translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:744
- do_replace net/ipv6/netfilter/ip6_tables.c:1160 [inline]
- do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1686
- nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
- nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
- ipv6_setsockopt+0x10b/0x130 net/ipv6/ipv6_sockglue.c:927
- udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
- sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2976
- SYSC_setsockopt net/socket.c:1850 [inline]
- SyS_setsockopt+0x189/0x360 net/socket.c:1829
- do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
+  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
+  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
+  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
+  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
+  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
+  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
+  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
+  nf_nat_ipv6_local_fn+0x33/0x5d0
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
+  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook include/linux/netfilter.h:243 [inline]
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
+  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
+  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
+  dccp_connect+0x369/0x670 net/dccp/output.c:564
+  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
+  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
+  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
+  SYSC_connect+0x213/0x4a0 net/socket.c:1639
+  SyS_connect+0x24/0x30 net/socket.c:1620
+  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x441c69
+RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
+RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
+R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
+Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
+45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
+c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
+RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
 
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzkaller <syzkaller@googlegroups.com>
+The problem is that currently we don't have any check on the
+configured port range. A port range == -1 triggers the bug, while
+other negative values may require a very long time to complete the
+following loop.
+
+This commit addresses the issue swapping the two ends on negative
+ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
+the nft nat loads the port values from nft registers at runtime.
+
+v1 -> v2: use the correct 'Fixes' tag
+v2 -> v3: update commit message, drop unneeded READ_ONCE()
+
+Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
+Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_IDLETIMER.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/netfilter/nf_nat_proto_common.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -146,11 +146,11 @@ static int idletimer_tg_create(struct id
- 	timer_setup(&info->timer->timer, idletimer_tg_expired, 0);
- 	info->timer->refcnt = 1;
+--- a/net/netfilter/nf_nat_proto_common.c
++++ b/net/netfilter/nf_nat_proto_common.c
+@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const s
+ 				 const struct nf_conn *ct,
+ 				 u16 *rover)
+ {
+-	unsigned int range_size, min, i;
++	unsigned int range_size, min, max, i;
+ 	__be16 *portptr;
+ 	u_int16_t off;
  
-+	INIT_WORK(&info->timer->work, idletimer_tg_work);
-+
- 	mod_timer(&info->timer->timer,
- 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
- 
--	INIT_WORK(&info->timer->work, idletimer_tg_work);
--
- 	return 0;
- 
- out_free_attr:
-@@ -191,7 +191,10 @@ static int idletimer_tg_checkentry(const
- 		pr_debug("timeout value is zero\n");
- 		return -EINVAL;
+@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const s
+ 		}
+ 	} else {
+ 		min = ntohs(range->min_proto.all);
+-		range_size = ntohs(range->max_proto.all) - min + 1;
++		max = ntohs(range->max_proto.all);
++		if (unlikely(max < min))
++			swap(max, min);
++		range_size = max - min + 1;
  	}
--
-+	if (info->timeout >= INT_MAX / 1000) {
-+		pr_debug("timeout value is too big\n");
-+		return -EINVAL;
-+	}
- 	if (info->label[0] == '\0' ||
- 	    strnlen(info->label,
- 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
+ 
+ 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
