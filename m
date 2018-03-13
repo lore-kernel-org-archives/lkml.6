@@ -1,97 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932527AbeCMUrM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 16:47:12 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50084 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753096AbeCMUrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:47:08 -0400
-From: John Ogness <john.ogness@linutronix.de>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent() breakage when used from shrink_dentry_list())
-References: <20180223035814.GZ30522@ZenIV.linux.org.uk>
-        <20180223040814.GA30522@ZenIV.linux.org.uk>
-        <87h8q7erlo.fsf@linutronix.de>
-        <20180223150928.GC30522@ZenIV.linux.org.uk>
-        <20180223174216.GD30522@ZenIV.linux.org.uk>
-        <20180223201317.GG30522@ZenIV.linux.org.uk>
-        <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
-        <20180224002248.GH30522@ZenIV.linux.org.uk>
-        <20180225073950.GI30522@ZenIV.linux.org.uk>
-        <87bmgbnhar.fsf_-_@linutronix.de>
-        <20180312191351.GN30522@ZenIV.linux.org.uk>
-Date: Tue, 13 Mar 2018 21:46:48 +0100
-In-Reply-To: <20180312191351.GN30522@ZenIV.linux.org.uk> (Al Viro's message of
-        "Mon, 12 Mar 2018 19:13:51 +0000")
-Message-ID: <87zi3bn1on.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        id S1753156AbeCMUtD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 16:49:03 -0400
+Received: from ozlabs.org ([103.22.144.67]:44901 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751955AbeCMUtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 16:49:01 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 14 Mar 2018 07:48:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linus <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Tree for Mar 13
+Message-ID: <20180314074832.0fb08b90@canb.auug.org.au>
+In-Reply-To: <20180313175205.GA15734@light.dominikbrodowski.net>
+References: <20180313183326.0e93f359@canb.auug.org.au>
+        <20180313175205.GA15734@light.dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Up4weG3Z39ZovDdlJz62UAq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-12, Al Viro <viro@ZenIV.linux.org.uk> wrote:
->> If someone else has grabbed a reference, it shouldn't be added to the
->> lru list. Only decremented.
->> 
->> if (entry->d_lockref.count == 1)
+--Sig_/Up4weG3Z39ZovDdlJz62UAq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dominik,
+
+On Tue, 13 Mar 2018 18:52:05 +0100 Dominik Brodowski <linux@dominikbrodowsk=
+i.net> wrote:
 >
-> Nah, better handle that in retain_dentry() itself.  See updated
-> #work.dcache.
->
-> +	if (unlikely(dentry->d_lockref.count != 1)) {
-> +		dentry->d_lockref.count--;
-> +	} else if (likely(!retain_dentry(dentry))) {
-> +		__dentry_kill(dentry);
-> +		return parent;
-> +	}
+> would it be possible to have
+>=20
+>    https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscal=
+ls-next
+>=20
+> added to -next? This will probably only be for one or two release cycles,
+> but it might easen the development process of that patch series.
 
-Although the updated version is correct (and saves on lines of code), I
-find putting the deref and lru_add code in the "true" case of
-retain_dentry() to be pretty tricky. IMHO the code is easier to
-understand if it looks like this:
+Added from today.  I put it near the start since Linus said he may take
+(some of) it this release.
 
-	if (unlikely(dentry->d_lockref.count != 1)) {
-		dentry->d_lockref.count--;
-	} else if (likely(!retain_dentry(dentry))) {
-		__dentry_kill(dentry);
-		return parent;
-	} else {
-		dentry->d_lockref.count--;
-		dentry_lru_add(dentry);
-	}
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-This is what your version is doing, but that final else is hiding in the
-retain_dentry() "true" case.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-My suggestion is to revert 7479f57fecd2a4837b5c79ce1cf0dcf284db54be (and
-then fixup dput() to deref before calling dentry_lru_add()).
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-> FWIW, there's another trylock loop on dentries - one in
-> autofs get_next_positive_dentry().  Any plans re dealing
-> with that one?
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-I will need to dig into it a bit deeper (I am unfamiliar with autofs),
-but it looks like it is trying to do basically the same thing as the
-ascend loop in d_walk().
+--Sig_/Up4weG3Z39ZovDdlJz62UAq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> I'd spent the last couple of weeks (when not being too sick
-> for any work) going through dcache.c and related code; hopefully
-> this time I will get the documentation into postable shape ;-/
+-----BEGIN PGP SIGNATURE-----
 
-Thank you for all your help in getting these changes cleaned and
-correctly implemented so quickly.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoOSAACgkQAVBC80lX
+0GxheQf/ejxB7t4jQANFEBGnxuHtIZTX1GRKkCzBrBItuQ+nlLoNE71zSj07zuV+
+M91HNTlK+mFSRpVW985wmAXqYr6YdQq5kmeB3h5LRgCoWnOf198sFQLvO7ejBWdq
+k5xXYBYX2rl1ruDKsWmLwbP6vtHyHJXfF//Yum5opTwpuTn9xjxdEaZfdYc2gQJV
+x1bLRQLNwIENBKW+lRgC1vzplsksXw9r0QKJKt1vQELVeg2jVdCFvey4y/LD4h22
+REXjnhhkwIsFa64ZWNgFm3RMW1bhp9Q81PmMlDNLvQ1FKEv9WrAnd36yVQ36YldE
+yBxBP8nDPrUyfvWyS4mAYfbV83ARXA==
+=SrND
+-----END PGP SIGNATURE-----
 
-I've reviewed your latest trylock loop removal patches and found only 1
-minor issue. I'll post that separately.
-
-John Ogness
+--Sig_/Up4weG3Z39ZovDdlJz62UAq--
