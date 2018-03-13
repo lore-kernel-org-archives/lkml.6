@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtYpxi1Kp4DpJIPD20pUlHExv6Ctu7SolRcv9BcWxOdhdjhBPULWrgrxIAQQI5W3XeSHcKD
-ARC-Seal: i=1; a=rsa-sha256; t=1520955451; cv=none;
+X-Google-Smtp-Source: AG47ELvs7VzbQOaopIgucghUGNA70ziL6a3N9ZhTbEwfw1d0c0XSe04Qf03z02T8vnflhMpVaXCm
+ARC-Seal: i=1; a=rsa-sha256; t=1520955448; cv=none;
         d=google.com; s=arc-20160816;
-        b=x6dZ5lJTGAw8IdyC7BIMKUf4PsqL0KJzA0ZgjNSxSljRg31/6jv1+0wqr9xxI2ZKV/
-         3K7NsX7lRbJHQJJNb5gpjtbC0G4xyp6cIYXvv2A/LEUmnqYzazIRGPDMCM/1z+csMY4M
-         7m9tZtqyD8KMI+nI4BG8lS2OIVBrsqSClkUdB19jjd8/PwimeZaFuZOXvgspA6AklDou
-         hXzds+84e239we5MJqXHWjKmT7LYBP++ZF4uZSmpjV37p63e9DDbxivPYJNAqaOp6spv
-         98+NHDWWAFH+bFLuzZRxWRzjU2Ga/ywaok3ACfBwdctDS90pA6vsN+/jrqSOMk1NaFdf
-         YpqA==
+        b=nCHJfjCR3MpU0f4olTNjFnHV8qCP9/5jf2Ia5LPHEPOYAcoS4OKXEc8Q4zAdJ9ttl4
+         nYWqF6xxh56N3KTGNDIt8mIaD3twnJz0R0wFZyCvQdM9/4aR20SMQ190bz3bekEkZR+x
+         S+7iR8m8nQiTi0rpXduKogv7mgSoJaVkr5R/KPieC1H3Cwv+tnoHToih8F/M+BMq3kYO
+         EKpBPAJNcNlRHhb0vR9pkdw55EnuDzCh8+OwhwgoImyJ5jDRNfNb1u1wmORXfKJNOKM7
+         sjzzp4oW8hOOht4rzopi+xnYSrn8U51zCP8DIfdB0wUDfRX1UvpK+pXe2pBQauzRoiOj
+         3sMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0qYUcqmtVaYRKdoplXsd/YxettsrP4WjA7D+TrM6Ydk=;
-        b=jJx9ubSLPf+EBFDae3Xg3354PMA9ApqEk1H66VdXJzXt6HODpsEU6xX2cu+c75Xrw1
-         VqbIf0dW22tDRnuUO4JInZG5thBxYTEkMys9ue3K9vidBvjblAdBceuv1rfkoxDaTWCd
-         2xoZZC/8cgZzo+jh6OPSYm2/Wf821r6RWe3L0J9JCBnpV9uP6xU5BtQzzIn13YzeWlyS
-         fu/BtgwURwU0xo8kw5P4fbLfcLV78mJxJ9zci9nFUbQq92qJGIh63TfN7jD3j4HOvLjv
-         iJMqzXG3Ebs4Z7kPFiyN+tg+a1pxxniyp0M0Tr75+liRHRu7zjozSwU62zl8pKoibn8o
-         cZMg==
+        bh=PCLkEZc4W03UhBmR5C3yLfNLbC1kMI2EdCvjx+95Nuo=;
+        b=PaALwPz13bVCmzPXaimVpX2RoxL7LPxNKbIkWnhDKnd4skscE6BZLfmD4iPXd0bFeA
+         YOg4kCSpHZFvQ/5e5cpSLg1V/wFw30j58rDfReidlOgcWfqfkSG5AtwPegwcf5QTjNnY
+         wDa/CR/IMps6j0P/lUzT3pvlfzJp5su/rsN37zCSq6TcVXAxhNgjUssK7gA8e9kpdwzm
+         kT2EBuL/eUmNwXOsn1YsqbPYoavrVfLqh4cFfexmXkTEeqCmF7rXmCM4IxCiJIcmiVpK
+         /ckvn5zfvNPpiZVJ/sLr51ZME0w2zKo9apdP84yWp2G9HBdELYeq6M4cYtO/CpDwEzRj
+         xMCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Subject: [PATCH 4.14 054/140] drm/i915: Disable DC states around GMBUS on GLK
-Date: Tue, 13 Mar 2018 16:24:17 +0100
-Message-Id: <20180313152501.911883515@linuxfoundation.org>
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.14 053/140] drm/i915: Clear the in-use marker on execbuf failure
+Date: Tue, 13 Mar 2018 16:24:16 +0100
+Message-Id: <20180313152501.815279876@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152458.201155692@linuxfoundation.org>
 References: <20180313152458.201155692@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836803674032941?=
-X-GMAIL-MSGID: =?utf-8?q?1594837383323429268?=
+X-GMAIL-THRID: =?utf-8?q?1594836894035930650?=
+X-GMAIL-MSGID: =?utf-8?q?1594837379827263593?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 156961ae7bdf6feb72778e8da83d321b273343fd upstream.
+commit e659d14ed48096f87a678e7ebbdf286a817b4d0e upstream.
 
-Prevent the DMC from destroying GMBUS transfers on GLK. GMBUS
-lives in PG1 so DC off is all we need.
+If we fail to unbind the vma (due to a signal on an active buffer that
+needs to be moved for the next execbuf), then we need to clear the
+persistent tracking state we setup for this execbuf.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171208213739.16388-1-ville.syrjala@linux.intel.com
-Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Fixes: c7c6e46f913b ("drm/i915: Convert execbuf to use struct-of-array packing for critical fields")
+Testcase: igt/gem_fenced_exec_thrash/no-spare-fences-busy*
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180219140144.24004-1-chris@chris-wilson.co.uk
+(cherry picked from commit ed2f3532321083cf40e4da4e36234880e0136136)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_runtime_pm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_runtime_pm.c
-+++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
-@@ -1844,6 +1844,7 @@ void intel_display_power_put(struct drm_
- 	CNL_DISPLAY_POWERWELL_2_POWER_DOMAINS |		\
- 	BIT_ULL(POWER_DOMAIN_MODESET) |			\
- 	BIT_ULL(POWER_DOMAIN_AUX_A) |			\
-+	BIT_ULL(POWER_DOMAIN_GMBUS) |			\
- 	BIT_ULL(POWER_DOMAIN_INIT))
- 
- static const struct i915_power_well_ops i9xx_always_on_power_well_ops = {
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -499,6 +499,8 @@ eb_add_vma(struct i915_execbuffer *eb, u
+ 		list_add_tail(&vma->exec_link, &eb->unbound);
+ 		if (drm_mm_node_allocated(&vma->node))
+ 			err = i915_vma_unbind(vma);
++		if (unlikely(err))
++			vma->exec_flags = NULL;
+ 	}
+ 	return err;
+ }
