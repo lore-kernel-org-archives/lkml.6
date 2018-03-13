@@ -1,92 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751588AbeCMCma (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 22:42:30 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20450 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751442AbeCMCm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 22:42:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
-   d="asc'?scan'208";a="36780208"
-Date: Tue, 13 Mar 2018 10:34:42 +0800
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Zhi Wang <zhi.a.wang@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][drm-next] drm/i915/gvt: fix spelling mistake:
- "destoried" -> "destroyed"
-Message-ID: <20180313023442.g7i2cyudsvqf7l6k@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20180312114358.24456-1-colin.king@canonical.com>
+        id S932406AbeCMC5R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 22:57:17 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33862 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932261AbeCMC5Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 22:57:16 -0400
+X-Google-Smtp-Source: AG47ELtyiyae4fMKQTrGbYVRE1/LLUyIacZmtenMIhC+Zb+pEgt+wFDIS2H3nWijvTl7KRdN74+hBg==
+Subject: Re: [PATCH] net: hns: use put_device() if device_register fail
+To: Richard Weinberger <richard.weinberger@gmail.com>
+References: <fa970be78de11dee1a217c9a75ab0850f1780e0c.1520591977.git.arvind.yadav.cs@gmail.com>
+ <20180312.104323.14368638452528082.davem@davemloft.net>
+ <5AA6AA84.6040001@gmail.com>
+ <CAFLxGvw1U2OZn4kU1O6uJ17yWYf1deE=+Cr56Foffdq7Q=5u3A@mail.gmail.com>
+Cc: David Miller <davem@davemloft.net>, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, linyunsheng@huawei.com,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+From: arvindY <arvind.yadav.cs@gmail.com>
+Message-ID: <5AA73E06.1050604@gmail.com>
+Date: Tue, 13 Mar 2018 08:27:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zkgfnu4cdiknmifa"
-Content-Disposition: inline
-In-Reply-To: <20180312114358.24456-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAFLxGvw1U2OZn4kU1O6uJ17yWYf1deE=+Cr56Foffdq7Q=5u3A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zkgfnu4cdiknmifa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018.03.12 12:43:58 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in gvt_err error message text.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+On Monday 12 March 2018 10:59 PM, Richard Weinberger wrote:
+> On Mon, Mar 12, 2018 at 5:27 PM, arvindY <arvind.yadav.cs@gmail.com> wrote:
+>>
+>> On Monday 12 March 2018 08:13 PM, David Miller wrote:
+>>> From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>>> Date: Fri,  9 Mar 2018 16:11:17 +0530
+>>>
+>>>> if device_register() returned an error! Always use put_device()
+>>>> to give up the reference initialized.
+>>>>
+>>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>>> I do not see anything giving cls_dev an initial non-zero reference
+>>> count before this device_register() call.
+>> Yes,  you are correct there is nothing to release (hnae_release).
+> Wait, this is not what DaveM said.
+> Since you sent also patches to MTD I care about this too.
+>
+> Do we have to call put_device() in any case after a failure of
+> device_register() or not?
+> In this case the release function is empty, so nothing is going to released.
+> But technically a put_device() is needed and correct according to your
+> change log.
+>
+> I have to admit I don't know all details of the driver core, maybe you
+> can help me.
+> device_register() calls device_initialize() followed by device_add().
+> device_initialize() does a kobject_init() which again sets the
+> reference counter to 1 via kref_init().
+> In the next step device_add() does a get_device() --> reference
+> counter goes up to 2.
+> But in the exit path of the function a put_device() is done, also in
+> case of an error.
+> So device_register() always returns with reference count 1.
+>
+> If I understand this correctly a put_device() is mandatory.
+> Also in this driver.
+> Can you please enlighten me? :-)
+>
+Oh, I just miss understood david question.
 
-Thanks Colin, will pick up.
+But what ever you are telling that is correct.
+device_initialize() will call kref_init() which is setting
+refcount 1 by refcount_set(&kref->refcount, 1).
+and device_add() will call kref_get() to increment refcount
+by calling refcount_inc(&kref->refcount).
+So we need put_device() to decrement and release the
+kboject.
+Internally it'll call kref_put() -> refcount_dec_and_test(&kref->refcount)
+to decrement refcount.
 
->  drivers/gpu/drm/i915/gvt/gtt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
-t.c
-> index 0a100a288e6d..8eb76becd676 100644
-> --- a/drivers/gpu/drm/i915/gvt/gtt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
-> @@ -2046,7 +2046,7 @@ static void intel_vgpu_destroy_all_ppgtt_mm(struct =
-intel_vgpu *vgpu)
->  	}
-> =20
->  	if (GEM_WARN_ON(!list_empty(&vgpu->gtt.ppgtt_mm_list_head)))
-> -		gvt_err("vgpu ppgtt mm is not fully destoried\n");
-> +		gvt_err("vgpu ppgtt mm is not fully destroyed\n");
-> =20
->  	if (GEM_WARN_ON(!radix_tree_empty(&vgpu->gtt.spt_tree))) {
->  		gvt_err("Why we still has spt not freed?\n");
-> --=20
-> 2.15.1
->=20
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---zkgfnu4cdiknmifa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCWqc4wgAKCRCxBBozTXgY
-J8MCAJ4rhkHtaLw/o3jDxpLeMnewA7qXowCfbrXOUcjnuVC5LfsV4uu6/UEVqac=
-=Wm9f
------END PGP SIGNATURE-----
-
---zkgfnu4cdiknmifa--
+~arvind
