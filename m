@@ -1,73 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934323AbeCMQJO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:09:14 -0400
-Received: from smtp-out4.electric.net ([192.162.216.185]:61130 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932443AbeCMQJL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:09:11 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Gustavo A. R. Silva'" <gustavo@embeddedor.com>,
-        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] drm/nouveau/secboot: remove VLA usage
-Thread-Topic: [PATCH] drm/nouveau/secboot: remove VLA usage
-Thread-Index: AQHTut2QNsR4nq4lykyamoPGyKeiK6POVYlQ
-Date: Tue, 13 Mar 2018 16:10:03 +0000
-Message-ID: <6977788dfbac4b70b54fd56310cc27fe@AcuMS.aculab.com>
-References: <20180313144812.GA30043@embeddedgus>
-In-Reply-To: <20180313144812.GA30043@embeddedgus>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S934351AbeCMQJb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:09:31 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37732 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932443AbeCMQJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:09:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,465,1515484800";
+   d="scan'208";a="37841470"
+Date: Tue, 13 Mar 2018 09:44:17 -0600
+From: Scott Bauer <scott.bauer@intel.com>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Cc: Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] block: sed-opal: ioctl for writing to shadow mbr
+Message-ID: <20180313154416.sgptuw7jcn7l76vn@sbauer-Z170X-UD5>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+ <b0b34fc0132312c09629c868d33b74fe5a19854e.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0b34fc0132312c09629c868d33b74fe5a19854e.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva
-> Sent: 13 March 2018 14:48
-> In preparation to enabling -Wvla, remove VLA. In this particular
-> case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
-> variable cmdline_size. Also, remove cmdline_size as it is not
-> actually useful anymore.
-...
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-> b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-> index 6f10b09..2da147b 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c
-> @@ -80,12 +80,12 @@ acr_ls_msgqueue_post_run(struct nvkm_msgqueue *queue,
->  			 struct nvkm_falcon *falcon, u32 addr_args)
->  {
->  	struct nvkm_device *device = falcon->owner->device;
-> -	u32 cmdline_size = NVKM_MSGQUEUE_CMDLINE_SIZE;
-> -	u8 buf[cmdline_size];
-> +	u8 buf[NVKM_MSGQUEUE_CMDLINE_SIZE];
+On Tue, Mar 13, 2018 at 02:09:01PM +0100, Jonas Rabenstein wrote:
+> Allow modification of the shadow mbr. If the shadow mbr is not marked as
+> done, this data will be presented read only as the device content. Only
+> after marking the shadow mbr as done and unlocking a locking range the
+> actual content is accessible.
 > 
-> -	memset(buf, 0, cmdline_size);
-> +	memset(buf, 0, NVKM_MSGQUEUE_CMDLINE_SIZE);
->  	nvkm_msgqueue_write_cmdline(queue, buf);
-> -	nvkm_falcon_load_dmem(falcon, buf, addr_args, cmdline_size, 0);
-> +	nvkm_falcon_load_dmem(falcon, buf, addr_args,
-> +			      NVKM_MSGQUEUE_CMDLINE_SIZE, 0);
 
-I think I'd use 'sizeof (buf)' in both those lines.
 
-	David
+> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> +static int opal_write_shadow_mbr(struct opal_dev *dev,
+> +				 struct opal_shadow_mbr *info)
+> +{
+> +	const struct opal_step mbr_steps[] = {
+> +		{ opal_discovery0, },
+> +		{ start_admin1LSP_opal_session, &info->key },
+> +		{ write_shadow_mbr, info },
+> +		{ end_opal_session, },
+> +		{ NULL, }
+> +	};
+> +	int ret;
+> +
+> +	if (info->size == 0)
+> +		return 0;
+
+We need to bound this to some maximum. I assume we'll at some point come across a controller
+with crappy firmware that wont check this against the MBR Table size and the user will either
+brick their drive or overwrite their data.
+
+We can get the size of the MBR Table it seems but I'm not sure how hard it is to pull that table yet.
+
+TCG SAS 5.7.3.6:
+The size of the MBR Table is retrievable from the "Table" table of the SP that incorporates the Locking Template.
+
+As always the TCG spec is super helpful /s.
+
+I will see how todo this and if it's worth it.
+
+
+> diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
+> index 0cb9890cdc04..c2669ebff681 100644
+> --- a/include/uapi/linux/sed-opal.h
+> +++ b/include/uapi/linux/sed-opal.h
+> @@ -104,6 +104,13 @@ struct opal_mbr_data {
+>  	__u8 __align[7];
+>  };
+>  
+> +struct opal_shadow_mbr {
+> +	struct opal_key key;
+> +	const __u8 *data;
+
+ Please use a u64 here for the data and cast it to a pointer
+ in the driver. We do this so we do not have to maintain a compat
+ layer for 32 bit userland.
