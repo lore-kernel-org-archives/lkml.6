@@ -1,79 +1,52 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447179-1520954867-2-1560729548250028460
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520954867; b=N7jy65+kgpBU3u+sDmdjJfZSdtCOJdu2OTHP7Wo3/4//0kE
-    lMeBOR1nRUHDHqjzU4v4eNV+5r/qt/cdXpgKm2dSKiOWDKvc/H2gZb0CQC/dNQc/
-    L0UVsB347yMVan+qHl05dl89VXN4mZLUmju2Y+eIgVpwI9psRhBQ/3nVxR5QEumu
-    /epMJb1urX4G8JXNF9u+fXd0l7ph/Dbq+JH8ZASsvNvQTm8LGONeaKOzyytyUvjQ
-    UyqDrYJ3dGg0zpcU+2u74Cl/GQNIWZT7xDBNgSsIXm/TTvm9IwuTMdqf6YXMfhyI
-    usu1O8FMbAi7h70DUhMq3KOFzEQxmUw/6flF//Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520954867; bh=2qXlx6umLFNkmH2X4Ud1qQLZ1R
-    /auvVZp19FkiS+Eao=; b=Kprs8ataQmufa4vvvob1Kd7IkCas27gk0DJ783zegw
-    o3x4sNWnNBOgYrdD2uRPJeHcx4JqpGPYHER1ve2EgSPUrZLno81r6lYcr6hAaTYm
-    bxgaPmNFpRMRnIA/0ih0n4WyJiO11pxDcagZz1pIalVTL7DqMy8LmcorBlzq/HN3
-    +lV9sICwugei55hA+HKyjuwXmngZ7YhIowRyUwenxbn2rTbkUI1S0MI8A8RnKxPP
-    72qMr8lSaX9fljfiwUvHMM2ZmqdeTOFe1or9H/LLNCE62N8CJdSSG/gvI65uLwM+
-    MDIZZxmZue2IcutJpcIHCiepTBE+O2zztK7h68GxLpRw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932376AbeCMP1n (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 11:27:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57252 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932277AbeCMP1m (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 11:27:42 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvTGI/ZUsiu6L7L1sdwhlqg6gVP8+rJipbRyOO9VUsnXTkKGwFaNwDHGYxhkL3GX7NZaP0o
+ARC-Seal: i=1; a=rsa-sha256; t=1520954865; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ec2QPXse7W/vazqfoZJOCXUT7d8ZkazQS58KKgV0qlAnwEMTX7c3gC/zYj0wVNuaMJ
+         qL5+9O3D6XZs2S596ZhhURF2doYyQWmHYMnhsnHzn2hGBQBTV1Yldg+1z08F63aM8DjC
+         WUqpUd+kstNBl+eS/3L8K04L22rowGuDule8wMFP6PFbaXeKD7uZkSRWyzWxub86RMzy
+         K+Y84a9jL2IjywCZeLQmwtuOVuMW9nWhKUZpz3ir/MiNmrl5un3Osmu759ET1eOSPlJ2
+         M6FGjcUZjyLYmxioNf/6Z24QTiB7pWjg7TXfXJEB6w6xvJXXH3IDktA4B1e1a/27nCWS
+         JYSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=hpdMEFvE2MPgVB7+6mrjZ+6aAwevoLPcs1x/Y2mKsAQ=;
+        b=y1eBd5CFjcNjPxvYnn7wG+sDBc89UPc6+NAwjM2H7pouWCvqlHs+tml+ADZJcZfMDS
+         qgVJgdT/0a1XrRLJ+9RNVgQU0hpW46TV6uYv+lyefYr8CC8xpKOLtP4opXVI0t+53xK0
+         28t1dSPMhujc9lakTHxyyd6XKofZqtlLUM6to/Z5CiueLkL9EVV1ePC8b+BjPtSIsOPg
+         QecHjR2PYVQcs8DlPOIvf2zaNLezo/WgFMO7DjQFGN/jRO9GuFQQV/r+iVDeqkbzjVa+
+         Mdi/xe0+gyEL4g/MVSVpFAa65kT6ie07fwIdHt1ZV0z+Uv2sFLVgcxXNb2Vcl1oFRIGr
+         qE+g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.15 001/146] RDMA/ucma: Limit possible option size
-Date: Tue, 13 Mar 2018 16:22:48 +0100
-Message-Id: <20180313152320.681030850@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mika Kahola <mika.kahola@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.15 010/146] drm/i915/audio: fix check for av_enc_map overflow
+Date: Tue, 13 Mar 2018 16:22:57 +0100
+Message-Id: <20180313152321.396639946@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594836769072954901?=
+X-GMAIL-MSGID: =?utf-8?q?1594836769072954901?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,37 +54,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Jani Nikula <jani.nikula@intel.com>
 
-commit 6a21dfc0d0db7b7e0acedce67ca533a6eb19283c upstream.
+commit 72a6d72c2cd03bba7b70117b63dea83d2de88057 upstream.
 
-Users of ucma are supposed to provide size of option level,
-in most paths it is supposed to be equal to u8 or u16, but
-it is not the case for the IB path record, where it can be
-multiple of struct ib_path_rec_data.
+Turns out -1 >= ARRAY_SIZE() is always true. Move the bounds check where
+we know pipe >= 0 and next to the array indexing where it makes most
+sense.
 
-This patch takes simplest possible approach and prevents providing
-values more than possible to allocate.
-
-Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
-Fixes: 7ce86409adcd ("RDMA/ucma: Allow user space to set service type")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: 9965db26ac05 ("drm/i915: Check for fused or unused pipes")
+Fixes: 0b7029b7e43f ("drm/i915: Check for fused or unused pipes")
+Cc: <stable@vger.kernel.org> # v4.10+
+Cc: Mika Kahola <mika.kahola@intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Reviewed-by: Mika Kahola <mika.kahola@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180214173840.25360-1-jani.nikula@intel.com
+(cherry picked from commit cdb3db8542d854bd678d60cd28861b042e191672)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/i915/intel_audio.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1293,6 +1293,9 @@ static ssize_t ucma_set_option(struct uc
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+--- a/drivers/gpu/drm/i915/intel_audio.c
++++ b/drivers/gpu/drm/i915/intel_audio.c
+@@ -754,11 +754,11 @@ static struct intel_encoder *get_saved_e
+ {
+ 	struct intel_encoder *encoder;
  
-+	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
-+		return -EINVAL;
+-	if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
+-		return NULL;
+-
+ 	/* MST */
+ 	if (pipe >= 0) {
++		if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
++			return NULL;
 +
- 	optval = memdup_user((void __user *) (unsigned long) cmd.optval,
- 			     cmd.optlen);
- 	if (IS_ERR(optval)) {
+ 		encoder = dev_priv->av_enc_map[pipe];
+ 		/*
+ 		 * when bootup, audio driver may not know it is
