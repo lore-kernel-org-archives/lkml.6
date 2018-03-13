@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuunn+AAu40PGNehrKpxOP4qSbNqdSC5xWjkHsHpIYU3Dpz1OwoISOWEtmijHfOnUZwIg7T
-ARC-Seal: i=1; a=rsa-sha256; t=1520955283; cv=none;
+X-Google-Smtp-Source: AG47ELs0EK6rjzUjC45lGGCphPF3n6mXCdxe0vLT4o0wl4R6sHIyoGLQ7/003WW6XoH8yhyaYo5Y
+ARC-Seal: i=1; a=rsa-sha256; t=1520955280; cv=none;
         d=google.com; s=arc-20160816;
-        b=qAM/IwDXr4XsuRTQgHcwRFCzUFcloYmM5BTr38DRBhyf1iLJZv8IJ5Q5o3ukoGt+Cg
-         2Z3Kw03/YwbGcYf1hDLTN7ZurKq0KMOJUQ5c/2VfZAwEy1yFuvmpUG0vaxP/XnHrQ/D4
-         +7sEUovmsaMIx8JBW/u/3n1Rq0wgfhgPdhWBm4/kcJoO4yY9vF+y8Ksa+X/WambGWLom
-         Oa5WMScJC0NkWPx5QEaBYtUp2ku+Llqr9SFTa0TgfgyDNrbAUFXDcjVXm2b7dG9CYxOT
-         ky1pEE6EIfBf48jEfz91dMfxHYrTYyKRWk6CUbNM6v9hoGNc6gAFsJSVkj7uvKLf91LJ
-         BwvA==
+        b=V1yBFlqHtSXaLLJjN8ZS6EQrlzhMblB/HJDctjzBUKZoG7LHP9VxjjAcWnNsJRZjY+
+         PcoGVtbIehilQu59zniM00qifRyUvj7NR2CW+TaJW16vVUvkcMK6Y/YT4ablZqmghPd0
+         KyAZw9SohQxdatF2JLuk+wclxo6XsRFhwSGRLElEJmOy4WMEO7sOepplYrPz0MpisBAs
+         I8ZWvwacXL4kPfHybZM9gmLdO0ZCfTOikUS8EAFgnjHVlFcMMEoZAC5//QlVjB/ztLzk
+         ZTIZrcVuO66ls76aSWSL0rWTRszEmLjkMn/3YvrWAiSTw//ooYmyP7GFaqruMRgIvcu9
+         xkUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Rte0/uiiS/0FgrvDOX0D9AIeysU577ZilEeozCvJKtc=;
-        b=vDNwNgeDJHmrw6UjtfBzOXZU8Y51pgL9P5MsUGJS/OwMpwrDvZ7frXzwoRLY7X5Tru
-         7p9Ix3dqdLtyYkxmN1lIAybtl7aWMPCxeK1H5btH2RQwkpYKkYvnJLDJhK5yhAWBMmsK
-         o8K5/DzXo39kUV1OuPqnOwGUNcj9ADPx/Q75Xt3yj290nyn/B8RQ7M1JqdBuGFyHSvjL
-         lYTz2gbS463gnxWhLzA9A0xj51490yw1aLCtv+CFh0XMrknCw0zE1FmujqxkCXhHEVzH
-         jWdKV4sVXCQyiRREuEWwusBWwUHMXIibDPOTnRQUU7ddxFfYDLipd02EZNDlDgNxR3mw
-         2Llg==
+        bh=EhvJ5ljlER/7WKvTQRo8Oc0EN84SObeZDaJfoZXDpCs=;
+        b=Lk+H4V/ha1EdhIDO8b4eiLcIoPdKkYjxYVcEvy/TdWZuZO2sViNBi0li21uwh1Nk+P
+         bcpUqxb2rMqD3MfW+xTEnD0It1Hl10uUPta0qM4g+F67zbQv3ETwftDW3KEkVSix6I41
+         ZlOkTlOvAclEC6uoQuPbh8xwWLFn1wQbFxJR11fGRQWCyAADloBz1tUffuqrwMp/9rhg
+         P4uT2hZIQWj8rXF9L+Q0McZEfJRh6cLRnuIl27KziRFpkpNkD0f3fekqXFnKOD7v/8w2
+         ga9wFFMaPlXBkB2uToPNRicJzKBFKYiRXT/CVdSR4RzLbvek0PgtBfash4VA4Khl77BV
+         mC+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sawan Chandak <sawan.chandak@cavium.com>,
+	Quinn Tran <quinn.tran@cavium.com>,
 	Himanshu Madhani <himanshu.madhani@cavium.com>,
 	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 132/146] scsi: qla2xxx: Fix NPIV host cleanup in target mode
-Date: Tue, 13 Mar 2018 16:24:59 +0100
-Message-Id: <20180313152330.341300494@linuxfoundation.org>
+Subject: [PATCH 4.15 131/146] scsi: qla2xxx: Fix login state machine stuck at GPDB
+Date: Tue, 13 Mar 2018 16:24:58 +0100
+Message-Id: <20180313152330.273657910@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594837207629830173?=
-X-GMAIL-MSGID: =?utf-8?q?1594837207629830173?=
+X-GMAIL-THRID: =?utf-8?q?1594837204781255664?=
+X-GMAIL-MSGID: =?utf-8?q?1594837204781255664?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +51,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sawan Chandak <sawan.chandak@cavium.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 3be63b1e1838e35ce93e83f19573e949f4b389b4 upstream.
+commit 414d9ff3f8039f85d23f619dcbbd1ba2628a1a67 upstream.
 
-Add check to make sure we are cleaning up global target host list only
-for NPIV hosts
+This patch returns discovery state machine back to Login Complete.
 
-Fixes: bdbe24de281e2 ("scsi: qla2xxx: Cleanup NPIV host in target mode during config teardown")
+Fixes: 726b85487067d ("qla2xxx: Add framework for async fabric discovery")
 Cc: <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Sawan Chandak <sawan.chandak@cavium.com>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1561,8 +1561,11 @@ static void qlt_release(struct qla_tgt *
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -863,6 +863,7 @@ void qla24xx_handle_gpdb_event(scsi_qla_
+ 	int rval = ea->rc;
+ 	fc_port_t *fcport = ea->fcport;
+ 	unsigned long flags;
++	u16 opt = ea->sp->u.iocb_cmd.u.mbx.out_mb[10];
  
- 	btree_destroy64(&tgt->lun_qpair_map);
+ 	fcport->flags &= ~FCF_ASYNC_SENT;
  
--	if (ha->tgt.tgt_ops && ha->tgt.tgt_ops->remove_target)
--		ha->tgt.tgt_ops->remove_target(vha);
-+	if (vha->vp_idx)
-+		if (ha->tgt.tgt_ops &&
-+		    ha->tgt.tgt_ops->remove_target &&
-+		    vha->vha_tgt.target_lport_ptr)
-+			ha->tgt.tgt_ops->remove_target(vha);
+@@ -893,7 +894,8 @@ void qla24xx_handle_gpdb_event(scsi_qla_
+ 	}
  
- 	vha->vha_tgt.qla_tgt = NULL;
+ 	spin_lock_irqsave(&vha->hw->tgt.sess_lock, flags);
+-	ea->fcport->login_gen++;
++	if (opt != PDO_FORCE_ADISC)
++		ea->fcport->login_gen++;
+ 	ea->fcport->deleted = 0;
+ 	ea->fcport->logout_on_delete = 1;
  
+@@ -917,6 +919,13 @@ void qla24xx_handle_gpdb_event(scsi_qla_
+ 
+ 			qla24xx_post_gpsc_work(vha, fcport);
+ 		}
++	} else if (ea->fcport->login_succ) {
++		/*
++		 * We have an existing session. A late RSCN delivery
++		 * must have triggered the session to be re-validate.
++		 * session is still valid.
++		 */
++		fcport->disc_state = DSC_LOGIN_COMPLETE;
+ 	}
+ 	spin_unlock_irqrestore(&vha->hw->tgt.sess_lock, flags);
+ } /* gpdb event */
