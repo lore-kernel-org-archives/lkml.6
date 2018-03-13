@@ -1,120 +1,76 @@
-Return-Path: <kernel-hardening-return-12572-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtWTEhGF66yVV9osQA3crdbd42WduDiVSQGl6gLOU5Gyo6RNOF6A0oJ2zAYWLe34mnQZzFK
-ARC-Seal: i=1; a=rsa-sha256; t=1520996154; cv=none;
+Return-Path: <kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsFw2MlqjY0UHPIJ67cv106PPZrQavrx03wl73iqPlOYwGjBx0kxA0hwbZf6ffBKLK2V1V7
+ARC-Seal: i=1; a=rsa-sha256; t=1520949029; cv=none;
         d=google.com; s=arc-20160816;
-        b=BiZqm8RLd78MJT/SVNDusu/U1Zkr4iG4WDdtf3HATyixNeZcKSn8wrlgrz2lJ1aC/C
-         W+btsiXu2+t6FCadiuC2GoxXBxhIiN/YJ3Y0qEJmWo6k/MmtfiRcFesX2BKBa93T8f1+
-         6g1/RlPzNIyZQQvqGKft9b9rq/+RdRtnJjKjZyoSbLQitWeTksRJ7PgnEWL81v32YwYi
-         0Te4MmTzP/L1R5jFlyhVEBdBwtppnGm3mgf+zY9UvoDALbJq6O1XgpeK+v88XqES6DJO
-         DcJiBKYJJo20OTM+r8EW/qMrxXoDJq7qU3kZXlZgO0z8ARHbu8enOjnwTb6jK82frj4h
-         Cffg==
+        b=rM0+SSEz964Sak3bYzimy54qP3PqDgcgcfmn60KH2NhlqZjHvvAQTMpfJn0DMtgVGG
+         DcCv9sCOivnlK5N8ssEu77t4A/+2W+toCF8/l7UoQEOQVq/+xE4KhL0AtTUuoYvrv/md
+         eyrYKRh+cQonW80YV8M6EUwR/gg1WuX0TTwO0fhYDALiuu9oacJ5ChfYRJWFP1B3xt+g
+         5IXweZhXMnBN0aMzqbfEDsq0knQMoCqjZSYQV9nLrPLqYdxiqjy8ghqu2DA/OzFPRcW+
+         BHNxnmPSwxnTP3ouYC3fm7f+qQYLCcoAdYfDocgcNcXouaz1kGl/dtRJpmko2yLa9UVt
+         sQeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=qgI1v0OmCsdrT5/xwuHY6uOidJ1T6N6cbE5m/6zHJmc=;
-        b=ydu+QohT6Mdl5IDSkqj+PI4V2t2O3BqSOF2udMjPxEQ/l53RtM+jJYhs0pyjYjUsc8
-         nyQodlL5LZzWrpdI2tpNlooyEjz0GePfOLjvpmQbe99wPhU8NpSA7yrBkYViUAE5Eruw
-         PZlyFok5z2pFbucmrgFhIYFupISGoiq2ed5Uag5XoMaQuJeFNXXjfjouSUTa3Fxaxfqc
-         KaLJzAnVtTUlL3bzwf3n9DMy4rS0Rzu9FKBjcyW7LbiFSqeJYJmRMNiNIDAiXkF69XpV
-         UBbDvgbxmN9xU8HlpeNo/3wym1h4AAkORm+wodBd+9igsTJGqVw/VKxIlG5haipuoRTN
-         UKYA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:delivered-to:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=leJH7YYSo9Nh08QRb1M9U6e440VoCPQbtSdqZtm95c8=;
+        b=QV8w4LAr7r5Ewq2npVPeKJFm9s9iwlOGpKCj72oOKShszzW9k4AzPFp1/BgnWlFaze
+         4HumdrFdIjRLL14d3qQQeNsQNTyvaikGuzb/Y6wXW5gzhGszTPYpD22xlTPEfo8Npv0T
+         VD5vQHyOREqegR3IKe6SFKYuKjYd4OG5I/6xqhX5tyPGCoT6hKxcj01aQRgYDjMZxzyh
+         mVHtZS7dse0/OzVR/qU1Xvb3yA0xjT8k2NOfK3O2xtODb/HHko1YRlNVSjUn3otx7CZC
+         B55AREQNHieDNyiiehOjyWeQjYCGapbrWDW/aHVamy74ObTcD1ZhVs02DiwOhG4THoix
+         odFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12572-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12572-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=ftE1qf5W;
+       spf=pass (google.com: domain of kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12572-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12572-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=ftE1qf5W;
+       spf=pass (google.com: domain of kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 4/4] gpio: Remove VLA from stmpe driver
-To: Laura Abbott <labbott@redhat.com>,
-  Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>,
-  Patrice Chotard <patrice.chotard@st.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-  kernel-hardening@lists.openwall.com
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-5-labbott@redhat.com>
- <9175611d-049d-ec28-0716-e45fccfd579f@electromag.com.au>
- <4e64bbae-e91b-f0c5-ff79-3dde8fbe2119@redhat.com>
- <d37dbce5-43ca-b70a-41da-5ccfc673d3ac@redhat.com>
-From: Phil Reid <preid@electromag.com.au>
-Message-ID: <9ffedffb-5dd1-a67a-7266-eb480b07a384@electromag.com.au>
-Date: Wed, 14 Mar 2018 10:55:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <d37dbce5-43ca-b70a-41da-5ccfc673d3ac@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180310001021.6437-1-labbott@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 13 Mar 2018 10:42:51 +0100
+Message-ID: <CACRpkdaJz-GL_XdkEv-6FpUkjhNKdp27P8p2KFtriVY8GMkrCQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] VLA removal from the GPIO subsystem
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+	Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com,
+	Mathias Duckeck <m.duckeck@kunbus.de>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594507326034109383?=
-X-GMAIL-MSGID: =?utf-8?q?1594880063968236680?=
+X-GMAIL-THRID: =?utf-8?q?1594507290189676556?=
+X-GMAIL-MSGID: =?utf-8?q?1594830649956541485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 14/03/2018 09:16, Laura Abbott wrote:
-> On 03/13/2018 05:18 PM, Laura Abbott wrote:
->> On 03/13/2018 02:13 AM, Phil Reid wrote:
->>> On 10/03/2018 08:10, Laura Abbott wrote:
->>>> The new challenge is to remove VLAs from the kernel
->>>> (see https://lkml.org/lkml/2018/3/7/621)
->>>>
->>>> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>>>
->>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>>> ---
->>>>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
->>>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
->>>> index f8d7d1cd8488..b7854850bcdb 100644
->>>> --- a/drivers/gpio/gpio-stmpe.c
->>>> +++ b/drivers/gpio/gpio-stmpe.c
->>>> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>>       struct stmpe *stmpe = stmpe_gpio->stmpe;
->>>>       u8 statmsbreg;
->>>>       int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
->>>> -    u8 status[num_banks];
->>>> +    u8 *status;
->>>>       int ret;
->>>>       int i;
->>>> +    status = kmalloc_array(num_banks, sizeof(*status), GFP_ATOMIC);
->>>> +    if (!status)
->>>> +        return IRQ_NONE;
->>>> +
->>>>       /*
->>>>        * the stmpe_block_read() call below, imposes to set statmsbreg
->>>>        * with the register located at the lowest address. As STMPE1600
->>>> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>>           }
->>>>       }
->>>> +    kfree(status);
->>>>       return IRQ_HANDLED;
->>>>   }
->>>>
->>>
->>> Doing this in an irq handler seems wrong.
->>> Perhaps better if a buffer is pre-allocated in stmpe_gpio
->>
->> Sure, I can pre-allocate the buffer in the probe.
-> 
-> Actually I wonder if there would be concurrency problems if we
-> tried to pre-allocate a global buffer. But the IRQ handler
-> calls stmpe_block_read which takes a mutex to sleep so I think
-> doing the (small) kmalloc should be fine and I can change it to
-> a GFP_KERNEL.
-> 
-I'm no expert on this driver, but I wouldn't think there'd be any concurrency
-problem if the buffer is only used by the irq handler.
-It should never get called concurrently for the same device.
+On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
 
-As to the impact, I'll admit I've really got no idea how much potential overhead a
-kmalloc has compared to a mutex for the linux kernel.
-Just a general rule of thumb, that memory allocations are usually expensive.
--- 
-Regards
-Phil Reid
+> For those who haven't seen it, there's an effort to remove VLAs from the
+> kernel so we can turn on -Wvla in the name of security. See
+> https://lkml.org/lkml/2018/3/7/621 for more details and discussion.
+
+OK I read up on it, I'm on board! Less is more.
+
+> This is a series to remove a few VLAs from the gpio subsystem. These are
+> compile tested only so I'd appreciate reviews and tests from
+> maintainers. When these get Acked, I expect these to just go through the
+> GPIO tree like usual.
+
+Sure I will just queue it up with ACKs, or if I just think it looks nice
+and reliable.
+
+Thank you for doing this!
+
+Yours,
+Linus Walleij
