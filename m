@@ -1,190 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932751AbeCMM2q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:28:46 -0400
-Received: from mga12.intel.com ([192.55.52.136]:54633 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752162AbeCMM2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:28:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,464,1515484800";
-   d="scan'208";a="33435486"
-Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
- multi-pci-segment arches
-To: "Kroening, Gary" <gary.kroening@hpe.com>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>
-Cc: "Travis, Mike" <mike.travis@hpe.com>,
-        "Banman, Andrew" <abanman@hpe.com>,
-        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
- <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
- <CS1PR84MB0118227E1E8F1257E37C75C3F6D20@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <560d1400-92e9-6f38-d699-011f936d0615@linux.intel.com>
-Date: Tue, 13 Mar 2018 08:28:41 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932850AbeCMMbm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:31:42 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:51417 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752390AbeCMMbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:31:39 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CS1PR84MB0118227E1E8F1257E37C75C3F6D20@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To: Arnd Bergmann <arnd@arndb.de>,
+        "Jani Nikula" <jani.nikula@linux.intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
+        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+        "David Airlie" <airlied@linux.ie>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20180313120848.2658626-1-arnd@arndb.de>
+Cc: "Arnd Bergmann" <arnd@arndb.de>,
+        "Tvrtko Ursulin" <tvrtko.ursulin@intel.com>,
+        "Michal Wajdeczko" <michal.wajdeczko@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180313120848.2658626-1-arnd@arndb.de>
+Message-ID: <152094429237.515.2412380565628307987@mail.alporthouse.com>
+User-Agent: alot/0.3.6
+Subject: Re: [PATCH] drm/i915/pmu: avoid -Wmaybe-uninitialized warning
+Date: Tue, 13 Mar 2018 12:31:32 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Arnd Bergmann (2018-03-13 12:08:29)
+> The conditional spinlock confuses gcc into thinking the 'flags' value
+> might contain uninitialized data:
+> 
+> drivers/gpu/drm/i915/i915_pmu.c: In function '__i915_pmu_event_read':
+> arch/x86/include/asm/paravirt_types.h:573:3: error: 'flags' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> 
+> The code is correct, but it's easy to see how the compiler gets confused
+> here. This avoids the problem by pulling the lock outside of the function
+> into its only caller.
+> 
+> Fixes: 1fe699e30113 ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/i915/i915_pmu.c | 25 ++++++++++---------------
+>  1 file changed, 10 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index 4bc7aefa9541..2c8c705d1f18 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -415,7 +415,6 @@ static u64 __get_rc6(struct drm_i915_private *i915)
+>  static u64 get_rc6(struct drm_i915_private *i915, bool locked)
 
+bool locked is now unused, right?
 
-On 3/13/2018 1:06 AM, Kroening, Gary wrote:
-> Thanks, Kan -- your patch looks good, and cleaner than the previous method!
-> 
-> Tonight, I've tested it on our in-house simulator for the following configurations. The simulator has been matching hardware well for this issue -- we'll do more testing on real hardware, but I'm confident you have it right.
->
+>  {
+>  #if IS_ENABLED(CONFIG_PM)
+> -       unsigned long flags;
+>         u64 val;
+>  
+>         if (intel_runtime_pm_get_if_in_use(i915)) {
+> @@ -428,18 +427,12 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+>                  * previously.
+>                  */
+>  
+> -               if (!locked)
+> -                       spin_lock_irqsave(&i915->pmu.lock, flags);
+> -
+>                 if (val >= i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur) {
+>                         i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = 0;
+>                         i915->pmu.sample[__I915_SAMPLE_RC6].cur = val;
+>                 } else {
+>                         val = i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur;
+>                 }
+> -
+> -               if (!locked)
+> -                       spin_unlock_irqrestore(&i915->pmu.lock, flags);
+>         } else {
+>                 struct pci_dev *pdev = i915->drm.pdev;
+>                 struct device *kdev = &pdev->dev;
+> @@ -452,9 +445,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+>                  * on top of the last known real value, as the approximated RC6
+>                  * counter value.
+>                  */
+> -               if (!locked)
+> -                       spin_lock_irqsave(&i915->pmu.lock, flags);
+> -
+>                 spin_lock_irqsave(&kdev->power.lock, flags2);
+>  
+>                 if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
+> @@ -470,9 +460,6 @@ static u64 get_rc6(struct drm_i915_private *i915, bool locked)
+>                 val = jiffies_to_nsecs(val);
+>                 val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
+>                 i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
+> -
+> -               if (!locked)
+> -                       spin_unlock_irqrestore(&i915->pmu.lock, flags);
+>         }
+>  
+>         return val;
+> @@ -519,8 +506,16 @@ static u64 __i915_pmu_event_read(struct perf_event *event, bool locked)
+>                         val = count_interrupts(i915);
+>                         break;
+>                 case I915_PMU_RC6_RESIDENCY:
+> -                       val = get_rc6(i915, locked);
+> -                       break;
+> +                       if (!locked) {
+> +                               unsigned long flags;
+> +
+> +                               spin_lock_irqsave(&i915->pmu.lock, flags);
+> +                               val = get_rc6(i915, locked);
+> +                               spin_unlock_irqrestore(&i915->pmu.lock, flags);
+> +                               break;
+> +                       } else {
+> +                               val = get_rc6(i915, locked);
+> +                       }
 
-That's great. Thanks a lot for the verification. :)
-
-Thanks,
-Kan
-
-> Terminology:
-> 
-> "hubless" -- equivalent to "glueless" or "white box" where our BIOS sets things up with a single bus for all sockets.
-> 
-> "scalable" -- BIOS assigns a new segment/domain for each socket
-> 
-> Configurations tested so far:
-> - single-socket hubless/scalable
-> - two sockets, scalable
-> - four sockets, hubless
-> - eight sockets, scalable
-> 
-> In all cases, skx_count_chabox() is returning 28 for Skylake server.
-> Thanks for the quick response!
-> Gary
-> 
->> -----Original Message-----
->> From: Liang, Kan [mailto:kan.liang@linux.intel.com]
->> Sent: Monday, March 12, 2018 8:43 PM
->> To: Kroening, Gary; mingo@redhat.com; hpa@zytor.com; tglx@linutronix.de;
->> peterz@infradead.org
->> Cc: Travis, Mike; Banman, Andrew; Sivanich, Dimitri; Anderson, Russ;
->> x86@kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on multi-pci-
->> segment arches
->>
->>
->>
->> On 3/7/2018 3:33 PM, Kroening, Gary wrote:
->>> For systems with a single PCI segment, it is sufficient to look for the
->>> bus number to change in order to determine that all of the CHa's have
->>> been counted for a single socket.
->>>
->>> However, for multi PCI segment systems, each socket is given a new
->>> segment and the bus number does NOT change.  So looking only for the
->>> bus number to change ends up counting all of the CHa's on all sockets
->>> in the system.  This leads to writing CPU MSRs beyond a valid range and
->>> causes an error in ivbep_uncore_msr_init_box().
->>>
->>> The fix is to check for either the bus number or segment number to
->> change.
->>>
->>
->> Hi Gary,
->>
->> There is a recommended way in uncore document to query the number of
->> CHAs on Skylake server.
->> I have a patch to implement the new way.
->>
->> Could you please take a look at the patch and see if it can fix your
->> issue?
->>
->>
->> Thanks,
->> Kan
->>
->> ------
->>   From 55f54b2fa3021c691c2fd4f5cfc8f441fd104e91 Mon Sep 17 00:00:00 2001
->> From: Kan Liang <kan.liang@linux.intel.com>
->> Date: Mon, 12 Mar 2018 13:03:40 -0700
->> Subject: [PATCH] perf/x86/intel/uncore: Querying number of CHAs from
->> CAPID6 register
->>
->> The number of CHAs is miscalculated on multi PCI domain systems on
->> Skylake server
->>
->> (From Kroening, Gary:
->>
->> For systems with a single PCI segment, it is sufficient to look for the
->> bus number to change in order to determine that all of the CHa's have
->> been counted for a single socket.
->> However, for multi PCI segment systems, each socket is given a new
->> segment and the bus number does NOT change.  So looking only for the
->> bus number to change ends up counting all of the CHa's on all sockets
->> in the system.  This leads to writing CPU MSRs beyond a valid range and
->> causes an error in ivbep_uncore_msr_init_box().)
->>
->> To determine the number of CHAs, it should read bits 27:0 in the CAPID6
->> register located at Device 30, Function 3, Offset 0x9C. These 28 bits
->> form a bit vector of available LLC slices and the CHAs that manage those
->> slices.
->>
->> Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore
->> support")
->> Reported-by: Kroening, Gary <gary.kroening@hpe.com>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>    arch/x86/events/intel/uncore_snbep.c | 24 ++++++++++--------------
->>    1 file changed, 10 insertions(+), 14 deletions(-)
->>
->> diff --git a/arch/x86/events/intel/uncore_snbep.c
->> b/arch/x86/events/intel/uncore_snbep.c
->> index d4672ed..a42715b 100644
->> --- a/arch/x86/events/intel/uncore_snbep.c
->> +++ b/arch/x86/events/intel/uncore_snbep.c
->> @@ -3575,24 +3575,20 @@ static struct intel_uncore_type
->> *skx_msr_uncores[] = {
->>    	NULL,
->>    };
->>
->> +#define SKX_CAPID6		0x9c
->> +#define SKX_CHA_BIT_WIDTH	28
->> +
->>    static int skx_count_chabox(void)
->>    {
->> -	struct pci_dev *chabox_dev = NULL;
->> -	int bus, count = 0;
->> +	struct pci_dev *dev = NULL;
->> +	u32 val = 0;
->>
->> -	while (1) {
->> -		chabox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x208d,
->> chabox_dev);
->> -		if (!chabox_dev)
->> -			break;
->> -		if (count == 0)
->> -			bus = chabox_dev->bus->number;
->> -		if (bus != chabox_dev->bus->number)
->> -			break;
->> -		count++;
->> -	}
->> +	dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
->> +	if (!dev)
->> +		return 0;
->>
->> -	pci_dev_put(chabox_dev);
->> -	return count;
->> +	pci_read_config_dword(dev, SKX_CAPID6, &val);
->> +	return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
->>    }
->>
->>    void skx_uncore_cpu_init(void)
->> --
->> 2.7.4
-> 
+break is now on one path only; should be here.
+-Chris
