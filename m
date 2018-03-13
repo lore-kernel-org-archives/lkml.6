@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsBaAVp8LypnwbN++0zt/MZ5ChvR6kIWPDQzIatB9w8otnPUir+zwFcj5oMz9ayMif4RhBk
-ARC-Seal: i=1; a=rsa-sha256; t=1520955017; cv=none;
+X-Google-Smtp-Source: AG47ELuLXOhky8/EP0VtOHc5Dpz0Tdl74VWD5O1O3yDSHZ8o1v6eBr4zuXAru9zLVDI+7BKeFrvk
+ARC-Seal: i=1; a=rsa-sha256; t=1520955013; cv=none;
         d=google.com; s=arc-20160816;
-        b=Kq9FDlFCsSjx792bRfPaQrW7Q8kwyjp6MmydIBrPBJEjqxKnWFf+X7ygvKlWVyLjtA
-         o5nDYHrCxB/+sUmdYkGv/D3vdzq3nvDGQ0t4zDq702uceCi1OQNTFtOA3SnCKqh73A9r
-         10E5xKdUvm/36LbUO4gAHyqz3v19PVUn1co2y8mSDpSn++MU2B2XSgYqHqP7FxYjfChe
-         McTE6ye7wiQDsjPtI5fPzME98mK6RSL0Nf5fpugzyJRorMg4CF4MyiILglzTVlQOYmAn
-         vSaDxCX510cTx6J39JIi7i5s+jLXJLs8fhbdPvMl3Sa0R+gTlcLSfRFOp5iZ3vjK6wTK
-         J9Gw==
+        b=EDi+xeMJcNCXp/FGQ1yKtNj1ObTo9PN2EMwnGfgBAjum0QRNv2ZK5vAdl0FoX2jBvz
+         h0iN7Og7FsmdL3qjnsWs9Lqr5i5mORFuvb4RR+jmeED9kGQBa/IXat0UuhS7cRUhLGef
+         VEACZdzZFhinFRQxNVuvxlTwQ7uOVio0hE5rzczktxV74FT8Il4ZIcCtS7qEekTOcMtJ
+         AJ7WdiP5YDxoNy32wrflTU9180B+IOlXV24yIRMMOeAgWIABvUUFRtygOZVneivYExeH
+         3hfIZ5ywMiFmYiJLuG1fRaIlQrxeoX0YSpd4+2MJrql3SOhlYbqRATM+6LT6YAJFpokB
+         VknQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=E+zwmiojhQKVYMnwXMMYQ69+Sd0dvPeDGkjkTPaEsTE=;
-        b=HvCC7rLtGpvnX9fzVYP/M0lObapnBilm7fvuaI8f2agnXJj/8tB7Q2437ua26pFEyu
-         CxSYLpVmULvyu8anqoC+v+eeS2qa83o0Uv/WRXIIMylyGBhG1Jw70ozRwhT/9S6bNTwI
-         mp1D2bUrS9MWqhowSXv94IF+/gAEOnNhmPZOutnfQiEzTiE2R0oVNizFXpINOKGPk2A3
-         iBQhMxPonG3XMx2EC3w0mxCda0rVF1CujR5xjekTP24/Rf+GE7fzh1vdOQ68GGzOeLq8
-         W1Tjx3y4/AVo3BYHLJ4VZZne8EiG0yYSY53WEyqWfdYfQKKH/zUWYL3Zc+CEdZATjQCT
-         aiOQ==
+        bh=1JVlvTpT6CPwp2bEkVHbgAEq2CfWbfJb4n+KA8Ju0IQ=;
+        b=EsjOMwL18gEKdv/+ZC2gZ6+oHVBmJcdMRjvjzMirxMwqH99i94VDclNgJvRay3FxFs
+         auh7bNp2Ufhl5rDmipcZGlWlF3DK2v0qGPgx6sFhUMaVP82p7KDoD/UidDWem2j0T2aD
+         K3SL+hcpvzhCuyjd9JeNpAcMypeQmIDkY65FtzPNEcRJFrUsxsK4spMdZoB0c/GQJclm
+         iTQigiEidkQQdfCw+N3mT5ygJwpRLmeQM7TNochHC3TG2pDiFkdYj1LWRrwx70H6h5ef
+         3LjARbGm/gmuKh9J2i+krMSan4uYVFQ/dDNDC8vpCcPZqh7H4WwWFC14UqHmrMYuqR6Q
+         pHGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tang Junhui <tang.junhui@zte.com.cn>,
-	Marc MERLIN <marc@merlins.org>,
-	Michael Lyle <mlyle@lyle.org>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 060/146] bcache: fix crashes in duplicate cache device register
-Date: Tue, 13 Mar 2018 16:23:47 +0100
-Message-Id: <20180313152325.299777074@linuxfoundation.org>
+	Sergey Gorenko <sergeygo@mellanox.com>,
+	Laurence Oberman <loberman@redhat.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.15 059/146] IB/mlx5: Fix incorrect size of klms in the memory region
+Date: Tue, 13 Mar 2018 16:23:46 +0100
+Message-Id: <20180313152325.231930232@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836928471766382?=
-X-GMAIL-MSGID: =?utf-8?q?1594836928471766382?=
+X-GMAIL-THRID: =?utf-8?q?1594836924185487286?=
+X-GMAIL-MSGID: =?utf-8?q?1594836924185487286?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,163 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Sergey Gorenko <sergeygo@mellanox.com>
 
-commit cc40daf91bdddbba72a4a8cd0860640e06668309 upstream.
+commit da343b6d90e11132f1e917d865d88ee35d6e6d00 upstream.
 
-Kernel crashed when register a duplicate cache device, the call trace is
-bellow:
-[  417.643790] CPU: 1 PID: 16886 Comm: bcache-register Tainted: G
-   W  OE    4.15.5-amd64-preempt-sysrq-20171018 #2
-[  417.643861] Hardware name: LENOVO 20ERCTO1WW/20ERCTO1WW, BIOS
-N1DET41W (1.15 ) 12/31/2015
-[  417.643870] RIP: 0010:bdevname+0x13/0x1e
-[  417.643876] RSP: 0018:ffffa3aa9138fd38 EFLAGS: 00010282
-[  417.643884] RAX: 0000000000000000 RBX: ffff8c8f2f2f8000 RCX: ffffd6701f8
-c7edf
-[  417.643890] RDX: ffffa3aa9138fd88 RSI: ffffa3aa9138fd88 RDI: 00000000000
-00000
-[  417.643895] RBP: ffffa3aa9138fde0 R08: ffffa3aa9138fae8 R09: 00000000000
-1850e
-[  417.643901] R10: ffff8c8eed34b271 R11: ffff8c8eed34b250 R12: 00000000000
-00000
-[  417.643906] R13: ffffd6701f78f940 R14: ffff8c8f38f80000 R15: ffff8c8ea7d
-90000
-[  417.643913] FS:  00007fde7e66f500(0000) GS:ffff8c8f61440000(0000) knlGS:
-0000000000000000
-[  417.643919] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  417.643925] CR2: 0000000000000314 CR3: 00000007e6fa0001 CR4: 00000000003
-606e0
-[  417.643931] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000
-00000
-[  417.643938] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000
-00400
-[  417.643946] Call Trace:
-[  417.643978]  register_bcache+0x1117/0x1270 [bcache]
-[  417.643994]  ? slab_pre_alloc_hook+0x15/0x3c
-[  417.644001]  ? slab_post_alloc_hook.isra.44+0xa/0x1a
-[  417.644013]  ? kernfs_fop_write+0xf6/0x138
-[  417.644020]  kernfs_fop_write+0xf6/0x138
-[  417.644031]  __vfs_write+0x31/0xcc
-[  417.644043]  ? current_kernel_time64+0x10/0x36
-[  417.644115]  ? __audit_syscall_entry+0xbf/0xe3
-[  417.644124]  vfs_write+0xa5/0xe2
-[  417.644133]  SyS_write+0x5c/0x9f
-[  417.644144]  do_syscall_64+0x72/0x81
-[  417.644161]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[  417.644169] RIP: 0033:0x7fde7e1c1974
-[  417.644175] RSP: 002b:00007fff13009a38 EFLAGS: 00000246 ORIG_RAX: 0000000
-000000001
-[  417.644183] RAX: ffffffffffffffda RBX: 0000000001658280 RCX: 00007fde7e1c
-1974
-[  417.644188] RDX: 000000000000000a RSI: 0000000001658280 RDI: 000000000000
-0001
-[  417.644193] RBP: 000000000000000a R08: 0000000000000003 R09: 000000000000
-0077
-[  417.644198] R10: 000000000000089e R11: 0000000000000246 R12: 000000000000
-0001
-[  417.644203] R13: 000000000000000a R14: 7fffffffffffffff R15: 000000000000
-0000
-[  417.644213] Code: c7 c2 83 6f ee 98 be 20 00 00 00 48 89 df e8 6c 27 3b 0
-0 48 89 d8 5b c3 0f 1f 44 00 00 48 8b 47 70 48 89 f2 48 8b bf 80 00 00 00 <8
-b> b0 14 03 00 00 e9 73 ff ff ff 0f 1f 44 00 00 48 8b 47 40 39
-[  417.644302] RIP: bdevname+0x13/0x1e RSP: ffffa3aa9138fd38
-[  417.644306] CR2: 0000000000000314
+The value of mr->ndescs greater than mr->max_descs is set in the
+function mlx5_ib_sg_to_klms() if sg_nents is greater than
+mr->max_descs. This is an invalid value and it causes the
+following error when registering mr:
 
-When registering duplicate cache device in register_cache(), after failure
-on calling register_cache_set(), bch_cache_release() will be called, then
-bdev will be freed, so bdevname(bdev, name) caused kernel crash.
+mlx5_0:dump_cqe:276:(pid 193): dump error cqe
+00000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00000030: 00 00 00 00 0f 00 78 06 25 00 00 8b 08 1e 8f d3
 
-Since bch_cache_release() will free bdev, so in this patch we make sure
-bdev being freed if register_cache() fail, and do not free bdev again in
-register_bcache() when register_cache() fail.
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reported-by: Marc MERLIN <marc@merlins.org>
-Tested-by: Michael Lyle <mlyle@lyle.org>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: <stable@vger.kernel.org> # 4.5
+Fixes: b005d3164713 ("mlx5: Add arbitrary sg list support")
+Signed-off-by: Sergey Gorenko <sergeygo@mellanox.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/super.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1191,7 +1191,7 @@ static void register_bdev(struct cache_s
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1813,7 +1813,6 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
  
- 	return;
- err:
--	pr_notice("error opening %s: %s", bdevname(bdev, name), err);
-+	pr_notice("error %s: %s", bdevname(bdev, name), err);
- 	bcache_device_stop(&dc->disk);
- }
+ 	mr->ibmr.iova = sg_dma_address(sg) + sg_offset;
+ 	mr->ibmr.length = 0;
+-	mr->ndescs = sg_nents;
  
-@@ -1859,6 +1859,8 @@ static int register_cache(struct cache_s
- 	const char *err = NULL; /* must be set for any error case */
- 	int ret = 0;
+ 	for_each_sg(sgl, sg, sg_nents, i) {
+ 		if (unlikely(i >= mr->max_descs))
+@@ -1825,6 +1824,7 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr
  
-+	bdevname(bdev, name);
-+
- 	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
- 	ca->bdev = bdev;
- 	ca->bdev->bd_holder = ca;
-@@ -1867,11 +1869,12 @@ static int register_cache(struct cache_s
- 	ca->sb_bio.bi_io_vec[0].bv_page = sb_page;
- 	get_page(sb_page);
- 
--	if (blk_queue_discard(bdev_get_queue(ca->bdev)))
-+	if (blk_queue_discard(bdev_get_queue(bdev)))
- 		ca->discard = CACHE_DISCARD(&ca->sb);
- 
- 	ret = cache_alloc(ca);
- 	if (ret != 0) {
-+		blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
- 		if (ret == -ENOMEM)
- 			err = "cache_alloc(): -ENOMEM";
- 		else
-@@ -1894,14 +1897,14 @@ static int register_cache(struct cache_s
- 		goto out;
+ 		sg_offset = 0;
  	}
++	mr->ndescs = i;
  
--	pr_info("registered cache device %s", bdevname(bdev, name));
-+	pr_info("registered cache device %s", name);
- 
- out:
- 	kobject_put(&ca->kobj);
- 
- err:
- 	if (err)
--		pr_notice("error opening %s: %s", bdevname(bdev, name), err);
-+		pr_notice("error %s: %s", name, err);
- 
- 	return ret;
- }
-@@ -1990,6 +1993,7 @@ static ssize_t register_bcache(struct ko
- 	if (err)
- 		goto err_close;
- 
-+	err = "failed to register device";
- 	if (SB_IS_BDEV(sb)) {
- 		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
- 		if (!dc)
-@@ -2004,7 +2008,7 @@ static ssize_t register_bcache(struct ko
- 			goto err_close;
- 
- 		if (register_cache(sb, sb_page, bdev, ca) != 0)
--			goto err_close;
-+			goto err;
- 	}
- out:
- 	if (sb_page)
-@@ -2017,7 +2021,7 @@ out:
- err_close:
- 	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
- err:
--	pr_info("error opening %s: %s", path, err);
-+	pr_info("error %s: %s", path, err);
- 	ret = -EINVAL;
- 	goto out;
- }
+ 	if (sg_offset_p)
+ 		*sg_offset_p = sg_offset;
