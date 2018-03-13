@@ -1,76 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933522AbeCMMH1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:07:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933473AbeCMMHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:07:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7DF217A0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 31/31] perf test: Fix exit code for record+probe_libc_inet_pton.sh
-Date: Tue, 13 Mar 2018 09:05:08 -0300
-Message-Id: <20180313120508.29327-32-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313120508.29327-1-acme@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
+        id S1752531AbeCMMHJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:07:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:37991 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933477AbeCMMHC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:07:02 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Arnd Bergmann <arnd@arndb.de>, Artemy Kovalyov <artemyko@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] 40iw: include linux/irq.h
+Date: Tue, 13 Mar 2018 13:06:20 +0100
+Message-Id: <20180313120644.2619889-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:v77/dRA2M93IdkgcSz0tV4WtOUDGO5yRvpeO1YeePIS3pNOWypu
+ 0vx0Q15AywkC9UcQ+cGKJ/CgixXY12FoWaTpQZz9jk9xZvSyVqrY+nlrUHFF3DyQvBwS0NK
+ 4D4UqSjIbI6YpUUPfF3bqEWohT/ipM6EwI0fI+KOVto5QXHVEiM19gzPeDvephAsUxQDea8
+ Ksa0JeAKN6H1a4RGSfygQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eyexsJRGOyk=:9ONSJYhHm7ochn95UbwJnJ
+ hyFXodccDcCkFJEHXIjWDrYc437sLPT5gFiuWivTszjSr9KeKGKR4LjttjqyEVwgvo8oNuSSs
+ RPi564LLOGKuM3hrvIT20CX1qNelEKTVJB+SXZpeNpu5+24pXagywXozb7uJsj+ha31I62fm+
+ 9Jwf49Kg92oGJoJdUDdVKib/LEBkEQaI0aDtdBBnfa6YltwXX8TirROcPpKx6CqPL5devXNUo
+ F2cL5njfkS4mal15jMjopF/zlLOzC3vrrqxe1xNO5snlNUHmZsrnOn44mEaU/YxHQ/EyS/O+X
+ is9sJKYJ28TA6K3app1aLHquYVTLL0xCdeTlpQ6njfI/DRwXIt75kzyTriN5/zEJQQbB93dqB
+ zjKhVmipvOp8FmBB9dkm2O31044svVt22OOsvrPr7SWNTDbmfZI/4xmsKCSx0BJb5909D/5we
+ vMTUYQqAbC72nQSbQpMbtjMRJmu4IfHY56S8eKmQflcbympSGlEmU3pgc6R4MlfG187/96BOH
+ rWiGwK/ruGywr2l+TwINJu+2EtiHEYZLAtLVgo8thwPuaggzj/lXKG35xXKWgSDEHv3WAxUuC
+ MMBDKX1cuPPxVNFAEzQUXOwUJ+nbiCU5DzzwVoX6KYt8IXVabVerFL5BxDmfuuB5mONHv1Eym
+ NglkGOd9cnPRSUtz7byqmbvWWN6LbazcBgSRUfaaFy78B32wygeDwMEreCSVWLKIinDEEFrc0
+ xxzgJM/QZrZ7hB+5zxfckUXEJyLkBZdE6Uo7Sw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+We get a build failure on ARM unless the header is included explicitly:
 
-This fixes record+probe_libc_inet_pton.sh from always exiting with code
-0 and making the test pass even if the perf script output does not match
-the expected pattern.
+drivers/infiniband/hw/i40iw/i40iw_verbs.c: In function 'i40iw_get_vector_affinity':
+drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: implicit declaration of function 'irq_get_affinity_mask'; did you mean 'irq_create_affinity_masks'? [-Werror=implicit-function-declaration]
+  return irq_get_affinity_mask(msix_vec->irq);
+         ^~~~~~~~~~~~~~~~~~~~~
+         irq_create_affinity_masks
+drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: returning 'int' from a function with return type 'const struct cpumask *' makes pointer from integer without a cast [-Werror=int-conversion]
+  return irq_get_affinity_mask(msix_vec->irq);
 
-The issue can be observed if this test is run with the verbose flags as
-shown below:
-
-  60: probe libc's inet_pton & backtrace it with ping       :
-  ...
-  ping 19602 [006] 16988.413767: probe_libc:inet_pton: (7fff9a2c42e8)
-  1842e8 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-  130db4 getaddrinfo (/usr/lib64/libc-2.26.so)
-
-  FAIL: expected backtrace entry 3 ".*\(.*/bin/ping.*\)$" got ""
-  test child finished with 0
-  ...
-  probe libc's inet_pton & backtrace it with ping: Ok
-
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
-Link: http://lkml.kernel.org/r/20180312124450.30371-1-sandipan@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 7e952b19eb63 ("i40iw: Implement get_vector_affinity API")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/i40iw/i40iw_verbs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 52c3ee701a89..1ecc1f0ff84a 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -47,7 +47,10 @@ trace_libc_inet_pton_backtrace() {
- 		[ -z "${expected[$idx]}" ] && break
- 	done
- 
--	rm -f $file
-+	# If any statements are executed from this point onwards,
-+	# the exit code of the last among these will be reflected
-+	# in err below. If the exit code is 0, the test will pass
-+	# even if the perf script output does not match.
- }
- 
- # Check for IPv6 interface existence
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_verbs.c b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+index a51798578f27..f3af952402e9 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+@@ -38,6 +38,7 @@
+ #include <linux/highmem.h>
+ #include <linux/time.h>
+ #include <linux/hugetlb.h>
++#include <linux/irq.h>
+ #include <asm/byteorder.h>
+ #include <net/ip.h>
+ #include <rdma/ib_verbs.h>
 -- 
-2.14.3
+2.9.0
