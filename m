@@ -1,135 +1,342 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELuHYiXNALW/FO0hH1FLGW47HaZ7s8mZ6FGFW8EeXu57YUXoLqfPMPA/bJcbcHMFFilxM7Va
-ARC-Seal: i=1; a=rsa-sha256; t=1520989759; cv=none;
+X-Google-Smtp-Source: AG47ELvxnR6RI8swUpmO+9m5eAbw5aOh1ORyNyo3VsETBwq9EwzgvQc9Xow0JE0aljZm7tbvpS/r
+ARC-Seal: i=1; a=rsa-sha256; t=1520941381; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ggpuq6xkYbVFMH0VOVI7c8Wr2nuR9h9ew646YbPZN3soB1ZxaZi8cAzodIUtIsYXAT
-         y51OkjSd5XtlRr+leHUyPk+IaL5l+/M423MENB9DOR6u448wkgXrD4Ct/+DfxJsdI6F8
-         TGyRmll0pBgc03lVc4Av0LW4o15lRkY1ONs3bgVULB8BbIdIhM2PeSZN51HCvEYtK6F9
-         Rrfz3fN6uVbu7WobDdCCAoLpy4qufedF1S185th4BaXq0g0CoI2+8FjDSxvQegrFEL3e
-         3KYf9QVbBJWoPOhSb5EdqMRo9M3/xqgSFtM1N0zOiuoR9N/saZQIEByT9gHQD2dDbq2J
-         sQMA==
+        b=N+odHMPHWYoVGrqbIeOMuTFofoJ5tk1zcTlVv+xpdNUOnoMMyh/4lHHzUhG7fp95qY
+         d3znbfkgS0RnfBXCj/AHDI6/tK7r68oJsIrfmwWRYEmYRZaQPhBOIl0wiIKt2su7G+Jn
+         8SW995vXINBYuNlLSxItG9p0Jn04t8Teuk6WjGbF9eAUYyDkgqxOLPlXXhfV0t+98y/i
+         hQdoIyCxVoMkqY3XfrfMSsgJCFINIsKRTGYoY7uu6JgLjvCj8X1x47UCEimDQlWLHbtJ
+         tNbK3EphFC36iO5mbQYMY8ZiBiAkofrpMqiFex8iwbqVa+rkk1zAzFPA93sinmiH4hNz
+         XMcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:dkim-signature
-         :arc-authentication-results;
-        bh=FktR0faMikVyiZfKd7QMvwk3/4fo7UWlbhwF4KBBwGc=;
-        b=m4+rCQfzXog14pR92t29GLxhQW9IUmFCIXtbOX4qJU9wM2Fizlo3Z308EgYRnvGo58
-         j6k/WFUnX07ovfs3pIH8xjRbqYEiPKfaXYlmv0+Llo/xb5n8JHq7E/bnAyrpL/b7IeNp
-         yQSApZhki/0Nt6L33sn7S0JVbgKtltAVq3yWadzftx35NjZ9SDzc6mt3THLJH3N3TLMy
-         wWHqklU8NedwxZ4ATw2egodGniR+iXyFBUcqeaxiNphtsosK9pQF95NXExfP+ps9jP+Y
-         KOpLouUNm9gIHTV/hevqdALUPE6do6Wgb58iDXNI4wzrZaa12DTAjPd17WlS2XIAE3cm
-         ZrsA==
+        h=list-id:precedence:sender:content-transfer-encoding:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=ijmnr8lUP1pd1OWHuQ1fLDfd+jY50YzRmsOAWkq1fhk=;
+        b=C4o/ISgM93bpP7IhmA5LkKXkFSFoJXVX0YCZqyA3VlNfrF6Pt4oBljT+HyqzeDBqq/
+         ZY9mJzft/AJPOkLUcMzCghFAOmWYYGGatkghj4TlHG858Op5m54iKnoGl6oWXQ4AguKM
+         eIXR2QCYSa1sszXqJsGU+gMpp72McsNAEAWIOvQ9C5dS+ePh+cogiQ96/OwHdGsfqcDM
+         yc48KFtRLN7kotPAzWKMDZXewRfr4YBmVARAvOmLOYCAuRLdqsIdNwS86Ni8mqx/+RtK
+         l5UGJ1HOumvjTlV0zUlyXp9uW+5KRCDZSVUX0onU/Ib/7ZVjcl9mXGrFJNxr+dmTeScN
+         p8iw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@oracle.com header.s=corp-2017-10-26 header.b=VdJQH7vW;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=YllNYYuT;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@oracle.com header.s=corp-2017-10-26 header.b=VdJQH7vW;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=YllNYYuT;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeCNBJT (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 13 Mar 2018 21:09:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35544 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932590AbeCNBJS (ORCPT
+        id S932965AbeCMLmT (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 13 Mar 2018 07:42:19 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:32886 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932961AbeCMLmP (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:09:18 -0400
-Subject: Re: [PATCH 1/2] selftests/memfd/memfd_test.c: fix implicit
- declaration
-To: Anders Roxell <anders.roxell@linaro.org>, shuah@kernel.org
+        Tue, 13 Mar 2018 07:42:15 -0400
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org
 Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dh.herrmann@gmail.com
-References: <20180313114205.27714-1-anders.roxell@linaro.org>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <c3341eb3-623a-b5dd-e0d1-e7b9b6650932@oracle.com>
-Date: Tue, 13 Mar 2018 18:09:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
+        dh.herrmann@gmail.com, Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH 2/2] selftests/memfd/fuse_test: fix implicit declaration
+Date: Tue, 13 Mar 2018 12:42:05 +0100
+Message-Id: <20180313114205.27714-2-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180313114205.27714-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+References: <20180313114205.27714-1-anders.roxell@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803140009
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594822578193743011?=
-X-GMAIL-MSGID: =?utf-8?q?1594873358224001600?=
+X-GMAIL-THRID: =?utf-8?q?1594822630599482355?=
+X-GMAIL-MSGID: =?utf-8?q?1594822630599482355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/13/2018 04:42 AM, Anders Roxell wrote:
-> gcc warns about implicit declaration.
-> 
-> gcc -D_FILE_OFFSET_BITS=64 -I../../../../include/uapi/
->     -I../../../../include/ -I../../../../usr/include/
->     memfd_test.c common.o  -o memfd_test
-> memfd_test.c: In function ‘mfd_assert_get_seals’:
-> memfd_test.c:74:6: warning: implicit declaration of function ‘fcntl’
->     [-Wimplicit-function-declaration]
->   r = fcntl(fd, F_GET_SEALS);
->       ^~~~~
-> memfd_test.c: In function ‘mfd_assert_open’:
-> memfd_test.c:197:6: warning: implicit declaration of function ‘open’
->     [-Wimplicit-function-declaration]
->   r = open(buf, flags, mode);
->       ^~~~
-> memfd_test.c: In function ‘mfd_assert_write’:
-> memfd_test.c:328:6: warning: implicit declaration of function ‘fallocate’
->     [-Wimplicit-function-declaration]
->   r = fallocate(fd,
->       ^~~~~~~~~
-> 
-> In the current code, we include the headers that the functions want
-> according to the man pages, and we add some defines that will be used if
-> they isn't found in glibc.  The defines was added into the kernel source
-> in kernel >= 3.16 and glibc requires kernel header files >= 3.2.
-> 
-> Fixes: 4f5ce5e8d7e2 ("selftests: add memfd_create() + sealing tests")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  tools/testing/selftests/memfd/memfd_test.c | 25 ++++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-> index 10baa1652fc2..0dbeb29c094c 100644
-> --- a/tools/testing/selftests/memfd/memfd_test.c
-> +++ b/tools/testing/selftests/memfd/memfd_test.c
-> @@ -6,7 +6,6 @@
->  #include <inttypes.h>
->  #include <limits.h>
->  #include <linux/falloc.h>
-> -#include <linux/fcntl.h>
->  #include <linux/memfd.h>
->  #include <sched.h>
->  #include <stdio.h>
-> @@ -14,13 +13,37 @@
->  #include <signal.h>
->  #include <string.h>
->  #include <sys/mman.h>
-> +#include <sys/types.h>
->  #include <sys/stat.h>
->  #include <sys/syscall.h>
->  #include <sys/wait.h>
-> +#include <fcntl.h>
->  #include <unistd.h>
+gcc warns about implicit declaration.
 
-I suspect there is some guiding philosophy for selftests that I am
-unfamiliar with.  However, it seems that tests should use as much
-of the header files in the current kernel source tree as possible.
-This change removes the include of a header in the current source
-tree <linux/fcntl.h>.  It replaces that with the header <fcntl.h>
-from the host system (and some other changes).
+gcc -D_FILE_OFFSET_BITS=64 -I../../../../include/uapi/
+    -I../../../../include/ -I../../../../usr/include/
+    fuse_test.c common.o  -o fuse_test
+fuse_test.c: In function ‘mfd_assert_get_seals’:
+fuse_test.c:67:6: warning: implicit declaration of function ‘fcntl’
+    [-Wimplicit-function-declaration]
+  r = fcntl(fd, F_GET_SEALS);
+      ^~~~~
+fuse_test.c: In function ‘main’:
+fuse_test.c:261:7: warning: implicit declaration of function ‘open’
+    [-Wimplicit-function-declaration]
+  fd = open(argv[1], O_RDONLY | O_CLOEXEC);
+       ^~~~
+make: Leaving directory 'tools/testing/selftests/memfd'
 
-To me, this seems like step in the wrong direction.  But, I could
-be totally wrong and perhaps self tests should primarily target the
-host system header files.
+In the current code, we include the headers that the functions want
+according to the man pages, and we move common code for memfd to
+common.c. Moved F_ADD_SEALS and friends to memfd/common.h since both
+fuse_test and memfd_test uses them.
+
+Fixes: 87b2d44026e0 ("selftests: add memfd/sealing page-pinning tests")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/memfd/common.c     | 41 ++++++++++++++++++++-
+ tools/testing/selftests/memfd/common.h     | 26 +++++++++++++
+ tools/testing/selftests/memfd/fuse_test.c  | 46 ++---------------------
+ tools/testing/selftests/memfd/memfd_test.c | 59 ------------------------------
+ 4 files changed, 70 insertions(+), 102 deletions(-)
+
+diff --git a/tools/testing/selftests/memfd/common.c b/tools/testing/selftests/memfd/common.c
+index 8eb3d75f6e60..d1faee61782b 100644
+--- a/tools/testing/selftests/memfd/common.c
++++ b/tools/testing/selftests/memfd/common.c
+@@ -4,8 +4,10 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <linux/fcntl.h>
+ #include <linux/memfd.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
+ #include <unistd.h>
+ #include <sys/syscall.h>
+ 
+@@ -44,3 +46,40 @@ int sys_memfd_create(const char *name, unsigned int flags)
+ 
+ 	return syscall(__NR_memfd_create, name, flags);
+ }
++
++unsigned int mfd_assert_get_seals(int fd)
++{
++	int r;
++
++	r = fcntl(fd, F_GET_SEALS);
++	if (r < 0) {
++		printf("GET_SEALS(%d) failed: %m\n", fd);
++		abort();
++	}
++
++	return (unsigned int)r;
++}
++
++void mfd_assert_add_seals(int fd, unsigned int seals)
++{
++	int r;
++	unsigned int s;
++
++	s = mfd_assert_get_seals(fd);
++	r = fcntl(fd, F_ADD_SEALS, seals);
++	if (r < 0) {
++		printf("ADD_SEALS(%d, %u -> %u) failed: %m\n", fd, s, seals);
++		abort();
++	}
++}
++
++void mfd_assert_has_seals(int fd, unsigned int seals)
++{
++	unsigned int s;
++
++	s = mfd_assert_get_seals(fd);
++	if (s != seals) {
++		printf("%u != %u = GET_SEALS(%d)\n", seals, s, fd);
++		abort();
++	}
++}
+diff --git a/tools/testing/selftests/memfd/common.h b/tools/testing/selftests/memfd/common.h
+index 522d2c630bd8..333baf79ffc4 100644
+--- a/tools/testing/selftests/memfd/common.h
++++ b/tools/testing/selftests/memfd/common.h
+@@ -1,9 +1,35 @@
+ #ifndef COMMON_H_
+ #define COMMON_H_
+ 
++#ifndef F_LINUX_SPECIFIC_BASE
++#    define F_LINUX_SPECIFIC_BASE      1024
++#endif
++#ifndef F_ADD_SEALS
++#    define F_ADD_SEALS        (F_LINUX_SPECIFIC_BASE + 9)
++#endif
++#ifndef F_GET_SEALS
++#    define F_GET_SEALS        (F_LINUX_SPECIFIC_BASE + 10)
++#endif
++#ifndef F_SEAL_SEAL
++#    define F_SEAL_SEAL        0x0001 /* prevent further seals from being set */
++#endif
++#ifndef F_SEAL_SHRINK
++#    define F_SEAL_SHRINK      0x0002 /* prevent file from shrinking */
++#endif
++#ifndef F_SEAL_GROW
++#    define F_SEAL_GROW        0x0004 /* prevent file from growing */
++#endif
++#ifndef F_SEAL_WRITE
++#    define F_SEAL_WRITE       0x0008 /* prevent writes */
++#endif
++
+ extern int hugetlbfs_test;
+ 
+ unsigned long default_huge_page_size(void);
+ int sys_memfd_create(const char *name, unsigned int flags);
+ 
++void mfd_assert_add_seals(int fd, unsigned int seals);
++void mfd_assert_has_seals(int fd, unsigned int seals);
++unsigned int mfd_assert_get_seals(int fd);
++
+ #endif
+diff --git a/tools/testing/selftests/memfd/fuse_test.c b/tools/testing/selftests/memfd/fuse_test.c
+index b018e835737d..70df77ac1386 100644
+--- a/tools/testing/selftests/memfd/fuse_test.c
++++ b/tools/testing/selftests/memfd/fuse_test.c
+@@ -20,7 +20,6 @@
+ #include <inttypes.h>
+ #include <limits.h>
+ #include <linux/falloc.h>
+-#include <linux/fcntl.h>
+ #include <linux/memfd.h>
+ #include <sched.h>
+ #include <stdio.h>
+@@ -28,9 +27,11 @@
+ #include <signal.h>
+ #include <string.h>
+ #include <sys/mman.h>
++#include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/syscall.h>
+ #include <sys/wait.h>
++#include <fcntl.h>
+ #include <unistd.h>
+ 
+ #include "common.h"
+@@ -60,49 +61,10 @@ static int mfd_assert_new(const char *name, loff_t sz, unsigned int flags)
+ 	return fd;
+ }
+ 
+-static __u64 mfd_assert_get_seals(int fd)
++static int mfd_busy_add_seals(int fd, unsigned int seals)
+ {
+ 	long r;
+-
+-	r = fcntl(fd, F_GET_SEALS);
+-	if (r < 0) {
+-		printf("GET_SEALS(%d) failed: %m\n", fd);
+-		abort();
+-	}
+-
+-	return r;
+-}
+-
+-static void mfd_assert_has_seals(int fd, __u64 seals)
+-{
+-	__u64 s;
+-
+-	s = mfd_assert_get_seals(fd);
+-	if (s != seals) {
+-		printf("%llu != %llu = GET_SEALS(%d)\n",
+-		       (unsigned long long)seals, (unsigned long long)s, fd);
+-		abort();
+-	}
+-}
+-
+-static void mfd_assert_add_seals(int fd, __u64 seals)
+-{
+-	long r;
+-	__u64 s;
+-
+-	s = mfd_assert_get_seals(fd);
+-	r = fcntl(fd, F_ADD_SEALS, seals);
+-	if (r < 0) {
+-		printf("ADD_SEALS(%d, %llu -> %llu) failed: %m\n",
+-		       fd, (unsigned long long)s, (unsigned long long)seals);
+-		abort();
+-	}
+-}
+-
+-static int mfd_busy_add_seals(int fd, __u64 seals)
+-{
+-	long r;
+-	__u64 s;
++	unsigned int s;
+ 
+ 	r = fcntl(fd, F_GET_SEALS);
+ 	if (r < 0)
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 0dbeb29c094c..af722a639a64 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -22,28 +22,6 @@
+ 
+ #include "common.h"
+ 
+-#ifndef F_LINUX_SPECIFIC_BASE
+-#    define F_LINUX_SPECIFIC_BASE      1024
+-#endif
+-#ifndef F_ADD_SEALS
+-#    define F_ADD_SEALS        (F_LINUX_SPECIFIC_BASE + 9)
+-#endif
+-#ifndef F_GET_SEALS
+-#    define F_GET_SEALS        (F_LINUX_SPECIFIC_BASE + 10)
+-#endif
+-#ifndef F_SEAL_SEAL
+-#    define F_SEAL_SEAL        0x0001 /* prevent further seals from being set */
+-#endif
+-#ifndef F_SEAL_SHRINK
+-#    define F_SEAL_SHRINK      0x0002 /* prevent file from shrinking */
+-#endif
+-#ifndef F_SEAL_GROW
+-#    define F_SEAL_GROW        0x0004 /* prevent file from growing */
+-#endif
+-#ifndef F_SEAL_WRITE
+-#    define F_SEAL_WRITE       0x0008 /* prevent writes */
+-#endif
+-
+ #define MEMFD_STR	"memfd:"
+ #define MEMFD_HUGE_STR	"memfd-hugetlb:"
+ #define SHARED_FT_STR	"(shared file-table)"
+@@ -90,43 +68,6 @@ static void mfd_fail_new(const char *name, unsigned int flags)
+ 	}
+ }
+ 
+-static unsigned int mfd_assert_get_seals(int fd)
+-{
+-	int r;
+-
+-	r = fcntl(fd, F_GET_SEALS);
+-	if (r < 0) {
+-		printf("GET_SEALS(%d) failed: %m\n", fd);
+-		abort();
+-	}
+-
+-	return (unsigned int)r;
+-}
+-
+-static void mfd_assert_has_seals(int fd, unsigned int seals)
+-{
+-	unsigned int s;
+-
+-	s = mfd_assert_get_seals(fd);
+-	if (s != seals) {
+-		printf("%u != %u = GET_SEALS(%d)\n", seals, s, fd);
+-		abort();
+-	}
+-}
+-
+-static void mfd_assert_add_seals(int fd, unsigned int seals)
+-{
+-	int r;
+-	unsigned int s;
+-
+-	s = mfd_assert_get_seals(fd);
+-	r = fcntl(fd, F_ADD_SEALS, seals);
+-	if (r < 0) {
+-		printf("ADD_SEALS(%d, %u -> %u) failed: %m\n", fd, s, seals);
+-		abort();
+-	}
+-}
+-
+ static void mfd_fail_add_seals(int fd, unsigned int seals)
+ {
+ 	int r;
 -- 
-Mike Kravetz
+2.11.0
+
