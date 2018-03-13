@@ -1,179 +1,86 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1011380-1520878890-2-6140479313057095726
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enrosv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520878889; b=taBJliY21XxXa+MRBDYWcggUABZYVzH6ekf9AV8sFvxGM7l
-    Zbc4LMYAtq+g+Lcg1l++O59V89Br7Nnd6YCZD8hm5V1tf7XFb97ogV3SJllVnzq7
-    8eQfY1juwndjhP8ol/ilcqAnXszEhz5VRTZb3VKzO+d+NP+UPSkjnnvuuU9SpDN+
-    KfG9hanV6nweWlODVvZa8G2AHj8aXqc0vbaa4gqalthftE4aBVv4/uzxmSIELF1t
-    5gmyAWlFOAhmzWRK/kQUbD59kMYp1KKEd8BiKrYJX/D1xXikkxzfXCq46+V/D5vn
-    TcshVf9w7RCnwYRi5yeqS3hpFi1ZnSwmYXtUJRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520878889; bh=3
-    Nnuoa1pBTJ09LxZHJF/yRISDyBl/v7uWHEky9/LI7I=; b=MIGSu4dVWfoJQNEFA
-    ljGaljkJ3vwHclxeMfHDUwRqGHcW5BN7XIqynH2AcnygBgksUfSoveulVmHmN7sv
-    MI/GftHgr3McBsEOlFE/z1LPuQYjbhSuDlfk1g836RyDGxBloQRjmVSIDKpQFh8K
-    E/eUSUMb/xKVc7H7IgXEfDSWWUWJKqmXfy1OJvryQXcGTFeokfM+8bW1lqOzSeUF
-    Ka4Kuu6IDupzNAIoP8HpVrr2D3nmcZXdf+p0WAwqvrfarAkIkqQsLRRbi/yGlbyB
-    xaNc9sUVl+nU+t23uX9ruuiZxws150xriOoi2QzHhAaz5f7hEzh7pVyUljeoV6sU
-    BzeAw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VO7VMCht x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=W6iwe1n3;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VO7VMCht x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=W6iwe1n3;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELsPVBZ6tA1QrIaQibEyQEFlh/2ENftqKrD2/SQgJVCbIcjiaSTdEA40oijBJXPc9uRBnIr2iw==
-Date: Mon, 12 Mar 2018 15:21:16 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Graff Yang <graff.yang@gmail.com>
-Subject: [PATCH 1/3] staging:iio:ad2s1210: Add channel for fclkin and fexcit
-Message-ID: <335cf727d0583ccbe95f8bd97c282bf1fa210cae.1520878492.git.rodrigosiqueiramelo@gmail.com>
-References: <cover.1520878492.git.rodrigosiqueiramelo@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <cover.1520878492.git.rodrigosiqueiramelo@gmail.com>
-User-Agent: NeoMutt/20171215
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
- daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <jelsasser@appneta.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520919268; cv=none;
+        d=google.com; s=arc-20160816;
+        b=l4/BmJolisrNBHkLymfwNUbWCKn6H1nLyFDPa1XTDU7hQr0ZHoukVoonk7A7cnJ3Ua
+         NQZrSPxndpzYhKadQqwt1qLLBhonvQx0hJOXd3foqjJc2JBgPlK9/ys5xiumuPsTcBkL
+         jBunKEu0+szk8b3EjQDGZfJ/dvSLn9/1A+9Yf32Wui6AY6XSs8NDb0c/jebriHc35z9L
+         N0kM4+aPM9cMgLMHeCLkffQjoN7F05MMBWAFKfCcOVTX6XQkRmnGMEfv60xQQuBptjV+
+         C4CmBNO5tlD1FqaYCGnRNkCtsdnTuCqVa+L1ZOoPRQ/LV5py7/MN8YMFkxEbtA5ni61Q
+         49Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=Z0JucVFm4WV/JHg4+hrfKdoKq8m9tzvF6B+Bu2p/5C0=;
+        b=p0oVbwVBm/b3/+dXCl6mbTv+Voq/PLdO5IKlivwgRiKTc/8PX35/VPE47liFdTdMmT
+         z7OsETk8tL/K/2moc8V+8JHnaCZ6RsrKMDL/uzcD8DYU9d60aWHzyDxsi+gW7r+auScf
+         YPhreMqYG8gK6Bx4H50inUDwe0tAPjzZFZcRxlQCxaBP/59SrosamcoMAMaFBH0/R8Ug
+         YlRJnaNiHHbXTAQdO/VzCpeX7WPvW/pr78biBeKIJt8ljJ1vzgglLRFh3PtWUhO8SMBu
+         3NlCtyDSQYaCE7yYoerK3wOeWmjBWyWmQmJOLslz0vsacuj258HNoq9L1H3DmWUh6opb
+         dasw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@appneta.com header.s=google header.b=OUIwOXqX;
+       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=appneta.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@appneta.com header.s=google header.b=OUIwOXqX;
+       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=appneta.com
+X-Google-Smtp-Source: AG47ELtdbm21lECm1G4fV+mALb+zAxJezZeysjE8qYnA+P9yOR9NaYOuk0gP7P9SZ06p0JXihOQPgQ==
+From: Josh Elsasser <jelsasser@appneta.com>
+To: davem@davemloft.net
+Cc: Josh Elsasser <jelsasser@appneta.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	=?UTF-8?q?Michal=20Kube=C4=8Dek?= <mkubecek@suse.cz>,
+	Vlad Yasevich <vyasevich@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] net: avoid a kernel panic during sk_busy_loop
+Date: Mon, 12 Mar 2018 22:31:59 -0700
+Message-Id: <20180313053248.13654-1-jelsasser@appneta.com>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594799443655950888?=
+X-GMAIL-MSGID: =?utf-8?q?1594799443655950888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The ad2s1210 does not contain any channel for the fclkin and fexcit. As
-a result, it uses IIO_DEVICE_ATTR to expose this information. This patch
-adds one channel for fclkin and another for fexcit. It also adds an enum
-to easily address the correct channel.
+V2: just check napi->dev->netdev_ops instead of getting clever with the
+netdev registration state.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/staging/iio/resolver/ad2s1210.c | 43 ++++++++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+Original cover letter:
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index ac13b99bd9cb..28c3fd439663 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -67,6 +67,11 @@ enum ad2s1210_mode {
- 	MOD_RESERVED,
- };
- 
-+enum ad2s1210_frequency_channel {
-+	FCLKIN = 0,
-+	FEXCIT,
-+};
-+
- static const unsigned int ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
- 
- struct ad2s1210_state {
-@@ -88,6 +93,30 @@ static const int ad2s1210_mode_vals[4][2] = {
- 	[MOD_CONFIG] = { 1, 0 },
- };
- 
-+static const struct iio_chan_spec ad2s1210_channels[] = {
-+	{
-+		.type = IIO_ANGL,
-+		.indexed = 1,
-+		.channel = 0,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	}, {
-+		.type = IIO_ANGL_VEL,
-+		.indexed = 1,
-+		.channel = 0,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	}, {
-+		.type = IIO_CHAN_INFO_FREQUENCY,
-+		.indexed = 1,
-+		.channel = FCLKIN,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	}, {
-+		.type = IIO_CHAN_INFO_FREQUENCY,
-+		.indexed = 1,
-+		.channel = FEXCIT,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	},
-+};
-+
- static inline void ad2s1210_set_mode(enum ad2s1210_mode mode,
- 				     struct ad2s1210_state *st)
- {
-@@ -552,20 +581,6 @@ static IIO_DEVICE_ATTR(lot_low_thrd, 0644,
- 		       ad2s1210_show_reg, ad2s1210_store_reg,
- 		       AD2S1210_REG_LOT_LOW_THRD);
- 
--static const struct iio_chan_spec ad2s1210_channels[] = {
--	{
--		.type = IIO_ANGL,
--		.indexed = 1,
--		.channel = 0,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--	}, {
--		.type = IIO_ANGL_VEL,
--		.indexed = 1,
--		.channel = 0,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--	}
--};
--
- static struct attribute *ad2s1210_attributes[] = {
- 	&iio_dev_attr_fclkin.dev_attr.attr,
- 	&iio_dev_attr_fexcit.dev_attr.attr,
--- 
-2.16.2
+Hi Dave,
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+I stumbled across a reproducible kernel panic while playing around with
+busy_poll on a Linux 4.9.86 kernel. There's an unfortunate interaction
+between init_dummy_netdev, which doesn't bother to fill in netdev_ops, and
+sk_busy_loop, which assumed netdev_ops is a valid pointer.
+
+To reproduce on the device under test (DUT), I did:
+
+  $ ip addr show dev wlan0
+  8: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq [...]
+      inet 172.16.122.6/23 brd 172.16.123.255 scope global wlan0
+  $ sysctl -w net.core.busy_read=50
+  $ nc -l 172.16.122.6 5001
+
+Then transmitted some data to this socket from a second host:
+
+  $ echo "foo" | nc 172.16.122.6 5001
+
+The DUT immediately hits a kernel panic.
+
+I've attached a patch that applies cleanly to the 4.9.87 stable release.
+This fix isn't necessary for net/net-next (ndo_busy_poll was removed in
+linux-4.11), but a further backport of this commit is likely required for
+any stable releases older than linux-4.5.
+
+I hope this is the right way to raise something like this. I couldn't find
+a clear answer from the -stable and netdev on how to handle bugs in features
+that no longer exist in mainline.
+
+Thanks,
+    Josh
