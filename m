@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv+Tn6FWF6UvInfSbALRcpdt4WJT/5X7dvPRdZpl8mfKC4hRbmnRSosKUFHrEEQP3zFwoIf
-ARC-Seal: i=1; a=rsa-sha256; t=1520954898; cv=none;
+X-Google-Smtp-Source: AG47ELt6fQv1+jsmMcqkhElvk3jsRQVvC9wYQLN/GgKD++DyRURcXUoGa2ed49+ZT8gX7iYiJ+NL
+ARC-Seal: i=1; a=rsa-sha256; t=1520954892; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lb3rAhYjOunqVpI6LhW185QDh1opvz/83Emp2dMYqCCIkUJtXNocVgpqPcev4bDT3W
-         cPLVT9/m7Oi3B4Q/dMFrwvCsfsnRVNwrd5eoJkAOS9clLRKkJIySe5fwSxfGT8xe9+Nz
-         2u4CdwbFiU8BdkG6BhcLAkoUz2oTeP12FV3euDA5Rwwjdw/YFK61M4cogjTJJBL3A7qJ
-         0CKuxG6mMyH5crx1CLIj4+bMrTUE5UcNMk9hhMkq+tnuCyyeleMiZrhkKemf4T5OGD6q
-         JSA0AexQXH8cndDkHZVCIwUrUapnnD6Cq9skJqTdQ4VXHGTHUYlmwyO4+LIT+h5ybIJK
-         YNxQ==
+        b=IZACf8Uu8lqdaVbyuA49IUstcMwTP1+5mI6lyvcKc3g6QVtabdo7TOEjF1aL9e8sCD
+         sS+e+Y1gHq8FqDniYmA7lW0tTtPycx+L1qPf3w2M74UkQeWxwVu/UqbU7MTPZ+lNneWA
+         dM/eLRy8++x0H7H9GK6sdCYpGjzjM/1lgn1TamBShk4O9YTF9ZQC0Dn5OroUnXhwvB/t
+         8K2pjXuEBfaWBPxgwO0zyKjg0mU2gPFwqze3uig20AMragh1mI89zf3UFnRAkBFQ+ooN
+         42XBVoqchIk0b1mTx/+0NRiPozaTIkiTU/NKQKRBLQbbUfXAxK8JUs9RZ9FHkFE9K2zn
+         hjPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TN9mL5w4OswSh8MQ5JpNFRl6tTQ6Le56j/EHn3jiO20=;
-        b=F3ed04a3j5GONJzbZ0Lpb36qGZx8OSZHcK0tHwPqMSnTaooYxChCjJohXQWXFFoErb
-         7GPdfRLZXINdpQfS4CVeVwQ4KWLWSR/FoQ1qRznrjy/Tf3mB35mUYav8enEDp9EgDopp
-         5mk/WrZBh46DTQw1jzwPI3cPxKHD2tk+Aw2jVhJE/bmmjncnaPIATeqY4kwq7qG1kz12
-         gbfS/pJPqdf3/rTAijYP4U3xJnj0/KmNSubz9Ao6jca9cqAU5QYUaAMy8jQA7xu6SSJw
-         BmS5VmdCUotGslst+iTCw3W0EUDhRvCzNi7Bs4c7j2aw5bx3LTd/KQuXYNA1NLup2zeR
-         GtWw==
+        bh=zRdBfLbG5Z3zfvNGxnAd0cxzMq8HKKCcxRaEnyXBZ2I=;
+        b=AEZRag4ElI0/Je04e85BU1oCgw7p80f/fxKV8gXiWaQkhQ+9SixpSO69dYD9DswuKM
+         8ryT+zf0M2hNsHjadh/LN9hYGqfYwi0mE2ESr2e5Tnf411AWnIowzCzf4yZ8+c5b1Aax
+         Ohb/GJYcKJvrwcFjQZC/XRRO1RqxvYT7t53wy1j4PqzwqEgFUyO9JyaATUGw21ddz6Lc
+         zqsXkD97yzBYW+Eu+DNwPo4TuG17cb1v36GrPMX+2FSuhrKIVFSM2V/sHwYAKplL9jpr
+         C3sdOWOiUwjuoW2mmeQ7hwWuCbMPC0wSkEzZhHr3amUc3UZaXGKXoCWDKPoFYVgi8Oe2
+         v+bw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Subject: [PATCH 4.15 013/146] drm/i915: Disable DC states around GMBUS on GLK
-Date: Tue, 13 Mar 2018 16:23:00 +0100
-Message-Id: <20180313152321.596554483@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jaswinder Singh Rajput <jaswinder@perfectintelligent.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Mika Kahola <mika.kahola@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.15 009/146] drm/i915: Check for fused or unused pipes
+Date: Tue, 13 Mar 2018 16:22:56 +0100
+Message-Id: <20180313152321.327491132@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836803674032941?=
-X-GMAIL-MSGID: =?utf-8?q?1594836803674032941?=
+X-GMAIL-THRID: =?utf-8?q?1594836797675864034?=
+X-GMAIL-MSGID: =?utf-8?q?1594836797675864034?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +52,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Mika Kahola <mika.kahola@intel.com>
 
-commit 156961ae7bdf6feb72778e8da83d321b273343fd upstream.
+commit 9965db26ac0548648309f506dc155a92daa2158f upstream.
 
-Prevent the DMC from destroying GMBUS transfers on GLK. GMBUS
-lives in PG1 so DC off is all we need.
+We may have fused or unused pipes in our system. Let's check that the pipe
+in question is within limits of accessible pipes. In case, that we are not
+able to access the pipe, we return early with a warning.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171208213739.16388-1-ville.syrjala@linux.intel.com
-Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+v2: Rephrasing of the commit message (Jani)
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103206
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jaswinder Singh Rajput <jaswinder@perfectintelligent.com>
+Suggested-by: Jani Nikula <jani.nikula@intel.com>
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Mika Kahola <mika.kahola@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1513584243-12607-1-git-send-email-mika.kahola@intel.com
+(cherry picked from commit 0b7029b7e43fda1304c181a3ade0b429b9edcd9d)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: <stable@vger.kernel.org> # v4.10+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_runtime_pm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/i915/intel_audio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_runtime_pm.c
-+++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
-@@ -1844,6 +1844,7 @@ void intel_display_power_put(struct drm_
- 	CNL_DISPLAY_POWERWELL_2_POWER_DOMAINS |		\
- 	BIT_ULL(POWER_DOMAIN_MODESET) |			\
- 	BIT_ULL(POWER_DOMAIN_AUX_A) |			\
-+	BIT_ULL(POWER_DOMAIN_GMBUS) |			\
- 	BIT_ULL(POWER_DOMAIN_INIT))
+--- a/drivers/gpu/drm/i915/intel_audio.c
++++ b/drivers/gpu/drm/i915/intel_audio.c
+@@ -754,7 +754,7 @@ static struct intel_encoder *get_saved_e
+ {
+ 	struct intel_encoder *encoder;
  
- static const struct i915_power_well_ops i9xx_always_on_power_well_ops = {
+-	if (WARN_ON(pipe >= INTEL_INFO(dev_priv)->num_pipes))
++	if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
+ 		return NULL;
+ 
+ 	/* MST */
