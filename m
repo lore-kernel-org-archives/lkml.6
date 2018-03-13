@@ -1,31 +1,31 @@
 Return-Path: <thgarnie@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520974830; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520974828; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ly7WplpcDFDvHDr2N6XQNJa3wUCRJoOqaJgEAbAn8zVJl93KWRDVkNk14+MMs5fEw1
-         a0ra4COS2FER3ZpOHw7WvdbezXCQ2mWNzu9RVWAVVBmSAwejO5Uc4hin68WIak+GYVnZ
-         YFERYDtkq4347IHHF4Q9v895GuuQL3mNY4NK3r//MIn70U5zkheXzBC606gd1302vXsF
-         JvvcMPh9ExkN4GZpLvz0uGCOtkLJc157SP56FjZ48KMj/XZ1RCMWvQKG30ecQeuljxbo
-         McOPEL3iGZi7frU/WAKeXJ/Ra6w9VkdjksUvHhMj5BuX93TQxohWD5hUfBP0IrzSnfZ2
-         d2sQ==
+        b=lIsoQtHqpGFW09Vvgb43FxKA3+UfJm4C9prPVI6hEoJ2U0R6L+tCrspQcm8f/CgkNj
+         5puvFWVzdzpj2whvsaSrdpgHZbnU/JEHl1vh3qxU27MEShygyCC2i2EgvCNToGMy3DvX
+         YUPcVatQ6elckT67gJZz9ii4g0bNX+K+HwUZoD7SkXtxaL0XfzeFM891FG/kz2wWaMHg
+         Hp6ndwXy+4sjokhH5UHAyUqo5i6i+ljmMz8lLKU9OTt44WCna+a9cK4DGYjVyNmm3DIo
+         f57q3L/Uz30+inINewqCuOl6gO0V5ddR2isEOsQlC4QCiSXFmzLXYMBykTD9tOwIvwJB
+         o+xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=SmClNFgKiYj+p361xXtnLrXc/y2Bwhs/Mv32z/h5JIU=;
-        b=myuqQKM4rBtIY/nApl0XcW8I1ReHHStTO4ShTp4wwUnV2nHw4GbnL/e531NWevPAKN
-         Nwc7THVszXJCaVcx4LdWfNM8DSy4h0a2Mq7oVj3KTM4Zr329P81TLX8kS61yuOHqZybm
-         MRuXNCsFuBBSZSyt7wO9bE0i4wOwAr7Lva6lQwkWPgkbdtZgMpCca2BLIt8FEu9vo9el
-         B33x6grJx1nm0sHEIlUhbO+/3v+NA1CmF1976Nd2GYR/X8tzrkDnHabiJTy2xOaR5pW1
-         NgfDM2KSLjIreeyeXjAuBcnkWRcdGMkMtjvMfmbfHUfM5eshPmfXwSHLKSaIszth/uFP
-         2Wlw==
+        bh=+5M2FaP3vfmPSEGTB3GVETrTQCHNNxealc15RUl+u6U=;
+        b=o1YNJxHQYIVB1CCYaS9NUClFj7mj83UKRPqZdQcgvnX4S42RdOso7lTKCFfwbvlkw0
+         B2W8blUQztFokgATyTAwAQrp5sAJpeB5hzRH5heV3xRBVkEEnaDOm6p8zHgrWTkTiC82
+         F1nQK/HofK5RUEfNcg2C0IckbAS3WAnFR3c14BJRROB//yqXsZSwBJjzi6VzO+i1LmU6
+         uKjW5BHn1IKQm6VmpqPygZx+a6Em0LH6wtXms1VN1wAw/uxqaRqJ3xxJTXB6BvHy4ysv
+         KLgMGxA68AAV8CheZuMH+xgU7tZ5Y1T7W0Fd6ODR3ebnaaNXB8EMdwzEIKRS6TVuf9Ey
+         cICg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=GWBkYxTV;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Z5TtevK5;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=GWBkYxTV;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Z5TtevK5;
        spf=pass (google.com: domain of thgarnie@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thgarnie@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELtB7K6ipZENXLCJ+co3tG/TkrYIVVm1rfge5wS0fKITIElvls4U2yX6yoGaQwg20CSnImhnwA==
+X-Google-Smtp-Source: AG47ELuRdmqXLGKKl1PC4PR7zPkPKPxpWZW8c5JHEqNEEob2ZgBQfHXwfDsf2VSvQbsLF6GTrYMnjg==
 From: Thomas Garnier <thgarnie@google.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -105,101 +105,66 @@ Cc: x86@kernel.org,
 	kvm@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 09/27] x86/acpi: Adapt assembly for PIE support
-Date: Tue, 13 Mar 2018 13:59:27 -0700
-Message-Id: <20180313205945.245105-10-thgarnie@google.com>
+Subject: [PATCH v2 08/27] x86/CPU: Adapt assembly for PIE support
+Date: Tue, 13 Mar 2018 13:59:26 -0700
+Message-Id: <20180313205945.245105-9-thgarnie@google.com>
 X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 In-Reply-To: <20180313205945.245105-1-thgarnie@google.com>
 References: <20180313205945.245105-1-thgarnie@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594857704242557608?=
-X-GMAIL-MSGID: =?utf-8?q?1594857704242557608?=
+X-GMAIL-THRID: =?utf-8?q?1594857702197693665?=
+X-GMAIL-MSGID: =?utf-8?q?1594857702197693665?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+kernel to be PIE compatible. Use the new _ASM_MOVABS macro instead of
+the 'mov $symbol, %dst' construct.
 
 Position Independent Executable (PIE) support will allow to extended the
 KASLR randomization range below the -2G memory limit.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/kernel/acpi/wakeup_64.S | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/processor.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-index 50b8ed0317a3..472659c0f811 100644
---- a/arch/x86/kernel/acpi/wakeup_64.S
-+++ b/arch/x86/kernel/acpi/wakeup_64.S
-@@ -14,7 +14,7 @@
- 	 * Hooray, we are in Long 64-bit mode (but still running in low memory)
- 	 */
- ENTRY(wakeup_long64)
--	movq	saved_magic, %rax
-+	movq	saved_magic(%rip), %rax
- 	movq	$0x123456789abcdef0, %rdx
- 	cmpq	%rdx, %rax
- 	jne	bogus_64_magic
-@@ -25,14 +25,14 @@ ENTRY(wakeup_long64)
- 	movw	%ax, %es
- 	movw	%ax, %fs
- 	movw	%ax, %gs
--	movq	saved_rsp, %rsp
-+	movq	saved_rsp(%rip), %rsp
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index b0ccd4847a58..1b9488b1018a 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -50,7 +50,7 @@ static inline void *current_text_addr(void)
+ {
+ 	void *pc;
  
--	movq	saved_rbx, %rbx
--	movq	saved_rdi, %rdi
--	movq	saved_rsi, %rsi
--	movq	saved_rbp, %rbp
-+	movq	saved_rbx(%rip), %rbx
-+	movq	saved_rdi(%rip), %rdi
-+	movq	saved_rsi(%rip), %rsi
-+	movq	saved_rbp(%rip), %rbp
+-	asm volatile("mov $1f, %0; 1:":"=r" (pc));
++	asm volatile(_ASM_MOVABS " $1f, %0; 1:":"=r" (pc));
  
--	movq	saved_rip, %rax
-+	movq	saved_rip(%rip), %rax
- 	jmp	*%rax
- ENDPROC(wakeup_long64)
+ 	return pc;
+ }
+@@ -710,6 +710,7 @@ static inline void sync_core(void)
+ 		: ASM_CALL_CONSTRAINT : : "memory");
+ #else
+ 	unsigned int tmp;
++	unsigned long tmp2;
  
-@@ -45,7 +45,7 @@ ENTRY(do_suspend_lowlevel)
- 	xorl	%eax, %eax
- 	call	save_processor_state
+ 	asm volatile (
+ 		UNWIND_HINT_SAVE
+@@ -720,11 +721,13 @@ static inline void sync_core(void)
+ 		"pushfq\n\t"
+ 		"mov %%cs, %0\n\t"
+ 		"pushq %q0\n\t"
+-		"pushq $1f\n\t"
++		"leaq 1f(%%rip), %1\n\t"
++		"pushq %1\n\t"
+ 		"iretq\n\t"
+ 		UNWIND_HINT_RESTORE
+ 		"1:"
+-		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
++		: "=&r" (tmp), "=&r" (tmp2), ASM_CALL_CONSTRAINT
++		: : "cc", "memory");
+ #endif
+ }
  
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -64,13 +64,14 @@ ENTRY(do_suspend_lowlevel)
- 	pushfq
- 	popq	pt_regs_flags(%rax)
- 
--	movq	$.Lresume_point, saved_rip(%rip)
-+	leaq	.Lresume_point(%rip), %rax
-+	movq	%rax, saved_rip(%rip)
- 
--	movq	%rsp, saved_rsp
--	movq	%rbp, saved_rbp
--	movq	%rbx, saved_rbx
--	movq	%rdi, saved_rdi
--	movq	%rsi, saved_rsi
-+	movq	%rsp, saved_rsp(%rip)
-+	movq	%rbp, saved_rbp(%rip)
-+	movq	%rbx, saved_rbx(%rip)
-+	movq	%rdi, saved_rdi(%rip)
-+	movq	%rsi, saved_rsi(%rip)
- 
- 	addq	$8, %rsp
- 	movl	$3, %edi
-@@ -82,7 +83,7 @@ ENTRY(do_suspend_lowlevel)
- 	.align 4
- .Lresume_point:
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	saved_context_cr4(%rax), %rbx
- 	movq	%rbx, %cr4
- 	movq	saved_context_cr3(%rax), %rbx
 -- 
 2.16.2.660.g709887971b-goog
