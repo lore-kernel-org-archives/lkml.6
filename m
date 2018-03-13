@@ -1,53 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932779AbeCMMlM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 08:41:12 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55263 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752432AbeCMMlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 08:41:11 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <acme@redhat.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <namhyung@kernel.org>,
-        <jolsa@redhat.com>, <alexander.shishkin@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <kan.liang@linux.intel.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>
-Subject: [PATCH v2 -perf/core 2/2] perf debug: Avoid set quiet once more
-Date: Tue, 13 Mar 2018 20:31:14 +0800
-Message-ID: <1520944274-37001-2-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1520944274-37001-1-git-send-email-xieyisheng1@huawei.com>
-References: <1520944274-37001-1-git-send-email-xieyisheng1@huawei.com>
+        id S1751655AbeCMMlj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 08:41:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57426 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750796AbeCMMlh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 08:41:37 -0400
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: virtio-gpu: Hang on shutdown after suspend/resume with virtio
+To: Gerd Hoffmann <kraxel@redhat.com>, kvm list <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Tue, 13 Mar 2018 13:41:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031312-0040-0000-0000-0000043EF9E3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031312-0041-0000-0000-000020E22C18
+Message-Id: <92144051-e8ac-de5d-3fac-87dfd0e8270b@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803130151
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When use --quiet to disable log, we will set quiet first, then check the
-quiet to decide whether need to call perf_quiet_option, so no need to set
-the quiet once more.
+Gerd,
 
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- - This is a new add-on patch
+another thing with virtio-gpu.
 
- tools/perf/util/debug.c | 1 -
- 1 file changed, 1 deletion(-)
+I can successfully do suspend/resume (echo disk > /sys/power/state) on my system. As soon as I have a
+virtio-gpu the system hangs on reboot/shutdown:
 
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index f3a71db..3d64596 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -232,7 +232,6 @@ int perf_quiet_option(void)
- 		var++;
- 	}
- 
--	quiet = true;
- 	return 0;
- }
- 
--- 
-1.7.12.4
+e.g.
+
+crash> bt 1
+PID: 1      TASK: 6bef0000          CPU: 4   COMMAND: "systemd"
+ #0 [6beef4c0] __schedule at a55d60
+ #1 [6beef530] schedule at a563f2
+ #2 [6beef548] virtio_gpu_queue_ctrl_buffer_locked at 7ea708
+ #3 [6beef650] virtio_gpu_queue_ctrl_buffer at 7ea830
+ #4 [6beef680] virtio_gpu_primary_plane_update at 7ed5ee
+ #5 [6beef710] drm_atomic_helper_commit_planes at 7a2b46
+ #6 [6beef760] vgdev_atomic_commit_tail at 7e9dbc
+ #7 [6beef790] commit_tail at 7a7126
+ #8 [6beef7c0] drm_atomic_helper_commit at 7a73fe
+ #9 [6beef800] restore_fbdev_mode_atomic at 7aa38a
+#10 [6beef8a0] drm_fb_helper_pan_display at 7ab7aa
+#11 [6beef8f0] fb_pan_display at 74a248
+#12 [6beef928] bit_update_start at 7573c0
+#13 [6beef958] fbcon_switch at 7542b4
+#14 [6beefa50] redraw_screen at 77b2b8
+#15 [6beefaa0] csi_J at 77b476
+#16 [6beefad8] do_con_trol at 77ee12
+#17 [6beefb40] do_con_write at 77f80c
+#18 [6beefc10] con_write at 78003c
+#19 [6beefc40] n_tty_write at 7662d4
+#20 [6beefce0] tty_write at 761734
+#21 [6beefd48] __vfs_write at 3483cc
+#22 [6beefe00] vfs_write at 3486e8
+#23 [6beefe60] sys_write at 3489de
+#24 [6beefea8] system_call at a5b6a8
+ PSW:  0705100180000000 000003ff8111251c (user space)
+ GPRS: 0000000000000000 000003ff00000002 000000000000000e 000003ff80deaef0 
+       000000000000000a 0000000000000000 000000000000000f 00000000000003ef 
+       0000000000000000 000000000000000e 000003ff80deaef0 000000000000000a 
+       000003ff81228f58 000000000000000e 000003ff81112510 000003fffdefedf8 
+
+
+
+
+Turns out that the virtio-gpu console (via vnc) prints the image loading but then
+stops and show no login prompt. (but agetty is running on tty1) So I assume it 
+already hangs after resume (and I am working on the serial sclp console).
+
+Does suspend resume works for you with virtio-gpu on x86? If yes, then I would
+not to look into the s390 code (virtio-blk and net seems to work fine). Otherwise
+it would be good if you could have a look.
+
+Christian
