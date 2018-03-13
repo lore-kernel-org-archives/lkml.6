@@ -1,141 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932379AbeCMBhQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 21:37:16 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46839 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751758AbeCMBhO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 21:37:14 -0400
-X-Google-Smtp-Source: AG47ELv2hWzxRAplvjnM8JU5Zr8GfzBbP/DE4PcJz1k7k/QHwtDNMLnGmQRG/2DinWDVk6JRmNVClg==
-Date: Mon, 12 Mar 2018 22:37:09 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio:magnetometer: Remove duplications in iio_chan_spec
-Message-ID: <20180313013709.ca7hxb5q56rbghch@smtp.gmail.com>
+        id S1751554AbeCMBml (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 21:42:41 -0400
+Received: from mga03.intel.com ([134.134.136.65]:42254 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751394AbeCMBmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:42:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
+   d="scan'208";a="33302538"
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH 1/1] x86/platform/x86: Fix count of CHas on
+ multi-pci-segment arches
+To: "Kroening, Gary" <gary.kroening@hpe.com>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>
+Cc: "Travis, Mike" <mike.travis@hpe.com>,
+        "Banman, Andrew" <abanman@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+Message-ID: <9efcdfa1-9da3-f4de-749f-0950d20a5758@linux.intel.com>
+Date: Mon, 12 Mar 2018 21:42:36 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CS1PR84MB01182561B15688095C4DBF30F6D80@CS1PR84MB0118.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The magn_3d_channels array has multiple declarations of iio_chan_spec.
-Most of the iio_chan_spec are very similar, changing only by the .type
-and .channel2 field. This patch reduces the code duplication by adding a
-macro that can replace the iio_chan_spec  repetitions in the
-magn_3d_channels array.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+
+On 3/7/2018 3:33 PM, Kroening, Gary wrote:
+> For systems with a single PCI segment, it is sufficient to look for the
+> bus number to change in order to determine that all of the CHa's have
+> been counted for a single socket.
+> 
+> However, for multi PCI segment systems, each socket is given a new
+> segment and the bus number does NOT change.  So looking only for the
+> bus number to change ends up counting all of the CHa's on all sockets
+> in the system.  This leads to writing CPU MSRs beyond a valid range and
+> causes an error in ivbep_uncore_msr_init_box().
+> 
+> The fix is to check for either the bus number or segment number to change.
+> 
+
+Hi Gary,
+
+There is a recommended way in uncore document to query the number of 
+CHAs on Skylake server.
+I have a patch to implement the new way.
+
+Could you please take a look at the patch and see if it can fix your issue?
+
+
+Thanks,
+Kan
+
+------
+ From 55f54b2fa3021c691c2fd4f5cfc8f441fd104e91 Mon Sep 17 00:00:00 2001
+From: Kan Liang <kan.liang@linux.intel.com>
+Date: Mon, 12 Mar 2018 13:03:40 -0700
+Subject: [PATCH] perf/x86/intel/uncore: Querying number of CHAs from 
+CAPID6 register
+
+The number of CHAs is miscalculated on multi PCI domain systems on
+Skylake server
+
+(From Kroening, Gary:
+
+For systems with a single PCI segment, it is sufficient to look for the
+bus number to change in order to determine that all of the CHa's have
+been counted for a single socket.
+However, for multi PCI segment systems, each socket is given a new
+segment and the bus number does NOT change.  So looking only for the
+bus number to change ends up counting all of the CHa's on all sockets
+in the system.  This leads to writing CPU MSRs beyond a valid range and
+causes an error in ivbep_uncore_msr_init_box().)
+
+To determine the number of CHAs, it should read bits 27:0 in the CAPID6
+register located at Device 30, Function 3, Offset 0x9C. These 28 bits
+form a bit vector of available LLC slices and the CHAs that manage those
+slices.
+
+Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore
+support")
+Reported-by: Kroening, Gary <gary.kroening@hpe.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
-Changes in v2:
- - Change IIO_MOD_NORTH_MAGN in the last element of iio_chan_info for
-   IIO_MOD_NORTH_TRUE in the last parameter.
+  arch/x86/events/intel/uncore_snbep.c | 24 ++++++++++--------------
+  1 file changed, 10 insertions(+), 14 deletions(-)
 
- drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
- 1 file changed, 19 insertions(+), 64 deletions(-)
+diff --git a/arch/x86/events/intel/uncore_snbep.c 
+b/arch/x86/events/intel/uncore_snbep.c
+index d4672ed..a42715b 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3575,24 +3575,20 @@ static struct intel_uncore_type 
+*skx_msr_uncores[] = {
+  	NULL,
+  };
 
-diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-index d55c4885211a..cdbcfc61a180 100644
---- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-+++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-@@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
- 	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
- };
- 
-+#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
-+	{								\
-+		.type = channel_type,					\
-+		.modified = 1,						\
-+		.channel2 = characteristic,				\
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
-+					BIT(IIO_CHAN_INFO_SCALE) |	\
-+					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-+					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
-+	}								\
++#define SKX_CAPID6		0x9c
++#define SKX_CHA_BIT_WIDTH	28
 +
- /* Channel definitions */
- static const struct iio_chan_spec magn_3d_channels[] = {
--	{
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_X,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Y,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Z,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
+  static int skx_count_chabox(void)
+  {
+-	struct pci_dev *chabox_dev = NULL;
+-	int bus, count = 0;
++	struct pci_dev *dev = NULL;
++	u32 val = 0;
+
+-	while (1) {
+-		chabox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x208d, chabox_dev);
+-		if (!chabox_dev)
+-			break;
+-		if (count == 0)
+-			bus = chabox_dev->bus->number;
+-		if (bus != chabox_dev->bus->number)
+-			break;
+-		count++;
 -	}
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE),
- };
- 
- /* Adjust channel real bits based on report descriptor */
++	dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
++	if (!dev)
++		return 0;
+
+-	pci_dev_put(chabox_dev);
+-	return count;
++	pci_read_config_dword(dev, SKX_CAPID6, &val);
++	return bitmap_weight((unsigned long *)&val, SKX_CHA_BIT_WIDTH);
+  }
+
+  void skx_uncore_cpu_init(void)
 -- 
-2.16.2
+2.7.4
