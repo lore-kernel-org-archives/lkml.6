@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtBubcNdbCyqHks1A76CWOFeHCzjSMHbiDJ9bGiJtNseEixVw2N3YnzObIkImeVpXH+ME/v
-ARC-Seal: i=1; a=rsa-sha256; t=1520954876; cv=none;
+X-Google-Smtp-Source: AG47ELtSXAjinteeRMlsKNY7dV5Z5PGl597eYDvh9Dtgcvdt2KKUMV6P5vUCLGCdJQQqODTthvFB
+ARC-Seal: i=1; a=rsa-sha256; t=1520954874; cv=none;
         d=google.com; s=arc-20160816;
-        b=y7xh7K1NFjp2IWF9k3L6P9WQyuQB7g0LKrIpV5IHyLd6HkX/wda7lOt4LIIjHO13e1
-         TAF8H1nEVAtlbK5443JH76ejUQaoPIjcAFbcsgt9r/rXavsJz0pS0zJ0wJWce5BuzfFr
-         8qTv5fr/tOpuLcYnX/J1w7Q/P34+1uj5Vyw2eOBilGeTzBW/9P7/tpolTw67zbznVO07
-         NnLV0coCYKmBspucZ16cC8yb5jX+JHqdtWuFoIbp6EY8O4NFRCaKzC6r3QdpAjVgqpMY
-         bTPbEXcPb/XN2ymhL7fxD7YnJmC91N+0tE1KmKMs3+DOw6YtDBwsaVMxBtQklEzlVtqn
-         qvvg==
+        b=su4C8u2JTTid4sd081qaWYq3GRRDV1hQXyQh4ewVMSxegt99XxmesSaBKnfkQ/zVx7
+         duJKytgSEkhfjaFEg8gjZzTVv8/KesOlitnW9HpQCOzldflM6NBIvbb/DHxiTe9HpeZI
+         p3B2sAzeBFX1g3qmxy5AJjDo0JN6zuc60JMIsSgkIcYEzjWPyeOaFg39d6HFEnxzsF4j
+         d4I9iIoaZ/g1Om8DWBgh5Rjg4HZh5nzWUxu0tO7ZyM+MihLrl5ZjJDGvJaRoLT3sgcnn
+         2RGiPQO33T1jF8RrR/lisSxVnCglLmUIHrwDyj33LALrhDREct/Jot4s0WQoIwX1NW3s
+         V13A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TojmPEh5v2xCQkRUEtBNTbYN1Ekm4dT7fwUYW6rZqx0=;
-        b=UY9ncJwSm2YLHMTouD57F2k0PWzZWAPDDzneYrv9IUjDv6TBeQvd8lgbvYWbm6vyCK
-         n6AC1z5AiugFyoE0gkLfFxtC92l+H+PPDp9Tf/nxgd7C7pWZsAXnzT8vUg6QxKHFwziQ
-         qfWuBrxV9tw3rKPvcmhKGktZHmOynKURdj79Vw2FwHTszmnoAozsYDGDkKkZbgeAVril
-         Il1G+qowVjfaPyVdyQ3k1Vi/wjP8Y/pSgLlLy3F7Lgf+JV3kk/vmKt4uMQY8RYI/SYhW
-         ku5LQicc/CXAXkjrJtRmHfyZIJdPd2J4IY+dGGksMhEM0LHHkKBwbfedjwEcDXGuVxTX
-         cqTQ==
+        bh=N0sRt2BcfslHn2tk0IHucoGW3Xo9RjdgmAvtcmfjrLo=;
+        b=BotdaKERHkR0T62K5aI1AZYRc7ZIkO99y9B9dgMJ2uvMkkftXSWInfgnL72200j6ks
+         87ikBFsd/3JkyKPoAiVdkwS9B2uQYjUjhOy1KXDieR+i8Zxij0MSpEdMnZGvJzFQzwRy
+         0pbS/iqJOAKnwmNIZlwKJKVQuPvkjE7fDVCobVrNDTbYtgcR78eSV0Y/Q03A4aRHH5TV
+         RnBpFTGaP3PlK8rJAnaFIZ/3Dy1VVTwd2+TXkgeVFYvZoWZ5CxXdZTyachH67OyTI9l6
+         Y4FHsk8gf2ZcBnZiEslRFvcxrLJYlkJsob81VXseFT3h4eEFvLhhu9JyLT2wHElb9Psp
+         JYcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com,
-	Michal Hocko <mhocko@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jesper Dangaard Brouer <brouer@redhat.com>,
-	akpm@linux-foundation.org,
-	dhowells@redhat.com,
-	hannes@cmpxchg.org,
-	Jason Wang <jasowang@redhat.com>
-Subject: [PATCH 4.15 004/146] bpf: cpumap: use GFP_KERNEL instead of GFP_ATOMIC in __cpu_map_entry_alloc()
-Date: Tue, 13 Mar 2018 16:22:51 +0100
-Message-Id: <20180313152320.932915953@linuxfoundation.org>
+	syzkaller <syzkaller@googlegroups.com>,
+	Noa Osherovich <noaos@mellanox.com>,
+	Yishai Hadas <yishaih@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.15 003/146] RDMA/mlx5: Fix integer overflow while resizing CQ
+Date: Tue, 13 Mar 2018 16:22:50 +0100
+Message-Id: <20180313152320.841470041@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
 References: <20180313152320.439085687@linuxfoundation.org>
@@ -47,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836781464887360?=
-X-GMAIL-MSGID: =?utf-8?q?1594836781464887360?=
+X-GMAIL-THRID: =?utf-8?q?1594836777868272369?=
+X-GMAIL-MSGID: =?utf-8?q?1594836777868272369?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,44 +52,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 7fc17e909edfb9bf421ee04e981d3d474175c7c7 upstream.
+commit 28e9091e3119933c38933cb8fc48d5618eb784c8 upstream.
 
-There're several implications after commit 0bf7800f1799 ("ptr_ring:
-try vmalloc() when kmalloc() fails") with the using of vmalloc() since
-can't allow GFP_ATOMIC but mandate GFP_KERNEL. This will lead a WARN
-since cpumap try to call with GFP_ATOMIC. Fortunately, entry
-allocation of cpumap can only be done through syscall path which means
-GFP_ATOMIC is not necessary, so fixing this by replacing GFP_ATOMIC
-with GFP_KERNEL.
+The user can provide very large cqe_size which will cause to integer
+overflow as it can be seen in the following UBSAN warning:
 
-Reported-by: syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com
-Fixes: 0bf7800f1799 ("ptr_ring: try vmalloc() when kmalloc() fails")
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: akpm@linux-foundation.org
-Cc: dhowells@redhat.com
-Cc: hannes@cmpxchg.org
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+=======================================================================
+UBSAN: Undefined behaviour in drivers/infiniband/hw/mlx5/cq.c:1192:53
+signed integer overflow:
+64870 * 65536 cannot be represented in type 'int'
+CPU: 0 PID: 267 Comm: syzkaller605279 Not tainted 4.15.0+ #90 Hardware
+name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+ dump_stack+0xde/0x164
+ ? dma_virt_map_sg+0x22c/0x22c
+ ubsan_epilogue+0xe/0x81
+ handle_overflow+0x1f3/0x251
+ ? __ubsan_handle_negate_overflow+0x19b/0x19b
+ ? lock_acquire+0x440/0x440
+ mlx5_ib_resize_cq+0x17e7/0x1e40
+ ? cyc2ns_read_end+0x10/0x10
+ ? native_read_msr_safe+0x6c/0x9b
+ ? cyc2ns_read_end+0x10/0x10
+ ? mlx5_ib_modify_cq+0x220/0x220
+ ? sched_clock_cpu+0x18/0x200
+ ? lookup_get_idr_uobject+0x200/0x200
+ ? rdma_lookup_get_uobject+0x145/0x2f0
+ ib_uverbs_resize_cq+0x207/0x3e0
+ ? ib_uverbs_ex_create_cq+0x250/0x250
+ ib_uverbs_write+0x7f9/0xef0
+ ? cyc2ns_read_end+0x10/0x10
+ ? print_irqtrace_events+0x280/0x280
+ ? ib_uverbs_ex_create_cq+0x250/0x250
+ ? uverbs_devnode+0x110/0x110
+ ? sched_clock_cpu+0x18/0x200
+ ? do_raw_spin_trylock+0x100/0x100
+ ? __lru_cache_add+0x16e/0x290
+ __vfs_write+0x10d/0x700
+ ? uverbs_devnode+0x110/0x110
+ ? kernel_read+0x170/0x170
+ ? sched_clock_cpu+0x18/0x200
+ ? security_file_permission+0x93/0x260
+ vfs_write+0x1b0/0x550
+ SyS_write+0xc7/0x1a0
+ ? SyS_read+0x1a0/0x1a0
+ ? trace_hardirqs_on_thunk+0x1a/0x1c
+ entry_SYSCALL_64_fastpath+0x1e/0x8b
+RIP: 0033:0x433549
+RSP: 002b:00007ffe63bd1ea8 EFLAGS: 00000217
+=======================================================================
+
+Cc: syzkaller <syzkaller@googlegroups.com>
+Cc: <stable@vger.kernel.org> # 3.13
+Fixes: bde51583f49b ("IB/mlx5: Add support for resize CQ")
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Reviewed-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/cpumap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/cq.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -339,7 +339,7 @@ static int cpu_map_kthread_run(void *dat
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -1177,7 +1177,12 @@ static int resize_user(struct mlx5_ib_de
+ 	if (ucmd.reserved0 || ucmd.reserved1)
+ 		return -EINVAL;
  
- struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu, int map_id)
- {
--	gfp_t gfp = GFP_ATOMIC|__GFP_NOWARN;
-+	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
- 	struct bpf_cpu_map_entry *rcpu;
- 	int numa, err;
- 
+-	umem = ib_umem_get(context, ucmd.buf_addr, entries * ucmd.cqe_size,
++	/* check multiplication overflow */
++	if (ucmd.cqe_size && SIZE_MAX / ucmd.cqe_size <= entries - 1)
++		return -EINVAL;
++
++	umem = ib_umem_get(context, ucmd.buf_addr,
++			   (size_t)ucmd.cqe_size * entries,
+ 			   IB_ACCESS_LOCAL_WRITE, 1);
+ 	if (IS_ERR(umem)) {
+ 		err = PTR_ERR(umem);
