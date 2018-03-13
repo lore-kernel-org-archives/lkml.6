@@ -1,111 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753075AbeCMQqB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 12:46:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752848AbeCMQp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:45:59 -0400
-Subject: Re: Timing performance regression 4.15 to 4.16-rc1
-From: Zdenek Kabelac <zkabelac@redhat.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Alasdair G Kergon <agk@redhat.com>
-References: <31a4b0d7-2c9e-ce76-a486-48ed18b96cc6@redhat.com>
- <20180313040354.GW30522@ZenIV.linux.org.uk>
- <8d51dd0a-97a9-fca5-9d82-1cedae211d10@redhat.com>
-Organization: Red Hat
-Message-ID: <ac8f0ede-22e3-199a-acb3-afeb50013127@redhat.com>
-Date: Tue, 13 Mar 2018 17:45:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753152AbeCMQqU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 12:46:20 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34505 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752883AbeCMQpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 12:45:09 -0400
+X-Google-Smtp-Source: AG47ELssVRz+pGtsJAy975DfL7yHdIxzeDK3lbr/bqVu3hYB680BKGvjVuYYD1WUuVvbw8To2tpgoA==
+From: Thierry Escande <thierry.escande@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] arm64: dts: apq8096-db820c: enable bluetooth node
+Date: Tue, 13 Mar 2018 17:44:42 +0100
+Message-Id: <20180313164444.19881-2-thierry.escande@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180313164444.19881-1-thierry.escande@linaro.org>
+References: <20180313164444.19881-1-thierry.escande@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <8d51dd0a-97a9-fca5-9d82-1cedae211d10@redhat.com>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne 13.3.2018 v 12:17 Zdenek Kabelac napsal(a):
-> Dne 13.3.2018 v 05:03 Al Viro napsal(a):
->> On Sun, Mar 11, 2018 at 02:02:03PM +0100, Zdenek Kabelac wrote:
->>> Hi
->>>
->>> I've noticed quite some drop of performance (around 15% in some cases) where
->>> execution of lvm2 tests took longer time - and while tests itself should not
->>> really load CPU system  - the overall running time just got bigger.
->>>
->>> Running bisect game pointed clearly to this commit:
->>>
->>> ---
->>>
->>> commit 44c02a2c3dc55835e9f0d8ef73966406cd805001
->>> Author: Al Viro <viro@zeniv.linux.org.uk>
->>> Date:   Thu Oct 5 12:59:44 2017 -0400
->>>
->>>      dev_ioctl(): move copyin/copyout to callers
->>>
->>>
->>> ---
->>>
->>> clear revert of this commit on top of 3266b5bd97eaa72793df0b6e5a106c69ccc166c4
->>> (recent  ~4.16-rc4)  restored timing of tests back.
->>>
->>>
->>> I'm not sure why - so at this moment this is just a patch causing 15% longer
->>> running times on lvm2 test suite.
->>
->> I find it very hard to believe, TBH.  It doesn't go anywhere near drivers/md;
->> could you profile the damn thing and see where does it spend that extra time?
->>
->> It really doesn't touch anything on non-sockets...
-> 
-> 
-> Hi
-> 
-> Well I'm 100% sure it's this patch causing slowdown of the test runtime
-> (just reverting this case makes it faster).
-> 
-> But even though I've already tried to create some much more simplified 
-> reproducer I'm still unclear what's behind it.
-> 
-> lvm2 alone is using sockets via i.e. udev communication - so the possible 
-> reason could be that used slows down  'new node' events processing in some way.
-> 
-> So for now the most visible reproducer is to run test in lvm2 build tree
-> in directory tests/:   'make check_local T=lvconvert-mirror-basic-0.sh'
-> 
-> I do have 'perf record' grabs if the would help anything - but looking at them 
-> myself there are not some directly visible things.
-> 
-> As said -  User+Sys timing of the running test reported by 'time' command 
-> remains the same - just 'real' time gets longer - which means it's waiting for 
-> something much longer then before  - lvm2 typically waits till udev finishes 
-> it's scanning.
->
+Add a new serial node for the Qualcomm BT controller QCA6174. This
+allows automatic probing and hci registration through the serdev
+framework instead of relying on the userspace helpers.
 
-Hello
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  | 14 ++++++++++
+ .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    | 17 ++++++++++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       | 32 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 10 +++++++
+ 4 files changed, 73 insertions(+)
 
-Here is my update - after some time of investigation - it seems the core 
-trouble is actually hidden inside  test monitoring tool which is effectively 
-grabbing test output through  a PF_UNIX socket stream - there are no other 
-sockets. (and via add printk() used commands are 21519  & 21505  for 
-dev_ioctl() call).
-
-Also there is no influence caused by udev as since timing is same with disable 
-udev.
-
-So ATM I'm checking, why there is such a big change in this case in the test's 
-is run via internal application which is collecting logs compare with direct 
-execution.
-
-One more thing that has surprised me is the influence of CPU governor - the 
-difference between ondemand/performance governor is another 10 seconds.
-(on a test taking slight more then 1 minute).
-
-Regards
-
-Zdenek
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
+index 24552f19b3fa..172165d84669 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
+@@ -36,4 +36,18 @@
+ 			drive-strength = <2>;	/* 2 MA */
+ 		};
+ 	};
++
++	blsp1_uart1_default: blsp1_uart1_default {
++		function = "blsp_uart2";
++		pins = "gpio41", "gpio42", "gpio43", "gpio44";
++		drive-strength = <16>;
++		bias-disable;
++	};
++
++	blsp1_uart1_sleep: blsp1_uart1_sleep {
++		function = "gpio";
++		pins = "gpio41", "gpio42", "gpio43", "gpio44";
++		drive-strength = <2>;
++		bias-disable;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+index 59b29ddfb6e9..f8d2a3b10b1f 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
+@@ -26,6 +26,23 @@
+ 		};
+ 	};
+ 
++	divclk4_pin_a: divclk4 {
++		pins = "gpio18";
++		function = "func2";
++
++		bias-disable;
++		power-source = <PM8994_GPIO_S4>;
++	};
++
++	bt_en_pin_a: bt-en-active {
++		pins = "gpio19";
++		function = "normal";
++
++		output-low;
++		power-source = <PM8994_GPIO_S4>;
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
++	};
++
+ 	usb3_vbus_det_gpio: pm8996_gpio22 {
+ 		pinconf {
+ 			pins = "gpio22";
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 1c8f1b86472d..b05d6bc0b856 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -23,6 +23,7 @@
+ 	aliases {
+ 		serial0 = &blsp2_uart1;
+ 		serial1 = &blsp2_uart2;
++		serial2 = &blsp1_uart1;
+ 		i2c0	= &blsp1_i2c2;
+ 		i2c1	= &blsp2_i2c1;
+ 		i2c2	= &blsp2_i2c0;
+@@ -34,7 +35,38 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	clocks {
++		divclk4: divclk4 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "divclk4";
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&divclk4_pin_a>;
++		};
++	};
++
+ 	soc {
++		serial@7570000 {
++			label = "BT-UART";
++			status = "okay";
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&blsp1_uart1_default>;
++			pinctrl-1 = <&blsp1_uart1_sleep>;
++
++			bluetooth {
++				compatible = "qcom,qca6174-bt";
++
++				bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
++
++				pinctrl-names = "default";
++				pinctrl-0 = <&bt_en_pin_a>;
++
++				clocks = <&divclk4>;
++			};
++		};
++
+ 		serial@75b0000 {
+ 			label = "LS-UART1";
+ 			status = "okay";
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 0a6f7952bbb1..2d54a86a027f 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -408,6 +408,16 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		blsp1_uart1: serial@7570000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x07570000 0x1000>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
+ 		blsp1_spi0: spi@7575000 {
+ 			compatible = "qcom,spi-qup-v2.2.1";
+ 			reg = <0x07575000 0x600>;
+-- 
+2.14.1
