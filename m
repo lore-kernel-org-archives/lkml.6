@@ -1,23 +1,23 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELsY8qi+mL/avW/qEngYXNDUdRg0TCI6pKILDkaAnCX09fE5k6rIpEuDFLTbaKpQjjn9TGzl
-ARC-Seal: i=1; a=rsa-sha256; t=1520966035; cv=none;
+X-Google-Smtp-Source: AG47ELt6msmmZCq8AqBT/QwniS6kf5m1oNooUtY5Wxqtdh+upZXChldJrq1t0IWgIf5jXfvxDYY3
+ARC-Seal: i=1; a=rsa-sha256; t=1520966033; cv=none;
         d=google.com; s=arc-20160816;
-        b=ER8kEHlOBn7rAJ1MHxD/sna3iKgIWX1Kdp0qC1hRBfYdxTHE7Evr8XeKhKLCQGiVFx
-         Sqj2CdsW7oJZL8URiT8Hg31U3F8UHJWCA/ccJHe3ajrRlyQw7H7AsTU3Djnw440RzkC2
-         G7f+p5OtjFPnlKIyna1ofz7ImBS6GM4wTRaZyjoUlETRy3EOMwivpTDrt08vMwtY1B8l
-         du5CrNqOQxOsCQfaOtMTjcQBToGjAPkqeCHI9OxkgO5Fl+sRrM/YCukysgKpJEU7bUuw
-         +tA12+qokRbpmwvss47ysGigusEPj2AETTq8Er2IyfxY6bNLm4s6/tchYXjAtY4fA4Oz
-         u+Zg==
+        b=m07Z7nmLoUeQ/h5cfX7+BjAVvHyyFEBioN+H23tXhWK4YJUAoVJ5LnPM9y1TLnqoNN
+         +4pYto9GLPFhuPp/uxjpGvpV1ePdHrl20LdwMorERwmq+hdaRlBVT5sVdvBGVstReA/v
+         PSq66bEib1SA19K23bE5zrJxFhTLBHPKw6KRhqSWNxxsgLL/zSOEBXlH1kUzSGzIm1PF
+         xGWWbVPsfu9SbhBOdKEfQlw8M2d860Lm8VcFdGL/VeZ9BNDRX0lT2pwmHiczq2YI6MDf
+         IwlJUaVJIGNxbx5QDuYVcODf7ktHxitgMZ4OhV4ejIFmg43aHxmpBDk2qu9ZuYgT5Py8
+         XWBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9xqgUluudFFO5C1nUSkvzdpWoO4JVF+wgannQeY73nY=;
-        b=XqBmKh5FMN93h2wpCywX2HmCxhoQBtaBoydGIHvAY94CUWwzZ2o4M55W3lX8KWCc8R
-         L2zQN6VzHXkuXARh4eaWStptvbZ9yV7I6QkwN3Ox6q/rxjRtwI2WfGb/az/QjPckO7YI
-         Rb5TfQfnkON9MHVCqC95H/yfOrVNc90X9EH1wP1qqOdQVMtTGq4wl0zfhokb/2w5zfUL
-         u7EIXSrjMrJiiElKJhHeYoBUF0R30gMNSTJajColDRBPrOhiNK9uN+TRcljoBEPtFVT6
-         RWqyKPhnsvtEAYvBOnOoFQ8+osT/oQKP9tpPzuhG3Ycy+gPzrm0BS2sifZwy4VYJ62SW
-         XUFA==
+        bh=Fld6uJP5Aqml4QRfrvX0U7CWn18jOY4Hw1l5s3NUfUw=;
+        b=Et4YHPl1S64ARsCxXxb5djdvsS1xsalohdUnzjM7YxXWNSyf8FXOmhjVe1AeNgXgSU
+         2BAqCwEz/6Q9RnV83vkB+Fo/OeKG1KcARZT4YgAWfhoI3BrdoA52EgDqTAtaZ3FS70gB
+         BBBVXhW7eJ1DJmb8XmqAHLLDzlG0UTagjBJXmk+Yd5CcI2h2OyWGaLA8fmqEyw9a9UkH
+         AH4IVDmnFlTcVZd/emaNXG2QnSJaYTD0ZMoQ9ZpvIKXCBRDAm6k0AUYhsgTHW1mAHGPw
+         yIenVBnaLLBd6W+avnvAtXGBOQawlnLlKGxAhqYo12v+q0C7dBQW/gdSMcdAgqcLtVzh
+         xnYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
@@ -54,17 +54,17 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
 	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 6/8] powerpc/64: barrier_nospec: Add debugfs trigger
-Date: Tue, 13 Mar 2018 19:33:04 +0100
-Message-Id: <614dfe0abb78fffd35f127d0ba78e644e1a0570a.1520965380.git.msuchanek@suse.de>
+Subject: [PATCH RFC 4/8] powerpc/64s: Add support for ori barrier_nospec
+Date: Tue, 13 Mar 2018 19:33:02 +0100
+Message-Id: <50e3f58ffadc2ffdda68df768610816734b30ddd.1520965380.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 In-Reply-To: <cover.1520965380.git.msuchanek@suse.de>
 References: <cover.1520965380.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594848481057518187?=
-X-GMAIL-MSGID: =?utf-8?q?1594848481057518187?=
+X-GMAIL-THRID: =?utf-8?q?1594848479484086137?=
+X-GMAIL-MSGID: =?utf-8?q?1594848479484086137?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -72,54 +72,178 @@ Copypasta from rfi implementation
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/kernel/setup_64.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/powerpc/include/asm/barrier.h        |  4 ++--
+ arch/powerpc/include/asm/feature-fixups.h |  9 +++++++++
+ arch/powerpc/include/asm/setup.h          |  8 ++++++++
+ arch/powerpc/kernel/setup_64.c            | 29 +++++++++++++++++++++++++++++
+ arch/powerpc/kernel/vmlinux.lds.S         |  7 +++++++
+ arch/powerpc/lib/feature-fixups.c         | 27 +++++++++++++++++++++++++++
+ 6 files changed, 82 insertions(+), 2 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
+index 8e47b3abe405..4079a95e84c2 100644
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -75,9 +75,9 @@ do {									\
+ 	___p1;								\
+ })
+ 
+-/* TODO: add patching so this can be disabled */
+ /* Prevent speculative execution past this barrier. */
+-#define barrier_nospec_asm ori 31,31,0
++#define barrier_nospec_asm SPEC_BARRIER_FIXUP_SECTION;			\
++				nop
+ #ifdef __ASSEMBLY__
+ #define barrier_nospec barrier_nospec_asm
+ #else
+diff --git a/arch/powerpc/include/asm/feature-fixups.h b/arch/powerpc/include/asm/feature-fixups.h
+index 1e82eb3caabd..9d3382618ffd 100644
+--- a/arch/powerpc/include/asm/feature-fixups.h
++++ b/arch/powerpc/include/asm/feature-fixups.h
+@@ -195,11 +195,20 @@ label##3:					       	\
+ 	FTR_ENTRY_OFFSET 951b-952b;			\
+ 	.popsection;
+ 
++#define SPEC_BARRIER_FIXUP_SECTION			\
++953:							\
++	.pushsection __spec_barrier_fixup,"a";		\
++	.align 2;					\
++954:							\
++	FTR_ENTRY_OFFSET 953b-954b;			\
++	.popsection;
++
+ 
+ #ifndef __ASSEMBLY__
+ #include <linux/types.h>
+ 
+ extern long __start___rfi_flush_fixup, __stop___rfi_flush_fixup;
++extern long __start___spec_barrier_fixup, __stop___spec_barrier_fixup;
+ 
+ void apply_feature_fixups(void);
+ void setup_feature_keys(void);
+diff --git a/arch/powerpc/include/asm/setup.h b/arch/powerpc/include/asm/setup.h
+index 469b7fdc9be4..486d02e4a310 100644
+--- a/arch/powerpc/include/asm/setup.h
++++ b/arch/powerpc/include/asm/setup.h
+@@ -49,8 +49,16 @@ enum l1d_flush_type {
+ 	L1D_FLUSH_MTTRIG	= 0x8,
+ };
+ 
++/* These are bit flags */
++enum spec_barrier_type {
++	SPEC_BARRIER_NONE	= 0x1,
++	SPEC_BARRIER_ORI	= 0x2,
++};
++
+ void __init setup_rfi_flush(enum l1d_flush_type, bool enable);
+ void do_rfi_flush_fixups(enum l1d_flush_type types);
++void __init setup_barrier_nospec(enum spec_barrier_type, bool enable);
++void do_barrier_nospec_fixups(enum spec_barrier_type type);
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
 diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index d1d9f047161e..4b67b7b877d9 100644
+index c388cc3357fa..09f21a954bfc 100644
 --- a/arch/powerpc/kernel/setup_64.c
 +++ b/arch/powerpc/kernel/setup_64.c
-@@ -955,6 +955,41 @@ static __init int rfi_flush_debugfs_init(void)
- 	return 0;
+@@ -815,6 +815,10 @@ static enum l1d_flush_type enabled_flush_types;
+ static void *l1d_flush_fallback_area;
+ static bool no_rfi_flush;
+ bool rfi_flush;
++enum spec_barrier_type powerpc_barrier_nospec;
++static enum spec_barrier_type barrier_nospec_type;
++static bool no_nospec;
++bool barrier_nospec_enabled;
+ 
+ static int __init handle_no_rfi_flush(char *p)
+ {
+@@ -899,6 +903,31 @@ void __init setup_rfi_flush(enum l1d_flush_type types, bool enable)
+ 		rfi_flush_enable(enable);
  }
- device_initcall(rfi_flush_debugfs_init);
-+
-+static int barrier_nospec_set(void *data, u64 val)
+ 
++void barrier_nospec_enable(bool enable)
 +{
-+	switch (val) {
-+	case 0:
-+	case 1:
-+		break;
-+	default:
-+		return -EINVAL;
++	barrier_nospec_enabled = enable;
++
++	if (enable) {
++		powerpc_barrier_nospec = barrier_nospec_type;
++		do_barrier_nospec_fixups(powerpc_barrier_nospec);
++		on_each_cpu(do_nothing, NULL, 1);
++	} else {
++		powerpc_barrier_nospec = SPEC_BARRIER_NONE;
++		do_barrier_nospec_fixups(powerpc_barrier_nospec);
 +	}
-+
-+	if (!!val == !!barrier_nospec_enabled)
-+		return 0;
-+
-+	barrier_nospec_enable(!!val);
-+
-+	return 0;
 +}
 +
-+static int barrier_nospec_get(void *data, u64 *val)
++void __init setup_barrier_nospec(enum spec_barrier_type type, bool enable)
 +{
-+	*val = barrier_nospec_enabled ? 1 : 0;
-+	return 0;
++	if (type & SPEC_BARRIER_ORI)
++		pr_info("barrier_nospec: Using ori type flush\n");
++
++	barrier_nospec_type = type;
++
++	if (!no_nospec)
++		barrier_nospec_enable(enable);
 +}
 +
-+DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
-+			barrier_nospec_get, barrier_nospec_set, "%llu\n");
+ #ifdef CONFIG_DEBUG_FS
+ static int rfi_flush_set(void *data, u64 val)
+ {
+diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+index c8af90ff49f0..744b58ff77f1 100644
+--- a/arch/powerpc/kernel/vmlinux.lds.S
++++ b/arch/powerpc/kernel/vmlinux.lds.S
+@@ -139,6 +139,13 @@ SECTIONS
+ 		*(__rfi_flush_fixup)
+ 		__stop___rfi_flush_fixup = .;
+ 	}
 +
-+static __init int barrier_nospec_debugfs_init(void)
-+{
-+	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
-+			    &fops_barrier_nospec);
-+	return 0;
-+}
-+device_initcall(barrier_nospec_debugfs_init);
++	. = ALIGN(8);
++	__spec_barrier_fixup : AT(ADDR(__spec_barrier_fixup) - LOAD_OFFSET) {
++		__start___spec_barrier_fixup = .;
++		*(__spec_barrier_fixup)
++		__stop___spec_barrier_fixup = .;
++	}
  #endif
  
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ 	EXCEPTION_TABLE(0)
+diff --git a/arch/powerpc/lib/feature-fixups.c b/arch/powerpc/lib/feature-fixups.c
+index 73697c4e3468..000e153184ad 100644
+--- a/arch/powerpc/lib/feature-fixups.c
++++ b/arch/powerpc/lib/feature-fixups.c
+@@ -155,6 +155,33 @@ void do_rfi_flush_fixups(enum l1d_flush_type types)
+ 
+ 	printk(KERN_DEBUG "rfi-flush: patched %d locations\n", i);
+ }
++
++void do_barrier_nospec_fixups(enum spec_barrier_type type)
++{
++	unsigned int instr, *dest;
++	long *start, *end;
++	int i;
++
++	start = PTRRELOC(&__start___spec_barrier_fixup),
++	end = PTRRELOC(&__stop___spec_barrier_fixup);
++
++	instr = 0x60000000; /* nop */
++
++	if (type == SPEC_BARRIER_ORI) {
++		pr_info("barrier_nospec: using ORI speculation barrier\n");
++		instr = 0x63ff0000; /* ori 31,31,0 speculation barrier */
++	}
++
++	for (i = 0; start < end; start++, i++) {
++		dest = (void *)start + *start;
++
++		pr_devel("patching dest %lx\n", (unsigned long)dest);
++		patch_instruction(dest, instr);
++	}
++
++	printk(KERN_DEBUG "barrier-nospec: patched %d locations\n", i);
++}
++
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+ 
+ void do_lwsync_fixups(unsigned long value, void *fixup_start, void *fixup_end)
 -- 
 2.13.6
