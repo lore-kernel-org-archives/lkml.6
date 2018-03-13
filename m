@@ -1,86 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932385AbeCMA0y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 20:26:54 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34460 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932274AbeCMA0w (ORCPT
+        id S932444AbeCMA1M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 20:27:12 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:59091 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932405AbeCMA1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 20:26:52 -0400
-Subject: Re: [PATCH v5 06/36] drm/rockchip: Only wait for panel ACK on PSR
- entry
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
-        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
-        kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
-        Sonny Rao <sonnyrao@chromium.org>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-7-enric.balletbo@collabora.com>
- <1909495.WV5cT3kS9W@diego>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <804ab508-40b8-71fa-c40b-b54f70fcc453@collabora.com>
-Date: Tue, 13 Mar 2018 01:26:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 20:27:11 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org
+References: <20180313000131.28971-1-christian.brauner@ubuntu.com>
+        <20180313000131.28971-2-christian.brauner@ubuntu.com>
+Date: Mon, 12 Mar 2018 19:26:24 -0500
+In-Reply-To: <20180313000131.28971-2-christian.brauner@ubuntu.com> (Christian
+        Brauner's message of "Tue, 13 Mar 2018 01:01:29 +0100")
+Message-ID: <87o9js95xr.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1909495.WV5cT3kS9W@diego>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1evXmX-00087t-Hy;;;mid=<87o9js95xr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/Sl4KTCTBJUs/UrueCPnEz9lZxu764plc=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Christian Brauner <christian.brauner@ubuntu.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 546 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.1 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.31 (0.2%),
+        extract_message_metadata: 31 (5.6%), get_uri_detail_list: 3.3 (0.6%),
+        tests_pri_-1000: 12 (2.3%), tests_pri_-950: 2.1 (0.4%), tests_pri_-900: 1.61
+        (0.3%), tests_pri_-400: 30 (5.4%), check_bayes: 28 (5.1%), b_tokenize: 12
+        (2.2%), b_tok_get_all: 7 (1.2%), b_comp_prob: 3.4 (0.6%), b_tok_touch_all:
+        3.0 (0.5%), b_finish: 0.74 (0.1%), tests_pri_0: 453 (82.9%),
+        check_dkim_signature: 1.64 (0.3%), check_dkim_adsp: 4.5 (0.8%),
+        tests_pri_500: 8 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/3 v4] devpts: hoist out check for DEVPTS_SUPER_MAGIC
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Christian Brauner <christian.brauner@ubuntu.com> writes:
 
+> Hoist the check whether we have already found a suitable devpts filesystem
+> out of devpts_ptmx_path() in preparation for the devpts bind-mount
+> resolution patch. This is a non-functional change.
+>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-On 12/03/18 17:58, Heiko Stübner wrote:
-> Hi,
-> 
-> the subject is misleading I think, as this is touching only the generic
-> bridge code and not anything Rockchip-related, so should probably
-> be "drm/bridge"?
-> 
-
-Right, I'll fix this when I need to send another version, I'll wait, for now, a
-bit more for reviews on the other patches.
-
-Thanks
-  Enric
-
-> Am Freitag, 9. März 2018, 23:22:57 CET schrieb Enric Balletbo i Serra:
->> From: zain wang <wzz@rock-chips.com>
->>
->> We currently wait for the panel to mirror our intended PSR state
->> before continuing on both PSR enter and PSR exit. This is really
->> only important to do when we're entering PSR, since we want to
->> be sure the last frame we pushed is being served from the panel's
->> internal fb before shutting down the soc blocks (vop/analogix).
->>
->> This patch changes the behavior such that we only wait for the
->> panel to complete the PSR transition when we're entering PSR, and
->> to skip verification when we're exiting.
->>
->> Cc: Stéphane Marchesin <marcheu@chromium.org>
->> Cc: Sonny Rao <sonnyrao@chromium.org>
->> Signed-off-by: zain wang <wzz@rock-chips.com>
->> Signed-off-by: Sean Paul <seanpaul@chromium.org>
->> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> change itself looks good, so
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
+>  ---
+> ChangeLog v3->v4:
+> * patch unchanged
+> ChangeLog v2->v3:
+> * patch unchanged
+> ChangeLog v1->v2:
+> * patch added
+> ChangeLog v0->v1:
+> * patch not present
+> ---
+>  fs/devpts/inode.c | 35 ++++++++++++++++++++---------------
+>  1 file changed, 20 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+> index e31d6ed3ec32..d3ddbb888874 100644
+> --- a/fs/devpts/inode.c
+> +++ b/fs/devpts/inode.c
+> @@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
+>  	struct super_block *sb;
+>  	int err;
+>  
+> -	/* Has the devpts filesystem already been found? */
+> -	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
+> -		return 0;
+> -
+>  	/* Is a devpts filesystem at "pts" in the same directory? */
+>  	err = path_pts(path);
+>  	if (err)
+> @@ -159,17 +155,22 @@ static int devpts_ptmx_path(struct path *path)
+>  struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
+>  {
+>  	struct path path;
+> -	int err;
+>  
+>  	path = filp->f_path;
+>  	path_get(&path);
+>  
+> -	err = devpts_ptmx_path(&path);
+> -	dput(path.dentry);
+> -	if (err) {
+> -		mntput(path.mnt);
+> -		return ERR_PTR(err);
+> +	/* Has the devpts filesystem already been found? */
+> +	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
+> +		int err;
+> +
+> +		err = devpts_ptmx_path(&path);
+> +		dput(path.dentry);
+> +		if (err) {
+> +			mntput(path.mnt);
+> +			return ERR_PTR(err);
+> +		}
+>  	}
+> +
+>  	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
+>  		mntput(path.mnt);
+>  		return ERR_PTR(-ENODEV);
+> @@ -182,15 +183,19 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
+>  	struct pts_fs_info *result;
+>  	struct path path;
+>  	struct super_block *sb;
+> -	int err;
+>  
+>  	path = filp->f_path;
+>  	path_get(&path);
+>  
+> -	err = devpts_ptmx_path(&path);
+> -	if (err) {
+> -		result = ERR_PTR(err);
+> -		goto out;
+> +	/* Has the devpts filesystem already been found? */
+> +	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
+> +		int err;
+> +
+> +		err = devpts_ptmx_path(&path);
+> +		if (err) {
+> +			result = ERR_PTR(err);
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	/*
