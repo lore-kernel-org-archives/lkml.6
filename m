@@ -1,79 +1,136 @@
 Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AG47ELs95bsTI3qVa5GIDVJeitjctB66w5znzvuRxjaF4DVWfE4iNE1lO4A1q4xwM6JiOi6Em+XU
-ARC-Seal: i=1; a=rsa-sha256; t=1521062684; cv=none;
+X-Google-Smtp-Source: AG47ELs0vQEGIzd7+euo+89lgiv59nowO5L8H7HwHyJp3sveC9sDeV1WwaYHzWYba3K6Y27yc/qy
+ARC-Seal: i=1; a=rsa-sha256; t=1521062685; cv=none;
         d=google.com; s=arc-20160816;
-        b=eYNtiJhpymweDxLkWtvORVLtl7uaY1RiUV/lWeZRXBlKi1UPOEgQJMVOXbM73AYQEq
-         BiUwVwGdjRqM68solSTSkl1FPNdzHFmvV3R8dL0Im7zsSzDU6AyI6B5Tt0eiH42XFGPP
-         PFS0CW0NnmwiHiEGb6GjomrfwSrUjvoxyyTo7Er1t6vT6sKjgzvy3lUMCA7yktRBPcxh
-         gFSwg16yBxW5TV//Ua2MhiUNYE5k92FzwxIJbrzee8hftCkGLY9aiybwEanFuqt8ujYu
-         h3114+UH5Fy92r+iC3EzYd+MC3ohg7bk2f1xadvri/d03l05jT08V2DyVV9TOBAjwj8G
-         aCYg==
+        b=ClkLiaFRaC2QIMNiTVrJ4Go2/2tpXBg0HM5JbSqlzxDiyF+7eyleQ9EmcFUF4tx72H
+         QpqCBy+XJhwONZZ0A8I6XeUm3AkKWOdul9COG+ME3tYuUWFBNNqCny30GJb4C1Krdo76
+         muElbsaerEsRK5eaWmKczyWxcaEAWIIdMJ4wll5xPluTwtqBW/dMUn2nnLmGgeEvlAtG
+         iJuiQcIoToFcyCgb8v6j/8lh01AuM8CwB6DUBOBsuxHeRGvsS/kT4rFOgNtBE9jUb+Ol
+         FNpfdRM1C2qWml9QdxJppYEsBTeIdD1X+50bddhD2g4sVkc23cIdlV4EJYD+Bu54d9uk
+         biwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:cc:to:from:date:user-agent:message-id
-         :arc-authentication-results;
-        bh=dpBIE/HNyrf134+BLHWbzO3alEnxDJjrnYWiXRkF9e8=;
-        b=Ph44ZZEdohOyzfgISzpwGEhiGKoPrKIz4Tejh1W0iR40HIuZvDqpRuhr9hjVn3WIXS
-         P1/01IjB6RlnoF6J0yY5eUoL9NY6QevcFNDYtdFQ4cNCZzmfWVSKvB20UP2EzDX8pmoh
-         Bx9e16FDRuWSMO7lzsNMbM0B31TKeWBrt8droJii3KfY+YC9Mp5HyvADfaLEFQYyx3hg
-         ux+m9BB38U/m+h641Lkes5cRDWq90t9X4pTQclICuBi1squDy9Ng9XRxxTPnFuwQ0oCO
-         F5IxD1EpihBs+ZQd4Y/hT8hzREoKUGlQAoCud+nvfSTCo8eawfO983K8R93biB21xIle
-         TXSQ==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:arc-authentication-results;
+        bh=B5qzjWN9UQ2C7V+XsVBkf6bIVSb2DgjD0/HgBQHoIHY=;
+        b=NrvmQCqL5RLI/w00eyo6NugyFkdY8EdNMSnnIJmCHHBoAw2nCR5Q0kx2oAGWc9NjO7
+         9JfMjky1CY+4o7aauloDDX5VYJv6rVlnc51NpDCeE1DGWFLcZmHaTqTcNGR79O+llnWF
+         eQGJ4YgfCMY9C+zfFD7Wjg47hECJ7buYgx2UN4D2MlLJZu9cbBf+slRl3E8tGC7btDI0
+         AeJ9SFa2qcUJuAhksNWhcJa43QMd6sCmOz/qYn/LU6wTrk/vtpHj4NlLYoLJcJgUtj34
+         nWxHm0wid649eQ0IGnpiMYBBr01HthJczjRDX85UD/segzDVtrdGHU/9X020g1we4dAe
+         sbyw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Message-Id: <20180314211515.429128440@linutronix.de>
+Message-Id: <20180314212030.668321222@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Wed, 14 Mar 2018 22:15:15 +0100
+Date: Wed, 14 Mar 2018 22:15:19 +0100
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Ingo Molnar <mingo@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
  Kate Stewart <kstewart@linuxfoundation.org>,
  Philippe Ombredanne <pombredanne@nexb.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [patch 0/4] genirq: Clean up license information
+Subject: [patch 4/4] genirq: Add missing SPDX identifiers
+References: <20180314211515.429128440@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=genirq--Add-missing-SPDX-identifiers.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594949825957172254?=
-X-GMAIL-MSGID: =?utf-8?q?1594949825957172254?=
+X-GMAIL-THRID: =?utf-8?q?1594949826755527282?=
+X-GMAIL-MSGID: =?utf-8?q?1594949826755527282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The following patch series cleans up the licensing information in the
-generic irq subsystem.
+These files do not contain a license reference and were not updated in the
+initial SPDX conversion because the license was deduced by the scanners via
+EXPORT_SYMBOL_GPL as GPL2.0 only.
 
-  * Replace boiler plate language and sloppy references with SPDX
+Add the missing GPL-2.0 identifiers.
 
-  * Add missing SPDX identifiers to files with no license reference
-
-  * Use the proper tag format
-
-While at it clean up the top of file comments by removing pointless
-references to the filename itself and condense the information where
-appropriate.
-
-Thanks,
-
-	tglx
-
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- autoprobe.c    |    2 --
- chip.c         |   10 ++++------
- cpuhotplug.c   |    5 +----
- debugfs.c      |    8 +++-----
- devres.c       |    1 +
- dummychip.c    |    1 +
- generic-chip.c |    1 +
- handle.c       |    8 +++-----
- ipi.c          |    3 +--
- irq_sim.c      |   10 ++--------
- irqdesc.c      |    6 +++---
- irqdomain.c    |    2 ++
- manage.c       |    3 +--
- matrix.c       |    8 +++-----
- msi.c          |    5 +----
- pm.c           |    3 +--
- proc.c         |    2 --
- resend.c       |    2 --
- spurious.c     |    2 --
- timings.c      |   13 +++----------
- 20 files changed, 31 insertions(+), 64 deletions(-)
+ kernel/irq/chip.c         |    1 +
+ kernel/irq/devres.c       |    1 +
+ kernel/irq/dummychip.c    |    1 +
+ kernel/irq/generic-chip.c |    1 +
+ kernel/irq/handle.c       |    1 +
+ kernel/irq/ipi.c          |    1 +
+ kernel/irq/irqdesc.c      |    1 +
+ kernel/irq/irqdomain.c    |    2 ++
+ kernel/irq/manage.c       |    1 +
+ kernel/irq/pm.c           |    1 +
+ 10 files changed, 11 insertions(+)
+
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+--- a/kernel/irq/devres.c
++++ b/kernel/irq/devres.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+ #include <linux/device.h>
+--- a/kernel/irq/dummychip.c
++++ b/kernel/irq/dummychip.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+--- a/kernel/irq/generic-chip.c
++++ b/kernel/irq/generic-chip.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Library implementing the most common irq chip callback functions
+  *
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+--- a/kernel/irq/ipi.c
++++ b/kernel/irq/ipi.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2015 Imagination Technologies Ltd
+  * Author: Qais Yousef <qais.yousef@imgtec.com>
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1,3 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0
++
+ #define pr_fmt(fmt)  "irq: " fmt
+ 
+ #include <linux/acpi.h>
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006 Thomas Gleixner
+--- a/kernel/irq/pm.c
++++ b/kernel/irq/pm.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
+  *
