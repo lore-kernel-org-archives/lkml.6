@@ -1,286 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCNJMb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:12:31 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33842 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeCNJM3 (ORCPT
+        id S1751556AbeCNJO3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:14:29 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:53789 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751279AbeCNJO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:12:29 -0400
-X-Google-Smtp-Source: AG47ELsmOFESYbFEcQ6xQHIlUrro1+0J1ESSrFCxhP+FRn+Uz1cFOI+2BLCrq4v6RHJ0azVFHSJsFA==
-From: Lin Huang <hl@rock-chips.com>
-To: thierry.reding@gmail.com
-Cc: emil.l.velikov@gmail.com, briannorris@chromium.org, robh+dt@kernel.org,
-        seanpaul@chromium.org, airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v4 2/3] drm/panel: support Innolux P097PFG panel
-Date: Wed, 14 Mar 2018 17:12:15 +0800
-Message-Id: <1521018736-20980-2-git-send-email-hl@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
-References: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
+        Wed, 14 Mar 2018 05:14:28 -0400
+Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
+Date: Wed, 14 Mar 2018 10:14:25 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support Innolux P097PFG 9.7" 1536x2048 TFT LCD panel, it reuse
-the Innolux P079ZCA panel driver.
+On 14.03.18 10:11, Wolfgang Grandegger wrote:
+>> +    /* handle error frames */
+>> +    canid = le32_to_cpu(m->msg.can_msg.id);
+>> +    if (canid & CAN_ERR_FLAG) {
+>> +        ucan_handle_error_frame(up, m, canid);
+>> +        /* drop frame if berr-reporting is off */
+>> +        if (!(up->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING))
+>> +            return;
+>> +    }
+> 
+> You still do not generate error messages for state changes, IIUC.
 
-Change-Id: I97923aa3735f707332681691b0231c9421b427d0
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
-Changes in v2:
-- None
-Changes in v3:
-- None
-Changes in v4:
-- download panel initial code 
+The hardware generates error frames on state changes - is that what you 
+mean?
 
- drivers/gpu/drm/panel/panel-innolux-p079zca.c | 192 +++++++++++++++++++++++++-
- 1 file changed, 187 insertions(+), 5 deletions(-)
+In our testing, the state shows up (and updates) correctly in
 
-diff --git a/drivers/gpu/drm/panel/panel-innolux-p079zca.c b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-index 2075a9d..883b279 100644
---- a/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-+++ b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-@@ -20,6 +20,15 @@
- 
- #include <video/mipi_display.h>
- 
-+struct panel_init_cmd {
-+	int len;
-+	const char *data;
-+};
-+
-+#define _INIT_CMD(...) { \
-+	.len = sizeof((char[]){__VA_ARGS__}), \
-+	.data = (char[]){__VA_ARGS__} }
-+
- struct panel_desc {
- 	const struct drm_display_mode *modes;
- 	unsigned int bpc;
-@@ -30,6 +39,7 @@ struct panel_desc {
- 
- 	unsigned long flags;
- 	enum mipi_dsi_pixel_format format;
-+	const struct panel_init_cmd *init_cmds;
- 	unsigned int lanes;
- };
- 
-@@ -88,9 +98,12 @@ static int innolux_panel_unprepare(struct drm_panel *panel)
- 		return err;
- 	}
- 
-+	/* p097pfg: t15 */
-+	msleep(100);
-+
- 	gpiod_set_value_cansleep(innolux->enable_gpio, 0);
- 
--	/* T8: 80ms - 1000ms */
-+	/* p079zca: t8*/
- 	msleep(80);
- 
- 	regulator_disable(innolux->avee);
-@@ -124,13 +137,43 @@ static int innolux_panel_prepare(struct drm_panel *panel)
- 	if (err < 0)
- 		goto disable_avdd;
- 
--	/* T2: 15ms - 1000ms */
--	usleep_range(15000, 16000);
-+	/* p079zca: t2 (20ms), p097pfg: t4 (15ms) */
-+	usleep_range(20000, 21000);
- 
- 	gpiod_set_value_cansleep(innolux->enable_gpio, 1);
- 
--	/* T4: 15ms - 1000ms */
--	usleep_range(15000, 16000);
-+	/* p079zca: t4, p097pfg: t5 */
-+	usleep_range(20000, 21000);
-+
-+	if (innolux->desc->init_cmds) {
-+		const struct panel_init_cmd *cmds =
-+					innolux->desc->init_cmds;
-+		int i;
-+
-+		for (i = 0; cmds[i].len != 0; i++) {
-+			const struct panel_init_cmd *cmd = &cmds[i];
-+
-+			err = mipi_dsi_generic_write(innolux->link, cmd->data,
-+						     cmd->len);
-+			if (err < 0) {
-+				dev_err(panel->dev,
-+					"failed to write command %d\n", i);
-+				goto poweroff;
-+			}
-+
-+			/*
-+			 * Included by random guessing, because without this
-+			 * (or at least, some delay), the panel sometimes
-+			 * didn't appear to pick up the command sequence.
-+			 */
-+			err = mipi_dsi_dcs_nop(innolux->link);
-+			if (err < 0) {
-+				dev_err(panel->dev,
-+					"failed to send DCS nop: %d\n", err);
-+				goto poweroff;
-+			}
-+		}
-+	}
- 
- 	err = mipi_dsi_dcs_exit_sleep_mode(innolux->link);
- 	if (err < 0) {
-@@ -213,6 +256,142 @@ static const struct panel_desc innolux_p079zca_panel_desc = {
- 	.lanes = 4,
- };
- 
-+static const struct drm_display_mode innolux_p097pfg_mode = {
-+	.clock = 229000,
-+	.hdisplay = 1536,
-+	.hsync_start = 1536 + 100,
-+	.hsync_end = 1536 + 100 + 24,
-+	.htotal = 1536 + 100 + 24 + 100,
-+	.vdisplay = 2048,
-+	.vsync_start = 2048 + 100,
-+	.vsync_end = 2048 + 100 + 2,
-+	.vtotal = 2048 + 100 + 2 + 18,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_init_cmd innolux_p097pfg_init_cmds[] = {
-+	/* page 0 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x00),
-+	_INIT_CMD(0xB1, 0xE8, 0x11),
-+	_INIT_CMD(0xB2, 0x25, 0x02),
-+	_INIT_CMD(0xB5, 0x08, 0x00),
-+	_INIT_CMD(0xBC, 0x0F, 0x00),
-+	_INIT_CMD(0xB8, 0x03, 0x06, 0x00, 0x00),
-+	_INIT_CMD(0xBD, 0x01, 0x90, 0x14, 0x14),
-+	_INIT_CMD(0x6F, 0x01),
-+	_INIT_CMD(0xC0, 0x03),
-+	_INIT_CMD(0x6F, 0x02),
-+	_INIT_CMD(0xC1, 0x0D),
-+	_INIT_CMD(0xD9, 0x01, 0x09, 0x70),
-+	_INIT_CMD(0xC5, 0x12, 0x21, 0x00),
-+	_INIT_CMD(0xBB, 0x93, 0x93),
-+
-+	/* page 1 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x01),
-+	_INIT_CMD(0xB3, 0x3C, 0x3C),
-+	_INIT_CMD(0xB4, 0x0F, 0x0F),
-+	_INIT_CMD(0xB9, 0x45, 0x45),
-+	_INIT_CMD(0xBA, 0x14, 0x14),
-+	_INIT_CMD(0xCA, 0x02),
-+	_INIT_CMD(0xCE, 0x04),
-+	_INIT_CMD(0xC3, 0x9B, 0x9B),
-+	_INIT_CMD(0xD8, 0xC0, 0x03),
-+	_INIT_CMD(0xBC, 0x82, 0x01),
-+	_INIT_CMD(0xBD, 0x9E, 0x01),
-+
-+	/* page 2 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x02),
-+	_INIT_CMD(0xB0, 0x82),
-+	_INIT_CMD(0xD1, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x82, 0x00, 0xA5,
-+		  0x00, 0xC1, 0x00, 0xEA, 0x01, 0x0D, 0x01, 0x40),
-+	_INIT_CMD(0xD2, 0x01, 0x6A, 0x01, 0xA8, 0x01, 0xDC, 0x02, 0x29,
-+		  0x02, 0x67, 0x02, 0x68, 0x02, 0xA8, 0x02, 0xF0),
-+	_INIT_CMD(0xD3, 0x03, 0x19, 0x03, 0x49, 0x03, 0x67, 0x03, 0x8C,
-+		  0x03, 0xA6, 0x03, 0xC7, 0x03, 0xDE, 0x03, 0xEC),
-+	_INIT_CMD(0xD4, 0x03, 0xFF, 0x03, 0xFF),
-+	_INIT_CMD(0xE0, 0x00, 0x00, 0x00, 0x86, 0x00, 0xC5, 0x00, 0xE5,
-+		  0x00, 0xFF, 0x01, 0x26, 0x01, 0x45, 0x01, 0x75),
-+	_INIT_CMD(0xE1, 0x01, 0x9C, 0x01, 0xD5, 0x02, 0x05, 0x02, 0x4D,
-+		  0x02, 0x86, 0x02, 0x87, 0x02, 0xC3, 0x03, 0x03),
-+	_INIT_CMD(0xE2, 0x03, 0x2A, 0x03, 0x56, 0x03, 0x72, 0x03, 0x94,
-+		  0x03, 0xAC, 0x03, 0xCB, 0x03, 0xE0, 0x03, 0xED),
-+	_INIT_CMD(0xE3, 0x03, 0xFF, 0x03, 0xFF),
-+
-+	/* page 3 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x03),
-+	_INIT_CMD(0xB0, 0x00, 0x00, 0x00, 0x00),
-+	_INIT_CMD(0xB1, 0x00, 0x00, 0x00, 0x00),
-+	_INIT_CMD(0xB2, 0x00, 0x00, 0x06, 0x04, 0x01, 0x40, 0x85),
-+	_INIT_CMD(0xB3, 0x10, 0x07, 0xFC, 0x04, 0x01, 0x40, 0x80),
-+	_INIT_CMD(0xB6, 0xF0, 0x08, 0x00, 0x04, 0x00, 0x00, 0x00, 0x01,
-+		  0x40, 0x80),
-+	_INIT_CMD(0xBA, 0xC5, 0x07, 0x00, 0x04, 0x11, 0x25, 0x8C),
-+	_INIT_CMD(0xBB, 0xC5, 0x07, 0x00, 0x03, 0x11, 0x25, 0x8C),
-+	_INIT_CMD(0xC0, 0x00, 0x3C, 0x00, 0x00, 0x00, 0x80, 0x80),
-+	_INIT_CMD(0xC1, 0x00, 0x3C, 0x00, 0x00, 0x00, 0x80, 0x80),
-+	_INIT_CMD(0xC4, 0x00, 0x00),
-+	_INIT_CMD(0xEF, 0x41),
-+
-+	/* page 4 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x04),
-+	_INIT_CMD(0xEC, 0x4C),
-+
-+	/* page 5 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x05),
-+	_INIT_CMD(0xB0, 0x13, 0x03, 0x03, 0x01),
-+	_INIT_CMD(0xB1, 0x30, 0x00),
-+	_INIT_CMD(0xB2, 0x02, 0x02, 0x00),
-+	_INIT_CMD(0xB3, 0x82, 0x23, 0x82, 0x9D),
-+	_INIT_CMD(0xB4, 0xC5, 0x75, 0x24, 0x57),
-+	_INIT_CMD(0xB5, 0x00, 0xD4, 0x72, 0x11, 0x11, 0xAB, 0x0A),
-+	_INIT_CMD(0xB6, 0x00, 0x00, 0xD5, 0x72, 0x24, 0x56),
-+	_INIT_CMD(0xB7, 0x5C, 0xDC, 0x5C, 0x5C),
-+	_INIT_CMD(0xB9, 0x0C, 0x00, 0x00, 0x01, 0x00),
-+	_INIT_CMD(0xC0, 0x75, 0x11, 0x11, 0x54, 0x05),
-+	_INIT_CMD(0xC6, 0x00, 0x00, 0x00, 0x00),
-+	_INIT_CMD(0xD0, 0x00, 0x48, 0x08, 0x00, 0x00),
-+	_INIT_CMD(0xD1, 0x00, 0x48, 0x09, 0x00, 0x00),
-+
-+	/* page 6 */
-+	_INIT_CMD(0xF0, 0x55, 0xAA, 0x52, 0x08, 0x06),
-+	_INIT_CMD(0xB0, 0x02, 0x32, 0x32, 0x08, 0x2F),
-+	_INIT_CMD(0xB1, 0x2E, 0x15, 0x14, 0x13, 0x12),
-+	_INIT_CMD(0xB2, 0x11, 0x10, 0x00, 0x3D, 0x3D),
-+	_INIT_CMD(0xB3, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D),
-+	_INIT_CMD(0xB4, 0x3D, 0x32),
-+	_INIT_CMD(0xB5, 0x03, 0x32, 0x32, 0x09, 0x2F),
-+	_INIT_CMD(0xB6, 0x2E, 0x1B, 0x1A, 0x19, 0x18),
-+	_INIT_CMD(0xB7, 0x17, 0x16, 0x01, 0x3D, 0x3D),
-+	_INIT_CMD(0xB8, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D),
-+	_INIT_CMD(0xB9, 0x3D, 0x32),
-+	_INIT_CMD(0xC0, 0x01, 0x32, 0x32, 0x09, 0x2F),
-+	_INIT_CMD(0xC1, 0x2E, 0x1A, 0x1B, 0x16, 0x17),
-+	_INIT_CMD(0xC2, 0x18, 0x19, 0x03, 0x3D, 0x3D),
-+	_INIT_CMD(0xC3, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D),
-+	_INIT_CMD(0xC4, 0x3D, 0x32),
-+	_INIT_CMD(0xC5, 0x00, 0x32, 0x32, 0x08, 0x2F),
-+	_INIT_CMD(0xC6, 0x2E, 0x14, 0x15, 0x10, 0x11),
-+	_INIT_CMD(0xC7, 0x12, 0x13, 0x02, 0x3D, 0x3D),
-+	_INIT_CMD(0xC8, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D),
-+	_INIT_CMD(0xC9, 0x3D, 0x32),
-+
-+	{},
-+};
-+
-+static const struct panel_desc innolux_p097pfg_panel_desc = {
-+	.modes = &innolux_p097pfg_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width = 147,
-+		.height = 196,
-+	},
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		 MIPI_DSI_MODE_LPM,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.init_cmds = innolux_p097pfg_init_cmds,
-+	.lanes = 8,
-+};
-+
- static int innolux_panel_get_modes(struct drm_panel *panel)
- {
- 	struct drm_display_mode *mode;
-@@ -251,6 +430,9 @@ static const struct of_device_id innolux_of_match[] = {
- 	{ .compatible = "innolux,p079zca",
- 	  .data = &innolux_p079zca_panel_desc
- 	},
-+	{ .compatible = "innolux,p097pfg",
-+	  .data = &innolux_p097pfg_panel_desc
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, innolux_of_match);
--- 
-2.7.4
+	ip -details -statistics link show can0
+
+Best regards,
+Jakob
