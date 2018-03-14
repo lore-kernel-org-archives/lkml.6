@@ -1,114 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeCNLFP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:05:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38098 "EHLO
+        id S1751430AbeCNLIi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:08:38 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51508 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeCNLFO (ORCPT
+        with ESMTP id S1751289AbeCNLIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:05:14 -0400
-X-Google-Smtp-Source: AG47ELvhHzxWq63UppspctLdRK1ciRwOrtYIw3nLA3o4Wtv8tsp21wFSQyYfZ5B+Uvnx+iejal5uog==
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-References: <27165802.vQ9JbjrmvU@merkaba>
- <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
- <3573548.kp1edD77Gq@merkaba>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <1e708e58-5ba7-8ce9-2edf-6cc7ba5f80c3@redhat.com>
-Date: Wed, 14 Mar 2018 12:05:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Mar 2018 07:08:37 -0400
+X-Google-Smtp-Source: AG47ELt8d/qBaMo6kth7mdcan9zfRUXrLMGLZ6ydwU8ctE3qZWjmsbuoWqIxMMcLUNE6YILAxX/bHw==
+Date: Wed, 14 Mar 2018 12:08:34 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: David Laight <David.Laight@ACULAB.COM>,
+        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/nouveau/secboot: remove VLA usage
+Message-ID: <20180314110834.GB8564@ulmo>
+References: <20180313162411.GA1983@embeddedgus>
 MIME-Version: 1.0
-In-Reply-To: <3573548.kp1edD77Gq@merkaba>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+Content-Disposition: inline
+In-Reply-To: <20180313162411.GA1983@embeddedgus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 14-03-18 12:01, Martin Steigerwald wrote:
-> Hans de Goede - 11.03.18, 15:37:
->> Hi Martin,
->>
->> On 11-03-18 09:20, Martin Steigerwald wrote:
->>> Hello.
->>>
->>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
->>> with SMART checks occassionally failing like this:
->>>
->>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending checks
->>> udisksd[24408]: Error performing housekeeping for drive
->>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
->>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
->>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
->>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00  00
->>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
->>> udisksd[24408]: Error performing housekeeping for drive
->>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error updating
->>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected sense
->>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
->>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
->>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
->>>
->>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
->>>
->>> However when I then check manually with smartctl -a | -x | -H the device
->>> reports SMART data just fine.
->>>
->>> As smartd correctly detects that device is in sleep mode, this may be an
->>> userspace issue in udisksd.
->>>
->>> Also at some boot attempts the boot hangs with a message like "could not
->>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
->>> on to LVs (each on one of the SSDs). A configuration that requires a
->>> manual
->>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
->>> btrfs device scan).
->>>
->>> I wonder whether that has to do with the new SATA LPM policy stuff, but as
->>> I had issues with
->>>
->>>    3 => Medium power with Device Initiated PM enabled
->>>
->>> (machine did not boot, which could also have been caused by me
->>> accidentally
->>> removing all TCP/IP network support in the kernel with that setting)
->>>
->>> I set it back to
->>>
->>> CONFIG_SATA_MOBILE_LPM_POLICY=0
->>>
->>> (firmware settings)
->>
->> Right, so at that settings the LPM policy changes are effectively
->> disabled and cannot explain your SMART issues.
->>
->> Still I would like to zoom in on this part of your bug report, because
->> for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
->> and AFAIK Ubuntu has similar plans.
->>
->> I suspect that the issue you were seeing with
->> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've attached
->> a patch for you to test, which disabled LPM for your model Crucial SSD (but
->> keeps it on for the Intel disk) if you can confirm that with that patch you
->> can run with
->> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
-> 
-> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system successfully
-> booted three times in a row. So feel free to add tested-by.
+--PmA2V3Z32TCmWXqI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Tue, Mar 13, 2018 at 11:24:11AM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLA. In this particular
+> case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
+> variable cmdline_size. Also, remove cmdline_size as it is not
+> actually useful anymore.
+>=20
+> The use of stack Variable Length Arrays needs to be avoided, as they
+> can be a vector for stack exhaustion, which can be both a runtime bug
+> or a security flaw. Also, in general, as code evolves it is easy to
+> lose track of how big a VLA can get. Thus, we can end up having runtime
+> failures that are hard to debug.
+>=20
+> Also, fixed as part of the directive to remove all VLAs from
+> the kernel: https://lkml.org/lkml/2018/3/7/621
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Changes in v2:
+>  - Use sizeof(buf) instead of NVKM_MSGQUEUE_CMDLINE_SIZE. This change
+>    is based on the feedback provided by David Laight. Thanks David.
+>=20
+>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c | 7 +++-=
+---
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-To be clear, you're talking about 4.16-rc5 with the patch I made to
-blacklist the Crucial disk I assume, not just plain 4.16-rc5, right ?
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Regards,
+--PmA2V3Z32TCmWXqI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hans
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpAq8ACgkQ3SOs138+
+s6EoOg//S3oaA0fk2LHi/O5aXNHiK+EAqIjnb+tbwu5zji9AHXLyqvkjme5ZfwSl
+YnAAH4gffi+93bHSVdC5gMAT02Lpep1wN/5O76dKRK25LZluMYK2ybAgC9LDeZeI
+3j406OS3Fe/qYk5c0nj5vrRNAJOBVrkZ52FMhakc36896ZYu+aHqUkhdv0nYgYiF
++RQwtNldnTOOJ12WU+ZqCR7u/v5OAc+rOxsyuYozJHJ8JFE23hraxV15XIsRsizr
+VjWD8aIUNnchlpGiiiN61f7h50E7kYi0ChprUcSQtmTO+xp2bgFVLKRFevCLu5kL
+SckzSGzewvUCkTC18yFuwZbtHW948c1FrO1aveK3PvLtqGe1RwMe9nTz/9aRNJZu
++fLcNVD+5kDC4h8zcbdBDXfDxtAUcPZpDgv+xutUuVjN1cay+B7+EijwX2j7CCxC
+JlMSsOVcSA7A8tIxqMCMPfQ9QwbX3W42B48CvvlP3hL1kiEOz4InXlqkR5p/yFRg
+C6e2jpHm2xJV7RPIQGTx9efexCxgosUhV1k2YQiBzRheKJtuR29HATEvrC1xQla4
+Xl971Tq5Ugbrm4hJlczsbz4T1dKBsPp6J3hSzcuJuWYzRMuG3zgcW1l1n3L08g8e
+oC/yn42kH5jhaFJW8h0lBc63Era61OxSKPxoZCKqKe8WVKYfN8A=
+=YxhP
+-----END PGP SIGNATURE-----
+
+--PmA2V3Z32TCmWXqI--
