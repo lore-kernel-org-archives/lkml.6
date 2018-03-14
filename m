@@ -1,107 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeCNPto (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:49:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751488AbeCNPtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:49:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93A820779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Wed, 14 Mar 2018 16:49:39 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT][PATCH v4 1/7] time: tick-sched: Reorganize idle tick
- management code
-Message-ID: <20180314154934.GA3635@lerouge>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan>
- <2019498.YXfJVQUTuX@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2019498.YXfJVQUTuX@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752232AbeCNPt6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:49:58 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:57523 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbeCNPtz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 11:49:55 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH 31/47] watchdog: remove bfin_wdt driver
+Date: Wed, 14 Mar 2018 16:35:44 +0100
+Message-Id: <20180314153603.3127932-32-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:lAlPIr506X8lu/GyVN0546vqQfxA862fFtgVUpRYn8FpWmcLu6v
+ xNdrmftjjjvwIUApTvrUR9HlbNWXTLN16PwqF4i3AqTf2y/WAPRHPJrDQAq4A1+TZ4I0OAZ
+ T6UoOX8r9DG3gDz600q6LeVS2tb3fYJvr190oeUBymCsgid34ziZ3piaC5ktTk2tB2BM4b4
+ j+iQDCvuHfiwjZ4aon6IQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:G9ISzIcqSxc=:EXZTcYbv+S+CTuBe8rJABo
+ xpMVV2hG0ycb2yHUmDJ30W6RuWB+798jCBfQhXkB7FwYIkxYsWeQbg720lc8TsA0QpB8BIaaM
+ kJYXxi3/MUvHHZe2hA30y6AHcrSMtxTVnMzlVhO7C2l2SMca5n9gxX+ilwWpU92DYAB44simu
+ yKeRPFxW6sopzUMm2HxbODuv76zgHhk1GmEmuA63dH8xBuM85/kSPKiNQyTJd8Qywxe4avhpK
+ q04Wx/EzzGvgv+48VlvSbzYzzdRV0nVev7jiFWbF++SZ91XlEPwQoXdifW4j0LCfZ/kAy4DSJ
+ bIBvcurYWy6LdN4OBGUVjg8Sppbkisq/vwxiuOHlRBP30Bz8ev/NBXqsf6Qr+q1IYdOR/xyIe
+ 9bP+H3Dy5V8jqJ6AF0cbBRk9O9HN+v0QLe9bfTDmkmYV6gz2HubJETJbiklthEhCowaWt3fto
+ G7P3ut2TJvldshiqSNhLgyxddctA2v0wc43GlTgboe1wmHDhdBISUT7poBeo7ChaB61tl3Suy
+ MjXBkcjWEbQyVdeVyCl4TVTTS8oE4MHne2aK5jspkywTTDLRAwuFfHG46Ab8SGDDTIZZjrhLo
+ JOGB8t10Pt7OOyRVUoUmjG6ESBpXxGFlTUqZsm81rsiVqXzfI39pOXmXydakiYmNMUPy4D7ND
+ GK8Fij17YLDRhu3yBvtvpNa544MTasuRSrInUgxI5zYY1Ww7F5I7PxbVKHCCwsi/GdB6eld9v
+ 1OY3fhsHzYwwGDJ7g6fmGhQ3hmTeIQTFjunUKg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:47:41AM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Prepare the scheduler tick code for reworking the idle loop to
-> avoid stopping the tick in some cases.
-> 
-> Move away the tick_nohz_start_idle() invocation from
-> __tick_nohz_idle_enter(), rename the latter to
-> __tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
-> as a wrapper around it for calling it from the outside.
-> 
-> Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
-> of calling the entire __tick_nohz_idle_enter(), add another wrapper
-> disabling and enabling interrupts around tick_nohz_idle_stop_tick()
-> and make the current callers of tick_nohz_idle_enter() call it too
-> to retain their current functionality.
+The blackfin architecture is getting removed, so this driver has
+become obsolete.
 
-Perhaps we should have a higher level description of what the patch does.
-After all the low level part is already described in the diff.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ Documentation/watchdog/watchdog-parameters.txt |   5 -
+ drivers/watchdog/Kconfig                       |  17 -
+ drivers/watchdog/Makefile                      |   7 -
+ drivers/watchdog/bfin_wdt.c                    | 476 -------------------------
+ 4 files changed, 505 deletions(-)
+ delete mode 100644 drivers/watchdog/bfin_wdt.c
 
-Ie: we are splitting the nohz idle entry call to decouple the idle time
-stats accounting and preparatory work from the actual tick stop code, that
-in order to later be able to delay the tick stop once we reach more
-power-knowledgeable callers.
-
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  arch/x86/xen/smp_pv.c    |    1 +
->  include/linux/tick.h     |    9 +++++++++
->  kernel/sched/idle.c      |    1 +
->  kernel/time/tick-sched.c |   46 +++++++++++++++++++++++++---------------------
->  4 files changed, 36 insertions(+), 21 deletions(-)
-> 
-> Index: linux-pm/include/linux/tick.h
-> ===================================================================
-> --- linux-pm.orig/include/linux/tick.h
-> +++ linux-pm/include/linux/tick.h
-> @@ -114,6 +114,7 @@ enum tick_dep_bits {
->  #ifdef CONFIG_NO_HZ_COMMON
->  extern bool tick_nohz_enabled;
->  extern int tick_nohz_tick_stopped(void);
-> +extern void tick_nohz_idle_stop_tick(void);
->  extern void tick_nohz_idle_enter(void);
->  extern void tick_nohz_idle_exit(void);
->  extern void tick_nohz_irq_exit(void);
-> @@ -125,6 +126,7 @@ extern u64 get_cpu_iowait_time_us(int cp
->  #else /* !CONFIG_NO_HZ_COMMON */
->  #define tick_nohz_enabled (0)
->  static inline int tick_nohz_tick_stopped(void) { return 0; }
-> +static inline void tick_nohz_idle_stop_tick(void) { }
->  static inline void tick_nohz_idle_enter(void) { }
->  static inline void tick_nohz_idle_exit(void) { }
->  
-> @@ -136,6 +138,13 @@ static inline u64 get_cpu_idle_time_us(i
->  static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
->  #endif /* !CONFIG_NO_HZ_COMMON */
->  
-> +static inline void tick_nohz_idle_stop_tick_protected(void)
-> +{
-> +	local_irq_disable();
-> +	tick_nohz_idle_stop_tick();
-> +	local_irq_enable();
-> +}
-
-It seems that even if we have CONFIG_NO_HZ_COMMON=n, tick_nohz_idle_stop_tick_protected()
-will have overhead, right?
-
-Thanks.
+diff --git a/Documentation/watchdog/watchdog-parameters.txt b/Documentation/watchdog/watchdog-parameters.txt
+index beea975980f6..6d6200ea27b8 100644
+--- a/Documentation/watchdog/watchdog-parameters.txt
++++ b/Documentation/watchdog/watchdog-parameters.txt
+@@ -55,11 +55,6 @@ wdt_time: Watchdog time in seconds. (default=30)
+ nowayout: Watchdog cannot be stopped once started
+ 	(default=kernel config parameter)
+ -------------------------------------------------
+-bfin_wdt:
+-timeout: Watchdog timeout in seconds. (1<=timeout<=((2^32)/SCLK), default=20)
+-nowayout: Watchdog cannot be stopped once started
+-	(default=kernel config parameter)
+--------------------------------------------------
+ coh901327_wdt:
+ margin: Watchdog margin in seconds (default 60s)
+ -------------------------------------------------
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 098e5ed4ee3d..f89f8869ca2a 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -815,23 +815,6 @@ config SPRD_WATCHDOG
+ 	  Say Y here to include watchdog timer supported
+ 	  by Spreadtrum system.
+ 
+-# BLACKFIN Architecture
+-
+-config BFIN_WDT
+-	tristate "Blackfin On-Chip Watchdog Timer"
+-	depends on BLACKFIN
+-	---help---
+-	  If you say yes here you will get support for the Blackfin On-Chip
+-	  Watchdog Timer. If you have one of these processors and wish to
+-	  have watchdog support enabled, say Y, otherwise say N.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called bfin_wdt.
+-
+-# CRIS Architecture
+-
+-# FRV Architecture
+-
+ # X86 (i386 + ia64 + x86_64) Architecture
+ 
+ config ACQUIRE_WDT
+diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+index 0474d38aa854..e209824541b8 100644
+--- a/drivers/watchdog/Makefile
++++ b/drivers/watchdog/Makefile
+@@ -91,13 +91,6 @@ obj-$(CONFIG_UNIPHIER_WATCHDOG) += uniphier_wdt.o
+ obj-$(CONFIG_RTD119X_WATCHDOG) += rtd119x_wdt.o
+ obj-$(CONFIG_SPRD_WATCHDOG) += sprd_wdt.o
+ 
+-# BLACKFIN Architecture
+-obj-$(CONFIG_BFIN_WDT) += bfin_wdt.o
+-
+-# CRIS Architecture
+-
+-# FRV Architecture
+-
+ # X86 (i386 + ia64 + x86_64) Architecture
+ obj-$(CONFIG_ACQUIRE_WDT) += acquirewdt.o
+ obj-$(CONFIG_ADVANTECH_WDT) += advantechwdt.o
+diff --git a/drivers/watchdog/bfin_wdt.c b/drivers/watchdog/bfin_wdt.c
+deleted file mode 100644
+index aa4d2e8a8ef9..000000000000
+-- 
+2.9.0
