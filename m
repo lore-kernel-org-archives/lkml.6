@@ -1,54 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933093AbeCNByW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 21:54:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932763AbeCNByU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:54:20 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1B9205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 13 Mar 2018 22:54:17 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
- armv8-recommended.json
-Message-ID: <20180314015417.GB19781@kernel.org>
-References: <20180313120508.29327-1-acme@kernel.org>
- <20180313120508.29327-19-acme@kernel.org>
- <20180313142618.36je6syqg6ppwhbp@gmail.com>
- <20180313182730.GA7987@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313182730.GA7987@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S933133AbeCNCCK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 22:02:10 -0400
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:42571 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932937AbeCNCCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 22:02:08 -0400
+X-Google-Smtp-Source: AG47ELuJaRUkBCWArvPKnVnN4Uf0LptoP/P6HzTLQgiU6RKrRktuW03jLKeaObvI0Z0MiHXnpdqtBg==
+Message-ID: <1520992925.5128.18.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: vb2: unify calling of set_page_dirty_lock
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 13 Mar 2018 22:02:05 -0400
+In-Reply-To: <1520989785.5128.16.camel@ndufresne.ca>
+References: <20170829112603.32732-1-stanimir.varbanov@linaro.org>
+         <1507650010.2784.11.camel@ndufresne.ca>
+         <20171015204014.2awhhygw6hi3lxas@valkosipuli.retiisi.org.uk>
+         <1508108964.4502.6.camel@ndufresne.ca>
+         <20171017101420.5a5cvyhkadmcqgfy@valkosipuli.retiisi.org.uk>
+         <1508249953.19297.4.camel@ndufresne.ca>
+         <8f1eda59-fc51-b77e-ae43-9603b5759b14@linaro.org>
+         <1520988249.5128.13.camel@ndufresne.ca>
+         <1520989785.5128.16.camel@ndufresne.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 13, 2018 at 03:27:30PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Mar 13, 2018 at 03:26:18PM +0100, Ingo Molnar escreveu:
-> > That's not a valid SOB chain, author != first-Signed-off-by.
- 
-> I removed that cset for now, can you please check if the
-> perf-core-for-mingo-4.17-20180313-2 tag is allright?
+Le mardi 13 mars 2018 à 21:09 -0400, Nicolas Dufresne a écrit :
+> > I've looked into this again. I have hit the same issue but with CPU
+> > to
+> > DRM, using DMABuf allocated from DRM Dumb buffers. In that case,
+> > using
+> > DMA_BUF_IOCTL_SYNC fixes the issues.
+> > 
+> > This raises a lot of question around the model used in V4L2. As you
+> > mention, prepare/finish are missing in dma-vmalloc mem_ops. I'll
+> > give
+> > a
+> > try implementing that, it should cover my initial use case, but
+> > then
+> > I
+> > believe it will fail if my pipeline is:
+> > 
+> >    UVC -> in plane CPU modification -> DRM
+> > 
+> > Because we don't implement begin/end_cpu_access on our exported
+> > DMABuf.
+> > It should also fail for the following use case:
+> > 
+> >    UVC (importer) -> DRM
+> > 
+> > UVC driver won't call the remote dmabuf being/end_cpu_access
+> > method.
+> > This one is difficult because UVC driver and vivid don't seem to be
+> > aware of being an importer, exported or simply exporting to CPU
+> > (through mmap). I believe what we have now pretty much assumes the
+> > what
+> > we export as vmalloc is to be used by CPU only. Also, the usual
+> > direction used by prepare/finish ops won't work for drivers like
+> > vivid
+> > and UVC that write into the buffers using the cpu.
+> > 
+> > To be continued ...
+> 
+> While I was writing that, I was already outdated, as of now, we only
+> have one ops, called sync. This implements the to_cpu direction only.
 
-So, since there is this problem with powerpc and jevents, Ingo, please
-hold on a bit more... Hopefully tomorrow things will be in a better
-shape.
+Replying to myself again, obviously looking at the old videobuf code
+can only get one confused.
 
-- Arnaldo
+Nicolas
