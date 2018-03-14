@@ -1,52 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeCNUbj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:31:39 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:51752 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeCNUbh (ORCPT
+        id S1752232AbeCNUcJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:32:09 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33590 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeCNUcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:31:37 -0400
-X-Google-Smtp-Source: AG47ELtC+afkWMXbRQwrfW+pFSodvbDLDD/n+hHAdxiEFUPYhzJy1M0uySS/Hx1MqvnseGf3vQFSwBtG4Qp2W5ZrZ7o=
+        Wed, 14 Mar 2018 16:32:07 -0400
+X-Google-Smtp-Source: AG47ELuU2iDP5N/SqRefMFZxzq+8DrPcoCFATjiDloz4SX0OdWfMnMcXB+AVJk0zgv4Y7pNtcVSj14q2P8XlUOCwZdM=
 MIME-Version: 1.0
-In-Reply-To: <1521059294.18703.106.camel@redhat.com>
-References: <20180220205638.1959033-1-arnd@arndb.de> <20180228211514.GC13394@ziepe.ca>
- <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
- <20180306234539.GB1037@ziepe.ca> <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
- <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
- <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
- <1521057831.18703.101.camel@redhat.com> <CAK8P3a1=h7cF8kRUWpFG88-OSFL8_7SgUkaX4TUEhG6ypPODkg@mail.gmail.com>
- <1521059294.18703.106.camel@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 14 Mar 2018 13:31:36 -0700
-X-Google-Sender-Auth: vCGZdl4HMxdScj_AcI2U7Z-gHU8
-Message-ID: <CA+55aFxEsTA7DTBYdLz8sbniq2NRO-X+Nt1vmYxckfWAP0BQZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-To: Doug Ledford <dledford@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Eddie Wai <eddie.wai@broadcom.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
+In-Reply-To: <20180315072716.7e9a8e25@canb.auug.org.au>
+References: <20180315072716.7e9a8e25@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 21:32:06 +0100
+X-Google-Sender-Auth: tF2nd8Yi53rdRU9w5Nipeg1cbNs
+Message-ID: <CAK8P3a2wMzJx11KQ5W-EkMFf3mTdvGUp9spCQywNwJFyGJcd5g@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the asm-generic tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 1:28 PM, Doug Ledford <dledford@redhat.com> wrote:
+On Wed, Mar 14, 2018 at 9:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Arnd,
 >
-> Arnd sent in a two patch series and it got put into our for-next branch.
->  But, the two patches are the *only* two remaining issues for the arm
-> builds on the kernelci system.  They would like to get this into for-rc
-> so that the build failures stop.  Are you OK with me just cherry-picking
-> them from for-next to for-rc so I can send them to you?  They'll show as
-> duplicates in the next merge window, but should drop silently.
+> Commit
+>
+>   77b0b77f7812 ("CRIS: Drop support for the CRIS port")
+>
+> is missing a Signed-off-by from its committer.
 
-Go ahead, assuming there are no other planned changes around them that
-would cause potential pointless merge problems..
+Ah, I know what happened there, sorry about that and thanks a lot for
+the report.
+Uploading the fixed version (also including a number of new Acks) now.
 
-           Linus
+        Arnd
