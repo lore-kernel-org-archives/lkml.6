@@ -1,233 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeCNJsI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:48:08 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:53912 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751624AbeCNJsH (ORCPT
+        id S1751603AbeCNJvn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:51:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751379AbeCNJvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:48:07 -0400
-Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
- devices
-To: Wolfgang Grandegger <wg@grandegger.com>
-Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
- <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
- <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
- <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
- <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
- <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Message-ID: <5b3df9d5-3e65-1114-4b51-9dcc329cbc31@theobroma-systems.com>
-Date: Wed, 14 Mar 2018 10:48:04 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Wed, 14 Mar 2018 05:51:42 -0400
+Date: Wed, 14 Mar 2018 10:51:32 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
+In-Reply-To: <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
+        <20180309152556.0ccf3cb1@ThinkPad>
+        <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031409-0020-0000-0000-000004044CDC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031409-0021-0000-0000-000042984F18
+Message-Id: <20180314105132.3d828b01@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140115
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.03.18 10:25, Wolfgang Grandegger wrote:
->> Counting the state changes is one thing but you should also generate 
->> error messages for them.
+Hi Ingo,
+
+do you have an idea about this? This problem is currently holding me back to
+send a v2 of the patch set.
+
+Thanks
+Philipp
+
+On Mon, 12 Mar 2018 15:40:16 +0800
+Dave Young <dyoung@redhat.com> wrote:
+
+> Hi Philipp,
+> On 03/09/18 at 03:25pm, Philipp Rudo wrote:
+> > Hi Dave,
+> > 
+> > On Fri, 9 Mar 2018 13:19:40 +0800
+> > Dave Young <dyoung@redhat.com> wrote:
+> >   
+> > > Hi Philipp,
+> > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:  
+> > > > 
+> > > > Hi everybody
+> > > > 
+> > > > following the discussion with Dave and AKASHI, here are the common code
+> > > > patches extracted from my recent patch set (Add kexec_file_load support to
+> > > > s390) [1]. The patches were extracted to allow upstream integration together
+> > > > with AKASHI's common code patches before the arch code gets adjusted to the
+> > > > new base.
+> > > > 
+> > > > The reason for this series is to prepare common code for adding
+> > > > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
+> > > > field during purgatory load. In detail this series contains:
+> > > > 
+> > > > Patch #1&2: Minor cleanups/fixes.
+> > > > 
+> > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+> > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+> > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+> > > > depending on the section. With these patches the section address will be
+> > > > calculated verbosely and sh_offset will contain the offset of the section
+> > > > in the stripped purgatory binary (purgatory_buf).
+> > > > 
+> > > > Patch #10: Allows architectures to set the purgatory load address. This
+> > > > patch is important for s390 as the kernel and purgatory have to be loaded
+> > > > to fixed addresses. In current code this is impossible as the purgatory
+> > > > load is opaque to the architecture.
+> > > > 
+> > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
+> > > > directory to allow reuse in other architectures.
+> > > > 
+> > > > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
+> > > > requested changes only affected s390 code). Please note that I had to touch
+> > > > arch code for x86 and power a little. In theory this should not change the
+> > > > behavior but I don't have a way to test it. Cross-compiling with
+> > > > defconfig [2] works fine for both.
+> > > > 
+> > > > Thanks
+> > > > Philipp
+> > > > 
+> > > > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
+> > > > [2] On x86 with the orc unwinder and stack validation turned off. objtool
+> > > >     SEGFAULTs on s390...
+> > > > 
+> > > > Philipp Rudo (11):
+> > > >   kexec_file: Silence compile warnings
+> > > >   kexec_file: Remove checks in kexec_purgatory_load
+> > > >   kexec_file: Make purgatory_info->ehdr const
+> > > >   kexec_file: Search symbols in read-only kexec_purgatory
+> > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+> > > >   kexec_file: Split up __kexec_load_puragory
+> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+> > > >   kexec_file: Remove mis-use of sh_offset field
+> > > >   kexec_file: Allow archs to set purgatory load address
+> > > >   kexec_file: Move purgatories sha256 to common code
+> > > > 
+> > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+> > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+> > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+> > > >  arch/x86/purgatory/Makefile                    |   3 +
+> > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
+> > > >  include/linux/kexec.h                          |  38 +--
+> > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+> > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
+> > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+> > > >  9 files changed, 244 insertions(+), 271 deletions(-)
+> > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > > > 
+> > > > -- 
+> > > > 2.13.5
+> > > >     
+> > > 
+> > > I did a test on x86, but it failed:
+> > > [   15.636489] kexec: Undefined symbol: memcpy
+> > > [   15.636496] kexec-bzImage64: Loading purgatory failed
+> > > [   33.603356] kexec: Undefined symbol: memcpy
+> > > [   33.603362] kexec-bzImage64: Loading purgatory failed
+> > > 
+> > > I think this relates to the sha256 splitting patch.  
+> > 
+> > I looked into this a little closer and i think i understood what happens. 
+> > 
+> > There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
+> > in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
+> > switching to linux/string.h there is no more definition for it. Leaving us with
+> > 
+> > $ readelf -s purgatory.ro
+> > [...]
+> >  45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
+> > [...]
+> > 
+> > To solve this problem I see two possibilities (example patches are at the end of
+> > the mail):
+> > 
+> > 1) Have arch dependent includes in lib/sha256.c
+> > 2) Add makefile magic so memcpy is defined
+> > 
+> > With both solutions the resulting purgatory.ro looks good. However both
+> > solutions aren't perfect. For example in 2) i had too mix the linux/string.h
+> > header with arch/x86/boot/string.c, because lib/string.c has too many
+> > dependencies and does not compile in the purgatory. On the other hand having
+> > arch dependent includes isn't that nice either ...
+> > 
+> > What's your opinion on this?  
 > 
-> The usual test here is:
+> Looks like it is a mess, maybe the 1st one is better although it is also
+> ugly.  Ccing Ingo see if he has some idea about this. 
 > 
-> $ candump -td -e any,0:0,#FFFFFFFF
+> > 
+> > Thanks
+> > Philipp
+> > 
+> > -----
+> > Example solution 1
+> > 
+> > --- a/lib/sha256.c
+> > +++ b/lib/sha256.c
+> > @@ -17,9 +17,14 @@
+> >  
+> >  #include <linux/bitops.h>
+> >  #include <linux/sha256.h>
+> > -#include <linux/string.h>
+> >  #include <asm/byteorder.h>
+> >  
+> > +#ifdef CONFIG_X86
+> > +#include "../arch/x86/boot/string.h"
+> > +#else
+> > +#include <linux/string.h>
+> > +#endif /* CONFIG_X86 */
+> > +
+> >  static inline u32 Ch(u32 x, u32 y, u32 z)
+> >  {
+> >  	return z ^ (x & (y ^ z));
+> > 
+> > -----
+> > Example solution 2
+> > 
+> > --- a/arch/x86/purgatory/Makefile
+> > +++ b/arch/x86/purgatory/Makefile
+> > @@ -1,7 +1,8 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  OBJECT_FILES_NON_STANDARD := y
+> >  
+> > -purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string.o
+> > +purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o \
+> > +	string.o memcpy_$(BITS).o memset_$(BITS).o
+> >  
+> >  targets += $(purgatory-y)
+> >  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+> > @@ -9,6 +10,15 @@ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+> >  $(obj)/sha256.o: $(srctree)/lib/sha256.c
+> >  	$(call if_changed_rule,cc_o_c)
+> >  
+> > +$(obj)/string.o: $(srctree)/arch/x86/boot/string.c
+> > +	$(call if_changed_rule,cc_o_c)
+> > +
+> > +$(obj)/memset_$(BITS).o: $(srctree)/arch/x86/lib/memset_$(BITS).S
+> > +	$(call if_changed_rule,as_o_S)
+> > +
+> > +$(obj)/memcpy_$(BITS).o: $(srctree)/arch/x86/lib/memcpy_$(BITS).S
+> > +	$(call if_changed_rule,as_o_S)
+> > +
+> >  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+> >  targets += purgatory.ro
+> >  
+> >   
 > 
-> should report proper state changes, if you send messages with
+> Thanks
+> Dave
 > 
-> 1. no cable connected
-> 2. CAN high and low short-circuited
-> 
-> Also downwards if the hardware error is gone and you continue to send 
-> messages.
-Yes, we do, the hardware does it. Testcases:
-
-(1) no cable connected
-
-> root@rk3399-q7:~# candump -td -e any,0:0,#FFFFFFFF | head -n 1000
->  (000.000000)  can0  178   [0]
->  (000.000410)  can0  20000030   [8]  00 00 00 00 00 00 08 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{8}{0}}
->  (000.000445)  can0  20000030   [8]  00 00 00 00 00 00 10 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{16}{0}}
->  (000.000425)  can0  20000030   [8]  00 00 00 00 00 00 18 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{24}{0}}
->  (000.000451)  can0  20000030   [8]  00 00 00 00 00 00 20 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{32}{0}}
->  (000.000429)  can0  20000030   [8]  00 00 00 00 00 00 28 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{40}{0}}
->  (000.000448)  can0  20000030   [8]  00 00 00 00 00 00 30 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{48}{0}}
->  (000.000433)  can0  20000030   [8]  00 00 00 00 00 00 38 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{56}{0}}
->  (000.000437)  can0  20000030   [8]  00 00 00 00 00 00 40 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{64}{0}}
->  (000.000443)  can0  20000030   [8]  00 00 00 00 00 00 48 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{72}{0}}
->  (000.000437)  can0  20000030   [8]  00 00 00 00 00 00 50 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{80}{0}}
->  (000.000498)  can0  20000030   [8]  00 00 00 00 00 00 58 00   ERRORFRAME
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{88}{0}}
->  (000.000394)  can0  20000034   [8]  00 0C 00 00 00 00 60 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{96}{0}}
->  (000.000433)  can0  20000034   [8]  00 0C 00 00 00 00 68 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{104}{0}}
->  (000.000437)  can0  20000034   [8]  00 0C 00 00 00 00 70 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{112}{0}}
->  (000.000443)  can0  20000034   [8]  00 0C 00 00 00 00 78 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{120}{0}}
->  (000.000444)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{128}{0}}
->  (000.000495)  can0  20000024   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{128}{0}}
-
-Repeats ad infinitum...
-
-
-(1b) cable gets connected:
-
->  (000.000883)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	transceiver-status
-> 	no-acknowledgement-on-tx
-> 	error-counter-tx-rx{{128}{0}}
->  (000.000996)  can0  20000004   [8]  00 0C 00 00 00 00 7F 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning}
-> 	error-counter-tx-rx{{127}{0}}
-
-
-(2) short circuit
-
-> root@rk3399-q7:~# candump -td -e any,0:0,#FFFFFFFF | head -n 1000
->  (000.000000)  can0  6AB   [7]  33 39 62 29 00 F5 31
->  (000.000201)  can0  20000018   [8]  00 00 08 00 00 00 18 00   ERRORFRAME
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{24}{0}}
->  (000.000141)  can0  2000000C   [8]  00 3C 08 00 00 00 88 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	error-counter-tx-rx{{136}{0}}
->  (000.000202)  can0  2000001C   [8]  00 3C 08 00 00 00 90 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{144}{0}}
->  (000.000174)  can0  2000001C   [8]  00 3C 08 00 00 00 98 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{152}{0}}
->  (000.000229)  can0  2000001C   [8]  00 3C 08 00 00 00 A0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{160}{0}}
->  (000.000191)  can0  2000001C   [8]  00 3C 08 00 00 00 A8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{168}{0}}
->  (000.000227)  can0  2000001C   [8]  00 3C 08 00 00 00 B0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{176}{0}}
->  (000.000204)  can0  2000001C   [8]  00 3C 08 00 00 00 B8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{184}{0}}
->  (000.000200)  can0  2000001C   [8]  00 3C 08 00 00 00 C0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{192}{0}}
->  (000.000216)  can0  2000001C   [8]  00 3C 08 00 00 00 C8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{200}{0}}
->  (000.000214)  can0  2000001C   [8]  00 3C 08 00 00 00 D0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{208}{0}}
->  (000.000188)  can0  2000001C   [8]  00 3C 08 00 00 00 D8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{216}{0}}
->  (000.000206)  can0  2000001C   [8]  00 3C 08 00 00 00 E0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{224}{0}}
->  (000.000202)  can0  2000001C   [8]  00 3C 08 00 00 00 E8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{232}{0}}
->  (000.000218)  can0  2000001C   [8]  00 3C 08 00 00 00 F0 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{240}{0}}
->  (000.000203)  can0  2000001C   [8]  00 3C 08 00 00 00 F8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	transceiver-status
-> 	error-counter-tx-rx{{248}{0}}
->  (000.007153)  can0  2000004C   [8]  00 3C 08 00 00 00 F8 00   ERRORFRAME
-> 	controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
-> 	protocol-violation{{tx-dominant-bit-error}{}}
-> 	bus-off
-> 	error-counter-tx-rx{{248}{0}}
