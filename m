@@ -1,72 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933215AbeCNCsh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 22:48:37 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:46075 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932970AbeCNCsg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 22:48:36 -0400
-Subject: Re: [PATCH v8 06/13] [media] cobalt: add .is_unordered() for cobalt
-To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180309174920.22373-1-gustavo@padovan.org>
- <20180309174920.22373-7-gustavo@padovan.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f544c0e7-9955-e095-c5f6-7bdedb2c1718@xs4all.nl>
-Date: Tue, 13 Mar 2018 19:48:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S933264AbeCNC4t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 22:56:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750902AbeCNC4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 22:56:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEBF20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 13 Mar 2018 21:56:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Message-ID: <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
+References: <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
+ <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
+ <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309174920.22373-7-gustavo@padovan.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHC3BbbAhAK5tBwYK9h5ObPWi3B57Y/751GvMlHs1R8/yDROmyT7BomUvR7RTM+EfnC8La3nXWAJYfw00RWcSxCVrHeYvy+r9dS8wMZMxXNNKp/clq0N
- cgV/hEerETi9RGsx91Z8VScBx4YG6iqHCGzpDWEW2Zy7zDSlVlPnwYCxy6BrH247MzMzBqZNOhASVqS0C4SEbpwIhr2ml2hWaAtvBrI+GBrua0ZlF5ocyUzq
- gRLoMzcSKcX+SvZLPu9mRC1F3+cNoWglKiJFWMhReqAmJ0Dh26a7yzSrwQdMAp+Z+1f22u/LOELUCHihrQCWeNxrP88QepV6k0x3q4a5LZdbbNAPyvumNaoc
- 6KMlQ2CeDHA3ko9vPKFDz3fomvrScdQGsPNTbTBV1YY8RSINZRJ+ToWVg5buOW0UocnVwsWlnTFyeIOyoETLAVSH3G4agJ9LCsh6pBqXfyswu2vVbIHdWxlr
- c0RenYmLTk1HU6HV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Tue, Mar 13, 2018 at 05:21:20PM -0600, Logan Gunthorpe wrote:
+> On 13/03/18 05:08 PM, Bjorn Helgaas wrote:
+> > On Tue, Mar 13, 2018 at 10:31:55PM +0000, Stephen  Bates wrote:
+> > If it *is* necessary because Root Ports and devices below them behave
+> > differently than in conventional PCI, I think you should include a
+> > reference to the relevant section of the spec and check directly for a
+> > Root Port.  I would prefer that over trying to exclude Root Ports by
+> > looking for two upstream bridges.
 > 
-> The cobalt driver may reorder the capture buffers so we need to report
-> it as such.
-> 
-> v2: - use vb2_ops_set_unordered() helper
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> ---
->  drivers/media/pci/cobalt/cobalt-v4l2.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/pci/cobalt/cobalt-v4l2.c b/drivers/media/pci/cobalt/cobalt-v4l2.c
-> index e2a4c705d353..6b6611a0e190 100644
-> --- a/drivers/media/pci/cobalt/cobalt-v4l2.c
-> +++ b/drivers/media/pci/cobalt/cobalt-v4l2.c
-> @@ -430,6 +430,7 @@ static const struct vb2_ops cobalt_qops = {
->  	.stop_streaming = cobalt_stop_streaming,
->  	.wait_prepare = vb2_ops_wait_prepare,
->  	.wait_finish = vb2_ops_wait_finish,
-> +	.is_unordered = vb2_ops_set_unordered,
->  };
+> Well we've established that we don't want to allow root ports.
 
-If you do this, then you should also set the UNORDERED format flag for
-all formats used by cobalt.
+I assume you want to exclude Root Ports because of multi-function
+devices and the "route to self" error.  I was hoping for a reference
+to that so I could learn more about it.
 
-Regards,
+While I was looking for it, I found sec 6.12.1.2 (PCIe r4.0), "ACS
+Functions in SR-IOV Capable and Multi-Function Devices", which seems
+relevant.  It talks about "peer-to-peer Requests (between Functions of
+the device)".  Thay says to me that multi-function devices can DMA
+between themselves.
 
-	Hans
-
->  
->  /* V4L2 ioctls */
+> But we need to, at a minimum, do two pci_upstream_bridge() calls...
 > 
+> Remember, we need to check that a number of devices are behind the same
+> switch. So we need to find a _common_ upstream port for several devices.
+
+I agree that peers need to have a common upstream bridge.  I think
+you're saying peers need to have *two* common upstream bridges.  If I
+understand correctly, requiring two common bridges is a way to ensure
+that peers directly below Root Ports don't try to DMA to each other.
+
+So I guess the first order of business is to nail down whether peers
+below a Root Port are prohibited from DMAing to each other.  My
+assumption, based on 6.12.1.2 and the fact that I haven't yet found
+a prohibition, is that they can.
+
+> Excluding the multifunction device case (which I don't think is
+> applicable for reasons we've discussed before), this will *never* be the
+> first upstream port for a given device.
+
+If you're looking for a common upstream bridge, you don't need to make
+assumptions about whether the hierarchy is conventional PCI or PCIe or
+how many levels are in the hierarchy.
+
+You already have upstream_bridges_match(), which takes two pci_devs.
+I think it should walk up the PCI hierarchy from the first device,
+checking whether the bridge at each level is also a parent of the
+second device.
+
+Bjorn
