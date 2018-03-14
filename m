@@ -1,81 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeCNRlD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:41:03 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42532 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbeCNRlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:41:02 -0400
-X-Google-Smtp-Source: AG47ELsERzJeUfSF+xIHN79tvss2JKReWI4to/lajM+STbvaPoCRChwDtVBdZdRU7eeRTjjrCidScQ==
-Date: Wed, 14 Mar 2018 10:41:01 -0700
-From: Moritz Fischer <mdf@kernel.org>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Trung Tran <trung.tran@ettus.com>, Moritz Fischer <mdf@kernel.org>,
-        Michael J Clark <mjc@sifive.com>
-Subject: Re: [PATCH] RISC-V: Rename CONFIG_CMDLINE_OVERRIDE to
- CONFIG_CMDLINE_FORCE
-Message-ID: <20180314174101.4aq4kz2coohijhtl@us-aus-ras-130-164-29-23.amer.corp.natinst.com>
-References: <20180314164143.11898-1-palmer@sifive.com>
+        id S1752137AbeCNRlK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:41:10 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36152 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752071AbeCNRlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:41:06 -0400
+Date: Wed, 14 Mar 2018 18:40:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>, "Luck, Tony" <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Message-ID: <20180314174027.GF16605@pd.tnic>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+ <20180307121047.GG23662@pd.tnic>
+ <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
+ <20180308140830.GE21166@pd.tnic>
+ <FFF73D592F13FD46B8700F0A279B802F2E581D28@ORSMSX114.amr.corp.intel.com>
+ <20180309111157.GC10753@pd.tnic>
+ <FFF73D592F13FD46B8700F0A279B802F2E5821F9@ORSMSX114.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180314164143.11898-1-palmer@sifive.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F2E5821F9@ORSMSX114.amr.corp.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Palmer,
+On Sat, Mar 10, 2018 at 12:33:35AM +0000, Prakhya, Sai Praneeth wrote:
+> Although the discussions were off my understanding, the present issue
+> I see is, (and also the motivation for me to do the patch is) when a
+> thread tries to execute any efi_runtime_service() we switch to efi_pgd
+> (which doesn't have user space mappings) and all other subsystems in
+> kernel aren't aware of this switch. This looks like a perfect case for
+> kthread.
 
-On Wed, Mar 14, 2018 at 09:41:43AM -0700, Palmer Dabbelt wrote:
-> The device tree code looks for CONFIG_CMDLINE_FORCE, but we were using
-> CONFIG_CMDLINE_OVERRIDE.  It looks like this was just a hold over from
-> before our device tree conversion -- in fact, we'd already removed the
-> support for CONFIG_CMDLINE_OVERRIDE from our arch-specific code so it
-> didn't even work any more.
-> 
-> Thanks to Mortiz and Trung for finding the original bug, and for Michael
+That's all fine and good but you need to be prepared and handle properly
+an NMI while EFI is running.
 
-Nit: s/Mortiz/Moritz/g ;-)
-> for suggeting a better fix.
-> 
-> CC: Trung Tran <trung.tran@ettus.com>
-> CC: Moritz Fischer <mdf@kernel.org>
-> CC: Michael J Clark <mjc@sifive.com>
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  arch/riscv/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 04807c7f64cc..992412dda60c 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -281,7 +281,7 @@ config CMDLINE_BOOL
->  	  in CONFIG_CMDLINE.
->  
->  	  The built-in options will be concatenated to the default command
-> -	  line if CMDLINE_OVERRIDE is set to 'N'. Otherwise, the default
-> +	  line if CMDLINE_FORCE is set to 'N'. Otherwise, the default
->  	  command line will be ignored and replaced by the built-in string.
->  
->  config CMDLINE
-> @@ -291,7 +291,7 @@ config CMDLINE
->  	help
->  	  Supply command-line options at build time by entering them here.
->  
-> -config CMDLINE_OVERRIDE
-> +config CMDLINE_FORCE
->  	bool "Built-in command line overrides bootloader arguments"
->  	depends on CMDLINE_BOOL
->  	help
-> -- 
-> 2.16.1
-> 
+I have no clue whether the platform delays delivery of NMIs during EFI
+runtime services or whatever happens but you need to have all those
+cases covered so that no monkey business happens.
 
-Cheers,
+Thx.
 
-Moritz
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
