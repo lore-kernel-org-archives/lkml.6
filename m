@@ -1,112 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751526AbeCNMNV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:13:21 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33570 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeCNMNS (ORCPT
+        id S1751599AbeCNMP3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:15:29 -0400
+Received: from smtp-out6.electric.net ([192.162.217.183]:58664 "EHLO
+        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNMP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:13:18 -0400
-X-Google-Smtp-Source: AG47ELtsg1YVR4749I0N4kMb8NQybVg05cukSMAJFQam4aPqNrTb3umRX1ixBhuYL46pI8gcm9yxiw==
-Date: Wed, 14 Mar 2018 13:13:14 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci: tegra: add MSI dependency
-Message-ID: <20180314121314.GE8564@ulmo>
-References: <20180313115218.2246372-1-arnd@arndb.de>
- <20180314114515.GC8564@ulmo>
- <CAK8P3a3Wr8FNRP4ZYDGk9OL+=0w--pzRX=R6ye_+6nCtnHGVjg@mail.gmail.com>
+        Wed, 14 Mar 2018 08:15:27 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Logan Gunthorpe'" <logang@deltatee.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        "Jens Axboe" <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>
+Subject: RE: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Index: AQHTuyWoALnmQYmLREKJSwTnAPFHM6PPnIJg
+Date: Wed, 14 Mar 2018 12:16:05 +0000
+Message-ID: <6e36d43b0493455a8547bc50c8ec77ba@AcuMS.aculab.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <52cbbbc4-c488-f83f-8d02-14d455b4efd7@codeaurora.org>
+ <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <016dc910-f96a-8a60-4bda-fa24eea98ea5@codeaurora.org>
+ <2b152932-2f44-408b-e3ed-b4608d95f82e@deltatee.com>
+ <156c24fb-6e27-28f6-0b36-7fd83311ce37@codeaurora.org>
+ <932bbf48-9d86-97ec-17bb-052099aff99e@deltatee.com>
+In-Reply-To: <932bbf48-9d86-97ec-17bb-052099aff99e@deltatee.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="10jrOL3x2xqLmOsH"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3Wr8FNRP4ZYDGk9OL+=0w--pzRX=R6ye_+6nCtnHGVjg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2ECFbOK001520
 
+From: Logan Gunthorpe
+> Sent: 13 March 2018 23:46
+...
+> As Stephen pointed out, it's a requirement of the PCIe spec that a
+> switch supports P2P. If you want to sell a switch that does P2P with bad
+> performance then that's on you to deal with.
 
---10jrOL3x2xqLmOsH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That surprises me (unless I missed something last time I read the spec).
+While P2P writes are relatively easy to handle, reads and any other TLP that
+require acks are a completely different proposition.
+There are no additional fields that can be set in the read TLP and will be
+reflected back in the ack(s) than can be used to route the acks back to the
+correct initiator.
 
-On Wed, Mar 14, 2018 at 01:06:11PM +0100, Arnd Bergmann wrote:
-> On Wed, Mar 14, 2018 at 12:45 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Tue, Mar 13, 2018 at 12:52:05PM +0100, Arnd Bergmann wrote:
-> >> Building the tegra PCIe host driver without MSI results in a link
-> >> failure:
-> >>
-> >> drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci=
-_msi_unmask_irq'
-> >> drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci=
-_msi_mask_irq'
-> >>
-> >> This adds the same dependency that everyone else uses.
-> >>
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> ---
-> >>  drivers/pci/host/Kconfig | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >
-> > I'm slightly concerned about the dependency. Not that I doubt its
-> > correctness, but because it could mean that PCI_TEGRA is not visible in
-> > the default configuration. The only reason why it is currently visible
-> > is because PCI_MSI is selected by some symbols that also happen to be
-> > enabled. However, what if at some point those symbols are disabled or
-> > removed?
-> >
-> > Some architectures make sure that PCI_MSI is enabled by selecting it,
-> > but that's risky, isn't it, because PCI_MSI is user-visible and could
-> > therefore easily lead to conflicts.
-> >
-> > Enabling PCI_MSI in the arm64 defconfig would solve the issue and is
-> > good enough for me. I've got a couple of changes to that defconfig in
-> > the Tegra tree for v4.17-rc1, I can add a patch to enable PCI_MSI.
-> >
-> > Unless there are any objections.
->=20
-> I looked at it again and found that this on ARM64, PCI_MSI is always
-> selected indirectly by ARM_GIC&&PCI, so there is no problem.
->=20
-> The build failure must have been on 32-bit ARM.
+I'm pretty sure that to support P2P reads a switch would have to save
+the received read TLP and (possibly later on) issue read TLP of its own
+for the required data.
+I'm not even sure it is easy to interleave the P2P reads with those
+coming from the root.
+That requires a potentially infinite queue of pending requests.
 
-Okay, I had assumed that ARM_GIC_V2M (which selects PCI_MSI) was user-
-visible and hence could be disabled. But it's not, and always enabled on
-ARM64. On 32-bit we already explicitly enable PCI_MSI via the default
-configurations.
+Some x86 root ports support P2P writes (maybe with a bios option).
+It would be a shame not to be able to do P2P writes on such systems
+even though P2P reads won't work.
 
-I withdraw my concerns. I see that Lorenzo already applied the patch, so
-just for the record:
+(We looked at using P2P transfers for some data, but in the end used
+a different scheme.
+For our use case P2P writes were enough.
+An alternative would be to access the same host memory buffer from
+two different devices - but there isn't an API that lets you do that.)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---10jrOL3x2xqLmOsH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpEdoACgkQ3SOs138+
-s6F0yA//aupfcFSSBQFcQPwsoeUkqXMoTYfebuIV3TSMq/GUOv1zpfqf0duv9wkE
-KEJ2avzAX6vcG7AFMi2QsottaskHko0fpNXN0a919lR1uCMxkrjDDtpwrDVyCQHN
-Mmxy2wHqw2qjKCl0JmTOQf9QVVRiljYDt5vBSpsFpxUzXMzuipjKkfJsV6OrUnzl
-+/oN1XrsNP0qs/6rShLgObFdkNXBo7MejihrHiLwbzB7z/XGZ2krLrGNquWBY3Ff
-qt8CKiSSCDEzKtfzAMFP351z/W6KOrlHMhfBuiWCh0D32FqRfhx7mW+7Mpegqcp2
-tA6aSNqg+bY705Snk179K6J2uwIcPEiHTETpic0vxbwwliX2+NnrUeF/rkgS6m0o
-k9IDl7i1Hfi1/aqLNsgffsdpr1x+3K+fWCbcT/WbVR4h5Vaa/1AFC2rdusXmemFT
-1ymE1/IKNn2iU6avwINcfGJBHO6lqS5J08/k4U5AKq52rrO8jQvP3302GABcu6cK
-CLSEItLS8oB77h7RSCtPvyNDD6dFOXIRpGbpzQIF1A/dz0GdKgEYJg1rxj6N9pRg
-X/q8P8jACEQyWNZVx/wNV6GTDEbdPsPKkohzegAJ3H/rZkrroEdW7IKBokOUf5E7
-e5hKV5+w71g0RpFcTYLvKAqUCT9pN6brBTs4XDCgfgMxq20mgiM=
-=+dWC
------END PGP SIGNATURE-----
-
---10jrOL3x2xqLmOsH--
+	David
