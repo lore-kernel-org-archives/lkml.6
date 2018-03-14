@@ -1,109 +1,68 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2109832-1521045160-3-22442980421915933
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521045160; b=WxBxpK4mA3RGDoSrhMfHQ8P7zYnRzHBRLzvdGqCZCM6y8/Q
-    VwABlSdAwu9tTJ6FB8UoPquw4NGlPFRKkQbOCSLURmeD9pNjQdXKuZRANjzwqu3E
-    zt/KnkmOIDBQyg3NRfbc11mh4wqSvoYaVXIN1Xm9376Jhq3ka71k+5SNgw1tkDcN
-    UY9pCuYP15JkrVFkV4olEITn/cKtgipLJx3a2CqN0eUQzjVSN7A9FeueXU1zT272
-    EBam7Atkk/Cs07ReVYj9TUbUO1n7gANt9SllTuJfMPd7oDU4YF+h2tfgnuoa3g4e
-    6fc1Udfe1JIpgFv0s7HSPi0EwEvp99ErPXXoDqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521045160; bh=n
-    Qs8uyvJnTFHlOGcZoSnz6Ny/gbr8Iqsu0JCv0j+jAQ=; b=fMgUHTMQdyzb0D29W
-    iimh2mySHxCY4wFbcaoac7RPQEHr+6ZktyFeLAaNmjDih/r7IrdZm/DghCVgDzXE
-    gTWYsb5QVU0GiBsORIfqBD5YE08aRm+hjqoBmctsWwk0CjXRAzUbWjcgj3XoXCvw
-    OzeG7MO651GR7uXuJBmbRKpwEz/o/j74hBHFg6Zsb7QHXbg3mFRW9LcWDWhWpQQ3
-    rI+2ch3gHDtQODNfBQCTCVdZxI8A8j6u5nY4u2hbCAaq+GH6G3s2gVkrt9XOl+jy
-    iLF//yg1k+oHZSShCWMSQDWH73/2yVGw3Io3i0g9kOy4QyfBbM0k5o//+fgtFVPQ
-    qs6KA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 14 Mar 2018 17:32:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 46/47] staging: irda: remove bfin_sir driver
-Message-ID: <20180314163233.GB4279@kroah.com>
-References: <20180314153603.3127932-1-arnd@arndb.de>
- <20180314153603.3127932-47-arnd@arndb.de>
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521045344; cv=none;
+        d=google.com; s=arc-20160816;
+        b=HuUaXnZN+lHnPlHnnl/BrsNdQQkrg4n/Z6hpp2EfEor4oLe4Q1u7lQGGlYjrghH78x
+         r6UpbWkvgKTPq9teIpV1nHxQTv9kl7kzyIgJvFm5xcF+tSwlLVhdvlPyGJ5FaZ0bukVH
+         jB/wNpQJ6XidAu9YdJeQ9+ggAV83g27h/4wrJ/mYjKGI2x9XULohl9AFuSvUuyUXlMva
+         41gNxDuGmLA2ahXDZlVqCHywAisSix7GQcoGnDgdNbPOi5hlULUZW4WLikZkrtyO1hPa
+         o0Vpk2mPcuFO9WWs6xXnraWlXQJjpStlXYbsnlEtb7pSIF9W5k8aq1pSl9ga5ohQ23eQ
+         f4/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Tuch+BXfgWJM995C6CUs2hsJriTJBxbhsJaDlmetSKQ=;
+        b=zCb1fJA92hoLo11tdVZGPr3NijEjrs2aIWKCcYN0KhDSAe8OQZngyT4wo5+taoJMd1
+         oOp+kDZbczAFtvw3mY7XmJWFVWRlyYi5wvgtGEbFnyOWxFGGbfhn2DjoEoJh2IjF26Zj
+         H6StcrZKncSpKRmnNaHuaRtsHyKr/vNdcYIRhrw9yNjFyQV4HS6/t2Zb2lB4LCg7zzWD
+         pQ3+dtQSV/juNa6ADJazwhkpZ39mQq7Y9uRmvtqfTADnRtSZoGuCTno397uCnX4aM0D9
+         PgqQdyATwu6U2mGNQr2kGS2xkV2ParLMQO0PFgEvX6JRGHCOPTW4ltSi0mqeJ6IF2StZ
+         eAdQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O5pgl4Pm;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O5pgl4Pm;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELt7vFMbGmHcccoaT8R5L1gziPYecJqJEq03JwUB1St3z54Jft7oVYcbtOQROpRSvKc5KzjtfSHbzhpVv9U3jRY=
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180314153603.3127932-47-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org,
- Samuel Ortiz <samuel@sortiz.org>, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20180314163233.GB4279@kroah.com>
+References: <20180314153603.3127932-1-arnd@arndb.de> <20180314153603.3127932-47-arnd@arndb.de>
+ <20180314163233.GB4279@kroah.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 17:35:42 +0100
+X-Google-Sender-Auth: VPy7n619KSS8KbQp_bHqXqDPwxk
+Message-ID: <CAK8P3a3YC0N9P_fTt3Oiq6tzpia=SVx+fjY2q7p3nsJwH4=F4w@mail.gmail.com>
+Subject: Re: [PATCH 46/47] staging: irda: remove bfin_sir driver
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
+	Samuel Ortiz <samuel@sortiz.org>, Networking <netdev@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594929089709235937?=
+X-GMAIL-MSGID: =?utf-8?q?1594931642471349772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 04:35:59PM +0100, Arnd Bergmann wrote:
-> The blackfin architecture is getting removed, so this
-> driver is now obsolete.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/staging/irda/drivers/Kconfig    |  45 --
->  drivers/staging/irda/drivers/Makefile   |   1 -
->  drivers/staging/irda/drivers/bfin_sir.c | 819 --------------------------------
->  drivers/staging/irda/drivers/bfin_sir.h |  93 ----
->  4 files changed, 958 deletions(-)
->  delete mode 100644 drivers/staging/irda/drivers/bfin_sir.c
->  delete mode 100644 drivers/staging/irda/drivers/bfin_sir.h
+On Wed, Mar 14, 2018 at 5:32 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Wed, Mar 14, 2018 at 04:35:59PM +0100, Arnd Bergmann wrote:
+>> The blackfin architecture is getting removed, so this
+>> driver is now obsolete.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/staging/irda/drivers/Kconfig    |  45 --
+>>  drivers/staging/irda/drivers/Makefile   |   1 -
+>>  drivers/staging/irda/drivers/bfin_sir.c | 819 --------------------------------
+>>  drivers/staging/irda/drivers/bfin_sir.h |  93 ----
+>>  4 files changed, 958 deletions(-)
+>>  delete mode 100644 drivers/staging/irda/drivers/bfin_sir.c
+>>  delete mode 100644 drivers/staging/irda/drivers/bfin_sir.h
+>
+> I just deleted all of drivers/staging/irda/ earlier today :)
 
-I just deleted all of drivers/staging/irda/ earlier today :)
+Perfect, dropping this patch from my series then. Thanks,
 
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+      Arnd
