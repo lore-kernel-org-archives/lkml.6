@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeCNRxM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:53:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55418 "EHLO
+        id S1752502AbeCNRx2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:53:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55482 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbeCNRxJ (ORCPT
+        with ESMTP id S1751379AbeCNRxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:53:09 -0400
+        Wed, 14 Mar 2018 13:53:24 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: x86@kernel.org
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -15,9 +15,9 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 11/14] swiotlb: remove swiotlb_set_mem_attributes
-Date: Wed, 14 Mar 2018 18:52:10 +0100
-Message-Id: <20180314175213.20256-12-hch@lst.de>
+Subject: [PATCH 14/14] swiotlb: remove swiotlb_{alloc,free}_coherent
+Date: Wed, 14 Mar 2018 18:52:13 +0100
+Message-Id: <20180314175213.20256-15-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180314175213.20256-1-hch@lst.de>
 References: <20180314175213.20256-1-hch@lst.de>
@@ -26,103 +26,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that set_memory_decrypted is always available we can just call it
-directly.
+Unused now that everyone uses swiotlb_{alloc,free}.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/include/asm/mem_encrypt.h |  2 --
- arch/x86/mm/mem_encrypt.c          |  9 ---------
- lib/swiotlb.c                      | 12 ++++++------
- 3 files changed, 6 insertions(+), 17 deletions(-)
+ include/linux/swiotlb.h |  8 --------
+ lib/swiotlb.c           | 38 --------------------------------------
+ 2 files changed, 46 deletions(-)
 
-diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-index 22c5f3e6f820..9da0b63c8fc7 100644
---- a/arch/x86/include/asm/mem_encrypt.h
-+++ b/arch/x86/include/asm/mem_encrypt.h
-@@ -48,8 +48,6 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size);
- /* Architecture __weak replacement functions */
- void __init mem_encrypt_init(void);
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 5b1f2a00491c..965be92c33b5 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -72,14 +72,6 @@ void *swiotlb_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
+ void swiotlb_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_addr, unsigned long attrs);
  
--void swiotlb_set_mem_attributes(void *vaddr, unsigned long size);
+-extern void
+-*swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-			dma_addr_t *dma_handle, gfp_t flags);
 -
- bool sme_active(void);
- bool sev_active(void);
- 
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 66beedc8fe3d..d3b80d5f9828 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -446,15 +446,6 @@ void __init mem_encrypt_init(void)
- 			     : "Secure Memory Encryption (SME)");
- }
- 
--void swiotlb_set_mem_attributes(void *vaddr, unsigned long size)
--{
--	WARN(PAGE_ALIGN(size) != size,
--	     "size is not page-aligned (%#lx)\n", size);
+-extern void
+-swiotlb_free_coherent(struct device *hwdev, size_t size,
+-		      void *vaddr, dma_addr_t dma_handle);
 -
--	/* Make the SWIOTLB buffer area decrypted */
--	set_memory_decrypted((unsigned long)vaddr, size >> PAGE_SHIFT);
--}
--
- struct sme_populate_pgd_data {
- 	void	*pgtable_area;
- 	pgd_t	*pgd;
+ extern dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 				   unsigned long offset, size_t size,
+ 				   enum dma_data_direction dir,
 diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index c43ec2271469..005d1d87bb2e 100644
+index 8b06b4485e65..15954b86f09e 100644
 --- a/lib/swiotlb.c
 +++ b/lib/swiotlb.c
-@@ -31,6 +31,7 @@
- #include <linux/gfp.h>
- #include <linux/scatterlist.h>
- #include <linux/mem_encrypt.h>
-+#include <linux/set_memory.h>
- 
- #include <asm/io.h>
- #include <asm/dma.h>
-@@ -156,8 +157,6 @@ unsigned long swiotlb_size_or_default(void)
+@@ -157,13 +157,6 @@ unsigned long swiotlb_size_or_default(void)
  	return size ? size : (IO_TLB_DEFAULT_SIZE);
  }
  
--void __weak swiotlb_set_mem_attributes(void *vaddr, unsigned long size) { }
+-/* Note that this doesn't work with highmem page */
+-static dma_addr_t swiotlb_virt_to_bus(struct device *hwdev,
+-				      volatile void *address)
+-{
+-	return phys_to_dma(hwdev, virt_to_phys(address));
+-}
 -
- /* For swiotlb, clear memory encryption mask from dma addresses */
- static dma_addr_t swiotlb_phys_to_dma(struct device *hwdev,
- 				      phys_addr_t address)
-@@ -209,12 +208,12 @@ void __init swiotlb_update_mem_attributes(void)
+ static bool no_iotlb_memory;
  
- 	vaddr = phys_to_virt(io_tlb_start);
- 	bytes = PAGE_ALIGN(io_tlb_nslabs << IO_TLB_SHIFT);
--	swiotlb_set_mem_attributes(vaddr, bytes);
-+	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
- 	memset(vaddr, 0, bytes);
- 
- 	vaddr = phys_to_virt(io_tlb_overflow_buffer);
- 	bytes = PAGE_ALIGN(io_tlb_overflow);
--	swiotlb_set_mem_attributes(vaddr, bytes);
-+	set_memory_decrypted((unsigned long)vaddr, bytes >> PAGE_SHIFT);
- 	memset(vaddr, 0, bytes);
+ void swiotlb_print_info(void)
+@@ -752,28 +745,6 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ 	return NULL;
  }
  
-@@ -355,7 +354,7 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
- 	io_tlb_start = virt_to_phys(tlb);
- 	io_tlb_end = io_tlb_start + bytes;
+-void *
+-swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-		       dma_addr_t *dma_handle, gfp_t flags)
+-{
+-	int order = get_order(size);
+-	unsigned long attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
+-	void *ret;
+-
+-	ret = (void *)__get_free_pages(flags, order);
+-	if (ret) {
+-		*dma_handle = swiotlb_virt_to_bus(hwdev, ret);
+-		if (dma_coherent_ok(hwdev, *dma_handle, size)) {
+-			memset(ret, 0, size);
+-			return ret;
+-		}
+-		free_pages((unsigned long)ret, order);
+-	}
+-
+-	return swiotlb_alloc_buffer(hwdev, size, dma_handle, attrs);
+-}
+-EXPORT_SYMBOL(swiotlb_alloc_coherent);
+-
+ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 		dma_addr_t dma_addr)
+ {
+@@ -793,15 +764,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 	return true;
+ }
  
--	swiotlb_set_mem_attributes(tlb, bytes);
-+	set_memory_decrypted((unsigned long)tlb, bytes >> PAGE_SHIFT);
- 	memset(tlb, 0, bytes);
- 
- 	/*
-@@ -366,7 +365,8 @@ swiotlb_late_init_with_tbl(char *tlb, unsigned long nslabs)
- 	if (!v_overflow_buffer)
- 		goto cleanup2;
- 
--	swiotlb_set_mem_attributes(v_overflow_buffer, io_tlb_overflow);
-+	set_memory_decrypted((unsigned long)v_overflow_buffer,
-+			io_tlb_overflow >> PAGE_SHIFT);
- 	memset(v_overflow_buffer, 0, io_tlb_overflow);
- 	io_tlb_overflow_buffer = virt_to_phys(v_overflow_buffer);
- 
+-void
+-swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+-		      dma_addr_t dev_addr)
+-{
+-	if (!swiotlb_free_buffer(hwdev, size, dev_addr))
+-		free_pages((unsigned long)vaddr, get_order(size));
+-}
+-EXPORT_SYMBOL(swiotlb_free_coherent);
+-
+ static void
+ swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+ 	     int do_panic)
 -- 
 2.14.2
