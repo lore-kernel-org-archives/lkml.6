@@ -1,143 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751426AbeCNSwE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:52:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeCNSwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:52:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EBC2077A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 14 Mar 2018 13:51:59 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Message-ID: <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
-References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
- <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
- <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
- <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
- <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751508AbeCNSwk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:52:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751170AbeCNSwj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:52:39 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/2] hwmon: (ucd9000) Add gpio and debugfs interfaces
+Date: Wed, 14 Mar 2018 13:52:29 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031418-0024-0000-0000-0000033683E7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003034; UDB=6.00510429; IPR=6.00782364;
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:52:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031418-0025-0000-0000-00004753D4C1
+Message-Id: <1521053551-29903-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140206
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 10:17:34AM -0600, Logan Gunthorpe wrote:
-> On 13/03/18 08:56 PM, Bjorn Helgaas wrote:
-> > I agree that peers need to have a common upstream bridge.  I think
-> > you're saying peers need to have *two* common upstream bridges.  If I
-> > understand correctly, requiring two common bridges is a way to ensure
-> > that peers directly below Root Ports don't try to DMA to each other.
-> 
-> No, I don't get where you think we need to have two common upstream
-> bridges. I'm not sure when such a case would ever happen. But you seem
-> to understand based on what you wrote below.
+The ucd9000 series chips have gpio pins. Add a gpio chip interface to the ucd
+device so that users can query and set the state of the gpio pins.
 
-Sorry, I phrased that wrong.  You don't require two common upstream
-bridges; you require two upstream bridges, with the upper one being
-common, i.e.,
+Add a debugfs interface using the existing pmbus debugfs directory to provide
+MFR_STATUS and the status of the gpi faults to users.
 
-  static struct pci_dev *get_upstream_bridge_port(struct pci_dev *pdev)
-  {
-    struct pci_dev *up1, *up2;
+Changes since v2:
+ - split the gpio registration into it's own function
 
-    up1 = pci_dev_get(pci_upstream_bridge(pdev));
-    up2 = pci_dev_get(pci_upstream_bridge(up1));
-    return up2;
-  }
+Changes since v1:
+ - dropped dev_err messages
+ - made gpio chip registration conditional on having gpio pins
+ - made mfr_status debugfs attribute more simple
 
-So if you're starting with pdev, up1 is the immediately upstream
-bridge and up2 is the second upstream bridge.  If this is PCIe, up1
-may be a Root Port and there is no up2, or up1 and up2 are in a
-switch.
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
 
-This is more restrictive than the spec requires.  As long as there is
-a single common upstream bridge, peer-to-peer DMA should work.  In
-fact, in conventional PCI, I think the upstream bridge could even be
-the host bridge (not a PCI-to-PCI bridge).
+ drivers/hwmon/pmbus/ucd9000.c | 340 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 339 insertions(+), 1 deletion(-)
 
-You are focused on PCIe systems, and in those systems, most topologies
-do have an upstream switch, which means two upstream bridges.  I'm
-trying to remove that assumption because I don't think there's a
-requirement for it in the spec.  Enforcing this assumption complicates
-the code and makes it harder to understand because the reader says
-"huh, I know peer-to-peer DMA should work inside any PCI hierarchy*,
-so why do we need these two bridges?"
-
-[*] For conventional PCI, this means anything below the same host
-bridge.  Two devices on a conventional PCI root bus should be able to
-DMA to each other, even though there's no PCI-to-PCI bridge above
-them.  For PCIe, it means a "hierarchy domain" as used in PCIe r4.0,
-sec 1.3.1, i.e., anything below the same Root Port.
-
-> > So I guess the first order of business is to nail down whether peers
-> > below a Root Port are prohibited from DMAing to each other.  My
-> > assumption, based on 6.12.1.2 and the fact that I haven't yet found
-> > a prohibition, is that they can.
-> 
-> If you have a multifunction device designed to DMA to itself below a
-> root port, it can. But determining this is on a device by device basis,
-> just as determining whether a root complex can do peer to peer is on a
-> per device basis. So I'd say we don't want to allow it by default and
-> let someone who has such a device figure out what's necessary if and
-> when one comes along.
-
-It's not the job of this infrastructure to answer the device-dependent
-question of whether DMA initiators or targets support peer-to-peer
-DMA.
-
-All we want to do here is figure out whether the PCI topology supports
-it, using the mechanisms guaranteed by the spec.  We can derive that
-from the basic rules about how PCI bridges work, i.e., from the
-PCI-to-PCI Bridge spec r1.2, sec 4.3:
-
-  A bridge forwards PCI memory transactions from its primary interface
-  to its secondary interface (downstream) if a memory address is in
-  the range defined by the Memory Base and Memory Limit registers
-  (when the base is less than or equal to the limit) as illustrated in
-  Figure 4-3. Conversely, a memory transaction on the secondary
-  interface that is within this address range will not be forwarded
-  upstream to the primary interface. Any memory transactions on the
-  secondary interface that are outside this address range will be
-  forwarded upstream to the primary interface (provided they are not
-  in the address range defined by the prefetchable memory address
-  range registers).
-
-This works for either PCI or PCIe.  The only wrinkle PCIe adds is that
-the very top of the hierarchy is a Root Port, and we can't rely on it
-to route traffic to other Root Ports.  I also doubt Root Complex
-Integrated Endpoints can participate in peer-to-peer DMA.
-
-Thanks for your patience in working through all this.  I know it
-sometimes feels like being bounced around in all directions.  It's
-just a normal consequence of trying to add complex functionality to an
-already complex system, with interest and expertise spread unevenly
-across a crowd of people.
-
-Bjorn
+-- 
+1.8.3.1
