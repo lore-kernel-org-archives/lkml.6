@@ -1,147 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932858AbeCNCkx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 22:40:53 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39666 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932842AbeCNCkv (ORCPT
+        id S933166AbeCNCoi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 22:44:38 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:42242 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932840AbeCNCoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 22:40:51 -0400
-X-Google-Smtp-Source: AG47ELtH2M0wOgkV2GxVChE6N1mHumspv6Ek4M/slRGD3EKaUvNBqhbiJ2LebK3H63dnrkTaZ+cPLQ==
-Date: Tue, 13 Mar 2018 19:40:48 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Tirupathi Reddy <tirupath@codeaurora.org>
-Cc: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] Input: pm8941-pwrkey: add resin key capabilities
-Message-ID: <20180314024048.GA11034@tuxbook-pro>
-References: <1520930158-5854-1-git-send-email-tirupath@codeaurora.org>
+        Tue, 13 Mar 2018 22:44:37 -0400
+Subject: Re: [PATCH v8 04/13] [media] vb2: add is_unordered callback for
+ drivers
+To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180309174920.22373-1-gustavo@padovan.org>
+ <20180309174920.22373-5-gustavo@padovan.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <82d8167e-fea2-6f28-fdfe-69e37474cc27@xs4all.nl>
+Date: Tue, 13 Mar 2018 19:44:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520930158-5854-1-git-send-email-tirupath@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180309174920.22373-5-gustavo@padovan.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHs1e3tYXzWFSRpmHbiMm0sDLL6pGMi631ymm5cu+3BsXyzGoukzvztT7mPIK8n6J42vHni6dFH+wzjWJqP8BZ5yfSRfLWmXY79TjDXgomJxyARWrYeh
+ n2vF0h1YzkhHqiXQSVi0CaGAPQxJNc9ANhSnudvHFm9TRHA+veSY3zjLmXdJqJ4hD4ra3Y00RtxsJNJCNh2QIMEdRZfyjVFVE4PdFBM5jwNuKZKO4AIShsqD
+ ZQopf06oL4e+ENKTkkX62iGMaRL50wXYQPZl5aPyy7xqY2FXn8BQa5plHrpo+MFYF86G4hqVJ2vZVYUKexpDFXSaD5EbUIjCczmtdNpSw4cpe3cx6ALrpt2B
+ bR43bv0418H5LsvE2GmRQ7fwSgTUDvXzwGybDc8MkKm+Wlhv4S2ulnK0aE/jWPCjfnXL02HJo8AdJW6KQQPke5LkkgBeb3Su194Zl+n/ujruND0bQgsFPoMq
+ QYi4nX248BfbJNgZ
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13 Mar 01:35 PDT 2018, Tirupathi Reddy wrote:
-
-> Add resin key support to handle different types of key events
-> defined in different platforms.
+On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
 > 
-> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+> Explicit synchronization benefits a lot from ordered queues, they fit
+> better in a pipeline with DRM for example so create a opt-in way for
+> drivers notify videobuf2 that the queue is unordered.
+> 
+> Drivers don't need implement it if the queue is ordered.
+> 
+> v2: 	- improve comments for is_unordered flag (Hans)
+> 
+> v3: 	- make it bool (Hans)
+> 	- create vb2_ops_set_unordered() helper
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 > ---
->  .../bindings/input/qcom,pm8941-pwrkey.txt          | 20 ++++++-
->  drivers/input/misc/pm8941-pwrkey.c                 | 65 +++++++++++++++++++++-
->  2 files changed, 83 insertions(+), 2 deletions(-)
+>  drivers/media/common/videobuf2/videobuf2-v4l2.c |  6 ++++++
+>  include/media/videobuf2-core.h                  |  6 ++++++
+>  include/media/videobuf2-v4l2.h                  | 10 ++++++++++
+>  3 files changed, 22 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> index 07bf55f..f499cf8 100644
-> --- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> +++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> @@ -20,6 +20,14 @@ PROPERTIES
->  		    defined by the binding document describing the node's
->  		    interrupt parent.
->  
-> +- interrupt-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: Interrupt names.  This list must match up 1-to-1 with the
-> +		    interrupts specified in the 'interrupts' property. "kpdpwr"
-> +		    must be specified and should be the first entry of the list.
-> +		    "resin" may be specified for some platforms.
-> +
->  - debounce:
->  	Usage: optional
->  	Value type: <u32>
-> @@ -32,12 +40,22 @@ PROPERTIES
->  	Definition: presence of this property indicates that the KPDPWR_N pin
->  		    should be configured for pull up.
->  
-> +- linux,code:
-> +	Usage: required for "resin" key
-> +	Value type: <u32>
-> +	Definition: The input key-code associated with the resin key.
-> +		    Use the linux event codes defined in
-> +		    include/dt-bindings/input/linux-event-codes.h
-
-For completeness sake I think this should list both the key code for the
-power key and for the RESIN key.
-
-> +
->  EXAMPLE
->  
->  	pwrkey@800 {
->  		compatible = "qcom,pm8941-pwrkey";
->  		reg = <0x800>;
-> -		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> +		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>,
-> +			     <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-> +		interrupt-names = "kpdpwr", "resin";
->  		debounce = <15625>;
->  		bias-pull-up;
-
-Do we need to support defining the bias for the resin as well?
-
-Perhaps it makes more sense to describe the RESIN key with a separate
-compatible and define that in a node of its own (we can still implement
-this in the same driver - if there's any chance of reuse...).
-
-> +		linux,code = <KEY_VOLUMEDOWN>;
->  	};
-> diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
-> index 18ad956..2fffc7c 100644
-> --- a/drivers/input/misc/pm8941-pwrkey.c
-> +++ b/drivers/input/misc/pm8941-pwrkey.c
-> @@ -28,6 +28,7 @@
->  
->  #define PON_RT_STS			0x10
->  #define  PON_KPDPWR_N_SET		BIT(0)
-> +#define  PON_RESIN_N_SET		BIT(1)
->  
->  #define PON_PS_HOLD_RST_CTL		0x5a
->  #define PON_PS_HOLD_RST_CTL2		0x5b
-> @@ -46,6 +47,7 @@
->  struct pm8941_pwrkey {
->  	struct device *dev;
->  	int irq;
-> +	u32 resin_key_code;
->  	u32 baseaddr;
->  	struct regmap *regmap;
->  	struct input_dev *input;
-> @@ -130,6 +132,24 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
->  	return IRQ_HANDLED;
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 886a2d8d5c6c..68291ba8632d 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -961,6 +961,12 @@ void vb2_ops_wait_finish(struct vb2_queue *vq)
 >  }
+>  EXPORT_SYMBOL_GPL(vb2_ops_wait_finish);
 >  
-> +static irqreturn_t pm8941_resinkey_irq(int irq, void *_data)
+> +bool vb2_ops_set_unordered(struct vb2_queue *q)
 > +{
-> +	struct pm8941_pwrkey *pwrkey = _data;
-> +	unsigned int sts;
-> +	int error;
-> +
-> +	error = regmap_read(pwrkey->regmap,
-> +			    pwrkey->baseaddr + PON_RT_STS, &sts);
-
-This needs to be broken because the line is 81 chars long, if you use a
-shorter name for the return value (e.g. "ret") you don't need to do
-this.
-
-> +	if (error)
-> +		return IRQ_HANDLED;
-> +
-> +	input_report_key(pwrkey->input, pwrkey->resin_key_code,
-> +			 !!(sts & PON_RESIN_N_SET));
-
-Put pwrkey->resin_key_code in a local variable named "key" (or even
-key_code) and you don't need to line wrap this one.
-
-> +	input_sync(pwrkey->input);
-> +
-> +	return IRQ_HANDLED;
+> +	return true;
 > +}
+> +EXPORT_SYMBOL_GPL(vb2_ops_set_unordered);
+
+This should be called vb2_ops_is_unordered. The name after the vb2_ops_
+prefix should match the op name (is_unordered).
+
+I also would add this to videobuf2-core.c since there is nothing V4L2
+specific about this.
+
 > +
+>  MODULE_DESCRIPTION("Driver helper framework for Video for Linux 2");
+>  MODULE_AUTHOR("Pawel Osciak <pawel@osciak.com>, Marek Szyprowski");
+>  MODULE_LICENSE("GPL");
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 5b6c541e4e1b..46a9e674f7e1 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -370,6 +370,10 @@ struct vb2_buffer {
+>   *			callback by calling vb2_buffer_done() with either
+>   *			%VB2_BUF_STATE_DONE or %VB2_BUF_STATE_ERROR; may use
+>   *			vb2_wait_for_all_buffers() function
+> + * @is_unordered:	tell if the queue is unordered, i.e. buffers can be
+> + *			dequeued in a different order from how they were queued.
+> + *			The default is assumed to be ordered and this function
+> + *			only needs to be implemented for unordered queues.
+>   * @buf_queue:		passes buffer vb to the driver; driver may start
+>   *			hardware operation on this buffer; driver should give
+>   *			the buffer back by calling vb2_buffer_done() function;
+> @@ -393,6 +397,7 @@ struct vb2_ops {
+>  
+>  	int (*start_streaming)(struct vb2_queue *q, unsigned int count);
+>  	void (*stop_streaming)(struct vb2_queue *q);
+> +	bool (*is_unordered)(struct vb2_queue *q);
+>  
+>  	void (*buf_queue)(struct vb2_buffer *vb);
+>  };
+> @@ -566,6 +571,7 @@ struct vb2_queue {
+>  	u32				cnt_wait_finish;
+>  	u32				cnt_start_streaming;
+>  	u32				cnt_stop_streaming;
+> +	u32				cnt_is_unordered;
+>  #endif
+>  };
+>  
+> diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
+> index 3d5e2d739f05..9de3c887c875 100644
+> --- a/include/media/videobuf2-v4l2.h
+> +++ b/include/media/videobuf2-v4l2.h
+> @@ -291,4 +291,14 @@ void vb2_ops_wait_prepare(struct vb2_queue *vq);
+>   */
+>  void vb2_ops_wait_finish(struct vb2_queue *vq);
+>  
+> +/**
+> + * vb2_ops_set_unordered - helper function to mark queue as unordered
+> + *
+> + * @vq: pointer to &struct vb2_queue
+> + *
+> + * This helper just return true to notify that the driver can't deal with
+
+return -> returns
+
+> + * ordered queues.
+> + */
+> +bool vb2_ops_set_unordered(struct vb2_queue *q);
+> +
+>  #endif /* _MEDIA_VIDEOBUF2_V4L2_H */
+> 
 
 Regards,
-Bjorn
+
+	Hans
