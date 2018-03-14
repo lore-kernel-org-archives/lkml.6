@@ -1,138 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751089AbeCNJf7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:35:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750751AbeCNJf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:35:57 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
-Cc: "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/7] x86/hyper-v: move hyperv.h out of uapi
-References: <20180309140249.2840-1-vkuznets@redhat.com>
-        <20180309140249.2840-2-vkuznets@redhat.com>
-        <DM5PR2101MB103059A90CD91DE8FA69920BDCD20@DM5PR2101MB1030.namprd21.prod.outlook.com>
-Date: Wed, 14 Mar 2018 10:35:52 +0100
-In-Reply-To: <DM5PR2101MB103059A90CD91DE8FA69920BDCD20@DM5PR2101MB1030.namprd21.prod.outlook.com>
-        (Michael Kelley's message of "Tue, 13 Mar 2018 22:46:10 +0000")
-Message-ID: <874lljc83r.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751527AbeCNJhK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:37:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43659 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbeCNJhI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:37:08 -0400
+Subject: rx_packets/bytes stats for error frames (was: Re: [PATCH v2 1/1] can:
+ ucan: add driver for Theobroma Systems UCAN devices)
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <b4f644dc-265e-01e0-acaa-88cc8f3f69f5@pengutronix.de>
+ <6c1b7482-2cde-40e3-eff4-e4b94794a63e@theobroma-systems.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <4c957d42-2b03-9416-75a4-e331f2ded8cf@pengutronix.de>
+Date: Wed, 14 Mar 2018 10:36:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c1b7482-2cde-40e3-eff4-e4b94794a63e@theobroma-systems.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="u6zmgLP6d4ZUuIx0g08s7VOP0FWxzbdON"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--u6zmgLP6d4ZUuIx0g08s7VOP0FWxzbdON
+Content-Type: multipart/mixed; boundary="VunDYGtMXAdOGPEKAROIkeauQDhjaA1oK";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+ Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+ Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <4c957d42-2b03-9416-75a4-e331f2ded8cf@pengutronix.de>
+Subject: rx_packets/bytes stats for error frames (was: Re: [PATCH v2 1/1] can:
+ ucan: add driver for Theobroma Systems UCAN devices)
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <b4f644dc-265e-01e0-acaa-88cc8f3f69f5@pengutronix.de>
+ <6c1b7482-2cde-40e3-eff4-e4b94794a63e@theobroma-systems.com>
+In-Reply-To: <6c1b7482-2cde-40e3-eff4-e4b94794a63e@theobroma-systems.com>
 
->> -----Original Message-----
->> From: Vitaly Kuznetsov <vkuznets@redhat.com>
->> Sent: Friday, March 9, 2018 6:03 AM
->> To: kvm@vger.kernel.org
->> Cc: x86@kernel.org; Paolo Bonzini <pbonzini@redhat.com>; Radim Krčmář
->> <rkrcmar@redhat.com>; KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
->> <haiyangz@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>; Michael
->> Kelley (EOSG) <Michael.H.Kelley@microsoft.com>; Mohammed Gamal
->> <mmorsy@redhat.com>; Cathy Avery <cavery@redhat.com>; Bandan Das <bsd@redhat.com>;
->> linux-kernel@vger.kernel.org
->> Subject: [PATCH v3 1/7] x86/hyper-v: move hyperv.h out of uapi
->> 
->> hyperv.h is not part of uapi, there are no (known) users outside of kernel.
->> We are making changes to this file to match current Hyper-V TLFS and we
->> don't want to maintain backwards compatibility.
->> 
->> Move the file renaming to hyperv-tlfs.h to avoid confusing it with
->> mshyperv.h. In future, all definitions from TLFS should go to it and
->> all kernel objects should go to mshyperv.h or include/linux/hyperv.h.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->
-> [snip]
->
->> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
->> index 447371f4de56..72855182b191 100644
->> --- a/drivers/hv/connection.c
->> +++ b/drivers/hv/connection.c
->> @@ -31,7 +31,6 @@
->>  #include <linux/vmalloc.h>
->>  #include <linux/hyperv.h>
->>  #include <linux/export.h>
->> -#include <asm/hyperv.h>
->
-> This #include should remain and be changed to asm/hyperv-tlfs.h.  This
-> file uses the hypercall status values HV_STATUS_*.
->
->>  #include <asm/mshyperv.h>
+--VunDYGtMXAdOGPEKAROIkeauQDhjaA1oK
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
-My idea was that <asm/mshyperv.h> already includes <asm/hyperv-tlfs.h> so
-there's no need to include them both.
+On 03/14/2018 10:09 AM, Jakob Unterwurzacher wrote:
+> On 14.03.18 08:51, Marc Kleine-Budde wrote:
+>>> +		memcpy(cf->data, m->msg.can_msg.data, cf->can_dlc);
+>>> +
+>>> +	/* don't count error frames as real packets */
+>>> +	if (!(canid & CAN_ERR_FLAG)) {
+>>> +		stats->rx_packets++;
+>>> +		stats->rx_bytes +=3D cf->can_dlc;
+>>> +	}
+>> Please count them, too.
+>=20
+> We do count them, as errors!
+>=20
+> This is what happens when you transmit a single CAN frame with nothing =
 
->> 
->>  #include "hyperv_vmbus.h"
->> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
->> index fe96aab9e794..45f3694bbb76 100644
->> --- a/drivers/hv/hv.c
->> +++ b/drivers/hv/hv.c
->> @@ -29,7 +29,6 @@
->>  #include <linux/version.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/clockchips.h>
->> -#include <asm/hyperv.h>
->
-> This #include should remain and be changed to asm/hyperv-tlfs.h.  This
-> file uses HV_MESSAGE_* values.
->
+> connected: "TX errors" shoots up but "RX packets" stays zero.
 
-Ditto.
+This is handled not consistent in the existing CAN drivers. In flexcan
+all and c_can (all but rx overflow) are counted as rx_packets and
+rx_bytes. (I haven't looked at the other drivers.)
 
->>  #include <asm/mshyperv.h>
->>  #include "hyperv_vmbus.h"
->> 
->> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
->> index 22300ec7b556..500f805a6ef2 100644
->> --- a/drivers/hv/hyperv_vmbus.h
->> +++ b/drivers/hv/hyperv_vmbus.h
->> @@ -27,6 +27,7 @@
->> 
->>  #include <linux/list.h>
->>  #include <asm/sync_bitops.h>
->> +#include <asm/hyperv-tlfs.h>
->>  #include <linux/atomic.h>
->>  #include <linux/hyperv.h>
->>  #include <linux/interrupt.h>
->> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->> index bc65c4d79c1f..b10fe26c4891 100644
->> --- a/drivers/hv/vmbus_drv.c
->> +++ b/drivers/hv/vmbus_drv.c
->> @@ -36,7 +36,6 @@
->>  #include <linux/cpu.h>
->>  #include <linux/sched/task_stack.h>
->> 
->> -#include <asm/hyperv.h>
->
-> This #include should remain and be changed to asm/hyperv-tlfs.h.  This
-> file uses HVMSG_* values.
->
+I tend to count the error frames as ordinary frames.
 
-Ditto.
+Marc
 
->>  #include <asm/mshyperv.h>
->>  #include <linux/notifier.h>
->>  #include <linux/ptrace.h>
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-Thanks for the review!
 
--- 
-  Vitaly
+--VunDYGtMXAdOGPEKAROIkeauQDhjaA1oK--
+
+--u6zmgLP6d4ZUuIx0g08s7VOP0FWxzbdON
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlqo7TkACgkQk9IU1zQo
+ZfGsqwf/WkJISU3LQLqNxOs/QOsZpSFlBSKOgi6409dak6xVntye+4Z2J0caQPOW
+DEoty0MU5FecUI2uYANaU+xIHncbU8VkopQ9XyQl4pDSDMFt9Vgn/vI3opIviFJV
+G+CgygcN9iaX+VZmDuhJQFvjba+8a+PXxv4BvvYKBWdZQ88j34JWmBjrnIMWz8Zx
+K4IYRQ4g4Zf0Xonzm4QvVKm6V82vkacMWBl2Lauy1KGFny1xavjUv8yBP3Sl/WpW
+g6+4QBxosHEtZMAIdsLAbY+VpuKbn3WpawGoyTCYN443sinGIk3xcDSWAdIDsPE6
+Go2MYF9bs880lkscCAJaPogvJVIkLw==
+=ouAB
+-----END PGP SIGNATURE-----
+
+--u6zmgLP6d4ZUuIx0g08s7VOP0FWxzbdON--
