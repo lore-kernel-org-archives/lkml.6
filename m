@@ -1,125 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeCNLMG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:12:06 -0400
-Received: from de-deferred2.bosch-org.com ([139.15.180.217]:44044 "EHLO
-        de-deferred2.bosch-org.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750751AbeCNLMD (ORCPT
+        id S1751420AbeCNLPZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:15:25 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:51904 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNLPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:12:03 -0400
-X-AuditID: 0a3aad15-083ff700000062e5-7c-5aa901802c9b
-From: Mark Jonas <mark.jonas@de.bosch.com>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hs@denx.de>,
-        Zhu Yi <yi.zhu5@cn.bosch.com>, Mark Jonas <mark.jonas@de.bosch.com>
-Subject: [PATCH] can: enable multi-queue for SocketCAN devices
-Date: Wed, 14 Mar 2018 11:33:16 +0100
-Message-ID: <1521023596-30108-1-git-send-email-mark.jonas@de.bosch.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 14 Mar 2018 07:15:24 -0400
+X-Google-Smtp-Source: AG47ELsC8pnUL3BR3hX/kazWN6hjW8P8OEfMKykQVXgisYz6bVmJoQCvS/7uS1Hsl3wQTgtJ3VJehaRi/uNIAmR+gtw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Sa0xTZxzGeXsO5bT0mMMphb+Vgp64KCa6snnp5iUkmtjsixpvsermYT3S
-        Km1JTyGU+aFbBooaFagxdgQLCkGMuOCFWk0amoy0EKeibGNsujBcOsA5RVYULzuHgu0Hv/3z
-        PP/f+7zvk5fA6HMpasJsdXB2K1vESOW4/NOLmsUudN6g7euep/P99hDTtUZPYrp7/jqp7lKj
-        G9d1eTN0TQ+uJ+dL9fWeEK5/2juA9Mdfa/Vj7dkbcYN8lZErMpdy9g/X7JGbWl7fQMXts8u+
-        7VzlQkdUh5GMAGopVL+qQ4eRnKCpUxIY66qRigZN3UTw3z/m2NyBoMZrEWcptQj6Qz5MnNOp
-        rfDdo0pchDHqe2Fn8LZENJTUGqi61oyLM059AC09LVM6Sa2H1ju/4rHkbOj/sQqL6WkQPj00
-        pWMUQGckgp1ApCfB8iRYXiRpRaq9nLbUkrdiad4SewHHl2vzlnxps7SjWG0qH2po2BZEFIEY
-        BVmfdN5AJ7OlvNMSRMsICaMiA+4WAz2rwGZ0mlje9IW9pIjjGTWJkpKSaOU7mS8psJh53myz
-        BhEQGJNOXs0SONLIOss5uy2GBdEcAmcyyaPGAwaaKmQd3H6OK+bsM+5KgmCAvP1WANPsXCFX
-        ttdc5JixGU0sMyPRSYyVELIg+phQCNlR8QiSL2YtvLlwGp8dw+kZNY52o7XEL5GRSozGrTYr
-        p84ktSJPiZumEuu7G6izyN2KZgOtSjDipwyjfiR0qCR5sUOF8Dvj2UD6lHU76LRpMQ591CQw
-        1EAq1PvGEYR8B3GYcNXi0Bbpw+FF9V84hKIdyfD88WQy9Po9KVA1WimDu4eeyOD5ZCAVxj1v
-        U6H2ZoCEiZN1FNy/+7MSJtpH06H6jisDxir8mTB6wa8Wlrs0cP9WRAM/XenOhqGvXTkwFIjm
-        wPgf43NhqPMbBhpbjy2A8MiDhdD57N+FEP7bmwsR15VcCLtf5g4LxUqEYs3Xpop1sI73FDut
-        xl+ndqFUZ7Q5R4P0HT3uMw99g8ayufv61rYNnygtl88fGVBHt7ibenZWkdGarImXvwf2pdxS
-        bO3NX+3xju7f4CpUWvhTO52RQ7X3Ahcuvwg0HA09erN88597tle417FZbT+cqeDnfNK/+MlZ
-        52TF4Ff+4U35ssvbtoRXt7FvbjTv+uzzI427GZw3sXmLMDvP/g9Z97mVNwQAAA==
+In-Reply-To: <mhng-bb15ab0a-464a-4baf-bd4c-e8c409722351@palmer-si-x1c4>
+References: <CA+ZOyagHPWNw6uLAGri0cQph06MmspMjUZC--YBe8HRBA2Cd5g@mail.gmail.com>
+ <mhng-bb15ab0a-464a-4baf-bd4c-e8c409722351@palmer-si-x1c4>
+From: Zong Li <zongbox@gmail.com>
+Date: Wed, 14 Mar 2018 19:15:22 +0800
+Message-ID: <CA+ZOyajM8k8+o4Y4DL5z4VE7SoMW2SqzpuPyNAd7dn8smsdsfQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: Shea Levy <shea@shealevy.com>, Zong Li <zong@andestech.com>,
+        albert@sifive.com, linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greentime@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Yi <yi.zhu5@cn.bosch.com>
+2018-03-14 11:07 GMT+08:00 Palmer Dabbelt <palmer@sifive.com>:
+> On Tue, 13 Mar 2018 18:34:19 PDT (-0700), zongbox@gmail.com wrote:
+>>
+>> 2018-03-14 5:30 GMT+08:00 Shea Levy <shea@shealevy.com>:
+>>>
+>>> Hi Palmer,
+>>>
+>>> Palmer Dabbelt <palmer@sifive.com> writes:
+>>>
+>>>> On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
+>>>>>
+>>>>> These patches resolve the some issues of loadable module.
+>>>>>   - symbol out of ranges
+>>>>>   - unknown relocation types
+>>>>>
+>>>>> The reference of external variable and function symbols
+>>>>> cannot exceed 32-bit offset ranges in kernel module.
+>>>>> The module only can work on the 32-bit OS or the 64-bit
+>>>>> OS with sv32 virtual addressing.
+>>>>>
+>>>>> These patches will generate the .got, .got.plt and
+>>>>> .plt sections during loading module, let it can refer
+>>>>> to the symbol which locate more than 32-bit offset.
+>>>>> These sections depend on the relocation types:
+>>>>>  - R_RISCV_GOT_HI20
+>>>>>  - R_RISCV_CALL_PLT
+>>>>>
+>>>>> These patches also support more relocation types
+>>>>>  - R_RISCV_CALL
+>>>>>  - R_RISCV_HI20
+>>>>>  - R_RISCV_LO12_I
+>>>>>  - R_RISCV_LO12_S
+>>>>>  - R_RISCV_RVC_BRANCH
+>>>>>  - R_RISCV_RVC_JUMP
+>>>>>  - R_RISCV_ALIGN
+>>>>>  - R_RISCV_ADD32
+>>>>>  - R_RISCV_SUB32
+>>>>>
+>>>>> Zong Li (11):
+>>>>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>>>>   RISC-V: Add section of GOT.PLT for kernel module
+>>>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>>>>   RISC-V: Support CALL relocation type in kernel module
+>>>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>>>>   RISC-V: Support ALIGN relocation type in kernel module
+>>>>>   RISC-V: Support ADD32 relocation type in kernel module
+>>>>>   RISC-V: Support SUB32 relocation type in kernel module
+>>>>>   RISC-V: Enable module support in defconfig
+>>>>>   RISC-V: Add definition of relocation types
+>>>>>
+>>>>>  arch/riscv/Kconfig                  |   5 ++
+>>>>>  arch/riscv/Makefile                 |   3 +
+>>>>>  arch/riscv/configs/defconfig        |   2 +
+>>>>>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>>>>>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>>>>>  arch/riscv/kernel/Makefile          |   1 +
+>>>>>  arch/riscv/kernel/module-sections.c | 156
+>>>>> ++++++++++++++++++++++++++++++++
+>>>>>  arch/riscv/kernel/module.c          | 175
+>>>>> ++++++++++++++++++++++++++++++++++--
+>>>>>  arch/riscv/kernel/module.lds        |   8 ++
+>>>>>  9 files changed, 480 insertions(+), 6 deletions(-)
+>>>>>  create mode 100644 arch/riscv/include/asm/module.h
+>>>>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>>>>  create mode 100644 arch/riscv/kernel/module.lds
+>>>>
+>>>>
+>>>> This is the second set of patches that turn on modules, and it has the
+>>>> same
+>>>> R_RISCV_ALIGN problem as the other one
+>>>>
+>>>>
+>>>> http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
+>>>>
+>>>> It looks like this one uses shared libraries for modules instead of
+>>>> static
+>>>> objects.  I think using shared objects is the right thing to do, as
+>>>> it'll allow
+>>>> us to place modules anywhere in the address space by having multiple
+>>>> GOTs and
+>>>> PLTs.
+>>>
+>>>
+>>> Can you expand on this? It was my understanding that outside of the
+>>> context of multiple address spaces sharing code the GOT and PLT were
+>>> simply unnecessary overhead, what benefit would they bring here?
+>>>
+>>>> That's kind of complicated, though, so we can start with something
+>>>> simpler like this.
+>>
+>>
+>> Hi,
+>>
+>> The kernel module is a object file, it is not be linked by linker, the
+>> GOT and PLT
+>> sections will not be generated through -fPIC option, but it will
+>> generate the relative
+>> relocation type. As Palmer mention before, If we have GOT and PLT
+>> sections,
+>> we can put the module anywhere, even we support the KASLR in the kernel.
+>
+>
+> Sorry, I guess I meant PIC objects not shared objects (I keep forgetting
+> about
+> PIE).  We'll probably eventually add large code model targets, but they
+> might
+> end up just being functionally equilivant to PIE with multi-GOT and
+> multi-PLT
+> so it might not matter.
+>
+> Either way, this is the sanest way to do it for now.
 
-The existing SocketCAN implementation provides alloc_candev() to
-allocate a CAN device using a single Tx and Rx queue. This can lead to
-priority inversion in case the single Tx queue is already full with low
-priority messages and a high priority message needs to be sent while the
-bus is fully loaded with medium priority messages.
+Actually, I try to use the large code model and without PIC before.
+(The compiler with mcmodel=large obtain from my colleague development)
+On this compiler version, the `-mcmodel=large` uses the constant pool
+mechanism to
+puts the addresses of data symbols at the function tail. It can resolve
+the reference about out of range of data symbol, but this code generation not
+apply to function call. For the compiler code generation and no linker to do
+relax reason, kernel module still needs the PLT section to jump to far target.
+On the other hand, the ARM64 mailing list has the patches to remove
+the large code model for cache performance.
 
-This problem can be solved by using the existing multi-queue support of
-the network subsystem. The commit makes it possible to use multi-queue in
-the CAN subsystem in the same way it is used in the Ethernet subsystem
-by adding an alloc_candev_mqs() call and accompanying macros. With this
-support a CAN device can use multi-queue qdisc (e.g. mqprio) to avoid
-the aforementioned priority inversion.
+https://marc.info/?l=linux-arm-kernel&m=151860828416766
 
-The existing functionality of alloc_candev() is the same as before.
+so maybe we can use the `medany + fPIC` for now.
 
-CAN devices need to have prioritized multiple hardware queues or are
-able to abort waiting for arbitration to make sensible use of
-multi-queues.
+>> For the ALIGN problem, the kernel module loader is difficult to remove
+>> or migrate
+>> the module's code like relax doing, so the remnant nop instructions harm
+>> the
+>> performance,  I agree the point that adding the mno-relax option and
+>> checking
+>> the alignment in ALIGN type in module loader.
+>
+>
+> Sounds good.  I just merged the mno-relax stuff, it'll show up when I get
+> around to generating a 7.3.0 backport branch.  For now I think you should
+> just
+> fail on R_RISCV_ALIGN and attempt to pass -mno-relax to the compiler (via
+> something like "$(call cc-option,-mno-relax)", like we do for
+> "-mstrict-align").  I don't think it's worth handling R_RISCV_ALIGN in the
+> kernel, as that's essentially the same as full relaxation support.
 
-Signed-off-by: Zhu Yi <yi.zhu5@cn.bosch.com>
-Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
-Reviewed-by: Heiko Schocher <hs@denx.de>
----
- drivers/net/can/dev.c   | 8 +++++---
- include/linux/can/dev.h | 7 ++++++-
- 2 files changed, 11 insertions(+), 4 deletions(-)
+OK. I will send the v2 patches with the modification as you mention about
+R_RISCV_ALIGN type?
 
-diff --git a/drivers/net/can/dev.c b/drivers/net/can/dev.c
-index b177956..636f853 100644
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -703,7 +703,8 @@ EXPORT_SYMBOL_GPL(alloc_can_err_skb);
- /*
-  * Allocate and setup space for the CAN network device
-  */
--struct net_device *alloc_candev(int sizeof_priv, unsigned int echo_skb_max)
-+struct net_device *alloc_candev_mqs(int sizeof_priv, unsigned int echo_skb_max,
-+				    unsigned int txqs, unsigned int rxqs)
- {
- 	struct net_device *dev;
- 	struct can_priv *priv;
-@@ -715,7 +716,8 @@ struct net_device *alloc_candev(int sizeof_priv, unsigned int echo_skb_max)
- 	else
- 		size = sizeof_priv;
- 
--	dev = alloc_netdev(size, "can%d", NET_NAME_UNKNOWN, can_setup);
-+	dev = alloc_netdev_mqs(size, "can%d", NET_NAME_UNKNOWN, can_setup,
-+			       txqs, rxqs);
- 	if (!dev)
- 		return NULL;
- 
-@@ -734,7 +736,7 @@ struct net_device *alloc_candev(int sizeof_priv, unsigned int echo_skb_max)
- 
- 	return dev;
- }
--EXPORT_SYMBOL_GPL(alloc_candev);
-+EXPORT_SYMBOL_GPL(alloc_candev_mqs);
- 
- /*
-  * Free space of the CAN network device
-diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
-index 055aaf5..a83e1f6 100644
---- a/include/linux/can/dev.h
-+++ b/include/linux/can/dev.h
-@@ -143,7 +143,12 @@ u8 can_dlc2len(u8 can_dlc);
- /* map the sanitized data length to an appropriate data length code */
- u8 can_len2dlc(u8 len);
- 
--struct net_device *alloc_candev(int sizeof_priv, unsigned int echo_skb_max);
-+struct net_device *alloc_candev_mqs(int sizeof_priv, unsigned int echo_skb_max,
-+				    unsigned int txqs, unsigned int rxqs);
-+#define alloc_candev(sizeof_priv, echo_skb_max) \
-+	alloc_candev_mqs(sizeof_priv, echo_skb_max, 1, 1)
-+#define alloc_candev_mq(sizeof_priv, echo_skb_max, count) \
-+	alloc_candev_mqs(sizeof_priv, echo_skb_max, count, count)
- void free_candev(struct net_device *dev);
- 
- /* a candev safe wrapper around netdev_priv */
--- 
-2.7.4
+> If I understand your code correctly, you're currently generating one GOT and
+> one PLT per loaded module.  If that's the case, then this is correct, it's
+> just
+> possible to save some memory by merging these tables.  It's probably not
+> worth
+> the complexity for kernel modules for a while.
+
+Yes, there are one GOT and one PLT per loaded module.
+In the [PATCH 02/11], I generate the third section .got.plt for saving
+more memory of
+each PLT entry.
+
+Thanks a lot.
