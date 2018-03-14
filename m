@@ -1,91 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeCNPoT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:44:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:33523 "EHLO
+        id S1752308AbeCNPok (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:44:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:34685 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750862AbeCNPoQ (ORCPT
+        with ESMTP id S1750998AbeCNPoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:44:16 -0400
+        Wed, 14 Mar 2018 11:44:38 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Subject: [PATCH 19/47] crypto: remove blackfin CRC driver
-Date: Wed, 14 Mar 2018 16:35:32 +0100
-Message-Id: <20180314153603.3127932-20-arnd@arndb.de>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
+Subject: [PATCH 20/47] media: platform: remove blackfin capture driver
+Date: Wed, 14 Mar 2018 16:35:33 +0100
+Message-Id: <20180314153603.3127932-21-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:mX+ocRm+mfG0anbZjHMjxqmoQa+Ah/yRpeti2/dHWAUPYEgpPuJ
- EmONz2oC8NsWrARkjSA8FBUFdAtDjc4zYWDMMQoImy/jBeEuh5bL1tzgyje144c5DHtDbrz
- EteP2qD4KV6AVvAIUmfJvjqNrd7rnTW1KwbSlbAHVrD78CoS+q1JV6pk6tn2L4lvMlAp8Qf
- EwGjy71xVkBtGu2DSBD0w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:IzKEVtOOT8o=:bmqjAUlaSUC5TlosB2/k68
- gHccoJEdALhMgya/NFy5FBuCn4ltrXYvN2g226kP/cMQwUnQeVQdkOzE5Gir9p8g+IwVs9QSC
- OmONkfHQpFVQCGXZFl7hLolYJO7Nacn3LbJI7BMaXsWJGzFlksU97PxNlp2sMu7FN+qz9mZid
- PQFAvRa+y8vSSBbN0+sI/wGp3emWydUhcB7hQQvjdtq/KRr7f0GkdxUTrNctI3zJwYJUkRPtn
- NnAgLhxsnYwYhE/b1Pw44uxBZE5z3Vhrb5Dq4DGHW0Ztr/0apjjzA4WfrFU8sfFZ8I93NxWjx
- ADYbYXOq2Zj5iSUyB39nVBUrZdsLFyAJksBjBkTPqH+X01nM/4jGTrS86TmsNxpnYfr+fvAy0
- /YoLumCVdgCsIzRKN3zQlzgdsgjkbK4tS8Tq2g/Lhqe9wF+yi6vpiVmFj78xYFBfMVcjaH7rX
- 5170CPbhmVmGPOAyMy+NKb6buOAcTgxJMhC32j6iaDFjAFPQZzn7yOjNp9+14kQehzgX8y5nP
- sZEvjThKI7vNt/rSzSOOFUR+Ec9VKsZ5GbWVyNnPujtySmnr9Lvqus3z6fpeLm67A4FbS3f34
- WYd69t2+mC0E0AvRKzuuGgTB6J5460fVOnecX2raytk4btE8N26CDHrcuneVSYdiMktlJux5S
- aFg0yHTsuMMCN9iHw1BjryGz+K0SBUvjK+32SlKxIVzykvGE+Ew4l4tc7R6hD3o5uGPXicMwl
- pyqYdkf6LFE4f///9J1Xz32wqLYzYCbs8KahnQ==
+X-Provags-ID: V03:K0:1OLt0KgLmA5OwZu96CFwvLXqzUfWu9xvmvKLV0m/i89eApdhTtw
+ 4qtOHmEBZ7AeI20nBeQ/rtcYwnye9dhApE3EQsduZVt+qZK/Vv9k2VvKmFMoHK+k+RdMr22
+ vm0DPQYmPXpB7dlWHgN8GcfNaFOxNbrVS8/aLM3ZvHywtTuG6Mez61uI+rZhZvryYvQtOLH
+ wvPIklfNTUjUIU5ap7cVA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+oL9f0mgSfg=:+2Abs6TwLvIRxE1rQ72EbI
+ 3mo0yyBwuTE7UCB4FUhrMJ0AYp0rtFm6NZ2QjRc1HufkIIwtGGFf5Tre8FV54SlU1pb1hAJ5p
+ wQlMQAxadgIHgfymOVh8OxxOd6jhJtyuiwmoQqRcVv9tmPXdWPJSWkbBW+PsSw9ph48KP7JUU
+ F6j7dgTfBhDDby2eNTxhhYYOeHU8P+x+6sqHBRvBiVTcHMCTEvIgoH32Tgn5UvwWD0hF2/NkW
+ Wg/7W1s+Oke/bXbtzpQW5od2JKbJgaDLWfjo7+VWXiyqmdVWvu2ObdBcbb391UryADW8wnsVe
+ GyigMHUL1U3B7jLILGOzEPy9m15qStKKKuL4lIGKuJETQtPftOFwF6rSRl0XuJFmvuNyYzWdo
+ 98jSoPIHqWWVSTtZYGxuL4tOTPie1vfTS/sNoJVFj9wi/u8tagepKTUP5wn0vxyWHR8avZaZy
+ 9FqnryHg29xNAdZkyqbbkZums/JGATkjLCB1rZkDJ/RZi8PjYSCb7KejQX+jISEcaAZGkQ52d
+ EQYRFMND3xZlWURGiarkDjAdca1bMb9IeAuBHWXo6zk2XNnE2WtNifc/u1r7CE698eooSrSP2
+ BzqtyZYSjdLXp55ERygDGxDWrSw3zai7ES6G2I5fMEIB3miZ5drQqEkej9lKmXhfa6mqqHyPH
+ i5sTQFaNtvCxD/yk8HCNSBKRb+22yRSF91rQDtLqh/tIX6H8dWf92Qhx9XslnmxjlawVSZaUx
+ tWV44bzGaxP5+pcWecSLel2xry5pLqT7R0bz9Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The blackfin architecture is getting removed, so this
-driver won't be used any more.
+The blackfin architecture is getting removed, so the video
+capture driver is also obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/crypto/Kconfig    |   7 -
- drivers/crypto/Makefile   |   1 -
- drivers/crypto/bfin_crc.c | 753 ----------------------------------------------
- drivers/crypto/bfin_crc.h | 124 --------
- 4 files changed, 885 deletions(-)
- delete mode 100644 drivers/crypto/bfin_crc.c
- delete mode 100644 drivers/crypto/bfin_crc.h
+ drivers/media/platform/Kconfig                 |   2 -
+ drivers/media/platform/Makefile                |   2 -
+ drivers/media/platform/blackfin/Kconfig        |  16 -
+ drivers/media/platform/blackfin/Makefile       |   2 -
+ drivers/media/platform/blackfin/bfin_capture.c | 983 -------------------------
+ drivers/media/platform/blackfin/ppi.c          | 361 ---------
+ include/media/blackfin/bfin_capture.h          |  39 -
+ include/media/blackfin/ppi.h                   |  94 ---
+ 8 files changed, 1499 deletions(-)
+ delete mode 100644 drivers/media/platform/blackfin/Kconfig
+ delete mode 100644 drivers/media/platform/blackfin/Makefile
+ delete mode 100644 drivers/media/platform/blackfin/bfin_capture.c
+ delete mode 100644 drivers/media/platform/blackfin/ppi.c
+ delete mode 100644 include/media/blackfin/bfin_capture.h
+ delete mode 100644 include/media/blackfin/ppi.h
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 5c4106979cc9..d1ea1a07cecb 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -464,13 +464,6 @@ if CRYPTO_DEV_UX500
- 	source "drivers/crypto/ux500/Kconfig"
- endif # if CRYPTO_DEV_UX500
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 5d8fd71fc454..2136702c95fc 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -31,8 +31,6 @@ source "drivers/media/platform/davinci/Kconfig"
  
--config CRYPTO_DEV_BFIN_CRC
--	tristate "Support for Blackfin CRC hardware"
--	depends on BF60x
--	help
--	  Newer Blackfin processors have CRC hardware. Select this if you
--	  want to use the Blackfin CRC module.
+ source "drivers/media/platform/omap/Kconfig"
+ 
+-source "drivers/media/platform/blackfin/Kconfig"
 -
- config CRYPTO_DEV_ATMEL_AUTHENC
- 	tristate "Support for Atmel IPSEC/SSL hw accelerator"
- 	depends on HAS_DMA
-diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index ee5ec5c94383..7ae87b4f6c8d 100644
---- a/drivers/crypto/Makefile
-+++ b/drivers/crypto/Makefile
-@@ -3,7 +3,6 @@ obj-$(CONFIG_CRYPTO_DEV_ATMEL_AES) += atmel-aes.o
- obj-$(CONFIG_CRYPTO_DEV_ATMEL_SHA) += atmel-sha.o
- obj-$(CONFIG_CRYPTO_DEV_ATMEL_TDES) += atmel-tdes.o
- obj-$(CONFIG_CRYPTO_DEV_ATMEL_ECC) += atmel-ecc.o
--obj-$(CONFIG_CRYPTO_DEV_BFIN_CRC) += bfin_crc.o
- obj-$(CONFIG_CRYPTO_DEV_CAVIUM_ZIP) += cavium/
- obj-$(CONFIG_CRYPTO_DEV_CCP) += ccp/
- obj-$(CONFIG_CRYPTO_DEV_CCREE) += ccree/
-diff --git a/drivers/crypto/bfin_crc.c b/drivers/crypto/bfin_crc.c
+ config VIDEO_SH_VOU
+ 	tristate "SuperH VOU video output driver"
+ 	depends on MEDIA_CAMERA_SUPPORT
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index 85e112122f32..2b07f2e2fca6 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -53,8 +53,6 @@ obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+ 
+ obj-y					+= stm32/
+ 
+-obj-y                                   += blackfin/
+-
+ obj-y					+= davinci/
+ 
+ obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+diff --git a/drivers/media/platform/blackfin/Kconfig b/drivers/media/platform/blackfin/Kconfig
 deleted file mode 100644
-index cfc4d682d55a..000000000000
-diff --git a/drivers/crypto/bfin_crc.h b/drivers/crypto/bfin_crc.h
+index 68fa90151b8f..000000000000
+diff --git a/drivers/media/platform/blackfin/Makefile b/drivers/media/platform/blackfin/Makefile
 deleted file mode 100644
-index 786ef746d109..000000000000
+index 30421bc23080..000000000000
+diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
+deleted file mode 100644
+index b7660b1000fd..000000000000
+diff --git a/drivers/media/platform/blackfin/ppi.c b/drivers/media/platform/blackfin/ppi.c
+deleted file mode 100644
+index d3dc765c1609..000000000000
+diff --git a/include/media/blackfin/bfin_capture.h b/include/media/blackfin/bfin_capture.h
+deleted file mode 100644
+index a999a3970c69..000000000000
+diff --git a/include/media/blackfin/ppi.h b/include/media/blackfin/ppi.h
+deleted file mode 100644
+index 987e49e8f9c9..000000000000
 -- 
 2.9.0
