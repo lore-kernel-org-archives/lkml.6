@@ -1,109 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeCNVB5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:01:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750779AbeCNVB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:01:56 -0400
-Message-ID: <1521061314.18703.123.camel@redhat.com>
-Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-From: Doug Ledford <dledford@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Eddie Wai <eddie.wai@broadcom.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 14 Mar 2018 17:01:54 -0400
-In-Reply-To: <CA+55aFxEsTA7DTBYdLz8sbniq2NRO-X+Nt1vmYxckfWAP0BQZQ@mail.gmail.com>
-References: <20180220205638.1959033-1-arnd@arndb.de>
-         <20180228211514.GC13394@ziepe.ca>
-         <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
-         <20180306234539.GB1037@ziepe.ca>
-         <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
-         <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
-         <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
-         <1521057831.18703.101.camel@redhat.com>
-         <CAK8P3a1=h7cF8kRUWpFG88-OSFL8_7SgUkaX4TUEhG6ypPODkg@mail.gmail.com>
-         <1521059294.18703.106.camel@redhat.com>
-         <CA+55aFxEsTA7DTBYdLz8sbniq2NRO-X+Nt1vmYxckfWAP0BQZQ@mail.gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QvdOF5BTCqq2F29+7Pt9"
-Mime-Version: 1.0
+        id S1751673AbeCNVD7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:03:59 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33256 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeCNVDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 17:03:55 -0400
+X-Google-Smtp-Source: AG47ELuDr939fQ4V9DJdebnx9a7h2q722SN6jy71DSf3hbMi47M6jL2WptK5p2bmJd25ZGSEGp+VYA==
+From: Ram Pai <linuxram@us.ibm.com>
+To: mpe@ellerman.id.au
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, akpm@linux-foundation.org, dave.hansen@intel.com,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
+        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
+        msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
+Subject: [PATCH v3] powerpc: treat pkey-0 special
+Date: Wed, 14 Mar 2018 14:01:35 -0700
+Message-Id: <1521061295-22605-1-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Applications need the ability to associate an address-range with some
+key and latter revert to its initial default key. Pkey-0 comes close to
+providing this function but falls short, because the current
+implementation disallows applications to explicitly associate pkey-0 to
+the address range.
 
---=-QvdOF5BTCqq2F29+7Pt9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch clarifies the semantics of pkey-0 and provides the
+corresponding implementation on powerpc.
 
-On Wed, 2018-03-14 at 13:31 -0700, Linus Torvalds wrote:
-> On Wed, Mar 14, 2018 at 1:28 PM, Doug Ledford <dledford@redhat.com> wrote=
-:
-> >=20
-> > Arnd sent in a two patch series and it got put into our for-next branch=
-.
-> >  But, the two patches are the *only* two remaining issues for the arm
-> > builds on the kernelci system.  They would like to get this into for-rc
-> > so that the build failures stop.  Are you OK with me just cherry-pickin=
-g
-> > them from for-next to for-rc so I can send them to you?  They'll show a=
-s
-> > duplicates in the next merge window, but should drop silently.
->=20
-> Go ahead, assuming there are no other planned changes around them that
-> would cause potential pointless merge problems..
+Pkey-0 is special with the following semantics.
+(a) it is implicitly allocated and can never be freed. It always exists.
+(b) it is the default key assigned to any address-range.
+(c) it can be explicitly associated with any address-range.
 
-These two patches will be fine in that regard.  They aren't in the area
-where all the syzkaller bugs have been getting fixed.  But I need to
-merge for-rc into for-next because of all of the syzkaller bugs being
-fixed.  We are running into a situation where code updates that were
-planned are in areas where syzkaller bugs have been fixed and there
-would be significant merge conflicts if I didn't.  So, the plan as it
-stands is: get the needed patches in for-rc, merge for-rc to for-next,
-then cherry pick from for-next to for-rc just the two patches here
-(since I have no idea how cherry picking to for-rc and then merging for-
-rc to for-next would play out, I'm just not gonna try it).
+Tested on powerpc.
 
-It's a bit convoluted, but as long as I don't use my standard git
-request pull macro when generating the pull request (it will pick the
-wrong merge base every time whenever you've merged for-rc into for-next,=
-=20
-you have to manually find the alternate merge base and use the right one
-for git request pull) it comes out nicely in the end.
+History:
+    v3 : added clarification of the semantics of pkey0.
+    		-- suggested by Dave Hansen
+    v2 : split the patch into two, one for x86 and one for powerpc
+    		-- suggested by Michael Ellermen
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-QvdOF5BTCqq2F29+7Pt9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+cc: Dave Hansen <dave.hansen@intel.com>
+cc: Michael Ellermen <mpe@ellerman.id.au>
+cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+---
+ arch/powerpc/include/asm/pkeys.h | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqpjcIACgkQuCajMw5X
-L91AYhAAk/fz+G0z9fDw5BQWYh7Mgo+5hIke1Zhpi1XTe/HmQgdzOWMHDZRV5Bh0
-dWSBPddUo0jVUHNS8WYY0r/GQoQIJhi/XAAPAY8QTYhy6tIVsgPr4yeeEZMrIWdZ
-ozEDxASasgpmiogw9tX/ecfWqUyOu/U+iFclSZinHbrMnKvnvk4C6C3XDzmeF/mR
-cI2VM2yEtxTfblticeEmx1zRrlQBl3NjTdGZG7VXE6AOIPTQxqiKKcWXVMri1e3x
-UWD0hSKs1OIYFTWOTnxS1quJdj7hexJ5nCW+jaHQ4Rygl2DEGn6uWqDOQ0jnM5DU
-DdvBnW8o44IoYpAIMExQ3b2oOgXgy+gyz+PvPGQJ9nrv22/MEpVQaqel47m1sBAw
-/vKzQedNwA7bLZdWUZbPn/TTP4TI/zh72Ri39lv7ZYFr660ItlIDqVwm5B83tJwO
-k9Si26qeENAlVXjJfiTyp8hd2+dAy/Wxy7i2Jpn3877ZH0ffOtnt2byyhWOljx/A
-PGnVNj1U1A5pdUJwv61gQ9l/2CKNYBWYwYtJ5nHRg57sPrZGpOTHkPs2WK6/fiG0
-ibO9h2ALfhd8f+ZWlT00UoGb3WwOVRwMlbp5b6afRrhmi/2VvmfnywJeh7OXm8DQ
-+DotJLHvXpKAAMI7zp4xFDoNS6zMQsA5O5PGBNXTYP48+1RsKGI=
-=Vxrz
------END PGP SIGNATURE-----
-
---=-QvdOF5BTCqq2F29+7Pt9--
+diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+index 0409c80..3c1deec 100644
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -101,10 +101,18 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
+ 
+ static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+ {
+-	/* A reserved key is never considered as 'explicitly allocated' */
+-	return ((pkey < arch_max_pkey()) &&
+-		!__mm_pkey_is_reserved(pkey) &&
+-		__mm_pkey_is_allocated(mm, pkey));
++	/* pkey 0 is allocated by default. */
++	if (!pkey)
++	       return true;
++
++	if (pkey < 0 || pkey >= arch_max_pkey())
++	       return false;
++
++	/* Reserved keys are never allocated. */
++	if (__mm_pkey_is_reserved(pkey))
++	       return false;
++
++	return __mm_pkey_is_allocated(mm, pkey);
+ }
+ 
+ extern void __arch_activate_pkey(int pkey);
+@@ -150,7 +158,8 @@ static inline int mm_pkey_free(struct mm_struct *mm, int pkey)
+ 	if (static_branch_likely(&pkey_disabled))
+ 		return -1;
+ 
+-	if (!mm_pkey_is_allocated(mm, pkey))
++	/* pkey 0 cannot be freed */
++	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
+ 		return -EINVAL;
+ 
+ 	/*
+-- 
+1.8.3.1
