@@ -1,115 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCNU7G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:59:06 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:45290 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeCNU7B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752006AbeCNU7E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:59:04 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6234 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751780AbeCNU7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Mar 2018 16:59:01 -0400
-X-Google-Smtp-Source: AG47ELvETHBSE1C7a90dRS8wjje9fyQLfRgyyFA+vRj4v7yxA07903tWNa13MG9TsI1SMa1LSoPOBw==
-Date: Wed, 14 Mar 2018 13:58:59 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Roman Gushchin <guro@fb.com>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch -mm v3 1/3] mm, memcg: introduce per-memcg oom policy
- tunable
-In-Reply-To: <20180314123851.GB20850@castle.DHCP.thefacebook.com>
-Message-ID: <alpine.DEB.2.20.1803141341180.163553@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803121757080.192200@chino.kir.corp.google.com> <20180314123851.GB20850@castle.DHCP.thefacebook.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+Subject: Re: [PATCH] perf vendor events: fix processing for xfs
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <1521047452-28565-1-git-send-email-john.garry@huawei.com>
+ <20180314185355.GC27335@kernel.org>
+ <fa4f4c83-1a1a-761f-9259-ce21ee000fc3@huawei.com>
+ <20180314202643.GG27335@kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>, <wcohen@redhat.com>,
+        <sukadev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <4f8d9085-8415-5b99-daee-34994ae95cb1@huawei.com>
+Date: Wed, 14 Mar 2018 20:58:33 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180314202643.GG27335@kernel.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.95.230]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018, Roman Gushchin wrote:
+On 14/03/2018 20:26, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 14, 2018 at 07:39:25PM +0000, John Garry escreveu:
+>> On 14/03/2018 18:53, Arnaldo Carvalho de Melo wrote:
+>>> Em Thu, Mar 15, 2018 at 01:10:52AM +0800, John Garry escreveu:
+>>>> In the recently introduced support for vendor subdirectory,
+>>>> the checking for directory entries under xfs (or any other fs
+>>>> which does not support dirent.d_type) is missing the check
+>>>> for links for current and parent directory. This can result
+>>>> in a broken pmu_events.c being generated.
+>>>>
+>>>> Fix this by adding the appropriate check in is_leaf_dir().
+>>>
+>>> So I'll lookup the patch that introduced the patch and squash this one
+>>> with it, so that we don't break 'git bisect' on ppc.
+>>
+>> Right, so it's going to be "perf vendor events: add support for pmu events
+>> vendor subdirectory".
+>>
+>> BTW, I don't think it's specifically ppc which was broken, but just when
+>> building from xfs.
+>>
+>> Much appreciated,
+>> John
+>
+> This is the ammended cset, and yes, I mentioned just XFS not ppc, added
+> Sukadev to the CC list and the link to your patch that he tested. Also
+> stamped his Tested-by there.
+>
+> This will all go again the container build test set before a new pull
+> req to Ingo, where I'll avoid sending the previous 31 patches to the
+> mailing list, just the ones that came after it, as perf/core keeps
+> growing :-)
 
-> > The cgroup aware oom killer is needlessly enforced for the entire system
-> > by a mount option.  It's unnecessary to force the system into a single
-> > oom policy: either cgroup aware, or the traditional process aware.
-> 
-> Can you, please, provide a real-life example, when using per-process
-> and cgroup-aware OOM killer depending on OOM scope is beneficial?
-> 
+It looks ok,
 
-Hi Roman,
+Thanks a lot,
+John
 
-This question is only about per-process vs cgroup-aware, not about the 
-need for individual cgroup vs hierarchical subtree, so I'll only focus on 
-that.
-
-Three reasons:
-
- - Does not lock the entire system into a single methodology.  Users
-   working in a subtree can default to what they are used to: per-process
-   oom selection even though their subtree might be targeted by a system
-   policy level decision at the root.  This allow them flexibility to
-   organize their subtree intuitively for use with other controllers in a
-   single hierarchy.
-
-   The real-world example is a user who currently organizes their subtree
-   for this purpose and has defined oom_score_adj appropriately and now
-   regresses if the admin mounts with the needless "groupoom" option.
-
- - Allows changing the oom policy at runtime without remounting the entire
-   cgroup fs.  Depending on how cgroups are going to be used, per-process 
-   vs cgroup-aware may be mandated separately.  This is a trait only of
-   the mem cgroup controller, the root level oom policy is no different
-   from the subtree and depends directly on how the subtree is organized.
-   If other controllers are already being used, requiring a remount to
-   change the system-wide oom policy is an unnecessary burden.
-
-   The real-world example is systems software that either supports user
-   subtrees or strictly subtrees that it maintains itself.  While other
-   controllers are used, the mem cgroup oom policy can be changed at
-   runtime rather than requiring a remount and reorganizing other
-   controllers exactly as before.
-
- - Can be extended to cgroup v1 if necessary.  There is no need for a
-   new cgroup v1 mount option and mem cgroup oom selection is not
-   dependant on any functionality provided by cgroup v2.  The policies
-   introduced here work exactly the same if used with cgroup v1.
-
-   The real-world example is a cgroup configuration that hasn't had
-   the ability to move to cgroup v2 yet and still would like to use
-   cgroup-aware oom selection with a very trivial change to add the
-   memory.oom_policy file to the cgroup v1 filesystem.
-
-> It might be quite confusing, depending on configuration.
-> From inside a container you can have different types of OOMs,
-> depending on parent's cgroup configuration, which is not even
-> accessible for reading from inside.
-> 
-
-Right, and the oom is the result of the parent's limit that is outside the 
-control of the user.  That limit, and now oom policy, is defined by the 
-user controlling the ancestor of the subtree.  The user need not be 
-concerned that it was singled out for oom kill: that policy decision is 
-outside hiso or her control.  memory.oom_group can certainly be delegated 
-to the user, but the targeting cannot be changed or evaded.
-
-However, this patchset also provides them with the ability to define their 
-own oom policy for subcontainers that they create themselves.
-
-> Also, it's probably good to have an interface to show which policies
-> are available.
-> 
-
-This comes back to the user interface question.  I'm very happy to address 
-any way that the interface can be made better, even though I think what is 
-currently proposed is satisfactory.  I think your comment eludes to thp 
-like enabling where we have "[always] madvise never"?  I'm speculating 
-that you may be happier with memory.oom_policy becoming 
-"[none] cgroup tree" and extended for additional policies later?  
-Otherwise the user would need to try the write and test the return value, 
-which purely depends on whether the policy is available or not.  I'm 
-rather indifferent to either interface, but if you would prefer the
-"[none] cgroup tree" appearance, I'll change to that.
+>
+> - Arnaldo
+>
+> commit d24081387a00d2e10789eb012429144c549598be
+> Author: John Garry <john.garry@huawei.com>
+> Date:   Thu Mar 8 18:58:29 2018 +0800
+>
+>     perf vendor events: Add support for pmu events vendor subdirectory
+>
+>     For some architectures (like arm), it is required to support a vendor
+>     subdirectory and not locate all the JSONs for a specific vendor in the
+>     same folder.
+>
+>     This is because all the events for the same vendor will be placed in the
+>     same pmu events table, which may cause conflict.  This conflict would be
+>     in the instance that a vendor's custom implemented events do have the
+>     same meaning on different platforms, so events in the pmu table would
+>     conflict. In addition, per list command may show events which are not
+>     even supported for a given platform.
+>
+>     This patch adds support for a arch/vendor/platform directory hierarchy,
+>     while maintaining backwards-compatibility for existing arch/platform
+>     structure. In this, each platform would always have its own pmu events
+>     table.
+>
+>     In generated file pmu_events.c, each platform table name is in the
+>     format pme{_vendor}_platform, like this:
+>
+>     struct pmu_events_map pmu_events_map[] = {
+>     {
+>             .cpuid = "0x00000000420f5160",
+>             .version = "v1",
+>             .type = "core",
+>             .table = pme_cavium_thunderx2
+>     },
+>     {
+>             .cpuid = 0,
+>             .version = 0,
+>             .type = 0,
+>             .table = 0,
+>     },
+>     };
+>
+>     Signed-off-by: John Garry <john.garry@huawei.com>
+>     Acked-by: Jiri Olsa <jolsa@kernel.org>
+>     Tested-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+>     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>     Cc: Andi Kleen <ak@linux.intel.com>
+>     Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+>     Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+>     Cc: Will Deacon <will.deacon@arm.com>
+>     Cc: William Cohen <wcohen@redhat.com>
+>     Cc: linux-arm-kernel@lists.infradead.org
+>     Cc: linuxarm@huawei.com
+>     Link: http://lkml.kernel.org/r/1520506716-197429-5-git-send-email-john.garry@huawei.com
+>     Link: http://lkml.kernel.org/r/1521047452-28565-1-git-send-email-john.garry@huawei.com
+>     [ Add missing limits.h include, fixing the build on at least all Alpine Linux versions tested (3.4 to 3.7 + edge), ]
+>     [ Applied a patch to fix reading ./.. directories in XFS, see second Link tag ]
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>
+> diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
+> index 2407abc1d441..655286ff8767 100644
+> --- a/tools/perf/pmu-events/README
+> +++ b/tools/perf/pmu-events/README
+> @@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
+>  	Cache.json 	Memory.json 	Virtual-Memory.json
+>  	Frontend.json 	Pipeline.json
+>
+> +The JSONs folder for a CPU model/family may be placed in the root arch
+> +folder, or may be placed in a vendor sub-folder under the arch folder
+> +for instances where the arch and vendor are not the same.
+> +
+>  Using the JSON files and the mapfile, 'jevents' generates the C source file,
+>  'pmu-events.c', which encodes the two sets of tables:
+>
+> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+> index 1d02fafdc34d..0981d313064f 100644
+> --- a/tools/perf/pmu-events/jevents.c
+> +++ b/tools/perf/pmu-events/jevents.c
+> @@ -39,6 +39,7 @@
+>  #include <unistd.h>
+>  #include <stdarg.h>
+>  #include <libgen.h>
+> +#include <limits.h>
+>  #include <dirent.h>
+>  #include <sys/time.h>			/* getrlimit */
+>  #include <sys/resource.h>		/* getrlimit */
+> @@ -572,7 +573,7 @@ static char *file_name_to_table_name(char *fname)
+>  	 * Derive rest of table name from basename of the JSON file,
+>  	 * replacing hyphens and stripping out .json suffix.
+>  	 */
+> -	n = asprintf(&tblname, "pme_%s", basename(fname));
+> +	n = asprintf(&tblname, "pme_%s", fname);
+>  	if (n < 0) {
+>  		pr_info("%s: asprintf() error %s for file %s\n", prog,
+>  				strerror(errno), fname);
+> @@ -582,7 +583,7 @@ static char *file_name_to_table_name(char *fname)
+>  	for (i = 0; i < strlen(tblname); i++) {
+>  		c = tblname[i];
+>
+> -		if (c == '-')
+> +		if (c == '-' || c == '/')
+>  			tblname[i] = '_';
+>  		else if (c == '.') {
+>  			tblname[i] = '\0';
+> @@ -739,25 +740,80 @@ static int get_maxfds(void)
+>  static FILE *eventsfp;
+>  static char *mapfile;
+>
+> +static int is_leaf_dir(const char *fpath)
+> +{
+> +	DIR *d;
+> +	struct dirent *dir;
+> +	int res = 1;
+> +
+> +	d = opendir(fpath);
+> +	if (!d)
+> +		return 0;
+> +
+> +	while ((dir = readdir(d)) != NULL) {
+> +		if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+> +			continue;
+> +
+> +		if (dir->d_type == DT_DIR) {
+> +			res = 0;
+> +			break;
+> +		} else if (dir->d_type == DT_UNKNOWN) {
+> +			char path[PATH_MAX];
+> +			struct stat st;
+> +
+> +			sprintf(path, "%s/%s", fpath, dir->d_name);
+> +			if (stat(path, &st))
+> +				break;
+> +
+> +			if (S_ISDIR(st.st_mode)) {
+> +				res = 0;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	closedir(d);
+> +
+> +	return res;
+> +}
+> +
+>  static int process_one_file(const char *fpath, const struct stat *sb,
+>  			    int typeflag, struct FTW *ftwbuf)
+>  {
+> -	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
+> +	char *tblname, *bname;
+>  	int is_dir  = typeflag == FTW_D;
+>  	int is_file = typeflag == FTW_F;
+>  	int level   = ftwbuf->level;
+>  	int err = 0;
+>
+> +	if (level == 2 && is_dir) {
+> +		/*
+> +		 * For level 2 directory, bname will include parent name,
+> +		 * like vendor/platform. So search back from platform dir
+> +		 * to find this.
+> +		 */
+> +		bname = (char *) fpath + ftwbuf->base - 2;
+> +		for (;;) {
+> +			if (*bname == '/')
+> +				break;
+> +			bname--;
+> +		}
+> +		bname++;
+> +	} else
+> +		bname = (char *) fpath + ftwbuf->base;
+> +
+>  	pr_debug("%s %d %7jd %-20s %s\n",
+>  		 is_file ? "f" : is_dir ? "d" : "x",
+>  		 level, sb->st_size, bname, fpath);
+>
+> -	/* base dir */
+> -	if (level == 0)
+> +	/* base dir or too deep */
+> +	if (level == 0 || level > 3)
+>  		return 0;
+>
+> +
+>  	/* model directory, reset topic */
+> -	if (level == 1 && is_dir) {
+> +	if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
+> +	    (level == 2 && is_dir)) {
+>  		if (close_table)
+>  			print_events_table_suffix(eventsfp);
+>
+>
+> .
+>
