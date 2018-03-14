@@ -1,142 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933102AbeCNBdB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 21:33:01 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:44732 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932634AbeCNBc7 (ORCPT
+        id S933185AbeCNBeW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 21:34:22 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35210 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932732AbeCNBeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:32:59 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180314013256epoutp046f547495986dc72e0036f88a63d573e4~bpWq2NCrG3172031720epoutp04P
-X-AuditID: b6c32a37-433ff70000001029-ee-5aa87bc8027d
-Mime-Version: 1.0
-Subject: [PATCH v2] arm: ubsan: select ARCH_HAS_UBSAN_SANITIZE_ALL
-Reply-To: jinb.park@samsung.com
-From: Jinbum Park <jinb.park@samsung.com>
-To: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9@epcms1p4>
-Date: Wed, 14 Mar 2018 10:32:56 +0900
-X-CMS-MailID: 20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmvu6J6hVRBv96pS3+TjrGbvFl0jt2
-        i/fLehgtNj2+xmpxedccNoul1y8yWcyY/JLNgd1jzbw1jB6/f01i9Ni8pN6jb8sqRo/Pm+Q8
-        Xu8/xBjAFpVqk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuW
-        mQN0ipJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVina0NBIz9DAXM/IyEjPxDjWysgUqCQh
-        NWPL1X2MBT9EK9YskWtg7BbqYuTgkBAwkfj1SbeLkYtDSGAHo8TuFe/YQOK8AoISf3cIdzFy
-        cggLOEl8/72XDcQWEpCXuPVvMhtEXFvi8J5vjCA2m4CmxOVnZ9lA5ogITGGU+LLrGjuIwyzw
-        ilHi8svTTCBVEgK8EjPan7JA2NIS25dvZYSwRSVurn7LDmO/PzYfKi4i0XrvLDOELSjx4Odu
-        qLiUxN7N76Hi+RITJy6AildIHN52AmqOvsTs24sZIZ7xlTi3TQUkzCKgKnHzbisrRImLxN2Z
-        7WCnMQM9tv3tHGaQcmagZ9bv0ocosZXo37qPHaKET+Ld1x5WmE92zHsC9ZWyxMkvh6AukJQ4
-        M3ce1GUeEpeP/oSqcZSYvLiJCRKGgRKz7y5kncCoMAsR0rOQHDEL4YgFjMyrGMVSC4pz01OL
-        DQuM9YoTc4tL89L1kvNzNzGCU6OW+Q7GDed8DjEKcDAq8fBGXFoeJcSaWFZcmXuIUYKDWUmE
-        d6vMiigh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA9M23kl8YYmlgYmZkbA9GZpaKgkzhsQ
-        4BIlJJCeWJKanZpakFoE08fEwSnVwMhjKKNlenm3e7NsM9dSi2lLnG5eK3WeYK+gN2Xa3S8L
-        n556ePuDePkDG6YzYbxsHrPnaD4PtVdesmvfe5c0I8Wcj9IbMmZ1zf8cK2Pc4PS7JO7lgr86
-        5W9yz+33TFNg5WEWtXzbmXCbJy+8a1O6e4LxBrW7z1U+pC7yZVO4u3z96+cV5eV/bimxFGck
-        GmoxFxUnAgCQBIZ8owMAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9
-X-RootMTR: 20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9
-References: <CGME20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9@epcms1p4>
+        Tue, 13 Mar 2018 21:34:20 -0400
+X-Google-Smtp-Source: AG47ELt4FbbOTM5qbGhlCJGLpKhiwcvLFLT/QtRhguHHjmcccscQFefkCzYwTflcCkHG+mveVwVQhK8v2fffFxldalk=
+MIME-Version: 1.0
+In-Reply-To: <87sh93zmr6.fsf@xps13.shealevy.com>
+References: <mhng-dcc790fc-8fd7-41c8-84c8-cc4b8bd662ea@palmer-si-x1c4> <87sh93zmr6.fsf@xps13.shealevy.com>
+From: Zong Li <zongbox@gmail.com>
+Date: Wed, 14 Mar 2018 09:34:19 +0800
+Message-ID: <CA+ZOyagHPWNw6uLAGri0cQph06MmspMjUZC--YBe8HRBA2Cd5g@mail.gmail.com>
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+To: Shea Levy <shea@shealevy.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Zong Li <zong@andestech.com>,
+        albert@sifive.com, linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greentime@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable UBSAN on arm, ARCH_HAS_UBSAN_SANITIZE_ALL is needed to be selected.
+2018-03-14 5:30 GMT+08:00 Shea Levy <shea@shealevy.com>:
+> Hi Palmer,
+>
+> Palmer Dabbelt <palmer@sifive.com> writes:
+>
+>> On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
+>>> These patches resolve the some issues of loadable module.
+>>>   - symbol out of ranges
+>>>   - unknown relocation types
+>>>
+>>> The reference of external variable and function symbols
+>>> cannot exceed 32-bit offset ranges in kernel module.
+>>> The module only can work on the 32-bit OS or the 64-bit
+>>> OS with sv32 virtual addressing.
+>>>
+>>> These patches will generate the .got, .got.plt and
+>>> .plt sections during loading module, let it can refer
+>>> to the symbol which locate more than 32-bit offset.
+>>> These sections depend on the relocation types:
+>>>  - R_RISCV_GOT_HI20
+>>>  - R_RISCV_CALL_PLT
+>>>
+>>> These patches also support more relocation types
+>>>  - R_RISCV_CALL
+>>>  - R_RISCV_HI20
+>>>  - R_RISCV_LO12_I
+>>>  - R_RISCV_LO12_S
+>>>  - R_RISCV_RVC_BRANCH
+>>>  - R_RISCV_RVC_JUMP
+>>>  - R_RISCV_ALIGN
+>>>  - R_RISCV_ADD32
+>>>  - R_RISCV_SUB32
+>>>
+>>> Zong Li (11):
+>>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>>   RISC-V: Add section of GOT.PLT for kernel module
+>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>>   RISC-V: Support CALL relocation type in kernel module
+>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>>   RISC-V: Support ALIGN relocation type in kernel module
+>>>   RISC-V: Support ADD32 relocation type in kernel module
+>>>   RISC-V: Support SUB32 relocation type in kernel module
+>>>   RISC-V: Enable module support in defconfig
+>>>   RISC-V: Add definition of relocation types
+>>>
+>>>  arch/riscv/Kconfig                  |   5 ++
+>>>  arch/riscv/Makefile                 |   3 +
+>>>  arch/riscv/configs/defconfig        |   2 +
+>>>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>>>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>>>  arch/riscv/kernel/Makefile          |   1 +
+>>>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
+>>>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
+>>>  arch/riscv/kernel/module.lds        |   8 ++
+>>>  9 files changed, 480 insertions(+), 6 deletions(-)
+>>>  create mode 100644 arch/riscv/include/asm/module.h
+>>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>>  create mode 100644 arch/riscv/kernel/module.lds
+>>
+>> This is the second set of patches that turn on modules, and it has the same
+>> R_RISCV_ALIGN problem as the other one
+>>
+>>     http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
+>>
+>> It looks like this one uses shared libraries for modules instead of static
+>> objects.  I think using shared objects is the right thing to do, as it'll allow
+>> us to place modules anywhere in the address space by having multiple GOTs and
+>> PLTs.
+>
+> Can you expand on this? It was my understanding that outside of the
+> context of multiple address spaces sharing code the GOT and PLT were
+> simply unnecessary overhead, what benefit would they bring here?
+>
+>> That's kind of complicated, though, so we can start with something
+>> simpler like this.
 
-Basic test has passed on Raspberry Pi2, Raspbian jessi lite with
-CONFIG_UBSAN_SANITIZE_ALL, CONFIG_UBSAN_NULL.
+Hi,
 
-Used compiler is gcc 5.5.0 in [2] (2017.10).
+The kernel module is a object file, it is not be linked by linker, the
+GOT and PLT
+sections will not be generated through -fPIC option, but it will
+generate the relative
+relocation type. As Palmer mention before, If we have GOT and PLT sections,
+we can put the module anywhere, even we support the KASLR in the kernel.
 
-It would be a resend patch for [1] from Seung-Woo Kim.
-There was some problems when [1] submitted before.
+For the ALIGN problem, the kernel module loader is difficult to remove
+or migrate
+the module's code like relax doing, so the remnant nop instructions harm the
+performance,  I agree the point that adding the mno-relax option and checking
+the alignment in ALIGN type in module loader.
 
-  P1) show -Warray-bounds that is not seen without UBSAN
-  P2) too large stack size in crypto/serpent_generic.c
-  P3) link error of ____ilog2_NaN, __aeabi_uldivmod
+>> That's kind of complicated, though, so we can start with something
+>> simpler like this.
 
-I've tried to build locally with allmodconfig to ensure that above errors are fixed.
-The result is that P2), P3) have fixed, but P1) appears at diffent location.
-But, Since gcc closed P1) issue as won't fix [3],
-and It can be a helpful warning to user, we don't have to worry about P1).
+So what is the suggestion for that.
 
-build-environment that I used is as belows.
-
-  - config: arm allmodconfig
-  - compiler: gcc 5.5.0 in [2] (2017.10)
-  - ubsan flag: UBSAN, UBSAN_SANITIZE_ALL, UBSAN_ALIGNMENT, UBSAN_NULL
-  - linux version: linux/arm 4.16.0-rc4
-  - CONFIG_FRAME_WARN: 1024 (default value)
-
-[1] https://patchwork.kernel.org/patch/9189575/
-[2] https://releases.linaro.org/components/toolchain/binaries/latest-5/arm-linux-gnueabi/
-[3] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78678
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jinbum Park <jinb.park@samsung.com>
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
-v2: Add sign of Seung-Woo Kim.
-    Add commit message about history, build environment.
----
- arch/arm/Kconfig                  | 1 +
- arch/arm/boot/compressed/Makefile | 1 +
- arch/arm/vdso/Makefile            | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 1878083..bdd1561 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -7,6 +7,7 @@ config ARM
- 	select ARCH_HAS_DEBUG_VIRTUAL if MMU
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_ELF_RANDOMIZE
-+	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARCH_HAS_SET_MEMORY
- 	select ARCH_HAS_PHYS_TO_DMA
- 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index 45a6b9b..1b374ba 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -24,6 +24,7 @@ OBJS		+= hyp-stub.o
- endif
- 
- GCOV_PROFILE		:= n
-+UBSAN_SANITIZE		:= n
- 
- #
- # Architecture dependencies
-diff --git a/arch/arm/vdso/Makefile b/arch/arm/vdso/Makefile
-index bb411821..05597f7 100644
---- a/arch/arm/vdso/Makefile
-+++ b/arch/arm/vdso/Makefile
-@@ -29,6 +29,7 @@ CFLAGS_vgettimeofday.o = -O2
- 
- # Disable gcov profiling for VDSO code
- GCOV_PROFILE := n
-+UBSAN_SANITIZE := n
- 
- # Force dependency
- $(obj)/vdso.o : $(obj)/vdso.so
--- 
-1.9.1
+Thanks a lot.
