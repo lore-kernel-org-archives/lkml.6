@@ -1,92 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeCNUKp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:10:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751314AbeCNUKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:10:44 -0400
-Message-ID: <1521058242.18703.103.camel@redhat.com>
-Subject: Re: [PATCH] 40iw: include linux/irq.h
-From: Doug Ledford <dledford@redhat.com>
-To: Shiraz Saleem <shiraz.saleem@intel.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Faisal Latif <faisal.latif@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Artemy Kovalyov <artemyko@mellanox.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 14 Mar 2018 16:10:42 -0400
-In-Reply-To: <20180313132000.GA18400@ssaleem-MOBL4.amr.corp.intel.com>
-References: <20180313120644.2619889-1-arnd@arndb.de>
-         <20180313132000.GA18400@ssaleem-MOBL4.amr.corp.intel.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-/ymUGrBBWfd4Dv/wwzyH"
-Mime-Version: 1.0
+        id S1751753AbeCNUOp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:14:45 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:60804 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeCNUOo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 16:14:44 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH v4 3/3] Bluetooth: hci_qca: Add serdev support
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180314155514.3374-4-thierry.escande@linaro.org>
+Date: Wed, 14 Mar 2018 21:14:41 +0100
+Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <E2DB76D8-414B-4F45-8124-E9AA844E6909@holtmann.org>
+References: <20180314155514.3374-1-thierry.escande@linaro.org>
+ <20180314155514.3374-4-thierry.escande@linaro.org>
+To: Thierry Escande <thierry.escande@linaro.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Thierry,
 
---=-/ymUGrBBWfd4Dv/wwzyH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Add support for Qualcomm serial slave devices. Probe the serial device,
+> retrieve its maximum speed and register a new hci uart device.
+> 
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> ---
+> 
+> v4:
+> - Rename divclk4 as susclk (its name in the bt chip)
+> - Use gpiod_set_value_cansleep()
+> - Replace #include <linux/of.h> with <linux/mod_devicetable.h>
+> - Restore dependency on BT_HCIUART
+> 
+> v3:
+> - Remove redundant call to gpiod_set_value() after devm_gpiod_get()
+> - Check returned values for clk_set_rate() and clk_prepare_enable()
+> - Use clk_disable_unprepare()
+> 
+> v2:
+> - Fix author email
+> 
+> drivers/bluetooth/Kconfig   |   1 +
+> drivers/bluetooth/hci_qca.c | 109 +++++++++++++++++++++++++++++++++++++++++++-
+> 2 files changed, 108 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> index 07e55cd8f8c8..e0f1a6609b68 100644
+> --- a/drivers/bluetooth/Kconfig
+> +++ b/drivers/bluetooth/Kconfig
+> @@ -196,6 +196,7 @@ config BT_HCIUART_BCM
+> config BT_HCIUART_QCA
+> 	bool "Qualcomm Atheros protocol support"
+> 	depends on BT_HCIUART
+> +	depends on BT_HCIUART_SERDEV
+> 	select BT_HCIUART_H4
+> 	select BT_QCA
+> 	help
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 05ec530b8a3a..6cf0d1d4595a 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -29,7 +29,11 @@
+>  */
+> 
+> #include <linux/kernel.h>
+> +#include <linux/clk.h>
+> #include <linux/debugfs.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/serdev.h>
+> 
+> #include <net/bluetooth/bluetooth.h>
+> #include <net/bluetooth/hci_core.h>
+> @@ -50,6 +54,9 @@
+> #define IBS_TX_IDLE_TIMEOUT_MS		2000
+> #define BAUDRATE_SETTLE_TIMEOUT_MS	300
+> 
+> +/* susclk rate */
+> +#define SUSCLK_RATE_32KHZ	32768
+> +
+> /* HCI_IBS transmit side sleep protocol states */
+> enum tx_ibs_states {
+> 	HCI_IBS_TX_ASLEEP,
+> @@ -111,6 +118,12 @@ struct qca_data {
+> 	u64 votes_off;
+> };
+> 
+> +struct qca_serdev {
+> +	struct hci_uart	 serdev_hu;
+> +	struct gpio_desc *bt_en;
+> +	struct clk	 *susclk;
+> +};
+> +
+> static void __serial_clock_on(struct tty_struct *tty)
+> {
+> 	/* TODO: Some chipset requires to enable UART clock on client
+> @@ -386,6 +399,7 @@ static void hci_ibs_wake_retrans_timeout(struct timer_list *t)
+> /* Initialize protocol */
+> static int qca_open(struct hci_uart *hu)
+> {
+> +	struct qca_serdev *qcadev;
+> 	struct qca_data *qca;
+> 
+> 	BT_DBG("hu %p qca_open", hu);
+> @@ -444,6 +458,13 @@ static int qca_open(struct hci_uart *hu)
+> 	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+> 	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+> 
+> +	if (hu->serdev) {
+> +		serdev_device_open(hu->serdev);
+> +
+> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+> +		gpiod_set_value_cansleep(qcadev->bt_en, 1);
+> +	}
+> +
+> 	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
+> 	       qca->tx_idle_delay, qca->wake_retrans);
+> 
+> @@ -512,6 +533,7 @@ static int qca_flush(struct hci_uart *hu)
+> /* Close protocol */
+> static int qca_close(struct hci_uart *hu)
+> {
+> +	struct qca_serdev *qcadev;
+> 	struct qca_data *qca = hu->priv;
+> 
+> 	BT_DBG("hu %p qca close", hu);
+> @@ -525,6 +547,13 @@ static int qca_close(struct hci_uart *hu)
+> 	destroy_workqueue(qca->workqueue);
+> 	qca->hu = NULL;
+> 
+> +	if (hu->serdev) {
+> +		serdev_device_close(hu->serdev);
+> +
+> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+> +		gpiod_set_value_cansleep(qcadev->bt_en, 0);
+> +	}
+> +
+> 	kfree_skb(qca->rx_skb);
+> 
+> 	hu->priv = NULL;
+> @@ -885,6 +914,14 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+> 	return 0;
+> }
+> 
+> +static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+> +{
+> +	if (hu->serdev)
+> +		serdev_device_set_baudrate(hu->serdev, speed);
+> +	else
+> +		hci_uart_set_baudrate(hu, speed);
+> +}
+> +
+> static int qca_setup(struct hci_uart *hu)
+> {
+> 	struct hci_dev *hdev = hu->hdev;
+> @@ -905,7 +942,7 @@ static int qca_setup(struct hci_uart *hu)
+> 		speed = hu->proto->init_speed;
+> 
+> 	if (speed)
+> -		hci_uart_set_baudrate(hu, speed);
+> +		host_set_baudrate(hu, speed);
+> 
+> 	/* Setup user speed if needed */
+> 	speed = 0;
+> @@ -924,7 +961,7 @@ static int qca_setup(struct hci_uart *hu)
+> 				   ret);
+> 			return ret;
+> 		}
+> -		hci_uart_set_baudrate(hu, speed);
+> +		host_set_baudrate(hu, speed);
+> 	}
+> 
+> 	/* Setup patch / NVM configurations */
+> @@ -958,12 +995,80 @@ static struct hci_uart_proto qca_proto = {
+> 	.dequeue	= qca_dequeue,
+> };
+> 
+> +static int qca_serdev_probe(struct serdev_device *serdev)
+> +{
+> +	struct qca_serdev *qcadev;
+> +	int err;
+> +
+> +	qcadev = devm_kzalloc(&serdev->dev, sizeof(*qcadev), GFP_KERNEL);
+> +	if (!qcadev)
+> +		return -ENOMEM;
+> +
+> +	qcadev->serdev_hu.serdev = serdev;
+> +	serdev_device_set_drvdata(serdev, qcadev);
+> +
+> +	qcadev->bt_en = devm_gpiod_get(&serdev->dev, "bt-disable-n",
+> +				       GPIOD_OUT_LOW);
+> +	if (IS_ERR(qcadev->bt_en)) {
+> +		dev_err(&serdev->dev, "failed to acquire bt-disable-n gpio\n");
+> +		return PTR_ERR(qcadev->bt_en);
+> +	}
+> +
+> +	qcadev->susclk = devm_clk_get(&serdev->dev, NULL);
+> +	if (IS_ERR(qcadev->susclk)) {
+> +		dev_err(&serdev->dev, "failed to acquire clk\n");
+> +		return PTR_ERR(qcadev->susclk);
+> +	}
+> +
+> +	err = clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
+> +	if (err)
+> +		return err;
+> +
+> +	err = clk_prepare_enable(qcadev->susclk);
+> +	if (err)
+> +		return err;
+> +
+> +	err = hci_uart_register_device(&qcadev->serdev_hu, &qca_proto);
+> +	if (err)
+> +		clk_disable_unprepare(qcadev->susclk);
+> +
+> +	return err;
+> +}
+> +
+> +static void qca_serdev_remove(struct serdev_device *serdev)
+> +{
+> +	struct qca_serdev *qcadev = serdev_device_get_drvdata(serdev);
+> +
+> +	hci_uart_unregister_device(&qcadev->serdev_hu);
+> +
+> +	clk_disable_unprepare(qcadev->susclk);
+> +}
+> +
+> +static const struct of_device_id qca_bluetooth_of_match[] = {
+> +	{ .compatible = "qcom,qca6174-bt" },
+> +	{ /* sentinel */ }
+> +};
 
-On Tue, 2018-03-13 at 08:20 -0500, Shiraz Saleem wrote:
-> On Tue, Mar 13, 2018 at 01:06:20PM +0100, Arnd Bergmann wrote:
-> > We get a build failure on ARM unless the header is included explicitly:
-> >=20
-> > drivers/infiniband/hw/i40iw/i40iw_verbs.c: In function 'i40iw_get_vecto=
-r_affinity':
-> > drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: implicit decla=
-ration of function 'irq_get_affinity_mask'; did you mean 'irq_create_affini=
-ty_masks'? [-Werror=3Dimplicit-function-declaration]
-> >   return irq_get_affinity_mask(msix_vec->irq);
-> >          ^~~~~~~~~~~~~~~~~~~~~
-> >          irq_create_affinity_masks
-> > drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: returning 'int=
-' from a function with return type 'const struct cpumask *' makes pointer f=
-rom integer without a cast [-Werror=3Dint-conversion]
-> >   return irq_get_affinity_mask(msix_vec->irq);
-> >=20
-> > Fixes: 7e952b19eb63 ("i40iw: Implement get_vector_affinity API")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
->=20
-> Looks like you beat me to it. 0-day caught this on rdma-nxt and I was goi=
-ng to send the fix today.=20
->=20
-> Typo in the subject. 40iw --> i40iw. Othwerwise, looks good.
->=20
-> Thanks for the patch, Arnd!
->=20
-> Shiraz
->=20
+so I am fine taking this patch after we agree on the GPIO naming in the DT file, however ..
 
-Thanks, applied.
+While looking into the 3-Wire serdev patches to support Realtek devices, I realized that hacking serdev support into hci_uart.ko is actually pretty much a huge mess. It works, but it is also not pretty and makes the code really complicated and spaghetti like.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-/ymUGrBBWfd4Dv/wwzyH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+The nice thing about hci_uart.ko is that all vendor specific stuff is in a separate file (in comparison to btusb.ko), but the not so nice part is that it is largely messy and complicated.
 
------BEGIN PGP SIGNATURE-----
+So I have a basic btuart.ko driver ready that speaks only H:4 and serdev. It is clean and tiny and I added already basic Broadcom support to it. So maybe going the path like btusb.ko to select different setup routines is good enough. I need to work out a few kinks in it, but it is a lot cleaner from a code perspective. In addition, I have the basics for a bt3wire.ko driver that will then take H:5 instead of H:4.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqpgcIACgkQuCajMw5X
-L91F4w/+OSKz9gxNSVsdcK3wkvZGyb9imq3bUVOweaA9a5sWHrO9Nv0qXUwTf6PP
-Pr7uyv1FHug0NYZNYF10E+d3hrs8c7DiJpKpXvrDGJA3Jz9Lj9VRSKoYB+X81FA5
-jWw5r7haoh67kj6j18VspIcQ0znJoJUTNfhHJng0I7WYj/X2EgVq/mz+N3VNgwG4
-u2V7qtnhdlst3bMfOtyAigh8UzojVDmSV1rQClUG0uLz/6EVJkAOv6UiP30hWcSh
-G9tXTIeJSJ+jOM0X1jfuMhSb0yTTfLKWCAdCUHRs29VifTfz6OgfuRDtAhr2FjaT
-7dAFMMFhjwmA84O84TUm8KYjP55au9GKvdGoq+oTNqNC2nySJdoNtFXIG51FFv6P
-YfBE9RQxyb81jASUQrWQgMAJvaeTGtZFO/TonMVBLUxTcJYgKdibrr1Pd6U49Kik
-bs3QiLKYjp34RGedrLixP6BXpEgO3KtdnM5IEiqR7ftldBEHBDArv1ZoiYp6WRl0
-U+NB3lBxd8EKImGXCqRI5qmYHIfxsvp9S3ZlUk6HghhTZhrAiVvH4tLXkktqYRWB
-ncr5OmkvyWsMVelyjdJgaGdDSkZi3dlG50gi6D6KLrYqxIA0iCao2HwrV+NeQrW9
-PGPXR1FG1VDyHOQVMh36Zv4Y1eEbLAM/Gfi/62U+FPdU8J9ChRY=
-=hbze
------END PGP SIGNATURE-----
+I will send them around shortly and maybe it makes sense to go down this path and integrate QCA support there. I currently only have RPi3 on my desk with serdev attached Broadcom chip. So it would needs others testing if this can work.
 
---=-/ymUGrBBWfd4Dv/wwzyH--
+Regards
+
+Marcel
