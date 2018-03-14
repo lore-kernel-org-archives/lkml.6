@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeCNQ0b (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:26:31 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54419 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751302AbeCNQ01 (ORCPT
+        id S1751966AbeCNQ03 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:26:29 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38269 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751571AbeCNQ01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Mar 2018 12:26:27 -0400
-X-Google-Smtp-Source: AG47ELsxex4TAGKYSTb5km8fArcMpxYABBkyuV4trnP1RP8n24cA9lzCxHegEJEdtAC0hD0czFLhLnzn7SLo/HAwwZw=
+X-Google-Smtp-Source: AG47ELvux/He+oNIP7IscATDxFLiZSV56bILUM+RqpqpV5ZH3r99BK4g9lDWAtkYbVAadTHg1KVEWh1k6EZoGOBIUK0=
 MIME-Version: 1.0
 In-Reply-To: <20180314161212.GS2186@sirena.org.uk>
 References: <20180314153603.3127932-1-arnd@arndb.de> <20180314153603.3127932-16-arnd@arndb.de>
  <20180314161212.GS2186@sirena.org.uk>
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 14 Mar 2018 17:26:26 +0100
-X-Google-Sender-Auth: vLEGVVYSRENzjyNeE-o3G31A7gk
-Message-ID: <CAK8P3a3PMUEn7=g9kq+ncbd4kkswyDeg0bBiE9kNSSrcvDBg7w@mail.gmail.com>
+Date: Wed, 14 Mar 2018 17:26:25 +0100
+X-Google-Sender-Auth: WP4qPNjDt3_dadmcV5CMV6FP_sc
+Message-ID: <CAK8P3a1AX16ekADiZeLuDXp9+mPQaOxNa4bGy1ptquEdO3AC6g@mail.gmail.com>
 Subject: Re: [PATCH 15/47] ASoC: remove blackfin drivers
 To: Mark Brown <broonie@kernel.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
