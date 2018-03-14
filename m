@@ -1,102 +1,113 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1528056-1521028214-2-16784283526072097894
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521028214; b=Y9RemGQ6I3/GUzED1I8+cBC4/Np3KHBdcVwjvboqaJAdlaE
-    SF0LY9o7MGsXIB91eMwJG2YT3wPFOkprhZyvB9FfNLEpfFj1C8xZW6UFwzsiqPAk
-    ukQ0+WRlGdqJS58PmL0JgHlZogNgwmoTqJONZuT8Bc6tPBWYfewUQmRgXzXkGssQ
-    CNKpxRkZm18FQ20ndjkuKxxBJzDq4wEGpxHKb6Tp+DEmVfY8aBnWXkVIRhZEUb3I
-    5GMyGZMjMDoQuMWdYJThJavbM6s8vMZLuVZxTwGrge11ttMTIg+F6W1Dd4xmInyd
-    T3XLO7oIHfiWGm6QLlJXN0C4KSEhPOt7ViuCKCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521028214; bh=f7X0mJrT8bNOp+w6C+3jr97aIg
-    cZ7d5GR0EGyIEZiS4=; b=tNO9AjnIxa/tw9VH4MvTrtjiozTOHL7Bl6iDx1wQW4
-    svcTPxtZdp0CdJ6XyihPyaiwoSdOm2JUHWwmP3L4xdx9y8qCYcu4FJ82ebxe04v6
-    u6flSDRLFwTrCUQNAFDAgAoofqn1y5qJKU5Bn8K08cUWm+Bd19shTOLlVsUqSqto
-    1Lt3UEvtlkbARdYri7O4Lt39pghLXyui1hQiBWQiKz/8+WzVABJuw75lQZDFucA6
-    dDt+9rjlhDSRObSWoHr5IXuge0GSYKvuiqJUbJXsN/jqUxFVEx4o/ngR3Kw8/WPS
-    FG4weX9mpCE6rcNzHqfc78rFQg49pjZXwugrXVqjrc9g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeCNLt4 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 07:49:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54930 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeCNLtt (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Mar 2018 07:49:49 -0400
-Date: Wed, 14 Mar 2018 12:49:48 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Richard Leitner <richard.leitner@skidata.com>
-Cc: Richard Leitner <dev@g0hl1n.net>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        mathias.nyman@intel.com, bhelgaas@google.com
-Subject: Re: [PATCH 2/3] usb: host: pci: introduce PCI vendor ID for Netlogic
-Message-ID: <20180314114948.GA25368@kroah.com>
+Return-Path: <dev@g0hl1n.net>
+X-Google-Smtp-Source: AG47ELv3Zj7isGcYkl2pZ60BM2A7CQY+qfGYp8cKSQxz4EuFWAkJsUIr4MTgTNXqJLanNxdbrRm6
+ARC-Seal: i=1; a=rsa-sha256; t=1521023398; cv=none;
+        d=google.com; s=arc-20160816;
+        b=I9zEc5XzMvxUF1VTPP485JyYk3ypCZME5s5UNKT1nOggYsR4+XTEKxJrxfSmd2hXIK
+         KyIVWAgpBsm9bRbuuNmgbBUu0sYfuHRN5mdJebRKqpZ8otwKWpix9/1d2f7FfOdljWaY
+         pi4JtsrnzxpFtMk1Jy54Smgyp6TZPYrbREQSLh1CGe6n84yRjB2olV+1PhavOJflRE3p
+         LbaGp4ByxQwTZ5kSfCC2/ZtJGdwD6SzQR2b+jAMpTCLZRY4U7yrj6i8/bmU7++OXdPDl
+         b3J+piBfZ8KcU1Aqus08blLtiQDgcfz6L3KBYrbi734g5rSW90WgTVsH5V1F0cmy7FCy
+         585g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=XX5qrnja7q32g4MtAzLuKah7aRupCwOxUm4yzZnYMYo=;
+        b=uEi3kyJhwh12HlYijO6Y7Cj+73H8OILBSRqqfuY0EAWg8qytcDIS0Fl58RoNXcnyx2
+         fKvcd5vcT6Lg1tLFEk8sFsGudH3c3+wXfJDBmnvPWEGY//Vi8WR/ZCgq1SInVNFd9G4W
+         Uq/wGZw6RDyHsfbPEiorv5I7WCrSA3rLeQiuAWmVTJKwE4wjyfnFdLjGSTaC6CA7fnwY
+         z9S1Mq0Bivp2Bx4eF2jdjkk8/m00OM9DOtg+/jPiljcZyUbKE90WHeKDcnnZNv+0E//Q
+         pUFLbJDThHn85+uaf5oZvljiqAbfqpfU98vwDv5OI3Ykvu4uOW67C8jN0azhbbKQ0A/+
+         2E3g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 109.237.142.231 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 109.237.142.231 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
+X-Spam-DCC: : 
+From: Richard Leitner <dev@g0hl1n.net>
+To: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com,
+	bhelgaas@google.com,
+	richard.leitner@skidata.com
+Subject: [PATCH 3/3] usb: host: pci: replace hardcoded renesas PCI IDs
+Date: Wed, 14 Mar 2018 11:29:33 +0100
+Message-Id: <20180314102933.21367-4-dev@g0hl1n.net>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180314102933.21367-1-dev@g0hl1n.net>
 References: <20180314102933.21367-1-dev@g0hl1n.net>
- <20180314102933.21367-3-dev@g0hl1n.net>
- <20180314104849.GB32615@kroah.com>
- <d755d623-2bb3-460f-45a0-2be6ab6f47ea@skidata.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d755d623-2bb3-460f-45a0-2be6ab6f47ea@skidata.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594908630617691660?=
+X-GMAIL-MSGID: =?utf-8?q?1594908630617691660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 12:36:17PM +0100, Richard Leitner wrote:
-> 
-> On 03/14/2018 11:48 AM, Greg KH wrote:
-> > On Wed, Mar 14, 2018 at 11:29:32AM +0100, Richard Leitner wrote:
-> >> From: Richard Leitner <richard.leitner@skidata.com>
-> >>
-> >> Replace the hardcoded PCI vendor ID of Netlogic with a definition in
-> >> pci_ids.h
-> > 
-> > Why?  It's only being used in one file, so it should not be in
-> > pci_ids.h, right?
-> 
-> It's also used as PCI_VENDOR_NETLOGIC in arch/mips/netlogic/xlp/.
-> 
-> Should this be replaced with PCI_VENDOR_ID_NETLOGIC from pci_ids.h?
+From: Richard Leitner <richard.leitner@skidata.com>
 
-Yes, if you are going to add it to pci_ids.h, it had better be used by
-multiple files, otherwise it does not belong in there.
+Introduce Renesas uPD72020{1,2} PCI device IDs in pci_ids.h and replace
+the harcoded values with them.
 
-thanks,
+Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+---
+ drivers/usb/host/pci-quirks.c | 6 ++++--
+ drivers/usb/host/xhci-pci.c   | 4 ++--
+ include/linux/pci_ids.h       | 2 ++
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+index 39d163729b89..5e1ad523622e 100644
+--- a/drivers/usb/host/pci-quirks.c
++++ b/drivers/usb/host/pci-quirks.c
+@@ -1170,7 +1170,8 @@ static void quirk_usb_handoff_xhci(struct pci_dev *pdev)
+ 	/* Auto handoff never worked for these devices. Force it and continue */
+ 	if ((pdev->vendor == PCI_VENDOR_ID_TI &&
+ 	     pdev->device == PCI_DEVICE_ID_TI_TUSB73X0) ||
+-	    (pdev->vendor == PCI_VENDOR_ID_RENESAS && pdev->device == 0x0014)) {
++	    (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
++	     pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201)) {
+ 		val = (val | XHCI_HC_OS_OWNED) & ~XHCI_HC_BIOS_OWNED;
+ 		writel(val, base + ext_cap_offset);
+ 	}
+@@ -1282,7 +1283,8 @@ bool usb_xhci_needs_pci_reset(struct pci_dev *pdev)
+ 	 * quirk, or the system will be in a rather bad state.
+ 	 */
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+-	    (pdev->device == 0x0014 || pdev->device == 0x0015))
++	    (pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201 ||
++	     pdev->device == PCI_DEVICE_ID_RENESAS_UPD720202))
+ 		return true;
+ 
+ 	return false;
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index a5bfd890190c..a453e4c35ac7 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -189,10 +189,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+-			pdev->device == 0x0014)
++			pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201)
+ 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+-			pdev->device == 0x0015)
++			pdev->device == PCI_DEVICE_ID_RENESAS_UPD720202)
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+ 	if (pdev->vendor == PCI_VENDOR_ID_VIA)
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index d23a97868dee..eb52f0e9b651 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2427,6 +2427,8 @@
+ #define PCI_DEVICE_ID_RENESAS_SH7763	0x0004
+ #define PCI_DEVICE_ID_RENESAS_SH7785	0x0007
+ #define PCI_DEVICE_ID_RENESAS_SH7786	0x0010
++#define PCI_DEVICE_ID_RENESAS_UPD720201	0x0014
++#define PCI_DEVICE_ID_RENESAS_UPD720202	0x0015
+ 
+ #define PCI_VENDOR_ID_SOLARFLARE	0x1924
+ #define PCI_DEVICE_ID_SOLARFLARE_SFC4000A_0	0x0703
+-- 
+2.11.0
