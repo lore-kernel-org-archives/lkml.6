@@ -1,24 +1,24 @@
 Return-Path: <neil@brown.name>
-X-Google-Smtp-Source: AG47ELuyU9bgpKnTd2kewJuU322WJSqv/idZopUNlxp8mQ/wVLjQHbatzcRc3w/wJxa8wqh72+Cp
-ARC-Seal: i=1; a=rsa-sha256; t=1521059006; cv=none;
+X-Google-Smtp-Source: AG47ELs3gqF5p14UZfSoHepnFjBmmWXVWvsRSFYMQmbUChldY/R7UDe0dD1d3gyi71x19wm4DtxI
+ARC-Seal: i=1; a=rsa-sha256; t=1521059000; cv=none;
         d=google.com; s=arc-20160816;
-        b=s6L0JGtrmFrMrNQk+DurSrNcKbscBogaLnzGsIIANC54eFVhuwq+kF48N587XbOx+x
-         K7FMal+l3KqwxiDF60/0hVw0i/4NpYvsc4fZHUzEaCyV7EJmCzih6DBl5xYMIyi5L14M
-         10CRN3bFJ4yCC/0c9TiVqRsJjWhngxdRaTwkNEdpghniGa5+gZgPaBqhyjAsr3KwA5yp
-         Rq1VXRrVuwQmet3ivDxF8g/JySVGGR6qfr5w4F+Hs6GaEOdgA0FDVrRbCHCmYyHHKpXE
-         9srpWnHyDEGuIPSb9ZAikV598OLN4xn1B+LQ8y0gwf9x/xfMZCIEewhGzMI+l3ggQ98/
-         GZFw==
+        b=RcMu3biLW3yDW3Kx2bcap/FzFE3LFpO78fQMEAHUmDiC7l/l4iM3LuE+h8bNIZAKx9
+         Puplt7lkYO1pCpB7QpD8rk0oe4ogpf7/94UyU5QOm9EBQK8wyRsq5SiFQFcThPCkDNWS
+         cHf6oy/NnJyc3A5iNY3OpPWZF9BGfVwtobAOujVIBo1GfwWgLWU2gL/SCHSYTz3CP0Yf
+         7yfTrjIRtj1BGtSVQLitqZpCB7sEZbrp9xMnqGrwApJFl9mFoeGOSguOGgOsNZGkeFV3
+         NNKT1oTOh8c+3YNa+nsQ9RTTiqOUkcz6xwCITzgfJrDH+tieV3c5pOkEbwM12+P+xXpz
+         EunQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=7OLHN15+gLqzD2V27g0KN7tzoHjthjVj9umcFB67CdM=;
-        b=eCKNRh08r/+SfMM/YiAcDwceToujFsF8s0qKS+3f7ypgnsVPcUn8YxFnRtNhQ6ThDy
-         ekkIPgRO7ykA5fBoeiH9eeuXN66O4oTEOj527EKp3aEGyriP8ALDts4dFk/zr5csWrt4
-         1CfrnJ9hMx2oAnfSXJgmsqVYkHtvzKogBDVxEEGjGG4W1shiNirVQotGijz+/vYci7Vt
-         79igz8VEVjUF38ZzOq9+6eg0kqZkm3jOgFBfWWWQ0RklNaij0azZ4VoJsanmxP4pBfwi
-         JpXPTghf8ELO9lWKEcQOx0erMa/wjvEc1Z2qoaKjNwUclM5eC8mLqOCgRgeMkm7kzNyk
-         /dEQ==
+        bh=ClDB1mXtF7A58/rF1uVofthSXNPrRdqMKNDgYKXC1iw=;
+        b=pKC4zrd1JEGmroyC+4Av9kG9W+B2ydwW4mROgIZ6KGC0hnIWH7AL72MCxz99jAavxm
+         8R4RfpyZbRiLhU+ykAnHfkKUQJ0gePrHLlE9MHMg0mu82pxsZ6P7CHSwluM9ShMH03eF
+         IisshwDlIn0AS7DiNrMPAD3EyIFVEWYjxH3sjEfZs8GxI7UgjqrrpfuLVt5x0pvjzH6J
+         CsOcAgQQDcwzEZC78uya1xDm8s3cXVBR9ZVSwQCDuh2eBqfNrK+3/fE8vYBpT4qkjvdS
+         DkiKEOcNQYFB38C0kVIDwzqIgs/yALcARb3sX3tOjACIz/gHEC78Cb1M1OY7StXdVgCO
+         MEDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of neil@brown.name) smtp.mailfrom=neil@brown.name
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ Authentication-Results: mx.google.com;
 From: NeilBrown <neil@brown.name>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Thu, 15 Mar 2018 07:22:35 +1100
-Subject: [PATCH 04/13] staging: mt7621-spi: add mt7621 support
+Subject: [PATCH 03/13] staging: mt7621-gpio: ralink: add mt7621 gpio
+ controller
 Cc: devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
  John Crispin <blogic@openwrt.org>
-Message-ID: <152105895549.22262.12542208654106821911.stgit@noble>
+Message-ID: <152105895531.22262.9532375775617636739.stgit@noble>
 In-Reply-To: <152105892255.22262.1902152685410223215.stgit@noble>
 References: <152105892255.22262.1902152685410223215.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -37,575 +38,436 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594945968888677223?=
-X-GMAIL-MSGID: =?utf-8?q?1594945968888677223?=
+X-GMAIL-THRID: =?utf-8?q?1594945961885150899?=
+X-GMAIL-MSGID: =?utf-8?q?1594945961885150899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: John Crispin <blogic@openwrt.org>
 
-NeilBrown:
-    The code will fail with a warning if asked to transfer
-    more than 32 bytes at a time.  So used max_transfer_size
-    interface to tell users about this.
-
 Signed-off-by: John Crispin <blogic@openwrt.org>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- drivers/staging/Kconfig                 |    2 
- drivers/staging/Makefile                |    1 
- drivers/staging/mt7621-spi/Kconfig      |    6 
- drivers/staging/mt7621-spi/Makefile     |    1 
- drivers/staging/mt7621-spi/TODO         |    5 
- drivers/staging/mt7621-spi/spi-mt7621.c |  489 +++++++++++++++++++++++++++++++
- 6 files changed, 504 insertions(+)
- create mode 100644 drivers/staging/mt7621-spi/Kconfig
- create mode 100644 drivers/staging/mt7621-spi/Makefile
- create mode 100644 drivers/staging/mt7621-spi/TODO
- create mode 100644 drivers/staging/mt7621-spi/spi-mt7621.c
+ drivers/staging/Kconfig                   |    2 
+ drivers/staging/Makefile                  |    1 
+ drivers/staging/mt7621-gpio/Kconfig       |    6 
+ drivers/staging/mt7621-gpio/Makefile      |    3 
+ drivers/staging/mt7621-gpio/TODO          |    5 
+ drivers/staging/mt7621-gpio/gpio-mt7621.c |  353 +++++++++++++++++++++++++++++
+ 6 files changed, 370 insertions(+)
+ create mode 100644 drivers/staging/mt7621-gpio/Kconfig
+ create mode 100644 drivers/staging/mt7621-gpio/Makefile
+ create mode 100644 drivers/staging/mt7621-gpio/TODO
+ create mode 100644 drivers/staging/mt7621-gpio/gpio-mt7621.c
 
 diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-index 7568e10399fa..bcc6da1f656a 100644
+index cdd04c8b4445..7568e10399fa 100644
 --- a/drivers/staging/Kconfig
 +++ b/drivers/staging/Kconfig
-@@ -126,4 +126,6 @@ source "drivers/staging/mt7621-pinctrl/Kconfig"
+@@ -124,4 +124,6 @@ source "drivers/staging/pi433/Kconfig"
  
- source "drivers/staging/mt7621-gpio/Kconfig"
+ source "drivers/staging/mt7621-pinctrl/Kconfig"
  
-+source "drivers/staging/mt7621-spi/Kconfig"
++source "drivers/staging/mt7621-gpio/Kconfig"
 +
  endif # STAGING
 diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index 609fdb218985..051af9965549 100644
+index db90d85a80d3..609fdb218985 100644
 --- a/drivers/staging/Makefile
 +++ b/drivers/staging/Makefile
-@@ -55,3 +55,4 @@ obj-$(CONFIG_PI433)		+= pi433/
+@@ -54,3 +54,4 @@ obj-$(CONFIG_DRM_VBOXVIDEO)	+= vboxvideo/
+ obj-$(CONFIG_PI433)		+= pi433/
  obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci/
  obj-$(CONFIG_SOC_MT7621)	+= mt7621-pinctrl/
- obj-$(CONFIG_SOC_MT7621)	+= mt7621-gpio/
-+obj-$(CONFIG_SOC_MT7621)	+= mt7621-spi/
-diff --git a/drivers/staging/mt7621-spi/Kconfig b/drivers/staging/mt7621-spi/Kconfig
++obj-$(CONFIG_SOC_MT7621)	+= mt7621-gpio/
+diff --git a/drivers/staging/mt7621-gpio/Kconfig b/drivers/staging/mt7621-gpio/Kconfig
 new file mode 100644
-index 000000000000..0b90f4cfa426
+index 000000000000..c741ec3f4e50
 --- /dev/null
-+++ b/drivers/staging/mt7621-spi/Kconfig
++++ b/drivers/staging/mt7621-gpio/Kconfig
 @@ -0,0 +1,6 @@
-+config SPI_MT7621
-+	tristate "MediaTek MT7621 SPI Controller"
-+	depends on RALINK
++config GPIO_MT7621
++	bool "Mediatek GPIO Support"
++	depends on SOC_MT7620 || SOC_MT7621
++	select ARCH_REQUIRE_GPIOLIB
 +	help
-+	  This selects a driver for the MediaTek MT7621 SPI Controller.
++	  Say yes here to support the Mediatek SoC GPIO device
+diff --git a/drivers/staging/mt7621-gpio/Makefile b/drivers/staging/mt7621-gpio/Makefile
+new file mode 100644
+index 000000000000..e269ab1b8717
+--- /dev/null
++++ b/drivers/staging/mt7621-gpio/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_GPIO_MT7621)	+= gpio-mt7621.o
 +
-diff --git a/drivers/staging/mt7621-spi/Makefile b/drivers/staging/mt7621-spi/Makefile
++ccflags-y += -I$(srctree)/$(src)/include
+diff --git a/drivers/staging/mt7621-gpio/TODO b/drivers/staging/mt7621-gpio/TODO
 new file mode 100644
-index 000000000000..3be508f63bac
+index 000000000000..71439054e2e4
 --- /dev/null
-+++ b/drivers/staging/mt7621-spi/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_SPI_MT7621)		+= spi-mt7621.o
-diff --git a/drivers/staging/mt7621-spi/TODO b/drivers/staging/mt7621-spi/TODO
-new file mode 100644
-index 000000000000..fdbc5002c32a
---- /dev/null
-+++ b/drivers/staging/mt7621-spi/TODO
++++ b/drivers/staging/mt7621-gpio/TODO
 @@ -0,0 +1,5 @@
 +
 +- general code review and clean up
 +- ensure device-tree requirements are documented
 +
-+Cc: NeilBrown <neil@brown.name>
-diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
++Cc:  NeilBrown <neil@brown.name>
+diff --git a/drivers/staging/mt7621-gpio/gpio-mt7621.c b/drivers/staging/mt7621-gpio/gpio-mt7621.c
 new file mode 100644
-index 000000000000..d95e0b32f1f0
+index 000000000000..5c57abea853f
 --- /dev/null
-+++ b/drivers/staging/mt7621-spi/spi-mt7621.c
-@@ -0,0 +1,489 @@
++++ b/drivers/staging/mt7621-gpio/gpio-mt7621.c
+@@ -0,0 +1,353 @@
 +/*
-+ * spi-mt7621.c -- MediaTek MT7621 SPI controller driver
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published
++ * by the Free Software Foundation.
 + *
-+ * Copyright (C) 2011 Sergiy <piratfm@gmail.com>
-+ * Copyright (C) 2011-2013 Gabor Juhos <juhosg@openwrt.org>
-+ * Copyright (C) 2014-2015 Felix Fietkau <nbd@nbd.name>
-+ *
-+ * Some parts are based on spi-orion.c:
-+ *   Author: Shadi Ammouri <shadi@marvell.com>
-+ *   Copyright (C) 2007-2008 Marvell Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * Copyright (C) 2009-2011 Gabor Juhos <juhosg@openwrt.org>
++ * Copyright (C) 2013 John Crispin <blogic@openwrt.org>
 + */
 +
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/delay.h>
 +#include <linux/io.h>
-+#include <linux/reset.h>
-+#include <linux/spi/spi.h>
-+#include <linux/of_device.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/spinlock.h>
++#include <linux/irqdomain.h>
++#include <linux/interrupt.h>
 +#include <linux/platform_device.h>
-+#include <linux/swab.h>
 +
-+#include <ralink_regs.h>
++#define MTK_MAX_BANK		3
++#define MTK_BANK_WIDTH		32
 +
-+#define SPI_BPW_MASK(bits) BIT((bits) - 1)
-+
-+#define DRIVER_NAME			"spi-mt7621"
-+/* in usec */
-+#define RALINK_SPI_WAIT_MAX_LOOP	2000
-+
-+/* SPISTAT register bit field */
-+#define SPISTAT_BUSY			BIT(0)
-+
-+#define MT7621_SPI_TRANS	0x00
-+#define SPITRANS_BUSY		BIT(16)
-+
-+#define MT7621_SPI_OPCODE	0x04
-+#define MT7621_SPI_DATA0	0x08
-+#define MT7621_SPI_DATA4	0x18
-+#define SPI_CTL_TX_RX_CNT_MASK	0xff
-+#define SPI_CTL_START		BIT(8)
-+
-+#define MT7621_SPI_POLAR	0x38
-+#define MT7621_SPI_MASTER	0x28
-+#define MT7621_SPI_MOREBUF	0x2c
-+#define MT7621_SPI_SPACE	0x3c
-+
-+#define MT7621_CPHA		BIT(5)
-+#define MT7621_CPOL		BIT(4)
-+#define MT7621_LSB_FIRST	BIT(3)
-+
-+#define RT2880_SPI_MODE_BITS	(SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST | SPI_CS_HIGH)
-+
-+struct mt7621_spi;
-+
-+struct mt7621_spi {
-+	struct spi_master	*master;
-+	void __iomem		*base;
-+	unsigned int		sys_freq;
-+	unsigned int		speed;
-+	struct clk		*clk;
-+	spinlock_t		lock;
-+
-+	struct mt7621_spi_ops	*ops;
++enum mediatek_gpio_reg {
++	GPIO_REG_CTRL = 0,
++	GPIO_REG_POL,
++	GPIO_REG_DATA,
++	GPIO_REG_DSET,
++	GPIO_REG_DCLR,
++	GPIO_REG_REDGE,
++	GPIO_REG_FEDGE,
++	GPIO_REG_HLVL,
++	GPIO_REG_LLVL,
++	GPIO_REG_STAT,
++	GPIO_REG_EDGE,
 +};
 +
-+static inline struct mt7621_spi *spidev_to_mt7621_spi(struct spi_device *spi)
++static void __iomem *mediatek_gpio_membase;
++static int mediatek_gpio_irq;
++static struct irq_domain *mediatek_gpio_irq_domain;
++
++struct mtk_gc {
++	struct gpio_chip chip;
++	spinlock_t lock;
++	int bank;
++	u32 rising;
++	u32 falling;
++} *gc_map[MTK_MAX_BANK];
++
++static inline struct mtk_gc
++*to_mediatek_gpio(struct gpio_chip *chip)
 +{
-+	return spi_master_get_devdata(spi->master);
++	struct mtk_gc *mgc;
++
++	mgc = container_of(chip, struct mtk_gc, chip);
++
++	return mgc;
 +}
 +
-+static inline u32 mt7621_spi_read(struct mt7621_spi *rs, u32 reg)
++static inline void
++mtk_gpio_w32(struct mtk_gc *rg, u8 reg, u32 val)
 +{
-+	return ioread32(rs->base + reg);
++	iowrite32(val, mediatek_gpio_membase + (reg * 0x10) + (rg->bank * 0x4));
 +}
 +
-+static inline void mt7621_spi_write(struct mt7621_spi *rs, u32 reg, u32 val)
++static inline u32
++mtk_gpio_r32(struct mtk_gc *rg, u8 reg)
 +{
-+	iowrite32(val, rs->base + reg);
++	return ioread32(mediatek_gpio_membase + (reg * 0x10) + (rg->bank * 0x4));
 +}
 +
-+static void mt7621_spi_reset(struct mt7621_spi *rs, int duplex)
++static void
++mediatek_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 +{
-+	u32 master = mt7621_spi_read(rs, MT7621_SPI_MASTER);
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
 +
-+	master |= 7 << 29;
-+	master |= 1 << 2;
-+	if (duplex)
-+		master |= 1 << 10;
-+	else
-+		master &= ~(1 << 10);
-+
-+	mt7621_spi_write(rs, MT7621_SPI_MASTER, master);
++	mtk_gpio_w32(rg, (value) ? GPIO_REG_DSET : GPIO_REG_DCLR, BIT(offset));
 +}
 +
-+static void mt7621_spi_set_cs(struct spi_device *spi, int enable)
++static int
++mediatek_gpio_get(struct gpio_chip *chip, unsigned offset)
 +{
-+	struct mt7621_spi *rs = spidev_to_mt7621_spi(spi);
-+	int cs = spi->chip_select;
-+	u32 polar = 0;
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
 +
-+        mt7621_spi_reset(rs, cs);
-+	if (enable)
-+		polar = BIT(cs);
-+	mt7621_spi_write(rs, MT7621_SPI_POLAR, polar);
++	return !!(mtk_gpio_r32(rg, GPIO_REG_DATA) & BIT(offset));
 +}
 +
-+static int mt7621_spi_prepare(struct spi_device *spi, unsigned int speed)
++static int
++mediatek_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
 +{
-+	struct mt7621_spi *rs = spidev_to_mt7621_spi(spi);
-+	u32 rate;
-+	u32 reg;
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
++	unsigned long flags;
++	u32 t;
 +
-+	dev_dbg(&spi->dev, "speed:%u\n", speed);
-+
-+	rate = DIV_ROUND_UP(rs->sys_freq, speed);
-+	dev_dbg(&spi->dev, "rate-1:%u\n", rate);
-+
-+	if (rate > 4097)
-+		return -EINVAL;
-+
-+	if (rate < 2)
-+		rate = 2;
-+
-+	reg = mt7621_spi_read(rs, MT7621_SPI_MASTER);
-+	reg &= ~(0xfff << 16);
-+	reg |= (rate - 2) << 16;
-+	rs->speed = speed;
-+
-+	reg &= ~MT7621_LSB_FIRST;
-+	if (spi->mode & SPI_LSB_FIRST)
-+		reg |= MT7621_LSB_FIRST;
-+
-+	reg &= ~(MT7621_CPHA | MT7621_CPOL);
-+	switch(spi->mode & (SPI_CPOL | SPI_CPHA)) {
-+		case SPI_MODE_0:
-+			break;
-+		case SPI_MODE_1:
-+			reg |= MT7621_CPHA;
-+			break;
-+		case SPI_MODE_2:
-+			reg |= MT7621_CPOL;
-+			break;
-+		case SPI_MODE_3:
-+			reg |= MT7621_CPOL | MT7621_CPHA;
-+			break;
-+	}
-+	mt7621_spi_write(rs, MT7621_SPI_MASTER, reg);
++	spin_lock_irqsave(&rg->lock, flags);
++	t = mtk_gpio_r32(rg, GPIO_REG_CTRL);
++	t &= ~BIT(offset);
++	mtk_gpio_w32(rg, GPIO_REG_CTRL, t);
++	spin_unlock_irqrestore(&rg->lock, flags);
 +
 +	return 0;
 +}
 +
-+static inline int mt7621_spi_wait_till_ready(struct spi_device *spi)
++static int
++mediatek_gpio_direction_output(struct gpio_chip *chip,
++					unsigned offset, int value)
 +{
-+	struct mt7621_spi *rs = spidev_to_mt7621_spi(spi);
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
++	unsigned long flags;
++	u32 t;
++
++	spin_lock_irqsave(&rg->lock, flags);
++	t = mtk_gpio_r32(rg, GPIO_REG_CTRL);
++	t |= BIT(offset);
++	mtk_gpio_w32(rg, GPIO_REG_CTRL, t);
++	mediatek_gpio_set(chip, offset, value);
++	spin_unlock_irqrestore(&rg->lock, flags);
++
++	return 0;
++}
++
++static int
++mediatek_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
++	unsigned long flags;
++	u32 t;
++
++	spin_lock_irqsave(&rg->lock, flags);
++	t = mtk_gpio_r32(rg, GPIO_REG_CTRL);
++	spin_unlock_irqrestore(&rg->lock, flags);
++
++	if (t & BIT(offset))
++		return 0;
++
++	return 1;
++}
++
++static int
++mediatek_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
++{
++	struct mtk_gc *rg = to_mediatek_gpio(chip);
++
++	return irq_create_mapping(mediatek_gpio_irq_domain, pin + (rg->bank * MTK_BANK_WIDTH));
++}
++
++static int
++mediatek_gpio_bank_probe(struct platform_device *pdev, struct device_node *bank)
++{
++	const __be32 *id = of_get_property(bank, "reg", NULL);
++	struct mtk_gc *rg = devm_kzalloc(&pdev->dev,
++				sizeof(struct mtk_gc), GFP_KERNEL);
++
++	if (!rg || !id || be32_to_cpu(*id) > MTK_MAX_BANK)
++		return -ENOMEM;
++
++	gc_map[be32_to_cpu(*id)] = rg;
++
++	memset(rg, 0, sizeof(struct mtk_gc));
++
++	spin_lock_init(&rg->lock);
++
++	rg->chip.parent = &pdev->dev;
++	rg->chip.label = dev_name(&pdev->dev);
++	rg->chip.of_node = bank;
++	rg->chip.base = MTK_BANK_WIDTH * be32_to_cpu(*id);
++	rg->chip.ngpio = MTK_BANK_WIDTH;
++	rg->chip.direction_input = mediatek_gpio_direction_input;
++	rg->chip.direction_output = mediatek_gpio_direction_output;
++	rg->chip.get_direction = mediatek_gpio_get_direction;
++	rg->chip.get = mediatek_gpio_get;
++	rg->chip.set = mediatek_gpio_set;
++	if (mediatek_gpio_irq_domain)
++		rg->chip.to_irq = mediatek_gpio_to_irq;
++	rg->bank = be32_to_cpu(*id);
++
++	/* set polarity to low for all gpios */
++	mtk_gpio_w32(rg, GPIO_REG_POL, 0);
++
++	dev_info(&pdev->dev, "registering %d gpios\n", rg->chip.ngpio);
++
++	return gpiochip_add(&rg->chip);
++}
++
++static void
++mediatek_gpio_irq_handler(struct irq_desc *desc)
++{
 +	int i;
 +
-+	for (i = 0; i < RALINK_SPI_WAIT_MAX_LOOP; i++) {
-+		u32 status;
++	for (i = 0; i < MTK_MAX_BANK; i++) {
++		struct mtk_gc *rg = gc_map[i];
++		unsigned long pending;
++		int bit;
 +
-+		status = mt7621_spi_read(rs, MT7621_SPI_TRANS);
-+		if ((status & SPITRANS_BUSY) == 0) {
++		if (!rg)
++			continue;
++
++		pending = mtk_gpio_r32(rg, GPIO_REG_STAT);
++
++		for_each_set_bit(bit, &pending, MTK_BANK_WIDTH) {
++			u32 map = irq_find_mapping(mediatek_gpio_irq_domain, (MTK_BANK_WIDTH * i) + bit);
++
++			generic_handle_irq(map);
++			mtk_gpio_w32(rg, GPIO_REG_STAT, BIT(bit));
++		}
++	}
++}
++
++static void
++mediatek_gpio_irq_unmask(struct irq_data *d)
++{
++	int pin = d->hwirq;
++	int bank = pin / 32;
++	struct mtk_gc *rg = gc_map[bank];
++	unsigned long flags;
++	u32 rise, fall;
++
++	if (!rg)
++		return;
++
++	rise = mtk_gpio_r32(rg, GPIO_REG_REDGE);
++	fall = mtk_gpio_r32(rg, GPIO_REG_FEDGE);
++
++	spin_lock_irqsave(&rg->lock, flags);
++	mtk_gpio_w32(rg, GPIO_REG_REDGE, rise | (BIT(d->hwirq) & rg->rising));
++	mtk_gpio_w32(rg, GPIO_REG_FEDGE, fall | (BIT(d->hwirq) & rg->falling));
++	spin_unlock_irqrestore(&rg->lock, flags);
++}
++
++static void
++mediatek_gpio_irq_mask(struct irq_data *d)
++{
++	int pin = d->hwirq;
++	int bank = pin / 32;
++	struct mtk_gc *rg = gc_map[bank];
++	unsigned long flags;
++	u32 rise, fall;
++
++	if (!rg)
++		return;
++
++	rise = mtk_gpio_r32(rg, GPIO_REG_REDGE);
++	fall = mtk_gpio_r32(rg, GPIO_REG_FEDGE);
++
++	spin_lock_irqsave(&rg->lock, flags);
++	mtk_gpio_w32(rg, GPIO_REG_FEDGE, fall & ~BIT(d->hwirq));
++	mtk_gpio_w32(rg, GPIO_REG_REDGE, rise & ~BIT(d->hwirq));
++	spin_unlock_irqrestore(&rg->lock, flags);
++}
++
++static int
++mediatek_gpio_irq_type(struct irq_data *d, unsigned int type)
++{
++	int pin = d->hwirq;
++	int bank = pin / 32;
++	struct mtk_gc *rg = gc_map[bank];
++	u32 mask = BIT(d->hwirq);
++
++	if (!rg)
++		return -1;
++
++	if (type == IRQ_TYPE_PROBE) {
++		if ((rg->rising | rg->falling) & mask)
 +			return 0;
-+		}
-+		cpu_relax();
-+		udelay(1);
++
++		type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
 +	}
 +
-+	return -ETIMEDOUT;
-+}
++	if (type & IRQ_TYPE_EDGE_RISING)
++		rg->rising |= mask;
++	else
++		rg->rising &= ~mask;
 +
-+static int mt7621_spi_transfer_half_duplex(struct spi_master *master,
-+					   struct spi_message *m)
-+{
-+	struct mt7621_spi *rs = spi_master_get_devdata(master);
-+	struct spi_device *spi = m->spi;
-+	unsigned int speed = spi->max_speed_hz;
-+	struct spi_transfer *t = NULL;
-+	int status = 0;
-+	int i, len = 0;
-+	int rx_len = 0;
-+	u32 data[9] = { 0 };
-+	u32 val;
-+
-+	mt7621_spi_wait_till_ready(spi);
-+
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		const u8 *buf = t->tx_buf;
-+
-+		if (t->rx_buf)
-+			rx_len += t->len;
-+
-+		if (!buf)
-+			continue;
-+
-+		if (t->speed_hz < speed)
-+			speed = t->speed_hz;
-+
-+		if (WARN_ON(len + t->len > 36)) {
-+			status = -EIO;
-+			goto msg_done;
-+		}
-+
-+		for (i = 0; i < t->len; i++, len++)
-+			data[len / 4] |= buf[i] << (8 * (len & 3));
-+	}
-+
-+	if (WARN_ON(rx_len > 32)) {
-+		status = -EIO;
-+		goto msg_done;
-+	}
-+
-+	if (mt7621_spi_prepare(spi, speed)) {
-+		status = -EIO;
-+		goto msg_done;
-+	}
-+	data[0] = swab32(data[0]);
-+	if (len < 4)
-+		data[0] >>= (4 - len) * 8;
-+
-+	for (i = 0; i < len; i += 4)
-+		mt7621_spi_write(rs, MT7621_SPI_OPCODE + i, data[i / 4]);
-+
-+	val = (min_t(int, len, 4) * 8) << 24;
-+	if (len > 4)
-+		val |= (len - 4) * 8;
-+	val |= (rx_len * 8) << 12;
-+	mt7621_spi_write(rs, MT7621_SPI_MOREBUF, val);
-+
-+	mt7621_spi_set_cs(spi, 1);
-+
-+	val = mt7621_spi_read(rs, MT7621_SPI_TRANS);
-+	val |= SPI_CTL_START;
-+	mt7621_spi_write(rs, MT7621_SPI_TRANS, val);
-+
-+	mt7621_spi_wait_till_ready(spi);
-+
-+	mt7621_spi_set_cs(spi, 0);
-+
-+	for (i = 0; i < rx_len; i += 4)
-+		data[i / 4] = mt7621_spi_read(rs, MT7621_SPI_DATA0 + i);
-+
-+	m->actual_length = len + rx_len;
-+
-+	len = 0;
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		u8 *buf = t->rx_buf;
-+
-+		if (!buf)
-+			continue;
-+
-+		for (i = 0; i < t->len; i++, len++)
-+			buf[i] = data[len / 4] >> (8 * (len & 3));
-+	}
-+
-+msg_done:
-+	m->status = status;
-+	spi_finalize_current_message(master);
++	if (type & IRQ_TYPE_EDGE_FALLING)
++		rg->falling |= mask;
++	else
++		rg->falling &= ~mask;
 +
 +	return 0;
 +}
 +
-+static int mt7621_spi_transfer_full_duplex(struct spi_master *master,
-+					   struct spi_message *m)
++static struct irq_chip mediatek_gpio_irq_chip = {
++	.name		= "GPIO",
++	.irq_unmask	= mediatek_gpio_irq_unmask,
++	.irq_mask	= mediatek_gpio_irq_mask,
++	.irq_mask_ack	= mediatek_gpio_irq_mask,
++	.irq_set_type	= mediatek_gpio_irq_type,
++};
++
++static int
++mediatek_gpio_gpio_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
 +{
-+	struct mt7621_spi *rs = spi_master_get_devdata(master);
-+	struct spi_device *spi = m->spi;
-+	unsigned int speed = spi->max_speed_hz;
-+	struct spi_transfer *t = NULL;
-+	int status = 0;
-+	int i, len = 0;
-+	int rx_len = 0;
-+	u32 data[9] = { 0 };
-+	u32 val = 0;
-+
-+	mt7621_spi_wait_till_ready(spi);
-+
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		const u8 *buf = t->tx_buf;
-+
-+		if (t->rx_buf)
-+			rx_len += t->len;
-+
-+		if (!buf)
-+			continue;
-+
-+		if (WARN_ON(len + t->len > 16)) {
-+			status = -EIO;
-+			goto msg_done;
-+		}
-+
-+		for (i = 0; i < t->len; i++, len++)
-+			data[len / 4] |= buf[i] << (8 * (len & 3));
-+		if (speed > t->speed_hz)
-+			speed = t->speed_hz;
-+	}
-+
-+	if (WARN_ON(rx_len > 16)) {
-+		status = -EIO;
-+		goto msg_done;
-+	}
-+
-+	if (mt7621_spi_prepare(spi, speed)) {
-+		status = -EIO;
-+		goto msg_done;
-+	}
-+
-+	for (i = 0; i < len; i += 4)
-+		mt7621_spi_write(rs, MT7621_SPI_DATA0 + i, data[i / 4]);
-+
-+	val |= len * 8;
-+	val |= (rx_len * 8) << 12;
-+	mt7621_spi_write(rs, MT7621_SPI_MOREBUF, val);
-+
-+	mt7621_spi_set_cs(spi, 1);
-+
-+	val = mt7621_spi_read(rs, MT7621_SPI_TRANS);
-+	val |= SPI_CTL_START;
-+	mt7621_spi_write(rs, MT7621_SPI_TRANS, val);
-+
-+	mt7621_spi_wait_till_ready(spi);
-+
-+	mt7621_spi_set_cs(spi, 0);
-+
-+	for (i = 0; i < rx_len; i += 4)
-+		data[i / 4] = mt7621_spi_read(rs, MT7621_SPI_DATA4 + i);
-+
-+	m->actual_length = rx_len;
-+
-+	len = 0;
-+	list_for_each_entry(t, &m->transfers, transfer_list) {
-+		u8 *buf = t->rx_buf;
-+
-+		if (!buf)
-+			continue;
-+
-+		for (i = 0; i < t->len; i++, len++)
-+			buf[i] = data[len / 4] >> (8 * (len & 3));
-+	}
-+
-+msg_done:
-+	m->status = status;
-+	spi_finalize_current_message(master);
++	irq_set_chip_and_handler(irq, &mediatek_gpio_irq_chip, handle_level_irq);
++	irq_set_handler_data(irq, d);
 +
 +	return 0;
 +}
 +
-+static int mt7621_spi_transfer_one_message(struct spi_master *master,
-+					   struct spi_message *m)
++static const struct irq_domain_ops irq_domain_ops = {
++	.xlate = irq_domain_xlate_onecell,
++	.map = mediatek_gpio_gpio_map,
++};
++
++static int
++mediatek_gpio_probe(struct platform_device *pdev)
 +{
-+	struct spi_device *spi = m->spi;
-+	int cs = spi->chip_select;
++	struct device_node *bank, *np = pdev->dev.of_node;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 +
-+	if (cs)
-+		return mt7621_spi_transfer_full_duplex(master, m);
-+	return mt7621_spi_transfer_half_duplex(master, m);
-+}
++	mediatek_gpio_membase = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(mediatek_gpio_membase))
++		return PTR_ERR(mediatek_gpio_membase);
 +
-+static int mt7621_spi_setup(struct spi_device *spi)
-+{
-+	struct mt7621_spi *rs = spidev_to_mt7621_spi(spi);
-+
-+	if ((spi->max_speed_hz == 0) ||
-+		(spi->max_speed_hz > (rs->sys_freq / 2)))
-+		spi->max_speed_hz = (rs->sys_freq / 2);
-+
-+	if (spi->max_speed_hz < (rs->sys_freq / 4097)) {
-+		dev_err(&spi->dev, "setup: requested speed is too low %d Hz\n",
-+			spi->max_speed_hz);
-+		return -EINVAL;
++	mediatek_gpio_irq = irq_of_parse_and_map(np, 0);
++	if (mediatek_gpio_irq) {
++		mediatek_gpio_irq_domain = irq_domain_add_linear(np,
++			MTK_MAX_BANK * MTK_BANK_WIDTH,
++			&irq_domain_ops, NULL);
++		if (!mediatek_gpio_irq_domain)
++			dev_err(&pdev->dev, "irq_domain_add_linear failed\n");
 +	}
++
++	for_each_child_of_node(np, bank)
++		if (of_device_is_compatible(bank, "mtk,mt7621-gpio-bank"))
++			mediatek_gpio_bank_probe(pdev, bank);
++
++	if (mediatek_gpio_irq_domain)
++		irq_set_chained_handler(mediatek_gpio_irq, mediatek_gpio_irq_handler);
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id mt7621_spi_match[] = {
-+	{ .compatible = "ralink,mt7621-spi" },
++static const struct of_device_id mediatek_gpio_match[] = {
++	{ .compatible = "mtk,mt7621-gpio" },
 +	{},
 +};
-+MODULE_DEVICE_TABLE(of, mt7621_spi_match);
++MODULE_DEVICE_TABLE(of, mediatek_gpio_match);
 +
-+static size_t max_transfer_size(struct spi_device *spi)
-+{
-+	return 32;
-+}
-+
-+static int mt7621_spi_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *match;
-+	struct spi_master *master;
-+	struct mt7621_spi *rs;
-+	unsigned long flags;
-+	void __iomem *base;
-+	struct resource *r;
-+	int status = 0;
-+	struct clk *clk;
-+	struct mt7621_spi_ops *ops;
-+
-+	match = of_match_device(mt7621_spi_match, &pdev->dev);
-+	if (!match)
-+		return -EINVAL;
-+	ops = (struct mt7621_spi_ops *)match->data;
-+
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, r);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(clk)) {
-+		dev_err(&pdev->dev, "unable to get SYS clock, err=%d\n",
-+			status);
-+		return PTR_ERR(clk);
-+	}
-+
-+	status = clk_prepare_enable(clk);
-+	if (status)
-+		return status;
-+
-+	master = spi_alloc_master(&pdev->dev, sizeof(*rs));
-+	if (master == NULL) {
-+		dev_info(&pdev->dev, "master allocation failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	master->mode_bits = RT2880_SPI_MODE_BITS;
-+
-+	master->setup = mt7621_spi_setup;
-+	master->transfer_one_message = mt7621_spi_transfer_one_message;
-+	master->bits_per_word_mask = SPI_BPW_MASK(8);
-+	master->dev.of_node = pdev->dev.of_node;
-+	master->num_chipselect = 2;
-+	master->max_transfer_size = max_transfer_size;
-+
-+	dev_set_drvdata(&pdev->dev, master);
-+
-+	rs = spi_master_get_devdata(master);
-+	rs->base = base;
-+	rs->clk = clk;
-+	rs->master = master;
-+	rs->sys_freq = clk_get_rate(rs->clk);
-+	rs->ops = ops;
-+	dev_info(&pdev->dev, "sys_freq: %u\n", rs->sys_freq);
-+	spin_lock_irqsave(&rs->lock, flags);
-+
-+	device_reset(&pdev->dev);
-+
-+	mt7621_spi_reset(rs, 0);
-+
-+	return spi_register_master(master);
-+}
-+
-+static int mt7621_spi_remove(struct platform_device *pdev)
-+{
-+	struct spi_master *master;
-+	struct mt7621_spi *rs;
-+
-+	master = dev_get_drvdata(&pdev->dev);
-+	rs = spi_master_get_devdata(master);
-+
-+	clk_disable(rs->clk);
-+	spi_unregister_master(master);
-+
-+	return 0;
-+}
-+
-+MODULE_ALIAS("platform:" DRIVER_NAME);
-+
-+static struct platform_driver mt7621_spi_driver = {
++static struct platform_driver mediatek_gpio_driver = {
++	.probe = mediatek_gpio_probe,
 +	.driver = {
-+		.name = DRIVER_NAME,
++		.name = "mt7621_gpio",
 +		.owner = THIS_MODULE,
-+		.of_match_table = mt7621_spi_match,
++		.of_match_table = mediatek_gpio_match,
 +	},
-+	.probe = mt7621_spi_probe,
-+	.remove = mt7621_spi_remove,
 +};
 +
-+module_platform_driver(mt7621_spi_driver);
++static int __init
++mediatek_gpio_init(void)
++{
++	return platform_driver_register(&mediatek_gpio_driver);
++}
 +
-+MODULE_DESCRIPTION("MT7621 SPI driver");
-+MODULE_AUTHOR("Felix Fietkau <nbd@nbd.name>");
-+MODULE_LICENSE("GPL");
++subsys_initcall(mediatek_gpio_init);
