@@ -1,97 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933057AbeCNA7t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 20:59:49 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57350 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932718AbeCNA7r (ORCPT
+        id S932958AbeCNBAz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 21:00:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35126 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932634AbeCNBAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 20:59:47 -0400
-X-Google-Smtp-Source: AG47ELtjrVPnVbN9BHZ2/pRWbsfcqUg5LmrFXr7+QUY9L5HluNUEZqldl2bTH6njyzAsto7TVKJr0KR7hSk/LnfeBOo=
+        Tue, 13 Mar 2018 21:00:53 -0400
+References: <20180306102303.9063-1-takahiro.akashi@linaro.org> <20180306102303.9063-3-takahiro.akashi@linaro.org> <20180308011303.GB2600@dhcp-128-65.nay.redhat.com>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>, vgoyal@redhat.com,
+        bhe@redhat.com, mpe@ellerman.id.au, prudo@linux.vnet.ibm.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] kexec_file,x86,powerpc: factor out kexec_file_ops functions
+In-reply-to: <20180308011303.GB2600@dhcp-128-65.nay.redhat.com>
+Date: Tue, 13 Mar 2018 22:00:39 -0300
 MIME-Version: 1.0
-In-Reply-To: <20180313142412.d373318b81164c4cb4b864b3@linux-foundation.org>
-References: <20180309220807.24961-1-pasha.tatashin@oracle.com>
- <20180309220807.24961-2-pasha.tatashin@oracle.com> <20180312130410.e2fce8e5e38bc2086c7fd924@linux-foundation.org>
- <20180313160430.hbjnyiazadt3jwa6@xakep.localdomain> <20180313115549.7badec1c6b85eb5a1cf21eb6@linux-foundation.org>
- <20180313194546.k62tni4g4gnds2nx@xakep.localdomain> <20180313131156.f156abe1822a79ec01c4800a@linux-foundation.org>
- <ff16234e-eb45-ca99-bfec-6d33967e9c8f@oracle.com> <20180313142412.d373318b81164c4cb4b864b3@linux-foundation.org>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Tue, 13 Mar 2018 20:59:04 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZb4ZCxhENGCwuxpUYe6TfiDFbMxsrS8eCfiU_=thOJKg@mail.gmail.com>
-Message-ID: <CAGM2reZb4ZCxhENGCwuxpUYe6TfiDFbMxsrS8eCfiU_=thOJKg@mail.gmail.com>
-Subject: Re: [v5 1/2] mm: disable interrupts while initializing deferred pages
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803140007
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18031401-0020-0000-0000-00000D9659A7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008668; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002682; UDB=6.00510218; IPR=6.00782011;
+ MB=3.00020017; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 01:00:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031401-0021-0000-0000-0000607BF6E9
+Message-Id: <87zi3b8o94.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140008
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2E0xsFR012991
 
-> hm, maybe.  But I'm not sure that touch_nmi_watchdog() will hold off a
-> soft lockup warning.  Maybe it will.
 
-It should:
+Dave Young <dyoung@redhat.com> writes:
 
-124static inline void touch_nmi_watchdog(void)
-125{
-126 arch_touch_nmi_watchdog();
-127 touch_softlockup_watchdog();
-128}
-
+> On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
+>> As arch_kexec_kernel_image_{probe,load}(),
+>> arch_kimage_file_post_load_cleanup() and arch_kexec_kernel_verify_sig()
+>> are almost duplicated among architectures, they can be commonalized with
+>> an architecture-defined kexec_file_ops array. So let's factor them out.
+>> 
+>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+>> ---
+>>  arch/powerpc/include/asm/kexec.h            |  2 +-
+>>  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
+>>  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++-----------------
+>>  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
+>>  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
+>>  arch/x86/kernel/machine_kexec_64.c          | 45 +---------------------
+>>  include/linux/kexec.h                       | 13 +++----
+>>  kernel/kexec_file.c                         | 60 +++++++++++++++++++++++++++--
+>>  8 files changed, 71 insertions(+), 94 deletions(-)
+>> 
 >
-> And please let's get the above thoughts into the changlog.
+> For this patch it also needs some review from powerpc people. 
 
-OK
+FWIW:
 
->
->> >
->> > I'm not sure what to suggest, really.  Your changelog isn't the best:
->> > "Vlastimil Babka reported about a window issue during which when
->> > deferred pages are initialized, and the current version of on-demand
->> > initialization is finished, allocations may fail".  Well...  where is
->> > ths mysterious window?  Without such detail it's hard for others to
->> > suggest alternative approaches.
->>
->> Here is hopefully a better description of the problem:
->>
->> Currently, during boot we preinitialize some number of struct pages to satisfy all boot allocations. Even if these allocations happen when we initialize the reset of deferred pages in page_alloc_init_late(). The problem is that we do not know how much kernel will need, and it also depends on various options.
->>
->> So, with this work, we are changing this behavior to initialize struct pages on-demand, only when allocations happen.
->>
->> During boot, when we try to allocate memory, the on-demand struct page initialization code takes care of it. But, once the deferred pages are initializing in:
->>
->> page_alloc_init_late()
->>    for_each_node_state(nid, N_MEMORY)
->>       kthread_run(deferred_init_memmap())
->>
->> We cannot use on-demand initialization, as these threads resize pgdat.
->>
->> This whole thing is to take care of this time.
->>
->> My first version of on-demand deferred page initialization would simply fail to allocate memory during this period of time. But, this new version waits for threads to finish initializing deferred memory, and successfully perform the allocation.
->>
->> Because interrupt handler would wait for pgdat resize lock.
->
-> OK, thanks.  Please also add to changelog.
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-OK, I will send an updated patch, with changelog changes.
+Also, tested on a ppc64le KVM guest:
+
+Tested-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
