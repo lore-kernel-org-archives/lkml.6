@@ -1,143 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeCNTGW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:06:22 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:40325 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751420AbeCNTGU (ORCPT
+        id S1751757AbeCNTHw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:07:52 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:52820 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751379AbeCNTHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:06:20 -0400
-X-Google-Smtp-Source: AG47ELsi8Hkvkdy/qk+ZoCXJFnMrM2cVDY+QwWNeZZDG/OLd3RpGW/McLN3yHloQZPX7rqcoUIjesw==
-Date: Wed, 14 Mar 2018 15:06:17 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-cc: linux-kbuild@vger.kernel.org, Jarod Wilson <jarod@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] kbuild: link vmlinux just once for
- CONFIG_TRIM_UNUSED_KSYMS
-In-Reply-To: <1521045861-22418-8-git-send-email-yamada.masahiro@socionext.com>
-Message-ID: <nycvar.YSQ.7.76.1803141448330.28583@knanqh.ubzr>
-References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com> <1521045861-22418-8-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Wed, 14 Mar 2018 15:07:50 -0400
+Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
+ <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
+ <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
+ <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
+ <5b3df9d5-3e65-1114-4b51-9dcc329cbc31@theobroma-systems.com>
+ <b5bf52e2-0843-a2b3-b039-c39fb9c634e3@grandegger.com>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <1bd41545-facb-9314-005b-4e742c4c61da@theobroma-systems.com>
+Date: Wed, 14 Mar 2018 20:07:46 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <b5bf52e2-0843-a2b3-b039-c39fb9c634e3@grandegger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+On 14.03.18 11:04, Wolfgang Grandegger wrote:
+>>>  (000.000443)  can0  20000034   [8]  00 0C 00 00 00 00 78 00   ERRORFRAME
+>>>     controller-problem{rx-error-warning,tx-error-warning}
+>>>     transceiver-status
+>>>     no-acknowledgement-on-tx
+>>>     error-counter-tx-rx{{120}{0}}
+>>>  (000.000444)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
+>>>     controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive} 
+> 
+> Just,
+> 
+>        controller-problem{rx-error-passive,tx-error-passive} 
+>[...]
+> 
+> Back to error active is missing!?
 
-> If CONFIG_TRIM_UNUSED_KSYMS is enabled and the kernel is built from
-> a pristine state, the vmlinux is linked twice.
-> 
-> [1] A user runs "make"
-> 
-> [2] First build with empty autoksyms.h
-> 
-> [3] adjust_autoksyms.sh updates autoksyms.h and recurses "make vmlinux"
-> 
->   --------(begin sub-make)--------
->   [4] Second build with new autoksyms.h
-> 
->   [5] link-vmlinux.sh is invoked because "vmlinux" is missing
->   ---------(end sub-make)---------
-> 
-> [6] link-vmlinux.sh is invoked again despite "vmlinux" is up-to-date.
-> 
-> The reason of [6] is probably because Make already decided to update
-> "vmlinux" at the time of [2] because "vmlinux" was missing when Make
-> generated the dependency list.
+That was indeed missing. We have fixed the missing back-to-error-active 
+in our firmware.
 
-But the dependency list for vmlinux contains FORCE so the target is 
-always remade in (2) anyway. The decision to actually invoke 
-link-vmlinux.sh comes from "if_changed". Why is $(call if_changed,...) 
-in (6) not noticing that vmlinux is up to date?
+Also, we no longer send the controller status in every error frame, but 
+only on state changes (see below) which seems to be how other drivers 
+are handling things.
 
-> 
-> link-vmlinus.sh is costly, so it is better to not run it when unneeded.
-> Split CONFIG_TRIM_UNUSED_KSYMS handling to a dedicated target.
-> 
-> The reason of commit 2441e78b1919 ("krbuild: better abstract vmlinux
-> sequential prerequisites") was to cater to CONFIG_BUILD_DOCSRC, but
-> it was later removed by commit 184892925118 ("samples: move blackfin
-> gptimers-example from Documentation").
-> 
-> I also changed adjust_autoksyms.sh to simply exit with 1 or 0 to make
-> it look straightforward.
+Thanks,
+Jakob
 
-That is wrong. If the script fails for some reason (it runs with -e set) 
-then this will trigger an endless recursive make instead of failing the 
-build.
+*** test output ***
 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  Makefile                    | 28 ++++++++++++----------------
->  scripts/adjust_autoksyms.sh |  3 +--
->  2 files changed, 13 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 1dab647..0a7bab6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -987,21 +987,11 @@ export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Doc
->  
->  vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
->  
-> -# Include targets which we want to execute sequentially if the rest of the
-> -# kernel build went well. If CONFIG_TRIM_UNUSED_KSYMS is set, this might be
-> -# evaluated more than once.
-> -PHONY += vmlinux_prereq
-> -vmlinux_prereq: $(vmlinux-deps) FORCE
-> -ifdef CONFIG_HEADERS_CHECK
-> -	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
-> -endif
-> -ifdef CONFIG_GDB_SCRIPTS
-> -	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
-> -endif
-> -ifdef CONFIG_TRIM_UNUSED_KSYMS
-> -	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
-> -	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
-> -endif
-> +# Recurse until adjust_autoksyms.sh is satisfied
-> +PHONY += autoksyms_recursive
-> +autoksyms_recursive: $(vmlinux-deps)
-> +	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh || \
-> +	$(MAKE) -f $(srctree)/Makefile autoksyms_recursive
->  
->  # For the kernel to actually contain only the needed exported symbols,
->  # we have to build modules as well to determine what those symbols are.
-> @@ -1023,7 +1013,13 @@ cmd_link-vmlinux =                                                 \
->  	$(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
->  	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
->  
-> -vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
-> +vmlinux: scripts/link-vmlinux.sh autoksyms_recursive $(vmlinux-deps) FORCE
-> +ifdef CONFIG_HEADERS_CHECK
-> +	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
-> +endif
-> +ifdef CONFIG_GDB_SCRIPTS
-> +	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
-> +endif
->  	+$(call if_changed,link-vmlinux)
->  
->  # Build samples along the rest of the kernel
-> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
-> index 7bb3618..1377cf8 100755
-> --- a/scripts/adjust_autoksyms.sh
-> +++ b/scripts/adjust_autoksyms.sh
-> @@ -95,8 +95,7 @@ if [ $changed -gt 0 ]; then
->  	info "KSYMS" "symbols: before=$old, after=$new, changed=$changed"
->  	info "UPD" "$cur_ksyms_file"
->  	mv -f "$new_ksyms_file" "$cur_ksyms_file"
-> -	# Then trigger a rebuild of affected source files
-> -	exec $@
-> +	exit 1
->  else
->  	rm -f "$new_ksyms_file"
->  fi
-> -- 
-> 2.7.4
-> 
-> 
+Disconnect cable, send one frame
+
+> root@rk3399-q7:~# candump -td -e any,0:0,#FFFFFFFF | head -n 100
+>  (000.000000)  can0  6E7   [2]  7A F9
+>  (000.000558)  can0  20000030   [8]  00 00 00 00 00 00 08 00   ERRORFRAME
+> 	transceiver-status
+> 	no-acknowledgement-on-tx
+> 	error-counter-tx-rx{{8}{0}}
+[...]
+>  (000.000567)  can0  20000034   [8]  00 0C 00 00 00 00 60 00   ERRORFRAME
+> 	controller-problem{rx-error-warning,tx-error-warning}
+> 	transceiver-status
+> 	no-acknowledgement-on-tx
+> 	error-counter-tx-rx{{96}{0}}
+[...]
+>  (000.000527)  can0  20000034   [8]  00 30 00 00 00 00 80 00   ERRORFRAME
+> 	controller-problem{rx-error-passive,tx-error-passive}
+> 	transceiver-status
+> 	no-acknowledgement-on-tx
+> 	error-counter-tx-rx{{128}{0}}
+[...]
+
+Reconnect cable
+
+>  (000.000687)  can1  6E7   [2]  7A F9
+>  (000.000015)  can0  20000004   [8]  00 0C 00 00 00 00 7F 00   ERRORFRAME
+> 	controller-problem{rx-error-warning,tx-error-warning}
+> 	error-counter-tx-rx{{127}{0}}
+
+Send more frames
+
+>  (046.485245)  can0  61B   [2]  E2 D8
+>  (000.000621)  can1  61B   [2]  E2 D8
+[...]
+>  (000.199224)  can0  3E6   [0]
+>  (000.000477)  can1  3E6   [0]
+>  (000.000044)  can0  20000004   [8]  00 40 00 00 00 00 5F 00   ERRORFRAME
+> 	controller-problem{back-to-error-active}
+> 	error-counter-tx-rx{{95}{0}}
