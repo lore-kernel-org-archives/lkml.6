@@ -1,85 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932222AbeCNPlQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:41:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33543 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeCNPlO (ORCPT
+        id S1752034AbeCNPlX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:41:23 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:36433 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752146AbeCNPlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:41:14 -0400
-Date: Wed, 14 Mar 2018 08:40:01 -0700
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-af1d830bf32b27b387b97c8b29dc09e306a9ff7f@git.kernel.org>
-Cc: fengguang.wu@intel.com, jbaron@akamai.com,
-        linux-kernel@vger.kernel.org, davem@davemloft.net, bp@suse.de,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        jpoimboe@redhat.com, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, davem@davemloft.net, jbaron@akamai.com,
-        fengguang.wu@intel.com, peterz@infradead.org, bp@suse.de,
-        tglx@linutronix.de, hpa@zytor.com, jpoimboe@redhat.com,
-        mingo@kernel.org
-In-Reply-To: <c966fed42be6611254a62d46579ec7416548d572.1521041026.git.jpoimboe@redhat.com>
-References: <c966fed42be6611254a62d46579ec7416548d572.1521041026.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] jump_label: Fix sparc64 warning
-Git-Commit-ID: af1d830bf32b27b387b97c8b29dc09e306a9ff7f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 14 Mar 2018 11:41:18 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH 14/47] pcmcia: remove blackfin driver
+Date: Wed, 14 Mar 2018 16:35:27 +0100
+Message-Id: <20180314153603.3127932-15-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:kiOXzsVB0Q5UajRvBcPl2POyrEx+twR1Bnhl2zqNyCfc4VOtHF/
+ Ms++48/eXDG7dYA0o4rtk/54XyJDzKB/1p9bofK4m2bijYEZqH3pjrs5kjyC/VbRZgVHyDo
+ pNKe2xwNKePTeps61ZdIhbKGZKYEiL9ly5u+uMW6p8C/qr97X/BpzT7Syy9RmkuPnb/hr6Q
+ QHlhNMjPhkrIXEkU+78Ww==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:a52uj5VdzqA=:DgFIgzTW14n2JyaJ0OOV11
+ 7tQ4mcupALUd0f3MDNMQaICPDgmdYgFJirtKcvNeW9NiCjy/0aXycP8MlgHfvIc7AmXvAg7Ga
+ 0WIVWKMhkHheaY3q2F5oxISKlz12a3Gu+yOWUqDtYrSFN5op0V9aDigty6LaRMAcQ2aarniXI
+ vENR4s/iO6Xe0GF5ou1FOW6BUKnMH/Mh/wDB24JlBywsA/vEPgLaUWe1i7vbtsPVl8Wn3py5Q
+ LEaBOWMcx97d5E8lQTjGyPhrrsB5bWtJ65BwhHhgZwcev+ikTBwdSVpJmYgPaFP9MADgV03m1
+ F85LOTXHwm7PrJWt5coI6EiJ2PeaLr5B3CM25L8XIee9hzQgliaZb0Pk0gqR3E4dk2kpxPEox
+ CDHrMNXiL4jE7cfgYUt0uc4W1/dcSBVo87cQG36KyhUxc3GwnBNKkdfnZveye341q1Ux1V6VS
+ KtIYjWYYxyjkvBu5OUg/8gRstHyTkQFeWjGiBPG47Rtnmlm6TsW/F58gUGdoJAPeggZ1e6God
+ v9KcIAQT9lgJEGt71zK5qV+AC8nWPl6B0S9Tla9Qu63qpcJ/AwDHOcGpHDmxytyFsRpyYDDnp
+ 6QpQHhZLdtYo2FiwSDYsXnFMC1fwtlkXaFYWqeqUzkKbvvlnuXBTnEtKGGKNHVTvLpCskqaqK
+ FcYRyV1ys5aBIKWhlsBpMYDzbtWuOA9nZCzHOS4NKzAcqcatXe5Yj6P9doXYVhhIOHAUjtktD
+ w+/ojnJbV5wMlIj5IvlBvkbc/zJtvMPkF0Xh3Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  af1d830bf32b27b387b97c8b29dc09e306a9ff7f
-Gitweb:     https://git.kernel.org/tip/af1d830bf32b27b387b97c8b29dc09e306a9ff7f
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Wed, 14 Mar 2018 10:24:20 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 14 Mar 2018 16:35:26 +0100
+The blackfin architecture is getting removed, so this one is no
+longer needed either.
 
-jump_label: Fix sparc64 warning
-
-The kbuild test robot reported the following warning on sparc64:
-
-  kernel/jump_label.c: In function '__jump_label_update':
-  kernel/jump_label.c:376:51: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-       WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
-
-On sparc64, the jump_label entry->code field is of type u32, but
-pointers are 64-bit.  Silence the warning by casting entry->code to an
-unsigned long before casting it to a pointer.  This is also what the
-sparc jump label code does.
-
-Fixes: dc1dd184c2f0 ("jump_label: Warn on failed jump_label patching attempt")
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: "David S . Miller" <davem@davemloft.net>
-Link: https://lkml.kernel.org/r/c966fed42be6611254a62d46579ec7416548d572.1521041026.git.jpoimboe@redhat.com
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/jump_label.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pcmcia/Kconfig          |   7 -
+ drivers/pcmcia/Makefile         |   1 -
+ drivers/pcmcia/bfin_cf_pcmcia.c | 316 ----------------------------------------
+ 3 files changed, 324 deletions(-)
+ delete mode 100644 drivers/pcmcia/bfin_cf_pcmcia.c
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 52a0a7af8640..e7214093dcd1 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -373,7 +373,8 @@ static void __jump_label_update(struct static_key *key,
- 			if (kernel_text_address(entry->code))
- 				arch_jump_label_transform(entry, jump_label_type(entry));
- 			else
--				WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
-+				WARN_ONCE(1, "can't patch jump_label at %pS",
-+					  (void *)(unsigned long)entry->code);
- 		}
- 	}
- }
+diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
+index 49540d13dea4..cbbe4a285b48 100644
+--- a/drivers/pcmcia/Kconfig
++++ b/drivers/pcmcia/Kconfig
+@@ -247,13 +247,6 @@ config OMAP_CF
+ 	  Say Y here to support the CompactFlash controller on OMAP.
+ 	  Note that this doesn't support "True IDE" mode.
+ 
+-config BFIN_CFPCMCIA
+-	tristate "Blackfin CompactFlash PCMCIA Driver"
+-	depends on PCMCIA && BLACKFIN
+-	help
+-	  Say Y here to support the CompactFlash PCMCIA driver for Blackfin.
+-
+-
+ config AT91_CF
+ 	tristate "AT91 CompactFlash Controller"
+ 	depends on PCI
+diff --git a/drivers/pcmcia/Makefile b/drivers/pcmcia/Makefile
+index ca361266d055..f1f89ddb1bfd 100644
+--- a/drivers/pcmcia/Makefile
++++ b/drivers/pcmcia/Makefile
+@@ -32,7 +32,6 @@ obj-$(CONFIG_PCMCIA_BCM63XX)			+= bcm63xx_pcmcia.o
+ obj-$(CONFIG_PCMCIA_VRC4171)			+= vrc4171_card.o
+ obj-$(CONFIG_PCMCIA_VRC4173)			+= vrc4173_cardu.o
+ obj-$(CONFIG_OMAP_CF)				+= omap_cf.o
+-obj-$(CONFIG_BFIN_CFPCMCIA)			+= bfin_cf_pcmcia.o
+ obj-$(CONFIG_AT91_CF)				+= at91_cf.o
+ obj-$(CONFIG_ELECTRA_CF)			+= electra_cf.o
+ obj-$(CONFIG_PCMCIA_ALCHEMY_DEVBOARD)		+= db1xxx_ss.o
+diff --git a/drivers/pcmcia/bfin_cf_pcmcia.c b/drivers/pcmcia/bfin_cf_pcmcia.c
+deleted file mode 100644
+index 00a296d431ba..000000000000
+-- 
+2.9.0
