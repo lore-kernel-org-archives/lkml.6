@@ -1,58 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752244AbeCNSZz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:25:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55042 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751727AbeCNSZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:25:51 -0400
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 2/3] libnvdimm, pmem: use module_nd_driver
-Date: Wed, 14 Mar 2018 19:25:07 +0100
-Message-Id: <20180314182508.10351-3-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180314182508.10351-1-jthumshirn@suse.de>
-References: <20180314182508.10351-1-jthumshirn@suse.de>
+        id S1752373AbeCNS0P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:26:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39874 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752326AbeCNS0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:26:09 -0400
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+Subject: [PATCH v3 00/14] s390: vfio-ap: guest dedicated crypto adapters
+Date: Wed, 14 Mar 2018 14:25:40 -0400
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031418-0028-0000-0000-0000094D4E20
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003025; UDB=6.00510424; IPR=6.00782355;
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:26:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031418-0029-0000-0000-000039F79277
+Message-Id: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140201
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use module_nd_driver() instead of having module_init() and
-module_exit() callbacks which just call nd_driver_register() and
-nd_driver_unregister().
+On s390, we have cryptographic coprocessor cards, which are modeled on
+Linux as devices on the AP bus. Each card can be partitioned into domains
+which can be thought of as a set of hardware registers for processing 
+crypto commands. Crypto commands are sent to a specific domain within a
+card is via a queue which is identified as a (card,domain) tuple. We model 
+this something like the following (assuming we have access to cards 3 and 
+4 and domains 1 and 2):
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- drivers/nvdimm/pmem.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+AP -> card3 -> queue (3,1)
+            -> queue (3,2)
+   -> card4 -> queue (4,1)
+            -> queue (4,2)
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 06f8dcc52ca6..d8ab882be790 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -547,17 +547,7 @@ static struct nd_device_driver nd_pmem_driver = {
- 	.type = ND_DRIVER_NAMESPACE_IO | ND_DRIVER_NAMESPACE_PMEM,
- };
- 
--static int __init pmem_init(void)
--{
--	return nd_driver_register(&nd_pmem_driver);
--}
--module_init(pmem_init);
--
--static void pmem_exit(void)
--{
--	driver_unregister(&nd_pmem_driver.drv);
--}
--module_exit(pmem_exit);
-+module_nd_driver(nd_pmem_driver);
- 
- MODULE_AUTHOR("Ross Zwisler <ross.zwisler@linux.intel.com>");
- MODULE_LICENSE("GPL v2");
--- 
-2.13.6
+If we want to virtualize this, we can use a feature provided by the
+hardware. We basically attach a satellite control block to our main
+hardware virtualization control block and the hardware takes care of
+most of the rest.
+
+For this control block, we don't specify explicit tuples, but a list of
+cards and a list of domains. The guest will get access to the cross
+product.
+
+Because of this, we need to take care that the lists provided to
+different guests don't overlap; i.e., we need to enforce sane
+configurations. Otherwise, one guest may get access to things like
+secret keys for another guest.
+
+The idea of this patch set is to introduce a new device, the matrix
+device. This matrix device hangs off a different root and acts as the
+parent node for mdev devices.
+
+If you now want to give the tuples (4,1) and (4,2), you need to do the
+following:
+
+- Unbind the (4,1) and (4,2) tuples from their ap bus driver.
+- Bind the (4,1) and (4,2) tuples to the vfio_ap driver.
+- Create the mediated device.
+- Assign card 4 and domains 1 and 2 to the mediated device
+
+QEMU will now simply consume the mediated device and things should work.
+
+For a complete description of the architecture and concepts underlying the 
+design, see the Documentation/s390/vfio-ap.txt file included with this
+patch set.
+
+v2 => v3 Change log:
+===================
+* Set APIE in VCPU setup function
+* Renamed patch 13/15:
+    KVM: s390: Configure the guest's CRYCB
+    KVM: s390: Configure the guest's AP devices
+* Fixed problem with building arch/s390/kvm/kvm-ap.c when CONFIG_ZCRYPT
+  not selected 
+* Removed patch introducing VSIE support for AP pending further 
+  investigation
+* Initialized AP maximum mask sizes - i.e., APM, AQM and ADM - from info
+  returned from PQAP(QCI) function
+* Introduced a new device attribute to the KVM_S390_VM_CRYPTO attribute
+  group for setting a flag via the KVM_SET_DEVICE_ATTR ioctl to indicate
+  whether ECA_APIE should be set or not. The flag is used in the 
+  kvm_s390_vcpu_crypto_setup() function to set ECA_APIE in the SIE block.
+* Misc. formatting etc.
+
+Tony Krowiak (14):
+  KVM: s390: refactor crypto initialization
+  s390: zcrypt: externalize AP instructions available function
+  KVM: s390: CPU model support for AP virtualization
+  KVM: s390: device attribute to set AP interpretive execution
+  s390: vfio-ap: base implementation of VFIO AP device driver
+  s390: vfio-ap: register matrix device with VFIO mdev framework
+  KVM: s390: interfaces to configure/deconfigure guest's AP matrix
+  s390: vfio-ap: sysfs interfaces to configure adapters
+  s390: vfio-ap: sysfs interfaces to configure domains
+  s390: vfio-ap: sysfs interfaces to configure control domains
+  s390: vfio-ap: sysfs interface to view matrix mdev matrix
+  KVM: s390: configure the guest's AP devices
+  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+  s390: doc: detailed specifications for AP virtualization
+
+ Documentation/s390/vfio-ap.txt        |  560 +++++++++++++++++++++
+ MAINTAINERS                           |   14 +
+ arch/s390/Kconfig                     |   11 +
+ arch/s390/include/asm/ap.h            |    7 +
+ arch/s390/include/asm/kvm-ap.h        |   57 +++
+ arch/s390/include/asm/kvm_host.h      |    3 +
+ arch/s390/include/uapi/asm/kvm.h      |    2 +
+ arch/s390/kvm/Kconfig                 |    1 +
+ arch/s390/kvm/Makefile                |    2 +-
+ arch/s390/kvm/kvm-ap.c                |  330 +++++++++++++
+ arch/s390/kvm/kvm-s390.c              |   84 ++--
+ arch/s390/tools/gen_facilities.c      |    2 +
+ drivers/s390/crypto/Makefile          |    4 +
+ drivers/s390/crypto/ap_bus.c          |    6 +
+ drivers/s390/crypto/vfio_ap_drv.c     |  144 ++++++
+ drivers/s390/crypto/vfio_ap_ops.c     |  872 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |   47 ++
+ include/uapi/linux/vfio.h             |    2 +
+ 18 files changed, 2093 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
+ create mode 100644 arch/s390/include/asm/kvm-ap.h
+ create mode 100644 arch/s390/kvm/kvm-ap.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
