@@ -1,76 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeCNTol (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:44:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39480 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750779AbeCNToj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:44:39 -0400
-Date: Wed, 14 Mar 2018 14:44:36 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] livepatch: Initialize shadow variables by init
- function safely
-Message-ID: <20180314194436.fl5xro6aixroqzxk@treble>
-References: <20180313155448.1998-1-pmladek@suse.com>
- <20180313155448.1998-2-pmladek@suse.com>
- <20180314192702.h6fvqoo7myt426ww@redhat.com>
+        id S1751571AbeCNTpZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:45:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNTpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 15:45:24 -0400
+Date: Wed, 14 Mar 2018 12:45:21 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>, Mario.Limonciello@dell.com,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [GIT PULL] platform-drivers-x86 for 4.16-7
+Message-ID: <20180314194521.GA7096@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180314192702.h6fvqoo7myt426ww@redhat.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 03:27:02PM -0400, Joe Lawrence wrote:
-> On Tue, Mar 13, 2018 at 04:54:47PM +0100, Petr Mladek wrote:
-> > The existing API allows to pass a sample data to initialize the shadow
-> > data. It works well when the data are position independent. But it fails
-> > miserably when we need to set a pointer to the shadow structure itself.
-> > 
-> > Unfortunately, we might need to initialize the pointer surprisingly
-> > often because of struct list_head. It is even worse because the list
-> > might be hidden in other common structures, for example, struct mutex,
-> > struct wait_queue_head.
-> > 
-> > This patch makes the API more safe. A custom init function and data
-> > are passed to klp_shadow_*alloc() functions instead of the sample data.
-> 
-> Yup, this looks kinda familiar, I remember tinkering with the same idea
-> last year [1] before settling on the simpler API.
-> 
-> [1] https://github.com/torvalds/linux/compare/master...joe-lawrence:shadow_variables_v2_c
-> 
-> > Note that the init_data are not longer a template for the shadow->data.
-> > It might point to any data that might be necessary when the init
-> > function is called.
-> 
-> I'm not opposed to changing the API, but I was wondering if you had
-> thought about expanding it as an alternative? 
-> 
-> When working on this last summer, I remember holding onto to some less
-> than intuitive naming conventions so that I could support a basic API
-> and an extended API with bells and whistles like this patchset
-> implements.  It didn't seem too difficult to layer the basic API ontop
-> of one like this (see [1] for example), so maybe that's an option to
-> keep basic shadow variable usage a little simpler.  /two cents
+Hi Linus,
 
-I like Petr's new API.  It's not a big deal to just pass a couple of
-NULLs if you don't need the callback.
+This addresses the Dell boot failure reported by Dominik as well as the
+missing ACPI_WMI related Kconfig dependency.
 
-And I prefer fewer functions anyway -- maybe it's my functionitis
-allergies acting up again.
+As discussed, if any issues are reported against related dell drivers,
+I will immediately prepare the revert back to:
 
-> Perhaps shadow variables are another candidate for some kind of
-> kselftest?
+94f77cb platform/x86: dell-smbios: Rename dell-smbios source to dell-smbios-base
 
-Indeed!
+Thanks,
+
+Darren Hart
+VMware Open Source Technology Center
+
+The following changes since commit 32d7b19bad9695c4c9026b0ceb3a384561ddee70:
+
+  platform/x86: dell-smbios: Resolve dependency error on DCDBAS (2018-03-09 09:35:46 -0800)
+
+are available in the git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.16-7
+
+for you to fetch changes up to 49368c13217f3b4d2e2d168e88b16c74910ad0ae:
+
+  platform/x86: Fix dell driver init order (2018-03-14 11:05:53 -0700)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v4.16-7
+
+DELL_SMBIOS conditionally depends on ACPI_WMI in the same way it depends
+on DCDBAS, update the Kconfig accordingly. Correct the driver init order
+to ensure that the driver dependencies are met, avoiding race conditions
+resulting in boot failure on certain systems when the drivers are
+built-in.
+
+The following is an automated git shortlog grouped by driver:
+
+dell-smbios and related drivers:
+ - Fix dell driver init order
+ - Resolve dependency error on ACPI_WMI
+
+----------------------------------------------------------------
+Darren Hart (1):
+      platform/x86: dell-smbios: Resolve dependency error on ACPI_WMI
+
+Darren Hart (VMware) (1):
+      platform/x86: Fix dell driver init order
+
+ drivers/firmware/dcdbas.c               | 2 +-
+ drivers/platform/x86/Kconfig            | 7 ++++---
+ drivers/platform/x86/dell-smbios-base.c | 2 +-
+ drivers/platform/x86/dell-wmi.c         | 2 +-
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
 -- 
-Josh
+Darren Hart
+VMware Open Source Technology Center
