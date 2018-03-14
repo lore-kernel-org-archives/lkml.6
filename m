@@ -1,239 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeCNJvn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:51:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751379AbeCNJvm (ORCPT
+        id S1751440AbeCNJ5r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:57:47 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:41166 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750879AbeCNJ5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:51:42 -0400
-Date: Wed, 14 Mar 2018 10:51:32 +0100
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
-In-Reply-To: <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-        <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
-        <20180309152556.0ccf3cb1@ThinkPad>
-        <20180312074016.GA1854@dhcp-128-65.nay.redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Wed, 14 Mar 2018 05:57:46 -0400
+Subject: Re: rx_packets/bytes stats for error frames
+To: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <b4f644dc-265e-01e0-acaa-88cc8f3f69f5@pengutronix.de>
+ <6c1b7482-2cde-40e3-eff4-e4b94794a63e@theobroma-systems.com>
+ <4c957d42-2b03-9416-75a4-e331f2ded8cf@pengutronix.de>
+ <e468bcfa-db2e-7fec-0cad-229561f87cdd@grandegger.com>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <ed46e696-9685-77ec-8df5-03db265d0f93@theobroma-systems.com>
+Date: Wed, 14 Mar 2018 10:57:43 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <e468bcfa-db2e-7fec-0cad-229561f87cdd@grandegger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031409-0020-0000-0000-000004044CDC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031409-0021-0000-0000-000042984F18
-Message-Id: <20180314105132.3d828b01@ThinkPad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140115
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
-
-do you have an idea about this? This problem is currently holding me back to
-send a v2 of the patch set.
-
-Thanks
-Philipp
-
-On Mon, 12 Mar 2018 15:40:16 +0800
-Dave Young <dyoung@redhat.com> wrote:
-
-> Hi Philipp,
-> On 03/09/18 at 03:25pm, Philipp Rudo wrote:
-> > Hi Dave,
-> > 
-> > On Fri, 9 Mar 2018 13:19:40 +0800
-> > Dave Young <dyoung@redhat.com> wrote:
-> >   
-> > > Hi Philipp,
-> > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:  
-> > > > 
-> > > > Hi everybody
-> > > > 
-> > > > following the discussion with Dave and AKASHI, here are the common code
-> > > > patches extracted from my recent patch set (Add kexec_file_load support to
-> > > > s390) [1]. The patches were extracted to allow upstream integration together
-> > > > with AKASHI's common code patches before the arch code gets adjusted to the
-> > > > new base.
-> > > > 
-> > > > The reason for this series is to prepare common code for adding
-> > > > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
-> > > > field during purgatory load. In detail this series contains:
-> > > > 
-> > > > Patch #1&2: Minor cleanups/fixes.
-> > > > 
-> > > > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> > > > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> > > > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> > > > depending on the section. With these patches the section address will be
-> > > > calculated verbosely and sh_offset will contain the offset of the section
-> > > > in the stripped purgatory binary (purgatory_buf).
-> > > > 
-> > > > Patch #10: Allows architectures to set the purgatory load address. This
-> > > > patch is important for s390 as the kernel and purgatory have to be loaded
-> > > > to fixed addresses. In current code this is impossible as the purgatory
-> > > > load is opaque to the architecture.
-> > > > 
-> > > > Patch #11: Moves x86 purgatories sha implementation to common lib/
-> > > > directory to allow reuse in other architectures.
-> > > > 
-> > > > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
-> > > > requested changes only affected s390 code). Please note that I had to touch
-> > > > arch code for x86 and power a little. In theory this should not change the
-> > > > behavior but I don't have a way to test it. Cross-compiling with
-> > > > defconfig [2] works fine for both.
-> > > > 
-> > > > Thanks
-> > > > Philipp
-> > > > 
-> > > > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
-> > > > [2] On x86 with the orc unwinder and stack validation turned off. objtool
-> > > >     SEGFAULTs on s390...
-> > > > 
-> > > > Philipp Rudo (11):
-> > > >   kexec_file: Silence compile warnings
-> > > >   kexec_file: Remove checks in kexec_purgatory_load
-> > > >   kexec_file: Make purgatory_info->ehdr const
-> > > >   kexec_file: Search symbols in read-only kexec_purgatory
-> > > >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
-> > > >   kexec_file: Split up __kexec_load_puragory
-> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
-> > > >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
-> > > >   kexec_file: Remove mis-use of sh_offset field
-> > > >   kexec_file: Allow archs to set purgatory load address
-> > > >   kexec_file: Move purgatories sha256 to common code
-> > > > 
-> > > >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
-> > > >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
-> > > >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
-> > > >  arch/x86/purgatory/Makefile                    |   3 +
-> > > >  arch/x86/purgatory/purgatory.c                 |   2 +-
-> > > >  include/linux/kexec.h                          |  38 +--
-> > > >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
-> > > >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
-> > > >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
-> > > >  9 files changed, 244 insertions(+), 271 deletions(-)
-> > > >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> > > >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > > > 
-> > > > -- 
-> > > > 2.13.5
-> > > >     
-> > > 
-> > > I did a test on x86, but it failed:
-> > > [   15.636489] kexec: Undefined symbol: memcpy
-> > > [   15.636496] kexec-bzImage64: Loading purgatory failed
-> > > [   33.603356] kexec: Undefined symbol: memcpy
-> > > [   33.603362] kexec-bzImage64: Loading purgatory failed
-> > > 
-> > > I think this relates to the sha256 splitting patch.  
-> > 
-> > I looked into this a little closer and i think i understood what happens. 
-> > 
-> > There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
-> > in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
-> > switching to linux/string.h there is no more definition for it. Leaving us with
-> > 
-> > $ readelf -s purgatory.ro
-> > [...]
-> >  45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
-> > [...]
-> > 
-> > To solve this problem I see two possibilities (example patches are at the end of
-> > the mail):
-> > 
-> > 1) Have arch dependent includes in lib/sha256.c
-> > 2) Add makefile magic so memcpy is defined
-> > 
-> > With both solutions the resulting purgatory.ro looks good. However both
-> > solutions aren't perfect. For example in 2) i had too mix the linux/string.h
-> > header with arch/x86/boot/string.c, because lib/string.c has too many
-> > dependencies and does not compile in the purgatory. On the other hand having
-> > arch dependent includes isn't that nice either ...
-> > 
-> > What's your opinion on this?  
+On 14.03.18 10:46, Wolfgang Grandegger wrote:
+>>> We do count them, as errors!
+>>>
+>>> This is what happens when you transmit a single CAN frame with nothing
+>>> connected: "TX errors" shoots up but "RX packets" stays zero.
+>>
+>> This is handled not consistent in the existing CAN drivers. In flexcan
+>> all and c_can (all but rx overflow) are counted as rx_packets and
+>> rx_bytes. (I haven't looked at the other drivers.)
+>>
+>> I tend to count the error frames as ordinary frames.
 > 
-> Looks like it is a mess, maybe the 1st one is better although it is also
-> ugly.  Ccing Ingo see if he has some idea about this. 
-> 
-> > 
-> > Thanks
-> > Philipp
-> > 
-> > -----
-> > Example solution 1
-> > 
-> > --- a/lib/sha256.c
-> > +++ b/lib/sha256.c
-> > @@ -17,9 +17,14 @@
-> >  
-> >  #include <linux/bitops.h>
-> >  #include <linux/sha256.h>
-> > -#include <linux/string.h>
-> >  #include <asm/byteorder.h>
-> >  
-> > +#ifdef CONFIG_X86
-> > +#include "../arch/x86/boot/string.h"
-> > +#else
-> > +#include <linux/string.h>
-> > +#endif /* CONFIG_X86 */
-> > +
-> >  static inline u32 Ch(u32 x, u32 y, u32 z)
-> >  {
-> >  	return z ^ (x & (y ^ z));
-> > 
-> > -----
-> > Example solution 2
-> > 
-> > --- a/arch/x86/purgatory/Makefile
-> > +++ b/arch/x86/purgatory/Makefile
-> > @@ -1,7 +1,8 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  OBJECT_FILES_NON_STANDARD := y
-> >  
-> > -purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string.o
-> > +purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o \
-> > +	string.o memcpy_$(BITS).o memset_$(BITS).o
-> >  
-> >  targets += $(purgatory-y)
-> >  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
-> > @@ -9,6 +10,15 @@ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
-> >  $(obj)/sha256.o: $(srctree)/lib/sha256.c
-> >  	$(call if_changed_rule,cc_o_c)
-> >  
-> > +$(obj)/string.o: $(srctree)/arch/x86/boot/string.c
-> > +	$(call if_changed_rule,cc_o_c)
-> > +
-> > +$(obj)/memset_$(BITS).o: $(srctree)/arch/x86/lib/memset_$(BITS).S
-> > +	$(call if_changed_rule,as_o_S)
-> > +
-> > +$(obj)/memcpy_$(BITS).o: $(srctree)/arch/x86/lib/memcpy_$(BITS).S
-> > +	$(call if_changed_rule,as_o_S)
-> > +
-> >  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
-> >  targets += purgatory.ro
-> >  
-> >   
-> 
-> Thanks
-> Dave
-> 
+> +1, I think we should count the packets and bytes delivered to the 
+> network layer.
+
+Documentation/ABI/testing/sysfs-class-net-statistics says:
+
+> What:		/sys/class/<iface>/statistics/rx_packets
+> Date:		April 2005
+> KernelVersion:	2.6.12
+> Contact:	netdev@vger.kernel.org
+> Description:
+> 		Indicates the total number of good packets received by this
+> 		network device.
+
+I considered error frames not "good packets", but I can change that for 
+v3, no problem.
+
+Best regards,
+Jakob
