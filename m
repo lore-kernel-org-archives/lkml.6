@@ -1,49 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeCNNzs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 09:55:48 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:40349 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeCNNzr (ORCPT
+        id S1751543AbeCNOCw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:02:52 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33068 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeCNOCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:55:47 -0400
-X-Google-Smtp-Source: AG47ELtbHffw/R1SqCwtLIfpA2Qf5UkZWO1uf8gzLpQ5iOmPxg6cQWB0f094Biah0qCqSoTDQBTpzg==
-Date: Wed, 14 Mar 2018 06:55:44 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, cl@linux.com, linux-mm@kvack.org,
+        Wed, 14 Mar 2018 10:02:51 -0400
+Date: Wed, 14 Mar 2018 10:02:44 -0400 (EDT)
+Message-Id: <20180314.100244.2217493270868265936.davem@davemloft.net>
+To: gustavo@embeddedor.com
+Cc: arnd@arndb.de, jianjian.wang1@gmail.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] percpu: Allow to kill tasks doing pcpu_alloc() and
- waiting for pcpu_balance_workfn()
-Message-ID: <20180314135544.GT2943022@devbig577.frc2.facebook.com>
-References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Subject: Re: [PATCH] pktgen: Fix memory leak in pktgen_if_write
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180314080727.GA17319@embeddedgus>
+References: <20180314080727.GA17319@embeddedgus>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 02:51:48PM +0300, Kirill Tkhai wrote:
-> In case of memory deficit and low percpu memory pages,
-> pcpu_balance_workfn() takes pcpu_alloc_mutex for a long
-> time (as it makes memory allocations itself and waits
-> for memory reclaim). If tasks doing pcpu_alloc() are
-> choosen by OOM killer, they can't exit, because they
-> are waiting for the mutex.
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Wed, 14 Mar 2018 03:07:27 -0500
+
+> _buf_ is an array and the one that must be freed is _tp_ instead.
 > 
-> The patch makes pcpu_alloc() to care about killing signal
-> and use mutex_lock_killable(), when it's allowed by GFP
-> flags. This guarantees, a task does not miss SIGKILL
-> from OOM killer.
-> 
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Fixes: a870a02cc963 ("pktgen: use dynamic allocation for debug print buffer")
+> Reported-by: Wang Jian <jianjian.wang1@gmail.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Applied to percpu/for-4.16-fixes.
-
-Thanks, Kirill.
-
--- 
-tejun
+Applied, thanks.
