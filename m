@@ -1,93 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeCNPuE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:50:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:60699 "EHLO
+        id S1752351AbeCNPuN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:50:13 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:40347 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbeCNPuA (ORCPT
+        with ESMTP id S1751999AbeCNPuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:50:00 -0400
+        Wed, 14 Mar 2018 11:50:10 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 32/47] mtd: maps: remove bfin-async-flash driver
-Date: Wed, 14 Mar 2018 16:35:45 +0100
-Message-Id: <20180314153603.3127932-33-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi@vger.kernel.org
+Subject: [PATCH 34/47] spi: remove blackfin related host drivers
+Date: Wed, 14 Mar 2018 16:35:47 +0100
+Message-Id: <20180314153603.3127932-35-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:nx6DFakSc7GudSOfd5C+berzrSxpjqbNR8y7CK1ejwku3oDO2tU
- +5XWveazy19J1auiBE5/eUMBVXvs9mnrkbBeLH76qdwVQIQlwNyVDcIMqThZv5XnUMhQapI
- yax5QYh5IYqnLAFOCSBj0iK+JMzMQSCUKzI+wHviwq6HGtRuMUZIucmVBir5PdINmjYM+Gb
- ON3Iq0NF47vgcXGVuEQHA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Kq6Xe20dBVE=:Nif9pH0rY6mxS+ryLlApjN
- WSVwVeP1ZcHXm4E5uOjhD30CBouT6mgM8+6pBaksc9afdDaQO6IbLDpewtrU3rA18PpUoNYm9
- kck/KwsvSmfvOeF56LDRvvOsBJFailJGWEKruJC2vjT34/ItUegfj2vp4ZdGAFu96UVonOtnD
- /zBQs7E2JGsbHi757AhGJh0rIF8KUX3k7bPwSLaHOe2Lu/OEtnmrg+Iz5oWykuz+PYY7PFmTJ
- pPPlMouEF4mG04tBgUxbv/09yhI+tW54lCYT1l74kTBGKPgIS6PyqWuFjuofOci3iDt4+dVLd
- ZJ3YQZzZp4g13T71MF1sUbp9lGRCWRec7+PXlVRXiqpHfHt0i/T/U4TRO0/lAVOFNWL2WmFaf
- pgrXodhvTwXLJdWx5/SuZAPyR8pUyypxUZcs7qCkzhfAI1oAX11OearlUOa+MClAgjcI0M3t/
- YHLiON6qyZLjY/BgO3Tp8dTrf82wbX81w2ADOBPhsSqMBEaoqv9UNJmRAZtD7b5ZkDb2sOAra
- o/Ux864GatJWVGTCJo59Cr+sGWjV+XloFf8CbaUJSUtl2gGkzGGyBZKobiWjRYhCgPpcCBi4G
- HAWR2BCMGesbI5K1aY3/v98q0raFKc8NeMCC9f03QJeabLdfXJkg6KzwoFh6zggxLqlXV5VIx
- 1o8tJeCMdN3xCkSE6LYLpbzRp01sOuk0An+p18eFS1ZxVeXkLTKNZe3KdMmFo0HWCR/SngKB6
- esgqQGdmxSo0TKc4EZjwrDClH8EVOYe0opyniQ==
+X-Provags-ID: V03:K0:m3xKmraVFuisT+aVbY3R0+WhiHVu8JPtN1BM+DphmXtw9yTyq11
+ Q3fmmROhFYUpBxMAhJWaRMygorG2FpivNJJNM0SwkV8I/4d12KsJf5IEZH5EKMz9HPa/zZJ
+ rCw92d9qBchYT+eY45x7HCdyaEWp4HeYZLL1DBC61Se2v12EwE3GvUwQrwMzI+9NNkVMtXB
+ i4Gl241o78etXNxMCMrMA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mPmNk/kLUKg=:J3SASw50Y2QR1jMLaBQy4t
+ KOjPnnymH3Wob0x3x3EuM9+aAdhx9Cqy3ZxFjgVfq4aPikijf0kzP1TOI9c1Sxg6EIiHJ2y2O
+ WAVLXHpOcQdCCYYokb84EoF4AJNbx/EucuWAI4FdQ8YlV9jjx5sOjk3oNDLSZK4b0Q7af6Srd
+ ohRZ2D9wsjRUNeG/Pi+AgTlT/4i5RIji5bI5JCIS70XeEh3lIETB5eEFXK6FyFRu7c7qfgLyA
+ GdeW4jcfDEcKuqHLF3m3Wzkst8eu7Hzq/YhNXm9obVxZEc3WS2np7qIVdZs7NeHBf9NeCBd50
+ 6o1AZGper2guMvlpk88B0UiCiHkQZ0sXO9rjC7UcRFRhfO2gSMcMUoJ5bf0rFgVIWIrD9bpS1
+ FmqH85x5C25Rr/vhVi7WZA3GTuqS/UdPw7gCNvQyKe4Qjaa5jXJbqqAJKYJbNHrCivaQRenw9
+ zJDor/RxJOqDF/p/TGLnJZ8a4CRCt6jz5qgZ0tvF3pYlns8LXX1t/IGzY32OZ1cn6m0/ccbD1
+ bTzd7GcatZCtYQMYSis5tXmuoIPX8zRNCSfBV/Ul7LhAtP8ZPipCAL2wou1bACMdyv/d/hAh6
+ cJB+9K6Ae7p5epxIzu84/PMCwRX0ADIkbXAK5yzMI+Qk6luFTT9u2Zy06Mw1i+eupUz0k2wsX
+ v8WYYTji/CYQSWxBAjS4t0c738nSuRyTHDoMj0s+PQ1s8lOuOJGHRqhUOkka9egYviUiudyr9
+ BoY2Ul6Wk5xPsbjaG94orRyMYIRCch2A0LkqLg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The blackfin architecture is getting removed, so this driver
-has become obsolete.
+The blackfin architecture is getting removed, so these
+won't be needed any more.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/mtd/maps/Kconfig            |  10 --
- drivers/mtd/maps/Makefile           |   1 -
- drivers/mtd/maps/bfin-async-flash.c | 196 ------------------------------------
- 3 files changed, 207 deletions(-)
- delete mode 100644 drivers/mtd/maps/bfin-async-flash.c
+ drivers/spi/Kconfig          |   19 -
+ drivers/spi/Makefile         |    3 -
+ drivers/spi/spi-adi-v3.c     |  984 ----------------------------
+ drivers/spi/spi-bfin-sport.c |  919 --------------------------
+ drivers/spi/spi-bfin5xx.c    | 1462 ------------------------------------------
+ 5 files changed, 3387 deletions(-)
+ delete mode 100644 drivers/spi/spi-adi-v3.c
+ delete mode 100644 drivers/spi/spi-bfin-sport.c
+ delete mode 100644 drivers/spi/spi-bfin5xx.c
 
-diff --git a/drivers/mtd/maps/Kconfig b/drivers/mtd/maps/Kconfig
-index 542fdf8e81fa..bdc1283f30fb 100644
---- a/drivers/mtd/maps/Kconfig
-+++ b/drivers/mtd/maps/Kconfig
-@@ -334,16 +334,6 @@ config MTD_PCMCIA_ANONYMOUS
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 6fb0347a24f2..9b0d9ae740d1 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -115,25 +115,6 @@ config SPI_BCM2835AUX
+ 	  "universal SPI master", and the regular SPI controller.
+ 	  This driver is for the universal/auxiliary SPI controller.
  
- 	  If unsure, say N.
- 
--config MTD_BFIN_ASYNC
--	tristate "Blackfin BF533-STAMP Flash Chip Support"
--	depends on BFIN533_STAMP && MTD_CFI && MTD_COMPLEX_MAPPINGS
--	default y
+-config SPI_BFIN5XX
+-	tristate "SPI controller driver for ADI Blackfin5xx"
+-	depends on BLACKFIN && !BF60x
 -	help
--	  Map driver which allows for simultaneous utilization of
--	  ethernet and CFI parallel flash.
+-	  This is the SPI controller master driver for Blackfin 5xx processor.
 -
--	  If compiled as a module, it will be called bfin-async-flash.
+-config SPI_ADI_V3
+-	tristate "SPI controller v3 for ADI"
+-	depends on BF60x
+-	help
+-	  This is the SPI controller v3 master driver
+-	  found on Blackfin 60x processor.
 -
- config MTD_GPIO_ADDR
- 	tristate "GPIO-assisted Flash Chip Support"
- 	depends on GPIOLIB || COMPILE_TEST
-diff --git a/drivers/mtd/maps/Makefile b/drivers/mtd/maps/Makefile
-index b849aaf85c34..51acf1fec19b 100644
---- a/drivers/mtd/maps/Makefile
-+++ b/drivers/mtd/maps/Makefile
-@@ -42,7 +42,6 @@ obj-$(CONFIG_MTD_SCB2_FLASH)	+= scb2_flash.o
- obj-$(CONFIG_MTD_IXP4XX)	+= ixp4xx.o
- obj-$(CONFIG_MTD_PLATRAM)	+= plat-ram.o
- obj-$(CONFIG_MTD_INTEL_VR_NOR)	+= intel_vr_nor.o
--obj-$(CONFIG_MTD_BFIN_ASYNC)	+= bfin-async-flash.o
- obj-$(CONFIG_MTD_RBTX4939)	+= rbtx4939-flash.o
- obj-$(CONFIG_MTD_VMU)		+= vmu-flash.o
- obj-$(CONFIG_MTD_GPIO_ADDR)	+= gpio-addr-flash.o
-diff --git a/drivers/mtd/maps/bfin-async-flash.c b/drivers/mtd/maps/bfin-async-flash.c
+-config SPI_BFIN_SPORT
+-	tristate "SPI bus via Blackfin SPORT"
+-	depends on BLACKFIN
+-	help
+-	  Enable support for a SPI bus via the Blackfin SPORT peripheral.
+-
+ config SPI_BCM53XX
+ 	tristate "Broadcom BCM53xx SPI controller"
+ 	depends on ARCH_BCM_5301X
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 34c5f2832ddf..b935f10eb961 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -24,9 +24,6 @@ obj-$(CONFIG_SPI_BCM53XX)		+= spi-bcm53xx.o
+ obj-$(CONFIG_SPI_BCM63XX)		+= spi-bcm63xx.o
+ obj-$(CONFIG_SPI_BCM63XX_HSSPI)		+= spi-bcm63xx-hsspi.o
+ obj-$(CONFIG_SPI_BCM_QSPI)		+= spi-iproc-qspi.o spi-brcmstb-qspi.o spi-bcm-qspi.o
+-obj-$(CONFIG_SPI_BFIN5XX)		+= spi-bfin5xx.o
+-obj-$(CONFIG_SPI_ADI_V3)                += spi-adi-v3.o
+-obj-$(CONFIG_SPI_BFIN_SPORT)		+= spi-bfin-sport.o
+ obj-$(CONFIG_SPI_BITBANG)		+= spi-bitbang.o
+ obj-$(CONFIG_SPI_BUTTERFLY)		+= spi-butterfly.o
+ obj-$(CONFIG_SPI_CADENCE)		+= spi-cadence.o
+diff --git a/drivers/spi/spi-adi-v3.c b/drivers/spi/spi-adi-v3.c
 deleted file mode 100644
-index 41730feeace8..000000000000
+index a16b25dcd1e6..000000000000
+diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
+deleted file mode 100644
+index 01d0ba9c5942..000000000000
+diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
+deleted file mode 100644
+index 249c7a3677c9..000000000000
 -- 
 2.9.0
