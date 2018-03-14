@@ -1,84 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeCNJhV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:37:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46368 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751295AbeCNJhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:37:19 -0400
-Date: Wed, 14 Mar 2018 10:37:18 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/sun4i: Handle DRM_BUS_FLAG_PIXDATA_*EDGE
-Message-ID: <20180314093717.glamqbj2curklztd@flea>
-References: <1520963677-124239-1-git-send-email-giulio.benetti@micronovasrl.com>
+        id S1751537AbeCNJmz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:42:55 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:25243 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751348AbeCNJmx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:42:53 -0400
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Subject: Re: [PATCH 0/2] Introduce STM32MP1 Reset driver
+Thread-Topic: [PATCH 0/2] Introduce STM32MP1 Reset driver
+Thread-Index: AQHTuukmXhLqwRGQGUGMtGZ7ugmTrqPPYnEAgAAIfgA=
+Date: Wed, 14 Mar 2018 09:42:26 +0000
+Message-ID: <12ba9cee-f703-8fc7-75da-de213f5c8aa2@st.com>
+References: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
+ <1521018722.4490.1.camel@pengutronix.de>
+In-Reply-To: <1521018722.4490.1.camel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <401DE63C1C05764D961C4CB5B5609FDB@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4h5ue7ns54l4oqxk"
-Content-Disposition: inline
-In-Reply-To: <1520963677-124239-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20180223
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2E9hOS9019939
+
+Hi Philipp,
+
+Okay, i too support the idea to add custom  reset driver.
+
+Many Thanks Philipp.
+
+Best regards
+
+Gabriel
 
 
---4h5ue7ns54l4oqxk
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 13, 2018 at 06:54:37PM +0100, Giulio Benetti wrote:
-> Handle both positive and negative dclk polarity,
-> according to bus_flags, taking care of this:
->=20
-> On A20 and similar SoCs, the only way to achieve Positive Edge
-> (Rising Edge), is setting dclk clock phase to 2/3(240=B0).
-> By default TCON works in Negative Edge(Falling Edge), this is why phase
-> is set to 0 in that case.
-> Unfortunately there's no way to logically invert dclk through IO_POL
-> register.
-> The only acceptable way to work, triple checked with scope,
-> is using clock phase set to 0=B0 for Negative Edge and set to 240=B0 for
-> Positive Edge.
-> On A33 and similar SoCs there would be a 90=B0 phase option, but it divid=
-es
-> also dclk by 2.
-> This patch is a way to avoid quirks all around TCON and DOTCLOCK drivers
-> for using A33 90=B0 phase divided by 2 and consequently increase code
-> complexity.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4h5ue7ns54l4oqxk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqo7U0ACgkQ0rTAlCFN
-r3QNwRAAjNMJiq7njfEmhIRERvLHNq3qFUGqbl9esEEnqGP/P5OuakeQqprKnSOa
-RT8KSsUuyudtwHirvenjgkEzmdXWm6Du5MKwykSnH1WfDnEbKcaI3i2ueMXbNQuh
-BBE/zvAgwnVMwn9i2wvkfYtBexilaFADLJtvvr4UpUK7BTcT1E/k0YzxCTXqFIFb
-JVRinrFqKhqqGQo/Uny5Hx3TL8p/sjAmpU9sjJL6EL9/dzWuo7vpxMyYslcP8y5P
-0E2Ompqlrh02aGZqePqqS1mdiuVzalQui1LKeDeJm4Hg3VEy785YGVoRb5RPqADX
-V+BxBDebE/YNAwj8lV7iGiiv1mcoJT0d4fXGkXnq3Qu5SrQo5iz4iu7UCNwcmB1q
-tPl3neofmnaGAaXgz16cjN0n9ZycgRNZyf0NcNr059VFhFquiy+VZ6bKIu3na27m
-T37FLdOQCfdtEeJo6C8RCQSuinioXrb/AuE1cAZaTABuYk0iE5QWcqtZSNXmHTgE
-tiIU2XhacjgdFLVjblBVWGXhAfHMeeMu//vpRhGH+q3krn7lfZLAESqbwtt3vupD
-slRUBziRYVILt+fZApKQ79N8FA4RCEihRULSx8X5DVNYqbHaEGXhoLR3gMf3qEEC
-Q7TQDfvMhNoJH92hyFaL2MlF+IaE0OOcbv6VrcEeqvEGfQYLHuM=
-=F+p/
------END PGP SIGNATURE-----
-
---4h5ue7ns54l4oqxk--
+On 03/14/2018 10:12 AM, Philipp Zabel wrote:
+> Hi Gabriel,
+>
+> On Tue, 2018-03-13 at 17:34 +0100, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch-set enables the reset of STM32MP1.
+>> It uses the reset simple driver by introducing the clear register offset
+>> parameter.
+>> STM32MP1 reset IP has a register to assert by writing '1' and another
+>> register to de-assert by writing '1'.
+>> The offset between this two registers is '0x4'.
+> I worry a bit about feature creep in the simple-reset driver.
+> Your patch on its own is simple enough, and I'm not opposed to add a
+> SET/CLR feature on principle, but there are a few issues:
+>
+> The RESET_SIMPLE Kconfig description currently says:
+>    "This enables a simple reset controller driver for reset lines that
+>     that can be asserted and deasserted by toggling bits in a contiguous,
+>     exclusive register space."
+> That would have to be extended to mention SET/CLR register pairs as an
+> alternative.
+>
+> What about status (reset_simple_status)? Can current reset line status
+> be read back from the SET register, as is currently tried? If not, is
+> there a way to read current reset line status back at all?
+>
+> The data->lock spinlock is only needed to protect the read-modify-write
+> cycle on a toggle register, for separate SET/CLR register access the
+> locking is not necessary.
+>
+> At this point, it may or may not be easier to add a custom reset driver.
+> Either way you go, this is missing binding documentation for the
+> st,stm32mp1-rcc compatible in Documentation/devicetree/bindings/reset.
+>
+>> The patch 'dt-bindings: reset: add STM32MP1 resets' could be squashed
+>> with the patch:
+>> 'dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings'
+>> commit 3830681d354f
+>>
+>> Gabriel Fernandez (2):
+>>    dt-bindings: reset: add STM32MP1 resets
+>>    reset: simple: Enable stm32mp1 reset driver
+>>
+>>   drivers/reset/reset-simple.c                |  27 +++++--
+>>   drivers/reset/reset-simple.h                |   1 +
+>>   include/dt-bindings/reset/stm32mp1-resets.h | 108 ++++++++++++++++++++++++++++
+>>   3 files changed, 130 insertions(+), 6 deletions(-)
+>>   create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
+> regards
+> Philipp
