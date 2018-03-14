@@ -1,182 +1,299 @@
-Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AG47ELuCZ8B0KcpoxPUYG27y7g7pu8S6PHmhAMAaNchJQNeJb38Blk2GhWl0twGL6qvjVEdjaxax
-ARC-Seal: i=1; a=rsa-sha256; t=1521208056; cv=none;
+Return-Path: <mhiramat@kernel.org>
+X-Google-Smtp-Source: AG47ELu2TbANQEP2q90kMFd9GD6xENextm/UzAqggnJafxd5CFk21kfMOoqXyk8Td+870FfgdTbc
+ARC-Seal: i=1; a=rsa-sha256; t=1521036947; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vos7F0LihHKwhfxDWrfPJGkkcI9B4BHqix0RU8TYRFnOKX+u8aJJtnUQFrgdQEfeDi
-         Oqd1hgDHA/w1q3pJKdio7jOjkkrXDZkcZnCPImWntQzBHfAuzyaQbCN+M3spdVqqHH8+
-         3WBQLOkuN4F7zxz9U51g1b8s4mj1WjEI6ulI36JgGz8tOBgCNV3iPVJyepZtnN6dlFRE
-         Qj88aBnFlaC5FeZ2IEX/SkpN0Rvvy+elUF4KeLR9ttcM6PxM2GqoiVn0E+9pvU/e11T+
-         dR6tdr+qShAwPPGYEq1MnKbuY6WOuXoWkbJCGVkxXWyUDS17eq9xeTt9b57o5HYsQtSe
-         ZOfA==
+        b=dT8MsUQr7QwBz+ltPDboXxKFTZwONlpE/poiOLn2jlY7QRoWEwtR2SfyWjxvnqGDI1
+         MHYQyBHvqtmqYzE5LFpD8m4JrNY+gkxKA6c4OzHBKy6eNfgtQCxQ+jIzo8CLYDRZ31S1
+         Y2Z7l3KNDgaogKSbHbSbqNR4mzjlunS3CJXTUsroGe9pd/XUX2g46TfNaBWI8GkDi5Mu
+         YcIfzYoT94+ZKFTnYBCEJecS/ntRrodHYcExDuVFawUSwaV4P7vF4kKkGbsYMVna8/Wl
+         VxxdtqsPrFX2UQyGDrwvjR3Fv6iVPJP4gGKL51TN/iuVC3rmrLjLvcR2AJMpLC0Xg9QY
+         nDtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-language:content-transfer-encoding:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
          :arc-authentication-results;
-        bh=SqskjiqSk67h9ehOVswLKs1v94q8UwAa0pn6i0kxPJM=;
-        b=EkUdsdD2NCQkT60IV6NN38T5FztjjI8kobkrXVl0ETyN2ByPE1s0GhnPbTtOQKpUt/
-         /7R0WtYyHaJl3YBWEKtLCR9GO179tZbrqlY2PIi5eguvtPf21dy+Spy5OMuGB0rhQwPo
-         pgug4atL+b4yJ5GXDJPkLWEg7JvmNyyucmh7bDLAhoJFRRs6GI1XpRI5FJImNcmiuZod
-         q9YAWUY6ohG18SoeSV/CqK/sDeVBHStKSyfAN+KXL11PZws/ihu55UmolpaQu7B+5eRW
-         pCgIPjoaoJ+aMUd+Zvmhk80QGndFlLDs8Z0wGsAtxhBVRuJvSy5r0sn7Z+rDZ3yXU/8x
-         pc2Q==
+        bh=M6SuklTeKaIV6hNblVeVWyTKwWfAPImeGf6ymq1waKk=;
+        b=tYNHeAdMOVRF/eZ4KtkXgqEMCWvdNrQX5Rmv5hUyxPhPuW/Q1je5tTX5dtPXpILySL
+         ZSH5noDP6YN37s1TeBl97jTraH4auFes3vVZ15Pf+dRHjl5MNJBZ2Ngoy2f/eJ4WZ/Ww
+         EFTFhi5tEGhwgUUEVtvJxW5iRZrxYz3SUWxz5XS+daJ6vejWYu2Rd89/HFT1JzLaPFF4
+         aP7JzDlabmpUboPl2I0PaWUXJLBFGyW91XEQLRJgBEjlmOiwU0NO5LyaLM0sq++7gi1N
+         FNxuHpO0Bqkvp9ftS5037s1nC4GNFMX0ZfXzG5mNhgB0yepZzTnBH2q+/cvKx812fQB4
+         L7YA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD0E214D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Wed, 14 Mar 2018 23:15:40 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+ acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+ alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+ corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+ huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+ jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+ kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+ kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+ milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+ naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+ rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+ willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com
 Subject: Re: [PATCH 6/8] trace_uprobe/sdt: Fix multiple update of same
  reference counter
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
-        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
-        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
-        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
-        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Message-Id: <20180314231540.b98c74a153255f59f54ebc46@kernel.org>
+In-Reply-To: <20180313125603.19819-7-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180313125603.19819-7-ravi.bangoria@linux.vnet.ibm.com>
- <20180315144959.GB19643@redhat.com>
- <c93216a4-a4e1-dd8f-00be-17254e308cd1@linux.vnet.ibm.com>
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date: Fri, 16 Mar 2018 19:19:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <c93216a4-a4e1-dd8f-00be-17254e308cd1@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031613-0008-0000-0000-000004DEF76B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031613-0009-0000-0000-00001E72061F
-Message-Id: <20efff94-de74-dcbe-68e4-a72476fab209@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803160167
+	<20180313125603.19819-7-ravi.bangoria@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827186487084438?=
-X-GMAIL-MSGID: =?utf-8?q?1595102259316690404?=
+X-GMAIL-MSGID: =?utf-8?q?1594922838546651587?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Tue, 13 Mar 2018 18:26:01 +0530
+Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+
+> For tiny binaries/libraries, different mmap regions points to the
+> same file portion. In such cases, we may increment reference counter
+> multiple times. But while de-registration, reference counter will get
+> decremented only by once leaving reference counter > 0 even if no one
+> is tracing on that marker.
+> 
+> Ensure increment and decrement happens in sync by keeping list of
+> mms in trace_uprobe. Increment reference counter only if mm is not
+> present in the list and decrement only if mm is present in the list.
+> 
+> Example
+> 
+>   # echo "p:sdt_tick/loop2 /tmp/tick:0x6e4(0x10036)" > uprobe_events
+> 
+> Before patch:
+> 
+>   # perf stat -a -e sdt_tick:loop2
+>   # /tmp/tick
+>   # dd if=/proc/`pgrep tick`/mem bs=1 count=1 skip=$(( 0x10020036 )) 2>/dev/null | xxd
+>    0000000: 02                                       .
+> 
+>   # pkill perf
+>   # dd if=/proc/`pgrep tick`/mem bs=1 count=1 skip=$(( 0x10020036 )) 2>/dev/null | xxd
+>   0000000: 01                                       .
+> 
+> After patch:
+> 
+>   # perf stat -a -e sdt_tick:loop2
+>   # /tmp/tick
+>   # dd if=/proc/`pgrep tick`/mem bs=1 count=1 skip=$(( 0x10020036 )) 2>/dev/null | xxd
+>   0000000: 01                                       .
+> 
+>   # pkill perf
+>   # dd if=/proc/`pgrep tick`/mem bs=1 count=1 skip=$(( 0x10020036 )) 2>/dev/null | xxd
+>   0000000: 00                                       .
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+> ---
+>  kernel/trace/trace_uprobe.c | 105 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 103 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index b6c9b48..9bf3f7a 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -50,6 +50,11 @@ struct trace_uprobe_filter {
+>  	struct list_head	perf_events;
+>  };
+>  
+> +struct sdt_mm_list {
+> +	struct mm_struct *mm;
+> +	struct sdt_mm_list *next;
+> +};
+
+Oh, please use struct list_head instead of defining your own pointer-chain :(
+
+> +
+>  /*
+>   * uprobe event core functions
+>   */
+> @@ -61,6 +66,8 @@ struct trace_uprobe {
+>  	char				*filename;
+>  	unsigned long			offset;
+>  	unsigned long			ref_ctr_offset;
+> +	struct sdt_mm_list		*sml;
+> +	struct rw_semaphore		sml_rw_sem;
+
+BTW, is there any reason to use rw_semaphore? (mutex doesn't fit?)
+
+Thank you,
+
+>  	unsigned long			nhit;
+>  	struct trace_probe		tp;
+>  };
+> @@ -274,6 +281,7 @@ static inline bool is_ret_probe(struct trace_uprobe *tu)
+>  	if (is_ret)
+>  		tu->consumer.ret_handler = uretprobe_dispatcher;
+>  	init_trace_uprobe_filter(&tu->filter);
+> +	init_rwsem(&tu->sml_rw_sem);
+>  	return tu;
+>  
+>  error:
+> @@ -921,6 +929,74 @@ static void uretprobe_trace_func(struct trace_uprobe *tu, unsigned long func,
+>  	return trace_handle_return(s);
+>  }
+>  
+> +static bool sdt_check_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
+> +{
+> +	struct sdt_mm_list *tmp = tu->sml;
+> +
+> +	if (!tu->sml || !mm)
+> +		return false;
+> +
+> +	while (tmp) {
+> +		if (tmp->mm == mm)
+> +			return true;
+> +		tmp = tmp->next;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
+> +{
+> +	struct sdt_mm_list *tmp;
+> +
+> +	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+> +	if (!tmp)
+> +		return;
+> +
+> +	tmp->mm = mm;
+> +	tmp->next = tu->sml;
+> +	tu->sml = tmp;
+> +}
+> +
+> +static void sdt_del_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
+> +{
+> +	struct sdt_mm_list *prev, *curr;
+> +
+> +	if (!tu->sml)
+> +		return;
+> +
+> +	if (tu->sml->mm == mm) {
+> +		curr = tu->sml;
+> +		tu->sml = tu->sml->next;
+> +		kfree(curr);
+> +		return;
+> +	}
+> +
+> +	prev = tu->sml;
+> +	curr = tu->sml->next;
+> +	while (curr) {
+> +		if (curr->mm == mm) {
+> +			prev->next = curr->next;
+> +			kfree(curr);
+> +			return;
+> +		}
+> +		prev = curr;
+> +		curr = curr->next;
+> +	}
+> +}
+> +
+> +static void sdt_flush_mm_list(struct trace_uprobe *tu)
+> +{
+> +	struct sdt_mm_list *next, *curr = tu->sml;
+> +
+> +	while (curr) {
+> +		next = curr->next;
+> +		kfree(curr);
+> +		curr = next;
+> +	}
+> +	tu->sml = NULL;
+> +}
+> +
+>  static bool sdt_valid_vma(struct trace_uprobe *tu, struct vm_area_struct *vma)
+>  {
+>  	unsigned long vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> @@ -989,17 +1065,25 @@ static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
+>  	if (IS_ERR(info))
+>  		goto out;
+>  
+> +	down_write(&tu->sml_rw_sem);
+>  	while (info) {
+> +		if (sdt_check_mm_list(tu, info->mm))
+> +			goto cont;
+> +
+>  		down_write(&info->mm->mmap_sem);
+>  
+>  		vma = sdt_find_vma(info->mm, tu);
+>  		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> -		sdt_update_ref_ctr(info->mm, vaddr, 1);
+> +		if (!sdt_update_ref_ctr(info->mm, vaddr, 1))
+> +			sdt_add_mm_list(tu, info->mm);
+>  
+>  		up_write(&info->mm->mmap_sem);
+> +
+> +cont:
+>  		mmput(info->mm);
+>  		info = uprobe_free_map_info(info);
+>  	}
+> +	up_write(&tu->sml_rw_sem);
+>  
+>  out:
+>  	uprobe_end_dup_mmap();
+> @@ -1020,8 +1104,16 @@ void trace_uprobe_mmap_callback(struct vm_area_struct *vma)
+>  		    !trace_probe_is_enabled(&tu->tp))
+>  			continue;
+>  
+> +		down_write(&tu->sml_rw_sem);
+> +		if (sdt_check_mm_list(tu, vma->vm_mm))
+> +			goto cont;
+> +
+>  		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> -		sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
+> +		if (!sdt_update_ref_ctr(vma->vm_mm, vaddr, 1))
+> +			sdt_add_mm_list(tu, vma->vm_mm);
+> +
+> +cont:
+> +		up_write(&tu->sml_rw_sem);
+>  	}
+>  	mutex_unlock(&uprobe_lock);
+>  }
+> @@ -1038,7 +1130,11 @@ static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+>  	if (IS_ERR(info))
+>  		goto out;
+>  
+> +	down_write(&tu->sml_rw_sem);
+>  	while (info) {
+> +		if (!sdt_check_mm_list(tu, info->mm))
+> +			goto cont;
+> +
+>  		down_write(&info->mm->mmap_sem);
+>  
+>  		vma = sdt_find_vma(info->mm, tu);
+> @@ -1046,9 +1142,14 @@ static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+>  		sdt_update_ref_ctr(info->mm, vaddr, -1);
+>  
+>  		up_write(&info->mm->mmap_sem);
+> +		sdt_del_mm_list(tu, info->mm);
+> +
+> +cont:
+>  		mmput(info->mm);
+>  		info = uprobe_free_map_info(info);
+>  	}
+> +	sdt_flush_mm_list(tu);
+> +	up_write(&tu->sml_rw_sem);
+>  
+>  out:
+>  	uprobe_end_dup_mmap();
+> -- 
+> 1.8.3.1
+> 
 
 
-On 03/16/2018 05:42 PM, Ravi Bangoria wrote:
->
-> On 03/15/2018 08:19 PM, Oleg Nesterov wrote:
->> On 03/13, Ravi Bangoria wrote:
->>> For tiny binaries/libraries, different mmap regions points to the
->>> same file portion. In such cases, we may increment reference counter
->>> multiple times.
->> Yes,
->>
->>> But while de-registration, reference counter will get
->>> decremented only by once
->> could you explain why this happens? sdt_increment_ref_ctr() and
->> sdt_decrement_ref_ctr() look symmetrical, _decrement_ should see
->> the same mappings?
-> Sorry, I thought this happens only for tiny binaries. But that is not the case.
-> This happens for binary / library of any length.
->
-> Also, it's not a problem with sdt_increment_ref_ctr() / sdt_increment_ref_ctr().
-> The problem happens with trace_uprobe_mmap_callback().
->
-> To illustrate in detail, I'm adding a pr_info() in trace_uprobe_mmap_callback():
->
->                 vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-> +             pr_info("0x%lx-0x%lx : 0x%lx\n", vma->vm_start, vma->vm_end, vaddr);
->                 sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
->
->
-> Ok now, libpython has SDT markers with reference counter:
->
->     # readelf -n /usr/lib64/libpython2.7.so.1.0 | grep -A2 Provider
->         Provider: python
->         Name: function__entry
->         ... Semaphore: 0x00000000002899d8
->
-> Probing on that marker:
->
->     # cd /sys/kernel/debug/tracing/
->     # echo "p:sdt_python/function__entry /usr/lib64/libpython2.7.so.1.0:0x16a4d4(0x2799d8)" > uprobe_events
->     # echo 1 > events/sdt_python/function__entry/enable
->
-> When I run python:
->
->     # strace -o out python
->       mmap(NULL, 2738968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fff92460000
->       mmap(0x7fff926a0000, 327680, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x230000) = 0x7fff926a0000
->       mprotect(0x7fff926a0000, 65536, PROT_READ) = 0
->
-> The first mmap() maps the whole library into one region. Second mmap()
-> and third mprotect() split out the whole region into smaller vmas and sets
-> appropriate protection flags.
->
-> Now, in this case, trace_uprobe_mmap_callback() updates reference counter
-> twice -- by second mmap() call and by third mprotect() call -- because both
-> regions contain reference counter offset. This I can verify in dmesg:
->
->     # dmesg | tail
->       trace_kprobe: 0x7fff926a0000-0x7fff926f0000 : 0x7fff926e99d8
->       trace_kprobe: 0x7fff926b0000-0x7fff926f0000 : 0x7fff926e99d8
->
-> Final vmas of libpython:
->
->     # cat /proc/`pgrep python`/maps | grep libpython
->       7fff92460000-7fff926a0000 r-xp 00000000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
->       7fff926a0000-7fff926b0000 r--p 00230000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
->       7fff926b0000-7fff926f0000 rw-p 00240000 08:05 403934  /usr/lib64/libpython2.7.so.1.0
->
->
-> I see similar problem with normal binary as well. I'm using Brendan Gregg's
-> example[1]:
->
->     # readelf -n /tmp/tick | grep -A2 Provider
->         Provider: tick
->         Name: loop2
->         ... Semaphore: 0x000000001005003c
->
-> Probing that marker:
->
->     # echo "p:sdt_tick/loop2 /tmp/tick:0x6e4(0x10036)" > uprobe_events
->     # echo 1 > events/sdt_tick/loop2/enable
->
-> Now when I run the binary
->
->     # /tmp/tick
->
-> load_elf_binary() internally calls mmap() and I see trace_uprobe_mmap_callback()
-> updating reference counter twice:
->
->     # dmesg | tail
->       trace_kprobe: 0x10010000-0x10030000 : 0x10020036
->       trace_kprobe: 0x10020000-0x10030000 : 0x10020036
->
-> proc/<pid>/maps of the tick:
->
->     # cat /proc/`pgrep tick`/maps
->       10000000-10010000 r-xp 00000000 08:05 1335712  /tmp/tick
->       10010000-10020000 r--p 00000000 08:05 1335712  /tmp/tick
->       10020000-10030000 rw-p 00010000 08:05 1335712  /tmp/tick
->
-> [1] https://github.com/iovisor/bcc/issues/327#issuecomment-200576506
-
-Also, while de-registration, we look for all existing mms using
-uprobe_build_mmap_info() and decrement the counter in each
-of the mm. i.e. we decrement the counter only once.
-
--Ravi
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
