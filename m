@@ -1,123 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752038AbeCNMsy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:48:54 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:40807 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbeCNMsw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:48:52 -0400
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
-Date: Wed, 14 Mar 2018 13:48:51 +0100
-Message-ID: <4373847.u3KAOBid1D@merkaba>
-In-Reply-To: <1e708e58-5ba7-8ce9-2edf-6cc7ba5f80c3@redhat.com>
-References: <27165802.vQ9JbjrmvU@merkaba> <3573548.kp1edD77Gq@merkaba> <1e708e58-5ba7-8ce9-2edf-6cc7ba5f80c3@redhat.com>
+        id S1751649AbeCNMvh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:51:37 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:46518 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751344AbeCNMvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 08:51:35 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
+        kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>,
+        Sonny Rao <sonnyrao@chromium.org>
+Subject: Re: [PATCH v5 06/36] drm/rockchip: Only wait for panel ACK on PSR entry
+Date: Wed, 14 Mar 2018 13:51:20 +0100
+Message-ID: <217296292.AN06WKDqZv@diego>
+In-Reply-To: <20180309222327.18689-7-enric.balletbo@collabora.com>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com> <20180309222327.18689-7-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans de Goede - 14.03.18, 12:05:
-> Hi,
+Am Freitag, 9. März 2018, 23:22:57 CET schrieb Enric Balletbo i Serra:
+> From: zain wang <wzz@rock-chips.com>
 > 
-> On 14-03-18 12:01, Martin Steigerwald wrote:
-> > Hans de Goede - 11.03.18, 15:37:
-> >> Hi Martin,
-> >> 
-> >> On 11-03-18 09:20, Martin Steigerwald wrote:
-> >>> Hello.
-> >>> 
-> >>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
-> >>> with SMART checks occassionally failing like this:
-> >>> 
-> >>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
-> >>> checks
-> >>> udisksd[24408]: Error performing housekeeping for drive
-> >>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[â€¦]: Error updating
-> >>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
-> >>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
-> >>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00 
-> >>> 00
-> >>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
-> >>> udisksd[24408]: Error performing housekeeping for drive
-> >>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[â€¦]: Error
-> >>> updating
-> >>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
-> >>> sense
-> >>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
-> >>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
-> >>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
-> >>> 
-> >>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
-> >>> 
-> >>> However when I then check manually with smartctl -a | -x | -H the device
-> >>> reports SMART data just fine.
-> >>> 
-> >>> As smartd correctly detects that device is in sleep mode, this may be an
-> >>> userspace issue in udisksd.
-> >>> 
-> >>> Also at some boot attempts the boot hangs with a message like "could not
-> >>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
-> >>> on to LVs (each on one of the SSDs). A configuration that requires a
-> >>> manual
-> >>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
-> >>> btrfs device scan).
-> >>> 
-> >>> I wonder whether that has to do with the new SATA LPM policy stuff, but
-> >>> as
-> >>> I had issues with
-> >>> 
-> >>> 3 => Medium power with Device Initiated PM enabled
-> >>> 
-> >>> (machine did not boot, which could also have been caused by me
-> >>> accidentally
-> >>> removing all TCP/IP network support in the kernel with that setting)
-> >>> 
-> >>> I set it back to
-> >>> 
-> >>> CONFIG_SATA_MOBILE_LPM_POLICY=0
-> >>> 
-> >>> (firmware settings)
-> >> 
-> >> Right, so at that settings the LPM policy changes are effectively
-> >> disabled and cannot explain your SMART issues.
-> >> 
-> >> Still I would like to zoom in on this part of your bug report, because
-> >> for Fedora 28 we are planning to ship with
-> >> CONFIG_SATA_MOBILE_LPM_POLICY=3
-> >> and AFAIK Ubuntu has similar plans.
-> >> 
-> >> I suspect that the issue you were seeing with
-> >> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've
-> >> attached
-> >> a patch for you to test, which disabled LPM for your model Crucial SSD
-> >> (but
-> >> keeps it on for the Intel disk) if you can confirm that with that patch
-> >> you
-> >> can run with
-> >> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
-> > 
-> > With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system successfully
-> > booted three times in a row. So feel free to add tested-by.
+> We currently wait for the panel to mirror our intended PSR state
+> before continuing on both PSR enter and PSR exit. This is really
+> only important to do when we're entering PSR, since we want to
+> be sure the last frame we pushed is being served from the panel's
+> internal fb before shutting down the soc blocks (vop/analogix).
 > 
-> Thanks.
+> This patch changes the behavior such that we only wait for the
+> panel to complete the PSR transition when we're entering PSR, and
+> to skip verification when we're exiting.
 > 
-> To be clear, you're talking about 4.16-rc5 with the patch I made to
-> blacklist the Crucial disk I assume, not just plain 4.16-rc5, right ?
+> Cc: Stéphane Marchesin <marcheu@chromium.org>
+> Cc: Sonny Rao <sonnyrao@chromium.org>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-4.16-rc5 with your
+applied to drm-misc-next with the subject fixed.
 
-0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.patch
 
-patch.
-
-Thanks,
--- 
-Martin
+Thanks
+Heiko
