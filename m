@@ -1,157 +1,100 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3865743-1521099410-2-8094407714597826392
+X-Cyrus-Session-Id: sloti22d1t05-2877095-1521069945-2-689680792886817009
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='ch',
+  MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521099410; b=e01jCu9QszYZo/8CV29Q3QsVNtc2vzYY3dLRg6eWtvX8c2Z
-    wsESpfp3u7pV/9dZBUAQGtXCNYGxTzxD4GdZmN+Xvc3O7uO2oaYsUhlqAqo07DVC
-    CNhk2TWWKlPQ9RRb4mefcKu9oL7Md09N7YN8BRjNcfK/PpANOHCR8siivMIGeEa/
-    tXiQZXGUj/A8JJp0vMs5LGereXUQ/rs11uOB7Z2hfpT2jBf+BVCJvEuaKiLImTZa
-    BVpg+dEUz9VjZJ2iybXzSbZI6w3XqatVrDrS8P4LxFibknq4Y6PacwAEebyRCnBM
-    4g1OnKvMCyObuC33dI+cOmWYQdKpCt8x8oJuwNQ==
+    t=1521069945; b=L1J+HJHvXOTCC0rMQM3QkAKurXe2zzVws8Nf4SzgGyXhFgo
+    gG8O8jR88ZrLt6KDoKVIK2XAEQaeBmeXXHiqwf+JYgrPnaH4MchA68I94EJV1U8i
+    bXvlS8bYtL/TY1slSCnKd2hqYfJpfG0JQnv0KOc6swlSEx3Br/2dZRPxYZ1iP1f2
+    efxIAqNov9h2JQyNF0miQVBXs5pZwlbXcBqzryjqS6/cTSxzezh9yD9Sxv7lG1Oq
+    dHar409ICCg3TtNnWa45GUvNTyO1SJh3SfHThS2c7qy/FXeMaB0ubJr5dittQ3YW
+    WTyyQFclyybDsl57Q4qv7ZQV3tMKUw8aQkFpIrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1521099410; bh=c9d1ui
-    VW+6Gc6EKdyQ+w4hSqD//mw7m3X/GSqy89RPk=; b=RnGgxo7/8SfOzdJ3IPB17X
-    lc6yOqTdjPoLbGdNzhoyKUcAd3mkzaE+cvuXZqX0D8SoAs/6efIR6pQ0CyhusL5k
-    pBo2Ku4hDWzxfeQkuNWRfL7pTJacjM97fBgGX0EwFxZhFN6W1veShIb6lE4pAIK5
-    ap3L1OtKoq2o6F4Q9K6RJqPbCbvr9LgDV6L8OATMB7al5+T8rbvXxbbV3xGl+MSP
-    ErJ7yHxIiXCtFwIeoZZ+XteqSAK7hX9gP4mXjD99bnFJAxWiXEdv+NsmHBWPsxNt
-    rAVITEbqesHwLpBuEtj2iNpQANfduVspaxodSdMoiOP7ROUhXnEYuzX7E8otaKVA
-    ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521069945; bh=U7w6yzIvp/47gwRUMon116grDI
+    kfxZnmZ9lv+H45i/0=; b=qTcUo0UQ/u4sae+oY+d0K37e0WW3DiwzOYq1R9Nnmt
+    g/1TY9Q95V5UQhA3gKoGwTBs9VPP1eNKXZZ6L3RHU7kLsWj9jTSE/kM61VRU3gW8
+    2FFHRKXimKRvP0Pr4pphfgNUEovisaAGksKI+hHqTEhRzPiD22FwYHvrkBaASfi3
+    wxFP5UcP0A6tUIU83DK5GY52kxiS+Kj6/SIvyiXVTJmi5YHTBFxciDWSUAdpsJ6M
+    r0Q0NEABkSQ4BjSbtsokgyEzO7B8VH/kWSMwfOK1nx2ygcCKxJOWhksiED0AtVrs
+    lqBu62QkdLhv2xBPeYDajDUiP1ILW37c1DrN26RZDIiQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=lunn.ch header.i=@lunn.ch header.b=ZqdM0nJH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20171124;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lunn.ch;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lunn.ch header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=lunn.ch header.i=@lunn.ch header.b=ZqdM0nJH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20171124;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lunn.ch;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microchip.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lunn.ch header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeCOHgb convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Thu, 15 Mar 2018 03:36:31 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:9315 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751653AbeCOHga (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Mar 2018 03:36:30 -0400
-X-IronPort-AV: E=Sophos;i="5.48,308,1517900400";
-   d="scan'208";a="12107666"
-From: <Nisar.Sayed@microchip.com>
-To: <agraf@suse.de>, <Woojung.Huh@microchip.com>
-CC: <UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tbogendoerfer@suse.de>, <phil@raspberrypi.org>
-Subject: RE: [PATCH] lan78xx: Connect phy early
-Thread-Topic: [PATCH] lan78xx: Connect phy early
-Thread-Index: AQHTu6RtRKCcnT2O9k2lhCneqxr8AaPQ3VhQ
-Date: Thu, 15 Mar 2018 07:36:29 +0000
-Message-ID: <CE371C1263339941885964188A0225FA3838A8@CHN-SV-EXMX03.mchp-main.com>
+        id S1751599AbeCNXZZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 19:25:25 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:58123 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751357AbeCNXZY (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 14 Mar 2018 19:25:24 -0400
+Date: Thu, 15 Mar 2018 00:25:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexander Graf <agraf@suse.de>
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH] lan78xx: Connect phy early
+Message-ID: <20180314232520.GB16379@lunn.ch>
 References: <20180314145456.69029-1-agraf@suse.de>
-In-Reply-To: <20180314145456.69029-1-agraf@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.10.76.4]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314145456.69029-1-agraf@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Alexander,
-
-Thanks for the patch.
-
-> @@ -2575,13 +2571,7 @@ static int lan78xx_stop(struct net_device *net)
->  	if (timer_pending(&dev->stat_monitor))
->  		del_timer_sync(&dev->stat_monitor);
-> 
-> -	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
-> -	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
+> @@ -2082,8 +2082,6 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+>  
+>  	dev->fc_autoneg = phydev->autoneg;
+>  
+> -	phy_start(phydev);
 > -
->  	phy_stop(net->phydev);
-> -	phy_disconnect(net->phydev);
-> -
-> -	net->phydev = NULL;
-> 
->  	clear_bit(EVENT_DEV_OPEN, &dev->flags);
->  	netif_stop_queue(net);
-
-Please do add valid "phydev"  check before phy_stop, since "phy_disconnect" should be called before "unregister_netdev"
-
-+ if (net->phydev)
-	phy_stop(net->phydev);
-
-> @@ -3481,6 +3471,11 @@ static void lan78xx_disconnect(struct
-> usb_interface *intf)
->  	net = dev->net;
->  	unregister_netdev(net);
-> 
-> +	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
-> +	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
-> +
-> +	phy_disconnect(net->phydev);
-> +
->  	cancel_delayed_work_sync(&dev->wq);
-> 
->  	usb_scuttle_anchored_urbs(&dev->deferred);
-
-Please move "unregister_netdev" after "phy_disconnect", otherwise "phy_disconnect" will fail while we disconnect USB.
-
-> @@ -3634,6 +3629,10 @@ static int lan78xx_probe(struct usb_interface
-> *intf,
->  	pm_runtime_set_autosuspend_delay(&udev->dev,
->  					 DEFAULT_AUTOSUSPEND_DELAY);
-> 
-> +	ret = lan78xx_phy_init(dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
+>  	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+>  
 >  	return 0;
-> 
->  out3:
-> --
-> 2.12.3
+> @@ -2512,9 +2510,7 @@ static int lan78xx_open(struct net_device *net)
+>  	if (ret < 0)
+>  		goto done;
+>  
+> -	ret = lan78xx_phy_init(dev);
+> -	if (ret < 0)
+> -		goto done;
+> +	phy_start(net->phydev);
 
-We should "goto out4" instead of "return" upon "lan78xx_phy_init" fail
+Should the debug message be moved as well?
 
-+ out4:
-+	unregister_netdev(netdev);
-
-In addition to current changes, you might have to take care of the following.
-
-In function "lan78xx_reset_resume"
-
--  lan78xx_phy_init(dev);
-+ phy_start(dev->net->phydev);
-
-Thanks,
-Sd.Nisar
-
-
+       Andrew
