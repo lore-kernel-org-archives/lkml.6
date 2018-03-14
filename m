@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753254AbeCNEF0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:05:26 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42064 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeCNEFZ (ORCPT
+        id S1751420AbeCNEGV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:06:21 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35991 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbeCNEGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:05:25 -0400
-X-Google-Smtp-Source: AG47ELvkXvlSD+j4W8pocHoQKYya/sgN7ijezjlerCIHIaRZc/EsbnLU0m0JcufMx7ka1dYTavbv6A==
+        Wed, 14 Mar 2018 00:06:19 -0400
+X-Google-Smtp-Source: AG47ELtlFDQ4mlhzBWSOLxQbrGBdxuv1EpySHCKLnGC26ExXOR6TVLpGaJxBPvezuyvDqhIBLrXW6Q==
 From: Deepa Dinamani <deepa.kernel@gmail.com>
 To: arnd@arndb.de, tglx@linutronix.de, john.stultz@linaro.org
 Cc: linux-kernel@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH v5 03/10] compat: enable compat_get/put_timespec64 always
-Date: Tue, 13 Mar 2018 21:03:26 -0700
-Message-Id: <20180314040333.3291-4-deepa.kernel@gmail.com>
+Subject: [PATCH v5 04/10] arch: introduce CONFIG_64BIT_TIME
+Date: Tue, 13 Mar 2018 21:03:27 -0700
+Message-Id: <20180314040333.3291-5-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180314040333.3291-1-deepa.kernel@gmail.com>
 References: <20180314040333.3291-1-deepa.kernel@gmail.com>
@@ -21,175 +21,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions are used in the repurposed compat syscalls
-to provide backward compatibility for using 32 bit time_t
-on 32 bit systems.
+There are a total of 53 system calls (aside from ioctl) that pass a time_t
+or derived data structure as an argument, and in order to extend time_t
+to 64-bit, we have to replace them with new system calls and keep providing
+backwards compatibility.
 
+To avoid adding completely new and untested code for this purpose, we
+introduce a new CONFIG_64BIT_TIME symbol. Every architecture that supports
+new 64 bit time_t syscalls enables this config.
+
+After this is done for all architectures, the CONFIG_64BIT_TIME symbol
+will be deleted.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- include/linux/compat.h      |  2 --
- include/linux/compat_time.h |  4 ++++
- kernel/compat.c             | 52 +++++++--------------------------------------
- kernel/time/time.c          | 44 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 56 insertions(+), 46 deletions(-)
+ arch/Kconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 0eb4a3a8f62e..e4f64080ac97 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -267,8 +267,6 @@ extern int compat_get_timespec(struct timespec *, const void __user *);
- extern int compat_put_timespec(const struct timespec *, void __user *);
- extern int compat_get_timeval(struct timeval *, const void __user *);
- extern int compat_put_timeval(const struct timeval *, void __user *);
--extern int compat_get_timespec64(struct timespec64 *, const void __user *);
--extern int compat_put_timespec64(const struct timespec64 *, void __user *);
- extern int get_compat_itimerspec64(struct itimerspec64 *its,
- 			const struct compat_itimerspec __user *uits);
- extern int put_compat_itimerspec64(const struct itimerspec64 *its,
-diff --git a/include/linux/compat_time.h b/include/linux/compat_time.h
-index 56a54a1e4355..31f2774f1994 100644
---- a/include/linux/compat_time.h
-+++ b/include/linux/compat_time.h
-@@ -3,6 +3,7 @@
- #define _LINUX_COMPAT_TIME_H
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 8e0d665c8d53..16e6acfe8711 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -870,6 +870,14 @@ config OLD_SIGACTION
+ config COMPAT_OLD_SIGACTION
+ 	bool
  
- #include <linux/types.h>
-+#include <linux/time64.h>
++config 64BIT_TIME
++	def_bool ARCH_HAS_64BIT_TIME
++	help
++	  This should be selected by all architectures that need to support
++	  new system calls with a 64-bit time_t. This is relevant on all 32-bit
++	  architectures, and 64-bit architectures as part of compat syscall
++	  handling.
++
+ config ARCH_NO_COHERENT_DMA_MMAP
+ 	bool
  
- typedef s32		compat_time_t;
- 
-@@ -16,4 +17,7 @@ struct compat_timeval {
- 	s32		tv_usec;
- };
- 
-+extern int compat_get_timespec64(struct timespec64 *, const void __user *);
-+extern int compat_put_timespec64(const struct timespec64 *, void __user *);
-+
- #endif /* _LINUX_COMPAT_TIME_H */
-diff --git a/kernel/compat.c b/kernel/compat.c
-index 3f5fa8902e7d..dabe15d11894 100644
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -120,50 +120,6 @@ static int __compat_put_timespec(const struct timespec *ts, struct compat_timesp
- 			__put_user(ts->tv_nsec, &cts->tv_nsec)) ? -EFAULT : 0;
- }
- 
--static int __compat_get_timespec64(struct timespec64 *ts64,
--				   const struct compat_timespec __user *cts)
--{
--	struct compat_timespec ts;
--	int ret;
--
--	ret = copy_from_user(&ts, cts, sizeof(ts));
--	if (ret)
--		return -EFAULT;
--
--	ts64->tv_sec = ts.tv_sec;
--	ts64->tv_nsec = ts.tv_nsec;
--
--	return 0;
--}
--
--static int __compat_put_timespec64(const struct timespec64 *ts64,
--				   struct compat_timespec __user *cts)
--{
--	struct compat_timespec ts = {
--		.tv_sec = ts64->tv_sec,
--		.tv_nsec = ts64->tv_nsec
--	};
--	return copy_to_user(cts, &ts, sizeof(ts)) ? -EFAULT : 0;
--}
--
--int compat_get_timespec64(struct timespec64 *ts, const void __user *uts)
--{
--	if (COMPAT_USE_64BIT_TIME)
--		return copy_from_user(ts, uts, sizeof(*ts)) ? -EFAULT : 0;
--	else
--		return __compat_get_timespec64(ts, uts);
--}
--EXPORT_SYMBOL_GPL(compat_get_timespec64);
--
--int compat_put_timespec64(const struct timespec64 *ts, void __user *uts)
--{
--	if (COMPAT_USE_64BIT_TIME)
--		return copy_to_user(uts, ts, sizeof(*ts)) ? -EFAULT : 0;
--	else
--		return __compat_put_timespec64(ts, uts);
--}
--EXPORT_SYMBOL_GPL(compat_put_timespec64);
--
- int compat_get_timeval(struct timeval *tv, const void __user *utv)
- {
- 	if (COMPAT_USE_64BIT_TIME)
-@@ -367,6 +323,14 @@ COMPAT_SYSCALL_DEFINE3(sched_getaffinity, compat_pid_t,  pid, unsigned int, len,
- 	return ret;
- }
- 
-+/* Todo: Delete these extern declarations when get/put_compat_itimerspec64()
-+ * are moved to kernel/time/time.c .
-+ */
-+extern int __compat_get_timespec64(struct timespec64 *ts64,
-+				   const struct compat_timespec __user *cts);
-+extern int __compat_put_timespec64(const struct timespec64 *ts64,
-+				   struct compat_timespec __user *cts);
-+
- int get_compat_itimerspec64(struct itimerspec64 *its,
- 			const struct compat_itimerspec __user *uits)
- {
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index bd4e6c7dd689..02367a381f44 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -868,6 +868,50 @@ int put_timespec64(const struct timespec64 *ts,
- }
- EXPORT_SYMBOL_GPL(put_timespec64);
- 
-+int __compat_get_timespec64(struct timespec64 *ts64,
-+				   const struct compat_timespec __user *cts)
-+{
-+	struct compat_timespec ts;
-+	int ret;
-+
-+	ret = copy_from_user(&ts, cts, sizeof(ts));
-+	if (ret)
-+		return -EFAULT;
-+
-+	ts64->tv_sec = ts.tv_sec;
-+	ts64->tv_nsec = ts.tv_nsec;
-+
-+	return 0;
-+}
-+
-+int __compat_put_timespec64(const struct timespec64 *ts64,
-+				   struct compat_timespec __user *cts)
-+{
-+	struct compat_timespec ts = {
-+		.tv_sec = ts64->tv_sec,
-+		.tv_nsec = ts64->tv_nsec
-+	};
-+	return copy_to_user(cts, &ts, sizeof(ts)) ? -EFAULT : 0;
-+}
-+
-+int compat_get_timespec64(struct timespec64 *ts, const void __user *uts)
-+{
-+	if (COMPAT_USE_64BIT_TIME)
-+		return copy_from_user(ts, uts, sizeof(*ts)) ? -EFAULT : 0;
-+	else
-+		return __compat_get_timespec64(ts, uts);
-+}
-+EXPORT_SYMBOL_GPL(compat_get_timespec64);
-+
-+int compat_put_timespec64(const struct timespec64 *ts, void __user *uts)
-+{
-+	if (COMPAT_USE_64BIT_TIME)
-+		return copy_to_user(uts, ts, sizeof(*ts)) ? -EFAULT : 0;
-+	else
-+		return __compat_put_timespec64(ts, uts);
-+}
-+EXPORT_SYMBOL_GPL(compat_put_timespec64);
-+
- int get_itimerspec64(struct itimerspec64 *it,
- 			const struct itimerspec __user *uit)
- {
 -- 
 2.14.1
