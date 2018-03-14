@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753354AbeCNGO3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:14:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38674 "EHLO
+        id S1753397AbeCNGP0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:15:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40118 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbeCNGO1 (ORCPT
+        with ESMTP id S1751272AbeCNGPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:14:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2741360314
+        Wed, 14 Mar 2018 02:15:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86BF360314
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 13/36] drm/bridge: analogix_dp: Ensure edp is disabled
- when shutting down the panel
+Subject: Re: [PATCH v5 14/36] drm/bridge: analogix_dp: Extend hpd check time
+ to 100ms
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
         seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
@@ -30,14 +30,14 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hshi@chromium.org,
         =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-14-enric.balletbo@collabora.com>
+ <20180309222327.18689-15-enric.balletbo@collabora.com>
 From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <4bdae224-4a88-db7e-f2d7-358232d0d406@codeaurora.org>
-Date: Wed, 14 Mar 2018 11:44:09 +0530
+Message-ID: <7a95aaf7-f692-c476-e4b6-822a6923951a@codeaurora.org>
+Date: Wed, 14 Mar 2018 11:45:06 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-14-enric.balletbo@collabora.com>
+In-Reply-To: <20180309222327.18689-15-enric.balletbo@collabora.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -50,18 +50,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
 > From: Lin Huang <hl@rock-chips.com>
 > 
-> When panel is shut down, we should make sure edp can be disabled to avoid
-> undefined behavior.
+> There was a 1ms delay to detect the hpd signal, which is too short to
+> detect a short pulse. This patch extends this delay to 100ms.
+> 
 
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
 Thanks,
 Archit
 
-> 
 > Cc: Stéphane Marchesin <marcheu@chromium.org>
+> Cc: 征增 王 <wzz@rock-chips.com>
 > Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Signed-off-by: zain wang <wzz@rock-chips.com>
 > Signed-off-by: Sean Paul <seanpaul@chromium.org>
 > Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
@@ -69,48 +69,20 @@ Archit
 > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
 > 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index 92fb9a072cb6..3a222e7e46ee 100644
+> index 3a222e7e46ee..6cbde8473f58 100644
 > --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 > +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+> @@ -76,7 +76,7 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
+>   			return 0;
 >   
->   	pm_runtime_get_sync(dp->dev);
->   
-> +	ret = clk_prepare_enable(dp->clock);
-> +	if (ret < 0) {
-> +		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
-> +		goto out_dp_clk_pre;
-> +	}
-> +
->   	if (dp->plat_data->power_on)
->   		dp->plat_data->power_on(dp->plat_data);
->   
-> @@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->   	phy_power_off(dp->phy);
->   	if (dp->plat_data->power_off)
->   		dp->plat_data->power_off(dp->plat_data);
-> +	clk_disable_unprepare(dp->clock);
-> +out_dp_clk_pre:
->   	pm_runtime_put_sync(dp->dev);
->   
->   	return ret;
-> @@ -1233,11 +1241,14 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+>   		timeout_loop++;
+> -		usleep_range(10, 11);
+> +		usleep_range(1000, 1100);
 >   	}
 >   
->   	disable_irq(dp->irq);
-> +	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
->   	phy_power_off(dp->phy);
->   
->   	if (dp->plat_data->power_off)
->   		dp->plat_data->power_off(dp->plat_data);
->   
-> +	clk_disable_unprepare(dp->clock);
-> +
->   	pm_runtime_put_sync(dp->dev);
->   
->   	ret = analogix_dp_prepare_panel(dp, false, true);
+>   	/*
 > 
