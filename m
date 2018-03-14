@@ -1,173 +1,387 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeCNXV1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:21:27 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:47569 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeCNXVZ (ORCPT
+        id S1751527AbeCNXYq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:24:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59574 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeCNXYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:21:25 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
-        <20180224002248.GH30522@ZenIV.linux.org.uk>
-        <20180225073950.GI30522@ZenIV.linux.org.uk>
-        <87bmgbnhar.fsf_-_@linutronix.de>
-        <20180312191351.GN30522@ZenIV.linux.org.uk>
-        <877eqhcab3.fsf@xmission.com>
-        <20180312203916.GQ30522@ZenIV.linux.org.uk>
-        <87woygan6p.fsf@xmission.com> <87tvtk97i8.fsf@xmission.com>
-        <20180313003751.GT30522@ZenIV.linux.org.uk>
-        <20180313005010.GV30522@ZenIV.linux.org.uk>
-Date: Wed, 14 Mar 2018 18:20:29 -0500
-In-Reply-To: <20180313005010.GV30522@ZenIV.linux.org.uk> (Al Viro's message of
-        "Tue, 13 Mar 2018 00:50:11 +0000")
-Message-ID: <87muzai6rm.fsf_-_@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ewFhs-00046s-Mz;;;mid=<87muzai6rm.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX194dKeYDENhQkxw0o8oEt1Tng1B3DrsEv0=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Al Viro <viro@ZenIV.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 375 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.4 (0.9%), b_tie_ro: 2.2 (0.6%), parse: 1.55 (0.4%),
-        extract_message_metadata: 24 (6.3%), get_uri_detail_list: 5 (1.4%),
-        tests_pri_-1000: 12 (3.1%), tests_pri_-950: 1.73 (0.5%), tests_pri_-900: 1.41
-        (0.4%), tests_pri_-400: 36 (9.6%), check_bayes: 35 (9.2%), b_tokenize: 14
-        (3.7%), b_tok_get_all: 10 (2.7%), b_comp_prob: 4.0 (1.1%), b_tok_touch_all:
-        4.2 (1.1%), b_finish: 0.75 (0.2%), tests_pri_0: 284 (75.9%),
-        check_dkim_signature: 0.68 (0.2%), check_dkim_adsp: 3.3 (0.9%),
-        tests_pri_500: 6 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] fs: Teach path_connected to handle nfs filesystems with multiple roots.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Wed, 14 Mar 2018 19:24:44 -0400
+Date: Wed, 14 Mar 2018 16:24:42 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org,
+        sfr@canb.auug.org.au
+Subject: mmotm 2018-03-14-16-24 uploaded
+Message-ID: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The mm-of-the-moment snapshot 2018-03-14-16-24 has been uploaded to
 
-On nfsv2 and nfsv3 the nfs server can export subsets of the same
-filesystem and report the same filesystem identifier, so that the nfs
-client can know they are the same filesystem.  The subsets can be from
-disjoint directory trees.  The nfsv2 and nfsv3 filesystems provides no
-way to find the common root of all directory trees exported form the
-server with the same filesystem identifier.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-The practical result is that in struct super s_root for nfs s_root is
-not necessarily the root of the filesystem.  The nfs mount code sets
-s_root to the root of the first subset of the nfs filesystem that the
-kernel mounts.
+mmotm-readme.txt says
 
-This effects the dcache invalidation code in generic_shutdown_super
-currently called shrunk_dcache_for_umount and that code for years
-has gone through an additional list of dentries that might be dentry
-trees that need to be freed to accomodate nfs.
+README for mm-of-the-moment:
 
-When I wrote path_connected I did not realize nfs was so special, and
-it's hueristic for avoiding calling is_subdir can fail.
+http://www.ozlabs.org/~akpm/mmotm/
 
-The practical case where this fails is when there is a move of a
-directory from the subtree exposed by one nfs mount to the subtree
-exposed by another nfs mount.  This move can happen either locally or
-remotely.  With the remote case requiring that the move directory be cached
-before the move and that after the move someone walks the path
-to where the move directory now exists and in so doing causes the
-already cached directory to be moved in the dcache through the magic
-of d_splice_alias.
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-If someone whose working directory is in the move directory or a
-subdirectory and now starts calling .. from the initial mount of nfs
-(where s_root == mnt_root), then path_connected as a heuristic will
-not bother with the is_subdir check.  As s_root really is not the root
-of the nfs filesystem this heuristic is wrong, and the path may
-actually not be connected and path_connected can fail.
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-The is_subdir function might be cheap enough that we can call it
-unconditionally.  Verifying that will take some benchmarking and
-the result may not be the same on all kernels this fix needs
-to be backported to.  So I am avoiding that for now.
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-Filesystems with snapshots such as nilfs and btrfs do something
-similar.  But as the directory tree of the snapshots are disjoint
-from one another and from the main directory tree rename won't move
-things between them and this problem will not occur.
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-Cc: stable@vger.kernel.org
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Fixes: 397d425dc26d ("vfs: Test for and handle paths that are unreachable from their mnt_root")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
-Al do you want to push this one to Linus or shall I?
 
- fs/namei.c         | 5 +++--
- fs/nfs/super.c     | 2 ++
- include/linux/fs.h | 1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 921ae32dbc80..cafa365eeb70 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -559,9 +559,10 @@ static int __nd_alloc_stack(struct nameidata *nd)
- static bool path_connected(const struct path *path)
- {
- 	struct vfsmount *mnt = path->mnt;
-+	struct super_block *sb = mnt->mnt_sb;
- 
--	/* Only bind mounts can have disconnected paths */
--	if (mnt->mnt_root == mnt->mnt_sb->s_root)
-+	/* Bind mounts and multi-root filesystems can have disconnected paths */
-+	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
- 		return true;
- 
- 	return is_subdir(path->dentry, mnt->mnt_root);
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 29bacdc56f6a..5e470e233c83 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2631,6 +2631,8 @@ struct dentry *nfs_fs_mount_common(struct nfs_server *server,
- 		/* initial superblock/root creation */
- 		mount_info->fill_super(s, mount_info);
- 		nfs_get_cache_cookie(s, mount_info->parsed, mount_info->cloned);
-+		if (!(server->flags & NFS_MOUNT_UNSHARED))
-+			s->s_iflags |= SB_I_MULTIROOT;
- 	}
- 
- 	mntroot = nfs_get_root(s, mount_info->mntfh, dev_name);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2a815560fda0..0430e03febaa 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1317,6 +1317,7 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
- #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
- #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
-+#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
- 
- /* sb->s_iflags to limit user namespace mounts */
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
--- 
-2.14.1
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.16-rc5:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* mm-mempolicy-avoid-use-uninitialized-preferred_node.patch
+* mm-mempolicy-avoid-use-uninitialized-preferred_node-fix.patch
+* maintainers-update-my-e-mail.patch
+* lockdep-fix-fs_reclaim-warning.patch
+* hugetlbfs-check-for-pgoff-value-overflow.patch
+* hugetlbfs-check-for-pgoff-value-overflow-v3.patch
+* hugetlbfs-check-for-pgoff-value-overflow-v3-fix.patch
+* hugetlbfs-check-for-pgoff-value-overflow-v3-fix-fix.patch
+* mm-remove-unused-arg-from-memblock_next_valid_pfn.patch
+* h8300-remove-extranous-__big_endian-definition.patch
+* mm-vmalloc-add-interfaces-to-free-unmapped-page-table.patch
+* mm-vmalloc-add-interfaces-to-free-unmapped-page-table-fix.patch
+* x86-mm-implement-free-pmd-pte-page-interfaces.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* tile-pci_gx-make-setup_pcie_rc_delay-__init.patch
+* net-9p-avoid-erestartsys-leak-to-userspace.patch
+* ocfs2-use-osb-instead-of-ocfs2_sb.patch
+* ocfs2-use-oi-instead-of-ocfs2_i.patch
+* ocfs2-clean-up-some-unused-function-declaration.patch
+* ocfs2-keep-the-trace-point-consistent-with-the-function-name.patch
+* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown.patch
+* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown-v3.patch
+* ocfs2-remove-unnecessary-null-pointer-check-before-kmem_cache_destroy.patch
+* ocfs2-clean-up-two-unused-functions-in-suballocc.patch
+* ocfs2-dlm-clean-unrelated-comment.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-move-some-definitions-to-header-file.patch
+* ocfs2-fix-some-small-problems.patch
+* ocfs2-add-kobject-for-online-file-check.patch
+* ocfs2-add-duplicative-ino-number-check.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+  mm.patch
+* slab-mark-kmalloc-machinery-as-__ro_after_init.patch
+* slub-use-jitter-free-reference-while-printing-age.patch
+* slab-fixup-calculate_alignment-argument-type.patch
+* slab-make-kmalloc_index-return-unsigned-int.patch
+* slab-make-kmalloc_size-return-unsigned-int.patch
+* slab-make-create_kmalloc_cache-work-with-32-bit-sizes.patch
+* slab-make-create_boot_cache-work-with-32-bit-sizes.patch
+* slab-make-kmem_cache_create-work-with-32-bit-sizes.patch
+* slab-make-size_index-array-u8.patch
+* slab-make-size_index_elem-unsigned-int.patch
+* slub-make-remote_node_defrag_ratio-unsigned-int.patch
+* slub-make-max_attr_size-unsigned-int.patch
+* slub-make-red_left_pad-unsigned-int.patch
+* slub-make-reserved-unsigned-int.patch
+* slub-make-align-unsigned-int.patch
+* slub-make-inuse-unsigned-int.patch
+* slub-make-cpu_partial-unsigned-int.patch
+* slub-make-offset-unsigned-int.patch
+* slub-make-object_size-unsigned-int.patch
+* slub-make-size-unsigned-int.patch
+* slab-make-kmem_cache_flags-accept-32-bit-object-size.patch
+* kasan-make-kasan_cache_create-work-with-32-bit-slab-cache-sizes.patch
+* slab-make-usercopy-region-32-bit.patch
+* slub-make-slab_index-return-unsigned-int.patch
+* slub-make-struct-kmem_cache_order_objects-x-unsigned-int.patch
+* slub-make-size_from_object-return-unsigned-int.patch
+* slab-use-32-bit-arithmetic-in-freelist_randomize.patch
+* mm-slabc-remove-duplicated-check-of-colour_next.patch
+* slab-slub-remove-size-disparity-on-debug-kernel.patch
+* mm-ksm-make-function-stable_node_dup-static.patch
+* mm-always-print-rlimit_data-warning.patch
+* mm-migrate-change-migration-reason-mr_cma-as-mr_contig_range.patch
+* mm-hugetlbfs-move-hugetlbfs_i-outside-ifdef-config_hugetlbfs.patch
+* mm-memfd-split-out-memfd-for-use-by-multiple-filesystems.patch
+* mm-memfd-remove-memfd-code-from-shmem-files-and-use-new-memfd-files.patch
+* mm-swap_slots-use-conditional-compilation-for-swap_slotsc.patch
+* mm-disable-interrupts-while-initializing-deferred-pages.patch
+* mm-disable-interrupts-while-initializing-deferred-pages-v6.patch
+* mm-initialize-pages-on-demand-during-boot.patch
+* mm-initialize-pages-on-demand-during-boot-fix-3.patch
+* mm-initialize-pages-on-demand-during-boot-fix-4.patch
+* mm-initialize-pages-on-demand-during-boot-fix-4-fix.patch
+* mm-initialize-pages-on-demand-during-boot-v5.patch
+* mm-initialize-pages-on-demand-during-boot-v5-fix.patch
+* mm-initialize-pages-on-demand-during-boot-v6.patch
+* mm-initialize-pages-on-demand-during-boot-v6-checkpatch-fixes.patch
+* mm-thp-fix-potential-clearing-to-referenced-flag-in-page_idle_clear_pte_refs_one.patch
+* mm-memory_hotplug-enforce-block-size-aligned-range-check.patch
+* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory.patch
+* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory-v4.patch
+* mm-uninitialized-struct-page-poisoning-sanity-checking.patch
+* mm-uninitialized-struct-page-poisoning-sanity-checking-v4.patch
+* mm-memory_hotplug-optimize-probe-routine.patch
+* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug.patch
+* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug-v5.patch
+* mm-memory_hotplug-optimize-memory-hotplug.patch
+* mm-memory_hotplug-optimize-memory-hotplug-v5.patch
+* mm-hwpoison-disable-memory-error-handling-on-1gb-hugepage.patch
+* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent.patch
+* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent-fix.patch
+* mm-page_alloc-move-mirrored_kernelcore-to-__meminitdata.patch
+* mm-re-use-define_show_attribute-macro.patch
+* mm-re-use-define_show_attribute-macro-v2.patch
+* mm-fix-races-between-address_space-dereference-and-free-in-page_evicatable.patch
+* mm-page_ref-use-atomic_set_release-in-page_ref_unfreeze.patch
+* mm-huge_memoryc-reorder-operations-in-__split_huge_page_tail.patch
+* z3fold-limit-use-of-stale-list-for-allocation.patch
+* mmvmscan-dont-pretend-forward-progress-upon-shrinker_rwsem-contention.patch
+* mm-swap-clean-up-swap-readahead.patch
+* mm-swap-clean-up-swap-readahead-fix.patch
+* mm-swap-unify-cluster-based-and-vma-based-swap-readahead.patch
+* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma.patch
+* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma-fix.patch
+* mm-kmemleak-make-kmemleak_boot_config-__init.patch
+* mm-page_owner-make-early_page_owner_param-__init.patch
+* mm-page_poison-make-early_page_poison_param-__init.patch
+* mm-make-should_failslab-always-available-for-fault-injection.patch
+* mm-compaction-drain-pcps-for-zone-when-kcompactd-fails.patch
+* mm-free_pcppages_bulk-update-pcp-count-inside.patch
+* mm-free_pcppages_bulk-do-not-hold-lock-when-picking-pages-to-free.patch
+* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lock.patch
+* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lockpatch-v4.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
+* mm-gupc-fixed-coding-style-issues.patch
+* mm-powerpc-use-vma_kernel_pagesize-in-vma_mmu_pagesize.patch
+* mm-hugetlbfs-introduce-pagesize-to-vm_operations_struct.patch
+* device-dax-implement-pagesize-for-smaps-to-report-mmupagesize.patch
+* mm-provide-consistent-declaration-for-num_poisoned_pages.patch
+* direct-io-minor-cleanups-in-do_blockdev_direct_io.patch
+* direct-io-minor-cleanups-in-do_blockdev_direct_io-fix.patch
+* mm-introduce-nr_indirectly_reclaimable_bytes.patch
+* mm-treat-indirectly-reclaimable-memory-as-available-in-memavailable.patch
+* dcache-account-external-names-as-indirectly-reclaimable-memory.patch
+* dcache-account-external-names-as-indirectly-reclaimable-memory-fix.patch
+* dcache-account-external-names-as-indirectly-reclaimable-memory-fix-2.patch
+* mm-treat-indirectly-reclaimable-memory-as-free-in-overcommit-logic.patch
+* mm-fix-races-between-swapoff-and-flush-dcache.patch
+* mm-fix-races-between-swapoff-and-flush-dcache-fix.patch
+* zsmalloc-introduce-zs_huge_class_size-function.patch
+* zsmalloc-introduce-zs_huge_class_size-function-v3.patch
+* zram-drop-max_zpage_size-and-use-zs_huge_class_size.patch
+* zram-drop-max_zpage_size-and-use-zs_huge_class_size-v3.patch
+* mm-nommu-remove-description-of-alloc_vm_area.patch
+* mm-swap-remove-cold-parameter-description-for-release_pages.patch
+* mm-kernel-doc-add-missing-parameter-descriptions.patch
+* block_invalidatepage-only-release-page-if-the-full-page-was-invalidated.patch
+* mm-swap-make-bool-enable_vma_readahead-and-function-swap_vma_readahead-static.patch
+* mm-make-count-list_lru_one-nr_items-lockless.patch
+* detect-early-free-of-a-live-mm.patch
+* mm-page_alloc-wakeup-kcompactd-even-if-kswapd-cannot-free-more-memory.patch
+* mm-oom-remove-3%-bonus-for-cap_sys_admin-processes.patch
+* mm-change-return-type-to-vm_fault_t.patch
+* mm-make-start_isolate_page_range-fail-if-already-isolated.patch
+* include-linux-mmdebugh-fix-vm_warn-with-config_debug_vm=n.patch
+* mm-hugetlbc-clean-up-vm_warn-usage.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* mmvmscan-mark-register_shrinker-as-__must_check.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-page_alloc-dont-reserve-zone_highmem-for-zone_movable-request.patch
+* mm-cma-manage-the-memory-of-the-cma-area-by-using-the-zone_movable.patch
+* mm-cma-remove-alloc_cma.patch
+* arm-cma-avoid-double-mapping-to-the-cma-area-if-config_highmem-=-y.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-swap-make-pointer-swap_avail_heads-static.patch
+* mm-numa-rework-do_pages_move.patch
+* mm-migrate-remove-reason-argument-from-new_page_t.patch
+* mm-unclutter-thp-migration.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* kasan-slub-fix-handling-of-kasan_slab_free-hook.patch
+* kasan-slub-fix-handling-of-kasan_slab_free-hook-v2.patch
+* kasan-fix-invalid-free-test-crashing-the-kernel.patch
+* kasan-disallow-compiler-to-optimize-away-memset-in-tests.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps.patch
+* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps-v3.patch
+* procfs-optimize-seq_pad-to-speed-up-proc-pid-maps.patch
+* proc-get-rid-of-task-lock-unlock-pair-to-read-umask-for-the-status-file.patch
+* proc-do-less-stuff-under-pde_unload_lock.patch
+* proc-move-proc-sysvipc-creation-to-where-it-belongs.patch
+* proc-faster-open-close-of-files-without-release-hook.patch
+* proc-randomize-struct-pde_opener.patch
+* proc-move-struct-pde_opener-to-kmem-cache.patch
+* proc-account-struct-pde_opener.patch
+* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps.patch
+* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps-fix.patch
+* proc-replace-seq_printf-on-seq_putc-to-speed-up-proc-pid-smaps.patch
+* proc-optimize-single-symbol-delimiters-to-spead-up-seq_put_decimal_ull.patch
+* proc-replace-seq_printf-by-seq_put_smth-to-speed-up-proc-pid-status.patch
+* proc-check-permissions-earlier-for-proc-wchan.patch
+* proc-use-set_puts-at-proc-wchan.patch
+* fs-sysctl-fix-potential-page-fault-while-unregistering-sysctl-table.patch
+* fs-sysctl-remove-redundant-link-check-in-proc_sys_link_fill_cache.patch
+* proc-test-proc-self-wchan.patch
+* proc-test-proc-self-syscall.patch
+* proc-move-struct-proc_dir_entry-into-kmem-cache.patch
+* proc-fix-proc-map_files-lookup-some-more.patch
+* proc-register-filesystem-last.patch
+* proc-faster-proc-cmdline.patch
+* proc-do-mmput-asap-for-proc-map_files.patch
+* proc-revalidate-misc-dentries.patch
+* proc-test-last-field-of-proc-loadavg.patch
+* proc-reject-and-as-filenames.patch
+* proc-switch-struct-proc_dir_entry-count-to-refcount.patch
+* taint-convert-to-indexed-initialization.patch
+* taint-consolidate-documentation.patch
+* taint-add-taint-for-randstruct.patch
+* uts-create-struct-uts_namespace-from-kmem_cache.patch
+* lib-kconfigdebug-debug-lockups-and-hangs-keep-softlockup-options-together.patch
+* test_bitmap-do-not-accidentally-use-stack-vla.patch
+* lib-add-testing-module-for-ubsan.patch
+* lib-add-testing-module-for-ubsan-fix.patch
+* checkpatch-improve-parse_email-signature-checking.patch
+* checkpatchpl-add-spdx-license-tag-check.patch
+* checkpatch-add-crypto-on_stack-to-declaration_macros.patch
+* checkpatch-add-sub-routine-get_stat_real.patch
+* checkpatch-remove-unused-variable-declarations.patch
+* checkpatch-add-sub-routine-get_stat_here.patch
+* checkpatch-warn-for-use-of-%px.patch
+* checkpatch-improve-get_quoted_string-for-trace_event-macros.patch
+* checkpatch-two-spelling-fixes.patch
+* init-ramdisk-use-pr_cont-at-the-end-of-ramdisk-loading.patch
+* seq_file-allocate-seq_file-from-kmem_cache.patch
+* seq_file-account-everything.patch
+* seq_file-delete-small-value-optimization.patch
+* fork-unconditionally-clear-stack-on-fork.patch
+* exec-pass-stack-rlimit-into-mm-layout-functions.patch
+* exec-introduce-finalize_exec-before-start_thread.patch
+* exec-pin-stack-limit-during-exec.patch
+* kernel-downgrade-warning-for-unsafe-parameters.patch
+* ipc-shm-introduce-shmctlshm_stat_any.patch
+* ipc-sem-introduce-semctlsem_stat_any.patch
+* ipc-msg-introduce-msgctlmsg_stat_any.patch
+* proc-sysctl-fix-typo-in-sysctl_check_table_array.patch
+* sysctl-add-kdoc-comments-to-do_proc_douintvec_minmax_conv_param.patch
+* sysctl-add-flags-to-support-min-max-range-clamping.patch
+* proc-sysctl-check-for-invalid-flags-bits.patch
+* sysctl-warn-when-a-clamped-sysctl-parameter-is-set-out-of-range.patch
+* ipc-clamp-msgmni-and-shmmni-to-the-real-ipcmni-limit.patch
+* ipc-clamp-semmni-to-the-real-ipcmni-limit.patch
+* ipc-clamp-semmni-to-the-real-ipcmni-limit-fix.patch
+* test_sysctl-add-range-clamping-test.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-fixup.patch
+* ipc-mqueue-add-missing-error-code-in-init_mqueue_fs.patch
+* drivers-infiniband-core-verbsc-fix-build-with-gcc-444.patch
+* drivers-infiniband-ulp-srpt-ib_srptc-fix-build-with-gcc-444.patch
+* kexec_file-make-an-use-of-purgatory-optional.patch
+* kexec_file-make-an-use-of-purgatory-optional-fix.patch
+* kexec_filex86powerpc-factor-out-kexec_file_ops-functions.patch
+* x86-kexec_file-purge-system-ram-walking-from-prepare_elf64_headers.patch
+* x86-kexec_file-remove-x86_64-dependency-from-prepare_elf64_headers.patch
+* x86-kexec_file-lift-crash_max_ranges-limit-on-crash_mem-buffer.patch
+* x86-kexec_file-clean-up-prepare_elf64_headers.patch
+* kexec_file-x86-move-re-factored-code-to-generic-side.patch
+* mm-introduce-map_fixed_safe.patch
+* fs-elf-drop-map_fixed-usage-from-elf_map.patch
+* elf-enforce-map_fixed-on-overlaying-elf-segments.patch
+* xen-mm-allow-deferred-page-initialization-for-xen-pv-domains.patch
+* linux-consth-prefix-include-guard-of-uapi-linux-consth-with-_uapi.patch
+* linux-consth-move-ul-macro-to-include-linux-consth.patch
+* linux-consth-refactor-_bitul-and-_bitull-a-bit.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
+* headers-untangle-kmemleakh-from-mmh.patch
+* headers-untangle-kmemleakh-from-mmh-fix.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  mutex-subsystem-synchro-test-module.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
