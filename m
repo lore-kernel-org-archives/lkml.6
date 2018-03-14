@@ -1,75 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeCNVht (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:37:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751289AbeCNVhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:37:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1C120779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 14 Mar 2018 17:37:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: syzbot <syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        acme <acme@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        syzkaller-bugs@googlegroups.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Subject: Re: WARNING in tracepoint_probe_register_prio (2)
-Message-ID: <20180314173746.3a6ab6eb@vmware.local.home>
-In-Reply-To: <539259484.8875.1520954991870.JavaMail.zimbra@efficios.com>
-References: <001a114465e241a8720567419a72@google.com>
-        <539259484.8875.1520954991870.JavaMail.zimbra@efficios.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751523AbeCNVki (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:40:38 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59182 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNVkg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 17:40:36 -0400
+Date: Wed, 14 Mar 2018 17:33:54 -0400
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: syzbot <syzbot+c68e51bb5e699d3f8d91@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in __local_bh_enable_ip (2)
+Message-ID: <20180314213354.GH24557@oracle.com>
+References: <001a113de654ad181e056764f936@google.com>
+ <1686ceff-9b7e-592e-8607-b3b8add6a6a3@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1686ceff-9b7e-592e-8607-b3b8add6a6a3@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=450
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803140232
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 11:29:51 -0400 (EDT)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-
-> Here is a WARN_ON() splat in tracepoint.c, which I suspect is caused
-> by perf trying to register the same probe twice to the tracepoint API.
-> We got another splat on unregister too, which I will forward in a
-> separate email.
+On (03/14/18 14:28), Eric Dumazet wrote:
 > 
-> Thoughts ?
+> 
+> spin_lock_bh(&rds_tcp_conn_lock);/spin_unlock_bh(&rds_tcp_conn_lock); in
+> rds_tcp_conn_free()
+> 
+> is in conflict with the spin_lock_irqsave(&rds_conn_lock, flags);
+> in __rds_conn_create()
 
-Yes, it looks like it's perf not accounting for registered events
-properly.
+yes I was going to look into this and fix it later.
 
-Peter?
+> Hard to understand why RDS is messing with hard irqs really.
 
--- Steve
+some of it comes from the rds_rdma history: some parts of
+the common rds and rds_rdma module get called in various
+driver contexts for infiniband.
 
-
-
-> > RIP: 0010:tracepoint_add_func kernel/tracepoint.c:210 [inline]
-> > RIP: 0010:tracepoint_probe_register_prio+0x397/0x9a0 kernel/tracepoint.c:282
-> > RSP: 0018:ffff8801bbc87468 EFLAGS: 00010293
-> > RAX: ffff8801b5a3c680 RBX: 00000000fffffff4 RCX: ffffffff81735e67
-> > RDX: 0000000000000000 RSI: ffffffff86f42a00 RDI: 0000000000000286
-> > RBP: ffff8801bbc87570 R08: 1ffff10037790de1 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > R13: dffffc0000000000 R14: 0000000000000000 R15: ffff8801bbc87548
-> >  tracepoint_probe_register+0x2a/0x40 kernel/tracepoint.c:303
-> >  trace_event_reg+0x167/0x320 kernel/trace/trace_events.c:305
-> >  perf_trace_event_reg kernel/trace/trace_event_perf.c:122 [inline]
-> >  perf_trace_event_init kernel/trace/trace_event_perf.c:197 [inline]
-> >  perf_trace_init+0x4ef/0xab0 kernel/trace/trace_event_perf.c:221
-> >  perf_tp_event_init+0x7d/0xf0 kernel/events/core.c:7979
-> >  perf_try_init_event+0xc9/0x2a0 kernel/events/core.c:9240
-> >  perf_init_event kernel/events/core.c:9278 [inline]
-> >  perf_event_alloc+0x1cc6/0x2b00 kernel/events/core.c:9542
-> >  SYSC_perf_event_open+0x84e/0x2e00 kernel/events/core.c:9997
-> >  SyS_perf_event_open+0x39/0x50 kernel/events/core.c:9883
-> >  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->
+--Sowmini
