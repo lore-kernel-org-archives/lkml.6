@@ -1,42 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751559AbeCNJ1u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:27:50 -0400
-Received: from ozlabs.org ([103.22.144.67]:49557 "EHLO ozlabs.org"
+        id S1751969AbeCNJ17 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:27:59 -0400
+Received: from ozlabs.org ([103.22.144.67]:42475 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeCNJ1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:27:47 -0400
+        id S1751788AbeCNJ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:27:56 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 58935176ad17976b7a7f6ea25c0ceb2ca4308a30
-In-Reply-To: <20180214211519.15683-1-malat@debian.org>
+X-powerpc-patch-commit: 45b4d27a3897d6094bcf84bc87743954e038620a
+In-Reply-To: <20180225172236.29650-11-malat@debian.org>
 To: Mathieu Malaterre <malat@debian.org>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Laurent Vivier <lvivier@redhat.com>,
-        Mathieu Malaterre <malat@debian.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2] powerpc/via-pmu: Fix section mismatch warning
-Message-Id: <401RG939z2z9sD0@ozlabs.org>
-Date: Wed, 14 Mar 2018 20:27:45 +1100 (AEDT)
+Cc: Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [10/21] powerpc: Add missing prototype for slb_miss_bad_addr
+Message-Id: <401RGK6Fs4z9sVj@ozlabs.org>
+Date: Wed, 14 Mar 2018 20:27:53 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-14 at 21:15:18 UTC, Mathieu Malaterre wrote:
-> Make the struct via_pmu_driver const to avoid following warning:
+On Sun, 2018-02-25 at 17:22:25 UTC, Mathieu Malaterre wrote:
+> In commit f0f558b131db ("powerpc/mm: Preserve CFAR value on SLB miss caused
+> by access to bogus address"), the function slb_miss_bad_addr was added
+> without a prototype. This commit adds it.
 > 
-> WARNING: vmlinux.o(.data+0x4739c): Section mismatch in reference from the variable via_pmu_driver to the function .init.text:pmu_init()
-> The variable via_pmu_driver references
-> the function __init pmu_init()
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+> Fix a warning (treated as error in W=1):
+> 
+>   CC      arch/powerpc/kernel/traps.o
+> arch/powerpc/kernel/traps.c:1498:6: error: no previous prototype for ‘slb_miss_bad_addr’ [-Werror=missing-prototypes]
+>  void slb_miss_bad_addr(struct pt_regs *regs)
+>       ^~~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
 > 
 > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> Suggested-by: Laurent Vivier <lvivier@redhat.com>
-> Reviewed-by: Laurent Vivier <lvivier@redhat.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/58935176ad17976b7a7f6ea25c0ceb
+https://git.kernel.org/powerpc/c/45b4d27a3897d6094bcf84bc877439
 
 cheers
