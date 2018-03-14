@@ -1,138 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeCNNZy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 09:25:54 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:20197 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751559AbeCNNZv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:25:51 -0400
-Subject: Re: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-10-kishon@ti.com>
- <cda22332-ed17-9309-4989-19765744879b@intel.com>
- <a7ba98cd-7a3c-00f9-bfaa-a982126c9185@ti.com>
- <18a7cff5-5cc5-4eb1-17c8-033bd5ddf6c1@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <ccca4747-198d-b43f-57d3-b9dcebeaf460@ti.com>
-Date: Wed, 14 Mar 2018 18:55:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        id S1752020AbeCNN1E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 09:27:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34952 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751559AbeCNN1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 09:27:02 -0400
+Date: Wed, 14 Mar 2018 14:26:14 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: "Moger, Babu" <Babu.Moger@amd.com>
+Cc: "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 3/3] arch/x86/kvm: SVM: Introduce pause loop exit logic in
+ SVM
+Message-ID: <20180314132613.GB28943@flask>
+References: <1520007456-85293-1-git-send-email-babu.moger@amd.com>
+ <1520007456-85293-4-git-send-email-babu.moger@amd.com>
+ <20180309181233.GO12290@flask>
+ <CY4PR12MB1768CC12C6685127A947D02795DD0@CY4PR12MB1768.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <18a7cff5-5cc5-4eb1-17c8-033bd5ddf6c1@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CY4PR12MB1768CC12C6685127A947D02795DD0@CY4PR12MB1768.namprd12.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Monday 05 March 2018 03:08 PM, Adrian Hunter wrote:
-> On 05/03/18 11:30, Kishon Vijay Abraham I wrote:
->> Hi Adrian,
->>
->> On Monday 19 February 2018 02:21 PM, Adrian Hunter wrote:
->>> On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
->>>> Add quirk to disable HW timeout if the requested timeout is more than
->>>> the maximum obtainable timeout.
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  drivers/mmc/host/sdhci.c | 12 ++++++++++++
->>>>  drivers/mmc/host/sdhci.h |  7 +++++++
->>>>  2 files changed, 19 insertions(+)
->>>>
->>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>>> index 070aff9c108f..1aa74b4682f3 100644
->>>> --- a/drivers/mmc/host/sdhci.c
->>>> +++ b/drivers/mmc/host/sdhci.c
->>>> @@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>>  		DBG("Too large timeout 0x%x requested for CMD%d!\n",
->>>>  		    count, cmd->opcode);
->>>>  		count = 0xE;
->>>> +		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
->>>> +			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
->>>> +			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>>> +			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>>> +			host->hw_timeout_disabled = true;
->>>> +		}
->>>
->>> sdhci_calc_timeout() is really for calculations so please do this in
->>> sdhci_set_timeout() instead (i.e. change sdhci_calc_timeout() to return
->>> whether the timeout is too big).  Note that you need to cater for the "/*
->>> Unspecified timeout, assume max */" case and the
->>> SDHCI_QUIRK_BROKEN_TIMEOUT_VAL case.
->>>
->>> Also if SDHCI_INT_DATA_TIMEOUT is not being disabled, check here to
->>> re-enable it and leave sdhci_request_done() alone. i.e.
->>>
->>> 	else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
->>> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->>> 		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>> 		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>> 	}
->>>
->>> Maybe make a separate subroutine for the update:
->>>
->>> void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
->>> {
->>> 	if (enable)
->>> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->>> 	else
->>> 		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
->>> 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>> 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>> }
->>>
->>>
->>>>  	}
->>>>  
->>>>  	return count;
->>>> @@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
->>>>  	}
->>>>  
->>>>  	sdhci_del_timer(host, mrq);
->>>> +	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
->>>> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->>>> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>>> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>>> +		host->hw_timeout_disabled = false;
->>>> +	}
->>>>  
->>>>  	/*
->>>>  	 * Always unmap the data buffers if they were mapped by
->>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>>> index afab26fd70e6..3a967a56fcc3 100644
->>>> --- a/drivers/mmc/host/sdhci.h
->>>> +++ b/drivers/mmc/host/sdhci.h
->>>> @@ -437,6 +437,11 @@ struct sdhci_host {
->>>>  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
->>>>  /* Controller has CRC in 136 bit Command Response */
->>>>  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
->>>> +/*
->>>> + * Disable HW timeout if the requested timeout is more than the maximum
->>>> + * obtainable timeout
->>>> + */
->>>> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
->>
->> Are you okay with the definition of this quirk? i.e this quirk is applied only
->> when the requested timeout is "more" than the maximum obtainable timeout.
->>
->> By this way platforms can continue to use hardware timeout for smaller timeout
->> value.
+2018-03-10 05:07+0000, Moger, Babu:
+> Radim,
+>  Thanks for the comments. Taken care of most of the comments.
+>  I have few questions/comments. Please see inline.
 > 
-> It is fine to me.
+> > -----Original Message-----
+> > From: Radim Krčmář <rkrcmar@redhat.com>
+> > Sent: Friday, March 9, 2018 12:13 PM
+> > To: Moger, Babu <Babu.Moger@amd.com>
+> > Cc: joro@8bytes.org; tglx@linutronix.de; mingo@redhat.com;
+> > hpa@zytor.com; x86@kernel.org; pbonzini@redhat.com;
+> > kvm@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC 3/3] arch/x86/kvm: SVM: Introduce pause loop exit logic in
+> > SVM
+> > 
+> > 2018-03-02 11:17-0500, Babu Moger:
+> > > Bring the PLE(pause loop exit) logic to AMD svm driver.
+> > > We have noticed it help in situations where numerous pauses are
+> > generated
+> > > due to spinlock or other scenarios. Tested it with idle=poll and noticed
+> > > pause interceptions go down considerably.
+> > >
+> > > Signed-off-by: Babu Moger <babu.moger@amd.com>
+> > > ---
+> > > @@ -1046,6 +1095,58 @@ static int avic_ga_log_notifier(u32 ga_tag)
+> > >  	return 0;
+> > >  }
+> > >
+> > > +static void grow_ple_window(struct kvm_vcpu *vcpu)
+> > > +{
+> > > +	struct vcpu_svm *svm = to_svm(vcpu);
+> > > +	struct vmcb_control_area *control = &svm->vmcb->control;
+> > > +	int old = control->pause_filter_count;
+> > > +
+> > > +	control->pause_filter_count = __grow_ple_window(old,
+> > > +							pause_filter_count,
+> > > +							ple_window_grow,
+> > > +
+> > 	ple_window_actual_max);
+> > > +
+> > > +	if (control->pause_filter_count != old)
+> > > +		mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
+> > > +
+> > > +	trace_kvm_ple_window_grow(vcpu->vcpu_id,
+> > > +				  control->pause_filter_count, old);
+> > 
+> > Please move the tracing into __shrink_ple_window to share the code.
+> > This probably belongs to patch [2/3].
 > 
-Okay thanks. I've posted v3 sometime last week. I'm trying to get this in for
-4.17? Can you review the new revision please?
+> I will have to pass vcpu_id, and have to make few changes to display old and new values.
+> I am afraid it might add few more extra instructions.
 
-Thanks
-Kishon
+Right, vcpu_id isn't available in that function.
+Keeping it like this is ok.
+
+> > 
+> > > +/*
+> > > + * ple_window_actual_max is computed to be one grow_ple_window()
+> > below
+> > > + * ple_window_max. (See __grow_ple_window for the reason.)
+> > > + * This prevents overflows, because ple_window_max is int.
+> > > + * ple_window_max effectively rounded down to a multiple of
+> > ple_window_grow in
+> > > + * this process.
+> > > + * ple_window_max is also prevented from setting control-
+> > >pause_filter_count <
+> > > + * pause_filter_count.
+> > > + */
+> > > +static void update_ple_window_actual_max(void)
+> > > +{
+> > > +	ple_window_actual_max =
+> > > +		__shrink_ple_window(max(ple_window_max,
+> > pause_filter_count),
+> > 
+> > (I have no idea what I was thinking when I wrote that for VMX. :[
+> >  I'll write a patch to get rid of ple_window_actual_max, because its
+> >  benefits are really minuscule and the logic is complicated.)
+> 
+> If you are thinking of just straight forward removal, I can take care of it.
+
+And tweaking the overflow handling to account for that.  Go ahead if
+you'd like to.
+
+> > 
+> > > +				    pause_filter_count,
+> > > +				    ple_window_grow, SHRT_MIN);
+> > > +}
+> > >  static __init int svm_hardware_setup(void)
+> > >  {
+> > >  	int cpu;
+> > > @@ -1309,7 +1412,11 @@ static void init_vmcb(struct vcpu_svm *svm)
+> > >  	svm->vcpu.arch.hflags = 0;
+> > >
+> > >  	if (boot_cpu_has(X86_FEATURE_PAUSEFILTER)) {
+> > > -		control->pause_filter_count = 3000;
+> > > +		control->pause_filter_count = pause_filter_count;
+> > > +		if (boot_cpu_has(X86_FEATURE_PFTHRESHOLD))
+> > > +			control->pause_filter_thresh = pause_filter_thresh;
+> > > +		else
+> > > +			pause_filter_thresh = 0;
+> > 
+> > Please move this to hardware_setup and also clear pause_filter_count if
+> 
+> Moving this to hardware_setup will be a problem.  We don't have access to svm data structure in hardware_setup.
+
+I mean just the pause_filter_thresh = 0 and pause_filter_count = 0 logic
+based on boot_cpu_has (it's weird if the user-visible parameters are
+corrected after starting a VM);  VMCB configuration stays,
+
+thanks.
