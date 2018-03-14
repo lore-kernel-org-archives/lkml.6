@@ -1,66 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932315AbeCNOzE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 10:55:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751985AbeCNOzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 10:55:02 -0400
-Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-To: Vitaly Kuznetsov <vkuznets@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-References: <20180309140249.2840-1-vkuznets@redhat.com>
- <20180309140249.2840-8-vkuznets@redhat.com>
- <alpine.DEB.2.21.1803091507300.1364@nanos.tec.linutronix.de>
- <87r2opcr6u.fsf@vitty.brq.redhat.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <6a5f2453-cf51-d491-db54-5f239caa29bc@redhat.com>
-Date: Wed, 14 Mar 2018 15:54:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752278AbeCNO4U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:56:20 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:46589 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeCNO4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 10:56:17 -0400
+X-Google-Smtp-Source: AG47ELsMRFvfQVbmoPKy22goT2IYSd/4zolumf+m2R3nvBWDnYpQocooKXmUV+HnVeGdJ7GZFlJ69Fr0I1Ylgw+LnU4=
 MIME-Version: 1.0
-In-Reply-To: <87r2opcr6u.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <83b23320-e9de-a0cf-144c-1b60b9b7002a@oracle.com>
+References: <20180314143529.1456168-1-arnd@arndb.de> <20180314143958.1548568-1-arnd@arndb.de>
+ <83b23320-e9de-a0cf-144c-1b60b9b7002a@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 15:56:16 +0100
+X-Google-Sender-Auth: eBQp5tLRIf99iI1wOzcOP5QNdfs
+Message-ID: <CAK8P3a1otS+2Q7qr0PE_VPXRp44kJqdZMhDFWuYK2g2jkNCCsA@mail.gmail.com>
+Subject: Re: [PATCH 10/16] mm: remove obsolete alloc_remap()
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Petr Tesarik <ptesarik@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 15:19, Vitaly Kuznetsov wrote:
->>> Static key is being used to avoid performance penalty for non-Hyper-V
->>> deployments. Tests show we add around 3 (three) CPU cycles on each
->>> VMEXIT (1077.5 cycles before, 1080.7 cycles after for the same CPUID
->>> loop on bare metal). We can probably avoid one test/jmp in vmx_vcpu_run()
->>> but I don't see a clean way to use static key in assembly.
->> STATIC_JUMP_IF_TRUE, STATIC_JUMP_IF_FALSE are your friends.
->>
-> Thanks for the tip,
-> 
-> with a single kernel user of these APIs it was easy to miss :-)
-> 
-> Unfortunately, these APIs are only present if HAVE_JUMP_LABEL and
-> (afaiu) we still care about KVM on !HAVE_JUMP_LABEL builds. It would be
-> nice if we can make them behave the same way static_branch_likely() and
-> friends do: compile into something else when !HAVE_JUMP_LABEL so we can
-> avoid nasty #ifdefs in C code.
-> 
-> That said I'd like to defer the question to KVM maintainers: Paolo,
-> Radim, what would you like me to do? Use STATIC_JUMP_IF_TRUE/FALSE as
-> they are, try to make them work for !HAVE_JUMP_LABEL and use them or
-> maybe we can commit the series as-is and have it as a future
-> optimization (e.g. when HAVE_JUMP_LABEL becomes mandatory)?
+On Wed, Mar 14, 2018 at 3:50 PM, Pavel Tatashin
+<pasha.tatashin@oracle.com> wrote:
+> Hi Arnd,
+>
+> I like this cleanup, but arch/tile (which is afaik Orphaned but still in the gate) has:
+>
+> HAVE_ARCH_ALLOC_REMAP set to yes:
+>
+> arch/tile/Kconfig
+>  config HAVE_ARCH_ALLOC_REMAP
+>          def_bool y
 
-With a single instruction to patch, poking at the text manually might be
-an option...  Otherwise, it's okay as-is.
+It was a bit tricky to juggle the Cc lists here, but tile is removed
+in patch 06/10
+now. As I explained in the cover letter, it was originally planned to be marked
+deprecated for a while first, but after some more discussion, nobody could come
+up with a reason to keep it any longer. Same thing for mn10300,
+blackfin and cris.
 
-Paolo
+     Arnd
