@@ -1,84 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeCNLIi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:08:38 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51508 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeCNLIh (ORCPT
+        id S1751502AbeCNLIx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:08:53 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:55932 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbeCNLIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:08:37 -0400
-X-Google-Smtp-Source: AG47ELt8d/qBaMo6kth7mdcan9zfRUXrLMGLZ6ydwU8ctE3qZWjmsbuoWqIxMMcLUNE6YILAxX/bHw==
-Date: Wed, 14 Mar 2018 12:08:34 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: David Laight <David.Laight@ACULAB.COM>,
-        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/nouveau/secboot: remove VLA usage
-Message-ID: <20180314110834.GB8564@ulmo>
-References: <20180313162411.GA1983@embeddedgus>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
-Content-Disposition: inline
-In-Reply-To: <20180313162411.GA1983@embeddedgus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 14 Mar 2018 07:08:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] regulator: bd9571mwv: Add support for DDR backup mode
+Date: Wed, 14 Mar 2018 12:08:38 +0100
+Message-Id: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+	Hi all,
 
---PmA2V3Z32TCmWXqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
+development boards supports DDR Backup Power, which means that the DDR
+power rails can be kept powered while the main SoC is powered down.
 
-On Tue, Mar 13, 2018 at 11:24:11AM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wvla, remove VLA. In this particular
-> case directly use macro NVKM_MSGQUEUE_CMDLINE_SIZE instead of local
-> variable cmdline_size. Also, remove cmdline_size as it is not
-> actually useful anymore.
->=20
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> or a security flaw. Also, in general, as code evolves it is easy to
-> lose track of how big a VLA can get. Thus, we can end up having runtime
-> failures that are hard to debug.
->=20
-> Also, fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->  - Use sizeof(buf) instead of NVKM_MSGQUEUE_CMDLINE_SIZE. This change
->    is based on the feedback provided by David Laight. Thanks David.
->=20
->  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_msgqueue.c | 7 +++-=
----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+Currently performing a system suspend/resume cycle involves several
+manual steps:
+  1. Configure the PMIC for Backup Mode, using
+     "i2cset -f -y 7 0x30 0x20 0x0f", which changes the role of the
+     power switch to a wake-up switch,
+  2. Switch off SW23 (the ACC toggle switch) to prepare for suspend
+     (only on Salvator-X(S)),
+  3. Suspend to RAM, using "echo mem > /sys/power/state",
+  4. Switch on SW23 (on Salvator-X(S)) or push momentary switch SW8 (on
+     ULCB) to resume.
+Note the need for step 2 on systems equipped with a toggle instead of
+momentary power switch.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Especially the first and second steps are cumbersome, as they rely on
+  1. Intimate knowledge about the PMIC and actual board design,
+  2. Direct i2c access,
+  3. Having the i2cset utility available,
+  4. A manual togle switch operation (on Salvator-X(S)).
+In addition, all of this has to be redone after system resume.
 
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature; name="signature.asc"
+This patch series integrates Backup Mode configuration into the PMIC
+driver, using the "wakeup" sysfs virtual file.  I.e. it can be enabled
+or disabled by writing "enabled" or "disabled" to e.g.
 
------BEGIN PGP SIGNATURE-----
+    /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpAq8ACgkQ3SOs138+
-s6EoOg//S3oaA0fk2LHi/O5aXNHiK+EAqIjnb+tbwu5zji9AHXLyqvkjme5ZfwSl
-YnAAH4gffi+93bHSVdC5gMAT02Lpep1wN/5O76dKRK25LZluMYK2ybAgC9LDeZeI
-3j406OS3Fe/qYk5c0nj5vrRNAJOBVrkZ52FMhakc36896ZYu+aHqUkhdv0nYgYiF
-+RQwtNldnTOOJ12WU+ZqCR7u/v5OAc+rOxsyuYozJHJ8JFE23hraxV15XIsRsizr
-VjWD8aIUNnchlpGiiiN61f7h50E7kYi0ChprUcSQtmTO+xp2bgFVLKRFevCLu5kL
-SckzSGzewvUCkTC18yFuwZbtHW948c1FrO1aveK3PvLtqGe1RwMe9nTz/9aRNJZu
-+fLcNVD+5kDC4h8zcbdBDXfDxtAUcPZpDgv+xutUuVjN1cay+B7+EijwX2j7CCxC
-JlMSsOVcSA7A8tIxqMCMPfQ9QwbX3W42B48CvvlP3hL1kiEOz4InXlqkR5p/yFRg
-C6e2jpHm2xJV7RPIQGTx9efexCxgosUhV1k2YQiBzRheKJtuR29HATEvrC1xQla4
-Xl971Tq5Ugbrm4hJlczsbz4T1dKBsPp6J3hSzcuJuWYzRMuG3zgcW1l1n3L08g8e
-oC/yn42kH5jhaFJW8h0lBc63Era61OxSKPxoZCKqKe8WVKYfN8A=
-=YxhP
------END PGP SIGNATURE-----
+Which DDR rails are to be kept powered is board-specific, and controlled
+using the optional "rohm,ddr-backup-power" property in the board DTS
+file.
 
---PmA2V3Z32TCmWXqI--
+As the power switch type is board-specific, and cannot be determined
+automatically, it is obtained from the presence of one of the
+"rohm,rstbmode-{pulse,level}" properties in DT.
+
+For now only momentary power switches are supported, and wake-up is
+enabled by default, as it doesn't have any run-time side-effects.
+Support for toggle switches will be added in a follow-up series.
+
+Changes compared to v1:
+  - Improve DT property description,
+  - Add DT properties for power switch type,
+  - Add Acked-by,
+  - Use normal "wakeup" sysfs virtual file instead of adding our own
+    "backup_mode" file,
+  - Differentiate between momentary and toggle power switches:
+      - Support for momentary switches is enabled automatically,
+      - Toggle switches are not yet supported (but still work when
+	backup mode is enabled using i2set from userspace).
+  - Split off DTS part into its own series.
+
+This has been tested on M3ULCB (thanks Jacopo!), and on Salvator-X(S)
+(still using i2set from userspace).
+
+For testing, driver and DTS patches are available in the
+topic/bd9571-ddr-backup-mode-driver-v2 and
+topic/bd9571-ddr-backup-mode-dt-v2 branches of my renesas-drivers git
+repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
+  mfd: bd9571mwv: Add DDR Backup Power register bit definitions
+  mfd: bd9571mwv: Allow DDR Backup Power register access
+  regulator: bd9571mwv: Add support for DDR backup mode
+
+ .../devicetree/bindings/mfd/bd9571mwv.txt          |  21 ++++
+ drivers/mfd/bd9571mwv.c                            |   2 +
+ drivers/regulator/bd9571mwv-regulator.c            | 127 ++++++++++++++++++++-
+ include/linux/mfd/bd9571mwv.h                      |   5 +
+ 4 files changed, 154 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
