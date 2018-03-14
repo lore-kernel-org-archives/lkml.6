@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751956AbeCNLJF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:09:05 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:49394 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751612AbeCNLI5 (ORCPT
+        id S1751881AbeCNLJD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:09:03 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33364 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeCNLI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:08:57 -0400
+        Wed, 14 Mar 2018 07:08:58 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -15,9 +15,9 @@ To: Marek Vasut <marek.vasut+renesas@gmail.com>,
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
-Date: Wed, 14 Mar 2018 12:08:39 +0100
-Message-Id: <1521025722-24205-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] mfd: bd9571mwv: Add DDR Backup Power register bit definitions
+Date: Wed, 14 Mar 2018 12:08:40 +0100
+Message-Id: <1521025722-24205-3-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
 References: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
@@ -25,56 +25,34 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the new optional properties related to DDR Backup Mode and
-toggle/momentary power switches.
+Add definitions for the KEEPON_* bits in the "BKUP Mode Cnt" register,
+which control the DDR rails to be kept powered when backup mode is
+enabled.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 v2:
-  - Improve property description,
-  - Add properties for power switch type.
+  - Add Acked-by.
 ---
- Documentation/devicetree/bindings/mfd/bd9571mwv.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/linux/mfd/bd9571mwv.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-index 9ab216a851d5619b..8804a214759845c5 100644
---- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -25,6 +25,25 @@ Required properties:
- 			    Each child node is defined using the standard
- 			    binding for regulators.
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index f0708ba4cbbae2dc..eb05569f752bb089 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -33,6 +33,11 @@
+ #define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
  
-+Optional properties:
-+  - rohm,ddr-backup-power : Value to use for DDR-Backup Power (default 0).
-+			    This is a bitmask that specifies which DDR power
-+			    rails need to be kept powered when backup mode is
-+			    entered, for system suspend:
-+			      - bit 0: DDR0
-+			      - bit 1: DDR1
-+			      - bit 2: DDR0C
-+			      - bit 3: DDR1C
-+			    These bits match the KEEPON_DDR* bits in the
-+			    documentation for the "BKUP Mode Cnt" register.
-+  - rohm,rstbmode-level: The RSTB signal is configured for level mode, to
-+			 accommodate a toggle power switch (the RSTBMODE pin is
-+			 strapped low).
-+  - rohm,rstbmode-pulse: The RSTB signal is configured for pulse mode, to
-+			 accommodate a momentary power switch (the RSTBMODE pin
-+			 is strapped high).
-+			 The two properties above are mutually exclusive.
-+
- Example:
- 
- 	pmic: pmic@30 {
-@@ -36,6 +55,8 @@ Example:
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <15>;
-+		rohm,rstbmode-pulse;
- 
- 		regulators {
- 			dvfs: dvfs {
+ #define BD9571MWV_BKUP_MODE_CNT			0x20
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK	GENMASK(3, 0)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0	BIT(0)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1	BIT(1)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0C	BIT(2)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1C	BIT(3)
+ #define BD9571MWV_BKUP_MODE_STATUS		0x21
+ #define BD9571MWV_BKUP_RECOVERY_CNT		0x22
+ #define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
 -- 
 2.7.4
