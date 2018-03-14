@@ -1,100 +1,142 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-512551-1521128496-2-73956402327327989
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2286252-1521051198-2-1205216600522475208
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521128495; b=wLt+X1siE8QJndjdmAmtmeggzJSK0FpnsS3SQAkGqQJ8AYK
-    AQc6PZrTLM/DBpHaDVP3CXC9KGJQeCGihPQw87IYgDFoBbfnFpIBvbV6g47MX6R0
-    cpK1yFSI7NBhowzw9ycuLYAOVSpWZgH0ggRB+ZzEFNZMOThtoOQFgo8F5Yo6coqT
-    rEaru8SY+CWZszDrNgOkq4pvFOZpMmJOoZkqSsXq2dVn+60c7RXdzeNN1nUJt3uc
-    DqNKanMrIGGis4VaktwMIB1zy8XuCCdqwSDA1ECNnniXBkIa+XoTnDZglocX+qSQ
-    6HRI5kv7URkvBmiKVm5YBYyBxGMhuyOVaEtHvGQ==
+    t=1521051197; b=IjwefHi8J8ciCTMZh4tpbQBKo2hHH6mmveDlhYEK1BbIRqf
+    9tD6ZO+BMmNu6yrTgepAebpoSK1YkztXRlFu2TFmU+saN0JqHR+HZQXDXmIhBrm7
+    GxKHQaWPNR1AfIAO7V4BoVctaPgVttPF4Lwy560RaBSZs29jOJQxFbayRQ9/wvLi
+    2dj7PJwQGahNnpXWK3L2Z7BrF6hI7a05+/ORZMe7wie0wXGYcUQBs6H3nLni6lKW
+    liWbmbf/YmUsVZXqEW5mE3nzw0Re2W8X+6GNjp38Fwf4H8wJHV8KHNVvNh5cDKw7
+    2zwTTS6v1hbJG7LrjkZtr96Lr6kgdP6ckkMutpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521128495; bh=E2l+wB41gK15IagWCMu/V0r/E0cHhu0LUfPhGN
-    OK2Pg=; b=cJFXlLNXGayapFdT72i0Ap90l3iEP34AoBM0iPZY7krKZToHY3sqvv
-    X83WPFib0LoDG7sGZYfGT71YKyqxhZOtoF95e7Ylxo7xVpiWzRAYptEB7O1br/mc
-    s4Wt7pa1K/n83QQ3XaE4h5GTXKQaR51PTnOZhIwIin+FdyKOwhs23VmAUz58kYQt
-    ewTinm992rX3k6/ofSMIFivfmeUUwvj8Q6gWlAQJ9MtnTBWsQDvli10ZmefcBxZi
-    8+RPZT7tktQrCd+e7eZ5UVpLZ/r0nmyqGXJDXPM+IwQspCgJTSMkiG9HN5wMVMwa
-    JVtokroYNpjKwyH1O3631pJDrqPqp1Lg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=crTadqhI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521051197;
+    bh=UClwCy4Czc7JTjeITKkO970GO8A1sKHGZfO8wt2zgKw=; b=dRjFmuFLv+Lh
+    14pxPy43eyniLoazPGIOzs3mPfA4KXk38qKVpIQrYDRWP3w41qcs9wzFUCt4yTKh
+    HawW+zJYEv7MW74HiVsDU3MtQDGjxBa1B0sTB/g87saISrXVMU4uxwtEC+Af0HTc
+    CigCd4eek7jReg2oA+sld/I+HBFjy4cbI/cs2L9V7RO8PCDOzkbdga1vxgVRWdu2
+    AGW4HsQHr83fSfKLaHYMojBe1BBPDdzquXtD4kqqHjReNPPNC2rjZ2/AqSlQ/Fxg
+    RT7u89HKCXSagjiPB5TOOYpxAQ0GdY04IgzRKSdKKXGPI49W3m4Nz50vmhv/p+sx
+    DfISLXcg/w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MTCeyUM7;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=crTadqhI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MTCeyUM7;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeCOPlU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 11:41:20 -0400
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:32897 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751918AbeCOPlR (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:41:17 -0400
-X-Google-Smtp-Source: AG47ELtxOg/0oGT6yZfMn3O4Sgmr38G5i1Z2Z/lQidozCvV52zOpVBNiHbHvJHObCknCTx83o6dNNgCz0X4zOYgMraQ=
-MIME-Version: 1.0
-In-Reply-To: <1521103480-6940-1-git-send-email-bich.hemon@st.com>
-References: <1521103480-6940-1-git-send-email-bich.hemon@st.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 15 Mar 2018 16:41:15 +0100
-X-Google-Sender-Auth: jUrWsDG-6T8ulh5MJFcpEjxmRvg
-Message-ID: <CAK8P3a3sn4Z70VHXQmLV344uCX-a1=H=6m-yTy1HxFQMQRiHrg@mail.gmail.com>
-Subject: Re: [PATCH] serial: stm32: fix initialization of RS485 mode
-To: Bich HEMON <bich.hemon@st.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+        id S1752345AbeCNSL3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 14:11:29 -0400
+Received: from g4t3426.houston.hpe.com ([15.241.140.75]:41495 "EHLO
+        g4t3426.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbeCNSL2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 14:11:28 -0400
+From: Toshi Kani <toshi.kani@hpe.com>
+To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, bp@suse.de,
+        catalin.marinas@arm.com
+Cc: guohanjun@huawei.com, will.deacon@arm.com, wxf.wang@hisilicon.com,
+        willy@infradead.org, cpandya@codeaurora.org, linux-mm@kvack.org,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2 2/2] x86/mm: implement free pmd/pte page interfaces
+Date: Wed, 14 Mar 2018 12:01:55 -0600
+Message-Id: <20180314180155.19492-3-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180314180155.19492-1-toshi.kani@hpe.com>
+References: <20180314180155.19492-1-toshi.kani@hpe.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 9:44 AM, Bich HEMON <bich.hemon@st.com> wrote:
-> Configure RS485 mode during port initialization.
->
-> Fixes: 1bcda09d291081a7732fcaa9d1745312404a4e36 ("serial: stm32: add
-> support for RS485 hardware control mode")
->
-> Signed-off-by: Bich Hemon <bich.hemon@st.com>
+Implement pud_free_pmd_page() and pmd_free_pte_page() on x86, which
+clear a given pud/pmd entry and free up lower level page table(s).
+Address range associated with the pud/pmd entry must have been purged
+by INVLPG.
 
-I noticed the unused-function warning from the original patch, and the
-patch also fixes that (besides looking like it does the right thing).
+fixes: e61ce6ade404e ("mm: change ioremap to set up huge I/O mappings")
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>
+---
+ arch/x86/mm/pgtable.c |   28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 1eed7ed518e6..34cda7e0551b 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -712,7 +712,22 @@ int pmd_clear_huge(pmd_t *pmd)
+  */
+ int pud_free_pmd_page(pud_t *pud)
+ {
+-	return pud_none(*pud);
++	pmd_t *pmd;
++	int i;
++
++	if (pud_none(*pud))
++		return 1;
++
++	pmd = (pmd_t *)pud_page_vaddr(*pud);
++
++	for (i = 0; i < PTRS_PER_PMD; i++)
++		if (!pmd_free_pte_page(&pmd[i]))
++			return 0;
++
++	pud_clear(pud);
++	free_page((unsigned long)pmd);
++
++	return 1;
+ }
+ 
+ /**
+@@ -724,6 +739,15 @@ int pud_free_pmd_page(pud_t *pud)
+  */
+ int pmd_free_pte_page(pmd_t *pmd)
+ {
+-	return pmd_none(*pmd);
++	pte_t *pte;
++
++	if (pmd_none(*pmd))
++		return 1;
++
++	pte = (pte_t *)pmd_page_vaddr(*pmd);
++	pmd_clear(pmd);
++	free_page((unsigned long)pte);
++
++	return 1;
+ }
+ #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
