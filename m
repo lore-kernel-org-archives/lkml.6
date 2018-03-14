@@ -1,131 +1,381 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751478AbeCNQZx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:25:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750779AbeCNQZv (ORCPT
+        id S1751495AbeCNQ0G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:26:06 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:35227 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751588AbeCNQ0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:25:51 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        kirill@shutemov.name, ak@linux.intel.com, mhocko@kernel.org,
-        dave@stgolabs.net, jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
- <20180314084844.GP4043@hirez.programming.kicks-ass.net>
-Date: Wed, 14 Mar 2018 17:25:30 +0100
+        Wed, 14 Mar 2018 12:26:04 -0400
+Subject: Re: [PATCH v8 10/13] [media] vb2: add out-fence support to QBUF
+To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180309174920.22373-1-gustavo@padovan.org>
+ <20180309174920.22373-11-gustavo@padovan.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c08a0f49-a8b5-f8c1-4079-9cb3ddb330aa@xs4all.nl>
+Date: Wed, 14 Mar 2018 09:25:55 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180314084844.GP4043@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180309174920.22373-11-gustavo@padovan.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031416-0012-0000-0000-000005BE7291
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031416-0013-0000-0000-0000193A7831
-Message-Id: <399d758c-c329-fe49-d501-065067eb3b29@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140185
+X-CMAE-Envelope: MS4wfIssWZKVLa+8ZRuGY8paq1d6PZF/hhbygltr3bP1P47kq1yXbVfcW9AAD/5q1HDbTNg1dv8J7u3G84cWTmbyEQ+DblmEMg//Xn0yKwvEUws025CBG23z
+ +YIhwrMYz+zPOAc1KrQt2EECK+T3tyKI6qI9cLAUOsvsR3fMr6d2FpLHabrl4KpPPQsLOByUxeThVzkNh0TMo9WXDQTRsqUePA7eCDf6pXatGGQ3emF4Dzk3
+ +DipD15TqWFVMx16IwpNfHds5yk8AVZnQGO41U+Aqa3vd/ZFNSyVmSk+3pOsNhPoyIbowQ/9w/X5uJJg3j/xqHNN+rxksA5rcuQNXLnPFmjSGgI50rHAJL8Q
+ TtUvKi4cjpq6sEnW5WwN3c6rqfLsGMMLXNsSgxPL6jv7XHByw6hsbPRZVu9+LlgrheKtYCA3wW56L0oqOT1bFGU+k2+b8o3/6DNGgmOSaD99Y6iPTAtFizTU
+ 6GZm1TH9uLhFFbr0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/03/2018 09:48, Peter Zijlstra wrote:
-> On Tue, Mar 13, 2018 at 06:59:47PM +0100, Laurent Dufour wrote:
->> This change is inspired by the Peter's proposal patch [1] which was
->> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
->> that particular case, and it is introducing major performance degradation
->> due to excessive scheduling operations.
+On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
 > 
-> Do you happen to have a little more detail on that?
+> If V4L2_BUF_FLAG_OUT_FENCE flag is present on the QBUF call we create
+> an out_fence and send its fd to userspace on the fence_fd field as a
 
-This has been reported by kemi who find bad performance when running some
-benchmarks on top of the v5 series:
-https://patchwork.kernel.org/patch/9999687/
+on the -> in the
 
-It appears that SRCU is generating a lot of additional scheduling to manage the
-freeing of the VMA structure. SRCU is dealing through per cpu ressources but
-the SRCU callback is And since we are handling this way a per process
-ressource (VMA) through a global resource (SRCU) this leads to a lot of
-overhead when scheduling the SRCU callback.
-
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 34fde7111e88..28c763ea1036 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -335,6 +335,7 @@ struct vm_area_struct {
->>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
->>  #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>  	seqcount_t vm_sequence;
->> +	atomic_t vm_ref_count;		/* see vma_get(), vma_put() */
->>  #endif
->>  } __randomize_layout;
->>   
->> @@ -353,6 +354,9 @@ struct kioctx_table;
->>  struct mm_struct {
->>  	struct vm_area_struct *mmap;		/* list of VMAs */
->>  	struct rb_root mm_rb;
->> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->> +	rwlock_t mm_rb_lock;
->> +#endif
->>  	u32 vmacache_seqnum;                   /* per-thread vmacache */
->>  #ifdef CONFIG_MMU
->>  	unsigned long (*get_unmapped_area) (struct file *filp,
+> return arg for the QBUF call.
 > 
-> When I tried this, it simply traded contention on mmap_sem for
-> contention on these two cachelines.
+> The fence is signaled on buffer_done(), when the job on the buffer is
+> finished.
 > 
-> This was for the concurrent fault benchmark, where mmap_sem is only ever
-> acquired for reading (so no blocking ever happens) and the bottle-neck
-> was really pure cacheline access.
+> v9:	- remove in-fences changes from this patch (Alex Courbot)
+> 	- improve fence context creation (Hans Verkuil)
+> 	- clean up out fences if vb2_core_qbuf() fails (Hans Verkuil)
+> 
+> v8:
+> 	- return 0 as fence_fd if OUT_FENCE flag not used (Mauro)
+> 	- fix crash when checking not using fences in vb2_buffer_done()
+> 
+> v7:
+> 	- merge patch that add the infrastructure to out-fences into
+> 	this one (Alex Courbot)
+> 	- Do not install the fd if there is no fence. (Alex Courbot)
+> 	- do not report error on requeueing, just WARN_ON_ONCE() (Hans)
+> 
+> v6
+> 	- get rid of the V4L2_EVENT_OUT_FENCE event. We always keep the
+> 	ordering in vb2 for queueing in the driver, so the event is not
+> 	necessary anymore and the out_fence_fd is sent back to userspace
+> 	on QBUF call return arg
+> 	- do not allow requeueing with out-fences, instead mark the buffer
+> 	with an error and wake up to userspace.
+> 	- send the out_fence_fd back to userspace on the fence_fd field
+> 
+> v5:
+> 	- delay fd_install to DQ_EVENT (Hans)
+> 	- if queue is fully ordered send OUT_FENCE event right away
+> 	(Brian)
+> 	- rename 'q->ordered' to 'q->ordered_in_driver'
+> 	- merge change to implement OUT_FENCE event here
+> 
+> v4:
+> 	- return the out_fence_fd in the BUF_QUEUED event(Hans)
+> 
+> v3:	- add WARN_ON_ONCE(q->ordered) on requeueing (Hans)
+> 	- set the OUT_FENCE flag if there is a fence pending (Hans)
+> 	- call fd_install() after vb2_core_qbuf() (Hans)
+> 	- clean up fence if vb2_core_qbuf() fails (Hans)
+> 	- add list to store sync_file and fence for the next queued buffer
+> 
+> v2: check if the queue is ordered.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> ---
+>  drivers/media/common/videobuf2/videobuf2-core.c | 88 +++++++++++++++++++++++++
+>  drivers/media/common/videobuf2/videobuf2-v4l2.c | 20 +++++-
+>  include/media/videobuf2-core.h                  | 25 +++++++
+>  3 files changed, 132 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+> index 5de5e35cfc40..dd18a9f345c7 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/freezer.h>
+>  #include <linux/kthread.h>
+> +#include <linux/sync_file.h>
+>  
+>  #include <media/videobuf2-core.h>
+>  #include <media/v4l2-mc.h>
+> @@ -357,6 +358,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum vb2_memory memory,
+>  			vb->planes[plane].length = plane_sizes[plane];
+>  			vb->planes[plane].min_length = plane_sizes[plane];
+>  		}
+> +		vb->out_fence_fd = -1;
+>  		q->bufs[vb->index] = vb;
+>  
+>  		/* Allocate video buffer memory for the MMAP type */
+> @@ -934,10 +936,22 @@ static void vb2_process_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state
+>  	case VB2_BUF_STATE_QUEUED:
+>  		return;
+>  	case VB2_BUF_STATE_REQUEUEING:
+> +		/* Requeuing with explicit synchronization, spit warning */
+> +		WARN_ON_ONCE(vb->out_fence);
+> +
+>  		if (q->start_streaming_called)
+>  			__enqueue_in_driver(vb);
+>  		return;
+>  	default:
+> +		if (vb->out_fence) {
+> +			if (state == VB2_BUF_STATE_ERROR)
+> +				dma_fence_set_error(vb->out_fence, -EFAULT);
 
-I'd say that this expected if multiple threads are dealing on the same VMA, but
-if the VMA differ then this contention is disappearing while it is remaining
-when using the mmap_sem.
+-EFAULT doesn't sound right. -EIO seems more appropriate.
 
-This being said, test I did on PowerPC using will-it-scale/page_fault1_threads
-showed that the number of caches-misses generated in get_vma() are very low
-(less than 5%). Am I missing something ?
+> +			dma_fence_signal(vb->out_fence);
+> +			dma_fence_put(vb->out_fence);
+> +			vb->out_fence = NULL;
+> +			vb->out_fence_fd = -1;
+> +		}
+> +
+>  		/* Inform any processes that may be waiting for buffers */
+>  		wake_up(&q->done_wq);
+>  		break;
+> @@ -1353,6 +1367,62 @@ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_core_prepare_buf);
+>  
+> +static inline const char *vb2_fence_get_driver_name(struct dma_fence *fence)
+> +{
+> +	return "vb2_fence";
+> +}
+> +
+> +static inline const char *vb2_fence_get_timeline_name(struct dma_fence *fence)
+> +{
+> +	return "vb2_fence_timeline";
+> +}
+> +
+> +static inline bool vb2_fence_enable_signaling(struct dma_fence *fence)
+> +{
+> +	return true;
+> +}
+> +
+> +static const struct dma_fence_ops vb2_fence_ops = {
+> +	.get_driver_name = vb2_fence_get_driver_name,
+> +	.get_timeline_name = vb2_fence_get_timeline_name,
+> +	.enable_signaling = vb2_fence_enable_signaling,
+> +	.wait = dma_fence_default_wait,
+> +};
+> +
+> +int vb2_setup_out_fence(struct vb2_queue *q, unsigned int index)
+> +{
+> +	struct vb2_buffer *vb;
+> +
+> +	vb = q->bufs[index];
+> +
+> +	vb->out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
+> +
+> +	if (call_qop(q, is_unordered, q) || !q->queueing_started)
+> +		q->out_fence_context = dma_fence_context_alloc(1);
 
-> Only by using RCU can you avoid that thrashing.
+This needs a comment explaining why out_fence_context is only needed
+in this case.
 
-I agree, but this kind of test is the best use case for SRCU because there are
-not so many updates, so not a lot of call to the SRCU asynchronous callback.
+> +
+> +	vb->out_fence = kzalloc(sizeof(*vb->out_fence), GFP_KERNEL);
+> +	if (!vb->out_fence)
+> +		return -ENOMEM;
+> +
+> +	dma_fence_init(vb->out_fence, &vb2_fence_ops, &q->out_fence_lock,
+> +		       q->out_fence_context, 1);
+> +	if (!vb->out_fence) {
+> +		put_unused_fd(vb->out_fence_fd);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	vb->sync_file = sync_file_create(vb->out_fence);
+> +	if (!vb->sync_file) {
+> +		put_unused_fd(vb->out_fence_fd);
+> +		dma_fence_put(vb->out_fence);
+> +		vb->out_fence = NULL;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(vb2_setup_out_fence);
+> +
+>  /*
+>   * vb2_start_streaming() - Attempt to start streaming.
+>   * @q:		videobuf2 queue
+> @@ -1482,6 +1552,7 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb,
+>  	list_add_tail(&vb->queued_entry, &q->queued_list);
+>  	q->queued_count++;
+>  	q->waiting_for_buffers = false;
+> +	q->queueing_started = 1;
+>  	vb->state = VB2_BUF_STATE_QUEUED;
+>  	vb->in_fence = in_fence;
+>  
+> @@ -1545,6 +1616,11 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb,
+>  	if (pb)
+>  		call_void_bufop(q, fill_user_buffer, vb, pb);
+>  
+> +	if (vb->out_fence) {
+> +		fd_install(vb->out_fence_fd, vb->sync_file->file);
+> +		vb->sync_file = NULL;
+> +	}
+> +
+>  	dprintk(2, "qbuf of buffer %d succeeded\n", vb->index);
+>  	return 0;
+>  
+> @@ -1552,6 +1628,16 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb,
+>  	spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>  
+>  err:
+> +	if (vb->sync_file) {
+> +		put_unused_fd(vb->out_fence_fd);
+> +		vb->out_fence_fd = -1;
+> +
+> +		dma_fence_put(vb->out_fence);
+> +
+> +		fput(vb->sync_file->file);
+> +		vb->sync_file = NULL;
+> +	}
+> +
+>  	/* Fill buffer information for the userspace */
+>  	if (pb)
+>  		call_void_bufop(q, fill_user_buffer, vb, pb);
+> @@ -1804,6 +1890,7 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
+>  	q->start_streaming_called = 0;
+>  	q->queued_count = 0;
+>  	q->error = 0;
+> +	q->queueing_started = 0;
+>  
+>  	list_for_each_entry(vb, &q->queued_list, queued_entry) {
+>  		spin_lock_irqsave(&vb->fence_cb_lock, flags);
+> @@ -2156,6 +2243,7 @@ int vb2_core_queue_init(struct vb2_queue *q)
+>  	spin_lock_init(&q->done_lock);
+>  	mutex_init(&q->mmap_lock);
+>  	init_waitqueue_head(&q->done_wq);
+> +	spin_lock_init(&q->out_fence_lock);
+>  
+>  	q->memory = VB2_MEMORY_UNKNOWN;
+>  
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 1df5dd01c0cd..ab5b2b71d784 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -217,7 +217,12 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
+>  	b->sequence = vbuf->sequence;
+>  	b->reserved = 0;
+>  
+> -	b->fence_fd = 0;
+> +	if (b->flags & V4L2_BUF_FLAG_OUT_FENCE) {
+> +		b->fence_fd = vb->out_fence_fd;
+> +	} else {
+> +		b->fence_fd = 0;
+> +	}
+> +
+>  	if (vb->in_fence)
+>  		b->flags |= V4L2_BUF_FLAG_IN_FENCE;
+>  	else
+> @@ -496,6 +501,10 @@ int vb2_querybuf(struct vb2_queue *q, struct v4l2_buffer *b)
+>  	ret = __verify_planes_array(vb, b);
+>  	if (!ret)
+>  		vb2_core_querybuf(q, b->index, b);
+> +
+> +	/* Do not return the out-fence fd on querybuf */
+> +	if (vb->out_fence)
+> +		b->fence_fd = -1;
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(vb2_querybuf);
+> @@ -600,6 +609,15 @@ int vb2_qbuf(struct vb2_queue *q, struct v4l2_buffer *b)
+>  		}
+>  	}
+>  
+> +	if (b->flags & V4L2_BUF_FLAG_OUT_FENCE) {
+> +		ret = vb2_setup_out_fence(q, b->index);
+> +		if (ret) {
+> +			dprintk(1, "failed to set up out-fence\n");
+> +			dma_fence_put(in_fence);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	return vb2_core_qbuf(q, b->index, b, in_fence);
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_qbuf);
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 59cd9a6ac168..2b9d3433e960 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -260,6 +260,10 @@ struct vb2_buffer {
+>  	 *			using the buffer (queueing to the driver)
+>  	 * fence_cb:		fence callback information
+>  	 * fence_cb_lock:	protect callback signal/remove
+> +	 * out_fence_fd:	the out_fence_fd to be shared with userspace.
+> +	 * out_fence:		the out-fence associated with the buffer once
+> +	 *			it is queued to the driver.
+> +	 * sync_file:		the sync file to wrap the out fence
+>  	 */
+>  	enum vb2_buffer_state	state;
+>  
+> @@ -271,6 +275,10 @@ struct vb2_buffer {
+>  	struct dma_fence_cb	fence_cb;
+>  	spinlock_t              fence_cb_lock;
+>  
+> +	int			out_fence_fd;
+> +	struct dma_fence	*out_fence;
+> +	struct sync_file	*sync_file;
+> +
+>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>  	/*
+>  	 * Counters for how often these buffer-related ops are
+> @@ -515,6 +523,9 @@ struct vb2_buf_ops {
+>   * @last_buffer_dequeued: used in poll() and DQBUF to immediately return if the
+>   *		last decoded buffer was already dequeued. Set for capture queues
+>   *		when a buffer with the %V4L2_BUF_FLAG_LAST is dequeued.
+> + * @queueing_started: if queueing has started. Currently used to determine
+> + *		if an out_fence_context is needed.
+> + * @out_fence_context: the fence context for the out fences
+>   * @fileio:	file io emulator internal data, used only if emulator is active
+>   * @threadio:	thread io internal data, used only if thread is active
+>   */
+> @@ -567,6 +578,10 @@ struct vb2_queue {
+>  	unsigned int			is_output:1;
+>  	unsigned int			copy_timestamp:1;
+>  	unsigned int			last_buffer_dequeued:1;
+> +	unsigned int			queueing_started:1;
+> +
+> +	u64				out_fence_context;
+> +	spinlock_t			out_fence_lock;
+>  
+>  	struct vb2_fileio_data		*fileio;
+>  	struct vb2_threadio_data	*threadio;
+> @@ -754,6 +769,16 @@ int vb2_core_create_bufs(struct vb2_queue *q, enum vb2_memory memory,
+>   */
+>  int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb);
+>  
+> +/**
+> + * vb2_setup_out_fence() - setup new out-fence
+> + * @q:		The vb2_queue where to setup it
+> + * @index:	index of the buffer
+> + *
+> + * Setup the file descriptor, the fence and the sync_file for the next
+> + * buffer to be queued and add everything to the tail of the q->out_fence_list.
+> + */
+> +int vb2_setup_out_fence(struct vb2_queue *q, unsigned int index);
+> +
+>  /**
+>   * vb2_core_qbuf() - Queue a buffer from userspace
+>   *
+> 
 
-Honestly, I can't see an ideal solution here, RCU is not optimal when there is
-a high number of updates, and using a rwlock may introduced a bottleneck there.
-I get better results when using the rwlock than using SRCU in that case, but if
-you have another proposal, please advise, I'll give it a try.
+Looks good!
 
-> Also note that if your database allocates the one giant mapping, it'll
-> be _one_ VMA and that vm_ref_count gets _very_ hot indeed.
+Regards,
 
-In the case of the database product I mentioned in the series header, that's
-the opposite, the VMA number is very high so this doesn't happen. But in the
-case of one VMA, it's clear that there will be a contention on vm_ref_count,
-but this would be better than blocking on the mmap_sem.
-
-Laurent.
+	Hans
