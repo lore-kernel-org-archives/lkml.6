@@ -1,146 +1,103 @@
-Return-Path: <mark.rutland@arm.com>
-X-Google-Smtp-Source: AG47ELvhlHWYKfPaM1Dazz/6ExD8UsVFPzlwkU18ZhEVNlgBY/EksQTSD2tQMk30a5xYY59Puj2j
-ARC-Seal: i=1; a=rsa-sha256; t=1521028100; cv=none;
+Return-Path: <cpandya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELvgpnMj4q4JPNUea/uDZAt0jpjIsyElhqZSCuaCL5mwfTQw4UzlptvLzcFA6NFiInTrfDAD
+ARC-Seal: i=1; a=rsa-sha256; t=1521017351; cv=none;
         d=google.com; s=arc-20160816;
-        b=IeTd2jqcZZYpxwofAt9WipEwwVc74imh2nXBR/+3Doo0a/xApDn7d3cvOo+G27GODB
-         IJDotPO+p5c5QmG1O4l5NTE+qV3JOc11O1QHff7r7s2taZ9jmG3BqK2oCbHpHs8uKAPX
-         gxdlmqB2SuICQzXNelU6J6NO4xiVABmZUA7/PB0c82wm8pgvmL/f2NsjO3SYgNaIJdxo
-         mMDADZx8uGRHZBt6j0jC26oxal9hb1A4H8NHy3u/Wr7Ak+izPDIwxILQxiGbcyWZk2BO
-         p3FZAe6pnQ+d+D4xtml4wUqSHhlWK55XD1xfINcOoIStg70jWtW6pilFjpDWR5WNF+PW
-         vPGQ==
+        b=FIvwv8koTWNkJAuTRKHlfMSnpnm1XyR6r0Rbd+l7dqtsk0tBC6QthcPmOLNxwtg3IR
+         c63gHYNH4zQntbQm1weB5DnVTiqH3hZWNa3BI+ajZit6L3Yc/ZexgacBQeU2fWA6IC8j
+         +rLS6CS971zPnkRun1juBWRTrD5IUNvjgXUTjf8psDl7XMVSHJdhF9uLXiadCPnn2gmG
+         RcODUXtre9k5Lnhs/LMslhJJqZ2AQoZSw84nOPXVcLAoC3LDXXS5urnbw2PSyOSsS8i1
+         i+sJgEzraEk3KcKlqQXkt1SP7Ccl+ERPQRpDymW4ei7YDT+fya7oxn0kbktZXRSmislp
+         EIEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=t4+MeAEYakD50rNX18LEvjkh6zowXVOg8yCN98TvmPY=;
-        b=qr/jcAUzrp/eUYGwREpuKhD8jsXOuhgKltij0syvddSmfgo65Zh35Jo69mFwQftm0Y
-         AOsV046JS0hbw3nO+QRAe8O0lef0g8CA8gzVveDLzllpE2pdRD+tm0O8JFsH0JjDieDq
-         MTXW+DNdRU0LFwPpnK2mZH2H6ppGWoFwFDn3TC4WLRmsI7P9njmAmMSjArxPo5+Xor4a
-         H0xpE9G/AvHLaZW2d34nM2z3/qszuBQdKOlybyylTHd+nHSosEOdWCG3xdvKwsyjOFnA
-         IQhuSbIqZZ8z9IolAMrtLl5OCpc2IKLDFZLWaKoIWSm9pnRJJi6ZrRcDxUzJxINKti7W
-         a2Zw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=+TVdfKGRmp7qtPHpFgWe45ByWnnPmkoff+bIy3YtaTc=;
+        b=iMot5j4eFBwHyztxksqobX0btzsIm41evMJd9IBKXNEovyecxu+iJLxPmvwvChDzCv
+         WCZWjP8lYFv8S3qYQmVDOkNfZeUjGnq0BSQ5DBLyGWcdkNy54uHJFJc0Fb9Hk7Su2kuY
+         xlASIMjby6gLkASoXVKx32LzinavGOcv1TdnBhSxRI0dj1RDsv8DX4Q0X7U0eLV1mES9
+         MKXrz9iI/TGNqu9XUSr2fObXR8mtK0EiAPUL04/mszfieu94wfJvqtnANJUzCn6wHzsO
+         25IIOgIQB3xbp2tpkcAvYPU3XF6uKkJ23kfAi9L2ebm4aW5EyK7WnDqoUppfoRZbKzs5
+         ysTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FCd5/yKA;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=PtSomUgD;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
-Date: Wed, 14 Mar 2018 11:48:15 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
-	ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-	james.morse@arm.com, kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
-	tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org, toshi.kani@hpe.com
-Subject: Re: [PATCH v1 2/4] ioremap: Invalidate TLB after huge mappings
-Message-ID: <20180314114814.mzgwlzkwzxijiv54@lakrids.cambridge.arm.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=FCd5/yKA;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=PtSomUgD;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D215060F90
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	arnd@arndb.de
+Cc: mark.rutland@arm.com,
+	ard.biesheuvel@linaro.org,
+	marc.zyngier@arm.com,
+	james.morse@arm.com,
+	kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org,
+	toshi.kani@hpe.com,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v1 4/4] Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
+Date: Wed, 14 Mar 2018 14:18:25 +0530
+Message-Id: <1521017305-28518-5-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521017305-28518-1-git-send-email-cpandya@codeaurora.org>
 References: <1521017305-28518-1-git-send-email-cpandya@codeaurora.org>
- <1521017305-28518-3-git-send-email-cpandya@codeaurora.org>
- <20180314104823.yumqomzmbu3cj442@lakrids.cambridge.arm.com>
- <a278b3ca-b54f-ee5e-5828-b8859eea5cc6@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a278b3ca-b54f-ee5e-5828-b8859eea5cc6@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594902270765090574?=
-X-GMAIL-MSGID: =?utf-8?q?1594913561847610559?=
+X-GMAIL-THRID: =?utf-8?q?1594902291066991790?=
+X-GMAIL-MSGID: =?utf-8?q?1594902291066991790?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 04:50:35PM +0530, Chintan Pandya wrote:
-> On 3/14/2018 4:18 PM, Mark Rutland wrote:
-> > On Wed, Mar 14, 2018 at 02:18:23PM +0530, Chintan Pandya wrote:
-> > As has been noted in previous threads, the ARM architecture requires a
-> > Break-Before-Make sequence when changing an entry from a table to a
-> > block, as is the case here.
-> > 
-> > The means the necessary sequence is:
-> > 
-> > 	1. Make the entry invalid
-> > 	2. Invalidate relevant TLB entries
-> > 	3. Write the new entry
-> > 
-> We do this for PTEs. I don't see this applicable to PMDs.
+This commit 15122ee2c515a ("arm64: Enforce BBM for huge
+IO/VMAP mappings") is a temporary work-around until the
+issues with CONFIG_HAVE_ARCH_HUGE_VMAP gets fixed.
 
-The architecture requires this for *all* levels of page table, when
-certain changes are made. Switching an entry from a table to block (or
-vice versa) is one of those changes, and this definitely applies to
-PMDs.
+Revert this change as we have fixes for the issue.
 
-> Because,
-> 
-> 1) To mark any PMD invalid, we need to be sure that next level page
->    table (I mean all the 512 PTEs) should be zero. That requires us
->    to scan entire last level page. A big perf hit !
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+---
+ arch/arm64/mm/mmu.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-This is in ioremap code. Under what workload does this constitute a perf
-hit?
-
-Regardless, so long as we mark the pmd entry invalid before the TLB
-invalidation, we don't need to touch the next level table at all. We
-just require a sequence like:
-
-	pmd_clear(*pmdp);
-	flush_tlb_kernel_range(pmd_start_addr, pmd_end_addr);
-	pmd_set_huge(*pmdp, phys, prot);
-
-
-> 2) We need to perform step 1 for every unmap as we never know which
->    unmap will make last level page table empty.
-
-Sorry, I don't follow. Could you elaborate on the problem?
-
-> Moreover, problem comes only when 4K mapping was followed by 2M
-> mapping. In all other cases, retaining valid PMD has obvious perf
-> gain. That's what walk-cache is supposed to be introduced for.
-
-Retaining a valid PMD in the TLB that *differs* from a valid PMD in the
-page tables is a big problem.
-
-The architecture requires BBM, as this permits CPUs to allocate PMDs
-into TLBs at *any* time, even if there's already PMD in the TLB for a
-given address.
-
-Thus, CPUs can allocate *both* valid PMDs into the TLBs. When this
-happens, a TLB lookup can:
-
-1) return either of the PMDs.
-
-2) raise a TLB conflict abort.
-
-3) return an amalgamation of the two entries (e.g. provide an erroneous
-   address).
-
-Note that (3) is particularly scary:
-
-* The CPU could raise an SError if the amalgamated entry is junk.
-
-* If a memory access hits an amalgamated entry, it may use the wrong
-  physical address, attributes, or permissions, resulting in a number of
-  potential problems.
-
-* If the amalgamated entry looks like a partial walk, the TLB might try
-  to perform a walk starting at the physical address in the amalgamated
-  entry. This would cause page table walks to access bogus addresses,
-  allocating junk into TLBs, and may result in SErrors or other aborts.
-
-> > Whereas above, the sequence is
-> > 
-> > 	1. Write the new entry
-> > 	2. invalidate relevant TLB entries
-> > 
-> > Which is insufficient, and will lead to a number of problems.
-> I couldn't think of new problems with this approach. Could you share
-> any problematic scenarios ?
-
-Please see above.
-
-> Also, my test-case runs fine with these patches for 10+ hours.
-
-While this may happen to work on particular platforms, it is not
-guaranteed per the architecture, and will fail on others.
-
-Thanks,
-Mark.
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index c0df264..19116c6 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -935,10 +935,6 @@ int pud_set_huge(pud_t *pudp, phys_addr_t phys, pgprot_t prot)
+ 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pud_present(READ_ONCE(*pudp)))
+-		return 0;
+-
+ 	BUG_ON(phys & ~PUD_MASK);
+ 	if (pud_val(*pud) && !pud_huge(*pud))
+ 		free_page((unsigned long)__va(pud_val(*pud)));
+@@ -952,10 +948,6 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_t phys, pgprot_t prot)
+ 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pmd_present(READ_ONCE(*pmdp)))
+-		return 0;
+-
+ 	BUG_ON(phys & ~PMD_MASK);
+ 	if (pmd_val(*pmd) && !pmd_huge(*pmd))
+ 		free_page((unsigned long)__va(pmd_val(*pmd)));
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
