@@ -1,94 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeCNQkO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:40:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41254 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeCNQkK (ORCPT
+        id S1751957AbeCNQlu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:41:50 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43786 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeCNQlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:40:10 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        f.fainelli@gmail.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: bcm-qspi: fIX some error handling paths" to the spi tree
-In-Reply-To: <20180313183658.10641-1-christophe.jaillet@wanadoo.fr>
-Message-Id: <20180314164006.89AF3440079@finisterre.ee.mobilebroadband>
-Date: Wed, 14 Mar 2018 16:40:06 +0000 (GMT)
+        Wed, 14 Mar 2018 12:41:49 -0400
+X-Google-Smtp-Source: AG47ELunRsNZr9Tgqp8Y4zi3HZLqcNIDynL/zSJO7G/JWZGpDCtBgxtBaNVueVuJHGrxzPmX1vxLBrLkKzony7qzACk=
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu8qguR0tFWZxecQDTPS3_Eyt_E6_YA1ivyAAqNuaaR9-g@mail.gmail.com>
+References: <20180314134431.13241-1-ard.biesheuvel@linaro.org>
+ <20180314141323.GD23100@dhcp22.suse.cz> <CAKv+Gu9hrZnX6pmiCaT=S30KQ11tY4kv=qvdSPPZ2nYDC7P7eQ@mail.gmail.com>
+ <20180314145450.GI23100@dhcp22.suse.cz> <CAKv+Gu8qguR0tFWZxecQDTPS3_Eyt_E6_YA1ivyAAqNuaaR9-g@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 14 Mar 2018 16:41:47 +0000
+Message-ID: <CAKv+Gu8U9U1ThYxXWU6AuoF5s4uAGps_-T+2tksjc4nGNdX2_w@mail.gmail.com>
+Subject: Re: [PATCH] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>, Daniel Vacek <neelx@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 14 March 2018 at 15:54, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 14 March 2018 at 14:54, Michal Hocko <mhocko@kernel.org> wrote:
+>> On Wed 14-03-18 14:35:12, Ard Biesheuvel wrote:
+>>> On 14 March 2018 at 14:13, Michal Hocko <mhocko@kernel.org> wrote:
+>>> > Does http://lkml.kernel.org/r/20180313224240.25295-1-neelx@redhat.com
+>>> > fix your issue? From the debugging info you provided it should because
+>>> > the patch prevents jumping backwards.
+>>> >
+>>>
+>>> The patch does fix the boot hang.
+>>>
+>>> But I am concerned that we are papering over a fundamental flaw in
+>>> memblock_next_valid_pfn().
+>>
+>> It seems that memblock_next_valid_pfn is doing the right thing here. It
+>> is the alignment which moves the pfn back AFAICS. I am not really
+>> impressed about the original patch either, to be completely honest.
+>> It just looks awfully tricky. I still didn't manage to wrap my head
+>> around the original issue though so I do not have much better ideas to
+>> be honest.
+>
+> So first of all, memblock_next_valid_pfn() never refers to its max_pfn
+> argument, which is odd nut easily fixed.
+> Then, the whole idea of substracting one so that the pfn++ will
+> produce the expected value is rather hacky,
+>
+> But the real problem is that rounding down pfn for the next iteration
+> is dodgy, because early_pfn_valid() isn't guaranteed to return true
+> for the rounded down value. I know it is probably fine in reality, but
+> dodgy as hell. The same applies to the call to early_pfn_in_nid() btw
+>
+> So how about something like this (apologies on Gmail's behalf for the
+> whitespace damage, I can resend it as a proper patch)
+>
+>
+> ---------8<-----------
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3d974cb2a1a1..b89ca999ee3b 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5352,28 +5352,29 @@
+>                  * function.  They do not exist on hotplugged memory.
+>                  */
+>                 if (context != MEMMAP_EARLY)
+>                         goto not_early;
+>
+> -               if (!early_pfn_valid(pfn)) {
+> +               if (!early_pfn_valid(pfn) || !early_pfn_in_nid(pfn, nid)) {
+>  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+>                         /*
+>                          * Skip to the pfn preceding the next valid one (or
+>                          * end_pfn), such that we hit a valid pfn (or end_pfn)
+>                          * on our next iteration of the loop. Note that it needs
+>                          * to be pageblock aligned even when the region itself
+>                          * is not. move_freepages_block() can shift ahead of
+>                          * the valid region but still depends on correct page
+>                          * metadata.
+>                          */
+> -                       pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
+> -                                       ~(pageblock_nr_pages-1)) - 1;
+> -#endif
+> +                       pfn = memblock_next_valid_pfn(pfn, end_pfn);
+> +                       if (pfn >= end_pfn)
+> +                               break;
+> +                       pfn &= ~(pageblock_nr_pages - 1);
+> +#else
+>                         continue;
+> +#endif
+>                 }
+> -               if (!early_pfn_in_nid(pfn, nid))
+> -                       continue;
+>                 if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
+>                         break;
+>
+>  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+>                 /*
+> ---------8<-----------
+>
+> This ensures that we enter the remainder of the loop with a properly
+> aligned pfn, rather than tweaking the value of pfn so it assumes the
+> expected value after 'pfn++'
 
-   spi: bcm-qspi: fIX some error handling paths
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From bc3cc75281b3c2b1c5355d88d147b66a753bb9a5 Mon Sep 17 00:00:00 2001
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Tue, 13 Mar 2018 19:36:58 +0100
-Subject: [PATCH] spi: bcm-qspi: fIX some error handling paths
-
-For some reason, commit c0368e4db4a3 ("spi: bcm-qspi: Fix use after free
-in bcm_qspi_probe() in error path") has updated some gotos, but not all of
-them.
-
-This looks spurious, so fix it.
-
-Fixes: fa236a7ef240 ("spi: bcm-qspi: Add Broadcom MSPI driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-bcm-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index a172ab299e80..1596d35498c5 100644
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -1247,7 +1247,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[MSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[MSPI])) {
- 			ret = PTR_ERR(qspi->base[MSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 	} else {
- 		goto qspi_resource_err;
-@@ -1258,7 +1258,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 		qspi->base[BSPI]  = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(qspi->base[BSPI])) {
- 			ret = PTR_ERR(qspi->base[BSPI]);
--			goto qspi_probe_err;
-+			goto qspi_resource_err;
- 		}
- 		qspi->bspi_mode = true;
- 	} else {
--- 
-2.16.2
+Um, this does not actually solve the issue. I guess this is due to the
+fact that a single pageblock size chunk could have both valid and
+invalid PFNs, and so rounding down the first PFN of the second valid
+chunk moves you back to the first chunk.
