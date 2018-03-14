@@ -1,158 +1,83 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-14183-1520980042-2-7242773004353257916
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520980041; b=IDDBHSdrNPWGjekwLgDeIr+Jlvck3t8ICOFyoVSYWgw9fr5
-    zGKKpRUlLLy0iGvWQUV8IoHlTFuCeUkx9WQPr+F/6LhGLeks3ly4hTClYlsmL8Iz
-    Qv54eNu82T7yGfjVpdlriFNs7ClRbIp5Opo0Cm4P4dBDkiMV/lEsitYYxJthdG01
-    n+RpbNygndpEsoXtbObVzp4PD8Azur3ReWCLREeuMJ69Av3LxCZXt+dFKyFhQyNW
-    nfbfWAJzhamBU0fa3D/L8oluSekZQbr9YcG/veECoSaCTWhdSMPnPQW11srCUAIh
-    OOJrLEQ1gXKq8G2wYTyBc9/0fvQkJilG+0fCYIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc
-    :content-transfer-encoding:content-type:sender; s=arctest; t=
-    1520980041; bh=QY0LPuP7W9W+WrFrDwSdTvwFjWaYrxabCqHCI7cwips=; b=r
-    k5reNCv77CEPgO9VvtV+YQ/wVkgr1wRf3avzMba9LKT3IIybTABVn3MpIhQMTSrt
-    bzTrif27Z9VrWftWP6+g02YXrkaY/jTiLFv8mFymMS1WmfCjSfi2QsGVstBVcffW
-    C8dgUTxdNlXtlt+ADiB4EJvLc5SqINtcJcXIofC3kTyf+WRKZQ1mo1CxurhWEyIw
-    iZkjKGiVxnbt5TUIGTBpHjyFOBk3nLc7jc61SmFTcXD6TREPEtb+z0Zltj9csQcU
-    iRzQ+kKi5Ki3wFWRuOdxT6Z+hah4/ux4DNoxs3ukj4+kEPAUqnCHqJjsjO/XbSZB
-    bZ+4u4pUUiR771ki8vncw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=P5WylioQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=E3AiXek8;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=P5WylioQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=E3AiXek8;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELtQnftBckYCz2E8T3+/DvvCiVx38j5yUTeeBPaauUQHmiiUQib1z3NxFbk9T83IDQsoB3FnIg==
-Subject: Re: [PATCH] media: staging/imx: fill vb2_v4l2_buffer sequence entry
-To: Peter Seiderer <ps.report@gmx.net>
-References: <20180313200054.31305-1-ps.report@gmx.net>
- <d3601b40-d80a-b3c1-cdf0-82128d52b398@gmail.com>
- <20180313232449.253c7626@gmx.net>
-From: Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <0a65c663-ee8f-3edb-92ae-426910da9352@gmail.com>
-Date: Tue, 13 Mar 2018 15:27:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <chunfeng.yun@mediatek.com>
+X-Google-Smtp-Source: AG47ELtigQbFPHI7bkC4MNRQs4VRKkmgdItfesE54nACh0Dncc8/qvq9Jyj0Udb1Ep8mcPgnCwRm
+ARC-Seal: i=1; a=rsa-sha256; t=1521007396; cv=none;
+        d=google.com; s=arc-20160816;
+        b=drVd7hrvDJVShE22YZ08hcIxfDAj/dPS6e8gbw/VryHf+YUfgekWo1LTFmt2v50Zc1
+         LYAzjUzqJ7EmCUei5MO14pzI1uWmQG60/sfCUluWinMgQ425wJLahCIgM4ji3JaD/8cP
+         fFxhG4NjpiPExmEIzEf9FuciDdVYv+N+nlFMROm9dSBiXWgPovOXPgviwmA6eRW5Lcxm
+         LUE9te6uvEaMSWZ9bNIUVfMlSmYMSuhd6duO2/UUu0V5+t1rIHtPkwQSr7+/spEu/2ZL
+         9bG+XBpJwtjlIEgXYyy68owtASD0HfSt1JwigUw9uzACqMGXcVpmIxRrsLvIInUvR9Rh
+         BZgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=8pd0QQ/gQRUlyS2CJXsmK6bdQEAXFgZ66ENaxZHx38E=;
+        b=esPZOt8d5GWwx6Kzq8IkzH/IaEXUpiaftvv3rzho9h4tTzkbWJxoi1v1+fzqXYmHtj
+         r4AYlaOtRvXTl4Kur+kXW8rfYgSB7ls15DSQHEW7JTxcHtmzfsWTI62AyaGrGBcyT/f5
+         WdCc7LVd9uhysxlPrkEjHsFXrPnxBTIemrHU2ujc6dOs9+A5KAgLR8PIYwtjfbfwZAg7
+         euL0MknSbw0elycv8oqKqB0s9DAMfMgGoIBTdunIguFVt3zPadb0wnxEFJGzP8JCKLhm
+         S3eHAkN2OW1gj3e659+RzQb+YKR8jYDmwYK5n1a6/k9XvuRWLlIDvdubEKy60PBKvs6o
+         9Yxw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.78 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
+X-UUID: 482a472d4967464cad20d9b16b1a4189-20180314
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Heikki Krogerus
+	<heikki.krogerus@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>, Guenter Roeck <linux@roeck-us.net>,
+	Kate Stewart <kstewart@linuxfoundation.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Alan Stern <stern@rowland.harvard.edu>,
+	<linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] Add Apple Carplay driver 
+Date: Wed, 14 Mar 2018 14:02:35 +0800
+Message-ID: <1521007356-12306-1-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <20180313232449.253c7626@gmx.net>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain
+X-MTK: N
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594891852474932951?=
+X-GMAIL-MSGID: =?utf-8?q?1594891852474932951?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+>From bf48dcd9cb254576cfea373c9a5d2ab996408895 Mon Sep 17 00:00:00 2001
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Date: Tue, 13 Mar 2018 11:47:38 +0800
+Subject: [PATCH] Add Apple Carplay driver
 
+Some Apple devices which support Carplay can enter USB Host Mode from USB
+Device Mode after receiving a specific USB Vendor Request. There is a
+requirement apply to accesssories that support the USB dual role switch
+feature, and must have a USB-A receptacle that is capable of functioning
+in both USB Host and USB Device roles.
+It means that the driver should supports manual Dual-Role switch, due to
+no IDDIG pin is avaliable.
 
-On 03/13/2018 03:24 PM, Peter Seiderer wrote:
-> Hello Steve,
->
-> On Tue, 13 Mar 2018 15:03:07 -0700, Steve Longerbeam <slongerbeam@gmail.com> wrote:
->
->> Hi Peter,
->>
->> Thanks for the patch.
->>
->> This needs to be done in imx-ic-prpencvf.c as well, see
->> prp_vb2_buf_done().
-> Ahh, I see...., would you prefer an follow up patch or
-> an v2 patch doing the changes on mx-media-csi.c and
-> imx-ic-prpencvf.c at once?
+There is no suitable place to add this spicific USB Vendor Request, so
+here I extract a single driver which allow user force to send it by a debug
+interface when need it, and keep it independent on USB Dual-Role Controller
+Drivers.
+But to implement carplay feature, there are some requirments for USB Dual-Role
+Driver:
+1. supports manual dual-role switch, such as, by a debug interface;
+2. keep vbus alive even when switch host into device mode;
 
-Hi Peter, a v2 patch would be fine.
+More information please refer to "Chapter 46. USB Role Switch" in
+MFI Accessroy Interface Specification.pdf
 
-Steve
+Chunfeng Yun (1):
+  usb: misc: supports Apple Carplay driver
 
+ drivers/usb/misc/Kconfig   |    9 +++
+ drivers/usb/misc/Makefile  |    1 +
+ drivers/usb/misc/carplay.c |  193 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 203 insertions(+)
+ create mode 100644 drivers/usb/misc/carplay.c
 
-> On 03/13/2018 01:00 PM, Peter Seiderer wrote:
->>> Signed-off-by: Peter Seiderer <ps.report@gmx.net>
->>> ---
->>>    drivers/staging/media/imx/imx-media-csi.c | 5 +++++
->>>    1 file changed, 5 insertions(+)
->>>
->>> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
->>> index 5a195f80a24d..3a6a645b9dce 100644
->>> --- a/drivers/staging/media/imx/imx-media-csi.c
->>> +++ b/drivers/staging/media/imx/imx-media-csi.c
->>> @@ -111,6 +111,7 @@ struct csi_priv {
->>>    	struct v4l2_ctrl_handler ctrl_hdlr;
->>>    
->>>    	int stream_count; /* streaming counter */
->>> +	__u32 frame_sequence; /* frame sequence counter */
->>>    	bool last_eof;   /* waiting for last EOF at stream off */
->>>    	bool nfb4eof;    /* NFB4EOF encountered during streaming */
->>>    	struct completion last_eof_comp;
->>> @@ -234,8 +235,11 @@ static void csi_vb2_buf_done(struct csi_priv *priv)
->>>    	struct vb2_buffer *vb;
->>>    	dma_addr_t phys;
->>>    
->>> +	priv->frame_sequence++;
->>> +
->>>    	done = priv->active_vb2_buf[priv->ipu_buf_num];
->>>    	if (done) {
->>> +		done->vbuf.sequence = priv->frame_sequence;
->>>    		vb = &done->vbuf.vb2_buf;
->>>    		vb->timestamp = ktime_get_ns();
->>>    		vb2_buffer_done(vb, priv->nfb4eof ?
->>> @@ -543,6 +547,7 @@ static int csi_idmac_start(struct csi_priv *priv)
->>>    
->>>    	/* init EOF completion waitq */
->>>    	init_completion(&priv->last_eof_comp);
->>> +	priv->frame_sequence = 0;
->>>    	priv->last_eof = false;
->>>    	priv->nfb4eof = false;
->>>      
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+-- 
+1.7.9.5
