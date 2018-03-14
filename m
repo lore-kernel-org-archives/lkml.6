@@ -1,98 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932852AbeCNAuH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 20:50:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53708 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932667AbeCNAuG (ORCPT
+        id S933026AbeCNA4a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 20:56:30 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:40892 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932732AbeCNA43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 20:50:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39AB160452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH] irqchip/gic-v3: Ensure GICR_CTLR.EnableLPI=0 is observed before enabling
-Date: Tue, 13 Mar 2018 19:50:01 -0500
-Message-Id: <1520988601-16705-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 13 Mar 2018 20:56:29 -0400
+X-Google-Smtp-Source: AG47ELta3h+74Z1tXKsFMCdpt8Gm7ldBZ/kyCIlEtjYXXLOF+poEOT//g0x2DW99J1g56LI9kOs3Ki1GWfk2oS6+tmA=
+MIME-Version: 1.0
+In-Reply-To: <CANiq72k=sw=Cxoes9tCNnVp0LweXRN5U+RuXU56QvO__HHQ1ZA@mail.gmail.com>
+References: <20180312233952.niz2cuz7psv4fe2s@gmail.com> <20180313140037.7717460162192c99775b135e@linux-foundation.org>
+ <CANiq72nKXXV7SDTmCwvizWA3ubdczNZV8qT2-PoGAQnDfX9qtg@mail.gmail.com>
+ <1520980163.2049.54.camel@perches.com> <CANiq72k=sw=Cxoes9tCNnVp0LweXRN5U+RuXU56QvO__HHQ1ZA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 14 Mar 2018 01:56:08 +0100
+Message-ID: <CANiq72=UXiK1mocAPaYz4uoBU=EMJoUMArdmdKiEr6Q=zs76MA@mail.gmail.com>
+Subject: Re: [PATCH] clang-format: add configuration file
+To: Joe Perches <joe@perches.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Robo Bot <apw@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The definition of the GICR_CTLR.RWP control bit was expanded to indicate
-status of changing GICR_CTLR.EnableLPI from 1 to 0 is being in progress
-or completed. Software must observe GICR_CTLR.RWP==0 after clearing
-GICR_CTLR.EnableLPI from 1 to 0 and before writing GICR_PENDBASER and/or
-GICR_PROPBASER, otherwise behavior is UNPREDICTABLE.
+On Wed, Mar 14, 2018 at 1:18 AM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Since we seem to agree on having this, I will send a v2 after I try a
+> few experiments to try to reduce more the produced diffs, explain
+> things better in Documentation/, add more comments in the config file
+> and send a v2.
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
----
- drivers/irqchip/irq-gic-v3-its.c   | 30 +++++++++++++++++++++++-------
- include/linux/irqchip/arm-gic-v3.h |  1 +
- 2 files changed, 24 insertions(+), 7 deletions(-)
+Alright, time for a fun fact: roughly 11 hours after I sent the first
+message, Microsoft announces they are going to support clang-format in
+Visual Studio 15.7:
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 1d3056f..85cd158 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1875,15 +1875,31 @@ static void its_cpu_init_lpis(void)
- 		gic_data_rdist()->pend_page = pend_page;
- 	}
- 
--	/* Disable LPIs */
- 	val = readl_relaxed(rbase + GICR_CTLR);
--	val &= ~GICR_CTLR_ENABLE_LPIS;
--	writel_relaxed(val, rbase + GICR_CTLR);
- 
--	/*
--	 * Make sure any change to the table is observable by the GIC.
--	 */
--	dsb(sy);
-+	/* Make sure LPIs are disabled before programming PEND/PROP registers */
-+	if (val & GICR_CTLR_ENABLE_LPIS) {
-+		u32 count = 1000000; /* 1s! */
-+
-+		/* Disable LPIs */
-+		val &= ~GICR_CTLR_ENABLE_LPIS;
-+		writel_relaxed(val, rbase + GICR_CTLR);
-+
-+		/* Make sure any change to GICR_CTLR is observable by the GIC */
-+		dsb(sy);
-+
-+		/* Wait for GICR_CTLR.RWP==0 or timeout */
-+		while (readl_relaxed(rbase + GICR_CTLR) & GICR_CTLR_RWP) {
-+			if (!count) {
-+				pr_err("CPU%d: Failed to disable LPIs\n",
-+				       smp_processor_id());
-+				return;
-+			}
-+			cpu_relax();
-+			udelay(1);
-+			count--;
-+		};
-+	}
- 
- 	/* set PROPBASE */
- 	val = (page_to_phys(gic_rdists->prop_page) |
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index c00c4c33..4d5fb60 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -106,6 +106,7 @@
- #define GICR_PIDR2			GICD_PIDR2
- 
- #define GICR_CTLR_ENABLE_LPIS		(1UL << 0)
-+#define GICR_CTLR_RWP			(1UL << 3)
- 
- #define GICR_TYPER_CPU_NUMBER(r)	(((r) >> 8) & 0xffff)
- 
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+  https://blogs.msdn.microsoft.com/vcblog/2018/03/13/clangformat-support-in-visual-studio-2017-15-7-preview-1/
+
+Talk about coincidences... :-)
+
+On related news, Google also announced that they are compiling Chrome
+with clang on Windows a week or so ago...
+
+Cheers,
+Miguel
+
+[*] Their timestamp: <time class="entry-date published"
+datetime="2018-03-13T11:13:51+00:00">March 13, 2018</time>
