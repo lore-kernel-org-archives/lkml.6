@@ -1,74 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752603AbeCNJax (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:30:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46213 "EHLO mail.bootlin.com"
+        id S1752609AbeCNJbK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:31:10 -0400
+Received: from ozlabs.org ([103.22.144.67]:46867 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750990AbeCNJav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:30:51 -0400
-Date: Wed, 14 Mar 2018 10:30:50 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/sun4i: move rgb mode_valid from connector to
- encoder
-Message-ID: <20180314093050.aimmdpx4heghuf74@flea>
-References: <1520941017-81177-1-git-send-email-giulio.benetti@micronovasrl.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ficsuhinqjbjo3zk"
-Content-Disposition: inline
-In-Reply-To: <1520941017-81177-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20180223
+        id S1752152AbeCNJ2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:28:22 -0400
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: bf7fb32dd5fc8a6bd25aaab05d3acddd1223ba03
+In-Reply-To: <20180225172236.29650-21-malat@debian.org>
+To: Mathieu Malaterre <malat@debian.org>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [20/21] powerpc: Add missing prototypes for ppc_select & ppc_fadvise64_64
+Message-Id: <401RGr5TpCz9sVZ@ozlabs.org>
+Date: Wed, 14 Mar 2018 20:28:13 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 2018-02-25 at 17:22:35 UTC, Mathieu Malaterre wrote:
+> Add missing prototypes for ppc_select & ppc_fadvise64_64 to header
+> asm-prototypes.h. Fix the following warnings (treated as errors in W=1)
+> 
+>   CC      arch/powerpc/kernel/syscalls.o
+> arch/powerpc/kernel/syscalls.c:87:1: error: no previous prototype for ‘ppc_select’ [-Werror=missing-prototypes]
+>  ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct timeval __user *tvp)
+>  ^~~~~~~~~~
+> arch/powerpc/kernel/syscalls.c:119:6: error: no previous prototype for ‘ppc_fadvise64_64’ [-Werror=missing-prototypes]
+>  long ppc_fadvise64_64(int fd, int advice, u32 offset_high, u32 offset_low,
+>       ^~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
---ficsuhinqjbjo3zk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to powerpc next, thanks.
 
-On Tue, Mar 13, 2018 at 12:36:57PM +0100, Giulio Benetti wrote:
-> mode_valid function must be connected to encoder.
-> Otherwise it could get not be called by drm in the case there's a
-> bridge connected to encoder instead of a panel.
->=20
-> Move mode_valid function pointer to encoder helper functions,
-> changing its prototype according to encoder helper function pointer.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+https://git.kernel.org/powerpc/c/bf7fb32dd5fc8a6bd25aaab05d3acd
 
-Applied, thanks!
-Maxime
-
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ficsuhinqjbjo3zk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqo68kACgkQ0rTAlCFN
-r3SHVxAAg9NP7usmW/skjqXTwMHOpU5M5nASxXGk52GAt/Q5TGaHPCcrygjiQraO
-3BnAhj4aHvg36DfB4typqyjVckcZ8D0n9JgXmhAOYe7qhWkRVwkBNd++gbCW2TM7
-1EfqCwWczlp425Z+/gmm7UAEERL33d3c0Y51ULTNOqz8X/Vtow6NJza4JZe2tthV
-U1rSM2hmzmcLQoxUtXfh5Rnyr2/XELxTQHjlVJecsWpGEbSgqea7dw3XxXL2NaL/
-PLQZO03w7Rw0qzVtGXeTKwp7Vrhj+8d3AQ1gfc/gPolQMzCvPH3jOLWS4Tk3lElF
-j5T+ceYr6H9XdHcnox8zy4ihZSLSAuTfSYD++pPIuSxUtzrYSpUXVcY1U4x3bnl6
-T1yEKcLBo6vkEK+H+ecV2nBbkKVEau1Rvgd1iJtBATwMSUXN8kN6nMoNMA6tOkyu
-1JteQ+zYR1bQPV43XI8OjxqPwFsK3g7EyuS4RlKCvJiCDogQuWAzNp0u9HGCVEjs
-7nRTsfzLzCxkEl8sUxjBkRIiWCoOmSDfFjiMFmdhfEygGtyLI3Wc8RkrMTtINygk
-gtoFPsw+IUHOJa6K+6io79b7tn3EAbfWAVQiH49NiMkqwWstF36HlPnXZDLkLCba
-4ghcspjND791rP9uh7XcBpJW+X/CoPdY3Z3dBCFqBEAoaJ2oqI8=
-=WR6Y
------END PGP SIGNATURE-----
-
---ficsuhinqjbjo3zk--
+cheers
