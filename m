@@ -1,90 +1,83 @@
-Date: Wed, 14 Mar 2018 11:49:25 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Richard Leitner <dev@g0hl1n.net>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, mathias.nyman@intel.com,
-	bhelgaas@google.com, richard.leitner@skidata.com
+Return-Path: <prvs=604e35b7f=Richard.Leitner@skidata.com>
+X-Google-Smtp-Source: AG47ELuBm3wQGJfnp+cUaL7v4CwwEgVtcdDcCQX0biMDz8merzjprO80mr9GNbe9oUwN5ZU5T5uX
+ARC-Seal: i=1; a=rsa-sha256; t=1521027534; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KNzIqL+dxEac37ntQuvPxajPmT2+OEUqREsZVDKonnOohQdmCe1q4neHo3hUtE/0uD
+         HFDjwu/Rq4xI03tle1Up35y+4BaKWs7XK05M4rHYhnDSVHO1poNoSr2MT5W44TZs8g8z
+         9pBZiGM8fg/LphsolZuPNFQrQ8E00oMr8ZEPeu6uB8aPH8XiBI8PL6RkG9blAWxyJce5
+         RefKJY9/J2Rv5MUNJQmgAyzp8XpxMCPq1K3sXWL3OEiZIW7h9+RpJANNN6pXA3//u305
+         v9rl39h1UxM8iHRdPCmSAEy9fRU6Yh4f9esmYuUuj/xcOZQzSBcOzHyRy8FMS8eo81ck
+         tl0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=EoQJ4FcRowyIyo6Q0Tpwmj5ESJOjGbOmoASv1HKQsQM=;
+        b=Cn7l+MWKQcE9q1TKXYvR/sySTgVua9dE9jg6YiBESeS6tQhxV5eicikE2UGAw5eYDi
+         fZSsEgLgN/F7JoJknlnCY6W2AWmZzaVq+Acom1wox3O43O8A/HL6VxN5aThxCgX1ZH74
+         LiNdPBIL7ajxregF3PGnio02rW30HB3MggG8e5afVLgv+Anq9ckdP9zwUuc/o1xvZf8X
+         hx4v8geK/TCY5/Vkfo1EmziKc0P340CfGrWeBonNkEIzdcM7Ydy/5iiBiFHVM+4qdR6K
+         isaJDYrA/uSdNyL3z3GYGdf0LzXtWAMM2iTiNpdUVy4NcRBR0XR0j96V0TJ0TQ88Z1RY
+         ETng==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of prvs=604e35b7f=richard.leitner@skidata.com designates 91.230.2.91 as permitted sender) smtp.mailfrom=prvs=604e35b7f=Richard.Leitner@skidata.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of prvs=604e35b7f=richard.leitner@skidata.com designates 91.230.2.91 as permitted sender) smtp.mailfrom=prvs=604e35b7f=Richard.Leitner@skidata.com
+X-IronPort-AV: E=Sophos;i="5.47,470,1515452400";
+   d="scan'208";a="1327947"
 Subject: Re: [PATCH 3/3] usb: host: pci: replace hardcoded renesas PCI IDs
-Message-ID: <20180314104925.GC32615@kroah.com>
+To: Greg KH <gregkh@linuxfoundation.org>, Richard Leitner <dev@g0hl1n.net>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <mathias.nyman@intel.com>, <bhelgaas@google.com>
 References: <20180314102933.21367-1-dev@g0hl1n.net>
- <20180314102933.21367-4-dev@g0hl1n.net>
+ <20180314102933.21367-4-dev@g0hl1n.net> <20180314104925.GC32615@kroah.com>
+From: Richard Leitner <richard.leitner@skidata.com>
+Message-ID: <d46c3232-1a45-7e28-9691-de2fcb964ae4@skidata.com>
+Date: Wed, 14 Mar 2018 12:38:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314102933.21367-4-dev@g0hl1n.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180314104925.GC32615@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex3srv.skidata.net (192.168.111.81) To
+ sdex5srv.skidata.net (192.168.111.83)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594908630617691660?=
+X-GMAIL-MSGID: =?utf-8?q?1594912967636357741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 11:29:33AM +0100, Richard Leitner wrote:
-> From: Richard Leitner <richard.leitner@skidata.com>
+
+On 03/14/2018 11:49 AM, Greg KH wrote:
+> On Wed, Mar 14, 2018 at 11:29:33AM +0100, Richard Leitner wrote:
+>> From: Richard Leitner <richard.leitner@skidata.com>
+>>
+>> Introduce Renesas uPD72020{1,2} PCI device IDs in pci_ids.h and replace
+>> the harcoded values with them.
+>>
+>> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+>> ---
+>>  drivers/usb/host/pci-quirks.c | 6 ++++--
+>>  drivers/usb/host/xhci-pci.c   | 4 ++--
+>>  include/linux/pci_ids.h       | 2 ++
+>>  3 files changed, 8 insertions(+), 4 deletions(-)
+>>
+
+> Now this patch was fine :)
 > 
-> Introduce Renesas uPD72020{1,2} PCI device IDs in pci_ids.h and replace
-> the harcoded values with them.
+> Care to redo this series?
+
+Sure. Will send a v2 soon.
+
 > 
-> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
-> ---
->  drivers/usb/host/pci-quirks.c | 6 ++++--
->  drivers/usb/host/xhci-pci.c   | 4 ++--
->  include/linux/pci_ids.h       | 2 ++
->  3 files changed, 8 insertions(+), 4 deletions(-)
+> thanks,
 > 
-> diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-> index 39d163729b89..5e1ad523622e 100644
-> --- a/drivers/usb/host/pci-quirks.c
-> +++ b/drivers/usb/host/pci-quirks.c
-> @@ -1170,7 +1170,8 @@ static void quirk_usb_handoff_xhci(struct pci_dev *pdev)
->  	/* Auto handoff never worked for these devices. Force it and continue */
->  	if ((pdev->vendor == PCI_VENDOR_ID_TI &&
->  	     pdev->device == PCI_DEVICE_ID_TI_TUSB73X0) ||
-> -	    (pdev->vendor == PCI_VENDOR_ID_RENESAS && pdev->device == 0x0014)) {
-> +	    (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
-> +	     pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201)) {
->  		val = (val | XHCI_HC_OS_OWNED) & ~XHCI_HC_BIOS_OWNED;
->  		writel(val, base + ext_cap_offset);
->  	}
-> @@ -1282,7 +1283,8 @@ bool usb_xhci_needs_pci_reset(struct pci_dev *pdev)
->  	 * quirk, or the system will be in a rather bad state.
->  	 */
->  	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
-> -	    (pdev->device == 0x0014 || pdev->device == 0x0015))
-> +	    (pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201 ||
-> +	     pdev->device == PCI_DEVICE_ID_RENESAS_UPD720202))
->  		return true;
->  
->  	return false;
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index a5bfd890190c..a453e4c35ac7 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -189,10 +189,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
->  		xhci->quirks |= XHCI_BROKEN_STREAMS;
->  	}
->  	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
-> -			pdev->device == 0x0014)
-> +			pdev->device == PCI_DEVICE_ID_RENESAS_UPD720201)
->  		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
->  	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
-> -			pdev->device == 0x0015)
-> +			pdev->device == PCI_DEVICE_ID_RENESAS_UPD720202)
->  		xhci->quirks |= XHCI_RESET_ON_RESUME;
->  	if (pdev->vendor == PCI_VENDOR_ID_VIA)
->  		xhci->quirks |= XHCI_RESET_ON_RESUME;
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index d23a97868dee..eb52f0e9b651 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2427,6 +2427,8 @@
->  #define PCI_DEVICE_ID_RENESAS_SH7763	0x0004
->  #define PCI_DEVICE_ID_RENESAS_SH7785	0x0007
->  #define PCI_DEVICE_ID_RENESAS_SH7786	0x0010
-> +#define PCI_DEVICE_ID_RENESAS_UPD720201	0x0014
-> +#define PCI_DEVICE_ID_RENESAS_UPD720202	0x0015
+> greg k-h
+> 
 
-Now this patch was fine :)
+thank you!
 
-Care to redo this series?
-
-thanks,
-
-greg k-h
+regards;Richard.L
