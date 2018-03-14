@@ -1,181 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeCNPJm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:09:42 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36241 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeCNPJh (ORCPT
+        id S1752117AbeCNPKW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:10:22 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34690 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751459AbeCNPKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:09:37 -0400
-X-Google-Smtp-Source: AG47ELsNF81izV3oq0NHxXncooWwltn/xduK7RH9BR3GjrSdcP981JbelH1w/Gr9FYQLKKPSF52cEQ==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
+        Wed, 14 Mar 2018 11:10:20 -0400
+X-Google-Smtp-Source: AG47ELuy+TFyehMRpj4z5uaN97X659jZuxbI0EGhhP+XVR7CONJfa50t/g7qYRQLHqyoSMJsR4pSMA==
+Reply-To: monstr@monstr.eu
+Subject: Re: [PATCH 2/2] microblaze: switch to NO_BOOTMEM
+To: Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org
 Cc: Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 2/2] microblaze: switch to NO_BOOTMEM
-Date: Wed, 14 Mar 2018 16:09:32 +0100
-Message-Id: <2c20c2cbe89af51b7e59abbcda71e87fd1959bc5.1521040166.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
-References: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
-In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
-References: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
+References: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
+ <b7aa87fcf06143e9cabf18fa0e98a2c7f321e821.1521039689.git.michal.simek@xilinx.com>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <6fd76f9a-13b8-3047-57db-4b190bc3f1c1@monstr.eu>
+Date: Wed, 14 Mar 2018 16:10:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <b7aa87fcf06143e9cabf18fa0e98a2c7f321e821.1521039689.git.michal.simek@xilinx.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="WRBL08s4kukBh7N954UWfWxURNDlN368V"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--WRBL08s4kukBh7N954UWfWxURNDlN368V
+Content-Type: multipart/mixed; boundary="FCdoMycMskRB83YdrSzdr0F3O6Ngu4Z84";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Message-ID: <6fd76f9a-13b8-3047-57db-4b190bc3f1c1@monstr.eu>
+Subject: Re: [PATCH 2/2] microblaze: switch to NO_BOOTMEM
+References: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
+ <b7aa87fcf06143e9cabf18fa0e98a2c7f321e821.1521039689.git.michal.simek@xilinx.com>
+In-Reply-To: <b7aa87fcf06143e9cabf18fa0e98a2c7f321e821.1521039689.git.michal.simek@xilinx.com>
 
-Microblaze doesn't set CONFIG_NO_BOOTMEM and so memblock_virt_alloc()
-doesn't work for CONFIG_HAVE_MEMBLOCK && !CONFIG_NO_BOOTMEM.
+--FCdoMycMskRB83YdrSzdr0F3O6Ngu4Z84
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Similar change was already done by others architectures
-"ARM: mm: Remove bootmem code and switch to NO_BOOTMEM"
-(sha1: 84f452b1e8fc73ac0e31254c66e3e2260ce5263d)
-or
-"openrisc: Consolidate setup to use memblock instead of bootmem"
-(sha1: 266c7fad157265bb54d17db1c9545f2aaa488643)
-or
-"parisc: Drop bootmem and switch to memblock"
-(sha1: 4fe9e1d957e45ad8eba9885ee860a0e93d13a7c7)
-or
-"powerpc: Remove bootmem allocator"
-(sha1: 10239733ee8617bac3f1c1769af43a88ed979324)
-or
-"s390/mm: Convert bootmem to memblock"
-(sha1: 50be634507284eea38df78154d22615d21200b42)
-or
-"sparc64: Convert over to NO_BOOTMEM."
-(sha1: 625d693e9784f988371e69c2b41a2172c0be6c11)
-or
-"xtensa: drop sysmem and switch to memblock"
-(sha1: 0e46c1115f5816949220d62dd3ff04aa68e7ac6b)
+On 14.3.2018 16:01, Michal Simek wrote:
+> From: Rob Herring <robh@kernel.org>
+>=20
+> Microblaze doesn't set CONFIG_NO_BOOTMEM and so memblock_virt_alloc()
+> doesn't work for CONFIG_HAVE_MEMBLOCK && !CONFIG_NO_BOOTMEM.
+>=20
+> Similar change was already done by others architectures
+> "ARM: mm: Remove bootmem code and switch to NO_BOOTMEM"
+> (sha1: 84f452b1e8fc73ac0e31254c66e3e2260ce5263d)
+> or
+> "openrisc: Consolidate setup to use memblock instead of bootmem"
+> (sha1: 266c7fad157265bb54d17db1c9545f2aaa488643)
+> or
+> "parisc: Drop bootmem and switch to memblock"
+> (sha1: 4fe9e1d957e45ad8eba9885ee860a0e93d13a7c7)
+> or
+> "powerpc: Remove bootmem allocator"
+> (sha1: 10239733ee8617bac3f1c1769af43a88ed979324)
+> or
+> "s390/mm: Convert bootmem to memblock"
+> (sha1: 50be634507284eea38df78154d22615d21200b42)
+> or
+> "sparc64: Convert over to NO_BOOTMEM."
+> (sha1: 625d693e9784f988371e69c2b41a2172c0be6c11)
+> or
+> "xtensa: drop sysmem and switch to memblock"
+> (sha1: 0e46c1115f5816949220d62dd3ff04aa68e7ac6b)
+>=20
+> Issue was introduced by:
+> "of/fdt: use memblock_virt_alloc for early alloc"
+> (sha1: 0fa1c579349fdd90173381712ad78aa99c09d38b)
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+> Tested-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>=20
+>  arch/microblaze/Kconfig   |  1 +
+>  arch/microblaze/mm/init.c | 55 ++++++---------------------------------=
+--------
+>  2 files changed, 7 insertions(+), 49 deletions(-)
+>=20
+> diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
+> index 4f798aa671dd..3817a3e2146c 100644
+> --- a/arch/microblaze/Kconfig
+> +++ b/arch/microblaze/Kconfig
+> @@ -24,6 +24,7 @@ config MICROBLAZE
+>  	select HAVE_FTRACE_MCOUNT_RECORD
+>  	select HAVE_FUNCTION_GRAPH_TRACER
+>  	select HAVE_FUNCTION_TRACER
+> +	select NO_BOOTMEM
+>  	select HAVE_MEMBLOCK
+>  	select HAVE_MEMBLOCK_NODE_MAP
+>  	select HAVE_OPROFILE
+> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+> index 5bc9c7fbb541..6ab1ef2daf1d 100644
+> --- a/arch/microblaze/mm/init.c
+> +++ b/arch/microblaze/mm/init.c
+> @@ -32,9 +32,6 @@
+>  #ifndef CONFIG_MMU
+>  unsigned int __page_offset;
+>  EXPORT_SYMBOL(__page_offset);
+> -
+> -#else
+> -static int init_bootmem_done;
+>  #endif /* CONFIG_MMU */
+> =20
+>  char *klimit =3D _end;
+> @@ -174,17 +171,6 @@ void __init setup_memory(void)
+>  	pr_info("%s: max_low_pfn: %#lx\n", __func__, max_low_pfn);
+>  	pr_info("%s: max_pfn: %#lx\n", __func__, max_pfn);
+> =20
+> -	/*
+> -	 * Find an area to use for the bootmem bitmap.
+> -	 * We look for the first area which is at least
+> -	 * 128kB in length (128kB is enough for a bitmap
+> -	 * for 4GB of memory, using 4kB pages), plus 1 page
+> -	 * (in case the address isn't page-aligned).
+> -	 */
+> -	map_size =3D init_bootmem_node(NODE_DATA(0),
 
-Issue was introduced by:
-"of/fdt: use memblock_virt_alloc for early alloc"
-(sha1: 0fa1c579349fdd90173381712ad78aa99c09d38b)
+map_size variable should be also removed. Fixed in v2.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
-Tested-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+Thanks,
+Michal
 
-Changes in v2:
-- Forget to remove map_size which is unused now.
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
- arch/microblaze/Kconfig   |  1 +
- arch/microblaze/mm/init.c | 56 +++++------------------------------------------
- 2 files changed, 7 insertions(+), 50 deletions(-)
 
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index 4f798aa671dd..3817a3e2146c 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -24,6 +24,7 @@ config MICROBLAZE
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
-+	select NO_BOOTMEM
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_OPROFILE
-diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index 5bc9c7fbb541..df6de7ccdc2e 100644
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@ -32,9 +32,6 @@
- #ifndef CONFIG_MMU
- unsigned int __page_offset;
- EXPORT_SYMBOL(__page_offset);
--
--#else
--static int init_bootmem_done;
- #endif /* CONFIG_MMU */
- 
- char *klimit = _end;
-@@ -117,7 +114,6 @@ static void __init paging_init(void)
- 
- void __init setup_memory(void)
- {
--	unsigned long map_size;
- 	struct memblock_region *reg;
- 
- #ifndef CONFIG_MMU
-@@ -174,17 +170,6 @@ void __init setup_memory(void)
- 	pr_info("%s: max_low_pfn: %#lx\n", __func__, max_low_pfn);
- 	pr_info("%s: max_pfn: %#lx\n", __func__, max_pfn);
- 
--	/*
--	 * Find an area to use for the bootmem bitmap.
--	 * We look for the first area which is at least
--	 * 128kB in length (128kB is enough for a bitmap
--	 * for 4GB of memory, using 4kB pages), plus 1 page
--	 * (in case the address isn't page-aligned).
--	 */
--	map_size = init_bootmem_node(NODE_DATA(0),
--		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
--	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
--
- 	/* Add active regions with valid PFNs */
- 	for_each_memblock(memory, reg) {
- 		unsigned long start_pfn, end_pfn;
-@@ -196,32 +181,9 @@ void __init setup_memory(void)
- 				  &memblock.memory, 0);
- 	}
- 
--	/* free bootmem is whole main memory */
--	free_bootmem_with_active_regions(0, max_low_pfn);
--
--	/* reserve allocate blocks */
--	for_each_memblock(reserved, reg) {
--		unsigned long top = reg->base + reg->size - 1;
--
--		pr_debug("reserved - 0x%08x-0x%08x, %lx, %lx\n",
--			 (u32) reg->base, (u32) reg->size, top,
--						memory_start + lowmem_size - 1);
--
--		if (top <= (memory_start + lowmem_size - 1)) {
--			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
--		} else if (reg->base < (memory_start + lowmem_size - 1)) {
--			unsigned long trunc_size = memory_start + lowmem_size -
--								reg->base;
--			reserve_bootmem(reg->base, trunc_size, BOOTMEM_DEFAULT);
--		}
--	}
--
- 	/* XXX need to clip this if using highmem? */
- 	sparse_memory_present_with_active_regions(0);
- 
--#ifdef CONFIG_MMU
--	init_bootmem_done = 1;
--#endif
- 	paging_init();
- }
- 
-@@ -398,18 +360,12 @@ asmlinkage void __init mmu_init(void)
- /* This is only called until mem_init is done. */
- void __init *early_get_page(void)
- {
--	void *p;
--	if (init_bootmem_done) {
--		p = alloc_bootmem_pages(PAGE_SIZE);
--	} else {
--		/*
--		 * Mem start + kernel_tlb -> here is limit
--		 * because of mem mapping from head.S
--		 */
--		p = __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
--					memory_start + kernel_tlb));
--	}
--	return p;
-+	/*
-+	 * Mem start + kernel_tlb -> here is limit
-+	 * because of mem mapping from head.S
-+	 */
-+	return __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
-+				memory_start + kernel_tlb));
- }
- 
- #endif /* CONFIG_MMU */
--- 
-1.9.1
+
+--FCdoMycMskRB83YdrSzdr0F3O6Ngu4Z84--
+
+--WRBL08s4kukBh7N954UWfWxURNDlN368V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqpO1UACgkQykllyylKDCG1mgCfZcUEcJaciXIwLgwlROEwFsdp
+eVwAn1xptOsI0rAZl7DASJvZYMYycSyP
+=C+/c
+-----END PGP SIGNATURE-----
+
+--WRBL08s4kukBh7N954UWfWxURNDlN368V--
