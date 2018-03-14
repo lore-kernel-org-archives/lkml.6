@@ -1,67 +1,77 @@
-Return-Path: <kernel-hardening-return-12588-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELs6CoqSBoOSsUD39d51Vw8Ri/g/6r81OqBK4PbD93FEfVwybmOdTBnD4f1AezWzdR8jHQSk
-ARC-Seal: i=1; a=rsa-sha256; t=1521031471; cv=none;
+Return-Path: <kernel-hardening-return-12595-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtX3VLKE1onXxnPFP22RMfciBSX5zLhmKqzm5pRVI750mSdOt+/6O0MYznfz2XSpDyweFqg
+ARC-Seal: i=1; a=rsa-sha256; t=1521034283; cv=none;
         d=google.com; s=arc-20160816;
-        b=ekD1+OBlZ8LY4EhgLCcemyPzdjbtObwza2lWvrFu0iCv1XyKlyaQ1GRB1K94DZ6cst
-         odwts4gWtj0D+8AmBEHhgtjLXYsutUB5JSiLywnZwAnz69GFdyjnoKDh9boJdU65Ws5R
-         Lo74X7vyfvQSslN+UhB5/BMAwpfY9AeFYBg9HDWaDu1NjHEfQNPSmjEeFp6R7iIC7Ayu
-         7x8poN7SzZONzvWH0aukpNxv1dieHcwWfX6YzlhnKPTvCP56R090eM/ihrXDaHxDrJcb
-         ayK/fmIXqHzAme9NwuIq01NUM2veuCNXr5xVpiPWVcMxhcCtTo2pgx7xKGBvsgP4R0IH
-         LoVg==
+        b=C2ZMu/00rUgEKdiuvc0KsOAYaGqu2UKOU34UYb/cjV8dh08x94sCvSeIT1RrlNU3zx
+         7Ejwpg9XKCfGiBUio0wn0hkitv/YxYjrd2S+3LY6KTsouSHQUakNtXqsZW265bTltiQb
+         munXJ2OGAKQbEOuhiEbdb3Dfq0uqhT1TyXpXdxjYeDe1NJmvYnG8QNokBOiWzR8klvla
+         dar+aITNdR2pXs5lAb+/ZW7eygnsc1dZ3h8EQk+oo7uHea1ObJ1OyAnm+M+ldav3uiHh
+         jOv67CiRoOYBEYYnc9qYtQ2x1zlPicVlCo+B+FRh5fNcrq12mnnaZkOIVlNadelfkCXE
+         MNsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
+        h=mime-version:message-id:date:references:organization:in-reply-to
+         :subject:cc:to:from:delivered-to:delivered-to:list-id:list-subscribe
          :list-unsubscribe:list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=F4ipFVVt7YmubLLxw5olsjZWmNKKTU9pzZUhBricGJU=;
-        b=05TFPBSUeSkOqJS1WcLa5X6awuOqUvareupOsqlK8ltWbJxMChqfccfodz3VevpLFQ
-         XHmROoXGZBHSgVK77Glo9VaR/odkaYMpy386Si0TbYQ5IrempEe0GY3aFicQlpcOVjJG
-         +/ZzNlRl019l+yb0Bn8dBaozmpK45yq4e72bL2TyjKH+QF5tzjG5uWw18XAVTLHJmJgr
-         z0MJOZkcSubfVqv96q5Mj/OigJ0E93gQX2+5tNW1IAjhPb5OiROfkn3hkGYcuRWZQEdE
-         /1zQJk4lpBrhsxFTTDl52LOH7ZshLolV/1wwNePzW4CyvHZZhoSPI8FM6oeGMua5/KOD
-         iYSw==
+        bh=UEkHQSzMP8jcqcaF3S5Uj+4eyE2GCaK7QWuiBO4NJHc=;
+        b=OaGXvUOaOB/kY6qnzApY6fKOI0FzICSq5J5EDXGPHjgPWonLJNKZmOrOoJCyvSbsK5
+         /ZUPhYC6yh0qZxIgnPTm2hGmeRENX0v16bJOgbWGKbNbmhDINYIoMkYvK81D00oN5qtE
+         iyN2mtOqKHUrkjR/Fpziuibqw5c64eeWe4RIdPIFvHvW/+GKRPhx/ZtRCQNqcNRhSMWK
+         GC7h6FtR8m8eB4EWfe2Cs+sS/rUox3ieamNDs2IeFSzkofITwusBRwrztxothqVrhyDv
+         wg03HcDuTamP+5B3ORJ5X3Yg+3YV1/5iieSZRw3dipa033wnSuB0SE9Wl58vIc8fepoI
+         nNQg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JzedblaV;
-       spf=pass (google.com: domain of kernel-hardening-return-12588-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12588-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12595-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12595-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JzedblaV;
-       spf=pass (google.com: domain of kernel-hardening-return-12588-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12588-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12595-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12595-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <152103045697.8738.16803220270496592360@jlahtine-desk.ger.corp.intel.com>
-References: <1520970688-19683-1-git-send-email-s.mesoraca16@gmail.com> <152103045697.8738.16803220270496592360@jlahtine-desk.ger.corp.intel.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Wed, 14 Mar 2018 13:43:52 +0100
-Message-ID: <CAJHCu1LburVFrSX3uUhpRwSnYp-=Hm+KW-Vg_NOZG_Z5y4KmqA@mail.gmail.com>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,470,1515484800";
+   d="scan'208";a="37985401"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>, linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kernel-hardening@lists.openwall.com, David Airlie <airlied@linux.ie>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Kees Cook <keescook@chromium.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Salvatore Mesoraca <s.mesoraca16@gmail.com>
 Subject: Re: [PATCH] drm/i915: drop various VLAs in i915_debugfs.c
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, David Airlie <airlied@linux.ie>,
-	Jani Nikula <jani.nikula@linux.intel.com>, Kees Cook <keescook@chromium.org>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1520970688-19683-1-git-send-email-s.mesoraca16@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <1520970688-19683-1-git-send-email-s.mesoraca16@gmail.com>
+Date: Wed, 14 Mar 2018 14:17:07 +0200
+Message-ID: <87fu52n96k.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594853392696206560?=
-X-GMAIL-MSGID: =?utf-8?q?1594917096276948778?=
+X-GMAIL-MSGID: =?utf-8?q?1594920044472440297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-14 13:27 GMT+01:00 Joonas Lahtinen <joonas.lahtinen@linux.intel.com>:
-> CHV_SS_MAX should be good enough. Make these function scoped (so #define
-> at the beginning and #undef at the end of function).
->
-> Do use ARRAY_SIZE() instead of repeating.
+On Tue, 13 Mar 2018, Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
+> Avoid 3 VLAs[1] by using real constant expressions instead of variables.
+> The compiler should be able to optimize the original code and avoid using
+> any actual VLAs. Anyway this change is useful because it will avoid a false
+> positives with -Wvla, it might also help the compiler generating better
+> code.
 
-Thank you very much for your suggestions.
-Unfortunately, it seems that someone else already fixed this issue, so
-I'll just drop this patch.
-Best regards,
+Thanks for your patch. However, Chris beat you to it with:
 
-Salvatore
+7aa0b14ede64 ("drm/i915: Remove variable length arrays from sseu debugfs
+printers")
+
+as well as adding -Wvla to our subdir-ccflags-y to prevent more from
+cropping up:
+
+c5c2b11894f4 ("drm/i915: Warn against variable length arrays")
+
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
