@@ -1,72 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeCNR0l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:26:41 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41170 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751559AbeCNR0h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:26:37 -0400
-X-Google-Smtp-Source: AG47ELuMBnZjubhg8ql77ERB0vhpRf0GZOnrNUbBIWw26V4lNhhAk11Pc63mAtGpYREittYLQXVeSg==
-Date: Wed, 14 Mar 2018 13:26:35 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-cc: linux-kbuild@vger.kernel.org, Jarod Wilson <jarod@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] kbuild: touch autoksyms.h when it is really
- missing
-In-Reply-To: <1521045861-22418-3-git-send-email-yamada.masahiro@socionext.com>
-Message-ID: <nycvar.YSQ.7.76.1803141324420.28583@knanqh.ubzr>
-References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com> <1521045861-22418-3-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1751571AbeCNR1o (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:27:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56386 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751279AbeCNR1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:27:42 -0400
+Reply-To: jtoppins@redhat.com
+Subject: Re: [PATCH net] tg3: prevent scheduling while atomic splat
+To: Michael Chan <michael.chan@broadcom.com>
+Cc: Netdev <netdev@vger.kernel.org>, Andy Gospodarek <andy@greyhouse.net>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Prashant Sreedharan <prashant@broadcom.com>,
+        Michael Chan <mchan@broadcom.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <f439051c3964c6bb5342e25fb5327e0cdeba001e.1521045132.git.jtoppins@redhat.com>
+ <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
+From: Jonathan Toppins <jtoppins@redhat.com>
+Organization: Red Hat
+Message-ID: <266eae62-bef2-6c51-415f-cbacc1669e30@redhat.com>
+Date: Wed, 14 Mar 2018 13:27:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+On 03/14/2018 01:22 PM, Michael Chan wrote:
+> On Wed, Mar 14, 2018 at 9:36 AM, Jonathan Toppins <jtoppins@redhat.com> wrote:
+>> The problem was introduced in commit
+>> 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes"). The bug occurs
+>> because tp->lock spinlock is held which is obtained in tg3_start
+>> by way of tg3_full_lock(), line 11571. The documentation for usleep_range()
+>> specifically states it cannot be used inside a spinlock.
+>>
+>> Fixes: 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes")
+>> Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
+>> ---
+>>
+>> Notes:
+>>     The thing I need reviewed from Broadcom is if the udelay should be 20
+>>     instead of 10, due to any timing changes introduced by the offending
+>>     patch.
+> 
+> Thanks.  10 us is correct.
+> 
+> As a future improvement, we might want to see if we can release the
+> spinlock and go back to usleep_range().  The wait time is potentially
+> up to 20 msec which is quite long.
 
-> From the comment, I expect this code creates autoksyms.h in case it
-> is missing, but it actually touches it when it does exists.
-
-Oops, indeed.
-
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> I do not know when this code is useful...
-> 
-> If autoksyms.h were missing, build should have already failed because
-> include/{linux,asm-generic}/export.h need it.
-> 
-> Maybe for standalone test?
-> Or, in order to make this script self-contained?
-
-I agree it isn't very useful. Proof: it was wrong and wouldn't have 
-worked as intended. So the best fix might be to simply remove that line.
-
-
-
-> 
-> 
->  scripts/adjust_autoksyms.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
-> index 513da1a..a52210b 100755
-> --- a/scripts/adjust_autoksyms.sh
-> +++ b/scripts/adjust_autoksyms.sh
-> @@ -49,7 +49,7 @@ case "${KCONFIG_CONFIG}" in
->  esac
->  
->  # In case it doesn't exist yet...
-> -if [ -e "$cur_ksyms_file" ]; then touch "$cur_ksyms_file"; fi
-> +if [ ! -e "$cur_ksyms_file" ]; then touch "$cur_ksyms_file"; fi
->  
->  # Generate a new ksym list file with symbols needed by the current
->  # set of modules.
-> -- 
-> 2.7.4
-> 
-> 
+Agreed, glad it is not just me wondering why a lock needs to be held for
+reads. :-)
