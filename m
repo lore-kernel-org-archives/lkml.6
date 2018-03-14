@@ -1,174 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeCNRus (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:50:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeCNRup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:50:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A582620779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 14 Mar 2018 12:49:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-pci@vger.kernel.org, Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Cris <linux-cris-kernel@axis.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org, linux-am33-list@redhat.com
-Subject: Re: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
-Message-ID: <20180314174946.GB179719@bhelgaas-glaptop.roam.corp.google.com>
-References: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <CAHp75Vfp_uwSLe_ENnr=azJGrMoR6DuvGSCi5DSeq6=B-ghAGg@mail.gmail.com>
+        id S1751660AbeCNRvC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:51:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57586 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751414AbeCNRur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:50:47 -0400
+Subject: Re: [PATCH v9 4/5] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
+        robh+dt@kernel.org, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, will.deacon@arm.com, robdclark@gmail.com,
+        tfiga@chromium.org, sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-5-vivek.gautam@codeaurora.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8b427ea2-5c13-4712-13d1-e4c1aed0779e@arm.com>
+Date: Wed, 14 Mar 2018 17:50:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vfp_uwSLe_ENnr=azJGrMoR6DuvGSCi5DSeq6=B-ghAGg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180313085534.11650-5-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 06:31:38PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 13, 2018 at 11:45 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
+On 13/03/18 08:55, Vivek Gautam wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
 > 
-> Agree with Christoph's comment.
+> Finally add the device link between the master device and
+> smmu, so that the smmu gets runtime enabled/disabled only when the
+> master needs it. This is done from add_device callback which gets
+> called once when the master is added to the smmu.
 > 
-> > If a device already has MSI or MSI-X enabled, there's no need to set up its
-> > legacy INTx interrupt.
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> ---
+>   drivers/iommu/arm-smmu.c | 29 +++++++++++++++++++++++++++++
+>   1 file changed, 29 insertions(+)
 > 
-> Just point to the actual behaviour of this.
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 56a04ae80bf3..64953ff2281f 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -1460,10 +1460,31 @@ static int arm_smmu_add_device(struct device *dev)
+>   
+>   	iommu_device_link(&smmu->iommu, dev);
+>   
+> +	if (pm_runtime_enabled(smmu->dev)) {
+> +		struct device_link *link;
+> +
+> +		/*
+> +		 * Establish the link between smmu and master, so that the
+> +		 * smmu gets runtime enabled/disabled as per the master's
+> +		 * needs.
+> +		 */
+> +		link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
+> +		if (!link) {
 
-By "point to the actual behaviour", do you mean adding something to
-the changelog along the lines of the following?
+FWIW, given that we don't really care about link itself, I'd be quite 
+happy to simplify that lot down to:
 
-  If MSI or MSI-X is enabled, the device uses that.  It uses INTx only
-  if both MSI and MSI-X are disabled (see PCIe r4.0, sec 7.7.1.2).
+	if (pm_runtime_enabled(smmu_dev) &&
+	    !device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME)) {
 
-I did add that because I think that spec reference is useful.  If you
-have something else in mind, maybe an example would help me
-understand.
+> +			dev_warn(smmu->dev,
+> +				 "Unable to add link to the consumer %s\n",
+> +				 dev_name(dev));
 
-> In some cases code in question has to distinguish between MSI and
-> MSI-x.  So, this or similar changes has to be done with keeping
-> above in mind.
+(side note: since device_link_add() already prints a message on success, 
+maybe it could print its own failure message too?)
+
+Robin.
+
+> +			ret = -ENODEV;
+> +			goto out_unlink;
+> +		}
+> +	}
+> +
+>   	arm_smmu_rpm_put(smmu);
+>   
+>   	return 0;
+>   
+> +out_unlink:
+> +	iommu_device_unlink(&smmu->iommu, dev);
+> +	arm_smmu_master_free_smes(fwspec);
+>   out_rpm_put:
+>   	arm_smmu_rpm_put(smmu);
+>   out_cfg_free:
+> @@ -1486,6 +1507,14 @@ static void arm_smmu_remove_device(struct device *dev)
+>   	cfg  = fwspec->iommu_priv;
+>   	smmu = cfg->smmu;
+>   
+> +	if (pm_runtime_enabled(smmu->dev)) {
+> +		struct device_link *link;
+> +
+> +		link = device_link_find(dev, smmu->dev);
+> +		if (link)
+> +			device_link_del(link);
+> +	}
+> +
+>   	ret = arm_smmu_rpm_get(smmu);
+>   	if (ret < 0)
+>   		return;
 > 
-> (Existing example is Thunderbolt driver)
-
-Sorry, I didn't get your point here.  Certainly some code needs to
-distinguish between MSI and MSI-X, but I don't think that's the case
-here.  I'm not proposing to change Thunderbolt; I do see that it uses
-dev->msix_enabled (but not dev->msi_enabled), and it doesn't look like
-using pci_dev_msi_enabled() there would be appropriate.
-
-> > bba6f6fc68e7 ("[PATCH] MSI-X: fix resume crash") changed the cris, frv,
-> > x86, and ia64 arches to skip INTx setup when MSI is enabled.
-> >
-> > 16cf0ebc35dd ("x86/PCI: Do not use interrupt links for devices using
-> > MSI-X") extended that by changing x86 to also skip INTx setup when MSI-X is
-> > enabled.
-> >
-> > Change the remaining arches (cris, frv, and ia64) to skip INTx setup when
-> > either MSI or MSI-X is enabled.
-> >
-> > Also update mn10300 (which didn't exist at the time of bba6f6fc68e7) to
-> > follow the same pattern.
-> 
-> Perhaps no need to change the architectures that are about to be
-> removed completely from the kernel.
-
-Yeah, I figured there was a danger of that, but I haven't kept up on
-exactly which are on the chopping block, so I figured it'd be trivial
-to drop anything that turns out to be unnecessary.
-
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  arch/cris/arch-v32/drivers/pci/bios.c |    2 +-
-> >  arch/frv/mb93090-mb00/pci-vdk.c       |    2 +-
-> >  arch/ia64/pci/pci.c                   |    4 ++--
-> >  arch/mn10300/unit-asb2305/pci.c       |    8 +++++---
-> >  4 files changed, 9 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/cris/arch-v32/drivers/pci/bios.c b/arch/cris/arch-v32/drivers/pci/bios.c
-> > index 6b9e6cfaa29e..c2bed0cc060b 100644
-> > --- a/arch/cris/arch-v32/drivers/pci/bios.c
-> > +++ b/arch/cris/arch-v32/drivers/pci/bios.c
-> > @@ -68,7 +68,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
-> >         if ((err = pcibios_enable_resources(dev, mask)) < 0)
-> >                 return err;
-> >
-> > -       if (!dev->msi_enabled)
-> > +       if (!pci_dev_msi_enabled(dev))
-> >                 pcibios_enable_irq(dev);
-> >         return 0;
-> >  }
-> > diff --git a/arch/frv/mb93090-mb00/pci-vdk.c b/arch/frv/mb93090-mb00/pci-vdk.c
-> > index f211839e2cae..4a55d1b82d21 100644
-> > --- a/arch/frv/mb93090-mb00/pci-vdk.c
-> > +++ b/arch/frv/mb93090-mb00/pci-vdk.c
-> > @@ -413,7 +413,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
-> >
-> >         if ((err = pci_enable_resources(dev, mask)) < 0)
-> >                 return err;
-> > -       if (!dev->msi_enabled)
-> > +       if (!pci_dev_msi_enabled(dev))
-> >                 pcibios_enable_irq(dev);
-> >         return 0;
-> >  }
-> > diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
-> > index f5ec736100ee..7ccc64d5fe3e 100644
-> > --- a/arch/ia64/pci/pci.c
-> > +++ b/arch/ia64/pci/pci.c
-> > @@ -398,7 +398,7 @@ pcibios_enable_device (struct pci_dev *dev, int mask)
-> >         if (ret < 0)
-> >                 return ret;
-> >
-> > -       if (!dev->msi_enabled)
-> > +       if (!pci_dev_msi_enabled(dev))
-> >                 return acpi_pci_irq_enable(dev);
-> >         return 0;
-> >  }
-> > @@ -407,7 +407,7 @@ void
-> >  pcibios_disable_device (struct pci_dev *dev)
-> >  {
-> >         BUG_ON(atomic_read(&dev->enable_cnt));
-> > -       if (!dev->msi_enabled)
-> > +       if (!pci_dev_msi_enabled(dev))
-> >                 acpi_pci_irq_disable(dev);
-> >  }
-> >
-> > diff --git a/arch/mn10300/unit-asb2305/pci.c b/arch/mn10300/unit-asb2305/pci.c
-> > index 3dfe2d31c67b..4d36ea517679 100644
-> > --- a/arch/mn10300/unit-asb2305/pci.c
-> > +++ b/arch/mn10300/unit-asb2305/pci.c
-> > @@ -399,10 +399,12 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
-> >  {
-> >         int err;
-> >
-> > -       err = pci_enable_resources(dev, mask);
-> > -       if (err == 0)
-> > +       if ((err = pci_enable_resources(dev, mask)) < 0)
-> > +               return err;
-> > +
-> > +       if (!pci_dev_msi_enabled(dev))
-> >                 pcibios_enable_irq(dev);
-> > -       return err;
-> > +       return 0;
-> >  }
-> >
-> >  /*
-> >
-> 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
