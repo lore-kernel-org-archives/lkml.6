@@ -1,176 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933054AbeCNBJu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 21:09:50 -0400
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:39216 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932992AbeCNBJs (ORCPT
+        id S933017AbeCNBV1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 21:21:27 -0400
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:37668 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932634AbeCNBVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:09:48 -0400
-X-Google-Smtp-Source: AG47ELtsCly5mZLfS87MKrTFv+bIJCcIeCkqgTPEqPIWmGRdfM0Kh/nFqmzcCvfFQ7Bf9C2GZc/SMw==
-Message-ID: <1520989785.5128.16.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: vb2: unify calling of set_page_dirty_lock
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 13 Mar 2018 21:09:45 -0400
-In-Reply-To: <1520988249.5128.13.camel@ndufresne.ca>
-References: <20170829112603.32732-1-stanimir.varbanov@linaro.org>
-         <1507650010.2784.11.camel@ndufresne.ca>
-         <20171015204014.2awhhygw6hi3lxas@valkosipuli.retiisi.org.uk>
-         <1508108964.4502.6.camel@ndufresne.ca>
-         <20171017101420.5a5cvyhkadmcqgfy@valkosipuli.retiisi.org.uk>
-         <1508249953.19297.4.camel@ndufresne.ca>
-         <8f1eda59-fc51-b77e-ae43-9603b5759b14@linaro.org>
-         <1520988249.5128.13.camel@ndufresne.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
+        Tue, 13 Mar 2018 21:21:25 -0400
+X-Google-Smtp-Source: AG47ELuuEwnkXOpZODxIqPIwZZmUvLG1bI5GgCUDB7izA5LPyITJeMynb22OfKY19O8aYRjaNmBZxA==
+Subject: Re: kernel BUG at mm/khugepaged.c:533 on 4.15.3
+From: Laura Abbott <labbott@redhat.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Linux-MM <linux-mm@kvack.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <2a152301-0535-6cb6-8823-44035f007fae@redhat.com>
+ <20180221091445.iqtncxx66etpqamt@node.shutemov.name>
+ <70a4ca16-0d54-5df4-15bb-fdf1538ef080@redhat.com>
+Message-ID: <b2c6ca17-70d7-24ed-da0a-7a606a5dc7b4@redhat.com>
+Date: Tue, 13 Mar 2018 18:21:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <70a4ca16-0d54-5df4-15bb-fdf1538ef080@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mardi 13 mars 2018 à 20:44 -0400, Nicolas Dufresne a écrit :
-> Le mercredi 18 octobre 2017 à 11:34 +0300, Stanimir Varbanov a écrit
-> :
-> > 
-> > On 10/17/2017 05:19 PM, Nicolas Dufresne wrote:
-> > > Le mardi 17 octobre 2017 à 13:14 +0300, Sakari Ailus a écrit :
-> > > > On Sun, Oct 15, 2017 at 07:09:24PM -0400, Nicolas Dufresne
-> > > > wrote:
-> > > > > Le dimanche 15 octobre 2017 à 23:40 +0300, Sakari Ailus a
-> > > > > écrit
-> > > > > :
-> > > > > > Hi Nicolas,
-> > > > > > 
-> > > > > > On Tue, Oct 10, 2017 at 11:40:10AM -0400, Nicolas Dufresne
-> > > > > > wrote:
-> > > > > > > Le mardi 29 août 2017 à 14:26 +0300, Stanimir Varbanov a
-> > > > > > > écrit :
-> > > > > > > > Currently videobuf2-dma-sg checks for dma direction for
-> > > > > > > > every single page and videobuf2-dc lacks any dma
-> > > > > > > > direction
-> > > > > > > > checks and calls set_page_dirty_lock unconditionally.
-> > > > > > > > 
-> > > > > > > > Thus unify and align the invocations of
-> > > > > > > > set_page_dirty_lock
-> > > > > > > > for videobuf2-dc, videobuf2-sg  memory allocators with
-> > > > > > > > videobuf2-vmalloc, i.e. the pattern used in vmalloc has
-> > > > > > > > been
-> > > > > > > > copied to dc and dma-sg.
-> > > > > > > 
-> > > > > > > Just before we go too far in "doing like vmalloc", I
-> > > > > > > would
-> > > > > > > like to
-> > > > > > > share this small video that display coherency issues when
-> > > > > > > rendering
-> > > > > > > vmalloc backed DMABuf over various KMS/DRM driver. I can
-> > > > > > > reproduce
-> > > > > > > this
-> > > > > > > easily with Intel and MSM display drivers using UVC or
-> > > > > > > Vivid as
-> > > > > > > source.
-> > > > > > > 
-> > > > > > > The following is an HDMI capture of the following
-> > > > > > > GStreamer
-> > > > > > > pipeline
-> > > > > > > running on Dragonboard 410c.
-> > > > > > > 
-> > > > > > >     gst-launch-1.0 -v v4l2src device=/dev/video2 !
-> > > > > > > video/x-
-> > > > > > > raw,format=NV16,width=1280,height=720 ! kmssink
-> > > > > > >     https://people.collabora.com/~nicolas/vmalloc-issue.m
-> > > > > > > ov
-> > > > > > > 
-> > > > > > > Feedback on this issue would be more then welcome. It's
-> > > > > > > not
-> > > > > > > clear
-> > > > > > > to me
-> > > > > > > who's bug is this (v4l2, drm or iommu). The software is
-> > > > > > > unlikely to
-> > > > > > > be
-> > > > > > > blamed as this same pipeline works fine with non-vmalloc
-> > > > > > > based
-> > > > > > > sources.
-> > > > > > 
-> > > > > > Could you elaborate this a little bit more? Which Intel CPU
-> > > > > > do you
-> > > > > > have
-> > > > > > there?
-> > > > > 
-> > > > > I have tested with Skylake and Ivy Bridge and on Dragonboard
-> > > > > 410c
-> > > > > (Qualcomm APQ8016 SoC) (same visual artefact)
-> > > > 
-> > > > I presume kmssink draws on the display. Which GPU did you use?
-> > > 
-> > > In order, GPU will be Iris Pro 580, Intel® Ivybridge Mobile and
-> > > an
-> > > Adreno (3x ?). Why does it matter ? I'm pretty sure the GPU is
-> > > not
-> > > used
-> > > on the DB410c for this use case.
-> > 
-> > Nicolas, for me this looks like a problem in v4l2. In the case of
-> > vivid
-> > the stats overlay (where the coherency issues are observed, and
-> > most
-> > probably the issue will be observed on the whole image but
-> > fortunately
-> > it is a static image pattern) are filled by the CPU but I cannot
-> > see
-> > where the cache is flushed. Also I'm wondering why .finish method
-> > is
-> > missing for dma-vmalloc mem_ops.
-> > 
-> > To be sure that the problem is in vmalloc v4l2 allocator, could you
-> > change the allocator to dma-contig, there is a module param for
-> > that
-> > called 'allocators'.
+On 02/22/2018 09:33 AM, Laura Abbott wrote:
+> On 02/21/2018 01:14 AM, Kirill A. Shutemov wrote:
+>> On Mon, Feb 19, 2018 at 10:51:01AM -0800, Laura Abbott wrote:
+>>> Hi,
+>>>
+>>> Fedora got a bug report of a BUG with 4.15.3:
+>>> (https://bugzilla.redhat.com/show_bug.cgi?id=1546709)
+>>
+>> Is it new to v4.15 kernel?
+>> I don't see any recent change that could cause it.
+>>
 > 
-> I've looked into this again. I have hit the same issue but with CPU
-> to
-> DRM, using DMABuf allocated from DRM Dumb buffers. In that case,
-> using
-> DMA_BUF_IOCTL_SYNC fixes the issues.
+> The original reporter only saw it on 4.15 but another reporter
+> saw it on 4.14.13 (I only found this out after I sent the
+> e-mail). So I suspect the bug may have been latent but
+> hard to trigger.
 > 
-> This raises a lot of question around the model used in V4L2. As you
-> mention, prepare/finish are missing in dma-vmalloc mem_ops. I'll give
-> a
-> try implementing that, it should cover my initial use case, but then
-> I
-> believe it will fail if my pipeline is:
+>>
+>>> page:fffffac1800a0000 count:513 mapcount:1 mapping:ffff95657ef359a1 index:0x7f95d3400 compound_mapcount: 0
+>>> flags: 0xffffe00048268(uptodate|lru|active|owner_priv_1|head|swapbacked)
+>>> raw: 000ffffe00048268 ffff95657ef359a1 00000007f95d3400 0000020100000000
+>>> raw: fffffac18edea9a0 fffffac18e7085a0 00000000000db400 ffff9567a3269800
+>>> page dumped because: VM_BUG_ON_PAGE(PageCompound(page))
+>>> page->mem_cgroup:ffff9567a3269800
+>>> ------------[ cut here ]------------
+>>> kernel BUG at mm/khugepaged.c:533!
+>>> invalid opcode: 0000 [#1] SMP PTI
+>>> Modules linked in: vhost_net vhost tap fuse xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 tun ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack libcrc32c iptable_mangle iptable_raw iptable_security ebtable_filter ebtables ip6table_filter ip6_tables sunrpc vfat fat rmi_smbus rmi_core arc4 intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_hdmi iwlmvm kvm_intel iTCO_wdt mac80211 snd_hda_codec_realtek iTCO_vendor_support mei_wdt kvm snd_hda_codec_generic irqbypass intel_cstate snd_hda_intel intel_uncore iwlwifi uvcvideo intel_rapl_perf
+>>> snd_hda_codec videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core snd_hda_core cfg80211 videodev snd_hwdep snd_seq snd_seq_device snd_pcm media mei_me snd_timer thinkpad_acpi wmi_bmof rtsx_pci_ms joydev tpm_tis memstick i2c_i801 mei tpm_tis_core snd soundcore intel_pch_thermal tpm shpchp rfkill dm_crypt hid_logitech_hidpp hid_logitech_dj mmc_block nouveau i915 rtsx_pci_sdmmc mmc_core mxm_wmi ttm e1000e i2c_algo_bit drm_kms_helper crct10dif_pclmul crc32_pclmul crc32c_intel ptp drm ghash_clmulni_intel serio_raw rtsx_pci pps_core wmi video
+>>> CPU: 2 PID: 66 Comm: khugepaged Not tainted 4.15.3-300.fc27.x86_64 #1
+>>> Hardware name: LENOVO 20FXS0BB14/20FXS0BB14, BIOS R07ET63W (2.03 ) 03/15/2016
+>>> RIP: 0010:khugepaged+0x1af6/0x2130
+>>> RSP: 0018:ffffacacc1b4bdc0 EFLAGS: 00010282
+>>> RAX: 0000000000000021 RBX: fffffac1800a0000 RCX: 0000000000000006
+>>> RDX: 0000000000000000 RSI: 0000000000000086 RDI: ffff9567c14968f0
+>>> RBP: fffffac18e3a5b40 R08: 00000000000004a8 R09: 0000000000000004
+>>> R10: ffffacacc1b4bd70 R11: ffffffffb995b1ed R12: 00007f95f7e00000
+>>> R13: ffff95661113eaf0 R14: ffff9567a9ea0000 R15: 8000000002800825
+>>> FS:  0000000000000000(0000) GS:ffff9567c1480000(0000) knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 0000000000481046 CR3: 00000002ee20a005 CR4: 00000000003626e0
+>>> Call Trace:
+>>> ? finish_wait+0x80/0x80
+>>> ? collapse_shmem+0xdd0/0xdd0
+>>> kthread+0x113/0x130
+>>> ? kthread_create_worker_on_cpu+0x70/0x70
+>>> ret_from_fork+0x35/0x40
+>>> Code: ff e9 e7 fd ff ff bb 07 00 00 00 49 89 c7 e9 20 fb ff ff 48 83 ea 01 e9 66 fc ff ff 48 c7 c6 d8 3f 0a b9 48 89 df e8 0a 82 fa ff <0f> 0b 31 c9 4c 89 fa 48 89 de 4c 89 f7 e8 58 f1 fd ff e9 2e fa
+>>> RIP: khugepaged+0x1af6/0x2130 RSP: ffffacacc1b4bdc0
+>>> ---[ end trace a734c2f4d682e3bd ]---
+>>>
+>>> Reporter said it happened several times. Config is attached.
+>>> Any ideas?
+>>
+>> Looks like somebody managed to insert THP into the range in split it back
+>> between khugepaged_scan_pmd() and __collapse_huge_page_isolate().
+>>
+>> That's rather unlikely chain of events, but I don't see other option.
+>>
+>> Could you check if this works:
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index b7e2268dfc9a..c15da1ea7e63 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -530,7 +530,12 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>>               goto out;
+>>           }
+>> -        VM_BUG_ON_PAGE(PageCompound(page), page);
+>> +        /* TODO: teach khugepaged to collapse THP mapped with pte */
+>> +        if (PageCompound(page)) {
+>> +            result = SCAN_PAGE_COMPOUND;
+>> +            goto out;
+>> +        }
+>> +
+>>           VM_BUG_ON_PAGE(!PageAnon(page), page);
+>>           /*
+>>
 > 
->   UVC -> in plane CPU modification -> DRM
+> I asked the reporter(s) to test with this patch. I'll let you know
+> if I hear any results.
 > 
-> Because we don't implement begin/end_cpu_access on our exported
-> DMABuf.
-> It should also fail for the following use case:
-> 
->   UVC (importer) -> DRM
-> 
-> UVC driver won't call the remote dmabuf being/end_cpu_access method.
-> This one is difficult because UVC driver and vivid don't seem to be
-> aware of being an importer, exported or simply exporting to CPU
-> (through mmap). I believe what we have now pretty much assumes the
-> what
-> we export as vmalloc is to be used by CPU only. Also, the usual
-> direction used by prepare/finish ops won't work for drivers like
-> vivid
-> and UVC that write into the buffers using the cpu.
-> 
-> To be continued ...
+> Thanks,
+> Laura
 
-While I was writing that, I was already outdated, as of now, we only
-have one ops, called sync. This implements the to_cpu direction only.
+Reporter said he had been running with the patch for several
+weeks and hadn't seen the issue again.
 
-> 
-> Nicolas
-> 
-> 
+Thanks,
+Laura
