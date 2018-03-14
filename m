@@ -1,24 +1,24 @@
 Return-Path: <neil@brown.name>
-X-Google-Smtp-Source: AG47ELs6JAyeE4wvaV49x/jCLTha3YwrQB1skW988bM22RVCM/4DUVReOJrB4VQys6FcSHm/QhmW
-ARC-Seal: i=1; a=rsa-sha256; t=1521059056; cv=none;
+X-Google-Smtp-Source: AG47ELtBN1E+3dK/W8ZEcbpT4Y94tIUieAyVoL0lTHdYRSfqW9JeCOsCxbOMnf8pOYYjeyVwH1C9
+ARC-Seal: i=1; a=rsa-sha256; t=1521059050; cv=none;
         d=google.com; s=arc-20160816;
-        b=IX147QF6S7VMnhZFDTOdTmXzfPDIKaBpUlgkOLfzulm4iJt1Z5Yw9xr5LxEvS+DF7W
-         L9Qu87dUFRUmdGLGbiPtgQAJ3RGxNKFeIBwF/P74a9TwATgujrbthSXFSWXWoa5X5l8S
-         PbzzydJDP6M8nSs4CQDwMmLa3tGQHZXGSO18jxZejO9ke4woM4ZIiStKwRIIDbveAWgr
-         yN8E5OeVJkGEo40f4OCEIGpQQsm5DmTGbgPaakaNo8okpRh1bAb9Z7XI5zQO/ZitBmcB
-         Pk0h3dsfr/WDvL7Q+w/t7zAZT/e3cICOzcdrrobWZdk03Wf+9Wcdt+exvGy1nf71lNJt
-         o/XQ==
+        b=o+V0IKysbnExPishtbhIztWLmvyedbjBajMFzySKVBDkCqDkTHYpvIeKKqAZpWjKLG
+         R91EB1Ibp8mhi2mtzGsCKxX4qkvntNKlZffb+TG57AzaiZb5NdAG+KE25uNrH4giyzdD
+         MDhtw7a4Uvk2cIAn6cUrMkn7b+0zHsBraVCWHQzFjZNHRQ3aE+GTrfHYjjycw8cmKNm2
+         2spPab7e9xmnLPXjRaBJ+dMB+SRgTr7aVYCna5KZuPdenXWh7s6kI8mslDqyxTtdhGLB
+         gQY4fNYuViStOnit7NV0ViJ9sqQqI5DUTO2AOzyoVJ8jc+uqGi4u3rOc8/PyfqP9SfB5
+         x6hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=f4EGJaFR6x9qHGXZf2kNRO5Pwuy+yAFkMkmmDL7lZbo=;
-        b=qtoRofNAZW8iI41LYXyvxrT7OW47S1xmxYlib1StqgBokLlnDRmzlmZJ+g5qneQeS1
-         lMz4RcT6ILtalfbbyj+SyxRLebuWboR0qMDAUJ9B6sE+7u04NX88Lh0ehZPu29O0gaoG
-         VF7POHbsML+dXEvK9swWRPV8b3E04yWck/cf1KiUw7/4cHwBav4lva5nJka1N9bQpjXd
-         R+qd7OKjBVpTRgvEQznvdP5lapStnnX/W8+7PICeG0W7gRWbo0LQlNnoDbU6ts8YSFs0
-         KeQDzqsSLI9MCOnDxBEqwh/anOsMhBKtSH/gVQ4F1oMJfjNjGh2BQv9qKFxQcUUm5d9b
-         r0Ig==
+        bh=fkzbXuHuWY4jf6+irseu9syAwAszD92UK7gtceocxHY=;
+        b=cB2Boukzi4ABbDfHk/41e/djYEbdVnW3NcX2EGV0KpEfP4pYhOdmdb0QQkURZyJREW
+         qKe5Tg8ccZ6c/NV4S+GJodZsdHrdG33PTLETb+Nf5OhZHavvIeQPUbI3Nlclxr76e74u
+         L3Sz0c+xtrbDjIryF7t0+2avfen/STItBto+dCPjgFLdVQh8FtO4Ce2dCNg/iXzrsZ3T
+         ZP0pAYyQhCdPmJisxKv5sS+YSRlKDrExmylS/mKciL8cBE0Vvp5iNkFkjBruyCzGlOHi
+         wDgJ+bQ+at67TaPiJY/NnC35HVgOcfALOyZ/eQjbbU7D69kROrjIZ/DK4s2tIts7rWb0
+         EPeg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of neil@brown.name) smtp.mailfrom=neil@brown.name
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ Authentication-Results: mx.google.com;
 From: NeilBrown <neil@brown.name>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Thu, 15 Mar 2018 07:22:36 +1100
-Subject: [PATCH 11/13] staging: mt7621-eth: add support for mt7621
+Subject: [PATCH 10/13] staging: mt7621-eth: add mdio support for mt762X
+ family
 Cc: devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
  John Crispin <blogic@openwrt.org>
-Message-ID: <152105895636.22262.8115972610412076241.stgit@noble>
+Message-ID: <152105895630.22262.17721435026559861824.stgit@noble>
 In-Reply-To: <152105892255.22262.1902152685410223215.stgit@noble>
 References: <152105892255.22262.1902152685410223215.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -37,55 +38,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594946021150733696?=
-X-GMAIL-MSGID: =?utf-8?q?1594946021150733696?=
+X-GMAIL-THRID: =?utf-8?q?1594946014834718409?=
+X-GMAIL-MSGID: =?utf-8?q?1594946014834718409?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: John Crispin <blogic@openwrt.org>
 
-Add support for SoCs from the mt7621 family. These all have 2 GMAC ports,
-both of which are attached to the same internal 1000MBit switch. Currently
-we only support GMAC1 as the sole CPU port. MT7621 is very similar to
-MT7620 with only a few registers having different offsets. MT7621 is the
-first SoC to have the new QDMA engine builtin. The older PDMA engine is
-also present. unfortunatley, to get the best performance we need to run RX
-on PDMA and TX on QDMA. This SoC is also the first to have TX vlan
-offloading and TSO6 support.
+NeilBrown: this patch originally contained soc-mt7620.c
+  but as I cannot test that, I removed it.  Some functions
+  from mdio-mt7620.c are needed for soc-mt7621.c support
+  - fixed  mt7620_has_carrier() to read correct register.
 
-NeilBrown: the driver didn't work when I tested, so I changed it
-  to match known-working code as much as possible.  This included
-  converting to the PDMA engine for TX.
+Original comment:
+
+Add support for SoCs from the mt7620 family. These all have one dedicated
+external gbit port and a builtin 5 port 100mbit switch. Additionally one
+of the 5 switch ports can be changed to become an additional gbit port
+that we can attach a phy to. MT7620 was the first SoC released after
+Ralink was acquired by MTK and has seen a lot of changes to the core.
+
+With MT7620 we have seen the addition of some advanced features such as
+TX vlan offloading, RX scatter gather and TSO. Newer MTK SoCs are based on
+this design.
+
+Although the builtin MT7530 is gbit capable, the builtin PHYs are only
+100mbit. There are boards in the wild that use one of the gbit MACs to
+attach an external MT7530. For this to work a few hacks need to be applied
+to reorganize the MDIO address mappings and autopolling for the SoC to
+correctly work with the external switch. This is however not part of the
+series and will be part of a later series once we evaluated if we want to
+use DSA or switchdev.
 
 Signed-off-by: John Crispin <blogic@openwrt.org>
 Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Signed-off-by: Michael Lee <igvtee@gmail.com>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- drivers/staging/mt7621-eth/TODO         |    3 +
- drivers/staging/mt7621-eth/soc_mt7621.c |  160 +++++++++++++++++++++++++++++++
- 2 files changed, 163 insertions(+)
- create mode 100644 drivers/staging/mt7621-eth/soc_mt7621.c
+ drivers/staging/mt7621-eth/TODO          |    2 
+ drivers/staging/mt7621-eth/mdio_mt7620.c |  173 ++++++++++++++++++++++++++++++
+ 2 files changed, 175 insertions(+)
+ create mode 100644 drivers/staging/mt7621-eth/mdio_mt7620.c
 
 diff --git a/drivers/staging/mt7621-eth/TODO b/drivers/staging/mt7621-eth/TODO
-index 50fb5a959ee8..f9e47d4b4cd4 100644
+index 1ab0530131ae..50fb5a959ee8 100644
 --- a/drivers/staging/mt7621-eth/TODO
 +++ b/drivers/staging/mt7621-eth/TODO
-@@ -6,5 +6,8 @@
+@@ -4,5 +4,7 @@
+ - general code review and clean up
+ - add support for second MAC on mt7621
  - convert gsw code to use switchdev interfaces
- - md7620_mmi_write etc should probably be wrapped
-   in a regmap abstraction.
-+- Get soc_mt7621 to work with QDMA TX if possible.
-+- Ensure phys are correctly configured when a cable
-+  is plugged in.
++- md7620_mmi_write etc should probably be wrapped
++  in a regmap abstraction.
  
  Cc: NeilBrown <neil@brown.name>
-diff --git a/drivers/staging/mt7621-eth/soc_mt7621.c b/drivers/staging/mt7621-eth/soc_mt7621.c
+diff --git a/drivers/staging/mt7621-eth/mdio_mt7620.c b/drivers/staging/mt7621-eth/mdio_mt7620.c
 new file mode 100644
-index 000000000000..743c0eed89b6
+index 000000000000..ced605c2914e
 --- /dev/null
-+++ b/drivers/staging/mt7621-eth/soc_mt7621.c
-@@ -0,0 +1,160 @@
++++ b/drivers/staging/mt7621-eth/mdio_mt7620.c
+@@ -0,0 +1,173 @@
 +/*   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
 + *   the Free Software Foundation; version 2 of the License
@@ -101,148 +113,161 @@ index 000000000000..743c0eed89b6
 + */
 +
 +#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/if_vlan.h>
-+#include <linux/of_net.h>
-+
-+#include <asm/mach-ralink/ralink_regs.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
 +
 +#include "mtk_eth_soc.h"
 +#include "gsw_mt7620.h"
 +#include "mdio.h"
 +
-+#define MT7620_CDMA_CSG_CFG	0x400
-+#define MT7621_CDMP_IG_CTRL	(MT7620_CDMA_CSG_CFG + 0x00)
-+#define MT7621_CDMP_EG_CTRL	(MT7620_CDMA_CSG_CFG + 0x04)
-+#define MT7621_RESET_FE		BIT(6)
-+#define MT7621_L4_VALID		BIT(24)
-+
-+#define MT7621_TX_DMA_UDF	BIT(19)
-+
-+#define CDMA_ICS_EN		BIT(2)
-+#define CDMA_UCS_EN		BIT(1)
-+#define CDMA_TCS_EN		BIT(0)
-+
-+#define GDMA_ICS_EN		BIT(22)
-+#define GDMA_TCS_EN		BIT(21)
-+#define GDMA_UCS_EN		BIT(20)
-+
-+/* frame engine counters */
-+#define MT7621_REG_MIB_OFFSET	0x2000
-+#define MT7621_PPE_AC_BCNT0	(MT7621_REG_MIB_OFFSET + 0x00)
-+#define MT7621_GDM1_TX_GBCNT	(MT7621_REG_MIB_OFFSET + 0x400)
-+#define MT7621_GDM2_TX_GBCNT	(MT7621_GDM1_TX_GBCNT + 0x40)
-+
-+#define GSW_REG_GDMA1_MAC_ADRL	0x508
-+#define GSW_REG_GDMA1_MAC_ADRH	0x50C
-+#define GSW_REG_GDMA2_MAC_ADRL	0x1508
-+#define GSW_REG_GDMA2_MAC_ADRH	0x150C
-+
-+
-+#define MT7621_MTK_RST_GL	0x04
-+#define MT7620_MTK_INT_STATUS2	0x08
-+
-+/* MTK_INT_STATUS reg on mt7620 define CNT_GDM1_AF at BIT(29)
-+ * but after test it should be BIT(13).
-+ */
-+#define MT7621_MTK_GDM1_AF	BIT(28)
-+#define MT7621_MTK_GDM2_AF	BIT(29)
-+
-+static const u16 mt7621_reg_table[MTK_REG_COUNT] = {
-+	[MTK_REG_PDMA_GLO_CFG] = RT5350_PDMA_GLO_CFG,
-+	[MTK_REG_PDMA_RST_CFG] = RT5350_PDMA_RST_CFG,
-+	[MTK_REG_DLY_INT_CFG] = RT5350_DLY_INT_CFG,
-+	[MTK_REG_TX_BASE_PTR0] = RT5350_TX_BASE_PTR0,
-+	[MTK_REG_TX_MAX_CNT0] = RT5350_TX_MAX_CNT0,
-+	[MTK_REG_TX_CTX_IDX0] = RT5350_TX_CTX_IDX0,
-+	[MTK_REG_TX_DTX_IDX0] = RT5350_TX_DTX_IDX0,
-+	[MTK_REG_RX_BASE_PTR0] = RT5350_RX_BASE_PTR0,
-+	[MTK_REG_RX_MAX_CNT0] = RT5350_RX_MAX_CNT0,
-+	[MTK_REG_RX_CALC_IDX0] = RT5350_RX_CALC_IDX0,
-+	[MTK_REG_RX_DRX_IDX0] = RT5350_RX_DRX_IDX0,
-+	[MTK_REG_MTK_INT_ENABLE] = RT5350_MTK_INT_ENABLE,
-+	[MTK_REG_MTK_INT_STATUS] = RT5350_MTK_INT_STATUS,
-+	[MTK_REG_MTK_DMA_VID_BASE] = 0,
-+	[MTK_REG_MTK_COUNTER_BASE] = MT7621_GDM1_TX_GBCNT,
-+	[MTK_REG_MTK_RST_GL] = MT7621_MTK_RST_GL,
-+	[MTK_REG_MTK_INT_STATUS2] = MT7620_MTK_INT_STATUS2,
-+};
-+
-+static void mt7621_mtk_reset(struct mtk_eth *eth)
++static int mt7620_mii_busy_wait(struct mt7620_gsw *gsw)
 +{
-+	mtk_reset(eth, MT7621_RESET_FE);
++	unsigned long t_start = jiffies;
++
++	while (1) {
++		if (!(mtk_switch_r32(gsw,
++				     gsw->piac_offset + MT7620_GSW_REG_PIAC) &
++				     GSW_MDIO_ACCESS))
++			return 0;
++		if (time_after(jiffies, t_start + GSW_REG_PHY_TIMEOUT))
++			break;
++	}
++
++	dev_err(gsw->dev, "mdio: MDIO timeout\n");
++	return -1;
 +}
 +
-+static int mt7621_fwd_config(struct mtk_eth *eth)
++u32 _mt7620_mii_write(struct mt7620_gsw *gsw, u32 phy_addr,
++		      u32 phy_register, u32 write_data)
 +{
-+	/* Setup GMAC1 only, there is no support for GMAC2 yet */
-+	mtk_w32(eth, mtk_r32(eth, MT7620_GDMA1_FWD_CFG) & ~0xffff,
-+		MT7620_GDMA1_FWD_CFG);
++	if (mt7620_mii_busy_wait(gsw))
++		return -1;
 +
-+	/* Enable RX checksum */
-+	mtk_w32(eth, mtk_r32(eth, MT7620_GDMA1_FWD_CFG) | (GDMA_ICS_EN |
-+		       GDMA_TCS_EN | GDMA_UCS_EN),
-+		       MT7620_GDMA1_FWD_CFG);
++	write_data &= 0xffff;
 +
-+	/* Enable RX VLan Offloading */
-+	mtk_w32(eth, 0, MT7621_CDMP_EG_CTRL);
++	mtk_switch_w32(gsw, GSW_MDIO_ACCESS | GSW_MDIO_START | GSW_MDIO_WRITE |
++		(phy_register << GSW_MDIO_REG_SHIFT) |
++		(phy_addr << GSW_MDIO_ADDR_SHIFT) | write_data,
++		MT7620_GSW_REG_PIAC);
++
++	if (mt7620_mii_busy_wait(gsw))
++		return -1;
 +
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(_mt7620_mii_write);
 +
-+static void mt7621_set_mac(struct mtk_mac *mac, unsigned char *hwaddr)
++u32 _mt7620_mii_read(struct mt7620_gsw *gsw, int phy_addr, int phy_reg)
 +{
-+	unsigned long flags;
++	u32 d;
 +
-+	spin_lock_irqsave(&mac->hw->page_lock, flags);
-+	if (mac->id == 0) {
-+		mtk_w32(mac->hw, (hwaddr[0] << 8) | hwaddr[1], GSW_REG_GDMA1_MAC_ADRH);
-+		mtk_w32(mac->hw, (hwaddr[2] << 24) | (hwaddr[3] << 16) |
-+			(hwaddr[4] << 8) | hwaddr[5],
-+			GSW_REG_GDMA1_MAC_ADRL);
-+	}
-+	if (mac->id == 1) {
-+		mtk_w32(mac->hw, (hwaddr[0] << 8) | hwaddr[1], GSW_REG_GDMA2_MAC_ADRH);
-+		mtk_w32(mac->hw, (hwaddr[2] << 24) | (hwaddr[3] << 16) |
-+			(hwaddr[4] << 8) | hwaddr[5],
-+			GSW_REG_GDMA2_MAC_ADRL);
-+	}
-+	spin_unlock_irqrestore(&mac->hw->page_lock, flags);
++	if (mt7620_mii_busy_wait(gsw))
++		return 0xffff;
++
++	mtk_switch_w32(gsw, GSW_MDIO_ACCESS | GSW_MDIO_START | GSW_MDIO_READ |
++		(phy_reg << GSW_MDIO_REG_SHIFT) |
++		(phy_addr << GSW_MDIO_ADDR_SHIFT),
++		MT7620_GSW_REG_PIAC);
++
++	if (mt7620_mii_busy_wait(gsw))
++		return 0xffff;
++
++	d = mtk_switch_r32(gsw, MT7620_GSW_REG_PIAC) & 0xffff;
++
++	return d;
++}
++EXPORT_SYMBOL_GPL(_mt7620_mii_read);
++
++int mt7620_mdio_write(struct mii_bus *bus, int phy_addr, int phy_reg, u16 val)
++{
++	struct mtk_eth *eth = bus->priv;
++	struct mt7620_gsw *gsw = (struct mt7620_gsw *)eth->sw_priv;
++
++	return _mt7620_mii_write(gsw, phy_addr, phy_reg, val);
 +}
 +
-+static struct mtk_soc_data mt7621_data = {
-+	.hw_features = NETIF_F_IP_CSUM | NETIF_F_RXCSUM |
-+		       NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
-+		       NETIF_F_SG | NETIF_F_TSO | NETIF_F_TSO6 |
-+		       NETIF_F_IPV6_CSUM,
-+	.dma_type = MTK_PDMA,
-+	.dma_ring_size = 256,
-+	.napi_weight = 64,
-+	.new_stats = 1,
-+	.padding_64b = 1,
-+	.rx_2b_offset = 1,
-+	.rx_sg_dma = 1,
-+	.has_switch = 1,
-+	.mac_count = 2,
-+	.reset_fe = mt7621_mtk_reset,
-+	.set_mac = mt7621_set_mac,
-+	.fwd_config = mt7621_fwd_config,
-+	.switch_init = mtk_gsw_init,
-+	.reg_table = mt7621_reg_table,
-+	.pdma_glo_cfg = MTK_PDMA_SIZE_16DWORDS,
-+	.rx_int = RT5350_RX_DONE_INT,
-+	.tx_int = RT5350_TX_DONE_INT,
-+	.status_int = MT7621_MTK_GDM1_AF | MT7621_MTK_GDM2_AF,
-+	.checksum_bit = MT7621_L4_VALID,
-+	.has_carrier = mt7620_has_carrier,
-+	.mdio_read = mt7620_mdio_read,
-+	.mdio_write = mt7620_mdio_write,
-+	.mdio_adjust_link = mt7620_mdio_link_adjust,
-+};
++int mt7620_mdio_read(struct mii_bus *bus, int phy_addr, int phy_reg)
++{
++	struct mtk_eth *eth = bus->priv;
++	struct mt7620_gsw *gsw = (struct mt7620_gsw *)eth->sw_priv;
 +
-+const struct of_device_id of_mtk_match[] = {
-+	{ .compatible = "mediatek,mt7621-eth", .data = &mt7621_data },
-+	{},
-+};
++	return _mt7620_mii_read(gsw, phy_addr, phy_reg);
++}
 +
-+MODULE_DEVICE_TABLE(of, of_mtk_match);
++void mt7530_mdio_w32(struct mt7620_gsw *gsw, u32 reg, u32 val)
++{
++	_mt7620_mii_write(gsw, 0x1f, 0x1f, (reg >> 6) & 0x3ff);
++	_mt7620_mii_write(gsw, 0x1f, (reg >> 2) & 0xf,  val & 0xffff);
++	_mt7620_mii_write(gsw, 0x1f, 0x10, val >> 16);
++}
++EXPORT_SYMBOL_GPL(mt7530_mdio_w32);
++
++u32 mt7530_mdio_r32(struct mt7620_gsw *gsw, u32 reg)
++{
++	u16 high, low;
++
++	_mt7620_mii_write(gsw, 0x1f, 0x1f, (reg >> 6) & 0x3ff);
++	low = _mt7620_mii_read(gsw, 0x1f, (reg >> 2) & 0xf);
++	high = _mt7620_mii_read(gsw, 0x1f, 0x10);
++
++	return (high << 16) | (low & 0xffff);
++}
++EXPORT_SYMBOL_GPL(mt7530_mdio_r32);
++
++void mt7530_mdio_m32(struct mt7620_gsw *gsw, u32 mask, u32 set, u32 reg)
++{
++	u32 val = mt7530_mdio_r32(gsw, reg);
++
++	val &= ~mask;
++	val |= set;
++	mt7530_mdio_w32(gsw, reg, val);
++}
++EXPORT_SYMBOL_GPL(mt7530_mdio_m32);
++
++static unsigned char *mtk_speed_str(int speed)
++{
++	switch (speed) {
++	case 2:
++	case SPEED_1000:
++		return "1000";
++	case 1:
++	case SPEED_100:
++		return "100";
++	case 0:
++	case SPEED_10:
++		return "10";
++	}
++
++	return "? ";
++}
++
++int mt7620_has_carrier(struct mtk_eth *eth)
++{
++	struct mt7620_gsw *gsw = (struct mt7620_gsw *)eth->sw_priv;
++	int i;
++
++	for (i = 0; i < GSW_PORT6; i++)
++		if (mt7530_mdio_r32(gsw, GSW_REG_PORT_STATUS(i)) & 0x1)
++			return 1;
++	return 0;
++}
++
++void mt7620_print_link_state(struct mtk_eth *eth, int port, int link,
++			     int speed, int duplex)
++{
++	struct mt7620_gsw *gsw = eth->sw_priv;
++
++	if (link)
++		dev_info(gsw->dev, "port %d link up (%sMbps/%s duplex)\n",
++			 port, mtk_speed_str(speed),
++			 (duplex) ? "Full" : "Half");
++	else
++		dev_info(gsw->dev, "port %d link down\n", port);
++}
++
++void mt7620_mdio_link_adjust(struct mtk_eth *eth, int port)
++{
++	mt7620_print_link_state(eth, port, eth->link[port],
++				eth->phy->speed[port],
++				(eth->phy->duplex[port] == DUPLEX_FULL));
++}
