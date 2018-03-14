@@ -1,63 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeCNPb3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:31:29 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:38151 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbeCNPb0 (ORCPT
+        id S1751394AbeCNPg3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:36:29 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43890 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeCNPg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:31:26 -0400
-X-Google-Smtp-Source: AG47ELuFkGEcJtIh62EVBXvMRMdtcx/J+Ypbj9qUl+CeBAcL2ICBJrZQ6v0JyLVhqyFlpB1qKIQ5inneFASfKZzKhoE=
-MIME-Version: 1.0
-In-Reply-To: <20180314085601.GD28796@lst.de>
-References: <20180313212508.3553.65326.stgit@localhost.localdomain>
- <20180313213054.3553.89366.stgit@localhost.localdomain> <20180314085601.GD28796@lst.de>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 14 Mar 2018 08:31:24 -0700
-Message-ID: <CAKgT0UcotCGAQZjT8SWp0+HeHasyt0UV8M_Ev_zi08jV1uvp8w@mail.gmail.com>
-Subject: Re: [pci PATCH v6 5/5] pci-pf-stub: Add PF driver stub for PFs that
- function only to enable VFs
-To: Christoph Hellwig <hch@lst.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
-        netanel@amazon.com, Don Dutile <ddutile@redhat.com>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 11:36:28 -0400
+X-Google-Smtp-Source: AG47ELvGwEuYClsJ3+XzIDuYGEFh9Xzven3BoXcc0GJCri56JKe6q4u43YgTuw2zlyV99u1d2jvB1g==
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: dwmw2@infradead.org
+Cc: computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arushi Singhal <arushisinghal19971997@gmail.com>
+Subject: [PATCH 1/3] mtd: nand: Remove print after allocation failure
+Date: Wed, 14 Mar 2018 21:05:16 +0530
+Message-Id: <1521041718-32492-1-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 1:56 AM, Christoph Hellwig <hch@lst.de> wrote:
->> +
->> +/**
->> + * pci_pf_stub_white_list - White list of devices to bind pci-pf-stub onto
->> + *
->> + * This table provides the list of IDs this driver is supposed to bind
->> + * onto. You could think of this as a list of "quirked" devices where we
->> + * are adding support for SR-IOV here since there are no other drivers
->> + * that they would be running under.
->> + *
->> + * Layout of the table below is as follows:
->> + * { Vendor ID, Device ID,
->> + *   SubVendor ID, SubDevice ID,
->> + *   Class, Class Mask,
->> + *   private data (not used) }
->> + */
->
-> No need to document the PCI device table format in a random driver.
+The prints after [k|v][m|z|c]alloc() functions are not needed, because
+in case of failure, allocator will print their internal error prints
+anyway.
 
-I realize this probably isn't necessary, but I wanted to document it
-to make it clear in terms of layout so that it is't confused with the
-quirk structure layout since this has been referred to as a "quirk"
-driver a few times.
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+ drivers/mtd/nand/ams-delta.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> Otherwise looks fine:
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+diff --git a/drivers/mtd/nand/ams-delta.c b/drivers/mtd/nand/ams-delta.c
+index 9de6572..6e7f6e0 100644
+--- a/drivers/mtd/nand/ams-delta.c
++++ b/drivers/mtd/nand/ams-delta.c
+@@ -185,7 +185,6 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	/* Allocate memory for MTD device structure and private data */
+ 	this = kzalloc(sizeof(struct nand_chip), GFP_KERNEL);
+ 	if (!this) {
+-		printk (KERN_WARNING "Unable to allocate E3 NAND MTD device structure.\n");
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.7.4
