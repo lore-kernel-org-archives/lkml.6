@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1743198-1521033253-2-3683603208901141509
+X-Cyrus-Session-Id: sloti22d1t05-1743198-1521033223-2-1933725902732645795
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521033253; b=SuvxArHSezU3h3UOEJjTVWdiNh/u//wD3EpJjv1IP3vKDLn
-    54Znm5US/QZKvDBK65rUclWYNjJajJ3BGr0+4ka5Smp6sTdOA1inM6thZQJVcCSM
-    z0ckx2OT1LrZBEc+Q255oA0dLasSduufLlhlSmkSt/VvpUziOKrOldWQx2flBHzX
-    1NLo1F3kHjpvEOIajO9eezKRJZzZ67ISNcZM3K/I4djH2dg6t7uoQI86+rvgWNSw
-    5aq1uFCUuX13M2SexUnv7cPs67BJXYVRvgw7UEBX/Xt0Z0CCcLb6WJ45jOJdEYSl
-    DZBW96PkRmcRAaIOgom8xmDem84Uvh/HYjdGyJg==
+    t=1521033222; b=Yu1951Ol2R9Hng4hbwiG6WylwEgM6yrRapzWoWQwDmfSdhY
+    J7iY4wbN8N9PZXt8Cz+sGKIbnlKb+fTL/4KWh5TyeX2HZFWxMgX7wpxpQ1CHrU34
+    01/Mzi1yh99lPAC99zcBa8e5GMNXkkn2e+I/11K5Rj2Afvaq/e8uNlkgcHSVN6W8
+    tLQUwmv3JwloQXgB6uaGyIEu1PGB0WTMTLCX2Q2JS6PrIeSh6jXRz0li7A3DDqsx
+    IpYaAlnqx1aZKJZ4azPRbCORwBpZorRaDfchYuUCwh2wxw50mKwjrdf+N3wacqpl
+    m/rmcAt6sC7Kr3Cqps0RjPhG/z5GjHEdtDahrPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521033253;
-    bh=73OXtXN9h+Mw3rWCSJicQKfnXr+8VZP5i+FwPPpQKe8=; b=Ob4Fd93GFnbr
-    /VJ1Xefa6MAKkaVkI/H0jZYYXOAUXc4Y9tVfta7upJq3+CEYfAaQ77ccyhgzzonp
-    bpBVJHGvv2HkRm05L4emG2a9pCKn+O46Oj1wftupSzGgphCX9rxuHCl+fC+nU/ks
-    r/qIin12IfJ2ll8FjRJZ4KvdvwASc40LnxpkxQdLDTfw2gDEf9haxNt3jc3FAsv8
-    J7i6MBNvfZCJpsuhaTEHwnK7pCk0vSj1YCobK+rtncMsWfPnJdgTsinzw+D/pFzS
-    VcuT+yu7vE3oGX2pkIgNK5ZJyZzVCE4uTDxC57hyeqKFY/PbZv5KnEwLMqJKdSfd
-    +7XnL7QCyA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521033222;
+    bh=QQBy65f35g6nNWuIisVcOnii1X4MkQAet/1FeyppGhM=; b=lNu8QkXXZNl/
+    JR1gQCPsYPdIYB9iG+REMPv2BVJAHL7zR/eRW3D0bRCIguEFcScVhOdgqnzK3iLZ
+    AW6SbFaZBdcTut7gtJftFi+f3P78okZFH6djS54BPLMkSjuBrK+l4ehByolNxyCX
+    CJ7fURBC7DFdq/ZAoQejTZTXnqcNuOG8QyzdEPZSUnx+qbLV5+P7/qdRsjRgeLsj
+    8XPiw1fvkdc6Lc6+Dpm4bHQpQX5/NHoftT+NChRpd7VCr/a6HV2NHhfWkNuu1Wg0
+    Wt0QbTYMH+nnOQJhA/4WhiD0oZMqPPcYZgnKQynpp1jjLWPyBvtztSNOdLhrkk19
+    llcyQ/SxXA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
@@ -49,17 +49,17 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752333AbeCNNMw (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 09:12:52 -0400
+        id S1752380AbeCNNM6 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 09:12:58 -0400
 Received: from mga07.intel.com ([134.134.136.100]:3923 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752316AbeCNNMt (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:12:49 -0400
+        id S1752369AbeCNNM4 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 14 Mar 2018 09:12:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,470,1515484800";
-   d="scan'208";a="37991709"
+   d="scan'208";a="37991722"
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Hans de Goede <hdegoede@redhat.com>
@@ -71,9 +71,9 @@ Cc: Darren Hart <dvhart@infradead.org>,
         Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org
-Subject: [PATCH v8 08/12] xhci: Add Intel extended cap / otg phy mux handling
-Date: Wed, 14 Mar 2018 16:12:11 +0300
-Message-Id: <20180314131215.70833-9-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v8 10/12] usb: typec: driver for Pericom PI3USB30532 Type-C cross switch
+Date: Wed, 14 Mar 2018 16:12:13 +0300
+Message-Id: <20180314131215.70833-11-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180314131215.70833-1-heikki.krogerus@linux.intel.com>
 References: <20180314131215.70833-1-heikki.krogerus@linux.intel.com>
@@ -85,217 +85,284 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-The xHCI controller on various Intel SoCs has an extended cap mmio-range
-which contains registers to control the muxing to the xHCI (host mode)
-or the dwc3 (device mode) and vbus-detection for the otg usb-phy.
-
-Having a role-sw driver included in the xHCI code (under drivers/usb/host)
-is not desirable. So this commit adds a simple handler for this extended
-capability, which creates a platform device with the caps mmio region as
-resource, this allows us to write a separate platform role-sw driver for
-the role-switch.
-
-Note this commit adds a call to the new xhci_ext_cap_init() function
-to xhci_pci_probe(), it is added here because xhci_ext_cap_init() must
-be called only once. If in the future we also want to handle ext-caps
-on non pci xHCI HCDs from xhci_ext_cap_init() a call to it should also
-be added to other bus probe paths.
+Add a driver for the Pericom PI3USB30532 Type-C cross switch /
+mux chip found on some devices with a Type-C port.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
+Changes in v7:
+- Remove unneeded semicolon
+
 Changes in v4:
 -Add Andy's Reviewed-by
 
 Changes in v2:
--Use SPDX license header
--Various small style cleanups / changes
+-Cleanup pi3usb30532_set_conf() error handling
 -Add Heikki's Reviewed-by
 
-Changes from some time ago when this patch was part of another patch-set:
--Check xHCI controller PCI device-id instead of only checking for the
- Intel Extended capability ID, as the Extended capability ID is used on
- other model Intel xHCI controllers too
--Add a new generic xhci_ext_cap_init() function and handle the new
- XHCI_INTEL_CHT_USB_MUX quirk there.
--Stop using Cherry Trail / CHT in various places as other Intel SoCs
- (e.g. Broxton / Apollo Lake) also have this
+Changes in v1:
+-This is a rewrite of my previous driver which was using the
+ drivers/mux framework to use the new drivers/usb/typec/mux framework
 ---
- drivers/usb/host/Makefile        |  2 +-
- drivers/usb/host/xhci-ext-caps.c | 90 ++++++++++++++++++++++++++++++++++++++++
- drivers/usb/host/xhci-ext-caps.h |  2 +
- drivers/usb/host/xhci-pci.c      |  5 +++
- drivers/usb/host/xhci.h          |  2 +
- 5 files changed, 100 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/host/xhci-ext-caps.c
+ MAINTAINERS                         |   6 ++
+ drivers/usb/typec/Kconfig           |   2 +
+ drivers/usb/typec/Makefile          |   1 +
+ drivers/usb/typec/mux/Kconfig       |  10 ++
+ drivers/usb/typec/mux/Makefile      |   3 +
+ drivers/usb/typec/mux/pi3usb30532.c | 178 ++++++++++++++++++++++++++++++++++++
+ 6 files changed, 200 insertions(+)
+ create mode 100644 drivers/usb/typec/mux/Kconfig
+ create mode 100644 drivers/usb/typec/mux/Makefile
+ create mode 100644 drivers/usb/typec/mux/pi3usb30532.c
 
-diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-index 4ede4ce12366..8a8cffe0b445 100644
---- a/drivers/usb/host/Makefile
-+++ b/drivers/usb/host/Makefile
-@@ -11,7 +11,7 @@ fhci-y += fhci-mem.o fhci-tds.o fhci-sched.o
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5f1988cddbe8..17b64236719f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14521,6 +14521,12 @@ F:	drivers/usb/
+ F:	include/linux/usb.h
+ F:	include/linux/usb/
  
- fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
++USB TYPEC PI3USB30532 MUX DRIVER
++M:	Hans de Goede <hdegoede@redhat.com>
++L:	linux-usb@vger.kernel.org
++S:	Maintained
++F:	drivers/usb/typec/mux/pi3usb30532.c
++
+ USB TYPEC SUBSYSTEM
+ M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ L:	linux-usb@vger.kernel.org
+diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+index a2a0684e7c82..030f88cb0c3f 100644
+--- a/drivers/usb/typec/Kconfig
++++ b/drivers/usb/typec/Kconfig
+@@ -85,4 +85,6 @@ config TYPEC_TPS6598X
+ 	  If you choose to build this driver as a dynamically linked module, the
+ 	  module will be called tps6598x.ko.
  
--xhci-hcd-y := xhci.o xhci-mem.o
-+xhci-hcd-y := xhci.o xhci-mem.o xhci-ext-caps.o
- xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
- xhci-hcd-y += xhci-trace.o
- 
-diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
++source "drivers/usb/typec/mux/Kconfig"
++
+ endif # TYPEC
+diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
+index 56b2e9516ec1..1f599a6c30cc 100644
+--- a/drivers/usb/typec/Makefile
++++ b/drivers/usb/typec/Makefile
+@@ -6,3 +6,4 @@ obj-y				+= fusb302/
+ obj-$(CONFIG_TYPEC_WCOVE)	+= typec_wcove.o
+ obj-$(CONFIG_TYPEC_UCSI)	+= ucsi/
+ obj-$(CONFIG_TYPEC_TPS6598X)	+= tps6598x.o
++obj-$(CONFIG_TYPEC)		+= mux/
+diff --git a/drivers/usb/typec/mux/Kconfig b/drivers/usb/typec/mux/Kconfig
 new file mode 100644
-index 000000000000..399113f9fc5c
+index 000000000000..9a954d2b8d8f
 --- /dev/null
-+++ b/drivers/usb/host/xhci-ext-caps.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/usb/typec/mux/Kconfig
+@@ -0,0 +1,10 @@
++menu "USB Type-C Multiplexer/DeMultiplexer Switch support"
++
++config TYPEC_MUX_PI3USB30532
++	tristate "Pericom PI3USB30532 Type-C cross switch driver"
++	depends on I2C
++	help
++	  Say Y or M if your system has a Pericom PI3USB30532 Type-C cross
++	  switch / mux chip found on some devices with a Type-C port.
++
++endmenu
+diff --git a/drivers/usb/typec/mux/Makefile b/drivers/usb/typec/mux/Makefile
+new file mode 100644
+index 000000000000..1332e469b8a0
+--- /dev/null
++++ b/drivers/usb/typec/mux/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_TYPEC_MUX_PI3USB30532)	+= pi3usb30532.o
+diff --git a/drivers/usb/typec/mux/pi3usb30532.c b/drivers/usb/typec/mux/pi3usb30532.c
+new file mode 100644
+index 000000000000..b0e88db60ecf
+--- /dev/null
++++ b/drivers/usb/typec/mux/pi3usb30532.c
+@@ -0,0 +1,178 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * XHCI extended capability handling
++ * Pericom PI3USB30532 Type-C cross switch / mux driver
 + *
-+ * Copyright (c) 2017 Hans de Goede <hdegoede@redhat.com>
++ * Copyright (c) 2017-2018 Hans de Goede <hdegoede@redhat.com>
 + */
 +
-+#include <linux/platform_device.h>
-+#include "xhci.h"
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/usb/tcpm.h>
++#include <linux/usb/typec_mux.h>
 +
-+#define USB_SW_DRV_NAME		"intel_xhci_usb_sw"
-+#define USB_SW_RESOURCE_SIZE	0x400
++#define PI3USB30532_CONF			0x00
 +
-+static void xhci_intel_unregister_pdev(void *arg)
++#define PI3USB30532_CONF_OPEN			0x00
++#define PI3USB30532_CONF_SWAP			0x01
++#define PI3USB30532_CONF_4LANE_DP		0x02
++#define PI3USB30532_CONF_USB3			0x04
++#define PI3USB30532_CONF_USB3_AND_2LANE_DP	0x06
++
++struct pi3usb30532 {
++	struct i2c_client *client;
++	struct mutex lock; /* protects the cached conf register */
++	struct typec_switch sw;
++	struct typec_mux mux;
++	u8 conf;
++};
++
++static int pi3usb30532_set_conf(struct pi3usb30532 *pi, u8 new_conf)
 +{
-+	platform_device_unregister(arg);
++	int ret = 0;
++
++	if (pi->conf == new_conf)
++		return 0;
++
++	ret = i2c_smbus_write_byte_data(pi->client, PI3USB30532_CONF, new_conf);
++	if (ret) {
++		dev_err(&pi->client->dev, "Error writing conf: %d\n", ret);
++		return ret;
++	}
++
++	pi->conf = new_conf;
++	return 0;
 +}
 +
-+static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
++static int pi3usb30532_sw_set(struct typec_switch *sw,
++			      enum typec_orientation orientation)
 +{
-+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
-+	struct device *dev = hcd->self.controller;
-+	struct platform_device *pdev;
-+	struct resource	res = { 0, };
++	struct pi3usb30532 *pi = container_of(sw, struct pi3usb30532, sw);
++	u8 new_conf;
 +	int ret;
 +
-+	pdev = platform_device_alloc(USB_SW_DRV_NAME, PLATFORM_DEVID_NONE);
-+	if (!pdev) {
-+		xhci_err(xhci, "couldn't allocate %s platform device\n",
-+			 USB_SW_DRV_NAME);
++	mutex_lock(&pi->lock);
++	new_conf = pi->conf;
++
++	switch (orientation) {
++	case TYPEC_ORIENTATION_NONE:
++		new_conf = PI3USB30532_CONF_OPEN;
++		break;
++	case TYPEC_ORIENTATION_NORMAL:
++		new_conf &= ~PI3USB30532_CONF_SWAP;
++		break;
++	case TYPEC_ORIENTATION_REVERSE:
++		new_conf |= PI3USB30532_CONF_SWAP;
++		break;
++	}
++
++	ret = pi3usb30532_set_conf(pi, new_conf);
++	mutex_unlock(&pi->lock);
++
++	return ret;
++}
++
++static int pi3usb30532_mux_set(struct typec_mux *mux, int state)
++{
++	struct pi3usb30532 *pi = container_of(mux, struct pi3usb30532, mux);
++	u8 new_conf;
++	int ret;
++
++	mutex_lock(&pi->lock);
++	new_conf = pi->conf;
++
++	switch (state) {
++	case TYPEC_MUX_NONE:
++		new_conf = PI3USB30532_CONF_OPEN;
++		break;
++	case TYPEC_MUX_USB:
++		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
++			   PI3USB30532_CONF_USB3;
++		break;
++	case TYPEC_MUX_DP:
++		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
++			   PI3USB30532_CONF_4LANE_DP;
++		break;
++	case TYPEC_MUX_DOCK:
++		new_conf = (new_conf & PI3USB30532_CONF_SWAP) |
++			   PI3USB30532_CONF_USB3_AND_2LANE_DP;
++		break;
++	}
++
++	ret = pi3usb30532_set_conf(pi, new_conf);
++	mutex_unlock(&pi->lock);
++
++	return ret;
++}
++
++static int pi3usb30532_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct pi3usb30532 *pi;
++	int ret;
++
++	pi = devm_kzalloc(dev, sizeof(*pi), GFP_KERNEL);
++	if (!pi)
 +		return -ENOMEM;
++
++	pi->client = client;
++	pi->sw.dev = dev;
++	pi->sw.set = pi3usb30532_sw_set;
++	pi->mux.dev = dev;
++	pi->mux.set = pi3usb30532_mux_set;
++	mutex_init(&pi->lock);
++
++	ret = i2c_smbus_read_byte_data(client, PI3USB30532_CONF);
++	if (ret < 0) {
++		dev_err(dev, "Error reading config register %d\n", ret);
++		return ret;
 +	}
++	pi->conf = ret;
 +
-+	res.start = hcd->rsrc_start + cap_offset;
-+	res.end	  = res.start + USB_SW_RESOURCE_SIZE - 1;
-+	res.name  = USB_SW_DRV_NAME;
-+	res.flags = IORESOURCE_MEM;
-+
-+	ret = platform_device_add_resources(pdev, &res, 1);
++	ret = typec_switch_register(&pi->sw);
 +	if (ret) {
-+		dev_err(dev, "couldn't add resources to intel_xhci_usb_sw pdev\n");
-+		platform_device_put(pdev);
++		dev_err(dev, "Error registering typec switch: %d\n", ret);
 +		return ret;
 +	}
 +
-+	pdev->dev.parent = dev;
-+
-+	ret = platform_device_add(pdev);
++	ret = typec_mux_register(&pi->mux);
 +	if (ret) {
-+		dev_err(dev, "couldn't register intel_xhci_usb_sw pdev\n");
-+		platform_device_put(pdev);
++		typec_switch_unregister(&pi->sw);
++		dev_err(dev, "Error registering typec mux: %d\n", ret);
 +		return ret;
 +	}
 +
-+	ret = devm_add_action_or_reset(dev, xhci_intel_unregister_pdev, pdev);
-+	if (ret) {
-+		dev_err(dev, "couldn't add unregister action for intel_xhci_usb_sw pdev\n");
-+		return ret;
-+	}
-+
++	i2c_set_clientdata(client, pi);
 +	return 0;
 +}
 +
-+int xhci_ext_cap_init(struct xhci_hcd *xhci)
++static int pi3usb30532_remove(struct i2c_client *client)
 +{
-+	void __iomem *base = &xhci->cap_regs->hc_capbase;
-+	u32 offset, val;
-+	int ret;
++	struct pi3usb30532 *pi = i2c_get_clientdata(client);
 +
-+	offset = xhci_find_next_ext_cap(base, 0, 0);
-+
-+	while (offset) {
-+		val = readl(base + offset);
-+
-+		switch (XHCI_EXT_CAPS_ID(val)) {
-+		case XHCI_EXT_CAPS_VENDOR_INTEL:
-+			if (xhci->quirks & XHCI_INTEL_USB_ROLE_SW) {
-+				ret = xhci_create_intel_xhci_sw_pdev(xhci,
-+								     offset);
-+				if (ret)
-+					return ret;
-+			}
-+			break;
-+		}
-+		offset = xhci_find_next_ext_cap(base, offset, 0);
-+	}
-+
++	typec_mux_unregister(&pi->mux);
++	typec_switch_unregister(&pi->sw);
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(xhci_ext_cap_init);
-diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci-ext-caps.h
-index 631e7cc62604..268328c20681 100644
---- a/drivers/usb/host/xhci-ext-caps.h
-+++ b/drivers/usb/host/xhci-ext-caps.h
-@@ -39,6 +39,8 @@
- #define XHCI_EXT_CAPS_ROUTE	5
- /* IDs 6-9 reserved */
- #define XHCI_EXT_CAPS_DEBUG	10
-+/* Vendor caps */
-+#define XHCI_EXT_CAPS_VENDOR_INTEL	192
- /* USB Legacy Support Capability - section 7.1.1 */
- #define XHCI_HC_BIOS_OWNED	(1 << 16)
- #define XHCI_HC_OS_OWNED	(1 << 24)
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 5262fa571a5d..fe5e3916d46f 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -175,6 +175,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
- 		xhci->quirks |= XHCI_SSIC_PORT_UNUSED;
-+		xhci->quirks |= XHCI_INTEL_USB_ROLE_SW;
- 	}
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
-@@ -308,6 +309,10 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 		goto dealloc_usb2_hcd;
- 	}
- 
-+	retval = xhci_ext_cap_init(xhci);
-+	if (retval)
-+		goto put_usb3_hcd;
 +
- 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
- 			IRQF_SHARED);
- 	if (retval)
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index e4d7d3d06a75..2845aaf921b9 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1825,6 +1825,7 @@ struct xhci_hcd {
- #define XHCI_U2_DISABLE_WAKE	(1 << 27)
- #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
- #define XHCI_HW_LPM_DISABLE	(1 << 29)
-+#define XHCI_INTEL_USB_ROLE_SW	(1 << 30)
- 
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
-@@ -2020,6 +2021,7 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
- void xhci_init_driver(struct hc_driver *drv,
- 		      const struct xhci_driver_overrides *over);
- int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id);
-+int xhci_ext_cap_init(struct xhci_hcd *xhci);
- 
- int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup);
- int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
++static const struct i2c_device_id pi3usb30532_table[] = {
++	{ "pi3usb30532" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, pi3usb30532_table);
++
++static struct i2c_driver pi3usb30532_driver = {
++	.driver = {
++		.name = "pi3usb30532",
++	},
++	.probe_new	= pi3usb30532_probe,
++	.remove		= pi3usb30532_remove,
++	.id_table	= pi3usb30532_table,
++};
++
++module_i2c_driver(pi3usb30532_driver);
++
++MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("Pericom PI3USB30532 Type-C mux driver");
++MODULE_LICENSE("GPL");
 -- 
 2.16.1
 
