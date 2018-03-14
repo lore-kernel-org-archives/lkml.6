@@ -1,55 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751739AbeCNO2h (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 10:28:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55525 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeCNO2g (ORCPT
+        id S1751903AbeCNO26 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:28:58 -0400
+Received: from mail-pg0-f52.google.com ([74.125.83.52]:33653 "EHLO
+        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbeCNO24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 10:28:36 -0400
-From: Colin King <colin.king@canonical.com>
-To: Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: da7219: make structure da7219_dai_clks_ops static
-Date: Wed, 14 Mar 2018 14:28:25 +0000
-Message-Id: <20180314142825.8615-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 14 Mar 2018 10:28:56 -0400
+X-Google-Smtp-Source: AG47ELv5ByfNAWj46uOioh+yc55FntDjgngEr7UsiVLBhD3JFB4yErm6XOuiDPi8e5WR3IxruyYLiA==
+Date: Wed, 14 Mar 2018 08:28:52 -0600
+From: Tycho Andersen <tycho@tycho.ws>
+To: Nikolay Borisov <nborisov@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: WARN when unmounting a subvolume that is being synced
+Message-ID: <20180314142852.GA19493@cisco>
+References: <20180314031051.n6e4ymnlkz4yztic@smitten>
+ <783b8c49-3844-21a2-9609-67f9b4c8a5e1@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <783b8c49-3844-21a2-9609-67f9b4c8a5e1@suse.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Mar 14, 2018 at 09:46:07AM +0200, Nikolay Borisov wrote:
+> 
+> 
+> On 14.03.2018 05:10, Tycho Andersen wrote:
+> > Hi all,
+> > 
+> > I'm getting the WARN below. I think (?) what I'm doing when I get it
+> > is that I'm unmounting a subvolume while it's being synced (concurrent
+> > uses of the subvolume, at least, happy to look into it further if the
+> > stack trace is not so useful). Anyway, I can fairly reliably reproduce
+> > this on 4.16-rc4.
+> > 
+> > Thoughts?
+> 
+> Yeah, you've mounted the filesystem with flushoncommit. THe easiest
+> thing would be to remount with that option ommitted i.e the default
+> behavior. This is a well-known issue, unfortunately fixing it is a bit
+> hairy and deadlock prone against fs freeze.
 
-structure da7219_dai_clks_ops is local to the source and does not need
-to be in global scope, so make it static.
+Excellent, thanks!
 
-Cleans up sparse warning:
-sound/soc/codecs/da7219.c:1777:22: warning: symbol 'da7219_dai_clks_ops'
-was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/da7219.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 08f55d7a11ba..980a6a8bf56d 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -1774,7 +1774,7 @@ static int da7219_dai_clks_is_prepared(struct clk_hw *hw)
- 	return !!(clk_reg & DA7219_DAI_CLK_EN_MASK);
- }
- 
--const struct clk_ops da7219_dai_clks_ops = {
-+static const struct clk_ops da7219_dai_clks_ops = {
- 	.prepare = da7219_dai_clks_prepare,
- 	.unprepare = da7219_dai_clks_unprepare,
- 	.is_prepared = da7219_dai_clks_is_prepared,
--- 
-2.15.1
+Tycho
