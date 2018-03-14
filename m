@@ -1,59 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeCNUIm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:08:42 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35674 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbeCNUIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:08:40 -0400
-Date: Wed, 14 Mar 2018 23:08:28 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] of: unittest: fix an error code in
- of_unittest_apply_overlay()
-Message-ID: <20180314200828.GA10588@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=862
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803140217
+        id S1751682AbeCNUKp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:10:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51376 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751314AbeCNUKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 16:10:44 -0400
+Message-ID: <1521058242.18703.103.camel@redhat.com>
+Subject: Re: [PATCH] 40iw: include linux/irq.h
+From: Doug Ledford <dledford@redhat.com>
+To: Shiraz Saleem <shiraz.saleem@intel.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Faisal Latif <faisal.latif@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Artemy Kovalyov <artemyko@mellanox.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 14 Mar 2018 16:10:42 -0400
+In-Reply-To: <20180313132000.GA18400@ssaleem-MOBL4.amr.corp.intel.com>
+References: <20180313120644.2619889-1-arnd@arndb.de>
+         <20180313132000.GA18400@ssaleem-MOBL4.amr.corp.intel.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-/ymUGrBBWfd4Dv/wwzyH"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We accidentally return zero on failure instead of a negative error code.
 
-Fixes: 39a751a4cb7e ("of: change overlay apply input data from unflattened to FDT")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--=-/ymUGrBBWfd4Dv/wwzyH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index dede77a79820..bc03902693b7 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -1417,15 +1417,13 @@ static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
- 		int *overlay_id)
- {
- 	const char *overlay_name;
--	int ret;
- 
- 	overlay_name = overlay_name_from_nr(overlay_nr);
- 
--	ret = overlay_data_apply(overlay_name, overlay_id);
--	if (!ret) {
-+	if (!overlay_data_apply(overlay_name, overlay_id)) {
- 		unittest(0, "could not apply overlay \"%s\"\n",
- 				overlay_name);
--		return ret;
-+		return -EFAULT;
- 	}
- 	of_unittest_track_overlay(*overlay_id);
- 
+On Tue, 2018-03-13 at 08:20 -0500, Shiraz Saleem wrote:
+> On Tue, Mar 13, 2018 at 01:06:20PM +0100, Arnd Bergmann wrote:
+> > We get a build failure on ARM unless the header is included explicitly:
+> >=20
+> > drivers/infiniband/hw/i40iw/i40iw_verbs.c: In function 'i40iw_get_vecto=
+r_affinity':
+> > drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: implicit decla=
+ration of function 'irq_get_affinity_mask'; did you mean 'irq_create_affini=
+ty_masks'? [-Werror=3Dimplicit-function-declaration]
+> >   return irq_get_affinity_mask(msix_vec->irq);
+> >          ^~~~~~~~~~~~~~~~~~~~~
+> >          irq_create_affinity_masks
+> > drivers/infiniband/hw/i40iw/i40iw_verbs.c:2747:9: error: returning 'int=
+' from a function with return type 'const struct cpumask *' makes pointer f=
+rom integer without a cast [-Werror=3Dint-conversion]
+> >   return irq_get_affinity_mask(msix_vec->irq);
+> >=20
+> > Fixes: 7e952b19eb63 ("i40iw: Implement get_vector_affinity API")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+>=20
+> Looks like you beat me to it. 0-day caught this on rdma-nxt and I was goi=
+ng to send the fix today.=20
+>=20
+> Typo in the subject. 40iw --> i40iw. Othwerwise, looks good.
+>=20
+> Thanks for the patch, Arnd!
+>=20
+> Shiraz
+>=20
+
+Thanks, applied.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-/ymUGrBBWfd4Dv/wwzyH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqpgcIACgkQuCajMw5X
+L91F4w/+OSKz9gxNSVsdcK3wkvZGyb9imq3bUVOweaA9a5sWHrO9Nv0qXUwTf6PP
+Pr7uyv1FHug0NYZNYF10E+d3hrs8c7DiJpKpXvrDGJA3Jz9Lj9VRSKoYB+X81FA5
+jWw5r7haoh67kj6j18VspIcQ0znJoJUTNfhHJng0I7WYj/X2EgVq/mz+N3VNgwG4
+u2V7qtnhdlst3bMfOtyAigh8UzojVDmSV1rQClUG0uLz/6EVJkAOv6UiP30hWcSh
+G9tXTIeJSJ+jOM0X1jfuMhSb0yTTfLKWCAdCUHRs29VifTfz6OgfuRDtAhr2FjaT
+7dAFMMFhjwmA84O84TUm8KYjP55au9GKvdGoq+oTNqNC2nySJdoNtFXIG51FFv6P
+YfBE9RQxyb81jASUQrWQgMAJvaeTGtZFO/TonMVBLUxTcJYgKdibrr1Pd6U49Kik
+bs3QiLKYjp34RGedrLixP6BXpEgO3KtdnM5IEiqR7ftldBEHBDArv1ZoiYp6WRl0
+U+NB3lBxd8EKImGXCqRI5qmYHIfxsvp9S3ZlUk6HghhTZhrAiVvH4tLXkktqYRWB
+ncr5OmkvyWsMVelyjdJgaGdDSkZi3dlG50gi6D6KLrYqxIA0iCao2HwrV+NeQrW9
+PGPXR1FG1VDyHOQVMh36Zv4Y1eEbLAM/Gfi/62U+FPdU8J9ChRY=
+=hbze
+-----END PGP SIGNATURE-----
+
+--=-/ymUGrBBWfd4Dv/wwzyH--
