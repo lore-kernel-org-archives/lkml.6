@@ -1,88 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeCNGP0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:15:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40118 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbeCNGPX (ORCPT
+        id S933114AbeCNGQP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:16:15 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:33964 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751272AbeCNGQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:15:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86BF360314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 14/36] drm/bridge: analogix_dp: Extend hpd check time
- to 100ms
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
-        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
-        heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-15-enric.balletbo@collabora.com>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <7a95aaf7-f692-c476-e4b6-822a6923951a@codeaurora.org>
-Date: Wed, 14 Mar 2018 11:45:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-15-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Mar 2018 02:16:14 -0400
+Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-Quarantine-ID: <I8prlsk701eE>
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2003:d5:3e7:2500:bfbd:dba3:49d6:7204
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Scott Bauer <scott.bauer@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 8.0/8.4] block: sed-opal: check size of shadow mbr
+Date: Wed, 14 Mar 2018 07:15:41 +0100
+Message-Id: <cover.1521006595.git.jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180313154416.sgptuw7jcn7l76vn@sbauer-Z170X-UD5>
+References: <20180313154416.sgptuw7jcn7l76vn@sbauer-Z170X-UD5>
+References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <b0b34fc0132312c09629c868d33b74fe5a19854e.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de> <20180313154416.sgptuw7jcn7l76vn@sbauer-Z170X-UD5>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+I managed to extract the usable shadow mbr size out of my 850Evos
+OPAL_TABLE_TABLE and added an appropriate check into the write function.
+As this involves more than just a few lines, I decided to split the v2
+of this subpatch into 4 separate patches. I am unsure what whould be the
+best practice for such an situation but hope it is okay like this.
 
+Also the userspace exported pointer is replaced with an u64 value.
 
-On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: Lin Huang <hl@rock-chips.com>
-> 
-> There was a 1ms delay to detect the hpd signal, which is too short to
-> detect a short pulse. This patch extends this delay to 100ms.
-> 
+Jonas Rabenstein (4):
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: unify retrieval of table columns
+  block: sed-opal: get metadata about opal-sed tables
+  block: sed-opal: check size of shadow mbr
 
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+ block/opal_proto.h            |  18 ++++
+ block/sed-opal.c              | 245 ++++++++++++++++++++++++++++--------------
+ include/linux/sed-opal.h      |   1 +
+ include/uapi/linux/sed-opal.h |   8 ++
+ 4 files changed, 189 insertions(+), 83 deletions(-)
 
-Thanks,
-Archit
-
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Cc: 征增 王 <wzz@rock-chips.com>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index 3a222e7e46ee..6cbde8473f58 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -76,7 +76,7 @@ static int analogix_dp_detect_hpd(struct analogix_dp_device *dp)
->   			return 0;
->   
->   		timeout_loop++;
-> -		usleep_range(10, 11);
-> +		usleep_range(1000, 1100);
->   	}
->   
->   	/*
-> 
+-- 
+2.16.1
