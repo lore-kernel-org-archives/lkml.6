@@ -1,94 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751673AbeCNUi6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:38:58 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:42155 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751426AbeCNUi5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:38:57 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "peterz@infradead.org" <peterz@infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: arc_usr_cmpxchg and preemption
-Thread-Topic: arc_usr_cmpxchg and preemption
-Thread-Index: AQHTu7KSgtMaj81NvU2WaxKl+xOkrqPP4yWAgAAPhQCAAC4ZgA==
-Date: Wed, 14 Mar 2018 20:38:53 +0000
-Message-ID: <1521059931.11552.51.camel@synopsys.com>
-References: <1521045375.11552.27.camel@synopsys.com>
-         <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
-         <20180314175352.GP4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180314175352.GP4064@hirez.programming.kicks-ass.net>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E18847B7F7A53446ACF7F7C86D6A353F@internal.synopsys.com>
+        id S1752130AbeCNUjY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:39:24 -0400
+Received: from ozlabs.org ([103.22.144.67]:56927 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751970AbeCNUjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 16:39:23 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 15 Mar 2018 07:38:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Luck <tony.luck@intel.com>
+Subject: linux-next: Signed-off-by missing for commit in the edac-amd tree
+Message-ID: <20180315073851.0124d37a@canb.auug.org.au>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/t81ftmIZjWB==0Y=C3ZzJq6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2EKd5Ik031329
 
-Hi Peter, Vineet,
+--Sig_/t81ftmIZjWB==0Y=C3ZzJq6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2018-03-14 at 18:53 +0100, Peter Zijlstra wrote:
-> On Wed, Mar 14, 2018 at 09:58:19AM -0700, Vineet Gupta wrote:
-> 
-> > Well it is broken wrt the semantics the syscall is supposed to provide.
-> > Preemption disabling is what prevents a concurrent thread from coming in and
-> > modifying the same location (Imagine a variable which is being cmpxchg
-> > concurrently by 2 threads).
-> > 
-> > One approach is to do it the MIPS way, emulate the llsc flag - set it under
-> > preemption disabled section and clear it in switch_to
-> 
-> *shudder*... just catch the -EFAULT, force the write fault and retry.
-> 
-> Something like:
-> 
-> int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
-> {
-> 	u32 val;
-> 	int ret;
-> 
-> again:
-> 	ret = 0;
-> 
-> 	preempt_disable();
-> 	val = get_user(user_ptr);
-> 	if (val == old)
-> 		ret = put_user(new, user_ptr);
-> 	preempt_enable();
-> 
-> 	if (ret == -EFAULT) {
-> 		struct page *page;
-> 		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
-> 		if (ret < 0)
-> 			return ret;
-> 		put_page(page);
-> 		goto again;
+Hi Borislav,
 
-I guess this jump we need to do only once, right?
-If for whatever reason get_user_pages_fast() fails we return immediately
-and if it succeeds there's no reason for put_user() to not succeed as
-required page is supposed to be prepared for write.
+Commit
 
-Otherwise if something goes way too bad we may end-up in an infinite loop
-which we'd better prevent.
+  aefa4bb56ca8 ("EDAC, skx_edac: Detect non-volatile DIMMs")
 
-> 	}
-> 
-> 	return ret;
-> }
+is missing a Signed-off-by from its author.
 
-@Vineet, are you OK with proposed implementation?
+--=20
+Cheers,
+Stephen Rothwell
 
--Alexey
+--Sig_/t81ftmIZjWB==0Y=C3ZzJq6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpiFsACgkQAVBC80lX
+0Gxlegf+Nr4OVgntA0WcIYaVkWcR+c5nE9lWY4dHCWTtn+LVdkBVAyTqobWRqS0h
+TOJjYo3heWCnV90C8B+whQQ3y171AP/F7dKhROj+jlRcqW/U0cq1e6s9hicLAAqi
+c2KuHz4JEf8pKsXg59tyX2uyzIvh+2cftS2j450GH9MPKeqVFHOyNHISO44zhvj7
+5dpqJbVvAViJlfL8eQDC2VkbrpMqyVv2lSqEFNQOsd+3qpeOJY6j4EYG+py0/6yQ
+alDxHmdFplUFbWUxU7HaJX5uT/xaR2W1Vl0bNmHr3G/pKE5oveQiP4gDfN3TY1fy
+8qknpZeXRm16A7SNFH22VeFpAt1pvA==
+=Y1aj
+-----END PGP SIGNATURE-----
+
+--Sig_/t81ftmIZjWB==0Y=C3ZzJq6--
