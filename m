@@ -1,138 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeCNPim (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:38:42 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:34337 "EHLO
+        id S1752234AbeCNPj1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:39:27 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:45669 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeCNPij (ORCPT
+        with ESMTP id S1751386AbeCNPjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:38:39 -0400
+        Wed, 14 Mar 2018 11:39:25 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Shaohua Li <shli@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-raid@vger.kernel.org
-Subject: [PATCH 07/47] raid: remove tile specific raid6 implementation
-Date: Wed, 14 Mar 2018 16:35:20 +0100
-Message-Id: <20180314153603.3127932-8-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Subject: [PATCH 08/47] rtc: remove tile driver
+Date: Wed, 14 Mar 2018 16:35:21 +0100
+Message-Id: <20180314153603.3127932-9-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:drkzofKeJ4x6meiDQsb+7PL0lNA5wierTu2QulNTFi2M487GN8f
- rQpXJlQY0KLGKQ4ghU10WoUeQnBenCuquYLszFA1rcaHrJLRzPLAt9DhpRUpHRbVJ00jp8m
- hRr+45tjp6M8h5FL1f6PSpK4d8Fmyd6P3dBrNbdVmCPllH/+kXT4jje/gkCX3txoqOpPlnB
- XaNssmMBYBEkqo8954VsA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FQXA9P5HT9k=:Dn5zeEkiuhdInc6Wok4kCZ
- MMRpb5cGaeEVHAzQV9ZuV/JKV6mGp5UFU2YHIfgXwYDAYdlQrudss3fiA3+9AfblrKZabskcm
- FUQgxUcy2nv+Y3AHQT4hW284HktB3veJzBXY0Ft8lax0N3wFjw+Cs2HNc2ribMlqOh+XMzMVZ
- hJOsDpgu+PbkyUK15wveEjYz8whZcuZRswobVkqa/ZG05jwz2k4tm8+QAXT9gU0jTq5mDPmF6
- WVQL6FJCWLzoxdAFxWlc9TwIeNOsDRBNEb7zY6pngVyYhBbuUVX1kqtJJ5XPPPaL3mlriXHht
- irHkNrvOJ6ULeMmZGxJ9r7YBPLZyaOP1E5cmvLE1x7LzyErNchZqNwRl8sQseFMR5ZcelL0sf
- Nbed6bTJcmDEDuCfqBHRqdg43TCK3xKtwsIf4oEmeWSy50XU2KEWkdy3Vv9tzzWOmTNdaGsNc
- +7lSRgKycIYxuguv5X8XBl5ZYY29EJ52jElEstfvjTJw7RWG0LXF2NJ5J5NrOiw3ULBlW9lRQ
- G0WaRsKqeCHauzysJdRk+pNnDHjhupE0+I3g6lBR9OzXIiFKe9B6F4df4CzxdZvRq3xeYwNLu
- 11fMBNX6MmuznO+1DlEoaJ4E2A6b2VE+4AdWdWke+BzWmXBWKqZhicYZF1f50MNA4QmeEGrNd
- hRaYzv9vtF7BdBKiDuZB104VNyTOpoNdFBqKQG6JwYHSbxPRE9DYORdh+hNaaGi7ZZMO0B8Ip
- HphcIrko3lY75llh30cZc4Cn4aD5G5NC5ryeoA==
+X-Provags-ID: V03:K0:HvOV2YBGw0ttlWXsAyK6UKWEDRq03wWS27sIaAgE1mqpbZFj73W
+ OG2lgN6FYbBRiLFga8dCmnHvWNn+OvcdgXRvnVlYWVy430jDUmDgmV6D/s/Xbk1t5exQ9kC
+ UMHzT5DcCp0j1rLPfIMgIxXUOtswUiLC4AuoB2QtqZ23bgEx+/djcbX6PkTY/UXGQYdDNz/
+ 954X/6bbm10Fnn49SFLbg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:W1lebNhlqS8=:LCEo5dZgAqCsN5B7Ef1YSR
+ Q6twOfeHe32GuRJafdrjKhm7VYxGFu9KOkg2SyFSAHWdSnuYtCKFt8CgwhIchC+LPrl5XCM/Y
+ ys9qUCCd5y1/ZLdr/++OeLetGTEkeKKQVNUD+Xh8L0PUDb7+GrjbaWo9fKnm9VgM5jm7Xb2cg
+ ZpxWpLvY6M32pT/wnhyoWdiDBQpWcB8Fv3cdrEgmX5a9JO11eKkQLU6m0OO759te1rMa2hNBO
+ vnFpbAJeFEmcQzGJ928kJnuNbicNzVnExlNjb+ybeNX4V4WGwVwEsFVD11m15fGZE+DUKBImi
+ m7XjLfmM1EpMSpjw+DQpdIZH5I2o1Sj+yP5TkNORz32X/ksIhGZQT0xl6HIpXIwgycc+2gjgo
+ lZqvDKL6/GgEZoxYi2nJE0nWZJC9ikWygIZmB7cSGJBps3YeUQunFklEg1OelE52DxylLgh/8
+ XCo9Fh61bA9iPP1snl1U1y8X3MyrCiYZ8JSUrp/E31D32lSNA/cAWnG9n+xuBk/9Y3d/Sxz2w
+ CHb2qyFA4wd4LetZSfnOCf/AebSNt4IWKdYWcTDihKceuX9eJVrBFrAg/RZNPscrECRAusKN2
+ pBewD1tgTJiWcZgZx5BI0IAwqmVWg2FMCz+51YwFRRxpLTLxWaYtXvt9/2U4Z9l/OmmVEMkAT
+ +hCC8dj8QxUdT4v2pO0n9pz6SnDOV1esyVh+PWVAv9MC9p1sgHjccGbCZ0eazN9Y5YZi9/Npv
+ cVQDmpr4affwogNzU8vWbnYObqe95TwyJqbuBQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tile architecture is getting removed, so we no longer need this either.
+The tile architecture is getting removed, so this driver is
+no longer needed.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/raid/pq.h |  1 -
- lib/raid6/Makefile      |  6 ----
- lib/raid6/algos.c       |  3 --
- lib/raid6/test/Makefile |  7 ----
- lib/raid6/tilegx.uc     | 87 -------------------------------------------------
- 5 files changed, 104 deletions(-)
- delete mode 100644 lib/raid6/tilegx.uc
+ drivers/rtc/Kconfig    |   7 ---
+ drivers/rtc/Makefile   |   1 -
+ drivers/rtc/rtc-tile.c | 143 -------------------------------------------------
+ 3 files changed, 151 deletions(-)
+ delete mode 100644 drivers/rtc/rtc-tile.c
 
-diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
-index 583cdd3d49ca..a366cc314479 100644
---- a/include/linux/raid/pq.h
-+++ b/include/linux/raid/pq.h
-@@ -105,7 +105,6 @@ extern const struct raid6_calls raid6_avx2x4;
- extern const struct raid6_calls raid6_avx512x1;
- extern const struct raid6_calls raid6_avx512x2;
- extern const struct raid6_calls raid6_avx512x4;
--extern const struct raid6_calls raid6_tilegx8;
- extern const struct raid6_calls raid6_s390vx8;
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 5457d15bbcc0..0e1413a5ba3a 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -1667,13 +1667,6 @@ config RTC_DRV_TEGRA
+ 	  This drive can also be built as a module. If so, the module
+ 	  will be called rtc-tegra.
  
- struct raid6_recov_calls {
-diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-index 4add700ddfe3..44d6b46df051 100644
---- a/lib/raid6/Makefile
-+++ b/lib/raid6/Makefile
-@@ -7,7 +7,6 @@ raid6_pq-y	+= algos.o recov.o tables.o int1.o int2.o int4.o \
- raid6_pq-$(CONFIG_X86) += recov_ssse3.o recov_avx2.o mmx.o sse1.o sse2.o avx2.o avx512.o recov_avx512.o
- raid6_pq-$(CONFIG_ALTIVEC) += altivec1.o altivec2.o altivec4.o altivec8.o
- raid6_pq-$(CONFIG_KERNEL_MODE_NEON) += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
--raid6_pq-$(CONFIG_TILEGX) += tilegx8.o
- raid6_pq-$(CONFIG_S390) += s390vx8.o recov_s390xc.o
- 
- hostprogs-y	+= mktables
-@@ -115,11 +114,6 @@ $(obj)/neon8.c:   UNROLL := 8
- $(obj)/neon8.c:   $(src)/neon.uc $(src)/unroll.awk FORCE
- 	$(call if_changed,unroll)
- 
--targets += tilegx8.c
--$(obj)/tilegx8.c:   UNROLL := 8
--$(obj)/tilegx8.c:   $(src)/tilegx.uc $(src)/unroll.awk FORCE
--	$(call if_changed,unroll)
+-config RTC_DRV_TILE
+-	tristate "Tilera hypervisor RTC support"
+-	depends on TILE
+-	help
+-	  Enable support for the Linux driver side of the Tilera
+-	  hypervisor's real-time clock interface.
 -
- targets += s390vx8.c
- $(obj)/s390vx8.c:   UNROLL := 8
- $(obj)/s390vx8.c:   $(src)/s390vx.uc $(src)/unroll.awk FORCE
-diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-index 476994723258..c65aa80d67ed 100644
---- a/lib/raid6/algos.c
-+++ b/lib/raid6/algos.c
-@@ -75,9 +75,6 @@ const struct raid6_calls * const raid6_algos[] = {
- 	&raid6_altivec4,
- 	&raid6_altivec8,
- #endif
--#if defined(CONFIG_TILEGX)
--	&raid6_tilegx8,
--#endif
- #if defined(CONFIG_S390)
- 	&raid6_s390vx8,
- #endif
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index be1010bdc435..fabc477b1417 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -51,9 +51,6 @@ else
-                 OBJS += altivec1.o altivec2.o altivec4.o altivec8.o
-         endif
- endif
--ifeq ($(ARCH),tilegx)
--OBJS += tilegx8.o
--endif
- 
- .c.o:
- 	$(CC) $(CFLAGS) -c -o $@ $<
-@@ -116,15 +113,11 @@ int16.c: int.uc ../unroll.awk
- int32.c: int.uc ../unroll.awk
- 	$(AWK) ../unroll.awk -vN=32 < int.uc > $@
- 
--tilegx8.c: tilegx.uc ../unroll.awk
--	$(AWK) ../unroll.awk -vN=8 < tilegx.uc > $@
--
- tables.c: mktables
- 	./mktables > tables.c
- 
- clean:
- 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.c raid6test
--	rm -f tilegx*.c
- 
- spotless: clean
- 	rm -f *~
-diff --git a/lib/raid6/tilegx.uc b/lib/raid6/tilegx.uc
+ config RTC_DRV_PUV3
+ 	tristate "PKUnity v3 RTC support"
+ 	depends on ARCH_PUV3
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index f481661a6eae..f7a4b09557a0 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -163,7 +163,6 @@ obj-$(CONFIG_RTC_DRV_SUN6I)	+= rtc-sun6i.o
+ obj-$(CONFIG_RTC_DRV_SUNXI)	+= rtc-sunxi.o
+ obj-$(CONFIG_RTC_DRV_TEGRA)	+= rtc-tegra.o
+ obj-$(CONFIG_RTC_DRV_TEST)	+= rtc-test.o
+-obj-$(CONFIG_RTC_DRV_TILE)	+= rtc-tile.o
+ obj-$(CONFIG_RTC_DRV_TPS6586X)	+= rtc-tps6586x.o
+ obj-$(CONFIG_RTC_DRV_TPS65910)	+= rtc-tps65910.o
+ obj-$(CONFIG_RTC_DRV_TPS80031)	+= rtc-tps80031.o
+diff --git a/drivers/rtc/rtc-tile.c b/drivers/rtc/rtc-tile.c
 deleted file mode 100644
-index 2dd291a11264..000000000000
+index ef1cdabf05b4..000000000000
 -- 
 2.9.0
