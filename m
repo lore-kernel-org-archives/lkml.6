@@ -1,5 +1,5 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1542408-1521027049-2-13720365617747888599
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1528056-1521027014-2-10021681327699434072
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -11,63 +11,66 @@ X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521027049; b=AepXasOOFToRwpyRJ2IdbpbmIaRo/tKRpsjYC+yFfCq3rKd
-    gbzyzGo+5EFBoAfcmea9EE0Vdl0uP3+1yE6ErxCn2RAC1L1kR2p5/ub9GxqsZ1+I
-    4JlyjKQUK/5+K6w07q1qMWEIdQNREr8GvMUtmC9lud0++eCY1Z938ZZ4IcRS5dSG
-    MgGSumbKxDstAVBPche7C9ymYhFZhiaSGnirSRVvOeN2kOaXqT/DhciO/5Npi+mJ
-    JKCuCcV/SLlo8jgruxfnoeG6keSX6ZQIkEs2c/Lmjit8e+onZapyx+Ezin2MN18W
-    46CRMrZprC5R1ZhbTwtKGCGXH7N5TTtYN2ppL9A==
+    t=1521027013; b=qVwtcUcucJmxj1YnvoMbuBY42QY2MZTuv3RiFAC066TULA8
+    8mqyz98AOt0xE8hzmbuc0gn+keuMF2rL7/zogHptQGnGATJiyUqd5ZCBFzqyNrHe
+    FMdO6qBAGw26Fl95BOScFwARIwFV2aqiMIFiH6HFJG5+sU9NZ/UfOU4MOj94Z+RJ
+    A/bvlopZDJM0kh1WyEJ4cC3TZSXnIGIoQEX3AuuR5b2rDAseqHAT4ygpQvQxwpgJ
+    FJK5izDooGIQHCeuuDQ137i7f0q3cdGIbLvCl4MNDHLvUY6wwV4YiZyCgWn2ahZy
+    DeBxhe/t7Uay9qhv7T/kv5lKC3UBRSDNTUHq4qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :mime-version:content-type:sender:list-id; s=arctest; t=
-    1521027049; bh=mA5MbhiM7aMruNmdO/+RySUDtDWpK6RQYqH6jrZh4rI=; b=r
-    W8Au4sfsxYCPI05U7BJ4WT3xi9qfeYXwdBz2EosaNUq/1U3NOLT9AKmxzoboaXGM
-    flOyf2zskn0E524CZcRRE4VUG3SWn9VeABLWc6gfaiNTDnzNuQcVewx//SIh0lTM
-    vHn657NvjZb/DkUmEvYbHh6+oILwGn/dVAmttJpUAdfHBnu0TvQ67mAOS5g8wHHN
-    HY1eoweriMxYnk8XjtPxR2I9YYs9cdQFkN+n8JpQ/+XtX1h23SyoZtLdFjpFCAdU
-    3s98AF5UoR/r0UGUjSFL9+AVAk0jVQHND+3HkPqbUDYc1+dXBNDu7FZJEPzf3Hfa
-    1G6Ol1UmvtpNRK7UsvFPg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    1521027013; bh=mof7/J1dHsn94zR28Te2PxufGP5F5ktXPmAE/RFhoJ0=; b=O
+    etA5VP6cEVgWv6Hi6AEsmw8OO2rj8651+Yt9Ygt0kKYhDiC3Q0tv3TR4q/vQmbFL
+    HJxsfHYoSeXD6hEPHAPesbx78n0THearFrJz3zdCVsbZPlhYY3RlLUPqB+VFpsWe
+    KK4gq9Xubj2mR5eI3k07/nX02qu133f4YMtGMi+i5E7h7xQ4l28Uxdr8VscTAOdj
+    gB4NSGs2APIswDwsV1cF+78LyF1AkZTLt1n8pwFwp7PGK79eCO8uXqS1p+mzbV7K
+    v50mvoYpJNgz9vtZwKlN7Joq9PyJhuEeY7zbNvMoqiyHEDT73AQxczvncXZ5lVQg
+    TJZPlbIgYydLcMiJHEeIQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeCNLad (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 07:30:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50342 "EHLO
+        id S1751370AbeCNLaM (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 07:30:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50248 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeCNLab (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Mar 2018 07:30:31 -0400
-Date: Wed, 14 Mar 2018 12:30:30 +0100
+        with ESMTP id S1750855AbeCNLaL (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Wed, 14 Mar 2018 07:30:11 -0400
+Date: Wed, 14 Mar 2018 12:30:10 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB fixes for 4.16-rc6
-Message-ID: <20180314113030.GA23868@kroah.com>
+        Jiri Slaby <jslaby@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial fixes for 4.16-rc6
+Message-ID: <20180314113010.GA23819@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,108 +81,58 @@ The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/ tags/usb-4.16-rc6
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/ tags/tty-4.16-rc6
 
-for you to fetch changes up to 94e46a4f2d5eb14059e42f313c098d4854847376:
+for you to fetch changes up to 5d7f77ec72d10c421bc33958f06a5583f2d27ed6:
 
-  usb: musb: Fix external abort in musb_remove on omap2430 (2018-03-13 16:36:59 +0100)
+  serial: imx: fix bogus dev_err (2018-02-28 13:48:21 +0100)
 
 ----------------------------------------------------------------
-USB fixes for 4.16-rc6
+TTY/Serial driver fixes for 4.16-rc6
 
-Here are a small clump of USB fixes for 4.16-rc6.
+Here are some small TTY core and Serial driver fixes for 4.16-rc6.
 
-Nothing major, just a number of fixes in lots of different drivers, as
-well as a PHY driver fix that snuck into this tree.  Full details are in
-the shortlog.
+They resolve some newly reported bugs, as well as some very old ones,
+which is always nice to see.  There is also a new device id added in
+here for good measure.
 
-All of these have been in linux-next with no reported issues.
+All of these have been in linux-next for a while with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Amelie Delaunay (2):
-      dt-bindings: usb: fix the STM32F7 DWC2 OTG HS core binding
-      usb: dwc2: fix STM32F7 USB OTG HS compatible
+Andy Shevchenko (1):
+      serial: 8250_pci: Don't fail on multiport card class
 
-Arnd Bergmann (1):
-      phy: qcom-ufs: add MODULE_LICENSE tag
+Greentime Hu (1):
+      earlycon: add reg-offset to physical address before mapping
 
-Colin Ian King (1):
-      usbip: vudc: fix null pointer dereference on udc->lock
+Jonas Danielsson (1):
+      tty/serial: atmel: add new version check for usart
 
-Danilo Krummrich (1):
-      usb: quirks: add control message delay for 1b1c:1b20
+Nikola Ciprich (1):
+      serial: 8250_pci: Add Brainboxes UC-260 4 port serial device
 
-Fredrik Noring (1):
-      USB: OHCI: Fix NULL dereference in HCDs using HCD_LOCAL_MEM
+Sebastian Andrzej Siewior (1):
+      serial: core: mark port as initialized in autoconfig
 
-Greg Kroah-Hartman (2):
-      Merge tag 'fixes-for-v4.16-rc4' of git://git.kernel.org/.../balbi/usb into usb-linus
-      Merge tag 'phy-for-4.16-rc' of git://git.kernel.org/.../kishon/linux-phy into usb-linus
+Tejun Heo (1):
+      tty: make n_tty_read() always abort if hangup is in progress
 
-Hans de Goede (2):
-      Revert "typec: tcpm: Only request matching pdos"
-      usb: typec: tcpm: fusb302: Do not log an error on -EPROBE_DEFER
+Ulrich Hecht (1):
+      serial: sh-sci: prevent lockup on full TTY buffers
 
-Kai-Heng Feng (1):
-      xhci: Fix front USB ports on ASUS PRIME B350M-A
+phil eichinger (1):
+      serial: imx: fix bogus dev_err
 
-Lu Baolu (1):
-      usb: xhci: dbc: Fix lockdep warning
-
-Mathias Nyman (1):
-      xhci: fix endpoint context tracer output
-
-Merlijn Wajer (2):
-      usb: musb: call pm_runtime_{get,put}_sync before reading vbus registers
-      usb: musb: Fix external abort in musb_remove on omap2430
-
-Oliver Neukum (1):
-      uas: fix comparison for error code
-
-Pete Zaitcev (1):
-      usb: usbmon: Read text within supplied buffer size
-
-Roger Quadros (1):
-      usb: dwc3: Fix lock-up on ID change during system suspend/resume
-
-Teijo Kinnunen (1):
-      USB: storage: Add JMicron bridge 152d:2567 to unusual_devs.h
-
-Xinyong (1):
-      usb: gadget: f_fs: Fix use-after-free in ffs_fs_kill_sb()
-
-Yoshihiro Shimoda (4):
-      usb: renesas_usbhs: add binding for r8a77965
-      usb: gadget: udc: renesas_usb3: add binging for r8a77965
-      usb: host: xhci-rcar: add support for r8a77965
-      usb: host: xhci-plat: revert "usb: host: xhci-plat: enable clk in resume timing"
-
- Documentation/devicetree/bindings/usb/dwc2.txt     |   2 +-
- .../devicetree/bindings/usb/renesas_usb3.txt       |   1 +
- .../devicetree/bindings/usb/renesas_usbhs.txt      |   1 +
- Documentation/devicetree/bindings/usb/usb-xhci.txt |   1 +
- drivers/phy/qualcomm/phy-qcom-ufs.c                |   5 +
- drivers/usb/core/message.c                         |   4 +
- drivers/usb/core/quirks.c                          |   3 +-
- drivers/usb/dwc2/params.c                          |   6 +-
- drivers/usb/dwc3/core.c                            |   2 +-
- drivers/usb/gadget/function/f_fs.c                 |   1 -
- drivers/usb/host/ohci-hcd.c                        |   3 +-
- drivers/usb/host/xhci-dbgcap.c                     |  20 ++-
- drivers/usb/host/xhci-dbgtty.c                     |  20 ++-
- drivers/usb/host/xhci-pci.c                        |   3 +
- drivers/usb/host/xhci-plat.c                       |  11 +-
- drivers/usb/host/xhci-rcar.c                       |   4 +
- drivers/usb/host/xhci.c                            |   3 +
- drivers/usb/host/xhci.h                            |  23 +--
- drivers/usb/mon/mon_text.c                         | 126 ++++++++++------
- drivers/usb/musb/musb_core.c                       |   4 +-
- drivers/usb/storage/uas.c                          |   2 +-
- drivers/usb/storage/unusual_devs.h                 |   7 +
- drivers/usb/typec/fusb302/fusb302.c                |   3 +-
- drivers/usb/typec/tcpm.c                           | 163 ++++++---------------
- drivers/usb/usbip/vudc_sysfs.c                     |   8 +-
- include/linux/usb/quirks.h                         |   3 +
- 26 files changed, 211 insertions(+), 218 deletions(-)
+ drivers/tty/n_tty.c                |  6 ++++++
+ drivers/tty/serial/8250/8250_pci.c | 21 ++++++++++++++++++---
+ drivers/tty/serial/atmel_serial.c  |  1 +
+ drivers/tty/serial/earlycon.c      |  3 ++-
+ drivers/tty/serial/imx.c           |  2 +-
+ drivers/tty/serial/serial_core.c   |  2 ++
+ drivers/tty/serial/sh-sci.c        |  2 ++
+ drivers/tty/tty_io.c               |  9 +++++++++
+ include/linux/tty.h                |  1 +
+ 9 files changed, 42 insertions(+), 5 deletions(-)
