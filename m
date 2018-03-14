@@ -1,137 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753473AbeCNGe5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:34:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55512 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753306AbeCNGez (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:34:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C051560314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 22/36] drm/bridge: analogix_dp: Fix incorrect
- operations with register ANALOGIX_DP_FUNC_EN_1
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
-        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
-        heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-23-enric.balletbo@collabora.com>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <ce105b52-cb47-5715-8494-24ae718418fb@codeaurora.org>
-Date: Wed, 14 Mar 2018 12:04:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-23-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753416AbeCNGgm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:36:42 -0400
+Received: from mx.socionext.com ([202.248.49.38]:51856 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeCNGgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 02:36:41 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: divide I2S and S/PDIF audio out pin-mux group
+Date: Wed, 14 Mar 2018 15:35:35 +0900
+Message-Id: <20180314063535.13303-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch divides large pin-mux group 'aio' of UniPhier LD11/LD20
+to 2 groups as following:
+  aout1   : 8ch I2S output: AO1DACCK, AO1BCK, AO1LRCK, AO1D[0-2]
+  aoutiec1: S/PDIF output : AO1IEC, AO1ARC
 
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 15 ++++++++++-----
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 15 ++++++++++-----
+ 2 files changed, 20 insertions(+), 10 deletions(-)
 
-On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: zain wang <wzz@rock-chips.com>
-> 
-> Register ANALOGIX_DP_FUNC_EN_1(offset 0x18), Rockchip is different to
-> Exynos:
-> 
-> on Exynos edp phy,
-> BIT 7		MASTER_VID_FUNC_EN_N
-> BIT 6		reserved
-> BIT 5		SLAVE_VID_FUNC_EN_N
-> 
-> on Rockchip edp phy,
-> BIT 7		reserved
-> BIT 6		RK_VID_CAP_FUNC_EN_N
-> BIT 5		RK_VID_FIFO_FUNC_EN_N
-> 
-> So, we should do some private operations to Rockchip.
-
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-
-Thanks,
-Archit
-
-> 
-> Cc: Tomasz Figa <tfiga@chromium.org>
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 19 ++++++++++++++-----
->   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  2 ++
->   2 files changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> index 02ab1aaa9993..4eae206ec31b 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> @@ -126,9 +126,14 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
->   	analogix_dp_stop_video(dp);
->   	analogix_dp_enable_video_mute(dp, 0);
->   
-> -	reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
-> -		AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
-> -		HDCP_FUNC_EN_N | SW_FUNC_EN_N;
-> +	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
-> +		reg = RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N |
-> +			SW_FUNC_EN_N;
-> +	else
-> +		reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
-> +			AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
-> +			HDCP_FUNC_EN_N | SW_FUNC_EN_N;
-> +
->   	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
->   
->   	reg = SSC_FUNC_EN_N | AUX_FUNC_EN_N |
-> @@ -971,8 +976,12 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp)
->   	u32 reg;
->   
->   	reg = readl(dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
-> -	reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
-> -	reg |= MASTER_VID_FUNC_EN_N;
-> +	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type)) {
-> +		reg &= ~(RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N);
-> +	} else {
-> +		reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
-> +		reg |= MASTER_VID_FUNC_EN_N;
-> +	}
->   	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
->   
->   	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-> index b633a4a5082a..0cf27c731727 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-> @@ -127,7 +127,9 @@
->   
->   /* ANALOGIX_DP_FUNC_EN_1 */
->   #define MASTER_VID_FUNC_EN_N			(0x1 << 7)
-> +#define RK_VID_CAP_FUNC_EN_N			(0x1 << 6)
->   #define SLAVE_VID_FUNC_EN_N			(0x1 << 5)
-> +#define RK_VID_FIFO_FUNC_EN_N			(0x1 << 5)
->   #define AUD_FIFO_FUNC_EN_N			(0x1 << 4)
->   #define AUD_FUNC_EN_N				(0x1 << 3)
->   #define HDCP_FUNC_EN_N				(0x1 << 2)
-> 
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 8a5ecd6277d8..5ec5afa70413 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -470,8 +470,10 @@ static const struct pinctrl_pin_desc uniphier_ld11_pins[] = {
+ 			     166, UNIPHIER_PIN_PULL_DOWN),
+ };
+ 
+-static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
+-static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned aout1_pins[] = {137, 138, 139, 140, 141, 142};
++static const int aout1_muxvals[] = {0, 0, 0, 0, 0, 0};
++static const unsigned aoutiec1_pins[] = {135, 136};
++static const int aoutiec1_muxvals[] = {0, 0};
+ static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
+ static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
+ static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
+@@ -547,7 +549,8 @@ static const unsigned int gpio_range5_pins[] = {
+ };
+ 
+ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+-	UNIPHIER_PINCTRL_GROUP(aout),
++	UNIPHIER_PINCTRL_GROUP(aout1),
++	UNIPHIER_PINCTRL_GROUP(aoutiec1),
+ 	UNIPHIER_PINCTRL_GROUP(emmc),
+ 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rmii),
+@@ -573,7 +576,8 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range5),
+ };
+ 
+-static const char * const aout_groups[] = {"aout"};
++static const char * const aout1_groups[] = {"aout1"};
++static const char * const aoutiec1_groups[] = {"aoutiec1"};
+ static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_rmii_groups[] = {"ether_rmii"};
+ static const char * const i2c0_groups[] = {"i2c0"};
+@@ -592,7 +596,8 @@ static const char * const usb1_groups[] = {"usb1"};
+ static const char * const usb2_groups[] = {"usb2"};
+ 
+ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+-	UNIPHIER_PINMUX_FUNCTION(aout),
++	UNIPHIER_PINMUX_FUNCTION(aout1),
++	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
+ 	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c0),
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index 3be7967edae0..eb5d4cc6a3ba 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -551,8 +551,10 @@ static const struct pinctrl_pin_desc uniphier_ld20_pins[] = {
+ 			     175, UNIPHIER_PIN_PULL_DOWN),
+ };
+ 
+-static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
+-static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned aout1_pins[] = {137, 138, 139, 140, 141, 142};
++static const int aout1_muxvals[] = {0, 0, 0, 0, 0, 0};
++static const unsigned aoutiec1_pins[] = {135, 136};
++static const int aoutiec1_muxvals[] = {0, 0};
+ static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
+ static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
+ static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
+@@ -631,7 +633,8 @@ static const unsigned int gpio_range2_pins[] = {
+ };
+ 
+ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+-	UNIPHIER_PINCTRL_GROUP(aout),
++	UNIPHIER_PINCTRL_GROUP(aout1),
++	UNIPHIER_PINCTRL_GROUP(aoutiec1),
+ 	UNIPHIER_PINCTRL_GROUP(emmc),
+ 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rgmii),
+@@ -657,7 +660,8 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range2),
+ };
+ 
+-static const char * const aout_groups[] = {"aout"};
++static const char * const aout1_groups[] = {"aout1"};
++static const char * const aoutiec1_groups[] = {"aoutiec1"};
+ static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
+ static const char * const ether_rmii_groups[] = {"ether_rmii"};
+@@ -679,7 +683,8 @@ static const char * const usb2_groups[] = {"usb2"};
+ static const char * const usb3_groups[] = {"usb3"};
+ 
+ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+-	UNIPHIER_PINMUX_FUNCTION(aout),
++	UNIPHIER_PINMUX_FUNCTION(aout1),
++	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
+ 	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
+-- 
+2.16.1
