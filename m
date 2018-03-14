@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCNLJD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:09:03 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33364 "EHLO
+        id S1751532AbeCNLJC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:09:02 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33378 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeCNLI6 (ORCPT
+        with ESMTP id S1751512AbeCNLI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Mar 2018 07:08:58 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -15,9 +15,9 @@ To: Marek Vasut <marek.vasut+renesas@gmail.com>,
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] mfd: bd9571mwv: Add DDR Backup Power register bit definitions
-Date: Wed, 14 Mar 2018 12:08:40 +0100
-Message-Id: <1521025722-24205-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] regulator: bd9571mwv: Add support for DDR backup mode
+Date: Wed, 14 Mar 2018 12:08:42 +0100
+Message-Id: <1521025722-24205-5-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
 References: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
@@ -25,34 +25,217 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add definitions for the KEEPON_* bits in the "BKUP Mode Cnt" register,
-which control the DDR rails to be kept powered when backup mode is
-enabled.
+The BD9571MWV PMIC supports DDR backup mode, which keeps one or more DDR
+rails powered while the main SoC is powered down.
+
+Which DDR rails are to be kept powered is board-specific, and controlled
+using the optional "rohm,ddr-backup-power" DT property.  In the absence
+of this property, backup mode is not available.
+
+Backup mode can be enabled or disabled by the user using the standard
+"wakeup" virtual file in sysfs, e.g. to enable:
+
+    echo enabled > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
+
+When the PMIC is configured for backup mode, the role of the accessory
+power switch changes from a power switch to a wake-up switch.
+Two types of switches (or signals) can be used:
+  A. With a momentary power switch (or pulse signal), the PMIC is
+     configured for backup mode in the PMIC driver's suspend callback,
+     during system suspend.
+     Backup mode is enabled by default, as there is no further impact
+     during normal system operation.
+
+  B. With a toggle power switch (or level signal), the following steps
+     must be followed exactly:
+       1. Configure PMIC for backup mode,
+       2. Switch accessory power switch off, to prepare for system
+          suspend, which is a manual step not controlled by software,
+       3. Suspend system.
+     This mode is not yet supported by the driver.
+
+As the switch type is board-specific, and cannot be determined
+automatically, it is obtained from the presence of one of the
+"rohm,rstbmode-*" properties in DT.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 v2:
-  - Add Acked-by.
+  - Use normal "wakeup" sysfs virtual file instead of adding our own
+    "backup_mode" file,
+  - Differentiate between momentary and toggle power switches:
+      - Support for momentary switches is enabled automatically,
+      - Toggle switches are not yet supported (but still work when
+	backup mode is enabled using i2set from userspace).
 ---
- include/linux/mfd/bd9571mwv.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/regulator/bd9571mwv-regulator.c | 127 +++++++++++++++++++++++++++++++-
+ 1 file changed, 126 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
-index f0708ba4cbbae2dc..eb05569f752bb089 100644
---- a/include/linux/mfd/bd9571mwv.h
-+++ b/include/linux/mfd/bd9571mwv.h
-@@ -33,6 +33,11 @@
- #define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index c67a83d53c4cb76b..be574eb444ebda97 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -24,6 +24,18 @@
  
- #define BD9571MWV_BKUP_MODE_CNT			0x20
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK	GENMASK(3, 0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0	BIT(0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1	BIT(1)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0C	BIT(2)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1C	BIT(3)
- #define BD9571MWV_BKUP_MODE_STATUS		0x21
- #define BD9571MWV_BKUP_RECOVERY_CNT		0x22
- #define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
+ #include <linux/mfd/bd9571mwv.h>
+ 
++struct bd9571mwv_reg {
++	struct bd9571mwv *bd;
++
++	/* DDR Backup Power */
++	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
++	u8 bkup_mode_cnt_saved;
++
++	/* Power switch type */
++	bool rstbmode_level;
++	bool rstbmode_pulse;
++};
++
+ enum bd9571mwv_regulators { VD09, VD18, VD25, VD33, DVFS };
+ 
+ #define BD9571MWV_REG(_name, _of, _id, _ops, _vr, _vm, _nv, _min, _step, _lmin)\
+@@ -131,14 +143,99 @@ static struct regulator_desc regulators[] = {
+ 		      0x80, 600000, 10000, 0x3c),
+ };
+ 
++#ifdef CONFIG_PM_SLEEP
++static int bd9571mwv_bkup_mode_read(struct bd9571mwv *bd, unsigned int *mode)
++{
++	int ret;
++
++	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	if (ret) {
++		dev_err(bd->dev, "failed to read backup mode (%d)\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
++{
++	int ret;
++
++	ret = regmap_write(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	if (ret) {
++		dev_err(bd->dev, "failed to configure backup mode 0x%x (%d)\n",
++			mode, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int bd9571mwv_suspend(struct device *dev)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++	unsigned int mode;
++	int ret;
++
++	if (!device_may_wakeup(dev))
++		return 0;
++
++	/* Save DDR Backup Mode */
++	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	if (ret)
++		return ret;
++
++	bdreg->bkup_mode_cnt_saved = mode;
++
++	if (!bdreg->rstbmode_pulse)
++		return 0;
++
++	/* Enable DDR Backup Mode */
++	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
++	mode |= bdreg->bkup_mode_cnt_keepon;
++
++	if (mode != bdreg->bkup_mode_cnt_saved)
++		return bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++
++	return 0;
++}
++
++static int bd9571mwv_resume(struct device *dev)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++
++	if (!device_may_wakeup(dev))
++		return 0;
++
++	/* Restore DDR Backup Mode */
++	return bd9571mwv_bkup_mode_write(bdreg->bd, bdreg->bkup_mode_cnt_saved);
++}
++
++static const struct dev_pm_ops bd9571mwv_pm  = {
++	SET_SYSTEM_SLEEP_PM_OPS(bd9571mwv_suspend, bd9571mwv_resume)
++};
++
++#define DEV_PM_OPS	&bd9571mwv_pm
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ {
+ 	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
++	struct bd9571mwv_reg *bdreg;
+ 	struct regulator_dev *rdev;
++	unsigned int val;
+ 	int i;
+ 
+-	platform_set_drvdata(pdev, bd);
++	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
++	if (!bdreg)
++		return -ENOMEM;
++
++	bdreg->bd = bd;
++
++	platform_set_drvdata(pdev, bdreg);
+ 
+ 	config.dev = &pdev->dev;
+ 	config.dev->of_node = bd->dev->of_node;
+@@ -155,6 +252,33 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	val = 0;
++	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
++	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
++		dev_err(bd->dev, "invalid %s mode %u\n",
++			"rohm,ddr-backup-power", val);
++		return -EINVAL;
++	}
++	bdreg->bkup_mode_cnt_keepon = val;
++
++	bdreg->rstbmode_level = of_property_read_bool(bd->dev->of_node,
++						      "rohm,rstbmode-level");
++	bdreg->rstbmode_pulse = of_property_read_bool(bd->dev->of_node,
++						      "rohm,rstbmode-pulse");
++	if (bdreg->rstbmode_level && bdreg->rstbmode_pulse) {
++		dev_err(bd->dev, "only one rohm,rstbmode-* may be specified");
++		return -EINVAL;
++	}
++
++	if (bdreg->bkup_mode_cnt_keepon) {
++		device_set_wakeup_capable(&pdev->dev, true);
++		/*
++		 * Wakeup is enabled by default in pulse mode, but needs
++		 * explicit user setup in level mode.
++		 */
++		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -167,6 +291,7 @@ MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
+ static struct platform_driver bd9571mwv_regulator_driver = {
+ 	.driver = {
+ 		.name = "bd9571mwv-regulator",
++		.pm = DEV_PM_OPS,
+ 	},
+ 	.probe = bd9571mwv_regulator_probe,
+ 	.id_table = bd9571mwv_regulator_id_table,
 -- 
 2.7.4
