@@ -1,104 +1,149 @@
-Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521502337; cv=none;
-        d=google.com; s=arc-20160816;
-        b=W9LiavbD3HwmxwKEGdnzWQwc3OF4r0q0FAoOJgxIfsUbHe6LRMX6D7K84nrvswKBlR
-         0u0SqCV3HtoTbRF5r5YV0BthJ6Gx9Yk9+Cq9gQnJvXs3bDDwFBYGXcsjaJbdWIPw8pl5
-         ZkK1lJGzf60zBiaJxmvLGVs7+WgQvQetGI7AYgaLCySuOXHEv3bq4qzi3z1vu6W8fiPn
-         89yCQX5MKtuXvueWbosUrWUpOPPRp4i4rcZxyLjhJQJZMflqzvYjVZsfOx05VO458Hfx
-         1eK4A6+vt4H+LULCOEuM4ETimIlqwkyS3BKnmlVd0cw7wT+/I3k1aTk5of6hk9dCcl11
-         62PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=EUVL9Bxc19Zmdf1zgW6RhsP68hL1N48Cb3dQSL+9eO0=;
-        b=JR9Yn3E9+amlwuTkAKVEomD+Cx2B/VfHsijyLfTtfzHRc/vg7XOwBn9zkop47iJ9gh
-         BeGNCSvEvGyMswQcdN7ZhgqbTLTpdni/C3f59PFJektZm4xeEvWlv5PVJOVsNu/iRlmb
-         jj6yFkyJrgLGc6AqyU4/09GRVCT117/UtdsSvy+LLSogCcrI7zo4pPDQj+lvI8gPbjDy
-         1fj+X8X9fORncgKIfottHy38j46K/zt+ynGcZ+vDs6ZeqCWBBW+P5rx7f4L5Fyr9qLst
-         5MPJjIeUn6MSl7nMyqPCb6EO8H45jYdDs+DY/EUxGRYyroBDmn7YiZItJShZ7wG6gtNQ
-         mddA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ONk3sTLD;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ONk3sTLD;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELtsobUwN12N7V8U627EFZ+JVmSsxqo8W8s2dujIKe0SJRnVLBfSH7XPOsnlERmLXriGu4Cio2G3/c4Tp4jgvx4=
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1280822-1521020518-2-16394633731956110082
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES dasven, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521020517; b=rCSvGcjmjUtIW7+M5OpL2LjCa+QthabFtXSIZObCEfe5nzi
+    GVmLs2PE8S1fZAvNoT4G0ixJSYJyf5B4RGQtXHf8F28+Zq3QgS9yhstADEggbyIa
+    wzkgfd7pNG/zZO6Ab6zMlMX2iAxkrszczqTk/5Qb6iXsOH8znH70DJlTP8lxZf2U
+    if4spVgEKaoQLtGc1GpY4/BPBKC96S2uujKtA8B9Z7Wko/4aUs26Xy0R8UEinS+u
+    BEgCW2xz50NixI8PlAifb+YwoGJDYsL86dOhiYBA2/iwEnBAxqg2+BxGCic9TcbK
+    LVhxl7YTQw49fnrgOxWv2r0J/i645an+eGqep2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-id:mime-version:content-transfer-encoding
+    :sender:list-id; s=arctest; t=1521020517; bh=dVNYAiewxVB9GaxdY+y
+    tXmE2ISnU/lGrxXL01MH/J6M=; b=ShAkPA5Sez246NxIQif2VoHYBjav6LyTkRt
+    hP1OugGtWp2O2+SB6H3mtD4sz3GpGVhPHS3WsXt6nxlOIBQqT9Gq0TszEQCmnGbX
+    HeQe9MhNZP7TmvR/mg3YEzASqeQWslxp1Ldnhm4W9VO3+xI+7zYk0Y9bRMKXuKC3
+    pcRO7TxPYbAl+zn+3qGjAY4QGZ+TXIresMNiOE0XePyz7MxJPPesfBpfiwhAswyR
+    waNmcEeE+S8eQZpHySu+zlbmOyP4Pc4pJQURnPWbxPdqoPbMBoesWviOdm2JJ4+4
+    7uV/RCNr7YxO+pYy/depLNeDoSaN7QyVQTqBv98sqsUyr3lQ+RQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.co.uk);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=vzBCRSGV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.co.uk);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=vzBCRSGV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751381AbeCNJlz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 05:41:55 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:47370 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNJlx (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 14 Mar 2018 05:41:53 -0400
+X-IronPort-AV: E=Sophos;i="5.47,469,1515456000";
+   d="scan'208";a="599674396"
+From: "Tautschnig, Michael" <tautschn@amazon.co.uk>
+To: "x86@kernel.org" <x86@kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH] x86/sigreturn: use SYSCALL_DEFINE0  
+Thread-Topic: [PATCH] x86/sigreturn: use SYSCALL_DEFINE0  
+Thread-Index: AQHTu3ioXWZ/5N/YjEqO1zxD9uUWOA==
+Date: Wed, 14 Mar 2018 09:41:42 +0000
+Message-ID: <9C9981F4-0E5E-42A7-8788-70F3DEAD258D@amazon.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.101]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BBB771763136B645B98AA59E70099F0B@amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hd100vzl2.wl-tiwai@suse.de>
-References: <20180319061108.24178-1-k.marinushkin@gmail.com>
- <20180319074019.GA30688@kroah.com> <s5hzi34o6ai.wl-tiwai@suse.de> <s5hd100vzl2.wl-tiwai@suse.de>
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Date: Tue, 20 Mar 2018 01:32:16 +0200
-Message-ID: <CAB=otbRC+5CxFAW2doYDps9p14dJXRNSw1-XyW7iqb=NvsMNiQ@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: usb-audio: Fix parsing descriptor of UAC2
- processing unit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Kirill Marinushkin <k.marinushkin@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>, Philippe Ombredanne <pombredanne@nexb.com>,
-	Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595345312154569888?=
-X-GMAIL-MSGID: =?utf-8?q?1595410834598519409?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 5:45 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Mon, 19 Mar 2018 08:47:49 +0100,
-> Takashi Iwai wrote:
->>
->> On Mon, 19 Mar 2018 08:40:19 +0100,
->> Greg Kroah-Hartman wrote:
->> >
->> > On Mon, Mar 19, 2018 at 07:11:08AM +0100, Kirill Marinushkin wrote:
->> > > Currently, the offsets in the UAC2 processing unit descriptor are
->> > > calculated incorrectly. It causes an issue when connecting the device which
->> > > provides such a feature:
->> > >
->> > > ~~~~
->> > > [84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
->> > > ~~~~
->> > >
->> > > After this patch is applied, the UAC2 processing unit inits w/o this error.
->> > >
->> > > Fixes: 5e1ddb481776 ("UAPI: (Scripted) Disintegrate include/linux/usb")
->> > > Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
->> > > Cc: Mark Brown <broonie@kernel.org>
->> > > Cc: Jaroslav Kysela <perex@perex.cz>
->> > > Cc: Takashi Iwai <tiwai@suse.com>
->> > > Cc: Thomas Gleixner <tglx@linutronix.de>
->> > > Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
->> > > Cc: Philippe Ombredanne <pombredanne@nexb.com>
->> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> > > Cc: Ruslan Bilovol <ruslan.bilovol@gmail.com>
->> > > Cc: linux-kernel@vger.kernel.org
->> > > Cc: alsa-devel@alsa-project.org
->> > > ---
->> > >  include/uapi/linux/usb/audio.h | 4 ++--
->> > >  1 file changed, 2 insertions(+), 2 deletions(-)
->> >
->> >     Cc: stable <stable@vger.kernel.org>
->> >  perhaps?
->>
->> Yes, it deserves.  But I'd need to double-check the UAC2
->> specification.  It's interesting that such a basic thing hasn't hit
->> until now.  Maybe just because it's a fairly minor feature.
->
-> ... and the patch looks correct, after confirming the UAC2 spec.
-> Now I applied it, with a minor correction of Fixes tag, which actually
-> was introduced by 23caaf19b11e ("ALSA: usb-mixer: Add support for
-> Audio Class v2.0"), and adding Cc to stable.
->
+All definitions of syscalls in x86 except for those patched here have
+already been using the appropriate SYSCALL_DEFINE*.
 
-I also checked UAC1/UAC2 spec and the patch looks good.
-What's interesting it seems nobody faced this issue (after searching
-ower Internet can't find any mention) which was present from the
-beginning of UAC2 driver implementation.
+Signed-off-by: Michael Tautschnig <tautschn@amazon.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jaswinder Singh <jaswinder@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/kernel/signal.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
-Ruslan
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index b9e00e8..40ba242 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -25,6 +25,7 @@
+ #include <linux/user-return-notifier.h>
+ #include <linux/uprobes.h>
+ #include <linux/context_tracking.h>
++#include <linux/syscalls.h>
+
+ #include <asm/processor.h>
+ #include <asm/ucontext.h>
+@@ -601,7 +602,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+  * Do a signal return; undo the signal stack.
+  */
+ #ifdef CONFIG_X86_32
+-asmlinkage unsigned long sys_sigreturn(void)
++SYSCALL_DEFINE0(sigreturn)
+ {
+ 	struct pt_regs *regs =3D current_pt_regs();
+ 	struct sigframe __user *frame;
+@@ -633,7 +634,7 @@ asmlinkage unsigned long sys_sigreturn(void)
+ }
+ #endif /* CONFIG_X86_32 */
+
+-asmlinkage long sys_rt_sigreturn(void)
++SYSCALL_DEFINE0(rt_sigreturn)
+ {
+ 	struct pt_regs *regs =3D current_pt_regs();
+ 	struct rt_sigframe __user *frame;
+--
+2.7.3.AMZN
+
+
+
+Amazon Web Services UK Limited. Registered in England and Wales with regist=
+ration number 08650665 with its registered office at 1 Principal Place, Wor=
+ship Street, London, EC2A 2FA, United Kingdom.
+
+
+
