@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751420AbeCNEGV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:06:21 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35991 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeCNEGT (ORCPT
+        id S1753285AbeCNEG2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:06:28 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34371 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751296AbeCNEGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:06:19 -0400
-X-Google-Smtp-Source: AG47ELtlFDQ4mlhzBWSOLxQbrGBdxuv1EpySHCKLnGC26ExXOR6TVLpGaJxBPvezuyvDqhIBLrXW6Q==
+        Wed, 14 Mar 2018 00:06:20 -0400
+X-Google-Smtp-Source: AG47ELu5PS1PhnojDkvvMZs7gkk4nbkm2GdM9JEV2eBP0A5P5Ggp9tdhg1qaWZw43Dwewt9RgF4RNw==
 From: Deepa Dinamani <deepa.kernel@gmail.com>
 To: arnd@arndb.de, tglx@linutronix.de, john.stultz@linaro.org
 Cc: linux-kernel@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH v5 04/10] arch: introduce CONFIG_64BIT_TIME
-Date: Tue, 13 Mar 2018 21:03:27 -0700
-Message-Id: <20180314040333.3291-5-deepa.kernel@gmail.com>
+Subject: [PATCH v5 05/10] arch: Introduce CONFIG_COMPAT_32BIT_TIME
+Date: Tue, 13 Mar 2018 21:03:28 -0700
+Message-Id: <20180314040333.3291-6-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180314040333.3291-1-deepa.kernel@gmail.com>
 References: <20180314040333.3291-1-deepa.kernel@gmail.com>
@@ -21,39 +21,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a total of 53 system calls (aside from ioctl) that pass a time_t
-or derived data structure as an argument, and in order to extend time_t
-to 64-bit, we have to replace them with new system calls and keep providing
-backwards compatibility.
+Compat functions are now used to support 32 bit time_t in
+compat mode on 64 bit architectures and in native mode on
+32 bit architectures.
 
-To avoid adding completely new and untested code for this purpose, we
-introduce a new CONFIG_64BIT_TIME symbol. Every architecture that supports
-new 64 bit time_t syscalls enables this config.
+Introduce COMPAT_32BIT_TIME to conditionally compile these
+functions.
 
-After this is done for all architectures, the CONFIG_64BIT_TIME symbol
-will be deleted.
+Note that turning off 32 bit time_t support requires more
+changes on architecture side. For instance, architecure
+syscall tables need to be updated to drop support for 32 bit
+time_t syscalls.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- arch/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/Kconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/Kconfig b/arch/Kconfig
-index 8e0d665c8d53..16e6acfe8711 100644
+index 16e6acfe8711..4377b0cec976 100644
 --- a/arch/Kconfig
 +++ b/arch/Kconfig
-@@ -870,6 +870,14 @@ config OLD_SIGACTION
- config COMPAT_OLD_SIGACTION
- 	bool
+@@ -878,6 +878,13 @@ config 64BIT_TIME
+ 	  architectures, and 64-bit architectures as part of compat syscall
+ 	  handling.
  
-+config 64BIT_TIME
-+	def_bool ARCH_HAS_64BIT_TIME
++config COMPAT_32BIT_TIME
++	def_bool (!64BIT && 64BIT_TIME) || COMPAT
 +	help
-+	  This should be selected by all architectures that need to support
-+	  new system calls with a 64-bit time_t. This is relevant on all 32-bit
-+	  architectures, and 64-bit architectures as part of compat syscall
-+	  handling.
++	  This enables 32 bit time_t support in addition to 64 bit time_t support.
++	  This is relevant on all 32-bit architectures, and 64-bit architectures
++	  as part of compat syscall handling.
 +
  config ARCH_NO_COHERENT_DMA_MMAP
  	bool
