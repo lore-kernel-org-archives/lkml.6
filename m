@@ -1,84 +1,129 @@
-Return-Path: <Jason@zx2c4.com>
-X-Google-Smtp-Source: AG47ELvnaphi0/HYllSujxMnw+GWvwf9cfCt1QJKxP+29wxbvrIsQC6vNpXbW1LNEZTS729AIK2c
-ARC-Seal: i=1; a=rsa-sha256; t=1520350798; cv=none;
-        d=google.com; s=arc-20160816;
-        b=s7yN9c55hPmy5Vb9d3OZ+Eh/532Ck+WPD8LrE9XETfgyH3CZGm8VoNaXr34EHUWeHf
-         kCTLd5MyzuCfjpSuxWWWRqAOpo7ej4V+Xf6o5UJJWjdaIYyNxcGCX5tkBU/447hg1idZ
-         AdKj+uxAV8+Ii1rNMuT6Z4ZuxP1pqafNLoa5l/t23kSjwg5aQ76jtJ+qlikJrW3EeeRN
-         12xt9rLP2icOoK3lRRdYpHA4dPpCMbol/4wQ66ceU3g9Ik8jWvj4/MfFT3rB1g260Ugx
-         kHoW1zwyPT4qIsft4aigRF0nW1osKWnGur8zcGAU2YU6F5Jxnkm185bdmsEKXUF7kue6
-         8zGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=JWfYnwLLlBWikPsD/qK93wKdBkAMpXCBwqcisfGjfFI=;
-        b=u9Xo82j47QIOoDLQKPForgJDs3hcEmKq3UF6cyjvslJZ2LNtUASJQuQNvlDKWhiNX/
-         /cGh1Cw+ckSPBRSOSdUGDzZvZkCJvjYTf8ijeVHTN7NLGwH+kH8ZjoDfhqL3FF8sLwOs
-         WS6fkCdKwQmycETTnTwZ/3QMWKBap3s4k7KtNVlhSnML0HSGePvdfRjsQeSfllWcoVQf
-         xsY+rIku2jzoYjwRXQkp4/n9Vzz6uKyVvNdgmQQVlMXcnnL9nQ5+mO1Wl0i9QCg1fcZL
-         5DNqi8yw4povWefCuiZQfuwUYkhrjFhG24aTfut89m+OUqOxen5Jkk2T6NiyOkGrUzMY
-         vsjg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@zx2c4.com header.s=mail header.b=Wu0ZHSnu;
-       spf=pass (google.com: domain of jason@zx2c4.com designates 192.95.5.64 as permitted sender) smtp.mailfrom=Jason@zx2c4.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=zx2c4.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@zx2c4.com header.s=mail header.b=Wu0ZHSnu;
-       spf=pass (google.com: domain of jason@zx2c4.com designates 192.95.5.64 as permitted sender) smtp.mailfrom=Jason@zx2c4.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=zx2c4.com
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2286252-1521051044-2-8659882274445554327
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521051043; b=eHANUEG804GUKEfej09CAMub/p6h1sdoZYtHD3OtSAo6KUK
+    1s3tlb24orTQ1IRMedbMCZtLNMqnXJ91v8X0RLm4z5VP+aN/cOkdpGPWz4QC97g1
+    q6SBhu4nbRSff1lxKqnO4r9YbO0GbT55YaE76fBXoyEu7I3hf7IARM0aQEdFpZE4
+    M64FmVJtiOjF3yQEdX9zuFRR/2YSNHZ1c2SykS230s4q+tj1mYfK5Xl0WMvfjCGe
+    ZtYaAIWiQwuSO/eDtJD8NeE1NyMG0HEXk8dMU/QZK/MHdvzZjKsDnwTA1qvxw9gx
+    3bkPiXMx8xj/a6ncuBYLDGS1gZAgcqNOaV7Opfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521051043; bh=D
+    lSzKJYWJpt0UmNgknoxo3YR7cm3YLLcWBcnNIk3qLQ=; b=e2gp6Kh5rZhUlWHiY
+    gLsU8tmFgp1r4Z7he2QqmUsWBgHi7gGl2qlqzboyp12+DAxPb/uUzC7R5ICO5gwB
+    muQFVcIxWJ5bwl/oBykADlKyXs8sq1C24eM27LwemeNe+jwb4mduJBZZBWUW9JtN
+    KOVnBzYje9z0f1uBSMYnrDEG+DA9fWqPRF6rGpG3DdtRpHN5IeyjHO2vnUSpBVR2
+    T+nDMbUqB3byiYkxxdeBg3VJNmbHpZBWK9ZMy/nA/U2zhK5UlUPBSe97C6mT+Xqt
+    9sd+6nfkT3o5iGe5i827YsfXlMVd+SmOC7o2yDs8GDucoqldMZjZox8cR4e6O6U2
+    zCOdQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxcSi2eJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BG1u/85U;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxcSi2eJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BG1u/85U;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELsAqE9m9vbm4D5vUOB/x+p8sfcrVE7c4CHzX1WFMrqiiXyN4UWaziqWOsWhoKLWOpsbkvrtrg==
+Date: Wed, 14 Mar 2018 15:10:00 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Barry Song <21cnbao@gmail.com>, John Syne <john3909@gmail.com>
+Subject: [PATCH 0/7] staging:iio:ade7854: Cleanup on I2C/SPI code
+Message-ID: <cover.1521037060.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzLR2DbGnAKQwg79Ob9dpkOM1Z7bxkjyPBSp3Zdxmk5eQ@mail.gmail.com>
-References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <CALCETrUF61fqjXKG=kwf83JWpw=kgL16UvKowezDVwVA1=YVAw@mail.gmail.com>
- <20180209191112.55zyjf4njum75brd@suse.de> <20180210091543.ynypx4y3koz44g7y@angband.pl>
- <CA+55aFwdLZjDcfhj4Ps=dUfd7ifkoYxW0FoH_JKjhXJYzxUSZQ@mail.gmail.com>
- <20180211105909.53bv5q363u7jgrsc@angband.pl> <6FB16384-7597-474E-91A1-1AF09201CEAC@gmail.com>
- <20180213085429.GB10278@kroah.com> <CA+55aFzLR2DbGnAKQwg79Ob9dpkOM1Z7bxkjyPBSp3Zdxmk5eQ@mail.gmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 6 Mar 2018 16:39:43 +0100
-X-Gmail-Original-Message-ID: <CAHmME9rntZnGBfN_yp5+zBBpXiinFJTU2RkuREa4a5DQGiMB7A@mail.gmail.com>
-Message-ID: <CAHmME9rntZnGBfN_yp5+zBBpXiinFJTU2RkuREa4a5DQGiMB7A@mail.gmail.com>
-Subject: Re: [PATCH 00/31 v2] PTI support for x86_32
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Mark D Rustad <mrustad@gmail.com>,
-	Adam Borowski <kilobyte@angband.pl>, Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>, Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>, Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-	WireGuard mailing list <wireguard@lists.zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180223
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591914900490843452?=
-X-GMAIL-MSGID: =?utf-8?q?1594203358431795980?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Linus,
+This patchset reworks the I2C/SPI code from meter module. The set of
+patches try to reduce the code duplication and make the communication
+reliable. The current version of the module had many code duplications,
+which make the code more error-prone and hard to read. Jonh Syne
+identified some wrong error handling and fixed it in his patches; in
+this series of patches I analyzed Jonh's fixes, and use it in the new
+code.
 
-On Tue, Feb 13, 2018 at 6:25 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> So let's try to fix the iscsi and ipsec issues. Not that anybody sane
-> should use that overly complex ipsec thing, and I think we should
-> strive to merge WireGuard and get people moved over to that instead,
-> but I haven't heard anything from davem about it since I last asked..
-> I have some hope that it's slowly happening.
+It is important to highlight that meter module is under observation, due
+to the lack of hardware and the old design of the chip. However, John
+has the hardware for testing and interest to help to update the code
+[1]. As a result, this patchset represents the first work effort to
+update the meter module in the staging.
 
-Sorry for missing this comment earlier. We're really quite close to a
-point where we can post our v1 patchset. I'm headed on the road this
-week, but will be back on the first of April, and I expect that
-sometime in the spring we should begin to have the cycles of posting
-patches and receiving reviews and getting this into shape for shipping
-upstream.
+1 - https://marc.info/?l=linux-iio&m=152046885922153&w=2 
 
-So, fear not, we're still rolling ahead!
+Rodrigo Siqueira (7):
+  staging:iio:ade7854: Rework I2C write function
+  staging:iio:ade7854: Rework SPI write function
+  staging:iio:ade7854: Replace many functions for one function
+  staging:iio:ade7854: Rework I2C read function
+  staging:iio:ade7854: Rework SPI read function
+  staging:iio:ade7854: Remove read_reg_* duplications
+  staging:iio:ade7854: Add proper error handling condition.
 
-Regards,
-Jason
+ drivers/staging/iio/meter/ade7854-i2c.c | 236 ++++++++--------------------
+ drivers/staging/iio/meter/ade7854-spi.c | 268 +++++++-------------------------
+ drivers/staging/iio/meter/ade7854.c     |  44 +++---
+ drivers/staging/iio/meter/ade7854.h     |  23 +--
+ 4 files changed, 160 insertions(+), 411 deletions(-)
+
+-- 
+2.16.2
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
