@@ -1,82 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932958AbeCNBAz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 21:00:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35126 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932634AbeCNBAx (ORCPT
+        id S933054AbeCNBJu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 21:09:50 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:39216 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932992AbeCNBJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:00:53 -0400
-References: <20180306102303.9063-1-takahiro.akashi@linaro.org> <20180306102303.9063-3-takahiro.akashi@linaro.org> <20180308011303.GB2600@dhcp-128-65.nay.redhat.com>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>, vgoyal@redhat.com,
-        bhe@redhat.com, mpe@ellerman.id.au, prudo@linux.vnet.ibm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] kexec_file,x86,powerpc: factor out kexec_file_ops functions
-In-reply-to: <20180308011303.GB2600@dhcp-128-65.nay.redhat.com>
-Date: Tue, 13 Mar 2018 22:00:39 -0300
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18031401-0020-0000-0000-00000D9659A7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008668; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01002682; UDB=6.00510218; IPR=6.00782011;
- MB=3.00020017; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 01:00:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031401-0021-0000-0000-0000607BF6E9
-Message-Id: <87zi3b8o94.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140008
+        Tue, 13 Mar 2018 21:09:48 -0400
+X-Google-Smtp-Source: AG47ELtsCly5mZLfS87MKrTFv+bIJCcIeCkqgTPEqPIWmGRdfM0Kh/nFqmzcCvfFQ7Bf9C2GZc/SMw==
+Message-ID: <1520989785.5128.16.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: vb2: unify calling of set_page_dirty_lock
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 13 Mar 2018 21:09:45 -0400
+In-Reply-To: <1520988249.5128.13.camel@ndufresne.ca>
+References: <20170829112603.32732-1-stanimir.varbanov@linaro.org>
+         <1507650010.2784.11.camel@ndufresne.ca>
+         <20171015204014.2awhhygw6hi3lxas@valkosipuli.retiisi.org.uk>
+         <1508108964.4502.6.camel@ndufresne.ca>
+         <20171017101420.5a5cvyhkadmcqgfy@valkosipuli.retiisi.org.uk>
+         <1508249953.19297.4.camel@ndufresne.ca>
+         <8f1eda59-fc51-b77e-ae43-9603b5759b14@linaro.org>
+         <1520988249.5128.13.camel@ndufresne.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Le mardi 13 mars 2018 à 20:44 -0400, Nicolas Dufresne a écrit :
+> Le mercredi 18 octobre 2017 à 11:34 +0300, Stanimir Varbanov a écrit
+> :
+> > 
+> > On 10/17/2017 05:19 PM, Nicolas Dufresne wrote:
+> > > Le mardi 17 octobre 2017 à 13:14 +0300, Sakari Ailus a écrit :
+> > > > On Sun, Oct 15, 2017 at 07:09:24PM -0400, Nicolas Dufresne
+> > > > wrote:
+> > > > > Le dimanche 15 octobre 2017 à 23:40 +0300, Sakari Ailus a
+> > > > > écrit
+> > > > > :
+> > > > > > Hi Nicolas,
+> > > > > > 
+> > > > > > On Tue, Oct 10, 2017 at 11:40:10AM -0400, Nicolas Dufresne
+> > > > > > wrote:
+> > > > > > > Le mardi 29 août 2017 à 14:26 +0300, Stanimir Varbanov a
+> > > > > > > écrit :
+> > > > > > > > Currently videobuf2-dma-sg checks for dma direction for
+> > > > > > > > every single page and videobuf2-dc lacks any dma
+> > > > > > > > direction
+> > > > > > > > checks and calls set_page_dirty_lock unconditionally.
+> > > > > > > > 
+> > > > > > > > Thus unify and align the invocations of
+> > > > > > > > set_page_dirty_lock
+> > > > > > > > for videobuf2-dc, videobuf2-sg  memory allocators with
+> > > > > > > > videobuf2-vmalloc, i.e. the pattern used in vmalloc has
+> > > > > > > > been
+> > > > > > > > copied to dc and dma-sg.
+> > > > > > > 
+> > > > > > > Just before we go too far in "doing like vmalloc", I
+> > > > > > > would
+> > > > > > > like to
+> > > > > > > share this small video that display coherency issues when
+> > > > > > > rendering
+> > > > > > > vmalloc backed DMABuf over various KMS/DRM driver. I can
+> > > > > > > reproduce
+> > > > > > > this
+> > > > > > > easily with Intel and MSM display drivers using UVC or
+> > > > > > > Vivid as
+> > > > > > > source.
+> > > > > > > 
+> > > > > > > The following is an HDMI capture of the following
+> > > > > > > GStreamer
+> > > > > > > pipeline
+> > > > > > > running on Dragonboard 410c.
+> > > > > > > 
+> > > > > > >     gst-launch-1.0 -v v4l2src device=/dev/video2 !
+> > > > > > > video/x-
+> > > > > > > raw,format=NV16,width=1280,height=720 ! kmssink
+> > > > > > >     https://people.collabora.com/~nicolas/vmalloc-issue.m
+> > > > > > > ov
+> > > > > > > 
+> > > > > > > Feedback on this issue would be more then welcome. It's
+> > > > > > > not
+> > > > > > > clear
+> > > > > > > to me
+> > > > > > > who's bug is this (v4l2, drm or iommu). The software is
+> > > > > > > unlikely to
+> > > > > > > be
+> > > > > > > blamed as this same pipeline works fine with non-vmalloc
+> > > > > > > based
+> > > > > > > sources.
+> > > > > > 
+> > > > > > Could you elaborate this a little bit more? Which Intel CPU
+> > > > > > do you
+> > > > > > have
+> > > > > > there?
+> > > > > 
+> > > > > I have tested with Skylake and Ivy Bridge and on Dragonboard
+> > > > > 410c
+> > > > > (Qualcomm APQ8016 SoC) (same visual artefact)
+> > > > 
+> > > > I presume kmssink draws on the display. Which GPU did you use?
+> > > 
+> > > In order, GPU will be Iris Pro 580, Intel® Ivybridge Mobile and
+> > > an
+> > > Adreno (3x ?). Why does it matter ? I'm pretty sure the GPU is
+> > > not
+> > > used
+> > > on the DB410c for this use case.
+> > 
+> > Nicolas, for me this looks like a problem in v4l2. In the case of
+> > vivid
+> > the stats overlay (where the coherency issues are observed, and
+> > most
+> > probably the issue will be observed on the whole image but
+> > fortunately
+> > it is a static image pattern) are filled by the CPU but I cannot
+> > see
+> > where the cache is flushed. Also I'm wondering why .finish method
+> > is
+> > missing for dma-vmalloc mem_ops.
+> > 
+> > To be sure that the problem is in vmalloc v4l2 allocator, could you
+> > change the allocator to dma-contig, there is a module param for
+> > that
+> > called 'allocators'.
+> 
+> I've looked into this again. I have hit the same issue but with CPU
+> to
+> DRM, using DMABuf allocated from DRM Dumb buffers. In that case,
+> using
+> DMA_BUF_IOCTL_SYNC fixes the issues.
+> 
+> This raises a lot of question around the model used in V4L2. As you
+> mention, prepare/finish are missing in dma-vmalloc mem_ops. I'll give
+> a
+> try implementing that, it should cover my initial use case, but then
+> I
+> believe it will fail if my pipeline is:
+> 
+>   UVC -> in plane CPU modification -> DRM
+> 
+> Because we don't implement begin/end_cpu_access on our exported
+> DMABuf.
+> It should also fail for the following use case:
+> 
+>   UVC (importer) -> DRM
+> 
+> UVC driver won't call the remote dmabuf being/end_cpu_access method.
+> This one is difficult because UVC driver and vivid don't seem to be
+> aware of being an importer, exported or simply exporting to CPU
+> (through mmap). I believe what we have now pretty much assumes the
+> what
+> we export as vmalloc is to be used by CPU only. Also, the usual
+> direction used by prepare/finish ops won't work for drivers like
+> vivid
+> and UVC that write into the buffers using the cpu.
+> 
+> To be continued ...
 
-Dave Young <dyoung@redhat.com> writes:
+While I was writing that, I was already outdated, as of now, we only
+have one ops, called sync. This implements the to_cpu direction only.
 
-> On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
->> As arch_kexec_kernel_image_{probe,load}(),
->> arch_kimage_file_post_load_cleanup() and arch_kexec_kernel_verify_sig()
->> are almost duplicated among architectures, they can be commonalized with
->> an architecture-defined kexec_file_ops array. So let's factor them out.
->> 
->> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
->> Cc: Dave Young <dyoung@redhat.com>
->> Cc: Vivek Goyal <vgoyal@redhat.com>
->> Cc: Baoquan He <bhe@redhat.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
->> ---
->>  arch/powerpc/include/asm/kexec.h            |  2 +-
->>  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
->>  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++-----------------
->>  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
->>  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
->>  arch/x86/kernel/machine_kexec_64.c          | 45 +---------------------
->>  include/linux/kexec.h                       | 13 +++----
->>  kernel/kexec_file.c                         | 60 +++++++++++++++++++++++++++--
->>  8 files changed, 71 insertions(+), 94 deletions(-)
->> 
->
-> For this patch it also needs some review from powerpc people. 
-
-FWIW:
-
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-
-Also, tested on a ppc64le KVM guest:
-
-Tested-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+> 
+> Nicolas
+> 
+> 
