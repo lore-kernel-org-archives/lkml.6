@@ -1,74 +1,336 @@
-Return-Path: <SRS0=4QCZ=GE=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AG47ELutCZoQBUHIecnwYEb+nL0iBc/zNbnSRmov5TftNuA8S+FSnOkywZj1IJzO8zSzB1w/qkA2
-ARC-Seal: i=1; a=rsa-sha256; t=1521064693; cv=none;
+Return-Path: <mhiramat@kernel.org>
+X-Google-Smtp-Source: AG47ELuNhNChuPPqTZSjhSjbfJNKpZoQH5+N0rdCheww9KearvIZqz/fXboJwv/ViaZrChoLEFlN
+ARC-Seal: i=1; a=rsa-sha256; t=1521035297; cv=none;
         d=google.com; s=arc-20160816;
-        b=HRRTUQSO8eJNW4NoHXxMuEdCLnt0mWBL/GFiVNu9gAHBinXy3gyrZWxTVjGZP46uTt
-         gxyvtAqNlgIQqPVvN1e2xvPRUrhDwu6goZ8HlLk967/MEKmPkM7QyeJ/oNUuNHzVGj1W
-         t/QCQ/jKWoLXRQzU50hKgc0HOsr6xisQyPLuIKZRQD4KV4COTxB8inMiRdVsEbswCG1m
-         0a549CKqQraqkRqBsA6CnFHtEPRIkiMzMkmbAGFNI5mIC4yzUVyuYgvTaRncrVpDzT8R
-         BCSqCf4wA4BMHCcrvgJTvYryGGiwf8fT5X/7byUy+RnAHiy4wRU//q+4eNdrvsTB6D8Z
-         /klw==
+        b=rmkIaR6uIPpGOq93U+I/olYxj+/C0joao5tzds6wbcLb3INF8e3rkOjUVbUaB0/5gm
+         pu9n6EQYQQto8JqlJLxCukE56jkqskFO24lyU6TdrzDai0pGsq6kL4i1EbwvIQ47QsZO
+         BRfVfgPKMNFmuQEai2JzYD7SvujvNPkk+O+NpKlENUnOI1+QGOO3RNEGTsJVnEGliGox
+         DkEcteJJ8SFx/Nn1pFLC7GVdPuBdKqmOPfXDYu/K4T+Zg9ww5o6btLy++rwPXC9NN4iM
+         54dOMuZzk0MvQVCfsk08lAILHOlKCdpZPUrFKYh07zQlc9l9OELfV0mNIX8+5mhssaYv
+         2Vjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:dmarc-filter
          :arc-authentication-results;
-        bh=kv+RZO3+wDeOMLV2pJT0qDpTRRw58JJNqdAmvBd+U4s=;
-        b=ZyiVUnLsRdHYdiOh0kmNJnmpV4+bWGI6FE0KctsLlwrmNF6bSFjLdcsh77TGhD1vrN
-         +wIlCvTIgFb1XSu3qLjba8NN11MhNGX9rxug+9Os/crE4ipqboo01pB+3e5agdp8aasf
-         Nqjgn0wStzg1FjA1Vn/GDw6J+zAa67ueYEtSIT4LM/mGiaOpINIwKnpuNYtwcVlAEQTa
-         1Qn5HKcTN2iZ6julpxLoVHB8aV0tfUo6IE8/u9MUFAPYbMeXyI0BfzWYZ1rF8v+UV5kr
-         YFjKqYsf7ifmodyvWhC+Wu8S1QHBwCEGLMYn1X7WHOfo2BPLRZcP3fYUCaj7Sb/i6Feu
-         brvg==
+        bh=Q72wyokvCOvM381Exo0/cTRF1VQ9a8nFa5zNNtSbqE4=;
+        b=wKBi7/LCcxZaa5pFCz8Qq4IEHGWLYoKp8kfySkyvxukniTtMrapHSwypdhp0GYLKqk
+         rVwhLZKqKZJAAc0EVgt8cjwfXrDNAPSUJCOTwedbe+GYbtG+WPiXW6xlmeDlMBbt+rp9
+         zf8wv9y7udRgJoH607B0WNHmHbs62So7QkcWRDEQjxkf8jkaROd26lkLhCwU+qfrAxdi
+         CKY0ScArKoRtAsslYuDaDjbYF7UOJtx+0pCrIKMiWh1pT9EhpVfCVtCzHfQKVZ41aL3Q
+         aIRc8wUNEOslISHtFoBwkZbIvmq9KDClRsaMzp9uiXmIjz7iGC4oxUpbqOnjlbLXbifK
+         bhkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4qcz=ge=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4QCZ=GE=goodmis.org=rostedt@kernel.org
+       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4qcz=ge=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4QCZ=GE=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BAF204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 14 Mar 2018 17:58:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
+       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FDD208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Wed, 14 Mar 2018 22:48:09 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
- srikar@linux.vnet.ibm.com, acme@kernel.org, ananth@linux.vnet.ibm.com,
- akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
- alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
- gregkh@linuxfoundation.org, huawei.libin@huawei.com, hughd@google.com,
- jack@suse.cz, jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+ acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+ alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+ corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+ huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+ jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
  kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
  kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
  milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
  naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
- tglx@linutronix.de, tmricht@linux.vnet.ibm.com, willy@infradead.org,
- yao.jin@linux.intel.com, fengguang.wu@intel.com
+ rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+ willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com
 Subject: Re: [PATCH 5/8] trace_uprobe: Support SDT markers having reference
  count (semaphore)
-Message-ID: <20180314175811.1ca7d830@vmware.local.home>
+Message-Id: <20180314224809.5ee4c8834bb366faa398e342@kernel.org>
 In-Reply-To: <20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
 	<20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827101403620100?=
-X-GMAIL-MSGID: =?utf-8?q?1594951931801587996?=
+X-GMAIL-MSGID: =?utf-8?q?1594921108009813641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Hi Ravi,
 
 On Tue, 13 Mar 2018 18:26:00 +0530
 Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
 
->  include/linux/uprobes.h     |   2 +
->  kernel/events/uprobes.c     |   6 ++
->  kernel/trace/trace_uprobe.c | 172 +++++++++++++++++++++++++++++++++++++++++++-
-
-I'm currently traveling, but I'll try to look at it in a week or two.
-
--- Steve
-
->  3 files changed, 178 insertions(+), 2 deletions(-)
+> Userspace Statically Defined Tracepoints[1] are dtrace style markers
+> inside userspace applications. These markers are added by developer at
+> important places in the code. Each marker source expands to a single
+> nop instruction in the compiled code but there may be additional
+> overhead for computing the marker arguments which expands to couple of
+> instructions. In case the overhead is more, execution of it can be
+> ommited by runtime if() condition when no one is tracing on the marker:
 > 
->
+>     if (reference_counter > 0) {
+>         Execute marker instructions;
+>     }
+> 
+> Default value of reference counter is 0. Tracer has to increment the
+> reference counter before tracing on a marker and decrement it when
+> done with the tracing.
+> 
+> Implement the reference counter logic in trace_uprobe, leaving core
+> uprobe infrastructure as is, except one new callback from uprobe_mmap()
+> to trace_uprobe.
+> 
+> trace_uprobe definition with reference counter will now be:
+> 
+>   <path>:<offset>[(ref_ctr_offset)]
+
+Would you mean 
+<path>:<offset>(<ref_ctr_offset>)
+?
+
+or use "[]" for delimiter?
+
+Since,
+
+> @@ -454,6 +458,26 @@ static int create_trace_uprobe(int argc, char **argv)
+>  		goto fail_address_parse;
+>  	}
+>  
+> +	/* Parse reference counter offset if specified. */
+> +	rctr = strchr(arg, '(');
+
+This seems you choose "()" for delimiter.
+
+> +	if (rctr) {
+> +		rctr_end = strchr(arg, ')');
+
+		rctr_end = strchr(rctr, ')');
+
+? since we are sure rctr != NULL.
+
+> +		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
+> +			ret = -EINVAL;
+> +			pr_info("Invalid reference counter offset.\n");
+> +			goto fail_address_parse;
+> +		}
+
+
+Also
+
+> +
+> +		*rctr++ = 0;
+> +		*rctr_end = 0;
+
+Please consider to use '\0' for nul;
+
+Thanks,
+
+
+
+> +		ret = kstrtoul(rctr, 0, &ref_ctr_offset);
+> +		if (ret) {
+> +			pr_info("Invalid reference counter offset.\n");
+> +			goto fail_address_parse;
+> +		}
+> +	}
+> +
+> +	/* Parse uprobe offset. */
+>  	ret = kstrtoul(arg, 0, &offset);
+>  	if (ret)
+>  		goto fail_address_parse;
+> @@ -488,6 +512,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>  		goto fail_address_parse;
+>  	}
+>  	tu->offset = offset;
+> +	tu->ref_ctr_offset = ref_ctr_offset;
+>  	tu->inode = inode;
+>  	tu->filename = kstrdup(filename, GFP_KERNEL);
+>  
+> @@ -620,6 +645,8 @@ static int probes_seq_show(struct seq_file *m, void *v)
+>  			break;
+>  		}
+>  	}
+> +	if (tu->ref_ctr_offset)
+> +		seq_printf(m, "(0x%lx)", tu->ref_ctr_offset);
+>  
+>  	for (i = 0; i < tu->tp.nr_args; i++)
+>  		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
+> @@ -894,6 +921,139 @@ static void uretprobe_trace_func(struct trace_uprobe *tu, unsigned long func,
+>  	return trace_handle_return(s);
+>  }
+>  
+> +static bool sdt_valid_vma(struct trace_uprobe *tu, struct vm_area_struct *vma)
+> +{
+> +	unsigned long vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> +
+> +	return tu->ref_ctr_offset &&
+> +		vma->vm_file &&
+> +		file_inode(vma->vm_file) == tu->inode &&
+> +		vma->vm_flags & VM_WRITE &&
+> +		vma->vm_start <= vaddr &&
+> +		vma->vm_end > vaddr;
+> +}
+> +
+> +static struct vm_area_struct *
+> +sdt_find_vma(struct mm_struct *mm, struct trace_uprobe *tu)
+> +{
+> +	struct vm_area_struct *tmp;
+> +
+> +	for (tmp = mm->mmap; tmp != NULL; tmp = tmp->vm_next)
+> +		if (sdt_valid_vma(tu, tmp))
+> +			return tmp;
+> +
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * Reference count gate the invocation of probe. If present,
+> + * by default reference count is 0. One needs to increment
+> + * it before tracing the probe and decrement it when done.
+> + */
+> +static int
+> +sdt_update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+> +{
+> +	void *kaddr;
+> +	struct page *page;
+> +	struct vm_area_struct *vma;
+> +	int ret = 0;
+> +	unsigned short orig = 0;
+> +
+> +	if (vaddr == 0)
+> +		return -EINVAL;
+> +
+> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
+> +		FOLL_FORCE | FOLL_WRITE, &page, &vma, NULL);
+> +	if (ret <= 0)
+> +		return ret;
+> +
+> +	kaddr = kmap_atomic(page);
+> +	memcpy(&orig, kaddr + (vaddr & ~PAGE_MASK), sizeof(orig));
+> +	orig += d;
+> +	memcpy(kaddr + (vaddr & ~PAGE_MASK), &orig, sizeof(orig));
+> +	kunmap_atomic(kaddr);
+> +
+> +	put_page(page);
+> +	return 0;
+> +}
+> +
+> +static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
+> +{
+> +	struct uprobe_map_info *info;
+> +	struct vm_area_struct *vma;
+> +	unsigned long vaddr;
+> +
+> +	uprobe_start_dup_mmap();
+> +	info = uprobe_build_map_info(tu->inode->i_mapping,
+> +				tu->ref_ctr_offset, false);
+> +	if (IS_ERR(info))
+> +		goto out;
+> +
+> +	while (info) {
+> +		down_write(&info->mm->mmap_sem);
+> +
+> +		vma = sdt_find_vma(info->mm, tu);
+> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> +		sdt_update_ref_ctr(info->mm, vaddr, 1);
+> +
+> +		up_write(&info->mm->mmap_sem);
+> +		mmput(info->mm);
+> +		info = uprobe_free_map_info(info);
+> +	}
+> +
+> +out:
+> +	uprobe_end_dup_mmap();
+> +}
+> +
+> +/* Called with down_write(&vma->vm_mm->mmap_sem) */
+> +void trace_uprobe_mmap_callback(struct vm_area_struct *vma)
+> +{
+> +	struct trace_uprobe *tu;
+> +	unsigned long vaddr;
+> +
+> +	if (!(vma->vm_flags & VM_WRITE))
+> +		return;
+> +
+> +	mutex_lock(&uprobe_lock);
+> +	list_for_each_entry(tu, &uprobe_list, list) {
+> +		if (!sdt_valid_vma(tu, vma) ||
+> +		    !trace_probe_is_enabled(&tu->tp))
+> +			continue;
+> +
+> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> +		sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
+> +	}
+> +	mutex_unlock(&uprobe_lock);
+> +}
+> +
+> +static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
+> +{
+> +	struct vm_area_struct *vma;
+> +	unsigned long vaddr;
+> +	struct uprobe_map_info *info;
+> +
+> +	uprobe_start_dup_mmap();
+> +	info = uprobe_build_map_info(tu->inode->i_mapping,
+> +				tu->ref_ctr_offset, false);
+> +	if (IS_ERR(info))
+> +		goto out;
+> +
+> +	while (info) {
+> +		down_write(&info->mm->mmap_sem);
+> +
+> +		vma = sdt_find_vma(info->mm, tu);
+> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
+> +		sdt_update_ref_ctr(info->mm, vaddr, -1);
+> +
+> +		up_write(&info->mm->mmap_sem);
+> +		mmput(info->mm);
+> +		info = uprobe_free_map_info(info);
+> +	}
+> +
+> +out:
+> +	uprobe_end_dup_mmap();
+> +}
+> +
+>  typedef bool (*filter_func_t)(struct uprobe_consumer *self,
+>  				enum uprobe_filter_ctx ctx,
+>  				struct mm_struct *mm);
+> @@ -939,6 +1099,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
+>  	if (ret)
+>  		goto err_buffer;
+>  
+> +	if (tu->ref_ctr_offset)
+> +		sdt_increment_ref_ctr(tu);
+> +
+>  	return 0;
+>  
+>   err_buffer:
+> @@ -979,6 +1142,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
+>  
+>  	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+>  
+> +	if (tu->ref_ctr_offset)
+> +		sdt_decrement_ref_ctr(tu);
+> +
+>  	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
+>  	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+>  
+> @@ -1423,6 +1589,8 @@ static __init int init_uprobe_trace(void)
+>  	/* Profile interface */
+>  	trace_create_file("uprobe_profile", 0444, d_tracer,
+>  				    NULL, &uprobe_profile_ops);
+> +
+> +	uprobe_mmap_callback = trace_uprobe_mmap_callback;
+>  	return 0;
+>  }
+>  
+> -- 
+> 1.8.3.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
