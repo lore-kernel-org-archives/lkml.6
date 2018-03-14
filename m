@@ -1,98 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751673AbeCNVD7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:03:59 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33256 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCNVDz (ORCPT
+        id S1751480AbeCNVJr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:09:47 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:24774 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeCNVJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:03:55 -0400
-X-Google-Smtp-Source: AG47ELuDr939fQ4V9DJdebnx9a7h2q722SN6jy71DSf3hbMi47M6jL2WptK5p2bmJd25ZGSEGp+VYA==
-From: Ram Pai <linuxram@us.ibm.com>
-To: mpe@ellerman.id.au
-Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, akpm@linux-foundation.org, dave.hansen@intel.com,
-        benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
-        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
-        msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
-Subject: [PATCH v3] powerpc: treat pkey-0 special
-Date: Wed, 14 Mar 2018 14:01:35 -0700
-Message-Id: <1521061295-22605-1-git-send-email-linuxram@us.ibm.com>
-X-Mailer: git-send-email 1.7.1
+        Wed, 14 Mar 2018 17:09:45 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 14 Mar 2018 22:09:44 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: heiko@sntech.de, branislav@radocaj.org, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+Date: Wed, 14 Mar 2018 22:09:34 +0100
+Message-Id: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applications need the ability to associate an address-range with some
-key and latter revert to its initial default key. Pkey-0 comes close to
-providing this function but falls short, because the current
-implementation disallows applications to explicitly associate pkey-0 to
-the address range.
+If the optional regulator is deferrred, we must release some resources.
+They will be re-allocated when the probe function will be called again.
 
-This patch clarifies the semantics of pkey-0 and provides the
-corresponding implementation on powerpc.
-
-Pkey-0 is special with the following semantics.
-(a) it is implicitly allocated and can never be freed. It always exists.
-(b) it is the default key assigned to any address-range.
-(c) it can be explicitly associated with any address-range.
-
-Tested on powerpc.
-
-History:
-    v3 : added clarification of the semantics of pkey0.
-    		-- suggested by Dave Hansen
-    v2 : split the patch into two, one for x86 and one for powerpc
-    		-- suggested by Michael Ellermen
-
-cc: Dave Hansen <dave.hansen@intel.com>
-cc: Michael Ellermen <mpe@ellerman.id.au>
-cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/powerpc/include/asm/pkeys.h | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/arc/emac_rockchip.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
-index 0409c80..3c1deec 100644
---- a/arch/powerpc/include/asm/pkeys.h
-+++ b/arch/powerpc/include/asm/pkeys.h
-@@ -101,10 +101,18 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
- 
- static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
- {
--	/* A reserved key is never considered as 'explicitly allocated' */
--	return ((pkey < arch_max_pkey()) &&
--		!__mm_pkey_is_reserved(pkey) &&
--		__mm_pkey_is_allocated(mm, pkey));
-+	/* pkey 0 is allocated by default. */
-+	if (!pkey)
-+	       return true;
-+
-+	if (pkey < 0 || pkey >= arch_max_pkey())
-+	       return false;
-+
-+	/* Reserved keys are never allocated. */
-+	if (__mm_pkey_is_reserved(pkey))
-+	       return false;
-+
-+	return __mm_pkey_is_allocated(mm, pkey);
- }
- 
- extern void __arch_activate_pkey(int pkey);
-@@ -150,7 +158,8 @@ static inline int mm_pkey_free(struct mm_struct *mm, int pkey)
- 	if (static_branch_likely(&pkey_disabled))
- 		return -1;
- 
--	if (!mm_pkey_is_allocated(mm, pkey))
-+	/* pkey 0 cannot be freed */
-+	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
- 		return -EINVAL;
- 
- 	/*
+diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
+index 16f9bee992fe..8ee9dfd0e363 100644
+--- a/drivers/net/ethernet/arc/emac_rockchip.c
++++ b/drivers/net/ethernet/arc/emac_rockchip.c
+@@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
+ 	/* Optional regulator for PHY */
+ 	priv->regulator = devm_regulator_get_optional(dev, "phy");
+ 	if (IS_ERR(priv->regulator)) {
+-		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto out_clk_disable;
++		}
+ 		dev_err(dev, "no regulator found\n");
+ 		priv->regulator = NULL;
+ 	}
 -- 
-1.8.3.1
+2.14.1
