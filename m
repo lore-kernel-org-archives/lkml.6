@@ -1,46 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752063AbeCNQ4g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:56:36 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:33458 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751426AbeCNQ4f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:56:35 -0400
-X-Google-Smtp-Source: AG47ELuP1QIQG5GdZj6Lkl+5IdNNtSut4Jk/Sqg0+LWHGGZpHzvNOeqI1g15NJJ0vLZOvzhdoZUPSHaNteFkYJNBYGM=
+        id S1752007AbeCNQ5O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:57:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55954 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751131AbeCNQ5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:57:13 -0400
+Date: Wed, 14 Mar 2018 16:57:09 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>
+Subject: Re: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
+Message-ID: <20180314165708.daoui66waxvicciq@lakrids.cambridge.arm.com>
+References: <20180313172103.24281-1-marc.zyngier@arm.com>
+ <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
+ <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180313184652.dzjmoxs7zl4ocrfw@gmail.com>
-References: <20180313184652.dzjmoxs7zl4ocrfw@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 14 Mar 2018 09:56:33 -0700
-X-Google-Sender-Auth: WL4FZtYmjwwp209HJbUwL7ylJsM
-Message-ID: <CA+55aFyiM9apbksAvYn7ECaed2F9q7YJk7Vv_iA=ogLKxD4R0w@mail.gmail.com>
-Subject: Re: [GIT PULL] auxdisplay for v4.16-rc6
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Burton <paul.burton@mips.com>, Willy Tarreau <w@1wt.eu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:46 AM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> This is my first pull request, so if there is anything wrong, please let
-> me know!
+On Tue, Mar 13, 2018 at 06:35:07PM +0000, Marc Zyngier wrote:
+> On 13/03/18 17:51, Mark Rutland wrote:
+> > On Tue, Mar 13, 2018 at 05:21:00PM +0000, Marc Zyngier wrote:
+> >> As kexec and kdump are getting used a bit more intensively, I've been
+> >> made aware of a number of shortcomings.
+> >>
+> >> The main gripe is from folks trying to launch a kdump kernel from
+> >> within an interrupt handler. If using EOImode==1, things work as
+> >> expected. If using EOImode==0 (such as in a guest), the secondary
+> >> kernel hangs as the previous interrupt hasn't been EOI'd, and the
+> >> active priority is still set. The first two patches are addressing
+> >> this situation for both GICv2 and GICv3 by reseting the APRs to their
+> >> default value.
+> > 
+> > As a more general thing, if irqchip drivers have state that needs to be
+> > reset in their init code, can we live all this irqchip reset to the
+> > crashdump kernel, and kill machine_kexec_mask_interrupts() entirely?
+> 
+> We could, once we know for sure that all the potential irqchips have
+> been fixed. Or we could just remove it immediately, and see what breaks.
 
-The commits in there looks fine, but I have to admit to not being
-super-happy about it.  They are recently rebased, and looking around
-in the logs you've been gone for the last eight years.
+I would be very tempted to do the latter.
 
-> Also, note that for the moment my PGP/GPG key is only signed by 2 other
-> kernel maintainers and that we did it over email/Skype. I used GitHub
-> as well for the same reason.
-
-Ok, I see Linus Walleij's signature there, and the individual commits
-look trivially correct, so I'm pulling it, but with a bit of grumbling
-about the timing.
-
-                 Linus
+Thanks,
+Mark.
