@@ -1,92 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCNKds (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:33:48 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:48242 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeCNKdp (ORCPT
+        id S1751700AbeCNKew (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:34:52 -0400
+Received: from salem.gmr.ssr.upm.es ([138.4.36.7]:48362 "EHLO
+        salem.gmr.ssr.upm.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751420AbeCNKev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:33:45 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180314103343epoutp03967fb30b82f66aa5328a680bb38d2f82~bwu1WiK5A2291522915epoutp03k
-X-AuditID: b6c32a46-3c1ff70000001029-7c-5aa8fa870974
-Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
- to hdmi device node
-To: Inki Dae <inki.dae@samsung.com>
-Cc: krzk@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <21459bbe-befc-da77-5c34-c821db74ae8d@samsung.com>
-Date: Wed, 14 Mar 2018 11:33:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <5AA5CE4F.6050807@samsung.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7bCmhW77rxVRBv9OyllsnLGe1WL+kXOs
-        FpPuT2Cx6H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gs1h65y+7A6bFpVSebx+Yl9R59W1Yx
-        enzeJBfAEsVlk5Kak1mWWqRvl8CV0fF9JktBD0fFqdvGDYxn2boYOTkkBEwknsz6xN7FyMUh
-        JLCDUWLV7NNsEM53RoldL3azwFRd3fWZGSKxm1Fi/qmdzCAJIYH7jBL9jx1AbGGBJIkPj+aD
-        xUUElCVW7WsHG8ss8IhRYl/nbnaQBJuAoUTv0T7GLkYODl4BO4mPzyxBwiwCqhIHn01gBbFF
-        BSIkFk59yghi8woISvyYfA/sCE4BbYmn59eAjWEW0JR48WUSC4QtLnHs/k1GCFteYvOat2CH
-        SgjcZpNYuuIhE8QHLhK9d04xQtjCEq+Ob2GHsKUlnq3aCBWvluhs62KHaG5hlPgz7RI0kKwl
-        Dh+/yAqxgU+i4/BfdpAHJAR4JTrahCBKPCT6Dp6GhpajxITbH5kgodXGJHH920bmCYxys5A8
-        NAvJE7OQPDELyRMLGFlWMYqlFhTnpqcWGxUY6RUn5haX5qXrJefnbmIEJxcttx2MS875HGIU
-        4GBU4uGNuLQ8Sog1say4MvcQowQHs5II71aZFVFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVsD
-        XKKEBNITS1KzU1MLUotgskwcnFINjCLx095Hf/n18sJ9yb71Sw3dbxhFyV7g1PoVtXWiToUg
-        u9nDZJHsArHzQgf8avgn6rR+sb22ttzqx505Lc17rE8bZ3bcZzx/bcNJEZdCgbvL/Fx9i4sn
-        8zJauUk2yQSnRBY9ueunaLRQRbptyY13lX4+d15kLb2REtyR3VI102T28Sm/pS9fUWIpzkg0
-        1GIuKk4EAFsts+cqAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t9jAd22XyuiDK5uVLDYOGM9q8X8I+dY
-        LSbdn8Bi0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZrD1yl92B02PTqk42j81L6j36tqxi
-        9Pi8SS6AJYrLJiU1J7MstUjfLoEro+P7TJaCHo6KU7eNGxjPsnUxcnJICJhIXN31mbmLkYtD
-        SGAno8Tt79+ZIJyHjBI77h8AqxIWSJLofTUFzBYRUJZYta+dHaSIWeARo8S8matYIDramCSW
-        TVsJVsUmYCjRe7SPsYuRg4NXwE7i4zNLkDCLgKrEwWcTWEFsUYEIic6V81lAbF4BQYkfk++B
-        2ZwC2hJPz69hB2llFlCXmDIlFyTMLCAucez+TUYIW15i85q3zBMYBWYh6Z6F0DELSccsJB0L
-        GFlWMUqmFhTnpucWGxUY5aWW6xUn5haX5qXrJefnbmIExsK2w1r9OxgfL4k/xCjAwajEwxtx
-        aXmUEGtiWXFl7iFGCQ5mJRHerTIrooR4UxIrq1KL8uOLSnNSiw8xSnOwKInz8ucfixQSSE8s
-        Sc1OTS1ILYLJMnFwSjUw9opEdfiK/NY0/ObyNK9z+5bjbXo6HkLTn2k8l2yUyC//LcbWeSwy
-        ZgPrkef/alZOCXr1Xqn8uaw7l1Of2trbTy48dt651+mdo4vmhnmLFG48nf+/XfP10+7OyROT
-        z235ZD711Jce6W/8v5xO/RIUWsKvM2HOv8erXSYlTA25nDeLXSHqTaZxvRJLcUaioRZzUXEi
-        AM2ZZqWBAgAA
-X-CMS-MailID: 20180314103342epcas2p1bd2889280033d882c1cee411f1b948cd
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
-X-RootMTR: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
-References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
-        <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <5AA1F41B.5080104@samsung.com>
-        <39965bce-a6f2-6202-5c3f-97e4446e97eb@samsung.com>
-        <5AA5CE4F.6050807@samsung.com>
+        Wed, 14 Mar 2018 06:34:51 -0400
+Date: Wed, 14 Mar 2018 11:35:38 +0100
+From: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC] pwm: Add Xilinx AXI Timer in PWM mode support
+Message-ID: <20180314103536.GA8772@salem.gmr.ssr.upm.es>
+References: <20170627100522.30447-1-alvaro.gamez@hazent.com>
+ <20170706091344.GO16144@ulmo.fritz.box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170706091344.GO16144@ulmo.fritz.box>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Inki,
+On Thu, Jul 06, 2017 at 11:13:44AM +0200, Thierry Reding wrote:
+> On Tue, Jun 27, 2017 at 12:05:22PM +0200, Alvaro Gamez Machado wrote:
+> > a) Changing "xlnx,axi-timer-2.0" compatible string for this device to something
+> >    different like xlnx,axi-pwm-2.0?
+> 
+> I don't see a xlnx,axi-timer-2.0 compatible string defined in the
+> kernel. There's an xlnx,xps-timer-1.00.a used in Microblaze and PowerPC,
+> but it might not be related.
+ 
 
-On 03/12/2018 01:48 AM, Inki Dae wrote:
-> Thanks for explanation. By the way, who binds '#sound-dai-cells' property?.
-> This patch adds this property to hdmi device node which will be bound by 
-> HDMI driver fo Exynos DRM but I don't see any place to bind '#sound-dai-cells' 
-> property in this driver.
-> So I think some driver like Odroid XU3/4 audio driver(sound/soc/samsung/odroid.c) 
-> or ASoC simple audio card driver(sound/soc/generic/simple-card.c) should exist 
-> and this property should be placed to such device node.
+Yes, that was a mistake of mine.  I was talking about xlnx,xps-timer-1.00.a. 
+XPS was the previous name of some Xilinx utility, and after they pushed for
+the axi protocol, they started renaming lots of IP Cores, but the
+compatibility strings were kept even in their own software; so xps-timer is
+basically the same as axi-timer, thus my mistake when writing from memory
+instead of looking at the code.
 
-The *-cells property is supposed to be in a node that a phandle points to,
-and in this case the phandle entry in 'sound-dai' points to the hdmi node.
->From the DT bindings perspective it not that important how Linux parses
-the bindings, it's more a matter of describing the HW configuration.
 
-There is even a related check in dtc:
+> > b) Is there a way to make arch/microblaze/kernel/timer.c take full posession
+> >    of its axi timer device so that any further driver can't access it?
+> 
+> > I've tried option (a) and works flawlessly as far as I can tell (tested
+> > through /sys interface), but I think option (b) would be better, if it's
+> > something that can be done.
+> 
+> I think (a) is certainly the cleaner approach because it lets you select
+> the mode via DT. However, it's probably best to get DT maintainers'
+> opinion on this. Cc'ing them. Quoting in full for context.
+> 
+> As you point out, using a completely different compatible string is the
+> easiest way to side-step the problem. However, it's also "wrong" in that
+> you're still dealing with the same hardware, and consequently should be
+> identified by the same compatible string.
+> 
+> One possible option I can think of would be to define a somewhat generic
+> compatible string to identify the block as a whole and require a second
+> compatible string to specify what mode to use the block in.
+> 
+> Another alternative would be to mark the node as PWM controller with an
+> additional property (e.g. pwm-controller) and use that as the selector
+> for the mode. The timer code would have to be modified to abort if it
+> encounters a node marked with this property, and similarily the PWM
+> driver would abort if the property is absent.
 
-$ grep -n sound scripts/dtc/checks.c
-1208:WARNING_PROPERTY_PHANDLE_CELLS(sound_dai, "sound-dai", "#sound-dai-cells");
+I've given this a thought and came up with the idea of adding an attribute
+to the device tree -something like say xlnx,pwm-outputs- which would take
+the value of 1 for timers instantiated with the PWM capability, as it is
+optional.
 
+This way, timer.c could check that xlnx,pwm-outputs equals 0 or is
+undefined, so we keep old device trees compatible, whereas pwm-axi-timer.c
+checks if this attribute is equal to 1. Even if it's not something that is
+probable to happen, this would also leave the door open to supporting this
+future versions of this IP core providing more than one pwm output.
+
+Problem is, there should probably be a timer-axi.c driver under clocksource,
+because the number of timers available on a given Microblaze/Zynq design is
+unconstrained, and it'd probably be good to aim for full compatibility with
+this small chunk of hardware.
+
+The more I think about this the less sure I am about which is the best way
+to go... it wouldn't make much sense having three pieces of code talking to
+the same hardware, or to different instances of the same IP core
+(arch/microblaze/kernel/timer.c, pwm/pwm-axi-timer.c and
+clocksource/timer-axi.c).
+ 
+> Anyway, let's see what the device tree maintainers think about it.
+
+They haven't manifested themselves, but I think I should have pushed this a
+little bit earlier, sorry for the delay!
+
+Best regards
 -- 
-Regards,
-Sylwester
+Alvaro G. M.
