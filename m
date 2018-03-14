@@ -1,94 +1,82 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1421698-1521023394-2-15985483496590602892
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521023393; b=aVBw4p1PJIB1mTH4dKoL1wHOwWDkTgBts0DQIsdxs//+OwM
-    zx9D9bBXOChNL4OA2v1Of4s80cTPv7e6pmmvZdHxQpvayjd9anannZtBBLU9bzxe
-    qk7tdPqWKC4oniPWIcGw+EgPcMqbvVj2FSujZMz5+BTNhZGWg8rNxmmvZlKphYb8
-    lwpqd3Pp9105NKbbKgadGnNaa/6X+hBL5Qhv6p1cQ6VlF7Q4Bf3Ks4+OOziRtas6
-    9/YysiEqSv8nVdj+qqPyzVOtMKckU/7LKHZipWm/JRNc2z/P3c9wsBE91YEAV9hV
-    FT/pXFuiYdprTaByGnAx164C0R4NHpi4pZQmZsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1521023393; bh=X4Msc/ZAasOFmRIFEtw534yhdm
-    uktokdhTWHtDiT9xU=; b=SksOzAYxcAGEI3cp6ZpLwSnmKuEwYSO/jTVvFL+0KM
-    F87uyxAr7hRKgI28wmb/9xS3mWFKjsKNVpwjyNdIdvTHyIgHpfitJeu9UWqfT/q8
-    4TA0kpxsph4GQSv68riYjPe3nodMROQLWD/3kswOXIqbBRCo8Dxu4jS0xVBy1E+3
-    wsCscwJuRN3YySu92IxGH4WV/nLu+vHJ014nAlDW/EVZFR6ecWhjq0DPx8Vuj9JL
-    5sTbiB24V1jMoC4UxZRCi3f1/1cXHnGdosDTijqUl1998HFvHVHCIV6URBdnlJU4
-    ne/Zb0gN6gbgSuPDbumUd59zwQFwI/7rKiJ5MJv2DrLQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=g0hl1n.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=40 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=g0hl1n.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=g0hl1n.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=40 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=g0hl1n.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeCNK3u (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 06:29:50 -0400
-Received: from relay09.alfahosting-server.de ([109.237.142.247]:23680 "EHLO
-        relay09.alfahosting-server.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751228AbeCNK3u (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Mar 2018 06:29:50 -0400
-X-Remote-Spam-DCC: : 
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-1000.0 required=7.0 tests=BAYES_50,D_SENT_WITH_SASL
-        autolearn=disabled version=3.2.5
+Return-Path: <dev@g0hl1n.net>
+X-Google-Smtp-Source: AG47ELs11/lzTZ/BkPBE1YE0wD9e12rdjy5XJEBbLe75btO29FF/IskbtQrXJZoedgHrRl/SGgCM
+ARC-Seal: i=1; a=rsa-sha256; t=1521023392; cv=none;
+        d=google.com; s=arc-20160816;
+        b=PppOQsxcFfOI1OO94T8NmXP3rr9SvDdTH/I55Vd53TD2Znx/vF6fHrvATx/6oTiMXp
+         Vs//KVQpQ6wGoC1icnCZ3Ib56p66hsWBAo2pBWm3TZuvuBGCPXLJXeOTe9qsMBntonbg
+         pYzxMHi5a/w/4pIxCiKoH8DPyXCWIjM5f58ES4Q+JF6BnGjBxQsC6MKahV568KTE5w1E
+         brljUI7AOo1fzcr1rbPsPnvW4MFDXXj9mFOKeTzDNfQuQQprdkCD42lS4F3W9n2NJu38
+         933WNwcSj1ZKoUJAjvojAhwtwOYiCRcCarvKI6FkePpNQ4WC32iFqpSH+P4U1L8fqmdE
+         bjbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=mQozJP0Id94Wn7dEft/1tXhK0mFwc8jXg5l5+AIp/xc=;
+        b=dAuJgFWtcrxMK2K5RYRPfO2H0geZe6UDLIDb8uNMY/99nIFJrbzkZOB0R2hon7covx
+         D8n6jsZjqHlrmWQ5Cs0ZF6do9AYKom41i1XyF5I+jQt6kxWllifgTk7jvZUyk4VrKLMt
+         6nJI42pAtZHadthkQrSyw3VPEDR22ds8pCFZJ9D97hiPtfHlYxh5XCzDNcL9Kw0sdlfh
+         VFQ8FgpJkVWHjvDQ1UUW/x9AkrpDt+r3vWmAjMy/03WIHlDQYuGPyjIZhljJ+0feQoKg
+         inBH/+MtoF9bZA4fJqtZmiSl6YbD25e+LvTa7rOZj7onCJaHeMQBoa9KSGs/0nB4sEtg
+         PC+g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 109.237.142.245 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 109.237.142.245 is neither permitted nor denied by best guess record for domain of dev@g0hl1n.net) smtp.mailfrom=dev@g0hl1n.net
+X-Spam-DCC: : 
 From: Richard Leitner <dev@g0hl1n.net>
-To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
-        bhelgaas@google.com, richard.leitner@skidata.com
-Subject: [PATCH 0/3] usb: host: pci: PCI ID consolidation
-Date: Wed, 14 Mar 2018 11:29:30 +0100
-Message-Id: <20180314102933.21367-1-dev@g0hl1n.net>
+To: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com,
+	bhelgaas@google.com,
+	richard.leitner@skidata.com
+Subject: [PATCH 2/3] usb: host: pci: introduce PCI vendor ID for Netlogic
+Date: Wed, 14 Mar 2018 11:29:32 +0100
+Message-Id: <20180314102933.21367-3-dev@g0hl1n.net>
 X-Mailer: git-send-email 2.11.0
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+In-Reply-To: <20180314102933.21367-1-dev@g0hl1n.net>
+References: <20180314102933.21367-1-dev@g0hl1n.net>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594908624828665894?=
+X-GMAIL-MSGID: =?utf-8?q?1594908624828665894?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Richard Leitner <richard.leitner@skidata.com>
 
-Centralize some hardcoded PCI IDs as definitions in the global
-include/linux/pci_ids.h file. This is done to reduce the amount of
-scattered PCI ID definitions and hardcoded values across the kernel.
+Replace the hardcoded PCI vendor ID of Netlogic with a definition in
+pci_ids.h
 
-Richard Leitner (3):
-  usb: host: pci: use existing Intel PCI ID macros
-  usb: host: pci: introduce PCI vendor ID for Netlogic
-  usb: host: pci: replace hardcoded renesas PCI IDs
+Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+---
+ drivers/usb/host/pci-quirks.c | 2 +-
+ include/linux/pci_ids.h       | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
- drivers/usb/host/pci-quirks.c | 16 +++++++++-------
- drivers/usb/host/xhci-pci.c   |  7 ++++---
- include/linux/pci_ids.h       |  5 +++++
- 3 files changed, 18 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+index 4f4a9f36a68e..39d163729b89 100644
+--- a/drivers/usb/host/pci-quirks.c
++++ b/drivers/usb/host/pci-quirks.c
+@@ -1243,7 +1243,7 @@ static void quirk_usb_early_handoff(struct pci_dev *pdev)
+ 	/* Skip Netlogic mips SoC's internal PCI USB controller.
+ 	 * This device does not need/support EHCI/OHCI handoff
+ 	 */
+-	if (pdev->vendor == 0x184e)	/* vendor Netlogic */
++	if (pdev->vendor == PCI_VENDOR_ID_NETLOGIC)
+ 		return;
+ 	if (pdev->class != PCI_CLASS_SERIAL_USB_UHCI &&
+ 			pdev->class != PCI_CLASS_SERIAL_USB_OHCI &&
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index e8d1af82a688..d23a97868dee 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -3067,4 +3067,6 @@
+ 
+ #define PCI_VENDOR_ID_OCZ		0x1b85
+ 
++#define PCI_VENDOR_ID_NETLOGIC		0x184e
++
+ #endif /* _LINUX_PCI_IDS_H */
 -- 
 2.11.0
-
