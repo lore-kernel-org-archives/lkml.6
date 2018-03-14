@@ -1,157 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeCNPnU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:43:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47929 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751452AbeCNPnS (ORCPT
+        id S1752242AbeCNPnZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:43:25 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:55407 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752171AbeCNPnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:43:18 -0400
-Date: Wed, 14 Mar 2018 08:42:49 -0700
-From: tip-bot for Lai Jiangshan <tipbot@zytor.com>
-Message-ID: <tip-17a2f1ced0280068897990b0dd25ce70555b8ac7@git.kernel.org>
-Cc: boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de, hpa@zytor.com, tglx@linutronix.de,
-        peterz@infradead.org, paulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        jiangshanlai@gmail.com
-Reply-To: paulmck@linux.vnet.ibm.com, peterz@infradead.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, hpa@zytor.com, boris.ostrovsky@oracle.com,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-In-Reply-To: <20171201135008.21633-1-jiangshanlai@gmail.com>
-References: <20171201135008.21633-1-jiangshanlai@gmail.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/hotplug] cpu/hotplug: Merge cpuhp_bp_states and
- cpuhp_ap_states
-Git-Commit-ID: 17a2f1ced0280068897990b0dd25ce70555b8ac7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 14 Mar 2018 11:43:21 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH 18/47] fbdev: s1d13xxxfb: remove m32r specific hacks
+Date: Wed, 14 Mar 2018 16:35:31 +0100
+Message-Id: <20180314153603.3127932-19-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:pnCQlRTK4nB2L1CvvzU1b6hzXQZnghdtwfchkoLYZkruC2iiJ24
+ c/OOcArLdpXMEJTdqIWVEzp2dYzsa+gkK4EmCEPcmoBfFHcDoeZF9dQodxt9Dy3ml+1EcWN
+ x6LsDCOHpQwvPbDke6DtCTNN8uqpHNwtobtIMNTTbqogpcvllXY6aOU6xVwopXoy3/DmX9n
+ RapiKhUAQBdyqa4UKOW8w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:346y4PUNzGE=:V/ih5/f+nm7y8gTrZrDo0x
+ 9t9EW75mL3wICqXlleofEf5v0zehVMkZjRySPd21jm0QZEBJTJtlVOZqbN8fZogyAp14P+bDa
+ b0mgQl1IYxa8fQLTdP+3IbdrJUn90Sk1rsKIbsT8NMMpwkKIPBHFuOa9pHRta16EJUPK3qcwz
+ 5CR3uUcX9+i3BK7j+V7Zlv7TEm1ufq+WbHbCgXtAqgelkDjfal44rjYpulugSXZy7H5wDD/ho
+ Olwag1v/9ycdN+LG4MDzL/bXYBAuxNqjevYOurqjF4JEG+Avk3tFfy2iWEiGFZVAZikVmqw6E
+ R0NV9rBM1vB6AcXXNdMNsQsvAYTMYKXcPKG2C8MHd6IkrUXAuuqjcWmSpmsyfqVOxd5UUhNdO
+ S4H/iJxIpEWZFKqWbWFX1o/f+MDsutXzSoAuGVDI260qU3jzHs8oM7qE5joHe7QShF9kwFgvL
+ Jnd5msVWc5wBTbUJ4vZqJqwYlxwB6AVBpVow3h0+dU3Yhg454SDWxkpLBeJRsc1BOo6SWdxpB
+ BNx2Hm8T9HLsGu6V0Zv1Xni/xdDsvbutvC29b2Zq2c3IjHD9Ilp9ienfksgchu0Scbr29mAMn
+ hZ0w8cxnsvijp0LdA29cTRU7lC07oHcAp1TS0lURTCnf8t2DId1WM57Yp4v9sO7BH11PO55te
+ xKENmadZp0tRJSCYN8lTSLzYwyr0HJWLd4vh2/R+ZlnIVNFZmXYYCwWxmZ85kWMa6vHdhjx1Q
+ uArLJGbnrh2aKbIu/ZyBAxMyK5Ge2wWr2ChtAw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  17a2f1ced0280068897990b0dd25ce70555b8ac7
-Gitweb:     https://git.kernel.org/tip/17a2f1ced0280068897990b0dd25ce70555b8ac7
-Author:     Lai Jiangshan <jiangshanlai@gmail.com>
-AuthorDate: Fri, 1 Dec 2017 21:50:05 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 14 Mar 2018 16:38:43 +0100
+The m32r architecture is being removed, so this is no longer needed.
 
-cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states
-
-cpuhp_bp_states and cpuhp_ap_states have different set of steps without any
-conflicting steps, so that they can be merged.
-
-The original `[CPUHP_BRINGUP_CPU] = { },` is removed, because the new
-cpuhp_hp_states has CPUHP_ONLINE index which is larger than
-CPUHP_BRINGUP_CPU.
-
-Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Link: https://lkml.kernel.org/r/20171201135008.21633-1-jiangshanlai@gmail.com
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/cpu.c | 42 +++++++++++++++---------------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+ drivers/video/fbdev/s1d13xxxfb.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 53f7dc65f9a3..a1860d42aacf 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -124,8 +124,7 @@ struct cpuhp_step {
- };
- 
- static DEFINE_MUTEX(cpuhp_state_mutex);
--static struct cpuhp_step cpuhp_bp_states[];
--static struct cpuhp_step cpuhp_ap_states[];
-+static struct cpuhp_step cpuhp_hp_states[];
- 
- static bool cpuhp_is_ap_state(enum cpuhp_state state)
+diff --git a/drivers/video/fbdev/s1d13xxxfb.c b/drivers/video/fbdev/s1d13xxxfb.c
+index 5d6179ef0298..e04efb567b5c 100644
+--- a/drivers/video/fbdev/s1d13xxxfb.c
++++ b/drivers/video/fbdev/s1d13xxxfb.c
+@@ -96,18 +96,12 @@ static const struct fb_fix_screeninfo s1d13xxxfb_fix = {
+ static inline u8
+ s1d13xxxfb_readreg(struct s1d13xxxfb_par *par, u16 regno)
  {
-@@ -138,10 +137,7 @@ static bool cpuhp_is_ap_state(enum cpuhp_state state)
- 
- static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
- {
--	struct cpuhp_step *sp;
--
--	sp = cpuhp_is_ap_state(state) ? cpuhp_ap_states : cpuhp_bp_states;
--	return sp + state;
-+	return cpuhp_hp_states + state;
+-#if defined(CONFIG_PLAT_M32700UT) || defined(CONFIG_PLAT_OPSPUT) || defined(CONFIG_PLAT_MAPPI3)
+-	regno=((regno & 1) ? (regno & ~1L) : (regno + 1));
+-#endif
+ 	return readb(par->regs + regno);
  }
  
- /**
-@@ -1224,7 +1220,7 @@ int __boot_cpu_id;
- #endif /* CONFIG_SMP */
- 
- /* Boot processor state steps */
--static struct cpuhp_step cpuhp_bp_states[] = {
-+static struct cpuhp_step cpuhp_hp_states[] = {
- 	[CPUHP_OFFLINE] = {
- 		.name			= "offline",
- 		.startup.single		= NULL,
-@@ -1289,24 +1285,6 @@ static struct cpuhp_step cpuhp_bp_states[] = {
- 		.teardown.single	= NULL,
- 		.cant_stop		= true,
- 	},
--	/*
--	 * Handled on controll processor until the plugged processor manages
--	 * this itself.
--	 */
--	[CPUHP_TEARDOWN_CPU] = {
--		.name			= "cpu:teardown",
--		.startup.single		= NULL,
--		.teardown.single	= takedown_cpu,
--		.cant_stop		= true,
--	},
--#else
--	[CPUHP_BRINGUP_CPU] = { },
+ static inline void
+ s1d13xxxfb_writereg(struct s1d13xxxfb_par *par, u16 regno, u8 value)
+ {
+-#if defined(CONFIG_PLAT_M32700UT) || defined(CONFIG_PLAT_OPSPUT) || defined(CONFIG_PLAT_MAPPI3)
+-	regno=((regno & 1) ? (regno & ~1L) : (regno + 1));
 -#endif
--};
--
--/* Application processor state steps */
--static struct cpuhp_step cpuhp_ap_states[] = {
--#ifdef CONFIG_SMP
- 	/* Final state before CPU kills itself */
- 	[CPUHP_AP_IDLE_DEAD] = {
- 		.name			= "idle:dead",
-@@ -1340,6 +1318,16 @@ static struct cpuhp_step cpuhp_ap_states[] = {
- 	[CPUHP_AP_ONLINE] = {
- 		.name			= "ap:online",
- 	},
-+	/*
-+	 * Handled on controll processor until the plugged processor manages
-+	 * this itself.
-+	 */
-+	[CPUHP_TEARDOWN_CPU] = {
-+		.name			= "cpu:teardown",
-+		.startup.single		= NULL,
-+		.teardown.single	= takedown_cpu,
-+		.cant_stop		= true,
-+	},
- 	/* Handle smpboot threads park/unpark */
- 	[CPUHP_AP_SMPBOOT_THREADS] = {
- 		.name			= "smpboot/threads:online",
-@@ -1408,11 +1396,11 @@ static int cpuhp_reserve_state(enum cpuhp_state state)
+ 	writeb(value, par->regs + regno);
+ }
  
- 	switch (state) {
- 	case CPUHP_AP_ONLINE_DYN:
--		step = cpuhp_ap_states + CPUHP_AP_ONLINE_DYN;
-+		step = cpuhp_hp_states + CPUHP_AP_ONLINE_DYN;
- 		end = CPUHP_AP_ONLINE_DYN_END;
- 		break;
- 	case CPUHP_BP_PREPARE_DYN:
--		step = cpuhp_bp_states + CPUHP_BP_PREPARE_DYN;
-+		step = cpuhp_hp_states + CPUHP_BP_PREPARE_DYN;
- 		end = CPUHP_BP_PREPARE_DYN_END;
- 		break;
- 	default:
+@@ -296,11 +290,7 @@ s1d13xxxfb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
+ 			dbg("s1d13xxxfb_setcolreg: pseudo %d, val %08x\n",
+ 				    regno, pseudo_val);
+ 
+-#if defined(CONFIG_PLAT_MAPPI)
+-			((u32 *)info->pseudo_palette)[regno] = cpu_to_le16(pseudo_val);
+-#else
+ 			((u32 *)info->pseudo_palette)[regno] = pseudo_val;
+-#endif
+ 
+ 			break;
+ 		case FB_VISUAL_PSEUDOCOLOR:
+-- 
+2.9.0
