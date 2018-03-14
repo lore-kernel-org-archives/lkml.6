@@ -1,83 +1,80 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4106523-1520977707-2-1972641654775376419
+X-Cyrus-Session-Id: sloti22d1t05-1421698-1521022865-2-12494577795545999580
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520977706; b=innxGx4rBQ0rV1SMC5dsKFxOy3jtvFGetjh76nh6p17/Zys
-    lsBzn2r5geryziyBN40aPq5fE1U28PA171byYetSmGdbJcogpvi64efacMjYZVeb
-    lsudxqHYIbo+noSLbczIjguJIeI+NRkSHPPFASko/1iHC7frNx9jH8XHdLMgsOyK
-    LfHgihE2CKh/Dw18/SIU96VeLM6RazL1GKjE+T1McIy0GX7yoqH5CR6d7Pz9vlyW
-    Ro/8XA03bjGFCAp2PPbQ70Xpjd9Ecwa3yr/W+2lNxdNAZAKc8KY1rfAm+/qp6z9G
-    t1N5HByKnHR3UOoM+8/pOVfsoOcLLXAFeF6CSrg==
+    t=1521022863; b=a0Wa6PmvwQcdHXFoXZVREY/hHR4zE66jjTSVQrnqnOcpoPo
+    topVl/02abbVhil4bG8fSooszndLEtG4+G8VXemxixC87UGYX4LVcvmTpSikA+JT
+    9mYsEuiYt0MxgTM89sfAXKjehF863HkVizEpPXAwrstAQKjZGKtXXQNTayhnA5Hq
+    rSHgQj1UT7e7rZTbx6Mnqjv2fxa8Bgp0M6zoABVGB1CFFfhiFZTLpX6cwlfl3JSn
+    HSwXH2Pk1nwbXg+glpzl1z0RzNpya1rBT5rJ7ZWRYn/cMsadcZHuoHFCeWRLLq7d
+    r2O+5dttvm3I7Q23r5HXy7O4QdC9NpQhxCGY0QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:content-type:sender:list-id; s=
-    arctest; t=1520977706; bh=LdyD30R9ZfSXMUuIleRO7C1UHIpwgSbweFExiM
-    +CkaQ=; b=L2x2Hs8RzpYflrwJ55KScWaHENAiKJA5lSeZmc+NKKI93kDlc5bBnf
-    wfnjaIyFHUAOIVfzRcSNkbzqYSaVEeQNBLKIA30XN15ZF4qKl+yqxENcPt51oXUV
-    QoCG3A6leThtGebfVfEh5TJezLosz8GqUjtWF62YpE2yFf9bqALQ3YIzYkurKKZE
-    xSAZf2pGkFLBhUzCCuypxw6PC4sfBrqifz3Akzoq+lHbYv0avgLlvxm/YwG3oB3e
-    44w0xuX/40IhKEcGsGXt5R8QjXdLMySEKUJbgyVwxlBr2c3guTdTx3qMD+pXZ0SQ
-    bzDTNyy1eVYqw6bCeR9i9Zu/Lcj3bQUw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1521022863; bh=hcWSg7YkGWV9yEUqTVyr5tpMf5lq1o1D1HzE7l
+    NvHHA=; b=jz3uraRZax4HcAL8ivK855NUUzlvangf4rDCP1wuAsxzW723gZYHeH
+    o04JFeDurAoFS4SpITmVENLm08tk0tFDunU6K7EmEqHGVTf23V3GKq0XDl4f016z
+    2JKGfdOxKh66T3IXA70hkQP8S3X5CUskqo0JLfDiaKCCI3ehYBJFVPdXUJ5cUiIT
+    8lKSmqtimGwRAC3TJoYQ943DJ7yyKfisEw+rI3p29gn3uoUCRH0WkiMxIMtvbNG+
+    g0rgAXSjr4qQiDC4kSixXlPCQbzp7A5y4KQzcf8BymM1I97HjTnQZdnNVBaKAHDj
+    okPjmAm8/oV57b5rujjK4QkBBGwjKEtw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=FiyGk1tH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fvwkCEEY;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h6HLeJsI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=FiyGk1tH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fvwkCEEY;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h6HLeJsI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeCMVsX (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 17:48:23 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33183 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753075AbeCMVry (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 17:47:54 -0400
-X-Google-Smtp-Source: AG47ELuMz9MP9PBqHpNzzXM1DE4iVWJez8eGMP5OY4/y+IbeLl2sR8mIgwkke0sytVstZX4jx1pUil6EKUYU5IDosm0=
+        id S1751401AbeCNKVC (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 06:21:02 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43801 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNKU7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 06:20:59 -0400
+X-Google-Smtp-Source: AG47ELtVj8iPTH/XRJ0A0ZHnOz4up4/GOeEUSKI3RcIPC5Z26pnjzDH7VTfY0nHSe9qnJs/+6CSdUMirypalUI42o0g=
 MIME-Version: 1.0
-In-Reply-To: <20180313193457.gjqbfwd6eorxeedc@xps>
-References: <20180313152320.439085687@linuxfoundation.org> <20180313152324.434860515@linuxfoundation.org>
- <20180313193457.gjqbfwd6eorxeedc@xps>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Tue, 13 Mar 2018 22:47:53 +0100
-Message-ID: <CACjP9X8qC=3eevF7B1pihE8S3jERtpFYv9qs9H8bChHCETTUaQ@mail.gmail.com>
-Subject: Re: [PATCH 4.15 049/146] mm/page_alloc: fix memmap_init_zone
- pageblock alignment
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Daniel Vacek <neelx@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
+References: <20180313152320.439085687@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 14 Mar 2018 15:50:56 +0530
+Message-ID: <CA+G9fYspDG9qukkn__sLVpsWkXDhwQ-sOLn6p7R_G0E4xa4vFA@mail.gmail.com>
+Subject: Re: [PATCH 4.15 000/146] 4.15.10-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Daniel Vacek <neelx@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -85,181 +82,331 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 8:34 PM, Dan Rue <dan.rue@linaro.org> wrote:
-> On Tue, Mar 13, 2018 at 04:23:36PM +0100, Greg Kroah-Hartman wrote:
->> 4.15-stable review patch.  If anyone has any objections, please let me know.
+On 13 March 2018 at 20:52, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.15.10 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On 4.14 and 4.15, this patch breaks booting on dragonboard 410c and
-> hikey 620 (both arm64). The fix has been proposed and tested but is not
-> yet in mainline per https://lkml.org/lkml/2018/3/12/710
-
-I'll send a formal fix today.
-
-> Dan
+> Responses should be made by Thu Mar 15 15:22:37 UTC 2018.
+> Anything received after that time might be too late.
 >
->>
->> ------------------
->>
->> From: Daniel Vacek <neelx@redhat.com>
->>
->> commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae upstream.
->>
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") introduced a bug where move_freepages() triggers a
->> VM_BUG_ON() on uninitialized page structure due to pageblock alignment.
->> To fix this, simply align the skipped pfns in memmap_init_zone() the
->> same way as in move_freepages_block().
->>
->> Seen in one of the RHEL reports:
->>
->>   crash> log | grep -e BUG -e RIP -e Call.Trace -e move_freepages_block -e rmqueue -e freelist -A1
->>   kernel BUG at mm/page_alloc.c:1389!
->>   invalid opcode: 0000 [#1] SMP
->>   --
->>   RIP: 0010:[<ffffffff8118833e>]  [<ffffffff8118833e>] move_freepages+0x15e/0x160
->>   RSP: 0018:ffff88054d727688  EFLAGS: 00010087
->>   --
->>   Call Trace:
->>    [<ffffffff811883b3>] move_freepages_block+0x73/0x80
->>    [<ffffffff81189e63>] __rmqueue+0x263/0x460
->>    [<ffffffff8118c781>] get_page_from_freelist+0x7e1/0x9e0
->>    [<ffffffff8118caf6>] __alloc_pages_nodemask+0x176/0x420
->>   --
->>   RIP  [<ffffffff8118833e>] move_freepages+0x15e/0x160
->>    RSP <ffff88054d727688>
->>
->>   crash> page_init_bug -v | grep RAM
->>   <struct resource 0xffff88067fffd2f8>          1000 -        9bfff   System RAM (620.00 KiB)
->>   <struct resource 0xffff88067fffd3a0>        100000 -     430bffff   System RAM (  1.05 GiB = 1071.75 MiB = 1097472.00 KiB)
->>   <struct resource 0xffff88067fffd410>      4b0c8000 -     4bf9cfff   System RAM ( 14.83 MiB = 15188.00 KiB)
->>   <struct resource 0xffff88067fffd480>      4bfac000 -     646b1fff   System RAM (391.02 MiB = 400408.00 KiB)
->>   <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff   System RAM (480.00 KiB)
->>   <struct resource 0xffff88067fffd640>     100000000 -    67fffffff   System RAM ( 22.00 GiB)
->>
->>   crash> page_init_bug | head -6
->>   <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff   System RAM (480.00 KiB)
->>   <struct page 0xffffea0001ede200>   1fffff00000000  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
->>   <struct page 0xffffea0001ede200> 505736 505344 <struct page 0xffffea0001ed8000> 505855 <struct page 0xffffea0001edffc0>
->>   <struct page 0xffffea0001ed8000>                0  0 <struct pglist_data 0xffff88047ffd9000> 0 <struct zone 0xffff88047ffd9000> DMA               1       4095
->>   <struct page 0xffffea0001edffc0>   1fffff00000400  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
->>   BUG, zones differ!
->>
->> Note that this range follows two not populated sections
->> 68000000-77ffffff in this zone.  7b788000-7b7fffff is the first one
->> after a gap.  This makes memmap_init_zone() skip all the pfns up to the
->> beginning of this range.  But this range is not pageblock (2M) aligned.
->> In fact no range has to be.
->>
->>   crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b787000 7b788000
->>         PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
->>   ffffea0001e00000  78000000                0        0  0 0
->>   ffffea0001ed7fc0  7b5ff000                0        0  0 0
->>   ffffea0001ed8000  7b600000                0        0  0 0   <<<<
->>   ffffea0001ede1c0  7b787000                0        0  0 0
->>   ffffea0001ede200  7b788000                0        0  1 1fffff00000000
->>
->> Top part of page flags should contain nodeid and zonenr, which is not
->> the case for page ffffea0001ed8000 here (<<<<).
->>
->>   crash> log | grep -o fffea0001ed[^\ ]* | sort -u
->>   fffea0001ed8000
->>   fffea0001eded20
->>   fffea0001edffc0
->>
->>   crash> bt -r | grep -o fffea0001ed[^\ ]* | sort -u
->>   fffea0001ed8000
->>   fffea0001eded00
->>   fffea0001eded20
->>   fffea0001edffc0
->>
->> Initialization of the whole beginning of the section is skipped up to
->> the start of the range due to the commit b92df1de5d28.  Now any code
->> calling move_freepages_block() (like reusing the page from a freelist as
->> in this example) with a page from the beginning of the range will get
->> the page rounded down to start_page ffffea0001ed8000 and passed to
->> move_freepages() which crashes on assertion getting wrong zonenr.
->>
->>   >         VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
->>
->> Note, page_zone() derives the zone from page flags here.
->>
->> >From similar machine before commit b92df1de5d28:
->>
->>   crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b7fe000 7b7ff000
->>         PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
->>   fffff73941e00000  78000000                0        0  1 1fffff00000000
->>   fffff73941ed7fc0  7b5ff000                0        0  1 1fffff00000000
->>   fffff73941ed8000  7b600000                0        0  1 1fffff00000000
->>   fffff73941edff80  7b7fe000                0        0  1 1fffff00000000
->>   fffff73941edffc0  7b7ff000 ffff8e67e04d3ae0     ad84  1 1fffff00020068 uptodate,lru,active,mappedtodisk
->>
->> All the pages since the beginning of the section are initialized.
->> move_freepages()' not gonna blow up.
->>
->> The same machine with this fix applied:
->>
->>   crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b7fe000 7b7ff000
->>         PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
->>   ffffea0001e00000  78000000                0        0  0 0
->>   ffffea0001e00000  7b5ff000                0        0  0 0
->>   ffffea0001ed8000  7b600000                0        0  1 1fffff00000000
->>   ffffea0001edff80  7b7fe000                0        0  1 1fffff00000000
->>   ffffea0001edffc0  7b7ff000 ffff88017fb13720        8  2 1fffff00020068 uptodate,lru,active,mappedtodisk
->>
->> At least the bare minimum of pages is initialized preventing the crash
->> as well.
->>
->> Customers started to report this as soon as 7.4 (where b92df1de5d28 was
->> merged in RHEL) was released.  I remember reports from
->> September/October-ish times.  It's not easily reproduced and happens on
->> a handful of machines only.  I guess that's why.  But that does not make
->> it less serious, I think.
->>
->> Though there actually is a report here:
->>   https://bugzilla.kernel.org/show_bug.cgi?id=196443
->>
->> And there are reports for Fedora from July:
->>   https://bugzilla.redhat.com/show_bug.cgi?id=1473242
->> and CentOS:
->>   https://bugs.centos.org/view.php?id=13964
->> and we internally track several dozens reports for RHEL bug
->>   https://bugzilla.redhat.com/show_bug.cgi?id=1525121
->>
->> Link: http://lkml.kernel.org/r/0485727b2e82da7efbce5f6ba42524b429d0391a.1520011945.git.neelx@redhat.com
->> Fixes: b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns where possible")
->> Signed-off-by: Daniel Vacek <neelx@redhat.com>
->> Cc: Mel Gorman <mgorman@techsingularity.net>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Paul Burton <paul.burton@imgtec.com>
->> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>
->> ---
->>  mm/page_alloc.c |    9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -5353,9 +5353,14 @@ void __meminit memmap_init_zone(unsigned
->>                       /*
->>                        * Skip to the pfn preceding the next valid one (or
->>                        * end_pfn), such that we hit a valid pfn (or end_pfn)
->> -                      * on our next iteration of the loop.
->> +                      * on our next iteration of the loop. Note that it needs
->> +                      * to be pageblock aligned even when the region itself
->> +                      * is not. move_freepages_block() can shift ahead of
->> +                      * the valid region but still depends on correct page
->> +                      * metadata.
->>                        */
->> -                     pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
->> +                     pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
->> +                                     ~(pageblock_nr_pages-1)) - 1;
->>  #endif
->>                       continue;
->>               }
->>
->>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.15.10-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> -------------
+> Pseudo-Shortlog of commits:
+>
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>     Linux 4.15.10-rc1
+>
+> Trond Myklebust <trond.myklebust@primarydata.com>
+>     NFS: Fix unstable write completion
+>
+> Trond Myklebust <trond.myklebust@primarydata.com>
+>     pNFS: Prevent the layout header refcount going to zero in pnfs_roc()
+>
+> Trond Myklebust <trond.myklebust@primarydata.com>
+>     NFS: Fix an incorrect type in struct nfs_direct_req
+>
+> himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+>     scsi: qla2xxx: Fix memory leak in dual/target mode
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix system crash in qlt_plogi_ack_unref
+>
+> Giridhar Malavali <giridhar.malavali@cavium.com>
+>     scsi: qla2xxx: Remove aborting ELS IOCB call issued as part of timeout.
+>
+> Giridhar Malavali <giridhar.malavali@cavium.com>
+>     scsi: qla2xxx: Defer processing of GS IOCB calls
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Clear loop id after delete
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix scan state field for fcport
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Replace fcport alloc with qla2x00_alloc_fcport
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix abort command deadlock due to spinlock
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix PRLI state check
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix Relogin being triggered too fast
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Relogin to target port on a cable swap
+>
+> Sawan Chandak <sawan.chandak@cavium.com>
+>     scsi: qla2xxx: Fix NPIV host cleanup in target mode
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix login state machine stuck at GPDB
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Serialize GPNID for multiple RSCN
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Retry switch command on time out
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix re-login for Nport Handle in use
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Skip IRQ affinity for Target QPairs
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Move session delete to driver work queue
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix gpnid error processing
+>
+> Quinn Tran <quinn.tran@cavium.com>
+>     scsi: qla2xxx: Fix system crash for Notify ack timeout handling
+>
+> Prarit Bhargava <prarit@redhat.com>
+>     x86/xen: Calculate __max_logical_packages on PV domains
+>
+> Javier Martinez Canillas <javierm@redhat.com>
+>     tpm: only attempt to disable the LPC CLKRUN if is already enabled
+>
+> Arnd Bergmann <arnd@arndb.de>
+>     tpm: remove unused variables
+>
+> Javier Martinez Canillas <javierm@redhat.com>
+>     tpm: delete the TPM_TIS_CLK_ENABLE flag
+>
+> Azhar Shaikh <azhar.shaikh@intel.com>
+>     tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+>
+> Azhar Shaikh <azhar.shaikh@intel.com>
+>     tpm_tis: Move ilb_base_addr to tpm_tis_data
+>
+> Eric Dumazet <edumazet@google.com>
+>     netfilter: use skb_to_full_sk in ip6_route_me_harder
+>
+> Florian Westphal <fw@strlen.de>
+>     netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
+>
+> Florian Westphal <fw@strlen.de>
+>     netfilter: bridge: ebt_among: add missing match size checks
+>
+> Florian Westphal <fw@strlen.de>
+>     netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets
+>
+> Eric Dumazet <edumazet@google.com>
+>     netfilter: IDLETIMER: be syzkaller friendly
+>
+> Paolo Abeni <pabeni@redhat.com>
+>     netfilter: nat: cope with negative port range
+>
+> Paolo Abeni <pabeni@redhat.com>
+>     netfilter: x_tables: fix missing timer initialization in xt_LED
+>
+> Eric Dumazet <edumazet@google.com>
+>     netfilter: xt_hashlimit: fix lock imbalance
+>
+> Cong Wang <xiyou.wangcong@gmail.com>
+>     netfilter: ipt_CLUSTERIP: fix a race condition of proc file creation
+>
+> Florian Westphal <fw@strlen.de>
+>     netfilter: add back stackpointer size checks
+>
+> Jerry Hoemann <jerry.hoemann@hpe.com>
+>     watchdog: hpwdt: Remove legacy NMI sourcing.
+>
+> Arnd Bergmann <arnd@arndb.de>
+>     watchdog: hpwdt: fix unused variable warning
+>
+> Jerry Hoemann <jerry.hoemann@hpe.com>
+>     watchdog: hpwdt: Check source of NMI
+>
+> Jerry Hoemann <jerry.hoemann@hpe.com>
+>     watchdog: hpwdt: SMBIOS check
+>
+> Francis Deslauriers <francis.deslauriers@efficios.com>
+>     x86/kprobes: Fix kernel crash when probing .entry_trampoline code
+>
+> Josh Poimboeuf <jpoimboe@redhat.com>
+>     objtool: Fix 32-bit build
+>
+> Josh Poimboeuf <jpoimboe@redhat.com>
+>     objtool: Fix another switch table detection issue
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     objtool, retpolines: Integrate objtool with retpoline support more closely
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     objtool: Add module specific retpoline rules
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     objtool: Add retpoline validation
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     objtool: Use existing global variables for options
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     x86/mm/sme, objtool: Annotate indirect call in sme_encrypt_execute()
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     x86/paravirt, objtool: Annotate indirect calls
+>
+> Ingo Molnar <mingo@kernel.org>
+>     x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
+>
+> Peter Zijlstra <peterz@infradead.org>
+>     x86/speculation, objtool: Annotate indirect calls/jumps for objtool
+>
+> David Woodhouse <dwmw@amazon.co.uk>
+>     x86/retpoline: Support retpoline builds with Clang
+>
+> David Woodhouse <dwmw@amazon.co.uk>
+>     x86/speculation: Use IBRS if available before calling into firmware
+>
+> David Woodhouse <dwmw@amazon.co.uk>
+>     Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+>
+> Jan Beulich <JBeulich@suse.com>
+>     x86-64/realmode: Add instruction suffix
+>
+> Jan Beulich <JBeulich@suse.com>
+>     x86/LDT: Avoid warning in 32-bit builds with older gcc
+>
+> Jan Beulich <JBeulich@suse.com>
+>     x86/IO-APIC: Avoid warning in 32-bit builds
+>
+> Jan Beulich <JBeulich@suse.com>
+>     x86/asm: Improve how GEN_*_SUFFIXED_RMWcc() specify clobbers
+>
+> Jann Horn <jannh@google.com>
+>     x86/mm: Remove stale comment about KMEMCHECK
+>
+> Dominik Brodowski <linux@dominikbrodowski.net>
+>     x86/entry/64: Use 'xorl' for faster register clearing
+>
+> Dominik Brodowski <linux@dominikbrodowski.net>
+>     x86/entry: Reduce the code footprint of the 'idtentry' macro
+>
+> Dan Williams <dan.j.williams@intel.com>
+>     nospec: Include <asm/barrier.h> dependency
+>
+> Dan Williams <dan.j.williams@intel.com>
+>     nospec: Kill array_index_nospec_mask_check()
+>
+> Paul Burton <paul.burton@mips.com>
+>     MIPS: CPC: Map registers using DT in mips_cpc_default_phys_base()
+>
+> Paul Burton <paul.burton@mips.com>
+>     dt-bindings: Document mti,mips-cpc binding
+>
+> himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+>     scsi: qla2xxx: Fix recursion while sending terminate exchange
+>
+> himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
+>     scsi: qla2xxx: Fix NULL pointer crash due to probe failure
+>
+> Dennis Wassenberg <dennis.wassenberg@secunet.com>
+>     ALSA: hda: add dock and led support for HP ProBook 640 G2
+>
+> Dennis Wassenberg <dennis.wassenberg@secunet.com>
+>     ALSA: hda: add dock and led support for HP EliteBook 820 G3
+>
+> Hui Wang <hui.wang@canonical.com>
+>     ALSA: hda - Fix a wrong FIXUP for alc289 on Dell machines
+>
+> Takashi Iwai <tiwai@suse.de>
+>     ALSA: seq: More protection for concurrent write and ioctl races
+>
+> Takashi Iwai <tiwai@suse.de>
+>     ALSA: seq: Don't allow resizing pool in use
+>
+> Dennis Wassenberg <dennis.wassenberg@secunet.com>
+>     ALSA: hda/realtek - Make dock sound work on ThinkPad L570
+>
+> Takashi Iwai <tiwai@suse.de>
+>     ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
+>
+> Benjamin Berg <bberg@redhat.com>
+>     ALSA: hda/realtek: Limit mic boost on T480
+>
+> Kailang Yang <kailang@realtek.com>
+>     ALSA: hda/realtek - Add headset mode support for Dell laptop
+>
+> Kailang Yang <kailang@realtek.com>
+>     ALSA: hda/realtek - Add support headset mode for DELL WYSE
+>
+> Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>     x86/spectre_v2: Don't check microcode versions when running under hypervisors
+>
+> Adrian Hunter <adrian.hunter@intel.com>
+>     perf tools: Fix trigger class trigger_on()
+>
+> Seunghun Han <kkamagui@gmail.com>
+>     x86/MCE: Serialize sysfs changes
+>
+> Tony Luck <tony.luck@intel.com>
+>     x86/MCE: Save microcode revision in machine check records
+>
+> Michael Lyle <mlyle@lyle.org>
+>     bcache: don't attach backing with duplicate UUID
+>
+> Tang Junhui <tang.junhui@zte.com.cn>
+>     bcache: fix crashes in duplicate cache device register
+>
+> Sergey Gorenko <sergeygo@mellanox.com>
+>     IB/mlx5: Fix incorrect size of klms in the memory region
+>
+> Arnd Bergmann <arnd@arndb.de>
+>     dm bufio: avoid false-positive Wmaybe-uninitialized warning
+>
+> James Hogan <jhogan@kernel.org>
+>     kbuild: Handle builtin dtb file names containing hyphens
+>
+> Christoph Hellwig <hch@lst.de>
+>     Revert "nvme: create 'slaves' and 'holders' entries for hidden controllers"
+>
+> Parav Pandit <parav@mellanox.com>
+>     IB/core: Fix missing RDMA cgroups release in case of failure to register device
+>
+> Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>     arm64: mm: fix thinko in non-global page table attribute check
+>
+> David Hildenbrand <david@redhat.com>
+>     KVM: s390: fix memory overwrites when not using SCA entries
+>
+> Tiwei Bie <tiwei.bie@intel.com>
+>     virtio_ring: fix num_free handling in error case
+>
+> Ross Zwisler <ross.zwisler@linux.intel.com>
+>     loop: Fix lost writes caused by missing flag
+>
+> Matthew Wilcox <mawilcox@microsoft.com>
+>     Documentation/sphinx: Fix Directive import error
+>
+> Daniel Vacek <neelx@redhat.com>
+>     mm/page_alloc: fix memmap_init_zone pageblock alignment
+
+
+On 4.14 and 4.15, this patch breaks booting on dragonboard 410c and
+hikey 620 (both arm64). The fix has been proposed and tested but is not
+yet in mainline per https://lkml.org/lkml/2018/3/12/710
+
+A new fix proposed by Daniel is under review,
+mm/page_alloc: fix boot hang in memmap_init_zone
+https://lkml.org/lkml/2018/3/13/1422
