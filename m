@@ -1,70 +1,103 @@
 Return-Path: <djkurtz@chromium.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521063891; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521063895; cv=none;
         d=google.com; s=arc-20160816;
-        b=KLQ7N0rlaV0Y2jFygag3mFaR7Y4BzliJY3s2Y3WggKgY9SDwVjm7X8ZGeOvA3Olfgw
-         ph/Mn0qsWmknVn7z/QnK17n5/Nr5clpJMi6zu1FdglO4A4OgE4AHyN6rG+mUntVnT7RR
-         ZN3U+VWoTJCdBJdH0gnzh/I5/E2pMF0Qx2xSkhxoFwSKkwM6mYmAb+p3hualp8qrH7Cf
-         ACWpq59RgIfE5LZt8SE2d8e3Ai3B13YWGmsGr2ZyQTC/uhCc4Go86eZAJtlPoPnPWz3W
-         /feB6vAS9PyoXCuZDn6woK78XgTKHTfleC70T8tMWbzywwe1xrn4PGkMF+P7ekEzgtUM
-         mUbw==
+        b=lLBh1PBvM0LJ8j9ZFRvgEbpHsHVsZ1UMk/oMwkWdF/gv3Kh7CRh6BbRUlW+LR3YMMC
+         6W5rQK/jP1apUgjq90YFwuP1A3iAv8JEjnGrvc/czI9s6bZ68vQvY2udWGKadfaTnUtx
+         46XUzuK2D6d3rUKdHj+8hL6SC79OS6qi0uzpNmcN50p505GeoCMZmEWG4++uUCvn10IQ
+         /rcf3UKIZJdk33vfhBki1Vjm6N5d3V9JcuUxgpbSk0NmWzGJ/3caibhOTmPn/J4CLDdS
+         RFRhNP3i3AuFLTfOLLDZX3zKb+3z7Yg0LrOlSJUJg72qReNPGlZlqeSnzDIElH/EDakQ
+         jYpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=bvb5An+FRd8WBGgHl5jRe+Jtd7dWGgpb2nQ3crP4P2w=;
-        b=kqZGDrwBNU8PGDtxfuRA/LPbw7mWWMBxzYmhFs9TkuYM+RLMfkdXBYsMLGEyZrGBnd
-         8WCNr+Kz31DmFtet8oKNPy6j3adWjSipIRFVi9bmrZiPxz5+FlJgqjUfp0Vwuw0PFsSy
-         RBIZaWShalphCGK/ObwWA8ygNY/KvD3iDeBdkY5oOT22gGTjPcjD72nKC9pteqnh/IAn
-         2nyU6g/C6HldL9uoPl+IYu0oYZy2NvCxxjs4soKS/zWpGzO6ObMspRIRuDWgefXx44VO
-         Y7PFOXOKlGEj3jALkiKv7Nblr1Z238gDy8Q6WO5B7EDl5Kd5sBmj2SLdQurHluY5ow1n
-         NaBA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Tdtjq/qkd4bjtfRl96x5sol1oqCrkwUTzGSG+0MBqWA=;
+        b=N/YZy08EPLxAQqWsm+UNuPAsDP1wXnAXVW0u4R4LICouEkaTNpup1e5LD1+ZL8tIgO
+         IthNaLno6eNE62+Vmnq1pozrHdFw+BS1SXE8D2m2yzQXNPUJLgHuu2eikpUUlomf7lrB
+         QvBCCMwvGsNy6RUmQ52kO0bz66ouYQDe2Eh/ZGHl9ViSlRzTdDThMUhd7SfaWznCt7sc
+         Qw/qexa6/frvbsykU2wqycMHYyQBxZ2XD1HlKEfRGoS5mEMC2c8DoSclNcMD2udAGS+T
+         6keY9Ds2zbcoCTRs1PUeTuda9yRdzogIRnLPVIZxI4//YnEb/uxcNeceMtm5qS9FLPcp
+         vsCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=oKi+lmWN;
+       dkim=pass header.i=@chromium.org header.s=google header.b=i3jrIxI+;
        spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=oKi+lmWN;
+       dkim=pass header.i=@chromium.org header.s=google header.b=i3jrIxI+;
        spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AG47ELt6qnmCUxpJOvYd3p3lbHmDoPSfnUDrgaz+8w4kdcZPcBUAoWp31nhIDW8Zz3AQ3ZO9qJ6J8g==
+X-Google-Smtp-Source: AG47ELsSs6zjkQyiJJpJAAz+r8mY0heXgCCe/rox8KYKWNh2newCAML0RcdT/6cNWoevcv6MOwNDEA==
 From: Daniel Kurtz <djkurtz@chromium.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: adurbin@chromium.org,
 	linux-kernel@vger.kernel.org,
-	Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH v2 0/3] Add earlycon support for AMD Carrizo / Stoneyridge
-Date: Wed, 14 Mar 2018 15:44:35 -0600
-Message-Id: <20180314214439.27806-1-djkurtz@chromium.org>
+	Daniel Kurtz <djkurtz@chromium.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org (open list:ACPI)
+Subject: [PATCH v2 2/3] ACPI: SPCR: Add support for AMD CT/SZ
+Date: Wed, 14 Mar 2018 15:44:37 -0600
+Message-Id: <20180314214439.27806-3-djkurtz@chromium.org>
 X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180314214439.27806-1-djkurtz@chromium.org>
+References: <20180314214439.27806-1-djkurtz@chromium.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594951091006511765?=
-X-GMAIL-MSGID: =?utf-8?q?1594951091006511765?=
+X-GMAIL-THRID: =?utf-8?q?1594951095060046903?=
+X-GMAIL-MSGID: =?utf-8?q?1594951095060046903?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a 48 MHz
-input clock.  Currently, there is no way to tell earlycon to use a specific
-uart input clock when configuring a baud rate.
+AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
+earlycon setup handler to configure its input clock in order to compute
+baud rate divisor registers.
+Detect them by examining the OEMID field in the SPCR header, and pass
+then pass uart type amdcz to earlycon.
 
-Patch 1 adds an earlycon ->setup() callback to set up this clock.  The setup is
-triggered on the commandline by specifying "earlycon=amdcz,...".
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/acpi/spcr.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Patch 2 adds an ACPI SPCR quirk to automatically trigger this hook when the
-ACPI SPCR table OEMID field is "AMDCZ ".
-
-Patch 3 adds an additional fix which allows botht the ACPI SPCR quirk and amdcz
-->setup() to tell 8250_core to skip initialization of old serial ports that do
-not exist on these SoCs.
-
-Daniel Kurtz (3):
-  serial: 8250_early: Add earlycon support for AMD Carrizo / Stoneyridge
-  ACPI: SPCR: Add support for AMD CT/SZ
-  serial: core: Allow skipping old serial port initialization
-
- drivers/acpi/spcr.c                  | 25 +++++++++++++++++++++++++
- drivers/tty/serial/8250/8250_core.c  |  6 ++++++
- drivers/tty/serial/8250/8250_early.c | 16 ++++++++++++++++
- include/linux/serial_8250.h          |  6 ++++++
- 4 files changed, 53 insertions(+)
-
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index 9d52743080a4..52d840d0e05b 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -73,6 +73,24 @@ static bool xgene_8250_erratum_present(struct acpi_table_spcr *tb)
+ 	return xgene_8250;
+ }
+ 
++/*
++ * AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
++ * earlycon setup handler to configure its input clock in order to compute
++ * baud rate divisor registers.
++ * Detect them by examining the OEM fields in the SPCR header.
++ */
++static bool amdcz_present(struct acpi_table_spcr *tb)
++{
++	if (memcmp(tb->header.oem_id, "AMDCZ ", ACPI_OEM_ID_SIZE))
++		return false;
++
++	if (memcmp(tb->header.oem_table_id, "AMDCZ   ",
++		    ACPI_OEM_TABLE_ID_SIZE))
++		return false;
++
++	return true;
++}
++
+ /**
+  * acpi_parse_spcr() - parse ACPI SPCR table and add preferred console
+  *
+@@ -189,6 +207,11 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 			uart = "qdf2400_e44";
+ 	}
+ 
++	if (amdcz_present(table)) {
++		if (enable_earlycon)
++			uart = "amdcz";
++	}
++
+ 	if (xgene_8250_erratum_present(table)) {
+ 		iotype = "mmio32";
+ 
 -- 
 2.16.2.804.g6dcf76e118-goog
