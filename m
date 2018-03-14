@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751791AbeCNXmh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:42:37 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42334 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeCNXme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:42:34 -0400
-X-Google-Smtp-Source: AG47ELtmJjS0rHhWrd7PeW0ORyQFdNrzVc3dQW8XTv63dUm+sTm5n9oKNZz8mJr7LG3pwUlQ+8weXQ==
-Date: Wed, 14 Mar 2018 16:42:31 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] thermal: exynos: sanitize DeviceTree support
-Message-ID: <20180314234230.GA9784@localhost.localdomain>
-References: <CGME20180306144427epcas1p3bd260e382c61ab5176a50aa95084b542@epcas1p3.samsung.com>
- <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
+        id S1751984AbeCNXmn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:42:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751447AbeCNXmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 19:42:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA6C20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 14 Mar 2018 19:42:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak
+ symbol
+Message-ID: <20180314194237.45e2709c@vmware.local.home>
+In-Reply-To: <20180309095054.vrngc6fz7wo3hd4x@pathway.suse.cz>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+        <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
+        <20180307022127.GB802@jagdpanzerIV>
+        <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
+        <20180307104002.GA505@jagdpanzerIV>
+        <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
+        <20180307114845.GA894@jagdpanzerIV>
+        <20180309095054.vrngc6fz7wo3hd4x@pathway.suse.cz>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 9 Mar 2018 10:50:55 +0100
+Petr Mladek <pmladek@suse.com> wrote:
 
-On Tue, Mar 06, 2018 at 03:43:43PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+> On Wed 2018-03-07 20:48:56, Sergey Senozhatsky wrote:
+> > On (03/07/18 11:57), Arnd Bergmann wrote:  
+> > > Since lib/dump_stack.c is mandatory then, I would suggest making it
+> > > obj-y and moving it out of lib/ into kernel/printk/.  
+> > 
+> > Totally agree on obj-y. And tend to agree on moving lib/dump_stack to
+> > kernel/printk. lib/dump_stack depends on CONFIG_PRINTK and is partially
+> > in printk.h. So it _mostly_ seems like the right place after all.  
 > 
-> Values passed through DT properties specific to Exynos thermal
-> driver ("samsung,*") are SoC (not platform) specific so just
-> define them in struct exynos_tmu_data instance (or just use
-> constants where values are identical for all SoCs) and remove
-> "samsung," DT properties altogether.
+> I agree that we should define dump_stack.o as obj-y. Also it makes
+> sense to move it to kernel/printk/. As Sergey said: it depends on
+> CONFIG_PRINTK and is in printk.h.
 > 
-> The patchset should not cause any functionality changes.  This
-> means that unless there are some bugs in the patches itself there
-> should be no behavior changes for the driver (this also includes
-> lack of changes in the way hardware is accessed by the driver).
-> 
-> Tested on Exynos5422 based Odroid-XU3 Lite board.
+> Steven, do you agree or would you suggest another location?
+> It was you who suggested to move the several functions from printk.c
+> to dump_stack.c. IMHO, the motivation was to fix responsibilities
+> (maintainer-ship) of this stuff. This will not really happen if
+> we move the file to printk directory.
+>
 
-applied this series. except for patch 10, which should go through your
-arch tree.
+I still would like to keep it in lib. If blackfin is going to be nuked
+in 4.17, and nds32 is the only one that is causing a issue. I would
+highly recommend fixing nds32 and have Stephen stop building blackfin.
 
-Thanks.
-
-> 1.9.1
+-- Steve
