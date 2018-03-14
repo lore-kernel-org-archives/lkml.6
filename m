@@ -1,132 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeCNF2M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 01:28:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44132 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753270AbeCNF2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 01:28:11 -0400
-Date: Wed, 14 Mar 2018 01:23:27 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Steve Grubb <sgrubb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
-Message-ID: <20180314052327.3uhxb6iy5xtrs3ml@madcap2.tricolour.ca>
-References: <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
- <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
- <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca>
- <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
- <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca>
- <20180313093517.28c99b48@ivy-bridge>
- <20180313101108.s6o7jec57rsxpsmc@madcap2.tricolour.ca>
- <20180313113815.187da185@ivy-bridge>
- <20180313105251.p7pc472xyklm7ssr@madcap2.tricolour.ca>
- <CAHC9VhQ+JwGd3FOU_oZVgQRt=MAcyeDxDiZv8GWtXF3bYLp+dQ@mail.gmail.com>
+        id S1751983AbeCNF3r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 01:29:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38846 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbeCNF3o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 01:29:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F5FE6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state
+ after configuring the PSR
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
+        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
+        heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, mark.yao@rock-chips.com,
+        wzz@rock-chips.com, hl@rock-chips.com, jingoohan1@gmail.com,
+        sw0312.kim@samsung.com, dianders@chromium.org,
+        kyungmin.park@samsung.com, kuankuan.y@gmail.com, hshi@chromium.org
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+ <20180309222327.18689-2-enric.balletbo@collabora.com>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <c2a7ac1d-5021-508a-18bc-cf61ca676688@codeaurora.org>
+Date: Wed, 14 Mar 2018 10:59:27 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ+JwGd3FOU_oZVgQRt=MAcyeDxDiZv8GWtXF3bYLp+dQ@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <20180309222327.18689-2-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-13 16:24, Paul Moore wrote:
-> On Tue, Mar 13, 2018 at 6:52 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-03-13 11:38, Steve Grubb wrote:
-> >> On Tue, 13 Mar 2018 06:11:08 -0400
-> >> Richard Guy Briggs <rgb@redhat.com> wrote:
-> >>
-> >> > On 2018-03-13 09:35, Steve Grubb wrote:
-> >> > > On Mon, 12 Mar 2018 11:52:56 -0400
-> >> > > Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > >
-> >> > > > On 2018-03-12 11:53, Paul Moore wrote:
-> >> > > > > On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs
-> >> > > > > <rgb@redhat.com> wrote:
-> >> > > > > > On 2018-03-12 11:12, Paul Moore wrote:
-> >> > > > > >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs
-> >> > > > > >> <rgb@redhat.com> wrote:
-> >> > > > > >> > Audit link denied events for symlinks had duplicate PATH
-> >> > > > > >> > records rather than just updating the existing PATH record.
-> >> > > > > >> > Update the symlink's PATH record with the current dentry
-> >> > > > > >> > and inode information.
-> >> > > > > >> >
-> >> > > > > >> > See: https://github.com/linux-audit/audit-kernel/issues/21
-> >> > > > > >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >> > > > > >> > ---
-> >> > > > > >> >  fs/namei.c | 1 +
-> >> > > > > >> >  1 file changed, 1 insertion(+)
-> >> > > > > >>
-> >> > > > > >> Why didn't you include this in patch 4/4 like I asked during
-> >> > > > > >> the previous review?
-> >> > > > > >
-> >> > > > > > Please see the last comment of:
-> >> > > > > > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
-> >> > > > >
-> >> > > > > Yes, I just saw that ... I hadn't seen your replies on the v1
-> >> > > > > patches until I had finished reviewing v2.  I just replied to
-> >> > > > > that mail in the v1 thread, but basically you need to figure
-> >> > > > > out what is necessary here and let us know.  If I have to
-> >> > > > > figure it out it likely isn't going to get done with enough
-> >> > > > > soak time prior to the upcoming merge window.
-> >> > > >
-> >> > > > Steve?  I was hoping you could chime in here.
-> >> > >
-> >> > > If the CWD record will always be the same as the PARENT record,
-> >> > > then we do not need the parent record. Duplicate information is
-> >> > > bad. Like all the duplicate SYSCALL information.
-> >> >
-> >> > The CWD record could be different from the PARENT record, since I
-> >> > could have SYMLINK=/tmp/test/symlink, CWD=/tmp, PARENT=/tmp/test.
-> >> > Does the parent record even matter since it might not be a directory
-> >> > operation like creat, unlink or rename?
-> >>
-> >> There's 2 issues. One is creating the path if what we have is relative.
-> >> In this situation CWD should be enough. But if the question is whether
-> >> the PARENT directory should be included...what if the PARENT
-> >> permissions do not allow the successful name resolution? In that case
-> >> we might only get a PARENT record no? In that case we would need it.
-> >
-> > I think in the case of symlink creation, normal file create code path
-> > would be in effect, and would properly log parent and symlink source
-> > file paths (if a rule to log it was in effect) which is not something
-> > that would trigger a symlink link denied error.  Symlink link denied
-> > happens only when trying to actually follow the link before
-> > resolving the target path of a read/write/exec of the symlink target.
-> >
-> > If the parent permissions of the link's target don't allow successful
-> > name resolution then the symlink link denied condition isn't met, but
-> > rather any other rule that applies to the target path.
+
+
+On Saturday 10 March 2018 03:52 AM, Enric Balletbo i Serra wrote:
+> From: Yakir Yang <ykk@rock-chips.com>
 > 
-> I'm guessing you are in the process of tracking all this down, but if
-> not, lets get to a point where we can answer this definitively and not
-> guess :)
+> Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
+> function, or print the sink PSR error state if we failed to apply the
+> requested PSR setting.
 
-I was fairly certain but being polite, expecting confirmation or
-possibly correction if I've overlooked something.
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
-Additionally, this denial message only happens in certain parts of the
-permission check for symlinks:
-	/proc/sys/fs/protected_symlinks == 1
-	and follower and link owner don't match
-	and parent sticky and world-writable
-	and link parent and link owner don't match
-
-If you want other symlink denials logged, you need to set a rule for the
-target filtering on operation failure such as unix file permissions.
-
-The similar situation exists for hardlinks.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> 
+> Cc: 征增 王 <wzz@rock-chips.com>
+> Cc: Stéphane Marchesin <marcheu@chromium.org>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> [seanpaul changed timeout loop to a readx poll]
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> 
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++--
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  6 ++--
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 35 +++++++++++++++++++---
+>   3 files changed, 37 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index a693ab3078f0..e738aa6de1af 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -122,8 +122,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
+>   	psr_vsc.DB0 = 0;
+>   	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+>   
+> -	analogix_dp_send_psr_spd(dp, &psr_vsc);
+> -	return 0;
+> +	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>   }
+>   EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+>   
+> @@ -149,8 +148,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+>   	if (ret != 1)
+>   		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
+>   
+> -	analogix_dp_send_psr_spd(dp, &psr_vsc);
+> -	return 0;
+> +	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+>   }
+>   EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+>   
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> index 5c6a28806129..b039b28d8fcc 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+> @@ -20,6 +20,8 @@
+>   #define MAX_CR_LOOP 5
+>   #define MAX_EQ_LOOP 5
+>   
+> +#define DP_TIMEOUT_PSR_LOOP_MS			300
+> +
+>   /* DP_MAX_LANE_COUNT */
+>   #define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
+>   #define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
+> @@ -247,8 +249,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
+>   void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
+>   void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+>   void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
+> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+> -			      struct edp_vsc_psr *vsc);
+> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+> +			     struct edp_vsc_psr *vsc);
+>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+>   			     struct drm_dp_aux_msg *msg);
+>   
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> index 303083ad28e3..005a3f7005d2 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> @@ -10,10 +10,11 @@
+>    * option) any later version.
+>    */
+>   
+> -#include <linux/device.h>
+> -#include <linux/io.h>
+>   #include <linux/delay.h>
+> +#include <linux/device.h>
+>   #include <linux/gpio.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+>   
+>   #include <drm/bridge/analogix_dp.h>
+>   
+> @@ -992,10 +993,25 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
+>   	writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
+>   }
+>   
+> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+> -			      struct edp_vsc_psr *vsc)
+> +static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
+> +{
+> +	ssize_t val;
+> +	u8 status;
+> +
+> +	val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &status);
+> +	if (val < 0) {
+> +		dev_err(dp->dev, "PSR_STATUS read failed ret=%zd", val);
+> +		return val;
+> +	}
+> +	return status;
+> +}
+> +
+> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+> +			     struct edp_vsc_psr *vsc)
+>   {
+>   	unsigned int val;
+> +	int ret;
+> +	ssize_t psr_status;
+>   
+>   	/* don't send info frame */
+>   	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+> @@ -1036,6 +1052,17 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>   	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+>   	val |= IF_EN;
+>   	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+> +
+> +	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
+> +		psr_status >= 0 &&
+> +		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
+> +		(!vsc->DB1 && psr_status == DP_PSR_SINK_INACTIVE)), 1500,
+> +		DP_TIMEOUT_PSR_LOOP_MS * 1000);
+> +	if (ret) {
+> +		dev_warn(dp->dev, "Failed to apply PSR %d\n", ret);
+> +		return ret;
+> +	}
+> +	return 0;
+>   }
+>   
+>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+> 
