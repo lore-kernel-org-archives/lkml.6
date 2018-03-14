@@ -1,62 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeCNS5A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:57:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38120 "EHLO mail.bootlin.com"
+        id S1752077AbeCNS5S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:57:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751379AbeCNS47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:56:59 -0400
-Date: Wed, 14 Mar 2018 19:56:52 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
-        richard@nod.at, cyrille.pitchen@wedev4u.fr, dedekind1@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mtd: ubi: use put_device() if device_register fail
-Message-ID: <20180314195652.59b21594@bbrezillon>
-In-Reply-To: <5d9b08afdad2fbc65bac48d8ae22f4925bb80512.1520592440.git.arvind.yadav.cs@gmail.com>
-References: <cover.1520592440.git.arvind.yadav.cs@gmail.com>
-        <5d9b08afdad2fbc65bac48d8ae22f4925bb80512.1520592440.git.arvind.yadav.cs@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751348AbeCNS5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:57:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331052077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 14 Mar 2018 15:57:15 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephane Eranian <eranian@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 1/2] perf record: Synthesize features before events in
+ pipe mode
+Message-ID: <20180314185715.GE27335@kernel.org>
+References: <20180314092205.23291-1-jolsa@kernel.org>
+ <CABPqkBS5u6Qkbw3qoq4ocgsMZSoVF2m_5pBQ5YTRnx3=mZG6LQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBS5u6Qkbw3qoq4ocgsMZSoVF2m_5pBQ5YTRnx3=mZG6LQ@mail.gmail.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Mar 2018 16:20:49 +0530
-Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
-
-> if device_register() returned an error! Always use put_device()
-> to give up the reference initialized.
+Em Wed, Mar 14, 2018 at 11:45:14AM -0700, Stephane Eranian escreveu:
+> On Wed, Mar 14, 2018 at 2:22 AM, Jiri Olsa <jolsa@kernel.org> wrote:
+> > We need to synthesize events first, because some
+> > features works on top of them (on report side).
+> >
+> > Link: http://lkml.kernel.org/n/tip-vz436m6fobfz8ykmuxo8phyy@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/mtd/ubi/vmt.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-> index 3fd8d7f..db85b68 100644
-> --- a/drivers/mtd/ubi/vmt.c
-> +++ b/drivers/mtd/ubi/vmt.c
-> @@ -609,6 +609,7 @@ int ubi_add_volume(struct ubi_device *ubi, struct ubi_volume *vol)
->  	return err;
->  
->  out_cdev:
-> +	put_device(&vol->dev);
->  	cdev_del(&vol->cdev);
+> Works for me.
+> Tested-by: Stephane Eranian <eranian@google.com>
 
-use-after-free bug here: put_device() has freed the vol obj, and you're
-dereferencing the pointer just after that.
+Thanks for testing, will apply.
 
->  	return err;
->  }
-
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+- Arnaldo
