@@ -1,58 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752722AbeCNSau (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:30:50 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35121 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752330AbeCNSaq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:30:46 -0400
-X-Google-Smtp-Source: AG47ELsFpSdLMkisUoOCzVchp8i+WURVvvFjCCDmiy+AxbXrV5LqGGyzqRTx2pPg3HYBytvqTj5Dcw==
-Date: Wed, 14 Mar 2018 11:30:43 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Thierry Escande <thierry.escande@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] dt-bindings: net: bluetooth: Add
- qualcomm-bluetooth
-Message-ID: <20180314183043.GX18510@minitux>
-References: <20180314155514.3374-1-thierry.escande@linaro.org>
- <20180314155514.3374-3-thierry.escande@linaro.org>
- <FF2E3FDE-76C5-477A-A904-32AC064297DA@holtmann.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FF2E3FDE-76C5-477A-A904-32AC064297DA@holtmann.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752191AbeCNSZy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:25:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55037 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751700AbeCNSZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:25:51 -0400
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH 1/3] libnvdimm: provide module_nd_driver wrapper
+Date: Wed, 14 Mar 2018 19:25:06 +0100
+Message-Id: <20180314182508.10351-2-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180314182508.10351-1-jthumshirn@suse.de>
+References: <20180314182508.10351-1-jthumshirn@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14 Mar 09:13 PDT 2018, Marcel Holtmann wrote:
-> > +		bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
-> 
-> can we use a common name here. I think that Nokia and Broadcom drivers
-> define one. And if this is the enable/shutdown GPIO, we should name it
-> consistently across all manufacturers. It essentially does the same on
-> Bluetooth UART chips no matter what chip is behind them.
-> 
+Provide a module_nd_driver() wrapper over simple nd_driver_register()
+nd_driver_unregister() combinations in module_init() and module_exit()
+respectively.
 
-Broadcomm has a device-wakup-gpios and Nokia has bluetooth-wakup-gpios.
-It might be that these behave in the same way, but from the description
-they only trigger the wakeup.
+Note an explicit nd_driver_unregister() had to be implemented as nd
+bus drivers did call device_unregister() direcly in the module_exit()
+function.
 
-The reason for the proposed naming here is that the pin is named
-"BT_DISABLE_N" in the datasheet.
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ include/linux/nd.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Regards,
-Bjorn
+diff --git a/include/linux/nd.h b/include/linux/nd.h
+index 5dc6b695437d..43c181a6add5 100644
+--- a/include/linux/nd.h
++++ b/include/linux/nd.h
+@@ -180,6 +180,12 @@ struct nd_region;
+ void nvdimm_region_notify(struct nd_region *nd_region, enum nvdimm_event event);
+ int __must_check __nd_driver_register(struct nd_device_driver *nd_drv,
+ 		struct module *module, const char *mod_name);
++static inline void nd_driver_unregister(struct nd_device_driver *drv)
++{
++	driver_unregister(&drv->drv);
++}
+ #define nd_driver_register(driver) \
+ 	__nd_driver_register(driver, THIS_MODULE, KBUILD_MODNAME)
++#define module_nd_driver(driver) \
++	module_driver(driver, nd_driver_register, nd_driver_unregister)
+ #endif /* __LINUX_ND_H__ */
+-- 
+2.13.6
