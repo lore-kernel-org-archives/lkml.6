@@ -1,56 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeCNEM7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:12:59 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33547 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbeCNEM5 (ORCPT
+        id S1753258AbeCNENF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:13:05 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37012 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeCNENA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:12:57 -0400
-X-Google-Smtp-Source: AG47ELsz3dsxl96j5qbwW3/bjc0RIVjolsrhd5j/kV8D/YNE0viS9HK7R6cy0aekqW7wjXeCLrewPw==
-Date: Tue, 13 Mar 2018 22:12:49 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] RDMA/qedr: eliminate duplicate barriers on
- weakly-ordered archs
-Message-ID: <20180314041249.GA18314@ziepe.ca>
-References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
- <1520997629-17361-3-git-send-email-okaya@codeaurora.org>
+        Wed, 14 Mar 2018 00:13:00 -0400
+X-Google-Smtp-Source: AG47ELtaqsnIl//iHyNsTcB8wyGhsr6awOfDdG+yGU0zBl24QJUB/v3YPd/0wr7VuJq7UZNPSGw+dpDf+v6BXzLa6tY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520997629-17361-3-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
+References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180311112725.GC4043@hirez.programming.kicks-ass.net> <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
+ <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 13 Mar 2018 21:12:58 -0700
+Message-ID: <CAPcyv4h3SPqx879nnvQt0rvwanKksxLTqChCQa9ZQH8hsd_7yg@mail.gmail.com>
+Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce wait_var_event()/wake_up_var()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:20:24PM -0400, Sinan Kaya wrote:
-> Code includes wmb() followed by writel() in multiple places. writel()
-> already has a barrier on some architectures like arm64.
-> 
-> This ends up CPU observing two barriers back to back before executing the
-> register write.
-> 
-> Since code already has an explicit barrier call, changing writel() to
-> writel_relaxed().
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->  drivers/infiniband/hw/qedr/verbs.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Mar 13, 2018 at 3:20 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Sun, Mar 11, 2018 at 10:15:55AM -0700, Dan Williams wrote:
+>> On Sun, Mar 11, 2018 at 4:27 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>> > On Fri, Mar 09, 2018 at 10:55:32PM -0800, Dan Williams wrote:
+>> >> Add a generic facility for awaiting an atomic_t to reach a value of 1.
+>> >>
+>> >> Page reference counts typically need to reach 0 to be considered a
+>> >> free / inactive page. However, ZONE_DEVICE pages allocated via
+>> >> devm_memremap_pages() are never 'onlined', i.e. the put_page() typically
+>> >> done at init time to assign pages to the page allocator is skipped.
+>> >>
+>> >> These pages will have their reference count elevated > 1 by
+>> >> get_user_pages() when they are under DMA. In order to coordinate DMA to
+>> >> these pages vs filesytem operations like hole-punch and truncate the
+>> >> filesystem-dax implementation needs to capture the DMA-idle event i.e.
+>> >> the 2 to 1 count transition).
+>> >>
+>> >> For now, this implementation does not have functional behavior change,
+>> >> follow-on patches will add waiters for these page-idle events.
+>> >
+>> > Argh, no no no.. That whole wait_for_atomic_t thing is a giant
+>> > trainwreck already and now you're making it worse still.
+>> >
+>> > Please have a look here:
+>> >
+>> >   https://lkml.kernel.org/r/20171101190644.chwhfpoz3ywxx2m7@hirez.programming.kicks-ass.net
+>>
+>> That thread seems to be worried about the object disappearing the
+>> moment it's reference count reaches a target. That isn't the case with
+>> the memmap / struct page objects for ZONE_DEVICE pages. I understand
+>> wait_for_atomic_one() is broken in the general case, but as far as I
+>> can see it works fine specifically for ZONE_DEVICE page busy tracking,
+>> just not generic object lifetime.
+>
+> How's this, compile tested (x86_64-allmodconfig) only.
+>
+> This allows you to write:
+>
+>         wait_var_event(&your_atomic, atomic_read(&your_atomic) == 1);
 
-Sure matches my understanding of writel_relaxed
+Nice!
 
-This is part of a series, should we take just this patch through the
-rdma tree? If not:
-
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-
-Thanks,
-Jason
+I'll give this a shot. I will need to add
+wait_var_event_interruptible(), but other than that it looks workable
+to me.
