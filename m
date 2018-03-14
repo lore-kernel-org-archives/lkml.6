@@ -1,75 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeCNT5R (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:57:17 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:35294 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751860AbeCNT5O (ORCPT
+        id S1751977AbeCNT6A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:58:00 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:29519 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751426AbeCNT55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:57:14 -0400
-X-Google-Smtp-Source: AG47ELtCDk44Znq8mlh5Ao860KVd9hEqIvnNKXMwazQbX0l2wkgWiO+pGoLMNd1GPASBJ1y5oYdkbg==
-Date: Wed, 14 Mar 2018 12:57:11 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-Message-ID: <20180314195711.GD2943022@devbig577.frc2.facebook.com>
-References: <1520609707-16582-1-git-send-email-longman@redhat.com>
- <1520613285.12489.36.camel@gmx.de>
- <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
- <1520619426.27998.18.camel@gmx.de>
- <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
- <1520624424.27998.76.camel@gmx.de>
- <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
- <20180309221736.GB5926@hirez.programming.kicks-ass.net>
- <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
- <1520653648.12749.20.camel@gmx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520653648.12749.20.camel@gmx.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 14 Mar 2018 15:57:57 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 14 Mar 2018 20:57:56 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] remoteproc: imx_rproc: Fix an error handling path in 'imx_rproc_probe()'
+Date: Wed, 14 Mar 2018 20:56:37 +0100
+Message-Id: <f944d560ce1b1573be00697d66c4a49b14680af9.1521057013.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+If 'of_device_get_match_data()' fails, we must undo the previous
+'rproc_alloc()' call.
 
-On Sat, Mar 10, 2018 at 04:47:28AM +0100, Mike Galbraith wrote:
-> Some form of cpu_exclusive (preferably exactly that, but something else
-> could replace it) is needed to define sets that must not overlap any
-> other set at creation time or any time thereafter.  A set with property
-> 'exclusive' is the enabler for fundamentally exclusive (but dynamic!)
-> set properties such as 'isolated' (etc etc).
+Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/remoteproc/imx_rproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I'm not sure cpu_exclusive makes sense.  A controller knob can either
-belong to the parent or the cgroup itself and cpu_exclusive doesn't
-make sense in either case.
-
-1. cpu_exclusive is owned by the parent as other usual resource
-   control knobs.  IOW, it's not delegatable.
-
-   This is weird because it's asking the kernel to protect against its
-   own misconfiguration and there's nothing preventing cpu_exclusive
-   itself being cleared by the same entitya.
-
-2. cpu_exclusive is owned by the cgroup itself like memory.oom_group.
-   IOW, it's delegatable.
-
-   This allows a cgroup to affect what its siblings can or cannot do,
-   which is broken.  Semantically, it doesn't make much sense either.
-
-I don't think it's a good idea to add a kernel mechanism to prevent
-misconfiguration from a single entity.
-
-Thanks.
-
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 633268e9d550..05bcbce2013a 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -339,8 +339,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	dcfg = of_device_get_match_data(dev);
+-	if (!dcfg)
+-		return -EINVAL;
++	if (!dcfg) {
++		ret = -EINVAL;
++		goto err_put_rproc;
++	}
+ 
+ 	priv = rproc->priv;
+ 	priv->rproc = rproc;
 -- 
-tejun
+2.14.1
