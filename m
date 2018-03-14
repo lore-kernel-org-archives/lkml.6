@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-732879-1521003830-2-3239671150940555172
+X-Cyrus-Session-Id: sloti22d1t05-693261-1521003817-2-1279718692836162493
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521003830; b=nC4YOTmYfvBTEtC/ox03u0Y33fMgK5lHv6qUO5L1i/SFi8B
-    YolSbyRh9/fKCZycXTzhOgyqFLRsDUkTI5TYsNxt5UJ0SE5vjNa2SzRwJUG3C2ue
-    AfDof2O7anZJS95m32tFbwj5H75ehV4MD06uCVUrBcJBxvO3PLoNtualS63S3OZR
-    8WyFBrQx2PnFdJhoWmC/CsiwwOkN1MXKqVtaKPSR3L7rUEAZaeEtiXhT2dcbE4ge
-    AKV4vKhOBGBP5bSRaWXZSgQVyfNCn/XN09Vt9vrKMQXbpmPfQg8/U4Md2TxnbG9n
-    WXhvI746PvUC2j0q0ogE+AMx2d8LbF8jJfzup6g==
+    t=1521003816; b=TFPecz+VICIKkIayW9HNtBNFAvDJNad2VKvarsqeMdhQ3S3
+    Uh6c2sIP8WPFDnEzuTvoOY1+d4MvLXhgGGrfCS9D9rxgp6skk1+lNiP+151GE9yd
+    7VSkH7Nb9tRA6rS+fE7xr5BGphIKYTo5GKe0kVpaCV+QqAsvg6Se3ucNgBGAsvyw
+    UBijnRvyJPCWcifaJ6VJhxH3gOwxefmzvy28vOsHeeTVUslpeinm5NP4mgxb1eWO
+    4dn/jjrA+zERVFw/CXxdVqOnEXBKCW5xmWSkjYdFfDulJ1Eb1go8Gpc0Zpuony1l
+    ISxRTUT1upIN+lkKNbq5sgGHBphQoA5VdApyoTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1521003830; bh=ZyEtJzkGUUlEwixQb9y/d36sq4imjAU2z42
-    OxXEshUE=; b=u/bHi3tzbD1Z984Jwd+MA7hbCokYN4aeDDVmf0FdUBXEIDqTxJW
-    PW/RZfJ8pito6WB+smfOBSVlCuX3LWW4wkCUQvw5J5upwID48Ze73LjmdTIpCPHW
-    gt2J3gw0KLW791SVaMGd62fhbhBG1o098iAqbzfJWE8bRmv0QruqaK6EVsl8Bb+z
-    MKcnNvNjOoxZQotzYn9WDq3lmn5MNNoYW18S71CPSm6YUBSHue/c4x88Sr8eWHsH
-    vdEqxe18f1ymUGphELo2i4guO6OLKuASTRWzjB1rcHTB1yJnssjZi0rT1le2MwFB
-    8j4M4a09i5+Nb5HEIC7LbaK5fn9JZv+CBqQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    s=arctest; t=1521003816; bh=beaM37Ea2Y9zOYiQ+Ob+w7GWHN5n9Kbbsm7
+    +m/nL0jo=; b=s/7F0PmVA97rzQM3A4gUbRXzTQUJk5vlBc9bI618v344QKOQJJ2
+    YplCCXed2YIjRzAHS6MIw1uLxisRKxjxHPfTAD+p62uNpTZbKxlSKfQuXS9yB/uu
+    cqmB8bXS88TZt8iRP5qrp5Flbbl8zkM+v1Mk3NSlUxZy3WXv1NchSi7kIC+h7w1R
+    gNXL/hnJmr4UJxxdkx3UQ/V9h2uFEh6KKqn/RW4z54b64upPQEzXYrkT0y4/My8R
+    7XOd6JjsT5HExD//99MZKjPyAtVqRIUyJNdfnagINyGkqhINSwjap9NOk5dHeIgx
+    KSTNJr5nYOUmjVnWuf3okVX+lJbnZyiVh+A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-75 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -49,13 +49,13 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750758AbeCNFDe (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 01:03:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753246AbeCNFDT (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1753248AbeCNFDT (ORCPT <rfc822;greg@kroah.com>);
         Wed, 14 Mar 2018 01:03:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E263E21796
+Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750758AbeCNFDR (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 14 Mar 2018 01:03:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D4C821783
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
 From: Andy Lutomirski <luto@kernel.org>
@@ -63,9 +63,9 @@ To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>, Stas Sergeev <stsp@list.ru>,
         bartoldeman@gmail.com, Brian Gerst <brgerst@gmail.com>,
         Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH 3/3] x86/vm86/32: Fix POPF emulation
-Date: Tue, 13 Mar 2018 22:03:12 -0700
-Message-Id: <ce95f40556e7b2178b6bc06ee9557827ff94bd28.1521003603.git.luto@kernel.org>
+Subject: [PATCH 2/3] selftests/x86/entry_from_vm86: Add test cases for POPF
+Date: Tue, 13 Mar 2018 22:03:11 -0700
+Message-Id: <a16270b5cfe7832d6d00c479d0f871066cbdb52b.1521003603.git.luto@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <cover.1521003603.git.luto@kernel.org>
 References: <cover.1521003603.git.luto@kernel.org>
@@ -77,30 +77,93 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-POPF would trap if VIP was set regardless of whether IF was set.  Fix it.
+POPF is currently broken -- add tests to catch the error.  This
+results in:
 
-Reported-by: Bart Oldeman <bartoldeman@gmail.com>
-Suggested-by: Stas Sergeev <stsp@list.ru>
+   [RUN]	POPF with VIP set and IF clear from vm86 mode
+   [INFO]	Exited vm86 mode due to STI
+   [FAIL]	Incorrect return reason (started at eip = 0xd, ended at eip = 0xf)
+
+because POPF currently fails to check IF before reporting a pending
+interrupt.
+
+This patch also makes the FAIL message a bit more informative.
+
 Cc: stable@vger.kernel.org
-Fixes: 5ed92a8ab71f ("x86/vm86: Use the normal pt_regs area for vm86")
+Reported-by: Bart Oldeman <bartoldeman@gmail.com>
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/kernel/vm86_32.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/entry_from_vm86.c | 30 ++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
-index 5edb27f1a2c4..9d0b5af7db91 100644
---- a/arch/x86/kernel/vm86_32.c
-+++ b/arch/x86/kernel/vm86_32.c
-@@ -727,7 +727,8 @@ void handle_vm86_fault(struct kernel_vm86_regs *regs, long error_code)
- 	return;
+diff --git a/tools/testing/selftests/x86/entry_from_vm86.c b/tools/testing/selftests/x86/entry_from_vm86.c
+index 6e85f0d0498d..ade443a88421 100644
+--- a/tools/testing/selftests/x86/entry_from_vm86.c
++++ b/tools/testing/selftests/x86/entry_from_vm86.c
+@@ -95,6 +95,10 @@ asm (
+ 	"int3\n\t"
+ 	"vmcode_int80:\n\t"
+ 	"int $0x80\n\t"
++	"vmcode_popf_hlt:\n\t"
++	"push %ax\n\t"
++	"popf\n\t"
++	"hlt\n\t"
+ 	"vmcode_umip:\n\t"
+ 	/* addressing via displacements */
+ 	"smsw (2052)\n\t"
+@@ -124,8 +128,8 @@ asm (
  
- check_vip:
--	if (VEFLAGS & X86_EFLAGS_VIP) {
-+	if ((VEFLAGS & (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) ==
-+	    (X86_EFLAGS_VIP | X86_EFLAGS_VIF)) {
- 		save_v86_state(regs, VM86_STI);
- 		return;
+ extern unsigned char vmcode[], end_vmcode[];
+ extern unsigned char vmcode_bound[], vmcode_sysenter[], vmcode_syscall[],
+-	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_umip[],
+-	vmcode_umip_str[], vmcode_umip_sldt[];
++	vmcode_sti[], vmcode_int3[], vmcode_int80[], vmcode_popf_hlt[],
++	vmcode_umip[], vmcode_umip_str[], vmcode_umip_sldt[];
+ 
+ /* Returns false if the test was skipped. */
+ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+@@ -175,7 +179,7 @@ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+ 	    (VM86_TYPE(ret) == rettype && VM86_ARG(ret) == retarg)) {
+ 		printf("[OK]\tReturned correctly\n");
+ 	} else {
+-		printf("[FAIL]\tIncorrect return reason\n");
++		printf("[FAIL]\tIncorrect return reason (started at eip = 0x%lx, ended at eip = 0x%lx)\n", eip, v86->regs.eip);
+ 		nerrs++;
  	}
+ 
+@@ -264,6 +268,9 @@ int main(void)
+ 	v86.regs.ds = load_addr / 16;
+ 	v86.regs.es = load_addr / 16;
+ 
++	/* Use the end of the page as our stack. */
++	v86.regs.esp = 4096;
++
+ 	assert((v86.regs.cs & 3) == 0);	/* Looks like RPL = 0 */
+ 
+ 	/* #BR -- should deliver SIG??? */
+@@ -295,6 +302,23 @@ int main(void)
+ 	v86.regs.eflags &= ~X86_EFLAGS_IF;
+ 	do_test(&v86, vmcode_sti - vmcode, VM86_STI, 0, "STI with VIP set");
+ 
++	/* POPF with VIP set but IF clear: should not trap */
++	v86.regs.eflags = X86_EFLAGS_VIP;
++	v86.regs.eax = 0;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_UNKNOWN, 0, "POPF with VIP set and IF clear");
++
++	/* POPF with VIP set and IF set: should trap */
++	v86.regs.eflags = X86_EFLAGS_VIP;
++	v86.regs.eax = X86_EFLAGS_IF;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_STI, 0, "POPF with VIP and IF set");
++
++	/* POPF with VIP clear and IF set: should not trap */
++	v86.regs.eflags = 0;
++	v86.regs.eax = X86_EFLAGS_IF;
++	do_test(&v86, vmcode_popf_hlt - vmcode, VM86_UNKNOWN, 0, "POPF with VIP clear and IF set");
++
++	v86.regs.eflags = 0;
++
+ 	/* INT3 -- should cause #BP */
+ 	do_test(&v86, vmcode_int3 - vmcode, VM86_TRAP, 3, "INT3");
+ 
 -- 
 2.14.3
