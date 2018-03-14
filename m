@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeCNS0P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:26:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39874 "EHLO
+        id S1752465AbeCNS0W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:26:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49738 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752326AbeCNS0J (ORCPT
+        by vger.kernel.org with ESMTP id S1752381AbeCNS0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:26:09 -0400
+        Wed, 14 Mar 2018 14:26:17 -0400
 From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -18,18 +18,20 @@ Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
         jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
         berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com
-Subject: [PATCH v3 00/14] s390: vfio-ap: guest dedicated crypto adapters
-Date: Wed, 14 Mar 2018 14:25:40 -0400
+Subject: [PATCH v3 02/14] s390: zcrypt: externalize AP instructions available function
+Date: Wed, 14 Mar 2018 14:25:42 -0400
 X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18031418-0028-0000-0000-0000094D4E20
+x-cbid: 18031418-0024-0000-0000-0000181452CD
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.01003025; UDB=6.00510424; IPR=6.00782355;
- MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:26:06
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:26:14
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031418-0029-0000-0000-000039F79277
-Message-Id: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18031418-0025-0000-0000-00004F1A9EE6
+Message-Id: <1521051954-25715-3-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,107 +43,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On s390, we have cryptographic coprocessor cards, which are modeled on
-Linux as devices on the AP bus. Each card can be partitioned into domains
-which can be thought of as a set of hardware registers for processing 
-crypto commands. Crypto commands are sent to a specific domain within a
-card is via a queue which is identified as a (card,domain) tuple. We model 
-this something like the following (assuming we have access to cards 3 and 
-4 and domains 1 and 2):
+If the AP instructions are not available on the linux host, then
+AP devices can not be interpreted by the SIE. The AP bus has a
+function it uses to determine if the AP instructions are
+available. This patch provides a new function that wraps the
+AP bus's function to externalize it for use by KVM.
 
-AP -> card3 -> queue (3,1)
-            -> queue (3,2)
-   -> card4 -> queue (4,1)
-            -> queue (4,2)
+Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Reviewed-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Reviewed-by: Harald Freudenberger <freude@linux.vnet.ibm.com>
+---
+ arch/s390/include/asm/ap.h   |    7 +++++++
+ drivers/s390/crypto/ap_bus.c |    6 ++++++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
 
-If we want to virtualize this, we can use a feature provided by the
-hardware. We basically attach a satellite control block to our main
-hardware virtualization control block and the hardware takes care of
-most of the rest.
-
-For this control block, we don't specify explicit tuples, but a list of
-cards and a list of domains. The guest will get access to the cross
-product.
-
-Because of this, we need to take care that the lists provided to
-different guests don't overlap; i.e., we need to enforce sane
-configurations. Otherwise, one guest may get access to things like
-secret keys for another guest.
-
-The idea of this patch set is to introduce a new device, the matrix
-device. This matrix device hangs off a different root and acts as the
-parent node for mdev devices.
-
-If you now want to give the tuples (4,1) and (4,2), you need to do the
-following:
-
-- Unbind the (4,1) and (4,2) tuples from their ap bus driver.
-- Bind the (4,1) and (4,2) tuples to the vfio_ap driver.
-- Create the mediated device.
-- Assign card 4 and domains 1 and 2 to the mediated device
-
-QEMU will now simply consume the mediated device and things should work.
-
-For a complete description of the architecture and concepts underlying the 
-design, see the Documentation/s390/vfio-ap.txt file included with this
-patch set.
-
-v2 => v3 Change log:
-===================
-* Set APIE in VCPU setup function
-* Renamed patch 13/15:
-    KVM: s390: Configure the guest's CRYCB
-    KVM: s390: Configure the guest's AP devices
-* Fixed problem with building arch/s390/kvm/kvm-ap.c when CONFIG_ZCRYPT
-  not selected 
-* Removed patch introducing VSIE support for AP pending further 
-  investigation
-* Initialized AP maximum mask sizes - i.e., APM, AQM and ADM - from info
-  returned from PQAP(QCI) function
-* Introduced a new device attribute to the KVM_S390_VM_CRYPTO attribute
-  group for setting a flag via the KVM_SET_DEVICE_ATTR ioctl to indicate
-  whether ECA_APIE should be set or not. The flag is used in the 
-  kvm_s390_vcpu_crypto_setup() function to set ECA_APIE in the SIE block.
-* Misc. formatting etc.
-
-Tony Krowiak (14):
-  KVM: s390: refactor crypto initialization
-  s390: zcrypt: externalize AP instructions available function
-  KVM: s390: CPU model support for AP virtualization
-  KVM: s390: device attribute to set AP interpretive execution
-  s390: vfio-ap: base implementation of VFIO AP device driver
-  s390: vfio-ap: register matrix device with VFIO mdev framework
-  KVM: s390: interfaces to configure/deconfigure guest's AP matrix
-  s390: vfio-ap: sysfs interfaces to configure adapters
-  s390: vfio-ap: sysfs interfaces to configure domains
-  s390: vfio-ap: sysfs interfaces to configure control domains
-  s390: vfio-ap: sysfs interface to view matrix mdev matrix
-  KVM: s390: configure the guest's AP devices
-  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
-  s390: doc: detailed specifications for AP virtualization
-
- Documentation/s390/vfio-ap.txt        |  560 +++++++++++++++++++++
- MAINTAINERS                           |   14 +
- arch/s390/Kconfig                     |   11 +
- arch/s390/include/asm/ap.h            |    7 +
- arch/s390/include/asm/kvm-ap.h        |   57 +++
- arch/s390/include/asm/kvm_host.h      |    3 +
- arch/s390/include/uapi/asm/kvm.h      |    2 +
- arch/s390/kvm/Kconfig                 |    1 +
- arch/s390/kvm/Makefile                |    2 +-
- arch/s390/kvm/kvm-ap.c                |  330 +++++++++++++
- arch/s390/kvm/kvm-s390.c              |   84 ++--
- arch/s390/tools/gen_facilities.c      |    2 +
- drivers/s390/crypto/Makefile          |    4 +
- drivers/s390/crypto/ap_bus.c          |    6 +
- drivers/s390/crypto/vfio_ap_drv.c     |  144 ++++++
- drivers/s390/crypto/vfio_ap_ops.c     |  872 +++++++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_private.h |   47 ++
- include/uapi/linux/vfio.h             |    2 +
- 18 files changed, 2093 insertions(+), 55 deletions(-)
- create mode 100644 Documentation/s390/vfio-ap.txt
- create mode 100644 arch/s390/include/asm/kvm-ap.h
- create mode 100644 arch/s390/kvm/kvm-ap.c
- create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
- create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
- create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+index cfce683..1df6b59 100644
+--- a/arch/s390/include/asm/ap.h
++++ b/arch/s390/include/asm/ap.h
+@@ -120,4 +120,11 @@ struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
+ 					 struct ap_qirq_ctrl qirqctrl,
+ 					 void *ind);
+ 
++/**
++ * ap_instructions_installed() - Tests whether AP instructions are installed
++ *
++ * Returns 1 if the AP instructions are installed, otherwise; returns 0
++ */
++int ap_instructions_installed(void);
++
+ #endif /* _ASM_S390_AP_H_ */
+diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+index 48d55dc..089b1cf 100644
+--- a/drivers/s390/crypto/ap_bus.c
++++ b/drivers/s390/crypto/ap_bus.c
+@@ -211,6 +211,12 @@ int ap_query_configuration(struct ap_config_info *info)
+ }
+ EXPORT_SYMBOL(ap_query_configuration);
+ 
++int ap_instructions_installed(void)
++{
++	return (ap_instructions_available() == 0);
++}
++EXPORT_SYMBOL(ap_instructions_installed);
++
+ /**
+  * ap_init_configuration(): Allocate and query configuration array.
+  */
+-- 
+1.7.1
