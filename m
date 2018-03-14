@@ -1,137 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeCNK1X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:27:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62334 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750751AbeCNK1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:27:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,469,1515484800";
-   d="scan'208";a="25591039"
-Subject: Re: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        David Howells <dhowells@redhat.com>, linux-cris-kernel@axis.com,
-        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-am33-list@redhat.com
-References: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <c3f097e6-9347-58f5-579a-21b40a7bef3e@intel.com>
-Date: Wed, 14 Mar 2018 11:27:17 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751475AbeCNK3E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:29:04 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54535 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751228AbeCNK3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 06:29:03 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37818244"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <rjw@rjwysocki.net>, <lenb@kernel.org>, <tglx@linutronix.de>,
+        <rafael@kernel.org>, <dedekind1@gmail.com>, <ming.lei@redhat.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [RFC PATCH] ACPI / processor: Get accurate possible CPU count
+Date: Wed, 14 Mar 2018 18:28:47 +0800
+Message-ID: <20180314102847.30459-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-In-Reply-To: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 73457486A78A.AFFB6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/13/2018 10:45 PM, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> If a device already has MSI or MSI-X enabled, there's no need to set up its
-> legacy INTx interrupt.
->
-> bba6f6fc68e7 ("[PATCH] MSI-X: fix resume crash") changed the cris, frv,
-> x86, and ia64 arches to skip INTx setup when MSI is enabled.
->
-> 16cf0ebc35dd ("x86/PCI: Do not use interrupt links for devices using
-> MSI-X") extended that by changing x86 to also skip INTx setup when MSI-X is
-> enabled.
->
-> Change the remaining arches (cris, frv, and ia64) to skip INTx setup when
-> either MSI or MSI-X is enabled.
->
-> Also update mn10300 (which didn't exist at the time of bba6f6fc68e7) to
-> follow the same pattern.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Rafael J told me in order for the ACPI-based physical CPU hotplug to work,
+there have to be objects in the ACPI namespace corresponding to all of the
+processors in question. If they are not present, there is no way to signal
+insertion and eject the processors safely.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+But, Kernel calculates the possible CPU count from the number of Local APIC
+entries in ACPI MADT. It doesn't consider with the ACPI namespace and
+reports unrealistically high numbers.
 
-> ---
->   arch/cris/arch-v32/drivers/pci/bios.c |    2 +-
->   arch/frv/mb93090-mb00/pci-vdk.c       |    2 +-
->   arch/ia64/pci/pci.c                   |    4 ++--
->   arch/mn10300/unit-asb2305/pci.c       |    8 +++++---
->   4 files changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/cris/arch-v32/drivers/pci/bios.c b/arch/cris/arch-v32/drivers/pci/bios.c
-> index 6b9e6cfaa29e..c2bed0cc060b 100644
-> --- a/arch/cris/arch-v32/drivers/pci/bios.c
-> +++ b/arch/cris/arch-v32/drivers/pci/bios.c
-> @@ -68,7 +68,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->   	if ((err = pcibios_enable_resources(dev, mask)) < 0)
->   		return err;
->   
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->   		pcibios_enable_irq(dev);
->   	return 0;
->   }
-> diff --git a/arch/frv/mb93090-mb00/pci-vdk.c b/arch/frv/mb93090-mb00/pci-vdk.c
-> index f211839e2cae..4a55d1b82d21 100644
-> --- a/arch/frv/mb93090-mb00/pci-vdk.c
-> +++ b/arch/frv/mb93090-mb00/pci-vdk.c
-> @@ -413,7 +413,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->   
->   	if ((err = pci_enable_resources(dev, mask)) < 0)
->   		return err;
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->   		pcibios_enable_irq(dev);
->   	return 0;
->   }
-> diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
-> index f5ec736100ee..7ccc64d5fe3e 100644
-> --- a/arch/ia64/pci/pci.c
-> +++ b/arch/ia64/pci/pci.c
-> @@ -398,7 +398,7 @@ pcibios_enable_device (struct pci_dev *dev, int mask)
->   	if (ret < 0)
->   		return ret;
->   
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->   		return acpi_pci_irq_enable(dev);
->   	return 0;
->   }
-> @@ -407,7 +407,7 @@ void
->   pcibios_disable_device (struct pci_dev *dev)
->   {
->   	BUG_ON(atomic_read(&dev->enable_cnt));
-> -	if (!dev->msi_enabled)
-> +	if (!pci_dev_msi_enabled(dev))
->   		acpi_pci_irq_disable(dev);
->   }
->   
-> diff --git a/arch/mn10300/unit-asb2305/pci.c b/arch/mn10300/unit-asb2305/pci.c
-> index 3dfe2d31c67b..4d36ea517679 100644
-> --- a/arch/mn10300/unit-asb2305/pci.c
-> +++ b/arch/mn10300/unit-asb2305/pci.c
-> @@ -399,10 +399,12 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
->   {
->   	int err;
->   
-> -	err = pci_enable_resources(dev, mask);
-> -	if (err == 0)
-> +	if ((err = pci_enable_resources(dev, mask)) < 0)
-> +		return err;
-> +
-> +	if (!pci_dev_msi_enabled(dev))
->   		pcibios_enable_irq(dev);
-> -	return err;
-> +	return 0;
->   }
->   
->   /*
->
+Depth-first search the namespace tree, check and collect the correct CPUs
+and update the possible map
+
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+ drivers/acpi/acpi_processor.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 449d86d39965..ca4fa95e0515 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -671,6 +671,23 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 
+ }
+ 
++static void __init acpi_update_possible_map(void)
++{
++	unsigned int cpu, nr = 0;
++
++	if (nr_cpu_ids <= nr_unique_ids)
++		return;
++
++	for_each_possible_cpu(cpu) {
++		if (nr >= nr_unique_ids)
++			set_cpu_possible(cpu, false);
++		nr++;
++	}
++
++	nr_cpu_ids = nr_unique_ids;
++	pr_info("Allowing %d possible CPUs\n", nr_cpu_ids);
++}
++
+ static void __init acpi_processor_check_duplicates(void)
+ {
+ 	/* check the correctness for all processors in ACPI namespace */
+@@ -680,6 +697,9 @@ static void __init acpi_processor_check_duplicates(void)
+ 						NULL, NULL, NULL);
+ 	acpi_get_devices(ACPI_PROCESSOR_DEVICE_HID, acpi_processor_ids_walk,
+ 						NULL, NULL);
++
++	/* make possible CPU count more realistic */
++	acpi_update_possible_map();
+ }
+ 
+ bool acpi_duplicate_processor_id(int proc_id)
+-- 
+2.14.3
