@@ -1,91 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeCNPvA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:51:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42358 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751729AbeCNPun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:50:43 -0400
-Date: Wed, 14 Mar 2018 16:50:40 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 02/10] livepatch: Free only structures with
- initialized kobject
-Message-ID: <20180314155040.54sqxtkxidihl6sn@pathway.suse.cz>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <20180307082039.10196-3-pmladek@suse.com>
- <20180313223858.p32bicvp4ohj5mk6@treble>
+        id S1752409AbeCNPyU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:54:20 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52701 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751679AbeCNPyR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 11:54:17 -0400
+X-Google-Smtp-Source: AG47ELst8ZftH4X4mIjRUNZbkPOUo6MTwHuJxy2jTchGU4xtcV8ec//5p4aQdyvXWh3fervF6HPoewlDHrMnQxL6HnY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313223858.p32bicvp4ohj5mk6@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180314145450.GI23100@dhcp22.suse.cz>
+References: <20180314134431.13241-1-ard.biesheuvel@linaro.org>
+ <20180314141323.GD23100@dhcp22.suse.cz> <CAKv+Gu9hrZnX6pmiCaT=S30KQ11tY4kv=qvdSPPZ2nYDC7P7eQ@mail.gmail.com>
+ <20180314145450.GI23100@dhcp22.suse.cz>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 14 Mar 2018 15:54:16 +0000
+Message-ID: <CAKv+Gu8qguR0tFWZxecQDTPS3_Eyt_E6_YA1ivyAAqNuaaR9-g@mail.gmail.com>
+Subject: Re: [PATCH] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>, Daniel Vacek <neelx@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-03-13 17:38:58, Josh Poimboeuf wrote:
-> On Wed, Mar 07, 2018 at 09:20:31AM +0100, Petr Mladek wrote:
-> > We are going to add a feature called atomic replace. It will allow to
-> > create a patch that would replace all already registered patches.
-> > For this, we will need to dynamically create funcs and objects
-> > for functions that are no longer patched.
-> > 
-> > We will want to reuse the existing init() and free() functions. Up to now,
-> > the free() functions checked a limit and were called only for structures
-> > with initialized kobject. But we will want to call them also for structures
-> > that were allocated but where the kobject was not initialized yet.
-> > 
-> > This patch removes the limit. It calls klp_free*() functions for all
-> > structures. But only the ones with initialized kobject are freed.
-> > The handling of un-initialized structures will be added later with
-> > the support for dynamic structures.
-> > 
-> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > index 1d525f4a270a..69bde95e76f8 100644
-> > --- a/kernel/livepatch/core.c
-> > +++ b/kernel/livepatch/core.c
-> > @@ -653,17 +653,15 @@ static struct kobj_type klp_ktype_func = {
-> >  	.sysfs_ops = &kobj_sysfs_ops,
-> >  };
-> >  
-> > -/*
-> > - * Free all functions' kobjects in the array up to some limit. When limit is
-> > - * NULL, all kobjects are freed.
-> > - */
-> > -static void klp_free_funcs_limited(struct klp_object *obj,
-> > -				   struct klp_func *limit)
-> > +/* Free all funcs that have the kobject initialized. */
-> > +static void klp_free_funcs(struct klp_object *obj)
-> >  {
-> >  	struct klp_func *func;
-> >  
-> > -	for (func = obj->funcs; func->old_name && func != limit; func++)
-> > -		kobject_put(&func->kobj);
-> > +	klp_for_each_func(obj, func) {
-> > +		if (func->kobj.state_initialized)
-> > +			kobject_put(&func->kobj);
-> > +	}
-> >  }
-> 
-> Now that this function only has a single caller, personally I think it
-> would become more readable if klp_free_funcs() were inlined into its
-> caller (klp_free_objects()).  At the very least it should be moved to be
-> right above it.
+On 14 March 2018 at 14:54, Michal Hocko <mhocko@kernel.org> wrote:
+> On Wed 14-03-18 14:35:12, Ard Biesheuvel wrote:
+>> On 14 March 2018 at 14:13, Michal Hocko <mhocko@kernel.org> wrote:
+>> > Does http://lkml.kernel.org/r/20180313224240.25295-1-neelx@redhat.com
+>> > fix your issue? From the debugging info you provided it should because
+>> > the patch prevents jumping backwards.
+>> >
+>>
+>> The patch does fix the boot hang.
+>>
+>> But I am concerned that we are papering over a fundamental flaw in
+>> memblock_next_valid_pfn().
+>
+> It seems that memblock_next_valid_pfn is doing the right thing here. It
+> is the alignment which moves the pfn back AFAICS. I am not really
+> impressed about the original patch either, to be completely honest.
+> It just looks awfully tricky. I still didn't manage to wrap my head
+> around the original issue though so I do not have much better ideas to
+> be honest.
 
-I would keep it as is. The function will get later more complicated by
-adding support for dynamically allocated structures.
+So first of all, memblock_next_valid_pfn() never refers to its max_pfn
+argument, which is odd nut easily fixed.
+Then, the whole idea of substracting one so that the pfn++ will
+produce the expected value is rather hacky,
 
-I still have to think about squashing the patches. I'll reply
-on this in the other mail where you opened this question.
+But the real problem is that rounding down pfn for the next iteration
+is dodgy, because early_pfn_valid() isn't guaranteed to return true
+for the rounded down value. I know it is probably fine in reality, but
+dodgy as hell. The same applies to the call to early_pfn_in_nid() btw
 
-Best regards,
-Petr
+So how about something like this (apologies on Gmail's behalf for the
+whitespace damage, I can resend it as a proper patch)
 
-PS: Thank you for review. I took some pills against functionitis and
-already applied all changes suggested for the 1st patch.
+
+---------8<-----------
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 3d974cb2a1a1..b89ca999ee3b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5352,28 +5352,29 @@
+                 * function.  They do not exist on hotplugged memory.
+                 */
+                if (context != MEMMAP_EARLY)
+                        goto not_early;
+
+-               if (!early_pfn_valid(pfn)) {
++               if (!early_pfn_valid(pfn) || !early_pfn_in_nid(pfn, nid)) {
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+                        /*
+                         * Skip to the pfn preceding the next valid one (or
+                         * end_pfn), such that we hit a valid pfn (or end_pfn)
+                         * on our next iteration of the loop. Note that it needs
+                         * to be pageblock aligned even when the region itself
+                         * is not. move_freepages_block() can shift ahead of
+                         * the valid region but still depends on correct page
+                         * metadata.
+                         */
+-                       pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
+-                                       ~(pageblock_nr_pages-1)) - 1;
+-#endif
++                       pfn = memblock_next_valid_pfn(pfn, end_pfn);
++                       if (pfn >= end_pfn)
++                               break;
++                       pfn &= ~(pageblock_nr_pages - 1);
++#else
+                        continue;
++#endif
+                }
+-               if (!early_pfn_in_nid(pfn, nid))
+-                       continue;
+                if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
+                        break;
+
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+                /*
+---------8<-----------
+
+This ensures that we enter the remainder of the loop with a properly
+aligned pfn, rather than tweaking the value of pfn so it assumes the
+expected value after 'pfn++'
