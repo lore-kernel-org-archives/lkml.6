@@ -1,83 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeCNIwG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:52:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35012 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeCNIwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:52:05 -0400
-Date: Wed, 14 Mar 2018 09:48:44 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: paulmck@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        kirill@shutemov.name, ak@linux.intel.com, mhocko@kernel.org,
-        dave@stgolabs.net, jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
-Message-ID: <20180314084844.GP4043@hirez.programming.kicks-ass.net>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
+        id S1752130AbeCNIyZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:54:25 -0400
+Received: from verein.lst.de ([213.95.11.211]:34593 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750860AbeCNIyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:54:23 -0400
+Date: Wed, 14 Mar 2018 09:54:21 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: bhelgaas@google.com, alexander.h.duyck@intel.com,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
+        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
+        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
+Subject: Re: [pci PATCH v6 1/5] pci: Add pci_sriov_configure_simple for PFs
+        that don't manage VF resources
+Message-ID: <20180314085421.GA28796@lst.de>
+References: <20180313212508.3553.65326.stgit@localhost.localdomain> <20180313212754.3553.72176.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180313212754.3553.72176.stgit@localhost.localdomain>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 06:59:47PM +0100, Laurent Dufour wrote:
-> This change is inspired by the Peter's proposal patch [1] which was
-> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
-> that particular case, and it is introducing major performance degradation
-> due to excessive scheduling operations.
+On Tue, Mar 13, 2018 at 02:28:49PM -0700, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> 
+> This patch adds a common configuration function called
+> pci_sriov_configure_simple that will allow for managing VFs on devices
+> where the PF is not capable of managing VF resources.
+> 
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+> 
+> v5: New patch replacing pci_sriov_configure_unmanaged with
+>       pci_sriov_configure_simple
+>     Dropped bits related to autoprobe changes
+> v6: Defined pci_sriov_configure_simple as NULL if IOV is disabled
+> 
+>  drivers/pci/iov.c   |   32 ++++++++++++++++++++++++++++++++
+>  include/linux/pci.h |    3 +++
+>  2 files changed, 35 insertions(+)
+> 
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index 677924ae0350..bd7021491fdb 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -807,3 +807,35 @@ int pci_sriov_get_totalvfs(struct pci_dev *dev)
+>  	return dev->sriov->total_VFs;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_sriov_get_totalvfs);
+> +
+> +/**
+> + * pci_sriov_configure_simple - helper to configure unmanaged SR-IOV
+> + * @dev: the PCI device
+> + * @nr_virtfn: number of virtual functions to enable, 0 to disable
+> + *
+> + * Used to provide generic enable/disable SR-IOV option for devices
+> + * that do not manage the VFs generated by their driver
+> + */
+> +int pci_sriov_configure_simple(struct pci_dev *dev, int nr_virtfn)
+> +{
+> +	int err = -EINVAL;
 
-Do you happen to have a little more detail on that?
+This assignment seems like it is never used..
 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 34fde7111e88..28c763ea1036 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -335,6 +335,7 @@ struct vm_area_struct {
->  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
->  #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->  	seqcount_t vm_sequence;
-> +	atomic_t vm_ref_count;		/* see vma_get(), vma_put() */
->  #endif
->  } __randomize_layout;
->  
-> @@ -353,6 +354,9 @@ struct kioctx_table;
->  struct mm_struct {
->  	struct vm_area_struct *mmap;		/* list of VMAs */
->  	struct rb_root mm_rb;
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +	rwlock_t mm_rb_lock;
-> +#endif
->  	u32 vmacache_seqnum;                   /* per-thread vmacache */
->  #ifdef CONFIG_MMU
->  	unsigned long (*get_unmapped_area) (struct file *filp,
+> +
+> +	might_sleep();
+> +
+> +	if (!dev->is_physfn)
+> +		return -ENODEV;
+> +
+> +	if (pci_vfs_assigned(dev)) {
+> +		pci_warn(dev,
+> +			 "Cannot modify SR-IOV while VFs are assigned\n");
+> +		err = -EPERM;
 
-When I tried this, it simply traded contention on mmap_sem for
-contention on these two cachelines.
+Why not:
 
-This was for the concurrent fault benchmark, where mmap_sem is only ever
-acquired for reading (so no blocking ever happens) and the bottle-neck
-was really pure cacheline access.
+	if (pci_vfs_assigned(dev)) {
+		pci_warn(dev,
+			 "Cannot modify SR-IOV while VFs are assigned\n");
+		return -EPERM;
+	}
 
-Only by using RCU can you avoid that thrashing.
+Otherwise looks good:
 
-Also note that if your database allocates the one giant mapping, it'll
-be _one_ VMA and that vm_ref_count gets _very_ hot indeed.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
