@@ -1,66 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeCNRlK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:41:10 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36152 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752071AbeCNRlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:41:06 -0400
-Date: Wed, 14 Mar 2018 18:40:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Message-ID: <20180314174027.GF16605@pd.tnic>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180307121047.GG23662@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
- <20180308140830.GE21166@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E581D28@ORSMSX114.amr.corp.intel.com>
- <20180309111157.GC10753@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E5821F9@ORSMSX114.amr.corp.intel.com>
+        id S1752201AbeCNRlb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:41:31 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:35468 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeCNRl3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:41:29 -0400
+X-Google-Smtp-Source: AG47ELttQHRHSYXvPvJDUHL7/FonqbXrY5bvfN9PXLA1Pva+Mk4Wwv5v3eW116M/nr1vhBpMvLU1QsoegfUgyO9+slE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F2E5821F9@ORSMSX114.amr.corp.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180314163455.15854-2-desnesn@linux.vnet.ibm.com>
+References: <20180314163455.15854-1-desnesn@linux.vnet.ibm.com> <20180314163455.15854-2-desnesn@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 14 Mar 2018 19:41:27 +0200
+Message-ID: <CAHp75VdOaE-efzbQV=Mtf+a1-6L5JxF10Uc+uZ+LYz3S757biw@mail.gmail.com>
+Subject: Re: [PATCH 1/2, pci] pci: Addition of PCI_DEV_FLAGS_QUIET_PCI_REALIGN
+ attribute to the PCI subsystem
+To: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
+        <linuxppc-dev@lists.ozlabs.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, ruscur@russell.cc,
+        aik@ozlabs.ru, david@gibson.dropbear.id.au, fbarrat@linux.vnet.ibm.com,
+        brking@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 12:33:35AM +0000, Prakhya, Sai Praneeth wrote:
-> Although the discussions were off my understanding, the present issue
-> I see is, (and also the motivation for me to do the patch is) when a
-> thread tries to execute any efi_runtime_service() we switch to efi_pgd
-> (which doesn't have user space mappings) and all other subsystems in
-> kernel aren't aware of this switch. This looks like a perfect case for
-> kthread.
+On Wed, Mar 14, 2018 at 6:34 PM, Desnes A. Nunes do Rosario
+<desnesn@linux.vnet.ibm.com> wrote:
+> Add PCI_DEV_FLAGS_QUIET_PCI_REALIGN to pci_dev_flags and use it to
+> silent PCI realignment messages if the flag is turned on by a driver.
 
-That's all fine and good but you need to be prepared and handle properly
-an NMI while EFI is running.
+It doesn't explain "Why?"
+Why the driver needs that?
 
-I have no clue whether the platform delays delivery of NMIs during EFI
-runtime services or whatever happens but you need to have all those
-cases covered so that no monkey business happens.
+Another approach is to increase level of the message. Would it be
+accepted by you (in case Bjorn agrees)?
 
-Thx.
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -205,6 +205,8 @@ enum pci_dev_flags {
+>         PCI_DEV_FLAGS_NO_FLR_RESET = (__force pci_dev_flags_t) (1 << 10),
+>         /* Don't use Relaxed Ordering for TLPs directed at this device */
+>         PCI_DEV_FLAGS_NO_RELAXED_ORDERING = (__force pci_dev_flags_t) (1 << 11),
+> +       /* Silent PCI resource realignment messages */
+> +       PCI_DEV_FLAGS_QUIET_PCI_REALIGN = (__force pci_dev_flags_t) (1 << 12),
+
+I would rather name it _NO_PCI_REALIGN_MSG
+
+>  };
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+With Best Regards,
+Andy Shevchenko
