@@ -1,216 +1,112 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1645187-1521029886-2-15554483623008572272
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521029886; b=Ek5r8ATllVIs+9pApI9EOChIlG01lu36RmnO8ZyWSLPLF5a
-    lhFbrqoOshsEzTmffBrUJZqOu65LP5JVjJAmMayomIpvmn4n6yQqrsbcRc2Me6b1
-    4oHnkMmcmqD1NGAX2NNL6S9+pZZSL64KvFvNtKi9DKd8afAhim6E5R+mFb9bBKAM
-    XHD4N6Ju06hP6P95K1n73PRWOdfYQuw8T4CH/T5W4dArTMeULK4fQc1b9raWpahC
-    82ZYEu593P3e2nGRW52/y0QD/JT0EedxQB7Z98laEkM3G6hchzxgTyDjeV9/Ertq
-    68yOr29TQoQYcBLgeUROY7glU/5oZ1F2VTjQ3Vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521029886; bh=Z
-    VOjDpvySxUpX7HHZi+IPyb0n1tzUSZyq2boZEK9x9M=; b=B/Y6gFdQ2+ypcJ7Yr
-    mI8fJWwwVH3G0FUgqObgd2pM2f5rL6grxMOTpJ53YyeR2JlttQ6Q6D0PpZYk4ELS
-    f/qlU/GhLrqOauciwaKqMZ93PWm9nP17dqprCpWGZb8WG0wRP0K7x+IVDQLVJHxp
-    VSaL7VH9eRQrqtZe05APWAb75LZLciBgQ08KvGfaWI0FoeTRSoxZ/ZiWo05hfCEQ
-    QjVjhnhlIVqP+xAUfAm0XcRBvFiK/O1sNdfZ4RfZj7pkgcWf9F1eRVoIzLwH+b3W
-    +afY/daSjRJc9xx5/k3nuEHdlYHrlFeO66BTsqR6eJnvfxN2sKimvErUNIbdx6zK
-    KVbTg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 14 Mar 2018 13:17:59 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-Subject: Re: [PATCH v5 1/6] staging: fsl-dpaa2/ethsw: Add APIs for DPSW object
-Message-ID: <20180314121759.GA22695@kroah.com>
+Return-Path: <razvan.stefanescu@nxp.com>
+X-Google-Smtp-Source: AG47ELtvk+YmDFaMP+PNmgqkVZGXtLn+qGr3gcNhdog9jDhhfs/dNSe71DvWmH5IA3PKIY8jdTt7
+ARC-Seal: i=1; a=rsa-sha256; t=1521037853; cv=none;
+        d=google.com; s=arc-20160816;
+        b=qhqoPWk+vedwWWI3ee2If3ROEwqsTOQllDF/gLpV7JXKN0m8OzPMRiIozxDY21Jw8D
+         Mm+yKxNOT0wQXQuYehuaZnXZ4Zyl1AFlClVe2HtR05NUlGqV8PkLk4hj5rGMC/4Qt3z9
+         G9aFqM/lvJApHKWpuzUyrw824dJ3oUQz3oAxYu2Ve9lyZ+UWVWhml7rSCO7teKfX6LS2
+         NAf/Vnpf/OEi5Irh/zz0apC3k76gc5abrA+5W8XVFY4KXmQTLLW933S3a0WnFslwRxaw
+         ENwXh+ijdBCE34a8dNudDKmra+9parhwsnX+inrKWuASlnyqftLBKC0wH1Bsq0LxdZyx
+         0KoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=fJnFnfi9lMLtj5CFSa5wB5h+KVlYUcftFKHTfwq7GPs=;
+        b=bTaQcBgaXAMO+NouKBytv1A5l/aJ2FrSYH9Qz2NU5jCqLPp1wJ9CtsVFaTjJPux3wX
+         wd5fNKwR84IvyBN+jVDZUcO3wQkjyNivfT/nOpfPj/tPvEp+bhot3WdBsdEYZlkwtn7t
+         z5adw8SWAqBO3pTz33PqmuCIM2aUbCRwvj/DwzLTmYyeCFiDpFxIViOSdXw9a9RRec1f
+         2utKCvvidHE1PZdyKNeyLIRUneVmk0lWzULhbogNummtmTlall/7fwEBccvJALqGJSsP
+         yCUCEqpojL/DvpHWIGRQj7lfda3Ca8kN4dG4rc2b6T6H5SSSY5/iWsnbAAM3hvvPYmKN
+         FavQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=oS6d8TJX;
+       spf=pass (google.com: domain of razvan.stefanescu@nxp.com designates 40.107.5.65 as permitted sender) smtp.mailfrom=razvan.stefanescu@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=oS6d8TJX;
+       spf=pass (google.com: domain of razvan.stefanescu@nxp.com designates 40.107.5.65 as permitted sender) smtp.mailfrom=razvan.stefanescu@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "arnd@arndb.de"
+	<arnd@arndb.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Alexandru
+ Marginean <alexandru.marginean@nxp.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Alexander Graf <agraf@suse.de>,
+	"stuyoder@gmail.com" <stuyoder@gmail.com>, Ioana Ciornei
+	<ioana.ciornei@nxp.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: RE: [PATCH v5 1/6] staging: fsl-dpaa2/ethsw: Add APIs for DPSW object
+Thread-Topic: [PATCH v5 1/6] staging: fsl-dpaa2/ethsw: Add APIs for DPSW
+ object
+Thread-Index: AQHTutKTsHS76vydi0KJF/2s++AYE6PPp1WAgAAkW1A=
+Date: Wed, 14 Mar 2018 14:30:49 +0000
+Message-ID: <AM3PR04MB07433547BF2FEB36282A176BE6D10@AM3PR04MB0743.eurprd04.prod.outlook.com>
 References: <20180313135156.3322-1-razvan.stefanescu@nxp.com>
  <20180313135156.3322-2-razvan.stefanescu@nxp.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180313135156.3322-2-razvan.stefanescu@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, stuyoder@gmail.com, arnd@arndb.de,
- netdev@vger.kernel.org, alexandru.marginean@nxp.com,
- linux-kernel@vger.kernel.org, agraf@suse.de, ioana.ciornei@nxp.com,
- laurentiu.tudor@nxp.com
+ <20180314121759.GA22695@kroah.com>
+In-Reply-To: <20180314121759.GA22695@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=razvan.stefanescu@nxp.com;
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB321;7:qdx8xTPycq0IXdIihS2c3MBT5lFo4/IEbXPdBHGZM0PF7oxe9FiZCh3Zem7KsWH++BnQRW6kWu4Vut/kVETBf8B5u6qH2Ulx38DohHAB37LNwq8iaT+XNAdAvuJ5qFDcLXtMKEJj3KVyjdqyu9LDACSqmLcxh12O6Jb7wruwJsScuavFQt9XQK6qYGqb8T1E+udy1DgF15b12Iias+/7r64NHFAY+Nr0bMd2B5id/3POoatVDzlgJT13xiFvpLOl
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2d8c5189-4185-4e54-7485-08d589b82ed2
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB321;
+x-ms-traffictypediagnostic: AM3PR04MB321:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <AM3PR04MB321EDF8287C5E6C18C27268E6D10@AM3PR04MB321.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB321;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB321;
+x-forefront-prvs: 0611A21987
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(366004)(39380400002)(346002)(396003)(189003)(199004)(81156014)(9686003)(6506007)(3846002)(186003)(6246003)(7696005)(6916009)(81166006)(76176011)(8676002)(2950100002)(6116002)(478600001)(305945005)(74316002)(25786009)(3280700002)(2900100001)(102836004)(86362001)(68736007)(105586002)(53936002)(54906003)(59450400001)(26005)(5660300001)(316002)(6436002)(345774005)(55016002)(4326008)(33656002)(106356001)(3660700001)(99286004)(39060400002)(66066001)(97736004)(229853002)(7736002)(2906002)(8936002)(14454004)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB321;H:AM3PR04MB0743.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: CCwi613xeEvoIsyXuAJkJMyFHM1Lfbrk/OOP+/WD4tY7jaDJvFcWp4Xg+Vnlqgbe4qcGelSVV9mGDXwCaMfTa7FMf4AtrcZgMDq2IcLjlNfCG+a45k9NuBSXiJwJegxgfKkJvSGIx7L7Hm+xeatyMmRx2c1r3o0doO4SbmUviGDo/8TmGFfDtJ0T2OFyH/wFd9pAgsR23R3yCqXfw+w4AbFS5W5WwWVym8NcNF3UNG5Dp7mevQM0QQbHVRk9D4cy8QyB4Orxl+nF1LoszOQf2rsMGQHROGzcunclesMamQECXbpFF5YTVMYXMEGpRLeZzwZrP2dONbmFiGVcyFJKnQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d8c5189-4185-4e54-7485-08d589b82ed2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2018 14:30:49.3762
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB321
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594830763348119708?=
+X-GMAIL-MSGID: =?utf-8?q?1594923788195184400?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 08:51:51AM -0500, Razvan Stefanescu wrote:
-> Add the command build/parse APIs for operating on DPSW objects through
-> the DPAA2 Management Complex.
-> 
-> Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-> ---
-> Changelog:
->  v2:
->     - use u8 for en parameter of dpsw_if_set_flooding/broadcast()
->  v3:
->     - no changes
->  v4:
->     - adjust to moving MC-bus out of staging
->     - fix sparse warnings
->  v5:
->    - no changes
-> 
->  drivers/staging/fsl-dpaa2/Kconfig          |    8 +
->  drivers/staging/fsl-dpaa2/Makefile         |    1 +
->  drivers/staging/fsl-dpaa2/ethsw/Makefile   |    7 +
->  drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h |  358 +++++++++
->  drivers/staging/fsl-dpaa2/ethsw/dpsw.c     | 1116 ++++++++++++++++++++++++++++
->  drivers/staging/fsl-dpaa2/ethsw/dpsw.h     |  579 +++++++++++++++
->  6 files changed, 2069 insertions(+)
->  create mode 100644 drivers/staging/fsl-dpaa2/ethsw/Makefile
->  create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
->  create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw.c
->  create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw.h
-> 
-> diff --git a/drivers/staging/fsl-dpaa2/Kconfig b/drivers/staging/fsl-dpaa2/Kconfig
-> index dfff675..8a508ef 100644
-> --- a/drivers/staging/fsl-dpaa2/Kconfig
-> +++ b/drivers/staging/fsl-dpaa2/Kconfig
-> @@ -16,3 +16,11 @@ config FSL_DPAA2_ETH
->  	---help---
->  	  Ethernet driver for Freescale DPAA2 SoCs, using the
->  	  Freescale MC bus driver
-> +
-> +config FSL_DPAA2_ETHSW
-> +	tristate "Freescale DPAA2 Ethernet Switch"
-> +	depends on FSL_DPAA2
-> +	depends on NET_SWITCHDEV
-> +	---help---
-> +	Driver for Freescale DPAA2 Ethernet Switch. Select
-> +	BRIDGE to have support for bridge tools.
-> diff --git a/drivers/staging/fsl-dpaa2/Makefile b/drivers/staging/fsl-dpaa2/Makefile
-> index 0836ba8..6cfd76b 100644
-> --- a/drivers/staging/fsl-dpaa2/Makefile
-> +++ b/drivers/staging/fsl-dpaa2/Makefile
-> @@ -3,3 +3,4 @@
->  #
->  
->  obj-$(CONFIG_FSL_DPAA2_ETH)	+= ethernet/
-> +obj-$(CONFIG_FSL_DPAA2_ETHSW)	+= ethsw/
-> diff --git a/drivers/staging/fsl-dpaa2/ethsw/Makefile b/drivers/staging/fsl-dpaa2/ethsw/Makefile
-> new file mode 100644
-> index 0000000..db137f7
-> --- /dev/null
-> +++ b/drivers/staging/fsl-dpaa2/ethsw/Makefile
-> @@ -0,0 +1,7 @@
-> +#
-> +# Makefile for the Freescale DPAA2 Ethernet Switch
-> +#
-> +
-> +obj-$(CONFIG_FSL_DPAA2_ETHSW) += dpaa2-ethsw.o
-> +
-> +dpaa2-ethsw-objs := dpsw.o
-> diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
-> new file mode 100644
-> index 0000000..36edef6
-> --- /dev/null
-> +++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
-> @@ -0,0 +1,358 @@
-> +/* Copyright 2013-2016 Freescale Semiconductor Inc.
-> + * Copyright 2017-2018 NXP
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions are met:
-> + *     * Redistributions of source code must retain the above copyright
-> + *	 notice, this list of conditions and the following disclaimer.
-> + *     * Redistributions in binary form must reproduce the above copyright
-> + *	 notice, this list of conditions and the following disclaimer in the
-> + *	 documentation and/or other materials provided with the distribution.
-> + *     * Neither the name of the above-listed copyright holders nor the
-> + *	 names of any contributors may be used to endorse or promote products
-> + *	 derived from this software without specific prior written permission.
-> + *
-> + *
-> + * ALTERNATIVELY, this software may be distributed under the terms of the
-> + * GNU General Public License ("GPL") as published by the Free Software
-> + * Foundation, either version 2 of that License or (at your option) any
-> + * later version.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-> + * POSSIBILITY OF SUCH DAMAGE.
-> + */
+>=20
+> Can you resend this series and just use the correct SPDX identifiers for
+> all of the new files, instead of all of this horrid boiler-plate code?
+>=20
+> That will save me time when I have to go delete all of this in the near
+> future :)
+>=20
+> Also, why dual license it?  Are you _SURE_ you want to do that, and are
+> totally aware of all of the crazy issues surrounding it?  Hint, it
+> almost never means what you might think it does, and I have yet to know
+> of anyone doing anything "real" with any dual-licensed Linux kernel
+> code.
+>=20
+> Remember, BSD is not the license you want/need for GPL header files that
+> are exposed to userspace...
+>=20
+>=20
+> thanks,
+>=20
+> greg k-h
 
-Can you resend this series and just use the correct SPDX identifiers for
-all of the new files, instead of all of this horrid boiler-plate code?
+Thank you for your observation. I will update the patches with the SPDX ide=
+ntifiers.
 
-That will save me time when I have to go delete all of this in the near
-future :)
-
-Also, why dual license it?  Are you _SURE_ you want to do that, and are
-totally aware of all of the crazy issues surrounding it?  Hint, it
-almost never means what you might think it does, and I have yet to know
-of anyone doing anything "real" with any dual-licensed Linux kernel
-code.
-
-Remember, BSD is not the license you want/need for GPL header files that
-are exposed to userspace...
-
-
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Razvan
