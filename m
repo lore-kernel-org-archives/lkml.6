@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933308AbeCNDU2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:20:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42940 "EHLO
+        id S933377AbeCNDUj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:20:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43090 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932937AbeCNDU1 (ORCPT
+        with ESMTP id S932937AbeCNDUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:20:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D503560592
+        Tue, 13 Mar 2018 23:20:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8142F607A2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -17,8 +17,8 @@ Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
 Subject: [PATCH 1/7] i40e/i40evf: Eliminate duplicate barriers on weakly-ordered archs
-Date: Tue, 13 Mar 2018 23:19:52 -0400
-Message-Id: <1520997599-17298-1-git-send-email-okaya@codeaurora.org>
+Date: Tue, 13 Mar 2018 23:20:22 -0400
+Message-Id: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
