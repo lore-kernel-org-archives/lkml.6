@@ -1,56 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeCNRna (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:43:30 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:35830 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeCNRn3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:43:29 -0400
-Date: Wed, 14 Mar 2018 13:43:24 -0400 (EDT)
-Message-Id: <20180314.134324.74418674311685220.davem@davemloft.net>
-To: michael.chan@broadcom.com
-Cc: jtoppins@redhat.com, netdev@vger.kernel.org, andy@greyhouse.net,
-        siva.kallam@broadcom.com, prashant@broadcom.com, mchan@broadcom.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] tg3: prevent scheduling while atomic splat
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
-References: <f439051c3964c6bb5342e25fb5327e0cdeba001e.1521045132.git.jtoppins@redhat.com>
-        <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752096AbeCNRou (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:44:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:57498 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751131AbeCNRos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:44:48 -0400
+Date: Wed, 14 Mar 2018 17:44:43 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Evgenii Stepanov <eugenis@google.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Jacob Bramley <Jacob.Bramley@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Lee Smith <Lee.Smith@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory
+ syscalls
+Message-ID: <20180314174442.lclslnqc3egfjg4c@armageddon.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com>
+ <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+ <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+ <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
+ <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
+ <CAAeHK+y3hJ4jAByvfGDYyNb_RZ3_As4r-FCyZL9u69Vv_HS2AA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+y3hJ4jAByvfGDYyNb_RZ3_As4r-FCyZL9u69Vv_HS2AA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Wed, 14 Mar 2018 10:22:51 -0700
+On Wed, Mar 14, 2018 at 04:45:20PM +0100, Andrey Konovalov wrote:
+> On Fri, Mar 9, 2018 at 6:42 PM, Evgenii Stepanov <eugenis@google.com> wrote:
+> > On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> >> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> >>> I'm not yet convinced these functions need to allow tagged pointers.
+> >>> They are not doing memory accesses but rather dealing with the memory
+> >>> range, hence an untagged pointer is better suited. There is probably a
+> >>> reason why the "start" argument is "unsigned long" vs "void __user *"
+> >>> (in the kernel, not the man page).
+> >>
+> >> So that would make the user to untag pointers before passing to these syscalls.
+> >>
+> >> Evgeniy, would that be possible to untag pointers in HWASan before
+> >> using memory subsystem syscalls? Is there a reason for untagging them
+> >> in the kernel?
+> >
+> > Generally, no. It's possible to intercept a libc call using symbol
+> > interposition, but I don't know how to rewrite arguments of a raw
+> > system call other than through ptrace, and that creates more problems
+> > than it solves.
 
-> On Wed, Mar 14, 2018 at 9:36 AM, Jonathan Toppins <jtoppins@redhat.com> wrote:
->> The problem was introduced in commit
->> 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes"). The bug occurs
->> because tp->lock spinlock is held which is obtained in tg3_start
->> by way of tg3_full_lock(), line 11571. The documentation for usleep_range()
->> specifically states it cannot be used inside a spinlock.
->>
->> Fixes: 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes")
->> Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
->> ---
->>
->> Notes:
->>     The thing I need reviewed from Broadcom is if the udelay should be 20
->>     instead of 10, due to any timing changes introduced by the offending
->>     patch.
-> 
-> Thanks.  10 us is correct.
-> 
-> As a future improvement, we might want to see if we can release the
-> spinlock and go back to usleep_range().  The wait time is potentially
-> up to 20 msec which is quite long.
-> 
-> Acked-by: Michael Chan <michael.chan@broadcom.com>
+With these patches, we are trying to relax the user/kernel ABI so that
+tagged pointers can be passed into the kernel. Since this is a new ABI
+(or an extension to the existing one), it might be ok to change the libc
+so that the top byte is zeroed on specific syscalls before issuing the
+SVC.
 
-Applied, thanks everyone.
+I agree that it is problematic for HWASan if it only relies on
+overriding malloc/free.
+
+> > AFAIU, it's valid for a program to pass an address obtained from
+> > malloc or, better, posix_memalign to an mm syscall like mprotect().
+> > These arguments are pointers from the userspace point of view.
+> 
+> Catalin, do you think this is a good reason to have the untagging done
+> in the kernel?
+
+malloc() or posix_memalign() are C library implementations and it's the
+C library (or overridden functions) setting a tag on the returned
+pointers. Since the TBI hardware feature allows memory accesses with a
+non-zero tag, we could allow them in the kernel for syscalls performing
+such accesses on behalf of the user (e.g. get_user/put_user would not
+need to clear the tag).
+
+madvise(), OTOH, does not perform a memory access on behalf of the user,
+it's just advising the kernel about a range of virtual addresses. That's
+where I think, from an ABI perspective, it doesn't make much sense to
+allow tags into the kernel for these syscalls (even if it's simpler from
+a user space perspective).
+
+(but I don't have a very strong opinion on this ;))
+
+-- 
+Catalin
