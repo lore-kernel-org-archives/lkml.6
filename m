@@ -1,54 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCNQ5O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:57:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55954 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751131AbeCNQ5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:57:13 -0400
-Date: Wed, 14 Mar 2018 16:57:09 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-Subject: Re: [PATCH 0/3] irqchip: GIC kexec/kdump improvement and workarounds
-Message-ID: <20180314165708.daoui66waxvicciq@lakrids.cambridge.arm.com>
-References: <20180313172103.24281-1-marc.zyngier@arm.com>
- <20180313175156.gmncij4rnqcdl5ie@lakrids.cambridge.arm.com>
- <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
+        id S1751624AbeCNQ6d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:58:33 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:44524 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeCNQ6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:58:31 -0400
+Subject: Re: arc_usr_cmpxchg and preemption
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+CC: Peter Zijlstra <peterz@infradead.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <1521045375.11552.27.camel@synopsys.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+Date: Wed, 14 Mar 2018 09:58:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72c7a6d2-a4c4-26b2-2982-c1d1ffb39b81@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1521045375.11552.27.camel@synopsys.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 06:35:07PM +0000, Marc Zyngier wrote:
-> On 13/03/18 17:51, Mark Rutland wrote:
-> > On Tue, Mar 13, 2018 at 05:21:00PM +0000, Marc Zyngier wrote:
-> >> As kexec and kdump are getting used a bit more intensively, I've been
-> >> made aware of a number of shortcomings.
-> >>
-> >> The main gripe is from folks trying to launch a kdump kernel from
-> >> within an interrupt handler. If using EOImode==1, things work as
-> >> expected. If using EOImode==0 (such as in a guest), the secondary
-> >> kernel hangs as the previous interrupt hasn't been EOI'd, and the
-> >> active priority is still set. The first two patches are addressing
-> >> this situation for both GICv2 and GICv3 by reseting the APRs to their
-> >> default value.
-> > 
-> > As a more general thing, if irqchip drivers have state that needs to be
-> > reset in their init code, can we live all this irqchip reset to the
-> > crashdump kernel, and kill machine_kexec_mask_interrupts() entirely?
++CC linux-arch, Peter for any preemption insights !
+
+On 03/14/2018 09:36 AM, Alexey Brodkin wrote:
+> Hi Vineet,
 > 
-> We could, once we know for sure that all the potential irqchips have
-> been fixed. Or we could just remove it immediately, and see what breaks.
+> While debugging a segfault of user-space app on system without atomic ops
+> (I mean LLOCK/SCOND) I understood the root-cause is in implementation
+> of kernel's __NR_arc_usr_cmpxchg syscall which is supposed to emulate mentioned
+> atomic ops for user-space.
+> 
+> So here's a problem.
+> 
+> 1. User-space app [via libc] triggers __NR_arc_usr_cmpxchg syscall,
+>     we enter arc_usr_cmpxchg()which basically does:
+>     ---------------------------->8-------------------------------
+>       preempt_disable();
+>       __get_user(uval, uaddr);
+>       __put_user(new, uaddr);
+>       preempt_enable();
+>     ---------------------------->8-------------------------------
+> 
+> 2. Most of the time everything is fine because __get_user()/__put_user()
+>     for ARC is just LD/ST.
+> 
+> 3. Rarely user's variable is situated in not yet allocated page.
+>     Here I mean copy-on-write case, when a page has read-only flag in TLB.
+>     In that case __get_user() succeeds but __put_user() causes Privilege
+>     Violation exception and we enter do_page_fault() where new page allocation
+>     with proper access bits is supposed to happen... but that never happens
+>     because with preempt_disable() we set in_atomic() which set
+>     faulthandler_disabled() and so we exit early from page fault handler
+>     effectively with nothing done, i.e. user's variable is left unchanged
+>     which in its turn causes very strange problems later down the line because
+>     we don't notify user-space app about failed data modification.
 
-I would be very tempted to do the latter.
+Interesting problem ! But what is special here, I would think syscalls in general 
+could hit this.
 
-Thanks,
-Mark.
+> 
+> The simplest fix is to not mess with preemption:
+>     ---------------------------->8-------------------------------
+> diff --git a/arch/arc/kernel/process.c b/arch/arc/kernel/process.c
+> index 5ac3b547453f..d1713d8d3981 100644
+> --- a/arch/arc/kernel/process.c
+> +++ b/arch/arc/kernel/process.c
+> @@ -63,8 +63,6 @@ SYSCALL_DEFINE3(arc_usr_cmpxchg, int *, uaddr, int, expected, int, new)
+>          if (!access_ok(VERIFY_WRITE, uaddr, sizeof(int)))
+>                  return -EFAULT;
+>   
+> -       preempt_disable();
+> -
+>          if (__get_user(uval, uaddr))
+>                  goto done;
+
+...
+...
+
+>   done:
+> -       preempt_enable();
+> -
+>          return uval;
+>   }
+>     ---------------------------->8-------------------------------
+> 
+> But I'm not really sure how safe is that.
+
+Well it is broken wrt the semantics the syscall is supposed to provide. Preemption 
+disabling is what prevents a concurrent thread from coming in and modifying the 
+same location (Imagine a variable which is being cmpxchg concurrently by 2 threads).
+
+One approach is to do it the MIPS way, emulate the llsc flag - set it under 
+preemption disabled section and clear it in switch_to
+
+see arch/mips/kernel/syscall.c
