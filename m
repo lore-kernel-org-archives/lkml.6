@@ -1,164 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752338AbeCNRIW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:08:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50780 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751835AbeCNRIS (ORCPT
+        id S1752197AbeCNRHy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:07:54 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41047 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeCNRHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:08:18 -0400
-Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
-        Jiandi An <anjiandi@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-ima-devel@lists.sourceforge.net"
-        <linux-ima-devel@lists.sourceforge.net>,
-        "linux-ima-user@lists.sourceforge.net"
-        <linux-ima-user@lists.sourceforge.net>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Wed, 14 Mar 2018 13:08:06 -0400
-In-Reply-To: <1521038471.4508.25.camel@HansenPartnership.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-         <20180307185132.GA30102@ziepe.ca>
-         <1520448953.10396.565.camel@linux.vnet.ibm.com>
-         <1520449719.5558.28.camel@HansenPartnership.com>
-         <1520450495.10396.587.camel@linux.vnet.ibm.com>
-         <1520451662.24314.5.camel@HansenPartnership.com>
-         <1520461156.10396.654.camel@linux.vnet.ibm.com>
-         <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-         <1520615461.12216.6.camel@HansenPartnership.com>
-         <1520891598.3547.190.camel@linux.vnet.ibm.com>
-         <1520893847.4522.62.camel@HansenPartnership.com>
-         <1520897400.3547.253.camel@linux.vnet.ibm.com>
-         <1520899605.4522.67.camel@HansenPartnership.com>
-         <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-         <1521038471.4508.25.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Wed, 14 Mar 2018 13:07:50 -0400
+X-Google-Smtp-Source: AG47ELv04pCzh3BhDWnhhHsb8YACk/YJVcpWpiw8WORNcdCk13sxJtUaAKK3c7L7RU2HjMnlv7RPwQ==
+Date: Wed, 14 Mar 2018 10:07:49 -0700 (PDT)
+X-Google-Original-Date: Wed, 14 Mar 2018 09:59:59 PDT (-0700)
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <87o9jqzxcp.fsf@xps13.shealevy.com>
+CC: zongbox@gmail.com, zong@andestech.com, albert@sifive.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        greentime@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: shea@shealevy.com
+Message-ID: <mhng-a918ba24-716d-47ae-8f33-4c7ec85cf11a@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031417-0020-0000-0000-000004047A29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031417-0021-0000-0000-000042987F28
-Message-Id: <1521047286.3547.470.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140190
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 07:41 -0700, James Bottomley wrote:
-> On Tue, 2018-03-13 at 12:57 +0000, Safford, David (GE Global Research,
-> US) wrote:
-> > > 
-> > > -----Original Message-----
-> > > From: James Bottomley [mailto:James.Bottomley@HansenPartnership.com
-> > > ]
-> > > Sent: Monday, March 12, 2018 8:07 PM
-> > > To: Mimi Zohar <zohar@linux.vnet.ibm.com>; Jiandi An
-> [...]
-> > > > > The key question is not whether the component could
-> > > > > theoretically
-> > > > > access the files but whether it actually does so.
-> > > > 
-> > > > As much as you might think you know what is included in the
-> > > > initramfs, IMA-measurement is your safety net, including
-> > > > everything accessed in the TCB.
-> > > 
-> > > The initrd *is* part of the Trusted Computing Base because it's
-> > > part of the boot custody chain.  That's really my point.  If I
-> > > don't know what's in my initrd, I've broken the chain there and IMA
-> > > can't fix it.
-> > > 
-> > > James
-> > 
-> > That's exactly the point - how do you know what's in your initrd?
-> > The initrd is normally built on the possibly compromised system in
-> > question.
-> 
-> The point of deploying security measures is to make sure my system
-> isn't compromised.  I realise the institutional view is "we didn't
-> build the initrd" and my individual view is well, I built my own kernel
-> as well, so what's the difference?  But the initrd in both models is
-> still part of the chain.
-> 
-> > It's not signed as a whole by someone trusted. How can the
-> > attestation server say a given hash of the initrd as a whole is good?
-> 
-> I trust myself.  I can get the hash at build time.  In the same way as
-> I sign my own kernel at build time for secure boot.
-> 
-> > If IMA is running from the very start, it can at least measure (and
-> > eventually appraise) every individual file in the initrd. Given this
-> > more detailed measurement list, the attestation server can verify all
-> > the components in the initrd, even when it is assembled on the
-> > untrusted system.
-> > 
-> > On many embedded systems, there is no initrd, and IMA has to start
-> > measuring and appraising immediately, anyway.
-> > 
-> > Perhaps there is a use case where there is a known set of initrd
-> > images, and so the bootloader's measurement of the initrd is
-> > sufficient for verification. I've not run into that situation yet. If
-> > you want an option for this use case,  that's fine, (I'm all for
-> > choice) but it should not be the default for IMA.
-> 
-> Actually, we seem to have wandered away from the main concern which was
-> trying to select built in TPM drivers.
+On Wed, 14 Mar 2018 04:54:14 PDT (-0700), shea@shealevy.com wrote:
+> Palmer Dabbelt <palmer@sifive.com> writes:
+>
+>> On Tue, 13 Mar 2018 18:34:19 PDT (-0700), zongbox@gmail.com wrote:
+>>> 2018-03-14 5:30 GMT+08:00 Shea Levy <shea@shealevy.com>:
+>>>> Hi Palmer,
+>>>>
+>>>> Palmer Dabbelt <palmer@sifive.com> writes:
+>>>>
+>>>>> On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
+>>>>>> These patches resolve the some issues of loadable module.
+>>>>>>   - symbol out of ranges
+>>>>>>   - unknown relocation types
+>>>>>>
+>>>>>> The reference of external variable and function symbols
+>>>>>> cannot exceed 32-bit offset ranges in kernel module.
+>>>>>> The module only can work on the 32-bit OS or the 64-bit
+>>>>>> OS with sv32 virtual addressing.
+>>>>>>
+>>>>>> These patches will generate the .got, .got.plt and
+>>>>>> .plt sections during loading module, let it can refer
+>>>>>> to the symbol which locate more than 32-bit offset.
+>>>>>> These sections depend on the relocation types:
+>>>>>>  - R_RISCV_GOT_HI20
+>>>>>>  - R_RISCV_CALL_PLT
+>>>>>>
+>>>>>> These patches also support more relocation types
+>>>>>>  - R_RISCV_CALL
+>>>>>>  - R_RISCV_HI20
+>>>>>>  - R_RISCV_LO12_I
+>>>>>>  - R_RISCV_LO12_S
+>>>>>>  - R_RISCV_RVC_BRANCH
+>>>>>>  - R_RISCV_RVC_JUMP
+>>>>>>  - R_RISCV_ALIGN
+>>>>>>  - R_RISCV_ADD32
+>>>>>>  - R_RISCV_SUB32
+>>>>>>
+>>>>>> Zong Li (11):
+>>>>>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>>>>>   RISC-V: Add section of GOT.PLT for kernel module
+>>>>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>>>>>   RISC-V: Support CALL relocation type in kernel module
+>>>>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>>>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>>>>>   RISC-V: Support ALIGN relocation type in kernel module
+>>>>>>   RISC-V: Support ADD32 relocation type in kernel module
+>>>>>>   RISC-V: Support SUB32 relocation type in kernel module
+>>>>>>   RISC-V: Enable module support in defconfig
+>>>>>>   RISC-V: Add definition of relocation types
+>>>>>>
+>>>>>>  arch/riscv/Kconfig                  |   5 ++
+>>>>>>  arch/riscv/Makefile                 |   3 +
+>>>>>>  arch/riscv/configs/defconfig        |   2 +
+>>>>>>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>>>>>>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>>>>>>  arch/riscv/kernel/Makefile          |   1 +
+>>>>>>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
+>>>>>>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
+>>>>>>  arch/riscv/kernel/module.lds        |   8 ++
+>>>>>>  9 files changed, 480 insertions(+), 6 deletions(-)
+>>>>>>  create mode 100644 arch/riscv/include/asm/module.h
+>>>>>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>>>>>  create mode 100644 arch/riscv/kernel/module.lds
+>>>>>
+>>>>> This is the second set of patches that turn on modules, and it has the same
+>>>>> R_RISCV_ALIGN problem as the other one
+>>>>>
+>>>>>     http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
+>>>>>
+>>>>> It looks like this one uses shared libraries for modules instead of static
+>>>>> objects.  I think using shared objects is the right thing to do, as it'll allow
+>>>>> us to place modules anywhere in the address space by having multiple GOTs and
+>>>>> PLTs.
+>>>>
+>>>> Can you expand on this? It was my understanding that outside of the
+>>>> context of multiple address spaces sharing code the GOT and PLT were
+>>>> simply unnecessary overhead, what benefit would they bring here?
+>>>>
+>>>>> That's kind of complicated, though, so we can start with something
+>>>>> simpler like this.
+>>>
+>>> Hi,
+>>>
+>>> The kernel module is a object file, it is not be linked by linker, the
+>>> GOT and PLT
+>>> sections will not be generated through -fPIC option, but it will
+>>> generate the relative
+>>> relocation type. As Palmer mention before, If we have GOT and PLT sections,
+>>> we can put the module anywhere, even we support the KASLR in the kernel.
+>>
+>> Sorry, I guess I meant PIC objects not shared objects (I keep forgetting about
+>> PIE).  We'll probably eventually add large code model targets, but they might
+>> end up just being functionally equilivant to PIE with multi-GOT and multi-PLT
+>> so it might not matter.
+>>
+>> Either way, this is the sanest way to do it for now.
+>>
+>>> For the ALIGN problem, the kernel module loader is difficult to remove
+>>> or migrate
+>>> the module's code like relax doing, so the remnant nop instructions harm the
+>>> performance,  I agree the point that adding the mno-relax option and checking
+>>> the alignment in ALIGN type in module loader.
+>>
+>> Sounds good.  I just merged the mno-relax stuff, it'll show up when I get
+>> around to generating a 7.3.0 backport branch.  For now I think you should just
+>> fail on R_RISCV_ALIGN and attempt to pass -mno-relax to the compiler (via
+>> something like "$(call cc-option,-mno-relax)", like we do for
+>> "-mstrict-align").  I don't think it's worth handling R_RISCV_ALIGN in the
+>> kernel, as that's essentially the same as full relaxation support.
+>>
+>
+> Should we unconditionally fail on R_RISCV_ALIGN or only if the code
+> isn't already aligned?
 
-IMA selecting the generic TPM drivers has never been an issue.  As I
-mentioned previously, this is simply a convenience.  Anyone building a
-kernel can configure the vendor specific TPM drivers as builtin.
+Either way is OK for me.  With '-mno-relax' there shouldn't be any
+R_RISCV_ALIGN relocations, so it shouldn't matter.
 
-In terms of distro's, configuring vendor specific TPMs as builtin is a
- TPM vandor/distro discussion.  On OpenPower, we've requested the
-Atmel, Infineon, and Nuvoton TPM drivers be builtin by the different
-distro's.
-
-> What about a compromise: we
-> already get the boot loader to do measurements and PCR extensions using
-> the BIOS TPM driver, there's no reason why we can't do the same in the
-> early kernel until a real TPM driver is found.
-
-Your proposal requires changes to the existing boot loaders, not all
-of which are X86 based.  Grub, to the best of my knowledge, is not
-interested in having anything to do with TPM based measurements.  Many
-attempts have been made to upstream trusted boot patches, but none
-have been accepted.  Any support would need to piggyback on the
-callback hooks introduced for secure boot and then be carried by the
-distros.
-
-As for Linux based boot loaders, the driver needs to be builtin for
-these measurements.  So this wouldn't help you.
-
-> That way IMA would have
-> no dependency on any built in TPM driver ... is that an acceptable
-> compromise to everyone?
-
-Adding additional support for post IMA-initialization for TPM's built
-as kernel modules is clearly not optimal for all of the reasons
-provided to now and will be confusing, but could be supported.  This
-delayed loading of the TPM needs to be clearly indicated in both the
-audit log and in IMA's measurement list.
-
-In terms of attestation, if a measurement policy is enabled before the
-TPM is loaded, any records up to the delayed TPM entry in the IMA
-measurement list would need to be ignored.
-
-In addition, your changes should not in any way change the existing
-IMA-measurement initialization.
-
-Mimi
+>>
+>>>>> That's kind of complicated, though, so we can start with something
+>>>>> simpler like this.
+>>>
+>>> So what is the suggestion for that.
+>>
+>> Well, I'm not really sure -- essentially the idea of proper multi-GOT and
+>> multi-PLT support would be to merge the GOTs and PLTs of modules together when
+>> they're within range of each other.  We haven't even figured this out in
+>> userspace yet, so it's probably not worth attempting for kernel modules for a
+>> bit.
+>>
+>> If I understand your code correctly, you're currently generating one GOT and
+>> one PLT per loaded module.  If that's the case, then this is correct, it's just
+>> possible to save some memory by merging these tables.  It's probably not worth
+>> the complexity for kernel modules for a while.
