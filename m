@@ -1,387 +1,315 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751527AbeCNXYq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:24:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59574 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeCNXYo (ORCPT
+        id S1751595AbeCNX2j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:28:39 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57708 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751302AbeCNX2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:24:44 -0400
-Date: Wed, 14 Mar 2018 16:24:42 -0700
-From: akpm@linux-foundation.org
-To: broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org,
-        sfr@canb.auug.org.au
-Subject: mmotm 2018-03-14-16-24 uploaded
-Message-ID: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        Wed, 14 Mar 2018 19:28:37 -0400
+Message-ID: <1521070116.4508.94.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.16-rc5
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Mar 2018 16:28:36 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-03-14-16-24 has been uploaded to
+This is four patches, consisting of one regression from the merge
+window (qla2xxx) one lonstanding memory leak (sd_zbc) one event queue
+mislabelling which we want to eliminate to discourage the pattern
+(mpt3sas) and one behaviour change because re-reading the partition
+table shouldn't clear the ro flag.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+The patch is available here:
 
-mmotm-readme.txt says
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-README for mm-of-the-moment:
+The short changelog is:
 
-http://www.ozlabs.org/~akpm/mmotm/
+Bill Kuzeja (1):
+      scsi: qla2xxx: Fix crashes in qla2x00_probe_one on probe failure
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+Damien Le Moal (1):
+      scsi: sd_zbc: Fix potential memory leak
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+Hannes Reinecke (1):
+      scsi: mpt3sas: Do not mark fw_event workqueue as WQ_MEM_RECLAIM
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+Jeremy Cline (1):
+      scsi: sd: Keep disk read-only when re-reading partition
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+And the diffstat:
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |  2 +-
+ drivers/scsi/qla2xxx/qla_os.c        | 59 ++++++++++++++++++++++--------------
+ drivers/scsi/sd.c                    |  3 +-
+ drivers/scsi/sd_zbc.c                | 35 +++++++++------------
+ 4 files changed, 55 insertions(+), 44 deletions(-)
 
+With full diff below.
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+James
 
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+---
 
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.16-rc5:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* mm-mempolicy-avoid-use-uninitialized-preferred_node.patch
-* mm-mempolicy-avoid-use-uninitialized-preferred_node-fix.patch
-* maintainers-update-my-e-mail.patch
-* lockdep-fix-fs_reclaim-warning.patch
-* hugetlbfs-check-for-pgoff-value-overflow.patch
-* hugetlbfs-check-for-pgoff-value-overflow-v3.patch
-* hugetlbfs-check-for-pgoff-value-overflow-v3-fix.patch
-* hugetlbfs-check-for-pgoff-value-overflow-v3-fix-fix.patch
-* mm-remove-unused-arg-from-memblock_next_valid_pfn.patch
-* h8300-remove-extranous-__big_endian-definition.patch
-* mm-vmalloc-add-interfaces-to-free-unmapped-page-table.patch
-* mm-vmalloc-add-interfaces-to-free-unmapped-page-table-fix.patch
-* x86-mm-implement-free-pmd-pte-page-interfaces.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* tile-pci_gx-make-setup_pcie_rc_delay-__init.patch
-* net-9p-avoid-erestartsys-leak-to-userspace.patch
-* ocfs2-use-osb-instead-of-ocfs2_sb.patch
-* ocfs2-use-oi-instead-of-ocfs2_i.patch
-* ocfs2-clean-up-some-unused-function-declaration.patch
-* ocfs2-keep-the-trace-point-consistent-with-the-function-name.patch
-* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown.patch
-* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown-v3.patch
-* ocfs2-remove-unnecessary-null-pointer-check-before-kmem_cache_destroy.patch
-* ocfs2-clean-up-two-unused-functions-in-suballocc.patch
-* ocfs2-dlm-clean-unrelated-comment.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-move-some-definitions-to-header-file.patch
-* ocfs2-fix-some-small-problems.patch
-* ocfs2-add-kobject-for-online-file-check.patch
-* ocfs2-add-duplicative-ino-number-check.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-  mm.patch
-* slab-mark-kmalloc-machinery-as-__ro_after_init.patch
-* slub-use-jitter-free-reference-while-printing-age.patch
-* slab-fixup-calculate_alignment-argument-type.patch
-* slab-make-kmalloc_index-return-unsigned-int.patch
-* slab-make-kmalloc_size-return-unsigned-int.patch
-* slab-make-create_kmalloc_cache-work-with-32-bit-sizes.patch
-* slab-make-create_boot_cache-work-with-32-bit-sizes.patch
-* slab-make-kmem_cache_create-work-with-32-bit-sizes.patch
-* slab-make-size_index-array-u8.patch
-* slab-make-size_index_elem-unsigned-int.patch
-* slub-make-remote_node_defrag_ratio-unsigned-int.patch
-* slub-make-max_attr_size-unsigned-int.patch
-* slub-make-red_left_pad-unsigned-int.patch
-* slub-make-reserved-unsigned-int.patch
-* slub-make-align-unsigned-int.patch
-* slub-make-inuse-unsigned-int.patch
-* slub-make-cpu_partial-unsigned-int.patch
-* slub-make-offset-unsigned-int.patch
-* slub-make-object_size-unsigned-int.patch
-* slub-make-size-unsigned-int.patch
-* slab-make-kmem_cache_flags-accept-32-bit-object-size.patch
-* kasan-make-kasan_cache_create-work-with-32-bit-slab-cache-sizes.patch
-* slab-make-usercopy-region-32-bit.patch
-* slub-make-slab_index-return-unsigned-int.patch
-* slub-make-struct-kmem_cache_order_objects-x-unsigned-int.patch
-* slub-make-size_from_object-return-unsigned-int.patch
-* slab-use-32-bit-arithmetic-in-freelist_randomize.patch
-* mm-slabc-remove-duplicated-check-of-colour_next.patch
-* slab-slub-remove-size-disparity-on-debug-kernel.patch
-* mm-ksm-make-function-stable_node_dup-static.patch
-* mm-always-print-rlimit_data-warning.patch
-* mm-migrate-change-migration-reason-mr_cma-as-mr_contig_range.patch
-* mm-hugetlbfs-move-hugetlbfs_i-outside-ifdef-config_hugetlbfs.patch
-* mm-memfd-split-out-memfd-for-use-by-multiple-filesystems.patch
-* mm-memfd-remove-memfd-code-from-shmem-files-and-use-new-memfd-files.patch
-* mm-swap_slots-use-conditional-compilation-for-swap_slotsc.patch
-* mm-disable-interrupts-while-initializing-deferred-pages.patch
-* mm-disable-interrupts-while-initializing-deferred-pages-v6.patch
-* mm-initialize-pages-on-demand-during-boot.patch
-* mm-initialize-pages-on-demand-during-boot-fix-3.patch
-* mm-initialize-pages-on-demand-during-boot-fix-4.patch
-* mm-initialize-pages-on-demand-during-boot-fix-4-fix.patch
-* mm-initialize-pages-on-demand-during-boot-v5.patch
-* mm-initialize-pages-on-demand-during-boot-v5-fix.patch
-* mm-initialize-pages-on-demand-during-boot-v6.patch
-* mm-initialize-pages-on-demand-during-boot-v6-checkpatch-fixes.patch
-* mm-thp-fix-potential-clearing-to-referenced-flag-in-page_idle_clear_pte_refs_one.patch
-* mm-memory_hotplug-enforce-block-size-aligned-range-check.patch
-* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory.patch
-* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory-v4.patch
-* mm-uninitialized-struct-page-poisoning-sanity-checking.patch
-* mm-uninitialized-struct-page-poisoning-sanity-checking-v4.patch
-* mm-memory_hotplug-optimize-probe-routine.patch
-* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug.patch
-* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug-v5.patch
-* mm-memory_hotplug-optimize-memory-hotplug.patch
-* mm-memory_hotplug-optimize-memory-hotplug-v5.patch
-* mm-hwpoison-disable-memory-error-handling-on-1gb-hugepage.patch
-* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent.patch
-* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent-fix.patch
-* mm-page_alloc-move-mirrored_kernelcore-to-__meminitdata.patch
-* mm-re-use-define_show_attribute-macro.patch
-* mm-re-use-define_show_attribute-macro-v2.patch
-* mm-fix-races-between-address_space-dereference-and-free-in-page_evicatable.patch
-* mm-page_ref-use-atomic_set_release-in-page_ref_unfreeze.patch
-* mm-huge_memoryc-reorder-operations-in-__split_huge_page_tail.patch
-* z3fold-limit-use-of-stale-list-for-allocation.patch
-* mmvmscan-dont-pretend-forward-progress-upon-shrinker_rwsem-contention.patch
-* mm-swap-clean-up-swap-readahead.patch
-* mm-swap-clean-up-swap-readahead-fix.patch
-* mm-swap-unify-cluster-based-and-vma-based-swap-readahead.patch
-* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma.patch
-* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma-fix.patch
-* mm-kmemleak-make-kmemleak_boot_config-__init.patch
-* mm-page_owner-make-early_page_owner_param-__init.patch
-* mm-page_poison-make-early_page_poison_param-__init.patch
-* mm-make-should_failslab-always-available-for-fault-injection.patch
-* mm-compaction-drain-pcps-for-zone-when-kcompactd-fails.patch
-* mm-free_pcppages_bulk-update-pcp-count-inside.patch
-* mm-free_pcppages_bulk-do-not-hold-lock-when-picking-pages-to-free.patch
-* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lock.patch
-* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lockpatch-v4.patch
-* mm-sparse-add-a-static-variable-nr_present_sections.patch
-* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-* mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
-* mm-gupc-fixed-coding-style-issues.patch
-* mm-powerpc-use-vma_kernel_pagesize-in-vma_mmu_pagesize.patch
-* mm-hugetlbfs-introduce-pagesize-to-vm_operations_struct.patch
-* device-dax-implement-pagesize-for-smaps-to-report-mmupagesize.patch
-* mm-provide-consistent-declaration-for-num_poisoned_pages.patch
-* direct-io-minor-cleanups-in-do_blockdev_direct_io.patch
-* direct-io-minor-cleanups-in-do_blockdev_direct_io-fix.patch
-* mm-introduce-nr_indirectly_reclaimable_bytes.patch
-* mm-treat-indirectly-reclaimable-memory-as-available-in-memavailable.patch
-* dcache-account-external-names-as-indirectly-reclaimable-memory.patch
-* dcache-account-external-names-as-indirectly-reclaimable-memory-fix.patch
-* dcache-account-external-names-as-indirectly-reclaimable-memory-fix-2.patch
-* mm-treat-indirectly-reclaimable-memory-as-free-in-overcommit-logic.patch
-* mm-fix-races-between-swapoff-and-flush-dcache.patch
-* mm-fix-races-between-swapoff-and-flush-dcache-fix.patch
-* zsmalloc-introduce-zs_huge_class_size-function.patch
-* zsmalloc-introduce-zs_huge_class_size-function-v3.patch
-* zram-drop-max_zpage_size-and-use-zs_huge_class_size.patch
-* zram-drop-max_zpage_size-and-use-zs_huge_class_size-v3.patch
-* mm-nommu-remove-description-of-alloc_vm_area.patch
-* mm-swap-remove-cold-parameter-description-for-release_pages.patch
-* mm-kernel-doc-add-missing-parameter-descriptions.patch
-* block_invalidatepage-only-release-page-if-the-full-page-was-invalidated.patch
-* mm-swap-make-bool-enable_vma_readahead-and-function-swap_vma_readahead-static.patch
-* mm-make-count-list_lru_one-nr_items-lockless.patch
-* detect-early-free-of-a-live-mm.patch
-* mm-page_alloc-wakeup-kcompactd-even-if-kswapd-cannot-free-more-memory.patch
-* mm-oom-remove-3%-bonus-for-cap_sys_admin-processes.patch
-* mm-change-return-type-to-vm_fault_t.patch
-* mm-make-start_isolate_page_range-fail-if-already-isolated.patch
-* include-linux-mmdebugh-fix-vm_warn-with-config_debug_vm=n.patch
-* mm-hugetlbc-clean-up-vm_warn-usage.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* mmvmscan-mark-register_shrinker-as-__must_check.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-oom-refactor-the-oom_kill_process-function.patch
-* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
-* mm-oom-cgroup-aware-oom-killer.patch
-* mm-oom-cgroup-aware-oom-killer-fix.patch
-* mm-oom-introduce-memoryoom_group.patch
-* mm-oom-introduce-memoryoom_group-fix.patch
-* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
-* cgroup-list-groupoom-in-cgroup-features.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-page_alloc-dont-reserve-zone_highmem-for-zone_movable-request.patch
-* mm-cma-manage-the-memory-of-the-cma-area-by-using-the-zone_movable.patch
-* mm-cma-remove-alloc_cma.patch
-* arm-cma-avoid-double-mapping-to-the-cma-area-if-config_highmem-=-y.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-swap-make-pointer-swap_avail_heads-static.patch
-* mm-numa-rework-do_pages_move.patch
-* mm-migrate-remove-reason-argument-from-new_page_t.patch
-* mm-unclutter-thp-migration.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* kasan-slub-fix-handling-of-kasan_slab_free-hook.patch
-* kasan-slub-fix-handling-of-kasan_slab_free-hook-v2.patch
-* kasan-fix-invalid-free-test-crashing-the-kernel.patch
-* kasan-disallow-compiler-to-optimize-away-memset-in-tests.patch
-* mm-kasan-dont-vfree-nonexistent-vm_area.patch
-* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps.patch
-* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps-v3.patch
-* procfs-optimize-seq_pad-to-speed-up-proc-pid-maps.patch
-* proc-get-rid-of-task-lock-unlock-pair-to-read-umask-for-the-status-file.patch
-* proc-do-less-stuff-under-pde_unload_lock.patch
-* proc-move-proc-sysvipc-creation-to-where-it-belongs.patch
-* proc-faster-open-close-of-files-without-release-hook.patch
-* proc-randomize-struct-pde_opener.patch
-* proc-move-struct-pde_opener-to-kmem-cache.patch
-* proc-account-struct-pde_opener.patch
-* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps.patch
-* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps-fix.patch
-* proc-replace-seq_printf-on-seq_putc-to-speed-up-proc-pid-smaps.patch
-* proc-optimize-single-symbol-delimiters-to-spead-up-seq_put_decimal_ull.patch
-* proc-replace-seq_printf-by-seq_put_smth-to-speed-up-proc-pid-status.patch
-* proc-check-permissions-earlier-for-proc-wchan.patch
-* proc-use-set_puts-at-proc-wchan.patch
-* fs-sysctl-fix-potential-page-fault-while-unregistering-sysctl-table.patch
-* fs-sysctl-remove-redundant-link-check-in-proc_sys_link_fill_cache.patch
-* proc-test-proc-self-wchan.patch
-* proc-test-proc-self-syscall.patch
-* proc-move-struct-proc_dir_entry-into-kmem-cache.patch
-* proc-fix-proc-map_files-lookup-some-more.patch
-* proc-register-filesystem-last.patch
-* proc-faster-proc-cmdline.patch
-* proc-do-mmput-asap-for-proc-map_files.patch
-* proc-revalidate-misc-dentries.patch
-* proc-test-last-field-of-proc-loadavg.patch
-* proc-reject-and-as-filenames.patch
-* proc-switch-struct-proc_dir_entry-count-to-refcount.patch
-* taint-convert-to-indexed-initialization.patch
-* taint-consolidate-documentation.patch
-* taint-add-taint-for-randstruct.patch
-* uts-create-struct-uts_namespace-from-kmem_cache.patch
-* lib-kconfigdebug-debug-lockups-and-hangs-keep-softlockup-options-together.patch
-* test_bitmap-do-not-accidentally-use-stack-vla.patch
-* lib-add-testing-module-for-ubsan.patch
-* lib-add-testing-module-for-ubsan-fix.patch
-* checkpatch-improve-parse_email-signature-checking.patch
-* checkpatchpl-add-spdx-license-tag-check.patch
-* checkpatch-add-crypto-on_stack-to-declaration_macros.patch
-* checkpatch-add-sub-routine-get_stat_real.patch
-* checkpatch-remove-unused-variable-declarations.patch
-* checkpatch-add-sub-routine-get_stat_here.patch
-* checkpatch-warn-for-use-of-%px.patch
-* checkpatch-improve-get_quoted_string-for-trace_event-macros.patch
-* checkpatch-two-spelling-fixes.patch
-* init-ramdisk-use-pr_cont-at-the-end-of-ramdisk-loading.patch
-* seq_file-allocate-seq_file-from-kmem_cache.patch
-* seq_file-account-everything.patch
-* seq_file-delete-small-value-optimization.patch
-* fork-unconditionally-clear-stack-on-fork.patch
-* exec-pass-stack-rlimit-into-mm-layout-functions.patch
-* exec-introduce-finalize_exec-before-start_thread.patch
-* exec-pin-stack-limit-during-exec.patch
-* kernel-downgrade-warning-for-unsafe-parameters.patch
-* ipc-shm-introduce-shmctlshm_stat_any.patch
-* ipc-sem-introduce-semctlsem_stat_any.patch
-* ipc-msg-introduce-msgctlmsg_stat_any.patch
-* proc-sysctl-fix-typo-in-sysctl_check_table_array.patch
-* sysctl-add-kdoc-comments-to-do_proc_douintvec_minmax_conv_param.patch
-* sysctl-add-flags-to-support-min-max-range-clamping.patch
-* proc-sysctl-check-for-invalid-flags-bits.patch
-* sysctl-warn-when-a-clamped-sysctl-parameter-is-set-out-of-range.patch
-* ipc-clamp-msgmni-and-shmmni-to-the-real-ipcmni-limit.patch
-* ipc-clamp-semmni-to-the-real-ipcmni-limit.patch
-* ipc-clamp-semmni-to-the-real-ipcmni-limit-fix.patch
-* test_sysctl-add-range-clamping-test.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-fixup.patch
-* ipc-mqueue-add-missing-error-code-in-init_mqueue_fs.patch
-* drivers-infiniband-core-verbsc-fix-build-with-gcc-444.patch
-* drivers-infiniband-ulp-srpt-ib_srptc-fix-build-with-gcc-444.patch
-* kexec_file-make-an-use-of-purgatory-optional.patch
-* kexec_file-make-an-use-of-purgatory-optional-fix.patch
-* kexec_filex86powerpc-factor-out-kexec_file_ops-functions.patch
-* x86-kexec_file-purge-system-ram-walking-from-prepare_elf64_headers.patch
-* x86-kexec_file-remove-x86_64-dependency-from-prepare_elf64_headers.patch
-* x86-kexec_file-lift-crash_max_ranges-limit-on-crash_mem-buffer.patch
-* x86-kexec_file-clean-up-prepare_elf64_headers.patch
-* kexec_file-x86-move-re-factored-code-to-generic-side.patch
-* mm-introduce-map_fixed_safe.patch
-* fs-elf-drop-map_fixed-usage-from-elf_map.patch
-* elf-enforce-map_fixed-on-overlaying-elf-segments.patch
-* xen-mm-allow-deferred-page-initialization-for-xen-pv-domains.patch
-* linux-consth-prefix-include-guard-of-uapi-linux-consth-with-_uapi.patch
-* linux-consth-move-ul-macro-to-include-linux-consth.patch
-* linux-consth-refactor-_bitul-and-_bitull-a-bit.patch
-* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
-* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
-* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
-* headers-untangle-kmemleakh-from-mmh.patch
-* headers-untangle-kmemleakh-from-mmh-fix.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index c2ea13c7e37e..a1cb0236c550 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -10558,7 +10558,7 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	snprintf(ioc->firmware_event_name, sizeof(ioc->firmware_event_name),
+ 	    "fw_event_%s%d", ioc->driver_name, ioc->id);
+ 	ioc->firmware_event_thread = alloc_ordered_workqueue(
+-	    ioc->firmware_event_name, WQ_MEM_RECLAIM);
++	    ioc->firmware_event_name, 0);
+ 	if (!ioc->firmware_event_thread) {
+ 		pr_err(MPT3SAS_FMT "failure at %s:%d/%s()!\n",
+ 		    ioc->name, __FILE__, __LINE__, __func__);
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 285911e81728..5c5dcca4d1da 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -454,7 +454,7 @@ static int qla2x00_alloc_queues(struct qla_hw_data *ha, struct req_que *req,
+ 	ha->req_q_map[0] = req;
+ 	set_bit(0, ha->rsp_qid_map);
+ 	set_bit(0, ha->req_qid_map);
+-	return 1;
++	return 0;
+ 
+ fail_qpair_map:
+ 	kfree(ha->base_qpair);
+@@ -471,6 +471,9 @@ static int qla2x00_alloc_queues(struct qla_hw_data *ha, struct req_que *req,
+ 
+ static void qla2x00_free_req_que(struct qla_hw_data *ha, struct req_que *req)
+ {
++	if (!ha->req_q_map)
++		return;
++
+ 	if (IS_QLAFX00(ha)) {
+ 		if (req && req->ring_fx00)
+ 			dma_free_coherent(&ha->pdev->dev,
+@@ -481,14 +484,17 @@ static void qla2x00_free_req_que(struct qla_hw_data *ha, struct req_que *req)
+ 		(req->length + 1) * sizeof(request_t),
+ 		req->ring, req->dma);
+ 
+-	if (req)
++	if (req) {
+ 		kfree(req->outstanding_cmds);
+-
+-	kfree(req);
++		kfree(req);
++	}
+ }
+ 
+ static void qla2x00_free_rsp_que(struct qla_hw_data *ha, struct rsp_que *rsp)
+ {
++	if (!ha->rsp_q_map)
++		return;
++
+ 	if (IS_QLAFX00(ha)) {
+ 		if (rsp && rsp->ring)
+ 			dma_free_coherent(&ha->pdev->dev,
+@@ -499,7 +505,8 @@ static void qla2x00_free_rsp_que(struct qla_hw_data *ha, struct rsp_que *rsp)
+ 		(rsp->length + 1) * sizeof(response_t),
+ 		rsp->ring, rsp->dma);
+ 	}
+-	kfree(rsp);
++	if (rsp)
++		kfree(rsp);
+ }
+ 
+ static void qla2x00_free_queues(struct qla_hw_data *ha)
+@@ -1723,6 +1730,8 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ 	struct qla_tgt_cmd *cmd;
+ 	uint8_t trace = 0;
+ 
++	if (!ha->req_q_map)
++		return;
+ 	spin_lock_irqsave(qp->qp_lock_ptr, flags);
+ 	req = qp->req;
+ 	for (cnt = 1; cnt < req->num_outstanding_cmds; cnt++) {
+@@ -3095,14 +3104,14 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* Set up the irqs */
+ 	ret = qla2x00_request_irqs(ha, rsp);
+ 	if (ret)
+-		goto probe_hw_failed;
++		goto probe_failed;
+ 
+ 	/* Alloc arrays of request and response ring ptrs */
+-	if (!qla2x00_alloc_queues(ha, req, rsp)) {
++	if (qla2x00_alloc_queues(ha, req, rsp)) {
+ 		ql_log(ql_log_fatal, base_vha, 0x003d,
+ 		    "Failed to allocate memory for queue pointers..."
+ 		    "aborting.\n");
+-		goto probe_init_failed;
++		goto probe_failed;
+ 	}
+ 
+ 	if (ha->mqenable && shost_use_blk_mq(host)) {
+@@ -3387,15 +3396,6 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	return 0;
+ 
+-probe_init_failed:
+-	qla2x00_free_req_que(ha, req);
+-	ha->req_q_map[0] = NULL;
+-	clear_bit(0, ha->req_qid_map);
+-	qla2x00_free_rsp_que(ha, rsp);
+-	ha->rsp_q_map[0] = NULL;
+-	clear_bit(0, ha->rsp_qid_map);
+-	ha->max_req_queues = ha->max_rsp_queues = 0;
+-
+ probe_failed:
+ 	if (base_vha->timer_active)
+ 		qla2x00_stop_timer(base_vha);
+@@ -4508,11 +4508,17 @@ qla2x00_mem_free(struct qla_hw_data *ha)
+ 	if (ha->init_cb)
+ 		dma_free_coherent(&ha->pdev->dev, ha->init_cb_size,
+ 			ha->init_cb, ha->init_cb_dma);
+-	vfree(ha->optrom_buffer);
+-	kfree(ha->nvram);
+-	kfree(ha->npiv_info);
+-	kfree(ha->swl);
+-	kfree(ha->loop_id_map);
++
++	if (ha->optrom_buffer)
++		vfree(ha->optrom_buffer);
++	if (ha->nvram)
++		kfree(ha->nvram);
++	if (ha->npiv_info)
++		kfree(ha->npiv_info);
++	if (ha->swl)
++		kfree(ha->swl);
++	if (ha->loop_id_map)
++		kfree(ha->loop_id_map);
+ 
+ 	ha->srb_mempool = NULL;
+ 	ha->ctx_mempool = NULL;
+@@ -4528,6 +4534,15 @@ qla2x00_mem_free(struct qla_hw_data *ha)
+ 	ha->ex_init_cb_dma = 0;
+ 	ha->async_pd = NULL;
+ 	ha->async_pd_dma = 0;
++	ha->loop_id_map = NULL;
++	ha->npiv_info = NULL;
++	ha->optrom_buffer = NULL;
++	ha->swl = NULL;
++	ha->nvram = NULL;
++	ha->mctp_dump = NULL;
++	ha->dcbx_tlv = NULL;
++	ha->xgmac_data = NULL;
++	ha->sfp_data = NULL;
+ 
+ 	ha->s_dma_pool = NULL;
+ 	ha->dl_dma_pool = NULL;
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index ab75ebd518a7..3b45f7fc5620 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2624,6 +2624,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
+ 	int res;
+ 	struct scsi_device *sdp = sdkp->device;
+ 	struct scsi_mode_data data;
++	int disk_ro = get_disk_ro(sdkp->disk);
+ 	int old_wp = sdkp->write_prot;
+ 
+ 	set_disk_ro(sdkp->disk, 0);
+@@ -2664,7 +2665,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
+ 			  "Test WP failed, assume Write Enabled\n");
+ 	} else {
+ 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
+-		set_disk_ro(sdkp->disk, sdkp->write_prot);
++		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
+ 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
+ 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
+ 				  sdkp->write_prot ? "on" : "off");
+diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
+index 27793b9f54c0..9049a189c8e5 100644
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -486,7 +486,7 @@ static int sd_zbc_check_capacity(struct scsi_disk *sdkp, unsigned char *buf)
+  */
+ static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ {
+-	u64 zone_blocks;
++	u64 zone_blocks = 0;
+ 	sector_t block = 0;
+ 	unsigned char *buf;
+ 	unsigned char *rec;
+@@ -504,10 +504,8 @@ static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ 
+ 	/* Do a report zone to get the same field */
+ 	ret = sd_zbc_report_zones(sdkp, buf, SD_ZBC_BUF_SIZE, 0);
+-	if (ret) {
+-		zone_blocks = 0;
+-		goto out;
+-	}
++	if (ret)
++		goto out_free;
+ 
+ 	same = buf[4] & 0x0f;
+ 	if (same > 0) {
+@@ -547,7 +545,7 @@ static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ 			ret = sd_zbc_report_zones(sdkp, buf,
+ 						  SD_ZBC_BUF_SIZE, block);
+ 			if (ret)
+-				return ret;
++				goto out_free;
+ 		}
+ 
+ 	} while (block < sdkp->capacity);
+@@ -555,35 +553,32 @@ static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
+ 	zone_blocks = sdkp->zone_blocks;
+ 
+ out:
+-	kfree(buf);
+-
+ 	if (!zone_blocks) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Devices with non constant zone "
+ 				  "size are not supported\n");
+-		return -ENODEV;
+-	}
+-
+-	if (!is_power_of_2(zone_blocks)) {
++		ret = -ENODEV;
++	} else if (!is_power_of_2(zone_blocks)) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Devices with non power of 2 zone "
+ 				  "size are not supported\n");
+-		return -ENODEV;
+-	}
+-
+-	if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
++		ret = -ENODEV;
++	} else if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
+ 		if (sdkp->first_scan)
+ 			sd_printk(KERN_NOTICE, sdkp,
+ 				  "Zone size too large\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++	} else {
++		sdkp->zone_blocks = zone_blocks;
++		sdkp->zone_shift = ilog2(zone_blocks);
+ 	}
+ 
+-	sdkp->zone_blocks = zone_blocks;
+-	sdkp->zone_shift = ilog2(zone_blocks);
++out_free:
++	kfree(buf);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int sd_zbc_setup(struct scsi_disk *sdkp)
