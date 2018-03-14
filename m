@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933259AbeCNGQX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:16:23 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:50265 "EHLO
+        id S933338AbeCNGQa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:16:30 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:33918 "EHLO
         mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933184AbeCNGQT (ORCPT
+        by vger.kernel.org with ESMTP id S933184AbeCNGQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:16:19 -0400
+        Wed, 14 Mar 2018 02:16:26 -0400
 Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
-X-Quarantine-ID: <7J9jVC6l__Zc>
+X-Quarantine-ID: <fBlPuaEGEoEM>
 X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once:
         "References" occurs 3 times
 X-RRZE-Flag: Not-Spam
@@ -21,9 +21,9 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8.1/8.4] block: sed-opal: ioctl for writing to shadow mbr
-Date: Wed, 14 Mar 2018 07:15:42 +0100
-Message-Id: <81404de84e5c3967e014e508e2d9f655301ece08.1521006596.git.jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH v2 8.2/8.4] block: sed-opal: unify retrieval of table columns
+Date: Wed, 14 Mar 2018 07:15:43 +0100
+Message-Id: <93a5d31c09c867546621b9a3f849cb2b9dd628d8.1521006596.git.jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1521006595.git.jonas.rabenstein@studium.uni-erlangen.de>
 References: <cover.1521006595.git.jonas.rabenstein@studium.uni-erlangen.de>
@@ -34,155 +34,209 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow modification of the shadow mbr. If the shadow mbr is not marked as
-done, this data will be presented read only as the device content. Only
-after marking the shadow mbr as done and unlocking a locking range the
-actual content is accessible.
+instead of having multiple places defining the same argument list to get
+a specific column of a sed-opal table, provide a generic version and
+call it from those functions.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
- block/sed-opal.c              | 76 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/sed-opal.h      |  1 +
- include/uapi/linux/sed-opal.h |  8 +++++
- 3 files changed, 85 insertions(+)
+ block/opal_proto.h |   2 +
+ block/sed-opal.c   | 130 +++++++++++++++++++----------------------------------
+ 2 files changed, 49 insertions(+), 83 deletions(-)
 
+diff --git a/block/opal_proto.h b/block/opal_proto.h
+index e20be8258854..b6e352cfe982 100644
+--- a/block/opal_proto.h
++++ b/block/opal_proto.h
+@@ -170,6 +170,8 @@ enum opal_token {
+ 	OPAL_READLOCKED = 0x07,
+ 	OPAL_WRITELOCKED = 0x08,
+ 	OPAL_ACTIVEKEY = 0x0A,
++	/* lockingsp table */
++	OPAL_LIFECYCLE = 0x06,
+ 	/* locking info table */
+ 	OPAL_MAXRANGES = 0x04,
+ 	 /* mbr control */
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index b201c96d23a3..aa49fcc30462 100644
+index aa49fcc30462..ebee06aaadd6 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -1491,6 +1491,54 @@ static int set_mbr_enable_disable(struct opal_dev *dev, void *data)
+@@ -1075,6 +1075,37 @@ static int finalize_and_send(struct opal_dev *dev, cont_fn cont)
+ 	return opal_send_recv(dev, cont);
+ }
+ 
++/*
++ * request @column from table @table on device @dev. On success, the column
++ * data will be available in dev->resp->tok[4]
++ */
++static int generic_get_column(struct opal_dev *dev, const u8 *table,
++			      u64 column)
++{
++	int err;
++
++	err = start_opal_cmd(dev, table, opalmethod[OPAL_GET]);
++
++	add_token_u8(&err, dev, OPAL_STARTLIST);
++
++	add_token_u8(&err, dev, OPAL_STARTNAME);
++	add_token_u8(&err, dev, OPAL_STARTCOLUMN);
++	add_token_u64(&err, dev, column);
++	add_token_u8(&err, dev, OPAL_ENDNAME);
++
++	add_token_u8(&err, dev, OPAL_STARTNAME);
++	add_token_u8(&err, dev, OPAL_ENDCOLUMN);
++	add_token_u64(&err, dev, column);
++	add_token_u8(&err, dev, OPAL_ENDNAME);
++
++	add_token_u8(&err, dev, OPAL_ENDLIST);
++
++	if (err)
++		return err;
++
++	return finalize_and_send(dev, parse_and_check_status);
++}
++
+ static int gen_key(struct opal_dev *dev, void *data)
+ {
+ 	u8 uid[OPAL_UID_LENGTH];
+@@ -1129,23 +1160,11 @@ static int get_active_key(struct opal_dev *dev, void *data)
+ 	if (err)
+ 		return err;
+ 
+-	err = start_opal_cmd(dev, uid, opalmethod[OPAL_GET]);
+-	add_token_u8(&err, dev, OPAL_STARTLIST);
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 3); /* startCloumn */
+-	add_token_u8(&err, dev, 10); /* ActiveKey */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 4); /* endColumn */
+-	add_token_u8(&err, dev, 10); /* ActiveKey */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-	add_token_u8(&err, dev, OPAL_ENDLIST);
+-	if (err) {
+-		pr_debug("Error building get active key command\n");
++	err = generic_get_column(dev, uid, OPAL_ACTIVEKEY);
++	if (err)
+ 		return err;
+-	}
+ 
+-	return finalize_and_send(dev, get_active_key_cont);
++	return get_active_key_cont(dev);
+ }
+ 
+ static int generic_lr_enable_disable(struct opal_dev *dev,
+@@ -1800,14 +1819,16 @@ static int activate_lsp(struct opal_dev *dev, void *data)
  	return finalize_and_send(dev, parse_and_check_status);
  }
  
-+static int write_shadow_mbr(struct opal_dev *dev, void *data)
-+{
-+	struct opal_shadow_mbr *shadow = data;
-+	const u8 __user *src;
-+	u8 *dst;
-+	size_t off;
-+	u64 len;
-+	int err = 0;
-+
-+	/* FIXME: this is the maximum we can use for IO_BUFFER_LENGTH=2048.
-+	 *        Instead of having constant, it would be nice to compute the
-+	 *        actual value depending on IO_BUFFER_LENGTH
-+	 */
-+	len = 1950;
-+
-+	/* do the actual transmission(s) */
-+	src = (u8 *) shadow->data;
-+	for (off = 0 ; off < shadow->size; off += len) {
-+		len = min(len, shadow->size - off);
-+
-+		pr_debug("MBR: write bytes %zu+%llu/%llu\n",
-+			 off, len, shadow->size);
-+		err = start_opal_cmd(dev, opaluid[OPAL_MBR],
-+				     opalmethod[OPAL_SET]);
-+		add_token_u8(&err, dev, OPAL_STARTNAME);
-+		add_token_u8(&err, dev, OPAL_WHERE);
-+		add_token_u64(&err, dev, shadow->offset + off);
-+		add_token_u8(&err, dev, OPAL_ENDNAME);
-+
-+		add_token_u8(&err, dev, OPAL_STARTNAME);
-+		add_token_u8(&err, dev, OPAL_VALUES);
-+		dst = add_bytestring_header(&err, dev, len);
-+		if (!dst)
-+			break;
-+		if (copy_from_user(dst, src + off, len))
-+			err = -EFAULT;
-+
-+		add_token_u8(&err, dev, OPAL_ENDNAME);
-+		if (err)
-+			break;
-+
-+		err = finalize_and_send(dev, parse_and_check_status);
-+		if (err)
-+			break;
-+	}
-+	return err;
-+}
-+
- static int generic_pw_cmd(u8 *key, size_t key_len, u8 *cpin_uid,
- 			  struct opal_dev *dev)
+-static int get_lsp_lifecycle_cont(struct opal_dev *dev)
++/* Determine if we're in the Manufactured Inactive or Active state */
++static int get_lsp_lifecycle(struct opal_dev *dev, void *data)
  {
-@@ -2036,6 +2084,31 @@ static int opal_mbr_status(struct opal_dev *dev, struct opal_mbr_data *opal_mbr)
- 	return ret;
+ 	u8 lc_status;
+-	int error = 0;
++	int err;
+ 
+-	error = parse_and_check_status(dev);
+-	if (error)
+-		return error;
++	err = generic_get_column(dev, opaluid[OPAL_LOCKINGSP_UID],
++				 OPAL_LIFECYCLE);
++	if (err)
++		return err;
+ 
+ 	lc_status = response_get_u64(&dev->parsed, 4);
+ 	/* 0x08 is Manufacured Inactive */
+@@ -1820,49 +1841,19 @@ static int get_lsp_lifecycle_cont(struct opal_dev *dev)
+ 	return 0;
  }
  
-+static int opal_write_shadow_mbr(struct opal_dev *dev,
-+				 struct opal_shadow_mbr *info)
-+{
-+	const struct opal_step mbr_steps[] = {
-+		{ opal_discovery0, },
-+		{ start_admin1LSP_opal_session, &info->key },
-+		{ write_shadow_mbr, info },
-+		{ end_opal_session, },
-+		{ NULL, }
-+	};
-+	int ret;
-+
-+	if (info->size == 0)
-+		return 0;
-+
-+	if (!access_ok(VERIFY_READ, info->data, info->size))
-+		return -EINVAL;
-+
-+	mutex_lock(&dev->dev_lock);
-+	setup_opal_dev(dev, mbr_steps);
-+	ret = next(dev);
-+	mutex_unlock(&dev->dev_lock);
-+	return ret;
-+}
-+
- static int opal_save(struct opal_dev *dev, struct opal_lock_unlock *lk_unlk)
+-/* Determine if we're in the Manufactured Inactive or Active state */
+-static int get_lsp_lifecycle(struct opal_dev *dev, void *data)
+-{
+-	int err;
+-
+-	err = start_opal_cmd(dev, opaluid[OPAL_LOCKINGSP_UID],
+-			     opalmethod[OPAL_GET]);
+-
+-	add_token_u8(&err, dev, OPAL_STARTLIST);
+-
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 3); /* Start Column */
+-	add_token_u8(&err, dev, 6); /* Lifecycle Column */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 4); /* End Column */
+-	add_token_u8(&err, dev, 6); /* Lifecycle Column */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-
+-	add_token_u8(&err, dev, OPAL_ENDLIST);
+-
+-	if (err) {
+-		pr_debug("Error Building GET Lifecycle Status command\n");
+-		return err;
+-	}
+-
+-	return finalize_and_send(dev, get_lsp_lifecycle_cont);
+-}
+-
+-static int get_msid_cpin_pin_cont(struct opal_dev *dev)
++static int get_msid_cpin_pin(struct opal_dev *dev, void *data)
  {
- 	struct opal_suspend_data *suspend;
-@@ -2368,6 +2441,9 @@ int sed_ioctl(struct opal_dev *dev, unsigned int cmd, void __user *arg)
- 	case IOC_OPAL_MBR_STATUS:
- 		ret = opal_mbr_status(dev, p);
- 		break;
-+	case IOC_OPAL_WRITE_SHADOW_MBR:
-+		ret = opal_write_shadow_mbr(dev, p);
-+		break;
- 	case IOC_OPAL_ERASE_LR:
- 		ret = opal_erase_locking_range(dev, p);
- 		break;
-diff --git a/include/linux/sed-opal.h b/include/linux/sed-opal.h
-index b38dc602cae3..cf08cdc13cbd 100644
---- a/include/linux/sed-opal.h
-+++ b/include/linux/sed-opal.h
-@@ -47,6 +47,7 @@ static inline bool is_sed_ioctl(unsigned int cmd)
- 	case IOC_OPAL_ENABLE_DISABLE_MBR:
- 	case IOC_OPAL_ERASE_LR:
- 	case IOC_OPAL_SECURE_ERASE_LR:
-+	case IOC_OPAL_WRITE_SHADOW_MBR:
- 	case IOC_OPAL_MBR_STATUS:
- 		return true;
+ 	const char *msid_pin;
+ 	size_t strlen;
+-	int error = 0;
++	int err;
+ 
+-	error = parse_and_check_status(dev);
+-	if (error)
+-		return error;
++	err = generic_get_column(dev, opaluid[OPAL_C_PIN_MSID], OPAL_PIN);
++	if (err)
++		return err;
+ 
+ 	strlen = response_get_string(&dev->parsed, 4, &msid_pin);
+ 	if (!msid_pin) {
+-		pr_debug("%s: Couldn't extract PIN from response\n", __func__);
++		pr_debug("Couldn't extract MSID_CPIN from response\n");
+ 		return OPAL_INVAL_PARAM;
  	}
-diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
-index 0cb9890cdc04..ab4b69778bd0 100644
---- a/include/uapi/linux/sed-opal.h
-+++ b/include/uapi/linux/sed-opal.h
-@@ -104,6 +104,13 @@ struct opal_mbr_data {
- 	__u8 __align[7];
- };
  
-+struct opal_shadow_mbr {
-+	struct opal_key key;
-+	const __u64 data;
-+	__u64 offset;
-+	__u64 size;
-+};
-+
- #define IOC_OPAL_SAVE		    _IOW('p', 220, struct opal_lock_unlock)
- #define IOC_OPAL_LOCK_UNLOCK	    _IOW('p', 221, struct opal_lock_unlock)
- #define IOC_OPAL_TAKE_OWNERSHIP	    _IOW('p', 222, struct opal_key)
-@@ -117,5 +124,6 @@ struct opal_mbr_data {
- #define IOC_OPAL_ERASE_LR           _IOW('p', 230, struct opal_session_info)
- #define IOC_OPAL_SECURE_ERASE_LR    _IOW('p', 231, struct opal_session_info)
- #define IOC_OPAL_MBR_STATUS         _IOW('p', 232, struct opal_mbr_data)
-+#define IOC_OPAL_WRITE_SHADOW_MBR   _IOW('p', 233, struct opal_shadow_mbr)
+@@ -1875,33 +1866,6 @@ static int get_msid_cpin_pin_cont(struct opal_dev *dev)
+ 	return 0;
+ }
  
- #endif /* _UAPI_SED_OPAL_H */
+-static int get_msid_cpin_pin(struct opal_dev *dev, void *data)
+-{
+-	int err;
+-
+-	err = start_opal_cmd(dev, opaluid[OPAL_C_PIN_MSID],
+-			     opalmethod[OPAL_GET]);
+-
+-	add_token_u8(&err, dev, OPAL_STARTLIST);
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 3); /* Start Column */
+-	add_token_u8(&err, dev, 3); /* PIN */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-
+-	add_token_u8(&err, dev, OPAL_STARTNAME);
+-	add_token_u8(&err, dev, 4); /* End Column */
+-	add_token_u8(&err, dev, 3); /* Lifecycle Column */
+-	add_token_u8(&err, dev, OPAL_ENDNAME);
+-	add_token_u8(&err, dev, OPAL_ENDLIST);
+-
+-	if (err) {
+-		pr_debug("Error building Get MSID CPIN PIN command.\n");
+-		return err;
+-	}
+-
+-	return finalize_and_send(dev, get_msid_cpin_pin_cont);
+-}
+-
+ static int end_opal_session(struct opal_dev *dev, void *data)
+ {
+ 	int err = 0;
 -- 
 2.16.1
