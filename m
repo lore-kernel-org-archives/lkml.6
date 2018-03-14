@@ -1,165 +1,425 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751449AbeCNKFA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:05:00 -0400
-Received: from mailproxy03.manitu.net ([217.11.48.67]:56196 "EHLO
-        mailproxy03.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeCNKE6 (ORCPT
+        id S1751652AbeCNKJM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:09:12 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60943 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNKJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:04:58 -0400
-Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
- devices
-To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
- <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
- <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
- <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
- <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
- <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
- <5b3df9d5-3e65-1114-4b51-9dcc329cbc31@theobroma-systems.com>
-From: Wolfgang Grandegger <wg@grandegger.com>
-Message-ID: <b5bf52e2-0843-a2b3-b039-c39fb9c634e3@grandegger.com>
-Date: Wed, 14 Mar 2018 11:04:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Mar 2018 06:09:09 -0400
+X-Originating-IP: 2.224.242.101
+Date: Wed, 14 Mar 2018 11:09:02 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+Message-ID: <20180314100902.GB16424@w540>
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CGME20180313143057epcas4p4c747ed8c1b333a557eef5aa8e15376fd@epcas4p4.samsung.com>
+ <1520951425-13843-3-git-send-email-jacopo+renesas@jmondi.org>
+ <8c224e1e-9871-dce9-89d0-3dad8218a747@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <5b3df9d5-3e65-1114-4b51-9dcc329cbc31@theobroma-systems.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
+Content-Disposition: inline
+In-Reply-To: <8c224e1e-9871-dce9-89d0-3dad8218a747@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jakob,
 
-Am 14.03.2018 um 10:48 schrieb Jakob Unterwurzacher:
-> On 14.03.18 10:25, Wolfgang Grandegger wrote:
->>> Counting the state changes is one thing but you should also generate 
->>> error messages for them.
->>
->> The usual test here is:
->>
->> $ candump -td -e any,0:0,#FFFFFFFF
->>
->> should report proper state changes, if you send messages with
->>
->> 1. no cable connected
->> 2. CAN high and low short-circuited
->>
->> Also downwards if the hardware error is gone and you continue to send 
->> messages.
-> Yes, we do, the hardware does it. Testcases:
-> 
-> (1) no cable connected
-> 
->> root@rk3399-q7:~# candump -td -e any,0:0,#FFFFFFFF | head -n 1000
->>  (000.000000)  can0  178   [0]
->>  (000.000410)  can0  20000030   [8]  00 00 00 00 00 00 08 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{8}{0}}
->>  (000.000445)  can0  20000030   [8]  00 00 00 00 00 00 10 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{16}{0}}
->>  (000.000425)  can0  20000030   [8]  00 00 00 00 00 00 18 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{24}{0}}
->>  (000.000451)  can0  20000030   [8]  00 00 00 00 00 00 20 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{32}{0}}
->>  (000.000429)  can0  20000030   [8]  00 00 00 00 00 00 28 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{40}{0}}
->>  (000.000448)  can0  20000030   [8]  00 00 00 00 00 00 30 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{48}{0}}
->>  (000.000433)  can0  20000030   [8]  00 00 00 00 00 00 38 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{56}{0}}
->>  (000.000437)  can0  20000030   [8]  00 00 00 00 00 00 40 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{64}{0}}
->>  (000.000443)  can0  20000030   [8]  00 00 00 00 00 00 48 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{72}{0}}
->>  (000.000437)  can0  20000030   [8]  00 00 00 00 00 00 50 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{80}{0}}
->>  (000.000498)  can0  20000030   [8]  00 00 00 00 00 00 58 00   ERRORFRAME
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{88}{0}}
->>  (000.000394)  can0  20000034   [8]  00 0C 00 00 00 00 60 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning}
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{96}{0}}
->>  (000.000433)  can0  20000034   [8]  00 0C 00 00 00 00 68 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning}
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{104}{0}}
->>  (000.000437)  can0  20000034   [8]  00 0C 00 00 00 00 70 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning}
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{112}{0}}
->>  (000.000443)  can0  20000034   [8]  00 0C 00 00 00 00 78 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning}
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{120}{0}}
->>  (000.000444)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive} 
+--s2ZSL+KKDSLx8OML
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Just,
+Hi Andrzej,
+    thanks for review
 
-       controller-problem{rx-error-passive,tx-error-passive} 
+On Wed, Mar 14, 2018 at 09:42:36AM +0100, Andrzej Hajda wrote:
+> On 13.03.2018 15:30, Jacopo Mondi wrote:
+> > Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> > output decoder.
+>
+> IMO converter suits here better, but it is just suggestion.
+>
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/gpu/drm/bridge/Kconfig        |   7 +
+> >  drivers/gpu/drm/bridge/Makefile       |   1 +
+> >  drivers/gpu/drm/bridge/thc63lvd1024.c | 241 ++++++++++++++++++++++++++++++++++
+> >  3 files changed, 249 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+> >
+> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > index 3b99d5a..facf6bd 100644
+> > --- a/drivers/gpu/drm/bridge/Kconfig
+> > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > @@ -92,6 +92,13 @@ config DRM_SII9234
+> >  	  It is an I2C driver, that detects connection of MHL bridge
+> >  	  and starts encapsulation of HDMI signal.
+> >
+> > +config DRM_THINE_THC63LVD1024
+> > +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+> > +	depends on OF
+> > +	select DRM_PANEL_BRIDGE
+>
+> You don't use PANEL_BRIDGE, it should be possible to drop the select.
+>
 
->>
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{128}{0}}
->>  (000.000495)  can0  20000024   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive} 
->>
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{128}{0}}
-> 
-> Repeats ad infinitum...
+Ack
 
-Good! And without "berr-reporting" just the state changes should show up.
+> > +	---help---
+> > +	  Thine THC63LVD1024 LVDS decoder bridge driver.
+>
+> Decoder to what?
+> Maybe it would be better to say it is LVDS/parallel or LVDS/RGB
+> converter or bridge.
 
-> 
-> 
-> (1b) cable gets connected:
-> 
->>  (000.000883)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive} 
->>
->>     transceiver-status
->>     no-acknowledgement-on-tx
->>     error-counter-tx-rx{{128}{0}}
->>  (000.000996)  can0  20000004   [8]  00 0C 00 00 00 00 7F 00   ERRORFRAME
->>     controller-problem{rx-error-warning,tx-error-warning}
->>     error-counter-tx-rx{{127}{0}}
+"LVDS to digital CMOS/TTL parallel data converter" as the manual
+describes the chip?
 
-Back to error active is missing!? Have a look to:
+>
+> > +
+> >  config DRM_TOSHIBA_TC358767
+> >  	tristate "Toshiba TC358767 eDP bridge"
+> >  	depends on OF
+> > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > index 373eb28..fd90b16 100644
+> > --- a/drivers/gpu/drm/bridge/Makefile
+> > +++ b/drivers/gpu/drm/bridge/Makefile
+> > @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+> >  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+> >  obj-$(CONFIG_DRM_SII902X) += sii902x.o
+> >  obj-$(CONFIG_DRM_SII9234) += sii9234.o
+> > +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+> >  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+> >  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+> >  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+> > diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > new file mode 100644
+> > index 0000000..4b059c0
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > @@ -0,0 +1,241 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
+> > + *
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + */
+> > +
+> > +#include <drm/drmP.h>
+> > +#include <drm/drm_bridge.h>
+> > +#include <drm/drm_panel.h>
+> > +
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/of_graph.h>
+> > +#include <linux/regulator/consumer.h>
+> > +
+> > +static const char * const thc63_reg_names[] = {
+> > +	"vcc", "lvcc", "pvcc", "cvcc", };
+> > +
+> > +struct thc63_dev {
+> > +	struct device *dev;
+> > +
+> > +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
+> > +
+> > +	struct gpio_desc *pwdn;
+> > +	struct gpio_desc *oe;
+> > +
+> > +	struct drm_bridge bridge;
+> > +	struct drm_bridge *next;
+> > +};
+> > +
+> > +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
+> > +{
+> > +	return container_of(bridge, struct thc63_dev, bridge);
+> > +}
+> > +
+> > +static int thc63_attach(struct drm_bridge *bridge)
+> > +{
+> > +	struct thc63_dev *thc63 = to_thc63(bridge);
+> > +
+> > +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
+> > +}
+> > +
+> > +static void thc63_enable(struct drm_bridge *bridge)
+> > +{
+> > +	struct thc63_dev *thc63 = to_thc63(bridge);
+> > +	struct regulator *vcc;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+> > +		vcc = thc63->vccs[i];
+> > +		if (vcc) {
+> > +			ret = regulator_enable(vcc);
+> > +			if (ret)
+> > +				goto error_vcc_enable;
+> > +		}
+> > +	}
+> > +
+> > +	if (thc63->pwdn)
+> > +		gpiod_set_value(thc63->pwdn, 0);
+> > +
+> > +	if (thc63->oe)
+> > +		gpiod_set_value(thc63->oe, 1);
+> > +
+> > +	return;
+> > +
+> > +error_vcc_enable:
+> > +	dev_err(thc63->dev, "Failed to enable regulator %u\n", i);
+> > +}
+> > +
+> > +static void thc63_disable(struct drm_bridge *bridge)
+> > +{
+> > +	struct thc63_dev *thc63 = to_thc63(bridge);
+> > +	struct regulator *vcc;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+> > +		vcc = thc63->vccs[i];
+> > +		if (vcc) {
+> > +			ret = regulator_disable(vcc);
+> > +			if (ret)
+> > +				goto error_vcc_disable;
+>
+> I think in disable path you can report an error and continue - should be
+> safer.
+>
 
-https://elixir.bootlin.com/linux/latest/source/drivers/net/can/dev.c#L364
+Ack
 
-Wolfgang.
+> > +		}
+> > +	}
+> > +
+> > +	if (thc63->pwdn)
+> > +		gpiod_set_value(thc63->pwdn, 1);
+> > +
+> > +	if (thc63->oe)
+> > +		gpiod_set_value(thc63->oe, 0);
+>
+> Usually disable uses reverse order. Ie first disable oe, then, pwdn,
+> then regulators, also in reverse order.
+> Looks more reasonable.
+>
+
+Indeed! I will invert the order.
+
+(I wonder if the regulator disabling order actually makes a difference
+though).
+
+> > +
+> > +	return;
+> > +
+> > +error_vcc_disable:
+> > +	dev_err(thc63->dev, "Failed to disable regulator %u\n", i);
+> > +}
+> > +
+> > +struct drm_bridge_funcs thc63_bridge_func = {
+> > +	.attach	= thc63_attach,
+> > +	.enable = thc63_enable,
+> > +	.disable = thc63_disable,
+> > +};
+> > +
+> > +static int thc63_parse_dt(struct thc63_dev *thc63)
+> > +{
+> > +	struct device_node *thc63_out;
+> > +	struct device_node *remote;
+> > +	int ret = 0;
+> > +
+> > +	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node, 2, -1);
+>
+> Please define and use enums for port number, it will be more clear.
+>
+
+yup
+
+> > +	if (!thc63_out) {
+> > +		dev_err(thc63->dev, "Missing endpoint in Port@2\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	remote = of_graph_get_remote_port_parent(thc63_out);
+> > +	if (!remote) {
+> > +		dev_err(thc63->dev, "Endpoint in Port@2 unconnected\n");
+> > +		ret = -ENODEV;
+> > +		goto error_put_out_node;
+> > +	}
+> > +
+> > +	if (!of_device_is_available(remote)) {
+> > +		dev_err(thc63->dev, "Port@2 remote endpoint is disabled\n");
+> > +		ret = -ENODEV;
+> > +		goto error_put_remote_node;
+> > +	}
+> > +
+> > +	thc63->next = of_drm_find_bridge(remote);
+> > +	if (!thc63->next)
+> > +		ret = -EPROBE_DEFER;
+> > +
+> > +error_put_remote_node:
+> > +	of_node_put(remote);
+> > +error_put_out_node:
+> > +	of_node_put(thc63_out);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int thc63_gpio_init(struct thc63_dev *thc63)
+> > +{
+> > +	thc63->pwdn = devm_gpiod_get_optional(thc63->dev, "pwdn",
+> > +					      GPIOD_OUT_LOW);
+> Shouldn't be GPIOD_OUT_HIGH - bridge initially disabled?
+
+No, the PWDN gpio is active low, it puts the chip in power down mode
+when the physical line level is set to 0.
+
+That's another confusing thing, when requesting the GPIO, the actual
+physical line value has to be provided, while when "set_value()" the
+logical one is requested, iirc.
+
+Being the GPIO defined as active low, in power enable we set it to
+"logical inactive" == "physical 1", while during power disable it has
+to be set to "logical active" == "physical 0"
+
+Not the right place to complain here, but imo that's not consistent.
+Or have I misinterpreted the APIs? I cannot do much test, as in my setup
+the PWDN pin is hardwired to +vcc (through a physical switch, not
+controlled through a GPIO though).
+
+Thanks
+   j
+
+>
+> Regards
+> Andrzej
+> > +	if (IS_ERR(thc63->pwdn)) {
+> > +		dev_err(thc63->dev, "Unable to get GPIO \"pwdn\"\n");
+> > +		return PTR_ERR(thc63->pwdn);
+> > +	}
+> > +
+> > +	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> > +	if (IS_ERR(thc63->oe)) {
+> > +		dev_err(thc63->dev, "Unable to get GPIO \"oe\"\n");
+> > +		return PTR_ERR(thc63->oe);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thc63_regulator_init(struct thc63_dev *thc63)
+> > +{
+> > +	struct regulator **reg;
+> > +	int i;
+> > +
+> > +	reg = &thc63->vccs[0];
+> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
+> > +		*reg = devm_regulator_get_optional(thc63->dev,
+> > +						   thc63_reg_names[i]);
+> > +		if (IS_ERR(*reg)) {
+> > +			if (PTR_ERR(*reg) == -EPROBE_DEFER)
+> > +				return -EPROBE_DEFER;
+> > +			*reg = NULL;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thc63_probe(struct platform_device *pdev)
+> > +{
+> > +	struct thc63_dev *thc63;
+> > +	int ret;
+> > +
+> > +	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
+> > +	if (!thc63)
+> > +		return -ENOMEM;
+> > +
+> > +	thc63->dev = &pdev->dev;
+> > +	platform_set_drvdata(pdev, thc63);
+> > +
+> > +	ret = thc63_regulator_init(thc63);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = thc63_gpio_init(thc63);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = thc63_parse_dt(thc63);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	thc63->bridge.driver_private = thc63;
+> > +	thc63->bridge.of_node = pdev->dev.of_node;
+> > +	thc63->bridge.funcs = &thc63_bridge_func;
+> > +
+> > +	drm_bridge_add(&thc63->bridge);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thc63_remove(struct platform_device *pdev)
+> > +{
+> > +	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
+> > +
+> > +	drm_bridge_remove(&thc63->bridge);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id thc63_match[] = {
+> > +	{ .compatible = "thine,thc63lvd1024", },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, thc63_match);
+> > +#endif
+> > +
+> > +static struct platform_driver thc63_driver = {
+> > +	.probe	= thc63_probe,
+> > +	.remove	= thc63_remove,
+> > +	.driver	= {
+> > +		.name		= "thc63lvd1024",
+> > +		.of_match_table	= thc63_match,
+> > +	},
+> > +};
+> > +module_platform_driver(thc63_driver);
+> > +
+> > +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
+> > +MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
+> > +MODULE_LICENSE("GPL v2");
+>
+>
+
+--s2ZSL+KKDSLx8OML
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJaqPS+AAoJEHI0Bo8WoVY8Aa0QAK1a9kd0/1xwIffYpGH5M/ba
+KcwaIFfgeEoQPxIkYIG4fFpaoKMrbUtDr1HXB47N0xzuh8dgm8l9qIgPC7bF6huu
+3R2EIAyA9DQkFqYMHw9kgDgsHWtKX6TzUTfcOAXKNHfCEvM1P50/X24USDdXVb5I
+VpDguxDL9JcG0CDN2sekSH8Gq5q1ex0cgQUSCrbgBkHq7kC0x4L10psBgjK18jNb
+uZtmf6w4em8wRlyg+vvpu/r1q0Q32vcNDHIBAIVEYSP1+KUWjhXXKtJ5tR09yNyg
+H2UhRMwg7TK7bQLt24iGYGTwQce9KkxsjyNgnXowh8zsvc+EDFvXboSmu3ed1cAY
+K+iIqOkX1XVsRK/HsitNz+ptWNhvNvRa3VlNwoxdrqY6aabXOOpomiTuUxM40q9z
+Rh5VMgFiK8jZbVZWbW6xgH0DRBMymuR+5dGeWOVOJ43TljHG27+yIjcXz90hBsMa
+Wt9M3cKZVF+CS59xhcKTcMwnkv/q+ZHZugF+GEuXQMAkORBw8rTCzqEkTmtRHjhH
+/qQeMf//cOJwi6G6dJtpNL9KqY7dMDyXLJMeuiOHjzDR8M1kWZHjH8dhqDJhDIma
+bPEbC6v8dnllVZbo10HM5PtGBj/SIHh00nKtNHSoae2ZkZ6HJdwEA/9FW4SHizH9
+MP2omU5QVr1lc1Xss50p
+=2cVk
+-----END PGP SIGNATURE-----
+
+--s2ZSL+KKDSLx8OML--
