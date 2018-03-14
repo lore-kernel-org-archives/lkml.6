@@ -1,81 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeCNCfB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 22:35:01 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:54489 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932868AbeCNCfA (ORCPT
+        id S932858AbeCNCkx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 22:40:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39666 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932842AbeCNCkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 22:35:00 -0400
-Subject: Re: [PATCH v8 03/13] [media] omap3isp: group device capabilities
-To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180309174920.22373-1-gustavo@padovan.org>
- <20180309174920.22373-4-gustavo@padovan.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <5756fc2a-c2f6-0d14-d8fc-9dcc5f7b7d93@xs4all.nl>
-Date: Tue, 13 Mar 2018 19:34:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 13 Mar 2018 22:40:51 -0400
+X-Google-Smtp-Source: AG47ELtH2M0wOgkV2GxVChE6N1mHumspv6Ek4M/slRGD3EKaUvNBqhbiJ2LebK3H63dnrkTaZ+cPLQ==
+Date: Tue, 13 Mar 2018 19:40:48 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Tirupathi Reddy <tirupath@codeaurora.org>
+Cc: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] Input: pm8941-pwrkey: add resin key capabilities
+Message-ID: <20180314024048.GA11034@tuxbook-pro>
+References: <1520930158-5854-1-git-send-email-tirupath@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180309174920.22373-4-gustavo@padovan.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNJMe2k6QXDuhKqg74hUAaVrw95LsKPAFoUTN2bCLCc6/yiL8NeNRfgkqllWHkQN8JhgoS2paCXkrAOwr54ELQFIuE5leQ6tgXLosK4BfQmo000/1BNW
- 2xXxpZE8ijQZH9XgjnRJ16mC5MlL36DHm6dPhO6KwVFt42HSlmxOesiocu+IhTJIqI658eNqJVnuhCJL8rLxryeyWeG4ZeVQ3DshwmH5aeGnxlM6n9Egdllk
- cltT/7H3SSi1AGmjt+hplptqgAaxViNGG307ZGMBnSQA0qZ1XdKN1/MpjL5jGdh7QbceFbk7h12uq62QD3sVUmZXR1DFj+hiSZPEkACLa5tN4UWc4kePC61u
- gLw09QUE7yQeZi7mMQxveYV6xlCqsT/8ovEsrRApyd5RGXfbEfx5z8uggDf19RmBfT19OiwA6qaUn+iGJ7o343WiCEHLVr0S3cgJ3mwWfIm2J2M46jun7ETq
- hQLPmX0hysiQIwrH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520930158-5854-1-git-send-email-tirupath@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Tue 13 Mar 01:35 PDT 2018, Tirupathi Reddy wrote:
+
+> Add resin key support to handle different types of key events
+> defined in different platforms.
 > 
-> Instead of putting V4L2_CAP_STREAMING everywhere, set device_caps
-> earlier with this value.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
 > ---
->  drivers/media/platform/omap3isp/ispvideo.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+>  .../bindings/input/qcom,pm8941-pwrkey.txt          | 20 ++++++-
+>  drivers/input/misc/pm8941-pwrkey.c                 | 65 +++++++++++++++++++++-
+>  2 files changed, 83 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-> index a751c89a3ea8..b4d4ef926749 100644
-> --- a/drivers/media/platform/omap3isp/ispvideo.c
-> +++ b/drivers/media/platform/omap3isp/ispvideo.c
-> @@ -658,13 +658,14 @@ isp_video_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
->  	strlcpy(cap->card, video->video.name, sizeof(cap->card));
->  	strlcpy(cap->bus_info, "media", sizeof(cap->bus_info));
+> diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> index 07bf55f..f499cf8 100644
+> --- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> +++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> @@ -20,6 +20,14 @@ PROPERTIES
+>  		    defined by the binding document describing the node's
+>  		    interrupt parent.
 >  
-> -	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT
-> -		| V4L2_CAP_STREAMING | V4L2_CAP_DEVICE_CAPS;
-> +	cap->device_caps = V4L2_CAP_STREAMING;
-> +	cap->capabilities = cap->device_caps | V4L2_CAP_VIDEO_CAPTURE |
-> +		V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_DEVICE_CAPS;
+> +- interrupt-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: Interrupt names.  This list must match up 1-to-1 with the
+> +		    interrupts specified in the 'interrupts' property. "kpdpwr"
+> +		    must be specified and should be the first entry of the list.
+> +		    "resin" may be specified for some platforms.
+> +
+>  - debounce:
+>  	Usage: optional
+>  	Value type: <u32>
+> @@ -32,12 +40,22 @@ PROPERTIES
+>  	Definition: presence of this property indicates that the KPDPWR_N pin
+>  		    should be configured for pull up.
+>  
+> +- linux,code:
+> +	Usage: required for "resin" key
+> +	Value type: <u32>
+> +	Definition: The input key-code associated with the resin key.
+> +		    Use the linux event codes defined in
+> +		    include/dt-bindings/input/linux-event-codes.h
 
-Same as in patch 1: I'd move this down to after the if-else. It makes more
-sense that way.
+For completeness sake I think this should list both the key code for the
+power key and for the RESIN key.
 
+> +
+>  EXAMPLE
 >  
->  	if (video->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
-> -		cap->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
-> +		cap->device_caps |= V4L2_CAP_VIDEO_CAPTURE;
->  	else
-> -		cap->device_caps = V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_STREAMING;
-> +		cap->device_caps |= V4L2_CAP_VIDEO_OUTPUT;
+>  	pwrkey@800 {
+>  		compatible = "qcom,pm8941-pwrkey";
+>  		reg = <0x800>;
+> -		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+> +		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>,
+> +			     <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+> +		interrupt-names = "kpdpwr", "resin";
+>  		debounce = <15625>;
+>  		bias-pull-up;
+
+Do we need to support defining the bias for the resin as well?
+
+Perhaps it makes more sense to describe the RESIN key with a separate
+compatible and define that in a node of its own (we can still implement
+this in the same driver - if there's any chance of reuse...).
+
+> +		linux,code = <KEY_VOLUMEDOWN>;
+>  	};
+> diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
+> index 18ad956..2fffc7c 100644
+> --- a/drivers/input/misc/pm8941-pwrkey.c
+> +++ b/drivers/input/misc/pm8941-pwrkey.c
+> @@ -28,6 +28,7 @@
 >  
->  	return 0;
+>  #define PON_RT_STS			0x10
+>  #define  PON_KPDPWR_N_SET		BIT(0)
+> +#define  PON_RESIN_N_SET		BIT(1)
+>  
+>  #define PON_PS_HOLD_RST_CTL		0x5a
+>  #define PON_PS_HOLD_RST_CTL2		0x5b
+> @@ -46,6 +47,7 @@
+>  struct pm8941_pwrkey {
+>  	struct device *dev;
+>  	int irq;
+> +	u32 resin_key_code;
+>  	u32 baseaddr;
+>  	struct regmap *regmap;
+>  	struct input_dev *input;
+> @@ -130,6 +132,24 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
+>  	return IRQ_HANDLED;
 >  }
-> 
+>  
+> +static irqreturn_t pm8941_resinkey_irq(int irq, void *_data)
+> +{
+> +	struct pm8941_pwrkey *pwrkey = _data;
+> +	unsigned int sts;
+> +	int error;
+> +
+> +	error = regmap_read(pwrkey->regmap,
+> +			    pwrkey->baseaddr + PON_RT_STS, &sts);
+
+This needs to be broken because the line is 81 chars long, if you use a
+shorter name for the return value (e.g. "ret") you don't need to do
+this.
+
+> +	if (error)
+> +		return IRQ_HANDLED;
+> +
+> +	input_report_key(pwrkey->input, pwrkey->resin_key_code,
+> +			 !!(sts & PON_RESIN_N_SET));
+
+Put pwrkey->resin_key_code in a local variable named "key" (or even
+key_code) and you don't need to line wrap this one.
+
+> +	input_sync(pwrkey->input);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
 
 Regards,
-
-	Hans
+Bjorn
