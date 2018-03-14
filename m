@@ -1,72 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeCNPXx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:23:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51546 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751362AbeCNPXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:23:52 -0400
-Date: Wed, 14 Mar 2018 16:23:46 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [RT PATCH 2/2] block: blk-mq: move
- blk_queue_usage_counter_release() into process context
-Message-ID: <20180314152345.xyphm4dg4m7suqov@linutronix.de>
-References: <20180309202550.j66qphz3txupt55u@linutronix.de>
- <20180309222643.GC5926@hirez.programming.kicks-ass.net>
- <20180312105113.p7jifhwdwbhpvxds@linutronix.de>
- <20180312132729.GI4064@hirez.programming.kicks-ass.net>
- <20180312141107.roveviectc6a75s7@linutronix.de>
- <20180312142933.GF4043@hirez.programming.kicks-ass.net>
- <20180312195118.rye5lg2pb26kmavn@linutronix.de>
- <20180313184039.begptzircgb5ketk@linutronix.de>
- <20180313184240.ndq2pw2fmvhkwidc@linutronix.de>
- <20180313201039.GB4082@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180313201039.GB4082@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180223
+        id S1751649AbeCNPYx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:24:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751289AbeCNPYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 11:24:52 -0400
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH] jump_label: Fix sparc64 warning
+Date: Wed, 14 Mar 2018 10:24:20 -0500
+Message-Id: <c966fed42be6611254a62d46579ec7416548d572.1521041026.git.jpoimboe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-13 21:10:39 [+0100], Peter Zijlstra wrote:
-> On Tue, Mar 13, 2018 at 07:42:41PM +0100, Sebastian Andrzej Siewior wrote:
-> > +static void blk_queue_usage_counter_release_swork(struct swork_event *sev)
-> > +{
-> > +	struct request_queue *q =
-> > +		container_of(sev, struct request_queue, mq_pcpu_wake);
-> > +
-> > +	wake_up_all(&q->mq_freeze_wq);
-> > +}
-> > +
-> >  static void blk_queue_usage_counter_release(struct percpu_ref *ref)
-> >  {
-> >  	struct request_queue *q =
-> >  		container_of(ref, struct request_queue, q_usage_counter);
-> >  
-> > -	wake_up_all(&q->mq_freeze_wq);
-> > +	swork_queue(&q->mq_pcpu_wake);
-> >  }
-> 
-> Depending on if we expect there to actually be wakeups, you could do
-> something like:
-> 
-> 	if (wq_has_sleepers(&q->mq_freeze_wq))
-> 		swork_queue(&q->mq_pcpu_wake));
-> 
-> avoiding the whole workqueue thing in the case there wasn't anybody
-> waiting for it. But since I don't know this code, I can't say if it
-> makes sense or not. Tejun?
+The kbuild test robot reported the following warning on sparc64:
 
-this pops up on boot and shows that there are no waiter. So I consider
-to take this.
+  kernel/jump_label.c: In function '__jump_label_update':
+  kernel/jump_label.c:376:51: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+       WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
 
-Sebastian
+On sparc64, the jump_label entry->code field is of type u32, but
+pointers are 64-bit.  Silence the warning by casting entry->code to an
+unsigned long before casting it to a pointer.  This is also what the
+sparc jump label code does.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: dc1dd184c2f0 ("jump_label: Warn on failed jump_label patching attempt")
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ kernel/jump_label.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 52a0a7af8640..e7214093dcd1 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -373,7 +373,8 @@ static void __jump_label_update(struct static_key *key,
+ 			if (kernel_text_address(entry->code))
+ 				arch_jump_label_transform(entry, jump_label_type(entry));
+ 			else
+-				WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
++				WARN_ONCE(1, "can't patch jump_label at %pS",
++					  (void *)(unsigned long)entry->code);
+ 		}
+ 	}
+ }
+-- 
+2.14.3
