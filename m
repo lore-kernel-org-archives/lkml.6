@@ -1,118 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCNMIP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:08:15 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51864 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeCNMIN (ORCPT
+        id S1751440AbeCNMKL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:10:11 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54845 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNMKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:08:13 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
-Date: Wed, 14 Mar 2018 13:08:47 +0100
-Message-ID: <1612418.9UMGjv7DaP@aspire.rjw.lan>
-In-Reply-To: <20180314120450.GT4043@hirez.programming.kicks-ass.net>
-References: <4137867.C4jYrWdt8n@aspire.rjw.lan> <20180314120450.GT4043@hirez.programming.kicks-ass.net>
+        Wed, 14 Mar 2018 08:10:08 -0400
+X-Google-Smtp-Source: AG47ELsC+Dmm2iyaC0pIoLvG9MLiDfT8OCLrVBkZ58U2ijuTIWu4q69YOQXvyk+kCenhb8Kld9qvOw==
+Date: Wed, 14 Mar 2018 13:10:05 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] i2c: tegra: Fix PM device usage count
+Message-ID: <20180314121005.GD8564@ulmo>
+References: <20180224224423.hz36gpxnlpex2cqx@agrajag.zerfleddert.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mJm6k4Vb/yFcL9ZU"
+Content-Disposition: inline
+In-Reply-To: <20180224224423.hz36gpxnlpex2cqx@agrajag.zerfleddert.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 14, 2018 1:04:50 PM CET Peter Zijlstra wrote:
-> On Mon, Mar 12, 2018 at 10:36:27AM +0100, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > 
-> > If poll_idle() is allowed to spin until need_resched() returns 'true',
-> > it may actually spin for a much longer time than expected by the idle
-> > governor, since set_tsk_need_resched() is not always called by the
-> > timer interrupt handler.  If that happens, the CPU may spend much
-> > more time than anticipated in the "polling" state.
-> > 
-> > To prevent that from happening, limit the time of the spinning loop
-> > in poll_idle().
-> > 
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> > 
-> > -> v2: After additional testing reduce POLL_IDLE_TIME_CHECK_COUNT to 1000.
-> > 
-> > ---
-> >  drivers/cpuidle/poll_state.c |   17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > Index: linux-pm/drivers/cpuidle/poll_state.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/cpuidle/poll_state.c
-> > +++ linux-pm/drivers/cpuidle/poll_state.c
-> > @@ -5,16 +5,31 @@
-> >   */
-> >  
-> >  #include <linux/cpuidle.h>
-> > +#include <linux/ktime.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/sched/idle.h>
-> >  
-> > +#define POLL_IDLE_TIME_CHECK_COUNT	1000
-> > +#define POLL_IDLE_TIME_LIMIT		(TICK_NSEC / 16)
-> > +
-> >  static int __cpuidle poll_idle(struct cpuidle_device *dev,
-> >  			       struct cpuidle_driver *drv, int index)
-> >  {
-> > +	ktime_t start = ktime_get();
-> 
-> I would recoomend not using ktime_get(), imagine the 'joy' if that
-> happens to be the HPET.
-> 
-> >  	local_irq_enable();
-> >  	if (!current_set_polling_and_test()) {
-> > +		unsigned int time_check_counter = 0;
-> > +
-> > +		while (!need_resched()) {
-> >  			cpu_relax();
-> > +			if (time_check_counter++ < POLL_IDLE_TIME_CHECK_COUNT)
-> > +				continue;
-> > +
-> > +			time_check_counter = 0;
-> > +			if (ktime_sub(ktime_get(), start) > POLL_IDLE_TIME_LIMIT)
-> > +				break;
-> > +		}
-> >  	}
-> >  	current_clr_polling();
-> 
-> Since the idle loop is strictly per-cpu, you can use regular
-> sched_clock() here. Something like:
-> 
-> 	u64 start = sched_clock();
-> 
-> 	local_irq_enable();
-> 	if (!current_set_polling_and_test()) {
-> 		while (!need_resched()) {
-> 			cpu_relax();
-> 
-> 			if (sched_clock() - start > POLL_IDLE_TIME_LIMIT)
-> 				break;
-> 		}
-> 	}
-> 	current_clr_polling();
 
-Good idea!
+--mJm6k4Vb/yFcL9ZU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On x86 we don't have to use that time_check_counter thing, sched_clock()
-> is really cheap, not sure if it makes sense on other platforms.
+On Sat, Feb 24, 2018 at 11:44:23PM +0100, Tobias Jordan wrote:
+> pm_runtime_get_sync() increases the device's usage count even when
+> reporting an error, so add a call to pm_runtime_put_noidle() in the
+> related error branches.
+>=20
+> Fixes: 1f50ad2c86cd ("i2c: tegra: Add runtime power-management support")
+> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+> ---
+> This is one of a number of patches for problems found using coccinelle=20
+> scripting in the SIL2LinuxMP project. The patch has been compile-tested;
+> it's based on linux-next-20180223.
+>=20
+> For a discussion of the corresponding issue, see
+> https://marc.info/?l=3Dlinux-pm&m=3D151904483924999&w=3D2
+>=20
+>  drivers/i2c/busses/i2c-tegra.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Let's do it the way you suggested, if there are issues with it, we
-can still add the counter later.
+This seems okay to me, though given the discussion it might be
+preferable to just ignore errors rather than fail.
 
-Thanks!
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--mJm6k4Vb/yFcL9ZU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpERoACgkQ3SOs138+
+s6GwLg/8C43j62gUc666BaZPllQ7dl9eSO2C0d3rhaOg2cwdhdPFaVAftH53/emV
+VmnD2byfZkeHiDdCqtYBAAGm60rbSKKih0ZAGxHhatK4VO4C2yR+YBAIPg7UdQ7C
+3fnM+dkMkjjQ4GyrV951VOjj0D3R7IeoWYv2kjRi6prj17UktwKKAj0B/rTFYEvR
+fDsW6kTJ6QFQtcfTsRYeMbQ3ZQihOb4s0oTo6EFwayl0BOn7M6MVjEKl3D0rxZfX
+0K+KgZdOzgOP34SXgOBLKFydotjcUI+U2PDVEkknhKRS/J8fw9gaeB4qnS2H0Lrn
+GU7DbGF4jVSx6PSI+aP0yDiOpZkq9RGe1XFE0Y97TOVf826iMRqGLB1ayJvJqPKz
+LqsDfJkMIPp43vCyYs0xMzjmAk+zPlFPciX+w3NqID8W3Kgq9c34cBKPp5SIwone
+j5IMxgx7GaN0t5kuYngdQ+eV0xvNR705bMcXFhXMBGIKI8ArUVj5r2RBmFmBJteK
+h3R6LDrjXzpSHp2neQzP/UCbSb0mFozGZFqmIW3AmOgbPckhs3kNv19y63gILENp
+tuFI24MURUXSrj+Q4tl42UyKvnZ1ve0Sp0tCLA2fLAsvTB3sWx22ZUqN4fOjyVDC
+Q7vaeCl7sly0Y9WxFzQo4bRRW4eOiKsZmaowzzAFNbAOwXAvdOE=
+=/vO1
+-----END PGP SIGNATURE-----
+
+--mJm6k4Vb/yFcL9ZU--
