@@ -1,96 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeCNT3y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:29:54 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42992 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeCNT3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:29:52 -0400
-X-Google-Smtp-Source: AG47ELv8GKL4vsNrWBo1WWxSje8WJuYIuNOla0PL3W/OF8tVhvStmdIJXdyNq6S5EMHCU0Bl+EVPow==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        marc.zyngier@arm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Vacek <neelx@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-Date: Wed, 14 Mar 2018 19:29:37 +0000
-Message-Id: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.15.1
+        id S1751620AbeCNTbS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:31:18 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:42066 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeCNTbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 15:31:16 -0400
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
+ <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
+ <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
+ <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
+ <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
+ <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
+ <b75e83ad-bb83-1f8d-1751-0989cc2493f1@deltatee.com>
+ <CAPcyv4g-A6fqdTahxX=aONSCgp1eEvBb=ZVMzbZUWUDmqBbj7Q@mail.gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <a9d7985d-09bb-2e23-c004-d14356a02830@deltatee.com>
+Date: Wed, 14 Mar 2018 13:30:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4g-A6fqdTahxX=aONSCgp1eEvBb=ZVMzbZUWUDmqBbj7Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, sbates@raithlin.com, helgaas@kernel.org, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
 
-Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
-alignment") modified the logic in memmap_init_zone() to initialize
-struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
-in move_freepages(), which is redundant by its own admission, and
-dereferences struct page fields to obtain the zone without checking
-whether the struct pages in question are valid to begin with.
 
-Commit 864b75f9d6b0 only makes it worse, since the rounding it does
-may cause pfn assume the same value it had in a prior iteration of
-the loop, resulting in an infinite loop and a hang very early in the
-boot. Also, since it doesn't perform the same rounding on start_pfn
-itself but only on intermediate values following an invalid PFN, we
-may still hit the same VM_BUG_ON() as before.
+On 14/03/18 01:28 PM, Dan Williams wrote:
+> P2P over PCI/PCI-X is quite common in devices like raid controllers.
+> It would be useful if those configurations were not left behind so
+> that Linux could feasibly deploy offload code to a controller in the
+> PCI domain.
 
-So instead, let's fix this at the core, and ensure that the BUG
-check doesn't dereference struct page fields of invalid pages.
+Thanks for the note. Neat. In the end nothing is getting left behind
+it's just work for someone to add support. Even if I wasn't already
+going to make the change I mentioned it all fits in the architecture and
+APIs quite easily.
 
-Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
-Cc: Daniel Vacek <neelx@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- mm/page_alloc.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3d974cb2a1a1..635d7dd29d7f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
- 	 * Remove at a later date when no bug reports exist related to
- 	 * grouping pages by mobility
- 	 */
--	VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
-+	VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
-+	          pfn_valid(page_to_pfn(end_page)) &&
-+	          page_zone(start_page) != page_zone(end_page));
- #endif
- 
- 	if (num_movable)
-@@ -5359,14 +5361,9 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 			/*
- 			 * Skip to the pfn preceding the next valid one (or
- 			 * end_pfn), such that we hit a valid pfn (or end_pfn)
--			 * on our next iteration of the loop. Note that it needs
--			 * to be pageblock aligned even when the region itself
--			 * is not. move_freepages_block() can shift ahead of
--			 * the valid region but still depends on correct page
--			 * metadata.
-+			 * on our next iteration of the loop.
- 			 */
--			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
--					~(pageblock_nr_pages-1)) - 1;
-+			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
- #endif
- 			continue;
- 		}
--- 
-2.15.1
+Logan
