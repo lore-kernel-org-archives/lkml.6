@@ -1,88 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753127AbeCNIDL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:03:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751317AbeCNIDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:03:07 -0400
-Date: Wed, 14 Mar 2018 09:03:01 +0100
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
-References: <20180313154826.20436-1-kraxel@redhat.com>
- <20180313161035.GL4788@phenom.ffwll.local>
+        id S1753418AbeCNIDV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:03:21 -0400
+Received: from ozlabs.org ([103.22.144.67]:43469 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753190AbeCNIDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:03:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 14 Mar 2018 19:01:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: please clean up the clockevents tree
+Message-ID: <20180314190137.3704602b@canb.auug.org.au>
+In-Reply-To: <ce514c90-f9ec-fc9e-e205-cd822cd766b2@linaro.org>
+References: <20180314100213.61168207@canb.auug.org.au>
+        <ce514c90-f9ec-fc9e-e205-cd822cd766b2@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180313161035.GL4788@phenom.ffwll.local>
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uJA0QYGPf4LPxYtqkojBPTO"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+--Sig_/uJA0QYGPf4LPxYtqkojBPTO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Either mlock account (because it's mlocked defacto), and get_user_pages
-> won't do that for you.
-> 
-> Or you write the full-blown userptr implementation, including mmu_notifier
-> support (see i915 or amdgpu), but that also requires Christian Königs
-> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
-> buffers is a no-go).
+Hi Daniel,
 
-I guess I'll look at mlock accounting for starters then.  Easier for
-now, and leaves the door open to switch to userptr later as this should
-be transparent to userspace.
+On Wed, 14 Mar 2018 07:56:00 +0100 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> On 14/03/2018 00:02, Stephen Rothwell wrote:
+> > Hi Daniel,
+> >=20
+> > The clockevents tree appears to only contain an old version of patches
+> > that have been committed upstream.  As such, it is only causing conflic=
+ts.
+> > Please resync with your upstream tree. =20
+>=20
+> Done.
 
-> > Known issue:  Driver API isn't complete yet.  Need add some flags, for
-> > example to support read-only buffers.
-> 
-> dma-buf has no concept of read-only. I don't think we can even enforce
-> that (not many iommus can enforce this iirc), so pretty much need to
-> require r/w memory.
+Excellent, thanks.
 
-Ah, ok.  Just saw the 'write' arg for get_user_pages_fast and figured we
-might support that, but if iommus can't handle that anyway it's
-pointless indeed.
+--=20
+Cheers,
+Stephen Rothwell
 
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> 
-> btw there's also the hyperdmabuf stuff from the xen folks, but imo their
-> solution of forwarding the entire dma-buf api is over the top. This here
-> looks _much_ better, pls cc all the hyperdmabuf people on your next
-> version.
+--Sig_/uJA0QYGPf4LPxYtqkojBPTO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Fun fact: googling for "hyperdmabuf" found me your mail and nothing else :-o
-(Trying "hyper dmabuf" instead worked better then).
+-----BEGIN PGP SIGNATURE-----
 
-Yes, will cc them on the next version.  Not sure it'll help much on xen
-though due to the memory management being very different.  Basically xen
-owns the memory, not the kernel of the control domain (dom0), so
-creating dmabufs for guest memory chunks isn't that simple ...
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqo1uEACgkQAVBC80lX
+0Gxmlgf+NM3gNSxo75j2JdE+0da8nmZo+VyjTXVtE7PtWe/P+yqdBiJiZbIPeMR9
+8NyUHQHJNCq1Bz0bY7ZyrrfC8a+4BURzWqb+jUSwrzTUbcrfWpQgYvPdG8Kq/ODf
++AQ9+kjvhiPixYmo5UVSlt/RAgdNPIIC2W9qFHHT7FyY8IfG/x7wmIQe1AxJbsh8
+S4MRk8R7uwLK+tffPSVOA2uqyxw5TKJgKasZaFlPcugE8UCNDuA8e1VtLJtLW2pf
+7GERkxEKeERCJR7M1n1OmsmLoJ+d/Wzd0IfZnQab/uzOHIwl0m+WXDQ1wSiDtPwI
+Bmv3ni7447ayLcaNUqBXm5F0jfKRkQ==
+=ETQm
+-----END PGP SIGNATURE-----
 
-Also it's not clear whenever they really need guest -> guest exports or
-guest -> dom0 exports.
-
-> Overall I like the idea, but too lazy to review.
-
-Cool.  General comments on the idea was all I was looking for for the
-moment.  Spare yor review cycles for the next version ;)
-
-> Oh, some kselftests for this stuff would be lovely.
-
-I'll look into it.
-
-thanks,
-  Gerd
+--Sig_/uJA0QYGPf4LPxYtqkojBPTO--
