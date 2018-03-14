@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933377AbeCNDUj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:20:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43090 "EHLO
+        id S933447AbeCNDUr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:20:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43286 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932937AbeCNDUg (ORCPT
+        with ESMTP id S932937AbeCNDUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:20:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8142F607A2
+        Tue, 13 Mar 2018 23:20:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 312B86083C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -16,10 +16,12 @@ Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] i40e/i40evf: Eliminate duplicate barriers on weakly-ordered archs
-Date: Tue, 13 Mar 2018 23:20:22 -0400
-Message-Id: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH 4/7] igbvf: eliminate duplicate barriers on weakly-ordered archs
+Date: Tue, 13 Mar 2018 23:20:25 -0400
+Message-Id: <1520997629-17361-4-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,35 +39,21 @@ writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_txrx.c   | 2 +-
- drivers/net/ethernet/intel/i40evf/i40e_txrx.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igbvf/netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_txrx.c b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-index e554aa6cf..7028516 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-@@ -1375,7 +1375,7 @@ static inline void i40e_release_rx_desc(struct i40e_ring *rx_ring, u32 val)
- 	 * such as IA-64).
- 	 */
- 	wmb();
--	writel(val, rx_ring->tail);
-+	writel_relaxed(val, rx_ring->tail);
+diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
+index 4214c15..fe3441b 100644
+--- a/drivers/net/ethernet/intel/igbvf/netdev.c
++++ b/drivers/net/ethernet/intel/igbvf/netdev.c
+@@ -251,7 +251,7 @@ static void igbvf_alloc_rx_buffers(struct igbvf_ring *rx_ring,
+ 		 * such as IA-64).
+ 		*/
+ 		wmb();
+-		writel(i, adapter->hw.hw_addr + rx_ring->tail);
++		writel_relaxed(i, adapter->hw.hw_addr + rx_ring->tail);
+ 	}
  }
  
- /**
-diff --git a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
-index 357d605..2d323fc 100644
---- a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
-@@ -667,7 +667,7 @@ static inline void i40e_release_rx_desc(struct i40e_ring *rx_ring, u32 val)
- 	 * such as IA-64).
- 	 */
- 	wmb();
--	writel(val, rx_ring->tail);
-+	writel_relaxed(val, rx_ring->tail);
- }
- 
- /**
 -- 
 2.7.4
