@@ -1,28 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751549AbeCNVLK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:11:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51658 "EHLO
+        id S1751615AbeCNVMe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:12:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58056 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750950AbeCNVLJ (ORCPT
+        by vger.kernel.org with ESMTP id S1750950AbeCNVMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:11:09 -0400
-From: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: bhelgaas@google.com, brking@linux.vnet.ibm.com
-Subject: [PATCH, pci, v2] pci: Delete PCI disabling informational messages
-Date: Wed, 14 Mar 2018 18:10:53 -0300
-X-Mailer: git-send-email 2.14.3
+        Wed, 14 Mar 2018 17:12:33 -0400
+Subject: Re: [PATCH 1/2, pci] pci: Addition of PCI_DEV_FLAGS_QUIET_PCI_REALIGN
+ attribute to the PCI subsystem
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ruscur@russell.cc, aik@ozlabs.ru, david@gibson.dropbear.id.au,
+        fbarrat@linux.vnet.ibm.com, brking@linux.vnet.ibm.com
+References: <20180314163455.15854-1-desnesn@linux.vnet.ibm.com>
+ <20180314163455.15854-2-desnesn@linux.vnet.ibm.com>
+ <20180314180642.GC179719@bhelgaas-glaptop.roam.corp.google.com>
+ <30c63477-620b-3f8b-82df-fd1e34cd99b8@linux.vnet.ibm.com>
+ <20180314185508.GE179719@bhelgaas-glaptop.roam.corp.google.com>
+From: =?UTF-8?Q?Desnes_Augusto_Nunes_do_Ros=c3=a1rio?=
+        <desnesn@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 18:12:23 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180314185508.GE179719@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18031421-0016-0000-0000-00000864764C
+x-cbid: 18031421-0056-0000-0000-0000042D9175
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.01003080; UDB=6.00510457; IPR=6.00782410;
- MB=3.00020036; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 21:11:07
+ MB=3.00020036; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 21:12:30
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031421-0017-0000-0000-00003DD80AA5
-Message-Id: <20180314211053.26605-1-desnesn@linux.vnet.ibm.com>
+x-cbparentid: 18031421-0057-0000-0000-0000086F9281
+Message-Id: <442e2ae9-9423-8bf3-a7c1-a35381781145@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -34,54 +50,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The disabling informational messages on the PCI subsystem should be deleted
-since they do not represent any real value for the system logs.
+On 03/14/2018 03:55 PM, Bjorn Helgaas wrote:
 
-These messages are either not presented, or presented for all PCI devices
-(e.g., powerpc now realigns all PCI devices to its page size). Thus, they
-are flooding system logs and can be interpreted as a false positive for
-total PCI failure on the system.
+>>> As far as I'm concerned, we can just remove these messages completely.
+>>> I don't think there's any real value there.
+>>
+>> After I found out that this was happening to all PCI devices on powerpc due
+>> to the __weak
+>> pcibios_default_alignment() interface (necessary for VFIO passthrough and
+>> performance), I confess that this was my first approach to this matter;
+>> however I couldn't vouch the need of these messages on other architectures.
+>>
+>> If there are no further concerns, I definitely prefer sending a second
+>> version of this patch only eliminating these messages and attesting the
+>> reason why.
+>>
+>> Thank you very much for your review Bjorn,
+> 
+> No problem, welcome to PCI, and I hope we see more of your work!
 
-[root@system user]# dmesg | grep -i disabling
-[    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.692324] pci 0000:00:00.0: disabling bridge mem windows
-[    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.737352] pci 0001:00:00.0: disabling bridge mem windows
-[    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
-[    0.784509] pci 0002:00:00.0: disabling bridge mem windows
-... and goes on for all PCI devices on the system ...
+Bjorn,
 
-Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
-Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
----
- drivers/pci/pci.c       | 1 -
- drivers/pci/setup-res.c | 2 --
- 2 files changed, 3 deletions(-)
+Awesome! A second version of this fix has been sent with a new title: 
+"[PATCH, pci, v2] pci: Delete PCI disabling informational messages"
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 8c71d1a66cdd..1563ce1ee091 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
- 		return;
- 	}
- 
--	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
- 	pci_read_config_word(dev, PCI_COMMAND, &command);
- 	command &= ~PCI_COMMAND_MEMORY;
- 	pci_write_config_word(dev, PCI_COMMAND, command);
-diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-index 369d48d6c6f1..6bd35e8e7cde 100644
---- a/drivers/pci/setup-res.c
-+++ b/drivers/pci/setup-res.c
-@@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
- 
- void pci_disable_bridge_window(struct pci_dev *dev)
- {
--	pci_info(dev, "disabling bridge mem windows\n");
--
- 	/* MMIO Base/Limit */
- 	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
- 
+Thanks for the review and warm welcome!
+
 -- 
-2.14.3
+Desnes A. Nunes do Rosário
+--------------------------
