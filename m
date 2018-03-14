@@ -1,124 +1,197 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521187670; cv=none;
+Return-Path: <neil@brown.name>
+X-Google-Smtp-Source: AG47ELsVedfEpEu+PWD2rqm/OlDnkX2B7S4nafFYh3DZCUES1hEWsnmmljmPrjmJWMRAmKmMAw+G
+ARC-Seal: i=1; a=rsa-sha256; t=1521058982; cv=none;
         d=google.com; s=arc-20160816;
-        b=dpZ3yAFeLYDkYfxrG41+dY0wNb36BpgA0/DXQCwEfelXne0/AdgdPtwZD30x39NyOt
-         lbbqf7CL/R0pIFAuV1sp5DUOU3BIKRK9FrkCL1Pg1OYF1CxIrvrkxIbxdOCKG0+guN2Z
-         oQvHg/Rrl7TPlSk/5R8cPOcM0Rq9ax2zb4igCt/mOpHSulJRedFL5FgHJWsJ9TmA/E4J
-         LpvOSwpNfCv/CXZuz7HZFBbeBZGGwrgqSPc8IeGVCGbImMXh61TjesTyddXO24kqL0bW
-         bzO8nRZyM7SahR70iOSi/43eh8xYQJ46K2DFiLtiLFSTTG1er3FFP0xsBvxEClwVWvx/
-         Gdpw==
+        b=ttBy/Km3VPVCC77piWhqzuDVmjD45Oy+PjDkm/NrcDv8Tf9iB9YZCwnMebmqfV8+iw
+         +3bwxJ/6cVuZ1IcoLa4hOR1CR57TffRUMmvVay5b/Am+XFRowDvxprlAAHYoJJkrFd6V
+         H2Fyqy2GgqnPwNvl/TrRn6aBlR09nCvOCgGXIFO8DZbJAWx8qlp9M4E3aooW44x8orvh
+         L/TBE5/7eDPIIXc3+e0NoXA36l3UG0cfu532ZpnZCgXOYwVifvK9t/xQA/ZFvsUd4TRS
+         n0NFTSJFFL/EZQU13htZ2gtL7IdxOKTvC/uaIeuzAgwgH2MZXQl2FguRVFOPA6w467qX
+         M07A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=g0qhrPaNFXprhc3cZYbGlbf//MPehpcRQRML1FYj4So=;
-        b=EQXuUrdFCu0rE4Zd2EyP+mwZIe6VeyTY/GPE8L4sXPQq+fDDqIBIX51LZQboP64Sq/
-         uVwF1xhhAJyhloaKKzeko/1YCvvG/FMVSci8F8fPov2yzHca7KyHl0b+zJN/CwQei5mm
-         joMbsRj1tauJw8f3b8hZ06hsERiIKXy1KB+gYmycx8NwkFEOGgDXMpZFBNm69SF74m4z
-         DlCeQ1zjoRVW124I9Z9peALpy//oyHUcx4IL6FoEH3Uf25a+PMKfyxKuv3XPx0jsxN9N
-         wQTmDmgrc/b5a+HNpmtfB6nnETcXwp54r0C3kPTOAzXy/mHg7o8PrVLWzOJDmJ3yImyz
-         CZrA==
+        h=content-transfer-encoding:mime-version:user-agent:message-id:cc
+         :subject:date:to:from:arc-authentication-results;
+        bh=IJ5uZfWJggK93iE3xtg4L/OmNKaF9iWtf+dLugHd5h0=;
+        b=AxpcagdKL2vAdDzm9aE3Kf+RYIi9kpgC/gSIz4egCCl885+YAIfoPAiTM6UXzJ91y5
+         zwVjb8VMSD7eMfdchZDO/S8wR2E8rHGbhYHpq41A/iqjcB2IVlZc38MEnTazTMC9QxJH
+         U/Uc1pe2m7I9ib0Qzyma9IpJ5E/dgfSAgo58BrvqndOOp8RgYkuGptFGazef/i9D6p7w
+         rxq6ocRJKOjo+kwsO+HL4NeV15txBgoeP4jj+FcsTb3uwLVdmh9krFjMBmPZxnhPGAlA
+         VNqhglaXQ3puV4+2mgtem6DjbmnliXpwvu8p9Py3/tZLJ1ayMXb6KldnJf94P/ZC+eKb
+         MTNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=aeNfzRe7;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of neil@brown.name) smtp.mailfrom=neil@brown.name
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=aeNfzRe7;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AG47ELvhqRlORf5MoHNe1VGLc0hQRUmNncHRtFhBV0x6MOdTYkaXrKK4kF2TEfNvfvw646bSXDisXcTaKB0/486fDSs=
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of neil@brown.name) smtp.mailfrom=neil@brown.name
+From: NeilBrown <neil@brown.name>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 15 Mar 2018 07:22:34 +1100
+Subject: [PATCH 00/13] staging: add drivers to support Mediatek mt7621 in
+ gnubee-pc1
+Cc: devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
+ John Crispin <blogic@openwrt.org>
+Message-ID: <152105892255.22262.1902152685410223215.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20180315224727.GC73@LTA0271908.dhcp.ti.com>
-References: <20180316091355.2d2b7b04@canb.auug.org.au> <20180315224727.GC73@LTA0271908.dhcp.ti.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 16 Mar 2018 09:07:49 +0100
-X-Google-Sender-Auth: tAasubj62OnkV-YOppiB682kB1w
-Message-ID: <CAK8P3a3fiRkqiR5ZGHAkjzHvX1H_+svtYGCd9SYQjtrFjXDpng@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the asm-generic tree
-To: Bin Liu <b-liu@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Aaron Wu <aaron.wu@analog.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595043554282877699?=
-X-GMAIL-MSGID: =?utf-8?q?1595080882726349270?=
+X-GMAIL-THRID: =?utf-8?q?1594945943746723387?=
+X-GMAIL-MSGID: =?utf-8?q?1594945943746723387?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 11:47 PM, Bin Liu <b-liu@ti.com> wrote:
-> Hi,
->
-> On Fri, Mar 16, 2018 at 09:13:55AM +1100, Stephen Rothwell wrote:
->> Hi Arnd,
->>
->> After merging the asm-generic tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> drivers/usb/musb/musb_host.c: In function 'musb_rx_reinit':
->> drivers/usb/musb/musb_host.c:577:10: error: 'struct musb' has no member named 'double_buffer_not_ok'
->>   if (musb->double_buffer_not_ok)
->>           ^~
->> drivers/usb/musb/musb_host.c: In function 'musb_ep_program':
->> drivers/usb/musb/musb_host.c:807:12: error: 'struct musb' has no member named 'double_buffer_not_ok'
->>     if (musb->double_buffer_not_ok) {
->>             ^~
->>
->> Caused by commit
->>
->>   8312c0cad792 ("usb: musb: remove blackfin port")
+Hi Greg,
+ I'd like to submit the following drivers to staging.  They
+ are all for components of the mt7621 MIPS-based SOC from Mediatek.
+ I lifted them out of libreCMC and (for the ethernet code) out
+ of email posts from about 2 years ago.  I forward-ported
+ them to mainline, fixed enough bugs that they mostly work,
+ and moved them to staging.
 
-Sorry about that, I should have done more testing after updating the patch.
-Aaron sent a second version of the blackfin removal, and after comparing
-his version with mine, I picked up a couple of extra hunks that I folded
-into my patch series, including the two musb bits below.
+ With these patches the GNUBEE is almost usable.  It needs
+ one patch to arch/mips/kernel/setup.c because mips_cm_probe()
+ is being called too early.  To successfully reboot (i.e warm-restart)
+ it needs a small patch to drivers/mtd/devices/m25p80.c.
 
-> I don't have a clone of the asm-generic tree to check, but this patch
-> Arnd sent yesterday for review doesn't remove double_buffer_not_ok from
-> struct musb. Is it removed when Arnd you were revising it based on my
-> review comments? Anyway, it is better to remove it too since this flag
-> is Blackfin specific, but is it possible to combine this fixup patch with the
-> original patch to avoid bisect headache in the future?
+ I've made a point of only included code that I can actually test
+ on hardware that I have.  That has meant selecting only a few patches
+ from a series and in a couple of cases, discarding some files from a
+ patch.  I haven't discard code from within a file that I need part
+ of.
 
-Sure, doing that now.
+ All the driver patches had a From: of John Crispin so he is cc:ed -
+ thanks John!!
 
-    Arnd
+ I have added TODO files, some of which have useful details.
+ I think some of the drivers (eth,mmc, maybe dma) should be merged
+ with related mainline code rather than added as separate drivers.
 
-8<---
+ I've included a dts file for the GNUBEE.  When all the other drivers
+ move out of staging, it should follow them.
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index 011c8ca7de42..13486588e561 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -2166,7 +2166,7 @@ musb_init_controller(struct device *dev, int
-nIrq, void __iomem *ctrl)
-         *   - initializes musb->xceiv, usually by otg_get_phy()
-         *   - stops powering VBUS
-         *
--        * There are various transceiver configurations.  Blackfin,
-+        * There are various transceiver configurations.
-         * DaVinci, TUSB60x0, and others integrate them.  OMAP3 uses
-         * external/discrete ones in various flavors (twl4030 family,
-         * isp1504, non-OTG, etc) mostly hooking up through ULPI.
-diff --git a/drivers/usb/musb/musb_core.h b/drivers/usb/musb/musb_core.h
-index ac675b1a34c4..8a74cb2907f8 100644
---- a/drivers/usb/musb/musb_core.h
-+++ b/drivers/usb/musb/musb_core.h
-@@ -414,19 +414,6 @@ struct musb {
-        struct usb_gadget_driver *gadget_driver;        /* its driver */
-        struct usb_hcd          *hcd;                   /* the usb hcd */
+ I plan to continue to work on these drivers, but probably not for a
+ few weeks at least.
 
--       /*
--        * FIXME: Remove this flag.
--        *
--        * This is only added to allow Blackfin to work
--        * with current driver. For some unknown reason
--        * Blackfin doesn't work with double buffering
--        * and that's enabled by default.
--        *
--        * We added this flag to forcefully disable double
--        * buffering until we get it working.
--        */
--       unsigned                double_buffer_not_ok:1;
--
-        const struct musb_hdrc_config *config;
+Thanks,
+NeilBrown
 
-        int                     xceiv_old_state;
+---
+
+John Crispin (12):
+      staging: mt7621-pci: MIPS/ralink: add MT7621 pcie driver
+      staging: mt7621-pinctrl: ralink: add pinctrl driver
+      staging: mt7621-gpio: ralink: add mt7621 gpio controller
+      staging: mt7621-spi: add mt7621 support
+      staging: mt7621-dma: ralink: add rt2880 dma engine
+      staging: mt7621-mmc: MIPS: ralink: add sdhci for mt7620a SoC
+      staging: mt7621-eth: Document ralink/mediatek SoC ethernet binding
+      staging: mt7621-eth: add the drivers core files
+      staging: mt7621-eth: add gigabit switch driver (GSW)
+      staging: mt7621-eth: add mdio support for mt762X family
+      staging: mt7621-eth: add support for mt7621
+      staging: mt7621-eth: mediatek: add Kconfig and Makefile
+
+NeilBrown (1):
+      staging: mt7621-dts: add dts files
+
+
+ drivers/staging/Kconfig                            |   14 
+ drivers/staging/Makefile                           |    8 
+ drivers/staging/mt7621-dma/Kconfig                 |   12 
+ drivers/staging/mt7621-dma/Makefile                |    4 
+ drivers/staging/mt7621-dma/TODO                    |    5 
+ drivers/staging/mt7621-dma/mtk-hsdma.c             |  767 +++++
+ drivers/staging/mt7621-dma/ralink-gdma.c           |  928 ++++++
+ drivers/staging/mt7621-dts/Kconfig                 |    5 
+ drivers/staging/mt7621-dts/Makefile                |    3 
+ drivers/staging/mt7621-dts/TODO                    |    5 
+ drivers/staging/mt7621-dts/gbpc1.dts               |  143 +
+ drivers/staging/mt7621-dts/mt7621.dtsi             |  471 +++
+ .../devicetree/bindings/net/mediatek-net-gsw.txt   |   48 
+ drivers/staging/mt7621-eth/Kconfig                 |   39 
+ drivers/staging/mt7621-eth/Makefile                |   14 
+ drivers/staging/mt7621-eth/TODO                    |   13 
+ drivers/staging/mt7621-eth/ethtool.c               |  225 +
+ drivers/staging/mt7621-eth/ethtool.h               |   22 
+ drivers/staging/mt7621-eth/gsw_mt7620.h            |  277 ++
+ drivers/staging/mt7621-eth/gsw_mt7621.c            |  298 ++
+ drivers/staging/mt7621-eth/mdio.c                  |  271 ++
+ drivers/staging/mt7621-eth/mdio.h                  |   27 
+ drivers/staging/mt7621-eth/mdio_mt7620.c           |  173 +
+ drivers/staging/mt7621-eth/mtk_eth_soc.c           | 2178 ++++++++++++++
+ drivers/staging/mt7621-eth/mtk_eth_soc.h           |  721 +++++
+ drivers/staging/mt7621-eth/soc_mt7621.c            |  160 +
+ drivers/staging/mt7621-gpio/Kconfig                |    6 
+ drivers/staging/mt7621-gpio/Makefile               |    3 
+ drivers/staging/mt7621-gpio/TODO                   |    5 
+ drivers/staging/mt7621-gpio/gpio-mt7621.c          |  353 ++
+ drivers/staging/mt7621-mmc/Kconfig                 |   16 
+ drivers/staging/mt7621-mmc/Makefile                |   42 
+ drivers/staging/mt7621-mmc/TODO                    |    8 
+ drivers/staging/mt7621-mmc/board.h                 |  137 +
+ drivers/staging/mt7621-mmc/dbg.c                   |  347 ++
+ drivers/staging/mt7621-mmc/dbg.h                   |  156 +
+ drivers/staging/mt7621-mmc/mt6575_sd.h             | 1001 +++++++
+ drivers/staging/mt7621-mmc/sd.c                    | 3074 ++++++++++++++++++++
+ drivers/staging/mt7621-pci/Makefile                |    1 
+ drivers/staging/mt7621-pci/TODO                    |   12 
+ drivers/staging/mt7621-pci/pci-mt7621.c            |  840 +++++
+ drivers/staging/mt7621-pinctrl/Kconfig             |    4 
+ drivers/staging/mt7621-pinctrl/Makefile            |    3 
+ drivers/staging/mt7621-pinctrl/TODO                |    6 
+ drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c    |  472 +++
+ drivers/staging/mt7621-spi/Kconfig                 |    6 
+ drivers/staging/mt7621-spi/Makefile                |    1 
+ drivers/staging/mt7621-spi/TODO                    |    5 
+ drivers/staging/mt7621-spi/spi-mt7621.c            |  489 +++
+ 49 files changed, 13818 insertions(+)
+ create mode 100644 drivers/staging/mt7621-dma/Kconfig
+ create mode 100644 drivers/staging/mt7621-dma/Makefile
+ create mode 100644 drivers/staging/mt7621-dma/TODO
+ create mode 100644 drivers/staging/mt7621-dma/mtk-hsdma.c
+ create mode 100644 drivers/staging/mt7621-dma/ralink-gdma.c
+ create mode 100644 drivers/staging/mt7621-dts/Kconfig
+ create mode 100644 drivers/staging/mt7621-dts/Makefile
+ create mode 100644 drivers/staging/mt7621-dts/TODO
+ create mode 100644 drivers/staging/mt7621-dts/gbpc1.dts
+ create mode 100644 drivers/staging/mt7621-dts/mt7621.dtsi
+ create mode 100644 drivers/staging/mt7621-eth/Documentation/devicetree/bindings/net/mediatek-net-gsw.txt
+ create mode 100644 drivers/staging/mt7621-eth/Kconfig
+ create mode 100644 drivers/staging/mt7621-eth/Makefile
+ create mode 100644 drivers/staging/mt7621-eth/TODO
+ create mode 100644 drivers/staging/mt7621-eth/ethtool.c
+ create mode 100644 drivers/staging/mt7621-eth/ethtool.h
+ create mode 100644 drivers/staging/mt7621-eth/gsw_mt7620.h
+ create mode 100644 drivers/staging/mt7621-eth/gsw_mt7621.c
+ create mode 100644 drivers/staging/mt7621-eth/mdio.c
+ create mode 100644 drivers/staging/mt7621-eth/mdio.h
+ create mode 100644 drivers/staging/mt7621-eth/mdio_mt7620.c
+ create mode 100644 drivers/staging/mt7621-eth/mtk_eth_soc.c
+ create mode 100644 drivers/staging/mt7621-eth/mtk_eth_soc.h
+ create mode 100644 drivers/staging/mt7621-eth/soc_mt7621.c
+ create mode 100644 drivers/staging/mt7621-gpio/Kconfig
+ create mode 100644 drivers/staging/mt7621-gpio/Makefile
+ create mode 100644 drivers/staging/mt7621-gpio/TODO
+ create mode 100644 drivers/staging/mt7621-gpio/gpio-mt7621.c
+ create mode 100644 drivers/staging/mt7621-mmc/Kconfig
+ create mode 100644 drivers/staging/mt7621-mmc/Makefile
+ create mode 100644 drivers/staging/mt7621-mmc/TODO
+ create mode 100644 drivers/staging/mt7621-mmc/board.h
+ create mode 100644 drivers/staging/mt7621-mmc/dbg.c
+ create mode 100644 drivers/staging/mt7621-mmc/dbg.h
+ create mode 100644 drivers/staging/mt7621-mmc/mt6575_sd.h
+ create mode 100644 drivers/staging/mt7621-mmc/sd.c
+ create mode 100644 drivers/staging/mt7621-pci/Makefile
+ create mode 100644 drivers/staging/mt7621-pci/TODO
+ create mode 100644 drivers/staging/mt7621-pci/pci-mt7621.c
+ create mode 100644 drivers/staging/mt7621-pinctrl/Kconfig
+ create mode 100644 drivers/staging/mt7621-pinctrl/Makefile
+ create mode 100644 drivers/staging/mt7621-pinctrl/TODO
+ create mode 100644 drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
+ create mode 100644 drivers/staging/mt7621-spi/Kconfig
+ create mode 100644 drivers/staging/mt7621-spi/Makefile
+ create mode 100644 drivers/staging/mt7621-spi/TODO
+ create mode 100644 drivers/staging/mt7621-spi/spi-mt7621.c
+
+--
+Signature
