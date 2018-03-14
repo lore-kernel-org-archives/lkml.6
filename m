@@ -1,84 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeCNVBB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:01:01 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45931 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeCNVA4 (ORCPT
+        id S1751731AbeCNU67 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:58:59 -0400
+Received: from avasout05.plus.net ([84.93.230.250]:35272 "EHLO
+        avasout05.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNU65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:00:56 -0400
-X-Google-Smtp-Source: AG47ELvqa5JEHFzQbPGUK0Ng1kW6BFIg0pnTQBjL9W+n4zzQUNs4AlX5LozhkfsCyfT6b8qpX3F1Tw==
-From: Ram Pai <linuxram@us.ibm.com>
-To: mingo@redhat.com
-Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
-        x86@kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
-        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
-        msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
-Subject: [PATCH v3] x86: treat pkey-0 special
-Date: Wed, 14 Mar 2018 14:00:14 -0700
-Message-Id: <1521061214-22385-1-git-send-email-linuxram@us.ibm.com>
-X-Mailer: git-send-email 1.7.1
+        Wed, 14 Mar 2018 16:58:57 -0400
+X-CM-Score: 0.00
+X-CNFS-Analysis: v=2.3 cv=J9KEEjvS c=1 sm=1 tr=0
+ a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
+ a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10 a=pGLkceISAAAA:8 a=RMjmPgqFiLURycAYgZkA:9
+ a=CjuIK1q_8ugA:10
+Date: Wed, 14 Mar 2018 20:51:24 +0000
+From: Nick Dyer <nick@shmanahar.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] Input: atmel_mxt_ts - do not pass suspend mode in
+ platform data
+Message-ID: <20180314205123.GA26353@lava.h.shmanahar.org>
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-2-dmitry.torokhov@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312190907.174301-2-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CMAE-Envelope: MS4wfBg5HndNXzZIqiwp/cT9/vwMkDO5FlhTgQcix9op7nQGGmgj6bJ4+8UouebsH0u3X7lL5hUhNv0hZNcu8rYKq+Af4tdWCcdt8uEGWHdwvj0ZY9dBJ7DK
+ RJX5IJ2Gf3AKCbevbJtb35ZT4r8IGptvcf3rA/1/TpwtxRvahUniTR4o
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applications need the ability to associate an address-range with some
-key and latter revert to its initial default key. Pkey-0 comes close to
-providing this function but falls short, because the current
-implementation disallows applications to explicitly associate pkey-0 to
-the address range.
+Hi Dmitry-
 
-This patch clarifies the semantics of pkey-0 and provides the
-corresponding implementation on powerpc.
+Thanks for sending these patches!
 
-Pkey-0 is special with the following semantics.
-(a) it is implicitly allocated and can never be freed. It always exists.
-(b) it is the default key assigned to any address-range.
-(c) it can be explicitly associated with any address-range.
+On Mon, Mar 12, 2018 at 12:08:54PM -0700, Dmitry Torokhov wrote:
+> The way we are supposed to put controller to sleep and wake it up does not
+> depend on the platform, but rather on controller itself. Controllers using
+> T9 require manipulating T9 control register, while others, using newer
+> T100, should be put to sleep by adjusting T7 power config.
 
-Tested on x86_64.
+I'm afraid this is actually a misconception. If you look at object table
+for the older T9 device, you'll find it has the T7 object and it in fact
+works exactly the same way as the T100-based device.
 
-History:
-    v3 : added clarification of the semantics of pkey0.
-    		-- suggested by Dave Hansen
-    v2 : split the patch into two, one for x86 and one for powerpc
-    		-- suggested by Michael Ellermen
+The MXT_SUSPEND_T9_CTRL is in there because on your older Pixel devices
+the config saved into NVRAM on the touch controller has a zero byte in
+the T9 CTRL setting, meaning the touch controller will never wake up
+unless the driver knows to write 0x83 into it.
 
-cc: Dave Hansen <dave.hansen@intel.com>
-cc: Michael Ellermen <mpe@ellerman.id.au>
-cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
----
- arch/x86/include/asm/pkeys.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-index a0ba1ff..6ea7486 100644
---- a/arch/x86/include/asm/pkeys.h
-+++ b/arch/x86/include/asm/pkeys.h
-@@ -52,7 +52,7 @@ bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
- 	 * from pkey_alloc().  pkey 0 is special, and never
- 	 * returned from pkey_alloc().
- 	 */
--	if (pkey <= 0)
-+	if (pkey < 0)
- 		return false;
- 	if (pkey >= arch_max_pkey())
- 		return false;
-@@ -92,7 +92,8 @@ int mm_pkey_alloc(struct mm_struct *mm)
- static inline
- int mm_pkey_free(struct mm_struct *mm, int pkey)
- {
--	if (!mm_pkey_is_allocated(mm, pkey))
-+	/* pkey 0 is special and can never be freed */
-+	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
- 		return -EINVAL;
- 
- 	mm_set_pkey_free(mm, pkey);
--- 
-1.8.3.1
+> We'll keep pdata->suspend_mode for now and remove it when we rework
+> chromeos-laptop driver.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index 7659bc48f1db8..1aabfae1297ba 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -2868,8 +2868,8 @@ static const struct attribute_group mxt_attr_group = {
+>  
+>  static void mxt_start(struct mxt_data *data)
+>  {
+> -	switch (data->pdata->suspend_mode) {
+> -	case MXT_SUSPEND_T9_CTRL:
+> +	switch (data->multitouch) {
+> +	case MXT_TOUCH_MULTI_T9:
+>  		mxt_soft_reset(data);
+>  
+>  		/* Touch enable */
+> @@ -2878,7 +2878,7 @@ static void mxt_start(struct mxt_data *data)
+>  				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0x83);
+>  		break;
+>  
+> -	case MXT_SUSPEND_DEEP_SLEEP:
+> +	case MXT_TOUCH_MULTITOUCHSCREEN_T100:
+>  	default:
+>  		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
+>  
+> @@ -2886,19 +2886,18 @@ static void mxt_start(struct mxt_data *data)
+>  		mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
+>  		break;
+>  	}
+> -
+>  }
+>  
+>  static void mxt_stop(struct mxt_data *data)
+>  {
+> -	switch (data->pdata->suspend_mode) {
+> -	case MXT_SUSPEND_T9_CTRL:
+> +	switch (data->multitouch) {
+> +	case MXT_TOUCH_MULTI_T9:
+>  		/* Touch disable */
+>  		mxt_write_object(data,
+>  				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0);
+>  		break;
+>  
+> -	case MXT_SUSPEND_DEEP_SLEEP:
+> +	case MXT_TOUCH_MULTITOUCHSCREEN_T100:
+>  	default:
+>  		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
+>  		break;
+> @@ -2954,8 +2953,6 @@ static const struct mxt_platform_data *mxt_parse_dt(struct i2c_client *client)
+>  		pdata->t19_keymap = keymap;
+>  	}
+>  
+> -	pdata->suspend_mode = MXT_SUSPEND_DEEP_SLEEP;
+> -
+>  	return pdata;
+>  }
+>  #else
+> -- 
+> 2.16.2.660.g709887971b-goog
+> 
