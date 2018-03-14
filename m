@@ -1,99 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeCNPpB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:45:01 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:44511 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751695AbeCNPo7 (ORCPT
+        id S1752410AbeCNPpZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:45:25 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38094 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbeCNPpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:44:59 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
-Subject: [PATCH 21/47] media: platform: remove m32r specific arv driver
-Date: Wed, 14 Mar 2018 16:35:34 +0100
-Message-Id: <20180314153603.3127932-22-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
-References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:djlz6B5A35Usy7EZPRiGX42/L5rU/KR95nT4dQRi5QtfRg9dnOX
- xYy9xF3+qN9vqjmZdrIHpvoBJSra7VIwU3O+HyfI9wPVMB0nL7IpY0Jtn9H9Qpl6Ua6QGj9
- 05xzjElCHtP33e+S0G9qaNtpbVtwlpo/coNfXlBtTtPRNbBRXmMWgNSN9Vhg4LMU7lOvgLj
- npuKyg3VfKAnaXwUAy2MQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/j7Eu0kl6cU=:egvfVOkDd1hq71nrJT5kK0
- I7UAeRVyDWM03ehqFiIIGcIBeynZVC0NRjrkayjQUCeRHPgJZUTi7F38F3VTU6YLVtZM3w+uL
- 0LSm33NX9z8hKpC4qjOm8bODwXWfpjDpEwypNXjbTW/VUEvzmjkS+0yFjp1Brkfenlo3SwXo2
- 9U/rrTOIrmTLxz/NSMZdgI9T6wd6OnXuppQ2pvYnXA/Rk4Z7CbcHMaACUL3pSQmCDLWMDGr+q
- /TGY2/5bXw0iUyzbdK8ay7AUGX9EBuz4OxLpNWMj6lnMswPFHXjO4+iX12jMmF+sAoPNiHAJ1
- irWC7ryA8zOzjsTSYVKMvGAHVOveqPMREfJglJ9y9ieHn7CMjUW2Iko5PPCG+/u8PYfc5WXlq
- pbNPl5c0IXvJWUAHIHsa5HYmWJevmyJ6evP1CW3T08G4sAMzBuZeRJbgR5vHi0VVP6srKRwFl
- JMaMHRYrIvwZQHcIgNkgUSs/60eata91HN8izwWUTcR9KBzAvod3e0cxhRBA54/7O9BXCHzVr
- mWjwLTmnwux2W/VTW5xZhUFzMpcN6k2XkswA1nGZgeMGSeZ1VW5qZjF9rF0XAp2Kc3koI85Pc
- Aa7n6ybyc8OeqzpkJBwO0QGCDlBC8LQfNQcZrMtqJhGq4aMPjkX+yekHWnhL2xoV5slnoOpzn
- mx5OBWACygG37Xxntx15VwfiJppHYwjQcOkE5Q7SGlMV5KLND4fanwKQTnyjflAsvdq01SVzY
- 8MnsbOL9WltONQI8B24//ub9K6zn+EbYeLklWQ==
+        Wed, 14 Mar 2018 11:45:22 -0400
+X-Google-Smtp-Source: AG47ELvPbLEGdJFtISOJ6mfHbqEXCVMN+/aGo4Z6dByeKGC1kfp8x5RTW4QdGQ8iq2qgaB0zbzTY1tSVrrlOc/I8io8=
+MIME-Version: 1.0
+In-Reply-To: <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
+References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+ <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+ <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com> <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Wed, 14 Mar 2018 16:45:20 +0100
+Message-ID: <CAAeHK+y3hJ4jAByvfGDYyNb_RZ3_As4r-FCyZL9u69Vv_HS2AA@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
+To: Evgenii Stepanov <eugenis@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The m32r architecture is getting removed, so this one is no longer needed.
+On Fri, Mar 9, 2018 at 6:42 PM, Evgenii Stepanov <eugenis@google.com> wrote:
+> On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>>> I'm not yet convinced these functions need to allow tagged pointers.
+>>> They are not doing memory accesses but rather dealing with the memory
+>>> range, hence an untagged pointer is better suited. There is probably a
+>>> reason why the "start" argument is "unsigned long" vs "void __user *"
+>>> (in the kernel, not the man page).
+>>
+>> So that would make the user to untag pointers before passing to these syscalls.
+>>
+>> Evgeniy, would that be possible to untag pointers in HWASan before
+>> using memory subsystem syscalls? Is there a reason for untagging them
+>> in the kernel?
+>
+> Generally, no. It's possible to intercept a libc call using symbol
+> interposition, but I don't know how to rewrite arguments of a raw
+> system call other than through ptrace, and that creates more problems
+> than it solves.
+>
+> AFAIU, it's valid for a program to pass an address obtained from
+> malloc or, better, posix_memalign to an mm syscall like mprotect().
+> These arguments are pointers from the userspace point of view.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/Kconfig  |  20 -
- drivers/media/platform/Makefile |   2 -
- drivers/media/platform/arv.c    | 884 ----------------------------------------
- 3 files changed, 906 deletions(-)
- delete mode 100644 drivers/media/platform/arv.c
-
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 2136702c95fc..c7a1cf8a1b01 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -52,26 +52,6 @@ config VIDEO_VIU
- 	  Say Y here if you want to enable VIU device on MPC5121e Rev2+.
- 	  In doubt, say N.
- 
--config VIDEO_M32R_AR
--	tristate "AR devices"
--	depends on VIDEO_V4L2
--	depends on M32R || COMPILE_TEST
--	---help---
--	  This is a video4linux driver for the Renesas AR (Artificial Retina)
--	  camera module.
--
--config VIDEO_M32R_AR_M64278
--	tristate "AR device with color module M64278(VGA)"
--	depends on PLAT_M32700UT
--	select VIDEO_M32R_AR
--	---help---
--	  This is a video4linux driver for the Renesas AR (Artificial
--	  Retina) with M64278E-800 camera module.
--	  This module supports VGA(640x480 pixels) resolutions.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called arv.
--
- config VIDEO_MUX
- 	tristate "Video Multiplexer"
- 	select MULTIPLEXER
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 2b07f2e2fca6..932515df4477 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -3,8 +3,6 @@
- # Makefile for the video capture/playback device drivers.
- #
- 
--obj-$(CONFIG_VIDEO_M32R_AR_M64278) += arv.o
--
- obj-$(CONFIG_VIDEO_VIA_CAMERA) += via-camera.o
- obj-$(CONFIG_VIDEO_CAFE_CCIC) += marvell-ccic/
- obj-$(CONFIG_VIDEO_MMP_CAMERA) += marvell-ccic/
-diff --git a/drivers/media/platform/arv.c b/drivers/media/platform/arv.c
-deleted file mode 100644
-index 1e865fea803c..000000000000
--- 
-2.9.0
+Catalin, do you think this is a good reason to have the untagging done
+in the kernel?
