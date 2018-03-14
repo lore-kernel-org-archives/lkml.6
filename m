@@ -1,192 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752405AbeCNRFk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:05:40 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:34494 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751461AbeCNRFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:05:36 -0400
-Date: Wed, 14 Mar 2018 18:04:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        id S1752340AbeCNRFy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:05:54 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45142 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752130AbeCNQ7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:59:16 -0400
+X-Google-Smtp-Source: AG47ELs/RDCKZ4OvMKXyMvmsGYrv6A27Wj+EihblUhR5Wr4e8/We9ZLGX9W1457J0PRoGUUd80q4gA==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] x86/microcode/AMD: check whether the equivalence
- table fits in the file
-Message-ID: <20180314170457.GE16605@pd.tnic>
-References: <cover.1520973389.git.mail@maciej.szmigiero.name>
- <e2de27e0-6250-a10f-8d08-99c0c8d417ba@maciej.szmigiero.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e2de27e0-6250-a10f-8d08-99c0c8d417ba@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Subject: [PATCH v6 07/25] PM / Domains: Add genpd governor for CPUs
+Date: Wed, 14 Mar 2018 17:58:17 +0100
+Message-Id: <1521046715-30683-8-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 10:06:23PM +0100, Maciej S. Szmigiero wrote:
-> Before loading a CPU equivalence table from a microcode container file we
-> need to verify whether this file is actually large enough to contain the
-> table of a size indicated in this file.
-> If it is not, there is no point of continuing with loading it since
-> microcode patches are located after the equivalence table anyway.
-> 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c | 54 ++++++++++++++++++++++++++-----------
->  1 file changed, 38 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index ffe0d0ce57fc..ac06e2819f26 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -80,20 +80,29 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
->   * Returns the amount of bytes consumed while scanning. @desc contains all the
->   * data we're going to use in later stages of the application.
->   */
-> -static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-> +static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
->  {
->  	struct equiv_cpu_entry *eq;
-> -	ssize_t orig_size = size;
-> +	size_t orig_size = size;
->  	u32 *hdr = (u32 *)ucode;
-> +	size_t eq_size;
->  	u16 eq_id;
->  	u8 *buf;
->  
->  	/* Am I looking at an equivalence table header? */
+As it's now perfectly possible that a PM domain managed by genpd contains
+devices belonging to CPUs, we should start to take into account the
+residency values for the idle states during the state selection process.
+The residency value specifies the minimum duration of time, the CPU or a
+group of CPUs, needs to spend in an idle state to not waste energy entering
+it.
 
-That comment becomes wrong when you add this check here.
+To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
+may be used for a PM domain that have CPU devices attached or if the CPUs
+are attached through subdomains.
 
-> +	if (size < CONTAINER_HDR_SZ)
-> +		return 0;
-> +
->  	if (hdr[0] != UCODE_MAGIC ||
->  	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
->  	    hdr[2] == 0)
->  		return CONTAINER_HDR_SZ;
->  
-> +	eq_size = hdr[2];
+The new governor computes the minimum expected idle duration time for the
+online CPUs being attached to the PM domain and its subdomains. Then in the
+state selection process, trying the deepest state first, it verifies that
+the idle duration time satisfies the state's residency value.
 
-If we're going to have special local vars for the container header, then
-do it right:
+It should be noted that, when computing the minimum expected idle duration
+time, we use the information from tick_nohz_get_next_wakeup(), to find the
+next wakeup for the related CPUs. Future wise, this may deserve to be
+improved, as there are more reasons to why a CPU may be woken up from idle.
 
-	cont_magic	= hdr[0];
-	cont_type  	= hdr[1];
-	equiv_tbl_len	= hdr[2];
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/power/domain_governor.c | 56 ++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h            |  2 ++
+ 2 files changed, 58 insertions(+)
 
-and then use those from now on.
-
-> +	if (eq_size < sizeof(*eq) ||
-> +	    size - CONTAINER_HDR_SZ < eq_size)
-> +		return 0;
-
-I think you want
-
-	if (size < eqiv_tbl_len + CONTAINER_HDR_SZ)
-		return size;
-
-here to skip over the next, hopefully not truncated container.
-
-> +
->  	buf = ucode;
->  
->  	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
-> @@ -101,8 +110,8 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
->  	/* Find the equivalence ID of our CPU in this table: */
->  	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
->  
-> -	buf  += hdr[2] + CONTAINER_HDR_SZ;
-> -	size -= hdr[2] + CONTAINER_HDR_SZ;
-> +	buf  += eq_size + CONTAINER_HDR_SZ;
-> +	size -= eq_size + CONTAINER_HDR_SZ;
->  
->  	/*
->  	 * Scan through the rest of the container to find where it ends. We do
-> @@ -159,15 +168,13 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
->   */
->  static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
->  {
-> -	ssize_t rem = size;
-> -
-> -	while (rem >= 0) {
-> -		ssize_t s = parse_container(ucode, rem, desc);
-> +	while (size > 0) {
-> +		size_t s = parse_container(ucode, size, desc);
->  		if (!s)
->  			return;
->  
->  		ucode += s;
-> -		rem   -= s;
-> +		size  -= s;
->  	}
->  }
->  
-
-All changes upto here need to be a separate patch.
-install_equiv_cpu_table() changes below are the second patch.
-
-> @@ -540,15 +547,30 @@ static enum ucode_state apply_microcode_amd(int cpu)
->  	return UCODE_UPDATED;
->  }
->  
-> -static int install_equiv_cpu_table(const u8 *buf)
-> +static int install_equiv_cpu_table(const u8 *buf, size_t buf_size)
->  {
->  	unsigned int *ibuf = (unsigned int *)buf;
-> -	unsigned int type = ibuf[1];
-> -	unsigned int size = ibuf[2];
-> +	unsigned int type, size;
-
-unsigned int type, equiv_tbl_len;
-
-> +
-> +	if (buf_size < CONTAINER_HDR_SZ) {
-
-		     <= is ok too.
-
-> +		pr_err("no container header\n");
-
-More descriptive error messages:
-
-			"Truncated microcode container header.\n"
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	type = ibuf[1];
-> +	if (type != UCODE_EQUIV_CPU_TABLE_TYPE) {
-> +		pr_err("invalid type field in container file section header\n");
-
-			"Wrong microcode container equivalence table type: %d.\n"
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	size = ibuf[2];
-> +	if (size < sizeof(struct equiv_cpu_entry)) {
-> +		pr_err("equivalent CPU table too short\n");
-
-			"Truncated equivalence table.\n"
-
-> +		return -EINVAL;
-> +	}
->  
-> -	if (type != UCODE_EQUIV_CPU_TABLE_TYPE || !size) {
-> -		pr_err("empty section/"
-> -		       "invalid type field in container file section header\n");
-> +	if (buf_size - CONTAINER_HDR_SZ < size) {
-> +		pr_err("equivalent CPU table truncated\n");
-
-Combine that test with the above one and use the same error message.
-
-Thx.
-
+diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
+index 99896fb..70565a8 100644
+--- a/drivers/base/power/domain_governor.c
++++ b/drivers/base/power/domain_governor.c
+@@ -10,6 +10,9 @@
+ #include <linux/pm_domain.h>
+ #include <linux/pm_qos.h>
+ #include <linux/hrtimer.h>
++#include <linux/cpumask.h>
++#include <linux/ktime.h>
++#include <linux/tick.h>
+ 
+ static int dev_update_qos_constraint(struct device *dev, void *data)
+ {
+@@ -245,6 +248,54 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
+ 	return false;
+ }
+ 
++static bool cpu_power_down_ok(struct dev_pm_domain *pd)
++{
++	struct generic_pm_domain *genpd = pd_to_genpd(pd);
++	ktime_t domain_wakeup, cpu_wakeup;
++	s64 idle_duration_ns;
++	int cpu, i;
++
++	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
++		return true;
++
++	/*
++	 * Find the next wakeup for any of the online CPUs within the PM domain
++	 * and its subdomains. Note, we only need the genpd->cpus, as it already
++	 * contains a mask of all CPUs from subdomains.
++	 */
++	domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
++	for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
++		cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
++		if (ktime_before(cpu_wakeup, domain_wakeup))
++			domain_wakeup = cpu_wakeup;
++	}
++
++	/* The minimum idle duration is from now - until the next wakeup. */
++	idle_duration_ns = ktime_to_ns(ktime_sub(domain_wakeup, ktime_get()));
++
++	/*
++	 * Find the deepest idle state, that has its residency value satisfied.
++	 * Start at the deepest supported state.
++	 */
++	i = genpd->state_count - 1;
++	do {
++		if (!genpd->states[i].residency_ns)
++			break;
++
++		/* Check idle_duration_ns >= 0 to compare signed/unsigned. */
++		if (idle_duration_ns >= 0 &&
++		    idle_duration_ns >= genpd->states[i].residency_ns)
++			break;
++		i--;
++	} while (i >= 0);
++
++	if (i < 0)
++		return false;
++
++	genpd->state_idx = i;
++	return true;
++}
++
+ struct dev_power_governor simple_qos_governor = {
+ 	.suspend_ok = default_suspend_ok,
+ 	.power_down_ok = default_power_down_ok,
+@@ -257,3 +308,8 @@ struct dev_power_governor pm_domain_always_on_gov = {
+ 	.power_down_ok = always_on_power_down_ok,
+ 	.suspend_ok = default_suspend_ok,
+ };
++
++struct dev_power_governor pm_domain_cpu_gov = {
++	.suspend_ok = NULL,
++	.power_down_ok = cpu_power_down_ok,
++};
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index ccd7c94..8f60181 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -161,6 +161,7 @@ extern int dev_pm_genpd_set_performance_state(struct device *dev,
+ 
+ extern struct dev_power_governor simple_qos_governor;
+ extern struct dev_power_governor pm_domain_always_on_gov;
++extern struct dev_power_governor pm_domain_cpu_gov;
+ #else
+ 
+ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+@@ -206,6 +207,7 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
+ 
+ #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
+ #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
++#define pm_domain_cpu_gov		(*(struct dev_power_governor *)(NULL))
+ #endif
+ 
+ static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.7.4
