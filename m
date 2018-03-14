@@ -1,24 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeCNUtJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:49:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45501 "EHLO
+        id S1751719AbeCNUtk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:49:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40531 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751781AbeCNUtI (ORCPT
+        with ESMTP id S1751314AbeCNUti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:49:08 -0400
-Date: Wed, 14 Mar 2018 13:48:55 -0700
+        Wed, 14 Mar 2018 16:49:38 -0400
+Date: Wed, 14 Mar 2018 13:49:25 -0700
 From: tip-bot for Palmer Dabbelt <tipbot@zytor.com>
-Message-ID: <tip-caacdbf4aa567ab5e8de1a4070195c5d3e8f1340@git.kernel.org>
-Cc: palmer@sifive.com, mingo@kernel.org, will.deacon@arm.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        palmer@sifive.com, will.deacon@arm.com, mingo@kernel.org
-In-Reply-To: <20180307235731.22627-2-palmer@sifive.com>
-References: <20180307235731.22627-2-palmer@sifive.com>
+Message-ID: <tip-cc6c98485f8e61fb3d6c51821fc75384e5a3a9c3@git.kernel.org>
+Cc: will.deacon@arm.com, linux-kernel@vger.kernel.org, palmer@sifive.com,
+        hch@lst.de, hpa@zytor.com, mingo@kernel.org, shorne@gmail.com,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, shorne@gmail.com,
+        will.deacon@arm.com, hch@lst.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, palmer@sifive.com
+In-Reply-To: <20180307235731.22627-3-palmer@sifive.com>
+References: <20180307235731.22627-3-palmer@sifive.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER
-Git-Commit-ID: caacdbf4aa567ab5e8de1a4070195c5d3e8f1340
+Subject: [tip:irq/core] RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER
+ handler
+Git-Commit-ID: cc6c98485f8e61fb3d6c51821fc75384e5a3a9c3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,111 +34,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  caacdbf4aa567ab5e8de1a4070195c5d3e8f1340
-Gitweb:     https://git.kernel.org/tip/caacdbf4aa567ab5e8de1a4070195c5d3e8f1340
+Commit-ID:  cc6c98485f8e61fb3d6c51821fc75384e5a3a9c3
+Gitweb:     https://git.kernel.org/tip/cc6c98485f8e61fb3d6c51821fc75384e5a3a9c3
 Author:     Palmer Dabbelt <palmer@sifive.com>
-AuthorDate: Wed, 7 Mar 2018 15:57:27 -0800
+AuthorDate: Wed, 7 Mar 2018 15:57:28 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 14 Mar 2018 21:46:29 +0100
 
-genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER
+RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler
 
-The arm multi irq handler registration mechanism has been copied into a
-handful of architectures, including arm64 and openrisc. RISC-V needs the
-same mechanism.
+The existing mechanism for handling IRQs on RISC-V is pretty ugly: the irq
+entry code selects the handler via Kconfig dependencies.
 
-Instead of adding yet another copy for RISC-V copy the arm implementation
-into the core code depending on a new Kconfig symbol:
-CONFIG_GENERIC_MULTI_IRQ_HANDLER.
+Use the new generic IRQ handling infastructure, which allows boot time
+registration of the low level entry handler.
 
-Subsequent patches will convert the various architectures.
+This does add an additional load to the interrupt latency, but there's a
+lot of tuning left to be done there on RISC-V so it's OK for now.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Stafford Horne <shorne@gmail.com>
 Cc: jonas@southpole.se
 Cc: catalin.marinas@arm.com
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux@armlinux.org.uk
 Cc: stefan.kristiansson@saunalahti.fi
 Cc: openrisc@lists.librecores.org
-Cc: shorne@gmail.com
 Cc: linux-riscv@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
-Link: https://lkml.kernel.org/r/20180307235731.22627-2-palmer@sifive.com
+Link: https://lkml.kernel.org/r/20180307235731.22627-3-palmer@sifive.com
 
 ---
- include/linux/irq.h | 18 ++++++++++++++++++
- kernel/irq/Kconfig  |  5 +++++
- kernel/irq/handle.c | 15 +++++++++++++++
- 3 files changed, 38 insertions(+)
+ arch/riscv/Kconfig            |  1 +
+ arch/riscv/include/asm/Kbuild |  1 +
+ arch/riscv/kernel/entry.S     |  7 +++----
+ arch/riscv/kernel/irq.c       | 13 -------------
+ 4 files changed, 5 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 979eed1b2654..65916a305f3d 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -1165,4 +1165,22 @@ int __ipi_send_mask(struct irq_desc *desc, const struct cpumask *dest);
- int ipi_send_single(unsigned int virq, unsigned int cpu);
- int ipi_send_mask(unsigned int virq, const struct cpumask *dest);
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 04807c7f64cc..148865de1692 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -33,6 +33,7 @@ config RISCV
+ 	select MODULES_USE_ELF_RELA if MODULES
+ 	select THREAD_INFO_IN_TASK
+ 	select RISCV_TIMER
++	select GENERIC_IRQ_MULTI_HANDLER
  
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
-+/*
-+ * Registers a generic IRQ handling function as the top-level IRQ handler in
-+ * the system, which is generally the first C code called from an assembly
-+ * architecture-specific interrupt handler.
-+ *
-+ * Returns 0 on success, or -EBUSY if an IRQ handler has already been
-+ * registered.
-+ */
-+int __init set_handle_irq(void (*handle_irq)(struct pt_regs *));
-+
-+/*
-+ * Allows interrupt handlers to find the irqchip that's been registered as the
-+ * top-level IRQ handler.
-+ */
-+extern void (*handle_arch_irq)(struct pt_regs *) __ro_after_init;
-+#endif
-+
- #endif /* _LINUX_IRQ_H */
-diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-index 6fc87ccda1d7..5f3e2baefca9 100644
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -132,3 +132,8 @@ config GENERIC_IRQ_DEBUGFS
- 	  If you don't know what to do here, say N.
+ config MMU
+ 	def_bool y
+diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+index 4286a5f83876..1e5fd280fb4d 100644
+--- a/arch/riscv/include/asm/Kbuild
++++ b/arch/riscv/include/asm/Kbuild
+@@ -15,6 +15,7 @@ generic-y += fcntl.h
+ generic-y += futex.h
+ generic-y += hardirq.h
+ generic-y += hash.h
++generic-y += handle_irq.h
+ generic-y += hw_irq.h
+ generic-y += ioctl.h
+ generic-y += ioctls.h
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index 56fa592cfa34..9aaf6c986771 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -167,10 +167,9 @@ ENTRY(handle_exception)
+ 	bge s4, zero, 1f
  
- endmenu
-+
-+config GENERIC_IRQ_MULTI_HANDLER
-+	bool
-+	help
-+	  Allow to specify the low level IRQ handler at run time.
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 79f987b942b8..3570c715c3e7 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -20,6 +20,10 @@
- 
- #include "internals.h"
- 
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
-+void (*handle_arch_irq)(struct pt_regs *) __ro_after_init;
-+#endif
-+
- /**
-  * handle_bad_irq - handle spurious and unhandled irqs
-  * @desc:      description of the interrupt
-@@ -207,3 +211,14 @@ irqreturn_t handle_irq_event(struct irq_desc *desc)
- 	irqd_clear(&desc->irq_data, IRQD_IRQ_INPROGRESS);
- 	return ret;
+ 	/* Handle interrupts */
+-	slli a0, s4, 1
+-	srli a0, a0, 1
+-	move a1, sp /* pt_regs */
+-	tail do_IRQ
++	move a0, sp /* pt_regs */
++	REG_L a1, handle_arch_irq
++	jr a1
+ 1:
+ 	/* Exceptions run with interrupts enabled */
+ 	csrs sstatus, SR_SIE
+diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
+index 328718e8026e..b74cbfbce2d0 100644
+--- a/arch/riscv/kernel/irq.c
++++ b/arch/riscv/kernel/irq.c
+@@ -24,16 +24,3 @@ void __init init_IRQ(void)
+ {
+ 	irqchip_init();
  }
-+
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
-+int __init set_handle_irq(void (*handle_irq)(struct pt_regs *))
-+{
-+	if (handle_arch_irq)
-+		return -EBUSY;
-+
-+	handle_arch_irq = handle_irq;
-+	return 0;
-+}
-+#endif
+-
+-asmlinkage void __irq_entry do_IRQ(unsigned int cause, struct pt_regs *regs)
+-{
+-#ifdef CONFIG_RISCV_INTC
+-	/*
+-	 * FIXME: We don't want a direct call to riscv_intc_irq here.  The plan
+-	 * is to put an IRQ domain here and let the interrupt controller
+-	 * register with that, but I poked around the arm64 code a bit and
+-	 * there might be a better way to do it (ie, something fully generic).
+-	 */
+-	riscv_intc_irq(cause, regs);
+-#endif
+-}
