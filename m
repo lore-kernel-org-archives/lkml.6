@@ -1,36 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeCNU3r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:29:47 -0400
-Received: from mail-io0-f179.google.com ([209.85.223.179]:35924 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751467AbeCNU3p (ORCPT
+        id S1752045AbeCNUbL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:31:11 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:58700 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbeCNUbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:29:45 -0400
-X-Google-Smtp-Source: AG47ELtMo8QvWTok4xX+w/rM6ENiTDz4V6v64mntBKRfhQONOUwRKuDXDy+hJiu4F6qGaPRRp7OhzT+Uq1zgOI/kZl4=
+        Wed, 14 Mar 2018 16:31:09 -0400
+Date: Wed, 14 Mar 2018 21:31:08 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 12/16] asm-generic: siginfo: remove obsolete #ifdefs
+Message-ID: <20180314203108.GA18775@isilmar-4.linta.de>
+References: <20180314143529.1456168-1-arnd@arndb.de>
+ <20180314144614.1632190-1-arnd@arndb.de>
+ <20180314144614.1632190-2-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20180314194521.GA7096@localhost.localdomain>
-References: <20180314194521.GA7096@localhost.localdomain>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 14 Mar 2018 13:29:44 -0700
-X-Google-Sender-Auth: 1oN_mz04AsT2snHCZqoZ0lmARxY
-Message-ID: <CA+55aFyN1uasjjsFOySpWDugipea_LhpE9_TSWR2avOYkTaanQ@mail.gmail.com>
-Subject: Re: [GIT PULL] platform-drivers-x86 for 4.16-7
-To: Darren Hart <dvhart@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314144614.1632190-2-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 12:45 PM, Darren Hart <dvhart@infradead.org> wrote:
->
-> This addresses the Dell boot failure reported by Dominik as well as the
-> missing ACPI_WMI related Kconfig dependency.
+On Wed, Mar 14, 2018 at 03:43:47PM +0100, Arnd Bergmann wrote:
+> The frv, tile and blackfin architectures are being removed, so
+> we can clean up this header by removing all the special cases
+> except those for ia64.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Boots and works (still) on my xps13.
+AFAICS, score is the only architecture which still defines
 
-             Linus
+	__ARCH_WANT_SYSCALL_NO_FLAGS
+	__ARCH_WANT_SYSCALL_OFF_T
+	__ARCH_WANT_SYSCALL_DEPRECATED .
+
+So maybe you want to clean up include/uapi/asm-generic/unistd.h as well?
+
+Thanks,
+	Dominik
