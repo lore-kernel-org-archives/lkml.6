@@ -1,90 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeCNKQf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:16:35 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:52118 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750934AbeCNKQd (ORCPT
+        id S1751386AbeCNKTz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:19:55 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:43265 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750818AbeCNKTy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:16:33 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH] ARM: dts: sun8i-h3: Add Mali node
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1520936205-64723-1-git-send-email-giulio.benetti@micronovasrl.com>
- <20180314080500.whywwskhp5546z7m@flea>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <1269750b-5190-a167-8d34-91794e6d0a8c@micronovasrl.com>
-Date: Wed, 14 Mar 2018 11:16:32 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Mar 2018 06:19:54 -0400
+Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
+ <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
+ <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
+ <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
+ <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
+ <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
+ <5b3df9d5-3e65-1114-4b51-9dcc329cbc31@theobroma-systems.com>
+ <b5bf52e2-0843-a2b3-b039-c39fb9c634e3@grandegger.com>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <ed41c2d8-b231-fa8f-9802-b18382dde32e@theobroma-systems.com>
+Date: Wed, 14 Mar 2018 11:19:51 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180314080500.whywwskhp5546z7m@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: it
+In-Reply-To: <b5bf52e2-0843-a2b3-b039-c39fb9c634e3@grandegger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 14.03.18 11:04, Wolfgang Grandegger wrote:
+>>>      controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
+> 
+> Just,
+> 
+>         controller-problem{rx-error-passive,tx-error-passive}
 
-Il 14/03/2018 09:05, Maxime Ripard ha scritto:
-> On Tue, Mar 13, 2018 at 11:16:45AM +0100, Giulio Benetti wrote:
->> The H3 has an ARM Mali 400 GPU, so add binding to our DT.
+Ok.
+
+>> (1b) cable gets connected:
 >>
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+>>>   (000.000883)  can0  20000034   [8]  00 3C 00 00 00 00 80 00   ERRORFRAME
+>>>      controller-problem{rx-error-warning,tx-error-warning,rx-error-passive,tx-error-passive}
+>>>
+>>>      transceiver-status
+>>>      no-acknowledgement-on-tx
+>>>      error-counter-tx-rx{{128}{0}}
+>>>   (000.000996)  can0  20000004   [8]  00 0C 00 00 00 00 7F 00   ERRORFRAME
+>>>      controller-problem{rx-error-warning,tx-error-warning}
+>>>      error-counter-tx-rx{{127}{0}}
 > 
-> How was this tested?
-
-I wanted you asked me about this to ask you:
-if I can't test it on HW, but others tested it all around,
-for example using this patch:
-https://github.com/armbian/build/blob/master/patch/kernel/sunxi-next/32-h3-DT-add-mali-node.patch
-
-Is it enough? Or do I have to test it directly?
-Or maybe I can invite those people to tag this patch as tested-by ?
-
+> Back to error active is missing!? Have a look to:
 > 
-> Is there any specific reason not to share it with the H5?
+> https://elixir.bootlin.com/linux/latest/source/drivers/net/can/dev.c#L364
 
-Yes, H5 has dual GPU but quad PP and on IRQ you can clearly see:
-- GPU_GP
-- GPU_GPMMU
-- GPU_PMU
-- GPU_PP
-- GPU_PP0
-- GPU_PPMMU0
-- GPU_PP1
-- GPU_PPMMU1
-- GPU_PP2
-- GPU_PPMMU2
-- GPU_PP3
-- GPU_PPMMU3
+Should be sent out once the error counter drops further, will check.
 
-So I think they should be placed in specific dts files.
-What do you think?
-
-Thanks
-
-> 
-> Maxime
-> 
-
-
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale � 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+Thanks,
+Jakob
