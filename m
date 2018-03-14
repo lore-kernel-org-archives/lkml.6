@@ -1,61 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeCNPpZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:45:25 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38094 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752263AbeCNPpW (ORCPT
+        id S1752429AbeCNPpj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:45:39 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:58667 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbeCNPpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:45:22 -0400
-X-Google-Smtp-Source: AG47ELvPbLEGdJFtISOJ6mfHbqEXCVMN+/aGo4Z6dByeKGC1kfp8x5RTW4QdGQ8iq2qgaB0zbzTY1tSVrrlOc/I8io8=
-MIME-Version: 1.0
-In-Reply-To: <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
-References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
- <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
- <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com> <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Wed, 14 Mar 2018 16:45:20 +0100
-Message-ID: <CAAeHK+y3hJ4jAByvfGDYyNb_RZ3_As4r-FCyZL9u69Vv_HS2AA@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
-To: Evgenii Stepanov <eugenis@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 11:45:23 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
+Subject: [PATCH 23/47] cpufreq: remove cris specific drivers
+Date: Wed, 14 Mar 2018 16:35:36 +0100
+Message-Id: <20180314153603.3127932-24-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:q5clH/C/IO+WhP9C8UaJcpuzrpjX1kDXrqST0VFeBKYqYbumufY
+ WbxDYKUPNRD4Xd5COQN08M5BWeDBWt1OHzD6xicAU5s3BiSks+EdLrfL2k8Vy/o0ULxclDx
+ q6P99945mT1MNfJUKDTK8P+4Q1AH0JiLZ+tkWak4T9B9cxKngxgoHPn1a4W9r1v8ai+3erH
+ GF7UEr/bw4lFjGIH5OE8A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+F01YTo18Vo=:oFGQZbBRgIPhZa24uLJAi4
+ l7DOsWK4ZODWIWM7C1CramKcWak/oxqEbvwmPv3tqQlz0a6fInP8Mxq3+FhXqGN+kqKmdzHdB
+ XmPw58E+Qhx0wGzsZsLAxznav5Y7AWbT7fLNMKtIAwo8IqeCtxWynoGw0MGb/IW/IHK5SPKnq
+ 3NxRsCRA0j5XWUZi3dymcdQqNx00VYSewQKElfdHeGNTk5WCVYQUeR6TtHSNKiaFJ6Wf5j8xG
+ ApFSqvvc+hmk0W7DndfwgtCTwFJ3I/1XhEjJg6lxkZEv34S2coOds5k24FA8i9egMYgk4hP0P
+ +jcOjimQoxx6Q8W3sPZVapO9S+3ua0UR+6X2RdOOTQy0FR+PR6Jh9qwyL3YDMQkDe5cfrdsLu
+ rT7apU8+FMpO3ZomzFZSa8ivfPIs5EuoooiMdLYMQqTyDydRrEcaCGeKv6yuyVqkN0eqeCXH4
+ LcqaJtu+xtNjbdbMeI/4iGqwaF51McpZaZiestBvsr5cdZYuBqggKBxo8631yxBNpxFrmtfJS
+ DoPTy/D/2p580zMBywn6uou3dZeaL+MXeMDDmCn+d0yrDJA0ZRiLvDSAUnZYLY14AINEkUcGb
+ U2m0cMdbMRbmGrb+B6SYp/PBI/IsygtarWyVniqpNIUh60qJNDPeSjO0xYDy4Q8F4nUF3k9e0
+ syOnpfqx335slWfW8V0KtrehImU9xrxpoHNV1xJWLjGncwAZiMRVbEYxAGv7DTs1vWod4l2kz
+ scO7T0hmWRGLCWbppiSsIg883gdhFmyOcq3isw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 6:42 PM, Evgenii Stepanov <eugenis@google.com> wrote:
-> On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
->> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
->>> I'm not yet convinced these functions need to allow tagged pointers.
->>> They are not doing memory accesses but rather dealing with the memory
->>> range, hence an untagged pointer is better suited. There is probably a
->>> reason why the "start" argument is "unsigned long" vs "void __user *"
->>> (in the kernel, not the man page).
->>
->> So that would make the user to untag pointers before passing to these syscalls.
->>
->> Evgeniy, would that be possible to untag pointers in HWASan before
->> using memory subsystem syscalls? Is there a reason for untagging them
->> in the kernel?
->
-> Generally, no. It's possible to intercept a libc call using symbol
-> interposition, but I don't know how to rewrite arguments of a raw
-> system call other than through ptrace, and that creates more problems
-> than it solves.
->
-> AFAIU, it's valid for a program to pass an address obtained from
-> malloc or, better, posix_memalign to an mm syscall like mprotect().
-> These arguments are pointers from the userspace point of view.
+The cris architecture is getting removed, including the artpec3
+and etraxfs SoCs, so these cpufreq drivers are now unused.
 
-Catalin, do you think this is a good reason to have the untagging done
-in the kernel?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/cpufreq/Makefile               |  2 -
+ drivers/cpufreq/cris-artpec3-cpufreq.c | 93 ----------------------------------
+ drivers/cpufreq/cris-etraxfs-cpufreq.c | 92 ---------------------------------
+ 3 files changed, 187 deletions(-)
+ delete mode 100644 drivers/cpufreq/cris-artpec3-cpufreq.c
+ delete mode 100644 drivers/cpufreq/cris-etraxfs-cpufreq.c
+
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 2e4495cf9aa8..8d24ade3bd02 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -102,8 +102,6 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
+ ##################################################################################
+ # Other platform drivers
+ obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
+-obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
+-obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
+ obj-$(CONFIG_IA64_ACPI_CPUFREQ)		+= ia64-acpi-cpufreq.o
+ obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
+ obj-$(CONFIG_LOONGSON1_CPUFREQ)		+= loongson1-cpufreq.o
+diff --git a/drivers/cpufreq/cris-artpec3-cpufreq.c b/drivers/cpufreq/cris-artpec3-cpufreq.c
+deleted file mode 100644
+index 455b4fb78cba..000000000000
+diff --git a/drivers/cpufreq/cris-etraxfs-cpufreq.c b/drivers/cpufreq/cris-etraxfs-cpufreq.c
+deleted file mode 100644
+index 4c4b5dd685e3..000000000000
+-- 
+2.9.0
