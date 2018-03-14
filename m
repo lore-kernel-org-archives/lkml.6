@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeCNKpD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:45:03 -0400
-Received: from mail-bn3nam01on0072.outbound.protection.outlook.com ([104.47.33.72]:17167
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1751458AbeCNKpX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:45:23 -0400
+Received: from mail-sn1nam02on0041.outbound.protection.outlook.com ([104.47.36.41]:55830
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750855AbeCNKpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:45:01 -0400
-Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
+        id S1750855AbeCNKpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 06:45:21 -0400
+Authentication-Results: spf=softfail (sender IP is 149.199.60.100)
  smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
 From: <nagasureshkumarrelli@gmail.com>
@@ -16,95 +16,154 @@ To: <boris.brezillon@bootlin.com>, <rogerq@ti.com>, <lee.jones@linaro.org>,
         <ladis@linux-mips.org>, <ada@thorsis.com>
 CC: <linux-kernel@vger.kernel.org>,
         Naga Sureshkumar Relli <nagasure@xilinx.com>
-Subject: [LINUX PATCH v8 0/2] Add arm pl353 smc driver for xilinx zynq soc
-Date: Wed, 14 Mar 2018 16:13:55 +0530
-Message-ID: <1521024235-30374-1-git-send-email-nagasureshkumarrelli@gmail.com>
+Subject: [LINUX PATCH v8 1/2] Devicetree: Add pl353 smc controller devicetree binding information
+Date: Wed, 14 Mar 2018 16:14:16 +0530
+Message-ID: <1521024256-30423-1-git-send-email-nagasureshkumarrelli@gmail.com>
 X-Mailer: git-send-email 2.7.4
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-Result: No--4.679-7.0-31-1
-X-imss-scan-details: No--4.679-7.0-31-1;No--4.679-5.0-31-1
+X-TM-AS-Result: No--11.053-7.0-31-1
+X-imss-scan-details: No--11.053-7.0-31-1;No--11.053-5.0-31-1
 X-TM-AS-User-Approved-Sender: No;No
 X-TM-AS-Result-Xfilter: Match text exemption rules:No
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131654978990501489;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(39860400002)(396003)(346002)(2980300002)(199004)(189003)(8676002)(83322999)(36756003)(48376002)(47776003)(966005)(6306002)(86152003)(55446002)(81166006)(82202002)(9786002)(8936002)(73392003)(87572001)(2876002)(356003)(4326008)(110136005)(316002)(76482006)(26005)(16586007)(2906002)(50226002)(63266004)(107886003)(50466002)(106466001)(105596002)(336012)(2201001)(86362001)(498600001)(73972006)(5660300001)(51416003)(54906003)(61266001)(81156014)(77096007)(305945005)(107986001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2535;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;PTR:unknown-60-83.xilinx.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT023;1:FWSF+H2w7+TPQyix9JMOoNzZIEcc/XljOWb712dN4hcTXuIAe3OWQDtCPuKzygd/ezZlMYrOHitzy9NL4ExR16Vs6ATxjt5dGs3tI57GcE/d7+YWSMVYvWbNYp72fITK
+X-Matching-Connectors: 131654979189218303;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(39380400002)(396003)(346002)(2980300002)(189003)(199004)(82202002)(86152003)(73392003)(106466001)(76482006)(87572001)(81166006)(81156014)(55446002)(316002)(63266004)(83322999)(51416003)(4326008)(8936002)(54906003)(110136005)(16586007)(8676002)(6666003)(336012)(50226002)(107886003)(36756003)(48376002)(86362001)(2876002)(9786002)(2201001)(77096007)(50466002)(26005)(2906002)(498600001)(5660300001)(105596002)(305945005)(61266001)(47776003)(356003)(73972006)(107986001)(5001870100001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR02MB327;H:xsj-pvapsmtpgw02;FPR:;SPF:SoftFail;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT003;1:dZvn6YOo9hYaJAGKktMC9lbVbEC0LnRLy/J0QdXeP4glcxIcd88/YPfNloUPPtx5Divo4p+cPH2BX0NQjRKylgNKzTLP+sx/LCavSi7tXLVB6NjYMFZbHjEst6lWxWrH
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e058591f-572f-49ef-efaf-08d58998a20f
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:CY4PR02MB2535;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2535;3:9IsZKlv2IqUHHPV52wcFrOZB9zRgdAALB76Y6Pt10u3lFUV2d2bBV2VGvu1goQZIJVrzze83d0JVj9CsCNKYfj88PtvmoarHPkHY4tL/LO5sQptMh4Kk5N/bmx3Yic4TaKVengHzsl8EM+FOgEGdXCxBfD7WFKG9Vmz2Hvye1GRZiuOvriaEuvT5g4H2rsuw4VM598oegJSGjFjJtJ+8d4uYkNHPOq+DpRqOdVUVVbkzy0ry7ScVv8BvP1xJrFDEOYVd1IwrNmx9isfbfVlyGoNxstgEJKVWEdK4ap4MZWs3syHgvPEHZNwQmlFdar7CZammamJPKIYnSaZYczxNr8dHyXPHxko+qL7eejPZxe4=;25:AxTkqnOtaT5rrzMgxnPNedTl0UgFxo/LeBbexY6FlfGxPgOmWspqVrC9BXA1xiexWwXhrVxkQkPlL3ZAfs82Ewz8SBaRr6fUoQ0pcAfwEaNKo47tVrUXaVk4hDCrogPi2Mq4Xt5hQOF5y8u51wLe5E8LDZFDqRGYdJQ0vVt0PUajm3nmJWCSyX3ga+NQYy7b79XpR1pMox0dziv4ij3g8r4qkp7uYTHwLENrBLanEgcB6lAA4dgKQPc+CpYEIUNyszrypjbU45spelA0rMen1GCIqGLSXvXcvcg2UqdI/Vo9hNqWyiOpPclnkpRtileUxpmDqBhQp7h7rs2g8nW/sA==
-X-MS-TrafficTypeDiagnostic: CY4PR02MB2535:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2535;31:H8FBtJXHsmh6AvpYLd3R9OEwoQYeeIm50vu9BO9u1SueH7g9k/jsc0CVZbYW9CBSOmjL1xxzSMVeUF1kjl8qnkJW7+8I6r/4QEh2PNgiZAWYU93k9eclDOmOEe5DHdsFaMv/Tp/cy/EmfnIxkmeoXmRUcyq8ypP7xaO5Co0eHvk2BJfEqZ5B0b9a3XLqwYKbNCJg0QGJg4dd0pk7uH8ZoZQSK3/z+HYLVGrhj0PaHZU=;4:Z46pHvdHgaCxlskqGof4ijI1cKPj05oVBPSySEg1l914u7s1NTQ6QDY3n3r/SiOea6Jm74qZisNT1Ufh/QafGi1XtKd8i8bUYpJ9rEapIBg5mjz38T3cPtgqpzQI4fw/tUfQpo0zpYa0StI3Y3C2ZwE0+LTD2KtDjhWr7Kw1vF9kyMgWLqLWanL7YHutBeG2FYDmPpJgsaiksQezQrhQ6HMs1Zii/EvQU7YJB8NFOmKeCvuZJD4P1BAW0JAD1/9Ovw+HNMt1nKJHv6uWaWApESvRaMj3HtpXl0DV9NFojYFBS3QX0+2/KPFBG6WgrdKKTU/wB5QZox4WedhaaXojuWSApX7xmjSOgaKIAHnnQtUPHqOLNput/REUsDihu9ti
-X-Microsoft-Antispam-PRVS: <CY4PR02MB2535EC481404F21B761E2E1DC6D10@CY4PR02MB2535.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(192813158149592)(189271028609987);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6096035)(20161123559100)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123561025)(20161123556025)(20161123565025)(20161123563025)(201708071742011);SRVR:CY4PR02MB2535;BCL:0;PCL:0;RULEID:(400006);SRVR:CY4PR02MB2535;
+X-MS-Office365-Filtering-Correlation-Id: 514798b0-1ad7-4ec6-9283-08d58998ade9
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:BLUPR02MB327;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB327;3:LXSw2rRobSeFKnMGF3tJNc2hTKH1aGPtssFoYwe0k+JkR2YLG8VuCB2V1q2IwbsBHOKSfw4Q+VSzHzUzPG5wo9nwupdvgzibZDL60qBL4jj9kRx1PnWpKew2h7Zy6wwD7nI0RGrJtB4dDJlSQZ49gd5gyDlGAoqmRcEyQxDCk242wbl1dycKPEOEwRRMBzUV+K2V2wc6vPFS2J8UaIzC0GsmoWJmQBidh8blZRil0thdQrrQmlTfZsI4pNQ3eaIePPWqYljFPftci2BP/6RC28UcCqPm9uXeSo0PexvjXuIqUxOOj+41mg/YhQ8aKLwEZ/LLEtmQAU4NHWsSslKuXPvn8kpdXOp8yH1YBncQp80=;25:ETdWrP3Sr1aQDdb+ScRVWWYGLyFmn8cMqhdWIFnMysoHmdld09Zw4Lvxrhr8XfTGnhfWFOLjvqaLmxkcd58pBtV5EiTCDM6FnZ/TZsi2lu7B2G1l5fddIj6FyJsnS8juywlOI3aZOJitersGJnwY+BSMagROPfX7rnK6Hg68kqof/lEf2UdTYtnV3LDlNIg9KzK2zWJOoy8lfP3p+Zdd4g7v20BqL3mbfvygToYW41afgKtk2zbj9EaH/ZQ+pd/z00w6dHhOYXAOfjnnKD/Ak1B1BM8dPQsF1TllI6g8E4LmiXlFFbanE0k7HPIEiepkosE9u/oALEEbp0Fi72gAIw==
+X-MS-TrafficTypeDiagnostic: BLUPR02MB327:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB327;31:pHgU3a12ZGJWPPygGOwQIam+RJNZYjh7eAh2uCO8WGmJbFiCVGgNVI0MvEPSTRBfF9qcJmpZgz1GJ4gK0XpN1lwwXLTkLi9omXgdQUdve470wzdt+0YmFdtJYxYQUzrh/VmkkG/ssrU/7HFzGaM0Pw4Ae0K4BboW04ug0Hoj62hRALOGztCQV0eLD6KWQ8bDxgid+rJnBY5IoqdbaXTce8RoIAsG0NeN1naDIzVlqBM=;4:APbSQGVBg7ToIkoeJgdd4xLl6CsZdYZXlwwrOnMCzsv1QD/4KcfSsNjNH8uMU7LEHcMAooBBhZwPMwHDIvQsaEla/m8BMNXSv2KrGX+uChjh2Fy1+5UvRzEYsxrpkGw2n0RMs5E8PnZGg+0wTxKfX1y/0hAp2zAhRLh5hsiRzfINlKDq6Ai0jKk6JPkT7nES/eZ1nn9C6t7/Xtzp/ndzf9CoptQ+fj14ueakSQUX2Bhjt4S699lg3BNPO8Hmui1Uaa5O9FG2trdRIUcmU6pLQgrL8t8b/zc75D+2e35ZAbER1Zev2fEzThZ9QGzQLyXV
+X-Microsoft-Antispam-PRVS: <BLUPR02MB327694E092B19A653ABC878C6D10@BLUPR02MB327.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93001095)(6055026)(6096035)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123559100)(20161123563025)(20161123561025)(20161123565025)(20161123556025)(201708071742011);SRVR:BLUPR02MB327;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR02MB327;
 X-Forefront-PRVS: 0611A21987
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR02MB2535;23:2qQkXIoP1Qo4xT0BXa8yegMNuEjtd58tGWrbTiGPg?=
- =?us-ascii?Q?n3AfGXfiT/1SAwNd9E6oFoeIMbra9obXgy7EE0oUrwJqKDy8iF+1CQqxBiY5?=
- =?us-ascii?Q?YmniWzNGVTeUoeJ/1HeZhtxwoeotQDtx+ghy5Jv1SJG77l3Rh1EUe+H4vSk5?=
- =?us-ascii?Q?RpXu307I6XBrX4K6uwNOGMfFfw4y1aAMQPa6Jjh0xjqKURcuDJr0QexJi5fN?=
- =?us-ascii?Q?wdXHqaL05idNs8Q9MTzqMOvfEdRNL6lFi5Sw1YhlKhKkEoos7hE1GyXKaKwO?=
- =?us-ascii?Q?RfEtpa16kyq3kNPyT2C2cV5q9/omExfz4uhtUsNYSrXAh5JzpmSdtuh/6r2S?=
- =?us-ascii?Q?iASC/QDSgrU3J7Lbo6BBgHIazRALth1Ihb9Im8Xlu5A5jnOusMUiB+pobPOc?=
- =?us-ascii?Q?aWgDmiMY2S2hGfOspsbtVqdFDqO7wso63TJrLu6DH7a/7AgSkhWed3rbagnC?=
- =?us-ascii?Q?8s4tdTCbA/bRqA5rOErxdUTKAafNv/ueutFLQ3Rt/f0Mh0K+/spEckc59dH2?=
- =?us-ascii?Q?C6o4L6Vs5XFvZ4+E3YAjr8xh2eyxq4DltAX2AyaEI1u2ou+opUUOoIWoUefA?=
- =?us-ascii?Q?GhksDKcwA/Dt2Ozb+hWUOcAOaZs8wMiRuyh/iwYKv91X+vg2wroL7TlhCF5D?=
- =?us-ascii?Q?F/SSbi4xB6Mf0lDZIXpDg9wNdLZxOKXmeJXGMr2DdRaXq9bjE0d2tEiA6GWt?=
- =?us-ascii?Q?ARMziSKgLp3N/2rIcs8KirG99VD/2lvttwAYoOnIVyO5VAmqKVy4kykOYv2I?=
- =?us-ascii?Q?iPry5232yrGDjD0F3wsF2xgWcA5bVJJb/Rub1RBlG7rnTGw9DNzkr0dc9Hka?=
- =?us-ascii?Q?/ZzLV2oy7Hz1vGt3JOd6jMFW9bnqErtD/FTZXY0jFWon3zbhRZNp0v7eMKaI?=
- =?us-ascii?Q?aXELaJHVQjX0jbZ7ckt7EAqBatD0JJA9ZqszrzzOgiS/LZYNvnQq5qBpoog5?=
- =?us-ascii?Q?5OvM83DapDIDkMRWzJMd4mexZ3vhG4FDIBjKQj3r1MX0ROK4NKG8Yplx081F?=
- =?us-ascii?Q?z7LTQpgODUAITHqiWUzt98NJ8GVCRpK44wreFT4FECn7Ph8qVSRTX9IcF96r?=
- =?us-ascii?Q?C56oTccB+kyhF5GbpgyMRoQt6JbE8y5yzte79DodKzUXAEMyN2yeQY4FHtDw?=
- =?us-ascii?Q?oPGhvlONTNdgE8m540vb7BsDF5IyBwTt4EsHD9iSdcDl5kqf7kqFWY6XLy2c?=
- =?us-ascii?Q?CJSTklOh32+A2NIG7/MV8p2nofJIac8RyZ+?=
-X-Microsoft-Antispam-Message-Info: 6cB7vHVzQNGYFoXSFRJwf/R841NImxr47XoA9rDVHMZjIbpBJLgKVbFNaqfu/HTl5Ck4smyLo7Vi/rvpZ81OEcjQs/eC+E7cgpcDbY7TMgvTeF+SyI78PGVDZFsdO/YyRMvWopWlQB4uwTvKtEBLvZFJgUukf9Zqw/cE2SP1Hbng11R/TJiMBKqemZXFBM7h
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2535;6:uDqi4BezyT4322a6kbF+nz0/cPQ9jEOBeio+DN7NRBJW3EPrDD1+H8aMmR4rJ4iY0FNAYfTLZtr46TVlWfdZCmJ9A37P65ESzMNxHyTlkFQj6BuZs3zrhFhUIaVLrSHkG1kg3JxilhAJnaulmDTbNDR0fHtso5Gr0O9sKlaqwVQ//mP0mT9zxHQDFsYwZPczOy552WoKyMJMbrboh4MHuVdy/PAVsAVnScPKJoArmYeovQheidlHkdeKw6zdfteA9vhHQYwsZVNZRt+aoLQ3//TXBO7HEwOC8vtWtYv2ANF96VcQb+QU0s6w/DRqS6DzVKulROXQW9hu0CRfUS884mCRFYPqk9qGrdeWQk9frRQ=;5:rm1f4oSom2uqZaM3chtZPTU4J2GEC19fixaVZtXE7A59vDhudHnA1RqRXZBXrkKmn3aiTAbGuWarzyRK0ZXA6m1ZSOGAwBGfpHljGCQyPxRoEA/n9W3xGb5an9xVuoJ3S1Tzk6bHStUMgaiSkG/T23vZHNf8km3ZylHaLtfST6I=;24:D1S2zIaibNgM/HY7s8ErAUsdJXndR7ZyeMfO2y7yB8AAFSzwabHD6xODzN6VqXIRglqCnI0wX+bw/2KMHJA5a07fXgZZCLx1nwzi+bAeHSE=;7:liCg2aoW48XXyhcy1/N9VcaKSBTfk7wFIhxryno2b79VBkOCBkfKA+Se4wLUH96uYRccc1Shfr4kzCVcIs3ojlrtrg8LOjA8NV80UrMMPudoWLlmSgFYzk3ORETKroRbiDow9b08x9tCyn+D5PAFq4NzpMaduRqklnrx9TYf2r43LGS39+pMrP0xwWtfiXTM00y0KmcqWZjdpb95ED5plp9Cqnl/sKu6TUkZJjrbU4P3hMBiAijwaIhtq1ca+WRg
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR02MB327;23:yEx9VaISMPvwlS7Mj6BExkouKoUBGhsQcNcfP3LDNl?=
+ =?us-ascii?Q?yCmJGUIzR3HxWUOn9iIT8eNObVUi+8zUd0pBS9dxux4L6XY5RthqqrxLD+ei?=
+ =?us-ascii?Q?ofBvPYP5+4IjRlf/0GGumU4/HR5dAHATWTtH4VI9Msky96Es6H54N4tHsWJ+?=
+ =?us-ascii?Q?fMOEBfPo22qB0iYYNCB+c45LqQMUiRGm/tRruxXi8TXepTQqKuTjzWcJb76C?=
+ =?us-ascii?Q?Apj7eCH+QYUlEkPKl437QyOR+MPVqVgDoRbLWRo1I0UcC8aXpxQ57j3Wyn6n?=
+ =?us-ascii?Q?fKkwCPSPSphaoyKgBrB69WvI59R7CV6nqLQIZNhgiq36OCPHT8YqcTMYQpJ7?=
+ =?us-ascii?Q?0buu3GtMPC4qdKYpy7Np75OYQUEwD9gvGnXQQTVk5YPO3ghoa0lWKpPxGRcM?=
+ =?us-ascii?Q?xp41IwlQb02TYhnjtdg+A371YHFGBl7qKsSfW3B7EAdJcB5Sz64wnxo1rhQO?=
+ =?us-ascii?Q?oqpH+POLwlLLt3/BxCPa1sp2XBP0nJPspydr0Rt4gt1mhss2BaBMU7JFaKVO?=
+ =?us-ascii?Q?E8GJRcnHUMSBegOfzL4CCRUtVlcYOOwcCLl4u9IWk9YBv3GSL/5GwaCmBAbd?=
+ =?us-ascii?Q?zZLO53ddVqfM4bNc0D4f4przhu4ctiFFBz2BWr5mKGBj+v/crUdw4hdVvCil?=
+ =?us-ascii?Q?2ub6GluWDdkr0w+wM9iUnAuE8g/DiptU2Sf9vTaKkDGlvhiTJpDqvAuK9y8B?=
+ =?us-ascii?Q?xuviJ2cFFN60Sfkx70bl5ja0nzz9YTSXnxtJ1MA2WWWDZeXO9RQXvGzMJN2V?=
+ =?us-ascii?Q?Z5TpC8+kIiP+FYihr+1Sdd9Zl4UD7tDN15gyGmu7SiDTbH5D1fU7Oh5XZIp3?=
+ =?us-ascii?Q?9GTedQYck6nnoG5z8rxf8Dh1cvaE+wD/ab3DT3RI+/pzf6aeppDVczRvEOok?=
+ =?us-ascii?Q?VTKIa148vqz1mfc4sjqzznl529wQvwKYgUYwwuhj30QctpkNSXrrhWbbcTTM?=
+ =?us-ascii?Q?4zvW9JArDPNIl6q0KRTWb2bxHLrnckA/hwo8X74NrG5eSKWKxM6yba37dfEd?=
+ =?us-ascii?Q?uv4zh49/BuoxUpEfPBi9mUOC9LFOtcZEju7oTqQVZUnMPRJ/K7nZhsIgrHNY?=
+ =?us-ascii?Q?1aKUQEDwcxJbLFV/fqQif0JETwkmvTmwKPqwD9E7vBvYCfndMETn8mzTDPaA?=
+ =?us-ascii?Q?FXK3UymnJGNDXljFjXVUZQK/lIFa5GTvfSHHUHKqTR9i1p1rSvm/oFu+ORJ/?=
+ =?us-ascii?Q?AJ2GQB+sz/STWI8/ttjnCuYDNvafgCrDle?=
+X-Microsoft-Antispam-Message-Info: ia+hjGhTO5iJ/AX+KPX2Cq//GuLzszy+AX8yjqY9PhvbHWkwtmImaN7axLrnhE/y71d09lpEuVuPW23V4dXUHOOLhXlsUKj5QmERBDE7uothehZh70Msgcz6ZO6fq+5Z/TEssHItkHYcSOQSacDSrc5cDtpJYaNKshPUOS8cfXKzl+c3RD650juQpezlFrO9
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB327;6:DZUDfP9diuqps0tqlDWH/qMSigV7LVLPH2jXZFm1KGjtTNjv3h2uZh3efw0j8KaNAw3gVf/6qmPqXkxXtYAh1w+bst+KLcj/BV11jHqgB90Mbp8UBCNP1ju5sRtSN2sAxFlBmkgfwEYV1C4Y1AIbOQNx3P57LG/MjPpFe/oIuOHqKyYOUDk6aDs8olTTloVkftDohSe127onY59tJTu86s5q8d43fe0yDEKir6RMwQaSs9VTi+Dr7EyTvLrwjIjCesPYDjfy1jSzonqbneVaHTX/NBH8TAh21JCmLqLUJVvhFAPmJnPQXj19GNbjM5wOwYgwNdS1PJ7Fo/00hnSAgRKKI+chS/fJCnAkh5sgWY8=;5:w3Z64g8ySaFXXxJjE4flaJ7wJ7di/WF5T5eJpWiaXL3abj7OZY9cRw3RXpTN5QF3R1PXMDitkbICDrScMvM3CWxwS6VxOypiUsm29VeCPUpUORcXDqJbWWunGs0JeG43CajuLIYpO5u16nVsyERCtf+OL76IPL5SPm+yskxuukI=;24:hK37D9VGo/dd1r5fC6P9wmmWlL+twshfq3ZZfCDFtF89O2ENNwaq70MemdfArm9Ku1i3y+Mkg2iDsuER1Y3VQAnVIi47YWPxYujHFKs873o=;7:x9URVsNuqRSnv7JT2S2giRsE+P4dX7zPlqr9q32Nv5EQzs89+Hw1zfZAtAif5ucnB7lTW9gUeRe6Iaskx6Iem5ybO3XdHx0eV9hOIPiPLTM//JLHh0vKTWv8Ddzh66LFInmoxigXIkTODd+gxqIak2Z0roccTj3y7txb7tTLO9lRxcu97MLfN0ixbYCurVClEXXZLga7LWY5/zkd7fZv7OAKu5B1OTLYxc7+aUDICrQfjc0a/L9xYtUB9D+5RqZW
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2018 10:44:58.8359
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2018 10:45:18.6561
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e058591f-572f-49ef-efaf-08d58998a20f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 514798b0-1ad7-4ec6-9283-08d58998ade9
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2535
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR02MB327
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Naga Sureshkumar Relli <nagasure@xilinx.com>
 
-The following patches add arm pl353 static memory controller driver for
-xilinx zynq soc. The arm pl353 smc supports two interfaces i.e nand and
-nor/sram memory interfaces. The current implementation supports only a
-single SMC instance and nand specific configuration.
+Add pl353 static memory controller devicetree binding information.
 
-xilinx zynq TRM link:
-http://www.xilinx.com/support/documentation/user_guides/ug585-Zynq-7000-TRM.pdf
-
-ARM pl353 smc TRM link:
-http://infocenter.arm.com/help/topic/com.arm.doc.ddi0380g/
-DDI0380G_smc_pl350_series_r2p1_trm.pdf
-
-Naga Sureshkumar Relli (2):
-  Devicetree: Add pl353 smc controller devicetree binding information
-  memory: pl353: Add driver for arm pl353 static memory controller
-
- .../bindings/memory-controllers/pl353-smc.txt      |  53 ++
- drivers/memory/Kconfig                             |   7 +
- drivers/memory/Makefile                            |   1 +
- drivers/memory/pl353-smc.c                         | 548 +++++++++++++++++++++
- include/linux/platform_data/pl353-smc.h            |  34 ++
- 5 files changed, 643 insertions(+)
+Signed-off-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+---
+Changes in v8:
+ - None
+Changes in v7:
+- Corrected clocks description
+- prefixed '#' for address and size cells 
+Changes in v6:
+ - None
+Changes in v5:
+ - Removed timing properties
+Changes in v4:
+ - none
+Changes in v3:
+ - none
+Changes in v2:
+ - modified timing binding info as per onfi timing parameters
+ - add suffix nano second as timing unit
+ - modified the clock names as per the IP spec
+---
+ .../bindings/memory-controllers/pl353-smc.txt      | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
- create mode 100644 drivers/memory/pl353-smc.c
- create mode 100644 include/linux/platform_data/pl353-smc.h
 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+new file mode 100644
+index 0000000..551e66b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+@@ -0,0 +1,53 @@
++Device tree bindings for ARM PL353 static memory controller
++
++PL353 static memory controller supports two kinds of memory
++interfaces.i.e NAND and SRAM/NOR interfaces.
++The actual devices are instantiated from the child nodes of pl353 smc node.
++
++Required properties:
++- compatible		: Should be "arm,pl353-smc-r2p1"
++- reg			: Controller registers map and length.
++- clock-names		: List of input clock names - "ref_clk", "aper_clk"
++			  (See clock bindings for details).
++- clocks		: Clock phandles (see clock bindings for details).
++- address-cells		: Address cells, must be 1.
++- size-cells		: Size cells. Must be 1.
++
++Child nodes:
++ For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash" drivers are
++supported as child nodes.
++
++Mandatory timing properties for child nodes:
++- arm,nand-cycle-t0	: Read cycle time(t_rc).
++- arm,nand-cycle-t1	: Write cycle time(t_wc).
++- arm,nand-cycle-t2	: re_n assertion delay(t_rea).
++- arm,nand-cycle-t3	: we_n de-assertion delay(t_wp).
++- arm,nand-cycle-t4	: Status read time(t_clr)
++- arm,nand-cycle-t5	: ID read time(t_ar)
++- arm,nand-cycle-t6	: busy to re_n(t_rr)
++
++for nand partition information please refer the below file
++Documentation/devicetree/bindings/mtd/partition.txt
++
++Example:
++	pl353smcc_0: pl353smcc@e000e000 {
++			compatible = "arm,pl353-smc-r2p1"
++			clock-names = "memclk", "aclk";
++			clocks = <&clkc 11>, <&clkc 44>;
++			reg = <0xe000e000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			nand_0: nand@e1000000 {
++				compatible = "arm,pl353-nand-r2p1"
++				reg = <0xe1000000 0x1000000>;
++				arm,nand-cycle-t0 = <0x4>;
++				arm,nand-cycle-t1 = <0x4>;
++				arm,nand-cycle-t2 = <0x1>;
++				arm,nand-cycle-t3 = <0x2>;
++				arm,nand-cycle-t4 = <0x2>;
++				arm,nand-cycle-t5 = <0x2>;
++				arm,nand-cycle-t6 = <0x4>;
++				(...)
++			};
++	};
 -- 
 2.7.4
