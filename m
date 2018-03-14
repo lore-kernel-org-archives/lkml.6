@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeCNRAo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:00:44 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42662 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932274AbeCNQ7s (ORCPT
+        id S1752476AbeCNRBE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:01:04 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43828 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752337AbeCNQ7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:48 -0400
-X-Google-Smtp-Source: AG47ELtroVocYWjrkPQ4P6WWERCPllfN/8m25g8jmfA8KdhmuICrps0L5Y7S8Tna2vwtab3d+AT19w==
+        Wed, 14 Mar 2018 12:59:46 -0400
+X-Google-Smtp-Source: AG47ELtbzr1KNg6q8KQjCrjXYwXSX6z9nmJgEFXjAOA/0E/JeN+1IzqvPlviOxkMPKUvMVYo2lCkVQ==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -22,12 +22,10 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v6 24/25] arm64: kernel: Respect the hierarchical CPU topology in DT for PSCI
-Date: Wed, 14 Mar 2018 17:58:34 +0100
-Message-Id: <1521046715-30683-25-git-send-email-ulf.hansson@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 23/25] MAINTAINERS: Update files for PSCI
+Date: Wed, 14 Mar 2018 17:58:33 +0100
+Message-Id: <1521046715-30683-24-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
@@ -35,32 +33,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To let the PSCI driver to parse the CPU topology in DT, as to create CPU PM
-domains in case the hierarchical layout is used, let's call
-psci_dt_topology_init() from the existing topology_init() subsys_initcall.
+Some new files have been for the PSCI firmware driver, let's make the
+expression more generic to cover them all.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm64/kernel/setup.c | 3 +++
- 1 file changed, 3 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 30ad2f0..574a504 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -331,6 +331,9 @@ static int __init topology_init(void)
- {
- 	int i;
- 
-+	if (acpi_disabled)
-+		psci_dt_topology_init();
-+
- 	for_each_online_node(i)
- 		register_one_node(i);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4623caf..dda16cf 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11082,7 +11082,7 @@ M:	Mark Rutland <mark.rutland@arm.com>
+ M:	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+-F:	drivers/firmware/psci*.c
++F:	drivers/firmware/psci*
+ F:	include/linux/psci.h
+ F:	include/uapi/linux/psci.h
  
 -- 
 2.7.4
