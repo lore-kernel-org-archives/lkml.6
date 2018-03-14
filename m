@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeCNS0W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:26:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49738 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752381AbeCNS0R (ORCPT
+        id S1752625AbeCNS0f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:26:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46718 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751959AbeCNS0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:26:17 -0400
+        Wed, 14 Mar 2018 14:26:33 -0400
 From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -18,20 +18,20 @@ Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
         jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
         berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com
-Subject: [PATCH v3 02/14] s390: zcrypt: externalize AP instructions available function
-Date: Wed, 14 Mar 2018 14:25:42 -0400
+Subject: [PATCH v3 06/14] s390: vfio-ap: register matrix device with VFIO mdev framework
+Date: Wed, 14 Mar 2018 14:25:46 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18031418-0024-0000-0000-0000181452CD
+x-cbid: 18031418-0020-0000-0000-00000D9750A0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000254; SDB=6.01003025; UDB=6.00510424; IPR=6.00782355;
- MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:26:14
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:26:29
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031418-0025-0000-0000-00004F1A9EE6
-Message-Id: <1521051954-25715-3-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18031418-0021-0000-0000-0000607E962C
+Message-Id: <1521051954-25715-7-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -43,52 +43,242 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the AP instructions are not available on the linux host, then
-AP devices can not be interpreted by the SIE. The AP bus has a
-function it uses to determine if the AP instructions are
-available. This patch provides a new function that wraps the
-AP bus's function to externalize it for use by KVM.
+Registers the matrix device created by the VFIO AP device
+driver with the VFIO mediated device framework.
+Registering the matrix device will create the sysfs
+structures needed to create mediated matrix devices
+each of which will be used to configure the AP matrix
+for a guest and connect it to the VFIO AP device driver.
+
+Registering the matrix device with the VFIO mediated device
+framework will create the following sysfs structures:
+
+/sys/devices/vfio_ap
+... [matrix]
+...... [mdev_supported_types]
+......... [vfio_ap-passthrough]
+............ create
+
+To create a mediated device for the AP matrix device, write a UUID
+to the create file:
+
+	uuidgen > create
+
+A symbolic link to the mediated device's directory will be created in the
+devices subdirectory named after the generated $uuid:
+
+/sys/devices/vfio_ap
+... [matrix]
+...... [mdev_supported_types]
+......... [vfio_ap-passthrough]
+............ [devices]
+............... [$uuid]
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Reviewed-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Reviewed-by: Harald Freudenberger <freude@linux.vnet.ibm.com>
 ---
- arch/s390/include/asm/ap.h   |    7 +++++++
- drivers/s390/crypto/ap_bus.c |    6 ++++++
- 2 files changed, 13 insertions(+), 0 deletions(-)
+ MAINTAINERS                           |    1 +
+ drivers/s390/crypto/Makefile          |    2 +-
+ drivers/s390/crypto/vfio_ap_drv.c     |    9 +++
+ drivers/s390/crypto/vfio_ap_ops.c     |  105 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |   18 ++++++
+ 5 files changed, 134 insertions(+), 1 deletions(-)
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
 
-diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-index cfce683..1df6b59 100644
---- a/arch/s390/include/asm/ap.h
-+++ b/arch/s390/include/asm/ap.h
-@@ -120,4 +120,11 @@ struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
- 					 struct ap_qirq_ctrl qirqctrl,
- 					 void *ind);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f129253..2af3815 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11886,6 +11886,7 @@ F:	arch/s390/include/asm/kvm/kvm-ap.h
+ F:	arch/s390/kvm/kvm-ap.c
+ F:	drivers/s390/crypto/vfio_ap_drv.c
+ F:	drivers/s390/crypto/vfio_ap_private.h
++F:	drivers/s390/crypto/vfio_ap_ops.c
  
-+/**
-+ * ap_instructions_installed() - Tests whether AP instructions are installed
-+ *
-+ * Returns 1 if the AP instructions are installed, otherwise; returns 0
-+ */
-+int ap_instructions_installed(void);
+ S390 ZFCP DRIVER
+ M:	Steffen Maier <maier@linux.vnet.ibm.com>
+diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+index 48e466e..8d36b05 100644
+--- a/drivers/s390/crypto/Makefile
++++ b/drivers/s390/crypto/Makefile
+@@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
+ obj-$(CONFIG_PKEY) += pkey.o
+ 
+ # adjunct processor matrix
+-vfio_ap-objs := vfio_ap_drv.o
++vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
+ obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+index 459e595..b138cb0 100644
+--- a/drivers/s390/crypto/vfio_ap_drv.c
++++ b/drivers/s390/crypto/vfio_ap_drv.c
+@@ -122,11 +122,20 @@ int __init vfio_ap_init(void)
+ 		return ret;
+ 	}
+ 
++	ret = vfio_ap_mdev_register(ap_matrix);
++	if (ret) {
++		ap_driver_unregister(&vfio_ap_drv);
++		vfio_ap_matrix_dev_destroy(ap_matrix);
 +
- #endif /* _ASM_S390_AP_H_ */
-diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-index 48d55dc..089b1cf 100644
---- a/drivers/s390/crypto/ap_bus.c
-+++ b/drivers/s390/crypto/ap_bus.c
-@@ -211,6 +211,12 @@ int ap_query_configuration(struct ap_config_info *info)
++		return ret;
++	}
++
+ 	return 0;
  }
- EXPORT_SYMBOL(ap_query_configuration);
  
-+int ap_instructions_installed(void)
-+{
-+	return (ap_instructions_available() == 0);
-+}
-+EXPORT_SYMBOL(ap_instructions_installed);
+ void __exit vfio_ap_exit(void)
+ {
++	vfio_ap_mdev_unregister(ap_matrix);
+ 	ap_driver_unregister(&vfio_ap_drv);
+ 	vfio_ap_matrix_dev_destroy(ap_matrix);
+ }
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+new file mode 100644
+index 0000000..4292a5e
+--- /dev/null
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -0,0 +1,105 @@
++/*
++ * Adjunct processor matrix VFIO device driver callbacks.
++ *
++ * Copyright IBM Corp. 2017
++ * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
++ *
++ */
++#include <linux/string.h>
++#include <linux/vfio.h>
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/ctype.h>
 +
- /**
-  * ap_init_configuration(): Allocate and query configuration array.
-  */
++#include "vfio_ap_private.h"
++
++#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
++#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
++
++static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
++{
++	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
++
++	ap_matrix->available_instances--;
++
++	return 0;
++}
++
++static int vfio_ap_mdev_remove(struct mdev_device *mdev)
++{
++	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
++
++	ap_matrix->available_instances++;
++
++	return 0;
++}
++
++static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
++{
++	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
++}
++
++MDEV_TYPE_ATTR_RO(name);
++
++static ssize_t available_instances_show(struct kobject *kobj,
++					struct device *dev, char *buf)
++{
++	struct ap_matrix *ap_matrix;
++
++	ap_matrix = to_ap_matrix(dev);
++
++	return sprintf(buf, "%d\n", ap_matrix->available_instances);
++}
++
++MDEV_TYPE_ATTR_RO(available_instances);
++
++static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
++			       char *buf)
++{
++	return sprintf(buf, "%s\n", VFIO_DEVICE_API_AP_STRING);
++}
++
++MDEV_TYPE_ATTR_RO(device_api);
++
++static struct attribute *vfio_ap_mdev_type_attrs[] = {
++	&mdev_type_attr_name.attr,
++	&mdev_type_attr_device_api.attr,
++	&mdev_type_attr_available_instances.attr,
++	NULL,
++};
++
++static struct attribute_group vfio_ap_mdev_hwvirt_type_group = {
++	.name = VFOP_AP_MDEV_TYPE_HWVIRT,
++	.attrs = vfio_ap_mdev_type_attrs,
++};
++
++static struct attribute_group *vfio_ap_mdev_type_groups[] = {
++	&vfio_ap_mdev_hwvirt_type_group,
++	NULL,
++};
++
++static const struct mdev_parent_ops vfio_ap_matrix_ops = {
++	.owner			= THIS_MODULE,
++	.supported_type_groups	= vfio_ap_mdev_type_groups,
++	.create			= vfio_ap_mdev_create,
++	.remove			= vfio_ap_mdev_remove,
++};
++
++int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
++{
++	int ret;
++
++	ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
++	if (ret)
++		return ret;
++
++	ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
++
++	return 0;
++}
++
++void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
++{
++	ap_matrix->available_instances--;
++	mdev_unregister_device(&ap_matrix->device);
++}
+diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+index 21f3697..f11e5e1 100644
+--- a/drivers/s390/crypto/vfio_ap_private.h
++++ b/drivers/s390/crypto/vfio_ap_private.h
+@@ -9,14 +9,32 @@
+ #define _VFIO_AP_PRIVATE_H_
+ 
+ #include <linux/types.h>
++#include <linux/device.h>
++#include <linux/mdev.h>
+ 
+ #include "ap_bus.h"
+ 
+ #define VFIO_AP_MODULE_NAME "vfio_ap"
+ #define VFIO_AP_DRV_NAME "vfio_ap"
++#define VFIO_AP_MATRIX_MODULE_NAME "vfio_ap_matrix"
++/**
++ * There must be one mediated matrix device per guest. If every APQN is assigned
++ * to a guest, then the maximum number of guests with a unique APQN assigned
++ * would be 255 adapters x 255 domains = 72351 guests.
++ */
++#define AP_MATRIX_MAX_AVAILABLE_INSTANCES 72351
+ 
+ struct ap_matrix {
+ 	struct device device;
++	int available_instances;
+ };
+ 
++static inline struct ap_matrix *to_ap_matrix(struct device *dev)
++{
++	return container_of(dev, struct ap_matrix, device);
++}
++
++extern int vfio_ap_mdev_register(struct ap_matrix *ap_matrix);
++extern void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix);
++
+ #endif /* _VFIO_AP_PRIVATE_H_ */
 -- 
 1.7.1
