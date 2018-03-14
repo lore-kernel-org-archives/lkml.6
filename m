@@ -1,55 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753275AbeCNEk5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:40:57 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:40503 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753245AbeCNEk4 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 14 Mar 2018 00:40:56 -0400
-Date: Wed, 14 Mar 2018 12:40:45 +0800
-From: joeyli <jlee@suse.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: David Howells <dhowells@redhat.com>, linux-fs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] MODSIGN: print appropriate status message when
- getting UEFI certificates list
-Message-ID: <20180314044045.GC19718@linux-l9pv.suse>
-References: <20180313103559.13032-1-jlee@suse.com>
- <20180313103559.13032-3-jlee@suse.com>
- <1520961470.5360.18.camel@HansenPartnership.com>
+        id S1753265AbeCNE5z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:57:55 -0400
+Received: from ozlabs.org ([103.22.144.67]:36101 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751983AbeCNE5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 00:57:53 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 14 Mar 2018 15:57:25 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the syscalls tree
+Message-ID: <20180314155725.581ee5ca@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520961470.5360.18.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gU.G4dORfkS/3tOR+UOSJXT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+--Sig_/gU.G4dORfkS/3tOR+UOSJXT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your review.
+Hi Dominik,
 
-On Tue, Mar 13, 2018 at 10:17:50AM -0700, James Bottomley wrote:
-> On Tue, 2018-03-13 at 18:35 +0800, Lee, Chun-Yi wrote:
-> > When getting certificates list from UEFI variable, the original error
-> > message shows the state number from UEFI firmware. It's hard to be
-> > read by human. This patch changed the error message to show the
-> > appropriate string.
-> > 
-> > The message will be showed as:
-> > 
-> > [    0.788529] MODSIGN: Couldn't get UEFI MokListRT: EFI_NOT_FOUND
-> > [    0.788537] MODSIGN: Couldn't get UEFI MokListXRT: EFI_NOT_FOUND
-> 
-> I keep saying this, but these error messages need to be gated on the
-> presence of shim for the non-shim secure boot case.  You can't assume
-> the shim variables are there because they won't be in the case of a
-> fully owned system.
+After merging the syscalls tree, today's linux-next build (x86_64
+allnoconfig) failed like this:
 
-I will change the message to pr_debug.
 
-Thanks a lot!
-Joey Lee 
+Caused by commit
+
+  3e334170db85 ("mm: use do_futex() instead of sys_futex() in mm_release()")
+
+CONFIG_FUTEX is not set for this build.  Normally sys_futex() would be
+the one from kernel/sys_ni.c in this case ...
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gU.G4dORfkS/3tOR+UOSJXT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoq7UACgkQAVBC80lX
+0GwuJAgAhwG3673bd5mc6+epyWlUSEaO4HVxJg/84JkfrjTcj+zrxq7qOCLvOITw
+Tp788cH7/qez2wmF9AaI2eSLsWACaY0K921w/HH/3qF8a7CPs0AWxcI+d1+HE2p5
+DILB+0Sae0JyRDpRRiGHu2NRbN+tvX64yWaY5UCWeEDOvOR32mGUBG2hNv53CLIz
+SQJTzDgV5q9UnePlVYu+N6xyzuoMCDikqwnVygVOKN9SHLptdFVuMjJOAtln9hk7
+s3JA7IUJRFSTGtVenPtfAYrWb8bCFl8LgBCEmshr4RQPjXGW+t0hwztyet6ryJe5
+othpHvmfcW38hVOO8Dajbrd7PbB7Kw==
+=iYWF
+-----END PGP SIGNATURE-----
+
+--Sig_/gU.G4dORfkS/3tOR+UOSJXT--
