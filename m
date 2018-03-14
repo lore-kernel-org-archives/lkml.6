@@ -1,336 +1,150 @@
-Return-Path: <mhiramat@kernel.org>
-X-Google-Smtp-Source: AG47ELuNhNChuPPqTZSjhSjbfJNKpZoQH5+N0rdCheww9KearvIZqz/fXboJwv/ViaZrChoLEFlN
-ARC-Seal: i=1; a=rsa-sha256; t=1521035297; cv=none;
+Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AG47ELtB8VEIfLIVrygGrd0pbCAq9QG4yyNfMp2l16GOTWpJjSDN1p8kzJ2KhS2AqLirnb4usAyF
+ARC-Seal: i=1; a=rsa-sha256; t=1521040225; cv=none;
         d=google.com; s=arc-20160816;
-        b=rmkIaR6uIPpGOq93U+I/olYxj+/C0joao5tzds6wbcLb3INF8e3rkOjUVbUaB0/5gm
-         pu9n6EQYQQto8JqlJLxCukE56jkqskFO24lyU6TdrzDai0pGsq6kL4i1EbwvIQ47QsZO
-         BRfVfgPKMNFmuQEai2JzYD7SvujvNPkk+O+NpKlENUnOI1+QGOO3RNEGTsJVnEGliGox
-         DkEcteJJ8SFx/Nn1pFLC7GVdPuBdKqmOPfXDYu/K4T+Zg9ww5o6btLy++rwPXC9NN4iM
-         54dOMuZzk0MvQVCfsk08lAILHOlKCdpZPUrFKYh07zQlc9l9OELfV0mNIX8+5mhssaYv
-         2Vjw==
+        b=e0tk6sYseZmn/Ee6t2ihcO3TupoJQVBCY7I7/HcD4Lvt1zzaYdpemMi3BeYVZ3K5tf
+         s2tPRrECw7uqjzF9y9TFCwQt4DFZucaMaIPuobk9DCQVBW+w0UoYXnfDqFI5OmffO97F
+         Rk94taSNOZNEoRXRKXu14MPTFuFbcb891+oyG3QE3B8q2VJtNBT+w1ooXerFIsVCcZWS
+         JcpKGxJMISHUPOdHbfeqYTwp6E20rozIEmGUDLYj+PA908tLcZs7CBlfhoUO1rq7/qVf
+         v3l/aEZwrkF9SF9YFClHgl8/fp3vmt/+Xd/xRRFcJHLIaHrQFmSTABqCeaRlx0YMuiEy
+         CjUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=message-id:content-language:content-transfer-encoding:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=Q72wyokvCOvM381Exo0/cTRF1VQ9a8nFa5zNNtSbqE4=;
-        b=wKBi7/LCcxZaa5pFCz8Qq4IEHGWLYoKp8kfySkyvxukniTtMrapHSwypdhp0GYLKqk
-         rVwhLZKqKZJAAc0EVgt8cjwfXrDNAPSUJCOTwedbe+GYbtG+WPiXW6xlmeDlMBbt+rp9
-         zf8wv9y7udRgJoH607B0WNHmHbs62So7QkcWRDEQjxkf8jkaROd26lkLhCwU+qfrAxdi
-         CKY0ScArKoRtAsslYuDaDjbYF7UOJtx+0pCrIKMiWh1pT9EhpVfCVtCzHfQKVZ41aL3Q
-         aIRc8wUNEOslISHtFoBwkZbIvmq9KDClRsaMzp9uiXmIjz7iGC4oxUpbqOnjlbLXbifK
-         bhkQ==
+        bh=bGF2rDxQ06JOZ4hcrEC6ZxOcGT8sJvL4xJ8Lqa8TR2c=;
+        b=W5ghTg0fqEW+ztHo+9sgDEj7BzGekKGOOI5qCXiM/nqkw3zRcrOXRKBUIS5kXhDHRV
+         38rymLDAGTq+6lYZ4IHqvb9wlQItXTutTh7fO1llq6DpPLFNBkZE44gfCZbth49mCFxa
+         l6pes+rr0etoBMsg3ziHRpjaDa0P3dpTzOIAVPJZ9jMi6/114L6sX/9Z1wvi+DwfHbjK
+         OllKPSXrvoUfatYi0bp7WVQ2mYKGYJPQFiz2aTFHkiIbp/pzILL9rrc5o5xYByz3TTGg
+         k3e1MOB/FF0+48MEGJNp44eR6N6kmxouE48Qd9kWM+gw3wSvyCJxe+jt9lojzOUHvegu
+         D+Dw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mhiramat@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mhiramat@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FDD208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Wed, 14 Mar 2018 22:48:09 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
- acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
- alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
- corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
- huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
- jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
- kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
- kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
- milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
- naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
- rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
- willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Subject: Re: [PATCH 5/8] trace_uprobe: Support SDT markers having reference
  count (semaphore)
-Message-Id: <20180314224809.5ee4c8834bb366faa398e342@kernel.org>
-In-Reply-To: <20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
+        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
+        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
-	<20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+ <20180313125603.19819-6-ravi.bangoria@linux.vnet.ibm.com>
+ <20180314224809.5ee4c8834bb366faa398e342@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 20:42:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180314224809.5ee4c8834bb366faa398e342@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031415-0008-0000-0000-000004DD6B61
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031415-0009-0000-0000-00001E70707E
+Message-Id: <fabfad9d-a75e-0b18-1558-ce738b46e538@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140171
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827101403620100?=
-X-GMAIL-MSGID: =?utf-8?q?1594921108009813641?=
+X-GMAIL-MSGID: =?utf-8?q?1594926276047362324?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Ravi,
+Hi Masami,
 
-On Tue, 13 Mar 2018 18:26:00 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+On 03/14/2018 07:18 PM, Masami Hiramatsu wrote:
+> Hi Ravi,
+>
+> On Tue, 13 Mar 2018 18:26:00 +0530
+> Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+>
+>> Userspace Statically Defined Tracepoints[1] are dtrace style markers
+>> inside userspace applications. These markers are added by developer at
+>> important places in the code. Each marker source expands to a single
+>> nop instruction in the compiled code but there may be additional
+>> overhead for computing the marker arguments which expands to couple of
+>> instructions. In case the overhead is more, execution of it can be
+>> ommited by runtime if() condition when no one is tracing on the marker:
+>>
+>>     if (reference_counter > 0) {
+>>         Execute marker instructions;
+>>     }
+>>
+>> Default value of reference counter is 0. Tracer has to increment the
+>> reference counter before tracing on a marker and decrement it when
+>> done with the tracing.
+>>
+>> Implement the reference counter logic in trace_uprobe, leaving core
+>> uprobe infrastructure as is, except one new callback from uprobe_mmap()
+>> to trace_uprobe.
+>>
+>> trace_uprobe definition with reference counter will now be:
+>>
+>>   <path>:<offset>[(ref_ctr_offset)]
+> Would you mean 
+> <path>:<offset>(<ref_ctr_offset>)
+> ?
+>
+> or use "[]" for delimiter?
 
-> Userspace Statically Defined Tracepoints[1] are dtrace style markers
-> inside userspace applications. These markers are added by developer at
-> important places in the code. Each marker source expands to a single
-> nop instruction in the compiled code but there may be additional
-> overhead for computing the marker arguments which expands to couple of
-> instructions. In case the overhead is more, execution of it can be
-> ommited by runtime if() condition when no one is tracing on the marker:
-> 
->     if (reference_counter > 0) {
->         Execute marker instructions;
->     }
-> 
-> Default value of reference counter is 0. Tracer has to increment the
-> reference counter before tracing on a marker and decrement it when
-> done with the tracing.
-> 
-> Implement the reference counter logic in trace_uprobe, leaving core
-> uprobe infrastructure as is, except one new callback from uprobe_mmap()
-> to trace_uprobe.
-> 
-> trace_uprobe definition with reference counter will now be:
-> 
->   <path>:<offset>[(ref_ctr_offset)]
+[] indicates optional field.
 
-Would you mean 
-<path>:<offset>(<ref_ctr_offset>)
-?
+> Since,
+>
+>> @@ -454,6 +458,26 @@ static int create_trace_uprobe(int argc, char **argv)
+>>  		goto fail_address_parse;
+>>  	}
+>>  
+>> +	/* Parse reference counter offset if specified. */
+>> +	rctr = strchr(arg, '(');
+> This seems you choose "()" for delimiter.
 
-or use "[]" for delimiter?
+Correct.
 
-Since,
+>> +	if (rctr) {
+>> +		rctr_end = strchr(arg, ')');
+> 		rctr_end = strchr(rctr, ')');
+>
+> ? since we are sure rctr != NULL.
 
-> @@ -454,6 +458,26 @@ static int create_trace_uprobe(int argc, char **argv)
->  		goto fail_address_parse;
->  	}
->  
-> +	/* Parse reference counter offset if specified. */
-> +	rctr = strchr(arg, '(');
+Yes. we can use rctr instead of arg.
 
-This seems you choose "()" for delimiter.
+>> +		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
+>> +			ret = -EINVAL;
+>> +			pr_info("Invalid reference counter offset.\n");
+>> +			goto fail_address_parse;
+>> +		}
+>
+> Also
+>
+>> +
+>> +		*rctr++ = 0;
+>> +		*rctr_end = 0;
+> Please consider to use '\0' for nul;
 
-> +	if (rctr) {
-> +		rctr_end = strchr(arg, ')');
+Sure. Will change it.
 
-		rctr_end = strchr(rctr, ')');
-
-? since we are sure rctr != NULL.
-
-> +		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
-> +			ret = -EINVAL;
-> +			pr_info("Invalid reference counter offset.\n");
-> +			goto fail_address_parse;
-> +		}
-
-
-Also
-
-> +
-> +		*rctr++ = 0;
-> +		*rctr_end = 0;
-
-Please consider to use '\0' for nul;
-
-Thanks,
-
-
-
-> +		ret = kstrtoul(rctr, 0, &ref_ctr_offset);
-> +		if (ret) {
-> +			pr_info("Invalid reference counter offset.\n");
-> +			goto fail_address_parse;
-> +		}
-> +	}
-> +
-> +	/* Parse uprobe offset. */
->  	ret = kstrtoul(arg, 0, &offset);
->  	if (ret)
->  		goto fail_address_parse;
-> @@ -488,6 +512,7 @@ static int create_trace_uprobe(int argc, char **argv)
->  		goto fail_address_parse;
->  	}
->  	tu->offset = offset;
-> +	tu->ref_ctr_offset = ref_ctr_offset;
->  	tu->inode = inode;
->  	tu->filename = kstrdup(filename, GFP_KERNEL);
->  
-> @@ -620,6 +645,8 @@ static int probes_seq_show(struct seq_file *m, void *v)
->  			break;
->  		}
->  	}
-> +	if (tu->ref_ctr_offset)
-> +		seq_printf(m, "(0x%lx)", tu->ref_ctr_offset);
->  
->  	for (i = 0; i < tu->tp.nr_args; i++)
->  		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
-> @@ -894,6 +921,139 @@ static void uretprobe_trace_func(struct trace_uprobe *tu, unsigned long func,
->  	return trace_handle_return(s);
->  }
->  
-> +static bool sdt_valid_vma(struct trace_uprobe *tu, struct vm_area_struct *vma)
-> +{
-> +	unsigned long vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-> +
-> +	return tu->ref_ctr_offset &&
-> +		vma->vm_file &&
-> +		file_inode(vma->vm_file) == tu->inode &&
-> +		vma->vm_flags & VM_WRITE &&
-> +		vma->vm_start <= vaddr &&
-> +		vma->vm_end > vaddr;
-> +}
-> +
-> +static struct vm_area_struct *
-> +sdt_find_vma(struct mm_struct *mm, struct trace_uprobe *tu)
-> +{
-> +	struct vm_area_struct *tmp;
-> +
-> +	for (tmp = mm->mmap; tmp != NULL; tmp = tmp->vm_next)
-> +		if (sdt_valid_vma(tu, tmp))
-> +			return tmp;
-> +
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * Reference count gate the invocation of probe. If present,
-> + * by default reference count is 0. One needs to increment
-> + * it before tracing the probe and decrement it when done.
-> + */
-> +static int
-> +sdt_update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
-> +{
-> +	void *kaddr;
-> +	struct page *page;
-> +	struct vm_area_struct *vma;
-> +	int ret = 0;
-> +	unsigned short orig = 0;
-> +
-> +	if (vaddr == 0)
-> +		return -EINVAL;
-> +
-> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
-> +		FOLL_FORCE | FOLL_WRITE, &page, &vma, NULL);
-> +	if (ret <= 0)
-> +		return ret;
-> +
-> +	kaddr = kmap_atomic(page);
-> +	memcpy(&orig, kaddr + (vaddr & ~PAGE_MASK), sizeof(orig));
-> +	orig += d;
-> +	memcpy(kaddr + (vaddr & ~PAGE_MASK), &orig, sizeof(orig));
-> +	kunmap_atomic(kaddr);
-> +
-> +	put_page(page);
-> +	return 0;
-> +}
-> +
-> +static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
-> +{
-> +	struct uprobe_map_info *info;
-> +	struct vm_area_struct *vma;
-> +	unsigned long vaddr;
-> +
-> +	uprobe_start_dup_mmap();
-> +	info = uprobe_build_map_info(tu->inode->i_mapping,
-> +				tu->ref_ctr_offset, false);
-> +	if (IS_ERR(info))
-> +		goto out;
-> +
-> +	while (info) {
-> +		down_write(&info->mm->mmap_sem);
-> +
-> +		vma = sdt_find_vma(info->mm, tu);
-> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-> +		sdt_update_ref_ctr(info->mm, vaddr, 1);
-> +
-> +		up_write(&info->mm->mmap_sem);
-> +		mmput(info->mm);
-> +		info = uprobe_free_map_info(info);
-> +	}
-> +
-> +out:
-> +	uprobe_end_dup_mmap();
-> +}
-> +
-> +/* Called with down_write(&vma->vm_mm->mmap_sem) */
-> +void trace_uprobe_mmap_callback(struct vm_area_struct *vma)
-> +{
-> +	struct trace_uprobe *tu;
-> +	unsigned long vaddr;
-> +
-> +	if (!(vma->vm_flags & VM_WRITE))
-> +		return;
-> +
-> +	mutex_lock(&uprobe_lock);
-> +	list_for_each_entry(tu, &uprobe_list, list) {
-> +		if (!sdt_valid_vma(tu, vma) ||
-> +		    !trace_probe_is_enabled(&tu->tp))
-> +			continue;
-> +
-> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-> +		sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
-> +	}
-> +	mutex_unlock(&uprobe_lock);
-> +}
-> +
-> +static void sdt_decrement_ref_ctr(struct trace_uprobe *tu)
-> +{
-> +	struct vm_area_struct *vma;
-> +	unsigned long vaddr;
-> +	struct uprobe_map_info *info;
-> +
-> +	uprobe_start_dup_mmap();
-> +	info = uprobe_build_map_info(tu->inode->i_mapping,
-> +				tu->ref_ctr_offset, false);
-> +	if (IS_ERR(info))
-> +		goto out;
-> +
-> +	while (info) {
-> +		down_write(&info->mm->mmap_sem);
-> +
-> +		vma = sdt_find_vma(info->mm, tu);
-> +		vaddr = vma_offset_to_vaddr(vma, tu->ref_ctr_offset);
-> +		sdt_update_ref_ctr(info->mm, vaddr, -1);
-> +
-> +		up_write(&info->mm->mmap_sem);
-> +		mmput(info->mm);
-> +		info = uprobe_free_map_info(info);
-> +	}
-> +
-> +out:
-> +	uprobe_end_dup_mmap();
-> +}
-> +
->  typedef bool (*filter_func_t)(struct uprobe_consumer *self,
->  				enum uprobe_filter_ctx ctx,
->  				struct mm_struct *mm);
-> @@ -939,6 +1099,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
->  	if (ret)
->  		goto err_buffer;
->  
-> +	if (tu->ref_ctr_offset)
-> +		sdt_increment_ref_ctr(tu);
-> +
->  	return 0;
->  
->   err_buffer:
-> @@ -979,6 +1142,9 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
->  
->  	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
->  
-> +	if (tu->ref_ctr_offset)
-> +		sdt_decrement_ref_ctr(tu);
-> +
->  	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
->  	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
->  
-> @@ -1423,6 +1589,8 @@ static __init int init_uprobe_trace(void)
->  	/* Profile interface */
->  	trace_create_file("uprobe_profile", 0444, d_tracer,
->  				    NULL, &uprobe_profile_ops);
-> +
-> +	uprobe_mmap_callback = trace_uprobe_mmap_callback;
->  	return 0;
->  }
->  
-> -- 
-> 1.8.3.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks for the review :)
+Ravi
