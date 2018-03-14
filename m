@@ -1,49 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeCNPHX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:07:23 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45745 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeCNPHW (ORCPT
+        id S1751870AbeCNPIB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:08:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51483 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbeCNPIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:07:22 -0400
-X-Google-Smtp-Source: AG47ELtWA8IaI3gJmTTmUI0alrLcgTeHP8oY9keW+pl1aypkWMp6INR9UahJHw9BGW8ZJ9WvSgTE1w==
-Date: Thu, 15 Mar 2018 00:07:13 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: Re: [PATCHv3 0/2] zsmalloc/zram: drop zram's max_zpage_size
-Message-ID: <20180314150713.GA144952@rodete-laptop-imager.corp.google.com>
-References: <20180314081833.1096-1-sergey.senozhatsky@gmail.com>
+        Wed, 14 Mar 2018 11:08:00 -0400
+Date: Wed, 14 Mar 2018 16:07:43 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+cc: x86@kernel.org, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
+        anshuman.gupta@intel.com, andriy.shevchenko@linux.intel.com,
+        linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+Subject: Re: [PATCH v2] x86: i8237: Register based on FADT legacy boot flag
+In-Reply-To: <1521004627-30329-1-git-send-email-rajneesh.bhardwaj@intel.com>
+Message-ID: <alpine.DEB.2.21.1803141603190.2481@nanos.tec.linutronix.de>
+References: <1521004627-30329-1-git-send-email-rajneesh.bhardwaj@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314081833.1096-1-sergey.senozhatsky@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 05:18:31PM +0900, Sergey Senozhatsky wrote:
-> Hello,
-> 
-> 	ZRAM's max_zpage_size is a bad thing. It forces zsmalloc to
-> store normal objects as huge ones, which results in bigger zsmalloc
-> memory usage. Drop it and use actual zsmalloc huge-class value when
-> decide if the object is huge or not.
-> 
-> v3:
-> - add pool param to zs_huge_class_size() [Minchan]
-> 
-> Sergey Senozhatsky (2):
->   zsmalloc: introduce zs_huge_class_size() function
->   zram: drop max_zpage_size and use zs_huge_class_size()
- 
-Both looks good to me.
+On Wed, 14 Mar 2018, Rajneesh Bhardwaj wrote:
+>  static int __init i8237A_init_ops(void)
+>  {
+> +	/*
+> +	 * From SKL PCH onwards, the port 0x61 bit 4 would stop toggle and
 
-Acked-by: Minchan Kim <minchan@kernel.org>
+s/would stop toggle/stops toggling/
 
-Thanks.
+You are describing a fact, right?
+
+> +	 * the legacy DMA device is removed in which the I/O ports (81h-83h,
+> +	 * 87h, 89h-8Bh, 8Fh)  related to it are removed as well. All
+> +	 * removed ports must return 0xff for a inb() request.
+> +	 *
+> +	 * Note: DMA_PAGE_2 (port 0x81) should not be checked for detecting
+> +	 * the presence of DMA device since it may be used by BIOS to decode
+> +	 * LPC traffic for POST codes. Original LPC only decodes one byte of
+> +	 * port 0x80 but some BIOS may choose to enhance PCH LPC port 0x8x
+> +	 * decoding.
+> +	 */
+> +	if (dma_inb(DMA_PAGE_0) == 0xFF)
+> +		return -ENODEV;
+> +
+> +	/*
+> +	 * It should be OK to not load this driver as newer SoC may not
+
+Should? Is this based on facts or hope?
+
+> +	 * support 8237 DMA or bus mastering from LPC. Platform firmware
+> +	 * must announce the support for such legacy devices via
+> +	 * ACPI_FADT_LEGACY_DEVICES field in FADT table.
+> +	 */
+> +	if (!x86_platform.legacy.devices.pnpbios && dmi_get_bios_year() >= 2017)
+
+Please use arch_pnpbios_disabled() and explain why you need that year
+check. If there is no pnpbios then why is the year interesting and why
+would anyone trust something which comes from BIOS?
+
+Thanks,
+
+	tglx
