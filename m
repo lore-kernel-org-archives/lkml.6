@@ -1,79 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeCNPQG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:16:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51506 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751348AbeCNPQD (ORCPT
+        id S1751537AbeCNPTa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:19:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50654 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751362AbeCNPT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:16:03 -0400
-Date: Wed, 14 Mar 2018 16:15:58 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] x86/hyper-v: allocate and use Virtual Processor
- Assist Pages
-In-Reply-To: <20180309140249.2840-5-vkuznets@redhat.com>
-Message-ID: <alpine.DEB.2.21.1803141611300.2481@nanos.tec.linutronix.de>
-References: <20180309140249.2840-1-vkuznets@redhat.com> <20180309140249.2840-5-vkuznets@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 14 Mar 2018 11:19:28 -0400
+Date: Wed, 14 Mar 2018 14:03:43 +0200
+From: Yuval Shaia <yuval.shaia@oracle.com>
+To: Liran Alon <liran.alon@oracle.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, idan.brown@oracle.com,
+        sharon.s.liu@oracle.com
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+Message-ID: <20180314120342.GA15750@yuvallap>
+References: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
+ <20180313161345.GC4023@yuvallap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313161345.GC4023@yuvallap>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803140173
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
-> @@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
->  	struct hv_reenlightenment_control re_ctrl;
->  	unsigned int new_cpu;
->  
-> +	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
-> +		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
-> +		vfree(hv_vp_assist_page[cpu]);
-> +		hv_vp_assist_page[cpu] = NULL;
+On Tue, Mar 13, 2018 at 06:13:45PM +0200, Yuval Shaia wrote:
+> On Tue, Mar 13, 2018 at 05:07:22PM +0200, Liran Alon wrote:
+> > Before this commit, dev_forward_skb() always cleared packet's
+> > per-network-namespace info. Even if the packet doesn't cross
+> > network namespaces.
+> > 
+> > The comment above dev_forward_skb() describes that this is done
+> > because the receiving device may be in another network namespace.
+> > However, this case can easily be tested for and therefore we can
+> > scrub packet's per-network-namespace info only when receiving device
+> > is indeed in another network namespace.
+> > 
+> > Therefore, this commit changes ____dev_forward_skb() to tell
+> > skb_scrub_packet() that skb has crossed network-namespace only in case
+> > transmitting device (skb->dev) network namespace is different then
+> > receiving device (dev) network namespace.
+> > 
+> > An example of a netdev that use skb_forward_skb() is veth.
+> > Thus, before this commit a packet transmitted from one veth peer to
+> > another when both veth peers are on same network namespace will lose
+> > it's skb->mark. The bug could easily be demonstrated by the following:
+> > 
+> > ip netns add test
+> > ip netns exec test bash
+> > ip link add veth-a type veth peer name veth-b
+> > ip link set veth-a up
+> > ip link set veth-b up
+> > ip addr add dev veth-a 12.0.0.1/24
+> > tc qdisc add dev veth-a root handle 1 prio
+> > tc qdisc add dev veth-b ingress
+> > tc filter add dev veth-a parent 1: u32 match u32 0 0 action skbedit mark 1337
+> > tc filter add dev veth-b parent ffff: basic match 'meta(nf_mark eq 1337)' action simple "skb->mark 1337!"
+> > dmesg -C
+> > ping 12.0.0.2
+> > dmesg
+> > 
+> > Before this change, the above will print nothing to dmesg.
+> > After this change, "skb->mark 1337!" will be printed as necessary.
+> 
+> Hi Liran,
+> 
+> > 
+> > Signed-off-by: Liran Alon <liran.alon@oracle.com>
+> > Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+> > Signed-off-by: Yuval Shaia <yuval.shaia@oracle.com>
+> 
+> I did not earned the credits for SOB, only r-b.
 
-So this is freed before the CPU is actually dead. And this runs in
-preemtible context. Is the wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0); enough to
-prevent eventual users of the assist page on the outgoing CPU from
-accessing it?
+Had an offlist conversation with Liran,
+Turns out that this SOB is ok.
 
->  	if (hv_reenlightenment_cb == NULL)
->  		return 0;
->  
-> @@ -241,6 +267,13 @@ void hyperv_init(void)
->  	if (!hv_vp_index)
->  		return;
->  
-> +	hv_vp_assist_page = kcalloc(num_possible_cpus(),
-> +				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
-> +	if (!hv_vp_assist_page) {
-> +		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
-> +		return;
-> +	}
-> +
->  	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
->  			      hv_cpu_init, hv_cpu_die) < 0)
->  		goto free_vp_index;
+Yuval
 
-Shouldn't you free hv_vp_assist_page in the error path?
-
-> +extern struct hv_vp_assist_page **hv_vp_assist_page;
-> +
-> +static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-> +{
-> +	return hv_vp_assist_page[cpu];
-
-Shouldn't that check hv_vp_assist_page != NULL?
-
-Thanks,
-
-	tglx
+> 
+> Yuval
+> 
+> > ---
+> >  include/linux/netdevice.h | 2 +-
+> >  net/core/dev.c            | 6 +++---
+> >  2 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index 5eef6c8e2741..5908f1e31ee2 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -3371,7 +3371,7 @@ static __always_inline int ____dev_forward_skb(struct net_device *dev,
+> >  		return NET_RX_DROP;
+> >  	}
+> >  
+> > -	skb_scrub_packet(skb, true);
+> > +	skb_scrub_packet(skb, !net_eq(dev_net(dev), dev_net(skb->dev)));
+> >  	skb->priority = 0;
+> >  	return 0;
+> >  }
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index 2cedf520cb28..087787dd0a50 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -1877,9 +1877,9 @@ int __dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
+> >   * start_xmit function of one device into the receive queue
+> >   * of another device.
+> >   *
+> > - * The receiving device may be in another namespace, so
+> > - * we have to clear all information in the skb that could
+> > - * impact namespace isolation.
+> > + * The receiving device may be in another namespace.
+> > + * In that case, we have to clear all information in the
+> > + * skb that could impact namespace isolation.
+> >   */
+> >  int dev_forward_skb(struct net_device *dev, struct sk_buff *skb)
+> >  {
+> > -- 
+> > 1.9.1
+> > 
