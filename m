@@ -1,67 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCNSyB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45580 "EHLO mail.kernel.org"
+        id S1751595AbeCNSzM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:55:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751985AbeCNSx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:53:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACC52077A
+        id S1751366AbeCNSzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:55:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF51D2077A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 14 Mar 2018 15:53:55 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: John Garry <john.garry@huawei.com>
-Cc: peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com, wcohen@redhat.com,
-        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com
-Subject: Re: [PATCH] perf vendor events: fix processing for xfs
-Message-ID: <20180314185355.GC27335@kernel.org>
-References: <1521047452-28565-1-git-send-email-john.garry@huawei.com>
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 14 Mar 2018 13:55:08 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Desnes Augusto Nunes do =?iso-8859-1?Q?Ros=E1rio?=
+        <desnesn@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ruscur@russell.cc, aik@ozlabs.ru, david@gibson.dropbear.id.au,
+        fbarrat@linux.vnet.ibm.com, brking@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2, pci] pci: Addition of
+ PCI_DEV_FLAGS_QUIET_PCI_REALIGN attribute to the PCI subsystem
+Message-ID: <20180314185508.GE179719@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180314163455.15854-1-desnesn@linux.vnet.ibm.com>
+ <20180314163455.15854-2-desnesn@linux.vnet.ibm.com>
+ <20180314180642.GC179719@bhelgaas-glaptop.roam.corp.google.com>
+ <30c63477-620b-3f8b-82df-fd1e34cd99b8@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1521047452-28565-1-git-send-email-john.garry@huawei.com>
-X-Url: http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <30c63477-620b-3f8b-82df-fd1e34cd99b8@linux.vnet.ibm.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Mar 15, 2018 at 01:10:52AM +0800, John Garry escreveu:
-> In the recently introduced support for vendor subdirectory,
-> the checking for directory entries under xfs (or any other fs
-> which does not support dirent.d_type) is missing the check
-> for links for current and parent directory. This can result
-> in a broken pmu_events.c being generated.
+On Wed, Mar 14, 2018 at 03:22:44PM -0300, Desnes Augusto Nunes do Rosário wrote:
+> Hello Bjorn,
 > 
-> Fix this by adding the appropriate check in is_leaf_dir().
-
-So I'll lookup the patch that introduced the patch and squash this one
-with it, so that we don't break 'git bisect' on ppc.
-
-- Arnaldo
- 
-> Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
+> On 03/14/2018 03:06 PM, Bjorn Helgaas wrote:
+> > On Wed, Mar 14, 2018 at 01:34:54PM -0300, Desnes A. Nunes do Rosario wrote:
+> > > Add PCI_DEV_FLAGS_QUIET_PCI_REALIGN to pci_dev_flags and use it to
+> > > silent PCI realignment messages if the flag is turned on by a driver.
+> > > 
+> > > Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
+> > > ---
+> > >   drivers/pci/pci.c       | 3 ++-
+> > >   drivers/pci/setup-res.c | 3 ++-
+> > >   include/linux/pci.h     | 2 ++
+> > >   3 files changed, 6 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > > index 8c71d1a66cdd..be197c944e5f 100644
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -5505,7 +5505,8 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
+> > >   		return;
+> > >   	}
+> > > -	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
+> > > +	if (!(dev->dev_flags & PCI_DEV_FLAGS_QUIET_PCI_REALIGN))
+> > > +		pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
+> > >   	pci_read_config_word(dev, PCI_COMMAND, &command);
+> > >   	command &= ~PCI_COMMAND_MEMORY;
+> > >   	pci_write_config_word(dev, PCI_COMMAND, command);
+> > > diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+> > > index 369d48d6c6f1..00a538def763 100644
+> > > --- a/drivers/pci/setup-res.c
+> > > +++ b/drivers/pci/setup-res.c
+> > > @@ -172,7 +172,8 @@ EXPORT_SYMBOL(pci_claim_resource);
+> > >   void pci_disable_bridge_window(struct pci_dev *dev)
+> > >   {
+> > > -	pci_info(dev, "disabling bridge mem windows\n");
+> > > +	if (!(dev->dev_flags & PCI_DEV_FLAGS_QUIET_PCI_REALIGN))
+> > > +		pci_info(dev, "disabling bridge mem windows\n");
+> > 
+> > As far as I'm concerned, we can just remove these messages completely.
+> > I don't think there's any real value there.
 > 
-> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-> index 1c01844..db3a594 100644
-> --- a/tools/perf/pmu-events/jevents.c
-> +++ b/tools/perf/pmu-events/jevents.c
-> @@ -873,7 +873,10 @@ static int is_leaf_dir(const char *fpath)
->  		return 0;
->  
->  	while ((dir = readdir(d)) != NULL) {
-> -		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
-> +		if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
-> +			continue;
-> +
-> +		if (dir->d_type == DT_DIR) {
->  			res = 0;
->  			break;
->  		} else if (dir->d_type == DT_UNKNOWN) {
-> -- 
-> 1.9.1
+> After I found out that this was happening to all PCI devices on powerpc due
+> to the __weak
+> pcibios_default_alignment() interface (necessary for VFIO passthrough and
+> performance), I confess that this was my first approach to this matter;
+> however I couldn't vouch the need of these messages on other architectures.
+> 
+> If there are no further concerns, I definitely prefer sending a second
+> version of this patch only eliminating these messages and attesting the
+> reason why.
+> 
+> Thank you very much for your review Bjorn,
+
+No problem, welcome to PCI, and I hope we see more of your work!
