@@ -1,86 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeCNPZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:25:57 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43895 "EHLO
+        id S1751660AbeCNP2W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:28:22 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42650 "EHLO
         mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751430AbeCNPZy (ORCPT
+        with ESMTP id S1750779AbeCNP2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:25:54 -0400
-X-Google-Smtp-Source: AG47ELtI0BQcrJrIIJ1ownC0HUF4qtSYq1MM+0Upu9iDUjjUL3KgpMj0zMBCeReEbjF32ox+GdiECDAWaps0HHuk9Ds=
+        Wed, 14 Mar 2018 11:28:20 -0400
+X-Google-Smtp-Source: AG47ELt10mngbjHA2qb/eO7MvZdcVY6Z2osPEIMX5caBzfr1eYz22C+bXqWa+eg3ITHhQromOkNVcocb4LSksQQ0oQ8=
 MIME-Version: 1.0
-In-Reply-To: <0BF8A237-1EB9-465A-9A7C-75163F093F18@goldelico.com>
-References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
- <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com> <0BF8A237-1EB9-465A-9A7C-75163F093F18@goldelico.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Mar 2018 17:25:52 +0200
-Message-ID: <CAHp75VeD_2W-psRxz=MkWpUpUGoX7xx=9O9NM2a3YQ3yzhmN7A@mail.gmail.com>
-Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
- and pcal9555a
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Yong Li <yong.b.li@intel.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+In-Reply-To: <20180314085421.GA28796@lst.de>
+References: <20180313212508.3553.65326.stgit@localhost.localdomain>
+ <20180313212754.3553.72176.stgit@localhost.localdomain> <20180314085421.GA28796@lst.de>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 14 Mar 2018 08:28:18 -0700
+Message-ID: <CAKgT0UdmU7Rc+eOz2FrtmSET2MqAnErGPQza2fmDChmU6__8OQ@mail.gmail.com>
+Subject: Re: [pci PATCH v6 1/5] pci: Add pci_sriov_configure_simple for PFs
+ that don't manage VF resources
+To: Christoph Hellwig <hch@lst.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
+        netanel@amazon.com, Don Dutile <ddutile@redhat.com>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 2:39 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->> Am 13.03.2018 um 17:56 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
->> On Sat, Mar 10, 2018 at 1:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-
->> What does L means in the model code?
->
-> Good question. The data sheets don't tell. But 6424 and 6524 are not identical
-> from register set and overall functions, although quite similar.
-> Only for pin and package.
->
-> As far as I understand the 6524 (and all PCAL) have additional interrupt
-> latch mechanisms and registers so that it is possible to disable each
-> I/O pin individually as an interrupt while for the 6424 they are always
-> enabled. Maybe this is the "L" designator.
-
-IIRC "L" stands for the "Latch" as you correctly described above.
-
-> But we aren't using interrupts yet.
-
-Are you planning? Or let's put it this way: does the hardware support it?
-
->> Perhaps we need to rename PCA_PCAL to be more specific?
->
-> My assumption is that it should be there for all PCAL variants,
-> but I think the original author who introduced this constant should know.
-
->     The original patch was submitted by
->     Josef Ahmad <josef.ahmad@linux.intel.com>
->     http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-kernel/linux/files/0015-Quark-GPIO-1-2-quark.patch
-
-I'm not sure we can reach to Josef (at least easily). So, better to
-rely on official datasheets.
-
->>> +       { .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
->>> +       { .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
+On Wed, Mar 14, 2018 at 1:54 AM, Christoph Hellwig <hch@lst.de> wrote:
+> On Tue, Mar 13, 2018 at 02:28:49PM -0700, Alexander Duyck wrote:
+>> From: Alexander Duyck <alexander.h.duyck@intel.com>
 >>
->> Other way around, you missed PCA_PCAL in the second case.
+>> This patch adds a common configuration function called
+>> pci_sriov_configure_simple that will allow for managing VFs on devices
+>> where the PF is not capable of managing VF resources.
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>> ---
+>>
+>> v5: New patch replacing pci_sriov_configure_unmanaged with
+>>       pci_sriov_configure_simple
+>>     Dropped bits related to autoprobe changes
+>> v6: Defined pci_sriov_configure_simple as NULL if IOV is disabled
+>>
+>>  drivers/pci/iov.c   |   32 ++++++++++++++++++++++++++++++++
+>>  include/linux/pci.h |    3 +++
+>>  2 files changed, 35 insertions(+)
+>>
+>> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+>> index 677924ae0350..bd7021491fdb 100644
+>> --- a/drivers/pci/iov.c
+>> +++ b/drivers/pci/iov.c
+>> @@ -807,3 +807,35 @@ int pci_sriov_get_totalvfs(struct pci_dev *dev)
+>>       return dev->sriov->total_VFs;
+>>  }
+>>  EXPORT_SYMBOL_GPL(pci_sriov_get_totalvfs);
+>> +
+>> +/**
+>> + * pci_sriov_configure_simple - helper to configure unmanaged SR-IOV
+>> + * @dev: the PCI device
+>> + * @nr_virtfn: number of virtual functions to enable, 0 to disable
+>> + *
+>> + * Used to provide generic enable/disable SR-IOV option for devices
+>> + * that do not manage the VFs generated by their driver
+>> + */
+>> +int pci_sriov_configure_simple(struct pci_dev *dev, int nr_virtfn)
+>> +{
+>> +     int err = -EINVAL;
 >
-> Ah, ok. It wasn't clear how these flag relate to the i2c table because they
-> are hidden by a macro here. I'd assume that PCA_PCAL is missing for both.
+> This assignment seems like it is never used..
 
-Yep, if HW supports it.
+It applies in the case where we are setting a number of VFs when VFs
+are already allocated. It was needed since the last statement ended in
+an if.
 
-> So it might be that we run the pcal6524 in non-PCAL mode because we use DT.
-> I can do a test as soon as I have access to the hardware.
+>> +
+>> +     might_sleep();
+>> +
+>> +     if (!dev->is_physfn)
+>> +             return -ENODEV;
+>> +
+>> +     if (pci_vfs_assigned(dev)) {
+>> +             pci_warn(dev,
+>> +                      "Cannot modify SR-IOV while VFs are assigned\n");
+>> +             err = -EPERM;
+>
+> Why not:
+>
+>         if (pci_vfs_assigned(dev)) {
+>                 pci_warn(dev,
+>                          "Cannot modify SR-IOV while VFs are assigned\n");
+>                 return -EPERM;
+>         }
 
-Please, do.
+Symmetry. I had this as one of 3 blocks and just did it this way to be
+consistent with the next two statements. I could probably just return
+from each if block if that is preferred.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Otherwise looks good:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+For v7 I can probably drop the err parameter and just return the
+necessary error values directly.
