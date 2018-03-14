@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeCNQ7S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:59:18 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43743 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751997AbeCNQ7N (ORCPT
+        id S1752573AbeCNREz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:04:55 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43758 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeCNQ7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:13 -0400
-X-Google-Smtp-Source: AG47ELu6V3o4QSZEKsC/gCA9hVXoP+X1ZZ88qcB0ICIf8m5nnn08S4yV/5ggDgdWhWY98cvedFhmRA==
+        Wed, 14 Mar 2018 12:59:18 -0400
+X-Google-Smtp-Source: AG47ELuhxqVYigt32oLkl5ebTYlGhgNzggotEhXyoY3DbQdXkNXTX/6QxkO6Ee9XNVFiWF0S8J+VdQ==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 05/25] PM / Domains: Add helper functions to attach/detach CPUs to/from genpd
-Date: Wed, 14 Mar 2018 17:58:15 +0100
-Message-Id: <1521046715-30683-6-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v6 08/25] PM / Domains: Extend genpd CPU governor to cope with QoS constraints
+Date: Wed, 14 Mar 2018 17:58:18 +0100
+Message-Id: <1521046715-30683-9-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,132 +33,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce two new genpd helper functions, of_genpd_attach|detach_cpu(),
-which takes the CPU-number as an in-parameter.
+CPU devices and other regular devices may share the same PM domain and may
+also be hierarchically related via subdomains. In either case, all devices
+including CPUs, may be attached to a PM domain managed by genpd, that has
+an idle state with an enter/exit latency.
 
-To attach a CPU to a genpd, of_genpd_attach_cpu() starts by fetching the
-struct device belonging to the CPU. Then it calls genpd_dev_pm_attach(),
-which via DT tries to hook up the CPU device to its corresponding PM
-domain. If it succeeds, of_genpd_attach_cpu() continues to prepare/enable
-runtime PM of the device.
-
-To detach a CPU from its PM domain, of_genpd_attach_cpu() reverse the
-operations made from of_genpd_attach_cpu(). However, first it checks that
-the CPU device has a valid PM domain pointer assigned, as to make sure it
-belongs to genpd.
+Let's take these latencies into account in the state selection process by
+genpd's governor for CPUs. This means the governor, pm_domain_cpu_gov,
+becomes extended to satisfy both a state's residency and a potential dev PM
+QoS constraint.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/base/power/domain.c | 67 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pm_domain.h   |  9 ++++++
- 2 files changed, 76 insertions(+)
+ drivers/base/power/domain_governor.c | 15 +++++++++++----
+ include/linux/pm_domain.h            |  1 +
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e178521..91ea9b2 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2324,6 +2324,73 @@ int genpd_dev_pm_attach(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
+index 70565a8..2f162bc 100644
+--- a/drivers/base/power/domain_governor.c
++++ b/drivers/base/power/domain_governor.c
+@@ -214,8 +214,10 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+ 	struct generic_pm_domain *genpd = pd_to_genpd(pd);
+ 	struct gpd_link *link;
  
-+/**
-+ * of_genpd_attach_cpu() - Attach a CPU to its PM domain
-+ * @cpu: The CPU to be attached.
-+ *
-+ * Try to find the corresponding PM domain provider for the CPU's device. Use
-+ * it to attach the CPU's device to its PM domain. If attaching is completed
-+ * successfully, we enable runtime PM for the CPU's device.
-+ *
-+ * Returns zero on success else a negative error code.
-+ */
-+int of_genpd_attach_cpu(int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+	int ret;
-+
-+	if (!dev) {
-+		pr_warn("genpd: no dev for cpu%d\n", cpu);
-+		return -ENODEV;
+-	if (!genpd->max_off_time_changed)
++	if (!genpd->max_off_time_changed) {
++		genpd->state_idx = genpd->cached_power_down_state_idx;
+ 		return genpd->cached_power_down_ok;
 +	}
+ 
+ 	/*
+ 	 * We have to invalidate the cached results for the masters, so
+@@ -240,6 +242,7 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+ 		genpd->state_idx--;
+ 	}
+ 
++	genpd->cached_power_down_state_idx = genpd->state_idx;
+ 	return genpd->cached_power_down_ok;
+ }
+ 
+@@ -255,6 +258,10 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
+ 	s64 idle_duration_ns;
+ 	int cpu, i;
+ 
++	/* Validate dev PM QoS constraints. */
++	if (!default_power_down_ok(pd))
++		return false;
 +
-+	ret = genpd_dev_pm_attach(dev);
-+	if (ret) {
-+		dev_warn(dev, "genpd: attach cpu failed %d\n", ret);
-+		return ret;
-+	}
-+
-+	pm_runtime_irq_safe(dev);
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
-+	dev_info(dev, "genpd: attached cpu\n");
-+	return 0;
-+}
-+EXPORT_SYMBOL(of_genpd_attach_cpu);
-+
-+/**
-+ * of_genpd_detach_cpu() - Detach a CPU from its PM domain
-+ * @cpu: The CPU to be detached.
-+ *
-+ * Detach the CPU's device from its corresponding PM domain. If detaching is
-+ * completed successfully, disable runtime PM and restore the runtime PM usage
-+ * count for the CPU's device.
-+ */
-+void of_genpd_detach_cpu(int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
-+
-+	if (!dev) {
-+		pr_warn("genpd: no dev for cpu%d\n", cpu);
-+		return;
-+	}
-+
-+	/* Check that the device is attached to a genpd. */
-+	if (!(dev->pm_domain && dev->pm_domain->detach == genpd_dev_pm_detach))
-+		return;
-+
-+	genpd_dev_pm_detach(dev, true);
-+
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_reinit(dev);
-+
-+	dev_info(dev, "genpd: detached cpu\n");
-+}
-+EXPORT_SYMBOL(of_genpd_detach_cpu);
-+
- static const struct of_device_id idle_state_match[] = {
- 	{ .compatible = "domain-idle-state", },
- 	{ }
+ 	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
+ 		return true;
+ 
+@@ -275,9 +282,9 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
+ 
+ 	/*
+ 	 * Find the deepest idle state, that has its residency value satisfied.
+-	 * Start at the deepest supported state.
++	 * Start at the state picked by the dev PM QoS constraint validation.
+ 	 */
+-	i = genpd->state_count - 1;
++	i = genpd->state_idx;
+ 	do {
+ 		if (!genpd->states[i].residency_ns)
+ 			break;
+@@ -310,6 +317,6 @@ struct dev_power_governor pm_domain_always_on_gov = {
+ };
+ 
+ struct dev_power_governor pm_domain_cpu_gov = {
+-	.suspend_ok = NULL,
++	.suspend_ok = default_suspend_ok,
+ 	.power_down_ok = cpu_power_down_ok,
+ };
 diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 29ab00c..ccd7c94 100644
+index 8f60181..e7910d2 100644
 --- a/include/linux/pm_domain.h
 +++ b/include/linux/pm_domain.h
-@@ -249,6 +249,8 @@ extern int of_genpd_parse_idle_states(struct device_node *dn,
- 			struct genpd_power_state **states, int *n);
- 
- int genpd_dev_pm_attach(struct device *dev);
-+int of_genpd_attach_cpu(int cpu);
-+void of_genpd_detach_cpu(int cpu);
- #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
- static inline int of_genpd_add_provider_simple(struct device_node *np,
- 					struct generic_pm_domain *genpd)
-@@ -287,6 +289,13 @@ static inline int genpd_dev_pm_attach(struct device *dev)
- 	return -ENODEV;
- }
- 
-+static inline int of_genpd_attach_cpu(int cpu)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline void of_genpd_detach_cpu(int cpu) {}
-+
- static inline
- struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
- {
+@@ -77,6 +77,7 @@ struct generic_pm_domain {
+ 	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
+ 	bool max_off_time_changed;
+ 	bool cached_power_down_ok;
++	bool cached_power_down_state_idx;
+ 	int (*attach_dev)(struct generic_pm_domain *domain,
+ 			  struct device *dev);
+ 	void (*detach_dev)(struct generic_pm_domain *domain,
 -- 
 2.7.4
