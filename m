@@ -1,125 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751754AbeCNV5g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:57:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32950 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750779AbeCNV5d (ORCPT
+        id S1751537AbeCNWCN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:02:13 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:41470 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNWCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:57:33 -0400
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
- interpretive execution
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-Date: Wed, 14 Mar 2018 22:57:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Mar 2018 18:02:12 -0400
+X-Google-Smtp-Source: AG47ELtEVRlpV9QRQchFivWN0v8c1Pudc9GWIKhsNPyjF67HWn05GvBdx/0izAcWGruIatXFfYS5jRT8IpywPySlz8A=
 MIME-Version: 1.0
-In-Reply-To: <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031421-0040-0000-0000-000004208E72
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031421-0041-0000-0000-000026239529
-Message-Id: <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140234
+In-Reply-To: <20180310081123.thin6wphgk7tongy@gmail.com>
+References: <1520620971-9567-1-git-send-email-john.stultz@linaro.org>
+ <1520620971-9567-4-git-send-email-john.stultz@linaro.org> <20180310081123.thin6wphgk7tongy@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 23:02:10 +0100
+X-Google-Sender-Auth: 8aKrr8vGgoREbuNJYsfyL0NpBXE
+Message-ID: <CAK8P3a1PGEk2WDQU8i7H64Cw4dmYaJ-6vPLzW_2o23PTgm74JA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] y2038: time: Introduce struct __kernel_old_timeval
+To: Ingo Molnar <mingo@kernel.org>
+Cc: John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Mar 10, 2018 at 9:11 AM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>> +extern struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec);
+>
+> Generally there's no need to mark arguments with arithmethic types as const, as
+> they are never modified in the calling scope.
 
+Sure. Here I just copied from the neighboring line, but that's an obvious
+change.
 
-On 03/14/2018 07:25 PM, Tony Krowiak wrote:
-> The VFIO AP device model exploits interpretive execution of AP
-> instructions (APIE) to provide guests passthrough access to AP
-> devices. This patch introduces a new device attribute in the
-> KVM_S390_VM_CRYPTO device attribute group to set APIE from
-> the VFIO AP device defined on the guest.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
+>> + * legacy timeval structure, only embedded in structures that
+>> + * traditionally used 'timeval' to pass time intervals (not absolute
+>> + * times). Do not add new users. If user space fails to compile
+>> + * here, this is probably because it is not y2038 safe and needs to
+>> + * be changed to use another interface.
+>> + */
+>> +struct __kernel_old_timeval {
+>> +     __kernel_long_t tv_sec;                 /* seconds */
+>> +     __kernel_long_t tv_usec;                /* seconds */
+>
+> s/seconds/microseconds
 
-[..]
+Right.
 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index a60c45b..bc46b67 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->  			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
->  		VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
->  		break;
-> +	case KVM_S390_VM_CRYPTO_INTERPRET_AP:
-> +		if (attr->addr) {
-> +			if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>> +struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec)
+>> +{
+>> +     struct timespec64 ts = ns_to_timespec64(nsec);
+>> +     struct __kernel_old_timeval tv;
+>> +
+>> +     tv.tv_sec = ts.tv_sec;
+>> +     tv.tv_usec = (suseconds_t) ts.tv_nsec / 1000;
+>
+> Is ts.tv_nsec guaranteed to never have bits set in the high 32 bits?
 
-Unlock mutex before returning?
+Yes, ns_to_timespec64() produces a valid timespec64 structure.
 
-Maybe flip conditions (don't allow manipulating apie if feature not there).
-Clearing the anyways clear apie if feature not there ain't too bad, but
-rejecting the operation appears nicer to me.
+> In any case, the space before the type cast is a bit confusing to me, I think it
+> should be written as:
+>
+>         tv.tv_usec = (suseconds_t)ts.tv_nsec / 1000;
+>
+> To better show was the higher precedence of the cast is going to result in.
 
-> +				return -EOPNOTSUPP;
-> +			kvm->arch.crypto.apie = 1;
-> +			VM_EVENT(kvm, 3, "%s",
-> +				 "ENABLE: AP interpretive execution");
-> +		} else {
-> +			kvm->arch.crypto.apie = 0;
-> +			VM_EVENT(kvm, 3, "%s",
-> +				 "DISABLE: AP interpretive execution");
-> +		}
-> +		break;
->  	default:
->  		mutex_unlock(&kvm->lock);
->  		return -ENXIO;
+Sure.
 
-I wonder how the loop after this switch works for KVM_S390_VM_CRYPTO_INTERPRET_AP:
+Thanks for taking a look, I'll send an updated version.
 
-        kvm_for_each_vcpu(i, vcpu, kvm) {
-                kvm_s390_vcpu_crypto_setup(vcpu);
-                exit_sie(vcpu);
-        }
-
->From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
-
-        if (kvm->created_vcpus) {
-                mutex_unlock(&kvm->lock);
-                return -EBUSY;
-and from the aforementioned loop I guess ECA.28 can be changed
-for a running guest.
-
-If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
-changed (set) these will be taken out of SIE by exit_sie().  Then for the
-corresponding threads the control probably goes to QEMU (the emulator in
-the userspace). And it puts that vcpu back into the SIE, and then that
-cpu starts acting according to the new ECA.28 value.  While other vcpus
-may still work with the old value of ECA.28.
-
-I'm not saying what I describe above is necessarily something broken.
-But I would like to have it explained, why is it OK -- provided I did not
-make any errors in my reasoning (assumptions included).
-
-Can you help me understand this code?
-
-Regards,
-Halil
-
-[..]
+       Arnd
