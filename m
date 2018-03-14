@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeCNQ7U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:59:20 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33764 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751914AbeCNQ7O (ORCPT
+        id S1752334AbeCNQ71 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:59:27 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44467 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752256AbeCNQ7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:14 -0400
-X-Google-Smtp-Source: AG47ELta2xPQQqOJ4ft2qVMM/qrfsr9FGkw9wauIscYNQrkxUVDFxvnwmS4WS3QxkP0Jby2ISTjrwQ==
+        Wed, 14 Mar 2018 12:59:22 -0400
+X-Google-Smtp-Source: AG47ELvGA/2X5mSaZA6j4H5UjXFIntfNALASRbl88bwgrKbBmH9gE4bw4Pcg4X0r9STViA6CoedCJw==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 06/25] timer: Export next wakeup time of a CPU
-Date: Wed, 14 Mar 2018 17:58:16 +0100
-Message-Id: <1521046715-30683-7-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v6 10/25] dt: psci: Update DT bindings to support hierarchical PSCI states
+Date: Wed, 14 Mar 2018 17:58:20 +0100
+Message-Id: <1521046715-30683-11-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
@@ -35,74 +35,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lina Iyer <lina.iyer@linaro.org>
 
-Knowing the sleep duration of CPUs, is known to be needed while selecting
-the most energy efficient idle state for a CPU or a group of CPUs.
+Update DT bindings to represent hierarchical CPU and CPU PM domain idle
+states for PSCI. Also update the PSCI examples to clearly show how
+flattened and hierarchical idle states can be represented in DT.
 
-However, to be able to compute the sleep duration, we need to know at what
-time the next expected wakeup is for the CPU. Therefore, let's export this
-information via a new function, tick_nohz_get_next_wakeup(). Following
-changes make use of it.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
 Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- include/linux/tick.h     | 10 ++++++++++
- kernel/time/tick-sched.c | 11 +++++++++++
- 2 files changed, 21 insertions(+)
+ Documentation/devicetree/bindings/arm/psci.txt | 156 +++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
 
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 7cc3592..e51cf2c 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -120,6 +120,7 @@ extern void tick_nohz_irq_exit(void);
- extern ktime_t tick_nohz_get_sleep_length(void);
- extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
-+extern ktime_t tick_nohz_get_next_wakeup(int cpu);
- extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
- extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
- #else /* !CONFIG_NO_HZ_COMMON */
-@@ -132,6 +133,15 @@ static inline ktime_t tick_nohz_get_sleep_length(void)
- {
- 	return NSEC_PER_SEC / HZ;
- }
-+
-+static inline ktime_t tick_nohz_get_next_wakeup(int cpu)
-+{
-+	ktime_t len = NSEC_PER_SEC/HZ;
-+
-+	/* Next wake up is the tick period, assume it starts now */
-+	return ktime_add(len, ktime_get());
-+}
-+
- static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
- static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
- #endif /* !CONFIG_NO_HZ_COMMON */
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 29a5733..da1bff3 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1025,6 +1025,17 @@ unsigned long tick_nohz_get_idle_calls(void)
- 	return ts->idle_calls;
- }
+diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+index a2c4f1d..17aa3d3 100644
+--- a/Documentation/devicetree/bindings/arm/psci.txt
++++ b/Documentation/devicetree/bindings/arm/psci.txt
+@@ -105,7 +105,163 @@ Case 3: PSCI v0.2 and PSCI v0.1.
+ 		...
+ 	};
  
-+/**
-+ * tick_nohz_get_next_wakeup - return the next wake up of the CPU
-+ */
-+ktime_t tick_nohz_get_next_wakeup(int cpu)
-+{
-+	struct clock_event_device *dev =
-+			per_cpu(tick_cpu_device.evtdev, cpu);
++ARM systems can have multiple cores sometimes in hierarchical arrangement.
++This often, but not always, maps directly to the processor power topology of
++the system. Individual nodes in a topology have their own specific power states
++and can be better represented in DT hierarchically.
 +
-+	return dev->next_event;
-+}
++For these cases, the definitions of the idle states for the CPUs and the CPU
++topology, must conform to the domain idle state specification [3]. The domain
++idle states themselves, must be compatible with the defined 'domain-idle-state'
++binding [1], and also need to specify the arm,psci-suspend-param property for
++each idle state.
 +
- static void tick_nohz_account_idle_ticks(struct tick_sched *ts)
- {
- #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
++DT allows representing CPUs and CPU idle states in two different ways -
++
++The flattened model as given in Example 1, lists CPU's idle states followed by
++the domain idle state that the CPUs may choose. Note that the idle states are
++all compatible with "arm,idle-state".
++
++Example 2 represents the hierarchical model of CPUs and domain idle states.
++CPUs define their domain provider in their psci DT node. The domain controls
++the power to the CPU and possibly other h/w blocks that would enter an idle
++state along with the CPU. The CPU's idle states may therefore be considered as
++the domain's idle states and have the compatible "arm,idle-state". Such domains
++may also be embedded within another domain that may represent common h/w blocks
++between these CPUs. The idle states of the CPU topology shall be represented as
++the domain's idle states.
++
++In PSCI firmware v1.0, the OS-Initiated mode is introduced. In order to use it,
++the hierarchical representation must be used.
++
++Example 1: Flattened representation of CPU and domain idle states
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
++
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
++
++			CLUSTER_RET: cluster-retention {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
++
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++Example 2: Hierarchical representation of CPU and domain idle states
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD0>;
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD1>;
++		};
++
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
++
++			CLUSTER_RET: cluster-retention {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
++
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++
++		CPU_PD0: cpu-pd0 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CPU_PD1: cpu-pd1 {
++			#power-domain-cells = <0>;
++			domain-idle-states =  <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CLUSTER_PD: cluster-pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
++		};
++	};
++
+ [1] Kernel documentation - ARM idle states bindings
+     Documentation/devicetree/bindings/arm/idle-states.txt
+ [2] Power State Coordination Interface (PSCI) specification
+     http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
++[3]. PM Domains description
++    Documentation/devicetree/bindings/power/power_domain.txt
 -- 
 2.7.4
