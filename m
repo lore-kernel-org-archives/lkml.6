@@ -1,93 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeCNPra (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:47:30 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:47581 "EHLO
+        id S1752509AbeCNPsA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:48:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:33817 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeCNPr2 (ORCPT
+        with ESMTP id S1752402AbeCNPr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:47:28 -0400
+        Wed, 14 Mar 2018 11:47:57 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH 28/47] input: misc: remove blackfin rotary driver
-Date: Wed, 14 Mar 2018 16:35:41 +0100
-Message-Id: <20180314153603.3127932-29-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org
+Subject: [PATCH 29/47] mmc: remove bfin_sdh driver
+Date: Wed, 14 Mar 2018 16:35:42 +0100
+Message-Id: <20180314153603.3127932-30-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:Bh7GBfnfTMy/uZL15e71XraGUVtYO9LquZsrfKI//AKjCcfSyc3
- cmhIUih0M3zNl19kgn2gfqLZxYccqEkLeax4t0C1MoPk3KB7aKQ3AToJHoFPpE6fjhLJK+d
- ZGlpiC+s8XBG4r+DLL3KPeHQBQHL57VWM1yPFSiPWduHzypKrDoJ7L4KXxUc0R9QcjCWr6F
- Jn0nhYc1U2FUpVcFOMhnQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VdRpxfhU4gs=:1t8RYYrw2E0gwN1S8ZoSNW
- cZaZdC56Uw+1ikv3sP9l+s0maFSKyAxuqPS5kr0p2cD33tzkylMaY9jOjxnGYQfnnextICXXz
- 6im2++ULcsllyiVEmhgU2LYqZ/7p5dlKGkROufnqnK8beDXAU9t1w0Q9btTp4AKvqQERmIcNX
- tiDnCUYjz704B476aAwMMQQ2XBQh/lxvjbG6HrEbrIOy5PEn9TezmzmYhaE2IYYgeN4QmcPek
- Vro2hXkzjsUCQW7pWSjay/EuplfBSuzOPW3nxytjRIb9n8VOx1ezhrYxehi6lqFX/PvsRVwlP
- CMMKp37mo/P1penEo/VVNmP2IAkI1g5m03dX5G83JCtSxM5pt9hLcEmsA9KkezppYg9VueROs
- uhqLVnQSMea1Hh1S8sR2e3ALSnIgkiA54iCp4kNdYnI1iOeh9e3AQIMwzk7f3aIWbmKUsdo4I
- i86wrnwQPq5dAla9KRRgBiskLWIHWvE+z7/IL1hh+JBRocuGz1T4ofAWL5eoV4VhqAjZu25O+
- EtxCwM5zgmikdmGW68Vo/xfCuOxevJ1og2AIQ2C9qPBHmtHcF7Neu2M/WGwT1D7o3auRilman
- tSdiMX8IEluypF0DlY+35YlKBultTQEOoH4Jay86LK2ELu5/RZwUwomzbu+Imzd0PImL9eEah
- w1gSBAq4QiubsM/XMguCf4SrmrRXwWwURCObBh40Cd3WHrbQE8ZhS4xdQTo874kSK2LtDAEcZ
- dTcqQVPYJPkqU1fasuMQhzz8s7vjgOR8kJwLkw==
+X-Provags-ID: V03:K0:vFnj92gW4/FJcjni9h5oW7AcoeMEADifckltmjMYGnpZE94tA5R
+ ylRaVZlqCe+EnWumXId1OtGa4/oXmv8aL6AuGnNLkpIdTLNKd5rb/xtrGjum3/So0xssWqT
+ CpWPiuanAPjl6A2QTvGFuQBHzUbokipj3+xjYBA2dhDFM9WXeyBJD6YehAQmCpf5ps2uAZi
+ +avc3DNv3K5p+qC1E+Czg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ARCQpUx0jZQ=:EtFmlx93Iz+cww5M6b3N7K
+ r/NWQ+JP+lRq/ipqPrJhjBQn4x9A3SggThejl+hyuQfZSva6uD31d7vKsKOY1n7TS/xL9H1DG
+ wZTQ7ekiWB6ruVq4FTG4ATtj+lOwgZhlXZnxifR5K0dqbcirm/ctTqrTRNn7gdkb0dtdfOhMJ
+ H9DSuijCqB/ItgBJz73QeKxYZIpliBSkuor5Xw4A9bMPeK6W12xJwQwcImqpPE3eHj4qFzt76
+ IQcCUGBKM7N1ZPnwpiwj36XFuLEaYxtxWSfX9JfYHBH2le7aqtSyb9bpS7jtRTxSbblY2CjaR
+ 85DPKZRATKwEuTO9avC2O11+HVGOzxE1cEmX1cCaFBx4AbxMBTGGkp9IuS7dNlq9YJ2WbZnrX
+ G0YTn1ecH9PwZkklkCRJggcknJ+g1rO9Ds2XLwNZnLqVVsSH8WYLgh6rPUdlnvuSY0dZzW9sC
+ LxYCbn0q8bpyTY7fvqVCiFnv/NlLEsX3iacH//vntwv6G9IluqadV3OQezkxLIXDZJOiyR18k
+ YPjaujZ0VMAIC8Xf3nnA0150fd1tRK3bL16dqrGTr/G1pIIrJW6DCHV44eOsRXYYAaNmjdYuJ
+ 91M+OQzw+n5iuHAYPTMWnNyd2AUfGPSUq9D12Rju6nXJvo8yXEua1Wsr44G0Mu4AA0tKI7X4B
+ dYsf/E2BgWkzMopjM5g3s9ImPOtopFtWcD7ngH0o85EvdCqZwIjTYFsZTi/yfoDRMzQH6cNQg
+ Gwbc/ycVes+oRMTukNz/Vpw5XxkEQzXoROjmXw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The blackfin architecture is getting removed, so this
-one is obsolete as well.
+The blackfin architecture is getting removed, so this one
+is obsolete now as well.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/input/misc/Kconfig                |   9 -
- drivers/input/misc/Makefile               |   1 -
- drivers/input/misc/bfin_rotary.c          | 294 ------------------------------
- include/linux/platform_data/bfin_rotary.h | 117 ------------
- 4 files changed, 421 deletions(-)
- delete mode 100644 drivers/input/misc/bfin_rotary.c
- delete mode 100644 include/linux/platform_data/bfin_rotary.h
+ drivers/mmc/host/Kconfig    |  19 --
+ drivers/mmc/host/Makefile   |   1 -
+ drivers/mmc/host/bfin_sdh.c | 679 --------------------------------------------
+ 3 files changed, 699 deletions(-)
+ delete mode 100644 drivers/mmc/host/bfin_sdh.c
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 6a3c753b093b..572b15fa18c2 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -655,15 +655,6 @@ config INPUT_DM355EVM
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called dm355evm_keys.
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 620c2d90a646..b4fd5d48dd35 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -646,25 +646,6 @@ config MMC_VIA_SDMMC
  
--config INPUT_BFIN_ROTARY
--	tristate "Blackfin Rotary support"
--	depends on BF54x || BF52x
+ 	  If unsure, say N.
+ 
+-config SDH_BFIN
+-	tristate "Blackfin Secure Digital Host support"
+-	depends on (BF54x && !BF544) || (BF51x && !BF512)
 -	help
--	  Say Y here if you want to use the Blackfin Rotary.
+-	  If you say yes here you will get support for the Blackfin on-chip
+-	  Secure Digital Host interface.  This includes support for MMC and
+-	  SD cards.
 -
 -	  To compile this driver as a module, choose M here: the
--	  module will be called bfin-rotary.
+-	  module will be called bfin_sdh.
 -
- config INPUT_WM831X_ON
- 	tristate "WM831X ON pin"
- 	depends on MFD_WM831X
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 8cc58f362bb8..72cde28649e2 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -19,7 +19,6 @@ obj-$(CONFIG_INPUT_ARIZONA_HAPTICS)	+= arizona-haptics.o
- obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
- obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
- obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
--obj-$(CONFIG_INPUT_BFIN_ROTARY)		+= bfin_rotary.o
- obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
- obj-$(CONFIG_INPUT_CM109)		+= cm109.o
- obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
-diff --git a/drivers/input/misc/bfin_rotary.c b/drivers/input/misc/bfin_rotary.c
+-	  If unsure, say N.
+-
+-config SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND
+-	bool "Blackfin EZkit Missing SDH_CMD Pull Up Resistor Workaround"
+-	depends on SDH_BFIN
+-	help
+-	  If you say yes here SD-Cards may work on the EZkit.
+-
+ config MMC_CAVIUM_OCTEON
+ 	tristate "Cavium OCTEON SD/MMC Card Interface support"
+ 	depends on CAVIUM_OCTEON_SOC
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 84cd1388abc3..f563cc0b7f93 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -43,7 +43,6 @@ obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
+ obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+-obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
+ octeon-mmc-objs := cavium.o cavium-octeon.o
+ obj-$(CONFIG_MMC_CAVIUM_OCTEON) += octeon-mmc.o
+ thunderx-mmc-objs := cavium.o cavium-thunderx.o
+diff --git a/drivers/mmc/host/bfin_sdh.c b/drivers/mmc/host/bfin_sdh.c
 deleted file mode 100644
-index 799ce3d2820e..000000000000
-diff --git a/include/linux/platform_data/bfin_rotary.h b/include/linux/platform_data/bfin_rotary.h
-deleted file mode 100644
-index 98829370fee2..000000000000
+index 526231e38583..000000000000
 -- 
 2.9.0
