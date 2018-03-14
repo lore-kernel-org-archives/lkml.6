@@ -1,70 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeCNWxG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:53:06 -0400
-Received: from ozlabs.org ([103.22.144.67]:39587 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750779AbeCNWxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:53:05 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 09:52:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the asm-generic tree with the syscalls
- tree
-Message-ID: <20180315095235.607d85d5@canb.auug.org.au>
+        id S1751532AbeCNWx3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:53:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33740 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNWx2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 18:53:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2330E603AF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock
+ alignment"
+To: Jan Glauber <jglauber@cavium.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: mark.rutland@arm.com, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Paul Burton <paul.burton@imgtec.com>, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vacek <neelx@redhat.com>, linux-arm-kernel@lists.infradead.org
+References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
+ <20180314222530.GA6300@wintermute>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <4c31c5ed-9f68-10c3-c73f-5b6f34dd82c9@codeaurora.org>
+Date: Wed, 14 Mar 2018 17:53:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bRUesZIPxM0FsDunIyWBVD3"; protocol="application/pgp-signature"
+In-Reply-To: <20180314222530.GA6300@wintermute>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bRUesZIPxM0FsDunIyWBVD3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi Ard,
 
-Today's linux-next merge of the asm-generic tree got conflicts in:
+On 03/14/2018 05:25 PM, Jan Glauber wrote:
+> On Wed, Mar 14, 2018 at 07:29:37PM +0000, Ard Biesheuvel wrote:
+>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
+> 
+> FWIW, the revert fixes the boot hang I'm seeing on ThunderX1.
+> 
+> --Jan
+> 
 
-  arch/tile/kernel/compat.c
-  arch/tile/kernel/sys.c
+Thanks for this patch, it fixes the boot hang on QDF2400 platform.
 
-between several commits from the syscalls tree and commit:
 
-  0373506fe580 ("arch: remove tile port")
+>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
+>> alignment") modified the logic in memmap_init_zone() to initialize
+>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
+>> in move_freepages(), which is redundant by its own admission, and
+>> dereferences struct page fields to obtain the zone without checking
+>> whether the struct pages in question are valid to begin with.
+>>
+>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
+>> may cause pfn assume the same value it had in a prior iteration of
+>> the loop, resulting in an infinite loop and a hang very early in the
+>> boot. Also, since it doesn't perform the same rounding on start_pfn
+>> itself but only on intermediate values following an invalid PFN, we
+>> may still hit the same VM_BUG_ON() as before.
+>>
+>> So instead, let's fix this at the core, and ensure that the BUG
+>> check doesn't dereference struct page fields of invalid pages.
+>>
+>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
+>> Cc: Daniel Vacek <neelx@redhat.com>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Paul Burton <paul.burton@imgtec.com>
+>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> ---
+>>  mm/page_alloc.c | 13 +++++--------
+>>  1 file changed, 5 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 3d974cb2a1a1..635d7dd29d7f 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
+>>  	 * Remove at a later date when no bug reports exist related to
+>>  	 * grouping pages by mobility
+>>  	 */
+>> -	VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
+>> +	VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
+>> +	          pfn_valid(page_to_pfn(end_page)) &&
+>> +	          page_zone(start_page) != page_zone(end_page));
+>>  #endif
+>>  
+>>  	if (num_movable)
+>> @@ -5359,14 +5361,9 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>  			/*
+>>  			 * Skip to the pfn preceding the next valid one (or
+>>  			 * end_pfn), such that we hit a valid pfn (or end_pfn)
+>> -			 * on our next iteration of the loop. Note that it needs
+>> -			 * to be pageblock aligned even when the region itself
+>> -			 * is not. move_freepages_block() can shift ahead of
+>> -			 * the valid region but still depends on correct page
+>> -			 * metadata.
+>> +			 * on our next iteration of the loop.
+>>  			 */
+>> -			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
+>> -					~(pageblock_nr_pages-1)) - 1;
+>> +			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+>>  #endif
+>>  			continue;
+>>  		}
+>> -- 
+>> 2.15.1
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
-from the asm-generic tree.
-
-I fixed it up (I just removed the files) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bRUesZIPxM0FsDunIyWBVD3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpp7MACgkQAVBC80lX
-0GyvGwgAkrh1sHwPtVdAy8oc3igloaH54Y5KZUD2rs7yBjSnUNSJsexNFVVYGZth
-dFJeM+vOmDrSzXzK8IBDs2NPTr4Y3C92yCh5ggEVXH6aXN8jFVgVsS/VGIZFTQcW
-Fo9Gjq7HKVk2C2VGGlKplZwiKmsQlE1urzTOz6lokRrYcHUBRKqy1c9GAgjRQU5z
-Xbxs1d51Mzc7f8rcCZP96QQjA4vvqWVb48a5jjPNWmmQS8bPZ6eh072RKgq/qJA2
-hzMx40c/HpHuI57SS7lOQuZrM+U4SErF+6lwuAWd4h4FHlOhYrJaDzo6CK0vCJLD
-pndw+hyx5jmA7S7jjJsUMJSD9e0dMQ==
-=6X6P
------END PGP SIGNATURE-----
-
---Sig_/bRUesZIPxM0FsDunIyWBVD3--
+-- 
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
