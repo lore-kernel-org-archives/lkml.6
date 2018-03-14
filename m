@@ -1,69 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeCNRx6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:53:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55622 "EHLO
+        id S1752547AbeCNRyj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:54:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55338 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbeCNRxz (ORCPT
+        with ESMTP id S1752319AbeCNRwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:53:55 -0400
-Date: Wed, 14 Mar 2018 18:53:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: arc_usr_cmpxchg and preemption
-Message-ID: <20180314175352.GP4064@hirez.programming.kicks-ass.net>
-References: <1521045375.11552.27.camel@synopsys.com>
- <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Wed, 14 Mar 2018 13:52:54 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: x86@kernel.org
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/14] iommu/intel-iommu: cleanup intel_{alloc,free}_coherent
+Date: Wed, 14 Mar 2018 18:52:07 +0100
+Message-Id: <20180314175213.20256-9-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180314175213.20256-1-hch@lst.de>
+References: <20180314175213.20256-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 09:58:19AM -0700, Vineet Gupta wrote:
+Use the dma_direct_* helpers and cleanup the code flow.
 
-> Well it is broken wrt the semantics the syscall is supposed to provide.
-> Preemption disabling is what prevents a concurrent thread from coming in and
-> modifying the same location (Imagine a variable which is being cmpxchg
-> concurrently by 2 threads).
-> 
-> One approach is to do it the MIPS way, emulate the llsc flag - set it under
-> preemption disabled section and clear it in switch_to
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/iommu/Kconfig       |  1 +
+ drivers/iommu/intel-iommu.c | 62 ++++++++++++---------------------------------
+ 2 files changed, 17 insertions(+), 46 deletions(-)
 
-*shudder*... just catch the -EFAULT, force the write fault and retry.
-
-Something like:
-
-int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
-{
-	u32 val;
-	int ret;
-
-again:
-	ret = 0;
-
-	preempt_disable();
-	val = get_user(user_ptr);
-	if (val == old)
-		ret = put_user(new, user_ptr);
-	preempt_enable();
-
-	if (ret == -EFAULT) {
-		struct page *page;
-		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
-		if (ret < 0)
-			return ret;
-		put_page(page);
-		goto again;
-	}
-
-	return ret;
-}
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index dc7c1914645d..df171cb85822 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -143,6 +143,7 @@ config DMAR_TABLE
+ config INTEL_IOMMU
+ 	bool "Support for Intel IOMMU using DMA Remapping Devices"
+ 	depends on PCI_MSI && ACPI && (X86 || IA64_GENERIC)
++	select DMA_DIRECT_OPS
+ 	select IOMMU_API
+ 	select IOMMU_IOVA
+ 	select DMAR_TABLE
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index fd899b2a12bb..24d1b1b42013 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -31,6 +31,7 @@
+ #include <linux/pci.h>
+ #include <linux/dmar.h>
+ #include <linux/dma-mapping.h>
++#include <linux/dma-direct.h>
+ #include <linux/mempool.h>
+ #include <linux/memory.h>
+ #include <linux/cpu.h>
+@@ -3708,61 +3709,30 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
+ 				  dma_addr_t *dma_handle, gfp_t flags,
+ 				  unsigned long attrs)
+ {
+-	struct page *page = NULL;
+-	int order;
+-
+-	size = PAGE_ALIGN(size);
+-	order = get_order(size);
+-
+-	if (!iommu_no_mapping(dev))
+-		flags &= ~(GFP_DMA | GFP_DMA32);
+-	else if (dev->coherent_dma_mask < dma_get_required_mask(dev)) {
+-		if (dev->coherent_dma_mask < DMA_BIT_MASK(32))
+-			flags |= GFP_DMA;
+-		else
+-			flags |= GFP_DMA32;
+-	}
++	void *vaddr;
+ 
+-	if (gfpflags_allow_blocking(flags)) {
+-		unsigned int count = size >> PAGE_SHIFT;
++	vaddr = dma_direct_alloc(dev, size, dma_handle, flags, attrs);
++	if (iommu_no_mapping(dev) || !vaddr)
++		return vaddr;
+ 
+-		page = dma_alloc_from_contiguous(dev, count, order, flags);
+-		if (page && iommu_no_mapping(dev) &&
+-		    page_to_phys(page) + size > dev->coherent_dma_mask) {
+-			dma_release_from_contiguous(dev, page, count);
+-			page = NULL;
+-		}
+-	}
+-
+-	if (!page)
+-		page = alloc_pages(flags, order);
+-	if (!page)
+-		return NULL;
+-	memset(page_address(page), 0, size);
+-
+-	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
+-					 DMA_BIDIRECTIONAL,
+-					 dev->coherent_dma_mask);
+-	if (*dma_handle)
+-		return page_address(page);
+-	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
+-		__free_pages(page, order);
++	*dma_handle = __intel_map_single(dev, virt_to_phys(vaddr),
++			PAGE_ALIGN(size), DMA_BIDIRECTIONAL,
++			dev->coherent_dma_mask);
++	if (!*dma_handle)
++		goto out_free_pages;
++	return vaddr;
+ 
++out_free_pages:
++	dma_direct_free(dev, size, vaddr, *dma_handle, attrs);
+ 	return NULL;
+ }
+ 
+ static void intel_free_coherent(struct device *dev, size_t size, void *vaddr,
+ 				dma_addr_t dma_handle, unsigned long attrs)
+ {
+-	int order;
+-	struct page *page = virt_to_page(vaddr);
+-
+-	size = PAGE_ALIGN(size);
+-	order = get_order(size);
+-
+-	intel_unmap(dev, dma_handle, size);
+-	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
+-		__free_pages(page, order);
++	if (!iommu_no_mapping(dev))
++		intel_unmap(dev, dma_handle, PAGE_ALIGN(size));
++	dma_direct_free(dev, size, vaddr, dma_handle, attrs);
+ }
+ 
+ static void intel_unmap_sg(struct device *dev, struct scatterlist *sglist,
+-- 
+2.14.2
