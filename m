@@ -1,211 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933337AbeCNDdN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:33:13 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:59362 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932937AbeCNDdM (ORCPT
+        id S933374AbeCNDeu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:34:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933259AbeCNDes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:33:12 -0400
-Subject: Re: [PATCH v8 13/13] [media] v4l: Document explicit synchronization
- behavior
-To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180309174920.22373-1-gustavo@padovan.org>
- <20180309174920.22373-14-gustavo@padovan.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ae50fe46-4d0a-fcf4-7c95-17b5b9a0d8a7@xs4all.nl>
-Date: Tue, 13 Mar 2018 20:33:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 13 Mar 2018 23:34:48 -0400
+Date: Tue, 13 Mar 2018 20:34:45 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        platform-driver-x86@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+Message-ID: <20180314033445.GA10337@localhost.localdomain>
+References: <4716007c23abeb0e42015786794539454aff487b.1520886814.git.dvhart@infradead.org>
+ <20180312202319.GA88572@localhost.localdomain>
+ <20180312220751.GA1757@light.dominikbrodowski.net>
+ <CA+55aFzUgk8c2n7GQfcCdYU-Jo86-W_b51gZCLyJahv_ZWMVsQ@mail.gmail.com>
+ <20180312233311.GA3848@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180309174920.22373-14-gustavo@padovan.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEjceeUASca51Rri+VsEIxuvZQ/mEJ7GX2JRp0KAehXk1xvWzyXLr7lwuo3NZot+gfrZszEwThGheNWDcb8vaPKyASKPcnrQ7H1bL4EXGqDwhakO770a
- We79Tv12P+auSIGCSrNwWBSTRIv9hbVOQ88e1mpW2qqM3Hhj4FfDuuGoIGCGa4tXQsEESBvfXiQWPBUeCW4/xomjMdoVLUFYdppDcmfHPrhEBnFyFJ0pNYdJ
- CF5nidQq39VJyNDXK+KHQ1ZHa8ViSHgxHZd/vrzSY8E520T7Rjaxbj97o1/09Zc8Rq7+8QgYXGY0Mz39oTPxZ6knx86gSVTrE3Lc2Uwfd0BSLhtO/W1Cx4CR
- hbl3qKSCLzyLAAyeOII84TKsd9vTQm8LpmeDUTCHFl3nsB2T04nA5qZKtMjT+f1U/J3lHbi5+GDMWdmAR6WAyYHT96fKvjKbEtKz2gEidS1BcqqF2s1W9573
- DnRCknypZWdn4KW2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312233311.GA3848@localhost.localdomain>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Mon, Mar 12, 2018 at 04:33:11PM -0700, Darren Hart wrote:
+> On Mon, Mar 12, 2018 at 03:17:57PM -0700, Linus Torvalds wrote:
+> > On Mon, Mar 12, 2018 at 3:07 PM, Dominik Brodowski
+> > <linux@dominikbrodowski.net> wrote:
+> > >
+> > > I'm awfully sorry, but this patch doesn't solve the issue.
+> > > CONFIG_ACPI_WMI=y was/is set, but still enabling CONFIG_DELL_SMBIOS_WMI=y
+> > > causes a very-early crash of v4.16-rc5. In fact, so early that the normal
+> > > boot messages never show up on the screen...
+> > 
+> > Hmm. My xps13 works fine, but it's the 9350 version so not the same machine.
+> > 
+> > But it does sound like that commit 25d47027e10 ("platform/x86:
+> > dell-smbios: Link all dell-smbios-* modules together") should just be
+> > reverted. It has clearly caused a lot more pain than it fixed.
 > 
-> Add section to VIDIOC_QBUF and VIDIOC_QUERY_BUF about it
+> Unfortunately, yes. This will re-instate the race condition it "fixed".
+> I'll work with Mario to fix this properly in 4.17, preferably in a way
+> that we can apply to stable. Pending an "oops, nevermind, the patch
+> works" from Dominik by tomorrow morning, I'll submit the pull request to
+> revert dell-smbios changes back to and including 25d47027e10.
 > 
-> v6:	- Close some gaps in the docs (Hans)
-> 
-> v5:
-> 	- Remove V4L2_CAP_ORDERED
-> 	- Add doc about V4L2_FMT_FLAG_UNORDERED
-> 
-> v4:
-> 	- Document ordering behavior for in-fences
-> 	- Document V4L2_CAP_ORDERED capability
-> 	- Remove doc about OUT_FENCE event
-> 	- Document immediate return of out-fence in QBUF
-> 
-> v3:
-> 	- make the out_fence refer to the current buffer (Hans)
-> 	- Note what happens when the IN_FENCE is not set (Hans)
-> 
-> v2:
-> 	- mention that fences are files (Hans)
-> 	- rework for the new API
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> ---
->  Documentation/media/uapi/v4l/vidioc-qbuf.rst     | 55 +++++++++++++++++++++++-
->  Documentation/media/uapi/v4l/vidioc-querybuf.rst | 12 ++++--
->  2 files changed, 63 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/media/uapi/v4l/vidioc-qbuf.rst b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
-> index 9e448a4aa3aa..371d84966e34 100644
-> --- a/Documentation/media/uapi/v4l/vidioc-qbuf.rst
-> +++ b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
-> @@ -54,7 +54,7 @@ When the buffer is intended for output (``type`` is
->  or ``V4L2_BUF_TYPE_VBI_OUTPUT``) applications must also initialize the
->  ``bytesused``, ``field`` and ``timestamp`` fields, see :ref:`buffer`
->  for details. Applications must also set ``flags`` to 0. The
-> -``reserved2`` and ``reserved`` fields must be set to 0. When using the
-> +``reserved`` field must be set to 0. When using the
->  :ref:`multi-planar API <planar-apis>`, the ``m.planes`` field must
->  contain a userspace pointer to a filled-in array of struct
->  :c:type:`v4l2_plane` and the ``length`` field must be set
-> @@ -118,6 +118,59 @@ immediately with an ``EAGAIN`` error code when no buffer is available.
->  The struct :c:type:`v4l2_buffer` structure is specified in
->  :ref:`buffer`.
->  
-> +Explicit Synchronization
-> +------------------------
-> +
-> +Explicit Synchronization allows us to control the synchronization of
-> +shared buffers from userspace by passing fences to the kernel and/or
-> +receiving them from it. Fences passed to the kernel are named in-fences and
-> +the kernel should wait on them to signal before using the buffer. On the other
-> +side, the kernel can create out-fences for the buffers it queues to the
-> +drivers. Out-fences signal when the driver is finished with buffer, i.e., the
-> +buffer is ready. The fences are represented as a file and passed as a file
-> +descriptor to userspace.
-> +
-> +The in-fences are communicated to the kernel at the ``VIDIOC_QBUF`` ioctl
-> +using the ``V4L2_BUF_FLAG_IN_FENCE`` buffer flag and the `fence_fd` field. If
-> +an in-fence needs to be passed to the kernel, `fence_fd` should be set to the
-> +fence file descriptor number and the ``V4L2_BUF_FLAG_IN_FENCE`` should be set
-> +as well. Setting one but not the other will cause ``VIDIOC_QBUF`` to return
-> +with an error.
+> Apologies for the noise on this one Linus, it got away from me.
 
-This sentence is confusing since it is not clear what 'one' and 'the other' refer
-to. Be specific here. I think it should be 'Setting V4L2_BUF_FLAG_IN_FENCE but not
-fence_fd'.
+Hi Linus,
 
- The fence_fd field will be ignored if the
-> +``V4L2_BUF_FLAG_IN_FENCE`` is not set.
-> +
-> +The videobuf2-core will guarantee that all buffers queued with an in-fence will
-> +be queued to the drivers in the same order. Fences may signal out of order, so
-> +this guarantee at videobuf2 is necessary to not change ordering. So when
-> +waiting on a fence to signal all buffers queued after will be also block until
+OK, I think we've identified the ordering issues and I have a patch out
+pending testing from Dominik (hopefully tonight). I'd like to hold off
+one more day on reverting if you're OK with that.
 
-after -> afterwards
-will be also block -> will also be blocked
+At RC5, we're certainly further into the RC cycle than I want to see
+these changes. So if you just want to call it now, I understand and I'll
+send you the revert pull request. If you can give me another day, I
+think we may finally have found the end of this loose string.
 
-> +that fence signal.
+Thanks,
 
-signal -> signals
-
-> +
-> +If the in-fence signals with an error the buffer will be marked with
-> +``V4L2_BUF_FLAG_ERROR`` when returned to userspace at ``VIDIOC_DQBUF``.
-> +Even with the error the order of dequeueing the buffers are preserved.
-
-are -> is
-
-> +
-> +To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE`` flag should
-> +be set to ask for a fence to be attached to the buffer. The out-fence fd is
-> +sent to userspace as a ``VIDIOC_QBUF`` return argument on the `fence_fd` field.
-
-on -> in
-
-> +
-> +Note the the same `fence_fd` field is used for both sending the in-fence as
-> +input argument to receive the out-fence as a return argument. A buffer can
-
-input argument -> an input argument and
-
-> +have both in-fence ond out-fence.
-
-have both an in-fence and an out-fence.
-
-> +
-> +At streamoff the out-fences will either signal normally if the driver waits
-> +for the operations on the buffers to finish or signal with an error if the
-> +driver cancels the pending operations. Buffers with in-fences won't be queued
-> +to the driver if their fences signal. They will be cleaned up.
-> +
-> +The ``V4L2_FMT_FLAG_UNORDERED`` flag in ``VIDIOC_ENUM_FMT`` tells userspace
-> +that the  when using this format the order in which buffers are dequeued can
-
-remove 'the'
-
-> +be different from the order in which they were queued.
-> +
-> +Ordering is important to fences because it can optimize the pipeline with
-> +other drivers like a DRM/KMS display driver. For example, if a capture from the
-> +camera is happening in an orderly manner one can send the capture buffer
-> +out-fence to the DRM/KMS driver and rest sure that the buffers will be shown on
-
-rest sure -> rest assured
-
-But I'd rephrase it as: be certain
-
-> +the screen at the correct order. If an ordered queue can not be set then such
-> +arrangements with other drivers may not be possible.
->  
->  Return Value
->  ============
-> diff --git a/Documentation/media/uapi/v4l/vidioc-querybuf.rst b/Documentation/media/uapi/v4l/vidioc-querybuf.rst
-> index dd54747fabc9..9aa3358bee0b 100644
-> --- a/Documentation/media/uapi/v4l/vidioc-querybuf.rst
-> +++ b/Documentation/media/uapi/v4l/vidioc-querybuf.rst
-> @@ -44,7 +44,7 @@ and the ``index`` field. Valid index numbers range from zero to the
->  number of buffers allocated with
->  :ref:`VIDIOC_REQBUFS` (struct
->  :c:type:`v4l2_requestbuffers` ``count``) minus
-> -one. The ``reserved`` and ``reserved2`` fields must be set to 0. When
-> +one. The ``reserved`` field must be set to 0. When
->  using the :ref:`multi-planar API <planar-apis>`, the ``m.planes``
->  field must contain a userspace pointer to an array of struct
->  :c:type:`v4l2_plane` and the ``length`` field has to be set
-> @@ -64,8 +64,14 @@ elements will be used instead and the ``length`` field of struct
->  array elements. The driver may or may not set the remaining fields and
->  flags, they are meaningless in this context.
->  
-> -The struct :c:type:`v4l2_buffer` structure is specified in
-> -:ref:`buffer`.
-> +When using in-fences, the ``V4L2_BUF_FLAG_IN_FENCE`` will be set if the
-> +in-fence didn't signal at the time of the
-> +:ref:`VIDIOC_QUERYBUF`. The ``V4L2_BUF_FLAG_OUT_FENCE`` will be set if
-> +the user asked for an out-fence for the buffer and the ``fence_fd``
-> +field will be set to the out-fence fd. In case ``V4L2_BUF_FLAG_OUT_FENCE`` is
-> +not set ``fence_fd`` will be set to 0 for backward compatibility.
-> +
-> +The struct :c:type:`v4l2_buffer` structure is specified in :ref:`buffer`.
->  
->  
->  Return Value
-> 
-
-Regards,
-
-	Hans
+-- 
+Darren Hart
+VMware Open Source Technology Center
