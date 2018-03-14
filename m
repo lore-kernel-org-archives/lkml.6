@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932333AbeCNRDJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:03:09 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37918 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeCNQ73 (ORCPT
+        id S1752537AbeCNRDZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:03:25 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45169 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752283AbeCNQ70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:29 -0400
-X-Google-Smtp-Source: AG47ELtwuG3YokhXiELvebmymrYGi8ufIkfwPTNLxSUnbKG3WIjYpOzeaytos8BOox34lTJ09JKEWQ==
+        Wed, 14 Mar 2018 12:59:26 -0400
+X-Google-Smtp-Source: AG47ELtzP2YX6t9eBDCncKmPtJu3beW26wv+teg9NbPjAvlfv5znXhcE5XaSWjsURBCxTLLwzXqh9Q==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 14/25] drivers: firmware: psci: Support hierarchical CPU idle states
-Date: Wed, 14 Mar 2018 17:58:24 +0100
-Message-Id: <1521046715-30683-15-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v6 12/25] cpuidle: dt: Support hierarchical CPU idle states
+Date: Wed, 14 Mar 2018 17:58:22 +0100
+Message-Id: <1521046715-30683-13-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
@@ -38,8 +38,9 @@ From: Lina Iyer <lina.iyer@linaro.org>
 Currently CPU's idle states are represented in a flattened model, via the
 "cpu-idle-states" binding from within the CPU's device nodes.
 
-Support the hierarchical layout, simply by converting to calling the new OF
-helper, of_get_cpu_state_node().
+Support the hierarchical layout during parsing and validating of the CPU's
+idle states. This is simply done by calling the new OF helper,
+of_get_cpu_state_node().
 
 Cc: Lina Iyer <ilina@codeaurora.org>
 Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
@@ -47,31 +48,31 @@ Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
 Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/psci.c | 5 ++---
+ drivers/cpuidle/dt_idle_states.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 9788bfc..256b4ed 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -294,8 +294,7 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- 	struct device_node *state_node;
+diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+index 53342b7..13f9b7c 100644
+--- a/drivers/cpuidle/dt_idle_states.c
++++ b/drivers/cpuidle/dt_idle_states.c
+@@ -118,8 +118,7 @@ static bool idle_state_valid(struct device_node *state_node, unsigned int idx,
+ 	for (cpu = cpumask_next(cpumask_first(cpumask), cpumask);
+ 	     cpu < nr_cpu_ids; cpu = cpumask_next(cpu, cpumask)) {
+ 		cpu_node = of_cpu_device_node_get(cpu);
+-		curr_state_node = of_parse_phandle(cpu_node, "cpu-idle-states",
+-						   idx);
++		curr_state_node = of_get_cpu_state_node(cpu_node, idx);
+ 		if (state_node != curr_state_node)
+ 			valid = false;
  
- 	/* Count idle states */
--	while ((state_node = of_parse_phandle(cpu_node, "cpu-idle-states",
--					      count))) {
-+	while ((state_node = of_get_cpu_state_node(cpu_node, count))) {
- 		count++;
- 		of_node_put(state_node);
- 	}
-@@ -308,7 +307,7 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- 		return -ENOMEM;
+@@ -176,7 +175,7 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+ 	cpu_node = of_cpu_device_node_get(cpumask_first(cpumask));
  
- 	for (i = 0; i < count; i++) {
+ 	for (i = 0; ; i++) {
 -		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
 +		state_node = of_get_cpu_state_node(cpu_node, i);
- 		ret = psci_dt_parse_state_node(state_node, &psci_states[i]);
- 		of_node_put(state_node);
+ 		if (!state_node)
+ 			break;
  
 -- 
 2.7.4
