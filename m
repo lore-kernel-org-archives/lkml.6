@@ -1,66 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeCNIHe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:07:34 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.35]:20949 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752592AbeCNIHb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:07:31 -0400
-Date: Wed, 14 Mar 2018 03:07:27 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
-        Wang Jian <jianjian.wang1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] pktgen: Fix memory leak in pktgen_if_write
-Message-ID: <20180314080727.GA17319@embeddedgus>
+        id S1753320AbeCNIOb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:14:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52514 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751751AbeCNIO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:14:28 -0400
+To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Yisheng Xie <xieyisheng1@huawei.com>, <wangkefeng.wang@huawei.com>
+From: chenjiankang <chenjiankang1@huawei.com>
+Subject: BUG: unable to handle kernel paing request at fffffc0000000000
+Message-ID: <270af3b0-ab0f-9ee5-d5d6-3e86983b8d9b@huawei.com>
+Date: Wed, 14 Mar 2018 16:14:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1ew1Ra-004MAO-77
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:39748
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.219.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_buf_ is an array and the one that must be freed is _tp_ instead.
 
-Fixes: a870a02cc963 ("pktgen: use dynamic allocation for debug print buffer")
-Reported-by: Wang Jian <jianjian.wang1@gmail.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/core/pktgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index fd65761..545cf08 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -913,7 +913,7 @@ static ssize_t pktgen_if_write(struct file *file,
- 			return PTR_ERR(tp);
- 
- 		pr_debug("%s,%zu  buffer -:%s:-\n", name, count, tp);
--		kfree(buf);
-+		kfree(tp);
- 	}
- 
- 	if (!strcmp(name, "min_pkt_size")) {
--- 
-2.7.4
+hello everyone:
+	my kernel version is 3.10.0-327.62.59.101.x86_64, and 
+why this Kasan's shadow memory is lost?
+	
+Thanks;
+
+BUG: unable to handle kernel paging request at fffffc0000000000
+IP: [<ffffffff8142160b>] kasan_mem_to_shadow include/linux/kasan.h:20 [inline]
+IP: [<ffffffff8142160b>] memory_is_poisoned_4 mm/kasan/kasan.c:122 [inline]
+IP: [<ffffffff8142160b>] memory_is_poisoned mm/kasan/kasan.c:244 [inline]
+IP: [<ffffffff8142160b>] check_memory_region_inline mm/kasan/kasan.c:270 [inline]
+IP: [<ffffffff8142160b>] __asan_load4+0x2b/0x80 mm/kasan/kasan.c:524
+PGD 0
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 21826 Comm: syz-executor0 Tainted: G    B          ---- ------- T 3.10.0-327.62.59.101.x86_64+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+task: ffff8802337ae680 ti: ffff880212dc8000 task.ti: ffff880212dc8000
+RIP: 0010:[<ffffffff8142160b>]  [<ffffffff8142160b>] kasan_mem_to_shadow include/linux/kasan.h:20 [inline]
+RIP: 0010:[<ffffffff8142160b>]  [<ffffffff8142160b>] memory_is_poisoned_4 mm/kasan/kasan.c:122 [inline]
+RIP: 0010:[<ffffffff8142160b>]  [<ffffffff8142160b>] memory_is_poisoned mm/kasan/kasan.c:244 [inline]
+RIP: 0010:[<ffffffff8142160b>]  [<ffffffff8142160b>] check_memory_region_inline mm/kasan/kasan.c:270 [inline]
+RIP: 0010:[<ffffffff8142160b>]  [<ffffffff8142160b>] __asan_load4+0x2b/0x80 mm/kasan/kasan.c:524
+RSP: 0018:ffff880212dcfba0  EFLAGS: 00010286
+RAX: fffffbffffffffff RBX: ffff8802286ddd60 RCX: ffffffff8167b601
+RDX: dffffc0000000000 RSI: 0000000000000008 RDI: fffffffffffffff8
+RBP: ffff880212dcfba0 R08: 0000000000000007 R09: 0000000000000000
+R10: ffff880000000000 R11: 0000000000000000 R12: ffff8802286da980
+R13: 0000000000000000 R14: fffffffffffffff8 R15: ffffffff81c9b370
+FS:  0000000000000000(0000) GS:ffff8800bb100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffc0000000000 CR3: 000000000255a000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ [<ffffffff8167b601>] crypto_ahash_digestsize include/crypto/hash.h:148 [inline]
+ [<ffffffff8167b601>] hash_sock_destruct+0x81/0x160 crypto/algif_hash.c:270
+ [<ffffffff81ca20f4>] __sk_free+0x44/0x330 net/core/sock.c:1392
+ [<ffffffff81ca240d>] sk_free+0x2d/0x40 net/core/sock.c:1422
+ [<ffffffff816792f5>] sock_put include/net/sock.h:1722 [inline]
+ [<ffffffff816792f5>] af_alg_release+0x55/0x70 crypto/af_alg.c:123
+ [<ffffffff81c9b23c>] sock_release+0x5c/0x190 net/socket.c:570
+ [<ffffffff81c9b38b>] sock_close+0x1b/0x20 net/socket.c:1161
+ [<ffffffff8146263b>] __fput+0x1bb/0x560 fs/file_table.c:246
+ [<ffffffff81462caa>] ____fput+0x1a/0x20 fs/file_table.c:283
+ [<ffffffff811721df>] task_work_run+0x11f/0x1e0 kernel/task_work.c:87
+ [<ffffffff8112101b>] exit_task_work include/linux/task_work.h:21 [inline]
+ [<ffffffff8112101b>] do_exit+0x68b/0x1b40 kernel/exit.c:815
+ [<ffffffff811225d1>] do_group_exit+0x91/0x1f0 kernel/exit.c:948
+ [<ffffffff81122752>] SYSC_exit_group kernel/exit.c:959 [inline]
+ [<ffffffff81122752>] SyS_exit_group+0x22/0x30 kernel/exit.c:957
+ [<ffffffff81fac0bd>] system_call_fastpath+0x16/0x1b
+Code: 55 48 b8 ff ff ff ff ff 7f ff ff 48 39 c7 48 89 e5 48 8b 4d 08 76 43 48 89 f8 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 48 01 d0 <66> 83 38 00 75 07 5d c3 0f 1f 44 00 00 48 8d 77 03 49 89 f0 49
+RIP  [<ffffffff8142160b>] kasan_mem_to_shadow include/linux/kasan.h:20 [inline]
+RIP  [<ffffffff8142160b>] memory_is_poisoned_4 mm/kasan/kasan.c:122 [inline]
+RIP  [<ffffffff8142160b>] memory_is_poisoned mm/kasan/kasan.c:244 [inline]
+RIP  [<ffffffff8142160b>] check_memory_region_inline mm/kasan/kasan.c:270 [inline]
+RIP  [<ffffffff8142160b>] __asan_load4+0x2b/0x80 mm/kasan/kasan.c:524
+ RSP <ffff880212dcfba0>
+CR2: fffffc0000000000
