@@ -1,72 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752429AbeCNPpj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:45:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:58667 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752275AbeCNPpX (ORCPT
+        id S1752457AbeCNPpq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:45:46 -0400
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:64763 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCNPpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:45:23 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
-Subject: [PATCH 23/47] cpufreq: remove cris specific drivers
-Date: Wed, 14 Mar 2018 16:35:36 +0100
-Message-Id: <20180314153603.3127932-24-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
-References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:q5clH/C/IO+WhP9C8UaJcpuzrpjX1kDXrqST0VFeBKYqYbumufY
- WbxDYKUPNRD4Xd5COQN08M5BWeDBWt1OHzD6xicAU5s3BiSks+EdLrfL2k8Vy/o0ULxclDx
- q6P99945mT1MNfJUKDTK8P+4Q1AH0JiLZ+tkWak4T9B9cxKngxgoHPn1a4W9r1v8ai+3erH
- GF7UEr/bw4lFjGIH5OE8A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+F01YTo18Vo=:oFGQZbBRgIPhZa24uLJAi4
- l7DOsWK4ZODWIWM7C1CramKcWak/oxqEbvwmPv3tqQlz0a6fInP8Mxq3+FhXqGN+kqKmdzHdB
- XmPw58E+Qhx0wGzsZsLAxznav5Y7AWbT7fLNMKtIAwo8IqeCtxWynoGw0MGb/IW/IHK5SPKnq
- 3NxRsCRA0j5XWUZi3dymcdQqNx00VYSewQKElfdHeGNTk5WCVYQUeR6TtHSNKiaFJ6Wf5j8xG
- ApFSqvvc+hmk0W7DndfwgtCTwFJ3I/1XhEjJg6lxkZEv34S2coOds5k24FA8i9egMYgk4hP0P
- +jcOjimQoxx6Q8W3sPZVapO9S+3ua0UR+6X2RdOOTQy0FR+PR6Jh9qwyL3YDMQkDe5cfrdsLu
- rT7apU8+FMpO3ZomzFZSa8ivfPIs5EuoooiMdLYMQqTyDydRrEcaCGeKv6yuyVqkN0eqeCXH4
- LcqaJtu+xtNjbdbMeI/4iGqwaF51McpZaZiestBvsr5cdZYuBqggKBxo8631yxBNpxFrmtfJS
- DoPTy/D/2p580zMBywn6uou3dZeaL+MXeMDDmCn+d0yrDJA0ZRiLvDSAUnZYLY14AINEkUcGb
- U2m0cMdbMRbmGrb+B6SYp/PBI/IsygtarWyVniqpNIUh60qJNDPeSjO0xYDy4Q8F4nUF3k9e0
- syOnpfqx335slWfW8V0KtrehImU9xrxpoHNV1xJWLjGncwAZiMRVbEYxAGv7DTs1vWod4l2kz
- scO7T0hmWRGLCWbppiSsIg883gdhFmyOcq3isw==
+        Wed, 14 Mar 2018 11:45:41 -0400
+Date: Wed, 14 Mar 2018 11:45:39 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH 06/47] net: smsc: remove m32r specific smc91x
+ configuration
+In-Reply-To: <20180314153603.3127932-7-arnd@arndb.de>
+Message-ID: <nycvar.YSQ.7.76.1803141144200.28583@knanqh.ubzr>
+References: <20180314153603.3127932-1-arnd@arndb.de> <20180314153603.3127932-7-arnd@arndb.de>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID: BF29C3EE-279E-11E8-A262-67830C78B957-78420484!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cris architecture is getting removed, including the artpec3
-and etraxfs SoCs, so these cpufreq drivers are now unused.
+On Wed, 14 Mar 2018, Arnd Bergmann wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/cpufreq/Makefile               |  2 -
- drivers/cpufreq/cris-artpec3-cpufreq.c | 93 ----------------------------------
- drivers/cpufreq/cris-etraxfs-cpufreq.c | 92 ---------------------------------
- 3 files changed, 187 deletions(-)
- delete mode 100644 drivers/cpufreq/cris-artpec3-cpufreq.c
- delete mode 100644 drivers/cpufreq/cris-etraxfs-cpufreq.c
+> The m32r architecture is getting removed, so this part can be
+> cleaned up as well.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 2e4495cf9aa8..8d24ade3bd02 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -102,8 +102,6 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
- ##################################################################################
- # Other platform drivers
- obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
--obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
--obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
- obj-$(CONFIG_IA64_ACPI_CPUFREQ)		+= ia64-acpi-cpufreq.o
- obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
- obj-$(CONFIG_LOONGSON1_CPUFREQ)		+= loongson1-cpufreq.o
-diff --git a/drivers/cpufreq/cris-artpec3-cpufreq.c b/drivers/cpufreq/cris-artpec3-cpufreq.c
-deleted file mode 100644
-index 455b4fb78cba..000000000000
-diff --git a/drivers/cpufreq/cris-etraxfs-cpufreq.c b/drivers/cpufreq/cris-etraxfs-cpufreq.c
-deleted file mode 100644
-index 4c4b5dd685e3..000000000000
--- 
-2.9.0
+Acked-by: Nicolas Pitre <nico@fluxnic.net>
+
+> ---
+>  drivers/net/ethernet/smsc/Kconfig  |  4 ++--
+>  drivers/net/ethernet/smsc/smc91x.h | 26 --------------------------
+>  2 files changed, 2 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/smsc/Kconfig b/drivers/net/ethernet/smsc/Kconfig
+> index 4c2f612e4414..1c2b6663f7ce 100644
+> --- a/drivers/net/ethernet/smsc/Kconfig
+> +++ b/drivers/net/ethernet/smsc/Kconfig
+> @@ -37,8 +37,8 @@ config SMC91X
+>  	select CRC32
+>  	select MII
+>  	depends on !OF || GPIOLIB
+> -	depends on ARM || ARM64 || ATARI_ETHERNAT || BLACKFIN || COLDFIRE || \
+> -		   M32R || MIPS || MN10300 || NIOS2 || SUPERH || XTENSA || H8300
+> +	depends on ARM || ARM64 || ATARI_ETHERNAT || COLDFIRE || \
+> +		   MIPS || NIOS2 || SUPERH || XTENSA || H8300
+>  	---help---
+>  	  This is a driver for SMC's 91x series of Ethernet chipsets,
+>  	  including the SMC91C94 and the SMC91C111. Say Y if you want it
+> diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+> index 08b17adf0a65..b337ee97e0c0 100644
+> --- a/drivers/net/ethernet/smsc/smc91x.h
+> +++ b/drivers/net/ethernet/smsc/smc91x.h
+> @@ -144,32 +144,6 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
+>  
+>  #define SMC_IRQ_FLAGS		(0)
+>  
+> -#elif   defined(CONFIG_M32R)
+> -
+> -#define SMC_CAN_USE_8BIT	0
+> -#define SMC_CAN_USE_16BIT	1
+> -#define SMC_CAN_USE_32BIT	0
+> -
+> -#define SMC_inb(a, r)		inb(((u32)a) + (r))
+> -#define SMC_inw(a, r)		inw(((u32)a) + (r))
+> -#define SMC_outb(v, a, r)	outb(v, ((u32)a) + (r))
+> -#define SMC_outw(lp, v, a, r)	outw(v, ((u32)a) + (r))
+> -#define SMC_insw(a, r, p, l)	insw(((u32)a) + (r), p, l)
+> -#define SMC_outsw(a, r, p, l)	outsw(((u32)a) + (r), p, l)
+> -
+> -#define SMC_IRQ_FLAGS		(0)
+> -
+> -#define RPC_LSA_DEFAULT		RPC_LED_TX_RX
+> -#define RPC_LSB_DEFAULT		RPC_LED_100_10
+> -
+> -#elif defined(CONFIG_MN10300)
+> -
+> -/*
+> - * MN10300/AM33 configuration
+> - */
+> -
+> -#include <unit/smc91111.h>
+> -
+>  #elif defined(CONFIG_ATARI)
+>  
+>  #define SMC_CAN_USE_8BIT        1
+> -- 
+> 2.9.0
+> 
+> 
