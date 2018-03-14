@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753481AbeCNGwm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:52:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41090 "EHLO
+        id S1753440AbeCNGwb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:52:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40786 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750934AbeCNGwj (ORCPT
+        with ESMTP id S1750934AbeCNGw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:52:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 578226070A
+        Wed, 14 Mar 2018 02:52:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FE9060452
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 25/36] drm/bridge: analogix_dp: Properly log AUX CH
- errors
+Subject: Re: [PATCH v5 23/36] drm/bridge: analogix_dp: Move fast link training
+ detect to set_bridge
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
         seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
@@ -29,17 +29,17 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-26-enric.balletbo@collabora.com>
+ <20180309222327.18689-24-enric.balletbo@collabora.com>
 From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <b6541348-6539-4ace-fdeb-58d263e5ba4b@codeaurora.org>
-Date: Wed, 14 Mar 2018 12:22:24 +0530
+Message-ID: <dfd5c20e-edbc-d2e6-af2c-0c0eb9e710fb@codeaurora.org>
+Date: Wed, 14 Mar 2018 12:22:13 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-26-enric.balletbo@collabora.com>
+In-Reply-To: <20180309222327.18689-24-enric.balletbo@collabora.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,27 +47,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: Douglas Anderson <dianders@chromium.org>
+> From: zain wang <wzz@rock-chips.com>
 > 
-> The code in analogix_dp_transfer() that was supposed to print out:
->    AUX CH error happened
-> 
-> Was actually dead code. That's because the previous check (whether
-> the interrupt status indicated any errors) would have hit for all
-> errors anyway.
-> 
-> Let's combine the two error checks so we can actually see AUX CH
-> errors.  We'll also downgrade the message to a warning since some of
-> these types of errors might be expected for some displays.  If this
-> gets too noisy we can downgrade again to debug.
+> It's too early to detect fast link training, if other step after it
+> failed, we will set fast_link flag to 1, and retry set_bridge again. In
+> this case we will power down and power up panel power supply, and we
+> will do fast link training since we have set fast_link flag to 1. In
+> fact, we should do full link training now, not the fast link training.
+> So we should move the fast link detection at the end of set_bridge.
 
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Is it possible to re-write this commit message? It's a bit hard to
+follow.
 
 Thanks,
 Archit
 
 > 
-> Cc: 征增 王 <wzz@rock-chips.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > Signed-off-by: Sean Paul <seanpaul@chromium.org>
 > Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
@@ -76,40 +73,82 @@ Archit
 > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
 > 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 13 +++++--------
->   1 file changed, 5 insertions(+), 8 deletions(-)
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 42 +++++++++++++---------
+>   1 file changed, 26 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> index 4eae206ec31b..58e8a28e99aa 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> @@ -1105,6 +1105,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
->   			     struct drm_dp_aux_msg *msg)
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index d76e1652b1fd..37b16643f14c 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -601,7 +601,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
 >   {
+>   	int lane, lane_count, retval;
 >   	u32 reg;
-> +	u32 status_reg;
->   	u8 *buffer = msg->buffer;
->   	unsigned int i;
->   	int num_transferred = 0;
-> @@ -1193,16 +1194,12 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+> -	u8 link_align, link_status[2], adjust_request[2], spread;
+> +	u8 link_align, link_status[2], adjust_request[2];
 >   
->   	/* Clear interrupt source for AUX CH access error */
->   	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
-> -	if (reg & AUX_ERR) {
-> +	status_reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
-> +	if ((reg & AUX_ERR) || (status_reg & AUX_STATUS_MASK)) {
->   		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
-> -		goto aux_error;
-> -	}
+>   	usleep_range(400, 401);
 >   
-> -	/* Check AUX CH error access status */
-> -	reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
-> -	if ((reg & AUX_STATUS_MASK)) {
-> -		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
-> -			reg & AUX_STATUS_MASK);
-> +		dev_warn(dp->dev, "AUX CH error happened: %#x (%d)\n",
-> +			 status_reg & AUX_STATUS_MASK, !!(reg & AUX_ERR));
->   		goto aux_error;
->   	}
+> @@ -645,20 +645,6 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+>   		dev_dbg(dp->dev, "final lane count = %.2x\n",
+>   			dp->link_train.lane_count);
 >   
+> -		retval = drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD,
+> -					   &spread);
+> -		if (retval != 1) {
+> -			dev_err(dp->dev, "failed to read downspread %d\n",
+> -				retval);
+> -			dp->fast_train_enable = false;
+> -		} else {
+> -			dp->fast_train_enable =
+> -				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
+> -					true : false;
+> -		}
+> -		dev_dbg(dp->dev, "fast link training %s\n",
+> -			dp->fast_train_enable ? "supported" : "unsupported");
+> -
+>   		dp->link_train.lt_state = FINISHED;
+>   
+>   		return 0;
+> @@ -996,6 +982,22 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> +static int analogix_dp_fast_link_train_detection(struct analogix_dp_device *dp)
+> +{
+> +	int ret;
+> +	u8 spread;
+> +
+> +	ret = drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD, &spread);
+> +	if (ret != 1) {
+> +		dev_err(dp->dev, "failed to read downspread %d\n", ret);
+> +		return ret;
+> +	}
+> +	dp->fast_train_enable = !!(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING);
+> +	dev_dbg(dp->dev, "fast link training %s\n",
+> +		dp->fast_train_enable ? "supported" : "unsupported");
+> +	return 0;
+> +}
+> +
+>   static int analogix_dp_commit(struct analogix_dp_device *dp)
+>   {
+>   	int ret;
+> @@ -1038,8 +1040,16 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
+>   	if (ret)
+>   		return ret;
+>   
+> -	if (dp->psr_enable)
+> +	if (dp->psr_enable) {
+>   		ret = analogix_dp_enable_sink_psr(dp);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Check whether panel supports fast training */
+> +	ret =  analogix_dp_fast_link_train_detection(dp);
+> +	if (ret)
+> +		dp->psr_enable = false;
+>   
+>   	return ret;
+>   }
 > 
