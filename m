@@ -1,95 +1,123 @@
-Return-Path: <niklas.cassel@axis.com>
-X-Google-Smtp-Source: AIpwx4/FVSSZ4vmXtF6yRQDEFj+ukpLDP3ZBCK5Rl6AOMlLNdFxbwZI22x3gKgIAp3fn5+B1HQ1A
-ARC-Seal: i=1; a=rsa-sha256; t=1522237898; cv=none;
-        d=google.com; s=arc-20160816;
-        b=GZpYXVO5cFg9M+C1sgKe9QWiTYpNvZLs+aQ33Us/w+sJwIO5CaovN5Ok2p9U5+oBTS
-         6g1SLuBxGw96AXK5+fF2LQqiuiJEzppnbNuhn20309tKLDjqofnjFlU8+/qPHAIg9g0S
-         ZjZoMzO8IjzXT8wEwXNzlIzKjC0e6+P79300U+LMcvEyUcazsOxUk7Lt0UymqQf6Z48T
-         lcO8hItAP6QPr7GLbQUeV7WPJb9+88LrTqoUzavZP8n9ZHtIf90VNYhTbZEtc4sNq0Sb
-         RT0CzPXlEjMgYZfnOxi3XoD0BlXTEV6C9FJzNRGo3Qqil/Cooswou8Tglr7rQYARseVn
-         r/yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=2GplgQroBnLZ4aDfrnxYBtb9/0DsRKI9bT4hRapO3TY=;
-        b=X9dCEFrgCXT6ivZZOwyZLxMV9T0jdamXcJZAuuylLCMJrecA4mhwSb5FuHlU3A/AWK
-         yWhIsDpprdnQYHB3jKt8iqxVK3UcpDgia7CXXo3eEUGB0aJFBZSDbp3wmSkQhKUI5xwM
-         MbYg/uV6sUX8QHobdECwupy94Y7I0zrfpdrraubYdKtIVcJvzoweSk3d7x/dU8WUv+ua
-         +HtXQGJj7EpRFm3gj1bpGpfPpIz+ySmjPsivQXwO9SVrf85+R++Q0xxwz+El84Sf5Rfm
-         jWHn2mVqFGU0zXmD1KBitvocO6+zMHzb/b5O1Pq35bFtFWNh68iOlgPBnQ27Swm2Ub61
-         DPcw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com,
-	cyrille.pitchen@free-electrons.com,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 12/12] misc: pci_endpoint_test: Handle 64-bit BARs properly
-Date: Wed, 28 Mar 2018 13:50:17 +0200
-Message-Id: <20180328115018.31921-13-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180328115018.31921-1-niklas.cassel@axis.com>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
-X-TM-AS-GCONF: 00
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-220671-1520987826-2-13523872148154476904
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520987825; b=IaMCnZFUZqix+DO/oLjSyn5UmsfuTn1ltB4S3FBOmADjzvj
+    vHQLh+P8aviUDw76zfTkeZA91EEBqAiqM5yvhjDU1lwH58LiG1M5x+LsaWk5Nqg+
+    CIShMVoKbmTBi+28rTKiJ/WIll4fPnxHY+uqjhOsKY6TomkRWB5YYwmA5LiJShGY
+    LdCJBaLKVA7O6MpF+BVdIygbu65TTUqrzM8ZaJdlggFGKnowIQyVHTv9R48dRANn
+    x7vJZjw8GRUXUgPU2r79JIb8ckuTcGHHXmIceRsW9Cds8qpN1m4zryETCN2LDDcI
+    KUb/EN9Dt24rotzMn7zQxM3cXpy8hi3giyT8avw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:cc:subject:date:message-id
+    :in-reply-to:references:to:sender:list-id; s=arctest; t=
+    1520987825; bh=OuVer0mDa6Y1H+JQYPUa+54JE5+NjeW13hBCpsGSeoY=; b=b
+    wOPQX3yu559KQjByT9DPrxLVanuwPN58DEjaLQXvBi5yqqrcIrrXIMNesKu3b5CC
+    i2gvsU4glHlsCPerWleEgNgOkL1Gw+OvipVqXmlhnJHoS58EOpor5poH+NcnN/Qu
+    0c5cSS9xRMRANTgf2pMpT2HYzS3sOCHzqfGvVvOHd6+fZj3THDhyUbEh9NaDPOxA
+    E4FCaswSrk7etQ23bntc/5lmyR3pPwmcpyoQrd2bSROeq4siR7k/LxEgNZ9XK+ve
+    MLbNhaMJ6Y5ZyftbWx51gngLPdl90UK6Pcu5LrydYESEbKDIXfPaLezvhsf+C9QQ
+    deJsbyF1uKBGg1xT7vk0A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=SB6z0pPh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-60 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UbpektbP;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=SB6z0pPh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-60 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UbpektbP;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932590AbeCNAhC (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Mar 2018 20:37:02 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38525 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932580AbeCNAhC (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 13 Mar 2018 20:37:02 -0400
+X-Google-Smtp-Source: AG47ELusWKJ8oXKLKQtOJMS4VzJfqLChIWlqdJMb/o+XV68o4dHZd4XnPT3ZB25qbqjpY9o1N+47Eg==
+From: Daniel Kurtz <djkurtz@chromium.org>
+Cc: adurbin@chromium.org, Daniel Kurtz <djkurtz@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] serial: 8250_early: Add earlycon support for AMD Carrizo / Stoneyridge
+Date: Tue, 13 Mar 2018 18:36:53 -0600
+Message-Id: <20180314003655.12141-2-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180314003655.12141-1-djkurtz@chromium.org>
+References: <20180314003655.12141-1-djkurtz@chromium.org>
+To: unlisted-recipients:; (no To-header on input)
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596182125919667723?=
-X-GMAIL-MSGID: =?utf-8?q?1596182125919667723?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-A 64-bit BAR consists of a BAR pair, where the second BAR has the
-upper bits, so we cannot simply call pci_ioremap_bar() on every single
-BAR index.
+AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a 48 MHz
+input clock.
 
-The second BAR in a BAR pair will not have the IORESOURCE_MEM resource
-flag set. Only call ioremap on BARs that have the IORESOURCE_MEM
-resource flag set.
+Allow these platforms to set up this clock by specifying a kernel command
+line like:
+earlycon=amdcz,mmio32,0xfedc6000,115200
 
-pci 0000:01:00.0: BAR 4: assigned [mem 0xc0300000-0xc031ffff 64bit]
-pci 0000:01:00.0: BAR 2: assigned [mem 0xc0320000-0xc03203ff 64bit]
-pci 0000:01:00.0: BAR 0: assigned [mem 0xc0320400-0xc03204ff 64bit]
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 1: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR1
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 3: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR3
-pci-endpoint-test 0000:01:00.0: can't ioremap BAR 5: [??? 0x00000000 flags 0x0]
-pci-endpoint-test 0000:01:00.0: failed to read BAR5
-
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- drivers/misc/pci_endpoint_test.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/tty/serial/8250/8250_early.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 320276f42653..fe8897e64635 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -534,12 +534,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	}
+diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
+index ae6a256524d8..c6bf971a6038 100644
+--- a/drivers/tty/serial/8250/8250_early.c
++++ b/drivers/tty/serial/8250/8250_early.c
+@@ -195,3 +195,18 @@ static int __init early_au_setup(struct earlycon_device *dev, const char *opt)
+ OF_EARLYCON_DECLARE(palmchip, "ralink,rt2880-uart", early_au_setup);
  
- 	for (bar = BAR_0; bar <= BAR_5; bar++) {
--		base = pci_ioremap_bar(pdev, bar);
--		if (!base) {
--			dev_err(dev, "failed to read BAR%d\n", bar);
--			WARN_ON(bar == test_reg_bar);
-+		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
-+			base = pci_ioremap_bar(pdev, bar);
-+			if (!base) {
-+				dev_err(dev, "failed to read BAR%d\n", bar);
-+				WARN_ON(bar == test_reg_bar);
-+			}
-+			test->bar[bar] = base;
- 		}
--		test->bar[bar] = base;
- 	}
- 
- 	test->base = test->bar[test_reg_bar];
+ #endif
++
++#ifdef CONFIG_SERIAL_8250_DW
++static int __init early_amdcz_setup(struct earlycon_device *dev,
++				    const char *opt)
++{
++	struct uart_port *port = &dev->port;
++
++	port->uartclk = 48000000;
++
++	return early_serial8250_setup(dev, opt);
++}
++
++EARLYCON_DECLARE(amdcz, early_amdcz_setup);
++
++#endif
 -- 
-2.14.2
+2.16.2.804.g6dcf76e118-goog
+
