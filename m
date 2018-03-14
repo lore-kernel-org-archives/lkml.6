@@ -1,125 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeCNPiD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:38:03 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:55847 "EHLO
+        id S1752047AbeCNPiN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:38:13 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:49897 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751957AbeCNPiB (ORCPT
+        with ESMTP id S1750998AbeCNPiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:38:01 -0400
+        Wed, 14 Mar 2018 11:38:10 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Finn Thain <fthain@telegraphics.com.au>, netdev@vger.kernel.org
-Subject: [PATCH 04/47] net: 8390: remove m32r specific bits
-Date: Wed, 14 Mar 2018 16:35:17 +0100
-Message-Id: <20180314153603.3127932-5-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 06/47] net: smsc: remove m32r specific smc91x configuration
+Date: Wed, 14 Mar 2018 16:35:19 +0100
+Message-Id: <20180314153603.3127932-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:cpwVa9Y972fUrVjb87RJxgBs2ifw4ZQkPpC1qSGpIBCb2JSPaT3
- 5UxKUKZYS+NangidrG0dZH+OHcBdW6YhYAozar91HsXT1UQFllXho1H+iw6W+DKzn1YFiab
- wCnUdLbeM9bkvJQfsudzZ3HVmVuApc6dSK9hrehuC0QJCdvJhm0PpSqgYARdIOJM8qvku+b
- Hdkd/nuRnG1ZZ/JT9SHxA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7fH30maxmlA=:RWOIj8ULHow4R7TUP6Vzll
- lR436CSyzil/scq1xUliWZv+u/dwFjIPGJzjXjh6XzkomnUyfNkuEaEQ7qhMppYA8VNGeqK5l
- khsRAnhE7cuawaeR9RBgw1/J20C+peEN+mJcEqSdTldZADWEQP0RzcwJK0kYfnWldQgEbekV/
- 75MseZYKBKTUVxj3JJ27mMNveb8ymMtF7IMJVqO0+vGzl9mD9ohbREmDYdUF8dArMTgO37nkx
- 2LCr+Bqh+LuNw79O9SIRYZSuowWx4jkemV5tiy0KXVqdltTm2JNsJ5rJ5hUcXbnyq/GWDivPn
- z7E1Di6bSMxgg3b+K5mQ+1cCCb9BkKtBd9VPXN2jEq1cpGxvDKluEgZNmugYA/T4S3wIi0UY9
- yBfevp9NMH9Lv7HmLeQdB6vtcv8N7BHgcn95D4uLsyZ8VWybWR9tFWZcPcM7KKHpBjUTv9WJN
- vUI0rWLFLZXB9PewNdRWu/LqAnSb+MDlGwz8aqjFMSmjBRBccuNAWwLrIfWd+rbxD5F714A4h
- WwTfbcrPXSFKeX7i4/rstWztxEzxlX156oVfFSTkXgM8gZ9OhMg4hFeV40tdty+zYBACmdhY5
- dY1VaPCiA3kVCH8Cfm2r3pP0yaHmJyfqpzXm3mo/iLuOrf8CIGizfqt2Vv1YW9hfqhWcpf9Kv
- ZSzRzjcZDheIphi/AXi5R2ZgrKfXFcCDf3Ivc00XM2uCLyOE/CxymsHYeFH5q62FyATWo7E8U
- B8L8uiqp39z4hwrSlex+W/6e4u4KwgGrsdgkEg==
+X-Provags-ID: V03:K0:DW46V2n8dP+FxkKlvkRJwW6+l3EveZFk+zpTozhYtVghiu1ic4l
+ DHtyD5FeQmZzUt7xb1PTFWbLnkuv4br7qNb/t0+WSfaRpQ65XrqCfQd41C+HsxtyBkNezY9
+ rQtyGqXAoPhZ5cMBao8jROEDMtSjOR9GifF+qsgHdOvaE2QERy+KolM0O7WMQuFNuFdICkz
+ evYpR349bIjKXo0ZCG3CQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mmBnsRyNXqU=:gM5d2KU9ocSVfkAHyxzpDX
+ jTijsBhpN1DrpDaQzl5UR+0RlVNnQ457md1r55tTArrgcoj3wOFfaSAm1slWD/tZF6byE+Wtl
+ 3KtrfqOxg3eeXczpYma9O4rNTHu8FHS3WvhvvUkZyWUMBgi/SqOQoFSU9hy+Rs1ecJOsHF1kP
+ EOmPlZPST0aVe4koz9MYNvxZ6pqFGty3C3DiBTdAwy1M0UJxy7pyBedQwxZ+WXD6kx+eQTWaQ
+ TRvlpc+/UVzlp66l0M9Alq6uO0H0Y+oHEKSyl83Jss2w7cNvP+p6XbSl8dyWqVXqixtzhrhZD
+ r2Jz1LdHunrvQl2ByRZrOMOJXQxarRtiT+htrtkf2HcuDFs8geb04UWex1XWq4oqQMHvLRrc9
+ Vf8gCyIPsXkdJqKLG2xMtoQGkCKRg++1A7nCvZmmErAgXi8kOvR67PqdgteW4F+vjlxwIjKk7
+ owvWiRwtrLz6JncYRq+bQbhjSTx82c1Lmh0eTAoox5NmGWLc25w4tG8vd703715wqvDqPt6NY
+ nc9DJiHkwmNDUoi6mFPxavfGadiz/LqVuk/A2oB2VG4krMpFkE8tVIYHFiV46GAWg9+GSWhIz
+ pGhAnfXJAnGYIC9ONb+5othaKWN0oeoVVqFsFavjXaGkflY1g1GqDm2Zv2qvR4B5Pf2Gg0uRs
+ cqrwpKhB5fCSnBzIlZa5D8Z/adZV8bvRLqnVGvxeeCfFCinO6CmAsgBYd//Qr+sD1qHvcA0kx
+ unlQKVrTfsnWU98Lq9OKJffZuqDO0nkdqTaWBg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The m32r architecture is getting removed, so we can kill off the
-architecture specific hacks in this driver.
+The m32r architecture is getting removed, so this part can be
+cleaned up as well.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/8390/Kconfig |  3 +--
- drivers/net/ethernet/8390/ne.c    | 23 ++---------------------
- 2 files changed, 3 insertions(+), 23 deletions(-)
+ drivers/net/ethernet/smsc/Kconfig  |  4 ++--
+ drivers/net/ethernet/smsc/smc91x.h | 26 --------------------------
+ 2 files changed, 2 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/ethernet/8390/Kconfig b/drivers/net/ethernet/8390/Kconfig
-index fdc673484add..9fee7c83ef9f 100644
---- a/drivers/net/ethernet/8390/Kconfig
-+++ b/drivers/net/ethernet/8390/Kconfig
-@@ -87,8 +87,7 @@ config MCF8390
- 
- config NE2000
- 	tristate "NE2000/NE1000 support"
--	depends on (ISA || (Q40 && m) || M32R || MACH_TX49XX || \
--		    ATARI_ETHERNEC)
-+	depends on (ISA || (Q40 && m) || MACH_TX49XX || ATARI_ETHERNEC)
+diff --git a/drivers/net/ethernet/smsc/Kconfig b/drivers/net/ethernet/smsc/Kconfig
+index 4c2f612e4414..1c2b6663f7ce 100644
+--- a/drivers/net/ethernet/smsc/Kconfig
++++ b/drivers/net/ethernet/smsc/Kconfig
+@@ -37,8 +37,8 @@ config SMC91X
  	select CRC32
+ 	select MII
+ 	depends on !OF || GPIOLIB
+-	depends on ARM || ARM64 || ATARI_ETHERNAT || BLACKFIN || COLDFIRE || \
+-		   M32R || MIPS || MN10300 || NIOS2 || SUPERH || XTENSA || H8300
++	depends on ARM || ARM64 || ATARI_ETHERNAT || COLDFIRE || \
++		   MIPS || NIOS2 || SUPERH || XTENSA || H8300
  	---help---
- 	  If you have a network (Ethernet) card of this type, say Y here.
-diff --git a/drivers/net/ethernet/8390/ne.c b/drivers/net/ethernet/8390/ne.c
-index 4cdff6e6af89..44a084b41bf0 100644
---- a/drivers/net/ethernet/8390/ne.c
-+++ b/drivers/net/ethernet/8390/ne.c
-@@ -99,7 +99,7 @@ MODULE_LICENSE("GPL");
- that the ne2k probe is the last 8390 based probe to take place (as it
- is at boot) and so the probe will get confused by any other 8390 cards.
- ISA device autoprobes on a running machine are not recommended anyway. */
--#if !defined(MODULE) && (defined(CONFIG_ISA) || defined(CONFIG_M32R))
-+#if !defined(MODULE) && defined(CONFIG_ISA)
- /* Do we need a portlist for the ISA auto-probe ? */
- #define NEEDS_PORTLIST
- #endif
-@@ -164,12 +164,7 @@ bad_clone_list[] __initdata = {
- #define NESM_START_PG	0x40	/* First page of TX buffer */
- #define NESM_STOP_PG	0x80	/* Last page +1 of RX ring */
+ 	  This is a driver for SMC's 91x series of Ethernet chipsets,
+ 	  including the SMC91C94 and the SMC91C111. Say Y if you want it
+diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+index 08b17adf0a65..b337ee97e0c0 100644
+--- a/drivers/net/ethernet/smsc/smc91x.h
++++ b/drivers/net/ethernet/smsc/smc91x.h
+@@ -144,32 +144,6 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
  
--#if defined(CONFIG_PLAT_MAPPI)
--#  define DCR_VAL 0x4b
--#elif defined(CONFIG_PLAT_OAKS32R)  || \
--   defined(CONFIG_MACH_TX49XX)
--#  define DCR_VAL 0x48		/* 8-bit mode */
--#elif defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
-+#if defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
- #  define DCR_VAL (MACH_IS_ATARI ? 0x48 : 0x49)
- #else
- #  define DCR_VAL 0x49
-@@ -422,12 +417,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
- 		stop_page  = NE1SM_STOP_PG;
- 	}
+ #define SMC_IRQ_FLAGS		(0)
  
--#if  defined(CONFIG_PLAT_MAPPI) || defined(CONFIG_PLAT_OAKS32R)
--	neX000 = ((SA_prom[14] == 0x57  &&  SA_prom[15] == 0x57)
--		|| (SA_prom[14] == 0x42 && SA_prom[15] == 0x42));
--#else
- 	neX000 = (SA_prom[14] == 0x57  &&  SA_prom[15] == 0x57);
--#endif
- 	ctron =  (SA_prom[0] == 0x00 && SA_prom[1] == 0x00 && SA_prom[2] == 0x1d);
- 	copam =  (SA_prom[14] == 0x49 && SA_prom[15] == 0x00);
+-#elif   defined(CONFIG_M32R)
+-
+-#define SMC_CAN_USE_8BIT	0
+-#define SMC_CAN_USE_16BIT	1
+-#define SMC_CAN_USE_32BIT	0
+-
+-#define SMC_inb(a, r)		inb(((u32)a) + (r))
+-#define SMC_inw(a, r)		inw(((u32)a) + (r))
+-#define SMC_outb(v, a, r)	outb(v, ((u32)a) + (r))
+-#define SMC_outw(lp, v, a, r)	outw(v, ((u32)a) + (r))
+-#define SMC_insw(a, r, p, l)	insw(((u32)a) + (r), p, l)
+-#define SMC_outsw(a, r, p, l)	outsw(((u32)a) + (r), p, l)
+-
+-#define SMC_IRQ_FLAGS		(0)
+-
+-#define RPC_LSA_DEFAULT		RPC_LED_TX_RX
+-#define RPC_LSB_DEFAULT		RPC_LED_100_10
+-
+-#elif defined(CONFIG_MN10300)
+-
+-/*
+- * MN10300/AM33 configuration
+- */
+-
+-#include <unit/smc91111.h>
+-
+ #elif defined(CONFIG_ATARI)
  
-@@ -508,18 +498,9 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
- 
- 	dev->base_addr = ioaddr;
- 
--#ifdef CONFIG_PLAT_MAPPI
--	outb_p(E8390_NODMA + E8390_PAGE1 + E8390_STOP,
--		ioaddr + E8390_CMD); /* 0x61 */
--	for (i = 0; i < ETH_ALEN; i++) {
--		dev->dev_addr[i] = SA_prom[i]
--			= inb_p(ioaddr + EN1_PHYS_SHIFT(i));
--	}
--#else
- 	for (i = 0; i < ETH_ALEN; i++) {
- 		dev->dev_addr[i] = SA_prom[i];
- 	}
--#endif
- 
- 	pr_cont("%pM\n", dev->dev_addr);
- 
+ #define SMC_CAN_USE_8BIT        1
 -- 
 2.9.0
