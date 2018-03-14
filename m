@@ -1,55 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeCNQoU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:44:20 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45662 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCNQoR (ORCPT
+        id S1752347AbeCNQoz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:44:55 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:38074 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeCNQou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:44:17 -0400
-X-Google-Smtp-Source: AG47ELttlyRHFeFxLVfsyFtclEIsa9XR9viC9maUGoNVuh6VbdjzbzUAPxM4oRmHF3Ay7PnGTLI+q6EYWV+Q+3iq5Ss=
-MIME-Version: 1.0
-In-Reply-To: <20180314163808.GA9201@ulmo>
-References: <20180314153603.3127932-1-arnd@arndb.de> <20180314153603.3127932-37-arnd@arndb.de>
- <20180314163808.GA9201@ulmo>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 14 Mar 2018 17:44:16 +0100
-X-Google-Sender-Auth: bW4ffzY237_siZdbchLdF55tdMY
-Message-ID: <CAK8P3a3mp=iKq2MvL24wQvhjyhDDeu_ty50vpdcfSnXrSaxjPA@mail.gmail.com>
-Subject: Re: [PATCH 36/47] pwm: remobe pwm-bfin driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pwm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 12:44:50 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2EGiSdT001049
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/7] kbuild: restore touching autoksyms.h to the top Makefile
+Date: Thu, 15 Mar 2018 01:44:18 +0900
+Message-Id: <1521045861-22418-5-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 5:38 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Mar 14, 2018 at 04:35:49PM +0100, Arnd Bergmann wrote:
->> The blackfin architecture is getting removed, so this driver is now
->> obsolete as well.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  drivers/pwm/Kconfig    |   9 ---
->>  drivers/pwm/Makefile   |   1 -
->>  drivers/pwm/pwm-bfin.c | 157 -------------------------------------------------
->>  3 files changed, 167 deletions(-)
->>  delete mode 100644 drivers/pwm/pwm-bfin.c
->
-> Do you want to apply this in a batch or do you want me to pick it up
-> into the PWM tree?
->
-> If you want to go for the former:
->
-> Acked-by: Thierry Reding <thierry.reding@gmail.com>
->
-> Otherwise, just let me know and I'll pick this up for v4.17.
+Commit d3fc425e819b ("kbuild: make sure autoksyms.h exists early")
+moved the code that touches autoksyms.h to scripts/kconfig/Makefile
+with obscure reason.
 
-Either way is fine with me, the other maintainers just provided
-an Ack, and preferred me to keep the removal in one piece, so
-i'll do the same here.
+>From Nicolas' comment [1], he did not seem to be sure about the root
+cause.
 
-       Arnd
+I guess I figured it out, so here is a fix-up I think is more correct.
+According to the error log in the original post [2], the build failed
+in scripts/mod/devicetable-offsets.c
+
+scripts/mod/Makefile is descended from scripts/Makefile, which is
+invoked from the top-level Makefile by the 'scripts' target.
+
+To build vmlinux and/or modules, Kbuild descend into $(vmlinux-dirs).
+This depends on 'prepare' and 'script' as follows:
+
+  $(vmlinux-dirs): prepare scripts
+
+Because there is no dependency between 'prepare' and 'scripts', the
+parallel building can run them simultaneously.
+
+'prepare' depends on 'prepare1', which touched autoksyms.h, whereas
+'scripts' descends into script/, then scripts/mod/, which needed
+<generated/autoksyms.h> if CONFIG_TRIM_UNUSED_KSYMS.  This was the
+reason of race.
+
+I am not happy to have unrelated code in the Kconfig Makefile, so
+getting it back to the top Makefile.
+
+I remove the standalone test target because I want to use it to
+create an empty autoksyms.h file.  Here is a little improvement;
+unnecessary autoksyms.h is not created when CONFIG_TRIM_UNUSED_KSYMS
+is disabled.
+
+[1] https://lkml.org/lkml/2016/11/30/734
+[2] https://lkml.org/lkml/2016/11/30/531
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Commit:
+
+The discussion happened in Nov. 2016.
+
+I was not involved in it.
+I was not the Kbuild maintainer at that time.
+
+END
+
+---
+
+ Makefile                 | 12 +++++++-----
+ scripts/kconfig/Makefile |  2 --
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index fab0e19..decc870 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1010,9 +1010,11 @@ ifdef CONFIG_TRIM_UNUSED_KSYMS
+ 	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
+ endif
+ 
+-# standalone target for easier testing
+-include/generated/autoksyms.h: FORCE
+-	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh true
++autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
++
++$(autoksyms_h):
++	$(Q)mkdir -p $(dir $@)
++	$(Q)touch $@
+ 
+ ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
+ 
+@@ -1056,7 +1058,7 @@ include/config/kernel.release: include/config/auto.conf FORCE
+ # in parallel
+ PHONY += scripts
+ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+-	 asm-generic gcc-plugins autoksyms
++	 asm-generic gcc-plugins $(autoksyms_h)
+ 	$(Q)$(MAKE) $(build)=$(@)
+ 
+ # Things we need to do before we recursively start building the kernel
+@@ -1086,7 +1088,7 @@ endif
+ # that need to depend on updated CONFIG_* values can be checked here.
+ prepare2: prepare3 prepare-compiler-check outputmakefile asm-generic
+ 
+-prepare1: prepare2 $(version_h) include/generated/utsrelease.h \
++prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+ 	$(cmd_crmodverdir)
+ 
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index cb3ec53..eb139a1 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -38,8 +38,6 @@ nconfig: $(obj)/nconf
+ # for external use.
+ silentoldconfig: $(obj)/conf
+ 	$(Q)mkdir -p include/config include/generated
+-	$(Q)test -e include/generated/autoksyms.h || \
+-	    touch   include/generated/autoksyms.h
+ 	$< $(silent) --$@ $(Kconfig)
+ 
+ localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
+-- 
+2.7.4
