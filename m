@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeCNIPX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:15:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33974 "EHLO
+        id S1753557AbeCNIPc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:15:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34176 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753202AbeCNIPS (ORCPT
+        with ESMTP id S1753526AbeCNIPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:15:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 845226081A
+        Wed, 14 Mar 2018 04:15:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8288760848
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
 From: Vivek Gautam <vivek.gautam@codeaurora.org>
@@ -18,9 +18,9 @@ Cc: mark.rutland@arm.com, will.deacon@arm.com, robdclark@gmail.com,
         tfiga@chromium.org, sricharan@codeaurora.org, m.szyprowski@samsung.com,
         architt@codeaurora.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, vivek.gautam@codeaurora.org
-Subject: [PATCH v10 4/5] iommu/arm-smmu: Add the device_link between masters and smmu
-Date: Wed, 14 Mar 2018 13:44:33 +0530
-Message-Id: <20180314081434.30875-5-vivek.gautam@codeaurora.org>
+Subject: [PATCH v10 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+Date: Wed, 14 Mar 2018 13:44:34 +0530
+Message-Id: <20180314081434.30875-6-vivek.gautam@codeaurora.org>
 X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 In-Reply-To: <20180314081434.30875-1-vivek.gautam@codeaurora.org>
 References: <20180314081434.30875-1-vivek.gautam@codeaurora.org>
@@ -28,72 +28,136 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sricharan R <sricharan@codeaurora.org>
+qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
+clock and power requirements. This smmu core is used with
+multiple masters on msm8996, viz. mdss, video, etc.
+Add bindings for the same.
 
-Finally add the device link between the master device and
-smmu, so that the smmu gets runtime enabled/disabled only when the
-master needs it. This is done from add_device callback which gets
-called once when the master is added to the smmu.
-
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
 
-Changes since v9:
- - Using device_link_del_dev() to delete the device link, instead of
-   doing it in two steps - device_link_find() to first find the link, and
-   then calling device_link_del().
+ - No change since v9.
 
- drivers/iommu/arm-smmu.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ .../devicetree/bindings/iommu/arm,smmu.txt         | 42 ++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                           | 14 ++++++++
+ 2 files changed, 56 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+index 8a6ffce12af5..7c71a6ed465a 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+@@ -17,10 +17,19 @@ conditions.
+                         "arm,mmu-401"
+                         "arm,mmu-500"
+                         "cavium,smmu-v2"
++                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
+ 
+                   depending on the particular implementation and/or the
+                   version of the architecture implemented.
+ 
++                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
++                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
++                  string that should be present along with the "qcom,smmu-v2"
++                  to facilitate SoC specific clocks/power connections and to
++                  address specific bug fixes.
++                  An example string would be -
++                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
++
+ - reg           : Base address and size of the SMMU.
+ 
+ - #global-interrupts : The number of global interrupts exposed by the
+@@ -71,6 +80,22 @@ conditions.
+                   or using stream matching with #iommu-cells = <2>, and
+                   may be ignored if present in such cases.
+ 
++- clock-names:    List of the names of clocks input to the device. The
++                  required list depends on particular implementation and
++                  is as follows:
++                  - for "qcom,smmu-v2":
++                    - "bus": clock required for downstream bus access and
++                             for the smmu ptw,
++                    - "iface": clock required to access smmu's registers
++                               through the TCU's programming interface.
++                  - unspecified for other implementations.
++
++- clocks:         Specifiers for all clocks listed in the clock-names property,
++                  as per generic clock bindings.
++
++- power-domains:  Specifiers for power domains required to be powered on for
++                  the SMMU to operate, as per generic power domain bindings.
++
+ ** Deprecated properties:
+ 
+ - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+@@ -137,3 +162,20 @@ conditions.
+                 iommu-map = <0 &smmu3 0 0x400>;
+                 ...
+         };
++
++	/* Qcom's arm,smmu-v2 implementation */
++	smmu4: iommu {
++		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
++		reg = <0xd00000 0x10000>;
++
++		#global-interrupts = <1>;
++		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
++		#iommu-cells = <1>;
++		power-domains = <&mmcc MDSS_GDSC>;
++
++		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
++			 <&mmcc SMMU_MDP_AHB_CLK>;
++		clock-names = "bus", "iface";
++	};
 diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 56a04ae80bf3..4cf270ffd449 100644
+index 4cf270ffd449..03750ba15224 100644
 --- a/drivers/iommu/arm-smmu.c
 +++ b/drivers/iommu/arm-smmu.c
-@@ -1460,10 +1460,31 @@ static int arm_smmu_add_device(struct device *dev)
+@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
+ 	GENERIC_SMMU,
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
++	QCOM_SMMUV2,
+ };
  
- 	iommu_device_link(&smmu->iommu, dev);
+ struct arm_smmu_s2cr {
+@@ -1995,6 +1996,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
  
-+	if (pm_runtime_enabled(smmu->dev)) {
-+		struct device_link *link;
++static const char * const qcom_smmuv2_clks[] = {
++	"bus", "iface",
++};
 +
-+		/*
-+		 * Establish the link between smmu and master, so that the
-+		 * smmu gets runtime enabled/disabled as per the master's
-+		 * needs.
-+		 */
-+		link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
-+		if (!link) {
-+			dev_warn(smmu->dev,
-+				 "Unable to add link to the consumer %s\n",
-+				 dev_name(dev));
-+			ret = -ENODEV;
-+			goto out_unlink;
-+		}
-+	}
++static const struct arm_smmu_match_data qcom_smmuv2 = {
++	.version = ARM_SMMU_V2,
++	.model = QCOM_SMMUV2,
++	.clks = qcom_smmuv2_clks,
++	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
++};
 +
- 	arm_smmu_rpm_put(smmu);
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+ 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
+@@ -2002,6 +2014,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
++	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+@@ -2376,6 +2389,7 @@ IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
+ IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
+ IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
+ IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
++IOMMU_OF_DECLARE(qcom_smmuv2, "qcom,smmu-v2");
  
- 	return 0;
- 
-+out_unlink:
-+	iommu_device_unlink(&smmu->iommu, dev);
-+	arm_smmu_master_free_smes(fwspec);
- out_rpm_put:
- 	arm_smmu_rpm_put(smmu);
- out_cfg_free:
-@@ -1486,6 +1507,9 @@ static void arm_smmu_remove_device(struct device *dev)
- 	cfg  = fwspec->iommu_priv;
- 	smmu = cfg->smmu;
- 
-+	if (pm_runtime_enabled(smmu->dev))
-+		device_link_del_dev(dev, smmu->dev);
-+
- 	ret = arm_smmu_rpm_get(smmu);
- 	if (ret < 0)
- 		return;
+ MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
+ MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
