@@ -1,128 +1,148 @@
 Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AG47ELsV0MZYe3mkNmdxlQ9mB+O6f7lIguQ6nMRixLGO8MMz/HaTaLqWklE6/Owf1E3w6OyP3iiN
-ARC-Seal: i=1; a=rsa-sha256; t=1521458023; cv=none;
+X-Google-Smtp-Source: AG47ELt5DVbE/DKWFJiUYRfuHuq7ZOMfVi6Sbh9Ex7YBpktU8KwLO1ZFO+WGIUrdDpg2ucBSl4O+
+ARC-Seal: i=1; a=rsa-sha256; t=1521051424; cv=none;
         d=google.com; s=arc-20160816;
-        b=Nsbtc7IhtyAMCtf13n/HpUjCQiOwnLFfFC9oiiJDJLyP1HcYWnJHSYRkopJdNM/qtp
-         nrOWEZnE1nh+wHpIkbJZsk/w6Ouv8o4FuKo/zq3Q6nTi0b/FHkUsSXsw93UTf2XHUi6C
-         4DbIXaTA5pLxWmlCRtAX7CLe+qJAxn7ClT6RK2RGXxxD/z4WbF5bj/NEysxw6bPnZiu8
-         qJKNeO7Xb5lKgp6yNqWDzwh/UTUT/kzILByZi9VSnK6wLU9S9adAw1i40C8S4jAzMphK
-         lyYwZTfZ8bNYtOJzK7BmE0JaodVhyX1KZAy8VNM/5OBhtS6kzlPrUTdANxMbwgBEWn0W
-         5KOg==
+        b=CPNWX6f1fDqPE26lvTmL4yl199OtWqnLkTFzoh7v7FVLeOeQRF71Gigttm4qJuEVpG
+         P4dP0PVd+kSsTSpLV0sswb+sfBGLzHYdcRL6AKCeGkyg704OlDie3Gc33h8MsX+GLlcK
+         BA/a/0A8pwXy096+MNsfqOT5rizJ43TLLWAVpgOH2HjVJJw4A1WRFBQ9UGGAesv0vtxx
+         uec8lh4X2Jkq6s+SqxmwKS8ITfXNSD1FWHxDD4Huayyb1z2pZJw2C8pumwIHYsBtBifg
+         vuzRdjefb4QudftHmnczfb+3uL5+nS/7MdnxIJsQ3fIjOH6+7lt7oBSAJQy8G4OWyN/4
+         YXKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:arc-authentication-results;
-        bh=+y7mA+SBa07AmzMWri5b1ZnCA3DwDTQOORSWmZ3pIKk=;
-        b=LWQAAFficxTFApUYCC3R6o5bMmR4AANEMF+IdbDCbdzUcxEo8sgYarQgurYu0UNzk3
-         16I2jxrTGmPkjBHWqdMPPNnFng8rYF6EDgh+rAZUQjVZ2scsuf4JD/BL8vq6F8iSJ85M
-         atUpZFjTYefje70ncIZGc47urKZDj8dfQ5SFpHjv5fSQREcFq8UDGtfsIOmtf2fE13wn
-         OufGjAA5mEh5F4kJ2kjNsNtZ+n2Go1A0CyWvHLBKkjFRrllZC/Nx7SnCbrDjz15SVuCa
-         OjwdgjbIi0P1+IXAkj6koXI1N/lN1AY5kO9+buCMFcPSQkGdUWmH2k5pu76zg4ZkbHBV
-         JoYA==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=B+pCoh0sl6Bwdm4gJuX082CPeVJBaeHzPTGr0X1haVs=;
+        b=lzpwDtAtyJD/ziJWPonHJhQMVOX8RLFlMbzpcDakL9dsqSY6/a/++zix3v6Y/o7TI4
+         YOUbdlO/1N/Z1mxT5L2bZ/3bBfDzz4RxQpy0pWH/yVjDAzVE/h8muKtJOjGYDbFypsPi
+         d3rsmzv8zCDvkWTafQjt/9M89UZsa35/Jo1CuQ/8LqAnOSoVctWT6vCTjqP+nVrI329x
+         rtlWj1H53kGv0SN44XklI0eHXREQGzpXakSGgKLx1BxLcf8NOQuOys34NCnUd8bb5fFP
+         q/pLK0mzlQHYb2hOkjfr+qjVIQZFD+Ct11IgFo9Ro+qjfENJ3kg9GDh7t7gpHjYNkNYo
+         9oKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
-Subject: Re: [PATCH v17 08/10] ACPI / scan: do not enumerate Indirect IO host
- children
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
- <1521051359-34473-9-git-send-email-john.garry@huawei.com>
- <2309217.pWfZsU88YQ@aspire.rjw.lan>
- <906b3868-39a5-3807-23a4-dfc52c2e82c4@huawei.com>
- <CAJZ5v0gm5AokZy4JvuJzDgdNoc88FjrMmXR2RK5pdRkXgtYrXQ@mail.gmail.com>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring
-	<robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann
-	<arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Olof Johansson
-	<olof@lixom.net>, Dann Frazier <dann.frazier@canonical.com>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, Rob Herring <robh@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Joe Perches <joe@perches.com>,
-	"Benjamin Herrenschmidt" <benh@kernel.crashing.org>, Linux PCI
-	<linux-pci@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, ACPI Devel Maling List
-	<linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, Corey Minyard
-	<minyard@acm.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-arch <linux-arch@vger.kernel.org>, Randy Dunlap
-	<rdunlap@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Frank Rowand
-	<frowand.list@gmail.com>, Alexander Graf <agraf@suse.de>
 From: John Garry <john.garry@huawei.com>
-Message-ID: <d4048516-033c-85f1-1766-69b3e58ae295@huawei.com>
-Date: Mon, 19 Mar 2018 11:13:07 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
+	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
+	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
+	<andy.shevchenko@gmail.com>, <robh@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>
+CC: <joe@perches.com>, <benh@kernel.crashing.org>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
+	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
+Subject: [PATCH v17 07/10] ACPI / scan: rename acpi_is_serial_bus_slave() to widen use
+Date: Thu, 15 Mar 2018 02:15:56 +0800
+Message-ID: <1521051359-34473-8-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
+References: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gm5AokZy4JvuJzDgdNoc88FjrMmXR2RK5pdRkXgtYrXQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594938018903038038?=
-X-GMAIL-MSGID: =?utf-8?q?1595364368758728084?=
+X-GMAIL-THRID: =?utf-8?q?1594938018736460891?=
+X-GMAIL-MSGID: =?utf-8?q?1594938018736460891?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 19/03/2018 10:57, Rafael J. Wysocki wrote:
-> On Mon, Mar 19, 2018 at 11:48 AM, John Garry <john.garry@huawei.com> wrote:
->> On 19/03/2018 10:30, Rafael J. Wysocki wrote:
->>>
->>> On Wednesday, March 14, 2018 7:15:57 PM CET John Garry wrote:
->>>>
->>>>> Through the logical PIO framework systems which otherwise have
->>>>> no IO space access to legacy ISA/LPC devices may access these
->>>>> devices through so-called "indirect IO" method. In this, IO
->>>>> space accesses for non-PCI hosts are redirected to a host
->>>>> LLDD to manually generate the IO space (bus) accesses. Hosts
->>>>> are able to register a region in logical PIO space to map to
->>>>> its bus address range.
->>>>>
->>>>> Indirect IO child devices have an associated host-specific bus
->>>>> address. Special translation is required to map between
->>>>> a logical PIO address for a device and it's host bus address.
->>>>>
->>>>> Since in the ACPI tables the child device IO resources would
->>>>> be the host-specific values, it is required the ACPI scan code
->>>>> should not enumerate these devices, and that this should be
->>>>> the responsibility of the host driver so that it can "fixup"
->>>>> the resources so that they map to the appropriate logical PIO
->>>>> addresses.
->>>>>
->>>>> To avoid enumerating these child devices, we add a check from
->>>>> acpi_device_enumeration_by_parent() as to whether the parent
->>>>> for a device is a member of a known list of "indirect IO" hosts.
->>>>> For now, the HiSilicon LPC host controller ID is added.
->>>>>
->>>>> Signed-off-by: John Garry <john.garry@huawei.com>
->>>>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> You have my ACK here already.
->>>
->>> Since I've ACKed the [7/10] too, I don't think there's anything more I can
->>> do
->>> about this series and I'm assuming that it will be routed through other
->>> trees.
->>>
->>> Thanks!
->>>
->>
->> Hi Rafael,
->>
->> Thanks for this.
->>
->> Yes, I am working on getting this whole series routed through another tree.
->> Actually I think 7+8 could go separately since there is no build dependency,
->> but I will try to keep the series together.
->
-> I can take the [7-8/10] if you want me to, so please let me know.
->
+Currently the ACPI scan has special handling for serial bus
+slaves, in that it makes it the responsibility of the the slave
+device's parent to enumerate the device.
 
-OK, thanks. Will do.
+To support in future other types of slave devices which require
+the same special handling, but where the bus is not strictly a
+serial bus - such as devices on the HiSilicon LPC controller bus -
+rename acpi_is_serial_bus_slave() to
+acpi_device_enumeration_by_parent(), so that the name can fit the
+wider purpose.
 
-John
+Associated device flag acpi_device_flags.serial_bus_slave is also
+renamed to .enumeration_by_parent.
 
-> Thanks!
->
-> .
->
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/acpi/scan.c     | 19 ++++++++++---------
+ include/acpi/acpi_bus.h |  2 +-
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 8e63d93..f9e7904 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1524,7 +1524,7 @@ static int acpi_check_serial_bus_slave(struct acpi_resource *ares, void *data)
+ 	return -1;
+ }
+ 
+-static bool acpi_is_serial_bus_slave(struct acpi_device *device)
++static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ {
+ 	struct list_head resource_list;
+ 	bool is_serial_bus_slave = false;
+@@ -1560,7 +1560,8 @@ void acpi_init_device_object(struct acpi_device *device, acpi_handle handle,
+ 	acpi_bus_get_flags(device);
+ 	device->flags.match_driver = false;
+ 	device->flags.initialized = true;
+-	device->flags.serial_bus_slave = acpi_is_serial_bus_slave(device);
++	device->flags.enumeration_by_parent =
++		acpi_device_enumeration_by_parent(device);
+ 	acpi_device_clear_enumerated(device);
+ 	device_initialize(&device->dev);
+ 	dev_set_uevent_suppress(&device->dev, true);
+@@ -1858,10 +1859,10 @@ static acpi_status acpi_bus_check_add(acpi_handle handle, u32 lvl_not_used,
+ static void acpi_default_enumeration(struct acpi_device *device)
+ {
+ 	/*
+-	 * Do not enumerate SPI/I2C/UART slaves as they will be enumerated by
+-	 * their respective parents.
++	 * Do not enumerate devices with enumeration_by_parent flag set as
++	 * they will be enumerated by their respective parents.
+ 	 */
+-	if (!device->flags.serial_bus_slave) {
++	if (!device->flags.enumeration_by_parent) {
+ 		acpi_create_platform_device(device, NULL);
+ 		acpi_device_set_enumerated(device);
+ 	} else {
+@@ -1958,7 +1959,7 @@ static void acpi_bus_attach(struct acpi_device *device)
+ 		return;
+ 
+ 	device->flags.match_driver = true;
+-	if (ret > 0 && !device->flags.serial_bus_slave) {
++	if (ret > 0 && !device->flags.enumeration_by_parent) {
+ 		acpi_device_set_enumerated(device);
+ 		goto ok;
+ 	}
+@@ -1967,10 +1968,10 @@ static void acpi_bus_attach(struct acpi_device *device)
+ 	if (ret < 0)
+ 		return;
+ 
+-	if (!device->pnp.type.platform_id && !device->flags.serial_bus_slave)
+-		acpi_device_set_enumerated(device);
+-	else
++	if (device->pnp.type.platform_id || device->flags.enumeration_by_parent)
+ 		acpi_default_enumeration(device);
++	else
++		acpi_device_set_enumerated(device);
+ 
+  ok:
+ 	list_for_each_entry(child, &device->children, node)
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index c9608b0..ba4dd54 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -215,7 +215,7 @@ struct acpi_device_flags {
+ 	u32 of_compatible_ok:1;
+ 	u32 coherent_dma:1;
+ 	u32 cca_seen:1;
+-	u32 serial_bus_slave:1;
++	u32 enumeration_by_parent:1;
+ 	u32 reserved:19;
+ };
+ 
+-- 
+1.9.1
