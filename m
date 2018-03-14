@@ -1,147 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933148AbeCNAoP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 20:44:15 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:46839 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932722AbeCNAoM (ORCPT
+        id S932852AbeCNAuH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 20:50:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53708 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932667AbeCNAuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 20:44:12 -0400
-X-Google-Smtp-Source: AG47ELvfoyELMM++fs6HXLZLbhBBiLU43CYDhXAbJWHXuUuIVyQLpAKMlcv0cGnqxSIyK4tS2ab+JA==
-Message-ID: <1520988249.5128.13.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: vb2: unify calling of set_page_dirty_lock
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 13 Mar 2018 20:44:09 -0400
-In-Reply-To: <8f1eda59-fc51-b77e-ae43-9603b5759b14@linaro.org>
-References: <20170829112603.32732-1-stanimir.varbanov@linaro.org>
-         <1507650010.2784.11.camel@ndufresne.ca>
-         <20171015204014.2awhhygw6hi3lxas@valkosipuli.retiisi.org.uk>
-         <1508108964.4502.6.camel@ndufresne.ca>
-         <20171017101420.5a5cvyhkadmcqgfy@valkosipuli.retiisi.org.uk>
-         <1508249953.19297.4.camel@ndufresne.ca>
-         <8f1eda59-fc51-b77e-ae43-9603b5759b14@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 13 Mar 2018 20:50:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39AB160452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH] irqchip/gic-v3: Ensure GICR_CTLR.EnableLPI=0 is observed before enabling
+Date: Tue, 13 Mar 2018 19:50:01 -0500
+Message-Id: <1520988601-16705-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 18 octobre 2017 à 11:34 +0300, Stanimir Varbanov a écrit :
-> 
-> On 10/17/2017 05:19 PM, Nicolas Dufresne wrote:
-> > Le mardi 17 octobre 2017 à 13:14 +0300, Sakari Ailus a écrit :
-> > > On Sun, Oct 15, 2017 at 07:09:24PM -0400, Nicolas Dufresne wrote:
-> > > > Le dimanche 15 octobre 2017 à 23:40 +0300, Sakari Ailus a écrit
-> > > > :
-> > > > > Hi Nicolas,
-> > > > > 
-> > > > > On Tue, Oct 10, 2017 at 11:40:10AM -0400, Nicolas Dufresne
-> > > > > wrote:
-> > > > > > Le mardi 29 août 2017 à 14:26 +0300, Stanimir Varbanov a
-> > > > > > écrit :
-> > > > > > > Currently videobuf2-dma-sg checks for dma direction for
-> > > > > > > every single page and videobuf2-dc lacks any dma
-> > > > > > > direction
-> > > > > > > checks and calls set_page_dirty_lock unconditionally.
-> > > > > > > 
-> > > > > > > Thus unify and align the invocations of
-> > > > > > > set_page_dirty_lock
-> > > > > > > for videobuf2-dc, videobuf2-sg  memory allocators with
-> > > > > > > videobuf2-vmalloc, i.e. the pattern used in vmalloc has
-> > > > > > > been
-> > > > > > > copied to dc and dma-sg.
-> > > > > > 
-> > > > > > Just before we go too far in "doing like vmalloc", I would
-> > > > > > like to
-> > > > > > share this small video that display coherency issues when
-> > > > > > rendering
-> > > > > > vmalloc backed DMABuf over various KMS/DRM driver. I can
-> > > > > > reproduce
-> > > > > > this
-> > > > > > easily with Intel and MSM display drivers using UVC or
-> > > > > > Vivid as
-> > > > > > source.
-> > > > > > 
-> > > > > > The following is an HDMI capture of the following GStreamer
-> > > > > > pipeline
-> > > > > > running on Dragonboard 410c.
-> > > > > > 
-> > > > > >     gst-launch-1.0 -v v4l2src device=/dev/video2 ! video/x-
-> > > > > > raw,format=NV16,width=1280,height=720 ! kmssink
-> > > > > >     https://people.collabora.com/~nicolas/vmalloc-issue.mov
-> > > > > > 
-> > > > > > Feedback on this issue would be more then welcome. It's not
-> > > > > > clear
-> > > > > > to me
-> > > > > > who's bug is this (v4l2, drm or iommu). The software is
-> > > > > > unlikely to
-> > > > > > be
-> > > > > > blamed as this same pipeline works fine with non-vmalloc
-> > > > > > based
-> > > > > > sources.
-> > > > > 
-> > > > > Could you elaborate this a little bit more? Which Intel CPU
-> > > > > do you
-> > > > > have
-> > > > > there?
-> > > > 
-> > > > I have tested with Skylake and Ivy Bridge and on Dragonboard
-> > > > 410c
-> > > > (Qualcomm APQ8016 SoC) (same visual artefact)
-> > > 
-> > > I presume kmssink draws on the display. Which GPU did you use?
-> > 
-> > In order, GPU will be Iris Pro 580, Intel® Ivybridge Mobile and an
-> > Adreno (3x ?). Why does it matter ? I'm pretty sure the GPU is not
-> > used
-> > on the DB410c for this use case.
-> 
-> Nicolas, for me this looks like a problem in v4l2. In the case of
-> vivid
-> the stats overlay (where the coherency issues are observed, and most
-> probably the issue will be observed on the whole image but
-> fortunately
-> it is a static image pattern) are filled by the CPU but I cannot see
-> where the cache is flushed. Also I'm wondering why .finish method is
-> missing for dma-vmalloc mem_ops.
-> 
-> To be sure that the problem is in vmalloc v4l2 allocator, could you
-> change the allocator to dma-contig, there is a module param for that
-> called 'allocators'.
+The definition of the GICR_CTLR.RWP control bit was expanded to indicate
+status of changing GICR_CTLR.EnableLPI from 1 to 0 is being in progress
+or completed. Software must observe GICR_CTLR.RWP==0 after clearing
+GICR_CTLR.EnableLPI from 1 to 0 and before writing GICR_PENDBASER and/or
+GICR_PROPBASER, otherwise behavior is UNPREDICTABLE.
 
-I've looked into this again. I have hit the same issue but with CPU to
-DRM, using DMABuf allocated from DRM Dumb buffers. In that case, using
-DMA_BUF_IOCTL_SYNC fixes the issues.
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c   | 30 +++++++++++++++++++++++-------
+ include/linux/irqchip/arm-gic-v3.h |  1 +
+ 2 files changed, 24 insertions(+), 7 deletions(-)
 
-This raises a lot of question around the model used in V4L2. As you
-mention, prepare/finish are missing in dma-vmalloc mem_ops. I'll give a
-try implementing that, it should cover my initial use case, but then I
-believe it will fail if my pipeline is:
-
-  UVC -> in plane CPU modification -> DRM
-
-Because we don't implement begin/end_cpu_access on our exported DMABuf.
-It should also fail for the following use case:
-
-  UVC (importer) -> DRM
-
-UVC driver won't call the remote dmabuf being/end_cpu_access method.
-This one is difficult because UVC driver and vivid don't seem to be
-aware of being an importer, exported or simply exporting to CPU
-(through mmap). I believe what we have now pretty much assumes the what
-we export as vmalloc is to be used by CPU only. Also, the usual
-direction used by prepare/finish ops won't work for drivers like vivid
-and UVC that write into the buffers using the cpu.
-
-To be continued ...
-
-Nicolas
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 1d3056f..85cd158 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1875,15 +1875,31 @@ static void its_cpu_init_lpis(void)
+ 		gic_data_rdist()->pend_page = pend_page;
+ 	}
+ 
+-	/* Disable LPIs */
+ 	val = readl_relaxed(rbase + GICR_CTLR);
+-	val &= ~GICR_CTLR_ENABLE_LPIS;
+-	writel_relaxed(val, rbase + GICR_CTLR);
+ 
+-	/*
+-	 * Make sure any change to the table is observable by the GIC.
+-	 */
+-	dsb(sy);
++	/* Make sure LPIs are disabled before programming PEND/PROP registers */
++	if (val & GICR_CTLR_ENABLE_LPIS) {
++		u32 count = 1000000; /* 1s! */
++
++		/* Disable LPIs */
++		val &= ~GICR_CTLR_ENABLE_LPIS;
++		writel_relaxed(val, rbase + GICR_CTLR);
++
++		/* Make sure any change to GICR_CTLR is observable by the GIC */
++		dsb(sy);
++
++		/* Wait for GICR_CTLR.RWP==0 or timeout */
++		while (readl_relaxed(rbase + GICR_CTLR) & GICR_CTLR_RWP) {
++			if (!count) {
++				pr_err("CPU%d: Failed to disable LPIs\n",
++				       smp_processor_id());
++				return;
++			}
++			cpu_relax();
++			udelay(1);
++			count--;
++		};
++	}
+ 
+ 	/* set PROPBASE */
+ 	val = (page_to_phys(gic_rdists->prop_page) |
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index c00c4c33..4d5fb60 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -106,6 +106,7 @@
+ #define GICR_PIDR2			GICD_PIDR2
+ 
+ #define GICR_CTLR_ENABLE_LPIS		(1UL << 0)
++#define GICR_CTLR_RWP			(1UL << 3)
+ 
+ #define GICR_TYPER_CPU_NUMBER(r)	(((r) >> 8) & 0xffff)
+ 
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
