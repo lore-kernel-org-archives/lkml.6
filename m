@@ -1,261 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCNUOp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:14:45 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:60804 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeCNUOo (ORCPT
+        id S1751959AbeCNUQo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:16:44 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37451 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751559AbeCNUQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:14:44 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH v4 3/3] Bluetooth: hci_qca: Add serdev support
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180314155514.3374-4-thierry.escande@linaro.org>
-Date: Wed, 14 Mar 2018 21:14:41 +0100
-Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <E2DB76D8-414B-4F45-8124-E9AA844E6909@holtmann.org>
-References: <20180314155514.3374-1-thierry.escande@linaro.org>
- <20180314155514.3374-4-thierry.escande@linaro.org>
-To: Thierry Escande <thierry.escande@linaro.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 14 Mar 2018 16:16:43 -0400
+X-Google-Smtp-Source: AG47ELuCs2pE4mx9fVBWhcEsMhQd7R7RLzsbrL/ZGsn6vG/EcEvKwB4o85IJwjrPjze3iZPZzhgcB9WYiF3Ahu5H1mU=
+MIME-Version: 1.0
+In-Reply-To: <1521057831.18703.101.camel@redhat.com>
+References: <20180220205638.1959033-1-arnd@arndb.de> <20180228211514.GC13394@ziepe.ca>
+ <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
+ <20180306234539.GB1037@ziepe.ca> <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
+ <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
+ <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com> <1521057831.18703.101.camel@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 21:16:41 +0100
+X-Google-Sender-Auth: eawA7_yCRKkUfKOQ8fnonQlBDzQ
+Message-ID: <CAK8P3a1=h7cF8kRUWpFG88-OSFL8_7SgUkaX4TUEhG6ypPODkg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
+To: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Eddie Wai <eddie.wai@broadcom.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+On Wed, Mar 14, 2018 at 9:03 PM, Doug Ledford <dledford@redhat.com> wrote:
+> On Tue, 2018-03-13 at 09:50 +0100, Arnd Bergmann wrote:
+>> On Wed, Mar 7, 2018 at 11:12 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Wed, Mar 7, 2018 at 10:05 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> >
+>> > > A small complication is that I wrote the changelog for the build warning
+>> > > on 32-bit architectures, which is more elaborate. kernelci.org for
+>> > > some reasons currently skips the allmodconfig build on all 32-bit
+>> > > architectures (I should ask the kernelci maintainers to change that),
+>> >
+>> > I see that Olof's build bot does have build results for arm32
+>> > allmodconfig, which is also big-endian, and reports the same
+>> > errors that I described in the patch changelog.
+>> >
+>> > See
+>> >
+>> > http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/
+>> > http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/buildall.arm.allmodconfig.log.passed
+>> >
+>> > for today's results.
+>> >
+>> > This bot reports one other warning for arm32, but it's
+>> > specific to the toolchain version used on that bot.
+>> > I have a fix for that one as well, but there was some
+>> > discussion on what the best approach would be.
+>>
+>> Any update on this? This is now the only remaining gcc warning we get on
+>> allmodconfig builds for arm (both 32-bit and 64-bit) in linux-4.16-rc.
+>>
+>
+> Do you need the full series to fix this (it looked that way to me)?
 
-> Add support for Qualcomm serial slave devices. Probe the serial device,
-> retrieve its maximum speed and register a new hci uart device.
-> 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-> ---
-> 
-> v4:
-> - Rename divclk4 as susclk (its name in the bt chip)
-> - Use gpiod_set_value_cansleep()
-> - Replace #include <linux/of.h> with <linux/mod_devicetable.h>
-> - Restore dependency on BT_HCIUART
-> 
-> v3:
-> - Remove redundant call to gpiod_set_value() after devm_gpiod_get()
-> - Check returned values for clk_set_rate() and clk_prepare_enable()
-> - Use clk_disable_unprepare()
-> 
-> v2:
-> - Fix author email
-> 
-> drivers/bluetooth/Kconfig   |   1 +
-> drivers/bluetooth/hci_qca.c | 109 +++++++++++++++++++++++++++++++++++++++++++-
-> 2 files changed, 108 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-> index 07e55cd8f8c8..e0f1a6609b68 100644
-> --- a/drivers/bluetooth/Kconfig
-> +++ b/drivers/bluetooth/Kconfig
-> @@ -196,6 +196,7 @@ config BT_HCIUART_BCM
-> config BT_HCIUART_QCA
-> 	bool "Qualcomm Atheros protocol support"
-> 	depends on BT_HCIUART
-> +	depends on BT_HCIUART_SERDEV
-> 	select BT_HCIUART_H4
-> 	select BT_QCA
-> 	help
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 05ec530b8a3a..6cf0d1d4595a 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -29,7 +29,11 @@
->  */
-> 
-> #include <linux/kernel.h>
-> +#include <linux/clk.h>
-> #include <linux/debugfs.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/serdev.h>
-> 
-> #include <net/bluetooth/bluetooth.h>
-> #include <net/bluetooth/hci_core.h>
-> @@ -50,6 +54,9 @@
-> #define IBS_TX_IDLE_TIMEOUT_MS		2000
-> #define BAUDRATE_SETTLE_TIMEOUT_MS	300
-> 
-> +/* susclk rate */
-> +#define SUSCLK_RATE_32KHZ	32768
-> +
-> /* HCI_IBS transmit side sleep protocol states */
-> enum tx_ibs_states {
-> 	HCI_IBS_TX_ASLEEP,
-> @@ -111,6 +118,12 @@ struct qca_data {
-> 	u64 votes_off;
-> };
-> 
-> +struct qca_serdev {
-> +	struct hci_uart	 serdev_hu;
-> +	struct gpio_desc *bt_en;
-> +	struct clk	 *susclk;
-> +};
-> +
-> static void __serial_clock_on(struct tty_struct *tty)
-> {
-> 	/* TODO: Some chipset requires to enable UART clock on client
-> @@ -386,6 +399,7 @@ static void hci_ibs_wake_retrans_timeout(struct timer_list *t)
-> /* Initialize protocol */
-> static int qca_open(struct hci_uart *hu)
-> {
-> +	struct qca_serdev *qcadev;
-> 	struct qca_data *qca;
-> 
-> 	BT_DBG("hu %p qca_open", hu);
-> @@ -444,6 +458,13 @@ static int qca_open(struct hci_uart *hu)
-> 	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
-> 	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
-> 
-> +	if (hu->serdev) {
-> +		serdev_device_open(hu->serdev);
-> +
-> +		qcadev = serdev_device_get_drvdata(hu->serdev);
-> +		gpiod_set_value_cansleep(qcadev->bt_en, 1);
-> +	}
-> +
-> 	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
-> 	       qca->tx_idle_delay, qca->wake_retrans);
-> 
-> @@ -512,6 +533,7 @@ static int qca_flush(struct hci_uart *hu)
-> /* Close protocol */
-> static int qca_close(struct hci_uart *hu)
-> {
-> +	struct qca_serdev *qcadev;
-> 	struct qca_data *qca = hu->priv;
-> 
-> 	BT_DBG("hu %p qca close", hu);
-> @@ -525,6 +547,13 @@ static int qca_close(struct hci_uart *hu)
-> 	destroy_workqueue(qca->workqueue);
-> 	qca->hu = NULL;
-> 
-> +	if (hu->serdev) {
-> +		serdev_device_close(hu->serdev);
-> +
-> +		qcadev = serdev_device_get_drvdata(hu->serdev);
-> +		gpiod_set_value_cansleep(qcadev->bt_en, 0);
-> +	}
-> +
-> 	kfree_skb(qca->rx_skb);
-> 
-> 	hu->priv = NULL;
-> @@ -885,6 +914,14 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
-> 	return 0;
-> }
-> 
-> +static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
-> +{
-> +	if (hu->serdev)
-> +		serdev_device_set_baudrate(hu->serdev, speed);
-> +	else
-> +		hci_uart_set_baudrate(hu, speed);
-> +}
-> +
-> static int qca_setup(struct hci_uart *hu)
-> {
-> 	struct hci_dev *hdev = hu->hdev;
-> @@ -905,7 +942,7 @@ static int qca_setup(struct hci_uart *hu)
-> 		speed = hu->proto->init_speed;
-> 
-> 	if (speed)
-> -		hci_uart_set_baudrate(hu, speed);
-> +		host_set_baudrate(hu, speed);
-> 
-> 	/* Setup user speed if needed */
-> 	speed = 0;
-> @@ -924,7 +961,7 @@ static int qca_setup(struct hci_uart *hu)
-> 				   ret);
-> 			return ret;
-> 		}
-> -		hci_uart_set_baudrate(hu, speed);
-> +		host_set_baudrate(hu, speed);
-> 	}
-> 
-> 	/* Setup patch / NVM configurations */
-> @@ -958,12 +995,80 @@ static struct hci_uart_proto qca_proto = {
-> 	.dequeue	= qca_dequeue,
-> };
-> 
-> +static int qca_serdev_probe(struct serdev_device *serdev)
-> +{
-> +	struct qca_serdev *qcadev;
-> +	int err;
-> +
-> +	qcadev = devm_kzalloc(&serdev->dev, sizeof(*qcadev), GFP_KERNEL);
-> +	if (!qcadev)
-> +		return -ENOMEM;
-> +
-> +	qcadev->serdev_hu.serdev = serdev;
-> +	serdev_device_set_drvdata(serdev, qcadev);
-> +
-> +	qcadev->bt_en = devm_gpiod_get(&serdev->dev, "bt-disable-n",
-> +				       GPIOD_OUT_LOW);
-> +	if (IS_ERR(qcadev->bt_en)) {
-> +		dev_err(&serdev->dev, "failed to acquire bt-disable-n gpio\n");
-> +		return PTR_ERR(qcadev->bt_en);
-> +	}
-> +
-> +	qcadev->susclk = devm_clk_get(&serdev->dev, NULL);
-> +	if (IS_ERR(qcadev->susclk)) {
-> +		dev_err(&serdev->dev, "failed to acquire clk\n");
-> +		return PTR_ERR(qcadev->susclk);
-> +	}
-> +
-> +	err = clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
-> +	if (err)
-> +		return err;
-> +
-> +	err = clk_prepare_enable(qcadev->susclk);
-> +	if (err)
-> +		return err;
-> +
-> +	err = hci_uart_register_device(&qcadev->serdev_hu, &qca_proto);
-> +	if (err)
-> +		clk_disable_unprepare(qcadev->susclk);
-> +
-> +	return err;
-> +}
-> +
-> +static void qca_serdev_remove(struct serdev_device *serdev)
-> +{
-> +	struct qca_serdev *qcadev = serdev_device_get_drvdata(serdev);
-> +
-> +	hci_uart_unregister_device(&qcadev->serdev_hu);
-> +
-> +	clk_disable_unprepare(qcadev->susclk);
-> +}
-> +
-> +static const struct of_device_id qca_bluetooth_of_match[] = {
-> +	{ .compatible = "qcom,qca6174-bt" },
-> +	{ /* sentinel */ }
-> +};
+I just double-checked, as I thought only the first one was needed, but
+indeed we do need both.
 
-so I am fine taking this patch after we agree on the GPIO naming in the DT file, however ..
-
-While looking into the 3-Wire serdev patches to support Realtek devices, I realized that hacking serdev support into hci_uart.ko is actually pretty much a huge mess. It works, but it is also not pretty and makes the code really complicated and spaghetti like.
-
-The nice thing about hci_uart.ko is that all vendor specific stuff is in a separate file (in comparison to btusb.ko), but the not so nice part is that it is largely messy and complicated.
-
-So I have a basic btuart.ko driver ready that speaks only H:4 and serdev. It is clean and tiny and I added already basic Broadcom support to it. So maybe going the path like btusb.ko to select different setup routines is good enough. I need to work out a few kinks in it, but it is a lot cleaner from a code perspective. In addition, I have the basics for a bt3wire.ko driver that will then take H:5 instead of H:4.
-
-I will send them around shortly and maybe it makes sense to go down this path and integrate QCA support there. I currently only have RPi3 on my desk with serdev attached Broadcom chip. So it would needs others testing if this can work.
-
-Regards
-
-Marcel
+       Arnd
