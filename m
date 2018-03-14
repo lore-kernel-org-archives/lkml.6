@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752471AbeCNPzo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:55:44 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35550 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752406AbeCNPzi (ORCPT
+        id S1752606AbeCNP7k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:59:40 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41055 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752587AbeCNPzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:55:38 -0400
-X-Google-Smtp-Source: AG47ELty18r4hhDks9RH2ZO9qRex381Nvi+jfJO7oDyrc5F57hLXrETzWWJ/3JM/i5pAOvqoICEV9w==
+        Wed, 14 Mar 2018 11:55:41 -0400
+X-Google-Smtp-Source: AG47ELvokbpiHTpUCuRv1n9higSIlkZTDNsQjARx1fZxp82Jzu/DfutYHKv7+yZzZMEBCAJacLffrA==
 From: Thierry Escande <thierry.escande@linaro.org>
 To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
         Marcel Holtmann <marcel@holtmann.org>,
@@ -20,10 +20,12 @@ To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] Bluetooth: hci_qca: Add serdev support
-Date: Wed, 14 Mar 2018 16:55:11 +0100
-Message-Id: <20180314155514.3374-1-thierry.escande@linaro.org>
+Subject: [PATCH v4 2/3] dt-bindings: net: bluetooth: Add qualcomm-bluetooth
+Date: Wed, 14 Mar 2018 16:55:13 +0100
+Message-Id: <20180314155514.3374-3-thierry.escande@linaro.org>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180314155514.3374-1-thierry.escande@linaro.org>
+References: <20180314155514.3374-1-thierry.escande@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset = "utf-8"
 Content-Transfert-Encoding: 8bit
@@ -31,40 +33,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add binding document for serial bluetooth chips using Qualcomm protocol.
 
-This patchset enables the Qualcomm BT controller QCA6174 node in the
-device tree of the db820c board. This allows the bluetooth chipset to
-be probed and registered against the hci layer by using the serdev
-framework.
-
-This patchset also contains the documentation for the compatible
-string "qcom,qca6174-bt" related to this chipset.
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+---
 
 v4:
-- Fix dt binding documentation
-- Address some other issues in patch #3
+- Move bt-disable-n-gpios to required properties section
+- Add clocks and pinctrl-0 as required properties
 
-v3:
-- Address comments for patch #3 (details in patch)
+v3: no change
+v2: no change
 
-v2:
-- Fix author email
-
-Thierry Escande (3):
-  arm64: dts: apq8096-db820c: enable bluetooth node
-  dt-bindings: net: bluetooth: Add qualcomm-bluetooth
-  Bluetooth: hci_qca: Add serdev support
-
- .../devicetree/bindings/net/qualcomm-bluetooth.txt |  34 +++++++
- arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  |  14 +++
- .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    |  17 ++++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |  32 ++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi              |  10 ++
- drivers/bluetooth/Kconfig                          |   1 +
- drivers/bluetooth/hci_qca.c                        | 109 ++++++++++++++++++++-
- 7 files changed, 215 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/net/qualcomm-bluetooth.txt | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
 
+diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+new file mode 100644
+index 000000000000..cdb14b96c229
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+@@ -0,0 +1,34 @@
++Qualcomm Bluetooth Chips
++---------------------
++
++This documents the binding structure and common properties for serial
++attached Qualcomm devices.
++
++Serial attached Qualcomm devices shall be a child node of the host UART
++device the slave device is attached to.
++
++Required properties:
++ - compatible: should contain one of the following:
++   * "qcom,qca6174-bt"
++ - bt-disable-n-gpios: gpio specifier, used to enable chip during probe
++ - pinctrl-0: pin phandle for bt_en gpio
++ - clocks: clock phandle for SUSCLK_32KHZ
++
++Example:
++
++serial@7570000 {
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&blsp1_uart1_default>;
++	pinctrl-1 = <&blsp1_uart1_sleep>;
++
++	bluetooth {
++		compatible = "qcom,qca6174-bt";
++
++		bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_en_pin_a>;
++
++		clocks = <&divclk4>;
++	};
++};
 -- 
 2.14.1
