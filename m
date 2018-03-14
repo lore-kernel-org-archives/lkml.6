@@ -1,108 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeCNEHd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:07:33 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37412 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeCNEGY (ORCPT
+        id S1751459AbeCNELg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:11:36 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:34784 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750818AbeCNELe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:06:24 -0400
-X-Google-Smtp-Source: AG47ELsddOOJdATrlfy+061Ned6wMofLdLPIWjZub92ZrotXYPbmuZCE2vIsHRZzQ2Xq+VBQWpPRrg==
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-To: arnd@arndb.de, tglx@linutronix.de, john.stultz@linaro.org
-Cc: linux-kernel@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH v5 08/10] fix get_timespec64() for y2038 safe compat interfaces
-Date: Tue, 13 Mar 2018 21:03:31 -0700
-Message-Id: <20180314040333.3291-9-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180314040333.3291-1-deepa.kernel@gmail.com>
-References: <20180314040333.3291-1-deepa.kernel@gmail.com>
+        Wed, 14 Mar 2018 00:11:34 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37807004"
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+CC: Ming Lei <ming.lei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, Laurence Oberman <loberman@redhat.com>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p>
+ <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
+ <20180309012458.GD5228@ming.t460p>
+ <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+ <20180309120833.GB30257@ming.t460p>
+ <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
+ <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
+ <1520926721.20980.210.camel@gmail.com> <20180313083535.GA21612@ming.t460p>
+ <1520930375.20980.213.camel@gmail.com>
+ <CAJZ5v0gcmkKVcgDBdt-aePgU0zvQwyf1yX5Qi_zRc1JfzaA5fg@mail.gmail.com>
+ <ec20381d-b5d9-9e22-d94e-96bbb8d6278e@cn.fujitsu.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <a8770022-a437-9b8c-0b2e-cd6bdc0764ef@cn.fujitsu.com>
+Date: Wed, 14 Mar 2018 12:11:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <ec20381d-b5d9-9e22-d94e-96bbb8d6278e@cn.fujitsu.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: CAD00400281A.A8D57
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get/put_timespec64() interfaces will eventually be used for
-conversions between the new y2038 safe struct __kernel_timespec
-and struct timespec64.
+Hi Artem,
 
-The new y2038 safe syscalls have a common entry for native
-and compat interfaces.
-On compat interfaces, the high order bits of nanoseconds
-should be zeroed out. This is because the application code
-or the libc do not guarantee zeroing of these. If used without
-zeroing, kernel might be at risk of using timespec values
-incorrectly.
+At 03/14/2018 11:29 AM, Dou Liyang wrote:
+> Hi All,
+> 
+> At 03/13/2018 05:35 PM, Rafael J. Wysocki wrote:
+>> On Tue, Mar 13, 2018 at 9:39 AM, Artem Bityutskiy 
+>> <dedekind1@gmail.com> wrote:
+>>> On Tue, 2018-03-13 at 16:35 +0800, Ming Lei wrote:
+>>>> Then looks this issue need to fix by making possible CPU count
+>>>> accurate
+>>>> because there are other resources allocated according to
+>>>> num_possible_cpus(),
+>>>> such as percpu variables.
+>>>
+>>> Short term the regression should be fixed. It is already v4.16-rc6, we
+>>> have little time left.
+>>
+>> Right.
+>>
+>>> Longer term, yeah, I agree. Kernel's notion of possible CPU count
+>>> should be realistic.
+>>
+> 
+> I did a patch for that, Artem, could you help me to test it.
+> 
 
-Note that clearing of bits is dependent on CONFIG_64BIT_TIME
-for now. This is until COMPAT_USE_64BIT_TIME has been handled
-correctly. x86 will be the first architecture that will use the
-CONFIG_64BIT_TIME.
+I didn't consider the nr_cpu_ids before. please ignore the old patch and
+try the following RFC patch.
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
- include/linux/time.h |  4 ++--
- kernel/time/time.c   | 14 ++++++++++----
- 2 files changed, 12 insertions(+), 6 deletions(-)
+Thanks
+	dou
 
-diff --git a/include/linux/time.h b/include/linux/time.h
-index 4b62a2c0a661..aed74463592d 100644
---- a/include/linux/time.h
-+++ b/include/linux/time.h
-@@ -10,9 +10,9 @@
- extern struct timezone sys_tz;
- 
- int get_timespec64(struct timespec64 *ts,
--		const struct timespec __user *uts);
-+		const struct __kernel_timespec __user *uts);
- int put_timespec64(const struct timespec64 *ts,
--		struct timespec __user *uts);
-+		struct __kernel_timespec __user *uts);
- int get_itimerspec64(struct itimerspec64 *it,
- 			const struct itimerspec __user *uit);
- int put_itimerspec64(const struct itimerspec64 *it,
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 02367a381f44..05121aec6897 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -841,9 +841,9 @@ struct timespec64 timespec64_add_safe(const struct timespec64 lhs,
- }
- 
- int get_timespec64(struct timespec64 *ts,
--		   const struct timespec __user *uts)
-+		   const struct __kernel_timespec __user *uts)
- {
--	struct timespec kts;
-+	struct __kernel_timespec kts;
- 	int ret;
- 
- 	ret = copy_from_user(&kts, uts, sizeof(kts));
-@@ -851,6 +851,11 @@ int get_timespec64(struct timespec64 *ts,
- 		return -EFAULT;
- 
- 	ts->tv_sec = kts.tv_sec;
+--------------------------->8-------------------------------------
+
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 449d86d39965..96d568408515 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -671,6 +671,23 @@ static acpi_status __init 
+acpi_processor_ids_walk(acpi_handle handle,
+
+  }
+
++static void __init acpi_refill_possible_map(void)
++{
++       unsigned int cpu, nr = 0;
 +
-+	/* Zero out the padding for 32 bit systems or in compat mode */
-+	if (IS_ENABLED(CONFIG_64BIT_TIME) && (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall()))
-+		kts.tv_nsec &= 0xFFFFFFFFUL;
++       if (nr_cpu_ids <= nr_unique_ids)
++               return;
 +
- 	ts->tv_nsec = kts.tv_nsec;
- 
- 	return 0;
-@@ -858,12 +863,13 @@ int get_timespec64(struct timespec64 *ts,
- EXPORT_SYMBOL_GPL(get_timespec64);
- 
- int put_timespec64(const struct timespec64 *ts,
--		   struct timespec __user *uts)
-+		   struct __kernel_timespec __user *uts)
- {
--	struct timespec kts = {
-+	struct __kernel_timespec kts = {
- 		.tv_sec = ts->tv_sec,
- 		.tv_nsec = ts->tv_nsec
- 	};
++       for_each_possible_cpu(cpu) {
++               if (nr >= nr_unique_ids)
++                       set_cpu_possible(cpu, false);
++               nr++;
++       }
 +
- 	return copy_to_user(uts, &kts, sizeof(kts)) ? -EFAULT : 0;
- }
- EXPORT_SYMBOL_GPL(put_timespec64);
--- 
-2.14.1
++       nr_cpu_ids = nr_unique_ids;
++       pr_info("Allowing %d possible CPUs\n", nr_cpu_ids);
++}
++
+  static void __init acpi_processor_check_duplicates(void)
+  {
+         /* check the correctness for all processors in ACPI namespace */
+@@ -680,6 +697,9 @@ static void __init acpi_processor_check_duplicates(void)
+                                                 NULL, NULL, NULL);
+         acpi_get_devices(ACPI_PROCESSOR_DEVICE_HID, 
+acpi_processor_ids_walk,
+                                                 NULL, NULL);
++
++       /* make possible CPU count more realistic */
++       acpi_refill_possible_map();
+  }
+
+  bool acpi_duplicate_processor_id(int proc_id)
