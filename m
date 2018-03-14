@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752378AbeCNQ7a (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:59:30 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37375 "EHLO
+        id S1752382AbeCNQ7l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:59:41 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40040 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752332AbeCNQ71 (ORCPT
+        with ESMTP id S932282AbeCNQ7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:27 -0400
-X-Google-Smtp-Source: AG47ELvxftcoRlsbuDtI0b+Q1TXFVSCo/lhPm/MiUeSxIaDXUGghRYo55kXjgMklOA7HOuhc0RKVCw==
+        Wed, 14 Mar 2018 12:59:36 -0400
+X-Google-Smtp-Source: AG47ELv+z23XoPeIMmVBq1rcJr/GrUIuLDvJDmn+1dRIGmcKopQN4qeH81mb46nd4UBqVNUbG3MyEw==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 13/25] drivers: firmware: psci: Split psci_dt_cpu_init_idle()
-Date: Wed, 14 Mar 2018 17:58:23 +0100
-Message-Id: <1521046715-30683-14-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v6 18/25] drivers: firmware: psci: Share a few internal PSCI functions
+Date: Wed, 14 Mar 2018 17:58:28 +0100
+Message-Id: <1521046715-30683-19-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,82 +33,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's split psci_dt_cpu_init_idle() function into two functions, as to
-allow following changes to re-use some of the code.
+Following changes needs to be able to call psci_get|set_domain_state() and
+psci_dt_parse_state_node(), but from a separate file. Let's make that
+possible by sharing them via a new internal PSCI header file.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/psci.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+ drivers/firmware/psci.c | 14 ++++++++------
+ drivers/firmware/psci.h | 13 +++++++++++++
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/firmware/psci.h
 
 diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index c80ec1d..9788bfc 100644
+index 40b2b89..463f78c 100644
 --- a/drivers/firmware/psci.c
 +++ b/drivers/firmware/psci.c
-@@ -270,9 +270,26 @@ static int __init psci_features(u32 psci_func_id)
- #ifdef CONFIG_CPU_IDLE
- static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+@@ -34,6 +34,8 @@
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
  
-+static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-+{
-+	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
++#include "psci.h"
 +
-+	if (err) {
-+		pr_warn("%pOF missing arm,psci-suspend-param property\n", np);
-+		return err;
-+	}
-+
-+	if (!psci_power_state_is_valid(*state)) {
-+		pr_warn("Invalid PSCI power state %#x\n", *state);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
+ /*
+  * While a 64-bit OS can make calls with SMC32 calling conventions, for some
+  * calls it is necessary to use SMC64 to pass or return 64-bit values.
+@@ -90,12 +92,12 @@ static u32 psci_function_id[PSCI_FN_MAX];
+ static DEFINE_PER_CPU(u32, domain_state);
+ static u32 psci_cpu_suspend_feature;
+ 
+-static inline u32 psci_get_domain_state(void)
++u32 psci_get_domain_state(void)
+ {
+ 	return this_cpu_read(domain_state);
+ }
+ 
+-static inline void psci_set_domain_state(u32 state)
++void psci_set_domain_state(u32 state)
+ {
+ 	this_cpu_write(domain_state, state);
+ }
+@@ -285,10 +287,7 @@ static int __init psci_features(u32 psci_func_id)
+ 			      psci_func_id, 0, 0);
+ }
+ 
+-#ifdef CONFIG_CPU_IDLE
+-static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+-
+-static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
++int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+ {
+ 	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
+ 
+@@ -305,6 +304,9 @@ static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_CPU_IDLE
++static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
 +
  static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
  {
--	int i, ret, count = 0;
-+	int i, ret = 0, count = 0;
- 	u32 *psci_states;
- 	struct device_node *state_node;
- 
-@@ -291,29 +308,16 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < count; i++) {
--		u32 state;
--
- 		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
-+		ret = psci_dt_parse_state_node(state_node, &psci_states[i]);
-+		of_node_put(state_node);
- 
--		ret = of_property_read_u32(state_node,
--					   "arm,psci-suspend-param",
--					   &state);
--		if (ret) {
--			pr_warn(" * %pOF missing arm,psci-suspend-param property\n",
--				state_node);
--			of_node_put(state_node);
-+		if (ret)
- 			goto free_mem;
--		}
- 
--		of_node_put(state_node);
--		pr_debug("psci-power-state %#x index %d\n", state, i);
--		if (!psci_power_state_is_valid(state)) {
--			pr_warn("Invalid PSCI power state %#x\n", state);
--			ret = -EINVAL;
--			goto free_mem;
--		}
--		psci_states[i] = state;
-+		pr_debug("psci-power-state %#x index %d\n", psci_states[i], i);
- 	}
+ 	int i, ret = 0, count = 0;
+diff --git a/drivers/firmware/psci.h b/drivers/firmware/psci.h
+new file mode 100644
+index 0000000..a2b4be5
+--- /dev/null
++++ b/drivers/firmware/psci.h
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	/* Idle states parsed correctly, initialize per-cpu pointer */
- 	per_cpu(psci_power_state, cpu) = psci_states;
- 	return 0;
++#ifndef __PSCI_H
++#define __PSCI_H
++
++struct device_node;
++
++u32 psci_get_domain_state(void);
++void psci_set_domain_state(u32 state);
++
++int psci_dt_parse_state_node(struct device_node *np, u32 *state);
++
++#endif /* __PSCI_H */
 -- 
 2.7.4
