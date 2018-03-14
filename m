@@ -1,122 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeCNQlu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:41:50 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43786 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeCNQlt (ORCPT
+        id S1751835AbeCNQmo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:42:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40674 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751405AbeCNQmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:41:49 -0400
-X-Google-Smtp-Source: AG47ELunRsNZr9Tgqp8Y4zi3HZLqcNIDynL/zSJO7G/JWZGpDCtBgxtBaNVueVuJHGrxzPmX1vxLBrLkKzony7qzACk=
+        Wed, 14 Mar 2018 12:42:42 -0400
+Date: Wed, 14 Mar 2018 17:42:36 +0100
+From: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH] perf stat: Add support for s390 transaction counters
+References: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com>
+ <87tvtk64ld.fsf@linux.intel.com>
+ <f7240f60-2a1d-58f9-8d6f-05d27557620a@linux.vnet.ibm.com>
+ <20180314131850.GA27335@kernel.org>
+ <a863f62d-e460-639a-b69b-3437b9d4e4c5@linux.vnet.ibm.com>
+ <20180314154317.GG13724@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8qguR0tFWZxecQDTPS3_Eyt_E6_YA1ivyAAqNuaaR9-g@mail.gmail.com>
-References: <20180314134431.13241-1-ard.biesheuvel@linaro.org>
- <20180314141323.GD23100@dhcp22.suse.cz> <CAKv+Gu9hrZnX6pmiCaT=S30KQ11tY4kv=qvdSPPZ2nYDC7P7eQ@mail.gmail.com>
- <20180314145450.GI23100@dhcp22.suse.cz> <CAKv+Gu8qguR0tFWZxecQDTPS3_Eyt_E6_YA1ivyAAqNuaaR9-g@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 14 Mar 2018 16:41:47 +0000
-Message-ID: <CAKv+Gu8U9U1ThYxXWU6AuoF5s4uAGps_-T+2tksjc4nGNdX2_w@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>, Daniel Vacek <neelx@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314154317.GG13724@tassilo.jf.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18031416-0020-0000-0000-00000404773C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031416-0021-0000-0000-000042987C28
+Message-Id: <20180314164236.GB5297@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 March 2018 at 15:54, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 14 March 2018 at 14:54, Michal Hocko <mhocko@kernel.org> wrote:
->> On Wed 14-03-18 14:35:12, Ard Biesheuvel wrote:
->>> On 14 March 2018 at 14:13, Michal Hocko <mhocko@kernel.org> wrote:
->>> > Does http://lkml.kernel.org/r/20180313224240.25295-1-neelx@redhat.com
->>> > fix your issue? From the debugging info you provided it should because
->>> > the patch prevents jumping backwards.
->>> >
->>>
->>> The patch does fix the boot hang.
->>>
->>> But I am concerned that we are papering over a fundamental flaw in
->>> memblock_next_valid_pfn().
->>
->> It seems that memblock_next_valid_pfn is doing the right thing here. It
->> is the alignment which moves the pfn back AFAICS. I am not really
->> impressed about the original patch either, to be completely honest.
->> It just looks awfully tricky. I still didn't manage to wrap my head
->> around the original issue though so I do not have much better ideas to
->> be honest.
->
-> So first of all, memblock_next_valid_pfn() never refers to its max_pfn
-> argument, which is odd nut easily fixed.
-> Then, the whole idea of substracting one so that the pfn++ will
-> produce the expected value is rather hacky,
->
-> But the real problem is that rounding down pfn for the next iteration
-> is dodgy, because early_pfn_valid() isn't guaranteed to return true
-> for the rounded down value. I know it is probably fine in reality, but
-> dodgy as hell. The same applies to the call to early_pfn_in_nid() btw
->
-> So how about something like this (apologies on Gmail's behalf for the
-> whitespace damage, I can resend it as a proper patch)
->
->
-> ---------8<-----------
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3d974cb2a1a1..b89ca999ee3b 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5352,28 +5352,29 @@
->                  * function.  They do not exist on hotplugged memory.
->                  */
->                 if (context != MEMMAP_EARLY)
->                         goto not_early;
->
-> -               if (!early_pfn_valid(pfn)) {
-> +               if (!early_pfn_valid(pfn) || !early_pfn_in_nid(pfn, nid)) {
->  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
->                         /*
->                          * Skip to the pfn preceding the next valid one (or
->                          * end_pfn), such that we hit a valid pfn (or end_pfn)
->                          * on our next iteration of the loop. Note that it needs
->                          * to be pageblock aligned even when the region itself
->                          * is not. move_freepages_block() can shift ahead of
->                          * the valid region but still depends on correct page
->                          * metadata.
->                          */
-> -                       pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
-> -                                       ~(pageblock_nr_pages-1)) - 1;
-> -#endif
-> +                       pfn = memblock_next_valid_pfn(pfn, end_pfn);
-> +                       if (pfn >= end_pfn)
-> +                               break;
-> +                       pfn &= ~(pageblock_nr_pages - 1);
-> +#else
->                         continue;
-> +#endif
->                 }
-> -               if (!early_pfn_in_nid(pfn, nid))
-> -                       continue;
->                 if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
->                         break;
->
->  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
->                 /*
-> ---------8<-----------
->
-> This ensures that we enter the remainder of the loop with a properly
-> aligned pfn, rather than tweaking the value of pfn so it assumes the
-> expected value after 'pfn++'
+Hi,
 
-Um, this does not actually solve the issue. I guess this is due to the
-fact that a single pageblock size chunk could have both valid and
-invalid PFNs, and so rounding down the first PFN of the second valid
-chunk moves you back to the first chunk.
+On Wed, Mar 14, 2018 at 08:43:17AM -0700, Andi Kleen wrote:
+> > S390 has no support for Elision and uses transaction begin/end/abort
+> > instructions. The CPU measurement counter facility provides counters for
+> > transaction end and transaction abort.
+> 
+> You don't need to implement the el-* events.
+> 
+> > I have used this table (taken from arch/x86/events/intel/core.c) as giudeline:
+> > /* Haswell special events */
+> > EVENT_ATTR_STR(tx-start,        tx_start,       "event=0xc9,umask=0x1");
+> > EVENT_ATTR_STR(tx-commit,       tx_commit,      "event=0xc9,umask=0x2");
+> > EVENT_ATTR_STR(tx-abort,        tx_abort,       "event=0xc9,umask=0x4");
+> > EVENT_ATTR_STR(tx-capacity,     tx_capacity,    "event=0x54,umask=0x2");
+> > EVENT_ATTR_STR(tx-conflict,     tx_conflict,    "event=0x54,umask=0x1");
+> > EVENT_ATTR_STR(el-start,        el_start,       "event=0xc8,umask=0x1");
+> > EVENT_ATTR_STR(el-commit,       el_commit,      "event=0xc8,umask=0x2");
+> > EVENT_ATTR_STR(el-abort,        el_abort,       "event=0xc8,umask=0x4");
+> > EVENT_ATTR_STR(el-capacity,     el_capacity,    "event=0x54,umask=0x2");
+> > EVENT_ATTR_STR(el-conflict,     el_conflict,    "event=0x54,umask=0x1");
+> > EVENT_ATTR_STR(cycles-t,        cycles_t,       "event=0x3c,in_tx=1");
+> > EVENT_ATTR_STR(cycles-ct,       cycles_ct,      "event=0x3c,in_tx=1,in_tx_cp=1");
+> > 
+> > 
+> > So s390 can only support tx_commit and tx-abort symbolic names.
+
+In detail, for s390 we have:
+
+cpum_cf/TX_C_TABORT_NO_SPECIAL/
+cpum_cf/TX_C_TABORT_SPECIAL/
+cpum_cf/TX_C_TEND/
+cpum_cf/TX_NC_TABORT/
+cpum_cf/TX_NC_TEND/
+
+The mapping of the above is not that easy. As s390 have counters for
+non-constraint (TC_NC_*) and contraint (TX_C_*) transaction commits (TEND)
+and aborts (TABORTs).
+
+> We could change perf stat to fall back to only tx commit and tx abort.
+> We already did that for one limited case.
+
+Displaying these different types for s390 is important from my point of
+view.  Of course, I could create a mapping of TX_NC_TABORT/TX_NC_TEND
+to tx-commit/tx-abort.  The remaining events would still appear to be specific
+to the cpum_cf.
+
+So I would propose to go with adding the cpum_cf/ specific ones first.
+If necessary, they could go into the perf/arch/s390/ directory and included
+in builtin-stat.  I put a todo on my list to provide at least a
+tx-commit/abort for the nonconstraint transactions. (The other would still be
+specific).
+
+Kind regards,
+  Hendrik
+
+-- 
+Hendrik Brueckner
+brueckner@linux.vnet.ibm.com      | IBM Deutschland Research & Development GmbH
+Linux on z Systems Development    | Schoenaicher Str. 220, 71032 Boeblingen
+
+
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Martina Koederitz
+Geschaeftsfuehrung: Dirk Wittkopp
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
