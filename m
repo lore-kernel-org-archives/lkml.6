@@ -1,303 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933348AbeCNDHS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:07:18 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:59685 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933180AbeCNDHM (ORCPT
+        id S933367AbeCNDH4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:07:56 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40977 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933158AbeCNDHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:07:12 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: chenjh@rock-chips.com
-X-FST-TO: tony.xie@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: chenjh@rock-chips.com
-X-UNIQUE-TAG: <5f16742f8a69a9a53bfdcb6fd8da0343>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v2 2/2] mfd: rk808: Add restart functionality
-To: Daniel Schultz <d.schultz@phytec.de>, Lee Jones <lee.jones@linaro.org>
-Cc: zyw@rock-chips.com, zhangqing@rock-chips.com,
-        linux-kernel@vger.kernel.org, w.egorov@phytec.de,
-        "xsf@rock-chips.com" <xsf@rock-chips.com>,
-        =?UTF-8?B?6LCi5L+u6ZGr?= <tony.xie@rock-chips.com>
-References: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
- <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
- <20180312141012.bc3xkhymkgd4q6b7@dell>
- <b5fb541f-cc48-bd4e-372c-789411b214f2@rock-chips.com>
- <2f6f31a4-b249-dc68-bf5c-5bbc3f900c77@phytec.de>
-From: Joseph Chen <chenjh@rock-chips.com>
-Message-ID: <2466b0b9-ab22-1631-03cd-a668c421de1f@rock-chips.com>
-Date: Wed, 14 Mar 2018 11:08:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <2f6f31a4-b249-dc68-bf5c-5bbc3f900c77@phytec.de>
+        Tue, 13 Mar 2018 23:07:55 -0400
+X-Google-Smtp-Source: AG47ELuDAqa4ujHqq0GLq0oPwIV8o+cbst7s8BtL5RZFGKaRUTouyeklvbF/QrOB7Md9r+aNi5fipw==
+Date: Tue, 13 Mar 2018 20:07:52 -0700 (PDT)
+X-Google-Original-Date: Tue, 13 Mar 2018 20:05:19 PDT (-0700)
+Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <CA+ZOyagHPWNw6uLAGri0cQph06MmspMjUZC--YBe8HRBA2Cd5g@mail.gmail.com>
+CC: shea@shealevy.com, zong@andestech.com, albert@sifive.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        greentime@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: zongbox@gmail.com
+Message-ID: <mhng-bb15ab0a-464a-4baf-bd4c-e8c409722351@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Daniel：
-
-     I discussed with my colleagues, we agree with your idear to make 
-PMIC restart as a option and controlled by a new DTS property.
-
-
-在 2018/3/13 17:48, Daniel Schultz 写道:
+On Tue, 13 Mar 2018 18:34:19 PDT (-0700), zongbox@gmail.com wrote:
+> 2018-03-14 5:30 GMT+08:00 Shea Levy <shea@shealevy.com>:
+>> Hi Palmer,
+>>
+>> Palmer Dabbelt <palmer@sifive.com> writes:
+>>
+>>> On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
+>>>> These patches resolve the some issues of loadable module.
+>>>>   - symbol out of ranges
+>>>>   - unknown relocation types
+>>>>
+>>>> The reference of external variable and function symbols
+>>>> cannot exceed 32-bit offset ranges in kernel module.
+>>>> The module only can work on the 32-bit OS or the 64-bit
+>>>> OS with sv32 virtual addressing.
+>>>>
+>>>> These patches will generate the .got, .got.plt and
+>>>> .plt sections during loading module, let it can refer
+>>>> to the symbol which locate more than 32-bit offset.
+>>>> These sections depend on the relocation types:
+>>>>  - R_RISCV_GOT_HI20
+>>>>  - R_RISCV_CALL_PLT
+>>>>
+>>>> These patches also support more relocation types
+>>>>  - R_RISCV_CALL
+>>>>  - R_RISCV_HI20
+>>>>  - R_RISCV_LO12_I
+>>>>  - R_RISCV_LO12_S
+>>>>  - R_RISCV_RVC_BRANCH
+>>>>  - R_RISCV_RVC_JUMP
+>>>>  - R_RISCV_ALIGN
+>>>>  - R_RISCV_ADD32
+>>>>  - R_RISCV_SUB32
+>>>>
+>>>> Zong Li (11):
+>>>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>>>   RISC-V: Add section of GOT.PLT for kernel module
+>>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>>>   RISC-V: Support CALL relocation type in kernel module
+>>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>>>   RISC-V: Support ALIGN relocation type in kernel module
+>>>>   RISC-V: Support ADD32 relocation type in kernel module
+>>>>   RISC-V: Support SUB32 relocation type in kernel module
+>>>>   RISC-V: Enable module support in defconfig
+>>>>   RISC-V: Add definition of relocation types
+>>>>
+>>>>  arch/riscv/Kconfig                  |   5 ++
+>>>>  arch/riscv/Makefile                 |   3 +
+>>>>  arch/riscv/configs/defconfig        |   2 +
+>>>>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
+>>>>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
+>>>>  arch/riscv/kernel/Makefile          |   1 +
+>>>>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
+>>>>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
+>>>>  arch/riscv/kernel/module.lds        |   8 ++
+>>>>  9 files changed, 480 insertions(+), 6 deletions(-)
+>>>>  create mode 100644 arch/riscv/include/asm/module.h
+>>>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>>>  create mode 100644 arch/riscv/kernel/module.lds
+>>>
+>>> This is the second set of patches that turn on modules, and it has the same
+>>> R_RISCV_ALIGN problem as the other one
+>>>
+>>>     http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
+>>>
+>>> It looks like this one uses shared libraries for modules instead of static
+>>> objects.  I think using shared objects is the right thing to do, as it'll allow
+>>> us to place modules anywhere in the address space by having multiple GOTs and
+>>> PLTs.
+>>
+>> Can you expand on this? It was my understanding that outside of the
+>> context of multiple address spaces sharing code the GOT and PLT were
+>> simply unnecessary overhead, what benefit would they bring here?
+>>
+>>> That's kind of complicated, though, so we can start with something
+>>> simpler like this.
+>
 > Hi,
 >
-> I can add a DTS property to enable the PMIC restart functions? So this 
-> feature can be used if its desired.
->
-> My problem with the CRU reset is a strange behaviour in the ROM code. 
-> During a reset from MMC1 (eMMC), the ROM tries to load the SPL from 
-> MMC0 (SD).
->
-> Daniel
->
->
-> On 03/13/2018 04:32 AM, Joseph Chen wrote:
->> Hi, Daniel：
->>
->>         On Rockchip platforms, we always use CRU to restart system. 
->> From your patch, I think you would like to support restart by CRU or 
->> PMIC, right ?
->>
->>         I think restart by PMIC is not accepted, because PMIC restart 
->> means all regualtors are reset (voltage drops to 0mv and then power 
->> on again), including vdd_arm, vdd_logic, vcc_ddr, etc. This is like a 
->> cold boot for machine.
->>
->>        We use CRU reset, because we want to keep status of last log, 
->> GRF, CRU or other registers, but PMIC restart can make them lost.
->>
->>
->> 在 2018/3/12 22:10, Lee Jones 写道:
->>> Rockchip guys,
->>>
->>> I'd really appreciate your input on these two patches please.
->>>
->>> Please provide Reviewed-by/Tested-by tags.
->>>
->>> On Wed, 07 Mar 2018, Daniel Schultz wrote:
->>>> When using Rockchip SoCs with rk805/808/818 PMICs, restarts are 
->>>> realized by
->>>> setting the reset registers in the "Clock and Reset Unit".
->>>>
->>>> Since all three shutdown functions have almost the same code, all 
->>>> logic
->>>> from the shutdown functions can be refactored to a new function
->>>> "rk808_update_bits", which can update a register by a given address 
->>>> and
->>>> bitmask.
->>>>
->>>> After that, notifier blocks and the restart functions were added to 
->>>> the
->>>> driver. Like the shutdown function, the restart is bound to the
->>>> "rockchip,system-power-controller" device tree property and can easily
->>>> revoked to the software restart by removing the property.
->>>>
->>>> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
->>>> ---
->>>> Changes:
->>>>     v2: Re-submit with recipients from Rockchip.
->>>>
->>>>   drivers/mfd/rk808.c       | 97 
->>>> ++++++++++++++++++++++++++++++-----------------
->>>>   include/linux/mfd/rk808.h |  1 +
->>>>   2 files changed, 63 insertions(+), 35 deletions(-)
->>>>
->>>> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
->>>> index d138721..2c68f8c 100644
->>>> --- a/drivers/mfd/rk808.c
->>>> +++ b/drivers/mfd/rk808.c
->>>> @@ -27,6 +27,7 @@
->>>>   #include <linux/module.h>
->>>>   #include <linux/of_device.h>
->>>>   #include <linux/regmap.h>
->>>> +#include <linux/reboot.h>
->>>>     struct rk808_reg_data {
->>>>       int addr;
->>>> @@ -369,59 +370,73 @@ static const struct regmap_irq_chip 
->>>> rk818_irq_chip = {
->>>>     static struct i2c_client *rk808_i2c_client;
->>>>   -static void rk805_device_shutdown(void)
->>>> +static void rk808_update_bits(unsigned int reg, unsigned int 
->>>> bit_mask)
->>>>   {
->>>>       int ret;
->>>>       struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
->>>>         if (!rk808) {
->>>>           dev_warn(&rk808_i2c_client->dev,
->>>> -             "have no rk805, so do nothing here\n");
->>>> +             "have no %s, so do nothing here\n",
->>>> +             rk808->regmap_irq_chip->name);
->>>>           return;
->>>>       }
->>>>         ret = regmap_update_bits(rk808->regmap,
->>>> -                 RK805_DEV_CTRL_REG,
->>>> -                 DEV_OFF, DEV_OFF);
->>>> +                 reg,
->>>> +                 bit_mask, bit_mask);
->>>>       if (ret)
->>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
->>>> +        dev_err(&rk808_i2c_client->dev, "can't write to DEVCTRL: 
->>>> %x!\n",
->>>> +            ret);
->>>>   }
->>>>   -static void rk808_device_shutdown(void)
->>>> +static void rk805_device_shutdown(void)
->>>>   {
->>>> -    int ret;
->>>> -    struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
->>>> -
->>>> -    if (!rk808) {
->>>> -        dev_warn(&rk808_i2c_client->dev,
->>>> -             "have no rk808, so do nothing here\n");
->>>> -        return;
->>>> -    }
->>>> +    rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
->>>> +}
->>>> +static int rk805_restart_notify(struct notifier_block *this,
->>>> +                   unsigned long mode, void *cmd)
->>>> +{
->>>> +    rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF_RST);
->>>> +    return NOTIFY_DONE;
->>>> +}
->>>>   -    ret = regmap_update_bits(rk808->regmap,
->>>> -                 RK808_DEVCTRL_REG,
->>>> -                 DEV_OFF_RST, DEV_OFF_RST);
->>>> -    if (ret)
->>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
->>>> +static void rk808_device_shutdown(void)
->>>> +{
->>>> +    rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
->>>> +}
->>>> +static int rk808_restart_notify(struct notifier_block *this,
->>>> +                   unsigned long mode, void *cmd)
->>>> +{
->>>> +    rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF);
->>>> +    return NOTIFY_DONE;
->>>>   }
->>>>     static void rk818_device_shutdown(void)
->>>>   {
->>>> -    int ret;
->>>> -    struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
->>>> +    rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF_RST);
->>>> +}
->>>> +static int rk818_restart_notify(struct notifier_block *this,
->>>> +                   unsigned long mode, void *cmd)
->>>> +{
->>>> +    rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
->>>> +    return NOTIFY_DONE;
->>>> +}
->>>>   -    if (!rk808) {
->>>> -        dev_warn(&rk808_i2c_client->dev,
->>>> -             "have no rk818, so do nothing here\n");
->>>> -        return;
->>>> -    }
->>>> +static struct notifier_block rk805_restart_handler = {
->>>> +    .notifier_call = rk805_restart_notify,
->>>> +    .priority = 196,
->>>> +};
->>>>   -    ret = regmap_update_bits(rk808->regmap,
->>>> -                 RK818_DEVCTRL_REG,
->>>> -                 DEV_OFF_RST, DEV_OFF_RST);
->>>> -    if (ret)
->>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
->>>> -}
->>>> +static struct notifier_block rk808_restart_handler = {
->>>> +    .notifier_call = rk808_restart_notify,
->>>> +    .priority = 196,
->>>> +};
->>>> +
->>>> +static struct notifier_block rk818_restart_handler = {
->>>> +    .notifier_call = rk818_restart_notify,
->>>> +    .priority = 196,
->>>> +};
->>>>     static const struct of_device_id rk808_of_match[] = {
->>>>       { .compatible = "rockchip,rk805" },
->>>> @@ -476,6 +491,7 @@ static int rk808_probe(struct i2c_client *client,
->>>>           cells = rk805s;
->>>>           nr_cells = ARRAY_SIZE(rk805s);
->>>>           pm_pwroff_fn = rk805_device_shutdown;
->>>> +        rk808->nb = &rk805_restart_handler;
->>>>           break;
->>>>       case RK808_ID:
->>>>           rk808->regmap_cfg = &rk808_regmap_config;
->>>> @@ -485,6 +501,7 @@ static int rk808_probe(struct i2c_client *client,
->>>>           cells = rk808s;
->>>>           nr_cells = ARRAY_SIZE(rk808s);
->>>>           pm_pwroff_fn = rk808_device_shutdown;
->>>> +        rk808->nb = &rk808_restart_handler;
->>>>           break;
->>>>       case RK818_ID:
->>>>           rk808->regmap_cfg = &rk818_regmap_config;
->>>> @@ -494,6 +511,7 @@ static int rk808_probe(struct i2c_client *client,
->>>>           cells = rk818s;
->>>>           nr_cells = ARRAY_SIZE(rk818s);
->>>>           pm_pwroff_fn = rk818_device_shutdown;
->>>> +        rk808->nb = &rk818_restart_handler;
->>>>           break;
->>>>       default:
->>>>           dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
->>>> @@ -546,11 +564,18 @@ static int rk808_probe(struct i2c_client 
->>>> *client,
->>>>         pm_off = of_property_read_bool(np,
->>>>                   "rockchip,system-power-controller");
->>>> -    if (pm_off && !pm_power_off) {
->>>> +    if (pm_off) {
->>>>           rk808_i2c_client = client;
->>>> -        pm_power_off = pm_pwroff_fn;
->>>> +        if (!pm_power_off)
->>>> +            pm_power_off = pm_pwroff_fn;
->>>> +        if (rk808->nb) {
->>>> +            ret = register_restart_handler(rk808->nb);
->>>> +            if (ret)
->>>> +                dev_err(&client->dev,
->>>> +                    "cannot register restart handler, %d\n",
->>>> +                    ret);
->>>> +        }
->>>>       }
->>>> -
->>>>       return 0;
->>>>     err_irq:
->>>> @@ -564,6 +589,8 @@ static int rk808_remove(struct i2c_client *client)
->>>>         regmap_del_irq_chip(client->irq, rk808->irq_data);
->>>>       pm_power_off = NULL;
->>>> +    if (rk808->nb)
->>>> +        unregister_restart_handler(rk808->nb);
->>>>         return 0;
->>>>   }
->>>> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
->>>> index 338e0f6..9c26ca2 100644
->>>> --- a/include/linux/mfd/rk808.h
->>>> +++ b/include/linux/mfd/rk808.h
->>>> @@ -453,5 +453,6 @@ struct rk808 {
->>>>       long                variant;
->>>>       const struct regmap_config    *regmap_cfg;
->>>>       const struct regmap_irq_chip    *regmap_irq_chip;
->>>> +    struct notifier_block        *nb;
->>>>   };
->>>>   #endif /* __LINUX_REGULATOR_RK808_H */
->>
->
->
->
+> The kernel module is a object file, it is not be linked by linker, the
+> GOT and PLT
+> sections will not be generated through -fPIC option, but it will
+> generate the relative
+> relocation type. As Palmer mention before, If we have GOT and PLT sections,
+> we can put the module anywhere, even we support the KASLR in the kernel.
 
--- 
-Best Regards
-----------------------------------------------------------------------------
-陈健洪 (Joseph Chen)
-E-mail：chenjh@rock-chips.com
-福州瑞芯微电子股份有限公司
-Fuzhou Rockchip Electronics Co.Ltd
-福建省福州市铜盘路软件大道89号软件园A区21号楼 (350003)
-No. 21 Building, A District, No.89,software Boulevard Fuzhou,Fujian,PRC
-TEL：0591-83991906/07-8573
+Sorry, I guess I meant PIC objects not shared objects (I keep forgetting about
+PIE).  We'll probably eventually add large code model targets, but they might
+end up just being functionally equilivant to PIE with multi-GOT and multi-PLT
+so it might not matter.
+
+Either way, this is the sanest way to do it for now.
+
+> For the ALIGN problem, the kernel module loader is difficult to remove
+> or migrate
+> the module's code like relax doing, so the remnant nop instructions harm the
+> performance,  I agree the point that adding the mno-relax option and checking
+> the alignment in ALIGN type in module loader.
+
+Sounds good.  I just merged the mno-relax stuff, it'll show up when I get
+around to generating a 7.3.0 backport branch.  For now I think you should just
+fail on R_RISCV_ALIGN and attempt to pass -mno-relax to the compiler (via
+something like "$(call cc-option,-mno-relax)", like we do for
+"-mstrict-align").  I don't think it's worth handling R_RISCV_ALIGN in the
+kernel, as that's essentially the same as full relaxation support.
+
+>>> That's kind of complicated, though, so we can start with something
+>>> simpler like this.
+>
+> So what is the suggestion for that.
+
+Well, I'm not really sure -- essentially the idea of proper multi-GOT and
+multi-PLT support would be to merge the GOTs and PLTs of modules together when
+they're within range of each other.  We haven't even figured this out in
+userspace yet, so it's probably not worth attempting for kernel modules for a
+bit.
+
+If I understand your code correctly, you're currently generating one GOT and
+one PLT per loaded module.  If that's the case, then this is correct, it's just
+possible to save some memory by merging these tables.  It's probably not worth
+the complexity for kernel modules for a while.
