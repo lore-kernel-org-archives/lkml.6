@@ -1,53 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeCNLSC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:18:02 -0400
-Received: from ozlabs.org ([103.22.144.67]:44801 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751155AbeCNLSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:18:01 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@ozlabs.org
-Subject: [RESEND PATCH] Input: joystick/analog - Use get_cycles() on PPC
-Date: Wed, 14 Mar 2018 22:17:52 +1100
-Message-Id: <20180314111752.1748-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.14.1
+        id S1751413AbeCNLUG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:20:06 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45261 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbeCNLUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 07:20:04 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Joel Fernandes <joelaf@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Claudio Scordino <claudio@evidence.eu.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Date: Wed, 14 Mar 2018 12:20:38 +0100
+Message-ID: <2122625.mgU2W7rFO1@aspire.rjw.lan>
+In-Reply-To: <CAJWu+orsBLQdjGJZKOnLP15M-aKboiDPVTQ2W+8tiHpgNLexMg@mail.gmail.com>
+References: <1520937340-2755-1-git-send-email-claudio@evidence.eu.com> <20180313111506.GC15832@vireshk-i7> <CAJWu+orsBLQdjGJZKOnLP15M-aKboiDPVTQ2W+8tiHpgNLexMg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The analog joystick driver spits a warning at us:
+On Wednesday, March 14, 2018 2:27:53 AM CET Joel Fernandes wrote:
+> On Tue, Mar 13, 2018 at 4:15 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 13-03-18, 11:35, Claudio Scordino wrote:
+> >> When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> >> we should not wait for the rate limit, otherwise we may miss some
+> >> deadline.
+> >>
+> >> Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
+> >> shown reductions of even 10% of deadline misses with a negligible
+> >> increase of energy consumption (measured through Baylibre Cape).
+> >>
+> >> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> CC: Viresh Kumar <viresh.kumar@linaro.org>
+> >> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> >> CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> >> CC: Morten Rasmussen <morten.rasmussen@arm.com>
+> >> CC: Juri Lelli <juri.lelli@redhat.com>
+> >> CC: Vincent Guittot <vincent.guittot@linaro.org>
+> >> CC: Todd Kjos <tkjos@android.com>
+> >> CC: Joel Fernandes <joelaf@google.com>
+> >> CC: linux-pm@vger.kernel.org
+> >> CC: linux-kernel@vger.kernel.org
+> >> ---
+> >> Changes from v3:
+> >>  - Specific routine renamed as ignore_dl_rate_limit()
+> >
+> > LGTM. Thanks.
+> 
+> Nice! Thanks.
 
-  drivers/input/joystick/analog.c:176:2: warning: #warning Precise timer
-  not defined for this architecture.
+OK, the patch doesn't seem to depend on anything in -tip, so I'm going to
+apply it.
 
-PPC has get_cycles() so use that.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- drivers/input/joystick/analog.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-
-This is the third resend, I'll take it via the powerpc tree if no one else
-does.
-
-cheers
-
-diff --git a/drivers/input/joystick/analog.c b/drivers/input/joystick/analog.c
-index c868a878c84f..a942c4ccd2af 100644
---- a/drivers/input/joystick/analog.c
-+++ b/drivers/input/joystick/analog.c
-@@ -163,7 +163,7 @@ static unsigned int get_time_pit(void)
- #define GET_TIME(x)	do { x = (unsigned int)rdtsc(); } while (0)
- #define DELTA(x,y)	((y)-(x))
- #define TIME_NAME	"TSC"
--#elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_RISCV) || defined(CONFIG_TILE)
-+#elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV) || defined(CONFIG_TILE)
- #define GET_TIME(x)	do { x = get_cycles(); } while (0)
- #define DELTA(x,y)	((y)-(x))
- #define TIME_NAME	"get_cycles"
--- 
-2.14.1
+Thanks!
