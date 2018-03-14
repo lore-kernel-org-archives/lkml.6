@@ -1,268 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeCNU7E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:59:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6234 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751780AbeCNU7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:59:01 -0400
-Subject: Re: [PATCH] perf vendor events: fix processing for xfs
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <1521047452-28565-1-git-send-email-john.garry@huawei.com>
- <20180314185355.GC27335@kernel.org>
- <fa4f4c83-1a1a-761f-9259-ce21ee000fc3@huawei.com>
- <20180314202643.GG27335@kernel.org>
-CC: <peterz@infradead.org>, <mingo@redhat.com>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>, <ak@linux.intel.com>, <wcohen@redhat.com>,
-        <sukadev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <4f8d9085-8415-5b99-daee-34994ae95cb1@huawei.com>
-Date: Wed, 14 Mar 2018 20:58:33 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1752130AbeCNU7b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:59:31 -0400
+Received: from avasout06.plus.net ([212.159.14.18]:42037 "EHLO
+        avasout06.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeCNU73 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 16:59:29 -0400
+X-CM-Score: 0.00
+X-CNFS-Analysis: v=2.3 cv=fL8XI6Se c=1 sm=1 tr=0
+ a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
+ a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10 a=pGLkceISAAAA:8 a=beXlt2xKAAAA:8
+ a=fxZjIJLCPaIycJdo6jkA:9 a=aP5k2Ks-GnYjluUe:21 a=SeZQ477pr3i55Sbe:21
+ a=CjuIK1q_8ugA:10 a=gcY2M4Ci8LIz02MwfSIM:22
+Date: Wed, 14 Mar 2018 20:51:55 +0000
+From: Nick Dyer <nick@shmanahar.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/14] Input: atmel_mxt_ts - switch from OF to generic
+ device properties
+Message-ID: <20180314205155.GB26353@lava.h.shmanahar.org>
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-3-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180314202643.GG27335@kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.95.230]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312190907.174301-3-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CMAE-Envelope: MS4wfI/qYdZxJS3pbHwtjm6wcmogfLjIlWzfxkPiyTmYMH4vHklhkUGoxqdIMk60rkZplJaOO13+jQO+j/+DFw5pf87dF18g4PnOQqpWw+Vij4j8Qfue1l6x
+ 04kcS7PrIthnA/HHl/LtKKgA1owmLkB4hs6nTvjyiWhgSMMzJCvA3vt4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/03/2018 20:26, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Mar 14, 2018 at 07:39:25PM +0000, John Garry escreveu:
->> On 14/03/2018 18:53, Arnaldo Carvalho de Melo wrote:
->>> Em Thu, Mar 15, 2018 at 01:10:52AM +0800, John Garry escreveu:
->>>> In the recently introduced support for vendor subdirectory,
->>>> the checking for directory entries under xfs (or any other fs
->>>> which does not support dirent.d_type) is missing the check
->>>> for links for current and parent directory. This can result
->>>> in a broken pmu_events.c being generated.
->>>>
->>>> Fix this by adding the appropriate check in is_leaf_dir().
->>>
->>> So I'll lookup the patch that introduced the patch and squash this one
->>> with it, so that we don't break 'git bisect' on ppc.
->>
->> Right, so it's going to be "perf vendor events: add support for pmu events
->> vendor subdirectory".
->>
->> BTW, I don't think it's specifically ppc which was broken, but just when
->> building from xfs.
->>
->> Much appreciated,
->> John
->
-> This is the ammended cset, and yes, I mentioned just XFS not ppc, added
-> Sukadev to the CC list and the link to your patch that he tested. Also
-> stamped his Tested-by there.
->
-> This will all go again the container build test set before a new pull
-> req to Ingo, where I'll avoid sending the previous 31 patches to the
-> mailing list, just the ones that came after it, as perf/core keeps
-> growing :-)
+On Mon, Mar 12, 2018 at 12:08:55PM -0700, Dmitry Torokhov wrote:
+> Instead of using OF-specific APIs to fecth device properties, let's switch
+> to generic device properties API. This will allow us to use device
+> properties on legacy ChromeOS devices and get rid of platform data down
+> the road.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-It looks ok,
+Acked-by: Nick Dyer <nick@shmanahar.org>
 
-Thanks a lot,
-John
-
->
-> - Arnaldo
->
-> commit d24081387a00d2e10789eb012429144c549598be
-> Author: John Garry <john.garry@huawei.com>
-> Date:   Thu Mar 8 18:58:29 2018 +0800
->
->     perf vendor events: Add support for pmu events vendor subdirectory
->
->     For some architectures (like arm), it is required to support a vendor
->     subdirectory and not locate all the JSONs for a specific vendor in the
->     same folder.
->
->     This is because all the events for the same vendor will be placed in the
->     same pmu events table, which may cause conflict.  This conflict would be
->     in the instance that a vendor's custom implemented events do have the
->     same meaning on different platforms, so events in the pmu table would
->     conflict. In addition, per list command may show events which are not
->     even supported for a given platform.
->
->     This patch adds support for a arch/vendor/platform directory hierarchy,
->     while maintaining backwards-compatibility for existing arch/platform
->     structure. In this, each platform would always have its own pmu events
->     table.
->
->     In generated file pmu_events.c, each platform table name is in the
->     format pme{_vendor}_platform, like this:
->
->     struct pmu_events_map pmu_events_map[] = {
->     {
->             .cpuid = "0x00000000420f5160",
->             .version = "v1",
->             .type = "core",
->             .table = pme_cavium_thunderx2
->     },
->     {
->             .cpuid = 0,
->             .version = 0,
->             .type = 0,
->             .table = 0,
->     },
->     };
->
->     Signed-off-by: John Garry <john.garry@huawei.com>
->     Acked-by: Jiri Olsa <jolsa@kernel.org>
->     Tested-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
->     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->     Cc: Andi Kleen <ak@linux.intel.com>
->     Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
->     Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
->     Cc: Will Deacon <will.deacon@arm.com>
->     Cc: William Cohen <wcohen@redhat.com>
->     Cc: linux-arm-kernel@lists.infradead.org
->     Cc: linuxarm@huawei.com
->     Link: http://lkml.kernel.org/r/1520506716-197429-5-git-send-email-john.garry@huawei.com
->     Link: http://lkml.kernel.org/r/1521047452-28565-1-git-send-email-john.garry@huawei.com
->     [ Add missing limits.h include, fixing the build on at least all Alpine Linux versions tested (3.4 to 3.7 + edge), ]
->     [ Applied a patch to fix reading ./.. directories in XFS, see second Link tag ]
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->
-> diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
-> index 2407abc1d441..655286ff8767 100644
-> --- a/tools/perf/pmu-events/README
-> +++ b/tools/perf/pmu-events/README
-> @@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
->  	Cache.json 	Memory.json 	Virtual-Memory.json
->  	Frontend.json 	Pipeline.json
->
-> +The JSONs folder for a CPU model/family may be placed in the root arch
-> +folder, or may be placed in a vendor sub-folder under the arch folder
-> +for instances where the arch and vendor are not the same.
-> +
->  Using the JSON files and the mapfile, 'jevents' generates the C source file,
->  'pmu-events.c', which encodes the two sets of tables:
->
-> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-> index 1d02fafdc34d..0981d313064f 100644
-> --- a/tools/perf/pmu-events/jevents.c
-> +++ b/tools/perf/pmu-events/jevents.c
-> @@ -39,6 +39,7 @@
->  #include <unistd.h>
->  #include <stdarg.h>
->  #include <libgen.h>
-> +#include <limits.h>
->  #include <dirent.h>
->  #include <sys/time.h>			/* getrlimit */
->  #include <sys/resource.h>		/* getrlimit */
-> @@ -572,7 +573,7 @@ static char *file_name_to_table_name(char *fname)
->  	 * Derive rest of table name from basename of the JSON file,
->  	 * replacing hyphens and stripping out .json suffix.
->  	 */
-> -	n = asprintf(&tblname, "pme_%s", basename(fname));
-> +	n = asprintf(&tblname, "pme_%s", fname);
->  	if (n < 0) {
->  		pr_info("%s: asprintf() error %s for file %s\n", prog,
->  				strerror(errno), fname);
-> @@ -582,7 +583,7 @@ static char *file_name_to_table_name(char *fname)
->  	for (i = 0; i < strlen(tblname); i++) {
->  		c = tblname[i];
->
-> -		if (c == '-')
-> +		if (c == '-' || c == '/')
->  			tblname[i] = '_';
->  		else if (c == '.') {
->  			tblname[i] = '\0';
-> @@ -739,25 +740,80 @@ static int get_maxfds(void)
->  static FILE *eventsfp;
->  static char *mapfile;
->
-> +static int is_leaf_dir(const char *fpath)
-> +{
-> +	DIR *d;
-> +	struct dirent *dir;
-> +	int res = 1;
-> +
-> +	d = opendir(fpath);
-> +	if (!d)
-> +		return 0;
-> +
-> +	while ((dir = readdir(d)) != NULL) {
-> +		if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
-> +			continue;
-> +
-> +		if (dir->d_type == DT_DIR) {
-> +			res = 0;
-> +			break;
-> +		} else if (dir->d_type == DT_UNKNOWN) {
-> +			char path[PATH_MAX];
-> +			struct stat st;
-> +
-> +			sprintf(path, "%s/%s", fpath, dir->d_name);
-> +			if (stat(path, &st))
-> +				break;
-> +
-> +			if (S_ISDIR(st.st_mode)) {
-> +				res = 0;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
-> +	closedir(d);
-> +
-> +	return res;
-> +}
-> +
->  static int process_one_file(const char *fpath, const struct stat *sb,
->  			    int typeflag, struct FTW *ftwbuf)
+> ---
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 59 ++++++++++++------------
+>  1 file changed, 30 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index 1aabfae1297ba..072b78d3c6e00 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/property.h>
+>  #include <asm/unaligned.h>
+>  #include <media/v4l2-device.h>
+>  #include <media/v4l2-ioctl.h>
+> @@ -2920,47 +2921,52 @@ static void mxt_input_close(struct input_dev *dev)
+>  	mxt_stop(data);
+>  }
+>  
+> -#ifdef CONFIG_OF
+> -static const struct mxt_platform_data *mxt_parse_dt(struct i2c_client *client)
+> +static const struct mxt_platform_data *
+> +mxt_parse_device_properties(struct i2c_client *client)
 >  {
-> -	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
-> +	char *tblname, *bname;
->  	int is_dir  = typeflag == FTW_D;
->  	int is_file = typeflag == FTW_F;
->  	int level   = ftwbuf->level;
->  	int err = 0;
->
-> +	if (level == 2 && is_dir) {
-> +		/*
-> +		 * For level 2 directory, bname will include parent name,
-> +		 * like vendor/platform. So search back from platform dir
-> +		 * to find this.
-> +		 */
-> +		bname = (char *) fpath + ftwbuf->base - 2;
-> +		for (;;) {
-> +			if (*bname == '/')
-> +				break;
-> +			bname--;
+> +	static const char keymap_property[] = "linux,gpio-keymap";
+>  	struct mxt_platform_data *pdata;
+> -	struct device_node *np = client->dev.of_node;
+>  	u32 *keymap;
+> -	int proplen, ret;
+> -
+> -	if (!np)
+> -		return ERR_PTR(-ENOENT);
+> +	int n_keys;
+> +	int error;
+>  
+>  	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+>  	if (!pdata)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	if (of_find_property(np, "linux,gpio-keymap", &proplen)) {
+> -		pdata->t19_num_keys = proplen / sizeof(u32);
+> +	if (device_property_present(&client->dev, keymap_property)) {
+> +		n_keys = device_property_read_u32_array(&client->dev,
+> +							keymap_property,
+> +							NULL, 0);
+> +		if (n_keys <= 0) {
+> +			error = n_keys < 0 ? n_keys : -EINVAL;
+> +			dev_err(&client->dev,
+> +				"invalid/malformed '%s' property: %d\n",
+> +				keymap_property, error);
+> +			return ERR_PTR(error);
 > +		}
-> +		bname++;
-> +	} else
-> +		bname = (char *) fpath + ftwbuf->base;
-> +
->  	pr_debug("%s %d %7jd %-20s %s\n",
->  		 is_file ? "f" : is_dir ? "d" : "x",
->  		 level, sb->st_size, bname, fpath);
->
-> -	/* base dir */
-> -	if (level == 0)
-> +	/* base dir or too deep */
-> +	if (level == 0 || level > 3)
->  		return 0;
->
-> +
->  	/* model directory, reset topic */
-> -	if (level == 1 && is_dir) {
-> +	if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
-> +	    (level == 2 && is_dir)) {
->  		if (close_table)
->  			print_events_table_suffix(eventsfp);
->
->
-> .
->
+>  
+> -		keymap = devm_kzalloc(&client->dev,
+> -				pdata->t19_num_keys * sizeof(keymap[0]),
+> -				GFP_KERNEL);
+> +		keymap = devm_kmalloc_array(&client->dev, n_keys, sizeof(u32),
+> +					    GFP_KERNEL);
+>  		if (!keymap)
+>  			return ERR_PTR(-ENOMEM);
+>  
+> -		ret = of_property_read_u32_array(np, "linux,gpio-keymap",
+> -						 keymap, pdata->t19_num_keys);
+> -		if (ret)
+> -			dev_warn(&client->dev,
+> -				 "Couldn't read linux,gpio-keymap: %d\n", ret);
+> +		error = device_property_read_u32_array(&client->dev,
+> +						       keymap_property,
+> +						       keymap, n_keys);
+> +		if (error) {
+> +			dev_err(&client->dev,
+> +				"failed to parse '%s' property: %d\n",
+> +				keymap_property, error);
+> +			return ERR_PTR(error);
+> +		}
+>  
+>  		pdata->t19_keymap = keymap;
+> +		pdata->t19_num_keys = n_keys;
+>  	}
+>  
+>  	return pdata;
+>  }
+> -#else
+> -static const struct mxt_platform_data *mxt_parse_dt(struct i2c_client *client)
+> -{
+> -	return ERR_PTR(-ENOENT);
+> -}
+> -#endif
+>  
+>  #ifdef CONFIG_ACPI
+>  
+> @@ -3094,16 +3100,11 @@ mxt_get_platform_data(struct i2c_client *client)
+>  	if (pdata)
+>  		return pdata;
+>  
+> -	pdata = mxt_parse_dt(client);
+> -	if (!IS_ERR(pdata) || PTR_ERR(pdata) != -ENOENT)
+> -		return pdata;
+> -
+>  	pdata = mxt_parse_acpi(client);
+>  	if (!IS_ERR(pdata) || PTR_ERR(pdata) != -ENOENT)
+>  		return pdata;
+>  
+> -	dev_err(&client->dev, "No platform data specified\n");
+> -	return ERR_PTR(-EINVAL);
+> +	return mxt_parse_device_properties(client);
+>  }
+>  
+>  static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+> -- 
+> 2.16.2.660.g709887971b-goog
+> 
