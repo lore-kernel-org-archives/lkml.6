@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2033369-1521041950-2-2202526992857149101
+X-Cyrus-Session-Id: sloti22d1t05-2033369-1521042750-2-5703582495598741783
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
   MailFrom='org'
@@ -13,28 +13,29 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521041949; b=j8JgIvfk1HZGNWqB11ecnRQowc0r0g0hGOP1Uk3/Oxx0C3M
-    eqUQwQWHNCSPFzJsYJq5H8o6UINJ5nTHvNnCWWcNwvE7AxDOaKlrRuvg0BCJV10n
-    XEvXms9PRosDmp/5Tw1SDuBxH755fSniD+DhNydrD4z6cauFqx3CQu0OSD52yDpZ
-    6APlNMiejMpNhbQpwzo56wL/WIFVOKimWdNB3AsEUbDc32A1DdMLHqJcjxC0WdbP
-    bKbwiAwcCBLTFFb4LYzrOhnqgfwLI3q9C46iaV+xmdn5xcQVP4y1kq3N7cmaMuPY
-    WsrOTAQ7qqPJ5hM3j+oUDZksPjD5HVso6YFLvYw==
+    t=1521042749; b=pHDDJHQLVQX3p+S1xgfSK5XAcUehNto71giCCUabJy4wCrm
+    ORgn+0UuqPjzwry7t/dqKoKSpNvWzxms8vHamhmk00JWD7AytysMCGvn/Q1ErIop
+    mKtz1h1fgVi/UbwyZGrurAScyW2kevg9NT+UY0Nswjedk2wm7U4t7rNGTzx0AqMM
+    Ug9mBXoknTXv7BSKkG4YgXl+snk80uURf0vJhsKB7txnlgFMGmYJ5E/5M1+5jcwW
+    zI9CO4DPcItyG2pp+dR6miQg/dZ56jzHrJw91JZ1isWl8S/hayWm9R0eN2oAWNwp
+    AwtopaaWGwDnkcq2uCGhsZQmDwgLBb3bXwAsNMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1521041949; bh=WkfUvPNZYcuKqNS0W1IXwud6qi
-    wTmr60oQg/rNt1Pvo=; b=gTuGxsHIhLDEv8HIu0V07dDDe7rtiK/e4/pa/+djxW
-    ua5Hn6HRrW/NQGeK5HENY4UL73SzH3YEjgdGR+wLmLJRkbu71v1OMNDAAaEEa2vJ
-    BRChUY7mZRwrLhrWpp4RH3tK/l/Cxj6YlPIaJYdteH0jZsbAiXkW+1N7GEiXWIPL
-    Nv2oB+qJS1l5pBnWwTHsR4hRiGrxyGi7O1lfEJd7gu8DP3qMUsI87m89cw9ixWF/
-    jUMzUHpM7ZuNfM7X4LSh4liFL+4nG7tf56IyVWSuWsNzzFk8XYQmANENqW026ZSC
-    wWJ8xrm+hKza34yY5mXAWstGEGSSuZQXJ5ypuHZ0h1Cw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521042749;
+    bh=/ND0jPcY+ko/0qxpCzTucSA1pOMmmP9KdmKiJwxsX0o=; b=rgVsjtUkbRPn
+    XfPHtRD6CWhLbPl3AuVv7Ci+x8y5WZMQt9l+B27hB1fcP06wj9pY9FJt7WoiKXue
+    GuKoZSJmKnoduoHB5NzMS9sKBDR0jevF1TiBa3NqNAkGDMMkz8eQ9/n4mmiLJDcU
+    k527PuNOy3CEkluCUYdM2NsY3wOJsubxb6ZDLGkatmRA1WalzzQsO+kM4Wi6I1p4
+    8CBzuDQ9t/qw2UI2XUTVkEmiT/Nd/iWqU49Ps6JTJIgPC+mYqqNBfaGFwOSqV6jr
+    Ki7Vety2uAi99+WHnJE5WwE0QMASW5BNu4uG557wFrTSd0tv8n0WRSsBE1OhmN+D
+    ywJXXVcWXw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
@@ -44,495 +45,604 @@ Authentication-Results: mx5.messagingengine.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeCNPjA (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 11:39:00 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:38987 "EHLO
+        id S1752443AbeCNPwQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 11:52:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:60863 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeCNPit (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Mar 2018 11:38:49 -0400
+        with ESMTP id S1752189AbeCNPwO (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Mar 2018 11:52:14 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, linux@roeck-us.net, corbet@lwn.net,
-        tj@kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, bp@alien8.de, mchehab@kernel.org,
-        linus.walleij@linaro.org, wsa@the-dreams.de,
-        dmitry.torokhov@gmail.com, ulf.hansson@linaro.org,
-        boris.brezillon@bootlin.com, cyrille.pitchen@wedev4u.fr,
-        wg@grandegger.com, mkl@pengutronix.de,
-        alexandre.belloni@bootlin.com, broonie@kernel.org,
-        jic23@kernel.org, lars@metafoo.de, jslaby@suse.com,
-        stern@rowland.harvard.edu, b.zolnierkie@samsung.com,
-        shli@kernel.org, linux-watchdog@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-can@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-raid@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [PATCH 00/47] arch-removal: device drivers
-Date: Wed, 14 Mar 2018 16:35:13 +0100
-Message-Id: <20180314153603.3127932-1-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH 38/47] usb: musb: remove blackfin port
+Date: Wed, 14 Mar 2018 16:35:51 +0100
+Message-Id: <20180314153603.3127932-39-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:1s4F6Ssxy/PD/WM7koPJ+6Xw/bnIq2YqeLP3iO7W9F2uHzZr/GH
- ufBBQ5pGEQWlpxvzmXCd6x7iDxK71BieedprSlpBqBRGpsVZ6N+UOllSMss9KdvSTSORQD/
- IwP/2WnDQjLOEj5TTlePKfXsXzW5csPR3BiB06yXakHLQw2GWFslVinUTj9VpDPeIE+QKP6
- SaBY+EVwWu9YOvnUl6YGA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FpJltreOk68=:tnZRPqJoY1PiP1686zYRU1
- Bbvrb8y3YGIIQNdSLFPIJkXw9sfK7c1Xi0fuuVON6V3/j6hJRAE8W/R0btvHu5YA3yxSQnZOh
- DWXD4P8lrY8BlNbLeV8wKKvU2IVstU044Lutku3c5K9djD59exN4t6YL+hgoY5UUoon4DyyCD
- zspcIXV2jQ4Uw8dOR9HnwELXNO6WSiHGq5tItWV1A2aHTIIWr0aQjvwVQfxRqs+ZFQtCFBkni
- ERoUYDJmMNnh/e7oBy55e5jwlELMKOTEItoJ9u7jvoRJPSU2l5WwMyyZHjqiRnA5Wvm0KrG/p
- myWG58dg4WMos5fMTxYYE+hKNfwqxK83E4A91jSzz1xiK99QYedO5mr+0xpXl/9QVwXjgYR3z
- hzRugpNIihnT8XwLf0cn8wU/mvqSP3jxT67zBoIAuRWeT3ev6SJGRsj+Wtj9rJXn1OgsId+vZ
- OfncSDcnxKsPqqxzZ9NbOp6HgeWgJqOifXX3GYdg3N/0J6Obd/sv8D/1cN0ZotS0lTgXBHU+U
- iy9mP9VC7GxhzGheH9tM+7gT/+3jRG2kcaGJT+w1d+dIpl87csQHYgZuqiVH9SLWsTw6j8Mep
- 3uNAKPhNwroY7On3ybhAiZdmg8dq6ILIp4dvU18ioPIlQ8NEaAlOnIV+Dw7fD8GbWvRQjr74R
- AWftTOrhVN1pz1LL/Mjb3jVaOchWnOP9EL8C7rYXhjrXJRX5RE0dyyZEij/JyzebeIpH19qSM
- /+JMXyunRnolKx6nMtrn2Q8T0N8NOpYxdH3VmA==
+In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:EKo1M9FA9v4uyUR5tTHNd7lgO5we7q1Fx9alv9aK6zsN66HFsWX
+ 4Vxl7QcKIzSMICzlqdGFzYxVb58YdJV53RjnFa2C7Ll/dYK50eAGaRx7U/Yr4ruuqTNyrgn
+ b5VCYKRUjuysge7/rhH0h16hGla2QPFI6A0olsa9dnYzuYFGeUEXmhLOQcpQwd/T5eF+oie
+ MfAb/J97CE9V+oBY42SLA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TUvYnlmYCXU=:egKEqe6dUVON9RdQvh4upa
+ 2OkzxpSwdVqpileqvUh/NbDtEAmsFTSGbYS0A4zafjp8JNIDSu8Tb4Mg8eOa+shSkivhFy3jw
+ 6VPvntZ89hxO/VzL/f+1ahBJ7qdcILFiNNm7h3Oehp94YjEPxs1GQ6Qu8iGG8ex/9t68SCYTN
+ 25eM0d6Nq7AFaN4gb426UH7IQJ6F8JasPbYlhIYZ6uRdkLLuH6zWvuPOQ0oAv1u+Sbq1HAm3U
+ 2AWB2XcIe5e1mZxNUs4JzqAZrwqWqCseSmVq+7UegGHub4Ghmf8DxOIvmtsUL2DW06Sys5RmU
+ UzQ+4ZITNriL5+gRXK7DTupC8zEh9QnH6k/OH1PkwbVh82wO/B6c6OBD1zPbAwojL3NdKINvx
+ D/WbZLYTvgT0a2NmIp+U4zq98toLQTiS1NfNi768Q1dtxdUQGgS+ndGb7IxHtzshjn+oDQbhs
+ 7dmChGhkXTcdMPEvpW1rqo6578YBXhdvX/UHP6E3IlBmHcDu8woR52KCnoc2x0ve3ogyrrT0X
+ 1s4VN6oTMQx/vCN/rKLEUQuLvGuyDxvYhgG9CcP1pypll0Mbz4iefjgS4Cv9EBiQNmjgEkRBp
+ LBM8lJvWMBYOH/surGepBBjetH+tZh78E4GpysBy7+epfqdYqRltX98oLiWxnYMWkEVJftE6z
+ 5OibW7fkKN2u8wFYXtR89tqsRb4mLwOx/U7fN8nz9Z+50cDFYyeLpdDwnGnN/CY0FajQLGQbm
+ AicYIXq4RiLjZiapeVr/+kIEIowE9vcHGYMoCw==
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi driver maintainers,
+The blackfin architecture is getting removed, so we can clean up
+all the special cases in the musb driver.
 
-I just posted one series with the removal of eight architectures,
-see https://lkml.org/lkml/2018/3/14/505 for details, or
-https://lwn.net/Articles/748074/ for more background.
-
-These are the device drivers that go along with them. I have already
-picked up the drivers for arch/metag/ into my tree, they were reviewed
-earlier.
-
-Please let me know if you have any concerns with the patch, or if you
-prefer to pick up the patches in your respective trees.  I created
-the patches with 'git format-patch -D', so they will not apply without
-manually removing those files.
-
-For anything else, I'd keep the removal patches in my asm-generic tree
-and will send a pull request for 4.17 along with the actual arch removal.
-
-       Arnd
-
-Arnd Bergmann
-  edac: remove tile driver
-  net: tile: remove ethernet drivers
-  net: adi: remove blackfin ethernet drivers
-  net: 8390: remove m32r specific bits
-  net: remove cris etrax ethernet driver
-  net: smsc: remove m32r specific smc91x configuration
-  raid: remove tile specific raid6 implementation
-  rtc: remove tile driver
-  rtc: remove bfin driver
-  char: remove obsolete ds1302 rtc driver
-  char: remove tile-srom.c
-  char: remove blackfin OTP driver
-  pcmcia: remove m32r drivers
-  pcmcia: remove blackfin driver
-  ASoC: remove blackfin drivers
-  video/logo: remove obsolete logo files
-  fbdev: remove blackfin drivers
-  fbdev: s1d13xxxfb: remove m32r specific hacks
-  crypto: remove blackfin CRC driver
-  media: platform: remove blackfin capture driver
-  media: platform: remove m32r specific arv driver
-  cpufreq: remove blackfin driver
-  cpufreq: remove cris specific drivers
-  gpio: remove etraxfs driver
-  pinctrl: remove adi2/blackfin drivers
-  ata: remove bf54x driver
-  input: keyboard: remove bf54x driver
-  input: misc: remove blackfin rotary driver
-  mmc: remove bfin_sdh driver
-  can: remove bfin_can driver
-  watchdog: remove bfin_wdt driver
-  mtd: maps: remove bfin-async-flash driver
-  mtd: nand: remove bf5xx_nand driver
-  spi: remove blackfin related host drivers
-  i2c: remove bfin-twi driver
-  pwm: remobe pwm-bfin driver
-  usb: host: remove tilegx platform glue
-  usb: musb: remove blackfin port
-  usb: isp1362: remove blackfin arch glue
-  serial: remove cris/etrax uart drivers
-  serial: remove blackfin drivers
-  serial: remove m32r_sio driver
-  serial: remove tile uart driver
-  tty: remove bfin_jtag_comm and hvc_bfin_jtag drivers
-  tty: hvc: remove tile driver
-  staging: irda: remove bfin_sir driver
-  staging: iio: remove iio-trig-bfin-timer driver
-
- .../devicetree/bindings/gpio/gpio-etraxfs.txt      |   22 -
- .../bindings/serial/axis,etraxfs-uart.txt          |   22 -
- Documentation/watchdog/watchdog-parameters.txt     |    5 -
- MAINTAINERS                                        |    8 -
- drivers/ata/Kconfig                                |    9 -
- drivers/ata/Makefile                               |    1 -
- drivers/ata/pata_bf54x.c                           | 1703 --------
- drivers/char/Kconfig                               |   48 -
- drivers/char/Makefile                              |    3 -
- drivers/char/bfin-otp.c                            |  237 --
- drivers/char/ds1302.c                              |  357 --
- drivers/char/tile-srom.c                           |  475 ---
- drivers/cpufreq/Makefile                           |    3 -
- drivers/cpufreq/blackfin-cpufreq.c                 |  217 -
- drivers/cpufreq/cris-artpec3-cpufreq.c             |   93 -
- drivers/cpufreq/cris-etraxfs-cpufreq.c             |   92 -
- drivers/crypto/Kconfig                             |    7 -
- drivers/crypto/Makefile                            |    1 -
- drivers/crypto/bfin_crc.c                          |  753 ----
- drivers/crypto/bfin_crc.h                          |  124 -
- drivers/edac/Kconfig                               |    8 -
- drivers/edac/Makefile                              |    2 -
- drivers/edac/tile_edac.c                           |  265 --
- drivers/gpio/Kconfig                               |    9 -
- drivers/gpio/Makefile                              |    1 -
- drivers/gpio/gpio-etraxfs.c                        |  475 ---
- drivers/i2c/busses/Kconfig                         |   18 -
- drivers/i2c/busses/Makefile                        |    1 -
- drivers/i2c/busses/i2c-bfin-twi.c                  |  737 ----
- drivers/input/keyboard/Kconfig                     |    9 -
- drivers/input/keyboard/Makefile                    |    1 -
- drivers/input/keyboard/bf54x-keys.c                |  396 --
- drivers/input/misc/Kconfig                         |    9 -
- drivers/input/misc/Makefile                        |    1 -
- drivers/input/misc/bfin_rotary.c                   |  294 --
- drivers/media/platform/Kconfig                     |   22 -
- drivers/media/platform/Makefile                    |    4 -
- drivers/media/platform/arv.c                       |  884 ----
- drivers/media/platform/blackfin/Kconfig            |   16 -
- drivers/media/platform/blackfin/Makefile           |    2 -
- drivers/media/platform/blackfin/bfin_capture.c     |  983 -----
- drivers/media/platform/blackfin/ppi.c              |  361 --
- drivers/mmc/host/Kconfig                           |   19 -
- drivers/mmc/host/Makefile                          |    1 -
- drivers/mmc/host/bfin_sdh.c                        |  679 ----
- drivers/mtd/maps/Kconfig                           |   10 -
- drivers/mtd/maps/Makefile                          |    1 -
- drivers/mtd/maps/bfin-async-flash.c                |  196 -
- drivers/mtd/nand/raw/Kconfig                       |   32 -
- drivers/mtd/nand/raw/Makefile                      |    1 -
- drivers/mtd/nand/raw/bf5xx_nand.c                  |  861 ----
- drivers/net/Makefile                               |    1 -
- drivers/net/can/Kconfig                            |    9 -
- drivers/net/can/Makefile                           |    1 -
- drivers/net/can/bfin_can.c                         |  784 ----
- drivers/net/cris/Makefile                          |    1 -
- drivers/net/cris/eth_v10.c                         | 1742 --------
- drivers/net/ethernet/8390/Kconfig                  |    3 +-
- drivers/net/ethernet/8390/ne.c                     |   23 +-
- drivers/net/ethernet/Kconfig                       |    2 -
- drivers/net/ethernet/Makefile                      |    2 -
- drivers/net/ethernet/adi/Kconfig                   |   66 -
- drivers/net/ethernet/adi/Makefile                  |    5 -
- drivers/net/ethernet/adi/bfin_mac.c                | 1881 ---------
- drivers/net/ethernet/adi/bfin_mac.h                |  104 -
- drivers/net/ethernet/smsc/Kconfig                  |    4 +-
- drivers/net/ethernet/smsc/smc91x.h                 |   26 -
- drivers/net/ethernet/tile/Kconfig                  |   18 -
- drivers/net/ethernet/tile/Makefile                 |   11 -
- drivers/net/ethernet/tile/tilegx.c                 | 2279 -----------
- drivers/net/ethernet/tile/tilepro.c                | 2397 -----------
- drivers/pcmcia/Kconfig                             |   26 -
- drivers/pcmcia/Makefile                            |    3 -
- drivers/pcmcia/bfin_cf_pcmcia.c                    |  316 --
- drivers/pcmcia/m32r_cfc.c                          |  786 ----
- drivers/pcmcia/m32r_cfc.h                          |   88 -
- drivers/pcmcia/m32r_pcc.c                          |  763 ----
- drivers/pcmcia/m32r_pcc.h                          |   66 -
- drivers/pinctrl/Kconfig                            |   19 -
- drivers/pinctrl/Makefile                           |    3 -
- drivers/pinctrl/pinctrl-adi2-bf54x.c               |  588 ---
- drivers/pinctrl/pinctrl-adi2-bf60x.c               |  517 ---
- drivers/pinctrl/pinctrl-adi2.c                     | 1114 -----
- drivers/pinctrl/pinctrl-adi2.h                     |   75 -
- drivers/pwm/Kconfig                                |    9 -
- drivers/pwm/Makefile                               |    1 -
- drivers/pwm/pwm-bfin.c                             |  157 -
- drivers/rtc/Kconfig                                |   17 -
- drivers/rtc/Makefile                               |    2 -
- drivers/rtc/rtc-bfin.c                             |  448 ---
- drivers/rtc/rtc-tile.c                             |  143 -
- drivers/spi/Kconfig                                |   19 -
- drivers/spi/Makefile                               |    3 -
- drivers/spi/spi-adi-v3.c                           |  984 -----
- drivers/spi/spi-bfin-sport.c                       |  919 -----
- drivers/spi/spi-bfin5xx.c                          | 1462 -------
- drivers/staging/iio/Kconfig                        |    1 -
- drivers/staging/iio/Makefile                       |    1 -
- drivers/staging/iio/trigger/Kconfig                |   19 -
- drivers/staging/iio/trigger/Makefile               |    5 -
- drivers/staging/iio/trigger/iio-trig-bfin-timer.c  |  292 --
- drivers/staging/iio/trigger/iio-trig-bfin-timer.h  |   25 -
- drivers/staging/irda/drivers/Kconfig               |   45 -
- drivers/staging/irda/drivers/Makefile              |    1 -
- drivers/staging/irda/drivers/bfin_sir.c            |  819 ----
- drivers/staging/irda/drivers/bfin_sir.h            |   93 -
- drivers/tty/Kconfig                                |   13 -
- drivers/tty/Makefile                               |    1 -
- drivers/tty/bfin_jtag_comm.c                       |  353 --
- drivers/tty/hvc/Kconfig                            |    9 -
- drivers/tty/hvc/Makefile                           |    2 -
- drivers/tty/hvc/hvc_bfin_jtag.c                    |  104 -
- drivers/tty/hvc/hvc_tile.c                         |  196 -
- drivers/tty/serial/Kconfig                         |  198 -
- drivers/tty/serial/Makefile                        |    6 -
- drivers/tty/serial/bfin_sport_uart.c               |  937 -----
- drivers/tty/serial/bfin_sport_uart.h               |   86 -
- drivers/tty/serial/bfin_uart.c                     | 1551 -------
- drivers/tty/serial/crisv10.c                       | 4248 --------------------
- drivers/tty/serial/crisv10.h                       |  133 -
- drivers/tty/serial/etraxfs-uart.c                  |  960 -----
- drivers/tty/serial/m32r_sio.c                      | 1053 -----
- drivers/tty/serial/m32r_sio_reg.h                  |  150 -
- drivers/tty/serial/tilegx.c                        |  689 ----
- drivers/usb/host/Kconfig                           |    1 +
- drivers/usb/host/ehci-hcd.c                        |    5 -
- drivers/usb/host/ehci-tilegx.c                     |  207 -
- drivers/usb/host/isp1362.h                         |   44 -
- drivers/usb/host/ohci-hcd.c                        |   18 -
- drivers/usb/host/ohci-tilegx.c                     |  196 -
- drivers/usb/musb/Kconfig                           |   10 +-
- drivers/usb/musb/Makefile                          |    1 -
- drivers/usb/musb/blackfin.c                        |  623 ---
- drivers/usb/musb/blackfin.h                        |   81 -
- drivers/usb/musb/musb_core.c                       |    5 -
- drivers/usb/musb/musb_core.h                       |   30 -
- drivers/usb/musb/musb_debugfs.c                    |    2 -
- drivers/usb/musb/musb_dma.h                        |   11 -
- drivers/usb/musb/musb_gadget.c                     |   35 -
- drivers/usb/musb/musb_regs.h                       |  182 -
- drivers/usb/musb/musbhsdma.c                       |    5 -
- drivers/usb/musb/musbhsdma.h                       |   64 -
- drivers/video/fbdev/Kconfig                        |  103 -
- drivers/video/fbdev/Makefile                       |    5 -
- drivers/video/fbdev/bf537-lq035.c                  |  891 ----
- drivers/video/fbdev/bf54x-lq043fb.c                |  764 ----
- drivers/video/fbdev/bfin-lq035q1-fb.c              |  864 ----
- drivers/video/fbdev/bfin-t350mcqb-fb.c             |  669 ---
- drivers/video/fbdev/bfin_adv7393fb.c               |  828 ----
- drivers/video/fbdev/bfin_adv7393fb.h               |  319 --
- drivers/video/fbdev/s1d13xxxfb.c                   |   10 -
- drivers/video/logo/Kconfig                         |   15 -
- drivers/video/logo/Makefile                        |    3 -
- drivers/video/logo/logo.c                          |   12 -
- drivers/video/logo/logo_blackfin_clut224.ppm       | 1127 ------
- drivers/video/logo/logo_blackfin_vga16.ppm         | 1127 ------
- drivers/video/logo/logo_m32r_clut224.ppm           | 1292 ------
- drivers/watchdog/Kconfig                           |   17 -
- drivers/watchdog/Makefile                          |    7 -
- drivers/watchdog/bfin_wdt.c                        |  476 ---
- include/linux/bfin_mac.h                           |   30 -
- include/linux/linux_logo.h                         |    3 -
- include/linux/platform_data/bfin_rotary.h          |  117 -
- include/linux/platform_data/pinctrl-adi2.h         |   40 -
- include/linux/raid/pq.h                            |    1 -
- include/linux/usb/musb.h                           |    7 -
- include/linux/usb/tilegx.h                         |   35 -
- include/media/blackfin/bfin_capture.h              |   39 -
- include/media/blackfin/ppi.h                       |   94 -
- lib/raid6/Makefile                                 |    6 -
- lib/raid6/algos.c                                  |    3 -
- lib/raid6/test/Makefile                            |    7 -
- lib/raid6/tilegx.uc                                |   87 -
- sound/soc/Kconfig                                  |    1 -
- sound/soc/Makefile                                 |    1 -
- sound/soc/blackfin/Kconfig                         |  205 -
- sound/soc/blackfin/Makefile                        |   40 -
- sound/soc/blackfin/bf5xx-ac97-pcm.c                |  480 ---
- sound/soc/blackfin/bf5xx-ac97.c                    |  388 --
- sound/soc/blackfin/bf5xx-ac97.h                    |   57 -
- sound/soc/blackfin/bf5xx-ad1836.c                  |  109 -
- sound/soc/blackfin/bf5xx-ad193x.c                  |  131 -
- sound/soc/blackfin/bf5xx-ad1980.c                  |  109 -
- sound/soc/blackfin/bf5xx-ad73311.c                 |  212 -
- sound/soc/blackfin/bf5xx-i2s-pcm.c                 |  373 --
- sound/soc/blackfin/bf5xx-i2s-pcm.h                 |   17 -
- sound/soc/blackfin/bf5xx-i2s.c                     |  391 --
- sound/soc/blackfin/bf5xx-sport.c                   | 1102 -----
- sound/soc/blackfin/bf5xx-sport.h                   |  174 -
- sound/soc/blackfin/bf5xx-ssm2602.c                 |  126 -
- sound/soc/blackfin/bf6xx-i2s.c                     |  239 --
- sound/soc/blackfin/bf6xx-sport.c                   |  425 --
- sound/soc/blackfin/bf6xx-sport.h                   |   82 -
- sound/soc/blackfin/bfin-eval-adau1373.c            |  173 -
- sound/soc/blackfin/bfin-eval-adau1701.c            |  113 -
- sound/soc/blackfin/bfin-eval-adau1x61.c            |  142 -
- sound/soc/blackfin/bfin-eval-adau1x81.c            |  129 -
- sound/soc/blackfin/bfin-eval-adav80x.c             |  145 -
- 198 files changed, 7 insertions(+), 56230 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
- delete mode 100644 Documentation/devicetree/bindings/serial/axis,etraxfs-uart.txt
- delete mode 100644 drivers/ata/pata_bf54x.c
- delete mode 100644 drivers/char/bfin-otp.c
- delete mode 100644 drivers/char/ds1302.c
- delete mode 100644 drivers/char/tile-srom.c
- delete mode 100644 drivers/cpufreq/blackfin-cpufreq.c
- delete mode 100644 drivers/cpufreq/cris-artpec3-cpufreq.c
- delete mode 100644 drivers/cpufreq/cris-etraxfs-cpufreq.c
- delete mode 100644 drivers/crypto/bfin_crc.c
- delete mode 100644 drivers/crypto/bfin_crc.h
- delete mode 100644 drivers/edac/tile_edac.c
- delete mode 100644 drivers/gpio/gpio-etraxfs.c
- delete mode 100644 drivers/i2c/busses/i2c-bfin-twi.c
- delete mode 100644 drivers/input/keyboard/bf54x-keys.c
- delete mode 100644 drivers/input/misc/bfin_rotary.c
- delete mode 100644 drivers/media/platform/arv.c
- delete mode 100644 drivers/media/platform/blackfin/Kconfig
- delete mode 100644 drivers/media/platform/blackfin/Makefile
- delete mode 100644 drivers/media/platform/blackfin/bfin_capture.c
- delete mode 100644 drivers/media/platform/blackfin/ppi.c
- delete mode 100644 drivers/mmc/host/bfin_sdh.c
- delete mode 100644 drivers/mtd/maps/bfin-async-flash.c
- delete mode 100644 drivers/mtd/nand/raw/bf5xx_nand.c
- delete mode 100644 drivers/net/can/bfin_can.c
- delete mode 100644 drivers/net/cris/Makefile
- delete mode 100644 drivers/net/cris/eth_v10.c
- delete mode 100644 drivers/net/ethernet/adi/Kconfig
- delete mode 100644 drivers/net/ethernet/adi/Makefile
- delete mode 100644 drivers/net/ethernet/adi/bfin_mac.c
- delete mode 100644 drivers/net/ethernet/adi/bfin_mac.h
- delete mode 100644 drivers/net/ethernet/tile/Kconfig
- delete mode 100644 drivers/net/ethernet/tile/Makefile
- delete mode 100644 drivers/net/ethernet/tile/tilegx.c
- delete mode 100644 drivers/net/ethernet/tile/tilepro.c
- delete mode 100644 drivers/pcmcia/bfin_cf_pcmcia.c
- delete mode 100644 drivers/pcmcia/m32r_cfc.c
- delete mode 100644 drivers/pcmcia/m32r_cfc.h
- delete mode 100644 drivers/pcmcia/m32r_pcc.c
- delete mode 100644 drivers/pcmcia/m32r_pcc.h
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf54x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf60x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.h
- delete mode 100644 drivers/pwm/pwm-bfin.c
- delete mode 100644 drivers/rtc/rtc-bfin.c
- delete mode 100644 drivers/rtc/rtc-tile.c
- delete mode 100644 drivers/spi/spi-adi-v3.c
- delete mode 100644 drivers/spi/spi-bfin-sport.c
- delete mode 100644 drivers/spi/spi-bfin5xx.c
- delete mode 100644 drivers/staging/iio/trigger/Kconfig
- delete mode 100644 drivers/staging/iio/trigger/Makefile
- delete mode 100644 drivers/staging/iio/trigger/iio-trig-bfin-timer.c
- delete mode 100644 drivers/staging/iio/trigger/iio-trig-bfin-timer.h
- delete mode 100644 drivers/staging/irda/drivers/bfin_sir.c
- delete mode 100644 drivers/staging/irda/drivers/bfin_sir.h
- delete mode 100644 drivers/tty/bfin_jtag_comm.c
- delete mode 100644 drivers/tty/hvc/hvc_bfin_jtag.c
- delete mode 100644 drivers/tty/hvc/hvc_tile.c
- delete mode 100644 drivers/tty/serial/bfin_sport_uart.c
- delete mode 100644 drivers/tty/serial/bfin_sport_uart.h
- delete mode 100644 drivers/tty/serial/bfin_uart.c
- delete mode 100644 drivers/tty/serial/crisv10.c
- delete mode 100644 drivers/tty/serial/crisv10.h
- delete mode 100644 drivers/tty/serial/etraxfs-uart.c
- delete mode 100644 drivers/tty/serial/m32r_sio.c
- delete mode 100644 drivers/tty/serial/m32r_sio_reg.h
- delete mode 100644 drivers/tty/serial/tilegx.c
- delete mode 100644 drivers/usb/host/ehci-tilegx.c
- delete mode 100644 drivers/usb/host/ohci-tilegx.c
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/usb/musb/Kconfig        |  10 +-
+ drivers/usb/musb/Makefile       |   1 -
+ drivers/usb/musb/blackfin.c     | 623 ----------------------------------------
+ drivers/usb/musb/blackfin.h     |  81 ------
+ drivers/usb/musb/musb_core.c    |   5 -
+ drivers/usb/musb/musb_core.h    |  30 --
+ drivers/usb/musb/musb_debugfs.c |   2 -
+ drivers/usb/musb/musb_dma.h     |  11 -
+ drivers/usb/musb/musb_gadget.c  |  35 ---
+ drivers/usb/musb/musb_regs.h    | 182 ------------
+ drivers/usb/musb/musbhsdma.c    |   5 -
+ drivers/usb/musb/musbhsdma.h    |  64 -----
+ include/linux/usb/musb.h        |   7 -
+ 13 files changed, 1 insertion(+), 1055 deletions(-)
  delete mode 100644 drivers/usb/musb/blackfin.c
  delete mode 100644 drivers/usb/musb/blackfin.h
- delete mode 100644 drivers/video/fbdev/bf537-lq035.c
- delete mode 100644 drivers/video/fbdev/bf54x-lq043fb.c
- delete mode 100644 drivers/video/fbdev/bfin-lq035q1-fb.c
- delete mode 100644 drivers/video/fbdev/bfin-t350mcqb-fb.c
- delete mode 100644 drivers/video/fbdev/bfin_adv7393fb.c
- delete mode 100644 drivers/video/fbdev/bfin_adv7393fb.h
- delete mode 100644 drivers/video/logo/logo_blackfin_clut224.ppm
- delete mode 100644 drivers/video/logo/logo_blackfin_vga16.ppm
- delete mode 100644 drivers/video/logo/logo_m32r_clut224.ppm
- delete mode 100644 drivers/watchdog/bfin_wdt.c
- delete mode 100644 include/linux/bfin_mac.h
- delete mode 100644 include/linux/platform_data/bfin_rotary.h
- delete mode 100644 include/linux/platform_data/pinctrl-adi2.h
- delete mode 100644 include/linux/usb/tilegx.h
- delete mode 100644 include/media/blackfin/bfin_capture.h
- delete mode 100644 include/media/blackfin/ppi.h
- delete mode 100644 lib/raid6/tilegx.uc
- delete mode 100644 sound/soc/blackfin/Kconfig
- delete mode 100644 sound/soc/blackfin/Makefile
- delete mode 100644 sound/soc/blackfin/bf5xx-ac97-pcm.c
- delete mode 100644 sound/soc/blackfin/bf5xx-ac97.c
- delete mode 100644 sound/soc/blackfin/bf5xx-ac97.h
- delete mode 100644 sound/soc/blackfin/bf5xx-ad1836.c
- delete mode 100644 sound/soc/blackfin/bf5xx-ad193x.c
- delete mode 100644 sound/soc/blackfin/bf5xx-ad1980.c
- delete mode 100644 sound/soc/blackfin/bf5xx-ad73311.c
- delete mode 100644 sound/soc/blackfin/bf5xx-i2s-pcm.c
- delete mode 100644 sound/soc/blackfin/bf5xx-i2s-pcm.h
- delete mode 100644 sound/soc/blackfin/bf5xx-i2s.c
- delete mode 100644 sound/soc/blackfin/bf5xx-sport.c
- delete mode 100644 sound/soc/blackfin/bf5xx-sport.h
- delete mode 100644 sound/soc/blackfin/bf5xx-ssm2602.c
- delete mode 100644 sound/soc/blackfin/bf6xx-i2s.c
- delete mode 100644 sound/soc/blackfin/bf6xx-sport.c
- delete mode 100644 sound/soc/blackfin/bf6xx-sport.h
- delete mode 100644 sound/soc/blackfin/bfin-eval-adau1373.c
- delete mode 100644 sound/soc/blackfin/bfin-eval-adau1701.c
- delete mode 100644 sound/soc/blackfin/bfin-eval-adau1x61.c
- delete mode 100644 sound/soc/blackfin/bfin-eval-adau1x81.c
- delete mode 100644 sound/soc/blackfin/bfin-eval-adav80x.c
 
+diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
+index 5506a9c03c1f..490990e8b015 100644
+--- a/drivers/usb/musb/Kconfig
++++ b/drivers/usb/musb/Kconfig
+@@ -18,9 +18,6 @@ config USB_MUSB_HDRC
+ 	  Texas Instruments families using this IP include DaVinci
+ 	  (35x, 644x ...), OMAP 243x, OMAP 3, and TUSB 6010.
+ 
+-	  Analog Devices parts using this IP include Blackfin BF54x,
+-	  BF525 and BF527.
+-
+ 	  Allwinner SoCs using this IP include A10, A13, A20, ...
+ 
+ 	  If you do not know what this is, please say N.
+@@ -107,11 +104,6 @@ config USB_MUSB_DSPS
+ 	depends on ARCH_OMAP2PLUS || COMPILE_TEST
+ 	depends on OF_IRQ
+ 
+-config USB_MUSB_BLACKFIN
+-	tristate "Blackfin"
+-	depends on (BF54x && !BF544) || (BF52x && ! BF522 && !BF523)
+-	depends on NOP_USB_XCEIV
+-
+ config USB_MUSB_UX500
+ 	tristate "Ux500 platforms"
+ 	depends on ARCH_U8500 || COMPILE_TEST
+@@ -149,7 +141,7 @@ config USB_UX500_DMA
+ 
+ config USB_INVENTRA_DMA
+ 	bool 'Inventra'
+-	depends on USB_MUSB_OMAP2PLUS || USB_MUSB_BLACKFIN
++	depends on USB_MUSB_OMAP2PLUS
+ 	help
+ 	  Enable DMA transfers using Mentor's engine.
+ 
+diff --git a/drivers/usb/musb/Makefile b/drivers/usb/musb/Makefile
+index 79d4d5439164..3a88c79e650c 100644
+--- a/drivers/usb/musb/Makefile
++++ b/drivers/usb/musb/Makefile
+@@ -21,7 +21,6 @@ obj-$(CONFIG_USB_MUSB_DSPS)			+= musb_dsps.o
+ obj-$(CONFIG_USB_MUSB_TUSB6010)			+= tusb6010.o
+ obj-$(CONFIG_USB_MUSB_DAVINCI)			+= davinci.o
+ obj-$(CONFIG_USB_MUSB_DA8XX)			+= da8xx.o
+-obj-$(CONFIG_USB_MUSB_BLACKFIN)			+= blackfin.o
+ obj-$(CONFIG_USB_MUSB_UX500)			+= ux500.o
+ obj-$(CONFIG_USB_MUSB_JZ4740)			+= jz4740.o
+ obj-$(CONFIG_USB_MUSB_SUNXI)			+= sunxi.o
+diff --git a/drivers/usb/musb/blackfin.c b/drivers/usb/musb/blackfin.c
+deleted file mode 100644
+index 0a98dcd66d19..000000000000
+diff --git a/drivers/usb/musb/blackfin.h b/drivers/usb/musb/blackfin.h
+deleted file mode 100644
+index 5b149915b0f8..000000000000
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index c344ef4e5355..72bb03e7b751 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -126,7 +126,6 @@ EXPORT_SYMBOL_GPL(musb_get_mode);
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-#ifndef CONFIG_BLACKFIN
+ static int musb_ulpi_read(struct usb_phy *phy, u32 reg)
+ {
+ 	void __iomem *addr = phy->io_priv;
+@@ -208,10 +207,6 @@ static int musb_ulpi_write(struct usb_phy *phy, u32 val, u32 reg)
+ 
+ 	return ret;
+ }
+-#else
+-#define musb_ulpi_read		NULL
+-#define musb_ulpi_write		NULL
+-#endif
+ 
+ static struct usb_phy_io_ops musb_ulpi_access = {
+ 	.read = musb_ulpi_read,
+diff --git a/drivers/usb/musb/musb_core.h b/drivers/usb/musb/musb_core.h
+index 385841ee6f46..ac675b1a34c4 100644
+--- a/drivers/usb/musb/musb_core.h
++++ b/drivers/usb/musb/musb_core.h
+@@ -467,34 +467,6 @@ static inline char *musb_ep_xfertype_string(u8 type)
+ 	return s;
+ }
+ 
+-#ifdef CONFIG_BLACKFIN
+-static inline int musb_read_fifosize(struct musb *musb,
+-		struct musb_hw_ep *hw_ep, u8 epnum)
+-{
+-	musb->nr_endpoints++;
+-	musb->epmask |= (1 << epnum);
+-
+-	if (epnum < 5) {
+-		hw_ep->max_packet_sz_tx = 128;
+-		hw_ep->max_packet_sz_rx = 128;
+-	} else {
+-		hw_ep->max_packet_sz_tx = 1024;
+-		hw_ep->max_packet_sz_rx = 1024;
+-	}
+-	hw_ep->is_shared_fifo = false;
+-
+-	return 0;
+-}
+-
+-static inline void musb_configure_ep0(struct musb *musb)
+-{
+-	musb->endpoints[0].max_packet_sz_tx = MUSB_EP0_FIFOSIZE;
+-	musb->endpoints[0].max_packet_sz_rx = MUSB_EP0_FIFOSIZE;
+-	musb->endpoints[0].is_shared_fifo = true;
+-}
+-
+-#else
+-
+ static inline int musb_read_fifosize(struct musb *musb,
+ 		struct musb_hw_ep *hw_ep, u8 epnum)
+ {
+@@ -531,8 +503,6 @@ static inline void musb_configure_ep0(struct musb *musb)
+ 	musb->endpoints[0].max_packet_sz_rx = MUSB_EP0_FIFOSIZE;
+ 	musb->endpoints[0].is_shared_fifo = true;
+ }
+-#endif /* CONFIG_BLACKFIN */
+-
+ 
+ /***************************** Glue it together *****************************/
+ 
+diff --git a/drivers/usb/musb/musb_debugfs.c b/drivers/usb/musb/musb_debugfs.c
+index 7cf5a1bbdaff..7dac456f7ebc 100644
+--- a/drivers/usb/musb/musb_debugfs.c
++++ b/drivers/usb/musb/musb_debugfs.c
+@@ -70,7 +70,6 @@ static const struct musb_register_map musb_regmap[] = {
+ 	{ "DMA_CNTLch7",	0x274,	16 },
+ 	{ "DMA_ADDRch7",	0x278,	32 },
+ 	{ "DMA_COUNTch7",	0x27C,	32 },
+-#ifndef CONFIG_BLACKFIN
+ 	{ "ConfigData",	MUSB_CONFIGDATA,8 },
+ 	{ "BabbleCtl",	MUSB_BABBLE_CTL,8 },
+ 	{ "TxFIFOsz",	MUSB_TXFIFOSZ,	8 },
+@@ -79,7 +78,6 @@ static const struct musb_register_map musb_regmap[] = {
+ 	{ "RxFIFOadd",	MUSB_RXFIFOADD,	16 },
+ 	{ "EPInfo",	MUSB_EPINFO,	8 },
+ 	{ "RAMInfo",	MUSB_RAMINFO,	8 },
+-#endif
+ 	{  }	/* Terminating Entry */
+ };
+ 
+diff --git a/drivers/usb/musb/musb_dma.h b/drivers/usb/musb/musb_dma.h
+index a4241f4d430e..0fc8cd0c2a5c 100644
+--- a/drivers/usb/musb/musb_dma.h
++++ b/drivers/usb/musb/musb_dma.h
+@@ -80,17 +80,6 @@ struct musb_hw_ep;
+ #define	is_cppi_enabled(musb)	0
+ #endif
+ 
+-/* Anomaly 05000456 - USB Receive Interrupt Is Not Generated in DMA Mode 1
+- *	Only allow DMA mode 1 to be used when the USB will actually generate the
+- *	interrupts we expect.
+- */
+-#ifdef CONFIG_BLACKFIN
+-# undef USE_MODE1
+-# if !ANOMALY_05000456
+-#  define USE_MODE1
+-# endif
+-#endif
+-
+ /*
+  * DMA channel status ... updated by the dma controller driver whenever that
+  * status changes, and protected by the overall controller spinlock.
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index 293e5b8da565..58a41b54763b 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -1680,40 +1680,6 @@ static int musb_gadget_pullup(struct usb_gadget *gadget, int is_on)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_BLACKFIN
+-static struct usb_ep *musb_match_ep(struct usb_gadget *g,
+-		struct usb_endpoint_descriptor *desc,
+-		struct usb_ss_ep_comp_descriptor *ep_comp)
+-{
+-	struct usb_ep *ep = NULL;
+-
+-	switch (usb_endpoint_type(desc)) {
+-	case USB_ENDPOINT_XFER_ISOC:
+-	case USB_ENDPOINT_XFER_BULK:
+-		if (usb_endpoint_dir_in(desc))
+-			ep = gadget_find_ep_by_name(g, "ep5in");
+-		else
+-			ep = gadget_find_ep_by_name(g, "ep6out");
+-		break;
+-	case USB_ENDPOINT_XFER_INT:
+-		if (usb_endpoint_dir_in(desc))
+-			ep = gadget_find_ep_by_name(g, "ep1in");
+-		else
+-			ep = gadget_find_ep_by_name(g, "ep2out");
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	if (ep && usb_gadget_ep_match_desc(g, ep, desc, ep_comp))
+-		return ep;
+-
+-	return NULL;
+-}
+-#else
+-#define musb_match_ep NULL
+-#endif
+-
+ static int musb_gadget_start(struct usb_gadget *g,
+ 		struct usb_gadget_driver *driver);
+ static int musb_gadget_stop(struct usb_gadget *g);
+@@ -1727,7 +1693,6 @@ static const struct usb_gadget_ops musb_gadget_operations = {
+ 	.pullup			= musb_gadget_pullup,
+ 	.udc_start		= musb_gadget_start,
+ 	.udc_stop		= musb_gadget_stop,
+-	.match_ep		= musb_match_ep,
+ };
+ 
+ /* ----------------------------------------------------------------------- */
+diff --git a/drivers/usb/musb/musb_regs.h b/drivers/usb/musb/musb_regs.h
+index a4beba184798..88466622c89f 100644
+--- a/drivers/usb/musb/musb_regs.h
++++ b/drivers/usb/musb/musb_regs.h
+@@ -195,8 +195,6 @@
+ #define MUSB_HUBADDR_MULTI_TT		0x80
+ 
+ 
+-#ifndef CONFIG_BLACKFIN
+-
+ /*
+  * Common USB registers
+  */
+@@ -416,184 +414,4 @@ static inline u8 musb_read_txhubport(struct musb *musb, u8 epnum)
+ 			  musb->io.busctl_offset(epnum, MUSB_TXHUBPORT));
+ }
+ 
+-#else /* CONFIG_BLACKFIN */
+-
+-#define USB_BASE		USB_FADDR
+-#define USB_OFFSET(reg)		(reg - USB_BASE)
+-
+-/*
+- * Common USB registers
+- */
+-#define MUSB_FADDR		USB_OFFSET(USB_FADDR)	/* 8-bit */
+-#define MUSB_POWER		USB_OFFSET(USB_POWER)	/* 8-bit */
+-#define MUSB_INTRTX		USB_OFFSET(USB_INTRTX)	/* 16-bit */
+-#define MUSB_INTRRX		USB_OFFSET(USB_INTRRX)
+-#define MUSB_INTRTXE		USB_OFFSET(USB_INTRTXE)
+-#define MUSB_INTRRXE		USB_OFFSET(USB_INTRRXE)
+-#define MUSB_INTRUSB		USB_OFFSET(USB_INTRUSB)	/* 8 bit */
+-#define MUSB_INTRUSBE		USB_OFFSET(USB_INTRUSBE)/* 8 bit */
+-#define MUSB_FRAME		USB_OFFSET(USB_FRAME)
+-#define MUSB_INDEX		USB_OFFSET(USB_INDEX)	/* 8 bit */
+-#define MUSB_TESTMODE		USB_OFFSET(USB_TESTMODE)/* 8 bit */
+-
+-/*
+- * Additional Control Registers
+- */
+-
+-#define MUSB_DEVCTL		USB_OFFSET(USB_OTG_DEV_CTL)	/* 8 bit */
+-
+-#define MUSB_LINKINFO		USB_OFFSET(USB_LINKINFO)/* 8 bit */
+-#define MUSB_VPLEN		USB_OFFSET(USB_VPLEN)	/* 8 bit */
+-#define MUSB_HS_EOF1		USB_OFFSET(USB_HS_EOF1)	/* 8 bit */
+-#define MUSB_FS_EOF1		USB_OFFSET(USB_FS_EOF1)	/* 8 bit */
+-#define MUSB_LS_EOF1		USB_OFFSET(USB_LS_EOF1)	/* 8 bit */
+-
+-/* Offsets to endpoint registers */
+-#define MUSB_TXMAXP		0x00
+-#define MUSB_TXCSR		0x04
+-#define MUSB_CSR0		MUSB_TXCSR	/* Re-used for EP0 */
+-#define MUSB_RXMAXP		0x08
+-#define MUSB_RXCSR		0x0C
+-#define MUSB_RXCOUNT		0x10
+-#define MUSB_COUNT0		MUSB_RXCOUNT	/* Re-used for EP0 */
+-#define MUSB_TXTYPE		0x14
+-#define MUSB_TYPE0		MUSB_TXTYPE	/* Re-used for EP0 */
+-#define MUSB_TXINTERVAL		0x18
+-#define MUSB_NAKLIMIT0		MUSB_TXINTERVAL	/* Re-used for EP0 */
+-#define MUSB_RXTYPE		0x1C
+-#define MUSB_RXINTERVAL		0x20
+-#define MUSB_TXCOUNT		0x28
+-
+-/* Offsets to endpoint registers in indexed model (using INDEX register) */
+-#define MUSB_INDEXED_OFFSET(_epnum, _offset)	\
+-	(0x40 + (_offset))
+-
+-/* Offsets to endpoint registers in flat models */
+-#define MUSB_FLAT_OFFSET(_epnum, _offset)	\
+-	(USB_OFFSET(USB_EP_NI0_TXMAXP) + (0x40 * (_epnum)) + (_offset))
+-
+-/* Not implemented - HW has separate Tx/Rx FIFO */
+-#define MUSB_TXCSR_MODE			0x0000
+-
+-static inline void musb_write_txfifosz(void __iomem *mbase, u8 c_size)
+-{
+-}
+-
+-static inline void musb_write_txfifoadd(void __iomem *mbase, u16 c_off)
+-{
+-}
+-
+-static inline void musb_write_rxfifosz(void __iomem *mbase, u8 c_size)
+-{
+-}
+-
+-static inline void  musb_write_rxfifoadd(void __iomem *mbase, u16 c_off)
+-{
+-}
+-
+-static inline void musb_write_ulpi_buscontrol(void __iomem *mbase, u8 val)
+-{
+-}
+-
+-static inline u8 musb_read_txfifosz(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u16 musb_read_txfifoadd(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_rxfifosz(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u16  musb_read_rxfifoadd(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_ulpi_buscontrol(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_configdata(void __iomem *mbase)
+-{
+-	return 0;
+-}
+-
+-static inline u16 musb_read_hwvers(void __iomem *mbase)
+-{
+-	/*
+-	 * This register is invisible on Blackfin, actually the MUSB
+-	 * RTL version of Blackfin is 1.9, so just hardcode its value.
+-	 */
+-	return MUSB_HWVERS_1900;
+-}
+-
+-static inline void musb_write_rxfunaddr(void __iomem *mbase, u8 epnum,
+-		u8 qh_addr_req)
+-{
+-}
+-
+-static inline void musb_write_rxhubaddr(void __iomem *mbase, u8 epnum,
+-		u8 qh_h_addr_reg)
+-{
+-}
+-
+-static inline void musb_write_rxhubport(void __iomem *mbase, u8 epnum,
+-		u8 qh_h_port_reg)
+-{
+-}
+-
+-static inline void  musb_write_txfunaddr(void __iomem *mbase, u8 epnum,
+-		u8 qh_addr_reg)
+-{
+-}
+-
+-static inline void  musb_write_txhubaddr(void __iomem *mbase, u8 epnum,
+-		u8 qh_addr_reg)
+-{
+-}
+-
+-static inline void  musb_write_txhubport(void __iomem *mbase, u8 epnum,
+-		u8 qh_h_port_reg)
+-{
+-}
+-
+-static inline u8 musb_read_rxfunaddr(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_rxhubaddr(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_rxhubport(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-static inline u8  musb_read_txfunaddr(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-static inline u8  musb_read_txhubaddr(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-static inline u8 musb_read_txhubport(void __iomem *mbase, u8 epnum)
+-{
+-	return 0;
+-}
+-
+-#endif /* CONFIG_BLACKFIN */
+-
+ #endif	/* __MUSB_REGS_H__ */
+diff --git a/drivers/usb/musb/musbhsdma.c b/drivers/usb/musb/musbhsdma.c
+index 21fb9e6622f3..4389fc3422bd 100644
+--- a/drivers/usb/musb/musbhsdma.c
++++ b/drivers/usb/musb/musbhsdma.c
+@@ -235,11 +235,6 @@ static irqreturn_t dma_controller_irq(int irq, void *private_data)
+ 
+ 	int_hsdma = musb_readb(mbase, MUSB_HSDMA_INTR);
+ 
+-#ifdef CONFIG_BLACKFIN
+-	/* Clear DMA interrupt flags */
+-	musb_writeb(mbase, MUSB_HSDMA_INTR, int_hsdma);
+-#endif
+-
+ 	if (!int_hsdma) {
+ 		musb_dbg(musb, "spurious DMA irq");
+ 
+diff --git a/drivers/usb/musb/musbhsdma.h b/drivers/usb/musb/musbhsdma.h
+index 44f7983df0a1..93665135aff1 100644
+--- a/drivers/usb/musb/musbhsdma.h
++++ b/drivers/usb/musb/musbhsdma.h
+@@ -6,8 +6,6 @@
+  * Copyright (C) 2005-2007 by Texas Instruments
+  */
+ 
+-#ifndef CONFIG_BLACKFIN
+-
+ #define MUSB_HSDMA_BASE		0x200
+ #define MUSB_HSDMA_INTR		(MUSB_HSDMA_BASE + 0)
+ #define MUSB_HSDMA_CONTROL		0x4
+@@ -34,68 +32,6 @@
+ 	musb_writel(mbase, \
+ 		    MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_COUNT), \
+ 		    len)
+-#else
+-
+-#define MUSB_HSDMA_BASE		0x400
+-#define MUSB_HSDMA_INTR		(MUSB_HSDMA_BASE + 0)
+-#define MUSB_HSDMA_CONTROL		0x04
+-#define MUSB_HSDMA_ADDR_LOW		0x08
+-#define MUSB_HSDMA_ADDR_HIGH		0x0C
+-#define MUSB_HSDMA_COUNT_LOW		0x10
+-#define MUSB_HSDMA_COUNT_HIGH		0x14
+-
+-#define MUSB_HSDMA_CHANNEL_OFFSET(_bchannel, _offset)		\
+-		(MUSB_HSDMA_BASE + (_bchannel * 0x20) + _offset)
+-
+-static inline u32 musb_read_hsdma_addr(void __iomem *mbase, u8 bchannel)
+-{
+-	u32 addr = musb_readw(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_ADDR_HIGH));
+-
+-	addr = addr << 16;
+-
+-	addr |= musb_readw(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_ADDR_LOW));
+-
+-	return addr;
+-}
+-
+-static inline void musb_write_hsdma_addr(void __iomem *mbase,
+-				u8 bchannel, dma_addr_t dma_addr)
+-{
+-	musb_writew(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_ADDR_LOW),
+-		dma_addr);
+-	musb_writew(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_ADDR_HIGH),
+-		(dma_addr >> 16));
+-}
+-
+-static inline u32 musb_read_hsdma_count(void __iomem *mbase, u8 bchannel)
+-{
+-	u32 count = musb_readw(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_COUNT_HIGH));
+-
+-	count = count << 16;
+-
+-	count |= musb_readw(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_COUNT_LOW));
+-
+-	return count;
+-}
+-
+-static inline void musb_write_hsdma_count(void __iomem *mbase,
+-				u8 bchannel, u32 len)
+-{
+-	musb_writew(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_COUNT_LOW),len);
+-	musb_writew(mbase,
+-		MUSB_HSDMA_CHANNEL_OFFSET(bchannel, MUSB_HSDMA_COUNT_HIGH),
+-		(len >> 16));
+-}
+-
+-#endif /* CONFIG_BLACKFIN */
+-
+ /* control register (16-bit): */
+ #define MUSB_HSDMA_ENABLE_SHIFT		0
+ #define MUSB_HSDMA_TRANSMIT_SHIFT	1
+diff --git a/include/linux/usb/musb.h b/include/linux/usb/musb.h
+index 5d19e6730475..9eb908a98033 100644
+--- a/include/linux/usb/musb.h
++++ b/include/linux/usb/musb.h
+@@ -89,13 +89,6 @@ struct musb_hdrc_config {
+ 	u8		ram_bits;	/* ram address size */
+ 
+ 	struct musb_hdrc_eps_bits *eps_bits __deprecated;
+-#ifdef CONFIG_BLACKFIN
+-	/* A GPIO controlling VRSEL in Blackfin */
+-	unsigned int	gpio_vrsel;
+-	unsigned int	gpio_vrsel_active;
+-	/* musb CLKIN in Blackfin in MHZ */
+-	unsigned char   clkin;
+-#endif
+ 	u32		maximum_speed;
+ };
+ 
 -- 
-Cc: linux@roeck-us.net
-Cc: corbet@lwn.net
-Cc: tj@kernel.org
-Cc: gregkh@linuxfoundation.org
-Cc: rjw@rjwysocki.net
-Cc: viresh.kumar@linaro.org
-Cc: herbert@gondor.apana.org.au
-Cc: davem@davemloft.net
-Cc: bp@alien8.de
-Cc: mchehab@kernel.org
-Cc: linus.walleij@linaro.org
-Cc: wsa@the-dreams.de
-Cc: dmitry.torokhov@gmail.com
-Cc: ulf.hansson@linaro.org
-Cc: boris.brezillon@bootlin.com
-Cc: cyrille.pitchen@wedev4u.fr
-Cc: wg@grandegger.com
-Cc: mkl@pengutronix.de
-Cc: alexandre.belloni@bootlin.com
-Cc: broonie@kernel.org
-Cc: jic23@kernel.org
-Cc: lars@metafoo.de
-Cc: jslaby@suse.com
-Cc: stern@rowland.harvard.edu
-Cc: b.zolnierkie@samsung.com
-Cc: shli@kernel.org
-Cc: linux-watchdog@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-ide@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-edac@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org
-Cc: linux-input@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
-Cc: netdev@vger.kernel.org
-Cc: linux-can@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-spi@vger.kernel.org
-Cc: linux-iio@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: linux-fbdev@vger.kernel.org
-Cc: linux-raid@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
+2.9.0
+
