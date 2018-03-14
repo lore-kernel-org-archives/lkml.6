@@ -1,130 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753416AbeCNGgm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:36:42 -0400
-Received: from mx.socionext.com ([202.248.49.38]:51856 "EHLO mx.socionext.com"
+        id S1753459AbeCNGhF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:37:05 -0400
+Received: from mx.socionext.com ([202.248.49.38]:51863 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeCNGgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:36:41 -0400
+        id S1753350AbeCNGhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 02:37:04 -0400
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+To: linux-arm-kernel@lists.infradead.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arm-kernel@lists.infradead.org
+        devicetree@vger.kernel.org
 Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: divide I2S and S/PDIF audio out pin-mux group
-Date: Wed, 14 Mar 2018 15:35:35 +0900
-Message-Id: <20180314063535.13303-1-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] arm64: dts: uniphier: divide I2S and S/PDIF audio out pin-mux group
+Date: Wed, 14 Mar 2018 15:37:00 +0900
+Message-Id: <20180314063700.13365-1-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch divides large pin-mux group 'aio' of UniPhier LD11/LD20
-to 2 groups as following:
+audio system as following:
   aout1   : 8ch I2S output: AO1DACCK, AO1BCK, AO1LRCK, AO1D[0-2]
   aoutiec1: S/PDIF output : AO1IEC, AO1ARC
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 ---
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 15 ++++++++++-----
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 15 ++++++++++-----
- 2 files changed, 20 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 5 +++--
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 9 +++++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 8a5ecd6277d8..5ec5afa70413 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-@@ -470,8 +470,10 @@ static const struct pinctrl_pin_desc uniphier_ld11_pins[] = {
- 			     166, UNIPHIER_PIN_PULL_DOWN),
- };
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
+index c17b77091129..e64b03fc0cae 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
+@@ -192,7 +192,8 @@
+ 			reg = <0x56000000 0x80000>;
+ 			interrupts = <0 144 4>;
+ 			pinctrl-names = "default";
+-			pinctrl-0 = <&pinctrl_aout>;
++			pinctrl-0 = <&pinctrl_aout1>,
++				    <&pinctrl_aoutiec1>;
+ 			clock-names = "aio";
+ 			clocks = <&sys_clk 40>;
+ 			reset-names = "aio";
+@@ -578,7 +579,7 @@
  
--static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
--static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned aout1_pins[] = {137, 138, 139, 140, 141, 142};
-+static const int aout1_muxvals[] = {0, 0, 0, 0, 0, 0};
-+static const unsigned aoutiec1_pins[] = {135, 136};
-+static const int aoutiec1_muxvals[] = {0, 0};
- static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
- static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
- static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
-@@ -547,7 +549,8 @@ static const unsigned int gpio_range5_pins[] = {
- };
+ #include "uniphier-pinctrl.dtsi"
  
- static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
--	UNIPHIER_PINCTRL_GROUP(aout),
-+	UNIPHIER_PINCTRL_GROUP(aout1),
-+	UNIPHIER_PINCTRL_GROUP(aoutiec1),
- 	UNIPHIER_PINCTRL_GROUP(emmc),
- 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
- 	UNIPHIER_PINCTRL_GROUP(ether_rmii),
-@@ -573,7 +576,8 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range5),
- };
+-&pinctrl_aout {
++&pinctrl_aoutiec1 {
+ 	drive-strength = <4>;	/* default: 4mA */
  
--static const char * const aout_groups[] = {"aout"};
-+static const char * const aout1_groups[] = {"aout1"};
-+static const char * const aoutiec1_groups[] = {"aoutiec1"};
- static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
- static const char * const ether_rmii_groups[] = {"ether_rmii"};
- static const char * const i2c0_groups[] = {"i2c0"};
-@@ -592,7 +596,8 @@ static const char * const usb1_groups[] = {"usb1"};
- static const char * const usb2_groups[] = {"usb2"};
+ 	ao1arc {
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+index c85e790fd00d..9a5df24059a2 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+@@ -292,7 +292,8 @@
+ 			reg = <0x56000000 0x80000>;
+ 			interrupts = <0 144 4>;
+ 			pinctrl-names = "default";
+-			pinctrl-0 = <&pinctrl_aout>;
++			pinctrl-0 = <&pinctrl_aout1>,
++				    <&pinctrl_aoutiec1>;
+ 			clock-names = "aio";
+ 			clocks = <&sys_clk 40>;
+ 			reset-names = "aio";
+@@ -633,13 +634,17 @@
  
- static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
--	UNIPHIER_PINMUX_FUNCTION(aout),
-+	UNIPHIER_PINMUX_FUNCTION(aout1),
-+	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
- 	UNIPHIER_PINMUX_FUNCTION(emmc),
- 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
- 	UNIPHIER_PINMUX_FUNCTION(i2c0),
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-index 3be7967edae0..eb5d4cc6a3ba 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-@@ -551,8 +551,10 @@ static const struct pinctrl_pin_desc uniphier_ld20_pins[] = {
- 			     175, UNIPHIER_PIN_PULL_DOWN),
- };
+ #include "uniphier-pinctrl.dtsi"
  
--static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
--static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned aout1_pins[] = {137, 138, 139, 140, 141, 142};
-+static const int aout1_muxvals[] = {0, 0, 0, 0, 0, 0};
-+static const unsigned aoutiec1_pins[] = {135, 136};
-+static const int aoutiec1_muxvals[] = {0, 0};
- static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
- static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
- static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
-@@ -631,7 +633,8 @@ static const unsigned int gpio_range2_pins[] = {
- };
+-&pinctrl_aout {
++&pinctrl_aout1 {
+ 	drive-strength = <4>;	/* default: 3.5mA */
  
- static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
--	UNIPHIER_PINCTRL_GROUP(aout),
-+	UNIPHIER_PINCTRL_GROUP(aout1),
-+	UNIPHIER_PINCTRL_GROUP(aoutiec1),
- 	UNIPHIER_PINCTRL_GROUP(emmc),
- 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
- 	UNIPHIER_PINCTRL_GROUP(ether_rgmii),
-@@ -657,7 +660,8 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range2),
- };
+ 	ao1dacck {
+ 		pins = "AO1DACCK";
+ 		drive-strength = <5>;	/* 5mA */
+ 	};
++};
++
++&pinctrl_aoutiec1 {
++	drive-strength = <4>;	/* default: 3.5mA */
  
--static const char * const aout_groups[] = {"aout"};
-+static const char * const aout1_groups[] = {"aout1"};
-+static const char * const aoutiec1_groups[] = {"aoutiec1"};
- static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
- static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
- static const char * const ether_rmii_groups[] = {"ether_rmii"};
-@@ -679,7 +683,8 @@ static const char * const usb2_groups[] = {"usb2"};
- static const char * const usb3_groups[] = {"usb3"};
- 
- static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
--	UNIPHIER_PINMUX_FUNCTION(aout),
-+	UNIPHIER_PINMUX_FUNCTION(aout1),
-+	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
- 	UNIPHIER_PINMUX_FUNCTION(emmc),
- 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
- 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
+ 	ao1arc {
+ 		pins = "AO1ARC";
 -- 
 2.16.1
