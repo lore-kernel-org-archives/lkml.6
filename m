@@ -1,258 +1,237 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933167AbeCNBkg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 21:40:36 -0400
-Received: from magic.merlins.org ([209.81.13.136]:33565 "EHLO
-        mail1.merlins.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932636AbeCNBke (ORCPT
+        id S933173AbeCNBl5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 21:41:57 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:65134 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932976AbeCNBlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 21:40:34 -0400
-Date: Tue, 13 Mar 2018 18:40:28 -0700
-From: Marc MERLIN <marc@merlins.org>
-To: Michael Lyle <mlyle@lyle.org>, linux-bcache@vger.kernel.org
-Cc: Tang Junhui <tang.junhui@zte.com.cn>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 4.14 095/140] bcache: fix crashes in duplicate cache
- device register
-Message-ID: <20180314014028.tybbyq2gtmh64mga@merlins.org>
-References: <20180313152458.201155692@linuxfoundation.org>
- <20180313152504.537862990@linuxfoundation.org>
- <20180313161907.tu4afzqrgmkvzzxv@merlins.org>
- <CAJ+L6qf8zO6gLkYTpmt0-YsL5GUp-h+W9gwz1u5htu2WmJEhcA@mail.gmail.com>
+        Tue, 13 Mar 2018 21:41:55 -0400
+X-UUID: 7d4739575dd4431bb798c75d12fadb99-20180314
+Message-ID: <1520991709.12028.3.camel@mtkswgap22>
+Subject: Re: [PATCH v1] arm: dts: mt7623: add PCIe related nodes
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Wed, 14 Mar 2018 09:41:49 +0800
+In-Reply-To: <4e567be2546f90ef62a5df0e957e8a014e460cde.1518576282.git.ryder.lee@mediatek.com>
+References: <4e567be2546f90ef62a5df0e957e8a014e460cde.1518576282.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ+L6qf8zO6gLkYTpmt0-YsL5GUp-h+W9gwz1u5htu2WmJEhcA@mail.gmail.com>
-X-Sysadmin: BOFH
-X-URL: http://marc.merlins.org/
-User-Agent: NeoMutt/20160916 (1.7.0)
-X-SA-No-Run: Yes
-X-SA-Exim-Connect-IP: 107.182.35.68
-X-SA-Exim-Mail-From: marc@merlins.org
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[linux-kernel to bcc, moving back to bcache list]
+Hi Matthias,
 
-On Tue, Mar 13, 2018 at 10:26:33AM -0700, Michael Lyle wrote:
-> Though note you're still not safe from -that-.  If there's duplicate
-> UUIDs around because you've duplicated devices, there's just no sane
-> way to tell which is the "right one" to attach to.
+Just a gentle ping on this patch.
 
-Thanks for clearing that up, Mike.
+Thanks
 
-So, what happened to me was
-1) I dd'ed drive1 to drive2 (raw device)
-2) while that was going on, I ran fdisk on drive2 to fix a partition type
-3) saving fdisk caused drive2 to be rescanned by the kernel
-4) udev said, oh, a bcache partition, yummy, let me register that
-5) instead I got a kernel crash that got fixed by this patch
-6) tried to reboot a few times, and each time the kernel would crash
-early, until I found out it was bcache, removed drive2, system came back
-up
-7) by then, my bcache filesystem was heavily corrupted and unsuable
-
-If there is a duplicate cache device UUID, wouldn't bcache just use the
-first one it sees and ignore the 2nd one? 
-In my case this would have been the safe thing and I'm guessing in most
-cases, whatever device the UUID got duplicated on, will come 2nd in the
-boot order, and therefore is safer to ignore, even if the duplicate
-situation isn't safe per se.
-
-What do you think?
-
-Thanks,
-Marc
-
-> Mike
+On Wed, 2018-02-14 at 11:27 +0800, Ryder Lee (李庚諺) wrote:
+> This patch adds some device nodes for the PCIe function block and updates
+> related pinmux.
 > 
-> On Tue, Mar 13, 2018 at 9:19 AM, Marc MERLIN <marc@merlins.org> wrote:
-> > On Tue, Mar 13, 2018 at 04:24:58PM +0100, Greg Kroah-Hartman wrote:
-> >> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> >
-> > Just in case someone is considering whether it's important to merge, the
-> > bug did crash my kernel of course, but I'm virtually certain it was also
-> > responsible for corrupting my existing bcache device enough that I had
-> > to restore it from backup.
-> >
-> > Thanks again to Tang for fixing it.
-> >
-> >
-> >> ------------------
-> >>
-> >> From: Tang Junhui <tang.junhui@zte.com.cn>
-> >>
-> >> commit cc40daf91bdddbba72a4a8cd0860640e06668309 upstream.
-> >>
-> >> Kernel crashed when register a duplicate cache device, the call trace is
-> >> bellow:
-> >> [  417.643790] CPU: 1 PID: 16886 Comm: bcache-register Tainted: G
-> >>    W  OE    4.15.5-amd64-preempt-sysrq-20171018 #2
-> >> [  417.643861] Hardware name: LENOVO 20ERCTO1WW/20ERCTO1WW, BIOS
-> >> N1DET41W (1.15 ) 12/31/2015
-> >> [  417.643870] RIP: 0010:bdevname+0x13/0x1e
-> >> [  417.643876] RSP: 0018:ffffa3aa9138fd38 EFLAGS: 00010282
-> >> [  417.643884] RAX: 0000000000000000 RBX: ffff8c8f2f2f8000 RCX: ffffd6701f8
-> >> c7edf
-> >> [  417.643890] RDX: ffffa3aa9138fd88 RSI: ffffa3aa9138fd88 RDI: 00000000000
-> >> 00000
-> >> [  417.643895] RBP: ffffa3aa9138fde0 R08: ffffa3aa9138fae8 R09: 00000000000
-> >> 1850e
-> >> [  417.643901] R10: ffff8c8eed34b271 R11: ffff8c8eed34b250 R12: 00000000000
-> >> 00000
-> >> [  417.643906] R13: ffffd6701f78f940 R14: ffff8c8f38f80000 R15: ffff8c8ea7d
-> >> 90000
-> >> [  417.643913] FS:  00007fde7e66f500(0000) GS:ffff8c8f61440000(0000) knlGS:
-> >> 0000000000000000
-> >> [  417.643919] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [  417.643925] CR2: 0000000000000314 CR3: 00000007e6fa0001 CR4: 00000000003
-> >> 606e0
-> >> [  417.643931] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000
-> >> 00000
-> >> [  417.643938] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000
-> >> 00400
-> >> [  417.643946] Call Trace:
-> >> [  417.643978]  register_bcache+0x1117/0x1270 [bcache]
-> >> [  417.643994]  ? slab_pre_alloc_hook+0x15/0x3c
-> >> [  417.644001]  ? slab_post_alloc_hook.isra.44+0xa/0x1a
-> >> [  417.644013]  ? kernfs_fop_write+0xf6/0x138
-> >> [  417.644020]  kernfs_fop_write+0xf6/0x138
-> >> [  417.644031]  __vfs_write+0x31/0xcc
-> >> [  417.644043]  ? current_kernel_time64+0x10/0x36
-> >> [  417.644115]  ? __audit_syscall_entry+0xbf/0xe3
-> >> [  417.644124]  vfs_write+0xa5/0xe2
-> >> [  417.644133]  SyS_write+0x5c/0x9f
-> >> [  417.644144]  do_syscall_64+0x72/0x81
-> >> [  417.644161]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> >> [  417.644169] RIP: 0033:0x7fde7e1c1974
-> >> [  417.644175] RSP: 002b:00007fff13009a38 EFLAGS: 00000246 ORIG_RAX: 0000000
-> >> 000000001
-> >> [  417.644183] RAX: ffffffffffffffda RBX: 0000000001658280 RCX: 00007fde7e1c
-> >> 1974
-> >> [  417.644188] RDX: 000000000000000a RSI: 0000000001658280 RDI: 000000000000
-> >> 0001
-> >> [  417.644193] RBP: 000000000000000a R08: 0000000000000003 R09: 000000000000
-> >> 0077
-> >> [  417.644198] R10: 000000000000089e R11: 0000000000000246 R12: 000000000000
-> >> 0001
-> >> [  417.644203] R13: 000000000000000a R14: 7fffffffffffffff R15: 000000000000
-> >> 0000
-> >> [  417.644213] Code: c7 c2 83 6f ee 98 be 20 00 00 00 48 89 df e8 6c 27 3b 0
-> >> 0 48 89 d8 5b c3 0f 1f 44 00 00 48 8b 47 70 48 89 f2 48 8b bf 80 00 00 00 <8
-> >> b> b0 14 03 00 00 e9 73 ff ff ff 0f 1f 44 00 00 48 8b 47 40 39
-> >> [  417.644302] RIP: bdevname+0x13/0x1e RSP: ffffa3aa9138fd38
-> >> [  417.644306] CR2: 0000000000000314
-> >>
-> >> When registering duplicate cache device in register_cache(), after failure
-> >> on calling register_cache_set(), bch_cache_release() will be called, then
-> >> bdev will be freed, so bdevname(bdev, name) caused kernel crash.
-> >>
-> >> Since bch_cache_release() will free bdev, so in this patch we make sure
-> >> bdev being freed if register_cache() fail, and do not free bdev again in
-> >> register_bcache() when register_cache() fail.
-> >>
-> >> Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-> >> Reported-by: Marc MERLIN <marc@merlins.org>
-> >> Tested-by: Michael Lyle <mlyle@lyle.org>
-> >> Reviewed-by: Michael Lyle <mlyle@lyle.org>
-> >> Cc: <stable@vger.kernel.org>
-> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >>
-> >> ---
-> >>  drivers/md/bcache/super.c |   16 ++++++++++------
-> >>  1 file changed, 10 insertions(+), 6 deletions(-)
-> >>
-> >> --- a/drivers/md/bcache/super.c
-> >> +++ b/drivers/md/bcache/super.c
-> >> @@ -1181,7 +1181,7 @@ static void register_bdev(struct cache_s
-> >>
-> >>       return;
-> >>  err:
-> >> -     pr_notice("error opening %s: %s", bdevname(bdev, name), err);
-> >> +     pr_notice("error %s: %s", bdevname(bdev, name), err);
-> >>       bcache_device_stop(&dc->disk);
-> >>  }
-> >>
-> >> @@ -1849,6 +1849,8 @@ static int register_cache(struct cache_s
-> >>       const char *err = NULL; /* must be set for any error case */
-> >>       int ret = 0;
-> >>
-> >> +     bdevname(bdev, name);
-> >> +
-> >>       memcpy(&ca->sb, sb, sizeof(struct cache_sb));
-> >>       ca->bdev = bdev;
-> >>       ca->bdev->bd_holder = ca;
-> >> @@ -1857,11 +1859,12 @@ static int register_cache(struct cache_s
-> >>       ca->sb_bio.bi_io_vec[0].bv_page = sb_page;
-> >>       get_page(sb_page);
-> >>
-> >> -     if (blk_queue_discard(bdev_get_queue(ca->bdev)))
-> >> +     if (blk_queue_discard(bdev_get_queue(bdev)))
-> >>               ca->discard = CACHE_DISCARD(&ca->sb);
-> >>
-> >>       ret = cache_alloc(ca);
-> >>       if (ret != 0) {
-> >> +             blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
-> >>               if (ret == -ENOMEM)
-> >>                       err = "cache_alloc(): -ENOMEM";
-> >>               else
-> >> @@ -1884,14 +1887,14 @@ static int register_cache(struct cache_s
-> >>               goto out;
-> >>       }
-> >>
-> >> -     pr_info("registered cache device %s", bdevname(bdev, name));
-> >> +     pr_info("registered cache device %s", name);
-> >>
-> >>  out:
-> >>       kobject_put(&ca->kobj);
-> >>
-> >>  err:
-> >>       if (err)
-> >> -             pr_notice("error opening %s: %s", bdevname(bdev, name), err);
-> >> +             pr_notice("error %s: %s", name, err);
-> >>
-> >>       return ret;
-> >>  }
-> >> @@ -1980,6 +1983,7 @@ static ssize_t register_bcache(struct ko
-> >>       if (err)
-> >>               goto err_close;
-> >>
-> >> +     err = "failed to register device";
-> >>       if (SB_IS_BDEV(sb)) {
-> >>               struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
-> >>               if (!dc)
-> >> @@ -1994,7 +1998,7 @@ static ssize_t register_bcache(struct ko
-> >>                       goto err_close;
-> >>
-> >>               if (register_cache(sb, sb_page, bdev, ca) != 0)
-> >> -                     goto err_close;
-> >> +                     goto err;
-> >>       }
-> >>  out:
-> >>       if (sb_page)
-> >> @@ -2007,7 +2011,7 @@ out:
-> >>  err_close:
-> >>       blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
-> >>  err:
-> >> -     pr_info("error opening %s: %s", path, err);
-> >> +     pr_info("error %s: %s", path, err);
-> >>       ret = -EINVAL;
-> >>       goto out;
-> >>  }
-> >>
-> >>
-> >>
-> >
-> > --
-> > "A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-> > Microsoft is to operating systems ....
-> >                                       .... what McDonalds is to gourmet cooking
-> > Home page: http://marc.merlins.org/                       | PGP 7F55D5F27AAF9D08
+> Moreover, we add interrupt-map properties in both parent and children as
+> the chip only has one IRQ per slot that is connected to all INTx and get
+> propagated through the bridges and it also represents the root ports own
+> interrupts.
 > 
-
--- 
-"A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-Microsoft is to operating systems ....
-                                      .... what McDonalds is to gourmet cooking
-Home page: http://marc.merlins.org/                       | PGP 7F55D5F27AAF9D08
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> ---
+> 
+> Sorry to send v1 in such a rush. Somehow I forgot to add something in previous version.
+> 
+> changes since v1:
+>  - enable device nodes - pcie0_phy & pcie2_phy
+>  - fix dtc warning: Warning (pci_bridge): Node /pcie-controller@1a140000 node name is not "pci" or "pcie"
+> ---
+>  arch/arm/boot/dts/mt7623.dtsi                 | 105 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  30 ++++++++
+>  2 files changed, 135 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+> index 629c92b..137ce99 100644
+> --- a/arch/arm/boot/dts/mt7623.dtsi
+> +++ b/arch/arm/boot/dts/mt7623.dtsi
+> @@ -667,6 +667,111 @@
+>                 #reset-cells = <1>;
+>         };
+> 
+> +       pcie: pcie@1a140000 {
+> +               compatible = "mediatek,mt7623-pcie";
+> +               device_type = "pci";
+> +               reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
+> +                     <0 0x1a142000 0 0x1000>, /* Port0 registers */
+> +                     <0 0x1a143000 0 0x1000>, /* Port1 registers */
+> +                     <0 0x1a144000 0 0x1000>; /* Port2 registers */
+> +               reg-names = "subsys", "port0", "port1", "port2";
+> +               #address-cells = <3>;
+> +               #size-cells = <2>;
+> +               #interrupt-cells = <1>;
+> +               interrupt-map-mask = <0xf800 0 0 0>;
+> +               interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
+> +                               <0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
+> +                               <0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+> +               clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
+> +                        <&hifsys CLK_HIFSYS_PCIE0>,
+> +                        <&hifsys CLK_HIFSYS_PCIE1>,
+> +                        <&hifsys CLK_HIFSYS_PCIE2>;
+> +               clock-names = "free_ck", "sys_ck0", "sys_ck1", "sys_ck2";
+> +               resets = <&hifsys MT2701_HIFSYS_PCIE0_RST>,
+> +                        <&hifsys MT2701_HIFSYS_PCIE1_RST>,
+> +                        <&hifsys MT2701_HIFSYS_PCIE2_RST>;
+> +               reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
+> +               phys = <&pcie0_port PHY_TYPE_PCIE>,
+> +                      <&pcie1_port PHY_TYPE_PCIE>,
+> +                      <&u3port1 PHY_TYPE_PCIE>;
+> +               phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
+> +               power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
+> +               bus-range = <0x00 0xff>;
+> +               status = "disabled";
+> +               ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000
+> +                         0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;
+> +
+> +               pcie@0,0 {
+> +                       reg = <0x0000 0 0 0 0>;
+> +                       #address-cells = <3>;
+> +                       #size-cells = <2>;
+> +                       #interrupt-cells = <1>;
+> +                       interrupt-map-mask = <0 0 0 0>;
+> +                       interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
+> +                       ranges;
+> +                       num-lanes = <1>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               pcie@1,0 {
+> +                       reg = <0x0800 0 0 0 0>;
+> +                       #address-cells = <3>;
+> +                       #size-cells = <2>;
+> +                       #interrupt-cells = <1>;
+> +                       interrupt-map-mask = <0 0 0 0>;
+> +                       interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
+> +                       ranges;
+> +                       num-lanes = <1>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               pcie@2,0 {
+> +                       reg = <0x1000 0 0 0 0>;
+> +                       #address-cells = <3>;
+> +                       #size-cells = <2>;
+> +                       #interrupt-cells = <1>;
+> +                       interrupt-map-mask = <0 0 0 0>;
+> +                       interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+> +                       ranges;
+> +                       num-lanes = <1>;
+> +                       status = "disabled";
+> +               };
+> +       };
+> +
+> +       pcie0_phy: pcie-phy@1a149000 {
+> +               compatible = "mediatek,generic-tphy-v1";
+> +               reg = <0 0x1a149000 0 0x0700>;
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +               status = "disabled";
+> +
+> +               pcie0_port: pcie-phy@1a149900 {
+> +                       reg = <0 0x1a149900 0 0x0700>;
+> +                       clocks = <&clk26m>;
+> +                       clock-names = "ref";
+> +                       #phy-cells = <1>;
+> +                       status = "okay";
+> +               };
+> +       };
+> +
+> +       pcie1_phy: pcie-phy@1a14a000 {
+> +               compatible = "mediatek,generic-tphy-v1";
+> +               reg = <0 0x1a14a000 0 0x0700>;
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +               status = "disabled";
+> +
+> +               pcie1_port: pcie-phy@1a14a900 {
+> +                       reg = <0 0x1a14a900 0 0x0700>;
+> +                       clocks = <&clk26m>;
+> +                       clock-names = "ref";
+> +                       #phy-cells = <1>;
+> +                       status = "okay";
+> +               };
+> +       };
+> +
+>         usb1: usb@1a1c0000 {
+>                 compatible = "mediatek,mt7623-xhci",
+>                              "mediatek,mt8173-xhci";
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 7bf5aa2..3efecc5 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -209,6 +209,28 @@
+>         vqmmc-supply = <&mt6323_vio18_reg>;
+>  };
+> 
+> +&pcie {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pcie_default>;
+> +       status = "okay";
+> +
+> +       pcie@0,0 {
+> +               status = "okay";
+> +       };
+> +
+> +       pcie@1,0 {
+> +               status = "okay";
+> +       };
+> +};
+> +
+> +&pcie0_phy {
+> +       status = "okay";
+> +};
+> +
+> +&pcie1_phy {
+> +       status = "okay";
+> +};
+> +
+>  &pio {
+>         cir_pins_a:cir@0 {
+>                 pins_cir {
+> @@ -376,6 +398,14 @@
+>                 };
+>         };
+> 
+> +       pcie_default: pcie_pin_default {
+> +               pins_cmd_dat {
+> +                       pinmux = <MT7623_PIN_208_AUD_EXT_CK1_FUNC_PCIE0_PERST_N>,
+> +                                <MT7623_PIN_209_AUD_EXT_CK2_FUNC_PCIE1_PERST_N>;
+> +                       bias-disable;
+> +               };
+> +       };
+> +
+>         pwm_pins_a: pwm@0 {
+>                 pins_pwm {
+>                         pinmux = <MT7623_PIN_203_PWM0_FUNC_PWM0>,
+> --
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
