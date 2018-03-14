@@ -1,59 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753478AbeCNHSA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 03:18:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40858 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750862AbeCNHR6 (ORCPT
+        id S1753488AbeCNHXX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 03:23:23 -0400
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:34098 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeCNHXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 03:17:58 -0400
-X-Google-Smtp-Source: AG47ELsktB74r8riGpaXeqi4oqkb8GRKIFN61NqvDIZhzcmTfMs4Wv/qlRXH3bxeUNbJrNpydy+AhQ==
-Date: Wed, 14 Mar 2018 08:17:51 +0100
+        Wed, 14 Mar 2018 03:23:21 -0400
+X-Google-Smtp-Source: AG47ELtNPUFjaOI1XGhAy2dvhkqApbONkn0TcVO+p+y/2tC9d/8RQioR4feFnLbxgMGb5qHgTlZBOw==
+Date: Wed, 14 Mar 2018 08:23:16 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, William Cohen <wcohen@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH 18/31] perf vendor events arm64: Add
- armv8-recommended.json
-Message-ID: <20180314071751.aglkde77apjjffku@gmail.com>
-References: <20180313120508.29327-1-acme@kernel.org>
- <20180313120508.29327-19-acme@kernel.org>
- <20180313142618.36je6syqg6ppwhbp@gmail.com>
- <20180313182730.GA7987@kernel.org>
- <20180314015417.GB19781@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dave Hansen <dave.hansen@intel.com>, Yang Shi <yang.s@alibaba-inc.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Charlebois <charlebm@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 2/2] kbuild: Don't mess with the .cache.mk when root
+Message-ID: <20180314072316.zc7qe2reox3htw3z@gmail.com>
+References: <20180313061109.72629-1-dianders@chromium.org>
+ <20180313061109.72629-3-dianders@chromium.org>
+ <20180313061603.jsgiumet23uqi6hl@gmail.com>
+ <CAD=FV=UEuWww=H=TY=E8JvEmrobDNi5+rbTXvTAmZ2brpK+sdg@mail.gmail.com>
+ <CAKwvOdnPSMSOenPiPqBpDf=hf5q5uQ5MF0pOLAea5T5_VPhmaA@mail.gmail.com>
+ <CAD=FV=UvT-BrpZcz4RV=cRW4Nf9rBkYvc2JgcQr465NMYjAvJw@mail.gmail.com>
+ <CA+55aFzTT5fzz__pY2HhxK=GPnJ8vtpgtok672AAXfSGg+ztuQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180314015417.GB19781@kernel.org>
+In-Reply-To: <CA+55aFzTT5fzz__pY2HhxK=GPnJ8vtpgtok672AAXfSGg+ztuQ@mail.gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> Em Tue, Mar 13, 2018 at 03:27:30PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Tue, Mar 13, 2018 at 03:26:18PM +0100, Ingo Molnar escreveu:
-> > > That's not a valid SOB chain, author != first-Signed-off-by.
->  
-> > I removed that cset for now, can you please check if the
-> > perf-core-for-mingo-4.17-20180313-2 tag is allright?
-> 
-> So, since there is this problem with powerpc and jevents, Ingo, please
-> hold on a bit more... Hopefully tomorrow things will be in a better
-> shape.
+> If Ingo wants to build as root, maybe we could even make him set some
+> environment flag to avoid errors.
 
-Sure, no problem!
+I only build as root infrequently, but I think PeterZ does it more frequently?
+
+Distro package builds are also often done as root.
+
+I don't mind warnings, etc. - I only objected to the workaround of silently 
+turning off a build optimization when root.
 
 Thanks,
 
