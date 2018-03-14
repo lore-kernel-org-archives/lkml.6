@@ -1,69 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCNKi3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:38:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50374 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeCNKi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:38:28 -0400
-Date: Wed, 14 Mar 2018 10:38:23 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Vikram Sethi <vikrams@codeaurora.org>
-Subject: Re: [PATCH] irqchip/gic-v3: Ensure GICR_CTLR.EnableLPI=0 is observed
- before enabling
-Message-ID: <20180314103823.roo7qt7htcr27dkt@lakrids.cambridge.arm.com>
-References: <1520988601-16705-1-git-send-email-shankerd@codeaurora.org>
+        id S1751776AbeCNKjY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:39:24 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:44500 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751155AbeCNKjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 06:39:22 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
+        kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org
+Subject: Re: [PATCH v5 05/36] drm/bridge: analogix_dp: add fast link train for eDP
+Date: Wed, 14 Mar 2018 11:39:11 +0100
+Message-ID: <6139185.TexXAUNAzh@diego>
+In-Reply-To: <20180309222327.18689-6-enric.balletbo@collabora.com>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com> <20180309222327.18689-6-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520988601-16705-1-git-send-email-shankerd@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 07:50:01PM -0500, Shanker Donthineni wrote:
-> The definition of the GICR_CTLR.RWP control bit was expanded to indicate
-> status of changing GICR_CTLR.EnableLPI from 1 to 0 is being in progress
-> or completed. Software must observe GICR_CTLR.RWP==0 after clearing
-> GICR_CTLR.EnableLPI from 1 to 0 and before writing GICR_PENDBASER and/or
-> GICR_PROPBASER, otherwise behavior is UNPREDICTABLE.
+Am Freitag, 9. März 2018, 23:22:56 CET schrieb Enric Balletbo i Serra:
+> From: zain wang <wzz@rock-chips.com>
+> 
+> We would meet a short black screen when exit PSR with the full link
+> training, In this case, we should use fast link train instead of full
+> link training.
+> 
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> +	/* Make sure LPIs are disabled before programming PEND/PROP registers */
-> +	if (val & GICR_CTLR_ENABLE_LPIS) {
-> +		u32 count = 1000000; /* 1s! */
+applied to drm-misc-next
 
-Please use USEC_PER_SEC from <linux/time64.h>.
+Checking the whole series, there is nothing else that touches the
+reordered headers, so I've dropped that change, leaving only the
+newly added iopoll.h inclusion in [0].
 
-> +		/* Wait for GICR_CTLR.RWP==0 or timeout */
-> +		while (readl_relaxed(rbase + GICR_CTLR) & GICR_CTLR_RWP) {
-> +			if (!count) {
-> +				pr_err("CPU%d: Failed to disable LPIs\n",
-> +				       smp_processor_id());
-> +				return;
-> +			}
-> +			cpu_relax();
-> +			udelay(1);
-> +			count--;
-> +		};
+Thanks
+Heiko
 
-Please use readl_relaxed_poll_timeout() from <linux/iopoll.h>.
 
-	/* Wait for GICR_CTLR.RWP==0 or timeout */
-	ret = readl_relaxed_poll_timeout(rbase + GICR_CTLR, reg,
-					 !(reg & GICR_CTLR_RWP), 1,
-					 USEC_PER_SEC);
-	if (ret) {
-		pr_err("CPU%d: Failed to disable LPIs\n",
-			smp_processor_id());
-		return;
-	}
-
-Thanks,
-Mark.
+[0] https://cgit.freedesktop.org/drm/drm-misc/commit/?id=f9d5680596f2dac390918e6aec3e174db03633a3
