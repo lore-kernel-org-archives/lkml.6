@@ -1,124 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeCNELg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:11:36 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:34784 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750818AbeCNELe (ORCPT
+        id S1752717AbeCNEM7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:12:59 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33547 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbeCNEM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:11:34 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37807004"
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>
-CC: Ming Lei <ming.lei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, Laurence Oberman <loberman@redhat.com>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p>
- <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
- <20180309012458.GD5228@ming.t460p>
- <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
- <20180309120833.GB30257@ming.t460p>
- <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
- <5e5f3852-5314-c479-245e-d0a575e533a5@cn.fujitsu.com>
- <1520926721.20980.210.camel@gmail.com> <20180313083535.GA21612@ming.t460p>
- <1520930375.20980.213.camel@gmail.com>
- <CAJZ5v0gcmkKVcgDBdt-aePgU0zvQwyf1yX5Qi_zRc1JfzaA5fg@mail.gmail.com>
- <ec20381d-b5d9-9e22-d94e-96bbb8d6278e@cn.fujitsu.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <a8770022-a437-9b8c-0b2e-cd6bdc0764ef@cn.fujitsu.com>
-Date: Wed, 14 Mar 2018 12:11:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 14 Mar 2018 00:12:57 -0400
+X-Google-Smtp-Source: AG47ELsz3dsxl96j5qbwW3/bjc0RIVjolsrhd5j/kV8D/YNE0viS9HK7R6cy0aekqW7wjXeCLrewPw==
+Date: Tue, 13 Mar 2018 22:12:49 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] RDMA/qedr: eliminate duplicate barriers on
+ weakly-ordered archs
+Message-ID: <20180314041249.GA18314@ziepe.ca>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-3-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <ec20381d-b5d9-9e22-d94e-96bbb8d6278e@cn.fujitsu.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: CAD00400281A.A8D57
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520997629-17361-3-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Artem,
-
-At 03/14/2018 11:29 AM, Dou Liyang wrote:
-> Hi All,
+On Tue, Mar 13, 2018 at 11:20:24PM -0400, Sinan Kaya wrote:
+> Code includes wmb() followed by writel() in multiple places. writel()
+> already has a barrier on some architectures like arm64.
 > 
-> At 03/13/2018 05:35 PM, Rafael J. Wysocki wrote:
->> On Tue, Mar 13, 2018 at 9:39 AM, Artem Bityutskiy 
->> <dedekind1@gmail.com> wrote:
->>> On Tue, 2018-03-13 at 16:35 +0800, Ming Lei wrote:
->>>> Then looks this issue need to fix by making possible CPU count
->>>> accurate
->>>> because there are other resources allocated according to
->>>> num_possible_cpus(),
->>>> such as percpu variables.
->>>
->>> Short term the regression should be fixed. It is already v4.16-rc6, we
->>> have little time left.
->>
->> Right.
->>
->>> Longer term, yeah, I agree. Kernel's notion of possible CPU count
->>> should be realistic.
->>
+> This ends up CPU observing two barriers back to back before executing the
+> register write.
 > 
-> I did a patch for that, Artem, could you help me to test it.
+> Since code already has an explicit barrier call, changing writel() to
+> writel_relaxed().
 > 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>  drivers/infiniband/hw/qedr/verbs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I didn't consider the nr_cpu_ids before. please ignore the old patch and
-try the following RFC patch.
+Sure matches my understanding of writel_relaxed
 
-Thanks
-	dou
+This is part of a series, should we take just this patch through the
+rdma tree? If not:
 
---------------------------->8-------------------------------------
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..96d568408515 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -671,6 +671,23 @@ static acpi_status __init 
-acpi_processor_ids_walk(acpi_handle handle,
-
-  }
-
-+static void __init acpi_refill_possible_map(void)
-+{
-+       unsigned int cpu, nr = 0;
-+
-+       if (nr_cpu_ids <= nr_unique_ids)
-+               return;
-+
-+       for_each_possible_cpu(cpu) {
-+               if (nr >= nr_unique_ids)
-+                       set_cpu_possible(cpu, false);
-+               nr++;
-+       }
-+
-+       nr_cpu_ids = nr_unique_ids;
-+       pr_info("Allowing %d possible CPUs\n", nr_cpu_ids);
-+}
-+
-  static void __init acpi_processor_check_duplicates(void)
-  {
-         /* check the correctness for all processors in ACPI namespace */
-@@ -680,6 +697,9 @@ static void __init acpi_processor_check_duplicates(void)
-                                                 NULL, NULL, NULL);
-         acpi_get_devices(ACPI_PROCESSOR_DEVICE_HID, 
-acpi_processor_ids_walk,
-                                                 NULL, NULL);
-+
-+       /* make possible CPU count more realistic */
-+       acpi_refill_possible_map();
-  }
-
-  bool acpi_duplicate_processor_id(int proc_id)
+Thanks,
+Jason
