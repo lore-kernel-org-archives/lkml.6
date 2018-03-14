@@ -1,12 +1,12 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2286252-1521051044-2-8659882274445554327
+X-Cyrus-Session-Id: sloti22d1t05-2286252-1521051151-2-7895172308867654006
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -14,60 +14,62 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521051043; b=eHANUEG804GUKEfej09CAMub/p6h1sdoZYtHD3OtSAo6KUK
-    1s3tlb24orTQ1IRMedbMCZtLNMqnXJ91v8X0RLm4z5VP+aN/cOkdpGPWz4QC97g1
-    q6SBhu4nbRSff1lxKqnO4r9YbO0GbT55YaE76fBXoyEu7I3hf7IARM0aQEdFpZE4
-    M64FmVJtiOjF3yQEdX9zuFRR/2YSNHZ1c2SykS230s4q+tj1mYfK5Xl0WMvfjCGe
-    ZtYaAIWiQwuSO/eDtJD8NeE1NyMG0HEXk8dMU/QZK/MHdvzZjKsDnwTA1qvxw9gx
-    3bkPiXMx8xj/a6ncuBYLDGS1gZAgcqNOaV7Opfg==
+    t=1521051149; b=Ub8SeLwFzViNvj06NOFHJH500Ux8N16W2GOPoz49Yzjm1Qf
+    BBy3+UQEiGtBLLzahAKWFjXyfbOyBtwVhYQ1IXOLE0Ai7ZwmXQy1Vzqr8iRNw6GF
+    NmQO2j/kfcLHX0H8VaE314+PokTjjeqUuHLigCBlGLLMF3/F2ge2AQJn5nRKyjh5
+    +NvG4/LsrNNAZYyupsomMXz1BlxsuqYZGcGHTkYxSUGJkQa7d39CckHfmS5CK55C
+    kzyDWYTngREQoXCweA8ZDnFF4G8hGeIaaNpsbEIVjE9e8VP+xnR0Ma0ZuHYt3q6O
+    T5zSMLG+97ou+kvGJJYt54CDpkyFzdSy5XYZYmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521051043; bh=D
-    lSzKJYWJpt0UmNgknoxo3YR7cm3YLLcWBcnNIk3qLQ=; b=e2gp6Kh5rZhUlWHiY
-    gLsU8tmFgp1r4Z7he2QqmUsWBgHi7gGl2qlqzboyp12+DAxPb/uUzC7R5ICO5gwB
-    muQFVcIxWJ5bwl/oBykADlKyXs8sq1C24eM27LwemeNe+jwb4mduJBZZBWUW9JtN
-    KOVnBzYje9z0f1uBSMYnrDEG+DA9fWqPRF6rGpG3DdtRpHN5IeyjHO2vnUSpBVR2
-    T+nDMbUqB3byiYkxxdeBg3VJNmbHpZBWK9ZMy/nA/U2zhK5UlUPBSe97C6mT+Xqt
-    9sd+6nfkT3o5iGe5i827YsfXlMVd+SmOC7o2yDs8GDucoqldMZjZox8cR4e6O6U2
-    zCOdQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxcSi2eJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521051149; bh=W
+    eBio+k1CfBGOeXRk/LRopP0jbV6HsQuQVlp9vmunDQ=; b=P6+OJlt6nKhF00dlT
+    4vs3vi70t5UVufceqWvikB0kDYbNfG35Ok/Z6SZ7TCDMJSpSeU5YJCXeYFTC04iZ
+    bxD1yuJJ92E5c+t9qvnE+/7EalAfC6sn34WA/W97dkGcnbve5B3vibCtLv5WXU4j
+    VgGo8UYuOgw1Q9m8DUmhPPIqEmGveHPSgryWjzyyRui2NOmZzTiigjVmZzy8hURS
+    UzNZDYeicrvndXZk9eA7DwN01ICo8PoqqaITo16+rvOWOgcz7H0RNs/htTBqnhLw
+    jDxVYVhvE0bOGzj05jgER0gWzJGJ/HzaS6y6dqUbnQjxq6sHmv4mxVwtNnwXqZjd
+    W6Z1w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UlnXQc2p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BG1u/85U;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uUjc8o+l;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxcSi2eJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UlnXQc2p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BG1u/85U;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uUjc8o+l;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELsAqE9m9vbm4D5vUOB/x+p8sfcrVE7c4CHzX1WFMrqiiXyN4UWaziqWOsWhoKLWOpsbkvrtrg==
-Date: Wed, 14 Mar 2018 15:10:00 -0300
+X-Google-Smtp-Source: AG47ELvf6MtTPDYurd+EsK8Ga92zBOesTYi2aKRZgnMWPfEZqRfQat6xh0juG9cRglnuEcfT8o5mug==
+Date: Wed, 14 Mar 2018 15:12:18 -0300
 From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
  Lars-Peter Clausen <lars@metafoo.de>,
  Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Barry Song <21cnbao@gmail.com>, John Syne <john3909@gmail.com>
-Subject: [PATCH 0/7] staging:iio:ade7854: Cleanup on I2C/SPI code
-Message-ID: <cover.1521037060.git.rodrigosiqueiramelo@gmail.com>
+Subject: [PATCH 7/7] staging:iio:ade7854: Add proper error handling condition
+Message-ID: <72d5aaef3445edaca08498b4d7aaff19d4ac0232.1521037060.git.rodrigosiqueiramelo@gmail.com>
+References: <cover.1521037060.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
+In-Reply-To: <cover.1521037060.git.rodrigosiqueiramelo@gmail.com>
 User-Agent: NeoMutt/20180223
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -89,37 +91,38 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchset reworks the I2C/SPI code from meter module. The set of
-patches try to reduce the code duplication and make the communication
-reliable. The current version of the module had many code duplications,
-which make the code more error-prone and hard to read. Jonh Syne
-identified some wrong error handling and fixed it in his patches; in
-this series of patches I analyzed Jonh's fixes, and use it in the new
-code.
+There is some improper error handling for IRQ and device register.  This
+patch adds a proper verification. The IRQ correction was extracted from
+John Syne patches.
 
-It is important to highlight that meter module is under observation, due
-to the lack of hardware and the old design of the chip. However, John
-has the hardware for testing and interest to help to update the code
-[1]. As a result, this patchset represents the first work effort to
-update the meter module in the staging.
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: John Syne <john3909@gmail.com>
+---
+ drivers/staging/iio/meter/ade7854.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-1 - https://marc.info/?l=linux-iio&m=152046885922153&w=2 
-
-Rodrigo Siqueira (7):
-  staging:iio:ade7854: Rework I2C write function
-  staging:iio:ade7854: Rework SPI write function
-  staging:iio:ade7854: Replace many functions for one function
-  staging:iio:ade7854: Rework I2C read function
-  staging:iio:ade7854: Rework SPI read function
-  staging:iio:ade7854: Remove read_reg_* duplications
-  staging:iio:ade7854: Add proper error handling condition.
-
- drivers/staging/iio/meter/ade7854-i2c.c | 236 ++++++++--------------------
- drivers/staging/iio/meter/ade7854-spi.c | 268 +++++++-------------------------
- drivers/staging/iio/meter/ade7854.c     |  44 +++---
- drivers/staging/iio/meter/ade7854.h     |  23 +--
- 4 files changed, 160 insertions(+), 411 deletions(-)
-
+diff --git a/drivers/staging/iio/meter/ade7854.c b/drivers/staging/iio/meter/ade7854.c
+index 09fd8c067738..49cbe365e43d 100644
+--- a/drivers/staging/iio/meter/ade7854.c
++++ b/drivers/staging/iio/meter/ade7854.c
+@@ -436,7 +436,7 @@ static int ade7854_initial_setup(struct iio_dev *indio_dev)
+ 
+ 	/* Disable IRQ */
+ 	ret = ade7854_set_irq(dev, false);
+-	if (ret) {
++	if (ret < 0) {
+ 		dev_err(dev, "disable irq failed");
+ 		goto err_ret;
+ 	}
+@@ -544,7 +544,7 @@ int ade7854_probe(struct iio_dev *indio_dev, struct device *dev)
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 
+ 	ret = devm_iio_device_register(dev, indio_dev);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	/* Get the device into a sane initial state */
 -- 
 2.16.2
 
