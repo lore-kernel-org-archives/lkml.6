@@ -1,50 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933275AbeCNDDC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:03:02 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43792 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbeCNDC7 (ORCPT
+        id S933295AbeCNDG5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:06:57 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:34451 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933180AbeCNDGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:02:59 -0400
-X-Google-Smtp-Source: AG47ELsg9hJL/KGwLva+B37NtVbMO4cK26HJvy91x1W7+2qztkTXFIqlgeMKuZeaGBzeheBHKOsZj/Wz6rPlQtDUPlU=
+        Tue, 13 Mar 2018 23:06:55 -0400
+Subject: Re: [PATCH v8 08/13] [media] vb2: add explicit fence user API
+To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180309174920.22373-1-gustavo@padovan.org>
+ <20180309174920.22373-9-gustavo@padovan.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9f0ea425-e2db-7ffc-af2f-8573e9bf82d7@xs4all.nl>
+Date: Tue, 13 Mar 2018 20:06:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180313.202552.1990425972566331246.davem@davemloft.net>
-References: <20180313205856.3309750-1-arnd@arndb.de> <20180313.202552.1990425972566331246.davem@davemloft.net>
-From: Wang Jian <jianjian.wang1@gmail.com>
-Date: Wed, 14 Mar 2018 11:02:57 +0800
-Message-ID: <CAP4sYWURRroc0H7vDcMdmi2cyuKxHfcj12X0zqWjw1vcoru06A@mail.gmail.com>
-Subject: Re: [PATCH] pktgen: use dynamic allocation for debug print buffer
-To: David Miller <davem@davemloft.net>
-Cc: arnd@arndb.de, gustavo@embeddedor.com, dima@arista.com,
-        johannes.berg@intel.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180309174920.22373-9-gustavo@padovan.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfDKRsCLoi5nX7eT3SpPDzOFqA78F/Tv9e6/7OvNvrEigzyKzdZidDzQIpUQOPEzMUkuhl4L+OUniIN3XtkDoqhHXMLMKDtrbbD2fJ31ZAz/ruz+U1Tqn
+ +sbWkM4CtM32t5KFHr+sibyKrH1mmq+j8MDDnR96MZThV8kY52AVbqKwiS72TuhHaS00XhQnLJHSiCgJYPukvDmLxBA5KVp768V5n2Em3D0e4esMF0l8QibG
+ VyBl2gNOVFCXZxuOS0jqKuqRUkCDYa/yA2Z1Qo5ho/4wRLzMoiDqYDWqxLyYtdbKiHG8WM9jYRlL0wJ+AlGjc0vvuY7K5XNeahWGOrgulGUk/xtXJlMT2zeg
+ cMErl76A3vFFvEc2WOK2IpgE3xOJl8Mnr4IXgcpsbGlUYJ/B0RMF89HjnyirIADpKEx5PWg75k3pDcU1vVZk0gbb6URm3KGNkcX/8KJ42QFYCv9NMVVAZczL
+ F4TtBFMA4uT+Bb8b
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> +  kfree(buf);
-free tb? buf is an array.
+On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+> 
+> Turn the reserved2 field into fence_fd that we will use to send
+> an in-fence to the kernel or return an out-fence from the kernel to
+> userspace.
+> 
+> Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
+> when sending a fence to the kernel to be waited on, and
+> V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
+> 
+> v6:	- big improvement on doc (Hans Verkuil)
+> 
+> v5:
+> 	- keep using reserved2 field for cpia2
+> 	- set fence_fd to 0 for now, for compat with userspace(Mauro)
+> 
+> v4:
+> 	- make it a union with reserved2 and fence_fd (Hans Verkuil)
+> 
+> v3:
+> 	- make the out_fence refer to the current buffer (Hans Verkuil)
+> 
+> v2: add documentation
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> ---
+>  Documentation/media/uapi/v4l/buffer.rst         | 45 +++++++++++++++++++++++--
+>  drivers/media/common/videobuf2/videobuf2-v4l2.c |  2 +-
+>  drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
+>  include/uapi/linux/videodev2.h                  |  7 +++-
+>  4 files changed, 51 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
+> index e2c85ddc990b..49273026740f 100644
+> --- a/Documentation/media/uapi/v4l/buffer.rst
+> +++ b/Documentation/media/uapi/v4l/buffer.rst
+> @@ -301,10 +301,22 @@ struct v4l2_buffer
+>  	elements in the ``planes`` array. The driver will fill in the
+>  	actual number of valid elements in that array.
+>      * - __u32
+> -      - ``reserved2``
+> +      - ``fence_fd``
+>        -
+> -      - A place holder for future extensions. Drivers and applications
+> -	must set this to 0.
+> +      - Used to communicate fences file descriptors from userspace to kernel
 
-On Wed, Mar 14, 2018 at 8:25 AM, David Miller <davem@davemloft.net> wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> Date: Tue, 13 Mar 2018 21:58:39 +0100
->
->> After the removal of the VLA, we get a harmless warning about a large
->> stack frame:
->>
->> net/core/pktgen.c: In function 'pktgen_if_write':
->> net/core/pktgen.c:1710:1: error: the frame size of 1076 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
->>
->> The function was previously shown to be safe despite hitting
->> the 1024 bye warning level. To get rid of the annoyging warning,
->> while keeping it readable, this changes it to use strndup_user().
->>
->> Obviously this is not a fast path, so the kmalloc() overhead
->> can be disregarded.
->>
->> Fixes: 35951393bbff ("pktgen: Remove VLA usage")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Applied, thanks.
+fences file descriptors -> a fence file descriptor
+
+> +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
+> +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
+> +	be used and this field set to the fence file descriptor of the in-fence
+
+Missing period at the end of this sentence.
+
+> +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
+
+` -> ``
+
+> +
+> +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
+> +	must be set, the kernel will return the out-fence file descriptor on
+
+on -> in
+
+> +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
+
+` -> ``
+
+> +        an error.
+> +
+> +	In all other ioctls V4L2 sets this field to -1 if
+
+In all other -> For all other buffer
+
+> +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
+> +	otherwise this field is set to 0 for backward compatibility.
+>      * - __u32
+>        - ``reserved``
+>        -
+> @@ -648,6 +660,33 @@ Buffer Flags
+>        - Start Of Exposure. The buffer timestamp has been taken when the
+>  	exposure of the frame has begun. This is only valid for the
+>  	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
+> +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
+> +
+> +      - ``V4L2_BUF_FLAG_IN_FENCE``
+> +      - 0x00200000
+> +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
+> +	buffer won't be queued to the driver until the fence signals. The order
+> +	in which buffers are queued is guaranteed to be preserved, so any
+> +	buffers queued after this buffer will also be blocked until this fence
+> +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
+> +	other ioctls the driver just report the value of the flag.
+
+report -> reports
+
+> +
+> +        If the fence signals the flag is cleared and not reported anymore.
+> +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
+> +
+> +
+> +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
+> +
+> +      - ``V4L2_BUF_FLAG_OUT_FENCE``
+> +      - 0x00400000
+> +      - Request for a fence to be attached to the buffer. The driver will fill
+> +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
+> +	<VIDIOC_QBUF>` returns. This flag must be set before calling
+> +	``VIDIOC_QBUF``. For other ioctls the driver just report the value of
+
+report -> reports
+
+> +	the flag.
+> +
+> +        If the creation of the  out-fence  fails ``VIDIOC_QBUF`` returns an
+
+double spaces before and after 'out-fence'.
+
+> +	error.
+>  
+>  
+>  
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 68291ba8632d..ad1e032c3bf5 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -203,7 +203,7 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
+>  	b->timestamp = ns_to_timeval(vb->timestamp);
+>  	b->timecode = vbuf->timecode;
+>  	b->sequence = vbuf->sequence;
+> -	b->reserved2 = 0;
+> +	b->fence_fd = 0;
+>  	b->reserved = 0;
+>  
+>  	if (q->is_multiplanar) {
+> diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+> index 5198c9eeb348..3de2252e3632 100644
+> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+> @@ -386,7 +386,7 @@ struct v4l2_buffer32 {
+>  		__s32		fd;
+>  	} m;
+>  	__u32			length;
+> -	__u32			reserved2;
+> +	__s32			fence_fd;
+>  	__u32			reserved;
+>  };
+>  
+> @@ -604,7 +604,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *kp,
+>  	    assign_in_user(&up->timestamp.tv_usec, &kp->timestamp.tv_usec) ||
+>  	    copy_in_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
+>  	    assign_in_user(&up->sequence, &kp->sequence) ||
+> -	    assign_in_user(&up->reserved2, &kp->reserved2) ||
+> +	    assign_in_user(&up->fence_fd, &kp->fence_fd) ||
+>  	    assign_in_user(&up->reserved, &kp->reserved) ||
+>  	    get_user(length, &kp->length) ||
+>  	    put_user(length, &up->length))
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 58894cfe9479..2d424aebdd1e 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -933,7 +933,10 @@ struct v4l2_buffer {
+>  		__s32		fd;
+>  	} m;
+>  	__u32			length;
+> -	__u32			reserved2;
+> +	union {
+> +		__s32		fence_fd;
+> +		__u32		reserved2;
+> +	};
+>  	__u32			reserved;
+>  };
+>  
+> @@ -970,6 +973,8 @@ struct v4l2_buffer {
+>  #define V4L2_BUF_FLAG_TSTAMP_SRC_SOE		0x00010000
+>  /* mem2mem encoder/decoder */
+>  #define V4L2_BUF_FLAG_LAST			0x00100000
+> +#define V4L2_BUF_FLAG_IN_FENCE			0x00200000
+> +#define V4L2_BUF_FLAG_OUT_FENCE			0x00400000
+>  
+>  /**
+>   * struct v4l2_exportbuffer - export of video buffer as DMABUF file descriptor
+> 
+
+Regards,
+
+	Hans
