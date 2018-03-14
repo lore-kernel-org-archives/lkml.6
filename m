@@ -1,93 +1,199 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AG47ELvN+gB+0VT21r9pdboZJtvnjNeRjIOCXJc/aZEbBFsre6D+h8U9cqu5/W6sPpFf0Gmk9gKb
-ARC-Seal: i=1; a=rsa-sha256; t=1521552518; cv=none;
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AG47ELsdVioY9SckRXwYmuE0meu4WoeWscQZd8V0HPgZleD7m0mBg2OgkszYlExrnS0vEiWg69hw
+ARC-Seal: i=1; a=rsa-sha256; t=1521062684; cv=none;
         d=google.com; s=arc-20160816;
-        b=HdWkBSctgdcgWjncvaV+G2X4xf89I3ZaILBytCc6u5chOr5fh9nXTQbcVXyjsKjt/N
-         wFnNe6lBLLljR2q5y3IvSfjS+y0jS8fcQYWey1NOa27y8/VnYd7v8RxOxzG/aSbjn/zc
-         20jp+ThmBtJ5sxOyS2W5PYBtSoEXYVk8LFcqWLIOvCXlCXbfoDQhspzjliO5tLEIEqe+
-         5nnxXKSAODomPIJAJy7IsuVH5TWdbIfZJsg/kfZ4hN5VkgsJlgW4JC10qm26JnvM7Qt7
-         JylC3gi3aoeCCoNKn/VaxP9jdnRMkr19Z5ciywBGoeTdgKoc/Ox6kLonVlJNkamw/DDE
-         KqDw==
+        b=l7rurqbrssp3TfFn0qUKoBpbIIEKCO7X2ozpncBARyjCthobix3UqugNy73GsRbUGO
+         yiSd+bxOL6wKTJXWNxUynHAjMPOSrYUAoCKzI9bouhJ4Un0kJukhn2w7A04vZfZdlVi4
+         foFWXZ57QwQxisqv9mskrWv2jRjSaT70IRBlTbRtdXSzx47Sc6qIypCPDvM4CiU/MdFS
+         SqQ0orxODBidAps42oeULbK7PO3DcE/QMKO9GsEklDeWgqbb6z2Y8FqB6Ud3hCSMH2TY
+         QSQzMs7iDqMaGGGTxIOafUI2OBYMp1bd5zPoCTD/nlP1dcB6D8de3uUPtc09cnJ1WU9g
+         hUZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=q/jHzE5dmzoOEO82wjPNhj32meS2mSdSPRRCECpBbGI=;
-        b=XdSzNq4oXmv0w4ffxLB+2D1Tk+vUm3N2AqNWlFwGbEXag2fxC+ZjBJPH2f0QSOQwj8
-         ICfr5NEI1TVtN6awiaW8VSW4UyV6gvcqU3aFxXgW72/heA6yTxOK+RFxyPPZ7mfGbGKJ
-         UmNxTs3hR5aFsaveQNzJoGRrP6CL8F3Dx3wJoMK3sKe4lC8cXzcDZu9tpZE+tlcAluqQ
-         q+RegHXFQGA/cOmwBDByzBszS8ANae2dXokcvHRmXzBHURtxVISnjR4HqnMHZ2bzJK2E
-         eLaJ52iIsKodgm/RzwraoLqExSaPdO8eAJp45d32CRYKOLERBETOLe8lHc8/UfTrT8Su
-         bA9A==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:arc-authentication-results;
+        bh=ouGCsM37RM2y1SxNV5GeUTVwTwKgXBtBPSErvqM9N2s=;
+        b=fmc7Km3Lxxui2h9QN7x4NcTzrI1dy2dqt2H4r8//TJIJd4yEzPu/R3qFwW3rc8MyXO
+         hHWHGVg6XBJ+mc9X3oCOGoWh5KjPjeEdMTRdWPQGebMfgdqh+Lc1d8oZdErscSkLTLOg
+         4jaSPikd7UEK4DQGUlALMdWP3EiuqLDlspOj2IgD6VYBIlFNfAvzJ6ElFcruY1V8/pVq
+         Vg4gB/WWi6gRs4W9seC/yWKQj5MUB4w8velqRlmcn4aeVo0DdrPGDSouiV6PKWp60L6j
+         DXhRJEYOvEnuy+cjiRizNJOo60y4glbBOWizuStECdPgAnUm16SMW+8fPDxvDQhLm+qe
+         vKzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Tue, 20 Mar 2018 06:28:28 -0700
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-90cafdd521721eb588a738fae17ac70e50675686@git.kernel.org>
-Cc: marc.zyngier@arm.com, mingo@kernel.org, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, gregkh@linuxfoundation.org, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, gregkh@linuxfoundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, mingo@kernel.org, marc.zyngier@arm.com
-In-Reply-To: <20180314212030.492674761@linutronix.de>
-References: <20180314212030.492674761@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/matrix: Cleanup SPDX identifier
-Git-Commit-ID: 90cafdd521721eb588a738fae17ac70e50675686
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Message-Id: <20180314212030.412095827@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Wed, 14 Mar 2018 22:15:16 +0100
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [patch 1/4] genirq: Cleanup top of file comments
+References: <20180314211515.429128440@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Disposition: inline;
+ filename=genirq--Remove-pointless-file-references-in-top-comments.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594949826087120291?=
-X-GMAIL-MSGID: =?utf-8?q?1595463453486688851?=
+X-GMAIL-THRID: =?utf-8?q?1594949825828386943?=
+X-GMAIL-MSGID: =?utf-8?q?1594949825828386943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  90cafdd521721eb588a738fae17ac70e50675686
-Gitweb:     https://git.kernel.org/tip/90cafdd521721eb588a738fae17ac70e50675686
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Wed, 14 Mar 2018 22:15:17 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 20 Mar 2018 14:23:28 +0100
-
-genirq/matrix: Cleanup SPDX identifier
-
-Use the proper SPDX-Identifier format.
+Remove pointless references to the file name itself and condense the
+information so it wastes less space.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Link: https://lkml.kernel.org/r/20180314212030.492674761@linutronix.de
-
 ---
- kernel/irq/matrix.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ kernel/irq/autoprobe.c |    2 --
+ kernel/irq/chip.c      |    9 +++------
+ kernel/irq/handle.c    |    7 ++-----
+ kernel/irq/ipi.c       |    2 --
+ kernel/irq/irqdesc.c   |    5 ++---
+ kernel/irq/manage.c    |    2 --
+ kernel/irq/msi.c       |    2 --
+ kernel/irq/pm.c        |    2 --
+ kernel/irq/proc.c      |    2 --
+ kernel/irq/resend.c    |    2 --
+ kernel/irq/spurious.c  |    2 --
+ kernel/irq/timings.c   |    2 --
+ 12 files changed, 7 insertions(+), 32 deletions(-)
 
-diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
-index 4c5770407031..5092494bf261 100644
---- a/kernel/irq/matrix.c
-+++ b/kernel/irq/matrix.c
-@@ -1,8 +1,6 @@
--/*
-- * Copyright (C) 2017 Thomas Gleixner <tglx@linutronix.de>
+--- a/kernel/irq/autoprobe.c
++++ b/kernel/irq/autoprobe.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/irq/autoprobe.c
 - *
-- * SPDX-License-Identifier: GPL-2.0
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2017 Thomas Gleixner <tglx@linutronix.de>
-+
- #include <linux/spinlock.h>
- #include <linux/seq_file.h>
- #include <linux/bitmap.h>
+  * Copyright (C) 1992, 1998-2004 Linus Torvalds, Ingo Molnar
+  *
+  * This file contains the interrupt probing code and driver APIs.
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1,13 +1,10 @@
+ /*
+- * linux/kernel/irq/chip.c
+- *
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+  *
+- * This file contains the core interrupt handling code, for irq-chip
+- * based architectures.
+- *
+- * Detailed information is available in Documentation/core-api/genericirq.rst
++ * This file contains the core interrupt handling code, for irq-chip based
++ * architectures. Detailed information is available in
++ * Documentation/core-api/genericirq.rst
+  */
+ 
+ #include <linux/irq.h>
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -1,12 +1,9 @@
+ /*
+- * linux/kernel/irq/handle.c
+- *
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+  *
+- * This file contains the core interrupt handling code.
+- *
+- * Detailed information is available in Documentation/core-api/genericirq.rst
++ * This file contains the core interrupt handling code. Detailed
++ * information is available in Documentation/core-api/genericirq.rst
+  *
+  */
+ 
+--- a/kernel/irq/ipi.c
++++ b/kernel/irq/ipi.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/irq/ipi.c
+- *
+  * Copyright (C) 2015 Imagination Technologies Ltd
+  * Author: Qais Yousef <qais.yousef@imgtec.com>
+  *
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -2,9 +2,8 @@
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+  *
+- * This file contains the interrupt descriptor management code
+- *
+- * Detailed information is available in Documentation/core-api/genericirq.rst
++ * This file contains the interrupt descriptor management code. Detailed
++ * information is available in Documentation/core-api/genericirq.rst
+  *
+  */
+ #include <linux/irq.h>
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/irq/manage.c
+- *
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006 Thomas Gleixner
+  *
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/irq/msi.c
+- *
+  * Copyright (C) 2014 Intel Corp.
+  * Author: Jiang Liu <jiang.liu@linux.intel.com>
+  *
+--- a/kernel/irq/pm.c
++++ b/kernel/irq/pm.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/irq/pm.c
+- *
+  * Copyright (C) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
+  *
+  * This file contains power management functions related to interrupts.
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/irq/proc.c
+- *
+  * Copyright (C) 1992, 1998-2004 Linus Torvalds, Ingo Molnar
+  *
+  * This file contains the /proc/irq/ handling code.
+--- a/kernel/irq/resend.c
++++ b/kernel/irq/resend.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/irq/resend.c
+- *
+  * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+  * Copyright (C) 2005-2006, Thomas Gleixner
+  *
+--- a/kernel/irq/spurious.c
++++ b/kernel/irq/spurious.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/irq/spurious.c
+- *
+  * Copyright (C) 1992, 1998-2004 Linus Torvalds, Ingo Molnar
+  *
+  * This file contains spurious interrupt handling.
+--- a/kernel/irq/timings.c
++++ b/kernel/irq/timings.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/irq/timings.c
+- *
+  * Copyright (C) 2016, Linaro Ltd - Daniel Lezcano <daniel.lezcano@linaro.org>
+  *
+  * This program is free software; you can redistribute it and/or modify
