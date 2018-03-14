@@ -1,111 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeCNMFw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:05:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36204 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeCNMFs (ORCPT
+        id S1751970AbeCNMGO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:06:14 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42929 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeCNMGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:05:48 -0400
-Date: Wed, 14 Mar 2018 13:04:50 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
-Message-ID: <20180314120450.GT4043@hirez.programming.kicks-ass.net>
-References: <4137867.C4jYrWdt8n@aspire.rjw.lan>
+        Wed, 14 Mar 2018 08:06:12 -0400
+X-Google-Smtp-Source: AG47ELuZgnD9n4WGvVV3xuG3bimjsr7GBVly1o1R2WqnsHayXxzz9Wd0But2KEP7GsqH9lHuHw64jTivAklXxKDZxQ0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4137867.C4jYrWdt8n@aspire.rjw.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180314114515.GC8564@ulmo>
+References: <20180313115218.2246372-1-arnd@arndb.de> <20180314114515.GC8564@ulmo>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Mar 2018 13:06:11 +0100
+X-Google-Sender-Auth: F-w4NgtpVQkWvLvVBRH_N3JSYB8
+Message-ID: <CAK8P3a3Wr8FNRP4ZYDGk9OL+=0w--pzRX=R6ye_+6nCtnHGVjg@mail.gmail.com>
+Subject: Re: [PATCH] pci: tegra: add MSI dependency
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:36:27AM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> If poll_idle() is allowed to spin until need_resched() returns 'true',
-> it may actually spin for a much longer time than expected by the idle
-> governor, since set_tsk_need_resched() is not always called by the
-> timer interrupt handler.  If that happens, the CPU may spend much
-> more time than anticipated in the "polling" state.
-> 
-> To prevent that from happening, limit the time of the spinning loop
-> in poll_idle().
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> -> v2: After additional testing reduce POLL_IDLE_TIME_CHECK_COUNT to 1000.
-> 
-> ---
->  drivers/cpuidle/poll_state.c |   17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/cpuidle/poll_state.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpuidle/poll_state.c
-> +++ linux-pm/drivers/cpuidle/poll_state.c
-> @@ -5,16 +5,31 @@
->   */
->  
->  #include <linux/cpuidle.h>
-> +#include <linux/ktime.h>
->  #include <linux/sched.h>
->  #include <linux/sched/idle.h>
->  
-> +#define POLL_IDLE_TIME_CHECK_COUNT	1000
-> +#define POLL_IDLE_TIME_LIMIT		(TICK_NSEC / 16)
-> +
->  static int __cpuidle poll_idle(struct cpuidle_device *dev,
->  			       struct cpuidle_driver *drv, int index)
->  {
-> +	ktime_t start = ktime_get();
+On Wed, Mar 14, 2018 at 12:45 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Tue, Mar 13, 2018 at 12:52:05PM +0100, Arnd Bergmann wrote:
+>> Building the tegra PCIe host driver without MSI results in a link
+>> failure:
+>>
+>> drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_msi_unmask_irq'
+>> drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_msi_mask_irq'
+>>
+>> This adds the same dependency that everyone else uses.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/pci/host/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>
+> I'm slightly concerned about the dependency. Not that I doubt its
+> correctness, but because it could mean that PCI_TEGRA is not visible in
+> the default configuration. The only reason why it is currently visible
+> is because PCI_MSI is selected by some symbols that also happen to be
+> enabled. However, what if at some point those symbols are disabled or
+> removed?
+>
+> Some architectures make sure that PCI_MSI is enabled by selecting it,
+> but that's risky, isn't it, because PCI_MSI is user-visible and could
+> therefore easily lead to conflicts.
+>
+> Enabling PCI_MSI in the arm64 defconfig would solve the issue and is
+> good enough for me. I've got a couple of changes to that defconfig in
+> the Tegra tree for v4.17-rc1, I can add a patch to enable PCI_MSI.
+>
+> Unless there are any objections.
 
-I would recoomend not using ktime_get(), imagine the 'joy' if that
-happens to be the HPET.
+I looked at it again and found that this on ARM64, PCI_MSI is always
+selected indirectly by ARM_GIC&&PCI, so there is no problem.
 
->  	local_irq_enable();
->  	if (!current_set_polling_and_test()) {
-> +		unsigned int time_check_counter = 0;
-> +
-> +		while (!need_resched()) {
->  			cpu_relax();
-> +			if (time_check_counter++ < POLL_IDLE_TIME_CHECK_COUNT)
-> +				continue;
-> +
-> +			time_check_counter = 0;
-> +			if (ktime_sub(ktime_get(), start) > POLL_IDLE_TIME_LIMIT)
-> +				break;
-> +		}
->  	}
->  	current_clr_polling();
+The build failure must have been on 32-bit ARM.
 
-Since the idle loop is strictly per-cpu, you can use regular
-sched_clock() here. Something like:
-
-	u64 start = sched_clock();
-
-	local_irq_enable();
-	if (!current_set_polling_and_test()) {
-		while (!need_resched()) {
-			cpu_relax();
-
-			if (sched_clock() - start > POLL_IDLE_TIME_LIMIT)
-				break;
-		}
-	}
-	current_clr_polling();
-
-On x86 we don't have to use that time_check_counter thing, sched_clock()
-is really cheap, not sure if it makes sense on other platforms.
+       Arnd
