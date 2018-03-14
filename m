@@ -1,129 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeCNVpH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:45:07 -0400
-Received: from mail-wr0-f177.google.com ([209.85.128.177]:37931 "EHLO
-        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751957AbeCNVpA (ORCPT
+        id S1751547AbeCNVsD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:48:03 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:53518 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeCNVsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:45:00 -0400
-X-Google-Smtp-Source: AG47ELv9okFMK6UuRvv/L1EUZmLkhVOdgg7/auz7IotHq5Pe32X7e4H7+R4Y6e4HlIPXG0CDrddX7roQlU82UZ0jh30=
-MIME-Version: 1.0
-In-Reply-To: <6a5b5723-85bb-e46f-f621-eab17a01f1f0@arm.com>
-References: <20180301054820.42847-1-dbasehore@chromium.org>
- <20180301054820.42847-2-dbasehore@chromium.org> <20180301114144.nmwu4qtslvj7ogj5@lakrids.cambridge.arm.com>
- <0a74f87a-027a-df7d-ca2d-fc164ec9cdf7@arm.com> <CAGAzgsqLgujex--HCo3dRGvOPXG0zu-RwkbuGhgNhBTc3sURJA@mail.gmail.com>
- <6a5b5723-85bb-e46f-f621-eab17a01f1f0@arm.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Wed, 14 Mar 2018 14:44:57 -0700
-X-Google-Sender-Auth: AbTAGKdWC9FdfPwzoI9lvovgSQc
-Message-ID: <CAGAzgspNsybYfxwKOERJCU9oFvEjxOA41KT+4L5f6Zr=+WXO9w@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] irqchip/gic-v3-its: add ability to save/restore
- ITS state
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 17:48:02 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 14 Mar 2018 22:48:00 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mfd: pcf50633: Fix some memory leaks in the error handling path of 'pcf50633_probe()'
+Date: Wed, 14 Mar 2018 22:47:55 +0100
+Message-Id: <20180314214755.25853-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 3:22 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 02/03/18 02:08, dbasehore . wrote:
->> On Thu, Mar 1, 2018 at 4:29 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> Hi Mark,
->>>
->>> On 01/03/18 11:41, Mark Rutland wrote:
->>>> On Wed, Feb 28, 2018 at 09:48:18PM -0800, Derek Basehore wrote:
->>>>> Some platforms power off GIC logic in suspend, so we need to
->>>>> save/restore state. The distributor and redistributor registers need
->>>>> to be handled in platform code due to access permissions on those
->>>>> registers, but the ITS registers can be restored in the kernel.
->>>>>
->>>>> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
->>>>
->>>> How much state do we have to save/restore?
->>>>
->>>> Given we can apparently read all this state, couldn't we *always* save
->>>> the state, then upon resume detect if the state has been lost, restoring
->>>> it if so?
->>>>
->>>> That way, we don't need a property in FW tables for DT or ACPI.
->>>
->>> That's a good point. I guess that we could just compare the saved
->>> GITS_CTLR register and restore the full state only if the ITS comes back
->>> as disabled.
->>>
->>> I'm just a bit worried that it makes it an implicit convention between
->>> kernel an FW, which could change in funny ways. Importantly, the PSCI
->>> spec says states FW should restore *the whole state*. Obviously, it
->>> cannot to that on HW that doesn't allow you to read out the state, hence
->>> the DT flag that outlines the departure from the expected behaviour.
->>>
->>> I'm happy to go either way, but then I have the feeling that we should
->>> go back to quirking it on the actual implementation (GIC500 in this
->>> case) if we're to from the property.
->>>
->>>>
->>>> [...]
->>>>
->>>>> @@ -3261,6 +3363,9 @@ static int __init its_probe_one(struct resource *res,
->>>>>              ctlr |= GITS_CTLR_ImDe;
->>>>>      writel_relaxed(ctlr, its->base + GITS_CTLR);
->>>>>
->>>>> +    if (fwnode_property_present(handle, "reset-on-suspend"))
->>>>> +            its->flags |= ITS_FLAGS_SAVE_SUSPEND_STATE;
->>>>
->>>> Does this allow this property on an ACPI system?
->>>>
->>>> If we need this on ACPI, we need a spec update to handle this properly,
->>>> and shouldn't use device properties like this.
->>>
->>> Well spotted. I guess that dropping the property would fix that
->>> altogether, assuming we feel that the above is safe enough.
->>>
->>> Thoughts?
->>
->> I'm fine changing it to get rid of the devicetree property.
->>
->> What's the reason for quirking the behavior though? It's not that much
->> code + data and nothing else relies on the state of the ITS getting
->> disabled across suspend/resume. Even if something did, we'd have to
->> resolve it with this feature anyways.
->
-> The reason we do this is to cope with GIC500 having the collection state
-> in registers instead of memory. If we didn't have this extraordinary
-> misfeature, FW could do a full save/restore of the ITS, and we wouldn't
-> have to do anything (which is what the driver currently expects).
->
-> A middle ground approach is to limit the feature to systems where
-> GITS_TYPER.HCC is non-zero instead of limiting it to GIC500. Pretty easy
-> to fix. This should have the same effect, as GIC500 is the only
-> implementation I'm aware of with HCC!=0.
->
-> Given that we're already at -rc5 and that I'd like to queue things for
-> 4.17, I've made this change myself and queued patches 1 and 3 here[1].
->
-> Can you please have a look at let me know if that works for you?
->
+If a 'platform_device_alloc()' call fails, we still need to release the
+resources that have already been allocated before returning.
 
-Assuming that your fine with only having the GIC500 implementations
-that have HCC as non-zero getting ITS registers restored in the
-kernel. As far as I can tell, this can happen in firmware for all
-implementations. It's only the code to resend that MAPC on resume that
-needs to be in the kernel.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mfd/pcf50633-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> Thanks,
->
->         M.
->
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git
-> irq/irqchip-next
-> --
-> Jazz is not dead. It just smells funny...
+diff --git a/drivers/mfd/pcf50633-core.c b/drivers/mfd/pcf50633-core.c
+index f952dff6765f..0d2a88d53eed 100644
+--- a/drivers/mfd/pcf50633-core.c
++++ b/drivers/mfd/pcf50633-core.c
+@@ -242,8 +242,10 @@ static int pcf50633_probe(struct i2c_client *client,
+ 
+ 	for (i = 0; i < PCF50633_NUM_REGULATORS; i++) {
+ 		pdev = platform_device_alloc("pcf50633-regulator", i);
+-		if (!pdev)
+-			return -ENOMEM;
++		if (!pdev) {
++			ret = -ENOMEM;
++			goto err2;
++		}
+ 
+ 		pdev->dev.parent = pcf->dev;
+ 		ret = platform_device_add_data(pdev, &pdata->reg_init_data[i],
+@@ -269,6 +271,7 @@ static int pcf50633_probe(struct i2c_client *client,
+ 
+ err:
+ 	platform_device_put(pdev);
++err2:
+ 	for (j = 0; j < i; j++)
+ 		platform_device_put(pcf->regulator_pdev[j]);
+ 
+-- 
+2.14.1
