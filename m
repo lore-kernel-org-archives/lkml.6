@@ -1,71 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeCNOkX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 10:40:23 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35046 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeCNOkV (ORCPT
+        id S1752003AbeCNOlA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:41:00 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:44415 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751394AbeCNOk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 10:40:21 -0400
-X-Google-Smtp-Source: AG47ELum8hyMz9QfC+rPjoBACnrfk7vOZH3tu6lRKvoXQZiBUNdQvoLmtqeczz5ZDY2zeM+l7loFXBICgV9TYnBbE4I=
-MIME-Version: 1.0
-In-Reply-To: <CAG_fn=VMj0KDqr24Mx71QBZjHzJDdQi0OthA-E1YcB0q=Sk0BA@mail.gmail.com>
-References: <20180314140322.233047-1-glider@google.com> <CANn89iL8gWYReSPRfhHdyYT1+TC+GwxTD45SG+zjCMBEYjY3KQ@mail.gmail.com>
- <CAG_fn=VMj0KDqr24Mx71QBZjHzJDdQi0OthA-E1YcB0q=Sk0BA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 14 Mar 2018 07:40:19 -0700
-Message-ID: <CANn89iL3wh6DJBOGGjvH+dPX7Q+otNPH4N+CDrBDGAyFqaM5jQ@mail.gmail.com>
-Subject: Re: [PATCH] netlink: make sure nladdr has correct size in netlink_connect()
-To: Alexander Potapenko <glider@google.com>
-Cc: Dmitriy Vyukov <dvyukov@google.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 10:40:58 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Petr Tesarik <ptesarik@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org
+Subject: [PATCH 10/16] mm: remove obsolete alloc_remap()
+Date: Wed, 14 Mar 2018 15:39:09 +0100
+Message-Id: <20180314143958.1548568-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180314143529.1456168-1-arnd@arndb.de>
+References: <20180314143529.1456168-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:/HnUiaZVpLAgW1ppzzqZltZzmypjlxCbHC0YZv20X8L3fDuaAWS
+ r1bXegLSOMkPJlNx862xLqa7NSv6EvEYpDD2/I+vs6zabzMOQobNZbWYrQDenk+GcJdcRJc
+ mbc/TxIn2yDI+l0Vh4bvZ2nEZ5pkplgvmGlYOnNiO+x1TX9szrSsg8ZkOrXhiD8Ne1Qz+6N
+ CC2zuZ+nPfQJtg1soIsKQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nfp/Hj6cmLg=:lYqn2SnYt+DGguBMQNinG/
+ hdQF8RF7lUZuOnehkJf5KPSmgqAyWuPbarUpgJ++XxyeQzt4FdeuJwKE1O7g1gm5nFIjlVDxI
+ ed0+Aco2wLNlk3QRDdog1I2LEkCMwyea5dEW7svSQTsO5qUVCTyuTGDRTsPIpfknZ0CPhpXVl
+ M7Lbhq+3LH4vvddb5YMwYdHBZQ5ltIuewH4uFZUbpff9Jz0F1dZYDixk4MqhUGQk61EF2Xl9L
+ 9Oz9H3buoWkj8QvSxPWyeWpoVDIkwaoP5Sd8/ZIQgODFGwlUV343BBXm1OFqyk/ABtXKPB5zY
+ SzQd4xlGQlyxPyk3t4Tz8GIpaIpfZLlSNxzb34bSm2voGvvzGtB++tXLXC36mvpOLHw6If2Ru
+ WQOgtwnc4zBOdGQmSOSXsYbOuQwwwvfWpkpIHB2+7lPPP1FfA78vVZwa7x8VfSvRsuEuxdxTg
+ fNPGuZsU9dbz6SPhmLrBCvRw11OyKJYqmyQjaGo3wR8/NbgDpBEc4UOahxzQ//13iBoRH30Sw
+ 71rwRZjifBN4n5GzIdurm2diNpo0gQKp/PNj93SfUXP1TCsctOOCQnj7qkrChl+rQ5i+bIV9h
+ 7i+Zg+UXkXDYn3Sy/RYrEXY7AXNlPpcMfLEFuaQ8LiMgfYLmVrn2HCk0EnFxXa6QgLQP7KaKY
+ s1SB9fpPk6NOhg5p5pPNQImNJS2W22w/YB2sWW6vvh6gLfrb0SQn0oPw8N56bCVNEnBUNmzQR
+ F+Y4tRWyVX9zuEFu7lhKgMqxFRGXZ4VnVmx2tA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 7:16 AM, Alexander Potapenko <glider@google.com> wrote:
->
->
->
-> On Wed, Mar 14, 2018 at 3:11 PM Eric Dumazet <edumazet@google.com> wrote:
->>
->> On Wed, Mar 14, 2018 at 7:03 AM, Alexander Potapenko <glider@google.com>
->> wrote:
->> > KMSAN reports use of uninitialized memory in the case when |alen| is
->> > smaller than sizeof(struct netlink_sock), and therefore |nladdr| isn't
->> > fully copied from the userspace.
->> >
->> > Signed-off-by: Alexander Potapenko <glider@google.com>
->> > Fixes: 1da177e4c3f41524 ("Linux-2.6.12-rc2")
->> > ---
->> >  net/netlink/af_netlink.c | 3 +++
->> >  1 file changed, 3 insertions(+)
->> >
->> > diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
->> > index 07e8478068f0..5d49b39e81c3 100644
->> > --- a/net/netlink/af_netlink.c
->> > +++ b/net/netlink/af_netlink.c
->> > @@ -1085,6 +1085,9 @@ static int netlink_connect(struct socket *sock,
->> > struct sockaddr *addr,
->> >         if (addr->sa_family != AF_NETLINK)
->> >                 return -EINVAL;
->> >
->> > +       if (alen < sizeof(struct netlink_sock))
->> > +               return -EINVAL;
->> > +
->> >
->>
->> Hmmm. How was this patch tested exactly ?
->
-> You're absolutely right, I should have been using sizeof(sockaddr_nl).
-> The reproducer that I used to trigger the bug was passing alen=2, so the
-> patch still worked despite being incorrect.
-> Is there any generic set of networking tests that I can use for such bugs?
+Tile was the only remaining architecture to implement alloc_remap(),
+and since that is being removed, there is no point in keeping this
+function.
 
-There are upstream tests in tools/testing/selftests/
+Removing all callers simplifies the mem_map handling.
 
-In your case, making sure tools like iproute2 ss are still working
-would have done the job.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/bootmem.h |  9 ---------
+ mm/page_alloc.c         |  5 +----
+ mm/sparse.c             | 15 ---------------
+ 3 files changed, 1 insertion(+), 28 deletions(-)
+
+diff --git a/include/linux/bootmem.h b/include/linux/bootmem.h
+index a53063e9d7d8..7942a96b1a9d 100644
+--- a/include/linux/bootmem.h
++++ b/include/linux/bootmem.h
+@@ -364,15 +364,6 @@ static inline void __init memblock_free_late(
+ }
+ #endif /* defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM) */
+ 
+-#ifdef CONFIG_HAVE_ARCH_ALLOC_REMAP
+-extern void *alloc_remap(int nid, unsigned long size);
+-#else
+-static inline void *alloc_remap(int nid, unsigned long size)
+-{
+-	return NULL;
+-}
+-#endif /* CONFIG_HAVE_ARCH_ALLOC_REMAP */
+-
+ extern void *alloc_large_system_hash(const char *tablename,
+ 				     unsigned long bucketsize,
+ 				     unsigned long numentries,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb416723538f..484e21062228 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6199,10 +6199,7 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
+ 		end = pgdat_end_pfn(pgdat);
+ 		end = ALIGN(end, MAX_ORDER_NR_PAGES);
+ 		size =  (end - start) * sizeof(struct page);
+-		map = alloc_remap(pgdat->node_id, size);
+-		if (!map)
+-			map = memblock_virt_alloc_node_nopanic(size,
+-							       pgdat->node_id);
++		map = memblock_virt_alloc_node_nopanic(size, pgdat->node_id);
+ 		pgdat->node_mem_map = map + offset;
+ 	}
+ 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 7af5e7a92528..65bb52599f90 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -427,10 +427,6 @@ struct page __init *sparse_mem_map_populate(unsigned long pnum, int nid,
+ 	struct page *map;
+ 	unsigned long size;
+ 
+-	map = alloc_remap(nid, sizeof(struct page) * PAGES_PER_SECTION);
+-	if (map)
+-		return map;
+-
+ 	size = PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
+ 	map = memblock_virt_alloc_try_nid(size,
+ 					  PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+@@ -446,17 +442,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+ 	unsigned long pnum;
+ 	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
+ 
+-	map = alloc_remap(nodeid, size * map_count);
+-	if (map) {
+-		for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
+-			if (!present_section_nr(pnum))
+-				continue;
+-			map_map[pnum] = map;
+-			map += size;
+-		}
+-		return;
+-	}
+-
+ 	size = PAGE_ALIGN(size);
+ 	map = memblock_virt_alloc_try_nid_raw(size * map_count,
+ 					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+-- 
+2.9.0
