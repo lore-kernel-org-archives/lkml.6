@@ -1,88 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeCNPhF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:37:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:45009 "EHLO
+        id S1752003AbeCNPiD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:38:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:55847 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750862AbeCNPhD (ORCPT
+        with ESMTP id S1751957AbeCNPiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:37:03 -0400
+        Wed, 14 Mar 2018 11:38:01 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org
-Subject: [PATCH 01/47] edac: remove tile driver
-Date: Wed, 14 Mar 2018 16:35:14 +0100
-Message-Id: <20180314153603.3127932-2-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Finn Thain <fthain@telegraphics.com.au>, netdev@vger.kernel.org
+Subject: [PATCH 04/47] net: 8390: remove m32r specific bits
+Date: Wed, 14 Mar 2018 16:35:17 +0100
+Message-Id: <20180314153603.3127932-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:Xsp9DdTy/dm+UBi8nV8pUztaPP1+rMKIWuA1jKoe4F2da3joOgs
- 3qc1S5uZAPW+wLPL9KayJWidqFcBT2+fetlU1l8/nPoMzdOacj/+3yfHz4Xf2SMILaqdiuC
- 0W5uoCIcarcPcJ5CXZ348Z6g3jMtpHjYK3cp0msQ2ySmtoCPizMkY3UsW3oS9qM1PHzhZhV
- JhLbFK++QiTWV1YhBQGVg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:IimNDnBZhio=:mFNkytJXfa/jSQZBZRglKv
- wzv0i9eOZUypcTVG6MfRRCkI2MGwbC0ER4cmUXbz4YWG6b0pTeNCXnPlwm6ps0o0dqWn4I383
- qpQBS1KSvfx7MccJURQ3F2hqy+eUw3DoTFohxYEwEdsy/Z8RwbsreVSIiI2YuBEaQnEnL5i6E
- cONmrd7zfUx1ykJijxdjvvVhNhNZUUAWRfoUhgk27065ZK57SljrWOdQIMJRPYFyH/5Ij/5JS
- URDb0BGwnyuxCuhGafc145Pn7/aTzesUk3YPAzBbPNyNbrmIdpRehCmE0GjPL+yrijkn3VhXB
- Mm4w5mLgltFYmx+EO8mbMaESChRwDDGOIhqngY9/W926cqXG+P8jkEvh2+Fh3TJK9F4VnT9Ho
- 75tacQ5oD2Kcyk3Xb9C3O+sgiCkfyM3cQFA7sO5VKC4/HilRUAOX1z8ywV5cQioUn3CG2X0Kv
- ow26NwpX7jt2JLCRRpaN3tTneeN+BXBEOltaIXvcFhGachCrc5KE03oHTP2tzHv4e4mMkMJZf
- XR1oGmk9fY5h7vXb2KFffgrNSRHPNZxAJBcBNYfTlINoP5vYALyJFZWVmHBP40fEH3q/HgJTM
- P/lMHFwcg2gZROyTMyTzCo9miBGe1tCcu+M5/MRvCwEMHVqKWrPkqV81CjutVC25Oq7eQv7Tb
- +Q/kG2AgQU3RLxMiS7UaRx/AFzCeBVISCXhdxvUv8CsfZaqLDpObTWMdrT/IlhM9g7jYdywIa
- fADzvqe3cKb0S6gnRi+UKNyuNxz9aChtPsyYSA==
+X-Provags-ID: V03:K0:cpwVa9Y972fUrVjb87RJxgBs2ifw4ZQkPpC1qSGpIBCb2JSPaT3
+ 5UxKUKZYS+NangidrG0dZH+OHcBdW6YhYAozar91HsXT1UQFllXho1H+iw6W+DKzn1YFiab
+ wCnUdLbeM9bkvJQfsudzZ3HVmVuApc6dSK9hrehuC0QJCdvJhm0PpSqgYARdIOJM8qvku+b
+ Hdkd/nuRnG1ZZ/JT9SHxA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7fH30maxmlA=:RWOIj8ULHow4R7TUP6Vzll
+ lR436CSyzil/scq1xUliWZv+u/dwFjIPGJzjXjh6XzkomnUyfNkuEaEQ7qhMppYA8VNGeqK5l
+ khsRAnhE7cuawaeR9RBgw1/J20C+peEN+mJcEqSdTldZADWEQP0RzcwJK0kYfnWldQgEbekV/
+ 75MseZYKBKTUVxj3JJ27mMNveb8ymMtF7IMJVqO0+vGzl9mD9ohbREmDYdUF8dArMTgO37nkx
+ 2LCr+Bqh+LuNw79O9SIRYZSuowWx4jkemV5tiy0KXVqdltTm2JNsJ5rJ5hUcXbnyq/GWDivPn
+ z7E1Di6bSMxgg3b+K5mQ+1cCCb9BkKtBd9VPXN2jEq1cpGxvDKluEgZNmugYA/T4S3wIi0UY9
+ yBfevp9NMH9Lv7HmLeQdB6vtcv8N7BHgcn95D4uLsyZ8VWybWR9tFWZcPcM7KKHpBjUTv9WJN
+ vUI0rWLFLZXB9PewNdRWu/LqAnSb+MDlGwz8aqjFMSmjBRBccuNAWwLrIfWd+rbxD5F714A4h
+ WwTfbcrPXSFKeX7i4/rstWztxEzxlX156oVfFSTkXgM8gZ9OhMg4hFeV40tdty+zYBACmdhY5
+ dY1VaPCiA3kVCH8Cfm2r3pP0yaHmJyfqpzXm3mo/iLuOrf8CIGizfqt2Vv1YW9hfqhWcpf9Kv
+ ZSzRzjcZDheIphi/AXi5R2ZgrKfXFcCDf3Ivc00XM2uCLyOE/CxymsHYeFH5q62FyATWo7E8U
+ B8L8uiqp39z4hwrSlex+W/6e4u4KwgGrsdgkEg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tile architecture is obsolete and getting removed from the kernel,
-this driver appears to only be used there, and not on the ARM based
-successors (Tile-Mx, BlueField), so we should remove it as well.
+The m32r architecture is getting removed, so we can kill off the
+architecture specific hacks in this driver.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/edac/Kconfig     |   8 --
- drivers/edac/Makefile    |   2 -
- drivers/edac/tile_edac.c | 265 -----------------------------------------------
- 3 files changed, 275 deletions(-)
- delete mode 100644 drivers/edac/tile_edac.c
+ drivers/net/ethernet/8390/Kconfig |  3 +--
+ drivers/net/ethernet/8390/ne.c    | 23 ++---------------------
+ 2 files changed, 3 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index cb4ff1cc6eb4..533122aaa091 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -317,14 +317,6 @@ config EDAC_CPC925
- 	  a companion chip to the PowerPC 970 family of
- 	  processors.
+diff --git a/drivers/net/ethernet/8390/Kconfig b/drivers/net/ethernet/8390/Kconfig
+index fdc673484add..9fee7c83ef9f 100644
+--- a/drivers/net/ethernet/8390/Kconfig
++++ b/drivers/net/ethernet/8390/Kconfig
+@@ -87,8 +87,7 @@ config MCF8390
  
--config EDAC_TILE
--	tristate "Tilera Memory Controller"
--	depends on TILE
--	default y
--	help
--	  Support for error detection and correction on the
--	  Tilera memory controller.
--
- config EDAC_HIGHBANK_MC
- 	tristate "Highbank Memory Controller"
- 	depends on ARCH_HIGHBANK
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index b54912eb39af..02b43a7d8c3e 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -64,8 +64,6 @@ obj-$(CONFIG_EDAC_PPC4XX)		+= ppc4xx_edac.o
- obj-$(CONFIG_EDAC_AMD8111)		+= amd8111_edac.o
- obj-$(CONFIG_EDAC_AMD8131)		+= amd8131_edac.o
+ config NE2000
+ 	tristate "NE2000/NE1000 support"
+-	depends on (ISA || (Q40 && m) || M32R || MACH_TX49XX || \
+-		    ATARI_ETHERNEC)
++	depends on (ISA || (Q40 && m) || MACH_TX49XX || ATARI_ETHERNEC)
+ 	select CRC32
+ 	---help---
+ 	  If you have a network (Ethernet) card of this type, say Y here.
+diff --git a/drivers/net/ethernet/8390/ne.c b/drivers/net/ethernet/8390/ne.c
+index 4cdff6e6af89..44a084b41bf0 100644
+--- a/drivers/net/ethernet/8390/ne.c
++++ b/drivers/net/ethernet/8390/ne.c
+@@ -99,7 +99,7 @@ MODULE_LICENSE("GPL");
+ that the ne2k probe is the last 8390 based probe to take place (as it
+ is at boot) and so the probe will get confused by any other 8390 cards.
+ ISA device autoprobes on a running machine are not recommended anyway. */
+-#if !defined(MODULE) && (defined(CONFIG_ISA) || defined(CONFIG_M32R))
++#if !defined(MODULE) && defined(CONFIG_ISA)
+ /* Do we need a portlist for the ISA auto-probe ? */
+ #define NEEDS_PORTLIST
+ #endif
+@@ -164,12 +164,7 @@ bad_clone_list[] __initdata = {
+ #define NESM_START_PG	0x40	/* First page of TX buffer */
+ #define NESM_STOP_PG	0x80	/* Last page +1 of RX ring */
  
--obj-$(CONFIG_EDAC_TILE)			+= tile_edac.o
--
- obj-$(CONFIG_EDAC_HIGHBANK_MC)		+= highbank_mc_edac.o
- obj-$(CONFIG_EDAC_HIGHBANK_L2)		+= highbank_l2_edac.o
+-#if defined(CONFIG_PLAT_MAPPI)
+-#  define DCR_VAL 0x4b
+-#elif defined(CONFIG_PLAT_OAKS32R)  || \
+-   defined(CONFIG_MACH_TX49XX)
+-#  define DCR_VAL 0x48		/* 8-bit mode */
+-#elif defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
++#if defined(CONFIG_ATARI)	/* 8-bit mode on Atari, normal on Q40 */
+ #  define DCR_VAL (MACH_IS_ATARI ? 0x48 : 0x49)
+ #else
+ #  define DCR_VAL 0x49
+@@ -422,12 +417,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
+ 		stop_page  = NE1SM_STOP_PG;
+ 	}
  
-diff --git a/drivers/edac/tile_edac.c b/drivers/edac/tile_edac.c
-deleted file mode 100644
-index 8a33a87e67f1..000000000000
+-#if  defined(CONFIG_PLAT_MAPPI) || defined(CONFIG_PLAT_OAKS32R)
+-	neX000 = ((SA_prom[14] == 0x57  &&  SA_prom[15] == 0x57)
+-		|| (SA_prom[14] == 0x42 && SA_prom[15] == 0x42));
+-#else
+ 	neX000 = (SA_prom[14] == 0x57  &&  SA_prom[15] == 0x57);
+-#endif
+ 	ctron =  (SA_prom[0] == 0x00 && SA_prom[1] == 0x00 && SA_prom[2] == 0x1d);
+ 	copam =  (SA_prom[14] == 0x49 && SA_prom[15] == 0x00);
+ 
+@@ -508,18 +498,9 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
+ 
+ 	dev->base_addr = ioaddr;
+ 
+-#ifdef CONFIG_PLAT_MAPPI
+-	outb_p(E8390_NODMA + E8390_PAGE1 + E8390_STOP,
+-		ioaddr + E8390_CMD); /* 0x61 */
+-	for (i = 0; i < ETH_ALEN; i++) {
+-		dev->dev_addr[i] = SA_prom[i]
+-			= inb_p(ioaddr + EN1_PHYS_SHIFT(i));
+-	}
+-#else
+ 	for (i = 0; i < ETH_ALEN; i++) {
+ 		dev->dev_addr[i] = SA_prom[i];
+ 	}
+-#endif
+ 
+ 	pr_cont("%pM\n", dev->dev_addr);
+ 
 -- 
 2.9.0
