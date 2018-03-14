@@ -1,218 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeCNQaw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:30:52 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:39233 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751660AbeCNQaa (ORCPT
+        id S1751984AbeCNQbl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:31:41 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39626 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeCNQbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:30:30 -0400
-From: <gabriel.fernandez@st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, <gabriel.fernandez@st.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <gabriel.fernandez.st@gmail.com>, Loic PALLARDY <loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Michael Turquette <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH v2 2/2] reset: stm32mp1: Enable stm32mp1 reset driver
-Date: Wed, 14 Mar 2018 17:30:01 +0100
-Message-ID: <1521045001-30788-3-git-send-email-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521045001-30788-1-git-send-email-gabriel.fernandez@st.com>
-References: <1521045001-30788-1-git-send-email-gabriel.fernandez@st.com>
+        Wed, 14 Mar 2018 12:31:40 -0400
+X-Google-Smtp-Source: AG47ELto+FEld9YInwY1aCudrOjkujbw0GYxqAMjLDcvk+i3OmSM7nCqkVUElPcaabr5bC6+DEMX/vHVsGunJLyuBA8=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_08:,,
- signatures=0
+In-Reply-To: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 14 Mar 2018 18:31:38 +0200
+Message-ID: <CAHp75Vfp_uwSLe_ENnr=azJGrMoR6DuvGSCi5DSeq6=B-ghAGg@mail.gmail.com>
+Subject: Re: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Mikael Starvik <starvik@axis.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Cris <linux-cris-kernel@axis.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org, linux-am33-list@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, Mar 13, 2018 at 11:45 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>
 
-stm32mp1 RCC IP 1 has a reset SET register and a reset CLEAR register.
+Agree with Christoph's comment.
 
-Writing '0' on reset SET register has no effect
-Writing '1' on reset SET register
-	activates the reset of the corresponding peripheral
+> If a device already has MSI or MSI-X enabled, there's no need to set up its
+> legacy INTx interrupt.
 
-Writing '0' on reset CLEAR register	has no effect
-Writing '1' on reset CLEAR register
-	releases the reset of the corresponding peripheral
+Just point to the actual behaviour of this. In some cases code in
+question has to distinguish between MSI and MSI-x.
+So, this or similar changes has to be done with keeping above in mind.
 
-See Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+(Existing example is Thunderbolt driver)
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/reset/Kconfig          |   6 ++
- drivers/reset/Makefile         |   1 +
- drivers/reset/reset-stm32mp1.c | 122 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 129 insertions(+)
- create mode 100644 drivers/reset/reset-stm32mp1.c
+>
+> bba6f6fc68e7 ("[PATCH] MSI-X: fix resume crash") changed the cris, frv,
+> x86, and ia64 arches to skip INTx setup when MSI is enabled.
+>
+> 16cf0ebc35dd ("x86/PCI: Do not use interrupt links for devices using
+> MSI-X") extended that by changing x86 to also skip INTx setup when MSI-X is
+> enabled.
+>
+> Change the remaining arches (cris, frv, and ia64) to skip INTx setup when
+> either MSI or MSI-X is enabled.
+>
+> Also update mn10300 (which didn't exist at the time of bba6f6fc68e7) to
+> follow the same pattern.
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 1efbc6c..c0b292b 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -97,6 +97,12 @@ config RESET_SIMPLE
- 	   - Allwinner SoCs
- 	   - ZTE's zx2967 family
- 
-+config RESET_STM32MP157
-+	bool "STM32MP157 Reset Driver" if COMPILE_TEST
-+	default MACH_STM32MP157
-+	help
-+	  This enables the RCC reset controller driver for STM32 MPUs.
-+
- config RESET_SUNXI
- 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
- 	default ARCH_SUNXI
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 132c24f..c1261dc 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
-+obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
-new file mode 100644
-index 0000000..5e25388
---- /dev/null
-+++ b/drivers/reset/reset-stm32mp1.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+
-+#define CLR_OFFSET 0x4
-+
-+struct stm32_reset_data {
-+	struct reset_controller_dev	rcdev;
-+	void __iomem			*membase;
-+};
-+
-+static inline struct stm32_reset_data *
-+to_stm32_reset_data(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct stm32_reset_data, rcdev);
-+}
-+
-+static int stm32_reset_update(struct reset_controller_dev *rcdev,
-+			      unsigned long id, bool assert)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
-+	void __iomem *addr;
-+
-+	addr = data->membase + (bank * reg_width);
-+	if (!assert)
-+		addr += CLR_OFFSET;
-+
-+	writel(BIT(offset), addr);
-+
-+	return 0;
-+}
-+
-+static int stm32_reset_assert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, true);
-+}
-+
-+static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return stm32_reset_update(rcdev, id, false);
-+}
-+
-+static int stm32_reset_status(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
-+	int reg_width = sizeof(u32);
-+	int bank = id / (reg_width * BITS_PER_BYTE);
-+	int offset = id % (reg_width * BITS_PER_BYTE);
-+	u32 reg;
-+
-+	reg = readl(data->membase + (bank * reg_width));
-+
-+	return !(reg & BIT(offset));
-+}
-+
-+const struct reset_control_ops stm32_reset_ops = {
-+	.assert		= stm32_reset_assert,
-+	.deassert	= stm32_reset_deassert,
-+	.status		= stm32_reset_status,
-+};
-+
-+static const struct of_device_id stm32_reset_dt_ids[] = {
-+	{ .compatible = "st,stm32mp1-rcc"},
-+	{ /* sentinel */ },
-+};
-+
-+static int stm32_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct stm32_reset_data *data;
-+	void __iomem *membase;
-+	struct resource *res;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	membase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(membase))
-+		return PTR_ERR(membase);
-+
-+	data->membase = membase;
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
-+	data->rcdev.ops = &stm32_reset_ops;
-+	data->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static struct platform_driver stm32_reset_driver = {
-+	.probe	= stm32_reset_probe,
-+	.driver = {
-+		.name		= "stm32mp1-reset",
-+		.of_match_table	= stm32_reset_dt_ids,
-+	},
-+};
-+
-+static int __init stm32_reset_init(void)
-+{
-+	return platform_driver_register(&stm32_reset_driver);
-+}
-+
-+postcore_initcall(stm32_reset_init);
+Perhaps no need to change the architectures that are about to be
+removed completely from the kernel.
+
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  arch/cris/arch-v32/drivers/pci/bios.c |    2 +-
+>  arch/frv/mb93090-mb00/pci-vdk.c       |    2 +-
+>  arch/ia64/pci/pci.c                   |    4 ++--
+>  arch/mn10300/unit-asb2305/pci.c       |    8 +++++---
+>  4 files changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/cris/arch-v32/drivers/pci/bios.c b/arch/cris/arch-v32/drivers/pci/bios.c
+> index 6b9e6cfaa29e..c2bed0cc060b 100644
+> --- a/arch/cris/arch-v32/drivers/pci/bios.c
+> +++ b/arch/cris/arch-v32/drivers/pci/bios.c
+> @@ -68,7 +68,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+>         if ((err = pcibios_enable_resources(dev, mask)) < 0)
+>                 return err;
+>
+> -       if (!dev->msi_enabled)
+> +       if (!pci_dev_msi_enabled(dev))
+>                 pcibios_enable_irq(dev);
+>         return 0;
+>  }
+> diff --git a/arch/frv/mb93090-mb00/pci-vdk.c b/arch/frv/mb93090-mb00/pci-vdk.c
+> index f211839e2cae..4a55d1b82d21 100644
+> --- a/arch/frv/mb93090-mb00/pci-vdk.c
+> +++ b/arch/frv/mb93090-mb00/pci-vdk.c
+> @@ -413,7 +413,7 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+>
+>         if ((err = pci_enable_resources(dev, mask)) < 0)
+>                 return err;
+> -       if (!dev->msi_enabled)
+> +       if (!pci_dev_msi_enabled(dev))
+>                 pcibios_enable_irq(dev);
+>         return 0;
+>  }
+> diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
+> index f5ec736100ee..7ccc64d5fe3e 100644
+> --- a/arch/ia64/pci/pci.c
+> +++ b/arch/ia64/pci/pci.c
+> @@ -398,7 +398,7 @@ pcibios_enable_device (struct pci_dev *dev, int mask)
+>         if (ret < 0)
+>                 return ret;
+>
+> -       if (!dev->msi_enabled)
+> +       if (!pci_dev_msi_enabled(dev))
+>                 return acpi_pci_irq_enable(dev);
+>         return 0;
+>  }
+> @@ -407,7 +407,7 @@ void
+>  pcibios_disable_device (struct pci_dev *dev)
+>  {
+>         BUG_ON(atomic_read(&dev->enable_cnt));
+> -       if (!dev->msi_enabled)
+> +       if (!pci_dev_msi_enabled(dev))
+>                 acpi_pci_irq_disable(dev);
+>  }
+>
+> diff --git a/arch/mn10300/unit-asb2305/pci.c b/arch/mn10300/unit-asb2305/pci.c
+> index 3dfe2d31c67b..4d36ea517679 100644
+> --- a/arch/mn10300/unit-asb2305/pci.c
+> +++ b/arch/mn10300/unit-asb2305/pci.c
+> @@ -399,10 +399,12 @@ int pcibios_enable_device(struct pci_dev *dev, int mask)
+>  {
+>         int err;
+>
+> -       err = pci_enable_resources(dev, mask);
+> -       if (err == 0)
+> +       if ((err = pci_enable_resources(dev, mask)) < 0)
+> +               return err;
+> +
+> +       if (!pci_dev_msi_enabled(dev))
+>                 pcibios_enable_irq(dev);
+> -       return err;
+> +       return 0;
+>  }
+>
+>  /*
+>
+
+
+
 -- 
-1.9.1
+With Best Regards,
+Andy Shevchenko
