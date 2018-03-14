@@ -1,158 +1,116 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AG47ELtATgi7crNCIKrhzQ2BD4pR0vYn8ftu1S2g9vPfVB/llmuS/6iJY/VwItHhZ3ooz9F5MON4
-ARC-Seal: i=1; a=rsa-sha256; t=1521017332; cv=none;
+Return-Path: <mark.rutland@arm.com>
+X-Google-Smtp-Source: AG47ELvrsxHkikUR/dYdRUJU5GR3e7I6/VVBZDJyZZ2eRcXdwdaaN/0bFSbmG8ABH8Ec5qU2IZPB
+ARC-Seal: i=1; a=rsa-sha256; t=1521024509; cv=none;
         d=google.com; s=arc-20160816;
-        b=hXAoZFOA96a2C89Cll5C2s9suKhkqPooPVM1zEQysKnpL1EXwobgRLTm55W+5DSMcx
-         wHzEsGI3AUuxv5ZmLDA1yoX/sEbGMKfrdUxJRGKtGw8GOC8iGxV8bMkgX0dnsZMVxfzy
-         H8866HXqDPlJNgvuZCRxLn3NS24XcPN3GavMvR/MZK83/mbAj5AT1UBqBCgJLfdN6/oq
-         ZZ0YXZ+MSTb5UAT79vYVHSCy9Th9J7MC2emoXB+GV01C4o7uwAGBPg80hzJxUZSdN6d9
-         cBNtytjOrt5R4dI9tftPh96FHn8aSooZJkWgP6zdU+kZdSpzSEboPyBxGDKnLTDBHK5S
-         boqw==
+        b=Il3coaYBvWuk6t0O4+ccIUQxrBpiNMkRElKbbtWak4sQRzX7/maXMRwWlvPiPm7+v9
+         eG0vmlfIlW78mulSFIPveLbjVKWPRa9Q62IOI8RqKuFnEPkvv6QtfXAt0kgtFAM2KdBn
+         dQwAGsnlyfgL0/+vj+UY/AB2Xz2iNFBNh/hZHBPj9t5RIpVDGvq60NBmaIJnphDUCgdm
+         guASFm/gle0KowvcB2kf6xCn8QdBdWtRmwRsj9kxbW7/sGgvoItnzaHbXZXwaw6wXwuZ
+         srdG+22Mf86INGOMBF68lr29UwvWLIlGVuHhiICHrbJpeUWalK2U1/ekjTUC9h8SBEbM
+         O02A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=lrEyAjRlXQHBVl1/Ikbo7D3DIQ4hJFOVa7fn6/ZvHXc=;
-        b=KLwfgj2WkAElvLALj7MYr2SUOm4es7JGAEpdep/hzuk8OB6xLZlK1VeqfTjzGwJrOM
-         F6QhvSjZyDqzt4rwTa4rAnObkU4n9upSzdLZoer4EybrQcNujubFRmnrVpKZKM7ClRdd
-         7UVP4LjmIrs0QDklMc+tCPXagp1lsmsRM1k0qTmmTlCR9n4NipfUBoru4/aj7cM0mJJT
-         PTEDT9Y32nlGeObFJICMu1F71Ku8PnkcrhGmNDS4IiSNRI72oh9eTX2xheZCjJVN1HIa
-         YWYxt3CXgaaGT4ToPgpQ28oznj4pB/7P5Gg0l+o+tEkwvIB0kIwLK5joplJRJBy+I6hw
-         Cw8A==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=NjCY41x3Dj6qzg1oqlz3OG3/OVNalgSd1DxBGh31w9o=;
+        b=uEs4PFsKHiLHrz6dJYU5L00WgHnq5bDJnTc4ZcWHfTszIb8XHqyyaBbymKstjHdH6S
+         ipebxnlb18LpZ1gUuvmkqwowf/oytZXItIXYijxHIDFHvRa42J71to+28k49y30CfTOC
+         DXLKGT52GcFiS3vB1dC5Z6RsRI4Gw3n5qdIP53htp6jmeLsdNEP0bXqv361VhoL6TA8P
+         n8F9wJ/QrxwCxUBzgczov9qzQxRZ9arFyOon/AXvkaBRsYnkVqamw049eTcDiAg4B1LG
+         NPkdjO9+Qzsb/Tn49JQl/tPtAwV33PKeExfdlEiRs8tDrVNPBkh1SLIc60de1ksHnWW9
+         YBSg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=b+288mJz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YczjPr3l;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=b+288mJz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YczjPr3l;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 877C3608CB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	arnd@arndb.de
-Cc: mark.rutland@arm.com,
-	ard.biesheuvel@linaro.org,
-	marc.zyngier@arm.com,
-	james.morse@arm.com,
-	kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org,
-	toshi.kani@hpe.com,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v1 2/4] ioremap: Invalidate TLB after huge mappings
-Date: Wed, 14 Mar 2018 14:18:23 +0530
-Message-Id: <1521017305-28518-3-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521017305-28518-1-git-send-email-cpandya@codeaurora.org>
+       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
+Date: Wed, 14 Mar 2018 10:48:23 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
+	ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+	james.morse@arm.com, kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+	tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org, toshi.kani@hpe.com
+Subject: Re: [PATCH v1 2/4] ioremap: Invalidate TLB after huge mappings
+Message-ID: <20180314104823.yumqomzmbu3cj442@lakrids.cambridge.arm.com>
 References: <1521017305-28518-1-git-send-email-cpandya@codeaurora.org>
+ <1521017305-28518-3-git-send-email-cpandya@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521017305-28518-3-git-send-email-cpandya@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594902270765090574?=
-X-GMAIL-MSGID: =?utf-8?q?1594902270765090574?=
+X-GMAIL-MSGID: =?utf-8?q?1594909795985979657?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If huge mappings are enabled, they can override
-valid intermediate previous mappings. Some MMU
-can speculatively pre-fetch these intermediate
-entries even after unmap. That's because unmap
-will clear only last level entries in page table
-keeping intermediate (pud/pmd) entries still valid.
+On Wed, Mar 14, 2018 at 02:18:23PM +0530, Chintan Pandya wrote:
+> If huge mappings are enabled, they can override
+> valid intermediate previous mappings. Some MMU
+> can speculatively pre-fetch these intermediate
+> entries even after unmap. That's because unmap
+> will clear only last level entries in page table
+> keeping intermediate (pud/pmd) entries still valid.
+> 
+> This can potentially lead to stale TLB entries
+> which needs invalidation after map.
+> 
+> Some more info: https://lkml.org/lkml/2017/12/23/3
+> 
+> There is one noted case for ARM64 where such stale
+> TLB entries causes 3rd level translation fault even
+> after correct (huge) mapping is available.
 
-This can potentially lead to stale TLB entries
-which needs invalidation after map.
+> Hence, invalidate once we override pmd/pud with huge
+> mappings.
 
-Some more info: https://lkml.org/lkml/2017/12/23/3
+>  static int __read_mostly ioremap_p4d_capable;
+> @@ -92,8 +93,10 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+>  		if (ioremap_pmd_enabled() &&
+>  		    ((next - addr) == PMD_SIZE) &&
+>  		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
+> -			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+> +			if (pmd_set_huge(pmd, phys_addr + addr, prot)) {
+> +				flush_tlb_pgtable(&init_mm, addr);
+>  				continue;
+> +			}
+>  		}
+>  
+>  		if (ioremap_pte_range(pmd, addr, next, phys_addr + addr, prot))
+> @@ -118,8 +121,10 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
+>  		if (ioremap_pud_enabled() &&
+>  		    ((next - addr) == PUD_SIZE) &&
+>  		    IS_ALIGNED(phys_addr + addr, PUD_SIZE)) {
+> -			if (pud_set_huge(pud, phys_addr + addr, prot))
+> +			if (pud_set_huge(pud, phys_addr + addr, prot)) {
+> +				flush_tlb_pgtable(&init_mm, addr);
+>  				continue;
+> +			}
+>  		}
 
-There is one noted case for ARM64 where such stale
-TLB entries causes 3rd level translation fault even
-after correct (huge) mapping is available.
+As has been noted in previous threads, the ARM architecture requires a
+Break-Before-Make sequence when changing an entry from a table to a
+block, as is the case here.
 
-See the case below (reproduced locally with tests),
+The means the necessary sequence is:
 
-[17505.330123] Unable to handle kernel paging request at virtual address ffffff801ae00000
-[17505.338100] pgd = ffffff800a761000
-[17505.341566] [ffffff801ae00000] *pgd=000000017e1be003, *pud=000000017e1be003, *pmd=00e8000098000f05
-[17505.350704] ------------[ cut here ]------------
-[17505.355362] Kernel BUG at ffffff8008238c30 [verbose debug info unavailable]
-[17505.362375] Internal error: Oops: 96000007 [#1] PREEMPT SMP
-[17505.367996] Modules linked in:
-[17505.371114] CPU: 6 PID: 488 Comm: chintan-ioremap Not tainted 4.9.81+ #160
-[17505.378039] Hardware name: Qualcomm Technologies, Inc. SDM845 v1 MTP (DT)
-[17505.384885] task: ffffffc0e3e61180 task.stack: ffffffc0e3e70000
-[17505.390868] PC is at io_remap_test+0x2e0/0x444
-[17505.395352] LR is at io_remap_test+0x2d0/0x444
-[17505.399835] pc : [<ffffff8008238c30>] lr : [<ffffff8008238c20>] pstate: 60c00005
-[17505.407282] sp : ffffffc0e3e73d70
-[17505.410624] x29: ffffffc0e3e73d70 x28: ffffff801ae00008
-[17505.416031] x27: ffffff801ae00010 x26: ffffff801ae00018
-[17505.421436] x25: ffffff801ae00020 x24: ffffff801adfffe0
-[17505.426840] x23: ffffff801adfffe8 x22: ffffff801adffff0
-[17505.432244] x21: ffffff801adffff8 x20: ffffff801ae00000
-[17505.437648] x19: 0000000000000005 x18: 0000000000000000
-[17505.443052] x17: 00000000b3409452 x16: 00000000923da470
-[17505.448456] x15: 0000000071c9763c x14: 00000000a15658fa
-[17505.453860] x13: 000000005cae96bf x12: 00000000e6d5c44a
-[17505.459264] x11: 0140000000000000 x10: ffffff80099a1000
-[17505.464668] x9 : 0000000000000000 x8 : ffffffc0e3e73d68
-[17505.470072] x7 : ffffff80099d3220 x6 : 0000000000000015
-[17505.475476] x5 : 00000c00004ad32a x4 : 000000000000000a
-[17505.480880] x3 : 000000000682aaab x2 : 0000001345c2ad2e
-[17505.486284] x1 : 7d78d61de56639ba x0 : 0000000000000001
+	1. Make the entry invalid
+	2. Invalidate relevant TLB entries
+	3. Write the new entry
 
-Hence, invalidate once we override pmd/pud with huge
-mappings.
+Whereas above, the sequence is
 
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
----
- lib/ioremap.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+	1. Write the new entry
+	2. invalidate relevant TLB entries
 
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index b808a39..c1e1341 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <asm/cacheflush.h>
- #include <asm/pgtable.h>
-+#include <asm-generic/tlb.h>
- 
- #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
- static int __read_mostly ioremap_p4d_capable;
-@@ -92,8 +93,10 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
--			if (pmd_set_huge(pmd, phys_addr + addr, prot))
-+			if (pmd_set_huge(pmd, phys_addr + addr, prot)) {
-+				flush_tlb_pgtable(&init_mm, addr);
- 				continue;
-+			}
- 		}
- 
- 		if (ioremap_pte_range(pmd, addr, next, phys_addr + addr, prot))
-@@ -118,8 +121,10 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE)) {
--			if (pud_set_huge(pud, phys_addr + addr, prot))
-+			if (pud_set_huge(pud, phys_addr + addr, prot)) {
-+				flush_tlb_pgtable(&init_mm, addr);
- 				continue;
-+			}
- 		}
- 
- 		if (ioremap_pmd_range(pud, addr, next, phys_addr + addr, prot))
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Which is insufficient, and will lead to a number of problems.
+
+Therefore, NAK to this patch.
+
+Please read up on the Break-Before-Make requirements in the ARM ARM.
+
+Thanks,
+Mark.
