@@ -1,54 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeCNOMr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 10:12:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54972 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751426AbeCNOMp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 10:12:45 -0400
-From: Colin King <colin.king@canonical.com>
-To: Kalle Valo <kvalo@codeaurora.org>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rsi: remove redundant duplicate assignment of buffer_size
-Date: Wed, 14 Mar 2018 14:12:39 +0000
-Message-Id: <20180314141239.8321-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1751914AbeCNON1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:13:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60786 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751405AbeCNON0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 10:13:26 -0400
+Date: Wed, 14 Mar 2018 15:13:23 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        marc.zyngier@arm.com, Daniel Vacek <neelx@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] Revert "mm/page_alloc: fix memmap_init_zone pageblock
+ alignment"
+Message-ID: <20180314141323.GD23100@dhcp22.suse.cz>
+References: <20180314134431.13241-1-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314134431.13241-1-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Does http://lkml.kernel.org/r/20180313224240.25295-1-neelx@redhat.com
+fix your issue? From the debugging info you provided it should because
+the patch prevents jumping backwards.
 
-Variable buffer_size is re-assigned the same value, this duplicated
-assignment is redundant and can be removed.
+On Wed 14-03-18 13:44:31, Ard Biesheuvel wrote:
+> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
+> 
+> It breaks the boot on my Socionext SynQuacer based system, because
+> it enters an infinite loop iterating over the pfns.
+> 
+> Adding the following debug output to memmap_init_zone()
+> 
+>   --- a/mm/page_alloc.c
+>   +++ b/mm/page_alloc.c
+>   @@ -5365,6 +5365,11 @@
+>    			 * the valid region but still depends on correct page
+>    			 * metadata.
+>    			 */
+>   +			pr_err("pfn:%lx oldnext:%lx newnext:%lx\n", pfn,
+>   +				memblock_next_valid_pfn(pfn, end_pfn) - 1,
+>   +				(memblock_next_valid_pfn(pfn, end_pfn) &
+>   +					~(pageblock_nr_pages-1)) - 1);
+>   +
+>    			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
+>    					~(pageblock_nr_pages-1)) - 1;
+>    #endif
+> 
+> results in
+> 
+>    Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+>    Linux version 4.16.0-rc5-00004-gfc6eabbbf8ef-dirty (ard@dogfood) ...
+>    Machine model: Socionext Developer Box
+>    earlycon: pl11 at MMIO 0x000000002a400000 (options '')
+>    bootconsole [pl11] enabled
+>    efi: Getting EFI parameters from FDT:
+>    efi: EFI v2.70 by Linaro
+>    efi:  SMBIOS 3.0=0xff580000  ESRT=0xf9948198  MEMATTR=0xf83b1a98  RNG=0xff7ac898
+>    random: fast init done
+>    efi: seeding entropy pool
+>    esrt: Reserving ESRT space from 0x00000000f9948198 to 0x00000000f99481d0.
+>    cma: Reserved 16 MiB at 0x00000000fd800000
+>    NUMA: No NUMA configuration found
+>    NUMA: Faking a node at [mem 0x0000000000000000-0x0000000fffffffff]
+>    NUMA: NODE_DATA [mem 0xffffd8d80-0xffffda87f]
+>    Zone ranges:
+>      DMA32    [mem 0x0000000080000000-0x00000000ffffffff]
+>      Normal   [mem 0x0000000100000000-0x0000000fffffffff]
+>    Movable zone start for each node
+>    Early memory node ranges
+>      node   0: [mem 0x0000000080000000-0x00000000febeffff]
+>      node   0: [mem 0x00000000febf0000-0x00000000fefcffff]
+>      node   0: [mem 0x00000000fefd0000-0x00000000ff43ffff]
+>      node   0: [mem 0x00000000ff440000-0x00000000ff7affff]
+>      node   0: [mem 0x00000000ff7b0000-0x00000000ffffffff]
+>      node   0: [mem 0x0000000880000000-0x0000000fffffffff]
+>    Initmem setup node 0 [mem 0x0000000080000000-0x0000000fffffffff]
+>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>    etc etc
+> 
+> and the boot never proceeds after this point.
+> 
+> So the logic is obviously flawed, and so it is best to revert this at
+> the current -rc stage (unless someone can fix the logic instead)
+> 
+> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
+> Cc: Daniel Vacek <neelx@redhat.com>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Paul Burton <paul.burton@imgtec.com>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  mm/page_alloc.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3d974cb2a1a1..cb416723538f 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5359,14 +5359,9 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>  			/*
+>  			 * Skip to the pfn preceding the next valid one (or
+>  			 * end_pfn), such that we hit a valid pfn (or end_pfn)
+> -			 * on our next iteration of the loop. Note that it needs
+> -			 * to be pageblock aligned even when the region itself
+> -			 * is not. move_freepages_block() can shift ahead of
+> -			 * the valid region but still depends on correct page
+> -			 * metadata.
+> +			 * on our next iteration of the loop.
+>  			 */
+> -			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
+> -					~(pageblock_nr_pages-1)) - 1;
+> +			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
+>  #endif
+>  			continue;
+>  		}
+> -- 
+> 2.15.1
+> 
 
-Cleans up clang warning:
-drivers/net/wireless/rsi/rsi_91x_usb.c:140:4: warning: Value stored
-to 'buffer_size' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/rsi/rsi_91x_usb.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index be8236f404b5..7b8bae313aa9 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -140,7 +140,6 @@ static int rsi_find_bulk_in_and_out_endpoints(struct usb_interface *interface,
- 			buffer_size = endpoint->wMaxPacketSize;
- 			dev->bulkout_endpoint_addr[bout_found] =
- 				endpoint->bEndpointAddress;
--			buffer_size = endpoint->wMaxPacketSize;
- 			dev->bulkout_size[bout_found] = buffer_size;
- 			bout_found++;
- 		}
 -- 
-2.15.1
+Michal Hocko
+SUSE Labs
