@@ -1,96 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeCNW6W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:58:22 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36598 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeCNW6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:58:20 -0400
-X-Google-Smtp-Source: AG47ELuh33C0Q5Gkk1v7DmAhqnBOIafnPUW09oZD20NBY464aHS0Ih7SLurV0fSN8/TuY8BCE7YTFA==
-Date: Wed, 14 Mar 2018 23:58:16 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Masaki Ota <masaki.ota@jp.alps.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3
- and v6 protocols
-Message-ID: <20180314225816.634w64kggycj67ec@pali>
-References: <20180312230915.26050-1-pali.rohar@gmail.com>
- <20180312231335.fnfxgenu22utr3z6@pali>
- <TYXPR01MB0719092EDE164BA6C576A1C7C7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="66ugg6jf3vaojm63"
-Content-Disposition: inline
-In-Reply-To: <TYXPR01MB0719092EDE164BA6C576A1C7C7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751961AbeCNW65 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:58:57 -0400
+Received: from vern.gendns.com ([206.190.152.46]:40546 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751440AbeCNW6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 18:58:55 -0400
+From: David Lechner <david@lechnology.com>
+To: dri-devel@lists.freedesktop.org
+Cc: David Lechner <david@lechnology.com>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tilcdc: Fix setting clock divider for omap-l138
+Date: Wed, 14 Mar 2018 17:58:45 -0500
+Message-Id: <1521068325-15077-1-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This fixes setting the clock divider on the TI OMAP-L138 LCDK board.
 
---66ugg6jf3vaojm63
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The clock drivers for OMAP-L138 are being covernted to the common clock
+framework. When this happens, clk_set_rate() will no longer return an
+error. However, on this SoC, the clock rate cannot actually be changed
+because the clock has to maintain a fixed ratio to the ARM clock. So
+after attempting to set the clock rate, we need to check to see if the
+new rate is actually close enough. If not, then follow the previous
+error path to adjust the divider in LCDC IP block to compensate for not
+being able to change the parent clock rate.
 
-Hi! Thank you for information.
+Tested working on a TI OMAP-L138 LCDK board.
 
-Your PS/2 Aux Port Control description seems to really matches. Just
-there is reverse order of bits. Bit 0 in description is highest,
-therefore matches BIT(7) macro.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bit 6 in description (BIT(1) in code) describes SP Extended Mode which
-alps.c enabled. And in that description is written:
-
-"If 1 SP is extended packet format (driver must set SP raw mode and GP
-absolute mode)."
-
-Do you have any idea what "SP raw mode" is? How to set it? For me it
-looks like it could be that extended mode of trackstick itself.
-
-"GP absolute mode" I guess is GlidePoint absolute mode, therefore enable
-6 byte absolute mode for touchpad.
-
-And for Bit 7 (BIT(0)) is written:
-
-This bit is used with the PS/2 Aux port to use the Pass-Thru mode ( see
-appendix A ). Do you have some information about this appendix A?
-
-On Wednesday 14 March 2018 10:21:43 Masaki Ota wrote:
-> Hi, Pali,
->=20
-> I just picked up the spec which relates with trackstic.
->=20
-> Best Regards,
-> Masaki Ota
-> -----Original Message-----
-> From: Pali Roh=C3=A1r [mailto:pali.rohar@gmail.com]=20
-> Sent: Tuesday, March 13, 2018 8:14 AM
-> To: =E5=A4=AA=E7=94=B0 =E7=9C=9F=E5=96=9C Masaki Ota <masaki.ota@jp.alps.=
-com>; Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization fo=
-r v3 and v6 protocols
->=20
-> Masaki, if you have access to the internal ALPS v3 / Rushmore documentati=
-on, I would like to have a review of this patch or confirmation of those in=
-formation :-)
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---66ugg6jf3vaojm63
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWqmpAgAKCRCL8Mk9A+RD
-UjwmAKCIxUQ7IDM0TLHJg8NQVwGQcMskTwCeJRtJUhh9kMeZDzwrQeq0ALRVYH4=
-=37VS
------END PGP SIGNATURE-----
-
---66ugg6jf3vaojm63--
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+index 8bf6bb9..6931777 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+@@ -224,7 +224,7 @@ static void tilcdc_crtc_set_clk(struct drm_crtc *crtc)
+ 
+ 	ret = clk_set_rate(priv->clk, req_rate * clkdiv);
+ 	clk_rate = clk_get_rate(priv->clk);
+-	if (ret < 0) {
++	if (ret < 0 || tilcdc_pclk_diff(req_rate, clk_rate) > 5) {
+ 		/*
+ 		 * If we fail to set the clock rate (some architectures don't
+ 		 * use the common clock framework yet and may not implement
+-- 
+2.7.4
