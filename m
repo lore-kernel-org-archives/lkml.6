@@ -1,71 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751870AbeCNOu6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 10:50:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54828 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbeCNOu5 (ORCPT
+        id S1751997AbeCNOvH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 10:51:07 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58576 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeCNOvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 10:50:57 -0400
-Date: Wed, 14 Mar 2018 07:50:55 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rdunlap@infradead.org,
-        sfr@canb.auug.org.au
-Subject: Re: + headers-untangle-kmemleakh-from-mmh-fix.patch added to -mm
- tree
-Message-Id: <20180314075055.353f2d975defb2af34f65d2b@linux-foundation.org>
-In-Reply-To: <20180314121704.GA23036@dhcp22.suse.cz>
-References: <20180306234907.8-AwjmNNh%akpm@linux-foundation.org>
-        <20180314121704.GA23036@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 14 Mar 2018 10:51:05 -0400
+Subject: Re: [PATCH 10/16] mm: remove obsolete alloc_remap()
+To: Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Petr Tesarik <ptesarik@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org
+References: <20180314143529.1456168-1-arnd@arndb.de>
+ <20180314143958.1548568-1-arnd@arndb.de>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Message-ID: <83b23320-e9de-a0cf-144c-1b60b9b7002a@oracle.com>
+Date: Wed, 14 Mar 2018 10:50:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180314143958.1548568-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803140168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018 13:17:04 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+Hi Arnd,
 
-> > --- a/security/keys/big_key.c~headers-untangle-kmemleakh-from-mmh-fix
-> > +++ a/security/keys/big_key.c
-> > @@ -18,6 +18,7 @@
-> >  #include <linux/err.h>
-> >  #include <linux/scatterlist.h>
-> >  #include <linux/random.h>
-> > +#include <linux/vmalloc.h>
-> >  #include <keys/user-type.h>
-> >  #include <keys/big_key-type.h>
-> >  #include <crypto/aead.h>
+I like this cleanup, but arch/tile (which is afaik Orphaned but still in the gate) has:
+
+HAVE_ARCH_ALLOC_REMAP set to yes:
+
+arch/tile/Kconfig
+ config HAVE_ARCH_ALLOC_REMAP
+         def_bool y
+
+Define in arch/tile/kernel/setup.c:
+void *__init alloc_remap(int nid, unsigned long size)
+{
+        int pages = node_end_pfn[nid] - node_start_pfn[nid];
+        void *map = pfn_to_kaddr(node_memmap_pfn[nid]);
+        BUG_ON(size != pages * sizeof(struct page));
+        memset(map, 0, size);
+        return map; 
+}
+
+Thank you,
+Pavel
+
+On 03/14/2018 10:39 AM, Arnd Bergmann wrote:
+> Tile was the only remaining architecture to implement alloc_remap(),
+> and since that is being removed, there is no point in keeping this
+> function.
 > 
-> My build test battery says we need also this one, m32r complains
-> otherwise for allmodconfig.
+> Removing all callers simplifies the mem_map handling.
 > 
-> >From 5c3f7a041df707417532dd64b1d71fc29b24c0fe Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Wed, 14 Mar 2018 13:15:49 +0100
-> Subject: [PATCH] headers-untangle-kmemleakh-from-mmh-fix-fix
-> 
-> m32r allmodconfig complains with
-> security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
->   vfree(data);
->   ^
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  security/integrity/digsig.c | 1 +
->  1 file changed, 1 insertion(+)
+>  include/linux/bootmem.h |  9 ---------
+>  mm/page_alloc.c         |  5 +----
+>  mm/sparse.c             | 15 ---------------
+>  3 files changed, 1 insertion(+), 28 deletions(-)
 > 
-> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> index 6f9e4ce568cd..9bb0a7f2863e 100644
-> --- a/security/integrity/digsig.c
-> +++ b/security/integrity/digsig.c
-> @@ -18,6 +18,7 @@
->  #include <linux/cred.h>
->  #include <linux/key-type.h>
->  #include <linux/digsig.h>
-> +#include <linux/vmalloc.h>
->  #include <crypto/public_key.h>
->  #include <keys/system_keyring.h>
-
-hm, current linux-next.patch already has this change.  What happened here?
+> diff --git a/include/linux/bootmem.h b/include/linux/bootmem.h
+> index a53063e9d7d8..7942a96b1a9d 100644
+> --- a/include/linux/bootmem.h
+> +++ b/include/linux/bootmem.h
+> @@ -364,15 +364,6 @@ static inline void __init memblock_free_late(
+>  }
+>  #endif /* defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM) */
+>  
+> -#ifdef CONFIG_HAVE_ARCH_ALLOC_REMAP
+> -extern void *alloc_remap(int nid, unsigned long size);
+> -#else
+> -static inline void *alloc_remap(int nid, unsigned long size)
+> -{
+> -	return NULL;
+> -}
+> -#endif /* CONFIG_HAVE_ARCH_ALLOC_REMAP */
+> -
+>  extern void *alloc_large_system_hash(const char *tablename,
+>  				     unsigned long bucketsize,
+>  				     unsigned long numentries,
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cb416723538f..484e21062228 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -6199,10 +6199,7 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
+>  		end = pgdat_end_pfn(pgdat);
+>  		end = ALIGN(end, MAX_ORDER_NR_PAGES);
+>  		size =  (end - start) * sizeof(struct page);
+> -		map = alloc_remap(pgdat->node_id, size);
+> -		if (!map)
+> -			map = memblock_virt_alloc_node_nopanic(size,
+> -							       pgdat->node_id);
+> +		map = memblock_virt_alloc_node_nopanic(size, pgdat->node_id);
+>  		pgdat->node_mem_map = map + offset;
+>  	}
+>  	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 7af5e7a92528..65bb52599f90 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -427,10 +427,6 @@ struct page __init *sparse_mem_map_populate(unsigned long pnum, int nid,
+>  	struct page *map;
+>  	unsigned long size;
+>  
+> -	map = alloc_remap(nid, sizeof(struct page) * PAGES_PER_SECTION);
+> -	if (map)
+> -		return map;
+> -
+>  	size = PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
+>  	map = memblock_virt_alloc_try_nid(size,
+>  					  PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+> @@ -446,17 +442,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  	unsigned long pnum;
+>  	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
+>  
+> -	map = alloc_remap(nodeid, size * map_count);
+> -	if (map) {
+> -		for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
+> -			if (!present_section_nr(pnum))
+> -				continue;
+> -			map_map[pnum] = map;
+> -			map += size;
+> -		}
+> -		return;
+> -	}
+> -
+>  	size = PAGE_ALIGN(size);
+>  	map = memblock_virt_alloc_try_nid_raw(size * map_count,
+>  					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+> 
