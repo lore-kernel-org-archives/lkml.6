@@ -1,68 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeCNPJh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:09:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33064 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeCNPJg (ORCPT
+        id S1752173AbeCNPJm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:09:42 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36241 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752084AbeCNPJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:09:36 -0400
-X-Google-Smtp-Source: AG47ELuClu60ZudU9Q2sXu80KvGD0KQrLEkWNYZeMWGct0DN0Q+7FnjoMQHoC5JEM2rF5RFvSRdU2Q==
+        Wed, 14 Mar 2018 11:09:37 -0400
+X-Google-Smtp-Source: AG47ELsNF81izV3oq0NHxXncooWwltn/xduK7RH9BR3GjrSdcP981JbelH1w/Gr9FYQLKKPSF52cEQ==
 From: Michal Simek <michal.simek@xilinx.com>
 To: linux-kernel@vger.kernel.org, monstr@monstr.eu
 Cc: Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/2] microblaze: remove unused alloc_maybe_bootmem
-Date: Wed, 14 Mar 2018 16:09:31 +0100
-Message-Id: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 2/2] microblaze: switch to NO_BOOTMEM
+Date: Wed, 14 Mar 2018 16:09:32 +0100
+Message-Id: <2c20c2cbe89af51b7e59abbcda71e87fd1959bc5.1521040166.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
+References: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
+In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
+References: <77785f26fa882362b5e72e71845bb607f2cec757.1521040166.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rob Herring <robh@kernel.org>
 
-alloc_maybe_bootmem is unused, so remove it.
+Microblaze doesn't set CONFIG_NO_BOOTMEM and so memblock_virt_alloc()
+doesn't work for CONFIG_HAVE_MEMBLOCK && !CONFIG_NO_BOOTMEM.
+
+Similar change was already done by others architectures
+"ARM: mm: Remove bootmem code and switch to NO_BOOTMEM"
+(sha1: 84f452b1e8fc73ac0e31254c66e3e2260ce5263d)
+or
+"openrisc: Consolidate setup to use memblock instead of bootmem"
+(sha1: 266c7fad157265bb54d17db1c9545f2aaa488643)
+or
+"parisc: Drop bootmem and switch to memblock"
+(sha1: 4fe9e1d957e45ad8eba9885ee860a0e93d13a7c7)
+or
+"powerpc: Remove bootmem allocator"
+(sha1: 10239733ee8617bac3f1c1769af43a88ed979324)
+or
+"s390/mm: Convert bootmem to memblock"
+(sha1: 50be634507284eea38df78154d22615d21200b42)
+or
+"sparc64: Convert over to NO_BOOTMEM."
+(sha1: 625d693e9784f988371e69c2b41a2172c0be6c11)
+or
+"xtensa: drop sysmem and switch to memblock"
+(sha1: 0e46c1115f5816949220d62dd3ff04aa68e7ac6b)
+
+Issue was introduced by:
+"of/fdt: use memblock_virt_alloc for early alloc"
+(sha1: 0fa1c579349fdd90173381712ad78aa99c09d38b)
 
 Signed-off-by: Rob Herring <robh@kernel.org>
+Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+Tested-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
-Changes in v2: None
+Changes in v2:
+- Forget to remove map_size which is unused now.
 
- arch/microblaze/include/asm/setup.h | 1 -
- arch/microblaze/mm/init.c           | 8 --------
- 2 files changed, 9 deletions(-)
+ arch/microblaze/Kconfig   |  1 +
+ arch/microblaze/mm/init.c | 56 +++++------------------------------------------
+ 2 files changed, 7 insertions(+), 50 deletions(-)
 
-diff --git a/arch/microblaze/include/asm/setup.h b/arch/microblaze/include/asm/setup.h
-index be84a4d3917f..7c968c1d1729 100644
---- a/arch/microblaze/include/asm/setup.h
-+++ b/arch/microblaze/include/asm/setup.h
-@@ -44,7 +44,6 @@ void machine_early_init(const char *cmdline, unsigned int ram,
- void machine_halt(void);
- void machine_power_off(void);
- 
--extern void *alloc_maybe_bootmem(size_t size, gfp_t mask);
- extern void *zalloc_maybe_bootmem(size_t size, gfp_t mask);
- 
- # endif /* __ASSEMBLY__ */
+diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
+index 4f798aa671dd..3817a3e2146c 100644
+--- a/arch/microblaze/Kconfig
++++ b/arch/microblaze/Kconfig
+@@ -24,6 +24,7 @@ config MICROBLAZE
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_TRACER
++	select NO_BOOTMEM
+ 	select HAVE_MEMBLOCK
+ 	select HAVE_MEMBLOCK_NODE_MAP
+ 	select HAVE_OPROFILE
 diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index 434639f9a3a6..5bc9c7fbb541 100644
+index 5bc9c7fbb541..df6de7ccdc2e 100644
 --- a/arch/microblaze/mm/init.c
 +++ b/arch/microblaze/mm/init.c
-@@ -414,14 +414,6 @@ void __init *early_get_page(void)
- 
+@@ -32,9 +32,6 @@
+ #ifndef CONFIG_MMU
+ unsigned int __page_offset;
+ EXPORT_SYMBOL(__page_offset);
+-
+-#else
+-static int init_bootmem_done;
  #endif /* CONFIG_MMU */
  
--void * __ref alloc_maybe_bootmem(size_t size, gfp_t mask)
--{
--	if (mem_init_done)
--		return kmalloc(size, mask);
--	else
--		return alloc_bootmem(size);
--}
--
- void * __ref zalloc_maybe_bootmem(size_t size, gfp_t mask)
+ char *klimit = _end;
+@@ -117,7 +114,6 @@ static void __init paging_init(void)
+ 
+ void __init setup_memory(void)
  {
- 	void *p;
+-	unsigned long map_size;
+ 	struct memblock_region *reg;
+ 
+ #ifndef CONFIG_MMU
+@@ -174,17 +170,6 @@ void __init setup_memory(void)
+ 	pr_info("%s: max_low_pfn: %#lx\n", __func__, max_low_pfn);
+ 	pr_info("%s: max_pfn: %#lx\n", __func__, max_pfn);
+ 
+-	/*
+-	 * Find an area to use for the bootmem bitmap.
+-	 * We look for the first area which is at least
+-	 * 128kB in length (128kB is enough for a bitmap
+-	 * for 4GB of memory, using 4kB pages), plus 1 page
+-	 * (in case the address isn't page-aligned).
+-	 */
+-	map_size = init_bootmem_node(NODE_DATA(0),
+-		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
+-	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
+-
+ 	/* Add active regions with valid PFNs */
+ 	for_each_memblock(memory, reg) {
+ 		unsigned long start_pfn, end_pfn;
+@@ -196,32 +181,9 @@ void __init setup_memory(void)
+ 				  &memblock.memory, 0);
+ 	}
+ 
+-	/* free bootmem is whole main memory */
+-	free_bootmem_with_active_regions(0, max_low_pfn);
+-
+-	/* reserve allocate blocks */
+-	for_each_memblock(reserved, reg) {
+-		unsigned long top = reg->base + reg->size - 1;
+-
+-		pr_debug("reserved - 0x%08x-0x%08x, %lx, %lx\n",
+-			 (u32) reg->base, (u32) reg->size, top,
+-						memory_start + lowmem_size - 1);
+-
+-		if (top <= (memory_start + lowmem_size - 1)) {
+-			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+-		} else if (reg->base < (memory_start + lowmem_size - 1)) {
+-			unsigned long trunc_size = memory_start + lowmem_size -
+-								reg->base;
+-			reserve_bootmem(reg->base, trunc_size, BOOTMEM_DEFAULT);
+-		}
+-	}
+-
+ 	/* XXX need to clip this if using highmem? */
+ 	sparse_memory_present_with_active_regions(0);
+ 
+-#ifdef CONFIG_MMU
+-	init_bootmem_done = 1;
+-#endif
+ 	paging_init();
+ }
+ 
+@@ -398,18 +360,12 @@ asmlinkage void __init mmu_init(void)
+ /* This is only called until mem_init is done. */
+ void __init *early_get_page(void)
+ {
+-	void *p;
+-	if (init_bootmem_done) {
+-		p = alloc_bootmem_pages(PAGE_SIZE);
+-	} else {
+-		/*
+-		 * Mem start + kernel_tlb -> here is limit
+-		 * because of mem mapping from head.S
+-		 */
+-		p = __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
+-					memory_start + kernel_tlb));
+-	}
+-	return p;
++	/*
++	 * Mem start + kernel_tlb -> here is limit
++	 * because of mem mapping from head.S
++	 */
++	return __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
++				memory_start + kernel_tlb));
+ }
+ 
+ #endif /* CONFIG_MMU */
 -- 
 1.9.1
