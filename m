@@ -1,103 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeCNPiN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:38:13 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:49897 "EHLO
+        id S1752140AbeCNPim (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:38:42 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:34337 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeCNPiK (ORCPT
+        with ESMTP id S1751366AbeCNPij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:38:10 -0400
+        Wed, 14 Mar 2018 11:38:39 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 06/47] net: smsc: remove m32r specific smc91x configuration
-Date: Wed, 14 Mar 2018 16:35:19 +0100
-Message-Id: <20180314153603.3127932-7-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Shaohua Li <shli@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-raid@vger.kernel.org
+Subject: [PATCH 07/47] raid: remove tile specific raid6 implementation
+Date: Wed, 14 Mar 2018 16:35:20 +0100
+Message-Id: <20180314153603.3127932-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:DW46V2n8dP+FxkKlvkRJwW6+l3EveZFk+zpTozhYtVghiu1ic4l
- DHtyD5FeQmZzUt7xb1PTFWbLnkuv4br7qNb/t0+WSfaRpQ65XrqCfQd41C+HsxtyBkNezY9
- rQtyGqXAoPhZ5cMBao8jROEDMtSjOR9GifF+qsgHdOvaE2QERy+KolM0O7WMQuFNuFdICkz
- evYpR349bIjKXo0ZCG3CQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mmBnsRyNXqU=:gM5d2KU9ocSVfkAHyxzpDX
- jTijsBhpN1DrpDaQzl5UR+0RlVNnQ457md1r55tTArrgcoj3wOFfaSAm1slWD/tZF6byE+Wtl
- 3KtrfqOxg3eeXczpYma9O4rNTHu8FHS3WvhvvUkZyWUMBgi/SqOQoFSU9hy+Rs1ecJOsHF1kP
- EOmPlZPST0aVe4koz9MYNvxZ6pqFGty3C3DiBTdAwy1M0UJxy7pyBedQwxZ+WXD6kx+eQTWaQ
- TRvlpc+/UVzlp66l0M9Alq6uO0H0Y+oHEKSyl83Jss2w7cNvP+p6XbSl8dyWqVXqixtzhrhZD
- r2Jz1LdHunrvQl2ByRZrOMOJXQxarRtiT+htrtkf2HcuDFs8geb04UWex1XWq4oqQMHvLRrc9
- Vf8gCyIPsXkdJqKLG2xMtoQGkCKRg++1A7nCvZmmErAgXi8kOvR67PqdgteW4F+vjlxwIjKk7
- owvWiRwtrLz6JncYRq+bQbhjSTx82c1Lmh0eTAoox5NmGWLc25w4tG8vd703715wqvDqPt6NY
- nc9DJiHkwmNDUoi6mFPxavfGadiz/LqVuk/A2oB2VG4krMpFkE8tVIYHFiV46GAWg9+GSWhIz
- pGhAnfXJAnGYIC9ONb+5othaKWN0oeoVVqFsFavjXaGkflY1g1GqDm2Zv2qvR4B5Pf2Gg0uRs
- cqrwpKhB5fCSnBzIlZa5D8Z/adZV8bvRLqnVGvxeeCfFCinO6CmAsgBYd//Qr+sD1qHvcA0kx
- unlQKVrTfsnWU98Lq9OKJffZuqDO0nkdqTaWBg==
+X-Provags-ID: V03:K0:drkzofKeJ4x6meiDQsb+7PL0lNA5wierTu2QulNTFi2M487GN8f
+ rQpXJlQY0KLGKQ4ghU10WoUeQnBenCuquYLszFA1rcaHrJLRzPLAt9DhpRUpHRbVJ00jp8m
+ hRr+45tjp6M8h5FL1f6PSpK4d8Fmyd6P3dBrNbdVmCPllH/+kXT4jje/gkCX3txoqOpPlnB
+ XaNssmMBYBEkqo8954VsA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FQXA9P5HT9k=:Dn5zeEkiuhdInc6Wok4kCZ
+ MMRpb5cGaeEVHAzQV9ZuV/JKV6mGp5UFU2YHIfgXwYDAYdlQrudss3fiA3+9AfblrKZabskcm
+ FUQgxUcy2nv+Y3AHQT4hW284HktB3veJzBXY0Ft8lax0N3wFjw+Cs2HNc2ribMlqOh+XMzMVZ
+ hJOsDpgu+PbkyUK15wveEjYz8whZcuZRswobVkqa/ZG05jwz2k4tm8+QAXT9gU0jTq5mDPmF6
+ WVQL6FJCWLzoxdAFxWlc9TwIeNOsDRBNEb7zY6pngVyYhBbuUVX1kqtJJ5XPPPaL3mlriXHht
+ irHkNrvOJ6ULeMmZGxJ9r7YBPLZyaOP1E5cmvLE1x7LzyErNchZqNwRl8sQseFMR5ZcelL0sf
+ Nbed6bTJcmDEDuCfqBHRqdg43TCK3xKtwsIf4oEmeWSy50XU2KEWkdy3Vv9tzzWOmTNdaGsNc
+ +7lSRgKycIYxuguv5X8XBl5ZYY29EJ52jElEstfvjTJw7RWG0LXF2NJ5J5NrOiw3ULBlW9lRQ
+ G0WaRsKqeCHauzysJdRk+pNnDHjhupE0+I3g6lBR9OzXIiFKe9B6F4df4CzxdZvRq3xeYwNLu
+ 11fMBNX6MmuznO+1DlEoaJ4E2A6b2VE+4AdWdWke+BzWmXBWKqZhicYZF1f50MNA4QmeEGrNd
+ hRaYzv9vtF7BdBKiDuZB104VNyTOpoNdFBqKQG6JwYHSbxPRE9DYORdh+hNaaGi7ZZMO0B8Ip
+ HphcIrko3lY75llh30cZc4Cn4aD5G5NC5ryeoA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The m32r architecture is getting removed, so this part can be
-cleaned up as well.
+The Tile architecture is getting removed, so we no longer need this either.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/smsc/Kconfig  |  4 ++--
- drivers/net/ethernet/smsc/smc91x.h | 26 --------------------------
- 2 files changed, 2 insertions(+), 28 deletions(-)
+ include/linux/raid/pq.h |  1 -
+ lib/raid6/Makefile      |  6 ----
+ lib/raid6/algos.c       |  3 --
+ lib/raid6/test/Makefile |  7 ----
+ lib/raid6/tilegx.uc     | 87 -------------------------------------------------
+ 5 files changed, 104 deletions(-)
+ delete mode 100644 lib/raid6/tilegx.uc
 
-diff --git a/drivers/net/ethernet/smsc/Kconfig b/drivers/net/ethernet/smsc/Kconfig
-index 4c2f612e4414..1c2b6663f7ce 100644
---- a/drivers/net/ethernet/smsc/Kconfig
-+++ b/drivers/net/ethernet/smsc/Kconfig
-@@ -37,8 +37,8 @@ config SMC91X
- 	select CRC32
- 	select MII
- 	depends on !OF || GPIOLIB
--	depends on ARM || ARM64 || ATARI_ETHERNAT || BLACKFIN || COLDFIRE || \
--		   M32R || MIPS || MN10300 || NIOS2 || SUPERH || XTENSA || H8300
-+	depends on ARM || ARM64 || ATARI_ETHERNAT || COLDFIRE || \
-+		   MIPS || NIOS2 || SUPERH || XTENSA || H8300
- 	---help---
- 	  This is a driver for SMC's 91x series of Ethernet chipsets,
- 	  including the SMC91C94 and the SMC91C111. Say Y if you want it
-diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
-index 08b17adf0a65..b337ee97e0c0 100644
---- a/drivers/net/ethernet/smsc/smc91x.h
-+++ b/drivers/net/ethernet/smsc/smc91x.h
-@@ -144,32 +144,6 @@ static inline void _SMC_outw_align4(u16 val, void __iomem *ioaddr, int reg,
+diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
+index 583cdd3d49ca..a366cc314479 100644
+--- a/include/linux/raid/pq.h
++++ b/include/linux/raid/pq.h
+@@ -105,7 +105,6 @@ extern const struct raid6_calls raid6_avx2x4;
+ extern const struct raid6_calls raid6_avx512x1;
+ extern const struct raid6_calls raid6_avx512x2;
+ extern const struct raid6_calls raid6_avx512x4;
+-extern const struct raid6_calls raid6_tilegx8;
+ extern const struct raid6_calls raid6_s390vx8;
  
- #define SMC_IRQ_FLAGS		(0)
+ struct raid6_recov_calls {
+diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
+index 4add700ddfe3..44d6b46df051 100644
+--- a/lib/raid6/Makefile
++++ b/lib/raid6/Makefile
+@@ -7,7 +7,6 @@ raid6_pq-y	+= algos.o recov.o tables.o int1.o int2.o int4.o \
+ raid6_pq-$(CONFIG_X86) += recov_ssse3.o recov_avx2.o mmx.o sse1.o sse2.o avx2.o avx512.o recov_avx512.o
+ raid6_pq-$(CONFIG_ALTIVEC) += altivec1.o altivec2.o altivec4.o altivec8.o
+ raid6_pq-$(CONFIG_KERNEL_MODE_NEON) += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+-raid6_pq-$(CONFIG_TILEGX) += tilegx8.o
+ raid6_pq-$(CONFIG_S390) += s390vx8.o recov_s390xc.o
  
--#elif   defined(CONFIG_M32R)
--
--#define SMC_CAN_USE_8BIT	0
--#define SMC_CAN_USE_16BIT	1
--#define SMC_CAN_USE_32BIT	0
--
--#define SMC_inb(a, r)		inb(((u32)a) + (r))
--#define SMC_inw(a, r)		inw(((u32)a) + (r))
--#define SMC_outb(v, a, r)	outb(v, ((u32)a) + (r))
--#define SMC_outw(lp, v, a, r)	outw(v, ((u32)a) + (r))
--#define SMC_insw(a, r, p, l)	insw(((u32)a) + (r), p, l)
--#define SMC_outsw(a, r, p, l)	outsw(((u32)a) + (r), p, l)
--
--#define SMC_IRQ_FLAGS		(0)
--
--#define RPC_LSA_DEFAULT		RPC_LED_TX_RX
--#define RPC_LSB_DEFAULT		RPC_LED_100_10
--
--#elif defined(CONFIG_MN10300)
--
--/*
-- * MN10300/AM33 configuration
-- */
--
--#include <unit/smc91111.h>
--
- #elif defined(CONFIG_ATARI)
+ hostprogs-y	+= mktables
+@@ -115,11 +114,6 @@ $(obj)/neon8.c:   UNROLL := 8
+ $(obj)/neon8.c:   $(src)/neon.uc $(src)/unroll.awk FORCE
+ 	$(call if_changed,unroll)
  
- #define SMC_CAN_USE_8BIT        1
+-targets += tilegx8.c
+-$(obj)/tilegx8.c:   UNROLL := 8
+-$(obj)/tilegx8.c:   $(src)/tilegx.uc $(src)/unroll.awk FORCE
+-	$(call if_changed,unroll)
+-
+ targets += s390vx8.c
+ $(obj)/s390vx8.c:   UNROLL := 8
+ $(obj)/s390vx8.c:   $(src)/s390vx.uc $(src)/unroll.awk FORCE
+diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
+index 476994723258..c65aa80d67ed 100644
+--- a/lib/raid6/algos.c
++++ b/lib/raid6/algos.c
+@@ -75,9 +75,6 @@ const struct raid6_calls * const raid6_algos[] = {
+ 	&raid6_altivec4,
+ 	&raid6_altivec8,
+ #endif
+-#if defined(CONFIG_TILEGX)
+-	&raid6_tilegx8,
+-#endif
+ #if defined(CONFIG_S390)
+ 	&raid6_s390vx8,
+ #endif
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index be1010bdc435..fabc477b1417 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -51,9 +51,6 @@ else
+                 OBJS += altivec1.o altivec2.o altivec4.o altivec8.o
+         endif
+ endif
+-ifeq ($(ARCH),tilegx)
+-OBJS += tilegx8.o
+-endif
+ 
+ .c.o:
+ 	$(CC) $(CFLAGS) -c -o $@ $<
+@@ -116,15 +113,11 @@ int16.c: int.uc ../unroll.awk
+ int32.c: int.uc ../unroll.awk
+ 	$(AWK) ../unroll.awk -vN=32 < int.uc > $@
+ 
+-tilegx8.c: tilegx.uc ../unroll.awk
+-	$(AWK) ../unroll.awk -vN=8 < tilegx.uc > $@
+-
+ tables.c: mktables
+ 	./mktables > tables.c
+ 
+ clean:
+ 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.c raid6test
+-	rm -f tilegx*.c
+ 
+ spotless: clean
+ 	rm -f *~
+diff --git a/lib/raid6/tilegx.uc b/lib/raid6/tilegx.uc
+deleted file mode 100644
+index 2dd291a11264..000000000000
 -- 
 2.9.0
