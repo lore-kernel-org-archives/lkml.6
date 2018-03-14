@@ -1,80 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751679AbeCNJ7S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:59:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57002 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751413AbeCNJ7R (ORCPT
+        id S1751660AbeCNKCX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:02:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36032 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeCNKCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:59:17 -0400
-Subject: Re: [linux-next][bisected c7c133f3][gcc 4.8.5] build fail with
- error: first argument to
- =?UTF-8?Q?=E2=80=98=5F=5Fbuiltin=5Fchoose=5Fexpr=E2=80=99?= not a constant
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, mpe <mpe@ellerman.id.au>,
-        sachinp <sachinp@linux.vnet.ibm.com>
-Date: Wed, 14 Mar 2018 15:29:06 +0530
-In-Reply-To: <20180314193957.5f835d33@canb.auug.org.au>
-References: <1521016194.31953.9.camel@abdul.in.ibm.com>
-         <20180314193957.5f835d33@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031409-0056-0000-0000-0000042D5008
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008671; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01002856; UDB=6.00510322; IPR=6.00782186;
- MB=3.00020027; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 09:59:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031409-0057-0000-0000-0000086F50A0
-Message-Id: <1521021546.31953.12.camel@abdul.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140117
+        Wed, 14 Mar 2018 06:02:21 -0400
+X-Google-Smtp-Source: AG47ELtqZX/OLPuf4yiHd5qauAmhg6Cfcg+V3DP8mGwigZq1qLjBi/XrMOyWPRPPSfQsmLjLwqkj6w==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: JC Kuo <jckuo@nvidia.com>,
+        Rohith Seelaboyina <rseelaboyina@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: tegra: xusb: Uncomment register write
+Date: Wed, 14 Mar 2018 11:02:18 +0100
+Message-Id: <20180314100218.5957-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 19:39 +1100, Stephen Rothwell wrote:
-> Hi Abdul,
-> 
-> On Wed, 14 Mar 2018 13:59:54 +0530 Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
-> >
-> > Today's next kernel fails to build with gcc 4.8.5 on powerpc machine.
-> 
-> Thanks for the report.  Just for the future, please include  the
-> next-XXXXXXXX tag when making reports about linux-next.
+From: Thierry Reding <treding@nvidia.com>
 
-Sure, I will. next-20180313 is the bad tag
-> 
-> > ./include/linux/jiffies.h: In function ‘jiffies_delta_to_clock_t’:
-> > ./include/linux/kernel.h:855:2: error: first argument to ‘__builtin_choose_expr’ not a constant
-> >   __builtin_choose_expr(__builtin_constant_p(x) &&  \
-> >   ^
-> > ./include/linux/kernel.h:867:19: note: in expansion of macro ‘__max’
-> >  #define max(x, y) __max(typeof(x), typeof(y), x, y)
-> > 
-> > Machine Type: Power8 Baremetal
-> > gcc: 4.8.5
-> > 
-> > 
-> > Builds fine when below patch is reverted
-> > c7c133f3 kernel.h: skip single-eval logic on literals in min()/max()
-> 
-> Those patches have been removed from today's linux-next (next-20180314).
+The reason why this was originally commented out is no longer clear. The
+UPHY driver for SATA works fine with or without this change. The reset
+value of the XDIGCLK_EN bit is 0, so unless programmed by the bootloader
+this shouldn't make a difference anyway.
 
+Define a macro for this bit and uncomment the code. This also fixes a
+coverity issue brought to my attention by Rohith because not only is the
+XDIGCLK_EN field modification commented out, but also the register write
+which causes none of the earlier modifications of the register value to
+be written to the register and the value being overwritten.
+
+Reported-by: Rohith Seelaboyina <rseelaboyina@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/phy/tegra/xusb-tegra210.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 9d0689ebd28c..05bee32a3a4d 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -169,6 +169,7 @@
+ #define XUSB_PADCTL_UPHY_PLL_CTL2_CAL_EN (1 << 0)
+ 
+ #define XUSB_PADCTL_UPHY_PLL_P0_CTL4 0x36c
++#define XUSB_PADCTL_UPHY_PLL_CTL4_XDIGCLK_EN (1 << 19)
+ #define XUSB_PADCTL_UPHY_PLL_CTL4_TXCLKREF_EN (1 << 15)
+ #define XUSB_PADCTL_UPHY_PLL_CTL4_TXCLKREF_SEL_SHIFT 12
+ #define XUSB_PADCTL_UPHY_PLL_CTL4_TXCLKREF_SEL_MASK 0x3
+@@ -537,11 +538,8 @@ static int tegra210_sata_uphy_enable(struct tegra_xusb_padctl *padctl, bool usb)
+ 		value |= (XUSB_PADCTL_UPHY_PLL_CTL4_TXCLKREF_SEL_SATA_VAL <<
+ 			  XUSB_PADCTL_UPHY_PLL_CTL4_TXCLKREF_SEL_SHIFT);
+ 
+-	/* XXX PLL0_XDIGCLK_EN */
+-	/*
+-	value &= ~(1 << 19);
++	value &= ~XUSB_PADCTL_UPHY_PLL_CTL4_XDIGCLK_EN;
+ 	padctl_writel(padctl, value, XUSB_PADCTL_UPHY_PLL_S0_CTL4);
+-	*/
+ 
+ 	value = padctl_readl(padctl, XUSB_PADCTL_UPHY_PLL_S0_CTL1);
+ 	value &= ~((XUSB_PADCTL_UPHY_PLL_CTL1_FREQ_MDIV_MASK <<
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+2.16.2
