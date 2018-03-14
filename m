@@ -1,66 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeCNT2U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:28:20 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:39808 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751781AbeCNT2F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:28:05 -0400
-X-Google-Smtp-Source: AG47ELueHRng6fS8ozgjrUd9BqpAmBOe4P45OOdH/oepTLIVsfZzkTUBbT8JiPukFFXpawr/OdjzEpotQlHN9Pcc3yc=
+        id S1751679AbeCNT3E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:29:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44822 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751700AbeCNT3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 15:29:01 -0400
+Date: Wed, 14 Mar 2018 14:28:57 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] livepatch: Initialize shadow variables by init
+ function safely
+Message-ID: <20180314192857.yfdk2uwn4okuzlfh@treble>
+References: <20180313155448.1998-1-pmladek@suse.com>
+ <20180313155448.1998-2-pmladek@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <b75e83ad-bb83-1f8d-1751-0989cc2493f1@deltatee.com>
-References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org> <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org> <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com> <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
- <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com> <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
- <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com> <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
- <b75e83ad-bb83-1f8d-1751-0989cc2493f1@deltatee.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 14 Mar 2018 12:28:04 -0700
-Message-ID: <CAPcyv4g-A6fqdTahxX=aONSCgp1eEvBb=ZVMzbZUWUDmqBbj7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180313155448.1998-2-pmladek@suse.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 12:03 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->
->
-> On 14/03/18 12:51 PM, Bjorn Helgaas wrote:
->> You are focused on PCIe systems, and in those systems, most topologies
->> do have an upstream switch, which means two upstream bridges.  I'm
->> trying to remove that assumption because I don't think there's a
->> requirement for it in the spec.  Enforcing this assumption complicates
->> the code and makes it harder to understand because the reader says
->> "huh, I know peer-to-peer DMA should work inside any PCI hierarchy*,
->> so why do we need these two bridges?"
->
-> Yes, as I've said, we focused on being behind a single PCIe Switch
-> because it's easier and vaguely safer (we *know* switches will work but
-> other types of topology we have to assume will work based on the spec).
-> Also, I have my doubts that anyone will ever have a use for this with
-> non-PCIe devices.
+On Tue, Mar 13, 2018 at 04:54:47PM +0100, Petr Mladek wrote:
+> The existing API allows to pass a sample data to initialize the shadow
+> data. It works well when the data are position independent. But it fails
+> miserably when we need to set a pointer to the shadow structure itself.
+> 
+> Unfortunately, we might need to initialize the pointer surprisingly
+> often because of struct list_head. It is even worse because the list
+> might be hidden in other common structures, for example, struct mutex,
+> struct wait_queue_head.
 
-P2P over PCI/PCI-X is quite common in devices like raid controllers.
-It would be useful if those configurations were not left behind so
-that Linux could feasibly deploy offload code to a controller in the
-PCI domain.
+Can you provide a specific example in the changelog of where this was
+needed?
+
+> This patch makes the API more safe. A custom init function and data
+> are passed to klp_shadow_*alloc() functions instead of the sample data.
+> 
+> Note that the init_data are not longer a template for the shadow->data.
+> It might point to any data that might be necessary when the init
+> function is called.
+> 
+> In addition, the newly allocated shadow structure is initialized
+> only when it is really used.
+
+I don't understand this sentence.  It makes it sound like the init
+function is called when you do klp_shadow_get().  However, looking at
+the code, the init function is always called after allocation.
+
+> For this, the init function must be
+> called under klp_shadow_lock. On one hand, this adds a risk of
+> ABBA deadlocks. On the other hand, it allows to do some operations
+> safely. For example, we could add the new structure into an
+> existing list.
+
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index 4754f01c1abb..fc7c64ce0992 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -186,11 +186,20 @@ static inline bool klp_have_reliable_stack(void)
+>  	       IS_ENABLED(CONFIG_HAVE_RELIABLE_STACKTRACE);
+>  }
+>  
+> +struct klp_shadow;
+
+Why is this forward struct declaration needed?
+
+> @@ -150,6 +145,23 @@ static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
+>  		goto exists;
+>  	}
+>  
+> +	new_shadow->obj = obj;
+> +	new_shadow->id = id;
+> +
+> +	if (init_func) {
+> +		int err;
+> +
+> +		err = init_func(obj, new_shadow->data, init_data);
+
+Am I hallucinating, or will new_shadow->data always be NULL?  How did it
+even work before?
+
+-- 
+Josh
