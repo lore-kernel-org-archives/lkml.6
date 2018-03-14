@@ -1,45 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeCNVTq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 17:19:46 -0400
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:39772 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeCNVTp (ORCPT
+        id S1751613AbeCNVWg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:22:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56298 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751170AbeCNVWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 17:19:45 -0400
-X-Google-Smtp-Source: AG47ELtkBS6OlCn5+nr2AuTAQg+oIk8NLD4TB9ChdIqg0YPQo9lJFHxQ1fD39thQ3CCn+r1sh23I1A==
-To: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Laura Abbott <labbott@redhat.com>
-Subject: New -Werror=restrict error with incremental gcc
-Message-ID: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
-Date: Wed, 14 Mar 2018 14:19:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Mar 2018 17:22:34 -0400
+References: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>,
+        Josh Sklar <sklar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Use common error handling code in setup_new_fdt()
+In-reply-to: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net>
+Date: Wed, 14 Mar 2018 18:22:07 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18031421-0040-0000-0000-00000407946F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008675; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003084; UDB=6.00510459; IPR=6.00782414;
+ MB=3.00020036; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 21:22:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031421-0041-0000-0000-00000808956D
+Message-Id: <87fu52jqtc.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140228
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Fedora picked up a new gcc (8.0.1-0.18.fc29) and it seems to have introduced a new error:
+SF Markus Elfring <elfring@users.sourceforge.net> writes:
 
-   gcc -Wp,-MD,/home/labbott/linux/tools/objtool/.str_error_r.o.d -Wp,-MT,/home/labbott/linux/tools/objtool/str_error_r.o -Wall -Werror -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wshadow -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef -Wwrite-strings -Wformat -Wstrict-aliasing=3 -Wno-switch-default -Wno-switch-enum -Wno-packed -fomit-frame-pointer -O2 -g -I/home/labbott/linux/tools/include -I/home/labbott/linux/tools/arch/x86/include/uapi -I/home/labbott/linux/tools/objtool/arch/x86/include -I/home/labbott/linux/tools/lib -D"BUILD_STR(s)=#s" -c -o /home/labbott/linux/tools/objtool/str_error_r.o ../lib/str_error_r.c
-../lib/str_error_r.c: In function ‘str_error_r’:
-../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
-    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
-    ^~
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 11 Mar 2018 09:03:42 +0100
+>
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  arch/powerpc/kernel/machine_kexec_file_64.c | 28 ++++++++++++----------------
+>  1 file changed, 12 insertions(+), 16 deletions(-)
 
-This looks like gcc is now warning about the aliasing from printing out buf
-while printing to the buffer. I can work around this pretty easily but I
-know people have strong opinions about gcc warnings. Any thoughts?
+I liked it. Thanks!
 
-Thanks,
-Laura
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
