@@ -1,101 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeCNTvI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:51:08 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:45822 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751170AbeCNTvG (ORCPT
+        id S1751488AbeCNTxV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:53:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59086 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751289AbeCNTxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:51:06 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH v4 2/3] dt-bindings: net: bluetooth: Add
- qualcomm-bluetooth
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180314190522.GY18510@minitux>
-Date: Wed, 14 Mar 2018 20:51:02 +0100
-Cc: Thierry Escande <thierry.escande@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <494C4C44-1949-405E-91DA-1B40100ED2E6@holtmann.org>
-References: <20180314155514.3374-1-thierry.escande@linaro.org>
- <20180314155514.3374-3-thierry.escande@linaro.org>
- <FF2E3FDE-76C5-477A-A904-32AC064297DA@holtmann.org>
- <20180314183043.GX18510@minitux>
- <D999852D-E9A7-41D2-9878-A93CB4D43D0C@holtmann.org>
- <20180314190522.GY18510@minitux>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 14 Mar 2018 15:53:19 -0400
+Subject: Re: [PATCH 2/2] watchdog: aspeed: Allow configuring for alternate
+ boot
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@jms.id.au, wim@linux-watchdog.org,
+        Milton Miller <miltonm@us.ibm.com>
+References: <1520632700-25800-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1520632700-25800-3-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180309220610.GB32606@roeck-us.net>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 14:53:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180309220610.GB32606@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031419-0004-0000-0000-000013CD68A8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003054; UDB=6.00510441; IPR=6.00782384;
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 19:53:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031419-0005-0000-0000-00008676D904
+Message-Id: <bab2d3b4-536c-5dcb-4a13-95a29560d416@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140214
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
->>>>> +		bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
->>>> 
->>>> can we use a common name here. I think that Nokia and Broadcom drivers
->>>> define one. And if this is the enable/shutdown GPIO, we should name it
->>>> consistently across all manufacturers. It essentially does the same on
->>>> Bluetooth UART chips no matter what chip is behind them.
->>>> 
->>> 
->>> Broadcomm has a device-wakup-gpios and Nokia has bluetooth-wakup-gpios.
->>> It might be that these behave in the same way, but from the description
->>> they only trigger the wakeup.
->> 
->> that is something that we might need to start fixing. I really prefer
->> if we name the GPIOs a bit more consistent.
->> 
->>> The reason for the proposed naming here is that the pin is named
->>> "BT_DISABLE_N" in the datasheet.
->> 
->> That is not a reason I buy. So the next board comes around that labels
->> it in the data sheet BT_DISABLE_YEAH_SUPER_GREAT and you send me a
->> patch to the driver to look for that name. If the GPIO does the same
->> thing, I couldn’t care less what the data sheet says. That might be
->> a comment in the DT file, but it should not pollute the driver code.
->> 
-> 
-> BT_DISABLE_N is the name of this pin in the datasheet of the QCA chip,
-> not on the board, so this name is the same regardless of what you name
-> the line or gpio your board connect it to.
 
-and QCA chip v1 and QCA chip v2 will use the same driver and same firmware loading mechanism. So why do we have to add a new GPIO naming if they decide to change the name in the data sheet. With Bluetooth it is pretty much all the same. Every UART chip has a shutdown/reset GPIO to enable/disable the chip behind the UART.
+On 03/09/2018 04:06 PM, Guenter Roeck wrote:
+> On Fri, Mar 09, 2018 at 03:58:20PM -0600, Eddie James wrote:
+>> From: Milton Miller <miltonm@us.ibm.com>
+>>
+>> Allow the device tree to specify a watchdog to fallover to
+>> the alternate boot source.
+>>
+>> The aspeeed watchdog can set a latch directing flash chip select 0 to
+>> chip select 1, allowing boot from an alternate media if the watchdog
+>> is not reset in time.  On the ast2400 bank 1 also goes to flash bank 1,
+>> while on the ast2500 the chip selects are swapped.
+>>
+>> Signed-off-by: Milton Miller <miltonm@us.ibm.com>
+>> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> This is already documented in the bindings document, so the property
+> should be ok.
+>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
->> A new board should not require driver changes, you just ship a new DT
->> for that board and an existing driver hopefully just does the job. No
->> matter how someone named a GPIO in a piece of paper.
->> 
-> 
-> I totally agree with the fact that the board should not affect the
-> naming of the gpio in the driver. But I do enjoy when we refer to pins
-> by their real name - instead of having to guess which pin in the _chip_
-> specification the driver actually refer to.
-> 
-> 
-> That said, what name would you prefer for this?
-> 
-> Afaict this is not "wakeup" and there are a few extra steps between the
-> disabled state and "bluetooth is enabled", so "enable" feels slightly
-> wrong. And it probably should be "bluetooth" and not just "device" as
-> this refers to a pin on a WiFi/BT combo chip.
+Thanks. On a related note, our system has need of a way to determine if 
+it's currently booted from the alternate chip or not. It seems the only 
+way to tell is to look at the ast2400/2500 watchdog timeout status 
+register. We can add some debugfs to the aspeed driver I guess, but I 
+wonder if this is a common enough situation that the watchdog core could 
+use some debugfs or sysfs for providing that info?
 
-The Broadcom side called it shutdown GPIO, it is essentially the shutdown/reset GPIO or power on/off GPIO. Personally I do not care what it is named, but it will be all the same for all Bluetooth chips. Take a poll from Broadcom, Intel, Realtek and Qualcomm and you can pick a reasonable common name.
+Thanks,
+Eddie
 
-For the wakeup GPIOs, these are different and depend on if there is some low-power mode provided. You would need to check the data sheet to see if they provide more advanced low-power state handling.
-
-Regards
-
-Marcel
+>
+>> ---
+>>   drivers/watchdog/aspeed_wdt.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+>> index d1987d6..f41d246 100644
+>> --- a/drivers/watchdog/aspeed_wdt.c
+>> +++ b/drivers/watchdog/aspeed_wdt.c
+>> @@ -46,6 +46,7 @@ struct aspeed_wdt_config {
+>>   #define WDT_RELOAD_VALUE	0x04
+>>   #define WDT_RESTART		0x08
+>>   #define WDT_CTRL		0x0C
+>> +#define   WDT_CTRL_BOOT_SECONDARY	BIT(7)
+>>   #define   WDT_CTRL_RESET_MODE_SOC	(0x00 << 5)
+>>   #define   WDT_CTRL_RESET_MODE_FULL_CHIP	(0x01 << 5)
+>>   #define   WDT_CTRL_RESET_MODE_ARM_CPU	(0x10 << 5)
+>> @@ -245,6 +246,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>>   	}
+>>   	if (of_property_read_bool(np, "aspeed,external-signal"))
+>>   		wdt->ctrl |= WDT_CTRL_WDT_EXT;
+>> +	if (of_property_read_bool(np, "aspeed,alt-boot"))
+>> +		wdt->ctrl |= WDT_CTRL_BOOT_SECONDARY;
+>>   
+>>   	if (readl(wdt->base + WDT_CTRL) & WDT_CTRL_ENABLE)  {
+>>   		/*
+>> -- 
+>> 1.8.3.1
+>>
