@@ -1,92 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeCNKgp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 06:36:45 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:46481 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751274AbeCNKgo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 06:36:44 -0400
-X-Google-Smtp-Source: AG47ELv797h/rpecQS8RmyqPCWDm1PKZuuQzu03eWvI02wT8wyND0xNmpVC6Ur9+eOKB+Nqa3VbU8aYhfsIknBiLLgg=
+        id S1751523AbeCNKiQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 06:38:16 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:58331 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750751AbeCNKiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 06:38:15 -0400
+Subject: Re: [PATCH 04/21] powerpc: Mark both tmp variables as unused
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org
+References: <20180225172236.29650-1-malat@debian.org>
+ <20180225172236.29650-5-malat@debian.org>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <3f881ec2-eb0f-77e6-f1c5-95530b8f84ad@c-s.fr>
+Date: Wed, 14 Mar 2018 11:38:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180314003655.12141-3-djkurtz@chromium.org>
-References: <20180314003655.12141-1-djkurtz@chromium.org> <20180314003655.12141-3-djkurtz@chromium.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Mar 2018 12:36:42 +0200
-Message-ID: <CAHp75Vdi_X9DHVMAM07eAhbPGJ4R3HrKpPVg0JK2vKjTzs0D9g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ACPI: SPCR: Add support for AMD CT/SZ
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Aaron Durbin <adurbin@chromium.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        "open list:ACPI" <linux-acpi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180225172236.29650-5-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 2:36 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
-> earlycon setup handler to configure its input clock in order to compute
-> baud rate divisor registers.
-> Detect them by examining the OEMID field in the SPCR header, and pass
-> then pass uart type amdcz to earlycon.
 
-Thanks, this is what I meant.
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
+> Since the value of `tmp` is never intended to be read, declare both `tmp`
+> variables as unused. Fix warning (treated as error in W=1):
+
+What about using fault_in_pages_readable() instead ?
+
+Christophe
+
+> 
+>    CC      arch/powerpc/kernel/signal_32.o
+> arch/powerpc/kernel/signal_32.c: In function ‘sys_swapcontext’:
+> arch/powerpc/kernel/signal_32.c:1048:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
+>    unsigned char tmp;
+>                  ^~~
+> arch/powerpc/kernel/signal_32.c: In function ‘sys_debug_setcontext’:
+> arch/powerpc/kernel/signal_32.c:1234:16: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
+>    unsigned char tmp;
+>                  ^~~
+> cc1: all warnings being treated as errors
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 > ---
->  drivers/acpi/spcr.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> index 9d52743080a4..52d840d0e05b 100644
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@ -73,6 +73,24 @@ static bool xgene_8250_erratum_present(struct acpi_table_spcr *tb)
->         return xgene_8250;
->  }
->
-> +/*
-> + * AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
-> + * earlycon setup handler to configure its input clock in order to compute
-> + * baud rate divisor registers.
-> + * Detect them by examining the OEM fields in the SPCR header.
-> + */
-> +static bool amdcz_present(struct acpi_table_spcr *tb)
-> +{
-> +       if (memcmp(tb->header.oem_id, "AMDCZ ", ACPI_OEM_ID_SIZE))
-> +               return false;
-> +
-> +       if (memcmp(tb->header.oem_table_id, "AMDCZ   ",
-> +                   ACPI_OEM_TABLE_ID_SIZE))
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
->  /**
->   * acpi_parse_spcr() - parse ACPI SPCR table and add preferred console
->   *
-> @@ -189,6 +207,11 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
->                         uart = "qdf2400_e44";
->         }
->
-> +       if (amdcz_present(table)) {
-> +               if (enable_earlycon)
-> +                       uart = "amdcz";
-> +       }
-> +
->         if (xgene_8250_erratum_present(table)) {
->                 iotype = "mmio32";
->
-> --
-> 2.16.2.804.g6dcf76e118-goog
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+>   arch/powerpc/kernel/signal_32.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+> index a46de0035214..492f03451877 100644
+> --- a/arch/powerpc/kernel/signal_32.c
+> +++ b/arch/powerpc/kernel/signal_32.c
+> @@ -1045,7 +1045,7 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+>   		     struct ucontext __user *new_ctx,
+>   		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+>   {
+> -	unsigned char tmp;
+> +	unsigned char tmp __maybe_unused;
+>   	int ctx_has_vsx_region = 0;
+>   
+>   #ifdef CONFIG_PPC64
+> @@ -1231,7 +1231,7 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+>   {
+>   	struct sig_dbg_op op;
+>   	int i;
+> -	unsigned char tmp;
+> +	unsigned char tmp __maybe_unused;
+>   	unsigned long new_msr = regs->msr;
+>   #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>   	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
+> 
