@@ -1,47 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751537AbeCNT1h (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:27:37 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52076 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbeCNT1g (ORCPT
+        id S1752047AbeCNT2c (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:28:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51049 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751302AbeCNT23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:27:36 -0400
-Date: Wed, 14 Mar 2018 20:27:10 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Toshi Kani <toshi.kani@hpe.com>
-cc: mingo@redhat.com, hpa@zytor.com, bp@alien8.de, luto@kernel.org,
-        gratian.crisan@ni.com, x86@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/mm: remove pointless checks in vmalloc_fault
-In-Reply-To: <20180313170347.3829-3-toshi.kani@hpe.com>
-Message-ID: <alpine.DEB.2.21.1803142024540.1946@nanos.tec.linutronix.de>
-References: <20180313170347.3829-1-toshi.kani@hpe.com> <20180313170347.3829-3-toshi.kani@hpe.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 14 Mar 2018 15:28:29 -0400
+Date: Wed, 14 Mar 2018 12:27:53 -0700
+From: tip-bot for Toshi Kani <tipbot@zytor.com>
+Message-ID: <tip-18a955219bf7d9008ce480d4451b6b8bf4483a22@git.kernel.org>
+Cc: tglx@linutronix.de, luto@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, toshi.kani@hpe.com, bp@alien8.de, hpa@zytor.com,
+        gratian.crisan@ni.com
+Reply-To: toshi.kani@hpe.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, luto@kernel.org, gratian.crisan@ni.com,
+        hpa@zytor.com, bp@alien8.de
+In-Reply-To: <20180313170347.3829-2-toshi.kani@hpe.com>
+References: <20180313170347.3829-2-toshi.kani@hpe.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/mm: Fix vmalloc_fault to use pXd_large
+Git-Commit-ID: 18a955219bf7d9008ce480d4451b6b8bf4483a22
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Toshi Kani wrote:
+Commit-ID:  18a955219bf7d9008ce480d4451b6b8bf4483a22
+Gitweb:     https://git.kernel.org/tip/18a955219bf7d9008ce480d4451b6b8bf4483a22
+Author:     Toshi Kani <toshi.kani@hpe.com>
+AuthorDate: Tue, 13 Mar 2018 11:03:46 -0600
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 14 Mar 2018 20:22:42 +0100
 
-> vmalloc_fault() sets user's pgd or p4d from the kernel page table.
-> Once it's set, all tables underneath are identical. There is no point
-> of following the same page table with two separate pointers and makes
-> sure they see the same with BUG().
-> 
-> Remove the pointless checks in vmalloc_fault(). Also rename the kernel
-> pgd/p4d pointers to pgd_k/p4d_k so that their names are consistent in
-> the file.
+x86/mm: Fix vmalloc_fault to use pXd_large
 
-I have no idea to which branch this might apply. The first patch applies
-cleanly on linus head, but this one fails in hunk #2 on everything I
-tried. Can you please check?
+Gratian Crisan reported that vmalloc_fault() crashes when CONFIG_HUGETLBFS
+is not set since the function inadvertently uses pXn_huge(), which always
+return 0 in this case.  ioremap() does not depend on CONFIG_HUGETLBFS.
 
-Thanks,
+Fix vmalloc_fault() to call pXd_large() instead.
 
-	tglx
+Fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
+Reported-by: Gratian Crisan <gratian.crisan@ni.com>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/20180313170347.3829-2-toshi.kani@hpe.com
+
+---
+ arch/x86/mm/fault.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index c88573d90f3e..25a30b5d6582 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -330,7 +330,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (!pmd_k)
+ 		return -1;
+ 
+-	if (pmd_huge(*pmd_k))
++	if (pmd_large(*pmd_k))
+ 		return 0;
+ 
+ 	pte_k = pte_offset_kernel(pmd_k, address);
+@@ -475,7 +475,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
+ 		BUG();
+ 
+-	if (pud_huge(*pud))
++	if (pud_large(*pud))
+ 		return 0;
+ 
+ 	pmd = pmd_offset(pud, address);
+@@ -486,7 +486,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
+ 		BUG();
+ 
+-	if (pmd_huge(*pmd))
++	if (pmd_large(*pmd))
+ 		return 0;
+ 
+ 	pte_ref = pte_offset_kernel(pmd_ref, address);
