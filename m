@@ -1,120 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeCNSzs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:55:48 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43453 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbeCNSzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:55:45 -0400
-X-Google-Smtp-Source: AG47ELvtf5S0AMOF3zKzVkoGJZjlRbDP8yL16Q43RrOuuEjI8klY2VVa9WrN2/PaVnBdo/GrR+5Ybw==
-Date: Wed, 14 Mar 2018 11:55:42 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Eddie James <eajames@linux.vnet.ibm.com>, linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, Joel Stanley <joel@jms.id.au>,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v2 1/2] hwmon: (ucd9000) Add gpio chip interface
-Message-ID: <20180314185542.GA23989@roeck-us.net>
-References: <1520974749-5372-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1520974749-5372-2-git-send-email-eajames@linux.vnet.ibm.com>
- <CAHp75VdOzzmN=6K4H3rVGGaqMJ+q+nXnoY=qksNT6uvHnG6CAQ@mail.gmail.com>
+        id S1752003AbeCNS5A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:57:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38120 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751379AbeCNS47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:56:59 -0400
+Date: Wed, 14 Mar 2018 19:56:52 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
+        richard@nod.at, cyrille.pitchen@wedev4u.fr, dedekind1@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mtd: ubi: use put_device() if device_register fail
+Message-ID: <20180314195652.59b21594@bbrezillon>
+In-Reply-To: <5d9b08afdad2fbc65bac48d8ae22f4925bb80512.1520592440.git.arvind.yadav.cs@gmail.com>
+References: <cover.1520592440.git.arvind.yadav.cs@gmail.com>
+        <5d9b08afdad2fbc65bac48d8ae22f4925bb80512.1520592440.git.arvind.yadav.cs@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VdOzzmN=6K4H3rVGGaqMJ+q+nXnoY=qksNT6uvHnG6CAQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:13:04PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 13, 2018 at 10:59 PM, Eddie James
-> <eajames@linux.vnet.ibm.com> wrote:
-> > From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> >
-> > Add a struct gpio_chip and define some methods so that this device's
-> > I/O can be accessed via /sys/class/gpio.
-> 
-> > +       /*
-> > +        * Note:
-> > +        *
-> > +        * Pinmux support has not been added to the new gpio_chip.
-> > +        * This support should be added when possible given the mux
-> > +        * behavior of these IO devices.
-> > +        */
-> 
-> > +       data->gpio.label = (const char *)&client->name;
-> 
-> Hmm... Why do you need this casting?
-> 
-> > +       data->gpio.get_direction = ucd9000_gpio_get_direction;
-> > +       data->gpio.direction_input = ucd9000_gpio_direction_input;
-> > +       data->gpio.direction_output = ucd9000_gpio_direction_output;
-> > +       data->gpio.get = ucd9000_gpio_get;
-> > +       data->gpio.set = ucd9000_gpio_set;
-> 
-> > +       data->gpio.can_sleep = 1;
-> 
-> Isn't it type of boolean?
-> 
-You are right.
+On Fri,  9 Mar 2018 16:20:49 +0530
+Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
 
-> > +       data->gpio.base = -1;
+> if device_register() returned an error! Always use put_device()
+> to give up the reference initialized.
 > 
-> > +       data->gpio.parent = &client->dev;
-> > +       data->gpio.owner = THIS_MODULE;
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  drivers/mtd/ubi/vmt.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> > +       data->gpio.of_node = client->dev.of_node;
-> 
-> I think GPIO core does this for you.
-> 
-Same here. I checked and found that it also sets the owner, so maybe this can be
-dropped as well.
+> diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+> index 3fd8d7f..db85b68 100644
+> --- a/drivers/mtd/ubi/vmt.c
+> +++ b/drivers/mtd/ubi/vmt.c
+> @@ -609,6 +609,7 @@ int ubi_add_volume(struct ubi_device *ubi, struct ubi_volume *vol)
+>  	return err;
+>  
+>  out_cdev:
+> +	put_device(&vol->dev);
+>  	cdev_del(&vol->cdev);
 
-> > +       if (data->gpio.ngpio) {
-> 
-> Hmm...
-> 
-> I would rather reorganize the above part to a separate helper, like
-> 
-> static int ..._probe_gpio()
-> {
-> ...
->   switch () {
->    default:
->      return 0; /* GPIO part is optional */
->   }
->   return 0;
-> }
-> 
-> ret = _probe_gpio();
-> if (ret)
->  dev_warn();
-> 
+use-after-free bug here: put_device() has freed the vol obj, and you're
+dereferencing the pointer just after that.
 
-I am neutral to positiva on that.
-Might as well add the call to devm_gpiochip_add_data()
-into that function as well.
+>  	return err;
+>  }
 
-> > +               ret = devm_gpiochip_add_data(&client->dev, &data->gpio,
-> > +                                            client);
-> > +               if (ret)
-> > +                       dev_warn(&client->dev, "Could not add gpiochip: %d\n",
-> > +                                ret);
-> > +       }
-> > +
-> >         return pmbus_do_probe(client, mid, info);
-> >  }
-> >
-> > --
-> > 1.8.3.1
-> >
-> 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
