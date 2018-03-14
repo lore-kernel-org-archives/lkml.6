@@ -1,121 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751731AbeCNU67 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:58:59 -0400
-Received: from avasout05.plus.net ([84.93.230.250]:35272 "EHLO
-        avasout05.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeCNU65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:58:57 -0400
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.3 cv=J9KEEjvS c=1 sm=1 tr=0
- a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
- a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10 a=pGLkceISAAAA:8 a=RMjmPgqFiLURycAYgZkA:9
- a=CjuIK1q_8ugA:10
-Date: Wed, 14 Mar 2018 20:51:24 +0000
-From: Nick Dyer <nick@shmanahar.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] Input: atmel_mxt_ts - do not pass suspend mode in
- platform data
-Message-ID: <20180314205123.GA26353@lava.h.shmanahar.org>
-References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
- <20180312190907.174301-2-dmitry.torokhov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312190907.174301-2-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-CMAE-Envelope: MS4wfBg5HndNXzZIqiwp/cT9/vwMkDO5FlhTgQcix9op7nQGGmgj6bJ4+8UouebsH0u3X7lL5hUhNv0hZNcu8rYKq+Af4tdWCcdt8uEGWHdwvj0ZY9dBJ7DK
- RJX5IJ2Gf3AKCbevbJtb35ZT4r8IGptvcf3rA/1/TpwtxRvahUniTR4o
+        id S1752191AbeCNVB5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:01:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36672 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750779AbeCNVB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 17:01:56 -0400
+Message-ID: <1521061314.18703.123.camel@redhat.com>
+Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
+From: Doug Ledford <dledford@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Eddie Wai <eddie.wai@broadcom.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Mar 2018 17:01:54 -0400
+In-Reply-To: <CA+55aFxEsTA7DTBYdLz8sbniq2NRO-X+Nt1vmYxckfWAP0BQZQ@mail.gmail.com>
+References: <20180220205638.1959033-1-arnd@arndb.de>
+         <20180228211514.GC13394@ziepe.ca>
+         <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
+         <20180306234539.GB1037@ziepe.ca>
+         <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
+         <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
+         <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
+         <1521057831.18703.101.camel@redhat.com>
+         <CAK8P3a1=h7cF8kRUWpFG88-OSFL8_7SgUkaX4TUEhG6ypPODkg@mail.gmail.com>
+         <1521059294.18703.106.camel@redhat.com>
+         <CA+55aFxEsTA7DTBYdLz8sbniq2NRO-X+Nt1vmYxckfWAP0BQZQ@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-QvdOF5BTCqq2F29+7Pt9"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry-
 
-Thanks for sending these patches!
+--=-QvdOF5BTCqq2F29+7Pt9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 12, 2018 at 12:08:54PM -0700, Dmitry Torokhov wrote:
-> The way we are supposed to put controller to sleep and wake it up does not
-> depend on the platform, but rather on controller itself. Controllers using
-> T9 require manipulating T9 control register, while others, using newer
-> T100, should be put to sleep by adjusting T7 power config.
+On Wed, 2018-03-14 at 13:31 -0700, Linus Torvalds wrote:
+> On Wed, Mar 14, 2018 at 1:28 PM, Doug Ledford <dledford@redhat.com> wrote=
+:
+> >=20
+> > Arnd sent in a two patch series and it got put into our for-next branch=
+.
+> >  But, the two patches are the *only* two remaining issues for the arm
+> > builds on the kernelci system.  They would like to get this into for-rc
+> > so that the build failures stop.  Are you OK with me just cherry-pickin=
+g
+> > them from for-next to for-rc so I can send them to you?  They'll show a=
+s
+> > duplicates in the next merge window, but should drop silently.
+>=20
+> Go ahead, assuming there are no other planned changes around them that
+> would cause potential pointless merge problems..
 
-I'm afraid this is actually a misconception. If you look at object table
-for the older T9 device, you'll find it has the T7 object and it in fact
-works exactly the same way as the T100-based device.
+These two patches will be fine in that regard.  They aren't in the area
+where all the syzkaller bugs have been getting fixed.  But I need to
+merge for-rc into for-next because of all of the syzkaller bugs being
+fixed.  We are running into a situation where code updates that were
+planned are in areas where syzkaller bugs have been fixed and there
+would be significant merge conflicts if I didn't.  So, the plan as it
+stands is: get the needed patches in for-rc, merge for-rc to for-next,
+then cherry pick from for-next to for-rc just the two patches here
+(since I have no idea how cherry picking to for-rc and then merging for-
+rc to for-next would play out, I'm just not gonna try it).
 
-The MXT_SUSPEND_T9_CTRL is in there because on your older Pixel devices
-the config saved into NVRAM on the touch controller has a zero byte in
-the T9 CTRL setting, meaning the touch controller will never wake up
-unless the driver knows to write 0x83 into it.
+It's a bit convoluted, but as long as I don't use my standard git
+request pull macro when generating the pull request (it will pick the
+wrong merge base every time whenever you've merged for-rc into for-next,=
+=20
+you have to manually find the alternate merge base and use the right one
+for git request pull) it comes out nicely in the end.
 
-> We'll keep pdata->suspend_mode for now and remove it when we rework
-> chromeos-laptop driver.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 7659bc48f1db8..1aabfae1297ba 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -2868,8 +2868,8 @@ static const struct attribute_group mxt_attr_group = {
->  
->  static void mxt_start(struct mxt_data *data)
->  {
-> -	switch (data->pdata->suspend_mode) {
-> -	case MXT_SUSPEND_T9_CTRL:
-> +	switch (data->multitouch) {
-> +	case MXT_TOUCH_MULTI_T9:
->  		mxt_soft_reset(data);
->  
->  		/* Touch enable */
-> @@ -2878,7 +2878,7 @@ static void mxt_start(struct mxt_data *data)
->  				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0x83);
->  		break;
->  
-> -	case MXT_SUSPEND_DEEP_SLEEP:
-> +	case MXT_TOUCH_MULTITOUCHSCREEN_T100:
->  	default:
->  		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
->  
-> @@ -2886,19 +2886,18 @@ static void mxt_start(struct mxt_data *data)
->  		mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
->  		break;
->  	}
-> -
->  }
->  
->  static void mxt_stop(struct mxt_data *data)
->  {
-> -	switch (data->pdata->suspend_mode) {
-> -	case MXT_SUSPEND_T9_CTRL:
-> +	switch (data->multitouch) {
-> +	case MXT_TOUCH_MULTI_T9:
->  		/* Touch disable */
->  		mxt_write_object(data,
->  				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0);
->  		break;
->  
-> -	case MXT_SUSPEND_DEEP_SLEEP:
-> +	case MXT_TOUCH_MULTITOUCHSCREEN_T100:
->  	default:
->  		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
->  		break;
-> @@ -2954,8 +2953,6 @@ static const struct mxt_platform_data *mxt_parse_dt(struct i2c_client *client)
->  		pdata->t19_keymap = keymap;
->  	}
->  
-> -	pdata->suspend_mode = MXT_SUSPEND_DEEP_SLEEP;
-> -
->  	return pdata;
->  }
->  #else
-> -- 
-> 2.16.2.660.g709887971b-goog
-> 
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-QvdOF5BTCqq2F29+7Pt9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqpjcIACgkQuCajMw5X
+L91AYhAAk/fz+G0z9fDw5BQWYh7Mgo+5hIke1Zhpi1XTe/HmQgdzOWMHDZRV5Bh0
+dWSBPddUo0jVUHNS8WYY0r/GQoQIJhi/XAAPAY8QTYhy6tIVsgPr4yeeEZMrIWdZ
+ozEDxASasgpmiogw9tX/ecfWqUyOu/U+iFclSZinHbrMnKvnvk4C6C3XDzmeF/mR
+cI2VM2yEtxTfblticeEmx1zRrlQBl3NjTdGZG7VXE6AOIPTQxqiKKcWXVMri1e3x
+UWD0hSKs1OIYFTWOTnxS1quJdj7hexJ5nCW+jaHQ4Rygl2DEGn6uWqDOQ0jnM5DU
+DdvBnW8o44IoYpAIMExQ3b2oOgXgy+gyz+PvPGQJ9nrv22/MEpVQaqel47m1sBAw
+/vKzQedNwA7bLZdWUZbPn/TTP4TI/zh72Ri39lv7ZYFr660ItlIDqVwm5B83tJwO
+k9Si26qeENAlVXjJfiTyp8hd2+dAy/Wxy7i2Jpn3877ZH0ffOtnt2byyhWOljx/A
+PGnVNj1U1A5pdUJwv61gQ9l/2CKNYBWYwYtJ5nHRg57sPrZGpOTHkPs2WK6/fiG0
+ibO9h2ALfhd8f+ZWlT00UoGb3WwOVRwMlbp5b6afRrhmi/2VvmfnywJeh7OXm8DQ
++DotJLHvXpKAAMI7zp4xFDoNS6zMQsA5O5PGBNXTYP48+1RsKGI=
+=Vxrz
+-----END PGP SIGNATURE-----
+
+--=-QvdOF5BTCqq2F29+7Pt9--
