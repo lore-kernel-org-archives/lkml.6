@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933224AbeCNGTi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:19:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43920 "EHLO
+        id S1753387AbeCNGXl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 02:23:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46276 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753333AbeCNGTg (ORCPT
+        with ESMTP id S1751436AbeCNGXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:19:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E143860314
+        Wed, 14 Mar 2018 02:23:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9215603AF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 16/36] drm/bridge: analogix_dp: Check dpcd write/read
- status
+Subject: Re: [PATCH v5 17/36] drm/bridge: analogix_dp: Fix AUX_PD bit for
+ Rockchip
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
         seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
@@ -27,16 +27,16 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         jingoohan1@gmail.com, sw0312.kim@samsung.com,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>
+        hshi@chromium.org
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-17-enric.balletbo@collabora.com>
+ <20180309222327.18689-18-enric.balletbo@collabora.com>
 From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <216ddbe8-c044-e6e8-115a-69b5c2985a8e@codeaurora.org>
-Date: Wed, 14 Mar 2018 11:49:17 +0530
+Message-ID: <0b27e434-92fd-0033-9a45-a87170de2da1@codeaurora.org>
+Date: Wed, 14 Mar 2018 11:53:20 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-17-enric.balletbo@collabora.com>
+In-Reply-To: <20180309222327.18689-18-enric.balletbo@collabora.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -47,21 +47,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: Lin Huang <hl@rock-chips.com>
+> From: zain wang <wzz@rock-chips.com>
 > 
-> We need to check the dpcd write/read return value to see whether the
-> write/read was successful
-> 
+> There are some different bits between Rockchip and Exynos in register
+> "AUX_PD". This patch fixes the incorrect operations about it.
+
+You mean the register ANALOGIX_DP_PHY_PD/ANALOGIX_DP_PD, right? AUX_PD
+sounds like just one of the fields of the register.
+
+With that,
 
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
 Thanks,
 Archit
 
-> Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> 
+> Cc: Douglas Anderson <dianders@chromium.org>
 > Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > Signed-off-by: Sean Paul <seanpaul@chromium.org>
 > Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
@@ -69,296 +72,166 @@ Archit
 > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
 > 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 169 ++++++++++++++++-----
->   1 file changed, 127 insertions(+), 42 deletions(-)
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 117 ++++++++++++----------
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |   2 +
+>   2 files changed, 65 insertions(+), 54 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index 1eed35f9eb8d..be6eddd0d0a7 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -160,80 +160,137 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->   }
->   EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
->   
-> -static bool analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
-> +static int analogix_dp_detect_sink_psr(struct analogix_dp_device *dp)
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> index bb72f8b0e603..dee1ba109b5f 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> @@ -248,76 +248,85 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
 >   {
->   	unsigned char psr_version;
-> +	int ret;
+>   	u32 reg;
+>   	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
+> +	u32 mask;
+>   
+>   	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+>   		phy_pd_addr = ANALOGIX_DP_PD;
+>   
+>   	switch (block) {
+>   	case AUX_BLOCK:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= AUX_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~AUX_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+> +			mask = RK_AUX_PD;
+> +		else
+> +			mask = AUX_PD;
 > +
-> +	ret = drm_dp_dpcd_readb(&dp->aux, DP_PSR_SUPPORT, &psr_version);
-> +	if (ret != 1) {
-> +		dev_err(dp->dev, "failed to get PSR version, disable it\n");
-> +		return ret;
-> +	}
->   
-> -	drm_dp_dpcd_readb(&dp->aux, DP_PSR_SUPPORT, &psr_version);
->   	dev_dbg(dp->dev, "Panel PSR version : %x\n", psr_version);
->   
-> -	return (psr_version & DP_PSR_IS_SUPPORTED) ? true : false;
-> +	dp->psr_enable = (psr_version & DP_PSR_IS_SUPPORTED) ? true : false;
+> +		reg = readl(dp->reg_base + phy_pd_addr);
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+>   		break;
+>   	case CH0_BLOCK:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= CH0_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~CH0_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		mask = CH0_PD;
+> +		reg = readl(dp->reg_base + phy_pd_addr);
 > +
-> +	return 0;
->   }
->   
-> -static void analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
-> +static int analogix_dp_enable_sink_psr(struct analogix_dp_device *dp)
->   {
->   	unsigned char psr_en;
-> +	int ret;
->   
->   	/* Disable psr function */
-> -	drm_dp_dpcd_readb(&dp->aux, DP_PSR_EN_CFG, &psr_en);
-> +	ret = drm_dp_dpcd_readb(&dp->aux, DP_PSR_EN_CFG, &psr_en);
-> +	if (ret != 1) {
-> +		dev_err(dp->dev, "failed to get psr config\n");
-> +		goto end;
-> +	}
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+>   		break;
+>   	case CH1_BLOCK:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= CH1_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~CH1_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		mask = CH1_PD;
+> +		reg = readl(dp->reg_base + phy_pd_addr);
 > +
->   	psr_en &= ~DP_PSR_ENABLE;
-> -	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	ret = drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	if (ret != 1) {
-> +		dev_err(dp->dev, "failed to disable panel psr\n");
-> +		goto end;
-> +	}
->   
->   	/* Main-Link transmitter remains active during PSR active states */
->   	psr_en = DP_PSR_MAIN_LINK_ACTIVE | DP_PSR_CRC_VERIFICATION;
-> -	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	ret = drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	if (ret != 1) {
-> +		dev_err(dp->dev, "failed to set panel psr\n");
-> +		goto end;
-> +	}
->   
->   	/* Enable psr function */
->   	psr_en = DP_PSR_ENABLE | DP_PSR_MAIN_LINK_ACTIVE |
->   		 DP_PSR_CRC_VERIFICATION;
-> -	drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	ret = drm_dp_dpcd_writeb(&dp->aux, DP_PSR_EN_CFG, psr_en);
-> +	if (ret != 1) {
-> +		dev_err(dp->dev, "failed to set panel psr\n");
-> +		goto end;
-> +	}
->   
->   	analogix_dp_enable_psr_crc(dp);
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+>   		break;
+>   	case CH2_BLOCK:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= CH2_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~CH2_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		mask = CH2_PD;
+> +		reg = readl(dp->reg_base + phy_pd_addr);
 > +
-> +	return 0;
-> +end:
-> +	dev_err(dp->dev, "enable psr fail, force to disable psr\n");
-> +	dp->psr_enable = false;
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+>   		break;
+>   	case CH3_BLOCK:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= CH3_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~CH3_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		mask = CH3_PD;
+> +		reg = readl(dp->reg_base + phy_pd_addr);
 > +
-> +	return ret;
->   }
->   
-> -static void
-> +static int
->   analogix_dp_enable_rx_to_enhanced_mode(struct analogix_dp_device *dp,
->   				       bool enable)
->   {
->   	u8 data;
-> +	int ret;
->   
-> -	drm_dp_dpcd_readb(&dp->aux, DP_LANE_COUNT_SET, &data);
-> +	ret = drm_dp_dpcd_readb(&dp->aux, DP_LANE_COUNT_SET, &data);
-> +	if (ret != 1)
-> +		return ret;
->   
->   	if (enable)
-> -		drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
-> -				   DP_LANE_COUNT_ENHANCED_FRAME_EN |
-> -					DPCD_LANE_COUNT_SET(data));
-> +		ret = drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
-> +					 DP_LANE_COUNT_ENHANCED_FRAME_EN |
-> +					 DPCD_LANE_COUNT_SET(data));
->   	else
-> -		drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
-> -				   DPCD_LANE_COUNT_SET(data));
-> +		ret = drm_dp_dpcd_writeb(&dp->aux, DP_LANE_COUNT_SET,
-> +					 DPCD_LANE_COUNT_SET(data));
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+>   		break;
+>   	case ANALOG_TOTAL:
+> -		if (enable) {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg |= DP_PHY_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		} else {
+> -			reg = readl(dp->reg_base + phy_pd_addr);
+> -			reg &= ~DP_PHY_PD;
+> -			writel(reg, dp->reg_base + phy_pd_addr);
+> -		}
+> +		/*
+> +		 * There is no bit named DP_PHY_PD, so We used DP_INC_BG
+> +		 * to power off everything instead of DP_PHY_PD in
+> +		 * Rockchip
+> +		 */
+> +		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+> +			mask = DP_INC_BG;
+> +		else
+> +			mask = DP_PHY_PD;
 > +
-> +	return ret < 0 ? ret : 0;
->   }
->   
-> -static int analogix_dp_is_enhanced_mode_available(struct analogix_dp_device *dp)
-> +static int analogix_dp_is_enhanced_mode_available(struct analogix_dp_device *dp,
-> +						  u8 *enhanced_mode_support)
->   {
->   	u8 data;
-> -	int retval;
-> +	int ret;
->   
-> -	drm_dp_dpcd_readb(&dp->aux, DP_MAX_LANE_COUNT, &data);
-> -	retval = DPCD_ENHANCED_FRAME_CAP(data);
-> +	ret = drm_dp_dpcd_readb(&dp->aux, DP_MAX_LANE_COUNT, &data);
-> +	if (ret != 1) {
-> +		*enhanced_mode_support = 0;
-> +		return ret;
-> +	}
->   
-> -	return retval;
-> +	*enhanced_mode_support = DPCD_ENHANCED_FRAME_CAP(data);
+> +		reg = readl(dp->reg_base + phy_pd_addr);
+> +		if (enable)
+> +			reg |= mask;
+> +		else
+> +			reg &= ~mask;
 > +
-> +	return 0;
->   }
->   
-> -static void analogix_dp_set_enhanced_mode(struct analogix_dp_device *dp)
-> +static int analogix_dp_set_enhanced_mode(struct analogix_dp_device *dp)
->   {
->   	u8 data;
-> +	int ret;
-> +
-> +	ret = analogix_dp_is_enhanced_mode_available(dp, &data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = analogix_dp_enable_rx_to_enhanced_mode(dp, data);
-> +	if (ret < 0)
-> +		return ret;
->   
-> -	data = analogix_dp_is_enhanced_mode_available(dp);
-> -	analogix_dp_enable_rx_to_enhanced_mode(dp, data);
->   	analogix_dp_enable_enhanced_mode(dp, data);
-> +
-> +	return 0;
->   }
->   
-> -static void analogix_dp_training_pattern_dis(struct analogix_dp_device *dp)
-> +static int analogix_dp_training_pattern_dis(struct analogix_dp_device *dp)
->   {
-> +	int ret;
-> +
->   	analogix_dp_set_training_pattern(dp, DP_NONE);
->   
-> -	drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> -			   DP_TRAINING_PATTERN_DISABLE);
-> +	ret = drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> +				 DP_TRAINING_PATTERN_DISABLE);
-> +
-> +	return ret < 0 ? ret : 0;
->   }
->   
->   static void
-> @@ -282,7 +339,11 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
->   	if (retval < 0)
->   		return retval;
->   	/* set enhanced mode if available */
-> -	analogix_dp_set_enhanced_mode(dp);
-> +	retval = analogix_dp_set_enhanced_mode(dp);
-> +	if (retval < 0) {
-> +		dev_err(dp->dev, "failed to set enhance mode\n");
-> +		return retval;
-> +	}
->   
->   	/* Set TX pre-emphasis to minimum */
->   	for (lane = 0; lane < lane_count; lane++)
-> @@ -567,10 +628,11 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
->   
->   	if (!analogix_dp_channel_eq_ok(link_status, link_align, lane_count)) {
->   		/* traing pattern Set to Normal */
-> -		analogix_dp_training_pattern_dis(dp);
-> +		retval = analogix_dp_training_pattern_dis(dp);
-> +		if (retval < 0)
-> +			return retval;
->   
->   		dev_info(dp->dev, "Link Training success!\n");
-> -
->   		analogix_dp_get_link_bandwidth(dp, &reg);
->   		dp->link_train.link_rate = reg;
->   		dev_dbg(dp->dev, "final bandwidth = %.2x\n",
-> @@ -867,24 +929,32 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
->   	return 0;
->   }
->   
-> -static void analogix_dp_enable_scramble(struct analogix_dp_device *dp,
-> -					bool enable)
-> +static int analogix_dp_enable_scramble(struct analogix_dp_device *dp,
-> +				       bool enable)
->   {
->   	u8 data;
-> +	int ret;
->   
->   	if (enable) {
->   		analogix_dp_enable_scrambling(dp);
->   
-> -		drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET, &data);
-> -		drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> +		ret = drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> +					&data);
-> +		if (ret != 1)
-> +			return ret;
-> +		ret = drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
->   				   (u8)(data & ~DP_LINK_SCRAMBLING_DISABLE));
->   	} else {
->   		analogix_dp_disable_scrambling(dp);
->   
-> -		drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET, &data);
-> -		drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> +		ret = drm_dp_dpcd_readb(&dp->aux, DP_TRAINING_PATTERN_SET,
-> +					&data);
-> +		if (ret != 1)
-> +			return ret;
-> +		ret = drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET,
->   				   (u8)(data | DP_LINK_SCRAMBLING_DISABLE));
->   	}
-> +	return ret < 0 ? ret : 0;
->   }
->   
->   static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
-> @@ -939,23 +1009,36 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
->   		return ret;
->   	}
->   
-> -	analogix_dp_enable_scramble(dp, 1);
-> +	ret = analogix_dp_enable_scramble(dp, 1);
-> +	if (ret < 0) {
-> +		dev_err(dp->dev, "can not enable scramble\n");
-> +		return ret;
-> +	}
->   
->   	analogix_dp_init_video(dp);
->   	ret = analogix_dp_config_video(dp);
-> -	if (ret)
-> +	if (ret) {
->   		dev_err(dp->dev, "unable to config video\n");
-> +		return ret;
-> +	}
->   
->   	/* Safe to enable the panel now */
->   	if (dp->plat_data->panel) {
-> -		if (drm_panel_enable(dp->plat_data->panel))
-> +		ret = drm_panel_enable(dp->plat_data->panel);
-> +		if (ret) {
->   			DRM_ERROR("failed to enable the panel\n");
-> +			return ret;
-> +		}
->   	}
->   
-> -	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
-> +	ret = analogix_dp_detect_sink_psr(dp);
-> +	if (ret)
-> +		return ret;
-> +
->   	if (dp->psr_enable)
-> -		analogix_dp_enable_sink_psr(dp);
-> -	return 0;
-> +		ret = analogix_dp_enable_sink_psr(dp);
-> +
-> +	return ret;
->   }
->   
->   /*
-> @@ -1185,8 +1268,10 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->   	}
->   
->   	ret = analogix_dp_commit(dp);
-> -	if (ret)
-> +	if (ret) {
-> +		DRM_ERROR("dp commit error, ret = %d\n", ret);
->   		goto out_dp_init;
-> +	}
->   
->   	enable_irq(dp->irq);
->   	return 0;
+> +		writel(reg, dp->reg_base + phy_pd_addr);
+> +		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+> +			usleep_range(10, 15);
+>   		break;
+>   	case POWER_ALL:
+>   		if (enable) {
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+> index 9602668669f4..b633a4a5082a 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+> @@ -345,7 +345,9 @@
+>   #define DP_INC_BG				(0x1 << 7)
+>   #define DP_EXP_BG				(0x1 << 6)
+>   #define DP_PHY_PD				(0x1 << 5)
+> +#define RK_AUX_PD				(0x1 << 5)
+>   #define AUX_PD					(0x1 << 4)
+> +#define RK_PLL_PD				(0x1 << 4)
+>   #define CH3_PD					(0x1 << 3)
+>   #define CH2_PD					(0x1 << 2)
+>   #define CH1_PD					(0x1 << 1)
 > 
