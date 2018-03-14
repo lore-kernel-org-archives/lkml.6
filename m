@@ -1,45 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752524AbeCNJ3f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:29:35 -0400
-Received: from ozlabs.org ([103.22.144.67]:34009 "EHLO ozlabs.org"
+        id S1752345AbeCNJ2f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:28:35 -0400
+Received: from ozlabs.org ([103.22.144.67]:46785 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752377AbeCNJ2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:28:44 -0400
+        id S1750852AbeCNJ2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:28:32 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 1ff3b404019adf9d605224e1dce0677a0375d274
-In-Reply-To: <20180304173132.19677-1-vaibhav@linux.vnet.ibm.com>
-To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>
+X-powerpc-patch-commit: c554ac91ce2213faa91c51c45423770218cccce3
+In-Reply-To: <20180227112555.DEBCE6E8BA@po15720vm.idsi0.si.c-s.fr>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>,
+        Vitaly Bordug <vitb@kernel.crashing.org>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Douglas Miller <dougmill@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: xmon: Clear all breakpoints when xmon is disabled via debugfs
-Message-Id: <401RHG6psmz9sVP@ozlabs.org>
-Date: Wed, 14 Mar 2018 20:28:33 +1100 (AEDT)
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/8xx: fix cpm_cascade() dual end of interrupt
+Message-Id: <401RH26WRbz9sTw@ozlabs.org>
+Date: Wed, 14 Mar 2018 20:28:19 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-03-04 at 17:31:32 UTC, Vaibhav Jain wrote:
-> Presently when xmon is disabled by debugfs any existing
-> instruction/data-access breakpoints set are not disabled. This may
-> lead to kernel oops when those breakpoints are hit as the necessary
-> debugger hooks aren't installed.
+On Tue, 2018-02-27 at 11:25:55 UTC, Christophe Leroy wrote:
+> cpm_cascade() doesn't have to call eoi() as it is already called
+> by handle_fasteoi_irq()
 > 
-> Hence this patch introduces a new function named clear_all_bpt()
-> which is called when xmon is disabled via debugfs. The function will
-> unpatch/clear all the trap and ciabr/dab based breakpoints.
+> And cpm_get_irq() will always return an unsigned int so the test
+> is useless
 > 
-> Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-> Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/1ff3b404019adf9d605224e1dce067
+https://git.kernel.org/powerpc/c/c554ac91ce2213faa91c51c4542377
 
 cheers
