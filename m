@@ -1,54 +1,73 @@
-Date: Wed, 14 Mar 2018 12:29:46 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: [GIT PULL] Staging fixes for 4.16-rc6
-Message-ID: <20180314112946.GA23773@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Return-Path: <hariprasath.elango@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521023044; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v83DG+kavGmp8/CviwQYLEPvF2om3gaBS9LbEcZ/shF0KB8920p6Re7u9MlTMvXHvb
+         49YVzUXSvElV1UMlywOaGWs2fcXtU1RyGe9UTv5zpD+6Qi0Id6yJ8bZYAUHukTbGYbqr
+         tEwxHatAvIuIK9LDkHTXEW/Jlz5cUjYcAZY2KzLGkLfLVy87s4qTq8G1NaG4o4xCioYN
+         xqlIGGGcE9RQ4g6QG2TAusodBvmLknOrYS6UiCr00IaXfknD0yVL7OPpboNZfwfA78gg
+         s9bFa8ZsQhg499b7bi7AmKAw80jfH00Wzb/PlGbpeAn0ESW9Y0IFByfr/xahnln2e+a8
+         v1pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=3f1DubGsmL+9Td1G2PJydN5vyAoNChL1lmAwmM/TbQk=;
+        b=Q6GscuGsbrKcWuB/40kZVtg1+CTviZlz3XfHirfHI1kXAw+utqMGCF9+fmqN59S3mT
+         cUaBRbSFKVbHACVPp+k6cIIEkaKtLqaysfbDgHhwjhSigT5Wp2Eobr0N7pUg51drSZMj
+         /5TMPxpWwx7JfaovOZJhGzxrMIN1KNlKu1l8AfetI/B+64pNapGVAGo+YaYJqZlBb+oY
+         +pTEMPAHYEXgAAM495kdx100K9yNLMWxahP1aSm5BZkKL0v/m/o/82w6Pr60wZZ0mWkn
+         f910+VosEIceVU5JqamcDk3fD2keym/0HFvt/+3AExeOqJJHDT5r5m1HX9XNcbK63tZZ
+         326Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p5jgH8Mn;
+       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p5jgH8Mn;
+       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuyZnlv/QxjFHTTQs08YQCriPt5fybhtVn1kh7KDHXd1jV8uis7avc6q3nZ/1FSjy/cXChGUg==
+From: hariprasath.elango@gmail.com
+To: linux@wolf-entwicklungen.de,
+	gregkh@linuxfoundation.org
+Cc: hariprasath.elango@gmail.com,
+	Valentin Vidic <Valentin.Vidic@CARNet.hr>,
+	=?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
+	Nguyen Phan Quang Minh <minhnpq16@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Srishti Sharma <srishtishar@gmail.com>,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: pi433: Remove comments inside code
+Date: Wed, 14 Mar 2018 15:53:31 +0530
+Message-Id: <20180314102336.8594-1-hariprasath.elango@gmail.com>
+X-Mailer: git-send-email 2.10.0.GIT
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594908260538557704?=
+X-GMAIL-MSGID: =?utf-8?q?1594908260538557704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
+From: HariPrasath Elango <hariprasath.elango@gmail.com>
 
-  Linux 4.16-rc3 (2018-02-25 18:50:41 -0800)
+Remove comments inbetween code as in this case.
 
-are available in the Git repository at:
+Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
+---
+ drivers/staging/pi433/pi433_if.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/ tags/staging-4.16-rc6
-
-for you to fetch changes up to 740a5759bf222332fbb5eda42f89aa25ba38f9b2:
-
-  staging: android: ashmem: Fix possible deadlock in ashmem_ioctl (2018-03-06 07:21:10 -0800)
-
-----------------------------------------------------------------
-Staging fixes for 4.16-rc6
-
-Here are 3 staging driver fixes for 4.16-rc6
-
-Two of them are lockdep fixes for the ashmem driver that have been
-reported by a number of people recently.  The last one is a fix for the
-comedi driver core.
-
-All of these have been in linux-next for a while with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Frank Mori Hess (1):
-      staging: comedi: fix comedi_nsamples_left.
-
-Joel Fernandes (1):
-      staging: android: ashmem: Fix lockdep issue during llseek
-
-Yisheng Xie (1):
-      staging: android: ashmem: Fix possible deadlock in ashmem_ioctl
-
- drivers/staging/android/ashmem.c | 23 ++++++++++-------------
- drivers/staging/comedi/drivers.c |  3 +--
- 2 files changed, 11 insertions(+), 15 deletions(-)
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index 88da91d..5c6a722 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -1331,7 +1331,7 @@ static int __init pi433_init(void)
+ 	 * that will key udev/mdev to add/remove /dev nodes.  Last, register
+ 	 * Last, register the driver which manages those device numbers.
+ 	 */
+-	status = alloc_chrdev_region(&pi433_dev, 0 /*firstminor*/, N_PI433_MINORS /*count*/, "pi433" /*name*/);
++	status = alloc_chrdev_region(&pi433_dev, 0, N_PI433_MINORS, "pi433");
+ 	if (status < 0)
+ 		return status;
+ 
+-- 
+2.10.0.GIT
