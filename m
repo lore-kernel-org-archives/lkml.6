@@ -1,122 +1,97 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AG47ELu9CjPW0Efmc/yZMIAijDcUu+LoitfpDosT6rVKeePuUrrFCOYkCTn+KsWhVzTk2+La5+FO
-ARC-Seal: i=1; a=rsa-sha256; t=1521532618; cv=none;
+Return-Path: <foo00@h08.hostsharing.net>
+X-Google-Smtp-Source: AG47ELvVOUAsc1Y8vQE46Rzc0hTQzytPsDQ8XSawRjulXmHpJyfmXkEjG/ape4pEqsRdqJAK5jEk
+ARC-Seal: i=1; a=rsa-sha256; t=1521030207; cv=none;
         d=google.com; s=arc-20160816;
-        b=YvDi6OWLQufBFdSzncL9Lxb4PCWU6o/xT77wiKqjt+UCvFoHprfkqmyGwcFncigeQU
-         JzbEcINjb2rC36Q9JEE9jEfAYNmCacZb52kKJh0ZQsbmw29jJ31ZdqlnDsbtvZGnTvjk
-         bp92ajZiYrS3leHlMy71mtADR012hnG8GXHbTe15+1bK0O+3/wmiRSITom8FIdzWSKKL
-         RA2rC+xE7lFeP/gs2ueG9gqDOC38++2NVB9J4BGofmQbDfDbXHcBfJ7bYDBy2cSMscQJ
-         SQ8/k0o8D/XbhHSuO3tzpuIOnN0xbmDgiLxKYFVnO72gHysnkOQenm2RDWVwa+N3S1Z5
-         RWMA==
+        b=YuTNAn9EidtxMwBLGTGoyDAmIb3RVtNJbDPLghNObyZfLhGLABulGKbaNzRPz2yJM+
+         v2eKw1+5/QeH7zVUtWB/ZLr7HeTzscyWArGniiHjZwrdxa7HxDluT869mNzdODKhwOJm
+         MZ7UGXP76fwbYd7hsslj4mDlHJSQyjAJTOvFir0f9Z7kMVr9kDdwmyqp4jGQSOa7lrYk
+         0apJdzCDJzFYdnxLrKcUNngTJNP+iYlT0OkRsavUNFfc2UhSlaHSLPqENeNASlVFkAQB
+         QVIUzmL7BC97ASlTnN8+H2Oh2vkib5+aA4G/6gHYTRSLxkMUgkNYM4rOT2QkJqVTTw6c
+         OhAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=nseFxllVmY+Q7uCQBXUVL8div4Uutlc8ROdSO36UiUI=;
-        b=IsQi0L6ffA4FZ9aUdYfAD+4lNdAYH+yGfwFkgI9EOUQpFUsQMH+DgYBdqiEa0nlc4e
-         e3e8gLCPAGsMhH0UZvlhGbyLVRd7j9svIdipHIo6dHSOye5hk6ZxJg9JNwpzN9JE7uJt
-         aG6ODdDVcMz6Vx12QD4QPVivnlDK7gwYRLQv41vXPDCDH3wWjf7kBxtxu8QLPC9CyrlK
-         7Uh7IlqkT86bazHjycajNBbPds602Quim3jpN4Abuvvz9OZwmapiNQ5n3lqeuYBx5HAb
-         7o4Nj/08QDh//Dguc0lWayi9omksIBvhJJyzP7TxpYjNJFs/hUg3aL/2355DHIhIAucY
-         CPAQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=L8c/dMpmms8975xyJXkag4epgiZND1RVlFaKIMdzqeM=;
+        b=BtpDvHtl4roUr1iiW+35PkypHhCMMvWW8ZX6xtglVl9+5whLaS4YvholCDS93fkOKW
+         f3KwdjGde0RE6SX2Wmf4c/lE5wUdMlkLWDZHL0UDBSK76+/mhyuWLiu+ttBd7zOsMZpP
+         151GnCob+DHKn+RqHzxxY/gIuzQqkgX8kVIoX0+7J5sXYkdRco/lNudGLSATc0OSiHCh
+         EnG1uA/DEkF8wyBpHx0VtJgcPXLmeDMJ7tuSeEao8TrQR0p+e9voYO5ALRZZg/4cf+Jb
+         RZKMhkpYoZqriC+fy8mOXfB14AWGsvqSsyKqfqx+EbPlk3s6VCJEfMTCWjiNprDB9yZg
+         vaYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YYDA1Gss;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kOzo851M;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.90.240 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YYDA1Gss;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kOzo851M;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50AD060314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.90.240 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
+Date: Wed, 14 Mar 2018 13:23:26 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Tomasz Figa <tfiga@chromium.org>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	"open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+	Sricharan R <sricharan@codeaurora.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH v9 1/5] driver core: Find an existing link between two
  devices
-To: Lukas Wunner <lukas@wunner.de>, Robin Murphy <robin.murphy@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa
- <tfiga@chromium.org>, Joerg Roedel <joro@8bytes.org>,
- Rob Herring <robh+dt@kernel.org>,
- "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
- devicetree@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
- Rob Clark <robdclark@gmail.com>, Sricharan R <sricharan@codeaurora.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Archit Taneja <architt@codeaurora.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <20180314122326.GA19651@wunner.de>
 References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <CAFp+6iH3R2j0_vboSV6-0k7vQFaZ66iNiTcV3_qSbBGXdM=S_A@mail.gmail.com>
+ <CAAFQd5A5Rj1KAZjUc5ZUKuKnbkA5Q6aLw9z0H3_kfyBQOOF-gw@mail.gmail.com>
  <2217404.A2W3Iek6du@aspire.rjw.lan>
- <CAAFQd5CQXY0Efv+2MC1kTVW5q4eZjJ=gwVaR-LA=3agnSSHzUw@mail.gmail.com>
- <2705105.V6KYPvoJqj@aspire.rjw.lan>
- <11eae0bc-7921-e598-9c01-63498400c85b@arm.com>
- <20180314122759.GB19651@wunner.de>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <726cf34b-568f-55c9-0459-ff34176f9927@codeaurora.org>
-Date: Tue, 20 Mar 2018 13:26:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180314122759.GB19651@wunner.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2217404.A2W3Iek6du@aspire.rjw.lan>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594812129788829883?=
-X-GMAIL-MSGID: =?utf-8?q?1595442587166741780?=
+X-GMAIL-MSGID: =?utf-8?q?1594915771167446877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Lukasz,
+On Wed, Mar 14, 2018 at 12:12:05PM +0100, Rafael J. Wysocki wrote:
+> On Tuesday, March 13, 2018 12:23:34 PM CET Tomasz Figa wrote:
+> > On Tue, Mar 13, 2018 at 7:34 PM, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> > > On Tue, Mar 13, 2018 at 3:45 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+> > >> On Tue, Mar 13, 2018 at 5:55 PM, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> > >>> The lists managing the device-links can be traversed to
+> > >>> find the link between two devices. The device_link_add() APIs
+> > >>> does traverse these lists to check if there's already a link
+> > >>> setup between the two devices.
+> > >>> So, add a new APIs, device_link_find(), to find an existing
+> > >>> device link between two devices - suppliers and consumers.
+> > >>
+> > >> I'm wondering if this API would be useful for anything else that the
+> > >> problem we're trying to solve with deleting links without storing them
+> > >> anywhere. Perhaps a device_link_del_dev(consumer, supplier) would be a
+> > >> better alternative?
+> > >
+> > > Yea, that sounds simpler i think. Will add this API instead of
+> > > find_link(). Thanks.
+> > 
+> > Perhaps let's wait for a moment to see if there are other opinions. :)
+> > 
+> > Rafael, Lucas, any thoughts?
+> 
+> It is not clear to me what the device_link_del_dev(consumer, supplier)
+> would do.
 
+The point appears to be that the pointer to the device_link need not be
+stored somewhere for later deletion.  The newly added function would
+check if a device link exists and delete it if so.
 
-On 3/14/2018 5:57 PM, Lukas Wunner wrote:
-> On Wed, Mar 14, 2018 at 12:14:15PM +0000, Robin Murphy wrote:
->>>> On Wed, Mar 14, 2018 at 8:12 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->>>>> On Tuesday, March 13, 2018 12:23:34 PM CET Tomasz Figa wrote:
->>>>>> On Tue, Mar 13, 2018 at 7:34 PM, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>>>>> On Tue, Mar 13, 2018 at 3:45 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->>>>>>>> On Tue, Mar 13, 2018 at 5:55 PM, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>>>>>>> The lists managing the device-links can be traversed to
->>>>>>>>> find the link between two devices. The device_link_add() APIs
->>>>>>>>> does traverse these lists to check if there's already a link
->>>>>>>>> setup between the two devices.
->>>>>>>>> So, add a new APIs, device_link_find(), to find an existing
->>>>>>>>> device link between two devices - suppliers and consumers.
->>>>>>>> I'm wondering if this API would be useful for anything else that the
->>>>>>>> problem we're trying to solve with deleting links without storing them
->>>>>>>> anywhere. Perhaps a device_link_del_dev(consumer, supplier) would be a
->>>>>>>> better alternative?
->>>>>>> Yea, that sounds simpler i think. Will add this API instead of
->>>>>>> find_link(). Thanks.
->>>>>> Perhaps let's wait for a moment to see if there are other opinions. :)
->>>>>>
->>>>>> Rafael, Lucas, any thoughts?
->>>>> It is not clear to me what the device_link_del_dev(consumer, supplier)
->>>>> would do.
->> Not quite - the issue here is that we have one supplier with an arbitrarily
->> large number of consumers, and would prefer that supplier not to have to
->> spend a whole bunch of memory to store all the struct device_link pointers
->> for the sole reason of having something to give to device_link_del() at the
->> end, given that the device links code is already keeping track of everything
->> internally anyway.
-> Makes sense to me.  How about an additional flag which autoremoves the
-> link on provider unbind?
+However I don't understand why storing the pointer would be a problem?
+Also, would using DL_FLAG_AUTOREMOVE avoid the need for the additional
+function?
 
-If I understand this correctly, if we create the device link with 
-DL_FLAG_AUTOREMOVE, the link is deleted after a consumer unbind. During 
-a supplier unbind all we get is a WARN_ON with DL_FLAG_AUTOREMOVE. I 
-guess that's an intended behavior?
+Thanks,
 
-If this is the case, then the consumer/supplier drivers just don't have 
-to take care of deleting the device link explicitly.
-Is my understanding correct?
-
-regards
-Vivek
-
->
-> Thanks,
->
-> Lukas
+Lukas
