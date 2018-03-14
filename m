@@ -1,88 +1,84 @@
-Return-Path: <kernel-hardening-return-12503-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsAVaCSK4uqaiZz4d9SPGO5eXok+XzEgOWqLu9xQ00Fih/lJHlOjuAxYrqz0wlPUwtFzGD8
-ARC-Seal: i=1; a=rsa-sha256; t=1520944300; cv=none;
+Return-Path: <kernel-hardening-return-12567-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELuUJ8AVrPDC4hc3Bybp0rBZ5sWNzvwjRePLhU0NWyLkeormp7ekNH/hfzwjBYwrgPIywR0H
+ARC-Seal: i=1; a=rsa-sha256; t=1520990347; cv=none;
         d=google.com; s=arc-20160816;
-        b=C6ZDrlKGJwXNZ12Lz7mLDXOADk5FHpAdAclAPk0vRxZ5LiK6BG1FVW8Qg18jwABPCD
-         SZaRBrDtut+f0pum9e5BKYieOZpP/iwPzDdw69FAX/EbnozpXq/WZVZsGMEmjUL3stC9
-         vYQQYeQ5DEB1LrTtqMSf5lEBr0OBY0I9Gpl3J346qA+zpGQfQCOnvjzV4RiTlIPSjL3/
-         ueFNWahRBQI7fdOBwr1CeW6bLN95QFa2s6dkvqDwfYiAivUsq6zNjsSYCW+ItL0OtiE3
-         VmA2utF0nOpv8Ecz1jKSV0HnSjbYQ22R982HMEpdjXZHbu/G2R6rj+P2QQJUE6uZTuwz
-         F6/A==
+        b=sFtmGV6A6fWRhZIDPggkfPAIGVgzuZkFIWkxjSGK0q1IRZ6wrd3vT/CbFcvFjFZkes
+         qFOhtq7ukikBFiHWYqqBL7nWbc83h8GUM0WdYbHYkpnYylrpHilgL/ab/rHiWPjmF7T3
+         3a/QEP5g3JXwFdXwZWi7VrhiQmumROMkYCzTHzFjUX282A4w8IJQIgJFNdmASn07ksPr
+         AiDnnT48Pv8cty9EVGhX8chhFv7+qFbGSRELlrxge9/b+GzZ8wI6wpJD+Yq74D+LNB7o
+         QD7IpJ2QRu547Lfpi8F2KYamcmFr9tlGuftu8FANTLhnMATvBLCIyPuAKhCoiztJVY1S
+         jnEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:delivered-to:list-id:list-subscribe
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
          :list-unsubscribe:list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=zEYOeRnplyJid69FxE8VlqPSFfUhl1Dz3EE7hk6N9Nc=;
-        b=JK5/tG3IZPRLNY+Euv6zWZasjIXvsVW+ly+Iod0uR9RlkcLiD1gYW+BtP310JeR5kV
-         pH/v/mBAOnvj36hJCmLxk2ZgS2B9ISY4Su/qe+twkCWJqQjBxn8TWRYl+p4Yqwss8V88
-         hXEIvCsEMtla4vuDayIMShe4Mdfgm9W4LrjT4GM/ic66F9YczLBexsrF/P0zph1i5GGl
-         02EE0thUhGnCgpZdC0g003yEUUTSytfwET20D3n09tLePPJbBzlJZnGDhQy0uat6bab6
-         rh4d+++CgKIlpQ40FpVINozt0j4aiLQifBjltFRn3osVbuzjk5ZNSEsew8d4p5PAUb4a
-         q8pg==
+        bh=JRkuCtiO2q99zk6TMZ1olV8cgEf7p4M6E1DtDTFheuo=;
+        b=EsHYkZaGsQTNFRj5NXMoZQCqg/zLw0To3jVkodNNFcKIlu6ORL/j+amEtSkjj0F0cG
+         7CmnN2xS3B5vjyVds1kzeffxgnF3KzdEH0lzisHHT+QBW8fyTWOI2rSYV47EbwW9/t9U
+         XpnV70nFbXj6+SB0flzzariJSJrylPh9yF4k77MaBaEMUecJSBA9aIaDIY9nJqZlfefo
+         JN/h6tb48P5idG9veerpVCj/vWoTSeaHZ/z30M5Q6tyfCLT0ac9DXgbaEfXG6ERriaXE
+         3zq5S++UecTSQCqQLQrNMOSJImXJrQB8bkgIcwgRevuP4am6GmYl/WYo75hsoA7HI4FU
+         /NYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12503-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12503-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pZVLaGtv;
+       spf=pass (google.com: domain of kernel-hardening-return-12567-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12567-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12503-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12503-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pZVLaGtv;
+       spf=pass (google.com: domain of kernel-hardening-return-12567-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12567-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Daniel Micay' <danielmicay@gmail.com>, Arend van Spriel
-	<arend.vanspriel@broadcom.com>
-CC: Andreas Christoforou <andreaschristofo@gmail.com>, Kees Cook
-	<keescook@chromium.org>, Kernel Hardening
-	<kernel-hardening@lists.openwall.com>, QCA ath9k Development
-	<ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Netdev
-	<netdev@vger.kernel.org>, kernel list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] drivers: net: wireless: ath: ath9: dfs: remove VLA usage
-Thread-Topic: [PATCH] drivers: net: wireless: ath: ath9: dfs: remove VLA usage
-Thread-Index: AQHTuMnnjNH4TjF/HkGf/htWtZeOkKPOG2eQ
-Date: Tue, 13 Mar 2018 12:32:17 +0000
-Message-ID: <423b529d48c54eba9f7ed51922814d46@AcuMS.aculab.com>
-References: <1520598613-3641-1-git-send-email-andreaschristofo@gmail.com>
- <5AA464DE.90100@broadcom.com>
- <CA+DvKQ+hbMoWJdOuQB5n+eVF4ePf=kVuRiMbdtTUZ8ars4Pz4A@mail.gmail.com>
-In-Reply-To: <CA+DvKQ+hbMoWJdOuQB5n+eVF4ePf=kVuRiMbdtTUZ8ars4Pz4A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <423b529d48c54eba9f7ed51922814d46@AcuMS.aculab.com>
+References: <1520598613-3641-1-git-send-email-andreaschristofo@gmail.com>
+ <5AA464DE.90100@broadcom.com> <CA+DvKQ+hbMoWJdOuQB5n+eVF4ePf=kVuRiMbdtTUZ8ars4Pz4A@mail.gmail.com>
+ <423b529d48c54eba9f7ed51922814d46@AcuMS.aculab.com>
+From: Daniel Micay <danielmicay@gmail.com>
+Date: Tue, 13 Mar 2018 21:18:45 -0400
+Message-ID: <CA+DvKQK9jRe5YOk_K4DzBYkh2VUys56XbaYZRGs0fn2WJNT+nQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers: net: wireless: ath: ath9: dfs: remove VLA usage
+To: David Laight <David.Laight@aculab.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Andreas Christoforou <andreaschristofo@gmail.com>, Kees Cook <keescook@chromium.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594463764603415966?=
-X-GMAIL-MSGID: =?utf-8?q?1594825690558705035?=
+X-GMAIL-MSGID: =?utf-8?q?1594873974699814506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogRGFuaWVsIE1pY2F5DQo+IFNlbnQ6IDEwIE1hcmNoIDIwMTggMjM6NDUNCj4gDQo+ID4g
-SnVzdCB3b25kZXJpbmcuIElzIHRoaXMgYWN0dWFsbHkgYSBWTEEuIEZGVF9OVU1fU0FNUExFUyB3
-YXMgc3RhdGljIGNvbnN0IHNvDQo+ID4gbm90IHJlYWxseSBnb2luZyB0byBzaG93IGEgbG90IG9m
-IHZhcmlhdGlvbi4gVGhpcyBhcnJheSB3aWxsIGFsd2F5cyBoYXZlIHRoZQ0KPiA+IHNhbWUgc2l6
-ZSBvbiB0aGUgc3RhY2suDQo+IA0KPiBUaGUgaXNzdWUgaXMgdGhhdCB1bmxpa2UgaW4gQysrLCBh
-IGBzdGF0aWMgY29uc3RgIGNhbid0IGJlIHVzZWQgaW4gYQ0KPiBjb25zdGFudCBleHByZXNzaW9u
-IGluIEMuIEl0J3MgdW5jbGVhciB3aHkgQyBpcyBkZWZpbmVkIHRoYXQgd2F5IGJ1dA0KPiBpdCdz
-IGhvdyBpdCBpcyBhbmQgdGhlcmUgaXNuJ3QgY3VycmVudGx5IGEgR0NDIGV4dGVuc2lvbiBtYWtp
-bmcgbW9yZQ0KPiB0aGluZ3MgaW50byBjb25zdGFudCBleHByZXNzaW9ucyBsaWtlIEMrKy4NCg0K
-J3N0YXRpYycgYW5kICdjb25zdCcgYXJlIGJvdGgganVzdCBxdWFsaWZpZXJzIHRvIGEgJ3Zhcmlh
-YmxlJw0KWW91IGNhbiBzdGlsbCB0YWtlIGl0J3MgYWRkcmVzcy4NClRoZSBsYW5ndWFnZSBhbGxv
-d3MgeW91IHRvIGNhc3QgYXdheSB0aGUgJ2NvbnN0JyBhbmQgd3JpdGUgdG8NCnRoZSB2YXJpYWJs
-ZSAtIHRoZSBlZmZlY3QgaXMgcHJvYmFibHkgJ2ltcGxlbWVudGF0aW9uIGRlZmluZWQnLg0KDQpJ
-dCBpcyBwcm9iYWJseSByZXF1aXJlZCB0byBiZSB2YWxpZCBmb3IgJ3N0YXRpYyBjb25zdCcgaXRl
-bXMNCnRvIGJlIHBhdGNoYWJsZS4NCg0KCURhdmlkDQoNCg==
+No, it's undefined behavior to write to a const variable. The `static`
+and `const` on the variable both change the code generation in the
+real world as permitted / encouraged by the standard. It's placed in
+read-only memory. Trying to write to it will break. It's not
+"implemented defined" to write to it, it's "undefined behavior" i.e.
+it's considered incorrect. There a clear distinction between those in
+the standard.
+
+You're confusing having a real `const` for a variable with having it
+applied to a pointer. It's well-defined to cast away const from a
+pointer and write to what it points at if it's not actually const. If
+it is const, that's broken.
+
+There's nothing implementation defined about either case.
+
+The C standard could have considered `static const` variables to work
+as constant expressions just like the C++ standard. They borrowed it
+from there but made it less useful than const in what became the C++
+standard. They also used stricter rules for the permitted implicit
+conversions of const pointers which made those much less usable, i.e.
+converting `int **` to `const int *const *` wasn't permitted like C++.
+I don't think the difference between C and C++ const pointer
+conversions, it's a quirk of them being standardized on different
+timelines and ending up with different versions of the same thing. On
+the other hand, they might have left out having ever so slightly more
+useful constant expressions on purpose since people can use #define.
