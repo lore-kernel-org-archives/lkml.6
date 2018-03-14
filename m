@@ -1,118 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeCNRCZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:02:25 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39819 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752397AbeCNQ7d (ORCPT
+        id S1752474AbeCNRCg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:02:36 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42936 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbeCNRCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:33 -0400
-X-Google-Smtp-Source: AG47ELvE116t+UR8Ob2pk1XrYKZ4gudkGLGZ4Pb1UcQV1Cc77C37Rxtx5mz6KzoSE3Z+ZGqEeaSQCA==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 16/25] drivers: firmware: psci: Announce support for OS initiated suspend mode
-Date: Wed, 14 Mar 2018 17:58:26 +0100
-Message-Id: <1521046715-30683-17-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
-References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 14 Mar 2018 13:02:33 -0400
+X-Google-Smtp-Source: AG47ELvZGCvN6DaPW/PDXiUWvPaaJi1oDXLKxU6gh3dQqTSVBxdPKdkUAxaiABLKJG0utb/tNMhOTbGj4tjH33qoOA4=
+MIME-Version: 1.0
+In-Reply-To: <20180314084329.y7735ecw2is5i5pd@esperanza>
+References: <20180313165428.58699-1-shakeelb@google.com> <alpine.DEB.2.20.1803131217200.9367@nuc-kabylake>
+ <CALvZod4qa39QJqCr3n6UqzdD6pfLAQ3Rix6zm9_1pQkfQCDa7Q@mail.gmail.com> <20180314084329.y7735ecw2is5i5pd@esperanza>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 14 Mar 2018 10:02:30 -0700
+Message-ID: <CALvZod7sG9s+K481rygGDAE3r96ytoJ4Usp-1KfXsN3RFVx2qQ@mail.gmail.com>
+Subject: Re: [PATCH] slab, slub: remove size disparity on debug kernel
+To: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Christopher Lameter <cl@linux.com>,
+        Suleiman Souhlal <suleiman@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PSCI firmware v1.0+, supports two different modes for CPU_SUSPEND. The
-Platform Coordinated mode, which is the default and mandatory mode, while
-support for the OS initiated mode is optional.
+On Wed, Mar 14, 2018 at 1:43 AM, Vladimir Davydov
+<vdavydov.dev@gmail.com> wrote:
+> On Tue, Mar 13, 2018 at 10:36:52AM -0700, Shakeel Butt wrote:
+>> On Tue, Mar 13, 2018 at 10:19 AM, Christopher Lameter <cl@linux.com> wrote:
+>> > On Tue, 13 Mar 2018, Shakeel Butt wrote:
+>> >
+>> >> However for SLUB in debug kernel, the sizes were same. On further
+>> >> inspection it is found that SLUB always use kmem_cache.object_size to
+>> >> measure the kmem_cache.size while SLAB use the given kmem_cache.size. In
+>> >> the debug kernel the slab's size can be larger than its object_size.
+>> >> Thus in the creation of non-root slab, the SLAB uses the root's size as
+>> >> base to calculate the non-root slab's size and thus non-root slab's size
+>> >> can be larger than the root slab's size. For SLUB, the non-root slab's
+>> >> size is measured based on the root's object_size and thus the size will
+>> >> remain same for root and non-root slab.
+>> >
+>> > Note that the object_size and size may differ for SLUB based on kernel
+>> > parameters and slab configuration. For SLAB these are compilation options.
+>> >
+>>
+>> Thanks for the explanation.
+>>
+>> >> @@ -379,7 +379,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+>> >>  }
+>> >>
+>> >>  static struct kmem_cache *create_cache(const char *name,
+>> >> -             unsigned int object_size, unsigned int size, unsigned int align,
+>> >> +             unsigned int object_size, unsigned int align,
+>> >>               slab_flags_t flags, unsigned int useroffset,
+>> >
+>> > Why was both the size and object_size passed during cache creation in the
+>> > first place? From the flags etc the slab logic should be able to compute
+>> > the actual bytes required for each object and its metadata.
+>> >
+>>
+>> +Vladimir
+>>
+>> I think it was introduced by 794b1248be4e7 ("memcg, slab: separate
+>> memcg vs root cache creation paths") but I could not find out the
+>> reason.
+>
+> This was a mistake - I missed that __kmem_cache_create() overwrites
+> kmem_cache->size. Thanks for fixing this.
 
-This change introduces initial support for the OS initiated mode, in way
-that it adds the related PSCI bits from the spec and prints a message in
-the log to inform whether the mode is supported by the PSCI FW.
+Thanks for confirming.
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/firmware/psci.c   | 21 ++++++++++++++++++++-
- include/uapi/linux/psci.h |  5 +++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+Andrew, can you please add following line to the patch commit message.
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index 3888100..e8f4f84 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -95,6 +95,11 @@ static inline bool psci_has_ext_power_state(void)
- 				PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK;
- }
- 
-+static inline bool psci_has_osi_support(void)
-+{
-+	return psci_cpu_suspend_feature & PSCI_1_0_OS_INITIATED;
-+}
-+
- static inline bool psci_power_state_loses_context(u32 state)
- {
- 	const u32 mask = psci_has_ext_power_state() ?
-@@ -658,10 +663,24 @@ static int __init psci_0_1_init(struct device_node *np)
- 	return 0;
- }
- 
-+static int __init psci_1_0_init(struct device_node *np)
-+{
-+	int err;
-+
-+	err = psci_0_2_init(np);
-+	if (err)
-+		return err;
-+
-+	if (psci_has_osi_support())
-+		pr_info("OSI mode supported.\n");
-+
-+	return 0;
-+}
-+
- static const struct of_device_id psci_of_match[] __initconst = {
- 	{ .compatible = "arm,psci",	.data = psci_0_1_init},
- 	{ .compatible = "arm,psci-0.2",	.data = psci_0_2_init},
--	{ .compatible = "arm,psci-1.0",	.data = psci_0_2_init},
-+	{ .compatible = "arm,psci-1.0",	.data = psci_1_0_init},
- 	{},
- };
- 
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index b3bcabe..581f720 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -49,6 +49,7 @@
- 
- #define PSCI_1_0_FN_PSCI_FEATURES		PSCI_0_2_FN(10)
- #define PSCI_1_0_FN_SYSTEM_SUSPEND		PSCI_0_2_FN(14)
-+#define PSCI_1_0_FN_SET_SUSPEND_MODE		PSCI_0_2_FN(15)
- 
- #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
- 
-@@ -97,6 +98,10 @@
- #define PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK	\
- 			(0x1 << PSCI_1_0_FEATURES_CPU_SUSPEND_PF_SHIFT)
- 
-+#define PSCI_1_0_OS_INITIATED			BIT(0)
-+#define PSCI_1_0_SUSPEND_MODE_PC		0
-+#define PSCI_1_0_SUSPEND_MODE_OSI		1
-+
- /* PSCI return values (inclusive of all PSCI versions) */
- #define PSCI_RET_SUCCESS			0
- #define PSCI_RET_NOT_SUPPORTED			-1
--- 
-2.7.4
+Fixes: 794b1248be4e ("memcg, slab: separate memcg vs root cache creation paths")
