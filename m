@@ -1,122 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeCNREz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:04:55 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43758 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752173AbeCNQ7S (ORCPT
+        id S1752376AbeCNRFQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:05:16 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36715 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbeCNRFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:18 -0400
-X-Google-Smtp-Source: AG47ELuhxqVYigt32oLkl5ebTYlGhgNzggotEhXyoY3DbQdXkNXTX/6QxkO6Ee9XNVFiWF0S8J+VdQ==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Wed, 14 Mar 2018 13:05:12 -0400
+X-Google-Smtp-Source: AG47ELu53CL2qmprMR+P519rINolEpM4TDbzp0VlyFyCKDl0s4YBlTcMbDBF28iPSFtOHOm+LvBsww==
+From: Sonny Rao <sonnyrao@chromium.org>
+To: kvm@vger.kernel.org
+Cc: "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 08/25] PM / Domains: Extend genpd CPU governor to cope with QoS constraints
-Date: Wed, 14 Mar 2018 17:58:18 +0100
-Message-Id: <1521046715-30683-9-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
-References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH] vhost: fix vhost ioctl signature to build with clang
+Date: Wed, 14 Mar 2018 10:05:06 -0700
+Message-Id: <20180314170506.121791-1-sonnyrao@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU devices and other regular devices may share the same PM domain and may
-also be hierarchically related via subdomains. In either case, all devices
-including CPUs, may be attached to a PM domain managed by genpd, that has
-an idle state with an enter/exit latency.
+Clang is particularly anal about signed vs unsigned comparisons and
+doesn't like the fact that some ioctl numbers set the MSB, so we get
+this error when trying to build vhost on aarch64:
 
-Let's take these latencies into account in the state selection process by
-genpd's governor for CPUs. This means the governor, pm_domain_cpu_gov,
-becomes extended to satisfy both a state's residency and a potential dev PM
-QoS constraint.
+drivers/vhost/vhost.c:1400:7: error: overflow converting case value to
+ switch condition type (3221794578 to 18446744072636378898)
+ [-Werror, -Wswitch]
+        case VHOST_GET_VRING_BASE:
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+3221794578 is 0xC008AF12 in hex
+18446744072636378898 is 0xFFFFFFFFC008AF12 in hex
+
+Fix this by using unsigned ints in the function signature for
+vhost_vring_ioctl().
+
+Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
 ---
- drivers/base/power/domain_governor.c | 15 +++++++++++----
- include/linux/pm_domain.h            |  1 +
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ drivers/vhost/vhost.c | 2 +-
+ drivers/vhost/vhost.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
-index 70565a8..2f162bc 100644
---- a/drivers/base/power/domain_governor.c
-+++ b/drivers/base/power/domain_governor.c
-@@ -214,8 +214,10 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
- 	struct generic_pm_domain *genpd = pd_to_genpd(pd);
- 	struct gpd_link *link;
- 
--	if (!genpd->max_off_time_changed)
-+	if (!genpd->max_off_time_changed) {
-+		genpd->state_idx = genpd->cached_power_down_state_idx;
- 		return genpd->cached_power_down_ok;
-+	}
- 
- 	/*
- 	 * We have to invalidate the cached results for the masters, so
-@@ -240,6 +242,7 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
- 		genpd->state_idx--;
- 	}
- 
-+	genpd->cached_power_down_state_idx = genpd->state_idx;
- 	return genpd->cached_power_down_ok;
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 1b3e8d2d5c8b4..5316319d84081 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1337,7 +1337,7 @@ static long vhost_set_memory(struct vhost_dev *d, struct vhost_memory __user *m)
+ 	return -EFAULT;
  }
  
-@@ -255,6 +258,10 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
- 	s64 idle_duration_ns;
- 	int cpu, i;
+-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp)
++long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
+ {
+ 	struct file *eventfp, *filep = NULL;
+ 	bool pollstart = false, pollstop = false;
+diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+index ac4b6056f19ae..d8ee85ae8fdcc 100644
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -45,7 +45,7 @@ void vhost_poll_stop(struct vhost_poll *poll);
+ void vhost_poll_flush(struct vhost_poll *poll);
+ void vhost_poll_queue(struct vhost_poll *poll);
+ void vhost_work_flush(struct vhost_dev *dev, struct vhost_work *work);
+-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
++long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp);
  
-+	/* Validate dev PM QoS constraints. */
-+	if (!default_power_down_ok(pd))
-+		return false;
-+
- 	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
- 		return true;
+ struct vhost_log {
+ 	u64 addr;
+@@ -177,7 +177,7 @@ void vhost_dev_reset_owner(struct vhost_dev *, struct vhost_umem *);
+ void vhost_dev_cleanup(struct vhost_dev *);
+ void vhost_dev_stop(struct vhost_dev *);
+ long vhost_dev_ioctl(struct vhost_dev *, unsigned int ioctl, void __user *argp);
+-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
++long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp);
+ int vhost_vq_access_ok(struct vhost_virtqueue *vq);
+ int vhost_log_access_ok(struct vhost_dev *);
  
-@@ -275,9 +282,9 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
- 
- 	/*
- 	 * Find the deepest idle state, that has its residency value satisfied.
--	 * Start at the deepest supported state.
-+	 * Start at the state picked by the dev PM QoS constraint validation.
- 	 */
--	i = genpd->state_count - 1;
-+	i = genpd->state_idx;
- 	do {
- 		if (!genpd->states[i].residency_ns)
- 			break;
-@@ -310,6 +317,6 @@ struct dev_power_governor pm_domain_always_on_gov = {
- };
- 
- struct dev_power_governor pm_domain_cpu_gov = {
--	.suspend_ok = NULL,
-+	.suspend_ok = default_suspend_ok,
- 	.power_down_ok = cpu_power_down_ok,
- };
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 8f60181..e7910d2 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -77,6 +77,7 @@ struct generic_pm_domain {
- 	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
- 	bool max_off_time_changed;
- 	bool cached_power_down_ok;
-+	bool cached_power_down_state_idx;
- 	int (*attach_dev)(struct generic_pm_domain *domain,
- 			  struct device *dev);
- 	void (*detach_dev)(struct generic_pm_domain *domain,
 -- 
-2.7.4
+2.13.5
