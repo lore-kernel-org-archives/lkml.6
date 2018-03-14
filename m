@@ -1,227 +1,303 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933295AbeCNDG5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:06:57 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:34451 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933180AbeCNDGz (ORCPT
+        id S933348AbeCNDHS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:07:18 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:59685 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933180AbeCNDHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:06:55 -0400
-Subject: Re: [PATCH v8 08/13] [media] vb2: add explicit fence user API
-To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180309174920.22373-1-gustavo@padovan.org>
- <20180309174920.22373-9-gustavo@padovan.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9f0ea425-e2db-7ffc-af2f-8573e9bf82d7@xs4all.nl>
-Date: Tue, 13 Mar 2018 20:06:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 13 Mar 2018 23:07:12 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: chenjh@rock-chips.com
+X-FST-TO: tony.xie@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: chenjh@rock-chips.com
+X-UNIQUE-TAG: <5f16742f8a69a9a53bfdcb6fd8da0343>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2 2/2] mfd: rk808: Add restart functionality
+To: Daniel Schultz <d.schultz@phytec.de>, Lee Jones <lee.jones@linaro.org>
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com,
+        linux-kernel@vger.kernel.org, w.egorov@phytec.de,
+        "xsf@rock-chips.com" <xsf@rock-chips.com>,
+        =?UTF-8?B?6LCi5L+u6ZGr?= <tony.xie@rock-chips.com>
+References: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
+ <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
+ <20180312141012.bc3xkhymkgd4q6b7@dell>
+ <b5fb541f-cc48-bd4e-372c-789411b214f2@rock-chips.com>
+ <2f6f31a4-b249-dc68-bf5c-5bbc3f900c77@phytec.de>
+From: Joseph Chen <chenjh@rock-chips.com>
+Message-ID: <2466b0b9-ab22-1631-03cd-a668c421de1f@rock-chips.com>
+Date: Wed, 14 Mar 2018 11:08:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309174920.22373-9-gustavo@padovan.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDKRsCLoi5nX7eT3SpPDzOFqA78F/Tv9e6/7OvNvrEigzyKzdZidDzQIpUQOPEzMUkuhl4L+OUniIN3XtkDoqhHXMLMKDtrbbD2fJ31ZAz/ruz+U1Tqn
- +sbWkM4CtM32t5KFHr+sibyKrH1mmq+j8MDDnR96MZThV8kY52AVbqKwiS72TuhHaS00XhQnLJHSiCgJYPukvDmLxBA5KVp768V5n2Em3D0e4esMF0l8QibG
- VyBl2gNOVFCXZxuOS0jqKuqRUkCDYa/yA2Z1Qo5ho/4wRLzMoiDqYDWqxLyYtdbKiHG8WM9jYRlL0wJ+AlGjc0vvuY7K5XNeahWGOrgulGUk/xtXJlMT2zeg
- cMErl76A3vFFvEc2WOK2IpgE3xOJl8Mnr4IXgcpsbGlUYJ/B0RMF89HjnyirIADpKEx5PWg75k3pDcU1vVZk0gbb6URm3KGNkcX/8KJ42QFYCv9NMVVAZczL
- F4TtBFMA4uT+Bb8b
+In-Reply-To: <2f6f31a4-b249-dc68-bf5c-5bbc3f900c77@phytec.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> 
-> Turn the reserved2 field into fence_fd that we will use to send
-> an in-fence to the kernel or return an out-fence from the kernel to
-> userspace.
-> 
-> Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
-> when sending a fence to the kernel to be waited on, and
-> V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
-> 
-> v6:	- big improvement on doc (Hans Verkuil)
-> 
-> v5:
-> 	- keep using reserved2 field for cpia2
-> 	- set fence_fd to 0 for now, for compat with userspace(Mauro)
-> 
-> v4:
-> 	- make it a union with reserved2 and fence_fd (Hans Verkuil)
-> 
-> v3:
-> 	- make the out_fence refer to the current buffer (Hans Verkuil)
-> 
-> v2: add documentation
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> ---
->  Documentation/media/uapi/v4l/buffer.rst         | 45 +++++++++++++++++++++++--
->  drivers/media/common/videobuf2/videobuf2-v4l2.c |  2 +-
->  drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
->  include/uapi/linux/videodev2.h                  |  7 +++-
->  4 files changed, 51 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> index e2c85ddc990b..49273026740f 100644
-> --- a/Documentation/media/uapi/v4l/buffer.rst
-> +++ b/Documentation/media/uapi/v4l/buffer.rst
-> @@ -301,10 +301,22 @@ struct v4l2_buffer
->  	elements in the ``planes`` array. The driver will fill in the
->  	actual number of valid elements in that array.
->      * - __u32
-> -      - ``reserved2``
-> +      - ``fence_fd``
->        -
-> -      - A place holder for future extensions. Drivers and applications
-> -	must set this to 0.
-> +      - Used to communicate fences file descriptors from userspace to kernel
+Hi, Daniel：
 
-fences file descriptors -> a fence file descriptor
+     I discussed with my colleagues, we agree with your idear to make 
+PMIC restart as a option and controlled by a new DTS property.
 
-> +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
-> +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
-> +	be used and this field set to the fence file descriptor of the in-fence
 
-Missing period at the end of this sentence.
+在 2018/3/13 17:48, Daniel Schultz 写道:
+> Hi,
+>
+> I can add a DTS property to enable the PMIC restart functions? So this 
+> feature can be used if its desired.
+>
+> My problem with the CRU reset is a strange behaviour in the ROM code. 
+> During a reset from MMC1 (eMMC), the ROM tries to load the SPL from 
+> MMC0 (SD).
+>
+> Daniel
+>
+>
+> On 03/13/2018 04:32 AM, Joseph Chen wrote:
+>> Hi, Daniel：
+>>
+>>         On Rockchip platforms, we always use CRU to restart system. 
+>> From your patch, I think you would like to support restart by CRU or 
+>> PMIC, right ?
+>>
+>>         I think restart by PMIC is not accepted, because PMIC restart 
+>> means all regualtors are reset (voltage drops to 0mv and then power 
+>> on again), including vdd_arm, vdd_logic, vcc_ddr, etc. This is like a 
+>> cold boot for machine.
+>>
+>>        We use CRU reset, because we want to keep status of last log, 
+>> GRF, CRU or other registers, but PMIC restart can make them lost.
+>>
+>>
+>> 在 2018/3/12 22:10, Lee Jones 写道:
+>>> Rockchip guys,
+>>>
+>>> I'd really appreciate your input on these two patches please.
+>>>
+>>> Please provide Reviewed-by/Tested-by tags.
+>>>
+>>> On Wed, 07 Mar 2018, Daniel Schultz wrote:
+>>>> When using Rockchip SoCs with rk805/808/818 PMICs, restarts are 
+>>>> realized by
+>>>> setting the reset registers in the "Clock and Reset Unit".
+>>>>
+>>>> Since all three shutdown functions have almost the same code, all 
+>>>> logic
+>>>> from the shutdown functions can be refactored to a new function
+>>>> "rk808_update_bits", which can update a register by a given address 
+>>>> and
+>>>> bitmask.
+>>>>
+>>>> After that, notifier blocks and the restart functions were added to 
+>>>> the
+>>>> driver. Like the shutdown function, the restart is bound to the
+>>>> "rockchip,system-power-controller" device tree property and can easily
+>>>> revoked to the software restart by removing the property.
+>>>>
+>>>> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+>>>> ---
+>>>> Changes:
+>>>>     v2: Re-submit with recipients from Rockchip.
+>>>>
+>>>>   drivers/mfd/rk808.c       | 97 
+>>>> ++++++++++++++++++++++++++++++-----------------
+>>>>   include/linux/mfd/rk808.h |  1 +
+>>>>   2 files changed, 63 insertions(+), 35 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+>>>> index d138721..2c68f8c 100644
+>>>> --- a/drivers/mfd/rk808.c
+>>>> +++ b/drivers/mfd/rk808.c
+>>>> @@ -27,6 +27,7 @@
+>>>>   #include <linux/module.h>
+>>>>   #include <linux/of_device.h>
+>>>>   #include <linux/regmap.h>
+>>>> +#include <linux/reboot.h>
+>>>>     struct rk808_reg_data {
+>>>>       int addr;
+>>>> @@ -369,59 +370,73 @@ static const struct regmap_irq_chip 
+>>>> rk818_irq_chip = {
+>>>>     static struct i2c_client *rk808_i2c_client;
+>>>>   -static void rk805_device_shutdown(void)
+>>>> +static void rk808_update_bits(unsigned int reg, unsigned int 
+>>>> bit_mask)
+>>>>   {
+>>>>       int ret;
+>>>>       struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>>>>         if (!rk808) {
+>>>>           dev_warn(&rk808_i2c_client->dev,
+>>>> -             "have no rk805, so do nothing here\n");
+>>>> +             "have no %s, so do nothing here\n",
+>>>> +             rk808->regmap_irq_chip->name);
+>>>>           return;
+>>>>       }
+>>>>         ret = regmap_update_bits(rk808->regmap,
+>>>> -                 RK805_DEV_CTRL_REG,
+>>>> -                 DEV_OFF, DEV_OFF);
+>>>> +                 reg,
+>>>> +                 bit_mask, bit_mask);
+>>>>       if (ret)
+>>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>>>> +        dev_err(&rk808_i2c_client->dev, "can't write to DEVCTRL: 
+>>>> %x!\n",
+>>>> +            ret);
+>>>>   }
+>>>>   -static void rk808_device_shutdown(void)
+>>>> +static void rk805_device_shutdown(void)
+>>>>   {
+>>>> -    int ret;
+>>>> -    struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>>>> -
+>>>> -    if (!rk808) {
+>>>> -        dev_warn(&rk808_i2c_client->dev,
+>>>> -             "have no rk808, so do nothing here\n");
+>>>> -        return;
+>>>> -    }
+>>>> +    rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
+>>>> +}
+>>>> +static int rk805_restart_notify(struct notifier_block *this,
+>>>> +                   unsigned long mode, void *cmd)
+>>>> +{
+>>>> +    rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF_RST);
+>>>> +    return NOTIFY_DONE;
+>>>> +}
+>>>>   -    ret = regmap_update_bits(rk808->regmap,
+>>>> -                 RK808_DEVCTRL_REG,
+>>>> -                 DEV_OFF_RST, DEV_OFF_RST);
+>>>> -    if (ret)
+>>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>>>> +static void rk808_device_shutdown(void)
+>>>> +{
+>>>> +    rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
+>>>> +}
+>>>> +static int rk808_restart_notify(struct notifier_block *this,
+>>>> +                   unsigned long mode, void *cmd)
+>>>> +{
+>>>> +    rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF);
+>>>> +    return NOTIFY_DONE;
+>>>>   }
+>>>>     static void rk818_device_shutdown(void)
+>>>>   {
+>>>> -    int ret;
+>>>> -    struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>>>> +    rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF_RST);
+>>>> +}
+>>>> +static int rk818_restart_notify(struct notifier_block *this,
+>>>> +                   unsigned long mode, void *cmd)
+>>>> +{
+>>>> +    rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
+>>>> +    return NOTIFY_DONE;
+>>>> +}
+>>>>   -    if (!rk808) {
+>>>> -        dev_warn(&rk808_i2c_client->dev,
+>>>> -             "have no rk818, so do nothing here\n");
+>>>> -        return;
+>>>> -    }
+>>>> +static struct notifier_block rk805_restart_handler = {
+>>>> +    .notifier_call = rk805_restart_notify,
+>>>> +    .priority = 196,
+>>>> +};
+>>>>   -    ret = regmap_update_bits(rk808->regmap,
+>>>> -                 RK818_DEVCTRL_REG,
+>>>> -                 DEV_OFF_RST, DEV_OFF_RST);
+>>>> -    if (ret)
+>>>> -        dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>>>> -}
+>>>> +static struct notifier_block rk808_restart_handler = {
+>>>> +    .notifier_call = rk808_restart_notify,
+>>>> +    .priority = 196,
+>>>> +};
+>>>> +
+>>>> +static struct notifier_block rk818_restart_handler = {
+>>>> +    .notifier_call = rk818_restart_notify,
+>>>> +    .priority = 196,
+>>>> +};
+>>>>     static const struct of_device_id rk808_of_match[] = {
+>>>>       { .compatible = "rockchip,rk805" },
+>>>> @@ -476,6 +491,7 @@ static int rk808_probe(struct i2c_client *client,
+>>>>           cells = rk805s;
+>>>>           nr_cells = ARRAY_SIZE(rk805s);
+>>>>           pm_pwroff_fn = rk805_device_shutdown;
+>>>> +        rk808->nb = &rk805_restart_handler;
+>>>>           break;
+>>>>       case RK808_ID:
+>>>>           rk808->regmap_cfg = &rk808_regmap_config;
+>>>> @@ -485,6 +501,7 @@ static int rk808_probe(struct i2c_client *client,
+>>>>           cells = rk808s;
+>>>>           nr_cells = ARRAY_SIZE(rk808s);
+>>>>           pm_pwroff_fn = rk808_device_shutdown;
+>>>> +        rk808->nb = &rk808_restart_handler;
+>>>>           break;
+>>>>       case RK818_ID:
+>>>>           rk808->regmap_cfg = &rk818_regmap_config;
+>>>> @@ -494,6 +511,7 @@ static int rk808_probe(struct i2c_client *client,
+>>>>           cells = rk818s;
+>>>>           nr_cells = ARRAY_SIZE(rk818s);
+>>>>           pm_pwroff_fn = rk818_device_shutdown;
+>>>> +        rk808->nb = &rk818_restart_handler;
+>>>>           break;
+>>>>       default:
+>>>>           dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
+>>>> @@ -546,11 +564,18 @@ static int rk808_probe(struct i2c_client 
+>>>> *client,
+>>>>         pm_off = of_property_read_bool(np,
+>>>>                   "rockchip,system-power-controller");
+>>>> -    if (pm_off && !pm_power_off) {
+>>>> +    if (pm_off) {
+>>>>           rk808_i2c_client = client;
+>>>> -        pm_power_off = pm_pwroff_fn;
+>>>> +        if (!pm_power_off)
+>>>> +            pm_power_off = pm_pwroff_fn;
+>>>> +        if (rk808->nb) {
+>>>> +            ret = register_restart_handler(rk808->nb);
+>>>> +            if (ret)
+>>>> +                dev_err(&client->dev,
+>>>> +                    "cannot register restart handler, %d\n",
+>>>> +                    ret);
+>>>> +        }
+>>>>       }
+>>>> -
+>>>>       return 0;
+>>>>     err_irq:
+>>>> @@ -564,6 +589,8 @@ static int rk808_remove(struct i2c_client *client)
+>>>>         regmap_del_irq_chip(client->irq, rk808->irq_data);
+>>>>       pm_power_off = NULL;
+>>>> +    if (rk808->nb)
+>>>> +        unregister_restart_handler(rk808->nb);
+>>>>         return 0;
+>>>>   }
+>>>> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+>>>> index 338e0f6..9c26ca2 100644
+>>>> --- a/include/linux/mfd/rk808.h
+>>>> +++ b/include/linux/mfd/rk808.h
+>>>> @@ -453,5 +453,6 @@ struct rk808 {
+>>>>       long                variant;
+>>>>       const struct regmap_config    *regmap_cfg;
+>>>>       const struct regmap_irq_chip    *regmap_irq_chip;
+>>>> +    struct notifier_block        *nb;
+>>>>   };
+>>>>   #endif /* __LINUX_REGULATOR_RK808_H */
+>>
+>
+>
+>
 
-> +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
-
-` -> ``
-
-> +
-> +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
-> +	must be set, the kernel will return the out-fence file descriptor on
-
-on -> in
-
-> +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
-
-` -> ``
-
-> +        an error.
-> +
-> +	In all other ioctls V4L2 sets this field to -1 if
-
-In all other -> For all other buffer
-
-> +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
-> +	otherwise this field is set to 0 for backward compatibility.
->      * - __u32
->        - ``reserved``
->        -
-> @@ -648,6 +660,33 @@ Buffer Flags
->        - Start Of Exposure. The buffer timestamp has been taken when the
->  	exposure of the frame has begun. This is only valid for the
->  	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
-> +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
-> +
-> +      - ``V4L2_BUF_FLAG_IN_FENCE``
-> +      - 0x00200000
-> +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
-> +	buffer won't be queued to the driver until the fence signals. The order
-> +	in which buffers are queued is guaranteed to be preserved, so any
-> +	buffers queued after this buffer will also be blocked until this fence
-> +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
-> +	other ioctls the driver just report the value of the flag.
-
-report -> reports
-
-> +
-> +        If the fence signals the flag is cleared and not reported anymore.
-> +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
-> +
-> +
-> +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
-> +
-> +      - ``V4L2_BUF_FLAG_OUT_FENCE``
-> +      - 0x00400000
-> +      - Request for a fence to be attached to the buffer. The driver will fill
-> +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
-> +	<VIDIOC_QBUF>` returns. This flag must be set before calling
-> +	``VIDIOC_QBUF``. For other ioctls the driver just report the value of
-
-report -> reports
-
-> +	the flag.
-> +
-> +        If the creation of the  out-fence  fails ``VIDIOC_QBUF`` returns an
-
-double spaces before and after 'out-fence'.
-
-> +	error.
->  
->  
->  
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index 68291ba8632d..ad1e032c3bf5 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> @@ -203,7 +203,7 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
->  	b->timestamp = ns_to_timeval(vb->timestamp);
->  	b->timecode = vbuf->timecode;
->  	b->sequence = vbuf->sequence;
-> -	b->reserved2 = 0;
-> +	b->fence_fd = 0;
->  	b->reserved = 0;
->  
->  	if (q->is_multiplanar) {
-> diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> index 5198c9eeb348..3de2252e3632 100644
-> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> @@ -386,7 +386,7 @@ struct v4l2_buffer32 {
->  		__s32		fd;
->  	} m;
->  	__u32			length;
-> -	__u32			reserved2;
-> +	__s32			fence_fd;
->  	__u32			reserved;
->  };
->  
-> @@ -604,7 +604,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *kp,
->  	    assign_in_user(&up->timestamp.tv_usec, &kp->timestamp.tv_usec) ||
->  	    copy_in_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
->  	    assign_in_user(&up->sequence, &kp->sequence) ||
-> -	    assign_in_user(&up->reserved2, &kp->reserved2) ||
-> +	    assign_in_user(&up->fence_fd, &kp->fence_fd) ||
->  	    assign_in_user(&up->reserved, &kp->reserved) ||
->  	    get_user(length, &kp->length) ||
->  	    put_user(length, &up->length))
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 58894cfe9479..2d424aebdd1e 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -933,7 +933,10 @@ struct v4l2_buffer {
->  		__s32		fd;
->  	} m;
->  	__u32			length;
-> -	__u32			reserved2;
-> +	union {
-> +		__s32		fence_fd;
-> +		__u32		reserved2;
-> +	};
->  	__u32			reserved;
->  };
->  
-> @@ -970,6 +973,8 @@ struct v4l2_buffer {
->  #define V4L2_BUF_FLAG_TSTAMP_SRC_SOE		0x00010000
->  /* mem2mem encoder/decoder */
->  #define V4L2_BUF_FLAG_LAST			0x00100000
-> +#define V4L2_BUF_FLAG_IN_FENCE			0x00200000
-> +#define V4L2_BUF_FLAG_OUT_FENCE			0x00400000
->  
->  /**
->   * struct v4l2_exportbuffer - export of video buffer as DMABUF file descriptor
-> 
-
-Regards,
-
-	Hans
+-- 
+Best Regards
+----------------------------------------------------------------------------
+陈健洪 (Joseph Chen)
+E-mail：chenjh@rock-chips.com
+福州瑞芯微电子股份有限公司
+Fuzhou Rockchip Electronics Co.Ltd
+福建省福州市铜盘路软件大道89号软件园A区21号楼 (350003)
+No. 21 Building, A District, No.89,software Boulevard Fuzhou,Fujian,PRC
+TEL：0591-83991906/07-8573
