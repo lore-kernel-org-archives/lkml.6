@@ -1,150 +1,195 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2202530-1521048167-2-8069310700259471727
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2139802-1521046323-2-8251503771798896336
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: 
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521048164; b=aJCYedUJ+aVawQH1yH7sYVhqrDstntl+818dkfJBsnSLsc9
-    nM8DaDmkYMo5aD+Bxm7zwE9IGL3Dt5zk/UXEn3C0voqkbS4Os6t2nRdWRsxg63d/
-    exXiBTNvdv+TAzR+PJjg42NtMHpUAuTlnW/3Olen3mr1hQBmj0rWnJAZszspDlVU
-    ntIhjZg88XwLugVbrc8jTsbu7K9QU8kA8Fb2JeWW2bLftqXNWWPN2gsCBCdI29Ou
-    a36d5UK+Rr2nVmsonHUfvr+neH4bQbnkmsHXmZvajKZWNRsgdKxi9ijeXRsby5Jl
-    m51ht7q4CQaX0fcXLgo1JxPYUB0cy1k4Az568wg==
+    t=1521046322; b=bnx6egMiS/UmO+NcG0pGTsCBNgZ6qgKbhA89N7LH1HQ6dy6
+    GzaZzzjf754AXvBfS4YQ0EA8+T3rn6/Xa587U8AbByVLahtC2lnMY91varVbwg8Z
+    WxsoMq1GT4tk3A/nOtx2jnjDUe3K/xMVe4CQJzprQhng5HUeocjRtKIn7sRpQUit
+    N8yuPzY6L1XxNmymHeuAxXtFHqtW3xyDf2AQ0Cb6aIQL8sf2TRwKv32Q1aPX/vRd
+    8cOYdkUNV1JX/QBS1Qrg82OftoT57BXljc+6AdDu2Qaq2EVS5KLoxy//M1Lw/wqn
+    2AVfRf9ksvNdn9myrBK8keURLNQG6rmvHb1ITWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1521048164; bh=eUp0QmOjJHz7bUurhK2Ty7Tak48EL0OOfdaBvKH2qLM=; b=a
-    tZTtjPxtgpVVsjj9DOvFm65jCd5d8/V6S590gTPgF1uxPU1vsV7uYUULWWYWtTrm
-    cPQEMY8WXepGhKnO1+lN8hMyTkelq/iuxZHQ5GZeuIv1/aZkRjLTsb8BiKOHIMJG
-    rGquIBfugoJLFMC/cTuT5yLmxIOE824YBwlx0nVpoL1K7woy0Zj9mtwjv0PbV72/
-    zcUdQ0TJus+WIrcPUfNYI7NMk7+7k40egEJ1UN0zV1VOtjZVOIghBBIEP/tPUaWH
-    d4vi2aJB3h4G5LL/EoZAADQ1zwfL8dDAiPywQlT+9HgrKGq2KjD49O8h8w2mFU3M
-    /nm12dCF5IhuN7A+KO7Vg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521046322; bh=c
+    YCXfxkJtB+7twAnkiZCmW21jxs0EFjn4OE3g/NwhSI=; b=wkkp8MqRQPtSwW4Ox
+    hZqNLAkZuBNWWBgtG2ald29aG1ZVpL9Eu5ZS2rrnAndVA56G6qIlZSySNHn+MPj5
+    UySeHdySe8n2xbO52O4Nec8XP7auHm6lzFm2ucejoXhOD0kS0eHDjVOjHFr3Qpm0
+    suAPa8j1RwD3Aduglo51vJer52XtKYsZ8P01drgBJ4eHR83RtjoYnj1SB45jKVMm
+    tM971t6pnAy33SWFhowgk4a65xlumvgJdE7GXDfv7s/W2v+TssdHOKwV/IDyILRw
+    mRKututvFzxXwDiZzspGa3FFsaz9PgDz3wM7WhDhM0UmeqmKQzbwIn5laymu60Ky
+    qOvOg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gmx.net;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmx.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gmx.net;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751408AbeCNRWm (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 13:22:42 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:11273 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751559AbeCNRWl (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:22:41 -0400
-From: <patrice.chotard@st.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <linux-serial@vger.kernel.org>
-CC: <patrice.chotard@st.com>
-Subject: [RESEND PATCH v4 3/3]] ARM: dts: STi: Remove "console=ttyASN" from bootargs for STi boards
-Date: Wed, 14 Mar 2018 18:22:07 +0100
-Message-ID: <1521048127-20298-1-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmx.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Peter Seiderer <ps.report@gmx.net>
+To: linux-media@vger.kernel.org
+Subject: [PATCH v3] media: staging/imx: fill vb2_v4l2_buffer sequence entry
+Date: Wed, 14 Mar 2018 17:51:39 +0100
+Message-Id: <20180314165139.5356-1-ps.report@gmx.net>
+X-Mailer: git-send-email 2.16.2
+X-Provags-ID: V03:K0:AMQlfiAbu6xwGIHavbo8gFeLsx3iDR+uzaG35igP4KBVru9YQSe
+ OBSlQNeM9WTku1dUQzpoJ6iy2Nk09YT8eYr6lis43tocKBmjmT16/6o1Y3SK8CCwOf4k0Xp
+ 9Fwd8iNTI+poGxoSn2Gk5u1u3hQD38uYSdKUbY71aKibRXKBW7XuJHNKld5l9Jx4gj0vISX
+ ZfZJj+6uKaN/fYSRqMyuw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BhH0ddctKY0=:mTsysCRGK2h6fv3x7aXY/3
+ LT53ft7MQG2qYQhOUqyxHBk7I4YrccQ513/DSxOOu0wXugfuWHAqPvoc4yyCkt9Joxjw30VUk
+ BLf9ck3SZ4GNLQxzZganOaH4vrjDlazj0sE7B9d7mLfC3MsYxh9YuCLtoOLVuie+g1KTN21fA
+ BUGo5QqzEqdeotlbV/9NAh+vxTghzj6GKHNfxKSe+Txp+gHIuhfT/InjwpLfPtJt5C+AetQV5
+ sg5DLs9wSuq4GUm3sFwFHEvkti4XQ0J2trJHO9wm6EaqJY/u8dhW4O0BVlkOmDG38pABibHdK
+ ppLnh4doWybIqAOFbukOV4xhmMx1iWL83LDdAheMCCs5YVgHk3K7UjP0ysyCvwQUwWLMi4ptW
+ JfwO3LJ2bUjwZlqIpR88EVSvxmSC/9iMBVR7peVEZfC1gOF/MbsQcfHgQzjKv0bUeKSWvnCMl
+ V6yd7c/GVMwV1uJNmNacvVyMwfA8z3bgVBxAPzBv50nukSls5KcI0/m6DIW60XS5Bb59QBGpP
+ ku/8R4pXIrY7J+ygfoYxeBkOv9GwKMNR+xJ/3RwKF2p3w0hDdRpELJC8n2WVArci6KiwZ5gcH
+ 0jFqaxs1T7Ld54t5mksK6WmuICttP/vuwQzHMUuu498mAk5eOeiMQQGi3/N1f4F84xsLeISlI
+ JZn7ExMvDYWl25jHjiwAQAnK0k6jPXRMTe5VIXFrvqMrIf9W6/CLtXaQcWMLTIfvFrDDy219r
+ PMKMzQuAs3SNfW36U2jRXTkdtuL/YrIDC3V7uUQNQYWBJpf2w3LUr3eMjG8ahnkhnye9CU9r/
+ i4Vri5oC5bo2b3eceuEzuTfhSkeHg==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, Peter Seiderer <ps.report@gmx.net>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Steve Longerbeam <slongerbeam@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
- signatures=0
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Enables gstreamer v4l2src lost frame detection, e.g:
 
-As serial interface is already specified into stdout-path property,
-"console=ttyASN,115200" from bootargs can be removed.
+  0:00:08.685185668  348  0x54f520 WARN  v4l2src gstv4l2src.c:970:gst_v4l2src_create:<v4l2src0> lost frames detected: count = 141 - ts: 0:00:08.330177332
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
- arch/arm/boot/dts/stih407-b2120.dts | 2 +-
- arch/arm/boot/dts/stih410-b2120.dts | 2 +-
- arch/arm/boot/dts/stih410-b2260.dts | 2 +-
- arch/arm/boot/dts/stih418-b2199.dts | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Changes in v2:
+  - fill vb2_v4l2_buffer sequence entry in imx-ic-prpencvf too
+    (suggested by Steve Longerbeam)
 
-diff --git a/arch/arm/boot/dts/stih407-b2120.dts b/arch/arm/boot/dts/stih407-b2120.dts
-index 37f2ddbfa099..a7a0f76e9cbc 100644
---- a/arch/arm/boot/dts/stih407-b2120.dts
-+++ b/arch/arm/boot/dts/stih407-b2120.dts
-@@ -14,7 +14,7 @@
- 	compatible = "st,stih407-b2120", "st,stih407";
+Changes in v3:
+  - add changelog (suggested by Greg Kroah-Hartman, Fabio Estevam
+    and Dan Carpenter) and patch history
+  - use u32 (instead of __u32) (suggested by Dan Carpenter)
+  - let sequence counter start with zero, keeping v4l2-compliance
+    testing happy (needs additional setting of field to a valid
+    value, patch will follow soon)
+---
+ drivers/staging/media/imx/imx-ic-prpencvf.c | 5 +++++
+ drivers/staging/media/imx/imx-media-csi.c   | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index ae453fd422f0..274683d2d4ba 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -103,6 +103,7 @@ struct prp_priv {
+ 	int nfb4eof_irq;
  
- 	chosen {
--		bootargs = "console=ttyAS0,115200 clk_ignore_unused";
-+		bootargs = "clk_ignore_unused";
- 		linux,stdout-path = &sbc_serial0;
- 	};
+ 	int stream_count;
++	u32 frame_sequence; /* frame sequence counter */
+ 	bool last_eof;  /* waiting for last EOF at stream off */
+ 	bool nfb4eof;    /* NFB4EOF encountered during streaming */
+ 	struct completion last_eof_comp;
+@@ -208,8 +209,11 @@ static void prp_vb2_buf_done(struct prp_priv *priv, struct ipuv3_channel *ch)
+ 	struct vb2_buffer *vb;
+ 	dma_addr_t phys;
  
-diff --git a/arch/arm/boot/dts/stih410-b2120.dts b/arch/arm/boot/dts/stih410-b2120.dts
-index a6f00a6687a9..6c6b4cc37e97 100644
---- a/arch/arm/boot/dts/stih410-b2120.dts
-+++ b/arch/arm/boot/dts/stih410-b2120.dts
-@@ -14,7 +14,7 @@
- 	compatible = "st,stih410-b2120", "st,stih410";
++	priv->frame_sequence++;
++
+ 	done = priv->active_vb2_buf[priv->ipu_buf_num];
+ 	if (done) {
++		done->vbuf.sequence = priv->frame_sequence;
+ 		vb = &done->vbuf.vb2_buf;
+ 		vb->timestamp = ktime_get_ns();
+ 		vb2_buffer_done(vb, priv->nfb4eof ?
+@@ -637,6 +641,7 @@ static int prp_start(struct prp_priv *priv)
  
- 	chosen {
--		bootargs = "console=ttyAS0,115200 clk_ignore_unused";
-+		bootargs = "clk_ignore_unused";
- 		linux,stdout-path = &sbc_serial0;
- 	};
+ 	/* init EOF completion waitq */
+ 	init_completion(&priv->last_eof_comp);
++	priv->frame_sequence = -1;
+ 	priv->last_eof = false;
+ 	priv->nfb4eof = false;
  
-diff --git a/arch/arm/boot/dts/stih410-b2260.dts b/arch/arm/boot/dts/stih410-b2260.dts
-index 62770496e328..50d36758391c 100644
---- a/arch/arm/boot/dts/stih410-b2260.dts
-+++ b/arch/arm/boot/dts/stih410-b2260.dts
-@@ -15,7 +15,7 @@
- 	compatible = "st,stih410-b2260", "st,stih410";
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index 5a195f80a24d..161a92946a86 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -111,6 +111,7 @@ struct csi_priv {
+ 	struct v4l2_ctrl_handler ctrl_hdlr;
  
- 	chosen {
--		bootargs = "console=ttyAS1,115200 clk_ignore_unused";
-+		bootargs = "clk_ignore_unused";
- 		linux,stdout-path = &uart1;
- 	};
+ 	int stream_count; /* streaming counter */
++	u32 frame_sequence; /* frame sequence counter */
+ 	bool last_eof;   /* waiting for last EOF at stream off */
+ 	bool nfb4eof;    /* NFB4EOF encountered during streaming */
+ 	struct completion last_eof_comp;
+@@ -234,8 +235,11 @@ static void csi_vb2_buf_done(struct csi_priv *priv)
+ 	struct vb2_buffer *vb;
+ 	dma_addr_t phys;
  
-diff --git a/arch/arm/boot/dts/stih418-b2199.dts b/arch/arm/boot/dts/stih418-b2199.dts
-index 36f40f58155d..7f5f3252bfc7 100644
---- a/arch/arm/boot/dts/stih418-b2199.dts
-+++ b/arch/arm/boot/dts/stih418-b2199.dts
-@@ -14,7 +14,7 @@
- 	compatible = "st,stih418-b2199", "st,stih418";
++	priv->frame_sequence++;
++
+ 	done = priv->active_vb2_buf[priv->ipu_buf_num];
+ 	if (done) {
++		done->vbuf.sequence = priv->frame_sequence;
+ 		vb = &done->vbuf.vb2_buf;
+ 		vb->timestamp = ktime_get_ns();
+ 		vb2_buffer_done(vb, priv->nfb4eof ?
+@@ -543,6 +547,7 @@ static int csi_idmac_start(struct csi_priv *priv)
  
- 	chosen {
--		bootargs = "console=ttyAS0,115200 clk_ignore_unused";
-+		bootargs = "clk_ignore_unused";
- 		linux,stdout-path = &sbc_serial0;
- 	};
+ 	/* init EOF completion waitq */
+ 	init_completion(&priv->last_eof_comp);
++	priv->frame_sequence = -1;
+ 	priv->last_eof = false;
+ 	priv->nfb4eof = false;
  
 -- 
-1.9.1
+2.16.2
 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
