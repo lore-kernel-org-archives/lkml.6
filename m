@@ -1,292 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752333AbeCNQBY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:01:24 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29988 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751755AbeCNQBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:01:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,470,1515484800";
-   d="scan'208";a="41990308"
-Message-ID: <1521043276.10722.645.camel@linux.intel.com>
-Subject: Re: [PATCH v4 3/3] Bluetooth: hci_qca: Add serdev support
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thierry Escande <thierry.escande@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 14 Mar 2018 18:01:16 +0200
-In-Reply-To: <20180314155514.3374-4-thierry.escande@linaro.org>
-References: <20180314155514.3374-1-thierry.escande@linaro.org>
-         <20180314155514.3374-4-thierry.escande@linaro.org>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+        id S1752563AbeCNQBr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:01:47 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:39527 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752038AbeCNQBq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:01:46 -0400
+Subject: Re: [PATCH v8 13/13] [media] v4l: Document explicit synchronization
+ behavior
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180309174920.22373-1-gustavo@padovan.org>
+ <20180309174920.22373-14-gustavo@padovan.org>
+ <ae50fe46-4d0a-fcf4-7c95-17b5b9a0d8a7@xs4all.nl>
+Message-ID: <c42c3e90-7e6e-5308-8644-44355bc569a3@xs4all.nl>
+Date: Wed, 14 Mar 2018 09:01:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <ae50fe46-4d0a-fcf4-7c95-17b5b9a0d8a7@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfO/THOT01gkqkR8p3zua/Sm5n1eroPcHFN8qf2dEkIuaFn1EZqAfPN+yDSAW6wKOI97u01RwVq/WSiFVqf5r5LYVzVrkRERaeUoK0DbonCUCi7b2tJU/
+ IM1IFmLJ+IGAg9h52g5/l4iFbgAMs2h6OmUurDYWg+fun98XUf13KZQvH1jsM9shKXPxjglOyVbjAsVdu0UOSt7gERnn/2Fk8yBQosoDUCrDNsB5tY2K3CMt
+ vAwA//WYFxDC0Yx+tE7xscihtPYYrGdZz8rPboyZqfn/YMw5Kmu6zX5VwJw0BNxLs778MzSqrP61kNswgJtLzIcljcxHl+F1HROvTUcsftFhHbjl82rcpEST
+ i9I0cQlcLcBXWBHEaguwPi1+QwgV/1PuScK6boEbwwOcDFT/picSG5sARMee37M40AnPfp+A+V6byEOdIzq6DTndCj7qh/kyMa50taiQehkRJ80LTeVo0R+C
+ 26jFBwYNk7E0XgYI
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 16:55 +0100, Thierry Escande wrote:
-> Add support for Qualcomm serial slave devices. Probe the serial
-> device,
-> retrieve its maximum speed and register a new hci uart device.
+On 03/13/2018 08:33 PM, Hans Verkuil wrote:
+> On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
+>> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+>>
+>> Add section to VIDIOC_QBUF and VIDIOC_QUERY_BUF about it
+>>
+>> v6:	- Close some gaps in the docs (Hans)
+>>
+>> v5:
+>> 	- Remove V4L2_CAP_ORDERED
+>> 	- Add doc about V4L2_FMT_FLAG_UNORDERED
+>>
+>> v4:
+>> 	- Document ordering behavior for in-fences
+>> 	- Document V4L2_CAP_ORDERED capability
+>> 	- Remove doc about OUT_FENCE event
+>> 	- Document immediate return of out-fence in QBUF
+>>
+>> v3:
+>> 	- make the out_fence refer to the current buffer (Hans)
+>> 	- Note what happens when the IN_FENCE is not set (Hans)
+>>
+>> v2:
+>> 	- mention that fences are files (Hans)
+>> 	- rework for the new API
+>>
+>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>> ---
+>>  Documentation/media/uapi/v4l/vidioc-qbuf.rst     | 55 +++++++++++++++++++++++-
+>>  Documentation/media/uapi/v4l/vidioc-querybuf.rst | 12 ++++--
+>>  2 files changed, 63 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/media/uapi/v4l/vidioc-qbuf.rst b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
+>> index 9e448a4aa3aa..371d84966e34 100644
+>> --- a/Documentation/media/uapi/v4l/vidioc-qbuf.rst
+>> +++ b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
+>> @@ -54,7 +54,7 @@ When the buffer is intended for output (``type`` is
+>>  or ``V4L2_BUF_TYPE_VBI_OUTPUT``) applications must also initialize the
+>>  ``bytesused``, ``field`` and ``timestamp`` fields, see :ref:`buffer`
+>>  for details. Applications must also set ``flags`` to 0. The
+>> -``reserved2`` and ``reserved`` fields must be set to 0. When using the
+>> +``reserved`` field must be set to 0. When using the
+>>  :ref:`multi-planar API <planar-apis>`, the ``m.planes`` field must
+>>  contain a userspace pointer to a filled-in array of struct
+>>  :c:type:`v4l2_plane` and the ``length`` field must be set
+>> @@ -118,6 +118,59 @@ immediately with an ``EAGAIN`` error code when no buffer is available.
+>>  The struct :c:type:`v4l2_buffer` structure is specified in
+>>  :ref:`buffer`.
+>>  
+>> +Explicit Synchronization
+>> +------------------------
+>> +
+>> +Explicit Synchronization allows us to control the synchronization of
+>> +shared buffers from userspace by passing fences to the kernel and/or
+>> +receiving them from it. Fences passed to the kernel are named in-fences and
+>> +the kernel should wait on them to signal before using the buffer. On the other
+>> +side, the kernel can create out-fences for the buffers it queues to the
+>> +drivers. Out-fences signal when the driver is finished with buffer, i.e., the
+>> +buffer is ready. The fences are represented as a file and passed as a file
+>> +descriptor to userspace.
+>> +
+>> +The in-fences are communicated to the kernel at the ``VIDIOC_QBUF`` ioctl
+>> +using the ``V4L2_BUF_FLAG_IN_FENCE`` buffer flag and the `fence_fd` field. If
+>> +an in-fence needs to be passed to the kernel, `fence_fd` should be set to the
+>> +fence file descriptor number and the ``V4L2_BUF_FLAG_IN_FENCE`` should be set
+>> +as well. Setting one but not the other will cause ``VIDIOC_QBUF`` to return
+>> +with an error.
 > 
+> This sentence is confusing since it is not clear what 'one' and 'the other' refer
+> to. Be specific here. I think it should be 'Setting V4L2_BUF_FLAG_IN_FENCE but not
+> fence_fd'.
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Ignore this comment.
 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-> ---
 > 
-> v4:
-> - Rename divclk4 as susclk (its name in the bt chip)
-> - Use gpiod_set_value_cansleep()
-> - Replace #include <linux/of.h> with <linux/mod_devicetable.h>
-> - Restore dependency on BT_HCIUART
-> 
-> v3:
-> - Remove redundant call to gpiod_set_value() after devm_gpiod_get()
-> - Check returned values for clk_set_rate() and clk_prepare_enable()
-> - Use clk_disable_unprepare()
-> 
-> v2:
-> - Fix author email
-> 
->  drivers/bluetooth/Kconfig   |   1 +
->  drivers/bluetooth/hci_qca.c | 109
-> +++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 108 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-> index 07e55cd8f8c8..e0f1a6609b68 100644
-> --- a/drivers/bluetooth/Kconfig
-> +++ b/drivers/bluetooth/Kconfig
-> @@ -196,6 +196,7 @@ config BT_HCIUART_BCM
->  config BT_HCIUART_QCA
->  	bool "Qualcomm Atheros protocol support"
->  	depends on BT_HCIUART
-> +	depends on BT_HCIUART_SERDEV
->  	select BT_HCIUART_H4
->  	select BT_QCA
->  	help
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 05ec530b8a3a..6cf0d1d4595a 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -29,7 +29,11 @@
->   */
->  
->  #include <linux/kernel.h>
-> +#include <linux/clk.h>
->  #include <linux/debugfs.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/serdev.h>
->  
->  #include <net/bluetooth/bluetooth.h>
->  #include <net/bluetooth/hci_core.h>
-> @@ -50,6 +54,9 @@
->  #define IBS_TX_IDLE_TIMEOUT_MS		2000
->  #define BAUDRATE_SETTLE_TIMEOUT_MS	300
->  
-> +/* susclk rate */
-> +#define SUSCLK_RATE_32KHZ	32768
-> +
->  /* HCI_IBS transmit side sleep protocol states */
->  enum tx_ibs_states {
->  	HCI_IBS_TX_ASLEEP,
-> @@ -111,6 +118,12 @@ struct qca_data {
->  	u64 votes_off;
->  };
->  
-> +struct qca_serdev {
-> +	struct hci_uart	 serdev_hu;
-> +	struct gpio_desc *bt_en;
-> +	struct clk	 *susclk;
-> +};
-> +
->  static void __serial_clock_on(struct tty_struct *tty)
->  {
->  	/* TODO: Some chipset requires to enable UART clock on client
-> @@ -386,6 +399,7 @@ static void hci_ibs_wake_retrans_timeout(struct
-> timer_list *t)
->  /* Initialize protocol */
->  static int qca_open(struct hci_uart *hu)
->  {
-> +	struct qca_serdev *qcadev;
->  	struct qca_data *qca;
->  
->  	BT_DBG("hu %p qca_open", hu);
-> @@ -444,6 +458,13 @@ static int qca_open(struct hci_uart *hu)
->  	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->  	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->  
-> +	if (hu->serdev) {
-> +		serdev_device_open(hu->serdev);
-> +
-> +		qcadev = serdev_device_get_drvdata(hu->serdev);
-> +		gpiod_set_value_cansleep(qcadev->bt_en, 1);
-> +	}
-> +
->  	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u,
-> wake_retrans=%u",
->  	       qca->tx_idle_delay, qca->wake_retrans);
->  
-> @@ -512,6 +533,7 @@ static int qca_flush(struct hci_uart *hu)
->  /* Close protocol */
->  static int qca_close(struct hci_uart *hu)
->  {
-> +	struct qca_serdev *qcadev;
->  	struct qca_data *qca = hu->priv;
->  
->  	BT_DBG("hu %p qca close", hu);
-> @@ -525,6 +547,13 @@ static int qca_close(struct hci_uart *hu)
->  	destroy_workqueue(qca->workqueue);
->  	qca->hu = NULL;
->  
-> +	if (hu->serdev) {
-> +		serdev_device_close(hu->serdev);
-> +
-> +		qcadev = serdev_device_get_drvdata(hu->serdev);
-> +		gpiod_set_value_cansleep(qcadev->bt_en, 0);
-> +	}
-> +
->  	kfree_skb(qca->rx_skb);
->  
->  	hu->priv = NULL;
-> @@ -885,6 +914,14 @@ static int qca_set_baudrate(struct hci_dev *hdev,
-> uint8_t baudrate)
->  	return 0;
->  }
->  
-> +static inline void host_set_baudrate(struct hci_uart *hu, unsigned
-> int speed)
-> +{
-> +	if (hu->serdev)
-> +		serdev_device_set_baudrate(hu->serdev, speed);
-> +	else
-> +		hci_uart_set_baudrate(hu, speed);
-> +}
-> +
->  static int qca_setup(struct hci_uart *hu)
->  {
->  	struct hci_dev *hdev = hu->hdev;
-> @@ -905,7 +942,7 @@ static int qca_setup(struct hci_uart *hu)
->  		speed = hu->proto->init_speed;
->  
->  	if (speed)
-> -		hci_uart_set_baudrate(hu, speed);
-> +		host_set_baudrate(hu, speed);
->  
->  	/* Setup user speed if needed */
->  	speed = 0;
-> @@ -924,7 +961,7 @@ static int qca_setup(struct hci_uart *hu)
->  				   ret);
->  			return ret;
->  		}
-> -		hci_uart_set_baudrate(hu, speed);
-> +		host_set_baudrate(hu, speed);
->  	}
->  
->  	/* Setup patch / NVM configurations */
-> @@ -958,12 +995,80 @@ static struct hci_uart_proto qca_proto = {
->  	.dequeue	= qca_dequeue,
->  };
->  
-> +static int qca_serdev_probe(struct serdev_device *serdev)
-> +{
-> +	struct qca_serdev *qcadev;
-> +	int err;
-> +
-> +	qcadev = devm_kzalloc(&serdev->dev, sizeof(*qcadev),
-> GFP_KERNEL);
-> +	if (!qcadev)
-> +		return -ENOMEM;
-> +
-> +	qcadev->serdev_hu.serdev = serdev;
-> +	serdev_device_set_drvdata(serdev, qcadev);
-> +
-> +	qcadev->bt_en = devm_gpiod_get(&serdev->dev, "bt-disable-n",
-> +				       GPIOD_OUT_LOW);
-> +	if (IS_ERR(qcadev->bt_en)) {
-> +		dev_err(&serdev->dev, "failed to acquire bt-disable-n 
-> gpio\n");
-> +		return PTR_ERR(qcadev->bt_en);
-> +	}
-> +
-> +	qcadev->susclk = devm_clk_get(&serdev->dev, NULL);
-> +	if (IS_ERR(qcadev->susclk)) {
-> +		dev_err(&serdev->dev, "failed to acquire clk\n");
-> +		return PTR_ERR(qcadev->susclk);
-> +	}
-> +
-> +	err = clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
-> +	if (err)
-> +		return err;
-> +
-> +	err = clk_prepare_enable(qcadev->susclk);
-> +	if (err)
-> +		return err;
-> +
-> +	err = hci_uart_register_device(&qcadev->serdev_hu,
-> &qca_proto);
-> +	if (err)
-> +		clk_disable_unprepare(qcadev->susclk);
-> +
-> +	return err;
-> +}
-> +
-> +static void qca_serdev_remove(struct serdev_device *serdev)
-> +{
-> +	struct qca_serdev *qcadev =
-> serdev_device_get_drvdata(serdev);
-> +
-> +	hci_uart_unregister_device(&qcadev->serdev_hu);
-> +
-> +	clk_disable_unprepare(qcadev->susclk);
-> +}
-> +
-> +static const struct of_device_id qca_bluetooth_of_match[] = {
-> +	{ .compatible = "qcom,qca6174-bt" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, qca_bluetooth_of_match);
-> +
-> +static struct serdev_device_driver qca_serdev_driver = {
-> +	.probe = qca_serdev_probe,
-> +	.remove = qca_serdev_remove,
-> +	.driver = {
-> +		.name = "hci_uart_qca",
-> +		.of_match_table = qca_bluetooth_of_match,
-> +	},
-> +};
-> +
->  int __init qca_init(void)
->  {
-> +	serdev_device_driver_register(&qca_serdev_driver);
-> +
->  	return hci_uart_register_proto(&qca_proto);
->  }
->  
->  int __exit qca_deinit(void)
->  {
-> +	serdev_device_driver_unregister(&qca_serdev_driver);
-> +
->  	return hci_uart_unregister_proto(&qca_proto);
->  }
+>  The fence_fd field will be ignored if the
+>> +``V4L2_BUF_FLAG_IN_FENCE`` is not set.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Looking at the code, I don't think this is correct. You get an error if IN_FENCE is
+not set but fence_fd is. Removing this sentence would fix this and the previous
+sentence would make a lot more sense.
+
+>> +
+>> +The videobuf2-core will guarantee that all buffers queued with an in-fence will
+>> +be queued to the drivers in the same order. Fences may signal out of order, so
+>> +this guarantee at videobuf2 is necessary to not change ordering. So when
+>> +waiting on a fence to signal all buffers queued after will be also block until
+> 
+> after -> afterwards
+> will be also block -> will also be blocked
+> 
+>> +that fence signal.
+> 
+> signal -> signals
+
+What is missing in the documentation is what happens when you mix in-fence buffers
+and buffers without an in-fence.
+
+Regards,
+
+	Hans
