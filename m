@@ -1,88 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752494AbeCNPrH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:47:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:42263 "EHLO
+        id S1752502AbeCNPra (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:47:30 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:47581 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752087AbeCNPrE (ORCPT
+        with ESMTP id S1751626AbeCNPr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:47:04 -0400
+        Wed, 14 Mar 2018 11:47:28 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org
-Subject: [PATCH 27/47] input: keyboard: remove bf54x driver
-Date: Wed, 14 Mar 2018 16:35:40 +0100
-Message-Id: <20180314153603.3127932-28-arnd@arndb.de>
+Subject: [PATCH 28/47] input: misc: remove blackfin rotary driver
+Date: Wed, 14 Mar 2018 16:35:41 +0100
+Message-Id: <20180314153603.3127932-29-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:8rlRpqSJqQZlIJ2rG5vidrpGK/YmlGWSE6WJqaRLUPdVX9mnSrv
- 2qA2b29sMJB1jtcVcskwtByIuYqzT4fxkPrEH50hCbt+h/fpgi0pEjF9TSl+Zk8cbZ1Ca0j
- pJyp+6uNPR98wusqKDQTK3pnYmmT2Xom9z9ZogJYqnPzo/KjaLFDHRR7+StQriDjL+tAfz5
- BDMERNDtDdL5YhHcAkYTA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nIrRd8ww+A4=:3fCk/p2j2yjlptttQteyG8
- kcCU7pD1A0UDyvVxd/pmPCuVVgRDacLcHTO4Ps4Ekbt6wEWbytPh29NlTpkkZENNZ0LNX1Tcc
- fHMSd/6Oyb7M/f74CBvKHJsdMZoPaEEWkGvwRAlBu51dU5INhTkMDpvM/cSO532SUvEbA74SI
- 4OvV3d71D0sXFqoIUKxZO1MYPcmADs0Z4SY+gWuNdhfz0KigmVNU/Okpk+JZkcC/GgsCv3bQq
- NPnvGzEWkuIAJvdWMk7elxAhdJcPm6QC+KJEMfW1kXNH9awY8RqvFOdXEAO51BVPeMXHCUOjV
- UexUSLILS+tBe/URk7PCNqhL8PBYGxrbwiwZrPt7EjppYaDgx8hoxn3grmNJxCnkiFTj3DzIR
- 9+oHYTgrmJYCjCw9iQZvIa6k+7QxoAJHU7VLD9k4ZasKquhDZAnKAYMDDztw2+uXa01IIKaPC
- theRiH5z9O/h97YqAgnBIVo2aV1/AJZjeeBmouHGoW6kTevcahTQVcsUTw6BVNSzJs0uXYams
- 4g4bHyBpZ33s+8mrd/4M/BrtZgN/79+DbtW5boT5lN5yOfRHbp6KPhp6DqO0tmi+eJMs35Jd6
- KIpthl6m8lgJbtHj/CqYb04IYlYNL70+az7FuNDksCHY56d4LD6uYcRqKomZmyoROaxy47OJ5
- w4HwL+S1HHqK/KyXA8wb+++QIdhkirjzj1tRGfzm68N7ODECfqSKaQ1BUIWpXDg0sN4g4OuyM
- wRkRaOjPKPcT0nzsa8v/H9sS0RZr3zLH3R/w8A==
+X-Provags-ID: V03:K0:Bh7GBfnfTMy/uZL15e71XraGUVtYO9LquZsrfKI//AKjCcfSyc3
+ cmhIUih0M3zNl19kgn2gfqLZxYccqEkLeax4t0C1MoPk3KB7aKQ3AToJHoFPpE6fjhLJK+d
+ ZGlpiC+s8XBG4r+DLL3KPeHQBQHL57VWM1yPFSiPWduHzypKrDoJ7L4KXxUc0R9QcjCWr6F
+ Jn0nhYc1U2FUpVcFOMhnQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VdRpxfhU4gs=:1t8RYYrw2E0gwN1S8ZoSNW
+ cZaZdC56Uw+1ikv3sP9l+s0maFSKyAxuqPS5kr0p2cD33tzkylMaY9jOjxnGYQfnnextICXXz
+ 6im2++ULcsllyiVEmhgU2LYqZ/7p5dlKGkROufnqnK8beDXAU9t1w0Q9btTp4AKvqQERmIcNX
+ tiDnCUYjz704B476aAwMMQQ2XBQh/lxvjbG6HrEbrIOy5PEn9TezmzmYhaE2IYYgeN4QmcPek
+ Vro2hXkzjsUCQW7pWSjay/EuplfBSuzOPW3nxytjRIb9n8VOx1ezhrYxehi6lqFX/PvsRVwlP
+ CMMKp37mo/P1penEo/VVNmP2IAkI1g5m03dX5G83JCtSxM5pt9hLcEmsA9KkezppYg9VueROs
+ uhqLVnQSMea1Hh1S8sR2e3ALSnIgkiA54iCp4kNdYnI1iOeh9e3AQIMwzk7f3aIWbmKUsdo4I
+ i86wrnwQPq5dAla9KRRgBiskLWIHWvE+z7/IL1hh+JBRocuGz1T4ofAWL5eoV4VhqAjZu25O+
+ EtxCwM5zgmikdmGW68Vo/xfCuOxevJ1og2AIQ2C9qPBHmtHcF7Neu2M/WGwT1D7o3auRilman
+ tSdiMX8IEluypF0DlY+35YlKBultTQEOoH4Jay86LK2ELu5/RZwUwomzbu+Imzd0PImL9eEah
+ w1gSBAq4QiubsM/XMguCf4SrmrRXwWwURCObBh40Cd3WHrbQE8ZhS4xdQTo874kSK2LtDAEcZ
+ dTcqQVPYJPkqU1fasuMQhzz8s7vjgOR8kJwLkw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The blackfin architecture is getting removed, so this
-driver is now obsolete.
+one is obsolete as well.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/input/keyboard/Kconfig      |   9 -
- drivers/input/keyboard/Makefile     |   1 -
- drivers/input/keyboard/bf54x-keys.c | 396 ------------------------------------
- 3 files changed, 406 deletions(-)
- delete mode 100644 drivers/input/keyboard/bf54x-keys.c
+ drivers/input/misc/Kconfig                |   9 -
+ drivers/input/misc/Makefile               |   1 -
+ drivers/input/misc/bfin_rotary.c          | 294 ------------------------------
+ include/linux/platform_data/bfin_rotary.h | 117 ------------
+ 4 files changed, 421 deletions(-)
+ delete mode 100644 drivers/input/misc/bfin_rotary.c
+ delete mode 100644 include/linux/platform_data/bfin_rotary.h
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 4c4ab1ced235..2b469cc47a78 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -157,15 +157,6 @@ config KEYBOARD_QT2160
- 	  This driver can also be built as a module. If so, the module
- 	  will be called qt2160.
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 6a3c753b093b..572b15fa18c2 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -655,15 +655,6 @@ config INPUT_DM355EVM
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called dm355evm_keys.
  
--config KEYBOARD_BFIN
--	tristate "Blackfin BF54x keypad support"
--	depends on (BF54x && !BF544)
+-config INPUT_BFIN_ROTARY
+-	tristate "Blackfin Rotary support"
+-	depends on BF54x || BF52x
 -	help
--	  Say Y here if you want to use the BF54x keypad.
+-	  Say Y here if you want to use the Blackfin Rotary.
 -
 -	  To compile this driver as a module, choose M here: the
--	  module will be called bf54x-keys.
+-	  module will be called bfin-rotary.
 -
- config KEYBOARD_CLPS711X
- 	tristate "CLPS711X Keypad support"
- 	depends on OF_GPIO && (ARCH_CLPS711X || COMPILE_TEST)
-diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-index 526e68294e6e..8fab920afa58 100644
---- a/drivers/input/keyboard/Makefile
-+++ b/drivers/input/keyboard/Makefile
-@@ -13,7 +13,6 @@ obj-$(CONFIG_KEYBOARD_AMIGA)		+= amikbd.o
- obj-$(CONFIG_KEYBOARD_ATARI)		+= atakbd.o
- obj-$(CONFIG_KEYBOARD_ATKBD)		+= atkbd.o
- obj-$(CONFIG_KEYBOARD_BCM)		+= bcm-keypad.o
--obj-$(CONFIG_KEYBOARD_BFIN)		+= bf54x-keys.o
- obj-$(CONFIG_KEYBOARD_CAP11XX)		+= cap11xx.o
- obj-$(CONFIG_KEYBOARD_CLPS711X)		+= clps711x-keypad.o
- obj-$(CONFIG_KEYBOARD_CROS_EC)		+= cros_ec_keyb.o
-diff --git a/drivers/input/keyboard/bf54x-keys.c b/drivers/input/keyboard/bf54x-keys.c
+ config INPUT_WM831X_ON
+ 	tristate "WM831X ON pin"
+ 	depends on MFD_WM831X
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index 8cc58f362bb8..72cde28649e2 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -19,7 +19,6 @@ obj-$(CONFIG_INPUT_ARIZONA_HAPTICS)	+= arizona-haptics.o
+ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
+ obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
+ obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
+-obj-$(CONFIG_INPUT_BFIN_ROTARY)		+= bfin_rotary.o
+ obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
+ obj-$(CONFIG_INPUT_CM109)		+= cm109.o
+ obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
+diff --git a/drivers/input/misc/bfin_rotary.c b/drivers/input/misc/bfin_rotary.c
 deleted file mode 100644
-index 8a07a426f88e..000000000000
+index 799ce3d2820e..000000000000
+diff --git a/include/linux/platform_data/bfin_rotary.h b/include/linux/platform_data/bfin_rotary.h
+deleted file mode 100644
+index 98829370fee2..000000000000
 -- 
 2.9.0
