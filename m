@@ -1,113 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751537AbeCNJmz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:42:55 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:25243 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751348AbeCNJmx (ORCPT
+        id S1751565AbeCNJpb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:45:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52922 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751366AbeCNJp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:42:53 -0400
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH 0/2] Introduce STM32MP1 Reset driver
-Thread-Topic: [PATCH 0/2] Introduce STM32MP1 Reset driver
-Thread-Index: AQHTuukmXhLqwRGQGUGMtGZ7ugmTrqPPYnEAgAAIfgA=
-Date: Wed, 14 Mar 2018 09:42:26 +0000
-Message-ID: <12ba9cee-f703-8fc7-75da-de213f5c8aa2@st.com>
-References: <1520958859-27911-1-git-send-email-gabriel.fernandez@st.com>
- <1521018722.4490.1.camel@pengutronix.de>
-In-Reply-To: <1521018722.4490.1.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <401DE63C1C05764D961C4CB5B5609FDB@st.com>
+        Wed, 14 Mar 2018 05:45:29 -0400
+Date: Wed, 14 Mar 2018 10:45:19 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jason Vas Dias <jason.vas.dias@gmail.com>
+Cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>
+Subject: Re: [PATCH v4.16-rc4 2/2] x86/vdso: on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW
+Message-ID: <20180314094519.GD4082@hirez.programming.kicks-ass.net>
+References: <d109ixq7.fsf@gmail.com>
+ <20180312082741.GD4064@hirez.programming.kicks-ass.net>
+ <CALyZvKxKXWiFF9OYtykXEfnx-k+xaAM7XREEQ+N58oJtOTZhew@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALyZvKxKXWiFF9OYtykXEfnx-k+xaAM7XREEQ+N58oJtOTZhew@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2E9hOS9019939
 
-Hi Philipp,
+On Tue, Mar 13, 2018 at 11:45:45PM +0000, Jason Vas Dias wrote:
+> On 12/03/2018, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Mon, Mar 12, 2018 at 07:01:20AM +0000, Jason Vas Dias wrote:
+> >>   Sometimes, particularly when correlating elapsed time to performance
+> >>   counter values,
+> >
+> > So what actual problem are you tring to solve here? Perf can already
+> > give you sample time in various clocks, including MONOTONIC_RAW.
+> >
+> >
+> 
+> Yes, I am sampling perf counters,
 
-Okay, i too support the idea to add custom  reset driver.
+You're not in fact sampling, you're just reading the counters.
 
-Many Thanks Philipp.
+> including CPU_CYCLES , INSTRUCTIONS,
+> CPU_CLOCK, TASK_CLOCK, etc, in a Group FD I open with
+> perf_event_open() , for the current thread on the current CPU -
+> I am doing this for 4 threads , on Intel & ARM cpus.
+> 
+> Reading performance counters does involve  2 ioctls and a read() ,
+> which takes time that  already far exceeds the time required to read
+> the TSC or CNTPCT in the VDSO .
 
-Best regards
+So you can avoid the whole ioctl(ENABLE), ioctl(DISABLE) nonsense and
+just let them run and do:
 
-Gabriel
+	read(group_fd, &buf_pre, size);
+	/* your code section */
+	read(group_fd, &buf_post, size);
 
+	/* compute buf_post - buf_pre */
 
-On 03/14/2018 10:12 AM, Philipp Zabel wrote:
-> Hi Gabriel,
->
-> On Tue, 2018-03-13 at 17:34 +0100, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch-set enables the reset of STM32MP1.
->> It uses the reset simple driver by introducing the clear register offset
->> parameter.
->> STM32MP1 reset IP has a register to assert by writing '1' and another
->> register to de-assert by writing '1'.
->> The offset between this two registers is '0x4'.
-> I worry a bit about feature creep in the simple-reset driver.
-> Your patch on its own is simple enough, and I'm not opposed to add a
-> SET/CLR feature on principle, but there are a few issues:
->
-> The RESET_SIMPLE Kconfig description currently says:
->    "This enables a simple reset controller driver for reset lines that
->     that can be asserted and deasserted by toggling bits in a contiguous,
->     exclusive register space."
-> That would have to be extended to mention SET/CLR register pairs as an
-> alternative.
->
-> What about status (reset_simple_status)? Can current reset line status
-> be read back from the SET register, as is currently tried? If not, is
-> there a way to read current reset line status back at all?
->
-> The data->lock spinlock is only needed to protect the read-modify-write
-> cycle on a toggle register, for separate SET/CLR register access the
-> locking is not necessary.
->
-> At this point, it may or may not be easier to add a custom reset driver.
-> Either way you go, this is missing binding documentation for the
-> st,stm32mp1-rcc compatible in Documentation/devicetree/bindings/reset.
->
->> The patch 'dt-bindings: reset: add STM32MP1 resets' could be squashed
->> with the patch:
->> 'dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings'
->> commit 3830681d354f
->>
->> Gabriel Fernandez (2):
->>    dt-bindings: reset: add STM32MP1 resets
->>    reset: simple: Enable stm32mp1 reset driver
->>
->>   drivers/reset/reset-simple.c                |  27 +++++--
->>   drivers/reset/reset-simple.h                |   1 +
->>   include/dt-bindings/reset/stm32mp1-resets.h | 108 ++++++++++++++++++++++++++++
->>   3 files changed, 130 insertions(+), 6 deletions(-)
->>   create mode 100644 include/dt-bindings/reset/stm32mp1-resets.h
-> regards
-> Philipp
+Which is only 2 system calls, not 4.
+
+Also, a while back there was the proposal to extend the mmap()
+self-monitoring interface to groups, see:
+
+ https://lkml.kernel.org/r/20170530172555.5ya3ilfw3sowokjz@hirez.programming.kicks-ass.net
+
+I never did get around to writing the actual code for it, but it
+shouldn't be too hard.
+
+> The CPU_CLOCK software counter should give the converted TSC cycles
+> seen between the ioctl( grp_fd, PERF_EVENT_IOC_ENABLE , ...)
+> and the  ioctl( grp_fd, PERF_EVENT_IOC_DISABLE ), and the
+> difference between the event->time_running and time_enabled
+> should also measure elapsed time .
+
+While CPU_CLOCK is TSC based, there is no guarantee it has any
+correlation to CLOCK_MONOTONIC_RAW (even if that is also TSC based).
+
+(although, I think I might have fixed that recently and it might just
+work, but it's very much not guaranteed).
+
+If you want to correlate to CLOCK_MONOTONIC_RAW you have to read
+CLOCK_MONOTONIC_RAW and not some random other clock value.
+
+> This gives the "inner" elapsed time, from the perpective of the kernel,
+> while the measured code section had the counters enabled.
+> 
+> But unless the user-space program  also has a way of measuring elapsed
+> time from the CPU's perspective , ie. without being subject to
+> operator or NTP / PTP adjustment, it has no way of correlating this
+> inner elapsed time with any "outer"
+
+You could read the time using the group_fd's mmap() page. That actually
+includes the TSC mult,shift,offset as used by perf clocks.
+
+> Currently, users must parse the log file or use gdb / objdump to
+> inspect /proc/kcore to get the TSC calibration and exact
+> mult+shift values for the TSC value conversion.
+
+Which ;-) there's multiple floating around..
+
+> Intel does not publish, nor does the CPU come with in ROM or firmware,
+> the actual precise TSC frequency - this must be calibrated against the
+> other clocks , according to a complicated procedure in section 18.2 of
+> the SDM . My TSC has a "rated" / nominal TSC frequency , which one
+> can compute from CPUID leaves, of 2.3ghz, but the "Refined TSC frequency"
+> is 2.8333ghz .
+
+You might want to look at commit:
+
+  b51120309348 ("x86/tsc: Fix erroneous TSC rate on Skylake Xeon")
+
+There is no such thing as a precise TSC frequency, there's a reason we
+have NTP/PTP.
+
+> Hence I think Linux should export this calibrated frequency somehow ;
+> its "calibration" is expressed as the raw clocksource 'mult' and 'shift'
+> values, and is exported to the VDSO .
+> 
+> I think the VDSO should read the TSC and use the calibration
+> to render the raw, unadjusted time from the CPU's perspective.
+> 
+> Hence, the patch I am preparing , which is again attached.
+
+I have no objection to adding CLOCK_MONOTONIC_RAW support to the VDSO,
+but you seem to be rather confused on how things work.
+
+Now, if you wanted to actually have CLOCK_MONOTONIC_RAW times from perf
+you'd need something like the below patch.
+
+You'd need to create your events with:
+
+	attr.use_clockid = 1;
+	attr.clockid = CLOCK_MONOTONIC_RAW;
+	attr.read_format |= PERF_FORMAT_TIME;
+
+But whatever you do, you really have to stop mixing clocks, that's
+broken, even if it magically works for now.
+
+---
+ include/uapi/linux/perf_event.h |  5 ++++-
+ kernel/events/core.c            | 23 ++++++++++++++++++++---
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 912b85b52344..e210c9a97f2b 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -271,9 +271,11 @@ enum {
+  *	  { u64		time_enabled; } && PERF_FORMAT_TOTAL_TIME_ENABLED
+  *	  { u64		time_running; } && PERF_FORMAT_TOTAL_TIME_RUNNING
+  *	  { u64		id;           } && PERF_FORMAT_ID
++ *	  { u64		time;         } && PERF_FORMAT_TIME
+  *	} && !PERF_FORMAT_GROUP
+  *
+  *	{ u64		nr;
++ *	  { u64         time;         } && PERF_FORMAT_TIME
+  *	  { u64		time_enabled; } && PERF_FORMAT_TOTAL_TIME_ENABLED
+  *	  { u64		time_running; } && PERF_FORMAT_TOTAL_TIME_RUNNING
+  *	  { u64		value;
+@@ -287,8 +289,9 @@ enum perf_event_read_format {
+ 	PERF_FORMAT_TOTAL_TIME_RUNNING		= 1U << 1,
+ 	PERF_FORMAT_ID				= 1U << 2,
+ 	PERF_FORMAT_GROUP			= 1U << 3,
++	PERF_FORMAT_TIME			= 1U << 4,
+ 
+-	PERF_FORMAT_MAX = 1U << 4,		/* non-ABI */
++	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
+ };
+ 
+ #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index c87decf03757..4298b4a39bc0 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1707,6 +1707,9 @@ static void __perf_event_read_size(struct perf_event *event, int nr_siblings)
+ 		size += sizeof(u64);
+ 	}
+ 
++	if (event->attr.read_format & PERF_FORMAT_TIME)
++		size += sizeof(u64);
++
+ 	size += entry * nr;
+ 	event->read_size = size;
+ }
+@@ -4685,6 +4688,9 @@ static int __perf_read_group_add(struct perf_event *leader,
+ 	int n = 1; /* skip @nr */
+ 	int ret;
+ 
++	if (read_format & PERF_FORMAT_TIME)
++		n++; /* skip @time */
++
+ 	ret = perf_event_read(leader, true);
+ 	if (ret)
+ 		return ret;
+@@ -4739,6 +4745,9 @@ static int perf_read_group(struct perf_event *event,
+ 
+ 	values[0] = 1 + leader->nr_siblings;
+ 
++	if (read_format & PERF_FORMAT_TIME)
++		values[1] = perf_event_clock(event);
++
+ 	/*
+ 	 * By locking the child_mutex of the leader we effectively
+ 	 * lock the child list of all siblings.. XXX explain how.
+@@ -4773,7 +4782,7 @@ static int perf_read_one(struct perf_event *event,
+ 				 u64 read_format, char __user *buf)
+ {
+ 	u64 enabled, running;
+-	u64 values[4];
++	u64 values[5];
+ 	int n = 0;
+ 
+ 	values[n++] = __perf_event_read_value(event, &enabled, &running);
+@@ -4783,6 +4792,8 @@ static int perf_read_one(struct perf_event *event,
+ 		values[n++] = running;
+ 	if (read_format & PERF_FORMAT_ID)
+ 		values[n++] = primary_event_id(event);
++	if (read_format & PERF_FORMAT_TIME)
++		values[n++] = perf_event_clock(event)
+ 
+ 	if (copy_to_user(buf, values, n * sizeof(u64)))
+ 		return -EFAULT;
+@@ -6034,7 +6045,7 @@ static void perf_output_read_one(struct perf_output_handle *handle,
+ 				 u64 enabled, u64 running)
+ {
+ 	u64 read_format = event->attr.read_format;
+-	u64 values[4];
++	u64 values[5];
+ 	int n = 0;
+ 
+ 	values[n++] = perf_event_count(event);
+@@ -6049,6 +6060,9 @@ static void perf_output_read_one(struct perf_output_handle *handle,
+ 	if (read_format & PERF_FORMAT_ID)
+ 		values[n++] = primary_event_id(event);
+ 
++	if (read_format & PERF_FORMAT_TIME)
++		values[n++] = perf_event_clock(event);
++
+ 	__output_copy(handle, values, n * sizeof(u64));
+ }
+ 
+@@ -6058,11 +6072,14 @@ static void perf_output_read_group(struct perf_output_handle *handle,
+ {
+ 	struct perf_event *leader = event->group_leader, *sub;
+ 	u64 read_format = event->attr.read_format;
+-	u64 values[5];
++	u64 values[6];
+ 	int n = 0;
+ 
+ 	values[n++] = 1 + leader->nr_siblings;
+ 
++	if (read_format & PERF_FORMAT_TIME)
++		values[n++] = perf_event_clock(event);
++
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+ 		values[n++] = enabled;
+ 
