@@ -1,72 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeCNXmn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44924 "EHLO mail.kernel.org"
+        id S1751714AbeCNXqL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:46:11 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:52806 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeCNXmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:42:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA6C20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 14 Mar 2018 19:42:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak
- symbol
-Message-ID: <20180314194237.45e2709c@vmware.local.home>
-In-Reply-To: <20180309095054.vrngc6fz7wo3hd4x@pathway.suse.cz>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
-        <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
-        <20180307022127.GB802@jagdpanzerIV>
-        <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
-        <20180307104002.GA505@jagdpanzerIV>
-        <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
-        <20180307114845.GA894@jagdpanzerIV>
-        <20180309095054.vrngc6fz7wo3hd4x@pathway.suse.cz>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751348AbeCNXqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 19:46:09 -0400
+Subject: Re: [PATCH v3 3/9] x86/microcode/AMD: install_equiv_cpu_table()
+ should not return (signed) int
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1520973389.git.mail@maciej.szmigiero.name>
+ <cf57ed15-df47-087e-c98f-527e4ce1e0f8@maciej.szmigiero.name>
+ <20180314175824.GG16605@pd.tnic>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <b913d9fd-9722-d5cc-cf94-426885947890@maciej.szmigiero.name>
+Date: Thu, 15 Mar 2018 00:46:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180314175824.GG16605@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018 10:50:55 +0100
-Petr Mladek <pmladek@suse.com> wrote:
-
-> On Wed 2018-03-07 20:48:56, Sergey Senozhatsky wrote:
-> > On (03/07/18 11:57), Arnd Bergmann wrote:  
-> > > Since lib/dump_stack.c is mandatory then, I would suggest making it
-> > > obj-y and moving it out of lib/ into kernel/printk/.  
-> > 
-> > Totally agree on obj-y. And tend to agree on moving lib/dump_stack to
-> > kernel/printk. lib/dump_stack depends on CONFIG_PRINTK and is partially
-> > in printk.h. So it _mostly_ seems like the right place after all.  
+On 14.03.2018 18:58, Borislav Petkov wrote:
+> On Tue, Mar 13, 2018 at 10:06:34PM +0100, Maciej S. Szmigiero wrote:
+>> The maximum possible value returned by install_equiv_cpu_table() is
+>> UINT_MAX + CONTAINER_HDR_SZ (on a 64-bit kernel).
+>> This is more than (signed) int type currently returned by this function can
+>> hold so this function will need to return a size_t instead.
 > 
-> I agree that we should define dump_stack.o as obj-y. Also it makes
-> sense to move it to kernel/printk/. As Sergey said: it depends on
-> CONFIG_PRINTK and is in printk.h.
+> I'm trying to parse this but I'm not really sure.
 > 
-> Steven, do you agree or would you suggest another location?
-> It was you who suggested to move the several functions from printk.c
-> to dump_stack.c. IMHO, the motivation was to fix responsibilities
-> (maintainer-ship) of this stuff. This will not really happen if
-> we move the file to printk directory.
->
+> All I know is:
+> 
+> 	unsigned int size = ibuf[2];
+> 
+> and that is really a 4-byte unsigned quantity so anything less is an
+> arbitrary limitation.
 
-I still would like to keep it in lib. If blackfin is going to be nuked
-in 4.17, and nds32 is the only one that is causing a issue. I would
-highly recommend fixing nds32 and have Stephen stop building blackfin.
+There is no limit on CPU equivalence table length in this patch series
+like it was in the previous version.
 
--- Steve
+The maximum possible value returned by install_equiv_cpu_table() of
+UINT_MAX + CONTAINER_HDR_SZ comes from the maximum value of this 'size'
+variable (that is UINT_MAX) plus the header length of CONTAINER_HDR_SZ.
+This won't fit in 'int' type, hence this patch.
+
+That's because this functions tells its caller how much bytes to skip
+from the beginning of a microcode container file to the first patch
+section contained in it.
+
+Maciej
