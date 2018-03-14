@@ -1,48 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeCNRbq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:31:46 -0400
-Received: from mga03.intel.com ([134.134.136.65]:11666 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751283AbeCNRbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:31:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,306,1517904000";
-   d="scan'208";a="24661625"
-Date: Wed, 14 Mar 2018 10:31:28 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>,
+        id S1751754AbeCNReG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:34:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59736 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751452AbeCNReF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:34:05 -0400
+From: Colin King <colin.king@canonical.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf stat: Add support for s390 transaction counters
-Message-ID: <20180314173128.GH13724@tassilo.jf.intel.com>
-References: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com>
- <87tvtk64ld.fsf@linux.intel.com>
- <f7240f60-2a1d-58f9-8d6f-05d27557620a@linux.vnet.ibm.com>
- <20180314131850.GA27335@kernel.org>
- <a863f62d-e460-639a-b69b-3437b9d4e4c5@linux.vnet.ibm.com>
- <20180314154317.GG13724@tassilo.jf.intel.com>
- <20180314164236.GB5297@linux.vnet.ibm.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf tests: fix out of bounds access on array fd when cnt is 100
+Date: Wed, 14 Mar 2018 17:33:54 +0000
+Message-Id: <20180314173354.11250-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314164236.GB5297@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Displaying these different types for s390 is important from my point of
-> view.  Of course, I could create a mapping of TX_NC_TABORT/TX_NC_TEND
-> to tx-commit/tx-abort.  The remaining events would still appear to be specific
-> to the cpum_cf.
+From: Colin Ian King <colin.king@canonical.com>
 
-If you want more generic metrics you can just use the new json generic metrics /
-metric group support in the eventlist. In fact if we did it today I wouldn't
-add perf stat -T at all, but just use that.
+Currently when cnt is 100 an array bounds overflow occurs on the assignment
+of fd[cnt]. Fix this by performing the bounds check on cnt before writing
+to fd.
 
--Andi
+Detected by cppcheck:
+tools/perf/tests/bp_account.c:115: (warning) Either the condition
+'cnt==100' is redundant or the array 'fd[100]' is accessed at index 100,
+which is out of bounds.
+
+Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/tests/bp_account.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+index 2f75fa0c4fef..9e88d7608951 100644
+--- a/tools/perf/tests/bp_account.c
++++ b/tools/perf/tests/bp_account.c
+@@ -107,16 +107,14 @@ static int detect_cnt(bool is_x)
+ 	int fd[100], cnt = 0, i;
+ 
+ 	while (1) {
+-		fd[cnt] = __event(is_x, addr, &attr);
+-
+-		if (fd[cnt] < 0)
+-			break;
+-
+ 		if (cnt == 100) {
+ 			pr_debug("way too many debug registers, fix the test\n");
+ 			return 0;
+ 		}
++		fd[cnt] = __event(is_x, addr, &attr);
+ 
++		if (fd[cnt] < 0)
++			break;
+ 		cnt++;
+ 	}
+ 
+-- 
+2.15.1
