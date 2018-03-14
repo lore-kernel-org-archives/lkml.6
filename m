@@ -1,59 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeCNQSB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:18:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60430 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751755AbeCNQR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:17:59 -0400
-Date: Wed, 14 Mar 2018 09:17:53 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH 34/47] spi: remove blackfin related host drivers
-Message-ID: <20180314161753.GT2186@sirena.org.uk>
-References: <20180314153603.3127932-1-arnd@arndb.de>
- <20180314153603.3127932-35-arnd@arndb.de>
+        id S1752137AbeCNQSH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:18:07 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40728 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751755AbeCNQSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:18:04 -0400
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
+ <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
+ <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
+ <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
+Date: Wed, 14 Mar 2018 10:17:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WQ40utMgiyDduspJ"
-Content-Disposition: inline
-In-Reply-To: <20180314153603.3127932-35-arnd@arndb.de>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, sbates@raithlin.com, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---WQ40utMgiyDduspJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Mar 14, 2018 at 04:35:47PM +0100, Arnd Bergmann wrote:
-> The blackfin architecture is getting removed, so these
-> won't be needed any more.
+On 13/03/18 08:56 PM, Bjorn Helgaas wrote:
+> I assume you want to exclude Root Ports because of multi-function
+> devices and the "route to self" error.  I was hoping for a reference
+> to that so I could learn more about it.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+I haven't been able to find where in the spec it forbids route to self.
+But I was told this by developers who work know switches. Hopefully
+Stephen can find the reference.
 
-(or if you resend something directly applicable I can do that)
+But it's a bit of a moot point. Devices can DMA to themselves if they
+are designed to do so. For example, some NVMe cards can read and write
+their own CMB for certain types of DMA request. There is a register in
+the spec (CMBSZ) which specifies which types of requests are supported.
+(See 3.1.12 in NVMe 1.3a).
 
---WQ40utMgiyDduspJ
-Content-Type: application/pgp-signature; name="signature.asc"
+> I agree that peers need to have a common upstream bridge.  I think
+> you're saying peers need to have *two* common upstream bridges.  If I
+> understand correctly, requiring two common bridges is a way to ensure
+> that peers directly below Root Ports don't try to DMA to each other.
 
------BEGIN PGP SIGNATURE-----
+No, I don't get where you think we need to have two common upstream
+bridges. I'm not sure when such a case would ever happen. But you seem
+to understand based on what you wrote below.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqpSzAACgkQJNaLcl1U
-h9Dm9wf/dhNzPHEVAxztXFolS6JT9Sw4qUXvJRw0lXsHYBUSiYWWlKPdeCgXAWRS
-Y9mnmUYQdGVGuSAIHzjNk5UCFfIpW50UIu/0IjaJAcmGy2M4jMuX3SDfbhLJx2mt
-7142piElsmG/gotQuzUnc4qkC8SDtoZH1hi8p8PKD00WdJVlulGL6aJEsDnpc3DJ
-BkUYxQanSIP1dWjoy8U2nz1hDyYvLh6QGKCMymQm5VDfLQSBMEZu8i6TcodNWs8U
-vPHNATqITYoeUKpbPa2wnDOwSjol0M0LhLdT9dDVbdV+e0folEhexbzzG9ZiePKX
-2owZNoQW7LiUw5wmaeuasHAH9KaS3g==
-=BrBX
------END PGP SIGNATURE-----
+> So I guess the first order of business is to nail down whether peers
+> below a Root Port are prohibited from DMAing to each other.  My
+> assumption, based on 6.12.1.2 and the fact that I haven't yet found
+> a prohibition, is that they can.
 
---WQ40utMgiyDduspJ--
+If you have a multifunction device designed to DMA to itself below a
+root port, it can. But determining this is on a device by device basis,
+just as determining whether a root complex can do peer to peer is on a
+per device basis. So I'd say we don't want to allow it by default and
+let someone who has such a device figure out what's necessary if and
+when one comes along.
+
+> You already have upstream_bridges_match(), which takes two pci_devs.
+> I think it should walk up the PCI hierarchy from the first device,
+> checking whether the bridge at each level is also a parent of the
+> second device.
+
+Yes, this is what I meant when I said walking the entire tree. I've been
+kicking the can down the road on implementing this as getting ref
+counting right and testing it is going to be quite tricky. The single
+switch approach we implemented now is just a simplification which works
+for a single switch. But I guess we can look at implementing it this way
+for v4.
+
+Logan
