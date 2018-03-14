@@ -1,60 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752494AbeCNQpt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:45:49 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:38069 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeCNQou (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:44:50 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2EGiSdR001049
-X-Nifty-SrcIP: [125.199.20.195]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] kbuild: touch autoksyms.h when it is really missing
-Date: Thu, 15 Mar 2018 01:44:16 +0900
-Message-Id: <1521045861-22418-3-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
+        id S1752522AbeCNQpv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:45:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752011AbeCNQpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 12:45:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985BE20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To: Sricharan R <sricharan@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <ab5ad9c2-2016-47ca-b748-833ff6e75f70@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, robh@kernel.org,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+ <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
+ <20180226100425.GO26947@vireshk-i7>
+ <ab5ad9c2-2016-47ca-b748-833ff6e75f70@codeaurora.org>
+Message-ID: <152104594491.179530.16525167791258003396@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v7 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
+Date: Wed, 14 Mar 2018 09:45:44 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From the comment, I expect this code creates autoksyms.h in case it
-is missing, but it actually touches it when it does exists.
+Quoting Sricharan R (2018-02-26 02:15:59)
+> Hi Viresh,
+> 
+> On 2/26/2018 3:34 PM, Viresh Kumar wrote:
+> > On 26-02-18, 15:23, Sricharan R wrote:
+> >> From: Stephen Boyd <sboyd@codeaurora.org>
+> > 
+> > Is this email id still valid ?
+> > 
+> 
+>  Yes. codeaurora id should exist.
+> 
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-I do not know when this code is useful...
-
-If autoksyms.h were missing, build should have already failed because
-include/{linux,asm-generic}/export.h need it.
-
-Maybe for standalone test?
-Or, in order to make this script self-contained?
-
-
- scripts/adjust_autoksyms.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
-index 513da1a..a52210b 100755
---- a/scripts/adjust_autoksyms.sh
-+++ b/scripts/adjust_autoksyms.sh
-@@ -49,7 +49,7 @@ case "${KCONFIG_CONFIG}" in
- esac
- 
- # In case it doesn't exist yet...
--if [ -e "$cur_ksyms_file" ]; then touch "$cur_ksyms_file"; fi
-+if [ ! -e "$cur_ksyms_file" ]; then touch "$cur_ksyms_file"; fi
- 
- # Generate a new ksym list file with symbols needed by the current
- # set of modules.
--- 
-2.7.4
+Yes it exists and I am checking it.
