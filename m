@@ -1,76 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751842AbeCNJZI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:25:08 -0400
-Received: from mailproxy03.manitu.net ([217.11.48.67]:33128 "EHLO
-        mailproxy03.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751651AbeCNJZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:25:06 -0400
-Subject: Re: [PATCH v2 1/1] can: ucan: add driver for Theobroma Systems UCAN
- devices
-From: Wolfgang Grandegger <wg@grandegger.com>
-To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        id S1751467AbeCNJ1o (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:27:44 -0400
+Received: from ozlabs.org ([103.22.144.67]:40621 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbeCNJ1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:27:42 -0400
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 2f65272a2a304ec6aa32ad9a45b1506929406321
+In-Reply-To: <1516157443-17716-2-git-send-email-sukadev@linux.vnet.ibm.com>
+To: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: linuxppc-dev@ozlabs.org, mikey@neuling.org,
         linux-kernel@vger.kernel.org
-References: <20180313173520.21257-1-jakob.unterwurzacher@theobroma-systems.com>
- <20180313173520.21257-2-jakob.unterwurzacher@theobroma-systems.com>
- <d7986f8f-6c52-bf39-93f0-7a837bd85241@grandegger.com>
- <03024ab7-5386-3bcf-76f2-ef2e0e9e7a78@theobroma-systems.com>
- <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
-Message-ID: <92e559b1-d392-015e-1aa1-0497cbd4c071@grandegger.com>
-Date: Wed, 14 Mar 2018 10:25:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <68564c40-396b-9081-8534-67fe96a6fb3f@grandegger.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Subject: Re: [1/5] powerpc/vas: Remove a stray line in Makefile
+Message-Id: <401RG43HWbz9sVQ@ozlabs.org>
+Date: Wed, 14 Mar 2018 20:27:39 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Am 14.03.2018 um 10:17 schrieb Wolfgang Grandegger:
+On Wed, 2018-01-17 at 02:50:39 UTC, Sukadev Bhattiprolu wrote:
+> Remove a bogus line from arch/powerpc/platforms/powernv/Makefile that
+> was added by commit ece4e51 ("powerpc/vas: Export HVWC to debugfs").
 > 
-> 
-> Am 14.03.2018 um 10:14 schrieb Jakob Unterwurzacher:
->> On 14.03.18 10:11, Wolfgang Grandegger wrote:
->>>> +    /* handle error frames */
->>>> +    canid = le32_to_cpu(m->msg.can_msg.id);
->>>> +    if (canid & CAN_ERR_FLAG) {
->>>> +        ucan_handle_error_frame(up, m, canid);
->>>> +        /* drop frame if berr-reporting is off */
->>>> +        if (!(up->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING))
->>>> +            return;
->>>> +    }
->>>
->>> You still do not generate error messages for state changes, IIUC.
->>
->> The hardware generates error frames on state changes - is that what 
->> you mean?
->>
->> In our testing, the state shows up (and updates) correctly in
->>
->>      ip -details -statistics link show can0
-> 
-> Counting the state changes is one thing but you should also generate 
-> error messages for them.
+> Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
 
-The usual test here is:
+Applied to powerpc next, thanks.
 
-$ candump -td -e any,0:0,#FFFFFFFF
+https://git.kernel.org/powerpc/c/2f65272a2a304ec6aa32ad9a45b150
 
-should report proper state changes, if you send messages with
-
-1. no cable connected
-2. CAN high and low short-circuited
-
-Also downwards if the hardware error is gone and you continue to send 
-messages.
-
-Wolfgang.
+cheers
