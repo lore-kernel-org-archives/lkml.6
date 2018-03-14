@@ -1,75 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeCNSSZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:18:25 -0400
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:46430 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeCNSRJ (ORCPT
+        id S932252AbeCNSUW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:20:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34498 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751975AbeCNSUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:17:09 -0400
-X-Google-Smtp-Source: AG47ELsEixqWyepLT2P/AtmodqjYJC5O407vJnfH+R81ySlgK5ADs5mGmvnzDqQuwsfygQT2EcdHeS+b5XJef0rgnFE=
+        Wed, 14 Mar 2018 14:20:20 -0400
+Date: Wed, 14 Mar 2018 19:20:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: arc_usr_cmpxchg and preemption
+Message-ID: <20180314182017.GB4129@hirez.programming.kicks-ass.net>
+References: <1521045375.11552.27.camel@synopsys.com>
+ <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+ <20180314175352.GP4064@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180314174946.GB179719@bhelgaas-glaptop.roam.corp.google.com>
-References: <152097754955.241946.9551793957889760940.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <CAHp75Vfp_uwSLe_ENnr=azJGrMoR6DuvGSCi5DSeq6=B-ghAGg@mail.gmail.com> <20180314174946.GB179719@bhelgaas-glaptop.roam.corp.google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Mar 2018 20:17:07 +0200
-Message-ID: <CAHp75VdZSZ2srwuWREj0=NrpmfxKmjG5KmPW2jN9+mZ025j4nQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Cris <linux-cris-kernel@axis.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org, linux-am33-list@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314175352.GP4064@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 7:49 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Wed, Mar 14, 2018 at 06:31:38PM +0200, Andy Shevchenko wrote:
->> On Tue, Mar 13, 2018 at 11:45 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Wed, Mar 14, 2018 at 06:53:52PM +0100, Peter Zijlstra wrote:
+> On Wed, Mar 14, 2018 at 09:58:19AM -0700, Vineet Gupta wrote:
+> 
+> > Well it is broken wrt the semantics the syscall is supposed to provide.
+> > Preemption disabling is what prevents a concurrent thread from coming in and
+> > modifying the same location (Imagine a variable which is being cmpxchg
+> > concurrently by 2 threads).
+> > 
+> > One approach is to do it the MIPS way, emulate the llsc flag - set it under
+> > preemption disabled section and clear it in switch_to
+> 
+> *shudder*... just catch the -EFAULT, force the write fault and retry.
+> 
+> Something like:
+> 
+> int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
+> {
+> 	u32 val;
+> 	int ret;
 
->> > If a device already has MSI or MSI-X enabled, there's no need to set up its
->> > legacy INTx interrupt.
->>
->> Just point to the actual behaviour of this.
->
-> By "point to the actual behaviour", do you mean adding something to
-> the changelog along the lines of the following?
->
->   If MSI or MSI-X is enabled, the device uses that.  It uses INTx only
->   if both MSI and MSI-X are disabled (see PCIe r4.0, sec 7.7.1.2).
->
-> I did add that because I think that spec reference is useful.  If you
-> have something else in mind, maybe an example would help me
-> understand.
+Also very important:
 
-I meant that the behaviour now is changed from
- check MSI only case
-to
- check MSI _or MSI-x_ case
+	if ((unsigned long)user_ptr & 0x3)
+		return -EINVAL;
 
-Not all code paths may survive that.
+You must disallow unaligned atomics, otherwise the below can cross a
+page-boundary (and unaligned atomics are insane in any case).
 
->> In some cases code in question has to distinguish between MSI and
->> MSI-x.  So, this or similar changes has to be done with keeping
->> above in mind.
->>
->> (Existing example is Thunderbolt driver)
->
-> Sorry, I didn't get your point here.  Certainly some code needs to
-> distinguish between MSI and MSI-X, but I don't think that's the case
-> here.  I'm not proposing to change Thunderbolt; I do see that it uses
-> dev->msix_enabled (but not dev->msi_enabled), and it doesn't look like
-> using pci_dev_msi_enabled() there would be appropriate.
-
-Exactly, that's why I pointed on above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> again:
+> 	ret = 0;
+> 
+> 	preempt_disable();
+> 	val = get_user(user_ptr);
+> 	if (val == old)
+> 		ret = put_user(new, user_ptr);
+> 	preempt_enable();
+> 
+> 	if (ret == -EFAULT) {
+> 		struct page *page;
+> 		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
+> 		if (ret < 0)
+> 			return ret;
+> 		put_page(page);
+> 		goto again;
+> 	}
+> 
+> 	return ret;
+> }
