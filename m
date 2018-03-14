@@ -1,64 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeCNUBC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:01:02 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36961 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeCNUBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:01:01 -0400
-X-Google-Smtp-Source: AG47ELthGwQRKMpM4gJesRjTNyGSSBXLStucR+hswutDdQSyoJw8btAbXqru4L+f9aMa6aNgT3DVyp1qE+FphMRnT7c=
-MIME-Version: 1.0
-In-Reply-To: <5aa9792f.wV2Hkl94T1JHtkuH%fengguang.wu@intel.com>
-References: <5aa9792f.wV2Hkl94T1JHtkuH%fengguang.wu@intel.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 14 Mar 2018 21:00:59 +0100
-X-Google-Sender-Auth: wHWJYq5e-YcsAS0-E5lR4fHV20o
-Message-ID: <CAK8P3a2cKhf9iM1DSYDAwz4m94tLA8PQxmH-87O59Ayzo5tj1w@mail.gmail.com>
-Subject: Re: [asm-generic:asm-generic] BUILD SUCCESS 18fd258e74835b40a4f89f11ae933267866cc7af
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751459AbeCNUD4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:03:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751131AbeCNUDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 16:03:54 -0400
+Message-ID: <1521057831.18703.101.camel@redhat.com>
+Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
+From: Doug Ledford <dledford@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Eddie Wai <eddie.wai@broadcom.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Mar 2018 16:03:51 -0400
+In-Reply-To: <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
+References: <20180220205638.1959033-1-arnd@arndb.de>
+         <20180228211514.GC13394@ziepe.ca>
+         <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
+         <20180306234539.GB1037@ziepe.ca>
+         <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
+         <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
+         <CAK8P3a2SS4RBwjrd2XCnpA8W_bmHtjdjWdX1RTnkou0OQ5ROdA@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-UJaNqwXGmqS0tl2yU1Rb"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 8:34 PM, kbuild test robot
-<fengguang.wu@intel.com> wrote:
-> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git  asm-generic
-> branch HEAD: 18fd258e74835b40a4f89f11ae933267866cc7af  staging: iio: remove iio-trig-bfin-timer driver
->
-> elapsed time: 192m
->
-> configs tested: 176
->
-> The following configs have been built successfully.
-> More configs may be tested in the coming days.
->
-> blackfin                BF526-EZBRD_defconfig
-> blackfin                BF533-EZKIT_defconfig
-> blackfin            BF561-EZKIT-SMP_defconfig
-> blackfin                  TCM-BF537_defconfig
-> cris                 etrax-100lx_v2_defconfig
-> mn10300                     asb2364_defconfig
-> frv                                 defconfig
-> tile                         tilegx_defconfig
-> m32r                       m32104ut_defconfig
-> m32r                     mappi3.smp_defconfig
-> m32r                         opsput_defconfig
-> m32r                           usrv_defconfig
-> score                      spct6600_defconfig
 
-Hi Fengguang,
+--=-UJaNqwXGmqS0tl2yU1Rb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Something odd is going in with the reporting here. I got individual reports for
-a number of the above that they failed, but the summary for the branch
-reports the builds as successful.
+On Tue, 2018-03-13 at 09:50 +0100, Arnd Bergmann wrote:
+> On Wed, Mar 7, 2018 at 11:12 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wed, Mar 7, 2018 at 10:05 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >=20
+> > > A small complication is that I wrote the changelog for the build warn=
+ing
+> > > on 32-bit architectures, which is more elaborate. kernelci.org for
+> > > some reasons currently skips the allmodconfig build on all 32-bit
+> > > architectures (I should ask the kernelci maintainers to change that),
+> >=20
+> > I see that Olof's build bot does have build results for arm32
+> > allmodconfig, which is also big-endian, and reports the same
+> > errors that I described in the patch changelog.
+> >=20
+> > See
+> >=20
+> > http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/
+> > http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/builda=
+ll.arm.allmodconfig.log.passed
+> >=20
+> > for today's results.
+> >=20
+> > This bot reports one other warning for arm32, but it's
+> > specific to the toolchain version used on that bot.
+> > I have a fix for that one as well, but there was some
+> > discussion on what the best approach would be.
+>=20
+> Any update on this? This is now the only remaining gcc warning we get on
+> allmodconfig builds for arm (both 32-bit and 64-bit) in linux-4.16-rc.
+>=20
+>=20
+>      Arnd
 
-This branch contains the removal of blackfin, cris, mn10300, frv, tile, score,
-m32r, and metag, so none of the above should be marked as successful.
+Do you need the full series to fix this (it looked that way to me)?
 
-You may want to prevent them from being built in the future, but it also
-seems the reporting needs to be checked.
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-UJaNqwXGmqS0tl2yU1Rb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-       Arnd
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlqpgCcACgkQuCajMw5X
+L91xFBAAtH7NYOxqPq7xaCstsugw3L8s3QHtEMNDnT4f1zAdQFUW6k1AmlpsT38I
+CfrVE91jqi45p9O95ipRv4/diVb4j+RpzO0QLtA/WNpvkgNgwcUdDYHfVpktx+aT
+3cZ4RRXbqXZG+AJRKQb1L3wLEDz3sQHeLxQ0n8yZjCksF1SUaKOh6sGpZJdQraFu
+O5conXnugLTe8i5b4gZSM39Ak4O/GzNkNtlp8RrbX2Qye55Tyyb0/Gw43Ch86uKR
+O3yslNUvs0rkmKCNO+0yVEgnMFdhDi7+qiJ9g3zxqrmIyuuae3owAT0Cchr8aaH+
+MumCI4iLN4bRImxvkzzR3aAJAm8eOF0kdFCuOzlUAWzPXz/5V9Sv1Y45fjlqvEhG
+hfkUlSeSgZo0y9wZw73w31NGUXhAZxxqR9yLHfmUNjv6GrnlsHmNFIZdjxOKOlwY
+c+C2C/k4uUrL/Iyxl3mGq6TFGzAWJOOoZmTVEPzddnLwk1nwLnQK5J1PUHBDM/Zg
++Xy9OHHSpvirIj0XUxXqctBL/v/hiLPTRVpImEP7+RVhcvKLPp87jFCqvaaIfa60
+8x5ffiKOmtt6/h4skeCvbalLdQvB9S1PEXE0tbiPr0QZikR7g5cYvUk2HGkkPBTC
+a8vrdCIjK9Zq0EFbWPItmENQaTXWRTWM9a/lLm7ZI0e8shsz75s=
+=P7RC
+-----END PGP SIGNATURE-----
+
+--=-UJaNqwXGmqS0tl2yU1Rb--
