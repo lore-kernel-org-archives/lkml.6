@@ -1,81 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751556AbeCNTZc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:25:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53027 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751170AbeCNTZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:25:30 -0400
-Date: Wed, 14 Mar 2018 12:25:14 -0700
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-163cf842f5837334bc69aaf09ad38e11f4573914@git.kernel.org>
-Cc: mingo@kernel.org, longman@redhat.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, yang.shi@linux.alibaba.com,
-        tglx@linutronix.de, hpa@zytor.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, yang.shi@linux.alibaba.com,
-        linux-kernel@vger.kernel.org, longman@redhat.com, arnd@arndb.de,
-        mingo@kernel.org
-In-Reply-To: <20180313131857.158876-1-arnd@arndb.de>
-References: <20180313131857.158876-1-arnd@arndb.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/debugobjects] debugobjects: Avoid another unused variable
- warning
-Git-Commit-ID: 163cf842f5837334bc69aaf09ad38e11f4573914
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751488AbeCNT1F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:27:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45704 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750779AbeCNT1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 15:27:04 -0400
+Date: Wed, 14 Mar 2018 15:27:02 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
+        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] livepatch: Initialize shadow variables by init
+ function safely
+Message-ID: <20180314192702.h6fvqoo7myt426ww@redhat.com>
+References: <20180313155448.1998-1-pmladek@suse.com>
+ <20180313155448.1998-2-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180313155448.1998-2-pmladek@suse.com>
+User-Agent: Mutt/1.6.2-neo (2016-08-08)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  163cf842f5837334bc69aaf09ad38e11f4573914
-Gitweb:     https://git.kernel.org/tip/163cf842f5837334bc69aaf09ad38e11f4573914
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Tue, 13 Mar 2018 14:18:46 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 14 Mar 2018 20:20:01 +0100
+On Tue, Mar 13, 2018 at 04:54:47PM +0100, Petr Mladek wrote:
+> The existing API allows to pass a sample data to initialize the shadow
+> data. It works well when the data are position independent. But it fails
+> miserably when we need to set a pointer to the shadow structure itself.
+> 
+> Unfortunately, we might need to initialize the pointer surprisingly
+> often because of struct list_head. It is even worse because the list
+> might be hidden in other common structures, for example, struct mutex,
+> struct wait_queue_head.
+> 
+> This patch makes the API more safe. A custom init function and data
+> are passed to klp_shadow_*alloc() functions instead of the sample data.
 
-debugobjects: Avoid another unused variable warning
+Yup, this looks kinda familiar, I remember tinkering with the same idea
+last year [1] before settling on the simpler API.
 
-debug_objects_maxchecked is only updated in __debug_check_no_obj_freed(),
-and only read in debug_objects_maxchecked, unfortunately both of these are
-optional and depend on different Kconfig symbols.
+[1] https://github.com/torvalds/linux/compare/master...joe-lawrence:shadow_variables_v2_c
 
-When both CONFIG_DEBUG_OBJECTS_FREE and CONFIG_DEBUG_FS are disabled this
-warning is emitted:
+> Note that the init_data are not longer a template for the shadow->data.
+> It might point to any data that might be necessary when the init
+> function is called.
 
-  lib/debugobjects.c:56:14: error: 'debug_objects_maxchecked' defined but not used [-Werror=unused-variable]
+I'm not opposed to changing the API, but I was wondering if you had
+thought about expanding it as an alternative? 
 
-Rather than trying to add more complex #ifdef protections, mark the
-variable as __maybe_unused so it can be silently dropped when usused.
+When working on this last summer, I remember holding onto to some less
+than intuitive naming conventions so that I could support a basic API
+and an extended API with bells and whistles like this patchset
+implements.  It didn't seem too difficult to layer the basic API ontop
+of one like this (see [1] for example), so maybe that's an option to
+keep basic shadow variable usage a little simpler.  /two cents
 
-Fixes: bd9dcd046509 ("debugobjects: Export max loops counter")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Waiman Long <longman@redhat.com>
-Link: https://lkml.kernel.org/r/20180313131857.158876-1-arnd@arndb.de
+> In addition, the newly allocated shadow structure is initialized
+> only when it is really used. For this, the init function must be
+> called under klp_shadow_lock. On one hand, this adds a risk of
+> ABBA deadlocks. On the other hand, it allows to do some operations
+> safely. For example, we could add the new structure into an
+> existing list.
+> 
+> Reported-by: Nicolai Stange <nstange@suse.de>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  Documentation/livepatch/shadow-vars.txt   | 32 +++++++++++++++------
+>  include/linux/livepatch.h                 | 17 ++++++++---
+>  kernel/livepatch/shadow.c                 | 48 +++++++++++++++++++++----------
+>  samples/livepatch/livepatch-shadow-fix1.c | 19 +++++++++++-
+>  samples/livepatch/livepatch-shadow-fix2.c |  6 ++--
+>  5 files changed, 89 insertions(+), 33 deletions(-)
+> 
+> diff --git a/Documentation/livepatch/shadow-vars.txt b/Documentation/livepatch/shadow-vars.txt
+> [ ... snip ...]
+> @@ -148,16 +154,24 @@ shadow variables to parents already in-flight.
+>  For commit 1d147bfa6429, a good spot to allocate a shadow spinlock is
+>  inside ieee80211_sta_ps_deliver_wakeup():
+>  
+> +int ps_lock_shadow_init(void *obj, void *shadow_data, void *data)
+> +{
+> +	spinlock_t *lock = shadow_data;
+> +
+> +	spin_lock_init(lock);
+> +	return 0;
+> +}
+> +
+>  #define PS_LOCK 1
+>  void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
+>  {
+> -	DEFINE_SPINLOCK(ps_lock_fallback);
+>  	spinlock_t *ps_lock;
+>  
+>  	/* sync with ieee80211_tx_h_unicast_ps_buf */
+>  	ps_lock = klp_shadow_get_or_alloc(sta, PS_LOCK,
+> -			&ps_lock_fallback, sizeof(ps_lock_fallback),
+> -			GFP_ATOMIC);
+> +			sizeof(ps_lock_fallback), GFP_ATOMIC,
 
----
- lib/debugobjects.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think this should be "sizeof(*ps_lock)" here since we've removed the
+ps_lock_fallback.
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 105ecfc47d8c..994be4805cec 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -53,7 +53,7 @@ static int			obj_nr_tofree;
- static struct kmem_cache	*obj_cache;
- 
- static int			debug_objects_maxchain __read_mostly;
--static int			debug_objects_maxchecked __read_mostly;
-+static int __maybe_unused	debug_objects_maxchecked __read_mostly;
- static int			debug_objects_fixups __read_mostly;
- static int			debug_objects_warnings __read_mostly;
- static int			debug_objects_enabled __read_mostly
+> +			ps_lock_shadow_init, NULL);
+> +
+>  	if (ps_lock)
+>  		spin_lock(ps_lock);
+
+The rest of this patchset looks pretty good.  I gave the samples a
+test-run and they still operate as advertised.  Perhaps shadow variables
+are another candidate for some kind of kselftest?
+
+Regards,
+
+-- Joe
