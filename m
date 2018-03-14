@@ -1,158 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753647AbeCNIS7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:18:59 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41316 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbeCNISz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:18:55 -0400
-X-Google-Smtp-Source: AG47ELvHFfa9L9CnZv0O6ZHEcTjZ8fRE0keavxU4aM2JbM1UAhDDrG5frDPJl8tda4XEwlRjbeKihA==
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCHv3 2/2] zram: drop max_zpage_size and use zs_huge_class_size()
-Date: Wed, 14 Mar 2018 17:18:33 +0900
-Message-Id: <20180314081833.1096-3-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180314081833.1096-1-sergey.senozhatsky@gmail.com>
-References: <20180314081833.1096-1-sergey.senozhatsky@gmail.com>
+        id S1753667AbeCNITo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:19:44 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:47496 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753589AbeCNITl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:19:41 -0400
+Subject: Re: int3403_driver_init needs over 330 ms to finish
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b6cf267e-3042-1226-cb06-1b7fc26ed122@molgen.mpg.de>
+ <1521012744.2087.13.camel@intel.com>
+From: Paul Menzel <pmenzel+linux-pm@molgen.mpg.de>
+Message-ID: <6ce0b246-b2ba-c251-3506-df3e3b71da84@molgen.mpg.de>
+Date: Wed, 14 Mar 2018 09:19:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1521012744.2087.13.camel@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Dear Rui,
 
-This patch removes ZRAM's enforced "huge object" value and uses zsmalloc
-huge-class watermark instead, which makes more sense.
 
-TEST
-- I used a 1G zram device, LZO compression back-end, original
-  data set size was 444MB. Looking at zsmalloc classes stats the
-  test ended up to be pretty fair.
+On 03/14/2018 08:32 AM, Zhang Rui wrote:
+> On 二, 2018-03-13 at 20:39 +0100, Paul Menzel wrote:
 
-BASE ZRAM/ZSMALLOC
-=====================
-zram mm_stat
+>> Booting the Dell XPS 13 9370 with Linux 4.16-rc4+ and
+>> `initcall_debug`,
+>> shows it is shown that int3403_driver_init needs over 330 ms to run.
+>>
+>>       [    2.524839] initcall int3403_driver_init+0x0/0x1000
+>> [int3403_thermal] returned 0 after 333972 usecs
+>>
+> I guess most of the time are spent in evaluating ACPI ASL code.
+> But anyway, please create a bugzilla report and attach both dmesg and
+> acpidump there.
 
-498978816 191482495 199831552        0 199831552    15634        0
+I created bug report #199113 [1], and attached the requested files.
 
-zsmalloc classes
 
- class  size almost_full almost_empty obj_allocated   obj_used pages_used pages_per_zspage freeable
-...
-   151  2448           0            0          1240       1240        744                3        0
-   168  2720           0            0          4200       4200       2800                2        0
-   190  3072           0            0         10100      10100       7575                3        0
-   202  3264           0            0           380        380        304                4        0
-   254  4096           0            0         10620      10620      10620                1        0
+Kind regards,
 
- Total                 7           46        106982     106187      48787                         0
+Paul
 
-PATCHED ZRAM/ZSMALLOC
-=====================
 
-zram mm_stat
-
-498978816 182579184 194248704        0 194248704    15628        0
-
-zsmalloc classes
-
- class  size almost_full almost_empty obj_allocated   obj_used pages_used pages_per_zspage freeable
-...
-   151  2448           0            0          1240       1240        744                3        0
-   168  2720           0            0          4200       4200       2800                2        0
-   190  3072           0            0         10100      10100       7575                3        0
-   202  3264           0            0          7180       7180       5744                4        0
-   254  4096           0            0          3820       3820       3820                1        0
-
- Total                 8           45        106959     106193      47424                         0
-
-As we can see, we reduced the number of objects stored in class-4096,
-because a huge number of objects which we previously forcibly stored in
-class-4096 now stored in non-huge class-3264.  This results in lower
-memory consumption:
-
-- zsmalloc now uses 47424 physical pages, which is less than 48787 pages
-  zsmalloc used before.
-
-- objects that we store in class-3264 share zspages.  That's why overall
-  the number of pages that both class-4096 and class-3264 consumed went
-  down from 10924 to 9564.
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- drivers/block/zram/zram_drv.c |  9 ++++++++-
- drivers/block/zram/zram_drv.h | 16 ----------------
- 2 files changed, 8 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 71b449613cfa..0f3fadd71230 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -44,6 +44,11 @@ static const char *default_compressor = "lzo";
- 
- /* Module params (documentation at end) */
- static unsigned int num_devices = 1;
-+/*
-+ * Pages that compress to sizes equals or greater than this are stored
-+ * uncompressed in memory.
-+ */
-+static size_t huge_class_size;
- 
- static void zram_free_page(struct zram *zram, size_t index);
- 
-@@ -786,6 +791,8 @@ static bool zram_meta_alloc(struct zram *zram, u64 disksize)
- 		return false;
- 	}
- 
-+	if (!huge_class_size)
-+		huge_class_size = zs_huge_class_size(zram->mem_pool);
- 	return true;
- }
- 
-@@ -965,7 +972,7 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 		return ret;
- 	}
- 
--	if (unlikely(comp_len > max_zpage_size)) {
-+	if (unlikely(comp_len >= huge_class_size)) {
- 		if (zram_wb_enabled(zram) && allow_wb) {
- 			zcomp_stream_put(zram->comp);
- 			ret = write_to_bdev(zram, bvec, index, bio, &element);
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 31762db861e3..d71c8000a964 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -21,22 +21,6 @@
- 
- #include "zcomp.h"
- 
--/*-- Configurable parameters */
--
--/*
-- * Pages that compress to size greater than this are stored
-- * uncompressed in memory.
-- */
--static const size_t max_zpage_size = PAGE_SIZE / 4 * 3;
--
--/*
-- * NOTE: max_zpage_size must be less than or equal to:
-- *   ZS_MAX_ALLOC_SIZE. Otherwise, zs_malloc() would
-- * always return failure.
-- */
--
--/*-- End of configurable params */
--
- #define SECTOR_SHIFT		9
- #define SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
- #define SECTORS_PER_PAGE	(1 << SECTORS_PER_PAGE_SHIFT)
--- 
-2.16.2
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=199113
