@@ -1,84 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753214AbeCNFRj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 01:17:39 -0400
-Received: from mx.socionext.com ([202.248.49.38]:50422 "EHLO mx.socionext.com"
+        id S1753278AbeCNFWR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 01:22:17 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34179 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750758AbeCNFRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 01:17:38 -0400
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: linux-arm-kernel@lists.infradead.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] ARM: dts: uniphier: add audio in/out pin-mux node
-Date: Wed, 14 Mar 2018 14:17:32 +0900
-Message-Id: <20180314051732.6177-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.16.1
+        id S1751270AbeCNFWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 01:22:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,468,1515484800";
+   d="scan'208,223";a="25064915"
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+To: x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
+        anshuman.gupta@intel.com, andriy.shevchenko@linux.intel.com,
+        linux-kernel@vger.kernel.org,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Alan Cox <alan@linux.intel.com>
+Subject: [PATCH v2] x86: i8237: Register based on FADT legacy boot flag
+Date: Wed, 14 Mar 2018 10:47:07 +0530
+Message-Id: <1521004627-30329-1-git-send-email-rajneesh.bhardwaj@intel.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The UniPhier AIO audio system needs I2S data in/out lines
-and clock signal pins to connect external codec chip.
+>From Skylake onwards, the platform controller hub (Sunrisepoint PCH) does
+not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh, 8Fh.
+Currently this driver registers as syscore ops and its resume function is
+called on every resume from S3. On Skylake and Kabylake, this causes a
+resume delay of around 100ms due to port IO operations, which is a problem.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+This change allows to load the driver only when the platform bios
+explicitly supports such devices or has a cut-off date earlier than 2017.
+
+Please refer to chapter 21 of 6th Generation Intel® Core™ Processor
+Platform Controller Hub Family: BIOS Specification.
+
+https://www.intel.in/content/www/in/en/embedded/products/skylake/u-mobile/software-and-drivers.html
+
+Cc: Alan Cox <alan@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
 ---
- arch/arm/boot/dts/uniphier-pinctrl.dtsi | 40 +++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Changes in v2:
+ * changed to dma_inb()
 
-diff --git a/arch/arm/boot/dts/uniphier-pinctrl.dtsi b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
-index de481c372467..c213f17a12ca 100644
---- a/arch/arm/boot/dts/uniphier-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
-@@ -13,6 +13,46 @@
- 		function = "aout";
- 	};
+This depends on recently introduced dmi_get_bios_year() helper.
+https://patchwork.kernel.org/patch/10252151/
+ arch/x86/kernel/i8237.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/x86/kernel/i8237.c b/arch/x86/kernel/i8237.c
+index 8eeaa81de066..bf5d8104e17b 100644
+--- a/arch/x86/kernel/i8237.c
++++ b/arch/x86/kernel/i8237.c
+@@ -9,6 +9,7 @@
+  * your option) any later version.
+  */
  
-+	pinctrl_ain1: ain1 {
-+		groups = "ain1";
-+		function = "ain1";
-+	};
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/syscore_ops.h>
+ 
+@@ -49,6 +50,30 @@ static struct syscore_ops i8237_syscore_ops = {
+ 
+ static int __init i8237A_init_ops(void)
+ {
++	/*
++	 * From SKL PCH onwards, the port 0x61 bit 4 would stop toggle and
++	 * the legacy DMA device is removed in which the I/O ports (81h-83h,
++	 * 87h, 89h-8Bh, 8Fh)  related to it are removed as well. All
++	 * removed ports must return 0xff for a inb() request.
++	 *
++	 * Note: DMA_PAGE_2 (port 0x81) should not be checked for detecting
++	 * the presence of DMA device since it may be used by BIOS to decode
++	 * LPC traffic for POST codes. Original LPC only decodes one byte of
++	 * port 0x80 but some BIOS may choose to enhance PCH LPC port 0x8x
++	 * decoding.
++	 */
++	if (dma_inb(DMA_PAGE_0) == 0xFF)
++		return -ENODEV;
 +
-+	pinctrl_ain2: ain2 {
-+		groups = "ain2";
-+		function = "ain2";
-+	};
++	/*
++	 * It should be OK to not load this driver as newer SoC may not
++	 * support 8237 DMA or bus mastering from LPC. Platform firmware
++	 * must announce the support for such legacy devices via
++	 * ACPI_FADT_LEGACY_DEVICES field in FADT table.
++	 */
++	if (!x86_platform.legacy.devices.pnpbios && dmi_get_bios_year() >= 2017)
++		return -ENODEV;
 +
-+	pinctrl_ainiec1: ainiec1 {
-+		groups = "ainiec1";
-+		function = "ainiec1";
-+	};
-+
-+	pinctrl_aout1: aout1 {
-+		groups = "aout1";
-+		function = "aout1";
-+	};
-+
-+	pinctrl_aout2: aout2 {
-+		groups = "aout2";
-+		function = "aout2";
-+	};
-+
-+	pinctrl_aout3: aout3 {
-+		groups = "aout3";
-+		function = "aout3";
-+	};
-+
-+	pinctrl_aoutiec1: aoutiec1 {
-+		groups = "aoutiec1";
-+		function = "aoutiec1";
-+	};
-+
-+	pinctrl_aoutiec2: aoutiec2 {
-+		groups = "aoutiec2";
-+		function = "aoutiec2";
-+	};
-+
- 	pinctrl_emmc: emmc {
- 		groups = "emmc", "emmc_dat8";
- 		function = "emmc";
+ 	register_syscore_ops(&i8237_syscore_ops);
+ 	return 0;
+ }
 -- 
-2.16.1
+2.7.4
