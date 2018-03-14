@@ -1,160 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeCNRHy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:07:54 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41047 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeCNRHu (ORCPT
+        id S1752136AbeCNRIw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:08:52 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46363 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCNQ7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:07:50 -0400
-X-Google-Smtp-Source: AG47ELv04pCzh3BhDWnhhHsb8YACk/YJVcpWpiw8WORNcdCk13sxJtUaAKK3c7L7RU2HjMnlv7RPwQ==
-Date: Wed, 14 Mar 2018 10:07:49 -0700 (PDT)
-X-Google-Original-Date: Wed, 14 Mar 2018 09:59:59 PDT (-0700)
-Subject: Re: [PATCH 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
-In-Reply-To: <87o9jqzxcp.fsf@xps13.shealevy.com>
-CC: zongbox@gmail.com, zong@andestech.com, albert@sifive.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        greentime@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: shea@shealevy.com
-Message-ID: <mhng-a918ba24-716d-47ae-8f33-4c7ec85cf11a@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Mar 2018 12:59:05 -0400
+X-Google-Smtp-Source: AG47ELs3eF+sBpGB/98M1eL8koIYYSgfJ8k9SzJ/PsYUCz/rGNZvzdFkTJJ6vff7P+ksq/Ou7ZusOg==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 01/25] PM / Domains: Don't treat zero found compatible idle states as an error
+Date: Wed, 14 Mar 2018 17:58:11 +0100
+Message-Id: <1521046715-30683-2-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018 04:54:14 PDT (-0700), shea@shealevy.com wrote:
-> Palmer Dabbelt <palmer@sifive.com> writes:
->
->> On Tue, 13 Mar 2018 18:34:19 PDT (-0700), zongbox@gmail.com wrote:
->>> 2018-03-14 5:30 GMT+08:00 Shea Levy <shea@shealevy.com>:
->>>> Hi Palmer,
->>>>
->>>> Palmer Dabbelt <palmer@sifive.com> writes:
->>>>
->>>>> On Tue, 13 Mar 2018 01:35:05 PDT (-0700), zong@andestech.com wrote:
->>>>>> These patches resolve the some issues of loadable module.
->>>>>>   - symbol out of ranges
->>>>>>   - unknown relocation types
->>>>>>
->>>>>> The reference of external variable and function symbols
->>>>>> cannot exceed 32-bit offset ranges in kernel module.
->>>>>> The module only can work on the 32-bit OS or the 64-bit
->>>>>> OS with sv32 virtual addressing.
->>>>>>
->>>>>> These patches will generate the .got, .got.plt and
->>>>>> .plt sections during loading module, let it can refer
->>>>>> to the symbol which locate more than 32-bit offset.
->>>>>> These sections depend on the relocation types:
->>>>>>  - R_RISCV_GOT_HI20
->>>>>>  - R_RISCV_CALL_PLT
->>>>>>
->>>>>> These patches also support more relocation types
->>>>>>  - R_RISCV_CALL
->>>>>>  - R_RISCV_HI20
->>>>>>  - R_RISCV_LO12_I
->>>>>>  - R_RISCV_LO12_S
->>>>>>  - R_RISCV_RVC_BRANCH
->>>>>>  - R_RISCV_RVC_JUMP
->>>>>>  - R_RISCV_ALIGN
->>>>>>  - R_RISCV_ADD32
->>>>>>  - R_RISCV_SUB32
->>>>>>
->>>>>> Zong Li (11):
->>>>>>   RISC-V: Add sections of PLT and GOT for kernel module
->>>>>>   RISC-V: Add section of GOT.PLT for kernel module
->>>>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
->>>>>>   RISC-V: Support CALL relocation type in kernel module
->>>>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
->>>>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
->>>>>>   RISC-V: Support ALIGN relocation type in kernel module
->>>>>>   RISC-V: Support ADD32 relocation type in kernel module
->>>>>>   RISC-V: Support SUB32 relocation type in kernel module
->>>>>>   RISC-V: Enable module support in defconfig
->>>>>>   RISC-V: Add definition of relocation types
->>>>>>
->>>>>>  arch/riscv/Kconfig                  |   5 ++
->>>>>>  arch/riscv/Makefile                 |   3 +
->>>>>>  arch/riscv/configs/defconfig        |   2 +
->>>>>>  arch/riscv/include/asm/module.h     | 112 +++++++++++++++++++++++
->>>>>>  arch/riscv/include/uapi/asm/elf.h   |  24 +++++
->>>>>>  arch/riscv/kernel/Makefile          |   1 +
->>>>>>  arch/riscv/kernel/module-sections.c | 156 ++++++++++++++++++++++++++++++++
->>>>>>  arch/riscv/kernel/module.c          | 175 ++++++++++++++++++++++++++++++++++--
->>>>>>  arch/riscv/kernel/module.lds        |   8 ++
->>>>>>  9 files changed, 480 insertions(+), 6 deletions(-)
->>>>>>  create mode 100644 arch/riscv/include/asm/module.h
->>>>>>  create mode 100644 arch/riscv/kernel/module-sections.c
->>>>>>  create mode 100644 arch/riscv/kernel/module.lds
->>>>>
->>>>> This is the second set of patches that turn on modules, and it has the same
->>>>> R_RISCV_ALIGN problem as the other one
->>>>>
->>>>>     http://lists.infradead.org/pipermail/linux-riscv/2018-February/000081.html
->>>>>
->>>>> It looks like this one uses shared libraries for modules instead of static
->>>>> objects.  I think using shared objects is the right thing to do, as it'll allow
->>>>> us to place modules anywhere in the address space by having multiple GOTs and
->>>>> PLTs.
->>>>
->>>> Can you expand on this? It was my understanding that outside of the
->>>> context of multiple address spaces sharing code the GOT and PLT were
->>>> simply unnecessary overhead, what benefit would they bring here?
->>>>
->>>>> That's kind of complicated, though, so we can start with something
->>>>> simpler like this.
->>>
->>> Hi,
->>>
->>> The kernel module is a object file, it is not be linked by linker, the
->>> GOT and PLT
->>> sections will not be generated through -fPIC option, but it will
->>> generate the relative
->>> relocation type. As Palmer mention before, If we have GOT and PLT sections,
->>> we can put the module anywhere, even we support the KASLR in the kernel.
->>
->> Sorry, I guess I meant PIC objects not shared objects (I keep forgetting about
->> PIE).  We'll probably eventually add large code model targets, but they might
->> end up just being functionally equilivant to PIE with multi-GOT and multi-PLT
->> so it might not matter.
->>
->> Either way, this is the sanest way to do it for now.
->>
->>> For the ALIGN problem, the kernel module loader is difficult to remove
->>> or migrate
->>> the module's code like relax doing, so the remnant nop instructions harm the
->>> performance,  I agree the point that adding the mno-relax option and checking
->>> the alignment in ALIGN type in module loader.
->>
->> Sounds good.  I just merged the mno-relax stuff, it'll show up when I get
->> around to generating a 7.3.0 backport branch.  For now I think you should just
->> fail on R_RISCV_ALIGN and attempt to pass -mno-relax to the compiler (via
->> something like "$(call cc-option,-mno-relax)", like we do for
->> "-mstrict-align").  I don't think it's worth handling R_RISCV_ALIGN in the
->> kernel, as that's essentially the same as full relaxation support.
->>
->
-> Should we unconditionally fail on R_RISCV_ALIGN or only if the code
-> isn't already aligned?
+Instead of returning -EINVAL from of_genpd_parse_idle_states() in case none
+compatible states was found, let's return 0 to indicate success. Assign
+also the out-parameter *states to NULL and *n to 0, to indicate to the
+caller that zero states have been found/allocated.
 
-Either way is OK for me.  With '-mno-relax' there shouldn't be any
-R_RISCV_ALIGN relocations, so it shouldn't matter.
+This enables the caller of of_genpd_parse_idle_states() to easier act on
+the returned error code.
 
->>
->>>>> That's kind of complicated, though, so we can start with something
->>>>> simpler like this.
->>>
->>> So what is the suggestion for that.
->>
->> Well, I'm not really sure -- essentially the idea of proper multi-GOT and
->> multi-PLT support would be to merge the GOTs and PLTs of modules together when
->> they're within range of each other.  We haven't even figured this out in
->> userspace yet, so it's probably not worth attempting for kernel modules for a
->> bit.
->>
->> If I understand your code correctly, you're currently generating one GOT and
->> one PLT per loaded module.  If that's the case, then this is correct, it's just
->> possible to save some memory by merging these tables.  It's probably not worth
->> the complexity for kernel modules for a while.
+Cc: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/power/domain.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 1ea0e25..c2ef944 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2331,8 +2331,8 @@ static int genpd_iterate_idle_states(struct device_node *dn,
+  *
+  * Returns the device states parsed from the OF node. The memory for the states
+  * is allocated by this function and is the responsibility of the caller to
+- * free the memory after use. If no domain idle states is found it returns
+- * -EINVAL and in case of errors, a negative error code.
++ * free the memory after use. If any or zero compatible domain idle states is
++ * found it returns 0 and in case of errors, a negative error code is returned.
+  */
+ int of_genpd_parse_idle_states(struct device_node *dn,
+ 			struct genpd_power_state **states, int *n)
+@@ -2341,8 +2341,14 @@ int of_genpd_parse_idle_states(struct device_node *dn,
+ 	int ret;
+ 
+ 	ret = genpd_iterate_idle_states(dn, NULL);
+-	if (ret <= 0)
+-		return ret < 0 ? ret : -EINVAL;
++	if (ret < 0)
++		return ret;
++
++	if (!ret) {
++		*states = NULL;
++		*n = 0;
++		return 0;
++	}
+ 
+ 	st = kcalloc(ret, sizeof(*st), GFP_KERNEL);
+ 	if (!st)
+-- 
+2.7.4
