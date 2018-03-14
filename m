@@ -1,70 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753142AbeCNIFE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:05:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43940 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751751AbeCNIFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:05:02 -0400
-Date: Wed, 14 Mar 2018 09:05:00 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: sun8i-h3: Add Mali node
-Message-ID: <20180314080500.whywwskhp5546z7m@flea>
-References: <1520936205-64723-1-git-send-email-giulio.benetti@micronovasrl.com>
+        id S1753398AbeCNIFh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:05:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47674 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753221AbeCNIFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:05:35 -0400
+Subject: Re: [PATCH] x86, powerpc : pkey-mprotect must allow pkey-0
+From: Florian Weimer <fweimer@redhat.com>
+To: Ram Pai <linuxram@us.ibm.com>
+Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
+References: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
+ <ec90ed75-2810-bcc3-8439-8dc85a6b46ac@redhat.com>
+ <20180309200017.GR1060@ram.oc3035372033.ibm.com>
+ <f71b583f-2b66-e9ed-b08b-fddff228a5a7@redhat.com>
+Message-ID: <0a6981b3-dcd2-4dce-3209-7f8055d8548f@redhat.com>
+Date: Wed, 14 Mar 2018 09:05:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="onoirhpiat4gjlaw"
-Content-Disposition: inline
-In-Reply-To: <1520936205-64723-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <f71b583f-2b66-e9ed-b08b-fddff228a5a7@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/14/2018 09:00 AM, Florian Weimer wrote:
+> On 03/09/2018 09:00 PM, Ram Pai wrote:
+>> On Fri, Mar 09, 2018 at 12:04:49PM +0100, Florian Weimer wrote:
+>>> On 03/09/2018 09:12 AM, Ram Pai wrote:
+>>>> Once an address range is associated with an allocated pkey, it 
+>>>> cannot be
+>>>> reverted back to key-0. There is no valid reason for the above 
+>>>> behavior.
+>>>
+>>> mprotect without a key does not necessarily use key 0, e.g. if
+>>> protection keys are used to emulate page protection flag combination
+>>> which is not directly supported by the hardware.
+>>>
+>>> Therefore, it seems to me that filtering out non-allocated keys is
+>>> the right thing to do.
+>>
+>> I am not sure, what you mean. Do you agree with the patch or otherwise?
+> 
+> I think it's inconsistent to make key 0 allocated, but not the key which 
+> is used for PROT_EXEC emulation, which is still reserved.  Even if you 
+> change the key 0 behavior, it is still not possible to emulate mprotect 
+> behavior faithfully with an allocated key.
 
---onoirhpiat4gjlaw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ugh.  Should have read the code first before replying:
 
-On Tue, Mar 13, 2018 at 11:16:45AM +0100, Giulio Benetti wrote:
-> The H3 has an ARM Mali 400 GPU, so add binding to our DT.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+         /* Do we need to assign a pkey for mm's execute-only maps? */
+         if (execute_only_pkey == -1) {
+                 /* Go allocate one to use, which might fail */
+                 execute_only_pkey = mm_pkey_alloc(mm);
+                 if (execute_only_pkey < 0)
+                         return -1;
+                 need_to_set_mm_pkey = true;
+         }
 
-How was this tested?
+So we do allocate the PROT_EXEC-only key, and I assume it means that the 
+key can be restored using pkey_mprotect.  So the key 0 behavior is a 
+true exception after all, and it makes sense to realign the behavior 
+with the other keys.
 
-Is there any specific reason not to share it with the H5?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---onoirhpiat4gjlaw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqo16sACgkQ0rTAlCFN
-r3S3qw/8CqCvzPe4kv7TsV4um+x3CapVmF148spt8zkl0NP+jKoaP9t/9W1WMyPn
-mJwlM/lTD2MmQHBfloWPVpAkZN3Inen2Hx73s/G+vPI9I3VmbrgicMbcMRQObRbT
-KCgBCzDv79lAxrikOBkpxwH5C1T63XxTzqmL9rwBwIR40iVTzjIFmNyQDFtu2svW
-vuIvTWygR3xy5qrl+kaEtnUaX4q9uV3fEUzjy2crOE89yXwRnSreguV0PJ1XYBwe
-X/XJoeK706foFqnRg6xhd9ssNsLK674ZFwVfmqRbeo0AF/PUYwx/0S3nHZnrReuR
-oJvr5n/TnQ4QFfF16eHu+wOpvbvGc8c34bnXtrsUCOQcCJ4SVARKUj11iqxE1guR
-yL6YwgPF7kkP0I9sHP3QdgonBp7zsRJMHtsfBvjOEd7O4giZQ19em+VrFFQvm/Pd
-rRAEaZklhfmSreFVFl9YJUr2ny+iFq4jGkWh5oMFTKwbq2v55fXivoCbeaMH02XS
-wohYYjlKUCvxSNJB7uOrUleisR6LYL4gsxNy64az++gHg/3Lxvbh8qFGHxxyfO7u
-I7PxYcu5fXYSXDq5EMEJNiYigsfeiNvCFKVMhZdiXbcZlA4GaEVE0F5kjaoZ84wq
-fDavQEqhsy83rWhkhM02TyVU7FPqksas314qbczkTzX1ENWK12U=
-=RlC2
------END PGP SIGNATURE-----
-
---onoirhpiat4gjlaw--
+Thanks,
+Florian
