@@ -1,163 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753557AbeCNIPc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:15:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34176 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753526AbeCNIPW (ORCPT
+        id S1753592AbeCNIP4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:15:56 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50248 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753575AbeCNIPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:15:22 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8288760848
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robh+dt@kernel.org, rafael.j.wysocki@intel.com,
-        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
+        Wed, 14 Mar 2018 04:15:50 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180314081547euoutp028dcd1b7919950cd079f0366b9392d7ad~bu2ZdCSMc1450114501euoutp02Z
+X-AuditID: cbfec7f5-b5fff700000028a9-09-5aa8da31931c
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com, will.deacon@arm.com, robdclark@gmail.com,
-        tfiga@chromium.org, sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, vivek.gautam@codeaurora.org
-Subject: [PATCH v10 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date: Wed, 14 Mar 2018 13:44:34 +0530
-Message-Id: <20180314081434.30875-6-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180314081434.30875-1-vivek.gautam@codeaurora.org>
-References: <20180314081434.30875-1-vivek.gautam@codeaurora.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <ebe90ad4-60f4-4ac1-c337-df840b754d53@samsung.com>
+Date: Wed, 14 Mar 2018 09:15:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520951425-13843-2-git-send-email-jacopo+renesas@jmondi.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0zMcRjHfb6/7ltzfLouPX6MOUIhwuxLNG398cU//IF2LC59dzVdceco
+        NksNFzIkzZVfy01LjY4rPzqbu3RaaqUWXfqhFcK5kYuEdPfV9N/r83k/z/N+3tvDkrKf9DQ2
+        KWW/oE1RJSsYf6qiZqhhcYSzWLl0KDeMy2moJbhMg4vmrlY30FyLx81wb51WgsuyeBDnGC6T
+        cNnnbki45oeFDGfp/0xw3bdcDGd62URwjotnaO6YtVrCPS9xStZN5kuvlCK++UwOwXfnjRD8
+        A2OHhC8wXKL5kVc9JG8uyWZ4m92A+MrBbprvOuUg+HfN3xm+cGiQ4gfMMzdJlf5rEoTkpAOC
+        dknULv/E7nZ6b+/UtM9uI52BvspPIj8W8Ao4ejkLnUT+rAwXIyj+Xkp6BRn+hiDHrhWFAQSP
+        +mskYx32b3ZGFG4ieN3XQYkPF4KO9j++9kAcBx8/tdBeQY7LCKh1//BVkTgTwYvaLF8Vg0Ph
+        9902xstSHAVv7p/zMYVD4Gi5yEE4Fq7n9SGxJgBqL/VSXvbDGyDfcNrHJJ4Fla5CUuRgcPZe
+        JbxmgE0stFjchLh4DAy/LvoXIhA+OO794xlQlysOAnwY2t5nUmKzAUHX8AlGFCLB7mgazcOO
+        OoTC7YdLvAh4LVy2rRZxErxyBYgrTILzFfmk+C0Fw3GZOGM2dNVbSJGDwdToYc6iOcZxwYzj
+        whjHhTH+t72GqBIULOh1GrWgW54iHAzXqTQ6fYo6fHeqxoxGL7Luj8NzHz3+FW9DmEWKidIJ
+        jTeVMlp1QJeusSFgSYVcaplRrJRJE1TphwRt6k6tPlnQ2dB0llIES+MWHFHKsFq1X9gjCHsF
+        7ZhKsH7TMlCk2SwfeqbWBnUW5aoZ8kZ6ArM5KlrfXlXepnkb/V5arwyJs1oWrJ8r7y164Gpa
+        Fm0Nv7BjX2u83NlzhyzhphxxpjavWlzmmLdtYP4pT+DGyaYw5slTjSnmy5dFVa35aZ+SKsI6
+        16zNyfiJF/at3OLcuj22M6DUHHe2IKjVlKGeoqB0iaqIMFKrU/0FZZkouo0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42I5/e/4XV2DWyuiDDaeVbfoPXeSyaKp4y2r
+        xfwj51gtrnx9z2bx7NZeJovmrV8ZLY7/Xstu0TlxCbvF5V1z2Cy2vnzHZPFg9Vs2i6XXLzJZ
+        HJ/Wx2rRuvcIu8WZVbfYHfg91sxbw+hxua+XyePB1P9MHjtn3WX3mN0xk9Xj/41HzB6bVnWy
+        eRw63MHosf3bA1aP+93HmTyeX/7O5jHn5zcWj8+b5AJ4o/RsivJLS1IVMvKLS2yVog0tjPQM
+        LS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyHtxmLXgiWfHu/SzWBsZPIl2MnBwSAiYS
+        h78cZuti5OIQEljKKLHy2mUmiIS4xO75b5khbGGJP9e6oIpeM0r8/HUFLCEsECfx+s0VVpCE
+        iMBaJoknRxYwgzjMAk2MEhNmf2KCaLnLKDFrw2FWkBY2AU2Jv5tvsoHYvAJ2Eg93TASzWQRU
+        JRo3QtiiAhESnSvns0DUCEqcnPkEzOYU8JKY3tEDZjMLqEv8mXeJGcKWl9j+dg6ULS5x68l8
+        pgmMQrOQtM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBCaGbcd+btnB
+        2PUu+BCjAAejEg8vw4XlUUKsiWXFlbmHGCU4mJVEeLfKrIgS4k1JrKxKLcqPLyrNSS0+xGgK
+        9NxEZinR5Hxg0soriTc0NTS3sDQ0NzY3NrNQEuc9b1AZJSSQnliSmp2aWpBaBNPHxMEp1cAY
+        83jdpNsJ3Kpigusd7TPSmWPtMuoXaRlf/ZR6+krDr6pv/cE5u5ZFFJ2ZuffyIe3qPbvYj9ZP
+        +71kX23wddOkbUw/Vx1Jr9XWyn1/dULp/j8Ka77fYLy8onzn6QWL1SfrcTT7LL3fX3vkR96Z
+        mW83KcW2/37Sd+LF12Pif/wiy0M+H7j/m9GyXomlOCPRUIu5qDgRAI/YR1IiAwAA
+X-CMS-MailID: 20180314081545eucas1p206b055e7289775c51a5f483d2fb8fe10
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180314081545eucas1p206b055e7289775c51a5f483d2fb8fe10
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180313143056epcas4p28ad52892b943d0800c6f77337a40f5f0
+X-RootMTR: 20180313143056epcas4p28ad52892b943d0800c6f77337a40f5f0
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+        <CGME20180313143056epcas4p28ad52892b943d0800c6f77337a40f5f0@epcas4p2.samsung.com>
+        <1520951425-13843-2-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements. This smmu core is used with
-multiple masters on msm8996, viz. mdss, video, etc.
-Add bindings for the same.
+On 13.03.2018 15:30, Jacopo Mondi wrote:
+> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> new file mode 100644
+> index 0000000..5b5afcd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -0,0 +1,63 @@
+> +Thine Electronics THC63LVD1024 LVDS decoder
+> +-------------------------------------------
+> +
+> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
+> +to parallel data outputs. The chip supports single/dual input/output modes,
+> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
+> +
+> +Required properties:
+> +- compatible: Shall be "thine,thc63lvd1024",
+> +
+> +Optional properties:
+> +- vcc-supply: Power supply for TTL output and digital circuitry
+> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> +- lvcc-supply: Power supply for LVDS inputs
+> +- pvcc-supply: Power supply for PLL circuitry
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
----
+I wonder if it wouldn't be better to make them required (at least VCC) -
+it is closer to reality.
 
- - No change since v9.
+> +- pwnd-gpios: Power down GPIO signal. Active low.
 
- .../devicetree/bindings/iommu/arm,smmu.txt         | 42 ++++++++++++++++++++++
- drivers/iommu/arm-smmu.c                           | 14 ++++++++
- 2 files changed, 56 insertions(+)
+As I said before, specs[1] says about "/PDWN" pin. Is it your typo, or
+different docs?
+Moreover there are already bindings for THC63LVDM83D with the same
+dichotomy [2].
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 8a6ffce12af5..7c71a6ed465a 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -17,10 +17,19 @@ conditions.
-                         "arm,mmu-401"
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-+                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
- 
-+                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
-+                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
-+                  string that should be present along with the "qcom,smmu-v2"
-+                  to facilitate SoC specific clocks/power connections and to
-+                  address specific bug fixes.
-+                  An example string would be -
-+                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
-@@ -71,6 +80,22 @@ conditions.
-                   or using stream matching with #iommu-cells = <2>, and
-                   may be ignored if present in such cases.
- 
-+- clock-names:    List of the names of clocks input to the device. The
-+                  required list depends on particular implementation and
-+                  is as follows:
-+                  - for "qcom,smmu-v2":
-+                    - "bus": clock required for downstream bus access and
-+                             for the smmu ptw,
-+                    - "iface": clock required to access smmu's registers
-+                               through the TCU's programming interface.
-+                  - unspecified for other implementations.
-+
-+- clocks:         Specifiers for all clocks listed in the clock-names property,
-+                  as per generic clock bindings.
-+
-+- power-domains:  Specifiers for power domains required to be powered on for
-+                  the SMMU to operate, as per generic power domain bindings.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -137,3 +162,20 @@ conditions.
-                 iommu-map = <0 &smmu3 0 0x400>;
-                 ...
-         };
-+
-+	/* Qcom's arm,smmu-v2 implementation */
-+	smmu4: iommu {
-+		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-+		reg = <0xd00000 0x10000>;
-+
-+		#global-interrupts = <1>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-+		#iommu-cells = <1>;
-+		power-domains = <&mmcc MDSS_GDSC>;
-+
-+		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-+			 <&mmcc SMMU_MDP_AHB_CLK>;
-+		clock-names = "bus", "iface";
-+	};
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 4cf270ffd449..03750ba15224 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
- 
- struct arm_smmu_s2cr {
-@@ -1995,6 +1996,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
- 
-+static const char * const qcom_smmuv2_clks[] = {
-+	"bus", "iface",
-+};
-+
-+static const struct arm_smmu_match_data qcom_smmuv2 = {
-+	.version = ARM_SMMU_V2,
-+	.model = QCOM_SMMUV2,
-+	.clks = qcom_smmuv2_clks,
-+	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-@@ -2002,6 +2014,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-@@ -2376,6 +2389,7 @@ IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
- IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
- IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
- IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
-+IOMMU_OF_DECLARE(qcom_smmuv2, "qcom,smmu-v2");
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Out of curiosity I have googled for "pwnd pin" and it looks like some
+vendors use this form.
+For me both forms are quite misleading: power down signal, active low,
+why they couldn't call it just 'enable, active high'.
+
+[1]: http://www.thine.co.jp/files/topics/179_ext_12_0.pdf
+[2]:
+https://elixir.bootlin.com/linux/v4.16-rc5/source/Documentation/devicetree/bindings/display/bridge/thine,thc63lvdm83d.txt
+
+> +- oe-gpios: Output enable GPIO signal. Active high.
+> +
+> +The THC63LVD1024 video port connections are modeled according
+> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
+> +
+> +Required video port nodes:
+> +- Port@0: First LVDS input port
+> +- Port@2: First digital CMOS/TTL parallel output
+> +
+> +Optional video port nodes:
+> +- Port@1: Second LVDS input port
+> +- Port@3: Second digital CMOS/TTL parallel output
+> +
+> +Example:
+> +--------
+> +
+> +	thc63lvd1024: lvds-decoder {
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		vcc-supply = <&reg_lvds_vcc>;
+> +		lvcc-supply = <&reg_lvds_lvcc>;
+> +
+> +		pwdn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+And here another variation :), should be pdwn-gpios.
+
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				lvds_dec_in_0: endpoint {
+> +					remote-endpoint = <&lvds_out>;
+> +				};
+> +			};
+> +
+> +			port@2{
+> +				reg = <2>;
+> +
+> +				lvds_dec_out_2: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +
+> +			};
+> +
+> +		};
+> +	};
