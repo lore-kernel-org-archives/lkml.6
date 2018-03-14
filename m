@@ -1,38 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeCNNIs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 09:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751289AbeCNNIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:08:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C5820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [f2fs-dev] [PATCH] f2fs: align memory boundary for bitops
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180310020348.69129-1-jaegeuk@kernel.org>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <b370fdca-e460-7f62-3538-e43373d7274e@kernel.org>
-Date: Wed, 14 Mar 2018 21:08:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751824AbeCNNL3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 09:11:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44378 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751480AbeCNNL0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 09:11:26 -0400
+Date: Wed, 14 Mar 2018 14:11:20 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jason Vas Dias <jason.vas.dias@gmail.com>
+Cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>
+Subject: Re: [PATCH v4.16-rc4 2/2] x86/vdso: on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW
+Message-ID: <20180314131120.GK4064@hirez.programming.kicks-ass.net>
+References: <d109ixq7.fsf@gmail.com>
+ <20180312082741.GD4064@hirez.programming.kicks-ass.net>
+ <CALyZvKxKXWiFF9OYtykXEfnx-k+xaAM7XREEQ+N58oJtOTZhew@mail.gmail.com>
+ <20180314094519.GD4082@hirez.programming.kicks-ass.net>
+ <CALyZvKzbLi6K9DFwOXu7h--MdxWFv9A3==0xORuQ=KwtJx3ZrQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180310020348.69129-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALyZvKzbLi6K9DFwOXu7h--MdxWFv9A3==0xORuQ=KwtJx3ZrQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/10 10:03, Jaegeuk Kim wrote:
-> For example, in arm64, free_nid_bitmap should be aligned to word size in order
-> to use bit operations.
+On Wed, Mar 14, 2018 at 12:55:20PM +0000, Jason Vas Dias wrote:
+
+> > So you can avoid the whole ioctl(ENABLE), ioctl(DISABLE) nonsense and
+> > just let them run and do:
+> >
+> > 	read(group_fd, &buf_pre, size);
+> > 	/* your code section */
+> > 	read(group_fd, &buf_post, size);
+> >
+> > 	/* compute buf_post - buf_pre */
+> >
+> > Which is only 2 system calls, not 4.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> But I can't, really - I am trying to restrict the
+> performance counter measurements
+> to only a subset of the code, and exclude
+> performance measurement result processing  -
+> so the timeline is like:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>                       struct timespec t_start, t_end;
+>                       perf_event_open(...);
+>                       thread_main_loop() { ... do {
+>           t     _    clock_gettime(CLOCK_MONOTONIC_RAW, &t_start);
+>           t+x _   enable_perf  ();
+>                       total_work = do_some_work();
+>                       disable_perf ();
+>                       clock_gettime(CLOCK_MONOTONIC_RAW, &t_end);
+>            t+y_
+>                       read_perf_counters_and_store_results
+>                        ( perf_grp_fd, &results ,  total_work,
+>                          TS2T( &t_end ) - TS2T( &t_start)
+>                         );
+>            } while (.... );
+>         }
+> 
+>    Now. here the bandwidth / performance results recorded by
+>    my 'read_perf_counters_and_store_results' method
+>    is very sensitive to the measurement of the OUTER
+>    elapsed time .
 
-Thanks,
+I still don't see why you have to do that enable_perf() / disable_perf()
+stuff. What goes wrong if you just let them run and do 2
+read_perf*() things?
