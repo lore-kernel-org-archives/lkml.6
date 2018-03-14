@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751729AbeCNWqs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:46:48 -0400
-Received: from ozlabs.org ([103.22.144.67]:45757 "EHLO ozlabs.org"
+        id S1751478AbeCNWsm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:48:42 -0400
+Received: from ozlabs.org ([103.22.144.67]:57171 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751131AbeCNWqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:46:46 -0400
+        id S1750779AbeCNWsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 18:48:41 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 09:46:17 +1100
+Date: Thu, 15 Mar 2018 09:48:10 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 To: Arnd Bergmann <arnd@arndb.de>,
         Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
 Subject: linux-next: manual merge of the asm-generic tree with the syscalls
  tree
-Message-ID: <20180315094617.7c2a11b0@canb.auug.org.au>
+Message-ID: <20180315094810.799c7388@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qkJ0JBwy.utBj.8=7wiOemP"; protocol="application/pgp-signature"
+ boundary="Sig_/4._gFti0+ajKbk_/kW0s=/D"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qkJ0JBwy.utBj.8=7wiOemP
+--Sig_/4._gFti0+ajKbk_/kW0s=/D
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -31,7 +32,7 @@ Hi Arnd,
 
 Today's linux-next merge of the asm-generic tree got a conflict in:
 
-  arch/frv/kernel/sys_frv.c
+  arch/mn10300/kernel/sys_mn10300.c
 
 between commit:
 
@@ -40,7 +41,7 @@ o sys_mmap_pgoff()")
 
 from the syscalls tree and commit:
 
-  fd8773f9f544 ("arch: remove frv port")
+  739d875dd698 ("mn10300: Remove the architecture")
 
 from the asm-generic tree.
 
@@ -55,20 +56,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/qkJ0JBwy.utBj.8=7wiOemP
+--Sig_/4._gFti0+ajKbk_/kW0s=/D
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppjkACgkQAVBC80lX
-0GzjIgf8CMMBhePpFl+ZxK0uvdLwIw+jCaHJS6+h2n3SzM5JZTyIcCbWnbe/4ACj
-SgGN7wxMoo8sM7BPv8m+bafXaWFXA+7hngL0YnF8/U74l80Zy5hc0A9cJV+qiqBA
-82fc36cilOmE+J2ZOnhZovEGqOak7dmb9xWOoW1JLmwDg2oqHMx4JYRbvDUF5x3u
-Jm2mPOBFcDU9wg8bfsjoRrqlLAHzBF+Qx71VbzXn/Gju/Iw5G5qdmXHbKBJLAQrU
-tQarxqqF7PAemMGV2sS7WnlN2cVi7EaV7CieSNwZtywFUMZhSbuO0vvyf7z+wLAS
-PETqPJ2oREW5mEZRPz+vMpfWRyQB7g==
-=nylQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppqoACgkQAVBC80lX
+0GxReQgAhe0b1Oj2PpQg7fKRFHXA5C7GtImwCPqkOngHRCiH1Gg3MMu5jJjOBNvS
+l3zvACgbHMaroJ3MOM8lYK9VkIhyHds/2882iR6gUaMOGVU5RKVpU5M16OKes04+
+X0HDZbphfvq0PNdJNTlAlOgpy9IzJAUuzP085EauX/JSFmI3ZAwwOFCCeLzVBhEa
+o9SrqNUQVhZ3QAco16xx3pYmsizAeTeHqtRZM7g5AzAksFs/07oT6tQsp25SZSeU
+d2W5sAITS+HiMmas0ogtwqpAqyTNhKToQ8CRvlvR5//dugj/fpEzbry6TTipQNtu
+AERzYw+nk0KPBHr4xdBl/RJEwQ9Wpg==
+=LvVB
 -----END PGP SIGNATURE-----
 
---Sig_/qkJ0JBwy.utBj.8=7wiOemP--
+--Sig_/4._gFti0+ajKbk_/kW0s=/D--
