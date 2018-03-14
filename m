@@ -1,170 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeCNPBp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 11:01:45 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52162 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeCNPBl (ORCPT
+        id S1752362AbeCNPDb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 11:03:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59386 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752343AbeCNPDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:01:41 -0400
-X-Google-Smtp-Source: AG47ELtW5DX1so8w3YVoEncI7b3YBNxe0vQPMFSW6/lXe2M2utxAHgH/PclzjSCJctXPQP9USEiEpw==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Rob Herring <robh@kernel.org>
-Subject: [PATCH 2/2] microblaze: switch to NO_BOOTMEM
-Date: Wed, 14 Mar 2018 16:01:35 +0100
-Message-Id: <b7aa87fcf06143e9cabf18fa0e98a2c7f321e821.1521039689.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
-References: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
-In-Reply-To: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
-References: <77785f26fa882362b5e72e71845bb607f2cec757.1521039689.git.michal.simek@xilinx.com>
+        Wed, 14 Mar 2018 11:03:30 -0400
+Date: Wed, 14 Mar 2018 08:03:28 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        sfr@canb.auug.org.au
+Subject: Re: + headers-untangle-kmemleakh-from-mmh-fix.patch added to -mm
+ tree
+Message-Id: <20180314080328.500c93123727a9528b5bfb8a@linux-foundation.org>
+In-Reply-To: <20180314145724.GJ23100@dhcp22.suse.cz>
+References: <20180306234907.8-AwjmNNh%akpm@linux-foundation.org>
+        <20180314121704.GA23036@dhcp22.suse.cz>
+        <20180314075055.353f2d975defb2af34f65d2b@linux-foundation.org>
+        <20180314145724.GJ23100@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+On Wed, 14 Mar 2018 15:57:24 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-Microblaze doesn't set CONFIG_NO_BOOTMEM and so memblock_virt_alloc()
-doesn't work for CONFIG_HAVE_MEMBLOCK && !CONFIG_NO_BOOTMEM.
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> > > index 6f9e4ce568cd..9bb0a7f2863e 100644
+> > > --- a/security/integrity/digsig.c
+> > > +++ b/security/integrity/digsig.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <linux/cred.h>
+> > >  #include <linux/key-type.h>
+> > >  #include <linux/digsig.h>
+> > > +#include <linux/vmalloc.h>
+> > >  #include <crypto/public_key.h>
+> > >  #include <keys/system_keyring.h>
+> > 
+> > hm, current linux-next.patch already has this change.  What happened here?
+> 
+> OK, I see. This is usuall inter tree mess. It didn't fly through your
+> tree:
+> commit 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140
+> Author: Randy Dunlap <rdunlap@infradead.org>
+> Date:   Mon Feb 12 17:26:20 2018 -0800
+> 
+>     integrity/security: fix digsig.c build error with header file
+>     
+>     security/integrity/digsig.c has build errors on some $ARCH due to a
+>     missing header file, so add it.
+>     
+>       security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+>     
+>     Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+>     Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>     Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>     Cc: linux-integrity@vger.kernel.org
+>     Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
+>     Signed-off-by: James Morris <james.morris@microsoft.com>
+> 
+> And that is why I haven't noticed that.
 
-Similar change was already done by others architectures
-"ARM: mm: Remove bootmem code and switch to NO_BOOTMEM"
-(sha1: 84f452b1e8fc73ac0e31254c66e3e2260ce5263d)
-or
-"openrisc: Consolidate setup to use memblock instead of bootmem"
-(sha1: 266c7fad157265bb54d17db1c9545f2aaa488643)
-or
-"parisc: Drop bootmem and switch to memblock"
-(sha1: 4fe9e1d957e45ad8eba9885ee860a0e93d13a7c7)
-or
-"powerpc: Remove bootmem allocator"
-(sha1: 10239733ee8617bac3f1c1769af43a88ed979324)
-or
-"s390/mm: Convert bootmem to memblock"
-(sha1: 50be634507284eea38df78154d22615d21200b42)
-or
-"sparc64: Convert over to NO_BOOTMEM."
-(sha1: 625d693e9784f988371e69c2b41a2172c0be6c11)
-or
-"xtensa: drop sysmem and switch to memblock"
-(sha1: 0e46c1115f5816949220d62dd3ff04aa68e7ac6b)
-
-Issue was introduced by:
-"of/fdt: use memblock_virt_alloc for early alloc"
-(sha1: 0fa1c579349fdd90173381712ad78aa99c09d38b)
-
-Signed-off-by: Rob Herring <robh@kernel.org>
-Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
-Tested-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
-
- arch/microblaze/Kconfig   |  1 +
- arch/microblaze/mm/init.c | 55 ++++++-----------------------------------------
- 2 files changed, 7 insertions(+), 49 deletions(-)
-
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index 4f798aa671dd..3817a3e2146c 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -24,6 +24,7 @@ config MICROBLAZE
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
-+	select NO_BOOTMEM
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_OPROFILE
-diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index 5bc9c7fbb541..6ab1ef2daf1d 100644
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@ -32,9 +32,6 @@
- #ifndef CONFIG_MMU
- unsigned int __page_offset;
- EXPORT_SYMBOL(__page_offset);
--
--#else
--static int init_bootmem_done;
- #endif /* CONFIG_MMU */
- 
- char *klimit = _end;
-@@ -174,17 +171,6 @@ void __init setup_memory(void)
- 	pr_info("%s: max_low_pfn: %#lx\n", __func__, max_low_pfn);
- 	pr_info("%s: max_pfn: %#lx\n", __func__, max_pfn);
- 
--	/*
--	 * Find an area to use for the bootmem bitmap.
--	 * We look for the first area which is at least
--	 * 128kB in length (128kB is enough for a bitmap
--	 * for 4GB of memory, using 4kB pages), plus 1 page
--	 * (in case the address isn't page-aligned).
--	 */
--	map_size = init_bootmem_node(NODE_DATA(0),
--		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
--	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
--
- 	/* Add active regions with valid PFNs */
- 	for_each_memblock(memory, reg) {
- 		unsigned long start_pfn, end_pfn;
-@@ -196,32 +182,9 @@ void __init setup_memory(void)
- 				  &memblock.memory, 0);
- 	}
- 
--	/* free bootmem is whole main memory */
--	free_bootmem_with_active_regions(0, max_low_pfn);
--
--	/* reserve allocate blocks */
--	for_each_memblock(reserved, reg) {
--		unsigned long top = reg->base + reg->size - 1;
--
--		pr_debug("reserved - 0x%08x-0x%08x, %lx, %lx\n",
--			 (u32) reg->base, (u32) reg->size, top,
--						memory_start + lowmem_size - 1);
--
--		if (top <= (memory_start + lowmem_size - 1)) {
--			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
--		} else if (reg->base < (memory_start + lowmem_size - 1)) {
--			unsigned long trunc_size = memory_start + lowmem_size -
--								reg->base;
--			reserve_bootmem(reg->base, trunc_size, BOOTMEM_DEFAULT);
--		}
--	}
--
- 	/* XXX need to clip this if using highmem? */
- 	sparse_memory_present_with_active_regions(0);
- 
--#ifdef CONFIG_MMU
--	init_bootmem_done = 1;
--#endif
- 	paging_init();
- }
- 
-@@ -398,18 +361,12 @@ asmlinkage void __init mmu_init(void)
- /* This is only called until mem_init is done. */
- void __init *early_get_page(void)
- {
--	void *p;
--	if (init_bootmem_done) {
--		p = alloc_bootmem_pages(PAGE_SIZE);
--	} else {
--		/*
--		 * Mem start + kernel_tlb -> here is limit
--		 * because of mem mapping from head.S
--		 */
--		p = __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
--					memory_start + kernel_tlb));
--	}
--	return p;
-+	/*
-+	 * Mem start + kernel_tlb -> here is limit
-+	 * because of mem mapping from head.S
-+	 */
-+	return __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
-+				memory_start + kernel_tlb));
- }
- 
- #endif /* CONFIG_MMU */
--- 
-1.9.1
+I can jiggle things to prevent this, but the
+security/integrity/digsig.c fix is actually in mainline now so things
+should sort themselves out OK.
