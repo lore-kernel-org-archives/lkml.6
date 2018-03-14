@@ -1,141 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeCNQBr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:01:47 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:39527 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752038AbeCNQBq (ORCPT
+        id S1752612AbeCNQCW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:02:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752096AbeCNQCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:01:46 -0400
-Subject: Re: [PATCH v8 13/13] [media] v4l: Document explicit synchronization
- behavior
-From: Hans Verkuil <hverkuil@xs4all.nl>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180309174920.22373-1-gustavo@padovan.org>
- <20180309174920.22373-14-gustavo@padovan.org>
- <ae50fe46-4d0a-fcf4-7c95-17b5b9a0d8a7@xs4all.nl>
-Message-ID: <c42c3e90-7e6e-5308-8644-44355bc569a3@xs4all.nl>
-Date: Wed, 14 Mar 2018 09:01:37 -0700
+        Wed, 14 Mar 2018 12:02:21 -0400
+Subject: Re: [PATCH v2 01/15] KVM: s390: refactor crypto initialization
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180228183741.5276e3d3.cohuck@redhat.com>
+ <edab4611-2393-4b82-99af-7d3192b488bc@linux.vnet.ibm.com>
+ <20180301105915.5c871524.cohuck@redhat.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 12:02:05 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <ae50fe46-4d0a-fcf4-7c95-17b5b9a0d8a7@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180301105915.5c871524.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfO/THOT01gkqkR8p3zua/Sm5n1eroPcHFN8qf2dEkIuaFn1EZqAfPN+yDSAW6wKOI97u01RwVq/WSiFVqf5r5LYVzVrkRERaeUoK0DbonCUCi7b2tJU/
- IM1IFmLJ+IGAg9h52g5/l4iFbgAMs2h6OmUurDYWg+fun98XUf13KZQvH1jsM9shKXPxjglOyVbjAsVdu0UOSt7gERnn/2Fk8yBQosoDUCrDNsB5tY2K3CMt
- vAwA//WYFxDC0Yx+tE7xscihtPYYrGdZz8rPboyZqfn/YMw5Kmu6zX5VwJw0BNxLs778MzSqrP61kNswgJtLzIcljcxHl+F1HROvTUcsftFhHbjl82rcpEST
- i9I0cQlcLcBXWBHEaguwPi1+QwgV/1PuScK6boEbwwOcDFT/picSG5sARMee37M40AnPfp+A+V6byEOdIzq6DTndCj7qh/kyMa50taiQehkRJ80LTeVo0R+C
- 26jFBwYNk7E0XgYI
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031416-2213-0000-0000-0000027F731A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008673; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01002977; UDB=6.00510395; IPR=6.00782307;
+ MB=3.00020033; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 16:02:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031416-2214-0000-0000-000059697F63
+Message-Id: <de105d1d-576f-e416-2c55-81f5d46098e0@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140181
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/13/2018 08:33 PM, Hans Verkuil wrote:
-> On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
->> From: Gustavo Padovan <gustavo.padovan@collabora.com>
->>
->> Add section to VIDIOC_QBUF and VIDIOC_QUERY_BUF about it
->>
->> v6:	- Close some gaps in the docs (Hans)
->>
->> v5:
->> 	- Remove V4L2_CAP_ORDERED
->> 	- Add doc about V4L2_FMT_FLAG_UNORDERED
->>
->> v4:
->> 	- Document ordering behavior for in-fences
->> 	- Document V4L2_CAP_ORDERED capability
->> 	- Remove doc about OUT_FENCE event
->> 	- Document immediate return of out-fence in QBUF
->>
->> v3:
->> 	- make the out_fence refer to the current buffer (Hans)
->> 	- Note what happens when the IN_FENCE is not set (Hans)
->>
->> v2:
->> 	- mention that fences are files (Hans)
->> 	- rework for the new API
->>
->> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
->> ---
->>  Documentation/media/uapi/v4l/vidioc-qbuf.rst     | 55 +++++++++++++++++++++++-
->>  Documentation/media/uapi/v4l/vidioc-querybuf.rst | 12 ++++--
->>  2 files changed, 63 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/media/uapi/v4l/vidioc-qbuf.rst b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
->> index 9e448a4aa3aa..371d84966e34 100644
->> --- a/Documentation/media/uapi/v4l/vidioc-qbuf.rst
->> +++ b/Documentation/media/uapi/v4l/vidioc-qbuf.rst
->> @@ -54,7 +54,7 @@ When the buffer is intended for output (``type`` is
->>  or ``V4L2_BUF_TYPE_VBI_OUTPUT``) applications must also initialize the
->>  ``bytesused``, ``field`` and ``timestamp`` fields, see :ref:`buffer`
->>  for details. Applications must also set ``flags`` to 0. The
->> -``reserved2`` and ``reserved`` fields must be set to 0. When using the
->> +``reserved`` field must be set to 0. When using the
->>  :ref:`multi-planar API <planar-apis>`, the ``m.planes`` field must
->>  contain a userspace pointer to a filled-in array of struct
->>  :c:type:`v4l2_plane` and the ``length`` field must be set
->> @@ -118,6 +118,59 @@ immediately with an ``EAGAIN`` error code when no buffer is available.
->>  The struct :c:type:`v4l2_buffer` structure is specified in
->>  :ref:`buffer`.
->>  
->> +Explicit Synchronization
->> +------------------------
->> +
->> +Explicit Synchronization allows us to control the synchronization of
->> +shared buffers from userspace by passing fences to the kernel and/or
->> +receiving them from it. Fences passed to the kernel are named in-fences and
->> +the kernel should wait on them to signal before using the buffer. On the other
->> +side, the kernel can create out-fences for the buffers it queues to the
->> +drivers. Out-fences signal when the driver is finished with buffer, i.e., the
->> +buffer is ready. The fences are represented as a file and passed as a file
->> +descriptor to userspace.
->> +
->> +The in-fences are communicated to the kernel at the ``VIDIOC_QBUF`` ioctl
->> +using the ``V4L2_BUF_FLAG_IN_FENCE`` buffer flag and the `fence_fd` field. If
->> +an in-fence needs to be passed to the kernel, `fence_fd` should be set to the
->> +fence file descriptor number and the ``V4L2_BUF_FLAG_IN_FENCE`` should be set
->> +as well. Setting one but not the other will cause ``VIDIOC_QBUF`` to return
->> +with an error.
-> 
-> This sentence is confusing since it is not clear what 'one' and 'the other' refer
-> to. Be specific here. I think it should be 'Setting V4L2_BUF_FLAG_IN_FENCE but not
-> fence_fd'.
+On 03/01/2018 04:59 AM, Cornelia Huck wrote:
+> On Wed, 28 Feb 2018 16:23:29 -0500
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> On 02/28/2018 12:37 PM, Cornelia Huck wrote:
+>>> On Tue, 27 Feb 2018 09:27:59 -0500
+>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>>>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>>>> new file mode 100644
+>>>> index 0000000..5305f4c
+>>>> --- /dev/null
+>>>> +++ b/arch/s390/kvm/kvm-ap.c
+>>>> @@ -0,0 +1,47 @@
+>>>> +/*
+>>>> + * Adjunct Processor (AP) configuration management for KVM guests
+>>>> + *
+>>>> + * Copyright IBM Corp. 2017
+>>>> + *
+>>>> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+>>>> + */
+>>>> +
+>>>> +#include <asm/kvm-ap.h>
+>>>> +#include <asm/ap.h>
+>>>> +
+>>>> +#include "kvm-s390.h"
+>>>> +
+>>>> +static int kvm_ap_apxa_installed(void)
+>>>> +{
+>>>> +	int ret;
+>>>> +	struct ap_config_info config;
+>>>> +
+>>>> +	ret = ap_query_configuration(&config);
+>>> Doesn't that introduce a dependency on CONFIG_ZCRYPT?
+>> It does, but AFAIK zcrypt is built into the kernel. Or is that not what
+>> you are asking?
+> It is built into the kernel (and not into a module) if CONFIG_ZCRYPT is
+> set. When I compile a kernel with CONFIG_KVM set and CONFIG_ZCRYPT
+> unset, with this patch applied I get
+>
+> arch/s390/kvm/kvm-ap.o: In function `kvm_ap_apxa_installed':
+> /home/cohuck/git/linux/arch/s390/kvm/kvm-ap.c:19: undefined reference to `ap_query_configuration'
+>
+> So I'm afraid you cannot use ap_query_configuration() in base s390 kvm
+> code unless you move that function to a place where it is always built
+> (or at least always built if either CONFIG_KVM or CONFIG_ZCRYPT are
+> set).
+I was able to get around this by inserting the following into 
+arch/s390/kvm/Kconfig:
 
-Ignore this comment.
+config KVM
+     def_tristate y
+     prompt "Kernel-based Virtual Machine (KVM) support"
+     depends on HAVE_KVM
+     select PREEMPT_NOTIFIERS
+...
+     select ZCRYPT
 
-> 
->  The fence_fd field will be ignored if the
->> +``V4L2_BUF_FLAG_IN_FENCE`` is not set.
-
-Looking at the code, I don't think this is correct. You get an error if IN_FENCE is
-not set but fence_fd is. Removing this sentence would fix this and the previous
-sentence would make a lot more sense.
-
->> +
->> +The videobuf2-core will guarantee that all buffers queued with an in-fence will
->> +be queued to the drivers in the same order. Fences may signal out of order, so
->> +this guarantee at videobuf2 is necessary to not change ordering. So when
->> +waiting on a fence to signal all buffers queued after will be also block until
-> 
-> after -> afterwards
-> will be also block -> will also be blocked
-> 
->> +that fence signal.
-> 
-> signal -> signals
-
-What is missing in the documentation is what happens when you mix in-fence buffers
-and buffers without an in-fence.
-
-Regards,
-
-	Hans
+If this is a problem, we can discuss it in the v3 which is forthcoming 
+very shortly
+>
