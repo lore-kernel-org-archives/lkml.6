@@ -1,79 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeCNENF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 00:13:05 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37012 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeCNENA (ORCPT
+        id S1751456AbeCNEUf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 00:20:35 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54124 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeCNEUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 00:13:00 -0400
-X-Google-Smtp-Source: AG47ELtaqsnIl//iHyNsTcB8wyGhsr6awOfDdG+yGU0zBl24QJUB/v3YPd/0wr7VuJq7UZNPSGw+dpDf+v6BXzLa6tY=
-MIME-Version: 1.0
-In-Reply-To: <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180311112725.GC4043@hirez.programming.kicks-ass.net> <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
- <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 13 Mar 2018 21:12:58 -0700
-Message-ID: <CAPcyv4h3SPqx879nnvQt0rvwanKksxLTqChCQa9ZQH8hsd_7yg@mail.gmail.com>
-Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce wait_var_event()/wake_up_var()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Mar 2018 00:20:34 -0400
+X-Google-Smtp-Source: AG47ELtvqGpPw1CEPswhdBMPZfZl0sokgyB1OuqYNAi8ONo77XJTQryQBNpZzdBg59ptGToI5B3EGg==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc5 (3)] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Wed, 14 Mar 2018 04:20:19 +0000
+Message-Id: <1521001222-10712-1-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 3:20 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Sun, Mar 11, 2018 at 10:15:55AM -0700, Dan Williams wrote:
->> On Sun, Mar 11, 2018 at 4:27 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> > On Fri, Mar 09, 2018 at 10:55:32PM -0800, Dan Williams wrote:
->> >> Add a generic facility for awaiting an atomic_t to reach a value of 1.
->> >>
->> >> Page reference counts typically need to reach 0 to be considered a
->> >> free / inactive page. However, ZONE_DEVICE pages allocated via
->> >> devm_memremap_pages() are never 'onlined', i.e. the put_page() typically
->> >> done at init time to assign pages to the page allocator is skipped.
->> >>
->> >> These pages will have their reference count elevated > 1 by
->> >> get_user_pages() when they are under DMA. In order to coordinate DMA to
->> >> these pages vs filesytem operations like hole-punch and truncate the
->> >> filesystem-dax implementation needs to capture the DMA-idle event i.e.
->> >> the 2 to 1 count transition).
->> >>
->> >> For now, this implementation does not have functional behavior change,
->> >> follow-on patches will add waiters for these page-idle events.
->> >
->> > Argh, no no no.. That whole wait_for_atomic_t thing is a giant
->> > trainwreck already and now you're making it worse still.
->> >
->> > Please have a look here:
->> >
->> >   https://lkml.kernel.org/r/20171101190644.chwhfpoz3ywxx2m7@hirez.programming.kicks-ass.net
->>
->> That thread seems to be worried about the object disappearing the
->> moment it's reference count reaches a target. That isn't the case with
->> the memmap / struct page objects for ZONE_DEVICE pages. I understand
->> wait_for_atomic_one() is broken in the general case, but as far as I
->> can see it works fine specifically for ZONE_DEVICE page busy tracking,
->> just not generic object lifetime.
->
-> How's this, compile tested (x86_64-allmodconfig) only.
->
-> This allows you to write:
->
->         wait_var_event(&your_atomic, atomic_read(&your_atomic) == 1);
 
-Nice!
 
-I'll give this a shot. I will need to add
-wait_var_event_interruptible(), but other than that it looks workable
-to me.
+  Currently the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
+
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values, user-space  code needs to know elapsed time from the
+  perspective of the CPU no matter how "hot" / fast or "cold" / slow it
+  might be running wrt NTP / PTP "real" time; when code needs this,
+  the latencies associated with a syscall are often unacceptably high.
+
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+     
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc5 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  This patch affects only files:
+  
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vdso/vdso.lds.S
+   arch/x86/entry/vdso/vdsox32.lds.S
+   arch/x86/entry/vdso/vdso32/vdso32.lds.S      
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+  There are 3 patches in the series :
+
+   Patch #1 makes the VDSO handle clock_gettime(CLOCK_MONOTONIC_RAW) with rdtsc_ordered()
+
+   Patch #2 makes the VDSO handle clock_gettime(CLOCK_MONOTONIC_RAW) with a new rdtscp() function in msr.h
+
+   Patch #3 makes the VDSO export TSC calibration data via a new function in the vDSO: 
+               unsigned int __vdso_linux_tsc_calibration ( struct linux_tsc_calibration *tsc_cal )
+            that user code can optionally call.
+
+   Patches #2 & #3 should be considered "optional" .
+
+   Patch #2 makes clock_gettime(CLOCK_MONOTONIC_RAW) calls have @ half the latency
+   of clock_gettime(CLOCK_MONOTONIC) calls.
+
+   I think something like Patch #3 is necessary to export TSC calibration data to user-space TSC readers.
+
+
+Best Regards,
+Jason Vas Dias
