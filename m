@@ -1,80 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeCNMKL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:10:11 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54845 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeCNMKI (ORCPT
+        id S1751508AbeCNMNH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:13:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60954 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeCNMNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:10:08 -0400
-X-Google-Smtp-Source: AG47ELsC+Dmm2iyaC0pIoLvG9MLiDfT8OCLrVBkZ58U2ijuTIWu4q69YOQXvyk+kCenhb8Kld9qvOw==
-Date: Wed, 14 Mar 2018 13:10:05 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] i2c: tegra: Fix PM device usage count
-Message-ID: <20180314121005.GD8564@ulmo>
-References: <20180224224423.hz36gpxnlpex2cqx@agrajag.zerfleddert.de>
+        Wed, 14 Mar 2018 08:13:06 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mJm6k4Vb/yFcL9ZU"
-Content-Disposition: inline
-In-Reply-To: <20180224224423.hz36gpxnlpex2cqx@agrajag.zerfleddert.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 14 Mar 2018 08:13:05 -0400
+From: okaya@codeaurora.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: netdev@vger.kernel.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] ixgbevf: eliminate duplicate barriers on
+ weakly-ordered archs
+In-Reply-To: <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-7-git-send-email-okaya@codeaurora.org>
+ <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
+Message-ID: <2a4f4dec64b7462ae64152f6c2df9754@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-14 01:08, Timur Tabi wrote:
+> On 3/13/18 10:20 PM, Sinan Kaya wrote:
+>> +/* Assumes caller has executed a write barrier to order memory and 
+>> device
+>> + * requests.
+>> + */
+>>   static inline void ixgbevf_write_tail(struct ixgbevf_ring *ring, u32 
+>> value)
+>>   {
+>> -	writel(value, ring->tail);
+>> +	writel_relaxed(value, ring->tail);
+>>   }
+> 
+> Why not put the wmb() in this function, or just get rid of the wmb()
+> in the rest of the file and keep this as writel?  That way, you can
+> avoid the comment and the risk that comes with it.
 
---mJm6k4Vb/yFcL9ZU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 24, 2018 at 11:44:23PM +0100, Tobias Jordan wrote:
-> pm_runtime_get_sync() increases the device's usage count even when
-> reporting an error, so add a call to pm_runtime_put_noidle() in the
-> related error branches.
->=20
-> Fixes: 1f50ad2c86cd ("i2c: tegra: Add runtime power-management support")
-> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-> ---
-> This is one of a number of patches for problems found using coccinelle=20
-> scripting in the SIL2LinuxMP project. The patch has been compile-tested;
-> it's based on linux-next-20180223.
->=20
-> For a discussion of the corresponding issue, see
-> https://marc.info/?l=3Dlinux-pm&m=3D151904483924999&w=3D2
->=20
->  drivers/i2c/busses/i2c-tegra.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-This seems okay to me, though given the discussion it might be
-preferable to just ignore errors rather than fail.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---mJm6k4Vb/yFcL9ZU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpERoACgkQ3SOs138+
-s6GwLg/8C43j62gUc666BaZPllQ7dl9eSO2C0d3rhaOg2cwdhdPFaVAftH53/emV
-VmnD2byfZkeHiDdCqtYBAAGm60rbSKKih0ZAGxHhatK4VO4C2yR+YBAIPg7UdQ7C
-3fnM+dkMkjjQ4GyrV951VOjj0D3R7IeoWYv2kjRi6prj17UktwKKAj0B/rTFYEvR
-fDsW6kTJ6QFQtcfTsRYeMbQ3ZQihOb4s0oTo6EFwayl0BOn7M6MVjEKl3D0rxZfX
-0K+KgZdOzgOP34SXgOBLKFydotjcUI+U2PDVEkknhKRS/J8fw9gaeB4qnS2H0Lrn
-GU7DbGF4jVSx6PSI+aP0yDiOpZkq9RGe1XFE0Y97TOVf826iMRqGLB1ayJvJqPKz
-LqsDfJkMIPp43vCyYs0xMzjmAk+zPlFPciX+w3NqID8W3Kgq9c34cBKPp5SIwone
-j5IMxgx7GaN0t5kuYngdQ+eV0xvNR705bMcXFhXMBGIKI8ArUVj5r2RBmFmBJteK
-h3R6LDrjXzpSHp2neQzP/UCbSb0mFozGZFqmIW3AmOgbPckhs3kNv19y63gILENp
-tuFI24MURUXSrj+Q4tl42UyKvnZ1ve0Sp0tCLA2fLAsvTB3sWx22ZUqN4fOjyVDC
-Q7vaeCl7sly0Y9WxFzQo4bRRW4eOiKsZmaowzzAFNbAOwXAvdOE=
-=/vO1
------END PGP SIGNATURE-----
-
---mJm6k4Vb/yFcL9ZU--
+Sure, both solutions will work. I want to see what the maintainer 
+prefers. I can repost accordingly.
