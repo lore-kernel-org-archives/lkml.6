@@ -1,55 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeCNUTN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:19:13 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:41824 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeCNUTK (ORCPT
+        id S1752108AbeCNUUk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 16:20:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751626AbeCNUUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:19:10 -0400
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-CC: Peter Zijlstra <peterz@infradead.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.cross-arch,gmane.linux.kernel.arc
-References: <1519917189.13866.6.camel@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
-Date: Wed, 14 Mar 2018 13:19:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519917189.13866.6.camel@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
+        Wed, 14 Mar 2018 16:20:38 -0400
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: [PATCH 0/4] Code improvements in integrity and IMA
+Date: Wed, 14 Mar 2018 17:20:16 -0300
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18031420-0024-0000-0000-000003368E28
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003063; UDB=6.00510447; IPR=6.00782393;
+ MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 20:20:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031420-0025-0000-0000-000047540424
+Message-Id: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140218
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC Peter since we have his attention ;-)
+Hello,
 
-On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
-> Hi Vineet,
-> 
-> Just noticed that in comments for smp_call_function_many() it is said that
-> preemption must be disabled during its execution. And that function gets executed
-> among other ways like that:
-> -------------------------->8-----------------------
->    flush_tlb_range()
->      -> on_each_cpu_mask()
->           -> smp_call_function_many()
-> -------------------------->8-----------------------
+These patches come from the "appended signatures support for IMA appraisal"
+series. They are code improvements and cleanups and I decided to submit
+them separately for a couple of reasons:
 
-In general I prefer not to - Peter what say you ?
+1. they stand on their own and could be included in v4.17;
 
-> 
-> I'm not seeing right now any real problem with current implementation but
-> some architectures do that thus the question.
-> 
-> -Alexey
-> 
+2. this will simplify the original patch series a bit, by having it contain
+   only the patches actually necessary to implement the feature.
+
+These are the changes made to them since v5 of the modsig series:
+
+- Patch "integrity: Remove unused macro IMA_ACTION_RULE_FLAGS"
+  - New patch.
+
+- Patch "ima: Improvements in ima_appraise_measurement()"
+  - Moved is_ima_sig() to its own patch (not in this series).
+
+Mimi Zohar (1):
+  ima: Improvements in ima_appraise_measurement()
+
+Thiago Jung Bauermann (3):
+  integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
+  ima: Simplify ima_eventsig_init()
+  integrity: Introduce struct evm_xattr
+
+ security/integrity/evm/evm_crypto.c       |  4 ++--
+ security/integrity/evm/evm_main.c         | 10 ++++----
+ security/integrity/ima/ima_appraise.c     | 40 ++++++++++++++++++-------------
+ security/integrity/ima/ima_template_lib.c | 11 +++------
+ security/integrity/integrity.h            |  6 ++++-
+ 5 files changed, 39 insertions(+), 32 deletions(-)
