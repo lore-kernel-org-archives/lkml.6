@@ -1,93 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751458AbeCNLpV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 07:45:21 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:51883 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeCNLpT (ORCPT
+        id S1751892AbeCNLve (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 07:51:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47124 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbeCNLvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 07:45:19 -0400
-X-Google-Smtp-Source: AG47ELv8asoZwEcK+Wd6dqtCD+XcrGpci63ZvuRJSQciGaAD568MjWsuIw6LaYJV9NCGU1UH+ouhYQ==
-Date: Wed, 14 Mar 2018 12:45:15 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pci: tegra: add MSI dependency
-Message-ID: <20180314114515.GC8564@ulmo>
-References: <20180313115218.2246372-1-arnd@arndb.de>
+        Wed, 14 Mar 2018 07:51:33 -0400
+Date: Wed, 14 Mar 2018 12:51:25 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andy Whitcroft <apw@canonical.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] x86/speculation, objtool: Annotate indirect
+ calls/jumps for objtool on 32bit
+Message-ID: <20180314115125.GS4043@hirez.programming.kicks-ass.net>
+References: <20180314112427.22351-1-apw@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313115218.2246372-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180314112427.22351-1-apw@canonical.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---nmemrqcdn5VTmUEE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 13, 2018 at 12:52:05PM +0100, Arnd Bergmann wrote:
-> Building the tegra PCIe host driver without MSI results in a link
-> failure:
->=20
-> drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_ms=
-i_unmask_irq'
-> drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_ms=
-i_mask_irq'
->=20
-> This adds the same dependency that everyone else uses.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Wed, Mar 14, 2018 at 11:24:27AM +0000, Andy Whitcroft wrote:
+> In 9e0e3c5130e9 ("x86/speculation, objtool: Annotate indirect calls/jumps
+> for objtool") we added annotations for CALL_NOSPEC/JMP_NOSPEC on x86 64bit.
+> We did not annotate the 32bit path.  Annotate it similarly.
+> 
+> Signed-off-by: Andy Whitcroft <apw@canonical.com>
 > ---
->  drivers/pci/host/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/x86/include/asm/nospec-branch.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+>     While reviewing indirect calls in our builds I noted that the
+>     i386 retpoline CALL_NOSPEC is not annotated safe even though
+>     its amd64 equivalent is.  I cannot see any reason this is not
+>     also inherantly safe.  Peter was there a reason that you did
+>     not annotate this one too?  Anyhow, on the assumption this was
+>     just missed, this patch annotates it.
 
-I'm slightly concerned about the dependency. Not that I doubt its
-correctness, but because it could mean that PCI_TEGRA is not visible in
-the default configuration. The only reason why it is currently visible
-is because PCI_MSI is selected by some symbols that also happen to be
-enabled. However, what if at some point those symbols are disabled or
-removed?
+Yeah, just an oversight aided by the fact that I (obviously) never build
+32bit kernels.
 
-Some architectures make sure that PCI_MSI is enabled by selecting it,
-but that's risky, isn't it, because PCI_MSI is user-visible and could
-therefore easily lead to conflicts.
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index d0dabeae0505..07886162bdf8 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -183,7 +183,10 @@
+>   * otherwise we'll run out of registers. We don't care about CET
+>   * here, anyway.
+>   */
+> -# define CALL_NOSPEC ALTERNATIVE("call *%[thunk_target]\n",	\
+> +# define CALL_NOSPEC 						\
+> +	ALTERNATIVE(						\
+> +	ANNOTATE_RETPOLINE_SAFE					\
+> +	"call *%[thunk_target]\n",				\
+>  	"       jmp    904f;\n"					\
+>  	"       .align 16\n"					\
+>  	"901:	call   903f;\n"					\
 
-Enabling PCI_MSI in the arm64 defconfig would solve the issue and is
-good enough for me. I've got a couple of changes to that defconfig in
-the Tegra tree for v4.17-rc1, I can add a patch to enable PCI_MSI.
-
-Unless there are any objections.
-
-Thierry
-
---nmemrqcdn5VTmUEE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqpC0kACgkQ3SOs138+
-s6EiHxAAn6oQjcvzOEpBboIKDTGgxt0iPDj4dJzJzYucPE38Ve+vFm+PTA+MpYZs
-NWX07OLWX/AwVgRzS6sbxVxZrvtV3LxQOh0/IwDgZOGxoXgFbZ3OW8+x2PECzb4k
-olgjHWcJ4wKAnAoCQ5w6p5f/3Y1aBZ2N0sjKXjTYOi7nOBCsu/qm7cxm1rtUjEhS
-6frkef/D+4N3hYAQfAZNoUffy92w4YrDbFgRorOxg6RPqCRPyMdJfVf4t9GDzUkR
-TLTDc92r7UDYaWKm7X+l6aTuJLl5DWO0JeikiAyTkKoXs65SkKdbkodZGtVGDiUH
-x9KHYn5uTxKjX63e+gJszaFXvWGgh/Z61Ihxllz/4ObEelex5JY4SlvhZJWfr/ZD
-SogLQCintL1Iw7KUx/PEkjIDdANTOrx0HWO/ysL9FkG+UICBtxt4g8vsGnTBVJpn
-Z0jlKoKVYv3aMSjmMKI2CcWzH1+v+WONkJJEpuXWCYRDwc6lcZYZYTDXo7Fvrgx+
-vjX2ATksyc8W+4ynBjUUKD9kil1Nckkwx+yrHZT19VordlmYNOBo9bmjhJu2DPSl
-UKfnIbvEljg0mEXihk8aFWAYqR3hd0LT0gZk2PZKquhmPr4BHzToLla9Uff7iv47
-luEDw7UC0esK6tn1t7oP09EjtaCnMOq30OT14Fhcz4UvnhShXX4=
-=976t
------END PGP SIGNATURE-----
-
---nmemrqcdn5VTmUEE--
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
