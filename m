@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1132802-1521015656-2-12033726552262503021
+X-Cyrus-Session-Id: sloti22d1t05-1132802-1521013498-2-624888402024479046
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521015656; b=ck/odEUt9LjW+1/nSa0xeXJP6i0/IHIIgumbMJUvvUYw98o
-    85QKSEL7Vd83aFvrs2fR0Dmb9KGsswgBshs6NbA3S3STNJbgjvMKRwMD3kpHqBbn
-    PaWeqMnF5SnaqyGn7ca8Kkm/qT8LNXJSTPby4nqKxy+k0ffV0DEetkBXIl+HI8Db
-    bpTHNveUH6emoi5lUSOHutGSCtfR50+8ImQvnZilhxSLTYNYvd8l5Wd0kcohYfiV
-    J8w+8Xzx/IEC19vtaxcuVmOaQTQMkLDtqWRGMQV6PAs2n6rLpiGU1vW41j9TjQBp
-    dbkCbISloWUudrvSyWus0lnnO7WNWZgxbuRik1Q==
+    t=1521013497; b=kB6NYpaMGEU6Z00Rd7Yxsz7/tkZGz5Kv35+rwH8xj59vRX/
+    qPyP8WEzJMbJv4+KyrlfaO5rCAjNeeA81vfJqPhCpk4kV64GX17dCe05/HzQrcaI
+    QeFXEM+b0nCsojg1wg59Q+MrQGnoIw06E53oyhreNWYhPuihnxTkuc3wQkRjHVzz
+    wdPFnuD7XgxX6ls+nDetr9wPBO9tDc6hEr2q4HA2qEZm3cEP3YTAXTugQeSJffc2
+    NRVArB4Ii5ky38fBZDEr+YYKAn4QDN+orBab8d5zd18mnsre0wbxuK4qnxqS1zaF
+    nZDDANBbzn8LjpWX3Md6yULI5VfJqfsJjZT/cdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:message-id:from:to:cc:subject
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521015656; bh=yVNq48kkyDRdTZoeowkBCzqLCU
-    qAXP34ErLOI5mNpXU=; b=cUP7Pj935zEKeQCj6ntAcCV7WMpIhq1fokcIWFqVDs
-    aZ/a1g9aJcb79sH+bn1QL18RJQIEpqA0oEdRfQzGcvLqs3gPrzqxsbwhjwP+V3xB
-    wkPuwZ46n1nDqoGbNg4+bHJXPUMYmLmKwbRO3O1SgEcZ0eqeUnaV4YDoEWhGxQbJ
-    yEy0eDlTIy2ZC6zWygX4abRthhYUzxtzC9Hoy5mDSCdKWrreIlhFuglM5h060TYe
-    9CkKDPBVMhll+EItlm/ANj/IddcT0dAntrIHXvHGD4Zl4EkfqiPz5zRIfLY6O+XY
-    PrGjk8hG8ADClonn7SqkBPDtn0Rux3P3yOqU9z4fcmRw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521013497; bh=rtd7zgLyqnqk4yWwtxucoenJlj
+    TA8GADrlMpTTi9e+g=; b=eZWPERZxkolxoE3KhEHF6/bA7FNR4ZYQnBHEM+jnkr
+    zoPE6grJ9aii87E6i9Hx3jlcB/qFhPANxJjfs2rnUTpYYBDmwQVl6XeXtsRLlryU
+    Z3O0zTbrGjlWVgjOJd9m9aKt5gB3RGrWK37/+FxRsxehqV13tMB8mqznmxDkn24s
+    SbCo0tiCFgnfNapuCyDW1rRsJAqcxu1aky3x8OM7Y2fZUFQhfWa52A6ML/pCcicb
+    UJ1rntJgpdw1cdm0PT0yunfjhvPL7TQh/VkVUpaH8I8cP3Vo0IgGXpAcfwTNjh9N
+    pKGie43J5K2pFrJIzK1NQHWmGd/0PT0C9snuzVz4DUdg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=users.sourceforge.jp;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.jp header.result=pass header_org.domain=sourceforge.jp header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=users.sourceforge.jp;
@@ -49,14 +49,14 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.jp header.result=pass header_org.domain=sourceforge.jp header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753573AbeCNIU3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 04:20:29 -0400
-Received: from mail01.asahi-net.or.jp ([202.224.55.13]:48346 "EHLO
-        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752949AbeCNIUW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 04:20:22 -0400
-Date: Wed, 14 Mar 2018 17:10:40 +0900
-Message-ID: <87po47axhb.wl-ysato@users.sourceforge.jp>
+        id S1753307AbeCNHoy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 03:44:54 -0400
+Received: from h61-195-96-97.vps.ablenet.jp ([61.195.96.97]:33652 "EHLO
+        h61-195-96-97.vps.ablenet.jp" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750934AbeCNHox (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 03:44:53 -0400
+Date: Wed, 14 Mar 2018 16:34:38 +0900
+Message-ID: <87sh93az5d.wl-ysato@users.sourceforge.jp>
 From: Yoshinori Sato <ysato@users.sourceforge.jp>
 To: Huacai Chen <chenhc@lemote.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
@@ -93,8 +93,6 @@ Huacai Chen wrote:
 > 
 > Huacai
 >
-
-Sorry. Previous mail bounced. It resend.
 
 OK. Apply this fix.
 SuperH can not handle long int directly.
