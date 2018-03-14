@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeCNRzD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:55:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55318 "EHLO
+        id S1752246AbeCNRzg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:55:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55198 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752181AbeCNRwt (ORCPT
+        with ESMTP id S1751547AbeCNRwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:52:49 -0400
+        Wed, 14 Mar 2018 13:52:36 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: x86@kernel.org
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -15,9 +15,9 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/14] iommu/amd_iommu: use dma_direct_{alloc,free}
-Date: Wed, 14 Mar 2018 18:52:06 +0100
-Message-Id: <20180314175213.20256-8-hch@lst.de>
+Subject: [PATCH 02/14] x86: remove dma_alloc_coherent_mask
+Date: Wed, 14 Mar 2018 18:52:01 +0100
+Message-Id: <20180314175213.20256-3-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180314175213.20256-1-hch@lst.de>
 References: <20180314175213.20256-1-hch@lst.de>
@@ -26,127 +26,151 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cleans up the code a lot by removing duplicate logic.
+These days all devices (including the ISA fallback device) have a coherent
+DMA mask set, so remove the workaround.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 ---
- drivers/iommu/Kconfig     |  1 +
- drivers/iommu/amd_iommu.c | 68 +++++++++++++++--------------------------------
- 2 files changed, 22 insertions(+), 47 deletions(-)
+ arch/x86/include/asm/dma-mapping.h | 18 ++----------------
+ arch/x86/kernel/pci-dma.c          | 10 ++++------
+ arch/x86/mm/mem_encrypt.c          |  4 +---
+ drivers/xen/swiotlb-xen.c          | 16 +---------------
+ 4 files changed, 8 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index f3a21343e636..dc7c1914645d 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -107,6 +107,7 @@ config IOMMU_PGTABLES_L2
- # AMD IOMMU support
- config AMD_IOMMU
- 	bool "AMD IOMMU support"
-+	select DMA_DIRECT_OPS
- 	select SWIOTLB
- 	select PCI_MSI
- 	select PCI_ATS
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 0bf19423b588..83819d0cbf90 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2600,51 +2600,32 @@ static void *alloc_coherent(struct device *dev, size_t size,
- 			    unsigned long attrs)
+diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
+index 6277c83c0eb1..545bf3721bc0 100644
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@ -44,26 +44,12 @@ extern void dma_generic_free_coherent(struct device *dev, size_t size,
+ 				      void *vaddr, dma_addr_t dma_addr,
+ 				      unsigned long attrs);
+ 
+-static inline unsigned long dma_alloc_coherent_mask(struct device *dev,
+-						    gfp_t gfp)
+-{
+-	unsigned long dma_mask = 0;
+-
+-	dma_mask = dev->coherent_dma_mask;
+-	if (!dma_mask)
+-		dma_mask = (gfp & GFP_DMA) ? DMA_BIT_MASK(24) : DMA_BIT_MASK(32);
+-
+-	return dma_mask;
+-}
+-
+ static inline gfp_t dma_alloc_coherent_gfp_flags(struct device *dev, gfp_t gfp)
  {
- 	u64 dma_mask = dev->coherent_dma_mask;
--	struct protection_domain *domain;
--	struct dma_ops_domain *dma_dom;
--	struct page *page;
+-	unsigned long dma_mask = dma_alloc_coherent_mask(dev, gfp);
 -
--	domain = get_domain(dev);
--	if (PTR_ERR(domain) == -EINVAL) {
--		page = alloc_pages(flag, get_order(size));
--		*dma_addr = page_to_phys(page);
--		return page_address(page);
--	} else if (IS_ERR(domain))
--		return NULL;
-+	struct protection_domain *domain = get_domain(dev);
-+	bool is_direct = false;
-+	void *virt_addr;
- 
--	dma_dom   = to_dma_ops_domain(domain);
--	size	  = PAGE_ALIGN(size);
--	dma_mask  = dev->coherent_dma_mask;
--	flag     &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
--	flag     |= __GFP_ZERO;
--
--	page = alloc_pages(flag | __GFP_NOWARN,  get_order(size));
--	if (!page) {
--		if (!gfpflags_allow_blocking(flag))
--			return NULL;
--
--		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
--						 get_order(size), flag);
--		if (!page)
-+	if (IS_ERR(domain)) {
-+		if (PTR_ERR(domain) != -EINVAL)
- 			return NULL;
-+		is_direct = true;
- 	}
- 
-+	virt_addr = dma_direct_alloc(dev, size, dma_addr, flag, attrs);
-+	if (!virt_addr || is_direct)
-+		return virt_addr;
-+
- 	if (!dma_mask)
- 		dma_mask = *dev->dma_mask;
- 
--	*dma_addr = __map_single(dev, dma_dom, page_to_phys(page),
--				 size, DMA_BIDIRECTIONAL, dma_mask);
--
-+	*dma_addr = __map_single(dev, to_dma_ops_domain(domain),
-+			virt_to_phys(virt_addr), PAGE_ALIGN(size),
-+			DMA_BIDIRECTIONAL, dma_mask);
- 	if (*dma_addr == AMD_IOMMU_MAPPING_ERROR)
- 		goto out_free;
--
--	return page_address(page);
-+	return virt_addr;
- 
- out_free:
--
--	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, get_order(size));
--
-+	dma_direct_free(dev, size, virt_addr, *dma_addr, attrs);
- 	return NULL;
- }
- 
-@@ -2655,24 +2636,17 @@ static void free_coherent(struct device *dev, size_t size,
- 			  void *virt_addr, dma_addr_t dma_addr,
- 			  unsigned long attrs)
+-	if (dma_mask <= DMA_BIT_MASK(24))
++	if (dev->coherent_dma_mask <= DMA_BIT_MASK(24))
+ 		gfp |= GFP_DMA;
+ #ifdef CONFIG_X86_64
+-	if (dma_mask <= DMA_BIT_MASK(32) && !(gfp & GFP_DMA))
++	if (dev->coherent_dma_mask <= DMA_BIT_MASK(32) && !(gfp & GFP_DMA))
+ 		gfp |= GFP_DMA32;
+ #endif
+        return gfp;
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index df7ab02f959f..b59820872ec7 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -80,13 +80,10 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 				 dma_addr_t *dma_addr, gfp_t flag,
+ 				 unsigned long attrs)
  {
--	struct protection_domain *domain;
--	struct dma_ops_domain *dma_dom;
--	struct page *page;
-+	struct protection_domain *domain = get_domain(dev);
+-	unsigned long dma_mask;
+ 	struct page *page;
+ 	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 	dma_addr_t addr;
  
--	page = virt_to_page(virt_addr);
- 	size = PAGE_ALIGN(size);
- 
--	domain = get_domain(dev);
--	if (IS_ERR(domain))
--		goto free_mem;
-+	if (!IS_ERR(domain)) {
-+		struct dma_ops_domain *dma_dom = to_dma_ops_domain(domain);
- 
--	dma_dom = to_dma_ops_domain(domain);
+-	dma_mask = dma_alloc_coherent_mask(dev, flag);
 -
--	__unmap_single(dma_dom, dma_addr, size, DMA_BIDIRECTIONAL);
-+		__unmap_single(dma_dom, dma_addr, size, DMA_BIDIRECTIONAL);
-+	}
+ again:
+ 	page = NULL;
+ 	/* CMA can be used only in the context which permits sleeping */
+@@ -95,7 +92,7 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 						 flag);
+ 		if (page) {
+ 			addr = phys_to_dma(dev, page_to_phys(page));
+-			if (addr + size > dma_mask) {
++			if (addr + size > dev->coherent_dma_mask) {
+ 				dma_release_from_contiguous(dev, page, count);
+ 				page = NULL;
+ 			}
+@@ -108,10 +105,11 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 		return NULL;
  
--free_mem:
--	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, get_order(size));
-+	dma_direct_free(dev, size, virt_addr, dma_addr, attrs);
- }
+ 	addr = phys_to_dma(dev, page_to_phys(page));
+-	if (addr + size > dma_mask) {
++	if (addr + size > dev->coherent_dma_mask) {
+ 		__free_pages(page, get_order(size));
  
- /*
+-		if (dma_mask < DMA_BIT_MASK(32) && !(flag & GFP_DMA)) {
++		if (dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
++		    !(flag & GFP_DMA)) {
+ 			flag = (flag & ~GFP_DMA32) | GFP_DMA;
+ 			goto again;
+ 		}
+diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+index 1a53071e2e17..75dc8b525c12 100644
+--- a/arch/x86/mm/mem_encrypt.c
++++ b/arch/x86/mm/mem_encrypt.c
+@@ -203,12 +203,10 @@ void __init sme_early_init(void)
+ static void *sev_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ 		       gfp_t gfp, unsigned long attrs)
+ {
+-	unsigned long dma_mask;
+ 	unsigned int order;
+ 	struct page *page;
+ 	void *vaddr = NULL;
+ 
+-	dma_mask = dma_alloc_coherent_mask(dev, gfp);
+ 	order = get_order(size);
+ 
+ 	/*
+@@ -226,7 +224,7 @@ static void *sev_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ 		 * mask with it already cleared.
+ 		 */
+ 		addr = __sme_clr(phys_to_dma(dev, page_to_phys(page)));
+-		if ((addr + size) > dma_mask) {
++		if ((addr + size) > dev->coherent_dma_mask) {
+ 			__free_pages(page, get_order(size));
+ 		} else {
+ 			vaddr = page_address(page);
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index 5bb72d3f8337..e1c60899fdbc 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -53,20 +53,6 @@
+  * API.
+  */
+ 
+-#ifndef CONFIG_X86
+-static unsigned long dma_alloc_coherent_mask(struct device *dev,
+-					    gfp_t gfp)
+-{
+-	unsigned long dma_mask = 0;
+-
+-	dma_mask = dev->coherent_dma_mask;
+-	if (!dma_mask)
+-		dma_mask = (gfp & GFP_DMA) ? DMA_BIT_MASK(24) : DMA_BIT_MASK(32);
+-
+-	return dma_mask;
+-}
+-#endif
+-
+ #define XEN_SWIOTLB_ERROR_CODE	(~(dma_addr_t)0x0)
+ 
+ static char *xen_io_tlb_start, *xen_io_tlb_end;
+@@ -328,7 +314,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+ 		return ret;
+ 
+ 	if (hwdev && hwdev->coherent_dma_mask)
+-		dma_mask = dma_alloc_coherent_mask(hwdev, flags);
++		dma_mask = hwdev->coherent_dma_mask;
+ 
+ 	/* At this point dma_handle is the physical address, next we are
+ 	 * going to set it to the machine address.
 -- 
 2.14.2
