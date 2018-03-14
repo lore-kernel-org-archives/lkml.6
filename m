@@ -1,105 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753500AbeCNGyH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 02:54:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44362 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753320AbeCNGyF (ORCPT
+        id S1753384AbeCNHAX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 03:00:23 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39384 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750934AbeCNHAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 02:54:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B283D60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v5 26/36] drm/bridge: analogix_dp: Properly disable aux
- chan retries on rockchip
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
-        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
-        heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com>
- <20180309222327.18689-27-enric.balletbo@collabora.com>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <4044e328-09e4-a0d1-61d4-164fed221c8f@codeaurora.org>
-Date: Wed, 14 Mar 2018 12:23:49 +0530
+        Wed, 14 Mar 2018 03:00:21 -0400
+Subject: Re: [PATCH] scsi: iscsi_tcp: set BDI_CAP_STABLE_WRITES when data
+ digest enabled
+To: lduncan@suse.com, cleech@redhat.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc: open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <91cacdf3-ae5c-c12c-9fe4-695ba6ac7c21@oracle.com>
+Date: Wed, 14 Mar 2018 15:00:08 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309222327.18689-27-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803140081
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Would anyone please take a review at this patch ?
 
+Thanks in advace
+Jianchao
 
-On Saturday 10 March 2018 03:53 AM, Enric Balletbo i Serra wrote:
-> From: Douglas Anderson <dianders@chromium.org>
+On 03/07/2018 08:29 PM, Jianchao Wang wrote:
+> iscsi tcp will first send out data, then calculate and send data
+> digest. If we don't have BDI_CAP_STABLE_WRITES, the page cache will
+> be written in spite of the on going writeback. Consequently, wrong
+> digest will be got and sent to target.
 > 
-> The comments in analogix_dp_init_aux() claim that we're disabling aux
-> channel retries, but then right below it for Rockchip it sets them to
-> 3.  If we actually need 3 retries for Rockchip then we could adjust
-> the comment, but it seems more likely that we want the same retry
-> behavior across all platforms.
-
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-
-Thanks,
-Archit
-
+> To fix this, set BDI_CAP_STABLE_WRITES when data digest is enabled
+> in iscsi_tcp .slave_configure callback.
 > 
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Cc: 征增 王 <wzz@rock-chips.com>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 > ---
+>  drivers/scsi/iscsi_tcp.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
->   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> index 58e8a28e99aa..a5f2763d72e4 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> @@ -481,15 +481,16 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
->   
->   	analogix_dp_reset_aux(dp);
->   
-> -	/* Disable AUX transaction H/W retry */
-> +	/* AUX_BIT_PERIOD_EXPECTED_DELAY doesn't apply to Rockchip IP */
->   	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
-> -		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
-> -		      AUX_HW_RETRY_COUNT_SEL(3) |
-> -		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +		reg = 0;
->   	else
-> -		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
-> -		      AUX_HW_RETRY_COUNT_SEL(0) |
-> -		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3);
+> diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+> index 6198559..261c686 100644
+> --- a/drivers/scsi/iscsi_tcp.c
+> +++ b/drivers/scsi/iscsi_tcp.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/kfifo.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/module.h>
+> +#include <linux/backing-dev.h>
+>  #include <net/tcp.h>
+>  #include <scsi/scsi_cmnd.h>
+>  #include <scsi/scsi_device.h>
+> @@ -954,6 +955,12 @@ static int iscsi_sw_tcp_slave_alloc(struct scsi_device *sdev)
+>  
+>  static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
+>  {
+> +	struct iscsi_sw_tcp_host *tcp_sw_host = iscsi_host_priv(sdev->host);
+> +	struct iscsi_session *session = tcp_sw_host->session;
+> +	struct iscsi_conn *conn = session->leadconn;
 > +
-> +	/* Disable AUX transaction H/W retry */
-> +	reg |= AUX_HW_RETRY_COUNT_SEL(0) |
-> +	       AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
-> +
->   	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
->   
->   	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
+> +	if (conn->datadgst_en)
+> +		sdev->request_queue->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
+>  	blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_ANY);
+>  	blk_queue_dma_alignment(sdev->request_queue, 0);
+>  	return 0;
 > 
