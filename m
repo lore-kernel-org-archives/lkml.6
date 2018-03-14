@@ -1,10 +1,10 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1743198-1521033183-2-9638623585123427812
+X-Cyrus-Session-Id: sloti22d1t05-1734499-1521033161-2-8356604111779842898
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521033180; b=PEqAvgkxsgvaL2A+/dosfclR+u+iZH35tcfPXNULyyB+Dgj
-    m56u8zHN8fPlR61buXl2bwMjZS0MplpIUI4fnXVRIvkx+5SL3MxNYKLPy2VR6M+Q
-    EHHOY6qc57R6tut6FG/OLTaHyBzODYeJfC9Ay6mQjMmFWPjagLUDB904RyUmwcD4
-    rDmhqgH/mLZK9Lzvpy07Bh6RJytpC5dCD6tMft/mhVXaVoQfUkR8Oz3GklF/6YG1
-    8tGO6CiM8xzm17RzyFFclnmg5ate4Fd/xMhucQHnXFdgwi8tCCjZ6fuAemfdz2zS
-    7ffLMVVaWBrPDLnaIxZEsA9ZzhL+wCKhLmWXJCA==
+    t=1521033160; b=le2AqP7GaC3fCFvOWQlASWBShSzK5vbw8uf2VCjIpluDR2+
+    3Tf+7egR2/z2kjgvJrM8mREmKj7c9w2rg4mvnoF7lumFCQ5APCihRd5DDdOZkT/e
+    zxEKST+9izqr1i9o0hp/1XoqZMOQHECHDFAAZ8hkeDfwJm/v/bHHsna5hyvAybP9
+    rTAWANdk0PcKf9hRH0vLp2LgNX1ItQuAINOnlL17KfRzFH6BUTVruEc3sJJMAoZm
+    hEIBqMoGezT1ny7+CGRpIDHSQu1IXml6av8HUenGzhDo6Rkuzhj5HC54AeKf3Hp3
+    ARBo62Db/98s+UUB17mpCjjzkaKzFGNJcqfHalQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521033180;
-    bh=gQC3Kev/swrZP4yLaZPcSwmOK5wo7u8XUJ+MPuOUjTo=; b=nfi0QgJlc3fE
-    XKOs06jFLCsFmOUMRfUugdedpX5U5vu3ESvegpjmOftW7Ue3BahKe/pswmYi7aiC
-    +96QMGlqKS9z1BWKJdQt0GSt26UFVP2b5+alRbSKxoiYDw5EaKOGxMNCf+LoPfCZ
-    iay+2mEh2mytFXuhfihBjYAtIG5AznM/f321EmED/LFp3Gx4P41x+fig2sMt/7px
-    03q8CoOjB+6hpVU3VltsLmo3D0W+UTCOOWLWMf3Ybfha9WKpXvC/oLX58Qp7Mg9b
-    wwHI0z+4mFW2jg/2voVGAeAH0OfeF50PeWcsyC+xWE2k3r2gMy6nrgbIGGcIpBuK
-    W33MkQoRcw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521033160;
+    bh=ExY/x6loDTqHpcZDlCFYgjjYV2tw9T1XUnvKBvkSnO0=; b=QWNMlQrbLdOU
+    WXofMc74m8a42+9JOXxRGcDcAdRtkeh25moCdKNX4BFJLasBx8j/w92boXS9sOZx
+    zbEw7iumjbE1mepQokdIwawR+/hFeVgYBCGQJIhC7aRsEiwHqAsbXQ4oOosbEg/4
+    iQRCGwtP67UMl2Gz47UviVcpjh4Z1v17RNs1mwjEYA1cBoRIKAGUlSXsmuYWWIQq
+    JHkQbBdz9VvTOXErV5NnYLKcsLd303XCKMY9a99VMNeHRH4WapzJgwvCaq1aa8Y8
+    32eKJZcIb8kU0SZyjnyWgRCzV5KE63jd/DQxXYHKeLN3J6N8CWPG+vETQt1HLth6
+    Qv0/jeUGFQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
@@ -49,17 +49,17 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeCNNMz (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 09:12:55 -0400
+        id S1752164AbeCNNMi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 09:12:38 -0400
 Received: from mga07.intel.com ([134.134.136.100]:3923 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752340AbeCNNMx (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:12:53 -0400
+        id S1751527AbeCNNMd (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 14 Mar 2018 09:12:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,470,1515484800";
-   d="scan'208";a="37991716"
+   d="scan'208";a="37991626"
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Hans de Goede <hdegoede@redhat.com>
@@ -71,9 +71,9 @@ Cc: Darren Hart <dvhart@infradead.org>,
         Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org
-Subject: [PATCH v8 09/12] usb: roles: Add Intel xHCI USB role switch driver
-Date: Wed, 14 Mar 2018 16:12:12 +0300
-Message-Id: <20180314131215.70833-10-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v8 03/12] usb: common: Small class for USB role switches
+Date: Wed, 14 Mar 2018 16:12:06 +0300
+Message-Id: <20180314131215.70833-4-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180314131215.70833-1-heikki.krogerus@linux.intel.com>
 References: <20180314131215.70833-1-heikki.krogerus@linux.intel.com>
@@ -83,315 +83,463 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hans de Goede <hdegoede@redhat.com>
+USB role switch is a device that can be used to choose the
+data role for USB connector. With dual-role capable USB
+controllers, the controller itself will be the switch, but
+on some platforms the USB host and device controllers are
+separate IPs and there is a mux between them and the
+connector. On those platforms the mux driver will need to
+register the switch.
 
-Various Intel SoCs (Cherry Trail, Broxton and others) have an internal USB
-role switch for swiching the OTG USB data lines between the xHCI host
-controller and the dwc3 gadget controller.
+With USB Type-C connectors, the host-to-device relationship
+is negotiated over the Configuration Channel (CC). That
+means the USB Type-C drivers need to be in control of the
+role switch. The class provides a simple API for the USB
+Type-C drivers for the control.
 
-Note on some Cherry Trail systems there is ACPI/AML code listening to
-edge interrupts on the id-pin (through an _AIE ACPI method) and switching
-the role between ROLE_HOST and ROLE_NONE based on the id-pin. Note it does
-not set the role to ROLE_DEVICE, because device-mode is usually not used
-under Windows.
+For other types of USB connectors (mainly microAB) the class
+provides user space control via sysfs attribute file that
+can be used to request role swapping from the switch.
 
-The presence of AML code which modifies the cfg0 reg (on some systems)
-means that our read/write/modify of cfg0 may race with the AML code
-doing the same to avoid this we take the global ACPI lock while doing
-the read/write/modify.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
-Changes in v7:
-- Declare intel_xhci_usb_remove() as static
-
 Changes in v4:
+-Consistently use IS_ERR_OR_NULL where applicable
 -Add Andy's Reviewed-by
--Add Heikki's Reviewed-by
 
 Changes in v2:
--Drop unnecessary depends on EXTCON from Kconfig
--Use BIT(), resource_size()
--Various other small style fixes
+-Minor style fixes from review of v1
 ---
- MAINTAINERS                                    |   6 +
- drivers/usb/Kconfig                            |   2 +
- drivers/usb/Makefile                           |   2 +
- drivers/usb/roles/Kconfig                      |  14 ++
- drivers/usb/roles/Makefile                     |   1 +
- drivers/usb/roles/intel-xhci-usb-role-switch.c | 192 +++++++++++++++++++++++++
- 6 files changed, 217 insertions(+)
- create mode 100644 drivers/usb/roles/Kconfig
- create mode 100644 drivers/usb/roles/Makefile
- create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
+ Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
+ drivers/usb/Kconfig                            |   3 +
+ drivers/usb/common/Makefile                    |   1 +
+ drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
+ include/linux/usb/role.h                       |  53 +++++
+ 5 files changed, 383 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
+ create mode 100644 drivers/usb/common/roles.c
+ create mode 100644 include/linux/usb/role.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93a12af4f180..5f1988cddbe8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14385,6 +14385,12 @@ S:	Maintained
- F:	Documentation/hid/hiddev.txt
- F:	drivers/hid/usbhid/
- 
-+USB INTEL XHCI ROLE MUX DRIVER
-+M:	Hans de Goede <hdegoede@redhat.com>
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
+diff --git a/Documentation/ABI/testing/sysfs-class-usb_role b/Documentation/ABI/testing/sysfs-class-usb_role
+new file mode 100644
+index 000000000000..3b810a425a52
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-usb_role
+@@ -0,0 +1,21 @@
++What:		/sys/class/usb_role/
++Date:		Jan 2018
++Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
++Description:
++		Place in sysfs for USB Role Switches. USB Role Switch is a
++		device that can select the data role (host or device) for USB
++		port.
 +
- USB ISP116X DRIVER
- M:	Olav Kongas <ok@artecdesign.ee>
- L:	linux-usb@vger.kernel.org
++What:		/sys/class/usb_role/<switch>/role
++Date:		Jan 2018
++Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
++Description:
++		The current role of the switch. This attribute can be used for
++		requesting role swapping with non-USB Type-C ports. With USB
++		Type-C ports, the ABI defined for USB Type-C connector class
++		must be used.
++
++		Valid values:
++		- none
++		- host
++		- device
 diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index f278958e04ca..75f7fb151f71 100644
+index 148f3ee70286..f278958e04ca 100644
 --- a/drivers/usb/Kconfig
 +++ b/drivers/usb/Kconfig
-@@ -171,6 +171,8 @@ source "drivers/usb/gadget/Kconfig"
+@@ -203,4 +203,7 @@ config USB_ULPI_BUS
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called ulpi.
  
- source "drivers/usb/typec/Kconfig"
++config USB_ROLE_SWITCH
++	tristate
++
+ endif # USB_SUPPORT
+diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
+index 0a7c45e85481..fb4d5ef4165c 100644
+--- a/drivers/usb/common/Makefile
++++ b/drivers/usb/common/Makefile
+@@ -9,3 +9,4 @@ usb-common-$(CONFIG_USB_LED_TRIG) += led.o
  
-+source "drivers/usb/roles/Kconfig"
-+
- config USB_LED_TRIG
- 	bool "USB LED Triggers"
- 	depends on LEDS_CLASS && LEDS_TRIGGERS
-diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
-index 060643a1b5c8..7d1b8c82b208 100644
---- a/drivers/usb/Makefile
-+++ b/drivers/usb/Makefile
-@@ -65,3 +65,5 @@ obj-$(CONFIG_USB_COMMON)	+= common/
- obj-$(CONFIG_USBIP_CORE)	+= usbip/
- 
- obj-$(CONFIG_TYPEC)		+= typec/
-+
-+obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles/
-diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
+ obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
+ obj-$(CONFIG_USB_ULPI_BUS)	+= ulpi.o
++obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles.o
+diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
 new file mode 100644
-index 000000000000..f5a5e6f79f1b
+index 000000000000..15cc76e22123
 --- /dev/null
-+++ b/drivers/usb/roles/Kconfig
-@@ -0,0 +1,14 @@
-+if USB_ROLE_SWITCH
-+
-+config USB_ROLES_INTEL_XHCI
-+	tristate "Intel XHCI USB Role Switch"
-+	depends on ACPI && X86
-+	help
-+	  Driver for the internal USB role switch for switching the USB data
-+	  lines between the xHCI host controller and the dwc3 gadget controller
-+	  found on various Intel SoCs.
-+
-+	  To compile the driver as a module, choose M here: the module will
-+	  be called intel-xhci-usb-role-switch.
-+
-+endif # USB_ROLE_SWITCH
-diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
-new file mode 100644
-index 000000000000..e44b179ba275
---- /dev/null
-+++ b/drivers/usb/roles/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_USB_ROLES_INTEL_XHCI) += intel-xhci-usb-role-switch.o
-diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-new file mode 100644
-index 000000000000..58c1b60a33c1
---- /dev/null
-+++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0+
++++ b/drivers/usb/common/roles.c
+@@ -0,0 +1,305 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Intel XHCI (Cherry Trail, Broxton and others) USB OTG role switch driver
++ * USB Role Switch Support
 + *
-+ * Copyright (c) 2016-2017 Hans de Goede <hdegoede@redhat.com>
-+ *
-+ * Loosely based on android x86 kernel code which is:
-+ *
-+ * Copyright (C) 2014 Intel Corp.
-+ *
-+ * Author: Wu, Hao
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
++ *         Hans de Goede <hdegoede@redhat.com>
 + */
 +
-+#include <linux/acpi.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
 +#include <linux/usb/role.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/slab.h>
 +
-+/* register definition */
-+#define DUAL_ROLE_CFG0			0x68
-+#define SW_VBUS_VALID			BIT(24)
-+#define SW_IDPIN_EN			BIT(21)
-+#define SW_IDPIN			BIT(20)
++static struct class *role_class;
 +
-+#define DUAL_ROLE_CFG1			0x6c
-+#define HOST_MODE			BIT(29)
-+
-+#define DUAL_ROLE_CFG1_POLL_TIMEOUT	1000
-+
-+#define DRV_NAME			"intel_xhci_usb_sw"
-+
-+struct intel_xhci_usb_data {
-+	struct usb_role_switch *role_sw;
-+	void __iomem *base;
-+};
-+
-+struct intel_xhci_acpi_match {
-+	const char *hid;
-+	int hrv;
-+};
-+
-+/*
-+ * ACPI IDs for PMICs which do not support separate data and power role
-+ * detection (USB ACA detection for micro USB OTG), we allow userspace to
-+ * change the role manually on these.
-+ */
-+static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
-+	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
-+};
-+
-+static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
-+{
-+	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
-+	unsigned long timeout;
-+	acpi_status status;
-+	u32 glk, val;
-+
-+	/*
-+	 * On many CHT devices ACPI event (_AEI) handlers read / modify /
-+	 * write the cfg0 register, just like we do. Take the ACPI lock
-+	 * to avoid us racing with the AML code.
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		dev_err(dev, "Error could not acquire lock\n");
-+		return -EIO;
-+	}
-+
-+	/* Set idpin value as requested */
-+	val = readl(data->base + DUAL_ROLE_CFG0);
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		val |= SW_IDPIN;
-+		val &= ~SW_VBUS_VALID;
-+		break;
-+	case USB_ROLE_HOST:
-+		val &= ~SW_IDPIN;
-+		val &= ~SW_VBUS_VALID;
-+		break;
-+	case USB_ROLE_DEVICE:
-+		val |= SW_IDPIN;
-+		val |= SW_VBUS_VALID;
-+		break;
-+	}
-+	val |= SW_IDPIN_EN;
-+
-+	writel(val, data->base + DUAL_ROLE_CFG0);
-+
-+	acpi_release_global_lock(glk);
-+
-+	/* In most case it takes about 600ms to finish mode switching */
-+	timeout = jiffies + msecs_to_jiffies(DUAL_ROLE_CFG1_POLL_TIMEOUT);
-+
-+	/* Polling on CFG1 register to confirm mode switch.*/
-+	do {
-+		val = readl(data->base + DUAL_ROLE_CFG1);
-+		if (!!(val & HOST_MODE) == (role == USB_ROLE_HOST))
-+			return 0;
-+
-+		/* Interval for polling is set to about 5 - 10 ms */
-+		usleep_range(5000, 10000);
-+	} while (time_before(jiffies, timeout));
-+
-+	dev_warn(dev, "Timeout waiting for role-switch\n");
-+	return -ETIMEDOUT;
-+}
-+
-+static enum usb_role intel_xhci_usb_get_role(struct device *dev)
-+{
-+	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++struct usb_role_switch {
++	struct device dev;
++	struct mutex lock; /* device lock*/
 +	enum usb_role role;
-+	u32 val;
 +
-+	val = readl(data->base + DUAL_ROLE_CFG0);
++	/* From descriptor */
++	struct device *usb2_port;
++	struct device *usb3_port;
++	struct device *udc;
++	usb_role_switch_set_t set;
++	usb_role_switch_get_t get;
++	bool allow_userspace_control;
++};
 +
-+	if (!(val & SW_IDPIN))
-+		role = USB_ROLE_HOST;
-+	else if (val & SW_VBUS_VALID)
-+		role = USB_ROLE_DEVICE;
++#define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
++
++/**
++ * usb_role_switch_set_role - Set USB role for a switch
++ * @sw: USB role switch
++ * @role: USB role to be switched to
++ *
++ * Set USB role @role for @sw.
++ */
++int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
++{
++	int ret;
++
++	if (IS_ERR_OR_NULL(sw))
++		return 0;
++
++	mutex_lock(&sw->lock);
++
++	ret = sw->set(sw->dev.parent, role);
++	if (!ret)
++		sw->role = role;
++
++	mutex_unlock(&sw->lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(usb_role_switch_set_role);
++
++/**
++ * usb_role_switch_get_role - Get the USB role for a switch
++ * @sw: USB role switch
++ *
++ * Depending on the role-switch-driver this function returns either a cached
++ * value of the last set role, or reads back the actual value from the hardware.
++ */
++enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
++{
++	enum usb_role role;
++
++	if (IS_ERR_OR_NULL(sw))
++		return USB_ROLE_NONE;
++
++	mutex_lock(&sw->lock);
++
++	if (sw->get)
++		role = sw->get(sw->dev.parent);
 +	else
-+		role = USB_ROLE_NONE;
++		role = sw->role;
++
++	mutex_unlock(&sw->lock);
 +
 +	return role;
 +}
++EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
 +
-+static struct usb_role_switch_desc sw_desc = {
-+	.set = intel_xhci_usb_set_role,
-+	.get = intel_xhci_usb_get_role,
-+};
-+
-+static int intel_xhci_usb_probe(struct platform_device *pdev)
++static int __switch_match(struct device *dev, const void *name)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct intel_xhci_usb_data *data;
-+	struct resource *res;
-+	int i;
++	return !strcmp((const char *)name, dev_name(dev));
++}
 +
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++static void *usb_role_switch_match(struct device_connection *con, int ep,
++				   void *data)
++{
++	struct device *dev;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->base = devm_ioremap_nocache(dev, res->start, resource_size(res));
-+	if (IS_ERR(data->base))
-+		return PTR_ERR(data->base);
++	dev = class_find_device(role_class, NULL, con->endpoint[ep],
++				__switch_match);
 +
-+	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
-+		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
-+				     allow_userspace_ctrl_ids[i].hrv))
-+			sw_desc.allow_userspace_control = true;
++	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
++}
 +
-+	platform_set_drvdata(pdev, data);
++/**
++ * usb_role_switch_get - Find USB role switch linked with the caller
++ * @dev: The caller device
++ *
++ * Finds and returns role switch linked with @dev. The reference count for the
++ * found switch is incremented.
++ */
++struct usb_role_switch *usb_role_switch_get(struct device *dev)
++{
++	return device_connection_find_match(dev, "usb-role-switch", NULL,
++					    usb_role_switch_match);
++}
++EXPORT_SYMBOL_GPL(usb_role_switch_get);
 +
-+	data->role_sw = usb_role_switch_register(dev, &sw_desc);
-+	if (IS_ERR(data->role_sw))
-+		return PTR_ERR(data->role_sw);
++/**
++ * usb_role_switch_put - Release handle to a switch
++ * @sw: USB Role Switch
++ *
++ * Decrement reference count for @sw.
++ */
++void usb_role_switch_put(struct usb_role_switch *sw)
++{
++	if (!IS_ERR_OR_NULL(sw))
++		put_device(&sw->dev);
++}
++EXPORT_SYMBOL_GPL(usb_role_switch_put);
++
++static umode_t
++usb_role_switch_is_visible(struct kobject *kobj, struct attribute *attr, int n)
++{
++	struct device *dev = container_of(kobj, typeof(*dev), kobj);
++	struct usb_role_switch *sw = to_role_switch(dev);
++
++	if (sw->allow_userspace_control)
++		return attr->mode;
 +
 +	return 0;
 +}
 +
-+static int intel_xhci_usb_remove(struct platform_device *pdev)
-+{
-+	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
++static const char * const usb_roles[] = {
++	[USB_ROLE_NONE]		= "none",
++	[USB_ROLE_HOST]		= "host",
++	[USB_ROLE_DEVICE]	= "device",
++};
 +
-+	usb_role_switch_unregister(data->role_sw);
-+	return 0;
++static ssize_t
++role_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct usb_role_switch *sw = to_role_switch(dev);
++	enum usb_role role = usb_role_switch_get_role(sw);
++
++	return sprintf(buf, "%s\n", usb_roles[role]);
 +}
 +
-+static const struct platform_device_id intel_xhci_usb_table[] = {
-+	{ .name = DRV_NAME },
-+	{}
++static ssize_t role_store(struct device *dev, struct device_attribute *attr,
++			  const char *buf, size_t size)
++{
++	struct usb_role_switch *sw = to_role_switch(dev);
++	int ret;
++
++	ret = sysfs_match_string(usb_roles, buf);
++	if (ret < 0) {
++		bool res;
++
++		/* Extra check if the user wants to disable the switch */
++		ret = kstrtobool(buf, &res);
++		if (ret || res)
++			return -EINVAL;
++	}
++
++	ret = usb_role_switch_set_role(sw, ret);
++	if (ret)
++		return ret;
++
++	return size;
++}
++static DEVICE_ATTR_RW(role);
++
++static struct attribute *usb_role_switch_attrs[] = {
++	&dev_attr_role.attr,
++	NULL,
 +};
-+MODULE_DEVICE_TABLE(platform, intel_xhci_usb_table);
 +
-+static struct platform_driver intel_xhci_usb_driver = {
-+	.driver = {
-+		.name = DRV_NAME,
-+	},
-+	.id_table = intel_xhci_usb_table,
-+	.probe = intel_xhci_usb_probe,
-+	.remove = intel_xhci_usb_remove,
++static const struct attribute_group usb_role_switch_group = {
++	.is_visible = usb_role_switch_is_visible,
++	.attrs = usb_role_switch_attrs,
 +};
 +
-+module_platform_driver(intel_xhci_usb_driver);
++static const struct attribute_group *usb_role_switch_groups[] = {
++	&usb_role_switch_group,
++	NULL,
++};
 +
++static int
++usb_role_switch_uevent(struct device *dev, struct kobj_uevent_env *env)
++{
++	int ret;
++
++	ret = add_uevent_var(env, "USB_ROLE_SWITCH=%s", dev_name(dev));
++	if (ret)
++		dev_err(dev, "failed to add uevent USB_ROLE_SWITCH\n");
++
++	return ret;
++}
++
++static void usb_role_switch_release(struct device *dev)
++{
++	struct usb_role_switch *sw = to_role_switch(dev);
++
++	kfree(sw);
++}
++
++static const struct device_type usb_role_dev_type = {
++	.name = "usb_role_switch",
++	.groups = usb_role_switch_groups,
++	.uevent = usb_role_switch_uevent,
++	.release = usb_role_switch_release,
++};
++
++/**
++ * usb_role_switch_register - Register USB Role Switch
++ * @parent: Parent device for the switch
++ * @desc: Description of the switch
++ *
++ * USB Role Switch is a device capable or choosing the role for USB connector.
++ * On platforms where the USB controller is dual-role capable, the controller
++ * driver will need to register the switch. On platforms where the USB host and
++ * USB device controllers behind the connector are separate, there will be a
++ * mux, and the driver for that mux will need to register the switch.
++ *
++ * Returns handle to a new role switch or ERR_PTR. The content of @desc is
++ * copied.
++ */
++struct usb_role_switch *
++usb_role_switch_register(struct device *parent,
++			 const struct usb_role_switch_desc *desc)
++{
++	struct usb_role_switch *sw;
++	int ret;
++
++	if (!desc || !desc->set)
++		return ERR_PTR(-EINVAL);
++
++	sw = kzalloc(sizeof(*sw), GFP_KERNEL);
++	if (!sw)
++		return ERR_PTR(-ENOMEM);
++
++	mutex_init(&sw->lock);
++
++	sw->allow_userspace_control = desc->allow_userspace_control;
++	sw->usb2_port = desc->usb2_port;
++	sw->usb3_port = desc->usb3_port;
++	sw->udc = desc->udc;
++	sw->set = desc->set;
++	sw->get = desc->get;
++
++	sw->dev.parent = parent;
++	sw->dev.class = role_class;
++	sw->dev.type = &usb_role_dev_type;
++	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
++
++	ret = device_register(&sw->dev);
++	if (ret) {
++		put_device(&sw->dev);
++		return ERR_PTR(ret);
++	}
++
++	/* TODO: Symlinks for the host port and the device controller. */
++
++	return sw;
++}
++EXPORT_SYMBOL_GPL(usb_role_switch_register);
++
++/**
++ * usb_role_switch_unregister - Unregsiter USB Role Switch
++ * @sw: USB Role Switch
++ *
++ * Unregister switch that was registered with usb_role_switch_register().
++ */
++void usb_role_switch_unregister(struct usb_role_switch *sw)
++{
++	if (!IS_ERR_OR_NULL(sw))
++		device_unregister(&sw->dev);
++}
++EXPORT_SYMBOL_GPL(usb_role_switch_unregister);
++
++static int __init usb_roles_init(void)
++{
++	role_class = class_create(THIS_MODULE, "usb_role");
++	return PTR_ERR_OR_ZERO(role_class);
++}
++subsys_initcall(usb_roles_init);
++
++static void __exit usb_roles_exit(void)
++{
++	class_destroy(role_class);
++}
++module_exit(usb_roles_exit);
++
++MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
 +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_DESCRIPTION("Intel XHCI USB role switch driver");
-+MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("USB Role Class");
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+new file mode 100644
+index 000000000000..edc51be4a77c
+--- /dev/null
++++ b/include/linux/usb/role.h
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#ifndef __LINUX_USB_ROLE_H
++#define __LINUX_USB_ROLE_H
++
++#include <linux/device.h>
++
++struct usb_role_switch;
++
++enum usb_role {
++	USB_ROLE_NONE,
++	USB_ROLE_HOST,
++	USB_ROLE_DEVICE,
++};
++
++typedef int (*usb_role_switch_set_t)(struct device *dev, enum usb_role role);
++typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
++
++/**
++ * struct usb_role_switch_desc - USB Role Switch Descriptor
++ * @usb2_port: Optional reference to the host controller port device (USB2)
++ * @usb3_port: Optional reference to the host controller port device (USB3)
++ * @udc: Optional reference to the peripheral controller device
++ * @set: Callback for setting the role
++ * @get: Callback for getting the role (optional)
++ * @allow_userspace_control: If true userspace may change the role through sysfs
++ *
++ * @usb2_port and @usb3_port will point to the USB host port and @udc to the USB
++ * device controller behind the USB connector with the role switch. If
++ * @usb2_port, @usb3_port and @udc are included in the description, the
++ * reference count for them should be incremented by the caller of
++ * usb_role_switch_register() before registering the switch.
++ */
++struct usb_role_switch_desc {
++	struct device *usb2_port;
++	struct device *usb3_port;
++	struct device *udc;
++	usb_role_switch_set_t set;
++	usb_role_switch_get_t get;
++	bool allow_userspace_control;
++};
++
++int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
++enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
++struct usb_role_switch *usb_role_switch_get(struct device *dev);
++void usb_role_switch_put(struct usb_role_switch *sw);
++
++struct usb_role_switch *
++usb_role_switch_register(struct device *parent,
++			 const struct usb_role_switch_desc *desc);
++void usb_role_switch_unregister(struct usb_role_switch *sw);
++
++#endif /* __LINUX_USB_ROLE_H */
 -- 
 2.16.1
 
