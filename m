@@ -1,276 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753319AbeCNFWp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 01:22:45 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46654 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753288AbeCNFWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 01:22:43 -0400
-X-Google-Smtp-Source: AG47ELt5qUM4oEcpNdqgwBwLyEy0zvWAEZRrCSb6r5KTtlE9E6C4HXNw0m5vjrmytkPymkAqVGzncg==
-From: Nicolas Boichat <drinkcat@chromium.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        groeck@chromium.org, dtor@chromium.org
-Subject: [PATCH v4] HID: google: add google hammer HID driver
-Date: Wed, 14 Mar 2018 13:22:19 +0800
-Message-Id: <20180314052219.224622-1-drinkcat@chromium.org>
-X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+        id S1753211AbeCNF1D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 01:27:03 -0400
+Received: from mx.socionext.com ([202.248.49.38]:50588 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750816AbeCNF1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 01:27:02 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: linux-arm-kernel@lists.infradead.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] ARM: dts: uniphier: add sound node for UniPhier PXs2
+Date: Wed, 14 Mar 2018 14:26:58 +0900
+Message-Id: <20180314052658.6244-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei-Ning Huang <wnhuang@chromium.org>
+This patch adds audio controller, external codec and simple card node
+of UniPhier AIO sound system for PXs2 SoCs.
 
-Add Google hammer HID driver. This driver allow us to control hammer
-keyboard backlight and support future features.
-
-We add a new HID quirk, that allows us to have the keyboard interface
-to bind to google-hammer driver, while the touchpad interface can
-bind to the multitouch driver.
-
-Signed-off-by: Wei-Ning Huang <wnhuang@google.com>
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 ---
+ arch/arm/boot/dts/uniphier-pxs2-gentil.dts | 24 +++++++++++++
+ arch/arm/boot/dts/uniphier-pxs2-vodka.dts  | 37 ++++++++++++++++++++
+ arch/arm/boot/dts/uniphier-pxs2.dtsi       | 54 ++++++++++++++++++++++++++++++
+ 3 files changed, 115 insertions(+)
 
-Changes since v3:
- - Rebase on latest linux-next/master, which moved the quirk list from
-   hid-core.c to hid-quirks.c. Also, completely rework the logic to make
-   it possible to bind google-hammer driver to keyboard interface, and
-   generic multitouch driver to touchpad interface, as it is much simpler
-   to do now that quirks are read early in hid_add_device.
- - Add dynamic backlight detection support (only such devices have an
-   output HID descriptor).
- - Add support for wand (one more USB product ID).
- - Add SPDX-License-Identifier, fix one minor formatting issue.
-
- drivers/hid/Kconfig             |   6 ++
- drivers/hid/Makefile            |   1 +
- drivers/hid/hid-core.c          |   4 ++
- drivers/hid/hid-google-hammer.c | 116 ++++++++++++++++++++++++++++++++
- drivers/hid/hid-ids.h           |   3 +
- drivers/hid/hid-quirks.c        |   5 ++
- include/linux/hid.h             |   2 +
- 7 files changed, 137 insertions(+)
- create mode 100644 drivers/hid/hid-google-hammer.c
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 1fce4c94e5ac..60252fd796f6 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -339,6 +339,12 @@ config HOLTEK_FF
- 	  Say Y here if you have a Holtek On Line Grip based game controller
- 	  and want to have force feedback support for it.
+diff --git a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
+index d09acb8e59a1..782962749bbf 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
++++ b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
+@@ -34,6 +34,12 @@
+ 		device_type = "memory";
+ 		reg = <0x80000000 0x80000000>;
+ 	};
++
++	sound {
++		compatible = "audio-graph-card";
++		label = "UniPhier PXs2";
++		dais = <&i2s_port2>;
++	};
+ };
  
-+config HID_GOOGLE_HAMMER
-+	tristate "Google Hammer Keyboard"
-+	depends on USB_HID && LEDS_CLASS
-+	---help---
-+	Say Y here if you have a Google Hammer device.
-+
- config HID_GT683R
- 	tristate "MSI GT68xR LED support"
- 	depends on LEDS_CLASS && USB_HID
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index 713601c7bfa6..17a8bd97da9d 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_HID_ELO)		+= hid-elo.o
- obj-$(CONFIG_HID_EZKEY)		+= hid-ezkey.o
- obj-$(CONFIG_HID_GEMBIRD)	+= hid-gembird.o
- obj-$(CONFIG_HID_GFRM)		+= hid-gfrm.o
-+obj-$(CONFIG_HID_GOOGLE_HAMMER)	+= hid-google-hammer.o
- obj-$(CONFIG_HID_GT683R)	+= hid-gt683r.o
- obj-$(CONFIG_HID_GYRATION)	+= hid-gyration.o
- obj-$(CONFIG_HID_HOLTEK)	+= hid-holtek-kbd.o
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 36af26c2565b..61c7d135d680 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2116,6 +2116,10 @@ int hid_add_device(struct hid_device *hdev)
- 		ret = hid_scan_report(hdev);
- 		if (ret)
- 			hid_warn(hdev, "bad device descriptor (%d)\n", ret);
-+
-+		if (hdev->quirks & HID_QUIRK_NO_GENERIC &&
-+				hdev->group == HID_GROUP_GENERIC)
-+			hdev->group = HID_GROUP_GENERIC_OVERRIDE;
- 	}
+ &serial2 {
+@@ -52,6 +58,19 @@
  
- 	/* XXX hack, any other cleaner solution after the driver core
-diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
-new file mode 100644
-index 000000000000..e7ad042a8464
---- /dev/null
-+++ b/drivers/hid/hid-google-hammer.c
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *  HID driver for Google Hammer device.
-+ *
-+ *  Copyright (c) 2017 Google Inc.
-+ *  Author: Wei-Ning Huang <wnhuang@google.com>
-+ */
+ &i2c2 {
+ 	status = "okay";
 +
-+/*
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the Free
-+ * Software Foundation; either version 2 of the License, or (at your option)
-+ * any later version.
-+ */
++	wm8960@1a {
++		compatible = "wlf,wm8960";
++		reg = <0x1a>;
++		#sound-dai-cells = <0>;
 +
-+#include <linux/hid.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/usb.h>
++		port@0 {
++			wm_speaker: endpoint {
++				dai-format = "i2s";
++				remote-endpoint = <&i2s_aux>;
++			};
++		};
++	};
+ };
+ 
+ &eth {
+@@ -64,3 +83,8 @@
+ 		reg = <1>;
+ 	};
+ };
 +
-+#include "hid-ids.h"
++&i2s_aux {
++	dai-format = "i2s";
++	remote-endpoint = <&wm_speaker>;
++};
+diff --git a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
+index 6f13a25b935f..33bcd98c8653 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
++++ b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
+@@ -32,6 +32,35 @@
+ 		device_type = "memory";
+ 		reg = <0x80000000 0x80000000>;
+ 	};
 +
-+#define MAX_BRIGHTNESS 100
++	sound {
++		compatible = "audio-graph-card";
++		label = "UniPhier PXs2";
++		dais = <&spdif_port0
++			&comp_spdif_port0>;
++	};
 +
-+struct hammer_kbd_leds {
-+	struct led_classdev cdev;
-+	struct hid_device *hdev;
-+	u8 buf[2] ____cacheline_aligned;
++	spdif-out {
++		compatible = "linux,spdif-dit";
++		#sound-dai-cells = <0>;
++
++		port@0 {
++			spdif_tx: endpoint {
++				remote-endpoint = <&spdif_hiecout1>;
++			};
++		};
++	};
++
++	comp-spdif-out {
++		compatible = "linux,spdif-dit";
++		#sound-dai-cells = <0>;
++
++		port@0 {
++			comp_spdif_tx: endpoint {
++				remote-endpoint = <&comp_spdif_hiecout1>;
++			};
++		};
++	};
+ };
+ 
+ &serial2 {
+@@ -52,3 +81,11 @@
+ 		reg = <1>;
+ 	};
+ };
++
++&spdif_hiecout1 {
++	remote-endpoint = <&spdif_tx>;
 +};
 +
-+static int hammer_kbd_brightness_set_blocking(struct led_classdev *cdev,
-+		enum led_brightness br)
-+{
-+	struct hammer_kbd_leds *led = container_of(cdev,
-+						   struct hammer_kbd_leds,
-+						   cdev);
-+	int ret;
-+
-+	led->buf[0] = 0;
-+	led->buf[1] = br;
-+
-+	ret = hid_hw_output_report(led->hdev, led->buf, sizeof(led->buf));
-+	if (ret == -ENOSYS)
-+		ret = hid_hw_raw_request(led->hdev, 0, led->buf,
-+					 sizeof(led->buf),
-+					 HID_OUTPUT_REPORT,
-+					 HID_REQ_SET_REPORT);
-+	if (ret < 0)
-+		hid_err(led->hdev, "failed to set keyboard backlight: %d\n",
-+			ret);
-+	return ret;
-+}
-+
-+static int hammer_register_leds(struct hid_device *hdev)
-+{
-+	struct hammer_kbd_leds *kbd_backlight;
-+
-+	kbd_backlight = devm_kzalloc(&hdev->dev,
-+				     sizeof(*kbd_backlight),
-+				     GFP_KERNEL);
-+	if (!kbd_backlight)
-+		return -ENOMEM;
-+
-+	kbd_backlight->hdev = hdev;
-+	kbd_backlight->cdev.name = "hammer::kbd_backlight";
-+	kbd_backlight->cdev.max_brightness = MAX_BRIGHTNESS;
-+	kbd_backlight->cdev.brightness_set_blocking =
-+		hammer_kbd_brightness_set_blocking;
-+	kbd_backlight->cdev.flags = LED_HW_PLUGGABLE;
-+
-+	/* Set backlight to 0% initially. */
-+	hammer_kbd_brightness_set_blocking(&kbd_backlight->cdev, 0);
-+
-+	return devm_led_classdev_register(&hdev->dev, &kbd_backlight->cdev);
-+}
-+
-+static int hammer_input_configured(struct hid_device *hdev,
-+				   struct hid_input *hi)
-+{
-+	struct usb_interface *intf = to_usb_interface(hdev->dev.parent);
-+
-+	struct list_head *report_list =
-+		&hdev->report_enum[HID_OUTPUT_REPORT].report_list;
-+
-+	if (intf->cur_altsetting->desc.bInterfaceProtocol ==
-+	    USB_INTERFACE_PROTOCOL_KEYBOARD && !list_empty(report_list)) {
-+		int err = hammer_register_leds(hdev);
-+
-+		if (err)
-+			hid_warn(hdev,
-+				 "Failed to register keyboard backlight: %d\n",
-+				 err);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct hid_device_id hammer_devices[] = {
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC_OVERRIDE,
-+		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_HAMMER) },
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC_OVERRIDE,
-+		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_STAFF) },
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC_OVERRIDE,
-+		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_WAND) },
-+	{ }
++&comp_spdif_hiecout1 {
++	remote-endpoint = <&comp_spdif_tx>;
 +};
-+MODULE_DEVICE_TABLE(hid, hammer_devices);
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 18f336e64036..d64ca9d0aef1 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -227,6 +227,60 @@
+ 						     <21 217 3>;
+ 		};
+ 
++		audio@56000000 {
++			compatible = "socionext,uniphier-pxs2-aio";
++			reg = <0x56000000 0x80000>;
++			interrupts = <0 144 4>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_ain1>,
++				    <&pinctrl_ain2>,
++				    <&pinctrl_ainiec1>,
++				    <&pinctrl_aout2>,
++				    <&pinctrl_aout3>,
++				    <&pinctrl_aoutiec1>,
++				    <&pinctrl_aoutiec2>;
++			clock-names = "aio";
++			clocks = <&sys_clk 40>;
++			reset-names = "aio";
++			resets = <&sys_rst 40>;
++			#sound-dai-cells = <1>;
 +
-+static struct hid_driver hammer_driver = {
-+	.name = "hammer",
-+	.id_table = hammer_devices,
-+	.input_configured = hammer_input_configured,
-+};
-+module_hid_driver(hammer_driver);
++			i2s_port0: port@0 {
++				i2s_hdmi: endpoint {
++				};
++			};
 +
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 41f227a841fb..5a3a7ead3012 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -448,7 +448,10 @@
- #define USB_DEVICE_ID_GOODTOUCH_000f	0x000f
- 
- #define USB_VENDOR_ID_GOOGLE		0x18d1
-+#define USB_DEVICE_ID_GOOGLE_HAMMER	0x5022
- #define USB_DEVICE_ID_GOOGLE_TOUCH_ROSE	0x5028
-+#define USB_DEVICE_ID_GOOGLE_STAFF	0x502b
-+#define USB_DEVICE_ID_GOOGLE_WAND	0x502d
- 
- #define USB_VENDOR_ID_GOTOP		0x08f2
- #define USB_DEVICE_ID_SUPER_Q2		0x007f
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index 587e2681a53f..d112a14da200 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -84,6 +84,11 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_FREESCALE, USB_DEVICE_ID_FREESCALE_MX28), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_FUTABA, USB_DEVICE_ID_LED_DISPLAY), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_GREENASIA, USB_DEVICE_ID_GREENASIA_DUAL_USB_JOYPAD), HID_QUIRK_MULTI_INPUT },
-+#if IS_ENABLED(CONFIG_HID_GOOGLE_HAMMER)
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_HAMMER), HID_QUIRK_NO_GENERIC },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_STAFF), HID_QUIRK_NO_GENERIC },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_WAND), HID_QUIRK_NO_GENERIC },
-+#endif
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HAPP, USB_DEVICE_ID_UGCI_DRIVING), HID_QUIRK_BADPAD | HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HAPP, USB_DEVICE_ID_UGCI_FIGHTING), HID_QUIRK_BADPAD | HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HAPP, USB_DEVICE_ID_UGCI_FLYING), HID_QUIRK_BADPAD | HID_QUIRK_MULTI_INPUT },
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index dfea5a656a1a..f2655265f8b5 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -340,6 +340,7 @@ struct hid_item {
- #define HID_QUIRK_NO_EMPTY_INPUT		0x00000100
- /* 0x00000200 reserved for backward compatibility, was NO_INIT_INPUT_REPORTS */
- #define HID_QUIRK_ALWAYS_POLL			0x00000400
-+#define HID_QUIRK_NO_GENERIC			0x00000800
- #define HID_QUIRK_SKIP_OUTPUT_REPORTS		0x00010000
- #define HID_QUIRK_SKIP_OUTPUT_REPORT_ID		0x00020000
- #define HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP	0x00040000
-@@ -359,6 +360,7 @@ struct hid_item {
- #define HID_GROUP_MULTITOUCH			0x0002
- #define HID_GROUP_SENSOR_HUB			0x0003
- #define HID_GROUP_MULTITOUCH_WIN_8		0x0004
-+#define HID_GROUP_GENERIC_OVERRIDE		0x0005
- 
- /*
-  * Vendor specific HID device groups
++			i2s_port1: port@1 {
++				i2s_line: endpoint {
++				};
++			};
++
++			i2s_port2: port@2 {
++				i2s_aux: endpoint {
++				};
++			};
++
++			spdif_port0: port@3 {
++				spdif_hiecout1: endpoint {
++				};
++			};
++
++			spdif_port1: port@4 {
++				spdif_iecout1: endpoint {
++				};
++			};
++
++			comp_spdif_port0: port@5 {
++				comp_spdif_hiecout1: endpoint {
++				};
++			};
++
++			comp_spdif_port1: port@6 {
++				comp_spdif_iecout1: endpoint {
++				};
++			};
++		};
++
+ 		i2c0: i2c@58780000 {
+ 			compatible = "socionext,uniphier-fi2c";
+ 			status = "disabled";
 -- 
-2.16.2.804.g6dcf76e118-goog
+2.16.1
