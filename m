@@ -1,152 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCNWFL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:05:11 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:60831 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeCNWFJ (ORCPT
+        id S1751791AbeCNWJO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:09:14 -0400
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:33181 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeCNWJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:05:09 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>, Stephen Boyd <sboyd@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH] [v2] y2038: introduce struct __kernel_old_timeval
-Date: Wed, 14 Mar 2018 23:04:15 +0100
-Message-Id: <20180314220452.3453973-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <CAK8P3a1PGEk2WDQU8i7H64Cw4dmYaJ-6vPLzW_2o23PTgm74JA@mail.gmail.com>
-References: <CAK8P3a1PGEk2WDQU8i7H64Cw4dmYaJ-6vPLzW_2o23PTgm74JA@mail.gmail.com>
-X-Provags-ID: V03:K0:3r9r2Mvb3wmSwqgjnM6akqV4jZ1JR4UhvfovsrY+BXw+n0Gw+Lt
- kfoJwf5MYeASIegQg/nJMWy0e0G0wiVfIt4z6k8M2ynjtlbHOAkB4mxJ+BlgeV2GUUUqOJ7
- 2gYsEtV72//HBEm83CCxP0qmiLzuLl52BTdby9PdA76M3f+dsNq1Adh+co4NSahyRsDonCn
- ErWB7SgP8CLpYvLTLs6/A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rmjoqT+W36Q=:ejQQQnEpO05apqcmqu8/MQ
- Z0H0/fCcI8I64wiu9SK+t4pDobbWEErrKevrY5DVf1x8oXxPi+FstDO+slXp1apcyxX/YMAYh
- S0PVOiYslHcxTeQUlEuZ6gudhdaB8i9xn0CKXkaWVWgw1LtkM+m24ncW2zQQSsmUcPhSr4dfu
- zfdVhNthgnKm2YMResSqzBazTBGmynE8EXMuVuZVhjmnVKUBCZPlB5MAelHa0sv17GON+xKfW
- VhRMInv01PkNTkeIPHSYtQUCYrJ3mw2a9mVEqKH+UslfWO3FslYhAd2lV4F884bJ5IcBJMwig
- l+k1iaieU2dWA61Ujo5gr8b+CXkwCggh7TicNYkk68AKJF5O8qgHjumA1W63Lewf/COsLDZme
- VXBPKyNWbUXeB3FBbv2wBQc9Kvh4mDfUlMSDa7Zd2cPnWpkodKSjuOSzdHxfbyVqYGtbnsu6y
- XZOQLu1aVdLGYPFzAOZjIuzu5umN0OKiC1N02GVFm2TiFsX25z9v8b2BabbSScyz2wX/AoQgV
- nckkUn9/TRN8l9ef63FrHvzpREfP0emmhtsze5Sc2HNZ3yVXLccWKPNa4qqMhD7kP0lxgIMHG
- dIj/tXuH6Xi2bVZW6bnXcZWeiCqkUNcz8/CijxZ+aQSnxmDheFAdzyGvPTCp1ln+bBWLqh7S5
- 2BYeBkH3T10ZUB67i/SG6Q0jlpnk+xxNzeZv7EmCed3jll8JEyMLOQfWuqus983vATodzDLKG
- u/TN7ejQ/CWnDqzBr6NKuGq2RxFizfSkLH7sNw==
+        Wed, 14 Mar 2018 18:09:12 -0400
+X-Google-Smtp-Source: AG47ELvX8a1ETkJbLqjVHcNakCkubl15kBQrAwJAAo53XNPpsE8lXexffedF7eP5u8cYojlLU7K5jQ==
+Date: Wed, 14 Mar 2018 15:09:09 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, cl@linux.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] percpu: Allow to kill tasks doing pcpu_alloc() and
+ waiting for pcpu_balance_workfn()
+Message-ID: <20180314220909.GE2943022@devbig577.frc2.facebook.com>
+References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
+ <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dealing with 'struct timeval' users in the y2038 series is a bit tricky:
+Hello, Andrew.
 
-We have two definitions of timeval that are visible to user space,
-one comes from glibc (or some other C library), the other comes from
-linux/time.h. The kernel copy is what we want to be used for a number of
-structures defined by the kernel itself, e.g. elf_prstatus (used it core
-dumps), sysinfo and rusage (used in system calls).  These generally tend
-to be used for passing time intervals rather than absolute (epoch-based)
-times, so they do not suffer from the y2038 overflow. Some of them
-could be changed to use 64-bit timestamps by creating new system calls,
-others like the core files cannot easily be changed.
+On Wed, Mar 14, 2018 at 01:56:31PM -0700, Andrew Morton wrote:
+> It would benefit from a comment explaining why we're doing this (it's
+> for the oom-killer).
 
-An application using these interfaces likely also uses gettimeofday()
-or other interfaces that use absolute times, and pass 'struct timeval'
-pointers directly into kernel interfaces, so glibc must redefine their
-timeval based on a 64-bit time_t when they introduce their y2038-safe
-interfaces.
+Will add.
 
-The only reasonable way forward I see is to remove the 'timeval'
-definion from the kernel's uapi headers, and change the interfaces that
-we do not want to (or cannot) duplicate for 64-bit times to use a new
-__kernel_old_timeval definition instead. This type should be avoided
-for all new interfaces (those can use 64-bit nanoseconds, or the 64-bit
-version of timespec instead), and should be used with great care when
-converting existing interfaces from timeval, to be sure they don't suffer
-from the y2038 overflow, and only with consensus for the particular user
-that using __kernel_old_timeval is better than moving to a 64-bit based
-interface. The structure name is intentionally chosen to not conflict
-with user space types, and to be ugly enough to discourage its use.
+> My memory is weak and our documentation is awful.  What does
+> mutex_lock_killable() actually do and how does it differ from
+> mutex_lock_interruptible()?  Userspace tasks can run pcpu_alloc() and I
 
-Note that ioctl based interfaces that pass a bare 'timeval' pointer
-cannot change to '__kernel_old_timeval' because the user space source
-code refers to 'timeval' instead, and we don't want to modify the user
-space sources if possible. However, any application that relies on a
-structure to contain an embedded 'timeval' (e.g. by passing a pointer
-to the member into a function call that expects a timeval pointer) is
-broken when that structure gets converted to __kernel_old_timeval. I
-don't see any way around that, and we have to rely on the compiler to
-produce a warning or compile failure that will alert users when they
-recompile their sources against a new libc.
+IIRC, killable listens only to SIGKILL.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: update for Ingo's comments
----
- include/linux/time32.h    |  1 +
- include/uapi/linux/time.h | 12 ++++++++++++
- kernel/time/time.c        | 12 ++++++++++++
- 3 files changed, 25 insertions(+)
+> wonder if there's any way in which a userspace-delivered signal can
+> disrupt another userspace task's memory allocation attempt?
 
-diff --git a/include/linux/time32.h b/include/linux/time32.h
-index 100411c979be..0b14f936100a 100644
---- a/include/linux/time32.h
-+++ b/include/linux/time32.h
-@@ -205,5 +205,6 @@ static inline s64 timeval_to_ns(const struct timeval *tv)
-  * Returns the timeval representation of the nsec parameter.
-  */
- extern struct timeval ns_to_timeval(const s64 nsec);
-+extern struct __kernel_old_timeval ns_to_kernel_old_timeval(s64 nsec);
- 
- #endif
-diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
-index 4ed5bd3a3145..44c994c8755e 100644
---- a/include/uapi/linux/time.h
-+++ b/include/uapi/linux/time.h
-@@ -50,6 +50,18 @@ struct __kernel_timespec {
- #endif
- 
- /*
-+ * legacy timeval structure, only embedded in structures that
-+ * traditionally used 'timeval' to pass time intervals (not absolute
-+ * times). Do not add new users. If user space fails to compile
-+ * here, this is probably because it is not y2038 safe and needs to
-+ * be changed to use another interface.
-+ */
-+struct __kernel_old_timeval {
-+	__kernel_long_t tv_sec;			/* seconds */
-+	__kernel_long_t tv_usec;		/* microseconds */
-+};
-+
-+/*
-  * The IDs of the various system clocks (for POSIX.1b interval timers):
-  */
- #define CLOCK_REALTIME			0
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 5db8f15ec056..6fa99213fc72 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -486,6 +486,18 @@ struct timeval ns_to_timeval(const s64 nsec)
- }
- EXPORT_SYMBOL(ns_to_timeval);
- 
-+struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec)
-+{
-+	struct timespec64 ts = ns_to_timespec64(nsec);
-+	struct __kernel_old_timeval tv;
-+
-+	tv.tv_sec = ts.tv_sec;
-+	tv.tv_usec = (suseconds_t)ts.tv_nsec / 1000;
-+
-+	return tv;
-+}
-+EXPORT_SYMBOL(ns_to_kernel_old_timeval);
-+
- /**
-  * set_normalized_timespec - set timespec sec and nsec parts and normalize
-  *
+Hmm... maybe.  Just honoring SIGKILL *should* be fine but the alloc
+failure paths might be broken, so there are some risks.  Given that
+the cases where userspace tasks end up allocation percpu memory is
+pretty limited and/or priviledged (like mount, bpf), I don't think the
+risks are high tho.
+
+Thanks.
+
 -- 
-2.9.0
+tejun
