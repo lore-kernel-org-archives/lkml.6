@@ -1,200 +1,116 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520648864; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AG47ELuUqwWnmnRC5kjoNF5ZqgHCDBo1JQ+T61SKzqxUe0rC8tQWU8koRBRREYISorHPeHOfHniF
+ARC-Seal: i=1; a=rsa-sha256; t=1521030537; cv=none;
         d=google.com; s=arc-20160816;
-        b=scN25pdL29YGXOqW3cSRh8hKWatpPglEI2enK4iVxQEkHQIlq8Ys902ja3XCo50DzO
-         b2YN89JYjZ+rJVspN/IY18YJXnGMWTi0N4oFO5NswEoIxUjqQGP8Hq6sSCrqfepOKQEw
-         8uieTxubnljJGdSEzTkS0YSSuf7bLhjus5FMTlk5GeEnwFsEituq7S98tRV2tcP6etDB
-         7m5EkLqYGiZos7YBCVu2Fm2tHxKg08AS7/13Xfw6tJmJAiz/G/lmtnWTKdtaqXhDXIzz
-         +VDc1T4sKx65rEN78+H+nBt57gPch+Yi08vT+OUN4ucXHgs4rsbpQOvwcwudpq6tdiQU
-         qXFw==
+        b=KR2krWAw/qJGGUpD0wC75hYQfYZxE4YBFbaw/tsLSI3Q2Wy1fImZAfavetMUGxiCD2
+         H3Fxu8GQOnTXUzhPSb+RO7ugHAbB2BLp11luujf+bwg8ncyIL2SwxR76U0D929j2jLzF
+         0Qbo5my3STG1Et1IBLbkb+MOP5V7BKhWasLOGObrVyKmsZGxnAzHU9GL3tI1uZVlBGsc
+         ewBkLNyoB3Su3ZZ7NWZSkNeP5CWIPvB4L7RtYEb7449FM/kC6f49DkynWE9VHNog8Z5V
+         /uLmaX/sxzDC0Opmr6bGegjqJKE5EGWZeE7SkqwXCOW/IAEP9KcZKW9d8LI4ArgOfeeX
+         tx/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=qNkPjCX+uXERSiiJcnrRkyTt+6mEj36twYioni/4PQA=;
-        b=Kg/mgerL67XjlPa5hOjVdVImFRhWpFlV8Eso0uPEUQCcx1PCP1BUBeXbYg5iKQPIiG
-         h5YaZYT02ZNmYy4CRMqCm6oyMfGTDA3+RpA4O945542nvOB2b0ZktJgTnYNcEzULOXxp
-         cqRr+UCx/98/HCkq+qOmfwbA1vukKEJjUPtUCey4YOBbm5oxZP8AwoHxl50RgT4mj2HN
-         OnX0jCkSMCJTtXYU1PpS1ngo326vLi8Yi2y/nV9mqKJe8YjzBaW+9fJvoLmzRfjsq2Cv
-         mqhxCxNYGUiuAHn3swLPiJkJ9BVzi93aSO9GljNLSfiZ0dKTQWUM/fGqCl26Q7h/o4R3
-         rx2Q==
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=fAdt+ThUDlVpQ+8DE2qX4IN8J8X48OsjpAISPGOV3mw=;
+        b=t29Shx4Izbm7NtfbMeCxz/oN7OQFJ5tt6sl0xTRcDRhzAL87eRMoIHfm8NDnU2x2cQ
+         euv/NS6XmRsQZmWY5cziykY2KORcZEBZZOwHb6koxBSg5FeNpQq23CAkC+/z8H1R1qxE
+         GKJpoKkmewEFN4MMScWTuP/ATLxeCVyRlr2oUHjul2jIjXHfv8iLAMGFkE5/7HgykHNH
+         7sJBmw6vggizDPxdFvCBG+DM3TUwC2xzS6Q2Wz4sLzSKaNNmYa7FrBWGcYv7DqBcpQUP
+         etT/tdpfOF+lgnvh9WfLan5GaLs1Tn7e6WNj0cSuE8aiqbPGJ2n/A1bvubNCzBjR+nOw
+         fkeA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=EfuE7YIu;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=EfuE7YIu;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELvcHRPll3fB3NZpyqylGA1TtthgUW21M2//bM/3cxX35QqQAUXzLjHx5yTI9+C3Niek+F1MPQ==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	bgoswami@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	srinivas.kandagatla@linaro.org
-Subject: [PATCH v4 01/24] soc: qcom dt-bindings: Add APR bus bindings
-Date: Sat, 10 Mar 2018 02:24:33 +0000
-Message-Id: <20180310022456.26739-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180310022456.26739-1-srinivas.kandagatla@linaro.org>
-References: <20180310022456.26739-1-srinivas.kandagatla@linaro.org>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Wed, 14 Mar 2018 05:28:01 -0700
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Andy Whitcroft <tipbot@zytor.com>
+Message-ID: <tip-a14bff131108faf50cc0cf864589fd71ee216c96@git.kernel.org>
+Cc: hpa@zytor.com, dave.hansen@linux.intel.com, arjan@linux.intel.com,
+        mingo@kernel.org, dwmw@amazon.co.uk, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, apw@canonical.com, bp@alien8.de,
+        luto@kernel.org, dan.j.williams@intel.com, jpoimboe@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, tglx@linutronix.de,
+        dan.j.williams@intel.com, bp@alien8.de, torvalds@linux-foundation.org,
+        apw@canonical.com, luto@kernel.org, dwmw@amazon.co.uk,
+        gregkh@linuxfoundation.org, mingo@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, arjan@linux.intel.com
+In-Reply-To: <20180314112427.22351-1-apw@canonical.com>
+References: <20180314112427.22351-1-apw@canonical.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation, objtool: Annotate indirect
+ calls/jumps for objtool on 32-bit kernels
+Git-Commit-ID: a14bff131108faf50cc0cf864589fd71ee216c96
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594515903348456348?=
-X-GMAIL-MSGID: =?utf-8?q?1594515903348456348?=
+X-GMAIL-THRID: =?utf-8?q?1594916116672090070?=
+X-GMAIL-MSGID: =?utf-8?q?1594916116672090070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Commit-ID:  a14bff131108faf50cc0cf864589fd71ee216c96
+Gitweb:     https://git.kernel.org/tip/a14bff131108faf50cc0cf864589fd71ee216c96
+Author:     Andy Whitcroft <apw@canonical.com>
+AuthorDate: Wed, 14 Mar 2018 11:24:27 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 14 Mar 2018 13:24:31 +0100
 
-This patch add dt bindings for Qualcomm APR (Asynchronous Packet Router)
-bus driver. This bus is used for communicating with DSP which provides
-audio and various other services to cpu.
+x86/speculation, objtool: Annotate indirect calls/jumps for objtool on 32-bit kernels
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In the following commit:
+
+  9e0e3c5130e9 ("x86/speculation, objtool: Annotate indirect calls/jumps for objtool")
+
+... we added annotations for CALL_NOSPEC/JMP_NOSPEC on 64-bit x86 kernels,
+but we did not annotate the 32-bit path.
+
+Annotate it similarly.
+
+Signed-off-by: Andy Whitcroft <apw@canonical.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180314112427.22351-1-apw@canonical.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- .../devicetree/bindings/soc/qcom/qcom,apr.txt      | 85 ++++++++++++++++++++++
- include/dt-bindings/soc/qcom,apr.h                 | 27 +++++++
- 2 files changed, 112 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
- create mode 100644 include/dt-bindings/soc/qcom,apr.h
+ arch/x86/include/asm/nospec-branch.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-new file mode 100644
-index 000000000000..6071a9038b4b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -0,0 +1,85 @@
-+Qualcomm APR (Asynchronous Packet Router) binding
-+
-+This binding describes the Qualcomm APR. APR is a IPC protocol for
-+communication between Application processor and QDSP. APR is mainly
-+used for audio/voice services on the QDSP.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,apr-v<VERSION-NUMBER>", example "qcom,apr-v2"
-+
-+- qcom,apr-dest-domain-id
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: Destination processor ID.
-+	Possible values are :
-+			1 - APR simulator
-+			2 - PC
-+			3 - MODEM
-+			4 - ADSP
-+			5 - APPS
-+			6 - MODEM2
-+			7 - APPS2
-+
-+= APR SERVICES
-+Each subnode of the APR node represents service tied to this apr. The name
-+of the nodes are not important. The properties of these nodes are defined
-+by the individual bindings for the specific service
-+- All APR services MUST contain the following property:
-+
-+- qcom,apr-svc-id
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: APR Service ID, used for matching the service.
-+	Possible values are :
-+			3 - DSP Core Service
-+			4 - Audio Front End Service.
-+			5 - Voice Stream Manager Service.
-+			6 - Voice processing manager.
-+			7 - Audio Stream Manager Service.
-+			8 - Audio Device Manager Service.
-+			9 - Multimode voice manager.
-+			10 - Core voice stream.
-+			11 - Core voice processor.
-+			12 - Ultrasound stream manager.
-+			13 - Listen stream manager.
-+
-+- qcom,apr-svc-name
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: User readable name of a APR service.
-+
-+= EXAMPLE
-+The following example represents a QDSP based sound card on a MSM8996 device
-+which uses apr as communication between Apps and QDSP.
-+
-+	apr {
-+		compatible = "qcom,apr-v2";
-+		qcom,smd-channels = "apr_audio_svc";
-+		qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
-+
-+		q6core {
-+			compatible = "qcom,q6core";
-+			qcom,apr-svc-name = "CORE";
-+			qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
-+		};
-+
-+		q6afe {
-+			compatible = "qcom,q6afe";
-+			qcom,apr-svc-name = "AFE";
-+			qcom,apr-svc-id = <APR_SVC_AFE>;
-+		};
-+
-+		q6asm {
-+			compatible = "qcom,q6asm";
-+			qcom,apr-svc-name = "ASM";
-+			qcom,apr-svc-id = <APR_SVC_ASM>;
-+		};
-+
-+		q6adm {
-+			compatible = "qcom,q6adm";
-+			qcom,apr-svc-name = "ADM";
-+			qcom,apr-svc-id = <APR_SVC_ADM>;
-+		};
-+	};
-diff --git a/include/dt-bindings/soc/qcom,apr.h b/include/dt-bindings/soc/qcom,apr.h
-new file mode 100644
-index 000000000000..905503f81885
---- /dev/null
-+++ b/include/dt-bindings/soc/qcom,apr.h
-@@ -0,0 +1,27 @@
-+#ifndef __DT_BINDINGS_QCOM_APR_H
-+#define __DT_BINDINGS_QCOM_APR_H
-+
-+/* Domain IDs */
-+#define APR_DOMAIN_SIM		0x1
-+#define APR_DOMAIN_PC		0x2
-+#define APR_DOMAIN_MODEM	0x3
-+#define APR_DOMAIN_ADSP		0x4
-+#define APR_DOMAIN_APPS		0x5
-+#define APR_DOMAIN_MAX		0x6
-+
-+/* ADSP service IDs */
-+#define APR_SVC_ADSP_CORE	0x3
-+#define APR_SVC_AFE		0x4
-+#define APR_SVC_VSM		0x5
-+#define APR_SVC_VPM		0x6
-+#define APR_SVC_ASM		0x7
-+#define APR_SVC_ADM		0x8
-+#define APR_SVC_ADSP_MVM	0x09
-+#define APR_SVC_ADSP_CVS	0x0A
-+#define APR_SVC_ADSP_CVP	0x0B
-+#define APR_SVC_USM		0x0C
-+#define APR_SVC_LSM		0x0D
-+#define APR_SVC_VIDC		0x16
-+#define APR_SVC_MAX		0x17
-+
-+#endif /* __DT_BINDINGS_QCOM_APR_H */
--- 
-2.15.1
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index b7063cfa19f9..b3996d60f981 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -183,7 +183,10 @@
+  * otherwise we'll run out of registers. We don't care about CET
+  * here, anyway.
+  */
+-# define CALL_NOSPEC ALTERNATIVE("call *%[thunk_target]\n",	\
++# define CALL_NOSPEC						\
++	ALTERNATIVE(						\
++	ANNOTATE_RETPOLINE_SAFE					\
++	"call *%[thunk_target]\n",				\
+ 	"       jmp    904f;\n"					\
+ 	"       .align 16\n"					\
+ 	"901:	call   903f;\n"					\
