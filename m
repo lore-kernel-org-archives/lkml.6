@@ -1,139 +1,340 @@
-Return-Path: <rjw@rjwysocki.net>
-X-Google-Smtp-Source: AG47ELukxr0DoyGZC20zUiIA4/IGTpRIw4B7G9Z4oRSSDBtI2Y43Rkzm4U4vUYAp8EKKo32V9s78
-ARC-Seal: i=1; a=rsa-sha256; t=1521455216; cv=none;
+Return-Path: <john.garry@huawei.com>
+X-Google-Smtp-Source: AG47ELsSMu56sAcLoGgI+vTaXzfZNgF7zjH4QGDyWnmhY8ReO7BZESDblZerSEFqy3NVNCkNJWMR
+ARC-Seal: i=1; a=rsa-sha256; t=1521051429; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZpNy1jvydh1b8fFYUnf/+/Z/OOK4zpPGYLtWbf5XL4RUHFBq61E30lRBVaWpQ8H1xN
-         R8sZ8iOkLAilwd0b19GDY8EfnNW2puNV3YEzz9aqdiW8xNOC/dT4j27H85Ps1cG04Vb1
-         WUKi9cOc+bwb4VIMJ1tLO9pCIdCwp7+c9IvjPfbTRXTUv7Y09NYVUcfU/t19Hz13IK5/
-         3uKR2HzbTL6+dhYw3Bcwn8PHi8juGuN4sSFJs9JMz5CccEbpkMHsxZjoHrLA/WWyTDdu
-         rkuqkIYeVLFSBs6hssK0wXoUSN5jFkVbfbAw7mDffCCmiaQ7cY+UUvGTCM0K/9SGxOGC
-         H8VA==
+        b=0sfkBCewTVtjlxSBG/tKuL9A5e3ItBF/54GaYQlcJzl6pnXZBng5GUMgu/cDNq6xUZ
+         hURWvIOjWgdZzCSrAOS50P9dsPrWkZSsce54bgC/8kHzfaWIP4zZQcJ3q7TBcYstBwvO
+         sUB047ILB0XZmaX4uZwRKaWzOAjl/Szzc+BpPeeOoDPUAy5aYl54JK7GcQSTHc3xgrEa
+         Pkprx/TrRe9VmacBoZ8OZsmomhR0EPqA+eaFFt8LnJTEfidgqik19twlpHII3JWMLCOJ
+         CrMHbs3X8Ww0p5u12+/Zmu7+WwXGeznzmw6rAaa3k6wSj+cn+/fF0XGfMoQOOJFCJIIi
+         BIWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=+H/UPr0WyFzx6374aNxj69SIsgWovWtkEHgBUpx0v1Y=;
-        b=JaMyfsmCnNQRla0BNncJPj4dybsr8BYpNi3xt3RJuLBT2083SilXBfRLCKrM2ums0e
-         MGuVLcyaGttkCvYkmrD9UmTA858vH0fi6LgIxsvQi016LwhFcVKyhniyJ+ytGMc5UaDI
-         ANtqd4bPidNt7DL2dEJxzO8tgSKt9Q/wkmD6qQ+3XAeBPz21dcUESQISJJR432zBREuS
-         6I+6g9CqHILs+nvWZa0waJWb4KGWZeL6xsuBswEc3Ld/gpYtbxAzbWBm/1ZSrsovjaV/
-         dkDUK0xS4f5aceQufSCDLo6cHYUsHIa4ohYr+0CiRGqUIS0l0zadMKP4QdYArqfTzQ+q
-         2zHQ==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=u5tlPEl92qBaHHaVFmr0JXx5hr8xJngcDkNjXZTR7aY=;
+        b=aShumHQ9cRC4S+IJKK3btCoFQ51pGiWeT6vGCOCitxpLC4+ZuonaB2yX06aB2DLxZ9
+         6wyTevzd32WDai2fDTx1qEDx0AVLSTVzeJX1vlsh1XPysyYxkJ5tZHa87HljQQ3C5ueT
+         yUP/gckvCuH+NPvseISzrUXN+DvSzOo7qklw327mbEmk7hFpZk+qXAKsl0+XRxN2Ypba
+         EL+7rmypmAwAarIovgXjR9Aaso1ZtIB5KEaqZM36Aa2GYXaPXr//3gzonAKywyZqt9K8
+         dJj+LoVOtI2pZRqE2yi5Fc/drdKnC58c0kxjkmWPzQc5QP6g5F493XGHZmk/e9x675fs
+         pfmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: John Garry <john.garry@huawei.com>
-Cc: mika.westerberg@linux.intel.com, rafael@kernel.org, lorenzo.pieralisi@arm.com, hanjun.guo@linaro.org, robh+dt@kernel.org, bhelgaas@google.com, arnd@arndb.de, mark.rutland@arm.com, olof@lixom.net, dann.frazier@canonical.com, andy.shevchenko@gmail.com, robh@kernel.org, andriy.shevchenko@linux.intel.com, joe@perches.com, benh@kernel.crashing.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, minyard@acm.org, devicetree@vger.kernel.org, linux-arch@vger.kernel.org, rdunlap@infradead.org, gregkh@linuxfoundation.org, akpm@linux-foundation.org, frowand.list@gmail.com, agraf@suse.de
-Subject: Re: [PATCH v17 07/10] ACPI / scan: rename acpi_is_serial_bus_slave() to widen use
-Date: Mon, 19 Mar 2018 11:27:25 +0100
-Message-ID: <2268663.His4AzxF9G@aspire.rjw.lan>
-In-Reply-To: <1521051359-34473-8-git-send-email-john.garry@huawei.com>
-References: <1521051359-34473-1-git-send-email-john.garry@huawei.com> <1521051359-34473-8-git-send-email-john.garry@huawei.com>
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
+From: John Garry <john.garry@huawei.com>
+To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
+	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
+	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
+	<andy.shevchenko@gmail.com>, <robh@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>
+CC: <joe@perches.com>, <benh@kernel.crashing.org>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
+	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
+Subject: [PATCH v17 09/10] HISI LPC: Add ACPI support
+Date: Thu, 15 Mar 2018 02:15:58 +0800
+Message-ID: <1521051359-34473-10-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
+References: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594938018736460891?=
-X-GMAIL-MSGID: =?utf-8?q?1595361425046792390?=
+X-GMAIL-THRID: =?utf-8?q?1594938023495568657?=
+X-GMAIL-MSGID: =?utf-8?q?1594938023495568657?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wednesday, March 14, 2018 7:15:56 PM CET John Garry wrote:
-> Currently the ACPI scan has special handling for serial bus
-> slaves, in that it makes it the responsibility of the the slave
-> device's parent to enumerate the device.
-> 
-> To support in future other types of slave devices which require
-> the same special handling, but where the bus is not strictly a
-> serial bus - such as devices on the HiSilicon LPC controller bus -
-> rename acpi_is_serial_bus_slave() to
-> acpi_device_enumeration_by_parent(), so that the name can fit the
-> wider purpose.
-> 
-> Associated device flag acpi_device_flags.serial_bus_slave is also
-> renamed to .enumeration_by_parent.
-> 
-> Signed-off-by: John Garry <john.garry@huawei.com>
+Based on the previous patches, this patch supports the
+LPC host on hip06/hip07 for ACPI FW.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+It is the responsibility of the LPC host driver to
+enumerate the child devices, as the ACPI scan code will
+not enumerate children of "indirect IO" hosts.
 
-> ---
->  drivers/acpi/scan.c     | 19 ++++++++++---------
->  include/acpi/acpi_bus.h |  2 +-
->  2 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index 8e63d93..f9e7904 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1524,7 +1524,7 @@ static int acpi_check_serial_bus_slave(struct acpi_resource *ares, void *data)
->  	return -1;
->  }
->  
-> -static bool acpi_is_serial_bus_slave(struct acpi_device *device)
-> +static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
->  {
->  	struct list_head resource_list;
->  	bool is_serial_bus_slave = false;
-> @@ -1560,7 +1560,8 @@ void acpi_init_device_object(struct acpi_device *device, acpi_handle handle,
->  	acpi_bus_get_flags(device);
->  	device->flags.match_driver = false;
->  	device->flags.initialized = true;
-> -	device->flags.serial_bus_slave = acpi_is_serial_bus_slave(device);
-> +	device->flags.enumeration_by_parent =
-> +		acpi_device_enumeration_by_parent(device);
->  	acpi_device_clear_enumerated(device);
->  	device_initialize(&device->dev);
->  	dev_set_uevent_suppress(&device->dev, true);
-> @@ -1858,10 +1859,10 @@ static acpi_status acpi_bus_check_add(acpi_handle handle, u32 lvl_not_used,
->  static void acpi_default_enumeration(struct acpi_device *device)
->  {
->  	/*
-> -	 * Do not enumerate SPI/I2C/UART slaves as they will be enumerated by
-> -	 * their respective parents.
-> +	 * Do not enumerate devices with enumeration_by_parent flag set as
-> +	 * they will be enumerated by their respective parents.
->  	 */
-> -	if (!device->flags.serial_bus_slave) {
-> +	if (!device->flags.enumeration_by_parent) {
->  		acpi_create_platform_device(device, NULL);
->  		acpi_device_set_enumerated(device);
->  	} else {
-> @@ -1958,7 +1959,7 @@ static void acpi_bus_attach(struct acpi_device *device)
->  		return;
->  
->  	device->flags.match_driver = true;
-> -	if (ret > 0 && !device->flags.serial_bus_slave) {
-> +	if (ret > 0 && !device->flags.enumeration_by_parent) {
->  		acpi_device_set_enumerated(device);
->  		goto ok;
->  	}
-> @@ -1967,10 +1968,10 @@ static void acpi_bus_attach(struct acpi_device *device)
->  	if (ret < 0)
->  		return;
->  
-> -	if (!device->pnp.type.platform_id && !device->flags.serial_bus_slave)
-> -		acpi_device_set_enumerated(device);
-> -	else
-> +	if (device->pnp.type.platform_id || device->flags.enumeration_by_parent)
->  		acpi_default_enumeration(device);
-> +	else
-> +		acpi_device_set_enumerated(device);
->  
->   ok:
->  	list_for_each_entry(child, &device->children, node)
-> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> index c9608b0..ba4dd54 100644
-> --- a/include/acpi/acpi_bus.h
-> +++ b/include/acpi/acpi_bus.h
-> @@ -215,7 +215,7 @@ struct acpi_device_flags {
->  	u32 of_compatible_ok:1;
->  	u32 coherent_dma:1;
->  	u32 cca_seen:1;
-> -	u32 serial_bus_slave:1;
-> +	u32 enumeration_by_parent:1;
->  	u32 reserved:19;
->  };
->  
-> 
+The ACPI table for the LPC host controller and the child
+devices is in the following format:
+  Device (LPC0) {
+    Name (_HID, "HISI0191")  // HiSi LPC
+    Name (_CRS, ResourceTemplate () {
+      Memory32Fixed (ReadWrite, 0xa01b0000, 0x1000)
+    })
+  }
+
+  Device (LPC0.IPMI) {
+    Name (_HID, "IPI0001")
+    Name (LORS, ResourceTemplate() {
+      QWordIO (
+        ResourceConsumer,
+	MinNotFixed,     // _MIF
+	MaxNotFixed,     // _MAF
+	PosDecode,
+	EntireRange,
+	0x0,             // _GRA
+	0xe4,            // _MIN
+	0x3fff,          // _MAX
+	0x0,             // _TRA
+	0x04,            // _LEN
+	, ,
+	BTIO
+      )
+    })
+
+Since the IO resources of the child devices need to be
+translated from LPC bus addresses to logical PIO addresses,
+and we shouldn't modify the resources of the devices
+generated in the FW scan, a per-child MFD is created as
+a substitute. The MFD IO resources will be the translated
+bus addresses of the ACPI child.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Tested-by: dann frazier <dann.frazier@canonical.com>
+---
+ drivers/bus/hisi_lpc.c | 202 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index c331609..9d38cfa 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -12,6 +12,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/logic_pio.h>
++#include <linux/mfd/core.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -346,6 +347,204 @@ static void hisi_lpc_comm_out(void *hostdata, unsigned long pio,
+ 	.outs = hisi_lpc_comm_outs,
+ };
+ 
++#ifdef CONFIG_ACPI
++#define MFD_CHILD_NAME_PREFIX DRV_NAME"-"
++#define MFD_CHILD_NAME_LEN (ACPI_ID_LEN + sizeof(MFD_CHILD_NAME_PREFIX) - 1)
++
++struct hisi_lpc_mfd_cell {
++	struct mfd_cell_acpi_match acpi_match;
++	char name[MFD_CHILD_NAME_LEN];
++	char pnpid[ACPI_ID_LEN];
++};
++
++static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
++				     struct acpi_device *host,
++				     struct resource *res)
++{
++	unsigned long sys_port;
++	resource_size_t len = resource_size(res);
++
++	sys_port = logic_pio_trans_hwaddr(&host->fwnode, res->start, len);
++	if (sys_port == ~0UL)
++		return -EFAULT;
++
++	res->start = sys_port;
++	res->end = sys_port + len;
++
++	return 0;
++}
++
++/*
++ * hisi_lpc_acpi_set_io_res - set the resources for a child's MFD
++ * @child: the device node to be updated the I/O resource
++ * @hostdev: the device node associated with host controller
++ * @res: double pointer to be set to the address of translated resources
++ * @num_res: pointer to variable to hold the number of translated resources
++ *
++ * Returns 0 when successful, and a negative value for failure.
++ *
++ * For a given host controller, each child device will have an associated
++ * host-relative address resource. This function will return the translated
++ * logical PIO addresses for each child devices resources.
++ */
++static int hisi_lpc_acpi_set_io_res(struct device *child,
++				    struct device *hostdev,
++				    const struct resource **res,
++				    int *num_res)
++{
++	struct acpi_device *adev;
++	struct acpi_device *host;
++	struct resource_entry *rentry;
++	LIST_HEAD(resource_list);
++	struct resource *resources;
++	int count;
++	int i;
++
++	if (!child || !hostdev)
++		return -EINVAL;
++
++	host = to_acpi_device(hostdev);
++	adev = to_acpi_device(child);
++
++	/* check the device state */
++	if (!adev->status.present) {
++		dev_dbg(child, "device is not present\n");
++		return -EIO;
++	}
++	/* whether the child had been enumerated? */
++	if (acpi_device_enumerated(adev)) {
++		dev_dbg(child, "has been enumerated\n");
++		return -EIO;
++	}
++
++	/*
++	 * The following code segment to retrieve the resources is common to
++	 * acpi_create_platform_device(), so consider a common helper function
++	 * in future.
++	 */
++	count = acpi_dev_get_resources(adev, &resource_list, NULL, NULL);
++	if (count <= 0) {
++		dev_dbg(child, "failed to get resources\n");
++		return count ? count : -EIO;
++	}
++
++	resources = devm_kcalloc(hostdev, count, sizeof(*resources),
++				 GFP_KERNEL);
++	if (!resources) {
++		dev_warn(hostdev, "could not allocate memory for %d resources\n",
++			 count);
++		acpi_dev_free_resource_list(&resource_list);
++		return -ENOMEM;
++	}
++	count = 0;
++	list_for_each_entry(rentry, &resource_list, node)
++		resources[count++] = *rentry->res;
++
++	acpi_dev_free_resource_list(&resource_list);
++
++	/* translate the I/O resources */
++	for (i = 0; i < count; i++) {
++		int ret;
++
++		if (!(resources[i].flags & IORESOURCE_IO))
++			continue;
++		ret = hisi_lpc_acpi_xlat_io_res(adev, host, &resources[i]);
++		if (ret) {
++			dev_err(child, "translate IO range failed(%d)\n", ret);
++			return ret;
++		}
++	}
++	*res = resources;
++	*num_res = count;
++
++	return 0;
++}
++
++/*
++ * hisi_lpc_acpi_probe - probe children for ACPI FW
++ * @hostdev: LPC host device pointer
++ *
++ * Returns 0 when successful, and a negative value for failure.
++ *
++ * Scan all child devices and create a per-device MFD with
++ * logical PIO translated IO resources.
++ */
++static int hisi_lpc_acpi_probe(struct device *hostdev)
++{
++	struct acpi_device *adev = ACPI_COMPANION(hostdev);
++	struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cells;
++	struct mfd_cell *mfd_cells;
++	struct acpi_device *child;
++	int size, ret, count = 0, cell_num = 0;
++
++	list_for_each_entry(child, &adev->children, node)
++		cell_num++;
++
++	/* allocate the mfd cell and companion ACPI info, one per child */
++	size = sizeof(*mfd_cells) + sizeof(*hisi_lpc_mfd_cells);
++	mfd_cells = devm_kcalloc(hostdev, cell_num, size, GFP_KERNEL);
++	if (!mfd_cells)
++		return -ENOMEM;
++
++	hisi_lpc_mfd_cells = (struct hisi_lpc_mfd_cell *)&mfd_cells[cell_num];
++	/* Only consider the children of the host */
++	list_for_each_entry(child, &adev->children, node) {
++		struct mfd_cell *mfd_cell = &mfd_cells[count];
++		struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cell =
++					&hisi_lpc_mfd_cells[count];
++		struct mfd_cell_acpi_match *acpi_match =
++					&hisi_lpc_mfd_cell->acpi_match;
++		char *name = hisi_lpc_mfd_cell[count].name;
++		char *pnpid = hisi_lpc_mfd_cell[count].pnpid;
++		struct mfd_cell_acpi_match match = {
++			.pnpid = pnpid,
++		};
++
++		/*
++		 * For any instances of this host controller (hip06 and hip07
++		 * are the only chipsets), we would not have multiple slaves
++		 * with the same HID. And in any system we would have just one
++		 * controller active. So don't worrry about MFD name clashes.
++		 */
++		snprintf(name, MFD_CHILD_NAME_LEN, MFD_CHILD_NAME_PREFIX"%s",
++			 acpi_device_hid(child));
++		snprintf(pnpid, ACPI_ID_LEN, "%s", acpi_device_hid(child));
++
++		memcpy(acpi_match, &match, sizeof(*acpi_match));
++		mfd_cell->name = name;
++		mfd_cell->acpi_match = acpi_match;
++
++		ret = hisi_lpc_acpi_set_io_res(&child->dev, &adev->dev,
++					       &mfd_cell->resources,
++					       &mfd_cell->num_resources);
++		if (ret) {
++			dev_warn(&child->dev, "set resource fail(%d)\n", ret);
++			return ret;
++		}
++		count++;
++	}
++
++	ret = mfd_add_devices(hostdev, PLATFORM_DEVID_NONE,
++			      mfd_cells, cell_num, NULL, 0, NULL);
++	if (ret) {
++		dev_err(hostdev, "failed to add mfd cells (%d)\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct acpi_device_id hisi_lpc_acpi_match[] = {
++	{"HISI0191"},
++	{}
++};
++#else
++static int hisi_lpc_acpi_probe(struct device *dev)
++{
++	return -ENODEV;
++}
++#endif // CONFIG_ACPI
++
+ /*
+  * hisi_lpc_probe - the probe callback function for hisi lpc host,
+  *		   will finish all the initialization.
+@@ -391,6 +590,8 @@ static int hisi_lpc_probe(struct platform_device *pdev)
+ 	/* register the LPC host PIO resources */
+ 	if (!acpi_device)
+ 		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	else
++		ret = hisi_lpc_acpi_probe(dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -414,6 +615,7 @@ static int hisi_lpc_probe(struct platform_device *pdev)
+ 	.driver = {
+ 		.name           = DRV_NAME,
+ 		.of_match_table = hisi_lpc_of_match,
++		.acpi_match_table = ACPI_PTR(hisi_lpc_acpi_match),
+ 	},
+ 	.probe = hisi_lpc_probe,
+ };
+-- 
+1.9.1
