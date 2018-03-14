@@ -1,58 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751571AbeCNR1o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:27:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751279AbeCNR1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:27:42 -0400
-Reply-To: jtoppins@redhat.com
-Subject: Re: [PATCH net] tg3: prevent scheduling while atomic splat
-To: Michael Chan <michael.chan@broadcom.com>
-Cc: Netdev <netdev@vger.kernel.org>, Andy Gospodarek <andy@greyhouse.net>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        Michael Chan <mchan@broadcom.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <f439051c3964c6bb5342e25fb5327e0cdeba001e.1521045132.git.jtoppins@redhat.com>
- <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
-From: Jonathan Toppins <jtoppins@redhat.com>
-Organization: Red Hat
-Message-ID: <266eae62-bef2-6c51-415f-cbacc1669e30@redhat.com>
-Date: Wed, 14 Mar 2018 13:27:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <CACKFLi=R2q71JH2Jbqbpy8HrzNpg1UmnoNWKhEs7ooWLWoQOqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751753AbeCNR2N (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:28:13 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:40450 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeCNR2M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 13:28:12 -0400
+X-Google-Smtp-Source: AG47ELt759+bIx6kOqkBuPog+cSvS4+U/UcDxP11itF2sdVL6QAyGgWCa+Wb2anK9eGBR+9dlp9aHw==
+Date: Wed, 14 Mar 2018 10:28:10 -0700 (PDT)
+X-Google-Original-Date: Wed, 14 Mar 2018 10:28:06 PDT (-0700)
+Subject: Re: [PATCH v3 3/5] arm: Convert to GENERIC_IRQ_MULTI_HANDLER
+In-Reply-To: <alpine.DEB.2.21.1803141806580.2481@nanos.tec.linutronix.de>
+CC: linux@armlinux.org.uk, catalin.marinas@arm.com,
+        Will Deacon <will.deacon@arm.com>, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-riscv@lists.infradead.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: tglx@linutronix.de
+Message-ID: <mhng-154bcacc-ddfa-4875-b5c5-e3efc72f3e42@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/14/2018 01:22 PM, Michael Chan wrote:
-> On Wed, Mar 14, 2018 at 9:36 AM, Jonathan Toppins <jtoppins@redhat.com> wrote:
->> The problem was introduced in commit
->> 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes"). The bug occurs
->> because tp->lock spinlock is held which is obtained in tg3_start
->> by way of tg3_full_lock(), line 11571. The documentation for usleep_range()
->> specifically states it cannot be used inside a spinlock.
+On Wed, 14 Mar 2018 10:07:35 PDT (-0700), tglx@linutronix.de wrote:
+> On Wed, 7 Mar 2018, Palmer Dabbelt wrote:
+>
+>> This converts the ARM port to use the recently added
+>> GENERIC_IRQ_MULTI_HANDLER, which is essentially just a copy of ARM's
+>> existhing MULTI_IRQ_HANDLER.  The only changes are:
 >>
->> Fixes: 506b0a395f26 ("[netdrv] tg3: APE heartbeat changes")
->> Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
->> ---
->>
->> Notes:
->>     The thing I need reviewed from Broadcom is if the udelay should be 20
->>     instead of 10, due to any timing changes introduced by the offending
->>     patch.
-> 
-> Thanks.  10 us is correct.
-> 
-> As a future improvement, we might want to see if we can release the
-> spinlock and go back to usleep_range().  The wait time is potentially
-> up to 20 msec which is quite long.
+>> * handle_arch_irq is now defined in a generic C file instead of an
+>>   arm-specific assembly file.
+>> * handle_arch_irq is not marked as __ro_after_init.
+>
+> Why? What prevents the generic implementation from doing so?
 
-Agreed, glad it is not just me wondering why a lock needs to be held for
-reads. :-)
+Sorry, I guess that should have said "handle_arch_irq was not marked as
+__ro_after_init".  The patch set has __ro_after_init for the generic
+implementation, which was not the case for the arm version.
