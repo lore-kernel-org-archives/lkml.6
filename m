@@ -1,77 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933553AbeCNDW2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Mar 2018 23:22:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43162 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933316AbeCNDUi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Mar 2018 23:20:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 27EE0607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] ixgbe: eliminate duplicate barriers on weakly-ordered archs
-Date: Tue, 13 Mar 2018 23:20:23 -0400
-Message-Id: <1520997629-17361-2-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
-References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933458AbeCNDXq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Mar 2018 23:23:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58836 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932937AbeCNDXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Mar 2018 23:23:45 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mst@redhat.com, Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net-next] tuntap: XDP_TX can use native XDP
+Date: Wed, 14 Mar 2018 11:23:40 +0800
+Message-Id: <1520997820-8289-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel() in multiple places. writel()
-already has a barrier on some architectures like arm64.
+Now we have ndo_xdp_xmit, switch to use it instead of the slow generic
+XDP TX routine. XDP_TX on TAP gets ~20% improvements from ~1.5Mpps to
+~1.8Mpps on 2.60GHz Core(TM) i7-5600U.
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
-
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/tun.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 0da5aa2..35ca1d8 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -1692,7 +1692,7 @@ void ixgbe_alloc_rx_buffers(struct ixgbe_ring *rx_ring, u16 cleaned_count)
- 		 * such as IA-64).
- 		 */
- 		wmb();
--		writel(i, rx_ring->tail);
-+		writel_relaxed(i, rx_ring->tail);
- 	}
- }
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 475088f..baeafa0 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1613,7 +1613,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 	unsigned int delta = 0;
+ 	char *buf;
+ 	size_t copied;
+-	bool xdp_xmit = false;
+ 	int err, pad = TUN_RX_PAD;
  
-@@ -2453,7 +2453,7 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
- 		 * know there are new descriptors to fetch.
- 		 */
- 		wmb();
--		writel(ring->next_to_use, ring->tail);
-+		writel_relaxed(ring->next_to_use, ring->tail);
+ 	rcu_read_lock();
+@@ -1671,8 +1670,14 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 			preempt_enable();
+ 			return NULL;
+ 		case XDP_TX:
+-			xdp_xmit = true;
+-			/* fall through */
++			get_page(alloc_frag->page);
++			alloc_frag->offset += buflen;
++			if (tun_xdp_xmit(tun->dev, &xdp))
++				goto err_redirect;
++			tun_xdp_flush(tun->dev);
++			rcu_read_unlock();
++			preempt_enable();
++			return NULL;
+ 		case XDP_PASS:
+ 			delta = orig_data - xdp.data;
+ 			break;
+@@ -1699,14 +1704,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 	get_page(alloc_frag->page);
+ 	alloc_frag->offset += buflen;
  
- 		xdp_do_flush_map();
- 	}
-@@ -10014,7 +10014,7 @@ static void ixgbe_xdp_flush(struct net_device *dev)
- 	 * are new descriptors to fetch.
- 	 */
- 	wmb();
--	writel(ring->next_to_use, ring->tail);
-+	writel_relaxed(ring->next_to_use, ring->tail);
+-	if (xdp_xmit) {
+-		skb->dev = tun->dev;
+-		generic_xdp_tx(skb, xdp_prog);
+-		rcu_read_unlock();
+-		preempt_enable();
+-		return NULL;
+-	}
+-
+ 	rcu_read_unlock();
+ 	preempt_enable();
  
- 	return;
- }
 -- 
 2.7.4
