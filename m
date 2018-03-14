@@ -1,45 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeCNQNT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 12:13:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36434 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751426AbeCNQNR (ORCPT
+        id S1752177AbeCNQNv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 12:13:51 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:59538 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbeCNQNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:13:17 -0400
-Date: Wed, 14 Mar 2018 09:13:17 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] x86/hyper-v: move hyperv.h out of uapi
-Message-ID: <20180314161317.GA19701@infradead.org>
-References: <20180309140249.2840-1-vkuznets@redhat.com>
- <20180309140249.2840-2-vkuznets@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309140249.2840-2-vkuznets@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 14 Mar 2018 12:13:50 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH v4 2/3] dt-bindings: net: bluetooth: Add
+ qualcomm-bluetooth
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180314155514.3374-3-thierry.escande@linaro.org>
+Date: Wed, 14 Mar 2018 17:13:47 +0100
+Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <FF2E3FDE-76C5-477A-A904-32AC064297DA@holtmann.org>
+References: <20180314155514.3374-1-thierry.escande@linaro.org>
+ <20180314155514.3374-3-thierry.escande@linaro.org>
+To: Thierry Escande <thierry.escande@linaro.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 03:02:43PM +0100, Vitaly Kuznetsov wrote:
-> hyperv.h is not part of uapi, there are no (known) users outside of kernel.
-> We are making changes to this file to match current Hyper-V TLFS and we
-> don't want to maintain backwards compatibility.
-> 
-> Move the file renaming to hyperv-tlfs.h to avoid confusing it with
-> mshyperv.h. In future, all definitions from TLFS should go to it and
-> all kernel objects should go to mshyperv.h or include/linux/hyperv.h.
+Hi Thierry,
 
-What is TLFS?  And hows does it differe from mshyperv.h?  
+> Add binding document for serial bluetooth chips using Qualcomm protocol.
+> 
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> ---
+> 
+> v4:
+> - Move bt-disable-n-gpios to required properties section
+> - Add clocks and pinctrl-0 as required properties
+> 
+> v3: no change
+> v2: no change
+> 
+> .../devicetree/bindings/net/qualcomm-bluetooth.txt | 34 ++++++++++++++++++++++
+> 1 file changed, 34 insertions(+)
+> create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> new file mode 100644
+> index 000000000000..cdb14b96c229
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> @@ -0,0 +1,34 @@
+> +Qualcomm Bluetooth Chips
+> +---------------------
+> +
+> +This documents the binding structure and common properties for serial
+> +attached Qualcomm devices.
+> +
+> +Serial attached Qualcomm devices shall be a child node of the host UART
+> +device the slave device is attached to.
+> +
+> +Required properties:
+> + - compatible: should contain one of the following:
+> +   * "qcom,qca6174-bt"
+> + - bt-disable-n-gpios: gpio specifier, used to enable chip during probe
+> + - pinctrl-0: pin phandle for bt_en gpio
+> + - clocks: clock phandle for SUSCLK_32KHZ
+> +
+> +Example:
+> +
+> +serial@7570000 {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&blsp1_uart1_default>;
+> +	pinctrl-1 = <&blsp1_uart1_sleep>;
+> +
+> +	bluetooth {
+> +		compatible = "qcom,qca6174-bt";
+> +
+> +		bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
+
+can we use a common name here. I think that Nokia and Broadcom drivers define one. And if this is the enable/shutdown GPIO, we should name it consistently across all manufacturers. It essentially does the same on Bluetooth UART chips no matter what chip is behind them.
+
+Regards
+
+Marcel
