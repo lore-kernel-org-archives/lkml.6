@@ -1,114 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751613AbeCNWZf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:25:35 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37806 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751314AbeCNWZd (ORCPT
+        id S1751666AbeCNWcX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:32:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750779AbeCNWcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:25:33 -0400
-X-Google-Smtp-Source: AG47ELvcTfMpJu5AFUCpDeWu2BnlpLh/mNvCYW8B7+6QxYHuvsxw2JxSockjeOzlbt/H9khgK3XiIQ==
-From: Jan Glauber <jglauber@cavium.com>
-X-Google-Original-From: Jan Glauber <jglauber@caviumnetworks.com>
-Date: Wed, 14 Mar 2018 23:25:30 +0100
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, Michal Hocko <mhocko@suse.com>,
-        Paul Burton <paul.burton@imgtec.com>, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Daniel Vacek <neelx@redhat.com>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock
- alignment"
-Message-ID: <20180314222530.GA6300@wintermute>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 14 Mar 2018 18:32:22 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v4 0/2] hwmon: (ucd9000) Add gpio and debugfs interfaces
+Date: Wed, 14 Mar 2018 17:32:12 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031422-0044-0000-0000-000003F398E8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008675; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003107; UDB=6.00510473; IPR=6.00782437;
+ MB=3.00020038; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 22:32:19
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031422-0045-0000-0000-0000082399F9
+Message-Id: <1521066734-7985-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140240
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 07:29:37PM +0000, Ard Biesheuvel wrote:
-> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
+The ucd9000 series chips have gpio pins. Add a gpio chip interface to the ucd
+device so that users can query and set the state of the gpio pins.
 
-FWIW, the revert fixes the boot hang I'm seeing on ThunderX1.
+Add a debugfs interface using the existing pmbus debugfs directory to provide
+MFR_STATUS and the status of the gpi faults to users.
 
---Jan
+Changes since v3:
+ - remove setting of gpio_chip->owner
+ - format the mfr_status data
+ - switch to #ifdef rather than #if IS_ENABLED for debugfs
 
-> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
-> alignment") modified the logic in memmap_init_zone() to initialize
-> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
-> in move_freepages(), which is redundant by its own admission, and
-> dereferences struct page fields to obtain the zone without checking
-> whether the struct pages in question are valid to begin with.
-> 
-> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
-> may cause pfn assume the same value it had in a prior iteration of
-> the loop, resulting in an infinite loop and a hang very early in the
-> boot. Also, since it doesn't perform the same rounding on start_pfn
-> itself but only on intermediate values following an invalid PFN, we
-> may still hit the same VM_BUG_ON() as before.
-> 
-> So instead, let's fix this at the core, and ensure that the BUG
-> check doesn't dereference struct page fields of invalid pages.
-> 
-> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
-> Cc: Daniel Vacek <neelx@redhat.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Paul Burton <paul.burton@imgtec.com>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  mm/page_alloc.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3d974cb2a1a1..635d7dd29d7f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->  	 * Remove at a later date when no bug reports exist related to
->  	 * grouping pages by mobility
->  	 */
-> -	VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
-> +	VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
-> +	          pfn_valid(page_to_pfn(end_page)) &&
-> +	          page_zone(start_page) != page_zone(end_page));
->  #endif
->  
->  	if (num_movable)
-> @@ -5359,14 +5361,9 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  			/*
->  			 * Skip to the pfn preceding the next valid one (or
->  			 * end_pfn), such that we hit a valid pfn (or end_pfn)
-> -			 * on our next iteration of the loop. Note that it needs
-> -			 * to be pageblock aligned even when the region itself
-> -			 * is not. move_freepages_block() can shift ahead of
-> -			 * the valid region but still depends on correct page
-> -			 * metadata.
-> +			 * on our next iteration of the loop.
->  			 */
-> -			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
-> -					~(pageblock_nr_pages-1)) - 1;
-> +			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
->  #endif
->  			continue;
->  		}
-> -- 
-> 2.15.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Changes since v2:
+ - split the gpio registration into it's own function
+
+Changes since v1:
+ - dropped dev_err messages
+ - made gpio chip registration conditional on having gpio pins
+ - made mfr_status debugfs attribute more simple
+
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
+
+ drivers/hwmon/pmbus/ucd9000.c | 354 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 353 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
