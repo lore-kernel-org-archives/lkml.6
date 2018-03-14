@@ -1,173 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeCNIBU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 04:01:20 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28548 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753110AbeCNIBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 04:01:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,469,1515484800";
-   d="scan'208";a="211400579"
-Message-ID: <1521014472.2087.32.camel@intel.com>
-Subject: Re: [PATCH V4] thermal: Add cooling device's statistics in sysfs
-From: Zhang Rui <rui.zhang@intel.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Date: Wed, 14 Mar 2018 16:01:12 +0800
-In-Reply-To: <1520924571.3766.8.camel@intel.com>
-References: <6e557b90950723065d49c9a545146ce31d7dc6e1.1516096153.git.viresh.kumar@linaro.org>
-         <1520924571.3766.8.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
+        id S1753127AbeCNIDL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 04:03:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751317AbeCNIDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 04:03:07 -0400
+Date: Wed, 14 Mar 2018 09:03:01 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>, qemu-devel@nongnu.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: [RfC PATCH] Add udmabuf misc device
+Message-ID: <20180314080301.366zycak3whqvvqx@sirius.home.kraxel.org>
+References: <20180313154826.20436-1-kraxel@redhat.com>
+ <20180313161035.GL4788@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180313161035.GL4788@phenom.ffwll.local>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 二, 2018-03-13 at 15:02 +0800, Zhang Rui wrote:
-> Hi, Viresh,
+  Hi,
+
+> Either mlock account (because it's mlocked defacto), and get_user_pages
+> won't do that for you.
 > 
-> I will queue it for 4.17, with just one minor fix below.
+> Or you write the full-blown userptr implementation, including mmu_notifier
+> support (see i915 or amdgpu), but that also requires Christian K�nigs
+> latest ->invalidate_mapping RFC for dma-buf (since atm exporting userptr
+> buffers is a no-go).
+
+I guess I'll look at mlock accounting for starters then.  Easier for
+now, and leaves the door open to switch to userptr later as this should
+be transparent to userspace.
+
+> > Known issue:  Driver API isn't complete yet.  Need add some flags, for
+> > example to support read-only buffers.
 > 
-I got the following warning from checkpatch.pl
----------------
+> dma-buf has no concept of read-only. I don't think we can even enforce
+> that (not many iommus can enforce this iirc), so pretty much need to
+> require r/w memory.
 
-WARNING: please write a paragraph that describes the config symbol
-fully
-#147: FILE: drivers/thermal/Kconfig:18:
-+config THERMAL_STATISTICS
+Ah, ok.  Just saw the 'write' arg for get_user_pages_fast and figured we
+might support that, but if iommus can't handle that anyway it's
+pointless indeed.
 
-WARNING: Consider renaming function(s)
-'thermal_cooling_device_total_trans_show' to 'total_trans_show'
-#391: FILE: drivers/thermal/thermal_sysfs.c:901:
-+}
+> > Cc: David Airlie <airlied@linux.ie>
+> > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> 
+> btw there's also the hyperdmabuf stuff from the xen folks, but imo their
+> solution of forwarding the entire dma-buf api is over the top. This here
+> looks _much_ better, pls cc all the hyperdmabuf people on your next
+> version.
 
-WARNING: Consider renaming function(s)
-'thermal_cooling_device_time_in_state_show' to 'time_in_state_show'
-#395: FILE: drivers/thermal/thermal_sysfs.c:905:
-+static DEVICE_ATTR(time_in_state, 0444,
+Fun fact: googling for "hyperdmabuf" found me your mail and nothing else :-o
+(Trying "hyper dmabuf" instead worked better then).
 
-WARNING: Consider renaming function(s)
-'thermal_cooling_device_reset_store' to 'reset_store'
-#397: FILE: drivers/thermal/thermal_sysfs.c:907:
-+static DEVICE_ATTR(reset, 0200, NULL,
-thermal_cooling_device_reset_store);
+Yes, will cc them on the next version.  Not sure it'll help much on xen
+though due to the memory management being very different.  Basically xen
+owns the memory, not the kernel of the control domain (dom0), so
+creating dmabufs for guest memory chunks isn't that simple ...
 
-WARNING: Consider renaming function(s)
-'thermal_cooling_device_trans_table_show' to 'trans_table_show'
-#398: FILE: drivers/thermal/thermal_sysfs.c:908:
-+static DEVICE_ATTR(trans_table, 0444,
+Also it's not clear whenever they really need guest -> guest exports or
+guest -> dom0 exports.
 
-total: 0 errors, 5 warnings, 366 lines checked
+> Overall I like the idea, but too lazy to review.
 
+Cool.  General comments on the idea was all I was looking for for the
+moment.  Spare yor review cycles for the next version ;)
 
-I'm okay with the first one because the description does not have to be
-larger than 3 lines.
-the last 4 warnings makes sense to me. I think we should rename the
-function and use DEVICE_ATTR_RO() and DEVICE_ATTR_WO() instead.
+> Oh, some kselftests for this stuff would be lovely.
 
-what do you think?
+I'll look into it.
 
 thanks,
-rui
-
-> On 二, 2018-01-16 at 15:22 +0530, Viresh Kumar wrote:
-> > 
-> > This extends the sysfs interface for thermal cooling devices and
-> > exposes
-> > some pretty useful statistics. These statistics have proven to be
-> > quite
-> > useful specially while doing benchmarks related to the task
-> > scheduler,
-> > where we want to make sure that nothing has disrupted the test,
-> > specially the cooling device which may have put constraints on the
-> > CPUs.
-> > The information exposed here tells us to what extent the CPUs were
-> > constrained by the thermal framework.
-> > 
-> > The write-only "reset" file is used to reset the statistics.
-> > 
-> > The read-only "time_in_state" file shows the clock_t time spent by
-> > the
-> > device in the respective cooling states, and it prints one line per
-> > cooling state.
-> > 
-> > The read-only "total_trans" file shows single positive integer
-> > value
-> > showing the total number of cooling state transitions the device
-> > has
-> > gone through since the time the cooling device is registered or the
-> > time
-> > when statistics were reset last.
-> > 
-> > The read-only "trans_table" file shows a two dimensional matrix,
-> > where
-> > an entry <i,j> (row i, column j) represents the number of
-> > transitions
-> > from State_i to State_j.
-> > 
-> > This is how the directory structure looks like for a single cooling
-> > device:
-> > 
-> > $ ls -R /sys/class/thermal/cooling_device0/
-> > /sys/class/thermal/cooling_device0/:
-> > cur_state  max_state  power  stats  subsystem  type  uevent
-> > 
-> > /sys/class/thermal/cooling_device0/power:
-> > autosuspend_delay_ms  runtime_active_time  runtime_suspended_time
-> > control               runtime_status
-> > 
-> > /sys/class/thermal/cooling_device0/stats:
-> > reset  time_in_state  total_trans  trans_table
-> > 
-> > This is tested on ARM 64-bit Hisilicon hikey620 board running
-> > Ubuntu
-> > and
-> > ARM 64-bit Hisilicon hikey960 board running Android.
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> [snip]
-> 
-> > 
-> > +static void cooling_device_stats_setup(struct
-> > thermal_cooling_device
-> > *cdev)
-> > +{
-> > +	struct cooling_dev_stats *stats;
-> > +	unsigned long states;
-> > +	int var;
-> > +
-> > +	if (cdev->ops->get_max_state(cdev, &states))
-> > +		return;
-> > +
-> > +	states++; /* Total number of states is highest state + 1
-> > */
-> > +
-> > +	var = sizeof(*stats);
-> > +	var += sizeof(*stats->time_in_state) * states;
-> > +	var += sizeof(*stats->trans_table) * states * states;
-> > +
-> > +	stats = kzalloc(var, GFP_KERNEL);
-> > +	if (!stats)
-> > +		return;
-> > +
-> > +	stats->time_in_state = (ktime_t *)(stats + 1);
-> > +	stats->trans_table = (unsigned int *)(stats->time_in_state 
-> > +
-> > states);
-> > +	cdev->stats = stats;
-> > +	stats->last_time = ktime_get();
-> > +	stats->max_states = states;
-> > +	cdev->stats = stats;
-> > +
-> cdev->stats is set twice here, I will remove the first one.
-> 
-> thanks,
-> rui
+  Gerd
