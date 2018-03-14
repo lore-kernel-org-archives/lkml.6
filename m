@@ -1,152 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeCNU7k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 16:59:40 -0400
-Received: from g2t2353.austin.hpe.com ([15.233.44.26]:7611 "EHLO
-        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeCNU7i (ORCPT
+        id S1752270AbeCNVAB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 17:00:01 -0400
+Received: from avasout05.plus.net ([84.93.230.250]:35272 "EHLO
+        avasout05.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbeCNU77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 16:59:38 -0400
-From: Toshi Kani <toshi.kani@hpe.com>
-To: tglx@linutronix.de
-Cc: mingo@redhat.com, hpa@zytor.com, bp@alien8.de, luto@kernel.org,
-        gratian.crisan@ni.com, x86@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>
-Subject: [PATCH] x86/mm: remove pointless checks in vmalloc_fault
-Date: Wed, 14 Mar 2018 14:59:32 -0600
-Message-Id: <20180314205932.7193-1-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
+        Wed, 14 Mar 2018 16:59:59 -0400
+X-CM-Score: 0.00
+X-CNFS-Analysis: v=2.3 cv=J9KEEjvS c=1 sm=1 tr=0
+ a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
+ a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10 a=pGLkceISAAAA:8 a=beXlt2xKAAAA:8
+ a=SPACMrjmOz8H3TWAVbcA:9 a=mUwzUsA8ZbHA0aK7:21 a=yrFacnBGrNHf5BOi:21
+ a=CjuIK1q_8ugA:10 a=gcY2M4Ci8LIz02MwfSIM:22
+Date: Wed, 14 Mar 2018 20:52:27 +0000
+From: Nick Dyer <nick@shmanahar.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/14] Input: atmel_mxt_ts - switch ChromeOS ACPI devices
+ to generic props
+Message-ID: <20180314205227.GC26353@lava.h.shmanahar.org>
+References: <20180312190907.174301-1-dmitry.torokhov@gmail.com>
+ <20180312190907.174301-4-dmitry.torokhov@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312190907.174301-4-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CMAE-Envelope: MS4wfJ61BZga71UuNPy5C9OMX9YeeQOiGQ1qjcTW6RJaFQa+Y1QxBgVt+tfnIdEsp03iMW6tlcVMjQ+ahbbH18dlBcxFp+HvqV6bW0/mpw08njdfyYvnQOBO
+ 3Wib46mNvw2OSmquEh/yz0zzhuNrdnV+QUF2uw3uMDoyjmXEPKaGQCHt
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmalloc_fault() sets user's pgd or p4d from the kernel page table.
-Once it's set, all tables underneath are identical. There is no point
-of following the same page table with two separate pointers and makes
-sure they see the same with BUG().
+On Mon, Mar 12, 2018 at 12:08:56PM -0700, Dmitry Torokhov wrote:
+> Move older ChromeOS devices describing Atmel controllers in ACPI, but not
+> providing enough details to configure the controllers properly, from
+> platform data over to generic device properties. This will allow us
+> remove support for platform data later on, leaving only generic device
+> properties in place.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Remove the pointless checks in vmalloc_fault(). Also rename the kernel
-pgd/p4d pointers to pgd_k/p4d_k so that their names are consistent in
-the file.
+Acked-by: Nick Dyer <nick@shmanahar.org>
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Gratian Crisan <gratian.crisan@ni.com>
----
-Rebased 2/2 patch on tip.
----
- arch/x86/mm/fault.c |   56 +++++++++++++++------------------------------------
- 1 file changed, 17 insertions(+), 39 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 8e012c3f6ad6..73bd8c95ac71 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -417,11 +417,11 @@ void vmalloc_sync_all(void)
-  */
- static noinline int vmalloc_fault(unsigned long address)
- {
--	pgd_t *pgd, *pgd_ref;
--	p4d_t *p4d, *p4d_ref;
--	pud_t *pud, *pud_ref;
--	pmd_t *pmd, *pmd_ref;
--	pte_t *pte, *pte_ref;
-+	pgd_t *pgd, *pgd_k;
-+	p4d_t *p4d, *p4d_k;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	pte_t *pte;
- 
- 	/* Make sure we are in vmalloc area: */
- 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
-@@ -435,73 +435,51 @@ static noinline int vmalloc_fault(unsigned long address)
- 	 * case just flush:
- 	 */
- 	pgd = (pgd_t *)__va(read_cr3_pa()) + pgd_index(address);
--	pgd_ref = pgd_offset_k(address);
--	if (pgd_none(*pgd_ref))
-+	pgd_k = pgd_offset_k(address);
-+	if (pgd_none(*pgd_k))
- 		return -1;
- 
- 	if (pgtable_l5_enabled) {
- 		if (pgd_none(*pgd)) {
--			set_pgd(pgd, *pgd_ref);
-+			set_pgd(pgd, *pgd_k);
- 			arch_flush_lazy_mmu_mode();
- 		} else {
--			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_ref));
-+			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_k));
- 		}
- 	}
- 
- 	/* With 4-level paging, copying happens on the p4d level. */
- 	p4d = p4d_offset(pgd, address);
--	p4d_ref = p4d_offset(pgd_ref, address);
--	if (p4d_none(*p4d_ref))
-+	p4d_k = p4d_offset(pgd_k, address);
-+	if (p4d_none(*p4d_k))
- 		return -1;
- 
- 	if (p4d_none(*p4d) && !pgtable_l5_enabled) {
--		set_p4d(p4d, *p4d_ref);
-+		set_p4d(p4d, *p4d_k);
- 		arch_flush_lazy_mmu_mode();
- 	} else {
--		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_ref));
-+		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_k));
- 	}
- 
--	/*
--	 * Below here mismatches are bugs because these lower tables
--	 * are shared:
--	 */
- 	BUILD_BUG_ON(CONFIG_PGTABLE_LEVELS < 4);
- 
- 	pud = pud_offset(p4d, address);
--	pud_ref = pud_offset(p4d_ref, address);
--	if (pud_none(*pud_ref))
-+	if (pud_none(*pud))
- 		return -1;
- 
--	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
--		BUG();
--
- 	if (pud_large(*pud))
- 		return 0;
- 
- 	pmd = pmd_offset(pud, address);
--	pmd_ref = pmd_offset(pud_ref, address);
--	if (pmd_none(*pmd_ref))
-+	if (pmd_none(*pmd))
- 		return -1;
- 
--	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
--		BUG();
--
- 	if (pmd_large(*pmd))
- 		return 0;
- 
--	pte_ref = pte_offset_kernel(pmd_ref, address);
--	if (!pte_present(*pte_ref))
--		return -1;
--
- 	pte = pte_offset_kernel(pmd, address);
--
--	/*
--	 * Don't use pte_page here, because the mappings can point
--	 * outside mem_map, and the NUMA hash lookup cannot handle
--	 * that:
--	 */
--	if (!pte_present(*pte) || pte_pfn(*pte) != pte_pfn(*pte_ref))
--		BUG();
-+	if (!pte_present(*pte))
-+		return -1;
- 
- 	return 0;
- }
+> ---
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 63 +++++++++++++++---------
+>  1 file changed, 40 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index 072b78d3c6e00..cf2aac4e79ae8 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -2972,7 +2972,7 @@ mxt_parse_device_properties(struct i2c_client *client)
+>  
+>  struct mxt_acpi_platform_data {
+>  	const char *hid;
+> -	struct mxt_platform_data pdata;
+> +	const struct property_entry *props;
+>  };
+>  
+>  static unsigned int samus_touchpad_buttons[] = {
+> @@ -2982,14 +2982,16 @@ static unsigned int samus_touchpad_buttons[] = {
+>  	BTN_LEFT
+>  };
+>  
+> +static const struct property_entry samus_touchpad_props[] = {
+> +	PROPERTY_ENTRY_U32_ARRAY("linux,gpio-keymap", samus_touchpad_buttons),
+> +	{ }
+> +};
+> +
+>  static struct mxt_acpi_platform_data samus_platform_data[] = {
+>  	{
+>  		/* Touchpad */
+>  		.hid	= "ATML0000",
+> -		.pdata	= {
+> -			.t19_num_keys	= ARRAY_SIZE(samus_touchpad_buttons),
+> -			.t19_keymap	= samus_touchpad_buttons,
+> -		},
+> +		.props	= samus_touchpad_props,
+>  	},
+>  	{
+>  		/* Touchscreen */
+> @@ -3007,14 +3009,16 @@ static unsigned int chromebook_tp_buttons[] = {
+>  	BTN_LEFT
+>  };
+>  
+> +static const struct property_entry chromebook_tp_props[] = {
+> +	PROPERTY_ENTRY_U32_ARRAY("linux,gpio-keymap", chromebook_tp_buttons),
+> +	{ }
+> +};
+> +
+>  static struct mxt_acpi_platform_data chromebook_platform_data[] = {
+>  	{
+>  		/* Touchpad */
+>  		.hid	= "ATML0000",
+> -		.pdata	= {
+> -			.t19_num_keys	= ARRAY_SIZE(chromebook_tp_buttons),
+> -			.t19_keymap	= chromebook_tp_buttons,
+> -		},
+> +		.props	= chromebook_tp_props,
+>  	},
+>  	{
+>  		/* Touchscreen */
+> @@ -3044,7 +3048,7 @@ static const struct dmi_system_id mxt_dmi_table[] = {
+>  	{ }
+>  };
+>  
+> -static const struct mxt_platform_data *mxt_parse_acpi(struct i2c_client *client)
+> +static int mxt_acpi_probe(struct i2c_client *client)
+>  {
+>  	struct acpi_device *adev;
+>  	const struct dmi_system_id *system_id;
+> @@ -3061,33 +3065,46 @@ static const struct mxt_platform_data *mxt_parse_acpi(struct i2c_client *client)
+>  	 * as a threshold.
+>  	 */
+>  	if (client->addr < 0x40)
+> -		return ERR_PTR(-ENXIO);
+> +		return -ENXIO;
+>  
+>  	adev = ACPI_COMPANION(&client->dev);
+>  	if (!adev)
+> -		return ERR_PTR(-ENOENT);
+> +		return -ENOENT;
+>  
+>  	system_id = dmi_first_match(mxt_dmi_table);
+>  	if (!system_id)
+> -		return ERR_PTR(-ENOENT);
+> +		return -ENOENT;
+>  
+>  	acpi_pdata = system_id->driver_data;
+>  	if (!acpi_pdata)
+> -		return ERR_PTR(-ENOENT);
+> +		return -ENOENT;
+>  
+>  	while (acpi_pdata->hid) {
+> -		if (!strcmp(acpi_device_hid(adev), acpi_pdata->hid))
+> -			return &acpi_pdata->pdata;
+> +		if (!strcmp(acpi_device_hid(adev), acpi_pdata->hid)) {
+> +			/*
+> +			 * Remove previously installed properties if we
+> +			 * are probing this device not for the very first
+> +			 * time.
+> +			 */
+> +			device_remove_properties(&client->dev);
+> +
+> +			/*
+> +			 * Now install the platform-specific properties
+> +			 * that are missing from ACPI.
+> +			 */
+> +			device_add_properties(&client->dev, acpi_pdata->props);
+> +			break;
+> +		}
+>  
+>  		acpi_pdata++;
+>  	}
+>  
+> -	return ERR_PTR(-ENOENT);
+> +	return 0;
+>  }
+>  #else
+> -static const struct mxt_platform_data *mxt_parse_acpi(struct i2c_client *client)
+> +static int mxt_acpi_probe(struct i2c_client *client)
+>  {
+> -	return ERR_PTR(-ENOENT);
+> +	return -ENOENT;
+>  }
+>  #endif
+>  
+> @@ -3100,10 +3117,6 @@ mxt_get_platform_data(struct i2c_client *client)
+>  	if (pdata)
+>  		return pdata;
+>  
+> -	pdata = mxt_parse_acpi(client);
+> -	if (!IS_ERR(pdata) || PTR_ERR(pdata) != -ENOENT)
+> -		return pdata;
+> -
+>  	return mxt_parse_device_properties(client);
+>  }
+>  
+> @@ -3113,6 +3126,10 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  	const struct mxt_platform_data *pdata;
+>  	int error;
+>  
+> +	error = mxt_acpi_probe(client);
+> +	if (error && error != -ENOENT)
+> +		return error;
+> +
+>  	pdata = mxt_get_platform_data(client);
+>  	if (IS_ERR(pdata))
+>  		return PTR_ERR(pdata);
+> -- 
+> 2.16.2.660.g709887971b-goog
+> 
