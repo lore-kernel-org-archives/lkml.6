@@ -1,105 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeCNW51 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 18:57:27 -0400
-Received: from ozlabs.org ([103.22.144.67]:41541 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeCNW50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 18:57:26 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 09:56:56 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the asm-generic tree with the
- input-current tree
-Message-ID: <20180315095656.6007fe3a@canb.auug.org.au>
-In-Reply-To: <20180315093705.4e75ab90@canb.auug.org.au>
-References: <20180315093705.4e75ab90@canb.auug.org.au>
+        id S1751599AbeCNW5q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 18:57:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeCNW5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 18:57:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D650660314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 7/7] ixgbevf: eliminate duplicate barriers on
+ weakly-ordered archs
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Timur Tabi <timur@codeaurora.org>, Netdev <netdev@vger.kernel.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-7-git-send-email-okaya@codeaurora.org>
+ <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
+ <2a4f4dec64b7462ae64152f6c2df9754@codeaurora.org>
+ <CAKgT0UcriMiyV0q6y_x9r3-HJRAWp5_CpsK2jTqh3qvOV=Kkzw@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <d565406d-1bc7-6fb0-3f36-87a28ac69070@codeaurora.org>
+Date: Wed, 14 Mar 2018 18:57:40 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t+2d_Dr55iUjTR_fOswLbQw"; protocol="application/pgp-signature"
+In-Reply-To: <CAKgT0UcriMiyV0q6y_x9r3-HJRAWp5_CpsK2jTqh3qvOV=Kkzw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/t+2d_Dr55iUjTR_fOswLbQw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Alexander,
 
-Hi all,
+On 3/14/2018 5:49 PM, Alexander Duyck wrote:
+> On Wed, Mar 14, 2018 at 5:13 AM,  <okaya@codeaurora.org> wrote:
+>> On 2018-03-14 01:08, Timur Tabi wrote:
+>>>
+>>> On 3/13/18 10:20 PM, Sinan Kaya wrote:
 
-[Just adding Dimitry to cc]
+> Actually I would argue this whole patch set is pointless. For starters
+> why is it we are only updating the Intel Ethernet drivers here? 
 
-On Thu, 15 Mar 2018 09:37:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi Arnd,
->=20
-> Today's linux-next merge of the asm-generic tree got a conflict in:
->=20
->   drivers/input/joystick/analog.c
->=20
-> between commit:
->=20
->   c9ab800167e1 ("Input: analog - use get_cycles() on PPC")
->=20
-> from the input-current tree and commits:
->=20
->   739d875dd698 ("mn10300: Remove the architecture")
->   588020dcb92a ("treewide: simplify Kconfig dependencies for removed arch=
-s")
->=20
-> from the asm-generic tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/input/joystick/analog.c
-> index a942c4ccd2af,eefac7978f93..000000000000
-> --- a/drivers/input/joystick/analog.c
-> +++ b/drivers/input/joystick/analog.c
-> @@@ -163,7 -163,7 +163,7 @@@ static unsigned int get_time_pit(void
->   #define GET_TIME(x)	do { x =3D (unsigned int)rdtsc(); } while (0)
->   #define DELTA(x,y)	((y)-(x))
->   #define TIME_NAME	"TSC"
-> - #elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG_A=
-RM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV=
-) || defined(CONFIG_TILE)
->  -#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM64=
-) || defined(CONFIG_RISCV)
-> ++#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM64=
-) || defined(CONFIG_PPC) || defined(CONFIG_RISCV)
->   #define GET_TIME(x)	do { x =3D get_cycles(); } while (0)
->   #define DELTA(x,y)	((y)-(x))
->   #define TIME_NAME	"get_cycles"
+I did a regex search for wmb() followed by writel() in each drivers directory.
+I scrubbed the ones I care about and posted this series. Note also that
+I have one Infiniband patch in the series. 
 
---Sig_/t+2d_Dr55iUjTR_fOswLbQw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I considered "ease of change", "popular usage" and "performance critical
+path" as the determining criteria for my filtering. 
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpqLgACgkQAVBC80lX
-0GwXQwf+Nno+3DamsdzL36b7lyztDTndOAMZf/CUF9zt5VaKTgJwiE96v5AJXS/Q
-qEnl+vZ1M/U8dsVM44dLrakRI29YwrHVvuD5I1MJRqLLS0DTrCjL2tn/i1zuskgk
-O0P2tXBR8VNKIpwdtthd+74kVEwc5hb3AlKdlE/3H0JYMyEtjMml9hTQ6UyJLJU4
-/35lr8b3DdTytQ3Wl35sriyba+VaZEgUvleg8u5k11AYF0kPKyNgUcmBa5WQPl63
-xRkK6tAfujdBYIQ6axn1XYe1pY4lh6vVjegE4iBqUlXXGTke0qEfkNFXFDjNgNnG
-+ZmXLnHH+zEIoxcbUINd0MVAgw0qXQ==
-=AQKp
------END PGP SIGNATURE-----
+> This
+> seems like something that is going to impact the whole kernel tree
+> since many of us have been writing drivers for some time assuming x86
+> style behavior.
 
---Sig_/t+2d_Dr55iUjTR_fOswLbQw--
+That's true. We used relaxed API heavily on ARM for a long time but
+it did not exist on other architectures. For this reason, relaxed
+architectures have been paying double penalty in order to use the common
+drivers. 
+
+Now that relaxed API is present on all architectures, we can go and scrub
+all drivers to see what needs to change and what can remain.
+
+> 
+> It doesn't make sense to be optimizing the drivers for one subset of
+> architectures. The scope of the work needed to update the drivers for
+> this would be ridiculous. Also I don't see how this could be expected
+> to work on any other architecture when we pretty much need to have a
+> wmb() before calling the writel on x86 to deal with accesses between
+> coherent and non-coherent memory. It seems to me more like somebody
+> added what they considered to be an optimization somewhere that is a
+> workaround for a poorly written driver. Either that or the barrier is
+> serving a different purpose then the one we were using.
+
+Is there a semantic problem with the definition of wmb() vs. writel() vs.
+writel_relaxed()? I thought everything is well described in barriers
+document about what to expect from these APIs.
+
+AFAIK, writel() is equal to writel_relaxed() on x86 architecture.
+It doesn't really change anything for x86 but it saves barriers on
+other architectures.
+
+> 
+> It would make more sense to put in the effort making writel and
+> writel_relaxed consistent between architectures before we go through
+> and start modifying driver code to support different architectures.
+> 
+
+Is there an arch problem that I'm not seeing?
+
+Sinan
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
