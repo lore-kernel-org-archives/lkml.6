@@ -1,44 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeCNXgE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:36:04 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57550 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeCNXgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:36:03 -0400
-Date: Thu, 15 Mar 2018 00:35:26 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the edac-amd tree
-Message-ID: <20180314233526.GK16605@pd.tnic>
-References: <20180315073851.0124d37a@canb.auug.org.au>
+        id S1751791AbeCNXmh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:42:37 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42334 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeCNXme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 19:42:34 -0400
+X-Google-Smtp-Source: AG47ELtmJjS0rHhWrd7PeW0ORyQFdNrzVc3dQW8XTv63dUm+sTm5n9oKNZz8mJr7LG3pwUlQ+8weXQ==
+Date: Wed, 14 Mar 2018 16:42:31 -0700
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/12] thermal: exynos: sanitize DeviceTree support
+Message-ID: <20180314234230.GA9784@localhost.localdomain>
+References: <CGME20180306144427epcas1p3bd260e382c61ab5176a50aa95084b542@epcas1p3.samsung.com>
+ <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180315073851.0124d37a@canb.auug.org.au>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 07:38:51AM +1100, Stephen Rothwell wrote:
-> Hi Borislav,
+Hello,
+
+On Tue, Mar 06, 2018 at 03:43:43PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
 > 
-> Commit
+> Values passed through DT properties specific to Exynos thermal
+> driver ("samsung,*") are SoC (not platform) specific so just
+> define them in struct exynos_tmu_data instance (or just use
+> constants where values are identical for all SoCs) and remove
+> "samsung," DT properties altogether.
 > 
->   aefa4bb56ca8 ("EDAC, skx_edac: Detect non-volatile DIMMs")
+> The patchset should not cause any functionality changes.  This
+> means that unless there are some bugs in the patches itself there
+> should be no behavior changes for the driver (this also includes
+> lack of changes in the way hardware is accessed by the driver).
 > 
-> is missing a Signed-off-by from its author.
+> Tested on Exynos5422 based Odroid-XU3 Lite board.
 
-Fixed.
+applied this series. except for patch 10, which should go through your
+arch tree.
 
-Thanks for letting me know Stephen!
+Thanks.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> 1.9.1
