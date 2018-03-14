@@ -1,79 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751757AbeCNTEY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 15:04:24 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41838 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCNTEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 15:04:21 -0400
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Stephen Bates <sbates@raithlin.com>, Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
- <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
- <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
- <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
- <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
- <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b75e83ad-bb83-1f8d-1751-0989cc2493f1@deltatee.com>
-Date: Wed, 14 Mar 2018 13:03:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751456AbeCNTF1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 15:05:27 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41970 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeCNTFZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 15:05:25 -0400
+X-Google-Smtp-Source: AG47ELv3rlrDU6sJ6oPDl8d7JId9hsl8ue823c838DlEiRRmIloDPgK6j56TMbm/xyNh5xmjK5EZIg==
+Date: Wed, 14 Mar 2018 12:05:22 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Thierry Escande <thierry.escande@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] dt-bindings: net: bluetooth: Add
+ qualcomm-bluetooth
+Message-ID: <20180314190522.GY18510@minitux>
+References: <20180314155514.3374-1-thierry.escande@linaro.org>
+ <20180314155514.3374-3-thierry.escande@linaro.org>
+ <FF2E3FDE-76C5-477A-A904-32AC064297DA@holtmann.org>
+ <20180314183043.GX18510@minitux>
+ <D999852D-E9A7-41D2-9878-A93CB4D43D0C@holtmann.org>
 MIME-Version: 1.0
-In-Reply-To: <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, sbates@raithlin.com, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=windows-1252
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D999852D-E9A7-41D2-9878-A93CB4D43D0C@holtmann.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 14 Mar 11:42 PDT 2018, Marcel Holtmann wrote:
+
+> Hi Bjoern,
+> 
+> >>> +		bt-disable-n-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
+> >> 
+> >> can we use a common name here. I think that Nokia and Broadcom drivers
+> >> define one. And if this is the enable/shutdown GPIO, we should name it
+> >> consistently across all manufacturers. It essentially does the same on
+> >> Bluetooth UART chips no matter what chip is behind them.
+> >> 
+> > 
+> > Broadcomm has a device-wakup-gpios and Nokia has bluetooth-wakup-gpios.
+> > It might be that these behave in the same way, but from the description
+> > they only trigger the wakeup.
+> 
+> that is something that we might need to start fixing. I really prefer
+> if we name the GPIOs a bit more consistent.
+> 
+> > The reason for the proposed naming here is that the pin is named
+> > "BT_DISABLE_N" in the datasheet.
+> 
+> That is not a reason I buy. So the next board comes around that labels
+> it in the data sheet BT_DISABLE_YEAH_SUPER_GREAT and you send me a
+> patch to the driver to look for that name. If the GPIO does the same
+> thing, I couldn’t care less what the data sheet says. That might be
+> a comment in the DT file, but it should not pollute the driver code.
+> 
+
+BT_DISABLE_N is the name of this pin in the datasheet of the QCA chip,
+not on the board, so this name is the same regardless of what you name
+the line or gpio your board connect it to.
+
+> A new board should not require driver changes, you just ship a new DT
+> for that board and an existing driver hopefully just does the job. No
+> matter how someone named a GPIO in a piece of paper.
+> 
+
+I totally agree with the fact that the board should not affect the
+naming of the gpio in the driver. But I do enjoy when we refer to pins
+by their real name - instead of having to guess which pin in the _chip_
+specification the driver actually refer to.
 
 
-On 14/03/18 12:51 PM, Bjorn Helgaas wrote:
-> You are focused on PCIe systems, and in those systems, most topologies
-> do have an upstream switch, which means two upstream bridges.  I'm
-> trying to remove that assumption because I don't think there's a
-> requirement for it in the spec.  Enforcing this assumption complicates
-> the code and makes it harder to understand because the reader says
-> "huh, I know peer-to-peer DMA should work inside any PCI hierarchy*,
-> so why do we need these two bridges?"
+That said, what name would you prefer for this?
 
-Yes, as I've said, we focused on being behind a single PCIe Switch
-because it's easier and vaguely safer (we *know* switches will work but
-other types of topology we have to assume will work based on the spec).
-Also, I have my doubts that anyone will ever have a use for this with
-non-PCIe devices.
+Afaict this is not "wakeup" and there are a few extra steps between the
+disabled state and "bluetooth is enabled", so "enable" feels slightly
+wrong. And it probably should be "bluetooth" and not just "device" as
+this refers to a pin on a WiFi/BT combo chip.
 
-A switch shows up as two or more virtual bridges (per the PCIe v4 Spec
-1.3.3) which explains the existing get_upstream_bridge_port() function.
-
-In any case, we'll look at generalizing this by looking for a common
-upstream port in the next revision of the patch set.
-
-Logan
+Regards,
+Bjorn
