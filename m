@@ -1,77 +1,91 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522317774; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gNp68FQhB3K+18vCZVRWgUs+6QSQPvpJFQAUuLzaKTZeWC3WBWGzeZDYosp7bTHHOg
-         PV7WFhiLxjCswu+qyuTKpayVPwxYzqwBIw2v90a4CIZ86ajP0Elv/dxHSpo9PjoqhyGS
-         0UUBhT4Km+e+oF8aokum/zEf4rvOsJwo/O7oiysgjsTYSp6p6mgZ9tH2oC2aletdHHOr
-         jfHsvntL+n2J1TrS+ElJ6PoANDKmDDDGCwD8sMmktJKloe9+6fXruit1+xUfuHNlsQRl
-         Z9yBsXzVOXdb03zjUmkORBsoA0MV1ASUeILbJ72sOrT93kdiH2kdShvNvdEZh6GeXev3
-         u1rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=wMK3qv4AfPRuuXFAOIamWWMyrVwYS5NWHy2NF0x1z5k=;
-        b=qMHMA1HgJLidreyzU5GyjMXiT7VPo/Xyihj78I54nzK6tnkIpArlsrUO8vskv2WwjR
-         4qM7so96V46vDWYPt/tiSjSV3Flmfw7x03FUvYmtDN703EmbAqMd8a63kW9FhWZL4874
-         xli1bmb1c8IJfePRcPYj5M9kY/dJcgUfagH09wLLSOiZwxNRf15smrt/wXvh9KRqKiQi
-         XwzH7+Vj+2ZFi7fAKRZExavXgLgC+fcOxHDY9nENyj8vJwGhvNHeWb8S/ND0frdMYpon
-         BzoAeV+53U3XSxRROOj8Ojy+8c+/AHznJU/bEAtCqU5M3vayeiTJ7ADpR5xp1AMo0UAk
-         QgEA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kIYhmHzz;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kIYhmHzz;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AIpwx48OxFm598CgjX7GuEn7m/sF9EuWudzkX+8qj3/2hEIzrktRze3hUXztVKykuh3XjxHQ1yhH/g==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Thu, 29 Mar 2018 12:02:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sanjeev Gupta <ghane0@gmail.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/usb: Fix dead links and convert others to
- https
-Message-ID: <20180329100255.GA16578@localhost>
-References: <20180328160752.17840-1-ghane0@gmail.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1800801-1521035946-2-5227929127579780415
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521035945; b=RjyEvQBFOmgqJBX1d6lyG2jlVdxGTZO/C+qsfV6xORwfE+v
+    s7IBs7mVZhgWTXUbasAkmhWZM7jkR8XEfjaWni3IDJpfme7F9hKnSOq7E+7ynJCg
+    CyZGUFFi9FReR1ajvDdV9gdOuMqZ8vlySzxJN/wCYhE8N+AtDZMCemSSL7hvwWdn
+    MyNDz/AGacCPzGIzXzhD78dColuLodnouHCGmoRMjKYtV966GCmBuA7kPy1v/+so
+    iZfHDXT7Um2eBIKe9OV9ERZOv1YdmKL+vFdUB0w/N/6xzQx9bSyuCpxfNmwvByeW
+    cMe+jIXO2pGTCWhr/AqjeBU5kwaYQ0TrYfmBqlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521035945; bh=a0rOsNzs4gvba674vQeH8fHvGp
+    VlDnMkv3CZXUTk/wo=; b=Y67ko7bmrUmaIBpmwK3kfgE8wM2ZUZp+507fTN9zQc
+    C4dqoqZl2w5xdzkmhuLYVNJOiBUppSRoHUzpmlM/HM1qU3pgskoRbIGQoaPsDjbZ
+    a93vRnAZIu4V74sx31L0/XciV/e258Th8Rk9D8RI+xkTsULazvrNqTVxsThim92e
+    zIXcrrZSvmSLfzBg2wSg+YXLK5QLev9yCpZeV5uBWRIXoZu4dQKgrCBNDwRtESdC
+    XnFrjXYmPitaNPStp3ggNWpI3ACkCRdtkn/odZ0KOs90t/xU9qQc9v5vHQk+4rr8
+    EaIhBDoOGw2VztwjigR3SAdhsuYzDTcd+4MNaiafmG5g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751302AbeCNN7E (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Mar 2018 09:59:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38290 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbeCNN7D (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 09:59:03 -0400
+Date: Wed, 14 Mar 2018 14:59:02 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: stable@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>,
+        "Andrew F. Davis" <afd@ti.com>, Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] w1: gpio: fix problem with platfom data in w1-gpio
+Message-ID: <20180314135902.GA21622@kroah.com>
+References: <20180218170629.6045-1-paweldembicki@gmail.com>
+ <20180218171927.6414-1-paweldembicki@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180328160752.17840-1-ghane0@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180218171927.6414-1-paweldembicki@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596198252944820308?=
-X-GMAIL-MSGID: =?utf-8?q?1596265882353747991?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 12:07:52AM +0800, Sanjeev Gupta wrote:
-> All links checked, for those dead, I have replaced with copies on
-> archive.org.  For some, https is not supported, http has been
-> kept.
+On Sun, Feb 18, 2018 at 06:19:26PM +0100, Pawel Dembicki wrote:
+> In devices, where fdt is used, is impossible to apply platform data
+> without proper fdt node.
 > 
-> The git log says this was last done by Justin P. Mattock in 2010.
-> Hi, Justin!
-
-Not sure this belongs in the commit message (and did you forget to CC
-Justin?).
-
-> Signed-off-by: Sanjeev Gupta <ghane0@gmail.com>
+> This patch allow to use platform data in devices with fdt.
+> 
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> Acked-by: Andrew F. Davis <afd@ti.com>
 > ---
->  Documentation/usb/usb-serial.txt | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-  
->    For any questions or problems with this driver, please contact Hugh
->    Blemings at hugh@misc.nu
-> @@ -436,7 +437,8 @@ Winchiphead CH341 Driver
->    also implements an IEEE 1284 parallel port, I2C and SPI, but that is not
->    supported by the driver. The protocol was analyzed from the behaviour
->    of the Windows driver, no datasheet is available at present.
-> -  The manufacturer's website: http://www.winchiphead.com/.
-> +  The manufacturer's website:
-> +  https://web.archive.org/web/20170911133726/http://winchiphead.com/ .
+>  drivers/w1/masters/w1-gpio.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-AFAICT this link is still working.
-
-Johan
+Patch does not apply at all to my tree :(
