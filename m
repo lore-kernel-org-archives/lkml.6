@@ -1,60 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeCNXqL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:46:11 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:52806 "EHLO vps-vb.mhejs.net"
+        id S1751517AbeCNXvf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 19:51:35 -0400
+Received: from ozlabs.org ([103.22.144.67]:55993 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751348AbeCNXqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:46:09 -0400
-Subject: Re: [PATCH v3 3/9] x86/microcode/AMD: install_equiv_cpu_table()
- should not return (signed) int
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1520973389.git.mail@maciej.szmigiero.name>
- <cf57ed15-df47-087e-c98f-527e4ce1e0f8@maciej.szmigiero.name>
- <20180314175824.GG16605@pd.tnic>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <b913d9fd-9722-d5cc-cf94-426885947890@maciej.szmigiero.name>
-Date: Thu, 15 Mar 2018 00:46:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751348AbeCNXve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 19:51:34 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 15 Mar 2018 10:51:03 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greentime Hu <green.hu@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jesper Nilsson <jesper@jni.nu>
+Subject: linux-next: manual merge of the nds32 tree with the asm-generic
+ tree
+Message-ID: <20180315105103.421ba79c@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180314175824.GG16605@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jWXUg2yC_59pO.EJnzcQN_Y"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.03.2018 18:58, Borislav Petkov wrote:
-> On Tue, Mar 13, 2018 at 10:06:34PM +0100, Maciej S. Szmigiero wrote:
->> The maximum possible value returned by install_equiv_cpu_table() is
->> UINT_MAX + CONTAINER_HDR_SZ (on a 64-bit kernel).
->> This is more than (signed) int type currently returned by this function can
->> hold so this function will need to return a size_t instead.
-> 
-> I'm trying to parse this but I'm not really sure.
-> 
-> All I know is:
-> 
-> 	unsigned int size = ibuf[2];
-> 
-> and that is really a 4-byte unsigned quantity so anything less is an
-> arbitrary limitation.
+--Sig_/jWXUg2yC_59pO.EJnzcQN_Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There is no limit on CPU equivalence table length in this patch series
-like it was in the previous version.
+Hi Greentime,
 
-The maximum possible value returned by install_equiv_cpu_table() of
-UINT_MAX + CONTAINER_HDR_SZ comes from the maximum value of this 'size'
-variable (that is UINT_MAX) plus the header length of CONTAINER_HDR_SZ.
-This won't fit in 'int' type, hence this patch.
+Today's linux-next merge of the nds32 tree got a conflict in:
 
-That's because this functions tells its caller how much bytes to skip
-from the beginning of a microcode container file to the first patch
-section contained in it.
+  arch/cris/include/asm/io.h
 
-Maciej
+between commit:
+
+  77b0b77f7812 ("CRIS: Drop support for the CRIS port")
+
+from the asm-generic tree and commit:
+
+  c25a4f41b284 ("cris: add ioremap_nocache declaration before include asm-g=
+eneric/io.h.")
+
+from the nds32 tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jWXUg2yC_59pO.EJnzcQN_Y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqptWcACgkQAVBC80lX
+0GzzOAf+Mk07lWURI6Co99GBerkcSEfQ0impK1PhYxucQ5N4UJymvgZzO1MEKZat
+G73Qil4/Hmojp+osK+9pvs7RBj39g7Mhnql9x+8TPvJP1liSnpANz3/oL0/YnPMA
+2Cf8IEGVRcwCDMk4nHTkq+8SMsRkJoQ+q67iUzY38NoLJ2+XRKdgqzp+JgVPCjxq
+WXm9pT+SVhPLxfp1Z9zZsw7akXTAeQHc4JKJE/5xNd0ggcNiDNLAS5VlBH45QrYq
+QVMCxOaDOXHhTLLAQt5SEEvyoSUqSAN+SB+ZALhpzbh8swj3PvE50QY0+/yYHD/e
+wyMUoTqnKbfhbZq1CHnSu5BJAGfO/Q==
+=KWVE
+-----END PGP SIGNATURE-----
+
+--Sig_/jWXUg2yC_59pO.EJnzcQN_Y--
