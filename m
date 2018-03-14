@@ -1,88 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752278AbeCNSfI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:35:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:58690 "EHLO foss.arm.com"
+        id S1752206AbeCNShB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:37:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39232 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751696AbeCNSfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:35:06 -0400
-Date: Wed, 14 Mar 2018 18:34:56 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci: tegra: add MSI dependency
-Message-ID: <20180314183456.GA3056@e107981-ln.cambridge.arm.com>
-References: <20180313115218.2246372-1-arnd@arndb.de>
- <20180314114515.GC8564@ulmo>
- <CAK8P3a3Wr8FNRP4ZYDGk9OL+=0w--pzRX=R6ye_+6nCtnHGVjg@mail.gmail.com>
- <20180314121314.GE8564@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314121314.GE8564@ulmo>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751381AbeCNSg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 14:36:58 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Emanuel Czirai <xftroxgpx@protonmail.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/2] x86/microcode: Fix CPU synchronization routine
+Date: Wed, 14 Mar 2018 19:36:15 +0100
+Message-Id: <20180314183615.17629-2-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180314183615.17629-1-bp@alien8.de>
+References: <20180314183615.17629-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 01:13:14PM +0100, Thierry Reding wrote:
-> On Wed, Mar 14, 2018 at 01:06:11PM +0100, Arnd Bergmann wrote:
-> > On Wed, Mar 14, 2018 at 12:45 PM, Thierry Reding
-> > <thierry.reding@gmail.com> wrote:
-> > > On Tue, Mar 13, 2018 at 12:52:05PM +0100, Arnd Bergmann wrote:
-> > >> Building the tegra PCIe host driver without MSI results in a link
-> > >> failure:
-> > >>
-> > >> drivers/pci/host/pci-tegra.o:(.data+0x70): undefined reference to `pci_msi_unmask_irq'
-> > >> drivers/pci/host/pci-tegra.o:(.data+0x74): undefined reference to `pci_msi_mask_irq'
-> > >>
-> > >> This adds the same dependency that everyone else uses.
-> > >>
-> > >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > >> ---
-> > >>  drivers/pci/host/Kconfig | 1 +
-> > >>  1 file changed, 1 insertion(+)
-> > >
-> > > I'm slightly concerned about the dependency. Not that I doubt its
-> > > correctness, but because it could mean that PCI_TEGRA is not visible in
-> > > the default configuration. The only reason why it is currently visible
-> > > is because PCI_MSI is selected by some symbols that also happen to be
-> > > enabled. However, what if at some point those symbols are disabled or
-> > > removed?
-> > >
-> > > Some architectures make sure that PCI_MSI is enabled by selecting it,
-> > > but that's risky, isn't it, because PCI_MSI is user-visible and could
-> > > therefore easily lead to conflicts.
-> > >
-> > > Enabling PCI_MSI in the arm64 defconfig would solve the issue and is
-> > > good enough for me. I've got a couple of changes to that defconfig in
-> > > the Tegra tree for v4.17-rc1, I can add a patch to enable PCI_MSI.
-> > >
-> > > Unless there are any objections.
-> > 
-> > I looked at it again and found that this on ARM64, PCI_MSI is always
-> > selected indirectly by ARM_GIC&&PCI, so there is no problem.
-> > 
-> > The build failure must have been on 32-bit ARM.
-> 
-> Okay, I had assumed that ARM_GIC_V2M (which selects PCI_MSI) was user-
-> visible and hence could be disabled. But it's not, and always enabled on
-> ARM64. On 32-bit we already explicitly enable PCI_MSI via the default
-> configurations.
-> 
-> I withdraw my concerns. I see that Lorenzo already applied the patch, so
-> just for the record:
+From: Borislav Petkov <bp@suse.de>
 
-Apologies - it fixed an issue and it seemed harmless hence I applied it
-straight away, I should have waited for an ACK.
+Emanuel reported an issue with a hang during microcode update because my
+dumb idea to use one atomic synchronization variable for both rendezvous
+- before and after update - was simply bollocks:
 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+  microcode: microcode_reload_late: late_cpus: 4
+  microcode: __reload_late: cpu 2 entered
+  microcode: __reload_late: cpu 1 entered
+  microcode: __reload_late: cpu 3 entered
+  microcode: __reload_late: cpu 0 entered
+  microcode: __reload_late: cpu 1 left
+  microcode: Timeout while waiting for CPUs rendezvous, remaining: 1
 
-Updated - it is important to keep records, that's what tags are for.
+CPU1 above would finish, leave and the others will still spin waiting
+for it to join.
 
-Thanks,
-Lorenzo
+So do two synchronization atomics instead. Which makes the code a lot
+more straightforward.
+
+Also, since the update is serialized and it also takes a couple of
+thousand cycles per microcode engine, increase the exit timeout by the
+number of CPUs on the system.
+
+That's ok because the moment all CPUs are done, that timeout will be cut
+short.
+
+Furthermore, panic when some of the CPUs timeout when returning from a
+microcode update: we can't allow a system with not all cores updated.
+
+Also, as an optimization, do not do the exit sync if microcode wasn't
+updated.
+
+Reported-and-tested-by: Emanuel Czirai <xftroxgpx@protonmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/kernel/cpu/microcode/core.c | 68 ++++++++++++++++++++++--------------
+ 1 file changed, 41 insertions(+), 27 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 9f0fe5bb450d..10c4fc2c91f8 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -517,7 +517,29 @@ static int check_online_cpus(void)
+ 	return -EINVAL;
+ }
+ 
+-static atomic_t late_cpus;
++static atomic_t late_cpus_in;
++static atomic_t late_cpus_out;
++
++static int __wait_for_cpus(atomic_t *t, long long timeout)
++{
++	int all_cpus = num_online_cpus();
++
++	atomic_inc(t);
++
++	while (atomic_read(t) < all_cpus) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				all_cpus - atomic_read(t));
++			return 1;
++		}
++
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
++
++		touch_nmi_watchdog();
++	}
++	return 0;
++}
+ 
+ /*
+  * Returns:
+@@ -527,30 +549,16 @@ static atomic_t late_cpus;
+  */
+ static int __reload_late(void *info)
+ {
+-	unsigned int timeout = NSEC_PER_SEC;
+-	int all_cpus = num_online_cpus();
+ 	int cpu = smp_processor_id();
+ 	enum ucode_state err;
+ 	int ret = 0;
+ 
+-	atomic_dec(&late_cpus);
+-
+ 	/*
+ 	 * Wait for all CPUs to arrive. A load will not be attempted unless all
+ 	 * CPUs show up.
+ 	 * */
+-	while (atomic_read(&late_cpus)) {
+-		if (timeout < SPINUNIT) {
+-			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
+-				atomic_read(&late_cpus));
+-			return -1;
+-		}
+-
+-		ndelay(SPINUNIT);
+-		timeout -= SPINUNIT;
+-
+-		touch_nmi_watchdog();
+-	}
++	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
++		return -1;
+ 
+ 	spin_lock(&update_lock);
+ 	apply_microcode_local(&err);
+@@ -558,15 +566,22 @@ static int __reload_late(void *info)
+ 
+ 	if (err > UCODE_NFOUND) {
+ 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-		ret = -1;
+-	} else if (err == UCODE_UPDATED) {
++		return -1;
++	/* siblings return UCODE_OK because their engine got updated already */
++	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
+ 		ret = 1;
++	} else {
++		return ret;
+ 	}
+ 
+-	atomic_inc(&late_cpus);
+-
+-	while (atomic_read(&late_cpus) != all_cpus)
+-		cpu_relax();
++	/*
++	 * Increase the wait timeout to a safe value here since we're
++	 * serializing the microcode update and that could take a while on a
++	 * large number of CPUs. And that is fine as the *actual* timeout will
++	 * be determined by the last CPU finished updating and thus cut short.
++	 */
++	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC * num_online_cpus()))
++		panic("Timeout during microcode update!\n");
+ 
+ 	return ret;
+ }
+@@ -579,12 +594,11 @@ static int microcode_reload_late(void)
+ {
+ 	int ret;
+ 
+-	atomic_set(&late_cpus, num_online_cpus());
++	atomic_set(&late_cpus_in,  0);
++	atomic_set(&late_cpus_out, 0);
+ 
+ 	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
+-	if (ret < 0)
+-		return ret;
+-	else if (ret > 0)
++	if (ret > 0)
+ 		microcode_check();
+ 
+ 	return ret;
+-- 
+2.13.0
