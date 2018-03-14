@@ -1,122 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752399AbeCNSJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 14:09:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751694AbeCNSJ4 (ORCPT
+        id S1752458AbeCNSKN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 14:10:13 -0400
+Received: from relay0.mail.gandi.net ([217.70.178.220]:58987 "EHLO
+        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752301AbeCNSKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 14:09:56 -0400
-Subject: Re: [PATCH 1/2, pci] pci: Addition of PCI_DEV_FLAGS_QUIET_PCI_REALIGN
- attribute to the PCI subsystem
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT"
-        <linuxppc-dev@lists.ozlabs.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, ruscur@russell.cc,
-        aik@ozlabs.ru, david@gibson.dropbear.id.au, fbarrat@linux.vnet.ibm.com,
-        brking@linux.vnet.ibm.com
-References: <20180314163455.15854-1-desnesn@linux.vnet.ibm.com>
- <20180314163455.15854-2-desnesn@linux.vnet.ibm.com>
- <CAHp75VdOaE-efzbQV=Mtf+a1-6L5JxF10Uc+uZ+LYz3S757biw@mail.gmail.com>
-From: =?UTF-8?Q?Desnes_Augusto_Nunes_do_Ros=c3=a1rio?=
-        <desnesn@linux.vnet.ibm.com>
-Date: Wed, 14 Mar 2018 15:09:28 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 14 Mar 2018 14:10:10 -0400
+X-Originating-IP: 2.224.242.101
+Date: Wed, 14 Mar 2018 19:04:38 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
+        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+Message-ID: <20180314180438.GD16424@w540>
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520951425-13843-3-git-send-email-jacopo+renesas@jmondi.org>
+ <a893a17c-367d-4f61-f835-4b6b420dc597@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdOaE-efzbQV=Mtf+a1-6L5JxF10Uc+uZ+LYz3S757biw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031418-0052-0000-0000-000002C984CC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008674; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003020; UDB=6.00510421; IPR=6.00782349;
- MB=3.00020035; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-14 18:09:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031418-0053-0000-0000-00005BFEC492
-Message-Id: <588ea850-2b28-2b7e-6e95-13d267f05cfa@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140199
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EY/WZ/HvNxOox07X"
+Content-Disposition: inline
+In-Reply-To: <a893a17c-367d-4f61-f835-4b6b420dc597@cogentembedded.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andy,
 
-On 03/14/2018 02:41 PM, Andy Shevchenko wrote:
-> On Wed, Mar 14, 2018 at 6:34 PM, Desnes A. Nunes do Rosario
-> <desnesn@linux.vnet.ibm.com> wrote:
->> Add PCI_DEV_FLAGS_QUIET_PCI_REALIGN to pci_dev_flags and use it to
->> silent PCI realignment messages if the flag is turned on by a driver.
-> 
-> It doesn't explain "Why?"
-> Why the driver needs that?
+--EY/WZ/HvNxOox07X
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-I have written down the reason on the cover letter, but I concur on 
-creating a second version of the patch's comment. Basically, all PCI 
-resources on powerpc are printing out expected realignment messages 
-which are flooding the systems logs.
+Hi Sergei,
+   thanks for review
 
-Perhaps this would be better?
----
-"Some architectures such as powerpc has aligned all of its PCI resources 
-to its PAGE_SIZE during boot, thus the system logs will be flooded by 
-expected realignment messages, which can be interpreted as a false 
-positive for total PCI failure on the system.
+On Wed, Mar 14, 2018 at 08:09:52PM +0300, Sergei Shtylyov wrote:
+> On 03/13/2018 05:30 PM, Jacopo Mondi wrote:
+>
+> > Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> > output decoder.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> [...]
+> > diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > new file mode 100644
+> > index 0000000..4b059c0
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > @@ -0,0 +1,241 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
+> > + *
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + */
+> > +
+> > +#include <drm/drmP.h>
+> > +#include <drm/drm_bridge.h>
+> > +#include <drm/drm_panel.h>
+> > +
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/of_graph.h>
+> > +#include <linux/regulator/consumer.h>
+> > +
+> > +static const char * const thc63_reg_names[] = {
+> > +	"vcc", "lvcc", "pvcc", "cvcc", };
+>
+>    Your bracing style is pretty strange -- neither here nor there. Please place };
+> on the next line...
 
-[root@system user]# dmesg | grep -i disabling
-[    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing 
-memory resources
-[    0.692324] pci 0000:00:00.0: disabling bridge mem windows
-[    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing 
-memory resources
-[    0.737352] pci 0001:00:00.0: disabling bridge mem windows
-[    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing 
-memory resources
-[    0.784509] pci 0002:00:00.0: disabling bridge mem windows
-... and goes on for all PCI devices ...
+Yeah, I had doubt about this.. The most common style I found around is
 
-Thus, this patch adds PCI_DEV_FLAGS_NO_REALIGN_MSG to pci_dev_flags and 
-uses it to silent PCI realignment messages if the flag is turned on by a 
-driver.
-"
----
+static const char * const foo[] = {
+        "bar",
+        "baz",
+        "...",
+};
 
-> 
-> Another approach is to increase level of the message. Would it be
-> accepted by you (in case Bjorn agrees)?
-> 
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -205,6 +205,8 @@ enum pci_dev_flags {
->>          PCI_DEV_FLAGS_NO_FLR_RESET = (__force pci_dev_flags_t) (1 << 10),
->>          /* Don't use Relaxed Ordering for TLPs directed at this device */
->>          PCI_DEV_FLAGS_NO_RELAXED_ORDERING = (__force pci_dev_flags_t) (1 << 11),
->> +       /* Silent PCI resource realignment messages */
->> +       PCI_DEV_FLAGS_QUIET_PCI_REALIGN = (__force pci_dev_flags_t) (1 << 12),
-> 
-> I would rather name it _NO_PCI_REALIGN_MSG
+But seems really too many lines for a bunch of 4 character strings...
 
-I concur on changing it to PCI_DEV_FLAGS_NO_REALIGN_MSG in a second 
-version of the patchset.
+>
+> [...]
+> > +static void thc63_enable(struct drm_bridge *bridge)
+> > +{
+> > +	struct thc63_dev *thc63 = to_thc63(bridge);
+> > +	struct regulator *vcc;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+> > +		vcc = thc63->vccs[i];
+> > +		if (vcc) {
+> > +			ret = regulator_enable(vcc);
+> > +			if (ret)
+>
+>    You hardly need this variable, could do a call right in this *if*.
+>
+> [...]
+> > +error_vcc_enable:
+> > +	dev_err(thc63->dev, "Failed to enable regulator %u\n", i);
+> > +}
+> > +
+>
+>    Why not do this instead of *goto* before?
 
-> 
->>   };
-> 
+Well, goto breaks the loop, if I only print out the error message, the
+enable sequence will go on and enable the other regulators.
 
-Thank you very much for your review,
+I can print out and break, but I don't see that much benefit
 
--- 
-Desnes A. Nunes do Rosário
+One thing I could do instead, is not only print out the error message,
+but disable the already enabled regulators if one fails to start.
+
+>
+> > +static void thc63_disable(struct drm_bridge *bridge)
+> > +{
+> > +	struct thc63_dev *thc63 = to_thc63(bridge);
+> > +	struct regulator *vcc;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+> > +		vcc = thc63->vccs[i];
+> > +		if (vcc) {
+> > +			ret = regulator_disable(vcc);
+> > +			if (ret)
+>
+>    Again, no need for 'ret' whatsoever...
+>
+> > +				goto error_vcc_disable;
+> > +		}
+> > +	}
+> > +
+> > +	if (thc63->pwdn)
+> > +		gpiod_set_value(thc63->pwdn, 1);
+> > +
+> > +	if (thc63->oe)
+> > +		gpiod_set_value(thc63->oe, 0);
+> > +
+> > +	return;
+> > +
+> > +error_vcc_disable:
+> > +	dev_err(thc63->dev, "Failed to disable regulator %u\n", i);
+>
+>    Again, why not do it instead of *goto*?
+
+ditto
+
+>
+> [...]
+> > +static int thc63_gpio_init(struct thc63_dev *thc63)
+> > +{
+> > +	thc63->pwdn = devm_gpiod_get_optional(thc63->dev, "pwdn",
+> > +					      GPIOD_OUT_LOW);
+> > +	if (IS_ERR(thc63->pwdn)) {
+> > +		dev_err(thc63->dev, "Unable to get GPIO \"pwdn\"\n");
+>
+>    "pwdn-gpios" maybe?
+>
+> > +		return PTR_ERR(thc63->pwdn);
+> > +	}
+> > +
+> > +	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> > +	if (IS_ERR(thc63->oe)) {
+> > +		dev_err(thc63->dev, "Unable to get GPIO \"oe\"\n");
+>
+>    "oe-gpios" maybe?
+
+Are you referring to the error message? I can change this, but again, I
+see no standards around.
+
+Thanks
+   j
+
+>
+> [...]
+>
+> MBR, Sergei
+
+--EY/WZ/HvNxOox07X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJaqWQ2AAoJEHI0Bo8WoVY8LpUQAKIyRMcMRnIzIsyHbHxNh2V8
+tUIGieL84JcuSgN7hXLFt1sUoW+fQTu69G8LOSZKRV5idnEKMatmkuUnqIatuXXz
+IkfqwfTdOHO1YoEWpsNvGUDa5UQBJO5ZK4PnrwNvGLfIddk+pdISmYvkvRzA7MG5
+4ETsY/iE0XIhxPIxA+y/aiWwtdJ1fd5AwEPawAwDsKykWbgFTy6ZOdULr/bnQHmJ
+1QqvwJV09JxXHUl7eGq9TsLhXBFj/ukWTX5gmbaqI7EBImQtgqf6ShqPBcr/ypLJ
+pC7IHosNnVKF8Nk7IM0GVQjc5PIE+arHQAupEt98SpfezJluLkeDBfQmCjihzEAI
+XRanoQJJONS5pv2SVFNql1W37p3ofeJDAbSEApdtcCn9r/wXZ0uQKnL6q68md73o
+1s2jRXXKSjjePZ8QX/umlKkVjD1GYV4d/L1KJU0ejzaYKtutGHcZhzzkh5PwWQjA
+mLsWv+lZu0+apeef9lJ8Ev8dHZTYp1X7JlKWVL6f68bVSd4k235T9ynflIkKfPkp
+GOTIuZ90A6Oe7Zr6d67tumLpn0xXr6fEMTl1jl0SVwkGUAtI30TNmoqKQlb9Ezu6
+SUUvPY4oEIEg9vTi9N1hPMqqyGkXeyCV2KGH2upNKWDH4gVtr7f3JwvwwUfP0Ip5
+q7/f9gha5CKFVewZ/Q42
+=Sba9
+-----END PGP SIGNATURE-----
+
+--EY/WZ/HvNxOox07X--
