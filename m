@@ -1,62 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeCNJ2t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 05:28:49 -0400
-Received: from ozlabs.org ([103.22.144.67]:47959 "EHLO ozlabs.org"
+        id S1752479AbeCNJ2z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 05:28:55 -0400
+Received: from ozlabs.org ([103.22.144.67]:58967 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752380AbeCNJ2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 05:28:46 -0400
+        id S1752416AbeCNJ2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 05:28:52 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: ef85dffd4251ff6c23056651f6f83bdce83cd1cf
-In-Reply-To: <20180302195051.4472-1-malat@debian.org>
-To: Mathieu Malaterre <malat@debian.org>
+X-powerpc-patch-commit: e1368d0c9edbc366e45216e7295fd61ae55c2b12
+In-Reply-To: <20180304173025.19520-1-vaibhav@linux.vnet.ibm.com>
+To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [v2, 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-Message-Id: <401RHG4l43z9sTl@ozlabs.org>
-Date: Wed, 14 Mar 2018 20:28:27 +1100 (AEDT)
+Cc: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Douglas Miller <dougmill@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [v2] xmon: Setup xmon debugger hooks when first break-point is set
+Message-Id: <401RHQ2TS9z9s2R@ozlabs.org>
+Date: Wed, 14 Mar 2018 20:28:31 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 19:50:51 UTC, Mathieu Malaterre wrote:
-> Rewrite function-like macro into regular static inline function to avoid a
-> warning during macro expansion.
-> Fix warning (treated as error in W=1):
+On Sun, 2018-03-04 at 17:30:25 UTC, Vaibhav Jain wrote:
+> Presently sysrq key for xmon('x') is registered during kernel init
+> irrespective of the value of kernel param 'xmon'. Thus xmon is enabled
+> even if 'xmon=off' is passed on the kernel command line. However this
+> doesn't enable the kernel debugger hooks needed for instruction or data
+> breakpoints. Thus when a break-point is hit with xmon=off a kernel oops
+> of the form below is reported:
 > 
->   CC      arch/powerpc/kernel/signal_32.o
-> In file included from ./include/linux/uaccess.h:14:0,
->                  from ./include/asm-generic/termios-base.h:8,
->                  from ./arch/powerpc/include/asm/termios.h:20,
->                  from ./include/uapi/linux/termios.h:6,
->                  from ./include/linux/tty.h:7,
->                  from arch/powerpc/kernel/signal_32.c:36:
-> ./include/asm-generic/termios-base.h: In function ‘user_termio_to_kernel_termios’:
-> ./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
->    (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
->                                    ^
-> ./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro ‘__access_ok’
->    __access_ok((__force unsigned long)(addr), (size), get_fs()))
->    ^~~~~~~~~~~
-> ./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro ‘access_ok’
->   if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
->       ^~~~~~~~~
-> ./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro ‘__get_user_check’
->   __get_user_check((x), (ptr), sizeof(*(ptr)))
->   ^~~~~~~~~~~~~~~~
-> ./include/asm-generic/termios-base.h:36:6: note: in expansion of macro ‘get_user’
->   if (get_user(termios->c_line, &termio->c_line) < 0)
->       ^~~~~~~~
-> [...]
-> cc1: all warnings being treated as errors
+> Oops: Exception in kernel mode, sig: 5 [#1]
+> < snip >
+> Trace/breakpoint trap
 > 
-> Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> To fix this the patch checks and enables debugger hooks when an
+> instruction or data break-point is set via xmon console.
+> 
+> Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+> Reviewed-by: Balbir Singh <bsingharora@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/ef85dffd4251ff6c23056651f6f83b
+https://git.kernel.org/powerpc/c/e1368d0c9edbc366e45216e7295fd6
 
 cheers
