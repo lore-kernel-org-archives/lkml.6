@@ -1,96 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCNROU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:14:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52500 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeCNRNi (ORCPT
+        id S1751961AbeCNRPG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:15:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47884 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751362AbeCNRPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:13:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDB6360AF9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org, rnayak@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: [PATCH v5 2/2] dt-bindings: introduce Command DB for QCOM SoCs
-Date: Wed, 14 Mar 2018 11:13:30 -0600
-Message-Id: <20180314171330.1828-3-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180314171330.1828-1-ilina@codeaurora.org>
-References: <20180314171330.1828-1-ilina@codeaurora.org>
+        Wed, 14 Mar 2018 13:15:05 -0400
+Date: Wed, 14 Mar 2018 10:14:48 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: mingo@redhat.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com
+Subject: Re: [PATCH 1/1 v2] x86: pkey-mprotect must allow pkey-0
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1521013574-27041-1-git-send-email-linuxram@us.ibm.com>
+ <18b155e3-07e9-5a4b-1f95-e1667078438c@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18b155e3-07e9-5a4b-1f95-e1667078438c@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18031417-0012-0000-0000-000005BE77A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031417-0013-0000-0000-0000193A7D78
+Message-Id: <20180314171448.GA1060@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140192
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+On Wed, Mar 14, 2018 at 07:19:23AM -0700, Dave Hansen wrote:
+> On 03/14/2018 12:46 AM, Ram Pai wrote:
+> > Once an address range is associated with an allocated pkey, it cannot be
+> > reverted back to key-0. There is no valid reason for the above behavior.  On
+> > the contrary applications need the ability to do so.
+> 
+> I'm trying to remember why we cared in the first place. :)
+> 
+> Could you add that to the changelog, please?
+> 
+> > @@ -92,7 +92,8 @@ int mm_pkey_alloc(struct mm_struct *mm)
+> >  static inline
+> >  int mm_pkey_free(struct mm_struct *mm, int pkey)
+> >  {
+> > -	if (!mm_pkey_is_allocated(mm, pkey))
+> > +	/* pkey 0 is special and can never be freed */
+> > +	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
+> >  		return -EINVAL;
+> 
+> If an app was being really careful, couldn't it free up all of the
+> implicitly-pkey-0-assigned memory so that it is not in use at all?  In
+> that case, we might want to allow this.
+> 
+> On the other hand, nobody is likely to _ever_ actually do this so this
+> is good shoot-yourself-in-the-foot protection.
 
-Command DB provides information on shared resources like clocks,
-regulators etc., probed at boot by the remote subsytem and made
-available in shared memory.
+I look at key-0 as 'the key'. It has special status. 
+(a) It always exist.
+(b) it cannot be freed.
+(c) it is assigned by default.
+(d) its permissions cannot be modified.
+(e) it bypasses key-permission checks when assigned.
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
+An arch need not necessarily map 'the key-0' to its key-0.  It could
+internally map it to any of its internal key of its choice, transparent
+to the application.
 
-Changes in v4:
-	- Fix unwanted capitalization
-	- Add reg property
----
- .../devicetree/bindings/soc/qcom/cmd-db.txt        | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/cmd-db.txt
+Do you see a problem to this view point?
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/cmd-db.txt b/Documentation/devicetree/bindings/soc/qcom/cmd-db.txt
-new file mode 100644
-index 000000000000..5737ed2ac6e8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/cmd-db.txt
-@@ -0,0 +1,38 @@
-+Command DB
-+---------
-+
-+Command DB is a database that provides a mapping between resource key and the
-+resource address for a system resource managed by a remote processor. The data
-+is stored in a shared memory region and is loaded by the remote processor.
-+
-+Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
-+controlling shared resources. Depending on the board configuration the shared
-+resource properties may change. These properties are dynamically probed by the
-+remote processor and made available in the shared memory.
-+
-+The bindings for Command DB is specified in the reserved-memory section in
-+devicetree. The devicetree representation of the command DB driver should be:
-+
-+Properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,cmd-db"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop encoded array>
-+	Definition: The register address that points to the location of the
-+		    Command DB in memory. Additionally, specify the address
-+		    and size of the actual lacation in memory.
-+
-+Example:
-+
-+	reserved-memory {
-+		[...]
-+		qcom,cmd-db@c3f000c {
-+			reg = <0x0 0xc3f000c 0x0 0x8>,
-+			      <0x0 0x85fe0000 0x0 0x20000>;
-+			compatible = "qcom,cmd-db";
-+		};
-+	};
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+RP
