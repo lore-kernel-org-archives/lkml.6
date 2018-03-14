@@ -1,62 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752301AbeCNRG7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 13:06:59 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37326 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeCNQ7J (ORCPT
+        id S1752454AbeCNRH0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 13:07:26 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50334 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752025AbeCNRHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 12:59:09 -0400
-X-Google-Smtp-Source: AG47ELsaN+OYArM4e6wd9t+LSqqsc4wUWKc6zcaDjFTzEp8+vtKq1FRHwqj2Na6QWUmQQ0EtSqT+1A==
+        Wed, 14 Mar 2018 13:07:22 -0400
+X-Google-Smtp-Source: AG47ELvR/EXPiJQoLuOU+pRwp+TNFG6+QwaT4Z/Jm4HCVCNR1zc9YPxJQu3/pdZdAUpKWQ273ZuaO3ty8kaDnJU1H4c=
+MIME-Version: 1.0
+In-Reply-To: <20180314153603.3127932-30-arnd@arndb.de>
+References: <20180314153603.3127932-1-arnd@arndb.de> <20180314153603.3127932-30-arnd@arndb.de>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 03/25] PM / Domains: Add generic data pointer to genpd_power_state struct
-Date: Wed, 14 Mar 2018 17:58:13 +0100
-Message-Id: <1521046715-30683-4-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
-References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+Date: Wed, 14 Mar 2018 18:07:21 +0100
+Message-ID: <CAPDyKFr81J1pW_Jie7afshcRdHCSDsE-0MdHqsi3EZCLNzznQw@mail.gmail.com>
+Subject: Re: [PATCH 29/47] mmc: remove bfin_sdh driver
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <lina.iyer@linaro.org>
+On 14 March 2018 at 16:35, Arnd Bergmann <arnd@arndb.de> wrote:
+> The blackfin architecture is getting removed, so this one
+> is obsolete now as well.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Let's add a data pointer to the genpd_power_state struct, to allow
-platforms to store per state specific data.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- include/linux/pm_domain.h | 1 +
- 1 file changed, 1 insertion(+)
+Kind regards
+Uffe
 
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 04dbef9..55ad34d 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -44,6 +44,7 @@ struct genpd_power_state {
- 	s64 residency_ns;
- 	struct fwnode_handle *fwnode;
- 	ktime_t idle_time;
-+	void *data;
- };
- 
- struct genpd_lock_ops;
--- 
-2.7.4
+> ---
+>  drivers/mmc/host/Kconfig    |  19 --
+>  drivers/mmc/host/Makefile   |   1 -
+>  drivers/mmc/host/bfin_sdh.c | 679 --------------------------------------------
+>  3 files changed, 699 deletions(-)
+>  delete mode 100644 drivers/mmc/host/bfin_sdh.c
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 620c2d90a646..b4fd5d48dd35 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -646,25 +646,6 @@ config MMC_VIA_SDMMC
+>
+>           If unsure, say N.
+>
+> -config SDH_BFIN
+> -       tristate "Blackfin Secure Digital Host support"
+> -       depends on (BF54x && !BF544) || (BF51x && !BF512)
+> -       help
+> -         If you say yes here you will get support for the Blackfin on-chip
+> -         Secure Digital Host interface.  This includes support for MMC and
+> -         SD cards.
+> -
+> -         To compile this driver as a module, choose M here: the
+> -         module will be called bfin_sdh.
+> -
+> -         If unsure, say N.
+> -
+> -config SDH_BFIN_MISSING_CMD_PULLUP_WORKAROUND
+> -       bool "Blackfin EZkit Missing SDH_CMD Pull Up Resistor Workaround"
+> -       depends on SDH_BFIN
+> -       help
+> -         If you say yes here SD-Cards may work on the EZkit.
+> -
+>  config MMC_CAVIUM_OCTEON
+>         tristate "Cavium OCTEON SD/MMC Card Interface support"
+>         depends on CAVIUM_OCTEON_SOC
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 84cd1388abc3..f563cc0b7f93 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -43,7 +43,6 @@ obj-$(CONFIG_MMC_SDHI_SYS_DMAC)               += renesas_sdhi_sys_dmac.o
+>  obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)   += renesas_sdhi_internal_dmac.o
+>  obj-$(CONFIG_MMC_CB710)                += cb710-mmc.o
+>  obj-$(CONFIG_MMC_VIA_SDMMC)    += via-sdmmc.o
+> -obj-$(CONFIG_SDH_BFIN)         += bfin_sdh.o
+>  octeon-mmc-objs := cavium.o cavium-octeon.o
+>  obj-$(CONFIG_MMC_CAVIUM_OCTEON) += octeon-mmc.o
+>  thunderx-mmc-objs := cavium.o cavium-thunderx.o
+> diff --git a/drivers/mmc/host/bfin_sdh.c b/drivers/mmc/host/bfin_sdh.c
+> deleted file mode 100644
+> index 526231e38583..000000000000
+> --
+> 2.9.0
+>
