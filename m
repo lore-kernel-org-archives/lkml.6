@@ -1,220 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeCNMlx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 08:41:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54314 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750902AbeCNMlw (ORCPT
+        id S1751944AbeCNMon (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 08:44:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45499 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeCNMom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:41:52 -0400
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: [PATCH 1/2 v2] perf stat: Rework x86 transaction counter handling
-Date: Wed, 14 Mar 2018 13:40:03 +0100
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18031412-0012-0000-0000-000005BE5AD4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031412-0013-0000-0000-0000193A5E95
-Message-Id: <20180314124004.98937-1-tmricht@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803140145
+        Wed, 14 Mar 2018 08:44:42 -0400
+Subject: Re: [PATCH] can: enable multi-queue for SocketCAN devices
+To: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>,
+        Wolfgang Grandegger <wg@grandegger.com>
+Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hs@denx.de" <hs@denx.de>,
+        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
+References: <9ce65a3a1535456dbad7120c5775a8f9@de.bosch.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <7cd5b1e3-5d86-1f3c-e651-448d696a0823@pengutronix.de>
+Date: Wed, 14 Mar 2018 13:44:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <9ce65a3a1535456dbad7120c5775a8f9@de.bosch.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="NjTT4RXgDvMfEI53KONn9meUQ5VFRRgrC"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Command 'perf stat -T -- sleep 2' displays transaction
-counters.  Right now there is only hard coded support
-for x86.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--NjTT4RXgDvMfEI53KONn9meUQ5VFRRgrC
+Content-Type: multipart/mixed; boundary="arCDEgYDoXUguQgCngMyZ3uhBNGiddoEm";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>,
+ Wolfgang Grandegger <wg@grandegger.com>
+Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "hs@denx.de" <hs@denx.de>, "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
+Message-ID: <7cd5b1e3-5d86-1f3c-e651-448d696a0823@pengutronix.de>
+Subject: Re: [PATCH] can: enable multi-queue for SocketCAN devices
+References: <9ce65a3a1535456dbad7120c5775a8f9@de.bosch.com>
+In-Reply-To: <9ce65a3a1535456dbad7120c5775a8f9@de.bosch.com>
 
-This patch introduces architecture specific counter
-tables for x86. The architecture is queried
-and the event string for transaction counters is constructed
-depending on the architecture and the CPU measurement
-facility counter list. This scheme can be easily extended
-to support other architectures.
+--arCDEgYDoXUguQgCngMyZ3uhBNGiddoEm
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
-Output does not change.
+On 03/14/2018 01:26 PM, Jonas Mark (BT-FIR/ENG1) wrote:
+>> Do you have a driver or a patch to make a driver mq aware?
+>=20
+> Yes, we have CAN hardware with multiple queues and we also have a
+> SocketCAN driver for it.
+>=20
+> IMHO the driver will be of very little use for the Linux community
+> because the HW is proprietary.
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
----
- tools/perf/builtin-stat.c | 130 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 102 insertions(+), 28 deletions(-)
+That doesn't matter. It would be the first driver that makes use of the
+feature, so we can learn from it. And you might get a free review of
+your driver.
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 86c8c8a9229c..8d7b97c708e4 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -95,22 +95,8 @@ static const char *transaction_attrs = {
- 	"task-clock,"
- 	"{"
- 	"instructions,"
--	"cycles,"
--	"cpu/cycles-t/,"
--	"cpu/tx-start/,"
--	"cpu/el-start/,"
--	"cpu/cycles-ct/"
--	"}"
--};
--
--/* More limited version when the CPU does not have all events. */
--static const char * transaction_limited_attrs = {
--	"task-clock,"
--	"{"
--	"instructions,"
--	"cycles,"
--	"cpu/cycles-t/,"
--	"cpu/tx-start/"
-+	"cycles"
-+	"%s"
- 	"}"
- };
- 
-@@ -2149,13 +2135,93 @@ __weak void arch_topdown_group_warn(void)
- {
- }
- 
-+struct pmu_tx_events {			/* Define transaction counters */
-+	const char *pmu;		/* PMU name */
-+	const char *name;		/* Counter name */
-+};
-+
-+static struct pmu_tx_events x86_tx_events[] = {/* x86 transaction counters */
-+	{
-+		.pmu = "cpu",
-+		.name = "cycles-t",
-+	},
-+	{
-+		.pmu = "cpu",
-+		.name = "tx-start",
-+	},
-+	{
-+		.pmu = "cpu",
-+		.name = "el-start",
-+	},
-+	{
-+		.pmu = "cpu",
-+		.name = "cycles-ct",
-+	},
-+	{
-+		.pmu = 0
-+	}
-+};
-+
-+struct arch_pmu_tx_events {
-+	const char *archname;		/* Architecture name */
-+	struct pmu_tx_events *tx;	/* Architecture specific counters */
-+} arch_pmu_tx_events[] = {
-+	{
-+		.archname = "x86",
-+		.tx = x86_tx_events
-+	},
-+	{
-+		.archname = 0
-+	}
-+};
-+
-+static struct pmu_tx_events *pmu_tx_find_arch(const char *name)
-+{
-+	struct arch_pmu_tx_events *p = arch_pmu_tx_events;
-+
-+	for (; p->archname; ++p)
-+		if (!strcmp(name, p->archname))
-+			return p->tx;
-+	return NULL;
-+}
-+
-+/* Search the list of transaction events and test if they are valid for
-+ * this PMU. The events are named cpu/cycles-t/ or cpum_cf/TX_NC_TEND/
-+ * that is the PMU name followed by the event name surrounded by slashes.
-+ *
-+ * The function returns a string which contains the tested (and existing)
-+ * PMU transaction events. The caller must free this string.
-+ *
-+ * If no PMU transaction events are found, a NULL pointer is returned.
-+ */
-+static char *build_tx_string(const char *fmt, struct pmu_tx_events *txp)
-+{
-+	struct pmu_tx_events *p = txp;
-+	char buffer[512], *result;
-+	int rc, i = 0;
-+
-+	memset(buffer, 0, sizeof(buffer));
-+	for (p = txp; p->pmu; ++p) {
-+		if (pmu_have_event(p->pmu, p->name)) {
-+			rc = scnprintf(buffer + i, sizeof(buffer) - i,
-+				       ",%s/%s/", p->pmu, p->name);
-+			i += rc;
-+			if (i >= (int)sizeof(buffer))
-+				break;
-+		}
-+	}
-+	if (i)			/* Transaction counters found */
-+		return asprintf(&result, fmt, buffer) < 0 ? NULL : result;
-+	return NULL;
-+}
-+
- /*
-  * Add default attributes, if there were no attributes specified or
-  * if -d/--detailed, -d -d or -d -d -d is used:
-  */
- static int add_default_attributes(void)
- {
--	int err;
-+	int err = -1;
- 	struct perf_event_attr default_attrs0[] = {
- 
-   { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_TASK_CLOCK		},
-@@ -2274,21 +2340,29 @@ static int add_default_attributes(void)
- 		return 0;
- 
- 	if (transaction_run) {
--		struct parse_events_error errinfo;
-+		struct parse_events_error errinfo = { .idx = 0 };
-+		char *tx_str;
-+		struct pmu_tx_events *tx_archp;
- 
--		if (pmu_have_event("cpu", "cycles-ct") &&
--		    pmu_have_event("cpu", "el-start"))
--			err = parse_events(evsel_list, transaction_attrs,
--					   &errinfo);
--		else
--			err = parse_events(evsel_list,
--					   transaction_limited_attrs,
--					   &errinfo);
--		if (err) {
-+		/* Find architecture transaction counter string table */
-+		tx_archp = pmu_tx_find_arch(perf_env__arch(NULL));
-+		if (!tx_archp) {
- 			fprintf(stderr, "Cannot set up transaction events\n");
- 			return -1;
- 		}
--		return 0;
-+
-+		/* Build architecture transaction counter string */
-+		tx_str = build_tx_string(transaction_attrs, tx_archp);
-+		if (!tx_str) {
-+			fprintf(stderr, "Cannot set up transaction events\n");
-+			return -1;
-+		}
-+
-+		err = parse_events(evsel_list, tx_str, &errinfo);
-+		if (err)
-+			parse_events_print_error(&errinfo, tx_str);
-+		free(tx_str);
-+		return err;
- 	}
- 
- 	if (smi_cost) {
--- 
-2.14.3
+> Our motivation to separate this patch from the proprietary SocketCAN
+> driver
+
+Looking at your email address I assume your employer sells devices with
+this hardware and the driver. So someone has to provide the sources for
+it anyways to fulfil the GPL license requirements. :)
+
+> is that we felt it was odd that the multi-queue infrastructure is in
+> place and only very few lines of code are missing to offer it to the
+> CAN networking subsystem as well.
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--arCDEgYDoXUguQgCngMyZ3uhBNGiddoEm--
+
+--NjTT4RXgDvMfEI53KONn9meUQ5VFRRgrC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlqpGTIACgkQk9IU1zQo
+ZfFq3ggAqD2LOcpwBk3KTi4BGSjsenhZPIKEng2TIHHd+8Sb3xomGBA0WA27Ij4H
+om7jpD7AetBaHUDMljHO4PzIkkTacXdeu+e5KRfJIZJjeLC6Enp4pc8UGbF3qqDZ
+JbkRETxSZ2r6MxLXq1hYXHOGty7ks6DZXeag4O4Z9eXeYBjxt62xOgi0hBICfpMW
+56ASz0Sz/lb7HAAByip/lt9Mjho8IY6e7jevjbm6ZiYWov68/ChpU3XrfBIXbZAA
+27U1NMko0LHRiPrbU7G+gjRnKys/NHWkG3FR+FRIosbsAA8uRzEV/dqSQRi3gVZc
+GuAQwTJvg9dXiDyFw2mS4Ml1di3zLA==
+=e8Pv
+-----END PGP SIGNATURE-----
+
+--NjTT4RXgDvMfEI53KONn9meUQ5VFRRgrC--
