@@ -1,68 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeCORSC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:18:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57098 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbeCORSA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:18:00 -0400
-Subject: Re: mmotm 2018-03-14-16-24 uploaded (lustre)
-To: akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        lustre-devel@lists.lustre.org
-References: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5c65e935-a6d9-2f80-18ac-470ed38ba439@infradead.org>
-Date: Thu, 15 Mar 2018 10:17:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752113AbeCORUi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:20:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751731AbeCORUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:20:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB2D204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 15 Mar 2018 13:20:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: changbin.du@intel.com, jolsa@redhat.com, peterz@infradead.org,
+        mingo@redhat.com, namhyung@kernel.org, yan.y.zhao@intel.com,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf trace: __print_array should print hex format
+ instead of dec
+Message-ID: <20180315132025.5825df8c@vmware.local.home>
+In-Reply-To: <20180313142732.GA29837@kernel.org>
+References: <1520937557-24895-1-git-send-email-changbin.du@intel.com>
+        <20180313142732.GA29837@kernel.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/14/2018 04:24 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-03-14-16-24 has been uploaded to
+On Tue, 13 Mar 2018 11:27:32 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> Em Tue, Mar 13, 2018 at 06:39:17PM +0800, changbin.du@intel.com escreveu:
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > The token '__print_array' is to print the array in hex format, but not
+> > decimal numbers. The implementation of __print_array in kernel side is:
+> > __print_array()->trace_print_array_seq()
+> > 
+> > This patch align the perf's behavior with kernel so we have a consistent
+> > event format.  
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+> Look ok, i.e. makes the userspace formatting do what the equivalent
+> kernel code does, Rostedt, Ack?
+> 
 
-(not from the mmotm patches, but in its linux-next.patch)
+Thanks for sending this to me. I'll see how it affects trace-cmd, and
+let you know.
 
-CONFIG_LUSTRE_FS=y
-# CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK is not set
-
-
-In file included from ../drivers/staging/lustre/include/linux/libcfs/libcfs.h:42:0,
-                 from ../drivers/staging/lustre/lustre/obdclass/lu_object.c:44:
-../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_degister':
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: dereferencing pointer to incomplete type
-          __func__, key->lct_owner ? key->lct_owner->name : "",
-                                                   ^
-../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
-   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
-                                         ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1409:3: note: in expansion of macro 'CDEBUG'
-   CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
-   ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_quiesce':
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1550:42: error: dereferencing pointer to incomplete type
-           key->lct_owner ? key->lct_owner->name : "",
-                                          ^
-../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
-   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
-                                         ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1548:4: note: in expansion of macro 'CDEBUG'
-    CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
-    ^
-
-
-
--- 
-~Randy
+-- Steve
