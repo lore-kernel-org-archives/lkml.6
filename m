@@ -1,84 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932532AbeCOS3W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:29:22 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43864 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbeCOS3T (ORCPT
+        id S1752605AbeCOSa2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:30:28 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:42942 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeCOSa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:29:19 -0400
-X-Google-Smtp-Source: AG47ELtKR05fOSdgZgPSo0bglWLnKXNzEIy42SHkCylbDOIVd70aAHdMe9XQWWjJzCrnEhAjeflpSA==
-Subject: Re: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode
- setting with RGMII PHY interface
-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Schuyler Patton <spatton@ti.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180315165603.30471-1-sz.lin@moxa.com>
- <b866b57c-2e15-978b-e1e5-5b2c7aa0a06a@ti.com>
- <eddbe437-8a9f-c7df-4e68-8a45c6d89cdb@ti.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <f2a255a8-945a-6248-0c28-5ed96fbfde0b@gmail.com>
-Date: Thu, 15 Mar 2018 11:29:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <eddbe437-8a9f-c7df-4e68-8a45c6d89cdb@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 15 Mar 2018 14:30:26 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] [v2] Bluetooth: btrsi: rework dependencies
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180315165050.2211236-1-arnd@arndb.de>
+Date: Thu, 15 Mar 2018 19:30:23 +0100
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>, Sebastian Reichel <sre@kernel.org>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <988BDE3E-B2D2-4ABF-B644-4BFF41AF4157@holtmann.org>
+References: <20180315165050.2211236-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 11:18 AM, Grygorii Strashko wrote:
-> 
-> 
-> On 03/15/2018 12:39 PM, Grygorii Strashko wrote:
->>
->>
->> On 03/15/2018 11:56 AM, SZ Lin (林上智) wrote:
->>> According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
->>> DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register
->>> is only
->>> available when PHY is configured in RGMII mode with 10Mbps speed. It
->>> will
->>> cause some networking issues without RGMII mode, such as carrier sense
->>> errors and low throughput. TI also mentioned this issue in their
->>> forum[4].
->>>
->>> This patch adds the check mechanism for PHY interface with RGMII
->>> interface
->>> type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
->>>
->>> References:
->>> [1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
->>> [2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
->>> [3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
->>> [4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
->>>
->>> Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
->>> Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
->>> Signed-off-by: Schuyler Patton <spatton@ti.com>
->>> ---
->>> Changes from v1:
->>> - Use phy_interface_is_rgmii helper function
->>> - Remove blank line
->>>
->>
->> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>
-> 
-> Also could this be marked as stable material 4.9+?
+Hi Arnd,
 
-This is not how it works for networking changes, just make sure you
-provide a "Fixes:" tag, and David would usually take care of queueing
-the change to -stable accordingly:
+> The linkage between the bluetooth driver and the wireless
+> driver is not defined properly, leading to build problems
+> such as:
+> 
+> warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI && RSI_91X)
+> drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
+> (.text+0x205): undefined reference to `rsi_bt_ops'
+> 
+> As the dependency is actually the reverse (RSI_91X uses
+> the BT_RSI driver, not the other way round), this changes
+> the dependency to match, and enables the bluetooth driver
+> from the RSI_COEX symbol.
+> 
+> Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: Pick a different from v1
+> ---
+> drivers/bluetooth/Kconfig        | 4 +---
+> drivers/net/wireless/rsi/Kconfig | 4 +++-
+> 2 files changed, 4 insertions(+), 4 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/netdev-FAQ.txt#n148
--- 
-Florian
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
+
+Since I think Kalle still has to take it through his tree until the btrsi driver makes it into net-next.
+
+Regards
+
+Marcel
