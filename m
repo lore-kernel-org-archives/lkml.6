@@ -1,52 +1,51 @@
-Return-Path: <kernel-hardening-return-12646-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELu8iFVFp8PZu4H+BidgznNnu4MQH5XvbyAn5qmZ96GiPS6s7z8EoSe18GmA2Jv1+LvV0a+6
-ARC-Seal: i=1; a=rsa-sha256; t=1521154001; cv=none;
+Return-Path: <kernel-hardening-return-12652-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvAuBwOZpAPH/4QgKw5CPvskmUhksgHT8jdANoWInpmyN2lg0AWQgVLkpE/SwfaTqHFqAsE
+ARC-Seal: i=1; a=rsa-sha256; t=1521156872; cv=none;
         d=google.com; s=arc-20160816;
-        b=jk777efjucz/7bUSQl2J5w/lqjaXaER6Fgsw46wCjjLbAc+EPEJTlBJtWfwOR2cfwZ
-         oJipG0cxng8nxOzEb7M6zND5u/7n2qSx0mvBxGp7IXryI7Ey71g7QdlokRXKp7GXVTME
-         bfGp2HCWHELH+OosVpIoo3u+5tkJP1nvaxR7RjKItt1WsOmwtcTfYaO1Zx3YSZUUJVb2
-         wqDlyHzL3sS/JDjebPjiqCJO8D/wvi5d7xLdYs9+JIkvlAYRLs34qcLIte025yeIDkfJ
-         T/Nd3UTD87GcgFm7NO+6Q0hWsaVx/3a6WE6InL4P7Rd03kklyHcquJTPTOk0b6q3aOH1
-         oiaQ==
+        b=YKi3mPS2u7xsU4KvhXNMjo89vHKFRzS9GcXjUGgEfgySeRW7/OSQpfmkO97kmbGiC0
+         LXtG4QkseoVk6YN0nPJWACQtFs5LQ+JZcBORruD+9P3lGcFSG4mr0ShHVZf0fXi2W60W
+         ftw0ePu9sanzwl0qW3bgm/cMzAlH7UNDFwrV3614CJlL8NtBaw8zfKwHp1pW8WmBOGeQ
+         MzewwbiZC/T70HEHKhkbZQ/eU/RZS4wMrZjClfxFBiG1iLjPckYPeBhz6bD7rD4piTMW
+         IkemTm7S6YevnL+RLN4JB0eJcRvxgIljPl+ABXOhRJIyAlaXDqYflPWP+GEXSH0duEXe
+         WeIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
          :list-subscribe:list-unsubscribe:list-help:list-post:precedence
          :mailing-list:arc-authentication-results;
-        bh=stQyrmotWiOD8n8XDEvVIZwJGN3jZW9lSK8XliOTdaU=;
-        b=gBl+1dhGiR8veQi8d7xWJHokam/P8mX10/Mjue43zo+2SFlW+MgitvaMWEzdUJ33ms
-         p/SyvjtCB8AtzDucxrv6Sa5Qq0nmSqRXdVc9xafZs3PutrUW9uIxUiLSFlBzhUMBDfxn
-         4A3fojKnJOR+fv3hECTvO4gTpdGWPI6XL/xDMDXjrmC0zsShNIPJvgYm8NKBqpWUVd87
-         Rio6clh27bVrzJK7XBVjyRmzmMoJSKi3jIjzf+WYNb35J4VdQM0U3Oy156AUPnUwYgFZ
-         KkwGU1MEhfCEWaqmw7OgOXs7QEMu3PkA/tAucZnsOHIMaCJFowneWQ/EmAdmYqRs3l9r
-         WHTQ==
+        bh=X9P+LUmQLqE0ilVk4ITwIZDAOy2LhAi9vKi1gKT7cEA=;
+        b=X5LySwMG51sdWkDdUIfys8z2fZIhVKvWqkFQ0jEtq3a4AFmCBR8pHmmaC+GfKYH+Q0
+         CFQcXQPBOK9rtfPmGZ+CalBdqUnJr3l+Rrrn1ZkEfTAWpoZOIMATfBTmGq4nAL36qmYv
+         TJctItTPUriwqu9U+L+KMt9hCZH5jirP+j1VwzICxpx0jinacqO4vhXXzsUZPMpFKVAG
+         B0LK6IIxnJN3P6OeE/nSp/Ly8cSbZJ/bipwxgCkvtIZsyOnneX1d3LasTEk7x8JOp5Go
+         V+RRBsyzcJ+rp5o8nNMEza2S4l9hLoFoWiJdO/0wE6lPqIoraJf41dzPHPepcBamanmP
+         /eeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=EdkmPqE2;
-       dkim=pass header.i=@chromium.org header.s=google header.b=fIbi+nSr;
-       spf=pass (google.com: domain of kernel-hardening-return-12646-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12646-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U7aKaoJA;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=RHyGjHmj;
+       spf=pass (google.com: domain of kernel-hardening-return-12652-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12652-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=EdkmPqE2;
-       dkim=pass header.i=@chromium.org header.s=google header.b=fIbi+nSr;
-       spf=pass (google.com: domain of kernel-hardening-return-12646-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12646-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U7aKaoJA;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=RHyGjHmj;
+       spf=pass (google.com: domain of kernel-hardening-return-12652-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12652-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CA+55aFwDJ906oQ-98L2DNrjfKtb6cd5ykwMxpG942qxCFmAoEQ@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAGXu5jLHam5kz18k9uvhsz2WYodkF2v1tsEOV4Sx0O7jir4B3A@mail.gmail.com>
 References: <1521143266-31350-1-git-send-email-keescook@chromium.org>
  <1521143266-31350-2-git-send-email-keescook@chromium.org> <CA+55aFzu+VU_FVZdbLCZttUspZdJCvBhkuo4V69H=XnqmLrpLA@mail.gmail.com>
- <CAGXu5jKtv=a8qTy1-AfbzNRB=Azb8V7Pt1M4QMVYNKg6+Ci7=Q@mail.gmail.com> <CA+55aFwDJ906oQ-98L2DNrjfKtb6cd5ykwMxpG942qxCFmAoEQ@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 15 Mar 2018 15:46:21 -0700
-X-Google-Sender-Auth: DXGlTpE7D59Ksf-bvhmjc70zqVg
-Message-ID: <CAGXu5jLHam5kz18k9uvhsz2WYodkF2v1tsEOV4Sx0O7jir4B3A@mail.gmail.com>
+ <CAGXu5jKtv=a8qTy1-AfbzNRB=Azb8V7Pt1M4QMVYNKg6+Ci7=Q@mail.gmail.com>
+ <CA+55aFwDJ906oQ-98L2DNrjfKtb6cd5ykwMxpG942qxCFmAoEQ@mail.gmail.com> <CAGXu5jLHam5kz18k9uvhsz2WYodkF2v1tsEOV4Sx0O7jir4B3A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 15 Mar 2018 16:34:13 -0700
+X-Google-Sender-Auth: olMylVb_VRnNGg0kYPrHa8GseWM
+Message-ID: <CA+55aFzO12QMFJHe8osoWfph8jnjgp_jLUQWmgbNmth_KwPxXw@mail.gmail.com>
 Subject: Re: [PATCH v4 1/2] kernel.h: Introduce const_max() for VLA removal
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Randy Dunlap <rdunlap@infradead.org>,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Ingo Molnar <mingo@kernel.org>,
@@ -58,74 +57,46 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@redhat.c
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595034361293703830?=
-X-GMAIL-MSGID: =?utf-8?q?1595045577729399948?=
+X-GMAIL-MSGID: =?utf-8?q?1595048589056540258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 3:23 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Mar 15, 2018 at 3:16 PM, Kees Cook <keescook@chromium.org> wrote:
->>
->> size_t __error_not_const_arg(void) \
->> __compiletime_error("const_max() used with non-compile-time constant arg");
->> #define const_max(x, y)                                         \
->>         __builtin_choose_expr(__builtin_constant_p(x) &&        \
->>                               __builtin_constant_p(y),          \
->>                               (typeof(x))(x) > (typeof(y))(y) ? \
->>                                         (x) : (y),              \
->>                               __error_not_const_arg())
->>
->> Is typeof() forcing enums to int? Regardless, I'll put this through
->> larger testing. How does that look?
+On Thu, Mar 15, 2018 at 3:46 PM, Kees Cook <keescook@chromium.org> wrote:
 >
-> Ok, that alleviates my worry about one class of insane behavior, but
-> it does raise a few other questions:
+> So, AIUI, I can either get strict type checking, in which case, this
+> is rejected (which I assume there is still a desire to have):
 >
->  - what drugs is gcc on where (typeof(x)(x)) makes a difference? Funky.
+> int foo[const_max(6, sizeof(whatever))];
 
-Yeah, that's why I didn't even try that originally. But in looking
-back at max() again, it seemed to be the only thing missing that would
-handle the enum evaluation, which turned out to be true.
+Ehh, yes, that looks fairly sane, and erroring out would be annoying.
 
->  - this does have the usual "what happen if you do
->
->      const_max(-1,sizeof(x))
->
-> where the comparison will now be done in 'size_t', and -1 ends up
-> being a very very big unsigned integer.
->
-> Is there no way to get that type checking inserted? Maybe now is a
-> good point for that __builtin_types_compatible(), and add it to the
-> constness checking (and change the name of that error case function)?
+But maybe we should just make the type explicit, and make it "const_max_t()"?
 
-So, AIUI, I can either get strict type checking, in which case, this
-is rejected (which I assume there is still a desire to have):
+I think all the existing users are of type "max_t()" anyway due to the
+very same issue, no?
 
-int foo[const_max(6, sizeof(whatever))];
+At least if there's an explicit type like 'size_t', then passing in
+"-1" becoming a large unsigned integer is understandable and clear,
+not just some odd silent behavior.
 
-due to __builtin_types_compatible_p() rejecting it, or I can construct
-a "positive arguments only" test, in which the above is accepted, but
-this is rejected:
+Put another way: I think it's unacceptable that
 
-int foo[const_max(-1, sizeof(whatever))];
+     const_max(-1,6)
 
-By using this eye-bleed:
+magically becomes a huge positive number like in that patch of yours, but
 
-size_t __error_not_const_arg(void) \
-__compiletime_error("const_max() used with non-compile-time constant arg");
-size_t __error_not_positive_arg(void) \
-__compiletime_error("const_max() used with negative arg");
-#define const_max(x, y)                                                 \
-        __builtin_choose_expr(__builtin_constant_p(x) &&                \
-                              __builtin_constant_p(y),                  \
-                __builtin_choose_expr((x) >= 0 && (y) >= 0,             \
-                                      (typeof(x))(x) > (typeof(y))(y) ? \
-                                        (x) : (y),                      \
-                                      __error_not_positive_arg()),      \
-                __error_not_const_arg())
+     const_max_t(size_t, -1, 6)
 
--Kees
+*obviously* is a huge positive number.
 
--- 
-Kees Cook
-Pixel Security
+The two things would *do* the same thing, but in the second case the
+type is explicit and visible.
+
+> due to __builtin_types_compatible_p() rejecting it, or I can construct
+> a "positive arguments only" test, in which the above is accepted, but
+> this is rejected:
+
+That sounds acceptable too, although the "const_max_t()" thing is
+presumably going to be simpler?
+
+                 Linus
