@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeCOLzw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:55:52 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39349 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeCOLzu (ORCPT
+        id S1751977AbeCOL4E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:56:04 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35391 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751353AbeCOLzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:55:50 -0400
-X-Google-Smtp-Source: AG47ELv3vh9WFh0t0YGNx0CRcPslRqsOIQNwx0CSkbMdtKRis2k67q+Qi1kh3M7uBHv8tqOL0Bnvgw==
+        Thu, 15 Mar 2018 07:55:51 -0400
+X-Google-Smtp-Source: AG47ELuOMXVZCUzeZyCwiAXOwWOn4lpgV5Z9ESsc0pOWcV+zGU5k82W2oPtDHyNp5oro8jQtgh9Pvg==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
         Neil Armstrong <narmstrong@baylibre.com>
@@ -15,43 +15,71 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] ARM64: dts: meson: hhi syscon and clock controllers
-Date: Thu, 15 Mar 2018 12:55:41 +0100
-Message-Id: <20180315115545.1884-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/4] dt-bindings: clock: meson: update documentation with hhi syscon
+Date: Thu, 15 Mar 2018 12:55:42 +0100
+Message-Id: <20180315115545.1884-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180315115545.1884-1-jbrunet@baylibre.com>
+References: <20180315115545.1884-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HHI register region provides more than just clocks. Several drivers may
-need to access this region, such as the clock controllers and the display
+The HHI register region hosts more than just clocks and needs to
+accessed drivers other than the clock controller, such as the display
 driver.
 
-Meson-gx clock controllers has been developed and merged before we knew the
-hhi could be needed elsewhere, which is why it requests the region directly.
-Meson-axg was built following the model of meson-gx.
+This register region should be managed by syscon. It is already the case
+on gxbb/gxl and it soon will be on axg. The clock controllers must use
+this system controller instead of directly mapping the registers.
 
-To fix this situation, the clock controller should be a child of the hhi
-system controllers. The hhi system controller node already exists on meson-gx.
-It needs to be added on the axg.
+This changes the bindings of gxbb and axg's clock controllers. This is
+due to an initial 'incomplete' knowledge of these SoCs, which is why the
+meson bindings are unstable ATM.
 
-This changeset depends on [0]. This dependency has been merged in
-clk-next. A topic branch is available here [1]
-
-[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-amlogic
-
-Jerome Brunet (4):
-  dt-bindings: clock: meson: update documentation with hhi syscon
-  ARM64: dts: meson-gx: sysctrl is the parent of the clock controller
-  ARM64: dts: meson-axg: use hhi syscon for the clock controller
-  ARM64: dts: meson-gx: fix gxl clock controller compatible
-
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
  .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt      | 16 +++++++++++-----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi               | 12 ++++++++----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi              |  5 ++---
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi               |  7 +++----
- 4 files changed, 24 insertions(+), 16 deletions(-)
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index e2b377ed6f91..e950599566a9 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -10,9 +10,6 @@ Required Properties:
+ 		"amlogic,gxl-clkc" for GXL and GXM SoC,
+ 		"amlogic,axg-clkc" for AXG SoC.
+ 
+-- reg: physical base address of the clock controller and length of memory
+-       mapped region.
+-
+ - #clock-cells: should be 1.
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+@@ -20,13 +17,22 @@ to specify the clock which they consume. All available clocks are defined as
+ preprocessor macros in the dt-bindings/clock/gxbb-clkc.h header and can be
+ used in device tree sources.
+ 
++Parent node should have the following properties :
++- compatible: "syscon", "simple-mfd, and "amlogic,meson-gx-hhi-sysctrl" or
++              "amlogic,meson-axg-hhi-sysctrl"
++- reg: base address and size of the HHI system control register space.
++
+ Example: Clock controller node:
+ 
+-	clkc: clock-controller@c883c000 {
++sysctrl: system-controller@0 {
++	compatible = "amlogic,meson-gx-hhi-sysctrl", "syscon", "simple-mfd";
++	reg = <0 0 0 0x400>;
++
++	clkc: clock-controller {
+ 		#clock-cells = <1>;
+ 		compatible = "amlogic,gxbb-clkc";
+-		reg = <0x0 0xc883c000 0x0 0x3db>;
+ 	};
++};
+ 
+ Example: UART controller node that consumes the clock generated by the clock
+   controller:
 -- 
 2.14.3
