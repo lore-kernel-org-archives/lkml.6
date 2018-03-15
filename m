@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeCOPns (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:43:48 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38896 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752722AbeCOPno (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:43:44 -0400
-Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
-To: Joao Martins <joao.m.martins@oracle.com>, linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-References: <20180315142205.15839-1-joao.m.martins@oracle.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <bbf536dc-3c3d-8a25-47e8-7fd52850835d@oracle.com>
-Date: Thu, 15 Mar 2018 11:45:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180315142205.15839-1-joao.m.martins@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150169
+        id S1752879AbeCOPoD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:44:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60504 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752776AbeCOPkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:40:31 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: [PATCH 05/12] crypto: inside-secure - fix typo s/allways/always/ in a define
+Date: Thu, 15 Mar 2018 16:38:44 +0100
+Message-Id: <20180315153851.9958-6-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
+References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 10:22 AM, Joao Martins wrote:
-> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
-> changing only the acpi_id. For processors which P-state coordination type
-> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
-> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
->
-> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
-> this will have some unintended side effects. Effectively, it will look at
-> the P-state domain existence and *if it already exists* it will skip the
-> acpi-cpufreq initialization and thus inherit the policy from the first CPU
-> in the cpufreq domain. This will finally lead to the original cpu not
-> changing target freq to P0 other than the first in the domain. Which will
-> make turbo boost not getting enabled (e.g. for 'performance' governor) for
-> all cpus.
->
-> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
-> processors and thus always uploading the correct info to Xen. We export
-> acpi_processor_get_psd() for that this purpose, but change signature
-> to not assume an existent of acpi_processor given that ACPI isn't creating
-> an acpi_processor for non-dom0 CPUs.
->
-> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+Small cosmetic patch fixing one typo in the
+EIP197_HIA_DSE_CFG_ALLWAYS_BUFFERABLE macro, it should be _ALWAYS_.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/crypto/inside-secure/safexcel.c | 2 +-
+ drivers/crypto/inside-secure/safexcel.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 384b4ceb37f0..5fe85b9dad64 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -332,7 +332,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	val = EIP197_HIA_DSE_CFG_DIS_DEBUG;
+ 	val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(7) | EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(8);
+ 	val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(WR_CACHE_3BITS);
+-	val |= EIP197_HIA_DSE_CFG_ALLWAYS_BUFFERABLE;
++	val |= EIP197_HIA_DSE_CFG_ALWAYS_BUFFERABLE;
+ 	/* FIXME: instability issues can occur for EIP97 but disabling it impact
+ 	 * performances.
+ 	 */
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index d8dff65fc311..2b7bed3cfb75 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -179,7 +179,7 @@
+ #define EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(n)	((n) << 0)
+ #define EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(n)	(((n) & 0x7) << 4)
+ #define EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(n)	((n) << 8)
+-#define EIP197_HIA_DSE_CFG_ALLWAYS_BUFFERABLE	GENMASK(15, 14)
++#define EIP197_HIA_DSE_CFG_ALWAYS_BUFFERABLE	GENMASK(15, 14)
+ #define EIP197_HIA_DxE_CFG_MIN_CTRL_SIZE(n)	((n) << 16)
+ #define EIP197_HIA_DxE_CFG_CTRL_CACHE_CTRL(n)	(((n) & 0x7) << 20)
+ #define EIP197_HIA_DxE_CFG_MAX_CTRL_SIZE(n)	((n) << 24)
+-- 
+2.14.3
