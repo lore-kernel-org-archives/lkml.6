@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932660AbeCOTGW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:06:22 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:35802 "EHLO
+        id S1752690AbeCOTH5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:07:57 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36186 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932496AbeCOTGT (ORCPT
+        with ESMTP id S932673AbeCOTGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:19 -0400
+        Thu, 15 Mar 2018 15:06:24 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        x86@kernel.org
-Subject: [PATCH v2 13/36] x86/ioport: add ksys_ioperm() helper; remove in-kernel calls to sys_ioperm()
-Date: Thu, 15 Mar 2018 20:05:06 +0100
-Message-Id: <20180315190529.20943-14-linux@dominikbrodowski.net>
+        arnd@arndb.de
+Subject: [PATCH v2 14/36] fs: add ksys_mount() helper; remove in-kernel calls to sys_mount()
+Date: Thu, 15 Mar 2018 20:05:07 +0100
+Message-Id: <20180315190529.20943-15-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
 References: <20180315190529.20943-1-linux@dominikbrodowski.net>
@@ -24,85 +22,134 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel calls to the sys_ioperm()
+Using this helper allows us to avoid the in-kernel calls to the sys_mount()
 syscall.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/include/asm/syscalls.h | 1 +
- arch/x86/kernel/ioport.c        | 7 ++++++-
- drivers/tty/vt/vt_ioctl.c       | 6 +++---
- 3 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/base/devtmpfs.c  |  5 +++--
+ fs/namespace.c           | 10 ++++++++--
+ include/linux/syscalls.h |  3 +++
+ init/do_mounts.c         |  4 ++--
+ init/do_mounts_initrd.c  |  6 +++---
+ 5 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
-index bad25bb80679..1c0bebbd039e 100644
---- a/arch/x86/include/asm/syscalls.h
-+++ b/arch/x86/include/asm/syscalls.h
-@@ -17,6 +17,7 @@
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 50025d7959cb..4afb04686c8e 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -356,7 +356,8 @@ int devtmpfs_mount(const char *mntdir)
+ 	if (!thread)
+ 		return 0;
  
- /* Common in X86_32 and X86_64 */
- /* kernel/ioport.c */
-+long ksys_ioperm(unsigned long from, unsigned long num, int turn_on);
- asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
- asmlinkage long sys_iopl(unsigned int);
+-	err = sys_mount("devtmpfs", (char *)mntdir, "devtmpfs", MS_SILENT, NULL);
++	err = ksys_mount("devtmpfs", (char *)mntdir, "devtmpfs", MS_SILENT,
++			 NULL);
+ 	if (err)
+ 		printk(KERN_INFO "devtmpfs: error mounting %i\n", err);
+ 	else
+@@ -382,7 +383,7 @@ static int devtmpfsd(void *p)
+ 	*err = sys_unshare(CLONE_NEWNS);
+ 	if (*err)
+ 		goto out;
+-	*err = sys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
++	*err = ksys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
+ 	if (*err)
+ 		goto out;
+ 	sys_chdir("/.."); /* will traverse into overmounted root */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 9d1374ab6e06..642b8b229944 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3032,8 +3032,8 @@ struct dentry *mount_subtree(struct vfsmount *mnt, const char *name)
+ }
+ EXPORT_SYMBOL(mount_subtree);
  
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index 38deafebb21b..0fe1c8782208 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -23,7 +23,7 @@
- /*
-  * this changes the io permissions bitmap in the current task.
-  */
--SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
-+long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
+-SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+-		char __user *, type, unsigned long, flags, void __user *, data)
++int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
++	       unsigned long flags, void __user *data)
  {
- 	struct thread_struct *t = &current->thread;
- 	struct tss_struct *tss;
-@@ -96,6 +96,11 @@ SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
- 	return 0;
+ 	int ret;
+ 	char *kernel_type;
+@@ -3066,6 +3066,12 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+ 	return ret;
  }
  
-+SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
++SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
++		char __user *, type, unsigned long, flags, void __user *, data)
 +{
-+	return ksys_ioperm(from, num, turn_on);
++	return ksys_mount(dev_name, dir_name, type, flags, data);
 +}
 +
  /*
-  * sys_iopl has to be used when you want to access the IO ports
-  * beyond the 0x3ff range: to get the full 65536 ports bitmapped
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index d61be307256a..a78ad10a119b 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -57,7 +57,7 @@ extern struct tty_driver *console_driver;
+  * Return true if path is reachable from root
+  *
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a63e21e7a3af..69899ffa03e9 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -948,4 +948,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+  * the ksys_xyzyyz() functions prototyped below.
   */
  
- #ifdef CONFIG_X86
--#include <linux/syscalls.h>
-+#include <asm/syscalls.h>
++int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
++	       unsigned long flags, void __user *data);
++
  #endif
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 7cf4f6dafd5f..eb768de43d84 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -363,7 +363,7 @@ static void __init get_fs_names(char *page)
+ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
+ {
+ 	struct super_block *s;
+-	int err = sys_mount(name, "/root", fs, flags, data);
++	int err = ksys_mount(name, "/root", fs, flags, data);
+ 	if (err)
+ 		return err;
  
- static void complete_change_console(struct vc_data *vc);
-@@ -420,12 +420,12 @@ int vt_ioctl(struct tty_struct *tty,
- 			ret = -EINVAL;
- 			break;
- 		}
--		ret = sys_ioperm(arg, 1, (cmd == KDADDIO)) ? -ENXIO : 0;
-+		ret = ksys_ioperm(arg, 1, (cmd == KDADDIO)) ? -ENXIO : 0;
- 		break;
+@@ -599,7 +599,7 @@ void __init prepare_namespace(void)
+ 	mount_root();
+ out:
+ 	devtmpfs_mount("dev");
+-	sys_mount(".", "/", NULL, MS_MOVE, NULL);
++	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	sys_chroot(".");
+ }
  
- 	case KDENABIO:
- 	case KDDISABIO:
--		ret = sys_ioperm(GPFIRST, GPNUM,
-+		ret = ksys_ioperm(GPFIRST, GPNUM,
- 				  (cmd == KDENABIO)) ? -ENXIO : 0;
- 		break;
- #endif
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 53d4f0f326e7..7868a6039fb4 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -43,7 +43,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ 	sys_dup(0);
+ 	/* move initrd over / and chdir/chroot in initrd root */
+ 	sys_chdir("/root");
+-	sys_mount(".", "/", NULL, MS_MOVE, NULL);
++	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	sys_chroot(".");
+ 	sys_setsid();
+ 	return 0;
+@@ -81,7 +81,7 @@ static void __init handle_initrd(void)
+ 	current->flags &= ~PF_FREEZER_SKIP;
+ 
+ 	/* move initrd to rootfs' /old */
+-	sys_mount("..", ".", NULL, MS_MOVE, NULL);
++	ksys_mount("..", ".", NULL, MS_MOVE, NULL);
+ 	/* switch root and cwd back to / of rootfs */
+ 	sys_chroot("..");
+ 
+@@ -95,7 +95,7 @@ static void __init handle_initrd(void)
+ 	mount_root();
+ 
+ 	printk(KERN_NOTICE "Trying to move old root to /initrd ... ");
+-	error = sys_mount("/old", "/root/initrd", NULL, MS_MOVE, NULL);
++	error = ksys_mount("/old", "/root/initrd", NULL, MS_MOVE, NULL);
+ 	if (!error)
+ 		printk("okay\n");
+ 	else {
 -- 
 2.16.2
