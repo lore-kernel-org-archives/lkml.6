@@ -1,64 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeCOOx4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:53:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50802 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbeCOOxy (ORCPT
+        id S1752737AbeCOOya (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:54:30 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:61335 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752254AbeCOOy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:53:54 -0400
-Date: Thu, 15 Mar 2018 15:53:39 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce
- wait_var_event()/wake_up_var()
-Message-ID: <20180315145339.GE4082@hirez.programming.kicks-ass.net>
-References: <20180315115146.GX4064@hirez.programming.kicks-ass.net>
- <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
- <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180311112725.GC4043@hirez.programming.kicks-ass.net>
- <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
- <3396.1521107922@warthog.procyon.org.uk>
- <18971.1521125120@warthog.procyon.org.uk>
+        Thu, 15 Mar 2018 10:54:27 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2FEsGXj006846
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AG47ELu26NqSI4/g8dgw+j0Ot++w3eDUii4fnwDw0VAD8CZ+QMvU2RnyUt0aunJI4ZLeN8bq0dnp8ExJFnNWd69tv2Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18971.1521125120@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180314051732.6177-1-suzuki.katsuhiro@socionext.com>
+References: <20180314051732.6177-1-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 15 Mar 2018 23:53:35 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARDrg2ihb1UVPagQtck_KgfFzRh0==HOfjXZySMvM2dqg@mail.gmail.com>
+Message-ID: <CAK7LNARDrg2ihb1UVPagQtck_KgfFzRh0==HOfjXZySMvM2dqg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: uniphier: add audio in/out pin-mux node
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 02:45:20PM +0000, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > Does the below address things sufficiently clear?
-> 
-> Yep.
+2018-03-14 14:17 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> The UniPhier AIO audio system needs I2S data in/out lines
+> and clock signal pins to connect external codec chip.
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
 
-Thanks!
+Applied to linux-uniphier. Thanks!
 
-> > +wait_queue_head_t *__var_waitqueue(void *p)
-> > +{
-> > +	if (BITS_PER_LONG == 64) {
-> > +		unsigned long q = (unsigned long)p;
-> > +
-> > +		return bit_waitqueue((void *)(q & ~1), q & 1);
-> > +	}
-> > +	return bit_waitqueue(p, 0);
-> > +}
-> 
-> You might be better off not using bit_waitqueue() but rather do the
-> calculation directly since you don't actually have a bit number.
 
-Yes, I did that in patch 11. The initial version uses the exact same
-stuff wait_on_atomic_t() uses to avoid spurious changes.
+>  arch/arm/boot/dts/uniphier-pinctrl.dtsi | 40 +++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/uniphier-pinctrl.dtsi b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+> index de481c372467..c213f17a12ca 100644
+> --- a/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+> @@ -13,6 +13,46 @@
+>                 function = "aout";
+>         };
+>
+> +       pinctrl_ain1: ain1 {
+> +               groups = "ain1";
+> +               function = "ain1";
+> +       };
+> +
+> +       pinctrl_ain2: ain2 {
+> +               groups = "ain2";
+> +               function = "ain2";
+> +       };
+> +
+> +       pinctrl_ainiec1: ainiec1 {
+> +               groups = "ainiec1";
+> +               function = "ainiec1";
+> +       };
+> +
+> +       pinctrl_aout1: aout1 {
+> +               groups = "aout1";
+> +               function = "aout1";
+> +       };
+> +
+> +       pinctrl_aout2: aout2 {
+> +               groups = "aout2";
+> +               function = "aout2";
+> +       };
+> +
+> +       pinctrl_aout3: aout3 {
+> +               groups = "aout3";
+> +               function = "aout3";
+> +       };
+> +
+> +       pinctrl_aoutiec1: aoutiec1 {
+> +               groups = "aoutiec1";
+> +               function = "aoutiec1";
+> +       };
+> +
+> +       pinctrl_aoutiec2: aoutiec2 {
+> +               groups = "aoutiec2";
+> +               function = "aoutiec2";
+> +       };
+> +
+>         pinctrl_emmc: emmc {
+>                 groups = "emmc", "emmc_dat8";
+>                 function = "emmc";
+> --
+> 2.16.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
