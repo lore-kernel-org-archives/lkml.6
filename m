@@ -1,55 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751673AbeCOBIG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 21:08:06 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35658 "EHLO mail.skyhub.de"
+        id S1751571AbeCOBTU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 21:19:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:60023 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751390AbeCOBIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 21:08:05 -0400
-Date: Thu, 15 Mar 2018 02:07:28 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: York Sun <york.sun@nxp.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] drivers/edac: Add L1 and L2 error detection for
- A53 and A57
-Message-ID: <20180315010728.GF11061@pd.tnic>
-References: <1521073067-24348-1-git-send-email-york.sun@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1521073067-24348-1-git-send-email-york.sun@nxp.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1750950AbeCOBTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 21:19:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,308,1517904000";
+   d="scan'208";a="182872805"
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Minchan Kim <minchan@kernel.org>,
+        Shaohua Li <shli@kernel.org>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        jglisse@redhat.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: [PATCH -mm] mm, madvise, THP: Use THP aligned address in madvise_free_huge_pmd()
+Date: Thu, 15 Mar 2018 09:18:40 +0800
+Message-Id: <20180315011840.27599-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 05:17:46PM -0700, York Sun wrote:
-> Add error detection for A53 and A57 cores. Hardware error injection
-> is supported on A53. Software error injection is supported on both.
-> For hardware error injection on A53 to work, proper access to
-> L2ACTLR_EL1, CPUACTLR_EL1 needs to be granted by EL3 firmware. This
-> is done by making an SMC call in the driver. Failure to enable access
-> disables hardware error injection. For error interrupt to work,
-> another SMC call enables access to L2ECTLR_EL1. Failure to enable
-> access disables interrupt for error reporting.
-> 
-> Signed-off-by: York Sun <york.sun@nxp.com>
-> ---
->  .../devicetree/bindings/edac/cortex-arm64-edac.txt |  37 +
->  arch/arm64/include/asm/cacheflush.h                |   1 +
->  arch/arm64/mm/cache.S                              |  35 +
->  drivers/edac/Kconfig                               |   6 +
->  drivers/edac/Makefile                              |   1 +
->  drivers/edac/cortex_arm64_l1_l2.c                  | 741 +++++++++++++++++++++
+From: Huang Ying <ying.huang@intel.com>
 
-I don't want per-functional unit EDAC drivers. Also, what happened to
-talking to ARM people about designing a generic ARM64 EDAC driver?
+The address argument passed in madvise_free_huge_pmd() may be not THP
+aligned.  But some THP operations like pmdp_invalidate(),
+set_pmd_at(), and tlb_remove_pmd_tlb_entry() need the address to be
+THP aligned.  Fix this via using THP aligned address for these
+functions in madvise_free_huge_pmd().
 
-If this is going to be it, then it should be called edac_arm64.c and it
-should contain all the architectural RAS functionality in it.
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: jglisse@redhat.com
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+---
+ mm/huge_memory.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 0cc62405de9c..c5e1bfb08bd7 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1617,6 +1617,7 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	struct page *page;
+ 	struct mm_struct *mm = tlb->mm;
+ 	bool ret = false;
++	unsigned long haddr = addr & HPAGE_PMD_MASK;
+ 
+ 	tlb_remove_check_page_size_change(tlb, HPAGE_PMD_SIZE);
+ 
+@@ -1663,12 +1664,12 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	unlock_page(page);
+ 
+ 	if (pmd_young(orig_pmd) || pmd_dirty(orig_pmd)) {
+-		pmdp_invalidate(vma, addr, pmd);
++		pmdp_invalidate(vma, haddr, pmd);
+ 		orig_pmd = pmd_mkold(orig_pmd);
+ 		orig_pmd = pmd_mkclean(orig_pmd);
+ 
+-		set_pmd_at(mm, addr, pmd, orig_pmd);
+-		tlb_remove_pmd_tlb_entry(tlb, pmd, addr);
++		set_pmd_at(mm, haddr, pmd, orig_pmd);
++		tlb_remove_pmd_tlb_entry(tlb, pmd, haddr);
+ 	}
+ 
+ 	mark_page_lazyfree(page);
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.16.1
