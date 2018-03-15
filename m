@@ -1,66 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752813AbeCOURK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:17:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54536 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752640AbeCOURI (ORCPT
+        id S1752351AbeCOUT6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:19:58 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53485 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbeCOUT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:17:08 -0400
-Date: Thu, 15 Mar 2018 21:17:05 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: jason.vas.dias@gmail.com
-cc: linux-kernel@vger.kernel.org, x86@kernel.org, mingo@kernel.org,
-        peterz@infradead.org, andi@firstfloor.org
-Subject: Re: [PATCH v4.16-rc5 (3)] x86/vdso: on Intel, VDSO should handle
- CLOCK_MONOTONIC_RAW
-In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
-Message-ID: <alpine.DEB.2.21.1803152047380.1520@nanos.tec.linutronix.de>
-References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 15 Mar 2018 16:19:57 -0400
+X-Google-Smtp-Source: AG47ELumTARqt0iDZZCyOBTiw7R/5UwI2Fujh6LLmftPo6CxJzY8XeIeqx5dxmjutqQPDmgn/7BNm3FfQi2NqzoCDxY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <201803160351.YXuH1FAL%fengguang.wu@intel.com>
+References: <20180313214327.37475-2-joelaf@google.com> <201803160351.YXuH1FAL%fengguang.wu@intel.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Thu, 15 Mar 2018 13:19:54 -0700
+Message-ID: <CAJWu+oqsDT28t_2=dUcjrid=0S3dLzM-Y2YrpYJWc-RoQKJBxg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] tracing: Improve design of preemptirq tracepoints
+ and its users
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jason,
+Hello,
 
-On Thu, 15 Mar 2018, jason.vas.dias@gmail.com wrote:
+On Thu, Mar 15, 2018 at 12:51 PM, kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Joel,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc5 next-20180315]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes/tracing-Improve-design-of-preemptirq-tracepoints-and-its-users/20180316-012211
+> config: i386-randconfig-x006-201810 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>    kernel//locking/lockdep.c: In function 'lockdep_init':
+> >> kernel//locking/lockdep.c:4325:2: error: implicit declaration of function 'register_trace_irq_disable'; did you mean 'trace_irq_disable'? [-Werror=implicit-function-declaration]
+>      register_trace_irq_disable(lockdep_hardirqs_off, NULL);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
->   Resent to address reviewer comments.
+The reason for this is PREEMPTIRQ_TRACEPOINTS depends on FTRACE which
+is turned off in the config. Its a combination I hadn't tested in my
+matrix. It causes build errors in in lockdep code that tries to
+register the lockdep hooks. I'll fix it in the next rev. Thanks.
 
-I was being patient so far and tried to guide you through the patch
-submission process, but unfortunately this turns out to be just waste of my
-time.
-
-You have not addressed any of the comments I made here:
-
-[1]  https://lkml.kernel.org/r/alpine.DEB.2.21.1803141511340.2481@nanos.tec.linutronix.de
-[2]  https://lkml.kernel.org/r/alpine.DEB.2.21.1803141527300.2481@nanos.tec.linutronix.de
-
-But still you claim that you addressed reviewer comments.
-
-The delta between the two patch series shows clearly that you ignored both
-review mails completely. You merily changed the implementation of a
-function, which I not even reviewed, and fiddled in the big fat comment.
-
-Feel free to ignore me, but rest assured that this is the last chance
-before you end up in the /dev/null mail filter.
-
-I recommend you to try to fixup only the first patch and once that is good
-to go you might try to submit the rest. But please take your time and
-address _ALL_ of my comments and follow the documented rules.
-
-If you have questions regarding my comments or the process after working
-through them and the Documentation I pointed to, feel free to ask them on
-the list and not in private mail. If you think that my comments or
-recommendations are wrong, discuss them on list instead of silently
-ignoring them.
-
-Yours grumpy
-
-      tglx
+- Joel
