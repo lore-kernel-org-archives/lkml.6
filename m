@@ -1,85 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752060AbeCORjV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:39:21 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:18319 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbeCORjT (ORCPT
+        id S932330AbeCORkU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:40:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39546 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752152AbeCORkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:39:19 -0400
-Subject: Re: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode
- setting with RGMII PHY interface
-To: =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>
-CC: Schuyler Patton <spatton@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180315165603.30471-1-sz.lin@moxa.com>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <b866b57c-2e15-978b-e1e5-5b2c7aa0a06a@ti.com>
-Date: Thu, 15 Mar 2018 12:39:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 13:40:18 -0400
+Date: Thu, 15 Mar 2018 10:39:59 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+        x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com,
+        Ulrich.Weigand@de.ibm.com
+Subject: Re: [PATCH v3] x86: treat pkey-0 special
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1521061214-22385-1-git-send-email-linuxram@us.ibm.com>
+ <alpine.DEB.2.21.1803151039430.1525@nanos.tec.linutronix.de>
+ <f5ef79ef-122a-e0a3-9b8e-d49c33f4a417@intel.com>
+ <20180315172129.GD1060@ram.oc3035372033.ibm.com>
+ <2bf8e659-5a8d-a2d5-ea52-e4d395ea2201@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180315165603.30471-1-sz.lin@moxa.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2bf8e659-5a8d-a2d5-ea52-e4d395ea2201@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18031517-0040-0000-0000-000004216384
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031517-0041-0000-0000-000026246DE3
+Message-Id: <20180315173959.GE1060@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150193
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 15, 2018 at 10:31:51AM -0700, Dave Hansen wrote:
+> On 03/15/2018 10:21 AM, Ram Pai wrote:
+> > On Thu, Mar 15, 2018 at 08:55:31AM -0700, Dave Hansen wrote:
+> >> On 03/15/2018 02:46 AM, Thomas Gleixner wrote:
+> >>>> +	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
+> >>> Why this extra check? mm_pkey_is_allocated(mm, 0) should not return true
+> >>> ever. If it does, then this wants to be fixed.
+> >> I was thinking that we _do_ actually want it to seem allocated.  It just
+> >> get "allocated" implicitly when an mm is created.  I think that will
+> >> simplify the code if we avoid treating it specially in as many places as
+> >> possible.
+> > I think, the logic that makes pkey-0 special must to go
+> > in arch-neutral code.   How about checking for pkey-0 in sys_pkey_free()
+> > itself?
+> 
+> This is for protection against shooting yourself in the foot?  Yes, that
+> can go in sys_pkey_free().
+> 
+> Does this need manpage and/or selftests updates?
 
+Yes. it needs selftest, manpage and documentation updates too.
 
-On 03/15/2018 11:56 AM, SZ Lin (林上智) wrote:
-> According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
-> DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
-> available when PHY is configured in RGMII mode with 10Mbps speed. It will
-> cause some networking issues without RGMII mode, such as carrier sense
-> errors and low throughput. TI also mentioned this issue in their forum[4].
-> 
-> This patch adds the check mechanism for PHY interface with RGMII interface
-> type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
-> 
-> References:
-> [1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
-> [2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
-> [3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
-> [4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
-> 
-> Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
-> Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
-> Signed-off-by: Schuyler Patton <spatton@ti.com>
-> ---
-> Changes from v1:
-> - Use phy_interface_is_rgmii helper function
-> - Remove blank line
-> 
+Unfortunately I am not getting enough reviewed-by for my selftests
+and documentation changes. :-(  Need help!
 
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
->   drivers/net/ethernet/ti/cpsw.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> index 1b1b78fdc138..b2b30c9df037 100644
-> --- a/drivers/net/ethernet/ti/cpsw.c
-> +++ b/drivers/net/ethernet/ti/cpsw.c
-> @@ -1014,7 +1014,8 @@ static void _cpsw_adjust_link(struct cpsw_slave *slave,
->   		/* set speed_in input in case RMII mode is used in 100Mbps */
->   		if (phy->speed == 100)
->   			mac_control |= BIT(15);
-> -		else if (phy->speed == 10)
-> +		/* in band mode only works in 10Mbps RGMII mode */
-> +		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
->   			mac_control |= BIT(18); /* In Band mode */
->   
->   		if (priv->rx_pause)
-> 
 
 -- 
-regards,
--grygorii
+Ram Pai
