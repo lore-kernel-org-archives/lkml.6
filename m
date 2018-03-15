@@ -1,102 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751711AbeCOJBj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:01:39 -0400
-Received: from ozlabs.org ([103.22.144.67]:60349 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751624AbeCOJBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:01:36 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 20:00:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>
-Subject: linux-next: manual merge of the akpm-current tree with the
- asm-generic tree
-Message-ID: <20180315200015.63d54b51@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YgfL4y/AkGSkM47vpcQ+unT"; protocol="application/pgp-signature"
+        id S1751805AbeCOJCU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:02:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38560 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751095AbeCOJCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:02:18 -0400
+From: Honggang LI <honli@redhat.com>
+To: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org
+Cc: noaos@mellanox.com, linux-kernel@vger.kernel.org, honli@redhat.com
+Subject: [PATCH 0/2] IB/core: Set invalid active widths to 1X when port is not active
+Date: Thu, 15 Mar 2018 17:02:12 +0800
+Message-Id: <20180315090214.21706-1-honli@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YgfL4y/AkGSkM47vpcQ+unT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Honggang Li <honli@redhat.com>
 
-Hi Andrew,
+Before the mlx5 RoCE port negotiate the active rate and width
+with remote side, the mlx5_ib driver set them to zero.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+The tool 'ibstat' of 'infiniband-diags' package will panic as it
+read invalid width from the sys file. Set the active widths to
+lowest valid vaule as what ib_core module did for invalid rates.
 
-  mm/sparse.c
+Honggang Li (2):
+  IB/core: Set speed string to SDR for invalid active rates
+  IB/core: Set width to 1X for invalid active widths when port is down
 
-between commit:
+ drivers/infiniband/core/sysfs.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-  123d3239fb65 ("mm: remove obsolete alloc_remap()")
-
-from the asm-generic tree and commit:
-
-  9c6a14b65e50 ("mm/sparse.c: optimize memmap allocation during sparse_init=
-()")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc mm/sparse.c
-index 65bb52599f90,873617fab5ff..000000000000
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@@ -441,7 -454,21 +450,8 @@@ void __init sparse_mem_maps_populate_no
-  	void *map;
-  	unsigned long pnum;
-  	unsigned long size =3D sizeof(struct page) * PAGES_PER_SECTION;
-+ 	int idx_present;
- =20
- -	map =3D alloc_remap(nodeid, size * map_count);
- -	if (map) {
- -		idx_present =3D 0;
- -		for (pnum =3D pnum_begin; pnum < pnum_end; pnum++) {
- -			if (!present_section_nr(pnum))
- -				continue;
- -			map_map[idx_present] =3D map;
- -			map +=3D size;
- -			idx_present++;
- -		}
- -		return;
- -	}
- -
-  	size =3D PAGE_ALIGN(size);
-  	map =3D memblock_virt_alloc_try_nid_raw(size * map_count,
-  					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-
---Sig_/YgfL4y/AkGSkM47vpcQ+unT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqNh8ACgkQAVBC80lX
-0Gz/GQf8CDoUOZLqIDTKKNvUWee0AQGPRFnUbWBRJuvOnUvNMrjcM32XFKytNGp3
-dKBKVbjedSMXOJH5j4rRiTOWmfRH8ozDOL/+Etc4GvZQSf4ic7roND+jhdzBhQZD
-GgQeNEsA/EHjfNzbBe5pfK9mYff7h754Zhuwb/A24phmmfGO/DFrl9sqO3MFvjaW
-DXiDFvHrR5A7B4raoilD17QryYksEUrPsRxExgOMMQVjM/Y3sWJGmFJfB5JRd161
-+n1vw0zTPeJRgE9Bi+buiKFcH23ywczEbizTE8eHDJWYLZyqswEtMwVelYYaaqL8
-PzS3MX3cEqB6P0gBydQFoNQDVkRNYg==
-=ycLm
------END PGP SIGNATURE-----
-
---Sig_/YgfL4y/AkGSkM47vpcQ+unT--
+-- 
+2.14.GIT
