@@ -1,102 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751871AbeCOL2V (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:28:21 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46097 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeCOL2U (ORCPT
+        id S1751914AbeCOL2e (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:28:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48414 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeCOL2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:28:20 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Thu, 15 Mar 2018 11:56:31 +0100
-Message-Id: <1521111391-3515-4-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 15 Mar 2018 07:28:33 -0400
+Date: Thu, 15 Mar 2018 12:28:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: arc_usr_cmpxchg and preemption
+Message-ID: <20180315112829.GW4064@hirez.programming.kicks-ass.net>
+References: <1521045375.11552.27.camel@synopsys.com>
+ <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+ <20180314175352.GP4064@hirez.programming.kicks-ass.net>
+ <1521059931.11552.51.camel@synopsys.com>
+ <20180315081845.GS4064@hirez.programming.kicks-ass.net>
+ <1521105128.11552.64.camel@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521105128.11552.64.camel@synopsys.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-decoder, connected to the on-chip LVDS encoder output on one side
-and to HDMI encoder ADV7511w on the other one.
+On Thu, Mar 15, 2018 at 09:12:09AM +0000, Alexey Brodkin wrote:
+> On Thu, 2018-03-15 at 09:18 +0100, Peter Zijlstra wrote:
 
-As the decoder does not need any configuration it has been so-far
-omitted from DTS. Now that a driver is available, describe it in DT
-as well.
+> > Also, it might make sense to stuff this implementation in some lib/ file
+> > somewhere and make all platforms that need it use the same code, afaict
+> > there really isn't anything platform specific to it.
+> 
+> Not clear which part do you mean here.
+> Are you talking about entire cmpxchg syscall implementation?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 +++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+Yep.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index c0fd144..69f43b8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -42,6 +42,33 @@
- 			};
- 		};
- 	};
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				thc63lvd1024_in_0: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				thc63lvd1024_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
- };
- 
- &avb {
-@@ -98,7 +125,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
-+					remote-endpoint = <&thc63lvd1024_out_2>;
- 				};
- 			};
- 
-@@ -152,8 +179,8 @@
- 
- 	ports {
- 		port@1 {
--			endpoint {
--				remote-endpoint = <&adv7511_in>;
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in_0>;
- 			};
- 		};
- 	};
--- 
-2.7.4
+> Do you think there're many users of that quite an inefficient
+> [compared to proper HW version] atomic exchange?
+
+I think there's a bunch of architectures that are in the same boat.
+m68k, arm, mips was mentioned. Sure, the moment an arch has hardware
+support you don't need the syscall anymore.
+
+I was just thinking it would be good to have a common implementation (if
+possible) rather than 4-5 different copies of basically the same thing.
