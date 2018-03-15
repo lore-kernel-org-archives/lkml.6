@@ -1,43 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752536AbeCORFe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:05:34 -0400
-Received: from mga11.intel.com ([192.55.52.93]:41530 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751711AbeCORFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:05:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="37713764"
-Message-ID: <1122028a7efd57fa6b5c1cabfd470fe986f7acba.camel@linux.intel.com>
-Subject: Re: [PATCH v2 8/8] tpm: move tpm2 code validation to tpm2-space.c
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 18:49:01 +0200
-In-Reply-To: <20180310082428.31519-9-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-         <20180310082428.31519-9-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.27.90-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752591AbeCORGW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:06:22 -0400
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:40921 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752006AbeCORGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:06:13 -0400
+X-Google-Smtp-Source: AG47ELtjEklbRPeywV8qeqh9JXXEL/TOecuSlALovmuSo7JeKI8eFNWOIqAh4hYLsD+EVV9Up1CnKQ==
+Date: Thu, 15 Mar 2018 22:36:06 +0530
+From: afzal mohammed <afzal.mohd.ma@gmail.com>
+To: Harald Geyer <harald@ccbib.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
+Subject: Re: arm64: allwinner: Add support for TERES I laptop
+Message-ID: <20180315170606.GA3635@afzalpc>
+References: <20180312161050.7647-1-harald@ccbib.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312161050.7647-1-harald@ccbib.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> Add new function tpm2_validate_command to tpm2-space.c
-> that wraps up open coded functionality from tpm_validate_command.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Hi,
 
-Same comment as for 7/8. Probably might apply also for 1-6.
+On Mon, Mar 12, 2018 at 04:10:45PM +0000, Harald Geyer wrote:
+> This series adds support for the TERES I open hardware laptop produced
+> by olimex. With these patches and a bootloader capable of setting up
+> simple framebuffer the laptop is quite useable.
 
-/Jarkko
+Thanks for the patches
+
+w/ defconfig could reach to prompt via serial console using audio
+jack.
+
+And just by enabling PWM_SUN4I & FB_SIMPLE, laptop could function
+standalone as well.
+
+Suggestions (feel free to ignore):
+
+1. seems currently only review comment pending is on simple
+framebuffer, perhaps you can proceed removing just that so that a
+basic bootable system can be achieved at the earliest (iiuc, anyway
+drm would be the final solution for display)
+
+2. in next revision (if), may be you can put keywords DIY and/or Open
+Hardware (irrespective of whatever exactly that means) Laptop in the
+subject itself, that might bring more interest/eyeballs, especially at
+this time of ME & so on.
+
+Regards
+afzal
