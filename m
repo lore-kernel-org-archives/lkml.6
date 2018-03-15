@@ -1,62 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeCOUT6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:19:58 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53485 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeCOUT5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:19:57 -0400
-X-Google-Smtp-Source: AG47ELumTARqt0iDZZCyOBTiw7R/5UwI2Fujh6LLmftPo6CxJzY8XeIeqx5dxmjutqQPDmgn/7BNm3FfQi2NqzoCDxY=
+        id S932349AbeCOUUT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:20:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49317 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752655AbeCOUUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 16:20:18 -0400
+Date: Thu, 15 Mar 2018 21:17:53 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Chris Mason <clm@fb.com>, Anna Schumaker <anna.schumaker@netapp.com>,
+        Joel Becker <jlbec@evilplan.org>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        George Spelvin <linux@sciencehorizons.net>
+Subject: Re: [PATCH 05/11] sched/wait,btrfs: Replace wait_on_atomic_t usage
+Message-ID: <20180315201752.GX32007@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Chris Mason <clm@fb.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Joel Becker <jlbec@evilplan.org>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        George Spelvin <linux@sciencehorizons.net>
+References: <20180315121902.942902000@infradead.org>
+ <20180315123202.577145977@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <201803160351.YXuH1FAL%fengguang.wu@intel.com>
-References: <20180313214327.37475-2-joelaf@google.com> <201803160351.YXuH1FAL%fengguang.wu@intel.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Thu, 15 Mar 2018 13:19:54 -0700
-Message-ID: <CAJWu+oqsDT28t_2=dUcjrid=0S3dLzM-Y2YrpYJWc-RoQKJBxg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] tracing: Improve design of preemptirq tracepoints
- and its users
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315123202.577145977@infradead.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Mar 15, 2018 at 01:19:07PM +0100, Peter Zijlstra wrote:
+> Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
+> 
+> Cc: Chris Mason <clm@fb.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-On Thu, Mar 15, 2018 at 12:51 PM, kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Joel,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16-rc5 next-20180315]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes/tracing-Improve-design-of-preemptirq-tracepoints-and-its-users/20180316-012211
-> config: i386-randconfig-x006-201810 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386
->
-> All errors (new ones prefixed by >>):
->
->    kernel//locking/lockdep.c: In function 'lockdep_init':
-> >> kernel//locking/lockdep.c:4325:2: error: implicit declaration of function 'register_trace_irq_disable'; did you mean 'trace_irq_disable'? [-Werror=implicit-function-declaration]
->      register_trace_irq_disable(lockdep_hardirqs_off, NULL);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The reason for this is PREEMPTIRQ_TRACEPOINTS depends on FTRACE which
-is turned off in the config. Its a combination I hadn't tested in my
-matrix. It causes build errors in in lockdep code that tries to
-register the lockdep hooks. I'll fix it in the next rev. Thanks.
-
-- Joel
+Acked-by: David Sterba <dsterba@suse.com>
