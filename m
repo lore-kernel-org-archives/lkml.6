@@ -1,143 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932410AbeCOPja (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:39:30 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:60727 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752738AbeCOPj3 (ORCPT
+        id S932483AbeCOPj7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:39:59 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:36199 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932427AbeCOPj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:39:29 -0400
-Date: Thu, 15 Mar 2018 16:39:18 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180315163620.6122d752@bbrezillon>
-References: <20180304200602.11475-1-stefan@agner.ch> <20180315163620.6122d752@bbrezillon>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC strength
-To: Boris Brezillon <boris.brezillon@bootlin.com>, han.xu@nxp.com
-CC: boris.brezillon@free-electrons.com, max.oss.09@gmail.com,
-        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        dwmw2@infradead.org
-From: Stefan Agner <stefan@agner.ch>
-Message-ID: <C8FA1701-52CE-46B6-9A3E-3249D1BDA4AC@agner.ch>
+        Thu, 15 Mar 2018 11:39:57 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: dell: avoid link error with modular ACPI_SMI
+Date: Thu, 15 Mar 2018 16:39:07 +0100
+Message-Id: <20180315153934.3844276-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:RALNamAAmVwPvwgJNcOs+rZ50kykAaHzVgebphk0r2RNayE402y
+ XAPBYeB3rcOh3Wzg503J/GwpBVfpFyww9eSDX1iRh4bZJjEL0pxJPU8aVF+/axiYHzYY/GV
+ z04G2CuApnZb3g4iUZGu+z9BN0EOgejIE+SN49VL6yCT9Z/xteOYYi1sU/uKlB9Ln2Wlf0m
+ 0trl2CxfDjt8K3AjtNJDQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:txZdxXPxdjs=:beaYMHro9jCMtR3Me9VZ93
+ RE7zURFj0lnIPJaQ8aQBpUmaFNOitxofMtvXyX/dDJywpCMUw78kVZYRwQZP1oimaqhpP1kaS
+ k3pyEWNzYufr7333e8WEW1isWdGAtqEdPZGRHeksro31gkl2tMvjK8W9F2SlNhRyawcOGrD9F
+ l6AWyvyuRRxkiAVJBTeS8Lx0eIekDsjG6p5xrebMx1jZOKbjZtwJ2cL0duvz1fLPTKMTE3hVg
+ 9J2Zbx6CPFXicrpkr+u83RqUZAv3XDM1Y4Iwir4Fo9U87kfQPqUrGsBAxbcNBAqybMI6nIsUC
+ GYM457Eo3n6342oXimqGOdyaoSWIZaQtxDsfUpXStk9WfHsl2dQZsIbbBR9aYr7LFqbZGNbcj
+ xSowF49ilNrau95FK+w17oWUsl1tLxKD1uaGZxCFONJv/XgH96N7GBOHJgWHBxMGr1qilMXbE
+ SYzlIBRm7KgKrw7A8KJN1U3jhbL8cVPD07NrMSVq2rHhx/PthEduJotlecgilTNnBNaeZNlcW
+ WS5LSwH/fZ5Tq8uRUeZUx2w1F7ArP4pe0Wp5z357kG2xtikGqAvGAcLhyNiwBpXtX5rGcnfK1
+ ttmvc5Z2HGW2bVvE+k34y81vf38q2iuSmFhmlvqxIikkjZBFIO/0XNDil4/6/tNJIofnacebF
+ to5qlyyBc8thcjmX7CUkvOrU8ZK/hkz5RzmGFWxWREvx/9MKITUgk3W9TtqEUeUYZ9D8gOGm6
+ zQGxKzy9IDdIDCs2WJrqzYyWeQEQuOCteDhmPg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2FFdXSU015070
 
+The new DELL_LAPTOP dependencies allowed one configuration that should not
+have been possible, with DELL_SMBIOS_WMI built-in, but ACPI_SMI as a
+module:
 
+drivers/platform/x86/dell-smbios-wmi.o: In function `run_smbios_call':
+dell-smbios-wmi.c:(.text+0x47): undefined reference to `wmidev_evaluate_method'
+drivers/platform/x86/dell-smbios-wmi.o: In function `dell_smbios_wmi_probe':
+dell-smbios-wmi.c:(.text+0x5d0): undefined reference to `dell_wmi_get_descriptor_valid'
+dell-smbios-wmi.c:(.text+0x60f): undefined reference to `dell_wmi_get_size'
+dell-smbios-wmi.c:(.text+0x61f): undefined reference to `dell_wmi_get_hotfix'
+dell-smbios-wmi.c:(.text+0x644): undefined reference to `set_required_buffer_size'
+drivers/platform/x86/dell-smbios-wmi.o: In function `exit_dell_smbios_wmi':
+dell-smbios-wmi.c:(.text+0x78e): undefined reference to `wmi_driver_unregister'
 
-On March 15, 2018 4:36:20 PM GMT+01:00, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->Hi,
->
->On Sun,  4 Mar 2018 21:06:01 +0100
->Stefan Agner <stefan@agner.ch> wrote:
->
->> Add support for specified ECC strength/size using device tree
->> properties nand-ecc-strength/nand-ecc-step-size.
->
->Han, we didn't hear back from you on that. Are you okay with adding
->these new properties? IIRC, you feared there would be a delta between
->u-boot and linux support.
->
->Stephan, there's no changelog. Has anything changed in this version or
->is this just a RESEND?
+This adds an extra dependency to avoid that case.
 
-Sorry forgot that. I just split documentation and driver changes.
+Fixes: 41e36f2f85af ("platform/x86: dell-smbios: Link all dell-smbios-* modules together")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I think the plan was to drop the change that caused it. For completeness,
+this patch is the last thing that I needed to make randconfig work
+reliably again.
+---
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---
-Stefan
-
->
->Regards,
->
->Boris
->
->> 
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30
->++++++++++++++++++++----------
->>  1 file changed, 20 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> index 61fdd733492f..d04754289c03 100644
->> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct
->gpmi_nand_data *this)
->>   *
->>   * We may have available oob space in this case.
->>   */
->> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
->> +				    unsigned int ecc_strength,
->> +				    unsigned int ecc_step)
->>  {
->>  	struct bch_geometry *geo = &this->bch_geometry;
->>  	struct nand_chip *chip = &this->nand;
->>  	struct mtd_info *mtd = nand_to_mtd(chip);
->>  	unsigned int block_mark_bit_offset;
->>  
->> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->> -		return -EINVAL;
->> -
->> -	switch (chip->ecc_step_ds) {
->> +	switch (ecc_step) {
->>  	case SZ_512:
->>  		geo->gf_len = 13;
->>  		break;
->> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct
->gpmi_nand_data *this)
->>  			chip->ecc_strength_ds, chip->ecc_step_ds);
->>  		return -EINVAL;
->>  	}
->> -	geo->ecc_chunk_size = chip->ecc_step_ds;
->> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
->> +	geo->ecc_chunk_size = ecc_step;
->> +	geo->ecc_strength = round_up(ecc_strength, 2);
->>  	if (!gpmi_check_ecc(this))
->>  		return -EINVAL;
->>  
->> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct
->gpmi_nand_data *this)
->>  	if (geo->ecc_chunk_size < mtd->oobsize) {
->>  		dev_err(this->dev,
->>  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
->> -			chip->ecc_step_ds, mtd->oobsize);
->> +			ecc_step, mtd->oobsize);
->>  		return -EINVAL;
->>  	}
->>  
->> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct
->gpmi_nand_data *this)
->>  
->>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->>  {
->> +	struct nand_chip *chip = &this->nand;
->> +
->> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
->> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
->> +						chip->ecc.size);
->> +
->>  	if ((of_property_read_bool(this->dev->of_node,
->"fsl,use-minimum-ecc"))
->> -				|| legacy_set_geometry(this))
->> -		return set_geometry_by_ecc_info(this);
->> +				|| legacy_set_geometry(this)) {
->> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->> +			return -EINVAL;
->> +
->> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
->> +						chip->ecc_step_ds);
->> +	}
->>  
->>  	return 0;
->>  }
-
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 8383806c360f..0cced065e298 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -122,6 +122,7 @@ config DELL_SMBIOS_WMI
+ 	bool "Dell SMBIOS driver WMI backend"
+ 	default y
+ 	depends on ACPI_WMI
++	depends on ACPI_WMI=y || DELL_SMBIOS=m
+ 	select DELL_WMI_DESCRIPTOR
+ 	depends on DELL_SMBIOS
+ 	---help---
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.9.0
