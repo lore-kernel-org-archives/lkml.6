@@ -1,223 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932487AbeCOOz6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:55:58 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:29476 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752704AbeCOOzy (ORCPT
+        id S932459AbeCOOzu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:55:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752705AbeCOOzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:55:54 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2FEtao4005678
-X-Nifty-SrcIP: [209.85.213.54]
-X-Google-Smtp-Source: AG47ELtFDB0JyXT141Ksf4hujb1xyunZO4/3EvonEW8TLWsgfwUu0/3YzOtlrGqQeWx2P80ZBYZr1u9oMfNHc1ZlUnU=
+        Thu, 15 Mar 2018 10:55:47 -0400
+Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
+ <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 15:55:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180314052658.6244-1-suzuki.katsuhiro@socionext.com>
-References: <20180314052658.6244-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 15 Mar 2018 23:54:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASMNpC1BzFTi3rQe2bVPaFwb3gjCdKBPGnM9OpCD48Q9g@mail.gmail.com>
-Message-ID: <CAK7LNASMNpC1BzFTi3rQe2bVPaFwb3gjCdKBPGnM9OpCD48Q9g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: uniphier: add sound node for UniPhier PXs2
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031514-0020-0000-0000-0000040545AA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031514-0021-0000-0000-000042994ECA
+Message-Id: <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150165
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-14 14:26 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> This patch adds audio controller, external codec and simple card node
-> of UniPhier AIO sound system for PXs2 SoCs.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
+On 15/03/2018 15:48, Tony Krowiak wrote:
+> On 03/15/2018 08:26 AM, Pierre Morel wrote:
+>> On 14/03/2018 19:25, Tony Krowiak wrote:
+>>> This patch refactors the code that initializes the crypto
+>>> configuration for a guest. The crypto configuration is contained in
+>>> a crypto control block (CRYCB) which is a satellite control block to
+>>> our main hardware virtualization control block. The CRYCB is
+>>> attached to the main virtualization control block via a CRYCB
+>>> designation (CRYCBD) designation field containing the address of
+>>> the CRYCB as well as its format.
+>>>
+>>> Prior to the introduction of AP device virtualization, there was
+>>> no need to provide access to or specify the format of the CRYCB for
+>>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>>> on the host system. With the introduction of AP device virtualization,
+>>> the CRYCB and its format must be made accessible to the guest
+>>> regardless of the presence of the MSAX3 facility.
+>>>
+>>> The crypto initialization code is restructured as follows:
+>>>
+>>> * A new compilation unit is introduced to contain all interfaces
+>>>    and data structures related to configuring a guest's CRYCB for
+>>>    both the refactoring of crypto initialization as well as all
+>>>    subsequent patches introducing AP virtualization support.
+>>>
+>>> * Currently, the asm code for querying the AP configuration is
+>>>    duplicated in the AP bus as well as in KVM. Since the KVM
+>>>    code was introduced, the AP bus has externalized the interface
+>>>    for querying the AP configuration. The KVM interface will be
+>>>    replaced with a call to the AP bus interface. Of course, this
+>>>    will be moved to the new compilation unit mentioned above.
+>>>
+>>> * An interface to format the CRYCBD field will be provided via
+>>>    the new compilation unit and called from the KVM vm
+>>>    initialization.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>>>   MAINTAINERS                      |   10 ++++++
+>>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++
+>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>   arch/s390/kvm/Kconfig            |    1 +
+>>>   arch/s390/kvm/Makefile           |    2 +-
+>>>   arch/s390/kvm/kvm-ap.c           |   48 +++++++++++++++++++++++++++++
+>>>   arch/s390/kvm/kvm-s390.c         |   61 
+>>> ++++---------------------------------
+>>>   7 files changed, 84 insertions(+), 55 deletions(-)
+>>>   create mode 100644 arch/s390/include/asm/kvm-ap.h
+>>>   create mode 100644 arch/s390/kvm/kvm-ap.c
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 0ec5881..72742d5 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -11875,6 +11875,16 @@ W: 
+>>> http://www.ibm.com/developerworks/linux/linux390/
+>>>   S:    Supported
+>>>   F:    drivers/s390/crypto/
+>>>
+>>> +S390 VFIO AP DRIVER
+>>> +M:    Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> +M:    Christian Borntraeger <borntraeger@de.ibm.com>
+>>> +M:    Martin Schwidefsky <schwidefsky@de.ibm.com>
+>>> +L:    linux-s390@vger.kernel.org
+>>> +W:    http://www.ibm.com/developerworks/linux/linux390/
+>>> +S:    Supported
+>>> +F:    arch/s390/include/asm/kvm/kvm-ap.h
+>>> +F:    arch/s390/kvm/kvm-ap.c
+>>> +
+>>>   S390 ZFCP DRIVER
+>>>   M:    Steffen Maier <maier@linux.vnet.ibm.com>
+>>>   M:    Benjamin Block <bblock@linux.vnet.ibm.com>
+>>> diff --git a/arch/s390/include/asm/kvm-ap.h 
+>>> b/arch/s390/include/asm/kvm-ap.h
+>>> new file mode 100644
+>>> index 0000000..362846c
+>>> --- /dev/null
+>>> +++ b/arch/s390/include/asm/kvm-ap.h
+>>> @@ -0,0 +1,16 @@
+>>> +/*
+>>> + * Adjunct Processor (AP) configuration management for KVM guests
+>>> + *
+>>> + * Copyright IBM Corp. 2017
+>>> + *
+>>> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+>>> + */
+>>> +
+>>> +#ifndef _ASM_KVM_AP
+>>> +#define _ASM_KVM_AP
+>>> +#include <linux/types.h>
+>>> +#include <linux/kvm_host.h>
+>>> +
+>>> +void kvm_ap_build_crycbd(struct kvm *kvm);
+>>> +
+>>> +#endif /* _ASM_KVM_AP */
+>>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>>> b/arch/s390/include/asm/kvm_host.h
+>>> index 34c9b5b..65a944e 100644
+>>> --- a/arch/s390/include/asm/kvm_host.h
+>>> +++ b/arch/s390/include/asm/kvm_host.h
+>>> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
+>>>       __u8    reservedf0[12];        /* 0x00f0 */
+>>>   #define CRYCB_FORMAT1 0x00000001
+>>>   #define CRYCB_FORMAT2 0x00000003
+>>> +#define CRYCB_FORMAT_MASK 0x00000003
+>>>       __u32    crycbd;            /* 0x00fc */
+>>>       __u64    gcr[16];        /* 0x0100 */
+>>>       __u64    gbea;            /* 0x0180 */
+>>> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
+>>> index a3dbd45..4ca9077 100644
+>>> --- a/arch/s390/kvm/Kconfig
+>>> +++ b/arch/s390/kvm/Kconfig
+>>> @@ -33,6 +33,7 @@ config KVM
+>>>       select HAVE_KVM_INVALID_WAKEUPS
+>>>       select SRCU
+>>>       select KVM_VFIO
+>>> +    select ZCRYPT
+>>
+>> I do not think it is a good solution to *always* enable ZCRYPT
+>> when we have KVM.
+> If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed() 
+> function will not compile
+> because it calls a zcrypt interface. How would you suggest we make 
+> sure zcrypt interfaces
+> used in KVM are built if CONFIG_ZCRYPT is not selected?
+
+if zcrypt is not configured, I suppose that the KVM code initializaing CRYCB
+has no use but the function will be called from KVM.
+So I would do something like:
+
+#ifdef ZCRYPT
+external definitions.
+#else
+stubs returning error -ENOZCRYPT (or whatever)
+#endif
 
 
-Applied to linux-uniphier. Thanks!
 
-
->  arch/arm/boot/dts/uniphier-pxs2-gentil.dts | 24 +++++++++++++
->  arch/arm/boot/dts/uniphier-pxs2-vodka.dts  | 37 ++++++++++++++++++++
->  arch/arm/boot/dts/uniphier-pxs2.dtsi       | 54 ++++++++++++++++++++++++++++++
->  3 files changed, 115 insertions(+)
+>>
+>> Pierre
+>>
+>>
 >
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
-> index d09acb8e59a1..782962749bbf 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
-> +++ b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
-> @@ -34,6 +34,12 @@
->                 device_type = "memory";
->                 reg = <0x80000000 0x80000000>;
->         };
-> +
-> +       sound {
-> +               compatible = "audio-graph-card";
-> +               label = "UniPhier PXs2";
-> +               dais = <&i2s_port2>;
-> +       };
->  };
->
->  &serial2 {
-> @@ -52,6 +58,19 @@
->
->  &i2c2 {
->         status = "okay";
-> +
-> +       wm8960@1a {
-> +               compatible = "wlf,wm8960";
-> +               reg = <0x1a>;
-> +               #sound-dai-cells = <0>;
-> +
-> +               port@0 {
-> +                       wm_speaker: endpoint {
-> +                               dai-format = "i2s";
-> +                               remote-endpoint = <&i2s_aux>;
-> +                       };
-> +               };
-> +       };
->  };
->
->  &eth {
-> @@ -64,3 +83,8 @@
->                 reg = <1>;
->         };
->  };
-> +
-> +&i2s_aux {
-> +       dai-format = "i2s";
-> +       remote-endpoint = <&wm_speaker>;
-> +};
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
-> index 6f13a25b935f..33bcd98c8653 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
-> +++ b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
-> @@ -32,6 +32,35 @@
->                 device_type = "memory";
->                 reg = <0x80000000 0x80000000>;
->         };
-> +
-> +       sound {
-> +               compatible = "audio-graph-card";
-> +               label = "UniPhier PXs2";
-> +               dais = <&spdif_port0
-> +                       &comp_spdif_port0>;
-> +       };
-> +
-> +       spdif-out {
-> +               compatible = "linux,spdif-dit";
-> +               #sound-dai-cells = <0>;
-> +
-> +               port@0 {
-> +                       spdif_tx: endpoint {
-> +                               remote-endpoint = <&spdif_hiecout1>;
-> +                       };
-> +               };
-> +       };
-> +
-> +       comp-spdif-out {
-> +               compatible = "linux,spdif-dit";
-> +               #sound-dai-cells = <0>;
-> +
-> +               port@0 {
-> +                       comp_spdif_tx: endpoint {
-> +                               remote-endpoint = <&comp_spdif_hiecout1>;
-> +                       };
-> +               };
-> +       };
->  };
->
->  &serial2 {
-> @@ -52,3 +81,11 @@
->                 reg = <1>;
->         };
->  };
-> +
-> +&spdif_hiecout1 {
-> +       remote-endpoint = <&spdif_tx>;
-> +};
-> +
-> +&comp_spdif_hiecout1 {
-> +       remote-endpoint = <&comp_spdif_tx>;
-> +};
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> index 18f336e64036..d64ca9d0aef1 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> @@ -227,6 +227,60 @@
->                                                      <21 217 3>;
->                 };
->
-> +               audio@56000000 {
-> +                       compatible = "socionext,uniphier-pxs2-aio";
-> +                       reg = <0x56000000 0x80000>;
-> +                       interrupts = <0 144 4>;
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&pinctrl_ain1>,
-> +                                   <&pinctrl_ain2>,
-> +                                   <&pinctrl_ainiec1>,
-> +                                   <&pinctrl_aout2>,
-> +                                   <&pinctrl_aout3>,
-> +                                   <&pinctrl_aoutiec1>,
-> +                                   <&pinctrl_aoutiec2>;
-> +                       clock-names = "aio";
-> +                       clocks = <&sys_clk 40>;
-> +                       reset-names = "aio";
-> +                       resets = <&sys_rst 40>;
-> +                       #sound-dai-cells = <1>;
-> +
-> +                       i2s_port0: port@0 {
-> +                               i2s_hdmi: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       i2s_port1: port@1 {
-> +                               i2s_line: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       i2s_port2: port@2 {
-> +                               i2s_aux: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       spdif_port0: port@3 {
-> +                               spdif_hiecout1: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       spdif_port1: port@4 {
-> +                               spdif_iecout1: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       comp_spdif_port0: port@5 {
-> +                               comp_spdif_hiecout1: endpoint {
-> +                               };
-> +                       };
-> +
-> +                       comp_spdif_port1: port@6 {
-> +                               comp_spdif_iecout1: endpoint {
-> +                               };
-> +                       };
-> +               };
-> +
->                 i2c0: i2c@58780000 {
->                         compatible = "socionext,uniphier-fi2c";
->                         status = "disabled";
-> --
-> 2.16.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
 
 -- 
-Best Regards
-Masahiro Yamada
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
