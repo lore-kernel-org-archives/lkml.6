@@ -1,109 +1,103 @@
-Return-Path: <mark.rutland@arm.com>
-X-Google-Smtp-Source: AG47ELuB+pJXV48Y+mqDclKWd2QuMZDcSAr67TGK9aXS+9+SKcfh4PWboAQYUwRn+hv/3za4mpw7
-ARC-Seal: i=1; a=rsa-sha256; t=1521127251; cv=none;
+Return-Path: <cpandya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELsCJzZf9AKptOufdqC45nQdyMzkIw36XZngfZjBSB4/lVzoX2PmI9CNT47YlC1DUiCeUvWL
+ARC-Seal: i=1; a=rsa-sha256; t=1521117953; cv=none;
         d=google.com; s=arc-20160816;
-        b=JFGpHWO8M4x1m6w2CkmQ30OAUUOHzdhXWO3QGhDEA2AFh1ezguG0f4w7dwHnFR2UpM
-         hWrIETbfAuhNT4jk/NoujTsiwzPtxsJVnw4C5A2ltmRsI+mUoSUvUWqZKnpxd60rqw+5
-         tvcRw2U8HDFIpAivEPX3nWqUEr93xdr0t5IuvITaVNld+Jug6T5XQJwgyWq/bGlIq6xu
-         4PJHYW6Wj+LjEbdUl2r1OveywZcNOBYtz4KOqrz7nDnPEP4KyctgDzGKmL53v3+FvEwD
-         RgkdJetSl0EVjtfnIALPrYVUyANAKRGMaCEpc9zki6te1Xzi1JrsvWC/VdNnuF/JI76i
-         yUrw==
+        b=elsEqtXaF5bMClwGUZrSfJUSTmqgHq0cF3cCrgOSqJO/y2M0a0lN/ycxrF5JgcIVI+
+         G2vPZQPnuzUyAUr17p3WtW6uM4ApeBFshWQ6y2PJt897zGMyki0zTeGHzSKun85Ug3ZL
+         Q7uNo7S0flWqpzHiCzwo+iRG/zfhTKdyMthBw6j+xqxXCLq9nXTfF9Bo4DHUPBbZCuGs
+         UilJT57wjpo6OmHGWSLYEDANbVCeK1+iOlpNc8jB3S9440XuzzkNBYXd3z1c/riyIbRW
+         gRP5iwx9f0lnZ405gMrTl2f7XGGjsgvdtwfehVnHMRZJtque2XpyffxfzVXRLpqUSUa9
+         QFdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=FV0yKjozee9wCfSer6OIZi2DoukV7EIrrTPrD4SEdbA=;
-        b=vOvqrIxrgwDBirXlZXau0cp2o2CLztIG/YX6SUEiUKK4qGolN829wculigpEn0KGmO
-         Gq0Gkkf/bbp4IIVvvKdRs2EbcVPIomFY/R9zn8zIUEtKrcMYKn7CU1wKUkSdqX9+lwBk
-         cNOQEnVfmImF/9IUOc9BbUwWgE2+TZsvDksAZNlWbROV1sW/BkQXs5k4Mi5go4mzGmPO
-         KDWWAjgBpEB9L49jB5dTjREInVg6puy9r4n6ogTimImZixsekt74lg/xDTQ9fbJV+myK
-         xYENuOOvqdmtS9qGGugF7ZJUHqYlpbkgV1Z1E7Dprb6CEF2xMc+2LFHb6hqC7K/BETBY
-         MJgA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=bpKHGdohq3xWPT9EsRYWPI6dZg8BWoFRa1FKZuzimFs=;
+        b=KszcMdLgOqMImG5a5gRxyhSxv7C526H28SG79R++0gY2WjcuTtoC3BpNh4PM6LFW9s
+         LlJs24ep8ZjxrAk26ZU3I9zHvz+0EPg+XD3LLhupkmlyuy8oGHYY1Jj7e9/Fip3WAZXF
+         0JZpxI169JFohjya1NEjmXErx0h4eHJ16hPadRW3NXTvkzEJGbwZodOcKv5/QfcOBX4F
+         uUbofKAEHsXRqNWy+4nOW/O20Q/7ywdQr3SzvP/yaVU29XF39S8/M7XBGmKb9v6zyl9r
+         FG0gi9Enk4jaufn2IGS+L9IuBwZnj6JKfawUudqwe4DuNSBIzn+DmBHoRJgjuwbW2O2s
+         9OlA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WlCxiRB8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=H8GQyqyW;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
-Date: Thu, 15 Mar 2018 15:20:45 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: linux-arch@vger.kernel.org, toshi.kani@hpe.com, arnd@arndb.de,
-	ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org, james.morse@arm.com,
-	gregkh@linuxfoundation.org, tglx@linutronix.de,
-	akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] ioremap: Implement TLB_INV before huge mapping
-Message-ID: <20180315152045.uajoedfvdcynhus5@lakrids.cambridge.arm.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WlCxiRB8;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=H8GQyqyW;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2B1860FEF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	arnd@arndb.de
+Cc: mark.rutland@arm.com,
+	ard.biesheuvel@linaro.org,
+	marc.zyngier@arm.com,
+	james.morse@arm.com,
+	kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org,
+	toshi.kani@hpe.com,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v2 4/4] Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
+Date: Thu, 15 Mar 2018 18:15:06 +0530
+Message-Id: <1521117906-20107-5-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521117906-20107-1-git-send-email-cpandya@codeaurora.org>
 References: <1521117906-20107-1-git-send-email-cpandya@codeaurora.org>
- <1521117906-20107-3-git-send-email-cpandya@codeaurora.org>
- <20180315133157.ucbdg25jo5ew3t2h@lakrids.cambridge.arm.com>
- <b6c7622d-9676-5584-d52b-10ece6a3877c@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6c7622d-9676-5584-d52b-10ece6a3877c@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595007763353693659?=
-X-GMAIL-MSGID: =?utf-8?q?1595017528344916744?=
+X-GMAIL-THRID: =?utf-8?q?1595007779013667778?=
+X-GMAIL-MSGID: =?utf-8?q?1595007779013667778?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 07:49:01PM +0530, Chintan Pandya wrote:
-> On 3/15/2018 7:01 PM, Mark Rutland wrote:
-> > On Thu, Mar 15, 2018 at 06:15:04PM +0530, Chintan Pandya wrote:
-> > > @@ -91,10 +93,15 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
-> > >   		if (ioremap_pmd_enabled() &&
-> > >   		    ((next - addr) == PMD_SIZE) &&
-> > > -		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
-> > > -		    pmd_free_pte_page(pmd)) {
-> > > -			if (pmd_set_huge(pmd, phys_addr + addr, prot))
-> > > +		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
-> > > +			old_pmd = *pmd;
-> > > +			pmd_clear(pmd);
-> > > +			flush_tlb_pgtable(&init_mm, addr);
-> > > +			if (pmd_set_huge(pmd, phys_addr + addr, prot)) {
-> > > +				pmd_free_pte_page(&old_pmd);
-> > >   				continue;
-> > > +			} else
-> > > +				set_pmd(pmd, old_pmd);
-> > >   		}
-> > 
-> > Can we have something like a pmd_can_set_huge() helper? Then we could
-> > avoid pointless modification and TLB invalidation work when
-> > pmd_set_huge() will fail.
-> 
-> Actually, pmd_set_huge() will never fail because, if
-> CONFIG_HAVE_ARCH_HUGE_VMAP is disabled, ioremap_pmd_enabled()
-> will fail and if enabled (i.e. ARM64 & x86), they don't fail
-> in their implementation. So, rather we can do the following.
+This commit 15122ee2c515a ("arm64: Enforce BBM for huge
+IO/VMAP mappings") is a temporary work-around until the
+issues with CONFIG_HAVE_ARCH_HUGE_VMAP gets fixed.
 
-AFAICT, that's not true. The x86 pmd_set_huge() can fail under certain
-conditions:
+Revert this change as we have fixes for the issue.
 
-int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot)
-{
-	u8 mtrr, uniform;
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+---
+ arch/arm64/mm/mmu.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-	mtrr = mtrr_type_lookup(addr, addr + PMD_SIZE, &uniform);
-	if ((mtrr != MTRR_TYPE_INVALID) && (!uniform) &&
-	    (mtrr != MTRR_TYPE_WRBACK)) {
-		pr_warn_once("%s: Cannot satisfy [mem %#010llx-%#010llx] with a huge-page mapping due to MTRR override.\n",
-			     __func__, addr, addr + PMD_SIZE);
-		return 0;
-	}
-
-	prot = pgprot_4k_2_large(prot);
-
-	set_pte((pte_t *)pmd, pfn_pte(
-		(u64)addr >> PAGE_SHIFT,
-		__pgprot(pgprot_val(prot) | _PAGE_PSE)));
-
-	return 1;
-}
-
-... perhaps that can never happen in this particular case, but that's
-not clear to me.
-
-Thanks,
-Mark.
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 6f21a65..a1b8073 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -936,10 +936,6 @@ int pud_set_huge(pud_t *pudp, phys_addr_t phys, pgprot_t prot)
+ 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pud_present(READ_ONCE(*pudp)))
+-		return 0;
+-
+ 	BUG_ON(phys & ~PUD_MASK);
+ 	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
+@@ -950,10 +946,6 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_t phys, pgprot_t prot)
+ 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
+ 
+-	/* ioremap_page_range doesn't honour BBM */
+-	if (pmd_present(READ_ONCE(*pmdp)))
+-		return 0;
+-
+ 	BUG_ON(phys & ~PMD_MASK);
+ 	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
