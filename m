@@ -1,130 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeCOPRW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:17:22 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36977 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752504AbeCOPRV (ORCPT
+        id S932388AbeCOPR6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:17:58 -0400
+Received: from smtprelay0142.hostedemail.com ([216.40.44.142]:33878 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752375AbeCOPR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:17:21 -0400
-X-Google-Smtp-Source: AG47ELuNjrP6F7Uzu28rk7vNtoYi7TXNV2p3PMbkds0Bzo4YuKWgA98LxP+EUrlGVuQzpHyF5lcxmcK0wJFFYGtuJk4=
-MIME-Version: 1.0
-In-Reply-To: <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
- <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
- <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
- <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com>
- <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com> <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 15 Mar 2018 15:17:19 +0000
-Message-ID: <CAKv+Gu8dvCRUnS5KxDWa4GP2vMPo9cUWVNybx+tGY_Y8T67Uvw@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Daniel Vacek <neelx@redhat.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Mar 2018 11:17:57 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3873:3874:4321:4559:5007:7903:8603:8660:10004:10400:10848:11232:11658:11914:12296:12555:12663:12740:12895:12986:13069:13148:13230:13311:13357:13439:13894:14096:14097:14659:14721:21080:21611:21627:30012:30054:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: mark03_adf91698085c
+X-Filterd-Recvd-Size: 2714
+Message-ID: <1521127073.22221.13.camel@perches.com>
+Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
+From: Joe Perches <joe@perches.com>
+To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date: Thu, 15 Mar 2018 08:17:53 -0700
+In-Reply-To: <20180315150524.GS5453@intel.com>
+References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
+         <20180315133026.GR5453@intel.com>
+         <1b50f5d8-97a6-2442-34bb-2782c35505fd@linux.intel.com>
+         <20180315150524.GS5453@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 March 2018 at 15:12, Daniel Vacek <neelx@redhat.com> wrote:
-> On Thu, Mar 15, 2018 at 8:45 AM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 15 March 2018 at 07:44, Daniel Vacek <neelx@redhat.com> wrote:
->>> On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
->>> <ard.biesheuvel@linaro.org> wrote:
->>>> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
->>>>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
->>>>> <ard.biesheuvel@linaro.org> wrote:
->>>>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
->>>>>>
->>>>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
->>>>>> alignment") modified the logic in memmap_init_zone() to initialize
->>>>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
->>>>>> in move_freepages(), which is redundant by its own admission, and
->>>>>> dereferences struct page fields to obtain the zone without checking
->>>>>> whether the struct pages in question are valid to begin with.
->>>>>>
->>>>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
->>>>>> may cause pfn assume the same value it had in a prior iteration of
->>>>>> the loop, resulting in an infinite loop and a hang very early in the
->>>>>> boot. Also, since it doesn't perform the same rounding on start_pfn
->>>>>> itself but only on intermediate values following an invalid PFN, we
->>>>>> may still hit the same VM_BUG_ON() as before.
->>>>>>
->>>>>> So instead, let's fix this at the core, and ensure that the BUG
->>>>>> check doesn't dereference struct page fields of invalid pages.
->>>>>>
->>>>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
->>>>>> Cc: Daniel Vacek <neelx@redhat.com>
->>>>>> Cc: Mel Gorman <mgorman@techsingularity.net>
->>>>>> Cc: Michal Hocko <mhocko@suse.com>
->>>>>> Cc: Paul Burton <paul.burton@imgtec.com>
->>>>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->>>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>>>> ---
->>>>>>  mm/page_alloc.c | 13 +++++--------
->>>>>>  1 file changed, 5 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>>>> index 3d974cb2a1a1..635d7dd29d7f 100644
->>>>>> --- a/mm/page_alloc.c
->>>>>> +++ b/mm/page_alloc.c
->>>>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->>>>>>          * Remove at a later date when no bug reports exist related to
->>>>>>          * grouping pages by mobility
->>>>>>          */
->>>>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
->>>>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
->>>>>> +                 pfn_valid(page_to_pfn(end_page)) &&
->>>>>> +                 page_zone(start_page) != page_zone(end_page));
->>>>>
->>>>> Hi, I am on vacation this week and I didn't have a chance to test this
->>>>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
->>>>> arm{,64} arch specific versions returns true for all pfns in a section
->>>>> if there is at least some memory mapped in that section. So I doubt
->>>>> this prevents the crash I was targeting. I believe pfn_valid() does
->>>>> not change a thing here :(
->>>>>
->>>>
->>>> If this is the case, memblock_next_valid_pfn() is broken since it
->>>> skips valid PFNs, and we should be fixing that instead.
->>>
->>> How do you define valid pfn? Maybe the generic version of pfn_valid()
->>> should be fixed???
->>>
->>
->> memblock_next_valid_pfn() skips PFNs for which pfn_valid() returns
->> true. That is clearly a bug.
->
-> So pfn_valid() does not mean this frame is usable memory?
->
+On Thu, 2018-03-15 at 17:05 +0200, Ville Syrjälä wrote:
+> On Thu, Mar 15, 2018 at 03:04:52PM +0100, Maarten Lankhorst wrote:
+> > Op 15-03-18 om 14:30 schreef Ville Syrjälä:
+> > > On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
+> > > > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
+> > > > arguments that can be removed by creating separate functins.
+> > > > 
+> > > > Create specific functions for these calls to reduce x86/64 defconfig
+> > > > size by ~20k.
+> > > > 
+> > > > Modify the existing macros to use the specific calls.
+> > > > 
+> > > > new:
+> > > > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > > > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
+> > > > 
+> > > > old:
+> > > > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > > > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
+> > > > 
+> > > > Miscellanea:
+> > > > 
+> > > > o intel_display requires a change to use the specific calls.
+> > > 
+> > > How much would we lose if we move the (drm_debug&FOO) outside the
+> > > functions again?
 
-Who cares what it *means*?
+again?
 
-memblock_next_valid_pfn() has 'valid_pfn' in its name, so if passing
-pfn A returns B, and there exists a C such that A < C < B and
-pfn_valid(C) returns true, memblock_next_valid_pfn doesn't do what it
-says on the tin and should be fixed.
+> > >  I'm somewhat concerned about all the function call
+> > > overhead when debugs aren't even enabled.
 
-You keep going on about how pfn_valid() does or does not do what you
-think, but that is really irrelevant.
+Perhaps better to have compilation elimination
+of the entire debug output instead.
 
-> OK, in that case we need to fix or revert memblock_next_valid_pfn().
-> That works for me.
->
-
-OK. You can add my ack to a patch that reverts it, and we can revisit
-it for the next cycle.
+I think you are discussing a different issue and
+this discussion should not block this patch as
+this patch has no impact other than code size
+reduction.
