@@ -1,332 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeCOLWg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:22:36 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:50425 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbeCOLWe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:22:34 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-Date: Thu, 15 Mar 2018 11:56:30 +0100
-Message-Id: <1521111391-3515-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1751771AbeCOL1F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:27:05 -0400
+Received: from mga02.intel.com ([134.134.136.20]:20755 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751480AbeCOL1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 07:27:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
+   d="scan'208";a="211555721"
+Subject: Re: [PATCH v3 06/11] mmc: sdhci: Add quirk to disable HW timeout
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180307132020.30951-1-kishon@ti.com>
+ <20180307132020.30951-7-kishon@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <e98930eb-aaca-c193-1e5a-185195e71de5@intel.com>
+Date: Thu, 15 Mar 2018 13:26:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180307132020.30951-7-kishon@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-output converter.
+On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
+> Add quirk to disable HW timeout if the requested timeout is more than
+> the maximum obtainable timeout.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/mmc/host/sdhci.c | 27 +++++++++++++++++++++------
+>  drivers/mmc/host/sdhci.h |  5 +++++
+>  2 files changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index aa8b5ca0d1b0..1dd117cbeb6e 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -767,12 +767,6 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  			break;
+>  	}
+>  
+> -	if (count >= 0xF) {
+> -		DBG("Too large timeout 0x%x requested for CMD%d!\n",
+> -		    count, cmd->opcode);
+> -		count = 0xE;
+> -	}
+> -
+>  	return count;
+>  }
+>  
+> @@ -790,6 +784,16 @@ static void sdhci_set_transfer_irqs(struct sdhci_host *host)
+>  	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+>  }
+>  
+> +static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
+> +{
+> +	if (enable)
+> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
+> +	else
+> +		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
+> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +}
+> +
+>  static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  {
+>  	u8 count;
+> @@ -798,6 +802,17 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  		host->ops->set_timeout(host, cmd);
+>  	} else {
+>  		count = sdhci_calc_timeout(host, cmd);
+> +		if (count >= 0xF &&
+> +		    host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT)
+> +			sdhci_set_data_timeout_irq(host, false);
+> +		else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT))
+> +			sdhci_set_data_timeout_irq(host, true);
+> +
+> +		if (count >= 0xF) {
+> +			DBG("Too large timeout 0x%x requested for CMD%d!\n",
+> +			    count, cmd->opcode);
+> +			count = 0xE;
+> +		}
+>  		sdhci_writeb(host, count, SDHCI_TIMEOUT_CONTROL);
+>  	}
+>  }
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/gpu/drm/bridge/Kconfig        |   6 +
- drivers/gpu/drm/bridge/Makefile       |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
- 3 files changed, 262 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+I guess I misunderstood you, but we need to cater for
+open-ended busy timeouts (i.e. busy_timeout==0) and broken
+timeout (i.e. SDHCI_QUIRK_BROKEN_TIMEOUT_VAL and
+SDHCI_QUIRK2_DISABLE_HW_TIMEOUT together mean never use the
+HW timeout)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 3b99d5a..5815a20 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -92,6 +92,12 @@ config DRM_SII9234
- 	  It is an I2C driver, that detects connection of MHL bridge
- 	  and starts encapsulation of HDMI signal.
+So maybe like this:
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index aa8b5ca0d1b0..a358eb5c5f98 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -709,12 +709,15 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+ 		return sg_dma_address(host->data->sg);
+ }
  
-+config DRM_THINE_THC63LVD1024
-+	tristate "Thine THC63LVD1024 LVDS decoder bridge"
-+	depends on OF
-+	---help---
-+	  Thine THC63LVD1024 LVDS/parallel converter driver.
+-static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
++static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd,
++			     bool *too_big)
+ {
+ 	u8 count;
+ 	struct mmc_data *data = cmd->data;
+ 	unsigned target_timeout, current_timeout;
+ 
++	*too_big = true;
 +
- config DRM_TOSHIBA_TC358767
- 	tristate "Toshiba TC358767 eDP bridge"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 373eb28..fd90b16 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
- obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
- obj-$(CONFIG_DRM_SII902X) += sii902x.o
- obj-$(CONFIG_DRM_SII9234) += sii9234.o
-+obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
- obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-new file mode 100644
-index 0000000..067f231
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-@@ -0,0 +1,255 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * THC63LVD1024 LVDS to parallel data DRM bridge driver.
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ */
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_graph.h>
-+#include <linux/regulator/consumer.h>
-+
-+enum {
-+	THC63_LVDS_IN0,
-+	THC63_LVDS_IN1,
-+	THC63_DIGITAL_OUT0,
-+	THC63_DIGITAL_OUT1,
-+};
-+
-+static const char * const thc63_reg_names[] = {
-+	"vcc", "lvcc", "pvcc", "cvcc",
-+};
-+
-+struct thc63_dev {
-+	struct device *dev;
-+
-+	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
-+
-+	struct gpio_desc *pdwn;
-+	struct gpio_desc *oe;
-+
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next;
-+};
-+
-+static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
+ 	/*
+ 	 * If the host controller provides us with an incorrect timeout
+ 	 * value, just skip the check and use 0xE.  The hardware may take
+@@ -768,9 +771,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+ 	}
+ 
+ 	if (count >= 0xF) {
+-		DBG("Too large timeout 0x%x requested for CMD%d!\n",
+-		    count, cmd->opcode);
++		if (!(host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT))
++			DBG("Too large timeout 0x%x requested for CMD%d!\n",
++			    count, cmd->opcode);
+ 		count = 0xE;
++	} else {
++		*too_big = false;
+ 	}
+ 
+ 	return count;
+@@ -790,6 +796,16 @@ static void sdhci_set_transfer_irqs(struct sdhci_host *host)
+ 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+ }
+ 
++static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
 +{
-+	return container_of(bridge, struct thc63_dev, bridge);
++	if (enable)
++		host->ier |= SDHCI_INT_DATA_TIMEOUT;
++	else
++		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
++	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
++	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
 +}
 +
-+static int thc63_attach(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
+ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+ {
+ 	u8 count;
+@@ -797,7 +813,17 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+ 	if (host->ops->set_timeout) {
+ 		host->ops->set_timeout(host, cmd);
+ 	} else {
+-		count = sdhci_calc_timeout(host, cmd);
++		bool too_big = false;
 +
-+	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
-+}
++		count = sdhci_calc_timeout(host, cmd, &too_big);
 +
-+static void thc63_enable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	struct regulator *vcc;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		if (regulator_enable(vcc))
-+			goto error_vcc_enable;
-+	}
-+
-+	if (thc63->pdwn)
-+		gpiod_set_value(thc63->pdwn, 0);
-+
-+	if (thc63->oe)
-+		gpiod_set_value(thc63->oe, 1);
-+
-+	return;
-+
-+error_vcc_enable:
-+	dev_err(thc63->dev, "Failed to enable regulator %u\n", i);
-+
-+	for (i = i - 1; i >= 0; i--) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		regulator_disable(vcc);
-+	}
-+}
-+
-+static void thc63_disable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	struct regulator *vcc;
-+	int i;
-+
-+	if (thc63->oe)
-+		gpiod_set_value(thc63->oe, 0);
-+
-+	if (thc63->pdwn)
-+		gpiod_set_value(thc63->pdwn, 1);
-+
-+	for (i = ARRAY_SIZE(thc63->vccs) - 1; i >= 0; i--) {
-+		vcc = thc63->vccs[i];
-+		if (!vcc)
-+			continue;
-+
-+		if (regulator_disable(vcc))
-+			dev_dbg(thc63->dev,
-+				"Failed to disable regulator %u\n", i);
-+	}
-+}
-+
-+struct drm_bridge_funcs thc63_bridge_func = {
-+	.attach	= thc63_attach,
-+	.enable = thc63_enable,
-+	.disable = thc63_disable,
-+};
-+
-+static int thc63_parse_dt(struct thc63_dev *thc63)
-+{
-+	struct device_node *thc63_out;
-+	struct device_node *remote;
-+	int ret = 0;
-+
-+	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-+						  THC63_DIGITAL_OUT0, -1);
-+	if (!thc63_out) {
-+		dev_err(thc63->dev, "Missing endpoint in Port@%u\n",
-+			THC63_DIGITAL_OUT0);
-+		return -ENODEV;
-+	}
-+
-+	remote = of_graph_get_remote_port_parent(thc63_out);
-+	if (!remote) {
-+		dev_err(thc63->dev, "Endpoint in Port@%u unconnected\n",
-+			THC63_DIGITAL_OUT0);
-+		ret = -ENODEV;
-+		goto error_put_out_node;
-+	}
-+
-+	if (!of_device_is_available(remote)) {
-+		dev_err(thc63->dev, "Port@%u remote endpoint is disabled\n",
-+			THC63_DIGITAL_OUT0);
-+		ret = -ENODEV;
-+		goto error_put_remote_node;
-+	}
-+
-+	thc63->next = of_drm_find_bridge(remote);
-+	if (!thc63->next)
-+		ret = -EPROBE_DEFER;
-+
-+error_put_remote_node:
-+	of_node_put(remote);
-+error_put_out_node:
-+	of_node_put(thc63_out);
-+
-+	return ret;
-+}
-+
-+static int thc63_gpio_init(struct thc63_dev *thc63)
-+{
-+	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
-+	if (IS_ERR(thc63->oe)) {
-+		dev_err(thc63->dev, "Unable to get \"oe-gpios\"\n");
-+		return PTR_ERR(thc63->oe);
-+	}
-+
-+	thc63->pdwn = devm_gpiod_get_optional(thc63->dev, "pdwn",
-+					      GPIOD_OUT_HIGH);
-+	if (IS_ERR(thc63->pdwn)) {
-+		dev_err(thc63->dev, "Unable to get \"pdwn-gpios\"\n");
-+		return PTR_ERR(thc63->pdwn);
-+	}
-+
-+	return 0;
-+}
-+
-+static int thc63_regulator_init(struct thc63_dev *thc63)
-+{
-+	struct regulator **reg;
-+	int i;
-+
-+	reg = &thc63->vccs[0];
-+	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
-+		*reg = devm_regulator_get_optional(thc63->dev,
-+						   thc63_reg_names[i]);
-+		if (IS_ERR(*reg)) {
-+			if (PTR_ERR(*reg) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+			*reg = NULL;
++		if (too_big &&
++		    host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
++			sdhci_set_data_timeout_irq(host, false);
++		} else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
++			sdhci_set_data_timeout_irq(host, true);
 +		}
-+	}
 +
-+	return 0;
-+}
-+
-+static int thc63_probe(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63;
-+	int ret;
-+
-+	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
-+	if (!thc63)
-+		return -ENOMEM;
-+
-+	thc63->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, thc63);
-+
-+	ret = thc63_regulator_init(thc63);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc63_gpio_init(thc63);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc63_parse_dt(thc63);
-+	if (ret)
-+		return ret;
-+
-+	thc63->bridge.driver_private = thc63;
-+	thc63->bridge.of_node = pdev->dev.of_node;
-+	thc63->bridge.funcs = &thc63_bridge_func;
-+
-+	drm_bridge_add(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+static int thc63_remove(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id thc63_match[] = {
-+	{ .compatible = "thine,thc63lvd1024", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, thc63_match);
-+#endif
-+
-+static struct platform_driver thc63_driver = {
-+	.probe	= thc63_probe,
-+	.remove	= thc63_remove,
-+	.driver	= {
-+		.name		= "thc63lvd1024",
-+		.of_match_table	= thc63_match,
-+	},
-+};
-+module_platform_driver(thc63_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+ 		sdhci_writeb(host, count, SDHCI_TIMEOUT_CONTROL);
+ 	}
+ }
+
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index c95b0a4a7594..ff283ee08854 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -437,6 +437,11 @@ struct sdhci_host {
+>  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
+>  /* Controller has CRC in 136 bit Command Response */
+>  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
+> +/*
+> + * Disable HW timeout if the requested timeout is more than the maximum
+> + * obtainable timeout
+> + */
+> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
+> 
