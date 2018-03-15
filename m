@@ -1,74 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeCOQkm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:40:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36234 "EHLO mx1.redhat.com"
+        id S1752535AbeCOQkz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:40:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:53032 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751456AbeCOQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:40:40 -0400
-Subject: [PATCH] vfio/pci: Quiet broken INTx whining when INTx is
- unsupported by device
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, aik@ozlabs.ru,
-        alex.williamson@redhat.com, leedom@chelsio.com, ganeshgr@chelsio.com,
-        arjun@chelsio.com, indranil@chelsio.com, nirranjan@chelsio.com
-Date: Thu, 15 Mar 2018 10:40:35 -0600
-Message-ID: <20180315163956.30579.92502.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        id S1751557AbeCOQkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:40:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="211871021"
+Message-ID: <67805a53fd3471c70a9f29daa430d85d4879a23a.camel@linux.intel.com>
+Subject: Re: [PATCH v2 5/8] tpm: factor out tpm1 pm suspend flow into
+ tpm1-cmd.c
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 18:40:49 +0200
+In-Reply-To: <20180310082428.31519-6-tomas.winkler@intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+         <20180310082428.31519-6-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intent of commit 2170dd04316e ("vfio-pci: Mask INTx if a device is
-not capabable of enabling it") was to disallow the user from seeing
-that the device supports INTx if the platform is incapable of enabling
-it.  The detection of this case however incorrectly includes devices
-which natively do not support INTx, such as SR-IOV VFs.  We don't need
-the nointx handling code for such devices, nor do we want to issue a
-broken INTx masking warning.  Check whether the device supports INTx
-before enabling nointx.
+On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> Factor out tpm1 suspend flow from tpm-interface.c into a new function
+> tpm1_pm_suspend in tpm1-cmd.c
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Reported-by: Arjun Vynipadath <arjun@chelsio.com>
-Fixes: 2170dd04316e ("vfio-pci: Mask INTx if a device is not capabable of enabling it")
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/pci/vfio_pci.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index ad18ed266dc0..f2ca24644a2c 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -192,6 +192,8 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev);
-  */
- static bool vfio_pci_nointx(struct pci_dev *pdev)
- {
-+	u8 pin;
-+
- 	switch (pdev->vendor) {
- 	case PCI_VENDOR_ID_INTEL:
- 		switch (pdev->device) {
-@@ -207,7 +209,18 @@ static bool vfio_pci_nointx(struct pci_dev *pdev)
- 		}
- 	}
- 
--	if (!pdev->irq)
-+	pci_read_config_byte(pdev, PCI_INTERRUPT_PIN, &pin);
-+
-+	/*
-+	 * If the device supports INTx, but it cannot be enabled, invoke
-+	 * nointx to mask the pin value and INTx IRQ_INFO to the user.
-+	 *
-+	 * NB. Generally nointx depends on at least being able to prevent the
-+	 * device from generating INTx, so ideally we might check if INTx
-+	 * masking is supported, but perhaps we can interpret lack of an irq
-+	 * as lack of routing and presume the INTx line is unwired.
-+	 */
-+	if (pin && !pdev->irq)
- 		return true;
- 
- 	return false;
+/Jarkko
