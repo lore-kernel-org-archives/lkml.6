@@ -1,57 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeCOQZb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:25:31 -0400
-Received: from h1.radempa.de ([176.9.142.194]:52196 "EHLO mail.cosmopool.net"
+        id S1751693AbeCOQ1l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:27:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:35214 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752052AbeCOQZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:25:29 -0400
-From: Harald Geyer <harald@ccbib.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com,
-        Harald Geyer <harald@ccbib.org>
-Subject: [PATCHv2 0/5] arm64: allwinner: Add support for TERES-I laptop
-Date: Thu, 15 Mar 2018 16:25:05 +0000
-Message-Id: <20180315162510.11669-1-harald@ccbib.org>
-X-Mailer: git-send-email 2.11.0
+        id S1751357AbeCOQ1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:27:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="39199379"
+Message-ID: <3697876666d609ef774595a78d05e91e50d02bdf.camel@linux.intel.com>
+Subject: Re: [PATCH v2 1/8] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 18:27:33 +0200
+In-Reply-To: <20180310082428.31519-2-tomas.winkler@intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+         <20180310082428.31519-2-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for the TERES I open hardware laptop produced
-by olimex. With these patches and a bootloader capable of setting up
-simple framebuffer the laptop is quite useable.
+On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> unused pcrextend_header structure.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Patches 1-4 add some pin descriptions and devices in the A64 dtsi, which
-are useful to have on the teres.
-Patch 5 finally adds the board dts itself.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Changes to the previous version are listed along the individual patches.
-
-best regards,
-Harald
-
-
-Harald Geyer (5):
-  arm64: dts: allwinner: a64: Add i2c0 pins
-  arm64: dts: allwinner: a64: Add watchdog
-  arm64: dts: allwinner: a64: add simplefb for A64 SoC
-  arm64: dts: allwinner: a64: Add pwm device
-  arm64: allwinner: a64: Add support for TERES-I laptop
-
- .../devicetree/bindings/pwm/pwm-sun4i.txt          |   1 +
- .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   6 +-
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 279 +++++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  46 ++++
- 5 files changed, 331 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-
--- 
-2.11.0
+/Jarkko
