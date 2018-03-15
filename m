@@ -1,72 +1,66 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-679016-1521133038-2-2219470485111873478
+X-Cyrus-Session-Id: sloti22d1t05-679016-1521133727-2-16856667215157091481
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FUZZY_CPILL 0.001, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01,
-  LANGUAGES enropt, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='ISO-8859-1'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521133037; b=aEmiuZvLm88JD2aWYgZL/Wj4aNRL6SxCHxOaVcGF/QucjuL
-    EeJaSY41SRQ3CWMdgHqWTIBoF9ntIKQDkWRov91YFiYDbWi+3DMNrRDPNJK+2h7A
-    uIqJatOml5i8ZaUrjglVCeddYu2KNKZzuDaHc2EIkEdx/ovOkXbd1geG52c9X5B3
-    wQO6X0Ix99MdoIsDbJcV+ipIJNL3+lwDxKulMWL7F0sSQ7wT4LslUCNlH6Jyp5Q1
-    Fgza5onKEajiyP2E8D2E7yEDKzvfJlURV0vjeh/ACgY4+F6LnZ4kXSIyUm+nczmu
-    3rP/9LQjaib+5HCwfkH7KrFCk9DyrL36fC8MZLw==
+    t=1521133727; b=j5EEHS7kTKIcg9RUW3oFT9mPJid7cdA8nkBlvIuBGABsUBz
+    nJ/bWuntVHLAJDBKq7cY6VIswdY4Zx1CYMuGz+HPjC7a7hjZs+Z64GuHI46E0aSW
+    QFOLtZ9CKNWA5LiFOjzExuR0SXSqy3BGtniopgTu5E2zAGDBqzoyoVrqJLOV9mAh
+    qtCiLOtjyBjrlNLuweVfQNb8GRd7Q/9X51fwTs6R7T0PdAVkQWFz1pp6ydyWhKdf
+    8YX5odIBVdA7WcTPMTdOGVOZWC06ayFoFc/FeA31ZA+q2lj7zEn5oTAX1UHvDD0e
+    G0yXzUM0grx1RHDaxxyoHDw4wZ2KzFlFGrXU1Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521133037; bh=YMA9wKWix5aY/KgSsjda+7baDOMHbzl5/7KmLNBRsfE=; b=f
-    XpnM/BhnVfbJd/2KW463o8KwQOqXx2vsIRxWQ/zji4hf8fLZJOk1l0a4LUKaIKMY
-    1gUJMCtClGr7AvTsehJZdIySc3Vy62WtiHB1d5sl4SIyqY5MrsOQSswc3wAH0t5R
-    Lxf7pqvLaJ1tq1rFLqSn9Au5FemC8Ss7hYUNHXtHMnufljo3nYrj1XUb1cT0Q3g8
-    KVGuOJR5075kFj1aoxPp37Rc/jkEaPlIi4JQyvt1+edq9SOEFAWTZGSVYuQHwcjO
-    2Mw/xu1uNbhFkTXAERFIe18e5PntiDHqiXpBsjUMZE2D45CMDhLWNWXhg6qnGpMC
-    q11RP6d2Up2eyW9Lc46Rg==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521133727; bh=WA/qBYF9h1gqPK5r/Yu04WOoTd
+    zurXVouxK5DQKkrPo=; b=V7vRPBeI2mluuoub7VH/QylQcYjaWV1I6buFtPVbH/
+    FYXWfONPiH13yR1KKmH7xikoHhgZnCqEMhcnaVqI9WXuHjgyNH45Akk8fj+C8ZXx
+    vo+N2QtICytRxu3a5CEk9NACPEJELSqGOxGTupRW6xNe+iUHFG39v8PasG2umuKC
+    seMmbs9ePUd8PHXDKv81fqeO5oh2yq6KH6IAL+MAE2tOH49QpSnyHC9NvTSFNEEC
+    aF0+ZbI0sKfuI/BDampHMRPToQZNyWPwNqiZITwxgLdJyUC2iUX2vg+jj8lVBZ0h
+    MOsmAJ9gJHXtp3uolN82CDZW0PO3HybKUdUKwaUwWVgA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=R4+n64fc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=perches.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=R4+n64fc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=perches.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeCOQ46 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 12:56:58 -0400
-Received: from smtprelay0051.hostedemail.com ([216.40.44.51]:52837 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751314AbeCOQ4y (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Mar 2018 12:56:54 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Remote-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:4:41:69:355:379:541:569:800:960:966:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1593:1594:1605:1730:1747:1777:1792:1801:2196:2199:2393:2553:2559:2562:2828:2897:2901:2904:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4385:4605:5007:6119:6742:7903:8603:9389:9592:10004:10848:10954:11026:11232:11473:11658:11914:12043:12291:12296:12438:12555:12683:12740:12760:12895:12986:13138:13231:13255:13439:14659:21060:21080:21324:21433:21451:21611:21627:30003:30012:30029:30030:30034:30051:30054:30056:30060:30062:30075:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: prose66_11ad9270265e
-X-Filterd-Recvd-Size: 19682
-Message-ID: <1521133006.22221.35.camel@perches.com>
-Subject: rfc: remove print_vma_addr ? (was Re: [PATCH 00/16] remove eight
- obsolete architectures)
-From: Joe Perches <joe@perches.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        David Howells <dhowells@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
+        id S1752675AbeCORIo (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Mar 2018 13:08:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53500 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbeCORIg (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Mar 2018 13:08:36 -0400
+Date: Thu, 15 Mar 2018 10:08:30 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Joe Perches <joe@perches.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Howells <dhowells@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Linux-Arch <linux-arch@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
@@ -81,533 +75,58 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
         Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux MM <linux-mm@kvack.org>
-Date: Thu, 15 Mar 2018 09:56:46 -0700
-In-Reply-To: <CAMuHMdXcxuzCOnFCNm4NXDv-wfYJDO5GQpB_ECu7j=2BjMhNpA@mail.gmail.com>
+Subject: Re: rfc: remove print_vma_addr ? (was Re: [PATCH 00/16] remove eight
+ obsolete architectures)
+Message-ID: <20180315170830.GA17574@bombadil.infradead.org>
 References: <20180314143529.1456168-1-arnd@arndb.de>
-         <2929.1521106970@warthog.procyon.org.uk>
-         <CAMuHMdXcxuzCOnFCNm4NXDv-wfYJDO5GQpB_ECu7j=2BjMhNpA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+ <2929.1521106970@warthog.procyon.org.uk>
+ <CAMuHMdXcxuzCOnFCNm4NXDv-wfYJDO5GQpB_ECu7j=2BjMhNpA@mail.gmail.com>
+ <1521133006.22221.35.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521133006.22221.35.camel@perches.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-03-15 at 10:48 +0100, Geert Uytterhoeven wrote:
-> Hi David,
+On Thu, Mar 15, 2018 at 09:56:46AM -0700, Joe Perches wrote:
+> I have a patchset that creates a vsprintf extension for
+> print_vma_addr and removes all the uses similar to the
+> print_symbol() removal.
 > 
-> On Thu, Mar 15, 2018 at 10:42 AM, David Howells <dhowells@redhat.com> wrote:
-> > Do we have anything left that still implements NOMMU?
+> This now avoids any possible printk interleaving.
 > 
-> Sure: arm, c6x, m68k, microblaze, and  sh.
+> Unfortunately, without some #ifdef in vsprintf, which
+> I would like to avoid, it increases the nommu kernel
+> size by ~500 bytes.
+> 
+> Anyone think this is acceptable?
+> 
+> Here's the overall patch, but I have it as a series
+> ---
+>  Documentation/core-api/printk-formats.rst |  9 +++++
+>  arch/arm64/kernel/traps.c                 | 13 +++----
+>  arch/mips/mm/fault.c                      | 16 ++++-----
+>  arch/parisc/mm/fault.c                    | 15 ++++----
+>  arch/riscv/kernel/traps.c                 | 11 +++---
+>  arch/s390/mm/fault.c                      |  7 ++--
+>  arch/sparc/mm/fault_32.c                  |  8 ++---
+>  arch/sparc/mm/fault_64.c                  |  8 ++---
+>  arch/tile/kernel/signal.c                 |  9 ++---
+>  arch/um/kernel/trap.c                     | 13 +++----
+>  arch/x86/kernel/signal.c                  | 10 ++----
+>  arch/x86/kernel/traps.c                   | 18 ++++------
+>  arch/x86/mm/fault.c                       | 12 +++----
+>  include/linux/mm.h                        |  1 -
+>  lib/vsprintf.c                            | 58 ++++++++++++++++++++++++++-----
+>  mm/memory.c                               | 33 ------------------
+>  16 files changed, 112 insertions(+), 129 deletions(-)
 
-I have a patchset that creates a vsprintf extension for
-print_vma_addr and removes all the uses similar to the
-print_symbol() removal.
-
-This now avoids any possible printk interleaving.
-
-Unfortunately, without some #ifdef in vsprintf, which
-I would like to avoid, it increases the nommu kernel
-size by ~500 bytes.
-
-Anyone think this is acceptable?
-
-Here's the overall patch, but I have it as a series
----
- Documentation/core-api/printk-formats.rst |  9 +++++
- arch/arm64/kernel/traps.c                 | 13 +++----
- arch/mips/mm/fault.c                      | 16 ++++-----
- arch/parisc/mm/fault.c                    | 15 ++++----
- arch/riscv/kernel/traps.c                 | 11 +++---
- arch/s390/mm/fault.c                      |  7 ++--
- arch/sparc/mm/fault_32.c                  |  8 ++---
- arch/sparc/mm/fault_64.c                  |  8 ++---
- arch/tile/kernel/signal.c                 |  9 ++---
- arch/um/kernel/trap.c                     | 13 +++----
- arch/x86/kernel/signal.c                  | 10 ++----
- arch/x86/kernel/traps.c                   | 18 ++++------
- arch/x86/mm/fault.c                       | 12 +++----
- include/linux/mm.h                        |  1 -
- lib/vsprintf.c                            | 58 ++++++++++++++++++++++++++-----
- mm/memory.c                               | 33 ------------------
- 16 files changed, 112 insertions(+), 129 deletions(-)
-
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 934559b3c130..10a91da1bc83 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -157,6 +157,15 @@ DMA address types dma_addr_t
- For printing a dma_addr_t type which can vary based on build options,
- regardless of the width of the CPU data path.
- 
-+VMA name and address
-+----------------------------
-+
-+::
-+
-+	%pav	<name>[hexstart+hexsize] or ?[0+0] if unavailable
-+
-+For any address, print the vma's name and its starting address and size
-+
- Passed by reference.
- 
- Raw buffer as an escaped string
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 2b478565d774..48edf812ce8b 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -242,13 +242,14 @@ void arm64_force_sig_info(struct siginfo *info, const char *str,
- 	if (!show_unhandled_signals_ratelimited())
- 		goto send_sig;
- 
--	pr_info("%s[%d]: unhandled exception: ", tsk->comm, task_pid_nr(tsk));
- 	if (esr)
--		pr_cont("%s, ESR 0x%08x, ", esr_get_class_string(esr), esr);
--
--	pr_cont("%s", str);
--	print_vma_addr(KERN_CONT " in ", regs->pc);
--	pr_cont("\n");
-+		pr_info("%s[%d]: unhandled exception: %s, ESR 0x%08x, %s in %pav\n",
-+			tsk->comm, task_pid_nr(tsk),
-+			esr_get_class_string(esr), esr,
-+			str, &regs->pc);
-+	else
-+		pr_info("%s[%d]: unhandled exception: %s in %pav\n",
-+			tsk->comm, task_pid_nr(tsk), str, &regs->pc);
- 	__show_regs(regs);
- 
- send_sig:
-diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
-index 4f8f5bf46977..ce7bf077a0f5 100644
---- a/arch/mips/mm/fault.c
-+++ b/arch/mips/mm/fault.c
-@@ -213,14 +213,14 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 				tsk->comm,
- 				write ? "write access to" : "read access from",
- 				field, address);
--			pr_info("epc = %0*lx in", field,
--				(unsigned long) regs->cp0_epc);
--			print_vma_addr(KERN_CONT " ", regs->cp0_epc);
--			pr_cont("\n");
--			pr_info("ra  = %0*lx in", field,
--				(unsigned long) regs->regs[31]);
--			print_vma_addr(KERN_CONT " ", regs->regs[31]);
--			pr_cont("\n");
-+			pr_info("epc = %0*lx in %pav\n",
-+				field,
-+				(unsigned long)regs->cp0_epc,
-+				&regs->cp0_epc);
-+			pr_info("ra  = %0*lx in %pav\n",
-+				field,
-+				(unsigned long)regs->regs[31],
-+				&regs->regs[31]);
- 		}
- 		current->thread.trap_nr = (regs->cp0_cause >> 2) & 0x1f;
- 		info.si_signo = SIGSEGV;
-diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
-index e247edbca68e..877cea702714 100644
---- a/arch/parisc/mm/fault.c
-+++ b/arch/parisc/mm/fault.c
-@@ -240,17 +240,14 @@ show_signal_msg(struct pt_regs *regs, unsigned long code,
- 	if (!printk_ratelimit())
- 		return;
- 
--	pr_warn("\n");
--	pr_warn("do_page_fault() command='%s' type=%lu address=0x%08lx",
--	    tsk->comm, code, address);
--	print_vma_addr(KERN_CONT " in ", regs->iaoq[0]);
--
--	pr_cont("\ntrap #%lu: %s%c", code, trap_name(code),
--		vma ? ',':'\n');
-+	pr_warn("do_page_fault() command='%s' type=%lu address=0x%08lx in %pav\n",
-+		tsk->comm, code, address, &regs->iaoq[0]);
- 
- 	if (vma)
--		pr_cont(" vm_start = 0x%08lx, vm_end = 0x%08lx\n",
--			vma->vm_start, vma->vm_end);
-+		pr_warn("trap #%lu: %s%c, vm_start = 0x%08lx, vm_end = 0x%08lx\n",
-+			code, trap_name(code), vma->vm_start, vma->vm_end);
-+	else
-+		pr_warn("trap #%lu: %s%c\n", code, trap_name(code));
- 
- 	show_regs(regs);
- }
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 93132cb59184..16609dcb2546 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -78,12 +78,11 @@ static inline void do_trap_siginfo(int signo, int code,
- void do_trap(struct pt_regs *regs, int signo, int code,
- 	unsigned long addr, struct task_struct *tsk)
- {
--	if (show_unhandled_signals && unhandled_signal(tsk, signo)
--	    && printk_ratelimit()) {
--		pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x" REG_FMT,
--			tsk->comm, task_pid_nr(tsk), signo, code, addr);
--		print_vma_addr(KERN_CONT " in ", GET_IP(regs));
--		pr_cont("\n");
-+	if (show_unhandled_signals && unhandled_signal(tsk, signo) &&
-+	    printk_ratelimit()) {
-+		pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x" REG_FMT " in %pav\n",
-+			tsk->comm, task_pid_nr(tsk), signo, code, addr,
-+			&GET_IP(regs));
- 		show_regs(regs);
- 	}
- 
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index 93faeca52284..3b1d6d618af2 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -250,10 +250,9 @@ void report_user_fault(struct pt_regs *regs, long signr, int is_mm_fault)
- 		return;
- 	if (!printk_ratelimit())
- 		return;
--	printk(KERN_ALERT "User process fault: interruption code %04x ilc:%d ",
--	       regs->int_code & 0xffff, regs->int_code >> 17);
--	print_vma_addr(KERN_CONT "in ", regs->psw.addr);
--	printk(KERN_CONT "\n");
-+	printk(KERN_ALERT "User process fault: interruption code %04x ilc:%d in %pav\n",
-+	       regs->int_code & 0xffff, regs->int_code >> 17,
-+	       &regs->psw.addr);
- 	if (is_mm_fault)
- 		dump_fault_info(regs);
- 	show_regs(regs);
-diff --git a/arch/sparc/mm/fault_32.c b/arch/sparc/mm/fault_32.c
-index a8103a84b4ac..206ec5a1c915 100644
---- a/arch/sparc/mm/fault_32.c
-+++ b/arch/sparc/mm/fault_32.c
-@@ -113,15 +113,11 @@ show_signal_msg(struct pt_regs *regs, int sig, int code,
- 	if (!printk_ratelimit())
- 		return;
- 
--	printk("%s%s[%d]: segfault at %lx ip %px (rpc %px) sp %px error %x",
-+	printk("%s%s[%d]: segfault at %lx ip %px (rpc %px) sp %px error %x in %pav\n",
- 	       task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
- 	       tsk->comm, task_pid_nr(tsk), address,
- 	       (void *)regs->pc, (void *)regs->u_regs[UREG_I7],
--	       (void *)regs->u_regs[UREG_FP], code);
--
--	print_vma_addr(KERN_CONT " in ", regs->pc);
--
--	printk(KERN_CONT "\n");
-+	       (void *)regs->u_regs[UREG_FP], code, &regs->pc);
- }
- 
- static void __do_fault_siginfo(int code, int sig, struct pt_regs *regs,
-diff --git a/arch/sparc/mm/fault_64.c b/arch/sparc/mm/fault_64.c
-index 41363f46797b..a21199329ebe 100644
---- a/arch/sparc/mm/fault_64.c
-+++ b/arch/sparc/mm/fault_64.c
-@@ -154,15 +154,11 @@ show_signal_msg(struct pt_regs *regs, int sig, int code,
- 	if (!printk_ratelimit())
- 		return;
- 
--	printk("%s%s[%d]: segfault at %lx ip %px (rpc %px) sp %px error %x",
-+	printk("%s%s[%d]: segfault at %lx ip %px (rpc %px) sp %px error %x in %pav\b",
- 	       task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
- 	       tsk->comm, task_pid_nr(tsk), address,
- 	       (void *)regs->tpc, (void *)regs->u_regs[UREG_I7],
--	       (void *)regs->u_regs[UREG_FP], code);
--
--	print_vma_addr(KERN_CONT " in ", regs->tpc);
--
--	printk(KERN_CONT "\n");
-+	       (void *)regs->u_regs[UREG_FP], code, &regs->tpc);
- }
- 
- static void do_fault_siginfo(int code, int sig, struct pt_regs *regs,
-diff --git a/arch/tile/kernel/signal.c b/arch/tile/kernel/signal.c
-index f2bf557bb005..0556106dfe8a 100644
---- a/arch/tile/kernel/signal.c
-+++ b/arch/tile/kernel/signal.c
-@@ -383,13 +383,10 @@ void trace_unhandled_signal(const char *type, struct pt_regs *regs,
- 	if (show_unhandled_signals <= 1 && !printk_ratelimit())
- 		return;
- 
--	printk("%s%s[%d]: %s at %lx pc "REGFMT" signal %d",
-+	printk("%s%s[%d]: %s at %lx pc " REGFMT " signal %d in %pav\n",
- 	       task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
--	       tsk->comm, task_pid_nr(tsk), type, address, regs->pc, sig);
--
--	print_vma_addr(KERN_CONT " in ", regs->pc);
--
--	printk(KERN_CONT "\n");
-+	       tsk->comm, task_pid_nr(tsk), type, address, regs->pc, sig,
-+	       &regs->pc);
- 
- 	if (show_unhandled_signals > 1) {
- 		switch (sig) {
-diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
-index b2b02df9896e..9281248972c0 100644
---- a/arch/um/kernel/trap.c
-+++ b/arch/um/kernel/trap.c
-@@ -150,14 +150,11 @@ static void show_segv_info(struct uml_pt_regs *regs)
- 	if (!printk_ratelimit())
- 		return;
- 
--	printk("%s%s[%d]: segfault at %lx ip %px sp %px error %x",
--		task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
--		tsk->comm, task_pid_nr(tsk), FAULT_ADDRESS(*fi),
--		(void *)UPT_IP(regs), (void *)UPT_SP(regs),
--		fi->error_code);
--
--	print_vma_addr(KERN_CONT " in ", UPT_IP(regs));
--	printk(KERN_CONT "\n");
-+	printk("%s%s[%d]: segfault at %lx ip %px sp %px error %x in %pav\n",
-+	       task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
-+	       tsk->comm, task_pid_nr(tsk), FAULT_ADDRESS(*fi),
-+	       (void *)UPT_IP(regs), (void *)UPT_SP(regs),
-+	       fi->error_code, &UPT_IP(regs));
- }
- 
- static void bad_segv(struct faultinfo fi, unsigned long ip)
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 4cdc0b27ec82..9ab0c5c50b29 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -841,15 +841,11 @@ void signal_fault(struct pt_regs *regs, void __user *frame, char *where)
- {
- 	struct task_struct *me = current;
- 
--	if (show_unhandled_signals && printk_ratelimit()) {
--		printk("%s"
--		       "%s[%d] bad frame in %s frame:%p ip:%lx sp:%lx orax:%lx",
-+	if (show_unhandled_signals && printk_ratelimit())
-+		printk("%s%s[%d] bad frame in %s frame:%p ip:%lx sp:%lx orax:%lx in %pav\n",
- 		       task_pid_nr(current) > 1 ? KERN_INFO : KERN_EMERG,
- 		       me->comm, me->pid, where, frame,
--		       regs->ip, regs->sp, regs->orig_ax);
--		print_vma_addr(KERN_CONT " in ", regs->ip);
--		pr_cont("\n");
--	}
-+		       regs->ip, regs->sp, regs->orig_ax, &regs->ip);
- 
- 	force_sig(SIGSEGV, me);
- }
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 3d9b2308e7fa..c6e3d02759e5 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -270,13 +270,10 @@ do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
- 	tsk->thread.trap_nr = trapnr;
- 
- 	if (show_unhandled_signals && unhandled_signal(tsk, signr) &&
--	    printk_ratelimit()) {
--		pr_info("%s[%d] trap %s ip:%lx sp:%lx error:%lx",
-+	    printk_ratelimit())
-+		pr_info("%s[%d] trap %s ip:%lx sp:%lx error:%lx in %pav\n",
- 			tsk->comm, tsk->pid, str,
--			regs->ip, regs->sp, error_code);
--		print_vma_addr(KERN_CONT " in ", regs->ip);
--		pr_cont("\n");
--	}
-+			regs->ip, regs->sp, error_code, &regs->ip);
- 
- 	force_sig_info(signr, info ?: SEND_SIG_PRIV, tsk);
- }
-@@ -565,13 +562,10 @@ do_general_protection(struct pt_regs *regs, long error_code)
- 	tsk->thread.trap_nr = X86_TRAP_GP;
- 
- 	if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
--			printk_ratelimit()) {
--		pr_info("%s[%d] general protection ip:%lx sp:%lx error:%lx",
-+			printk_ratelimit())
-+		pr_info("%s[%d] general protection ip:%lx sp:%lx error:%lx in %pav\n",
- 			tsk->comm, task_pid_nr(tsk),
--			regs->ip, regs->sp, error_code);
--		print_vma_addr(KERN_CONT " in ", regs->ip);
--		pr_cont("\n");
--	}
-+			regs->ip, regs->sp, error_code, &regs->ip);
- 
- 	force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
- }
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index e6af2b464c3d..b629319e621a 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -857,14 +857,10 @@ show_signal_msg(struct pt_regs *regs, unsigned long error_code,
- 	if (!printk_ratelimit())
- 		return;
- 
--	printk("%s%s[%d]: segfault at %lx ip %px sp %px error %lx",
--		task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
--		tsk->comm, task_pid_nr(tsk), address,
--		(void *)regs->ip, (void *)regs->sp, error_code);
--
--	print_vma_addr(KERN_CONT " in ", regs->ip);
--
--	printk(KERN_CONT "\n");
-+	printk("%s%s[%d]: segfault at %lx ip %px sp %px error %lx in %pav\n",
-+	       task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
-+	       tsk->comm, task_pid_nr(tsk), address,
-+	       (void *)regs->ip, (void *)regs->sp, error_code, &regs->ip);
- }
- 
- static void
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 9f1270360983..9584bd3e8c25 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2537,7 +2537,6 @@ extern int randomize_va_space;
- #endif
- 
- const char * arch_vma_name(struct vm_area_struct *vma);
--void print_vma_addr(char *prefix, unsigned long rip);
- 
- void sparse_mem_maps_populate_node(struct page **map_map,
- 				   unsigned long pnum_begin,
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 942b5234a59b..9081476ea4ea 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -35,6 +35,8 @@
- #include <net/addrconf.h>
- #include <linux/siphash.h>
- #include <linux/compiler.h>
-+#include <linux/mm_types.h>
-+
- #ifdef CONFIG_BLOCK
- #include <linux/blkdev.h>
- #endif
-@@ -407,6 +409,11 @@ struct printf_spec {
- #define FIELD_WIDTH_MAX ((1 << 23) - 1)
- #define PRECISION_MAX ((1 << 15) - 1)
- 
-+static const struct printf_spec strspec = {
-+	.field_width = -1,
-+	.precision = -1,
-+};
-+
- static noinline_for_stack
- char *number(char *buf, char *end, unsigned long long num,
- 	     struct printf_spec spec)
-@@ -1427,6 +1434,45 @@ char *netdev_bits(char *buf, char *end, const void *addr, const char *fmt)
- 	return special_hex_number(buf, end, num, size);
- }
- 
-+static noinline_for_stack
-+char *vma_addr(char *buf, char *end, const void *addr)
-+{
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	char *page;
-+	char tbuf[2 * sizeof(unsigned long) * 2 + 4];
-+	const char *output = "?[0+0]";
-+
-+	/*
-+	 * we might be running from an atomic context so we cannot sleep
-+	 */
-+	if (!down_read_trylock(&mm->mmap_sem))
-+		goto output;
-+
-+	vma = find_vma(mm, *(unsigned long *)addr);
-+	if (!vma || !vma->vm_file)
-+		goto up_read;
-+
-+	page = (char *)__get_free_page(GFP_ATOMIC | __GFP_NOWARN);
-+	if (page) {
-+		char *fp;
-+
-+		fp = file_path(vma->vm_file, page, PAGE_SIZE);
-+		if (IS_ERR(fp))
-+			fp = "?";
-+		buf = string(buf, end, kbasename(fp), strspec);
-+		sprintf(tbuf, "[%lx+%lx]",
-+			vma->vm_start, vma->vm_end - vma->vm_start);
-+		output = tbuf;
-+		free_page((unsigned long)page);
-+	}
-+
-+up_read:
-+	up_read(&mm->mmap_sem);
-+output:
-+	return string(buf, end, output, strspec);
-+}
-+
- static noinline_for_stack
- char *address_val(char *buf, char *end, const void *addr, const char *fmt)
- {
-@@ -1434,6 +1480,8 @@ char *address_val(char *buf, char *end, const void *addr, const char *fmt)
- 	int size;
- 
- 	switch (fmt[1]) {
-+	case 'v':
-+		return vma_addr(buf, end, addr);
- 	case 'd':
- 		num = *(const dma_addr_t *)addr;
- 		size = sizeof(dma_addr_t);
-@@ -1474,11 +1522,7 @@ char *format_flags(char *buf, char *end, unsigned long flags,
- 					const struct trace_print_flags *names)
- {
- 	unsigned long mask;
--	const struct printf_spec strspec = {
--		.field_width = -1,
--		.precision = -1,
--	};
--	const struct printf_spec numspec = {
-+	static const struct printf_spec numspec = {
- 		.flags = SPECIAL|SMALL,
- 		.field_width = -1,
- 		.precision = -1,
-@@ -1548,10 +1592,6 @@ char *device_node_gen_full_name(const struct device_node *np, char *buf, char *e
- {
- 	int depth;
- 	const struct device_node *parent = np->parent;
--	static const struct printf_spec strspec = {
--		.field_width = -1,
--		.precision = -1,
--	};
- 
- 	/* special case for root node */
- 	if (!parent)
-diff --git a/mm/memory.c b/mm/memory.c
-index bc760df8a7f4..f1f922421bde 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4502,39 +4502,6 @@ int access_process_vm(struct task_struct *tsk, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(access_process_vm);
- 
--/*
-- * Print the name of a VMA.
-- */
--void print_vma_addr(char *prefix, unsigned long ip)
--{
--	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma;
--
--	/*
--	 * we might be running from an atomic context so we cannot sleep
--	 */
--	if (!down_read_trylock(&mm->mmap_sem))
--		return;
--
--	vma = find_vma(mm, ip);
--	if (vma && vma->vm_file) {
--		struct file *f = vma->vm_file;
--		char *buf = (char *)__get_free_page(GFP_NOWAIT);
--		if (buf) {
--			char *p;
--
--			p = file_path(f, buf, PAGE_SIZE);
--			if (IS_ERR(p))
--				p = "?";
--			printk("%s%s[%lx+%lx]", prefix, kbasename(p),
--					vma->vm_start,
--					vma->vm_end - vma->vm_start);
--			free_page((unsigned long)buf);
--		}
--	}
--	up_read(&mm->mmap_sem);
--}
--
- #if defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_DEBUG_ATOMIC_SLEEP)
- void __might_fault(const char *file, int line)
- {
-
-
+This doesn't feel like a huge win since it's only called ~once per
+architecture.  I'd be more excited if it made the printing of the whole
+thing standardised; eg we have a print_fault() function in mm/memory.c
+which takes a suitable set of arguments.
