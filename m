@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeCOVbh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:31:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50196 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751774AbeCOVbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:31:35 -0400
-Subject: [PATCH v2 0/3] vfio/pci: ioeventfd support
+        id S932383AbeCOVbs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:31:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57096 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752640AbeCOVbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:31:46 -0400
+Subject: [PATCH v2 1/3] vfio/pci: Pull BAR mapping setup from read-write path
 From: Alex Williamson <alex.williamson@redhat.com>
 To: kvm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
         alex.williamson@redhat.com, peterx@redhat.com, eric.auger@redhat.com,
         aik@ozlabs.ru
-Date: Thu, 15 Mar 2018 15:31:27 -0600
-Message-ID: <20180315212634.15150.88094.stgit@gimli.home>
+Date: Thu, 15 Mar 2018 15:31:40 -0600
+Message-ID: <20180315213140.15150.52043.stgit@gimli.home>
+In-Reply-To: <20180315212634.15150.88094.stgit@gimli.home>
+References: <20180315212634.15150.88094.stgit@gimli.home>
 User-Agent: StGit/0.18-102-gdf9f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -22,53 +24,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A vfio ioeventfd will perform the pre-specified device write on
-triggering of an eventfd.  When coupled with KVM ioeventfds, this
-feature allows a VM to trap a device page for virtualization, while
-also registering targeted ioeventfds to maintain performance of high
-frequency register writes within the trapped range.  Much like the
-existing interrupt eventfd/irqfd coupling, such writes can be handled
-entirely in the host kernel.
+This creates a common helper that we'll use for ioeventfd setup.
 
-The new VFIO device ioctl may be supported by any vfio bus driver,
-including mdev drivers, but the implementation here only enables
-vfio-pci.  This is intended as an acceleration path, bus drivers
-may choose which regions to support and userspace should always
-intend to fall back to non-accelerated handling when unavailable.
-
-v1->v2:
- * Peter & Eric Sign-offs on 1/3
- * mutex_destroy() in 3/3
- * Slight enhancement to uapi description
- * sparse clean - Sparse didn't like that we dropped the __iomem
-   address space when calling iowriteXX, re-adding it via the opaque
-   and data pointers of the virq was crude, and that was not a 32-bit
-   friendly soluion anyway, so add the iomem address to our ioeventfd
-   struct, pass that, and use a more simple, common handler.
-
-RFC->v1:
- * An arbitrary limit is added for the number of ioeventfds supported
-   per device.  The intention is to set this high enough to allow any
-   reasonable use case, but limit malicious user behavior.
- * Split patches, including adding a patch for endian neutral io reads
-   and writes.  This should be a nop for little-endian and avoid
-   redundant swap on big-endian, and hopefully resolves Alexey's
-   comments regarding the endian nature of this interface.
- * Rebase to v4.16-rc3
-
-Thanks,
-Alex
-
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
+ drivers/vfio/pci/vfio_pci_rdwr.c |   39 ++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
 
-Alex Williamson (3):
-      vfio/pci: Pull BAR mapping setup from read-write path
-      vfio/pci: Use endian neutral helpers
-      vfio/pci: Add ioeventfd support
-
-
- drivers/vfio/pci/vfio_pci.c         |   35 +++++++
- drivers/vfio/pci/vfio_pci_private.h |   19 ++++
- drivers/vfio/pci/vfio_pci_rdwr.c    |  184 +++++++++++++++++++++++++++++++----
- include/uapi/linux/vfio.h           |   27 +++++
- 4 files changed, 245 insertions(+), 20 deletions(-)
+diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
+index 357243d76f10..5f2b376dcebd 100644
+--- a/drivers/vfio/pci/vfio_pci_rdwr.c
++++ b/drivers/vfio/pci/vfio_pci_rdwr.c
+@@ -113,6 +113,30 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
+ 	return done;
+ }
+ 
++static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
++{
++	struct pci_dev *pdev = vdev->pdev;
++	int ret;
++	void __iomem *io;
++
++	if (vdev->barmap[bar])
++		return 0;
++
++	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
++	if (ret)
++		return ret;
++
++	io = pci_iomap(pdev, bar, 0);
++	if (!io) {
++		pci_release_selected_regions(pdev, 1 << bar);
++		return -ENOMEM;
++	}
++
++	vdev->barmap[bar] = io;
++
++	return 0;
++}
++
+ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 			size_t count, loff_t *ppos, bool iswrite)
+ {
+@@ -147,22 +171,13 @@ ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
+ 		if (!io)
+ 			return -ENOMEM;
+ 		x_end = end;
+-	} else if (!vdev->barmap[bar]) {
+-		int ret;
+-
+-		ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
++	} else {
++		int ret = vfio_pci_setup_barmap(vdev, bar);
+ 		if (ret)
+ 			return ret;
+ 
+-		io = pci_iomap(pdev, bar, 0);
+-		if (!io) {
+-			pci_release_selected_regions(pdev, 1 << bar);
+-			return -ENOMEM;
+-		}
+-
+-		vdev->barmap[bar] = io;
+-	} else
+ 		io = vdev->barmap[bar];
++	}
+ 
+ 	if (bar == vdev->msix_bar) {
+ 		x_start = vdev->msix_offset;
