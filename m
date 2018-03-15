@@ -1,96 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeCOQxN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:53:13 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38379 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbeCOQxM (ORCPT
+        id S1751719AbeCOQyd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:54:33 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42357 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeCOQyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:53:12 -0400
-Message-ID: <1521132789.4624.4.camel@pengutronix.de>
-Subject: Re: [PATCH] [v3] gpu: ipu-v3: prg: avoid possible array underflow
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 17:53:09 +0100
-In-Reply-To: <20180315162011.807909-1-arnd@arndb.de>
-References: <20180315162011.807909-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 15 Mar 2018 12:54:31 -0400
+X-Google-Smtp-Source: AG47ELv/goOOCpVIAfnw962sULZ9iZm3ZNeIdvwuPQTyuK0nIjLndjI63kaBCZkzG2TMJu7Y3Et86w==
+From: Matthias Brugger <matthias.bgg@gmail.com>
+X-Google-Original-From: Matthias Brugger <mbrugger@suse.com>
+To: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net
+Cc: tianjinchuan1@huawei.com, lipeng321@huawei.com, lixiaoping3@huawei.com,
+        mbrugger@suse.com, yankejian@huawei.com, linyunsheng@huawei.com,
+        huangdaode@hisilicon.com, stephen@networkplumber.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        matthias.bgg@gmail.com
+Subject: [PATCH] net: hns: Fix ethtool private flags
+Date: Thu, 15 Mar 2018 17:54:20 +0100
+Message-Id: <20180315165420.16086-1-mbrugger@suse.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+The driver implementation returns support for private flags, while
+no private flags are present. When asked for the number of private
+flags it returns the number of statistic flag names.
 
-On Thu, 2018-03-15 at 17:19 +0100, Arnd Bergmann wrote:
-> gcc-8 reports that we access an array with a negative index
-> in an error case:
-> 
-> drivers/gpu/ipu-v3/ipu-prg.c: In function 'ipu_prg_channel_disable':
-> drivers/gpu/ipu-v3/ipu-prg.c:252:43: error: array subscript -22 is below array bounds of 'struct ipu_prg_channel[3]' [-Werror=array-bounds]
-> 
-> This moves the range check in front of the first time that
-> variable gets used.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fix this by returning EOPNOTSUPP for not implemented ethtool flags.
 
-thank you, I've replaced v2 with this version in imx-drm/fixes.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c  | 2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c  | 2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c   | 4 +++-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
-regards
-Philipp
-
-> ----
-> v1: Originally sent on Dec 4, 2017.
-> v2: Sent again on Jan 16, after no reply, Phillipp said it was merged
-> v3: Ran into a related problem with CONFIG_UBSAN, sent again fixing both
-> ---
->  drivers/gpu/ipu-v3/ipu-prg.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
-> index 97b99500153d..83f9dd934a5d 100644
-> --- a/drivers/gpu/ipu-v3/ipu-prg.c
-> +++ b/drivers/gpu/ipu-v3/ipu-prg.c
-> @@ -250,10 +250,14 @@ void ipu_prg_channel_disable(struct ipuv3_channel *ipu_chan)
->  {
->  	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
->  	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
-> -	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
-> +	struct ipu_prg_channel *chan;
->  	u32 val;
->  
-> -	if (!chan->enabled || prg_chan < 0)
-> +	if (prg_chan < 0)
-> +		return;
-> +
-> +	chan = &prg->chan[prg_chan];
-> +	if (!chan->enabled)
->  		return;
->  
->  	pm_runtime_get_sync(prg->dev);
-> @@ -280,13 +284,15 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
->  {
->  	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
->  	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
-> -	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
-> +	struct ipu_prg_channel *chan;
->  	u32 val;
->  	int ret;
->  
->  	if (prg_chan < 0)
->  		return prg_chan;
->  
-> +	chan = &prg->chan[prg_chan];
-> +
->  	if (chan->enabled) {
->  		ipu_pre_update(prg->pres[chan->used_pre], *eba);
->  		return 0;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index 86944bc3b273..74bd260ca02a 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -666,7 +666,7 @@ static void hns_gmac_get_strings(u32 stringset, u8 *data)
+ 
+ static int hns_gmac_get_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return ARRAY_SIZE(g_gmac_stats_string);
+ 
+ 	return 0;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+index b62816c1574e..93e71e27401b 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
+@@ -422,7 +422,7 @@ void hns_ppe_update_stats(struct hns_ppe_cb *ppe_cb)
+ 
+ int hns_ppe_get_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return ETH_PPE_STATIC_NUM;
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+index 6f3570cfb501..e2e28532e4dc 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
+@@ -876,7 +876,7 @@ void hns_rcb_get_stats(struct hnae_queue *queue, u64 *data)
+  */
+ int hns_rcb_get_ring_sset_count(int stringset)
+ {
+-	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
++	if (stringset == ETH_SS_STATS)
+ 		return HNS_RING_STATIC_REG_NUM;
+ 
+ 	return 0;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index 7ea7f8a4aa2a..2e14a3ae1d8b 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -993,8 +993,10 @@ int hns_get_sset_count(struct net_device *netdev, int stringset)
+ 			cnt--;
+ 
+ 		return cnt;
+-	} else {
++	} else if (stringset == ETH_SS_STATS) {
+ 		return (HNS_NET_STATS_CNT + ops->get_sset_count(h, stringset));
++	} else {
++		return -EOPNOTSUPP;
+ 	}
+ }
+ 
+-- 
+2.16.2
