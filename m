@@ -1,55 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeCONoN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:44:13 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:44230 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeCONoM (ORCPT
+        id S1752350AbeCONp2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:45:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53472 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeCONp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:44:12 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888 output.
-Date: Thu, 15 Mar 2018 14:43:30 +0100
-Message-Id: <1521121410-17103-1-git-send-email-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Mar 2018 09:45:26 -0400
+Date: Thu, 15 Mar 2018 14:45:24 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, rafael@kernel.org,
+        dedekind1@gmail.com, ming.lei@redhat.com, andy.shevchenko@gmail.com
+Subject: Re: [RFC PATCH v2] ACPI / processor: Fix possible CPUs map
+In-Reply-To: <20180315030756.5548-1-douly.fnst@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1803151436200.1525@nanos.tec.linutronix.de>
+References: <20180315030756.5548-1-douly.fnst@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setting
-for the needed pins.
+On Thu, 15 Mar 2018, Dou Liyang wrote:
+>  
+> +static void __init acpi_update_possible_map(void)
+> +{
+> +	unsigned int cpu;
+> +
+> +	if (nr_unique_ids >= nr_cpu_ids)
+> +		return;
+> +
+> +	/* Don't yet figure out if it's superfluous */
+> +	if (nr_unique_ids >= cpumask_last(cpu_possible_mask))
+> +		return;
+> +
+> +	for_each_cpu_wrap(cpu, cpu_possible_mask, nr_unique_ids)
+> +		set_cpu_possible(cpu, false);
+> +
+> +	nr_cpu_ids = nr_unique_ids;
+> +	pr_info("Allowing %d possible CPUs\n", nr_cpu_ids);
+> +}
+> +
+>  static void __init acpi_processor_check_duplicates(void)
+>  {
+>  	/* check the correctness for all processors in ACPI namespace */
+> @@ -680,6 +698,9 @@ static void __init acpi_processor_check_duplicates(void)
+>  						NULL, NULL, NULL);
+>  	acpi_get_devices(ACPI_PROCESSOR_DEVICE_HID, acpi_processor_ids_walk,
+>  						NULL, NULL);
+> +
+> +	/* make possible CPU count more realistic */
+> +	acpi_update_possible_map();
+>  }
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I tested this on a machine which claims to have gazillion of hotplugable
+CPUs:
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index bd0cd32..d4b2d18 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -922,6 +922,14 @@
- 				pins = "PI20", "PI21";
- 				function = "uart7";
- 			};
-+
-+			lcd0_rgb888_pins: lcd0-rgb888-pins {
-+				pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
-+				       "PD8", "PD9", "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
-+				       "PD16", "PD17", "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
-+				       "PD24", "PD25", "PD26", "PD27";
-+				function = "lcd0";
-+			};
- 		};
- 
- 		timer@1c20c00 {
--- 
-2.7.4
+	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
+	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
+	smp: Brought up 2 nodes, 32 CPUs
+
+Now with your patch applied it's still saying:
+
+	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
+	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
+	smp: Brought up 2 nodes, 32 CPUs
+
+and the above code runs later on and the result is:
+
+	nr_unique_ids 1 nr_cpu_ids 152
+	Allowing 1 possible CPU
+
+which subsequently causes the machine to die as we have already 32 CPUs
+online.
+
+So nr_unique_ids is not what it should be and even if it would be the code
+runs way too late. It needs to run _before_ setup_percpu() is invoked to
+scale everything correctly.
+
+Thanks,
+
+	tglx
