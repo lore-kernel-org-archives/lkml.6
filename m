@@ -1,79 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752270AbeCOLns (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:43:48 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59330 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751791AbeCOLlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:41:40 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] drm/sun4i: Add compatible strings for A80 TCONs
-Date: Thu, 15 Mar 2018 19:41:29 +0800
-Message-Id: <20180315114136.24747-2-wens@csie.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180315114136.24747-1-wens@csie.org>
-References: <20180315114136.24747-1-wens@csie.org>
+        id S1751666AbeCOLpK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:45:10 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53138 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOLpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 07:45:09 -0400
+Date: Thu, 15 Mar 2018 12:45:03 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v3 4/7] x86/hyper-v: allocate and use Virtual Processor
+ Assist Pages
+In-Reply-To: <87bmfpbqek.fsf@vitty.brq.redhat.com>
+Message-ID: <alpine.DEB.2.21.1803151240030.1525@nanos.tec.linutronix.de>
+References: <20180309140249.2840-1-vkuznets@redhat.com> <20180309140249.2840-5-vkuznets@redhat.com> <alpine.DEB.2.21.1803141611300.2481@nanos.tec.linutronix.de> <87bmfpbqek.fsf@vitty.brq.redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A80 has 2 or 3 TCONs. The documentation and vendor kernel are very
-vague about the third TCON, to the point that it might not exist.
+On Thu, 15 Mar 2018, Vitaly Kuznetsov wrote:
+> Thomas Gleixner <tglx@linutronix.de> writes:
+> > On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
+> >> @@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
+> >>  	struct hv_reenlightenment_control re_ctrl;
+> >>  	unsigned int new_cpu;
+> >>  
+> >> +	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
+> >> +		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
+> >> +		vfree(hv_vp_assist_page[cpu]);
+> >> +		hv_vp_assist_page[cpu] = NULL;
+> >
+> > So this is freed before the CPU is actually dead. And this runs in
+> > preemtible context. Is the wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0); enough to
+> > prevent eventual users of the assist page on the outgoing CPU from
+> > accessing it?
+> >
+> 
+> After we do wrmsrl() the page is no longer 'magic' so in case eventual
+> users try using it they'll most likely misbehave -- so changing the
+> shutdown order won't help.
+> 
+> The only user of these pages is currently KVM. Can we still have vCPUs
+> running on the outgoing CPU at this point? If case we can we're in
+> trouble and we need to somehow kick them out first.
 
-In the documentation, the first TCON is missing channel 1, and the
-second is missing channel 0. However the vendor kernel seems to be
-able to use them regardless. Here we model them like the old TCONs.
+The first thing we do in unplug is to mark the CPU inactive, but I'm not
+sure whether that prevents something which was on the CPU before and
+perhaps preempted or is affine to that CPU to be scheduled in
+again. Peter????
 
-An oddity is that TCON0 requires the reset control for the eDP block
-to be deasserted, for any register access to stick.
+Thanks,
 
-This patch adds compatible strings for TCON0 and TCON1, with TCON0
-requiring an extra "edp" reset control.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 8bdef4920edc..c05cbcdde4d7 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -146,13 +146,16 @@ Required properties:
-    * allwinner,sun8i-a83t-tcon-lcd
-    * allwinner,sun8i-a83t-tcon-tv
-    * allwinner,sun8i-v3s-tcon
-+   * allwinner,sun9i-a80-tcon-lcd
-+   * allwinner,sun9i-a80-tcon-tv
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON.
-    - 'ahb': the interface clocks
--   - 'tcon-ch0': The clock driving the TCON channel 0, except for A83T TV TCON
-+   - 'tcon-ch0': The clock driving the TCON channel 0, if supported
-  - resets: phandles to the reset controllers driving the encoder
--   - "lcd": the reset line for the TCON channel 0
-+   - "lcd": the reset line for the TCON
-+   - "edp": the reset line for the eDP block (A80 only)
- 
-  - clock-names: the clock names mentioned above
-  - reset-names: the reset names mentioned above
-@@ -171,7 +174,9 @@ Required properties:
-   channel the endpoint is associated to. If that property is not
-   present, the endpoint number will be used as the channel number.
- 
--On SoCs other than the A33 and V3s, there is one more clock required:
-+For TCONs with channel 0, there is one more clock required:
-+   - 'tcon-ch0': The clock driving the TCON channel 0
-+For TCONs with channel 1, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- When TCON support LVDS (all TCONs except TV TCON on A83T and those found
--- 
-2.16.2
+	tglx
