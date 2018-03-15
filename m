@@ -1,96 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752182AbeCOQUD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:20:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35544 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752131AbeCOQTT (ORCPT
+        id S1752330AbeCOQUV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:20:21 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:39817 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751997AbeCOQUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:19:19 -0400
-Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
-        Jiandi An <anjiandi@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Thu, 15 Mar 2018 12:19:09 -0400
-In-Reply-To: <1521048306.4508.56.camel@HansenPartnership.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-         <20180307185132.GA30102@ziepe.ca>
-         <1520448953.10396.565.camel@linux.vnet.ibm.com>
-         <1520449719.5558.28.camel@HansenPartnership.com>
-         <1520450495.10396.587.camel@linux.vnet.ibm.com>
-         <1520451662.24314.5.camel@HansenPartnership.com>
-         <1520461156.10396.654.camel@linux.vnet.ibm.com>
-         <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
-         <1520615461.12216.6.camel@HansenPartnership.com>
-         <1520891598.3547.190.camel@linux.vnet.ibm.com>
-         <1520893847.4522.62.camel@HansenPartnership.com>
-         <1520897400.3547.253.camel@linux.vnet.ibm.com>
-         <1520899605.4522.67.camel@HansenPartnership.com>
-         <BCA04D5D9A3B764C9B7405BBA4D4A3C002367FEF@ALPMBAPA12.e2k.ad.ge.com>
-         <1521038471.4508.25.camel@HansenPartnership.com>
-         <1521047286.3547.470.camel@linux.vnet.ibm.com>
-         <1521048306.4508.56.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031516-0020-0000-0000-0000040556FB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031516-0021-0000-0000-000042996080
-Message-Id: <1521130749.3547.608.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150178
+        Thu, 15 Mar 2018 12:20:18 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lucas Stach <l.stach@pengutronix.de>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] gpu: ipu-v3: prg: avoid possible array underflow
+Date: Thu, 15 Mar 2018 17:19:57 +0100
+Message-Id: <20180315162011.807909-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:lbA6dTr3mwpT4NT80Zxn6D8aDnyLcSfwMFfQGKk6/a0pnCmFf5w
+ TmalFCnjJgMDW/MyUnC2x8wa9yG1QC0LL21SLf9tisCkMuLjFnPYp1dv+d6hOeTW6PVNiWs
+ bgAxPgilbqVi3KCZA6vO9lNTV7CaelsKSZO5GF+mn0Ndb7GxUJU63f/k6iDk038NmUL9Fta
+ VM966JJheg+wFLYJAGDJQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:c8Ec0vxPw9k=:QqjXW71jkiJKnr2askDiqQ
+ XBaeowtBL/I3O8FVP23PZvwtgtSh1g0BqSjKp30OeMAiNgEbDPFZYeSACDAvPAh7nxCiace2t
+ JForuaW31Epfo4a21wNfjRSnRuhNGNwN8VYlsT8YVkC4gsfXytU2Aq2hRkvE3H9+U3LC+5Q8U
+ zMzzkDr00DBgXzIQpsGJJbfJ9Zwbpod77va7NuVkIGK1iJ+WEmtbnzRx1yT9Z1h4ECpZQGM1v
+ tEYGfkRquubxfcGvvPuTxwKm5KDjgteH5tLXXm/EZIXLXsHX4YluILjk1XhtdY8kzDHOWZF1E
+ lRf9J1i4yCIMU+r9oADjhGwtDJSpaJotjLlRjs/fc44SF4P5YNW5uW82NyICcW5gacYRS/cRE
+ muy+Y75O8T5B6ms+hfaHnUC4TA+NCOVq507/zcWlJA/onwmeMHaIyav7+PjQHu686atOW1JTk
+ 8KFnsqwor26UMBm+8bKVxFSQFhoO2BKUXByhirVvVzGy2BZ32ku4LHFUGdr8WLyR+DvKfV/QI
+ XKTmeaX/iIP3hVFc/OrqHssiHOxgWLhlbcnIWqQYC4ot4TqsTqeu6XoX/y5xkZhxdYuSnpnrl
+ QKwhADgNn6cuf7JxeWR3ZkVog1i/SEVmaUKq1QbacppRP1icfbeA6h4Mnek3LEU0k6UFS6/55
+ fnqEWuNjuERY1nnxoNFoGRFZpIvEJdZf4a092Ww+K95cbi/jwFj6ZSEzcNphSRHQ3RMWoWPjz
+ piwAxNWYp1lhRi1KV6tXPeJaTMBOx03JRLECoQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 10:25 -0700, James Bottomley wrote:
-> On Wed, 2018-03-14 at 13:08 -0400, Mimi Zohar wrote:
-[..]
-> > Adding additional support for post IMA-initialization for TPM's built
-> > as kernel modules is clearly not optimal for all of the reasons
-> > provided to now and will be confusing, but could be supported.  This
-> > delayed loading of the TPM needs to be clearly indicated in both the
-> > audit log and in IMA's measurement list.
-> 
-> Why if the measurement chain isn't broken?  The way I'm thinking of
-> implementing it, IMA wouldn't even know.
+gcc-8 reports that we access an array with a negative index
+in an error case:
 
-I'm not sure this is good news.
+drivers/gpu/ipu-v3/ipu-prg.c: In function 'ipu_prg_channel_disable':
+drivers/gpu/ipu-v3/ipu-prg.c:252:43: error: array subscript -22 is below array bounds of 'struct ipu_prg_channel[3]' [-Werror=array-bounds]
 
-> What would happen is that a
-> NULL tpm chip in tpm_pcr_read/tpm_pcr_extend would trigger the usual
-> search for the first TPM but if none were found and we'd booted on an
-> EFI system, we'd just use the EFI driver to do perform the operation.
+This moves the range check in front of the first time that
+variable gets used.
 
-If EFI is extending the TPM, will the events be added to the TPM event
-log or to the IMA measurement list?   Up to now the IMA boot aggregate
-record includes PCRs from 0 - 7.  With these PCRs, the boot aggregate
-wouldn't change when booting the same kernel.  Would you change the
-boot-aggregate to include these other PCRs?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+----
+v1: Originally sent on Dec 4, 2017.
+v2: Sent again on Jan 16, after no reply, Phillipp said it was merged
+v3: Ran into a related problem with CONFIG_UBSAN, sent again fixing both
+---
+ drivers/gpu/ipu-v3/ipu-prg.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> There's probably a bit of additional subtlety making the kernel and EFI
-> agree which TPM they're using in a multi-TPM situation.
-
-Agreed
-
-> The EFI driver isn't full featured: it only does measurement and
-> logging, but it looks like that's all IMA needs.
-
-What happens for non EFI systems, when you can't extend the TPM?
-
-Mimi
+diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
+index 97b99500153d..83f9dd934a5d 100644
+--- a/drivers/gpu/ipu-v3/ipu-prg.c
++++ b/drivers/gpu/ipu-v3/ipu-prg.c
+@@ -250,10 +250,14 @@ void ipu_prg_channel_disable(struct ipuv3_channel *ipu_chan)
+ {
+ 	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+ 	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+-	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
++	struct ipu_prg_channel *chan;
+ 	u32 val;
+ 
+-	if (!chan->enabled || prg_chan < 0)
++	if (prg_chan < 0)
++		return;
++
++	chan = &prg->chan[prg_chan];
++	if (!chan->enabled)
+ 		return;
+ 
+ 	pm_runtime_get_sync(prg->dev);
+@@ -280,13 +284,15 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
+ {
+ 	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+ 	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+-	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
++	struct ipu_prg_channel *chan;
+ 	u32 val;
+ 	int ret;
+ 
+ 	if (prg_chan < 0)
+ 		return prg_chan;
+ 
++	chan = &prg->chan[prg_chan];
++
+ 	if (chan->enabled) {
+ 		ipu_pre_update(prg->pres[chan->used_pre], *eba);
+ 		return 0;
+-- 
+2.9.0
