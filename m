@@ -1,115 +1,111 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1140530-1521016340-2-1760264902758651862
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521016339; b=jW6D/7psdbNHrRiAStcSID0EyDiQdDOgte8KtW3urTtslXf
-    ajmm0AM78QK1PWxNRmojoTRxRO2ClS9GCtUk6RBOq8ZWV3YFrM1wv58JW9iT7S0c
-    Ydxy7Ug2nMyhUsn3mvRA0CZESn2aylXz6VnJWWQ/08M73Q8JWu7hOXpCskGTtQOo
-    0ynN1VmkmbQOkTDvh7NeFmmz0MqnR2yvjNjNM070n5YThCTKO7icnzd3LUoeSDUw
-    IdUeccgs6nboXGIGYDy1kKxCNML8cdxzgPRAWjNoGS+7VVzSQNfdRGDCVt+Mr36O
-    W0X0FKJSMyHL/L5sq3kzXzU05Ald5Yzon2PeWfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521016339; bh=x
-    M46WNrLSUEewpYfjAv14IxHbTT3Gr1f1vr18HqeJdI=; b=uw+p/lhi7mLqzpJ5E
-    FbnjErauiSIvAFHOL0j0KjWRjOzmECFKKiPJBdnhldZmWxwo8BIozILUVoFdvFic
-    Mlq0JbSYi1XFYyasQT8NRUa/0W5Shf/gj8U8Sz5PAG/NyWA8+pacqscElAGDqBYW
-    EFuR1aAfZGPnTofwIqMzJx6NsgBQ2INdccVu7jG+yBEtZGeFQsgeGW7pNuIJw2zk
-    TL1tqMCl4vMQrvCviGCHtKNSC1j5+QmKUBskpeZ5iz+IKJ0jNvmdRGNgpTZSbep4
-    1XDV+wthgkPjP75u2TgyQ0MSzfTQQ1rAyydnG+tma9xzwLQZLsVd7HURrPLxGAc4
-    tJQlA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=ZFdOGIrO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=ZFdOGIrO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 14 Mar 2018 11:27:01 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Mohammed Gamal <mgamal@redhat.com>
-Subject: Re: [PATCH] hv_netvsc: Make sure out channel is fully opened on send
-Message-ID: <20180314082701.2inzz2etg67r3zry@mwanda>
-References: <1520968010-20733-1-git-send-email-mgamal@redhat.com>
+Return-Path: <kernel-hardening-return-12641-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvHZDVzWmruq4jzLuzsX67o/LitwRTogf2VSPCOusb6eRMhyicP92yqLsURCV+2e1QTB0mz
+ARC-Seal: i=1; a=rsa-sha256; t=1521143330; cv=none;
+        d=google.com; s=arc-20160816;
+        b=s37m3Hfftbp39wQfXHH2UMkHqw+40W6uqKAjDtNyajjDiNaNQIVxe42he6G8fyHHnH
+         N+V2Iu1Al66MjBGpNHjNnVsBnrLg7nPQJVIxvJE1Rx1tCWUpo2sQ3n0XXhb9JD8BTaf9
+         I29VtwiZxPpCokf7fTj6hCn9mu4xAqjN0efiUB/ZP0gU2kXYyJ8vwgXl9mVLu0BFDk0s
+         NhP5iY490brgpY8z/ngq3Yrecer6Qy5r3s2bqb+4rwREJAcXjN+LTZXTcJheBSrUQ+lg
+         L4dylH+GVxdyB9nntoiV5bhNV85g3RVoteSM8tsMmuL86828G3EL56sfEU8i8dAjPIT2
+         ri8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=WEX7hmkA7/BtMNQu45Oivq9q+iL7cN8WdOfbkas5JS4=;
+        b=o/gW7njaj33LCYYYCPOlvKPvrahpMFtV7WwdSjS/4eFUJwBZglH413tSRpMYKDT3AL
+         UQvFG+3f1UhOfNpXd2+cq9O+3x/fOi8sTgI/mjLPFUMb8t0sqPntQ5L/TZ5OYWkhUeUe
+         O+YUSiOicYFCrB/y88YtvbOQv6AsFqcoy6C1jf9BC5qEbuBr4j6HkFqFZnqwrrtZolo6
+         eTd872PbhT0qJ65hXnCOIfwnHXPBZaYISfGt9CGF8AhT+iJDJLO/08AIWvED39KnAp5G
+         vLWgplW8MXLC8NykHcFgLQJIe1RLcoVB2liTVqMDnXTT3gjeWdFGilAfDJ5fetMV+Aed
+         3Myg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EPkFf7iw;
+       spf=pass (google.com: domain of kernel-hardening-return-12641-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12641-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EPkFf7iw;
+       spf=pass (google.com: domain of kernel-hardening-return-12641-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12641-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Kees Cook <keescook@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	David Laight <David.Laight@aculab.com>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	linux-input@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH v4 0/2] Remove false-positive VLAs when using max()
+Date: Thu, 15 Mar 2018 12:47:44 -0700
+Message-Id: <1521143266-31350-1-git-send-email-keescook@chromium.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <1520968010-20733-1-git-send-email-mgamal@redhat.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831
- signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803140100
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: otubo@redhat.com, sthemmin@microsoft.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
- vkuznets@redhat.com, davem@davemloft.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595034368078500739?=
+X-GMAIL-MSGID: =?utf-8?q?1595034389609913870?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 08:06:50PM +0100, Mohammed Gamal wrote:
-> @@ -791,6 +791,7 @@ static inline int netvsc_send_pkt(
->  				       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
->  	}
->  
-> +	ring_avail = hv_ringbuf_avail_percent(&out_channel->outbound);
->  	if (ret == 0) {
->  		atomic_inc_return(&nvchan->queue_sends);
->  
+I'm calling this "v4" since the last effort at this was v3, even
+if it's a different approach. Patch 1 adds const_max(), patch 2
+uses it in all the places max() was used for stack arrays. Commit
+log from patch 1:
 
-Could you move the assignment inside the "ret == 0" path closer to where
-it's used?
+---snip---
+kernel.h: Introduce const_max() for VLA removal
 
-regards,
-dan carpenter
+In the effort to remove all VLAs from the kernel[1], it is desirable to
+build with -Wvla. However, this warning is overly pessimistic, in that
+it is only happy with stack array sizes that are declared as constant
+expressions, and not constant values. One case of this is the evaluation
+of the max() macro which, due to its construction, ends up converting
+constant expression arguments into a constant value result. Attempts
+to adjust the behavior of max() ran afoul of version-dependent compiler
+behavior[2].
 
+To work around this and still gain -Wvla coverage, this patch introduces
+a new macro, const_max(), for use in these cases of stack array size
+declaration, where the constant expressions are retained. Since this means
+losing the double-evaluation protections of the max() macro, this macro is
+designed to explicitly fail if used on non-constant arguments.
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Older compilers will fail with the unhelpful message:
+
+    error: first argument to ‘__builtin_choose_expr’ not a constant
+
+Newer compilers will fail with a hopefully more helpful message:
+
+    error: call to ‘__error_not_const_arg’ declared with attribute error: const_max() used with non-compile-time constant arg
+
+To gain the ability to compare differing types, the arguments are
+explicitly cast to size_t. Without this, some compiler versions will
+fail when comparing different enum types or similar constant expression
+cases. With the casting, it's possible to do things like:
+
+int foo[const_max(6, sizeof(something))];
+
+[1] https://lkml.org/lkml/2018/3/7/621
+[2] https://lkml.org/lkml/2018/3/10/170
+---eol---
+
+Hopefully this reads well as a summary from all the things that got tried.
+I've tested this on allmodconfig builds with gcc 4.4.4 and 6.3.0, with and
+without -Wvla.
+
+-Kees
