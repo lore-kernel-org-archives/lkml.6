@@ -1,81 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751583AbeCOEB1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 00:01:27 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41058 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbeCOEBY (ORCPT
+        id S1751708AbeCOEBi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 00:01:38 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50273 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751650AbeCOEBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 00:01:24 -0400
-To: "Stephen Bates" <sbates@raithlin.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci\@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme\@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma\@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm\@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block\@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
-        <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
-        <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
-        <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
-        <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
-        <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
-        <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
-        <8de5d3dd-a78f-02d5-0eea-4365364143b6@deltatee.com>
-        <20180314025639.GA50067@bhelgaas-glaptop.roam.corp.google.com>
-        <112493af-ccd0-455b-6600-b50764f7ab7e@deltatee.com>
-        <20180314185159.GD179719@bhelgaas-glaptop.roam.corp.google.com>
-        <b75e83ad-bb83-1f8d-1751-0989cc2493f1@deltatee.com>
-        <CAPcyv4g-A6fqdTahxX=aONSCgp1eEvBb=ZVMzbZUWUDmqBbj7Q@mail.gmail.com>
-        <AA646409-BB63-4757-A250-CE7118D4D3B8@raithlin.com>
-Date: Thu, 15 Mar 2018 00:00:27 -0400
-In-Reply-To: <AA646409-BB63-4757-A250-CE7118D4D3B8@raithlin.com> (Stephen
-        Bates's message of "Wed, 14 Mar 2018 19:34:53 +0000")
-Message-ID: <yq1fu529eec.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 15 Mar 2018 00:01:36 -0400
+X-ME-Sender: <xms:H_CpWtrnY6vSvduFe0ak5VEysClDEvcYXFcjyRJww88CzwukZMg_8Q>
+Date: Thu, 15 Mar 2018 01:01:32 -0300
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Emanuel Czirai <xftroxgpx@protonmail.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] x86/microcode: Fix CPU synchronization routine
+Message-ID: <20180315040132.m3i3ozykkbjrxa66@khazad-dum.debian.net>
+References: <20180314183615.17629-1-bp@alien8.de>
+ <20180314183615.17629-2-bp@alien8.de>
+ <20180315010014.xsedkarzrgqiunxf@khazad-dum.debian.net>
+ <20180315010152.GE11061@pd.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=2 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=2 mlxscore=2 mlxlogscore=173
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150044
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315010152.GE11061@pd.tnic>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 15 Mar 2018, Borislav Petkov wrote:
+> On Wed, Mar 14, 2018 at 10:00:14PM -0300, Henrique de Moraes Holschuh wrote:
+> > Intel takes anything from twenty thousand cycles to several *million*
+> > cycles per core, proportional to microcode update size.
+> 
+> Got any hard data to back that claim up?
 
-Stephen,
+A reasonably well-known paper on intel microcode updates[1] profiled
+that very well, years ago (2013).  The information about a linear
+increase in update time versus update size comes from that paper (I did
+not attempt to reproduce his findings, though).
 
->> It would be useful if those configurations were not left behind so
->> that Linux could feasibly deploy offload code to a controller in the
->> PCI domain.
->    
-> Agreed. I think this would be great. Kind of like the XCOPY framework
-> that was proposed a while back for SCSI devices [1] but updated to also
-> include NVMe devices. That is definitely a use case we would like this
-> framework to support.
+When I measured my Xeon X5550 workstation doing an early update, the
+Xeon took about 1M cycles for the BSP, and 800k cycles for the APs (see
+below).
 
-I'm on my umpteenth rewrite of the block/SCSI offload code. It is not as
-protocol-agnostic as I would like in the block layer facing downwards.
-It has proven quite hard to reconcile token-based and EXTENDED COPY
-semantics along with the desire to support stacking. But from an
-application/filesystem perspective everything looks the same regardless
-of the intricacies of the device. Nothing is preventing us from
-supporting other protocols...
+To measure that, as far as I recall I just did a rdtsc right before the
+wrmsr, and another right after, and stashed the result somewhere to be
+able to print it out later in the BSP's case.  I repeated the process
+(by rebooting) a few times.  There was a *lot* of variation, but not
+enough to get it wrong by an order of magnitude.
+
+I am surprised that this would be news to you, though.  It is not like I
+have been quiet about how expensive these updates are on Intel over the
+past years every time I sent you a patch related to this...
+
+Anyway, here's my measurement data from 2013:
+
+Xeon X5550:
+microcode_early: CPU0: entire core updated early to revision 0x19, in 1016168 cycles
+microcode_early: CPU1: entire core updated early to revision 0x19, in 842264 cycles
+microcode_early: CPU2: entire core updated early to revision 0x19, in 846784 cycles
+microcode_early: CPU3: entire core updated early to revision 0x19, in 838196 cycles
+
+
+[1] HAWKES, Ben. "Notes on Intel Microcode Updates", March 2013.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+  Henrique Holschuh
