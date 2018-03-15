@@ -1,73 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeCOApc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 20:45:32 -0400
-Received: from ozlabs.org ([103.22.144.67]:45261 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750779AbeCOApa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 20:45:30 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 11:45:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: linux-next: manual merge of the printk tree with the asm-generic
- tree
-Message-ID: <20180315114500.65daa865@canb.auug.org.au>
+        id S1751597AbeCOArP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 20:47:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33970 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeCOArN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 20:47:13 -0400
+X-Google-Smtp-Source: AG47ELuft+y07poRvan9vwslMcIS0RbUJAve6xTwn+y34MUoWYVsRNFJ+D7nbxhlte9XpKNQZqVNeQ==
+Subject: Re: KASAN: use-after-free Read in pfifo_fast_enqueue
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: syzbot <syzbot+ed43b6903ab968b16f54@syzkaller.appspotmail.com>,
+        davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+References: <000000000000081c6a056767c154@google.com>
+ <a37dbc2c-2c43-2f71-7b36-275fcee83eb1@gmail.com>
+Message-ID: <0ffb86a8-a316-f2a2-829e-6dc471122f3b@gmail.com>
+Date: Wed, 14 Mar 2018 17:47:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OtxR5x.c6h9/3nOL=632dUT"; protocol="application/pgp-signature"
+In-Reply-To: <a37dbc2c-2c43-2f71-7b36-275fcee83eb1@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OtxR5x.c6h9/3nOL=632dUT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
 
-Today's linux-next merge of the printk tree got a conflict in:
+On 03/14/2018 05:16 PM, Eric Dumazet wrote:
 
-  arch/blackfin/kernel/dumpstack.c
+> 
+> typical use after free...
+> 
+> diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+> index 190570f21b208d5a17943360a3a6f85e1c2a2187..663e016491773f40f81d9bbfeab3dd68e1c2fc5c 100644
+> --- a/net/sched/sch_generic.c
+> +++ b/net/sched/sch_generic.c
+> @@ -628,6 +628,7 @@ static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc *qdisc,
+>         int band = prio2band[skb->priority & TC_PRIO_MAX];
+>         struct pfifo_fast_priv *priv = qdisc_priv(qdisc);
+>         struct skb_array *q = band2list(priv, band);
+> +       unsigned int pkt_len = qdisc_pkt_len(skb);
+>         int err;
+>  
+>         err = skb_array_produce(q, skb);
+> @@ -636,7 +637,7 @@ static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc *qdisc,
+>                 return qdisc_drop_cpu(skb, qdisc, to_free);
+>  
+>         qdisc_qstats_cpu_qlen_inc(qdisc);
+> -       qdisc_qstats_cpu_backlog_inc(qdisc, skb);
+> +       this_cpu_add(qdisc->cpu_qstats->backlog, pkt_len);
+>         return NET_XMIT_SUCCESS;
+>  }
+> 
+There is also a similar issue right after qdisc_enqueue_skb_bad_txq() call.
 
-between commit:
+We should move the following code in qdisc_enqueue_skb_bad_txq() to benefit from the locking
 
-  e7e57f690e38 ("arch: remove blackfin port")
+                       if (qdisc_is_percpu_stats(q)) {
+                               qdisc_qstats_cpu_backlog_inc(q, nskb);
+                               qdisc_qstats_cpu_qlen_inc(q);
+                       } else {
+                               qdisc_qstats_backlog_inc(q, nskb);
+                               q->q.qlen++;
+                       }
 
-from the asm-generic tree and commit:
 
-  33251b634b4a ("dump_stack: convert generic dump_stack into a weak symbol")
-
-from the printk tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OtxR5x.c6h9/3nOL=632dUT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpwgwACgkQAVBC80lX
-0Gymrwf/YqRsZ12whBM9rYfSWM92psUDAjRSoJKNtTjPCpHTGTvw67Knaq4oOqYl
-b/MDfi2l6Dr+C3DNcztU8Vot3AE9U3p9MuJBlE93iVj7LC9Te5V8gi35aClvLo8e
-z5OBDfNF8OA8GXdJ069WrS4Kp15ZvTT8Z18Cdg6S98knDL0QuoW/EnSlpkVx5yMX
-nJhQ0+cW8z2ujhnvrCVHggzuzgwBFECSA6K7hdBCdBjfRP/RFqHHYo+n+I/f1/Kp
-lGOEgvYHy9xxprpC9bOitvSHCvYN6NARqwP6RgQ37XqPquIPkEKznp43EaJnvI4G
-LWgVcSzBaYjex31YUwos0q9Habab4A==
-=p6ov
------END PGP SIGNATURE-----
-
---Sig_/OtxR5x.c6h9/3nOL=632dUT--
+I will post a patch with the two fixes.
