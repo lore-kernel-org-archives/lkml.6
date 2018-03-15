@@ -1,131 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeCOQUh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:20:37 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35771 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752131AbeCOQUf (ORCPT
+        id S1752254AbeCOQVX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:21:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48814 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbeCOQVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:20:35 -0400
-X-Originating-IP: 2.224.242.101
-Date: Thu, 15 Mar 2018 17:20:08 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] media: i2c: Copy mt9t112 soc_camera sensor driver
-Message-ID: <20180315162008.GA31710@w540>
-References: <1520862185-17150-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520862185-17150-2-git-send-email-jacopo+renesas@jmondi.org>
- <20180315113533.cwgf7g7sir7gyplk@valkosipuli.retiisi.org.uk>
- <20180315143856.GF16424@w540>
- <d1cfdb88-ec5d-5229-6fd7-0916905fc8e8@xs4all.nl>
+        Thu, 15 Mar 2018 12:21:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48B9460590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 7/7] ixgbevf: eliminate duplicate barriers on
+ weakly-ordered archs
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Timur Tabi <timur@codeaurora.org>, Netdev <netdev@vger.kernel.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-7-git-send-email-okaya@codeaurora.org>
+ <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
+ <2a4f4dec64b7462ae64152f6c2df9754@codeaurora.org>
+ <CAKgT0UcriMiyV0q6y_x9r3-HJRAWp5_CpsK2jTqh3qvOV=Kkzw@mail.gmail.com>
+ <d565406d-1bc7-6fb0-3f36-87a28ac69070@codeaurora.org>
+ <CAKgT0UeBHGDmr0uXfuPQJKOomiH9uvXRVYpyDwMOzjkxAZMSYg@mail.gmail.com>
+ <53bf7dfe-32ee-1861-e6ea-81f667590a43@codeaurora.org>
+ <CAKgT0UcBQRoSPPZ73bdu1oEBGqBA8_c3ZAjti20=+9UwEqpXbw@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <eee8269d-b711-828c-ab84-5933bf86d024@codeaurora.org>
+Date: Thu, 15 Mar 2018 12:21:17 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-In-Reply-To: <d1cfdb88-ec5d-5229-6fd7-0916905fc8e8@xs4all.nl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAKgT0UcBQRoSPPZ73bdu1oEBGqBA8_c3ZAjti20=+9UwEqpXbw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/15/2018 10:32 AM, Alexander Duyck wrote:
+> We tend to do something like:
+>   update tx_buffer_info
+>   update tx_desc
+>   wmb()
+>   point first tx_buffer_info next_to_watch value at last tx_desc
+>   update next_to_use
+>   notify device via writel
+> 
+> We do it this way because we have to synchronize between the Tx
+> cleanup path and the hardware so we basically lump the two barriers
+> together. instead of invoking both a smp_wmb and a wmb. Now that I
+> look at the pseudocode though I wonder if we shouldn't move the
+> next_to_use update before the wmb, but that might be material for
+> another patch. Anyway, in the Tx cleanup path we should have an
+> smp_rmb() after we read the next_to_watch values so that we avoid
+> reading any of the other fields in the buffer_info if either the field
+> is NULL or the descriptor pointed to has not been written back.
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+How do you feel about keeping wmb() very close to writel_relaxed() like this?
 
-Hi Hans,
+   update tx_buffer_info
+   update tx_desc
+   point first tx_buffer_info next_to_watch value at last tx_desc
+   update next_to_use
+   wmb()
+   notify device via writel_relaxed()
 
-On Thu, Mar 15, 2018 at 08:30:21AM -0700, Hans Verkuil wrote:
-> On 03/15/2018 07:38 AM, jacopo mondi wrote:
-> > Hi Sakari,
-> >    thanks for looking into this!
-> >
-> > On Thu, Mar 15, 2018 at 01:35:34PM +0200, Sakari Ailus wrote:
-> >> Hi Jacopo,
-> >>
-> >> I wonder if it'd make sense to just make all the changes to the driver and
-> >> then have it reviewed; I'm not sure the old driver can be said to have been
-> >> in a known-good state that'd be useful to compare against. I think you did
-> >> that with another driver as well.
-> >>
-> >
-> > Well, I understand this is still debated, and I see your point.
-> > As far as I can tell the driver had been developed to work with SH4
-> > Ecovec boards and there tested.
-> >
-> > I'm not sure I fully got you here though. Are you proposing to
-> > squash my next patch that cleans up the driver into this one and
-> > propose it as a completely new driver to be reviewed from scratch?
-> >
-> > In the two previous driver I touched in this "remove soc_camera"
-> > journey (ov772x and tw9910) I have followed this same pattern: copy
-> > the soc_camera driver without removing the existing one, and pile on
-> > top my changes/cleanups in another patch. Then port the board code to
-> > use the new sensor driver, and the new CEU driver as well.
-> >
-> > Also, how would you like to proceed here? Hans sent a pull request for
-> > the series, should I go with incremental changes on top of this?
->
-> I don't want to postpone this conversion. The i2c/mt9t112.c is bug-compatible
-> with i2c/soc-camera/mt9t112.c which is good enough for me. Being able to
-> remove soc-camera in the (hopefully very) near future is the most important
-> thing here.
->
-> Once Jacopo can actually test the sensor, then that's a good time to review
-> the driver in more detail.
->
-> This reminded me that I actually started testing this sensor a year
-> ago (I bought the same sensor on ebay, I completely forgot about that!).
->
-> My attempt is here:
->
-> https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=mt9t112
->
-> I never finished it because I had no documentation on the pinout and never
-> got around to hooking my oscilloscope up to it to figure this out. I was
-> testing this with the atmel-isc.c driver.
->
-> This might be of some use to you, Jacopo, once you have the sensor.
+I'm afraid that if the order of wmb() and writel() is not very
+obvious or hidden in multiple functions, somebody can introduce a very nasty
+bug in the future.
 
-Thanks for the info. I'll see what I can do. I don't have register
-level document, and if the module is the same you have neither a
-pinout description. This is going to be fun :/
+We also have to think about code maintenance.
 
-I'll then refrain from sending more patches for this series/driver
-until we cannot actually test the sensor, fixes apart, if any, of course.
-
-Thanks
-   j
-
->
-> Regards,
->
-> 	Hans
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJaqp04AAoJEHI0Bo8WoVY8JQQP/jHzm5tlUBjYLExvnJcOnDAD
-ocK4En9NHx3NOL/hcxEj8y+RILFoDlE2QxQvXj2ZF113HP/ZdbegUKv4HU66tRIT
-L9aw7NHd8CDv4lE6pLUZBQIqFnhO0ejvY4vGJrQUJGwkCld50sQnaHCp4XOtgMK7
-QmJ1SQtDQNEBPL4kJNiyYEbYol8uKr/TBX5uCTlac7/Rua5JJ2dR/CVKoqZIz1Qr
-iRfWpLbuIoUrNXyDy+YEKvwP+2YFbkETzajG18hg1GIeZwPmLjZu7zUji2N5o7D8
-raqLYgfsaFrtSXo+u325OhdnH/86s+k7AmF871l2LNi+emTMYjgrxbcQFPRjPrfi
-ptwH0diNJQccPVwqnceXH+CJoAcC9Z/earDge70hIFKz3u3j0DCoWU7+21Obvq8k
-Uc4dD/WdKP3pFPIWKMqoeUT/i0Hc7aeLwckcVjjcR52WYjN80HTuo1EEhncI/45G
-L+8utn4b6AvQ48N6sfY8946eGQzdZD138b+2YBm+uUFbkwZCfimIDHMYvNKcdJGH
-/0ioAcvJjThekLb/chUXZfY3Fivoi6Rf57hIlrX0gMehfCc8m3l6XtOFbZ4FP0JB
-ocYGHb38FQ8TTSv88WRVNn2QPTqlzS4kWKNbsV9SiuLHhcZeTuuFeZ1EmzdcIDeU
-t2kIrGCNWUH+KXr9D0Xv
-=rVaa
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
