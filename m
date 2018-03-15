@@ -1,120 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932550AbeCOP7g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:59:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:42268 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752600AbeCOP7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:59:35 -0400
-Subject: Re: [PATCH 3/3] irqchip/gic-v3: Allow LPIs to be disabled from the
- command line
-To: shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180313172103.24281-1-marc.zyngier@arm.com>
- <20180313172103.24281-4-marc.zyngier@arm.com>
- <f3fee732-2c07-e303-4ec2-2d79668b868e@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <0418813e-9837-32b0-d1df-2b5d52c83d8e@arm.com>
-Date: Thu, 15 Mar 2018 15:59:32 +0000
+        id S932688AbeCOQA0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:00:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57398 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932486AbeCOQAY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:00:24 -0400
+Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
+ interpretive execution
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
+ <3afd28d7-57c6-cda6-a436-18da32ef0df3@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 17:00:03 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <f3fee732-2c07-e303-4ec2-2d79668b868e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3afd28d7-57c6-cda6-a436-18da32ef0df3@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031516-0008-0000-0000-000004DE4F9C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031516-0009-0000-0000-00001E715A69
+Message-Id: <1e8a4cfc-1425-b30e-2875-2a5c5d9bcb7c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150176
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/18 14:58, Shanker Donthineni wrote:
-> 
-> Hi Marc,
-> 
-> On 03/13/2018 12:21 PM, Marc Zyngier wrote:
->> For most GICv3 implementations, enabling LPIs is a one way switch.
->> Once they're on, there is no turning back, which completely kills
->> kexec (pending tables will always be live, and we can't tell the
->> secondary kernel where they are).
+On 15/03/2018 16:23, Tony Krowiak wrote:
+> On 03/14/2018 05:57 PM, Halil Pasic wrote:
 >>
->> This is really annoying if you plan to use Linux as a bootloader,
->> as it pretty much guarantees that the secondary kernel won't be
->> able to use MSIs, and may even see some memory corruption. Bad.
+>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
+>>> The VFIO AP device model exploits interpretive execution of AP
+>>> instructions (APIE) to provide guests passthrough access to AP
+>>> devices. This patch introduces a new device attribute in the
+>>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
+>>> the VFIO AP device defined on the guest.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>> [..]
 >>
->> A workaround for this unfortunate situation is to allow the kernel
->> not to enable LPIs, even if the feature is present in the HW. This
->> would allow Linux-as-a-bootloader to leave LPIs alone, and let the
->> secondary kernel to do whatever it wants with them.
+>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>> index a60c45b..bc46b67 100644
+>>> --- a/arch/s390/kvm/kvm-s390.c
+>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm 
+>>> *kvm, struct kvm_device_attr *attr)
+>>> sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>>           VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
+>>>           break;
+>>> +    case KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>>> +        if (attr->addr) {
+>>> +            if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>> Unlock mutex before returning?
+> The mutex is unlocked prior to return at the end of the function.
 >>
->> Let's introduce a boolean "irqchip.gicv3_nolpi" command line option
->> that serves that purpose.
+>> Maybe flip conditions (don't allow manipulating apie if feature not 
+>> there).
+>> Clearing the anyways clear apie if feature not there ain't too bad, but
+>> rejecting the operation appears nicer to me.
+> I think what you're saying is something like this:
+>
+>     if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>         return -EOPNOTSUPP;
+>
+>     kvm->arch.crypto.apie = (attr->addr) ? 1 : 0;
+>
+> I can make arguments for doing this either way, but since the attribute
+> is will most likely only be set by an AP device in userspace, I suppose
+> it makes sense to allow setting of the attribute if the AP feature is
+> installed. It certainly makes sense for the dedicated implementation.
 >>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
->>  drivers/irqchip/irq-gic-v3.c                    | 10 +++++++++-
->>  2 files changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 1d1d53f85ddd..60130231db3b 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -1743,6 +1743,14 @@
->>  			of a GICv2 controller even if the memory range
->>  			exposed by the device tree is too small.
->>  
->> +	irqchip.gicv3_nolpi=
->> +			[ARM, ARM64]
->> +			Force the kernel to ignore the availability of
->> +			LPIs (and by consequence ITSs). Intended for system
->> +			that use the kernel as a bootloader, and thus want
->> +			to let secondary kernels in charge of setting up
->> +			LPIs.
->> +
->>  	irqfixup	[HW]
->>  			When an interrupt is not handled search all handlers
->>  			for it. Intended to get systems with badly broken
->> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
->> index 0ea02504115d..3e9eeb6cb294 100644
->> --- a/drivers/irqchip/irq-gic-v3.c
->> +++ b/drivers/irqchip/irq-gic-v3.c
->> @@ -613,9 +613,17 @@ static void gic_cpu_sys_reg_init(void)
->>  		pr_crit_once("RSS is required but GICD doesn't support it\n");
->>  }
->>  
->> +static bool gicv3_nolpi;
->> +
->> +static int __init gicv3_nolpi_cfg(char *buf)
->> +{
->> +	return strtobool(buf, &gicv3_nolpi);
->> +}
->> +early_param("irqchip.gicv3_nolpi", gicv3_nolpi_cfg);
->> +
->>  static int gic_dist_supports_lpis(void)
->>  {
->> -	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS);
->> +	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS) && !gicv3_nolpi;
-> 
-> Thanks for this patch series especially for KDUMP case. It would be nice if we disable GIC-ITS and
-> GICR-LPI functionality completely to avoid in flight LPIs which were triggered by first kernel.
+>>> +                return -EOPNOTSUPP;
 
-For kdump, it doesn't really matter much. The kdump kernel lives in its
-own memory space, and is unaffected by LPIs being triggered. You just
-need to make sure that if you can't reset EnableLPIs, you still carry on
-using wired interrupts. The ITS doesn't really matter, as long as the
-redistributors have their EnableLPIs zeroed.
+Obviously Halil is speaking on this return statement.
+Which returns without unlocking the mutex.
 
-It really is for kexec that it matters a lot, because the secondary
-kernel expects to find a sane environment, which it cannot have if LPIs
-are still on.
 
-Thanks,
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
