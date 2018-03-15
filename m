@@ -1,47 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932465AbeCOTGD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:06:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51948 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751508AbeCOTGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:02 -0400
-Date: Thu, 15 Mar 2018 14:06:01 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Message-ID: <20180315190601.iv5ptjqkxlolclmz@treble>
-References: <20180315154448.16222-1-bp@alien8.de>
- <20180315154448.16222-5-bp@alien8.de>
- <20180315181054.3fuuetu6fxpzlpcn@treble>
- <20180315181612.GH27816@pd.tnic>
+        id S1752982AbeCOTNu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:13:50 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:34000 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752935AbeCOTNr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 15:13:47 -0400
+X-Google-Smtp-Source: AG47ELtmTeyXrNy6NNdKibhoC57MbdzKK+kshcJhUQ8TUA2XDwBkWjNWwEssC/T00NGUkSHwK1yRQwYeihcaOrHalVk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180315181612.GH27816@pd.tnic>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <8042f946-49bf-5fc1-f513-4b76ccd5f7d6@arm.com>
+References: <20180215175803.6870-1-marc.zyngier@arm.com> <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com> <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
+ <20180306092134.4bfbz34yhqfrfdlf@kamzik.brq.redhat.com> <8042f946-49bf-5fc1-f513-4b76ccd5f7d6@arm.com>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Thu, 15 Mar 2018 19:13:26 +0000
+Message-ID: <CAFEAcA-t1QvjW6eFQ4U+8odj0p_01F8sktpvN9KrZ1Kc-FhtnQ@mail.gmail.com>
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Andrew Jones <drjones@redhat.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 07:16:13PM +0100, Borislav Petkov wrote:
-> On Thu, Mar 15, 2018 at 01:10:54PM -0500, Josh Poimboeuf wrote:
-> > I liked OPCODE_BUFSIZE where it was before :-)  Here it disrupts the
-> > readability of the function a bit IMO.
-> 
-> My thinking is have it close by so that you don't have to go search for
-> its definition.
+On 15 March 2018 at 19:00, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 06/03/18 09:21, Andrew Jones wrote:
+>> On Mon, Mar 05, 2018 at 04:47:55PM +0000, Peter Maydell wrote:
+>>> On 2 March 2018 at 11:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>>> On Fri, 02 Mar 2018 10:44:48 +0000,
+>>>> Auger Eric wrote:
+>>>>> I understand the get/set is called as part of the migration process.
+>>>>> So my understanding is the benefit of this series is migration fails in
+>>>>> those cases:
+>>>>>
+>>>>>> =0.2 source -> 0.1 destination
+>>>>> 0.1 source -> >=0.2 destination
+>>>>
+>>>> It also fails in the case where you migrate a 1.0 guest to something
+>>>> that cannot support it.
+>>>
+>>> I think it would be useful if we could write out the various
+>>> combinations of source, destination and what we expect/want to
+>>> have happen. My gut feeling here is that we're sacrificing
+>>> exact migration compatibility in favour of having the guest
+>>> automatically get the variant-2 mitigations, but it's not clear
+>>> to me exactly which migration combinations that's intended to
+>>> happen for. Marc?
+>>>
+>>> If this wasn't a mitigation issue the desired behaviour would be
+>>> straightforward:
+>>>  * kernel should default to 0.2 on the basis that
+>>>    that's what it did before
+>>>  * new QEMU version should enable 1.0 by default for virt-2.12
+>>>    and 0.2 for virt-2.11 and earlier
+>>>  * PSCI version info shouldn't appear in migration stream unless
+>>>    it's something other than 0.2
+>>> But that would leave some setups (which?) unnecessarily without the
+>>> mitigation, so we're not doing that. The question is, exactly
+>>> what *are* we aiming for?
+>>
+>> The reason Marc dropped this patch from the series it was first introduced
+>> in was because we didn't have the aim 100% understood. We want the
+>> mitigation by default, but also to have the least chance of migration
+>> failure, and when we must fail (because we're not doing the
+>> straightforward approach listed above, which would prevent failures), then
+>> we want to fail with the least amount of damage to the user.
+>>
+>> I experimented with a couple different approaches and provided tables[1]
+>> with my results. I even recommended an approach, but I may have changed
+>> my mind after reading Marc's follow-up[2]. The thread continues from
+>> there as well with follow-ups from Christoffer, Marc, and myself. Anyway,
+>> Marc did this repost for us to debate it and work out the best approach
+>> here.
+> It doesn't look like we've made much progress on this, which makes me
+> think that we probably don't need anything of the like.
 
-But knowing the value of OPCODE_BUFSIZE isn't needed for understanding
-the rest of the function, so it seems like clutter to me.  Besides,
-that's what the vim cscope plugin is for :-)
+I was waiting for a better explanation from you of what we're trying to
+achieve. If you want to take the "do nothing" approach then a list
+also of what migrations succeed/fail/break in that case would also
+be useful.
 
-But I also don't have a strong opinion.
+(I am somewhat lazily trying to avoid having to spend time reverse
+engineering the "what are we trying to do and what effects are
+we accepting" parts from the patch and the code that's already gone
+into the kernel.)
 
--- 
-Josh
+thanks
+-- PMM
