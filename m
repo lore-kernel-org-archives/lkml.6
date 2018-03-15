@@ -1,235 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeCOPfE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:35:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53621 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeCOPfD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:35:03 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Hirofumi Nakagawa <nklabs@gmail.com>,
-        Yang Shi <yang.s@alibaba-inc.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] pstore: fix crypto dependencies
-Date: Thu, 15 Mar 2018 16:34:08 +0100
-Message-Id: <20180315153433.3724071-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:sxRM6JoU++JkjY6wgkJJBu6PNbzsgVmOtDM9cQ5VdJ5KDKgLi4U
- pP+OteS0sZINitgg+N7YAV4aiY/9u8kXa6i/gQVx8ptMgY/To3tfq3PLnGDgjM27WQraZqg
- LpyXHAitP7YTEWN+n36TvwavT23Mp8HJLd8K9KuLjvQrZUZM5jDV1d1KrLyCBnUhiPx7ePO
- ZpArnqmLZWVDB6nr84yXw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:A+Q2mvDwHzk=:xoRVzmWwGLTu5eWJMuAMuH
- qVv+J8ZU3JsuwyLQacBg96zGHON7xXXCAhIhHTcE4wdn+U85op7cjqso7qsVL4jXvXvt9NNpU
- sJ/gcKvUBR+k1YPh7QB9EzP4cwRipum5/Hd2bFGLm7uSHzWKFc9aZQvJ3Na8nYjYvlMKROd0S
- p8sxOJYx1VAjx+jIbeoNmXOFSGuaWBy4aABth6s8pEmPgTKSHeTgfW3O5wqR64VK0EuLk8QWU
- xKDco6bpZlNUbng2jGwtQeJnMOspTuFxzdYTAIm5gjhPcNEQIWLv/7cd8khIHhJTkqm3FAhWG
- JcPY5EM1TEZ/TLVMgwG82Y1fY62mgZ5r73VclvR6EBJIaZlIcKK9dnwHtbQQZ5GvsVdQUaiXs
- RvhlrifUepotSaqmQhDPwk15qYqeh6V5lM3SDLQwdHjwZBvcqFvO9HW9GOVr4p2/WIay2tKDU
- +kJ9TZuzP+L8u6nLdcFSY9Ql0mgkrMKU4FIjp6Nl3P8lOhjPsgq26pFk0RsahS1D2l8Q6yr1W
- i79kGJg9VvKYkP1aprdxcu2XOQ8OAWjroiUwYCh+gZDpIjTn7pNLbz2aCa6Mbo8ovoGYKhk/4
- eSrkOfK7V9etVptSkGctkQe1Rr48j0xNu+QeZXmAhk+2wZys0ImZSZI8Dac0nJ9YpNJtMJaCG
- 7lyYfeBzMrL31Flfdws04PO+dxX0Bo3a/+G4MHmkszA8VKpJmlEuXrGE6uDV20nUk2axDGJxe
- Y7nDjO2putd49pjsdj8Ylhz2x/OjdCCOqGO+9Q==
+        id S1752611AbeCOPgk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:36:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60378 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752336AbeCOPgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:36:39 -0400
+Date: Thu, 15 Mar 2018 16:36:20 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>, han.xu@nxp.com
+Cc: boris.brezillon@free-electrons.com, max.oss.09@gmail.com,
+        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
+        dwmw2@infradead.org
+Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
+ strength
+Message-ID: <20180315163620.6122d752@bbrezillon>
+In-Reply-To: <20180304200602.11475-1-stefan@agner.ch>
+References: <20180304200602.11475-1-stefan@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new crypto API use causes some problems with Kconfig dependencies,
-including this link error:
+Hi,
 
-fs/pstore/platform.o: In function `pstore_register':
-platform.c:(.text+0x248): undefined reference to `crypto_has_alg'
-platform.c:(.text+0x2a0): undefined reference to `crypto_alloc_base'
-fs/pstore/platform.o: In function `pstore_unregister':
-platform.c:(.text+0x498): undefined reference to `crypto_destroy_tfm'
-crypto/lz4hc.o: In function `lz4hc_sdecompress':
-lz4hc.c:(.text+0x1a): undefined reference to `LZ4_decompress_safe'
-crypto/lz4hc.o: In function `lz4hc_decompress_crypto':
-lz4hc.c:(.text+0x5a): undefined reference to `LZ4_decompress_safe'
-crypto/lz4hc.o: In function `lz4hc_scompress':
-lz4hc.c:(.text+0xaa): undefined reference to `LZ4_compress_HC'
-crypto/lz4hc.o: In function `lz4hc_mod_init':
-lz4hc.c:(.init.text+0xf): undefined reference to `crypto_register_alg'
-lz4hc.c:(.init.text+0x1f): undefined reference to `crypto_register_scomp'
-lz4hc.c:(.init.text+0x2f): undefined reference to `crypto_unregister_alg'
+On Sun,  4 Mar 2018 21:06:01 +0100
+Stefan Agner <stefan@agner.ch> wrote:
 
-The problem is that with CONFIG_CRYPTO=m, we must not 'select CRYPTO_LZ4'
-from a bool symbol, or call crypto API functions from a built-in
-module.
+> Add support for specified ECC strength/size using device tree
+> properties nand-ecc-strength/nand-ecc-step-size.
 
-This turns the sub-options into 'tristate' ones so the dependencies
-are honored, and makes the pstore itself select the crypto core
-if necessary.
+Han, we didn't hear back from you on that. Are you okay with adding
+these new properties? IIRC, you feared there would be a delta between
+u-boot and linux support.
 
-Fixes: cb3bee0369bc ("pstore: Use crypto compress API")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/pstore/Kconfig    | 19 ++++++++++---------
- fs/pstore/platform.c | 22 +++++++++++-----------
- 2 files changed, 21 insertions(+), 20 deletions(-)
+Stephan, there's no changelog. Has anything changed in this version or
+is this just a RESEND?
 
-diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index 49b407eab846..09c19ef91526 100644
---- a/fs/pstore/Kconfig
-+++ b/fs/pstore/Kconfig
-@@ -1,5 +1,6 @@
- config PSTORE
- 	tristate "Persistent store support"
-+	select CRYPTO if PSTORE_COMPRESS
- 	default n
- 	help
- 	   This option enables generic access to platform level
-@@ -13,7 +14,7 @@ config PSTORE
- 	   say N.
- 
- config PSTORE_DEFLATE_COMPRESS
--	bool "DEFLATE (ZLIB) compression"
-+	tristate "DEFLATE (ZLIB) compression"
- 	default y
- 	depends on PSTORE
- 	select CRYPTO_DEFLATE
-@@ -22,21 +23,21 @@ config PSTORE_DEFLATE_COMPRESS
- 	  algorithm support.
- 
- config PSTORE_LZO_COMPRESS
--	bool "LZO compression"
-+	tristate "LZO compression"
- 	depends on PSTORE
- 	select CRYPTO_LZO
- 	help
- 	  This option enables LZO compression algorithm support.
- 
- config PSTORE_LZ4_COMPRESS
--	bool "LZ4 compression"
-+	tristate "LZ4 compression"
- 	depends on PSTORE
- 	select CRYPTO_LZ4
- 	help
- 	  This option enables LZ4 compression algorithm support.
- 
- config PSTORE_LZ4HC_COMPRESS
--	bool "LZ4HC compression"
-+	tristate "LZ4HC compression"
- 	depends on PSTORE
- 	select CRYPTO_LZ4HC
- 	help
-@@ -70,19 +71,19 @@ choice
- 	  The default compression algorithm is deflate.
- 
- 	config PSTORE_DEFLATE_COMPRESS_DEFAULT
--		bool "deflate" if PSTORE_DEFLATE_COMPRESS=y
-+		bool "deflate" if PSTORE_DEFLATE_COMPRESS
- 
- 	config PSTORE_LZO_COMPRESS_DEFAULT
--		bool "lzo" if PSTORE_LZO_COMPRESS=y
-+		bool "lzo" if PSTORE_LZO_COMPRESS
- 
- 	config PSTORE_LZ4_COMPRESS_DEFAULT
--		bool "lz4" if PSTORE_LZ4_COMPRESS=y
-+		bool "lz4" if PSTORE_LZ4_COMPRESS
- 
- 	config PSTORE_LZ4HC_COMPRESS_DEFAULT
--		bool "lz4hc" if PSTORE_LZ4HC_COMPRESS=y
-+		bool "lz4hc" if PSTORE_LZ4HC_COMPRESS
- 
- 	config PSTORE_842_COMPRESS_DEFAULT
--		bool "842" if PSTORE_842_COMPRESS=y
-+		bool "842" if PSTORE_842_COMPRESS
- 
- endchoice
- 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 42e111b3bd0c..1143ef351c58 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -28,10 +28,10 @@
- #include <linux/console.h>
- #include <linux/module.h>
- #include <linux/pstore.h>
--#ifdef CONFIG_PSTORE_LZO_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
- #include <linux/lzo.h>
- #endif
--#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
-+#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
- #include <linux/lz4.h>
- #endif
- #include <linux/crypto.h>
-@@ -142,7 +142,7 @@ bool pstore_cannot_block_path(enum kmsg_dump_reason reason)
- }
- EXPORT_SYMBOL_GPL(pstore_cannot_block_path);
- 
--#ifdef CONFIG_PSTORE_DEFLATE_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
- static int zbufsize_deflate(size_t size)
- {
- 	size_t cmpr;
-@@ -171,21 +171,21 @@ static int zbufsize_deflate(size_t size)
- }
- #endif
- 
--#ifdef CONFIG_PSTORE_LZO_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
- static int zbufsize_lzo(size_t size)
- {
- 	return lzo1x_worst_compress(size);
- }
- #endif
- 
--#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
-+#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
- static int zbufsize_lz4(size_t size)
- {
- 	return LZ4_compressBound(size);
- }
- #endif
- 
--#ifdef CONFIG_PSTORE_842_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
- static int zbufsize_842(size_t size)
- {
- 	return size;
-@@ -195,31 +195,31 @@ static int zbufsize_842(size_t size)
- static const struct pstore_zbackend *zbackend __ro_after_init;
- 
- static const struct pstore_zbackend zbackends[] = {
--#ifdef CONFIG_PSTORE_DEFLATE_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
- 	{
- 		.zbufsize	= zbufsize_deflate,
- 		.name		= "deflate",
- 	},
- #endif
--#ifdef CONFIG_PSTORE_LZO_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
- 	{
- 		.zbufsize	= zbufsize_lzo,
- 		.name		= "lzo",
- 	},
- #endif
--#ifdef CONFIG_PSTORE_LZ4_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS)
- 	{
- 		.zbufsize	= zbufsize_lz4,
- 		.name		= "lz4",
- 	},
- #endif
--#ifdef CONFIG_PSTORE_LZ4HC_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
- 	{
- 		.zbufsize	= zbufsize_lz4,
- 		.name		= "lz4hc",
- 	},
- #endif
--#ifdef CONFIG_PSTORE_842_COMPRESS
-+#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
- 	{
- 		.zbufsize	= zbufsize_842,
- 		.name		= "842",
+Regards,
+
+Boris
+
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> index 61fdd733492f..d04754289c03 100644
+> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
+>   *
+>   * We may have available oob space in this case.
+>   */
+> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
+> +				    unsigned int ecc_strength,
+> +				    unsigned int ecc_step)
+>  {
+>  	struct bch_geometry *geo = &this->bch_geometry;
+>  	struct nand_chip *chip = &this->nand;
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	unsigned int block_mark_bit_offset;
+>  
+> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> -		return -EINVAL;
+> -
+> -	switch (chip->ecc_step_ds) {
+> +	switch (ecc_step) {
+>  	case SZ_512:
+>  		geo->gf_len = 13;
+>  		break;
+> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>  			chip->ecc_strength_ds, chip->ecc_step_ds);
+>  		return -EINVAL;
+>  	}
+> -	geo->ecc_chunk_size = chip->ecc_step_ds;
+> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
+> +	geo->ecc_chunk_size = ecc_step;
+> +	geo->ecc_strength = round_up(ecc_strength, 2);
+>  	if (!gpmi_check_ecc(this))
+>  		return -EINVAL;
+>  
+> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>  	if (geo->ecc_chunk_size < mtd->oobsize) {
+>  		dev_err(this->dev,
+>  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
+> -			chip->ecc_step_ds, mtd->oobsize);
+> +			ecc_step, mtd->oobsize);
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
+>  
+>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
+>  {
+> +	struct nand_chip *chip = &this->nand;
+> +
+> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
+> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
+> +						chip->ecc.size);
+> +
+>  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
+> -				|| legacy_set_geometry(this))
+> -		return set_geometry_by_ecc_info(this);
+> +				|| legacy_set_geometry(this)) {
+> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> +			return -EINVAL;
+> +
+> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
+> +						chip->ecc_step_ds);
+> +	}
+>  
+>  	return 0;
+>  }
+
+
+
 -- 
-2.9.0
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
