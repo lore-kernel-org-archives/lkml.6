@@ -1,76 +1,97 @@
-Return-Path: <arend.vanspriel@broadcom.com>
-X-Google-Smtp-Source: AG47ELsg9Xrr8e/Tp5TLYasYke/BPQysFf3kBNnCnW5ijK+BjtPoTVplPC3R4UAy489VOmq/TGw8
-ARC-Seal: i=1; a=rsa-sha256; t=1521107737; cv=none;
+Return-Path: <briannorris@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521133503; cv=none;
         d=google.com; s=arc-20160816;
-        b=CtDcblOw5TMpZjrImGe6V50F7x/zvV2EWt8hpbV0x6D99insrRp5IwZYNx+QV63NvZ
-         yis1jYzohTRPyKkqBf8X8vW1vDe7AazvxMO7IrHaLhpnMuiOQtR21dKEICgz0lRzNL0p
-         t4wYym3ZiXMgFstXBG+V9XGMomi+M3KictV8blOYUo1FX3f1aX0NozMl2eTZWdNrvGHV
-         WLBG3FiNOh/rm8FhD3DYpqhHmYAdxu0GCyLxKJozvAMcgxi5Es815LtIETsvBShLhZea
-         SAbQfAXHq6qrYVxSSPfB0iPz1lGrGEWcww1dnG0NIBwqRMMqSytMLBdalPKngio9MYHj
-         NDWw==
+        b=gG8deHPc8gzuQENf9m9wwOoFQeJ10RIP4p1m5QOFDafzZ5o3XRIAkdoZT5jibTdaqs
+         /szn2CDNPBGedc+IA0vHQNO3/QSesWXada1GNEqnFMkmP7KlnFG+sGcDjwo+bH2KMnjD
+         3bhk+xEa/Wr2mWRn/m3k2wAKMJFY43pD75tbQEl+bA2AZ6MFBF1/F9BDcUy/1miBPzw+
+         PdfCqmHrPFrn1uZiWfMhPPqdHHKpst3g1SxxGi+tUmuIRNo8hDnoza7q9h0MkQlxeQ3+
+         byEB/Hq7x8cduJRH7gn6V445pGckojdfdb5qpzugkVC8CXn9b+LSfvx7HApeP+EWOLro
+         5w3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=/b2NMSKM8dZfhRvLmmwdX7PDP65bnUhggvf7jVmqWxY=;
-        b=0GwQ2Dwzn36pij9E7FD9EiqgBbo+98saOzb/2eeyIN0E5kO9VML/lfqLPyWS4rKOvM
-         O0mEsqbjW9J775j/Uvs8FCiyEmnLmY/sQu5vMIi4JI7jyLq6yk6ZQ8L/2LIierGxuO3r
-         +8AVbB/cZBZS60KpdUv2n86k6cTlc82TArNOj9ymKbC0pJ/Y3LTnNs/dINkVQ89UG0Ru
-         VxmA2zb7UuSLzsFMvHCbUEctN7asdCNo87gvqByNR7XnZv50mVde9D8OP4zF3G5+5k+e
-         XYrtGtJgwymcG7rULXKr7aWAI5r+Ol0/70Yb3ndSQHqfOuHMaow037YdHTfq6HKxi7kv
-         01LQ==
+        bh=X0ykJG6O/pZ7TNthJAZvCr2hEt7wl64te5a7ORiXLdM=;
+        b=P8Ky6elyEBI48DAWMTCbxrOzLDsOEECCCb9JcbG6dSFrUwARMbnOiMFxio2wl58QKl
+         pfFExLKXaP8IT8o+VL5X7bNW9hlcuuyXKtEWlMLrWiIgmcvg0xZ+TUs9pKxibNscpJuh
+         nbpTCBzN1fVAuf3IsMJwrHoO3zX+LgIv6PpyP1jY33EJ5mG8Z4taF0IBHMBn9mGeZR/L
+         kIn61Z9BRpIjBhoAjr9/UU/wQ+2ovNLLre9ohEphmuWkj+T1at90OAQk0gKechCU5vV+
+         isgKAW+T0HQDOn+0B1iMAsCL5HYDkZOV4zWQebTX93qk2ICB4PAzJcIQWLA+2/9JsYEd
+         Rzkw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@chromium.org header.s=google header.b=mae8n/eU;
+       spf=pass (google.com: domain of briannorris@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=briannorris@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-From: Arend van Spriel <aspriel@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Arend van Spriel <aspriel@gmail.com>
-Subject: [PATCH for-4.16 1/3] sysfs: improve devices-coredump description with user-space perspective
-Date: Thu, 15 Mar 2018 10:55:23 +0100
-Message-Id: <1521107725-25027-2-git-send-email-aspriel@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521107725-25027-1-git-send-email-aspriel@gmail.com>
+       dkim=pass header.i=@chromium.org header.s=google header.b=mae8n/eU;
+       spf=pass (google.com: domain of briannorris@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=briannorris@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELsNmwMdo/Vc2agJqtdeTV8Nz3Q71D401nGs14cRzuLt33lH9PA2V27j32KC86DJyGdtvJlL7g==
+Date: Thu, 15 Mar 2018 10:05:00 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Arend van Spriel <aspriel@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH for-4.16 1/3] sysfs: improve devices-coredump description
+ with user-space perspective
+Message-ID: <20180315170459.GA120116@rodete-desktop-imager.corp.google.com>
 References: <1521107725-25027-1-git-send-email-aspriel@gmail.com>
+ <1521107725-25027-2-git-send-email-aspriel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521107725-25027-2-git-send-email-aspriel@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594997067406689415?=
-X-GMAIL-MSGID: =?utf-8?q?1594997067406689415?=
+X-GMAIL-MSGID: =?utf-8?q?1595024084685797907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Instead of referring to kernel internals, describe the ABI from user-space
-perspective to clarify what can be expected when using it.
+On Thu, Mar 15, 2018 at 10:55:23AM +0100, Arend van Spriel wrote:
+> Instead of referring to kernel internals, describe the ABI from user-space
+> perspective to clarify what can be expected when using it.
+> 
+> Signed-off-by: Arend van Spriel <aspriel@gmail.com>
+> ---
+>  Documentation/ABI/testing/sysfs-devices-coredump | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-coredump b/Documentation/ABI/testing/sysfs-devices-coredump
+> index e459368..d5a4c75 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-coredump
+> +++ b/Documentation/ABI/testing/sysfs-devices-coredump
+> @@ -2,9 +2,13 @@ What:		/sys/devices/.../coredump
+>  Date:		December 2017
+>  Contact:	Arend van Spriel <aspriel@gmail.com>
+>  Description:
+> -		The /sys/devices/.../coredump attribute is only present when the
+> -		device is bound to a driver, which provides the .coredump()
+> -		callback. The attribute is write only. Anything written to this
+> -		file will trigger the .coredump() callback.
+> +		When present the /sys/devices/.../coredump attribute can be used
+> +		to trigger a coredump of the device. The coredump contents are
+> +		device driver specific and thus vary. The coredump attribute is
+> +		writeonly. Anything written to this file will trigger creation
+> +		of the coredump. When the coredump is made available under
+> +		/sys/class/devcoredump it will generate a uevent. When the
+> +		coredump can not be successfully generated no ueven will occur.
 
-Signed-off-by: Arend van Spriel <aspriel@gmail.com>
----
- Documentation/ABI/testing/sysfs-devices-coredump | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+s/ueven/uevent/
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-coredump b/Documentation/ABI/testing/sysfs-devices-coredump
-index e459368..d5a4c75 100644
---- a/Documentation/ABI/testing/sysfs-devices-coredump
-+++ b/Documentation/ABI/testing/sysfs-devices-coredump
-@@ -2,9 +2,13 @@ What:		/sys/devices/.../coredump
- Date:		December 2017
- Contact:	Arend van Spriel <aspriel@gmail.com>
- Description:
--		The /sys/devices/.../coredump attribute is only present when the
--		device is bound to a driver, which provides the .coredump()
--		callback. The attribute is write only. Anything written to this
--		file will trigger the .coredump() callback.
-+		When present the /sys/devices/.../coredump attribute can be used
-+		to trigger a coredump of the device. The coredump contents are
-+		device driver specific and thus vary. The coredump attribute is
-+		writeonly. Anything written to this file will trigger creation
-+		of the coredump. When the coredump is made available under
-+		/sys/class/devcoredump it will generate a uevent. When the
-+		coredump can not be successfully generated no ueven will occur.
+> 
+> -		Available when CONFIG_DEV_COREDUMP is enabled.
+> +		Available when CONFIG_DEV_COREDUMP is enabled and the device
+> +		driver supports coredump generation.
 
--		Available when CONFIG_DEV_COREDUMP is enabled.
-+		Available when CONFIG_DEV_COREDUMP is enabled and the device
-+		driver supports coredump generation.
---
-1.9.1
+What about /sys/class/devcoredump/disabled? Maybe we just need a
+sysfs-class-devcoredump too, now that there's a formal method for
+triggering devcoredumps.
+
+Brian
+
+> --
+> 1.9.1
+> 
