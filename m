@@ -1,79 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeCOMyH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:54:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53327 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751977AbeCOMyF (ORCPT
+        id S1752392AbeCOMy3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:54:29 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56341 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752294AbeCOMy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:54:05 -0400
-Date: Thu, 15 Mar 2018 13:53:52 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-cc: x86@kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/14] x86: use dma-direct
-In-Reply-To: <20180315115348.GA16210@lst.de>
-Message-ID: <alpine.DEB.2.21.1803151352170.1525@nanos.tec.linutronix.de>
-References: <20180314175213.20256-1-hch@lst.de> <20180314175213.20256-4-hch@lst.de> <alpine.DEB.2.21.1803150951540.1525@nanos.tec.linutronix.de> <20180315115348.GA16210@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 15 Mar 2018 08:54:27 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v4 4/7] cpuidle: Return nohz hint from cpuidle_select()
+Date: Thu, 15 Mar 2018 13:54:59 +0100
+Message-ID: <1998970.adS4ugIWGe@aspire.rjw.lan>
+In-Reply-To: <20180314125929.GU4043@hirez.programming.kicks-ass.net>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan> <15847301.VVmNzm1RNz@aspire.rjw.lan> <20180314125929.GU4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1111037880-1521118432=:1525"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1111037880-1521118432=:1525
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-On Thu, 15 Mar 2018, Christoph Hellwig wrote:
-
-> On Thu, Mar 15, 2018 at 09:56:13AM +0100, Thomas Gleixner wrote:
-> > On Wed, 14 Mar 2018, Christoph Hellwig wrote:
+On Wednesday, March 14, 2018 1:59:29 PM CET Peter Zijlstra wrote:
+> On Mon, Mar 12, 2018 at 10:54:18AM +0100, Rafael J. Wysocki wrote:
+> > @@ -378,6 +384,26 @@ static int menu_select(struct cpuidle_dr
+> >  	if (idx == -1)
+> >  		idx = 0; /* No states enabled. Must use 0. */
+> >  
+> > +	if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING) {
+> > +		*nohz_ret = false;
+> > +	} else if (drv->states[idx].target_residency < TICK_USEC_HZ) {
+> > +		first_idx = idx;
+> > +		for (i = idx + 1; i < drv->state_count; i++) {
+> > +			if (!drv->states[i].disabled &&
+> > +			    !dev->states_usage[i].disable) {
+> > +				first_idx = i;
+> > +				break;
+> > +			}
+> 		}
+> > +
+> > +		/*
+> > +		 * Do not stop the tick if there is at least one more state
+> > +		 * within the tick period range that could be used if longer
+> > +		 * idle duration was predicted.
+> > +		 */
+> > +		*nohz_ret = !(first_idx > idx &&
+> > +			      drv->states[first_idx].target_residency < TICK_USEC_HZ);
+> 
+> 
+> Why though? That comment only states what it does, but gives no clue as
+> to why we're doing this. What was wrong with disabling NOHZ if the
+> selected state (@idx) has shorter target residency.
+> 
+> 
+> > +	}
+> > +
+> >  	data->last_state_idx = idx;
+> >  
+> >  	return data->last_state_idx;
 > > 
-> > > The generic dma-direct implementation is now functionally equivalent to
-> > > the x86 nommu dma_map implementation, so switch over to using it.
-> > 
-> > Can you please convert the various drivers first and then remove the
-> > unused code?
 > 
-> Which various drivers?
-> 
-> > > Note that the various iommu drivers are switched from x86_dma_supported
 
-The various iommu drivers ....
+I invented this complicated logic because of the concern that using
+predicted_us alone may skew the prediction algotithm too much towards
+the lower values, so the idea was (roughly) to allow CPUs to be idle
+for longer times more aggressively.  That is, to stop the tick even
+in some cases in which predicted_us was below the tick period length,
+but then again not too often.
 
-> > > to dma_direct_supported to provide identical functionality, although the
-> > > checks looks fairly questionable for at least some of them.
-> > 
-> > Can you please elaborate? From the above it's not clear which checks you
-> > are referring to. If you convert these drivers seperately then explicit
-> > information about your concerns wants to be in the changelogs.
-> 
-> This bit:
-> 
-> 	/* Copied from i386. Doesn't make much sense, because it will
-> 	   only work for pci_alloc_coherent.
-> 	   The caller just has to use GFP_DMA in this case. */
-> 	if (mask < DMA_BIT_MASK(24))
-> 		return 0;
-> 
-> in x86_dma_supported, or the equivalent bit in dma_direct_supported.
-> Kept for bug to bug compatibility, but I guess I should reword or
-> just drop the changelog bit іf it causes confusion.
+It appears to work, but you are right that it is confusing and on
+a second thought simpler code is always better as long as it gets the
+job done.
 
-Reword please.
+I'll rework this and resend the series later today.
 
-Thanks,
-
-	tglx
-
---8323329-1111037880-1521118432=:1525--
+Thanks!
