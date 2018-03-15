@@ -1,84 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932328AbeCOTy7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:54:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:47050 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751546AbeCOTy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:54:58 -0400
-Message-ID: <5AAACEF1.1060701@arm.com>
-Date: Thu, 15 Mar 2018 19:52:17 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
-MIME-Version: 1.0
-To: gengdongjiu <gengdj.1984@gmail.com>
-CC: Dongjiu Geng <gengdongjiu@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, Huangshaoyu <huangshaoyu@huawei.com>
-Subject: Re: [PATCH] arm64: rename the function arm64_is_ras_serror() to avoid
- confusion
-References: <1519322552-7374-1-git-send-email-gengdongjiu@huawei.com> <5A90563E.4020608@arm.com> <CAMj-D2Cd7_fCwMuHKr-UQ3i4LEDkktxcg_GtO-QCqnj52mHyKA@mail.gmail.com>
-In-Reply-To: <CAMj-D2Cd7_fCwMuHKr-UQ3i4LEDkktxcg_GtO-QCqnj52mHyKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1752280AbeCOUAe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:00:34 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51160 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeCOUAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 16:00:33 -0400
+Date: Thu, 15 Mar 2018 16:00:30 -0400 (EDT)
+Message-Id: <20180315.160030.601332550949971028.davem@davemloft.net>
+To: nitin.m.gupta@oracle.com
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: sparc64 MM regression...
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180315.152815.1012910593389921933.davem@davemloft.net>
+References: <20180315.152815.1012910593389921933.davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
+From: David Miller <davem@davemloft.net>
+Date: Thu, 15 Mar 2018 15:28:15 -0400 (EDT)
 
-On 26/02/18 16:13, gengdongjiu wrote:
-> 2018-02-24 1:58 GMT+08:00 James Morse <james.morse@arm.com>:
->> On 22/02/18 18:02, Dongjiu Geng wrote:
->>> The RAS SError Syndrome can be Implementation-Defined,
->>> arm64_is_ras_serror() is used to judge whether it is RAS SError,
->>> but arm64_is_ras_serror() does not include this judgement. In order
->>> to avoid function name confusion, we rename the arm64_is_ras_serror()
->>> to arm64_is_categorized_ras_serror(), this function is used to
->>> judge whether it is categorized RAS Serror.
->>
->> I don't see how 'categorized' is relevant. The most significant ISS bit is used
->> to determine if this is an IMP-DEF ESR, or one that uses the architected layout.
 > 
-> From the name arm64_is_ras_serror(), it used to judge whether this is
-> RAS Serror,
-> but arm64_is_ras_serror() think the IMP-DEF SError is not RAS SError,
-> as shown the code note and code in[1].
+> So I bisected a userspace corruption regression down to commit:
+> 
+> commit a8e654f01cb725d0bfd741ebca1bf4c9337969cc                                                                                    
+> Author: Nitin Gupta <nitin.m.gupta@oracle.com>                                                                                     
+> Date:   Wed Jan 31 16:18:09 2018 -0800                                                                                             
+>                                                                                                                                    
+>     sparc64: update pmdp_invalidate() to return old pmd value                                                                      
+> 
+> The transformation is basically from a set_pte_at() call into
+> an atomic cmpxchg64() loop to set the pmd.
+> 
+> The problem is that set_pmd_at() does more than just assign
+> the pmd entry.
+> 
+> It also does some accounting and also queues up a batch TLB
+> flush entry.
+> 
+> So the side effect of this change is that the TLB is never
+> flushed for these changed PMDs, and thus the userland memory
+> corruption I was seeing.
 
-> In fact the IMP-DEF SError is also RAS SError, so when I read the
-> code, it looks like
+This seems to do the trick:
 
-This is just you then. No-one else has your imp-def:RAS error ESR values.
-
-This would be like me adding some impdef branch instruction, then claiming
-aarch64_insn_is_branch() doesn't take account of my private additions.
-
-I agree the name is assuming all architected ESR are RAS-errors, and that impdef
-ESR are just that: impdef, that's all we know about them. Unless this causes us
-to do the wrong thing, I don't think it matters.
-Obviously we would need to change it if a new architected ESR is added.
-
-
-> confusion, so I rename it to arm64_is_categorized_ras_serror(), then
-
-This is actually worse, because there is an architected ESR for 'uncategorized',
-that the helper papers-over and treats as uncontained. Calling it 'categorized'
-means we now have three states, not two.
-
-
-> this function is only used to
-> judge whether this is categorized RAS SError,
-> if it is categorized, the code will continue judge its Asynchronous Error Type.
-> if it is uncategorized, the code will panic(this is the original code
-> logic) or not panic when we support kernel-first or can isolate the
-> SError
-
-
-Thanks,
-
-James
+diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
+index 847ddff..b5cfab7 100644
+--- a/arch/sparc/mm/tlb.c
++++ b/arch/sparc/mm/tlb.c
+@@ -163,13 +163,10 @@ static void tlb_batch_pmd_scan(struct mm_struct *mm, unsigned long vaddr,
+ 	pte_unmap(pte);
+ }
+ 
+-void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+-		pmd_t *pmdp, pmd_t pmd)
+-{
+-	pmd_t orig = *pmdp;
+-
+-	*pmdp = pmd;
+ 
++static void __set_pmd_acct(struct mm_struct *mm, unsigned long addr,
++			   pmd_t orig, pmd_t pmd)
++{
+ 	if (mm == &init_mm)
+ 		return;
+ 
+@@ -219,6 +216,15 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 	}
+ }
+ 
++void set_pmd_at(struct mm_struct *mm, unsigned long addr,
++		pmd_t *pmdp, pmd_t pmd)
++{
++	pmd_t orig = *pmdp;
++
++	*pmdp = pmd;
++	__set_pmd_acct(mm, addr, orig, pmd);
++}
++
+ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 		unsigned long address, pmd_t *pmdp, pmd_t pmd)
+ {
+@@ -227,6 +233,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 	do {
+ 		old = *pmdp;
+ 	} while (cmpxchg64(&pmdp->pmd, old.pmd, pmd.pmd) != old.pmd);
++	__set_pmd_acct(vma->vm_mm, address, old, pmd);
+ 
+ 	return old;
+ }
