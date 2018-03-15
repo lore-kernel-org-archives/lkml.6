@@ -1,121 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeCOMcG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:32:06 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:44160 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751459AbeCOMcE (ORCPT
+        id S1751817AbeCOMdY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:33:24 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:47102 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeCOMdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:32:04 -0400
-X-Google-Smtp-Source: AG47ELtGTaHaEazQjojzMU3q9kzZhfxwdf2SEiDND+3hsHVH1ptQXc8/1RW05iNcVCNQaiQl5GMtbg==
-Subject: Re: [PATCH 2/2] IB/core: Set width to 1X for invalid active widths
- when port is down
-From: Hal Rosenstock <hal@dev.mellanox.co.il>
-To: Honggang LI <honli@redhat.com>, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org
-Cc: noaos@mellanox.com, linux-kernel@vger.kernel.org
-References: <20180315090214.21706-1-honli@redhat.com>
- <20180315090214.21706-3-honli@redhat.com>
- <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
-Message-ID: <f3d70fc6-08ec-3af1-90c3-a0a431c81ce2@dev.mellanox.co.il>
-Date: Thu, 15 Mar 2018 08:32:02 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 08:33:22 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v4 1/7] time: tick-sched: Reorganize idle tick management code
+Date: Thu, 15 Mar 2018 13:33:54 +0100
+Message-ID: <22374739.VLR6IT0dbg@aspire.rjw.lan>
+In-Reply-To: <20180314154934.GA3635@lerouge>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan> <2019498.YXfJVQUTuX@aspire.rjw.lan> <20180314154934.GA3635@lerouge>
 MIME-Version: 1.0
-In-Reply-To: <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/15/2018 8:01 AM, Hal Rosenstock wrote:
-> On 3/15/2018 5:02 AM, Honggang LI wrote:
->> From: Honggang Li <honli@redhat.com>
->>
->> commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
->> active_speed in RoCE"). Before this patch applied, the mlx5_ib
->> driver set default active_width and active_speed to IB_WIDTH_4X
->> and IB_SPEED_QDR.
->>
->> When the RoCE port is down, the RoCE port did not negotiate the
->> active width with remote side. The active width is zero. If run
->> ibstat to require the port status, ibstat will panic as it read
->> invalid width from sys file.
->>
->> Signed-off-by: Honggang Li <honli@redhat.com>
->> ---
->>  drivers/infiniband/core/sysfs.c | 15 +++++++++++----
->>  1 file changed, 11 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
->> index cf36ff1f0068..722e4571f4d2 100644
->> --- a/drivers/infiniband/core/sysfs.c
->> +++ b/drivers/infiniband/core/sysfs.c
->> @@ -240,6 +240,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
->>  	struct ib_port_attr attr;
->>  	char *speed = "";
->>  	int rate;		/* in deci-Gb/sec */
->> +	int width;
->>  	ssize_t ret;
->>  
->>  	ret = ib_query_port(p->ibdev, p->port_num, &attr);
->> @@ -278,13 +279,19 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
->>  		break;
->>  	}
->>  
->> -	rate *= ib_width_enum_to_int(attr.active_width);
->> -	if (rate < 0)
->> -		return -EINVAL;
->> +	width = ib_width_enum_to_int(attr.active_width);
->> +	if (width < 0) {
->> +		if (attr.state != IB_PORT_ACTIVE)
+On Wednesday, March 14, 2018 4:49:39 PM CET Frederic Weisbecker wrote:
+> On Mon, Mar 12, 2018 at 10:47:41AM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > 
+> > Prepare the scheduler tick code for reworking the idle loop to
+> > avoid stopping the tick in some cases.
+> > 
+> > Move away the tick_nohz_start_idle() invocation from
+> > __tick_nohz_idle_enter(), rename the latter to
+> > __tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
+> > as a wrapper around it for calling it from the outside.
+> > 
+> > Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
+> > of calling the entire __tick_nohz_idle_enter(), add another wrapper
+> > disabling and enabling interrupts around tick_nohz_idle_stop_tick()
+> > and make the current callers of tick_nohz_idle_enter() call it too
+> > to retain their current functionality.
 > 
-> Link width is valid in any PortState other than Down so I think that
-> this check should be:
-> 		if (attr.state != IB_PORT_DOWN)
+> Perhaps we should have a higher level description of what the patch does.
+> After all the low level part is already described in the diff.
 > 
-> However, I don't think overriding width should be needed for this case
-> and just returning -EINVAL should be fine regardless of port state.
-> AFAIK it's the driver responsibility to populate acceptable defaults for
-> such parameters. What driver(s) have this issue ? Shouldn't it be fixed
-> there rather than here ?
+> Ie: we are splitting the nohz idle entry call to decouple the idle time
+> stats accounting and preparatory work from the actual tick stop code, that
+> in order to later be able to delay the tick stop once we reach more
+> power-knowledgeable callers.
 
-I just noticed that you reference commit f1b65df5a232 ("IB/mlx5: Add
-support for active_width and active_speed in RoCE"). Before this patch
-applied, the mlx5_ib driver set default active_width and active_speed to
-IB_WIDTH_4X and IB_SPEED_QDR.
-
-Should the fix be to hw/mlx5/main.c:translate_eth_proto_oper which now has:
-
-        switch (eth_proto_oper) {
-...
-        default:
-                return -EINVAL;
-        }
-
-        return 0;
-
-and change default case to:
-		*active_width = IB_WIDTH_1X;
-
-?
-
-> -- Hal
-> 
->> +			width = 1; /* default to 1X for invalid widths */
->> +		else
->> +			return -EINVAL;
->> +	}
->> +
->> +	rate *= width;
->>  
->>  	return sprintf(buf, "%d%s Gb/sec (%dX%s)\n",
->>  		       rate / 10, rate % 10 ? ".5" : "",
->> -		       ib_width_enum_to_int(attr.active_width), speed);
->> +		       width, speed);
->>  }
->>  
->>  static ssize_t phys_state_show(struct ib_port *p, struct port_attribute *unused,
->>
+OK
