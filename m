@@ -1,70 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeCOSTG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:19:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752238AbeCOSTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:19:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3072B20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Thu, 15 Mar 2018 19:19:00 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
+        id S932453AbeCOSTO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:19:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50414 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752238AbeCOSTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:19:12 -0400
+Date: Thu, 15 Mar 2018 13:19:11 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT][PATCH v4 3/7] sched: idle: Do not stop the tick before
- cpuidle_idle_call()
-Message-ID: <20180315181858.GA14983@lerouge>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan>
- <3550231.xNMJN5JcLx@aspire.rjw.lan>
+Subject: Re: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
+ section
+Message-ID: <20180315181911.jpnxzbhltkxsissv@treble>
+References: <20180315154448.16222-1-bp@alien8.de>
+ <20180315154448.16222-5-bp@alien8.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3550231.xNMJN5JcLx@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180315154448.16222-5-bp@alien8.de>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:53:25AM +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Mar 15, 2018 at 04:44:43PM +0100, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> Make cpuidle_idle_call() decide whether or not to stop the tick.
+> The code used to iterate byte-by-byte over the bytes around RIP and that
+> is expensive: disabling pagefaults around it, copy_from_user, etc...
 > 
-> First, the cpuidle_enter_s2idle() path deals with the tick (and with
-> the entire timekeeping for that matter) by itself and it doesn't need
-> the tick to be stopped beforehand.
+> Make it read the whole buffer of OPCODE_BUFSIZE size in one go. Use a
+> statically allocated 64 bytes buffer so that concurrent show_opcodes()
+> do not interleave in the output even though in the majority of the cases
+> we sync on die_lock. Except the #PF path which doesn't...
+> 
+> Also, do the PAGE_OFFSET check outside of the function because latter
+> will be reused in other context.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> ---
+>  arch/x86/kernel/dumpstack.c | 34 ++++++++++++++++------------------
+>  1 file changed, 16 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index eb9d6c00a52f..3f781a8dddb8 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -22,8 +22,6 @@
+>  #include <asm/stacktrace.h>
+>  #include <asm/unwind.h>
+>  
+> -#define OPCODE_BUFSIZE 64
+> -
+>  int panic_on_unrecovered_nmi;
+>  int panic_on_io_nmi;
+>  static int die_counter;
+> @@ -72,29 +70,25 @@ static void printk_stack_address(unsigned long address, int reliable,
+>  
+>  static void show_opcodes(u8 *rip)
+>  {
+> -	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
+> -	unsigned int code_len = OPCODE_BUFSIZE;
+> -	unsigned char c;
+> +#define OPCODE_BUFSIZE 64
+> +	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
+> +	u8 opcodes[OPCODE_BUFSIZE];
+>  	u8 *ip;
+>  	int i;
+>  
+>  	printk(KERN_DEFAULT "Code: ");
+>  
+>  	ip = (u8 *)rip - code_prologue;
+> -	if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
+> -		/* try starting at IP */
+> -		ip = (u8 *)rip;
+> -		code_len = code_len - code_prologue + 1;
+> +	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
+> +		pr_cont(" Bad RIP value.\n");
+> +		return;
 
-Not sure you meant timekeeping either :)
+As long as you're changing the code, might as well remove the leading
+space here, so it shows
 
->  	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
->  		if (idle_should_enter_s2idle()) {
-> +			rcu_idle_enter();
-> +
->  			entered_state = cpuidle_enter_s2idle(drv, dev);
->  			if (entered_state > 0) {
->  				local_irq_enable();
->  				goto exit_idle;
->  			}
-> +
-> +			rcu_idle_exit();
->  		}
+	Code: Bad RIP value.
 
-I'm not sure how the tick is stopped on suspend to idle. Perhaps through
-hrtimer (tick_cancel_sched_timer()) or clockevents code.
+instead of
 
-But we may have a similar problem than with idle_poll() called right after
-call_cpuidle(). Ie: we arrive in cpuidle_enter_s2idle() with a tick that
-should be reprogrammed while it is not. No idea if that can hurt somehow.
+	Code:  Bad RIP value.
 
-I guess it depends what happens to the tick on s2idle, I'm not clear with that.
+-- 
+Josh
