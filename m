@@ -1,156 +1,247 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-444702-1521125621-2-10067932361693022496
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521125620; b=bExJAWZxYn8m8XnJ8+D2EFJwD8BvkUyu7HZCQmaC2wuQ492
-    FOp/T/e6YfcHelctZuAKDYCEwvK8w60XZeZWK1w1UWyCNXiFBNNBYsP4276/rY/a
-    X8EWqK90dy3l+qp7Wda7ryQHKffnZ6OLhhpdaLVkej/6qwzuQnUqmztV4CdlY5Mb
-    wftCtNchdH++eP+df1S3CrUc6pxx48U3v9J90zJQRJeln+Mml2sXlChmTvwK8uCZ
-    GHF+H9VBKbldBCkMD1D85PY6FOvor05xAMw3GIySKS4uwCJFqqoV65Vfo7V3Olq/
-    OmifXhlXyM2kiARpOxFSGMoSKEM/n0/8FbkWT3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521125620; bh=C054gAVi7xHyWvy2LAB8Icqn9EuQ0x7rw3M9b3
-    fHUQM=; b=QQcDA12O9p3wZTeR6BBROVMHq+UuYphtSgdZrcd+6Vk/XuNJRqZUvS
-    YlcBPoeQEuEoAOLvwIwphZx9lqNZ65AbWWkkPS54ngIRUQ/rOfafGwF8orkF0Q1T
-    FXPdjpIoAuaLUSeX4elPhPLFPWRqAk/9u2UPje2hWglDL2IJDP2dV+n8dYtZWnUD
-    mmwmGjZE+2Y0XiYctO+u2SYqjSFQ+4BYhTut4i/8wgamLfTZ+PpovC9yKwndXQCR
-    XPH2f89zDlLcnpP/RjBZ+9iDP588pcouVHudiJoVpeQ5Ei/Bo3vqfDbbeyNPZHMM
-    SOCdDoJWMbBwjgGaL/V779ISZdSQkaCA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Lu/sPJvw;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Lu/sPJvw;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752531AbeCOOxZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 10:53:25 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36983 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751984AbeCOOxX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Mar 2018 10:53:23 -0400
-X-Google-Smtp-Source: AG47ELth+fWZWFZd5dN5Ck59ne2mNye8ZQu5hmAB9S5bPwUhCmcVBu60fZtbzVcaQcH5NVLymQQpd/CmtkCawiSfaIg=
-MIME-Version: 1.0
-In-Reply-To: <20180315115055.GD23100@dhcp22.suse.cz>
-References: <20180313224240.25295-1-neelx@redhat.com> <20180314141727.GE23100@dhcp22.suse.cz>
- <CACjP9X8u8Q2Jwp3CqYGJZhUdf0ivv4qGe+ZRB4A6+Z=z0vTLNQ@mail.gmail.com> <20180315115055.GD23100@dhcp22.suse.cz>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Thu, 15 Mar 2018 15:53:22 +0100
-Message-ID: <CACjP9X8xXMXwbku7yvpGV72XGZ2ZeAcEi4vtFVe_rf9+QZ19XA@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: fix boot hang in memmap_init_zone
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521157251; cv=none;
+        d=google.com; s=arc-20160816;
+        b=V5GoLtuYBgcYh1LI+FoWeN+6oijVuYx0Wd/VdpfFib9t0nS3U8dN3OpMVvZZuSC4/x
+         7mGnLI44Xj2ARdsVgDUjgcYc5eXSTPiJN4PRjK+ZwYyjNj0ysGSHKutrPLHyghzR6wTv
+         5BeDC36eWEvTNvOgjgqNWRdSdf70Advn+mhEhMul6XBOu1PB8dqaJ7KwgfK3ka1nS0nA
+         yE3H5R0wcL5ihS+ut0x35DFvnE70HzVT2YbtgVZ3RlY5uMD7nTGJCX2vby2w6l3KL+oC
+         /dh/NL4u64pvVFn1W8YF15ZuVNoWhAzXXABZzp1SScXukhmK69ZAwQPeEISzTPX3D90s
+         4oYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=+K5bOFimXxThoQkmWyOyysUWWVB53ny8sxHQOthZBOA=;
+        b=Ms2nS4x87RLoXBCQ8FANYkPQV+gFsdkBuEr6CSye+dhmzTDXU13AcshJLDC1CVuuaC
+         l8lA7RSekgTsfliRf9K6MJvAZIXgP+DkK1IkNSPJPOQ62ZdvwTxa0r+FtDfyvXqojg0M
+         tsHGqzvahv4c00FkzhNy5s/uIxrsgVQWL8TZenU+BUicvsyS1oHqIb3Vl4vYKtC4KueF
+         9PwJ+7Vsv+kvxj0DSHtRLKzOJWSelSMdOLkbQpejMz1//cvvboSZQ1EnJXFt9aq3gw5I
+         y2UcLRcfzFgd3R1R8OmMEvXRRueudS/wnwYmcfNmJ48k7oJJMJPW6gMUNCFhHKIMV13p
+         0Mtw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AG47ELskZpDguWZzX0WyfscyzFP5vOGaNLAC2d5dyTk+v1s49EAa9wE/+9KK1TRGi0luZ5UKoJnaTA==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	gregkh@linuxfoundation.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: serge@hallyn.com,
+	avagin@virtuozzo.com,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v1] netns: send uevent messages
+Date: Fri, 16 Mar 2018 00:39:36 +0100
+Message-Id: <20180315233936.30594-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595048985962121648?=
+X-GMAIL-MSGID: =?utf-8?q?1595048985962121648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 12:50 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Thu 15-03-18 02:30:41, Daniel Vacek wrote:
->> On Wed, Mar 14, 2018 at 3:17 PM, Michal Hocko <mhocko@kernel.org> wrote:
->> > On Tue 13-03-18 23:42:40, Daniel Vacek wrote:
->> >> On some architectures (reported on arm64) commit 864b75f9d6b01 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
->> >> causes a boot hang. This patch fixes the hang making sure the alignment
->> >> never steps back.
->> >
->> > I am sorry to be complaining again, but the code is so obscure that I
->>
->> No worries, I'm glad for any review. Which code exactly you do find
->> obscure? This patch or my former fix or the original commit
->> introducing memblock_next_valid_pfn()? Coz I'd agree the original
->> commit looks pretty obscure...
->
-> As mentioned in the other email, the whole going back and forth in the
-> same loop is just too ugly to live.
+This patch adds a receive method to NETLINK_KOBJECT_UEVENT netlink sockets
+to allow sending uevent messages into the network namespace the socket
+belongs to.
 
-It's not really supposed to go back, but I guess you understand.
+Currently non-initial network namespaces are already isolated and don't
+receive uevents. There are a number of cases where it is beneficial for a
+sufficiently privileged userspace process to send a uevent into a network
+namespace.
 
->> > would _really_ appreciate some more information about what is going
->> > on here. memblock_next_valid_pfn will most likely return a pfn within
->> > the same memblock and the alignment will move it before the old pfn
->> > which is not valid - so the block has some holes. Is that correct?
->>
->> I do not understand what you mean by 'pfn within the same memblock'?
->
-> Sorry, I should have said in the same pageblock
->
->> And by 'the block has some holes'?
->
-> memblock_next_valid_pfn clearly returns pfn which is within a pageblock
-> and that is why we do not initialize pages in the begining of the block
-> while move_freepages_block does really expect the full pageblock to be
-> initialized properly. That is the fundamental problem, right?
+One such use case would be debugging and fuzzing of a piece of software
+which listens and reacts to uevents. By running a copy of that software
+inside a network namespace, specific uevents could then be presented to it.
+More concretely, this would allow for easy testing of udevd/ueventd.
 
-Yes, that's correct.
+This will also allow some piece of software to run components inside a
+separate network namespace and then effectively filter what that software
+can receive. Some examples of software that do directly listen to uevents
+and that we have in the past attempted to run inside a network namespace
+are rbd (CEPH client) or the X server.
 
->> memblock has types 'memory' (as usable memory) and 'reserved' (for
->> unusable mem), if I understand correctly.
->
-> We might not have struct pages for invalid pfns. That really depends on
-> the memory mode. Sure sparse mem model will usually allocate struct
-> pages for whole memory sections but that is not universally true and
-> adding such a suble assumption is simply wrong.
+Implementation:
+The implementation has been kept as simple as possible from the kernel's
+perspective. Specifically, a simple input method uevent_net_rcv() is added
+to NETLINK_KOBJECT_UEVENT sockets which completely reuses existing
+af_netlink infrastructure and does neither add an additional netlink family
+nor requires any user-visible changes.
 
-This is gray area for me. But if I understand correctly this
-assumption comes from the code. It was already there and got broken
-hence I was trying to keep it. If anything needs redesigning I'm all
-for it. But I was just calming the fire here. I only didn't test on
-arm, which seems to be the only one different.
+For example, by using netlink_rcv_skb() we can make use of existing netlink
+infrastructure to report back informative error messages to userspace.
 
-> I suspect you are making strong assumptions based on a very specific
-> implementation which might be not true in general. That was the feeling
-> I've had since the patch was proposed for the first time. This is such a
-> cluttered area that I am not really sure myself, thoug.
+Furthermore, this implementation does not introduce any overhead for
+existing uevent generating codepaths. The struct netns gets a new uevent
+socket member that records the uevent socket associated with that network
+namespace. Since we record the uevent socket for each network namespace in
+struct net we don't have to walk the whole uevent socket list.
+Instead we can directly retrieve the relevant uevent socket and send the
+message. This keeps the codepath very performant without introducing
+needless overhead.
 
-I understand. And again this is likely correct. I'll be glad for any
-assistance here. My limited knowledge is the primary cause for lack of
-relevant details I guess. What I checked looks like pfn_valid is a
-generic function used by all arches but arm, which seems to be the
-only one to implement CONFIG_HAVE_ARCH_PFN_VALID if I didn't miss
-anything. So if this config is enabled on arm, it uses it's own
-version of pfn_valid(). If not, I'd expect all arches behave the same.
-That's where my assumption comes from.
+Uevent sequence numbers are kept global. When a uevent message is sent to
+another network namespace the implementation will simply increment the
+global uevent sequence number and append it to the received uevent. This
+has the advantage that the kernel will never need to parse the received
+uevent message to replace any existing uevent sequence numbers. Instead it
+is up to the userspace process to remove any existing uevent sequence
+numbers in case the uevent message to be sent contains any.
 
-> --
-> Michal Hocko
-> SUSE Labs
+Security:
+In order for a caller to send uevent messages to a target network namespace
+the caller must have CAP_SYS_ADMIN in the owning user namespace of the
+target network namespace. Additionally, any received uevent message is
+verified to not exceed size UEVENT_BUFFER_SIZE. This includes the space
+needed to append the uevent sequence number.
+
+Testing:
+This patch has been tested and verified to work with the following udev
+implementations:
+1. CentOS 6 with udevd version 147
+2. Debian Sid with systemd-udevd version 237
+3. Android 7.1.1 with ueventd
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+Changelog v0->v1:
+* Hold mutex_lock() until uevent is sent to preserve uevent message
+  ordering. See udev and commit for reference:
+
+  commit 7b60a18da393ed70db043a777fd9e6d5363077c4
+  Author: Andrew Vagin <avagin@openvz.org>
+  Date:   Wed Mar 7 14:49:56 2012 +0400
+
+      uevent: send events in correct order according to seqnum (v3)
+
+      The queue handling in the udev daemon assumes that the events are
+      ordered.
+---
+ include/net/net_namespace.h |  1 +
+ lib/kobject_uevent.c        | 82 ++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 82 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index f306b2aa15a4..467bde763a9b 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -78,6 +78,7 @@ struct net {
+ 
+ 	struct sock 		*rtnl;			/* rtnetlink socket */
+ 	struct sock		*genl_sock;
++	struct sock		*uevent_sock;		/* uevent socket */
+ 
+ 	struct list_head 	dev_base_head;
+ 	struct hlist_head 	*dev_name_head;
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 9fe6ec8fda28..5a07798359a1 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -25,6 +25,7 @@
+ #include <linux/uuid.h>
+ #include <linux/ctype.h>
+ #include <net/sock.h>
++#include <net/netlink.h>
+ #include <net/net_namespace.h>
+ 
+ 
+@@ -602,12 +603,88 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ EXPORT_SYMBOL_GPL(add_uevent_var);
+ 
+ #if defined(CONFIG_NET)
++static int uevent_net_send(struct sock *usk, struct sk_buff *skb,
++			   struct netlink_ext_ack *extack)
++{
++	int ret;
++	/* u64 to chars: 2^64 - 1 = 21 chars */
++	char buf[sizeof("SEQNUM=") + 21];
++	struct sk_buff *skbc;
++
++	/* bump and prepare sequence number */
++	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", ++uevent_seqnum);
++	if (ret < 0 || (size_t)ret >= sizeof(buf))
++		return -ENOMEM;
++	ret++;
++
++	/* verify message does not overflow */
++	if ((skb->len + ret) > UEVENT_BUFFER_SIZE) {
++		NL_SET_ERR_MSG(extack, "uevent message too big");
++		return -EINVAL;
++	}
++
++	/* copy skb and extend to accommodate sequence number */
++	skbc = skb_copy_expand(skb, 0, ret, GFP_KERNEL);
++	if (!skbc)
++		return -ENOMEM;
++
++	/* append sequence number */
++	skb_put_data(skbc, buf, ret);
++
++	/* remove msg header */
++	skb_pull(skbc, NLMSG_HDRLEN);
++
++	/* set portid 0 to inform userspace message comes from kernel */
++	NETLINK_CB(skbc).portid = 0;
++	NETLINK_CB(skbc).dst_group = 1;
++
++	ret = netlink_broadcast(usk, skbc, 0, 1, GFP_KERNEL);
++	/* ENOBUFS should be handled in userspace */
++	if (ret == -ENOBUFS || ret == -ESRCH)
++		ret = 0;
++
++	return ret;
++}
++
++static int uevent_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
++			  struct netlink_ext_ack *extack)
++{
++	int ret;
++	struct net *net;
++
++	if (!nlmsg_data(nlh))
++		return -EINVAL;
++
++	/*
++	 * Verify that we are allowed to send messages to the target
++	 * network namespace. The caller must have CAP_SYS_ADMIN in the
++	 * owning user namespace of the target network namespace.
++	 */
++	net = sock_net(NETLINK_CB(skb).sk);
++	if (!netlink_ns_capable(skb, net->user_ns, CAP_SYS_ADMIN)) {
++		NL_SET_ERR_MSG(extack, "missing CAP_SYS_ADMIN capability");
++		return -EPERM;
++	}
++
++	mutex_lock(&uevent_sock_mutex);
++	ret = uevent_net_send(net->uevent_sock, skb, extack);
++	mutex_unlock(&uevent_sock_mutex);
++
++	return ret;
++}
++
++static void uevent_net_rcv(struct sk_buff *skb)
++{
++	netlink_rcv_skb(skb, &uevent_rcv_msg);
++}
++
+ static int uevent_net_init(struct net *net)
+ {
+ 	struct uevent_sock *ue_sk;
+ 	struct netlink_kernel_cfg cfg = {
+ 		.groups	= 1,
+-		.flags	= NL_CFG_F_NONROOT_RECV,
++		.input = uevent_net_rcv,
++		.flags	= NL_CFG_F_NONROOT_RECV
+ 	};
+ 
+ 	ue_sk = kzalloc(sizeof(*ue_sk), GFP_KERNEL);
+@@ -621,6 +698,9 @@ static int uevent_net_init(struct net *net)
+ 		kfree(ue_sk);
+ 		return -ENODEV;
+ 	}
++
++	net->uevent_sock = ue_sk->sk;
++
+ 	mutex_lock(&uevent_sock_mutex);
+ 	list_add_tail(&ue_sk->list, &uevent_sock_list);
+ 	mutex_unlock(&uevent_sock_mutex);
+-- 
+2.15.1
