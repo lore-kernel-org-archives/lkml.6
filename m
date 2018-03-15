@@ -1,62 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932379AbeCOSMu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:12:50 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43835 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752567AbeCOSMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:12:48 -0400
-X-Google-Smtp-Source: AG47ELssJwdQlcv+U4r2ccWYFiUwvFBVR4l1ucpfcMgOjGNJZwBpYC1ja2BjqxZ6xz3JwRenRCXAfw==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH] Revert "rpmsg: smd: Create device for all channels"
-Date: Thu, 15 Mar 2018 11:12:44 -0700
-Message-Id: <20180315181244.8859-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        id S1752721AbeCOSN4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:13:56 -0400
+Received: from vern.gendns.com ([206.190.152.46]:36537 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751864AbeCOSNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:13:54 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: davinci: DA8XX: simplify CFGCHIP regmap_config
+Date: Thu, 15 Mar 2018 13:13:41 -0500
+Message-Id: <1521137621-6491-1-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In an effort to pick up channels that are in a funky state we
-optimistically tried to open all channels that we found, with the
-addition that we failed if the other side did not handshake the opening.
+Since commit 8253bb3f8255 ("regmap: potentially duplicate the name
+string stored in regmap"), the name field of struct regmap_config
+is copied in __regmap_init(), so we no longer need to worry about
+keeping our own copy of the name.
 
-But as we're starting the modem a second time all channels are found -
-in a "funky" state - and we try to open them. But the modem firmware
-requires the IPCRTR to be up in order to initialize. So any channels we
-try to open before that will fail and will not be opened again.
+Just use a string literal in the initialization of da8xx_cfgchip_config
+instead of creating a separate variable for the name.
 
-This takes care of the regression, at the cost of reintroducing the
-previous behavior of handling of channels with "funky" states.
-
-Reverts commit c12fc4519f60 ("rpmsg: smd: Create device for all channels")
-
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/rpmsg/qcom_smd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-davinci/devices-da8xx.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 92d0c6a7a837..1bca889bbea5 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1234,6 +1234,11 @@ static void qcom_channel_state_worker(struct work_struct *work)
- 		if (channel->state != SMD_CHANNEL_CLOSED)
- 			continue;
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 273b6c2..1fd3619 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -1095,11 +1095,8 @@ int __init da850_register_sata(unsigned long refclkpn)
  
-+		remote_state = GET_RX_CHANNEL_INFO(channel, state);
-+		if (remote_state != SMD_CHANNEL_OPENING &&
-+		    remote_state != SMD_CHANNEL_OPENED)
-+			continue;
-+
- 		if (channel->registered)
- 			continue;
+ static struct regmap *da8xx_cfgchip;
  
+-/* regmap doesn't make a copy of this, so we need to keep the pointer around */
+-static const char da8xx_cfgchip_name[] = "cfgchip";
+-
+ static const struct regmap_config da8xx_cfgchip_config __initconst = {
+-	.name		= da8xx_cfgchip_name,
++	.name		= "cfgchip",
+ 	.reg_bits	= 32,
+ 	.val_bits	= 32,
+ 	.reg_stride	= 4,
 -- 
-2.16.2
+2.7.4
