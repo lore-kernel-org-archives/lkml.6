@@ -1,68 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeCORHU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:07:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751682AbeCORHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:07:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F61E21742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 15 Mar 2018 13:07:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180315130717.3435b71c@vmware.local.home>
-In-Reply-To: <20180315150754.qeshnhmtnob2jhxs@pathway.suse.cz>
-References: <1520330185.10722.401.camel@linux.intel.com>
-        <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
-        <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
-        <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
-        <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
-        <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
-        <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
-        <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
-        <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
-        <0c52c2f1-60d8-bb8a-80f2-c699d47659d3@rasmusvillemoes.dk>
-        <20180315150754.qeshnhmtnob2jhxs@pathway.suse.cz>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752216AbeCORHo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:07:44 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40590 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCORHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:07:37 -0400
+X-Google-Smtp-Source: AG47ELvcBr/uSQ7WrGWbpnf6FpAswV5UEUrm2LH+TuQ/k86Xcjwupbse8JqSXNiPsHeuYRmN4rHbkA==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
+        Andrea CORTESE <andrea.cortese@bticino.it>,
+        "davide . bonfanti" <davide.bonfanti@bticino.it>,
+        Shyam Saini <shyam.saini@amarulasolutions.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Simone CIANNI <simone.cianni@bticino.it>,
+        Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+Subject: [PATCH 1/3] dt-bindings: Add vendor prefix for Bticino
+Date: Thu, 15 Mar 2018 22:37:08 +0530
+Message-Id: <20180315170710.9551-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 16:07:54 +0100
-Petr Mladek <pmladek@suse.com> wrote:
+Added 'bticino' vendor prefix for Bticino International.
 
-> Good point. The following should do the job:
-> 
-> static const char *check_pointer_access(const void *ptr)
-> {
-> 	char c;
-> 
-> 	if (!ptr)
-> 		return "(null)";
-> 
-> 	if ((unsigned long)ptr < TASK_SIZE || probe_kernel_address(ptr, c))
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
+Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please don't.
-
--- Steve
-
-> 		return "(efault)";
-> 
-> 	return 0;
-> }
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index ae850d6c0ad3..da0ead5b1ea3 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -56,6 +56,7 @@ bosch	Bosch Sensortec GmbH
+ boundary	Boundary Devices Inc.
+ brcm	Broadcom Corporation
+ buffalo	Buffalo, Inc.
++bticino Bticino International
+ calxeda	Calxeda
+ capella	Capella Microsystems, Inc
+ cascoda	Cascoda, Ltd.
+-- 
+2.14.3
