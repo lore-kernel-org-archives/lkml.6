@@ -1,51 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752043AbeCOKn1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:43:27 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33536 "EHLO mail.skyhub.de"
+        id S1751892AbeCOKoi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:44:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:36790 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751757AbeCOKnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:43:25 -0400
-Date: Thu, 15 Mar 2018 11:42:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] x86/microcode/AMD: check whether the equivalence
- table fits in the file
-Message-ID: <20180315104246.GE27816@pd.tnic>
-References: <cover.1520973389.git.mail@maciej.szmigiero.name>
- <e2de27e0-6250-a10f-8d08-99c0c8d417ba@maciej.szmigiero.name>
- <20180314170457.GE16605@pd.tnic>
- <863eeb13-1c67-da37-6862-610a1204d648@maciej.szmigiero.name>
+        id S1751541AbeCOKog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 06:44:36 -0400
+Subject: Re: [PATCH v9 4/5] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-5-vivek.gautam@codeaurora.org>
+ <8b427ea2-5c13-4712-13d1-e4c1aed0779e@arm.com>
+ <CAAFQd5AqERQMLsJNLAsVXox79kZ+ZtpCUuMSutn70FGK-3Q7vw@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2cab6e92-c44c-edeb-bf50-946cec5cccac@arm.com>
+Date: Thu, 15 Mar 2018 10:44:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <863eeb13-1c67-da37-6862-610a1204d648@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAAFQd5AqERQMLsJNLAsVXox79kZ+ZtpCUuMSutn70FGK-3Q7vw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 12:34:09AM +0100, Maciej S. Szmigiero wrote:
-> 'size' here is the length of the whole CPIO blob containing all
-> containers combined (well, the remaining part of it).
+On 15/03/18 06:18, Tomasz Figa wrote:
+> On Thu, Mar 15, 2018 at 2:50 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 13/03/18 08:55, Vivek Gautam wrote:
+>>>
+>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>
+>>> Finally add the device link between the master device and
+>>> smmu, so that the smmu gets runtime enabled/disabled only when the
+>>> master needs it. This is done from add_device callback which gets
+>>> called once when the master is added to the smmu.
+>>>
+>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>>> ---
+>>>    drivers/iommu/arm-smmu.c | 29 +++++++++++++++++++++++++++++
+>>>    1 file changed, 29 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>> index 56a04ae80bf3..64953ff2281f 100644
+>>> --- a/drivers/iommu/arm-smmu.c
+>>> +++ b/drivers/iommu/arm-smmu.c
+>>> @@ -1460,10 +1460,31 @@ static int arm_smmu_add_device(struct device *dev)
+>>>          iommu_device_link(&smmu->iommu, dev);
+>>>    +     if (pm_runtime_enabled(smmu->dev)) {
+>>> +               struct device_link *link;
+>>> +
+>>> +               /*
+>>> +                * Establish the link between smmu and master, so that the
+>>> +                * smmu gets runtime enabled/disabled as per the master's
+>>> +                * needs.
+>>> +                */
+>>> +               link = device_link_add(dev, smmu->dev,
+>>> DL_FLAG_PM_RUNTIME);
+>>> +               if (!link) {
+>>
+>>
+>> FWIW, given that we don't really care about link itself, I'd be quite happy
+>> to simplify that lot down to:
+>>
+>>          if (pm_runtime_enabled(smmu_dev) &&
+>>              !device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME)) {
+>>
+>>> +                       dev_warn(smmu->dev,
+>>> +                                "Unable to add link to the consumer
+>>> %s\n",
+>>> +                                dev_name(dev));
+>>
+>>
+>> (side note: since device_link_add() already prints a message on success,
+>> maybe it could print its own failure message too?)
 > 
-> If we skip over 'size' bytes we'll have nothing left to parse.
+> I think we care whether adding the link succeeded. If it fails to be
+> added, we might end up with a complete system lockup on a system with
+> power domains.
 
-Well, if
+Well, yeah, that was implicit - the point is that we *only* care about 
+whether it succeeded or not. Thus we may as well just check for NULL 
+directly instead of assigning the value as if we were actually going to 
+do anything with it.
 
-	size < eqiv_tbl_len + CONTAINER_HDR_SZ
-
-then you really have nothing else to parse.
-
-Come to think of it, if the whole blob is truncated like that, we
-shouldn't trust it at all and stop looking at it. So yes, "return size"
-is the right thing to do but for a different reason.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Robin.
