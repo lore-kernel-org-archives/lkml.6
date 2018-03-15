@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeCOKWt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:22:49 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52950 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751583AbeCOKWr (ORCPT
+        id S1751946AbeCOKXA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:23:00 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39494 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751892AbeCOKW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:22:47 -0400
-X-Google-Smtp-Source: AG47ELsqaK5XdkjNpyij5tUSKVoHeIyRTl4xid46V/DLv4XiVJLxSDvkH3HtTrlikOlisPus3KCwhHJV4LQWDNRw89E=
+        Thu, 15 Mar 2018 06:22:57 -0400
+X-Google-Smtp-Source: AG47ELtmg/mwHqpsmainBHgijzsancSAGOfaK6y+yzCFmM32JZS0sdoOzNgTezIket0gn2h9j91MoMv3sy83tDCN+NE=
 MIME-Version: 1.0
-In-Reply-To: <20180223064138.18401-3-jh80.chung@samsung.com>
-References: <CGME20180223064140epcas2p2145faef6a2c44d7d20bb3d6099f12d18@epcas2p2.samsung.com>
- <20180223064138.18401-1-jh80.chung@samsung.com> <20180223064138.18401-3-jh80.chung@samsung.com>
+In-Reply-To: <20180223064138.18401-5-jh80.chung@samsung.com>
+References: <CGME20180223064140epcas2p1bf475ebcbfa8a0c46e92402e31590891@epcas2p1.samsung.com>
+ <20180223064138.18401-1-jh80.chung@samsung.com> <20180223064138.18401-5-jh80.chung@samsung.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 15 Mar 2018 11:22:46 +0100
-Message-ID: <CAPDyKFprYVFXXSq7Jv7BLwE0Liq2S2EDMmZY7MBp7tpbpdYsqA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] ARM: dts: socfpga: remove 'num-slots' property for dwmmc
+Date: Thu, 15 Mar 2018 11:22:56 +0100
+Message-ID: <CAPDyKFpYgVUwaWYyvRoGkX=m5kLi=L15_D4KZpgwW6iC2-WF4A@mail.gmail.com>
+Subject: Re: [PATCH 5/6] ARM: dts: lpc18xx: remove 'num-slots' property for dwmmc
 To: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         devicetree@vger.kernel.org,
@@ -40,60 +40,21 @@ Kind regards
 Uffe
 
 > ---
->  arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts | 1 -
->  arch/arm/boot/dts/socfpga_arria5.dtsi             | 1 -
->  arch/arm/boot/dts/socfpga_cyclone5.dtsi           | 1 -
->  arch/arm/boot/dts/socfpga_vt.dts                  | 1 -
->  4 files changed, 4 deletions(-)
+>  arch/arm/boot/dts/lpc18xx.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-> index 040a164ba148..5822fd2085db 100644
-> --- a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-> +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
-> @@ -20,7 +20,6 @@
->
->  &mmc {
->         status = "okay";
-> -       num-slots = <1>;
->         cap-sd-highspeed;
->         broken-cd;
->         bus-width = <4>;
-> diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> index 8c037297296c..e59461f5416e 100644
-> --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> @@ -30,7 +30,6 @@
->                 };
->
->                 mmc0: dwmmc0@ff704000 {
+> diff --git a/arch/arm/boot/dts/lpc18xx.dtsi b/arch/arm/boot/dts/lpc18xx.dtsi
+> index 7cae9c5e27db..10b8249b8ab6 100644
+> --- a/arch/arm/boot/dts/lpc18xx.dtsi
+> +++ b/arch/arm/boot/dts/lpc18xx.dtsi
+> @@ -115,7 +115,6 @@
+>                         compatible = "snps,dw-mshc";
+>                         reg = <0x40004000 0x1000>;
+>                         interrupts = <6>;
 > -                       num-slots = <1>;
->                         broken-cd;
->                         bus-width = <4>;
->                         cap-mmc-highspeed;
-> diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> index a05e3df23103..68ced67f8bfb 100644
-> --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> @@ -31,7 +31,6 @@
->                 };
->
->                 mmc0: dwmmc0@ff704000 {
-> -                       num-slots = <1>;
->                         broken-cd;
->                         bus-width = <4>;
->                         cap-mmc-highspeed;
-> diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
-> index dfe2193cd4d5..547c38632c68 100644
-> --- a/arch/arm/boot/dts/socfpga_vt.dts
-> +++ b/arch/arm/boot/dts/socfpga_vt.dts
-> @@ -42,7 +42,6 @@
->                 };
->
->                 dwmmc0@ff704000 {
-> -                       num-slots = <1>;
->                         broken-cd;
->                         bus-width = <4>;
->                         cap-mmc-highspeed;
+>                         clocks = <&ccu2 CLK_SDIO>, <&ccu1 CLK_CPU_SDIO>;
+>                         clock-names = "ciu", "biu";
+>                         resets = <&rgu 20>;
 > --
 > 2.15.1
 >
