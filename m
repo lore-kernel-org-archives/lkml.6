@@ -1,102 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751673AbeCOJjh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:39:37 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:54070 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbeCOJjf (ORCPT
+        id S1751500AbeCOJmn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:42:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48194 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750726AbeCOJml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:39:35 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "peterz@infradead.org" <peterz@infradead.org>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-Thread-Topic: Do we need to disable preemption in flush_tlb_range()?
-Thread-Index: AQHTsW/Ph/wHPbUur0SfkKmu1J1Lq6PQL76AgADLfoCAABQpAA==
-Date: Thu, 15 Mar 2018 09:39:31 +0000
-Message-ID: <1521106770.11552.70.camel@synopsys.com>
-References: <1519917189.13866.6.camel@synopsys.com>
-         <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
-         <20180315082720.GT4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180315082720.GT4064@hirez.programming.kicks-ass.net>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4B6D4518BFFBD64793F3FEC19A670248@internal.synopsys.com>
+        Thu, 15 Mar 2018 05:42:41 -0400
+Subject: Re: [PATCH v3 11/14] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 10:42:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1521051954-25715-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031509-0016-0000-0000-00000532FBE2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031509-0017-0000-0000-0000287004D6
+Message-Id: <fee58106-a481-aaf8-7fb6-8d51c4b7e906@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150110
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2F9dfdE012553
 
-Hi Peter,
+On 14/03/2018 19:25, Tony Krowiak wrote:
+> Provides a sysfs interface to view the AP matrix configured for the
+> mediated matrix device.
+>
+> The relevant sysfs structures are:
+>
+> /sys/devices/vfio_ap
+> ... [matrix]
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ...............[$uuid]
+> .................. matrix
+>
+> To view the matrix configured for the mediated matrix device,
+> print the matrix file:
+>
+> 	cat matrix
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c |   39 +++++++++++++++++++++++++++++++++++++
+>   1 files changed, 39 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 461d450..04f7a92 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -692,6 +692,44 @@ static ssize_t control_domains_show(struct device *dev,
+>   }
+>   DEVICE_ATTR_RO(control_domains);
+>
+> +static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+> +			   char *buf)
+> +{
+> +	struct mdev_device *mdev = mdev_from_dev(dev);
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +	char *bufpos = buf;
+> +	unsigned long apid;
+> +	unsigned long apqi;
+> +	int nchars = 0;
+> +	int n;
+> +
+> +	n = sprintf(bufpos, "ADAPTER.DOMAIN\n");
 
-On Thu, 2018-03-15 at 09:27 +0100, Peter Zijlstra wrote:
-> On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
-> > +CC Peter since we have his attention ;-)
-> 
-> Yeah, timezone collision there, I typically sleep at 1am ;-)
-> 
-> > On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
-> > > Hi Vineet,
-> > > 
-> > > Just noticed that in comments for smp_call_function_many() it is said that
-> > > preemption must be disabled during its execution. And that function gets executed
-> > > among other ways like that:
-> > > -------------------------->8-----------------------
-> > >    flush_tlb_range()
-> > >      -> on_each_cpu_mask()
-> > >           -> smp_call_function_many()
-> > > -------------------------->8-----------------------
-> > 
-> > In general I prefer not to - Peter what say you ?
-> 
-> The comment with smp_call_function_many() is correct, it relies on
-> preemption being disabled in a number of ways. I would expect
-> this_cpu_ptr() for example to complain when used with preemption
-> enabled (CONFIG_DEBUG_PREEMPT).
+For easy parsing it is better to only report the interesting data
+and let a user space utility make fancy presentation.
 
-I just tried CONFIG_DEBUG_PREEMPT and the only thing I got was that:
--------------------------->8-----------------------
-ARC perf        : 8 counters (32 bits), 32 conditions, [overflow IRQ support]
-BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-caller is arc_pmu_device_probe+0x24e/0x29c
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.14+ #67
+> +	bufpos += n;
+> +	nchars += n;
+> +
+> +	n = sprintf(bufpos, "--------------\n");
+> +	bufpos += n;
+> +	nchars += n;
+> +
+> +	for_each_set_bit_inv(apid, matrix_mdev->matrix->apm,
+> +			     matrix_mdev->matrix->apm_max) {
+> +		n = sprintf(bufpos, "%02lx\n", apid);
+> +		bufpos += n;
+> +		nchars += n;
+> +
+> +		for_each_set_bit_inv(apqi, matrix_mdev->matrix->aqm,
+> +				     matrix_mdev->matrix->aqm_max) {
+> +			n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+> +			bufpos += n;
+> +			nchars += n;
+> +		}
+> +	}
+> +
+> +	return nchars;
+> +}
+> +DEVICE_ATTR_RO(matrix);
+> +
+> +
+>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>   	&dev_attr_assign_adapter.attr,
+>   	&dev_attr_unassign_adapter.attr,
+> @@ -700,6 +738,7 @@ static ssize_t control_domains_show(struct device *dev,
+>   	&dev_attr_assign_control_domain.attr,
+>   	&dev_attr_unassign_control_domain.attr,
+>   	&dev_attr_control_domains.attr,
+> +	&dev_attr_matrix.attr,
+>   	NULL,
+>   };
+>
 
-Stack Trace:
-  arc_unwind_core.constprop.1+0xd0/0xf4
-  dump_stack+0x64/0x7c
-  debug_smp_processor_id+0xb8/0xbc
-  arc_pmu_device_probe+0x24e/0x29c
-  platform_drv_probe+0x26/0x5c
-  really_probe+0x288/0x338
-  __driver_attach+0xc4/0xc8
-  bus_for_each_dev+0x38/0x70
-  bus_add_driver+0x12a/0x18c
-  driver_register+0x50/0xec
-  do_one_initcall+0x32/0x108
-  kernel_init_freeable+0xfe/0x188
--------------------------->8-----------------------
-
-That happens because in PMU probe routine we want to
-configure IRQ handlers on all other cores:
--------------------------->8-----------------------
-  arc_pmu_device_probe() ->
-    on_each_cpu(arc_cpu_pmu_irq_init, &irq, 1): preempt_disable() ->
-      enable_percpu_irq(irq, IRQ_TYPE_NONE) ->
-        smp_processor_id() with disabled preemption.
--------------------------->8-----------------------
-
-Which poses another preemption related question - how do IRQ setup on
-all cores properly? :)
-
--Alexey
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
