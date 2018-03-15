@@ -1,230 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeCOLwH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:52:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48774 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbeCOLwF (ORCPT
+        id S1751881AbeCOLw0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:52:26 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45924 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeCOLwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:52:05 -0400
-Date: Thu, 15 Mar 2018 12:51:46 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce
- wait_var_event()/wake_up_var()
-Message-ID: <20180315115146.GX4064@hirez.programming.kicks-ass.net>
-References: <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
- <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180311112725.GC4043@hirez.programming.kicks-ass.net>
- <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
- <3396.1521107922@warthog.procyon.org.uk>
+        Thu, 15 Mar 2018 07:52:25 -0400
+Date: Thu, 15 Mar 2018 07:52:23 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, rostedt <rostedt@goodmis.org>,
+        syzbot <syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com>,
+        Ingo Molnar <mingo@redhat.com>, acme <acme@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Message-ID: <343055951.10185.1521114743799.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180315091950.GA7600@krava>
+References: <001a114465e241a8720567419a72@google.com> <539259484.8875.1520954991870.JavaMail.zimbra@efficios.com> <20180314173746.3a6ab6eb@vmware.local.home> <20180315083125.GU4064@hirez.programming.kicks-ass.net> <20180315091950.GA7600@krava>
+Subject: Re: WARNING in tracepoint_probe_register_prio (2)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3396.1521107922@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.6_GA_1906 (ZimbraWebClient - FF52 (Linux)/8.8.6_GA_1906)
+Thread-Topic: WARNING in tracepoint_probe_register_prio (2)
+Thread-Index: bkQm0/fZ+0SxpBCD0FzDT+Qwc8Eulg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 09:58:42AM +0000, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
+----- On Mar 15, 2018, at 5:19 AM, Jiri Olsa jolsa@redhat.com wrote:
+
+> On Thu, Mar 15, 2018 at 09:31:25AM +0100, Peter Zijlstra wrote:
+>> On Wed, Mar 14, 2018 at 05:37:46PM -0400, Steven Rostedt wrote:
+>> > On Tue, 13 Mar 2018 11:29:51 -0400 (EDT)
+>> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+>> > 
+>> > > Here is a WARN_ON() splat in tracepoint.c, which I suspect is caused
+>> > > by perf trying to register the same probe twice to the tracepoint API.
+>> > > We got another splat on unregister too, which I will forward in a
+>> > > separate email.
+>> > > 
+>> > > Thoughts ?
+>> > 
+>> > Yes, it looks like it's perf not accounting for registered events
+>> > properly.
+>> > 
+>> > Peter?
+>> 
+>> I've not yet managed to reproduce, but if you look at the provided
+>> repro.c file, you'll see it opens two _different_ events.
 > 
-> > > > Argh, no no no.. That whole wait_for_atomic_t thing is a giant
-> > > > trainwreck already and now you're making it worse still.
-> 
-> Your patch description needs to say why this isn't a trainwreck when you
-> consider wait_for_atomic_t() to be one since it does things in a very similar
-> way.
+> from the log it looks like they inject the slab error,
+> and the allocation fails.. looks like we need to change
+> the WARN to skip ENOMEM.. something like below?
 
-Does the below address things sufficiently clear?
+Oh, I missed this important point. Then we should only
+warn if !-ENOMEM for both tracepoint_add_func and tracepoint_remove_func,
+because each performs memory allocation under the hood.
+Like the following:
 
----
-
-Subject: sched/wait: Introduce wait_var_event()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu Mar 15 11:40:33 CET 2018
-
-As a replacement for the wait_on_atomic_t() API provide the
-wait_var_event() API.
-
-The wait_var_event() API is based on the very same hashed-waitqueue
-idea, but doesn't care about the type (atomic_t) or the specific
-condition (atomic_read() == 0). IOW. it's much more widely
-applicable/flexible.
-
-It shares all the benefits/disadvantages of a hashed-waitqueue
-approach with the existing wait_on_atomic_t/wait_on_bit() APIs.
-
-The API is modeled after the existing wait_event() API, but instead of
-taking a wait_queue_head, it takes an address. This addresses is
-hashed to obtain a wait_queue_head from the bit_wait_table.
-
-Similar to the wait_event() API, it takes a condition expression as
-second argument and will wait until this expression becomes true.
-
-The following are (mostly) identical replacements:
-
-	wait_on_atomic_t(&my_atomic, atomic_t_wait, TASK_UNINTERRUPTIBLE);
-	wake_up_atomic_t(&my_atomic);
-
-	wait_var_event(&my_atomic, !atomic_read(&my_atomic));
-	wake_up_var(&my_atomic);
-
-The only difference is that wake_up_var() is an unconditional wakeup
-and doesn't check the previously hard-coded (atomic_read() == 0)
-condition here. This is of little concequence, since most callers are
-already conditional on atomic_dec_and_test() and the ones that are
-not, are trivial to make so.
-
-Cc: David Howells <dhowells@redhat.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/wait_bit.h |   70 +++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sched/wait_bit.c  |   48 ++++++++++++++++++++++++++++++++
- 2 files changed, 118 insertions(+)
-
---- a/include/linux/wait_bit.h
-+++ b/include/linux/wait_bit.h
-@@ -262,4 +262,74 @@ int wait_on_atomic_t(atomic_t *val, wait
- 	return out_of_line_wait_on_atomic_t(val, action, mode);
- }
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -207,7 +207,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+                        lockdep_is_held(&tracepoints_mutex));
+        old = func_add(&tp_funcs, func, prio);
+        if (IS_ERR(old)) {
+-               WARN_ON_ONCE(1);
++               WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+                return PTR_ERR(old);
+        }
  
-+extern void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags);
-+extern void wake_up_var(void *var);
-+extern wait_queue_head_t *__var_waitqueue(void *p);
-+
-+#define ___wait_var_event(var, condition, state, exclusive, ret, cmd)	\
-+({									\
-+	__label__ __out;						\
-+	struct wait_queue_head *__wq_head = __var_waitqueue(var);	\
-+	struct wait_bit_queue_entry __wbq_entry;			\
-+	long __ret = ret; /* explicit shadow */				\
-+									\
-+	init_wait_var_entry(&__wbq_entry, var,				\
-+			    exclusive ? WQ_FLAG_EXCLUSIVE : 0);		\
-+	for (;;) {							\
-+		long __int = prepare_to_wait_event(__wq_head,		\
-+						   &__wbq_entry.wq_entry, \
-+						   state);		\
-+		if (condition)						\
-+			break;						\
-+									\
-+		if (___wait_is_interruptible(state) && __int) {		\
-+			__ret = __int;					\
-+			goto __out;					\
-+		}							\
-+									\
-+		cmd;							\
-+	}								\
-+	finish_wait(__wq_head, &__wbq_entry.wq_entry);			\
-+__out:	__ret;								\
-+})
-+
-+#define __wait_var_event(var, condition)				\
-+	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
-+			  schedule())
-+
-+#define wait_var_event(var, condition)					\
-+do {									\
-+	might_sleep();							\
-+	if (condition)							\
-+		break;							\
-+	__wait_var_event(var, condition);				\
-+} while (0)
-+
-+#define __wait_var_event_killable(var, condition)			\
-+	___wait_var_event(var, condition, TASK_KILLABLE, 0, 0,		\
-+			  schedule())
-+
-+#define wait_var_event_killable(var, condition)				\
-+({									\
-+	int __ret = 0;							\
-+	might_sleep();							\
-+	if (!(condition))						\
-+		__ret = __wait_var_event_killable(var, condition);	\
-+	__ret;								\
-+})
-+
-+#define __wait_var_event_timeout(var, condition, timeout)		\
-+	___wait_var_event(var, ___wait_cond_timeout(condition),		\
-+			  TASK_UNINTERRUPTIBLE, 0, timeout,		\
-+			  __ret = schedule_timeout(__ret))
-+
-+#define wait_var_event_timeout(var, condition, timeout)			\
-+({									\
-+	long __ret = timeout;						\
-+	might_sleep();							\
-+	if (!___wait_cond_timeout(condition))				\
-+		__ret = __wait_var_event_timeout(var, condition, timeout); \
-+	__ret;								\
-+})
-+
- #endif /* _LINUX_WAIT_BIT_H */
---- a/kernel/sched/wait_bit.c
-+++ b/kernel/sched/wait_bit.c
-@@ -149,6 +149,54 @@ void wake_up_bit(void *word, int bit)
- }
- EXPORT_SYMBOL(wake_up_bit);
+@@ -239,7 +239,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
+                        lockdep_is_held(&tracepoints_mutex));
+        old = func_remove(&tp_funcs, func);
+        if (IS_ERR(old)) {
+-               WARN_ON_ONCE(1);
++               WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+                return PTR_ERR(old);
+        }
  
-+wait_queue_head_t *__var_waitqueue(void *p)
-+{
-+	if (BITS_PER_LONG == 64) {
-+		unsigned long q = (unsigned long)p;
-+
-+		return bit_waitqueue((void *)(q & ~1), q & 1);
-+	}
-+	return bit_waitqueue(p, 0);
-+}
-+EXPORT_SYMBOL(__var_waitqueue);
-+
-+static int
-+var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-+		  int sync, void *arg)
-+{
-+	struct wait_bit_key *key = arg;
-+	struct wait_bit_queue_entry *wbq_entry =
-+		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
-+
-+	if (wbq_entry->key.flags != key->flags ||
-+	    wbq_entry->key.bit_nr != key->bit_nr)
-+		return 0;
-+
-+	return autoremove_wake_function(wq_entry, mode, sync, key);
-+}
-+
-+void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
-+{
-+	*wbq_entry = (struct wait_bit_queue_entry){
-+		.key = {
-+			.flags	= (var),
-+			.bit_nr = -1,
-+		},
-+		.wq_entry = {
-+			.private = current,
-+			.func	 = var_wake_function,
-+			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
-+		},
-+	};
-+}
-+EXPORT_SYMBOL(init_wait_var_entry);
-+
-+void wake_up_var(void *var)
-+{
-+	__wake_up_bit(__var_waitqueue(var), var, -1);
-+}
-+EXPORT_SYMBOL(wake_up_var);
-+
- /*
-  * Manipulate the atomic_t address to produce a better bit waitqueue table hash
-  * index (we're keying off bit -1, but that would produce a horrible hash
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
