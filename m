@@ -1,67 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751597AbeCOJFF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:05:05 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39611 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeCOJFC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:05:02 -0400
-X-Google-Smtp-Source: AG47ELt1kLA1bezhUMXAllDULduX9ejxEu5VGMG0T1tQHUM/wB2zONrYwPlUBJsgY96Xjvlcvx705j2wMK0dDoyksLA=
-MIME-Version: 1.0
-In-Reply-To: <CAD4SzjtHmBTisX6vQYuEnJf0fKsF==w5GHqsdks6xGv1go7Lzw@mail.gmail.com>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-4-git-send-email-jix024@eng.ucsd.edu> <20180315045401.GB4860@magnolia>
- <CAD4SzjtHmBTisX6vQYuEnJf0fKsF==w5GHqsdks6xGv1go7Lzw@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 15 Mar 2018 10:05:00 +0100
-X-Google-Sender-Auth: KQqmVkthjY2vHwjLQc3WGTNSEQk
-Message-ID: <CAK8P3a1OJqHEOgiHk1ZQytGW7b1c2Nam5xjSxxkfx=h2x7f_mg@mail.gmail.com>
-Subject: Re: [RFC v2 03/83] Add super.h.
-To: Andiry Xu <jix024@eng.ucsd.edu>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        id S1751700AbeCOJGG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:06:06 -0400
+Received: from ozlabs.org ([103.22.144.67]:47623 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbeCOJGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:06:05 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 15 Mar 2018 20:05:33 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
-        Steven Swanson <swanson@cs.ucsd.edu>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
-        swhiteho@redhat.com, miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Content-Type: text/plain; charset="UTF-8"
+        Huang Ying <ying.huang@intel.com>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ asm-generic tree
+Message-ID: <20180315200533.7a3c52a7@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jSOPd4VSlD+3M2DPGFTvOpu"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 7:11 AM, Andiry Xu <jix024@eng.ucsd.edu> wrote:
-> On Wed, Mar 14, 2018 at 9:54 PM, Darrick J. Wong
-> <darrick.wong@oracle.com> wrote:
->> On Sat, Mar 10, 2018 at 10:17:44AM -0800, Andiry Xu wrote:
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->>> +     /* s_mtime and s_wtime should be together and their order should not be
->>> +      * changed. we use an 8 byte write to update both of them atomically
->>> +      */
->>> +     __le32          s_mtime;                /* mount time */
->>> +     __le32          s_wtime;                /* write time */
->>
->> Hmmm, 32-bit timestamps?  2038 isn't that far away...
->>
->
-> I will try fixing this in the next version.
+Hi Andrew,
 
-I would also recommend adding nanosecond-resolution timestamps.
-In theory, a signed 64-bit nanosecond field is sufficient for each timestamp
-(it's good for several hundred years), but the more common format uses
-64-bit seconds and 32-bit nanoseconds in other file systems.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Unfortunately it looks, you will have to come up with a more sophisticated
-update method above, even if you leave out the nanoseconds, you can't
-easily rely on a 16-byte atomic update across architectures to deal with
-the two 64-bit timestamps. For the superblock fields, you might be able
-to get away with using second resolution, and then encoding the
-timestamps as a signed 64-bit 'mkfs time' along with two unsigned
-32-bit times added on top, which gives you a range of 136 years mount
-a file system after its creation.
+  arch/score/mm/cache.c
 
-      Arnd
+between commit:
+
+  b8c9c8f0190f ("arch: remove score port")
+
+from the asm-generic tree and commit:
+
+  32a8c02959cd ("mm: fix races between swapoff and flush dcache")
+
+from the akpm-current tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqN10ACgkQAVBC80lX
+0GwRGwf+PXr/DnXjWN9JqVWkIxYtovhe4/Wrlm6JGbYAlGa9UYK71raazAQexTUJ
+T5UegtYsKSL/Ii/Weo8H9RFTMHRtc/pP5pXrqToGqiX45TU510n2vIbuyMxjgube
+chHIbF8wbwGSAAByVuo/pIVDp66wdeKqhoBJAjbITygclilHe8e1VGR6Y7TaY/lH
+NGxZ9chagOI08SUrZKCJ91rIYns75mSf9uwGDoOYUHUkWkDnF/EHUBI4QhjFaeZZ
+atVEeQgJOI22NzCsO/8AnhevsSd+bO1GWElfZsUY/GnXYMQ6RTaoBACJNMszRaLo
+xSa7qu+qjoKjXQ/Qi+9aD29aiqHNyQ==
+=6hsN
+-----END PGP SIGNATURE-----
+
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu--
