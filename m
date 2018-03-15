@@ -1,242 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752890AbeCOVVi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:21:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33188 "EHLO mx1.redhat.com"
+        id S932457AbeCOVXu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:23:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55662 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752623AbeCOVVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:21:12 -0400
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 1/2] cpuset: Enable cpuset controller in default hierarchy
-Date: Thu, 15 Mar 2018 17:20:41 -0400
-Message-Id: <1521148842-15486-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1521148842-15486-1-git-send-email-longman@redhat.com>
-References: <1521148842-15486-1-git-send-email-longman@redhat.com>
+        id S1751877AbeCOVXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:23:43 -0400
+Date: Thu, 15 Mar 2018 15:23:34 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Alexey Kardashevskiy <aik@ozlabs.ru>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+Subject: Re: [RFC PATCH] vfio/pci: Add ioeventfd support
+Message-ID: <20180315152334.29ee10b6@w520.home>
+In-Reply-To: <777482c6-8180-df0f-0a0c-5d6e000553ba@redhat.com>
+References: <20180207000731.32764.95992.stgit@gimli.home>
+        <cfe31ae1-2557-d15a-45a2-0ba03d8d71fa@ozlabs.ru>
+        <20180206212538.50ef0e13@w520.home>
+        <6014d60c-9bdb-4dc0-7cd7-9299005d9c5a@ozlabs.ru>
+        <20180207071253.7c606594@w520.home>
+        <86c09adf-c4ab-5eca-629a-4d6c6a5692be@ozlabs.ru>
+        <777482c6-8180-df0f-0a0c-5d6e000553ba@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given the fact that thread mode had been merged into 4.14, it is now
-time to enable cpuset to be used in the default hierarchy (cgroup v2)
-as it is clearly threaded.
+On Tue, 13 Mar 2018 13:38:00 +0100
+Auger Eric <eric.auger@redhat.com> wrote:
+> On 08/02/18 02:22, Alexey Kardashevskiy wrote:
+> > On 08/02/18 01:12, Alex Williamson wrote:  
+> >> On Wed, 7 Feb 2018 15:48:26 +1100
+> >> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+> >>> On 07/02/18 15:25, Alex Williamson wrote:  
+> >>>> On Wed, 7 Feb 2018 15:09:22 +1100
+> >>>> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:    
+> >>>>> On 07/02/18 11:08, Alex Williamson wrote:    
+> >>>>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> >>>>>> index e3301dbd27d4..07966a5f0832 100644
+> >>>>>> --- a/include/uapi/linux/vfio.h
+> >>>>>> +++ b/include/uapi/linux/vfio.h
+> >>>>>> @@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
+> >>>>>>  
+> >>>>>>  #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
+> >>>>>>  
+> >>>>>> +/**
+> >>>>>> + * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
+> >>>>>> + *                              struct vfio_device_ioeventfd)
+> >>>>>> + *
+> >>>>>> + * Perform a write to the device at the specified device fd offset, with
+> >>>>>> + * the specified data and width when the provided eventfd is triggered.
+> >>>>>> + *
+> >>>>>> + * Return: 0 on success, -errno on failure.
+> >>>>>> + */
+> >>>>>> +struct vfio_device_ioeventfd {
+> >>>>>> +	__u32	argsz;
+> >>>>>> +	__u32	flags;
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
+> >>>>>> +	__u64	offset;			/* device fd offset of write */
+> >>>>>> +	__u64	data;			/* data to be written */
+> >>>>>> +	__s32	fd;			/* -1 for de-assignment */
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)      
+> >>>>>
+> >>>>>
+> >>>>> Is this a first ioctl with endianness fixed to little-endian? I'd suggest
+> >>>>> to comment on that as things like vfio_info_cap_header do use the host
+> >>>>> endianness.    
+> >>>>
+> >>>> Look at our current read and write interface, we call leXX_to_cpu
+> >>>> before calling iowriteXX there and I think a user would logically
+> >>>> expect to use the same data format here as they would there.    
+> >>>
+> >>> If the data is "char data[8]" (i.e. bytestream), then it can be expected to
+> >>> be device/bus endian (i.e. PCI == little endian), but if it is u64 - then I
+> >>> am not so sure really, and this made me look around. It could be "__le64
+> >>> data" too.
+> >>>  
+> >>>> Also note
+> >>>> that iowriteXX does a cpu_to_leXX, so are we really defining the
+> >>>> interface as little-endian or are we just trying to make ourselves
+> >>>> endian neutral and counter that implicit conversion?  Thanks,    
+> >>>
+> >>> Defining it LE is fine, I just find it a bit confusing when
+> >>> vfio_info_cap_header is host endian but vfio_device_ioeventfd is not.  
+> >>
+> >> But I don't think we are defining the interface as little-endian.
+> >> iowriteXX does a cpu_to_leXX byteswap.  Therefore in order to maintain
+> >> endian neutrality, if the data does a cpu->le swap on the way out, I
+> >> need to do a le->cpu swap on the way in, right?  Please defend the
+> >> assertion that we're creating a little-endian interface.  Thanks,  
+> > 
+> > 
+> > vfio_pci_ioctl() passes "endian-neutral" ioeventfd.data to
+> > vfio_pci_ioeventfd() which immediately does the leXX_to_cpu() conversion
+> > (and uses the result later on in iowriteXX(), which is not VFIO API) so I
+> > read it as the ioctl really expects LE.
+> > 
+> > The QEMU part - vfio_nvidia_mirror_quirk MR - does not swap bytes but the
+> > MR itself it declared DEVICE_LITTLE_ENDIAN which means
+> > vfio_nvidia_quirk_mirror_write() receives byteswapped @data in the host
+> > endian == bigendian on a big endian host. So the ioctl() handler will
+> > receive a BE value, do byteswap #1 in leXX_to_cpu(), and then do byteswap
+> > #2 in iowriteXX() so after all a BE will be written to a device. So I'd say
+> > we rather do not need leXX_to_cpu() in vfio_pci_ioeventfd(). Correct me
+> > where I am wrong. Thanks,  
+> 
+> It is not crystal clear to me what is the outcome of this discussion.
+> Please can you clarify?
+> 
+> At the beginning I understood we had a chain of lexx_to_cpu and
+> cpu_to_lexx (in iowritexx) so it was neutral. Now I am lost about what
+> we want.
 
-The cpuset controller had experienced feature creep since its
-introduction more than a decade ago. Besides the core cpus and mems
-control files to limit cpus and memory nodes, there are a bunch of
-additional features that can be controlled from the userspace. Some of
-the features are of doubtful usefulness and may not be actively used.
+I've tried to address this with patch 2/3 in the newer series, adding
+helpers such that the implicit endian-ness of the io{read,write}
+functions is hidden and no extraneous swapping is done.  Therefore the
+leXX_to_cpu() is gone, as Alexey wanted.  Unless there's a new
+objection, this is what I intend to go with.  Thanks,
 
-This patch enables cpuset controller in the default hierarchy with
-a minimal set of features, namely just the cpus and mems and their
-effective_* counterparts.  We can certainly add more features to the
-default hierarchy in the future if there is a real user need for them
-later on.
-
-Alternatively, with the unified hiearachy, it may make more sense
-to move some of those additional cpuset features, if desired, to
-memory controller or may be to the cpu controller instead of staying
-with cpuset.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/cgroup-v2.txt | 96 ++++++++++++++++++++++++++++++++++++++++-----
- kernel/cgroup/cpuset.c      | 44 +++++++++++++++++++--
- 2 files changed, 127 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
-index 74cdeae..b91fd5d 100644
---- a/Documentation/cgroup-v2.txt
-+++ b/Documentation/cgroup-v2.txt
-@@ -48,16 +48,18 @@ v1 is available under Documentation/cgroup-v1/.
-        5-2-1. Memory Interface Files
-        5-2-2. Usage Guidelines
-        5-2-3. Memory Ownership
--     5-3. IO
--       5-3-1. IO Interface Files
--       5-3-2. Writeback
--     5-4. PID
--       5-4-1. PID Interface Files
--     5-5. Device
--     5-6. RDMA
--       5-6-1. RDMA Interface Files
--     5-7. Misc
--       5-7-1. perf_event
-+     5-3. Cpuset
-+       5.3-1. Cpuset Interface Files
-+     5-4. IO
-+       5-4-1. IO Interface Files
-+       5-4-2. Writeback
-+     5-5. PID
-+       5-5-1. PID Interface Files
-+     5-6. Device
-+     5-7. RDMA
-+       5-7-1. RDMA Interface Files
-+     5-8. Misc
-+       5-8-1. perf_event
-      5-N. Non-normative information
-        5-N-1. CPU controller root cgroup process behaviour
-        5-N-2. IO controller root cgroup process behaviour
-@@ -1243,6 +1245,80 @@ POSIX_FADV_DONTNEED to relinquish the ownership of memory areas
- belonging to the affected files to ensure correct memory ownership.
- 
- 
-+Cpuset
-+------
-+
-+The "cpuset" controller provides a mechanism for constraining
-+the CPU and memory node placement of tasks to only the resources
-+specified in the cpuset interface files in a task's current cgroup.
-+This is especially valuable on large NUMA systems where placing jobs
-+on properly sized subsets of the systems with careful processor and
-+memory placement to reduce cross-node memory access and contention
-+can improve overall system performance.
-+
-+The "cpuset" controller is hierarchical.  That means the controller
-+cannot use CPUs or memory nodes not allowed in its parent.
-+
-+
-+Cpuset Interface Files
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+  cpuset.cpus
-+	A read-write multiple values file which exists on non-root
-+	cgroups.
-+
-+	It lists the CPUs allowed to be used by tasks within this
-+	cgroup.  The CPU numbers are comma-separated numbers or
-+	ranges.  For example:
-+
-+	  # cat cpuset.cpus
-+	  0-4,6,8-10
-+
-+	An empty value indicates that the cgroup is using the same
-+	setting as the nearest cgroup ancestor with a non-empty
-+	"cpuset.cpus" or all the available CPUs if none is found.
-+
-+	The value of "cpuset.cpus" stays constant until the next update
-+	and won't be affected by any CPU hotplug events.
-+
-+  cpuset.effective_cpus
-+	A read-only multiple values file which exists on non-root
-+	cgroups.
-+
-+	It lists the onlined CPUs that are actually allowed to be
-+	used by tasks within the current cgroup. It is a subset of
-+	"cpuset.cpus".  Its value will be affected by CPU hotplug
-+	events.
-+
-+  cpuset.mems
-+	A read-write multiple values file which exists on non-root
-+	cgroups.
-+
-+	It lists the memory nodes allowed to be used by tasks within
-+	this cgroup.  The memory node numbers are comma-separated
-+	numbers or ranges.  For example:
-+
-+	  # cat cpuset.mems
-+	  0-1,3
-+
-+	An empty value indicates that the cgroup is using the same
-+	setting as the nearest cgroup ancestor with a non-empty
-+	"cpuset.mems" or all the available memory nodes if none
-+	is found.
-+
-+	The value of "cpuset.mems" stays constant until the next update
-+	and won't be affected by any memory nodes hotplug events.
-+
-+  cpuset.effective_mems
-+	A read-only multiple values file which exists on non-root
-+	cgroups.
-+
-+	It lists the onlined memory nodes that are actually allowed
-+	to be used by tasks within the current cgroup.  It is a subset
-+	of "cpuset.mems".  Its value will be affected by memory nodes
-+	hotplug events.
-+
-+
- IO
- --
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index b42037e..7837d1f 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1823,12 +1823,11 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
- 	return 0;
- }
- 
--
- /*
-  * for the common functions, 'private' gives the type of file
-  */
- 
--static struct cftype files[] = {
-+static struct cftype legacy_files[] = {
- 	{
- 		.name = "cpus",
- 		.seq_show = cpuset_common_seq_show,
-@@ -1931,6 +1930,43 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
- };
- 
- /*
-+ * This is currently a minimal set for the default hierarchy. It can be
-+ * expanded later on by migrating more features and control files from v1.
-+ */
-+static struct cftype dfl_files[] = {
-+	{
-+		.name = "cpus",
-+		.seq_show = cpuset_common_seq_show,
-+		.write = cpuset_write_resmask,
-+		.max_write_len = (100U + 6 * NR_CPUS),
-+		.private = FILE_CPULIST,
-+	},
-+
-+	{
-+		.name = "mems",
-+		.seq_show = cpuset_common_seq_show,
-+		.write = cpuset_write_resmask,
-+		.max_write_len = (100U + 6 * MAX_NUMNODES),
-+		.private = FILE_MEMLIST,
-+	},
-+
-+	{
-+		.name = "effective_cpus",
-+		.seq_show = cpuset_common_seq_show,
-+		.private = FILE_EFFECTIVE_CPULIST,
-+	},
-+
-+	{
-+		.name = "effective_mems",
-+		.seq_show = cpuset_common_seq_show,
-+		.private = FILE_EFFECTIVE_MEMLIST,
-+	},
-+
-+	{ }	/* terminate */
-+};
-+
-+
-+/*
-  *	cpuset_css_alloc - allocate a cpuset css
-  *	cgrp:	control group that the new cpuset will be part of
-  */
-@@ -2104,8 +2140,10 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
- 	.post_attach	= cpuset_post_attach,
- 	.bind		= cpuset_bind,
- 	.fork		= cpuset_fork,
--	.legacy_cftypes	= files,
-+	.legacy_cftypes	= legacy_files,
-+	.dfl_cftypes	= dfl_files,
- 	.early_init	= true,
-+	.threaded	= true,
- };
- 
- /**
--- 
-1.8.3.1
+Alex
