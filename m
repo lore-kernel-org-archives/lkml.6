@@ -1,106 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932880AbeCOWzN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 18:55:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752810AbeCOWzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 18:55:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D3320685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Maciej Purski <m.purski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-Cc: David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Thibault Saunier <thibault.saunier@osg.samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
- <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
- <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-Message-ID: <152115450981.111154.2342657732967302796@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-Date: Thu, 15 Mar 2018 15:55:09 -0700
+        id S932919AbeCOWzv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 18:55:51 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54708 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752926AbeCOWzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 18:55:49 -0400
+X-Google-Smtp-Source: AG47ELv6PsqYsJtLodJaygnfKELIvvxKlrNRYMJiz91BN/K9NyHfItCk5bIqssbAy7+ESAeGZ642YQ==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc5 1/1] x86/vdso: VDSO should handle clock_gettime(CLOCK_MONOTONIC_RAW) without syscall
+Date: Thu, 15 Mar 2018 22:55:35 +0000
+Message-Id: <1521154536-13050-1-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Marek Szyprowski (2018-02-20 01:36:03)
-> Hi Robin,
-> 
-> On 2018-02-19 17:29, Robin Murphy wrote:
-> >
-> > Seeing how every subsequent patch ends up with the roughly this same 
-> > stanza:
-> >
-> >     x = devm_clk_bulk_alloc(dev, num, names);
-> >     if (IS_ERR(x)
-> >         return PTR_ERR(x);
-> >     ret = devm_clk_bulk_get(dev, x, num);
-> >
-> > I wonder if it might be better to simply implement:
-> >
-> >     int devm_clk_bulk_alloc_get(dev, &x, num, names)
-> >
-> > that does the whole lot in one go, and let drivers that want to do 
-> > more fiddly things continue to open-code the allocation.
-> >
-> > But perhaps that's an abstraction too far... I'm not all that familiar 
-> > with the lie of the land here.
-> 
-> Hmmm. This patchset clearly shows, that it would be much simpler if we
-> get rid of clk_bulk_data structure at all and let clk_bulk_* functions
-> to operate on struct clk *array[]. Typically the list of clock names
-> is already in some kind of array (taken from driver data or statically
-> embedded into driver), so there is little benefit from duplicating it
-> in clk_bulk_data. Sadly, I missed clk_bulk_* api discussion and maybe
-> there are other benefits from this approach.
-> 
-> If not, I suggest simplifying clk_bulk_* api by dropping clk_bulk_data
-> structure and switching to clock ptr array:
-> 
-> int clk_bulk_get(struct device *dev, int num_clock, struct clk *clocks[],
->                   const char *clk_names[]);
-> int clk_bulk_prepare(int num_clks, struct clk *clks[]);
-> int clk_bulk_enable(int num_clks, struct clk *clks[]);
-> ...
-> 
 
-If you have an array of pointers to names of clks then we can put the
-struct clk pointers adjacent to them at the same time. I suppose the
-problem there is that some drivers want to mark that array of pointers
-to names as const. And then we can't update the clk pointers next to
-them.
+Resent to address reviewer comments.
 
-This is the same design that regulators has done so that's why it's
-written like this for clks. Honestly, we're talking about a handful of
-pointers here so I'm not sure it really matters much. Just duplicate the
-pointer and be done if you want to mark the array of names as const or
-have your const 'setup' structure point to the bulk_data array that you
-define statically non-const somewhere globally.
+  Currently, the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
+
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values, user-space  code needs to know elapsed time from the
+  perspective of the CPU no matter how "hot" / fast or "cold" / slow it
+  might be running wrt NTP / PTP "real" time; when code needs this,
+  the latencies associated with a syscall are often unacceptably high.
+
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 20ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc5 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  This patch affects only files:
+
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+  Patches for kernels 3.10.0-21 and 4.9.65-rt23 (ARM) are attached to bug #198161,
+  as is the test program, timer_latency.c, to demonstrate the problem.
+
+  Before the patch a latency of 200-1000ns was measured for
+    clock_gettime(CLOCK_MONOTONIC_RAW,&ts)
+  calls - after the patch, the same call on the same machine
+  has a latency of @ 20ns.
+
+
+Thanks & Best Regards,
+Jason Vas Dias
