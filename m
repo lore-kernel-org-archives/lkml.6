@@ -1,127 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeCON5A (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:57:00 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36199 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751475AbeCON46 (ORCPT
+        id S1752216AbeCON5O (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:57:14 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53544 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbeCON5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:56:58 -0400
-X-Google-Smtp-Source: AG47ELsJ4GDNKrIrGiRjN3cqoy1uQaQfSSojsOmN8dBLh2t8yu07i14YTaSOVvC4Zt/8n20+4yoYvQ==
-From: Vivek Unune <npcomplete13@gmail.com>
-To: florian.fainelli@broadcom.com, hauke@hauke-m.de, zajec5@gmail.com,
-        jonmason@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vivek Unune <npcomplete13@gmail.com>
-Subject: [PATCH] ARM: dts: BCM5301X:Make usb3 phy use mdio phy driver
-Date: Thu, 15 Mar 2018 09:56:47 -0400
-Message-Id: <20180315135647.48456-1-npcomplete13@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 15 Mar 2018 09:57:13 -0400
+Date: Thu, 15 Mar 2018 14:57:03 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/7] x86/hyper-v: allocate and use Virtual Processor
+ Assist Pages
+In-Reply-To: <20180315134848.GV4043@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1803151455060.1525@nanos.tec.linutronix.de>
+References: <20180309140249.2840-1-vkuznets@redhat.com> <20180309140249.2840-5-vkuznets@redhat.com> <alpine.DEB.2.21.1803141611300.2481@nanos.tec.linutronix.de> <87bmfpbqek.fsf@vitty.brq.redhat.com> <alpine.DEB.2.21.1803151240030.1525@nanos.tec.linutronix.de>
+ <20180315134848.GV4043@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, usb3 phy in bcm5301x.dtsi uses platform driver which
-requires register range "ccb-mii" <0x18003000 0x1000>. This range
-overlaps with mdio cmd and param registers (<0x18003000 0x8>).
-Essentially, the platform driver partly acts like a mdio bus
-driver, hence to use of this register range.
+On Thu, 15 Mar 2018, Peter Zijlstra wrote:
+> On Thu, Mar 15, 2018 at 12:45:03PM +0100, Thomas Gleixner wrote:
+> > On Thu, 15 Mar 2018, Vitaly Kuznetsov wrote:
+> > > The only user of these pages is currently KVM. Can we still have vCPUs
+> > > running on the outgoing CPU at this point? If case we can we're in
+> > > trouble and we need to somehow kick them out first.
+> > 
+> > The first thing we do in unplug is to mark the CPU inactive, but I'm not
+> > sure whether that prevents something which was on the CPU before and
+> > perhaps preempted or is affine to that CPU to be scheduled in
+> > again. Peter????
+> 
+> I think we can still have tasks running at this point.
+> 
+> AP_ACTIVE (sched_cpu_deactivate) simply takes the CPU out of the active
+> mask, which guarantees no new tasks will land on the CPU.
+> 
+> We'll then proceed all the way to TEARDOWN_CPU as 'normal', at which
+> point we'll call stop_machine() which does the old DYING callbacks.
+> 
+> It sounds like we want this done here, although possibly we can't do
+> vfree() from that context, in which case it needs to store the pointer
+> and do that from a BP callback (what used to be the OFFLINE callbacks or
+> something).
 
-In some Northstar devices like Linksys EA9500, secondary switch
-is connected via external mdio. The only way to access and
-configure the external switch is via mdio bus. When we enable the
-mdio bus in it's current state, the mdio bus and any child buses
-fail to register because of the register range overlap.
+So the wrmsr() wants to be in the dying range. The vfree() is questionable
+anyway because the re-onlining of that CPU will just allocate it again. So
+it could very well stay around.
 
-On Northstar, the usb3 phy is connected at address 0x10 on the
-internal mdio bus. This change moves the usb3_phy node and makes
-it a child node of internal mdio bus.
+Thanks,
 
-Thanks to Rafał Miłecki's commit af850e14a7ae
-("phy: bcm-ns-usb3: add MDIO driver using proper bus layer") the
-same usb3 platform driver can now act as usb3 phy mdio driver.
-
-Tested on Linksys Panamera (EA9500)
-
-Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
----
- arch/arm/boot/dts/bcm47094.dtsi |  7 ++++---
- arch/arm/boot/dts/bcm5301x.dtsi | 34 ++++++++++++++++++++++++++--------
- 2 files changed, 30 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm47094.dtsi b/arch/arm/boot/dts/bcm47094.dtsi
-index 4840a782fc05..f7c3e274b354 100644
---- a/arch/arm/boot/dts/bcm47094.dtsi
-+++ b/arch/arm/boot/dts/bcm47094.dtsi
-@@ -7,9 +7,10 @@
- #include "bcm4708.dtsi"
- 
- / {
--	usb3_phy: usb3-phy {
--		compatible = "brcm,ns-bx-usb3-phy";
--	};
-+};
-+
-+&usb3_phy {
-+	compatible = "brcm,ns-bx-usb3-phy";
- };
- 
- &uart0 {
-diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-index 9a076c409f4e..7ba6533f7615 100644
---- a/arch/arm/boot/dts/bcm5301x.dtsi
-+++ b/arch/arm/boot/dts/bcm5301x.dtsi
-@@ -154,13 +154,6 @@
- 		clock-names = "phy-ref-clk";
- 	};
- 
--	usb3_phy: usb3-phy {
--		compatible = "brcm,ns-ax-usb3-phy";
--		reg = <0x18105000 0x1000>, <0x18003000 0x1000>;
--		reg-names = "dmp", "ccb-mii";
--		#phy-cells = <0>;
--	};
--
- 	axi@18000000 {
- 		compatible = "brcm,bus-axi";
- 		reg = <0x18000000 0x1000>;
-@@ -359,7 +352,32 @@
- 		reg = <0x18003000 0x8>;
- 		#size-cells = <1>;
- 		#address-cells = <0>;
--		status = "disabled";
-+	};
-+
-+	mdio-bus-mux {
-+		compatible = "mdio-mux-mmioreg";
-+		mdio-parent-bus = <&mdio>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x18003000 0x4>;
-+		mux-mask = <0x200>;
-+
-+		mdio_int: mdio@0 {
-+			reg = <0x0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			usb3_phy: usb3-phy@10 {
-+				compatible = "brcm,ns-ax-usb3-phy";
-+				reg = <0x10>;
-+				usb3-dmp-syscon = <&usb3_dmp>;
-+				#phy-cells = <0>;
-+			};
-+		};
-+	};
-+
-+	usb3_dmp: syscon@18105000 {
-+		reg = <0x18105000 0x1000>;
- 	};
- 
- 	i2c0: i2c@18009000 {
--- 
-2.11.0
+	tglx
