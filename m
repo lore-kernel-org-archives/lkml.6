@@ -1,113 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeCOPqk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:46:40 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48024 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752600AbeCOPqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:46:38 -0400
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive summary
-Date: Thu, 15 Mar 2018 16:44:47 +0100
-Message-Id: <20180315154448.16222-9-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
-References: <20180315154448.16222-1-bp@alien8.de>
+        id S1752869AbeCOPqx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:53 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34208 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752547AbeCOPqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:50 -0400
+X-Google-Smtp-Source: AG47ELuBn0ZBQ3W4j2J2hNT7rlueH2OwmX7kV54j7AsyXFPOCfY9FMRUB+yD7Od1Q3U0o7X+KPJepQ==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: [PATCH v2 1/8] iio: stx104: Implement get_multiple callback
+Date: Thu, 15 Mar 2018 11:46:37 -0400
+Message-Id: <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521128287.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
+References: <cover.1521128287.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+The Apex Embedded Systems STX104 series of devices provides 4 TTL
+compatible lines of inputs accessed via a single 4-bit port. Since four
+input lines are acquired on a single port input read, the STX104 GPIO
+driver may improve multiple input reads by utilizing a get_multiple
+callback. This patch implements the stx104_gpio_get_multiple function
+which serves as the respective get_multiple callback.
 
-Save the regs set when we call __die() for the first time and print it
-in oops_end().
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- arch/x86/kernel/dumpstack.c | 33 ++++++++++++---------------------
- 1 file changed, 12 insertions(+), 21 deletions(-)
+ drivers/iio/adc/stx104.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 8cf2e2289d50..bb712ca99632 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -26,6 +26,8 @@ int panic_on_unrecovered_nmi;
- int panic_on_io_nmi;
- static int die_counter;
- 
-+static struct pt_regs exec_summary_regs;
-+
- bool in_task_stack(unsigned long *stack, struct task_struct *task,
- 		   struct stack_info *info)
- {
-@@ -321,6 +323,9 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
- 	raw_local_irq_restore(flags);
- 	oops_exit();
- 
-+	/* Executive summary in case the oops scrolled away */
-+	__show_regs(&exec_summary_regs, false);
-+
- 	if (!signr)
- 		return;
- 	if (in_interrupt())
-@@ -339,10 +344,10 @@ NOKPROBE_SYMBOL(oops_end);
- 
- int __die(const char *str, struct pt_regs *regs, long err)
- {
--#ifdef CONFIG_X86_32
--	unsigned short ss;
--	unsigned long sp;
--#endif
-+	/* Save the regs of the first oops for the executive summary later. */
-+	if (!die_counter)
-+		exec_summary_regs = *regs;
-+
- 	printk(KERN_DEFAULT
- 	       "%s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff, ++die_counter,
- 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT"         : "",
-@@ -352,26 +357,14 @@ int __die(const char *str, struct pt_regs *regs, long err)
- 	       IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION) ?
- 	       (boot_cpu_has(X86_FEATURE_PTI) ? " PTI" : " NOPTI") : "");
- 
-+	show_regs(regs);
-+
- 	if (notify_die(DIE_OOPS, str, regs, err,
- 			current->thread.trap_nr, SIGSEGV) == NOTIFY_STOP)
- 		return 1;
- 
- 	print_modules();
--	show_regs(regs);
--#ifdef CONFIG_X86_32
--	if (user_mode(regs)) {
--		sp = regs->sp;
--		ss = regs->ss;
--	} else {
--		sp = kernel_stack_pointer(regs);
--		savesegment(ss, ss);
--	}
--	printk(KERN_EMERG "EIP: %pS SS:ESP: %04x:%08lx\n",
--	       (void *)regs->ip, ss, sp);
--#else
--	/* Executive summary in case the oops scrolled away */
--	printk(KERN_ALERT "RIP: %pS RSP: %016lx\n", (void *)regs->ip, regs->sp);
--#endif
-+
- 	return 0;
+diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
+index 17b021f33180..0662ca199eb0 100644
+--- a/drivers/iio/adc/stx104.c
++++ b/drivers/iio/adc/stx104.c
+@@ -233,6 +233,16 @@ static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(inb(stx104gpio->base) & BIT(offset));
  }
- NOKPROBE_SYMBOL(__die);
-@@ -410,7 +403,5 @@ void show_regs(struct pt_regs *regs)
  
- 		if (regs->ip < PAGE_OFFSET)
- 			pr_cont(" Bad RIP value.\n");
--		else
--			show_opcodes((u8 *)regs->ip, KERN_DEFAULT);
- 	}
- }
++static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++	unsigned long *bits)
++{
++	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
++
++	*bits = inb(stx104gpio->base);
++
++	return 0;
++}
++
+ static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
+ {
+@@ -342,6 +352,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
+ 	stx104gpio->chip.direction_input = stx104_gpio_direction_input;
+ 	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
+ 	stx104gpio->chip.get = stx104_gpio_get;
++	stx104gpio->chip.get_multiple = stx104_gpio_get_multiple;
+ 	stx104gpio->chip.set = stx104_gpio_set;
+ 	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
+ 	stx104gpio->base = base[id] + 3;
 -- 
-2.13.0
+2.16.2
