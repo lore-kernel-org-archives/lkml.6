@@ -1,67 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeCOMiL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:38:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34114 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751466AbeCOMfj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:35:39 -0400
-Message-Id: <20180315123202.735998040@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Thu, 15 Mar 2018 13:19:10 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Chris Mason <clm@fb.com>, Anna Schumaker <anna.schumaker@netapp.com>,
-        Joel Becker <jlbec@evilplan.org>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        George Spelvin <linux@sciencehorizons.net>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 08/11] sched/wait,ocfs2: Replace wait_on_atomic_t usage
-References: <20180315121902.942902000@infradead.org>
+        id S1752246AbeCOMiU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:38:20 -0400
+Received: from 8bytes.org ([81.169.241.247]:41958 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752214AbeCOMiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:38:18 -0400
+Date: Thu, 15 Mar 2018 13:38:13 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        jroedel@suse.de, alex.williamson@redhat.com
+Subject: Re: [PATCH v4] iommu/amd: Add support for fast IOTLB flushing
+Message-ID: <20180315123813.tmlce7fmd6ghe56e@8bytes.org>
+References: <1519197585-10546-1-git-send-email-suravee.suthikulpanit@amd.com>
+ <f9396eef-26b9-5280-1250-4aaeb0a38c32@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-wait_var-8.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9396eef-26b9-5280-1250-4aaeb0a38c32@amd.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
+Hi Suravee,
 
-Cc: Joel Becker <jlbec@evilplan.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- fs/ocfs2/filecheck.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+On Mon, Mar 05, 2018 at 08:08:21AM +0700, Suravee Suthikulpanit wrote:
+> Ping..
+> 
+> Joerg, when you get a chance, would you please let me know if you have any other concerns for this v4.
 
---- a/fs/ocfs2/filecheck.c
-+++ b/fs/ocfs2/filecheck.c
-@@ -134,9 +134,10 @@ ocfs2_filecheck_sysfs_free(struct ocfs2_
- {
- 	struct ocfs2_filecheck_entry *p;
- 
--	if (!atomic_dec_and_test(&entry->fs_count))
--		wait_on_atomic_t(&entry->fs_count, atomic_t_wait,
--				 TASK_UNINTERRUPTIBLE);
-+	if (!atomic_dec_and_test(&entry->fs_count)) {
-+		wait_var_event(&entry->fs_count,
-+			       !atomic_read(&entry->fs_count));
-+	}
- 
- 	spin_lock(&entry->fs_fcheck->fc_lock);
- 	while (!list_empty(&entry->fs_fcheck->fc_head)) {
-@@ -183,7 +184,7 @@ static void
- ocfs2_filecheck_sysfs_put(struct ocfs2_filecheck_sysfs_entry *entry)
- {
- 	if (atomic_dec_and_test(&entry->fs_count))
--		wake_up_atomic_t(&entry->fs_count);
-+		wake_up_var(&entry->fs_count);
- }
- 
- static struct ocfs2_filecheck_sysfs_entry *
+Sorry for the long delay. The patch is fine, I applied it to the
+iommu-tree.
+
+Thanks,
+
+	Joerg
