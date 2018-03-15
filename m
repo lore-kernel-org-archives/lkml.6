@@ -1,80 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932483AbeCOPj7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:39:59 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:36199 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932427AbeCOPj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:39:57 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: dell: avoid link error with modular ACPI_SMI
-Date: Thu, 15 Mar 2018 16:39:07 +0100
-Message-Id: <20180315153934.3844276-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:RALNamAAmVwPvwgJNcOs+rZ50kykAaHzVgebphk0r2RNayE402y
- XAPBYeB3rcOh3Wzg503J/GwpBVfpFyww9eSDX1iRh4bZJjEL0pxJPU8aVF+/axiYHzYY/GV
- z04G2CuApnZb3g4iUZGu+z9BN0EOgejIE+SN49VL6yCT9Z/xteOYYi1sU/uKlB9Ln2Wlf0m
- 0trl2CxfDjt8K3AjtNJDQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:txZdxXPxdjs=:beaYMHro9jCMtR3Me9VZ93
- RE7zURFj0lnIPJaQ8aQBpUmaFNOitxofMtvXyX/dDJywpCMUw78kVZYRwQZP1oimaqhpP1kaS
- k3pyEWNzYufr7333e8WEW1isWdGAtqEdPZGRHeksro31gkl2tMvjK8W9F2SlNhRyawcOGrD9F
- l6AWyvyuRRxkiAVJBTeS8Lx0eIekDsjG6p5xrebMx1jZOKbjZtwJ2cL0duvz1fLPTKMTE3hVg
- 9J2Zbx6CPFXicrpkr+u83RqUZAv3XDM1Y4Iwir4Fo9U87kfQPqUrGsBAxbcNBAqybMI6nIsUC
- GYM457Eo3n6342oXimqGOdyaoSWIZaQtxDsfUpXStk9WfHsl2dQZsIbbBR9aYr7LFqbZGNbcj
- xSowF49ilNrau95FK+w17oWUsl1tLxKD1uaGZxCFONJv/XgH96N7GBOHJgWHBxMGr1qilMXbE
- SYzlIBRm7KgKrw7A8KJN1U3jhbL8cVPD07NrMSVq2rHhx/PthEduJotlecgilTNnBNaeZNlcW
- WS5LSwH/fZ5Tq8uRUeZUx2w1F7ArP4pe0Wp5z357kG2xtikGqAvGAcLhyNiwBpXtX5rGcnfK1
- ttmvc5Z2HGW2bVvE+k34y81vf38q2iuSmFhmlvqxIikkjZBFIO/0XNDil4/6/tNJIofnacebF
- to5qlyyBc8thcjmX7CUkvOrU8ZK/hkz5RzmGFWxWREvx/9MKITUgk3W9TtqEUeUYZ9D8gOGm6
- zQGxKzy9IDdIDCs2WJrqzYyWeQEQuOCteDhmPg==
+        id S1752738AbeCOPkV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:40:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60463 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932427AbeCOPkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:40:19 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, igall@marvell.com,
+        Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: [PATCH 01/12] crypto: inside-secure - move hash result dma mapping to request
+Date: Thu, 15 Mar 2018 16:38:40 +0100
+Message-Id: <20180315153851.9958-2-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
+References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new DELL_LAPTOP dependencies allowed one configuration that should not
-have been possible, with DELL_SMBIOS_WMI built-in, but ACPI_SMI as a
-module:
+From: Ofer Heifetz <oferh@marvell.com>
 
-drivers/platform/x86/dell-smbios-wmi.o: In function `run_smbios_call':
-dell-smbios-wmi.c:(.text+0x47): undefined reference to `wmidev_evaluate_method'
-drivers/platform/x86/dell-smbios-wmi.o: In function `dell_smbios_wmi_probe':
-dell-smbios-wmi.c:(.text+0x5d0): undefined reference to `dell_wmi_get_descriptor_valid'
-dell-smbios-wmi.c:(.text+0x60f): undefined reference to `dell_wmi_get_size'
-dell-smbios-wmi.c:(.text+0x61f): undefined reference to `dell_wmi_get_hotfix'
-dell-smbios-wmi.c:(.text+0x644): undefined reference to `set_required_buffer_size'
-drivers/platform/x86/dell-smbios-wmi.o: In function `exit_dell_smbios_wmi':
-dell-smbios-wmi.c:(.text+0x78e): undefined reference to `wmi_driver_unregister'
+In heavy traffic the DMA mapping is overwritten by multiple requests as
+the DMA address is stored in a global context. This patch moves this
+information to the per-hash request context so that it can't be
+overwritten.
 
-This adds an extra dependency to avoid that case.
-
-Fixes: 41e36f2f85af ("platform/x86: dell-smbios: Link all dell-smbios-* modules together")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
+Signed-off-by: Ofer Heifetz <oferh@marvell.com>
+[Antoine: rebased the patch, small fixes, commit message.]
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
-I think the plan was to drop the change that caused it. For completeness,
-this patch is the last thing that I needed to make randconfig work
-reliably again.
----
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/inside-secure/safexcel.c      |  7 +------
+ drivers/crypto/inside-secure/safexcel.h      |  4 +---
+ drivers/crypto/inside-secure/safexcel_hash.c | 17 ++++++++++++-----
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 8383806c360f..0cced065e298 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -122,6 +122,7 @@ config DELL_SMBIOS_WMI
- 	bool "Dell SMBIOS driver WMI backend"
- 	default y
- 	depends on ACPI_WMI
-+	depends on ACPI_WMI=y || DELL_SMBIOS=m
- 	select DELL_WMI_DESCRIPTOR
- 	depends on DELL_SMBIOS
- 	---help---
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 956a37692e42..0c33bdbe48fc 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -538,15 +538,10 @@ void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring)
+ }
+ 
+ void safexcel_free_context(struct safexcel_crypto_priv *priv,
+-			   struct crypto_async_request *req,
+-			   int result_sz)
++			   struct crypto_async_request *req)
+ {
+ 	struct safexcel_context *ctx = crypto_tfm_ctx(req->tfm);
+ 
+-	if (ctx->result_dma)
+-		dma_unmap_single(priv->dev, ctx->result_dma, result_sz,
+-				 DMA_FROM_DEVICE);
+-
+ 	if (ctx->cache) {
+ 		dma_unmap_single(priv->dev, ctx->cache_dma, ctx->cache_sz,
+ 				 DMA_TO_DEVICE);
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index caaf6a81b162..4e14c7e730c4 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -580,7 +580,6 @@ struct safexcel_context {
+ 	bool exit_inv;
+ 
+ 	/* Used for ahash requests */
+-	dma_addr_t result_dma;
+ 	void *cache;
+ 	dma_addr_t cache_dma;
+ 	unsigned int cache_sz;
+@@ -608,8 +607,7 @@ struct safexcel_inv_result {
+ void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring);
+ void safexcel_complete(struct safexcel_crypto_priv *priv, int ring);
+ void safexcel_free_context(struct safexcel_crypto_priv *priv,
+-				  struct crypto_async_request *req,
+-				  int result_sz);
++				  struct crypto_async_request *req);
+ int safexcel_invalidate_cache(struct crypto_async_request *async,
+ 			      struct safexcel_crypto_priv *priv,
+ 			      dma_addr_t ctxr_dma, int ring,
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index a4960a934eef..e33f089185d6 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -34,6 +34,7 @@ struct safexcel_ahash_req {
+ 	bool needs_inv;
+ 
+ 	int nents;
++	dma_addr_t result_dma;
+ 
+ 	u8 state_sz;    /* expected sate size, only set once */
+ 	u32 state[SHA256_DIGEST_SIZE / sizeof(u32)] __aligned(sizeof(u32));
+@@ -158,7 +159,13 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
+ 		sreq->nents = 0;
+ 	}
+ 
+-	safexcel_free_context(priv, async, sreq->state_sz);
++	if (sreq->result_dma) {
++		dma_unmap_single(priv->dev, sreq->result_dma, sreq->state_sz,
++				 DMA_FROM_DEVICE);
++		sreq->result_dma = 0;
++	}
++
++	safexcel_free_context(priv, async);
+ 
+ 	cache_len = sreq->len - sreq->processed;
+ 	if (cache_len)
+@@ -291,15 +298,15 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
+ 	/* Add the token */
+ 	safexcel_hash_token(first_cdesc, len, req->state_sz);
+ 
+-	ctx->base.result_dma = dma_map_single(priv->dev, req->state,
+-					      req->state_sz, DMA_FROM_DEVICE);
+-	if (dma_mapping_error(priv->dev, ctx->base.result_dma)) {
++	req->result_dma = dma_map_single(priv->dev, req->state, req->state_sz,
++					 DMA_FROM_DEVICE);
++	if (dma_mapping_error(priv->dev, req->result_dma)) {
+ 		ret = -EINVAL;
+ 		goto cdesc_rollback;
+ 	}
+ 
+ 	/* Add a result descriptor */
+-	rdesc = safexcel_add_rdesc(priv, ring, 1, 1, ctx->base.result_dma,
++	rdesc = safexcel_add_rdesc(priv, ring, 1, 1, req->result_dma,
+ 				   req->state_sz);
+ 	if (IS_ERR(rdesc)) {
+ 		ret = PTR_ERR(rdesc);
 -- 
-2.9.0
+2.14.3
