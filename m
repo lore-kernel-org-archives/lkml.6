@@ -1,119 +1,90 @@
-Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AG47ELuOkliPc6LVdJc6DauriAfIoqfJNBGXrkozuhvhW1WXrLHkmGNrHTMoBnoMRxvU8O7ygmFB
-ARC-Seal: i=1; a=rsa-sha256; t=1521041827; cv=none;
-        d=google.com; s=arc-20160816;
-        b=qoJX8EEIgPmojxDT+rhFk4pFrsvotZmnozBargIVuwiCDbCP97zkDqZOmtbuYbKsNc
-         7fP75PfVCIJse9JKeXmCFeTFdXW5kRLkWFIhRRxhOR3KnNkPBnvIBXhc0TbH7ZdknPi/
-         ygd7J4f9xX5Hk1XsIyLxyk4b4KJycxOVcQlRjlNhvzlFwqQJAdKvhAHlfvX8NQLKfmLy
-         qaeZ3wZWMF9CZfTAYvg1b5h5HcJ/VZkJ06y3vN1Hna+yjzmFboI0iWbfixV0U1R6ZwA8
-         5tJJ3KTV0vmRtR2YqYk+e/S5hxlj5/3W7yrACT6wbUtP7i6nPe9kC/AqifVMl6YA0mqd
-         vu7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=u+78dRGSavScXNuu+bzfUNnxBdC1dp/JMQNgN7lE0E8=;
-        b=QOQU6OZ+INC2+x2PgOzfdkMXj63OsfV9E7HHOWKb0eknlp670RAnlSyCqskWH0IGTo
-         TdhEx0W/TqiQkHldjXnWbeveryRAwrihL0R1XxDfxUysSvjnI1Ux5UtTe4soTHUPv2AK
-         bWiHKzQgfrm0hE1wsEtzjgZ6Dbm239CUA74w1zxb+5TUHc1SREj1hn+j2wndFXAY0JHu
-         f7tCpjczWYhmCyc2Rl+krqgzM52it8HjRg5XRKQLdmXNan+do3OxCoNLBUXWyJk3Z4Ss
-         qBq9gwtPUMqETKqDlTDVehqiR673NJMVL+p58RCqNzmgbkVYFm65ncdPDVfcSA1jHFsm
-         SOwA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 212.227.126.133 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 212.227.126.133 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Zhao Chen <zhaochen6@huawei.com>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Aviad Krawczyk <aviad.krawczyk@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	netdev@vger.kernel.org
-Subject: [PATCH 02/47] net: tile: remove ethernet drivers
-Date: Wed, 14 Mar 2018 16:35:15 +0100
-Message-Id: <20180314153603.3127932-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
-References: <20180314153603.3127932-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:V29GfJZr6x8WcVn3AUUkIhFxRFiLo+v9Bebkdw+s9Jf8hs4ro2h
- Ou/Z5aiyKCxMPfahiGtZmwlUd2k5d9xYBov7SAVRFqESIdNc6m+fk1eD84CROprL9nUdhKt
- hTCt3UfiNCwPwaG3MROHXK+/YxRGbF5Nvf82TOuYyCuJh4yZoZ1KozFFxk/JXsiPHezBday
- htjuljB8Qrj90jsQJWHsA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3wzt/buZ95g=:WQPDxAspxjZu9fsNBI54u6
- LMAZIYtRz+Hs5mEu5mZiJOkrh6c2QccpMDVypV5c055Pba6Hh+rsgnn8XNBBbEFBUaznzeAAz
- QGRKC4Y3aCSSBY2JDJJrXbql5l32RhVsUfIue+5ttolcEHh0KC4/XJLGXJmzgKUcJDGw09XZB
- T/U3CqZSIZ3V1EKTcRvrHy53zwxhxLHb9UPSJkJAlJBJstLE8g4pn2B7kdSK1Rr/jkvUKlVMn
- FfwvtgT72hd7DA3xO1416TS0Jqd/5E3fXgsbt2k0ZURp5or0ZizysP2ptbeHkHM0AeFxj15vX
- MmdQ0CWbxlqDnuj8wZCN+W48YQH0+W0X37DdAPR60IPm2OZe0PCuGdEM5ttbknXVST1ZRulbH
- udo2viZq5CkTYAbTJzsNA+zb2uCdGFPzSIwDxQA8A9XBaPBH1jD9fC7mQZJFTaVusHwMBEYgH
- R3CN/TyMd16B8tRSyynNjfYAofv1tdbPWMAGFAncbqTm4dYW1rR7OweDnV1BcUEvY6GkQXkDm
- 4yEQy6JDx69fhvYqiRgztQyTDgdEVMMrfjWPDPTALKwZWzjWq2PA2mYaNi47Mit/+olelV2S+
- GPmo4RXiciogNwhaVQ1mMxTwCitTrZvy+tNuplnwXdf6mQFZKaxsq9NUGgaOu3ZNUd4SaY4g8
- HX/dRuihar/qK/o+NxyztvnneUSMNz8gGqJdHbxiHeKsxrLKgmF8wSERKbADtQtEdij717La/
- 2kIUyUuVXj+D6ofrQ8cGJmOiZxg65aNHa5zNgA==
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-373521-1521123402-5-7896728514030341061
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521123402; b=NlopFq5JFUmO8vjeRn4DXiqSmHV3f4fNUrly7WfHR6C3lw/
+    JV0cgHHfgwtDBXJnlmFoBFCzi55g0gNiZ9xK0gDBB4Np8MyIsCzJ52pp9y8OSYuh
+    CNDOf1nadYvjOlGuYu2yc+r17bEpghMry838m1CMUDu+WK3QCfIuoHrCyGDa6Rn3
+    mM0yxt0NQtQ8w+W7Iom6+mTqGcgsjW01pBIkg9rNU+ZaZrqhrAyqZ3MXMbOTO0IT
+    k/GBsLMa40RtHGq0clO75GLdQUS47LsPwbCDQEQ0kn+W0wL7m/odTxgsDwCvWPRv
+    cnT4WiCy3E9fHPL+2FJNm2ifZPI6sS4hMXqUz8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521123402; bh=kisFl6oLe+QHkC6d+v1L/6/4Tk
+    zexHZOiNdjvB4xpdo=; b=bRR+yHtxWSFGL93cOZ9GtLxUhNlcbXeB++ER89Tv0M
+    LAm9oB1o46PW02zlOFOBpe637tuXzsc5FSfTrpYpIWxtEyuw6ambqP9uoS4RnHtO
+    BBG3kvlBB+Qv+6070fpG9VxmtKpvAth8Cl+Ubjb+o0hQNt7EuRJzGGIYjGn+FiDI
+    WJcD/gIxSNkYDoH6mdcopSRtTEavtAEfXALq2k3tNqJfdcGYGIxDg1P3ALrhUZFf
+    O566InZ4nstILnWmFq+PGIu5IQPaQhJkbuRQyh7w9Agk9hZlG1xVjRGTQVKHnNnG
+    8CZMJY1BYZL8C0cLFKaZTOWjunitGI4LpttXtZIo8ilA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=8bytes.org header.i=@8bytes.org header.b=H3L6RjKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=8bytes.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=8bytes.org header.i=@8bytes.org header.b=H3L6RjKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=8bytes.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751651AbeCOOQj (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Mar 2018 10:16:39 -0400
+Received: from 8bytes.org ([81.169.241.247]:42814 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751535AbeCOOQi (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:16:38 -0400
+Date: Thu, 15 Mar 2018 15:16:36 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "# v4 . 4+" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix a potential memory leak
+Message-ID: <20180315141636.cel3dqr4pzxfgtb3@8bytes.org>
+References: <1519450947-9760-1-git-send-email-baolu.lu@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519450947-9760-1-git-send-email-baolu.lu@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594927955022600655?=
-X-GMAIL-MSGID: =?utf-8?q?1594927955022600655?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The tile architecture is obsolete and getting removed. From all
-I can tell, later ARM based products use a different ethernet driver,
-so we should remove this one as well.
+On Sat, Feb 24, 2018 at 01:42:27PM +0800, Lu Baolu wrote:
+> A memory block was allocated in intel_svm_bind_mm() but never freed
+> in a failure path. This patch fixes this by free it to avoid memory
+> leakage.
+> 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: <stable@vger.kernel.org> # v4.4+
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/Kconfig        |    1 -
- drivers/net/ethernet/Makefile       |    1 -
- drivers/net/ethernet/tile/Kconfig   |   18 -
- drivers/net/ethernet/tile/Makefile  |   11 -
- drivers/net/ethernet/tile/tilegx.c  | 2279 ---------------------------------
- drivers/net/ethernet/tile/tilepro.c | 2397 -----------------------------------
- 6 files changed, 4707 deletions(-)
- delete mode 100644 drivers/net/ethernet/tile/Kconfig
- delete mode 100644 drivers/net/ethernet/tile/Makefile
- delete mode 100644 drivers/net/ethernet/tile/tilegx.c
- delete mode 100644 drivers/net/ethernet/tile/tilepro.c
-
-diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-index b6cf4b6962f5..92be1ad3df59 100644
---- a/drivers/net/ethernet/Kconfig
-+++ b/drivers/net/ethernet/Kconfig
-@@ -176,7 +176,6 @@ source "drivers/net/ethernet/stmicro/Kconfig"
- source "drivers/net/ethernet/sun/Kconfig"
- source "drivers/net/ethernet/tehuti/Kconfig"
- source "drivers/net/ethernet/ti/Kconfig"
--source "drivers/net/ethernet/tile/Kconfig"
- source "drivers/net/ethernet/toshiba/Kconfig"
- source "drivers/net/ethernet/tundra/Kconfig"
- source "drivers/net/ethernet/via/Kconfig"
-diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
-index 3cdf01e96e0b..edef6069dd4b 100644
---- a/drivers/net/ethernet/Makefile
-+++ b/drivers/net/ethernet/Makefile
-@@ -88,7 +88,6 @@ obj-$(CONFIG_NET_VENDOR_STMICRO) += stmicro/
- obj-$(CONFIG_NET_VENDOR_SUN) += sun/
- obj-$(CONFIG_NET_VENDOR_TEHUTI) += tehuti/
- obj-$(CONFIG_NET_VENDOR_TI) += ti/
--obj-$(CONFIG_TILE_NET) += tile/
- obj-$(CONFIG_NET_VENDOR_TOSHIBA) += toshiba/
- obj-$(CONFIG_NET_VENDOR_TUNDRA) += tundra/
- obj-$(CONFIG_NET_VENDOR_VIA) += via/
-diff --git a/drivers/net/ethernet/tile/Kconfig b/drivers/net/ethernet/tile/Kconfig
-deleted file mode 100644
-index bdfeaf3d4fce..000000000000
-diff --git a/drivers/net/ethernet/tile/Makefile b/drivers/net/ethernet/tile/Makefile
-deleted file mode 100644
-index 3d0ae1f07fc9..000000000000
-diff --git a/drivers/net/ethernet/tile/tilegx.c b/drivers/net/ethernet/tile/tilegx.c
-deleted file mode 100644
-index b3e5816a4678..000000000000
-diff --git a/drivers/net/ethernet/tile/tilepro.c b/drivers/net/ethernet/tile/tilepro.c
-deleted file mode 100644
-index 56d06282fbde..000000000000
--- 
-2.9.0
+Applied, thanks.
