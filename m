@@ -1,116 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932995AbeCOQFk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:05:40 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50402 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932926AbeCOQBD (ORCPT
+        id S933035AbeCOQGH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:06:07 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53789 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932899AbeCOQA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:01:03 -0400
-X-Google-Smtp-Source: AG47ELskRQHxFdNXWljAWGn8WkUUgPAGyKG4v1i0ii1qmd57otJXGRaWT0bZmBxF3AU+o6v48rNLwA==
+        Thu, 15 Mar 2018 12:00:59 -0400
+X-Google-Smtp-Source: AG47ELsqphkPc2E6Jya/AdZdm4hZWtBJVyt4R1P+BNsuHfTZuVt9Fo1Re6Hj3JzVJ/n1lVXO3eOZZQ==
 From: jason.vas.dias@gmail.com
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
         peterz@infradead.org, andi@firstfloor.org
-Subject: [PATCH v4.16-rc5 2/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-Date: Thu, 15 Mar 2018 16:00:47 +0000
-Message-Id: <1521129648-20889-3-git-send-email-jason.vas.dias@gmail.com>
+Subject: [PATCH v4.16-rc5 (3)] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Thu, 15 Mar 2018 16:00:45 +0000
+Message-Id: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
 X-Mailer: git-send-email 2.8.2
-In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
-References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index fbc7371..2c46675 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -184,10 +184,9 @@ notrace static u64 vread_tsc(void)
- 
- notrace static u64 vread_tsc_raw(void)
- {
--	u64 tsc
-+	u64 tsc  = (gtod->has_rdtscp ? rdtscp((void *)0) : rdtsc_ordered())
- 	  , last = gtod->raw_cycle_last;
- 
--	tsc	      = rdtsc_ordered();
- 	if (likely(tsc >= last))
- 		return tsc;
- 	asm volatile ("");
-diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-index 5af7093..0327a95 100644
---- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-@@ -16,6 +16,9 @@
- #include <linux/timekeeper_internal.h>
- #include <asm/vgtod.h>
- #include <asm/vvar.h>
-+#include <asm/cpufeature.h>
-+
-+extern unsigned int tsc_khz;
- 
- int vclocks_used __read_mostly;
- 
-@@ -49,6 +52,7 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdata->raw_mask		= tk->tkr_raw.mask;
- 	vdata->raw_mult		= tk->tkr_raw.mult;
- 	vdata->raw_shift	= tk->tkr_raw.shift;
-+	vdata->has_rdtscp	= static_cpu_has(X86_FEATURE_RDTSCP);
- 
- 	vdata->wall_time_sec		= tk->xtime_sec;
- 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 30df295..a5ff704 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -218,6 +218,37 @@ static __always_inline unsigned long long rdtsc_ordered(void)
- 	return rdtsc();
- }
- 
-+/**
-+ * rdtscp() - read the current TSC and (optionally) CPU number, with built-in
-+ *            cancellation point replacing barrier - only available
-+ *            if static_cpu_has(X86_FEATURE_RDTSCP) .
-+ * returns:   The 64-bit Time Stamp Counter (TSC) value.
-+ * Optionally, 'cpu_out' can be non-null, and on return it will contain
-+ * the number (Intel CPU ID) of the CPU that the task is currently running on.
-+ * As does EAX_EDT_RET, this uses the "open-coded asm" style to
-+ * force the compiler + assembler to always use (eax, edx, ecx) registers,
-+ * NOT whole (rax, rdx, rcx) on x86_64 , because only 32-bit
-+ * variables are used - exactly the same code should be generated
-+ * for this instruction on 32-bit as on 64-bit when this asm stanza is used.
-+ * See: SDM , Vol #2, RDTSCP instruction.
-+ */
-+static __always_inline u64 rdtscp(u32 *cpu_out)
-+{
-+	u32	tsc_lo, tsc_hi, tsc_cpu;
-+
-+	asm volatile
-+	("rdtscp"
-+		:   "=a" (tsc_lo)
-+		  , "=d" (tsc_hi)
-+		  , "=c" (tsc_cpu)
-+	); // : eax, edx, ecx used - NOT rax, rdx, rcx
-+	if (unlikely(cpu_out != ((void *)0)))
-+		*cpu_out = tsc_cpu;
-+	return ((((u64)tsc_hi) << 32) |
-+		(((u64)tsc_lo) & 0x0ffffffffULL)
-+	       );
-+}
-+
- /* Deprecated, keep it for a cycle for easier merging: */
- #define rdtscll(now)	do { (now) = rdtsc_ordered(); } while (0)
- 
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index 24e4d45..e7e4804 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -26,6 +26,7 @@ struct vsyscall_gtod_data {
- 	u64	raw_mask;
- 	u32	raw_mult;
- 	u32	raw_shift;
-+	u32     has_rdtscp;
- 
- 	/* open coded 'struct timespec' */
- 	u64		wall_time_snsec;
+
+  Resent to address reviewer comments.
+   
+  Currently, the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
+
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values, user-space  code needs to know elapsed time from the
+  perspective of the CPU no matter how "hot" / fast or "cold" / slow it
+  might be running wrt NTP / PTP "real" time; when code needs this,
+  the latencies associated with a syscall are often unacceptably high.
+
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc5 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  This patch affects only files:
+
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vdso/vdso.lds.S
+   arch/x86/entry/vdso/vdsox32.lds.S
+   arch/x86/entry/vdso/vdso32/vdso32.lds.S
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+  There are 3 patches in the series :
+
+   Patch #1 makes the VDSO handle clock_gettime(CLOCK_MONOTONIC_RAW) with rdtsc_ordered()
+
+  Patches #2 & #3 should be considered "optional" :
+
+   Patch #2 makes the VDSO handle clock_gettime(CLOCK_MONOTONIC_RAW) with a new rdtscp() function in msr.h
+
+   Patch #3 makes the VDSO export TSC calibration data via a new function in the vDSO:
+               unsigned int __vdso_linux_tsc_calibration ( struct linux_tsc_calibration *tsc_cal )
+            that user code can optionally call.
+
+
+   Patch #2 makes clock_gettime(CLOCK_MONOTONIC_RAW) calls somewhat faster
+   than clock_gettime(CLOCK_MONOTONIC) calls.
+
+   I think something like Patch #3 is necessary to export TSC calibration data to user-space TSC readers.
+
+   It is entirely up to the kernel developers whether they want to include patches
+   #2 and #3, but I think something like Patch #1 really needs to get into a future
+   Linux release, as an unecessary latency of 200-1000ns for a timer that can tick
+   3 times per nanosecond is unacceptable.
+
+   Patches for kernels 3.10.0-21 and 4.9.65-rt23 (ARM) are attached to bug #198161. 
+
+
+Thanks & Best Regards,
+Jason Vas Dias
