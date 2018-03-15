@@ -1,330 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932608AbeCOVcF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:32:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43518 "EHLO mx1.redhat.com"
+        id S932448AbeCOVjH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:39:07 -0400
+Received: from ozlabs.org ([103.22.144.67]:50387 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751414AbeCOVcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:32:03 -0400
-Subject: [PATCH v2 3/3] vfio/pci: Add ioeventfd support
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        alex.williamson@redhat.com, peterx@redhat.com, eric.auger@redhat.com,
-        aik@ozlabs.ru
-Date: Thu, 15 Mar 2018 15:31:58 -0600
-Message-ID: <20180315213157.15150.86812.stgit@gimli.home>
-In-Reply-To: <20180315212634.15150.88094.stgit@gimli.home>
-References: <20180315212634.15150.88094.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
+        id S1751877AbeCOVjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:39:06 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 16 Mar 2018 08:38:34 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc
+ tree
+Message-ID: <20180316083834.3aa0c438@canb.auug.org.au>
+In-Reply-To: <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
+References: <20180316075629.019b6560@canb.auug.org.au>
+        <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4Tpp=nJyFCEXiTiZpwCCHrC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ioeventfd here is actually irqfd handling of an ioeventfd such as
-supported in KVM.  A user is able to pre-program a device write to
-occur when the eventfd triggers.  This is yet another instance of
-eventfd-irqfd triggering between KVM and vfio.  The impetus for this
-is high frequency writes to pages which are virtualized in QEMU.
-Enabling this near-direct write path for selected registers within
-the virtualized page can improve performance and reduce overhead.
-Specifically this is initially targeted at NVIDIA graphics cards where
-the driver issues a write to an MMIO register within a virtualized
-region in order to allow the MSI interrupt to re-trigger.
+--Sig_/4Tpp=nJyFCEXiTiZpwCCHrC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/pci/vfio_pci.c         |   35 +++++++++++
- drivers/vfio/pci/vfio_pci_private.h |   19 ++++++
- drivers/vfio/pci/vfio_pci_rdwr.c    |  111 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/vfio.h           |   27 +++++++++
- 4 files changed, 192 insertions(+)
+Hi Arnd,
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index b0f759476900..c6822149b394 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -305,6 +305,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
- {
- 	struct pci_dev *pdev = vdev->pdev;
- 	struct vfio_pci_dummy_resource *dummy_res, *tmp;
-+	struct vfio_pci_ioeventfd *ioeventfd, *ioeventfd_tmp;
- 	int i, bar;
- 
- 	/* Stop the device from further DMA */
-@@ -314,6 +315,15 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
- 				VFIO_IRQ_SET_ACTION_TRIGGER,
- 				vdev->irq_type, 0, 0, NULL);
- 
-+	/* Device closed, don't need mutex here */
-+	list_for_each_entry_safe(ioeventfd, ioeventfd_tmp,
-+				 &vdev->ioeventfds_list, next) {
-+		vfio_virqfd_disable(&ioeventfd->virqfd);
-+		list_del(&ioeventfd->next);
-+		kfree(ioeventfd);
-+	}
-+	vdev->ioeventfds_nr = 0;
-+
- 	vdev->virq_disabled = false;
- 
- 	for (i = 0; i < vdev->num_regions; i++)
-@@ -1012,6 +1022,28 @@ static long vfio_pci_ioctl(void *device_data,
- 
- 		kfree(groups);
- 		return ret;
-+	} else if (cmd == VFIO_DEVICE_IOEVENTFD) {
-+		struct vfio_device_ioeventfd ioeventfd;
-+		int count;
-+
-+		minsz = offsetofend(struct vfio_device_ioeventfd, fd);
-+
-+		if (copy_from_user(&ioeventfd, (void __user *)arg, minsz))
-+			return -EFAULT;
-+
-+		if (ioeventfd.argsz < minsz)
-+			return -EINVAL;
-+
-+		if (ioeventfd.flags & ~VFIO_DEVICE_IOEVENTFD_SIZE_MASK)
-+			return -EINVAL;
-+
-+		count = ioeventfd.flags & VFIO_DEVICE_IOEVENTFD_SIZE_MASK;
-+
-+		if (hweight8(count) != 1 || ioeventfd.fd < -1)
-+			return -EINVAL;
-+
-+		return vfio_pci_ioeventfd(vdev, ioeventfd.offset,
-+					  ioeventfd.data, count, ioeventfd.fd);
- 	}
- 
- 	return -ENOTTY;
-@@ -1174,6 +1206,8 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	vdev->irq_type = VFIO_PCI_NUM_IRQS;
- 	mutex_init(&vdev->igate);
- 	spin_lock_init(&vdev->irqlock);
-+	mutex_init(&vdev->ioeventfds_lock);
-+	INIT_LIST_HEAD(&vdev->ioeventfds_list);
- 
- 	ret = vfio_add_group_dev(&pdev->dev, &vfio_pci_ops, vdev);
- 	if (ret) {
-@@ -1215,6 +1249,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
- 
- 	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
- 	kfree(vdev->region);
-+	mutex_destroy(&vdev->ioeventfds_lock);
- 	kfree(vdev);
- 
- 	if (vfio_pci_is_vga(pdev)) {
-diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-index f561ac1c78a0..cde3b5d3441a 100644
---- a/drivers/vfio/pci/vfio_pci_private.h
-+++ b/drivers/vfio/pci/vfio_pci_private.h
-@@ -29,6 +29,19 @@
- #define PCI_CAP_ID_INVALID		0xFF	/* default raw access */
- #define PCI_CAP_ID_INVALID_VIRT		0xFE	/* default virt access */
- 
-+/* Cap maximum number of ioeventfds per device (arbitrary) */
-+#define VFIO_PCI_IOEVENTFD_MAX		1000
-+
-+struct vfio_pci_ioeventfd {
-+	struct list_head	next;
-+	struct virqfd		*virqfd;
-+	void __iomem		*addr;
-+	uint64_t		data;
-+	loff_t			pos;
-+	int			bar;
-+	int			count;
-+};
-+
- struct vfio_pci_irq_ctx {
- 	struct eventfd_ctx	*trigger;
- 	struct virqfd		*unmask;
-@@ -92,9 +105,12 @@ struct vfio_pci_device {
- 	bool			nointx;
- 	struct pci_saved_state	*pci_saved_state;
- 	int			refcnt;
-+	int			ioeventfds_nr;
- 	struct eventfd_ctx	*err_trigger;
- 	struct eventfd_ctx	*req_trigger;
- 	struct list_head	dummy_resources_list;
-+	struct mutex		ioeventfds_lock;
-+	struct list_head	ioeventfds_list;
- };
- 
- #define is_intx(vdev) (vdev->irq_type == VFIO_PCI_INTX_IRQ_INDEX)
-@@ -120,6 +136,9 @@ extern ssize_t vfio_pci_bar_rw(struct vfio_pci_device *vdev, char __user *buf,
- extern ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
- 			       size_t count, loff_t *ppos, bool iswrite);
- 
-+extern long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
-+			       uint64_t data, int count, int fd);
-+
- extern int vfio_pci_init_perm_bits(void);
- extern void vfio_pci_uninit_perm_bits(void);
- 
-diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
-index 925419e0f459..a6029d0a5524 100644
---- a/drivers/vfio/pci/vfio_pci_rdwr.c
-+++ b/drivers/vfio/pci/vfio_pci_rdwr.c
-@@ -17,6 +17,7 @@
- #include <linux/pci.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
-+#include <linux/vfio.h>
- #include <linux/vgaarb.h>
- 
- #include "vfio_pci_private.h"
-@@ -275,3 +276,113 @@ ssize_t vfio_pci_vga_rw(struct vfio_pci_device *vdev, char __user *buf,
- 
- 	return done;
- }
-+
-+static int vfio_pci_ioeventfd_handler(void *opaque, void *unused)
-+{
-+	struct vfio_pci_ioeventfd *ioeventfd = opaque;
-+
-+	switch (ioeventfd->count) {
-+	case 1:
-+		vfio_iowrite8(ioeventfd->data, ioeventfd->addr);
-+		break;
-+	case 2:
-+		vfio_iowrite16(ioeventfd->data, ioeventfd->addr);
-+		break;
-+	case 4:
-+		vfio_iowrite32(ioeventfd->data, ioeventfd->addr);
-+		break;
-+#ifdef iowrite64
-+	case 8:
-+		vfio_iowrite64(ioeventfd->data, ioeventfd->addr);
-+		break;
-+#endif
-+	}
-+
-+	return 0;
-+}
-+
-+long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
-+			uint64_t data, int count, int fd)
-+{
-+	struct pci_dev *pdev = vdev->pdev;
-+	loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
-+	int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
-+	struct vfio_pci_ioeventfd *ioeventfd;
-+
-+	/* Only support ioeventfds into BARs */
-+	if (bar > VFIO_PCI_BAR5_REGION_INDEX)
-+		return -EINVAL;
-+
-+	if (pos + count > pci_resource_len(pdev, bar))
-+		return -EINVAL;
-+
-+	/* Disallow ioeventfds working around MSI-X table writes */
-+	if (bar == vdev->msix_bar &&
-+	    !(pos + count <= vdev->msix_offset ||
-+	      pos >= vdev->msix_offset + vdev->msix_size))
-+		return -EINVAL;
-+
-+#ifndef iowrite64
-+	if (count == 8)
-+		return -EINVAL;
-+#endif
-+
-+	ret = vfio_pci_setup_barmap(vdev, bar);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&vdev->ioeventfds_lock);
-+
-+	list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
-+		if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
-+		    ioeventfd->data == data && ioeventfd->count == count) {
-+			if (fd == -1) {
-+				vfio_virqfd_disable(&ioeventfd->virqfd);
-+				list_del(&ioeventfd->next);
-+				vdev->ioeventfds_nr--;
-+				kfree(ioeventfd);
-+				ret = 0;
-+			} else
-+				ret = -EEXIST;
-+
-+			goto out_unlock;
-+		}
-+	}
-+
-+	if (fd < 0) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
-+
-+	if (vdev->ioeventfds_nr >= VFIO_PCI_IOEVENTFD_MAX) {
-+		ret = -ENOSPC;
-+		goto out_unlock;
-+	}
-+
-+	ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
-+	if (!ioeventfd) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	ioeventfd->addr = vdev->barmap[bar] + pos;
-+	ioeventfd->data = data;
-+	ioeventfd->pos = pos;
-+	ioeventfd->bar = bar;
-+	ioeventfd->count = count;
-+
-+	ret = vfio_virqfd_enable(ioeventfd, vfio_pci_ioeventfd_handler,
-+				 NULL, NULL, &ioeventfd->virqfd, fd);
-+	if (ret) {
-+		kfree(ioeventfd);
-+		goto out_unlock;
-+	}
-+
-+	list_add(&ioeventfd->next, &vdev->ioeventfds_list);
-+	vdev->ioeventfds_nr++;
-+
-+out_unlock:
-+	mutex_unlock(&vdev->ioeventfds_lock);
-+
-+	return ret;
-+}
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index c74372163ed2..1aa7b82e8169 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -575,6 +575,33 @@ struct vfio_device_gfx_plane_info {
- 
- #define VFIO_DEVICE_GET_GFX_DMABUF _IO(VFIO_TYPE, VFIO_BASE + 15)
- 
-+/**
-+ * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 16,
-+ *                              struct vfio_device_ioeventfd)
-+ *
-+ * Perform a write to the device at the specified device fd offset, with
-+ * the specified data and width when the provided eventfd is triggered.
-+ * vfio bus drivers may not support this for all regions, for all widths,
-+ * or at all.  vfio-pci currently only enables support for BAR regions,
-+ * excluding the MSI-X vector table.
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
-+struct vfio_device_ioeventfd {
-+	__u32	argsz;
-+	__u32	flags;
-+#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
-+#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
-+	__u64	offset;			/* device fd offset of write */
-+	__u64	data;			/* data to be written */
-+	__s32	fd;			/* -1 for de-assignment */
-+};
-+
-+#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
-+
- /* -------- API for Type1 VFIO IOMMU -------- */
- 
- /**
+On Thu, 15 Mar 2018 22:06:29 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> What script do you use to find those? I guess I should check for
+> missing signoffs as well when pulling a branch.
+
+See below.  You can give it any commit range you would give e.g. gitk.
+I run this using he ranges reported by the "git fetch" for each tree
+each day.
+--=20
+Cheers,
+Stephen Rothwell
+
+#!/bin/bash
+
+if [ "$#" -lt 1 ]; then
+	printf "Usage: %s <commit range>\n", "$0" 1>&2
+	exit 1
+fi
+
+commits=3D$(git rev-list --no-merges "$@")
+if [ -z "$commits" ]; then
+	printf "No commits\n"
+	exit 0
+fi
+
+for c in $commits; do
+	ae=3D$(git log -1 --format=3D'%ae' "$c")
+	aE=3D$(git log -1 --format=3D'%aE' "$c")
+	an=3D$(git log -1 --format=3D'%an' "$c")
+	aN=3D$(git log -1 --format=3D'%aN' "$c")
+	ce=3D$(git log -1 --format=3D'%ce' "$c")
+	cE=3D$(git log -1 --format=3D'%cE' "$c")
+	cn=3D$(git log -1 --format=3D'%cn' "$c")
+	cN=3D$(git log -1 --format=3D'%cN' "$c")
+	sob=3D$(git log -1 --format=3D'%b' "$c" | grep -i '^[[:space:]]*Signed-off=
+-by:')
+
+	am=3Dfalse
+	cm=3Dfalse
+	grep -i -q "<$ae>" <<<"$sob" ||
+		grep -i -q "<$aE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
+		am=3Dtrue
+	grep -i -q "<$ce>" <<<"$sob" ||
+		grep -i -q "<$cE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
+		cm=3Dtrue
+
+	if "$am" || "$cm"; then
+		printf "Commit %s\n" "$c"
+		"$am" && printf "\tauthor SOB missing\n"
+		"$cm" && printf "\tcommitter SOB missing\n"
+		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
+	fi
+done
+
+exec gitk "$@"
+
+--Sig_/4Tpp=nJyFCEXiTiZpwCCHrC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq59oACgkQAVBC80lX
+0GxWNQf/XNyHte04Fq3fqTaOZaStQ2IZkrZp15pJwablp/Cp7+JRevcVioCbbKqC
+PQCWdWMVZgipdU9F1cbT7l1xoZUSzAICcYRN2nk71pxI0UVn2EaZhRtuchwXkZmM
+1C/KVtKHFxLF1fEHIBq3jhdYm4BxVUOWxchlIRzmA+QEcj/heOk44i8wh1HEv9dw
+EbIlaHLdy1evJXv6cwsCkUTh9q+/oSgB97+cN7+PJ4TSmq+/ft4cXG9u/43lxspt
+f8irlYp4OhsHmluNE1YHd/gXpeTnMlN0h4h8mIlmEkeXgnpsqU3eLSLxRCd/eUrn
+c0Wq+DaBkjmEKOXdF7IgUQ1LSVvlWg==
+=hdCg
+-----END PGP SIGNATURE-----
+
+--Sig_/4Tpp=nJyFCEXiTiZpwCCHrC--
