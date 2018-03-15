@@ -1,77 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932682AbeCOPqJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:46:09 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47984 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752587AbeCOPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:46:06 -0400
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/9] x86/dumpstack: Add loglevel argument to show_opcodes()
-Date: Thu, 15 Mar 2018 16:44:44 +0100
-Message-Id: <20180315154448.16222-6-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
-References: <20180315154448.16222-1-bp@alien8.de>
+        id S932818AbeCOPuc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:50:32 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:33104 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932406AbeCOPua (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:50:30 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] Bluetooth: btrsi: rework dependencies
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180315154312.3941446-1-arnd@arndb.de>
+Date: Thu, 15 Mar 2018 16:50:27 +0100
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EE0D5CBE-0867-4FE0-B157-CA4086C84233@holtmann.org>
+References: <20180315154312.3941446-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Hi Arnd,
 
-Will be used in the next patch.
+> The linkage between the bluetooth driver and the wireless
+> driver is not defined properly, leading to build problems
+> such as:
+> 
+> warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI && RSI_91X)
+> drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
+> (.text+0x205): undefined reference to `rsi_bt_ops'
+> 
+> To actually make it work, we need the following steps:
+> 
+> - remove the bogus 'select RSI_COEX', this is already covered
+>  by the default
+> - change RSI_COEX to a 'bool' symbol so that the #ifdefs work
+>  all the time
+> - ensure that BT_HCIRSI is built-in whenever RSI_91X is built-in
+> - prevent BT_HCIRSI from being enabled when CONFIG_BT=m and
+>  RSI_91X=y, as this cannot work
+> 
+> Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> drivers/bluetooth/Kconfig        | 9 ++++++++-
+> drivers/bluetooth/Makefile       | 2 +-
+> drivers/net/wireless/rsi/Kconfig | 6 +-----
+> 3 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> index d8bbd661dbdb..6b3e8bf69d07 100644
+> --- a/drivers/bluetooth/Kconfig
+> +++ b/drivers/bluetooth/Kconfig
+> @@ -394,8 +394,9 @@ config BT_QCOMSMD
+> 
+> config BT_HCIRSI
+> 	tristate "Redpine HCI support"
+> +	depends on RSI_91X
+> +	depends on !(BT=m && RSI_91X=y)
+> 	default n
+> -	select RSI_COEX
+> 	help
+> 	  Redpine BT driver.
+> 	  This driver handles BT traffic from upper layers and pass
+> @@ -404,4 +405,10 @@ config BT_HCIRSI
+> 	  Say Y here to compile support for HCI over Redpine into the
+> 	  kernel or say M to compile as a module.
+> 
+> +config BT_HCIRSI_MODULE
+> +	tristate
+> +	# ensure that the BT_HCIRSI driver is visible to the core
+> +	default y if BT_HCIRSI=m && RSI_91X=y
+> +	default BT_HCIRSI
+> +
+> endmenu
+> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
+> index 03cfc1b20c4a..9e8d22712ff3 100644
+> --- a/drivers/bluetooth/Makefile
+> +++ b/drivers/bluetooth/Makefile
+> @@ -28,7 +28,7 @@ obj-$(CONFIG_BT_QCA)		+= btqca.o
+> 
+> obj-$(CONFIG_BT_HCIUART_NOKIA)	+= hci_nokia.o
+> 
+> -obj-$(CONFIG_BT_HCIRSI)		+= btrsi.o
+> +obj-$(CONFIG_BT_HCIRSI_MODULE)	+= btrsi.o
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/asm/stacktrace.h | 1 +
- arch/x86/kernel/dumpstack.c       | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+do we need this new option? I have avoided these kind of complex things multi config entries. Can we not just select the RSI_91X?
 
-diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/stacktrace.h
-index 133d9425fced..0630eeb18bbc 100644
---- a/arch/x86/include/asm/stacktrace.h
-+++ b/arch/x86/include/asm/stacktrace.h
-@@ -111,4 +111,5 @@ static inline unsigned long caller_frame_pointer(void)
- 	return (unsigned long)frame;
- }
- 
-+void show_opcodes(u8 *rip, const char *loglvl);
- #endif /* _ASM_X86_STACKTRACE_H */
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 3f781a8dddb8..82562f327a99 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -68,7 +68,7 @@ static void printk_stack_address(unsigned long address, int reliable,
- 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
- }
- 
--static void show_opcodes(u8 *rip)
-+void show_opcodes(u8 *rip, const char *loglvl)
- {
- #define OPCODE_BUFSIZE 64
- 	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
-@@ -76,7 +76,7 @@ static void show_opcodes(u8 *rip)
- 	u8 *ip;
- 	int i;
- 
--	printk(KERN_DEFAULT "Code: ");
-+	printk("%sCode: ", loglvl);
- 
- 	ip = (u8 *)rip - code_prologue;
- 	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
-@@ -400,6 +400,6 @@ void show_regs(struct pt_regs *regs)
- 		if (regs->ip < PAGE_OFFSET)
- 			pr_cont(" Bad RIP value.\n");
- 		else
--			show_opcodes((u8 *)regs->ip);
-+			show_opcodes((u8 *)regs->ip, KERN_DEFAULT);
- 	}
- }
--- 
-2.13.0
+Regards
+
+Marcel
