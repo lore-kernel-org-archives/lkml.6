@@ -1,101 +1,160 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvTGI/ZUsiu6L7L1sdwhlqg6gVP8+rJipbRyOO9VUsnXTkKGwFaNwDHGYxhkL3GX7NZaP0o
-ARC-Seal: i=1; a=rsa-sha256; t=1520954865; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ec2QPXse7W/vazqfoZJOCXUT7d8ZkazQS58KKgV0qlAnwEMTX7c3gC/zYj0wVNuaMJ
-         qL5+9O3D6XZs2S596ZhhURF2doYyQWmHYMnhsnHzn2hGBQBTV1Yldg+1z08F63aM8DjC
-         WUqpUd+kstNBl+eS/3L8K04L22rowGuDule8wMFP6PFbaXeKD7uZkSRWyzWxub86RMzy
-         K+Y84a9jL2IjywCZeLQmwtuOVuMW9nWhKUZpz3ir/MiNmrl5un3Osmu759ET1eOSPlJ2
-         M6FGjcUZjyLYmxioNf/6Z24QTiB7pWjg7TXfXJEB6w6xvJXXH3IDktA4B1e1a/27nCWS
-         JYSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=hpdMEFvE2MPgVB7+6mrjZ+6aAwevoLPcs1x/Y2mKsAQ=;
-        b=y1eBd5CFjcNjPxvYnn7wG+sDBc89UPc6+NAwjM2H7pouWCvqlHs+tml+ADZJcZfMDS
-         qgVJgdT/0a1XrRLJ+9RNVgQU0hpW46TV6uYv+lyefYr8CC8xpKOLtP4opXVI0t+53xK0
-         28t1dSPMhujc9lakTHxyyd6XKofZqtlLUM6to/Z5CiueLkL9EVV1ePC8b+BjPtSIsOPg
-         QecHjR2PYVQcs8DlPOIvf2zaNLezo/WgFMO7DjQFGN/jRO9GuFQQV/r+iVDeqkbzjVa+
-         Mdi/xe0+gyEL4g/MVSVpFAa65kT6ie07fwIdHt1ZV0z+Uv2sFLVgcxXNb2Vcl1oFRIGr
-         qE+g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Mika Kahola <mika.kahola@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.15 010/146] drm/i915/audio: fix check for av_enc_map overflow
-Date: Tue, 13 Mar 2018 16:22:57 +0100
-Message-Id: <20180313152321.396639946@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180313152320.439085687@linuxfoundation.org>
-References: <20180313152320.439085687@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Return-Path: <sfr@canb.auug.org.au>
+X-Cyrus-Session-Id: sloti22d1t05-3786778-1521095798-5-13029023017213388098
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='103.22.144.67', Host='ozlabs.org', Country='AU', FromHeader='au',
+  MailFrom='au'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: sfr@canb.auug.org.au
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521095797; b=boUmPqLIcS97rP8mQuZsPJvbHh/0Uqh8Ml7Bik4KrNH66dv
+    UkCgnpcXDcPBNxUOLOe5jw18Ra9BuuLY/7S+cAABUQfALAEvybVfwcPU23ISKWjf
+    apUf3G7BikXXZefNBx8z1nrW7DauU6inrPpiOc595Hif//HypINfp8jMf9zrvRqw
+    04s2d4ItYaIuKoGgiQna6irShG5hghsIQvA01Okwb7vct2awFzmf3fTRck/Eeo2k
+    2DVxjC8MBQMZ0FsUWaKwyL8pjMAGRICBV44MaeMty5laPgD4iFwd9PAviS6sdXdx
+    z41UNtW6iHPezVoJPWmNPYUlHWzs94in8iExVnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type; s=arctest; t=1521095797; bh=U1sIrafY
+    5CQ6Rpzi8Nk4kQg8Pri7PFurwlEqyQjN778=; b=hs5Xtq0FkKVMsVGDtCbRqpMo
+    3H9nUJwcZQ48dxBVJtagq+TRB56MIyCKP/BPip5VOHVOUhqfe8Ku3isrUCk4ULq8
+    TXSpYbEsq7IeV552K3JGdfZ3zt65umnf1olX2/x7stuTaL9AMvPEp0dfrifeaWrG
+    DAosmhNOJHaM+szqSSKjopkwYPtNifNtZX/wQCgndz+5Mwc946cSjJN6OzI34XfR
+    los9vLMXXEAD0kZwWikE/pku9U8P99tWRbLeJSWg1VZjKxMHRF4dcuCZu9ISTazn
+    dDfkM4jqbdc09E1UqOKYISZzljucjxlw2CCOuSNT9HnnYvHHyCqBpZSFTuiNiA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o8XJvn1v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o8XJvn1v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=201702;
+    dmarc=none (p=none,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=103.22.144.67 (ozlabs.org);
+    smime=temperror;
+    spf=pass smtp.mailfrom=sfr@canb.auug.org.au smtp.helo=ozlabs.org;
+    x-aligned-from=pass;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=ozlabs.org x-ptr-lookup=ozlabs.org;
+    x-return-mx=pass smtp.domain=canb.auug.org.au smtp.result=pass smtp_org.domain=auug.org.au smtp_org.result=pass smtp_is_org_domain=no header.domain=canb.auug.org.au header.result=pass header_org.domain=auug.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 15 Mar 2018 17:36:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Palmer Dabbelt
+ <palmer@sifive.com>
+Subject: linux-next: manual merge of the tty tree with the asm-generic tree
+Message-ID: <20180315173604.5c858ed8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iGXVQ7fEF9Uy8H_Bob4g059"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594836769072954901?=
-X-GMAIL-MSGID: =?utf-8?q?1594836769072954901?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-------------------
+Hi Greg,
 
-From: Jani Nikula <jani.nikula@intel.com>
+Today's linux-next merge of the tty tree got conflicts in:
 
-commit 72a6d72c2cd03bba7b70117b63dea83d2de88057 upstream.
+  drivers/tty/hvc/Kconfig
+  drivers/tty/hvc/Makefile
 
-Turns out -1 >= ARRAY_SIZE() is always true. Move the bounds check where
-we know pipe >= 0 and next to the array indexing where it makes most
-sense.
+between commit:
 
-Fixes: 9965db26ac05 ("drm/i915: Check for fused or unused pipes")
-Fixes: 0b7029b7e43f ("drm/i915: Check for fused or unused pipes")
-Cc: <stable@vger.kernel.org> # v4.10+
-Cc: Mika Kahola <mika.kahola@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: intel-gfx@lists.freedesktop.org
-Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Reviewed-by: Mika Kahola <mika.kahola@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180214173840.25360-1-jani.nikula@intel.com
-(cherry picked from commit cdb3db8542d854bd678d60cd28861b042e191672)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  c235c62f99e6 ("tty: remove bfin_jtag_comm and hvc_bfin_jtag drivers")
 
----
- drivers/gpu/drm/i915/intel_audio.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+from the asm-generic tree and commit:
 
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -754,11 +754,11 @@ static struct intel_encoder *get_saved_e
- {
- 	struct intel_encoder *encoder;
- 
--	if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
--		return NULL;
--
- 	/* MST */
- 	if (pipe >= 0) {
-+		if (WARN_ON(pipe >= ARRAY_SIZE(dev_priv->av_enc_map)))
-+			return NULL;
-+
- 		encoder = dev_priv->av_enc_map[pipe];
- 		/*
- 		 * when bootup, audio driver may not know it is
+  afa6b1ccfad5 ("tty: New RISC-V SBI console driver")
+
+from the tty tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/tty/hvc/Kconfig
+index 3bade5ad3d71,e7cc617d6e45..000000000000
+--- a/drivers/tty/hvc/Kconfig
++++ b/drivers/tty/hvc/Kconfig
+@@@ -88,6 -88,25 +88,16 @@@ config HVC_DC
+  	 driver. This console is used through a JTAG only on ARM. If you don't h=
+ave
+  	 a JTAG then you probably don't want this option.
+ =20
+ -config HVC_BFIN_JTAG
+ -	bool "Blackfin JTAG console"
+ -	depends on BLACKFIN
+ -	select HVC_DRIVER
+ -	help
+ -	 This console uses the Blackfin JTAG to create a console under the
+ -	 the HVC driver.  If you don't have JTAG, then you probably don't
+ -	 want this option.
+ -
++ config HVC_RISCV_SBI
++ 	bool "RISC-V SBI console support"
++ 	depends on RISCV
++ 	select HVC_DRIVER
++ 	help
++ 	  This enables support for console output via RISC-V SBI calls, which
++ 	  is normally used only during boot to output printk.
++=20
++ 	  If you don't know what do to here, say Y.
++=20
+  config HVCS
+  	tristate "IBM Hypervisor Virtual Console Server support"
+  	depends on PPC_PSERIES && HVC_CONSOLE
+diff --cc drivers/tty/hvc/Makefile
+index 7da1934d34e8,83079ae000ae..000000000000
+--- a/drivers/tty/hvc/Makefile
++++ b/drivers/tty/hvc/Makefile
+@@@ -9,4 -10,6 +9,5 @@@ obj-$(CONFIG_HVC_IRQ)		+=3D hvc_irq.
+  obj-$(CONFIG_HVC_XEN)		+=3D hvc_xen.o
+  obj-$(CONFIG_HVC_IUCV)		+=3D hvc_iucv.o
+  obj-$(CONFIG_HVC_UDBG)		+=3D hvc_udbg.o
+ -obj-$(CONFIG_HVC_BFIN_JTAG)	+=3D hvc_bfin_jtag.o
++ obj-$(CONFIG_HVC_RISCV_SBI)	+=3D hvc_riscv_sbi.o
+  obj-$(CONFIG_HVCS)		+=3D hvcs.o
+
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqFFQACgkQAVBC80lX
+0Gw84Af+JSpHXDpB1HfEw0JrSom98lezyVgJAJf6E9WlOiU8qe/N7SjMhbEFNok0
+YQFjhpnmtf6yev+ZYSKoyNi8ccODX4wJ2R/dqHGnyZdfbmGsCsH3m4GsA0OoO9QJ
+1SHNJvaB/hQTc6UoMGYYcSwhXMLcHOpJT4GwgmDJ4EQdcSkJcIUEomMMHHIlGXkH
+syfu/AcsCFWc7if74PbzpIYsJZUI0eYZk8TtMX7RjWcIDBXcHi3wDhbZWadS5Bg0
+RJD7DcXN02DWLQ8WPdvSBevBkUxaNLTcHIUf7cBsyMpDwtzYTzQ7s3a7fd9Fow8n
+0KG06HVfNULvQtrV67jsf8lyUTppqg==
+=9NgR
+-----END PGP SIGNATURE-----
+
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059--
