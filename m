@@ -1,157 +1,75 @@
-Return-Path: <kernel-hardening-return-12262-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvGHM244IrEJSLTUv6UhkeVQCQjznze83RAEPzZ49o8tFGi0RGQeNDybb1sGQaHVavKDem0
-ARC-Seal: i=1; a=rsa-sha256; t=1520542349; cv=none;
+Return-Path: <kernel-hardening-return-12621-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtpd8mfWafsuNEL6+BTZ/FygF3Rm1hXtAJ6IEykDWU2+mSkWfWu0ESGYufnOWgwZaGk8DPz
+ARC-Seal: i=1; a=rsa-sha256; t=1521088843; cv=none;
         d=google.com; s=arc-20160816;
-        b=v1LLOfQeMtWlo5ySPtJhZlEaZSHJFOb1AlZaWvSY95gCWC7D4UpdgIFkqkvNPSBgg9
-         mCkcjQ803eh+GwobQrAMWq76NFuG/Q30fI05zqz5pXlRyEvhsYQNIOOKyQ8pvx41Des4
-         Eqjxxlq3Ev+Mk/dSh2+lBFjDxyYs164pz1Gapr2AKHHhJnJfAnxWvGIDy0yv14uKXI/w
-         z+yWLLB8i1r5uWgpQZsC1LomrgNhiAWohrYRUbVRhbxw3G7SERDC4YMgwLzE7TwaXjK/
-         Yr2+B6gfNQnmTvHu3Awbehwk7ZSFxjaWnmX55R6hmX/ZZhSVP1erzNu572aLe+8djA8e
-         wbtA==
+        b=uVa9V5DucUst+uKqKEwiNbOjhwzVOiAqHVqN5sdSFyBXqaQgoixegWF1cWc+Ms/Ypx
+         38obhcSfm2lwuIxIWEhVJoQ2dCplzw/otb7a1sJA9+n8RxFz/l5ke9KkeXMXqsM31G65
+         GsECP0lHHSJa/TzHosTAUSuMjrZ/VHKvIOF/jMKPizusSy9B7j+BhsDEllh1i7KHW4DP
+         1BA8/PlaSjkcyuC9koOgcGhBSsWxRq5Upu33fvMqb2DDFgdqSS42vY6q+7Ma1D7jHPqi
+         F23oR2ELBus/hN3X8UtXEleZXr/p3EhKakXsRzc+UrbNWaVZ30mMmu1Gh/Nuesyz86ll
+         1r0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=bJnkjs8Al3B4d46sqcdbs9oodbrNXxg9ahl7cSOJFRE=;
-        b=AXK11fXtmUBn7XH+ewHp8FuX1w993Ttbp15fmwhsNQFvDZq3DU4SBPEp+Paw94km8G
-         2cxBPQhaPiiZ+vLeItoDtgSWvyC+pzQ2pA6L6ovRBBxMZ46kKYA4H2pyigvZ1yQgtVJI
-         n7esakuo0eV8UxW36eN+XiBhioINQqB7ks0nGL+9An+COj+gsFXkdnwshPAJsnN+8jiU
-         uq3lEgLhPMS2Qgdyc46Mo6DxOgBfa/Kp6gR19EadSXr61oViiPE7KbDrQ0DTc9Zmw39R
-         dGxCW54dwqm/KK2ns49vtINanygKmYqTnffhWM0eoz6sTxQZ3/O6Kz/MgwClM/gmFNbk
-         CBYg==
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :organization:from:subject:cc:to:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=+c/cOUfLutdLkJeulA0fvT6KKWcwcVM8NGtVn4GwIM8=;
+        b=bNDM9s+9kn1pZgZOBcWmqQRhjIW3C6ZrguFhjvpKoXEjXKQbYjnIjvIji9VHAVQBUv
+         QNgFQwW476zxP4C9pXh32YKqX1OR2UYwaAmjim4EKudczA69E1c1hj+YGzM40Ffst5Sa
+         3uDKG2SU0YDoK1ThK8dsiwHWirPMgAgtcX7l48Q43ge357jsjOba6Jh4VbZCYn2C+KFN
+         hKOpDSsmu+VlwH8n7uYDMr9EC/XNvrmZA0299K5WmcUVEIfJrpzwlXLiDY1tlAl4lDg7
+         q8RWG97Q7lvQc4rw5eQkKhHmkJpxwntmu0xDwBkNpNSJtfZqfHumiwVQ6CeBIFzT6NyI
+         VccA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12262-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12262-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=I36EV8uM;
+       spf=pass (google.com: domain of kernel-hardening-return-12621-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12621-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12262-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12262-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=I36EV8uM;
+       spf=pass (google.com: domain of kernel-hardening-return-12621-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12621-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Stephen Kitt <steve@sk2.org>
-To: hare@suse.com,
-	keescook@chromium.org
-Cc: linux-scsi@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	linux-kernel@vger.kernel.org,
-	Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2] aic7xxx/aic79xx: remove VLAs
-Date: Thu,  8 Mar 2018 21:51:58 +0100
-Message-Id: <20180308205158.5130-1-steve@sk2.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <CAGXu5jK=JhBFHBGpbWF46DC3-QMruiB0qqz1z+njcK2h7jVU9w@mail.gmail.com>
+To: Stephen Kitt <steve@sk2.org>
+Cc: hare@suse.com, keescook@chromium.org, linux-scsi@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] aic7xxx/aic79xx: remove VLAs
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
 References: <CAGXu5jK=JhBFHBGpbWF46DC3-QMruiB0qqz1z+njcK2h7jVU9w@mail.gmail.com>
+	<20180308205158.5130-1-steve@sk2.org>
+Date: Thu, 15 Mar 2018 00:35:16 -0400
+In-Reply-To: <20180308205158.5130-1-steve@sk2.org> (Stephen Kitt's message of
+	"Thu, 8 Mar 2018 21:51:58 +0100")
+Message-ID: <yq1d1067y7v.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=511
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150053
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594376653072055099?=
-X-GMAIL-MSGID: =?utf-8?q?1594404214721964115?=
+X-GMAIL-MSGID: =?utf-8?q?1594977254939940988?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In preparation to enabling -Wvla, remove VLAs and replace them with
-fixed-length arrays instead.
 
-The arrays fixed here, using the number of constant sections, aren't
-really VLAs, but they appear so to the compiler. Replace the array
-sizes with a pre-processor-level constant instead using ARRAY_SIZE.
+Stephen,
 
-This was prompted by https://lkml.org/lkml/2018/3/7/621
+> In preparation to enabling -Wvla, remove VLAs and replace them with
+> fixed-length arrays instead.
+>
+> The arrays fixed here, using the number of constant sections, aren't
+> really VLAs, but they appear so to the compiler. Replace the array
+> sizes with a pre-processor-level constant instead using ARRAY_SIZE.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- drivers/scsi/aic7xxx/aic79xx_core.c        | 8 ++++----
- drivers/scsi/aic7xxx/aic79xx_seq.h_shipped | 3 +--
- drivers/scsi/aic7xxx/aic7xxx_core.c        | 8 ++++----
- drivers/scsi/aic7xxx/aic7xxx_seq.h_shipped | 3 +--
- drivers/scsi/aic7xxx/aicasm/aicasm.c       | 3 +--
- 5 files changed, 11 insertions(+), 14 deletions(-)
+Applied to 4.17/scsi-queue.
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index b560f396ee99..034f4eebb160 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -9338,9 +9338,9 @@ ahd_dumpseq(struct ahd_softc* ahd)
- static void
- ahd_loadseq(struct ahd_softc *ahd)
- {
--	struct	cs cs_table[num_critical_sections];
--	u_int	begin_set[num_critical_sections];
--	u_int	end_set[num_critical_sections];
-+	struct	cs cs_table[NUM_CRITICAL_SECTIONS];
-+	u_int	begin_set[NUM_CRITICAL_SECTIONS];
-+	u_int	end_set[NUM_CRITICAL_SECTIONS];
- 	const struct patch *cur_patch;
- 	u_int	cs_count;
- 	u_int	cur_cs;
-@@ -9456,7 +9456,7 @@ ahd_loadseq(struct ahd_softc *ahd)
- 		 * Move through the CS table until we find a CS
- 		 * that might apply to this instruction.
- 		 */
--		for (; cur_cs < num_critical_sections; cur_cs++) {
-+		for (; cur_cs < NUM_CRITICAL_SECTIONS; cur_cs++) {
- 			if (critical_sections[cur_cs].end <= i) {
- 				if (begin_set[cs_count] == TRUE
- 				 && end_set[cs_count] == FALSE) {
-diff --git a/drivers/scsi/aic7xxx/aic79xx_seq.h_shipped b/drivers/scsi/aic7xxx/aic79xx_seq.h_shipped
-index 4b51e232392f..fd64a950ee44 100644
---- a/drivers/scsi/aic7xxx/aic79xx_seq.h_shipped
-+++ b/drivers/scsi/aic7xxx/aic79xx_seq.h_shipped
-@@ -1186,5 +1186,4 @@ static const struct cs {
- 	{ 759, 763 }
- };
- 
--static const int num_critical_sections = sizeof(critical_sections)
--				       / sizeof(*critical_sections);
-+#define NUM_CRITICAL_SECTIONS ARRAY_SIZE(critical_sections)
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 6612ff3b2e83..e97eceacf522 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -6848,9 +6848,9 @@ ahc_dumpseq(struct ahc_softc* ahc)
- static int
- ahc_loadseq(struct ahc_softc *ahc)
- {
--	struct	cs cs_table[num_critical_sections];
--	u_int	begin_set[num_critical_sections];
--	u_int	end_set[num_critical_sections];
-+	struct	cs cs_table[NUM_CRITICAL_SECTIONS];
-+	u_int	begin_set[NUM_CRITICAL_SECTIONS];
-+	u_int	end_set[NUM_CRITICAL_SECTIONS];
- 	const struct patch *cur_patch;
- 	u_int	cs_count;
- 	u_int	cur_cs;
-@@ -6915,7 +6915,7 @@ ahc_loadseq(struct ahc_softc *ahc)
- 		 * Move through the CS table until we find a CS
- 		 * that might apply to this instruction.
- 		 */
--		for (; cur_cs < num_critical_sections; cur_cs++) {
-+		for (; cur_cs < NUM_CRITICAL_SECTIONS; cur_cs++) {
- 			if (critical_sections[cur_cs].end <= i) {
- 				if (begin_set[cs_count] == TRUE
- 				 && end_set[cs_count] == FALSE) {
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_seq.h_shipped b/drivers/scsi/aic7xxx/aic7xxx_seq.h_shipped
-index 07e93fbae706..f37362bc8ece 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_seq.h_shipped
-+++ b/drivers/scsi/aic7xxx/aic7xxx_seq.h_shipped
-@@ -1304,5 +1304,4 @@ static const struct cs {
- 	{ 875, 877 }
- };
- 
--static const int num_critical_sections = sizeof(critical_sections)
--				       / sizeof(*critical_sections);
-+#define NUM_CRITICAL_SECTIONS ARRAY_SIZE(critical_sections)
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm.c b/drivers/scsi/aic7xxx/aicasm/aicasm.c
-index 21ac265280bf..5f474e490f3e 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm.c
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm.c
-@@ -451,8 +451,7 @@ output_code()
- 	fprintf(ofile, "\n};\n\n");
- 
- 	fprintf(ofile,
--"static const int num_critical_sections = sizeof(critical_sections)\n"
--"				       / sizeof(*critical_sections);\n");
-+	"#define NUM_CRITICAL_SECTIONS ARRAY_SIZE(critical_sections)\n");
- 
- 	fprintf(stderr, "%s: %d instructions used\n", appname, instrcount);
- }
 -- 
-2.11.0
+Martin K. Petersen	Oracle Linux Engineering
