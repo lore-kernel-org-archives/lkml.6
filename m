@@ -1,78 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeCOPR6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:17:58 -0400
-Received: from smtprelay0142.hostedemail.com ([216.40.44.142]:33878 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752375AbeCOPR5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:17:57 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3873:3874:4321:4559:5007:7903:8603:8660:10004:10400:10848:11232:11658:11914:12296:12555:12663:12740:12895:12986:13069:13148:13230:13311:13357:13439:13894:14096:14097:14659:14721:21080:21611:21627:30012:30054:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: mark03_adf91698085c
-X-Filterd-Recvd-Size: 2714
-Message-ID: <1521127073.22221.13.camel@perches.com>
-Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
-From: Joe Perches <joe@perches.com>
-To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Date: Thu, 15 Mar 2018 08:17:53 -0700
-In-Reply-To: <20180315150524.GS5453@intel.com>
-References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
-         <20180315133026.GR5453@intel.com>
-         <1b50f5d8-97a6-2442-34bb-2782c35505fd@linux.intel.com>
-         <20180315150524.GS5453@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1752394AbeCOPTV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:19:21 -0400
+Received: from 8bytes.org ([81.169.241.247]:46700 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752018AbeCOPTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:19:20 -0400
+Date: Thu, 15 Mar 2018 16:19:17 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Subject: Re: [PATCH 05/10] iommu/amd: remove the special case from
+ get_irq_table()
+Message-ID: <20180315151917.pgheszruqnnjbqb4@8bytes.org>
+References: <20180223222736.18542-1-bigeasy@linutronix.de>
+ <20180223222736.18542-6-bigeasy@linutronix.de>
+ <20180315125342.q74wurk6bdbhl6hy@8bytes.org>
+ <20180315130153.3ba2loj5oplogdew@linutronix.de>
+ <20180315130723.dunmpmbkswwvq54g@8bytes.org>
+ <20180315141541.6g3xc6yi4siafuwr@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180315141541.6g3xc6yi4siafuwr@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-15 at 17:05 +0200, Ville Syrjälä wrote:
-> On Thu, Mar 15, 2018 at 03:04:52PM +0100, Maarten Lankhorst wrote:
-> > Op 15-03-18 om 14:30 schreef Ville Syrjälä:
-> > > On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
-> > > > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
-> > > > arguments that can be removed by creating separate functins.
-> > > > 
-> > > > Create specific functions for these calls to reduce x86/64 defconfig
-> > > > size by ~20k.
-> > > > 
-> > > > Modify the existing macros to use the specific calls.
-> > > > 
-> > > > new:
-> > > > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > > > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
-> > > > 
-> > > > old:
-> > > > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > > > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
-> > > > 
-> > > > Miscellanea:
-> > > > 
-> > > > o intel_display requires a change to use the specific calls.
-> > > 
-> > > How much would we lose if we move the (drm_debug&FOO) outside the
-> > > functions again?
+On Thu, Mar 15, 2018 at 03:15:41PM +0100, Sebastian Andrzej Siewior wrote:
+> ->set_allocated() operates only on 0â€¦31 and other could be used at the
+> same time. However 0â€¦31 should be accessed by other user before they are
+> ready.
+> 
+> irq_remapping_alloc() is that ->alloc() callback invoked via
+> irq_domain_alloc_irqs_hierarchy() and each caller has to hold the
+> &irq_domain_mutex mutex. So we should not have those in parallel.
+> 
+> Is it possible to have those entries accessed before the setup is
+> complete? My understanding is that this setup is performed once during
+> boot (especially that ioapic part) and not again.
+> 
+> From looking at that hunk, it should not hurt to add that lock, just
+> wanted to check it is really needed.
 
-again?
+Okay, if the irq-layer does the needed locking, then we don't need
+another lock here. There is the modify_irte_ga() path for the
+virtualized irq routing into KVM guests, but there should be no KVM
+guests running when setup the ioapic routing entries.
 
-> > >  I'm somewhat concerned about all the function call
-> > > overhead when debugs aren't even enabled.
 
-Perhaps better to have compilation elimination
-of the entire debug output instead.
 
-I think you are discussing a different issue and
-this discussion should not block this patch as
-this patch has no impact other than code size
-reduction.
+	Joerg
