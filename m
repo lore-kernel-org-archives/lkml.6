@@ -1,54 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932786AbeCOTKV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:10:21 -0400
-Received: from mbkd0338.ocn.ad.jp ([153.149.236.39]:60883 "EHLO
-        mbkd0338.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932793AbeCOTJ2 (ORCPT
+        id S932601AbeCOSuK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:50:10 -0400
+Received: from mail-pl0-f52.google.com ([209.85.160.52]:42625 "EHLO
+        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752217AbeCOSuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:09:28 -0400
-Date: Fri, 16 Mar 2018 03:47:57 +0900 (JST)
-From: MR Paul Ogie <alexcell.dc@silk.ocn.ne.jp>
-Reply-To: UNITED NATION <united.nation.registration@hotmail.com>
-Message-ID: <648282413.62496534.1521139677242.JavaMail.root@silk.ocn.ne.jp>
-Subject: CONTACT DHL OFFICE IMMEDIATELY FOR DELIVERY OF YOUR ATM MASTERCARD
+        Thu, 15 Mar 2018 14:50:03 -0400
+X-Google-Smtp-Source: AG47ELsLe6A5M9NSsRuPfjzHLg32q8fVC/ktYaWyXCltToNCNAC6VC64PPdsu9iZwSsuwIvdL5ovNA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [41.85.161.137]
-To: unlisted-recipients:; (no To-header on input)
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180315181244.8859-1-bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20180315181244.8859-1-bjorn.andersson@linaro.org>
+Message-ID: <152113980179.111154.13908491838747798092@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] Revert "rpmsg: smd: Create device for all channels"
+Date: Thu, 15 Mar 2018 11:50:01 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2FIoE4E006498
 
-Attention; Beneficiary,
+Quoting Bjorn Andersson (2018-03-15 11:12:44)
+> In an effort to pick up channels that are in a funky state we
+> optimistically tried to open all channels that we found, with the
+> addition that we failed if the other side did not handshake the opening.
+> 
+> But as we're starting the modem a second time all channels are found -
+> in a "funky" state - and we try to open them. But the modem firmware
+> requires the IPCRTR to be up in order to initialize. So any channels we
+> try to open before that will fail and will not be opened again.
+> 
+> This takes care of the regression, at the cost of reintroducing the
+> previous behavior of handling of channels with "funky" states.
 
-This is to official inform you that we have been having meetings for the past three (3) weeks which ended two days ago with MR. JIM YONG KIM the Former world bank president and other seven continent presidents on the congress we treated on solution to scam victim problems.
-
-Note: we have decided to contact you following the reports we received from anti-fraud international monitoring group your name/email has been submitted to us therefore the united nations have agreed to compensate you with the sum of (USD$1.5 Million) this compensation is also including international business that failed you in past due to government problems etc.
-
-We have arranged your payment through our ATM MasterCard and deposited it in DHL Office to deliver it to you which is the latest instruction from the Former World Bank president MR. JIM YONG KIM, For your information’s, the delivery charges already paid by U.N treasury, the only money you will send to DHL office Benin Republic is $225 dollars for security keeping fee, U.N coordinator already paid for others charges fees for delivery except the security keeping fee, the director of DHL refused to collect the security keeping fee from U.N treasury because Direct of DHL office said they don’t know exactly time you will contact them to reconfirm your details to avoid counting demurrage.
-
-Therefore be advice to contact DHL Office agent Benin. Rev:Tony harries who is in position to post your ATM MasterCard, contact DHL Office  immediately with the bellow email & phone number  as listed below.
-
-Contact name: Rev:Tony  HARRIES
-Email:(post.dhlbenin.service@outlook.com )
-Tell: +229-98787436
-
-Make sure you reconfirmed DHL Office your details ASAP as stated below to avoid wrong delivery.
-
-Your full name..........
-Home address:.........
-Your country...........
-Your city..............
-Telephone......
-Occupation:.......
-Age:………………..
-
-
-Let us know as soon as possible you receive your ATM MasterCard for proper verifications.
-
-Regards,
-MR Paul Ogie.
-DEPUTY SECRETARY-GENERAL (U.N)
-Benin Republic.
+Is it a funky chicken and egg problem between IPCRTR and smd?
