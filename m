@@ -1,58 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932424AbeCOU5L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:57:11 -0400
-Received: from ozlabs.org ([103.22.144.67]:60245 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752238AbeCOU5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:57:09 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 16 Mar 2018 07:56:29 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Message-ID: <20180316075629.019b6560@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CtyQ/K0PVmIdC=bJE6dxSvV"; protocol="application/pgp-signature"
+        id S1752302AbeCOVB4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:01:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751546AbeCOVBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:01:54 -0400
+Subject: Re: [PATCH 0/4] Code improvements in integrity and IMA
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Thu, 15 Mar 2018 17:01:40 -0400
+In-Reply-To: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031521-0008-0000-0000-000004DE880A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031521-0009-0000-0000-00001E71939F
+Message-Id: <1521147700.3547.662.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150228
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Thiago,
 
-Hi all,
+On Wed, 2018-03-14 at 17:20 -0300, Thiago Jung Bauermann wrote:
+> Hello,
+> 
+> These patches come from the "appended signatures support for IMA appraisal"
+> series. They are code improvements and cleanups and I decided to submit
+> them separately for a couple of reasons:
+> 
+> 1. they stand on their own and could be included in v4.17;
+> 
+> 2. this will simplify the original patch series a bit, by having it contain
+>    only the patches actually necessary to implement the feature.
 
-Commit
+Agreed.  The first 3 patches are applied.  The last one, we'll see
+about.
 
-  9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
+Mimi
 
-is missing a Signed-off-by from its committer.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq3f0ACgkQAVBC80lX
-0Gzzdwf/TCh9xFq7P3e7iZ1uPdvXbI5mfqfWin9rUZnUAcmDLARW4nskkFav5YyQ
-K3aTo4BqsIEaNM3yi1W+S7Unq2zHrryauzlPh76eQlm0KiMWV240e5uvI0fLG8vB
-jht8YE9OY/6y+lMI/l5F8dVD9vY/2FCC/sdoxekezQ3JrtEExvAhWhlAtC/Tv/w5
-sU4PSw92X8qec4koQWwFERlg3v9ZgUzFd+elJ5YeUyqK/RUMAzf8MiDRKjIupDy3
-NOoBbCckAIZJHFnpSA2xi6tJa/W5X52RVUr655JK1Ukm4zahMMZdg2wUso2oM3tl
-wdW5RStcgMWEePSP2e4FFVtpYX7GPQ==
-=IQ/1
------END PGP SIGNATURE-----
-
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV--
+> 
+> These are the changes made to them since v5 of the modsig series:
+> 
+> - Patch "integrity: Remove unused macro IMA_ACTION_RULE_FLAGS"
+>   - New patch.
+> 
+> - Patch "ima: Improvements in ima_appraise_measurement()"
+>   - Moved is_ima_sig() to its own patch (not in this series).
+> 
+> Mimi Zohar (1):
+>   ima: Improvements in ima_appraise_measurement()
+> 
+> Thiago Jung Bauermann (3):
+>   integrity: Remove unused macro IMA_ACTION_RULE_FLAGS
+>   ima: Simplify ima_eventsig_init()
+>   integrity: Introduce struct evm_xattr
+> 
+>  security/integrity/evm/evm_crypto.c       |  4 ++--
+>  security/integrity/evm/evm_main.c         | 10 ++++----
+>  security/integrity/ima/ima_appraise.c     | 40 ++++++++++++++++++-------------
+>  security/integrity/ima/ima_template_lib.c | 11 +++------
+>  security/integrity/integrity.h            |  6 ++++-
+>  5 files changed, 39 insertions(+), 32 deletions(-)
+> 
