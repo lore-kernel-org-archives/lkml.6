@@ -1,216 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeCOKFn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:05:43 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:44150 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeCOKFk (ORCPT
+        id S1751905AbeCOKHV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:07:21 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:43830 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeCOKHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:05:40 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w2FA5J8C031822
-X-Nifty-SrcIP: [209.85.217.182]
-X-Google-Smtp-Source: AG47ELttvPwAr82SlKW36oqNJXotzFW1fuMjejTUOGlUjKxAq0p8VBT05imuF0FCWdcpeDeFEaf2VEZujfUzO9KZCCw=
+        Thu, 15 Mar 2018 06:07:19 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180314143529.1456168-1-arnd@arndb.de>
+        <20180314144614.1632190-1-arnd@arndb.de>
+        <20180314144614.1632190-2-arnd@arndb.de>
+Date: Thu, 15 Mar 2018 05:06:29 -0500
+In-Reply-To: <20180314144614.1632190-2-arnd@arndb.de> (Arnd Bergmann's message
+        of "Wed, 14 Mar 2018 15:43:47 +0100")
+Message-ID: <87po45hcuy.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YSQ.7.76.1803141437030.28583@knanqh.ubzr>
-References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
- <1521045861-22418-7-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1803141437030.28583@knanqh.ubzr>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 15 Mar 2018 19:04:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
-Message-ID: <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] kbuild: move include/config/ksym/* to include/ksym/*
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1ewPn4-0007jw-2B;;;mid=<87po45hcuy.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.121.173;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18Gp8JBdaqo+phXc4Xa6OPNRQzNVis/7SQ=
+X-SA-Exim-Connect-IP: 97.119.121.173
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4993]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Arnd Bergmann <arnd@arndb.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 177 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.5 (1.4%), b_tie_ro: 1.64 (0.9%), parse: 1.26 (0.7%),
+        extract_message_metadata: 15 (8.6%), get_uri_detail_list: 1.08 (0.6%),
+        tests_pri_-1000: 9 (4.9%), tests_pri_-950: 1.78 (1.0%), tests_pri_-900: 1.50
+        (0.9%), tests_pri_-400: 19 (10.5%), check_bayes: 17 (9.8%), b_tokenize: 7
+        (4.2%), b_tok_get_all: 4.3 (2.4%), b_comp_prob: 1.78 (1.0%), b_tok_touch_all:
+        2.1 (1.2%), b_finish: 0.60 (0.3%), tests_pri_0: 120 (67.6%),
+        check_dkim_signature: 0.51 (0.3%), check_dkim_adsp: 2.7 (1.5%),
+        tests_pri_500: 3.8 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 12/16] asm-generic: siginfo: remove obsolete #ifdefs
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-15 3:47 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
-> On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+Arnd Bergmann <arnd@arndb.de> writes:
+
+> The frv, tile and blackfin architectures are being removed, so
+> we can clean up this header by removing all the special cases
+> except those for ia64.
 >
->> The idea of using fixdep was inspired by Kconfig, but autoksyms
->> is unrelated to Kconfig.  So, I want to get those touched files
->> out of include/config/.  The directory include/ksym/ is removed
->> by "make clean".  We do not need to keep it for external module
->> building.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/uapi/asm-generic/siginfo.h | 36 ++----------------------------------
+>  1 file changed, 2 insertions(+), 34 deletions(-)
 >
-> It could be argued that include/config/ is not strictly containing
-> configuration data either and is slightly misleading.
 
-But, slightly related to configuration, IMHO.
-At least they carry timestamps that are updated
-when kernel configuration is changed.
+If I am reading siginfo.h correctly after this cleanup patch
+we can perform another cleanup and unconditionally define
+all of the ia64 si_codes except for __SEGV_PSTKOVF which
+aliases SEGV_PKUERR.
 
-The difference between include/config/ and include/ksym/ is that
-files under include/config/ are necessary for building
-external modules (so should be cleaned away by mrproper)
-whereas include/ksym/ is unnecessary for external modules
-since vmlinux and in-kernel modules do not depend on
-external modules.
+Which has the advantage that no one is tempted to define any further
+aliased si_codes.
 
-
-I wonder if trimming symbols makes sense for external modules.
-
-EXPORT_SYMBOL(_GPL) in external modules are always trimmed
-since vmlinux and in-kernel modules never rely on them.
-
-If an external module exports symbols,
-it expects they will be used by other external modules.
-
-So, the patch like follows make sense?
-
-
-
-
-kbuild: do not trim symbols in external modules
-
-diff --git a/Makefile b/Makefile
-index 0a7bab6..bdf565e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -998,6 +998,7 @@ autoksyms_recursive: $(vmlinux-deps)
- # (this can be evaluated only once include/config/auto.conf has been included)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
-   KBUILD_MODULES := 1
-+  export KBUILD_TRIM_UNUSED_KSYMS := 1
- endif
-
- autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 045971e..3249d5f 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -345,7 +345,7 @@ if_changed_dep = $(if $(strip $(any-prereq)
-$(arg-check) ),                  \
-        @set -e;                                                             \
-        $(cmd_and_fixdep), @:)
-
--ifndef CONFIG_TRIM_UNUSED_KSYMS
-+ifndef KBUILD_TRIM_UNUSED_KSYMS
-
- cmd_and_fixdep =                                                             \
-        $(echo-cmd) $(cmd_$(1));                                             \
-
-
-
-
-> What about moving include/config/ and include/ksym/ under
-> include/depfiles/ ? In fact that could even be
-> include/generated/depfiles/config/ and include/generated/depfiles/ksym/
-> to trim down the top include directory.
->
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>  .gitignore                  | 1 +
->>  Makefile                    | 2 +-
->>  scripts/Kbuild.include      | 2 +-
->>  scripts/adjust_autoksyms.sh | 2 +-
->>  scripts/basic/fixdep.c      | 8 ++++----
->>  5 files changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/.gitignore b/.gitignore
->> index 1be78fd..85bcc26 100644
->> --- a/.gitignore
->> +++ b/.gitignore
->> @@ -87,6 +87,7 @@ modules.builtin
->>  #
->>  include/config
->>  include/generated
->> +include/ksym
->>  arch/*/include/generated
->>
->>  # stgit generated dirs
->> diff --git a/Makefile b/Makefile
->> index e60b16f..1dab647 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -1327,7 +1327,7 @@ endif # CONFIG_MODULES
->>  # make distclean Remove editor backup files, patch leftover files and the like
->>
->>  # Directories & files removed with 'make clean'
->> -CLEAN_DIRS  += $(MODVERDIR)
->> +CLEAN_DIRS  += $(MODVERDIR) include/ksym
->>
->>  # Directories & files removed with 'make mrproper'
->>  MRPROPER_DIRS  += include/config usr/include include/generated          \
->> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
->> index 065324a..045971e 100644
->> --- a/scripts/Kbuild.include
->> +++ b/scripts/Kbuild.include
->> @@ -368,7 +368,7 @@ ksym_dep_filter =                                                            \
->>           $(CPP) $(call flags_nodeps,a_flags) -D__KSYM_DEPS__ $< ;;        \
->>         boot*|build*|cpp_its_S|*cpp_lds_S|dtc|host*|vdso*) : ;;            \
->>         *) echo "Don't know how to preprocess $(1)" >&2; false ;;          \
->> -     esac | tr ";" "\n" | sed -rn 's/^.*=== __KSYM_(.*) ===.*$$/KSYM_\1/p'
->> +     esac | tr ";" "\n" | sed -rn 's/^.*=== __KSYM_(.*) ===.*$$/\1/p'
->>
->>  cmd_and_fixdep =                                                             \
->>       $(echo-cmd) $(cmd_$(1));                                             \
->> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
->> index a52210b..7bb3618 100755
->> --- a/scripts/adjust_autoksyms.sh
->> +++ b/scripts/adjust_autoksyms.sh
->> @@ -81,7 +81,7 @@ sort "$cur_ksyms_file" "$new_ksyms_file" | uniq -u |
->>  sed -n 's/^#define __KSYM_\(.*\) 1/\1/p' | tr "A-Z_" "a-z/" |
->>  while read sympath; do
->>       if [ -z "$sympath" ]; then continue; fi
->> -     depfile="include/config/ksym/${sympath}.h"
->> +     depfile="include/ksym/${sympath}.h"
->>       mkdir -p "$(dirname "$depfile")"
->>       touch "$depfile"
->>       echo $((count += 1))
->> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
->> index 449b68c..f387538 100644
->> --- a/scripts/basic/fixdep.c
->> +++ b/scripts/basic/fixdep.c
->> @@ -113,11 +113,11 @@ static void usage(void)
->>  /*
->>   * Print out a dependency path from a symbol name
->>   */
->> -static void print_config(const char *m, int slen)
->> +static void print_dep(const char *m, int slen, const char *dir)
->>  {
->>       int c, i;
->>
->> -     printf("    $(wildcard include/config/");
->> +     printf("    $(wildcard %s/", dir);
->>       for (i = 0; i < slen; i++) {
->>               c = m[i];
->>               if (c == '_')
->> @@ -140,7 +140,7 @@ static void do_extra_deps(void)
->>                       fprintf(stderr, "fixdep: bad data on stdin\n");
->>                       exit(1);
->>               }
->> -             print_config(buf, len - 1);
->> +             print_dep(buf, len - 1, "include/ksym");
->>       }
->>  }
->>
->> @@ -208,7 +208,7 @@ static void use_config(const char *m, int slen)
->>           return;
->>
->>       define_config(m, slen, hash);
->> -     print_config(m, slen);
->> +     print_dep(m, slen, "include/config");
->>  }
->>
->>  /* test if s ends in sub */
->> --
->> 2.7.4
->>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Eric
