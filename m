@@ -1,103 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932851AbeCOPxt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:53:49 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:43815 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932469AbeCOPxq (ORCPT
+        id S932718AbeCOPxW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:53:22 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36040 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932686AbeCOPxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:53:46 -0400
-X-Google-Smtp-Source: AG47ELvR1WQhNKH/yCOBq/MtZcK20HAZ7a9qqLJrbBaZsQwBWq9Ymx9wlxEGA4EImqK36I2SB09CMA==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 8/8] gpio: ws16c48: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:53:39 -0400
-Message-Id: <78fd4e6464713068ba9292ba8ef5d9227cdd294c.1521128287.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
-References: <cover.1521128287.git.vilhelm.gray@gmail.com>
+        Thu, 15 Mar 2018 11:53:20 -0400
+Date: Thu, 15 Mar 2018 08:53:16 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180315155316.GY4865@magnolia>
+References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=976
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
-via six 8-bit ports. Since eight input lines are acquired on a single
-port input read, the WS16C48 GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-ws16c48_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+On Thu, Mar 15, 2018 at 06:01:34PM +0300, Kirill Tkhai wrote:
+> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
+> So, it's called for memcg reclaim too, e.g. this list is shrinked
+> disproportionality to another lists.
+> 
+> This looks confusing, so I'm reporting about this.
+> Consider this patch as RFC.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-ws16c48.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+So... I think the reasoning here is that xfs doesn't allocate inodes on
+behalf of any particular memcg (or put another way the cost of the
+inodes is shared by everything in the system) so if the shrinkers get
+called because a particular memcg is bumping up against its limits it
+makes no sense to try to purge xfs inodes?
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 746648244bf3..9f2e7d0b48f9 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -129,6 +129,51 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	const unsigned int gpio_reg_size = 8;
-+	size_t i;
-+	const size_t num_ports = chip->ngpio / gpio_reg_size;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long mask_word;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
-+	unsigned long port_state;
-+
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
-+
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < num_ports; i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
-+
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
-+
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = inb(ws16c48gpio->base + i);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-@@ -383,6 +428,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
-+	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
--- 
-2.16.2
+Followup questions: does the same reasoning apply to the xfs buffer and
+quota shrinkers?  Do any filesystems associate their metadata memory
+allocations with a specific memcg?  If not, why not put this in
+super_cache_{scan,count}?
+
+--D
+
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  fs/xfs/xfs_super.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 951271f57d00..124568aefa94 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1788,6 +1788,8 @@ xfs_fs_nr_cached_objects(
+>  	struct super_block	*sb,
+>  	struct shrink_control	*sc)
+>  {
+> +	if (sc->memcg)
+> +		return 0;
+>  	return xfs_reclaim_inodes_count(XFS_M(sb));
+>  }
+>  
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
