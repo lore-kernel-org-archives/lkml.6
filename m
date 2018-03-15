@@ -1,64 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeCORt4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:49:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752078AbeCORty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:49:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A618B20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 15 Mar 2018 14:49:50 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: changbin.du@intel.com, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, namhyung@kernel.org, yan.y.zhao@intel.com,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf trace: __print_array should print hex format
- instead of dec
-Message-ID: <20180315174950.GF3690@kernel.org>
-References: <1520937557-24895-1-git-send-email-changbin.du@intel.com>
- <20180313142732.GA29837@kernel.org>
- <20180315132025.5825df8c@vmware.local.home>
- <20180315133156.3389b762@vmware.local.home>
+        id S1752628AbeCORu3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:50:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43960 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751711AbeCORu1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:50:27 -0400
+Date: Thu, 15 Mar 2018 13:47:48 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] x86/amd_gart: look at coherent_dma_mask instead of
+ GFP_DMA
+Message-ID: <20180315174747.GP13391@char.us.oracle.com>
+References: <20180314175213.20256-1-hch@lst.de>
+ <20180314175213.20256-6-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180315133156.3389b762@vmware.local.home>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180314175213.20256-6-hch@lst.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=941
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Mar 15, 2018 at 01:31:56PM -0400, Steven Rostedt escreveu:
-> On Thu, 15 Mar 2018 13:20:25 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Mar 14, 2018 at 06:52:04PM +0100, Christoph Hellwig wrote:
+> We want to phase out looking at the magic GFP_DMA flag in the dma mapping
+> routines, so switch the gart driver to use the coherent_dma_mask instead,
+> which is used to select the GFP_DMA flag in the caller.
 > 
-> > On Tue, 13 Mar 2018 11:27:32 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > > Em Tue, Mar 13, 2018 at 06:39:17PM +0800, changbin.du@intel.com escreveu:  
-> > > > From: Changbin Du <changbin.du@intel.com>
-> > > > 
-> > > > The token '__print_array' is to print the array in hex format, but not
-> > > > decimal numbers. The implementation of __print_array in kernel side is:
-> > > > __print_array()->trace_print_array_seq()
-> > > > 
-> > > > This patch align the perf's behavior with kernel so we have a consistent
-> > > > event format.    
-> > > 
-> > > Look ok, i.e. makes the userspace formatting do what the equivalent
-> > > kernel code does, Rostedt, Ack?
-> > >   
-> > 
-> > Thanks for sending this to me. I'll see how it affects trace-cmd, and
-> > let you know.
-> >
-> 
-> Looks good!
-> 
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-thanks, applying
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/x86/kernel/amd_gart_64.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+> index 52e3abcf3e70..79ac6caaaabb 100644
+> --- a/arch/x86/kernel/amd_gart_64.c
+> +++ b/arch/x86/kernel/amd_gart_64.c
+> @@ -484,7 +484,7 @@ gart_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_addr,
+>  	unsigned long align_mask;
+>  	struct page *page;
+>  
+> -	if (force_iommu && !(flag & GFP_DMA)) {
+> +	if (force_iommu && dev->coherent_dma_mask > DMA_BIT_MASK(24)) {
+>  		flag &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
+>  		page = alloc_pages(flag | __GFP_ZERO, get_order(size));
+>  		if (!page)
+> -- 
+> 2.14.2
+> 
