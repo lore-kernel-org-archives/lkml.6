@@ -1,199 +1,223 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AG47ELtlLPmdPQpU5jmFPoHonpq3mTlNLwyTTt0Wo63upXlM3Y46nBJCpLUme50/qcDAvBHOW2y+
-ARC-Seal: i=1; a=rsa-sha256; t=1520694651; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jSsm80bD7QhyZywwZWVjAwoPCj6wYx6bBVzI+MHXvR/rpg/bJwO3ZSCjhFmSkp0+Sb
-         ooH579IzAcR0FrlECOREG4y/9vBb1kRRVfFaxnT1sqp42EiYB4fHkcDiaYe3FLvPfJEW
-         SvEQsOzqmiTxL1CWGAfSqQtioOYRJmxJkjSOBADPIIL8oc2ecSio8KhTIIhLis0hv6IG
-         O5IuVOuz2hU7bH7nptABY/BN1wCzM61nRup/pVWJg/3iUwh7bCIeivKzAtT6c/oMoKFo
-         KJBkgQX781f50pguMYJfkazSJ797r08aXfgaNZfoYmgdnheovsgScNlKv/AiA/CJgFfr
-         +jDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=tkggtEhTV5UluDZ/jWcYyVkulj4AE52+ZGU9+6i7rvM=;
-        b=swsudo54eNMVyFZP65trdUJ6px/sslYWrazakjRnKNzqJTKbWaZ18zrzBfLFI+L0fy
-         /hjkgD+afPa6bueqHX7ty2VK02w9sbxFmbfLUBmzOVmZt2D37TeTDh168wmVfG2tieZQ
-         oNFtlhZmiSJIlydPGV5AGX2oy2MuRqoXoVFsNfl20p+nu/x2VBn29pT60iQTCVM+eso1
-         3RYuG/lZzLiUm1LwbHSZoF1z3x9nNr8UPwRAFAZcMv6wwro/a3/3QwwsR71Sw2Jg7a49
-         gwvOKXhkKKtv+/GR76dyR8nKuTp/7yGPxzj6NzB8SMPfqobufxTdVFCO1/vRFXLzFKq3
-         ewEQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA238208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 10 Mar 2018 15:10:45 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, daniel.baluta@nxp.com,
- linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF
- by IIO_DEVICE_ATTR
-Message-ID: <20180310151045.4570e85d@archlinux>
-In-Reply-To: <20180309003733.aichruo53vqryafg@smtp.gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3494850-1521094339-2-15135377019084153503
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521094337; b=cs93Dr9ELh6WbUExkF/4FztDlA2bJPf7XCyO/wW2/tUvME+
+    ygg7bfx8jIJ/3MReJm+9SCnBeU0LB0kBG5MyyC+38PH1WYj390/CAnFjLh2DSMSa
+    p+VTnv+VyamIx8teNzxyr4ncPDUYuvZN7fcfYPMYinLXTLQFUklgtbZB/9eThFat
+    yFbxeO81baTdzHywgWd8P6rAYHGRbzkXtWwl4nYXEIRw8rjBwG2nqpzHH9mVygP2
+    gldQ5PciYE9NcwmPdkZZ7K6jGZUvmn3Au0b4n1DZuWLOGHVNf2YshPOyQcUCljsK
+    Aevc5Zwx0/L+WH4uhzpaGYyLXVFnPKxU1NP/HEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:subject:from:in-reply-to
+    :date:message-id:references:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521094337; bh=A
+    iWuvasxG/ST92QidWj7q4FzBXFPPxmpDoipcgrVziA=; b=R+GqE6zWoekJjcbdZ
+    D77lE4Tu3jHNuZ9zDWIoge+3pigafh57ihflg0yvpr9sPwEk2Lj2nYyBEzutl/hZ
+    4VWKmV939fBCY1KJ4DLCpJGkHTP0RFDXCK/FBP/jNYbvbBV74xpNfTc3WxEdbLFs
+    iQWx7C8v0mi69dEN8rHNxztD06O5BZrGB1E3Cm/ZjVVrdVnqnxZpedXIzng/WquQ
+    TqoCVMJT5D2ykVlpDrVproHKpdd9YQhQBQYkbxPT7BSNB+v2IfsboT/R9k073Jmi
+    T2tlr6x7BZATRHP3svFiRQitqn+rtYsOhV38UpnXJ3Ynqhh0Yh1CMh9J4QKdI1JA
+    4Uwng==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mDPsVHK1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KGWVl9OK;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mDPsVHK1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KGWVl9OK;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELv5UuZmUaDQAns3Yx1GVz/lpZUbFnnzIFSi//v+rKdUBOL1fsVbEuYrEk0f2nt2emmXgzZBOg==
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH v2 1/3] staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF by
+ IIO_DEVICE_ATTR
+From: John Syne <john3909@gmail.com>
+In-Reply-To: <20180310151045.4570e85d@archlinux>
+Date: Wed, 14 Mar 2018 23:12:02 -0700
+Message-Id: <79D3051B-FF2F-4DD3-AF75-F6A4BAD81838@gmail.com>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
-	<3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
-	<20180307200730.08ed3c2f@archlinux>
-	<20180309003733.aichruo53vqryafg@smtp.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
+ <20180307200730.08ed3c2f@archlinux>
+ <20180309003733.aichruo53vqryafg@smtp.gmail.com>
+ <20180310151045.4570e85d@archlinux>
+To: Jonathan Cameron <jic23@kernel.org>
+X-Mailer: Apple Mail (2.3445.5.20)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
+ daniel.baluta@nxp.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594237578169642590?=
-X-GMAIL-MSGID: =?utf-8?q?1594563914725114380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 8 Mar 2018 21:37:33 -0300
-Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-
-> On 03/07, Jonathan Cameron wrote:
-> > On Tue, 6 Mar 2018 21:43:47 -0300
-> > Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-> >   
-> > > The macro IIO_DEV_ATTR_CH_OFF is a wrapper for IIO_DEVICE_ATTR, with a
-> > > tiny change in the name definition. This extra macro does not improve
-> > > the readability and also creates some checkpatch errors.
-> > > 
-> > > This patch fixes the checkpatch.pl errors:
-> > > 
-> > > staging/iio/meter/ade7753.c:391: ERROR: Use 4 digit octal (0777) not
-> > > decimal permissions
-> > > staging/iio/meter/ade7753.c:395: ERROR: Use 4 digit octal (0777) not
-> > > decimal permissions
-> > > staging/iio/meter/ade7759.c:331: ERROR: Use 4 digit octal (0777) not
-> > > decimal permissions
-> > > staging/iio/meter/ade7759.c:335: ERROR: Use 4 digit octal (0777) not
-> > > decimal permissions
-> > > 
-> > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>  
-> > 
-> > Hmm. I wondered a bit about this one. It's a correct patch in of
-> > itself but the interface in question doesn't even vaguely conform
-> > to any of defined IIO ABI.  Anyhow, it's still and improvement so
-> > I'll take it.  
-> 
-> I am not sure if I understood the comment about the ABI. The meter
-> interface is wrong because it uses things like IIO_DEVICE_ATTR? It
-> should use iio_info together with *write_raw and *read_raw. Right? Is it
-> the ABI problem that you refer?
-The ABI is about the userspace interface of IIO.  It is defined
-in Documentation/ABI/testing/sysfs-bus-iio*
-So this documents the naming of sysfs attributes and (more or less)
-describes a consistent interface to userspace across lots of different
-types of devices.
-
-A lot of these older drivers in staging involve a good deal of ABI that
-was not reviewed or discussed.  That is one of the biggest reasons we
-didn't take them out of staging in the first place.
-
-In order for generic userspace programs to have any idea what to do
-with these devices this all needs to be fixed.
-
-There may well be cases where we need to expand the existing ABI to
-cover new things.   That's fine, but it has to be done with full
-review of the relevant documentation patches.
-
-Incidentally if you want an easy driver to work on moving out of staging
-then first thing to do is to compare what it shows to userspace with these
-docs.  If it's totally different then you have a big job on your hands
-as often ABI can take a lot of discussion and a long time to establish
-a consensus.
-
-Jonathan
-
-
-> 
-> Thanks :)
->  
-> > Applied to the togreg branch of iio.git and pushed out as testing
-> > for the autobuilders to play with it.
-> > 
-> > I also added the removal of the header define which is no
-> > longer used.
-> > 
-> > Please note, following discussions with Michael, I am going to send
-> > an email announcing an intent to drop these meter drivers next
-> > cycle unless someone can provide testing for any attempt to
-> > move them out of staging.  I'm still taking patches on the basis
-> > that 'might' happen - but I wouldn't focus on these until we
-> > have some certainty on whether they will be around long term!
-> > 
-> > Jonathan
-> >   
-> > > ---
-> > >  drivers/staging/iio/meter/ade7753.c | 18 ++++++++++--------
-> > >  drivers/staging/iio/meter/ade7759.c | 18 ++++++++++--------
-> > >  2 files changed, 20 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/meter/ade7753.c b/drivers/staging/iio/meter/ade7753.c
-> > > index c44eb577dc35..275e8dfff836 100644
-> > > --- a/drivers/staging/iio/meter/ade7753.c
-> > > +++ b/drivers/staging/iio/meter/ade7753.c
-> > > @@ -388,14 +388,16 @@ static IIO_DEV_ATTR_VPERIOD(0444,
-> > >  		ade7753_read_16bit,
-> > >  		NULL,
-> > >  		ADE7753_PERIOD);
-> > > -static IIO_DEV_ATTR_CH_OFF(1, 0644,
-> > > -		ade7753_read_8bit,
-> > > -		ade7753_write_8bit,
-> > > -		ADE7753_CH1OS);
-> > > -static IIO_DEV_ATTR_CH_OFF(2, 0644,
-> > > -		ade7753_read_8bit,
-> > > -		ade7753_write_8bit,
-> > > -		ADE7753_CH2OS);
-> > > +
-> > > +static IIO_DEVICE_ATTR(choff_1, 0644,
-> > > +			ade7753_read_8bit,
-> > > +			ade7753_write_8bit,
-> > > +			ADE7753_CH1OS);
-> > > +
-> > > +static IIO_DEVICE_ATTR(choff_2, 0644,
-> > > +			ade7753_read_8bit,
-> > > +			ade7753_write_8bit,
-> > > +			ADE7753_CH2OS);
-> > >  
-> > >  static int ade7753_set_irq(struct device *dev, bool enable)
-> > >  {
-> > > diff --git a/drivers/staging/iio/meter/ade7759.c b/drivers/staging/iio/meter/ade7759.c
-> > > index 1decb2b8afab..c078b770fa53 100644
-> > > --- a/drivers/staging/iio/meter/ade7759.c
-> > > +++ b/drivers/staging/iio/meter/ade7759.c
-> > > @@ -328,14 +328,16 @@ static IIO_DEV_ATTR_ACTIVE_POWER_GAIN(0644,
-> > >  		ade7759_read_16bit,
-> > >  		ade7759_write_16bit,
-> > >  		ADE7759_APGAIN);
-> > > -static IIO_DEV_ATTR_CH_OFF(1, 0644,
-> > > -		ade7759_read_8bit,
-> > > -		ade7759_write_8bit,
-> > > -		ADE7759_CH1OS);
-> > > -static IIO_DEV_ATTR_CH_OFF(2, 0644,
-> > > -		ade7759_read_8bit,
-> > > -		ade7759_write_8bit,
-> > > -		ADE7759_CH2OS);
-> > > +
-> > > +static IIO_DEVICE_ATTR(choff_1, 0644,
-> > > +			ade7759_read_8bit,
-> > > +			ade7759_write_8bit,
-> > > +			ADE7759_CH1OS);
-> > > +
-> > > +static IIO_DEVICE_ATTR(choff_2, 0644,
-> > > +			ade7759_read_8bit,
-> > > +			ade7759_write_8bit,
-> > > +			ADE7759_CH2OS);
-> > >  
-> > >  static int ade7759_set_irq(struct device *dev, bool enable)
-> > >  {  
-> >   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgSm9uYXRoYW4sCgpJIGhhdmUgYmVlbiBsb29raW5nIGF0IHRoZSBJSU8gQUJJIGRvY3MgYW5k
+IGlmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIHRoZSBpZGVhIGlzIHRvIHVzZSBjb25zaXN0ZW50
+IG5hbWluZyBjb252ZW50aW9ucz8gU28gZm9yIGV4YW1wbGUsIGxvb2tpbmcgYXQgdGhlIEFERTc4
+NTQgZGF0YXNoZWV0LCB0aGUgbmFtaW5nIG1hdGNoaW5nIHRoZSBBREU3ODU0IHJlZ2lzdGVycyB3
+b3VsZCBiZSBhcyBmb2xsb3dzOgoKe2RpcmVjdGlvbn1fe3R5cGV9X3tpbmRleH1fe21vZGlmaWVy
+fV97aW5mb19tYXNrfQoKQUlHQUlOCS0JSW5fY3VycmVudF9hX2dhaW4KQVZHQUlOCS0JaW5fdm9s
+dGFnZV9hX2dhaW4KQklHQUlOCS0JaW5fY3VycmVudF9iX2dhaW4KQlZHQUlOCS0JaW5fdm9sdGFn
+ZV9iX2dhaW4K4oCUCkhvdyBkbyB3ZSByZXByZXNlbnQgdGhlIHJtcyBhbmQgb2Zmc2V0CkFJUk1T
+T1MJLQlpbl9jdXJyZW50X2Ffcm1zb2Zmc2V0CkFWUk1TT1MJLQlpbl92b2x0YWdlX2Ffcm1zb2Zm
+c2V0CuKAlApIZXJlIEkgZG9u4oCZdCB1bmRlcnN0YW5kIGhvdyB0byByZXByZXNlbnQgYm90aCB0
+aGUgcGhhc2UgYW5kIHRoZSBhY3RpdmUvcmVhY3RpdmUvYXBwYXJlbnQgcG93ZXIgY29tcG9uZW50
+cy4gRG8gd2UgY29tYmluZSB0aGUgcGhhc2UgYW5kIHF1YWRyYXR1cmUgcGFydCBsaWtlIHRoaXMK
+QVZBR0FJTgkJLQlpbl9wb3dlcl9hX2dhaW4JCQkJLyogYXBwYXJlbnQgcG93ZXIgKi8K4oCUCkFX
+R0FJTgkJLQlpbl9wb3dlcl9haV9nYWluCQkJCS8qIGFjdGl2ZSBwb3dlciAqLwrigJQKQVZBUkdB
+SU4JLQlpbl9wb3dlcl9hcV9nYWluCQkJCS8qIHJlYWN0aXZlIHBvd2VyICovCuKAlApOb3cgaGVy
+ZSBpdCBiZWNvbWVzIG1vcmUgY29tcGxpY2F0ZWQuIE5vdCBzdXJlIGhvdyB0aGlzIGdldHMgaGFu
+ZGxlZC4gCkFGV0FUVE9TCS0JaW5fcG93ZXJfYV9hY3RpdmUvZnVuZGFtZW50YWwvb2Zmc2V0CuKA
+lApBV0FUVEhSCS0JaW5fZW5lcmd5X2FpX2FjY3VtdWxhdGlvbgrigJQKQVZBUkhSCQktCWluX2Vu
+ZXJneV9hcV9hY2N1bXVsYXRpb24K4oCUCklQRUFLCQktCWluX2N1cnJlbnRfcGVhawrigJQKCkni
+gJlsbCBsZWF2ZSBpdCB0aGVyZSwgYmVjYXVzZSB0aGVyZSBhcmUgc29tZSBldmVuIG1vcmUgY29t
+cGxpY2F0ZWQgcmVnaXN0ZXIgbmFtaW5nIGlzc3Vlcy4KClJlZ2FyZHMsCkpvaG4KCgoKCgo+IE9u
+IE1hciAxMCwgMjAxOCwgYXQgNzoxMCBBTSwgSm9uYXRoYW4gQ2FtZXJvbiA8amljMjNAa2VybmVs
+Lm9yZz4gd3JvdGU6Cj4gCj4gT24gVGh1LCA4IE1hciAyMDE4IDIxOjM3OjMzIC0wMzAwCj4gUm9k
+cmlnbyBTaXF1ZWlyYSA8cm9kcmlnb3NpcXVlaXJhbWVsb0BnbWFpbC5jb20+IHdyb3RlOgo+IAo+
+PiBPbiAwMy8wNywgSm9uYXRoYW4gQ2FtZXJvbiB3cm90ZToKPj4+IE9uIFR1ZSwgNiBNYXIgMjAx
+OCAyMTo0Mzo0NyAtMDMwMAo+Pj4gUm9kcmlnbyBTaXF1ZWlyYSA8cm9kcmlnb3NpcXVlaXJhbWVs
+b0BnbWFpbC5jb20+IHdyb3RlOgo+Pj4gCj4+Pj4gVGhlIG1hY3JvIElJT19ERVZfQVRUUl9DSF9P
+RkYgaXMgYSB3cmFwcGVyIGZvciBJSU9fREVWSUNFX0FUVFIsIHdpdGggYQo+Pj4+IHRpbnkgY2hh
+bmdlIGluIHRoZSBuYW1lIGRlZmluaXRpb24uIFRoaXMgZXh0cmEgbWFjcm8gZG9lcyBub3QgaW1w
+cm92ZQo+Pj4+IHRoZSByZWFkYWJpbGl0eSBhbmQgYWxzbyBjcmVhdGVzIHNvbWUgY2hlY2twYXRj
+aCBlcnJvcnMuCj4+Pj4gCj4+Pj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgY2hlY2twYXRjaC5wbCBl
+cnJvcnM6Cj4+Pj4gCj4+Pj4gc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1My5jOjM5MTogRVJST1I6
+IFVzZSA0IGRpZ2l0IG9jdGFsICgwNzc3KSBub3QKPj4+PiBkZWNpbWFsIHBlcm1pc3Npb25zCj4+
+Pj4gc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1My5jOjM5NTogRVJST1I6IFVzZSA0IGRpZ2l0IG9j
+dGFsICgwNzc3KSBub3QKPj4+PiBkZWNpbWFsIHBlcm1pc3Npb25zCj4+Pj4gc3RhZ2luZy9paW8v
+bWV0ZXIvYWRlNzc1OS5jOjMzMTogRVJST1I6IFVzZSA0IGRpZ2l0IG9jdGFsICgwNzc3KSBub3QK
+Pj4+PiBkZWNpbWFsIHBlcm1pc3Npb25zCj4+Pj4gc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1OS5j
+OjMzNTogRVJST1I6IFVzZSA0IGRpZ2l0IG9jdGFsICgwNzc3KSBub3QKPj4+PiBkZWNpbWFsIHBl
+cm1pc3Npb25zCj4+Pj4gCj4+Pj4gU2lnbmVkLW9mZi1ieTogUm9kcmlnbyBTaXF1ZWlyYSA8cm9k
+cmlnb3NpcXVlaXJhbWVsb0BnbWFpbC5jb20+ICAKPj4+IAo+Pj4gSG1tLiBJIHdvbmRlcmVkIGEg
+Yml0IGFib3V0IHRoaXMgb25lLiBJdCdzIGEgY29ycmVjdCBwYXRjaCBpbiBvZgo+Pj4gaXRzZWxm
+IGJ1dCB0aGUgaW50ZXJmYWNlIGluIHF1ZXN0aW9uIGRvZXNuJ3QgZXZlbiB2YWd1ZWx5IGNvbmZv
+cm0KPj4+IHRvIGFueSBvZiBkZWZpbmVkIElJTyBBQkkuICBBbnlob3csIGl0J3Mgc3RpbGwgYW5k
+IGltcHJvdmVtZW50IHNvCj4+PiBJJ2xsIHRha2UgaXQuICAKPj4gCj4+IEkgYW0gbm90IHN1cmUg
+aWYgSSB1bmRlcnN0b29kIHRoZSBjb21tZW50IGFib3V0IHRoZSBBQkkuIFRoZSBtZXRlcgo+PiBp
+bnRlcmZhY2UgaXMgd3JvbmcgYmVjYXVzZSBpdCB1c2VzIHRoaW5ncyBsaWtlIElJT19ERVZJQ0Vf
+QVRUUj8gSXQKPj4gc2hvdWxkIHVzZSBpaW9faW5mbyB0b2dldGhlciB3aXRoICp3cml0ZV9yYXcg
+YW5kICpyZWFkX3Jhdy4gUmlnaHQ/IElzIGl0Cj4+IHRoZSBBQkkgcHJvYmxlbSB0aGF0IHlvdSBy
+ZWZlcj8KPiBUaGUgQUJJIGlzIGFib3V0IHRoZSB1c2Vyc3BhY2UgaW50ZXJmYWNlIG9mIElJTy4g
+IEl0IGlzIGRlZmluZWQKPiBpbiBEb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLWJ1cy1p
+aW8qCj4gU28gdGhpcyBkb2N1bWVudHMgdGhlIG5hbWluZyBvZiBzeXNmcyBhdHRyaWJ1dGVzIGFu
+ZCAobW9yZSBvciBsZXNzKQo+IGRlc2NyaWJlcyBhIGNvbnNpc3RlbnQgaW50ZXJmYWNlIHRvIHVz
+ZXJzcGFjZSBhY3Jvc3MgbG90cyBvZiBkaWZmZXJlbnQKPiB0eXBlcyBvZiBkZXZpY2VzLgo+IAo+
+IEEgbG90IG9mIHRoZXNlIG9sZGVyIGRyaXZlcnMgaW4gc3RhZ2luZyBpbnZvbHZlIGEgZ29vZCBk
+ZWFsIG9mIEFCSSB0aGF0Cj4gd2FzIG5vdCByZXZpZXdlZCBvciBkaXNjdXNzZWQuICBUaGF0IGlz
+IG9uZSBvZiB0aGUgYmlnZ2VzdCByZWFzb25zIHdlCj4gZGlkbid0IHRha2UgdGhlbSBvdXQgb2Yg
+c3RhZ2luZyBpbiB0aGUgZmlyc3QgcGxhY2UuCj4gCj4gSW4gb3JkZXIgZm9yIGdlbmVyaWMgdXNl
+cnNwYWNlIHByb2dyYW1zIHRvIGhhdmUgYW55IGlkZWEgd2hhdCB0byBkbwo+IHdpdGggdGhlc2Ug
+ZGV2aWNlcyB0aGlzIGFsbCBuZWVkcyB0byBiZSBmaXhlZC4KPiAKPiBUaGVyZSBtYXkgd2VsbCBi
+ZSBjYXNlcyB3aGVyZSB3ZSBuZWVkIHRvIGV4cGFuZCB0aGUgZXhpc3RpbmcgQUJJIHRvCj4gY292
+ZXIgbmV3IHRoaW5ncy4gICBUaGF0J3MgZmluZSwgYnV0IGl0IGhhcyB0byBiZSBkb25lIHdpdGgg
+ZnVsbAo+IHJldmlldyBvZiB0aGUgcmVsZXZhbnQgZG9jdW1lbnRhdGlvbiBwYXRjaGVzLgo+IAo+
+IEluY2lkZW50YWxseSBpZiB5b3Ugd2FudCBhbiBlYXN5IGRyaXZlciB0byB3b3JrIG9uIG1vdmlu
+ZyBvdXQgb2Ygc3RhZ2luZwo+IHRoZW4gZmlyc3QgdGhpbmcgdG8gZG8gaXMgdG8gY29tcGFyZSB3
+aGF0IGl0IHNob3dzIHRvIHVzZXJzcGFjZSB3aXRoIHRoZXNlCj4gZG9jcy4gIElmIGl0J3MgdG90
+YWxseSBkaWZmZXJlbnQgdGhlbiB5b3UgaGF2ZSBhIGJpZyBqb2Igb24geW91ciBoYW5kcwo+IGFz
+IG9mdGVuIEFCSSBjYW4gdGFrZSBhIGxvdCBvZiBkaXNjdXNzaW9uIGFuZCBhIGxvbmcgdGltZSB0
+byBlc3RhYmxpc2gKPiBhIGNvbnNlbnN1cy4KPiAKPiBKb25hdGhhbgo+IAo+IAo+PiAKPj4gVGhh
+bmtzIDopCj4+IAo+Pj4gQXBwbGllZCB0byB0aGUgdG9ncmVnIGJyYW5jaCBvZiBpaW8uZ2l0IGFu
+ZCBwdXNoZWQgb3V0IGFzIHRlc3RpbmcKPj4+IGZvciB0aGUgYXV0b2J1aWxkZXJzIHRvIHBsYXkg
+d2l0aCBpdC4KPj4+IAo+Pj4gSSBhbHNvIGFkZGVkIHRoZSByZW1vdmFsIG9mIHRoZSBoZWFkZXIg
+ZGVmaW5lIHdoaWNoIGlzIG5vCj4+PiBsb25nZXIgdXNlZC4KPj4+IAo+Pj4gUGxlYXNlIG5vdGUs
+IGZvbGxvd2luZyBkaXNjdXNzaW9ucyB3aXRoIE1pY2hhZWwsIEkgYW0gZ29pbmcgdG8gc2VuZAo+
+Pj4gYW4gZW1haWwgYW5ub3VuY2luZyBhbiBpbnRlbnQgdG8gZHJvcCB0aGVzZSBtZXRlciBkcml2
+ZXJzIG5leHQKPj4+IGN5Y2xlIHVubGVzcyBzb21lb25lIGNhbiBwcm92aWRlIHRlc3RpbmcgZm9y
+IGFueSBhdHRlbXB0IHRvCj4+PiBtb3ZlIHRoZW0gb3V0IG9mIHN0YWdpbmcuICBJJ20gc3RpbGwg
+dGFraW5nIHBhdGNoZXMgb24gdGhlIGJhc2lzCj4+PiB0aGF0ICdtaWdodCcgaGFwcGVuIC0gYnV0
+IEkgd291bGRuJ3QgZm9jdXMgb24gdGhlc2UgdW50aWwgd2UKPj4+IGhhdmUgc29tZSBjZXJ0YWlu
+dHkgb24gd2hldGhlciB0aGV5IHdpbGwgYmUgYXJvdW5kIGxvbmcgdGVybSEKPj4+IAo+Pj4gSm9u
+YXRoYW4KPj4+IAo+Pj4+IC0tLQo+Pj4+IGRyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1
+My5jIHwgMTggKysrKysrKysrKy0tLS0tLS0tCj4+Pj4gZHJpdmVycy9zdGFnaW5nL2lpby9tZXRl
+ci9hZGU3NzU5LmMgfCAxOCArKysrKysrKysrLS0tLS0tLS0KPj4+PiAyIGZpbGVzIGNoYW5nZWQs
+IDIwIGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQo+Pj4+IAo+Pj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTMuYyBiL2RyaXZlcnMvc3RhZ2luZy9p
+aW8vbWV0ZXIvYWRlNzc1My5jCj4+Pj4gaW5kZXggYzQ0ZWI1NzdkYzM1Li4yNzVlOGRmZmY4MzYg
+MTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2lpby9tZXRlci9hZGU3NzUzLmMKPj4+
+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVyL2FkZTc3NTMuYwo+Pj4+IEBAIC0zODgs
+MTQgKzM4OCwxNiBAQCBzdGF0aWMgSUlPX0RFVl9BVFRSX1ZQRVJJT0QoMDQ0NCwKPj4+PiAJCWFk
+ZTc3NTNfcmVhZF8xNmJpdCwKPj4+PiAJCU5VTEwsCj4+Pj4gCQlBREU3NzUzX1BFUklPRCk7Cj4+
+Pj4gLXN0YXRpYyBJSU9fREVWX0FUVFJfQ0hfT0ZGKDEsIDA2NDQsCj4+Pj4gLQkJYWRlNzc1M19y
+ZWFkXzhiaXQsCj4+Pj4gLQkJYWRlNzc1M193cml0ZV84Yml0LAo+Pj4+IC0JCUFERTc3NTNfQ0gx
+T1MpOwo+Pj4+IC1zdGF0aWMgSUlPX0RFVl9BVFRSX0NIX09GRigyLCAwNjQ0LAo+Pj4+IC0JCWFk
+ZTc3NTNfcmVhZF84Yml0LAo+Pj4+IC0JCWFkZTc3NTNfd3JpdGVfOGJpdCwKPj4+PiAtCQlBREU3
+NzUzX0NIMk9TKTsKPj4+PiArCj4+Pj4gK3N0YXRpYyBJSU9fREVWSUNFX0FUVFIoY2hvZmZfMSwg
+MDY0NCwKPj4+PiArCQkJYWRlNzc1M19yZWFkXzhiaXQsCj4+Pj4gKwkJCWFkZTc3NTNfd3JpdGVf
+OGJpdCwKPj4+PiArCQkJQURFNzc1M19DSDFPUyk7Cj4+Pj4gKwo+Pj4+ICtzdGF0aWMgSUlPX0RF
+VklDRV9BVFRSKGNob2ZmXzIsIDA2NDQsCj4+Pj4gKwkJCWFkZTc3NTNfcmVhZF84Yml0LAo+Pj4+
+ICsJCQlhZGU3NzUzX3dyaXRlXzhiaXQsCj4+Pj4gKwkJCUFERTc3NTNfQ0gyT1MpOwo+Pj4+IAo+
+Pj4+IHN0YXRpYyBpbnQgYWRlNzc1M19zZXRfaXJxKHN0cnVjdCBkZXZpY2UgKmRldiwgYm9vbCBl
+bmFibGUpCj4+Pj4gewo+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvaWlvL21ldGVy
+L2FkZTc3NTkuYyBiL2RyaXZlcnMvc3RhZ2luZy9paW8vbWV0ZXIvYWRlNzc1OS5jCj4+Pj4gaW5k
+ZXggMWRlY2IyYjhhZmFiLi5jMDc4Yjc3MGZhNTMgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9z
+dGFnaW5nL2lpby9tZXRlci9hZGU3NzU5LmMKPj4+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvaWlv
+L21ldGVyL2FkZTc3NTkuYwo+Pj4+IEBAIC0zMjgsMTQgKzMyOCwxNiBAQCBzdGF0aWMgSUlPX0RF
+Vl9BVFRSX0FDVElWRV9QT1dFUl9HQUlOKDA2NDQsCj4+Pj4gCQlhZGU3NzU5X3JlYWRfMTZiaXQs
+Cj4+Pj4gCQlhZGU3NzU5X3dyaXRlXzE2Yml0LAo+Pj4+IAkJQURFNzc1OV9BUEdBSU4pOwo+Pj4+
+IC1zdGF0aWMgSUlPX0RFVl9BVFRSX0NIX09GRigxLCAwNjQ0LAo+Pj4+IC0JCWFkZTc3NTlfcmVh
+ZF84Yml0LAo+Pj4+IC0JCWFkZTc3NTlfd3JpdGVfOGJpdCwKPj4+PiAtCQlBREU3NzU5X0NIMU9T
+KTsKPj4+PiAtc3RhdGljIElJT19ERVZfQVRUUl9DSF9PRkYoMiwgMDY0NCwKPj4+PiAtCQlhZGU3
+NzU5X3JlYWRfOGJpdCwKPj4+PiAtCQlhZGU3NzU5X3dyaXRlXzhiaXQsCj4+Pj4gLQkJQURFNzc1
+OV9DSDJPUyk7Cj4+Pj4gKwo+Pj4+ICtzdGF0aWMgSUlPX0RFVklDRV9BVFRSKGNob2ZmXzEsIDA2
+NDQsCj4+Pj4gKwkJCWFkZTc3NTlfcmVhZF84Yml0LAo+Pj4+ICsJCQlhZGU3NzU5X3dyaXRlXzhi
+aXQsCj4+Pj4gKwkJCUFERTc3NTlfQ0gxT1MpOwo+Pj4+ICsKPj4+PiArc3RhdGljIElJT19ERVZJ
+Q0VfQVRUUihjaG9mZl8yLCAwNjQ0LAo+Pj4+ICsJCQlhZGU3NzU5X3JlYWRfOGJpdCwKPj4+PiAr
+CQkJYWRlNzc1OV93cml0ZV84Yml0LAo+Pj4+ICsJCQlBREU3NzU5X0NIMk9TKTsKPj4+PiAKPj4+
+PiBzdGF0aWMgaW50IGFkZTc3NTlfc2V0X2lycShzdHJ1Y3QgZGV2aWNlICpkZXYsIGJvb2wgZW5h
+YmxlKQo+Pj4+IHsgIAo+Pj4gCj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1paW8iIGluCj4+IHRoZSBib2R5IG9m
+IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+IE1vcmUgbWFqb3Jkb21v
+IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+
+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZGV2ZWwg
+bWFpbGluZyBsaXN0Cj4gZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwo+IGh0dHA6Ly9kcml2
+ZXJkZXYubGludXhkcml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaXZlcmRldi1k
+ZXZlbAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2
+ZWwgbWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZl
+cmRldi5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRl
+dmVsCg==
