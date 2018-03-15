@@ -1,100 +1,85 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AG47ELsI4JpR3oAOJNED0uyXH3QCo5WD55iAVo6U4ZTlVFmgxM5yL49iWYCUOWvgzk7StfVGRrTS
-ARC-Seal: i=1; a=rsa-sha256; t=1521184485; cv=none;
+Return-Path: <mark.rutland@arm.com>
+X-Google-Smtp-Source: AG47ELsADJut4G4aKd2Q0BmUvcZAE2gZupob5g7iF5zEe4crM1+SrbhM3tv8p8nfexup0lDNB4IE
+ARC-Seal: i=1; a=rsa-sha256; t=1521120723; cv=none;
         d=google.com; s=arc-20160816;
-        b=Chs2nfXa9FDAE3Z/tjSQ9LqH1+6McrOuKh2jVn5OkXnC1S3bxmW4DCubzvEke5pu4p
-         vidv2Cj0YKgbnCPY/o3ETVbwoVLBaD0cEC8MRMCL2TjshIHA1Ne+GlqJ4XZ7Q+cQOEFj
-         sIc9D9uiCA69Ipx3apLkGx1E7WaH/1GYgYcPa9yRYwP6i77QkD1QTspVP0lTW0zQ4wLl
-         YwhVSHhzWbJTMYoYOcQTUNRyjWxK/OmvdKr78ADYImSQ+x/JXWa8icls65uOirRSmFtR
-         KPatFUnBcRpDGCHb6vXnQvXCoVHS05/4se4/0HdRAq2AwasBQ2+9i/HgLpgnphKhd12/
-         FN3Q==
+        b=XSCOr+qWGJ33PlHhQQWNIu3n8ZxlLuS072X9xY/rtORlup7eYRU6WOxgTCupnpeh58
+         pGkbDX+WIc0m7YdKeDSv6I7oGFjjyIqQXYwoUjJE/jFq59pzKTa2xU0eRDN0x9NzajsP
+         T53h8/YPjz8IMqeyqqFBrnIDeJ/K5Xa9lHHFZRHCO2EagsHl7cuFlDAhqOd+3jJZj1yu
+         hR+BjHEjfu8FkI9QtvunJGHSqVOPkquYKAwYlv3dmA0bVFurhZPpbhPG3EDmK0fu6ph0
+         +5inRSm9xEmD+HXCI35d76K0f5YbDCGR+iKHKh2+rpHqr14Q3Q3/MEmmF8ftVGDoGtvq
+         wLbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=hPB1atSePrr14chfCSe+hBPtRUEHmlSOae6M8CBS4A8=;
-        b=NYZBF6qJT/xhOLurafH7O2HF9GUNXjJBdNiwetxMoK17yz4TaKzXCZ/LDhIUzKJl5w
-         uofXHMR1iAQcjwxeT3UAW+PRaLpoIyKcP+jzPYU1dbri/iY0aFJ8cT54FY2jtym9WS9Y
-         +WOPMup3s0gPvTJwUAeAjXGl73zqg//Yl9dOiuaf2+c+MpDWkwox/k3YVOZdns94u6fU
-         0oUFR93z3rgURKickYrHGSvKD7S1gSolvLfsf/h7gRvHpDobi5j8AjNhG4GJxkUcrH2f
-         3iNKlhKjOQsxCvbjrjuIX81QrJv5IA2i7NaIctp2atSrDjMJkvPBb2Up9JbQl+96uOp7
-         PIsg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=O5rWxrO4LKpgeKr94tt5HY0UsDhdyMRN5u3KCoWRxK4=;
+        b=uEyJc6FbGDxnfrutAgefbefWL+CSfYo0QQp+k2DzbsUYqOnOlhJObJB/HragfUSVqy
+         thekVfmwz8CaYDzIj/uUUZYUvurQEV+hSRCFM6QfU0GwS/TWajEfBlYiruTrMk7EgRix
+         KVRG2QgbBpDagdC/TusWPqFk+lC1WuRV6dBjDH8ssDmvZjIqb6tDyR1H0A8hvTGvfbYy
+         OOEW8mmk2LQMWMYyzaJsgUW7FpLcvgkjL04G2ULTGTivuzm0nWKCNoYfTmxUlVrG+442
+         /egk7LkQvFNtRkHnFApx7USETkIFDsadApBuxgdn2TCab2x92+jqweFoORn5bK09//eE
+         9viQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=D52fGAwV;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=OaO1e2mR;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=D52fGAwV;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=OaO1e2mR;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6C8FD6016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH v2 2/4] ioremap: Implement TLB_INV before huge mapping
-To: Mark Rutland <mark.rutland@arm.com>
+       spf=pass (google.com: domain of mark.rutland@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=mark.rutland@arm.com
+Date: Thu, 15 Mar 2018 13:31:58 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Chintan Pandya <cpandya@codeaurora.org>
 Cc: catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
- ard.biesheuvel@linaro.org, marc.zyngier@arm.com, james.morse@arm.com,
- kristina.martsenko@arm.com, takahiro.akashi@linaro.org,
- gregkh@linuxfoundation.org, tglx@linutronix.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, akpm@linux-foundation.org, toshi.kani@hpe.com
+	ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+	james.morse@arm.com, kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+	tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org, toshi.kani@hpe.com
+Subject: Re: [PATCH v2 2/4] ioremap: Implement TLB_INV before huge mapping
+Message-ID: <20180315133157.ucbdg25jo5ew3t2h@lakrids.cambridge.arm.com>
 References: <1521117906-20107-1-git-send-email-cpandya@codeaurora.org>
  <1521117906-20107-3-git-send-email-cpandya@codeaurora.org>
- <20180315131316.fd5ftqwgdb5bf5we@lakrids.cambridge.arm.com>
- <839387ee-e1c2-cc71-c06a-7bc2d0eda73d@codeaurora.org>
- <20180315151645.fsgcywyawvtiwx52@lakrids.cambridge.arm.com>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <7d1716a1-0a69-4851-68c6-ebc00d2e8e1d@codeaurora.org>
-Date: Fri, 16 Mar 2018 12:44:36 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180315151645.fsgcywyawvtiwx52@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521117906-20107-3-git-send-email-cpandya@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595007763353693659?=
-X-GMAIL-MSGID: =?utf-8?q?1595077542599482740?=
+X-GMAIL-MSGID: =?utf-8?q?1595010683947435403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Thu, Mar 15, 2018 at 06:15:04PM +0530, Chintan Pandya wrote:
+> @@ -91,10 +93,15 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
+>  
+>  		if (ioremap_pmd_enabled() &&
+>  		    ((next - addr) == PMD_SIZE) &&
+> -		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+> -		    pmd_free_pte_page(pmd)) {
+> -			if (pmd_set_huge(pmd, phys_addr + addr, prot))
+> +		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
+> +			old_pmd = *pmd;
+> +			pmd_clear(pmd);
+> +			flush_tlb_pgtable(&init_mm, addr);
+> +			if (pmd_set_huge(pmd, phys_addr + addr, prot)) {
+> +				pmd_free_pte_page(&old_pmd);
+>  				continue;
+> +			} else
+> +				set_pmd(pmd, old_pmd);
+>  		}
+>  
 
+Can we have something like a pmd_can_set_huge() helper? Then we could
+avoid pointless modification and TLB invalidation work when
+pmd_set_huge() will fail.
 
-On 3/15/2018 8:46 PM, Mark Rutland wrote:
-> On Thu, Mar 15, 2018 at 06:55:32PM +0530, Chintan Pandya wrote:
->> On 3/15/2018 6:43 PM, Mark Rutland wrote:
->>> On Thu, Mar 15, 2018 at 06:15:04PM +0530, Chintan Pandya wrote:
->>>> Huge mapping changes PMD/PUD which could have
->>>> valid previous entries. This requires proper
->>>> TLB maintanance on some architectures, like
->>>> ARM64.
->>>
->>> Just to check, I take it that you mean we could have a valid table
->>> entry, but all the entries in that next level table must be invalid,
->>> right?
->>
->> That was my assumption but my assumption can be wrong if any VA gets
->> block mapping for 1G directly (instead of the 2M cases we discussed
->> so far), then this would go for a toss.
-> 
-> Ok. Just considering the 4K -> 2M case, is that an assumption, or a
-> guarantee?
-For 4K->2M case, that's confirmed. I mean, while mapping 2M, all the
-next level entries will be unmapped and cleared. That gets ensured
-before we land to page table code. But if someone calls these page table
-APIs directly without respecting previous mappings, we will not hit
-BUG_ON() anywhere but a crash later in unfamiliar situations. But that's
-the wrong thing to do.
+	if (ioremap_pmd_enabled() &&
+	    ((next - addr) == PMD_SIZE) &&
+	    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
+	    pmd_can_set_huge(pmd, phys_addr + addr, prot)) {
+	    	// clear entries, invalidate TLBs, and free tables
+		...
+		continue;
 
-> 
-> Thanks,
-> Mark.
-> 
+	}
 
-Chintan
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Thanks,
+MArk.
