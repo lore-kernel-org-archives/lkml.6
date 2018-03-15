@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752809AbeCOTH7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:07:59 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:36280 "EHLO
+        id S1752741AbeCOTM4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:12:56 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36086 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932675AbeCOTGY (ORCPT
+        with ESMTP id S932574AbeCOTGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:24 -0400
+        Thu, 15 Mar 2018 15:06:20 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, Jeff Dike <jdike@addtoit.com>,
-        user-mode-linux-devel@lists.sourceforge.net
-Subject: [PATCH v2 25/36] hostfs: rename do_rmdir() to hostfs_do_rmdir()
-Date: Thu, 15 Mar 2018 20:05:18 +0100
-Message-Id: <20180315190529.20943-26-linux@dominikbrodowski.net>
+        arnd@arndb.de
+Subject: [PATCH v2 26/36] fs: add ksys_rmdir() wrapper; remove in-kernel calls to sys_rmdir()
+Date: Thu, 15 Mar 2018 20:05:19 +0100
+Message-Id: <20180315190529.20943-27-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
 References: <20180315190529.20943-1-linux@dominikbrodowski.net>
@@ -23,57 +22,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-do_rmdir() is used in the VFS layer at fs/namei.c, so use a different
-name in hostfs.
+Using this wrapper allows us to avoid the in-kernel calls to the
+sys_rmdir() syscall.
 
-Cc: Jeff Dike <jdike@addtoit.com>
-Cc: user-mode-linux-devel@lists.sourceforge.net
-Acked-by: Richard Weinberger <richard@nod.at>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/hostfs/hostfs.h      | 2 +-
- fs/hostfs/hostfs_kern.c | 2 +-
- fs/hostfs/hostfs_user.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/internal.h            | 1 +
+ fs/namei.c               | 2 +-
+ include/linux/syscalls.h | 7 +++++++
+ init/initramfs.c         | 4 ++--
+ 4 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/fs/hostfs/hostfs.h b/fs/hostfs/hostfs.h
-index ffaec2e7526c..cb8374af08a6 100644
---- a/fs/hostfs/hostfs.h
-+++ b/fs/hostfs/hostfs.h
-@@ -84,7 +84,7 @@ extern int set_attr(const char *file, struct hostfs_iattr *attrs, int fd);
- extern int make_symlink(const char *from, const char *to);
- extern int unlink_file(const char *file);
- extern int do_mkdir(const char *file, int mode);
--extern int do_rmdir(const char *file);
-+extern int hostfs_do_rmdir(const char *file);
- extern int do_mknod(const char *file, int mode, unsigned int major,
- 		    unsigned int minor);
- extern int link_file(const char *from, const char *to);
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index c148e7f4f451..3cd85eb5bbb1 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -706,7 +706,7 @@ static int hostfs_rmdir(struct inode *ino, struct dentry *dentry)
+diff --git a/fs/internal.h b/fs/internal.h
+index df262f41a0ef..0eda35fa1743 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -55,6 +55,7 @@ extern void __init chrdev_init(void);
+ extern int user_path_mountpoint_at(int, const char __user *, unsigned int, struct path *);
+ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
++long do_rmdir(int dfd, const char __user *pathname);
+ long do_unlinkat(int dfd, struct filename *name);
  
- 	if ((file = dentry_name(dentry)) == NULL)
- 		return -ENOMEM;
--	err = do_rmdir(file);
-+	err = hostfs_do_rmdir(file);
- 	__putname(file);
- 	return err;
+ /*
+diff --git a/fs/namei.c b/fs/namei.c
+index 524e829ffc7d..8545151f74e9 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3872,7 +3872,7 @@ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
  }
-diff --git a/fs/hostfs/hostfs_user.c b/fs/hostfs/hostfs_user.c
-index 9c1e0f019880..5ecc4706172b 100644
---- a/fs/hostfs/hostfs_user.c
-+++ b/fs/hostfs/hostfs_user.c
-@@ -304,7 +304,7 @@ int do_mkdir(const char *file, int mode)
- 	return 0;
- }
+ EXPORT_SYMBOL(vfs_rmdir);
  
--int do_rmdir(const char *file)
-+int hostfs_do_rmdir(const char *file)
+-static long do_rmdir(int dfd, const char __user *pathname)
++long do_rmdir(int dfd, const char __user *pathname)
  {
- 	int err;
+ 	int error = 0;
+ 	struct filename *name;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 31aea3873de7..48fa98840b4e 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -982,4 +982,11 @@ static inline long ksys_unlink(const char __user *pathname)
+ 	return do_unlinkat(AT_FDCWD, getname(pathname));
+ }
  
++extern long do_rmdir(int dfd, const char __user *pathname);
++
++static inline long ksys_rmdir(const char __user *pathname)
++{
++	return do_rmdir(AT_FDCWD, pathname);
++}
++
+ #endif
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 08eb551168a8..73bbb227f868 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -317,7 +317,7 @@ static void __init clean_path(char *path, umode_t fmode)
+ 
+ 	if (!vfs_lstat(path, &st) && (st.mode ^ fmode) & S_IFMT) {
+ 		if (S_ISDIR(st.mode))
+-			sys_rmdir(path);
++			ksys_rmdir(path);
+ 		else
+ 			ksys_unlink(path);
+ 	}
+@@ -589,7 +589,7 @@ static void __init clean_rootfs(void)
+ 			WARN_ON_ONCE(ret);
+ 			if (!ret) {
+ 				if (S_ISDIR(st.mode))
+-					sys_rmdir(dirp->d_name);
++					ksys_rmdir(dirp->d_name);
+ 				else
+ 					ksys_unlink(dirp->d_name);
+ 			}
 -- 
 2.16.2
