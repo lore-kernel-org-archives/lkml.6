@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeCPOYz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:24:55 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41902 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753127AbeCPOYw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:24:52 -0400
-Date: Fri, 16 Mar 2018 15:24:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-kernel@vger.kernel.org, jolsa@redhat.com, kernel-team@fb.com,
-        ephiepark@fb.com
-Subject: Re: [PATCH v2] perf: update perf_cgroup time for ancestor cgroup(s)
-Message-ID: <20180316142447.GA4043@hirez.programming.kicks-ass.net>
-References: <20180312165943.1057894-1-songliubraving@fb.com>
+        id S1752903AbeCPO2m (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:28:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33654 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751245AbeCPO2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:28:41 -0400
+Date: Thu, 15 Mar 2018 13:51:23 +0000
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Sonny Rao <sonnyrao@chromium.org>
+Cc: kvm@vger.kernel.org, "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] vhost: add vsock compat ioctl
+Message-ID: <20180315135123.GB7015@stefanha-x1.localdomain>
+References: <20180314213625.119211-1-sonnyrao@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
 Content-Disposition: inline
-In-Reply-To: <20180312165943.1057894-1-songliubraving@fb.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180314213625.119211-1-sonnyrao@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 09:59:43AM -0700, Song Liu wrote:
-> When a perf_event is attached to parent cgroup, it should count events
-> for all children cgroups:
-> 
->  parent_group   <---- perf_event
->    \
->     - child_group  <---- process(es)
-> 
-> However, in our tests, we found this perf_event cannot report reliable
-> results. Here is an example case:
-> 
->   # create cgroups
->   mkdir -p /sys/fs/cgroup/p/c
->   # start perf for parent group
->   perf stat -e instructions -G "p"
-> 
->   # on another console, run test process in child cgroup:
->   stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
-> 
->   # after the test process is done, stop perf in the first console shows
-> 
->        <not counted>      instructions              p
-> 
-> The instruction should not be "not counted" as the process runs in the
-> child cgroup.
-> 
-> We found this is because perf_event->cgrp and cpuctx->cgrp are not
-> identical, thus perf_event->cgrp are not updated properly.
-> 
-> This patch fixes this by updating perf_cgroup properly for ancestor
-> cgroup(s).
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> Reported-by: Ephraim Park <ephiepark@fb.com>
 
-Yeah, that looks about right, Thanks!
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 14, 2018 at 02:36:25PM -0700, Sonny Rao wrote:
+> This will allow usage of vsock from 32-bit binaries on a 64-bit
+> kernel.
+>=20
+> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+> ---
+>  drivers/vhost/vsock.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJaqnpbAAoJEJykq7OBq3PIRW8IAMcewt0u7IxTrOAqBcWsEpGy
+LinA4rdQttT81XR7oiFrzf0b+b/oaCPfW4ZNACeq3gADu4nDhIhp/ZYUKHVQh2NI
+7ykw6yPm0pqIQB82mbz2LGGf3PK+0ZRhu9qTLBXhg4uDMDcWKZhD9fAm/xx0YCRS
+4a2fhlFaxdK1TI4PCLB2vXnoto5aJqwHNTr9K/GOX69LHB7lMFKeMl/oLFduv2i2
+BZeBj4TI8rcvgBcLEK68clN8WkBxvSu4sWiUTLGtp1bowbqPnh6Dcspt5y7is4N7
+17y0mahmKrdKTGpmBN+cFsp9O7Fq0CDTH6H4vE3e+chpbaw7ieh90tTyMtZ5mKY=
+=bRd3
+-----END PGP SIGNATURE-----
+
+--SkvwRMAIpAhPCcCJ--
