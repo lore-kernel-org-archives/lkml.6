@@ -1,63 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeCOPKr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:10:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40820 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeCOPKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:10:46 -0400
-Date: Thu, 15 Mar 2018 15:10:42 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: York Sun <york.sun@nxp.com>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] drivers/edac: Add L1 and L2 error detection for
- A53 and A57
-Message-ID: <20180315151042.ikmjg67s6te5ov4x@lakrids.cambridge.arm.com>
-References: <1521073067-24348-1-git-send-email-york.sun@nxp.com>
- <20180315010728.GF11061@pd.tnic>
+        id S1752723AbeCOPMW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:12:22 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:32852 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751502AbeCOPMV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:12:21 -0400
+X-Google-Smtp-Source: AG47ELu/RlMMNoefaDdDgdKfkXoBvRZ5wGorIMHpnaR0c2YcQ0PXUdiGwLU0jhrfQxRSOjimwqkYaX0bWqXvuVVM8H4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315010728.GF11061@pd.tnic>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
+References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
+ <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
+ <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
+ <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com> <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
+From: Daniel Vacek <neelx@redhat.com>
+Date: Thu, 15 Mar 2018 16:12:20 +0100
+Message-ID: <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 02:07:28AM +0100, Borislav Petkov wrote:
-> On Wed, Mar 14, 2018 at 05:17:46PM -0700, York Sun wrote:
-> > Add error detection for A53 and A57 cores. Hardware error injection
-> > is supported on A53. Software error injection is supported on both.
-> > For hardware error injection on A53 to work, proper access to
-> > L2ACTLR_EL1, CPUACTLR_EL1 needs to be granted by EL3 firmware. This
-> > is done by making an SMC call in the driver. Failure to enable access
-> > disables hardware error injection. For error interrupt to work,
-> > another SMC call enables access to L2ECTLR_EL1. Failure to enable
-> > access disables interrupt for error reporting.
-> > 
-> > Signed-off-by: York Sun <york.sun@nxp.com>
-> > ---
-> >  .../devicetree/bindings/edac/cortex-arm64-edac.txt |  37 +
-> >  arch/arm64/include/asm/cacheflush.h                |   1 +
-> >  arch/arm64/mm/cache.S                              |  35 +
-> >  drivers/edac/Kconfig                               |   6 +
-> >  drivers/edac/Makefile                              |   1 +
-> >  drivers/edac/cortex_arm64_l1_l2.c                  | 741 +++++++++++++++++++++
-> 
-> I don't want per-functional unit EDAC drivers. Also, what happened to
-> talking to ARM people about designing a generic ARM64 EDAC driver?
+On Thu, Mar 15, 2018 at 8:45 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 15 March 2018 at 07:44, Daniel Vacek <neelx@redhat.com> wrote:
+>> On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
+>>>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
+>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
+>>>>>
+>>>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
+>>>>> alignment") modified the logic in memmap_init_zone() to initialize
+>>>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
+>>>>> in move_freepages(), which is redundant by its own admission, and
+>>>>> dereferences struct page fields to obtain the zone without checking
+>>>>> whether the struct pages in question are valid to begin with.
+>>>>>
+>>>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
+>>>>> may cause pfn assume the same value it had in a prior iteration of
+>>>>> the loop, resulting in an infinite loop and a hang very early in the
+>>>>> boot. Also, since it doesn't perform the same rounding on start_pfn
+>>>>> itself but only on intermediate values following an invalid PFN, we
+>>>>> may still hit the same VM_BUG_ON() as before.
+>>>>>
+>>>>> So instead, let's fix this at the core, and ensure that the BUG
+>>>>> check doesn't dereference struct page fields of invalid pages.
+>>>>>
+>>>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
+>>>>> Cc: Daniel Vacek <neelx@redhat.com>
+>>>>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>>>>> Cc: Michal Hocko <mhocko@suse.com>
+>>>>> Cc: Paul Burton <paul.burton@imgtec.com>
+>>>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>>> ---
+>>>>>  mm/page_alloc.c | 13 +++++--------
+>>>>>  1 file changed, 5 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>> index 3d974cb2a1a1..635d7dd29d7f 100644
+>>>>> --- a/mm/page_alloc.c
+>>>>> +++ b/mm/page_alloc.c
+>>>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
+>>>>>          * Remove at a later date when no bug reports exist related to
+>>>>>          * grouping pages by mobility
+>>>>>          */
+>>>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
+>>>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
+>>>>> +                 pfn_valid(page_to_pfn(end_page)) &&
+>>>>> +                 page_zone(start_page) != page_zone(end_page));
+>>>>
+>>>> Hi, I am on vacation this week and I didn't have a chance to test this
+>>>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
+>>>> arm{,64} arch specific versions returns true for all pfns in a section
+>>>> if there is at least some memory mapped in that section. So I doubt
+>>>> this prevents the crash I was targeting. I believe pfn_valid() does
+>>>> not change a thing here :(
+>>>>
+>>>
+>>> If this is the case, memblock_next_valid_pfn() is broken since it
+>>> skips valid PFNs, and we should be fixing that instead.
+>>
+>> How do you define valid pfn? Maybe the generic version of pfn_valid()
+>> should be fixed???
+>>
+>
+> memblock_next_valid_pfn() skips PFNs for which pfn_valid() returns
+> true. That is clearly a bug.
 
-Practically speaking, a generic drivers is only possible on ARMv8.2
-parts where RAS functionality is architected.
+So pfn_valid() does not mean this frame is usable memory?
 
-On other parts, it's IMPLEMENTATION DEFINED, and varies wildly between
-CPU implementations, even if they sometimes look deceptively similar at
-first glance...
+OK, in that case we need to fix or revert memblock_next_valid_pfn().
+That works for me.
 
-This driver is certainly not generic, and is specific to Cortex-A53 and
-Cortex-A57 as integrated by NXP (since it relies on NXP-specific
-firmware interfaces).
-
-Thanks,
-Mark.
+--nX
