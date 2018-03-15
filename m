@@ -1,130 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeCOJbD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:31:03 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32891 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751526AbeCOJam (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:30:42 -0400
-X-Google-Smtp-Source: AG47ELt9+5GvEawcVKQzMsFmmulzlfYdWbOg+I4zXk4I7VsENQO672alW4qbozBKsAv3Xf2QSXxaAQ==
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To: mchehab@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        hans.verkuil@cisco.com
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 2/2] cec: stm32: add suspend/resume functions
-Date: Thu, 15 Mar 2018 10:29:49 +0100
-Message-Id: <20180315092949.9895-3-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180315092949.9895-1-benjamin.gaignard@st.com>
-References: <20180315092949.9895-1-benjamin.gaignard@st.com>
+        id S1751895AbeCOJb1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:31:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751864AbeCOJb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:31:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9063620779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Thu, 15 Mar 2018 18:31:23 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, wangnan0@huawei.com, mingo@redhat.com,
+        srikar@linux.vnet.ibm.com, oleg@redhat.com, mhiramat@kernel.org,
+        namhyung@kernel.org
+Subject: Re: [PATCH v2 2/2] trace_uprobe: Simplify probes_seq_show()
+Message-Id: <20180315183123.e47cbb238ef59ff964564cbf@kernel.org>
+In-Reply-To: <20180315082756.9050-2-ravi.bangoria@linux.vnet.ibm.com>
+References: <20180315082756.9050-1-ravi.bangoria@linux.vnet.ibm.com>
+        <20180315082756.9050-2-ravi.bangoria@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+On Thu, 15 Mar 2018 13:57:56 +0530
+Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
 
-If wake up irq is defined in device-tree cec adapter
-could be used has wake up source.
+> Simplify probes_seq_show() function. No change in output
+> before and after patch.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
----
- drivers/media/platform/stm32/stm32-cec.c | 44 +++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+Yeah, we don't need this trick anymore.
 
-diff --git a/drivers/media/platform/stm32/stm32-cec.c b/drivers/media/platform/stm32/stm32-cec.c
-index 35cc2ffd6b96..68e18ee6655b 100644
---- a/drivers/media/platform/stm32/stm32-cec.c
-+++ b/drivers/media/platform/stm32/stm32-cec.c
-@@ -11,8 +11,11 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- #include <linux/platform_device.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/pm_runtime.h>
-+#include <linux/pm_wakeirq.h>
- #include <linux/regmap.h>
- 
- #include <media/cec.h>
-@@ -243,7 +246,7 @@ static int stm32_cec_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct stm32_cec *cec;
- 	void __iomem *mmio;
--	int ret;
-+	int ret, wakeirq;
- 
- 	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
- 	if (!cec)
-@@ -274,6 +277,12 @@ static int stm32_cec_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	wakeirq = of_irq_get_byname(pdev->dev.of_node, "wakeup");
-+	if (wakeirq > 0) {
-+		device_init_wakeup(&pdev->dev, true);
-+		dev_pm_set_dedicated_wake_irq(&pdev->dev, wakeirq);
-+	}
-+
- 	cec->clk_cec = devm_clk_get(&pdev->dev, "cec");
- 	if (IS_ERR(cec->clk_cec)) {
- 		dev_err(&pdev->dev, "Cannot get cec clock\n");
-@@ -312,12 +321,44 @@ static int stm32_cec_remove(struct platform_device *pdev)
- {
- 	struct stm32_cec *cec = platform_get_drvdata(pdev);
- 
-+	dev_pm_clear_wake_irq(&pdev->dev);
-+	device_init_wakeup(&pdev->dev, false);
-+
- 	cec_unregister_adapter(cec->adap);
- 
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
- }
-+
-+static int __maybe_unused stm32_cec_suspend(struct device *dev)
-+{
-+	struct stm32_cec *cec = dev_get_drvdata(dev);
-+
-+	pm_runtime_force_suspend(dev);
-+
-+	if (device_may_wakeup(dev))
-+		enable_irq_wake(cec->irq);
-+
-+	pinctrl_pm_select_sleep_state(dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stm32_cec_resume(struct device *dev)
-+{
-+	struct stm32_cec *cec = dev_get_drvdata(dev);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	if (device_may_wakeup(dev))
-+		disable_irq_wake(cec->irq);
-+
-+	pm_runtime_force_resume(dev);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused stm32_cec_runtime_suspend(struct device *dev)
- {
- 	struct stm32_cec *cec = dev_get_drvdata(dev);
-@@ -341,6 +382,7 @@ static int __maybe_unused stm32_cec_runtime_resume(struct device *dev)
- static const struct dev_pm_ops stm32_cec_pm_ops = {
- 	SET_RUNTIME_PM_OPS(stm32_cec_runtime_suspend, stm32_cec_runtime_resume,
- 			   NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(stm32_cec_suspend, stm32_cec_resume)
- };
- 
- static const struct of_device_id stm32_cec_of_match[] = {
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you!
+
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+> ---
+>  kernel/trace/trace_uprobe.c | 21 +++------------------
+>  1 file changed, 3 insertions(+), 18 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 0298bd15be83..544fa10a471b 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -602,24 +602,9 @@ static int probes_seq_show(struct seq_file *m, void *v)
+>  	char c = is_ret_probe(tu) ? 'r' : 'p';
+>  	int i;
+>  
+> -	seq_printf(m, "%c:%s/%s", c, tu->tp.call.class->system,
+> -			trace_event_name(&tu->tp.call));
+> -	seq_printf(m, " %s:", tu->filename);
+> -
+> -	/* Don't print "0x  (null)" when offset is 0 */
+> -	if (tu->offset) {
+> -		seq_printf(m, "0x%0*lx", (int)(sizeof(void *) * 2), tu->offset);
+> -	} else {
+> -		switch (sizeof(void *)) {
+> -		case 4:
+> -			seq_printf(m, "0x00000000");
+> -			break;
+> -		case 8:
+> -		default:
+> -			seq_printf(m, "0x0000000000000000");
+> -			break;
+> -		}
+> -	}
+> +	seq_printf(m, "%c:%s/%s %s:0x%0*lx", c, tu->tp.call.class->system,
+> +			trace_event_name(&tu->tp.call), tu->filename,
+> +			(int)(sizeof(void *) * 2), tu->offset);
+>  
+>  	for (i = 0; i < tu->tp.nr_args; i++)
+>  		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
+> -- 
+> 2.13.6
+> 
+
+
 -- 
-2.15.0
+Masami Hiramatsu <mhiramat@kernel.org>
