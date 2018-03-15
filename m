@@ -1,79 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeCOKpQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:45:16 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54233 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751600AbeCOKpO (ORCPT
+        id S1751887AbeCOKsP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:48:15 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36079 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCOKsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:45:14 -0400
-X-Google-Smtp-Source: AG47ELtODgBC1ZZG/+LIs6nL7kdRqe5IG96K8zn210xi2owb9CQrQ1u4kuXkR0LWAyEC8YxqmFyWAA==
-Date: Thu, 15 Mar 2018 11:45:11 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor
- on older Tegra's
-Message-ID: <20180315104511.GC15393@ulmo>
-References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
- <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
+        Thu, 15 Mar 2018 06:48:13 -0400
+X-Google-Smtp-Source: AG47ELvEhiA+UR9sgjmVY3n6VvN97nP1+OnN3IM8+TsLH07mCxDx8GpGVnLKxMAoFwnCLkfK5C08TRsr/BHnDQN70bg=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hYooF8G/hrfVAmum"
-Content-Disposition: inline
-In-Reply-To: <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <87po45hcuy.fsf@xmission.com>
+References: <20180314143529.1456168-1-arnd@arndb.de> <20180314144614.1632190-1-arnd@arndb.de>
+ <20180314144614.1632190-2-arnd@arndb.de> <87po45hcuy.fsf@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 11:48:12 +0100
+X-Google-Sender-Auth: EmI6749qgpjqZJjxThmMAsp3dx8
+Message-ID: <CAK8P3a1GL2N=emTbSgNGHxOrXtG6BxqRGMg00-tZqKg6-0O5=w@mail.gmail.com>
+Subject: Re: [PATCH 12/16] asm-generic: siginfo: remove obsolete #ifdefs
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 15, 2018 at 11:06 AM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+>
+>> The frv, tile and blackfin architectures are being removed, so
+>> we can clean up this header by removing all the special cases
+>> except those for ia64.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  include/uapi/asm-generic/siginfo.h | 36 ++----------------------------------
+>>  1 file changed, 2 insertions(+), 34 deletions(-)
+>>
+>
+> If I am reading siginfo.h correctly after this cleanup patch
+> we can perform another cleanup and unconditionally define
+> all of the ia64 si_codes except for __SEGV_PSTKOVF which
+> aliases SEGV_PKUERR.
+>
+> Which has the advantage that no one is tempted to define any further
+> aliased si_codes.
 
---hYooF8G/hrfVAmum
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do you mean like this:
 
-On Thu, Mar 15, 2018 at 04:00:25AM +0300, Dmitry Osipenko wrote:
-> Older Tegra's do not support RGBA format for the cursor, but instead
-> overlay plane could be used for it. Since there is no much use for the
-> overlays on a regular desktop and HW-accelerated cursor is much better
-> than a SW cursor, let's dedicate one overlay plane to the mouse cursor.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/dc.c | 28 +++++++++++++++++++++++-----
->  1 file changed, 23 insertions(+), 5 deletions(-)
+diff --git a/include/uapi/asm-generic/siginfo.h
+b/include/uapi/asm-generic/siginfo.h
+index b2ebf16c391a..ff13ed50dde8 100644
+--- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@ -186,11 +186,9 @@ typedef struct siginfo {
+ #define ILL_PRVREG     6       /* privileged register */
+ #define ILL_COPROC     7       /* coprocessor error */
+ #define ILL_BADSTK     8       /* internal stack error */
+-#ifdef __ia64__
+-# define ILL_BADIADDR  9       /* unimplemented instruction address */
+-# define __ILL_BREAK   10      /* illegal break */
+-# define __ILL_BNDMOD  11      /* bundle-update (modification) in progress */
+-#endif
++#define ILL_BADIADDR   9       /* unimplemented instruction address */
++#define __ILL_BREAK    10      /* illegal break */
++#define __ILL_BNDMOD   11      /* bundle-update (modification) in progress */
+ #define NSIGILL                11
 
-Applied. I'm not entirely happy that we need to sacrifice one of the
-overlay windows for this, but you're right, it's probably okay given
-how little planes are used on a regular desktop.
+ /*
+@@ -204,13 +202,11 @@ typedef struct siginfo {
+ #define FPE_FLTRES     6       /* floating point inexact result */
+ #define FPE_FLTINV     7       /* floating point invalid operation */
+ #define FPE_FLTSUB     8       /* subscript out of range */
+-#ifdef __ia64__
+-# define __FPE_DECOVF  9       /* decimal overflow */
+-# define __FPE_DECDIV  10      /* decimal division by zero */
+-# define __FPE_DECERR  11      /* packed decimal error */
+-# define __FPE_INVASC  12      /* invalid ASCII digit */
+-# define __FPE_INVDEC  13      /* invalid decimal digit */
+-#endif
++#define __FPE_DECOVF   9       /* decimal overflow */
++#define __FPE_DECDIV   10      /* decimal division by zero */
++#define __FPE_DECERR   11      /* packed decimal error */
++#define __FPE_INVASC   12      /* invalid ASCII digit */
++#define __FPE_INVDEC   13      /* invalid decimal digit */
+ #define NSIGFPE                13
 
-We could always provide a module parameter to switch this on and off
-if that's ever something we want.
+ /*
 
-Applied, thanks.
+That seems reasonable. If you send me a patch with a proper
+changelog (I don't think I could explain this well enough), I'll
+add it to the series.
 
-Thierry
-
---hYooF8G/hrfVAmum
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqqTrUACgkQ3SOs138+
-s6FEEhAAgJOMBgV21IHagDteeJ/4/5iPivGgzdNaSD61iA5UCp07Ke/c4EiT1dmp
-PGRFAfl6yvKkd0gPDIhBQSB7I9oJsCAsLsxxvJE5roqdoJj/i/ZgggjVAkNae10l
-gcV4xmYCdwOgxKHbILO09Kw1+M0bL+oSXdCX2zCwAsfTUcRj28rQ/OLcAeP7iza3
-JE2NePsmQ81kAlTsWcAgSJvEawhZ9l2w2J7fpP3rSlQT0ksdVWFAPfvZu6LkOBmF
-KqH/PmiXqBZsIIPEYxXlB0KNNUfQ//0CeiBX+yrfnrCQC9tXNgf5ruAilzbXK7Rj
-eFmLzc1vZNXzfNsCcvCL9/QIus4RSZJCBFMg294PEBiv04y2aMOsjbuvFUVvkXvb
-2FGwjfYz69zEU6WYyx4ilt/1QzUnWGXKYSD9FmZ0aFtzzHk4QGuZd6ki0QDtLkFn
-gllvffrnH4lcvRpyTjPjEP6+clnb70pE89LVwxtBKPmIIVEmS732Wl9ZDBtSDAQc
-uicPBTBz1f1Z4ADuJ+ytK+yihaDWsAft9edGyDSmRULxZhi9RqRBjN14Y/t9bJwv
-ZCdRVMln+jwCPB+0RaqtdslXZ/iJvWX+raGzxfDt224nFjqoXepk1mjxuPn2jqCT
-mL64AI6arUnUDMfTe5GHB0ftOTehSDzPGgQSIYYKduIxFvf1QfY=
-=Tl4S
------END PGP SIGNATURE-----
-
---hYooF8G/hrfVAmum--
+      Arnd
