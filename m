@@ -1,60 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752148AbeCODIo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 23:08:44 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:46675 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751682AbeCODIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 23:08:43 -0400
-X-ME-Sender: <xms:uuOpWlZkthJBjhm6BO6_GgIvspJLUtFWR55c9IOVU-Gy3Kvbz509Kg>
-From: Simon Gaiser <simon@invisiblethingslab.com>
-To: xen-devel@lists.xenproject.org
-Cc: Simon Gaiser <simon@invisiblethingslab.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] xen: xenbus_dev_frontend: Really return response string
-Date: Thu, 15 Mar 2018 04:08:03 +0100
-Message-Id: <20180315030803.27781-1-simon@invisiblethingslab.com>
-X-Mailer: git-send-email 2.16.2
+        id S1752183AbeCODJF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 23:09:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751682AbeCODJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 23:09:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ECFA204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Thu, 15 Mar 2018 11:08:06 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] soc: imx: gpcv2: Do not pass static memory as
+ platform data
+Message-ID: <20180315030804.GI26859@dragon>
+References: <20180122150748.1742-1-andrew.smirnov@gmail.com>
+ <20180208064709.GB31910@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208064709.GB31910@dragon>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xenbus_command_reply() did not actually copy the response string and
-leaked stack content instead.
+On Thu, Feb 08, 2018 at 02:47:10PM +0800, Shawn Guo wrote:
+> On Mon, Jan 22, 2018 at 07:07:47AM -0800, Andrey Smirnov wrote:
+> > Platform device core assumes the ownership of dev.platform_data as
+> > well as that it is dynamically allocated and it will try to kfree it
+> > as a part of platform_device_release(). Change the code to pass
+> > kzalloc'ed chunk of memory instead of a pointer to a static memory to
+> > avoid causing a BUG() when calling platform_device_put().
+> > 
+> > The problem can be reproduced by artificially enabling the error path
+> > of platform_device_add() call (around line 357).
+> > 
+> > Note that this change also allows us to constify imx7_pgc_domains,
+> > since we no longer need to be able to modify it.
+> > 
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Stefan Agner <stefan@agner.ch>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> 
+> Applied both, thanks.
 
-Fixes: 9a6161fe73bd ("xen: return xenstore command failures via response instead of rc")
-Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
----
+I decided to drop these two patches.  Triggered by Fabio's patch on top
+of you changes, I just took another look at them, and found that
+platform_device_add_data() can help us do the same thing in a nicer way.
 
-PS: AFAICS this is not a security issue since /dev/xen/xenbus is
-normally only accessible by root and giving xenstore access to a less
-trusted entity probably has a bunch of other unintended consequences.
+Shawn
 
- drivers/xen/xenbus/xenbus_dev_frontend.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
-index a493e99bed21..845a70fa7f79 100644
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -403,7 +403,7 @@ static int xenbus_command_reply(struct xenbus_file_priv *u,
- {
- 	struct {
- 		struct xsd_sockmsg hdr;
--		const char body[16];
-+		char body[16];
- 	} msg;
- 	int rc;
- 
-@@ -412,6 +412,7 @@ static int xenbus_command_reply(struct xenbus_file_priv *u,
- 	msg.hdr.len = strlen(reply) + 1;
- 	if (msg.hdr.len > sizeof(msg.body))
- 		return -E2BIG;
-+	memcpy(&msg.body, reply, msg.hdr.len);
- 
- 	mutex_lock(&u->reply_mutex);
- 	rc = queue_reply(&u->read_buffers, &msg, sizeof(msg.hdr) + msg.hdr.len);
--- 
-2.16.2
+[1] https://patchwork.kernel.org/patch/10274969/
