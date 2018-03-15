@@ -1,70 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeCORtH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:49:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38177 "EHLO mx2.suse.de"
+        id S932267AbeCORtr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:49:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38261 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752079AbeCORtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:49:06 -0400
-Date: Thu, 15 Mar 2018 18:49:03 +0100
+        id S1751929AbeCORtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:49:45 -0400
+Date: Thu, 15 Mar 2018 18:49:41 +0100
 From: Michal Hocko <mhocko@kernel.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
- case of global reclaim
-Message-ID: <20180315174903.GM23100@dhcp22.suse.cz>
-References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] mm: memcg: remote memcg charging for kmem
+ allocations
+Message-ID: <20180315174941.GN23100@dhcp22.suse.cz>
+References: <20180221223757.127213-1-shakeelb@google.com>
+ <20180221223757.127213-2-shakeelb@google.com>
+ <20180313134902.GW12772@dhcp22.suse.cz>
+ <CALvZod5XFKLfQiHN1g3KWJ-DEJPt8gX6QJD=x22x_eyDN88RYg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+In-Reply-To: <CALvZod5XFKLfQiHN1g3KWJ-DEJPt8gX6QJD=x22x_eyDN88RYg@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-03-18 18:01:34, Kirill Tkhai wrote:
-> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
-> So, it's called for memcg reclaim too, e.g. this list is shrinked
-> disproportionality to another lists.
+On Tue 13-03-18 10:55:18, Shakeel Butt wrote:
+> On Tue, Mar 13, 2018 at 6:49 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Wed 21-02-18 14:37:56, Shakeel Butt wrote:
+> > [...]
+> >> +#ifdef CONFIG_MEMCG
+> >> +static inline struct mem_cgroup *memalloc_memcg_save(struct mem_cgroup *memcg)
+> >> +{
+> >> +     struct mem_cgroup *old_memcg = current->target_memcg;
+> >> +     current->target_memcg = memcg;
+> >> +     return old_memcg;
+> >> +}
+> >
+> > So you are relying that the caller will handle the reference counting
+> > properly? I do not think this is a good idea.
 > 
-> This looks confusing, so I'm reporting about this.
-> Consider this patch as RFC.
+> For the fsnotify use-case, this assumption makes sense as fsnotify has
+> an abstraction of fsnotify_group which is created by the
+> person/process interested in the events and thus can be used to hold
+> the reference to the person/process's memcg.
 
-Could you be more specific about the problem you are trying to solve?
-Because we do skip shrinkers which are not memcg aware by
-shrink_slab:
-		/*
-		 * If kernel memory accounting is disabled, we ignore
-		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
-		 * passing NULL for memcg.
-		 */
-		if (memcg_kmem_enabled() &&
-		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
-			continue;
+OK, but there is not any direct connection between fsnotify_group and
+task_struct lifetimes, is it? This makes the API suspectible to
+use-after-free bugs.
 
-Or am I missing something?
- 
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  fs/xfs/xfs_super.c |    2 ++
->  1 file changed, 2 insertions(+)
+> Another use-case I have
+> in mind is the filesystem mount. Basically attaching a mount with a
+> memcg and thus all user pages and kmem allocations (inodes, dentries)
+> for that mount will be charged to the attached memcg.
+
+So you charge page cache to the origin task but metadata to a different
+memcg?
+
+> In this use-case
+> the super_block is the perfect structure to hold the reference to the
+> memcg.
 > 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 951271f57d00..124568aefa94 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1788,6 +1788,8 @@ xfs_fs_nr_cached_objects(
->  	struct super_block	*sb,
->  	struct shrink_control	*sc)
->  {
-> +	if (sc->memcg)
-> +		return 0;
->  	return xfs_reclaim_inodes_count(XFS_M(sb));
->  }
->  
+> If in future we find a use-case where this assumption does not make
+> sense we can evolve the API and since this is kernel internal API, it
+> should not be hard to evolve.
+> 
+> > Also do we need some kind
+> > of debugging facility to detect unbalanced save/restore scopes?
+> >
+> 
+> I am not sure, I didn't find other similar patterns (like PF_MEMALLOC)
+> having debugging facility.
 
+Maybe we need something more generic here.
+
+> Maybe we can add such debugging facility
+> when we find more users other than kmalloc & kmem_cache_alloc. Vmalloc
+> may be one but I could not think of a use-case for vmalloc for remote
+> charging, so, no need to add more code at this time.
+> 
+> > [...]
+> >> @@ -2260,7 +2269,10 @@ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep)
+> >>       if (current->memcg_kmem_skip_account)
+> >>               return cachep;
+> >>
+> >> -     memcg = get_mem_cgroup_from_mm(current->mm);
+> >> +     if (current->target_memcg)
+> >> +             memcg = get_mem_cgroup(current->target_memcg);
+> >> +     if (!memcg)
+> >> +             memcg = get_mem_cgroup_from_mm(current->mm);
+> >>       kmemcg_id = READ_ONCE(memcg->kmemcg_id);
+> >>       if (kmemcg_id < 0)
+> >>               goto out;
+> >
+> > You are also adding one branch for _each_ charge path even though the
+> > usecase is rather limited.
+> >
+> 
+> I understand the concern but the charging path, IMO, is much complex
+> than just one or couple of additional branches. I can run a simple
+> microbenchmark to see if there is anything noticeable here.
+
+Charging path is still a _hot path_. Especially when the kmem accounting
+is enabled by default. You cannot simply downplay the overhead. We have
+_one_ user but all users should pay the price. This is simply hard to
+justify. Maybe we can thing of something that would put the burden on
+the charging context?
 -- 
 Michal Hocko
 SUSE Labs
