@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753035AbeCOTPH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:15:07 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:35786 "EHLO
+        id S932776AbeCOTJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:09:27 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36262 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932501AbeCOTGT (ORCPT
+        with ESMTP id S932668AbeCOTGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:19 -0400
+        Thu, 15 Mar 2018 15:06:23 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
         arnd@arndb.de
-Subject: [PATCH v2 22/36] fs: add ksys_chdir() helper; remove in-kernel calls to sys_chdir()
-Date: Thu, 15 Mar 2018 20:05:15 +0100
-Message-Id: <20180315190529.20943-23-linux@dominikbrodowski.net>
+Subject: [PATCH v2 23/36] fs: add ksys_sync_file_range helper(); remove in-kernel calls to syscall
+Date: Thu, 15 Mar 2018 20:05:16 +0100
+Message-Id: <20180315190529.20943-24-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
 References: <20180315190529.20943-1-linux@dominikbrodowski.net>
@@ -22,117 +22,147 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel calls to the sys_chdir()
-syscall.
+Using this helper allows us to avoid the in-kernel calls to the
+sys_sync_file_range() syscall.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- drivers/base/devtmpfs.c  | 2 +-
- fs/open.c                | 7 ++++++-
- include/linux/syscalls.h | 1 +
- init/do_mounts.c         | 2 +-
- init/do_mounts_initrd.c  | 8 ++++----
- 5 files changed, 13 insertions(+), 7 deletions(-)
+ arch/mips/kernel/linux32.c      |  2 +-
+ arch/parisc/kernel/sys_parisc.c |  2 +-
+ arch/powerpc/kernel/sys_ppc32.c |  2 +-
+ arch/s390/kernel/compat_linux.c |  2 +-
+ arch/sparc/kernel/sys_sparc32.c |  2 +-
+ arch/x86/ia32/sys_ia32.c        |  6 +++---
+ fs/sync.c                       | 12 +++++++++---
+ include/linux/syscalls.h        |  2 ++
+ 8 files changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index d6f37537275c..f7768077e817 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -386,7 +386,7 @@ static int devtmpfsd(void *p)
- 	*err = ksys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
- 	if (*err)
- 		goto out;
--	sys_chdir("/.."); /* will traverse into overmounted root */
-+	ksys_chdir("/.."); /* will traverse into overmounted root */
- 	ksys_chroot(".");
- 	complete(&setup_done);
- 	while (1) {
-diff --git a/fs/open.c b/fs/open.c
-index 7a475e8a2e41..a19b8277c439 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -431,7 +431,7 @@ SYSCALL_DEFINE2(access, const char __user *, filename, int, mode)
- 	return sys_faccessat(AT_FDCWD, filename, mode);
- }
- 
--SYSCALL_DEFINE1(chdir, const char __user *, filename)
-+int ksys_chdir(const char __user *filename)
+diff --git a/arch/mips/kernel/linux32.c b/arch/mips/kernel/linux32.c
+index 0ce4f7240f69..db895771ab06 100644
+--- a/arch/mips/kernel/linux32.c
++++ b/arch/mips/kernel/linux32.c
+@@ -139,7 +139,7 @@ asmlinkage long sys32_sync_file_range(int fd, int __pad,
+ 	unsigned long a4, unsigned long a5,
+ 	int flags)
  {
- 	struct path path;
- 	int error;
-@@ -457,6 +457,11 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
- 	return error;
+-	return sys_sync_file_range(fd,
++	return ksys_sync_file_range(fd,
+ 			merge_64(a2, a3), merge_64(a4, a5),
+ 			flags);
+ }
+diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_parisc.c
+index 572feeea834c..0b0e1cfb4bd9 100644
+--- a/arch/parisc/kernel/sys_parisc.c
++++ b/arch/parisc/kernel/sys_parisc.c
+@@ -360,7 +360,7 @@ asmlinkage long parisc_sync_file_range(int fd,
+ 			u32 hi_off, u32 lo_off, u32 hi_nbytes, u32 lo_nbytes,
+ 			unsigned int flags)
+ {
+-	return sys_sync_file_range(fd, (loff_t)hi_off << 32 | lo_off,
++	return ksys_sync_file_range(fd, (loff_t)hi_off << 32 | lo_off,
+ 			(loff_t)hi_nbytes << 32 | lo_nbytes, flags);
  }
  
-+SYSCALL_DEFINE1(chdir, const char __user *, filename)
+diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
+index 93df264ab76c..3871aa9267e6 100644
+--- a/arch/powerpc/kernel/sys_ppc32.c
++++ b/arch/powerpc/kernel/sys_ppc32.c
+@@ -124,5 +124,5 @@ asmlinkage long compat_sys_sync_file_range2(int fd, unsigned int flags,
+ 	loff_t offset = ((loff_t)offset_hi << 32) | offset_lo;
+ 	loff_t nbytes = ((loff_t)nbytes_hi << 32) | nbytes_lo;
+ 
+-	return sys_sync_file_range(fd, offset, nbytes, flags);
++	return ksys_sync_file_range(fd, offset, nbytes, flags);
+ }
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index a47995a5174c..82e99bf3b00e 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -510,7 +510,7 @@ COMPAT_SYSCALL_DEFINE1(s390_fadvise64_64, struct fadvise64_64_args __user *, arg
+ COMPAT_SYSCALL_DEFINE6(s390_sync_file_range, int, fd, u32, offhigh, u32, offlow,
+ 		       u32, nhigh, u32, nlow, unsigned int, flags)
+ {
+-	return sys_sync_file_range(fd, ((loff_t)offhigh << 32) + offlow,
++	return ksys_sync_file_range(fd, ((loff_t)offhigh << 32) + offlow,
+ 				   ((u64)nhigh << 32) + nlow, flags);
+ }
+ 
+diff --git a/arch/sparc/kernel/sys_sparc32.c b/arch/sparc/kernel/sys_sparc32.c
+index 08261bc15d30..c56f43893283 100644
+--- a/arch/sparc/kernel/sys_sparc32.c
++++ b/arch/sparc/kernel/sys_sparc32.c
+@@ -241,7 +241,7 @@ long compat_sys_fadvise64_64(int fd,
+ 
+ long sys32_sync_file_range(unsigned int fd, unsigned long off_high, unsigned long off_low, unsigned long nb_high, unsigned long nb_low, unsigned int flags)
+ {
+-	return sys_sync_file_range(fd,
++	return ksys_sync_file_range(fd,
+ 				   (off_high << 32) | off_low,
+ 				   (nb_high << 32) | nb_low,
+ 				   flags);
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index ca28ee07a191..e5b053252a01 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -214,9 +214,9 @@ COMPAT_SYSCALL_DEFINE6(x86_sync_file_range, int, fd, unsigned int, off_low,
+ 		       unsigned int, off_hi, unsigned int, n_low,
+ 		       unsigned int, n_hi, int, flags)
+ {
+-	return sys_sync_file_range(fd,
+-				   ((u64)off_hi << 32) | off_low,
+-				   ((u64)n_hi << 32) | n_low, flags);
++	return ksys_sync_file_range(fd,
++				    ((u64)off_hi << 32) | off_low,
++				    ((u64)n_hi << 32) | n_low, flags);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE5(x86_fadvise64, int, fd, unsigned int, offset_lo,
+diff --git a/fs/sync.c b/fs/sync.c
+index 6e0a2cbaf6de..ff947c30a6c0 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -280,8 +280,8 @@ SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
+  * already-instantiated disk blocks, there are no guarantees here that the data
+  * will be available after a crash.
+  */
+-SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
+-				unsigned int, flags)
++int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
++			 unsigned int flags)
+ {
+ 	int ret;
+ 	struct fd f;
+@@ -359,10 +359,16 @@ SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
+ 	return ret;
+ }
+ 
++SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
++				unsigned int, flags)
 +{
-+	return ksys_chdir(filename);
++	return ksys_sync_file_range(fd, offset, nbytes, flags);
 +}
 +
- SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ /* It would be nice if people remember that not all the world's an i386
+    when they introduce new system calls */
+ SYSCALL_DEFINE4(sync_file_range2, int, fd, unsigned int, flags,
+ 				 loff_t, offset, loff_t, nbytes)
  {
- 	struct fd f = fdget_raw(fd);
+-	return sys_sync_file_range(fd, offset, nbytes, flags);
++	return ksys_sync_file_range(fd, offset, nbytes, flags);
+ }
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 37b311393bdc..923a4d056137 100644
+index 923a4d056137..8f0f99702e7a 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -967,5 +967,6 @@ static inline int ksys_fadvise64_64(int fd, loff_t offset, loff_t len,
- unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+@@ -968,5 +968,7 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
  			      unsigned long prot, unsigned long flags,
  			      unsigned long fd, unsigned long pgoff);
-+int ksys_chdir(const char __user *filename);
+ int ksys_chdir(const char __user *filename);
++int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
++			 unsigned int flags);
  
  #endif
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 2f06f7827b0c..89f18985fa90 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -367,7 +367,7 @@ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
- 	if (err)
- 		return err;
- 
--	sys_chdir("/root");
-+	ksys_chdir("/root");
- 	s = current->fs->pwd.dentry->d_sb;
- 	ROOT_DEV = s->s_dev;
- 	printk(KERN_INFO
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 414284dadc64..c19d9070134e 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -42,7 +42,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
- 	ksys_dup(0);
- 	ksys_dup(0);
- 	/* move initrd over / and chdir/chroot in initrd root */
--	sys_chdir("/root");
-+	ksys_chdir("/root");
- 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
- 	ksys_chroot(".");
- 	sys_setsid();
-@@ -61,7 +61,7 @@ static void __init handle_initrd(void)
- 	/* mount initrd on rootfs' /root */
- 	mount_block_root("/dev/root.old", root_mountflags & ~MS_RDONLY);
- 	sys_mkdir("/old", 0700);
--	sys_chdir("/old");
-+	ksys_chdir("/old");
- 
- 	/* try loading default modules from initrd */
- 	load_default_modules();
-@@ -86,11 +86,11 @@ static void __init handle_initrd(void)
- 	ksys_chroot("..");
- 
- 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
--		sys_chdir("/old");
-+		ksys_chdir("/old");
- 		return;
- 	}
- 
--	sys_chdir("/");
-+	ksys_chdir("/");
- 	ROOT_DEV = new_decode_dev(real_root_dev);
- 	mount_root();
- 
 -- 
 2.16.2
