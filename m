@@ -1,23 +1,23 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELt39UlclMMm4tgBdAr/Nxaofy2uBH7oq+M00GACxteKzGEjiR+xuFusx6qGP60BZjCkZuRD
-ARC-Seal: i=1; a=rsa-sha256; t=1521141386; cv=none;
+X-Google-Smtp-Source: AG47ELt8JE5q7mPLn3U7zc1//nEdYGLIC2AByyfJbpMew+N7kvB42ymgZX76AXSczhIbj3ObdStw
+ARC-Seal: i=1; a=rsa-sha256; t=1521141387; cv=none;
         d=google.com; s=arc-20160816;
-        b=DKLlBKC2AWqb04hnQbh5sGD9kuphLJm3DstCS3CyPhRFKDw4Hq6WuLOm9lx+TqfZAn
-         gB+hlrh1/h4qMkvGNClTiDaWohGC/t2jmCTJjBbShWv45Emyd0zGhuo1Yd/TGD1SvwSx
-         nIc6YGvmL2ua/pAIq28Ox1aKZd5dreZwi6tES5uQkj8uPEUU6Vs03DS7//4CvGwDe/PG
-         2W02gQsoJAWcDnZmlhdp9hMKr74FfILpSz64lGHjgipIqRtVWuhPQtbiK+huhAUPHDFe
-         fqEOacSNryU4jrigoPTs83AzB2Q2KzHyMca6IRcdFcNXeNIyjI67on5ZMVgRBBfcs08L
-         szpA==
+        b=tKsvzlucisDtD37OLSOSGZ70VutG60uUPGgJj7QP7Qi4v54k3ZmMpues45uToE4+6n
+         J3DmFkbUDQ5zb5lz6sTzjsBYfDaeaJfeD6jTN1diVC4XLfUkm0qWUeuojgpQZde4kENE
+         wNUxQXjyYMOdQ24xbSKF2mpxwgwnwUUOPZfL+7bRWV2VLq68HrI447MQ4wF1sscEyZCM
+         OePdLRqr5gT6j+3newXpZHh1BGgZxZeHOcKlVM7fqI3h8qk87GjDzadmAWQY1NdVPZJz
+         NdF/ICxdjDpE5DBnfS016Xc/EXguc48AAecjjv6DxSibYNymiKmYPLRPSacTL/Ua9p9s
+         ELqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XUfm8YYgtxGynaHkC+bobRw6IFwZa1ner4MwuzA4+Ss=;
-        b=LbCILqEWUdeKpHS6puPuip5IdzPC/pA63O9fS+JC73BZi5J5KRPEGL/n2y76U5bxuT
-         OZsScLtFTdrVxdOUTbqpNP0Ccx4iV5tbbYRCgZGcrJ2TpOfY5+CpyfjT4jDpWTCmxIA9
-         A1HwOydPh0ccrEkcouL54mxhWZlouoycuoaDxx4L3i+8v04+ltTfVBweY6IVFr7/cJn0
-         qMKHkI/seKdhwjobHtyr4E3fg9DCnMXyVBomqP12oQZq4AYSm72P1mNlrG2GSZT2UkiJ
-         ibUS3BUKp+Bt6wIaIpki+a1GP0W1/ahLxCybMDQM3rKLt69Pb2Zt/c2m4qEtfbOf8pZN
-         huBA==
+        bh=gEOKyIe1U9YBfXe66t+RgpZxY6v2Q9Kuc9lgV7yWwOA=;
+        b=L61HvwOXYULeJFBQ4CkTLVeA3kPyjTOthl76pGow0O3g+FdMIZlNwZhQYwBOz0wmpH
+         Xqhrzx55TW6X6xxG3OGoDpI9pEL2BtyFL25jcSt3kD2/ZG/PxDR6KCRt5hsrMCsuKul3
+         wCarsAMFIdikxO2HeqCocCM/t2Bca3HioJGzoCQ9AwziQJXTC9Rbdu/G76tgyRFoCA8F
+         ioQ48svolU0+RtTk+vm2fsW9NFcbhhj5M+XtaJDXnLWbafCqPlsMZ9kaA1lVNWI3MvGK
+         MeRZw87hMpQVPp1HpLK5iLMqDptiCquM7TBW/9LJJLOyCrUjwuF3XHWgo7PG1qd5FN+5
+         EBng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
@@ -48,9 +48,9 @@ Cc: Kate Stewart <kstewart@linuxfoundation.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	"Tobin C. Harding" <me@tobin.cc>,
 	Michal Suchanek <msuchanek@suse.de>
-Subject: [PATCH RFC rebase 7/9] powerpc/64: barrier_nospec: Add debugfs trigger
-Date: Thu, 15 Mar 2018 20:15:56 +0100
-Message-Id: <3fe550ea345920af7edea4f4d24ba075430ca9d0.1521141122.git.msuchanek@suse.de>
+Subject: [PATCH RFC rebase 8/9] powerpc/64s: barrier_nospec: Add hcall triggerr
+Date: Thu, 15 Mar 2018 20:15:57 +0100
+Message-Id: <54913b22e2f3647c670b6fb3e1fecce34729b736.1521141122.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
 References: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
@@ -58,63 +58,114 @@ References: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
 In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
 References: <cover.1521141122.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595032350839375792?=
-X-GMAIL-MSGID: =?utf-8?q?1595032350839375792?=
+X-GMAIL-THRID: =?utf-8?q?1595032350788756916?=
+X-GMAIL-MSGID: =?utf-8?q?1595032350788756916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Copypasta from rfi implementation
+Adapted from the RFI implementation
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/kernel/setup_64.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/powerpc/platforms/pseries/mobility.c |  2 +-
+ arch/powerpc/platforms/pseries/pseries.h  |  2 +-
+ arch/powerpc/platforms/pseries/setup.c    | 37 ++++++++++++++++++++++---------
+ 3 files changed, 29 insertions(+), 12 deletions(-)
 
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index f60e0e3b5ad2..f6678a7b6114 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -963,6 +963,41 @@ static __init int rfi_flush_debugfs_init(void)
- 	return 0;
- }
- device_initcall(rfi_flush_debugfs_init);
-+
-+static int barrier_nospec_set(void *data, u64 val)
-+{
-+	switch (val) {
-+	case 0:
-+	case 1:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (!!val == !!barrier_nospec_enabled)
-+		return 0;
-+
-+	barrier_nospec_enable(!!val);
-+
-+	return 0;
-+}
-+
-+static int barrier_nospec_get(void *data, u64 *val)
-+{
-+	*val = barrier_nospec_enabled ? 1 : 0;
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
-+			barrier_nospec_get, barrier_nospec_set, "%llu\n");
-+
-+static __init int barrier_nospec_debugfs_init(void)
-+{
-+	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
-+			    &fops_barrier_nospec);
-+	return 0;
-+}
-+device_initcall(barrier_nospec_debugfs_init);
- #endif
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index 8a8033a249c7..9d506be1580e 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -349,7 +349,7 @@ void post_mobility_fixup(void)
+ 			"failed: %d\n", rc);
  
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ 	/* Possibly switch to a new RFI flush type */
+-	pseries_setup_rfi_flush();
++	pseries_setup_rfi_nospec();
+ 
+ 	return;
+ }
+diff --git a/arch/powerpc/platforms/pseries/pseries.h b/arch/powerpc/platforms/pseries/pseries.h
+index 27cdcb69fd18..d49670c67686 100644
+--- a/arch/powerpc/platforms/pseries/pseries.h
++++ b/arch/powerpc/platforms/pseries/pseries.h
+@@ -100,6 +100,6 @@ static inline unsigned long cmo_get_page_size(void)
+ 
+ int dlpar_workqueue_init(void);
+ 
+-void pseries_setup_rfi_flush(void);
++void pseries_setup_rfi_nospec(void);
+ 
+ #endif /* _PSERIES_PSERIES_H */
+diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+index 9877c3dfcdc8..4b899a4db6dd 100644
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -459,30 +459,47 @@ static void __init find_and_init_phbs(void)
+ 	of_pci_check_probe_only();
+ }
+ 
+-void pseries_setup_rfi_flush(void)
++void pseries_setup_rfi_nospec(void)
+ {
+ 	struct h_cpu_char_result result;
+-	enum l1d_flush_type types;
+-	bool enable;
++	enum l1d_flush_type flush_types;
++	enum spec_barrier_type barrier_type;
++	bool flush_enable;
++	bool barrier_enable;
+ 	long rc;
+ 
+ 	/* Enable by default */
+-	enable = true;
+-	types = L1D_FLUSH_FALLBACK;
++	flush_enable = true;
++	flush_types = L1D_FLUSH_FALLBACK;
++	barrier_enable = true;
++	/* no fallback available if the firmware does not tell us */
++	barrier_type = SPEC_BARRIER_NONE;
+ 
+ 	rc = plpar_get_cpu_characteristics(&result);
+ 	if (rc == H_SUCCESS) {
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
+-			types |= L1D_FLUSH_MTTRIG;
++			flush_types |= L1D_FLUSH_MTTRIG;
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
+-			types |= L1D_FLUSH_ORI;
++			flush_types |= L1D_FLUSH_ORI;
++		if (result.character & H_CPU_CHAR_SPEC_BAR_ORI31)
++			barrier_type |= SPEC_BARRIER_ORI;
+ 
+ 		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
+ 		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
+-			enable = false;
++			flush_enable = false;
++		/*
++		 * Do not check H_CPU_BEHAV_BNDS_CHK_SPEC_BAR - the ORI does
++		 * nothing anyway when not supported.
++		 */
++		if ((!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
++			barrier_enable = false;
++	} else {
++		/* Default to fallback if case hcall is not available */
++		flush_types = L1D_FLUSH_FALLBACK;
+ 	}
+ 
+-	setup_rfi_flush(types, enable);
++	setup_barrier_nospec(barrier_type, barrier_enable);
++	setup_rfi_flush(flush_types, flush_enable);
+ }
+ 
+ #ifdef CONFIG_PCI_IOV
+@@ -658,7 +675,7 @@ static void __init pSeries_setup_arch(void)
+ 
+ 	fwnmi_init();
+ 
+-	pseries_setup_rfi_flush();
++	pseries_setup_rfi_nospec();
+ 
+ 	/* By default, only probe PCI (can be overridden by rtas_pci) */
+ 	pci_add_flags(PCI_PROBE_ONLY);
 -- 
 2.13.6
