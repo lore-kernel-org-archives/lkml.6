@@ -1,149 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752435AbeCOOZt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:25:49 -0400
-Received: from mga05.intel.com ([192.55.52.43]:17642 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752224AbeCOOZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:25:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="211602444"
-Subject: Re: [PATCH v3 03/11] mmc: sdhci-omap: Workaround for Errata i843
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180307132020.30951-1-kishon@ti.com>
- <20180307132020.30951-4-kishon@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <5410610d-4874-9e66-0d5a-966a73422457@intel.com>
-Date: Thu, 15 Mar 2018 16:24:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180307132020.30951-4-kishon@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752497AbeCOOZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:25:59 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34243 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeCOOZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:25:55 -0400
+X-Google-Smtp-Source: AG47ELt7LGN29nacxCFDbZMpA7TrlCIN+eE9DDU7ygD+b0uPSKaeXdCW0+zHG47G9cOfkri7CtmmQw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/tegra: plane: Keep 'dependent' blending state of unaffected planes
+Date: Thu, 15 Mar 2018 17:24:31 +0300
+Message-Id: <ebc6aef3f5cd7b9b9bb25ceff9e86e742390cfca.1521121707.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
-> Errata i843 in AM572x Sitara Processors Silicon Revision 2.0, 1.1
-> (SPRZ429K July 2014–Revised March 2017 [1]) mentions
-> PG 1.0/1.1 silicon has limitations w.r.t frequencies at which MMC1/2/3
-> can operate.
-> 
-> Use soc_device_match() to identify rev 1.0/1.1 silicon and
-> override mmc->f_max according to the errata workaround.
-> "max-frequency" dt property cannot be used since the device
-> tree is added for rev 2.0 silicon.
-> 
-> soc_device_match() is also used in order to get the IODelay values
-> for rev 1.0/1.1 silicon.
-> 
-> [1] -> http://www.ti.com/lit/er/sprz429k/sprz429k.pdf
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+This way new state takes into account the current state of unaffected
+(by the atomic commit) planes.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-> ---
->  drivers/mmc/host/sdhci-omap.c | 35 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> index 0c40b13fb67d..fbc20a4fbb23 100644
-> --- a/drivers/mmc/host/sdhci-omap.c
-> +++ b/drivers/mmc/host/sdhci-omap.c
-> @@ -26,6 +26,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/sys_soc.h>
->  
->  #include "sdhci-pltfm.h"
->  
-> @@ -100,6 +101,7 @@ struct sdhci_omap_data {
->  };
->  
->  struct sdhci_omap_host {
-> +	char			*version;
->  	void __iomem		*base;
->  	struct device		*dev;
->  	struct	regulator	*pbias;
-> @@ -733,12 +735,21 @@ static struct pinctrl_state
->  				  u32 *caps, u32 capmask)
->  {
->  	struct device *dev = omap_host->dev;
-> +	char *version = omap_host->version;
->  	struct pinctrl_state *pinctrl_state = ERR_PTR(-ENODEV);
-> +	char str[20];
->  
->  	if (!(*caps & capmask))
->  		goto ret;
->  
-> -	pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
-> +	if (version) {
-> +		snprintf(str, 20, "%s-%s", mode, version);
-> +		pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, str);
-> +	}
-> +
-> +	if (IS_ERR(pinctrl_state))
-> +		pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
-> +
->  	if (IS_ERR(pinctrl_state)) {
->  		dev_err(dev, "no pinctrl state for %s mode", mode);
->  		*caps &= ~capmask;
-> @@ -830,6 +841,16 @@ static int sdhci_omap_config_iodelay_pinctrl_state(struct sdhci_omap_host
->  	return 0;
->  }
->  
-> +static const struct soc_device_attribute sdhci_omap_soc_devices[] = {
-> +	{
-> +		.machine = "DRA7[45]*",
-> +		.revision = "ES1.[01]",
-> +	},
-> +	{
-> +		/* sentinel */
-> +	}
-> +};
-> +
->  static int sdhci_omap_probe(struct platform_device *pdev)
->  {
->  	int ret;
-> @@ -841,6 +862,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
->  	struct mmc_host *mmc;
->  	const struct of_device_id *match;
->  	struct sdhci_omap_data *data;
-> +	const struct soc_device_attribute *soc;
->  
->  	match = of_match_device(omap_sdhci_match, dev);
->  	if (!match)
-> @@ -875,6 +897,17 @@ static int sdhci_omap_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_pltfm_free;
->  
-> +	soc = soc_device_match(sdhci_omap_soc_devices);
-> +	if (soc) {
-> +		omap_host->version = "rev11";
-> +		if (!strcmp(dev_name(dev), "4809c000.mmc"))
-> +			mmc->f_max = 96000000;
-> +		if (!strcmp(dev_name(dev), "480b4000.mmc"))
-> +			mmc->f_max = 48000000;
-> +		if (!strcmp(dev_name(dev), "480ad000.mmc"))
-> +			mmc->f_max = 48000000;
-> +	}
-> +
->  	pltfm_host->clk = devm_clk_get(dev, "fck");
->  	if (IS_ERR(pltfm_host->clk)) {
->  		ret = PTR_ERR(pltfm_host->clk);
-> 
+v2: Dropped unrelated 'cleanup' changes and fixed
+    s/state->dependent[i]/state->dependent[index]/ typo.
+
+ drivers/gpu/drm/tegra/plane.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index fc37dcf8c458..0784422cc5a2 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -315,9 +315,6 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+ 	unsigned int zpos[2];
+ 	unsigned int i;
+ 
+-	for (i = 0; i < 3; i++)
+-		state->dependent[i] = false;
+-
+ 	for (i = 0; i < 2; i++)
+ 		zpos[i] = 0;
+ 
+@@ -331,6 +328,8 @@ void tegra_plane_check_dependent(struct tegra_plane *tegra,
+ 
+ 		index = tegra_plane_get_overlap_index(tegra, p);
+ 
++		state->dependent[index] = false;
++
+ 		/*
+ 		 * If any of the other planes is on top of this plane and uses
+ 		 * a format with an alpha component, mark this plane as being
+-- 
+2.16.1
