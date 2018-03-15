@@ -1,62 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751651AbeCOIZl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:25:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43766 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750777AbeCOIZj (ORCPT
+        id S1751776AbeCOI1d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:27:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47138 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeCOI1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:25:39 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-To: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org
-Cc: wangnan0@huawei.com, mingo@redhat.com, srikar@linux.vnet.ibm.com,
-        oleg@redhat.com, mhiramat@kernel.org, namhyung@kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 1/2] trace_uprobe: Use %lx to display offset
-Date: Thu, 15 Mar 2018 13:57:55 +0530
-X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18031508-0040-0000-0000-00000420ED6F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031508-0041-0000-0000-00002623F545
-Message-Id: <20180315082756.9050-1-ravi.bangoria@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150097
+        Thu, 15 Mar 2018 04:27:31 -0400
+Date: Thu, 15 Mar 2018 09:27:21 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: Do we need to disable preemption in flush_tlb_range()?
+Message-ID: <20180315082720.GT4064@hirez.programming.kicks-ass.net>
+References: <1519917189.13866.6.camel@synopsys.com>
+ <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tu->offset is unsigned long, not a pointer, thus %lx should
-be used to print it, not the %px.
+On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
+> +CC Peter since we have his attention ;-)
 
-Fixes: 0e4d819d0893 ("trace_uprobe: Display correct offset in uprobe_events")
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
----
-v2 changelog:
- - Keep prefixed 0s as is.
+Yeah, timezone collision there, I typically sleep at 1am ;-)
 
- kernel/trace/trace_uprobe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
+> > Hi Vineet,
+> > 
+> > Just noticed that in comments for smp_call_function_many() it is said that
+> > preemption must be disabled during its execution. And that function gets executed
+> > among other ways like that:
+> > -------------------------->8-----------------------
+> >    flush_tlb_range()
+> >      -> on_each_cpu_mask()
+> >           -> smp_call_function_many()
+> > -------------------------->8-----------------------
+> 
+> In general I prefer not to - Peter what say you ?
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 2014f4351ae0..0298bd15be83 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -608,7 +608,7 @@ static int probes_seq_show(struct seq_file *m, void *v)
- 
- 	/* Don't print "0x  (null)" when offset is 0 */
- 	if (tu->offset) {
--		seq_printf(m, "0x%px", (void *)tu->offset);
-+		seq_printf(m, "0x%0*lx", (int)(sizeof(void *) * 2), tu->offset);
- 	} else {
- 		switch (sizeof(void *)) {
- 		case 4:
--- 
-2.13.6
+The comment with smp_call_function_many() is correct, it relies on
+preemption being disabled in a number of ways. I would expect
+this_cpu_ptr() for example to complain when used with preemption
+enabled (CONFIG_DEBUG_PREEMPT).
