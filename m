@@ -1,46 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeCOA5O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 20:57:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:34844 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751405AbeCOA5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 20:57:13 -0400
-Date: Thu, 15 Mar 2018 01:56:34 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] x86/microcode/AMD: install_equiv_cpu_table()
- should not return (signed) int
-Message-ID: <20180315005634.GC11061@pd.tnic>
-References: <cover.1520973389.git.mail@maciej.szmigiero.name>
- <cf57ed15-df47-087e-c98f-527e4ce1e0f8@maciej.szmigiero.name>
- <20180314175824.GG16605@pd.tnic>
- <b913d9fd-9722-d5cc-cf94-426885947890@maciej.szmigiero.name>
- <20180314235812.GB11061@pd.tnic>
- <21fe4521-0fc7-c5ed-5a2a-4c7e93097385@maciej.szmigiero.name>
+        id S1751870AbeCOA6B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 20:58:01 -0400
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:40655 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbeCOA6A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 20:58:00 -0400
+X-Google-Smtp-Source: AG47ELupUDEXW8zd/NFVDTuOcxKzazZUy4rH3Y+5gFDfiUGD/IXdhqRIDa5lC8CTuZVxi0JD1RrFNA==
+Date: Thu, 15 Mar 2018 09:57:55 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+Message-ID: <20180315005755.GB3628@jagdpanzerIV>
+References: <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+ <1520330185.10722.401.camel@linux.intel.com>
+ <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
+ <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+ <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
+ <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+ <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+ <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+ <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+ <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <21fe4521-0fc7-c5ed-5a2a-4c7e93097385@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 01:13:07AM +0100, Maciej S. Szmigiero wrote:
-> This can be done if this function is modified to return only the CPU
-> equivalence table length (without the container header length), leaving
-> its single caller the job of adding the container header length to skip
-> to the fist patch section.
+On (03/14/18 15:09), Petr Mladek wrote:
+> Changes against v2:
+> 
+> 	+ fix handling with strchr(string, '\0'); happens with
+> 	  %p at the very end of the string
+> 	+ even more clear commit message
+> 	+ update Documentation/core-api/printk-formats.rst
+> 	+ add check into lib/test_printf.c
+> 
+> Changes against v1:
+> 
+> 	+ do not check access for plain %p
+> 	+ more clear commit message
 
-Sure, it leaves the function to deal with the equiv table length only
-and the caller then adds the header length. Which is actually cleaner.
+Did I miss v1 and v2?
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	-ss
