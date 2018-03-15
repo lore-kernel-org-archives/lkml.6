@@ -1,67 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeCOQvQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:51:16 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:44911 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeCOQvN (ORCPT
+        id S1751770AbeCOQxN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:53:13 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38379 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOQxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:51:13 -0400
-X-Google-Smtp-Source: AG47ELsTDTDZgcVBW566KSTnqZnLXC3Q6b+/O7rQwCFg8gAsuorZVLRDXGfr7e77LV+kDBsNCdU+Ow==
-Date: Thu, 15 Mar 2018 18:50:59 +0200
-From: Shmulik Ladkani <shmulik.ladkani@gmail.com>
-To: Liran Alon <liran.alon@oracle.com>
-Cc: <netdev@vger.kernel.org>, <daniel@iogearbox.net>, <mrv@mojatatu.com>,
-        <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        <yuval.shaia@oracle.com>, <idan.brown@oracle.com>
-Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
- only when crossing netns
-Message-ID: <20180315185059.1f780722@halley>
-In-Reply-To: <e653a52e-6a7d-49c9-aec6-6bc6437819c6@default>
-References: <e653a52e-6a7d-49c9-aec6-6bc6437819c6@default>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 15 Mar 2018 12:53:12 -0400
+Message-ID: <1521132789.4624.4.camel@pengutronix.de>
+Subject: Re: [PATCH] [v3] gpu: ipu-v3: prg: avoid possible array underflow
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 17:53:09 +0100
+In-Reply-To: <20180315162011.807909-1-arnd@arndb.de>
+References: <20180315162011.807909-1-arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 09:35:51 -0700 (PDT) Liran Alon <liran.alon@oracle.com> wrote:
-> ----- shmulik.ladkani@gmail.com wrote:
+Hi Arnd,
+
+On Thu, 2018-03-15 at 17:19 +0100, Arnd Bergmann wrote:
+> gcc-8 reports that we access an array with a negative index
+> in an error case:
 > 
-> > On Thu, 15 Mar 2018 08:01:03 -0700 (PDT) Liran Alon
-> > <liran.alon@oracle.com> wrote:  
-> > > 
-> > > I still think that default behavior should be to zero skb->mark only  
-> > when skb  
-> > > cross netdevs in different netns.  
-> > 
-> > But the previous default was scrub the mark in *both* xnet and
-> > non-xnet
-> > situations.
-> > 
-> > Therefore, there might be users which RELY on this (strange) default
-> > behavior in their same-netns-veth-pair setups.
-> > Meaning, changing the default behavior might break their apps relying
-> > on
-> > the former default behavior.
-> > 
-> > This is why the "disable mark scrubbing in non-xnet case" should be
-> > opt-in.  
+> drivers/gpu/ipu-v3/ipu-prg.c: In function 'ipu_prg_channel_disable':
+> drivers/gpu/ipu-v3/ipu-prg.c:252:43: error: array subscript -22 is below array bounds of 'struct ipu_prg_channel[3]' [-Werror=array-bounds]
 > 
-> We think the same.
-> The only difference is that I think this for now should be controllable
-> by a global /proc/sys/net/core file instead of giving a flexible per-netdev
-> control.
-> Because that is a larger change that could be done later.
+> This moves the range check in front of the first time that
+> variable gets used.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-A flags attribute to veth newlink is a very scoped change.
-User controls this per veth creation.
-This is way more neat than /proc/sys/net and provides the desired granular
-control.
+thank you, I've replaced v2 with this version in imx-drm/fixes.
 
-Also, scoping this to veth has the advantage of not affecting the many other
-dev_forward_skb callers.
+regards
+Philipp
 
-Regards,
-Shmulik
+> ----
+> v1: Originally sent on Dec 4, 2017.
+> v2: Sent again on Jan 16, after no reply, Phillipp said it was merged
+> v3: Ran into a related problem with CONFIG_UBSAN, sent again fixing both
+> ---
+>  drivers/gpu/ipu-v3/ipu-prg.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
+> index 97b99500153d..83f9dd934a5d 100644
+> --- a/drivers/gpu/ipu-v3/ipu-prg.c
+> +++ b/drivers/gpu/ipu-v3/ipu-prg.c
+> @@ -250,10 +250,14 @@ void ipu_prg_channel_disable(struct ipuv3_channel *ipu_chan)
+>  {
+>  	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+>  	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+> -	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
+> +	struct ipu_prg_channel *chan;
+>  	u32 val;
+>  
+> -	if (!chan->enabled || prg_chan < 0)
+> +	if (prg_chan < 0)
+> +		return;
+> +
+> +	chan = &prg->chan[prg_chan];
+> +	if (!chan->enabled)
+>  		return;
+>  
+>  	pm_runtime_get_sync(prg->dev);
+> @@ -280,13 +284,15 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
+>  {
+>  	int prg_chan = ipu_prg_ipu_to_prg_chan(ipu_chan->num);
+>  	struct ipu_prg *prg = ipu_chan->ipu->prg_priv;
+> -	struct ipu_prg_channel *chan = &prg->chan[prg_chan];
+> +	struct ipu_prg_channel *chan;
+>  	u32 val;
+>  	int ret;
+>  
+>  	if (prg_chan < 0)
+>  		return prg_chan;
+>  
+> +	chan = &prg->chan[prg_chan];
+> +
+>  	if (chan->enabled) {
+>  		ipu_pre_update(prg->pres[chan->used_pre], *eba);
+>  		return 0;
