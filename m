@@ -1,72 +1,120 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELvMGTz6gDESI8t4hQPXBEOZtCituD5gBCIXkE8moNwZeiBQlf0RsgZ8djEj8e9uEm8IOdmD
-ARC-Seal: i=1; a=rsa-sha256; t=1521192685; cv=none;
+X-Google-Smtp-Source: AG47ELt39UlclMMm4tgBdAr/Nxaofy2uBH7oq+M00GACxteKzGEjiR+xuFusx6qGP60BZjCkZuRD
+ARC-Seal: i=1; a=rsa-sha256; t=1521141386; cv=none;
         d=google.com; s=arc-20160816;
-        b=DuzkwEOtGLGnTyD1qUwth1Q8PdbO355vZHC/5WbQOhErPomMegzaTeZomrznj89Khd
-         UOLwMZOCUjpbdtRi+ggIvopFQeFl09mJZbJZ5ukzg82QqldHnj3XGkDOrxhfXA6b8Eow
-         ZuXNnlEILesoo+QIptiEJYBVXCS5IbdFzr1QWlocR8xemDFM4ov+p4MXwvJdQwdTTucu
-         p7Rw3ItJx87pdGY6b+h3qj6ayoYGSUhB7eZ7GpFOJrOztwn5H3QTpU6ASR2ZedWYIUZs
-         oiqiAKl5wUjDGYvpo2xiSDuC3gm2pt5qe97jt6qlQaxXAZgVa9hHOBizNsP51yrYsM2V
-         QHVg==
+        b=DKLlBKC2AWqb04hnQbh5sGD9kuphLJm3DstCS3CyPhRFKDw4Hq6WuLOm9lx+TqfZAn
+         gB+hlrh1/h4qMkvGNClTiDaWohGC/t2jmCTJjBbShWv45Emyd0zGhuo1Yd/TGD1SvwSx
+         nIc6YGvmL2ua/pAIq28Ox1aKZd5dreZwi6tES5uQkj8uPEUU6Vs03DS7//4CvGwDe/PG
+         2W02gQsoJAWcDnZmlhdp9hMKr74FfILpSz64lGHjgipIqRtVWuhPQtbiK+huhAUPHDFe
+         fqEOacSNryU4jrigoPTs83AzB2Q2KzHyMca6IRcdFcNXeNIyjI67on5ZMVgRBBfcs08L
+         szpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=2ChKmbtStbMs0IYsyt2UDNHo6cFlim1rFGVXCtREkqU=;
-        b=t+0kGad4WPo/v6oaf8nQK3aEmppJF4uC5h62DvZbWyU0kVk0jmZSgItgLXH6FQnNtk
-         AknDorra7cIEOLs6WPwoYOtRswU72d970USypVK1EPO1LnJrPf1Sou4unkZkd1dPZYZh
-         sJWtTeel/UjlFeo+3O4d7qKcUjzkvPaZdx0umCfJqNfuERZqHD9P6riBHu5In76TivZ9
-         VLlijeekFuH++s8tFRrOoFOcfD2aP7e7ZYrJr/kbYIZOep/5Y67IeFvsaV229Br9q/vo
-         KBFAUerWJTBS5GFpBKJEm3ocewWtpBmhz1cR7Ph454aF2MbpIxW9EX+4kOzBOykFUFbj
-         2vQg==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=XUfm8YYgtxGynaHkC+bobRw6IFwZa1ner4MwuzA4+Ss=;
+        b=LbCILqEWUdeKpHS6puPuip5IdzPC/pA63O9fS+JC73BZi5J5KRPEGL/n2y76U5bxuT
+         OZsScLtFTdrVxdOUTbqpNP0Ccx4iV5tbbYRCgZGcrJ2TpOfY5+CpyfjT4jDpWTCmxIA9
+         A1HwOydPh0ccrEkcouL54mxhWZlouoycuoaDxx4L3i+8v04+ltTfVBweY6IVFr7/cJn0
+         qMKHkI/seKdhwjobHtyr4E3fg9DCnMXyVBomqP12oQZq4AYSm72P1mNlrG2GSZT2UkiJ
+         ibUS3BUKp+Bt6wIaIpki+a1GP0W1/ahLxCybMDQM3rKLt69Pb2Zt/c2m4qEtfbOf8pZN
+         huBA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
-Date: Fri, 16 Mar 2018 10:31:21 +0100
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Madhavan Srinivasan
- <maddy@linux.vnet.ibm.com>, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Paul Mackerras <paulus@samba.org>,
- Michael Neuling <mikey@neuling.org>, "Bryant G. Ly"
- <bryantly@linux.vnet.ibm.com>, "Naveen N. Rao"
- <naveen.n.rao@linux.vnet.ibm.com>, Daniel Axtens <dja@axtens.net>, Nicholas
- Piggin <npiggin@gmail.com>, =?UTF-8?B?Q8OpZHJpYw==?= Le Goater
- <clg@kaod.org>, David Gibson <david@gibson.dropbear.id.au>,
- linux-kernel@vger.kernel.org, Sergey Senozhatsky
- <sergey.senozhatsky@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Joe Perches <joe@perches.com>, Oliver O'Halloran
- <oohall@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
- linuxppc-dev@lists.ozlabs.org, "Tobin C. Harding" <me@tobin.cc>
-Subject: Re: [PATCH RFC rebase 0/9] powerpc barrier_nospec
-Message-ID: <20180316103121.6dadf5b2@naga.suse.cz>
-In-Reply-To: <20180316080810.GA29615@kroah.com>
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+From: Michal Suchanek <msuchanek@suse.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>,
+	Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Neuling <mikey@neuling.org>,
+	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+	Daniel Axtens <dja@axtens.net>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	David Gibson <david@gibson.dropbear.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Joe Perches <joe@perches.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Tobin C. Harding" <me@tobin.cc>,
+	Michal Suchanek <msuchanek@suse.de>
+Subject: [PATCH RFC rebase 7/9] powerpc/64: barrier_nospec: Add debugfs trigger
+Date: Thu, 15 Mar 2018 20:15:56 +0100
+Message-Id: <3fe550ea345920af7edea4f4d24ba075430ca9d0.1521141122.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
 References: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
-	<cover.1521141122.git.msuchanek@suse.de>
-	<20180316080810.GA29615@kroah.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <cover.1521141122.git.msuchanek@suse.de>
+In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
+References: <cover.1521141122.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595032344364253632?=
-X-GMAIL-MSGID: =?utf-8?q?1595086141156909089?=
+X-GMAIL-THRID: =?utf-8?q?1595032350839375792?=
+X-GMAIL-MSGID: =?utf-8?q?1595032350839375792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 16 Mar 2018 09:08:10 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Copypasta from rfi implementation
 
-> On Thu, Mar 15, 2018 at 08:15:49PM +0100, Michal Suchanek wrote:
-> > Yes, it is good idea to add some commit messages.  
-> 
-> Always a good idea :)
-> 
-> Also, any reason you are not tagging these for the stable release(s)?
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/kernel/setup_64.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Oh, right. cc:stable would be a good idea as well.
-
-Thanks
-
-Michal
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index f60e0e3b5ad2..f6678a7b6114 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -963,6 +963,41 @@ static __init int rfi_flush_debugfs_init(void)
+ 	return 0;
+ }
+ device_initcall(rfi_flush_debugfs_init);
++
++static int barrier_nospec_set(void *data, u64 val)
++{
++	switch (val) {
++	case 0:
++	case 1:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (!!val == !!barrier_nospec_enabled)
++		return 0;
++
++	barrier_nospec_enable(!!val);
++
++	return 0;
++}
++
++static int barrier_nospec_get(void *data, u64 *val)
++{
++	*val = barrier_nospec_enabled ? 1 : 0;
++	return 0;
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
++			barrier_nospec_get, barrier_nospec_set, "%llu\n");
++
++static __init int barrier_nospec_debugfs_init(void)
++{
++	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
++			    &fops_barrier_nospec);
++	return 0;
++}
++device_initcall(barrier_nospec_debugfs_init);
+ #endif
+ 
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+-- 
+2.13.6
