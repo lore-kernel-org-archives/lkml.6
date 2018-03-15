@@ -1,146 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751698AbeCOGqh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 02:46:37 -0400
-Received: from mga07.intel.com ([134.134.136.100]:53122 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750715AbeCOGqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 02:46:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,308,1517904000";
-   d="scan'208";a="34046752"
-Date: Thu, 15 Mar 2018 14:37:23 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: changbin.du@intel.com
-Subject: [Q] How does linux kernel lockdep record lock-class dependency?
-Message-ID: <20180315063723.liagayoxeltgzow6@intel.com>
+        id S1751461AbeCOGxj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 02:53:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51514 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750715AbeCOGxh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 02:53:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0BB760452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v2 05/13] i2c: qup: schedule EOT and FLUSH tags at the end
+ of transfer
+To: Abhishek Sahu <absahu@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: David Brown <david.brown@linaro.org>,
+        Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
+ <1520860502-14886-6-git-send-email-absahu@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <2411c3ca-5da2-de43-f2dc-a74930a49a22@codeaurora.org>
+Date: Thu, 15 Mar 2018 12:23:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171027-42-ad8712
+In-Reply-To: <1520860502-14886-6-git-send-email-absahu@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hello everyone,
-I got a warning as below which is a AB-BA deadlock issue. But I don't understand
-how the 'existing dependency' happened.
 
-It looks like: kvm_read_guest() held (&mm->mmap_sem), then reading userspace memory
-(which is not ready yet) caused page_fault() invoked, then in i915_gem_fault()
-it tries to hold (&dev->struct_mutex).
+On 3/12/2018 6:44 PM, Abhishek Sahu wrote:
+> The role of FLUSH and EOT tag is to flush already scheduled
+> descriptors in BAM HW in case of error. EOT is required only
+> when descriptors are scheduled in RX FIFO. If all the messages
+> are WRITE, then only FLUSH tag will be used.
+> 
+> A single BAM transfer can have multiple read and write messages.
+> The EOT and FLUSH tags should be scheduled at the end of BAM HW
+> descriptors. Since the READ and WRITE can be present in any order
+> so for some of the cases, these tags are not being written
+> correctly.
+> 
+> Following is one of the example
+> 
+>    READ, READ, READ, READ
+> 
+> Currently EOT and FLUSH tags are being written after each READ.
+> If QUP gets NACK for first READ itself, then flush will be
+> triggered. It will look for first FLUSH tag in TX FIFO and will
+> stop there so only descriptors for first READ descriptors be
+> flushed. All the scheduled descriptors should be cleared to
+> generate BAM DMA completion.
+> 
+> Now this patch is scheduling FLUSH and EOT only once after all the
+> descriptors. So, flush will clear all the scheduled descriptors and
+> BAM will generate the completion interrupt.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+> 
 
-But this sequence must haven't happened. Otherwise, double-lock already happed,
-since intel_vgpu_create_workload() has held (&dev->struct_mutex) already:
+Reviewed-by: Sricharan R <sricharan@codeaurora.org>
 
-  (&dev->struct_mutex)->(&mm->mmap_sem)->(&dev->struct_mutex)
+Regards,
+ Sricharan
 
-So how could lockdep find such 'existing dependency'? Thanks!
 
-[  163.179109] ======================================================
-[  163.185306] WARNING: possible circular locking dependency detected
-[  163.191504] 4.16.0-rc5+ #44 Tainted: G     U
-[  163.196655] ------------------------------------------------------
-[  163.202854] qemu-system-x86/4514 is trying to acquire lock:
-[  163.208443]  (&mm->mmap_sem){++++}, at: [<00000000bca68632>] __might_fault+0x36/0x80
-[  163.216230]
-               but task is already holding lock:
-[  163.222090]  (&dev->struct_mutex){+.+.}, at: [<00000000a6b81a24>] copy_gma_to_hva+0xe5/0x140 [i915]
-[  163.231205]
-               which lock already depends on the new lock.
 
-[  163.239421]
-               the existing dependency chain (in reverse order) is:
-[  163.246925]
-               -> #1 (&dev->struct_mutex){+.+.}:
-[  163.252792]        i915_mutex_lock_interruptible+0x66/0x170 [i915]
-[  163.259005]        i915_gem_fault+0x1e0/0x630 [i915]
-[  163.263985]        __do_fault+0x19/0xed
-[  163.267830]        __handle_mm_fault+0x9fa/0x1140
-[  163.272550]        handle_mm_fault+0x1a7/0x390
-[  163.277006]        __do_page_fault+0x286/0x530
-[  163.281462]        page_fault+0x45/0x50
-[  163.285307]
-               -> #0 (&mm->mmap_sem){++++}:
-[  163.290722]        __might_fault+0x60/0x80
-[  163.294839]        __kvm_read_guest_page+0x3d/0x80 [kvm]
-[  163.300173]        kvm_read_guest+0x47/0x80 [kvm]
-[  163.304891]        kvmgt_rw_gpa+0x9d/0x110 [kvmgt]
-[  163.309714]        intel_gvt_scan_and_shadow_workload+0x1be/0x480 [i915]
-[  163.316448]        intel_vgpu_create_workload+0x3d9/0x550 [i915]
-[  163.322488]        intel_vgpu_submit_execlist+0xc0/0x2a0 [i915]
-[  163.328440]        elsp_mmio_write+0xcb/0x140 [i915]
-[  163.333448]        intel_vgpu_mmio_reg_rw+0x250/0x4f0 [i915]
-[  163.339138]        intel_vgpu_emulate_mmio_write+0xaa/0x240 [i915]
-[  163.345337]        intel_vgpu_rw+0x200/0x250 [kvmgt]
-[  163.350319]        intel_vgpu_write+0x164/0x1f0 [kvmgt]
-[  163.355558]        __vfs_write+0x33/0x170
-[  163.359580]        vfs_write+0xc5/0x1c0
-[  163.363427]        SyS_pwrite64+0x90/0xb0
-[  163.367447]        do_syscall_64+0x70/0x1c0
-[  163.371642]        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-[  163.377230]
-               other info that might help us debug this:
 
-[  163.385258]  Possible unsafe locking scenario:
 
-[  163.391196]        CPU0                    CPU1
-[  163.395737]        ----                    ----
-[  163.400280]   lock(&dev->struct_mutex);
-[  163.404125]                                lock(&mm->mmap_sem);
-[  163.410062]                                lock(&dev->struct_mutex);
-[  163.416436]   lock(&mm->mmap_sem);
-[  163.419846]
-                *** DEADLOCK ***
-
-[  163.425780] 3 locks held by qemu-system-x86/4514:
-[  163.430496]  #0:  (&gvt->lock){+.+.}, at: [<00000000d313c2c5>] intel_vgpu_emulate_mmio_write+0x64/0x240 [i915]
-[  163.440544]  #1:  (&dev->struct_mutex){+.+.}, at: [<00000000a6b81a24>] copy_gma_to_hva+0xe5/0x140 [i915]
-[  163.450068]  #2:  (&kvm->srcu){....}, at: [<00000000db73c4fc>] kvmgt_rw_gpa+0x4c/0x110 [kvmgt]
-[  163.458721]
-               stack backtrace:
-[  163.463097] CPU: 0 PID: 4514 Comm: qemu-system-x86 Tainted: G     U           4.16.0-rc5+ #44
-[  163.471663] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
-[  163.479093] Call Trace:
-[  163.481547]  dump_stack+0x7c/0xbe
-[  163.484872]  print_circular_bug.isra.33+0x21b/0x228
-[  163.489765]  __lock_acquire+0xf7d/0x1470
-[  163.493700]  ? lock_acquire+0xec/0x1e0
-[  163.497459]  lock_acquire+0xec/0x1e0
-[  163.501046]  ? __might_fault+0x36/0x80
-[  163.504805]  __might_fault+0x60/0x80
-[  163.508389]  ? __might_fault+0x36/0x80
-[  163.512155]  __kvm_read_guest_page+0x3d/0x80 [kvm]
-[  163.516966]  kvm_read_guest+0x47/0x80 [kvm]
-[  163.521161]  kvmgt_rw_gpa+0x9d/0x110 [kvmgt]
-[  163.525459]  intel_gvt_scan_and_shadow_workload+0x1be/0x480 [i915]
-[  163.531675]  intel_vgpu_create_workload+0x3d9/0x550 [i915]
-[  163.537192]  intel_vgpu_submit_execlist+0xc0/0x2a0 [i915]
-[  163.542621]  elsp_mmio_write+0xcb/0x140 [i915]
-[  163.547093]  intel_vgpu_mmio_reg_rw+0x250/0x4f0 [i915]
-[  163.552261]  intel_vgpu_emulate_mmio_write+0xaa/0x240 [i915]
-[  163.557938]  intel_vgpu_rw+0x200/0x250 [kvmgt]
-[  163.562396]  intel_vgpu_write+0x164/0x1f0 [kvmgt]
-[  163.567114]  __vfs_write+0x33/0x170
-[  163.570614]  ? common_file_perm+0x68/0x250
-[  163.574723]  ? security_file_permission+0x36/0xb0
-[  163.579440]  vfs_write+0xc5/0x1c0
-[  163.582765]  SyS_pwrite64+0x90/0xb0
-[  163.586261]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  163.590980]  do_syscall_64+0x70/0x1c0
-[  163.594653]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-[  163.599720] RIP: 0033:0x7f88649bcda3
-[  163.603303] RSP: 002b:00007f8854d5c6c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000012
-[  163.610896] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f88649bcda3
-[  163.618051] RDX: 0000000000000004 RSI: 00007f8854d5c6f0 RDI: 0000000000000019
-[  163.625206] RBP: 00007f8854d5c710 R08: 0000000000000004 R09: 00000000ffffffff
-[  163.632363] R10: 0000000000002230 R11: 0000000000000293 R12: 0000000000000000
-[  163.639518] R13: 00007ffcc49b9a3f R14: 00007f8854d5d9c0 R15: 0000000000000000
+> * Changes from v1:
+> 
+> 1. Modified commit message with more details
+> 
+>  drivers/i2c/busses/i2c-qup.c | 39 ++++++++++++++++++++++++---------------
+>  1 file changed, 24 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> index d970458..b2e8f57 100644
+> --- a/drivers/i2c/busses/i2c-qup.c
+> +++ b/drivers/i2c/busses/i2c-qup.c
+> @@ -551,7 +551,7 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 *tags, struct qup_i2c_dev *qup,
+>  }
+>  
+>  static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+> -			    struct i2c_msg *msg,  int is_dma)
+> +			    struct i2c_msg *msg)
+>  {
+>  	u16 addr = i2c_8bit_addr_from_msg(msg);
+>  	int len = 0;
+> @@ -592,11 +592,6 @@ static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+>  	else
+>  		tags[len++] = data_len;
+>  
+> -	if ((msg->flags & I2C_M_RD) && last && is_dma) {
+> -		tags[len++] = QUP_BAM_INPUT_EOT;
+> -		tags[len++] = QUP_BAM_FLUSH_STOP;
+> -	}
+> -
+>  	return len;
+>  }
+>  
+> @@ -605,7 +600,7 @@ static int qup_i2c_issue_xfer_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+>  	int data_len = 0, tag_len, index;
+>  	int ret;
+>  
+> -	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg, 0);
+> +	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg);
+>  	index = msg->len - qup->blk.data_len;
+>  
+>  	/* only tags are written for read */
+> @@ -701,7 +696,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  			while (qup->blk.pos < blocks) {
+>  				tlen = (i == (blocks - 1)) ? rem : limit;
+>  				tags = &qup->start_tag.start[off + len];
+> -				len += qup_i2c_set_tags(tags, qup, msg, 1);
+> +				len += qup_i2c_set_tags(tags, qup, msg);
+>  				qup->blk.data_len -= tlen;
+>  
+>  				/* scratch buf to read the start and len tags */
+> @@ -729,17 +724,11 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  				return ret;
+>  
+>  			off += len;
+> -			/* scratch buf to read the BAM EOT and FLUSH tags */
+> -			ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
+> -					     &qup->brx.tag.start[0],
+> -					     2, qup, DMA_FROM_DEVICE);
+> -			if (ret)
+> -				return ret;
+>  		} else {
+>  			while (qup->blk.pos < blocks) {
+>  				tlen = (i == (blocks - 1)) ? rem : limit;
+>  				tags = &qup->start_tag.start[off + tx_len];
+> -				len = qup_i2c_set_tags(tags, qup, msg, 1);
+> +				len = qup_i2c_set_tags(tags, qup, msg);
+>  				qup->blk.data_len -= tlen;
+>  
+>  				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
+> @@ -779,6 +768,26 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  		msg++;
+>  	}
+>  
+> +	/* schedule the EOT and FLUSH I2C tags */
+> +	len = 1;
+> +	if (rx_cnt) {
+> +		qup->btx.tag.start[0] = QUP_BAM_INPUT_EOT;
+> +		len++;
+> +
+> +		/* scratch buf to read the BAM EOT and FLUSH tags */
+> +		ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
+> +				     &qup->brx.tag.start[0],
+> +				     2, qup, DMA_FROM_DEVICE);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	qup->btx.tag.start[len - 1] = QUP_BAM_FLUSH_STOP;
+> +	ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++], &qup->btx.tag.start[0],
+> +			     len, qup, DMA_TO_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
+>  	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_cnt,
+>  				      DMA_MEM_TO_DEV,
+>  				      DMA_PREP_INTERRUPT | DMA_PREP_FENCE);
+> 
 
 -- 
-Thanks,
-Changbin Du
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
