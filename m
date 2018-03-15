@@ -1,72 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932326AbeCONhW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:37:22 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:62243 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932268AbeCONhQ (ORCPT
+        id S1752354AbeCONif (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:38:35 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37770 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeCONib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:37:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180315133714epoutp011ef4bdb564f25751d6fb41f4b33ff23f~cG4Whlc7a3174531745epoutp01I
-X-AuditID: b6c32a48-9adff70000000ff0-92-5aaa77090370
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 17/47] fbdev: remove blackfin drivers
-Date: Thu, 15 Mar 2018 14:37:10 +0100
-Message-id: <3361512.ia3YxlrZJW@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180314153603.3127932-18-arnd@arndb.de>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7bCmhS5n+aoog++ndSz+TjrGbnHl63s2
-        ixN9H1gtLu+aw+bA4vH71yRGj/vdx5k8Pm+SC2CO4rJJSc3JLEst0rdL4MqYeWIqU0Ejc0X7
-        O44GxgNMXYycHBICJhL/J51n62Lk4hAS2MEosfPRLmYI5zujRNP8fSwwVR+OnGEEsYUENjBK
-        PN9aBVH0lVGi8fsFVpAEm4CVxMT2VWBFIgKKElNfPAOaxMHBLJAgsXuRGUhYWMBSYvXCb2Cb
-        WQRUJSbP+cwOYvMKaEq8XbwXzBYV8JLYsq8drIZTwEziTct/NogaQYkfk++B3cMsIC+xb/9U
-        VghbR+LssXWMIPdICExhk3j4bTsjxNEuEs9frGODsIUlXh3fwg5hS0s8W7URqqGZUeLbjj3M
-        EIkJjBJ71gtB2NYSh49fhNrAJ9Fx+C87yDMSArwSHW1QJR4SsycchtrlKLH2xHZGSKBsYZR4
-        N/8f2wRG2VlIDp+F5PBZSA5fwMi8ilEstaA4Nz212KjARK84Mbe4NC9dLzk/dxMjOOK1PHYw
-        Hjjnc4hRgINRiYfXQG1llBBrYllxZe4hRgkOZiURXp+CVVFCvCmJlVWpRfnxRaU5qcWHGKU5
-        WJTEedsCXKKEBNITS1KzU1MLUotgskwcnFINjAE/ay5dEOJw+13QJ8trffeWotpOscgry8JX
-        Lux833198l/Z6iMzmm3fHj33Qunbs+lXz4kz3JV5Ok/i+fXE9Ut7UxqLV+7I7fjGnRaVl7G7
-        8tv647tcjZetDjJinn025RD7oqO1qRMSv819P1WC1Vjt7bFUm/Wc57Z/mRP5uCtrEfPV3eW6
-        zxKVWIozEg21mIuKEwEIpOC/9AIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t9jQV2O8lVRBivumVj8nXSM3eLK1/ds
-        Fif6PrBaXN41h82BxeP3r0mMHve7jzN5fN4kF8AcxWWTkpqTWZZapG+XwJUx88RUpoJG5or2
-        dxwNjAeYuhg5OSQETCQ+HDnD2MXIxSEksI5RYuuH7VDOV0aJzU0z2UGq2ASsJCa2r2IEsUUE
-        FCWmvnjGDGIzCyRIrHjbzgpiCwtYSqxe+A1sKouAqsTkOZ/BenkFNCXeLt4LZosKeEls2dcO
-        VsMpYCbxpuU/G8SyLYwSMxpOMEI0CEr8mHyPBWKBvMS+/VNZIWwtifU7jzNNYOSfhaRsFpKy
-        WUjKFjAyr2KUTC0ozk3PLTYqMMpLLdcrTswtLs1L10vOz93ECAzSbYe1+ncwPl4Sf4hRgINR
-        iYfXQG1llBBrYllxZe4hRgkOZiURXp+CVVFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEefnzj0UK
-        CaQnlqRmp6YWpBbBZJk4OKUaGEuPtTA0iDh3XbEutZ2huL13ERPXLKPO52xCVm/+S/yrllp9
-        s6lfbbbwtx7/RcKsJ2dsWpmu9rBpQ8q2nbfaNSzEfy/oeptvcC358KErf3+1cggJFsSd/DB7
-        nQ1vx4zt95TfRL638WyZVRz29CK3dvPyrwUTdyyoissNyWU9ZFHv3GlwxTagXYmlOCPRUIu5
-        qDgRABWnxUFOAgAA
-X-CMS-MailID: 20180315133712epcas2p17f4afe280394b60dcd3307f98a063d5c
+        Thu, 15 Mar 2018 09:38:31 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180315133829euoutp02ed5c08d358429649c6ae64653d9953ab~cG5ccYGo01333013330euoutp02K
+X-AuditID: cbfec7f2-1dbff70000011644-9c-5aaa7753371f
+Subject: Re: [PATCH v4 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car
+ V3M Eagle
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <186a9adc-f5b8-cbd9-218c-5a0c48dbc9aa@samsung.com>
+Date: Thu, 15 Mar 2018 14:38:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1521111391-3515-4-git-send-email-jacopo+renesas@jmondi.org>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRzf73kvnvw6rN9izIkwlcz4bZKX2fW0tWazYfcHjp5V9LZ7elEZ
+        p0ZXZGRJ56UYw51kx+UlMYnbLR29oMIuFqU5rXJIebmnh+m/z8v3+/19PtuPI1U/6EAuMSVd
+        1KfoktSML1XzePhpyPoss3bRq4IJuNjpIHCe0U3jigYnjds8/Qz+0FlH4HybB2D7SBWLC4+e
+        Z3HrnVMMtn38TOAui5vBF142E9h+/DCN99c1sPiJuZNdNUm4cuYKEFoPFxNCV+lvQrhtesMK
+        J43ltPC7/R0pWM2FjFD/0AiEm1+7aMF10E4IPa3fGOHU8FdKGLLOWMdrfSPixKTETFEfFrnV
+        N2HkXA9Ic/vtaqm2sAZgmFAEfDgEl6BK1z2iCPhyKngJIOPrcqCQLwB92l/DKmTIS9pL6H8r
+        HTW9pGJcBMhle0vJhgq6Aap8MVfGk+EG9PN6z9j2FFhFIEf/d0omJMwDqMWRT8pTDJzvnepg
+        igDH8TASDVvWyjIF56CPg1fHjk6Fm9DZ0vdAxjz0R47y7jHdB0YjS62LkDEJZ6J820lSwQGo
+        s7tirBCClzlkHypgldhrkdN1gFLwZNRnv/FXn44ajx36q+eijt48Slk2equNFDCKsRw9tDfT
+        clDSG7r6TpgMEVyBCqslBfqhdre/EsEPldSUkYrMI+MBlXJjFnI12UgFB6ALzzzMETDbNK6Y
+        aVwZ07gypv/PVgLKDALEDCk5XpTCU8SsUEmXLGWkxIduT022Au+PbPxlH7wFPC3b6gHkgHoi
+        3z77slZF6zKl7OR6gDhSPYWPSTNrVXycLjtH1Kdu0WckiVI9mMZR6gB+87w9WhWM16WLO0Ux
+        TdT/cwnOJ9AAgoTF1KqgmNim5o3Ze6MbV4YNVWmCqfQc98/T0bVRK42rt2uW3c9cvlCDQWJR
+        tfNBqbMhotx5UMU7onZYK65V2J8PPgrpKuFnta2wVp7YZ7l1l8vVFP/idAbD7uCWNZq086NB
+        fbHZO8iB0Ni6AXWsORJ/lpY2jT6KYXeVeQpH1JSUoAtfQOol3R+dIHnsjQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42I5/e/4Pd3A8lVRBu07WC16z51ksmjqeMtq
+        Mf/IOVaLK1/fs1k8u7WXyaJ561dGi+O/17JbdE5cwm5xedccNoutL98xWTxY/ZbNYun1i0wW
+        x6f1sVq07j3CbnFm1S12B36PNfPWMHpc7utl8ngw9T+Tx85Zd9k9ZnfMZPX4f+MRs8emVZ1s
+        HocOdzB6bP/2gNXjfvdxJo/nl7+zecz5+Y3F4/MmuQDeKD2bovzSklSFjPziElulaEMLIz1D
+        Sws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2M34ueMxa85au4tH41ewNjA3cXIyeHhICJ
+        xM1tL5i7GLk4hASWMkrsmL+DCSIhLrF7/ltmCFtY4s+1LjaIoteMEktnHgUrEhYIkzh6/SZY
+        t4jAWiaJJ0cWgDnMAk2MEhNmf2KCaLnNKHFm/xawWWwCmhJ/N98EmsXBwStgJ/FztQtImEVA
+        VeLlp3UsILaoQIRE58r5YDavgKDEyZlPwGxOAU+J1bvvg21mFlCX+DPvEjOELS/RvHU2lC0u
+        cevJfKYJjEKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgQmhm3H
+        fm7ewXhpY/AhRgEORiUe3hvKK6OEWBPLiitzDzFKcDArifD6FKyKEuJNSaysSi3Kjy8qzUkt
+        PsRoCvTcRGYp0eR8YNLKK4k3NDU0t7A0NDc2NzazUBLnPW9QGSUkkJ5YkpqdmlqQWgTTx8TB
+        KdXA2OT9dIGWakdO+/EfdsyPFs+YkZclb7NU5JxhtfHPn+oMrI2XZvvq1zh7nP1XY5eslByv
+        dKFX/vjTpxKOl6/cYD57ZlLBrb5/btKW1zgfMu2WzDvo2/Ah6Yhr9eeUWevPBHx7EFG++avV
+        xmpH5RAjp6t6OnPfcYuovmZgXvv1oPnG9GlCa088V2Ipzkg01GIuKk4EAJJoQQwiAwAA
+X-CMS-MailID: 20180315133826eucas1p24179f1dc7b18f7dccdeef399a8d34d22
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180314154309epcas5p12bdd7c766b90b11522c0f6065c1da2e6
-X-RootMTR: 20180314154309epcas5p12bdd7c766b90b11522c0f6065c1da2e6
-References: <20180314153603.3127932-1-arnd@arndb.de>
-        <CGME20180314154309epcas5p12bdd7c766b90b11522c0f6065c1da2e6@epcas5p1.samsung.com>
-        <20180314153603.3127932-18-arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180315133826eucas1p24179f1dc7b18f7dccdeef399a8d34d22
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180315112823epcas5p3e8d475cddae340ce0625267f30d4b06a
+X-RootMTR: 20180315112823epcas5p3e8d475cddae340ce0625267f30d4b06a
+References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+        <CGME20180315112823epcas5p3e8d475cddae340ce0625267f30d4b06a@epcas5p3.samsung.com>
+        <1521111391-3515-4-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 14, 2018 04:35:30 PM Arnd Bergmann wrote:
-> The blackfin architecture is getting removed, this removes the
-> associated fbdev drivers as well.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 15.03.2018 11:56, Jacopo Mondi wrote:
+> The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
+> decoder, connected to the on-chip LVDS encoder output on one side
+> and to HDMI encoder ADV7511w on the other one.
+>
+> As the decoder does not need any configuration it has been so-far
+> omitted from DTS. Now that a driver is available, describe it in DT
+> as well.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+ --
+Regards
+Andrzej
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 +++++++++++++++++++++++---
+>  1 file changed, 30 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> index c0fd144..69f43b8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -42,6 +42,33 @@
+>  			};
+>  		};
+>  	};
+> +
+> +	thc63lvd1024: lvds-decoder {
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				thc63lvd1024_in_0: endpoint {
+> +					remote-endpoint = <&lvds0_out>;
+> +				};
+> +			};
+> +
+> +			port@2{
+> +				reg = <2>;
+> +
+> +				thc63lvd1024_out_2: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +
+> +			};
+> +
+> +		};
+> +	};
+>  };
+>  
+>  &avb {
+> @@ -98,7 +125,7 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				adv7511_in: endpoint {
+> -					remote-endpoint = <&lvds0_out>;
+> +					remote-endpoint = <&thc63lvd1024_out_2>;
+>  				};
+>  			};
+>  
+> @@ -152,8 +179,8 @@
+>  
+>  	ports {
+>  		port@1 {
+> -			endpoint {
+> -				remote-endpoint = <&adv7511_in>;
+> +			lvds0_out: endpoint {
+> +				remote-endpoint = <&thc63lvd1024_in_0>;
+>  			};
+>  		};
+>  	};
