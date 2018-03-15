@@ -1,66 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932507AbeCOT3G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:29:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54414 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752768AbeCOT3E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:29:04 -0400
-Date: Thu, 15 Mar 2018 20:28:59 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
-cc: Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        x86@kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-In-Reply-To: <20180315170202.GA5180@flask>
-Message-ID: <alpine.DEB.2.21.1803152027370.1520@nanos.tec.linutronix.de>
-References: <20180309140249.2840-1-vkuznets@redhat.com> <20180309140249.2840-8-vkuznets@redhat.com> <2747cc75-b549-61bb-9c1b-0f554a49b536@redhat.com> <87zi399xih.fsf@vitty.brq.redhat.com> <20180315170202.GA5180@flask>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752052AbeCOTc3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:32:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46028 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751314AbeCOTc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 15:32:28 -0400
+Date: Thu, 15 Mar 2018 20:32:24 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180315193224.GV23100@dhcp22.suse.cz>
+References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+ <20180315174903.GM23100@dhcp22.suse.cz>
+ <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-351697842-1521142140=:1520"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-351697842-1521142140=:1520
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8BIT
-
-On Thu, 15 Mar 2018, Radim Krèmáø wrote:
-> 2018-03-15 16:19+0100, Vitaly Kuznetsov:
-> > This works. But hell, this is a crude hack :-) Not sure if there's a
-> > cleaner way to find what needs to be patched without something like jump
-> > label table ...
+On Thu 15-03-18 22:28:43, Kirill Tkhai wrote:
+> On 15.03.2018 20:49, Michal Hocko wrote:
+> > On Thu 15-03-18 18:01:34, Kirill Tkhai wrote:
+> >> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
+> >> So, it's called for memcg reclaim too, e.g. this list is shrinked
+> >> disproportionality to another lists.
+> >>
+> >> This looks confusing, so I'm reporting about this.
+> >> Consider this patch as RFC.
+> > 
+> > Could you be more specific about the problem you are trying to solve?
+> > Because we do skip shrinkers which are not memcg aware by
+> > shrink_slab:
+> > 		/*
+> > 		 * If kernel memory accounting is disabled, we ignore
+> > 		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
+> > 		 * passing NULL for memcg.
+> > 		 */
+> > 		if (memcg_kmem_enabled() &&
+> > 		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+> > 			continue;
+> > 
+> > Or am I missing something?
 > 
-> Yeah, I can see us accidently patching parts of other instructions. :)
-> 
-> The target instruction address can be made into a C-accessible symbol
-> with the same trick that vmx_return uses -- add a .global containing the
-> address of a label (not sure if a more direct approach would work).
-> 
-> The evil in me likes it.  (The good is too lazy to add a decent patching
-> infrastructure for just one user.)
+> sb->s_op->nr_cached_objects is a sub-method of generic super_cache_count().
+> super_cache_count() is owned and only called by superblock's shrinker,
+> which does have SHRINKER_MEMCG_AWARE flag.
 
-Can we just use jump labels please? There is agreement that 4.17 will have
-a dependency on a jump label capable compiler for x86.
-
-Thanks,
-
-	tglx
-
-
---8323329-351697842-1521142140=:1520--
+Ohh, I see. I thought it was a standard "top-level" shrinker.
+-- 
+Michal Hocko
+SUSE Labs
