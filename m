@@ -1,87 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751739AbeCOM1p (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:27:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750745AbeCOM1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:27:44 -0400
-Date: Thu, 15 Mar 2018 20:27:39 +0800
-From: Honggang LI <honli@redhat.com>
-To: Hal Rosenstock <hal@dev.mellanox.co.il>
-Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        noaos@mellanox.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] IB/core: Set width to 1X for invalid active widths
- when port is down
-Message-ID: <20180315122739.GA29117@dhcp-13-42.nay.redhat.com>
-References: <20180315090214.21706-1-honli@redhat.com>
- <20180315090214.21706-3-honli@redhat.com>
- <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
+        id S1751559AbeCOM3e (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:29:34 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:40560 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOM3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:29:32 -0400
+X-Google-Smtp-Source: AG47ELuEqL3UpGHuMLOaAioLQAsF+tkGkkryiFWtwGmfk28fbqkjgPGPSBGOh4gIrxKirlTJUpNNeOYllw8+j+LJsk0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1521109575.10722.654.camel@linux.intel.com>
+References: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
+ <CAPDyKFo8jFwDO1E=tNSd4yTn3qtefzvHK0V70fcEqzB=SibrJA@mail.gmail.com> <1521109575.10722.654.camel@linux.intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 15 Mar 2018 13:29:30 +0100
+Message-ID: <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+Subject: Re: [PATCH v10] mmc: Export host capabilities to debugfs.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:01:08AM -0400, Hal Rosenstock wrote:
-> On 3/15/2018 5:02 AM, Honggang LI wrote:
-> > From: Honggang Li <honli@redhat.com>
-> > 
-> > commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-> > active_speed in RoCE"). Before this patch applied, the mlx5_ib
-> > driver set default active_width and active_speed to IB_WIDTH_4X
-> > and IB_SPEED_QDR.
-> > 
-> > When the RoCE port is down, the RoCE port did not negotiate the
-> > active width with remote side. The active width is zero. If run
-> > ibstat to require the port status, ibstat will panic as it read
-> > invalid width from sys file.
-> > 
-> > Signed-off-by: Honggang Li <honli@redhat.com>
-> > ---
-> >  drivers/infiniband/core/sysfs.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-> > index cf36ff1f0068..722e4571f4d2 100644
-> > --- a/drivers/infiniband/core/sysfs.c
-> > +++ b/drivers/infiniband/core/sysfs.c
-> > @@ -240,6 +240,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
-> >  	struct ib_port_attr attr;
-> >  	char *speed = "";
-> >  	int rate;		/* in deci-Gb/sec */
-> > +	int width;
-> >  	ssize_t ret;
-> >  
-> >  	ret = ib_query_port(p->ibdev, p->port_num, &attr);
-> > @@ -278,13 +279,19 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
-> >  		break;
-> >  	}
-> >  
-> > -	rate *= ib_width_enum_to_int(attr.active_width);
-> > -	if (rate < 0)
-> > -		return -EINVAL;
-> > +	width = ib_width_enum_to_int(attr.active_width);
-> > +	if (width < 0) {
-> > +		if (attr.state != IB_PORT_ACTIVE)
-> 
-> Link width is valid in any PortState other than Down so I think that
-> this check should be:
-> 		if (attr.state != IB_PORT_DOWN)
+On 15 March 2018 at 11:26, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Thu, 2018-03-15 at 11:12 +0100, Ulf Hansson wrote:
+>> On 13 March 2018 at 06:10, Harish Jenny K N <harish_kandiga@mentor.com
+>> > wrote:
+>> >
+>
+>> Honestly, I don't like this, but maybe other people do, then I am fine
+>> with this approach.
+>>
+>> If were to decide, I would just rather print the caps field in a
+>> hexadecimal bit form and leave the translation to the user.
+>
+> A compromise would be to print both:
+>
+> 0xHHHHHHHH\n
+> Description of each enabled field, one per line
+>
+>
+> Another format would be:
+>
+> Bit XX: Description of a field
 
-OK, thanks for correct this.
+If we were to print the description, there is no point in printing the
+bits in hex. Or is it?
 
-> However, I don't think overriding width should be needed for this case
-> and just returning -EINVAL should be fine regardless of port state.
-> AFAIK it's the driver responsibility to populate acceptable defaults for
-> such parameters. What driver(s) have this issue ? Shouldn't it be fixed
+As I said, if you and other folkz thinks this is valuable, then I am
+fine as well. Just saying, it's not my preferred option.
 
-mlx5_ib, commit f1b65df5a232 changed the default active width and rate.
-
-> there rather than here ?
-
-Yes, I think so, as only mlx5 RoCE impacted by this issue. So, fix the
-driver is also acceptable.
+Kind regards
+Uffe
