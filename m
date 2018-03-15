@@ -1,176 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932830AbeCOPsu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:48:50 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46996 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932397AbeCOPss (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:48:48 -0400
-X-Google-Smtp-Source: AG47ELuufy6dqf2NrFqcy9gHKn+ioAQ5SH86dyIa3yuysUP+alFnC/7GKHHnzSiD4C+hBTvyMxJm7LHnj/0CLt92p0w=
+        id S932699AbeCOPqK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:10 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:32960 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752525AbeCOPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:06 -0400
+Date: Thu, 15 Mar 2018 16:45:54 +0100
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: Re: [PATCH 00/12] crypto: inside-secure - hmac(sha256/sha224) support
+Message-ID: <20180315154554.GD2947@kwain>
+References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <CACjP9X9w-zruS8uj6j+ZRc7EUZ80MAwbvWOh=gRJZu7gAqU7hg@mail.gmail.com>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
- <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
- <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
- <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com>
- <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
- <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
- <CAKv+Gu8dvCRUnS5KxDWa4GP2vMPo9cUWVNybx+tGY_Y8T67Uvw@mail.gmail.com> <CACjP9X9w-zruS8uj6j+ZRc7EUZ80MAwbvWOh=gRJZu7gAqU7hg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 15 Mar 2018 15:48:47 +0000
-Message-ID: <CAKv+Gu83VtB+ff6H88UMF9kiz5923U8tXhQoERdErYE4pQg94Q@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Daniel Vacek <neelx@redhat.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 March 2018 at 15:34, Daniel Vacek <neelx@redhat.com> wrote:
-> On Thu, Mar 15, 2018 at 4:17 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 15 March 2018 at 15:12, Daniel Vacek <neelx@redhat.com> wrote:
->>> On Thu, Mar 15, 2018 at 8:45 AM, Ard Biesheuvel
->>> <ard.biesheuvel@linaro.org> wrote:
->>>> On 15 March 2018 at 07:44, Daniel Vacek <neelx@redhat.com> wrote:
->>>>> On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
->>>>> <ard.biesheuvel@linaro.org> wrote:
->>>>>> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
->>>>>>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
->>>>>>> <ard.biesheuvel@linaro.org> wrote:
->>>>>>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
->>>>>>>>
->>>>>>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
->>>>>>>> alignment") modified the logic in memmap_init_zone() to initialize
->>>>>>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
->>>>>>>> in move_freepages(), which is redundant by its own admission, and
->>>>>>>> dereferences struct page fields to obtain the zone without checking
->>>>>>>> whether the struct pages in question are valid to begin with.
->>>>>>>>
->>>>>>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
->>>>>>>> may cause pfn assume the same value it had in a prior iteration of
->>>>>>>> the loop, resulting in an infinite loop and a hang very early in the
->>>>>>>> boot. Also, since it doesn't perform the same rounding on start_pfn
->>>>>>>> itself but only on intermediate values following an invalid PFN, we
->>>>>>>> may still hit the same VM_BUG_ON() as before.
->>>>>>>>
->>>>>>>> So instead, let's fix this at the core, and ensure that the BUG
->>>>>>>> check doesn't dereference struct page fields of invalid pages.
->>>>>>>>
->>>>>>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
->>>>>>>> Cc: Daniel Vacek <neelx@redhat.com>
->>>>>>>> Cc: Mel Gorman <mgorman@techsingularity.net>
->>>>>>>> Cc: Michal Hocko <mhocko@suse.com>
->>>>>>>> Cc: Paul Burton <paul.burton@imgtec.com>
->>>>>>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->>>>>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>>>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->>>>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>>>>>> ---
->>>>>>>>  mm/page_alloc.c | 13 +++++--------
->>>>>>>>  1 file changed, 5 insertions(+), 8 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>>>>>> index 3d974cb2a1a1..635d7dd29d7f 100644
->>>>>>>> --- a/mm/page_alloc.c
->>>>>>>> +++ b/mm/page_alloc.c
->>>>>>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->>>>>>>>          * Remove at a later date when no bug reports exist related to
->>>>>>>>          * grouping pages by mobility
->>>>>>>>          */
->>>>>>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
->>>>>>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
->>>>>>>> +                 pfn_valid(page_to_pfn(end_page)) &&
->>>>>>>> +                 page_zone(start_page) != page_zone(end_page));
->>>>>>>
->>>>>>> Hi, I am on vacation this week and I didn't have a chance to test this
->>>>>>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
->>>>>>> arm{,64} arch specific versions returns true for all pfns in a section
->>>>>>> if there is at least some memory mapped in that section. So I doubt
->>>>>>> this prevents the crash I was targeting. I believe pfn_valid() does
->>>>>>> not change a thing here :(
->>>>>>>
->>>>>>
->>>>>> If this is the case, memblock_next_valid_pfn() is broken since it
->>>>>> skips valid PFNs, and we should be fixing that instead.
->>>>>
->>>>> How do you define valid pfn? Maybe the generic version of pfn_valid()
->>>>> should be fixed???
->>>>>
->>>>
->>>> memblock_next_valid_pfn() skips PFNs for which pfn_valid() returns
->>>> true. That is clearly a bug.
->>>
->>> So pfn_valid() does not mean this frame is usable memory?
->>>
->>
->> Who cares what it *means*?
->
-> abstractions?
->
->> memblock_next_valid_pfn() has 'valid_pfn' in its name, so if passing
->> pfn A returns B, and there exists a C such that A < C < B and
->> pfn_valid(C) returns true, memblock_next_valid_pfn doesn't do what it
->> says on the tin and should be fixed.
->
-> If you don't like the name I would argue it should be changed to
-> something like memblock_pfn_of_next_memory(). Still the name is not
-> next_valid_pfn() but memblock_next... kind of distinguishing something
-> different.
->
+Hi Herbert,
 
-Naming is important. If the name would have reflected what it actually
-does, perhaps it would have taken us less time to figure out that what
-it's doing is wrong.
+On Thu, Mar 15, 2018 at 04:38:39PM +0100, Antoine Tenart wrote:
+> 
+> This series brings hmac(sha256) and hmac(sha224) support to the Inside
+> Secure cryptographic engine driver.
+> 
+> The first 10 patches are fixes and reworks needed for the hmac(sha256)
+> and hmac(224) support to land in. Then 2 patches adds the 2 new
+> algorithms.
 
->> You keep going on about how pfn_valid() does or does not do what you
->> think, but that is really irrelevant.
->
-> I'm trying to learn.
+I made a small mistake as the first 3 patches of the series already
+were merged into your tree, as they already were sent in a previous
+series. You can just ignore them.
 
-So am I :-)
+Sending a v2 is probably unnecessary but I can if needed.
 
-> Hence I was asking what is the abstract meaning
-> of it. As I see two *way_different* implementations so I am not sure
-> how I should understand that.
->
+Sorry for this,
+Antoine
 
-My interpretation is that it has a struct page associated with it, but
-it seems the semantics of pfn_valid() aren't well defined. IIRC there
-are places in the kernel that assume that valid PFNs are covered by
-the kernel direct mapping (on non-highmem kernels), and this is why we
-have a separate definition for arm64, which needs to remove some
-regions from the kernel direct mapping because the architecture does
-not permit mappings with mismatched attributes, and these regions may
-be mapped by the firmware as well.
-
-Dereferencing the struct page associated with a PFN for which
-pfn_valid() returns false is wrong in any case, which is why the
-VM_BUG_ON() you identified was buggy as well. But on the other hand,
-that does mean we need to guarantee that all valid PFNs have their
-struct page initialized.
-
->>> OK, in that case we need to fix or revert memblock_next_valid_pfn().
->>> That works for me.
->>>
->>
->> OK. You can add my ack to a patch that reverts it, and we can revisit
->> it for the next cycle.
->
-> Cool. I'll do that next week. Thank you, sir.
->
-
-Likewise.
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
