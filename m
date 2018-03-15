@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeCONrI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:47:08 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35998 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752438AbeCONrF (ORCPT
+        id S1752488AbeCONrV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:47:21 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40930 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbeCONrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:47:05 -0400
-X-Google-Smtp-Source: AG47ELtTnoBo8ZLZcoVtsUNKMT/4z9NyfTjCd8Fg8p3BhQZc8AAY+/u2dEPKF6yWor5yKDUx/JXe5A==
+        Thu, 15 Mar 2018 09:47:19 -0400
+X-Google-Smtp-Source: AG47ELvKqHrIjivfs/AWTqx/AzBoRtBgKlYnDKouwY9nyp691h7GlrOegSjoj7L0AzMhVwOKz/rbeA==
 Subject: Re: [PATCH v1 2/3] drm/tegra: plane: Correct legacy blending
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
@@ -17,8 +17,8 @@ References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmai
  <00cf4565238be471c90e5823e53e0ed504869bfe.1521075485.git.digetx@gmail.com>
  <20180315102905.GB15393@ulmo>
  <16e06ec0-af24-e2c1-b400-2ff1acae931c@gmail.com>
-Message-ID: <5bb313f0-8d90-3cd6-5680-bb695d9b7e2a@gmail.com>
-Date: Thu, 15 Mar 2018 16:47:01 +0300
+Message-ID: <82bc3aad-b532-9122-bec3-bd30f94c3c08@gmail.com>
+Date: Thu, 15 Mar 2018 16:47:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
