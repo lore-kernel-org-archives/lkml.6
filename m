@@ -1,44 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752535AbeCOQkz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:40:55 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53032 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751557AbeCOQkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:40:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="211871021"
-Message-ID: <67805a53fd3471c70a9f29daa430d85d4879a23a.camel@linux.intel.com>
-Subject: Re: [PATCH v2 5/8] tpm: factor out tpm1 pm suspend flow into
- tpm1-cmd.c
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 18:40:49 +0200
-In-Reply-To: <20180310082428.31519-6-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-         <20180310082428.31519-6-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.27.90-1 
-Mime-Version: 1.0
+        id S932354AbeCOQlh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:41:37 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36016 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751458AbeCOQlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:41:35 -0400
+Subject: Re: [PATCH v7 3/3] dts: arm64: Add mailbox binding for hi3660
+To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Kaihua Zhong <zhongkaihua@huawei.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Ruyi Wang <wangruyi@huawei.com>
+References: <1521130058-24796-1-git-send-email-leo.yan@linaro.org>
+ <1521130058-24796-4-git-send-email-leo.yan@linaro.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5AAAA22E.5030009@hisilicon.com>
+Date: Thu, 15 Mar 2018 16:41:18 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <1521130058-24796-4-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> Factor out tpm1 suspend flow from tpm-interface.c into a new function
-> tpm1_pm_suspend in tpm1-cmd.c
+Hi Leo,
+
+On 2018/3/15 16:07, Leo Yan wrote:
+> From: Kaihua Zhong <zhongkaihua@huawei.com>
 > 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Add DT binding for mailbox driver.
+> 
+> Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
+> Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fine to me. Thanks!
+Acked-by: Wei Xu <xuwei5@hisilicon.com>
 
-/Jarkko
+Best Regards,
+Wei
+
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index 63d4f9d..3788448 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -298,6 +298,14 @@
+>  			#reset-cells = <2>;
+>  		};
+>  
+> +		mailbox: mailbox@e896b000 {
+> +			compatible = "hisilicon,hi3660-mbox";
+> +			reg = <0x0 0xe896b000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
+> +			#mbox-cells = <3>;
+> +		};
+> +
+>  		dual_timer0: timer@fff14000 {
+>  			compatible = "arm,sp804", "arm,primecell";
+>  			reg = <0x0 0xfff14000 0x0 0x1000>;
+> 
