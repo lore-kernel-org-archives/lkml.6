@@ -1,63 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932553AbeCOP0L (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:26:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54252 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752216AbeCOP0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:26:10 -0400
-Date: Thu, 15 Mar 2018 16:26:07 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
-References: <1520330185.10722.401.camel@linux.intel.com>
- <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
- <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
- <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
- <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
- <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
- <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
- <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
- <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
- <1521119343.10722.665.camel@linux.intel.com>
+        id S932533AbeCOP1E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:27:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64040 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752277AbeCOP1C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:27:02 -0400
+Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
+ interpretive execution
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
+ <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 11:26:48 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521119343.10722.665.camel@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031515-8235-0000-0000-00000D2A6439
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003445; UDB=6.00510675; IPR=6.00782772;
+ MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 15:26:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031515-8236-0000-0000-00004012AC88
+Message-Id: <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150167
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-03-15 15:09:03, Andy Shevchenko wrote:
-> On Wed, 2018-03-14 at 15:09 +0100, Petr Mladek wrote:
-> > We already prevent crash when dereferencing some obviously broken
-> > pointers. But the handling is not consistent. Sometimes we print
-> > "(null)"
-> > only for pure NULL pointer, sometimes for pointers in the first
-> > page and 
-> 
-> 
-> > sometimes also for pointers in the last page (error codes).
-> 
-> I still think that printing a hex value of the error code is much better
-> than some odd "(efault)".
-
-Do you mean (err:0e)? Google gives rather confusing answers for this.
-
-I am not super excited about (efault). But it seems to be less
-cryptic and the style is more similar to (null).
-
-Best Regards,
-Petr
+On 03/15/2018 09:00 AM, Pierre Morel wrote:
+> On 14/03/2018 22:57, Halil Pasic wrote:
+>>
+>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
+>>> The VFIO AP device model exploits interpretive execution of AP
+>>> instructions (APIE) to provide guests passthrough access to AP
+>>> devices. This patch introduces a new device attribute in the
+>>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
+>>> the VFIO AP device defined on the guest.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>> [..]
+>>
+>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>> index a60c45b..bc46b67 100644
+>>> --- a/arch/s390/kvm/kvm-s390.c
+>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm 
+>>> *kvm, struct kvm_device_attr *attr)
+>>> sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>>           VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
+>>>           break;
+>>> +    case KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>>> +        if (attr->addr) {
+>>> +            if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>> Unlock mutex before returning?
+>>
+>> Maybe flip conditions (don't allow manipulating apie if feature not 
+>> there).
+>> Clearing the anyways clear apie if feature not there ain't too bad, but
+>> rejecting the operation appears nicer to me.
+>>
+>>> +                return -EOPNOTSUPP;
+>>> +            kvm->arch.crypto.apie = 1;
+>>> +            VM_EVENT(kvm, 3, "%s",
+>>> +                 "ENABLE: AP interpretive execution");
+>>> +        } else {
+>>> +            kvm->arch.crypto.apie = 0;
+>>> +            VM_EVENT(kvm, 3, "%s",
+>>> +                 "DISABLE: AP interpretive execution");
+>>> +        }
+>>> +        break;
+>>>       default:
+>>>           mutex_unlock(&kvm->lock);
+>>>           return -ENXIO;
+>> I wonder how the loop after this switch works for 
+>> KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>>
+>>          kvm_for_each_vcpu(i, vcpu, kvm) {
+>>                  kvm_s390_vcpu_crypto_setup(vcpu);
+>>                  exit_sie(vcpu);
+>>          }
+>>
+>>  From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
+>>
+>>          if (kvm->created_vcpus) {
+>>                  mutex_unlock(&kvm->lock);
+>>                  return -EBUSY;
+>> and from the aforementioned loop I guess ECA.28 can be changed
+>> for a running guest.
+>>
+>> If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
+>> changed (set) these will be taken out of SIE by exit_sie(). Then for the
+>> corresponding threads the control probably goes to QEMU (the emulator in
+>> the userspace). And it puts that vcpu back into the SIE, and then that
+>> cpu starts acting according to the new ECA.28 value.  While other vcpus
+>> may still work with the old value of ECA.28.
+>>
+>> I'm not saying what I describe above is necessarily something broken.
+>> But I would like to have it explained, why is it OK -- provided I did 
+>> not
+>> make any errors in my reasoning (assumptions included).
+>>
+>> Can you help me understand this code?
+>>
+>> Regards,
+>> Halil
+>>
+>> [..]
+>>
+>
+> I have the same concerns as Halil.
+>
+> We do not need to change the virtulization type
+> (hardware/software) on the fly for the current use case.
+>
+> Couldn't we delay this until we have one and in between only make the 
+> vCPU hotplug clean?
+>
+> We only need to let the door open for the day we have such a use case.
+Are you suggesting this code be removed? If so, then where and under 
+what conditions would
+you suggest setting ECA.28 given you objected to setting it based on 
+whether the
+AP feature is installed?
+>
+>
+> Pierre
+>
+>
+>
