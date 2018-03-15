@@ -1,49 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeCONp7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:45:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53488 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbeCONp6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:45:58 -0400
-Date: Thu, 15 Mar 2018 14:45:47 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-cc: x86@kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/14] x86: use dma-direct
-In-Reply-To: <20180315134028.GA18074@lst.de>
-Message-ID: <alpine.DEB.2.21.1803151445370.1525@nanos.tec.linutronix.de>
-References: <20180314175213.20256-1-hch@lst.de> <20180314175213.20256-4-hch@lst.de> <alpine.DEB.2.21.1803150951540.1525@nanos.tec.linutronix.de> <20180315115348.GA16210@lst.de> <alpine.DEB.2.21.1803151352170.1525@nanos.tec.linutronix.de>
- <20180315134028.GA18074@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752420AbeCONqy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:46:54 -0400
+Received: from 8bytes.org ([81.169.241.247]:42592 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752369AbeCONqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:46:52 -0400
+Date: Thu, 15 Mar 2018 14:46:49 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Dmitry Safonov <dima@arista.com>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
+Message-ID: <20180315134649.skh2aukcmg5ud74y@8bytes.org>
+References: <20180215191729.15777-1-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215191729.15777-1-dima@arista.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018, Christoph Hellwig wrote:
-> On Thu, Mar 15, 2018 at 01:53:52PM +0100, Thomas Gleixner wrote:
-> > > > > The generic dma-direct implementation is now functionally equivalent to
-> > > > > the x86 nommu dma_map implementation, so switch over to using it.
-> > > > 
-> > > > Can you please convert the various drivers first and then remove the
-> > > > unused code?
-> > > 
-> > > Which various drivers?
-> > > 
-> > > > > Note that the various iommu drivers are switched from x86_dma_supported
-> > 
-> > The various iommu drivers ....
-> 
-> It doesn't really make any sense to switch them separately.  They've
-> inherited the ops from x86 which used to override it on an arch level,
-> and we've now generalized the exactly same implementation to common code.
+On Thu, Feb 15, 2018 at 07:17:29PM +0000, Dmitry Safonov wrote:
+> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> index accf58388bdb..6c4ea32ee6a9 100644
+> --- a/drivers/iommu/dmar.c
+> +++ b/drivers/iommu/dmar.c
+> @@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+>  	int reg, fault_index;
+>  	u32 fault_status;
+>  	unsigned long flag;
+> -	bool ratelimited;
+>  	static DEFINE_RATELIMIT_STATE(rs,
+>  				      DEFAULT_RATELIMIT_INTERVAL,
+>  				      DEFAULT_RATELIMIT_BURST);
+>  
+> -	/* Disable printing, simply clear the fault when ratelimited */
+> -	ratelimited = !__ratelimit(&rs);
+> -
+>  	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+>  	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+> -	if (fault_status && !ratelimited)
+> +	if (fault_status && __ratelimit(&rs))
+>  		pr_err("DRHD: handling fault status reg %x\n", fault_status);
 
-Fair enough.
+This looks aweful. Have you tried to limit the number of loops in this
+function and returning? You can handle the next faults by the next
+interrupt. This ensures that the cpu visits a scheduling point from time
+to time so that you don't see soft-lockups.
+
+
+
+	Joerg
