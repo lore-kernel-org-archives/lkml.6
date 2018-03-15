@@ -1,150 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCOR0C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:26:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751711AbeCOR0B (ORCPT
+        id S1752232AbeCOR0F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:26:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53572 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCOR0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:26:01 -0400
-Subject: Re: [PATCH v3 05/14] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1d5a5e18-1886-dd73-a17e-9bec617507ba@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 13:25:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 15 Mar 2018 13:26:03 -0400
+X-Google-Smtp-Source: AG47ELuePmLOllB2s/RCqPExhdlmaRv35aQ4dQn3DPVQihYwxGD1U6gfrlK20lMTF3RrStmkabQDpw==
+Date: Thu, 15 Mar 2018 18:25:59 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Tycho Andersen <tycho@tycho.ws>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Subject: Re: [RFC 0/3] seccomp trap to userspace
+Message-ID: <20180315172558.GA28108@gmail.com>
+References: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
+ <20180315170509.GA32766@mail.hallyn.com>
+ <CALCETrXPcCNbpFJhXktkVS9gOPpmnU_bbY6Z8RrsBarq0dP4Lg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1d5a5e18-1886-dd73-a17e-9bec617507ba@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031517-0020-0000-0000-00000D988921
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008680; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003485; UDB=6.00510699; IPR=6.00782811;
- MB=3.00020054; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 17:25:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031517-0021-0000-0000-00006081F19D
-Message-Id: <e4d7621c-a09c-bdfd-ffe2-35c5ea3acdc7@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150190
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrXPcCNbpFJhXktkVS9gOPpmnU_bbY6Z8RrsBarq0dP4Lg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 09:25 AM, Pierre Morel wrote:
-> On 14/03/2018 19:25, Tony Krowiak wrote:
->> Introduces a new AP device driver. This device driver
->> is built on the VFIO mediated device framework. The framework
->> provides sysfs interfaces that facilitate passthrough
->> access by guests to devices installed on the linux host.
->>
->> The VFIO AP device driver will serve two purposes:
->>
->> 1. Provide the interfaces to reserve AP devices for exclusive
->>     use by KVM guests. This is accomplished by unbinding the
->>     devices to be reserved for guest usage from the default AP
->>     device driver and binding them to the VFIO AP device driver.
->>
->> 2. Implements the functions, callbacks and sysfs attribute
->>     interfaces required to create one or more VFIO mediated
->>     devices each of which will be used to configure the AP
->>     matrix for a guest and serve as a file descriptor
->>     for facilitating communication between QEMU and the
->>     VFIO AP device driver.
->>
->> When the VFIO AP device driver is initialized:
->>
->> * It registers with the AP bus for control of type 10 (CEX4
->>    and newer) AP queue devices. The probe and remove callbacks
->>    will be provided to support the binding/unbinding of
->>    AP queue devices to/from the VFIO AP device driver.
->>
->> * Creates a /sys/devices/vfio-ap/matrix device to hold
->>    the APQNs of the AP devices bound to the VFIO
->>    AP device driver and serves as the parent of the
->>    mediated devices created for each guest.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   MAINTAINERS                           |    2 +
->>   arch/s390/Kconfig                     |   11 +++
->>   drivers/s390/crypto/Makefile          |    4 +
->>   drivers/s390/crypto/vfio_ap_drv.c     |  135 
->> +++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |   22 ++++++
->>   include/uapi/linux/vfio.h             |    2 +
->>   6 files changed, 176 insertions(+), 0 deletions(-)
->>   create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
->>   create mode 100644 drivers/s390/crypto/vfio_ap_private.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 72742d5..f129253 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -11884,6 +11884,8 @@ W: 
->> http://www.ibm.com/developerworks/linux/linux390/
->>   S:    Supported
->>   F:    arch/s390/include/asm/kvm/kvm-ap.h
->>   F:    arch/s390/kvm/kvm-ap.c
->> +F:    drivers/s390/crypto/vfio_ap_drv.c
->> +F:    drivers/s390/crypto/vfio_ap_private.h
->>
->>   S390 ZFCP DRIVER
->>   M:    Steffen Maier <maier@linux.vnet.ibm.com>
->> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
->> index cbe1d97..58509db 100644
->> --- a/arch/s390/Kconfig
->> +++ b/arch/s390/Kconfig
->> @@ -771,6 +771,17 @@ config VFIO_CCW
->>         To compile this driver as a module, choose M here: the
->>         module will be called vfio_ccw.
->>
->> +config VFIO_AP
->> +    def_tristate m
-> not sure it must be module by default.
-> I would not set it by default.
-Connie also asked about this in the last review, so I will go ahead
-and change it.
->
->> +    prompt "VFIO support for AP devices"
->> +    depends on ZCRYPT && VFIO_MDEV_DEVICE
->
-> VFIO_MDEV_DEVICE is a general feature *needed* by VFIO_AP
-> and has no use case by its own. If it is set it is obviously because some
-> mediated device drivers needs it.
-> while ZCRYPT is a Z feature which may be set without VFIO_AP.
->
-> So you need:
->
-> config VFIO_AP
->     def_tristate n
->     prompt "VFIO support for AP devices"
->     depends on ZCRYPT
->     select VFIO_MDEV
->     select VFIO_MDEV_DEVICE
-> ...
-I was thinking the same just yesterday and I agree, this makes sense.
->
->
->
-> Pierre
->
+On Thu, Mar 15, 2018 at 05:11:32PM +0000, Andy Lutomirski wrote:
+> On Thu, Mar 15, 2018 at 5:05 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> > Quoting Andy Lutomirski (luto@kernel.org):
+> >> On Thu, Mar 15, 2018 at 4:09 PM, Christian Brauner
+> >> <christian.brauner@canonical.com> wrote:
+> >> > On Sun, Feb 04, 2018 at 11:49:43AM +0100, Tycho Andersen wrote:
+> >> >> Several months ago at Linux Plumber's, we had a discussion about adding a
+> >> >> feature to seccomp which would allow seccomp to trigger a notification for some
+> >> >> other process. Here's a draft of that feature.
+> >> >>
+> >> >> Patch 1 contains the bulk of it, patches 2 & 3 offer an alternative way to
+> >> >> acquire the fd that receives notifications via ptrace (the method in patch 1
+> >> >> poses some problems). Other suggestions for how to acquire one of these fds
+> >> >> would be welcome.
+> >> >>
+> >> >> Take a close look at the synchronization. I think I've got it right, but I
+> >> >> probably don't :)
+> >> >>
+> >> >> Thanks!
+> >> >>
+> >> >> Tycho Andersen (3):
+> >> >>   seccomp: add a return code to trap to userspace
+> >> >>   seccomp: hoist out filter resolving logic
+> >> >>   seccomp: add a way to get a listener fd from ptrace
+> >> >>
+> >> >>  arch/Kconfig                                  |   7 +
+> >> >>  include/linux/seccomp.h                       |  14 +-
+> >> >>  include/uapi/linux/ptrace.h                   |   1 +
+> >> >>  include/uapi/linux/seccomp.h                  |  18 +-
+> >> >>  kernel/ptrace.c                               |   4 +
+> >> >>  kernel/seccomp.c                              | 467 ++++++++++++++++++++++++--
+> >> >>  tools/testing/selftests/seccomp/seccomp_bpf.c | 180 +++++++++-
+> >> >>  7 files changed, 653 insertions(+), 38 deletions(-)
+> >> >
+> >> > Hey,
+> >> >
+> >> > So, I've been following the discussion silently in the background and I
+> >> > see that it got sidetracked into seccomp + ebpf. While I can see that
+> >> > there is value in adding epbf support to seccomp I'd really like to see
+> >> > this decoupled from this patchset. Afaict, this patchset would just work
+> >> > fine without the ebpf portion (but I might be just have missed the
+> >> > point). So if possible I would like to see a second version of this with
+> >> > the comments accounted for and - if possible - have this up for merging
+> >> > independent of the ebpf patchset that's floating around.
+> >> >
+> >>
+> >> The issue is that it might be (and, then again, might not be) nicer to
+> >> to *synchronously* call out to the monitor in the filter.  eBPF can do
+> >> that very cleanly, whereas classic BPF can't.
+> >
+> > Hm, synchronously - that brings to mind a thought...  I should re-look at
+> > Tycho's patches first, but, if I'm in a container, start some syscall that
+> > gets trapped to userspace, then I hit ctrl-c.  I'd like to be able to have
+> > the handler be interrupted and have it return -EINTR.  Is that going to
+> > be possible with the synchronous approach?
+> 
+> I think so, but it should be possible with the classic async approach
+> too.  The main issue is the difference between a classic filter like
+> this (pseudocode):
+> 
+> if (nr == SYS_mount) return TRAP_TO_USERSPACE;
+> 
+> and the eBPF variant:
+> 
+> if (nr == SYS_mount) trap_to_userspace();
+> 
+> I admit that it's still not 100% clear to me that the latter is
+> genuinely more useful than the former.
+
+We've just discussed this on irc and the fact that most problems can be
+addressed by interfaces we already have makes it questionable what ebpf
+brings to the game here. Especially since the discussion gave the
+impression that if ebpf ever makes it to seccomp it will basically be
+because it allows a nice implementation of the trap to userspace. If
+it's even unclear whether it is really the better choice for this task
+then we could consider to no try and make this patchset use it. (I
+probably sound way more polemic than I intend to.)
+
+> 
+> The case where I think the synchronous function call is a huge win is this one:
+> 
+> if (nr  == SYS_mount) {
+>   log("Someone called mount with args %lx\n", ...);
+>   return RET_KILL;
+> }
+> 
+> The idea being that the log message wouldn't show up in the kernel log
+> -- it would get sent to the listener socket belonging to whoever
+> created the filter, and that process could then go and log it
+> properly.  This would work perfectly in containers and in totally
+> unprivileged applications like Chromium.
+
+Hm, that is a decent point but that's also a non-essential feature. I
+also wonder if there's any reason to not simply extend it to use ebpf
+later if seccomp every uses it?
+
+Christian
