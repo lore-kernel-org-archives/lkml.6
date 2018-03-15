@@ -1,152 +1,106 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-679016-1521131121-2-2303292882827152957
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521131120; b=ZUTF8qYYEoxhFHf4itT1de2Sp7H5sp0ruVjrSlA2d3zvoGB
-    6kthmwTymVG4yxv14O6Z76Ulvezhq135FLixn/Pin7HBfl5h0LtDqVZIlYsnB40T
-    xuUifvFQj00xlMjSQulVzSLcn3n7uoUyYR5OGNuyTIglhs7Nkn9BAaIdAVVqKt24
-    RbYa3S/y3KUxz/DlbFd+gLugsWHYTzCvjJV/KEzmOpLL9svYIkUCVQY/eYpyR89z
-    20+TA4jdgg2BfDYa4X7MERtHqxG6+G7O9m5KHYlhXkT5K3HoAxQY/osB5jEdoz35
-    7lJhfLUxSeTDPmsvJsQjU3ZHildpRR0Yp4vchtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:references:in-reply-to:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521131120; bh=eUBV8Hsd4lZ+xQadAKoOKvW5C7sjxVrTDoa7eX
-    YhiNk=; b=S5P3+sXZS6IE4b3p01xwFumpLEyQFBTyp1AmyoIF47oP4GcJdA5m0d
-    +mOh/zdKREIJHBmCvLQRudvKni1+ra/Us3+NxO1FCjGmiamCoBq9fLeKdLmHvaWk
-    UStxZREnNInre+2eqcdno4fmnop+A8uyHdnneUG6CJ+wCoGUYx109nhkhwseNmQM
-    14vNA+NU8AUp7PXILd+awoVOPM9XNyyIiWvaRAlqv/bgWrRjP+NPvFMHw7AFaHEm
-    SbEBw60fV3gD+WLxvt5qLmGKssqLqpaNjzabxEnsLGA9UvXyJlJyIzb7Z7sf4Tqy
-    4vaMtnXnzaAK8/daTz9/nkImKkZh4ZIw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=G3KMFotI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gxkpg5lm;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=G3KMFotI x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gxkpg5lm;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751945AbeCOQZL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 12:25:11 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:38336 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbeCOQZI (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:25:08 -0400
-X-Google-Smtp-Source: AG47ELs7cPMzFA6UDZt9UDLQCib7tFrnO/mVKsTXjCVW3WcrlXXEZMbwcVzJqke5+QtuNVVrzzYt/nqq1h574JaHtQc=
-MIME-Version: 1.0
-References: <20180315020445.150604-1-djkurtz@chromium.org> <20180315020445.150604-4-djkurtz@chromium.org>
- <1521119068.10722.661.camel@linux.intel.com>
-In-Reply-To: <1521119068.10722.661.camel@linux.intel.com>
+Return-Path: <djkurtz@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521079492; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kQMF4TFHJh5b9pL43jCI7isB9Hj43IbNHbLfXEenreQf9lL0QtHU9cfgDjx5eJBUuq
+         2kiS+o8jtQktfRNfe7zGmzgQx4+TkYMYm4AS8ZrcUc3GzMJkndqYKfkB+YZVz7yKq31g
+         D4a/BmkFKK14Z26OHYmY+clUphcJ406/ZockAKXCnxC1YSuyJ+rfC9hkb8f1096b5Tyv
+         RwseUpEAFpqHjd7cyrv6t23cDK0i2oyyRICGVjd3R8Enim+VjLhBcYbBJwqHCm7QTcur
+         LCMyI45wKU94k2flUgVu8fbJBJc15g2+OAfzeIdWqp6Dl6xyH9HC2B3PivlncM1Tarwc
+         xOnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=uDdZm8yuXcFomq9kTBbYweUNrIni6McZopibnPCFFeA=;
+        b=Xli/vEBSy9zaOd2uUKmr0rM2CRaZarO4nRQ/DjAFq50+x1YlEQa+0Uqe6jQrZ5gMn7
+         ppfnuuzzA8dmid2HmqHQRt7kxmcCihGUWOTdTiCnu5+NB+rTOqMC1nbWMiMYroLB1wdb
+         pNaVlv37QGMY7xlnLtArbU03HN5SJADi6Asa70rZM6uSlr0/Cf+lUhJz9tuoaDVpdYa8
+         I5vu39e8KSiWv2NWAHsgJNpMcPUuYXY+ZqrRxhaD4y2EUvVMgI1OWUnq+VE84x2rzr32
+         JOtO/TU7BSb2dW/j52QKYnvj4Mgm5WM5upgSQ5XSfZsOaHfHUPF/bz0ydTHB4s37VBeI
+         U/OQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hmylWZFp;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=hmylWZFp;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELtLSKe5WFttvoO2KrxBf8GnvuJy2vZh5IW+9LaW5AaIGHiBjdaIn6mt+paHRrz+uOCQocOgFw==
 From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Thu, 15 Mar 2018 16:24:56 +0000
-Message-ID: <CAGS+omBiUJ=0LouOkP_C9GvHNZCTeH5Vr8=Yqoe9EO6YGgZFvQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] serial: core: Allow skipping old serial port initialization
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        adurbin@chromium.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, jslaby@suse.com,
-        Kees Cook <keescook@chromium.org>, mbrugger@suse.com,
-        dhowells@redhat.com, allen.lkml@gmail.com, sean@mess.org,
-        Doug Anderson <dianders@chromium.org>, matt.redfearn@mips.com,
-        Jeffy <jeffy.chen@rock-chips.com>,
-        marc_gonzalez@sigmadesigns.com, linux-acpi@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: adurbin@chromium.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org (open list:ACPI)
+Subject: [PATCH v3 2/3] ACPI: SPCR: Add support for AMD CT/SZ
+Date: Wed, 14 Mar 2018 20:04:44 -0600
+Message-Id: <20180315020445.150604-3-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+In-Reply-To: <20180315020445.150604-1-djkurtz@chromium.org>
+References: <20180315020445.150604-1-djkurtz@chromium.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594951095060046903?=
+X-GMAIL-MSGID: =?utf-8?q?1594967449680499635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 7:04 AM Andy Shevchenko <
-andriy.shevchenko@linux.intel.com> wrote:
+AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
+earlycon setup handler to configure its input clock in order to compute
+baud rate divisor registers.
+Detect them by examining the OEMID field in the SPCR header, and pass
+then pass uart type amdcz to earlycon.
 
-> On Wed, 2018-03-14 at 20:04 -0600, Daniel Kurtz wrote:
-> > The old_serial_port global array in 8250_core is supposed to hold an
-> > entry
-> > for each serial port on the system that cannot be discovered via a
-> > standard enumeration mechanism (aka ACPI/PCI/DTS).  The array is
-> > populated
-> > at compile-time from the value specified in the SERIAL_PORT_DFNS
-> > macro.
-> > This macro is defined in arch/serial.h.
-> >
-> > For x86, this macro is currently unconditionally initialized to supply
-> > four ioport UARTs (0x3F8, 0x2F8, 0x3E8, 0x2E8).
-> >
-> > However, not all x86 CPUs have these four ioport UARTs.  For example,
-> > the
-> > UARTs on AMD Carrizo and later are separate memory mapped Designware
-> > IP
-> > blocks.
-> >
-> > Fairly early in boot the console_initcall univ8250_console_init
-> > iterates
-> > over this array and installs these old UARTs into the global array
-> > serial8250_ports.  Further, it attempts to register them for use as
-> > the console.  In other words, if, for example, the kernel commandline
-> > has
-> > console=ttyS0, the console will be switched over to one of these
-> > non-existent UARTs.  Only later, when the real UART drivers are probed
-> > and their devices are instantiated will the console switch back over
-> > to
-> > the proper UART.
-> >
-> > This is noticeable when using earlycon, since part of the serial
-> > console
-> > log will appear to disappear (when the bogus old takes over) and then
-> > re-appear (when the real UART finally gets registered for the
-> > console).
-> >
-> > The problem is even more noticable when *not* using earlycon, since in
-> > this case the entire console output is missing, having been
-> > incorrectly
-> > played back to the non-existing serial port.
-> >
-> > Create a global variable to allow skipping old serial port
-> > initialization
-> > and wire it up to the AMDCZ ACPI SPCR quirk and the special amdcz
-> > earlycon
-> > setup handler.
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+Changes since v1:
+ * added Reviewed-by
 
-> I don't like this approach at all.
-> But unfortunately I have nothing to propose.
-> Just felt like I have to share my opinion on this.
+ drivers/acpi/spcr.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-I'm not very proud of this either, but I don't know how else to set this
-flag.
-I proposed a Kconfig option earlier, but that also met resistance.
-Perhaps another kernel command line option?
-
-
-> --
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index 9d52743080a4..52d840d0e05b 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -73,6 +73,24 @@ static bool xgene_8250_erratum_present(struct acpi_table_spcr *tb)
+ 	return xgene_8250;
+ }
+ 
++/*
++ * AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a special
++ * earlycon setup handler to configure its input clock in order to compute
++ * baud rate divisor registers.
++ * Detect them by examining the OEM fields in the SPCR header.
++ */
++static bool amdcz_present(struct acpi_table_spcr *tb)
++{
++	if (memcmp(tb->header.oem_id, "AMDCZ ", ACPI_OEM_ID_SIZE))
++		return false;
++
++	if (memcmp(tb->header.oem_table_id, "AMDCZ   ",
++		    ACPI_OEM_TABLE_ID_SIZE))
++		return false;
++
++	return true;
++}
++
+ /**
+  * acpi_parse_spcr() - parse ACPI SPCR table and add preferred console
+  *
+@@ -189,6 +207,11 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 			uart = "qdf2400_e44";
+ 	}
+ 
++	if (amdcz_present(table)) {
++		if (enable_earlycon)
++			uart = "amdcz";
++	}
++
+ 	if (xgene_8250_erratum_present(table)) {
+ 		iotype = "mmio32";
+ 
+-- 
+2.16.2.804.g6dcf76e118-goog
