@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932312AbeCOQ01 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:26:27 -0400
-Received: from h1.radempa.de ([176.9.142.194]:52245 "EHLO mail.cosmopool.net"
+        id S1752191AbeCOQZb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:25:31 -0400
+Received: from h1.radempa.de ([176.9.142.194]:52196 "EHLO mail.cosmopool.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752140AbeCOQZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:25:32 -0400
+        id S1752052AbeCOQZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:25:29 -0400
 From: Harald Geyer <harald@ccbib.org>
 To: Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>
@@ -16,60 +16,42 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
         Icenowy Zheng <icenowy@aosc.io>, info@olimex.com,
         Harald Geyer <harald@ccbib.org>
-Subject: [PATCHv2 3/5] arm64: dts: allwinner: a64: add simplefb for A64 SoC
-Date: Thu, 15 Mar 2018 16:25:08 +0000
-Message-Id: <20180315162510.11669-4-harald@ccbib.org>
+Subject: [PATCHv2 0/5] arm64: allwinner: Add support for TERES-I laptop
+Date: Thu, 15 Mar 2018 16:25:05 +0000
+Message-Id: <20180315162510.11669-1-harald@ccbib.org>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180315162510.11669-1-harald@ccbib.org>
-References: <20180315162510.11669-1-harald@ccbib.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A64 SoC features two display pipelines, one has a LCD output, the
-other has a HDMI output.
+This series adds support for the TERES I open hardware laptop produced
+by olimex. With these patches and a bootloader capable of setting up
+simple framebuffer the laptop is quite useable.
 
-Add support for simplefb for the LCD output. Tested on Teres I.
+Patches 1-4 add some pin descriptions and devices in the A64 dtsi, which
+are useful to have on the teres.
+Patch 5 finally adds the board dts itself.
 
-This patch was inspired by work of Icenowy Zheng.
+Changes to the previous version are listed along the individual patches.
 
-Signed-off-by: Harald Geyer <harald@ccbib.org>
----
-changes since v1: none
+best regards,
+Harald
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 8401e7f887ff..1b2ef28c42bd 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -52,6 +52,26 @@
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-+	chosen {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+/*
-+ * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
-+ * However there is no support for this clock on A64 yet, so we depend
-+ * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
-+ */
-+		simplefb_lcd: framebuffer-lcd {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer0-lcd0";
-+			clocks = <&ccu CLK_TCON0>,
-+				 <&ccu CLK_DE>, <&ccu CLK_BUS_DE>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+Harald Geyer (5):
+  arm64: dts: allwinner: a64: Add i2c0 pins
+  arm64: dts: allwinner: a64: Add watchdog
+  arm64: dts: allwinner: a64: add simplefb for A64 SoC
+  arm64: dts: allwinner: a64: Add pwm device
+  arm64: allwinner: a64: Add support for TERES-I laptop
+
+ .../devicetree/bindings/pwm/pwm-sun4i.txt          |   1 +
+ .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   6 +-
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 279 +++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  46 ++++
+ 5 files changed, 331 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+
 -- 
 2.11.0
