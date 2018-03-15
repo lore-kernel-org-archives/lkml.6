@@ -1,74 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeCOJGG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:06:06 -0400
-Received: from ozlabs.org ([103.22.144.67]:47623 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeCOJGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:06:05 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 20:05:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huang Ying <ying.huang@intel.com>
-Subject: linux-next: manual merge of the akpm-current tree with the
- asm-generic tree
-Message-ID: <20180315200533.7a3c52a7@canb.auug.org.au>
+        id S1751817AbeCOJGb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:06:31 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22097 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751755AbeCOJG3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:06:29 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "arm@kernel.org" <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Patrice CHOTARD <patrice.chotard@st.com>
+Subject: [GIT PULL] STi DT update for v4.17 round 2
+Thread-Topic: [GIT PULL] STi DT update for v4.17 round 2
+Thread-Index: AQHTvDzXpYopfEu1o0+2IKDEW9xFQQ==
+Date: Thu, 15 Mar 2018 09:06:01 +0000
+Message-ID: <af473935-7cb6-e59a-3b52-055d8492248c@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4F929E22060A714FB5FB2C8A6C45BC2C@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jSOPd4VSlD+3M2DPGFTvOpu"; protocol="application/pgp-signature"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2F96dQa008408
 
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd, Kevin, Olof
 
-Hi Andrew,
+PLease consider this second round of STi dts update for v4.17
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+The following changes since commit 0e04ce02e6a2ac30d21294d8bb2aeceb8489e52b:
 
-  arch/score/mm/cache.c
+   ARM: dts: STi: Remove unused clk_ext2f_a9 clock (2018-02-13 13:31:38 
++0100)
 
-between commit:
+are available in the git repository at:
 
-  b8c9c8f0190f ("arch: remove score port")
+   git://git.kernel.org/pub/scm/linux/kernel/git/pchotard/sti.git
 
-from the asm-generic tree and commit:
+for you to fetch changes up to 9a5f4879cd8de167e82f335317c63f2ffdc80129:
 
-  32a8c02959cd ("mm: fix races between swapoff and flush dcache")
+   ARM: dts: stih4xx: Add missing #sound-dai-cells (2018-03-15 09:52:25 
++0100)
 
-from the akpm-current tree.
+----------------------------------------------------------------
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+STi DT update:
 
---=20
-Cheers,
-Stephen Rothwell
+Add missing #sound-dai-cells which fix DT dtc warnings when building 
+with W=1
 
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+----------------------------------------------------------------
+Rob Herring (1):
+       ARM: dts: stih4xx: Add missing #sound-dai-cells
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqN10ACgkQAVBC80lX
-0GwRGwf+PXr/DnXjWN9JqVWkIxYtovhe4/Wrlm6JGbYAlGa9UYK71raazAQexTUJ
-T5UegtYsKSL/Ii/Weo8H9RFTMHRtc/pP5pXrqToGqiX45TU510n2vIbuyMxjgube
-chHIbF8wbwGSAAByVuo/pIVDp66wdeKqhoBJAjbITygclilHe8e1VGR6Y7TaY/lH
-NGxZ9chagOI08SUrZKCJ91rIYns75mSf9uwGDoOYUHUkWkDnF/EHUBI4QhjFaeZZ
-atVEeQgJOI22NzCsO/8AnhevsSd+bO1GWElfZsUY/GnXYMQ6RTaoBACJNMszRaLo
-xSa7qu+qjoKjXQ/Qi+9aD29aiqHNyQ==
-=6hsN
------END PGP SIGNATURE-----
-
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu--
+  arch/arm/boot/dts/stih407.dtsi | 1 +
+  arch/arm/boot/dts/stih410.dtsi | 1 +
+  2 files changed, 2 insertions(+)
