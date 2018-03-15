@@ -1,177 +1,142 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1536617-1521818643-2-316951779060503833
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521818643; b=fJs9djbON7Pf3PDJR3THu8R+qr/7upuwTWbzTLXDJrd229a
-    mCnfdaAIVeW99JaCDqIq2lqPZu+Qmtq2Ybxl5AQVa3sucEeT5+TMbFLfy6bb6TIX
-    FSu26eGckkvnbyJqmOUKi8PkyBgZ0IHDqVZz3vh8V3sDx8H241frp1yIr+6x8bvl
-    MfGwFjm+90aR8Mrm5VRigYPbymR/inPrWKhTIXz2Dz0uAQm6k84zEuusZB2OStEd
-    Yd7eJS7Y2OhCYMdSGn45G/XzmAB7QgUw325oWekPJkHVK13F40PJPr263Ky09rKv
-    ueyNdCUqJUIvpctBBC49g+sFRUhN1H+i79HqZ3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521818643; bh=q
-    x04kVxDjsDt+KIXC2yK1MKwk8JIkX3J6R9rmliB6LI=; b=i8aFC3Oz+tAVaPvGO
-    q/CPfNleGlczwfYKHm+aPcoO6edx3rJYc0SURIAlnV11HMkWnyB5U+JnKnG3WzBS
-    Zbu6NABfJiZfKYfT/q/tHVeB+mJwrSijr4pGUjjcu5Keqo2ZpYsX6a5lSaglsTQQ
-    X5+VoJvN0L+4oja0Znvz9hP1ILMyq7ow9Cyj9hh090tZOVaoB4u7gxwqwcO0t3TK
-    EuDSAsT8y0ZcTQ7rsI7sJCyrejkoigJbz95vKcOXMfm9yvPx382HSsa6Li6SpkjA
-    /ed2S4n/dUMrjLZLp5sTV1HStuxNk30R9ITbLNBtGoMZ6Y1suBBOwV0HX0qEtJ2Y
-    GlqVQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=e+/ZFhuZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=e+/ZFhuZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Return-Path: <ioana.ciornei@nxp.com>
+X-Google-Smtp-Source: AG47ELtb+bDOyhUMqkEj4xhZfjGB8s/c550RDgZrj09NAQaubkYG1BAbLy+RnXtRsy+mOQEoJCyM
+ARC-Seal: i=1; a=rsa-sha256; t=1521133567; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yCY2MMDxljnRsCqnKuF4a1FvK4vfGopJm0/CIZU2UFVJFKlwMqGgtSI4z57mPJsL1+
+         NkYQPmYyWx4TliGVlR4aDKlNAHh4y79u80neoVOam88zI6fpPK2OcI476cfdumcx7zCm
+         V3AUBd7Pkfr2M96jYomiY3NGDwfPCZBUJaeeKRaiHX65CSJ7nm2JXJjlNoyoWR7re+PT
+         jpVVN6Tu63QM0WqLaj0cwN1xBnnBIXcLuYPb0Qe1qld1jeiYYgFYiVFsR0wShj5voJ9g
+         IVgQ0gq9JZ2M1QG6pQhZTT1/6rvtCjlPCsknuih8Du3PTrM7fLrICxa3kK5Vw3nsYu6E
+         ckzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
+         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=9qYhxSIE2NCM533IebBmunPSJAQKZFMZ7q+QBjdt7U8=;
+        b=xPjtCqF1bu5PAQ4jyg48zwClCL8EWcm7JxmMypQSqpg5VBwV/A5MPFBT8t5vRSZV7s
+         myMoiNTdUXsrXO8oQ6K0yqtKj4e/1y2SWu9qv3sDNSYWCDUsEvISOBThOJAUFwSkHtGy
+         23r7eDWjUSbOBiEnZZ9qg57yfL/yqtbjbVvA8oz1oABhu6hhGHOGpO0diOgZs6+cKCvN
+         598OsjFWculMk5baJThdQauVMSSz9Np3z5l/JGqGxF5YMzuE7sX/+woU+CZmMqck3J1M
+         OOfghEkMuWNSemWMEh6OvWfB6cRk70jgUxxwhU6BCIT+a3ubiWl4kBZo+IkBbjaipQ1Q
+         U3jQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=L6P6mKqz;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.40 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=L6P6mKqz;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.40 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ruxandra.radulescu@nxp.com;
-From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH] staging: fsl-dpaa2/eth: Use debug level for message
-Date: Fri, 23 Mar 2018 10:23:36 -0500
-Message-Id: <20180323152336.11946-1-ruxandra.radulescu@nxp.com>
-X-Mailer: git-send-email 2.11.0
+ smtp.mailfrom=ioana.ciornei@nxp.com;
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: gregkh@linuxfoundation.org,
+	laurentiu.tudor@nxp.com
+Cc: linux-kernel@vger.kernel.org,
+	stuyoder@gmail.com,
+	ruxandra.radulescu@nxp.com,
+	razvan.stefanescu@nxp.com,
+	Roy.Pledge@nxp.com,
+	arnd@arndb.de,
+	Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: [PATCH v2 0/6] bus: fsl-mc: enhance Management Complex userspace support
+Date: Thu, 15 Mar 2018 12:05:30 -0500
+Message-Id: <cover.1521132659.git.ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-X-Originating-IP: [192.88.168.49]
-X-ClientProxiedBy: DM5PR2001CA0005.namprd20.prod.outlook.com
- (2603:10b6:4:16::15) To HE1PR0402MB2700.eurprd04.prod.outlook.com
- (2603:10a6:3:e0::10)
+Content-Type: text/plain
+X-Originating-IP: [192.88.168.1]
+X-ClientProxiedBy: MWHPR15CA0039.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::25) To DB6PR04MB3206.eurprd04.prod.outlook.com
+ (2603:10a6:6:6::14)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b717ef2e-536c-47e5-e97c-08d590d21574
-X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
- SRVR:HE1PR0402MB2700;
-X-Microsoft-Exchange-Diagnostics: 1; HE1PR0402MB2700;
- 3:zJ8c0DSBFFFwoacCMQo4ILsAJrwdXdoHaFXL7nRCyXHZPvxUfcKUxTMmUUfFko0PG9Xs4Bd91KVlbMlAhEUM6AYaMHlxk+vkCmysafevHlBa+fHy8Qc3UTmLeCsw4tE2m4+saNQqxOcqIBMCfD2A1AbB5lduNYkMBWz3Wlo0hJjs7CZ9P6aW+1jDNN0nASitTVYng/T/yhMr+Es7x3TM0z5QXuNjS9Rl42X5UjtikwIyzlZFBaQDaai+C4lT6rM2;
- 25:tmUh4S9XOyzsGesyLeqzKg7r1Se+j2l+A5Aa8JYW/uDsC7W7TqPMviQWoVpR7r/aeVX2nezuCgzw/6jw4PPIupkHvS0K9lkvtzQcAw2c2MuPDoAdhc+A3pj/n2FdpkFEC1FAyIs85mr8gST/IQNFqhCGR6PRkd0tkCzis9KU+b20hCGWSbABd738htGR/c1RIOqX7Z0PqFP6HoOvdHBYcfK4UfZoTvRwbXapw02hOk+VG3QQiS0Wmk4FHmbeHzvJYOB0nYyxt7FjyFPjz+qOuhrpGZs2iTkqG091qWpavmT0mDfB+KEInQ9+LvPu/xALBaiwQGIh5O2FeHv9dbcAnw==;
- 31:zA5jEUI8+bFtjhSkDFqfxVi8m+lSyuX6H7lhDaJ++LGRj8/NfOqWLxsG2XddNxsINWOQs7+DWzrFQ/wiD0ZQqmtckaJMegpjxqr2qhhHl6AWIhF+PXniOHnCKN0ncYlCC7Z3gGvV4lH/yRdPv9MBhsCZfwBJFG2oD0nEjfUIyyrlDxHDmIohtCHRz3ZlBpYg1QQEo3wDpQQaCr/wjkw7NMYWN9S0pSwljJAJBNZZxTU=
-X-MS-TrafficTypeDiagnostic: HE1PR0402MB2700:
-X-Microsoft-Exchange-Diagnostics: 1; HE1PR0402MB2700;
- 20:/h6oZ13cFZ/cgoAB0OxV119YN65PZFhkRGEQceNkSwxEjo/y1olZp9iir4WYeK+yv6QsBn9yh1S1i8aSk3NYbDQUrd/iWwn3Jzn0XlYXSeACe9K8IYfa62As9btOQA5JnoSo46OK1rjfyY+bt+eAHCihUk3E3tL2hodGWyo+XBvsqXQFIdCSt9jOD0qYRIq3m7Dl5qVKAtuoAyVNbEwIoEZul//aI9VNDtQvmRhpR5blVwA740NaSIYZ/ciIr7/x/xIqjympyK97ABxjfrhl+0W4vhYxFOincX9kaYjXuBf85GlT42VA7praUdX/qf43WL2JwpzXYq4fx4SEBrDE4ueIPE4sqB3/DfdJcFXDee1SN63405rMkr+aEc71cao837GwtGNxVYjrbSUNjAjI6lTcRc53AietTbEGQ/crAGcXxla1h6MIIJX7CDimD9o6vloDGazwbgmaUAxgwDJJ/9olpxYd6Td3C4skTYEXEGXsm2RNaJ0ocn0CT756oRXI;
- 4:wsEsJ2Qe1YSqQo2GPrIEeF1DJvCYM1fDLG8iodC6dQc4t3d1xy5OIt6+tfeGVyTiAW2JnQ4xPGXgu0m27UE+PCS/H1LiZlSP4026+0NYnhtFMmkj7bfAAESVm/sXJRupKmdY64KlBWm7AQjuAOfxf0ems9CzSz1rrSIkgKxYaGI0aC8u7oM2pg1Ve6g5x64JrYOKe4XCV7HUIg+cnyD3xWXbyfusQXXzOdjpPd2L1Igdaz9pzRR7s7MAwA4YNz/B5hVfj+PvnpP7AbGTZgW9Cq631ntHJzn0jI0J7ziNBs5+lPsLKWwcJPe02Mmy6DQU
-X-Microsoft-Antispam-PRVS: <HE1PR0402MB27006ACD893860083E8CEE2E94A80@HE1PR0402MB2700.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);
- SRVR:HE1PR0402MB2700; BCL:0; PCL:0; RULEID:; SRVR:HE1PR0402MB2700;
-X-Forefront-PRVS: 0620CADDF3
-X-Forefront-Antispam-Report: SFV:NSPM;
- SFS:(10009020)(366004)(376002)(396003)(346002)(39860400002)(39380400002)(189003)(199004)(53936002)(6666003)(15650500001)(105586002)(68736007)(8936002)(7736002)(66066001)(106356001)(5660300001)(1076002)(3846002)(59450400001)(50226002)(50466002)(6116002)(2351001)(6916009)(305945005)(2361001)(26005)(186003)(97736004)(16586007)(478600001)(48376002)(2906002)(86362001)(8676002)(81166006)(47776003)(25786009)(16526019)(1857600001)(4326008)(81156014)(6486002)(386003)(6512007)(316002)(6506007)(36756003)(51416003)(52116002);
- DIR:OUT; SFP:1101; SCL:1; SRVR:HE1PR0402MB2700; H:rhuath.am.freescale.net;
- FPR:; SPF:None; PTR:InfoNoRecords; MX:1; A:1; LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; HE1PR0402MB2700;
- 23:tYrZeTYJwewR1mWaWKNAhP9kQF8JqKOytniQrq+?=
- =?us-ascii?Q?4Pgmhd4IUxNEvNixS3N5ZlUt8qIz/5QP20xkK3cHSEIl1fgfURcStEW22zbX?=
- =?us-ascii?Q?jDXnxyhC8180mMYfNSFWvAq0tUwOQcUHcVxKD5/Gv016RDuLceT6Ye2NGzz8?=
- =?us-ascii?Q?6o6l2RWU0KFXyMGoGiaq5pEZJhM/Dgc+8xUaO54OzA5siHxrkj3nJfEojoFf?=
- =?us-ascii?Q?7pCMzjNQSuo8tHxXpJi/A1a0wMQPftpZNJ38q9pUtzeiQNZnC+IzkGDTy84Z?=
- =?us-ascii?Q?I/mm9bxylCNvXhOsmnNwAtwUlxsZ+4a10OYY5SndH+algQboLSXHV2ThPjmI?=
- =?us-ascii?Q?BtmhRrKKFojkQFj4ibzlgrnnmXNVFsHHr4S2l/68isNEBOFhyKNLu3LbI7AB?=
- =?us-ascii?Q?8eVoBbiTUw72nNT1lXeK8Vh5+LLEZDVpE7T10GbKjoAYFwNYEtQYIVFp3L42?=
- =?us-ascii?Q?IzH8+3K5+cmBNmTdlJmWWw/zOMBjZBM6oP6YWoLtgw3cTQ3g7jDMFtzQDcO4?=
- =?us-ascii?Q?z5/ccWoEXp0gbe163EXB54ZHnidBKY0z1rd1ftAwH/4GN4X+reWrtSeRZrRg?=
- =?us-ascii?Q?xMrG8O8hyh0ktpdewxrn5nInpU0wBg0aPP4+ZuxPSZX/Fc2v1blnnpuExa+F?=
- =?us-ascii?Q?WZLNAX27YjVJ79dH0i93H+fTqRDh39+E7TTntv0tFjHyZ8JI8to5OlfcI+tn?=
- =?us-ascii?Q?ljgp2PDPArN3QP6mFyL/ojbigu8JGN6Ft/jQ13HOHxlnMq5FlHpaWUlWhxs0?=
- =?us-ascii?Q?fQTqykf9oMrdrT2IpyK7/PT4aBOBqHpZhrgzYVpSnakrMowxn6lvHzJNBwQp?=
- =?us-ascii?Q?HnUV0hiJwDGtrfLjut3yDCa/wNLLfqEDBQUmQvGJiIcvAtIXWGECGUeQRcOi?=
- =?us-ascii?Q?lDvTAr9KbjYL4eT8L7qbsAhKk/6u4NeTOSOktq0Z7RrArunHZ1RYsEg/VjAJ?=
- =?us-ascii?Q?pvJwphi0lZ6VVZihSnL53GTYaqUawmgGxyguDmj3CNBR0BI2Fz7v+Bm5rDjq?=
- =?us-ascii?Q?mJyOUju1Z00yB+CpwPY5KLK90dqf+EIQix+gtsBHyfozl/7AjQfByHpqZ0xV?=
- =?us-ascii?Q?076yh89xYLaHKQJICzXEM+vStx/HP11azDdcuzDOMlr+3Ra2qRhbXGThEy+Z?=
- =?us-ascii?Q?OCsid43+oXSO73/1sjV07d/ZpXSQKVPSV3/Eb7stD0endrvTuZhZxdvzPasj?=
- =?us-ascii?Q?ETOQuDTPejcV7dK0=3D?=
-X-Microsoft-Antispam-Message-Info: Za/G9aL1hSYqowscwjxBgT0QJZCHccyf9sMm1l2qHjS6Fm35vIv6f2Mm7qeaL6U81Cmmu9nYOLAWQnK+OKYJmV7ZKtcdQT5076IkCTlicD2UT1MR1pTRM+xP4IlBtpQEX3mu+zfT2QP11TzbvVDnwOS2Tbw1WXuy8Kzz6VcmhJVs1Sb/eIfix7veM/+fxz0H
-X-Microsoft-Exchange-Diagnostics: 1; HE1PR0402MB2700;
- 6:BUsHl9+OpNCmhCV62qKpF2YE81JICmWAW/5G5tJXgN44nsWoTiEbNmn0kywRHkqrf7rRYtm0AFwFD3afkUGvMlfp4fu8+OOB9Qw9lbI/glzzxisiavfisRlnNtLSekf/PX7MG8NIZ2180BTGVgozIn/FFwvjQetjCjCxh1iEcdJMZ6xNQCzzONSDDLnbm6GhN13/dx827hzeDpZx/4CopsTbxWeKGm6B4NRDUink33fZb8zzR9q0ccUSKanSN+vmx9mXIOd0d5U4sRTdU3ecIGmvSYGpmHqv55T5u4yFjnZrjihRCrXvF/4Futyjrdm8AxvkrdASkI5SDKpY91oxQwNZgjFz2leV9FKU5kolmw4=;
- 5:FIqOmrqQNZdx0u/KPQnpUVwKj3QVqd4aQdNzhTCXlJ++tUhqQy+Zh52rxentLWqDjSA9S7Gh1VfFjcn4gg9FMRqKcSrfz5JxhExWJifryCE/4Al0c0vJyj/81xwm9slvOVcJIADQF9axtnJeG9RKfl/jZdc8VJvQEqrPu/n4VoQ=;
- 24:8Eb9tdIijTLDNWw3DPSm6IABSvtM018LTjo7plDcD7C8/NPJf1+4iqZ4DKPybcXxCxAARjmXHsCAO5fho9RWak28m2VuYX9xwYJXySO7SJ8=;
- 7:Z4EoYX9vhijZ8bmwA15SQcetGsnNeJ8Iae9eiEBoieJz9Zs+gxn/5ieTk0bjqXbX2tyHRPAsVtTd8wpTVB8SJO7bY2cjajh/6RtVHJfuuJ2L4NcX5HZYdtr/cvCQqTn1DBuV3U8pCC3M3JF8wSRPYfaUvJ4u+G04ub+ewMjdTyG60wERYj4gc58W2zL7sT1ZHFqGTwn8oavOYP6JApo2TIyHUTnFGJMUNVjhpG+hwuV5ZM4duefe1+PuKwiVEMfG
+X-MS-Office365-Filtering-Correlation-Id: 19d2c3d6-fe2c-4443-d0a9-08d58a9709e0
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR04MB3206;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;3:R4cQ9m9G295y7OrrNKR/gh60ZZzsQhCcpDUO79SGPa9TL6b9yYpiYMjxe/3J7VG8zD63sMq/kr73YrjdaV1Qzo/Mm8fEa23V9XDY/h1QT/1QedrhTN0UDbAtw48hf7jTPaP377cQya5i1ucbQzeb0WAIGpCwToIsc33+6zXBgH7UJkow647wBd7zZTZAKJFJL7T31OBxjeRGQlkgEzs9/yijOp2CCa0vctjHQzju/sYh2poReq8rYpxd6rFx1MHh;25:m7c/tZl4UThqkI6Cwi87wE0+t2GY0DD0IJV+ZCRKFgVXYUsyUIafkk8NUoFii6xrXgPhp+8cSMhFspdUIrV5vvySwsSgO3AV041mZP0l3Mw4AVTpLyo5cFqK3z//24IHvlIXA76VmWedKwa/Hj1DkDsczWPyGAzxW9PdLbHz1fUfAx7b5bJjbIxa83yYPwtA6dMMhrZY7U3TY90YdRxGllPZaK0fNfDh1dUGb8aC81EFgWSacZ5QB2tRwqzlO75C+ObeoWYnZyj00lQzn9HGyDBy+t2+Oj/+3YGSVIOE4fN3+e2eD8EXvw6AlczXMYSffqHq4kJWu8Sx07ssUCMOrw==;31:8GjQM6vidtlyA0zalBmgbqOdmefyCCTJlDubxwX1+tFAxoJ/ssNhMzu4bxhE6YhMU+sEe027C81PCNN2hR05dV3Eob7Ax3yvyR25hilw4tiW0tBqKB9OuzZuwfNSQcRbezi/M8KSDg4aEvwiaE7gQHTM/Nl+tkDlQ2ZKbj+PDYJXU5WYLVRuPBdcv2SKdgpfNbngDJaKQHwUdkbotrlVvCdImJowwAHCXolJKW860wo=
+X-MS-TrafficTypeDiagnostic: DB6PR04MB3206:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;20:ukX149cfLJQ4lwFDOh5CZ89UvVf3U1MCmLu7Di5aMWm/2/Zq+rWyyldx5NfD4FYr4NYTwjI0ZmHqhUdy+nRC0vFOaoDD/t+OzxtrNSU/lIgFDLM30xwhyd97uHk3fTudGMgPeE6NjmLEvpxHIEBPl+SjW5lY2Gdh4DuoVjv5fiiSAxYqqQl8je9D737VU+Zxr/JA9g21Yp18U/e9ya6vHaRM4S2lcr9109KgYaE6nYF/tj9TMSCQeWsrlSaZF3mY7oMOX82Hsi3AUBiG81gUrYidf4XyupGpanIEykd8cLDF7QFDC61rtsRa/j4YSlU6oaMd/LEuVFeFxWGu4C9lt0x5OvkpyLXEf7edarw8Z7lE2pDIuqjHqV+UeANrbE8sS3kGVQ8not6sViZIesauO1ehLJOFro+RA9YC68vAw6nR0LRAjBAYR7WHARdIq6EjphTnxWAMGZjV/j098j7kojQtT7emwyWj8zvkliZDYi/9W1zkiTKKXDcBk3oC/nDN;4:EreH/djs82tHidYijwgIIqi0jjvUHo2agZN8JNUwKx8prrPcNhFcOItAsNgdkO4m758a4akprOzZkZjEZIumB3nOoYvYuXeFaLFYySqRE+P9MbEQf1zmWTjfaVcm4hPg4UB++MBwpnICpu8F83Q0VeNwQI2A9EOqqwUW5sSz9RLcALPxEEU1GVaR5Q58Qjb7VKeney+PF8P6aSjIRE2Qu7ZBUKjiaCLtyq52E+7SikXuHFf9IPA4I6qEQZSwn6xvj53B+JoTPC7PP2QSH2KSYQ==
+X-Microsoft-Antispam-PRVS: <DB6PR04MB320675C77C292D63E5FF5F82E0D00@DB6PR04MB3206.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB6PR04MB3206;BCL:0;PCL:0;RULEID:;SRVR:DB6PR04MB3206;
+X-Forefront-PRVS: 0612E553B4
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39380400002)(346002)(366004)(39860400002)(189003)(199004)(7736002)(105586002)(81156014)(6486002)(50466002)(68736007)(3846002)(47776003)(66066001)(50226002)(6512007)(305945005)(6116002)(36756003)(48376002)(8676002)(53936002)(8936002)(5660300001)(478600001)(186003)(97736004)(16526019)(316002)(86362001)(25786009)(106356001)(39060400002)(81166006)(6666003)(26005)(6636002)(4326008)(52116002)(386003)(51416003)(6506007)(2906002)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR04MB3206;H:rhuath.am.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR04MB3206;23:NevPbtG1xGwONYnZEy4UBhKST3UA///euOXRhFzKj?=
+ =?us-ascii?Q?4y1mtT6hLsPyCo3X8Ij9/HQq3+geRalpgKFYHaZRQMnxEBOMgRplNGs7L6ue?=
+ =?us-ascii?Q?AtJvNdU+87KdxbwciYjqNFZ8JGIRB8wAhFDiZNxdD2U+pTdpXdai+N/pLtGX?=
+ =?us-ascii?Q?wVXJ5orvTnniBVVR2WkBG9bt8Eba7l+9znxGMZTovkAAh3u/DaUo/evLnUgE?=
+ =?us-ascii?Q?NrlHf38Ya/Lk98mVKBiPiMxWa5W5fwMcG7hcsAdu13dbWEHn4yAM1C4f2c+y?=
+ =?us-ascii?Q?+g4RNGMoND6U8y1MGHIdsavR48FULlfTR37OZQkU3Pm0KCyVr7706QDpvAZi?=
+ =?us-ascii?Q?jSpaAmfDuzuBnmheiz8UeDDZnviOQBQmU4agl+rT/nag9THTcH9nc7kgXqkv?=
+ =?us-ascii?Q?g5sr6kPqYihiplbHK4RSz1GITi5bXUC4jIpbikBdBl38AahV2TjBk4BJ8JjQ?=
+ =?us-ascii?Q?Q9+t8sPa/2dBimaAiHZiy8BVym3Pd0ReGYfB9KMb00p+gjBn+sFDDcbNw1DD?=
+ =?us-ascii?Q?YbA1v4zTvpy23SIhidA38Guv+0TUcC9VG+5vtDx2QrqtK+t4nMdzFPCuf3FV?=
+ =?us-ascii?Q?a+MmfJ8pLgH/9hkvcZetf3iZ29q8lkLncw8NXGDE0K7PXiTEZqTLMTX059jK?=
+ =?us-ascii?Q?h3nknimh7v/6DR4dAMa4wGhecqLw8vQOwUJ0BzsyEKHTLiBCNwKn5mGVRgkF?=
+ =?us-ascii?Q?VgsbbNulro4VJNVXgjxa2okfGovvVmLeP1LK01y5AZ2svhe4PQr+KeVq0pdg?=
+ =?us-ascii?Q?vd8szAWjSaNCP2MqjRJbrR9HQbku8ys3ucFeISsVvRfQryV/tFWV9rYsz4Wq?=
+ =?us-ascii?Q?c03lYnVaOK55C7zIpxWKkK69rpA/x3yA6x+L8hdo0FGkV2Vcm2UrC9f0Ss06?=
+ =?us-ascii?Q?o8+5JDw5dD8Eh+L9qkRpYw2eRxj7iF4Ht2VcWmXVlDmwWeIvaUURqJryB9tD?=
+ =?us-ascii?Q?TYA6ozl5JNlZDa4GrvSSr4mrM2qJi0ggr1pr8QeN2ysOHYV2aZ7teDJnng7/?=
+ =?us-ascii?Q?DMvJYGbXR9w2cAfgCruYMwgwXnLG00LJZywtO1Qa+t2i706Q4QucLjGazV8Y?=
+ =?us-ascii?Q?GNOAx9X41+bx9NDYaBd6uoFaD0H?=
+X-Microsoft-Antispam-Message-Info: YQDDQc5izq/aD3xEiTy3y+hKHNTzNq0MmVcXdEkonvw09gr40C42TP6Abw2YofBtdMbBdA9MXu4VoT6VPixhTnXrTM81j1Etv8wHjy+PdD5NEOzh7T0QLzPs7m0hnfiCBdKIan/CWJHb6hR+Tsvz4vOm2sTVNEPHJCicvfyZfAWmPzRKNpR/5T8/+IlwrTIT
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;6:NxK+9KvsNNxpkItKtkYy4lMMp/+76xOBiFdbS4foq7/q7e/AhLwgYbmpJ8GoKwcl5M1+kS5IUImKAhTH3dtVIFKBMWmGm/H2JQiMztBRyK5HP0YZ7sciIOsCUT8X2YLIzP8YXiCpdsTCsi2jzLjc7EGmyT9MdALM7YB8n5nFcmHPUrxyoi82IGzwrroyirRevYjBrG2IzipvKSGYPPzpWLJdXIL7Ghd2q+VVnp6GDvhD71oAfYlI70ykoPc5HDAKUZmOTBdJ4cNAn/0wwX19XfGJwUcslm6ePcWdNUZ83jTMTbn/UJVk3H7OSzZ7zlWFEe+quN6wQSofubhetRHWoUGNjcVBrDScht9cXP+dgfQ=;5:4EB5RCNuz1jbfPpo7VhUfpQwQtv3CtLj2KR/JgvA1t6asGPOc6pqjhMjxfuKnnajJrKEkQhwQA9ux/tjHDQ+eqn/j/cmxxWOKRJZJC/OMwCOsobATr3NAg0ElTmeevmBGpIry5Um0IRyHWcMj/Wg6C2yav5GYno+MLcRjhb4deo=;24:eWklWo715uQg2V1Vt0wOq8iJGJSui1nfagosKdq6kjuNPgbinFZMifVgIJjd8isxd8A5hfNmN+6kpB0rSpEy4pKnn4pXPZDzO6fPPwWJGYQ=;7:/mcdjkqNy0bRveSjOz3eMl66X3FrLXi32MzD3STSuKyrufFOfUgv9qVBFbF2/DLg4sCEyfG4ayDU86Et46HOFOK9ndSukJaINhNu0YWzdDVApuOo+s27m/vqv20W5ZhPkkRusht23SjajIxhXhXGs2aFn4LQJufBY+KQYkWqLOmgUhZ0LhwDeYGqjrqzhLa7JDcJcgwS3BdyfxWphsq3WXcNaoer/9NKLR+QJJPf2QVQAmFbkYrR9fAMhMbunRm+
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 15:23:50.8589 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b717ef2e-536c-47e5-e97c-08d590d21574
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2018 17:06:03.0246
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19d2c3d6-fe2c-4443-d0a9-08d58a9709e0
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0402MB2700
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3206
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595024152098474506?=
+X-GMAIL-MSGID: =?utf-8?q?1595024152098474506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The driver remove() function prints a message when the operation
-is completed. Make this a debug level message to avoid polluting
-the kernel log wih too much information.
+This patch set adds restool support in fsl-mc bus along
+with a rescan attribute to the root DPRC container.
 
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
----
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+ - changed mc_command in fsl_mc_command structure
+ - updated fsl_mc_command to use the proper types and moved it in uapi
+ - added proper sysfs documentation
 
-diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-index 14bd8fe..553678d 100644
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
-@@ -2578,7 +2578,7 @@ static int dpaa2_eth_remove(struct fsl_mc_device *ls_dev)
- 	dev_set_drvdata(dev, NULL);
- 	free_netdev(net_dev);
- 
--	dev_info(net_dev->dev.parent, "Removed interface %s\n", net_dev->name);
-+	dev_dbg(net_dev->dev.parent, "Removed interface %s\n", net_dev->name);
- 
- 	return 0;
- }
+Ioana Ciornei (6):
+  bus: fsl-mc: change mc_command in fsl_mc_command
+  bus: fsl-mc: move fsl_mc_command struct in a uapi header
+  bus: fsl-mc: add fsl_mc_allocator cleanup function
+  bus: fsl-mc: add restool userspace support
+  bus: fsl-mc: add root dprc rescan attribute
+  bus: fsl-mc: add bus rescan attribute
+
+ Documentation/ABI/stable/sysfs-bus-fsl-mc   |  13 ++
+ Documentation/ioctl/ioctl-number.txt        |   1 +
+ Documentation/networking/dpaa2/overview.rst |   4 +
+ MAINTAINERS                                 |   2 +
+ drivers/bus/fsl-mc/Kconfig                  |   7 +
+ drivers/bus/fsl-mc/Makefile                 |   3 +
+ drivers/bus/fsl-mc/dpbp.c                   |  12 +-
+ drivers/bus/fsl-mc/dpcon.c                  |  14 +-
+ drivers/bus/fsl-mc/dpmcp.c                  |   6 +-
+ drivers/bus/fsl-mc/dprc-driver.c            |   4 +-
+ drivers/bus/fsl-mc/dprc.c                   |  28 ++--
+ drivers/bus/fsl-mc/fsl-mc-allocator.c       |   5 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c             |  97 +++++++++++-
+ drivers/bus/fsl-mc/fsl-mc-private.h         |  53 +++++++
+ drivers/bus/fsl-mc/fsl-mc-restool.c         | 219 ++++++++++++++++++++++++++++
+ drivers/bus/fsl-mc/mc-sys.c                 |  20 +--
+ drivers/staging/fsl-dpaa2/ethernet/dpni.c   |  84 +++++------
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.c      |  64 ++++----
+ drivers/staging/fsl-mc/bus/dpio/dpio.c      |  12 +-
+ include/linux/fsl/mc.h                      |  16 +-
+ include/uapi/linux/fsl_mc.h                 |  31 ++++
+ 21 files changed, 561 insertions(+), 134 deletions(-)
+ create mode 100644 Documentation/ABI/stable/sysfs-bus-fsl-mc
+ create mode 100644 drivers/bus/fsl-mc/fsl-mc-restool.c
+ create mode 100644 include/uapi/linux/fsl_mc.h
+
 -- 
-2.7.4
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+1.9.1
