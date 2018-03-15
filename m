@@ -1,96 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932453AbeCOSTO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:19:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752238AbeCOSTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:19:12 -0400
-Date: Thu, 15 Mar 2018 13:19:11 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Message-ID: <20180315181911.jpnxzbhltkxsissv@treble>
-References: <20180315154448.16222-1-bp@alien8.de>
- <20180315154448.16222-5-bp@alien8.de>
+        id S1751652AbeCOSVP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:21:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41040 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750987AbeCOSVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:21:14 -0400
+Date: Thu, 15 Mar 2018 19:21:10 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Daniel Vacek <neelx@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock
+ alignment"
+Message-ID: <20180315182110.GR23100@dhcp22.suse.cz>
+References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
+ <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
+ <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
+ <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com>
+ <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
+ <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
+ <CAKv+Gu8dvCRUnS5KxDWa4GP2vMPo9cUWVNybx+tGY_Y8T67Uvw@mail.gmail.com>
+ <CACjP9X9w-zruS8uj6j+ZRc7EUZ80MAwbvWOh=gRJZu7gAqU7hg@mail.gmail.com>
+ <CAKv+Gu83VtB+ff6H88UMF9kiz5923U8tXhQoERdErYE4pQg94Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180315154448.16222-5-bp@alien8.de>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <CAKv+Gu83VtB+ff6H88UMF9kiz5923U8tXhQoERdErYE4pQg94Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 04:44:43PM +0100, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
+On Thu 15-03-18 15:48:47, Ard Biesheuvel wrote:
+> On 15 March 2018 at 15:34, Daniel Vacek <neelx@redhat.com> wrote:
+[...]
+> > Hence I was asking what is the abstract meaning
+> > of it. As I see two *way_different* implementations so I am not sure
+> > how I should understand that.
+> >
 > 
-> The code used to iterate byte-by-byte over the bytes around RIP and that
-> is expensive: disabling pagefaults around it, copy_from_user, etc...
-> 
-> Make it read the whole buffer of OPCODE_BUFSIZE size in one go. Use a
-> statically allocated 64 bytes buffer so that concurrent show_opcodes()
-> do not interleave in the output even though in the majority of the cases
-> we sync on die_lock. Except the #PF path which doesn't...
-> 
-> Also, do the PAGE_OFFSET check outside of the function because latter
-> will be reused in other context.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
->  arch/x86/kernel/dumpstack.c | 34 ++++++++++++++++------------------
->  1 file changed, 16 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-> index eb9d6c00a52f..3f781a8dddb8 100644
-> --- a/arch/x86/kernel/dumpstack.c
-> +++ b/arch/x86/kernel/dumpstack.c
-> @@ -22,8 +22,6 @@
->  #include <asm/stacktrace.h>
->  #include <asm/unwind.h>
->  
-> -#define OPCODE_BUFSIZE 64
-> -
->  int panic_on_unrecovered_nmi;
->  int panic_on_io_nmi;
->  static int die_counter;
-> @@ -72,29 +70,25 @@ static void printk_stack_address(unsigned long address, int reliable,
->  
->  static void show_opcodes(u8 *rip)
->  {
-> -	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
-> -	unsigned int code_len = OPCODE_BUFSIZE;
-> -	unsigned char c;
-> +#define OPCODE_BUFSIZE 64
-> +	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
-> +	u8 opcodes[OPCODE_BUFSIZE];
->  	u8 *ip;
->  	int i;
->  
->  	printk(KERN_DEFAULT "Code: ");
->  
->  	ip = (u8 *)rip - code_prologue;
-> -	if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
-> -		/* try starting at IP */
-> -		ip = (u8 *)rip;
-> -		code_len = code_len - code_prologue + 1;
-> +	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
-> +		pr_cont(" Bad RIP value.\n");
-> +		return;
+> My interpretation is that it has a struct page associated with it, but
+> it seems the semantics of pfn_valid() aren't well defined.
 
-As long as you're changing the code, might as well remove the leading
-space here, so it shows
-
-	Code: Bad RIP value.
-
-instead of
-
-	Code:  Bad RIP value.
-
+Well, pfn_valid says that a given pfn is backed by a real memory and it
+has a valid struct page backing it.
 -- 
-Josh
+Michal Hocko
+SUSE Labs
