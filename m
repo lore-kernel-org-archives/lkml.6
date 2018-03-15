@@ -1,91 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933143AbeCOQCS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:02:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35948 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932475AbeCOQCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:02:15 -0400
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, joel@jms.id.au, wim@linux-watchdog.org,
-        linux@roeck-us.net, Milton Miller <miltonm@us.ibm.com>,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v2] watchdog: aspeed: Allow configuring for alternate boot
-Date: Thu, 15 Mar 2018 11:02:06 -0500
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18031516-0004-0000-0000-000013CE73CC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003457; UDB=6.00510682; IPR=6.00782783;
- MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 16:02:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031516-0005-0000-0000-00008679C508
-Message-Id: <1521129726-15490-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150176
+        id S933160AbeCOQCl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:02:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57248 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932979AbeCOQCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:02:39 -0400
+From: Takashi Iwai <tiwai@suse.de>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Ivan Levshin <ivan.levshin@microfocus.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluebooth: btusb: Fix quirk for Atheros 1525/QCA6174
+Date: Thu, 15 Mar 2018 17:02:34 +0100
+Message-Id: <20180315160234.21789-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.2
+Patch-mainline: Submitted, linux-bluetooth ML
+References: bsc#1082504
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Milton Miller <miltonm@us.ibm.com>
+The Atheros 1525/QCA6174 BT doesn't seem working properly on the
+recent kernels, as it tries to load a wrong firmware
+ar3k/AthrBT_0x00000200.dfu and it fails.
 
-Allow the device tree to specify a watchdog to fallover to
-the alternate boot source.
+This seems to have been a problem for some time, and the known
+workaround is to apply BTUSB_QCA_ROM quirk instead of BTUSB_ATH3012.
 
-The aspeeed watchdog can set a latch directing flash chip select 0 to
-chip select 1, allowing boot from an alternate media if the watchdog
-is not reset in time.  On the ast2400 bank 1 also goes to flash bank 1,
-while on the ast2500 the chip selects are swapped.
+The device in question is:
 
-Also clear the secondary boot bit during the machine restart operation.
-Otherwise, the system will switch to the alternate boot after every
-reboot, which is not desired.
+T: Bus=01 Lev=01 Prnt=01 Port=09 Cnt=03 Dev#=  4 Spd=12   MxCh= 0
+D: Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P: Vendor=0cf3 ProdID=3004 Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E: Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E: Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I: If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I: If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I: If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I: If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I: If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Signed-off-by: Milton Miller <miltonm@us.ibm.com>
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
+Reported-and-tested-by: Ivan Levshin <ivan.levshin@microfocus.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
 ---
-Changes since v1:
- * Disable secondary boot before the restart operation.
+ drivers/bluetooth/btusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/watchdog/aspeed_wdt.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-index d1987d6..a5b8eb2 100644
---- a/drivers/watchdog/aspeed_wdt.c
-+++ b/drivers/watchdog/aspeed_wdt.c
-@@ -46,6 +46,7 @@ struct aspeed_wdt_config {
- #define WDT_RELOAD_VALUE	0x04
- #define WDT_RESTART		0x08
- #define WDT_CTRL		0x0C
-+#define   WDT_CTRL_BOOT_SECONDARY	BIT(7)
- #define   WDT_CTRL_RESET_MODE_SOC	(0x00 << 5)
- #define   WDT_CTRL_RESET_MODE_FULL_CHIP	(0x01 << 5)
- #define   WDT_CTRL_RESET_MODE_ARM_CPU	(0x10 << 5)
-@@ -158,6 +159,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
- {
- 	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -231,7 +231,6 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0930, 0x0227), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0b05, 0x17d0), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x0036), .driver_info = BTUSB_ATH3012 },
+-	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x3008), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311d), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311e), .driver_info = BTUSB_ATH3012 },
+@@ -264,6 +263,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0489, 0xe03c), .driver_info = BTUSB_ATH3012 },
  
-+	wdt->ctrl &= ~WDT_CTRL_BOOT_SECONDARY;
- 	aspeed_wdt_enable(wdt, 128 * WDT_RATE_1MHZ / 1000);
- 
- 	mdelay(1000);
-@@ -245,6 +247,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
- 	}
- 	if (of_property_read_bool(np, "aspeed,external-signal"))
- 		wdt->ctrl |= WDT_CTRL_WDT_EXT;
-+	if (of_property_read_bool(np, "aspeed,alt-boot"))
-+		wdt->ctrl |= WDT_CTRL_BOOT_SECONDARY;
- 
- 	if (readl(wdt->base + WDT_CTRL) & WDT_CTRL_ENABLE)  {
- 		/*
--- 
-1.8.3.1
+ 	/* QCA ROME chipset */
++	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe007), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe009), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe010), .driver_info = BTUSB_QCA_ROME },
