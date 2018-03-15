@@ -1,428 +1,523 @@
-Return-Path: <mst@redhat.com>
-X-Google-Smtp-Source: AG47ELtT112xD0scfe171eoXM5Uuy59BAbtsNw81rrk4Xh4VIK7NChM/RydNtY5rn4Snn9Yrk6jM
-ARC-Seal: i=1; a=rsa-sha256; t=1521120669; cv=none;
-        d=google.com; s=arc-20160816;
-        b=by9FU3mALW0jecZ17xjB9vrJBGZJD+U906hdJKbNlx3wzDokCP9c7beruiDG9tt2e7
-         LGMAQCXVL/55g2SSqSylZpWIsT+Eh2kalN5gEsTWs/554sB4hoyeE4G6PAdgYf6tyLlD
-         apxdGbUCGsGOY2Sl0oDMZwkEy9VLzVgU9OftPkj4q7RxpsBMGtWfdSkxmwe1s5dXQdbr
-         H31NIg2FGYt0aYhtWNAMVD1BLjwAJwPczcxUfsVYDgjDBB+UvGpPDq5lu3APGnjn8rwF
-         /Fh1lizSsnqMemko3Sf60JLLIWhziaKkwftVx3ZKGUxfE5aAJtaj+mmWl7g2iS/QNxFV
-         eJmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:arc-authentication-results;
-        bh=1VQJk6LqwF8OBg32fUH0xU+1nMHd6D71I1czl40Rtxw=;
-        b=Nipx2mIyhHmeD/ELs389H5cS2FcA2gw2FzGbpBr49A4TyIICTdsUTgZsnTq45aX6Mv
-         /k3u8tjnFeEPUNicK2ek6Yy6A8+51hEB1se0pOnQW0CDF42pxNQ8CZgNl5VXZOY5OcoF
-         Kd6hFcNTOp7J9q8tM96PyUrBdPmB++CuBhQT2tFsleMlphrs8ynaaFJ5FWGDWLxsxIUW
-         DbVpAxd4joapcxnkFs69/tdVbDdQbaRhJak0LlRb8aKG7z0Ic+toKl26IUltxNwTk3CC
-         Bj7h+pij5TP83Bc7AOuw7kanoBiYTanhQxezw3AVcbGfHEURSnXTxFwPRqxwhW7IBh3D
-         1a0g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mst@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mst@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mst@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mst@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Thu, 15 Mar 2018 15:31:05 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Gal Hammer <ghammer@redhat.com>
-Cc: Or Idgar <idgar@virtualoco.com>, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Greg KH <gregkh@linuxfoundation.org>,
-	Or Idgar <oidgar@redhat.com>, Or Idgar <oridgar@gmail.com>
-Subject: Re: [PATCH v5] drivers/misc: vm_gen_counter: initial driver
- implementation
-Message-ID: <20180315145526-mutt-send-email-mst@kernel.org>
-References: <20180301142215.11812-1-idgar@virtualoco.com>
- <20180313190617-mutt-send-email-mst@kernel.org>
- <CAA2ifQz9ZQPSG-Xx5RmHRaQCveFehXZQL6zaGhZP99s6oYEFaw@mail.gmail.com>
+Date: Thu, 15 Mar 2018 14:24:43 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.15.10
+Message-ID: <20180315132443.GA22292@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
 Content-Disposition: inline
-In-Reply-To: <CAA2ifQz9ZQPSG-Xx5RmHRaQCveFehXZQL6zaGhZP99s6oYEFaw@mail.gmail.com>
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593745507285614890?=
-X-GMAIL-MSGID: =?utf-8?q?1595010626546440361?=
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 10:00:30AM +0200, Gal Hammer wrote:
-> On Tue, Mar 13, 2018 at 7:40 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > Thanks for the patch! Yet something to improve (see below):
-> 
-> Thanks for the review.
-> 
-> > On Thu, Mar 01, 2018 at 04:22:15PM +0200, Or Idgar wrote:
-> >> From: Or Idgar <oridgar@gmail.com>
-> >
-> > I see addresses at gmail, virtualoco and redhat.com At this point I
-> > don't really know which address to use to contact you :) All of them?
-> 
-> Use his gmail or virtualoco one.
->
-> > Also, I think it's a good idea to CC this more widely. Consider CC-ing
-> > qemu contributors to the vm gen id (use git log to get the list), Ben
-> > Warren who wrote a prototype driver a while ago, qemu mailing list,
-> > maybe more.
-> >
-> >>
-> >> This patch is a driver which expose the Virtual Machine Generation ID
-> >> via sysfs.
-> >>
-> >> The ID is a UUID value used to differentiate between virtual
-> >> machines.
-> >>
-> >> The VM-Generation ID is a feature defined by Microsoft (paper:
-> >> http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
-> >> hypervisor vendors.
-> >>
-> >> Signed-off-by: Or Idgar <oridgar@gmail.com>
-> >
-> > I think it's a good idea to use sysfs for this. However,
-> > there are a couple of missing interfaces here:
-> >
-> > 1. Userspace needs a way to know when this value changes.
-> >    I see no change notifications here and that does not seem right.
-> 
-> We have the next version which includes notification. The problem is
-> that right now QEMU doesn't include a mean to change the generation id
-> on-the-fly, so it was not published it.
 
-It seems to send this notification on each migration or
-resume from snapshot.
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.15.10 kernel.
+
+All users of the 4.15 kernel series must upgrade.
+
+The updated 4.15.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.15.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/devicetree/bindings/power/mti,mips-cpc.txt |    8=20
+ Documentation/sphinx/kerneldoc.py                        |    3=20
+ MAINTAINERS                                              |    1=20
+ Makefile                                                 |    7=20
+ arch/arm64/mm/mmu.c                                      |    8=20
+ arch/mips/ath25/board.c                                  |    2=20
+ arch/mips/cavium-octeon/octeon-irq.c                     |    2=20
+ arch/mips/kernel/mips-cpc.c                              |   13=20
+ arch/mips/kernel/smp-bmips.c                             |    8=20
+ arch/s390/kvm/kvm-s390.c                                 |    1=20
+ arch/x86/Kconfig                                         |    1=20
+ arch/x86/Makefile                                        |    7=20
+ arch/x86/entry/calling.h                                 |   27=20
+ arch/x86/entry/entry_32.S                                |    3=20
+ arch/x86/entry/entry_64.S                                |   21=20
+ arch/x86/entry/entry_64_compat.S                         |   54 -
+ arch/x86/include/asm/apm.h                               |    6=20
+ arch/x86/include/asm/asm-prototypes.h                    |    3=20
+ arch/x86/include/asm/cpufeatures.h                       |    1=20
+ arch/x86/include/asm/efi.h                               |   17=20
+ arch/x86/include/asm/mmu_context.h                       |    1=20
+ arch/x86/include/asm/nospec-branch.h                     |  138 +++-
+ arch/x86/include/asm/paravirt.h                          |   17=20
+ arch/x86/include/asm/paravirt_types.h                    |    5=20
+ arch/x86/include/asm/refcount.h                          |    4=20
+ arch/x86/include/asm/rmwcc.h                             |   16=20
+ arch/x86/include/asm/sections.h                          |    1=20
+ arch/x86/include/asm/smp.h                               |    1=20
+ arch/x86/include/uapi/asm/mce.h                          |    1=20
+ arch/x86/kernel/apic/io_apic.c                           |    2=20
+ arch/x86/kernel/cpu/bugs.c                               |   12=20
+ arch/x86/kernel/cpu/intel.c                              |    7=20
+ arch/x86/kernel/cpu/mcheck/mce.c                         |   26=20
+ arch/x86/kernel/head_64.S                                |    2=20
+ arch/x86/kernel/kprobes/core.c                           |   10=20
+ arch/x86/kernel/smpboot.c                                |   10=20
+ arch/x86/kernel/vmlinux.lds.S                            |    2=20
+ arch/x86/lib/Makefile                                    |    1=20
+ arch/x86/lib/retpoline.S                                 |   56 -
+ arch/x86/mm/fault.c                                      |    4=20
+ arch/x86/mm/mem_encrypt_boot.S                           |    2=20
+ arch/x86/realmode/rm/trampoline_64.S                     |    2=20
+ arch/x86/xen/smp.c                                       |    2=20
+ drivers/block/loop.c                                     |    2=20
+ drivers/char/tpm/tpm-interface.c                         |    6=20
+ drivers/char/tpm/tpm_tis.c                               |  108 ---
+ drivers/char/tpm/tpm_tis_core.c                          |  121 +++
+ drivers/char/tpm/tpm_tis_core.h                          |   16=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c                 |    3=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c           |   58 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c                  |   13=20
+ drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c                    |   30=20
+ drivers/gpu/drm/amd/amdgpu/si.c                          |   22=20
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c                      |   50 -
+ drivers/gpu/drm/amd/display/dc/core/dc_stream.c          |    6=20
+ drivers/gpu/drm/amd/display/dc/dce/dce_link_encoder.c    |   16=20
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c         |   18=20
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c       |   11=20
+ drivers/gpu/drm/drm_framebuffer.c                        |    4=20
+ drivers/gpu/drm/drm_probe_helper.c                       |   20=20
+ drivers/gpu/drm/i915/i915_drv.c                          |    2=20
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c               |    4=20
+ drivers/gpu/drm/i915/i915_perf.c                         |   38 -
+ drivers/gpu/drm/i915/intel_audio.c                       |    6=20
+ drivers/gpu/drm/i915/intel_display.c                     |    2=20
+ drivers/gpu/drm/i915/intel_hdmi.c                        |   14=20
+ drivers/gpu/drm/i915/intel_runtime_pm.c                  |    1=20
+ drivers/gpu/drm/nouveau/nouveau_connector.c              |   18=20
+ drivers/gpu/drm/nouveau/nv50_display.c                   |    1=20
+ drivers/gpu/drm/radeon/cik.c                             |   31=20
+ drivers/gpu/drm/radeon/radeon_connectors.c               |   74 +-
+ drivers/gpu/drm/radeon/radeon_device.c                   |    4=20
+ drivers/gpu/drm/radeon/radeon_pm.c                       |    6=20
+ drivers/infiniband/core/device.c                         |    6=20
+ drivers/infiniband/core/rdma_core.c                      |   12=20
+ drivers/infiniband/core/ucma.c                           |    6=20
+ drivers/infiniband/hw/mlx5/cq.c                          |    7=20
+ drivers/infiniband/hw/mlx5/mr.c                          |    2=20
+ drivers/input/keyboard/matrix_keypad.c                   |    4=20
+ drivers/input/mouse/synaptics.c                          |    1=20
+ drivers/md/bcache/super.c                                |   27=20
+ drivers/md/dm-bufio.c                                    |   16=20
+ drivers/net/wireless/mac80211_hwsim.c                    |    2=20
+ drivers/nvme/host/core.c                                 |    2=20
+ drivers/nvme/host/multipath.c                            |   30=20
+ drivers/nvme/host/nvme.h                                 |    8=20
+ drivers/pci/dwc/pcie-designware-host.c                   |    2=20
+ drivers/regulator/stm32-vrefbuf.c                        |    2=20
+ drivers/scsi/hosts.c                                     |    3=20
+ drivers/scsi/qla2xxx/qla_def.h                           |   49 -
+ drivers/scsi/qla2xxx/qla_gs.c                            |  230 +++++-
+ drivers/scsi/qla2xxx/qla_init.c                          |   70 +-
+ drivers/scsi/qla2xxx/qla_iocb.c                          |   13=20
+ drivers/scsi/qla2xxx/qla_isr.c                           |    7=20
+ drivers/scsi/qla2xxx/qla_mbx.c                           |    3=20
+ drivers/scsi/qla2xxx/qla_mid.c                           |   42 -
+ drivers/scsi/qla2xxx/qla_os.c                            |   86 +-
+ drivers/scsi/qla2xxx/qla_target.c                        |   61 +
+ drivers/scsi/scsi_error.c                                |    5=20
+ drivers/scsi/scsi_lib.c                                  |    2=20
+ drivers/virtio/virtio_ring.c                             |    2=20
+ drivers/watchdog/hpwdt.c                                 |  507 ----------=
+-----
+ fs/nfs/direct.c                                          |    2=20
+ fs/nfs/pnfs.c                                            |   13=20
+ fs/nfs/write.c                                           |   83 +-
+ fs/overlayfs/namei.c                                     |    6=20
+ include/drm/drm_crtc_helper.h                            |    1=20
+ include/drm/drm_drv.h                                    |    1=20
+ include/linux/compiler-clang.h                           |    5=20
+ include/linux/compiler-gcc.h                             |    4=20
+ include/linux/init.h                                     |    8=20
+ include/linux/nospec.h                                   |   23=20
+ include/linux/tpm.h                                      |    1=20
+ include/linux/workqueue.h                                |    1=20
+ include/scsi/scsi_cmnd.h                                 |    3=20
+ include/scsi/scsi_host.h                                 |    2=20
+ kernel/bpf/cpumap.c                                      |    2=20
+ kernel/panic.c                                           |    2=20
+ kernel/workqueue.c                                       |   16=20
+ lib/bug.c                                                |    4=20
+ mm/memblock.c                                            |   10=20
+ net/bridge/netfilter/ebt_among.c                         |   21=20
+ net/bridge/netfilter/ebtables.c                          |   13=20
+ net/ipv4/netfilter/arp_tables.c                          |    4=20
+ net/ipv4/netfilter/ip_tables.c                           |    7=20
+ net/ipv4/netfilter/ipt_CLUSTERIP.c                       |   12=20
+ net/ipv6/netfilter.c                                     |    9=20
+ net/ipv6/netfilter/ip6_tables.c                          |    4=20
+ net/ipv6/netfilter/nf_nat_l3proto_ipv6.c                 |    4=20
+ net/netfilter/nf_nat_proto_common.c                      |    7=20
+ net/netfilter/xt_IDLETIMER.c                             |    9=20
+ net/netfilter/xt_LED.c                                   |   10=20
+ net/netfilter/xt_hashlimit.c                             |    2=20
+ net/smc/af_smc.c                                         |    4=20
+ scripts/Makefile.build                                   |    8=20
+ scripts/Makefile.lib                                     |    8=20
+ sound/core/seq/seq_clientmgr.c                           |   21=20
+ sound/core/seq/seq_fifo.c                                |    2=20
+ sound/core/seq/seq_memory.c                              |   14=20
+ sound/core/seq/seq_memory.h                              |    3=20
+ sound/pci/hda/patch_conexant.c                           |    2=20
+ sound/pci/hda/patch_realtek.c                            |   45 +
+ tools/objtool/builtin-check.c                            |    6=20
+ tools/objtool/builtin-orc.c                              |    6=20
+ tools/objtool/builtin.h                                  |    5=20
+ tools/objtool/check.c                                    |   93 ++
+ tools/objtool/check.h                                    |    3=20
+ tools/perf/util/trigger.h                                |    9=20
+ 148 files changed, 1574 insertions(+), 1371 deletions(-)
+
+Adrian Hunter (1):
+      perf tools: Fix trigger class trigger_on()
+
+Alex Deucher (6):
+      drm/amd/powerplay/smu7: allow mclk switching with no displays
+      drm/amd/powerplay/vega10: allow mclk switching with no displays
+      Revert "drm/radeon/pm: autoswitch power state when in balanced mode"
+      drm/amdgpu: used cached pcie gen info for SI (v2)
+      drm/radeon: fix KV harvesting
+      drm/amdgpu: fix KV harvesting
+
+Ard Biesheuvel (1):
+      arm64: mm: fix thinko in non-global page table attribute check
+
+Arkadiusz Hiler (1):
+      Revert "Input: synaptics - Lenovo Thinkpad T460p devices should use R=
+MI"
+
+Arnd Bergmann (3):
+      dm bufio: avoid false-positive Wmaybe-uninitialized warning
+      watchdog: hpwdt: fix unused variable warning
+      tpm: remove unused variables
+
+Azhar Shaikh (2):
+      tpm_tis: Move ilb_base_addr to tpm_tis_data
+      tpm: Keep CLKRUN enabled throughout the duration of transmit_cmd()
+
+Bart Van Assche (1):
+      scsi: core: Avoid that ATA error handling can trigger a kernel hang o=
+r oops
+
+Ben Crocker (1):
+      drm/radeon: insist on 32-bit DMA for Cedar on PPC64/PPC64LE
+
+Benjamin Berg (1):
+      ALSA: hda/realtek: Limit mic boost on T480
+
+Chris Wilson (1):
+      drm/i915: Clear the in-use marker on execbuf failure
+
+Christoph Hellwig (1):
+      Revert "nvme: create 'slaves' and 'holders' entries for hidden contro=
+llers"
+
+Colin Ian King (2):
+      MIPS: ath25: Check for kzalloc allocation failure
+      MIPS: OCTEON: irq: Check for null return on kzalloc allocation
+
+Cong Wang (1):
+      netfilter: ipt_CLUSTERIP: fix a race condition of proc file creation
+
+Dan Williams (2):
+      nospec: Kill array_index_nospec_mask_check()
+      nospec: Include <asm/barrier.h> dependency
+
+Daniel Vacek (1):
+      mm/memblock.c: hardcode the end_pfn being -1
+
+Daniele Ceraolo Spurio (1):
+      drm/i915: Fix rsvd2 mask when out-fence is returned
+
+David Hildenbrand (1):
+      KVM: s390: fix memory overwrites when not using SCA entries
+
+David Woodhouse (3):
+      Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+      x86/speculation: Use IBRS if available before calling into firmware
+      x86/retpoline: Support retpoline builds with Clang
+
+Davide Caratti (1):
+      net/smc: fix NULL pointer dereference on sock_create_kern() error path
+
+Dennis Wassenberg (3):
+      ALSA: hda/realtek - Make dock sound work on ThinkPad L570
+      ALSA: hda: add dock and led support for HP EliteBook 820 G3
+      ALSA: hda: add dock and led support for HP ProBook 640 G2
+
+Dominik Brodowski (2):
+      x86/entry: Reduce the code footprint of the 'idtentry' macro
+      x86/entry/64: Use 'xorl' for faster register clearing
+
+Eric Dumazet (3):
+      netfilter: xt_hashlimit: fix lock imbalance
+      netfilter: IDLETIMER: be syzkaller friendly
+      netfilter: use skb_to_full_sk in ip6_route_me_harder
+
+Eric Huang (1):
+      drm/amd/powerplay: fix power over limit on Fiji
+
+Fabrice Gasnier (1):
+      regulator: stm32-vrefbuf: fix check on ready flag
+
+Florian Westphal (4):
+      netfilter: add back stackpointer size checks
+      netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets
+      netfilter: bridge: ebt_among: add missing match size checks
+      netfilter: ipv6: fix use-after-free Write in nf_nat_ipv6_manip_pkt
+
+Francis Deslauriers (1):
+      x86/kprobes: Fix kernel crash when probing .entry_trampoline code
+
+Giridhar Malavali (2):
+      scsi: qla2xxx: Defer processing of GS IOCB calls
+      scsi: qla2xxx: Remove aborting ELS IOCB call issued as part of timeou=
+t.
+
+Greg Kroah-Hartman (1):
+      Linux 4.15.10
+
+Harry Wentland (1):
+      drm/amd/display: Default HDMI6G support to true. Log VBIOS table erro=
+r.
+
+Hui Wang (1):
+      ALSA: hda - Fix a wrong FIXUP for alc289 on Dell machines
+
+Ilia Mirkin (1):
+      drm/nouveau: prefer XBGR2101010 for addfb ioctl
+
+Ingo Molnar (1):
+      x86/speculation: Move firmware_restrict_branch_speculation_*() from C=
+ to CPP
+
+James Hogan (1):
+      kbuild: Handle builtin dtb file names containing hyphens
+
+James Zhu (2):
+      drm/amdgpu:Correct max uvd handles
+      drm/amdgpu:Always save uvd vcpu_bo in VM Mode
+
+Jan Beulich (4):
+      x86/asm: Improve how GEN_*_SUFFIXED_RMWcc() specify clobbers
+      x86/IO-APIC: Avoid warning in 32-bit builds
+      x86/LDT: Avoid warning in 32-bit builds with older gcc
+      x86-64/realmode: Add instruction suffix
+
+Jani Nikula (1):
+      drm/i915/audio: fix check for av_enc_map overflow
+
+Jann Horn (1):
+      x86/mm: Remove stale comment about KMEMCHECK
+
+Jason Gunthorpe (1):
+      IB/uverbs: Improve lockdep_check
+
+Jason Wang (1):
+      bpf: cpumap: use GFP_KERNEL instead of GFP_ATOMIC in __cpu_map_entry_=
+alloc()
+
+Javier Martinez Canillas (2):
+      tpm: delete the TPM_TIS_CLK_ENABLE flag
+      tpm: only attempt to disable the LPC CLKRUN if is already enabled
+
+Jerry Hoemann (3):
+      watchdog: hpwdt: SMBIOS check
+      watchdog: hpwdt: Check source of NMI
+      watchdog: hpwdt: Remove legacy NMI sourcing.
+
+Johannes Berg (1):
+      mac80211_hwsim: don't use WQ_MEM_RECLAIM
+
+Josh Poimboeuf (2):
+      objtool: Fix another switch table detection issue
+      objtool: Fix 32-bit build
+
+Justin Chen (1):
+      MIPS: BMIPS: Do not mask IPIs during suspend
+
+Kailang Yang (2):
+      ALSA: hda/realtek - Add support headset mode for DELL WYSE
+      ALSA: hda/realtek - Add headset mode support for Dell laptop
+
+Kees Cook (2):
+      bug: use %pB in BUG and stack protector failure
+      lib/bug.c: exclude non-BUG/WARN exceptions from report_bug()
+
+Koen Vandeputte (1):
+      PCI: dwc: Fix enumeration end when reaching root subordinate
+
+Konrad Rzeszutek Wilk (1):
+      x86/spectre_v2: Don't check microcode versions when running under hyp=
+ervisors
+
+Leon Romanovsky (3):
+      RDMA/ucma: Limit possible option size
+      RDMA/ucma: Check that user doesn't overflow QP state
+      RDMA/mlx5: Fix integer overflow while resizing CQ
+
+Lionel Landwerlin (1):
+      drm/i915/perf: fix perf stream opening lock
+
+Lukas Wunner (5):
+      workqueue: Allow retrieval of current task's work struct
+      drm: Allow determining if current task is output poll worker
+      drm/nouveau: Fix deadlock on runtime suspend
+      drm/radeon: Fix deadlock on runtime suspend
+      drm/amdgpu: Fix deadlock on runtime suspend
+
+Maarten Lankhorst (2):
+      drm/i915: Update watermark state correctly in sanitize_watermarks
+      drm/i915: Always call to intel_display_set_init_power() in resume_ear=
+ly.
+
+Matthew Wilcox (1):
+      Documentation/sphinx: Fix Directive import error
+
+Michael Lyle (1):
+      bcache: don't attach backing with duplicate UUID
+
+Mika Kahola (1):
+      drm/i915: Check for fused or unused pipes
+
+Paolo Abeni (2):
+      netfilter: x_tables: fix missing timer initialization in xt_LED
+      netfilter: nat: cope with negative port range
+
+Parav Pandit (1):
+      IB/core: Fix missing RDMA cgroups release in case of failure to regis=
+ter device
+
+Paul Burton (2):
+      dt-bindings: Document mti,mips-cpc binding
+      MIPS: CPC: Map registers using DT in mips_cpc_default_phys_base()
+
+Peter Zijlstra (8):
+      x86/speculation, objtool: Annotate indirect calls/jumps for objtool
+      x86/paravirt, objtool: Annotate indirect calls
+      x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
+      x86/mm/sme, objtool: Annotate indirect call in sme_encrypt_execute()
+      objtool: Use existing global variables for options
+      objtool: Add retpoline validation
+      objtool: Add module specific retpoline rules
+      objtool, retpolines: Integrate objtool with retpoline support more cl=
+osely
+
+Prarit Bhargava (1):
+      x86/xen: Calculate __max_logical_packages on PV domains
+
+Quinn Tran (16):
+      scsi: qla2xxx: Fix system crash for Notify ack timeout handling
+      scsi: qla2xxx: Fix gpnid error processing
+      scsi: qla2xxx: Move session delete to driver work queue
+      scsi: qla2xxx: Skip IRQ affinity for Target QPairs
+      scsi: qla2xxx: Fix re-login for Nport Handle in use
+      scsi: qla2xxx: Retry switch command on time out
+      scsi: qla2xxx: Serialize GPNID for multiple RSCN
+      scsi: qla2xxx: Fix login state machine stuck at GPDB
+      scsi: qla2xxx: Relogin to target port on a cable swap
+      scsi: qla2xxx: Fix Relogin being triggered too fast
+      scsi: qla2xxx: Fix PRLI state check
+      scsi: qla2xxx: Fix abort command deadlock due to spinlock
+      scsi: qla2xxx: Replace fcport alloc with qla2x00_alloc_fcport
+      scsi: qla2xxx: Fix scan state field for fcport
+      scsi: qla2xxx: Clear loop id after delete
+      scsi: qla2xxx: Fix system crash in qlt_plogi_ack_unref
+
+Rex Zhu (1):
+      drm/amdgpu: Notify sbios device ready before send request
+
+Ross Zwisler (1):
+      loop: Fix lost writes caused by missing flag
+
+Sawan Chandak (1):
+      scsi: qla2xxx: Fix NPIV host cleanup in target mode
+
+Sergey Gorenko (1):
+      IB/mlx5: Fix incorrect size of klms in the memory region
+
+Seunghun Han (1):
+      x86/MCE: Serialize sysfs changes
+
+Shirish S (1):
+      drm/amd/display: check for ipp before calling cursor operations
+
+Stefan Br=FCns (1):
+      drm/i915: Try EDID bitbanging on HDMI after failed read
+
+Takashi Iwai (3):
+      ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
+      ALSA: seq: Don't allow resizing pool in use
+      ALSA: seq: More protection for concurrent write and ioctl races
+
+Tang Junhui (1):
+      bcache: fix crashes in duplicate cache device register
+
+Tiwei Bie (1):
+      virtio_ring: fix num_free handling in error case
+
+Tony Luck (1):
+      x86/MCE: Save microcode revision in machine check records
+
+Trond Myklebust (3):
+      NFS: Fix an incorrect type in struct nfs_direct_req
+      pNFS: Prevent the layout header refcount going to zero in pnfs_roc()
+      NFS: Fix unstable write completion
+
+Ville Syrj=E4l=E4 (1):
+      drm/i915: Disable DC states around GMBUS on GLK
+
+Vivek Goyal (1):
+      ovl: redirect_dir=3Dnofollow should not follow redirect for opaque lo=
+wer
+
+Zhang Bo (1):
+      Input: matrix_keypad - fix race when disabling interrupts
+
+himanshu.madhani@cavium.com (4):
+      scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+      scsi: qla2xxx: Fix NULL pointer crash due to probe failure
+      scsi: qla2xxx: Fix recursion while sending terminate exchange
+      scsi: qla2xxx: Fix memory leak in dual/target mode
 
 
-> >    system calls. Pls add mmap support to the raw format.
-> >    (Phys address is not guaranteed to be page-aligned so you will
-> >     probably want an offset attribute for that as well).
-> 
-> I don't agree that this should be a requirement. According to the
-> specs, the value doesn't change frequently.
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What matters is whether it's read frequently, not whether it
-changes frequently.
+-----BEGIN PGP SIGNATURE-----
 
-Still, I agree we can defer that
-for now until apps actually start using the new interface.
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqqdBoACgkQONu9yGCS
+aT502RAAp+DUeA+6wexPeYZhs8mszekDWz4MSWQ/HXpbV/BPyJT/nSzFdi4o01m5
+I9wjAu2oTiLJCwBeYAmCNm+33Oy47CRwd5v/yvFDvPnMxFDnysDETSsuSrTXqlPn
+VZA5I+/BOwZtsyBYJo1L0ISlGXtQuFTTH4zkrIyczcMdXvIlmXM/qt792rR/q4U5
+iOe+q4CtK0N+2krJb4jDWJ6/ZXbTi4MFXp51OdHBH/+5HeMpPLEtYOTYzQPoSED9
+/YhEVFrhU3K4mp66OiOwnqGr72+E3d3WzQWeOQnps2boBG+3W7SiJc7BShUuDSMy
+tHikrvf1x9z8feiWe8oARI4lvb7i8/KN0gwXdMgs479x7RCX3L7jH/BzrhCR3qoI
+32JYirBAz5ID7U1bNutmdj3I4B/SE0ZkJTUhsxZuC+w6+skkCpBMXoUXBf2yZ60v
+XuMbu5/7O2w+qzyzaaVAnhXGRwlUfectoP78GLYp0Cu4Dg3ezuhTGIU46IIJEvyE
+aN1cNvhZTKa4lEXSU24YoJ3rF6hE7xAfbFMLOCD9G1G2BmF+Jw6uok2WySOKygqE
+PIGjcE47ulJWpx83HNkzTlNcVBa9vPvFJ8MQp1rMlh1W34r/wwjvEub19sybOPme
+j6hQgRCjgWMg60DpQT7v44Lcdv0eYkcz41oF9DIr2ty1NzyOUag=
+=++3N
+-----END PGP SIGNATURE-----
 
-
-> A notification about a
-> change the re-reading the value should be enough for now.
-
-Notifications are asynchronous so I am not sure it's robust to rely on
-them. So I suspect we'll need it down the road but I agree to defer that
-for now until apps actually start using the new interface.
-
-> > While it's possible to add these later in theory, it's
-> > easier if userspace can rely on all interfaces being
-> > in place just by detecting the directory presence.
-> >
-> >> ---
-> >>
-> >> Changes in v5:
-> >> - added to VMGENID module dependency on ACPI module.
-> >>
-> >>  Documentation/ABI/testing/sysfs-hypervisor |  13 +++
-> >>  drivers/misc/Kconfig                       |   7 ++
-> >>  drivers/misc/Makefile                      |   1 +
-> >>  drivers/misc/vmgenid.c                     | 142 +++++++++++++++++++++++++++++
-> >
-> > Do you want to add this under QEMU MACHINE EMULATOR in MAINTAINERS?
-> > This way e.g. qemu-devel will be copied.
-> 
-> This feature is supported by other hypervisors and this driver should
-> be able to support them in the next versions. I don't see a reason to
-> bound it to QEMU.
-
-Go ahead and add the microsoft list too, whatever it is.
-Point is you want people familiar with the spec to
-look at patches.
-
-> >>  4 files changed, 163 insertions(+)
-> >>  create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
-> >>  create mode 100644 drivers/misc/vmgenid.c
-> >>
-> >> diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
-> >> new file mode 100644
-> >> index 000000000000..2f9a7b8eab70
-> >> --- /dev/null
-> >> +++ b/Documentation/ABI/testing/sysfs-hypervisor
-> >> @@ -0,0 +1,13 @@
-> >> +What:                /sys/hypervisor/vm_gen_counter
-> >
-> > It's not a counter, is it?
-> > I'd go with "vm_generation_id" here. Eschew abbreviation.
-> 
-> The names were chosen so they'll match Microsoft's specification and
-> code examples.
-
-I don't think this makes sense.  We are not going to use '\' in file
-names to match Microsoft code examples, either.
-
-Maybe they say counter in some docs because someone somewhere uses this
-as a counter. Or maybe some architect wrote the code examples before the
-name was changed from gen counter to generation id and did not bother
-changing the code examples.  Who knows - there is still no point in
-building an API around that.
-
-In particular QEMU certainly does not pass a counter in that field,
-and spec does not say it should.
-
-> >> +Date:                February 2018
-> >> +Contact:     Or Idgar <idgar@virtualoco.com>
-> >> +             Gal Hammer <ghammer@redhat.com>
-> >> +Description: Expose the virtual machine generation ID. The directory
-> >> +             contains two files: "generation_id" and "raw". Both files
-> >> +             represent the same information.
-> >> +
-> >> +             "generation_id" file is a UUID string
-> >
-> > And this I'd call "uuid" then.
-> 
-> Why? The name says what the value is, not its type. This is not common
-> to see values' types in the sysfs directory.
-
-Look at the hierarchy:
-
-/sys/hypervisor/vm_gen_counter/generation_id
-/sys/hypervisor/vm_gen_counter/raw
-
-Naming it vm_gen_counter/generation_id makes it seem like
-there is a gen counter (general counter?) which
-allows some kind of raw access and which also has
-a generation id.
-
-But in reality what is going on here is that there is a single value
-which is a vm generation id, and we present it in two formats: uuid and raw.
-
-
-
-> >> +             representation.
-> >> +
-> >> +             "raw" file is a 128-bit integer
-> >> +             representation (binary).
-> >> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> >> index 03605f8fc0dc..a39feff6a867 100644
-> >> --- a/drivers/misc/Kconfig
-> >> +++ b/drivers/misc/Kconfig
-> >> @@ -500,6 +500,13 @@ config MISC_RTSX
-> >>       tristate
-> >>       default MISC_RTSX_PCI || MISC_RTSX_USB
-> >>
-> >> +config VMGENID
-> >> +     depends on ACPI
-> >> +     tristate "Virtual Machine Generation ID driver"
-> >> +     help
-> >> +       This is a Virtual Machine Generation ID driver which provides
-> >> +       a virtual machine unique identifier.
-> >> +
-> >>  source "drivers/misc/c2port/Kconfig"
-> >>  source "drivers/misc/eeprom/Kconfig"
-> >>  source "drivers/misc/cb710/Kconfig"
-
-BTW maybe we want to make this depend on CONFIG_PARAVIRT as well.
-
-
-> >> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> >> index c3c8624f4d95..067aa666bb6a 100644
-> >> --- a/drivers/misc/Makefile
-> >> +++ b/drivers/misc/Makefile
-> >> @@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)      += aspeed-lpc-snoop.o
-> >>  obj-$(CONFIG_PCI_ENDPOINT_TEST)      += pci_endpoint_test.o
-> >>  obj-$(CONFIG_OCXL)           += ocxl/
-> >>  obj-$(CONFIG_MISC_RTSX)              += cardreader/
-> >> +obj-$(CONFIG_VMGENID)                += vmgenid.o
-> >>
-> >>  lkdtm-$(CONFIG_LKDTM)                += lkdtm_core.o
-> >>  lkdtm-$(CONFIG_LKDTM)                += lkdtm_bugs.o
-> >> diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
-> >> new file mode 100644
-> >> index 000000000000..6c8d8fe75335
-> >> --- /dev/null
-> >> +++ b/drivers/misc/vmgenid.c
-> >> @@ -0,0 +1,142 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Virtual Machine Generation ID driver
-> >> + *
-> >> + * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
-> >> + *   Authors:
-> >> + *     Or Idgar <oridgar@gmail.com>
-> >> + *     Gal Hammer <ghammer@redhat.com>
-> >> + *
-> >> + */
-> >> +#include <linux/init.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/kobject.h>
-> >> +#include <linux/acpi.h>
-> >> +#include <linux/uuid.h>
-> >> +
-> >> +MODULE_LICENSE("GPL");
-> >> +MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
-> >> +MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
-> >> +MODULE_DESCRIPTION("Virtual Machine Generation ID");
-> >> +MODULE_VERSION("0.1");
-> >> +
-> >> +ACPI_MODULE_NAME("vmgenid");
-> >> +
-> >> +static u64 phys_addr;
-> >> +
-> >> +static ssize_t generation_id_show(struct device *_d,
-> >> +                           struct device_attribute *attr, char *buf)
-> >> +{
-> >> +     void __iomem *uuid_map;
-> >> +     uuid_t uuid;
-> >> +     ssize_t result;
-> >> +
-> >> +     uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
-> >> +     if (!uuid_map)
-> >> +             return -EFAULT;
-> >
-> > Shouldn't this be acpi_os_map_memory? Spec says it's never an IO address.
-> >
-> >> +
-> >> +     memcpy_fromio(&uuid, uuid_map, sizeof(uuid_t));
-> >> +     result = sprintf(buf, "%pUl\n", &uuid);
-> >> +     acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
-> >> +     return result;
-> >> +}
-> >> +static DEVICE_ATTR_RO(generation_id);
-> >> +
-> >> +static ssize_t raw_show(struct device *_d,
-> >> +                     struct device_attribute *attr,
-> >> +                           char *buf)
-> >> +{
-> >> +     void __iomem *uuid_map;
-> >> +
-> >> +     uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
-> >> +     if (!uuid_map)
-> >> +             return -EFAULT;
-> >> +     memcpy_fromio(buf, uuid_map, sizeof(uuid_t));
-> >> +     acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
-> >> +     return sizeof(uuid_t);
-> >> +}
-> >> +static DEVICE_ATTR_RO(raw);
-> >
-> > I think you want BIN_ATTR_RO.
-> >
-> >
-> >> +
-> >> +static struct attribute *vmgenid_attrs[] = {
-> >> +     &dev_attr_generation_id.attr,
-> >> +     &dev_attr_raw.attr,
-> >> +     NULL,
-> >> +};
-> >> +static const struct attribute_group vmgenid_group = {
-> >> +     .name = "vm_gen_counter",
-> >> +     .attrs = vmgenid_attrs,
-> >> +};
-> >> +
-> >> +static int get_vmgenid(acpi_handle handle)
-> >> +{
-> >> +     int i;
-> >> +     struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-> >> +     acpi_status status;
-> >> +     union acpi_object *pss;
-> >> +     union acpi_object *element;
-> >> +
-> >> +     status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
-> >> +     if (ACPI_FAILURE(status)) {
-> >> +             ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
-> >
-> > It's ADDR - not _ADDR, right?
-> >
-> >> +             return -ENODEV;
-> >> +     }
-> >> +     pss = buffer.pointer;
-> >> +     if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
-> >> +             return -EFAULT;
-> >> +
-> >> +     phys_addr = 0;
-> >> +     for (i = 0; i < pss->package.count; i++) {
-> >> +             element = &(pss->package.elements[i]);
-> >> +             if (element->type != ACPI_TYPE_INTEGER)
-> >> +                     return -EFAULT;
-> >
-> > EINVAL  here and elsewhere.
-> >
-> >> +             phys_addr |= element->integer.value << i*32;
-> >
-> > i * 32
-> >
-> >> +     }
-> >> +     return 0;
-> >> +}
-> >> +
-> >> +static int acpi_vmgenid_add(struct acpi_device *device)
-> >> +{
-> >> +     int retval;
-> >> +
-> >> +     if (!device)
-> >> +             return -EINVAL;
-> >> +     retval = get_vmgenid(device->handle);
-> >> +     if (retval < 0)
-> >> +             return retval;
-> >> +     return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
-> >> +}
-> >> +
-> >> +static int acpi_vmgenid_remove(struct acpi_device *device)
-> >> +{
-> >> +     sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
-> >> +     return 0;
-> >> +}
-> >> +
-> >> +static const struct acpi_device_id vmgenid_ids[] = {
-> >> +     {"QEMUVGID", 0},
-> >> +     {"", 0},
-> >> +};
-> >
-> > That's not right I think. You should go by _CID and maybe
-> > _DDN.
-> 
-> You are probably right on this. However, we didn't see that Linux
-> supports loading ACPI modules other than using the _HID value.
-
-Are you sure about this?
-                if (info->valid & ACPI_VALID_CID) {
-                        cid_list = &info->compatible_id_list;
-                        for (i = 0; i < cid_list->count; i++)
-                                acpi_add_id(pnp, cid_list->ids[i].string);
-                }
-
-
-Anyway, spec is pretty clear on this so we have to make it work.
-
-> >>
-> >> +
-> >> +static struct acpi_driver acpi_vmgenid_driver = {
-> >> +     .name = "vm_gen_counter",
-> >> +     .ids = vmgenid_ids,
-> >> +     .owner = THIS_MODULE,
-> >> +     .ops = {
-> >> +             .add = acpi_vmgenid_add,
-> >> +             .remove = acpi_vmgenid_remove,
-> >> +     }
-> >> +};
-> >> +
-> >> +static int __init vmgenid_init(void)
-> >> +{
-> >> +     return acpi_bus_register_driver(&acpi_vmgenid_driver);
-> >> +}
-> >> +
-> >> +static void __exit vmgenid_exit(void)
-> >> +{
-> >> +     acpi_bus_unregister_driver(&acpi_vmgenid_driver);
-> >> +}
-> >> +
-> >> +module_init(vmgenid_init);
-> >> +module_exit(vmgenid_exit);
-> >
-> > Thanks for your work, and I hope this helps!
-> >
-> > --
-> > MST
-> 
-> Thanks,
-> 
->     Gal.
+--82I3+IH0IqGh5yIs--
