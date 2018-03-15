@@ -1,56 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932375AbeCOVNA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:13:00 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40181 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeCOVM6 (ORCPT
+        id S1752807AbeCOVQy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:16:54 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:40650 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751975AbeCOVQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:12:58 -0400
-X-Google-Smtp-Source: AG47ELsXsha+YnvT4AFSt/tOGi3QuVLQOW/nC/OY/s7OgClDqXxEjl4YN0b8Mkamsnqb98Erv6Za+R5ex1tVxgJ/0+s=
+        Thu, 15 Mar 2018 17:16:52 -0400
+X-Google-Smtp-Source: AG47ELuN2MiurQxi2UlxiZWtfvfUAm14huSNQG5U1mwxBCuZZ7ct+CfRV4t++++BD1AW/EBp77zbmTlY6E6iMOxBDw8=
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jGi_ewnJXxwuY1-y6Ti64Y601A4DQuDhtMJ+riYPJpzA@mail.gmail.com>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan> <3550231.xNMJN5JcLx@aspire.rjw.lan>
- <20180315181858.GA14983@lerouge> <CAJZ5v0jGi_ewnJXxwuY1-y6Ti64Y601A4DQuDhtMJ+riYPJpzA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 15 Mar 2018 22:12:57 +0100
-X-Google-Sender-Auth: wwgJvZrBNaLUp54AVCmRmI7kf7A
-Message-ID: <CAJZ5v0hGsXV8HTKC8iS0pD6VLoe8pDutos7NhWPU+wid_q7Now@mail.gmail.com>
-Subject: Re: [RFT][PATCH v4 3/7] sched: idle: Do not stop the tick before cpuidle_idle_call()
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <988BDE3E-B2D2-4ABF-B644-4BFF41AF4157@holtmann.org>
+References: <20180315165050.2211236-1-arnd@arndb.de> <988BDE3E-B2D2-4ABF-B644-4BFF41AF4157@holtmann.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 22:16:51 +0100
+X-Google-Sender-Auth: aznJ39sXU3jco4b9TqofXDawtgE
+Message-ID: <CAK8P3a1DTbbRUoCoYsmaSAQBQhaePZ0Tx-g2+xuab3yRcGhLpw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] Bluetooth: btrsi: rework dependencies
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>, Sebastian Reichel <sre@kernel.org>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 9:41 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Thu, Mar 15, 2018 at 7:19 PM, Frederic Weisbecker
-> <frederic@kernel.org> wrote:
->> On Mon, Mar 12, 2018 at 10:53:25AM +0100, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Make cpuidle_idle_call() decide whether or not to stop the tick.
->>>
->>> First, the cpuidle_enter_s2idle() path deals with the tick (and with
->>> the entire timekeeping for that matter) by itself and it doesn't need
->>> the tick to be stopped beforehand.
->>
->> Not sure you meant timekeeping either :)
+On Thu, Mar 15, 2018 at 7:30 PM, Marcel Holtmann <marcel@holtmann.org> wrote:
+> Hi Arnd,
 >
-> Yeah, I meant nohz.
+>> The linkage between the bluetooth driver and the wireless
+>> driver is not defined properly, leading to build problems
+>> such as:
+>>
+>> warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI && RSI_91X)
+>> drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
+>> (.text+0x205): undefined reference to `rsi_bt_ops'
+>>
+>> As the dependency is actually the reverse (RSI_91X uses
+>> the BT_RSI driver, not the other way round), this changes
+>> the dependency to match, and enables the bluetooth driver
+>> from the RSI_COEX symbol.
+>>
+>> Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>> v2: Pick a different from v1
+>> ---
+>> drivers/bluetooth/Kconfig        | 4 +---
+>> drivers/net/wireless/rsi/Kconfig | 4 +++-
+>> 2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> Acked-by: Marcel Holtmann <marcel@holtmann.org>
+>
+> Since I think Kalle still has to take it through his tree until the btrsi driver makes it into net-next.
 
-Well, not really. :-)
+Ok. Kalle, please wait for v3 though, I just ran into another build failure
+caused by a typo in v2.
 
-It is the entire timekeeping this time, as it can be suspended
-entirely in that code path.
+        Arnd
