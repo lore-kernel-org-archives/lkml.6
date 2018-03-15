@@ -1,111 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932994AbeCOXQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 19:16:58 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57992 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932766AbeCOXQ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 19:16:56 -0400
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: arnd@arndb.de, venture@google.com, yuenn@google.co,
-        brendanhiggins@google.com, avifishman70@gmail.com, joel@jms.id.au
-Cc: openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 1/2] arm: npcm: modify configuration for the NPCM7xx BMC.
-Date: Fri, 16 Mar 2018 01:10:11 +0200
-Message-Id: <1521155412-29229-2-git-send-email-tmaimon77@gmail.com>
-X-Mailer: git-send-email 1.8.3.4
-In-Reply-To: <1521155412-29229-1-git-send-email-tmaimon77@gmail.com>
-References: <1521155412-29229-1-git-send-email-tmaimon77@gmail.com>
+        id S933021AbeCOXXs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 19:23:48 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40784 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932673AbeCOXXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 19:23:47 -0400
+Date: Fri, 16 Mar 2018 00:23:06 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/10] x86/microcode/AMD: Check microcode file sanity
+ before loading it
+Message-ID: <20180315232306.GA31610@pd.tnic>
+References: <9964a6cf-00be-78ea-cc1e-7f7062716fce@maciej.szmigiero.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9964a6cf-00be-78ea-cc1e-7f7062716fce@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify configuration and MakeFile
-for the Nuvoton NPCM and NPCM7xx BMC.
+On Fri, Mar 16, 2018 at 12:07:34AM +0100, Maciej S. Szmigiero wrote:
+> Currently, it is very easy to make the AMD microcode update driver crash
+> or spin on a malformed microcode container file since it does very little
+> consistency checking on data loaded from such file.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- arch/arm/mach-npcm/Kconfig  | 40 +++++++++++-----------------------------
- arch/arm/mach-npcm/Makefile |  4 +++-
- 2 files changed, 14 insertions(+), 30 deletions(-)
+Ok, a couple of tips for the next time:
 
-diff --git a/arch/arm/mach-npcm/Kconfig b/arch/arm/mach-npcm/Kconfig
-index 6ff9df2636be..684c9c9a32bd 100644
---- a/arch/arm/mach-npcm/Kconfig
-+++ b/arch/arm/mach-npcm/Kconfig
-@@ -1,48 +1,30 @@
- menuconfig ARCH_NPCM
- 	bool "Nuvoton NPCM Architecture"
--	select ARCH_REQUIRE_GPIOLIB
--	select USE_OF
-+	depends on ARCH_MULTI_V7
- 	select PINCTRL
--	select PINCTRL_NPCM7XX
- 
- if ARCH_NPCM
- 
--comment "NPCM7XX CPU type"
--
--config ARCH_NPCM750
--	depends on ARCH_NPCM && ARCH_MULTI_V7
--	bool "Support for NPCM750 BMC CPU (Poleg)"
-+config ARCH_NPCM7XX
-+	bool "Support for NPCM7xx BMC (Poleg)"
-+	depends on ARCH_MULTI_V7
-+	select PINCTRL_NPCM7XX
-+	select NPCM7XX_TIMER
-+	select ARCH_REQUIRE_GPIOLIB
- 	select CACHE_L2X0
--	select CPU_V7
- 	select ARM_GIC
--	select HAVE_SMP
--	select SMP
--	select SMP_ON_UP
--	select HAVE_ARM_SCU
- 	select HAVE_ARM_TWD if SMP
-+	select HAVE_ARM_SCU if SMP
-+	select ARM_ERRATA_764369 if SMP
- 	select ARM_ERRATA_720789
- 	select ARM_ERRATA_754322
--	select ARM_ERRATA_764369
- 	select ARM_ERRATA_794072
- 	select PL310_ERRATA_588369
- 	select PL310_ERRATA_727915
--	select USB_EHCI_ROOT_HUB_TT
--	select USB_ARCH_HAS_HCD
--	select USB_ARCH_HAS_EHCI
--	select USB_EHCI_HCD
--	select USB_ARCH_HAS_OHCI
--	select USB_OHCI_HCD
--	select USB
--	select FIQ
--	select CPU_USE_DOMAINS
--	select GENERIC_CLOCKEVENTS
--	select CLKDEV_LOOKUP
--	select COMMON_CLK if OF
--	select NPCM750_TIMER
- 	select MFD_SYSCON
- 	help
--	  Support for NPCM750 BMC CPU (Poleg).
-+	  General support for NPCM7xx BMC (Poleg).
- 
--	  Nuvoton NPCM750 BMC based on the Cortex A9.
-+	  Nuvoton NPCM7xx BMC based on the Cortex A9.
- 
- endif
-diff --git a/arch/arm/mach-npcm/Makefile b/arch/arm/mach-npcm/Makefile
-index c7a1316d27c1..0839e8926a84 100644
---- a/arch/arm/mach-npcm/Makefile
-+++ b/arch/arm/mach-npcm/Makefile
-@@ -1,3 +1,5 @@
- AFLAGS_headsmp.o		+= -march=armv7-a
- 
--obj-$(CONFIG_ARCH_NPCM750)	+= npcm7xx.o platsmp.o headsmp.o
-+obj-$(CONFIG_ARCH_NPCM7XX)	+= npcm7xx.o
-+obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
-+
+* please send your reworked patchset for review after review of your
+current patchset has been completed. We normally send patchsets once a
+week. You've sent yours two days after and that's kinda too fast. I'm
+sure you can imagine reviewers have other work to do too.
+
+So please be patient before resending next time.
+
+If in doubt, the whole process is documented in Documentation/process/ -
+might wanna skim through it.
+
+* when sending your patchset, make sure all mails are sent as a reply to
+the 0/N message.
+
+Your 0/N has:
+
+Message-ID: <9964a6cf-00be-78ea-cc1e-7f7062716fce@maciej.szmigiero.name>
+
+but your 1/N has
+
+References: <cover.1521150415.git.mail@maciej.szmigiero.name>
+
+so something went wrong there. Normally git send-email does this
+correctly.
+
+Thx.
+
 -- 
-2.14.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
