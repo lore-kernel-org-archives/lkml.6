@@ -1,163 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeCONOi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:14:38 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49091 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751763AbeCONOf (ORCPT
+        id S1751945AbeCONOr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:14:47 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51188 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751877AbeCONOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:14:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180315131433euoutp01eea403695610c53e47c91fe830bfe262~cGkiYWR6N1547715477euoutp01k
-X-AuditID: cbfec7f4-6f9ff700000043e4-7d-5aaa71b7bcfc
-Subject: Re: [PATCH v4 1/3] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <ee9a65b5-28ca-7404-36e2-29732e9ddfb8@samsung.com>
-Date: Thu, 15 Mar 2018 14:14:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
+        Thu, 15 Mar 2018 09:14:42 -0400
+X-Google-Smtp-Source: AG47ELvkZPbeQpDKcZ48hOvXeriTX/ynTkbARnPyjVWlwEEtWc/uSdob9YSFE9oL9DUJVHGBgO1pdT1I2KPheGEH6bs=
 MIME-Version: 1.0
-In-Reply-To: <1521111391-3515-2-git-send-email-jacopo+renesas@jmondi.org>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+Z/bjtLquJS9dJMmXSFLkThQWUEfTlDhhwqZUC09zMiZbd4q
-        6KJpy/CSpMNpaZlly3WxbZZp1BLXKC2zmVuXSZndXFJeUrJs20ny2+99n+fh/7zwp3HJODmL
-        3pOcyquTFUkyKpCwtI49Xdaw3yBfUZojY/Pb7RibpfWQbGVLO8m+GB6g2D5XM8Zmm4cRa/tl
-        FLEnT18UsZ2NFRRr/vwNY3uueii25mUHxtpKC0g2p7lFxD4xuETrZnB15+oQ11mQj3E9JRMY
-        d0f/RsSVa8tIbqL7Hc7VG05SnPWhFnENIz0k5z5lw7iPnT8prmJshOAG6+fFiOWBqxP4pD3p
-        vHp59K7AxPauejLlT0hmoeMrdRR1B+WhABqYKDBpLYSPJUwtgnzdtjwU6OUhBK7qQkwYBhH0
-        X/GgycRrxyguCJcR1LwtEgmDx+squ+93zWR2gNFiI31CMGPEwD4wSvgGnMlC8NyejftcFLME
-        ft9yUj4WM9HwoXnMnyaYBfD0nhPzcQgTC+dLPiDBEwT2sl5/2wBmI5T0lpI+xplQyDaX4wJL
-        wdVb6S8OTA0NbVXfRULxDWDIaSIFnglfbKZ/+zkwcacSE/gQOD9lEUJYi8D96wQlCKvgoa3D
-        G6a9LyyB643LhfUacJr6/GtgpkO3J0joMB2KLTpcWItBmysR3PPB3WbGBZZCzbNhqgiF6adc
-        pp9yjX7KNfr/71YhwoCkfJpGpeQ1kcl8RrhGodKkJSvD4/ep6pH3Tz7+Yxu6jRrHd1sRQyPZ
-        NHF32BW5hFSkaw6orAhoXBYs3pRikEvECYoDB3n1vp3qtCReY0WzaUImFe9YfFguYZSKVH4v
-        z6fw6kkVowNmHUVR9nB7er68OmHuoLZfJ3IqqxsWbW/yjEV0FWTc31AXMUSG/LCJtzlqt15z
-        xH+52VW78PatuNHdiXlu47H1cblSveneq7vKUHSmKirs0nt1cervI3TbsxurdDEyS3AdWdvf
-        URi5MjZ08FFm/OZ3Oe+PX10rbTp7wbR4S2ZpX+uD6CoZoUlURCzF1RrFXxTh7/CPAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTYRzGec/ZOZvi6jgdvnhhsihJ8Oj82muYeCUn9EIIIhapQw9quc12
-        pqRXphjT/LxQcIrzIkWXi5zOLDVkSkOSaS51mtYwM0o0MT/RNOcKvPvB8/z+8IdHgIvqiEBB
-        rkrLalSKPAnpzXt/bPsc1v/QKI+YObqAqu3jGCrVrRPIMGYn0MedXyRaXRjGUJllByDboYmP
-        Kuqf8ZHjTQuJLD82MOR6vk6i9rkPGLI11hCofHiMjyaMC/zEi0x3azdgHDXVGONqOMGY1/ol
-        PtOsayKYE+cyzpiNFSRjHdUB5tWui2C+PLVhzHfHHsm0HOzymN/moFShnI7XqAu0bHCOmtPe
-        kNyVokhaGofoyOg4Wholu3c9MkYSnhCfxeblFrKa8IQMOsc+aybyj8WPamfWyBLg9K0EXgJI
-        RcPFmX28EngLRFQ7gBP1VXxPEAAHDeu4h/3g0Wwl6SmtAWhY3DoL/Kg0aOq3Ee7AnzJhcGWs
-        7ewUTpUCWNe8hXmUTwB29oyQboWkrsE/vfNnLKQS4LfhA+BmHnUFTr6dx9wspu7Aii4Dz9Px
-        heNNK2fsRd2EDSuNhJtxKgQetU7jHr4EyyzN/zgALqwYsDog0p/T9ecU/TlFf05pAzwj8GcL
-        OGW2kpPSnELJFaiy6Uy10gxO19D/7qB3AEz33LICSgAkPkLn5S65iFAUckVKK4ACXOIvTMk3
-        ykXCLEVRMatRp2sK8ljOCmJOn6vHA8WZ6tNtqbTp0hipDMVJZVGyqFgkCRBORhTJRVS2Qss+
-        YNl8VvPfwwRegSWAC7T7VYWPJKvClVOxFY6v96dribU0cevG6pjG916HNjipJM+70rDdO2QW
-        ds4M7UfMxTpGizeDnck/B3W7y6aRvj7rcMaS6MlI2OZiUBudune7PMtySLyo3w7eaTGpUkOP
-        vTAftTmkb+CkY8jYPK4NSCKnXC8Tr+Ip9OPSKgmPy1FIQ3ENp/gLHmt/byMDAAA=
-X-CMS-MailID: 20180315131430eucas1p1143b894791e02b3054a7d2c51a59d49f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180315131430eucas1p1143b894791e02b3054a7d2c51a59d49f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180315111511epcas3p41569bd909fe6916429f3a016b0b88f57
-X-RootMTR: 20180315111511epcas3p41569bd909fe6916429f3a016b0b88f57
-References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
-        <CGME20180315111511epcas3p41569bd909fe6916429f3a016b0b88f57@epcas3p4.samsung.com>
-        <1521111391-3515-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <CAMuHMdXUNVBTi9n9+LQyv8o7e-z_ck-gSWsq-hi+ANgUnnTKjA@mail.gmail.com>
+References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org> <CAMuHMdXUNVBTi9n9+LQyv8o7e-z_ck-gSWsq-hi+ANgUnnTKjA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 15 Mar 2018 14:14:40 +0100
+Message-ID: <CAPDyKFp7a=oLNJ7N1=NY0D9ZwNeth9Wrb3yact_OTJ6pSPOT_A@mail.gmail.com>
+Subject: Re: [PATCH v6 00/25] PM / Domains: Support hierarchical CPU
+ arrangement (PSCI/ARM)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.03.2018 11:56, Jacopo Mondi wrote:
-> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On 15 March 2018 at 12:00, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../bindings/display/bridge/thine,thc63lvd1024.txt | 63 ++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> On Wed, Mar 14, 2018 at 5:58 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> This series is a re-worked version from Lina Iyer's two series [1] that got
+>> posted more than a year ago by now. I have picked up the series and done a
+>> significant re-work of it and here's the result. All patches have been changed,
+>> some have been dropped, some are entirely new. For this reason I decided to not
+>> include a version history, as I think people need a fresh start anyway.
 >
-> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> new file mode 100644
-> index 0000000..0936bde
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> @@ -0,0 +1,63 @@
-> +Thine Electronics THC63LVD1024 LVDS decoder
-> +-------------------------------------------
-> +
-> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-> +to parallel data outputs. The chip supports single/dual input/output modes,
-> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-> +
-> +Required properties:
-> +- compatible: Shall be "thine,thc63lvd1024",
-> +
-> +Optional properties:
-> +- vcc-supply: Power supply for TTL output and digital circuitry
-> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> +- lvcc-supply: Power supply for LVDS inputs
-> +- pvcc-supply: Power supply for PLL circuitry
-> +- pdwn-gpios: Power down GPIO signal. Active low.
-> +- oe-gpios: Output enable GPIO signal. Active high.
+> Thanks for your series!
+>
+> I gave it a try on a few Renesas boards and SoCs, without adding any new DT
+> descriptions.  On all of them it triggers
 
-Nitpick: different lines ends differently: period, dot, nothing.
-Another thing if there will be next iteration it would be good to
-emphasize converter has no control bus.
-Anyway:
+Thanks a lot for testing!
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>
+>     BUG: sleeping function called from invalid context at
+> drivers/base/power/runtime.c:1057
+>
+> during system suspend (s2ram).
+>
+> On R-Car Gen2 and SH-Mobile AG5 (arm32, no PSCI):
+>
+> Disabling non-boot CPUs ...
+> BUG: sleeping function called from invalid context at
+> drivers/base/power/runtime.c:1057
+> in_atomic(): 0, irqs_disabled(): 128, pid: 1725, name: s2ram
+> CPU: 0 PID: 1725 Comm: s2ram Not tainted
+> 4.16.0-rc5-koelsch-00475-gaa69fc46cc44c3d7 #4001
+> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+> [<c020f6a0>] (unwind_backtrace) from [<c020b324>] (show_stack+0x10/0x14)
+> [<c020b324>] (show_stack) from [<c07693c8>] (dump_stack+0x7c/0x9c)
+> [<c07693c8>] (dump_stack) from [<c02422ec>] (___might_sleep+0x128/0x164)
+> [<c02422ec>] (___might_sleep) from [<c0508efc>] (__pm_runtime_suspend+0x70/0xa8)
+> [<c0508efc>] (__pm_runtime_suspend) from [<c0299144>] (cpu_pm_enter+0x78/0x9c)
+> [<c0299144>] (cpu_pm_enter) from [<c0299170>] (cpu_pm_suspend+0x8/0x18)
+> [<c0299170>] (cpu_pm_suspend) from [<c04ff8c4>] (syscore_suspend+0x88/0x138)
+> [<c04ff8c4>] (syscore_suspend) from [<c0263010>]
+> (suspend_devices_and_enter+0x21c/0x564)
+> [<c0263010>] (suspend_devices_and_enter) from [<c02635a8>]
+> (pm_suspend+0x250/0x2c8)
+> [<c02635a8>] (pm_suspend) from [<c0262054>] (state_store+0xac/0xcc)
+> [<c0262054>] (state_store) from [<c035f238>] (kernfs_fop_write+0x170/0x1b0)
+> [<c035f238>] (kernfs_fop_write) from [<c02f8a5c>] (__vfs_write+0x2c/0x140)
+> [<c02f8a5c>] (__vfs_write) from [<c02f8ce4>] (vfs_write+0xb8/0x144)
+> [<c02f8ce4>] (vfs_write) from [<c02f8ea4>] (SyS_write+0x54/0xac)
+> [<c02f8ea4>] (SyS_write) from [<c0201000>] (ret_fast_syscall+0x0/0x4c)
+> Exception stack(0xeabcbfa8 to 0xeabcbff0)
+> bfa0:                   00000004 000ce408 00000001 000ce408 00000004 00000000
+> bfc0: 00000004 000ce408 b6e80b50 00000004 00000004 00000000 000c5758 00000000
+> bfe0: 00000000 be866754 b6de3c85 b6e1ef26
+>
+>
+> On R-Car Gen3 (arm64, PSCI):
+>
+> Disabling non-boot CPUs ...
+> CPU1: shutdown
+> psci: CPU1 killed.
+> CPU2: shutdown
+> psci: CPU2 killed.
+> CPU3: shutdown
+> psci: CPU3 killed.
+> CPU4: shutdown
+> psci: CPU4 killed.
+> CPU5: shutdown
+> psci: CPU5 killed.
+> CPU6: shutdown
+> psci: CPU6 killed.
+> CPU7: shutdown
+> psci: CPU7 killed.
+> BUG: sleeping function called from invalid context at
+> drivers/base/power/runtime.c:1057
+> in_atomic(): 0, irqs_disabled(): 128, pid: 2592, name: s2ram
+> 4 locks held by s2ram/2592:
+>  #0:  (sb_writers#7){.+.+}, at: [<00000000cae1f0e5>] vfs_write+0xb0/0x164
+>  #1:  (&of->mutex){+.+.}, at: [<000000003002e527>] kernfs_fop_write+0x114/0x1bc
+>  #2:  (kn->count#71){.+.+}, at: [<000000008c0217e1>]
+> kernfs_fop_write+0x11c/0x1bc
+>  #3:  (pm_mutex){+.+.}, at: [<000000009a6c23e2>] pm_suspend+0x194/0xb10
+> irq event stamp: 69308
+> hardirqs last  enabled at (69307): [<00000000e9d09767>]
+> _raw_spin_unlock_irq+0x2c/0x4c
+> hardirqs last disabled at (69308): [<00000000619169c4>]
+> arch_suspend_disable_irqs+0x10/0x18
+> softirqs last  enabled at (69246): [<00000000b8a7706e>]
+> hrtimers_dead_cpu+0x2b8/0x2f0
+> softirqs last disabled at (69242): [<000000004dee0c40>]
+> hrtimers_dead_cpu+0x48/0x2f0
+> CPU: 0 PID: 2592 Comm: s2ram Not tainted
+> 4.16.0-rc5-salvator-x-00470-g319cfb3643965f46 #1685
+> Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+> Call trace:
+>  dump_backtrace+0x0/0x140
+>  show_stack+0x14/0x1c
+>  dump_stack+0xb4/0xf0
+>  ___might_sleep+0x1fc/0x218
+>  __might_sleep+0x70/0x80
+>  __pm_runtime_suspend+0x6c/0xac
+>  cpu_pm_enter+0x74/0x9c
+>  cpu_pm_suspend+0xc/0x1c
+>  syscore_suspend+0x1b8/0x410
+>  suspend_devices_and_enter+0x210/0xd9c
+>  pm_suspend+0x9a4/0xb10
+>  state_store+0xd4/0xf8
+>  kobj_attr_store+0x18/0x28
+>  sysfs_kf_write+0x50/0x5c
+>  kernfs_fop_write+0x178/0x1bc
+>  __vfs_write+0x38/0x140
+>  vfs_write+0xc4/0x164
+>  SyS_write+0x54/0xa4
+>  el0_svc_naked+0x30/0x34
+>
+>
+> I've bisected this to "[PATCH v6 09/25] kernel/cpu_pm: Manage runtime PM
+> in the idle path for CPUs".
 
- --
-Regards
-Andrzej
+Thanks for the report, very much appreciated!
 
-> +
-> +The THC63LVD1024 video port connections are modeled according
-> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-> +
-> +Required video port nodes:
-> +- Port@0: First LVDS input port
-> +- Port@2: First digital CMOS/TTL parallel output
-> +
-> +Optional video port nodes:
-> +- Port@1: Second LVDS input port
-> +- Port@3: Second digital CMOS/TTL parallel output
-> +
-> +Example:
-> +--------
-> +
-> +	thc63lvd1024: lvds-decoder {
-> +		compatible = "thine,thc63lvd1024";
-> +
-> +		vcc-supply = <&reg_lvds_vcc>;
-> +		lvcc-supply = <&reg_lvds_lvcc>;
-> +
-> +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				lvds_dec_in_0: endpoint {
-> +					remote-endpoint = <&lvds_out>;
-> +				};
-> +			};
-> +
-> +			port@2{
-> +				reg = <2>;
-> +
-> +				lvds_dec_out_2: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +
-> +			};
-> +
-> +		};
-> +	};
+I realized that pm_runtime_irq_safe() won't be called for CPU devices
+that hasn't been hooked up to a genpd - as of_genpd_attach_cpu()
+hasn't been called for them.
+
+I figure something out for the next version on how to address this
+properly, until then you may test with the following change:
+
+diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
+index 71317ff..57250ee 100644
+--- a/kernel/cpu_pm.c
++++ b/kernel/cpu_pm.c
+@@ -103,7 +103,7 @@ int cpu_pm_enter(void)
+                 */
+                cpu_pm_notify(CPU_PM_ENTER_FAILED, nr_calls - 1, NULL);
+
+-       if (!ret && dev)
++       if (!ret && dev && pm_runtime_enabled(dev))
+                pm_runtime_put_sync_suspend(dev);
+
+        return ret;
+@@ -126,7 +126,7 @@ int cpu_pm_exit(void)
+ {
+        struct device *dev = get_cpu_device(smp_processor_id());
+
+-       if (dev)
++       if (dev && pm_runtime_enabled(dev))
+                pm_runtime_get_sync(dev);
+
+        return cpu_pm_notify(CPU_PM_EXIT, -1, NULL);
+-- 
+
+Kind regards
+Uffe
