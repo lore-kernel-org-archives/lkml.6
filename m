@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeCOKD1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:03:27 -0400
-Received: from osg.samsung.com ([64.30.133.232]:63721 "EHLO osg.samsung.com"
+        id S1751980AbeCOKDu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:03:50 -0400
+Received: from osg.samsung.com ([64.30.133.232]:40788 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751806AbeCOKD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:03:26 -0400
-Date: Thu, 15 Mar 2018 07:03:13 -0300
+        id S1751414AbeCOKDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 06:03:48 -0400
+Date: Thu, 15 Mar 2018 07:03:43 -0300
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH 01/47] edac: remove tile driver
-Message-ID: <20180315070313.12fc0c0e@vento.lan>
-In-Reply-To: <20180314154847.GD16605@pd.tnic>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 20/47] media: platform: remove blackfin capture driver
+Message-ID: <20180315070343.2034388e@vento.lan>
+In-Reply-To: <20180314153603.3127932-21-arnd@arndb.de>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-        <20180314153603.3127932-2-arnd@arndb.de>
-        <20180314154847.GD16605@pd.tnic>
+        <20180314153603.3127932-21-arnd@arndb.de>
 Organization: Samsung
 X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -26,28 +25,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 14 Mar 2018 16:48:47 +0100
-Borislav Petkov <bp@alien8.de> escreveu:
+Em Wed, 14 Mar 2018 16:35:33 +0100
+Arnd Bergmann <arnd@arndb.de> escreveu:
 
-> On Wed, Mar 14, 2018 at 04:35:14PM +0100, Arnd Bergmann wrote:
-> > The Tile architecture is obsolete and getting removed from the kernel,
-> > this driver appears to only be used there, and not on the ARM based
-> > successors (Tile-Mx, BlueField), so we should remove it as well.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/edac/Kconfig     |   8 --
-> >  drivers/edac/Makefile    |   2 -
-> >  drivers/edac/tile_edac.c | 265 -----------------------------------------------
-> >  3 files changed, 275 deletions(-)
-> >  delete mode 100644 drivers/edac/tile_edac.c  
+> The blackfin architecture is getting removed, so the video
+> capture driver is also obsolete.
 > 
-> Provided CONFIG_TILE gets removed, good riddance to that driver too.
-> 
-> Acked-by: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
 Acked-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
+> ---
+>  drivers/media/platform/Kconfig                 |   2 -
+>  drivers/media/platform/Makefile                |   2 -
+>  drivers/media/platform/blackfin/Kconfig        |  16 -
+>  drivers/media/platform/blackfin/Makefile       |   2 -
+>  drivers/media/platform/blackfin/bfin_capture.c | 983 -------------------------
+>  drivers/media/platform/blackfin/ppi.c          | 361 ---------
+>  include/media/blackfin/bfin_capture.h          |  39 -
+>  include/media/blackfin/ppi.h                   |  94 ---
+>  8 files changed, 1499 deletions(-)
+>  delete mode 100644 drivers/media/platform/blackfin/Kconfig
+>  delete mode 100644 drivers/media/platform/blackfin/Makefile
+>  delete mode 100644 drivers/media/platform/blackfin/bfin_capture.c
+>  delete mode 100644 drivers/media/platform/blackfin/ppi.c
+>  delete mode 100644 include/media/blackfin/bfin_capture.h
+>  delete mode 100644 include/media/blackfin/ppi.h
 > 
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> index 5d8fd71fc454..2136702c95fc 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -31,8 +31,6 @@ source "drivers/media/platform/davinci/Kconfig"
+>  
+>  source "drivers/media/platform/omap/Kconfig"
+>  
+> -source "drivers/media/platform/blackfin/Kconfig"
+> -
+>  config VIDEO_SH_VOU
+>  	tristate "SuperH VOU video output driver"
+>  	depends on MEDIA_CAMERA_SUPPORT
+> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+> index 85e112122f32..2b07f2e2fca6 100644
+> --- a/drivers/media/platform/Makefile
+> +++ b/drivers/media/platform/Makefile
+> @@ -53,8 +53,6 @@ obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+>  
+>  obj-y					+= stm32/
+>  
+> -obj-y                                   += blackfin/
+> -
+>  obj-y					+= davinci/
+>  
+>  obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+> diff --git a/drivers/media/platform/blackfin/Kconfig b/drivers/media/platform/blackfin/Kconfig
+> deleted file mode 100644
+> index 68fa90151b8f..000000000000
+> diff --git a/drivers/media/platform/blackfin/Makefile b/drivers/media/platform/blackfin/Makefile
+> deleted file mode 100644
+> index 30421bc23080..000000000000
+> diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
+> deleted file mode 100644
+> index b7660b1000fd..000000000000
+> diff --git a/drivers/media/platform/blackfin/ppi.c b/drivers/media/platform/blackfin/ppi.c
+> deleted file mode 100644
+> index d3dc765c1609..000000000000
+> diff --git a/include/media/blackfin/bfin_capture.h b/include/media/blackfin/bfin_capture.h
+> deleted file mode 100644
+> index a999a3970c69..000000000000
+> diff --git a/include/media/blackfin/ppi.h b/include/media/blackfin/ppi.h
+> deleted file mode 100644
+> index 987e49e8f9c9..000000000000
 
 
 
