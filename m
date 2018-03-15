@@ -1,115 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCOQu5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:50:57 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36532 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeCOQuz (ORCPT
+        id S1752451AbeCOQvG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:51:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:52893 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751866AbeCOQvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:50:55 -0400
-X-Google-Smtp-Source: AG47ELtr6lJFlypNCV2Uo5VCJ+Kfi4pEKUwbvY6ptP7XmXMDZIQ1VahoTmzYDInFycvwbogcszWQpYx+vSvEjkeCoG4=
-MIME-Version: 1.0
-In-Reply-To: <20180315161031.GA12313@lerouge>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan> <2177770.i4UbKDJpnI@aspire.rjw.lan>
- <20180315161031.GA12313@lerouge>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 15 Mar 2018 17:50:52 +0100
-X-Google-Sender-Auth: P7pd9pAgQDRYIELNBevNSV2nCSc
-Message-ID: <CAJZ5v0iVsby7J2dEApmFa0PfzRL+NV7iPoUcuiEudoJ-RRpk+w@mail.gmail.com>
-Subject: Re: [RFT][PATCH v4 2/7] sched: idle: Do not stop the tick upfront in
- the idle loop
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Mar 2018 12:51:04 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] [v2] Bluetooth: btrsi: rework dependencies
+Date: Thu, 15 Mar 2018 17:50:16 +0100
+Message-Id: <20180315165050.2211236-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:j+SzJK/jgpJjt24V7cDgs/q7gzxh1tKEHbts6atHNQWpFTAdqo4
+ UseDWdj35bcWGmwMNjG1z1KcdFqQoOGIb+Qn1j1cl9/MJdKt+oaoE7UULo9ThpSMJwgVVwF
+ tA0N2ZVoMauAgZPfgw0cAwfgJ3IuvajxkyoZAJwflpBxE1x0l4t8Ft13oCQfGXziEVrat5a
+ 2jNh/cCM3VoAVPVJHAi/g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jrKgMQjmTYI=:GY509RUMywHof2EhnNGa7Z
+ Yocz7VRYXEkax7cpCVqibl2zednTM9foJMlskb0BNkFotlhCi9fPJhRHt+WQKWZ1MyOlg+YII
+ se8gBgb67c1WU6QbRJo9QNkBgQnjJWEnZnQ7N10wGjUXzz9pCcgHP/9sil4LqrjjLgw4+pBo6
+ eCtXieTvYxIznAUluE2oXODbH2n/NYwK7jK7sQmxVxNFZkQNmQ7TmF1e5CRok/d0VrnsIHHvj
+ 6uCI74Pkj5qZprVzEom9xC+/AZohs9HeahsNWCAS4mgDCwKFXZv7suaCLciNdcW7QhDZxEmts
+ IwPjgmz0+pjibxdlNhffqM72ezffbhs88WX8VUEnTzqZil5+bX8Ws/uvHnNqUHhyJgAhTnAPy
+ z8ND3cSCcUQBFEk6U3ZyH7MGKOcVUU8UZOUIS2WmILIGfLokXb4J7iKRSuBZ6B3i94t+s5OPG
+ Fs75ZF9VhGvwmwkWu1Rt0nkjcaujiE8oJ6YAhac/wgWzSHPRTLXwBCIukshj2VziMWqjCUMhV
+ rYTbXYjrJZ9fgXjouYfJG1ilMPVv3osdevwhwOgLhpLptmGFJMtEjdWxLG2hPPI2Vy2ISS9f/
+ VpgHMYCGr6kEZm/9cgi0psE6L3T4AA8EzTnWPquKhzyVCZZEfIZDg/QvqkVZXueDy4a/6Jc1A
+ miHcOCq2HEDNZ/euKVz8vxHVeO5FbqBcXjuIhrbHn/H2FhDfV+i2ezTmt+26YAgLFgJ+NO+y0
+ BNyqhddPxch1H3fgPUv2tg0cv4FFl7FeBd9CDA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 5:10 PM, Frederic Weisbecker
-<frederic@kernel.org> wrote:
-> On Mon, Mar 12, 2018 at 10:51:11AM +0100, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Push the decision whether or not to stop the tick somewhat deeper
->> into the idle loop.
->>
->> Stopping the tick upfront leads to unpleasant outcomes in case the
->> idle governor doesn't agree with the timekeeping code on the duration
->> of the upcoming idle period.
->
-> Looks like you meant "nohz" instead of "timekeeping"?
+The linkage between the bluetooth driver and the wireless
+driver is not defined properly, leading to build problems
+such as:
 
-Yes, I did.
+warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI && RSI_91X)
+drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
+(.text+0x205): undefined reference to `rsi_bt_ops'
 
->> Specifically, if the tick has been
->> stopped and the idle governor predicts short idle, the situation is
->> bad regardless of whether or not the prediction is accurate.  If it
->> is accurate, the tick has been stopped unnecessarily which means
->> excessive overhead.  If it is not accurate, the CPU is likely to
->> spend too much time in the (shallow, because short idle has been
->> predicted) idle state selected by the governor [1].
->>
->> As the first step towards addressing this problem, change the code
->> to make the tick stopping decision inside of the loop in do_idle().
->> In particular, do not stop the tick in the cpu_idle_poll() code path.
->> Also don't do that in tick_nohz_irq_exit() which doesn't really have
->> enough information on whether or not to stop the tick.
->>
->> Link: https://marc.info/?l=linux-pm&m=150116085925208&w=2 # [1]
->> Link: https://tu-dresden.de/zih/forschung/ressourcen/dateien/projekte/haec/powernightmares.pdf
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>  kernel/sched/idle.c      |    8 +++++---
->>  kernel/time/tick-sched.c |    6 ++----
->>  2 files changed, 7 insertions(+), 7 deletions(-)
->>
->> Index: linux-pm/kernel/sched/idle.c
->> ===================================================================
->> --- linux-pm.orig/kernel/sched/idle.c
->> +++ linux-pm/kernel/sched/idle.c
->> @@ -241,10 +241,12 @@ static void do_idle(void)
->>                * broadcast device expired for us, we don't want to go deep
->>                * idle as we know that the IPI is going to arrive right away.
->>                */
->> -             if (cpu_idle_force_poll || tick_check_broadcast_expired())
->> +             if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
->>                       cpu_idle_poll();
->> -             else
->> +             } else {
->> +                     tick_nohz_idle_stop_tick();
->>                       cpuidle_idle_call();
->> +             }
->
-> I'm worried about one thing here. Say we enter cpuidle_idle_call() and the tick is stopped.
-> Later on, we get a tick, so we exit cpuidle_idle_call(), then we find cpu_idle_force_poll
-> or tick_check_broadcast_expired() to be true. So we poll but the tick hasn't been updated
-> to fire again.
->
-> I don't know if it can happen but cpu_idle_poll_ctrl() seem to be callable anytime.
-> It looks like it's only used on __init code or on power suspend/resume, not sure about
-> the implications on the latter, still there could be further misuse in the future.
->
-> Concerning tick_check_broadcast_expired(), it's hard to tell if it can be enabled
-> concurrently from another CPU or from interrupts.
->
-> Anyway perhaps we should have, out of paranoia:
->
-> +               if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
-> +                       tick_nohz_idle_restart_tick();
->                         cpu_idle_poll();
-> -               else
->
+As the dependency is actually the reverse (RSI_91X uses
+the BT_RSI driver, not the other way round), this changes
+the dependency to match, and enables the bluetooth driver
+from the RSI_COEX symbol.
 
-Agreed, I'll update the patch accordingly.
+Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: Pick a different from v1
+---
+ drivers/bluetooth/Kconfig        | 4 +---
+ drivers/net/wireless/rsi/Kconfig | 4 +++-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Thanks!
+diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+index d8bbd661dbdb..149a38ee1fce 100644
+--- a/drivers/bluetooth/Kconfig
++++ b/drivers/bluetooth/Kconfig
+@@ -393,9 +393,7 @@ config BT_QCOMSMD
+ 	  kernel or say M to compile as a module.
+ 
+ config BT_HCIRSI
+-	tristate "Redpine HCI support"
+-	default n
+-	select RSI_COEX
++	tristate
+ 	help
+ 	  Redpine BT driver.
+ 	  This driver handles BT traffic from upper layers and pass
+diff --git a/drivers/net/wireless/rsi/Kconfig b/drivers/net/wireless/rsi/Kconfig
+index f004be33fcfa..c6006fab8638 100644
+--- a/drivers/net/wireless/rsi/Kconfig
++++ b/drivers/net/wireless/rsi/Kconfig
+@@ -13,6 +13,7 @@ if WLAN_VENDOR_RSI
+ 
+ config RSI_91X
+ 	tristate "Redpine Signals Inc 91x WLAN driver support"
++	select BT_RSI if RSI_COEX
+ 	depends on MAC80211
+ 	---help---
+ 	  This option enabes support for RSI 1x1 devices.
+@@ -44,7 +45,8 @@ config RSI_USB
+ 
+ config RSI_COEX
+ 	bool "Redpine Signals WLAN BT Coexistence support"
+-	depends on BT_HCIRSI && RSI_91X
++	depends on BT && RSI_91X
++	depends on !(BT=m && RSI_91X=y)
+ 	default y
+ 	---help---
+ 	  This option enables the WLAN BT coex support in rsi drivers.
+-- 
+2.9.0
