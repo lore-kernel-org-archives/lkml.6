@@ -1,61 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932697AbeCOP5a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:57:30 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43396 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932395AbeCOP52 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:57:28 -0400
-X-Google-Smtp-Source: AG47ELuRvUYrQzdyzpA1PufhTitOB4FBA18FCjdAZ8r3vJUZUBAqh7v9D6llENgx+pqKdkV9VdWWWluNS90uoMh+muo=
+        id S932550AbeCOP7g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:59:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:42268 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752600AbeCOP7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:59:35 -0400
+Subject: Re: [PATCH 3/3] irqchip/gic-v3: Allow LPIs to be disabled from the
+ command line
+To: shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180313172103.24281-1-marc.zyngier@arm.com>
+ <20180313172103.24281-4-marc.zyngier@arm.com>
+ <f3fee732-2c07-e303-4ec2-2d79668b868e@codeaurora.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <0418813e-9837-32b0-d1df-2b5d52c83d8e@arm.com>
+Date: Thu, 15 Mar 2018 15:59:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <EE0D5CBE-0867-4FE0-B157-CA4086C84233@holtmann.org>
-References: <20180315154312.3941446-1-arnd@arndb.de> <EE0D5CBE-0867-4FE0-B157-CA4086C84233@holtmann.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 15 Mar 2018 16:57:26 +0100
-X-Google-Sender-Auth: eRB9spaLj-KdDvg4rZeAlhJ4xfA
-Message-ID: <CAK8P3a3y00nUVuYopxXWaJjo_OxXhVsATyiSOfXz5b09JFq2dA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btrsi: rework dependencies
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f3fee732-2c07-e303-4ec2-2d79668b868e@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 4:50 PM, Marcel Holtmann <marcel@holtmann.org> wrote:
-
->> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
->> index 03cfc1b20c4a..9e8d22712ff3 100644
->> --- a/drivers/bluetooth/Makefile
->> +++ b/drivers/bluetooth/Makefile
->> @@ -28,7 +28,7 @@ obj-$(CONFIG_BT_QCA)                += btqca.o
+On 15/03/18 14:58, Shanker Donthineni wrote:
+> 
+> Hi Marc,
+> 
+> On 03/13/2018 12:21 PM, Marc Zyngier wrote:
+>> For most GICv3 implementations, enabling LPIs is a one way switch.
+>> Once they're on, there is no turning back, which completely kills
+>> kexec (pending tables will always be live, and we can't tell the
+>> secondary kernel where they are).
 >>
->> obj-$(CONFIG_BT_HCIUART_NOKIA)        += hci_nokia.o
+>> This is really annoying if you plan to use Linux as a bootloader,
+>> as it pretty much guarantees that the secondary kernel won't be
+>> able to use MSIs, and may even see some memory corruption. Bad.
 >>
->> -obj-$(CONFIG_BT_HCIRSI)              += btrsi.o
->> +obj-$(CONFIG_BT_HCIRSI_MODULE)       += btrsi.o
->
-> do we need this new option? I have avoided these kind of complex things multi config entries. Can we not just select the RSI_91X?
->
+>> A workaround for this unfortunate situation is to allow the kernel
+>> not to enable LPIs, even if the feature is present in the HW. This
+>> would allow Linux-as-a-bootloader to leave LPIs alone, and let the
+>> secondary kernel to do whatever it wants with them.
+>>
+>> Let's introduce a boolean "irqchip.gicv3_nolpi" command line option
+>> that serves that purpose.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+>>  drivers/irqchip/irq-gic-v3.c                    | 10 +++++++++-
+>>  2 files changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 1d1d53f85ddd..60130231db3b 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -1743,6 +1743,14 @@
+>>  			of a GICv2 controller even if the memory range
+>>  			exposed by the device tree is too small.
+>>  
+>> +	irqchip.gicv3_nolpi=
+>> +			[ARM, ARM64]
+>> +			Force the kernel to ignore the availability of
+>> +			LPIs (and by consequence ITSs). Intended for system
+>> +			that use the kernel as a bootloader, and thus want
+>> +			to let secondary kernels in charge of setting up
+>> +			LPIs.
+>> +
+>>  	irqfixup	[HW]
+>>  			When an interrupt is not handled search all handlers
+>>  			for it. Intended to get systems with badly broken
+>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>> index 0ea02504115d..3e9eeb6cb294 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -613,9 +613,17 @@ static void gic_cpu_sys_reg_init(void)
+>>  		pr_crit_once("RSS is required but GICD doesn't support it\n");
+>>  }
+>>  
+>> +static bool gicv3_nolpi;
+>> +
+>> +static int __init gicv3_nolpi_cfg(char *buf)
+>> +{
+>> +	return strtobool(buf, &gicv3_nolpi);
+>> +}
+>> +early_param("irqchip.gicv3_nolpi", gicv3_nolpi_cfg);
+>> +
+>>  static int gic_dist_supports_lpis(void)
+>>  {
+>> -	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS);
+>> +	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS) && !gicv3_nolpi;
+> 
+> Thanks for this patch series especially for KDUMP case. It would be nice if we disable GIC-ITS and
+> GICR-LPI functionality completely to avoid in flight LPIs which were triggered by first kernel.
 
-I couldn't come up with a simpler way to do this.
-Selecting RSI_91X is not possible unless we make the BT
-driver 'depend on WLAN_VENDOR_RSI && MAC80211',
-which is even more backwards.
+For kdump, it doesn't really matter much. The kdump kernel lives in its
+own memory space, and is unaffected by LPIs being triggered. You just
+need to make sure that if you can't reset EnableLPIs, you still carry on
+using wired interrupts. The ITS doesn't really matter, as long as the
+redistributors have their EnableLPIs zeroed.
 
-The problem here is that it's actually a reverse dependency:
-the wlan driver calls into the bt driver.
+It really is for kexec that it matters a lot, because the secondary
+kernel expects to find a sane environment, which it cannot have if LPIs
+are still on.
 
-What we could do is to make BT_HCIRSI a silent symbol
-and have that selected by RSI_COEX, which can then
-be user-visible. With that, the Kconfig structure would follow
-what the code does.
+Thanks,
 
-       Arnd
+	M.
+-- 
+Jazz is not dead. It just smells funny...
