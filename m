@@ -1,61 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeCOG12 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 02:27:28 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:34739 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbeCOG11 (ORCPT
+        id S1751828AbeCOGdn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 02:33:43 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52960 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeCOGdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 02:27:27 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2F6RMZg001949
-X-Nifty-SrcIP: [209.85.217.175]
-X-Google-Smtp-Source: AG47ELtCqy1eSSfR3XZtPKE59VQdrdFMl8VbPAhHiTxtVxy4jkny2pPclfUF916XXLHvIMXRqZuOPrp3VQwI7Iur4kw=
-MIME-Version: 1.0
-In-Reply-To: <nycvar.YSQ.7.76.1803141324420.28583@knanqh.ubzr>
-References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
- <1521045861-22418-3-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1803141324420.28583@knanqh.ubzr>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 15 Mar 2018 15:26:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQMLA9-wOJ5Tgr1tuOTox33544cty3rVzAxvvyGQgs5Dg@mail.gmail.com>
-Message-ID: <CAK7LNAQMLA9-wOJ5Tgr1tuOTox33544cty3rVzAxvvyGQgs5Dg@mail.gmail.com>
-Subject: Re: [PATCH 2/7] kbuild: touch autoksyms.h when it is really missing
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 15 Mar 2018 02:33:41 -0400
+X-Google-Smtp-Source: AG47ELtABCsaExmYJLMxs59egnHc+pAMH3fcooQv5TzgcvIcGsURvYwAkMx/qrTSnH/4/GWKQzUCzQ==
+Subject: [PATCH 2/4] scsi: arcmsr: Handle adapter removed due to
+ thunderbolt cable disconnection.
+From: Ching Huang <ching2048@areca.com.tw>
+To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
 Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 15 Mar 2018 14:33:36 +0800
+Message-ID: <1521095616.31371.30.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-15 2:26 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
-> On Thu, 15 Mar 2018, Masahiro Yamada wrote:
->
->> From the comment, I expect this code creates autoksyms.h in case it
->> is missing, but it actually touches it when it does exists.
->
-> Oops, indeed.
->
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> I do not know when this code is useful...
->>
->> If autoksyms.h were missing, build should have already failed because
->> include/{linux,asm-generic}/export.h need it.
->>
->> Maybe for standalone test?
->> Or, in order to make this script self-contained?
->
-> I agree it isn't very useful. Proof: it was wrong and wouldn't have
-> worked as intended. So the best fix might be to simply remove that line.
->
+From: Ching Huang <ching2048@areca.com.tw>
 
-OK, I will remove the code.
+Handle adapter removed due to thunderbolt cable disconnection.
 
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 75e828b..2f52c53 100755
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -1446,12 +1446,80 @@ static void arcmsr_done4abort_postqueue(struct AdapterControlBlock *acb)
+ 	}
+ }
+ 
++static void arcmsr_remove_scsi_devices(struct AdapterControlBlock *acb)
++{
++	char *acb_dev_map = (char *)acb->device_map;
++	int target, lun, i;
++	struct scsi_device *psdev;
++	struct CommandControlBlock *ccb;
++	char temp;
++
++	for (i = 0; i < acb->maxFreeCCB; i++) {
++		ccb = acb->pccb_pool[i];
++		if (ccb->startdone == ARCMSR_CCB_START) {
++			ccb->pcmd->result = DID_NO_CONNECT << 16;
++			arcmsr_pci_unmap_dma(ccb);
++			ccb->pcmd->scsi_done(ccb->pcmd);
++		}
++	}
++	for (target = 0; target < ARCMSR_MAX_TARGETID; target++) {
++		temp = *acb_dev_map;
++		if (temp) {
++			for (lun = 0; lun < ARCMSR_MAX_TARGETLUN; lun++) {
++				if (temp & 1) {
++					psdev = scsi_device_lookup(acb->host,
++						0, target, lun);
++					if (psdev != NULL) {
++						scsi_remove_device(psdev);
++						scsi_device_put(psdev);
++					}
++				}
++				temp >>= 1;
++			}
++			*acb_dev_map = 0;
++		}
++		acb_dev_map++;
++	}
++}
++
++static void arcmsr_free_pcidev(struct AdapterControlBlock *acb)
++{
++	struct pci_dev *pdev;
++	struct Scsi_Host *host;
++
++	host = acb->host;
++	arcmsr_free_sysfs_attr(acb);
++	scsi_remove_host(host);
++	flush_work(&acb->arcmsr_do_message_isr_bh);
++	del_timer_sync(&acb->eternal_timer);
++	if (set_date_time)
++		del_timer_sync(&acb->refresh_timer);
++	pdev = acb->pdev;
++	arcmsr_free_irq(pdev, acb);
++	arcmsr_free_ccb_pool(acb);
++	arcmsr_free_mu(acb);
++	arcmsr_unmap_pciregion(acb);
++	pci_release_regions(pdev);
++	scsi_host_put(host);
++	pci_disable_device(pdev);
++}
++
+ static void arcmsr_remove(struct pci_dev *pdev)
+ {
+ 	struct Scsi_Host *host = pci_get_drvdata(pdev);
+ 	struct AdapterControlBlock *acb =
+ 		(struct AdapterControlBlock *) host->hostdata;
+ 	int poll_count = 0;
++	uint16_t dev_id;
++
++	pci_read_config_word(pdev, PCI_DEVICE_ID, &dev_id);
++	if (dev_id == 0xffff) {
++		acb->acb_flags &= ~ACB_F_IOP_INITED;
++		acb->acb_flags |= ACB_F_ADAPTER_REMOVED;
++		arcmsr_remove_scsi_devices(acb);
++		arcmsr_free_pcidev(acb);
++		return;
++	}
+ 	arcmsr_free_sysfs_attr(acb);
+ 	scsi_remove_host(host);
+ 	flush_work(&acb->arcmsr_do_message_isr_bh);
+@@ -1499,6 +1567,8 @@ static void arcmsr_shutdown(struct pci_dev *pdev)
+ 	struct Scsi_Host *host = pci_get_drvdata(pdev);
+ 	struct AdapterControlBlock *acb =
+ 		(struct AdapterControlBlock *)host->hostdata;
++	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
++		return;
+ 	del_timer_sync(&acb->eternal_timer);
+ 	if (set_date_time)
+ 		del_timer_sync(&acb->refresh_timer);
+@@ -2931,6 +3001,12 @@ static int arcmsr_queue_command_lck(struct scsi_cmnd *cmd,
+ 	struct AdapterControlBlock *acb = (struct AdapterControlBlock *) host->hostdata;
+ 	struct CommandControlBlock *ccb;
+ 	int target = cmd->device->id;
++
++	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED) {
++		cmd->result = (DID_NO_CONNECT << 16);
++		cmd->scsi_done(cmd);
++		return 0;
++	}
+ 	cmd->scsi_done = done;
+ 	cmd->host_scribble = NULL;
+ 	cmd->result = 0;
+@@ -4177,6 +4253,8 @@ static int arcmsr_bus_reset(struct scsi_cmnd *cmd)
+ 	int retry_count = 0;
+ 	int rtn = FAILED;
+ 	acb = (struct AdapterControlBlock *) cmd->device->host->hostdata;
++	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
++		return SUCCESS;
+ 	pr_notice("arcmsr: executing bus reset eh.....num_resets = %d,"
+ 		" num_aborts = %d \n", acb->num_resets, acb->num_aborts);
+ 	acb->num_resets++;
+@@ -4243,6 +4321,8 @@ static int arcmsr_abort(struct scsi_cmnd *cmd)
+ 	int rtn = FAILED;
+ 	uint32_t intmask_org;
+ 
++	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
++		return SUCCESS;
+ 	printk(KERN_NOTICE
+ 		"arcmsr%d: abort device command of scsi id = %d lun = %d\n",
+ 		acb->host->host_no, cmd->device->id, (u32)cmd->device->lun);
