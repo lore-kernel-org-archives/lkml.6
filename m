@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752362AbeCOONH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:13:07 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37757 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751753AbeCOONG (ORCPT
+        id S1752439AbeCOOPp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:15:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53607 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeCOOPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:13:06 -0400
-X-Google-Smtp-Source: AG47ELvFYj1ktg1j/wnhES3h+7SqalO3aQsY0AwX3NGfh4Tr12VzGwGsuXqyBpQHBC50jXGDOIdVTQ==
-Message-ID: <1521123183.2686.7.camel@arista.com>
-Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
-From: Dmitry Safonov <dima@arista.com>
+        Thu, 15 Mar 2018 10:15:43 -0400
+Date: Thu, 15 Mar 2018 15:15:41 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
-Date: Thu, 15 Mar 2018 14:13:03 +0000
-In-Reply-To: <20180315134649.skh2aukcmg5ud74y@8bytes.org>
-References: <20180215191729.15777-1-dima@arista.com>
-         <20180315134649.skh2aukcmg5ud74y@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Subject: Re: [PATCH 05/10] iommu/amd: remove the special case from
+ get_irq_table()
+Message-ID: <20180315141541.6g3xc6yi4siafuwr@linutronix.de>
+References: <20180223222736.18542-1-bigeasy@linutronix.de>
+ <20180223222736.18542-6-bigeasy@linutronix.de>
+ <20180315125342.q74wurk6bdbhl6hy@8bytes.org>
+ <20180315130153.3ba2loj5oplogdew@linutronix.de>
+ <20180315130723.dunmpmbkswwvq54g@8bytes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180315130723.dunmpmbkswwvq54g@8bytes.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-15 at 14:46 +0100, Joerg Roedel wrote:
-> On Thu, Feb 15, 2018 at 07:17:29PM +0000, Dmitry Safonov wrote:
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index accf58388bdb..6c4ea32ee6a9 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void
-> > *dev_id)
-> >  	int reg, fault_index;
-> >  	u32 fault_status;
-> >  	unsigned long flag;
-> > -	bool ratelimited;
-> >  	static DEFINE_RATELIMIT_STATE(rs,
-> >  				      DEFAULT_RATELIMIT_INTERVAL,
-> >  				      DEFAULT_RATELIMIT_BURST);
-> >  
-> > -	/* Disable printing, simply clear the fault when
-> > ratelimited */
-> > -	ratelimited = !__ratelimit(&rs);
-> > -
-> >  	raw_spin_lock_irqsave(&iommu->register_lock, flag);
-> >  	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
-> > -	if (fault_status && !ratelimited)
-> > +	if (fault_status && __ratelimit(&rs))
-> >  		pr_err("DRHD: handling fault status reg %x\n",
-> > fault_status);
+On 2018-03-15 14:07:23 [+0100], Joerg Roedel wrote:
+> On Thu, Mar 15, 2018 at 02:01:53PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2018-03-15 13:53:42 [+0100], Joerg Roedel wrote:
+> > > On Fri, Feb 23, 2018 at 11:27:31PM +0100, Sebastian Andrzej Siewior wrote:
+> > > > @@ -4103,10 +4093,26 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
+> > > >  		return ret;
+> > > >  
+> > > >  	if (info->type == X86_IRQ_ALLOC_TYPE_IOAPIC) {
+> > > > -		if (get_irq_table(devid, true))
+> > > > +		struct irq_remap_table *table;
+> > > > +		struct amd_iommu *iommu;
+> > > > +
+> > > > +		table = get_irq_table(devid);
+> > > > +		if (table) {
+> > > > +			if (!table->min_index) {
+> > > > +				/*
+> > > > +				 * Keep the first 32 indexes free for IOAPIC
+> > > > +				 * interrupts.
+> > > > +				 */
+> > > > +				table->min_index = 32;
+> > > > +				iommu = amd_iommu_rlookup_table[devid];
+> > > > +				for (i = 0; i < 32; ++i)
+> > > > +					iommu->irte_ops->set_allocated(table, i);
+> > > > +			}
+> > > 
+> > > I think this needs to be protected by the table->lock.
+> > 
+> > Which part any why? The !->min_index part plus extending(setting to 32)?
 > 
-> This looks aweful. Have you tried to limit the number of loops in
-> this
-> function and returning? You can handle the next faults by the next
-> interrupt. This ensures that the cpu visits a scheduling point from
-> time
-> to time so that you don't see soft-lockups.
+> In particular the set_allocated part, when get_irq_table() returns the
+> table is visible to other users as well. I have not checked the
+> irq-layer locking to be sure that can happen, though.
 
-So, you suggest to remove ratelimit at all?
-Do we really need printk flood for each happened fault?
-Imagine, you've hundreds of mappings and then PCI link flapped..
-Wouldn't it be better to keep ratelimiting?
-I don't mind, just it looks a bit strange to me.
+->set_allocated() operates only on 0…31 and other could be used at the
+same time. However 0…31 should be accessed by other user before they are
+ready.
 
--- 
-Thanks,
-             Dmitry
+irq_remapping_alloc() is that ->alloc() callback invoked via
+irq_domain_alloc_irqs_hierarchy() and each caller has to hold the
+&irq_domain_mutex mutex. So we should not have those in parallel.
+
+Is it possible to have those entries accessed before the setup is
+complete? My understanding is that this setup is performed once during
+boot (especially that ioapic part) and not again.
+
+>From looking at that hunk, it should not hurt to add that lock, just
+wanted to check it is really needed.
+
+Sebastian
