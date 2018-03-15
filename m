@@ -1,606 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752681AbeCOOuu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:50:50 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:50640 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752218AbeCOOus (ORCPT
+        id S1752632AbeCOOw3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:52:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41476 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752244AbeCOOw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:50:48 -0400
-X-Google-Smtp-Source: AG47ELuxBIOFna9HQbpKPD01+B4GwQl2oD0p2bM3Mf8V9NbYLNrh2xhHXb46OTTkiGu+R29UawOHpQ==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] ARM: dts: qcom: Add apq8064 Dragon Board 600c support
-Date: Thu, 15 Mar 2018 14:48:41 +0000
-Message-Id: <20180315144841.16144-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Thu, 15 Mar 2018 10:52:27 -0400
+Subject: Re: [PATCH v3 11/14] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <fee58106-a481-aaf8-7fb6-8d51c4b7e906@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 10:52:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <fee58106-a481-aaf8-7fb6-8d51c4b7e906@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031514-0028-0000-0000-0000094E5A1A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003434; UDB=6.00510668; IPR=6.00782760;
+ MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 14:52:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031514-0029-0000-0000-000039FA7CF6
+Message-Id: <f86c2e7d-198b-0900-e0ed-f22fedf39b04@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150165
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-This patch add support to DB600c board, which is another
-96board based on Qualcomm APQ8064 SoC.
-
-Support for USB, HDMI, PCIe, I2C, SPI, eMMC, microSD card, LEDs
-device tree nodes is added in this patch.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm/boot/dts/Makefile                |   1 +
- arch/arm/boot/dts/qcom-apq8064-db600c.dts | 547 ++++++++++++++++++++++++++++++
- 2 files changed, 548 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-apq8064-db600c.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index ade7a38543dc..940db57e57b8 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -743,6 +743,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-apq8064-ifc6410.dtb \
- 	qcom-apq8064-sony-xperia-yuga.dtb \
- 	qcom-apq8064-asus-nexus7-flo.dtb \
-+	qcom-apq8064-db600c.dtb \
- 	qcom-apq8074-dragonboard.dtb \
- 	qcom-apq8084-ifc6540.dtb \
- 	qcom-apq8084-mtp.dtb \
-diff --git a/arch/arm/boot/dts/qcom-apq8064-db600c.dts b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-new file mode 100644
-index 000000000000..6a3250151038
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-@@ -0,0 +1,547 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include "qcom-apq8064-v2.0.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
-+#include <dt-bindings/mfd/qcom-rpm.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. DB600c";
-+	compatible = "arrow,apq8064-db600c", "qcom,apq8064";
-+
-+	aliases {
-+		serial0 = &gsbi7_serial;
-+		serial1 = &gsbi1_serial;
-+		i2c0 = &gsbi2_i2c;
-+		i2c1 = &gsbi3_i2c;
-+		i2c2 = &gsbi4_i2c;
-+		i2c3 = &gsbi7_i2c;
-+		spi0 = &gsbi5_spi;
-+	};
-+
-+	regulators {
-+		compatible = "simple-bus";
-+		vph: regulator-fixed@1 {
-+			compatible = "regulator-fixed";
-+			regulator-min-microvolt = <4500000>;
-+			regulator-max-microvolt = <4500000>;
-+			regulator-name = "VPH";
-+			regulator-type = "voltage";
-+			regulator-boot-on;
-+		};
-+
-+		/* on board fixed 3.3v supply */
-+		vcc3v3: vcc3v3 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VCC3V3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&hdmi_out>;
-+			};
-+		};
-+	};
-+
-+	soc {
-+		pinctrl@800000 {
-+			card_detect: card_detect {
-+				mux {
-+					pins = "gpio26";
-+					function = "gpio";
-+					bias-disable;
-+				};
-+			};
-+
-+			user_leds: user-leds {
-+				mux {
-+					pins = "gpio6", "gpio7", "gpio35", "gpio86";
-+					function = "gpio";
-+				};
-+		
-+				conf {
-+					pins = "gpio6", "gpio7", "gpio35", "gpio86";
-+					function = "gpio";
-+					output-low;
-+				};
-+			};
-+		
-+			i2c1 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			i2c2 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			i2c3 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+			
-+			i2c4 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			i2c5 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			i2c6 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			i2c7 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+
-+			i2c1 {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+			};
-+		
-+			spi5_default {
-+				pinconf {
-+					drive-strength = <8>;
-+				};
-+		
-+				pinconf_cs {
-+					drive-strength = <8>;
-+				};
-+			};
-+		};
-+
-+		qcom,ssbi@500000 {
-+			pmic@0 {
-+				gpio@150 {
-+					pcie_pins: pcie_pins {
-+						pios {
-+							pins = "gpio22";
-+							function = "normal";
-+							power-source = <PM8921_GPIO_VPH>;
-+						};
-+					};
-+				};
-+
-+				mpps@50 {
-+					pcie_perst: pcie-perst {
-+						pinconf {
-+							pins = "mpp1";
-+							function = "digital";
-+							power-source = <PM8921_MPP_S4>;
-+							output-low;
-+						};
-+					};
-+			
-+					mpp_leds: mpp-leds {
-+						pinconf {
-+							pins = "mpp7", "mpp8", "mpp9", "mpp10",	"mpp11", "mpp12";
-+							function = "digital";
-+							power-source = <PM8921_MPP_VPH>;
-+							drive-strength = <12>;
-+							output-high;
-+						};
-+					};
-+				};
-+			};
-+		};
-+
-+		rpm@108000 {
-+			regulators {
-+				vdd_s1-supply = <&vph>;
-+				vdd_s2-supply = <&vph>;
-+				vdd_s3-supply = <&vph>;
-+				vdd_s4-supply = <&vph>;
-+				vdd_s5-supply = <&vph>;
-+				vdd_s6-supply = <&vph>;
-+				vdd_s7-supply = <&vph>;
-+
-+				vdd_l1_l2_l12_l18-supply = <&pm8921_s4>;
-+				vdd_l3_l15_l17-supply = <&vph>;
-+				vdd_l4_l14-supply = <&vph>;
-+				vdd_l5_l8_l16-supply = <&vph>;
-+				vdd_l6_l7-supply = <&vph>;
-+				vdd_l9_l11-supply = <&vph>;
-+				vdd_l10_l22-supply = <&vph>;
-+				vdd_l21_l23_l29-supply = <&vph>;
-+
-+				vdd_l24-supply = <&pm8921_s1>;
-+				vdd_l25-supply = <&pm8921_s1>;
-+				vdd_l26-supply = <&pm8921_s7>;
-+				vdd_l27-supply = <&pm8921_s7>;
-+				vdd_l28-supply = <&pm8921_s7>;
-+
-+				vin_lvs1_3_6-supply = <&pm8921_s4>;
-+				vin_lvs2-supply = <&pm8921_s1>;
-+				vin_lvs4_5_7-supply = <&pm8921_s4>;
-+
-+				s1 {
-+					regulator-always-on;
-+					regulator-min-microvolt = <1225000>;
-+					regulator-max-microvolt = <1225000>;
-+					qcom,switch-mode-frequency = <3200000>;
-+					bias-pull-down;
-+				};
-+
-+				s2 {
-+					regulator-min-microvolt = <1300000>;
-+					regulator-max-microvolt = <1300000>;
-+					qcom,switch-mode-frequency = <1600000>;
-+					bias-pull-down;
-+					regulator-always-on;
-+				};
-+
-+				s3 {
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1400000>;
-+					qcom,switch-mode-frequency = <4800000>;
-+				};
-+
-+				s4 {
-+					regulator-min-microvolt	= <1800000>;
-+					regulator-max-microvolt	= <1800000>;
-+					qcom,switch-mode-frequency = <1600000>;
-+					qcom,force-mode = <QCOM_RPM_FORCE_MODE_AUTO>;
-+					bias-pull-down;
-+					regulator-always-on;
-+				};
-+
-+				s7 {
-+					regulator-min-microvolt = <1300000>;
-+					regulator-max-microvolt = <1300000>;
-+					qcom,switch-mode-frequency = <3200000>;
-+				 };
-+
-+				l3 {
-+					regulator-min-microvolt = <3050000>;
-+					regulator-max-microvolt = <3300000>;
-+					bias-pull-down;
-+				};
-+
-+				l4 {
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1800000>;
-+					bias-pull-down;
-+				};
-+
-+				l5 {
-+					regulator-min-microvolt = <2750000>;
-+					regulator-max-microvolt = <3000000>;
-+					bias-pull-down;
-+					regulator-boot-on;
-+					regulator-always-on;
-+				};
-+
-+				l6 {
-+					regulator-min-microvolt = <2950000>;
-+					regulator-max-microvolt = <2950000>;
-+					bias-pull-down;
-+				};
-+
-+				l7 {
-+					regulator-min-microvolt = <2950000>;
-+					regulator-max-microvolt = <2950000>;
-+					regulator-boot-on;
-+					regulator-always-on;
-+				};
-+
-+				/**
-+				/**
-+				 * 1.8v required on LS expansion
-+				 * for mezzanine boards
-+				 */
-+				l15 {
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				l23 {
-+					regulator-min-microvolt = <1700000>;
-+					regulator-max-microvolt = <1900000>;
-+					bias-pull-down;
-+				};
-+
-+				l26 {
-+					regulator-min-microvolt = < 375000>;
-+					regulator-max-microvolt = <1050000>;
-+					bias-pull-down;
-+				};
-+
-+				lvs6 {
-+					bias-pull-down;
-+				};
-+
-+				lvs7 {
-+					bias-pull-down;
-+				};
-+			};
-+		};
-+
-+		gsbi@12440000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_UART_W_FC>;
-+			serial@12450000 {
-+				label = "LS-UART1";
-+				status = "okay";
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&gsbi1_uart_4pins>;
-+			};
-+		};
-+
-+		gsbi@12480000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_I2C>;
-+			i2c@124a0000 {
-+				/* On Low speed expansion and Sensors */
-+				label = "LS-I2C0";
-+				status = "okay";
-+			};
-+		};
-+
-+		gsbi@16200000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_I2C>;
-+			i2c@16280000 {
-+			/* On Low speed expansion */
-+				status = "okay";
-+				label = "LS-I2C1";
-+				clock-frequency = <200000>;
-+				eeprom@52 {
-+					compatible = "atmel,24c128";
-+					reg = <0x52>;
-+					pagesize = <64>;
-+				};
-+			};
-+		};
-+
-+		gsbi@16300000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_I2C>;
-+			i2c@16380000 {
-+				/* On High speed expansion */
-+				label = "HS-CAM-I2C3";
-+				status = "okay";
-+			};
-+		};
-+
-+		gsbi@1a200000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_SPI>;
-+			spi@1a280000 {
-+				/* On Low speed expansion */
-+				label = "LS-SPI0";
-+				status = "okay";
-+				num-cs = <1>;
-+				cs-gpios  = <&tlmm_pinmux 53 0>;
-+				spi-sram@0 {
-+					status = "okay";
-+					#address-cells = <1>;
-+					#size-cells = <1>;
-+					compatible= "microchip,mchp23lcv1024";
-+					reg = <0>;
-+					spi-max-frequency = <10000000>;
-+				};
-+			};
-+		};
-+
-+		gsbi@16500000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_UART_W_FC>;
-+			serial@1654000 {
-+				label = "BT-UART";
-+				status = "okay";
-+				pinctrl-name = "default";
-+				pinctrl-0 = <&gsbi6_uart_4pins>;
-+			};
-+		};
-+
-+
-+		/* DEBUG UART  */
-+		gsbi@16600000 {
-+			status = "okay";
-+			qcom,mode = <GSBI_PROT_I2C_UART>;
-+			serial@16640000 {
-+				label = "LS-UART0";
-+				status = "okay";
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&gsbi7_uart_2pins>;
-+
-+			};
-+
-+			i2c@16680000 {
-+				/* On High speed expansion */
-+				status = "okay";
-+				label = "HS-CAM-I2C2";
-+			};
-+		};
-+
-+		leds {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&user_leds>, <&mpp_leds>;
-+
-+			compatible = "gpio-leds";
-+
-+			user-led0 {
-+				label = "user0-led";
-+				gpios = <&pm8921_mpps 9 GPIO_ACTIVE_HIGH>;
-+				linux,default-trigger = "heartbeat";
-+				default-state = "off";
-+			};
-+
-+			user-led1 {
-+				label = "user1-led";
-+				gpios = <&pm8921_mpps 10 GPIO_ACTIVE_HIGH>;
-+				linux,default-trigger = "mmc0";
-+				default-state = "off";
-+			};
-+
-+			user-led2 {
-+				label = "user2-led";
-+				gpios = <&pm8921_mpps 11 GPIO_ACTIVE_HIGH>;
-+				linux,default-trigger = "mmc1";
-+				default-state = "off";
-+			};
-+
-+			user-led3 {
-+				label = "user3-led";
-+				gpios = <&pm8921_mpps 12 GPIO_ACTIVE_HIGH>;
-+				linux,default-trigger = "none";
-+				default-state = "off";
-+			};
-+
-+			wifi-led {
-+				label = "WiFi-led";
-+				gpios = <&pm8921_mpps 7 GPIO_ACTIVE_HIGH>;
-+				default-state = "off";
-+				linux,default-trigger = "none";
-+			};
-+
-+			bt-led {
-+				label = "BT-led";
-+				gpios = <&pm8921_mpps 8 GPIO_ACTIVE_HIGH>;
-+				default-state = "off";
-+				linux,default-trigger = "none";
-+			};
-+		};
-+
-+		pci@1b500000 {
-+			status = "okay";
-+			vdda-supply = <&pm8921_s3>;
-+			vdda_phy-supply = <&pm8921_lvs6>;
-+			vdda_refclk-supply = <&vcc3v3>;
-+			pinctrl-0 = <&pcie_perst>;
-+			pinctrl-names = "default";
-+			perst-gpio = <&pm8921_mpps 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		/* OTG */
-+		usb@12500000 {
-+			status = "okay";
-+			dr_mode = "otg";
-+			ulpi {
-+				phy {
-+					v3p3-supply = <&pm8921_l3>;
-+					v1p8-supply = <&pm8921_l4>;
-+				};
-+			};
-+		};
-+
-+		usb@12520000 {
-+			status = "okay";
-+			dr_mode = "host";
-+			ulpi {
-+				phy {
-+					v3p3-supply = <&pm8921_l3>;
-+					v1p8-supply = <&pm8921_l23>;
-+				};
-+			};
-+		};
-+
-+		usb@12530000 {
-+			status = "okay";
-+			dr_mode = "host";
-+			ulpi {
-+				phy {
-+					v3p3-supply = <&pm8921_l3>;
-+					v1p8-supply = <&pm8921_l23>;
-+				};
-+			};
-+		};
-+
-+		amba {
-+			/* eMMC */
-+			sdcc1: sdcc@12400000 {
-+				status = "okay";
-+				vmmc-supply = <&pm8921_l5>;
-+				vqmmc-supply = <&pm8921_s4>;
-+			};
-+
-+			/* External micro SD card */
-+			sdcc3: sdcc@12180000 {
-+				status = "okay";
-+				vmmc-supply = <&pm8921_l6>;
-+				vqmmc-supply = <&pm8921_l7>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&sdcc3_pins &card_detect>;
-+				cd-gpios = <&tlmm_pinmux 26 GPIO_ACTIVE_LOW>;
-+			};
-+		};
-+
-+		hdmi-tx@4a00000 {
-+			status = "okay";
-+			core-vdda-supply = <&pm8921_hdmi_switch>;
-+			hdmi-mux-supply = <&vcc3v3>;
-+
-+			hpd-gpio = <&tlmm_pinmux 72 GPIO_ACTIVE_HIGH>;
-+
-+			ports {
-+				port@1 {
-+					endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-phy@4a00400 {
-+			status = "okay";
-+			core-vdda-supply = <&pm8921_hdmi_switch>;
-+		};
-+
-+		mdp@5100000 {
-+			status = "okay";
-+
-+			ports {
-+				port@3 {
-+					endpoint {
-+						remote-endpoint = <&hdmi_in>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
--- 
-2.16.2
+On 03/15/2018 05:42 AM, Pierre Morel wrote:
+> On 14/03/2018 19:25, Tony Krowiak wrote:
+>> Provides a sysfs interface to view the AP matrix configured for the
+>> mediated matrix device.
+>>
+>> The relevant sysfs structures are:
+>>
+>> /sys/devices/vfio_ap
+>> ... [matrix]
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ [devices]
+>> ...............[$uuid]
+>> .................. matrix
+>>
+>> To view the matrix configured for the mediated matrix device,
+>> print the matrix file:
+>>
+>>     cat matrix
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c |   39 
+>> +++++++++++++++++++++++++++++++++++++
+>>   1 files changed, 39 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 461d450..04f7a92 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -692,6 +692,44 @@ static ssize_t control_domains_show(struct 
+>> device *dev,
+>>   }
+>>   DEVICE_ATTR_RO(control_domains);
+>>
+>> +static ssize_t matrix_show(struct device *dev, struct 
+>> device_attribute *attr,
+>> +               char *buf)
+>> +{
+>> +    struct mdev_device *mdev = mdev_from_dev(dev);
+>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +    char *bufpos = buf;
+>> +    unsigned long apid;
+>> +    unsigned long apqi;
+>> +    int nchars = 0;
+>> +    int n;
+>> +
+>> +    n = sprintf(bufpos, "ADAPTER.DOMAIN\n");
+>
+> For easy parsing it is better to only report the interesting data
+> and let a user space utility make fancy presentation.
+Is that your way of saying take the above line out?
+>
+>
+>> +    bufpos += n;
+>> +    nchars += n;
+>> +
+>> +    n = sprintf(bufpos, "--------------\n");
+>> +    bufpos += n;
+>> +    nchars += n;
+>> +
+>> +    for_each_set_bit_inv(apid, matrix_mdev->matrix->apm,
+>> +                 matrix_mdev->matrix->apm_max) {
+>> +        n = sprintf(bufpos, "%02lx\n", apid);
+>> +        bufpos += n;
+>> +        nchars += n;
+>> +
+>> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix->aqm,
+>> +                     matrix_mdev->matrix->aqm_max) {
+>> +            n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+>> +            bufpos += n;
+>> +            nchars += n;
+>> +        }
+>> +    }
+>> +
+>> +    return nchars;
+>> +}
+>> +DEVICE_ATTR_RO(matrix);
+>> +
+>> +
+>>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>>       &dev_attr_assign_adapter.attr,
+>>       &dev_attr_unassign_adapter.attr,
+>> @@ -700,6 +738,7 @@ static ssize_t control_domains_show(struct device 
+>> *dev,
+>>       &dev_attr_assign_control_domain.attr,
+>>       &dev_attr_unassign_control_domain.attr,
+>>       &dev_attr_control_domains.attr,
+>> +    &dev_attr_matrix.attr,
+>>       NULL,
+>>   };
+>>
+>
