@@ -1,108 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751640AbeCOIVC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:21:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33928 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeCOIU7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:20:59 -0400
-Date: Thu, 15 Mar 2018 08:20:45 +0000
-From: Darren Kenny <darren.kenny@oracle.com>
-To: Sonny Rao <sonnyrao@chromium.org>
-Cc: kvm@vger.kernel.org, "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vhost: fix vhost ioctl signature to build with clang
-Message-ID: <20180315082045.yphfdbz57uih7zzl@dhcp-10-169-107-175.ie.oracle.com>
-Mail-Followup-To: Sonny Rao <sonnyrao@chromium.org>, kvm@vger.kernel.org,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180314170506.121791-1-sonnyrao@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1751542AbeCOIYe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:24:34 -0400
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:43888 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeCOIYc (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:11:1>);
+        Thu, 15 Mar 2018 04:24:32 -0400
+Message-Id: <5AAA3BCB02000078001B1F1B@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Thu, 15 Mar 2018 02:24:27 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Cc: "David Laight" <David.Laight@aculab.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>, "Arnd Bergmann" <arnd@arndb.de>,
+        "Andrew Cooper" <andrew.cooper3@citrix.com>,
+        "Stefano Stabellini" <sstabellini@kernel.org>, <x86@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Ingo Molnar" <mingo@redhat.com>, "Juergen Gross" <jgross@suse.com>,
+        <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] [v3] xen: remove pre-xen3 fallback handlers
+References: <20180313210652.3484599-1-arnd@arndb.de>
+ <7c25f7f5-1b54-695e-be5f-6d06d4e89bfa@oracle.com>
+In-Reply-To: <7c25f7f5-1b54-695e-be5f-6d06d4e89bfa@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20180314170506.121791-1-sonnyrao@chromium.org>
-User-Agent: NeoMutt/20180223
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150096
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 10:05:06AM -0700, Sonny Rao wrote:
->Clang is particularly anal about signed vs unsigned comparisons and
->doesn't like the fact that some ioctl numbers set the MSB, so we get
->this error when trying to build vhost on aarch64:
->
->drivers/vhost/vhost.c:1400:7: error: overflow converting case value to
-> switch condition type (3221794578 to 18446744072636378898)
-> [-Werror, -Wswitch]
->        case VHOST_GET_VRING_BASE:
->
->3221794578 is 0xC008AF12 in hex
->18446744072636378898 is 0xFFFFFFFFC008AF12 in hex
->
->Fix this by using unsigned ints in the function signature for
->vhost_vring_ioctl().
->
->Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+>>> On 14.03.18 at 23:47, <boris.ostrovsky@oracle.com> wrote:
+> On 03/13/2018 05:06 PM, Arnd Bergmann wrote:
+>> The legacy hypercall handlers were originally added with
+>> a comment explaining that "copying the argument structures in
+>> HYPERVISOR_event_channel_op() and HYPERVISOR_physdev_op() into the local
+>> variable is sufficiently safe" and only made sure to not write
+>> past the end of the argument structure, the checks in linux/string.h
+>> disagree with that, when link-time optimizations are used:
+>>
+>> In function 'memcpy',
+>>     inlined from 'pirq_query_unmask' at drivers/xen/fallback.c:53:2,
+>>     inlined from '__startup_pirq' at drivers/xen/events/events_base.c:529:2,
+>>     inlined from 'restore_pirqs' at drivers/xen/events/events_base.c:1439:3,
+>>     inlined from 'xen_irq_resume' at drivers/xen/events/events_base.c:1581:2:
+>> include/linux/string.h:350:3: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+>>    __read_overflow2();
+>>    ^
+>>
+>> Further research turned out that only Xen 3.0.2 or earlier required the
+>> fallback at all, while all versions in use today don't need it.
+>> As far as I can tell, it is not even possible to run a mainline kernel
+>> on those old Xen releases, at the time when they were in use, only
+>> a patched kernel was supported anyway.
+>>
+>> Fixes: cf47a83fb06e ("xen/hypercall: fix hypercall fallback code for very old hypervisors")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>> [v2] use a table lookup instead of a switch/case statement, after
+>> multiple suggestions.
+>> [v3] remove that file completely
+> 
+> (+Jan who added this file originally)
 
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Well, if everyone thinks backwards compatibility to those very old
+hypervisors is not relevant anymore, then I'm not going to object.
+It's really a matter of the consuming distros to know how far back
+they want/need to guarantee compatibility.
 
-All the other callers of this function already appear to assume that
-it is an unsigned int.
-
-Thanks,
-
-Darren.
-
->---
-> drivers/vhost/vhost.c | 2 +-
-> drivers/vhost/vhost.h | 4 ++--
-> 2 files changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->index 1b3e8d2d5c8b4..5316319d84081 100644
->--- a/drivers/vhost/vhost.c
->+++ b/drivers/vhost/vhost.c
->@@ -1337,7 +1337,7 @@ static long vhost_set_memory(struct vhost_dev *d, struct vhost_memory __user *m)
-> 	return -EFAULT;
-> }
->
->-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp)
->+long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
-> {
-> 	struct file *eventfp, *filep = NULL;
-> 	bool pollstart = false, pollstop = false;
->diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
->index ac4b6056f19ae..d8ee85ae8fdcc 100644
->--- a/drivers/vhost/vhost.h
->+++ b/drivers/vhost/vhost.h
->@@ -45,7 +45,7 @@ void vhost_poll_stop(struct vhost_poll *poll);
-> void vhost_poll_flush(struct vhost_poll *poll);
-> void vhost_poll_queue(struct vhost_poll *poll);
-> void vhost_work_flush(struct vhost_dev *dev, struct vhost_work *work);
->-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
->+long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp);
->
-> struct vhost_log {
-> 	u64 addr;
->@@ -177,7 +177,7 @@ void vhost_dev_reset_owner(struct vhost_dev *, struct vhost_umem *);
-> void vhost_dev_cleanup(struct vhost_dev *);
-> void vhost_dev_stop(struct vhost_dev *);
-> long vhost_dev_ioctl(struct vhost_dev *, unsigned int ioctl, void __user *argp);
->-long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
->+long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp);
-> int vhost_vq_access_ok(struct vhost_virtqueue *vq);
-> int vhost_log_access_ok(struct vhost_dev *);
->
->-- 
->2.13.5
->
+Jan
