@@ -1,148 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeCOPep (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:34:45 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43757 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752416AbeCOPen (ORCPT
+        id S1752717AbeCOPfE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:35:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53621 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752172AbeCOPfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:34:43 -0400
-X-Google-Smtp-Source: AG47ELtuA1iPfIcKxW5pCvCQpex+dUY3vUZZY9tRWf/eUicmviqKk+hfDjm3kM1TMN5cZ0lC5otXdzj7gJhGwIbqAoU=
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8dvCRUnS5KxDWa4GP2vMPo9cUWVNybx+tGY_Y8T67Uvw@mail.gmail.com>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
- <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
- <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
- <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com>
- <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
- <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com> <CAKv+Gu8dvCRUnS5KxDWa4GP2vMPo9cUWVNybx+tGY_Y8T67Uvw@mail.gmail.com>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Thu, 15 Mar 2018 16:34:42 +0100
-Message-ID: <CACjP9X9w-zruS8uj6j+ZRc7EUZ80MAwbvWOh=gRJZu7gAqU7hg@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Mar 2018 11:35:03 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hirofumi Nakagawa <nklabs@gmail.com>,
+        Yang Shi <yang.s@alibaba-inc.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] pstore: fix crypto dependencies
+Date: Thu, 15 Mar 2018 16:34:08 +0100
+Message-Id: <20180315153433.3724071-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:sxRM6JoU++JkjY6wgkJJBu6PNbzsgVmOtDM9cQ5VdJ5KDKgLi4U
+ pP+OteS0sZINitgg+N7YAV4aiY/9u8kXa6i/gQVx8ptMgY/To3tfq3PLnGDgjM27WQraZqg
+ LpyXHAitP7YTEWN+n36TvwavT23Mp8HJLd8K9KuLjvQrZUZM5jDV1d1KrLyCBnUhiPx7ePO
+ ZpArnqmLZWVDB6nr84yXw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:A+Q2mvDwHzk=:xoRVzmWwGLTu5eWJMuAMuH
+ qVv+J8ZU3JsuwyLQacBg96zGHON7xXXCAhIhHTcE4wdn+U85op7cjqso7qsVL4jXvXvt9NNpU
+ sJ/gcKvUBR+k1YPh7QB9EzP4cwRipum5/Hd2bFGLm7uSHzWKFc9aZQvJ3Na8nYjYvlMKROd0S
+ p8sxOJYx1VAjx+jIbeoNmXOFSGuaWBy4aABth6s8pEmPgTKSHeTgfW3O5wqR64VK0EuLk8QWU
+ xKDco6bpZlNUbng2jGwtQeJnMOspTuFxzdYTAIm5gjhPcNEQIWLv/7cd8khIHhJTkqm3FAhWG
+ JcPY5EM1TEZ/TLVMgwG82Y1fY62mgZ5r73VclvR6EBJIaZlIcKK9dnwHtbQQZ5GvsVdQUaiXs
+ RvhlrifUepotSaqmQhDPwk15qYqeh6V5lM3SDLQwdHjwZBvcqFvO9HW9GOVr4p2/WIay2tKDU
+ +kJ9TZuzP+L8u6nLdcFSY9Ql0mgkrMKU4FIjp6Nl3P8lOhjPsgq26pFk0RsahS1D2l8Q6yr1W
+ i79kGJg9VvKYkP1aprdxcu2XOQ8OAWjroiUwYCh+gZDpIjTn7pNLbz2aCa6Mbo8ovoGYKhk/4
+ eSrkOfK7V9etVptSkGctkQe1Rr48j0xNu+QeZXmAhk+2wZys0ImZSZI8Dac0nJ9YpNJtMJaCG
+ 7lyYfeBzMrL31Flfdws04PO+dxX0Bo3a/+G4MHmkszA8VKpJmlEuXrGE6uDV20nUk2axDGJxe
+ Y7nDjO2putd49pjsdj8Ylhz2x/OjdCCOqGO+9Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 4:17 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 15 March 2018 at 15:12, Daniel Vacek <neelx@redhat.com> wrote:
->> On Thu, Mar 15, 2018 at 8:45 AM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 15 March 2018 at 07:44, Daniel Vacek <neelx@redhat.com> wrote:
->>>> On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
->>>> <ard.biesheuvel@linaro.org> wrote:
->>>>> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
->>>>>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
->>>>>> <ard.biesheuvel@linaro.org> wrote:
->>>>>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
->>>>>>>
->>>>>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
->>>>>>> alignment") modified the logic in memmap_init_zone() to initialize
->>>>>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
->>>>>>> in move_freepages(), which is redundant by its own admission, and
->>>>>>> dereferences struct page fields to obtain the zone without checking
->>>>>>> whether the struct pages in question are valid to begin with.
->>>>>>>
->>>>>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
->>>>>>> may cause pfn assume the same value it had in a prior iteration of
->>>>>>> the loop, resulting in an infinite loop and a hang very early in the
->>>>>>> boot. Also, since it doesn't perform the same rounding on start_pfn
->>>>>>> itself but only on intermediate values following an invalid PFN, we
->>>>>>> may still hit the same VM_BUG_ON() as before.
->>>>>>>
->>>>>>> So instead, let's fix this at the core, and ensure that the BUG
->>>>>>> check doesn't dereference struct page fields of invalid pages.
->>>>>>>
->>>>>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
->>>>>>> Cc: Daniel Vacek <neelx@redhat.com>
->>>>>>> Cc: Mel Gorman <mgorman@techsingularity.net>
->>>>>>> Cc: Michal Hocko <mhocko@suse.com>
->>>>>>> Cc: Paul Burton <paul.burton@imgtec.com>
->>>>>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->>>>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->>>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>>>>> ---
->>>>>>>  mm/page_alloc.c | 13 +++++--------
->>>>>>>  1 file changed, 5 insertions(+), 8 deletions(-)
->>>>>>>
->>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>>>>> index 3d974cb2a1a1..635d7dd29d7f 100644
->>>>>>> --- a/mm/page_alloc.c
->>>>>>> +++ b/mm/page_alloc.c
->>>>>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->>>>>>>          * Remove at a later date when no bug reports exist related to
->>>>>>>          * grouping pages by mobility
->>>>>>>          */
->>>>>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
->>>>>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
->>>>>>> +                 pfn_valid(page_to_pfn(end_page)) &&
->>>>>>> +                 page_zone(start_page) != page_zone(end_page));
->>>>>>
->>>>>> Hi, I am on vacation this week and I didn't have a chance to test this
->>>>>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
->>>>>> arm{,64} arch specific versions returns true for all pfns in a section
->>>>>> if there is at least some memory mapped in that section. So I doubt
->>>>>> this prevents the crash I was targeting. I believe pfn_valid() does
->>>>>> not change a thing here :(
->>>>>>
->>>>>
->>>>> If this is the case, memblock_next_valid_pfn() is broken since it
->>>>> skips valid PFNs, and we should be fixing that instead.
->>>>
->>>> How do you define valid pfn? Maybe the generic version of pfn_valid()
->>>> should be fixed???
->>>>
->>>
->>> memblock_next_valid_pfn() skips PFNs for which pfn_valid() returns
->>> true. That is clearly a bug.
->>
->> So pfn_valid() does not mean this frame is usable memory?
->>
->
-> Who cares what it *means*?
+The new crypto API use causes some problems with Kconfig dependencies,
+including this link error:
 
-abstractions?
+fs/pstore/platform.o: In function `pstore_register':
+platform.c:(.text+0x248): undefined reference to `crypto_has_alg'
+platform.c:(.text+0x2a0): undefined reference to `crypto_alloc_base'
+fs/pstore/platform.o: In function `pstore_unregister':
+platform.c:(.text+0x498): undefined reference to `crypto_destroy_tfm'
+crypto/lz4hc.o: In function `lz4hc_sdecompress':
+lz4hc.c:(.text+0x1a): undefined reference to `LZ4_decompress_safe'
+crypto/lz4hc.o: In function `lz4hc_decompress_crypto':
+lz4hc.c:(.text+0x5a): undefined reference to `LZ4_decompress_safe'
+crypto/lz4hc.o: In function `lz4hc_scompress':
+lz4hc.c:(.text+0xaa): undefined reference to `LZ4_compress_HC'
+crypto/lz4hc.o: In function `lz4hc_mod_init':
+lz4hc.c:(.init.text+0xf): undefined reference to `crypto_register_alg'
+lz4hc.c:(.init.text+0x1f): undefined reference to `crypto_register_scomp'
+lz4hc.c:(.init.text+0x2f): undefined reference to `crypto_unregister_alg'
 
-> memblock_next_valid_pfn() has 'valid_pfn' in its name, so if passing
-> pfn A returns B, and there exists a C such that A < C < B and
-> pfn_valid(C) returns true, memblock_next_valid_pfn doesn't do what it
-> says on the tin and should be fixed.
+The problem is that with CONFIG_CRYPTO=m, we must not 'select CRYPTO_LZ4'
+from a bool symbol, or call crypto API functions from a built-in
+module.
 
-If you don't like the name I would argue it should be changed to
-something like memblock_pfn_of_next_memory(). Still the name is not
-next_valid_pfn() but memblock_next... kind of distinguishing something
-different.
+This turns the sub-options into 'tristate' ones so the dependencies
+are honored, and makes the pstore itself select the crypto core
+if necessary.
 
-> You keep going on about how pfn_valid() does or does not do what you
-> think, but that is really irrelevant.
+Fixes: cb3bee0369bc ("pstore: Use crypto compress API")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/pstore/Kconfig    | 19 ++++++++++---------
+ fs/pstore/platform.c | 22 +++++++++++-----------
+ 2 files changed, 21 insertions(+), 20 deletions(-)
 
-I'm trying to learn. Hence I was asking what is the abstract meaning
-of it. As I see two *way_different* implementations so I am not sure
-how I should understand that.
-
->> OK, in that case we need to fix or revert memblock_next_valid_pfn().
->> That works for me.
->>
->
-> OK. You can add my ack to a patch that reverts it, and we can revisit
-> it for the next cycle.
-
-Cool. I'll do that next week. Thank you, sir.
-
---nX
+diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+index 49b407eab846..09c19ef91526 100644
+--- a/fs/pstore/Kconfig
++++ b/fs/pstore/Kconfig
+@@ -1,5 +1,6 @@
+ config PSTORE
+ 	tristate "Persistent store support"
++	select CRYPTO if PSTORE_COMPRESS
+ 	default n
+ 	help
+ 	   This option enables generic access to platform level
+@@ -13,7 +14,7 @@ config PSTORE
+ 	   say N.
+ 
+ config PSTORE_DEFLATE_COMPRESS
+-	bool "DEFLATE (ZLIB) compression"
++	tristate "DEFLATE (ZLIB) compression"
+ 	default y
+ 	depends on PSTORE
+ 	select CRYPTO_DEFLATE
+@@ -22,21 +23,21 @@ config PSTORE_DEFLATE_COMPRESS
+ 	  algorithm support.
+ 
+ config PSTORE_LZO_COMPRESS
+-	bool "LZO compression"
++	tristate "LZO compression"
+ 	depends on PSTORE
+ 	select CRYPTO_LZO
+ 	help
+ 	  This option enables LZO compression algorithm support.
+ 
+ config PSTORE_LZ4_COMPRESS
+-	bool "LZ4 compression"
++	tristate "LZ4 compression"
+ 	depends on PSTORE
+ 	select CRYPTO_LZ4
+ 	help
+ 	  This option enables LZ4 compression algorithm support.
+ 
+ config PSTORE_LZ4HC_COMPRESS
+-	bool "LZ4HC compression"
++	tristate "LZ4HC compression"
+ 	depends on PSTORE
+ 	select CRYPTO_LZ4HC
+ 	help
+@@ -70,19 +71,19 @@ choice
+ 	  The default compression algorithm is deflate.
+ 
+ 	config PSTORE_DEFLATE_COMPRESS_DEFAULT
+-		bool "deflate" if PSTORE_DEFLATE_COMPRESS=y
++		bool "deflate" if PSTORE_DEFLATE_COMPRESS
+ 
+ 	config PSTORE_LZO_COMPRESS_DEFAULT
+-		bool "lzo" if PSTORE_LZO_COMPRESS=y
++		bool "lzo" if PSTORE_LZO_COMPRESS
+ 
+ 	config PSTORE_LZ4_COMPRESS_DEFAULT
+-		bool "lz4" if PSTORE_LZ4_COMPRESS=y
++		bool "lz4" if PSTORE_LZ4_COMPRESS
+ 
+ 	config PSTORE_LZ4HC_COMPRESS_DEFAULT
+-		bool "lz4hc" if PSTORE_LZ4HC_COMPRESS=y
++		bool "lz4hc" if PSTORE_LZ4HC_COMPRESS
+ 
+ 	config PSTORE_842_COMPRESS_DEFAULT
+-		bool "842" if PSTORE_842_COMPRESS=y
++		bool "842" if PSTORE_842_COMPRESS
+ 
+ endchoice
+ 
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 42e111b3bd0c..1143ef351c58 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -28,10 +28,10 @@
+ #include <linux/console.h>
+ #include <linux/module.h>
+ #include <linux/pstore.h>
+-#ifdef CONFIG_PSTORE_LZO_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
+ #include <linux/lzo.h>
+ #endif
+-#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
++#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
+ #include <linux/lz4.h>
+ #endif
+ #include <linux/crypto.h>
+@@ -142,7 +142,7 @@ bool pstore_cannot_block_path(enum kmsg_dump_reason reason)
+ }
+ EXPORT_SYMBOL_GPL(pstore_cannot_block_path);
+ 
+-#ifdef CONFIG_PSTORE_DEFLATE_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
+ static int zbufsize_deflate(size_t size)
+ {
+ 	size_t cmpr;
+@@ -171,21 +171,21 @@ static int zbufsize_deflate(size_t size)
+ }
+ #endif
+ 
+-#ifdef CONFIG_PSTORE_LZO_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
+ static int zbufsize_lzo(size_t size)
+ {
+ 	return lzo1x_worst_compress(size);
+ }
+ #endif
+ 
+-#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
++#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
+ static int zbufsize_lz4(size_t size)
+ {
+ 	return LZ4_compressBound(size);
+ }
+ #endif
+ 
+-#ifdef CONFIG_PSTORE_842_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
+ static int zbufsize_842(size_t size)
+ {
+ 	return size;
+@@ -195,31 +195,31 @@ static int zbufsize_842(size_t size)
+ static const struct pstore_zbackend *zbackend __ro_after_init;
+ 
+ static const struct pstore_zbackend zbackends[] = {
+-#ifdef CONFIG_PSTORE_DEFLATE_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
+ 	{
+ 		.zbufsize	= zbufsize_deflate,
+ 		.name		= "deflate",
+ 	},
+ #endif
+-#ifdef CONFIG_PSTORE_LZO_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
+ 	{
+ 		.zbufsize	= zbufsize_lzo,
+ 		.name		= "lzo",
+ 	},
+ #endif
+-#ifdef CONFIG_PSTORE_LZ4_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS)
+ 	{
+ 		.zbufsize	= zbufsize_lz4,
+ 		.name		= "lz4",
+ 	},
+ #endif
+-#ifdef CONFIG_PSTORE_LZ4HC_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
+ 	{
+ 		.zbufsize	= zbufsize_lz4,
+ 		.name		= "lz4hc",
+ 	},
+ #endif
+-#ifdef CONFIG_PSTORE_842_COMPRESS
++#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
+ 	{
+ 		.zbufsize	= zbufsize_842,
+ 		.name		= "842",
+-- 
+2.9.0
