@@ -1,115 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932678AbeCOWWC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 18:22:02 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64605 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752777AbeCOWU5 (ORCPT
+        id S932731AbeCOWWJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 18:22:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932686AbeCOWWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 18:20:57 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v5 3/7] sched: idle: Do not stop the tick before cpuidle_idle_call()
-Date: Thu, 15 Mar 2018 23:07:41 +0100
-Message-ID: <1807351.NqqhpQtGba@aspire.rjw.lan>
-In-Reply-To: <2142751.3U6XgWyF8u@aspire.rjw.lan>
-References: <2142751.3U6XgWyF8u@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 15 Mar 2018 18:22:04 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v5 0/2] hwmon: (ucd9000) Add gpio and debugfs interfaces
+Date: Thu, 15 Mar 2018 17:21:54 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031522-0056-0000-0000-0000042E5580
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008681; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003583; UDB=6.00510758; IPR=6.00782910;
+ MB=3.00020057; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 22:22:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031522-0057-0000-0000-00000870577A
+Message-Id: <1521152516-10829-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150244
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The ucd9000 series chips have gpio pins. Add a gpio chip interface to the ucd
+device so that users can query and set the state of the gpio pins.
 
-Make cpuidle_idle_call() decide whether or not to stop the tick.
+Add a debugfs interface using the existing pmbus debugfs directory to provide
+MFR_STATUS and the status of the gpi faults to users.
 
-First, the cpuidle_enter_s2idle() path deals with the tick (and with
-the entire timekeeping for that matter) by itself and it doesn't need
-the tick to be stopped beforehand.
+Changes since v4:
+ - max-sized buffers for smbus transfers
+ - used bin2hex instead of my own code
 
-Second, to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, it will be
-necessary to change the ordering of cpuidle_select() with respect
-to tick_nohz_idle_stop_tick().  To prepare for that, put a
-tick_nohz_idle_stop_tick() call in the same branch in which
-cpuidle_select() is called.
+Changes since v3:
+ - remove setting of gpio_chip->owner
+ - format the mfr_status data
+ - switch to #ifdef rather than #if IS_ENABLED for debugfs
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Changes since v2:
+ - split the gpio registration into it's own function
 
-v4 -> v5:
-  * Rebase on top of the new [1-3/7].
+Changes since v1:
+ - dropped dev_err messages
+ - made gpio chip registration conditional on having gpio pins
+ - made mfr_status debugfs attribute more simple
 
----
- kernel/sched/idle.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
 
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -146,13 +146,15 @@ static void cpuidle_idle_call(void)
- 	}
- 
- 	/*
--	 * Tell the RCU framework we are entering an idle section,
--	 * so no more rcu read side critical sections and one more
-+	 * The RCU framework needs to be told that we are entering an idle
-+	 * section, so no more rcu read side critical sections and one more
- 	 * step to the grace period
- 	 */
--	rcu_idle_enter();
- 
- 	if (cpuidle_not_available(drv, dev)) {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		default_idle_call();
- 		goto exit_idle;
- 	}
-@@ -169,16 +171,26 @@ static void cpuidle_idle_call(void)
- 
- 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
- 		if (idle_should_enter_s2idle()) {
-+			rcu_idle_enter();
-+
- 			entered_state = cpuidle_enter_s2idle(drv, dev);
- 			if (entered_state > 0) {
- 				local_irq_enable();
- 				goto exit_idle;
- 			}
-+
-+			rcu_idle_exit();
- 		}
- 
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
-@@ -245,7 +257,6 @@ static void do_idle(void)
- 			tick_nohz_idle_restart_tick();
- 			cpu_idle_poll();
- 		} else {
--			tick_nohz_idle_stop_tick();
- 			cpuidle_idle_call();
- 		}
- 		arch_cpu_idle_exit();
+ drivers/hwmon/pmbus/ucd9000.c | 338 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 337 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
