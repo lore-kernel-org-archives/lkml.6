@@ -1,88 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752382AbeCOPW7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:22:59 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53618 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751840AbeCOPW6 (ORCPT
+        id S932282AbeCOPX2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:23:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752527AbeCOPX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:22:58 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Arnd Bergmann <arnd@arndb.de>
-CC: "olof@lixom.net" <olof@lixom.net>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "arm@kernel.org" <arm@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] STi DT update for v4.17 round 2
-Thread-Topic: [GIT PULL] STi DT update for v4.17 round 2
-Thread-Index: AQHTvDzXpYopfEu1o0+2IKDEW9xFQaPRUzSAgAAGZQA=
-Date: Thu, 15 Mar 2018 15:22:24 +0000
-Message-ID: <36e374f8-cfc9-06bb-f496-296a145d5b6d@st.com>
-References: <af473935-7cb6-e59a-3b52-055d8492248c@st.com>
- <CAK8P3a1R6CwHC4+0GXKevmgM9QqgbGGZCtLsccn2AYTpuHZ7uw@mail.gmail.com>
-In-Reply-To: <CAK8P3a1R6CwHC4+0GXKevmgM9QqgbGGZCtLsccn2AYTpuHZ7uw@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <25F80EED66707F4B9664E8C66F97E657@st.com>
+        Thu, 15 Mar 2018 11:23:27 -0400
+Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
+ interpretive execution
+To: Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 11:23:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
+In-Reply-To: <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031515-0004-0000-0000-000013CE67EA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003444; UDB=6.00510674; IPR=6.00782770;
+ MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 15:23:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031515-0005-0000-0000-00008679A9D0
+Message-Id: <3afd28d7-57c6-cda6-a436-18da32ef0df3@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
  signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150167
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2FFN6hB014925
 
-Hi Arnd
+On 03/14/2018 05:57 PM, Halil Pasic wrote:
+>
+> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
+>> The VFIO AP device model exploits interpretive execution of AP
+>> instructions (APIE) to provide guests passthrough access to AP
+>> devices. This patch introduces a new device attribute in the
+>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
+>> the VFIO AP device defined on the guest.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> ---
+> [..]
+>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index a60c45b..bc46b67 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
+>>   			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>   		VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
+>>   		break;
+>> +	case KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>> +		if (attr->addr) {
+>> +			if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+> Unlock mutex before returning?
+The mutex is unlocked prior to return at the end of the function.
+>
+> Maybe flip conditions (don't allow manipulating apie if feature not there).
+> Clearing the anyways clear apie if feature not there ain't too bad, but
+> rejecting the operation appears nicer to me.
+I think what you're saying is something like this:
 
-On 03/15/2018 03:59 PM, Arnd Bergmann wrote:
-> On Thu, Mar 15, 2018 at 10:06 AM, Patrice CHOTARD
-> <patrice.chotard@st.com> wrote:
->> Hi Arnd, Kevin, Olof
->>
->> PLease consider this second round of STi dts update for v4.17
->>
->> The following changes since commit 0e04ce02e6a2ac30d21294d8bb2aeceb8489e52b:
->>
->>     ARM: dts: STi: Remove unused clk_ext2f_a9 clock (2018-02-13 13:31:38
->> +0100)
->>
->> are available in the git repository at:
->>
->>     git://git.kernel.org/pub/scm/linux/kernel/git/pchotard/sti.git
->>
->> for you to fetch changes up to 9a5f4879cd8de167e82f335317c63f2ffdc80129:
->>
->>     ARM: dts: stih4xx: Add missing #sound-dai-cells (2018-03-15 09:52:25
->> +0100)
->>
->> ----------------------------------------------------------------
->>
->> STi DT update:
->>
->> Add missing #sound-dai-cells which fix DT dtc warnings when building
->> with W=1
-> 
-> You missed a tag name for this one, but I found tags/sti-dt-for-v4.17-round2
-> to be the one that matches the commit ID above and pulled that.
-> 
->        Arnd
-> 
+     if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+         return -EOPNOTSUPP;
 
-Sorry for that.
-I will check that point, i noticed that i got the same issue with the 
-previous pull request for STi DT.
+     kvm->arch.crypto.apie = (attr->addr) ? 1 : 0;
 
-Thanks
-
-Patrice
+I can make arguments for doing this either way, but since the attribute
+is will most likely only be set by an AP device in userspace, I suppose
+it makes sense to allow setting of the attribute if the AP feature is
+installed. It certainly makes sense for the dedicated implementation.
+>
+>> +				return -EOPNOTSUPP;
+>> +			kvm->arch.crypto.apie = 1;
+>> +			VM_EVENT(kvm, 3, "%s",
+>> +				 "ENABLE: AP interpretive execution");
+>> +		} else {
+>> +			kvm->arch.crypto.apie = 0;
+>> +			VM_EVENT(kvm, 3, "%s",
+>> +				 "DISABLE: AP interpretive execution");
+>> +		}
+>> +		break;
+>>   	default:
+>>   		mutex_unlock(&kvm->lock);
+>>   		return -ENXIO;
+> I wonder how the loop after this switch works for KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>
+>          kvm_for_each_vcpu(i, vcpu, kvm) {
+>                  kvm_s390_vcpu_crypto_setup(vcpu);
+>                  exit_sie(vcpu);
+>          }
+>
+>  From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
+>
+>          if (kvm->created_vcpus) {
+>                  mutex_unlock(&kvm->lock);
+>                  return -EBUSY;
+> and from the aforementioned loop I guess ECA.28 can be changed
+> for a running guest.
+>
+> If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
+> changed (set) these will be taken out of SIE by exit_sie().  Then for the
+> corresponding threads the control probably goes to QEMU (the emulator in
+> the userspace). And it puts that vcpu back into the SIE, and then that
+> cpu starts acting according to the new ECA.28 value.  While other vcpus
+> may still work with the old value of ECA.28.
+Assuming the scenario plays out as you described, why would the other vcpus
+be using the old ECA.28 value if the kvm_s390_vcpu_crypto_setup() function
+is executed for each of them to set the new value for ECA.28?
+>
+> I'm not saying what I describe above is necessarily something broken.
+> But I would like to have it explained, why is it OK -- provided I did not
+> make any errors in my reasoning (assumptions included).
+>
+> Can you help me understand this code?
+Unless I am missing something in the scenario you described, it seems that
+the reason the exit_sie(vcpu) function is called is to ensure that the vcpus
+that are already running acquire the new attribute values changed by this
+function when they are restored to SIE. Of course, my assumption is that
+the kvm_arch_vcpu_setup() function - which calls the 
+kvm_s390_vcpu_crypto_setup()
+function - is invoked when the vcpu is restored to SIE.
+>
+> Regards,
+> Halil
+>
+> [..]
