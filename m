@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeCOPxi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:53:38 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:38202 "EHLO
+        id S932851AbeCOPxt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:53:49 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:43815 "EHLO
         mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932665AbeCOPxf (ORCPT
+        with ESMTP id S932469AbeCOPxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:53:35 -0400
-X-Google-Smtp-Source: AG47ELs6v6MGwjA1Q/KpaSCSCAogQFwMCR+a7vDTD93kkv7A7h2vY8u1OrGSh18LpI8kQT6QRZpKOQ==
+        Thu, 15 Mar 2018 11:53:46 -0400
+X-Google-Smtp-Source: AG47ELvR1WQhNKH/yCOBq/MtZcK20HAZ7a9qqLJrbBaZsQwBWq9Ymx9wlxEGA4EImqK36I2SB09CMA==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: linus.walleij@linaro.org
 Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 7/8] gpio: gpio-mm: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:53:28 -0400
-Message-Id: <cd5458f1d3fedd67b01110a2919106be86c60ea4.1521128287.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v2 8/8] gpio: ws16c48: Implement get_multiple callback
+Date: Thu, 15 Mar 2018 11:53:39 -0400
+Message-Id: <78fd4e6464713068ba9292ba8ef5d9227cdd294c.1521128287.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
 References: <cover.1521128287.git.vilhelm.gray@gmail.com>
@@ -23,33 +23,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Diamond Systems GPIO-MM series of devices contain two 82C55A
-devices, which each feature three 8-bit ports of I/O. Since eight input
-lines are acquired on a single port input read, the GPIO-MM GPIO driver
-may improve multiple input reads by utilizing a get_multiple callback.
-This patch implements the gpiomm_gpio_get_multiple function which serves
-as the respective get_multiple callback.
+The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
+via six 8-bit ports. Since eight input lines are acquired on a single
+port input read, the WS16C48 GPIO driver may improve multiple input
+reads by utilizing a get_multiple callback. This patch implements the
+ws16c48_gpio_get_multiple function which serves as the respective
+get_multiple callback.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-gpio-mm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-ws16c48.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 46 insertions(+)
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index 11ade5b288f8..d9be9ebe41cf 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -171,6 +171,51 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+index 746648244bf3..9f2e7d0b48f9 100644
+--- a/drivers/gpio/gpio-ws16c48.c
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -129,6 +129,51 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
  	return !!(port_state & mask);
  }
  
-+static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+	unsigned long *bits)
++static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
++	unsigned long *mask, unsigned long *bits)
 +{
-+	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
-+	size_t i;
-+	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
 +	const unsigned int gpio_reg_size = 8;
++	size_t i;
++	const size_t num_ports = chip->ngpio / gpio_reg_size;
 +	unsigned int bits_offset;
 +	size_t word_index;
 +	unsigned int word_offset;
@@ -61,7 +61,7 @@ index 11ade5b288f8..d9be9ebe41cf 100644
 +	bitmap_zero(bits, chip->ngpio);
 +
 +	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++	for (i = 0; i < num_ports; i++) {
 +		/* gpio offset in bits array */
 +		bits_offset = i * gpio_reg_size;
 +
@@ -79,7 +79,7 @@ index 11ade5b288f8..d9be9ebe41cf 100644
 +		}
 +
 +		/* read bits from current gpio port */
-+		port_state = inb(gpiommgpio->base + ports[i]);
++		port_state = inb(ws16c48gpio->base + i);
 +
 +		/* store acquired bits at respective bits array offset */
 +		bits[word_index] |= port_state << word_offset;
@@ -88,16 +88,16 @@ index 11ade5b288f8..d9be9ebe41cf 100644
 +	return 0;
 +}
 +
- static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	int value)
+ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
-@@ -268,6 +313,7 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	gpiommgpio->chip.direction_input = gpiomm_gpio_direction_input;
- 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
- 	gpiommgpio->chip.get = gpiomm_gpio_get;
-+	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
- 	gpiommgpio->chip.set = gpiomm_gpio_set;
- 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
- 	gpiommgpio->base = base[id];
+ 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
+@@ -383,6 +428,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
+ 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
+ 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
+ 	ws16c48gpio->chip.get = ws16c48_gpio_get;
++	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
+ 	ws16c48gpio->chip.set = ws16c48_gpio_set;
+ 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
+ 	ws16c48gpio->base = base[id];
 -- 
 2.16.2
