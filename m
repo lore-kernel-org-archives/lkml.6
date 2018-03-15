@@ -1,68 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933203AbeCOQEA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:04:00 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:43224 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeCOQDz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:03:55 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] Bluetooth: btrsi: rework dependencies
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CAK8P3a3y00nUVuYopxXWaJjo_OxXhVsATyiSOfXz5b09JFq2dA@mail.gmail.com>
-Date: Thu, 15 Mar 2018 17:03:52 +0100
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Bluetooth mailing list
-        <linux-bluetooth@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <F9369C84-62C6-4881-8089-40F3F912F871@holtmann.org>
-References: <20180315154312.3941446-1-arnd@arndb.de>
- <EE0D5CBE-0867-4FE0-B157-CA4086C84233@holtmann.org>
- <CAK8P3a3y00nUVuYopxXWaJjo_OxXhVsATyiSOfXz5b09JFq2dA@mail.gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S932983AbeCOQE7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:04:59 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5210 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932959AbeCOQBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:01:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="24968449"
+Subject: [PATCH v6 07/15] fs,
+ dax: use page->mapping to warn if truncate collides with a busy page
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 08:52:01 -0700
+Message-ID: <152112912106.24669.9677997765966949415.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Catch cases where extent unmap operations encounter pages that are
+pinned / busy. Typically this is pinned pages that are under active dma.
+This warning is a canary for potential data corruption as truncated
+blocks could be allocated to a new file while the device is still
+performing i/o.
 
->>> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
->>> index 03cfc1b20c4a..9e8d22712ff3 100644
->>> --- a/drivers/bluetooth/Makefile
->>> +++ b/drivers/bluetooth/Makefile
->>> @@ -28,7 +28,7 @@ obj-$(CONFIG_BT_QCA)                += btqca.o
->>> 
->>> obj-$(CONFIG_BT_HCIUART_NOKIA)        += hci_nokia.o
->>> 
->>> -obj-$(CONFIG_BT_HCIRSI)              += btrsi.o
->>> +obj-$(CONFIG_BT_HCIRSI_MODULE)       += btrsi.o
->> 
->> do we need this new option? I have avoided these kind of complex things multi config entries. Can we not just select the RSI_91X?
->> 
-> 
-> I couldn't come up with a simpler way to do this.
-> Selecting RSI_91X is not possible unless we make the BT
-> driver 'depend on WLAN_VENDOR_RSI && MAC80211',
-> which is even more backwards.
-> 
-> The problem here is that it's actually a reverse dependency:
-> the wlan driver calls into the bt driver.
-> 
-> What we could do is to make BT_HCIRSI a silent symbol
-> and have that selected by RSI_COEX, which can then
-> be user-visible. With that, the Kconfig structure would follow
-> what the code does.
+Here is an example of a collision that this implementation catches:
 
-that sounds a bit better to me. If the RSI driver maintainers don’t like that, then they should re-architect the code to make this more dynamic and flexible.
+ WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
+ [..]
+ Call Trace:
+  __dax_invalidate_mapping_entry+0x6c/0xf0
+  dax_delete_mapping_entry+0xf/0x20
+  truncate_exceptional_pvec_entries.part.12+0x1af/0x200
+  truncate_inode_pages_range+0x268/0x970
+  ? tlb_gather_mmu+0x10/0x20
+  ? up_write+0x1c/0x40
+  ? unmap_mapping_range+0x73/0x140
+  xfs_free_file_space+0x1b6/0x5b0 [xfs]
+  ? xfs_file_fallocate+0x7f/0x320 [xfs]
+  ? down_write_nested+0x40/0x70
+  ? xfs_ilock+0x21d/0x2f0 [xfs]
+  xfs_file_fallocate+0x162/0x320 [xfs]
+  ? rcu_read_lock_sched_held+0x3f/0x70
+  ? rcu_sync_lockdep_assert+0x2a/0x50
+  ? __sb_start_write+0xd0/0x1b0
+  ? vfs_fallocate+0x20c/0x270
+  vfs_fallocate+0x154/0x270
+  SyS_fallocate+0x43/0x80
+  entry_SYSCALL_64_fastpath+0x1f/0x96
 
-Regards
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/dax.c |   56 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-Marcel
+diff --git a/fs/dax.c b/fs/dax.c
+index b646a46e4d12..9ba043eb6294 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -298,6 +298,56 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
+ 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
+ }
+ 
++static unsigned long dax_entry_size(void *entry)
++{
++	if (dax_is_zero_entry(entry))
++		return 0;
++	else if (dax_is_empty_entry(entry))
++		return 0;
++	else if (dax_is_pmd_entry(entry))
++		return HPAGE_SIZE;
++	else
++		return PAGE_SIZE;
++}
++
++#define for_each_entry_pfn(entry, pfn, end_pfn) \
++	for (pfn = dax_radix_pfn(entry), \
++			end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
++			pfn < end_pfn; \
++			pfn++)
++
++static void dax_associate_entry(void *entry, struct address_space *mapping)
++{
++	unsigned long pfn, end_pfn;
++
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
++		return;
++
++	for_each_entry_pfn(entry, pfn, end_pfn) {
++		struct page *page = pfn_to_page(pfn);
++
++		WARN_ON_ONCE(page->mapping);
++		page->mapping = mapping;
++	}
++}
++
++static void dax_disassociate_entry(void *entry, struct address_space *mapping,
++		bool trunc)
++{
++	unsigned long pfn, end_pfn;
++
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
++		return;
++
++	for_each_entry_pfn(entry, pfn, end_pfn) {
++		struct page *page = pfn_to_page(pfn);
++
++		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
++		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
++		page->mapping = NULL;
++	}
++}
++
+ /*
+  * Find radix tree entry at given index. If it points to an exceptional entry,
+  * return it with the radix tree entry locked. If the radix tree doesn't
+@@ -404,6 +454,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		}
+ 
+ 		if (pmd_downgrade) {
++			dax_disassociate_entry(entry, mapping, false);
+ 			radix_tree_delete(&mapping->page_tree, index);
+ 			mapping->nrexceptional--;
+ 			dax_wake_mapping_entry_waiter(mapping, index, entry,
+@@ -453,6 +504,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	    (radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_DIRTY) ||
+ 	     radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_TOWRITE)))
+ 		goto out;
++	dax_disassociate_entry(entry, mapping, trunc);
+ 	radix_tree_delete(page_tree, index);
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+@@ -547,6 +599,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+ 
+ 	spin_lock_irq(&mapping->tree_lock);
+ 	new_entry = dax_radix_locked_entry(pfn, flags);
++	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
++		dax_disassociate_entry(entry, mapping, false);
++		dax_associate_entry(new_entry, mapping);
++	}
+ 
+ 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+ 		/*
