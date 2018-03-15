@@ -1,93 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCOLGP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:06:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:37022 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751600AbeCOLGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:06:14 -0400
-Subject: Re: [PATCH v1 15/16] kvm: arm64: Allow configuring physical address
- space size
-To: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, Christoffer Dall <cdall@linaro.org>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-16-suzuki.poulose@arm.com> <20180208111414.GM29286@cbox>
- <31e5bf40-4fcb-934e-6036-ff2670f793df@arm.com> <20180209081606.GC7339@cbox>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <b4cfa88c-a630-23bc-18f2-42400042ce4f@arm.com>
-Date: Thu, 15 Mar 2018 11:06:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180209081606.GC7339@cbox>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752076AbeCOLG4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:06:56 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58607 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeCOLGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 07:06:55 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Date: Thu, 15 Mar 2018 11:56:28 +0100
+Message-Id: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/18 08:16, Christoffer Dall wrote:
-> On Thu, Feb 08, 2018 at 05:53:17PM +0000, Suzuki K Poulose wrote:
->> On 08/02/18 11:14, Christoffer Dall wrote:
->>> On Tue, Jan 09, 2018 at 07:04:10PM +0000, Suzuki K Poulose wrote:
->>>> Allow the guests to choose a larger physical address space size.
->>>> The default and minimum size is 40bits. A guest can change this
->>>> right after the VM creation, but before the stage2 entry page
->>>> tables are allocated (i.e, before it registers a memory range
->>>> or maps a device address). The size is restricted to the maximum
->>>> supported by the host. Also, the guest can only increase the PA size,
->>> >from the existing value, as reducing it could break the devices which
->>>> may have verified their physical address for validity and may do a
->>>> lazy mapping(e.g, VGIC).
->>>>
->>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>> Cc: Christoffer Dall <cdall@linaro.org>
->>>> Cc: Peter Maydell <peter.maydell@linaro.org>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Hello,
+   this new version fixes comments received from Andrzej and Sergei on the
+preceding v3.
 
->>>> +
->>>> +4.109 KVM_ARM_SET_PHYS_SHIFT
->>>> +
->>>> +Capability: KVM_CAP_ARM_CONFIG_PHYS_SHIFT
->>>> +Architectures: arm64
->>>> +Type: vm ioctl
->>>> +Parameters: __u32 (in)
->>>> +Returns: 0 on success, a negative value on error
->>>> +
->>>> +This ioctl is used to set the maximum physical address size for
->>>> +the VM. The value is Log2(Maximum_Physical_Address). The value can only
->>>> +be increased from the existing setting. The value cannot be changed
->>>> +after the stage-2 page tables are allocated and will return an error.
->>>> +
->>>
->>> Is there a way for userspace to discover what the underlying hardware
->>> can actually support, beyond trial-and-error on this ioctl?
->>
->> Unfortunately, there is none. We don't expose ID_AA64MMFR0 via mrs emulation.
->>
-> 
-> We should probably think about that.  Perhaps it could be tied to the
-> return value of KVM_CAP_ARM_CONFIG_PHYS_SHIFT ?
+Mostly, I cleaned up the mess with the powerdown GPIO names, and I'm now using
+pdwn everywhere. The regulator enabling routine has been improved as suggested
+by Sergei and Andrzej and I've changed Kconfig symbol documentation for
+consistency with other ones. Also, fix gpio initialization to comply with the
+APIs that work on logical level even at gpio request time.
 
-See below.
+Branch for testing available at
+git://jmondi.org v3m/v4.16-rc3/lvds-bridge-v4
 
->>>
->>> Have you considered making this capability a generic capability and
->>> encoding this in the 'type' argument to KVM_CREATE_VM?  This would
->>> significantly simplify all the above and would allow you to drop patch 8
->>> and 9 I think.
->>>> No. I will take a look.
+Thanks
+   j
 
-We could add a KVM dev capability hooked to the kvm_arch_dev_ioctl() for ARM
-to give out the maximum supported physical shift. And then the user could request
-the physical shift via the type argument (of course, encoded to allow future uses)
-to KVM_CREATE_VM.
+v3 -> v4:
+- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
+- Improve power enable/disable routines as suggested by Andrzej and Sergei
+- Change "pdwn" gpio initialization to use the logical output level
+- Change Kconfig description
 
-Cheers
-Suzuki
+v2 -> v3:
+- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
+-- Rework bindings to describe multiple input/output ports
+-- Rename driver and remove "lvds-decoder" references
+-- Rework Eagle DTS to use new bindings
+
+v1 -> v2:
+- Drop support for THC63LVD1024
+
+Jacopo Mondi (3):
+  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+  drm: bridge: Add thc63lvd1024 LVDS decoder driver
+  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
+
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |  63 +++++
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  33 ++-
+ drivers/gpu/drm/bridge/Kconfig                     |   6 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              | 255 +++++++++++++++++++++
+ 5 files changed, 355 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+
+--
+2.7.4
