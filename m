@@ -1,247 +1,112 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521157251; cv=none;
+Return-Path: <daniel.vetter@ffwll.ch>
+ARC-Seal: i=1; a=rsa-sha256; t=1521109919; cv=none;
         d=google.com; s=arc-20160816;
-        b=V5GoLtuYBgcYh1LI+FoWeN+6oijVuYx0Wd/VdpfFib9t0nS3U8dN3OpMVvZZuSC4/x
-         7mGnLI44Xj2ARdsVgDUjgcYc5eXSTPiJN4PRjK+ZwYyjNj0ysGSHKutrPLHyghzR6wTv
-         5BeDC36eWEvTNvOgjgqNWRdSdf70Advn+mhEhMul6XBOu1PB8dqaJ7KwgfK3ka1nS0nA
-         yE3H5R0wcL5ihS+ut0x35DFvnE70HzVT2YbtgVZ3RlY5uMD7nTGJCX2vby2w6l3KL+oC
-         /dh/NL4u64pvVFn1W8YF15ZuVNoWhAzXXABZzp1SScXukhmK69ZAwQPeEISzTPX3D90s
-         4oYg==
+        b=Fqz7Az9fjHmPQf0d2RsRJdjmT6bJeXHBAV5y0qFImmNFIBFigMwDCgWZQXgqveZfZ8
+         v81d212PfpSme0XC/63WgCOjp8WaJMktppEsyIkn82XAtEupAnxTc2/yNTikVgb0d/oR
+         hIwrjR7TqY5wKdD0lNXGFJSePHuSirYwMJhbXRt7EwpBgJFP1AJs6sRSMo5hXtUzM80r
+         MZgRfpPKlPjfMnmMArVo8SkxAvOcJgUS8TOvNRtX8tbSds37hP4T3kXXqQ+Sd/JPVzpV
+         9mSHQj4DxYhwrC6UhQapCPQCEiybRsH0qpmIyVIqdtCAAG/FmdlcMW+kP8kYGNXQlJBi
+         rWxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=+K5bOFimXxThoQkmWyOyysUWWVB53ny8sxHQOthZBOA=;
-        b=Ms2nS4x87RLoXBCQ8FANYkPQV+gFsdkBuEr6CSye+dhmzTDXU13AcshJLDC1CVuuaC
-         l8lA7RSekgTsfliRf9K6MJvAZIXgP+DkK1IkNSPJPOQ62ZdvwTxa0r+FtDfyvXqojg0M
-         tsHGqzvahv4c00FkzhNy5s/uIxrsgVQWL8TZenU+BUicvsyS1oHqIb3Vl4vYKtC4KueF
-         9PwJ+7Vsv+kvxj0DSHtRLKzOJWSelSMdOLkbQpejMz1//cvvboSZQ1EnJXFt9aq3gw5I
-         y2UcLRcfzFgd3R1R8OmMEvXRRueudS/wnwYmcfNmJ48k7oJJMJPW6gMUNCFhHKIMV13p
-         0Mtw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=wz0OzK1jEYqnCBV/npFXk8gvfSiWqBrxM+rkopH1HPo=;
+        b=nS/p7Ip3NVD2EJ4doL/vKcomZD4+lCS6KoIJXyY/D1TcVqoND7EfxaJWhI/u40R+x3
+         YGB0pDyYuhbF11F1vz2NVwTqi8/3dgRweWL9JN3kJ6sudtrY6M5pV48IETkaunzMHX3g
+         vvEOw84Dovg7p0UNXfinc6/YC5eeVNd4ZTCujG6B3+mxB+/Y3eX4BOY0C16/zrBrIwEc
+         YEHM8yZq2yOzRz3HapWzpMucq5xkpRTZmo5BWc2KVywdEBV1YVY279K5J4ec6xtpVxFz
+         SHzZ3S5dqcCX6SP5mYNf7OaBSLx6XKSt2cuDxe5xMX/Lvity5FZWfEaU23Mo9zSGggVs
+         rMXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+       dkim=pass header.i=@ffwll.ch header.s=google header.b=dwGS7QhH;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of daniel.vetter@ffwll.ch) smtp.mailfrom=daniel.vetter@ffwll.ch
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AG47ELskZpDguWZzX0WyfscyzFP5vOGaNLAC2d5dyTk+v1s49EAa9wE/+9KK1TRGi0luZ5UKoJnaTA==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: ebiederm@xmission.com,
-	gregkh@linuxfoundation.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: serge@hallyn.com,
-	avagin@virtuozzo.com,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v1] netns: send uevent messages
-Date: Fri, 16 Mar 2018 00:39:36 +0100
-Message-Id: <20180315233936.30594-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
+       dkim=pass header.i=@ffwll.ch header.s=google header.b=dwGS7QhH;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of daniel.vetter@ffwll.ch) smtp.mailfrom=daniel.vetter@ffwll.ch
+X-Google-Smtp-Source: AG47ELsYqSRpRIcAcmAgsv+864HO/pLMFd6UAMvNuYi8YT66HO0fM1px2Yma2luUZWF1S4+BUHkxpIIB8MlqiuGkLJg=
+MIME-Version: 1.0
+Sender: daniel.vetter@ffwll.ch
+X-Originating-IP: [2a02:168:56e6:0:e4bc:76a0:8042:669e]
+In-Reply-To: <aae95b90-a0c8-4825-17fb-b31eb1aecf80@lge.com>
+References: <20171207100849.407-1-daniel.vetter@ffwll.ch> <20171208105419.jdzene5wrsriwm2n@hirez.programming.kicks-ass.net>
+ <20171211091928.cpw3srz2rddmruxj@phenom.ffwll.local> <20171218071159.GW26573@phenom.ffwll.local>
+ <CA+55aFwD+0hhehWHmh8PW9eDCVtEBTi9KCmCrJXZRUFj77r82Q@mail.gmail.com>
+ <20171219095925.GY26573@phenom.ffwll.local> <aae95b90-a0c8-4825-17fb-b31eb1aecf80@lge.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Thu, 15 Mar 2018 11:31:57 +0100
+X-Google-Sender-Auth: 94iPyLfPXF7nqn9LAxyeQ3t4Qi4
+Message-ID: <CAKMK7uHdk1CT9YP00fb0mpBQdg_Di6CKv+z5ZXSS9Q4tbOcwAg@mail.gmail.com>
+Subject: Re: [PATCH] kthread: finer-grained lockdep/cross-release completion
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+	Marta Lofstedt <marta.lofstedt@intel.com>, Ingo Molnar <mingo@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Shaohua Li <shli@fb.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>,
+	Oleg Nesterov <oleg@redhat.com>, Daniel Vetter <daniel.vetter@intel.com>, kernel-team@lge.com,
+	Amir Goldstein <amir73il@gmail.com>, "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595048985962121648?=
-X-GMAIL-MSGID: =?utf-8?q?1595048985962121648?=
+X-GMAIL-THRID: =?utf-8?q?1586119401963161178?=
+X-GMAIL-MSGID: =?utf-8?q?1594999354904668668?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds a receive method to NETLINK_KOBJECT_UEVENT netlink sockets
-to allow sending uevent messages into the network namespace the socket
-belongs to.
+On Wed, Dec 20, 2017 at 2:14 AM, Byungchul Park <byungchul.park@lge.com> wrote:
+> On 12/19/2017 6:59 PM, Daniel Vetter wrote:
+>>
+>> On Mon, Dec 18, 2017 at 09:42:13AM -0800, Linus Torvalds wrote:
+>>>
+>>> On Sun, Dec 17, 2017 at 11:11 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>>
+>>>>
+>>>> This didn't seem to have made it into -rc4. Anything needed to get it
+>>>> going?
+>>>
+>>>
+>>> Do you actually see the problem in -rc4?
+>>>
+>>> Because we ended up removing the cross-release checking due to other
+>>> developers complaining. It seemed to need a lot more work before it
+>>> was ready.
+>>>
+>>> So I suspect the patch is simply not relevant any more (even if it's
+>>> not necessarily wrong either).
+>>
+>>
+>> Awww ... I like the cross release stuff, it's catching lots of good bugs
+>> for us - writing a gpu memory manager that's supposed to interface with
+>> the core one ain't the simplest thing to get right. That's also why we're
+>> going around and fixing up fallout (we've worked on the worker annotations
+>> for 4.14 too). I guess next release, hopefully.
+>>
+>> I think between 4.14 and 4.15 attemps cross-release spotted around 5 or so
+>> genuine deadlocks in i915 code. And at least right now, with the current
+>> set of fixups our CI runs are splat-free. So at least a Kconfig option
+>> would be nice, to be able to enable it easily when you want to.
+>>
+>> Wrt us not noticing: Getting the patches in through normal means takes too
+>> long, so we constantly carry arounda  bunch of fixup patches to address
+>> serious issues that block CI (no lockdep is no good CI). That's why we
+>> won't immediately notice when an issue is resolved some other way.
+>
+>
+> Hello Ingo and Linus,
+>
+> IMO, taking it off by default is enough. What fs folk actually
+> wanted is not to remove whole stuff but make it off by default.
+>
+> Cross-release logic itself makes sense. Please consider it back
+> and apply my patch making it off by default.
+>
+> I will do what I can do for the classification in layered fs.
 
-Currently non-initial network namespaces are already isolated and don't
-receive uevents. There are a number of cases where it is beneficial for a
-sufficiently privileged userspace process to send a uevent into a network
-namespace.
-
-One such use case would be debugging and fuzzing of a piece of software
-which listens and reacts to uevents. By running a copy of that software
-inside a network namespace, specific uevents could then be presented to it.
-More concretely, this would allow for easy testing of udevd/ueventd.
-
-This will also allow some piece of software to run components inside a
-separate network namespace and then effectively filter what that software
-can receive. Some examples of software that do directly listen to uevents
-and that we have in the past attempted to run inside a network namespace
-are rbd (CEPH client) or the X server.
-
-Implementation:
-The implementation has been kept as simple as possible from the kernel's
-perspective. Specifically, a simple input method uevent_net_rcv() is added
-to NETLINK_KOBJECT_UEVENT sockets which completely reuses existing
-af_netlink infrastructure and does neither add an additional netlink family
-nor requires any user-visible changes.
-
-For example, by using netlink_rcv_skb() we can make use of existing netlink
-infrastructure to report back informative error messages to userspace.
-
-Furthermore, this implementation does not introduce any overhead for
-existing uevent generating codepaths. The struct netns gets a new uevent
-socket member that records the uevent socket associated with that network
-namespace. Since we record the uevent socket for each network namespace in
-struct net we don't have to walk the whole uevent socket list.
-Instead we can directly retrieve the relevant uevent socket and send the
-message. This keeps the codepath very performant without introducing
-needless overhead.
-
-Uevent sequence numbers are kept global. When a uevent message is sent to
-another network namespace the implementation will simply increment the
-global uevent sequence number and append it to the received uevent. This
-has the advantage that the kernel will never need to parse the received
-uevent message to replace any existing uevent sequence numbers. Instead it
-is up to the userspace process to remove any existing uevent sequence
-numbers in case the uevent message to be sent contains any.
-
-Security:
-In order for a caller to send uevent messages to a target network namespace
-the caller must have CAP_SYS_ADMIN in the owning user namespace of the
-target network namespace. Additionally, any received uevent message is
-verified to not exceed size UEVENT_BUFFER_SIZE. This includes the space
-needed to append the uevent sequence number.
-
-Testing:
-This patch has been tested and verified to work with the following udev
-implementations:
-1. CentOS 6 with udevd version 147
-2. Debian Sid with systemd-udevd version 237
-3. Android 7.1.1 with ueventd
-
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-Changelog v0->v1:
-* Hold mutex_lock() until uevent is sent to preserve uevent message
-  ordering. See udev and commit for reference:
-
-  commit 7b60a18da393ed70db043a777fd9e6d5363077c4
-  Author: Andrew Vagin <avagin@openvz.org>
-  Date:   Wed Mar 7 14:49:56 2012 +0400
-
-      uevent: send events in correct order according to seqnum (v3)
-
-      The queue handling in the udev daemon assumes that the events are
-      ordered.
----
- include/net/net_namespace.h |  1 +
- lib/kobject_uevent.c        | 82 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 82 insertions(+), 1 deletion(-)
-
-diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-index f306b2aa15a4..467bde763a9b 100644
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -78,6 +78,7 @@ struct net {
- 
- 	struct sock 		*rtnl;			/* rtnetlink socket */
- 	struct sock		*genl_sock;
-+	struct sock		*uevent_sock;		/* uevent socket */
- 
- 	struct list_head 	dev_base_head;
- 	struct hlist_head 	*dev_name_head;
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 9fe6ec8fda28..5a07798359a1 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -25,6 +25,7 @@
- #include <linux/uuid.h>
- #include <linux/ctype.h>
- #include <net/sock.h>
-+#include <net/netlink.h>
- #include <net/net_namespace.h>
- 
- 
-@@ -602,12 +603,88 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
- EXPORT_SYMBOL_GPL(add_uevent_var);
- 
- #if defined(CONFIG_NET)
-+static int uevent_net_send(struct sock *usk, struct sk_buff *skb,
-+			   struct netlink_ext_ack *extack)
-+{
-+	int ret;
-+	/* u64 to chars: 2^64 - 1 = 21 chars */
-+	char buf[sizeof("SEQNUM=") + 21];
-+	struct sk_buff *skbc;
-+
-+	/* bump and prepare sequence number */
-+	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", ++uevent_seqnum);
-+	if (ret < 0 || (size_t)ret >= sizeof(buf))
-+		return -ENOMEM;
-+	ret++;
-+
-+	/* verify message does not overflow */
-+	if ((skb->len + ret) > UEVENT_BUFFER_SIZE) {
-+		NL_SET_ERR_MSG(extack, "uevent message too big");
-+		return -EINVAL;
-+	}
-+
-+	/* copy skb and extend to accommodate sequence number */
-+	skbc = skb_copy_expand(skb, 0, ret, GFP_KERNEL);
-+	if (!skbc)
-+		return -ENOMEM;
-+
-+	/* append sequence number */
-+	skb_put_data(skbc, buf, ret);
-+
-+	/* remove msg header */
-+	skb_pull(skbc, NLMSG_HDRLEN);
-+
-+	/* set portid 0 to inform userspace message comes from kernel */
-+	NETLINK_CB(skbc).portid = 0;
-+	NETLINK_CB(skbc).dst_group = 1;
-+
-+	ret = netlink_broadcast(usk, skbc, 0, 1, GFP_KERNEL);
-+	/* ENOBUFS should be handled in userspace */
-+	if (ret == -ENOBUFS || ret == -ESRCH)
-+		ret = 0;
-+
-+	return ret;
-+}
-+
-+static int uevent_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
-+			  struct netlink_ext_ack *extack)
-+{
-+	int ret;
-+	struct net *net;
-+
-+	if (!nlmsg_data(nlh))
-+		return -EINVAL;
-+
-+	/*
-+	 * Verify that we are allowed to send messages to the target
-+	 * network namespace. The caller must have CAP_SYS_ADMIN in the
-+	 * owning user namespace of the target network namespace.
-+	 */
-+	net = sock_net(NETLINK_CB(skb).sk);
-+	if (!netlink_ns_capable(skb, net->user_ns, CAP_SYS_ADMIN)) {
-+		NL_SET_ERR_MSG(extack, "missing CAP_SYS_ADMIN capability");
-+		return -EPERM;
-+	}
-+
-+	mutex_lock(&uevent_sock_mutex);
-+	ret = uevent_net_send(net->uevent_sock, skb, extack);
-+	mutex_unlock(&uevent_sock_mutex);
-+
-+	return ret;
-+}
-+
-+static void uevent_net_rcv(struct sk_buff *skb)
-+{
-+	netlink_rcv_skb(skb, &uevent_rcv_msg);
-+}
-+
- static int uevent_net_init(struct net *net)
- {
- 	struct uevent_sock *ue_sk;
- 	struct netlink_kernel_cfg cfg = {
- 		.groups	= 1,
--		.flags	= NL_CFG_F_NONROOT_RECV,
-+		.input = uevent_net_rcv,
-+		.flags	= NL_CFG_F_NONROOT_RECV
- 	};
- 
- 	ue_sk = kzalloc(sizeof(*ue_sk), GFP_KERNEL);
-@@ -621,6 +698,9 @@ static int uevent_net_init(struct net *net)
- 		kfree(ue_sk);
- 		return -ENODEV;
- 	}
-+
-+	net->uevent_sock = ue_sk->sk;
-+
- 	mutex_lock(&uevent_sock_mutex);
- 	list_add_tail(&ue_sk->list, &uevent_sock_list);
- 	mutex_unlock(&uevent_sock_mutex);
+Is there any progress on getting cross-release enabled again?
+-Daniel
 -- 
-2.15.1
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
