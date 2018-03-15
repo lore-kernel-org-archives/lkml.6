@@ -1,40 +1,39 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELsGOf3mgITYbM22X3VirpJ/WPsNEvjT1fykzPWeMM/bw0WdAJxmkwp4A6dmVhS+jedzTGvz
-ARC-Seal: i=1; a=rsa-sha256; t=1521211737; cv=none;
+X-Google-Smtp-Source: AG47ELsagYUBznKkmKE61yk+zN8N9iJFTBmnofHnSCjYtd0nDn8cgbgInoNLYdqXnwgjkkvYw4Y6
+ARC-Seal: i=1; a=rsa-sha256; t=1521092764; cv=none;
         d=google.com; s=arc-20160816;
-        b=B3iI5w4UE0kbb9l6jJxx+6ZXQlvJNllrqH4qdYb0zv46FSRccz3QEsWgqQFgDEjc7J
-         KxauR1J5gIWm0iEqkC817BAF5/nF54lUDH8DAe6GfpVVq9ru1BDoRi7FU/209fy4HWLk
-         85VODE2x2GqUHHAJxRssRnNG2UKN45ag8Eqmmq6nD9Ik+pr4aT0kOiLQjTIcLjI9ZoZL
-         6ENqCq5V6gMUbVDH/058kXoe8GG9Bc3USDKuL73u6Z9jKNwTiy1dhgqMsankRnQ8hQ8+
-         rtQTEs1V0AEE7bTKPdiXAxke1evwhHbspUrsGQwU5UDbjyN5xFNZHLM7Fe8B8a36SIzB
-         KedQ==
+        b=O5wVqzvZVD3+XV6uXw2cZBzP6WQ4dErA+HWn6EMFdizgY4AHH0XB47poGvOjk2zVg+
+         7EXM994Of7Dce5uhAT/V2OY0lK/dGp/feSVs1j496ffGKuqaSSYeFniPrYmcqyeo2sXv
+         dijvYRMrgt7uKyq5B+0tp0rcWLKOXvOU41fWFytwbfp+h61Hp6wjph7atmQRI8emn8n6
+         ZIDth5ccFMhreg8qaY9azM1akJo1yO3cbUswDXD+G/PHKJve+wMj3TFLWUWxONzWcJJG
+         c35jDiRt4YiTpGoOCGMmoHAG1FgxXDrM9tqHp+q17QU39jzY0SO76dclOfj1sakcoiL2
+         /sJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:message-id:subject:cc:to:from:date
-         :dmarc-filter:arc-authentication-results;
-        bh=y8yuqBjObggpO3/Cf14/O13hdwIni4DYPzx66ngxehA=;
-        b=Vi/8IhEPqI74Bx9lt7XCHgGmhjgfm8TLviA3QeeFwU067+bevx6EfHmcRpaVeZbIyp
-         Wb6BHyEI4+z2NMLyFRA31ConoeF2xhao9Ocicgv9WVQ3IjxD97smmv/KLWSnScakAcWt
-         ffUK4waEtXeDKopu3xUdqN6N/Yjgqi+wfxlO+B3zze76ZgsyYqtFsek3kYquGf47hfFO
-         tewC5TS/zBNMEHUEo0MG0l+kwdCPuRR/FnwvH10GACKq6edxsFLsSEmTiN59Z1S5qkUw
-         X6aVlrglO2qSXNu9OQiozIGl4QU/yuCKLZUrBDYTn1ba2u2gJ548e+uMMGZc1PmuPYqF
-         nQKQ==
+        h=list-id:precedence:sender:message-id:content-language
+         :content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :from:references:cc:to:subject:arc-authentication-results;
+        bh=d2W7+x3AvIRpcT8NJCYDw1BtvpR7VCKvwm/jtGr7OJs=;
+        b=sJTCHYxFlWUdiqBxH4ogVgicHmKIkQIRqwtv4S6f1xhWWPa3wY19mSzQ0gxLQg4ou+
+         UKHkRz1Cy5/G7FF6MVGAyv+R+tdbwNUASkJ1gyujvZWBZiwfVLXcjdIGKWzzM7ukkqzl
+         RJ6gfuKVNhsB4K+4TKsYySUMzz9CublsD89Iittvx754jLYzqOCHo1FZZgVIXLlTVMi3
+         wYHqTg315VtMA+fXDbG5ma+JTNum2rC2+TlDL2uRFmbADfAl7IJK1t74Pyhe9Q2ORQ0P
+         BwlI0sWvVjseTu/wJ5nccGrnJFw/Fhwn3gHwZB0Mc3dH+F9RW6sCWg+ogUAxoi6qGT7s
+         9iGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753394AbeCPOs5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 16 Mar 2018 10:48:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753320AbeCPOs4 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:48:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B52021741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Fri, 16 Mar 2018 23:48:52 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
+        id S1751390AbeCOFqD (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 15 Mar 2018 01:46:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750745AbeCOFqC (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 15 Mar 2018 01:46:02 -0400
+Subject: Re: [PATCH v5 16/19] tracing: probeevent: Add array type support
 To: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
@@ -42,106 +41,94 @@ Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: Re: [PATCH v5 16/19] tracing: probeevent: Add array type support
-Message-Id: <20180316234852.530b7831ee6e242e3b535a16@kernel.org>
-In-Reply-To: <152049905133.7289.17516121776689315422.stgit@devbox>
+        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 References: <152049860385.7289.14079393589900496424.stgit@devbox>
-        <152049905133.7289.17516121776689315422.stgit@devbox>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <152049905133.7289.17516121776689315422.stgit@devbox>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 11:18:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <152049905133.7289.17516121776689315422.stgit@devbox>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031505-0016-0000-0000-00000532CB4B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031505-0017-0000-0000-0000286FD370
+Message-Id: <72be81a4-710a-b942-277d-9156c3debc5d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150067
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594358839822578667?=
-X-GMAIL-MSGID: =?utf-8?q?1595106119290941924?=
+X-GMAIL-MSGID: =?utf-8?q?1594981366347557687?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu,  8 Mar 2018 17:50:51 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Hi Masami,
 
+On 03/08/2018 02:20 PM, Masami Hiramatsu wrote:
 > Add array type support for probe events.
 > This allows user to get arraied types from memory address.
 > The array type syntax is
-> 
+>
 > 	TYPE[N]
-> 
+>
 > Where TYPE is one of types (u8/16/32/64,s8/16/32/64,
 > x8/16/32/64, symbol, string) and N is a fixed value less
 > than 64.
-> 
+>
 > The string array type is a bit different from other types. For
 > other base types, <base-type>[1] is equal to <base-type>
 > (e.g. +0(%di):x32[1] is same as +0(%di):x32.) But string[1] is not
 > equal to string. The string type itself represents "char array",
 > but string array type represents "char * array". So, for example,
 > +0(%di):string[1] is equal to +0(+0(%di)):string.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  Changes in v4:
->   - Fix to use calculated size correctly for field definition.
->     (Thank you Namhyung!)
->  Changes in v2:
->   - Add array description in README file
->   - Fix to init s3 code out of loop.
->   - Fix to proceed code when the last code is OP_ARRAY.
->   - Add string array type and bitfield array type.
-> ---
->  Documentation/trace/kprobetrace.txt |   13 ++++
->  kernel/trace/trace.c                |    3 +
->  kernel/trace/trace_probe.c          |  130 +++++++++++++++++++++++++++--------
->  kernel/trace/trace_probe.h          |   14 ++++
->  kernel/trace/trace_probe_tmpl.h     |   63 +++++++++++++++--
->  5 files changed, 183 insertions(+), 40 deletions(-)
-> 
-> diff --git a/Documentation/trace/kprobetrace.txt b/Documentation/trace/kprobetrace.txt
-> index 1d082f8ffeee..8bf752dfc072 100644
-> --- a/Documentation/trace/kprobetrace.txt
-> +++ b/Documentation/trace/kprobetrace.txt
-> @@ -65,9 +65,22 @@ in decimal ('s' and 'u') or hexadecimal ('x'). Without type casting, 'x32'
->  or 'x64' is used depends on the architecture (e.g. x86-32 uses x32, and
->  x86-64 uses x64).
->  
-> +These value types can be an array. To record array data, you can add '[N]'
-> +(where N is a fixed number, less than 64) to the base type.
-> +E.g. 'x16[4]' means an array of x16 (2bytes hex) with 4 elements.
-> +Note that the array can be applied to memory type fetchargs, you can not
-> +apply it to registers/stack-entries etc. (for example, '$stack1:x8[8]' is
-> +wrong, but '+8($stack):x8[8]' is OK.)
-> +
->  String type is a special type, which fetches a "null-terminated" string from
->  kernel space. This means it will fail and store NULL if the string container
->  has been paged out.
-> +The string array type is a bit different from other types. For other base
-> +types, <base-type>[1] is equal to <base-type> (e.g. +0(%di):x32[1] is same
-> +as +0(%di):x32.) But string[1] is not equal to string. The string type itself
-> +represents "char array", but string array type represents "char * array".
-> +So, for example, +0(%di):string[1] is equal to +0(+0(%di)):string.
-> +
->  Bitfield is another special type, which takes 3 parameters, bit-width, bit-
->  offset, and container-size (usually 32). The syntax is;
->  
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index bcd1fd87082d..b7c6698265e5 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -4614,7 +4614,8 @@ static const char readme_msg[] =
->  	"\t           $stack<index>, $stack, $retval, $comm\n"
->  #endif
->  	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
-> -	"\t           b<bit-width>@<bit-offset>/<container-size>\n"
-> +	"\t           b<bit-width>@<bit-offset>/<container-size>,\n"
-> +	"\t           <type>[<array-size>]\n"
 
-Ah, this brace('[',']') should be escaped, like "<type>\[<array-size>\]", or we can not
-distinguish it from other braces which mean "optional" syntax.
-I'll update it in the next version.
+I was trying to test this patch. But I'm not getting proper data.
+Here is what I'm doing...
+
+$ cat hello.c
+#include <stdio.h>
+
+void foo1(int a[])
+{
+    printf("%d\n", a[2]);
+}
+
+void foo(int a[])
+{
+    printf("%d\n", a[1]);
+    foo1(a);
+}
+
+void main()
+{
+    int a[3] = {4, 5, 6};
+    printf("%d\n", a[0]);
+    foo(a);
+}
+
+$ gcc -g hello.c -o hello
+$ sudo ./perf probe -x ~/hello foo1 'a=a:x32[3]'
+$ sudo cat /sys/kernel/debug/tracing/uprobe_events
+p:probe_hello/foo1 /home/ravi/hello:0x00000000000005fc a=+96(%gpr31):x32[3]
+
+$ sudo ./perf record -e probe_hello:foo1 ~/hello
+$ sudo ./perf script
+hello  6913 [038]  2857.704470: probe_hello:foo1: (100005fc) a={0xd69e4400,0x7fff,0x0}
+
+
+I don't see proper values of the 'a'? Anything wrong with my perf commands :) ?
 
 Thanks,
+Ravi
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
