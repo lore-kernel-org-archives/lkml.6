@@ -1,79 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeCOOsg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:48:36 -0400
-Received: from smtprelay0105.hostedemail.com ([216.40.44.105]:53207 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752201AbeCOOse (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:48:34 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2110:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4559:5007:6119:7903:8531:8603:8985:9025:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12048:12050:12296:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21611:21627:30012:30029:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: snow62_2d58d48886d15
-X-Filterd-Recvd-Size: 2566
-Message-ID: <1521125310.22221.4.camel@perches.com>
-Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
-From: Joe Perches <joe@perches.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org
-Date: Thu, 15 Mar 2018 07:48:30 -0700
-In-Reply-To: <7dac9dbd-b57b-6e37-c1bb-9ab6c2711613@linux.intel.com>
-References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
-         <7dac9dbd-b57b-6e37-c1bb-9ab6c2711613@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752732AbeCOOtK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:49:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40016 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752641AbeCOOr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:47:27 -0400
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+To: peterz@infradead.org, mingo@redhat.com
+Cc: valentin.schneider@arm.com, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
+        linux-kernel@vger.kernel.org,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Subject: [PATCHv2 2/7] sched/fair: Add group_misfit_task load-balance type
+Date: Thu, 15 Mar 2018 14:46:59 +0000
+Message-Id: <1521125224-15434-3-git-send-email-morten.rasmussen@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
+References: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-15 at 14:22 +0100, Maarten Lankhorst wrote:
-> Op 13-03-18 om 23:02 schreef Joe Perches:
-> > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
-> > arguments that can be removed by creating separate functins.
-> > 
-> > Create specific functions for these calls to reduce x86/64 defconfig
-> > size by ~20k.
-> > 
-> > Modify the existing macros to use the specific calls.
-> > 
-> > new:
-> > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
-> > 
-> > old:
-> > $ size -t drivers/gpu/drm/built-in.a | tail -1
-> > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
-[]
-> I guess this adds up. Nice reduction. :)
+To maximize throughput in systems with asymmetric cpu capacities (e.g.
+ARM big.LITTLE) load-balancing has to consider task and cpu utilization
+as well as per-cpu compute capacity when load-balancing in addition to
+the current average load based load-balancing policy. Tasks with high
+utilization that are scheduled on a lower capacity cpu need to be
+identified and migrated to a higher capacity cpu if possible to maximize
+throughput.
 
-Yup. 1% of all drm object code.
+To implement this additional policy an additional group_type
+(load-balance scenario) is added: group_misfit_task. This represents
+scenarios where a sched_group has one or more tasks that are not
+suitable for its per-cpu capacity. group_misfit_task is only considered
+if the system is not overloaded or imbalanced (group_imbalanced or
+group_overloaded).
 
-> > diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-[]
-> >  
-> > -	drm_printk(level, category, "mismatch in %s %pV", name, &vaf);
-> > +	if (adjust)
-> > +		drm_dbg(DRM_UT_KMS, "mismatch in %s %pV", name, &vaf);
-> > +	else
-> > +		drm_err("mismatch in %s %pV", name, &vaf);
-> 
-> Could this use DRM_DEBUG_KMS/DRM_ERROR?
-> 
-> Rest looks good, so I can fix up if you want.
+Identifying misfit tasks requires the rq lock to be held. To avoid
+taking remote rq locks to examine source sched_groups for misfit tasks,
+each cpu is responsible for tracking misfit tasks themselves and update
+the rq->misfit_task flag. This means checking task utilization when
+tasks are scheduled and on sched_tick.
 
-If want you change something like that, it should be separate patch.
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
 
-btw: There was  separate patch that also reduced object size
-of the drm_dev_printk calls several months ago.  Never applied.
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ kernel/sched/fair.c  | 57 +++++++++++++++++++++++++++++++++++++++++++---------
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 50 insertions(+), 9 deletions(-)
 
-https://lkml.org/lkml/2017/9/25/247
-
-cheers, Joe
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e4ce572113a9..1e06c722bc2e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -697,6 +697,7 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 
+ static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
+ static unsigned long task_h_load(struct task_struct *p);
++static unsigned long capacity_of(int cpu);
+ 
+ /* Give new sched_entity start runnable values to heavy its load in infant time */
+ void init_entity_runnable_average(struct sched_entity *se)
+@@ -1407,7 +1408,6 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+ static unsigned long weighted_cpuload(struct rq *rq);
+ static unsigned long source_load(int cpu, int type);
+ static unsigned long target_load(int cpu, int type);
+-static unsigned long capacity_of(int cpu);
+ 
+ /* Cached statistics for all CPUs within a node */
+ struct numa_stats {
+@@ -3873,6 +3873,30 @@ static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
+ 
+ static int idle_balance(struct rq *this_rq, struct rq_flags *rf);
+ 
++static inline unsigned long task_util(struct task_struct *p);
++static inline int task_fits_capacity(struct task_struct *p, long capacity)
++{
++	return capacity * 1024 > task_util(p) * capacity_margin;
++}
++
++static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
++{
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return;
++
++	if (!p) {
++		rq->misfit_task_load = 0;
++		return;
++	}
++
++	if (task_fits_capacity(p, capacity_of(cpu_of(rq)))) {
++		rq->misfit_task_load = 0;
++		return;
++	}
++
++	rq->misfit_task_load = task_h_load(p);
++}
++
+ #else /* CONFIG_SMP */
+ 
+ static inline int
+@@ -3902,6 +3926,8 @@ static inline int idle_balance(struct rq *rq, struct rq_flags *rf)
+ 	return 0;
+ }
+ 
++static inline void update_misfit_status(struct task_struct *p, struct rq *rq) {}
++
+ #endif /* CONFIG_SMP */
+ 
+ static void check_spread(struct cfs_rq *cfs_rq, struct sched_entity *se)
+@@ -5835,7 +5861,6 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 	return target;
+ }
+ 
+-static inline unsigned long task_util(struct task_struct *p);
+ static unsigned long cpu_util_wake(int cpu, struct task_struct *p);
+ 
+ static unsigned long capacity_spare_wake(int cpu, struct task_struct *p)
+@@ -6398,7 +6423,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+ 	/* Bring task utilization in sync with prev_cpu */
+ 	sync_entity_load_avg(&p->se);
+ 
+-	return min_cap * 1024 < task_util(p) * capacity_margin;
++	return !task_fits_capacity(p, min_cap);
+ }
+ 
+ /*
+@@ -6829,9 +6854,12 @@ done: __maybe_unused;
+ 	if (hrtick_enabled(rq))
+ 		hrtick_start_fair(rq, p);
+ 
++	update_misfit_status(p, rq);
++
+ 	return p;
+ 
+ idle:
++	update_misfit_status(NULL, rq);
+ 	new_tasks = idle_balance(rq, rf);
+ 
+ 	/*
+@@ -7037,6 +7065,13 @@ static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+ 
+ enum fbq_type { regular, remote, all };
+ 
++enum group_type {
++	group_other = 0,
++	group_misfit_task,
++	group_imbalanced,
++	group_overloaded,
++};
++
+ #define LBF_ALL_PINNED	0x01
+ #define LBF_NEED_BREAK	0x02
+ #define LBF_DST_PINNED  0x04
+@@ -7578,12 +7613,6 @@ static unsigned long task_h_load(struct task_struct *p)
+ 
+ /********** Helpers for find_busiest_group ************************/
+ 
+-enum group_type {
+-	group_other = 0,
+-	group_imbalanced,
+-	group_overloaded,
+-};
+-
+ /*
+  * sg_lb_stats - stats of a sched_group required for load_balancing
+  */
+@@ -7599,6 +7628,7 @@ struct sg_lb_stats {
+ 	unsigned int group_weight;
+ 	enum group_type group_type;
+ 	int group_no_capacity;
++	int group_misfit_task_load; /* A cpu has a task too big for its capacity */
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int nr_numa_running;
+ 	unsigned int nr_preferred_running;
+@@ -7898,6 +7928,9 @@ group_type group_classify(struct sched_group *group,
+ 	if (sg_imbalanced(group))
+ 		return group_imbalanced;
+ 
++	if (sgs->group_misfit_task_load)
++		return group_misfit_task;
++
+ 	return group_other;
+ }
+ 
+@@ -7972,6 +8005,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		 */
+ 		if (!nr_running && idle_cpu(i))
+ 			sgs->idle_cpus++;
++
++		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
++		    !sgs->group_misfit_task_load && rq->misfit_task_load)
++			sgs->group_misfit_task_load = rq->misfit_task_load;
+ 	}
+ 
+ 	/* Adjust by relative CPU capacity of the group */
+@@ -9753,6 +9790,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 
+ 	if (static_branch_unlikely(&sched_numa_balancing))
+ 		task_tick_numa(rq, curr);
++
++	update_misfit_status(curr, rq);
+ }
+ 
+ /*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 017f62069e0b..22177dfc1f04 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -815,6 +815,8 @@ struct rq {
+ 
+ 	unsigned char		idle_balance;
+ 
++	unsigned int		misfit_task_load;
++
+ 	/* For active balancing */
+ 	int			active_balance;
+ 	int			push_cpu;
+-- 
+2.7.4
