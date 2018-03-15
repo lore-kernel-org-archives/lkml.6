@@ -1,39 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751790AbeCOAzK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 20:55:10 -0400
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:42349 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCOAzJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 20:55:09 -0400
-X-Google-Smtp-Source: AG47ELtp3rwON+Q+5XlnJZK4PKjuO0rRMhBo9by1bgwus4pEIJ6Lx7q4ggz14vu2oox3jAh82oNR3Q==
-Date: Thu, 15 Mar 2018 09:55:04 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: Re: [PATCHv3 0/2] zsmalloc/zram: drop zram's max_zpage_size
-Message-ID: <20180315005504.GA3628@jagdpanzerIV>
-References: <20180314081833.1096-1-sergey.senozhatsky@gmail.com>
- <20180314150713.GA144952@rodete-laptop-imager.corp.google.com>
+        id S1751714AbeCOA5O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 20:57:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34844 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751405AbeCOA5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 20:57:13 -0400
+Date: Thu, 15 Mar 2018 01:56:34 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/9] x86/microcode/AMD: install_equiv_cpu_table()
+ should not return (signed) int
+Message-ID: <20180315005634.GC11061@pd.tnic>
+References: <cover.1520973389.git.mail@maciej.szmigiero.name>
+ <cf57ed15-df47-087e-c98f-527e4ce1e0f8@maciej.szmigiero.name>
+ <20180314175824.GG16605@pd.tnic>
+ <b913d9fd-9722-d5cc-cf94-426885947890@maciej.szmigiero.name>
+ <20180314235812.GB11061@pd.tnic>
+ <21fe4521-0fc7-c5ed-5a2a-4c7e93097385@maciej.szmigiero.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180314150713.GA144952@rodete-laptop-imager.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <21fe4521-0fc7-c5ed-5a2a-4c7e93097385@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/15/18 00:07), Minchan Kim wrote:
-> Both looks good to me.
-> 
-> Acked-by: Minchan Kim <minchan@kernel.org>
+On Thu, Mar 15, 2018 at 01:13:07AM +0100, Maciej S. Szmigiero wrote:
+> This can be done if this function is modified to return only the CPU
+> equivalence table length (without the container header length), leaving
+> its single caller the job of adding the container header length to skip
+> to the fist patch section.
 
-Thanks.
+Sure, it leaves the function to deal with the equiv table length only
+and the caller then adds the header length. Which is actually cleaner.
 
-	-ss
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
