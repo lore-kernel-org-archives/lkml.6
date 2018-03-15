@@ -1,119 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeCOQrv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:47:51 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42296 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751466AbeCOQru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:47:50 -0400
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-To: William Cohen <wcohen@redhat.com>,
-        Ganapatrao Kulkarni <gklkml16@gmail.com>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
- <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
- <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
- <2a84ec0e-dc8c-7e2e-64e5-4ea48ba6da49@redhat.com>
-CC: Arnaldo Carvalho de Melo <acme@kernel.org>, <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>, <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        "Ingo Molnar" <mingo@redhat.com>, <jnair@caviumnetworks.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, <linux-arm-kernel@lists.infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <5b918449-b7b1-dbe1-e6e2-46486116dc65@huawei.com>
-Date: Thu, 15 Mar 2018 16:47:27 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <2a84ec0e-dc8c-7e2e-64e5-4ea48ba6da49@redhat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1751982AbeCOQsE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:48:04 -0400
+Received: from mga18.intel.com ([134.134.136.126]:9723 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751302AbeCOQsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:48:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="37713454"
+Message-ID: <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
+Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 18:47:58 +0200
+In-Reply-To: <20180310082428.31519-8-tomas.winkler@intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+         <20180310082428.31519-8-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/2018 15:53, William Cohen wrote:
-> On 03/07/2018 11:14 PM, Ganapatrao Kulkarni wrote:
->> On Thu, Mar 8, 2018 at 12:01 AM, William Cohen <wcohen@redhat.com> wrote:
->>> On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
->>>> Hi Will Cohen,
->>>>
->>>> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
->>>> <acme@kernel.org> wrote:
->>>>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
->>>>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
->>>>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
->>>>>>> to enable JSON events for B0.
->>>>>>>
->>>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>>>
->>>>> Ganapatrao, can you please take this in consideration and if agreeing
->>>>> send a v2 patch?
->>>>>
->>>>> With that I can add an Acked-by: wcohen, Right?
->>>>>
->>>>> - Arnaldo
->>>>>>> ---
->>>>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
->>>>>>>  1 file changed, 1 insertion(+)
->>>>>>>
->>>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>> index e61c9ca..93c5d14 100644
->>>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>> @@ -13,4 +13,5 @@
->>>>>>>  #
->>>>>>>  #Family-model,Version,Filename,EventType
->>>>>>>  0x00000000420f5160,v1,cavium,core
->>>>>>> +0x00000000430f0af0,v1,cavium,core
->>>>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
->>>>>>>
->>>>>>
->>>>>> Hi,
->>>>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
->>>>
->>>> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
->>>> are ignored/dont-care.
->>>
->>> Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
->>
->> It is same for arm64 too, there is no need to add an entry for every
->> revision change,  need to add when part number changes.
->> This patch is not intended to add entry for revision change, the fact
->> of the matter is that, there  is complete MIDR change (vulcan to
->> thunderx2) in B0.
->> as per current arm64
->> implementation(.tools/perf/arch/arm64/util/header.c), it is not
->> required to have any dontcare marking in mapfile for revision/variant
->> bits.
->>
->> thanks
->> Ganapat
->
-> Hi Ganapat,
->
-> Would it make more sense to pass the MIDR value unmodified and then use regular expressions in mapfile.csv to match the values?  If an event on a particular processor revision is broken or unusable it can be excluded from the list of events with a corrected list of events.  There certainly have been errata listing events that do not work on specific revisions of armv8 processor implementations.
->
+On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> Add tpm2_pcr_extend function to tpm2-cmd.c with signature required
+> by tpm-interface.c. It wraps the original open code
+> implementation. The original original tpm2_pcr_extend function
+> is renamed and made static, called only from new tpm2_pcr_extend.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Then there are vendors who do not always properly implemenent MIDR or 
-IIDRs (people who live in glass houses...).
+This might concern some of the earlier patches too but please use exact
+names for functions in the short and long summary i.e.
 
-Btw, topic originally discussed here:
-https://lkml.org/lkml/2017/5/2/113
+  tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
 
-Thanks,
-John
+Check this also for your long descriptions and previous that I gave
+reviewed-by (I think they were otherwise fine). And you refer to a
+function in text use parentheses after the name. I don't like
+hastily written commit messages.
 
-> -Will
->
->
-> .
->
+/Jarkko
