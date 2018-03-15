@@ -1,64 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751659AbeCOQcG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:32:06 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50668 "EHLO mail.skyhub.de"
+        id S1751884AbeCOQcv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:32:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41645 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751492AbeCOQcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:32:05 -0400
-Date: Thu, 15 Mar 2018 17:31:25 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        id S1750726AbeCOQct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:32:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="39200644"
+Message-ID: <9c096454a78283ee3871b5dd47ed0bf664d26b7e.camel@linux.intel.com>
+Subject: Re: [PATCH v2 3/8] tpm: factor out tpm1_get_random into tpm1-cmd.c
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/9] x86/microcode/AMD: verify patch section type for
- every such section
-Message-ID: <20180315163125.GG27816@pd.tnic>
-References: <cover.1520973389.git.mail@maciej.szmigiero.name>
- <c22d8453-e72a-4708-7aa1-3c19256881b1@maciej.szmigiero.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c22d8453-e72a-4708-7aa1-3c19256881b1@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Date: Thu, 15 Mar 2018 18:32:44 +0200
+In-Reply-To: <20180310082428.31519-4-tomas.winkler@intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+         <20180310082428.31519-4-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 10:07:01PM +0100, Maciej S. Szmigiero wrote:
-> We should check whether the patch section currently being processed is
-> actually a patch section for each of them (not just the first one) in the
-> late loader verify_and_add_patch() function, just like the early loader
-> already does in parse_container() function.
-> 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 0f78200f2f6c..3ad23e72c2b0 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -627,6 +627,11 @@ static int verify_and_add_patch(u8 family, u8 *fw, size_t leftover)
->  	if (leftover < SECTION_HDR_SIZE + sizeof(*mc_hdr))
->  		return leftover;
->  
-> +	if (*(u32 *)fw != UCODE_UCODE_TYPE) {
+On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> +		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> +		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
+> +			      recd) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
 
-Store that in a local var patch_type for better readability, while
-you're touching that.
+This rlength stuff can be handled with tpm_buf_length() as I do
+in my pendig-for-review patch set:
 
-Also, for all your patch subject names for your next submission, start
-the patch subject sentence with a capital letter:
+https://patchwork.kernel.org/patch/10259331/
 
-Subject: [PATCH v3 6/9] x86/microcode/AMD: Verify patch section type for every such section
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
