@@ -1,44 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeCOOW5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:22:57 -0400
-Received: from 8bytes.org ([81.169.241.247]:42904 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752425AbeCOOWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:22:55 -0400
-Date: Thu, 15 Mar 2018 15:22:53 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Dmitry Safonov <dima@arista.com>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
-Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
-Message-ID: <20180315142253.GC5259@8bytes.org>
-References: <20180215191729.15777-1-dima@arista.com>
- <20180315134649.skh2aukcmg5ud74y@8bytes.org>
- <1521123183.2686.7.camel@arista.com>
+        id S1752274AbeCOOYk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:24:40 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44489 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751551AbeCOOYi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:24:38 -0400
+X-Google-Smtp-Source: AG47ELt7iqShTxpr3x76U91aDkpb4LanPd8u+E9T9Yi5ymiNz/7+2LNwCD+Ef0JiBOoW5u/jbTVoElkjAzz8WWdl5ME=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521123183.2686.7.camel@arista.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180315081118.vivohgn6vrt74pyc@linux-x5ow.site>
+References: <20180314182508.10351-1-jthumshirn@suse.de> <20180315072257.GA14576@infradead.org>
+ <20180315081118.vivohgn6vrt74pyc@linux-x5ow.site>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 15 Mar 2018 07:24:37 -0700
+Message-ID: <CAPcyv4jj5HBJOBFNcWMGRg5DufLKJj-=BCVVORWpVno9p270Zg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Introduce module_nd_driver
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 02:13:03PM +0000, Dmitry Safonov wrote:
-> So, you suggest to remove ratelimit at all?
-> Do we really need printk flood for each happened fault?
-> Imagine, you've hundreds of mappings and then PCI link flapped..
-> Wouldn't it be better to keep ratelimiting?
-> I don't mind, just it looks a bit strange to me.
+On Thu, Mar 15, 2018 at 1:11 AM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
+> On Thu, Mar 15, 2018 at 12:22:57AM -0700, Christoph Hellwig wrote:
+>> What is the point?  It saves a hand fulk of lines, while making
+>> the code both harder to read and harder to extend.
+>
+> In the end it's just style alignment with most of the other "busses"
+> in the kernel, like pci, of, acpi, platform and so on...
+>
+> But yes I admit it's not a huge win. For the harder to read part, I
+> doubt it. A quick:
+> git grep -E module_.*._driver drivers/ | wc -l
+> has 3896 hit's, so it's not that uncommon ;-)
+>
+> But anyways, it's just code churn I came up with while being
+> frustrated hunting down a bug in this subsystem.
+>
 
-I never said you should remove the ratelimiting, after all you are
-trying to fix a soft-lockup, no?
-
-And that should not be fixed by changes to the ratelimiting, but with
-proper irq handling.
-
-
-	Joerg
+Works for me. Removing more lines than you add is always welcome.
