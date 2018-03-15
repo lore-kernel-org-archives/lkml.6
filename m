@@ -1,154 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932302AbeCOObe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:31:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752587AbeCOObb (ORCPT
+        id S932356AbeCOObv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:31:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49603 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932308AbeCOObs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:31:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B471860452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH v2] irqchip/gic-v3: Ensure GICR_CTLR.EnableLPI=0 is observed before enabling
-Date: Thu, 15 Mar 2018 09:31:27 -0500
-Message-Id: <1521124287-25009-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 15 Mar 2018 10:31:48 -0400
+Date: Thu, 15 Mar 2018 07:31:05 -0700
+From: tip-bot for Toshi Kani <tipbot@zytor.com>
+Message-ID: <tip-565977a3d929fc4427769117a8ac976ec16776d5@git.kernel.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, toshi.kani@hpe.com,
+        gratian.crisan@ni.com, luto@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, toshi.kani@hpe.com,
+        luto@kernel.org, gratian.crisan@ni.com
+In-Reply-To: <20180314205932.7193-1-toshi.kani@hpe.com>
+References: <20180314205932.7193-1-toshi.kani@hpe.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm: Remove pointless checks in vmalloc_fault
+Git-Commit-ID: 565977a3d929fc4427769117a8ac976ec16776d5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The definition of the GICR_CTLR.RWP control bit was expanded to indicate
-status of changing GICR_CTLR.EnableLPI from 1 to 0 is being in progress
-or completed. Software must observe GICR_CTLR.RWP==0 after clearing
-GICR_CTLR.EnableLPI from 1 to 0 and before writing GICR_PENDBASER and/or
-GICR_PROPBASER, otherwise behavior is UNPREDICTABLE.
+Commit-ID:  565977a3d929fc4427769117a8ac976ec16776d5
+Gitweb:     https://git.kernel.org/tip/565977a3d929fc4427769117a8ac976ec16776d5
+Author:     Toshi Kani <toshi.kani@hpe.com>
+AuthorDate: Wed, 14 Mar 2018 14:59:32 -0600
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 15 Mar 2018 15:27:47 +0100
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+x86/mm: Remove pointless checks in vmalloc_fault
+
+vmalloc_fault() sets user's pgd or p4d from the kernel page table.  Once
+it's set, all tables underneath are identical. There is no point of
+following the same page table with two separate pointers and make sure they
+see the same with BUG().
+
+Remove the pointless checks in vmalloc_fault(). Also rename the kernel
+pgd/p4d pointers to pgd_k/p4d_k so that their names are consistent in the
+file.
+
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Gratian Crisan <gratian.crisan@ni.com>
+Link: https://lkml.kernel.org/r/20180314205932.7193-1-toshi.kani@hpe.com
+
 ---
-Changes since v1:
-  -Moved LPI disable code to a seperate function as Marc suggested.
-  -Mark's suggestion to use readl_relaxed_poll_timeout() helper functions.
-  
- drivers/irqchip/irq-gic-v3-its.c   | 66 ++++++++++++++++++++++++++++++--------
- include/linux/irqchip/arm-gic-v3.h |  1 +
- 2 files changed, 53 insertions(+), 14 deletions(-)
+ arch/x86/mm/fault.c | 56 ++++++++++++++++-------------------------------------
+ 1 file changed, 17 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 1d3056f..cba71a7 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -33,6 +33,8 @@
- #include <linux/of_platform.h>
- #include <linux/percpu.h>
- #include <linux/slab.h>
-+#include <linux/time64.h>
-+#include <linux/iopoll.h>
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 84d702a71afe..70c3b1c43676 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -417,11 +417,11 @@ void vmalloc_sync_all(void)
+  */
+ static noinline int vmalloc_fault(unsigned long address)
+ {
+-	pgd_t *pgd, *pgd_ref;
+-	p4d_t *p4d, *p4d_ref;
+-	pud_t *pud, *pud_ref;
+-	pmd_t *pmd, *pmd_ref;
+-	pte_t *pte, *pte_ref;
++	pgd_t *pgd, *pgd_k;
++	p4d_t *p4d, *p4d_k;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
  
- #include <linux/irqchip.h>
- #include <linux/irqchip/arm-gic-v3.h>
-@@ -1875,16 +1877,6 @@ static void its_cpu_init_lpis(void)
- 		gic_data_rdist()->pend_page = pend_page;
+ 	/* Make sure we are in vmalloc area: */
+ 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
+@@ -435,73 +435,51 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	 * case just flush:
+ 	 */
+ 	pgd = (pgd_t *)__va(read_cr3_pa()) + pgd_index(address);
+-	pgd_ref = pgd_offset_k(address);
+-	if (pgd_none(*pgd_ref))
++	pgd_k = pgd_offset_k(address);
++	if (pgd_none(*pgd_k))
+ 		return -1;
+ 
+ 	if (pgtable_l5_enabled) {
+ 		if (pgd_none(*pgd)) {
+-			set_pgd(pgd, *pgd_ref);
++			set_pgd(pgd, *pgd_k);
+ 			arch_flush_lazy_mmu_mode();
+ 		} else {
+-			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_ref));
++			BUG_ON(pgd_page_vaddr(*pgd) != pgd_page_vaddr(*pgd_k));
+ 		}
  	}
  
--	/* Disable LPIs */
--	val = readl_relaxed(rbase + GICR_CTLR);
--	val &= ~GICR_CTLR_ENABLE_LPIS;
--	writel_relaxed(val, rbase + GICR_CTLR);
+ 	/* With 4-level paging, copying happens on the p4d level. */
+ 	p4d = p4d_offset(pgd, address);
+-	p4d_ref = p4d_offset(pgd_ref, address);
+-	if (p4d_none(*p4d_ref))
++	p4d_k = p4d_offset(pgd_k, address);
++	if (p4d_none(*p4d_k))
+ 		return -1;
+ 
+ 	if (p4d_none(*p4d) && !pgtable_l5_enabled) {
+-		set_p4d(p4d, *p4d_ref);
++		set_p4d(p4d, *p4d_k);
+ 		arch_flush_lazy_mmu_mode();
+ 	} else {
+-		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_ref));
++		BUG_ON(p4d_pfn(*p4d) != p4d_pfn(*p4d_k));
+ 	}
+ 
+-	/*
+-	 * Below here mismatches are bugs because these lower tables
+-	 * are shared:
+-	 */
+ 	BUILD_BUG_ON(CONFIG_PGTABLE_LEVELS < 4);
+ 
+ 	pud = pud_offset(p4d, address);
+-	pud_ref = pud_offset(p4d_ref, address);
+-	if (pud_none(*pud_ref))
++	if (pud_none(*pud))
+ 		return -1;
+ 
+-	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
+-		BUG();
+-
+ 	if (pud_large(*pud))
+ 		return 0;
+ 
+ 	pmd = pmd_offset(pud, address);
+-	pmd_ref = pmd_offset(pud_ref, address);
+-	if (pmd_none(*pmd_ref))
++	if (pmd_none(*pmd))
+ 		return -1;
+ 
+-	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
+-		BUG();
+-
+ 	if (pmd_large(*pmd))
+ 		return 0;
+ 
+-	pte_ref = pte_offset_kernel(pmd_ref, address);
+-	if (!pte_present(*pte_ref))
+-		return -1;
+-
+ 	pte = pte_offset_kernel(pmd, address);
 -
 -	/*
--	 * Make sure any change to the table is observable by the GIC.
+-	 * Don't use pte_page here, because the mappings can point
+-	 * outside mem_map, and the NUMA hash lookup cannot handle
+-	 * that:
 -	 */
--	dsb(sy);
--
- 	/* set PROPBASE */
- 	val = (page_to_phys(gic_rdists->prop_page) |
- 	       GICR_PROPBASER_InnerShareable |
-@@ -3288,13 +3280,59 @@ static bool gic_rdists_supports_plpis(void)
- 	return !!(gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER) & GICR_TYPER_PLPIS);
+-	if (!pte_present(*pte) || pte_pfn(*pte) != pte_pfn(*pte_ref))
+-		BUG();
++	if (!pte_present(*pte))
++		return -1;
+ 
+ 	return 0;
  }
- 
-+static int redist_disable_lpis(void)
-+{
-+	void __iomem *rbase = gic_data_rdist_rd_base();
-+	u64 val;
-+	int ret;
-+
-+	if (!gic_rdists_supports_plpis()) {
-+		pr_info("CPU%d: LPIs not supported\n", smp_processor_id());
-+		return -ENXIO;
-+	}
-+
-+	val = readl_relaxed(rbase + GICR_CTLR);
-+	if (!(val & GICR_CTLR_ENABLE_LPIS))
-+		return 0;
-+
-+	/* Disable LPIs */
-+	val &= ~GICR_CTLR_ENABLE_LPIS;
-+	writel_relaxed(val, rbase + GICR_CTLR);
-+
-+	/* Make sure any change to GICR_CTLR is observable by the GIC */
-+	dsb(sy);
-+
-+	/* Wait for GICR_CTLR.GICR_CTLR_ENABLE_LPIS==0 or timeout */
-+	ret = readl_relaxed_poll_timeout_atomic(rbase + GICR_CTLR, val,
-+					 !(val & GICR_CTLR_ENABLE_LPIS), 1,
-+					 USEC_PER_SEC);
-+	if (ret) {
-+		pr_err("CPU%d: Failed to disable LPIs\n", smp_processor_id());
-+		return -EBUSY;
-+	}
-+
-+	/* Wait for GICR_CTLR.RWP==0 or timeout */
-+	ret = readl_relaxed_poll_timeout_atomic(rbase + GICR_CTLR, val,
-+					 !(val & GICR_CTLR_RWP), 1,
-+					 USEC_PER_SEC);
-+	if (ret) {
-+		pr_err("CPU%d: Failed to observe RWP==0 after enabling LPIs\n",
-+		       smp_processor_id());
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
- int its_cpu_init(void)
- {
-+	int ret;
-+
- 	if (!list_empty(&its_nodes)) {
--		if (!gic_rdists_supports_plpis()) {
--			pr_info("CPU%d: LPIs not supported\n", smp_processor_id());
--			return -ENXIO;
--		}
-+		ret = redist_disable_lpis();
-+		if (ret)
-+			return ret;
-+
- 		its_cpu_init_lpis();
- 		its_cpu_init_collection();
- 	}
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index c00c4c33..4d5fb60 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -106,6 +106,7 @@
- #define GICR_PIDR2			GICD_PIDR2
- 
- #define GICR_CTLR_ENABLE_LPIS		(1UL << 0)
-+#define GICR_CTLR_RWP			(1UL << 3)
- 
- #define GICR_TYPER_CPU_NUMBER(r)	(((r) >> 8) & 0xffff)
- 
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
