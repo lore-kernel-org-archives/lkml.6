@@ -1,62 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933126AbeCOQCB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:02:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34387 "EHLO mail.bootlin.com"
+        id S933112AbeCOQB6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:01:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:50731 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932475AbeCOQB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933095AbeCOQB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Mar 2018 12:01:56 -0400
-Date: Thu, 15 Mar 2018 17:01:37 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: dwmw2@infradead.org, boris.brezillon@free-electrons.com,
-        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        computersforpeace@gmail.com
-Subject: Re: [PATCH 1/3] mtd: nand: Remove print after allocation failure
-Message-ID: <20180315170137.403af265@bbrezillon>
-In-Reply-To: <1521041718-32492-1-git-send-email-arushisinghal19971997@gmail.com>
-References: <1521041718-32492-1-git-send-email-arushisinghal19971997@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="34161564"
+Subject: [PATCH v6 15/15] xfs, dax: introduce xfs_break_dax_layouts()
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 08:52:50 -0700
+Message-ID: <152112917064.24669.8101553386217458496.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018 21:05:16 +0530
-Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
+xfs_break_dax_layouts(), similar to xfs_break_leased_layouts(), scans
+for busy / pinned dax pages and waits for those pages to go idle before
+any potential extent unmap operation.
 
-> The prints after [k|v][m|z|c]alloc() functions are not needed, because
-> in case of failure, allocator will print their internal error prints
-> anyway.
-> 
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
-> ---
->  drivers/mtd/nand/ams-delta.c | 1 -
+dax_layout_busy_page() handles synchronizing against new page-busy
+events (get_user_pages). It invalidates all mappings to trigger the
+get_user_pages slow path which will eventually block on the xfs inode
+log held in XFS_MMAPLOCK_EXCL mode. If dax_layout_busy_page() finds a
+busy page it returns it for xfs to wait for the page-idle event that
+will fire when the page reference count reaches 1 (recall ZONE_DEVICE
+pages are idle at count 1).
 
-You miss quite a few of them (atmel, nandsim, sunxi_nand at least,
-there might be others).
+While waiting, the XFS_MMAPLOCK_EXCL lock is dropped in order to not
+deadlock the process that might be trying to elevate the page count of
+more pages before arranging for any of them to go idle. I.e. the typical
+case of submitting I/O is that iov_iter_get_pages() elevates the
+reference count of all pages in the I/O before starting I/O on the first
+page.
 
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/ams-delta.c b/drivers/mtd/nand/ams-delta.c
-> index 9de6572..6e7f6e0 100644
-> --- a/drivers/mtd/nand/ams-delta.c
-> +++ b/drivers/mtd/nand/ams-delta.c
-> @@ -185,7 +185,6 @@ static int ams_delta_init(struct platform_device *pdev)
->  	/* Allocate memory for MTD device structure and private data */
->  	this = kzalloc(sizeof(struct nand_chip), GFP_KERNEL);
->  	if (!this) {
-> -		printk (KERN_WARNING "Unable to allocate E3 NAND MTD device structure.\n");
->  		err = -ENOMEM;
->  		goto out;
->  	}
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/xfs/xfs_file.c |   67 +++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 54 insertions(+), 13 deletions(-)
 
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 399c5221f101..2ccdbb19e31a 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -759,6 +759,38 @@ xfs_file_write_iter(
+ 	return ret;
+ }
+ 
++static void
++xfs_wait_var_event(
++	struct inode		*inode,
++	uint			iolock)
++{
++	struct xfs_inode        *ip = XFS_I(inode);
++
++	xfs_iunlock(ip, iolock);
++	schedule();
++	xfs_ilock(ip, iolock);
++}
++
++static int
++xfs_break_dax_layouts(
++	struct inode		*inode,
++	uint			iolock)
++{
++	struct page		*page;
++	int			ret;
++
++	page = dax_layout_busy_page(inode->i_mapping);
++	if (!page)
++		return 0;
++
++	ret = ___wait_var_event(&page->_refcount,
++			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
++			0, 0, xfs_wait_var_event(inode, iolock));
++	if (ret < 0)
++		return ret;
++	return 1;
++}
++
+ int
+ xfs_break_layouts(
+ 	struct inode		*inode,
+@@ -766,23 +798,32 @@ xfs_break_layouts(
+ 	enum layout_break_reason reason)
+ {
+ 	struct xfs_inode	*ip = XFS_I(inode);
+-	int			ret;
++	int			ret = 0;
+ 
+ 	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
+ 				| XFS_MMAPLOCK_EXCL));
+ 
+-	switch (reason) {
+-	case BREAK_TRUNCATE:
+-		/* fall through */
+-	case BREAK_WRITE:
+-		ret = xfs_break_leased_layouts(inode, iolock);
+-		if (ret > 0)
+-			ret = 0;
+-		break;
+-	default:
+-		ret = -EINVAL;
+-		break;
+-	}
++	do {
++		switch (reason) {
++		case BREAK_TRUNCATE:
++			ret = xfs_break_dax_layouts(inode, *iolock);
++			/* fall through */
++		case BREAK_WRITE:
++			if (ret != 0)
++				break;
++			ret = xfs_break_leased_layouts(inode, iolock);
++			break;
++		default:
++			ret = -EINVAL;
++			break;
++		}
++		/*
++		 * This loop terminates when either layout break attempt
++		 * returns an error, or both layout break attempts
++		 * return 0, i.e. layouts are verified broken while
++		 * holding all required locks.
++		 */
++	} while (ret > 0);
+ 
+ 	return ret;
+ }
