@@ -1,217 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeCOUP4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:15:56 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:46806 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeCOUPx (ORCPT
+        id S1752768AbeCOUQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:16:57 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:44031 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeCOUQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:15:53 -0400
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next] net: ethernet: ti: cpsw: enable vlan rx vlan offload
-Date: Thu, 15 Mar 2018 15:15:50 -0500
-Message-ID: <20180315201550.21487-1-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.10.5
+        Thu, 15 Mar 2018 16:16:55 -0400
+X-Google-Smtp-Source: AG47ELumtPNkCMbdKZPTPcGlGIOPkt39hKYLXSDNO6prQTlxxWXDNsP9Cz41lQMr4PxLld66FWh9VA==
+Date: Thu, 15 Mar 2018 13:16:53 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Roman Gushchin <guro@fb.com>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch -mm v3 1/3] mm, memcg: introduce per-memcg oom policy
+ tunable
+In-Reply-To: <20180315171039.GB1853@castle.DHCP.thefacebook.com>
+Message-ID: <alpine.DEB.2.20.1803151301480.44030@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803121757080.192200@chino.kir.corp.google.com> <20180314123851.GB20850@castle.DHCP.thefacebook.com> <alpine.DEB.2.20.1803141341180.163553@chino.kir.corp.google.com>
+ <20180315171039.GB1853@castle.DHCP.thefacebook.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In VLAN_AWARE mode CPSW can insert VLAN header encapsulation word on Host
-port 0 egress (RX) before the packet data if RX_VLAN_ENCAP bit is set in
-CPSW_CONTROL register. VLAN header encapsulation word has following format:
+On Thu, 15 Mar 2018, Roman Gushchin wrote:
 
- HDR_PKT_Priority bits 29-31 - Header Packet VLAN prio (Highest prio: 7)
- HDR_PKT_CFI 	  bits 28 - Header Packet VLAN CFI bit.
- HDR_PKT_Vid 	  bits 27-16 - Header Packet VLAN ID
- PKT_Type         bits 8-9 - Packet Type. Indicates whether the packet is
-                 	VLAN-tagged, priority-tagged, or non-tagged.
-	00: VLAN-tagged packet
-	01: Reserved
-	10: Priority-tagged packet
-	11: Non-tagged packet
+> >  - Does not lock the entire system into a single methodology.  Users
+> >    working in a subtree can default to what they are used to: per-process
+> >    oom selection even though their subtree might be targeted by a system
+> >    policy level decision at the root.  This allow them flexibility to
+> >    organize their subtree intuitively for use with other controllers in a
+> >    single hierarchy.
+> > 
+> >    The real-world example is a user who currently organizes their subtree
+> >    for this purpose and has defined oom_score_adj appropriately and now
+> >    regresses if the admin mounts with the needless "groupoom" option.
+> 
+> I find this extremely confusing.
+> 
+> The problem is that OOM policy defines independently how the OOM
+> of the corresponding scope is handled, not like how it prefers
+> to handle OOMs from above.
+> 
+> As I've said, if you're inside a container, you can have OOMs
+> of different types, depending on settings, which you don't even know about.
+> Sometimes oom_score_adj works, sometimes not.
+> Sometimes all processes are killed, sometimes not.
+> IMO, this adds nothing but mess.
+> 
 
-This feature can be used to implement TX VLAN offload in case of
-VLAN-tagged packets and to insert VLAN tag in case Non-tagged packet was
-received on port with PVID set. As per documentation, CPSW never modifies
-packet data on Host egress (RX) and as result, without this feature
-enabled, Host port will not be able to receive properly packets which
-entered switch non-tagged through external Port with PVID set (when
-non-tagged packet forwarded from external Port with PVID set to another
-external Port - packet will be VLAN tagged properly).
+There are many additional problems with the cgroup aware oom killer in 
+-mm, yes, the fact that memory.oom_group is factored into the selection 
+logic is another problem.  Users who prefer to account their subtree for 
+comparison (the only way to avoid allowing users to evade the oom killer 
+completely) should use the memory.oom_policy of "tree" introduced later.  
+memory.oom_group needs to be completely separated from the policy of 
+selecting a victim, it shall only be a mechanism that defines if a single 
+process is oom killed or all processes attached to the victim mem cgroup 
+as a property of the workload.
 
-Implementation details:
-- on RX driver will check CPDMA status bit RX_VLAN_ENCAP BIT(19) in CPPI
-descriptor to identify when VLAN header encapsulation word is present.
-- PKT_Type = 0x01 or 0x02 then ignore VLAN header encapsulation word and
-pass packet as is;
-- if HDR_PKT_Vid = 0 then ignore VLAN header encapsulation word and pass
-packet as is;
-- In dual mac mode traffic is separated between ports using default port
-vlans, which are not be visible to Host and so should not be reported.
-Hence, check for default port vlans in dual mac mode and ignore VLAN header
-encapsulation word;
-- otherwise fill SKB with VLAN info using __vlan_hwaccel_put_tag();
-- PKT_Type = 0x00 (VLAN-tagged) then strip out VLAN header from SKB.
+> The mount option (which I'm not a big fan of too) was added only
+> to provide a 100% backward compatibility, what was forced by Michal.
+> But I doubt that mixing per-process and per-cgroup approach
+> makes any sense.
+> 
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/net/ethernet/ti/cpsw.c          | 67 +++++++++++++++++++++++++++++++--
- drivers/net/ethernet/ti/davinci_cpdma.c |  2 +-
- drivers/net/ethernet/ti/davinci_cpdma.h |  2 +
- 3 files changed, 67 insertions(+), 4 deletions(-)
+It makes absolute sense and has real users who can immediately use this if 
+it's merged.  There is nothing wrong with a user preferring to kill the 
+largest process from their subtree on mem cgroup oom.  It's what they've 
+always experienced, with cgroup v1 and v2.  It's the difference between 
+users in a subtree being able to use /proc/pid/oom_score_adj or not.  
+Without it, their oom_score_adj values become entirely irrelevant.  We 
+have users who tune their oom_score_adj and are running in a subtree they 
+control.
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 1b1b78f..8af8891 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -120,14 +120,18 @@ do {								\
- #define CPDMA_RXCP		0x60
- 
- #define CPSW_POLL_WEIGHT	64
-+#define CPSW_RX_VLAN_ENCAP_HDR_SIZE		4
- #define CPSW_MIN_PACKET_SIZE	(VLAN_ETH_ZLEN)
--#define CPSW_MAX_PACKET_SIZE	(VLAN_ETH_FRAME_LEN + ETH_FCS_LEN)
-+#define CPSW_MAX_PACKET_SIZE	(VLAN_ETH_FRAME_LEN +\
-+				 ETH_FCS_LEN +\
-+				 CPSW_RX_VLAN_ENCAP_HDR_SIZE)
- 
- #define RX_PRIORITY_MAPPING	0x76543210
- #define TX_PRIORITY_MAPPING	0x33221100
- #define CPDMA_TX_PRIORITY_MAP	0x01234567
- 
- #define CPSW_VLAN_AWARE		BIT(1)
-+#define CPSW_RX_VLAN_ENCAP	BIT(2)
- #define CPSW_ALE_VLAN_AWARE	1
- 
- #define CPSW_FIFO_NORMAL_MODE		(0 << 16)
-@@ -148,6 +152,18 @@ do {								\
- #define CPSW_MAX_QUEUES		8
- #define CPSW_CPDMA_DESCS_POOL_SIZE_DEFAULT 256
- 
-+#define CPSW_RX_VLAN_ENCAP_HDR_PRIO_SHIFT	29
-+#define CPSW_RX_VLAN_ENCAP_HDR_PRIO_MSK		GENMASK(2, 0)
-+#define CPSW_RX_VLAN_ENCAP_HDR_VID_SHIFT	16
-+#define CPSW_RX_VLAN_ENCAP_HDR_PKT_TYPE_SHIFT	8
-+#define CPSW_RX_VLAN_ENCAP_HDR_PKT_TYPE_MSK	GENMASK(1, 0)
-+enum {
-+	CPSW_RX_VLAN_ENCAP_HDR_PKT_VLAN_TAG = 0,
-+	CPSW_RX_VLAN_ENCAP_HDR_PKT_RESERV,
-+	CPSW_RX_VLAN_ENCAP_HDR_PKT_PRIO_TAG,
-+	CPSW_RX_VLAN_ENCAP_HDR_PKT_UNTAG,
-+};
-+
- static int debug_level;
- module_param(debug_level, int, 0);
- MODULE_PARM_DESC(debug_level, "cpsw debug level (NETIF_MSG bits)");
-@@ -718,6 +734,49 @@ static void cpsw_tx_handler(void *token, int len, int status)
- 	dev_kfree_skb_any(skb);
- }
- 
-+static void cpsw_rx_vlan_encap(struct sk_buff *skb)
-+{
-+	struct cpsw_priv *priv = netdev_priv(skb->dev);
-+	struct cpsw_common *cpsw = priv->cpsw;
-+	u32 rx_vlan_encap_hdr = *((u32 *)skb->data);
-+	u16 vtag, vid, prio, pkt_type;
-+
-+	/* Remove VLAN header encapsulation word */
-+	skb_pull(skb, CPSW_RX_VLAN_ENCAP_HDR_SIZE);
-+
-+	pkt_type = (rx_vlan_encap_hdr >>
-+		    CPSW_RX_VLAN_ENCAP_HDR_PKT_TYPE_SHIFT) &
-+		    CPSW_RX_VLAN_ENCAP_HDR_PKT_TYPE_MSK;
-+	/* Ignore unknown & Priority-tagged packets*/
-+	if (pkt_type == CPSW_RX_VLAN_ENCAP_HDR_PKT_RESERV ||
-+	    pkt_type == CPSW_RX_VLAN_ENCAP_HDR_PKT_PRIO_TAG)
-+		return;
-+
-+	vid = (rx_vlan_encap_hdr >>
-+	       CPSW_RX_VLAN_ENCAP_HDR_VID_SHIFT) &
-+	       VLAN_VID_MASK;
-+	/* Ignore vid 0 and pass packet as is */
-+	if (!vid)
-+		return;
-+	/* Ignore default vlans in dual mac mode */
-+	if (cpsw->data.dual_emac &&
-+	    vid == cpsw->slaves[priv->emac_port].port_vlan)
-+		return;
-+
-+	prio = (rx_vlan_encap_hdr >>
-+		CPSW_RX_VLAN_ENCAP_HDR_PRIO_SHIFT) &
-+		CPSW_RX_VLAN_ENCAP_HDR_PRIO_MSK;
-+
-+	vtag = (prio << VLAN_PRIO_SHIFT) | vid;
-+	__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vtag);
-+
-+	/* strip vlan tag for VLAN-tagged packet */
-+	if (pkt_type == CPSW_RX_VLAN_ENCAP_HDR_PKT_VLAN_TAG) {
-+		memmove(skb->data + VLAN_HLEN, skb->data, 2 * ETH_ALEN);
-+		skb_pull(skb, VLAN_HLEN);
-+	}
-+}
-+
- static void cpsw_rx_handler(void *token, int len, int status)
- {
- 	struct cpdma_chan	*ch;
-@@ -752,6 +811,8 @@ static void cpsw_rx_handler(void *token, int len, int status)
- 	if (new_skb) {
- 		skb_copy_queue_mapping(new_skb, skb);
- 		skb_put(skb, len);
-+		if (status & CPDMA_RX_VLAN_ENCAP)
-+			cpsw_rx_vlan_encap(skb);
- 		cpts_rx_timestamp(cpsw->cpts, skb);
- 		skb->protocol = eth_type_trans(skb, ndev);
- 		netif_receive_skb(skb);
-@@ -1406,7 +1467,7 @@ static void cpsw_init_host_port(struct cpsw_priv *priv)
- 	cpsw_ale_control_set(cpsw->ale, HOST_PORT_NUM, ALE_VLAN_AWARE,
- 			     CPSW_ALE_VLAN_AWARE);
- 	control_reg = readl(&cpsw->regs->control);
--	control_reg |= CPSW_VLAN_AWARE;
-+	control_reg |= CPSW_VLAN_AWARE | CPSW_RX_VLAN_ENCAP;
- 	writel(control_reg, &cpsw->regs->control);
- 	fifo_mode = (cpsw->data.dual_emac) ? CPSW_FIFO_DUAL_MAC_MODE :
- 		     CPSW_FIFO_NORMAL_MODE;
-@@ -3122,7 +3183,7 @@ static int cpsw_probe(struct platform_device *pdev)
- 			cpsw->quirk_irq = true;
- 	}
- 
--	ndev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-+	ndev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_HW_VLAN_CTAG_RX;
- 
- 	ndev->netdev_ops = &cpsw_netdev_ops;
- 	ndev->ethtool_ops = &cpsw_ethtool_ops;
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index 6f9173f..31ae041 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -1164,7 +1164,7 @@ static int __cpdma_chan_process(struct cpdma_chan *chan)
- 		outlen -= CPDMA_DESC_CRC_LEN;
- 
- 	status	= status & (CPDMA_DESC_EOQ | CPDMA_DESC_TD_COMPLETE |
--			    CPDMA_DESC_PORT_MASK);
-+			    CPDMA_DESC_PORT_MASK | CPDMA_RX_VLAN_ENCAP);
- 
- 	chan->head = desc_from_phys(pool, desc_read(desc, hw_next));
- 	chan_write(chan, cp, desc_dma);
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.h b/drivers/net/ethernet/ti/davinci_cpdma.h
-index fd65ce2..d399af5 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.h
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.h
-@@ -19,6 +19,8 @@
- 
- #define CPDMA_RX_SOURCE_PORT(__status__)	((__status__ >> 16) & 0x7)
- 
-+#define CPDMA_RX_VLAN_ENCAP BIT(19)
-+
- #define CPDMA_EOI_RX_THRESH	0x0
- #define CPDMA_EOI_RX		0x1
- #define CPDMA_EOI_TX		0x2
--- 
-2.10.5
+If an overcomitted ancestor is oom, which is up to the admin to define in 
+the organization of the hierarchy and imposing limits, the user does not 
+control which process or group of processes is oom killed.  That's a 
+decision for the ancestor which controls all descendant cgroups, including 
+limits and oom policies.
+
+> > 
+> >  - Allows changing the oom policy at runtime without remounting the entire
+> >    cgroup fs.  Depending on how cgroups are going to be used, per-process 
+> >    vs cgroup-aware may be mandated separately.  This is a trait only of
+> >    the mem cgroup controller, the root level oom policy is no different
+> >    from the subtree and depends directly on how the subtree is organized.
+> >    If other controllers are already being used, requiring a remount to
+> >    change the system-wide oom policy is an unnecessary burden.
+> > 
+> >    The real-world example is systems software that either supports user
+> >    subtrees or strictly subtrees that it maintains itself.  While other
+> >    controllers are used, the mem cgroup oom policy can be changed at
+> >    runtime rather than requiring a remount and reorganizing other
+> >    controllers exactly as before.
+> 
+> Btw, what the problem with remounting? You don't have to re-create cgroups,
+> or something like this; the operation is as trivial as adding a flag.
+> 
+
+Remounting is for the entire mem cgroup hierarchy.  The point of this 
+entire patchset is that different subtrees will have different policies, 
+it cannot be locked into a single selection logic.
+
+This completely avoids users being able to evade the cgroup-aware oom 
+killer by creating subcontainers.
+
+Obviously I've been focused on users controlling subtrees in a lot of my 
+examples.  Those users may already prefer oom killing the largest process 
+on the system (or their subtree).  They can still do that with this patch 
+and opt out of cgroup awareness for their subtree.
+
+It also provides all the functionality that the current implementation in 
+-mm provides.
+
+> > 
+> >  - Can be extended to cgroup v1 if necessary.  There is no need for a
+> >    new cgroup v1 mount option and mem cgroup oom selection is not
+> >    dependant on any functionality provided by cgroup v2.  The policies
+> >    introduced here work exactly the same if used with cgroup v1.
+> > 
+> >    The real-world example is a cgroup configuration that hasn't had
+> >    the ability to move to cgroup v2 yet and still would like to use
+> >    cgroup-aware oom selection with a very trivial change to add the
+> >    memory.oom_policy file to the cgroup v1 filesystem.
+> 
+> I assume that v1 interface is frozen.
+> 
+
+It requires adding the memory.oom_policy file to the cgroup v1 fs, that's 
+it.  No other support is needed.  If that's allowed upstream, great; if 
+not, it's a very simple patch to carry for a distribution.
