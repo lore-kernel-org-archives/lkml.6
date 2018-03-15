@@ -1,47 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeCOQht (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:37:49 -0400
-Received: from mga06.intel.com ([134.134.136.31]:14394 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750987AbeCOQhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:37:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="39203461"
-Message-ID: <f70bda7aa50a99a3ed535742ac0939823d4a9f45.camel@linux.intel.com>
-Subject: Re: [PATCH v2 4/8] tpm: move tpm1 selftest code from tpm-interface
- tpm1-cmd.c
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 18:37:43 +0200
-In-Reply-To: <20180310082428.31519-5-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-         <20180310082428.31519-5-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.27.90-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752071AbeCOQiG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:38:06 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39621 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751982AbeCOQiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:38:04 -0400
+From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To: <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
+        <pmorel@linux.vnet.ibm.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v5 0/7] vfio/type1: Add support for valid iova list management
+Date: Thu, 15 Mar 2018 16:35:02 +0000
+Message-ID: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> Move the tmp1 selftest code functions to tpm1-cmd.c
-> and adjust callers to use the new function names.
->  1. tpm_pcr_read_dev to tpm1_pcr_read_dev
->  2. tpm_continue_selftest to tpm1_continue_selftest
->  3. tpm_do_selftest to tpm1_do_selftest
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+This series introduces an iova list associated with a vfio 
+iommu. The list is kept updated taking care of iommu apertures,
+and reserved regions. Also this series adds checks for any conflict
+with existing dma mappings whenever a new device group is attached to
+the domain.
 
-Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
+ioctl capability chains. Any dma map request outside the valid iova
+range will be rejected.
 
-/Jarkko
+
+v4 --> v5
+Rebased to next-20180315.
+ 
+ -Incorporated the corner case bug fix suggested by Alex to patch #5.
+ -Based on suggestions by Alex and Robin, added patch#7. This
+  moves the PCI window  reservation back in to DMA specific path.
+  This is to fix the issue reported by Eric[1].
+
+Note:
+The patch #7 has dependency with [2][3]
+
+1. https://patchwork.kernel.org/patch/10232043/
+2. https://patchwork.kernel.org/patch/10216553/
+3. https://patchwork.kernel.org/patch/10216555/
+
+v3 --> v4
+ Addressed comments received for v3.
+ -dma_addr_t instead of phys_addr_t
+ -LIST_HEAD() usage.
+ -Free up iova_copy list in case of error.
+ -updated logic in filling the iova caps info(patch #5)
+
+RFCv2 --> v3
+ Removed RFC tag.
+ Addressed comments from Alex and Eric:
+ - Added comments to make iova list management logic more clear.
+ - Use of iova list copy so that original is not altered in
+   case of failure.
+
+RFCv1 --> RFCv2
+ Addressed comments from Alex:
+-Introduced IOVA list management and added checks for conflicts with 
+ existing dma map entries during attach/detach.
+
+Shameer Kolothum (2):
+  vfio/type1: Add IOVA range capability support
+  iommu/dma: Move PCI window region reservation back into dma specific
+    path.
+
+Shameerali Kolothum Thodi (5):
+  vfio/type1: Introduce iova list and add iommu aperture validity check
+  vfio/type1: Check reserve region conflict and update iova list
+  vfio/type1: Update iova list on detach
+  vfio/type1: check dma map request is within a valid iova range
+  vfio/type1: remove duplicate retrieval of reserved regions
+
+ drivers/iommu/dma-iommu.c       |  54 ++---
+ drivers/vfio/vfio_iommu_type1.c | 497 +++++++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/vfio.h       |  23 ++
+ 3 files changed, 533 insertions(+), 41 deletions(-)
+
+-- 
+2.7.4
