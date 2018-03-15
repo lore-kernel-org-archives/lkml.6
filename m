@@ -1,54 +1,390 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752344AbeCOOpY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:45:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752006AbeCOOpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:45:23 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180315115146.GX4064@hirez.programming.kicks-ass.net>
-References: <20180315115146.GX4064@hirez.programming.kicks-ass.net> <20180313102056.GJ4043@hirez.programming.kicks-ass.net> <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com> <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com> <20180311112725.GC4043@hirez.programming.kicks-ass.net> <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com> <3396.1521107922@warthog.procyon.org.uk>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: dhowells@redhat.com, Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce wait_var_event()/wake_up_var()
+        id S932316AbeCOOqK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:46:10 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34063 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752451AbeCOOqI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:46:08 -0400
+X-Google-Smtp-Source: AG47ELv7U5FfGbyXPwbAhFp5kxEgv3isjHPnv702MSOVBv8nIouF4wiGRtHe9KSR7EhXz6yXjBr1zZFAp0GG6jXAWRc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18970.1521125120.1@warthog.procyon.org.uk>
-Date: Thu, 15 Mar 2018 14:45:20 +0000
-Message-ID: <18971.1521125120@warthog.procyon.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 15:46:06 +0100
+X-Google-Sender-Auth: DZXgyUi_s_t3Egw9HqMA0ctxfkw
+Message-ID: <CAK8P3a2PFSJa5UKHrB14zz8siRCpUzkL5hffTM8ku5ep3pUjCw@mail.gmail.com>
+Subject: Re: [Blackfin removal] [PATCH 01/28] Blackfin arch: Remove Blackfin
+ CPU arch general support
+To: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lennox Wu <lennox.wu@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, David Howells <dhowells@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Wu, Aaron" <aaron.wu@analog.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> wrote:
+> Signed-off-by: Aaron Wu <aaron.wu@analog.com>
+>
+> Remove Blackfin CPU arch general support
 
-> Does the below address things sufficiently clear?
+Hi Aaron,
 
-Yep.
+thanks a lot for your series. As you know, I've had almost the
+same patches in my tree already, but now I've cross-checked the
+two versions, and found small omissions or bugs in both. I
+ended up staying with my version, as that was already reviewed
+by a number of people, and it had the conflicts with the other
+arch removal resolved, but I've folded in everything that your
+version had that I was missing, see below for the diff between
+my original version and the new one.
 
-> +wait_queue_head_t *__var_waitqueue(void *p)
-> +{
-> +	if (BITS_PER_LONG == 64) {
-> +		unsigned long q = (unsigned long)p;
-> +
-> +		return bit_waitqueue((void *)(q & ~1), q & 1);
-> +	}
-> +	return bit_waitqueue(p, 0);
-> +}
+I've also added an 'Acked-by: Aaron Wu <aaron.wu@analog.com>'
+to each patch that we both had.
 
-You might be better off not using bit_waitqueue() but rather do the
-calculation directly since you don't actually have a bit number.
+I hope that all works for you.
 
-David
+       Arnd
+
+---
+ Documentation/driver-api/usb/writing_musb_glue_layer.rst |    3
+ drivers/misc/echo/echo.c                                 |   73 ------------
+ drivers/misc/echo/fir.h                                  |   50 --------
+ drivers/usb/gadget/function/f_uac1_legacy.c              |    2
+ drivers/usb/gadget/function/u_uac1_legacy.c              |    2
+ drivers/usb/gadget/function/u_uac1_legacy.h              |    2
+ drivers/usb/gadget/legacy/audio.c                        |    2
+ drivers/usb/host/isp1362.h                               |    4
+ drivers/usb/musb/musb_core.c                             |    2
+ drivers/usb/musb/musb_core.h                             |   13 --
+ include/linux/cpuhotplug.h                               |    1
+ include/linux/fb.h                                       |    3
+ 14 files changed, 3 insertions(+), 248 deletions(-)
+
+diff --git a/drivers/misc/echo/echo.c b/drivers/misc/echo/echo.c
+index 9597e9523cac..8a5adc0d2e88 100644
+--- a/drivers/misc/echo/echo.c
++++ b/drivers/misc/echo/echo.c
+@@ -115,78 +115,6 @@
+
+ /* adapting coeffs using the traditional stochastic descent (N)LMS algorithm */
+
+-#ifdef __bfin__
+-static inline void lms_adapt_bg(struct oslec_state *ec, int clean, int shift)
+-{
+- int i;
+- int offset1;
+- int offset2;
+- int factor;
+- int exp;
+- int16_t *phist;
+- int n;
+-
+- if (shift > 0)
+- factor = clean << shift;
+- else
+- factor = clean >> -shift;
+-
+- /* Update the FIR taps */
+-
+- offset2 = ec->curr_pos;
+- offset1 = ec->taps - offset2;
+- phist = &ec->fir_state_bg.history[offset2];
+-
+- /* st: and en: help us locate the assembler in echo.s */
+-
+- /* asm("st:"); */
+- n = ec->taps;
+- for (i = 0; i < n; i++) {
+- exp = *phist++ * factor;
+- ec->fir_taps16[1][i] += (int16_t) ((exp + (1 << 14)) >> 15);
+- }
+- /* asm("en:"); */
+-
+- /* Note the asm for the inner loop above generated by Blackfin gcc
+-    4.1.1 is pretty good (note even parallel instructions used):
+-
+-    R0 = W [P0++] (X);
+-    R0 *= R2;
+-    R0 = R0 + R3 (NS) ||
+-    R1 = W [P1] (X) ||
+-    nop;
+-    R0 >>>= 15;
+-    R0 = R0 + R1;
+-    W [P1++] = R0;
+-
+-    A block based update algorithm would be much faster but the
+-    above can't be improved on much.  Every instruction saved in
+-    the loop above is 2 MIPs/ch!  The for loop above is where the
+-    Blackfin spends most of it's time - about 17 MIPs/ch measured
+-    with speedtest.c with 256 taps (32ms).  Write-back and
+-    Write-through cache gave about the same performance.
+- */
+-}
+-
+-/*
+-   IDEAS for further optimisation of lms_adapt_bg():
+-
+-   1/ The rounding is quite costly.  Could we keep as 32 bit coeffs
+-   then make filter pluck the MS 16-bits of the coeffs when filtering?
+-   However this would lower potential optimisation of filter, as I
+-   think the dual-MAC architecture requires packed 16 bit coeffs.
+-
+-   2/ Block based update would be more efficient, as per comments above,
+-   could use dual MAC architecture.
+-
+-   3/ Look for same sample Blackfin LMS code, see if we can get dual-MAC
+-   packing.
+-
+-   4/ Execute the whole e/c in a block of say 20ms rather than sample
+-   by sample.  Processing a few samples every ms is inefficient.
+-*/
+-
+-#else
+ static inline void lms_adapt_bg(struct oslec_state *ec, int clean, int shift)
+ {
+  int i;
+@@ -215,7 +143,6 @@ static inline void lms_adapt_bg(struct oslec_state
+*ec, int clean, int shift)
+  ec->fir_taps16[1][i] += (int16_t) ((exp + (1 << 14)) >> 15);
+  }
+ }
+-#endif
+
+ static inline int top_bit(unsigned int bits)
+ {
+diff --git a/drivers/misc/echo/fir.h b/drivers/misc/echo/fir.h
+index 7b9fabf1fea5..4e0f365f0577 100644
+--- a/drivers/misc/echo/fir.h
++++ b/drivers/misc/echo/fir.h
+@@ -27,14 +27,6 @@
+ #define _FIR_H_
+
+ /*
+-   Blackfin NOTES & IDEAS:
+-
+-   A simple dot product function is used to implement the filter.
+This performs
+-   just one MAC/cycle which is inefficient but was easy to implement as a first
+-   pass.  The current Blackfin code also uses an unrolled form of the filter
+-   history to avoid 0 length hardware loop issues.  This is wasteful of
+-   memory.
+-
+    Ideas for improvement:
+
+    1/ Rewrite filter for dual MAC inner loop.  The issue here is handling
+@@ -94,21 +86,13 @@ static inline const int16_t *fir16_create(struct
+fir16_state_t *fir,
+  fir->taps = taps;
+  fir->curr_pos = taps - 1;
+  fir->coeffs = coeffs;
+-#if defined(__bfin__)
+- fir->history = kcalloc(2 * taps, sizeof(int16_t), GFP_KERNEL);
+-#else
+  fir->history = kcalloc(taps, sizeof(int16_t), GFP_KERNEL);
+-#endif
+  return fir->history;
+ }
+
+ static inline void fir16_flush(struct fir16_state_t *fir)
+ {
+-#if defined(__bfin__)
+- memset(fir->history, 0, 2 * fir->taps * sizeof(int16_t));
+-#else
+  memset(fir->history, 0, fir->taps * sizeof(int16_t));
+-#endif
+ }
+
+ static inline void fir16_free(struct fir16_state_t *fir)
+@@ -116,42 +100,9 @@ static inline void fir16_free(struct fir16_state_t *fir)
+  kfree(fir->history);
+ }
+
+-#ifdef __bfin__
+-static inline int32_t dot_asm(short *x, short *y, int len)
+-{
+- int dot;
+-
+- len--;
+-
+- __asm__("I0 = %1;\n\t"
+- "I1 = %2;\n\t"
+- "A0 = 0;\n\t"
+- "R0.L = W[I0++] || R1.L = W[I1++];\n\t"
+- "LOOP dot%= LC0 = %3;\n\t"
+- "LOOP_BEGIN dot%=;\n\t"
+- "A0 += R0.L * R1.L (IS) || R0.L = W[I0++] || R1.L = W[I1++];\n\t"
+- "LOOP_END dot%=;\n\t"
+- "A0 += R0.L*R1.L (IS);\n\t"
+- "R0 = A0;\n\t"
+- "%0 = R0;\n\t"
+- : "=&d"(dot)
+- : "a"(x), "a"(y), "a"(len)
+- : "I0", "I1", "A1", "A0", "R0", "R1"
+- );
+-
+- return dot;
+-}
+-#endif
+-
+ static inline int16_t fir16(struct fir16_state_t *fir, int16_t sample)
+ {
+  int32_t y;
+-#if defined(__bfin__)
+- fir->history[fir->curr_pos] = sample;
+- fir->history[fir->curr_pos + fir->taps] = sample;
+- y = dot_asm((int16_t *) fir->coeffs, &fir->history[fir->curr_pos],
+-     fir->taps);
+-#else
+  int i;
+  int offset1;
+  int offset2;
+@@ -165,7 +116,6 @@ static inline int16_t fir16(struct fir16_state_t
+*fir, int16_t sample)
+  y += fir->coeffs[i] * fir->history[i - offset1];
+  for (; i >= 0; i--)
+  y += fir->coeffs[i] * fir->history[i + offset2];
+-#endif
+  if (fir->curr_pos <= 0)
+  fir->curr_pos = fir->taps;
+  fir->curr_pos--;
+diff --git a/drivers/usb/gadget/function/f_uac1_legacy.c
+b/drivers/usb/gadget/function/f_uac1_legacy.c
+index 04f4b2862256..24c086bcdeaa 100644
+--- a/drivers/usb/gadget/function/f_uac1_legacy.c
++++ b/drivers/usb/gadget/function/f_uac1_legacy.c
+@@ -4,8 +4,6 @@
+   *
+  * Copyright (C) 2008 Bryan Wu <cooloney@kernel.org>
+  * Copyright (C) 2008 Analog Devices, Inc
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+  */
+
+ #include <linux/slab.h>
+diff --git a/drivers/usb/gadget/function/u_uac1_legacy.c
+b/drivers/usb/gadget/function/u_uac1_legacy.c
+index cbc868d117af..5393e5c37a4b 100644
+--- a/drivers/usb/gadget/function/u_uac1_legacy.c
++++ b/drivers/usb/gadget/function/u_uac1_legacy.c
+@@ -4,8 +4,6 @@
+  *
+  * Copyright (C) 2008 Bryan Wu <cooloney@kernel.org>
+  * Copyright (C) 2008 Analog Devices, Inc
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+  */
+
+ #include <linux/kernel.h>
+diff --git a/drivers/usb/gadget/function/u_uac1_legacy.h
+b/drivers/usb/gadget/function/u_uac1_legacy.h
+index dd69e408a3d9..5c1bdf46fe32 100644
+--- a/drivers/usb/gadget/function/u_uac1_legacy.h
++++ b/drivers/usb/gadget/function/u_uac1_legacy.h
+@@ -4,8 +4,6 @@
+  *
+  * Copyright (C) 2008 Bryan Wu <cooloney@kernel.org>
+  * Copyright (C) 2008 Analog Devices, Inc
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+  */
+
+ #ifndef __U_UAC1_LEGACY_H
+diff --git a/drivers/usb/gadget/legacy/audio.c
+b/drivers/usb/gadget/legacy/audio.c
+index 7b11dce98b94..dd81fd538cb8 100644
+--- a/drivers/usb/gadget/legacy/audio.c
++++ b/drivers/usb/gadget/legacy/audio.c
+@@ -4,8 +4,6 @@
+  *
+  * Copyright (C) 2008 Bryan Wu <cooloney@kernel.org>
+  * Copyright (C) 2008 Analog Devices, Inc
+- *
+- * Enter bugs at http://blackfin.uclinux.org/
+  */
+
+ /* #define VERBOSE_DEBUG */
+diff --git a/drivers/usb/host/isp1362.h b/drivers/usb/host/isp1362.h
+index 87c1ac97e538..650240846ee2 100644
+--- a/drivers/usb/host/isp1362.h
++++ b/drivers/usb/host/isp1362.h
+@@ -6,9 +6,7 @@
+  */
+
+ /* ------------------------------------------------------------------------- */
+-/*
+- * Platform specific compile time options
+- */
++
+ #define MAX_ROOT_PORTS 2
+
+ #define USE_32BIT 0
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index 011c8ca7de42..13486588e561 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2166,7 +2166,7 @@ musb_init_controller(struct device *dev, int
+nIrq, void __iomem *ctrl)
+  *   - initializes musb->xceiv, usually by otg_get_phy()
+  *   - stops powering VBUS
+  *
+- * There are various transceiver configurations.  Blackfin,
++ * There are various transceiver configurations.
+  * DaVinci, TUSB60x0, and others integrate them.  OMAP3 uses
+  * external/discrete ones in various flavors (twl4030 family,
+  * isp1504, non-OTG, etc) mostly hooking up through ULPI.
+diff --git a/drivers/usb/musb/musb_core.h b/drivers/usb/musb/musb_core.h
+index ac675b1a34c4..8a74cb2907f8 100644
+--- a/drivers/usb/musb/musb_core.h
++++ b/drivers/usb/musb/musb_core.h
+@@ -414,19 +414,6 @@ struct musb {
+  struct usb_gadget_driver *gadget_driver; /* its driver */
+  struct usb_hcd *hcd; /* the usb hcd */
+
+- /*
+- * FIXME: Remove this flag.
+- *
+- * This is only added to allow Blackfin to work
+- * with current driver. For some unknown reason
+- * Blackfin doesn't work with double buffering
+- * and that's enabled by default.
+- *
+- * We added this flag to forcefully disable double
+- * buffering until we get it working.
+- */
+- unsigned                double_buffer_not_ok:1;
+-
+  const struct musb_hdrc_config *config;
+
+  int xceiv_old_state;
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index 5b211fe295f0..8796ba387152 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -29,7 +29,6 @@ enum cpuhp_state {
+  CPUHP_PERF_PREPARE,
+  CPUHP_PERF_X86_PREPARE,
+  CPUHP_PERF_X86_AMD_UNCORE_PREP,
+- CPUHP_PERF_BFIN,
+  CPUHP_PERF_POWER,
+  CPUHP_PERF_SUPERH,
+  CPUHP_X86_HPET_DEAD,
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index f577d3c89618..0c20da7ab35f 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -571,8 +571,7 @@ static inline struct apertures_struct
+*alloc_apertures(unsigned int max_num) {
+
+ #elif defined(__i386__) || defined(__alpha__) || defined(__x86_64__) || \
+  defined(__hppa__) || defined(__sh__) || defined(__powerpc__) || \
+- defined(__avr32__) || defined(__bfin__) || defined(__arm__) || \
+- defined(__aarch64__)
++ defined(__avr32__) || defined(__arm__) || defined(__aarch64__)
+
+ #define fb_readb __raw_readb
+ #define fb_readw __raw_readw
