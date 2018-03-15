@@ -1,97 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeCOQyd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:54:33 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42357 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbeCOQyb (ORCPT
+        id S1751769AbeCOQ40 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:56:26 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45530 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeCOQ4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:54:31 -0400
-X-Google-Smtp-Source: AG47ELv/goOOCpVIAfnw962sULZ9iZm3ZNeIdvwuPQTyuK0nIjLndjI63kaBCZkzG2TMJu7Y3Et86w==
-From: Matthias Brugger <matthias.bgg@gmail.com>
-X-Google-Original-From: Matthias Brugger <mbrugger@suse.com>
-To: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net
-Cc: tianjinchuan1@huawei.com, lipeng321@huawei.com, lixiaoping3@huawei.com,
-        mbrugger@suse.com, yankejian@huawei.com, linyunsheng@huawei.com,
-        huangdaode@hisilicon.com, stephen@networkplumber.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        matthias.bgg@gmail.com
-Subject: [PATCH] net: hns: Fix ethtool private flags
-Date: Thu, 15 Mar 2018 17:54:20 +0100
-Message-Id: <20180315165420.16086-1-mbrugger@suse.com>
+        Thu, 15 Mar 2018 12:56:24 -0400
+X-Google-Smtp-Source: AG47ELtDnYqb3DxaR+wHFYCMQBnkR3lRuOXQnqfqldtXM5ikExsD0PNsIL5hN33JNHfwDmwIVgIuIw==
+From: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
+        <sz.lin@moxa.com>
+Cc: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
+        <sz.lin@moxa.com>,
+        Schuyler Patton <spatton@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
+Date: Fri, 16 Mar 2018 00:56:01 +0800
+Message-Id: <20180315165603.30471-1-sz.lin@moxa.com>
 X-Mailer: git-send-email 2.16.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver implementation returns support for private flags, while
-no private flags are present. When asked for the number of private
-flags it returns the number of statistic flag names.
+According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
+DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
+available when PHY is configured in RGMII mode with 10Mbps speed. It will
+cause some networking issues without RGMII mode, such as carrier sense
+errors and low throughput. TI also mentioned this issue in their forum[4].
 
-Fix this by returning EOPNOTSUPP for not implemented ethtool flags.
+This patch adds the check mechanism for PHY interface with RGMII interface
+type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+References:
+[1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
+[2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
+[3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
+[4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
+
+Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+Signed-off-by: Schuyler Patton <spatton@ti.com>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 2 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c  | 2 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c  | 2 +-
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c   | 4 +++-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+Changes from v1:
+- Use phy_interface_is_rgmii helper function
+- Remove blank line
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-index 86944bc3b273..74bd260ca02a 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-@@ -666,7 +666,7 @@ static void hns_gmac_get_strings(u32 stringset, u8 *data)
+ drivers/net/ethernet/ti/cpsw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 1b1b78fdc138..b2b30c9df037 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -1014,7 +1014,8 @@ static void _cpsw_adjust_link(struct cpsw_slave *slave,
+ 		/* set speed_in input in case RMII mode is used in 100Mbps */
+ 		if (phy->speed == 100)
+ 			mac_control |= BIT(15);
+-		else if (phy->speed == 10)
++		/* in band mode only works in 10Mbps RGMII mode */
++		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
+ 			mac_control |= BIT(18); /* In Band mode */
  
- static int hns_gmac_get_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
-+	if (stringset == ETH_SS_STATS)
- 		return ARRAY_SIZE(g_gmac_stats_string);
- 
- 	return 0;
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-index b62816c1574e..93e71e27401b 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-@@ -422,7 +422,7 @@ void hns_ppe_update_stats(struct hns_ppe_cb *ppe_cb)
- 
- int hns_ppe_get_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
-+	if (stringset == ETH_SS_STATS)
- 		return ETH_PPE_STATIC_NUM;
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-index 6f3570cfb501..e2e28532e4dc 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-@@ -876,7 +876,7 @@ void hns_rcb_get_stats(struct hnae_queue *queue, u64 *data)
-  */
- int hns_rcb_get_ring_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
-+	if (stringset == ETH_SS_STATS)
- 		return HNS_RING_STATIC_REG_NUM;
- 
- 	return 0;
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-index 7ea7f8a4aa2a..2e14a3ae1d8b 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -993,8 +993,10 @@ int hns_get_sset_count(struct net_device *netdev, int stringset)
- 			cnt--;
- 
- 		return cnt;
--	} else {
-+	} else if (stringset == ETH_SS_STATS) {
- 		return (HNS_NET_STATS_CNT + ops->get_sset_count(h, stringset));
-+	} else {
-+		return -EOPNOTSUPP;
- 	}
- }
- 
+ 		if (priv->rx_pause)
 -- 
 2.16.2
