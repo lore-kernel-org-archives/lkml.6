@@ -1,220 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932855AbeCOTHT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:07:19 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:36076 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932683AbeCOTGY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:24 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk
-Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de
-Subject: [PATCH v2 36/36] fs: add ksys_open() wrapper; remove in-kernel calls to sys_open()
-Date: Thu, 15 Mar 2018 20:05:29 +0100
-Message-Id: <20180315190529.20943-37-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+        id S932465AbeCOTGD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:06:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51948 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751508AbeCOTGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 15:06:02 -0400
+Date: Thu, 15 Mar 2018 14:06:01 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
+ section
+Message-ID: <20180315190601.iv5ptjqkxlolclmz@treble>
+References: <20180315154448.16222-1-bp@alien8.de>
+ <20180315154448.16222-5-bp@alien8.de>
+ <20180315181054.3fuuetu6fxpzlpcn@treble>
+ <20180315181612.GH27816@pd.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180315181612.GH27816@pd.tnic>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this wrapper allows us to avoid the in-kernel calls to the
-sys_open() syscall.
+On Thu, Mar 15, 2018 at 07:16:13PM +0100, Borislav Petkov wrote:
+> On Thu, Mar 15, 2018 at 01:10:54PM -0500, Josh Poimboeuf wrote:
+> > I liked OPCODE_BUFSIZE where it was before :-)  Here it disrupts the
+> > readability of the function a bit IMO.
+> 
+> My thinking is have it close by so that you don't have to go search for
+> its definition.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- fs/open.c                |  2 +-
- include/linux/syscalls.h | 11 +++++++++++
- init/do_mounts.c         |  4 ++--
- init/do_mounts_initrd.c  |  4 ++--
- init/do_mounts_md.c      |  6 +++---
- init/do_mounts_rd.c      |  6 +++---
- init/initramfs.c         |  6 +++---
- init/main.c              |  2 +-
- 8 files changed, 26 insertions(+), 15 deletions(-)
+But knowing the value of OPCODE_BUFSIZE isn't needed for understanding
+the rest of the function, so it seems like clutter to me.  Besides,
+that's what the vim cscope plugin is for :-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 710102fc262b..8a42a2961130 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1151,7 +1151,7 @@ COMPAT_SYSCALL_DEFINE4(openat, int, dfd, const char __user *, filename, int, fla
-  */
- SYSCALL_DEFINE2(creat, const char __user *, pathname, umode_t, mode)
- {
--	return sys_open(pathname, O_CREAT | O_WRONLY | O_TRUNC, mode);
-+	return ksys_open(pathname, O_CREAT | O_WRONLY | O_TRUNC, mode);
- }
- 
- #endif
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 4ff0b01ab277..6976c9e140db 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1074,4 +1074,15 @@ static inline int ksys_close(unsigned int fd)
- 	return __close_fd(current->files, fd);
- }
- 
-+extern long do_sys_open(int dfd, const char __user *filename, int flags,
-+			umode_t mode);
-+
-+static inline long ksys_open(const char __user *filename, int flags,
-+			     umode_t mode)
-+{
-+	if (force_o_largefile())
-+		flags |= O_LARGEFILE;
-+	return do_sys_open(AT_FDCWD, filename, flags, mode);
-+}
-+
- #endif
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index a28dd42d1f84..cc1103477071 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -489,13 +489,13 @@ void __init change_floppy(char *fmt, ...)
- 	va_start(args, fmt);
- 	vsprintf(buf, fmt, args);
- 	va_end(args);
--	fd = sys_open("/dev/root", O_RDWR | O_NDELAY, 0);
-+	fd = ksys_open("/dev/root", O_RDWR | O_NDELAY, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, FDEJECT, 0);
- 		ksys_close(fd);
- 	}
- 	printk(KERN_NOTICE "VFS: Insert %s and press ENTER\n", buf);
--	fd = sys_open("/dev/console", O_RDWR, 0);
-+	fd = ksys_open("/dev/console", O_RDWR, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, TCGETS, (long)&termios);
- 		termios.c_lflag &= ~ICANON;
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 50decd9999b7..1e3b469fb54b 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -38,7 +38,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
- {
- 	ksys_unshare(CLONE_FS | CLONE_FILES);
- 	/* stdin/stdout/stderr for /linuxrc */
--	sys_open("/dev/console", O_RDWR, 0);
-+	ksys_open("/dev/console", O_RDWR, 0);
- 	ksys_dup(0);
- 	ksys_dup(0);
- 	/* move initrd over / and chdir/chroot in initrd root */
-@@ -99,7 +99,7 @@ static void __init handle_initrd(void)
- 	if (!error)
- 		printk("okay\n");
- 	else {
--		int fd = sys_open("/dev/root.old", O_RDWR, 0);
-+		int fd = ksys_open("/dev/root.old", O_RDWR, 0);
- 		if (error == -ENOENT)
- 			printk("/initrd does not exist. Ignored.\n");
- 		else
-diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
-index ebd4013d589e..76dcfaada3ed 100644
---- a/init/do_mounts_md.c
-+++ b/init/do_mounts_md.c
-@@ -181,7 +181,7 @@ static void __init md_setup_drive(void)
- 			partitioned ? "_d" : "", minor,
- 			md_setup_args[ent].device_names);
- 
--		fd = sys_open(name, 0, 0);
-+		fd = ksys_open(name, 0, 0);
- 		if (fd < 0) {
- 			printk(KERN_ERR "md: open failed - cannot start "
- 					"array %s\n", name);
-@@ -244,7 +244,7 @@ static void __init md_setup_drive(void)
- 			 * array without it
- 			 */
- 			ksys_close(fd);
--			fd = sys_open(name, 0, 0);
-+			fd = ksys_open(name, 0, 0);
- 			sys_ioctl(fd, BLKRRPART, 0);
- 		}
- 		ksys_close(fd);
-@@ -294,7 +294,7 @@ static void __init autodetect_raid(void)
- 
- 	wait_for_device_probe();
- 
--	fd = sys_open("/dev/md0", 0, 0);
-+	fd = ksys_open("/dev/md0", 0, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
- 		ksys_close(fd);
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index f1aa341862d3..a6706314baa7 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -196,11 +196,11 @@ int __init rd_load_image(char *from)
- 	char rotator[4] = { '|' , '/' , '-' , '\\' };
- #endif
- 
--	out_fd = sys_open("/dev/ram", O_RDWR, 0);
-+	out_fd = ksys_open("/dev/ram", O_RDWR, 0);
- 	if (out_fd < 0)
- 		goto out;
- 
--	in_fd = sys_open(from, O_RDONLY, 0);
-+	in_fd = ksys_open(from, O_RDONLY, 0);
- 	if (in_fd < 0)
- 		goto noclose_input;
- 
-@@ -262,7 +262,7 @@ int __init rd_load_image(char *from)
- 				goto noclose_input;
- 			}
- 			change_floppy("disk #%d", disk);
--			in_fd = sys_open(from, O_RDONLY, 0);
-+			in_fd = ksys_open(from, O_RDONLY, 0);
- 			if (in_fd < 0)  {
- 				printk("Error opening disk.\n");
- 				goto noclose_input;
-diff --git a/init/initramfs.c b/init/initramfs.c
-index ce2bcad97cdf..5f2ff1d2370e 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -340,7 +340,7 @@ static int __init do_name(void)
- 			int openflags = O_WRONLY|O_CREAT;
- 			if (ml != 1)
- 				openflags |= O_TRUNC;
--			wfd = sys_open(collected, openflags, mode);
-+			wfd = ksys_open(collected, openflags, mode);
- 
- 			if (wfd >= 0) {
- 				ksys_fchown(wfd, uid, gid);
-@@ -567,7 +567,7 @@ static void __init clean_rootfs(void)
- 	struct linux_dirent64 *dirp;
- 	int num;
- 
--	fd = sys_open("/", O_RDONLY, 0);
-+	fd = ksys_open("/", O_RDONLY, 0);
- 	WARN_ON(fd < 0);
- 	if (fd < 0)
- 		return;
-@@ -629,7 +629,7 @@ static int __init populate_rootfs(void)
- 		}
- 		printk(KERN_INFO "rootfs image is not initramfs (%s)"
- 				"; looks like an initrd\n", err);
--		fd = sys_open("/initrd.image",
-+		fd = ksys_open("/initrd.image",
- 			      O_WRONLY|O_CREAT, 0700);
- 		if (fd >= 0) {
- 			ssize_t written = xwrite(fd, (char *)initrd_start,
-diff --git a/init/main.c b/init/main.c
-index d0ded4322c6b..e77951ae2c19 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1074,7 +1074,7 @@ static noinline void __init kernel_init_freeable(void)
- 	do_basic_setup();
- 
- 	/* Open the /dev/console on the rootfs, this should never fail */
--	if (sys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
-+	if (ksys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
- 		pr_err("Warning: unable to open an initial console.\n");
- 
- 	(void) ksys_dup(0);
+But I also don't have a strong opinion.
+
 -- 
-2.16.2
+Josh
