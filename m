@@ -1,77 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeCOCwY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 22:52:24 -0400
-Received: from ozlabs.org ([103.22.144.67]:36195 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751532AbeCOCwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 22:52:23 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 13:51:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        id S1751959AbeCODA6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 23:00:58 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:46756 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751556AbeCODA5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 23:00:57 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37834458"
+Subject: Re: [RFC PATCH] ACPI / processor: Get accurate possible CPU count
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: linux-next: manual merge of the crypto tree with the asm-generic
- tree
-Message-ID: <20180315135153.493712ac@canb.auug.org.au>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>, <ming.lei@redhat.com>
+References: <20180314102847.30459-1-douly.fnst@cn.fujitsu.com>
+ <CAHp75VfGPgbD8gBdvchBn5U8gH93zoHB9ja3KucUuxVNq+_MLg@mail.gmail.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <95c1590a-1645-ce0e-dea3-d8927bc97704@cn.fujitsu.com>
+Date: Thu, 15 Mar 2018 11:00:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fUabfP7OpigJFAOAKd/3fN2"; protocol="application/pgp-signature"
+In-Reply-To: <CAHp75VfGPgbD8gBdvchBn5U8gH93zoHB9ja3KucUuxVNq+_MLg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: E46AD4D0EFF7.AC3DF
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fUabfP7OpigJFAOAKd/3fN2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andy,
 
-Hi Herbert,
+At 03/15/2018 01:24 AM, Andy Shevchenko wrote:
+> On Wed, Mar 14, 2018 at 12:28 PM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+> 
+>> +static void __init acpi_update_possible_map(void)
+>> +{
+>> +       unsigned int cpu, nr = 0;
+>> +
+> 
+>> +       if (nr_cpu_ids <= nr_unique_ids)
+>> +               return;
+>> +
+>> +       for_each_possible_cpu(cpu) {
+>> +               if (nr >= nr_unique_ids)
+>> +                       set_cpu_possible(cpu, false);
+>> +               nr++;
+>> +       }
+> 
+> IIUC this can be optimized to:
+> 
 
-Today's linux-next merge of the crypto tree got a conflict in:
+Yes, I agree, It's smarter and clearer. Will use it.
 
-  drivers/crypto/bfin_crc.c
+Thanks,
+	dou
 
-between commit:
+> if (nr_unique_ids >= nr_cpu_ids)
+>      return;
+> 
+> /* Don't yet figure out if it's superfluous */
+> if (nr_unique_ids >= cpumask_last(cpu_possible_mask))
+>      return;
+> 
+> for_each_cpu_wrap(cpu, cpu_possible_mask, nr_unique_ids)
+>      set_cpu_possible(cpu, false);
+> 
 
-  1d77094897bc ("crypto: remove blackfin CRC driver")
 
-from the asm-generic tree and commits:
 
-  f1b298103e14 ("crypto: bfin_crc - Add empty hash export and import")
-  5471f2e2b5ea ("crypto: bfin_crc - Delete an error message for a failed me=
-mory allocation in bfin_crypto_crc_probe()")
-
-from the crypto tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/fUabfP7OpigJFAOAKd/3fN2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqp38kACgkQAVBC80lX
-0Gy3lgf+Odtdzp3zexoe/cthTjIKijFco6kZa3xN06GMqnIXfWmpuiSfgXySjpjW
-a4mA/w4FIChLIuoM984qsHZQ8g58njFhMgbqiPnaR2+sC7B88HUo3AoWM7eBiv0a
-k6JO4Exr3q3eVtVfo940CRfRytb3S2/6n9BfUKUSah+4Fl2J19bHAJ+f0t+5LWaO
-Vxiap0h45rSyPMdAFO6nQ6/16JesM8SBr1u9mCt6Zs8Won2HYlkU7iJXcfKHVuWY
-7VKkJdzM+8gew4Fbv+gIJheKOE1o5YO8cMijQPJ/Fpfx346cOiO1BN3bRO6GOMzQ
-9YoeX8Hu8G8fzcSztCW1jm7KJYb7fw==
-=Femr
------END PGP SIGNATURE-----
-
---Sig_/fUabfP7OpigJFAOAKd/3fN2--
+>> +       nr_cpu_ids = nr_unique_ids;
+>> +       pr_info("Allowing %d possible CPUs\n", nr_cpu_ids);
+>> +}
+> 
