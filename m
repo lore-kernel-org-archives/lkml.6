@@ -1,99 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932628AbeCOUmj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:42:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:47728 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752847AbeCOUmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:42:37 -0400
-Message-ID: <5AAADA1B.2030601@arm.com>
-Date: Thu, 15 Mar 2018 20:39:55 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
-MIME-Version: 1.0
-To: Dongjiu Geng <gengdongjiu@huawei.com>
-CC: rkrcmar@redhat.com, corbet@lwn.net, christoffer.dall@linaro.org,
-        marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        rjw@rjwysocki.net, bp@alien8.de, lenb@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-acpi@vger.kernel.org, devel@acpica.org, huangshaoyu@huawei.com
-Subject: Re: [PATCH v10 2/5] arm64: KVM: export the capability to set guest
- SError syndrome
-References: <1520093380-42577-1-git-send-email-gengdongjiu@huawei.com> <1520093380-42577-3-git-send-email-gengdongjiu@huawei.com>
-In-Reply-To: <1520093380-42577-3-git-send-email-gengdongjiu@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        id S932480AbeCOUoP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:44:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36226 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeCOUoN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 16:44:13 -0400
+X-Google-Smtp-Source: AG47ELtsQJuFEHb+5zH4fullBrDMmRCoE2UGpNPFM2tasHyCN95lPQMVErqdPT3B9yiKbjxb6OPZIA==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH v2 0/2] Improve preemptirq tracepoint usage
+Date: Thu, 15 Mar 2018 13:43:59 -0700
+Message-Id: <20180315204401.68282-1-joelaf@google.com>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dongjiu Geng,
+Hi,
+These patches improve the design of preemptirq tracepoints, clean up
+several of the ifdeffery and overall makes the feature configuration
+cleaner and less confusing. It also uses the tracepoints infra for
+the lockdep hooks for irqs on/off thus making a central point for all
+users of the event (kernel/trace/trace_preemptirq.c).
+Patches based on v4.16-rc5.
 
-On 03/03/18 16:09, Dongjiu Geng wrote:
-> Before user space injects a SError, it needs to know whether it can
-> specify the guest Exception Syndrome, so KVM should tell user space
-> whether it has such capability.
+Changes since v1:
+- Make PROVE_LOCKING depend on FTRACE since PROVE_LOCKING needs to
+  register hooks in this series which needs PREEMPTIRQ_TRACEPOINTS.
 
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index fc3ae95..8a3d708 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -4415,3 +4415,14 @@ Parameters: none
->  This capability indicates if the flic device will be able to get/set the
->  AIS states for migration via the KVM_DEV_FLIC_AISM_ALL attribute and allows
->  to discover this without having to create a flic device.
-> +
-> +8.14 KVM_CAP_ARM_SET_SERROR_ESR
-> +
-> +Architectures: arm, arm64
-> +
-> +This capability indicates that userspace can specify syndrome value reported to
-> +guest OS when guest takes a virtual SError interrupt exception.
+Changes since RFC [1]:
+- handle case where lockdep warnings occur in tracepoint code (2/2)
+- protect tracepoint probe registration in lockdep init by ifdef.
 
-"when userspace triggers a virtual SError"... how?
+Joel Fernandes (2):
+  tracing: Improve design of preemptirq tracepoints and its users
+  tracepoint: Prevent false-positive lockdep warnings
 
+[1] https://patchwork.kernel.org/patch/10202163/
 
-> +If KVM has this capability, userspace can only specify the ISS field for the ESR
-> +syndrome, can not specify the EC field which is not under control by KVM.
+ include/linux/ftrace.h            |  11 +-
+ include/linux/irqflags.h          |  11 +-
+ include/linux/lockdep.h           |   6 +-
+ include/linux/preempt.h           |   2 +-
+ include/linux/tracepoint.h        |  23 +++-
+ include/trace/events/preemptirq.h |  23 ++--
+ init/main.c                       |   2 +-
+ kernel/locking/lockdep.c          |  31 ++---
+ kernel/sched/core.c               |   2 +-
+ kernel/trace/Kconfig              |  19 ++-
+ kernel/trace/Makefile             |   2 +-
+ kernel/trace/trace_irqsoff.c      | 206 +++++++-----------------------
+ kernel/trace/trace_preemptirq.c   |  70 ++++++++++
+ lib/Kconfig.debug                 |   2 +-
+ 14 files changed, 192 insertions(+), 218 deletions(-)
+ create mode 100644 kernel/trace/trace_preemptirq.c
 
-Where do I put the ESR?
-If you re-order this after the patch that adds the API, you can describe how
-this can be used.
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Joel Fernandes <joelaf@google.com>
 
-
-Thanks,
-
-James
-
-
-
-> +If this virtual SError is taken to EL1 using AArch64, this value will be reported
-> +into ISS filed of ESR_EL1.
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index 3256b92..38c8a64 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
->  	case KVM_CAP_ARM_PMU_V3:
->  		r = kvm_arm_support_pmu_v3();
->  		break;
-> +	case KVM_CAP_ARM_INJECT_SERROR_ESR:
-> +		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
-> +		break;
->  	case KVM_CAP_SET_GUEST_DEBUG:
->  	case KVM_CAP_VCPU_ATTRIBUTES:
->  		r = 1;
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 8fb90a0..3587b33 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -934,6 +934,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_S390_AIS_MIGRATION 150
->  #define KVM_CAP_PPC_GET_CPU_CHAR 151
->  #define KVM_CAP_S390_BPB 152
-> +#define KVM_CAP_ARM_INJECT_SERROR_ESR 153
->  
->  #ifdef KVM_CAP_IRQ_ROUTING
->  
-> 
+-- 
+2.16.2.804.g6dcf76e118-goog
