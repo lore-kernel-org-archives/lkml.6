@@ -1,61 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752860AbeCOUyW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:54:22 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:46026 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeCOUyU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:54:20 -0400
-X-Google-Smtp-Source: AG47ELtTtZiDNj1x5T1K9BGOKrzeeOxKqvofoy4UaK3AkQ9Ch9xwkeA6mFwlto5fYNfYWs5kzJdgf8G9c8JwQScjCAE=
+        id S932424AbeCOU5L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:57:11 -0400
+Received: from ozlabs.org ([103.22.144.67]:60245 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752238AbeCOU5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 16:57:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 16 Mar 2018 07:56:29 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Message-ID: <20180316075629.019b6560@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180315190529.20943-22-linux@dominikbrodowski.net>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net> <20180315190529.20943-22-linux@dominikbrodowski.net>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 15 Mar 2018 21:54:19 +0100
-X-Google-Sender-Auth: XuQOzAkQPI2JHSY_x5vIcVfoark
-Message-ID: <CAK8P3a0Bfp+KOTgCRLGFMxh-yBu0H_wd-SvJzDbBVvg42QOgVg@mail.gmail.com>
-Subject: Re: [PATCH v2 21/36] mm: add ksys_mmap_pgoff() helper; remove
- in-kernel calls to sys_mmap_pgoff()
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CtyQ/K0PVmIdC=bJE6dxSvV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 8:05 PM, Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
-> Using this helper allows us to avoid the in-kernel calls to the
-> sys_mmap_pgoff() syscall.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+--Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It might be a good idea to clean up the sys_mmap2()/sys_mmap_pgoff()
-distinction as well: From what I understand (I'm sure Al will correct me
-if this is wrong), all 32-bit architectures have a sys_mmap2() syscall
-that has a fixed bit shift value, possibly always 12.
-sys_mmap_pgoff() is defined to have a shift of PAGE_SHIFT, which
-may or may not depend on the kernel configuration.
+Hi all,
 
-If we replace the
+Commit
 
-+SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,
-+               unsigned long, prot, unsigned long, flags,
-+               unsigned long, fd, unsigned long, pgoff)
-+{
-+       return ksys_mmap_pgoff(addr, len, prot, flags, fd, pgoff);
-+}
+  9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
 
-with a corresponding sys_mmap2() definition, it seems we can
-simplify a number of architectures that today need to define
-sys_mmap2() as a wrapper around sys_mmap_pgoff().
+is missing a Signed-off-by from its committer.
 
-        Arnd
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq3f0ACgkQAVBC80lX
+0Gzzdwf/TCh9xFq7P3e7iZ1uPdvXbI5mfqfWin9rUZnUAcmDLARW4nskkFav5YyQ
+K3aTo4BqsIEaNM3yi1W+S7Unq2zHrryauzlPh76eQlm0KiMWV240e5uvI0fLG8vB
+jht8YE9OY/6y+lMI/l5F8dVD9vY/2FCC/sdoxekezQ3JrtEExvAhWhlAtC/Tv/w5
+sU4PSw92X8qec4koQWwFERlg3v9ZgUzFd+elJ5YeUyqK/RUMAzf8MiDRKjIupDy3
+NOoBbCckAIZJHFnpSA2xi6tJa/W5X52RVUr655JK1Ukm4zahMMZdg2wUso2oM3tl
+wdW5RStcgMWEePSP2e4FFVtpYX7GPQ==
+=IQ/1
+-----END PGP SIGNATURE-----
+
+--Sig_/CtyQ/K0PVmIdC=bJE6dxSvV--
