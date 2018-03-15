@@ -1,111 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeCOOs0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:48:26 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:22060 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752293AbeCOOsY (ORCPT
+        id S1752699AbeCOOsg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:48:36 -0400
+Received: from smtprelay0105.hostedemail.com ([216.40.44.105]:53207 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752201AbeCOOse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:48:24 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2FElvnr002729
-X-Nifty-SrcIP: [209.85.217.176]
-X-Google-Smtp-Source: AG47ELtU3RrqwdVFqo9MbXklrOuoAIM1SDCGsCSPNzGCWy/yTLOwPatQEQMerRnyDwJvIMsBu+bcHyup3sItuvFK4+k=
-MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 15 Mar 2018 23:47:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASQ=JHNng80W-k6oxtpSRHzxHeZgNZvWFcU1vM52U7Wmg@mail.gmail.com>
-Message-ID: <CAK7LNASQ=JHNng80W-k6oxtpSRHzxHeZgNZvWFcU1vM52U7Wmg@mail.gmail.com>
-Subject: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for v4.17
-To: arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Mar 2018 10:48:34 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2110:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4559:5007:6119:7903:8531:8603:8985:9025:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12048:12050:12296:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21611:21627:30012:30029:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: snow62_2d58d48886d15
+X-Filterd-Recvd-Size: 2566
+Message-ID: <1521125310.22221.4.camel@perches.com>
+Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
+From: Joe Perches <joe@perches.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org
+Date: Thu, 15 Mar 2018 07:48:30 -0700
+In-Reply-To: <7dac9dbd-b57b-6e37-c1bb-9ab6c2711613@linux.intel.com>
+References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
+         <7dac9dbd-b57b-6e37-c1bb-9ab6c2711613@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Olof,
+On Thu, 2018-03-15 at 14:22 +0100, Maarten Lankhorst wrote:
+> Op 13-03-18 om 23:02 schreef Joe Perches:
+> > drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
+> > arguments that can be removed by creating separate functins.
+> > 
+> > Create specific functions for these calls to reduce x86/64 defconfig
+> > size by ~20k.
+> > 
+> > Modify the existing macros to use the specific calls.
+> > 
+> > new:
+> > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
+> > 
+> > old:
+> > $ size -t drivers/gpu/drm/built-in.a | tail -1
+> > 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
+[]
+> I guess this adds up. Nice reduction. :)
 
-Please pull UniPhier DT updates for v4.17.
+Yup. 1% of all drm object code.
 
-Note:
-In this development cycle, I ended up with putting all of arm/arm64 changes
-into a single pull request.
-This is because some DTSI files are shared across arches.
-So, I needed to do this to avoid build errors.
+> > diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+[]
+> >  
+> > -	drm_printk(level, category, "mismatch in %s %pV", name, &vaf);
+> > +	if (adjust)
+> > +		drm_dbg(DRM_UT_KMS, "mismatch in %s %pV", name, &vaf);
+> > +	else
+> > +		drm_err("mismatch in %s %pV", name, &vaf);
+> 
+> Could this use DRM_DEBUG_KMS/DRM_ERROR?
+> 
+> Rest looks good, so I can fix up if you want.
 
+If want you change something like that, it should be separate patch.
 
+btw: There was  separate patch that also reduced object size
+of the drm_dev_printk calls several months ago.  Never applied.
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+https://lkml.org/lkml/2017/9/25/247
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-tags/uniphier-dt-v4.17
-
-for you to fetch changes up to 7f9f76b10dbe3f2585a21699312f74ed2b544b84:
-
-  ARM: dts: uniphier: add sound node for PXs2 (2018-03-15 23:19:05 +0900)
-
-----------------------------------------------------------------
-UniPhier ARM SoC DT updates for v4.17
-
-- add sound support
-- add ethernet support
-- use proper SPDX-License-Identifier style
-
-----------------------------------------------------------------
-Katsuhiro Suzuki (6):
-      ARM: dts: uniphier: add audio in/out pin-mux node
-      arm64: dts: uniphier: add sound node
-      arm64: dts: uniphier: add speaker out for LD11/LD20 boards
-      arm64: dts: uniphier: add compress audio out for LD11/LD20
-      arm64: dts: uniphier: add fixed regulators for audio codec
-      ARM: dts: uniphier: add sound node for PXs2
-
-Kunihiko Hayashi (2):
-      ARM: dts: uniphier: add AVE ethernet node
-      arm64: dts: uniphier: add AVE ethernet node
-
-Masahiro Yamada (2):
-      ARM: dts: uniphier: use proper SPDX-License-Identifier style
-      arm64: dts: uniphier: use proper SPDX-License-Identifier style
-
- arch/arm/boot/dts/uniphier-ld4-ref.dts                 |  14 ++-
- arch/arm/boot/dts/uniphier-ld4.dtsi                    |  14 ++-
- arch/arm/boot/dts/uniphier-ld6b-ref.dts                |  25 +++--
- arch/arm/boot/dts/uniphier-ld6b.dtsi                   |  14 ++-
- arch/arm/boot/dts/uniphier-pinctrl.dtsi                |  54 ++++++++--
- arch/arm/boot/dts/uniphier-pro4-ace.dts                |  25 +++--
- arch/arm/boot/dts/uniphier-pro4-ref.dts                |  25 +++--
- arch/arm/boot/dts/uniphier-pro4-sanji.dts              |  25 +++--
- arch/arm/boot/dts/uniphier-pro4.dtsi                   |  32 ++++--
- arch/arm/boot/dts/uniphier-pro5.dtsi                   |  14 ++-
- arch/arm/boot/dts/uniphier-pxs2-gentil.dts             |  49 +++++++--
- arch/arm/boot/dts/uniphier-pxs2-vodka.dts              |  62 +++++++++--
- arch/arm/boot/dts/uniphier-pxs2.dtsi                   |  86 +++++++++++++--
- arch/arm/boot/dts/uniphier-ref-daughter.dtsi           |  14 ++-
- arch/arm/boot/dts/uniphier-sld8-ref.dts                |  14 ++-
- arch/arm/boot/dts/uniphier-sld8.dtsi                   |  14 ++-
- arch/arm/boot/dts/uniphier-support-card.dtsi           |  14 ++-
- arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts | 109
-+++++++++++++++++--
- arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts    |  25 +++--
- arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi       | 124
-++++++++++++++++++++--
- arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts | 111
-+++++++++++++++++--
- arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts    |  25 +++--
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi       | 135
-++++++++++++++++++++++--
- arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts    |  14 ++-
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi       |  14 ++-
- 25 files changed, 850 insertions(+), 202 deletions(-)
-
-
--- 
-Best Regards
-Masahiro Yamada
+cheers, Joe
