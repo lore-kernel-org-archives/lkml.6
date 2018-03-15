@@ -1,114 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752280AbeCOMil (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:38:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34110 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeCOMfi (ORCPT
+        id S1751791AbeCOMm3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:42:29 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33126 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeCOMm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:35:38 -0400
-Message-Id: <20180315123202.683132967@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Thu, 15 Mar 2018 13:19:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Chris Mason <clm@fb.com>, Anna Schumaker <anna.schumaker@netapp.com>,
-        Joel Becker <jlbec@evilplan.org>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        George Spelvin <linux@sciencehorizons.net>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 07/11] sched/wait,nfs: Replace wait_on_atomic_t usage
-References: <20180315121902.942902000@infradead.org>
+        Thu, 15 Mar 2018 08:42:27 -0400
+X-Google-Smtp-Source: AG47ELthETjw2e+0ik/vIWk1S/XGMoEt/kb0FIJW6XKoxQjQywDAn0+7kYfoKf4JWjMDOtm6k2uLEA==
+Subject: Re: [PATCH v1 2/3] drm/tegra: plane: Correct legacy blending
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
+ <00cf4565238be471c90e5823e53e0ed504869bfe.1521075485.git.digetx@gmail.com>
+ <20180315102905.GB15393@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <16e06ec0-af24-e2c1-b400-2ff1acae931c@gmail.com>
+Date: Thu, 15 Mar 2018 15:42:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-wait_var-7.patch
+In-Reply-To: <20180315102905.GB15393@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
+On 15.03.2018 13:29, Thierry Reding wrote:
+> On Thu, Mar 15, 2018 at 04:00:24AM +0300, Dmitry Osipenko wrote:
+>> Keep old 'dependent' state of unaffected planes, this way new state takes
+>> into account current state of unaffected planes.
+>>
+>> Fixes: ebae8d07435a ("drm/tegra: dc: Implement legacy blending")
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/gpu/drm/tegra/plane.c | 15 ++++++---------
+>>  1 file changed, 6 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+>> index fc37dcf8c458..3c0cb6a04c66 100644
+>> --- a/drivers/gpu/drm/tegra/plane.c
+>> +++ b/drivers/gpu/drm/tegra/plane.c
+>> @@ -287,13 +287,11 @@ unsigned int tegra_plane_format_adjust(unsigned int opaque)
+>>  	return opaque;
+>>  }
+>>  
+>> -unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
+>> -					   struct tegra_plane *other)
+>> +static unsigned int tegra_plane_get_overlap_index(struct tegra_plane *plane,
+>> +						  struct tegra_plane *other)
+> 
+> I'd prefer this to be a separate patch to keep the diff down to make
+> this easier to apply to v4.16. I can do that when I apply, no need to
+> resend.
 
-Cc: Anna Schumaker <anna.schumaker@netapp.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- fs/nfs/inode.c    |    5 -----
- fs/nfs/pagelist.c |    6 +++---
- fs/nfs/pnfs_nfs.c |    2 +-
- fs/nfs/write.c    |    6 +++---
- 4 files changed, 7 insertions(+), 12 deletions(-)
+Okay. But now I'm thinking that it's probably not really worth to backport this
+patch at all because it doesn't fix blending entirely, but only makes it good
+enough to show cursor plane properly. I'll send V2.
 
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -85,11 +85,6 @@ int nfs_wait_bit_killable(struct wait_bi
- }
- EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
- 
--int nfs_wait_atomic_killable(atomic_t *p, unsigned int mode)
--{
--	return nfs_wait_killable(mode);
--}
--
- /**
-  * nfs_compat_user_ino64 - returns the user-visible inode number
-  * @fileid: 64-bit fileid
---- a/fs/nfs/pagelist.c
-+++ b/fs/nfs/pagelist.c
-@@ -98,8 +98,8 @@ nfs_page_free(struct nfs_page *p)
- int
- nfs_iocounter_wait(struct nfs_lock_context *l_ctx)
- {
--	return wait_on_atomic_t(&l_ctx->io_count, nfs_wait_atomic_killable,
--			TASK_KILLABLE);
-+	return wait_var_event_killable(&l_ctx->io_count,
-+				       !atomic_read(&l_ctx->io_count));
- }
- 
- /**
-@@ -395,7 +395,7 @@ static void nfs_clear_request(struct nfs
- 	}
- 	if (l_ctx != NULL) {
- 		if (atomic_dec_and_test(&l_ctx->io_count)) {
--			wake_up_atomic_t(&l_ctx->io_count);
-+			wake_up_var(&l_ctx->io_count);
- 			if (test_bit(NFS_CONTEXT_UNLOCK, &ctx->flags))
- 				rpc_wake_up(&NFS_SERVER(d_inode(ctx->dentry))->uoc_rpcwaitq);
- 		}
---- a/fs/nfs/pnfs_nfs.c
-+++ b/fs/nfs/pnfs_nfs.c
-@@ -245,7 +245,7 @@ pnfs_generic_commit_cancel_empty_pagelis
- {
- 	if (list_empty(pages)) {
- 		if (atomic_dec_and_test(&cinfo->mds->rpcs_out))
--			wake_up_atomic_t(&cinfo->mds->rpcs_out);
-+			wake_up_var(&cinfo->mds->rpcs_out);
- 		/* don't call nfs_commitdata_release - it tries to put
- 		 * the open_context which is not acquired until nfs_init_commit
- 		 * which has not been called on @data */
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1620,8 +1620,8 @@ static void nfs_writeback_result(struct
- 
- static int wait_on_commit(struct nfs_mds_commit_info *cinfo)
- {
--	return wait_on_atomic_t(&cinfo->rpcs_out,
--			nfs_wait_atomic_killable, TASK_KILLABLE);
-+	return wait_var_event_killable(&cinfo->rpcs_out,
-+				       !atomic_read(&cinfo->rpcs_out));
- }
- 
- static void nfs_commit_begin(struct nfs_mds_commit_info *cinfo)
-@@ -1632,7 +1632,7 @@ static void nfs_commit_begin(struct nfs_
- static void nfs_commit_end(struct nfs_mds_commit_info *cinfo)
- {
- 	if (atomic_dec_and_test(&cinfo->rpcs_out))
--		wake_up_atomic_t(&cinfo->rpcs_out);
-+		wake_up_var(&cinfo->rpcs_out);
- }
- 
- void nfs_commitdata_release(struct nfs_commit_data *data)
+>>  {
+>>  	unsigned int index = 0, i;
+>>  
+>> -	WARN_ON(plane == other);
+>> -
+> 
+> Why would this need to go away? We still shouldn't be called with plane
+> == other because that makes no sense.
+This can't ever happen because we are skipping 'plane' in for_each_plane_in_state().
