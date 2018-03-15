@@ -1,102 +1,70 @@
-Return-Path: <kernel-hardening-return-12261-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsR00dWu6yNrOL4QacCLnEORFzdufe0d5mSZEbNkWJz+N9Bth047JxCTLcjQHF3CuJITvv3
-ARC-Seal: i=1; a=rsa-sha256; t=1520542246; cv=none;
+Return-Path: <djkurtz@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521079481; cv=none;
         d=google.com; s=arc-20160816;
-        b=AVvIaj7rAE/eIvuq4odLzfzn/ErjleHFiUDTi2siXSgqomqFtR1DetGy4mdvACy41F
-         XfRjYnCHXpK0fBgHHkWFTs3AwA81jBzwi5ipogKRzNA0nUglq9jbmNLi+o9Tv2rJXRoj
-         7Jnslq1l7Mn+JCEGSqKE7B0JtOyVTCUpYNEIaOQiX1+93gNo0NU9WAlkiL7RcEIuRoW2
-         I3OgcfiyTl0ktOykhJVyERB2C9NtcGWL4s+FWNiORgi3ToDkzwCizMxwKj7OKceeg6nq
-         IzrURFdQbyqcEIdcvcpIsM66lARxA91s1+2emfMjh+6OfS/WNYD7pduZaFVAip4saVwu
-         Flvw==
+        b=CivXbJeyU4axIIjly154gFv7VZ0RiI0XS/1uMBOJ1xrXdvblc3WSJFH7WIdJqObVFc
+         yik6PKJsGyKFQaKIdD6rfWMc3g8oyV5M2JDhKXSyH/k1I90ALWXcROVB5XpT6otoUo4Q
+         uzq6c25mRFMVzYx9MxEBBp/R7lImAkEB1BNWgDRVYova42wePej3Oa89/F6xH5dAJlzQ
+         En5GhAhAaY2006ygu66bzB9gWdxTmCf2nQ4j3zTZ6cZO1PHWKu1i6YIbVassXIldRDRc
+         sB2ebvn861uvQE2qvKFIDHP8RYRes61iFhN7iyt10Olvh493Wfxw1d39Jlfw/tR8PNCc
+         jfLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
-         :date:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=TngQvFG1dYuk6C+a+WeqDiz4+xpJj5kzvrSCEtdXsZs=;
-        b=P3/uiDUyZ5Kk7gCb2x+zT4WLvO8gjXIHcPABl5eUkjsVEtuHv88TUOzzP/u4O0EtaN
-         Dd4tCDhzdQDCih4NLeeYl6fzZdm/F82+u+f7Isuf+rmd4hiQx3XUi0j3OWRsJYP2MVJG
-         51UYvKOzeOvmfEbh0iP01ihcedYTWhq0/+b6Py52C4EqvPFuzuQjjYooe4NhUa+vxhWb
-         ZDMT7n+0m7l5vMsVBNAfDc4+jhx/sjxZ5YESVo/NQRB6BeBjyq9BntlTJ/87StFoTIxK
-         lPv1aX7rGnbvMtUkohYuNfJ1UfhKnTg23NbeFnqFUNTk6GGQlf9dGBiD0v+u+sVYYq9K
-         lEdg==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=nrvySmGlEuEePiWNYfaGy0dGhn1+zLZNjC4iKX59MTk=;
+        b=zH+cvpgOmEyvI9IJ7j+qulH10WfkY8HHM/ihQjINwh3o1A2zwa+FDsIhDkNTkzvCyh
+         d5c0HUM9NswpUkDFjODITiMDRWRZp894bRNAUL510L+5zkk0oln6+WxtobjRce8fCG+B
+         2V/qDWthWxrPXadBl+8YrFiC3ERG3gomxWR04EUmzPr45n9bcvDvJBOH2OMZyJFaQK4f
+         t7y9RMuL0MbfwM9Z+FmrHG+DUT6fDpOHSLspJ/3QpzsSRNCJvGG65i+jfuHIJZyuMQMl
+         d7TEEgcLVJUOYlbjM7cXKb/lefZ3uFQgmKWgnGU/se73C2OxgG9WtOhxM3s+TFvRaaPF
+         iqHw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12261-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12261-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@chromium.org header.s=google header.b=XSPheUHh;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12261-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12261-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Thu, 8 Mar 2018 21:50:19 +0100
-From: Stephen Kitt <steve@sk2.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: hare <hare@suse.com>, linux-scsi@vger.kernel.org, Kernel Hardening
- <kernel-hardening@lists.openwall.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] aic7xxx/aic79xx: remove VLAs
-Message-ID: <20180308215019.399ebdb4@heffalump.sk2.org>
-In-Reply-To: <CAGXu5jK=JhBFHBGpbWF46DC3-QMruiB0qqz1z+njcK2h7jVU9w@mail.gmail.com>
-References: <20180308132225.13229-1-steve@sk2.org>
-	<CAGXu5jK=JhBFHBGpbWF46DC3-QMruiB0qqz1z+njcK2h7jVU9w@mail.gmail.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/EbA69GcKFcB.rXi1iSj5RD0"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 11678959735493512462
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrkeeggdduvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+       dkim=pass header.i=@chromium.org header.s=google header.b=XSPheUHh;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELtfQTDizwSnx+AFiaAUvxjNlTwdFkQq2YRszeb4csU722kY280v06W23FDhcJeKmy/93dzbNA==
+From: Daniel Kurtz <djkurtz@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: adurbin@chromium.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH v3 0/3] Add earlycon support for AMD Carrizo / Stoneyridge
+Date: Wed, 14 Mar 2018 20:04:33 -0600
+Message-Id: <20180315020436.150509-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594376653072055099?=
-X-GMAIL-MSGID: =?utf-8?q?1594404106941279708?=
+X-GMAIL-THRID: =?utf-8?q?1594951091006511765?=
+X-GMAIL-MSGID: =?utf-8?q?1594967438719501025?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/EbA69GcKFcB.rXi1iSj5RD0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+AMD Carrizo / Stoneyridge use a DesignWare 8250 UART that uses a 48 MHz
+input clock.  Currently, there is no way to tell earlycon to use a specific
+uart input clock when configuring a baud rate.
 
-On Thu, 8 Mar 2018 11:52:25 -0800, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Mar 8, 2018 at 5:22 AM, Stephen Kitt <steve@sk2.org> wrote:
-> > -static const int num_critical_sections =3D sizeof(critical_sections)
-> > -                                      / sizeof(*critical_sections);
-> > +#define NUM_CRITICAL_SECTIONS 14 =20
->=20
-> The compiler doesn't treat "const" as a literal, hence the need to
-> change this. However, you can still use the sizeof (actually, this is
-> exactly ARRAY_SIZE()). Perhaps:
->=20
-> #define NUM_CRITICAL_SECTIONS ARRAY_SIZE(critical_sections)
->=20
-> ?
->=20
-> Otherwise, looks great!
+Patch 1 adds an earlycon ->setup() callback to set up this clock.  The setup is
+triggered on the commandline by specifying "earlycon=amdcz,...".
 
-Thanks, v2 incoming...
+Patch 2 adds an ACPI SPCR quirk to automatically trigger this hook when the
+ACPI SPCR table OEMID field is "AMDCZ ".
 
-Regards,
+Patch 3 adds an additional fix which allows botht the ACPI SPCR quirk and amdcz
+->setup() to tell 8250_core to skip initialization of old serial ports that do
+not exist on these SoCs.
 
-Stephen
+Daniel Kurtz (3):
+  serial: 8250_early: Add earlycon support for AMD Carrizo / Stoneyridge
+  ACPI: SPCR: Add support for AMD CT/SZ
+  serial: core: Allow skipping old serial port initialization
 
---Sig_/EbA69GcKFcB.rXi1iSj5RD0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ drivers/acpi/spcr.c                  | 26 ++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_core.c  |  6 ++++++
+ drivers/tty/serial/8250/8250_early.c | 16 ++++++++++++++++
+ include/linux/serial_8250.h          |  2 ++
+ 4 files changed, 50 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAlqhogsACgkQgNMC9Yht
-g5y+vxAAhYiZaRdCTRVxuCtpCt3PtJk1fq4D+RwtPbQjYdM1ZNm5H7DN1tL7Qac/
-vP8pnMh3jjU2s2+3lKth3SsM/3izj4KsHFk2XXZjncSIHZddvOhGOpYzGVSNRs97
-CKl1JxeTzt+7IaT8u7bxT8sSoIuhMqpXAT+y0YjlG4ljFWpZ23wZ6AxD2EIhDrLi
-wddbrvzGHMohAFYg+m4gM7E6SPx/N4dwFaW3ZD1bALvB284OIa0lkWrPQJLNI0m3
-JahA6OgzrQkHm8qqwGQPyKWY1JC0nTm/euF387AnklyE9v7pjB0uRk6Muj7Yle55
-yN4bKnXfFbQH1ANmbBMfvkIUTZESXaViPweHr3RbmbnMtEpvVkxt04qAOp7mhvBL
-qoICxTDE4C1mTHrehCnCjmA095owv+ZJc7TBZGPyvKlBscQh8KBNiJ/b3mXlrTPV
-RlLhOt9+oG/Sug/6J+30gYLV5CRJCAQK0H//zmeCKfKIq5Gtefm2CfX1Z+FiXTzM
-nREDdG1Pqg0Q+Flh7Yyz7DRY2MYe91cprj1ZsWbl+jmy89ds1iIXR3Q+s2011N8T
-/8QR4vIflUsVgaQoIkKyRqp4bAKxj83oN/vXvAauwTEfNfb0bAoeqAzesfBmc6M9
-2xHL145DPD1fth4l4PFNsaYdgeYkw1ZnqAEy1TUTaQSbFKDoB3I=
-=xGd9
------END PGP SIGNATURE-----
-
---Sig_/EbA69GcKFcB.rXi1iSj5RD0--
+-- 
+2.16.2.804.g6dcf76e118-goog
