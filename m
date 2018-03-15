@@ -1,132 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeCOXnk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 19:43:40 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38325 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932943AbeCOXni (ORCPT
+        id S933200AbeCOXov (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 19:44:51 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45947 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933034AbeCOXot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 19:43:38 -0400
-X-Google-Smtp-Source: AG47ELuE9FIx3exnzqD51AnMvwz8i1tvLzNXIkFAHn5XEM75lDTKX1ODRQAbr63TvA4/nVAQShx/7A==
-Date: Fri, 16 Mar 2018 00:43:34 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-Message-ID: <20180315234334.GA3432@bigcity.dyn.berto.se>
-References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 15 Mar 2018 19:44:49 -0400
+X-Google-Smtp-Source: AG47ELsEqkUc9O+3YkyT7XwAZsRcnHeqZBnAvIRQvBBe3mF+xPpyWWpRktZ3vs+tyLMgPF6huMjjtg==
+Date: Fri, 16 Mar 2018 07:44:40 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Kaihua Zhong <zhongkaihua@huawei.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Ruyi Wang <wangruyi@huawei.com>
+Subject: Re: [PATCH v7 3/3] dts: arm64: Add mailbox binding for hi3660
+Message-ID: <20180315234440.GA18160@leoy-ThinkPad-X240s>
+References: <1521130058-24796-1-git-send-email-leo.yan@linaro.org>
+ <1521130058-24796-4-git-send-email-leo.yan@linaro.org>
+ <5AAAA22E.5030009@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5AAAA22E.5030009@hisilicon.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-Thanks for your patch,
-
-On 2018-03-15 17:11:54 +0100, Jacopo Mondi wrote:
-> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On Thu, Mar 15, 2018 at 04:41:18PM +0000, Wei Xu wrote:
+> Hi Leo,
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 ++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> On 2018/3/15 16:07, Leo Yan wrote:
+> > From: Kaihua Zhong <zhongkaihua@huawei.com>
+> > 
+> > Add DT binding for mailbox driver.
+> > 
+> > Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
+> > Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> new file mode 100644
-> index 0000000..8225c6a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> @@ -0,0 +1,66 @@
-> +Thine Electronics THC63LVD1024 LVDS decoder
-> +-------------------------------------------
-> +
-> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-> +to parallel data outputs. The chip supports single/dual input/output modes,
-> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-> +
-> +Single or dual operation modes, output data mapping and DDR output modes are
-> +configured through input signals and the chip does not expose any control bus.
-> +
-> +Required properties:
-> +- compatible: Shall be "thine,thc63lvd1024"
-> +
-> +Optional properties:
-> +- vcc-supply: Power supply for TTL output and digital circuitry
-> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> +- lvcc-supply: Power supply for LVDS inputs
-> +- pvcc-supply: Power supply for PLL circuitry
-> +- pdwn-gpios: Power down GPIO signal. Active low
-> +- oe-gpios: Output enable GPIO signal. Active high
-> +
-> +The THC63LVD1024 video port connections are modeled according
-> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-> +
-> +Required video port nodes:
-> +- Port@0: First LVDS input port
-> +- Port@2: First digital CMOS/TTL parallel output
-> +
-> +Optional video port nodes:
-> +- Port@1: Second LVDS input port
-> +- Port@3: Second digital CMOS/TTL parallel output
-> +
-> +Example:
-> +--------
-> +
-> +	thc63lvd1024: lvds-decoder {
-> +		compatible = "thine,thc63lvd1024";
-> +
-> +		vcc-supply = <&reg_lvds_vcc>;
-> +		lvcc-supply = <&reg_lvds_lvcc>;
-> +
-> +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				lvds_dec_in_0: endpoint {
-> +					remote-endpoint = <&lvds_out>;
-> +				};
-> +			};
-> +
-> +			port@2{
-> +				reg = <2>;
-> +
-> +				lvds_dec_out_2: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +
-> +			};
-> +
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+> Fine to me. Thanks!
+> Acked-by: Wei Xu <xuwei5@hisilicon.com>
 
--- 
-Regards,
-Niklas Söderlund
+Thanks, Wei.
+
+> Best Regards,
+> Wei
+> 
+> > ---
+> >  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > index 63d4f9d..3788448 100644
+> > --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > @@ -298,6 +298,14 @@
+> >  			#reset-cells = <2>;
+> >  		};
+> >  
+> > +		mailbox: mailbox@e896b000 {
+> > +			compatible = "hisilicon,hi3660-mbox";
+> > +			reg = <0x0 0xe896b000 0x0 0x1000>;
+> > +			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
+> > +			#mbox-cells = <3>;
+> > +		};
+> > +
+> >  		dual_timer0: timer@fff14000 {
+> >  			compatible = "arm,sp804", "arm,primecell";
+> >  			reg = <0x0 0xfff14000 0x0 0x1000>;
+> > 
+> 
