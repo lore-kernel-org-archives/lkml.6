@@ -1,90 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751542AbeCOJMS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:12:18 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:33104 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751556AbeCOJMN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:12:13 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "peterz@infradead.org" <peterz@infradead.org>
-CC: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: arc_usr_cmpxchg and preemption
-Thread-Topic: arc_usr_cmpxchg and preemption
-Thread-Index: AQHTu7KSgtMaj81NvU2WaxKl+xOkrqPP4yWAgAAPhQCAAC4ZgIAAw4yAgAAO6wA=
-Date: Thu, 15 Mar 2018 09:12:09 +0000
-Message-ID: <1521105128.11552.64.camel@synopsys.com>
-References: <1521045375.11552.27.camel@synopsys.com>
-         <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
-         <20180314175352.GP4064@hirez.programming.kicks-ass.net>
-         <1521059931.11552.51.camel@synopsys.com>
-         <20180315081845.GS4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180315081845.GS4064@hirez.programming.kicks-ass.net>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5373E3962868F54486F8E6ED3D0ADF5F@internal.synopsys.com>
+        id S1751597AbeCOJOA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:14:00 -0400
+Received: from ozlabs.org ([103.22.144.67]:52519 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751314AbeCOJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:13:57 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 15 Mar 2018 20:13:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ asm-generic tree
+Message-ID: <20180315201326.2b616bcd@canb.auug.org.au>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/oO1S9L/5G0E=8zI9PMfy/Cg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2F9CPUp008874
 
-Hi Peter,
+--Sig_/oO1S9L/5G0E=8zI9PMfy/Cg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2018-03-15 at 09:18 +0100, Peter Zijlstra wrote:
-> On Wed, Mar 14, 2018 at 08:38:53PM +0000, Alexey Brodkin wrote:
-> > > int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
-> > > {
-> > > 	u32 val;
-> > > 	int ret;
-> > > 
-> > > again:
-> > > 	ret = 0;
-> > > 
-> > > 	preempt_disable();
-> > > 	val = get_user(user_ptr);
-> > > 	if (val == old)
-> > > 		ret = put_user(new, user_ptr);
-> > > 	preempt_enable();
-> > > 
-> > > 	if (ret == -EFAULT) {
-> > > 		struct page *page;
-> > > 		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
-> > > 		if (ret < 0)
-> > > 			return ret;
-> > > 		put_page(page);
-> > > 		goto again;
-> > 
-> > I guess this jump we need to do only once, right?
-> 
-> Typically, yes. It is theoretically possible for the page to get
-> paged-out right after we do put_page() and before we do get/put_user(),
-> But if that happens the machine likely has bigger problems than having
-> to do this loop again.
-> 
-> FWIW, look at kernel/futex.c for working examples of this pattern, the
-> above was written purely from memory and could contain a fail or two ;-)
+Hi all,
 
-Thanks for the pointer!
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-> Also, it might make sense to stuff this implementation in some lib/ file
-> somewhere and make all platforms that need it use the same code, afaict
-> there really isn't anything platform specific to it.
+  arch/tile/mm/mmap.c
 
-Not clear which part do you mean here.
-Are you talking about entire cmpxchg syscall implementation?
+between commit:
 
-Do you think there're many users of that quite an inefficient
-[compared to proper HW version] atomic exchange?
+  0373506fe580 ("arch: remove tile port")
 
--Alexey
+from the asm-generic tree and commit:
+
+  69ab63fcaa9b ("exec: pass stack rlimit into mm layout functions")
+
+from the akpm-current tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oO1S9L/5G0E=8zI9PMfy/Cg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqOTYACgkQAVBC80lX
+0GxcAAf9FZE6lAt6ZyJZO88DWyP+uQDjBSZpqfvVKdE96wx/9+8ecWFseK5ukM02
+xxri1ykv+8ou3gyhvpSxY3bkKlDE4PWy/a9YO9XQa7hYcfIuo4HRSo4pdwfEB+MG
+hqxxUDEXD6/T38zdbihaEV2LwnsZ8bR8D8k8RCN/hr9wu6Mdi8o/rn7m6grAM4Qc
+tuaiNsvNfAbPlXfeZRdt1/ObvatpQ3R+kDKOD5OPi6SqSsBGkN5GgRAG2Ydb0G3G
+8fF1CFFHxqDHaGQPv4llz2g09Yh0OIJkwHe8IeH2Ngq6TSWjXCdEeVTW1kAevFrX
+6A54+kbim9G8nO1AB5xQdH02W7gcTA==
+=q3pO
+-----END PGP SIGNATURE-----
+
+--Sig_/oO1S9L/5G0E=8zI9PMfy/Cg--
