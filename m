@@ -1,53 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932623AbeCOPqg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:46:36 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38697 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932427AbeCOPqe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:46:34 -0400
-X-Google-Smtp-Source: AG47ELv0Du2jsHmNtqh4pHboLXJSNsWp2xR7iXoqfv8nnzaxn9dt1mFFLTrWz+MCFUWT4aPx0G303oANbdmCHgxjNIw=
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803150943130.1525@nanos.tec.linutronix.de>
-References: <CAK8P3a1PGEk2WDQU8i7H64Cw4dmYaJ-6vPLzW_2o23PTgm74JA@mail.gmail.com>
- <20180314220452.3453973-1-arnd@arndb.de> <alpine.DEB.2.21.1803150943130.1525@nanos.tec.linutronix.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 15 Mar 2018 16:46:32 +0100
-X-Google-Sender-Auth: L9OPwTgs19C6tdYvfiXfTrriZ8c
-Message-ID: <CAK8P3a3hXBZqubqehcTzn037aa-KVAeg82gY630oN3Btnkvdcw@mail.gmail.com>
-Subject: Re: [PATCH] [v2] y2038: introduce struct __kernel_old_timeval
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>, Stephen Boyd <sboyd@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752852AbeCOPqk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:40 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:48024 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752600AbeCOPqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:38 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive summary
+Date: Thu, 15 Mar 2018 16:44:47 +0100
+Message-Id: <20180315154448.16222-9-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
+References: <20180315154448.16222-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 9:44 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Wed, 14 Mar 2018, Arnd Bergmann wrote:
->>
->>  /*
->> + * legacy timeval structure, only embedded in structures that
->> + * traditionally used 'timeval' to pass time intervals (not absolute
->> + * times). Do not add new users. If user space fails to compile
->> + * here, this is probably because it is not y2038 safe and needs to
->> + * be changed to use another interface.
->> + */
->> +struct __kernel_old_timeval {
->> +     __kernel_long_t tv_sec;                 /* seconds */
->> +     __kernel_long_t tv_usec;                /* microseconds */
->
-> Please don't use these horrible tail comments. If you want to document the
-> obvious, then please use proper kernel doc.
+From: Borislav Petkov <bp@suse.de>
 
-I just removed them now, the only reason they were there is to keep
-the style in sync with the rest of the file, but it's also just a lot of
-duplication.
+Save the regs set when we call __die() for the first time and print it
+in oops_end().
 
-      Arnd
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/dumpstack.c | 33 ++++++++++++---------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
+
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 8cf2e2289d50..bb712ca99632 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -26,6 +26,8 @@ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+ static int die_counter;
+ 
++static struct pt_regs exec_summary_regs;
++
+ bool in_task_stack(unsigned long *stack, struct task_struct *task,
+ 		   struct stack_info *info)
+ {
+@@ -321,6 +323,9 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
+ 	raw_local_irq_restore(flags);
+ 	oops_exit();
+ 
++	/* Executive summary in case the oops scrolled away */
++	__show_regs(&exec_summary_regs, false);
++
+ 	if (!signr)
+ 		return;
+ 	if (in_interrupt())
+@@ -339,10 +344,10 @@ NOKPROBE_SYMBOL(oops_end);
+ 
+ int __die(const char *str, struct pt_regs *regs, long err)
+ {
+-#ifdef CONFIG_X86_32
+-	unsigned short ss;
+-	unsigned long sp;
+-#endif
++	/* Save the regs of the first oops for the executive summary later. */
++	if (!die_counter)
++		exec_summary_regs = *regs;
++
+ 	printk(KERN_DEFAULT
+ 	       "%s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff, ++die_counter,
+ 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT"         : "",
+@@ -352,26 +357,14 @@ int __die(const char *str, struct pt_regs *regs, long err)
+ 	       IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION) ?
+ 	       (boot_cpu_has(X86_FEATURE_PTI) ? " PTI" : " NOPTI") : "");
+ 
++	show_regs(regs);
++
+ 	if (notify_die(DIE_OOPS, str, regs, err,
+ 			current->thread.trap_nr, SIGSEGV) == NOTIFY_STOP)
+ 		return 1;
+ 
+ 	print_modules();
+-	show_regs(regs);
+-#ifdef CONFIG_X86_32
+-	if (user_mode(regs)) {
+-		sp = regs->sp;
+-		ss = regs->ss;
+-	} else {
+-		sp = kernel_stack_pointer(regs);
+-		savesegment(ss, ss);
+-	}
+-	printk(KERN_EMERG "EIP: %pS SS:ESP: %04x:%08lx\n",
+-	       (void *)regs->ip, ss, sp);
+-#else
+-	/* Executive summary in case the oops scrolled away */
+-	printk(KERN_ALERT "RIP: %pS RSP: %016lx\n", (void *)regs->ip, regs->sp);
+-#endif
++
+ 	return 0;
+ }
+ NOKPROBE_SYMBOL(__die);
+@@ -410,7 +403,5 @@ void show_regs(struct pt_regs *regs)
+ 
+ 		if (regs->ip < PAGE_OFFSET)
+ 			pr_cont(" Bad RIP value.\n");
+-		else
+-			show_opcodes((u8 *)regs->ip, KERN_DEFAULT);
+ 	}
+ }
+-- 
+2.13.0
