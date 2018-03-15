@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeCOMgJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:36:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49196 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751437AbeCOMfp (ORCPT
+        id S1751889AbeCOMfo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:35:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34102 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751437AbeCOMfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:35:45 -0400
-Message-Id: <20180315123202.787477034@infradead.org>
+        Thu, 15 Mar 2018 08:35:38 -0400
+Message-Id: <20180315123202.577145977@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Thu, 15 Mar 2018 13:19:11 +0100
+Date: Thu, 15 Mar 2018 13:19:07 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Dan Williams <dan.j.williams@intel.com>,
@@ -23,48 +23,82 @@ Cc: Dan Williams <dan.j.williams@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         George Spelvin <linux@sciencehorizons.net>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 09/11] sched/wait,mips: Fix and replace wait_on_atomic_t usage
+Subject: [PATCH 05/11] sched/wait,btrfs: Replace wait_on_atomic_t usage
 References: <20180315121902.942902000@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-wait_var-9.patch
+Content-Disposition: inline; filename=peterz-wait_var-5.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
 
-And while there, add the missing wakeup...
-
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Chris Mason <clm@fb.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/mips/kernel/process.c |    2 ++
- arch/mips/kernel/traps.c   |    4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |   14 ++++++--------
+ fs/btrfs/ioctl.c       |    2 +-
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -781,6 +781,8 @@ int mips_set_process_fp_mode(struct task
- 	atomic_set(&task->mm->context.fp_mode_switching, 0);
- 	preempt_enable();
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -3990,7 +3990,7 @@ void btrfs_dec_nocow_writers(struct btrf
+ 	bg = btrfs_lookup_block_group(fs_info, bytenr);
+ 	ASSERT(bg);
+ 	if (atomic_dec_and_test(&bg->nocow_writers))
+-		wake_up_atomic_t(&bg->nocow_writers);
++		wake_up_var(&bg->nocow_writers);
+ 	/*
+ 	 * Once for our lookup and once for the lookup done by a previous call
+ 	 * to btrfs_inc_nocow_writers()
+@@ -4001,8 +4001,7 @@ void btrfs_dec_nocow_writers(struct btrf
  
-+	wake_up_var(&task->mm->context.fp_mode_switching);
-+
- 	return 0;
+ void btrfs_wait_nocow_writers(struct btrfs_block_group_cache *bg)
+ {
+-	wait_on_atomic_t(&bg->nocow_writers, atomic_t_wait,
+-			 TASK_UNINTERRUPTIBLE);
++	wait_var_event(&bg->nocow_writers, !atomic_read(&bg->nocow_writers));
  }
  
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -1248,8 +1248,8 @@ static int enable_restore_fp_context(int
- 	 * If an FP mode switch is currently underway, wait for it to
- 	 * complete before proceeding.
- 	 */
--	wait_on_atomic_t(&current->mm->context.fp_mode_switching,
--			 atomic_t_wait, TASK_KILLABLE);
-+	wait_var_event(&current->mm->context.fp_mode_switching,
-+		       !atomic_read(&current->mm->context.fp_mode_switching));
+ static const char *alloc_name(u64 flags)
+@@ -6526,7 +6525,7 @@ void btrfs_dec_block_group_reservations(
+ 	bg = btrfs_lookup_block_group(fs_info, start);
+ 	ASSERT(bg);
+ 	if (atomic_dec_and_test(&bg->reservations))
+-		wake_up_atomic_t(&bg->reservations);
++		wake_up_var(&bg->reservations);
+ 	btrfs_put_block_group(bg);
+ }
  
- 	if (!used_math()) {
- 		/* First time FP context user. */
+@@ -6552,8 +6551,7 @@ void btrfs_wait_block_group_reservations
+ 	down_write(&space_info->groups_sem);
+ 	up_write(&space_info->groups_sem);
+ 
+-	wait_on_atomic_t(&bg->reservations, atomic_t_wait,
+-			 TASK_UNINTERRUPTIBLE);
++	wait_var_event(&bg->reservations, !atomic_read(&bg->reservations));
+ }
+ 
+ /**
+@@ -11061,7 +11059,7 @@ void btrfs_wait_for_snapshot_creation(st
+ 		ret = btrfs_start_write_no_snapshotting(root);
+ 		if (ret)
+ 			break;
+-		wait_on_atomic_t(&root->will_be_snapshotted, atomic_t_wait,
+-				 TASK_UNINTERRUPTIBLE);
++		wait_var_event(&root->will_be_snapshotted,
++			       !atomic_read(&root->will_be_snapshotted));
+ 	}
+ }
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -723,7 +723,7 @@ static int create_snapshot(struct btrfs_
+ 	btrfs_subvolume_release_metadata(fs_info, &pending_snapshot->block_rsv);
+ dec_and_free:
+ 	if (atomic_dec_and_test(&root->will_be_snapshotted))
+-		wake_up_atomic_t(&root->will_be_snapshotted);
++		wake_up_var(&root->will_be_snapshotted);
+ free_pending:
+ 	kfree(pending_snapshot->root_item);
+ 	btrfs_free_path(pending_snapshot->path);
