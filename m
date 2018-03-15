@@ -1,54 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751549AbeCONSh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:18:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeCONSf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:18:35 -0400
-Date: Thu, 15 Mar 2018 06:18:32 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, tj@kernel.org, cl@linux.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] Improve mutex documentation
-Message-ID: <20180315131832.GC9949@bombadil.infradead.org>
-References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
- <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
- <20180315115812.GA9949@bombadil.infradead.org>
- <2397831d-71b5-3cc8-9dc4-ce06e2eddfde@virtuozzo.com>
+        id S1751915AbeCONTA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:19:00 -0400
+Received: from 8bytes.org ([81.169.241.247]:42338 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751833AbeCONS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:18:57 -0400
+Date: Thu, 15 Mar 2018 14:18:54 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: "Raj, Ashok" <ashok.raj@intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
+Message-ID: <20180315131854.s6xmltsvsysublcw@8bytes.org>
+References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
+ <20180213140303.42mbzfxpypljy37l@8bytes.org>
+ <20180213214002.GA27066@otc-nc-03>
+ <20180213145332.35c73eda@jacob-builder>
+ <20180215095337.fccoozdclfnbepi4@8bytes.org>
+ <20180215083811.3ec86e49@jacob-builder>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2397831d-71b5-3cc8-9dc4-ce06e2eddfde@virtuozzo.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180215083811.3ec86e49@jacob-builder>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 03:12:30PM +0300, Kirill Tkhai wrote:
-> > +/**
-> > + * mutex_lock_killable() - Acquire the mutex, interruptible by fatal signals.
-> 
-> Shouldn't we clarify that fatal signals are SIGKILL only?
+On Thu, Feb 15, 2018 at 08:38:11AM -0800, Jacob Pan wrote:
+> Just wondering if your concern is on the implementation or the debugfs
+> idea in general. Perhaps have some common IOMMU debugfs?
 
-It's more complicated than it might seem (... welcome to signal handling!)
-If you send SIGINT to a task that's waiting on a mutex_killable(), it will
-still die.  I *think* that's due to the code in complete_signal():
+My concern mainly is that we add interfaces which reveal
+potentially security relevant information to user-space and that tools
+come up using it so that this also becomes kABI and we can't easily
+change it anymore and this whole stuff turns into a maintence nightmare.
 
-        if (sig_fatal(p, sig) &&
-            !(signal->flags & SIGNAL_GROUP_EXIT) &&
-            !sigismember(&t->real_blocked, sig) &&
-            (sig == SIGKILL || !p->ptrace)) {
-...
-                                sigaddset(&t->pending.signal, SIGKILL);
+So that is definitly not something I'd like to see enabled in the
+distros, and its better to avoid it at all and search for better ways to
+debug upcoming issues.
 
-You're correct that this code only checks for SIGKILL, but any fatal
-signal will result in the signal group receiving SIGKILL.
+BPF tracers and tracing in general comes to mind here...
 
-Unless I've misunderstood, and it wouldn't be the first time I've
-misunderstood signal handling.
+
+	Joerg
