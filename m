@@ -1,157 +1,536 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751541AbeCOLsw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:48:52 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:32393 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeCOLst (ORCPT
+        id S1751687AbeCOLuV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:50:21 -0400
+Received: from atl4mhob21.registeredsite.com ([209.17.115.115]:43684 "EHLO
+        atl4mhob21.registeredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750745AbeCOLuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:48:49 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180315114847epoutp01923b1359bbf8552b47f7841d6107029e~cFZqIl32i2781027810epoutp01M
-X-AuditID: b6c32a46-3a9ff70000001029-d4-5aaa5d9e6026
-Subject: Re: [PATCH 1/6] mmc: dw_mmc: remove the deprecated
- "clock-freq-min-max" property
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Joachim Eastwood <manabian@gmail.com>, dinguyen@kernel.org,
-        Will Deacon <will.deacon@arm.com>, Wei Xu <xuwei5@hisilicon.com>
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Message-id: <32ad854d-f464-7aab-c765-fe49bdacd8e3@samsung.com>
-Date: Thu, 15 Mar 2018 20:48:46 +0900
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
-        Thunderbird/52.5.0
-MIME-version: 1.0
-In-reply-to: <CAPDyKFp2TCBfBvA53+UTJYYRrn2x_Szwb92x_2ahHhOKWdvntw@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmme682FVRBntfmFvMP3KO1eLo+d1M
-        Fpd3zWGzOPK/n9Fi9/VzjBZLr19ksmjde4Td4vjacIuXH0+wWDw5OoXZgctjzbw1jB47Z91l
-        93g8dyO7x6ZVnWwed67tYfP4vEkugC0q1SYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ
-        0sJcSSEvMTfVVsnFJ0DXLTMH6DIlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1StKGhkZ6h
-        gbmekZGRnolxrJWRKVBJQmrGkiuzmAveSVW8b97E2MDYINLFyMkhIWAisX3fQ/YuRi4OIYEd
-        jBLtx88zQTjfGSXOvd/ADFO1+coHqKoNjBLfN32EqrrLKPF/4z8WkCphgWiJw1P/sYPYIgIa
-        EnsenmcFKWIWeMAkMWnjHbAiNgEdie3fjgN1c3DwCthJdK2yAQmzCKhKnJ+5HaxXVCBM4ujM
-        T4wgNq+AoMSPyffAWjkFgiWWLJ/IBmIzC2hKvPgyiQXCFpdobr0JZctLbF7zlhlkr4TAZzaJ
-        pgW32SFecJG41NUDZQtLvDq+BcqWlni2aiMjhN3OKHF2tjBE8xRGiRUzupkgEsYSzxZ2MUFs
-        4JPoOPyXHeQBCQFeiY42IYgSD4kvbUtZIMKOEmuOQ0PrGqPErOsvWScwys1C8s8sJD/MQvLD
-        LCQ/LGBkWcUollpQnJueWmxUYKRXnJhbXJqXrpecn7uJEZwytdx2MC4553OIUYCDUYmH10Bt
-        ZZQQa2JZcWXuIUYJDmYlEd77hUAh3pTEyqrUovz4otKc1OJDjKbA8J7ILCWanA9M53kl8YYm
-        lgYmZmZG5mYWwOQmztsa4BIlJJCeWJKanZpakFoE08fEwSnVwMhW+29rv8cbAYnlNvMO9Bo7
-        yUabq7F/f6byZ8Gv31X39RKmiRZ6rPjq+HH365QTUTUex8673WKX+T+dybWDb5rJB/FXq/00
-        Nfg0ct/OeupouaJpz8WJZ1k3L9xplaX7+YP++w0sz/YXvu2dfOWXuPhDJr7lPXq+MdNDmeVT
-        btes3NB4/mnjIkslluKMREMt5qLiRAB6PnJZrwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsVy+t9jQd15sauiDM78kLOYf+Qcq8XR87uZ
-        LC7vmsNmceR/P6PF7uvnGC2WXr/IZNG69wi7xfG14RYvP55gsXhydAqzA5fHmnlrGD12zrrL
-        7vF47kZ2j02rOtk87lzbw+bxeZNcAFsUl01Kak5mWWqRvl0CV8aSK7OYC95JVbxv3sTYwNgg
-        0sXIySEhYCKx+coH9i5GLg4hgXWMEl87LrFAOPcZJRad3sYIUiUsEC1xeOo/dhBbREBDYs/D
-        86wgRcwCD5gkztw9yAjRcYNRYt+aRywgVWwCOhLbvx1n6mLk4OAVsJPoWmUDEmYRUJU4P3M7
-        2CBRgTCJnk2XwRbwCghK/Jh8D6yVUyBYYtejySwgrcwC6hJTpuSChJkFxCWaW2+yQNjyEpvX
-        vGWewCgwC0n3LISOWUg6ZiHpWMDIsopRMrWgODc9t9iowCgvtVyvODG3uDQvXS85P3cTIzBW
-        th3W6t/B+HhJ/CFGAQ5GJR5eA7WVUUKsiWXFlbmHGCU4mJVEeO8XAoV4UxIrq1KL8uOLSnNS
-        iw8xSnOwKInz8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwtt42viPF9XKSdsNhhnZPR8WTUo6v
-        RBuNLx/LWqG6i/cq2zkvbVFrp/VKR+Nqg574+66O3+GjpcN4219vZmKQrtJ36fU9confTn8V
-        kn2ZaBKsl5G067x6os+eVNkf0nN05+7oW2V4NflB0aX37O9sHLZ9nPlZrZDBdMd7llmxa+Z6
-        ZzcH1j5VYinOSDTUYi4qTgQADf9vw5ECAAA=
-X-CMS-MailID: 20180315114846epcas2p3c0f182279786330389cf500f05235f29
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342
-X-RootMTR: 20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342
-References: <CGME20180223064140epcas2p104fe6cca431ec24f2b09a6f5a45ed342@epcas2p1.samsung.com>
-        <20180223064138.18401-1-jh80.chung@samsung.com>
-        <CAPDyKFp2TCBfBvA53+UTJYYRrn2x_Szwb92x_2ahHhOKWdvntw@mail.gmail.com>
+        Thu, 15 Mar 2018 07:50:19 -0400
+X-TCPREMOTEIP: 37.74.225.130
+X-Authenticated-UID: mike@milosoftware.com
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v2] clk: Add driver for the si544 clock generator chip
+Date: Thu, 15 Mar 2018 12:50:08 +0100
+Message-Id: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 07:22 PM, Ulf Hansson wrote:
-> On 23 February 2018 at 07:41, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> 'clock-freq-min-max' property had already deprecated.
->> Remove the 'clock-freq-min-max' property that is kept to maintain
->> the compatibility.
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> 
-> Thanks, applied for next!
+This patch adds the driver and devicetree documentation for the
+Silicon Labs SI544 clock generator chip. This is an I2C controlled
+oscillator capable of generating clock signals ranging from 200kHz
+to 1500MHz.
 
-Sorry. Thanks for applying this. :)
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+v2: Add u64 cast to ls_div_bits calculation loop
+    When ls_div_bits is non-zero, the hs_div must always be even
 
-Best Regards,
-Jaehoon Chung
+ .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
+ drivers/clk/Kconfig                                |  10 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-si544.c                            | 422 +++++++++++++++++++++
+ 4 files changed, 458 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
+ create mode 100644 drivers/clk/clk-si544.c
 
-> 
-> Kind regards
-> Uffe
-> 
->> ---
->>  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt          |  4 ----
->>  drivers/mmc/host/dw_mmc.c                                 | 15 ++++-----------
->>  2 files changed, 4 insertions(+), 15 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
->> index ef3e5f14067a..75c9fdca4aaf 100644
->> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
->> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
->> @@ -59,10 +59,6 @@ Optional properties:
->>    is specified and the ciu clock is specified then we'll try to set the ciu
->>    clock to this at probe time.
->>
->> -* clock-freq-min-max (DEPRECATED): Minimum and Maximum clock frequency for card output
->> -  clock(cclk_out). If it's not specified, max is 200MHZ and min is 400KHz by default.
->> -         (Use the "max-frequency" instead of "clock-freq-min-max".)
->> -
->>  * num-slots (DEPRECATED): specifies the number of slots supported by the controller.
->>    The number of physical slots actually used could be equal or less than the
->>    value specified by num-slots. If this property is not specified, the value
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 0aa39975f33b..38e0e7c4ffd9 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -2784,7 +2784,6 @@ static int dw_mci_init_slot(struct dw_mci *host)
->>         struct dw_mci_slot *slot;
->>         const struct dw_mci_drv_data *drv_data = host->drv_data;
->>         int ctrl_id, ret;
->> -       u32 freq[2];
->>
->>         mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), host->dev);
->>         if (!mmc)
->> @@ -2798,16 +2797,6 @@ static int dw_mci_init_slot(struct dw_mci *host)
->>         host->slot = slot;
->>
->>         mmc->ops = &dw_mci_ops;
->> -       if (device_property_read_u32_array(host->dev, "clock-freq-min-max",
->> -                                          freq, 2)) {
->> -               mmc->f_min = DW_MCI_FREQ_MIN;
->> -               mmc->f_max = DW_MCI_FREQ_MAX;
->> -       } else {
->> -               dev_info(host->dev,
->> -                       "'clock-freq-min-max' property was deprecated.\n");
->> -               mmc->f_min = freq[0];
->> -               mmc->f_max = freq[1];
->> -       }
->>
->>         /*if there are external regulators, get them*/
->>         ret = mmc_regulator_get_supply(mmc);
->> @@ -2846,6 +2835,10 @@ static int dw_mci_init_slot(struct dw_mci *host)
->>         if (ret)
->>                 goto err_host_allocated;
->>
->> +       mmc->f_min = DW_MCI_FREQ_MIN;
->> +       if (!mmc->f_max)
->> +               mmc->f_max = DW_MCI_FREQ_MAX;
->> +
->>         /* Process SDIO IRQs through the sdio_irq_work. */
->>         if (mmc->caps & MMC_CAP_SDIO_IRQ)
->>                 mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
->> --
->> 2.15.1
->>
-> 
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+new file mode 100644
+index 0000000..eec1787
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+@@ -0,0 +1,25 @@
++Binding for Silicon Labs 544 programmable I2C clock generator.
++
++Reference
++This binding uses the common clock binding[1]. Details about the device can be
++found in the datasheet[2].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Si544 datasheet
++    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
++
++Required properties:
++ - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
++               to the speed grade of the chip.
++ - reg: I2C device address.
++ - #clock-cells: From common clock bindings: Shall be 0.
++
++Optional properties:
++ - clock-output-names: From common clock bindings. Recommended to be "si544".
++
++Example:
++	si544: clock-generator@55 {
++		reg = <0x55>;
++		#clock-cells = <0>;
++		compatible = "silabs,si544b";
++	};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc..5c7dc8e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -91,6 +91,16 @@ config COMMON_CLK_SI514
+ 	  This driver supports the Silicon Labs 514 programmable clock
+ 	  generator.
+ 
++config COMMON_CLK_SI544
++	tristate "Clock driver for SiLabs 544 devices"
++	depends on I2C
++	depends on OF
++	select REGMAP_I2C
++	help
++	---help---
++	  This driver supports the Silicon Labs 544 programmable clock
++	  generator.
++
+ config COMMON_CLK_SI570
+ 	tristate "Clock driver for SiLabs 570 and compatible devices"
+ 	depends on I2C
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e..bde614a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
++obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
+diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
+new file mode 100644
+index 0000000..a392acf
+--- /dev/null
++++ b/drivers/clk/clk-si544.c
+@@ -0,0 +1,422 @@
++/*
++ * Driver for Silicon Labs Si544 Programmable Oscillator
++ *
++ * Copyright (C) 2018 Topic Embedded Products
++ *
++ * Author: Mike Looijmans <mike.looijmans@topic.nl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/i2c.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++/* I2C registers (decimal as in datasheet) */
++#define SI544_REG_CONTROL	7
++#define SI544_REG_OE_STATE	17
++#define SI544_REG_HS_DIV	23
++#define SI544_REG_LS_HS_DIV	24
++#define SI544_REG_FBDIV0	26
++#define SI544_REG_FBDIV8	27
++#define SI544_REG_FBDIV16	28
++#define SI544_REG_FBDIV24	29
++#define SI544_REG_FBDIV32	30
++#define SI544_REG_FBDIV40	31
++#define SI544_REG_FCAL_OVR	69
++#define SI544_REG_ADPLL_DELTA_M0	231
++#define SI544_REG_ADPLL_DELTA_M8	232
++#define SI544_REG_ADPLL_DELTA_M16	233
++#define SI544_REG_PAGE_SELECT	255
++
++/* Register values */
++#define SI544_CONTROL_RESET	BIT(7)
++#define SI544_CONTROL_MS_ICAL2	BIT(3)
++
++#define SI544_OE_STATE_ODC_OE	BIT(0)
++
++/* Max freq depends on speed grade */
++#define SI544_MIN_FREQ	    200000U
++
++/* Si544 Internal oscilator runs at 55.05 MHz */
++#define FXO		  55050000U
++
++/* VCO range is 10.8 .. 12.1 GHz, max depends on speed grade */
++#define FVCO_MIN       10800000000ULL
++
++#define HS_DIV_MAX	2046
++#define HS_DIV_MAX_ODD	33
++
++enum si544_speed_grade {
++	si544a,
++	si544b,
++	si544c,
++};
++
++struct clk_si544 {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	struct i2c_client *i2c_client;
++	enum si544_speed_grade speed_grade;
++};
++#define to_clk_si544(_hw)	container_of(_hw, struct clk_si544, hw)
++
++/* Multiplier/divider settings */
++struct clk_si544_muldiv {
++	u32 fb_div_frac;  /* Integer part of feedback divider (32 bits) */
++	u16 fb_div_int;  /* Fractional part of feedback divider (11 bits) */
++	u16 hs_div; /* 1st divider, 5..2046, must be even when >33 */
++	u8 ls_div_bits; /* 2nd divider, as 2^x, range 0..5 */
++};
++
++/* Enables or disables the output driver */
++static int si544_enable_output(struct clk_si544 *data, bool enable)
++{
++	return regmap_update_bits(data->regmap, SI544_REG_OE_STATE,
++		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
++}
++
++/* Retrieve clock multiplier and dividers from hardware */
++static int si544_get_muldiv(struct clk_si544 *data,
++	struct clk_si544_muldiv *settings)
++{
++	int err;
++	u8 reg[6];
++
++	err = regmap_bulk_read(data->regmap, SI544_REG_HS_DIV, reg, 2);
++	if (err)
++		return err;
++
++	settings->ls_div_bits = (reg[1] >> 4) & 0x07;
++	settings->hs_div = (reg[1] & 0x07) << 8 | reg[0];
++
++	err = regmap_bulk_read(data->regmap, SI544_REG_FBDIV0, reg, 6);
++	if (err)
++		return err;
++
++	settings->fb_div_int = reg[4] | (reg[5] & 0x07) << 8;
++	settings->fb_div_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
++				reg[3] << 24;
++	return 0;
++}
++
++static int si544_set_muldiv(struct clk_si544 *data,
++	struct clk_si544_muldiv *settings)
++{
++	int err;
++	u8 reg[6];
++
++	reg[0] = settings->hs_div;
++	reg[1] = settings->hs_div >> 8 | settings->ls_div_bits << 4;
++
++	err = regmap_bulk_write(data->regmap, SI544_REG_HS_DIV, reg, 2);
++	if (err < 0)
++		return err;
++
++	reg[0] = settings->fb_div_frac;
++	reg[1] = settings->fb_div_frac >> 8;
++	reg[2] = settings->fb_div_frac >> 16;
++	reg[3] = settings->fb_div_frac >> 24;
++	reg[4] = settings->fb_div_int;
++	reg[5] = settings->fb_div_int >> 8;
++
++	/*
++	 * Writing to SI544_REG_FBDIV40 triggers the clock change, so that
++	 * must be written last
++	 */
++	return regmap_bulk_write(data->regmap, SI544_REG_FBDIV0, reg, 6);
++}
++
++static bool is_valid_frequency(const struct clk_si544 *data,
++	unsigned long frequency)
++{
++	unsigned long max_freq;
++
++	if (frequency < SI544_MIN_FREQ)
++		return false;
++
++	switch (data->speed_grade) {
++	case si544a:
++		max_freq = 1500000000;
++		break;
++	case si544b:
++		max_freq = 800000000;
++		break;
++	case si544c:
++		max_freq = 350000000;
++		break;
++	default:
++		return false;
++	}
++
++	if (frequency > max_freq)
++		return false;
++
++	return true;
++}
++
++/* Calculate divider settings for a given frequency */
++static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
++	unsigned long frequency)
++{
++	u64 vco;
++	u32 ls_freq;
++	u32 tmp;
++	u8 res;
++
++	/* Determine the minimum value of LS_DIV and resulting target freq. */
++	ls_freq = frequency;
++	settings->ls_div_bits = 0;
++
++	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
++		settings->ls_div_bits = 0;
++	else {
++		res = 1;
++		tmp = 2 * HS_DIV_MAX;
++		while (tmp <= (HS_DIV_MAX * 32)) {
++			if (((u64)frequency * tmp) >= FVCO_MIN)
++				break;
++			++res;
++			tmp <<= 1;
++		}
++		settings->ls_div_bits = res;
++		ls_freq = frequency << res;
++	}
++
++	/* Determine minimum HS_DIV by rounding up */
++	vco = FVCO_MIN + ls_freq - 1;
++	do_div(vco, ls_freq);
++	settings->hs_div = vco;
++	/* round up to even number when required */
++	if ((settings->hs_div & 1) &&
++	    ((settings->hs_div > HS_DIV_MAX_ODD) || settings->ls_div_bits))
++		++settings->hs_div;
++	/* Calculate VCO frequency (in 10..12GHz range) */
++	vco = (u64)ls_freq * settings->hs_div;
++	/* Calculate the integer part of the feedback divider */
++	tmp = do_div(vco, FXO);
++	settings->fb_div_int = vco;
++	/* And the fractional bits using the remainder */
++	vco = (u64)tmp << 32;
++	do_div(vco, FXO);
++	settings->fb_div_frac = vco;
++
++	return 0;
++}
++
++/* Calculate resulting frequency given the register settings */
++static unsigned long si544_calc_rate(struct clk_si544_muldiv *settings)
++{
++	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
++	u64 vco;
++
++	/* Calculate VCO while preventing overflow */
++	vco = (u64)settings->fb_div_int * FXO;
++	vco += (((u64)settings->fb_div_frac * FXO) + (FXO / 2)) >> 32;
++
++	do_div(vco, d);
++
++	return vco;
++}
++
++static unsigned long si544_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	err = si544_get_muldiv(data, &settings);
++	if (err) {
++		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
++		return 0;
++	}
++
++	return si544_calc_rate(&settings);
++}
++
++static long si544_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	if (!rate)
++		return 0;
++
++	if (!is_valid_frequency(data, rate))
++		return -EINVAL;
++
++	err = si544_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	return si544_calc_rate(&settings);
++}
++
++/*
++ * Update output frequency for "big" frequency changes
++ */
++static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	struct clk_si544_muldiv settings;
++	int err;
++
++	if (!is_valid_frequency(data, rate))
++		return -EINVAL;
++
++	err = si544_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	si544_enable_output(data, false);
++
++	/* Allow FCAL for this frequency update */
++	err = regmap_write(data->regmap, SI544_REG_FCAL_OVR, 0);
++	if (err < 0)
++		return err;
++
++
++	err = si544_set_muldiv(data, &settings);
++	if (err < 0)
++		return err; /* Undefined state now, best to leave disabled */
++
++	/* Trigger calibration */
++	err = regmap_write(data->regmap, SI544_REG_CONTROL,
++			   SI544_CONTROL_MS_ICAL2);
++	if (err < 0)
++		return err;
++
++	/* Applying a new frequency can take up to 10ms */
++	usleep_range(10000, 12000);
++
++	si544_enable_output(data, true);
++
++	return err;
++}
++
++static const struct clk_ops si544_clk_ops = {
++	.recalc_rate = si544_recalc_rate,
++	.round_rate = si544_round_rate,
++	.set_rate = si544_set_rate,
++};
++
++static bool si544_regmap_is_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case SI544_REG_CONTROL:
++	case SI544_REG_FCAL_OVR:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config si544_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.cache_type = REGCACHE_RBTREE,
++	.max_register = SI544_REG_PAGE_SELECT,
++	.volatile_reg = si544_regmap_is_volatile,
++};
++
++static int si544_probe(struct i2c_client *client,
++		const struct i2c_device_id *id)
++{
++	struct clk_si544 *data;
++	struct clk_init_data init;
++	int err;
++
++	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	init.ops = &si544_clk_ops;
++	init.flags = 0;
++	init.num_parents = 0;
++	data->hw.init = &init;
++	data->i2c_client = client;
++	data->speed_grade = id->driver_data;
++
++	if (of_property_read_string(client->dev.of_node, "clock-output-names",
++			&init.name))
++		init.name = client->dev.of_node->name;
++
++	data->regmap = devm_regmap_init_i2c(client, &si544_regmap_config);
++	if (IS_ERR(data->regmap)) {
++		dev_err(&client->dev, "failed to allocate register map\n");
++		return PTR_ERR(data->regmap);
++	}
++
++	i2c_set_clientdata(client, data);
++
++	/* Select page 0, just to be sure, there appear to be no more */
++	err = regmap_write(data->regmap, SI544_REG_PAGE_SELECT, 0);
++	if (err < 0)
++		return err;
++
++	err = devm_clk_hw_register(&client->dev, &data->hw);
++	if (err) {
++		dev_err(&client->dev, "clock registration failed\n");
++		return err;
++	}
++	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
++				     &data->hw);
++	if (err) {
++		dev_err(&client->dev, "unable to add clk provider\n");
++		return err;
++	}
++
++	return 0;
++}
++
++static int si544_remove(struct i2c_client *client)
++{
++	of_clk_del_provider(client->dev.of_node);
++	return 0;
++}
++
++static const struct i2c_device_id si544_id[] = {
++	{ "si544a", si544a },
++	{ "si544b", si544b },
++	{ "si544c", si544c },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, si544_id);
++
++static const struct of_device_id clk_si544_of_match[] = {
++	{ .compatible = "silabs,si544a" },
++	{ .compatible = "silabs,si544b" },
++	{ .compatible = "silabs,si544c" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, clk_si544_of_match);
++
++static struct i2c_driver si544_driver = {
++	.driver = {
++		.name = "si544",
++		.of_match_table = clk_si544_of_match,
++	},
++	.probe		= si544_probe,
++	.remove		= si544_remove,
++	.id_table	= si544_id,
++};
++module_i2c_driver(si544_driver);
++
++MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
++MODULE_DESCRIPTION("Si544 driver");
++MODULE_LICENSE("GPL");
+-- 
+1.9.1
