@@ -1,48 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeCOHVr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 03:21:47 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:47005 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751095AbeCOHVq (ORCPT
+        id S1751833AbeCOHXH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 03:23:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeCOHXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 03:21:46 -0400
-X-Google-Smtp-Source: AG47ELvriCLo9veW+ue9Bwx5z9KzJSoX3VGd+cONj+SvuFzgTtxEMGVyb3u1WBSx/8xui6LtNsfJWA==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
-        richard@nod.at, cyrille.pitchen@wedev4u.fr, dedekind1@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: [PATCH 2/2 v2] mtd: ubi: use put_device() if device_register fail
-Date: Thu, 15 Mar 2018 12:50:31 +0530
-Message-Id: <1521098431-29565-1-git-send-email-arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 15 Mar 2018 03:23:05 -0400
+Date: Thu, 15 Mar 2018 00:22:57 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 0/3] Introduce module_nd_driver
+Message-ID: <20180315072257.GA14576@infradead.org>
+References: <20180314182508.10351-1-jthumshirn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180314182508.10351-1-jthumshirn@suse.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if device_register() returned an error! Always use put_device()
-to give up the reference initialized.
+On Wed, Mar 14, 2018 at 07:25:05PM +0100, Johannes Thumshirn wrote:
+> Provide a module_nd_driver() wrapper and move over the appliccable
+> drivers nd_pmem.ko and dax_pmem.ko.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
-change in v2:
-        Fix use-after-free bug. move put_device() after cdev_del().
-
- drivers/mtd/ubi/vmt.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-index 3fd8d7f..93c6163 100644
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -610,6 +610,7 @@ int ubi_add_volume(struct ubi_device *ubi, struct ubi_volume *vol)
- 
- out_cdev:
- 	cdev_del(&vol->cdev);
-+	put_device(&vol->dev);
- 	return err;
- }
- 
--- 
-1.9.1
+What is the point?  It saves a hand fulk of lines, while making
+the code both harder to read and harder to extend.
