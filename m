@@ -1,148 +1,136 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv/VniVvzTtqI/LCxw22Y4FHtBrMLeFwx7ABSu4IMIFEWaxg9r6+iM7LeqND5aClJ+b1o0G
-ARC-Seal: i=1; a=rsa-sha256; t=1520451905; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Z931h3jaepU94LiDX8HfQ0U/onIFBPNImWbpJXhvcSaQZW84oEOxwkKvEgW92GDYcX
-         99K/79fF6n9eTk5zEsySvCTFfMltJPbtb/iWfPjqHNMQyNoWc6UZWdAeydMDoyJkGxRj
-         6XasyB/tyy+MpPfRmhClQmAItgw/fRGWAZmAhLlZzlGL5idfSIR1N+rVi51A+NwZXV8L
-         gIYQqGqhA5olz2FXllFoaC+M0UxsQ2hS5GneIh2tyKnoNae/k8YhfuJ7TKtmZUtqvbuP
-         UWGZYWbXxDpeyGS5x9s9007H9AJJSPH5CXfAMrOw3xdxE5PdPaIBbxaz7V9/9Bw4uUG9
-         Wsrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=TSMjgN2/y/lX87rJ8fTEPPjI5ohIEGRyVkEaRX50evI=;
-        b=uDnzpTBuc9iGV/PxEmHmZfuNVe8bbLqsyQk6xhydz8HbHzFE7dNGTXHLe6wkGcmFpR
-         Pt3dRPehYe5/2KXdjQJDuRrsUUUT9+CXBqbvdxf5kMMuUXdOLV59kqPk4QQaWP+/z5R6
-         QJORWfUHQDI9hDTw+yLD35F/WDWLP4uJysHRDNbacXPAi5PRQr2gRinjDq4MrIHs7C6K
-         uEomO1ehya23l0SJ2dp+unY59Ug0kAYTmr8V7n1IzI9ttkr9udjDHx11owaZ/r+ukuvo
-         W9HVXitJHtEnXWm0VCPBNvYb78YAoF0KE4DdovYX3aJWwwaCQjH3AwimoPK9pXWY80ct
-         rOwQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Anand Jain <anand.jain@oracle.com>,
-	Liu Bo <bo.li.liu@oracle.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 024/110] btrfs: use proper endianness accessors for super_copy
-Date: Wed,  7 Mar 2018 11:38:07 -0800
-Message-Id: <20180307191042.810088712@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-977033-1521140148-2-14607863818307892106
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521140148; b=JOanzGGDVxjDZWJC5pfPhPk/vXRROsSg/GibTIu/VLzGtTg
+    m6UXgFPy0Om1xD+VrXK3PiRkAGDTFfqknQKflKDnXtcoWNdbCdspi78b2QfSaDZg
+    pC9ZVnrIzulxRWCBVKumkSy1wg5k2tBaZ+3PGILrlF+sbtj1MgJo/v7C6G8XdeYY
+    Bm9zDhClcmlaeTldEKvgL82Q5vtZ+c/k4eOvQKMs3c6vstRR8l9a678LDZI3P2uB
+    oe8WQfL0x/L1KcTlMG2B+tmYwTBmyKXjFC2gYqyVw/JtRj1Bi6YJwVKAhKp4gzyb
+    kJEWiLo+KfJf9gelehGocqS0nvlc2scN3QiSgyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521140148; bh=o/ztID0C6Z34xpbLHIwJNhfO06
+    thABotL6OtLYxK0UA=; b=SiwFuOEEF3WkOFNDqvJPaxl2njz9ZkDrNkPaxVkN5y
+    +d2/RAGLAhGEpRRRHwNpOSYWIHnQ6p4yqmZlVsUbX4Qnu2N+8oq5RzE7LLrXixAG
+    i0ABBjI9p6Y6RChl3LUTBIgxOhXbFtziQcN1QbP4stzuAk75YsCTFGJ9cvYRiyIz
+    CrBtGknylPAMlta21EBtWYgzd2JjXErkasnxnUIeqeEn60ssZaDrmPYqOTbkRbil
+    7LFjBi5GxJ/aTLnni0PI2nDXVWWShKQDgpha5xKXwEe1tdYgRu2oKlH7lVz6GnOs
+    DYhxuvfFX2c4oOSIXnuhgOGyvncByJVsI8raOdqLvzog==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=manchmal.in-ulm.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-50 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=manchmal.in-ulm.de header.result=pass header_org.domain=in-ulm.de header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=manchmal.in-ulm.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-50 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=manchmal.in-ulm.de header.result=pass header_org.domain=in-ulm.de header_org.result=pass header_is_org_domain=no
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751546AbeCOSzq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Mar 2018 14:55:46 -0400
+Received: from manchmal.in-ulm.de ([217.10.9.201]:49990 "EHLO
+        manchmal.in-ulm.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeCOSzq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Mar 2018 14:55:46 -0400
+Date: Thu, 15 Mar 2018 19:55:42 +0100
+From: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Anand Jain <anand.jain@oracle.com>,
+        Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH 4.14 024/110] btrfs: use proper endianness accessors for
+ super_copy
+Message-ID: <1521139304@msgid.manchmal.in-ulm.de>
 References: <20180307191039.748351103@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+ <20180307191042.810088712@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307191042.810088712@linuxfoundation.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309090147375870?=
-X-GMAIL-MSGID: =?utf-8?q?1594309377521208214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Greg Kroah-Hartman wrote...
 
-------------------
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
 
-From: Anand Jain <anand.jain@oracle.com>
+> commit 3c181c12c431fe33b669410d663beb9cceefcd1b upstream.
+(...)
 
-commit 3c181c12c431fe33b669410d663beb9cceefcd1b upstream.
+> If the filesystem is always used on a same endian host, this will not
+> be a problem.
 
-The fs_info::super_copy is a byte copy of the on-disk structure and all
-members must use the accessor macros/functions to obtain the right
-value.  This was missing in update_super_roots and in sysfs readers.
+>From my observations I cannot quite subscribe to that.
 
-Moving between opposite endianness hosts will report bogus numbers in
-sysfs, and mount may fail as the root will not be restored correctly. If
-the filesystem is always used on a same endian host, this will not be a
-problem.
+On big-endian systems, this change intruduces severe corruption,
+resulting in complete loss of the data on the used block device.
 
-Fix this by using the btrfs_set_super...() functions to set
-fs_info::super_copy values, and for the sysfs, use the cached
-fs_info::nodesize/sectorsize values.
+Steps to reproduce (tested on ppc/powerpc and parisc/hppa):
 
-CC: stable@vger.kernel.org
-Fixes: df93589a17378 ("btrfs: export more from FS_INFO to sysfs")
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# mkfs.btrfs $DEV
+# mount $DEV /mnt/tmp/
+# umount /mnt/tmp/
 
----
- fs/btrfs/sysfs.c       |    8 +++-----
- fs/btrfs/transaction.c |   20 ++++++++++++--------
- 2 files changed, 15 insertions(+), 13 deletions(-)
+This simple umount corrupts the file system:
 
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -422,7 +422,7 @@ static ssize_t btrfs_nodesize_show(struc
- {
- 	struct btrfs_fs_info *fs_info = to_fs_info(kobj);
- 
--	return snprintf(buf, PAGE_SIZE, "%u\n", fs_info->super_copy->nodesize);
-+	return snprintf(buf, PAGE_SIZE, "%u\n", fs_info->nodesize);
- }
- 
- BTRFS_ATTR(nodesize, btrfs_nodesize_show);
-@@ -432,8 +432,7 @@ static ssize_t btrfs_sectorsize_show(str
- {
- 	struct btrfs_fs_info *fs_info = to_fs_info(kobj);
- 
--	return snprintf(buf, PAGE_SIZE, "%u\n",
--			fs_info->super_copy->sectorsize);
-+	return snprintf(buf, PAGE_SIZE, "%u\n", fs_info->sectorsize);
- }
- 
- BTRFS_ATTR(sectorsize, btrfs_sectorsize_show);
-@@ -443,8 +442,7 @@ static ssize_t btrfs_clone_alignment_sho
- {
- 	struct btrfs_fs_info *fs_info = to_fs_info(kobj);
- 
--	return snprintf(buf, PAGE_SIZE, "%u\n",
--			fs_info->super_copy->sectorsize);
-+	return snprintf(buf, PAGE_SIZE, "%u\n", fs_info->sectorsize);
- }
- 
- BTRFS_ATTR(clone_alignment, btrfs_clone_alignment_show);
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -1722,19 +1722,23 @@ static void update_super_roots(struct bt
- 
- 	super = fs_info->super_copy;
- 
-+	/* update latest btrfs_super_block::chunk_root refs */
- 	root_item = &fs_info->chunk_root->root_item;
--	super->chunk_root = root_item->bytenr;
--	super->chunk_root_generation = root_item->generation;
--	super->chunk_root_level = root_item->level;
-+	btrfs_set_super_chunk_root(super, root_item->bytenr);
-+	btrfs_set_super_chunk_root_generation(super, root_item->generation);
-+	btrfs_set_super_chunk_root_level(super, root_item->level);
- 
-+	/* update latest btrfs_super_block::root refs */
- 	root_item = &fs_info->tree_root->root_item;
--	super->root = root_item->bytenr;
--	super->generation = root_item->generation;
--	super->root_level = root_item->level;
-+	btrfs_set_super_root(super, root_item->bytenr);
-+	btrfs_set_super_generation(super, root_item->generation);
-+	btrfs_set_super_root_level(super, root_item->level);
-+
- 	if (btrfs_test_opt(fs_info, SPACE_CACHE))
--		super->cache_generation = root_item->generation;
-+		btrfs_set_super_cache_generation(super, root_item->generation);
- 	if (test_bit(BTRFS_FS_UPDATE_UUID_TREE_GEN, &fs_info->flags))
--		super->uuid_tree_generation = root_item->generation;
-+		btrfs_set_super_uuid_tree_generation(super,
-+						     root_item->generation);
- }
- 
- int btrfs_transaction_in_commit(struct btrfs_fs_info *info)
+# mount $DEV /mnt/tmp/
+mount: /mnt/tmp: wrong fs type, bad option, bad superblock on $DEV, missing codepage or helper program, or other error.
+
+# dmesg:
+BTRFS critical (device <dev>): unable to find logical 4294967296 length 4096
+BTRFS critical (device <dev>): unable to find logical 4294967296 length 4096
+BTRFS critical (device <dev>): unable to find logical 18102363734671360 length 16384
+BTRFS error (device <dev>): failed to read chunk root
+BTRFS error (device <dev>): open_ctree failed
+
+Also fsck is of no help:
+
+# btrfsck $DEV
+Couldn't map the block 18102363734671360
+No mapping for 18102363734671360-18102363734687744
+Couldn't map the block 18102363734671360
+bytenr mismatch, want=18102363734671360, have=0
+ERROR: cannot read chunk root
+ERROR: cannot open file system
+
+
+Trying mount or fsck on a little-endian system does not help either. So
+I consider the data on that device lost - luckily I use btrfs only for
+files where a backup exists all the time.
+
+
+Reverting that change restored the previous error-free behaviour. I
+didn't check HEAD, i.e. v4.16-rc5, since the upstream commt was the last
+that affected these files. Still I could give this a try if anybody
+wishes so.
+
+Cheers,
+
+    Christoph
