@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeCOMfo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:35:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34102 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751437AbeCOMfi (ORCPT
+        id S1752007AbeCOMgX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:36:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49192 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeCOMfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:35:38 -0400
-Message-Id: <20180315123202.577145977@infradead.org>
+        Thu, 15 Mar 2018 08:35:44 -0400
+Message-Id: <20180315121902.942902000@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Thu, 15 Mar 2018 13:19:07 +0100
+Date: Thu, 15 Mar 2018 13:19:02 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Dan Williams <dan.j.williams@intel.com>,
@@ -23,82 +23,55 @@ Cc: Dan Williams <dan.j.williams@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         George Spelvin <linux@sciencehorizons.net>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 05/11] sched/wait,btrfs: Replace wait_on_atomic_t usage
-References: <20180315121902.942902000@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-wait_var-5.patch
+Subject: [PATCH 00/11] sched/wait: Replace wait_on_atomic_t() with wait_var_event()
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
+I never really liked the whole wait_on_atomic_t() because of the hard-coded
+type and condition. And when Dan proposed to add 50+ lines of duplication to
+implement wait_on_atomic_one() I figured that was it.
 
-Cc: Chris Mason <clm@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Instead implement wait_var_event(), which at the fundamental level is much the
+same hashed-waitqueue as wait_on_atomic_t() is, but it doesn't care about the
+type or condition.
+
+It is further modelled on the existing wait_event() API and is otherwise
+consistent with that.
+
+The existing:
+
+  wait_for_atomic_t(&my_atomic, wait_atomic_t, TASK_UNINTERRUPTIBLE);
+  wake_up_atomic_t(&my_atomic);
+
+can be replaced with:
+
+  wait_var_event(&my_atomic, !atomic_read(&my_atomic));
+  wake_up_var(&my_atomic);
+
+And Dan can do what he needs done using:
+
+  wait_var_event(&my_atomic, atomic_read(&my_atomic) == 1);
+
+
 ---
- fs/btrfs/extent-tree.c |   14 ++++++--------
- fs/btrfs/ioctl.c       |    2 +-
- 2 files changed, 7 insertions(+), 9 deletions(-)
-
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -3990,7 +3990,7 @@ void btrfs_dec_nocow_writers(struct btrf
- 	bg = btrfs_lookup_block_group(fs_info, bytenr);
- 	ASSERT(bg);
- 	if (atomic_dec_and_test(&bg->nocow_writers))
--		wake_up_atomic_t(&bg->nocow_writers);
-+		wake_up_var(&bg->nocow_writers);
- 	/*
- 	 * Once for our lookup and once for the lookup done by a previous call
- 	 * to btrfs_inc_nocow_writers()
-@@ -4001,8 +4001,7 @@ void btrfs_dec_nocow_writers(struct btrf
- 
- void btrfs_wait_nocow_writers(struct btrfs_block_group_cache *bg)
- {
--	wait_on_atomic_t(&bg->nocow_writers, atomic_t_wait,
--			 TASK_UNINTERRUPTIBLE);
-+	wait_var_event(&bg->nocow_writers, !atomic_read(&bg->nocow_writers));
- }
- 
- static const char *alloc_name(u64 flags)
-@@ -6526,7 +6525,7 @@ void btrfs_dec_block_group_reservations(
- 	bg = btrfs_lookup_block_group(fs_info, start);
- 	ASSERT(bg);
- 	if (atomic_dec_and_test(&bg->reservations))
--		wake_up_atomic_t(&bg->reservations);
-+		wake_up_var(&bg->reservations);
- 	btrfs_put_block_group(bg);
- }
- 
-@@ -6552,8 +6551,7 @@ void btrfs_wait_block_group_reservations
- 	down_write(&space_info->groups_sem);
- 	up_write(&space_info->groups_sem);
- 
--	wait_on_atomic_t(&bg->reservations, atomic_t_wait,
--			 TASK_UNINTERRUPTIBLE);
-+	wait_var_event(&bg->reservations, !atomic_read(&bg->reservations));
- }
- 
- /**
-@@ -11061,7 +11059,7 @@ void btrfs_wait_for_snapshot_creation(st
- 		ret = btrfs_start_write_no_snapshotting(root);
- 		if (ret)
- 			break;
--		wait_on_atomic_t(&root->will_be_snapshotted, atomic_t_wait,
--				 TASK_UNINTERRUPTIBLE);
-+		wait_var_event(&root->will_be_snapshotted,
-+			       !atomic_read(&root->will_be_snapshotted));
- 	}
- }
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -723,7 +723,7 @@ static int create_snapshot(struct btrfs_
- 	btrfs_subvolume_release_metadata(fs_info, &pending_snapshot->block_rsv);
- dec_and_free:
- 	if (atomic_dec_and_test(&root->will_be_snapshotted))
--		wake_up_atomic_t(&root->will_be_snapshotted);
-+		wake_up_var(&root->will_be_snapshotted);
- free_pending:
- 	kfree(pending_snapshot->root_item);
- 	btrfs_free_path(pending_snapshot->path);
+ arch/mips/kernel/process.c                         |   2 +
+ arch/mips/kernel/traps.c                           |   4 +-
+ drivers/gpu/drm/drm_dp_aux_dev.c                   |  13 +--
+ drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c |  14 +--
+ drivers/media/platform/qcom/venus/hfi.c            |   8 +-
+ fs/afs/cell.c                                      |   6 +-
+ fs/afs/rxrpc.c                                     |   6 +-
+ fs/afs/server.c                                    |   6 +-
+ fs/btrfs/extent-tree.c                             |  14 ++-
+ fs/btrfs/ioctl.c                                   |   2 +-
+ fs/fscache/cookie.c                                |   7 +-
+ fs/nfs/inode.c                                     |   5 -
+ fs/nfs/pagelist.c                                  |   6 +-
+ fs/nfs/pnfs_nfs.c                                  |   2 +-
+ fs/nfs/write.c                                     |   6 +-
+ fs/ocfs2/filecheck.c                               |   9 +-
+ include/linux/fscache-cache.h                      |   2 +-
+ include/linux/wait_bit.h                           |  95 +++++++++++++-----
+ kernel/sched/wait_bit.c                            | 110 +++++----------------
+ 19 files changed, 147 insertions(+), 170 deletions(-)
