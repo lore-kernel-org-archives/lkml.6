@@ -1,76 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932426AbeCOSFc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:05:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50056 "EHLO mx1.redhat.com"
+        id S1752327AbeCOSHd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:07:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55892 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751488AbeCOSFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:05:30 -0400
-Date: Thu, 15 Mar 2018 11:05:27 -0700
-From: Chris Leech <cleech@redhat.com>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: lduncan@suse.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: iscsi_tcp: set BDI_CAP_STABLE_WRITES when data
- digest enabled
-Message-ID: <20180315180527.GC32176@straylight.hirudinean.org>
-Mail-Followup-To: Chris Leech <cleech@redhat.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>, lduncan@suse.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
+        id S1751466AbeCOSHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:07:32 -0400
+Date: Thu, 15 Mar 2018 13:07:31 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 9/9] x86/dumpstack: Explain the reasoning for the
+ prologue and buffer size
+Message-ID: <20180315180731.mnbpqjte4wafnzd3@treble>
+References: <20180315154448.16222-1-bp@alien8.de>
+ <20180315154448.16222-10-bp@alien8.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180315154448.16222-10-bp@alien8.de>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 08:29:03PM +0800, Jianchao Wang wrote:
-> iscsi tcp will first send out data, then calculate and send data
-> digest. If we don't have BDI_CAP_STABLE_WRITES, the page cache will
-> be written in spite of the on going writeback. Consequently, wrong
-> digest will be got and sent to target.
+On Thu, Mar 15, 2018 at 04:44:48PM +0100, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> To fix this, set BDI_CAP_STABLE_WRITES when data digest is enabled
-> in iscsi_tcp .slave_configure callback.
+> The whole reasoning behind the amount of opcode bytes dumped and
+> prologue length isn't very clear so let's hold down some of the reasons
+> for why it is done the way it is.
 > 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 > ---
->  drivers/scsi/iscsi_tcp.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  arch/x86/kernel/dumpstack.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
-> diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-> index 6198559..261c686 100644
-> --- a/drivers/scsi/iscsi_tcp.c
-> +++ b/drivers/scsi/iscsi_tcp.c
-> @@ -37,6 +37,7 @@
->  #include <linux/kfifo.h>
->  #include <linux/scatterlist.h>
->  #include <linux/module.h>
-> +#include <linux/backing-dev.h>
->  #include <net/tcp.h>
->  #include <scsi/scsi_cmnd.h>
->  #include <scsi/scsi_device.h>
-> @@ -954,6 +955,12 @@ static int iscsi_sw_tcp_slave_alloc(struct scsi_device *sdev)
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index bb712ca99632..7ceba3c09ad7 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -70,6 +70,25 @@ static void printk_stack_address(unsigned long address, int reliable,
+>  	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
+>  }
 >  
->  static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
+> +/*
+> + * The are a couple of reasons for the 2/3rd prologue, courtesy of Linus:
+
+s/The/There/
+
+> + *
+> + * In case where we don't have the exact kernel image (which, if we did, we can
+> + * simply disassemble and navigate to the RIP), the purpose of the bigger
+> + * prologue is to have more context and to be able to correlate the code from
+> + * the different toolchains better.
+> + *
+> + * In addition, it helps in recreating the register allocation of the failing
+> + * kernel and thus make sense of the register dump.
+> + *
+> + * What is more, the additional complication of a variable length insn arch like
+> + * x86 warrants having longer byte sequence before rIP so that the disassembler
+> + * can "sync" up properly and find instruction boundaries when decoding the
+> + * opcode bytes.
+> + *
+> + * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
+> + * guesstimate in attempt to achieve all of the above.
+> + */
+>  void show_opcodes(u8 *rip, const char *loglvl)
 >  {
-> +	struct iscsi_sw_tcp_host *tcp_sw_host = iscsi_host_priv(sdev->host);
-> +	struct iscsi_session *session = tcp_sw_host->session;
-> +	struct iscsi_conn *conn = session->leadconn;
-> +
-> +	if (conn->datadgst_en)
-> +		sdev->request_queue->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
->  	blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_ANY);
->  	blk_queue_dma_alignment(sdev->request_queue, 0);
->  	return 0;
+>  #define OPCODE_BUFSIZE 64
 > -- 
+> 2.13.0
+> 
 
-Thanks for fixing this issue with data digests!
-
-Signed-off-by: Chris Leech <cleech@redhat.com>
+-- 
+Josh
