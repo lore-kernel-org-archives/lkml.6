@@ -1,91 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeCOPjA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:39:00 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:48165 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751840AbeCOPi6 (ORCPT
+        id S932410AbeCOPja (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:39:30 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:60727 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752738AbeCOPj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:38:58 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpu/hotplug: fix unused function warning
-Date: Thu, 15 Mar 2018 16:38:04 +0100
-Message-Id: <20180315153829.3819606-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:J+yHwgJ38KnYt2rrG6M038BZEXBYgICtq1NUm2XdvDwaUp4EuiW
- Q/64GIxwAfkIvvqc1l24QqEW4Yz7oWm7dKFnsO1lq2PRH02hYNNsWWZiKg66ylbEGjonSW4
- 1Itlj3Cmin39xSxy6PrhBgdwqkAndTXgnHKB8J4eSlXwUuSzZ7ESwdpvo84OJefJ/RZ2dIT
- 0G6z1nZTE6+kfxw8lZbjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bndKs1VCD4A=:0XP1cTj3W5zJ1LkM5IpCoD
- teeAZmCC3lW1DSXcASsF+bHU9QEw3FrjXxYCJd6tepa8r+W/Qw0x/YegEJCzUNswmglnIotpa
- aZhJ3SGtY+uygrbJkx3T+NLEYQ0M3EwTC4GGwian47t/J1DygdrxKwdDfM0/tkZTl6hFvPhr0
- JL8ihHo2tLJcFuR/JVSy4OF1e3FVLPotWslYDshPrkjXLAvXoMKCT1BK0trx9v7PFKBdpIysz
- mYHoiB537CzrRzPNF9aYUWLhU33LfkKejbgvagbL9wvMwAXGPJAwXd1OzBg5PLvJUmAdKorg2
- WQi13ofHqFzD8i39SUD9O7dTZo7854NjkOsFuAOWJ94u3L38dnOueatX9nzBBVDvOpO+lxVwt
- cIW5sh5N3U5TthxhVvYUXZpJRFSPOIJwkyiI/9pZNvT51nVTycRXZB1wN3g8WhkgrwluTm/FK
- RNjvo6X55RlWSFR9eJKCr94imaD+uDx1wyOG7PPBdUanJWgXFo/WqWkPjscEAT0NuFLecer+r
- 5elLce57mXQhMbC1VevDfdcQoyuePVmq7/Wox3mqtTNTyq5uc6sLYsgL6r37SquKOPE2Oo4/w
- AXnoVCVZIHPagyHYREsGYI61zHUcayTMYXf1SVlsGZ4DNa6AF9H7DNXDTLogg7tNf8SS+ZUvc
- Vzc4hRDnPGnfJ9Z+L3X0YudNZY1j2XNs+PKsBsY4j7rTy1jHJHbn1qS8T8sd04Jig0rK2wK3Z
- YktO1YbczUvDyU2jSnMYEy7ntFhLusFCgQFkuw==
+        Thu, 15 Mar 2018 11:39:29 -0400
+Date: Thu, 15 Mar 2018 16:39:18 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180315163620.6122d752@bbrezillon>
+References: <20180304200602.11475-1-stefan@agner.ch> <20180315163620.6122d752@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC strength
+To: Boris Brezillon <boris.brezillon@bootlin.com>, han.xu@nxp.com
+CC: boris.brezillon@free-electrons.com, max.oss.09@gmail.com,
+        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
+        dwmw2@infradead.org
+From: Stefan Agner <stefan@agner.ch>
+Message-ID: <C8FA1701-52CE-46B6-9A3E-3249D1BDA4AC@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2FFdXSU015070
 
-The cpuhp_is_ap_state() function is no longer called outside of the
-CONFIG_SMP #ifdef section, causing a harmless warning:
 
-kernel/cpu.c:129:13: error: 'cpuhp_is_ap_state' defined but not used [-Werror=unused-function]
 
-This moves the function into the #ifdef to get a clean build again.
+On March 15, 2018 4:36:20 PM GMT+01:00, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>Hi,
+>
+>On Sun,  4 Mar 2018 21:06:01 +0100
+>Stefan Agner <stefan@agner.ch> wrote:
+>
+>> Add support for specified ECC strength/size using device tree
+>> properties nand-ecc-strength/nand-ecc-step-size.
+>
+>Han, we didn't hear back from you on that. Are you okay with adding
+>these new properties? IIRC, you feared there would be a delta between
+>u-boot and linux support.
+>
+>Stephan, there's no changelog. Has anything changed in this version or
+>is this just a RESEND?
 
-Fixes: 17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- kernel/cpu.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Sorry forgot that. I just split documentation and driver changes.
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index a1860d42aacf..0db8938fbb23 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -126,15 +126,6 @@ struct cpuhp_step {
- static DEFINE_MUTEX(cpuhp_state_mutex);
- static struct cpuhp_step cpuhp_hp_states[];
- 
--static bool cpuhp_is_ap_state(enum cpuhp_state state)
--{
--	/*
--	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
--	 * purposes as that state is handled explicitly in cpu_down.
--	 */
--	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
--}
--
- static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
- {
- 	return cpuhp_hp_states + state;
-@@ -235,6 +226,15 @@ static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
- }
- 
- #ifdef CONFIG_SMP
-+static bool cpuhp_is_ap_state(enum cpuhp_state state)
-+{
-+	/*
-+	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
-+	 * purposes as that state is handled explicitly in cpu_down.
-+	 */
-+	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
-+}
-+
- static inline void wait_for_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
- {
- 	struct completion *done = bringup ? &st->done_up : &st->done_down;
+--
+Stefan
+
+>
+>Regards,
+>
+>Boris
+>
+>> 
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30
+>++++++++++++++++++++----------
+>>  1 file changed, 20 insertions(+), 10 deletions(-)
+>> 
+>> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+>b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+>> index 61fdd733492f..d04754289c03 100644
+>> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+>> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+>> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct
+>gpmi_nand_data *this)
+>>   *
+>>   * We may have available oob space in this case.
+>>   */
+>> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
+>> +				    unsigned int ecc_strength,
+>> +				    unsigned int ecc_step)
+>>  {
+>>  	struct bch_geometry *geo = &this->bch_geometry;
+>>  	struct nand_chip *chip = &this->nand;
+>>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>>  	unsigned int block_mark_bit_offset;
+>>  
+>> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+>> -		return -EINVAL;
+>> -
+>> -	switch (chip->ecc_step_ds) {
+>> +	switch (ecc_step) {
+>>  	case SZ_512:
+>>  		geo->gf_len = 13;
+>>  		break;
+>> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct
+>gpmi_nand_data *this)
+>>  			chip->ecc_strength_ds, chip->ecc_step_ds);
+>>  		return -EINVAL;
+>>  	}
+>> -	geo->ecc_chunk_size = chip->ecc_step_ds;
+>> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
+>> +	geo->ecc_chunk_size = ecc_step;
+>> +	geo->ecc_strength = round_up(ecc_strength, 2);
+>>  	if (!gpmi_check_ecc(this))
+>>  		return -EINVAL;
+>>  
+>> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct
+>gpmi_nand_data *this)
+>>  	if (geo->ecc_chunk_size < mtd->oobsize) {
+>>  		dev_err(this->dev,
+>>  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
+>> -			chip->ecc_step_ds, mtd->oobsize);
+>> +			ecc_step, mtd->oobsize);
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct
+>gpmi_nand_data *this)
+>>  
+>>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
+>>  {
+>> +	struct nand_chip *chip = &this->nand;
+>> +
+>> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
+>> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
+>> +						chip->ecc.size);
+>> +
+>>  	if ((of_property_read_bool(this->dev->of_node,
+>"fsl,use-minimum-ecc"))
+>> -				|| legacy_set_geometry(this))
+>> -		return set_geometry_by_ecc_info(this);
+>> +				|| legacy_set_geometry(this)) {
+>> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+>> +			return -EINVAL;
+>> +
+>> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
+>> +						chip->ecc_step_ds);
+>> +	}
+>>  
+>>  	return 0;
+>>  }
+
 -- 
-2.9.0
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
