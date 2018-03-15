@@ -1,164 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932983AbeCOQE7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:04:59 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5210 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932959AbeCOQBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932964AbeCOQBH (ORCPT <rfc822;w@1wt.eu>);
         Thu, 15 Mar 2018 12:01:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="24968449"
-Subject: [PATCH v6 07/15] fs,
- dax: use page->mapping to warn if truncate collides with a busy page
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:52:01 -0700
-Message-ID: <152112912106.24669.9677997765966949415.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33842 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932922AbeCOQBB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:01:01 -0400
+X-Google-Smtp-Source: AG47ELtcGaHSMz3JZknqL9xr53KSyM1VmBpn5zbbecGgEwwCdZDR1V8btMwZyEKaq1IYKI6I97PRxQ==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc5 1/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Thu, 15 Mar 2018 16:00:46 +0000
+Message-Id: <1521129648-20889-2-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
+In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Catch cases where extent unmap operations encounter pages that are
-pinned / busy. Typically this is pinned pages that are under active dma.
-This warning is a canary for potential data corruption as truncated
-blocks could be allocated to a new file while the device is still
-performing i/o.
-
-Here is an example of a collision that this implementation catches:
-
- WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
- [..]
- Call Trace:
-  __dax_invalidate_mapping_entry+0x6c/0xf0
-  dax_delete_mapping_entry+0xf/0x20
-  truncate_exceptional_pvec_entries.part.12+0x1af/0x200
-  truncate_inode_pages_range+0x268/0x970
-  ? tlb_gather_mmu+0x10/0x20
-  ? up_write+0x1c/0x40
-  ? unmap_mapping_range+0x73/0x140
-  xfs_free_file_space+0x1b6/0x5b0 [xfs]
-  ? xfs_file_fallocate+0x7f/0x320 [xfs]
-  ? down_write_nested+0x40/0x70
-  ? xfs_ilock+0x21d/0x2f0 [xfs]
-  xfs_file_fallocate+0x162/0x320 [xfs]
-  ? rcu_read_lock_sched_held+0x3f/0x70
-  ? rcu_sync_lockdep_assert+0x2a/0x50
-  ? __sb_start_write+0xd0/0x1b0
-  ? vfs_fallocate+0x20c/0x270
-  vfs_fallocate+0x154/0x270
-  SyS_fallocate+0x43/0x80
-  entry_SYSCALL_64_fastpath+0x1f/0x96
-
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/dax.c |   56 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index b646a46e4d12..9ba043eb6294 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -298,6 +298,56 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
- 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index f19856d..fbc7371 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -182,6 +182,18 @@ notrace static u64 vread_tsc(void)
+ 	return last;
  }
  
-+static unsigned long dax_entry_size(void *entry)
++notrace static u64 vread_tsc_raw(void)
 +{
-+	if (dax_is_zero_entry(entry))
-+		return 0;
-+	else if (dax_is_empty_entry(entry))
-+		return 0;
-+	else if (dax_is_pmd_entry(entry))
-+		return HPAGE_SIZE;
++	u64 tsc
++	  , last = gtod->raw_cycle_last;
++
++	tsc	      = rdtsc_ordered();
++	if (likely(tsc >= last))
++		return tsc;
++	asm volatile ("");
++	return last;
++}
++
+ notrace static inline u64 vgetsns(int *mode)
+ {
+ 	u64 v;
+@@ -203,6 +215,27 @@ notrace static inline u64 vgetsns(int *mode)
+ 	return v * gtod->mult;
+ }
+ 
++notrace static inline u64 vgetsns_raw(int *mode)
++{
++	u64 v;
++	cycles_t cycles;
++
++	if (gtod->vclock_mode == VCLOCK_TSC)
++		cycles = vread_tsc_raw();
++#ifdef CONFIG_PARAVIRT_CLOCK
++	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
++		cycles = vread_pvclock(mode);
++#endif
++#ifdef CONFIG_HYPERV_TSCPAGE
++	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
++		cycles = vread_hvclock(mode);
++#endif
 +	else
-+		return PAGE_SIZE;
++		return 0;
++	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
++	return v * gtod->raw_mult;
 +}
 +
-+#define for_each_entry_pfn(entry, pfn, end_pfn) \
-+	for (pfn = dax_radix_pfn(entry), \
-+			end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
-+			pfn < end_pfn; \
-+			pfn++)
-+
-+static void dax_associate_entry(void *entry, struct address_space *mapping)
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+@@ -246,6 +279,27 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
+ 	return mode;
+ }
+ 
++notrace static __always_inline int do_monotonic_raw(struct timespec *ts)
 +{
-+	unsigned long pfn, end_pfn;
++	unsigned long seq;
++	u64 ns;
++	int mode;
 +
-+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-+		return;
++	do {
++		seq = gtod_read_begin(gtod);
++		mode = gtod->vclock_mode;
++		ts->tv_sec = gtod->monotonic_time_raw_sec;
++		ns = gtod->monotonic_time_raw_nsec;
++		ns += vgetsns_raw(&mode);
++		ns >>= gtod->raw_shift;
++	} while (unlikely(gtod_read_retry(gtod, seq)));
 +
-+	for_each_entry_pfn(entry, pfn, end_pfn) {
-+		struct page *page = pfn_to_page(pfn);
++	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
 +
-+		WARN_ON_ONCE(page->mapping);
-+		page->mapping = mapping;
-+	}
++	return mode;
 +}
 +
-+static void dax_disassociate_entry(void *entry, struct address_space *mapping,
-+		bool trunc)
-+{
-+	unsigned long pfn, end_pfn;
-+
-+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-+		return;
-+
-+	for_each_entry_pfn(entry, pfn, end_pfn) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
-+		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
-+		page->mapping = NULL;
-+	}
-+}
-+
- /*
-  * Find radix tree entry at given index. If it points to an exceptional entry,
-  * return it with the radix tree entry locked. If the radix tree doesn't
-@@ -404,6 +454,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		}
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +331,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) == VCLOCK_NONE)
++			goto fallback;
++		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
+index e1216dd..5af7093 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
++++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
+@@ -45,6 +45,11 @@ void update_vsyscall(struct timekeeper *tk)
+ 	vdata->mult		= tk->tkr_mono.mult;
+ 	vdata->shift		= tk->tkr_mono.shift;
  
- 		if (pmd_downgrade) {
-+			dax_disassociate_entry(entry, mapping, false);
- 			radix_tree_delete(&mapping->page_tree, index);
- 			mapping->nrexceptional--;
- 			dax_wake_mapping_entry_waiter(mapping, index, entry,
-@@ -453,6 +504,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	    (radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_DIRTY) ||
- 	     radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_TOWRITE)))
- 		goto out;
-+	dax_disassociate_entry(entry, mapping, trunc);
- 	radix_tree_delete(page_tree, index);
- 	mapping->nrexceptional--;
- 	ret = 1;
-@@ -547,6 +599,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
++	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
++	vdata->raw_mask		= tk->tkr_raw.mask;
++	vdata->raw_mult		= tk->tkr_raw.mult;
++	vdata->raw_shift	= tk->tkr_raw.shift;
++
+ 	vdata->wall_time_sec		= tk->xtime_sec;
+ 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
  
- 	spin_lock_irq(&mapping->tree_lock);
- 	new_entry = dax_radix_locked_entry(pfn, flags);
-+	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
-+		dax_disassociate_entry(entry, mapping, false);
-+		dax_associate_entry(new_entry, mapping);
-+	}
+@@ -74,5 +79,8 @@ void update_vsyscall(struct timekeeper *tk)
+ 		vdata->monotonic_time_coarse_sec++;
+ 	}
  
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		/*
++	vdata->monotonic_time_raw_sec  = tk->raw_sec;
++	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
++
+ 	gtod_write_end(vdata);
+ }
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index fb856c9..24e4d45 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -22,6 +22,10 @@ struct vsyscall_gtod_data {
+ 	u64	mask;
+ 	u32	mult;
+ 	u32	shift;
++	u64	raw_cycle_last;
++	u64	raw_mask;
++	u32	raw_mult;
++	u32	raw_shift;
+ 
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
+@@ -32,6 +36,8 @@ struct vsyscall_gtod_data {
+ 	gtod_long_t	wall_time_coarse_nsec;
+ 	gtod_long_t	monotonic_time_coarse_sec;
+ 	gtod_long_t	monotonic_time_coarse_nsec;
++	gtod_long_t	monotonic_time_raw_sec;
++	gtod_long_t	monotonic_time_raw_nsec;
+ 
+ 	int		tz_minuteswest;
+ 	int		tz_dsttime;
