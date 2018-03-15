@@ -1,158 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeCOGdn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 02:33:43 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52960 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbeCOGdl (ORCPT
+        id S1751886AbeCOGhX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 02:37:23 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:62131 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751362AbeCOGhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 02:33:41 -0400
-X-Google-Smtp-Source: AG47ELtABCsaExmYJLMxs59egnHc+pAMH3fcooQv5TzgcvIcGsURvYwAkMx/qrTSnH/4/GWKQzUCzQ==
-Subject: [PATCH 2/4] scsi: arcmsr: Handle adapter removed due to
- thunderbolt cable disconnection.
-From: Ching Huang <ching2048@areca.com.tw>
-To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
+        Thu, 15 Mar 2018 02:37:21 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2F6b8RM003229
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AG47ELu8N7Na4/lvatP+cocTQnR/nDx3A5GrR6U55TZh3yzTqAKdmkeddPA8QTqrmX4nqCh0dKyds4a09LCQ9AWPkGQ=
+MIME-Version: 1.0
+In-Reply-To: <nycvar.YSQ.7.76.1803141419550.28583@knanqh.ubzr>
+References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
+ <1521045861-22418-6-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1803141419550.28583@knanqh.ubzr>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 15 Mar 2018 15:36:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATTFjexL0gmtyL0QNpRQUeTPYsjoOxb3+9F20vFaE3Xdg@mail.gmail.com>
+Message-ID: <CAK7LNATTFjexL0gmtyL0QNpRQUeTPYsjoOxb3+9F20vFaE3Xdg@mail.gmail.com>
+Subject: Re: [PATCH 5/7] kbuild: hide CONFIG_TRIM_UNUSED_KSYMS code from
+ external module building
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 15 Mar 2018 14:33:36 +0800
-Message-ID: <1521095616.31371.30.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ching Huang <ching2048@areca.com.tw>
+2018-03-15 3:32 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
+> On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+>
+>> If CONFIG_TRIM_UNUSED_KYMS is enabled, KBUILD_MODULES is set.
+>
+> Not when you do "make vmlinux" though.
 
-Handle adapter removed due to thunderbolt cable disconnection.
+I could not understand this.
 
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
----
+Unless I am missing something,
+I think this code is always parsed.
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index 75e828b..2f52c53 100755
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -1446,12 +1446,80 @@ static void arcmsr_done4abort_postqueue(struct AdapterControlBlock *acb)
- 	}
- }
- 
-+static void arcmsr_remove_scsi_devices(struct AdapterControlBlock *acb)
-+{
-+	char *acb_dev_map = (char *)acb->device_map;
-+	int target, lun, i;
-+	struct scsi_device *psdev;
-+	struct CommandControlBlock *ccb;
-+	char temp;
-+
-+	for (i = 0; i < acb->maxFreeCCB; i++) {
-+		ccb = acb->pccb_pool[i];
-+		if (ccb->startdone == ARCMSR_CCB_START) {
-+			ccb->pcmd->result = DID_NO_CONNECT << 16;
-+			arcmsr_pci_unmap_dma(ccb);
-+			ccb->pcmd->scsi_done(ccb->pcmd);
-+		}
-+	}
-+	for (target = 0; target < ARCMSR_MAX_TARGETID; target++) {
-+		temp = *acb_dev_map;
-+		if (temp) {
-+			for (lun = 0; lun < ARCMSR_MAX_TARGETLUN; lun++) {
-+				if (temp & 1) {
-+					psdev = scsi_device_lookup(acb->host,
-+						0, target, lun);
-+					if (psdev != NULL) {
-+						scsi_remove_device(psdev);
-+						scsi_device_put(psdev);
-+					}
-+				}
-+				temp >>= 1;
-+			}
-+			*acb_dev_map = 0;
-+		}
-+		acb_dev_map++;
-+	}
-+}
-+
-+static void arcmsr_free_pcidev(struct AdapterControlBlock *acb)
-+{
-+	struct pci_dev *pdev;
-+	struct Scsi_Host *host;
-+
-+	host = acb->host;
-+	arcmsr_free_sysfs_attr(acb);
-+	scsi_remove_host(host);
-+	flush_work(&acb->arcmsr_do_message_isr_bh);
-+	del_timer_sync(&acb->eternal_timer);
-+	if (set_date_time)
-+		del_timer_sync(&acb->refresh_timer);
-+	pdev = acb->pdev;
-+	arcmsr_free_irq(pdev, acb);
-+	arcmsr_free_ccb_pool(acb);
-+	arcmsr_free_mu(acb);
-+	arcmsr_unmap_pciregion(acb);
-+	pci_release_regions(pdev);
-+	scsi_host_put(host);
-+	pci_disable_device(pdev);
-+}
-+
- static void arcmsr_remove(struct pci_dev *pdev)
- {
- 	struct Scsi_Host *host = pci_get_drvdata(pdev);
- 	struct AdapterControlBlock *acb =
- 		(struct AdapterControlBlock *) host->hostdata;
- 	int poll_count = 0;
-+	uint16_t dev_id;
-+
-+	pci_read_config_word(pdev, PCI_DEVICE_ID, &dev_id);
-+	if (dev_id == 0xffff) {
-+		acb->acb_flags &= ~ACB_F_IOP_INITED;
-+		acb->acb_flags |= ACB_F_ADAPTER_REMOVED;
-+		arcmsr_remove_scsi_devices(acb);
-+		arcmsr_free_pcidev(acb);
-+		return;
-+	}
- 	arcmsr_free_sysfs_attr(acb);
- 	scsi_remove_host(host);
- 	flush_work(&acb->arcmsr_do_message_isr_bh);
-@@ -1499,6 +1567,8 @@ static void arcmsr_shutdown(struct pci_dev *pdev)
- 	struct Scsi_Host *host = pci_get_drvdata(pdev);
- 	struct AdapterControlBlock *acb =
- 		(struct AdapterControlBlock *)host->hostdata;
-+	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
-+		return;
- 	del_timer_sync(&acb->eternal_timer);
- 	if (set_date_time)
- 		del_timer_sync(&acb->refresh_timer);
-@@ -2931,6 +3001,12 @@ static int arcmsr_queue_command_lck(struct scsi_cmnd *cmd,
- 	struct AdapterControlBlock *acb = (struct AdapterControlBlock *) host->hostdata;
- 	struct CommandControlBlock *ccb;
- 	int target = cmd->device->id;
-+
-+	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED) {
-+		cmd->result = (DID_NO_CONNECT << 16);
-+		cmd->scsi_done(cmd);
-+		return 0;
-+	}
- 	cmd->scsi_done = done;
- 	cmd->host_scribble = NULL;
- 	cmd->result = 0;
-@@ -4177,6 +4253,8 @@ static int arcmsr_bus_reset(struct scsi_cmnd *cmd)
- 	int retry_count = 0;
- 	int rtn = FAILED;
- 	acb = (struct AdapterControlBlock *) cmd->device->host->hostdata;
-+	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
-+		return SUCCESS;
- 	pr_notice("arcmsr: executing bus reset eh.....num_resets = %d,"
- 		" num_aborts = %d \n", acb->num_resets, acb->num_aborts);
- 	acb->num_resets++;
-@@ -4243,6 +4321,8 @@ static int arcmsr_abort(struct scsi_cmnd *cmd)
- 	int rtn = FAILED;
- 	uint32_t intmask_org;
- 
-+	if (acb->acb_flags & ACB_F_ADAPTER_REMOVED)
-+		return SUCCESS;
- 	printk(KERN_NOTICE
- 		"arcmsr%d: abort device command of scsi id = %d lun = %d\n",
- 		acb->host->host_no, cmd->device->id, (u32)cmd->device->lun);
+
+
+>> This code is unneeded for external module building because
+>> KBUILD_MODULES is always set.  Move this code inside "ifeq
+>> ($(KBUILD_EXTMOD),)" conditional.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Acked-by: Nicolas Pitre <nico@linaro.org>
+>
+>> ---
+>>
+>>  Makefile | 14 +++++++-------
+>>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Makefile b/Makefile
+>> index decc870..e60b16f 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -603,13 +603,6 @@ else
+>>  include/config/auto.conf: ;
+>>  endif # $(dot-config)
+>>
+>> -# For the kernel to actually contain only the needed exported symbols,
+>> -# we have to build modules as well to determine what those symbols are.
+>> -# (this can be evaluated only once include/config/auto.conf has been included)
+>> -ifdef CONFIG_TRIM_UNUSED_KSYMS
+>> -  KBUILD_MODULES := 1
+>> -endif
+>> -
+>>  # The all: target is the default when no target is given on the
+>>  # command line.
+>>  # This allow a user to issue only 'make' to build a kernel including modules
+>> @@ -1010,6 +1003,13 @@ ifdef CONFIG_TRIM_UNUSED_KSYMS
+>>         "$(MAKE) -f $(srctree)/Makefile vmlinux"
+>>  endif
+>>
+>> +# For the kernel to actually contain only the needed exported symbols,
+>> A+# we have to build modules as well to determine what those symbols
+> are.
+>> +# (this can be evaluated only once include/config/auto.conf has been included)
+>> +ifdef CONFIG_TRIM_UNUSED_KSYMS
+>> +  KBUILD_MODULES := 1
+>> +endif
+>> +
+>>  autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
+>>
+>>  $(autoksyms_h):
+>> --
+>> 2.7.4
+>>
+>>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
