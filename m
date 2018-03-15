@@ -1,225 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeCOVqZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:46:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751466AbeCOVqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:46:24 -0400
-Subject: Re: [RFC][PATCH] ipc: Remove IPCMNI
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stanislav Kinsbursky <skinsbursky@parallels.com>,
-        Linux Containers <containers@lists.linux-foundation.org>
-References: <1520885744-1546-1-git-send-email-longman@redhat.com>
- <1520885744-1546-5-git-send-email-longman@redhat.com>
- <87woyfyh57.fsf@xmission.com>
- <5d4a858a-3136-5ef4-76fe-a61e7f2aed56@redhat.com>
- <87o9jru3bf.fsf@xmission.com>
- <935a7c50-50cc-2dc0-33bb-92c000d039bc@redhat.com>
- <87woyego2u.fsf_-_@xmission.com>
- <047c6ed6-6581-b543-ba3d-cadc543d3d25@redhat.com>
- <87h8ph6u67.fsf@xmission.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7d3a1f93-f8e5-5325-f9a7-0079f7777b6f@redhat.com>
-Date: Thu, 15 Mar 2018 17:46:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932498AbeCOWEt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 18:04:49 -0400
+Received: from smtp-1b.atlantis.sk ([80.94.52.26]:44858 "EHLO
+        smtp-1b.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752688AbeCOWEr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 18:04:47 -0400
+From: Ondrej Zary <linux@rainbow-software.org>
+To: Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH, RFC] block: remove the paride drivers
+Date: Thu, 15 Mar 2018 23:04:40 +0100
+User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180315075256.25652-1-hch@lst.de> <201803150904.25087.linux@rainbow-software.org> <20180315080455.GA12388@lst.de>
+In-Reply-To: <20180315080455.GA12388@lst.de>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-In-Reply-To: <87h8ph6u67.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201803152304.40423.linux@rainbow-software.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 03:00 PM, Eric W. Biederman wrote:
-> Waiman Long <longman@redhat.com> writes:
+On Thursday 15 March 2018 09:04:55 Christoph Hellwig wrote:
+> On Thu, Mar 15, 2018 at 09:04:24AM +0100, Ondrej Zary wrote:
+> > On Thursday 15 March 2018, Christoph Hellwig wrote:
+> > > The paride drivers are some of the cruftiest, grottiest block drivers
+> > > (besides drivers/ide and floppy.c) and have seen one single targeted
+> > > commit since the dawn of git in 2007.  Drop them to make block layer
+> > > improvements easier.
+> >
+> > This will make my parallel port ZIP and LS-120 drives useless :(
 >
->> On 03/14/2018 08:49 PM, Eric W. Biederman wrote:
->>> The define IPCMNI was originally the size of a statically sized array in
->>> the kernel and that has long since been removed.  Therefore there is no
->>> fundamental reason for IPCMNI.
->>>
->>> The only remaining use IPCMNI serves is as a convoluted way to format
->>> the ipc id to userspace.  It does not appear that anything except for
->>> the CHECKPOINT_RESTORE code even cares about this variety of assignment
->>> and the CHECKPOINT_RESTORE code only cares about this weirdness because
->>> it has to restore these peculiar ids.
->>>
->>> Therefore make the assignment of ipc ids match the description in
->>> Advanced Programming in the Unix Environment and assign the next id
->>> until INT_MAX is hit then loop around to the lower ids.
->>>
->>> This can be implemented trivially with the current code using idr_alloc_cyclic.
->>>
->>> To make it possible to keep checkpoint/restore working I have renamed
->>> the sysctls from xxx_next_id to xxx_nextid.  That is enough change that
->>> a smart CRIU implementation can see that what is exported has changed,
->>> and act accordingly.  New kernels will be able to restore the old id's.
->>>
->>> This code still needs some real world testing to verify my assumptions.
->>> And some work with the CRIU implementations to actually add the code
->>> that deals with the new for of id assignment.
->>>
->>> Updates: 03f595668017 ("ipc: add sysctl to specify desired next object id")
->>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>> ---
->>>
->>> Waiman please take a look at this and run it through some tests etc,
->>> I am pretty certain something like this patch is all you need to do
->>> to sort out ipc assignment.  Not messing with sysctls needed.
->>>
->>>  include/linux/ipc.h           |  2 --
->>>  include/linux/ipc_namespace.h |  1 -
->>>  ipc/ipc_sysctl.c              |  6 ++--
->>>  ipc/namespace.c               | 11 ++----
->>>  ipc/util.c                    | 80 ++++++++++---------------------------------
->>>  ipc/util.h                    | 11 +-----
->>>  6 files changed, 25 insertions(+), 86 deletions(-)
->>>
->>> diff --git a/include/linux/ipc.h b/include/linux/ipc.h
->>> index 821b2f260992..6cc2df7f7ac9 100644
->>> --- a/include/linux/ipc.h
->>> +++ b/include/linux/ipc.h
->>> @@ -8,8 +8,6 @@
->>>  #include <uapi/linux/ipc.h>
->>>  #include <linux/refcount.h>
->>>  
->>> -#define IPCMNI 32768  /* <= MAX_INT limit for ipc arrays (including sysctl changes) */
->>> -
->>>  /* used by in-kernel data structures */
->>>  struct kern_ipc_perm {
->>>  	spinlock_t	lock;
->>> diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
->>> index b5630c8eb2f3..cab33b6a8236 100644
->>> --- a/include/linux/ipc_namespace.h
->>> +++ b/include/linux/ipc_namespace.h
->>> @@ -15,7 +15,6 @@ struct user_namespace;
->>>  
->>>  struct ipc_ids {
->>>  	int in_use;
->>> -	unsigned short seq;
->>>  	bool tables_initialized;
->>>  	struct rw_semaphore rwsem;
->>>  	struct idr ipcs_idr;
->>> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
->>> index 8ad93c29f511..a599963d58bf 100644
->>> --- a/ipc/ipc_sysctl.c
->>> +++ b/ipc/ipc_sysctl.c
->>> @@ -176,7 +176,7 @@ static struct ctl_table ipc_kern_table[] = {
->>>  	},
->>>  #ifdef CONFIG_CHECKPOINT_RESTORE
->>>  	{
->>> -		.procname	= "sem_next_id",
->>> +		.procname	= "sem_nextid",
->>>  		.data		= &init_ipc_ns.ids[IPC_SEM_IDS].next_id,
->>>  		.maxlen		= sizeof(init_ipc_ns.ids[IPC_SEM_IDS].next_id),
->>>  		.mode		= 0644,
->>> @@ -185,7 +185,7 @@ static struct ctl_table ipc_kern_table[] = {
->>>  		.extra2		= &int_max,
->>>  	},
->>>  	{
->>> -		.procname	= "msg_next_id",
->>> +		.procname	= "msg_nextid",
->>>  		.data		= &init_ipc_ns.ids[IPC_MSG_IDS].next_id,
->>>  		.maxlen		= sizeof(init_ipc_ns.ids[IPC_MSG_IDS].next_id),
->>>  		.mode		= 0644,
->>> @@ -194,7 +194,7 @@ static struct ctl_table ipc_kern_table[] = {
->>>  		.extra2		= &int_max,
->>>  	},
->>>  	{
->>> -		.procname	= "shm_next_id",
->>> +		.procname	= "shm_nextid",
->>>  		.data		= &init_ipc_ns.ids[IPC_SHM_IDS].next_id,
->>>  		.maxlen		= sizeof(init_ipc_ns.ids[IPC_SHM_IDS].next_id),
->>>  		.mode		= 0644,
->> So you are changing the names of existing sysctl parameters. Will it be
->> better to add new sysctl to indicate that the rule has changed
->> instead?
-> In practice I am replacing one set of sysctls with another, that work
-> very similarly but not quite the same.  As we can't keep the existing
-> semantics removing the old sysctl seems correct.  Likewise adding
-> a new sysctl with slightly changed semantics seems correct.
->
-> This needs an accompanying patch to CRIU to see which sysctls are
-> available and to change it's behavior based upon that.  The practical
-> question is what makes it easiest not to confuse CRIU.
->
-> Not having the sysctl should be something that CRIU detects today
-> and the old versions should fail gracefully.  But testing is needed.
-> Adding a new sysctl to say the behavior has changed and reusing the
-> old names won't have the same effect of disabling existing versions
-> of CRIU.
+> So you are still using them and the code actually works properly?
 
-That is fine as long as CRIU is the only user.
+I don't use them daily, only occasionally. Last time they worked.
+Checked now and it seems to work:
 
->
->> I don't know the history why the id management of SysV IPC was designed
->> in such a convoluted way, but the patch does make sense to me.
-> I don't have the full history and we might wind up finding more as we
-> run this patch through it's paces.
->
-> The earliest history I know is what I read in Advanced Programming in
-> the Unix Environment (which predates linux).  It described the ipc ids
-> as assigned from a counter that wraps.  I thought like my patch
-> implements. On closer reading it has a counter that increases each time
-> the slot is used, and then wraps.  Exactly like Linux before my patch.
-> *Grrr*
->
-> The existing structure of the bifurcated is present in Linux 1.0.  At
-> that time SHMMNI was 256.  SHMMNI was the size of a static array of shm
-> segments.  The high 24 bits held a sequence number that was incremented
-> when a segment was removed at the time.  Presumably the upper bits were
-> incremented to avoid swiftly reusing the same shm ids.
->
-> Hmm.  I took a quick look at FreeBSD10 and it has the exact same split
-> in the id.  So userspace may actually depend upon that split.
+[    0.000000] Linux version 4.16.0-rc4+ (zary@gsql) (gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)) #217 SMP Tue Mar 13 00:08:16 CET 2018
 
-Backward compatibility is the part that I am most worry about this
-patch. That is also the reason I asked why the ID is generated in such a
-way.
+...
 
-My original thinking was to have an extended mode where the IPCMNI
-becomes 8M from 32k. That will reduce the sequence number from 16 bits
-to 8 bits. The extended mode is enabled by adding, for example, a boot
-option. So this will be an opt-in feature instead of as a default.
+# modprobe epat
+[   47.376762] paride: epat registered as protocol 0
+# modprobe pf drive0=0x378,0
+[   59.048408] pf: pf version 1.04, major 47, cluster 64, nice 0
+[   59.156038] pf0: Sharing parport0 at 0x378
+[   59.157017] pf0: epat 1.02, Shuttle EPAT chip c6 at 0x378,
+[   59.157020] mode 5 (EPP-32), delay 1
+[   59.187400] pf0: mode sense completion: alt=0x51 stat=0x51 err=0x64 loop=0 phase=3
+[   59.188080] pf0: mode sense data done: alt=0x51 stat=0x51 err=0x64 loop=0 phase=3
+[   59.190648] pf0: Sense key: 6, ASC: 29, ASQ: 0
+[   59.196326] pf0: get capacity completion: alt=0x51 stat=0x51 err=0x24 loop=0 phase=3
+[   59.197038] pf0: get capacity data done: alt=0x51 stat=0x51 err=0x24 loop=0 phase=3
+[   59.199499] pf0: Sense key: 2, ASC: 3a, ASQ: 0
+[   59.200108] pf0: MATSHITA LS-120 COSM 04, master LUN 0, type 0
+[   59.200109] , removable
+[   59.200745] , no media
+[   59.219353] pf0: get capacity completion: alt=0x51 stat=0x51 err=0x24 loop=0 phase=3
+[   59.220078] pf0: get capacity data done: alt=0x51 stat=0x51 err=0x24 loop=0 phase=3
+[   59.222777] pf0: Sense key: 2, ASC: 3a, ASQ: 0
+[   59.223419] pf0: MATSHITA LS-120 COSM 04, master LUN 0, type 0
+[   59.223420] , removable
+[   59.224042] , no media
+# mount /dev/pf0 /media/floppy
+[   89.255905] pf0: mode sense completion: alt=0x51 stat=0x51 err=0x64 loop=0 phase=3
+[   89.256657] pf0: mode sense data done: alt=0x51 stat=0x51 err=0x64 loop=0 phase=3
+[   89.259415] pf0: Sense key: 6, ASC: 28, ASQ: 0
+[   89.265571] pf0: MATSHITA LS-120 COSM 04, master LUN 0, type 0
+[   89.265573] , removable
+[   89.266228] , RO
+[   89.266871] , 246528 blocks
+[   96.871316] pf0: MATSHITA LS-120 COSM 04, master LUN 0, type 0
+[   96.871319] , removable
+[   96.871998] , RO
+[   96.872653] , 246528 blocks
+[   96.888131] pf0: MATSHITA LS-120 COSM 04, master LUN 0, type 0
+[   96.888134] , removable
+[   96.888808] , RO
+[   96.889479] , 246528 blocks
+mount: /dev/pf0 is write-protected, mounting read-only
+# ls -la /media/floppy/
+total 356
+drwxr-xr-x 9 root root   2048 Jun 11  2002 !!!!!!!!
+drwxr-xr-x 6 root root  16384 Jan  1  1970 .
+drwxr-xr-x 6 root root   4096 Sep 16  2015 ..
+-rwxr-xr-x 1 root root    750 Nov  8  2007 auditsc-move-name-to-end-of-record.patch
+-rwxr-xr-x 1 root root    638 Nov  8  2007 audit-send-netlink-sync.patch
+-rwxr-xr-x 1 root root   5557 Nov  8  2007 cdu31a_interrupt_handling_new.patch
+-rwxr-xr-x 1 root root   4317 Nov  8  2007 cdu31a_interrupt_handling.patch
+-rwxr-xr-x 1 root root  51440 Nov  8  2007 cdu31a-locking-dd.patch
+-rwxr-xr-x 1 root root  48769 Nov  8  2007 cdu31a-locking.patch
+-rwxr-xr-x 1 root root  19470 Nov  8  2007 cdu31a-make-working.patch
+-rwxr-xr-x 1 root root    899 Nov  8  2007 cdu31a-timeouts-fix.patch
+-rwxr-xr-x 1 root root  36067 Nov  8  2007 cdu31a_trivial_cleanups.patch
+-rwxr-xr-x 1 root root  19278 Nov  8  2007 cdu31a_use_semaphores.patch
+-rwxr-xr-x 1 root root    462 Nov  8  2007 cyrix-math-new.patch
+-rwxr-xr-x 1 root root    530 Nov  8  2007 cyrix-math.patch
+-rwxr-xr-x 1 root root    391 Nov  8  2007 cyrix-new.patch
+-rwxr-xr-x 1 root root   1468 Nov  8  2007 cyrix-test.patch
+drwxr-xr-x 2 root root   2048 Jun  5  2002 DEUTSCH
+drwxr-xr-x 2 root root   2048 Jun  5  2002 ENGLISH
+drwxr-xr-x 2 root root   2048 Jun  5  2002 FRAN?AIS
+-rwxr-xr-x 1 root root    490 Nov  8  2007 hz100.patch
+-rwxr-xr-x 1 root root    796 Nov  8  2007 ide-floppy-eject.patch
+-rwxr-xr-x 1 root root   1655 Nov  8  2007 pf-fix-excess-reconnects.patch
+-rwxr-xr-x 1 root root    561 Nov  8  2007 sata_via_pata_dma_fix.patch
+-rwxr-xr-x 1 root root 111104 Sep 26  1997 SETUP.EXE
+-rwxr-xr-x 1 root root    643 Nov  8  2007 uncompressed-kernel-boot.patch
+-rwxr-xr-x 1 root root    455 Nov  8  2007 uncompressed-kernel-make.patch
+-rwxr-xr-x 1 root root   1098 Nov  8  2007 uncompressed-kernel.patch
+-rwxr-xr-x 1 root root   1558 Nov  8  2007 usbtouchscreen-invert.patch
 
->
-> Which comes down to the fundamental question what depends upon what.
-> How do other operating systems like Solaris handle this?
-
-I don't know how Solaris handle this, but I know they support up to 2^24
-shm segments.
-
->
-> Does any nix flavor support more that 16bits worth of shm segments?
->
-> The API has been deprecated for the last 20 years and we are still
-> keeping it alive.  Sigh.
->
-> Still there is fundamentally only one thing the kernel can do if we wish
-> to increase the number of shm segments.
->
-> Please take my patch and test it out and see if you can find anything
-> that cares about the change. Except for needing id reuse to be
-> infrequent I can not imagine that there is anything that cares.
->
-> It could very reasonably be argued that my when shmmni is < INT_MAX
-> my patch implements a version of the existing algorithm.  As we go
-> through all of the possible ids before we reuse any of them.
->
-> Eric
->
-Thanks for the patch, I am still thinking about what is the best way to
-handle this.
-
-Cheers,
-Longman
+-- 
+Ondrej Zary
