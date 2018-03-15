@@ -1,536 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeCOLuV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:50:21 -0400
-Received: from atl4mhob21.registeredsite.com ([209.17.115.115]:43684 "EHLO
-        atl4mhob21.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750745AbeCOLuT (ORCPT
+        id S1751653AbeCOLwH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:52:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48774 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeCOLwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:50:19 -0400
-X-TCPREMOTEIP: 37.74.225.130
-X-Authenticated-UID: mike@milosoftware.com
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Thu, 15 Mar 2018 12:50:08 +0100
-Message-Id: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
+        Thu, 15 Mar 2018 07:52:05 -0400
+Date: Thu, 15 Mar 2018 12:51:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [RFC][PATCH] sched/wait_bit: Introduce
+ wait_var_event()/wake_up_var()
+Message-ID: <20180315115146.GX4064@hirez.programming.kicks-ass.net>
+References: <20180313102056.GJ4043@hirez.programming.kicks-ass.net>
+ <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180311112725.GC4043@hirez.programming.kicks-ass.net>
+ <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
+ <3396.1521107922@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3396.1521107922@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the driver and devicetree documentation for the
-Silicon Labs SI544 clock generator chip. This is an I2C controlled
-oscillator capable of generating clock signals ranging from 200kHz
-to 1500MHz.
+On Thu, Mar 15, 2018 at 09:58:42AM +0000, David Howells wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > > Argh, no no no.. That whole wait_for_atomic_t thing is a giant
+> > > > trainwreck already and now you're making it worse still.
+> 
+> Your patch description needs to say why this isn't a trainwreck when you
+> consider wait_for_atomic_t() to be one since it does things in a very similar
+> way.
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Does the below address things sufficiently clear?
+
 ---
-v2: Add u64 cast to ls_div_bits calculation loop
-    When ls_div_bits is non-zero, the hs_div must always be even
 
- .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
- drivers/clk/Kconfig                                |  10 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-si544.c                            | 422 +++++++++++++++++++++
- 4 files changed, 458 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
- create mode 100644 drivers/clk/clk-si544.c
+Subject: sched/wait: Introduce wait_var_event()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu Mar 15 11:40:33 CET 2018
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-new file mode 100644
-index 0000000..eec1787
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-@@ -0,0 +1,25 @@
-+Binding for Silicon Labs 544 programmable I2C clock generator.
-+
-+Reference
-+This binding uses the common clock binding[1]. Details about the device can be
-+found in the datasheet[2].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Si544 datasheet
-+    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
-+
-+Required properties:
-+ - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
-+               to the speed grade of the chip.
-+ - reg: I2C device address.
-+ - #clock-cells: From common clock bindings: Shall be 0.
-+
-+Optional properties:
-+ - clock-output-names: From common clock bindings. Recommended to be "si544".
-+
-+Example:
-+	si544: clock-generator@55 {
-+		reg = <0x55>;
-+		#clock-cells = <0>;
-+		compatible = "silabs,si544b";
-+	};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc..5c7dc8e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -91,6 +91,16 @@ config COMMON_CLK_SI514
- 	  This driver supports the Silicon Labs 514 programmable clock
- 	  generator.
+As a replacement for the wait_on_atomic_t() API provide the
+wait_var_event() API.
+
+The wait_var_event() API is based on the very same hashed-waitqueue
+idea, but doesn't care about the type (atomic_t) or the specific
+condition (atomic_read() == 0). IOW. it's much more widely
+applicable/flexible.
+
+It shares all the benefits/disadvantages of a hashed-waitqueue
+approach with the existing wait_on_atomic_t/wait_on_bit() APIs.
+
+The API is modeled after the existing wait_event() API, but instead of
+taking a wait_queue_head, it takes an address. This addresses is
+hashed to obtain a wait_queue_head from the bit_wait_table.
+
+Similar to the wait_event() API, it takes a condition expression as
+second argument and will wait until this expression becomes true.
+
+The following are (mostly) identical replacements:
+
+	wait_on_atomic_t(&my_atomic, atomic_t_wait, TASK_UNINTERRUPTIBLE);
+	wake_up_atomic_t(&my_atomic);
+
+	wait_var_event(&my_atomic, !atomic_read(&my_atomic));
+	wake_up_var(&my_atomic);
+
+The only difference is that wake_up_var() is an unconditional wakeup
+and doesn't check the previously hard-coded (atomic_read() == 0)
+condition here. This is of little concequence, since most callers are
+already conditional on atomic_dec_and_test() and the ones that are
+not, are trivial to make so.
+
+Cc: David Howells <dhowells@redhat.com>
+Tested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/wait_bit.h |   70 +++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/wait_bit.c  |   48 ++++++++++++++++++++++++++++++++
+ 2 files changed, 118 insertions(+)
+
+--- a/include/linux/wait_bit.h
++++ b/include/linux/wait_bit.h
+@@ -262,4 +262,74 @@ int wait_on_atomic_t(atomic_t *val, wait
+ 	return out_of_line_wait_on_atomic_t(val, action, mode);
+ }
  
-+config COMMON_CLK_SI544
-+	tristate "Clock driver for SiLabs 544 devices"
-+	depends on I2C
-+	depends on OF
-+	select REGMAP_I2C
-+	help
-+	---help---
-+	  This driver supports the Silicon Labs 544 programmable clock
-+	  generator.
++extern void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags);
++extern void wake_up_var(void *var);
++extern wait_queue_head_t *__var_waitqueue(void *p);
 +
- config COMMON_CLK_SI570
- 	tristate "Clock driver for SiLabs 570 and compatible devices"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e..bde614a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
-+obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-new file mode 100644
-index 0000000..a392acf
---- /dev/null
-+++ b/drivers/clk/clk-si544.c
-@@ -0,0 +1,422 @@
-+/*
-+ * Driver for Silicon Labs Si544 Programmable Oscillator
-+ *
-+ * Copyright (C) 2018 Topic Embedded Products
-+ *
-+ * Author: Mike Looijmans <mike.looijmans@topic.nl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++#define ___wait_var_event(var, condition, state, exclusive, ret, cmd)	\
++({									\
++	__label__ __out;						\
++	struct wait_queue_head *__wq_head = __var_waitqueue(var);	\
++	struct wait_bit_queue_entry __wbq_entry;			\
++	long __ret = ret; /* explicit shadow */				\
++									\
++	init_wait_var_entry(&__wbq_entry, var,				\
++			    exclusive ? WQ_FLAG_EXCLUSIVE : 0);		\
++	for (;;) {							\
++		long __int = prepare_to_wait_event(__wq_head,		\
++						   &__wbq_entry.wq_entry, \
++						   state);		\
++		if (condition)						\
++			break;						\
++									\
++		if (___wait_is_interruptible(state) && __int) {		\
++			__ret = __int;					\
++			goto __out;					\
++		}							\
++									\
++		cmd;							\
++	}								\
++	finish_wait(__wq_head, &__wbq_entry.wq_entry);			\
++__out:	__ret;								\
++})
 +
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
++#define __wait_var_event(var, condition)				\
++	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
++			  schedule())
 +
-+/* I2C registers (decimal as in datasheet) */
-+#define SI544_REG_CONTROL	7
-+#define SI544_REG_OE_STATE	17
-+#define SI544_REG_HS_DIV	23
-+#define SI544_REG_LS_HS_DIV	24
-+#define SI544_REG_FBDIV0	26
-+#define SI544_REG_FBDIV8	27
-+#define SI544_REG_FBDIV16	28
-+#define SI544_REG_FBDIV24	29
-+#define SI544_REG_FBDIV32	30
-+#define SI544_REG_FBDIV40	31
-+#define SI544_REG_FCAL_OVR	69
-+#define SI544_REG_ADPLL_DELTA_M0	231
-+#define SI544_REG_ADPLL_DELTA_M8	232
-+#define SI544_REG_ADPLL_DELTA_M16	233
-+#define SI544_REG_PAGE_SELECT	255
++#define wait_var_event(var, condition)					\
++do {									\
++	might_sleep();							\
++	if (condition)							\
++		break;							\
++	__wait_var_event(var, condition);				\
++} while (0)
 +
-+/* Register values */
-+#define SI544_CONTROL_RESET	BIT(7)
-+#define SI544_CONTROL_MS_ICAL2	BIT(3)
++#define __wait_var_event_killable(var, condition)			\
++	___wait_var_event(var, condition, TASK_KILLABLE, 0, 0,		\
++			  schedule())
 +
-+#define SI544_OE_STATE_ODC_OE	BIT(0)
++#define wait_var_event_killable(var, condition)				\
++({									\
++	int __ret = 0;							\
++	might_sleep();							\
++	if (!(condition))						\
++		__ret = __wait_var_event_killable(var, condition);	\
++	__ret;								\
++})
 +
-+/* Max freq depends on speed grade */
-+#define SI544_MIN_FREQ	    200000U
++#define __wait_var_event_timeout(var, condition, timeout)		\
++	___wait_var_event(var, ___wait_cond_timeout(condition),		\
++			  TASK_UNINTERRUPTIBLE, 0, timeout,		\
++			  __ret = schedule_timeout(__ret))
 +
-+/* Si544 Internal oscilator runs at 55.05 MHz */
-+#define FXO		  55050000U
++#define wait_var_event_timeout(var, condition, timeout)			\
++({									\
++	long __ret = timeout;						\
++	might_sleep();							\
++	if (!___wait_cond_timeout(condition))				\
++		__ret = __wait_var_event_timeout(var, condition, timeout); \
++	__ret;								\
++})
 +
-+/* VCO range is 10.8 .. 12.1 GHz, max depends on speed grade */
-+#define FVCO_MIN       10800000000ULL
-+
-+#define HS_DIV_MAX	2046
-+#define HS_DIV_MAX_ODD	33
-+
-+enum si544_speed_grade {
-+	si544a,
-+	si544b,
-+	si544c,
-+};
-+
-+struct clk_si544 {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+	enum si544_speed_grade speed_grade;
-+};
-+#define to_clk_si544(_hw)	container_of(_hw, struct clk_si544, hw)
-+
-+/* Multiplier/divider settings */
-+struct clk_si544_muldiv {
-+	u32 fb_div_frac;  /* Integer part of feedback divider (32 bits) */
-+	u16 fb_div_int;  /* Fractional part of feedback divider (11 bits) */
-+	u16 hs_div; /* 1st divider, 5..2046, must be even when >33 */
-+	u8 ls_div_bits; /* 2nd divider, as 2^x, range 0..5 */
-+};
-+
-+/* Enables or disables the output driver */
-+static int si544_enable_output(struct clk_si544 *data, bool enable)
+ #endif /* _LINUX_WAIT_BIT_H */
+--- a/kernel/sched/wait_bit.c
++++ b/kernel/sched/wait_bit.c
+@@ -149,6 +149,54 @@ void wake_up_bit(void *word, int bit)
+ }
+ EXPORT_SYMBOL(wake_up_bit);
+ 
++wait_queue_head_t *__var_waitqueue(void *p)
 +{
-+	return regmap_update_bits(data->regmap, SI544_REG_OE_STATE,
-+		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
-+}
++	if (BITS_PER_LONG == 64) {
++		unsigned long q = (unsigned long)p;
 +
-+/* Retrieve clock multiplier and dividers from hardware */
-+static int si544_get_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err)
-+		return err;
-+
-+	settings->ls_div_bits = (reg[1] >> 4) & 0x07;
-+	settings->hs_div = (reg[1] & 0x07) << 8 | reg[0];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+	if (err)
-+		return err;
-+
-+	settings->fb_div_int = reg[4] | (reg[5] & 0x07) << 8;
-+	settings->fb_div_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
-+				reg[3] << 24;
-+	return 0;
-+}
-+
-+static int si544_set_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	reg[0] = settings->hs_div;
-+	reg[1] = settings->hs_div >> 8 | settings->ls_div_bits << 4;
-+
-+	err = regmap_bulk_write(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err < 0)
-+		return err;
-+
-+	reg[0] = settings->fb_div_frac;
-+	reg[1] = settings->fb_div_frac >> 8;
-+	reg[2] = settings->fb_div_frac >> 16;
-+	reg[3] = settings->fb_div_frac >> 24;
-+	reg[4] = settings->fb_div_int;
-+	reg[5] = settings->fb_div_int >> 8;
-+
-+	/*
-+	 * Writing to SI544_REG_FBDIV40 triggers the clock change, so that
-+	 * must be written last
-+	 */
-+	return regmap_bulk_write(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+}
-+
-+static bool is_valid_frequency(const struct clk_si544 *data,
-+	unsigned long frequency)
-+{
-+	unsigned long max_freq;
-+
-+	if (frequency < SI544_MIN_FREQ)
-+		return false;
-+
-+	switch (data->speed_grade) {
-+	case si544a:
-+		max_freq = 1500000000;
-+		break;
-+	case si544b:
-+		max_freq = 800000000;
-+		break;
-+	case si544c:
-+		max_freq = 350000000;
-+		break;
-+	default:
-+		return false;
++		return bit_waitqueue((void *)(q & ~1), q & 1);
 +	}
-+
-+	if (frequency > max_freq)
-+		return false;
-+
-+	return true;
++	return bit_waitqueue(p, 0);
 +}
++EXPORT_SYMBOL(__var_waitqueue);
 +
-+/* Calculate divider settings for a given frequency */
-+static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
-+	unsigned long frequency)
++static int
++var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
++		  int sync, void *arg)
 +{
-+	u64 vco;
-+	u32 ls_freq;
-+	u32 tmp;
-+	u8 res;
++	struct wait_bit_key *key = arg;
++	struct wait_bit_queue_entry *wbq_entry =
++		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
 +
-+	/* Determine the minimum value of LS_DIV and resulting target freq. */
-+	ls_freq = frequency;
-+	settings->ls_div_bits = 0;
-+
-+	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-+		settings->ls_div_bits = 0;
-+	else {
-+		res = 1;
-+		tmp = 2 * HS_DIV_MAX;
-+		while (tmp <= (HS_DIV_MAX * 32)) {
-+			if (((u64)frequency * tmp) >= FVCO_MIN)
-+				break;
-+			++res;
-+			tmp <<= 1;
-+		}
-+		settings->ls_div_bits = res;
-+		ls_freq = frequency << res;
-+	}
-+
-+	/* Determine minimum HS_DIV by rounding up */
-+	vco = FVCO_MIN + ls_freq - 1;
-+	do_div(vco, ls_freq);
-+	settings->hs_div = vco;
-+	/* round up to even number when required */
-+	if ((settings->hs_div & 1) &&
-+	    ((settings->hs_div > HS_DIV_MAX_ODD) || settings->ls_div_bits))
-+		++settings->hs_div;
-+	/* Calculate VCO frequency (in 10..12GHz range) */
-+	vco = (u64)ls_freq * settings->hs_div;
-+	/* Calculate the integer part of the feedback divider */
-+	tmp = do_div(vco, FXO);
-+	settings->fb_div_int = vco;
-+	/* And the fractional bits using the remainder */
-+	vco = (u64)tmp << 32;
-+	do_div(vco, FXO);
-+	settings->fb_div_frac = vco;
-+
-+	return 0;
-+}
-+
-+/* Calculate resulting frequency given the register settings */
-+static unsigned long si544_calc_rate(struct clk_si544_muldiv *settings)
-+{
-+	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
-+	u64 vco;
-+
-+	/* Calculate VCO while preventing overflow */
-+	vco = (u64)settings->fb_div_int * FXO;
-+	vco += (((u64)settings->fb_div_frac * FXO) + (FXO / 2)) >> 32;
-+
-+	do_div(vco, d);
-+
-+	return vco;
-+}
-+
-+static unsigned long si544_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	err = si544_get_muldiv(data, &settings);
-+	if (err) {
-+		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
-+		return 0;
-+	}
-+
-+	return si544_calc_rate(&settings);
-+}
-+
-+static long si544_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!rate)
++	if (wbq_entry->key.flags != key->flags ||
++	    wbq_entry->key.bit_nr != key->bit_nr)
 +		return 0;
 +
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	return si544_calc_rate(&settings);
++	return autoremove_wake_function(wq_entry, mode, sync, key);
 +}
 +
-+/*
-+ * Update output frequency for "big" frequency changes
-+ */
-+static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
++void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
 +{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	si544_enable_output(data, false);
-+
-+	/* Allow FCAL for this frequency update */
-+	err = regmap_write(data->regmap, SI544_REG_FCAL_OVR, 0);
-+	if (err < 0)
-+		return err;
-+
-+
-+	err = si544_set_muldiv(data, &settings);
-+	if (err < 0)
-+		return err; /* Undefined state now, best to leave disabled */
-+
-+	/* Trigger calibration */
-+	err = regmap_write(data->regmap, SI544_REG_CONTROL,
-+			   SI544_CONTROL_MS_ICAL2);
-+	if (err < 0)
-+		return err;
-+
-+	/* Applying a new frequency can take up to 10ms */
-+	usleep_range(10000, 12000);
-+
-+	si544_enable_output(data, true);
-+
-+	return err;
++	*wbq_entry = (struct wait_bit_queue_entry){
++		.key = {
++			.flags	= (var),
++			.bit_nr = -1,
++		},
++		.wq_entry = {
++			.private = current,
++			.func	 = var_wake_function,
++			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
++		},
++	};
 +}
++EXPORT_SYMBOL(init_wait_var_entry);
 +
-+static const struct clk_ops si544_clk_ops = {
-+	.recalc_rate = si544_recalc_rate,
-+	.round_rate = si544_round_rate,
-+	.set_rate = si544_set_rate,
-+};
-+
-+static bool si544_regmap_is_volatile(struct device *dev, unsigned int reg)
++void wake_up_var(void *var)
 +{
-+	switch (reg) {
-+	case SI544_REG_CONTROL:
-+	case SI544_REG_FCAL_OVR:
-+		return true;
-+	default:
-+		return false;
-+	}
++	__wake_up_bit(__var_waitqueue(var), var, -1);
 +}
++EXPORT_SYMBOL(wake_up_var);
 +
-+static const struct regmap_config si544_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = SI544_REG_PAGE_SELECT,
-+	.volatile_reg = si544_regmap_is_volatile,
-+};
-+
-+static int si544_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct clk_si544 *data;
-+	struct clk_init_data init;
-+	int err;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	init.ops = &si544_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = 0;
-+	data->hw.init = &init;
-+	data->i2c_client = client;
-+	data->speed_grade = id->driver_data;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-+			&init.name))
-+		init.name = client->dev.of_node->name;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &si544_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(&client->dev, "failed to allocate register map\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	i2c_set_clientdata(client, data);
-+
-+	/* Select page 0, just to be sure, there appear to be no more */
-+	err = regmap_write(data->regmap, SI544_REG_PAGE_SELECT, 0);
-+	if (err < 0)
-+		return err;
-+
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return err;
-+	}
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
-+				     &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int si544_remove(struct i2c_client *client)
-+{
-+	of_clk_del_provider(client->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id si544_id[] = {
-+	{ "si544a", si544a },
-+	{ "si544b", si544b },
-+	{ "si544c", si544c },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si544_id);
-+
-+static const struct of_device_id clk_si544_of_match[] = {
-+	{ .compatible = "silabs,si544a" },
-+	{ .compatible = "silabs,si544b" },
-+	{ .compatible = "silabs,si544c" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, clk_si544_of_match);
-+
-+static struct i2c_driver si544_driver = {
-+	.driver = {
-+		.name = "si544",
-+		.of_match_table = clk_si544_of_match,
-+	},
-+	.probe		= si544_probe,
-+	.remove		= si544_remove,
-+	.id_table	= si544_id,
-+};
-+module_i2c_driver(si544_driver);
-+
-+MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
-+MODULE_DESCRIPTION("Si544 driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+ /*
+  * Manipulate the atomic_t address to produce a better bit waitqueue table hash
+  * index (we're keying off bit -1, but that would produce a horrible hash
