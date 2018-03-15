@@ -1,89 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeCOLB7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:01:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37050 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751617AbeCOLBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:01:31 -0400
-Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-References: <20180309140249.2840-1-vkuznets@redhat.com>
- <20180309140249.2840-8-vkuznets@redhat.com>
- <2747cc75-b549-61bb-9c1b-0f554a49b536@redhat.com>
- <87fu51br1p.fsf@vitty.brq.redhat.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <02490491-9809-0057-fd4b-b1de81c713f3@redhat.com>
-Date: Thu, 15 Mar 2018 12:01:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752198AbeCOLC1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:02:27 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:61382 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751975AbeCOLCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 07:02:04 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w2FB1mXW008170
+X-Nifty-SrcIP: [209.85.213.43]
+X-Google-Smtp-Source: AG47ELv9lglYAEeSK6S4A5asPLtTcQ34V8Y2hCJbhCcGwMiZO5yXq95dWZURYpqGWKyrNuvYhNgCcJCsR6zhRzJhbQ0=
 MIME-Version: 1.0
-In-Reply-To: <87fu51br1p.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
+References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
+ <1521045861-22418-7-git-send-email-yamada.masahiro@socionext.com>
+ <nycvar.YSQ.7.76.1803141437030.28583@knanqh.ubzr> <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 15 Mar 2018 20:01:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATbXaT5azx+p+DfJd8v_2gSipU5LaRMXEyV79LoG+2KVA@mail.gmail.com>
+Message-ID: <CAK7LNATbXaT5azx+p+DfJd8v_2gSipU5LaRMXEyV79LoG+2KVA@mail.gmail.com>
+Subject: Re: [PATCH 6/7] kbuild: move include/config/ksym/* to include/ksym/*
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/2018 10:56, Vitaly Kuznetsov wrote:
->> +	EVMCS1_FIELD(VM_EXIT_MSR_STORE_ADDR, vm_exit_msr_store_addr,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
->> +	EVMCS1_FIELD(VM_EXIT_MSR_LOAD_ADDR, vm_exit_msr_load_addr,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
->> +	EVMCS1_FIELD(VM_ENTRY_MSR_LOAD_ADDR, vm_entry_msr_load_addr,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
->> +	EVMCS1_FIELD(VM_EXIT_MSR_STORE_COUNT, vm_exit_msr_store_count,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
->> +	EVMCS1_FIELD(VM_EXIT_MSR_LOAD_COUNT, vm_exit_msr_load_count,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
->> +	EVMCS1_FIELD(VM_ENTRY_MSR_LOAD_COUNT, vm_entry_msr_load_count,
->> +		     HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL),
-
-Hmm, actually these six are used.  I guess
-HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL is the best we can do, apart from
-asking Microsoft to fix the spec.
-
-
->>> +{
->>> +	*pin_based_exec_ctrl &= ~PIN_BASED_POSTED_INTR;> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_APIC_REGISTER_VIRT;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_PML;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_VMFUNC;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_SHADOW_VMCS;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_TSC_SCALING;
->>> +	*cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
->>> +	*pin_based_exec_ctrl &= ~PIN_BASED_VMX_PREEMPTION_TIMER;
->> How can these be set?
+2018-03-15 19:04 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> 2018-03-15 3:47 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
+>> On Thu, 15 Mar 2018, Masahiro Yamada wrote:
 >>
-> They can not if Hyper-V behaves but Radim didn't want to trust it -- so
-> the suggestion was to forcefully disable unsupported controls.
+>>> The idea of using fixdep was inspired by Kconfig, but autoksyms
+>>> is unrelated to Kconfig.  So, I want to get those touched files
+>>> out of include/config/.  The directory include/ksym/ is removed
+>>> by "make clean".  We do not need to keep it for external module
+>>> building.
+>>
+>> It could be argued that include/config/ is not strictly containing
+>> configuration data either and is slightly misleading.
+>
+> But, slightly related to configuration, IMHO.
+> At least they carry timestamps that are updated
+> when kernel configuration is changed.
+>
+> The difference between include/config/ and include/ksym/ is that
+> files under include/config/ are necessary for building
+> external modules (so should be cleaned away by mrproper)
+> whereas include/ksym/ is unnecessary for external modules
+> since vmlinux and in-kernel modules do not depend on
+> external modules.
+>
+>
+> I wonder if trimming symbols makes sense for external modules.
+>
+> EXPORT_SYMBOL(_GPL) in external modules are always trimmed
+> since vmlinux and in-kernel modules never rely on them.
+>
+> If an external module exports symbols,
+> it expects they will be used by other external modules.
+>
+> So, the patch like follows make sense?
+>
+>
+>
+>
+> kbuild: do not trim symbols in external modules
+>
+> diff --git a/Makefile b/Makefile
+> index 0a7bab6..bdf565e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -998,6 +998,7 @@ autoksyms_recursive: $(vmlinux-deps)
+>  # (this can be evaluated only once include/config/auto.conf has been included)
+>  ifdef CONFIG_TRIM_UNUSED_KSYMS
+>    KBUILD_MODULES := 1
+> +  export KBUILD_TRIM_UNUSED_KSYMS := 1
+>  endif
+>
+>  autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index 045971e..3249d5f 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -345,7 +345,7 @@ if_changed_dep = $(if $(strip $(any-prereq)
+> $(arg-check) ),                  \
+>         @set -e;                                                             \
+>         $(cmd_and_fixdep), @:)
+>
+> -ifndef CONFIG_TRIM_UNUSED_KSYMS
+> +ifndef KBUILD_TRIM_UNUSED_KSYMS
+>
+>  cmd_and_fixdep =                                                             \
+>         $(echo-cmd) $(cmd_$(1));                                             \
+>
+>
+>
+>
+>> What about moving include/config/ and include/ksym/ under
+>> include/depfiles/ ? In fact that could even be
+>> include/generated/depfiles/config/ and include/generated/depfiles/ksym/
+>> to trim down the top include directory.
+>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>>  .gitignore                  | 1 +
+>>>  Makefile                    | 2 +-
+>>>  scripts/Kbuild.include      | 2 +-
+>>>  scripts/adjust_autoksyms.sh | 2 +-
+>>>  scripts/basic/fixdep.c      | 8 ++++----
+>>>  5 files changed, 8 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/.gitignore b/.gitignore
+>>> index 1be78fd..85bcc26 100644
+>>> --- a/.gitignore
+>>> +++ b/.gitignore
+>>> @@ -87,6 +87,7 @@ modules.builtin
+>>>  #
+>>>  include/config
+>>>  include/generated
+>>> +include/ksym
+>>>  arch/*/include/generated
+>>>
+>>>  # stgit generated dirs
+>>> diff --git a/Makefile b/Makefile
+>>> index e60b16f..1dab647 100644
+>>> --- a/Makefile
+>>> +++ b/Makefile
+>>> @@ -1327,7 +1327,7 @@ endif # CONFIG_MODULES
+>>>  # make distclean Remove editor backup files, patch leftover files and the like
+>>>
+>>>  # Directories & files removed with 'make clean'
+>>> -CLEAN_DIRS  += $(MODVERDIR)
+>>> +CLEAN_DIRS  += $(MODVERDIR) include/ksym
+>>>
+>>>  # Directories & files removed with 'make mrproper'
+>>>  MRPROPER_DIRS  += include/config usr/include include/generated          \
+>>> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+>>> index 065324a..045971e 100644
+>>> --- a/scripts/Kbuild.include
+>>> +++ b/scripts/Kbuild.include
+>>> @@ -368,7 +368,7 @@ ksym_dep_filter =                                                            \
+>>>           $(CPP) $(call flags_nodeps,a_flags) -D__KSYM_DEPS__ $< ;;        \
+>>>         boot*|build*|cpp_its_S|*cpp_lds_S|dtc|host*|vdso*) : ;;            \
+>>>         *) echo "Don't know how to preprocess $(1)" >&2; false ;;          \
+>>> -     esac | tr ";" "\n" | sed -rn 's/^.*=== __KSYM_(.*) ===.*$$/KSYM_\1/p'
+>>> +     esac | tr ";" "\n" | sed -rn 's/^.*=== __KSYM_(.*) ===.*$$/\1/p'
+>>>
+>>>  cmd_and_fixdep =                                                             \
+>>>       $(echo-cmd) $(cmd_$(1));                                             \
+>>> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+>>> index a52210b..7bb3618 100755
+>>> --- a/scripts/adjust_autoksyms.sh
+>>> +++ b/scripts/adjust_autoksyms.sh
+>>> @@ -81,7 +81,7 @@ sort "$cur_ksyms_file" "$new_ksyms_file" | uniq -u |
+>>>  sed -n 's/^#define __KSYM_\(.*\) 1/\1/p' | tr "A-Z_" "a-z/" |
+>>>  while read sympath; do
+>>>       if [ -z "$sympath" ]; then continue; fi
+>>> -     depfile="include/config/ksym/${sympath}.h"
+>>> +     depfile="include/ksym/${sympath}.h"
+>>>       mkdir -p "$(dirname "$depfile")"
+>>>       touch "$depfile"
+>>>       echo $((count += 1))
+>>> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+>>> index 449b68c..f387538 100644
+>>> --- a/scripts/basic/fixdep.c
+>>> +++ b/scripts/basic/fixdep.c
+>>> @@ -113,11 +113,11 @@ static void usage(void)
+>>>  /*
+>>>   * Print out a dependency path from a symbol name
+>>>   */
+>>> -static void print_config(const char *m, int slen)
+>>> +static void print_dep(const char *m, int slen, const char *dir)
+>>>  {
+>>>       int c, i;
+>>>
+>>> -     printf("    $(wildcard include/config/");
+>>> +     printf("    $(wildcard %s/", dir);
+>>>       for (i = 0; i < slen; i++) {
+>>>               c = m[i];
+>>>               if (c == '_')
+>>> @@ -140,7 +140,7 @@ static void do_extra_deps(void)
+>>>                       fprintf(stderr, "fixdep: bad data on stdin\n");
+>>>                       exit(1);
+>>>               }
+>>> -             print_config(buf, len - 1);
+>>> +             print_dep(buf, len - 1, "include/ksym");
+>>>       }
+>>>  }
+>>>
+>>> @@ -208,7 +208,7 @@ static void use_config(const char *m, int slen)
+>>>           return;
+>>>
+>>>       define_config(m, slen, hash);
+>>> -     print_config(m, slen);
+>>> +     print_dep(m, slen, "include/config");
+>>>  }
+>>>
+>>>  /* test if s ends in sub */
+>>> --
 
-Yeah, it's good to have, especially if placed before we start using the
-values that are read.
 
->> This is wrong, we're reading the VMCS so the values must already be
->> sanitized (and if not, that's the bug and we want dump_vmcs to print the
->> "wrong" values).
-> 
-> The problem is that we vmcs_read these fields later in the function and
-> this will now WARN(). Initally, there was no WARN() for non-existent
-> fields so this could work (we would just print zeroes for unsupported
-> fields). Maybe, additional WARN_ON() is not a big deal here.
+No.  All exported symbols in external modules are
+still trimmed.
 
-If you WARN(), isn't it because the secondary_exec_control had a bad
-value to begin with?  As you say, the controls should never be set.
+Hmm.  Probably, this is a "Do not do it" thing.
 
-Thanks,
 
-Paolo
+
+-- 
+Best Regards
+Masahiro Yamada
