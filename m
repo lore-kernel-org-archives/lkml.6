@@ -1,54 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932313AbeCOSQh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:16:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54607 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeCOSQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:16:36 -0400
-From: Colin King <colin.king@canonical.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fbdev: aty: fix missing indentation in if statement
-Date: Thu, 15 Mar 2018 18:16:24 +0000
-Message-Id: <20180315181624.18684-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S932458AbeCOSQy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:16:54 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55732 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932391AbeCOSQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:16:53 -0400
+Date: Thu, 15 Mar 2018 19:16:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
+ section
+Message-ID: <20180315181612.GH27816@pd.tnic>
+References: <20180315154448.16222-1-bp@alien8.de>
+ <20180315154448.16222-5-bp@alien8.de>
+ <20180315181054.3fuuetu6fxpzlpcn@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180315181054.3fuuetu6fxpzlpcn@treble>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Mar 15, 2018 at 01:10:54PM -0500, Josh Poimboeuf wrote:
+> I liked OPCODE_BUFSIZE where it was before :-)  Here it disrupts the
+> readability of the function a bit IMO.
 
-There is a missing indentation following an if statement, fix this.
+My thinking is have it close by so that you don't have to go search for
+its definition.
 
-Detected by Coccinelle:
-drivers/video/fbdev/aty/mach64_ct.c:183:2-15: code aligned with
-following code on line 184
+But I don't have a strong opinion on where it should be so...
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/video/fbdev/aty/mach64_ct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/aty/mach64_ct.c b/drivers/video/fbdev/aty/mach64_ct.c
-index 7d3bd723d3d5..74a62aa193c0 100644
---- a/drivers/video/fbdev/aty/mach64_ct.c
-+++ b/drivers/video/fbdev/aty/mach64_ct.c
-@@ -180,7 +180,7 @@ static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
- 		dsp_on = ((multiplier << vshift) + divider) / divider;
- 		tmp = ((ras_multiplier << xshift) + ras_divider) / ras_divider;
- 		if (dsp_on < tmp)
--		dsp_on = tmp;
-+			dsp_on = tmp;
- 		dsp_on = dsp_on + (tmp * 2) + (pll->xclkpagefaultdelay << xshift);
- 	}
- 
 -- 
-2.15.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
