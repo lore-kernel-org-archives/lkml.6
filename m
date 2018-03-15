@@ -1,99 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeCOIvp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:51:45 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:8001 "EHLO
+        id S1751600AbeCOIvf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:51:35 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:15432 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeCOIvn (ORCPT
+        with ESMTP id S1751095AbeCOIvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:51:43 -0400
+        Thu, 15 Mar 2018 04:51:33 -0400
 From: Zong Li <zong@andestech.com>
 To: <palmer@sifive.com>, <albert@sifive.com>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <zong@andestech.com>, <zongbox@gmail.com>
 CC: <greentime@andestech.com>
-Subject: [PATCH v2 05/11] RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
-Date: Thu, 15 Mar 2018 16:50:45 +0800
-Message-ID: <b2a2fcef9a56d6febda05260880d63aabda58403.1521103172.git.zong@andestech.com>
+Subject: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+Date: Thu, 15 Mar 2018 16:50:40 +0800
+Message-ID: <cover.1521103167.git.zong@andestech.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1521103167.git.zong@andestech.com>
-References: <cover.1521103167.git.zong@andestech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.1.85]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w2F8lp8f080949
+X-MAIL: ATCSQR.andestech.com w2F8lLmo080876
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI20 and LO12_I/LO12_S relocate the absolute address, the range of
-offset must in 32-bit.
+These patches resolve the some issues of loadable module.
+  - symbol out of ranges
+  - unknown relocation types
+
+The reference of external variable and function symbols
+cannot exceed 32-bit offset ranges in kernel module.
+The module only can work on the 32-bit OS or the 64-bit
+OS with sv32 virtual addressing.
+
+These patches will generate the .got, .got.plt and
+.plt sections during loading module, let it can refer
+to the symbol which locate more than 32-bit offset.
+These sections depend on the relocation types:
+ - R_RISCV_GOT_HI20
+ - R_RISCV_CALL_PLT
+
+These patches also support more relocation types
+ - R_RISCV_CALL
+ - R_RISCV_HI20
+ - R_RISCV_LO12_I
+ - R_RISCV_LO12_S
+ - R_RISCV_RVC_BRANCH
+ - R_RISCV_RVC_JUMP
+ - R_RISCV_ALIGN
+ - R_RISCV_ADD32
+ - R_RISCV_SUB32
+
+This is the list of testing modules:
+# lsmod
+btrfs 7876158 0 - Live 0xffffffd00745d000
+ramoops 90806 0 - Live 0xffffffd0024b8000
+lzo 10554 0 - Live 0xffffffd002050000
+zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+zram 101300 0 - Live 0xffffffd0021b8000
+xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+xor 33246 1 btrfs, Live 0xffffffd002042000
+xfs 4395343 0 - Live 0xffffffd00399e000
+tun 252041 0 - Live 0xffffffd0038e0000
+test_user_copy 5265 0 - Live 0xffffffd003783000
+test_static_keys 19606 0 - Live 0xffffffd003717000
+test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+test_module 1557 0 - Live 0xffffffd003646000
+test_kmod 49100 0 - Live 0xffffffd0035f2000
+test_bpf 1599301 0 - Live 0xffffffd003000000
+test_bitmap 4403 0 - Live 0xffffffd002dd8000
+reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+netdevsim 65401 0 - Live 0xffffffd002910000
 
 Signed-off-by: Zong Li <zong@andestech.com>
 ---
- arch/riscv/kernel/module.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Change in v2:
+ - Add compile option 'mno-relax' for build kernel module
+ - Just fail on ALIGN type, this is unexpected type with mno-relax.
 
-diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
-index 3f2730840c25..f1bd6b1a4520 100644
---- a/arch/riscv/kernel/module.c
-+++ b/arch/riscv/kernel/module.c
-@@ -92,6 +92,45 @@ static int apply_r_riscv_pcrel_lo12_s_rela(struct module *me, u32 *location,
- 	return 0;
- }
- 
-+static int apply_r_riscv_hi20_rela(struct module *me, u32 *location,
-+				   Elf_Addr v)
-+{
-+	s32 hi20;
-+
-+	if (IS_ENABLED(CMODEL_MEDLOW)) {
-+		pr_err(
-+		  "%s: target %016llx can not be addressed by the 32-bit offset from PC = %p\n",
-+		  me->name, v, location);
-+		return -EINVAL;
-+	}
-+
-+	hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	*location = (*location & 0xfff) | hi20;
-+	return 0;
-+}
-+
-+static int apply_r_riscv_lo12_i_rela(struct module *me, u32 *location,
-+				     Elf_Addr v)
-+{
-+	/* Skip medlow checking because of filtering by HI20 already */
-+	s32 hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	s32 lo12 = ((s32)v - hi20);
-+	*location = (*location & 0xfffff) | ((lo12 & 0xfff) << 20);
-+	return 0;
-+}
-+
-+static int apply_r_riscv_lo12_s_rela(struct module *me, u32 *location,
-+				     Elf_Addr v)
-+{
-+	/* Skip medlow checking because of filtering by HI20 already */
-+	s32 hi20 = ((s32)v + 0x800) & 0xfffff000;
-+	s32 lo12 = ((s32)v - hi20);
-+	u32 imm11_5 = (lo12 & 0xfe0) << (31 - 11);
-+	u32 imm4_0 = (lo12 & 0x1f) << (11 - 4);
-+	*location = (*location & 0x1fff07f) | imm11_5 | imm4_0;
-+	return 0;
-+}
-+
- static int apply_r_riscv_got_hi20_rela(struct module *me, u32 *location,
- 				       Elf_Addr v)
- {
-@@ -176,6 +215,9 @@ static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
- 	[R_RISCV_PCREL_HI20]		= apply_r_riscv_pcrel_hi20_rela,
- 	[R_RISCV_PCREL_LO12_I]		= apply_r_riscv_pcrel_lo12_i_rela,
- 	[R_RISCV_PCREL_LO12_S]		= apply_r_riscv_pcrel_lo12_s_rela,
-+	[R_RISCV_HI20]			= apply_r_riscv_hi20_rela,
-+	[R_RISCV_LO12_I]		= apply_r_riscv_lo12_i_rela,
-+	[R_RISCV_LO12_S]		= apply_r_riscv_lo12_s_rela,
- 	[R_RISCV_GOT_HI20]		= apply_r_riscv_got_hi20_rela,
- 	[R_RISCV_CALL_PLT]		= apply_r_riscv_call_plt_rela,
- 	[R_RISCV_CALL]			= apply_r_riscv_call_rela,
+Zong Li (11):
+  RISC-V: Add sections of PLT and GOT for kernel module
+  RISC-V: Add section of GOT.PLT for kernel module
+  RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+  RISC-V: Support CALL relocation type in kernel module
+  RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+  RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+  RISC-V: Support ALIGN relocation type in kernel module
+  RISC-V: Support ADD32 relocation type in kernel module
+  RISC-V: Support SUB32 relocation type in kernel module
+  RISC-V: Enable module support in defconfig
+  RISC-V: Add definition of relocation types
+
+ arch/riscv/Kconfig                  |   5 +
+ arch/riscv/Makefile                 |   5 +
+ arch/riscv/configs/defconfig        |   2 +
+ arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
+ arch/riscv/include/uapi/asm/elf.h   |   7 ++
+ arch/riscv/kernel/Makefile          |   1 +
+ arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
+ arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
+ arch/riscv/kernel/module.lds        |   8 ++
+ 9 files changed, 470 insertions(+), 6 deletions(-)
+ create mode 100644 arch/riscv/include/asm/module.h
+ create mode 100644 arch/riscv/kernel/module-sections.c
+ create mode 100644 arch/riscv/kernel/module.lds
+
 -- 
 2.16.1
