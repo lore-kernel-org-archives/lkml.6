@@ -1,179 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932471AbeCOOsR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:48:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43502 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752311AbeCOOsM (ORCPT
+        id S1752696AbeCOOs0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:48:26 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:22060 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752293AbeCOOsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:48:12 -0400
-Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
- <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 10:48:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 15 Mar 2018 10:48:24 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2FElvnr002729
+X-Nifty-SrcIP: [209.85.217.176]
+X-Google-Smtp-Source: AG47ELtU3RrqwdVFqo9MbXklrOuoAIM1SDCGsCSPNzGCWy/yTLOwPatQEQMerRnyDwJvIMsBu+bcHyup3sItuvFK4+k=
 MIME-Version: 1.0
-In-Reply-To: <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031514-0024-0000-0000-000018155DB9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003432; UDB=6.00510667; IPR=6.00782759;
- MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 14:48:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031514-0025-0000-0000-00004F1D8533
-Message-Id: <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150164
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 15 Mar 2018 23:47:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASQ=JHNng80W-k6oxtpSRHzxHeZgNZvWFcU1vM52U7Wmg@mail.gmail.com>
+Message-ID: <CAK7LNASQ=JHNng80W-k6oxtpSRHzxHeZgNZvWFcU1vM52U7Wmg@mail.gmail.com>
+Subject: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for v4.17
+To: arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 08:26 AM, Pierre Morel wrote:
-> On 14/03/2018 19:25, Tony Krowiak wrote:
->> This patch refactors the code that initializes the crypto
->> configuration for a guest. The crypto configuration is contained in
->> a crypto control block (CRYCB) which is a satellite control block to
->> our main hardware virtualization control block. The CRYCB is
->> attached to the main virtualization control block via a CRYCB
->> designation (CRYCBD) designation field containing the address of
->> the CRYCB as well as its format.
->>
->> Prior to the introduction of AP device virtualization, there was
->> no need to provide access to or specify the format of the CRYCB for
->> a guest unless the MSA extension 3 (MSAX3) facility was installed
->> on the host system. With the introduction of AP device virtualization,
->> the CRYCB and its format must be made accessible to the guest
->> regardless of the presence of the MSAX3 facility.
->>
->> The crypto initialization code is restructured as follows:
->>
->> * A new compilation unit is introduced to contain all interfaces
->>    and data structures related to configuring a guest's CRYCB for
->>    both the refactoring of crypto initialization as well as all
->>    subsequent patches introducing AP virtualization support.
->>
->> * Currently, the asm code for querying the AP configuration is
->>    duplicated in the AP bus as well as in KVM. Since the KVM
->>    code was introduced, the AP bus has externalized the interface
->>    for querying the AP configuration. The KVM interface will be
->>    replaced with a call to the AP bus interface. Of course, this
->>    will be moved to the new compilation unit mentioned above.
->>
->> * An interface to format the CRYCBD field will be provided via
->>    the new compilation unit and called from the KVM vm
->>    initialization.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   MAINTAINERS                      |   10 ++++++
->>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++
->>   arch/s390/include/asm/kvm_host.h |    1 +
->>   arch/s390/kvm/Kconfig            |    1 +
->>   arch/s390/kvm/Makefile           |    2 +-
->>   arch/s390/kvm/kvm-ap.c           |   48 +++++++++++++++++++++++++++++
->>   arch/s390/kvm/kvm-s390.c         |   61 
->> ++++---------------------------------
->>   7 files changed, 84 insertions(+), 55 deletions(-)
->>   create mode 100644 arch/s390/include/asm/kvm-ap.h
->>   create mode 100644 arch/s390/kvm/kvm-ap.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 0ec5881..72742d5 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -11875,6 +11875,16 @@ W: 
->> http://www.ibm.com/developerworks/linux/linux390/
->>   S:    Supported
->>   F:    drivers/s390/crypto/
->>
->> +S390 VFIO AP DRIVER
->> +M:    Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> +M:    Christian Borntraeger <borntraeger@de.ibm.com>
->> +M:    Martin Schwidefsky <schwidefsky@de.ibm.com>
->> +L:    linux-s390@vger.kernel.org
->> +W:    http://www.ibm.com/developerworks/linux/linux390/
->> +S:    Supported
->> +F:    arch/s390/include/asm/kvm/kvm-ap.h
->> +F:    arch/s390/kvm/kvm-ap.c
->> +
->>   S390 ZFCP DRIVER
->>   M:    Steffen Maier <maier@linux.vnet.ibm.com>
->>   M:    Benjamin Block <bblock@linux.vnet.ibm.com>
->> diff --git a/arch/s390/include/asm/kvm-ap.h 
->> b/arch/s390/include/asm/kvm-ap.h
->> new file mode 100644
->> index 0000000..362846c
->> --- /dev/null
->> +++ b/arch/s390/include/asm/kvm-ap.h
->> @@ -0,0 +1,16 @@
->> +/*
->> + * Adjunct Processor (AP) configuration management for KVM guests
->> + *
->> + * Copyright IBM Corp. 2017
->> + *
->> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
->> + */
->> +
->> +#ifndef _ASM_KVM_AP
->> +#define _ASM_KVM_AP
->> +#include <linux/types.h>
->> +#include <linux/kvm_host.h>
->> +
->> +void kvm_ap_build_crycbd(struct kvm *kvm);
->> +
->> +#endif /* _ASM_KVM_AP */
->> diff --git a/arch/s390/include/asm/kvm_host.h 
->> b/arch/s390/include/asm/kvm_host.h
->> index 34c9b5b..65a944e 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
->>       __u8    reservedf0[12];        /* 0x00f0 */
->>   #define CRYCB_FORMAT1 0x00000001
->>   #define CRYCB_FORMAT2 0x00000003
->> +#define CRYCB_FORMAT_MASK 0x00000003
->>       __u32    crycbd;            /* 0x00fc */
->>       __u64    gcr[16];        /* 0x0100 */
->>       __u64    gbea;            /* 0x0180 */
->> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
->> index a3dbd45..4ca9077 100644
->> --- a/arch/s390/kvm/Kconfig
->> +++ b/arch/s390/kvm/Kconfig
->> @@ -33,6 +33,7 @@ config KVM
->>       select HAVE_KVM_INVALID_WAKEUPS
->>       select SRCU
->>       select KVM_VFIO
->> +    select ZCRYPT
->
-> I do not think it is a good solution to *always* enable ZCRYPT
-> when we have KVM.
-If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed() 
-function will not compile
-because it calls a zcrypt interface. How would you suggest we make sure 
-zcrypt interfaces
-used in KVM are built if CONFIG_ZCRYPT is not selected?
->
-> Pierre
->
->
+Hi Arnd, Olof,
+
+Please pull UniPhier DT updates for v4.17.
+
+Note:
+In this development cycle, I ended up with putting all of arm/arm64 changes
+into a single pull request.
+This is because some DTSI files are shared across arches.
+So, I needed to do this to avoid build errors.
+
+
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+tags/uniphier-dt-v4.17
+
+for you to fetch changes up to 7f9f76b10dbe3f2585a21699312f74ed2b544b84:
+
+  ARM: dts: uniphier: add sound node for PXs2 (2018-03-15 23:19:05 +0900)
+
+----------------------------------------------------------------
+UniPhier ARM SoC DT updates for v4.17
+
+- add sound support
+- add ethernet support
+- use proper SPDX-License-Identifier style
+
+----------------------------------------------------------------
+Katsuhiro Suzuki (6):
+      ARM: dts: uniphier: add audio in/out pin-mux node
+      arm64: dts: uniphier: add sound node
+      arm64: dts: uniphier: add speaker out for LD11/LD20 boards
+      arm64: dts: uniphier: add compress audio out for LD11/LD20
+      arm64: dts: uniphier: add fixed regulators for audio codec
+      ARM: dts: uniphier: add sound node for PXs2
+
+Kunihiko Hayashi (2):
+      ARM: dts: uniphier: add AVE ethernet node
+      arm64: dts: uniphier: add AVE ethernet node
+
+Masahiro Yamada (2):
+      ARM: dts: uniphier: use proper SPDX-License-Identifier style
+      arm64: dts: uniphier: use proper SPDX-License-Identifier style
+
+ arch/arm/boot/dts/uniphier-ld4-ref.dts                 |  14 ++-
+ arch/arm/boot/dts/uniphier-ld4.dtsi                    |  14 ++-
+ arch/arm/boot/dts/uniphier-ld6b-ref.dts                |  25 +++--
+ arch/arm/boot/dts/uniphier-ld6b.dtsi                   |  14 ++-
+ arch/arm/boot/dts/uniphier-pinctrl.dtsi                |  54 ++++++++--
+ arch/arm/boot/dts/uniphier-pro4-ace.dts                |  25 +++--
+ arch/arm/boot/dts/uniphier-pro4-ref.dts                |  25 +++--
+ arch/arm/boot/dts/uniphier-pro4-sanji.dts              |  25 +++--
+ arch/arm/boot/dts/uniphier-pro4.dtsi                   |  32 ++++--
+ arch/arm/boot/dts/uniphier-pro5.dtsi                   |  14 ++-
+ arch/arm/boot/dts/uniphier-pxs2-gentil.dts             |  49 +++++++--
+ arch/arm/boot/dts/uniphier-pxs2-vodka.dts              |  62 +++++++++--
+ arch/arm/boot/dts/uniphier-pxs2.dtsi                   |  86 +++++++++++++--
+ arch/arm/boot/dts/uniphier-ref-daughter.dtsi           |  14 ++-
+ arch/arm/boot/dts/uniphier-sld8-ref.dts                |  14 ++-
+ arch/arm/boot/dts/uniphier-sld8.dtsi                   |  14 ++-
+ arch/arm/boot/dts/uniphier-support-card.dtsi           |  14 ++-
+ arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts | 109
++++++++++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts    |  25 +++--
+ arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi       | 124
+++++++++++++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts | 111
++++++++++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts    |  25 +++--
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi       | 135
+++++++++++++++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts    |  14 ++-
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi       |  14 ++-
+ 25 files changed, 850 insertions(+), 202 deletions(-)
+
+
+-- 
+Best Regards
+Masahiro Yamada
