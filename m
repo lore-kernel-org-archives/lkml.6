@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932421AbeCOOrw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:47:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40070 "EHLO
+        id S932441AbeCOOsK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:48:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40048 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752674AbeCOOrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:47:36 -0400
+        id S1752656AbeCOOrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:47:33 -0400
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 To: peterz@infradead.org, mingo@redhat.com
 Cc: valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
         linux-kernel@vger.kernel.org,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv2 7/7] sched/fair: Set sd->overload when misfit
-Date: Thu, 15 Mar 2018 14:47:04 +0000
-Message-Id: <1521125224-15434-8-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCHv2 5/7] sched: Change root_domain->overload type to int
+Date: Thu, 15 Mar 2018 14:47:02 +0000
+Message-Id: <1521125224-15434-6-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
 References: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
@@ -24,44 +24,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Valentin Schneider <valentin.schneider@arm.com>
 
-Idle balance is a great opportunity to pull a misfit task. However,
-there are scenarios where misfit tasks are present but idle balance is
-prevented by the overload flag.
-
-A good example of this is a workload of n identical tasks. Let's suppose
-we have a 2+2 Arm big.LITTLE system. We then spawn 4 fairly
-CPU-intensive tasks - for the sake of simplicity let's say they are just
-CPU hogs, even when running on big CPUs.
-
-They are identical tasks, so on an SMP system they should all end at
-(roughly) the same time. However, in our case the LITTLE CPUs are less
-performing than the big CPUs, so tasks running on the LITTLEs will have
-a longer completion time.
-
-This means that the big CPUs will complete their work earlier, at which
-point they should pull the tasks from the LITTLEs. What we want to
-happen is summarized as follows:
-
-a,b,c,d are our CPU-hogging tasks
-_ signifies idling
-
-LITTLE_0 | a a a a _ _
-LITTLE_1 | b b b b _ _
----------|-------------
-  big_0  | c c c c a a
-  big_1  | d d d d b b
-                  ^
-                  ^
-    Tasks end on the big CPUs, idle balance happens
-    and the misfit tasks are pulled straight away
-
-This however won't happen, because currently the overload flag is only
-set when there is any CPU that has more than one runnable task - which
-may very well not be the case here if our CPU-hogging workload is all
-there is to run.
-
-As such, this commit sets the overload flag in update_sg_lb_stats when
-a group is flagged as having a misfit task.
+sizeof(_Bool) is implementation defined, so let's just go with 'int' as
+is done for other structures e.g. sched_domain_shared->has_idle_cores.
 
 cc: Ingo Molnar <mingo@redhat.com>
 cc: Peter Zijlstra <peterz@infradead.org>
@@ -69,51 +33,63 @@ cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 ---
- kernel/sched/fair.c  | 6 ++++--
- kernel/sched/sched.h | 6 +++++-
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c  | 7 +++----
+ kernel/sched/sched.h | 4 ++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4e79ec8760be..7952e9491713 100644
+index c791dd7ac9a8..fe4824a37302 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7964,7 +7964,7 @@ static bool update_nohz_stats(struct rq *rq, bool force)
-  * @load_idx: Load index of sched_domain of this_cpu for load calc.
-  * @local_group: Does group contain this_cpu.
-  * @sgs: variable to hold the statistics for this group.
-- * @overload: Indicate more than one runnable task for any CPU.
-+ * @overload: Indicate pullable load (e.g. >1 runnable task).
-  */
+@@ -7969,7 +7969,7 @@ static bool update_nohz_stats(struct rq *rq, bool force)
  static inline void update_sg_lb_stats(struct lb_env *env,
  			struct sched_group *group, int load_idx,
-@@ -8008,8 +8008,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 			sgs->idle_cpus++;
+ 			int local_group, struct sg_lb_stats *sgs,
+-			bool *overload)
++			int *overload)
+ {
+ 	unsigned long load;
+ 	int i, nr_running;
+@@ -7994,7 +7994,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  
- 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
--		    !sgs->group_misfit_task_load && rq->misfit_task_load)
-+		    !sgs->group_misfit_task_load && rq->misfit_task_load) {
- 			sgs->group_misfit_task_load = rq->misfit_task_load;
+ 		nr_running = rq->nr_running;
+ 		if (nr_running > 1)
+-			*overload = true;
 +			*overload = 1;
-+		}
- 	}
  
- 	/* Adjust by relative CPU capacity of the group */
+ #ifdef CONFIG_NUMA_BALANCING
+ 		sgs->nr_numa_running += rq->nr_numa_running;
+@@ -8143,8 +8143,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 	struct sched_group *sg = env->sd->groups;
+ 	struct sg_lb_stats *local = &sds->local_stat;
+ 	struct sg_lb_stats tmp_sgs;
+-	int load_idx, prefer_sibling = 0;
+-	bool overload = false;
++	int load_idx, prefer_sibling, overload = 0;
+ 
+ 	if (child && child->flags & SD_PREFER_SIBLING)
+ 		prefer_sibling = 1;
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 31847b7f7d47..2981a162d9c0 100644
+index 22177dfc1f04..5379f647016d 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -688,7 +688,11 @@ struct root_domain {
- 	cpumask_var_t		span;
+@@ -689,7 +689,7 @@ struct root_domain {
  	cpumask_var_t		online;
  
--	/* Indicate more than one runnable task for any CPU */
-+	/*
-+	 * Indicate pullable load on at least one CPU, e.g:
-+	 * - More than one runnable task
-+	 * - Running task is misfit
-+	 */
- 	int			overload;
+ 	/* Indicate more than one runnable task for any CPU */
+-	bool			overload;
++	int			overload;
  
  	/*
+ 	 * The bit corresponding to a CPU gets set here if such CPU has more
+@@ -1652,7 +1652,7 @@ static inline void add_nr_running(struct rq *rq, unsigned count)
+ 	if (prev_nr < 2 && rq->nr_running >= 2) {
+ #ifdef CONFIG_SMP
+ 		if (!rq->rd->overload)
+-			rq->rd->overload = true;
++			rq->rd->overload = 1;
+ #endif
+ 	}
+ 
 -- 
 2.7.4
