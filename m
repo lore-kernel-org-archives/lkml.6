@@ -1,153 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeCOOtJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:49:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40030 "EHLO
+        id S1752635AbeCOOr0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:47:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39978 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752653AbeCOOr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:47:29 -0400
+        id S1752619AbeCOOrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:47:24 -0400
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 To: peterz@infradead.org, mingo@redhat.com
 Cc: valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
         linux-kernel@vger.kernel.org,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv2 3/7] sched/fair: Consider misfit tasks when load-balancing
-Date: Thu, 15 Mar 2018 14:47:00 +0000
-Message-Id: <1521125224-15434-4-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCHv2 0/7] sched/fair: Migrate 'misfit' tasks on asymmetric capacity systems
+Date: Thu, 15 Mar 2018 14:46:57 +0000
+Message-Id: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
-References: <1521125224-15434-1-git-send-email-morten.rasmussen@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On asymmetric cpu capacity systems load intensive tasks can end up on
-cpus that don't suit their compute demand.  In this scenarios 'misfit'
-tasks should be migrated to cpus with higher compute capacity to ensure
-better throughput. group_misfit_task indicates this scenario, but tweaks
-to the load-balance code are needed to make the migrations happen.
+On asymmetric cpu capacity systems (e.g. Arm big.LITTLE) it is crucial
+for performance that cpu intensive tasks are aggressively migrated to
+high capacity cpus as soon as those become available. The capacity
+awareness tweaks already in the wake-up path can't handle this as such
+tasks might run or be runnable forever. If they happen to be placed on a
+low capacity cpu from the beginning they are stuck there forever while
+high capacity cpus may have become available in the meantime.
 
-Misfit balancing only makes sense between a source group of lower
-per-cpu capacity and destination group of higher compute capacity.
-Otherwise, misfit balancing is ignored. group_misfit_task has lowest
-priority so any imbalance due to overload is dealt with first.
+To address this issue this patch set introduces a new "misfit"
+load-balancing scenario in periodic/nohz/newly idle balance which tweaks
+the load-balance conditions to ignore load per capacity in certain
+cases. Since misfit tasks are commonly running alone on a cpu, more
+aggressive active load-balancing is needed too.
 
-The modifications are:
+The fundamental idea of this patch set has been in Android kernels for a
+long time and is absolutely essential for consistent performance on
+asymmetric cpu capacity systems.
 
-1. Only pick a group containing misfit tasks as the busiest group if the
-   destination group has higher capacity and has spare capacity.
-2. When the busiest group is a 'misfit' group, skip the usual average
-   load and group capacity checks.
-3. Set the imbalance for 'misfit' balancing sufficiently high for a task
-   to be pulled ignoring average load.
-4. Pick the first cpu with the rq->misfit flag raised as the source cpu.
-5. If the misfit task is alone on the source cpu, go for active
-   balancing.
+The patches have been tested on:
+   1. Arm Juno (r0): 2+4 Cortex A57/A53
+   2. Hikey960: 4+4 Cortex A73/A53
 
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
+Test case:
+Big cpus are always kept busy. Pin a shorter running sysbench tasks to
+big cpus, while creating a longer running set of unpinned sysbench
+tasks.
 
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
----
- kernel/sched/fair.c | 36 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+    REQUESTS=1000
+    BIGS="1 2"
+    LITTLES="0 3 4 5"
+ 
+    # Don't care about the score for those, just keep the bigs busy
+    for i in $BIGS; do
+        taskset -c $i sysbench --max-requests=$((REQUESTS / 4)) \
+        --test=cpu  run &>/dev/null &
+    done
+ 
+    for i in $LITTLES; do
+        sysbench --max-requests=$REQUESTS --test=cpu run \
+	| grep "total time:" &
+    done
+ 
+    wait
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1e06c722bc2e..496062860733 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7102,6 +7102,7 @@ struct lb_env {
- 	unsigned int		loop_max;
- 
- 	enum fbq_type		fbq_type;
-+	enum group_type		src_grp_type;
- 	struct list_head	tasks;
- };
- 
-@@ -8044,6 +8045,14 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- {
- 	struct sg_lb_stats *busiest = &sds->busiest_stat;
- 
-+	/*
-+	 * Don't try to pull misfit tasks we can't help.
-+	 */
-+	if (sgs->group_type == group_misfit_task &&
-+	    (!group_smaller_cpu_capacity(sg, sds->local) ||
-+	     !group_has_capacity(env, &sds->local_stat)))
-+		return false;
-+
- 	if (sgs->group_type > busiest->group_type)
- 		return true;
- 
-@@ -8363,8 +8372,9 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 	 * factors in sg capacity and sgs with smaller group_type are
- 	 * skipped when updating the busiest sg:
- 	 */
--	if (busiest->avg_load <= sds->avg_load ||
--	    local->avg_load >= sds->avg_load) {
-+	if (busiest->group_type != group_misfit_task &&
-+	    (busiest->avg_load <= sds->avg_load ||
-+	     local->avg_load >= sds->avg_load)) {
- 		env->imbalance = 0;
- 		return fix_small_imbalance(env, sds);
- 	}
-@@ -8398,6 +8408,12 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		(sds->avg_load - local->avg_load) * local->group_capacity
- 	) / SCHED_CAPACITY_SCALE;
- 
-+	/* Boost imbalance to allow misfit task to be balanced. */
-+	if (busiest->group_type == group_misfit_task) {
-+		env->imbalance = max_t(long, env->imbalance,
-+				       busiest->group_misfit_task_load);
-+	}
-+
- 	/*
- 	 * if *imbalance is less than the average load per runnable task
- 	 * there is no guarantee that any tasks will be moved so we'll have
-@@ -8464,6 +8480,10 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	    busiest->group_no_capacity)
- 		goto force_balance;
- 
-+	/* Misfit tasks should be dealt with regardless of the avg load */
-+	if (busiest->group_type == group_misfit_task)
-+		goto force_balance;
-+
- 	/*
- 	 * If the local group is busier than the selected busiest group
- 	 * don't try and pull any tasks.
-@@ -8501,6 +8521,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 
- force_balance:
- 	/* Looks like there is an imbalance. Compute it */
-+	env->src_grp_type = busiest->group_type;
- 	calculate_imbalance(env, &sds);
- 	return sds.busiest;
- 
-@@ -8548,6 +8569,14 @@ static struct rq *find_busiest_queue(struct lb_env *env,
- 		if (rt > env->fbq_type)
- 			continue;
- 
-+		/*
-+		 * For ASYM_CPUCAPACITY domains with misfit tasks we ignore
-+		 * load.
-+		 */
-+		if (env->src_grp_type == group_misfit_task &&
-+		    rq->misfit_task_load)
-+			return rq;
-+
- 		capacity = capacity_of(i);
- 
- 		wl = weighted_cpuload(rq);
-@@ -8617,6 +8646,9 @@ static int need_active_balance(struct lb_env *env)
- 			return 1;
- 	}
- 
-+	if (env->src_grp_type == group_misfit_task)
-+		return 1;
-+
- 	return unlikely(sd->nr_balance_failed > sd->cache_nice_tries+2);
- }
- 
+Results:
+Single runs with completion time of each task
+Juno (tip)
+    total time:                          1.2608s
+    total time:                          1.2995s
+    total time:                          1.5954s
+    total time:                          1.7463s
+
+Juno (misfit)
+    total time:                          1.2575s
+    total time:                          1.3004s
+    total time:                          1.5860s
+    total time:                          1.5871s
+
+Hikey960 (tip)
+    total time:                          1.7431s
+    total time:                          2.2914s
+    total time:                          2.5976s
+    total time:                          1.7280s
+
+Hikey960 (misfit)
+    total time:                          1.7866s
+    total time:                          1.7513s
+    total time:                          1.6918s
+    total time:                          1.6965s
+
+10 run summary (tracking longest running task for each run)
+	Juno		Hikey960
+	avg	max	avg	max
+tip     1.7465  1.7469  2.5997  2.6131 
+misfit  1.6016  1.6192  1.8506  1.9666
+
+Changelog:
+v2
+- Removed redudant condition in static_key enablement.
+- Fixed logic flaw in patch #2 reported by Yi Yao <yi.yao@intel.com>
+- Dropped patch #4 as although the patch seems to make sense no benefit
+  has been proven.
+- Dropped root_domain->overload renaming
+- Changed type of root_domain->overload to int
+- Wrapped accesses of rq->rd->overload with READ/WRITE_ONCE
+- v1 Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
+
+Morten Rasmussen (3):
+  sched: Add static_key for asymmetric cpu capacity optimizations
+  sched/fair: Add group_misfit_task load-balance type
+  sched/fair: Consider misfit tasks when load-balancing
+
+Valentin Schneider (4):
+  sched/fair: Kick nohz balance if rq->misfit_task
+  sched: Change root_domain->overload type to int
+  sched: Wrap rq->rd->overload accesses with READ/WRITE_ONCE
+  sched/fair: Set sd->overload when misfit
+
+ kernel/sched/fair.c     | 115 +++++++++++++++++++++++++++++++++++++++---------
+ kernel/sched/sched.h    |  15 +++++--
+ kernel/sched/topology.c |   9 ++++
+ 3 files changed, 115 insertions(+), 24 deletions(-)
+
 -- 
 2.7.4
