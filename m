@@ -1,106 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752593AbeCORcs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:32:48 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:43172 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752219AbeCORco (ORCPT
+        id S1752670AbeCORdT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:33:19 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38988 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751624AbeCORdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:32:44 -0400
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "peterz@infradead.org" <peterz@infradead.org>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.cross-arch,gmane.linux.kernel.arc
-References: <1519917189.13866.6.camel@synopsys.com>
- <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
- <20180315082720.GT4064@hirez.programming.kicks-ass.net>
- <1521106770.11552.70.camel@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <4a095f24-770c-3583-ab6e-601b0ca8bdf3@synopsys.com>
-Date: Thu, 15 Mar 2018 10:32:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1521106770.11552.70.camel@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
+        Thu, 15 Mar 2018 13:33:17 -0400
+Message-ID: <1521135192.5348.64.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace
+ support
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-ima-devel@lists.sourceforge.net, mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>, sunyuqiong1988@gmail.com,
+        containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        david.safford@ge.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Yuqiong Sun <suny@us.ibm.com>,
+        zohar@linux.vnet.ibm.com
+Date: Thu, 15 Mar 2018 10:33:12 -0700
+In-Reply-To: <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+         <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+         <87vadxfwqj.fsf@xmission.com>
+         <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC some more folks for intc/irq insights - please see question at the bottom !
+On Thu, 2018-03-15 at 11:26 -0400, Stefan Berger wrote:
+> On 03/15/2018 06:40 AM, Eric W. Biederman wrote:
+> > 
+> > Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
+> > 
+> > > 
+> > > From: Yuqiong Sun <suny@us.ibm.com>
+> > > 
+> > > Add new CONFIG_IMA_NS config option.  Let clone() create a new
+> > > IMA namespace upon CLONE_NEWNS flag. Add ima_ns data structure in
+> > > nsproxy.  ima_ns is allocated and freed upon IMA namespace
+> > > creation and exit.  Currently, the ima_ns contains no useful IMA
+> > > data but only a dummy interface. This patch creates the framework
+> > > for namespacing the different aspects of IMA (eg. IMA-audit, IMA-
+> > > measurement, IMA-appraisal).
+> > IMA is not path based.  The only thing that belongs to a mount
+> > namespace are paths.  Therefore IMA is completely inappropriate to
+> > be joint with a mount namespace.
 
-On 03/15/2018 02:39 AM, Alexey Brodkin wrote:
-> Hi Peter,
+Just to be clear: The mount namespace is not only about paths it's also
+about subtree properties.  However, the point still stands that IMA has
+a dependency on neither.
+
+> IMA measures the files described by these paths. The files also may
+> hold signatures (security.ima xattr) needed for IMA appraisal.
+
+The xattr is an inode property, which isn't namespaced by the mount_ns.
+
+When we had this discussion last year, we talked about possibly using
+the user_ns instead.  It makes sense because for IMA signatures you're
+going to need some type of keyring namespace and there's already one
+hanging off the user_ns:
+
+commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+Author: David Howells <dhowells@redhat.com>
+Date:   Tue Sep 24 10:35:19 2013 +0100
+
+    KEYS: Add per-user_namespace registers for persistent per-UID
+kerberos caches
+
+> > I saw that Serge even recently mentioned that you need to take
+> > this aspect of the changes back to the drawing board.  With my
+> > namespace maintainer hat on I repeat that.
 > 
-> On Thu, 2018-03-15 at 09:27 +0100, Peter Zijlstra wrote:
->> On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
->>> +CC Peter since we have his attention ;-)
->>
->> Yeah, timezone collision there, I typically sleep at 1am ;-)
->>
->>> On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
->>>> Hi Vineet,
->>>>
->>>> Just noticed that in comments for smp_call_function_many() it is said that
->>>> preemption must be disabled during its execution. And that function gets executed
->>>> among other ways like that:
->>>> -------------------------->8-----------------------
->>>>     flush_tlb_range()
->>>>       -> on_each_cpu_mask()
->>>>            -> smp_call_function_many()
->>>> -------------------------->8-----------------------
->>>
->>> In general I prefer not to - Peter what say you ?
->>
->> The comment with smp_call_function_many() is correct, it relies on
->> preemption being disabled in a number of ways. I would expect
->> this_cpu_ptr() for example to complain when used with preemption
->> enabled (CONFIG_DEBUG_PREEMPT).
+> Drawing board is here now (tuning on the text...):
 > 
-> I just tried CONFIG_DEBUG_PREEMPT and the only thing I got was that:
-> -------------------------->8-----------------------
-> ARC perf        : 8 counters (32 bits), 32 conditions, [overflow IRQ support]
-> BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-> caller is arc_pmu_device_probe+0x24e/0x29c
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.14+ #67
+> http://kernsec.org/wiki/index.php/IMA_Namespacing_design_consideratio
+> ns
+
+You mention an abuse case here which is basically a way of relaxing
+security policy.  Cannot we fix that by making policy hierarchical, so
+a child namespace must have the same or a more strict policy than the
+parent?
+
+> >  From a 10,000 foot view I can already tell that this is hopeless.
+> > So for binding IMA namspaces and CLONE_NEWNS:
+> > 
+> > Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> > 
+> > I am not nacking IMA namespacing just inappropriately tying ima
+> > namespaces to mount namespaces.  These should be completely
+> > separate entities.
 > 
-> Stack Trace:
->    arc_unwind_core.constprop.1+0xd0/0xf4
->    dump_stack+0x64/0x7c
->    debug_smp_processor_id+0xb8/0xbc
->    arc_pmu_device_probe+0x24e/0x29c
->    platform_drv_probe+0x26/0x5c
->    really_probe+0x288/0x338
->    __driver_attach+0xc4/0xc8
->    bus_for_each_dev+0x38/0x70
->    bus_add_driver+0x12a/0x18c
->    driver_register+0x50/0xec
->    do_one_initcall+0x32/0x108
->    kernel_init_freeable+0xfe/0x188
-> -------------------------->8-----------------------
-> 
-> That happens because in PMU probe routine we want to
-> configure IRQ handlers on all other cores:
-> -------------------------->8-----------------------
->    arc_pmu_device_probe() ->
->      on_each_cpu(arc_cpu_pmu_irq_init, &irq, 1): preempt_disable() ->
->        enable_percpu_irq(irq, IRQ_TYPE_NONE) ->
->          smp_processor_id() with disabled preemption.
-> -------------------------->8-----------------------
-> 
-> Which poses another preemption related question - how do IRQ setup on
-> all cores properly? :)
-> 
-> -Alexey
-> 
+> Let's say we go down the road of spawning it independently. Can we
+> use the unused clone flag 0x1000? Or should we come up with new 
+> unshare2()/clone2() syscalls to extend the clone bits to 64 bit? Or
+> use a sysfs/securityfs file to spawn a new IMA namespace? Make this a
+> generic file not an IMA specific one?
+
+If, as a result of discussions, it turns out that a separate namespace
+is the correct way to proceed, I'm sure we can sort out the details of
+how we cope with the flag paucity problem.
+
+James
