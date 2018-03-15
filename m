@@ -1,25 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932513AbeCOSc6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:32:58 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:58521 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752220AbeCOSc4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932415AbeCOSc4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
         Thu, 15 Mar 2018 14:32:56 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:54626 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751857AbeCOScy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:32:54 -0400
 Content-Type: text/plain;
-        charset=us-ascii
+        charset=utf-8
 Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] Bluebooth: btusb: Fix quirk for Atheros 1525/QCA6174
+Subject: Re: Atheros 1525/QCA6174 BT issue
 From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180315160234.21789-1-tiwai@suse.de>
-Date: Thu, 15 Mar 2018 19:32:54 +0100
+In-Reply-To: <s5h4llh72oz.wl-tiwai@suse.de>
+Date: Thu, 15 Mar 2018 19:32:52 +0100
 Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        Ivan Levshin <ivan.levshin@microfocus.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <D780224D-FFA1-4965-AF3D-299BF0A3D32B@holtmann.org>
-References: <20180315160234.21789-1-tiwai@suse.de>
+        Linux Bluetooth mailing list
+        <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ivan Levshin <ivan.levshin@microfocus.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <BF5240B2-EF29-4029-A8CE-E92511B2F40C@holtmann.org>
+References: <s5hd10fkm49.wl-tiwai@suse.de>
+ <184DA6FB-F23C-4C37-B89B-FE865DC9731C@holtmann.org>
+ <s5h1sgvkjup.wl-tiwai@suse.de> <s5hfu54fljg.wl-tiwai@suse.de>
+ <2D7B44D5-BF8C-42EE-A315-64DE11D25C79@holtmann.org>
+ <s5hd108fkaa.wl-tiwai@suse.de>
+ <D8E4DA1B-060E-45F4-9B26-E3FAEE652D03@holtmann.org>
+ <s5ha7vcfjfi.wl-tiwai@suse.de>
+ <0B0DDAD9-2379-4084-9FB3-8F9884786C6B@holtmann.org>
+ <s5h4llh72oz.wl-tiwai@suse.de>
 To: Takashi Iwai <tiwai@suse.de>
 X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -28,52 +38,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Takashi,
 
-> The Atheros 1525/QCA6174 BT doesn't seem working properly on the
-> recent kernels, as it tries to load a wrong firmware
-> ar3k/AthrBT_0x00000200.dfu and it fails.
+>>>>>>>>>> we've got a but report about the broken Atheros BT on the recent
+>>>>>>>>>> kernels:
+>>>>>>>>>> http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
+>>>>>>>>>> 
+>>>>>>>>>> In short, btusb can't load the patch ar3k/AthrBT_0x00000200.dfu, and
+>>>>>>>>>> this could be worked around by the patch to move 0cf3:3004 blacklist
+>>>>>>>>>> entry to use BTUSB_QCA_ROM instead of BTUSB_ATH3012.
+>>>>>>>>>> 
+>>>>>>>>>> And this looks like a long-standing problem, at least for over two
+>>>>>>>>>> years.  Many web pages suggest the same patch, but it's never merged
+>>>>>>>>>> to upstream.
+>>>>>>>>>> 
+>>>>>>>>>> So this made me wonder what's going on.  I see that the BTUSB_ATH3012
+>>>>>>>>>> quirk was originally introduced just for this chip id (0cf3:3004).
+>>>>>>>>>> Is it a different variant from the original chip that causes a
+>>>>>>>>>> problem?
+>>>>>>>>> 
+>>>>>>>>> not all patches from distro kernel are sent upstream. I have not heard of this specific issues, but happy to accept patches to get it fixed.
+>>>>>>>> 
+>>>>>>>> OK, basically it's like below.
+>>>>>>>> But, as mentioned, this made me wonder whether it's the right fix.
+>>>>>>>> The BTUSB_ATH3012 quirk was introduced exactly for this chip ID
+>>>>>>>> (0cf3:3004), and now this chip is moved to another quirk...
+>>>>>>>> 
+>>>>>>>> If this is the right move, I can re-submit via git-send-email, too.
+>>>>>>>> Just let me know.
+>>>>>>> 
+>>>>>>> Marcel, could you take a look at this?
+>>>>>>> If it sucks, let's seek for a better solution.
+>>>>>> 
+>>>>>> wasn’t the confusion that this is fixed with a recent kernel? I am lost in this thread. I mean if people add Tested-by, then I can take this as well. Otherwise we might need someone from Qualcomm to shed some light into these.
+>>>>> 
+>>>>> Well, *this* thread is likely different from the recent other
+>>>>> threads.
+>>>>> 
+>>>>> Isn't 4.15.7 recent enough?  At least, it already contains the
+>>>>> backport of relevant fixes:
+>>>>>  Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
+>>>>>  Bluetooth: btusb: Restore QCA Rome suspend/resume fix with a
+>>>>>    "rewritten" version
+>>>>> 
+>>>>> (And it's not Yoga but MSI GS40 laptop, so DMI doesn't matter.)
+>>>>> According to Ivan, the reporter of the bug (now Cc'ed), 4.15.7 didn't
+>>>>> work without the patch, so the problem is still there, as it seems.
+>>>>> 
+>>>>> In anyway, I'm going to build a kernel with my patch on top of 4.15.9
+>>>>> for testing again.  Maybe also a patched 4.16-rc5 kernel, too.  If
+>>>>> it's confirmed, will report back with tested-by tag.
+>>>> 
+>>>> I think there are two patches that are not yet in Linus’ tree and waiting in Dave’s net tree. We actually removed the Yoga DMI entry again since it was found that it is not needed. However there is a Dell OptiPlex entry that was needed.
+>>>> 
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=0c6e526646c04ce31d4aaa280ed2237dd1cd774c
+>>> 
+>>> In our case, the target machine is a MSI laptop, so these changes
+>>> should be irrelevant.  Or do you suggest to try the same DMI reset
+>>> quirk matching with the MSI machine?
+>> 
+>> that is maybe needed.
 > 
-> This seems to have been a problem for some time, and the known
-> workaround is to apply BTUSB_QCA_ROM quirk instead of BTUSB_ATH3012.
+> OK, now the results:
 > 
-> The device in question is:
+> 4.15.9 vanilla -> BAD
+> 4.16-rc5 vanilla -> BAD
+> 4.16-rc5 with DMI quirk -> BAD
 > 
-> T: Bus=01 Lev=01 Prnt=01 Port=09 Cnt=03 Dev#=  4 Spd=12   MxCh= 0
-> D: Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P: Vendor=0cf3 ProdID=3004 Rev= 0.01
-> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-> E: Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> E: Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I: If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I: If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I: If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I: If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I: If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E: Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E: Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> So, btusb_needs_reset_resume_table[] doesn't help in our case.
 > 
-> Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
-> Reported-and-tested-by: Ivan Levshin <ivan.levshin@microfocus.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> And the patch was confirmed to work on both 4.15.9 and 4.16-rc5.
 > 
-> ---
-> drivers/bluetooth/btusb.c |    2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+> I'll resubmit the patch.
 
-patch has been applied to bluetooth-stable tree.
+thanks for verifying. Lets run with your patch.
 
 Regards
 
