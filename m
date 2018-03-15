@@ -1,64 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeCOMUE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:20:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:11680 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbeCOMUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:20:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
-   d="scan'208";a="24749073"
-From: Haiyue Wang <haiyue.wang@linux.intel.com>
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
-Subject: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers allocation
-Date: Thu, 15 Mar 2018 20:20:52 +0800
-Message-Id: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751482AbeCOMYE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:24:04 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46630 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeCOMYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:24:02 -0400
+MIME-Version: 1.0
+Message-ID: <be0d17cf-12d5-440c-adee-e943ccb199c9@default>
+Date: Thu, 15 Mar 2018 05:23:41 -0700 (PDT)
+From: Liran Alon <liran.alon@oracle.com>
+To: <daniel@iogearbox.net>
+Cc: <netdev@vger.kernel.org>, <shmulik.ladkani@gmail.com>,
+        <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <yuval.shaia@oracle.com>, <idan.brown@oracle.com>
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150139
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2FCOBPS000904
 
-Allocate a continuous memory block for the three KCS data buffers with
-related index assignment.
 
-Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
----
- drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+----- daniel@iogearbox.net wrote:
 
-diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-index fbfc05e..dc19c0d 100644
---- a/drivers/char/ipmi/kcs_bmc.c
-+++ b/drivers/char/ipmi/kcs_bmc.c
-@@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops = {
- struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
- {
- 	struct kcs_bmc *kcs_bmc;
-+	void *buf;
- 
- 	kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, GFP_KERNEL);
- 	if (!kcs_bmc)
-@@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
- 	mutex_init(&kcs_bmc->mutex);
- 	init_waitqueue_head(&kcs_bmc->queue);
- 
--	kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
--	kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
--	kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
--	if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
-+	buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
-+	if (!buf)
- 		return NULL;
-+	kcs_bmc->data_in  = buf;
-+	kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
-+	kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
- 
- 	kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
- 	kcs_bmc->miscdev.name = dev_name(dev);
--- 
-2.7.4
+> On 03/15/2018 10:21 AM, Shmulik Ladkani wrote:
+> > Regarding the premise of this commit, this "reduces" the
+> > ipvs/orphan/mark scrubbing in the following *non* xnet situations:
+> > 
+> >  1. mac2vlan port xmit to other macvlan ports in Bridge Mode
+> >  2. similarly for ipvlan
+> >  3. veth xmit
+> >  4. l2tp_eth_dev_recv
+> >  5. bpf redirect/clone_redirect ingress actions
+> > 
+> > Regarding l2tp recv, this commit seems to align the srubbing
+> behavior
+> > with ip tunnels (full scrub only if crossing netns, see
+> ip_tunnel_rcv).
+> > 
+> > Regarding veth xmit, it does makes sense to preserve the fields if
+> not
+> > crossing netns. This is also the case when one uses tc mirred.
+> > 
+> > Regarding bpf redirect, well, it depends on the expectations of each
+> bpf
+> > program.
+> > I'd argue that preserving the fields (at least the mark field) in
+> the
+> > *non* xnet makes sense and provides more information and therefore
+> more
+> > capabilities; Alas this might change behavior already being relied
+> on.
+> > 
+> > Maybe Daniel can comment on the matter.
+> 
+> Overall I think it might be nice to not need scrubbing skb in such
+> cases,
+> although my concern would be that this has potential to break
+> existing
+> setups when they would expect mark being zero on other veth peer in
+> any
+> case since it's the behavior for a long time already. The safer
+> option
+> would be to have some sort of explicit opt-in e.g. on link creation to
+> let
+> the skb->mark pass through unscrubbed. This would definitely be a
+> useful
+> option e.g. when mark is set in the netns facing veth via
+> clsact/egress
+> on xmit and when the container is unprivileged anyway.
+> 
+> Thanks,
+> Daniel
+
+I see your point in regards to backwards comparability.
+However, not scrubbing skb when it cross netns via some kernel functions compared to
+others is basically a bug which could easily break with a little bit of more refactoring.
+Therefore, it seems a bit weird to me to from now on, we will force
+every user on link creation to consider that once there was a bug leading
+to this weird behavior on specific netdevs.
+Thus, I suggest to maybe control this via a global /proc/sys/net file instead.
+
+-Liran
