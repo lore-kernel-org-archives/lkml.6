@@ -1,105 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeCOJqg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:46:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52928 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751314AbeCOJqf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:46:35 -0400
-Date: Thu, 15 Mar 2018 10:46:05 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ram Pai <linuxram@us.ibm.com>
-cc: mingo@redhat.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com,
-        Ulrich.Weigand@de.ibm.com
-Subject: Re: [PATCH v3] x86: treat pkey-0 special
-In-Reply-To: <1521061214-22385-1-git-send-email-linuxram@us.ibm.com>
-Message-ID: <alpine.DEB.2.21.1803151039430.1525@nanos.tec.linutronix.de>
-References: <1521061214-22385-1-git-send-email-linuxram@us.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751600AbeCOJwg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:52:36 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:55070 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751095AbeCOJwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:52:34 -0400
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: Re: [PATCH] venus: vdec: fix format enumeration
+To: Alexandre Courbot <acourbot@chromium.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180313091135.145589-1-acourbot@chromium.org>
+Message-ID: <20ce58ee-879d-78b6-5e68-748317b67d12@mm-sol.com>
+Date: Thu, 15 Mar 2018 11:52:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180313091135.145589-1-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018, Ram Pai wrote:
-> Applications need the ability to associate an address-range with some
-> key and latter revert to its initial default key. Pkey-0 comes close to
-> providing this function but falls short, because the current
-> implementation disallows applications to explicitly associate pkey-0 to
-> the address range.
-> 
-> This patch clarifies the semantics of pkey-0 and provides the
+Hi Alex,
 
-grep 'This patch' Documentation/process
+Thanks for the patch!
 
-> corresponding implementation on powerpc.
-> 
-> Pkey-0 is special with the following semantics.
-> (a) it is implicitly allocated and can never be freed. It always exists.
-> (b) it is the default key assigned to any address-range.
-> (c) it can be explicitly associated with any address-range.
-> 
-> Tested on x86_64.
+On 13.03.2018 11:11, Alexandre Courbot wrote:
+> find_format_by_index() stops enumerating formats as soon as the index
+> matches, and returns NULL if venus_helper_check_codec() finds out that
+> the format is not supported. This prevents formats to be properly
+> enumerated if a non-supported format is present, as the enumeration will
+> end with it.
 
-I'm curious how the corresponding implementation on powerpc can be tested
-on x86_64. Copy and paste is not enough ...
+Please add fixes tag,
+
+Fixes: 29f0133ec6 media: venus: use helper function to check supported
+codecs
 
 > 
-> History:
->     v3 : added clarification of the semantics of pkey0.
->     		-- suggested by Dave Hansen
->     v2 : split the patch into two, one for x86 and one for powerpc
->     		-- suggested by Michael Ellermen
+> Fix this by moving the call to venus_helper_check_codec() into the loop,
+> and keep enumerating when it fails.
 
-Please put the history below the --- seperator. It's not part of the
-changelog. That way the tools can discard it when picking up the patch.
+Good catch!
 
 > 
-> cc: Dave Hansen <dave.hansen@intel.com>
-> cc: Michael Ellermen <mpe@ellerman.id.au>
-> cc: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> 
+> Change-Id: I4ff66e0b85172598efa59a6f01da8cb60597a6a5
+
+You forgot to delete gerrit id.
+
 > ---
->  arch/x86/include/asm/pkeys.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/media/platform/qcom/venus/vdec.c | 13 +++++++------
+>   drivers/media/platform/qcom/venus/venc.c |  9 +++++++--
+>   2 files changed, 14 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-> index a0ba1ff..6ea7486 100644
-> --- a/arch/x86/include/asm/pkeys.h
-> +++ b/arch/x86/include/asm/pkeys.h
-> @@ -52,7 +52,7 @@ bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
->  	 * from pkey_alloc().  pkey 0 is special, and never
->  	 * returned from pkey_alloc().
->  	 */
-> -	if (pkey <= 0)
-> +	if (pkey < 0)
->  		return false;
->  	if (pkey >= arch_max_pkey())
->  		return false;
-> @@ -92,7 +92,8 @@ int mm_pkey_alloc(struct mm_struct *mm)
->  static inline
->  int mm_pkey_free(struct mm_struct *mm, int pkey)
->  {
-> -	if (!mm_pkey_is_allocated(mm, pkey))
-> +	/* pkey 0 is special and can never be freed */
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index c9e9576bb08a..3677302cfe43 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -135,20 +135,21 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
+>   		return NULL;
+>   
+>   	for (i = 0; i < size; i++) {
+> +		bool valid;
+> +
+>   		if (fmt[i].type != type)
+>   			continue;
+> -		if (k == index)
+> +		valid = (type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE ||
+> +			 venus_helper_check_codec(inst, fmt[i].pixfmt));
 
-This comment is pretty useless. How should anyone figure out whats special
-about pkey 0?
+open and close braces are not needed.
 
-> +	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
+> +		if (k == index && valid)
+>   			break;
+> -		k++;
+> +		if (valid)
+> +			k++;
+>   	}
+>   
+>   	if (i == size)
+>   		return NULL;
+>   
+> -	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
+> -	    !venus_helper_check_codec(inst, fmt[i].pixfmt))
+> -		return NULL;
+> -
+>   	return &fmt[i];
+>   }
+>   
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index e3a10a852cad..5eba4c7cd52e 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -120,11 +120,16 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
+>   		return NULL;
+>   
+>   	for (i = 0; i < size; i++) {
+> +		bool valid;
+> +
+>   		if (fmt[i].type != type)
+>   			continue;
+> -		if (k == index)
+> +		valid = (type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ||
+> +			 venus_helper_check_codec(inst, fmt[i].pixfmt));
+> +		if (k == index && valid)
+>   			break;
+> -		k++;
+> +		if (valid)
+> +			k++;
+>   	}
+>   
+>   	if (i == size)
 
-Why this extra check? mm_pkey_is_allocated(mm, 0) should not return true
-ever. If it does, then this wants to be fixed.
+maybe we should delete the condition:
 
-Thanks,
+if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
+!venus_helper_check_codec(inst, fmt[i].pixfmt))
 
-	tglx
+as we do for the decoder?
+
+regards,
+Stan
