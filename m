@@ -1,43 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeCOKXg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:23:36 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37170 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751828AbeCOKXb (ORCPT
+        id S1752079AbeCOKXo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:23:44 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40083 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751585AbeCOKXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:23:31 -0400
-X-Google-Smtp-Source: AG47ELuvxHFXWQD/vQDce7RvcohqlvBlakEGEzwjD4Jxfdsw0ypzfP+Fs5a+dBDoYdZi7Il88VGrmnCT6RBgWTTIWTI=
+        Thu, 15 Mar 2018 06:23:42 -0400
+X-Google-Smtp-Source: AG47ELsdyLFFuAAFHuIysKVeqKVbeXrLh2ioHOsGhNKlgzeMljB5PXrNA5X3+1n7mlHcAJ4+oWa6DeCNq+sdF+6rsYM=
 MIME-Version: 1.0
-In-Reply-To: <4eca7388-cb2d-31e0-b64d-afb30818f53e@users.sourceforge.net>
-References: <4eca7388-cb2d-31e0-b64d-afb30818f53e@users.sourceforge.net>
+In-Reply-To: <1520398902-23012-1-git-send-email-harish_kandiga@mentor.com>
+References: <1520398902-23012-1-git-send-email-harish_kandiga@mentor.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 15 Mar 2018 11:23:30 +0100
-Message-ID: <CAPDyKFpBjRF4ggd73mA8QnybVVGuzA16SNCdYnZaBRNTbOuPAw@mail.gmail.com>
-Subject: Re: [PATCH] mmc/core/block: Use memdup_user() rather than duplicating
- its implementation
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+Date: Thu, 15 Mar 2018 11:23:41 +0100
+Message-ID: <CAPDyKFp_OAnoyTw1Lx+L0Yqt+z+vkwAGqkDz2Qiip-gdCg4e7A@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: Export card RCA register to sysfs.
+To: Harish Jenny K N <harish_kandiga@mentor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Shawn Lin <shawn.lin@rock-chips.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 March 2018 at 13:08, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 5 Mar 2018 11:33:21 +0100
+On 7 March 2018 at 06:01, Harish Jenny K N <harish_kandiga@mentor.com> wrote:
+> This patch exports RCA register to sysfs which will help in
+> reading the disk identification information.
 >
-> Reuse existing functionality from memdup_user() instead of keeping
-> duplicate source code.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 
 Thanks, applied for next!
 
@@ -45,44 +39,54 @@ Kind regards
 Uffe
 
 > ---
->  drivers/mmc/core/block.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
 >
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 20135a5de748..4b09c7380e70 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -375,22 +375,15 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
->                 return idata;
->         }
+> Changes in v2:
+> - Used 0x%04x to display 16 bit register
 >
-> -       idata->buf = kmalloc(idata->buf_bytes, GFP_KERNEL);
-> -       if (!idata->buf) {
-> -               err = -ENOMEM;
-> +       idata->buf = memdup_user((void __user *)(unsigned long)
-> +                                idata->ic.data_ptr, idata->buf_bytes);
-> +       if (IS_ERR(idata->buf)) {
-> +               err = PTR_ERR(idata->buf);
->                 goto idata_err;
->         }
+>  drivers/mmc/core/mmc.c | 2 ++
+>  drivers/mmc/core/sd.c  | 2 ++
+>  2 files changed, 4 insertions(+)
 >
-> -       if (copy_from_user(idata->buf, (void __user *)(unsigned long)
-> -                                       idata->ic.data_ptr, idata->buf_bytes)) {
-> -               err = -EFAULT;
-> -               goto copy_err;
-> -       }
-> -
->         return idata;
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 208a762..6f8ebd6 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -792,6 +792,7 @@ static int mmc_compare_ext_csds(struct mmc_card *card, unsigned bus_width)
+>  MMC_DEV_ATTR(raw_rpmb_size_mult, "%#x\n", card->ext_csd.raw_rpmb_size_mult);
+>  MMC_DEV_ATTR(rel_sectors, "%#x\n", card->ext_csd.rel_sectors);
+>  MMC_DEV_ATTR(ocr, "0x%08x\n", card->ocr);
+> +MMC_DEV_ATTR(rca, "0x%04x\n", card->rca);
+>  MMC_DEV_ATTR(cmdq_en, "%d\n", card->ext_csd.cmdq_en);
 >
-> -copy_err:
-> -       kfree(idata->buf);
->  idata_err:
->         kfree(idata);
->  out:
+>  static ssize_t mmc_fwrev_show(struct device *dev,
+> @@ -848,6 +849,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
+>         &dev_attr_raw_rpmb_size_mult.attr,
+>         &dev_attr_rel_sectors.attr,
+>         &dev_attr_ocr.attr,
+> +       &dev_attr_rca.attr,
+>         &dev_attr_dsr.attr,
+>         &dev_attr_cmdq_en.attr,
+>         NULL,
+> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+> index 62b84dd..2ecd098 100644
+> --- a/drivers/mmc/core/sd.c
+> +++ b/drivers/mmc/core/sd.c
+> @@ -676,6 +676,7 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
+>  MMC_DEV_ATTR(oemid, "0x%04x\n", card->cid.oemid);
+>  MMC_DEV_ATTR(serial, "0x%08x\n", card->cid.serial);
+>  MMC_DEV_ATTR(ocr, "0x%08x\n", card->ocr);
+> +MMC_DEV_ATTR(rca, "0x%04x\n", card->rca);
+>
+>
+>  static ssize_t mmc_dsr_show(struct device *dev,
+> @@ -709,6 +710,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
+>         &dev_attr_oemid.attr,
+>         &dev_attr_serial.attr,
+>         &dev_attr_ocr.attr,
+> +       &dev_attr_rca.attr,
+>         &dev_attr_dsr.attr,
+>         NULL,
+>  };
 > --
-> 2.16.2
+> 1.9.1
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
