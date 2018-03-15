@@ -1,76 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752744AbeCOSSx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:18:53 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:48315 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752307AbeCOSSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:18:51 -0400
-Subject: Re: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode
- setting with RGMII PHY interface
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-To: =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Schuyler Patton <spatton@ti.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180315165603.30471-1-sz.lin@moxa.com>
- <b866b57c-2e15-978b-e1e5-5b2c7aa0a06a@ti.com>
-Message-ID: <eddbe437-8a9f-c7df-4e68-8a45c6d89cdb@ti.com>
-Date: Thu, 15 Mar 2018 13:18:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752773AbeCOSTG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:19:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752238AbeCOSTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:19:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3072B20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 15 Mar 2018 19:19:00 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v4 3/7] sched: idle: Do not stop the tick before
+ cpuidle_idle_call()
+Message-ID: <20180315181858.GA14983@lerouge>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan>
+ <3550231.xNMJN5JcLx@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <b866b57c-2e15-978b-e1e5-5b2c7aa0a06a@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3550231.xNMJN5JcLx@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/15/2018 12:39 PM, Grygorii Strashko wrote:
+On Mon, Mar 12, 2018 at 10:53:25AM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
+> Make cpuidle_idle_call() decide whether or not to stop the tick.
 > 
-> On 03/15/2018 11:56 AM, SZ Lin (林上智) wrote:
->> According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
->> DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is 
->> only
->> available when PHY is configured in RGMII mode with 10Mbps speed. It will
->> cause some networking issues without RGMII mode, such as carrier sense
->> errors and low throughput. TI also mentioned this issue in their 
->> forum[4].
->>
->> This patch adds the check mechanism for PHY interface with RGMII 
->> interface
->> type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
->>
->> References:
->> [1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
->> [2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
->> [3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
->> [4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
->>
->> Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
->> Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
->> Signed-off-by: Schuyler Patton <spatton@ti.com>
->> ---
->> Changes from v1:
->> - Use phy_interface_is_rgmii helper function
->> - Remove blank line
->>
-> 
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
+> First, the cpuidle_enter_s2idle() path deals with the tick (and with
+> the entire timekeeping for that matter) by itself and it doesn't need
+> the tick to be stopped beforehand.
 
-Also could this be marked as stable material 4.9+?
+Not sure you meant timekeeping either :)
 
--- 
-regards,
--grygorii
+>  	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
+>  		if (idle_should_enter_s2idle()) {
+> +			rcu_idle_enter();
+> +
+>  			entered_state = cpuidle_enter_s2idle(drv, dev);
+>  			if (entered_state > 0) {
+>  				local_irq_enable();
+>  				goto exit_idle;
+>  			}
+> +
+> +			rcu_idle_exit();
+>  		}
+
+I'm not sure how the tick is stopped on suspend to idle. Perhaps through
+hrtimer (tick_cancel_sched_timer()) or clockevents code.
+
+But we may have a similar problem than with idle_poll() called right after
+call_cpuidle(). Ie: we arrive in cpuidle_enter_s2idle() with a tick that
+should be reprogrammed while it is not. No idea if that can hurt somehow.
+
+I guess it depends what happens to the tick on s2idle, I'm not clear with that.
