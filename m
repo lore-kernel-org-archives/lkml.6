@@ -1,73 +1,93 @@
-Return-Path: <luto@kernel.org>
-X-Google-Smtp-Source: AG47ELuCrlKfCnBSafTmxBch5gz3vyCd5SO2J8zfMpnKCBwffZrYniSxnbQdcPtTap7G2gKaobWn
-ARC-Seal: i=1; a=rsa-sha256; t=1520781623; cv=none;
+Return-Path: <bich.hemon@st.com>
+X-Google-Smtp-Source: AG47ELtmuI6FO1tAVLqHWYeIqpvnEDjMOYTrItgzMpK4SZby/wfCAKqcvFYQbhbOZZ8BP32GxLYx
+ARC-Seal: i=1; a=rsa-sha256; t=1521103493; cv=none;
         d=google.com; s=arc-20160816;
-        b=eSJZCnvkzf/whgZirK4hHpSXuD5dVJzwLhZVzb4Ws4fkhAjXu6pMvVcd0EecSsm1xz
-         BzCKUIsCkR8C792XkmsyVLKNFVN1l9ORGm14g6JitizF44JsdpSrrMCTxc4fOY0ZXCVF
-         Y7knzdA0n7gGyniA/RIiuRX6pOVjgv7L98/i2MBsR3kbRgRCLOGuCeRPLx5Orvay53dE
-         lcqUYvxpx/kzhfVc9X0LyEdvn+RGGI+AL/yut4rYL46HhFfPQPTd7KTSRcxGYm7i89vz
-         zUXEFz7E/kxl1ieknlQcQOIHSAQ7BhYDm/Q3i9XcM8qEuFr4qHOmFuK149GL/Hi8Hfnr
-         UHfA==
+        b=VwFhn6+fuqTEWAAQInNUHOzF8TdTJof42ipxz6cXQedlhGu5GJvWosgmCvZqhz1/hk
+         so8YdFfUfVONnylZwG5gkuPHLbk4qShirpZDatLj0iQRR6g0xfFMUWAmhiQLT/ae8sYH
+         IavuUZH/zL+oL72LCnbp5+BFhjN+jWAtfK2h6NIZujvFSqIEOc8ocn9b76nqlv+prgLj
+         0YBOZUrpwK1VjmVDNP9BMSO42n2ZSo0zc9sMmOnDb+I4ERc0k8FwlnGlNnCUsvH+80Zk
+         1oQvyheRCXi5MFBKt4VIft7X0iyPIJLiBVGjo6PN1jaXiLjgzCp8s8Iy2UInkRdQHqrQ
+         /cPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=yZUrodgeybGLAXalYdFCFrowgEGzni+Yq0QroawLiCQ=;
-        b=JeW5qQP7PU8P+s7PzonxaQV7ahhGAf7aJ0HYqOxaLhC0+szif8rhod/9bk6hO8O8AF
-         GVfHipJ9ytHXdEOxYOVMCOUrkUPUzH0vRDj2t3sai5GT4SK7//kmmboGA4pYiYys3AIr
-         fxeBa4SqLRGxGxDtkzMxbJtVrCuPsMeUMdCJETkjlY2cXjcFtDsfvVswpaqfXEJuNT+i
-         UFnfRjTtnI64J8SwegYGhBIa3sEGN+0qozQoTMSERdv2Xr8mlyOQgq1bY1E8Hxr/d9sN
-         0EtA+o0QX0afugm1xDsW41xJRqI373iUbY+y0OVXUQAf5Lb7wrTcRG5N4ROcuIDVxdZc
-         5SPw==
+        h=mime-version:content-transfer-encoding:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :cc:to:from:arc-authentication-results;
+        bh=eh+IRhRc1CqJqWq9KdZbS5Fz56QZ094fKFD0WTf0XGA=;
+        b=g59hmNxEQXn6nP1+7a7+cEHcAf0xrK0ePnBsIpxyy8nxAoCwMM3IxjeOoKoqvetkDA
+         Gyl4/lBqtbZQokeY7kaN9ubeVcfNi7sVBWj7aD0XjSeDPvzVoiunbUQ8dy0D8l31V1u3
+         vSK5eWW6vCTFRLeVBAPp5SwwS8Xx5CFxyMPCajIQXhVGpWfdkkkwB/SN6XpyJCAYvtKW
+         //fl7rpFgxCloUyKAtlHjFiDZbs/sxBjtkn1L/2AoBeF/T8JJYQGjeC45wSwwMbzgxAS
+         DqS4WjbPAsvGaARMeSqKA49JgGjrkwMKKuPaMW21XisqDURFE0mKXaouwWijQjB31K3w
+         yIVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of bich.hemon@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=bich.hemon@st.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15BE2178D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+       spf=pass (google.com: domain of bich.hemon@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=bich.hemon@st.com
+From: Bich HEMON <bich.hemon@st.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Bich HEMON <bich.hemon@st.com>
+Subject: [PATCH] serial: stm32: fix initialization of RS485 mode
+Thread-Topic: [PATCH] serial: stm32: fix initialization of RS485 mode
+Thread-Index: AQHTvDnfm3zhfM7hv06tT6Pb4c9WQw==
+Date: Thu, 15 Mar 2018 08:44:46 +0000
+Message-ID: <1521103480-6940-1-git-send-email-bich.hemon@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20180311105557.20807-14-linux@dominikbrodowski.net>
-References: <20180311105557.20807-1-linux@dominikbrodowski.net> <20180311105557.20807-14-linux@dominikbrodowski.net>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sun, 11 Mar 2018 15:20:01 +0000
-X-Gmail-Original-Message-ID: <CALCETrWHotpZ5HbaFO9Z6NimS8jqZDHprK8Vbj_=oMF9X=9feQ@mail.gmail.com>
-Message-ID: <CALCETrWHotpZ5HbaFO9Z6NimS8jqZDHprK8Vbj_=oMF9X=9feQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/35] syscalls: do not call sys_ioperm() within the kernel
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lutomirski <luto@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_04:,,
+ signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594638526828393635?=
-X-GMAIL-MSGID: =?utf-8?q?1594655111153692513?=
+X-GMAIL-THRID: =?utf-8?q?1594992617354613977?=
+X-GMAIL-MSGID: =?utf-8?q?1594992617354613977?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Mar 11, 2018 at 10:55 AM, Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
-> While at it, use SYSCALL_DEFINE3() instead of a hand-crafted syscall
-> definition.
+Configure RS485 mode during port initialization.
 
-Great!
+Fixes: 1bcda09d2910 ("serial: stm32: add support for RS485 hardware control mode")
+Signed-off-by: Bich Hemon <bich.hemon@st.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/tty/serial/stm32-usart.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->  static void complete_change_console(struct vc_data *vc);
-> @@ -420,12 +420,12 @@ int vt_ioctl(struct tty_struct *tty,
->                         ret = -EINVAL;
->                         break;
->                 }
-> -               ret = sys_ioperm(arg, 1, (cmd == KDADDIO)) ? -ENXIO : 0;
-> +               ret = ksys_ioperm(arg, 1, (cmd == KDADDIO)) ? -ENXIO : 0;
->                 break;
->
->         case KDENABIO:
->         case KDDISABIO:
-> -               ret = sys_ioperm(GPFIRST, GPNUM,
-> +               ret = ksys_ioperm(GPFIRST, GPNUM,
->                                   (cmd == KDENABIO)) ? -ENXIO : 0;
->                 break;
->  #endif
-
-I wonder if we can just delete this code.
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-us=
+art.c
+index 345fbf3..e8d7a7b 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -809,6 +809,10 @@ static int stm32_init_port(struct stm32_port *stm32por=
+t,
+ 	port->ops	=3D &stm32_uart_ops;
+ 	port->dev	=3D &pdev->dev;
+ 	port->irq	=3D platform_get_irq(pdev, 0);
++	port->rs485_config =3D stm32_config_rs485;
++
++	stm32_init_rs485(port, pdev);
++
+ 	stm32port->wakeirq =3D platform_get_irq(pdev, 1);
+ 	stm32port->fifoen =3D stm32port->info->cfg.has_fifo;
+=20
+--=20
+1.9.1
