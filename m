@@ -1,129 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932457AbeCOVXu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:23:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55662 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751877AbeCOVXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:23:43 -0400
-Date: Thu, 15 Mar 2018 15:23:34 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Alexey Kardashevskiy <aik@ozlabs.ru>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [RFC PATCH] vfio/pci: Add ioeventfd support
-Message-ID: <20180315152334.29ee10b6@w520.home>
-In-Reply-To: <777482c6-8180-df0f-0a0c-5d6e000553ba@redhat.com>
-References: <20180207000731.32764.95992.stgit@gimli.home>
-        <cfe31ae1-2557-d15a-45a2-0ba03d8d71fa@ozlabs.ru>
-        <20180206212538.50ef0e13@w520.home>
-        <6014d60c-9bdb-4dc0-7cd7-9299005d9c5a@ozlabs.ru>
-        <20180207071253.7c606594@w520.home>
-        <86c09adf-c4ab-5eca-629a-4d6c6a5692be@ozlabs.ru>
-        <777482c6-8180-df0f-0a0c-5d6e000553ba@redhat.com>
+        id S932544AbeCOVYI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:24:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752822AbeCOVYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:24:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF5520855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Patrice CHOTARD <patrice.chotard@st.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+ <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+ <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+Message-ID: <152114904300.111154.16697790469167766472@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Thu, 15 Mar 2018 14:24:03 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 13:38:00 +0100
-Auger Eric <eric.auger@redhat.com> wrote:
-> On 08/02/18 02:22, Alexey Kardashevskiy wrote:
-> > On 08/02/18 01:12, Alex Williamson wrote:  
-> >> On Wed, 7 Feb 2018 15:48:26 +1100
-> >> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> >>> On 07/02/18 15:25, Alex Williamson wrote:  
-> >>>> On Wed, 7 Feb 2018 15:09:22 +1100
-> >>>> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:    
-> >>>>> On 07/02/18 11:08, Alex Williamson wrote:    
-> >>>>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >>>>>> index e3301dbd27d4..07966a5f0832 100644
-> >>>>>> --- a/include/uapi/linux/vfio.h
-> >>>>>> +++ b/include/uapi/linux/vfio.h
-> >>>>>> @@ -503,6 +503,30 @@ struct vfio_pci_hot_reset {
-> >>>>>>  
-> >>>>>>  #define VFIO_DEVICE_PCI_HOT_RESET	_IO(VFIO_TYPE, VFIO_BASE + 13)
-> >>>>>>  
-> >>>>>> +/**
-> >>>>>> + * VFIO_DEVICE_IOEVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 14,
-> >>>>>> + *                              struct vfio_device_ioeventfd)
-> >>>>>> + *
-> >>>>>> + * Perform a write to the device at the specified device fd offset, with
-> >>>>>> + * the specified data and width when the provided eventfd is triggered.
-> >>>>>> + *
-> >>>>>> + * Return: 0 on success, -errno on failure.
-> >>>>>> + */
-> >>>>>> +struct vfio_device_ioeventfd {
-> >>>>>> +	__u32	argsz;
-> >>>>>> +	__u32	flags;
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_8		(1 << 0) /* 1-byte write */
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_16	(1 << 1) /* 2-byte write */
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_32	(1 << 2) /* 4-byte write */
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_64	(1 << 3) /* 8-byte write */
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD_SIZE_MASK	(0xf)
-> >>>>>> +	__u64	offset;			/* device fd offset of write */
-> >>>>>> +	__u64	data;			/* data to be written */
-> >>>>>> +	__s32	fd;			/* -1 for de-assignment */
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +#define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 14)      
-> >>>>>
-> >>>>>
-> >>>>> Is this a first ioctl with endianness fixed to little-endian? I'd suggest
-> >>>>> to comment on that as things like vfio_info_cap_header do use the host
-> >>>>> endianness.    
-> >>>>
-> >>>> Look at our current read and write interface, we call leXX_to_cpu
-> >>>> before calling iowriteXX there and I think a user would logically
-> >>>> expect to use the same data format here as they would there.    
-> >>>
-> >>> If the data is "char data[8]" (i.e. bytestream), then it can be expected to
-> >>> be device/bus endian (i.e. PCI == little endian), but if it is u64 - then I
-> >>> am not so sure really, and this made me look around. It could be "__le64
-> >>> data" too.
-> >>>  
-> >>>> Also note
-> >>>> that iowriteXX does a cpu_to_leXX, so are we really defining the
-> >>>> interface as little-endian or are we just trying to make ourselves
-> >>>> endian neutral and counter that implicit conversion?  Thanks,    
-> >>>
-> >>> Defining it LE is fine, I just find it a bit confusing when
-> >>> vfio_info_cap_header is host endian but vfio_device_ioeventfd is not.  
-> >>
-> >> But I don't think we are defining the interface as little-endian.
-> >> iowriteXX does a cpu_to_leXX byteswap.  Therefore in order to maintain
-> >> endian neutrality, if the data does a cpu->le swap on the way out, I
-> >> need to do a le->cpu swap on the way in, right?  Please defend the
-> >> assertion that we're creating a little-endian interface.  Thanks,  
-> > 
-> > 
-> > vfio_pci_ioctl() passes "endian-neutral" ioeventfd.data to
-> > vfio_pci_ioeventfd() which immediately does the leXX_to_cpu() conversion
-> > (and uses the result later on in iowriteXX(), which is not VFIO API) so I
-> > read it as the ioctl really expects LE.
-> > 
-> > The QEMU part - vfio_nvidia_mirror_quirk MR - does not swap bytes but the
-> > MR itself it declared DEVICE_LITTLE_ENDIAN which means
-> > vfio_nvidia_quirk_mirror_write() receives byteswapped @data in the host
-> > endian == bigendian on a big endian host. So the ioctl() handler will
-> > receive a BE value, do byteswap #1 in leXX_to_cpu(), and then do byteswap
-> > #2 in iowriteXX() so after all a BE will be written to a device. So I'd say
-> > we rather do not need leXX_to_cpu() in vfio_pci_ioeventfd(). Correct me
-> > where I am wrong. Thanks,  
+Quoting Linus Walleij (2018-03-01 01:12:30)
+> On Mon, Feb 26, 2018 at 9:41 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
 > 
-> It is not crystal clear to me what is the outcome of this discussion.
-> Please can you clarify?
+> > Hi Stephen, Michael
+> >
+> > It's a gentle reminder as this patch is present on mailing list and
+> > acked-by since 01/12/2018
 > 
-> At the beginning I understood we had a chain of lexx_to_cpu and
-> cpu_to_lexx (in iowritexx) so it was neutral. Now I am lost about what
-> we want.
+> You need Stephen's new kernel.org mail address to reach him.
+> (Added on TO:)
+> 
 
-I've tried to address this with patch 2/3 in the newer series, adding
-helpers such that the implicit endian-ness of the io{read,write}
-functions is hidden and no extraneous swapping is done.  Therefore the
-leXX_to_cpu() is gone, as Alexey wanted.  Unless there's a new
-objection, this is what I intend to go with.  Thanks,
-
-Alex
+Thanks. Both work now after I've setup filters to catch everything.
