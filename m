@@ -1,45 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeCOXE4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 19:04:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36180 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752794AbeCOXEz (ORCPT
+        id S1752969AbeCOXE6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 19:04:58 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:50488 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752855AbeCOXE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 19:04:55 -0400
-Date: Thu, 15 Mar 2018 16:04:53 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/khugepaged: Convert VM_BUG_ON() to collapse fail
-Message-Id: <20180315160453.dff17cfe3dca056dabc98b9e@linux-foundation.org>
-In-Reply-To: <20180315152353.27989-1-kirill.shutemov@linux.intel.com>
-References: <20180315152353.27989-1-kirill.shutemov@linux.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Mar 2018 19:04:56 -0400
+Date: Fri, 16 Mar 2018 10:03:13 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180315230313.GM18129@dastard>
+References: <152112607662.7371.16175767692798928059.stgit@localhost.localdomain>
+ <20180315174903.GM23100@dhcp22.suse.cz>
+ <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 18:23:53 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+On Thu, Mar 15, 2018 at 10:28:43PM +0300, Kirill Tkhai wrote:
+> On 15.03.2018 20:49, Michal Hocko wrote:
+> > On Thu 15-03-18 18:01:34, Kirill Tkhai wrote:
+> >> xfs_reclaim_inodes_count(XFS_M(sb)) does not care about memcg.
+> >> So, it's called for memcg reclaim too, e.g. this list is shrinked
+> >> disproportionality to another lists.
+> >>
+> >> This looks confusing, so I'm reporting about this.
+> >> Consider this patch as RFC.
+> > 
+> > Could you be more specific about the problem you are trying to solve?
+> > Because we do skip shrinkers which are not memcg aware by
+> > shrink_slab:
+> > 		/*
+> > 		 * If kernel memory accounting is disabled, we ignore
+> > 		 * SHRINKER_MEMCG_AWARE flag and call all shrinkers
+> > 		 * passing NULL for memcg.
+> > 		 */
+> > 		if (memcg_kmem_enabled() &&
+> > 		    !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+> > 			continue;
+> > 
+> > Or am I missing something?
+> 
+> sb->s_op->nr_cached_objects is a sub-method of generic super_cache_count().
+> super_cache_count() is owned and only called by superblock's shrinker,
+> which does have SHRINKER_MEMCG_AWARE flag.
 
-> khugepaged is not yet able to convert PTE-mapped huge pages back to PMD
-> mapped. We do not collapse such pages. See check khugepaged_scan_pmd().
-> 
-> But if between khugepaged_scan_pmd() and __collapse_huge_page_isolate()
-> somebody managed to instantiate THP in the range and then split the PMD
-> back to PTEs we would have a problem -- VM_BUG_ON_PAGE(PageCompound(page))
-> will get triggered.
-> 
-> It's possible since we drop mmap_sem during collapse to re-take for
-> write.
-> 
-> Replace the VM_BUG_ON() with graceful collapse fail.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Fixes: b1caa957ae6d ("khugepaged: ignore pmd tables with THP mapped with ptes")
+Xfs inodes are accounted to memcgs when they are allocated.  All the
+memcg reclaim stuff is done at the VFS inode cache level - all the
+XFS inode cache shrinker does is clean up inodes that are not
+referenced by the VFS inode cache because the memcg aware reclaim
+has already freed them.
 
-Jan 2016.  Do we need a cc:stable?
+i.e. what the XFS inode cache is doing is perfectly reasonable -
+memcg aware inode reclaim is occuring at the VFS level, but on XFS
+that does not free the inodes as they are still referenced
+internally by XFS. However, once the inode is removed from the VFS
+LRU, all memcg information about the inode is destroyed, so there's
+nothing in the XFS layers that cares about memcgs.
+
+Hence when the XFS inode shrinker then called to run a
+garbage collection pass on unreferenced inodes - the inodes that
+are now unreferenced in the memcg due to the VFS inode shrinker pass
+- it frees inodes regardless of the memcg context it was called from
+because that information is no longer present in the inode cache.
+Hence we just ignore memcgs at this level.
+
+So, is there a problem you are actually trying to fix, or is this
+simply a "I don't understand how the superblock shrinkers work,
+please explain" patch?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
