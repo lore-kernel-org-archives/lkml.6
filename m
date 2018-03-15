@@ -1,100 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751698AbeCOKKe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:10:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751405AbeCOKKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:10:32 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] x86/hyper-v: allocate and use Virtual Processor Assist Pages
-References: <20180309140249.2840-1-vkuznets@redhat.com>
-        <20180309140249.2840-5-vkuznets@redhat.com>
-        <alpine.DEB.2.21.1803141611300.2481@nanos.tec.linutronix.de>
-Date: Thu, 15 Mar 2018 11:10:27 +0100
-In-Reply-To: <alpine.DEB.2.21.1803141611300.2481@nanos.tec.linutronix.de>
-        (Thomas Gleixner's message of "Wed, 14 Mar 2018 16:15:58 +0100 (CET)")
-Message-ID: <87bmfpbqek.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751854AbeCOKL1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:11:27 -0400
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:45884 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeCOKLZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 06:11:25 -0400
+X-Google-Smtp-Source: AG47ELsnoED0TEA6Svs48CsbWeCCsZLbfFCuR1ZYv2HS7OsDUhAQ4NTL5UC0mhhFPHqC40gXAbW46A==
+From: Daniel Drake <drake@endlessm.com>
+To: jarkko.sakkinen@linux.intel.com
+Cc: chiu@endlessm.com, linux@endlessm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: TPM driver breaks S3 suspend
+Date: Thu, 15 Mar 2018 18:11:19 +0800
+Message-Id: <20180315101119.30222-1-drake@endlessm.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
+References: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+Hi,
 
-> On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
->> @@ -198,6 +218,12 @@ static int hv_cpu_die(unsigned int cpu)
->>  	struct hv_reenlightenment_control re_ctrl;
->>  	unsigned int new_cpu;
->>  
->> +	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
->> +		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
->> +		vfree(hv_vp_assist_page[cpu]);
->> +		hv_vp_assist_page[cpu] = NULL;
->
-> So this is freed before the CPU is actually dead. And this runs in
-> preemtible context. Is the wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0); enough to
-> prevent eventual users of the assist page on the outgoing CPU from
-> accessing it?
->
+Sorry for the delayed response.
 
-After we do wrmsrl() the page is no longer 'magic' so in case eventual
-users try using it they'll most likely misbehave -- so changing the
-shutdown order won't help.
+Unfortunately we had to return the affected machine to the vendor
+(Acer Veriton X4110G) although given we have a fairly complete
+understanding of the problem, perhaps we can find and push a fix
+anyway.
 
-The only user of these pages is currently KVM. Can we still have vCPUs
-running on the outgoing CPU at this point? If case we can we're in
-trouble and we need to somehow kick them out first.
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> Can you try it on git://git.infradead.org/users/jjs/linux-tpmdd.git ?
+> Maybe it is related to the LPC #CLKRUN issues we've had.
 
->>  	if (hv_reenlightenment_cb == NULL)
->>  		return 0;
->>  
->> @@ -241,6 +267,13 @@ void hyperv_init(void)
->>  	if (!hv_vp_index)
->>  		return;
->>  
->> +	hv_vp_assist_page = kcalloc(num_possible_cpus(),
->> +				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
->> +	if (!hv_vp_assist_page) {
->> +		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
->> +		return;
->> +	}
->> +
->>  	if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/hyperv_init:online",
->>  			      hv_cpu_init, hv_cpu_die) < 0)
->>  		goto free_vp_index;
->
-> Shouldn't you free hv_vp_assist_page in the error path?
->
+I don't see anything relevant in that git tree, and it seems like
+a distant issue from the CLKRUN changes that have been made.
 
-Yep, will do.
+To recap, the first suspend works OK, and then the TPM shows shows the
+following message on the first resume:
+  tpm tpm0: A TPM error(38) occured continue selftest
+And error(38) is TPM_ERR_INVALID_POSTINIT which means the TPM is
+not in the correct state. Then the following suspend will always
+fail with the following messages.
+  tpm tpm0: Error (38) sending savestate before suspend
+  PM: Device 00:0b failed to suspend: error 38
 
->> +extern struct hv_vp_assist_page **hv_vp_assist_page;
->> +
->> +static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->> +{
->> +	return hv_vp_assist_page[cpu];
->
-> Shouldn't that check hv_vp_assist_page != NULL?
->
+tpm_crb is the driver here (not tpm2).
 
-Not strictly required as we clean HV_X64_ENLIGHTENED_VMCS_RECOMMENDED
-above so KVM won't use it but I can add the check to make the API
-better.
+This exact problem was also discussed in depth years ago at
+https://lists.gt.net/linux/kernel/1358716
 
-Thanks,
+The patch that we used to avoid the issue is below. What do you think?
 
+Thanks
+Daniel
+
+
+---
+ drivers/char/tpm/tpm-interface.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1d6729be4cd6..444ae2df4a06 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -953,6 +953,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
+ 	rc = tpm_continue_selftest(chip);
++	if (rc == TPM_ERR_INVALID_POSTINIT) {
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
++	}
+ 	/* This may fail if there was no TPM driver during a suspend/resume
+ 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
+ 	 */
 -- 
-  Vitaly
+2.14.1
