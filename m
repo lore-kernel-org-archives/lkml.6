@@ -1,112 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeCOPGc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:06:32 -0400
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:42755 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752641AbeCOPGb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:06:31 -0400
-X-Google-Smtp-Source: AG47ELtsl4+UcPLE4hFXUr1roKjmrSh0a4HSKoDIVRobf7ensuKj5FvZklw4sIoz7lEAQick7PmgMQ==
-Subject: Re: New -Werror=restrict error with incremental gcc
-To: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
- <20180315143012.GA2221@redhat.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <53714ddf-1b2d-295b-e364-3330f1d9c48c@redhat.com>
-Date: Thu, 15 Mar 2018 08:06:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752801AbeCOPHH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:07:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:40652 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752595AbeCOPHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:07:06 -0400
+Date: Thu, 15 Mar 2018 15:07:02 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: York Sun <york.sun@nxp.com>
+Cc: bp@alien8.de, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, james.morse@arm.com,
+        marc.zyngier@arm.com
+Subject: Re: [PATCH RFC 1/2] drivers/edac: Add L1 and L2 error detection for
+ A53 and A57
+Message-ID: <20180315150702.5yqauxj3z6exdl65@lakrids.cambridge.arm.com>
+References: <1521073067-24348-1-git-send-email-york.sun@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180315143012.GA2221@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521073067-24348-1-git-send-email-york.sun@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 07:30 AM, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Mar 14, 2018 at 02:19:41PM -0700, Laura Abbott escreveu:
->> Hi,
->>
->> Fedora picked up a new gcc (8.0.1-0.18.fc29) and it seems to have introduced a new error:
->>
->>    gcc -Wp,-MD,/home/labbott/linux/tools/objtool/.str_error_r.o.d -Wp,-MT,/home/labbott/linux/tools/objtool/str_error_r.o -Wall -Werror -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wshadow -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef -Wwrite-strings -Wformat -Wstrict-aliasing=3 -Wno-switch-default -Wno-switch-enum -Wno-packed -fomit-frame-pointer -O2 -g -I/home/labbott/linux/tools/include -I/home/labbott/linux/tools/arch/x86/include/uapi -I/home/labbott/linux/tools/objtool/arch/x86/include -I/home/labbott/linux/tools/lib -D"BUILD_STR(s)=#s" -c -o /home/labbott/linux/tools/objtool/str_error_r.o ../lib/str_error_r.c
->> ../lib/str_error_r.c: In function ‘str_error_r’:
->> ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
->>     snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
->>     ^~
->>
->> This looks like gcc is now warning about the aliasing from printing out buf
->> while printing to the buffer. I can work around this pretty easily but I
->> know people have strong opinions about gcc warnings. Any thoughts?
-> 
-> I couldn't reproduce it here:
-> 
-> [perfbuilder@b34646cdb12b perf]$ gcc -v
-> Using built-in specs.
-> COLLECT_GCC=gcc
-> COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
-> OFFLOAD_TARGET_NAMES=nvptx-none
-> OFFLOAD_TARGET_DEFAULT=1
-> Target: x86_64-redhat-linux
-> Configured with: ../configure --enable-bootstrap
-> --enable-languages=c,c++,objc,obj-c++,fortran,ada,go,lto --prefix=/usr
-> --mandir=/usr/share/man --infodir=/usr/share/info
-> --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-shared
-> --enable-threads=posix --enable-checking=release --enable-multilib
-> --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions
-> --enable-gnu-unique-object --enable-linker-build-id
-> --with-gcc-major-version-only --with-linker-hash-style=gnu
-> --enable-plugin --enable-initfini-array --with-isl --enable-libmpx
-> --enable-offload-targets=nvptx-none --without-cuda-driver
-> --enable-gnu-indirect-function --with-tune=generic --with-arch_32=i686
-> --build=x86_64-redhat-linux
-> Thread model: posix
-> gcc version 8.0.1 20180310 (Red Hat 8.0.1-0.17) (GCC)
-> [perfbuilder@b34646cdb12b perf]$ rpm -q gcc
-> gcc-8.0.1-0.17.fc29.x86_64
-> [perfbuilder@b34646cdb12b perf]$
-> 
-> [perfbuilder@b34646cdb12b perf]$ make O=/tmp/build/kernel/
-> make[1]: Entering directory '/tmp/build/kernel'
->    CHK     include/config/kernel.release
->    Using /git/perf as source for kernel
->    GEN     ./Makefile
->    CHK     include/generated/uapi/linux/version.h
->    CHK     include/generated/utsrelease.h
->    CHK     include/generated/bounds.h
->    CHK     include/generated/timeconst.h
->    CHK     include/generated/asm-offsets.h
->    CALL    /git/perf/scripts/checksyscalls.sh
->    DESCEND  objtool
->    CC       /tmp/build/kernel/tools/objtool/str_error_r.o
->    LD       /tmp/build/kernel/tools/objtool/objtool-in.o
->    LINK     /tmp/build/kernel/tools/objtool/objtool
->    CHK     scripts/mod/devicetable-offsets.h
->    HOSTCC  scripts/asn1_compiler
-> 
-> 
-> :-\
-> 
-> But I noticed some of those warnings and started action on then for
-> tools/perf, things like:
-> 
-> "perf annotate: Use asprintf when formatting objdump command line"
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?id=f22ed8ad2ca0
-> 
-> - Arnaldo
-> 
+Hi York,
 
-This only showed up with the very latest rawhide snapshot, .17 worked and
-.18 started failing. I had to download .18 manually to test locally
-https://koji.fedoraproject.org/koji/packageinfo?packageID=40
+On Wed, Mar 14, 2018 at 05:17:46PM -0700, York Sun wrote:
+> Add error detection for A53 and A57 cores. Hardware error injection
+> is supported on A53. Software error injection is supported on both.
+> For hardware error injection on A53 to work, proper access to
+> L2ACTLR_EL1, CPUACTLR_EL1 needs to be granted by EL3 firmware. This
+> is done by making an SMC call in the driver. Failure to enable access
+> disables hardware error injection. For error interrupt to work,
+> another SMC call enables access to L2ECTLR_EL1. Failure to enable
+> access disables interrupt for error reporting.
+
+Further to James's comments, I'm very wary of the prospect of using
+IMPLEMENTATION DEFINED functionality in the kernel, since by definition
+this varies from CPU to CPU, and we have no architected guarantees to
+rely upon.
+
+I'm concerned that allowing the Non-secure world to access these
+IMPLEMENTATION DEFINED registers poses a security risk (as it allows the
+Non-secure world to change properties that the secure world may be
+relying upon, among other things).
+
+I'm also concerned by the SMC interface, which uses a SIP-specific ID
+(i.e. it's NXP-specific). Thus, this driver can only possibly work on
+particular CPUs as integrated by NXP.
+
+The general expectation is that IMPLEMENTATION DEFINED functionality is
+for the use of firmware, which can provide common abstract interfaces.
+
+>From ARMv8.2 onwards, EDAC functionality is architected as part of the
+RAS extensions, and in future, that's what I'd expect we'd support in
+the kernel.
+
+Given all that, I don't think that we should be poking this
+functionality directly within Linux, and I think that firmware should be
+in charge of managing EDAC errors on these systems.
+
+I've left some general comments below, but the above stands regardless.
+
+[...]
+
+> +/*
+> + *	Flush L1 dcache by way, using physical address to find sets
+> + *
+> + *	__flush_l1_dcache_way(ptr)
+> + *	- ptr	- physical address to be flushed
+> + */
+> +ENTRY(__flush_l1_dcache_way)
+> +	msr	csselr_el1, xzr		/* select cache level 1 */
+> +	isb
+> +	mrs	x6, ccsidr_el1
+> +	and	x2, x6, #7
+> +	add	x2, x2, #4		/* x2 has log2(cache line size) */
+> +	mov	x3, #0x3ff
+> +	and	x3, x3, x6, lsr #3	/* x3 has number of ways - 1 */
+> +	clz	w5, w3			/* bit position of ways */
+> +	mov	x4, #0x7fff
+> +	and	x4, x4, x6, lsr #13	/* x4 has number of sets - 1 */
+> +	clz	x7, x4
+> +	lsr	x0, x0, x2
+> +	lsl	x0, x0, x7
+> +	lsr	x0, x0, x7		/* x0 has the set for ptr */
+> +
+> +	mov	x6, x3
+> +loop_way:
+> +	lsl	x9, x3, x5
+> +	lsl	x7, x0, x2
+> +	orr	x9, x9, x7
+> +	dc	cisw, x9
+> +	subs	x6, x6, #1
+> +	b.ge	loop_way
+> +	dsb	ish
+> +	ret
+> +
+> +ENDPIPROC(__flush_l1_dcache_way)
+
+Generally, Set/Way maintenance doesn't provide guarantees people expect
+from it, so I would very strongly prefer to avoid it entirely within
+Linux, as we currently do. I do not wish to see it return.
+
+[...]
+
+> +config EDAC_CORTEX_ARM64_L1_L2
+> +	tristate "ARM Cortex A57/A53"
+> +	depends on ARM64
+> +	help
+> +	  Support for error detection on ARM Cortex A57 and A53.
+> +
+
+... as integrated by NXP, with NXP firmware.
+
+[...]
+
+> +static inline void write_l2actlr(int *mem)
+> +{
+> +	u64 val;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&cortex_edac_lock, flags);
+> +	__flush_dcache_area(mem, 8);
+> +	__flush_l1_dcache_way(virt_to_phys(mem));
+
+I don't follow why this Set/Way maintenance is necessary.
+
+[...]
+
+> +	arm_smccc_smc(SIP_ALLOW_L1L2_ERR_32, 0, 0, 0, 0, 0, 0, 0, &res);
+
+> +	arm_smccc_smc(SIP_ALLOW_L2_CLR_32, 0, 0, 0, 0, 0, 0, 0, &res);
+
+These are NXP-specific, and have nothing to do with Cortex-A53. These
+will clash with other SIP-specific SMC calls.
+
+The DT binding did not mention NXP at all.
+
+[...]
+
+> +	of_for_each_phandle(&it, rc, dn, "cpus", NULL, 0) {
+> +		np = it.node;
+> +		cell = of_get_property(np, "reg", NULL);
+> +		if (!cell) {
+> +			pr_err("%pOF: missing reg property\n", np);
+> +			continue;
+> +		}
+> +		mpidr = of_read_number(cell, of_n_addr_cells(np));
+> +		cpu = get_logical_index(mpidr);
+> +		if (cpu < 0) {
+> +			pr_err("Bad CPU number for mpidr 0x%llx", mpidr);
+> +			continue;
+> +		}
+> +		cpumask_set_cpu(cpu, &compat_mask);
+> +	}
+
+In future, please don't parse the CPU nodes like this. We have
+of_cpu_node_to_id() to go from a CPU node to its Linux logical ID.
+
+[...]
+
+> +#define SIP_ALLOW_L1L2_ERR_32		0x8200FF15
+> +#define SIP_ALLOW_L2_CLR_32		0x8200FF16
+
+In future, please encode _which_ SIP in the mnemonic name. i.e. use
+NXP_SIP_* for NXP-specific SIP calls.
 
 Thanks,
-Laura
+Mark.
