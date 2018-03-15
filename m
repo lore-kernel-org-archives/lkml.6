@@ -1,153 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752787AbeCOS5Z convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:57:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752380AbeCOS5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:57:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F1E204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1752780AbeCOS7g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:59:36 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:38961 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeCOS7e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:59:34 -0400
+X-Google-Smtp-Source: AG47ELtCPcfkIsvx9v4I9ObLXLkTOwV8fT2pXzQ/Z4udP9qiJQRg2Z+0fgFu7fCR2pI1yQWfFr0UNQ==
+Date: Thu, 15 Mar 2018 14:59:32 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] kbuild: move include/config/ksym/* to
+ include/ksym/*
+In-Reply-To: <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
+Message-ID: <nycvar.YSQ.7.76.1803151450260.28583@knanqh.ubzr>
+References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com> <1521045861-22418-7-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1803141437030.28583@knanqh.ubzr>
+ <CAK7LNATS2CyFVXoN5CrqeVcNBYA09aCmyz3Bm5BZo4VJEvxONQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        srinivas.kandagatla@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180315144841.16144-1-srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180315144841.16144-1-srinivas.kandagatla@linaro.org>
-Message-ID: <152114024246.111154.2712387658941057310@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] ARM: dts: qcom: Add apq8064 Dragon Board 600c support
-Date: Thu, 15 Mar 2018 11:57:22 -0700
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting srinivas.kandagatla@linaro.org (2018-03-15 07:48:41)
-> diff --git a/arch/arm/boot/dts/qcom-apq8064-db600c.dts b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-> new file mode 100644
-> index 000000000000..6a3250151038
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
-> @@ -0,0 +1,547 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include "qcom-apq8064-v2.0.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> +#include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
-> +#include <dt-bindings/mfd/qcom-rpm.h>
-> +
-> +/ {
-> +       model = "Qualcomm Technologies, Inc. DB600c";
-> +       compatible = "arrow,apq8064-db600c", "qcom,apq8064";
-> +
-> +       aliases {
-> +               serial0 = &gsbi7_serial;
-> +               serial1 = &gsbi1_serial;
-> +               i2c0 = &gsbi2_i2c;
-> +               i2c1 = &gsbi3_i2c;
-> +               i2c2 = &gsbi4_i2c;
-> +               i2c3 = &gsbi7_i2c;
-> +               spi0 = &gsbi5_spi;
-> +       };
+On Thu, 15 Mar 2018, Masahiro Yamada wrote:
 
-Can you also add a chosen node for the stdout-path? Or maybe
-that's contentious because there are two serial ports that could
-possibly be used for serial console?
+> 2018-03-15 3:47 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
+> > On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+> >
+> >> The idea of using fixdep was inspired by Kconfig, but autoksyms
+> >> is unrelated to Kconfig.  So, I want to get those touched files
+> >> out of include/config/.  The directory include/ksym/ is removed
+> >> by "make clean".  We do not need to keep it for external module
+> >> building.
+> >
+> > It could be argued that include/config/ is not strictly containing
+> > configuration data either and is slightly misleading.
+> 
+> But, slightly related to configuration, IMHO.
+> At least they carry timestamps that are updated
+> when kernel configuration is changed.
 
-> +
-> +       regulators {
-> +               compatible = "simple-bus";
-> +               vph: regulator-fixed@1 {
+Yes. But for the sake of argument, the ksym timestamps are updated only 
+when configuration is changed too. Fundamentally they're both about 
+dependencies, hence my naming suggestion of deps/config/ and deps/ksym/ 
+so not to clutter the top include directory too much.
 
-Drop @1?
+> The difference between include/config/ and include/ksym/ is that
+> files under include/config/ are necessary for building
+> external modules (so should be cleaned away by mrproper)
+> whereas include/ksym/ is unnecessary for external modules
+> since vmlinux and in-kernel modules do not depend on
+> external modules.
 
-> +                       compatible = "regulator-fixed";
-> +                       regulator-min-microvolt = <4500000>;
-> +                       regulator-max-microvolt = <4500000>;
-> +                       regulator-name = "VPH";
-> +                       regulator-type = "voltage";
-> +                       regulator-boot-on;
-> +               };
-> +
-> +               /* on board fixed 3.3v supply */
-> +               vcc3v3: vcc3v3 {
-> +                       compatible = "regulator-fixed";
-> +                       regulator-name = "VCC3V3";
-> +                       regulator-min-microvolt = <3300000>;
-> +                       regulator-max-microvolt = <3300000>;
-> +                       regulator-always-on;
-> +               };
-> +
-> +       };
-> +
-> +       hdmi-out {
-> +               compatible = "hdmi-connector";
-> +               type = "a";
-> +
-> +               port {
-> +                       hdmi_con: endpoint {
-> +                               remote-endpoint = <&hdmi_out>;
-> +                       };
-> +               };
-> +       };
+Agreed. 
 
-Cool!
+> I wonder if trimming symbols makes sense for external modules.
 
-> +
-> +       soc {
-> +               pinctrl@800000 {
-> +                       card_detect: card_detect {
-> +                               mux {
-> +                                       pins = "gpio26";
-> +                                       function = "gpio";
-> +                                       bias-disable;
-> +                               };
-> +                       };
-[...]
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       bias-pull-down;
-> +                               };
-> +
-> +                               l5 {
-> +                                       regulator-min-microvolt = <2750000>;
-> +                                       regulator-max-microvolt = <3000000>;
-> +                                       bias-pull-down;
-> +                                       regulator-boot-on;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               l6 {
-> +                                       regulator-min-microvolt = <2950000>;
-> +                                       regulator-max-microvolt = <2950000>;
-> +                                       bias-pull-down;
-> +                               };
-> +
-> +                               l7 {
-> +                                       regulator-min-microvolt = <2950000>;
-> +                                       regulator-max-microvolt = <2950000>;
-> +                                       regulator-boot-on;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               /**
-> +                               /**
+Probably not.
 
-Weird double comment here.
 
-> +                                * 1.8v required on LS expansion
-> +                                * for mezzanine boards
-> +                                */
-> +                               l15 {
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
+Nicolas
