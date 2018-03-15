@@ -1,88 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeCOMue (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:50:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40892 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750987AbeCOMuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:50:32 -0400
-Date: Thu, 15 Mar 2018 13:50:30 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: New -Werror=restrict error with incremental gcc
-Message-ID: <20180315125030.GA4727@krava>
-References: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
+        id S1751945AbeCOMul (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:50:41 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:56287 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751694AbeCOMui (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:50:38 -0400
+X-Google-Smtp-Source: AG47ELsk9XPjfc5kb9Ez5H+3fhFFbhyuCfWLQ3tlvPbvYhsmBa4N2oooHXKTMWRHLWOEJbzS2AltCjvy94FVvY2TJuQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <87o9jpbmcy.fsf@xmission.com>
+References: <20180314143529.1456168-1-arnd@arndb.de> <20180314144614.1632190-1-arnd@arndb.de>
+ <20180314144614.1632190-2-arnd@arndb.de> <87po45hcuy.fsf@xmission.com>
+ <CAK8P3a1GL2N=emTbSgNGHxOrXtG6BxqRGMg00-tZqKg6-0O5=w@mail.gmail.com> <87o9jpbmcy.fsf@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 13:50:36 +0100
+X-Google-Sender-Auth: 8R3W2C6t_tlCs6r1nvmoSAQHxk0
+Message-ID: <CAK8P3a2ii0aQ6sSB_B_KeMWw51Y8mbX0eL6EPj5fQ8b8bJqmUQ@mail.gmail.com>
+Subject: Re: [PATCH 12/16] asm-generic: siginfo: remove obsolete #ifdefs
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 02:19:41PM -0700, Laura Abbott wrote:
-> Hi,
-> 
-> Fedora picked up a new gcc (8.0.1-0.18.fc29) and it seems to have introduced a new error:
-> 
->   gcc -Wp,-MD,/home/labbott/linux/tools/objtool/.str_error_r.o.d -Wp,-MT,/home/labbott/linux/tools/objtool/str_error_r.o -Wall -Werror -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wshadow -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef -Wwrite-strings -Wformat -Wstrict-aliasing=3 -Wno-switch-default -Wno-switch-enum -Wno-packed -fomit-frame-pointer -O2 -g -I/home/labbott/linux/tools/include -I/home/labbott/linux/tools/arch/x86/include/uapi -I/home/labbott/linux/tools/objtool/arch/x86/include -I/home/labbott/linux/tools/lib -D"BUILD_STR(s)=#s" -c -o /home/labbott/linux/tools/objtool/str_error_r.o ../lib/str_error_r.c
-> ../lib/str_error_r.c: In function ‘str_error_r’:
-> ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
->    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
->    ^~
-> 
-> This looks like gcc is now warning about the aliasing from printing out buf
-> while printing to the buffer. I can work around this pretty easily but I
-> know people have strong opinions about gcc warnings. Any thoughts?
+On Thu, Mar 15, 2018 at 12:37 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>> On Thu, Mar 15, 2018 at 11:06 AM, Eric W. Biederman
 
-I did not get above warning.. objtool compiled for me properly
+>> That seems reasonable. If you send me a patch with a proper
+>> changelog (I don't think I could explain this well enough), I'll
+>> add it to the series.
+>
+> I just realized you can also remove the #ifdefs for BUS_MCEERR_AR,
+> BUS_MCEERR_AO, and SEGV_BNDERR.  As those si_codes are now always
+> defined.  That description I expect you can handle.
 
-but we have some issues with perf there, I have to use
-following to get it compile, plus attached patch
+My existing patch already does this, and I've added a note to the changelog
+as well now.
 
-  make EXTRA_CFLAGS="-Wno-format-truncation -Wno-cast-function-type"
+> For a description of the above change how does this sound?
+>
+> Unlike system call numbers the assignment of si_codes has never had a
+> reason to be made per architecture.  Some architectures have had unique
+> conditions to report and reporting those conditions needed new si_codes.
+> Nothing has ever needed si_codes to have different values on different
+> architectures.  The si_code space is vast so even with defining all
+> si_codes on all architectures there is no danger in running out of
+> si_code values.
+>
+> The history of the si_codes BUS_MCEERR_AR, BUS_MCEER_AO, SEGV_BNDERR,
+> and SEGV_PKUERR show that a need of one architecture frequently becomes
+> a need of another architecture which makes sharing si_codes between
+> architectures a positive benefit and something to be encouraged.
+>
+> Where there are no conflicts with the historical ia64 arch specific
+> si_codes and any other si_codes make them generic si_codes.  We might
+> need them on another architecture someday.
+>
+> This leaves only the good example of arch generic si_codes in the kernel
+> for future architectures and architecture enhancments to follow.
+> Without bad examples to follow it should be easy to avoid the mistakes
+> of the past.
 
-the format-truncation are mostly fine, because we use the
-buffer len to be safe and the worst things that will happen
-is that we won't open the file, because the path is too long
+Ok, done. I've listed you as 'Suggested-by' for that patch. Since the
+changelog is way more work than the actual change, I would have
+made you the author of that patch, but I don't have a Signed-off-by
+from you for it.
 
-the cast-function-type seems like a problem, I've bunch
-of following errors:
-
-	 /root/linux/tools/perf/util/python.c:830:15: warning: cast between incompatible function types from ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _object *, struct _object *)’} [-Wcast-function-type]
-	   .ml_meth  = (PyCFunction)pyrf_evsel__open,
-		       ^
-	/root/linux/tools/perf/util/python.c:1052:15: warning: cast between incompatible function types from ‘PyObject * (*)(struct pyrf_evlist *, PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct pyrf_evlist *, struct _object *, struct _object *)’} to ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _object *, struct _object *)’} [-Wcast-function-type]
-	   .ml_meth  = (PyCFunction)pyrf_evlist__mmap,
-		       ^
-	/root/linux/tools/perf/util/python.c:1058:15: warning: cast between incompatible function types from ‘PyObject * (*)(struct pyrf_evlist *, PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct pyrf_evlist *, struct _object *, struct _object *)’} to ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _object *, struct _object *)’} [-Wcast-function-type]
-	   .ml_meth  = (PyCFunction)pyrf_evlist__open,
-
-we might want to look at it.. there were some python related
-changes recently, like v3 support.. Arnaldo?
-
-thanks,
-jirka
-
-
----
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index cce926aeb0c0..48696fd80ad1 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2721,7 +2721,7 @@ static int check_ev_match(char *dir_name, char *scriptname,
- 	int match, len;
- 	FILE *fp;
- 
--	sprintf(filename, "%s/bin/%s-record", dir_name, scriptname);
-+	scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scriptname);
- 
- 	fp = fopen(filename, "r");
- 	if (!fp)
+      Arnd
