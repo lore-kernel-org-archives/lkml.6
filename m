@@ -1,90 +1,98 @@
-Return-Path: <kurt@linutronix.de>
-X-Google-Smtp-Source: AG47ELs1BYDF9RIKeNTeIEoIP4pVrY3cg2LTHswHjsECDb0ds01o7Ibp5TP9ApQKGQpdBYWvoF9w
-ARC-Seal: i=1; a=rsa-sha256; t=1521199846; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UdrV6bGUILpsoHGEin75ZnW6QUtBr14yRiBzUATtpAJtY/pdZV3dvPVSFD64Z07Esv
-         r17qqF/o6Bojdn60VQoPbe5IMtNpO6ruPje6tCHavQ7xCtRK99U+47bT/JNi6iM7Rm8t
-         vgENdnuhS0E4OO73mdUAvhgN3MeDbqGaCqmK3vEcuQV5YP2+l10biWCMoJVctTlxigPp
-         tit+2eazV2bnKbBrHDVMuikOKJEmzWueg6i325pzdmDepvG723D3z/rIlJ7IO2d1basi
-         3uIE5QHB41Kqruy21/90y/ADFZq7hwsz6aPmSGnxNQDgbouiAFfgU8BxtBpimjCjQ0X7
-         pwwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=9slBi4wXOzc2hu8Yr5JDprYlXpfsPbA0Jg0wNWGtxKo=;
-        b=nFc1W+usPVRa+UWbggnX4LnmxKMckUQ+zs6HQwRcqVINLurn5xrEkWd14eZnEmbtq+
-         LrOtM3+jTY0ExT5OOHbUgWN1au6z1WdrCI08zmpy+IWSqkg53o8Sb4rAtjir+TUuwY6G
-         YEOxPuijaAB2YGoX10bVZwfL93H2ePQOJpopgpLdd2+pyDmXmRCx8m4qpk5STRXe83Kz
-         M73lr6Pa64PNYS1WrJhQ8sdFh/tBNPfP3EGgbyv922QY7rEzMX7vSIT0JFjTx8lJu9Lb
-         dpsxBsUuHaWQnNiLTC3xsFsBQWb3FDT6Rfnclgw1e9L6XO2hvik7OLMqNA0QLokTf34S
-         T/gQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of kurt@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=kurt@linutronix.de
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of kurt@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=kurt@linutronix.de
-From: Kurt Kanzenbach <kurt@linutronix.de>
-To: gregkh@linuxfoundation.org
-Cc: kurt@linutronix.de,
-	tglx@linutronix.de,
-	jslaby@suse.com,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: serial: 8250: pass IRQ shared flag to UART ports
-Date: Fri, 16 Mar 2018 12:31:58 +0100
-Message-Id: <20180316113158.10298-1-kurt@linutronix.de>
-X-Mailer: git-send-email 2.11.0
+Return-Path: <pratik.jain0509@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-779193-1521135071-2-11323139670612068441
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.160.66', Host='mail-pl0-f66.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: pratik.jain0509@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521135070; b=jqOMWByYlcTlXe98ynZXUNXuuzCiRyNv3NoGjTgNZ7XHh+W
+    Y29MpEPYSdoGDd9Ur+wPRNAPohJ3jnh/VCCL7oicMbZ/dmpOqUIdV1Vg6dXnW8SE
+    E4XHKoWup5FvS0jvszfPK2K+5JNF0V4Z+qiVLbW+G6vFWz6wQHHzJiRTNHNWWnNI
+    0tSBSGy7+Ssk3Q+j92CBC6k7vF/CLgXmnN9qafGwpRjE6l4nDDnjNYxoPWHfsuqo
+    FGXAhYzCtEILErqskjWcEIx2wjGB2pgursBrQKGjpghsSJKp6VTNfNwU/1dQ9xg5
+    Vs1XINxszHZf9P2RfF+waShMkRy9nyGd/xTzCaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1521135070; bh=13NaVY7tPb6kO0Hbd0E8qHGAj7mnXgQHI3Efnd
+    Tg9JI=; b=FN0IfOWfbNdVzq52zWFimaLNNd3Tqgfzi+3VMt0fRsmGOAidB7Gf56
+    sfygtNrZQ3xmCiUQCJSJgciiKaGvuXFw3jfaOAx59th6O/+2TSme92CCgtNmvAyj
+    M9YVWD9zcDPDEeHYO82M9XCavmLzzka4YRmi21pfZUFjiq8UT5CqLDSbEdw0B3OK
+    Y/nxfZEDlY/5pMPfqllM/VOdGMufZykS+UMOhRTvpZWIVwcA8zKJcx9aaufmXwk6
+    o+O659rfBhGIn5ZgbR8q/QYFj8x1zQjfB4H//oUbeYuSiZiOEZHd+WF5yvIGWKiR
+    bPGa/mApid52ErcVyBNRIqRBCnR6Reug==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=c4A4o17/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=pratik.jain0509@gmail.com smtp.helo=mail-pl0-f66.google.com;
+    x-aligned-from=pass;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pS1w8HEN;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=c4A4o17/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=pratik.jain0509@gmail.com smtp.helo=mail-pl0-f66.google.com;
+    x-aligned-from=pass;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pS1w8HEN;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELuRqB2R05Bu4hPpu9Y+wjiSbmggm/kO8E4Hhr52B/ZcVSUe+/VPGVXoU+vV8ia0soagcJnLQw==
+From: Pratik Jain <pratik.jain0509@gmail.com>
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	abbotti@mev.co.uk,
+	Pratik Jain <pratik.jain0509@gmail.com>
+Subject: [PATCH] Staging: comedi: drivers: ni_atmio.c: fixed multi-line derefernce issue
+Date: Thu, 15 Mar 2018 23:00:40 +0530
+Message-Id: <20180315173040.11468-1-pratik.jain0509@gmail.com>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595093650314463976?=
-X-GMAIL-MSGID: =?utf-8?q?1595093650314463976?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On some systems IRQ lines between multiple UARTs might be shared. If so, the
-irqflags have to be configured accordingly. The reason is: The 8250 port startup
-code performs IRQ tests *before* the IRQ handler for that particular port is
-registered. This is performed in serial8250_do_startup(). This function checks
-whether IRQF_SHARED is configured and only then disables the IRQ line while
-testing.
+Fixed coding style issue.
 
-This test is performed upon each open() of the UART device. Imagine two UARTs
-share the same IRQ line: On is already opened and the IRQ is active. When the
-second UART is opened, the IRQ line has to be disabled while performing IRQ
-tests. Otherwise an IRQ might handler might be invoked, but the the IRQ itself
-cannot be handled, because the corresponding handler isn't registered,
-yet. That's because the 8250 code uses a chain-handler and invokes the
-corresponding port's IRQ handling rountines himself.
-
-Unfortunately this IRQF_SHARED flag isn't configured for UARTs probed via device
-tree even if the IRQs are shared. This way, the actual and shared IRQ line isn't
-disabled while performing tests and the kernel correctly detects a spurious
-IRQ. So, adding this flag to the DT probe solves the issue.
-
-Note: The UPF_SHARE_IRQ flag is configured unconditionally. Therefore, the
-IRQF_SHARED flag can be set unconditionally as well.
-
-Example stacktrace by performing echo 1 > /dev/ttyS2 on a non-patched system:
-
-|irq 85: nobody cared (try booting with the "irqpoll" option)
-| [...]
-|handlers:
-|[<ffff0000080fc628>] irq_default_primary_handler threaded [<ffff00000855fbb8>] serial8250_interrupt
-|Disabling IRQ #85
-
-Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+Signed-off-by: Pratik Jain <pratik.jain0509@gmail.com>
 ---
- drivers/tty/serial/8250/8250_of.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/comedi/drivers/ni_atmio.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
-index 160b8906d9b9..575f91e04770 100644
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -149,6 +149,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	port->uartclk = clk;
- 	port->flags = UPF_SHARE_IRQ | UPF_BOOT_AUTOCONF | UPF_IOREMAP
- 		| UPF_FIXED_PORT | UPF_FIXED_TYPE;
-+	port->irqflags |= IRQF_SHARED;
+diff --git a/drivers/staging/comedi/drivers/ni_atmio.c b/drivers/staging/comedi/drivers/ni_atmio.c
+index b9e9ab548c4b..e82fbe987dd8 100644
+--- a/drivers/staging/comedi/drivers/ni_atmio.c
++++ b/drivers/staging/comedi/drivers/ni_atmio.c
+@@ -226,8 +226,8 @@ static int ni_isapnp_find_board(struct pnp_dev **dev)
+ 	for (i = 0; i < ARRAY_SIZE(ni_boards); i++) {
+ 		isapnp_dev = pnp_find_dev(NULL,
+ 					  ISAPNP_VENDOR('N', 'I', 'C'),
+-					  ISAPNP_FUNCTION(ni_boards[i].
+-							  isapnp_id), NULL);
++					  ISAPNP_FUNCTION(ni_boards[i].isapnp_id),
++					  NULL);
  
- 	if (of_property_read_bool(np, "no-loopback-test"))
- 		port->flags |= UPF_SKIP_TEST;
+ 		if (!isapnp_dev || !isapnp_dev->card)
+ 			continue;
+@@ -356,4 +356,3 @@ module_comedi_driver(ni_atmio_driver);
+ MODULE_AUTHOR("Comedi http://www.comedi.org");
+ MODULE_DESCRIPTION("Comedi low-level driver");
+ MODULE_LICENSE("GPL");
+-
 -- 
-2.11.0
+2.16.2
