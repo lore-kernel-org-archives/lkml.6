@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932616AbeCOWV3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 18:21:29 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54888 "EHLO
+        id S932451AbeCOWU5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 18:20:57 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45817 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932488AbeCOWU6 (ORCPT
+        with ESMTP id S1752565AbeCOWUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 18:20:58 -0400
+        Thu, 15 Mar 2018 18:20:55 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Peter Zijlstra <peterz@infradead.org>,
         Linux PM <linux-pm@vger.kernel.org>,
@@ -18,9 +18,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v5 1/7] time: tick-sched: Reorganize idle tick management code
-Date: Thu, 15 Mar 2018 23:03:11 +0100
-Message-ID: <1759761.Qc8MLOVfBG@aspire.rjw.lan>
+Subject: [RFT][PATCH v5 7/7] cpuidle: menu: Avoid selecting shallow states with stopped tick
+Date: Thu, 15 Mar 2018 23:19:37 +0100
+Message-ID: <2148754.TY7qXgFyZy@aspire.rjw.lan>
 In-Reply-To: <2142751.3U6XgWyF8u@aspire.rjw.lan>
 References: <2142751.3U6XgWyF8u@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -32,202 +32,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Prepare the scheduler tick code for reworking the idle loop to
-avoid stopping the tick in some cases.
+If the scheduler tick has been stopped already and the governor
+selects a shallow idle state, the CPU can spend a long time in that
+state if the selection is based on an inaccurate prediction of idle
+time.  That effect turns out to be noticeable, so it needs to be
+mitigated.
 
-The idea is to split the nohz idle entry call to decouple the idle
-time stats accounting and preparatory work from the actual tick stop
-code, in order to later be able to delay the tick stop once we reach
-more power-knowledgeable callers.
-
-Move away the tick_nohz_start_idle() invocation from
-__tick_nohz_idle_enter(), rename the latter to
-__tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
-as a wrapper around it for calling it from the outside.
-
-Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
-of calling the entire __tick_nohz_idle_enter(), add another wrapper
-disabling and enabling interrupts around tick_nohz_idle_stop_tick()
-and make the current callers of tick_nohz_idle_enter() call it too
-to retain their current functionality.
+To that end, modify the menu governor to discard the result of the
+idle time prediction if the tick is stopped and the predicted idle
+time is less than the tick period length, unless the tick timer is
+going to expire soon.
 
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
 
 v4 -> v5:
-  * Add the high-level description to the changelog as suggested by
-    Frederic.
-  * Make tick_nohz_idle_stop_tick_protected() do nothing for
-    CONFIG_NO_HZ_COMMON unset.
+  * Rebase on top of the new [1-6/7].
+  * Never use the interactivity factor when the tick is stopped.
 
 ---
- arch/x86/xen/smp_pv.c    |    1 +
- include/linux/tick.h     |   12 ++++++++++++
- kernel/sched/idle.c      |    1 +
- kernel/time/tick-sched.c |   46 +++++++++++++++++++++++++---------------------
- 4 files changed, 39 insertions(+), 21 deletions(-)
+ drivers/cpuidle/governors/menu.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-Index: linux-pm/include/linux/tick.h
+Index: linux-pm/drivers/cpuidle/governors/menu.c
 ===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -114,6 +114,7 @@ enum tick_dep_bits {
- #ifdef CONFIG_NO_HZ_COMMON
- extern bool tick_nohz_enabled;
- extern int tick_nohz_tick_stopped(void);
-+extern void tick_nohz_idle_stop_tick(void);
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
-@@ -122,9 +123,18 @@ extern unsigned long tick_nohz_get_idle_
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
- extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
- extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
-+
-+static inline void tick_nohz_idle_stop_tick_protected(void)
-+{
-+	local_irq_disable();
-+	tick_nohz_idle_stop_tick();
-+	local_irq_enable();
-+}
-+
- #else /* !CONFIG_NO_HZ_COMMON */
- #define tick_nohz_enabled (0)
- static inline int tick_nohz_tick_stopped(void) { return 0; }
-+static inline void tick_nohz_idle_stop_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
- 
-@@ -134,6 +144,8 @@ static inline ktime_t tick_nohz_get_slee
- }
- static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
- static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
-+
-+static inline void tick_nohz_idle_stop_tick_protected(void) { }
- #endif /* !CONFIG_NO_HZ_COMMON */
- 
- #ifdef CONFIG_NO_HZ_FULL
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -539,14 +539,11 @@ static void tick_nohz_stop_idle(struct t
- 	sched_clock_idle_wakeup_event();
- }
- 
--static ktime_t tick_nohz_start_idle(struct tick_sched *ts)
-+static void tick_nohz_start_idle(struct tick_sched *ts)
- {
--	ktime_t now = ktime_get();
--
--	ts->idle_entrytime = now;
-+	ts->idle_entrytime = ktime_get();
- 	ts->idle_active = 1;
- 	sched_clock_idle_sleep_event();
--	return now;
- }
- 
- /**
-@@ -911,19 +908,21 @@ static bool can_stop_idle_tick(int cpu,
- 	return true;
- }
- 
--static void __tick_nohz_idle_enter(struct tick_sched *ts)
-+static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
- {
--	ktime_t now, expires;
-+	ktime_t expires;
- 	int cpu = smp_processor_id();
- 
--	now = tick_nohz_start_idle(ts);
--
- 	if (can_stop_idle_tick(cpu, ts)) {
- 		int was_stopped = ts->tick_stopped;
- 
- 		ts->idle_calls++;
- 
--		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
-+		/*
-+		 * The idle entry time should be a sufficient approximation of
-+		 * the current time at this point.
-+		 */
-+		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
- 		if (expires > 0LL) {
- 			ts->idle_sleeps++;
- 			ts->idle_expires = expires;
-@@ -937,16 +936,19 @@ static void __tick_nohz_idle_enter(struc
- }
- 
- /**
-- * tick_nohz_idle_enter - stop the idle tick from the idle task
-+ * tick_nohz_idle_stop_tick - stop the idle tick from the idle task
-  *
-  * When the next event is more than a tick into the future, stop the idle tick
-- * Called when we start the idle loop.
-- *
-- * The arch is responsible of calling:
-+ */
-+void tick_nohz_idle_stop_tick(void)
-+{
-+	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
-+}
-+
-+/**
-+ * tick_nohz_idle_enter - prepare for entering idle on the current CPU
-  *
-- * - rcu_idle_enter() after its last use of RCU before the CPU is put
-- *  to sleep.
-- * - rcu_idle_exit() before the first use of RCU after the CPU is woken up.
-+ * Called when we start the idle loop.
-  */
- void tick_nohz_idle_enter(void)
- {
-@@ -965,7 +967,7 @@ void tick_nohz_idle_enter(void)
- 
- 	ts = this_cpu_ptr(&tick_cpu_sched);
- 	ts->inidle = 1;
--	__tick_nohz_idle_enter(ts);
-+	tick_nohz_start_idle(ts);
- 
- 	local_irq_enable();
- }
-@@ -982,10 +984,12 @@ void tick_nohz_irq_exit(void)
- {
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
- 
--	if (ts->inidle)
--		__tick_nohz_idle_enter(ts);
--	else
-+	if (ts->inidle) {
-+		tick_nohz_start_idle(ts);
-+		__tick_nohz_idle_stop_tick(ts);
-+	} else {
- 		tick_nohz_full_update_tick(ts);
-+	}
- }
- 
- /**
-Index: linux-pm/arch/x86/xen/smp_pv.c
-===================================================================
---- linux-pm.orig/arch/x86/xen/smp_pv.c
-+++ linux-pm/arch/x86/xen/smp_pv.c
-@@ -425,6 +425,7 @@ static void xen_pv_play_dead(void) /* us
- 	 * data back is to call:
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -353,13 +353,28 @@ static int menu_select(struct cpuidle_dr
  	 */
- 	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
+ 	data->predicted_us = min(data->predicted_us, expected_interval);
  
- 	cpuhp_online_idle(CPUHP_AP_ONLINE_IDLE);
- }
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -221,6 +221,7 @@ static void do_idle(void)
+-	/*
+-	 * Use the performance multiplier and the user-configurable
+-	 * latency_req to determine the maximum exit latency.
+-	 */
+-	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
+-	if (latency_req > interactivity_req)
+-		latency_req = interactivity_req;
++	if (tick_nohz_tick_stopped()) {
++		/*
++		 * If the tick is already stopped, the cost of possible short
++		 * idle duration misprediction is much higher, because the CPU
++		 * may be stuck in a shallow idle state for a long time as a
++		 * result of it.  In that case say we might mispredict and try
++		 * to force the CPU into a state for which we would have stopped
++		 * the tick, unless the tick timer is going to expire really
++		 * soon anyway.
++		 */
++		if (data->predicted_us < TICK_USEC_HZ)
++			data->predicted_us = min_t(unsigned int, TICK_USEC_HZ,
++						   ktime_to_us(tick_time));
++	} else {
++		/*
++		 * Use the performance multiplier and the user-configurable
++		 * latency_req to determine the maximum exit latency.
++		 */
++		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
++		if (latency_req > interactivity_req)
++			latency_req = interactivity_req;
++	}
  
- 	__current_set_polling();
- 	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
- 
- 	while (!need_resched()) {
- 		check_pgt_cache();
+ 	expected_interval = data->predicted_us;
+ 	/*
