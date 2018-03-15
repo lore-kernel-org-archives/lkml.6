@@ -1,114 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752152AbeCORni (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:43:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45008 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751372AbeCORng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:43:36 -0400
-Date: Thu, 15 Mar 2018 17:43:29 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-Message-ID: <20180315174329.GB22176@e107981-ln.cambridge.arm.com>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
+        id S1752315AbeCORox (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:44:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48378 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751372AbeCORow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:44:52 -0400
+Date: Thu, 15 Mar 2018 10:44:48 -0700
+From: Chris Leech <cleech@redhat.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: lduncan@suse.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: scsi_transport_iscsi: use put_device() instead of
+ kfree()
+Message-ID: <20180315174448.GB32176@straylight.hirudinean.org>
+Mail-Followup-To: Chris Leech <cleech@redhat.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>, lduncan@suse.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org
+References: <a77739e256b044c2e125e106165efc751ce4a0f6.1520422535.git.arvind.yadav.cs@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a77739e256b044c2e125e106165efc751ce4a0f6.1520422535.git.arvind.yadav.cs@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 31, 2018 at 03:41:49PM +0800, Ryder Lee wrote:
-> A root complex usually consist of a host bridge and multiple P2P bridges,
-> and someone may express that in the form of a root node with many subnodes
-> and list all four interrupts for each slot (child node) in the root node
-> like this:
+On Wed, Mar 07, 2018 at 05:07:33PM +0530, Arvind Yadav wrote:
+> Never directly free @dev after calling device_register(), even
+> if it returned an error! Always use put_device() to give up the
+> reference initialized.
 > 
-> 	pcie-controller {
-> 		...
-> 		interrupt-map-mask = <0xf800 0 0 7>;
-> 		interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
-> 				 0x0800 0 0 {INTx} &{interrupt parent} ...>;
-> 
-> 		pcie@0,0 {
-> 			reg = <0x0000 0 0 0 0>;
-> 			...
-> 		};
-> 
-> 		pcie@1,0 {
-> 			reg = <0x0800 0 0 0 0>;
-> 			...
-> 		};
-> 	};
-> 
-> As shown above, we'd like to propagate IRQs from a root port to the devices
-> in the hierarchy below it in this way.  However, it seems that the current
-> parser couldn't handle such cases and will get something unexpected below:
-> 
-> 	pcieport 0000:00:01.0: assign IRQ: got 213
-> 	igb 0000:01:00.0: assign IRQ: got 212
-> 
-> There is a device which is connected to 2nd slot, but the port doesn't share
-> the same IRQ with its downstream devices.  The problem here is that, if the
-> loop found a P2P bridge, it wouldn't check whether the reg property exists
-> in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
-> thus the subsequent flow couldn't correctly resolve them.
-> 
-> Fix this by adding a check to fallback to standard device tree parsing.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 > ---
-> Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
-> ---
->  drivers/of/of_pci_irq.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-
-Hi Ryder,
-
-from the thread discussion I gather I can drop this series from the PCI
-queue and you will update the DT as agreed with Ben, that looks like
-the most reasonable solution to the problem you are facing, please
-let me know if there is anything I am missing.
-
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
-> index 3a05568..e445866 100644
-> --- a/drivers/of/of_pci_irq.c
-> +++ b/drivers/of/of_pci_irq.c
-> @@ -86,8 +86,18 @@ int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *out_irq
->  	out_irq->np = ppnode;
->  	out_irq->args_count = 1;
->  	out_irq->args[0] = pin;
-> -	laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
-> -	laddr[1] = laddr[2] = cpu_to_be32(0);
-> +
-> +	if (!dn && ppnode) {
-> +		const __be32 *addr;
-> +
-> +		addr = of_get_property(ppnode, "reg", NULL);
-> +		if (addr)
-> +			memcpy(laddr, addr, 3);
-> +	} else {
-> +		laddr[0] = cpu_to_be32((pdev->bus->number << 16) | (pdev->devfn << 8));
-> +		laddr[1] = laddr[2] = cpu_to_be32(0);
-> +	}
-> +
->  	rc = of_irq_parse_raw(laddr, out_irq);
->  	if (rc)
->  		goto err;
-> -- 
-> 1.9.1
+>  drivers/scsi/scsi_transport_iscsi.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
 > 
+
+> @@ -783,7 +781,7 @@ struct iscsi_iface *
+>  
+>  free_iface:
+>  	put_device(iface->dev.parent);
+> -	kfree(iface);
+> +	put_device(&iface->dev);
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(iscsi_create_iface);
+
+Am I reading the device code correctly that the parent reference is only
+released in the unregister path (device_unregister calls device_del) and
+so the manual put_device on the parent here is still correct?
+
+Just want to make sure that's still needed with the call to put_device.
+
+Other than that question, I this all looks good.
+Thanks.
+
+Signed-off-by: Chris Leech <cleech@redhat.com>
