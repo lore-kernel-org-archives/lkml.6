@@ -1,113 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeCOKsi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:48:38 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:39423 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751617AbeCOKsg (ORCPT
+        id S1752136AbeCOKt1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:49:27 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:41307 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751691AbeCOKtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:48:36 -0400
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
-Date: Thu, 15 Mar 2018 11:48:29 +0100
-Message-ID: <52455167.vuuyuMgTrX@merkaba>
-In-Reply-To: <3573548.kp1edD77Gq@merkaba>
-References: <27165802.vQ9JbjrmvU@merkaba> <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com> <3573548.kp1edD77Gq@merkaba>
+        Thu, 15 Mar 2018 06:49:25 -0400
+X-Originating-IP: 2.224.242.101
+Date: Thu, 15 Mar 2018 11:30:27 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+Message-ID: <20180315103027.GE16424@w540>
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CGME20180313143057epcas4p4c747ed8c1b333a557eef5aa8e15376fd@epcas4p4.samsung.com>
+ <1520951425-13843-3-git-send-email-jacopo+renesas@jmondi.org>
+ <8c224e1e-9871-dce9-89d0-3dad8218a747@samsung.com>
+ <20180314100902.GB16424@w540>
+ <4204d21d-080f-b275-1f89-828cfdcdf90a@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zjcmjzIkjQU2rmur"
+Content-Disposition: inline
+In-Reply-To: <4204d21d-080f-b275-1f89-828cfdcdf90a@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Steigerwald - 14.03.18, 12:01:
-> Hans de Goede - 11.03.18, 15:37:
-> > Hi Martin,
-> > 
-> > On 11-03-18 09:20, Martin Steigerwald wrote:
-> > > Hello.
-> > > 
-> > > Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
-> > > with SMART checks occassionally failing like this:
-> > > 
-> > > smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
-> > > checks
-> > > udisksd[24408]: Error performing housekeeping for drive
-> > > /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
-> > > SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
-> > > data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
-> > > 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00 
-> > > 00
-> > > 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
-> > > udisksd[24408]: Error performing housekeeping for drive
-> > > /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error
-> > > updating
-> > > SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
-> > > sense
-> > > data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
-> > > 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
-> > > 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
-> > > 
-> > > (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
-> > > 
-> > > However when I then check manually with smartctl -a | -x | -H the device
-> > > reports SMART data just fine.
-> > > 
-> > > As smartd correctly detects that device is in sleep mode, this may be an
-> > > userspace issue in udisksd.
-> > > 
-> > > Also at some boot attempts the boot hangs with a message like "could not
-> > > connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
-> > > on to LVs (each on one of the SSDs). A configuration that requires a
-> > > manual
-> > > adaption to InitRAMFS in order to boot (basically vgchange -ay before
-> > > btrfs device scan).
-> > > 
-> > > I wonder whether that has to do with the new SATA LPM policy stuff, but
-> > > as
-> > > I had issues with
-> > > 
-> > >   3 => Medium power with Device Initiated PM enabled
-> > > 
-> > > (machine did not boot, which could also have been caused by me
-> > > accidentally
-> > > removing all TCP/IP network support in the kernel with that setting)
-> > > 
-> > > I set it back to
-> > > 
-> > > CONFIG_SATA_MOBILE_LPM_POLICY=0
-> > > 
-> > > (firmware settings)
-> > 
-> > Right, so at that settings the LPM policy changes are effectively
-> > disabled and cannot explain your SMART issues.
-> > 
-> > Still I would like to zoom in on this part of your bug report, because
-> > for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
-> > and AFAIK Ubuntu has similar plans.
-> > 
-> > I suspect that the issue you were seeing with
-> > CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've attached
-> > a patch for you to test, which disabled LPM for your model Crucial SSD
-> > (but
-> > keeps it on for the Intel disk) if you can confirm that with that patch
-> > you
-> > can run with
-> > CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
-> 
-> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system successfully
-> booted three times in a row. So feel free to add tested-by.
+
+--zjcmjzIkjQU2rmur
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+HI Andrezej,
+
+On Thu, Mar 15, 2018 at 10:44:42AM +0100, Andrzej Hajda wrote:
+> On 14.03.2018 11:09, jacopo mondi wrote:
+> > Hi Andrzej,
+> >     thanks for review
+> >
+> > On Wed, Mar 14, 2018 at 09:42:36AM +0100, Andrzej Hajda wrote:
+> >> On 13.03.2018 15:30, Jacopo Mondi wrote:
+> >>> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> >>> output decoder.
+> >> IMO converter suits here better, but it is just suggestion.
+> >>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> ---
+> >>>  drivers/gpu/drm/bridge/Kconfig        |   7 +
+> >>>  drivers/gpu/drm/bridge/Makefile       |   1 +
+> >>>  drivers/gpu/drm/bridge/thc63lvd1024.c | 241 ++++++++++++++++++++++++++++++++++
+> >>>  3 files changed, 249 insertions(+)
+> >>>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+> >>>
+> >>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> >>> index 3b99d5a..facf6bd 100644
+> >>> --- a/drivers/gpu/drm/bridge/Kconfig
+> >>> +++ b/drivers/gpu/drm/bridge/Kconfig
+> >>> @@ -92,6 +92,13 @@ config DRM_SII9234
+> >>>  	  It is an I2C driver, that detects connection of MHL bridge
+> >>>  	  and starts encapsulation of HDMI signal.
+> >>>
+> >>> +config DRM_THINE_THC63LVD1024
+> >>> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+> >>> +	depends on OF
+> >>> +	select DRM_PANEL_BRIDGE
+> >> You don't use PANEL_BRIDGE, it should be possible to drop the select.
+> >>
+> > Ack
+> >
+> >>> +	---help---
+> >>> +	  Thine THC63LVD1024 LVDS decoder bridge driver.
+> >> Decoder to what?
+> >> Maybe it would be better to say it is LVDS/parallel or LVDS/RGB
+> >> converter or bridge.
+> > "LVDS to digital CMOS/TTL parallel data converter" as the manual
+> > describes the chip?
 >
-> Let´s see whether the blk_mq_terminate_expired or the smartd/udisks error
-> messages reappear with rc5. I still think they are a different issue.
+> Should work, unless we want some consistency in interface names, we have
+> already: parallel / DPI / RGB. I am little bit confused about relations
+> between them so I do not want to enforce any.
 
-As expected these two other issues still happen with 4.16-rc5
+config DRM_THINE_THC63LVD1024
+	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+	depends on OF
+	---help---
+	  Thine THC63LVD1024 LVDS/parallel converter driver.
 
-Thanks,
--- 
-Martin
+I guess this is consistent with other symbol descriptions I found
+
+>
+
+[snip]
+>
+> >>> +
+> >>> +static int thc63_gpio_init(struct thc63_dev *thc63)
+> >>> +{
+> >>> +	thc63->pwdn = devm_gpiod_get_optional(thc63->dev, "pwdn",
+> >>> +					      GPIOD_OUT_LOW);
+> >> Shouldn't be GPIOD_OUT_HIGH - bridge initially disabled?
+> > No, the PWDN gpio is active low, it puts the chip in power down mode
+> > when the physical line level is set to 0.
+> >
+> > That's another confusing thing, when requesting the GPIO, the actual
+> > physical line value has to be provided, while when "set_value()" the
+> > logical one is requested, iirc.
+>
+> I think it is opposite, only *raw* functions uses physical level. Other
+> uses logical level.
+>
+> >
+> > Being the GPIO defined as active low, in power enable we set it to
+> > "logical inactive" == "physical 1", while during power disable it has
+> > to be set to "logical active" == "physical 0"
+> >
+> > Not the right place to complain here, but imo that's not consistent.
+> > Or have I misinterpreted the APIs? I cannot do much test, as in my setup
+> > the PWDN pin is hardwired to +vcc (through a physical switch, not
+> > controlled through a GPIO though).
+>
+> devm_gpiod_get_optional calls (indirectly) gpiod_configure_flags, which
+> calls gpiod_direction_output which uses logical levels.
+
+I clearly mis-interpreted the APIs.
+
+I'll fix and I'm sending v4 out shortly.
+
+Thanks
+   j
+
+>
+> Regards
+> Andrzej
+>
+> >
+> > Thanks
+> >    j
+> >
+> >> Regards
+> >> Andrzej
+> >>> +	if (IS_ERR(thc63->pwdn)) {
+> >>> +		dev_err(thc63->dev, "Unable to get GPIO \"pwdn\"\n");
+> >>> +		return PTR_ERR(thc63->pwdn);
+> >>> +	}
+> >>> +
+> >>> +	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> >>> +	if (IS_ERR(thc63->oe)) {
+> >>> +		dev_err(thc63->dev, "Unable to get GPIO \"oe\"\n");
+> >>> +		return PTR_ERR(thc63->oe);
+> >>> +	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_regulator_init(struct thc63_dev *thc63)
+> >>> +{
+> >>> +	struct regulator **reg;
+> >>> +	int i;
+> >>> +
+> >>> +	reg = &thc63->vccs[0];
+> >>> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
+> >>> +		*reg = devm_regulator_get_optional(thc63->dev,
+> >>> +						   thc63_reg_names[i]);
+> >>> +		if (IS_ERR(*reg)) {
+> >>> +			if (PTR_ERR(*reg) == -EPROBE_DEFER)
+> >>> +				return -EPROBE_DEFER;
+> >>> +			*reg = NULL;
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_probe(struct platform_device *pdev)
+> >>> +{
+> >>> +	struct thc63_dev *thc63;
+> >>> +	int ret;
+> >>> +
+> >>> +	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
+> >>> +	if (!thc63)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	thc63->dev = &pdev->dev;
+> >>> +	platform_set_drvdata(pdev, thc63);
+> >>> +
+> >>> +	ret = thc63_regulator_init(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	ret = thc63_gpio_init(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	ret = thc63_parse_dt(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	thc63->bridge.driver_private = thc63;
+> >>> +	thc63->bridge.of_node = pdev->dev.of_node;
+> >>> +	thc63->bridge.funcs = &thc63_bridge_func;
+> >>> +
+> >>> +	drm_bridge_add(&thc63->bridge);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_remove(struct platform_device *pdev)
+> >>> +{
+> >>> +	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
+> >>> +
+> >>> +	drm_bridge_remove(&thc63->bridge);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +#ifdef CONFIG_OF
+> >>> +static const struct of_device_id thc63_match[] = {
+> >>> +	{ .compatible = "thine,thc63lvd1024", },
+> >>> +	{ },
+> >>> +};
+> >>> +MODULE_DEVICE_TABLE(of, thc63_match);
+> >>> +#endif
+> >>> +
+> >>> +static struct platform_driver thc63_driver = {
+> >>> +	.probe	= thc63_probe,
+> >>> +	.remove	= thc63_remove,
+> >>> +	.driver	= {
+> >>> +		.name		= "thc63lvd1024",
+> >>> +		.of_match_table	= thc63_match,
+> >>> +	},
+> >>> +};
+> >>> +module_platform_driver(thc63_driver);
+> >>> +
+> >>> +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
+> >>> +MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
+> >>> +MODULE_LICENSE("GPL v2");
+> >>
+>
+
+--zjcmjzIkjQU2rmur
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJaqktDAAoJEHI0Bo8WoVY8LtAP/3DDVciU0sbBOOzRmJDOhKvX
+tp8CL5/6Y1hL76QcnEwBjfh5yYeHpi5VSbTVPnsbCZ7UeepzDVCPqcx7YeXjImRQ
+g8bMeIz2h9tRY66xtwtvCtSNNGp8icO3ux7l/gL5t9jQupqe5SPlFJd8pdEkNw4o
+wZzl7RoimObi/SXL4VHtQym70RLtBco9N1UVg/Lb2gK8K1hHlnGHCL/IVbLxEayk
+KFoZHyq7DJkgvBbZMRppV6oktMdUQr7YzKdsXnyJDOGxKliDE6sMj2pskSW7eSaH
+QLys3csCoQ/aaPv3QLSM9TQbs0XMrLr5qYAfEjo3TJ33AyEzkEbzIgJCEUf++Fa7
+ZC8jhIEbK/RZOlDvKFx/X3X7ofiaOh83P9zsbQ5yBdr3AZv8lj2iqHYGykHNhSVp
+ZcLR7aOKvm870MWMFqWd3JlExdOfEAZdQ6r79XA/8HIgXCn5xZKxCE4wrQ1TOfI2
+jK2N4eLnHjLUu7qMWSbNU2JTzQKVkeuAP6lDrpe97eMsRqh1LPDyRDuDZMK79Nw+
+XvZTZM2QOQznHikQMgLOh8eNz5eakImVEoJp++jkzaw5SxMiVeNixIcAkicg9ovg
+XbCLNsjIavng0FSAz3O52CN/JIiRUNMpiESgfktRnaOy/+lfEjNIU2R1LxB5i/YG
+WeXaFGrTasPXLTnDLgXy
+=L0Kg
+-----END PGP SIGNATURE-----
+
+--zjcmjzIkjQU2rmur--
