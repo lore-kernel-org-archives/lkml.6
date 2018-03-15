@@ -1,125 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751618AbeCOCYB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 22:24:01 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37883 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeCOCYA (ORCPT
+        id S1752006AbeCOCcQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 22:32:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52940 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751957AbeCOCcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 22:24:00 -0400
-X-Google-Smtp-Source: AG47ELvGb6tCszkk0sk+8DdKVp3xibc3V1c1sqr1P6jjiIm3I+TkCcewmw3rD1awBBd1rCFmy04J/Klm1j9UtnQMnhw=
-MIME-Version: 1.0
-In-Reply-To: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Thu, 15 Mar 2018 03:23:59 +0100
-Message-ID: <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>, mark.rutland@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        Wed, 14 Mar 2018 22:32:14 -0400
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] SCSI fixes for 4.16-rc5
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1521070116.4508.94.camel@HansenPartnership.com>
+        <CA+55aFzRss7BfRbLW8fsO5mRhj5obX9sg2ebkNSp5G68VmpWvg@mail.gmail.com>
+Date: Wed, 14 Mar 2018 22:32:06 -0400
+In-Reply-To: <CA+55aFzRss7BfRbLW8fsO5mRhj5obX9sg2ebkNSp5G68VmpWvg@mail.gmail.com>
+        (Linus Torvalds's message of "Wed, 14 Mar 2018 17:09:14 -0700")
+Message-ID: <yq1605yax21.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150026
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
->
-> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
-> alignment") modified the logic in memmap_init_zone() to initialize
-> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
-> in move_freepages(), which is redundant by its own admission, and
-> dereferences struct page fields to obtain the zone without checking
-> whether the struct pages in question are valid to begin with.
->
-> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
-> may cause pfn assume the same value it had in a prior iteration of
-> the loop, resulting in an infinite loop and a hang very early in the
-> boot. Also, since it doesn't perform the same rounding on start_pfn
-> itself but only on intermediate values following an invalid PFN, we
-> may still hit the same VM_BUG_ON() as before.
->
-> So instead, let's fix this at the core, and ensure that the BUG
-> check doesn't dereference struct page fields of invalid pages.
->
-> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
-> Cc: Daniel Vacek <neelx@redhat.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Paul Burton <paul.burton@imgtec.com>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  mm/page_alloc.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3d974cb2a1a1..635d7dd29d7f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->          * Remove at a later date when no bug reports exist related to
->          * grouping pages by mobility
->          */
-> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
-> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
-> +                 pfn_valid(page_to_pfn(end_page)) &&
-> +                 page_zone(start_page) != page_zone(end_page));
 
-Hi, I am on vacation this week and I didn't have a chance to test this
-yet but I am not sure this is correct. Generic pfn_valid() unlike the
-arm{,64} arch specific versions returns true for all pfns in a section
-if there is at least some memory mapped in that section. So I doubt
-this prevents the crash I was targeting. I believe pfn_valid() does
-not change a thing here :(
+Linus,
 
-------------------------
-include/linux/mmzone.h:
-pfn_valid(pfn)
-  valid_section(__nr_to_section(pfn_to_section_nr(pfn)))
-    return (section && (section->section_mem_map & SECTION_HAS_MEM_MAP))
+> I've pulled it, but I don't see why (and how) this kind of garbage got
+> reviewed and acked by multiple people.
 
-arch/arm64/mm/init.c:
-#ifdef CONFIG_HAVE_ARCH_PFN_VALID
-int pfn_valid(unsigned long pfn)
-{
-    return memblock_is_map_memory(pfn << PAGE_SHIFT);
-}
-EXPORT_SYMBOL(pfn_valid);
-#endif
-------------------------
+My bad. I actually did notice the superfluous ifs and meant to nuke them
+when I committed the patch.
 
-Also I already sent a fix to Andrew yesterday which was reported to
-fix the loop.
+However, I had a freak accident with my fixes branch that day that
+compelled me to reset to my latest public hash and redo several
+commits. I completely forgot that I had intended to tweak this patch
+when I finally got around to applying it. I should have looked closer,
+but it was already in my "done" pile.
 
-Moreover, you also reported this:
+Botched it. Sorry about that!
 
->    Early memory node ranges
->      node   0: [mem 0x0000000080000000-0x00000000febeffff]
->      node   0: [mem 0x00000000febf0000-0x00000000fefcffff]
->      node   0: [mem 0x00000000fefd0000-0x00000000ff43ffff]
->      node   0: [mem 0x00000000ff440000-0x00000000ff7affff]
->      node   0: [mem 0x00000000ff7b0000-0x00000000ffffffff]
->      node   0: [mem 0x0000000880000000-0x0000000fffffffff]
->    Initmem setup node 0 [mem 0x0000000080000000-0x0000000fffffffff]
->    pfn:febf0 oldnext:febf0 newnext:fe9ff
->    pfn:febf0 oldnext:febf0 newnext:fe9ff
->    pfn:febf0 oldnext:febf0 newnext:fe9ff
->    etc etc
-
-I am wondering how come pfn_valid(0xfebf0) returns false here. Should
-it be true or do I miss something?
-
---nX
+-- 
+Martin K. Petersen	Oracle Linux Engineering
