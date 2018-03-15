@@ -1,62 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752591AbeCORGW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:06:22 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:40921 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeCORGN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:06:13 -0400
-X-Google-Smtp-Source: AG47ELtjEklbRPeywV8qeqh9JXXEL/TOecuSlALovmuSo7JeKI8eFNWOIqAh4hYLsD+EVV9Up1CnKQ==
-Date: Thu, 15 Mar 2018 22:36:06 +0530
-From: afzal mohammed <afzal.mohd.ma@gmail.com>
-To: Harald Geyer <harald@ccbib.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com
-Subject: Re: arm64: allwinner: Add support for TERES I laptop
-Message-ID: <20180315170606.GA3635@afzalpc>
-References: <20180312161050.7647-1-harald@ccbib.org>
+        id S1752647AbeCORG1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:06:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751829AbeCORGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:06:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649E620855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 15 Mar 2018 13:06:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+Message-ID: <20180315130612.4b4cd091@vmware.local.home>
+In-Reply-To: <0c52c2f1-60d8-bb8a-80f2-c699d47659d3@rasmusvillemoes.dk>
+References: <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
+        <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+        <1520330185.10722.401.camel@linux.intel.com>
+        <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
+        <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+        <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
+        <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+        <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+        <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+        <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+        <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+        <0c52c2f1-60d8-bb8a-80f2-c699d47659d3@rasmusvillemoes.dk>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312161050.7647-1-harald@ccbib.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 14 Mar 2018 23:12:36 +0100
+Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
 
-On Mon, Mar 12, 2018 at 04:10:45PM +0000, Harald Geyer wrote:
-> This series adds support for the TERES I open hardware laptop produced
-> by olimex. With these patches and a bootloader capable of setting up
-> simple framebuffer the laptop is quite useable.
+> Question: probe_kernel_read seems to allow (mapped) userspace addresses.
+> Is that really what we want? Sure, some %p* just format the pointed-to
+> bytes directly (as an IP address or raw hex dump or whatnot), but some
+> (e.g. %pD, and %pV could be particularly fun) do another dereference.
+> I'm not saying it would be easy for an attacker to get a userpointer
+> passed to %pV, but there's a lot of places that end up calling vsnprintf
+> (not just printk and friends). Isn't there some cheap address comparison
+> one can do to rule that out completely?
 
-Thanks for the patches
+We allow it today right? Why should we stop it now. For debugging I
+will sometimes add printk()s to write out content in userspace. Since
+the kernel maps all memory in its own space, there's nothing we are
+protecting by not letting the kernel read userspace but be OK letting
+it read anything in kernel space.
 
-w/ defconfig could reach to prompt via serial console using audio
-jack.
-
-And just by enabling PWM_SUN4I & FB_SIMPLE, laptop could function
-standalone as well.
-
-Suggestions (feel free to ignore):
-
-1. seems currently only review comment pending is on simple
-framebuffer, perhaps you can proceed removing just that so that a
-basic bootable system can be achieved at the earliest (iiuc, anyway
-drm would be the final solution for display)
-
-2. in next revision (if), may be you can put keywords DIY and/or Open
-Hardware (irrespective of whatever exactly that means) Laptop in the
-subject itself, that might bring more interest/eyeballs, especially at
-this time of ME & so on.
-
-Regards
-afzal
+-- Steve
