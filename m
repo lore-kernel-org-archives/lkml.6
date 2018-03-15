@@ -1,163 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932964AbeCOQBH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:01:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33842 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932922AbeCOQBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932949AbeCOQBF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:01:05 -0400
+Received: from mga09.intel.com ([134.134.136.24]:4894 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932898AbeCOQBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Mar 2018 12:01:01 -0400
-X-Google-Smtp-Source: AG47ELtcGaHSMz3JZknqL9xr53KSyM1VmBpn5zbbecGgEwwCdZDR1V8btMwZyEKaq1IYKI6I97PRxQ==
-From: jason.vas.dias@gmail.com
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, andi@firstfloor.org
-Subject: [PATCH v4.16-rc5 1/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-Date: Thu, 15 Mar 2018 16:00:46 +0000
-Message-Id: <1521129648-20889-2-git-send-email-jason.vas.dias@gmail.com>
-X-Mailer: git-send-email 2.8.2
-In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
-References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="208538386"
+Subject: [PATCH v6 06/15] ext2, dax: introduce ext2_dax_aops
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Jan Kara <jack@suse.com>, david@fromorbit.com, hch@lst.de,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 08:51:56 -0700
+Message-ID: <152112911591.24669.7494781212673308769.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index f19856d..fbc7371 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -182,6 +182,18 @@ notrace static u64 vread_tsc(void)
- 	return last;
+In preparation for the dax implementation to start associating dax pages
+to inodes via page->mapping, we need to provide a 'struct
+address_space_operations' instance for dax. Otherwise, direct-I/O
+triggers incorrect page cache assumptions and warnings.
+
+Cc: Jan Kara <jack@suse.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/ext2/ext2.h  |    1 +
+ fs/ext2/inode.c |   43 +++++++++++++++++++++++++++----------------
+ fs/ext2/namei.c |   18 ++----------------
+ 3 files changed, 30 insertions(+), 32 deletions(-)
+
+diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+index 032295e1d386..cc40802ddfa8 100644
+--- a/fs/ext2/ext2.h
++++ b/fs/ext2/ext2.h
+@@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
+ extern const struct file_operations ext2_file_operations;
+ 
+ /* inode.c */
++extern void ext2_set_file_ops(struct inode *inode);
+ extern const struct address_space_operations ext2_aops;
+ extern const struct address_space_operations ext2_nobh_aops;
+ extern const struct iomap_ops ext2_iomap_ops;
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 9b2ac55ac34f..9590712f2f88 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -952,17 +952,16 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ static int
+ ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ {
+-#ifdef CONFIG_FS_DAX
+-	if (dax_mapping(mapping)) {
+-		return dax_writeback_mapping_range(mapping,
+-						   mapping->host->i_sb->s_bdev,
+-						   wbc);
+-	}
+-#endif
+-
+ 	return mpage_writepages(mapping, wbc, ext2_get_block);
  }
  
-+notrace static u64 vread_tsc_raw(void)
++static int
++ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
 +{
-+	u64 tsc
-+	  , last = gtod->raw_cycle_last;
-+
-+	tsc	      = rdtsc_ordered();
-+	if (likely(tsc >= last))
-+		return tsc;
-+	asm volatile ("");
-+	return last;
++	return dax_writeback_mapping_range(mapping,
++			mapping->host->i_sb->s_bdev, wbc);
 +}
 +
- notrace static inline u64 vgetsns(int *mode)
- {
- 	u64 v;
-@@ -203,6 +215,27 @@ notrace static inline u64 vgetsns(int *mode)
- 	return v * gtod->mult;
+ const struct address_space_operations ext2_aops = {
+ 	.readpage		= ext2_readpage,
+ 	.readpages		= ext2_readpages,
+@@ -990,6 +989,13 @@ const struct address_space_operations ext2_nobh_aops = {
+ 	.error_remove_page	= generic_error_remove_page,
+ };
+ 
++const struct address_space_operations ext2_dax_aops = {
++	.direct_IO		= ext2_direct_IO,
++	.writepages		= ext2_dax_writepages,
++	.set_page_dirty		= noop_set_page_dirty,
++	.invalidatepage		= noop_invalidatepage,
++};
++
+ /*
+  * Probably it should be a library function... search for first non-zero word
+  * or memcmp with zero_page, whatever is better for particular architecture.
+@@ -1388,6 +1394,18 @@ void ext2_set_inode_flags(struct inode *inode)
+ 		inode->i_flags |= S_DAX;
  }
  
-+notrace static inline u64 vgetsns_raw(int *mode)
++void ext2_set_file_ops(struct inode *inode)
 +{
-+	u64 v;
-+	cycles_t cycles;
-+
-+	if (gtod->vclock_mode == VCLOCK_TSC)
-+		cycles = vread_tsc_raw();
-+#ifdef CONFIG_PARAVIRT_CLOCK
-+	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
-+		cycles = vread_pvclock(mode);
-+#endif
-+#ifdef CONFIG_HYPERV_TSCPAGE
-+	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
-+		cycles = vread_hvclock(mode);
-+#endif
++	inode->i_op = &ext2_file_inode_operations;
++	inode->i_fop = &ext2_file_operations;
++	if (IS_DAX(inode))
++		inode->i_mapping->a_ops = &ext2_dax_aops;
++	else if (test_opt(inode->i_sb, NOBH))
++		inode->i_mapping->a_ops = &ext2_nobh_aops;
 +	else
-+		return 0;
-+	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
-+	return v * gtod->raw_mult;
++		inode->i_mapping->a_ops = &ext2_aops;
 +}
 +
- /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
- notrace static int __always_inline do_realtime(struct timespec *ts)
+ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
  {
-@@ -246,6 +279,27 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
- 	return mode;
+ 	struct ext2_inode_info *ei;
+@@ -1480,14 +1498,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 		ei->i_data[n] = raw_inode->i_block[n];
+ 
+ 	if (S_ISREG(inode->i_mode)) {
+-		inode->i_op = &ext2_file_inode_operations;
+-		if (test_opt(inode->i_sb, NOBH)) {
+-			inode->i_mapping->a_ops = &ext2_nobh_aops;
+-			inode->i_fop = &ext2_file_operations;
+-		} else {
+-			inode->i_mapping->a_ops = &ext2_aops;
+-			inode->i_fop = &ext2_file_operations;
+-		}
++		ext2_set_file_ops(inode);
+ 	} else if (S_ISDIR(inode->i_mode)) {
+ 		inode->i_op = &ext2_dir_inode_operations;
+ 		inode->i_fop = &ext2_dir_operations;
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index e078075dc66f..55f7caadb093 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+ 
+-	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
+-		inode->i_mapping->a_ops = &ext2_nobh_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	} else {
+-		inode->i_mapping->a_ops = &ext2_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	}
++	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+ 	return ext2_add_nondir(dentry, inode);
  }
+@@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
  
-+notrace static __always_inline int do_monotonic_raw(struct timespec *ts)
-+{
-+	unsigned long seq;
-+	u64 ns;
-+	int mode;
-+
-+	do {
-+		seq = gtod_read_begin(gtod);
-+		mode = gtod->vclock_mode;
-+		ts->tv_sec = gtod->monotonic_time_raw_sec;
-+		ns = gtod->monotonic_time_raw_nsec;
-+		ns += vgetsns_raw(&mode);
-+		ns >>= gtod->raw_shift;
-+	} while (unlikely(gtod_read_retry(gtod, seq)));
-+
-+	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	ts->tv_nsec = ns;
-+
-+	return mode;
-+}
-+
- notrace static void do_realtime_coarse(struct timespec *ts)
- {
- 	unsigned long seq;
-@@ -277,6 +331,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 		if (do_monotonic(ts) == VCLOCK_NONE)
- 			goto fallback;
- 		break;
-+	case CLOCK_MONOTONIC_RAW:
-+		if (do_monotonic_raw(ts) == VCLOCK_NONE)
-+			goto fallback;
-+		break;
- 	case CLOCK_REALTIME_COARSE:
- 		do_realtime_coarse(ts);
- 		break;
-diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-index e1216dd..5af7093 100644
---- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-@@ -45,6 +45,11 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdata->mult		= tk->tkr_mono.mult;
- 	vdata->shift		= tk->tkr_mono.shift;
- 
-+	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
-+	vdata->raw_mask		= tk->tkr_raw.mask;
-+	vdata->raw_mult		= tk->tkr_raw.mult;
-+	vdata->raw_shift	= tk->tkr_raw.shift;
-+
- 	vdata->wall_time_sec		= tk->xtime_sec;
- 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
- 
-@@ -74,5 +79,8 @@ void update_vsyscall(struct timekeeper *tk)
- 		vdata->monotonic_time_coarse_sec++;
- 	}
- 
-+	vdata->monotonic_time_raw_sec  = tk->raw_sec;
-+	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
-+
- 	gtod_write_end(vdata);
- }
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index fb856c9..24e4d45 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -22,6 +22,10 @@ struct vsyscall_gtod_data {
- 	u64	mask;
- 	u32	mult;
- 	u32	shift;
-+	u64	raw_cycle_last;
-+	u64	raw_mask;
-+	u32	raw_mult;
-+	u32	raw_shift;
- 
- 	/* open coded 'struct timespec' */
- 	u64		wall_time_snsec;
-@@ -32,6 +36,8 @@ struct vsyscall_gtod_data {
- 	gtod_long_t	wall_time_coarse_nsec;
- 	gtod_long_t	monotonic_time_coarse_sec;
- 	gtod_long_t	monotonic_time_coarse_nsec;
-+	gtod_long_t	monotonic_time_raw_sec;
-+	gtod_long_t	monotonic_time_raw_nsec;
- 
- 	int		tz_minuteswest;
- 	int		tz_dsttime;
+-	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
+-		inode->i_mapping->a_ops = &ext2_nobh_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	} else {
+-		inode->i_mapping->a_ops = &ext2_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	}
++	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
