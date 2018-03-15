@@ -1,152 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933112AbeCOQB6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:01:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50731 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933095AbeCOQB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:01:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="34161564"
-Subject: [PATCH v6 15/15] xfs, dax: introduce xfs_break_dax_layouts()
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:52:50 -0700
-Message-ID: <152112917064.24669.8101553386217458496.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S933143AbeCOQCS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:02:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35948 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932475AbeCOQCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:02:15 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, joel@jms.id.au, wim@linux-watchdog.org,
+        linux@roeck-us.net, Milton Miller <miltonm@us.ibm.com>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v2] watchdog: aspeed: Allow configuring for alternate boot
+Date: Thu, 15 Mar 2018 11:02:06 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031516-0004-0000-0000-000013CE73CC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008679; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003457; UDB=6.00510682; IPR=6.00782783;
+ MB=3.00020051; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 16:02:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031516-0005-0000-0000-00008679C508
+Message-Id: <1521129726-15490-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150176
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xfs_break_dax_layouts(), similar to xfs_break_leased_layouts(), scans
-for busy / pinned dax pages and waits for those pages to go idle before
-any potential extent unmap operation.
+From: Milton Miller <miltonm@us.ibm.com>
 
-dax_layout_busy_page() handles synchronizing against new page-busy
-events (get_user_pages). It invalidates all mappings to trigger the
-get_user_pages slow path which will eventually block on the xfs inode
-log held in XFS_MMAPLOCK_EXCL mode. If dax_layout_busy_page() finds a
-busy page it returns it for xfs to wait for the page-idle event that
-will fire when the page reference count reaches 1 (recall ZONE_DEVICE
-pages are idle at count 1).
+Allow the device tree to specify a watchdog to fallover to
+the alternate boot source.
 
-While waiting, the XFS_MMAPLOCK_EXCL lock is dropped in order to not
-deadlock the process that might be trying to elevate the page count of
-more pages before arranging for any of them to go idle. I.e. the typical
-case of submitting I/O is that iov_iter_get_pages() elevates the
-reference count of all pages in the I/O before starting I/O on the first
-page.
+The aspeeed watchdog can set a latch directing flash chip select 0 to
+chip select 1, allowing boot from an alternate media if the watchdog
+is not reset in time.  On the ast2400 bank 1 also goes to flash bank 1,
+while on the ast2500 the chip selects are swapped.
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Also clear the secondary boot bit during the machine restart operation.
+Otherwise, the system will switch to the alternate boot after every
+reboot, which is not desired.
+
+Signed-off-by: Milton Miller <miltonm@us.ibm.com>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- fs/xfs/xfs_file.c |   67 +++++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 54 insertions(+), 13 deletions(-)
+Changes since v1:
+ * Disable secondary boot before the restart operation.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 399c5221f101..2ccdbb19e31a 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -759,6 +759,38 @@ xfs_file_write_iter(
- 	return ret;
- }
- 
-+static void
-+xfs_wait_var_event(
-+	struct inode		*inode,
-+	uint			iolock)
-+{
-+	struct xfs_inode        *ip = XFS_I(inode);
-+
-+	xfs_iunlock(ip, iolock);
-+	schedule();
-+	xfs_ilock(ip, iolock);
-+}
-+
-+static int
-+xfs_break_dax_layouts(
-+	struct inode		*inode,
-+	uint			iolock)
-+{
-+	struct page		*page;
-+	int			ret;
-+
-+	page = dax_layout_busy_page(inode->i_mapping);
-+	if (!page)
-+		return 0;
-+
-+	ret = ___wait_var_event(&page->_refcount,
-+			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
-+			0, 0, xfs_wait_var_event(inode, iolock));
-+	if (ret < 0)
-+		return ret;
-+	return 1;
-+}
-+
- int
- xfs_break_layouts(
- 	struct inode		*inode,
-@@ -766,23 +798,32 @@ xfs_break_layouts(
- 	enum layout_break_reason reason)
+ drivers/watchdog/aspeed_wdt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+index d1987d6..a5b8eb2 100644
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -46,6 +46,7 @@ struct aspeed_wdt_config {
+ #define WDT_RELOAD_VALUE	0x04
+ #define WDT_RESTART		0x08
+ #define WDT_CTRL		0x0C
++#define   WDT_CTRL_BOOT_SECONDARY	BIT(7)
+ #define   WDT_CTRL_RESET_MODE_SOC	(0x00 << 5)
+ #define   WDT_CTRL_RESET_MODE_FULL_CHIP	(0x01 << 5)
+ #define   WDT_CTRL_RESET_MODE_ARM_CPU	(0x10 << 5)
+@@ -158,6 +159,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
  {
- 	struct xfs_inode	*ip = XFS_I(inode);
--	int			ret;
-+	int			ret = 0;
+ 	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
  
- 	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
- 				| XFS_MMAPLOCK_EXCL));
++	wdt->ctrl &= ~WDT_CTRL_BOOT_SECONDARY;
+ 	aspeed_wdt_enable(wdt, 128 * WDT_RATE_1MHZ / 1000);
  
--	switch (reason) {
--	case BREAK_TRUNCATE:
--		/* fall through */
--	case BREAK_WRITE:
--		ret = xfs_break_leased_layouts(inode, iolock);
--		if (ret > 0)
--			ret = 0;
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
-+	do {
-+		switch (reason) {
-+		case BREAK_TRUNCATE:
-+			ret = xfs_break_dax_layouts(inode, *iolock);
-+			/* fall through */
-+		case BREAK_WRITE:
-+			if (ret != 0)
-+				break;
-+			ret = xfs_break_leased_layouts(inode, iolock);
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+		/*
-+		 * This loop terminates when either layout break attempt
-+		 * returns an error, or both layout break attempts
-+		 * return 0, i.e. layouts are verified broken while
-+		 * holding all required locks.
-+		 */
-+	} while (ret > 0);
+ 	mdelay(1000);
+@@ -245,6 +247,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 	}
+ 	if (of_property_read_bool(np, "aspeed,external-signal"))
+ 		wdt->ctrl |= WDT_CTRL_WDT_EXT;
++	if (of_property_read_bool(np, "aspeed,alt-boot"))
++		wdt->ctrl |= WDT_CTRL_BOOT_SECONDARY;
  
- 	return ret;
- }
+ 	if (readl(wdt->base + WDT_CTRL) & WDT_CTRL_ENABLE)  {
+ 		/*
+-- 
+1.8.3.1
