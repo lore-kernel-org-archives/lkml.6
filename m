@@ -1,33 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752407AbeCONCN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:02:13 -0400
-Received: from mga12.intel.com ([192.55.52.136]:60360 "EHLO mga12.intel.com"
+        id S1751889AbeCONHK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:07:10 -0400
+Received: from mga17.intel.com ([192.55.52.151]:41522 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752071AbeCONCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:02:12 -0400
+        id S1751481AbeCONHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:07:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
-   d="scan'208";a="35249851"
-Message-ID: <1521118928.10722.658.camel@linux.intel.com>
-Subject: Re: [PATCH v10] mmc: Export host capabilities to debugfs.
+   d="scan'208";a="42282618"
+Message-ID: <1521119224.10722.664.camel@linux.intel.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
-Date: Thu, 15 Mar 2018 15:02:08 +0200
-In-Reply-To: <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
-References: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
-         <CAPDyKFo8jFwDO1E=tNSd4yTn3qtefzvHK0V70fcEqzB=SibrJA@mail.gmail.com>
-         <1521109575.10722.654.camel@linux.intel.com>
-         <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date: Thu, 15 Mar 2018 15:07:04 +0200
+In-Reply-To: <20180315075842.GD3628@jagdpanzerIV>
+References: <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+         <1520330185.10722.401.camel@linux.intel.com>
+         <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
+         <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+         <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
+         <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+         <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+         <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+         <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+         <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+         <20180315075842.GD3628@jagdpanzerIV>
 Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.5-1 
@@ -37,39 +47,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-15 at 13:29 +0100, Ulf Hansson wrote:
-> On 15 March 2018 at 11:26, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, 2018-03-15 at 11:12 +0100, Ulf Hansson wrote:
-> > > On 13 March 2018 at 06:10, Harish Jenny K N <harish_kandiga@mentor
-> > > .com
-> > > > wrote:
-> > > > 
-> > > Honestly, I don't like this, but maybe other people do, then I am
-> > > fine
-> > > with this approach.
-> > > 
-> > > If were to decide, I would just rather print the caps field in a
-> > > hexadecimal bit form and leave the translation to the user.
-> > 
-> > A compromise would be to print both:
-> > 
-> > 0xHHHHHHHH\n
-> > Description of each enabled field, one per line
-> > 
-> > 
-> > Another format would be:
-> > 
-> > Bit XX: Description of a field
+On Thu, 2018-03-15 at 16:58 +0900, Sergey Senozhatsky wrote:
+> On (03/14/18 15:09), Petr Mladek wrote:
 > 
-> If we were to print the description, there is no point in printing the
-> bits in hex. Or is it?
 
-It is helpful for scripting (since it's debugfs, under scripting I mean
-something rather for test suites than for actual use).
 
-> As I said, if you and other folkz thinks this is valuable, then I am
-> fine as well. Just saying, it's not my preferred option.
+> >  char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+> >  	      struct printf_spec spec)
+> >  {
+> > +	static const char data_access_fmt[] =
+> > "RrhbMmIiEUVNadCDgGO";
+> >  	const int default_width = 2 * sizeof(void *);
+> > +	const char *err_msg = NULL;
+> > +
+> > +	/* Prevent silent crash when this is called under
+> > logbuf_lock. */
+> > +	if (*fmt && strchr(data_access_fmt, *fmt) != NULL)
+> > +		err_msg = check_pointer_access(ptr);
+> 
+> Agree with Rasmus, I think switch() is easier.
+> 
+
+One more to the same.
+
+Though need to add that we also have to append / update some comment to
+keep these lists synchronized (in Documentation, around pointer() and
+here)
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
