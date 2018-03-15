@@ -1,162 +1,71 @@
-Return-Path: <ravi.bangoria@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AG47ELs++f6Oh+dfqASfUMtJrZagEZ9P0Ls6P2b9xIaRs9bv8g8eA4Udx1purcpKFWYccu2jv7s4
-ARC-Seal: i=1; a=rsa-sha256; t=1520945709; cv=none;
+Return-Path: <SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org>
+X-Google-Smtp-Source: AG47ELsH+oe1OkS7cM5t7NZW6gN0X2u6AE9ABpE3JUpYakeOvQ2kK04WXReF4pNuhiW3KHWVjLxY
+ARC-Seal: i=1; a=rsa-sha256; t=1521131324; cv=none;
         d=google.com; s=arc-20160816;
-        b=FcQT3qjmDZ8L1UN0cCEhT0GdENJlm7lXoJ8x1Mb4MubhVHCev8hQmr59q+abarD/4n
-         HPyfIMs0BhaTbvfLfkoD/6f0fBnG72lusKnY4a8RN6HR2DRcaQWPqQqglaraDnVM3NY4
-         nQH9cjaqYmJ0LRYlRuQ/OFv8M2xf3GGouZBedBB+I23KQsu2/koNZ5XpF4N67yMuIQSm
-         Kz7Ny3piA8aIY5tUOGtaDpQog0yhJMPK6A2QGVeXfjvU//1X+yA3xTlDLfNMIIJF8D8T
-         gX7VAa/ji6LWXc9NeXYl2VrqfVtyQC2amYlmk0dH0sWQNEQ6JTnQbjhCxHkifoUBtRZL
-         WjqA==
+        b=TkY3rrawdx5XXS+ZiCD39S8sgKYzXLAfDS02uQzKGJe0ikgkLppggS6MHI2J1mi7ss
+         hMkVw0DbvvK+Lr65opg/yPo0+SPbLf4xedB2ntstc4kUmFWsQREHqznmgaWMa/4zdncE
+         7uTrO2Ivw7ZBRTGro9Yx/ki9QiNMS4gzBcAx12rgP7QdzCCZLCBTWZa73qfTsxtt768t
+         1yhBPYwZE/1ZuoWpnunVSB5lSzhHC8gz8b6JYL33Ddxxqx5V2iU9FvsyMSN5KXttRO0a
+         wrdDkagUG7TbSuenEMDTUchDynlwhGJFzimepymPsn/V4IByLT94Ihl8vxKmaUBWRlr5
+         xurw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:references:in-reply-to:date:subject:cc:to:from
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
          :arc-authentication-results;
-        bh=XmFyYaNCgKjTzxY/rkhTPkuYAYswHJQtj+vWWYSq1Nc=;
-        b=nIeP1mk01HhKaIUXMeM8vmVJIIv2GiTrBFAaeeIUgfy/aed0dGoXBDh5NWLzyRTtTt
-         R52WCu4N6dMjfoyLFqNAs0YwQ2UUipfeFqdmlbG5FZh8OBEkHsrxA+SJ7hl0BDF1tulZ
-         AgSHYNTqqWDXPPrMZvBDDumeHOOxv1HO97rhoAJd6AVdanVE4qB2BR4P/TQNQgeuxHmh
-         u89EwXXvQ15eEBhCkZ1tiv9fWBiOf1qxaVpgOycA+ZOnSaYqfuR83XasPqR79DqC0+g9
-         SNYu3eUqTBplBiAhkCvxJ0XL9XLw1ss/npi+e4/HGFHg2FiRNJkq4rTEAV+49xLBIAb2
-         dSuA==
+        bh=ftuiL4S2XjUXVWGZcH1n/0wW5Mi9HvP8Kh94EER3BzE=;
+        b=RY+TAI2uDREEZhjxLBh/WMhq5ZF5kZ39rMCQkc0MnJLMetiE4e0phoXvEsKE0BLlzB
+         8V0CMHgHAHYH6/jydZaxsbwg/XkLV5W0wqIvCHvccIrqRe8HR6627TC06W87HqU5w8kD
+         RONr8cRp2BC1mL6WNAkg/h/bij48RAniP09Wm/JKbh6tEwxWiVx9mYn9/z7QT/gD/tlw
+         rDxVbcorJe7LwK37SwD4rXluR70v1mTEX8IstVE7BQsqcsuX59kagMnUWJ179gJgInFF
+         Zo+vFNPL0wpeiz36TBSrbebk5vbYNWniXSSUE9M9hsfaD46UkAEM1RwZID69GJnHtkh/
+         2iWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of srs0=ddtq=gf=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of ravi.bangoria@linux.vnet.ibm.com) smtp.mailfrom=ravi.bangoria@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-To: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-        srikar@linux.vnet.ibm.com
-Cc: acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-        corbet@lwn.net, dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-        huawei.libin@huawei.com, hughd@google.com, jack@suse.cz,
-        jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
-        kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
-        rostedt@goodmis.org, tglx@linutronix.de, tmricht@linux.vnet.ibm.com,
-        willy@infradead.org, yao.jin@linux.intel.com, fengguang.wu@intel.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH 2/8] mm: Prefix vma_ to vaddr_to_offset() and offset_to_vaddr()
-Date: Tue, 13 Mar 2018 18:25:57 +0530
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
+       spf=pass (google.com: best guess record for domain of srs0=ddtq=gf=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ddTQ=GF=goodmis.org=rostedt@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA4C204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 15 Mar 2018 12:28:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+ srikar@linux.vnet.ibm.com, acme@kernel.org, ananth@linux.vnet.ibm.com,
+ akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+ alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+ gregkh@linuxfoundation.org, huawei.libin@huawei.com, hughd@google.com,
+ jack@suse.cz, jglisse@redhat.com, jolsa@redhat.com, kan.liang@intel.com,
+ kirill.shutemov@linux.intel.com, kjlx@templeofstupid.com,
+ kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+ milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+ naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, pombredanne@nexb.com,
+ tglx@linutronix.de, tmricht@linux.vnet.ibm.com, willy@infradead.org,
+ yao.jin@linux.intel.com, fengguang.wu@intel.com
+Subject: Re: [PATCH 2/8] mm: Prefix vma_ to vaddr_to_offset() and
+ offset_to_vaddr()
+Message-ID: <20180315122840.02ac36ec@vmware.local.home>
+In-Reply-To: <20180313125603.19819-3-ravi.bangoria@linux.vnet.ibm.com>
 References: <20180313125603.19819-1-ravi.bangoria@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18031312-0040-0000-0000-0000043EFB37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031312-0041-0000-0000-000020E22D7E
-Message-Id: <20180313125603.19819-3-ravi.bangoria@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803130154
+	<20180313125603.19819-3-ravi.bangoria@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594827168615885864?=
-X-GMAIL-MSGID: =?utf-8?q?1594827168615885864?=
+X-GMAIL-MSGID: =?utf-8?q?1595021799628679453?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-No functionality changes.
+On Tue, 13 Mar 2018 18:25:57 +0530
+Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
----
- include/linux/mm.h      |  4 ++--
- kernel/events/uprobes.c | 14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+> No functionality changes.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 95909f2..d7ee526 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2275,13 +2275,13 @@ struct vm_unmapped_area_info {
- }
- 
- static inline unsigned long
--offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
-+vma_offset_to_vaddr(struct vm_area_struct *vma, loff_t offset)
- {
- 	return vma->vm_start + offset - ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
- }
- 
- static inline loff_t
--vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
-+vma_vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
- {
- 	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
- }
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index bd6f230..535fd39 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -748,7 +748,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
- 		curr = info;
- 
- 		info->mm = vma->vm_mm;
--		info->vaddr = offset_to_vaddr(vma, offset);
-+		info->vaddr = vma_offset_to_vaddr(vma, offset);
- 	}
- 	i_mmap_unlock_read(mapping);
- 
-@@ -807,7 +807,7 @@ static inline struct map_info *free_map_info(struct map_info *info)
- 			goto unlock;
- 
- 		if (vma->vm_start > info->vaddr ||
--		    vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
-+		    vma_vaddr_to_offset(vma, info->vaddr) != uprobe->offset)
- 			goto unlock;
- 
- 		if (is_register) {
-@@ -977,7 +977,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
- 		    uprobe->offset >= offset + vma->vm_end - vma->vm_start)
- 			continue;
- 
--		vaddr = offset_to_vaddr(vma, uprobe->offset);
-+		vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
- 		err |= remove_breakpoint(uprobe, mm, vaddr);
- 	}
- 	up_read(&mm->mmap_sem);
-@@ -1023,7 +1023,7 @@ static void build_probe_list(struct inode *inode,
- 	struct uprobe *u;
- 
- 	INIT_LIST_HEAD(head);
--	min = vaddr_to_offset(vma, start);
-+	min = vma_vaddr_to_offset(vma, start);
- 	max = min + (end - start) - 1;
- 
- 	spin_lock(&uprobes_treelock);
-@@ -1076,7 +1076,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
- 	list_for_each_entry_safe(uprobe, u, &tmp_list, pending_list) {
- 		if (!fatal_signal_pending(current) &&
- 		    filter_chain(uprobe, UPROBE_FILTER_MMAP, vma->vm_mm)) {
--			unsigned long vaddr = offset_to_vaddr(vma, uprobe->offset);
-+			unsigned long vaddr = vma_offset_to_vaddr(vma, uprobe->offset);
- 			install_breakpoint(uprobe, vma->vm_mm, vma, vaddr);
- 		}
- 		put_uprobe(uprobe);
-@@ -1095,7 +1095,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
- 
- 	inode = file_inode(vma->vm_file);
- 
--	min = vaddr_to_offset(vma, start);
-+	min = vma_vaddr_to_offset(vma, start);
- 	max = min + (end - start) - 1;
- 
- 	spin_lock(&uprobes_treelock);
-@@ -1730,7 +1730,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
- 	if (vma && vma->vm_start <= bp_vaddr) {
- 		if (valid_vma(vma, false)) {
- 			struct inode *inode = file_inode(vma->vm_file);
--			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
-+			loff_t offset = vma_vaddr_to_offset(vma, bp_vaddr);
- 
- 			uprobe = find_uprobe(inode, offset);
- 		}
--- 
-1.8.3.1
+Again, please add an explanation to why this patch is done.
+
+-- Steve
+
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
