@@ -1,170 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932949AbeCOQBF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:01:05 -0400
-Received: from mga09.intel.com ([134.134.136.24]:4894 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932898AbeCOQBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:01:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="208538386"
-Subject: [PATCH v6 06/15] ext2, dax: introduce ext2_dax_aops
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jan Kara <jack@suse.com>, david@fromorbit.com, hch@lst.de,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:51:56 -0700
-Message-ID: <152112911591.24669.7494781212673308769.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S932995AbeCOQFk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:05:40 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50402 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932926AbeCOQBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:01:03 -0400
+X-Google-Smtp-Source: AG47ELskRQHxFdNXWljAWGn8WkUUgPAGyKG4v1i0ii1qmd57otJXGRaWT0bZmBxF3AU+o6v48rNLwA==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc5 2/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Thu, 15 Mar 2018 16:00:47 +0000
+Message-Id: <1521129648-20889-3-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
+In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the dax implementation to start associating dax pages
-to inodes via page->mapping, we need to provide a 'struct
-address_space_operations' instance for dax. Otherwise, direct-I/O
-triggers incorrect page cache assumptions and warnings.
-
-Cc: Jan Kara <jack@suse.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/ext2/ext2.h  |    1 +
- fs/ext2/inode.c |   43 +++++++++++++++++++++++++++----------------
- fs/ext2/namei.c |   18 ++----------------
- 3 files changed, 30 insertions(+), 32 deletions(-)
-
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index 032295e1d386..cc40802ddfa8 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
- extern const struct file_operations ext2_file_operations;
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index fbc7371..2c46675 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -184,10 +184,9 @@ notrace static u64 vread_tsc(void)
  
- /* inode.c */
-+extern void ext2_set_file_ops(struct inode *inode);
- extern const struct address_space_operations ext2_aops;
- extern const struct address_space_operations ext2_nobh_aops;
- extern const struct iomap_ops ext2_iomap_ops;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 9b2ac55ac34f..9590712f2f88 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -952,17 +952,16 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- static int
- ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ notrace static u64 vread_tsc_raw(void)
  {
--#ifdef CONFIG_FS_DAX
--	if (dax_mapping(mapping)) {
--		return dax_writeback_mapping_range(mapping,
--						   mapping->host->i_sb->s_bdev,
--						   wbc);
--	}
--#endif
--
- 	return mpage_writepages(mapping, wbc, ext2_get_block);
+-	u64 tsc
++	u64 tsc  = (gtod->has_rdtscp ? rdtscp((void *)0) : rdtsc_ordered())
+ 	  , last = gtod->raw_cycle_last;
+ 
+-	tsc	      = rdtsc_ordered();
+ 	if (likely(tsc >= last))
+ 		return tsc;
+ 	asm volatile ("");
+diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
+index 5af7093..0327a95 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
++++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
+@@ -16,6 +16,9 @@
+ #include <linux/timekeeper_internal.h>
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
++#include <asm/cpufeature.h>
++
++extern unsigned int tsc_khz;
+ 
+ int vclocks_used __read_mostly;
+ 
+@@ -49,6 +52,7 @@ void update_vsyscall(struct timekeeper *tk)
+ 	vdata->raw_mask		= tk->tkr_raw.mask;
+ 	vdata->raw_mult		= tk->tkr_raw.mult;
+ 	vdata->raw_shift	= tk->tkr_raw.shift;
++	vdata->has_rdtscp	= static_cpu_has(X86_FEATURE_RDTSCP);
+ 
+ 	vdata->wall_time_sec		= tk->xtime_sec;
+ 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 30df295..a5ff704 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -218,6 +218,37 @@ static __always_inline unsigned long long rdtsc_ordered(void)
+ 	return rdtsc();
  }
  
-+static int
-+ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
++/**
++ * rdtscp() - read the current TSC and (optionally) CPU number, with built-in
++ *            cancellation point replacing barrier - only available
++ *            if static_cpu_has(X86_FEATURE_RDTSCP) .
++ * returns:   The 64-bit Time Stamp Counter (TSC) value.
++ * Optionally, 'cpu_out' can be non-null, and on return it will contain
++ * the number (Intel CPU ID) of the CPU that the task is currently running on.
++ * As does EAX_EDT_RET, this uses the "open-coded asm" style to
++ * force the compiler + assembler to always use (eax, edx, ecx) registers,
++ * NOT whole (rax, rdx, rcx) on x86_64 , because only 32-bit
++ * variables are used - exactly the same code should be generated
++ * for this instruction on 32-bit as on 64-bit when this asm stanza is used.
++ * See: SDM , Vol #2, RDTSCP instruction.
++ */
++static __always_inline u64 rdtscp(u32 *cpu_out)
 +{
-+	return dax_writeback_mapping_range(mapping,
-+			mapping->host->i_sb->s_bdev, wbc);
++	u32	tsc_lo, tsc_hi, tsc_cpu;
++
++	asm volatile
++	("rdtscp"
++		:   "=a" (tsc_lo)
++		  , "=d" (tsc_hi)
++		  , "=c" (tsc_cpu)
++	); // : eax, edx, ecx used - NOT rax, rdx, rcx
++	if (unlikely(cpu_out != ((void *)0)))
++		*cpu_out = tsc_cpu;
++	return ((((u64)tsc_hi) << 32) |
++		(((u64)tsc_lo) & 0x0ffffffffULL)
++	       );
 +}
 +
- const struct address_space_operations ext2_aops = {
- 	.readpage		= ext2_readpage,
- 	.readpages		= ext2_readpages,
-@@ -990,6 +989,13 @@ const struct address_space_operations ext2_nobh_aops = {
- 	.error_remove_page	= generic_error_remove_page,
- };
+ /* Deprecated, keep it for a cycle for easier merging: */
+ #define rdtscll(now)	do { (now) = rdtsc_ordered(); } while (0)
  
-+const struct address_space_operations ext2_dax_aops = {
-+	.direct_IO		= ext2_direct_IO,
-+	.writepages		= ext2_dax_writepages,
-+	.set_page_dirty		= noop_set_page_dirty,
-+	.invalidatepage		= noop_invalidatepage,
-+};
-+
- /*
-  * Probably it should be a library function... search for first non-zero word
-  * or memcmp with zero_page, whatever is better for particular architecture.
-@@ -1388,6 +1394,18 @@ void ext2_set_inode_flags(struct inode *inode)
- 		inode->i_flags |= S_DAX;
- }
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index 24e4d45..e7e4804 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -26,6 +26,7 @@ struct vsyscall_gtod_data {
+ 	u64	raw_mask;
+ 	u32	raw_mult;
+ 	u32	raw_shift;
++	u32     has_rdtscp;
  
-+void ext2_set_file_ops(struct inode *inode)
-+{
-+	inode->i_op = &ext2_file_inode_operations;
-+	inode->i_fop = &ext2_file_operations;
-+	if (IS_DAX(inode))
-+		inode->i_mapping->a_ops = &ext2_dax_aops;
-+	else if (test_opt(inode->i_sb, NOBH))
-+		inode->i_mapping->a_ops = &ext2_nobh_aops;
-+	else
-+		inode->i_mapping->a_ops = &ext2_aops;
-+}
-+
- struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
- {
- 	struct ext2_inode_info *ei;
-@@ -1480,14 +1498,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
- 		ei->i_data[n] = raw_inode->i_block[n];
- 
- 	if (S_ISREG(inode->i_mode)) {
--		inode->i_op = &ext2_file_inode_operations;
--		if (test_opt(inode->i_sb, NOBH)) {
--			inode->i_mapping->a_ops = &ext2_nobh_aops;
--			inode->i_fop = &ext2_file_operations;
--		} else {
--			inode->i_mapping->a_ops = &ext2_aops;
--			inode->i_fop = &ext2_file_operations;
--		}
-+		ext2_set_file_ops(inode);
- 	} else if (S_ISDIR(inode->i_mode)) {
- 		inode->i_op = &ext2_dir_inode_operations;
- 		inode->i_fop = &ext2_dir_operations;
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index e078075dc66f..55f7caadb093 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	return ext2_add_nondir(dentry, inode);
- }
-@@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	d_tmpfile(dentry, inode);
- 	unlock_new_inode(inode);
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
