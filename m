@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeCOGLv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 02:11:51 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46808 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeCOGLt (ORCPT
+        id S1751541AbeCOGQU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 02:16:20 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42427 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeCOGQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 02:11:49 -0400
-X-Google-Smtp-Source: AG47ELv6zoi1b2DgbC6P0O/oAuSkA/M2WM11JfdsrvkLds0vSUFIQagnnaLGRMQ8RBdjD7kYxny4uvD1Sz1DT5pzd/0=
+        Thu, 15 Mar 2018 02:16:17 -0400
+X-Google-Smtp-Source: AG47ELsI+dH/SY2BWoiIBgUmrBXuX9k2pZfMBD9shexQ5k5AsbGRou+RKPwsW3luCcBhVgxeIlwT+PvHCDaHtJzB0t0=
 MIME-Version: 1.0
-In-Reply-To: <20180315045401.GB4860@magnolia>
+In-Reply-To: <20180315050653.GC4860@magnolia>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-4-git-send-email-jix024@eng.ucsd.edu> <20180315045401.GB4860@magnolia>
+ <1520705944-6723-5-git-send-email-jix024@eng.ucsd.edu> <20180315050653.GC4860@magnolia>
 From: Andiry Xu <jix024@eng.ucsd.edu>
-Date: Wed, 14 Mar 2018 23:11:48 -0700
-Message-ID: <CAD4SzjtHmBTisX6vQYuEnJf0fKsF==w5GHqsdks6xGv1go7Lzw@mail.gmail.com>
-Subject: Re: [RFC v2 03/83] Add super.h.
+Date: Wed, 14 Mar 2018 23:16:15 -0700
+Message-ID: <CAD4SzjvseYcy0n7xcHtpQQM_+zHMPYXzn_UXBfk81dfV76CQug@mail.gmail.com>
+Subject: Re: [RFC v2 04/83] NOVA inode definition.
 To: "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
@@ -31,210 +31,273 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 9:54 PM, Darrick J. Wong
+On Wed, Mar 14, 2018 at 10:06 PM, Darrick J. Wong
 <darrick.wong@oracle.com> wrote:
-> On Sat, Mar 10, 2018 at 10:17:44AM -0800, Andiry Xu wrote:
+> On Sat, Mar 10, 2018 at 10:17:45AM -0800, Andiry Xu wrote:
 >> From: Andiry Xu <jix024@cs.ucsd.edu>
 >>
->> This header file defines NOVA persistent and volatile superblock
->> data structures.
+>> inode.h defines the non-volatile and volatile NOVA inode data structures.
 >>
->> It also defines NOVA block layout:
+>> The non-volatile NOVA inode (nova_inode) is aligned to 128 bytes and contains
+>> file/directory metadata information. The most important fields
+>> are log_head and log_tail. log_head points to the start of
+>> the log, and log_tail points to the end of the latest committed
+>> log entry. NOVA make updates to the inode by appending
+>> to the log tail and update the log_tail pointer atomically.
 >>
->> Page 0: Superblock
->> Page 1: Reserved inodes
->> Page 2 - 15: Reserved
->> Page 16 - 31: Inode table pointers
->> Page 32 - 47: Journal address pointers
->> Page 48 - 63: Reserved
->> Pages n-2: Replicate reserved inodes
->> Pages n-1: Replicate superblock
->>
->> Other pages are for normal inodes, logs and data.
+>> The volatile NOVA inode (nova_inode_info) contains necessary
+>> information to limit access to the non-volatile NOVA inode during runtime.
+>> It has a radix tree to map file offset or filenames to the corresponding
+>> log entries.
 >>
 >> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 >> ---
->>  fs/nova/super.h | 149 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 149 insertions(+)
->>  create mode 100644 fs/nova/super.h
+>>  fs/nova/inode.h | 187 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 187 insertions(+)
+>>  create mode 100644 fs/nova/inode.h
 >>
->> diff --git a/fs/nova/super.h b/fs/nova/super.h
+>> diff --git a/fs/nova/inode.h b/fs/nova/inode.h
 >> new file mode 100644
->> index 0000000..cb53908
+>> index 0000000..f9187e3
 >> --- /dev/null
->> +++ b/fs/nova/super.h
->> @@ -0,0 +1,149 @@
->> +#ifndef __SUPER_H
->> +#define __SUPER_H
+>> +++ b/fs/nova/inode.h
+>> @@ -0,0 +1,187 @@
+>> +#ifndef __INODE_H
+>> +#define __INODE_H
+>> +
+>> +struct nova_inode_info_header;
+>> +struct nova_inode;
+>> +
+>> +#include "super.h"
+>> +
+>> +enum nova_new_inode_type {
+>> +     TYPE_CREATE = 0,
+>> +     TYPE_MKNOD,
+>> +     TYPE_SYMLINK,
+>> +     TYPE_MKDIR
+>> +};
+>> +
+>> +
 >> +/*
->> + * Structure of the NOVA super block in PMEM
->> + *
->> + * The fields are partitioned into static and dynamic fields. The static fields
->> + * never change after file system creation. This was primarily done because
->> + * nova_get_block() returns NULL if the block offset is 0 (helps in catching
->> + * bugs). So if we modify any field using journaling (for consistency), we
->> + * will have to modify s_sum which is at offset 0. So journaling code fails.
->> + * This (static+dynamic fields) is a temporary solution and can be avoided
->> + * once the file system becomes stable and nova_get_block() returns correct
->> + * pointers even for offset 0.
+>> + * Structure of an inode in PMEM
+>> + * Keep the inode size to within 120 bytes: We use the last eight bytes
+>> + * as inode table tail pointer.
+>
+> I would've expected a
+> BUILD_BUG_ON(NOVA_INODE_SIZE - sizeof(struct nova_inode) == 8);
+> or something to enforce this.
+>
+
+Thanks, will do.
+
+> (Or just equate inode number with byte offset?  I looked ahead at the
+> directory entries and they seem to be 64-bit...)
+>
+> I guess I'm being lazy and doing a on-disk-format-only review. :)
+>
 >> + */
->> +struct nova_super_block {
->> +     /* static fields. they never change after file system creation.
->> +      * checksum only validates up to s_start_dynamic field below
->> +      */
->> +     __le32          s_sum;                  /* checksum of this sb */
->> +     __le32          s_magic;                /* magic signature */
->> +     __le32          s_padding32;
->> +     __le32          s_blocksize;            /* blocksize in bytes */
->> +     __le64          s_size;                 /* total size of fs in bytes */
->> +     char            s_volume_name[16];      /* volume name */
+>> +struct nova_inode {
 >> +
->> +     /* all the dynamic fields should go here */
->> +     __le64          s_epoch_id;             /* Epoch ID */
->> +
->> +     /* s_mtime and s_wtime should be together and their order should not be
->> +      * changed. we use an 8 byte write to update both of them atomically
->> +      */
->> +     __le32          s_mtime;                /* mount time */
->> +     __le32          s_wtime;                /* write time */
+>> +     /* first 40 bytes */
+>> +     u8      i_rsvd;          /* reserved. used to be checksum */
 >
-> Hmmm, 32-bit timestamps?  2038 isn't that far away...
+> Magic number?
 >
 
-I will try fixing this in the next version.
+OK.
 
+>> +     u8      valid;           /* Is this inode valid? */
+>> +     u8      deleted;         /* Is this inode deleted? */
+>
+> Would i_mode == 0 cover these?
+>
+
+Deleted flag comes from NOVA-Fortis code. I will check if i_mode can cover it.
+
+>> +     u8      i_blk_type;      /* data block size this inode uses */
+>
+> I would've thought these would just be bits of i_flags?
+>
+> Also, if I have a 1G blocksize file and free space fragments to the
+> point that there's > 1G of free space but none of it contiguous, I guess
+> I can expect ENOSPC?
+>
+
+Yes, but 1G blocksize has not been tested.
+
+>> +     __le32  i_flags;         /* Inode flags */
+>> +     __le64  i_size;          /* Size of data in bytes */
+>> +     __le32  i_ctime;         /* Inode modification time */
+>> +     __le32  i_mtime;         /* Inode b-tree Modification time */
+>> +     __le32  i_atime;         /* Access time */
+>
+> Same y2038 grumble from the previous patch.
+>
+
+Will fix.
+
+>> +     __le16  i_mode;          /* File mode */
+>> +     __le16  i_links_count;   /* Links count */
+>> +
+>> +     __le64  i_xattr;         /* Extended attribute block */
+>> +
+>> +     /* second 40 bytes */
+>> +     __le32  i_uid;           /* Owner Uid */
+>> +     __le32  i_gid;           /* Group Id */
+>> +     __le32  i_generation;    /* File version (for NFS) */
+>> +     __le32  i_create_time;   /* Create time */
+>> +     __le64  nova_ino;        /* nova inode number */
+>> +
+>> +     __le64  log_head;        /* Log head pointer */
+>> +     __le64  log_tail;        /* Log tail pointer */
+>> +
+>> +     /* last 40 bytes */
+>> +     __le64  create_epoch_id; /* Transaction ID when create */
+>> +     __le64  delete_epoch_id; /* Transaction ID when deleted */
+>> +
+>> +     struct {
+>> +             __le32 rdev;     /* major/minor # */
+>> +     } dev;                   /* device inode */
+>> +
+>> +     __le32  csum;            /* CRC32 checksum */
+>> +     /* Leave 8 bytes for inode table tail pointer */
 >> +} __attribute((__packed__));
 >> +
->> +#define NOVA_SB_SIZE 512       /* must be power of two */
->> +
->> +/* ======================= Reserved blocks ========================= */
+>> +/*
+>> + * NOVA-specific inode state kept in DRAM
+>> + */
+>> +struct nova_inode_info_header {
+>> +     /* For files, tree holds a map from file offsets to
+>> +      * write log entries.
+>> +      *
+>> +      * For directories, tree holds a map from a hash of the file name to
+>> +      * dentry log entry.
+>> +      */
+>> +     struct radix_tree_root tree;
+>> +     struct rw_semaphore i_sem;      /* Protect log and tree */
+>> +     unsigned short i_mode;          /* Dir or file? */
+>> +     unsigned int i_flags;
+>> +     unsigned long log_pages;        /* Num of log pages */
+>> +     unsigned long i_size;
+>> +     unsigned long i_blocks;
+>> +     unsigned long ino;
+>> +     unsigned long pi_addr;
+>> +     unsigned long valid_entries;    /* For thorough GC */
+>> +     unsigned long num_entries;      /* For thorough GC */
+>> +     u64 last_setattr;               /* Last setattr entry */
+>> +     u64 last_link_change;           /* Last link change entry */
+>> +     u64 last_dentry;                /* Last updated dentry */
+>> +     u64 trans_id;                   /* Transaction ID */
+>> +     u64 log_head;                   /* Log head pointer */
+>> +     u64 log_tail;                   /* Log tail pointer */
+>> +     u8  i_blk_type;
+>> +};
 >> +
 >> +/*
->> + * Page 0 contains super blocks;
->> + * Page 1 contains reserved inodes;
->> + * Page 2 - 15 are reserved.
->> + * Page 16 - 31 contain pointers to inode tables.
->> + * Page 32 - 47 contain pointers to journal pages.
+>> + * DRAM state for inodes
 >> + */
->> +#define      HEAD_RESERVED_BLOCKS    64
->> +#define      NUM_JOURNAL_PAGES       16
->> +
->> +#define      SUPER_BLOCK_START       0 // Superblock
->> +#define      RESERVE_INODE_START     1 // Reserved inodes
->> +#define      INODE_TABLE_START       16 // inode table pointers
->> +#define      JOURNAL_START           32 // journal pointer table
->> +
->> +/* For replica super block and replica reserved inodes */
->> +#define      TAIL_RESERVED_BLOCKS    2
->> +
->> +/* ======================= Reserved inodes ========================= */
->> +
->> +/* We have space for 31 reserved inodes */
->> +#define NOVA_ROOT_INO                (1)
->> +#define NOVA_INODETABLE_INO  (2)     /* Fake inode associated with inode
->> +                                      * stroage.  We need this because our
->> +                                      * allocator requires inode to be
->> +                                      * associated with each allocation.
->> +                                      * The data actually lives in linked
->> +                                      * lists in INODE_TABLE_START. */
->> +#define NOVA_BLOCKNODE_INO   (3)     /* Storage for allocator state */
->> +#define NOVA_LITEJOURNAL_INO (4)     /* Storage for lightweight journals */
->> +#define NOVA_INODELIST_INO   (5)     /* Storage for Inode free list */
+>> +struct nova_inode_info {
+>> +     struct nova_inode_info_header header;
+>> +     struct inode vfs_inode;
+>> +};
 >> +
 >> +
->> +/* Normal inode starts at 32 */
->> +#define NOVA_NORMAL_INODE_START      (32)
+>> +static inline struct nova_inode_info *NOVA_I(struct inode *inode)
+>> +{
+>> +     return container_of(inode, struct nova_inode_info, vfs_inode);
+>> +}
+>> +
+>> +static inline void sih_lock(struct nova_inode_info_header *header)
 >
-> I've been wondering this whole time, why not make the inode number the
-> byte offset into the pmem?  Then you don't have to lose the last 8 bytes
-> of each inode block to point to the next one.
+> "sih"?  What happened to the "nova" prefix?
 >
 
-During failure recovery, NOVA scans the inode logs. To find all the
-inodes, it follows the inode block list. Making inode number the byte
-offset cannot locate all the inodes during recovery.
-
-One option is to organize the inodes in a B+tree, which makes the code
-more complex.
+This structure is born before the name NOVA was decided.
 
 Thanks,
 Andiry
 
 > --D
 >
->> +
->> +
->> +
->> +/*
->> + * NOVA super-block data in DRAM
->> + */
->> +struct nova_sb_info {
->> +     struct super_block *sb;                 /* VFS super block */
->> +     struct nova_super_block *nova_sb;       /* DRAM copy of SB */
->> +     struct block_device *s_bdev;
->> +     struct dax_device *s_dax_dev;
->> +
->> +     /*
->> +      * base physical and virtual address of NOVA (which is also
->> +      * the pointer to the super block)
->> +      */
->> +     phys_addr_t     phys_addr;
->> +     void            *virt_addr;
->> +     void            *replica_reserved_inodes_addr;
->> +     void            *replica_sb_addr;
->> +
->> +     unsigned long   num_blocks;
->> +
->> +     /* Mount options */
->> +     unsigned long   bpi;
->> +     unsigned long   blocksize;
->> +     unsigned long   initsize;
->> +     unsigned long   s_mount_opt;
->> +     kuid_t          uid;    /* Mount uid for root directory */
->> +     kgid_t          gid;    /* Mount gid for root directory */
->> +     umode_t         mode;   /* Mount mode for root directory */
->> +     atomic_t        next_generation;
->> +     /* inode tracking */
->> +     unsigned long   s_inodes_used_count;
->> +     unsigned long   head_reserved_blocks;
->> +     unsigned long   tail_reserved_blocks;
->> +
->> +     struct mutex    s_lock; /* protects the SB's buffer-head */
->> +
->> +     int cpus;
->> +
->> +     /* Current epoch. volatile guarantees visibility */
->> +     volatile u64 s_epoch_id;
->> +
->> +     /* ZEROED page for cache page initialized */
->> +     void *zeroed_page;
->> +};
->> +
->> +static inline struct nova_sb_info *NOVA_SB(struct super_block *sb)
 >> +{
->> +     return sb->s_fs_info;
+>> +     down_write(&header->i_sem);
 >> +}
 >> +
->> +static inline struct nova_super_block
->> +*nova_get_redund_super(struct super_block *sb)
+>> +static inline void sih_unlock(struct nova_inode_info_header *header)
+>> +{
+>> +     up_write(&header->i_sem);
+>> +}
+>> +
+>> +static inline void sih_lock_shared(struct nova_inode_info_header *header)
+>> +{
+>> +     down_read(&header->i_sem);
+>> +}
+>> +
+>> +static inline void sih_unlock_shared(struct nova_inode_info_header *header)
+>> +{
+>> +     up_read(&header->i_sem);
+>> +}
+>> +
+>> +static inline unsigned int
+>> +nova_inode_blk_shift(struct nova_inode_info_header *sih)
+>> +{
+>> +     return blk_type_to_shift[sih->i_blk_type];
+>> +}
+>> +
+>> +static inline uint32_t nova_inode_blk_size(struct nova_inode_info_header *sih)
+>> +{
+>> +     return blk_type_to_size[sih->i_blk_type];
+>> +}
+>> +
+>> +static inline u64 nova_get_reserved_inode_addr(struct super_block *sb,
+>> +     u64 inode_number)
+>> +{
+>> +     return (NOVA_DEF_BLOCK_SIZE_4K * RESERVE_INODE_START) +
+>> +                     inode_number * NOVA_INODE_SIZE;
+>> +}
+>> +
+>> +static inline struct nova_inode *nova_get_reserved_inode(struct super_block *sb,
+>> +     u64 inode_number)
 >> +{
 >> +     struct nova_sb_info *sbi = NOVA_SB(sb);
+>> +     u64 addr;
 >> +
->> +     return (struct nova_super_block *)(sbi->replica_sb_addr);
+>> +     addr = nova_get_reserved_inode_addr(sb, inode_number);
+>> +
+>> +     return (struct nova_inode *)(sbi->virt_addr + addr);
 >> +}
 >> +
->> +
->> +/* If this is part of a read-modify-write of the super block,
->> + * nova_memunlock_super() before calling!
->> + */
->> +static inline struct nova_super_block *nova_get_super(struct super_block *sb)
+>> +static inline struct nova_inode *nova_get_inode_by_ino(struct super_block *sb,
+>> +                                               u64 ino)
 >> +{
->> +     struct nova_sb_info *sbi = NOVA_SB(sb);
+>> +     if (ino == 0 || ino >= NOVA_NORMAL_INODE_START)
+>> +             return NULL;
 >> +
->> +     return (struct nova_super_block *)sbi->virt_addr;
+>> +     return nova_get_reserved_inode(sb, ino);
 >> +}
 >> +
->> +extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
+>> +static inline struct nova_inode *nova_get_inode(struct super_block *sb,
+>> +     struct inode *inode)
+>> +{
+>> +     struct nova_inode_info *si = NOVA_I(inode);
+>> +     struct nova_inode_info_header *sih = &si->header;
+>> +     struct nova_inode fake_pi;
+>> +     void *addr;
+>> +     int rc;
+>> +
+>> +     addr = nova_get_block(sb, sih->pi_addr);
+>> +     rc = memcpy_mcsafe(&fake_pi, addr, sizeof(struct nova_inode));
+>> +     if (rc)
+>> +             return NULL;
+>> +
+>> +     return (struct nova_inode *)addr;
+>> +}
+>> +
+>> +static inline int nova_persist_inode(struct nova_inode *pi)
+>> +{
+>> +     nova_flush_buffer(pi, sizeof(struct nova_inode), 1);
+>> +     return 0;
+>> +}
 >> +
 >> +#endif
 >> --
