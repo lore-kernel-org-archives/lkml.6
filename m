@@ -1,45 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeCOIQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:16:56 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33187 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751659AbeCOIQw (ORCPT
+        id S1751599AbeCOISw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:18:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeCOISt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:16:52 -0400
-X-Google-Smtp-Source: AG47ELtqypb7UonMr0r5UEn8aS+Fl+wIahvLpmXni/JD1wkuQgyGYg0OvwOn9yhK65Ggh2UamBylyQ==
-Date: Thu, 15 Mar 2018 08:16:47 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: pcf50633: Fix some memory leaks in the error
- handling path of 'pcf50633_probe()'
-Message-ID: <20180315081647.nmchuykgsgma2kyp@dell>
-References: <20180314214755.25853-1-christophe.jaillet@wanadoo.fr>
+        Thu, 15 Mar 2018 04:18:49 -0400
+Date: Thu, 15 Mar 2018 09:18:45 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: arc_usr_cmpxchg and preemption
+Message-ID: <20180315081845.GS4064@hirez.programming.kicks-ass.net>
+References: <1521045375.11552.27.camel@synopsys.com>
+ <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+ <20180314175352.GP4064@hirez.programming.kicks-ass.net>
+ <1521059931.11552.51.camel@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180314214755.25853-1-christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1521059931.11552.51.camel@synopsys.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Mar 2018, Christophe JAILLET wrote:
-
-> If a 'platform_device_alloc()' call fails, we still need to release the
-> resources that have already been allocated before returning.
+On Wed, Mar 14, 2018 at 08:38:53PM +0000, Alexey Brodkin wrote:
+> > int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
+> > {
+> > 	u32 val;
+> > 	int ret;
+> > 
+> > again:
+> > 	ret = 0;
+> > 
+> > 	preempt_disable();
+> > 	val = get_user(user_ptr);
+> > 	if (val == old)
+> > 		ret = put_user(new, user_ptr);
+> > 	preempt_enable();
+> > 
+> > 	if (ret == -EFAULT) {
+> > 		struct page *page;
+> > 		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
+> > 		if (ret < 0)
+> > 			return ret;
+> > 		put_page(page);
+> > 		goto again;
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/mfd/pcf50633-core.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> I guess this jump we need to do only once, right?
 
-Applied, thanks.
+Typically, yes. It is theoretically possible for the page to get
+paged-out right after we do put_page() and before we do get/put_user(),
+But if that happens the machine likely has bigger problems than having
+to do this loop again.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+FWIW, look at kernel/futex.c for working examples of this pattern, the
+above was written purely from memory and could contain a fail or two ;-)
+
+Also, it might make sense to stuff this implementation in some lib/ file
+somewhere and make all platforms that need it use the same code, afaict
+there really isn't anything platform specific to it.
