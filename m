@@ -1,46 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeCOEL5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 00:11:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53196 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeCOEL4 (ORCPT
+        id S1751653AbeCOEQs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 00:16:48 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45251 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOEQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 00:11:56 -0400
-To: lduncan@suse.com, cleech@redhat.com
-Cc: Jianchao Wang <jianchao.w.wang@oracle.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, open-iscsi@googlegroups.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: iscsi_tcp: set BDI_CAP_STABLE_WRITES when data digest enabled
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
-Date: Thu, 15 Mar 2018 00:11:45 -0400
-In-Reply-To: <1520425743-1923-1-git-send-email-jianchao.w.wang@oracle.com>
-        (Jianchao Wang's message of "Wed, 7 Mar 2018 20:29:03 +0800")
-Message-ID: <yq137129dvi.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 15 Mar 2018 00:16:46 -0400
+X-Google-Smtp-Source: AG47ELsGxPa3sduEil0zSMscFuOxeOPIB26XKOC1C/3FdRwup6E7U/yeZwFLYcINsD4DocxiPdL5hMcyVWeKR1xosTw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150047
+In-Reply-To: <20180304065038.28373-1-nick.desaulniers@gmail.com>
+References: <20180304065038.28373-1-nick.desaulniers@gmail.com>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+Date: Wed, 14 Mar 2018 21:16:44 -0700
+Message-ID: <CAH7mPvjoaDiJmnj9CPNaKD8R=P3+0ESMetxMCWEq6=FgyHEfEg@mail.gmail.com>
+Subject: Re: [PATCH] certs/blacklist: fix const confusion
+To: dhowells@redhat.com, Andrew Morton <akpm@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+bumping for review
 
-> iscsi tcp will first send out data, then calculate and send data
-> digest. If we don't have BDI_CAP_STABLE_WRITES, the page cache will
-> be written in spite of the on going writeback. Consequently, wrong
-> digest will be got and sent to target.
+On Sat, Mar 3, 2018 at 10:50 PM, Nick Desaulniers
+<nick.desaulniers@gmail.com> wrote:
+> Fixes commit 2be04df5668d ("certs/blacklist_nohashes.c: fix const confusion
+> in certs blacklist")
 >
-> To fix this, set BDI_CAP_STABLE_WRITES when data digest is enabled
-> in iscsi_tcp .slave_configure callback.
-
-Lee, Chris: Please review!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+> ---
+>  certs/blacklist.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/certs/blacklist.h b/certs/blacklist.h
+> index 150d82da8e99..1efd6fa0dc60 100644
+> --- a/certs/blacklist.h
+> +++ b/certs/blacklist.h
+> @@ -1,3 +1,3 @@
+>  #include <linux/kernel.h>
+>
+> -extern const char __initdata *const blacklist_hashes[];
+> +extern const char __initconst *const blacklist_hashes[];
+> --
+> 2.14.1
+>
