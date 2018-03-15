@@ -1,115 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeCOPMW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:12:22 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:32852 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751502AbeCOPMV (ORCPT
+        id S932407AbeCOPNo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:13:44 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48965 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752761AbeCOPNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:12:21 -0400
-X-Google-Smtp-Source: AG47ELu/RlMMNoefaDdDgdKfkXoBvRZ5wGorIMHpnaR0c2YcQ0PXUdiGwLU0jhrfQxRSOjimwqkYaX0bWqXvuVVM8H4=
+        Thu, 15 Mar 2018 11:13:43 -0400
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+To: Shmulik Ladkani <shmulik.ladkani@gmail.com>
+Cc: Liran Alon <liran.alon@oracle.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        idan.brown@oracle.com, Yuval Shaia <yuval.shaia@oracle.com>
+References: <1520953642-8145-1-git-send-email-liran.alon@oracle.com>
+ <20180315112150.58586758@halley>
+ <a673c689-ec30-61f6-9238-6b1773788201@iogearbox.net>
+ <20180315145038.16df4fea@halley>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <cd0b73e3-2cde-1442-4312-566c69571e8a@iogearbox.net>
+Date: Thu, 15 Mar 2018 16:13:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
-References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
- <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com>
- <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
- <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com> <CAKv+Gu8aVr_u4o8QR2Nquo9it54nSbvPMj4vcZ+CQa3uoOakrA@mail.gmail.com>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Thu, 15 Mar 2018 16:12:20 +0100
-Message-ID: <CACjP9X_bKJNeSwbPURmJ8bwDZ5BW2ZrykhT-cNapzKjddeWStQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180315145038.16df4fea@halley>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 8:45 AM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 15 March 2018 at 07:44, Daniel Vacek <neelx@redhat.com> wrote:
->> On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
->>>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
->>>> <ard.biesheuvel@linaro.org> wrote:
->>>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
->>>>>
->>>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
->>>>> alignment") modified the logic in memmap_init_zone() to initialize
->>>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
->>>>> in move_freepages(), which is redundant by its own admission, and
->>>>> dereferences struct page fields to obtain the zone without checking
->>>>> whether the struct pages in question are valid to begin with.
->>>>>
->>>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
->>>>> may cause pfn assume the same value it had in a prior iteration of
->>>>> the loop, resulting in an infinite loop and a hang very early in the
->>>>> boot. Also, since it doesn't perform the same rounding on start_pfn
->>>>> itself but only on intermediate values following an invalid PFN, we
->>>>> may still hit the same VM_BUG_ON() as before.
->>>>>
->>>>> So instead, let's fix this at the core, and ensure that the BUG
->>>>> check doesn't dereference struct page fields of invalid pages.
->>>>>
->>>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
->>>>> Cc: Daniel Vacek <neelx@redhat.com>
->>>>> Cc: Mel Gorman <mgorman@techsingularity.net>
->>>>> Cc: Michal Hocko <mhocko@suse.com>
->>>>> Cc: Paul Burton <paul.burton@imgtec.com>
->>>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>>> ---
->>>>>  mm/page_alloc.c | 13 +++++--------
->>>>>  1 file changed, 5 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>>>> index 3d974cb2a1a1..635d7dd29d7f 100644
->>>>> --- a/mm/page_alloc.c
->>>>> +++ b/mm/page_alloc.c
->>>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
->>>>>          * Remove at a later date when no bug reports exist related to
->>>>>          * grouping pages by mobility
->>>>>          */
->>>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
->>>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
->>>>> +                 pfn_valid(page_to_pfn(end_page)) &&
->>>>> +                 page_zone(start_page) != page_zone(end_page));
->>>>
->>>> Hi, I am on vacation this week and I didn't have a chance to test this
->>>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
->>>> arm{,64} arch specific versions returns true for all pfns in a section
->>>> if there is at least some memory mapped in that section. So I doubt
->>>> this prevents the crash I was targeting. I believe pfn_valid() does
->>>> not change a thing here :(
->>>>
+On 03/15/2018 01:50 PM, Shmulik Ladkani wrote:
+> On Thu, 15 Mar 2018 12:56:13 +0100 Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 03/15/2018 10:21 AM, Shmulik Ladkani wrote:
 >>>
->>> If this is the case, memblock_next_valid_pfn() is broken since it
->>> skips valid PFNs, and we should be fixing that instead.
+>>> Regarding veth xmit, it does makes sense to preserve the fields if not
+>>> crossing netns. This is also the case when one uses tc mirred.
+>>>
+>>> Regarding bpf redirect, well, it depends on the expectations of each bpf
+>>> program.
+>>> I'd argue that preserving the fields (at least the mark field) in the
+>>> *non* xnet makes sense and provides more information and therefore more
+>>> capabilities; Alas this might change behavior already being relied on.
+>>>
+>>> Maybe Daniel can comment on the matter.  
 >>
->> How do you define valid pfn? Maybe the generic version of pfn_valid()
->> should be fixed???
->>
->
-> memblock_next_valid_pfn() skips PFNs for which pfn_valid() returns
-> true. That is clearly a bug.
+>> Overall I think it might be nice to not need scrubbing skb in such cases,
+>> although my concern would be that this has potential to break existing
+>> setups when they would expect mark being zero on other veth peer in any
+>> case since it's the behavior for a long time already. The safer option
+>> would be to have some sort of explicit opt-in e.g. on link creation to let
+>> the skb->mark pass through unscrubbed. This would definitely be a useful
+>> option e.g. when mark is set in the netns facing veth via clsact/egress
+>> on xmit and when the container is unprivileged anyway.
+> 
+> For the veth xmit case, an opt-in flag which disables mark scrubbing in
+> the *non* xnet veth-pair seems reasonable.
+> 
+> But what about bpf_redirect BPF_F_INGRESS, in setups not invovling
+> containers?
+> Currently bpf_redirect is implemented using dev_forward_skb which
+> *fully* scrubs the skb, even if the target device is on same netns as
+> skb->dev is.
+> 
+> One might use ebpf programs that perform BPF_F_INGRESS bpf_redirect, for
+> example for demuxing skbs arriving on some "master" device into various
+> "slave" devices using specialized critiria.
+> 
+> It would be beneficial to have the mark preserved when skb is injected
+> to the slave device's rx path (especially when it's on the same netns).
 
-So pfn_valid() does not mean this frame is usable memory?
+Right, I think also here the easiest would be to have a BPF_F_PRESERVE_MARK
+flag to opt-in in general case (xnet/non-xnet) and where helper bails out
+on unknown flag, but also for the redirect in the same netns I think it would
+be useful to have a similar redirect mode as in ipvlan master where instead
+of dev_forward_skb() you would set the skb->dev = dev and have a similar
+notion of RX_HANDLER_ANOTHER. Was thinking about the latter more recently
+but haven't gotten to implement it yet.
 
-OK, in that case we need to fix or revert memblock_next_valid_pfn().
-That works for me.
+> Liran's patch fixes this - but at the cost of changing existing behavior
+> for BPF_F_INGRESS users (formerly: fully scrubbed; post patch: scrubbed
+> only if xnet).
+> 
+> I wonder, do you know of implementations that actually RELY on the fact
+> that BPF_F_INGRESS actually clears the mark, in the *non* xnet case?
 
---nX
+Not that I'm aware of right now, but hard to tell what other people run
+in the wild.
+
+But lets presume for a sec you would _not_ scrub it, then how are users
+supposed to make use of this? The feature/bug may not be critical enough
+(well, otherwise it wouldn't have been like this for long time) for stable,
+so to write an app relying on it the behavior will change from kernel A to
+kernel B, where you need to end up having a full blown veth run-time test
+in order to figure it out before you can use it, not really useful either.
+
+Thanks,
+Daniel
