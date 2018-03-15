@@ -1,90 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCOLw0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:52:26 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45924 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeCOLwZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:52:25 -0400
-Date: Thu, 15 Mar 2018 07:52:23 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com>,
-        Ingo Molnar <mingo@redhat.com>, acme <acme@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Message-ID: <343055951.10185.1521114743799.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180315091950.GA7600@krava>
-References: <001a114465e241a8720567419a72@google.com> <539259484.8875.1520954991870.JavaMail.zimbra@efficios.com> <20180314173746.3a6ab6eb@vmware.local.home> <20180315083125.GU4064@hirez.programming.kicks-ass.net> <20180315091950.GA7600@krava>
-Subject: Re: WARNING in tracepoint_probe_register_prio (2)
+        id S1751625AbeCOLxv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:53:51 -0400
+Received: from verein.lst.de ([213.95.11.211]:40744 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750726AbeCOLxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 07:53:50 -0400
+Date: Thu, 15 Mar 2018 12:53:48 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/14] x86: use dma-direct
+Message-ID: <20180315115348.GA16210@lst.de>
+References: <20180314175213.20256-1-hch@lst.de> <20180314175213.20256-4-hch@lst.de> <alpine.DEB.2.21.1803150951540.1525@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.6_GA_1906 (ZimbraWebClient - FF52 (Linux)/8.8.6_GA_1906)
-Thread-Topic: WARNING in tracepoint_probe_register_prio (2)
-Thread-Index: bkQm0/fZ+0SxpBCD0FzDT+Qwc8Eulg==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1803150951540.1525@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 15, 2018, at 5:19 AM, Jiri Olsa jolsa@redhat.com wrote:
-
-> On Thu, Mar 15, 2018 at 09:31:25AM +0100, Peter Zijlstra wrote:
->> On Wed, Mar 14, 2018 at 05:37:46PM -0400, Steven Rostedt wrote:
->> > On Tue, 13 Mar 2018 11:29:51 -0400 (EDT)
->> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->> > 
->> > > Here is a WARN_ON() splat in tracepoint.c, which I suspect is caused
->> > > by perf trying to register the same probe twice to the tracepoint API.
->> > > We got another splat on unregister too, which I will forward in a
->> > > separate email.
->> > > 
->> > > Thoughts ?
->> > 
->> > Yes, it looks like it's perf not accounting for registered events
->> > properly.
->> > 
->> > Peter?
->> 
->> I've not yet managed to reproduce, but if you look at the provided
->> repro.c file, you'll see it opens two _different_ events.
+On Thu, Mar 15, 2018 at 09:56:13AM +0100, Thomas Gleixner wrote:
+> On Wed, 14 Mar 2018, Christoph Hellwig wrote:
 > 
-> from the log it looks like they inject the slab error,
-> and the allocation fails.. looks like we need to change
-> the WARN to skip ENOMEM.. something like below?
+> > The generic dma-direct implementation is now functionally equivalent to
+> > the x86 nommu dma_map implementation, so switch over to using it.
+> 
+> Can you please convert the various drivers first and then remove the
+> unused code?
 
-Oh, I missed this important point. Then we should only
-warn if !-ENOMEM for both tracepoint_add_func and tracepoint_remove_func,
-because each performs memory allocation under the hood.
-Like the following:
+Which various drivers?
 
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -207,7 +207,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
-                        lockdep_is_held(&tracepoints_mutex));
-        old = func_add(&tp_funcs, func, prio);
-        if (IS_ERR(old)) {
--               WARN_ON_ONCE(1);
-+               WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
-                return PTR_ERR(old);
-        }
- 
-@@ -239,7 +239,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
-                        lockdep_is_held(&tracepoints_mutex));
-        old = func_remove(&tp_funcs, func);
-        if (IS_ERR(old)) {
--               WARN_ON_ONCE(1);
-+               WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
-                return PTR_ERR(old);
-        }
- 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> > Note that the various iommu drivers are switched from x86_dma_supported
+> > to dma_direct_supported to provide identical functionality, although the
+> > checks looks fairly questionable for at least some of them.
+> 
+> Can you please elaborate? From the above it's not clear which checks you
+> are referring to. If you convert these drivers seperately then explicit
+> information about your concerns wants to be in the changelogs.
+
+This bit:
+
+	/* Copied from i386. Doesn't make much sense, because it will
+	   only work for pci_alloc_coherent.
+	   The caller just has to use GFP_DMA in this case. */
+	if (mask < DMA_BIT_MASK(24))
+		return 0;
+
+in x86_dma_supported, or the equivalent bit in dma_direct_supported.
+Kept for bug to bug compatibility, but I guess I should reword or
+just drop the changelog bit іf it causes confusion.
