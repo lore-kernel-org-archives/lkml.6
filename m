@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeCOTMY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:12:24 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:36142 "EHLO
+        id S932778AbeCOTGi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:06:38 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36228 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932615AbeCOTGV (ORCPT
+        with ESMTP id S932694AbeCOTGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:21 -0400
+        Thu, 15 Mar 2018 15:06:25 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de
-Subject: [PATCH v2 17/36] fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()
-Date: Thu, 15 Mar 2018 20:05:10 +0100
-Message-Id: <20180315190529.20943-18-linux@dominikbrodowski.net>
+        arnd@arndb.de, linux-s390@vger.kernel.org
+Subject: [PATCH v2 18/36] fs: add ksys_write() helper; remove in-kernel calls to sys_write()
+Date: Thu, 15 Mar 2018 20:05:11 +0100
+Message-Id: <20180315190529.20943-19-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
 References: <20180315190529.20943-1-linux@dominikbrodowski.net>
@@ -22,102 +22,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel calls to the sys_chroot()
+Using this helper allows us to avoid the in-kernel calls to the sys_write()
 syscall.
 
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-s390@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- drivers/base/devtmpfs.c  | 2 +-
- fs/open.c                | 7 ++++++-
- include/linux/syscalls.h | 1 +
- init/do_mounts.c         | 2 +-
- init/do_mounts_initrd.c  | 4 ++--
- 5 files changed, 11 insertions(+), 5 deletions(-)
+ arch/s390/kernel/compat_linux.c | 2 +-
+ fs/read_write.c                 | 9 +++++++--
+ include/linux/syscalls.h        | 1 +
+ init/do_mounts_rd.c             | 4 ++--
+ init/initramfs.c                | 2 +-
+ 5 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 4afb04686c8e..5743f04014ca 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -387,7 +387,7 @@ static int devtmpfsd(void *p)
- 	if (*err)
- 		goto out;
- 	sys_chdir("/.."); /* will traverse into overmounted root */
--	sys_chroot(".");
-+	ksys_chroot(".");
- 	complete(&setup_done);
- 	while (1) {
- 		spin_lock(&req_lock);
-diff --git a/fs/open.c b/fs/open.c
-index 7ea118471dce..7a475e8a2e41 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -479,7 +479,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
- 	return error;
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index 79b7a3438d54..5a9cfde5fc28 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -468,7 +468,7 @@ COMPAT_SYSCALL_DEFINE3(s390_write, unsigned int, fd, const char __user *, buf, c
+ 	if ((compat_ssize_t) count < 0)
+ 		return -EINVAL; 
+ 
+-	return sys_write(fd, buf, count);
++	return ksys_write(fd, buf, count);
  }
  
--SYSCALL_DEFINE1(chroot, const char __user *, filename)
-+int ksys_chroot(const char __user *filename)
+ /*
+diff --git a/fs/read_write.c b/fs/read_write.c
+index f8547b82dfb3..8e8f0b4f52e2 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -578,8 +578,7 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+ 	return ret;
+ }
+ 
+-SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
+-		size_t, count)
++ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
  {
- 	struct path path;
- 	int error;
-@@ -512,6 +512,11 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 	return error;
+ 	struct fd f = fdget_pos(fd);
+ 	ssize_t ret = -EBADF;
+@@ -595,6 +594,12 @@ SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
+ 	return ret;
  }
  
-+SYSCALL_DEFINE1(chroot, const char __user *, filename)
++SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
++		size_t, count)
 +{
-+	return ksys_chroot(filename);
++	return ksys_write(fd, buf, count);
 +}
 +
- static int chmod_common(const struct path *path, umode_t mode)
+ SYSCALL_DEFINE4(pread64, unsigned int, fd, char __user *, buf,
+ 			size_t, count, loff_t, pos)
  {
- 	struct inode *inode = path->dentry->d_inode;
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 73f1889e73a5..13c7bc43b6ef 100644
+index 13c7bc43b6ef..c6aa44b6a0a2 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -952,5 +952,6 @@ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
- 	       unsigned long flags, void __user *data);
+@@ -953,5 +953,6 @@ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
  int ksys_umount(char __user *name, int flags);
  int ksys_dup(unsigned int fildes);
-+int ksys_chroot(const char __user *filename);
+ int ksys_chroot(const char __user *filename);
++ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
  
  #endif
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index eb768de43d84..2f06f7827b0c 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -600,7 +600,7 @@ void __init prepare_namespace(void)
- out:
- 	devtmpfs_mount("dev");
- 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
--	sys_chroot(".");
-+	ksys_chroot(".");
- }
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 99e0b649fc0e..2d365c398ccc 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -270,7 +270,7 @@ int __init rd_load_image(char *from)
+ 			printk("Loading disk #%d... ", disk);
+ 		}
+ 		sys_read(in_fd, buf, BLOCK_SIZE);
+-		sys_write(out_fd, buf, BLOCK_SIZE);
++		ksys_write(out_fd, buf, BLOCK_SIZE);
+ #if !defined(CONFIG_S390)
+ 		if (!(i % 16)) {
+ 			pr_cont("%c\b", rotator[rotate & 0x3]);
+@@ -317,7 +317,7 @@ static long __init compr_fill(void *buf, unsigned long len)
  
- static bool is_tmpfs;
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index e8573e1776f6..71293265ac4b 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -44,7 +44,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
- 	/* move initrd over / and chdir/chroot in initrd root */
- 	sys_chdir("/root");
- 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
--	sys_chroot(".");
-+	ksys_chroot(".");
- 	sys_setsid();
- 	return 0;
- }
-@@ -83,7 +83,7 @@ static void __init handle_initrd(void)
- 	/* move initrd to rootfs' /old */
- 	ksys_mount("..", ".", NULL, MS_MOVE, NULL);
- 	/* switch root and cwd back to / of rootfs */
--	sys_chroot("..");
-+	ksys_chroot("..");
+ static long __init compr_flush(void *window, unsigned long outcnt)
+ {
+-	long written = sys_write(crd_outfd, window, outcnt);
++	long written = ksys_write(crd_outfd, window, outcnt);
+ 	if (written != outcnt) {
+ 		if (decompress_error == 0)
+ 			printk(KERN_ERR
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 7e99a0038942..6f972df15bf2 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -27,7 +27,7 @@ static ssize_t __init xwrite(int fd, const char *p, size_t count)
  
- 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
- 		sys_chdir("/old");
+ 	/* sys_write only can write MAX_RW_COUNT aka 2G-4K bytes at most */
+ 	while (count) {
+-		ssize_t rv = sys_write(fd, p, count);
++		ssize_t rv = ksys_write(fd, p, count);
+ 
+ 		if (rv < 0) {
+ 			if (rv == -EINTR || rv == -EAGAIN)
 -- 
 2.16.2
