@@ -1,113 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeCOJfT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:35:19 -0400
-Received: from mout.web.de ([212.227.17.11]:47959 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbeCOJfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:35:16 -0400
-Subject: Re: [media] ov5645: Move an error code assignment in ov5645_probe()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <4efad917-ca08-f257-e9a1-b5bcb7df2df2@users.sourceforge.net>
- <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <21b0f618-4f54-633a-6411-0790628d6498@users.sourceforge.net>
-Date: Thu, 15 Mar 2018 10:34:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751701AbeCOJfy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:35:54 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33436 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOJfw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:35:52 -0400
+X-Google-Smtp-Source: AG47ELvBIorLRk30bJgCzc4TWeH6P8Dod3M+R/8e4PiTvFkwegyuwGeE3FradRytuRoh6CgfdRBY5tBHhRGU4Viaanc=
 MIME-Version: 1.0
-In-Reply-To: <20180314221702.5rtdttyqjcpysjkd@kekkonen.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:jDpGrablxB6u+B5tem/5L2VkV/qAed2Gmsn/RP5JdcU4u4+1Vp7
- ROKayPVCo5KV+X9TP+VtvLAlAYS/paWrqSm7N6j8r1HrVQuK1448Ob7kgqB85bMZtKmZ/64
- hMhuRvsYDy4Ai/YM3tzoYebBj4brMxgstxwnGaWjuf8U6zt6V03rs7Nr2xjy8BS2oULIqhe
- I9PyH7BLOacQyP4E2nwsQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:tvxiTyaIlAM=:LsdOZgxGLC53wdrEFM6J/C
- Ivy63eFqTYv4ttzWFSLwWNge7NpSlgiMmHxUwWUdV088837GbytsBHiekrkpqZEGC6eOHRt76
- LX8iwSLfZD7byMcxEgaP0oWBCKsqwRDD8Az6gAg7BCjRZSUJAWkkMTKawlsilVvVgPQ+RwYTT
- 6qAj/8kpIg8irXmW5EMfVdAiFB2WkA/ZG/EbsFpvFs0oN0TLtBw0sylQAzpeVO95RBiDjw/xb
- MZvz1Us6jPKtxGvw3be9FwKYZtHHvjTzGg1eYHbyXEGygwfYC/5n5Dck00nSlkHk39fT/Oays
- xR3H64t8d1bdKwaSmCLlJbvHwXaC/+T8TO1ZzSd96xPjVOkDKDpMkTXUPMSIpi6XenF3v/L/X
- kVNy9nQvp6k97OAyvsIF8RroXUwo232gFBqWlfemmq2Msg/4jlqefRPUte7SJdZBlNoGAkI2X
- 30k5bmjjoZsPbivXsEtyB59FE8xz8qKmhnGzG2KB5DPEEe0GHMf5WYj/wHCzHR1C4/MEqshDb
- w7k7BS8grm8dQ8wWvUYdUKIX02yE01BpRDh0kvKECSQiGIjfkYniTWIB15e7uKs/pW6EImv1h
- lZcZz8JByGfJAeEzrLJozgtG0xobyPBHT+puhCOFjmIpx/tXO68PU/DsFu3+OHDJQleInrcjS
- USKW0ymvE9/zu10+D0RsJBTHJ1EFmZ51U+jfgOQTsaKfPucI2j64WomLFQKbYwkw7V3hRhidV
- w42/BQR0bj+5KafBrn5HWmO5DfGSB53zv3JZErDW2yi42wYYvLjCToGFq4wahUt5LCASgsaTM
- OY+D/cYNrnh/P6vOWL0Gxbz94vi9u+s6ytA0mIJWDAcuOKpqFI=
+In-Reply-To: <201803150146.vzdp4sme%fengguang.wu@intel.com>
+References: <66eb534368782f411021e1a59f3292761d6576cd.1520928420.git.zong@andestech.com>
+ <201803150146.vzdp4sme%fengguang.wu@intel.com>
+From: Zong Li <zongbox@gmail.com>
+Date: Thu, 15 Mar 2018 17:35:48 +0800
+Message-ID: <CA+ZOyajf3sLf_0q4GGqFGz5XHmtZjacC6T4eGdPLYSJ7wUZagg@mail.gmail.com>
+Subject: Re: [PATCH 02/11] RISC-V: Add section of GOT.PLT for kernel module
+To: kbuild test robot <lkp@intel.com>
+Cc: Zong Li <zong@andestech.com>, kbuild-all@01.org,
+        Palmer Dabbelt <palmer@sifive.com>, albert@sifive.com,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greentime@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Move an assignment for a specific error code so that it is stored only once
->> in this function implementation.
->>
->> This issue was detected by using the Coccinelle software.
-> 
-> How?
+2018-03-15 1:34 GMT+08:00 kbuild test robot <lkp@intel.com>:
+> Hi Zong,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc5 next-20180314]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Zong-Li/RISC-V-Resolve-the-issue-of-loadable-module-on-64-bit/20180314-203750
+> config: riscv-defconfig (attached as .config)
+> compiler: riscv64-linux-gcc (GCC) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=riscv
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from include/linux/module.h:25:0,
+>                     from fs/notify/fsnotify.c:23:
+>    arch/riscv/include/asm/module.h:38:25: warning: 'struct mod_section' declared inside parameter list will not be visible outside of this definition or declaration
+>                const struct mod_section *sec)
+>                             ^~~~~~~~~~~
+>    arch/riscv/include/asm/module.h: In function 'get_got_entry':
+>    arch/riscv/include/asm/module.h:40:49: error: dereferencing pointer to incomplete type 'const struct mod_section'
+>      struct got_entry *got = (struct got_entry *)sec->shdr->sh_addr;
+>                                                     ^~
+>    arch/riscv/include/asm/module.h: At top level:
+>    arch/riscv/include/asm/module.h:89:57: warning: 'struct mod_section' declared inside parameter list will not be visible outside of this definition or declaration
+>     static inline int get_got_plt_idx(u64 val, const struct mod_section *sec)
+>                                                             ^~~~~~~~~~~
+>    arch/riscv/include/asm/module.h: In function 'get_got_plt_idx':
+>    arch/riscv/include/asm/module.h:91:53: error: dereferencing pointer to incomplete type 'const struct mod_section'
+>      struct got_entry *got_plt = (struct got_entry *)sec->shdr->sh_addr;
+>                                                         ^~
+>    arch/riscv/include/asm/module.h: At top level:
+>    arch/riscv/include/asm/module.h:101:24: warning: 'struct mod_section' declared inside parameter list will not be visible outside of this definition or declaration
+>               const struct mod_section *sec_plt,
+>                            ^~~~~~~~~~~
+>    arch/riscv/include/asm/module.h: In function 'get_plt_entry':
+>    arch/riscv/include/asm/module.h:104:53: error: dereferencing pointer to incomplete type 'const struct mod_section'
+>      struct plt_entry *plt = (struct plt_entry *)sec_plt->shdr->sh_addr;
+>                                                         ^~
+>>> arch/riscv/include/asm/module.h:105:41: error: passing argument 2 of 'get_got_plt_idx' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      int got_plt_idx = get_got_plt_idx(val, sec_got_plt);
+>                                             ^~~~~~~~~~~
+>    arch/riscv/include/asm/module.h:89:19: note: expected 'const struct mod_section *' but argument is of type 'const struct mod_section *'
+>     static inline int get_got_plt_idx(u64 val, const struct mod_section *sec)
+>                       ^~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+>
+> vim +/get_got_plt_idx +105 arch/riscv/include/asm/module.h
+>
+>     99
+>    100  static inline struct plt_entry *get_plt_entry(u64 val,
+>  > 101                                        const struct mod_section *sec_plt,
+>    102                                        const struct mod_section *sec_got_plt)
+>    103  {
+>    104          struct plt_entry *plt = (struct plt_entry *)sec_plt->shdr->sh_addr;
+>  > 105          int got_plt_idx = get_got_plt_idx(val, sec_got_plt);
+>    106          if (got_plt_idx >= 0)
+>    107                  return plt + got_plt_idx;
+>    108          else
+>    109                  return NULL;
+>    110  }
+>    111
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Would you like to experiment a bit more with the following approach
-for the semantic patch language?
+The config default is enable the MODULES, but also need to consider
+the MODULES disable situation.
+Modify the include/asm/module.h in PATCH v2
 
-show_same_statements3.cocci:
++u64 module_emit_got_entry(struct module *mod, u64 val);
++u64 module_emit_plt_entry(struct module *mod, u64 val);
 
-@duplicated_code@
-identifier work;
-statement s1, s2;
-type T;
-@@
- T work(...)
- {
- ... when any
-*if ((...) < 0)
-*{
-    ...
-*   s1
-*   s2
-*}
- ... when any
-*if ((...) < 0)
-*{
-    ...
-*   s1
-*   s2
-*}
- ... when any
+ #ifdef CONFIG_MODULE_SECTIONS
+ struct mod_section {
+@@ -23,6 +21,10 @@ struct mod_arch_specific {
+        struct mod_section plt;
+        struct mod_section got_plt;
+ };
+-#endif
+
+-u64 module_emit_got_entry(struct module *mod, u64 val);
+-u64 module_emit_plt_entry(struct module *mod, u64 val);
+
+ struct got_entry {
+         u64 symbol_addr;        /* the real variable address */
+@@ -108,6 +109,5 @@ static inline struct plt_entry *get_plt_entry(u64 val,
+                 return NULL;
  }
 
++#endif /* CONFIG_MODULE_SECTIONS */
 
->> @@ -1334,6 +1329,7 @@ static int ov5645_probe(struct i2c_client *client,
->>  
->>  power_down:
->>  	ov5645_s_power(&ov5645->sd, false);
->> +	ret = -ENODEV;
-> 
-> I don't think this is where people would expect you to set the error code
-> in general.
-
-This can be. - The view depends on some factors.
-
-
-> It should rather take place before goto, not after it.
-
-I proposed another software design direction.
-
-
-> That'd mean another variable,
-
-To which detail do you refer here?
-
-
-> and I'm not convinced the result would improve the driver.
-
-Can you see the relevance of a small code reduction in this function?
-
-Regards,
-Markus
+ #endif /* _ASM_RISCV_MODULE_H */
