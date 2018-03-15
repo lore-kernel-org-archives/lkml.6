@@ -1,105 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeCOVTU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:19:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:46055 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeCOVTS (ORCPT
+        id S1752707AbeCOVUy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:20:54 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51968 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeCOVUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:19:18 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] [v3] Bluetooth: btrsi: rework dependencies
-Date: Thu, 15 Mar 2018 22:18:24 +0100
-Message-Id: <20180315211904.2256817-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:dvD79D81LpjqBMK4iDXMNOYEOu2KwoQflJi6Nq7FMKEQG+CVqXs
- 5S0nAFVl5uM9pVVSm0F1cXlPz+cjuz43N58jUEKp4W+Un2f7VBq056KNMl850+tuUcAfnW8
- D1zKC0pWJp8iGvefD6XIZno/H7IVqhIKl/opMuK5oijbIWi9VbYDX1bt7msrutkaq2QdaIN
- LjUW3ITFDRFGi3IbltJKA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Di+aJDGoPNI=:JX+u0Z1wf50M9TL4fxSNIw
- ARNol62aoRvZF5FnsfZFaFiJ6hIpdybYVsqX8FCYwHwZeLzSve8IxxxdvPn7LwEhMz+kkXM30
- KesI7iscz7yfvNRh4qLBU8hHwifVDLbc9IVmIh+9aiS0TrkCBBPoAlpW6KNCZkQFsO5IMYjcv
- 38G4vGG0vfWBW1K5+e93fIXWwa5RsjAPYj5cOOdtW7H+H5gMz1WFmFYvL1WdRj5DpJdy3Io6Z
- EIGtxn0cMmrlbYkLwdmz8oWGs3LmIs6qtUrJN9OqZaopI9epQZF+1pqyqXu4k++RJhxYrklfY
- 5Bv6uySrDkyhl5uq2hujvtjZhCRxsj5ZakqUEco7/OSdrwUOeXmyI8oPFQXgyYAbR7cUc1Jzx
- L1onV793yWpWNQEg/WJgMDwcQ6SwidSPKH375H6lp850l8D2BGdK0YPnCM6UiJFremL5MSZPk
- LtTSQeWhoKFEyfsE+K6/0G8UhaPNUKLWY4ZCo2Hfj4udc4urb7XA1cfEZAeDTLJiPsFKj9Dvk
- e1KcGmDxZ/faWSduSO/L92D5RMH6d4BJg5vzE39Tu2jcnnoeSxUPjOxBne91f1r61lDVUgDYl
- S9RdBoMgqU53YarKiJoNeFR2ES5qQ8uk22PPAoh6EFIKcCuIbrmEx6azS2bwIBrLyqLlcX4af
- CdQDSgePG5DIzVKeWx9wepLQaY0Plc3/ZETuRqbeOUvVojH4O9ie23aeO1HOr7ZWf1jxLX7jj
- DBnzB836RFLM7W8NS0F4ndoe4qbUWM91abJGZQ==
+        Thu, 15 Mar 2018 17:20:52 -0400
+Date: Thu, 15 Mar 2018 17:20:49 -0400 (EDT)
+Message-Id: <20180315.172049.277308110149944782.davem@davemloft.net>
+To: torvalds@linux-foundation.org
+CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Sparc
+From: David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The linkage between the bluetooth driver and the wireless
-driver is not defined properly, leading to build problems
-such as:
 
-warning: (BT_HCIRSI) selects RSI_COEX which has unmet direct dependencies (NETDEVICES && WLAN && WLAN_VENDOR_RSI && BT_HCIRSI && RSI_91X)
-drivers/net/wireless/rsi/rsi_91x_main.o: In function `rsi_read_pkt':
-(.text+0x205): undefined reference to `rsi_bt_ops'
+Please pull to get this sparc64 PMD handling regression fix.
 
-As the dependency is actually the reverse (RSI_91X uses
-the BT_RSI driver, not the other way round), this changes
-the dependency to match, and enables the bluetooth driver
-from the RSI_COEX symbol.
+Thank you!
 
-Fixes: 38aa4da50483 ("Bluetooth: btrsi: add new rsi bluetooth driver")
-Acked-by; Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: Pick a different approach from v1
-v3: fix typo: s/BT_RSI/BT_HCIRSI/
----
- drivers/bluetooth/Kconfig        | 4 +---
- drivers/net/wireless/rsi/Kconfig | 4 +++-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+The following changes since commit e2c15aff5f353ba80bd3bb49840837f65fa5cc43:
 
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index d8bbd661dbdb..149a38ee1fce 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -393,9 +393,7 @@ config BT_QCOMSMD
- 	  kernel or say M to compile as a module.
- 
- config BT_HCIRSI
--	tristate "Redpine HCI support"
--	default n
--	select RSI_COEX
-+	tristate
- 	help
- 	  Redpine BT driver.
- 	  This driver handles BT traffic from upper layers and pass
-diff --git a/drivers/net/wireless/rsi/Kconfig b/drivers/net/wireless/rsi/Kconfig
-index f004be33fcfa..976c21866230 100644
---- a/drivers/net/wireless/rsi/Kconfig
-+++ b/drivers/net/wireless/rsi/Kconfig
-@@ -13,6 +13,7 @@ if WLAN_VENDOR_RSI
- 
- config RSI_91X
- 	tristate "Redpine Signals Inc 91x WLAN driver support"
-+	select BT_HCIRSI if RSI_COEX
- 	depends on MAC80211
- 	---help---
- 	  This option enabes support for RSI 1x1 devices.
-@@ -44,7 +45,8 @@ config RSI_USB
- 
- config RSI_COEX
- 	bool "Redpine Signals WLAN BT Coexistence support"
--	depends on BT_HCIRSI && RSI_91X
-+	depends on BT && RSI_91X
-+	depends on !(BT=m && RSI_91X=y)
- 	default y
- 	---help---
- 	  This option enables the WLAN BT coex support in rsi drivers.
--- 
-2.9.0
+  Merge tag 'sound-4.16-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound (2018-03-15 11:07:35 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
+
+for you to fetch changes up to cfb61b5e3e09f8b49bc4d685429df75f45127adc:
+
+  sparc64: Fix regression in pmdp_invalidate(). (2018-03-15 14:18:00 -0700)
+
+----------------------------------------------------------------
+David S. Miller (1):
+      sparc64: Fix regression in pmdp_invalidate().
+
+ arch/sparc/mm/tlb.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
