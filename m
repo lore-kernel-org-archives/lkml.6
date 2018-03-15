@@ -1,113 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932448AbeCOVjH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 17:39:07 -0400
-Received: from ozlabs.org ([103.22.144.67]:50387 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbeCOVjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 17:39:06 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 16 Mar 2018 08:38:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc
- tree
-Message-ID: <20180316083834.3aa0c438@canb.auug.org.au>
-In-Reply-To: <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
-References: <20180316075629.019b6560@canb.auug.org.au>
-        <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
+        id S1752672AbeCOVlk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 17:41:40 -0400
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:42030 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbeCOVli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 17:41:38 -0400
+X-Google-Smtp-Source: AG47ELu0/bfwd3PBW9MwWIEFaqnGj23i08ixzwHuZuWEJwtlna5gSxZl2PZDXcNSvsFmYAoXWQfybJersDCgeJKCfHs=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4Tpp=nJyFCEXiTiZpwCCHrC"; protocol="application/pgp-signature"
+In-Reply-To: <alpine.DEB.2.21.1803152047380.1520@nanos.tec.linutronix.de>
+References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com> <alpine.DEB.2.21.1803152047380.1520@nanos.tec.linutronix.de>
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+Date: Thu, 15 Mar 2018 21:41:36 +0000
+Message-ID: <CALyZvKwK9BEVHnS=SqU6j=aOsrcURjqWCRom1eMsz6Q8dbj9HQ@mail.gmail.com>
+Subject: Re: [PATCH v4.16-rc5 (3)] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Content-Type: multipart/mixed; boundary="001a1134f8363f554405677a5b29"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4Tpp=nJyFCEXiTiZpwCCHrC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--001a1134f8363f554405677a5b29
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Arnd,
-
-On Thu, 15 Mar 2018 22:06:29 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+Hi Thomas -
+RE:
+On 15/03/2018, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Jason,
 >
-> What script do you use to find those? I guess I should check for
-> missing signoffs as well when pulling a branch.
+> On Thu, 15 Mar 2018, jason.vas.dias@gmail.com wrote:
+>
+>>   Resent to address reviewer comments.
+>
+> I was being patient so far and tried to guide you through the patch
+> submission process, but unfortunately this turns out to be just waste of my
+> time.
+>
+> You have not addressed any of the comments I made here:
+>
+> [1]
+> https://lkml.kernel.org/r/alpine.DEB.2.21.1803141511340.2481@nanos.tec.linutronix.de
+> [2]
+> https://lkml.kernel.org/r/alpine.DEB.2.21.1803141527300.2481@nanos.tec.linutronix.de
+>
 
-See below.  You can give it any commit range you would give e.g. gitk.
-I run this using he ranges reported by the "git fetch" for each tree
-each day.
---=20
-Cheers,
-Stephen Rothwell
+I'm really sorry about that - I did not see those mails ,
+and have searched for them in my inbox -
+are you sure they were sent to 'linux-kernel@vger.kernel.org' ?
+That is the only list I am subscribed to .
+I clicked on the links , but the 'To:' field is just
+'linux-kernel' .
 
-#!/bin/bash
+If I had seen those messages before I re-submitted,
+those issues would have been fixed.
 
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
+checkpatch.pl did not report them -
+I ran it with all patches and it reported
+no errors .
 
-commits=3D$(git rev-list --no-merges "$@")
-if [ -z "$commits" ]; then
-	printf "No commits\n"
-	exit 0
-fi
+And I did send the test results in a previous mail -
 
-for c in $commits; do
-	ae=3D$(git log -1 --format=3D'%ae' "$c")
-	aE=3D$(git log -1 --format=3D'%aE' "$c")
-	an=3D$(git log -1 --format=3D'%an' "$c")
-	aN=3D$(git log -1 --format=3D'%aN' "$c")
-	ce=3D$(git log -1 --format=3D'%ce' "$c")
-	cE=3D$(git log -1 --format=3D'%cE' "$c")
-	cn=3D$(git log -1 --format=3D'%cn' "$c")
-	cN=3D$(git log -1 --format=3D'%cN' "$c")
-	sob=3D$(git log -1 --format=3D'%b' "$c" | grep -i '^[[:space:]]*Signed-off=
--by:')
+$ gcc -m64 -o timer timer.c
 
-	am=3Dfalse
-	cm=3Dfalse
-	grep -i -q "<$ae>" <<<"$sob" ||
-		grep -i -q "<$aE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
-		am=3Dtrue
-	grep -i -q "<$ce>" <<<"$sob" ||
-		grep -i -q "<$cE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
-		cm=3Dtrue
+( must be compiled in 64-bit mode).
 
-	if "$am" || "$cm"; then
-		printf "Commit %s\n" "$c"
-		"$am" && printf "\tauthor SOB missing\n"
-		"$cm" && printf "\tcommitter SOB missing\n"
-		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
-	fi
-done
+This is using the new rdtscp() function :
+$ ./timer -r 100
+...
+Total time: 0.000002806S - Average Latency: 0.000000028S N zero
+deltas: 0 N inconsistent deltas: 0
+Average of 100 average latencies of 100 samples : 0.000000027S
 
-exec gitk "$@"
+This is using the rdtsc_ordered() function:
 
---Sig_/4Tpp=nJyFCEXiTiZpwCCHrC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+$ ./timer -m -r 100
+Total time: 0.000005269S - Average Latency: 0.000000052S N zero
+deltas: 0 N inconsistent deltas: 0
+Average of 100 average latencies of 100 samples : 0.000000047S
 
------BEGIN PGP SIGNATURE-----
+timer.c is a very short program that just reads N_SAMPLES (a
+compile-time option)
+timespecs using either CLOCK_MONOTONIC_RAW (no -m) or CLOCK_MONOTONIC
+first parameter to clock_gettime(),  then
+computes the deltas as long long, then averages them , counting any
+zero deltas, or deltas where the previous timespec is somehow
+greater than the current timespec, which are reported as
+inconsitencies (note 'inconistent deltas:0' and 'zero deltas: 0' in output).
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq59oACgkQAVBC80lX
-0GxWNQf/XNyHte04Fq3fqTaOZaStQ2IZkrZp15pJwablp/Cp7+JRevcVioCbbKqC
-PQCWdWMVZgipdU9F1cbT7l1xoZUSzAICcYRN2nk71pxI0UVn2EaZhRtuchwXkZmM
-1C/KVtKHFxLF1fEHIBq3jhdYm4BxVUOWxchlIRzmA+QEcj/heOk44i8wh1HEv9dw
-EbIlaHLdy1evJXv6cwsCkUTh9q+/oSgB97+cN7+PJ4TSmq+/ft4cXG9u/43lxspt
-f8irlYp4OhsHmluNE1YHd/gXpeTnMlN0h4h8mIlmEkeXgnpsqU3eLSLxRCd/eUrn
-c0Wq+DaBkjmEKOXdF7IgUQ1LSVvlWg==
-=hdCg
------END PGP SIGNATURE-----
+So my initial claim that rdtscp() can be twice as fast as rdtsc_ordered()
+was not far-fetched - this is what I am seeing .
 
---Sig_/4Tpp=nJyFCEXiTiZpwCCHrC--
+I think this is because of the explicit barrier() call in rdtsc_ordered() .
+This must be slower than than the internal processor pipeline
+"cancellation point" (barrier) used by the rdtscp instruction itself.
+This is the only reason for the rdtscp call  -  plus all modern Intel
+& AMD CPUs support it, and it DOES solve the ordering problem,
+whereby instructions in one pipeline of a task can get different
+rdtsc() results than instructions in another pipeline.
+
+I will document the results better in the ChangeLog , fix all issues
+you identified, and resend .
+
+I did not mean to ignore your comments -
+those mails are nowhere in my Inbox -
+please ,  confirm the actual email address
+they are getting sent to.
+
+Thanks & Regards,
+Jason
+
+--001a1134f8363f554405677a5b29
+Content-Type: text/x-csrc; charset="US-ASCII"; name="timer.c"
+Content-Disposition: attachment; filename="timer.c"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: file0
+
+LyogCiAqIFByb2dyYW0gdG8gbWVhc3VyZSBoaWdoLXJlcyB0aW1lciBsYXRlbmN5LgogKgogKi8K
+I2luY2x1ZGUgPHN0ZGludC5oPgojaW5jbHVkZSA8c3RkYm9vbC5oPgojaW5jbHVkZSA8c3lzL3R5
+cGVzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KI2luY2x1ZGUgPHRpbWUuaD4KI2luY2x1ZGUgPGVy
+cm5vLmg+CiNpbmNsdWRlIDxhbGxvY2EuaD4KI2luY2x1ZGUgPHN0cmluZy5oPgojaW5jbHVkZSA8
+c3RkaW8uaD4KI2luY2x1ZGUgPHN0ZGxpYi5oPgoKI2lmbmRlZiBOX1NBTVBMRVMKI2RlZmluZSBO
+X1NBTVBMRVMgMTAwCiNlbmRpZgojZGVmaW5lIF9TVFIoX1NfKSAjX1NfCiNkZWZpbmUgU1RSKF9T
+XykgX1NUUihfU18pCgojZGVmaW5lIFRTMk5TKF9UU18pICgoKCh1bnNpZ25lZCBsb25nIGxvbmcp
+KF9UU18pLnR2X3NlYykqMTAwMDAwMDAwMFVMTCkgKyAoKCh1bnNpZ25lZCBsb25nIGxvbmcpKChf
+VFNfKS50dl9uc2VjKSkpKSAKCmludCBtYWluKGludCBhcmdjLCBjaGFyICpjb25zdCogYXJndiwg
+Y2hhciAqY29uc3QqIGVudnApCnsgc3RydWN0IHRpbWVzcGVjIHNhbXBsZVtOX1NBTVBMRVMrMV07
+CiAgdW5zaWduZWQgaW50IGNudD1OX1NBTVBMRVMsIHM9MCAsIGF2Z19uPTA7CiAgdW5zaWduZWQg
+bG9uZyBsb25nCiAgICBkZWx0YXMgWyBOX1NBTVBMRVMgXQogICAgLCB0MSwgdDIsIHN1bT0wLCB6
+ZD0wLCBpYz0wLCBkCiAgICAsIHRfc3RhcnQsIGF2Z19ucywgKmF2Z3M9MDsKICBjbG9ja2lkX3Qg
+Y2xrID0gQ0xPQ0tfTU9OT1RPTklDX1JBVzsKICBib29sIGRvX2R1bXAgPSBmYWxzZTsKICBpbnQg
+YXJnbj0xLCByZXBlYXQ9MTsKICBmb3IoOyBhcmduIDwgYXJnYzsgYXJnbis9MSkKICAgIGlmKCBh
+cmd2W2FyZ25dICE9IE5VTEwgKQogICAgICBpZiggKihhcmd2W2FyZ25dKSA9PSAnLScpCglzd2l0
+Y2goICooYXJndlthcmduXSsxKSApCgl7IGNhc2UgJ20nOgoJICBjYXNlICdNJzoKCSAgICBjbGsg
+PSBDTE9DS19NT05PVE9OSUM7CgkgICAgYnJlYWs7CgkgIGNhc2UgJ2QnOgoJICBjYXNlICdEJzoK
+CSAgICBkb19kdW1wID0gdHJ1ZTsKCSAgICBicmVhazsKICAgICAJICBjYXNlICdyJzoKICAgICAg
+CSAgY2FzZSAnUic6CgkgICAgaWYoIChhcmduIDwgYXJnYykgJiYgKGFyZ3ZbYXJnbisxXSAhPSBO
+VUxMKSkKCSAgICAgIHJlcGVhdCA9IGF0b2koYXJndlthcmduKz0xXSk7CgkgICAgYnJlYWs7Cgkg
+IGNhc2UgJz8nOgoJICBjYXNlICdoJzoKCSAgY2FzZSAndSc6CgkgIGNhc2UgJ1UnOgoJICBjYXNl
+ICdIJzoKCSAgICBmcHJpbnRmKHN0ZGVyciwiVXNhZ2U6IHRpbWVyX2xhdGVuY3kgW1xuXHQtbSA6
+IHVzZSBDTE9DS19NT05PVE9OSUMgY2xvY2sgKG5vdCBDTE9DS19NT05PVE9OSUNfUkFXKVxuXHQt
+ZCA6IGR1bXAgdGltZXNwZWMgY29udGVudHMuIE5fU0FNUExFUzogIiBTVFIoTl9TQU1QTEVTKSAi
+XG5cdCIKCSAgICAgICAgICAgICItciA8cmVwZWF0IGNvdW50PlxuXVx0IiAKCSAgICAgICAgICAg
+ICJDYWxjdWxhdGVzIGF2ZXJhZ2UgdGltZXIgbGF0ZW5jeSAobWluaW11bSB0aW1lIHRoYXQgY2Fu
+IGJlIG1lYXN1cmVkKSBvdmVyIE5fU0FNUExFUy5cbiIKCSAgICAgICAgICAgKTsKCSAgICByZXR1
+cm4gMDsKCX0KICBpZiggcmVwZWF0ID4gMSApCiAgeyBhdmdzPWFsbG9jYShzaXplb2YodW5zaWdu
+ZWQgbG9uZyBsb25nKSAqIChOX1NBTVBMRVMgKyAxKSk7CiAgICBpZiggKCh1bnNpZ25lZCBsb25n
+KSBhdmdzKSAmIDcgKQogICAgICBhdmdzID0gKCh1bnNpZ25lZCBsb25nIGxvbmcqKSgoKHVuc2ln
+bmVkIGNoYXIqKWF2Z3MpKyg4LSgodW5zaWduZWQgbG9uZykgYXZncykgJiA3KSkpOwogIH0KICBk
+byB7CiAgICBjbnQ9Tl9TQU1QTEVTOwogICAgcz0wOwogIGRvCiAgeyBpZiggMCAhPSBjbG9ja19n
+ZXR0aW1lKGNsaywgJnNhbXBsZVtzKytdKSApCiAgICB7IGZwcmludGYoc3RkZXJyLCJvb3BzLCBj
+bG9ja19nZXR0aW1lKCkgZmFpbGVkOiAlZDogJyVzJy5cbiIsIGVycm5vLCBzdHJlcnJvcihlcnJu
+bykpOwogICAgICByZXR1cm4gMTsKICAgIH0KICB9d2hpbGUoIC0tY250ICk7CiAgY2xvY2tfZ2V0
+dGltZShjbGssICZzYW1wbGVbc10pOwogIGZvcihzPTE7IHMgPCAoTl9TQU1QTEVTKzEpOyBzKz0x
+KQogIHsgdDEgPSBUUzJOUyhzYW1wbGVbcy0xXSk7CiAgICB0MiA9IFRTMk5TKHNhbXBsZVtzXSk7
+CiAgICBpZiAoICh0MSA+IHQyKQogICAgICAgfHwoc2FtcGxlW3MtMV0udHZfc2VjID4gc2FtcGxl
+W3NdLnR2X3NlYykKICAgICAgIHx8KChzYW1wbGVbcy0xXS50dl9zZWMgPT0gc2FtcGxlW3NdLnR2
+X3NlYykKICAgICAgICAmJihzYW1wbGVbcy0xXS50dl9uc2VjID4gc2FtcGxlW3NdLnR2X25zZWMp
+CiAgICAgICAgICkKICAgICAgICkKICAgIHsgZnByaW50ZihzdGRlcnIsIkluY29uc2lzdGVuY3k6
+ICVsbHUgJWxsdSAlbHUuJWx1ICVsdS4lbHVcbiIsIHQxICwgdDIKICAgICAgICAgICAgLCBzYW1w
+bGVbcy0xXS50dl9zZWMsIHNhbXBsZVtzLTFdLnR2X25zZWMKICAgICAgICAgICAgLCBzYW1wbGVb
+c10udHZfc2VjLCAgIHNhbXBsZVtzXS50dl9uc2VjCiAgICAgICk7CiAgICAgIGljKz0xOwogICAg
+ICBjb250aW51ZTsKICAgIH0KICAgIGQgPSB0MiAtIHQxOwogICAgaWYgKCBkID09IDAgKQogICAg
+eyAgemQgKz0gMTsKICAgIH0KICAgIGRlbHRhc1tzLTFdID0gZDsKICAgIGlmKGRvX2R1bXApCiAg
+ICAgIGZwcmludGYoc3RkZXJyLCAiJWx1ICVsdSAlbGx1XG4iLAogICAgICAgICAgICAgIHNhbXBs
+ZVtzXS50dl9zZWMsIHNhbXBsZVtzXS50dl9uc2VjLCBkCiAgICAgICAgICAgICApOwogIH0KICBm
+b3IocyA9IDAsIHN1bT0wOyBzIDwgTl9TQU1QTEVTOyBzKz0xKQogICAgc3VtICs9IGRlbHRhc1tz
+XTsKICBmcHJpbnRmKHN0ZGVyciwic3VtOiAlbGx1XG4iLHN1bSk7CiAgYXZnX25zID0gc3VtIC8g
+Tl9TQU1QTEVTOwogIHRfc3RhcnQgPSBUUzJOUyhzYW1wbGVbMF0pOwogIHQxPSh0MiAtIHRfc3Rh
+cnQpOwogIHByaW50ZigiVG90YWwgdGltZTogJTEuMWxsdS4lOS45bGx1UyAtIEF2ZXJhZ2UgTGF0
+ZW5jeTogJTEuMWxsdS4lOS45bGx1UyBOIHplcm8gZGVsdGFzOiAldSBOIGluY29uc2lzdGVudCBk
+ZWx0YXM6ICV1XG4iLAogICAgICAgICAgdDEgLyAxMDAwMDAwMDAwLCAgICAgICB0MSAlIDEwMDAw
+MDAwMDAsCiAgICAgICAgICBhdmdfbnMgLyAxMDAwMDAwMDAwLCAgIGF2Z19ucyAlIDEwMDAwMDAw
+MDAgLAogICAgICAgICAgemQsIGljCiAgICAgICAgKTsKICBpZiAoYXZncyAhPSAoKHZvaWQqKTBV
+TCkpCiAgICBhdmdzW2F2Z19uKytdID0gYXZnX25zOwogIH0gd2hpbGUgKC0tcmVwZWF0KTsKICBp
+ZiAoYXZncyAhPSAoKHZvaWQqKTBVTCkpCiAgeyBmb3IoIHM9MCwgc3VtPTA7IHMgPCBhdmdfbjsg
+cys9MSkKICAgICAgc3VtICs9IGF2Z3Nbc107CiAgICBwcmludGYoIkF2ZXJhZ2Ugb2YgJXUgYXZl
+cmFnZSBsYXRlbmNpZXMgb2YgIiBTVFIoTl9TQU1QTEVTKSAiIHNhbXBsZXMgOiAlMS4xbGx1LiU5
+LjlsbHVTXG4iCiAgICAgICAgICAsIGF2Z19uLCAoc3VtIC8gTl9TQU1QTEVTKSAvIDEwMDAwMDAw
+MDAsIChzdW0gLyBOX1NBTVBMRVMpICUgMTAwMDAwMDAwMAogICAgICAgICAgKTsKICB9CiAgcmV0
+dXJuIDA7Cn0KCg==
+--001a1134f8363f554405677a5b29--
