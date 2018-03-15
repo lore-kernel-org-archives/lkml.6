@@ -1,53 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeCOI1d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:27:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47138 "EHLO
+        id S1751545AbeCOIbr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:31:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47182 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeCOI1b (ORCPT
+        with ESMTP id S1750740AbeCOIbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:27:31 -0400
-Date: Thu, 15 Mar 2018 09:27:21 +0100
+        Thu, 15 Mar 2018 04:31:45 -0400
+Date: Thu, 15 Mar 2018 09:31:25 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: Do we need to disable preemption in flush_tlb_range()?
-Message-ID: <20180315082720.GT4064@hirez.programming.kicks-ass.net>
-References: <1519917189.13866.6.camel@synopsys.com>
- <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        syzbot <syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com>,
+        Ingo Molnar <mingo@redhat.com>, acme <acme@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        syzkaller-bugs@googlegroups.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Subject: Re: WARNING in tracepoint_probe_register_prio (2)
+Message-ID: <20180315083125.GU4064@hirez.programming.kicks-ass.net>
+References: <001a114465e241a8720567419a72@google.com>
+ <539259484.8875.1520954991870.JavaMail.zimbra@efficios.com>
+ <20180314173746.3a6ab6eb@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
+In-Reply-To: <20180314173746.3a6ab6eb@vmware.local.home>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
-> +CC Peter since we have his attention ;-)
-
-Yeah, timezone collision there, I typically sleep at 1am ;-)
-
-> On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
-> > Hi Vineet,
-> > 
-> > Just noticed that in comments for smp_call_function_many() it is said that
-> > preemption must be disabled during its execution. And that function gets executed
-> > among other ways like that:
-> > -------------------------->8-----------------------
-> >    flush_tlb_range()
-> >      -> on_each_cpu_mask()
-> >           -> smp_call_function_many()
-> > -------------------------->8-----------------------
+On Wed, Mar 14, 2018 at 05:37:46PM -0400, Steven Rostedt wrote:
+> On Tue, 13 Mar 2018 11:29:51 -0400 (EDT)
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> In general I prefer not to - Peter what say you ?
+> > Here is a WARN_ON() splat in tracepoint.c, which I suspect is caused
+> > by perf trying to register the same probe twice to the tracepoint API.
+> > We got another splat on unregister too, which I will forward in a
+> > separate email.
+> > 
+> > Thoughts ?
+> 
+> Yes, it looks like it's perf not accounting for registered events
+> properly.
+> 
+> Peter?
 
-The comment with smp_call_function_many() is correct, it relies on
-preemption being disabled in a number of ways. I would expect
-this_cpu_ptr() for example to complain when used with preemption
-enabled (CONFIG_DEBUG_PREEMPT).
+I've not yet managed to reproduce, but if you look at the provided
+repro.c file, you'll see it opens two _different_ events.
