@@ -1,75 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeCOQ40 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:56:26 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45530 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbeCOQ4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:56:24 -0400
-X-Google-Smtp-Source: AG47ELtDnYqb3DxaR+wHFYCMQBnkR3lRuOXQnqfqldtXM5ikExsD0PNsIL5hN33JNHfwDmwIVgIuIw==
-From: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
-        <sz.lin@moxa.com>
-Cc: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
-        <sz.lin@moxa.com>,
-        Schuyler Patton <spatton@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
-Date: Fri, 16 Mar 2018 00:56:01 +0800
-Message-Id: <20180315165603.30471-1-sz.lin@moxa.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751959AbeCOQ4g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751828AbeCOQ4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:56:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6A020779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELvwPMK4IxDnT0jBPSLJ/Vscm3XHcozFTdam+cBbKyyeVjy49ikeVX471qroxd8qHWauGHwd84cH0Xay3Z9p3JA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20180315160924.GA12744@gmail.com>
+References: <20180204104946.25559-1-tycho@tycho.ws> <20180315160924.GA12744@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 15 Mar 2018 16:56:12 +0000
+X-Gmail-Original-Message-ID: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
+Message-ID: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
+Subject: Re: [RFC 0/3] seccomp trap to userspace
+To: Christian Brauner <christian.brauner@canonical.com>
+Cc: Tycho Andersen <tycho@tycho.ws>, LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
-DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
-available when PHY is configured in RGMII mode with 10Mbps speed. It will
-cause some networking issues without RGMII mode, such as carrier sense
-errors and low throughput. TI also mentioned this issue in their forum[4].
+On Thu, Mar 15, 2018 at 4:09 PM, Christian Brauner
+<christian.brauner@canonical.com> wrote:
+> On Sun, Feb 04, 2018 at 11:49:43AM +0100, Tycho Andersen wrote:
+>> Several months ago at Linux Plumber's, we had a discussion about adding a
+>> feature to seccomp which would allow seccomp to trigger a notification for some
+>> other process. Here's a draft of that feature.
+>>
+>> Patch 1 contains the bulk of it, patches 2 & 3 offer an alternative way to
+>> acquire the fd that receives notifications via ptrace (the method in patch 1
+>> poses some problems). Other suggestions for how to acquire one of these fds
+>> would be welcome.
+>>
+>> Take a close look at the synchronization. I think I've got it right, but I
+>> probably don't :)
+>>
+>> Thanks!
+>>
+>> Tycho Andersen (3):
+>>   seccomp: add a return code to trap to userspace
+>>   seccomp: hoist out filter resolving logic
+>>   seccomp: add a way to get a listener fd from ptrace
+>>
+>>  arch/Kconfig                                  |   7 +
+>>  include/linux/seccomp.h                       |  14 +-
+>>  include/uapi/linux/ptrace.h                   |   1 +
+>>  include/uapi/linux/seccomp.h                  |  18 +-
+>>  kernel/ptrace.c                               |   4 +
+>>  kernel/seccomp.c                              | 467 ++++++++++++++++++++++++--
+>>  tools/testing/selftests/seccomp/seccomp_bpf.c | 180 +++++++++-
+>>  7 files changed, 653 insertions(+), 38 deletions(-)
+>
+> Hey,
+>
+> So, I've been following the discussion silently in the background and I
+> see that it got sidetracked into seccomp + ebpf. While I can see that
+> there is value in adding epbf support to seccomp I'd really like to see
+> this decoupled from this patchset. Afaict, this patchset would just work
+> fine without the ebpf portion (but I might be just have missed the
+> point). So if possible I would like to see a second version of this with
+> the comments accounted for and - if possible - have this up for merging
+> independent of the ebpf patchset that's floating around.
+>
 
-This patch adds the check mechanism for PHY interface with RGMII interface
-type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
-
-References:
-[1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
-[2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
-[3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
-[4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
-
-Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
-Signed-off-by: Schuyler Patton <spatton@ti.com>
----
-Changes from v1:
-- Use phy_interface_is_rgmii helper function
-- Remove blank line
-
- drivers/net/ethernet/ti/cpsw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 1b1b78fdc138..b2b30c9df037 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1014,7 +1014,8 @@ static void _cpsw_adjust_link(struct cpsw_slave *slave,
- 		/* set speed_in input in case RMII mode is used in 100Mbps */
- 		if (phy->speed == 100)
- 			mac_control |= BIT(15);
--		else if (phy->speed == 10)
-+		/* in band mode only works in 10Mbps RGMII mode */
-+		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
- 			mac_control |= BIT(18); /* In Band mode */
- 
- 		if (priv->rx_pause)
--- 
-2.16.2
+The issue is that it might be (and, then again, might not be) nicer to
+to *synchronously* call out to the monitor in the filter.  eBPF can do
+that very cleanly, whereas classic BPF can't.
