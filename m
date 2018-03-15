@@ -1,83 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeCOXko (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 19:40:44 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:48062 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932673AbeCOXkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 19:40:42 -0400
-Subject: Re: [PATCH v4 00/10] x86/microcode/AMD: Check microcode file sanity
- before loading it
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        id S933174AbeCOXnk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 19:43:40 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38325 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932943AbeCOXni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 19:43:38 -0400
+X-Google-Smtp-Source: AG47ELuE9FIx3exnzqD51AnMvwz8i1tvLzNXIkFAHn5XEM75lDTKX1ODRQAbr63TvA4/nVAQShx/7A==
+Date: Fri, 16 Mar 2018 00:43:34 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <9964a6cf-00be-78ea-cc1e-7f7062716fce@maciej.szmigiero.name>
- <20180315232306.GA31610@pd.tnic>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <ec44a74e-9017-b6bf-7397-862eca48026e@maciej.szmigiero.name>
-Date: Fri, 16 Mar 2018 00:40:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: Re: [PATCH v5 1/3] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+Message-ID: <20180315234334.GA3432@bigcity.dyn.berto.se>
+References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20180315232306.GA31610@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.03.2018 00:23, Borislav Petkov wrote:
-> On Fri, Mar 16, 2018 at 12:07:34AM +0100, Maciej S. Szmigiero wrote:
->> Currently, it is very easy to make the AMD microcode update driver crash
->> or spin on a malformed microcode container file since it does very little
->> consistency checking on data loaded from such file.
-> 
-> Ok, a couple of tips for the next time:
-> 
-> * please send your reworked patchset for review after review of your
-> current patchset has been completed. We normally send patchsets once a
-> week. You've sent yours two days after and that's kinda too fast. I'm
-> sure you can imagine reviewers have other work to do too.
->
-> So please be patient before resending next time.
-> 
-> If in doubt, the whole process is documented in Documentation/process/ -
-> might wanna skim through it.
-I thought the one week absolute minimum resend time is for the case that
-there are no comments to a patch, or, more generally, when there is no
-action and not for "normal process" respins.
+Hi Jacopo,
 
-submitting-patches.rst says:
-> Once upon a time, patches used to disappear into the void without comment,
-> but the development process works more smoothly than that now.  You should
-> receive comments within a week or so; if that does not happen, make sure
-> that you have sent your patches to the right place.  Wait for a minimum of
-> one week before resubmitting or pinging reviewers - possibly longer during
-> busy times like merge windows.
+Thanks for your patch,
 
-But I will wait a week now for respins if you say so.
+On 2018-03-15 17:11:54 +0100, Jacopo Mondi wrote:
+> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-> * when sending your patchset, make sure all mails are sent as a reply to
-> the 0/N message.
-> 
-> Your 0/N has:
-> 
-> Message-ID: <9964a6cf-00be-78ea-cc1e-7f7062716fce@maciej.szmigiero.name>
-> 
-> but your 1/N has
-> 
-> References: <cover.1521150415.git.mail@maciej.szmigiero.name>
-> 
-> so something went wrong there. Normally git send-email does this
-> correctly.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-I've copied these messages to my mailbox first and sent them from there,
-so that must have overwritten the message IDs.
-Will submit them from git-send-email the next time.
+> ---
+>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 ++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> new file mode 100644
+> index 0000000..8225c6a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -0,0 +1,66 @@
+> +Thine Electronics THC63LVD1024 LVDS decoder
+> +-------------------------------------------
+> +
+> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
+> +to parallel data outputs. The chip supports single/dual input/output modes,
+> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
+> +
+> +Single or dual operation modes, output data mapping and DDR output modes are
+> +configured through input signals and the chip does not expose any control bus.
+> +
+> +Required properties:
+> +- compatible: Shall be "thine,thc63lvd1024"
+> +
+> +Optional properties:
+> +- vcc-supply: Power supply for TTL output and digital circuitry
+> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> +- lvcc-supply: Power supply for LVDS inputs
+> +- pvcc-supply: Power supply for PLL circuitry
+> +- pdwn-gpios: Power down GPIO signal. Active low
+> +- oe-gpios: Output enable GPIO signal. Active high
+> +
+> +The THC63LVD1024 video port connections are modeled according
+> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
+> +
+> +Required video port nodes:
+> +- Port@0: First LVDS input port
+> +- Port@2: First digital CMOS/TTL parallel output
+> +
+> +Optional video port nodes:
+> +- Port@1: Second LVDS input port
+> +- Port@3: Second digital CMOS/TTL parallel output
+> +
+> +Example:
+> +--------
+> +
+> +	thc63lvd1024: lvds-decoder {
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		vcc-supply = <&reg_lvds_vcc>;
+> +		lvcc-supply = <&reg_lvds_lvcc>;
+> +
+> +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				lvds_dec_in_0: endpoint {
+> +					remote-endpoint = <&lvds_out>;
+> +				};
+> +			};
+> +
+> +			port@2{
+> +				reg = <2>;
+> +
+> +				lvds_dec_out_2: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +
+> +			};
+> +
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
 
-> Thx.
-
-Thanks,
-Maciej
+-- 
+Regards,
+Niklas Söderlund
