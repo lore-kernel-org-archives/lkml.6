@@ -1,48 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeCOR7w (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:59:52 -0400
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:34126 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeCOR7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:59:50 -0400
-X-Google-Smtp-Source: AG47ELv546D7sxzG1RpTsR3y9yWZwlSgDhDaT8D0wlvaN472nktgvPD417FD/7+646CaowlTKw5Af1vHzhSVqjsl8SM=
-MIME-Version: 1.0
-In-Reply-To: <20180315170710.9551-3-jagan@amarulasolutions.com>
-References: <20180315170710.9551-1-jagan@amarulasolutions.com> <20180315170710.9551-3-jagan@amarulasolutions.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 15 Mar 2018 14:59:49 -0300
-Message-ID: <CAOMZO5CVU9433zP3mgFQKwVjhRYhaM33RQ_DtavZd2xaxHQpkw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: imx6dl-mamoj: Add PFUZE100 support
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        "davide . bonfanti" <davide.bonfanti@bticino.it>,
-        Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Simone CIANNI <simone.cianni@bticino.it>,
-        Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752653AbeCOSDG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:03:06 -0400
+Received: from vern.gendns.com ([206.190.152.46]:35797 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752006AbeCOSDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:03:04 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: davinci: DA8XX: fix oops in USB PHY driver due to stack allocated platform platform_data
+Date: Thu, 15 Mar 2018 13:02:56 -0500
+Message-Id: <1521136976-32730-1-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 2:07 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> MX6DL Mamoj boards has Freescale PFUZE100 PMIC, so add support for it.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
-> Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+This fixes a possible kernel oops due to using stack allocated platform
+data for the USB PHY driver on DA8XX devices. If the platform device
+probe is deferred, then we get a corrupt pointer for the platform data.
 
-This one could be probably part of the previous patch that adds the
-initial board support.
+We now use a global static struct for the platform data so that the
+platform data pointer does not get written over.
+
+Tested on OMAP-L138 LCDK board using legacy board file.
+
+Fixes: 9b504750923cb ("ARM: davinci: da8xx: Add USB PHY platform device")
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/usb-da8xx.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index b1e53e31..9ff9624 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -23,17 +23,20 @@
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+ 
++static struct da8xx_usb_phy_platform_data da8xx_usb_phy_pdata;
++
+ static struct platform_device da8xx_usb_phy = {
+ 	.name		= "da8xx-usb-phy",
+ 	.id		= -1,
++	.dev		= {
++		.platform_data	= &da8xx_usb_phy_pdata,
++	},
+ };
+ 
++
+ int __init da8xx_register_usb_phy(void)
+ {
+-	struct da8xx_usb_phy_platform_data pdata;
+-
+-	pdata.cfgchip = da8xx_get_cfgchip();
+-	da8xx_usb_phy.dev.platform_data = &pdata;
++	da8xx_usb_phy_pdata.cfgchip = da8xx_get_cfgchip();
+ 
+ 	return platform_device_register(&da8xx_usb_phy);
+ }
+-- 
+2.7.4
