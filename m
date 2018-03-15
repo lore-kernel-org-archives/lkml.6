@@ -1,100 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752828AbeCOTTg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:19:36 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:44459 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751969AbeCOTTe (ORCPT
+        id S1752532AbeCOTVZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:21:25 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:56264 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeCOTVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:19:34 -0400
-Subject: Re: [PATCH v2] net: ethernet: ti: cpsw: add check for in-band mode
- setting with RGMII PHY interface
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        =?UTF-8?B?U1ogTGluICjmnpfkuIo=?= =?UTF-8?B?5pm6KQ==?=
-        <sz.lin@moxa.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Schuyler Patton <spatton@ti.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Keerthy <j-keerthy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180315165603.30471-1-sz.lin@moxa.com>
- <b866b57c-2e15-978b-e1e5-5b2c7aa0a06a@ti.com>
- <eddbe437-8a9f-c7df-4e68-8a45c6d89cdb@ti.com>
- <f2a255a8-945a-6248-0c28-5ed96fbfde0b@gmail.com>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <cbc8a349-4954-1869-f47a-3467547bd232@ti.com>
-Date: Thu, 15 Mar 2018 14:19:28 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 15:21:23 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>, sunyuqiong1988@gmail.com,
+        containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        david.safford@ge.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+        <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+        <87vadxfwqj.fsf@xmission.com>
+        <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+        <1521135192.5348.64.camel@HansenPartnership.com>
+        <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+        <1521139535.5348.89.camel@HansenPartnership.com>
+        <0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
+        <1521140467.5348.94.camel@HansenPartnership.com>
+        <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 14:20:31 -0500
+In-Reply-To: <056e5b9e-b4d3-1862-baea-06dda4bd0713@linux.vnet.ibm.com> (Stefan
+        Berger's message of "Thu, 15 Mar 2018 15:15:25 -0400")
+Message-ID: <87sh915eo0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <f2a255a8-945a-6248-0c28-5ed96fbfde0b@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-XM-SPF: eid=1ewYRE-0006Ek-IV;;;mid=<87sh915eo0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.121.173;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19xTLmUqqfgMVZgF99TYHFQVx9gpsRWTOg=
+X-SA-Exim-Connect-IP: 97.119.121.173
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4612]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Stefan Berger <stefanb@linux.vnet.ibm.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1008 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 6 (0.6%), b_tie_ro: 4.7 (0.5%), parse: 1.33 (0.1%),
+        extract_message_metadata: 8 (0.7%), get_uri_detail_list: 4.4 (0.4%),
+        tests_pri_-1000: 11 (1.1%), tests_pri_-950: 2.4 (0.2%), tests_pri_-900: 4.4
+        (0.4%), tests_pri_-400: 58 (5.7%), check_bayes: 54 (5.4%), b_tokenize: 19
+        (1.9%), b_tok_get_all: 13 (1.3%), b_comp_prob: 6 (0.6%), b_tok_touch_all: 7
+        (0.7%), b_finish: 0.94 (0.1%), tests_pri_0: 877 (87.0%),
+        check_dkim_signature: 1.02 (0.1%), check_dkim_adsp: 9 (0.9%), tests_pri_500:
+        19 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Stefan Berger <stefanb@linux.vnet.ibm.com> writes:
 
+> On 03/15/2018 03:01 PM, James Bottomley wrote:
+>> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
+>>> On 03/15/2018 02:45 PM, James Bottomley wrote:
+>> [...]
+>>>>>> going to need some type of keyring namespace and there's
+>>>>>> already
+>>>>>> one hanging off the user_ns:
+>>>>>>
+>>>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+>>>>>> Author: David Howells <dhowells@redhat.com>
+>>>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
+>>>>>>
+>>>>>>        KEYS: Add per-user_namespace registers for persistent
+>>>>>> per-UID
+>>>>>> kerberos caches
+>>>>> The benefit for IMA would be that this would then tie the keys
+>>>>> needed for appraising to the IMA namespace's policy.
+>>>>> However, if you have an appraise policy in your IMA namespace,
+>>>>> which is now hooked to the user namespace, and you join that user
+>>>>> namespace but your files don't have signatures, nothing will
+>>>>> execute anymore. That's now a side effect of joining this user
+>>>>> namespace unless we have a magic  exception. My feeling is,
+>>>>> people may not like that...
+>>>> Agree, but I think the magic might be to populate the ima keyring
+>>>> with the parent on user_ns creation.  That way the user_ns owner
+>>>> can delete the parent keys if they don't like them, but by default
+>>>> the parent appraisal policy should just work.
+>>> That may add keys to your keyring but doesn't get you signatures on
+>>> your  files.
+>> But it doesn't need to.  The only way we'd get a failure is if the file
+>> is already being appraised and we lose access to the key.  If the
+>
+> Well, the configuration I talked about above was assuming that we have
+> an appraisal policy active in the IMA namespace, which is now tied to
+> the user namespace that was just joined.
+>
+> If we are fine with the side effects of an IMA policy active as part
+> of a user namespace then let's go with it. The side effects in case of
+> an active IMA appraisal may then be that files cannot be
+> read/accessed, or file measurements or IMA auditing may occur.
+>
+> The alternative is we have an independent IMA namespace. If one joins
+> the USER namespace and there are no IMA-related side effects. If one
+> joins the IMA namespace its IMA policy should start being enforced. If
+> the current active USER namespace has the keys that go with the
+> signatures of the filesystem, then we're fine from the appraisal
+> perspective. If not, then IMA namespace joining may prevent file
+> accesses.
+>
+>> parent policy isn't appraisal, entering the IMA NS won't cause
+>
+> Why parent policy? The policy of the namespace that was joined should
+> be the active one, no ?
 
-On 03/15/2018 01:29 PM, Florian Fainelli wrote:
-> On 03/15/2018 11:18 AM, Grygorii Strashko wrote:
->>
->>
->> On 03/15/2018 12:39 PM, Grygorii Strashko wrote:
->>>
->>>
->>> On 03/15/2018 11:56 AM, SZ Lin (林上智) wrote:
->>>> According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
->>>> DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register
->>>> is only
->>>> available when PHY is configured in RGMII mode with 10Mbps speed. It
->>>> will
->>>> cause some networking issues without RGMII mode, such as carrier sense
->>>> errors and low throughput. TI also mentioned this issue in their
->>>> forum[4].
->>>>
->>>> This patch adds the check mechanism for PHY interface with RGMII
->>>> interface
->>>> type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
->>>>
->>>> References:
->>>> [1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
->>>> [2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
->>>> [3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
->>>> [4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
->>>>
->>>> Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
->>>> Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
->>>> Signed-off-by: Schuyler Patton <spatton@ti.com>
->>>> ---
->>>> Changes from v1:
->>>> - Use phy_interface_is_rgmii helper function
->>>> - Remove blank line
->>>>
->>>
->>> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>>
->>
->> Also could this be marked as stable material 4.9+?
-> 
-> This is not how it works for networking changes, just make sure you
-> provide a "Fixes:" tag, and David would usually take care of queueing
-> the change to -stable accordingly:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/netdev-FAQ.txt#n148
-> 
+Unless I am completely blind we should never stop enforcing the parent's
+polciy.  We should only add policy to enforce for the scope of a
+container.
 
-Sry, I know that, but this patch fixes very old commit [1] and it can't be
-applied to old Kernels without merge conflicts or build errors:(, 
-so I've manually checked if it can be applied to most recent stable kernels
-and noted kernel versions here.
-Also there is dependency from phy_interface_is_rgmii() which was merged in v4.2.
+In practice this is just the containers policy as the container is most
+likely a do whatever you want to in the parent policy.  But not always
+and not explicitly.
 
-[1] commit a81d8762d713 ("drivers: net cpsw: Enable In Band mode in cpsw for 10 mbps")
-^ went in v3.13
--- 
-regards,
--grygorii
+Mount namespaces are not hierarchical, user namespaces are.  Which makes
+them much more appropriate for being part of nested policy enforcement.
+
+>From previous conversations I remember that there is a legitimate
+bootstrap problem for IMA.  That needs to be looked at, and I am not
+seeing that mentioned.
+
+Eric
