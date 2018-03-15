@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeCOPkh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:40:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60522 "EHLO mail.bootlin.com"
+        id S932595AbeCOPmD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:42:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60536 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752831AbeCOPke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:40:34 -0400
+        id S1752842AbeCOPkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:40:37 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: herbert@gondor.apana.org.au, davem@davemloft.net
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
@@ -13,9 +13,9 @@ Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
         nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 07/12] crypto: inside-secure - improve the send error path
-Date: Thu, 15 Mar 2018 16:38:46 +0100
-Message-Id: <20180315153851.9958-8-antoine.tenart@bootlin.com>
+Subject: [PATCH 11/12] crypto: inside-secure - hmac(sha256) support
+Date: Thu, 15 Mar 2018 16:38:50 +0100
+Message-Id: <20180315153851.9958-12-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
 References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
@@ -23,46 +23,167 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch improves the send error path as it wasn't handling all error
-cases. A new label is added, and some of the goto are updated to point
-to the right labels, so that the code is more robust to errors.
-
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel_hash.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/crypto/inside-secure/safexcel.c      |  3 +-
+ drivers/crypto/inside-secure/safexcel.h      |  1 +
+ drivers/crypto/inside-secure/safexcel_hash.c | 80 +++++++++++++++++++++++++---
+ 3 files changed, 75 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 7b291068222f..5c19bdb28fe1 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -354,7 +354,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	val |= EIP197_PROTOCOL_ENCRYPT_ONLY | EIP197_PROTOCOL_HASH_ONLY;
+ 	val |= EIP197_ALG_AES_ECB | EIP197_ALG_AES_CBC;
+ 	val |= EIP197_ALG_SHA1 | EIP197_ALG_HMAC_SHA1;
+-	val |= EIP197_ALG_SHA2;
++	val |= EIP197_ALG_SHA2 | EIP197_ALG_HMAC_SHA2;
+ 	writel(val, EIP197_PE(priv) + EIP197_PE_EIP96_FUNCTION_EN);
+ 
+ 	/* Command Descriptor Rings prepare */
+@@ -768,6 +768,7 @@ static struct safexcel_alg_template *safexcel_algs[] = {
+ 	&safexcel_alg_sha224,
+ 	&safexcel_alg_sha256,
+ 	&safexcel_alg_hmac_sha1,
++	&safexcel_alg_hmac_sha256,
+ };
+ 
+ static int safexcel_register_algorithms(struct safexcel_crypto_priv *priv)
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index 8c139b98a580..4ada6be304f4 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -632,5 +632,6 @@ extern struct safexcel_alg_template safexcel_alg_sha1;
+ extern struct safexcel_alg_template safexcel_alg_sha224;
+ extern struct safexcel_alg_template safexcel_alg_sha256;
+ extern struct safexcel_alg_template safexcel_alg_hmac_sha1;
++extern struct safexcel_alg_template safexcel_alg_hmac_sha256;
+ 
+ #endif
 diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index bb2be12a8f4a..ef3e0c1c0f2c 100644
+index 845a5ebf25b4..61c0c82add34 100644
 --- a/drivers/crypto/inside-secure/safexcel_hash.c
 +++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -279,7 +279,7 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 					   sglen, len, ctx->base.ctxr_dma);
- 		if (IS_ERR(cdesc)) {
- 			ret = PTR_ERR(cdesc);
--			goto cdesc_rollback;
-+			goto unmap_sg;
- 		}
- 		n_cdesc++;
+@@ -22,8 +22,8 @@ struct safexcel_ahash_ctx {
  
-@@ -303,7 +303,7 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 					 DMA_FROM_DEVICE);
- 	if (dma_mapping_error(priv->dev, req->result_dma)) {
- 		ret = -EINVAL;
--		goto cdesc_rollback;
-+		goto unmap_sg;
+ 	u32 alg;
+ 
+-	u32 ipad[SHA1_DIGEST_SIZE / sizeof(u32)];
+-	u32 opad[SHA1_DIGEST_SIZE / sizeof(u32)];
++	u32 ipad[SHA256_DIGEST_SIZE / sizeof(u32)];
++	u32 opad[SHA256_DIGEST_SIZE / sizeof(u32)];
+ };
+ 
+ struct safexcel_ahash_req {
+@@ -961,20 +961,21 @@ static int safexcel_hmac_setkey(const char *alg, const u8 *key,
+ 	return ret;
+ }
+ 
+-static int safexcel_hmac_sha1_setkey(struct crypto_ahash *tfm, const u8 *key,
+-				     unsigned int keylen)
++static int safexcel_hmac_alg_setkey(struct crypto_ahash *tfm, const u8 *key,
++				    unsigned int keylen, const char *alg,
++				    unsigned int state_sz)
+ {
+ 	struct safexcel_ahash_ctx *ctx = crypto_tfm_ctx(crypto_ahash_tfm(tfm));
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	struct safexcel_ahash_export_state istate, ostate;
+ 	int ret, i;
+ 
+-	ret = safexcel_hmac_setkey("safexcel-sha1", key, keylen, &istate, &ostate);
++	ret = safexcel_hmac_setkey(alg, key, keylen, &istate, &ostate);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (priv->version == EIP197 && ctx->base.ctxr) {
+-		for (i = 0; i < SHA1_DIGEST_SIZE / sizeof(u32); i++) {
++		for (i = 0; i < state_sz / sizeof(u32); i++) {
+ 			if (ctx->ipad[i] != le32_to_cpu(istate.state[i]) ||
+ 			    ctx->opad[i] != le32_to_cpu(ostate.state[i])) {
+ 				ctx->base.needs_inv = true;
+@@ -983,12 +984,19 @@ static int safexcel_hmac_sha1_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 		}
  	}
  
- 	/* Add a result descriptor */
-@@ -324,6 +324,9 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 	return 0;
+-	memcpy(ctx->ipad, &istate.state, SHA1_DIGEST_SIZE);
+-	memcpy(ctx->opad, &ostate.state, SHA1_DIGEST_SIZE);
++	memcpy(ctx->ipad, &istate.state, state_sz);
++	memcpy(ctx->opad, &ostate.state, state_sz);
  
- unmap_result:
-+	dma_unmap_single(priv->dev, req->result_dma, req->state_sz,
-+			 DMA_FROM_DEVICE);
-+unmap_sg:
- 	dma_unmap_sg(priv->dev, areq->src, req->nents, DMA_TO_DEVICE);
- cdesc_rollback:
- 	for (i = 0; i < n_cdesc; i++)
+ 	return 0;
+ }
+ 
++static int safexcel_hmac_sha1_setkey(struct crypto_ahash *tfm, const u8 *key,
++				     unsigned int keylen)
++{
++	return safexcel_hmac_alg_setkey(tfm, key, keylen, "safexcel-sha1",
++					SHA1_DIGEST_SIZE);
++}
++
+ struct safexcel_alg_template safexcel_alg_hmac_sha1 = {
+ 	.type = SAFEXCEL_ALG_TYPE_AHASH,
+ 	.alg.ahash = {
+@@ -1142,3 +1150,59 @@ struct safexcel_alg_template safexcel_alg_sha224 = {
+ 		},
+ 	},
+ };
++
++static int safexcel_hmac_sha256_setkey(struct crypto_ahash *tfm, const u8 *key,
++				     unsigned int keylen)
++{
++	return safexcel_hmac_alg_setkey(tfm, key, keylen, "safexcel-sha256",
++					SHA256_DIGEST_SIZE);
++}
++
++static int safexcel_hmac_sha256_init(struct ahash_request *areq)
++{
++	struct safexcel_ahash_ctx *ctx = crypto_ahash_ctx(crypto_ahash_reqtfm(areq));
++
++	safexcel_sha256_init(areq);
++	ctx->digest = CONTEXT_CONTROL_DIGEST_HMAC;
++	return 0;
++}
++
++static int safexcel_hmac_sha256_digest(struct ahash_request *areq)
++{
++	int ret = safexcel_hmac_sha256_init(areq);
++
++	if (ret)
++		return ret;
++
++	return safexcel_ahash_finup(areq);
++}
++
++struct safexcel_alg_template safexcel_alg_hmac_sha256 = {
++	.type = SAFEXCEL_ALG_TYPE_AHASH,
++	.alg.ahash = {
++		.init = safexcel_hmac_sha256_init,
++		.update = safexcel_ahash_update,
++		.final = safexcel_ahash_final,
++		.finup = safexcel_ahash_finup,
++		.digest = safexcel_hmac_sha256_digest,
++		.setkey = safexcel_hmac_sha256_setkey,
++		.export = safexcel_ahash_export,
++		.import = safexcel_ahash_import,
++		.halg = {
++			.digestsize = SHA256_DIGEST_SIZE,
++			.statesize = sizeof(struct safexcel_ahash_export_state),
++			.base = {
++				.cra_name = "hmac(sha256)",
++				.cra_driver_name = "safexcel-hmac-sha256",
++				.cra_priority = 300,
++				.cra_flags = CRYPTO_ALG_ASYNC |
++					     CRYPTO_ALG_KERN_DRIVER_ONLY,
++				.cra_blocksize = SHA256_BLOCK_SIZE,
++				.cra_ctxsize = sizeof(struct safexcel_ahash_ctx),
++				.cra_init = safexcel_ahash_cra_init,
++				.cra_exit = safexcel_ahash_cra_exit,
++				.cra_module = THIS_MODULE,
++			},
++		},
++	},
++};
 -- 
 2.14.3
