@@ -1,97 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752280AbeCOUAe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:00:34 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:51160 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeCOUAd (ORCPT
+        id S1752525AbeCOUBj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:01:39 -0400
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:36013 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752337AbeCOUBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:00:33 -0400
-Date: Thu, 15 Mar 2018 16:00:30 -0400 (EDT)
-Message-Id: <20180315.160030.601332550949971028.davem@davemloft.net>
-To: nitin.m.gupta@oracle.com
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: sparc64 MM regression...
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180315.152815.1012910593389921933.davem@davemloft.net>
-References: <20180315.152815.1012910593389921933.davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Mar 2018 16:01:37 -0400
+X-Google-Smtp-Source: AG47ELuIGF++GcoTDNA6LpIEGPOBw2viqpfiDGKAlSEcIsRkZWoybol6UZz3uf7WHfC3JD54zpJayQ==
+Date: Thu, 15 Mar 2018 13:01:35 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Roman Gushchin <guro@fb.com>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch -mm] mm, memcg: evaluate root and leaf memcgs fairly on
+ oom
+In-Reply-To: <20180315164646.GA1853@castle.DHCP.thefacebook.com>
+Message-ID: <alpine.DEB.2.20.1803151259450.44030@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803131720470.247949@chino.kir.corp.google.com> <20180314121700.GA20850@castle.DHCP.thefacebook.com> <alpine.DEB.2.20.1803141337110.163553@chino.kir.corp.google.com>
+ <20180315164646.GA1853@castle.DHCP.thefacebook.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Thu, 15 Mar 2018 15:28:15 -0400 (EDT)
+On Thu, 15 Mar 2018, Roman Gushchin wrote:
 
+> > Seems like it was dropped from the patch somehow.  It is intended to do 
+> > atomic_long_add(nr_pages) in mem_cgroup_charge_skmem() and 
+> > atomic_long_add(-nr_pages) mem_cgroup_uncharge_skmem().
+> > 
+> > > I also doubt that global atomic variable can work here,
+> > > we probably need something better scaling.
+> > > 
+> > 
+> > Why do you think an atomic_long_add() is too expensive when we're already 
+> > disabling irqs and dong try_charge()?
 > 
-> So I bisected a userspace corruption regression down to commit:
+> Hard to say without having full code :)
+> try_charge() is batched, if you'll batch it too, it will probably work.
 > 
-> commit a8e654f01cb725d0bfd741ebca1bf4c9337969cc                                                                                    
-> Author: Nitin Gupta <nitin.m.gupta@oracle.com>                                                                                     
-> Date:   Wed Jan 31 16:18:09 2018 -0800                                                                                             
->                                                                                                                                    
->     sparc64: update pmdp_invalidate() to return old pmd value                                                                      
-> 
-> The transformation is basically from a set_pte_at() call into
-> an atomic cmpxchg64() loop to set the pmd.
-> 
-> The problem is that set_pmd_at() does more than just assign
-> the pmd entry.
-> 
-> It also does some accounting and also queues up a batch TLB
-> flush entry.
-> 
-> So the side effect of this change is that the TLB is never
-> flushed for these changed PMDs, and thus the userland memory
-> corruption I was seeing.
 
-This seems to do the trick:
+The full code is what's specified above: it does the 
+atomic_long_add(nr_pages) in mem_cgroup_charge_skmem() and 
+atomic_long_add(-nr_pages) mem_cgroup_uncharge_skmem().
 
-diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
-index 847ddff..b5cfab7 100644
---- a/arch/sparc/mm/tlb.c
-+++ b/arch/sparc/mm/tlb.c
-@@ -163,13 +163,10 @@ static void tlb_batch_pmd_scan(struct mm_struct *mm, unsigned long vaddr,
- 	pte_unmap(pte);
- }
- 
--void set_pmd_at(struct mm_struct *mm, unsigned long addr,
--		pmd_t *pmdp, pmd_t pmd)
--{
--	pmd_t orig = *pmdp;
--
--	*pmdp = pmd;
- 
-+static void __set_pmd_acct(struct mm_struct *mm, unsigned long addr,
-+			   pmd_t orig, pmd_t pmd)
-+{
- 	if (mm == &init_mm)
- 		return;
- 
-@@ -219,6 +216,15 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
- 	}
- }
- 
-+void set_pmd_at(struct mm_struct *mm, unsigned long addr,
-+		pmd_t *pmdp, pmd_t pmd)
-+{
-+	pmd_t orig = *pmdp;
-+
-+	*pmdp = pmd;
-+	__set_pmd_acct(mm, addr, orig, pmd);
-+}
-+
- static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- 		unsigned long address, pmd_t *pmdp, pmd_t pmd)
- {
-@@ -227,6 +233,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- 	do {
- 		old = *pmdp;
- 	} while (cmpxchg64(&pmdp->pmd, old.pmd, pmd.pmd) != old.pmd);
-+	__set_pmd_acct(vma->vm_mm, address, old, pmd);
- 
- 	return old;
- }
+The patch is comparing the root mem cgroup and leaf mem cgroups fairly.  
+For this, it requires that we have stats that can be directly compared or 
+at least very close approximations.  We don't want to get in a situation 
+where root and leaf mem cgroups are being compared based on different 
+stats.
