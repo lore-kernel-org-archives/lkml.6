@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932672AbeCOPpx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:45:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47936 "EHLO mail.skyhub.de"
+        id S1752798AbeCOPqN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47942 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932480AbeCOPpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932605AbeCOPpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Mar 2018 11:45:50 -0400
 From: Borislav Petkov <bp@alien8.de>
 To: X86 ML <x86@kernel.org>
@@ -13,9 +13,9 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/9] x86/dumpstack: Unexport oops_begin()
-Date: Thu, 15 Mar 2018 16:44:41 +0100
-Message-Id: <20180315154448.16222-3-bp@alien8.de>
+Subject: [PATCH 3/9] x86/dumpstack: Carve out Code: dumping into a function
+Date: Thu, 15 Mar 2018 16:44:42 +0100
+Message-Id: <20180315154448.16222-4-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
 References: <20180315154448.16222-1-bp@alien8.de>
@@ -25,28 +25,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-The only user outside of arch/ is not a module since
-
-  86cd47334b00 ("ACPI, APEI, GHES, Prevent GHES to be built as module")
-
-No functional changes.
+No functionality change, carve it out into a separate function for later
+changes.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/dumpstack.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/dumpstack.c | 57 ++++++++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 27 deletions(-)
 
 diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 593db796374d..579455c2b91e 100644
+index 579455c2b91e..eb9d6c00a52f 100644
 --- a/arch/x86/kernel/dumpstack.c
 +++ b/arch/x86/kernel/dumpstack.c
-@@ -268,7 +268,6 @@ unsigned long oops_begin(void)
- 	bust_spinlocks(1);
- 	return flags;
+@@ -70,6 +70,35 @@ static void printk_stack_address(unsigned long address, int reliable,
+ 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
  }
--EXPORT_SYMBOL_GPL(oops_begin);
- NOKPROBE_SYMBOL(oops_begin);
  
- void __noreturn rewind_stack_do_exit(int signr);
++static void show_opcodes(u8 *rip)
++{
++	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
++	unsigned int code_len = OPCODE_BUFSIZE;
++	unsigned char c;
++	u8 *ip;
++	int i;
++
++	printk(KERN_DEFAULT "Code: ");
++
++	ip = (u8 *)rip - code_prologue;
++	if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
++		/* try starting at IP */
++		ip = (u8 *)rip;
++		code_len = code_len - code_prologue + 1;
++	}
++	for (i = 0; i < code_len; i++, ip++) {
++		if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
++			pr_cont(" Bad RIP value.");
++			break;
++		}
++		if (ip == (u8 *)rip)
++			pr_cont("<%02x> ", c);
++		else
++			pr_cont("%02x ", c);
++	}
++	pr_cont("\n");
++}
++
+ void show_iret_regs(struct pt_regs *regs)
+ {
+ 	printk(KERN_DEFAULT "RIP: %04x:%pS\n", (int)regs->cs, (void *)regs->ip);
+@@ -359,7 +388,6 @@ void die(const char *str, struct pt_regs *regs, long err)
+ void show_regs(struct pt_regs *regs)
+ {
+ 	bool all = true;
+-	int i;
+ 
+ 	show_regs_print_info(KERN_DEFAULT);
+ 
+@@ -373,32 +401,7 @@ void show_regs(struct pt_regs *regs)
+ 	 * time of the fault..
+ 	 */
+ 	if (!user_mode(regs)) {
+-		unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
+-		unsigned int code_len = OPCODE_BUFSIZE;
+-		unsigned char c;
+-		u8 *ip;
+-
+ 		show_trace_log_lvl(current, regs, NULL, KERN_DEFAULT);
+-
+-		printk(KERN_DEFAULT "Code: ");
+-
+-		ip = (u8 *)regs->ip - code_prologue;
+-		if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
+-			/* try starting at IP */
+-			ip = (u8 *)regs->ip;
+-			code_len = code_len - code_prologue + 1;
+-		}
+-		for (i = 0; i < code_len; i++, ip++) {
+-			if (ip < (u8 *)PAGE_OFFSET ||
+-					probe_kernel_address(ip, c)) {
+-				pr_cont(" Bad RIP value.");
+-				break;
+-			}
+-			if (ip == (u8 *)regs->ip)
+-				pr_cont("<%02x> ", c);
+-			else
+-				pr_cont("%02x ", c);
+-		}
++		show_opcodes((u8 *)regs->ip);
+ 	}
+-	pr_cont("\n");
+ }
 -- 
 2.13.0
