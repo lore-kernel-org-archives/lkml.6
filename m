@@ -1,46 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeCOM6g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:58:36 -0400
-Received: from 8bytes.org ([81.169.241.247]:42140 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751546AbeCOM6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:58:34 -0400
-Date: Thu, 15 Mar 2018 13:58:32 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Subject: Re: [PATCH 08/10] iommu/amd: drop the lock while allocating new irq
- remap table
-Message-ID: <20180315125832.kfxoqfnxdajeg2yl@8bytes.org>
-References: <20180223222736.18542-1-bigeasy@linutronix.de>
- <20180223222736.18542-9-bigeasy@linutronix.de>
+        id S1752169AbeCONAJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:00:09 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:41633 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbeCONAH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:00:07 -0400
+X-Google-Smtp-Source: AG47ELvjqrecrzkdDEmr3JFLwMvUp3x6ksjIMg9QONBqbkUl9WmXEc2LMaomzzX6NYM0HT3LHmxaPEgUuO7VYkYIFA8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223222736.18542-9-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180315030804.GI26859@dragon>
+References: <20180122150748.1742-1-andrew.smirnov@gmail.com>
+ <20180208064709.GB31910@dragon> <20180315030804.GI26859@dragon>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Thu, 15 Mar 2018 06:00:06 -0700
+Message-ID: <CAHQ1cqHdtN7xjmAcQvKDknnGKAP0pRgk6pcFrzOiSew9=Z9GQg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] soc: imx: gpcv2: Do not pass static memory as
+ platform data
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 11:27:34PM +0100, Sebastian Andrzej Siewior wrote:
-> The irq_remap_table is allocated while the iommu_table_lock is held with
-> interrupts disabled. While this works it makes RT scream very loudly.
-> >From looking at the call sites, all callers are in the early device
-> initialisation (apic_bsp_setup(), pci_enable_device(),
-> pci_enable_msi()) so make sense to drop the lock which also enables
-> interrupts and try to allocate that memory with GFP_KERNEL instead
-> GFP_ATOMIC.
-> 
-> Since during the allocation the iommu_table_lock is dropped, we need to
-> recheck if table exists after the lock has been reacquired. I *think*
-> that it is impossible that the "devid" entry appears in irq_lookup_table
-> while the lock is dropped since the same device can only be probed once.
-> It is more likely that another device added an `alias' entry. However I
-> check for both cases, just to be sure.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Wed, Mar 14, 2018 at 8:08 PM, Shawn Guo <shawnguo@kernel.org> wrote:
+> On Thu, Feb 08, 2018 at 02:47:10PM +0800, Shawn Guo wrote:
+>> On Mon, Jan 22, 2018 at 07:07:47AM -0800, Andrey Smirnov wrote:
+>> > Platform device core assumes the ownership of dev.platform_data as
+>> > well as that it is dynamically allocated and it will try to kfree it
+>> > as a part of platform_device_release(). Change the code to pass
+>> > kzalloc'ed chunk of memory instead of a pointer to a static memory to
+>> > avoid causing a BUG() when calling platform_device_put().
+>> >
+>> > The problem can be reproduced by artificially enabling the error path
+>> > of platform_device_add() call (around line 357).
+>> >
+>> > Note that this change also allows us to constify imx7_pgc_domains,
+>> > since we no longer need to be able to modify it.
+>> >
+>> > Cc: Shawn Guo <shawnguo@kernel.org>
+>> > Cc: Stefan Agner <stefan@agner.ch>
+>> > Cc: Lucas Stach <l.stach@pengutronix.de>
+>> > Cc: linux-arm-kernel@lists.infradead.org
+>> > Cc: linux-kernel@vger.kernel.org
+>> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>>
+>> Applied both, thanks.
+>
+> I decided to drop these two patches.  Triggered by Fabio's patch on top
+> of you changes, I just took another look at them, and found that
+> platform_device_add_data() can help us do the same thing in a nicer way.
+>
 
-This looks like it conflicts with the x86/amd branch as well.
+Shawn:
+
+I am slightly confused by your phrasing. Are you:
+
+a) saying that you dropped my patches in favor of your own that use
+platform_device_add_data()
+
+or
+
+b) asking me to convert my patches to use platform_device_add_data()?
+
+Just trying to figure out if any action on my part is necessary.
+
+Thanks,
+Andrey Smirnov
