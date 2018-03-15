@@ -1,50 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeCOMxp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:53:45 -0400
-Received: from 8bytes.org ([81.169.241.247]:42076 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751302AbeCOMxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:53:44 -0400
-Date: Thu, 15 Mar 2018 13:53:42 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Subject: Re: [PATCH 05/10] iommu/amd: remove the special case from
- get_irq_table()
-Message-ID: <20180315125342.q74wurk6bdbhl6hy@8bytes.org>
-References: <20180223222736.18542-1-bigeasy@linutronix.de>
- <20180223222736.18542-6-bigeasy@linutronix.de>
+        id S1752220AbeCOMyH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:54:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53327 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeCOMyF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:54:05 -0400
+Date: Thu, 15 Mar 2018 13:53:52 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Christoph Hellwig <hch@lst.de>
+cc: x86@kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/14] x86: use dma-direct
+In-Reply-To: <20180315115348.GA16210@lst.de>
+Message-ID: <alpine.DEB.2.21.1803151352170.1525@nanos.tec.linutronix.de>
+References: <20180314175213.20256-1-hch@lst.de> <20180314175213.20256-4-hch@lst.de> <alpine.DEB.2.21.1803150951540.1525@nanos.tec.linutronix.de> <20180315115348.GA16210@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223222736.18542-6-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: multipart/mixed; boundary="8323329-1111037880-1521118432=:1525"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 11:27:31PM +0100, Sebastian Andrzej Siewior wrote:
-> @@ -4103,10 +4093,26 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
->  		return ret;
->  
->  	if (info->type == X86_IRQ_ALLOC_TYPE_IOAPIC) {
-> -		if (get_irq_table(devid, true))
-> +		struct irq_remap_table *table;
-> +		struct amd_iommu *iommu;
-> +
-> +		table = get_irq_table(devid);
-> +		if (table) {
-> +			if (!table->min_index) {
-> +				/*
-> +				 * Keep the first 32 indexes free for IOAPIC
-> +				 * interrupts.
-> +				 */
-> +				table->min_index = 32;
-> +				iommu = amd_iommu_rlookup_table[devid];
-> +				for (i = 0; i < 32; ++i)
-> +					iommu->irte_ops->set_allocated(table, i);
-> +			}
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I think this needs to be protected by the table->lock.
+--8323329-1111037880-1521118432=:1525
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 15 Mar 2018, Christoph Hellwig wrote:
+
+> On Thu, Mar 15, 2018 at 09:56:13AM +0100, Thomas Gleixner wrote:
+> > On Wed, 14 Mar 2018, Christoph Hellwig wrote:
+> > 
+> > > The generic dma-direct implementation is now functionally equivalent to
+> > > the x86 nommu dma_map implementation, so switch over to using it.
+> > 
+> > Can you please convert the various drivers first and then remove the
+> > unused code?
+> 
+> Which various drivers?
+> 
+> > > Note that the various iommu drivers are switched from x86_dma_supported
+
+The various iommu drivers ....
+
+> > > to dma_direct_supported to provide identical functionality, although the
+> > > checks looks fairly questionable for at least some of them.
+> > 
+> > Can you please elaborate? From the above it's not clear which checks you
+> > are referring to. If you convert these drivers seperately then explicit
+> > information about your concerns wants to be in the changelogs.
+> 
+> This bit:
+> 
+> 	/* Copied from i386. Doesn't make much sense, because it will
+> 	   only work for pci_alloc_coherent.
+> 	   The caller just has to use GFP_DMA in this case. */
+> 	if (mask < DMA_BIT_MASK(24))
+> 		return 0;
+> 
+> in x86_dma_supported, or the equivalent bit in dma_direct_supported.
+> Kept for bug to bug compatibility, but I guess I should reword or
+> just drop the changelog bit іf it causes confusion.
+
+Reword please.
+
+Thanks,
+
+	tglx
+
+--8323329-1111037880-1521118432=:1525--
