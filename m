@@ -1,69 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeCOMTb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:19:31 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:58139 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeCOMT3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:19:29 -0400
-Date: Thu, 15 Mar 2018 13:19:27 +0100
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 23/47] cpufreq: remove cris specific drivers
-Message-ID: <20180315121927.GS17177@axis.com>
-References: <20180314153603.3127932-1-arnd@arndb.de>
- <20180314153603.3127932-24-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314153603.3127932-24-arnd@arndb.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
+        id S1751682AbeCOMUE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:20:04 -0400
+Received: from mga05.intel.com ([192.55.52.43]:11680 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750731AbeCOMUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 08:20:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
+   d="scan'208";a="24749073"
+From: Haiyue Wang <haiyue.wang@linux.intel.com>
+To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
+Subject: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers allocation
+Date: Thu, 15 Mar 2018 20:20:52 +0800
+Message-Id: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 04:35:36PM +0100, Arnd Bergmann wrote:
-> The cris architecture is getting removed, including the artpec3
-> and etraxfs SoCs, so these cpufreq drivers are now unused.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Allocate a continuous memory block for the three KCS data buffers with
+related index assignment.
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+---
+ drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/cpufreq/Makefile               |  2 -
->  drivers/cpufreq/cris-artpec3-cpufreq.c | 93 ----------------------------------
->  drivers/cpufreq/cris-etraxfs-cpufreq.c | 92 ---------------------------------
->  3 files changed, 187 deletions(-)
->  delete mode 100644 drivers/cpufreq/cris-artpec3-cpufreq.c
->  delete mode 100644 drivers/cpufreq/cris-etraxfs-cpufreq.c
-> 
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 2e4495cf9aa8..8d24ade3bd02 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -102,8 +102,6 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
->  ##################################################################################
->  # Other platform drivers
->  obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
-> -obj-$(CONFIG_CRIS_MACH_ARTPEC3)		+= cris-artpec3-cpufreq.o
-> -obj-$(CONFIG_ETRAXFS)			+= cris-etraxfs-cpufreq.o
->  obj-$(CONFIG_IA64_ACPI_CPUFREQ)		+= ia64-acpi-cpufreq.o
->  obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
->  obj-$(CONFIG_LOONGSON1_CPUFREQ)		+= loongson1-cpufreq.o
-> diff --git a/drivers/cpufreq/cris-artpec3-cpufreq.c b/drivers/cpufreq/cris-artpec3-cpufreq.c
-> deleted file mode 100644
-> index 455b4fb78cba..000000000000
-> diff --git a/drivers/cpufreq/cris-etraxfs-cpufreq.c b/drivers/cpufreq/cris-etraxfs-cpufreq.c
-> deleted file mode 100644
-> index 4c4b5dd685e3..000000000000
-> -- 
-> 2.9.0
-
-/^JN - Jesper Nilsson
+diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
+index fbfc05e..dc19c0d 100644
+--- a/drivers/char/ipmi/kcs_bmc.c
++++ b/drivers/char/ipmi/kcs_bmc.c
+@@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops = {
+ struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
+ {
+ 	struct kcs_bmc *kcs_bmc;
++	void *buf;
+ 
+ 	kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, GFP_KERNEL);
+ 	if (!kcs_bmc)
+@@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
+ 	mutex_init(&kcs_bmc->mutex);
+ 	init_waitqueue_head(&kcs_bmc->queue);
+ 
+-	kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+-	kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+-	kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+-	if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
++	buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
++	if (!buf)
+ 		return NULL;
++	kcs_bmc->data_in  = buf;
++	kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
++	kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
+ 
+ 	kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
+ 	kcs_bmc->miscdev.name = dev_name(dev);
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+2.7.4
