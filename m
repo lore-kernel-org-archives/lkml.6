@@ -1,150 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeCOQAr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:00:47 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50649 "EHLO mga17.intel.com"
+        id S1751481AbeCOQHW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:07:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35036 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932486AbeCOQAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:00:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="28194447"
-Subject: [PATCH v6 02/15] fs,
- dax: prepare for dax-specific address_space_operations
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:51:33 -0700
-Message-ID: <152112909383.24669.7898033239205318865.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1750731AbeCOQHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:07:20 -0400
+Date: Thu, 15 Mar 2018 17:07:02 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: dwmw2@infradead.org, boris.brezillon@free-electrons.com,
+        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
+        computersforpeace@gmail.com
+Subject: Re: [PATCH 2/3] mtd: maps: Remove print after allocation failure
+Message-ID: <20180315170702.552c4756@bbrezillon>
+In-Reply-To: <1521041718-32492-2-git-send-email-arushisinghal19971997@gmail.com>
+References: <1521041718-32492-1-git-send-email-arushisinghal19971997@gmail.com>
+        <1521041718-32492-2-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the dax implementation to start associating dax pages
-to inodes via page->mapping, we need to provide a 'struct
-address_space_operations' instance for dax. Define some generic VFS aops
-helpers for dax. These noop implementations are there in the dax case to
-prevent the VFS from falling back to operations with page-cache
-assumptions, dax_writeback_mapping_range() may not be referenced in the
-FS_DAX=n case.
+Hi Arushi,
 
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Suggested-by: Matthew Wilcox <mawilcox@microsoft.com>
-Suggested-by: Jan Kara <jack@suse.cz>
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/libfs.c          |   27 +++++++++++++++++++++++++++
- include/linux/dax.h |   12 +++++++++---
- include/linux/fs.h  |    3 +++
- 3 files changed, 39 insertions(+), 3 deletions(-)
+On Wed, 14 Mar 2018 21:05:17 +0530
+Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 7ff3cb904acd..e49d0ac6f800 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1060,6 +1060,33 @@ int noop_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- }
- EXPORT_SYMBOL(noop_fsync);
- 
-+int noop_set_page_dirty(struct page *page)
-+{
-+	/*
-+	 * Unlike __set_page_dirty_no_writeback that handles dirty page
-+	 * tracking in the page object, dax does all dirty tracking in
-+	 * the inode address_space in response to mkwrite faults. In the
-+	 * dax case we only need to worry about potentially dirty CPU
-+	 * caches, not dirty page cache pages to write back.
-+	 *
-+	 * This callback is defined to prevent fallback to
-+	 * __set_page_dirty_buffers() in set_page_dirty().
-+	 */
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(noop_set_page_dirty);
-+
-+void noop_invalidatepage(struct page *page, unsigned int offset,
-+		unsigned int length)
-+{
-+	/*
-+	 * There is no page cache to invalidate in the dax case, however
-+	 * we need this callback defined to prevent falling back to
-+	 * block_invalidatepage() in do_invalidatepage().
-+	 */
-+}
-+EXPORT_SYMBOL_GPL(noop_invalidatepage);
-+
- /* Because kfree isn't assignment-compatible with void(void*) ;-/ */
- void kfree_link(void *p)
- {
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 0185ecdae135..ae27a7efe7ab 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -38,6 +38,7 @@ static inline void put_dax(struct dax_device *dax_dev)
- }
- #endif
- 
-+struct writeback_control;
- int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
- #if IS_ENABLED(CONFIG_FS_DAX)
- int __bdev_dax_supported(struct super_block *sb, int blocksize);
-@@ -57,6 +58,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev)
- }
- 
- struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
-+int dax_writeback_mapping_range(struct address_space *mapping,
-+		struct block_device *bdev, struct writeback_control *wbc);
- #else
- static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
- {
-@@ -76,6 +79,12 @@ static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
- {
- 	return NULL;
- }
-+
-+static inline int dax_writeback_mapping_range(struct address_space *mapping,
-+		struct block_device *bdev, struct writeback_control *wbc)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif
- 
- int dax_read_lock(void);
-@@ -121,7 +130,4 @@ static inline bool dax_mapping(struct address_space *mapping)
- 	return mapping->host && IS_DAX(mapping->host);
- }
- 
--struct writeback_control;
--int dax_writeback_mapping_range(struct address_space *mapping,
--		struct block_device *bdev, struct writeback_control *wbc);
- #endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 79c413985305..b57db31d294d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3129,6 +3129,9 @@ extern int simple_rmdir(struct inode *, struct dentry *);
- extern int simple_rename(struct inode *, struct dentry *,
- 			 struct inode *, struct dentry *, unsigned int);
- extern int noop_fsync(struct file *, loff_t, loff_t, int);
-+extern int noop_set_page_dirty(struct page *page);
-+extern void noop_invalidatepage(struct page *page, unsigned int offset,
-+		unsigned int length);
- extern int simple_empty(struct dentry *);
- extern int simple_readpage(struct file *file, struct page *page);
- extern int simple_write_begin(struct file *file, struct address_space *mapping,
+> The prints after [k|v][m|z|c]alloc() functions are not needed, because
+> in case of failure, allocator will print their internal error prints
+> anyway.
+> 
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> ---
+>  drivers/mtd/maps/sun_uflash.c | 4 +---
+
+And here as well some of the drivers are still printing error messages
+after mem allocation failures (amd76xrom, ck804xrom, esb2rom, ichxrom,
+vmu-flash).
+
+Regards,
+
+Boris
+
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/maps/sun_uflash.c b/drivers/mtd/maps/sun_uflash.c
+> index 1e73bba..80a253c 100644
+> --- a/drivers/mtd/maps/sun_uflash.c
+> +++ b/drivers/mtd/maps/sun_uflash.c
+> @@ -62,10 +62,8 @@ int uflash_devinit(struct platform_device *op, struct device_node *dp)
+>  	}
+>  
+>  	up = kzalloc(sizeof(struct uflash_dev), GFP_KERNEL);
+> -	if (!up) {
+> -		printk(KERN_ERR PFX "Cannot allocate struct uflash_dev\n");
+> +	if (!up)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	/* copy defaults and tweak parameters */
+>  	memcpy(&up->map, &uflash_map_templ, sizeof(uflash_map_templ));
+
+
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
