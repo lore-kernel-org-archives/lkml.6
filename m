@@ -1,79 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932656AbeCOTRc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:17:32 -0400
-Received: from vern.gendns.com ([206.190.152.46]:38754 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752198AbeCOTR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:17:29 -0400
-From: David Lechner <david@lechnology.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: davinci: DA8XX: fix oops in USB PHY driver due to stack allocated platform platform_data
-Date: Thu, 15 Mar 2018 14:17:20 -0500
-Message-Id: <1521141440-16418-1-git-send-email-david@lechnology.com>
-X-Mailer: git-send-email 2.7.4
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1752832AbeCOTSr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:18:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752337AbeCOTSo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 15:18:44 -0400
+Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date: Thu, 15 Mar 2018 15:18:34 -0400
+In-Reply-To: <87efkmjjc7.fsf@morokweng.localdomain>
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com>
+         <20180314202020.3794-4-bauerman@linux.vnet.ibm.com>
+         <20180314214045.GC14289@mail.hallyn.com>
+         <87efkmjjc7.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031519-0020-0000-0000-00000405797A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031519-0021-0000-0000-00004299837D
+Message-Id: <1521141514.3547.637.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150209
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes a possible kernel oops due to using stack allocated platform
-data for the USB PHY driver on DA8XX devices. If the platform device
-probe is deferred, then we get a corrupt pointer for the platform data.
+On Wed, 2018-03-14 at 21:03 -0300, Thiago Jung Bauermann wrote:
+> Hello Serge,
+> 
+> Thanks for quickly reviewing these patches!
+> 
+> Serge E. Hallyn <serge@hallyn.com> writes:
+> 
+> > Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
+> >> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> >> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  	}
+> >>  
+> >>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+> >> -	if ((status != INTEGRITY_PASS) &&
+> >> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
+> >> -	    (status != INTEGRITY_UNKNOWN)) {
+> >> -		if ((status == INTEGRITY_NOLABEL)
+> >> -		    || (status == INTEGRITY_NOXATTRS))
+> >> -			cause = "missing-HMAC";
+> >> -		else if (status == INTEGRITY_FAIL)
+> >> -			cause = "invalid-HMAC";
+> >> +	switch (status) {
+> >> +	case INTEGRITY_PASS:
+> >> +	case INTEGRITY_PASS_IMMUTABLE:
+> >> +	case INTEGRITY_UNKNOWN:
+> >
+> > Wouldn't it be more future-proof to replace this with a 'default', or
+> > to at least add a "default: BUG()" to catch new status values?
+> 
+> I agree. I like the "default: BUG()" option.
 
-We now use a global static struct for the platform data so that the
-platform data pointer does not get written over.
+Agreed.  I would put it at the end after INTEGRITY_FAIL.
 
-Fixes: 9b504750923cb ("ARM: davinci: da8xx: Add USB PHY platform device")
-Signed-off-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/usb-da8xx.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> >> +		break;
+> >> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+> >> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> >> +		cause = "missing-HMAC";
+> >> +		goto out;
+> >> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> >> +		cause = "invalid-HMAC";
+> >>  		goto out;
+> >>  	}
+> >> +
+> >>  	switch (xattr_value->type) {
+> >>  	case IMA_XATTR_DIGEST_NG:
+> >>  		/* first byte contains algorithm id */
+> >> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> >>  				    op, cause, rc, 0);
+> >>  	} else if (status != INTEGRITY_PASS) {
+> >> +		/* Fix mode, but don't replace file signatures. */
+> >>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+> >>  		    (!xattr_value ||
+> >>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+> >>  			if (!ima_fix_xattr(dentry, iint))
+> >>  				status = INTEGRITY_PASS;
+> >> -		} else if ((inode->i_size == 0) &&
+> >> -			   (iint->flags & IMA_NEW_FILE) &&
+> >> -			   (xattr_value &&
+> >> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
+> >> +		}
+> >> +
+> >> +		/* Permit new files with file signatures, but without data. */
+> >> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+> >
+> > This may be correct, but it's not identical to what you're replacing.
+> > Since in either case you're setting status to INTEGRITY_PASS the final
+> > result is the same, but with a few extra possible steps.  Not sure
+> > whether that matters.
+> 
+> Good point. I'll have to defer this one to Mimi though.
 
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index 4d89d86..67d634b 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -26,6 +26,8 @@
- 
- static struct clk *usb20_clk;
- 
-+static struct da8xx_usb_phy_platform_data da8xx_usb_phy_pdata;
-+
- static struct platform_device da8xx_usb_phy = {
- 	.name		= "da8xx-usb-phy",
- 	.id		= -1,
-@@ -37,14 +39,14 @@ static struct platform_device da8xx_usb_phy = {
- 		 */
- 		.init_name	= "da8xx-usb-phy",
- 	},
-+	.dev		= {
-+		.platform_data	= &da8xx_usb_phy_pdata,
-+	},
- };
- 
- int __init da8xx_register_usb_phy(void)
- {
--	struct da8xx_usb_phy_platform_data pdata;
--
--	pdata.cfgchip = da8xx_get_cfgchip();
--	da8xx_usb_phy.dev.platform_data = &pdata;
-+	da8xx_usb_phy_pdata.cfgchip = da8xx_get_cfgchip();
- 
- 	return platform_device_register(&da8xx_usb_phy);
- }
--- 
-2.7.4
+The end result is the same, but add some needed comments.
+
+Mimi
+
+> 
+> >
+> >> +		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
+> >>  			status = INTEGRITY_PASS;
+> >>  		}
+> >> +
+> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> >>  				    op, cause, rc, 0);
+> >>  	} else {
+> 
+> 
