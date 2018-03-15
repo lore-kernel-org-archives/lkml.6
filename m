@@ -1,141 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752895AbeCOUtL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:49:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:47822 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752011AbeCOUtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:49:08 -0400
-Message-ID: <5AAADBA1.1000804@arm.com>
-Date: Thu, 15 Mar 2018 20:46:25 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
+        id S932456AbeCOUvF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:51:05 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35371 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752283AbeCOUvD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 16:51:03 -0400
+X-Google-Smtp-Source: AG47ELsk+neLz2TjDHAFn7It0AgZ8TTGq6TAKKwGX/XG5MIIIZYzI/NAlSTUM2/PVKFkXOP42oAaeA==
+Date: Thu, 15 Mar 2018 13:51:01 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+cc: Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [patch -mm] mm, memcg: disregard mempolicies for cgroup-aware oom
+ killer
+In-Reply-To: <alpine.DEB.2.20.1803131720470.247949@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.20.1803151350420.55261@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803131720470.247949@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-To: gengdongjiu <gengdj.1984@gmail.com>, drjones@redhat.com
-CC: gengdongjiu <gengdongjiu@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        Huangshaoyu <huangshaoyu@huawei.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "devel@acpica.org" <devel@acpica.org>
-Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
-References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com> <5A70C5A0.1050600@arm.com> <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com> <5A7DDDEE.9050306@arm.com> <93d07d3e-8388-7814-d674-538071d84e2a@huawei.com> <5A85C974.70500@arm.com> <CAMj-D2COh4xDKreZXPHeiJK34mrPqDbHszDWY-fz_SfxTRaHQA@mail.gmail.com>
-In-Reply-To: <CAMj-D2COh4xDKreZXPHeiJK34mrPqDbHszDWY-fz_SfxTRaHQA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-ccpol: medium
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
+The cgroup-aware oom killer currently considers the set of allowed nodes
+for the allocation that triggers the oom killer and discounts usage from
+disallowed nodes when comparing cgroups.
 
-On 08/03/18 06:18, gengdongjiu wrote:
-> Hi James,
->    sorry for my late response due to chines new year.
+If a cgroup has both the cpuset and memory controllers enabled, it may be
+possible to restrict allocations to a subset of nodes, for example.  Some
+latency sensitive users use cpusets to allocate only local memory, almost
+to the point of oom even though there is an abundance of available free
+memory on other nodes.
 
-Happy new year,
+The same is true for processes that mbind(2) their memory to a set of
+allowed nodes.
 
+This yields very inconsistent results by considering usage from each mem
+cgroup (and perhaps its subtree) for the allocation's set of allowed nodes
+for its mempolicy.  Allocating a single page for a vma that is mbind to a
+now-oom node can cause a cgroup that is restricted to that node by its
+cpuset controller to be oom killed when other cgroups may have much higher
+overall usage.
 
-> 2018-02-16 1:55 GMT+08:00 James Morse <james.morse@arm.com>:
->> On 12/02/18 10:19, gengdongjiu wrote:
->>> On 2018/2/10 1:44, James Morse wrote:
->>>> The point? We can't know what a CPU without the RAS extensions puts in there.
->>>>
->>>> Why Does this matter? When migrating a pending SError we have to know the
->>>> difference between 'use this 64bit value', and 'the CPU will generate it'.
->>>> If I make an SError pending with ESR=0 on a CPU with VSESR, I can't migrated to
->>>> a system that generates an impdef SError-ESR, because I can't know it will be 0.
->>
->>> For the target system, before taking the SError, no one can know whether its syndrome value
->>> is IMPLEMENTATION DEFINED or architecturally defined.
->>
->> For a virtual-SError, the hypervisor knows what it generated. (do I have
->> VSESR_EL2? What did I put in there?).
->>
->>
->>> when the virtual SError is taken, the ESR_ELx.IDS will be updated, then we can know
->>> whether the ESR value is impdef or architecturally defined.
->>
->> True, the guest can't know anything about a pending virtual SError until it
->> takes it. Why is this a problem?
->>
->>
->>> It seems migration is only allowed only when target system and source system all support
->>> RAS extension, because we do not know whether its syndrome is IMPLEMENTATION DEFINED or
->>> architecturally defined.
->>
->> I don't think Qemu allows migration between hosts with differing guest-ID
->> registers. But we shouldn't depend on this, and we may want to hide the v8.2 RAS
->> features from the guest's ID register, but still use them from the host.
->>
->> The way I imagined it working was we would pack the following information into
->> that events struct:
->> {
->>         bool serror_pending;
->>         bool serror_has_esr;
->>         u64  serror_esr;
->> }
-> 
-> I have used your suggestion struct
+The cgroup-aware oom killer is described as killing the largest memory
+consuming cgroup (or subtree) without mentioning the mempolicy of the
+allocation.  For now, discount it.  It would be possible to add an
+additional oom policy for NUMA awareness if it would be generally useful
+later with the extensible interface.
 
-Ah! This is where it came from. Sorry, this was just to illustrate the
-information/sizes we wanted to transfer.... I didn't mean it literally.
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ Based on top of oom policy patch series at
+ https://marc.info/?t=152090280800001 and follow-up patch at
+ https://marc.info/?l=linux-kernel&m=152098687824112
 
-I should have said "64 bits of ESR, so that we can transfer anything that is
-added to VSESR_EL2 in the future, a flag somewhere to indicate an serror is
-pending, and another flag to indicate the ESR has a value we should use".
+ mm/memcontrol.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-
-Thanks/Sorry!
-
-James
-
-
->> The problem I was trying to describe is because there is no value of serror_esr
->> we can use to mean 'Ignore this, I'm a v8.0 CPU'. VSESR_EL2 is a 64bit register,
->> any bits we abuse may get a meaning we want to use in the future.
->>
->> When it comes to migration, v8.{0,1} systems can only GET/SET events where
->> serror_has_esr == false, they can't use the serror_esr. On v8.2 systems we
->> should require serror_has_esr to be true.
-> yes, I agreed.
-> 
->>
->> If we need to support migration from v8.{0,1} to v8.2, we can make up an impdef
->> serror_esr.
-> 
-> For the Qemu migration, I need to check more the QEMU code.
-
-
-> Hi Andrew,
->       I use KVM_GET/SET_VCPU_EVENTS IOCTL to migrate the Serror
-> exception status of VM,
-> The even struct is shown below:
-> 
-> {
->       bool serror_pending;
->       bool serror_has_esr;
->      u64  serror_esr;
-> }
-> 
-> Only when the target machine is armv8.2, it needs to set the
-> serror_esr(SError Exception Syndrome Register).
-> for the armv8.0,  software can not set the serror_esr(SError Exception
-> Syndrome Register).
-> so when migration from v8.{0,1} to v8.2, QEMU should make up an impdef
-> serror_esr for the v8.2 target.
-> can you give me some suggestion how to set that register in the QEMU?
-> I do not familar with the QEMU migration.
-> Thanks very much.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2608,19 +2608,15 @@ static inline bool memcg_has_children(struct mem_cgroup *memcg)
+ 	return ret;
+ }
+ 
+-static long memcg_oom_badness(struct mem_cgroup *memcg,
+-			      const nodemask_t *nodemask)
++static long memcg_oom_badness(struct mem_cgroup *memcg)
+ {
+ 	const bool is_root_memcg = memcg == root_mem_cgroup;
+ 	long points = 0;
+ 	int nid;
+-	pg_data_t *pgdat;
+ 
+ 	for_each_node_state(nid, N_MEMORY) {
+-		if (nodemask && !node_isset(nid, *nodemask))
+-			continue;
++		pg_data_t *pgdat = NODE_DATA(nid);
+ 
+-		pgdat = NODE_DATA(nid);
+ 		if (is_root_memcg) {
+ 			points += node_page_state(pgdat, NR_ACTIVE_ANON) +
+ 				  node_page_state(pgdat, NR_INACTIVE_ANON);
+@@ -2656,8 +2652,7 @@ static long memcg_oom_badness(struct mem_cgroup *memcg,
+  *   >0: memcg is eligible, and the returned value is an estimation
+  *       of the memory footprint
+  */
+-static long oom_evaluate_memcg(struct mem_cgroup *memcg,
+-			       const nodemask_t *nodemask)
++static long oom_evaluate_memcg(struct mem_cgroup *memcg)
+ {
+ 	struct css_task_iter it;
+ 	struct task_struct *task;
+@@ -2691,7 +2686,7 @@ static long oom_evaluate_memcg(struct mem_cgroup *memcg,
+ 	if (eligible <= 0)
+ 		return eligible;
+ 
+-	return memcg_oom_badness(memcg, nodemask);
++	return memcg_oom_badness(memcg);
+ }
+ 
+ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+@@ -2751,7 +2746,7 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+ 		if (memcg_has_children(iter))
+ 			continue;
+ 
+-		score = oom_evaluate_memcg(iter, oc->nodemask);
++		score = oom_evaluate_memcg(iter);
+ 
+ 		/*
+ 		 * Ignore empty and non-eligible memory cgroups.
+@@ -2780,8 +2775,7 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+ 
+ 	if (oc->chosen_memcg != INFLIGHT_VICTIM) {
+ 		if (root == root_mem_cgroup) {
+-			group_score = oom_evaluate_memcg(root_mem_cgroup,
+-							 oc->nodemask);
++			group_score = oom_evaluate_memcg(root_mem_cgroup);
+ 			if (group_score > leaf_score) {
+ 				/*
+ 				 * Discount the sum of all leaf scores to find
