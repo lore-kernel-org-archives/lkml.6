@@ -1,80 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeCOQ4g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:56:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751828AbeCOQ4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:56:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6A020779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELvwPMK4IxDnT0jBPSLJ/Vscm3XHcozFTdam+cBbKyyeVjy49ikeVX471qroxd8qHWauGHwd84cH0Xay3Z9p3JA=
+        id S1752061AbeCOQ6J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:58:09 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:39178 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeCOQ6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:58:07 -0400
+X-Google-Smtp-Source: AG47ELs8Aaj0L7Odz6VlBZVPp0qHHYKQGV5DYL/xfyIiF4bIIREB7zU1s2Ssgla8RPvq4DmhWZsk9UglS/7LII+elMM=
 MIME-Version: 1.0
-In-Reply-To: <20180315160924.GA12744@gmail.com>
-References: <20180204104946.25559-1-tycho@tycho.ws> <20180315160924.GA12744@gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 15 Mar 2018 16:56:12 +0000
-X-Gmail-Original-Message-ID: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
-Message-ID: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
-Subject: Re: [RFC 0/3] seccomp trap to userspace
-To: Christian Brauner <christian.brauner@canonical.com>
-Cc: Tycho Andersen <tycho@tycho.ws>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+In-Reply-To: <0175e460-3424-9838-1064-9f63dab3304f@codeaurora.org>
+References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
+ <1520997629-17361-7-git-send-email-okaya@codeaurora.org> <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
+ <2a4f4dec64b7462ae64152f6c2df9754@codeaurora.org> <CAKgT0UcriMiyV0q6y_x9r3-HJRAWp5_CpsK2jTqh3qvOV=Kkzw@mail.gmail.com>
+ <d565406d-1bc7-6fb0-3f36-87a28ac69070@codeaurora.org> <CAKgT0UeBHGDmr0uXfuPQJKOomiH9uvXRVYpyDwMOzjkxAZMSYg@mail.gmail.com>
+ <53bf7dfe-32ee-1861-e6ea-81f667590a43@codeaurora.org> <CAKgT0UcBQRoSPPZ73bdu1oEBGqBA8_c3ZAjti20=+9UwEqpXbw@mail.gmail.com>
+ <eee8269d-b711-828c-ab84-5933bf86d024@codeaurora.org> <0175e460-3424-9838-1064-9f63dab3304f@codeaurora.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Thu, 15 Mar 2018 09:58:05 -0700
+Message-ID: <CAKgT0UfqueJNq3cL3P=uWZ3xsJ1PXTMHSKTMgZO9uKmTUUCGPg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] ixgbevf: eliminate duplicate barriers on
+ weakly-ordered archs
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Timur Tabi <timur@codeaurora.org>, Netdev <netdev@vger.kernel.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 4:09 PM, Christian Brauner
-<christian.brauner@canonical.com> wrote:
-> On Sun, Feb 04, 2018 at 11:49:43AM +0100, Tycho Andersen wrote:
->> Several months ago at Linux Plumber's, we had a discussion about adding a
->> feature to seccomp which would allow seccomp to trigger a notification for some
->> other process. Here's a draft of that feature.
+On Thu, Mar 15, 2018 at 9:27 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
+> On 3/15/2018 12:21 PM, Sinan Kaya wrote:
+>> On 3/15/2018 10:32 AM, Alexander Duyck wrote:
+>>> We tend to do something like:
+>>>   update tx_buffer_info
+>>>   update tx_desc
+>>>   wmb()
+>>>   point first tx_buffer_info next_to_watch value at last tx_desc
+>>>   update next_to_use
+>>>   notify device via writel
+>>>
+>>> We do it this way because we have to synchronize between the Tx
+>>> cleanup path and the hardware so we basically lump the two barriers
+>>> together. instead of invoking both a smp_wmb and a wmb. Now that I
+>>> look at the pseudocode though I wonder if we shouldn't move the
+>>> next_to_use update before the wmb, but that might be material for
+>>> another patch. Anyway, in the Tx cleanup path we should have an
+>>> smp_rmb() after we read the next_to_watch values so that we avoid
+>>> reading any of the other fields in the buffer_info if either the field
+>>> is NULL or the descriptor pointed to has not been written back.
 >>
->> Patch 1 contains the bulk of it, patches 2 & 3 offer an alternative way to
->> acquire the fd that receives notifications via ptrace (the method in patch 1
->> poses some problems). Other suggestions for how to acquire one of these fds
->> would be welcome.
+>> How do you feel about keeping wmb() very close to writel_relaxed() like this?
 >>
->> Take a close look at the synchronization. I think I've got it right, but I
->> probably don't :)
+>>    update tx_buffer_info
+>>    update tx_desc
+>>    point first tx_buffer_info next_to_watch value at last tx_desc
+>>    update next_to_use
+>>    wmb()
+>>    notify device via writel_relaxed()
 >>
->> Thanks!
+>> I'm afraid that if the order of wmb() and writel() is not very
+>> obvious or hidden in multiple functions, somebody can introduce a very nasty
+>> bug in the future.
 >>
->> Tycho Andersen (3):
->>   seccomp: add a return code to trap to userspace
->>   seccomp: hoist out filter resolving logic
->>   seccomp: add a way to get a listener fd from ptrace
+>> We also have to think about code maintenance.
 >>
->>  arch/Kconfig                                  |   7 +
->>  include/linux/seccomp.h                       |  14 +-
->>  include/uapi/linux/ptrace.h                   |   1 +
->>  include/uapi/linux/seccomp.h                  |  18 +-
->>  kernel/ptrace.c                               |   4 +
->>  kernel/seccomp.c                              | 467 ++++++++++++++++++++++++--
->>  tools/testing/selftests/seccomp/seccomp_bpf.c | 180 +++++++++-
->>  7 files changed, 653 insertions(+), 38 deletions(-)
 >
-> Hey,
+> Now that I read your email again, I think this is the reason if I understood you
+> correctly.
 >
-> So, I've been following the discussion silently in the background and I
-> see that it got sidetracked into seccomp + ebpf. While I can see that
-> there is value in adding epbf support to seccomp I'd really like to see
-> this decoupled from this patchset. Afaict, this patchset would just work
-> fine without the ebpf portion (but I might be just have missed the
-> point). So if possible I would like to see a second version of this with
-> the comments accounted for and - if possible - have this up for merging
-> independent of the ebpf patchset that's floating around.
+> "instead of invoking both a smp_wmb and a wmb"
 >
+> You'd need something like
+>
+>     update tx_buffer_info
+>     update tx_desc
+>     smp_wmb()
+>     point first tx_buffer_info next_to_watch value at last tx_desc
+>     update next_to_use
+>     wmb()
+>     notify device via writel_relaxed()
+>
+> Let me work on your comments.
 
-The issue is that it might be (and, then again, might not be) nicer to
-to *synchronously* call out to the monitor in the filter.  eBPF can do
-that very cleanly, whereas classic BPF can't.
+Yes, we would be doing something like that, but we are using just a
+single wmb() to cover both cases since hardware will never look at the
+tx_buffer_info and software will never read that descriptor ring as
+long as the next_to_watch is NULL. By doing it this way we should have
+both cases covered and not need to worry
+
+The only other bit still remaining is the "maybe_stop_tx" logic which
+lives between the wmb and writel_relaxed. That logic has a smp_mb
+living in it that is triggered if we have to stop the queue. Once
+again though that is only viewed by software so it existing between
+the wmb and the writel_relaxed should not be an issue.
+
+Starting to understand why I was a bit hesitant to have us start
+taking on these changes now? :-)
+
+- Alex
