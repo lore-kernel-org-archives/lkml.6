@@ -1,141 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752725AbeCOPFl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:05:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:1583 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752595AbeCOPFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:05:40 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="39177486"
-Date: Thu, 15 Mar 2018 17:05:24 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Joe Perches <joe@perches.com>, Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Reduce object size of DRM_ERROR and DRM_DEBUG uses
-Message-ID: <20180315150524.GS5453@intel.com>
-References: <016b5cb84cede20fd0f91ed6965421d99fd5f2ce.1520978414.git.joe@perches.com>
- <20180315133026.GR5453@intel.com>
- <1b50f5d8-97a6-2442-34bb-2782c35505fd@linux.intel.com>
+        id S1752771AbeCOPGB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:06:01 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:56130 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752652AbeCOPGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:06:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Message-ID: <eb240da0-9498-4367-8430-600a481f8159@default>
+Date: Thu, 15 Mar 2018 08:05:33 -0700 (PDT)
+From: Liran Alon <liran.alon@oracle.com>
+To: <daniel@iogearbox.net>
+Cc: <netdev@vger.kernel.org>, <shmulik.ladkani@gmail.com>,
+        <mrv@mojatatu.com>, <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <yuval.shaia@oracle.com>,
+        <idan.brown@oracle.com>
+Subject: Re: [PATCH] net: dev_forward_skb(): Scrub packet's per-netns info
+ only when crossing netns
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b50f5d8-97a6-2442-34bb-2782c35505fd@linux.intel.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803150167
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2FF67eX014271
 
-On Thu, Mar 15, 2018 at 03:04:52PM +0100, Maarten Lankhorst wrote:
-> Op 15-03-18 om 14:30 schreef Ville Syrjälä:
-> > On Tue, Mar 13, 2018 at 03:02:15PM -0700, Joe Perches wrote:
-> >> drm_printk is used for both DRM_ERROR and DRM_DEBUG with unnecessary
-> >> arguments that can be removed by creating separate functins.
-> >>
-> >> Create specific functions for these calls to reduce x86/64 defconfig
-> >> size by ~20k.
-> >>
-> >> Modify the existing macros to use the specific calls.
-> >>
-> >> new:
-> >> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> >> 1876562	  44542	    995	1922099	 1d5433	(TOTALS)
-> >>
-> >> old:
-> >> $ size -t drivers/gpu/drm/built-in.a | tail -1
-> >> 1897565	  44542	    995	1943102	 1da63e	(TOTALS)
-> >>
-> >> Miscellanea:
-> >>
-> >> o intel_display requires a change to use the specific calls.
-> > How much would we lose if we move the (drm_debug&FOO) outside the
-> > functions again? I'm somewhat concerned about all the function call
-> > overhead when debugs aren't even enabled.
-> 
-> Upstream:
->    text    data     bss     dec     hex filename
->  377143    5689    4352  387184   5e870 drivers/gpu/drm/drm.ko
-> 
-> With this patch:
->  373831    5689    4352  383872   5db80 drivers/gpu/drm/drm.ko
-> 
-> Moving the if outside (below):
->  377629    5689    4352  387670   5ea56 drivers/gpu/drm/drm.ko
-> 
-> Bye savings..
-> 
-> I don't think there are any places in which the debug output is performance sensitive,
-> so I'm ok with not inlining.
 
-Not performance sensitive as such perhaps. But pointlessly wasting cpu
-cycles for nop function calls isn't particularly great. Would be nice
-to actually measure how much overhead there is on some weaker systems.
-IIRC older Atoms were particularly bad at this stuff.
+----- daniel@iogearbox.net wrote:
 
-> ---
-> diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> index 79abf6d5b4db..928822403a59 100644
-> --- a/drivers/gpu/drm/drm_print.c
-> +++ b/drivers/gpu/drm/drm_print.c
-> @@ -89,14 +89,11 @@ void drm_dev_printk(const struct device *dev, const char *level,
->  }
->  EXPORT_SYMBOL(drm_dev_printk);
->  
-> -void drm_dbg(unsigned int category, const char *format, ...)
-> +void __drm_dbg(const char *format, ...)
->  {
->  	struct va_format vaf;
->  	va_list args;
->  
-> -	if (!(drm_debug & category))
-> -		return;
-> -
->  	va_start(args, format);
->  	vaf.fmt = format;
->  	vaf.va = &args;
-> @@ -106,7 +103,7 @@ void drm_dbg(unsigned int category, const char *format, ...)
->  
->  	va_end(args);
->  }
-> -EXPORT_SYMBOL(drm_dbg);
-> +EXPORT_SYMBOL(__drm_dbg);
->  
->  void drm_err(const char *format, ...)
->  {
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index 3a40c5a3a5fa..2a145b97bdfc 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -200,8 +200,17 @@ __printf(6, 7)
->  void drm_dev_printk(const struct device *dev, const char *level,
->  		    unsigned int category, const char *function_name,
->  		    const char *prefix, const char *format, ...);
-> -__printf(2, 3)
-> -void drm_dbg(unsigned int category, const char *format, ...);
-> +
-> +__printf(1, 2)
-> +void __drm_dbg(const char *format, ...);
-> +
-> +
-> +#define drm_dbg(category, format, ...) \
-> +	do {	\
-> +		if (drm_debug & category)	\
-> +			__drm_dbg(format, ## __VA_ARGS__);	\
-> +	} while (0)
-> +
->  __printf(1, 2)
->  void drm_err(const char *format, ...);
->  
+> On 03/15/2018 03:35 PM, Roman Mashak wrote:
+> > Liran Alon <liran.alon@oracle.com> writes:
+> > [...]
+> >>> Overall I think it might be nice to not need scrubbing skb in
+> such
+> >>> cases,
+> >>> although my concern would be that this has potential to break
+> >>> existing
+> >>> setups when they would expect mark being zero on other veth peer
+> in
+> >>> any
+> >>> case since it's the behavior for a long time already. The safer
+> >>> option
+> >>> would be to have some sort of explicit opt-in e.g. on link
+> creation to
+> >>> let
+> >>> the skb->mark pass through unscrubbed. This would definitely be a
+> >>> useful
+> >>> option e.g. when mark is set in the netns facing veth via
+> >>> clsact/egress
+> >>> on xmit and when the container is unprivileged anyway.
+> >>>
+> >>> Thanks,
+> >>> Daniel
+> >>
+> >> I see your point in regards to backwards comparability.
+> >> However, not scrubbing skb when it cross netns via some kernel
+> functions compared to
+> >> others is basically a bug which could easily break with a little
+> bit of more refactoring.
+> >> Therefore, it seems a bit weird to me to from now on, we will
+> force
+> >> every user on link creation to consider that once there was a bug
+> leading
+> >> to this weird behavior on specific netdevs.
+> 
+> Why bug specifically? It could well be that for some unpriv
+> containers
+> it would be fine to do e.g. in cases where orchestrator sets up
+> clsact/
+> egress on veth/ipvlan/etc in the container to set the mark and where
+> app
+> cannot mess with this while for others you need to act out of host
+> facing
+> veth; thus, explicit opt-in per dev could provide such more fine
+> grained
+> control.
+> 
+> > One valid use case could be preserving a source namespace nsid in
+> > skb->mark when a packet crosses netns.
+> 
+> Right, was thinking about something similar.
 
--- 
-Ville Syrjälä
-Intel OTC
+I agree with all the above but this behavior was not supported both
+before and after this commit. skb->mark is always zeroed when crossing netns.
+This commit only changes behavior for skb crossing netdevs on *same* netns
+via dev_forward_skb().
+
+Therefore, I believe we should discuss here what we want default behavior to be
+and how it should be controlled for backwards comparability.
+Only after we should discuss about adding an extra feature of controlling skb scrub
+per netdev or something similar.
