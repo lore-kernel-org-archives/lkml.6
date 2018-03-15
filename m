@@ -1,214 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752868AbeCOUd4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:33:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43160 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752698AbeCOUdy (ORCPT
+        id S1752891AbeCOUex (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:34:53 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36893 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752587AbeCOUev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:33:54 -0400
-References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com> <20180314202020.3794-4-bauerman@linux.vnet.ibm.com> <20180314214045.GC14289@mail.hallyn.com> <87efkmjjc7.fsf@morokweng.localdomain> <1521141514.3547.637.camel@linux.vnet.ibm.com>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
-In-reply-to: <1521141514.3547.637.camel@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 17:33:42 -0300
+        Thu, 15 Mar 2018 16:34:51 -0400
+X-Google-Smtp-Source: AG47ELtUDzn6IUGW6af1ZqGqaCyCz3REVcGe5OzBh1kyabzEZr0qP3tI8XBeLDC5jvAWdR8Awx8Xxg==
+Date: Thu, 15 Mar 2018 13:34:49 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+cc: Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [patch -mm] mm, memcg: separate oom_group from selection criteria
+In-Reply-To: <alpine.DEB.2.20.1803131720470.247949@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.20.1803151334260.52771@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803131720470.247949@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18031520-0044-0000-0000-000003F448FD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008680; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01003548; UDB=6.00510737; IPR=6.00782873;
- MB=3.00020056; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 20:33:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031520-0045-0000-0000-000008244AD9
-Message-Id: <874llhoz89.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150223
+Content-Type: text/plain; charset=US-ASCII
+X-ccpol: medium
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With the current implementation of the cgroup-aware oom killer,
+memory.oom_group defines two behaviors:
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> On Wed, 2018-03-14 at 21:03 -0300, Thiago Jung Bauermann wrote:
->> Hello Serge,
->> 
->> Thanks for quickly reviewing these patches!
->> 
->> Serge E. Hallyn <serge@hallyn.com> writes:
->> 
->> > Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
->> >> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
->> >> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->> >>  	}
->> >>  
->> >>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
->> >> -	if ((status != INTEGRITY_PASS) &&
->> >> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
->> >> -	    (status != INTEGRITY_UNKNOWN)) {
->> >> -		if ((status == INTEGRITY_NOLABEL)
->> >> -		    || (status == INTEGRITY_NOXATTRS))
->> >> -			cause = "missing-HMAC";
->> >> -		else if (status == INTEGRITY_FAIL)
->> >> -			cause = "invalid-HMAC";
->> >> +	switch (status) {
->> >> +	case INTEGRITY_PASS:
->> >> +	case INTEGRITY_PASS_IMMUTABLE:
->> >> +	case INTEGRITY_UNKNOWN:
->> >
->> > Wouldn't it be more future-proof to replace this with a 'default', or
->> > to at least add a "default: BUG()" to catch new status values?
->> 
->> I agree. I like the "default: BUG()" option.
->
-> Agreed. I would put it at the end after INTEGRITY_FAIL.
+ - consider the footprint of the "group" consisting of the mem cgroup
+   itself and all descendants for comparison with other cgroups, and
 
-Ok, what about the version below?
+ - when selected as the victim mem cgroup, kill all processes attached to
+   it and its descendants that are eligible to be killed.
 
->> 
->> >> +		break;
->> >> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
->> >> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
->> >> +		cause = "missing-HMAC";
->> >> +		goto out;
->> >> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
->> >> +		cause = "invalid-HMAC";
->> >>  		goto out;
->> >>  	}
->> >> +
->> >>  	switch (xattr_value->type) {
->> >>  	case IMA_XATTR_DIGEST_NG:
->> >>  		/* first byte contains algorithm id */
->> >> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
->> >>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->> >>  				    op, cause, rc, 0);
->> >>  	} else if (status != INTEGRITY_PASS) {
->> >> +		/* Fix mode, but don't replace file signatures. */
->> >>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
->> >>  		    (!xattr_value ||
->> >>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
->> >>  			if (!ima_fix_xattr(dentry, iint))
->> >>  				status = INTEGRITY_PASS;
->> >> -		} else if ((inode->i_size == 0) &&
->> >> -			   (iint->flags & IMA_NEW_FILE) &&
->> >> -			   (xattr_value &&
->> >> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
->> >> +		}
->> >> +
->> >> +		/* Permit new files with file signatures, but without data. */
->> >> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
->> >
->> > This may be correct, but it's not identical to what you're replacing.
->> > Since in either case you're setting status to INTEGRITY_PASS the final
->> > result is the same, but with a few extra possible steps.  Not sure
->> > whether that matters.
->> 
->> Good point. I'll have to defer this one to Mimi though.
->
-> The end result is the same, but add some needed comments.
+Now that the memory.oom_policy of "tree" considers the memory footprint of
+the mem cgroup and all its descendants, separate the memory.oom_group
+setting from the selection criteria.
 
-The patch is unchanged here, then.
+Now, memory.oom_group only controls whether all processes attached to the
+victim mem cgroup and its descendants are oom killed (when set to "1") or
+the single largest memory consuming process attached to the victim mem
+cgroup and its descendants is killed.
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+This is generally regarded as a property of the workload attached to the
+subtree: it depends on whether the workload can continue running and be
+useful if a single process is oom killed or whether it's better to kill
+all attached processes.
 
-
->From 343bf4ed2974421e254fb4d5cd79aed79c66f016 Mon Sep 17 00:00:00 2001
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Mon, 21 Aug 2017 19:28:51 -0300
-Subject: [PATCH] ima: Improvements in ima_appraise_measurement()
-
-Replace nested ifs in the EVM xattr verification logic with a switch
-statement, making the code easier to understand.
-
-Also, add comments to the if statements in the out section and constify the
-cause variable.
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Signed-off-by: David Rientjes <rientjes@google.com>
 ---
- security/integrity/ima/ima_appraise.c | 35 ++++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+ Based on top of oom policy patch series at
+ https://marc.info/?t=152090280800001 and follow-up patch at
+ https://marc.info/?l=linux-kernel&m=152098687824112
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 0c5f94b7b9c3..8bd7a0733e51 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -215,7 +215,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     int xattr_len, int opened)
- {
- 	static const char op[] = "appraise_data";
--	char *cause = "unknown";
-+	const char *cause = "unknown";
- 	struct dentry *dentry = file_dentry(file);
- 	struct inode *inode = d_backing_inode(dentry);
- 	enum integrity_status status = INTEGRITY_UNKNOWN;
-@@ -241,16 +241,22 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	}
+ Documentation/cgroup-v2.txt | 21 ++++-----------------
+ mm/memcontrol.c             |  8 ++++----
+ 2 files changed, 8 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1045,25 +1045,12 @@ PAGE_SIZE multiple when read back.
+ 	A read-write single value file which exists on non-root
+ 	cgroups.  The default is "0".
  
- 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
--	if ((status != INTEGRITY_PASS) &&
--	    (status != INTEGRITY_PASS_IMMUTABLE) &&
--	    (status != INTEGRITY_UNKNOWN)) {
--		if ((status == INTEGRITY_NOLABEL)
--		    || (status == INTEGRITY_NOXATTRS))
--			cause = "missing-HMAC";
--		else if (status == INTEGRITY_FAIL)
--			cause = "invalid-HMAC";
-+	switch (status) {
-+	case INTEGRITY_PASS:
-+	case INTEGRITY_PASS_IMMUTABLE:
-+	case INTEGRITY_UNKNOWN:
-+		break;
-+	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
-+	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
-+		cause = "missing-HMAC";
-+		goto out;
-+	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
-+		cause = "invalid-HMAC";
- 		goto out;
-+	default:
-+		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
- 	}
-+
- 	switch (xattr_value->type) {
- 	case IMA_XATTR_DIGEST_NG:
- 		/* first byte contains algorithm id */
-@@ -316,17 +322,20 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
- 				    op, cause, rc, 0);
- 	} else if (status != INTEGRITY_PASS) {
-+		/* Fix mode, but don't replace file signatures. */
- 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
- 		    (!xattr_value ||
- 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
- 			if (!ima_fix_xattr(dentry, iint))
- 				status = INTEGRITY_PASS;
--		} else if ((inode->i_size == 0) &&
--			   (iint->flags & IMA_NEW_FILE) &&
--			   (xattr_value &&
--			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
-+		}
-+
-+		/* Permit new files with file signatures, but without data. */
-+		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
-+		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
- 			status = INTEGRITY_PASS;
- 		}
-+
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
- 				    op, cause, rc, 0);
- 	} else {
+-	If set, OOM killer will consider the memory cgroup as an
+-	indivisible memory consumers and compare it with other memory
+-	consumers by it's memory footprint.
+-	If such memory cgroup is selected as an OOM victim, all
+-	processes belonging to it or it's descendants will be killed.
++	If such memory cgroup is selected as an OOM victim, all processes
++	attached to it and its descendants that are eligible for oom kill
++	(their /proc/pid/oom_score_adj is not oom disabled) will be killed.
+ 
+ 	This applies to system-wide OOM conditions and reaching
+ 	the hard memory limit of the cgroup and their ancestor.
+-	If OOM condition happens in a descendant cgroup with it's own
+-	memory limit, the memory cgroup can't be considered
+-	as an OOM victim, and OOM killer will not kill all belonging
+-	tasks.
+-
+-	Also, OOM killer respects the /proc/pid/oom_score_adj value -1000,
+-	and will never kill the unkillable task, even if memory.oom_group
+-	is set.
+-
+-	If cgroup-aware OOM killer is not enabled, ENOTSUPP error
+-	is returned on attempt to access the file.
+ 
+   memory.oom_policy
+ 
+@@ -1325,7 +1312,7 @@ When selecting a cgroup as a victim, the OOM killer will kill the process
+ with the largest memory footprint.  A user can control this behavior by
+ enabling the per-cgroup memory.oom_group option.  If set, it causes the
+ OOM killer to kill all processes attached to the cgroup, except processes
+-with /proc/pid/oom_score_adj set to -1000 (oom disabled).
++with /proc/pid/oom_score_adj set to OOM_SCORE_ADJ_MIN.
+ 
+ The root cgroup is treated as a leaf memory cgroup as well, so it is
+ compared with other leaf memory cgroups.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2732,11 +2732,11 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+ 			continue;
+ 
+ 		/*
+-		 * We don't consider non-leaf non-oom_group memory cgroups
+-		 * without the oom policy of "tree" as OOM victims.
++		 * We don't consider non-leaf memory cgroups without the oom
++		 * policy of "tree" as OOM victims.
+ 		 */
+-		if (memcg_has_children(iter) && !mem_cgroup_oom_group(iter) &&
+-		    iter->oom_policy != MEMCG_OOM_POLICY_TREE)
++		if (iter->oom_policy != MEMCG_OOM_POLICY_TREE &&
++				memcg_has_children(iter))
+ 			continue;
+ 
+ 		/*
