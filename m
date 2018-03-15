@@ -1,53 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeCOQsE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:48:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9723 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751302AbeCOQsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:48:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="37713454"
-Message-ID: <62dcb95fa349f0b195afd3c28c9fa9aeac60fe98.camel@linux.intel.com>
-Subject: Re: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        id S1752494AbeCOQtc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:49:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36449 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751959AbeCOQta (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:49:30 -0400
+X-Google-Smtp-Source: AG47ELv5zYGkVnq9IuACLTFXanfb0phXicHKUbD09U0zSri+dqUcJy1D1IaKGukcsmLAI5FYgyjvug==
+Date: Thu, 15 Mar 2018 17:49:27 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 18:47:58 +0200
-In-Reply-To: <20180310082428.31519-8-tomas.winkler@intel.com>
-References: <20180310082428.31519-1-tomas.winkler@intel.com>
-         <20180310082428.31519-8-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.27.90-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] PCI: tegra: mark PM functions as __maybe_unused
+Message-ID: <20180315164927.GA31871@ulmo>
+References: <20180315161901.772729-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
+Content-Disposition: inline
+In-Reply-To: <20180315161901.772729-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
-> Add tpm2_pcr_extend function to tpm2-cmd.c with signature required
-> by tpm-interface.c. It wraps the original open code
-> implementation. The original original tpm2_pcr_extend function
-> is renamed and made static, called only from new tpm2_pcr_extend.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-This might concern some of the earlier patches too but please use exact
-names for functions in the short and long summary i.e.
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  tpm: migrate all of the PCR extension code to tpm2_pcr_extend()
+On Thu, Mar 15, 2018 at 05:18:39PM +0100, Arnd Bergmann wrote:
+> The new PM support causes a warning when CONFIG_PM is disabled:
+>=20
+> drivers/pci/host/pci-tegra.c:2482:12: error: 'tegra_pcie_pm_resume' defin=
+ed but not used [-Werror=3Dunused-function]
+>  static int tegra_pcie_pm_resume(struct device *dev)
+> drivers/pci/host/pci-tegra.c:2463:12: error: 'tegra_pcie_pm_suspend' defi=
+ned but not used [-Werror=3Dunused-function]
+>  static int tegra_pcie_pm_suspend(struct device *dev)
+>=20
+> Marking the functions as __maybe_unused lets the compiler drop them
+> silently instead.
+>=20
+> Fixes: b90b44154023 ("PCI: tegra: Add power management support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/pci/host/pci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Check this also for your long descriptions and previous that I gave
-reviewed-by (I think they were otherwise fine). And you refer to a
-function in text use parentheses after the name. I don't like
-hastily written commit messages.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-/Jarkko
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqqpBcACgkQ3SOs138+
+s6GZZxAAgfh++fLMiINh7+QqGgjQs3u1OPUCZvgOAB2ovdTlu4I4mB13sH2XqtyS
+dLeiEyGpGc23vtJLfOgD7JrwEb5PZyQ1Boxz5L+58yVIgks/gOwvZ+ghxefc5J8M
+m+rl8VjPb54DYWgAUrxTXC4cPS60ATGuEJAeX3YXpQfVc89lWy7alt8PjUGOdmH1
+qd8p/tn3KF+SpnvTgO7DlcEpwFT0FgiMMORxtCrmJUg6IoAGI3pmndSYvkggzgud
+wodK+XKk1Tyg3BBbg+qKzMmi3W1cs80F3AJdPMngz4o3OTcUSOY8WI2tUZDiQkqy
+B1H23XNadB7pnBr5ijkmF1scM+dPiP6PwxYlhXmxhcU+oLZzh4UqbWymidAS/GhL
+XA6Tc4uHq+K012B6/18AQdYmj9N6mAz5ZiH2Z6QE/1pE9SyjMDVwvfoqtBPpcULU
+X5E/G60zNcflKTPskSkjHQA689b1SqqWaWW9iF8Wlx6PyTmsWEPXZsksOsTMYKO5
+6PbGuHxj5DwveBgr9txz1lQAIC/SfrD3Py6hOu5k1IZxK4UPo+JSiJeytY6exkyR
+Zaevz/ZyZHKu9zFKQkf/wB+mU1qEWCcVRwHYIJh9Ar5zr69qeO/W+WQk7lzepD+U
+RkztyJRpWM4Bxx0b+zVKlc6KiT/6eOR6sR7IxvaHD3StfRQUT88=
+=7CmL
+-----END PGP SIGNATURE-----
+
+--DocE+STaALJfprDB--
