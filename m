@@ -1,70 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751860AbeCOL7A (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:59:00 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46990 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeCOL66 (ORCPT
+        id S1751508AbeCOMBO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:01:14 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:39334 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOMBM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:58:58 -0400
-Date: Thu, 15 Mar 2018 14:57:53 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Borislav Petkov <bp@suse.de>, Brijesh Singh <brijesh.singh@amd.com>,
-        Josh Sklar <sklar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Use common error handling code in
- setup_new_fdt()
-Message-ID: <20180315115753.rjejlkrp3fhdxbyk@mwanda>
-References: <0dd9d938-8d89-f0e0-f05f-9a3e5dc42a57@users.sourceforge.net>
- <87fu52jqtc.fsf@morokweng.localdomain>
+        Thu, 15 Mar 2018 08:01:12 -0400
+X-Google-Smtp-Source: AG47ELs546YzHgQ/TKhs6oESpqaTuGIoVZrDq3nvttDUO5TJYrVyoQp1VEXwihulX6+8KZiVoJsQxg==
+Subject: Re: [PATCH 2/2] IB/core: Set width to 1X for invalid active widths
+ when port is down
+To: Honggang LI <honli@redhat.com>, dledford@redhat.com, jgg@ziepe.ca,
+        linux-rdma@vger.kernel.org
+Cc: noaos@mellanox.com, linux-kernel@vger.kernel.org
+References: <20180315090214.21706-1-honli@redhat.com>
+ <20180315090214.21706-3-honli@redhat.com>
+From: Hal Rosenstock <hal@dev.mellanox.co.il>
+Message-ID: <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
+Date: Thu, 15 Mar 2018 08:01:08 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87fu52jqtc.fsf@morokweng.localdomain>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=743
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150134
+In-Reply-To: <20180315090214.21706-3-honli@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 06:22:07PM -0300, Thiago Jung Bauermann wrote:
+On 3/15/2018 5:02 AM, Honggang LI wrote:
+> From: Honggang Li <honli@redhat.com>
 > 
-> SF Markus Elfring <elfring@users.sourceforge.net> writes:
+> commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
+> active_speed in RoCE"). Before this patch applied, the mlx5_ib
+> driver set default active_width and active_speed to IB_WIDTH_4X
+> and IB_SPEED_QDR.
 > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 11 Mar 2018 09:03:42 +0100
-> >
-> > Add a jump target so that a bit of exception handling can be better reused
-> > at the end of this function.
-> >
-> > This issue was detected by using the Coccinelle software.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  arch/powerpc/kernel/machine_kexec_file_64.c | 28 ++++++++++++----------------
-> >  1 file changed, 12 insertions(+), 16 deletions(-)
+> When the RoCE port is down, the RoCE port did not negotiate the
+> active width with remote side. The active width is zero. If run
+> ibstat to require the port status, ibstat will panic as it read
+> invalid width from sys file.
 > 
-> I liked it. Thanks!
+> Signed-off-by: Honggang Li <honli@redhat.com>
+> ---
+>  drivers/infiniband/core/sysfs.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 > 
-> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> 
+> diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
+> index cf36ff1f0068..722e4571f4d2 100644
+> --- a/drivers/infiniband/core/sysfs.c
+> +++ b/drivers/infiniband/core/sysfs.c
+> @@ -240,6 +240,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
+>  	struct ib_port_attr attr;
+>  	char *speed = "";
+>  	int rate;		/* in deci-Gb/sec */
+> +	int width;
+>  	ssize_t ret;
+>  
+>  	ret = ib_query_port(p->ibdev, p->port_num, &attr);
+> @@ -278,13 +279,19 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
+>  		break;
+>  	}
+>  
+> -	rate *= ib_width_enum_to_int(attr.active_width);
+> -	if (rate < 0)
+> -		return -EINVAL;
+> +	width = ib_width_enum_to_int(attr.active_width);
+> +	if (width < 0) {
+> +		if (attr.state != IB_PORT_ACTIVE)
 
-You know that compilers already re-use string constants so this doesn't
-actually save memory?  Also we should be preserving the error codes
-instead of always returning -EINVAL.
+Link width is valid in any PortState other than Down so I think that
+this check should be:
+		if (attr.state != IB_PORT_DOWN)
 
-regards,
-dan carpenter
+However, I don't think overriding width should be needed for this case
+and just returning -EINVAL should be fine regardless of port state.
+AFAIK it's the driver responsibility to populate acceptable defaults for
+such parameters. What driver(s) have this issue ? Shouldn't it be fixed
+there rather than here ?
+
+-- Hal
+
+> +			width = 1; /* default to 1X for invalid widths */
+> +		else
+> +			return -EINVAL;
+> +	}
+> +
+> +	rate *= width;
+>  
+>  	return sprintf(buf, "%d%s Gb/sec (%dX%s)\n",
+>  		       rate / 10, rate % 10 ? ".5" : "",
+> -		       ib_width_enum_to_int(attr.active_width), speed);
+> +		       width, speed);
+>  }
+>  
+>  static ssize_t phys_state_show(struct ib_port *p, struct port_attribute *unused,
+> 
