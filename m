@@ -1,102 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeCOKoi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:44:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:36790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751541AbeCOKog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:44:36 -0400
-Subject: Re: [PATCH v9 4/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
- <20180313085534.11650-5-vivek.gautam@codeaurora.org>
- <8b427ea2-5c13-4712-13d1-e4c1aed0779e@arm.com>
- <CAAFQd5AqERQMLsJNLAsVXox79kZ+ZtpCUuMSutn70FGK-3Q7vw@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2cab6e92-c44c-edeb-bf50-946cec5cccac@arm.com>
-Date: Thu, 15 Mar 2018 10:44:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751999AbeCOKpQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:45:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54233 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeCOKpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 06:45:14 -0400
+X-Google-Smtp-Source: AG47ELtODgBC1ZZG/+LIs6nL7kdRqe5IG96K8zn210xi2owb9CQrQ1u4kuXkR0LWAyEC8YxqmFyWAA==
+Date: Thu, 15 Mar 2018 11:45:11 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Dedicate overlay plane to cursor
+ on older Tegra's
+Message-ID: <20180315104511.GC15393@ulmo>
+References: <8d9c7220b1d2cf126bd2030e5d232ec06f761440.1521075485.git.digetx@gmail.com>
+ <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5AqERQMLsJNLAsVXox79kZ+ZtpCUuMSutn70FGK-3Q7vw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hYooF8G/hrfVAmum"
+Content-Disposition: inline
+In-Reply-To: <f48200af36c3358d549fc451fbc754c2a37b0d47.1521075485.git.digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/18 06:18, Tomasz Figa wrote:
-> On Thu, Mar 15, 2018 at 2:50 AM, Robin Murphy <robin.murphy@arm.com> wrote:
->> On 13/03/18 08:55, Vivek Gautam wrote:
->>>
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> Finally add the device link between the master device and
->>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>> master needs it. This is done from add_device callback which gets
->>> called once when the master is added to the smmu.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>> ---
->>>    drivers/iommu/arm-smmu.c | 29 +++++++++++++++++++++++++++++
->>>    1 file changed, 29 insertions(+)
->>>
->>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>> index 56a04ae80bf3..64953ff2281f 100644
->>> --- a/drivers/iommu/arm-smmu.c
->>> +++ b/drivers/iommu/arm-smmu.c
->>> @@ -1460,10 +1460,31 @@ static int arm_smmu_add_device(struct device *dev)
->>>          iommu_device_link(&smmu->iommu, dev);
->>>    +     if (pm_runtime_enabled(smmu->dev)) {
->>> +               struct device_link *link;
->>> +
->>> +               /*
->>> +                * Establish the link between smmu and master, so that the
->>> +                * smmu gets runtime enabled/disabled as per the master's
->>> +                * needs.
->>> +                */
->>> +               link = device_link_add(dev, smmu->dev,
->>> DL_FLAG_PM_RUNTIME);
->>> +               if (!link) {
->>
->>
->> FWIW, given that we don't really care about link itself, I'd be quite happy
->> to simplify that lot down to:
->>
->>          if (pm_runtime_enabled(smmu_dev) &&
->>              !device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME)) {
->>
->>> +                       dev_warn(smmu->dev,
->>> +                                "Unable to add link to the consumer
->>> %s\n",
->>> +                                dev_name(dev));
->>
->>
->> (side note: since device_link_add() already prints a message on success,
->> maybe it could print its own failure message too?)
-> 
-> I think we care whether adding the link succeeded. If it fails to be
-> added, we might end up with a complete system lockup on a system with
-> power domains.
 
-Well, yeah, that was implicit - the point is that we *only* care about 
-whether it succeeded or not. Thus we may as well just check for NULL 
-directly instead of assigning the value as if we were actually going to 
-do anything with it.
+--hYooF8G/hrfVAmum
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Robin.
+On Thu, Mar 15, 2018 at 04:00:25AM +0300, Dmitry Osipenko wrote:
+> Older Tegra's do not support RGBA format for the cursor, but instead
+> overlay plane could be used for it. Since there is no much use for the
+> overlays on a regular desktop and HW-accelerated cursor is much better
+> than a SW cursor, let's dedicate one overlay plane to the mouse cursor.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dc.c | 28 +++++++++++++++++++++++-----
+>  1 file changed, 23 insertions(+), 5 deletions(-)
+
+Applied. I'm not entirely happy that we need to sacrifice one of the
+overlay windows for this, but you're right, it's probably okay given
+how little planes are used on a regular desktop.
+
+We could always provide a module parameter to switch this on and off
+if that's ever something we want.
+
+Applied, thanks.
+
+Thierry
+
+--hYooF8G/hrfVAmum
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqqTrUACgkQ3SOs138+
+s6FEEhAAgJOMBgV21IHagDteeJ/4/5iPivGgzdNaSD61iA5UCp07Ke/c4EiT1dmp
+PGRFAfl6yvKkd0gPDIhBQSB7I9oJsCAsLsxxvJE5roqdoJj/i/ZgggjVAkNae10l
+gcV4xmYCdwOgxKHbILO09Kw1+M0bL+oSXdCX2zCwAsfTUcRj28rQ/OLcAeP7iza3
+JE2NePsmQ81kAlTsWcAgSJvEawhZ9l2w2J7fpP3rSlQT0ksdVWFAPfvZu6LkOBmF
+KqH/PmiXqBZsIIPEYxXlB0KNNUfQ//0CeiBX+yrfnrCQC9tXNgf5ruAilzbXK7Rj
+eFmLzc1vZNXzfNsCcvCL9/QIus4RSZJCBFMg294PEBiv04y2aMOsjbuvFUVvkXvb
+2FGwjfYz69zEU6WYyx4ilt/1QzUnWGXKYSD9FmZ0aFtzzHk4QGuZd6ki0QDtLkFn
+gllvffrnH4lcvRpyTjPjEP6+clnb70pE89LVwxtBKPmIIVEmS732Wl9ZDBtSDAQc
+uicPBTBz1f1Z4ADuJ+ytK+yihaDWsAft9edGyDSmRULxZhi9RqRBjN14Y/t9bJwv
+ZCdRVMln+jwCPB+0RaqtdslXZ/iJvWX+raGzxfDt224nFjqoXepk1mjxuPn2jqCT
+mL64AI6arUnUDMfTe5GHB0ftOTehSDzPGgQSIYYKduIxFvf1QfY=
+=Tl4S
+-----END PGP SIGNATURE-----
+
+--hYooF8G/hrfVAmum--
