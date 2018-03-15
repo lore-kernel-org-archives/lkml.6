@@ -1,90 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752835AbeCOPqZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:46:25 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48004 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932427AbeCOPqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:46:22 -0400
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/9] x86/dumpstack: Add a show_ip() function
-Date: Thu, 15 Mar 2018 16:44:46 +0100
-Message-Id: <20180315154448.16222-8-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
-References: <20180315154448.16222-1-bp@alien8.de>
+        id S932623AbeCOPqg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:36 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38697 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932427AbeCOPqe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:34 -0400
+X-Google-Smtp-Source: AG47ELv0Du2jsHmNtqh4pHboLXJSNsWp2xR7iXoqfv8nnzaxn9dt1mFFLTrWz+MCFUWT4aPx0G303oANbdmCHgxjNIw=
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1803150943130.1525@nanos.tec.linutronix.de>
+References: <CAK8P3a1PGEk2WDQU8i7H64Cw4dmYaJ-6vPLzW_2o23PTgm74JA@mail.gmail.com>
+ <20180314220452.3453973-1-arnd@arndb.de> <alpine.DEB.2.21.1803150943130.1525@nanos.tec.linutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 16:46:32 +0100
+X-Google-Sender-Auth: L9OPwTgs19C6tdYvfiXfTrriZ8c
+Message-ID: <CAK8P3a3hXBZqubqehcTzn037aa-KVAeg82gY630oN3Btnkvdcw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] y2038: introduce struct __kernel_old_timeval
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>, Stephen Boyd <sboyd@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Thu, Mar 15, 2018 at 9:44 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, 14 Mar 2018, Arnd Bergmann wrote:
+>>
+>>  /*
+>> + * legacy timeval structure, only embedded in structures that
+>> + * traditionally used 'timeval' to pass time intervals (not absolute
+>> + * times). Do not add new users. If user space fails to compile
+>> + * here, this is probably because it is not y2038 safe and needs to
+>> + * be changed to use another interface.
+>> + */
+>> +struct __kernel_old_timeval {
+>> +     __kernel_long_t tv_sec;                 /* seconds */
+>> +     __kernel_long_t tv_usec;                /* microseconds */
+>
+> Please don't use these horrible tail comments. If you want to document the
+> obvious, then please use proper kernel doc.
 
-Which shows the Istruction Pointer along with the insn bytes around it.
-Use it whenever we print rIP.
+I just removed them now, the only reason they were there is to keep
+the style in sync with the rest of the file, but it's also just a lot of
+duplication.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/asm/stacktrace.h |  1 +
- arch/x86/kernel/dumpstack.c       | 13 ++++++++++++-
- arch/x86/kernel/process_32.c      |  4 +---
- 3 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/stacktrace.h
-index 0630eeb18bbc..b6dc698f992a 100644
---- a/arch/x86/include/asm/stacktrace.h
-+++ b/arch/x86/include/asm/stacktrace.h
-@@ -112,4 +112,5 @@ static inline unsigned long caller_frame_pointer(void)
- }
- 
- void show_opcodes(u8 *rip, const char *loglvl);
-+void show_ip(struct pt_regs *regs, const char *loglvl);
- #endif /* _ASM_X86_STACKTRACE_H */
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 82562f327a99..8cf2e2289d50 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -93,9 +93,20 @@ void show_opcodes(u8 *rip, const char *loglvl)
- 	pr_cont("\n");
- }
- 
-+void show_ip(struct pt_regs *regs, const char *loglvl)
-+{
-+#ifdef CONFIG_X86_32
-+	printk("%sEIP: %pS\n", loglvl, (void *)regs->ip);
-+#else
-+	printk("%sRIP: %04x:%pS\n", loglvl, (int)regs->cs, (void *)regs->ip);
-+#endif
-+
-+	show_opcodes((u8 *)regs->ip, loglvl);
-+}
-+
- void show_iret_regs(struct pt_regs *regs)
- {
--	printk(KERN_DEFAULT "RIP: %04x:%pS\n", (int)regs->cs, (void *)regs->ip);
-+	show_ip(regs, KERN_DEFAULT);
- 	printk(KERN_DEFAULT "RSP: %04x:%016lx EFLAGS: %08lx", (int)regs->ss,
- 		regs->sp, regs->flags);
- }
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5224c6099184..3d1f1226b972 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -76,9 +76,7 @@ void __show_regs(struct pt_regs *regs, int all)
- 		savesegment(gs, gs);
- 	}
- 
--	printk(KERN_DEFAULT "EIP: %pS\n", (void *)regs->ip);
--	printk(KERN_DEFAULT "EFLAGS: %08lx CPU: %d\n", regs->flags,
--		raw_smp_processor_id());
-+	show_ip(regs, KERN_DEFAULT);
- 
- 	printk(KERN_DEFAULT "EAX: %08lx EBX: %08lx ECX: %08lx EDX: %08lx\n",
- 		regs->ax, regs->bx, regs->cx, regs->dx);
--- 
-2.13.0
+      Arnd
