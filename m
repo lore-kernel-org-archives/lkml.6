@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751667AbeCOMfj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 08:35:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34100 "EHLO
+        id S1752206AbeCOMiL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 08:38:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34114 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeCOMfi (ORCPT
+        with ESMTP id S1751466AbeCOMfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 08:35:38 -0400
-Message-Id: <20180315123202.893686246@infradead.org>
+        Thu, 15 Mar 2018 08:35:39 -0400
+Message-Id: <20180315123202.735998040@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Thu, 15 Mar 2018 13:19:13 +0100
+Date: Thu, 15 Mar 2018 13:19:10 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Dan Williams <dan.j.williams@intel.com>,
@@ -23,39 +23,45 @@ Cc: Dan Williams <dan.j.williams@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         George Spelvin <linux@sciencehorizons.net>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 11/11] sched/wait: Improve __var_waitqueue()
+Subject: [PATCH 08/11] sched/wait,ocfs2: Replace wait_on_atomic_t usage
 References: <20180315121902.942902000@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-wait_var-11.patch
+Content-Disposition: inline; filename=peterz-wait_var-8.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we fixed hash_64 to not suck, there is no need to play games to
-attempt to improve the hash value on 64bit. Also, since we don't use
-the bit value for the variables, use hash_ptr() directly.
+Convert the wait_on_atomic_t() usage to the new wait_var_event() API.
 
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: George Spelvin <linux@sciencehorizons.net>
+Cc: Joel Becker <jlbec@evilplan.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/wait_bit.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/ocfs2/filecheck.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/kernel/sched/wait_bit.c
-+++ b/kernel/sched/wait_bit.c
-@@ -151,12 +151,7 @@ EXPORT_SYMBOL(wake_up_bit);
- 
- wait_queue_head_t *__var_waitqueue(void *p)
+--- a/fs/ocfs2/filecheck.c
++++ b/fs/ocfs2/filecheck.c
+@@ -134,9 +134,10 @@ ocfs2_filecheck_sysfs_free(struct ocfs2_
  {
--	if (BITS_PER_LONG == 64) {
--		unsigned long q = (unsigned long)p;
--
--		return bit_waitqueue((void *)(q & ~1), q & 1);
--	}
--	return bit_waitqueue(p, 0);
-+	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
- }
- EXPORT_SYMBOL(__var_waitqueue);
+ 	struct ocfs2_filecheck_entry *p;
  
+-	if (!atomic_dec_and_test(&entry->fs_count))
+-		wait_on_atomic_t(&entry->fs_count, atomic_t_wait,
+-				 TASK_UNINTERRUPTIBLE);
++	if (!atomic_dec_and_test(&entry->fs_count)) {
++		wait_var_event(&entry->fs_count,
++			       !atomic_read(&entry->fs_count));
++	}
+ 
+ 	spin_lock(&entry->fs_fcheck->fc_lock);
+ 	while (!list_empty(&entry->fs_fcheck->fc_head)) {
+@@ -183,7 +184,7 @@ static void
+ ocfs2_filecheck_sysfs_put(struct ocfs2_filecheck_sysfs_entry *entry)
+ {
+ 	if (atomic_dec_and_test(&entry->fs_count))
+-		wake_up_atomic_t(&entry->fs_count);
++		wake_up_var(&entry->fs_count);
+ }
+ 
+ static struct ocfs2_filecheck_sysfs_entry *
