@@ -1,132 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeCOR0F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:26:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53572 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCOR0D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:26:03 -0400
-X-Google-Smtp-Source: AG47ELuePmLOllB2s/RCqPExhdlmaRv35aQ4dQn3DPVQihYwxGD1U6gfrlK20lMTF3RrStmkabQDpw==
-Date: Thu, 15 Mar 2018 18:25:59 +0100
-From: Christian Brauner <christian.brauner@canonical.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Tycho Andersen <tycho@tycho.ws>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-Subject: Re: [RFC 0/3] seccomp trap to userspace
-Message-ID: <20180315172558.GA28108@gmail.com>
-References: <CALCETrVnvbZLx5v=DMu2N1JtR+ys507X5CYBi-qQnus3VMQdwg@mail.gmail.com>
- <20180315170509.GA32766@mail.hallyn.com>
- <CALCETrXPcCNbpFJhXktkVS9gOPpmnU_bbY6Z8RrsBarq0dP4Lg@mail.gmail.com>
+        id S1752281AbeCOR0w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:26:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751413AbeCOR0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 13:26:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4B8204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 15 Mar 2018 18:26:47 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v4 1/7] time: tick-sched: Reorganize idle tick
+ management code
+Message-ID: <20180315172643.GA14075@lerouge>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan>
+ <2019498.YXfJVQUTuX@aspire.rjw.lan>
+ <20180314154934.GA3635@lerouge>
+ <20180314172016.GO4064@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXPcCNbpFJhXktkVS9gOPpmnU_bbY6Z8RrsBarq0dP4Lg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180314172016.GO4064@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 05:11:32PM +0000, Andy Lutomirski wrote:
-> On Thu, Mar 15, 2018 at 5:05 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> > Quoting Andy Lutomirski (luto@kernel.org):
-> >> On Thu, Mar 15, 2018 at 4:09 PM, Christian Brauner
-> >> <christian.brauner@canonical.com> wrote:
-> >> > On Sun, Feb 04, 2018 at 11:49:43AM +0100, Tycho Andersen wrote:
-> >> >> Several months ago at Linux Plumber's, we had a discussion about adding a
-> >> >> feature to seccomp which would allow seccomp to trigger a notification for some
-> >> >> other process. Here's a draft of that feature.
-> >> >>
-> >> >> Patch 1 contains the bulk of it, patches 2 & 3 offer an alternative way to
-> >> >> acquire the fd that receives notifications via ptrace (the method in patch 1
-> >> >> poses some problems). Other suggestions for how to acquire one of these fds
-> >> >> would be welcome.
-> >> >>
-> >> >> Take a close look at the synchronization. I think I've got it right, but I
-> >> >> probably don't :)
-> >> >>
-> >> >> Thanks!
-> >> >>
-> >> >> Tycho Andersen (3):
-> >> >>   seccomp: add a return code to trap to userspace
-> >> >>   seccomp: hoist out filter resolving logic
-> >> >>   seccomp: add a way to get a listener fd from ptrace
-> >> >>
-> >> >>  arch/Kconfig                                  |   7 +
-> >> >>  include/linux/seccomp.h                       |  14 +-
-> >> >>  include/uapi/linux/ptrace.h                   |   1 +
-> >> >>  include/uapi/linux/seccomp.h                  |  18 +-
-> >> >>  kernel/ptrace.c                               |   4 +
-> >> >>  kernel/seccomp.c                              | 467 ++++++++++++++++++++++++--
-> >> >>  tools/testing/selftests/seccomp/seccomp_bpf.c | 180 +++++++++-
-> >> >>  7 files changed, 653 insertions(+), 38 deletions(-)
-> >> >
-> >> > Hey,
-> >> >
-> >> > So, I've been following the discussion silently in the background and I
-> >> > see that it got sidetracked into seccomp + ebpf. While I can see that
-> >> > there is value in adding epbf support to seccomp I'd really like to see
-> >> > this decoupled from this patchset. Afaict, this patchset would just work
-> >> > fine without the ebpf portion (but I might be just have missed the
-> >> > point). So if possible I would like to see a second version of this with
-> >> > the comments accounted for and - if possible - have this up for merging
-> >> > independent of the ebpf patchset that's floating around.
-> >> >
-> >>
-> >> The issue is that it might be (and, then again, might not be) nicer to
-> >> to *synchronously* call out to the monitor in the filter.  eBPF can do
-> >> that very cleanly, whereas classic BPF can't.
-> >
-> > Hm, synchronously - that brings to mind a thought...  I should re-look at
-> > Tycho's patches first, but, if I'm in a container, start some syscall that
-> > gets trapped to userspace, then I hit ctrl-c.  I'd like to be able to have
-> > the handler be interrupted and have it return -EINTR.  Is that going to
-> > be possible with the synchronous approach?
+On Wed, Mar 14, 2018 at 06:20:16PM +0100, Peter Zijlstra wrote:
+> On Wed, Mar 14, 2018 at 04:49:39PM +0100, Frederic Weisbecker wrote:
+> > On Mon, Mar 12, 2018 at 10:47:41AM +0100, Rafael J. Wysocki wrote:
 > 
-> I think so, but it should be possible with the classic async approach
-> too.  The main issue is the difference between a classic filter like
-> this (pseudocode):
+> > > @@ -136,6 +138,13 @@ static inline u64 get_cpu_idle_time_us(i
+> > >  static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+> > >  #endif /* !CONFIG_NO_HZ_COMMON */
+> > >  
+> > > +static inline void tick_nohz_idle_stop_tick_protected(void)
+> > > +{
+> > > +	local_irq_disable();
+> > > +	tick_nohz_idle_stop_tick();
+> > > +	local_irq_enable();
+> > > +}
+> > 
+> > It seems that even if we have CONFIG_NO_HZ_COMMON=n,
+> > tick_nohz_idle_stop_tick_protected() will have overhead, right?
 > 
-> if (nr == SYS_mount) return TRAP_TO_USERSPACE;
-> 
-> and the eBPF variant:
-> 
-> if (nr == SYS_mount) trap_to_userspace();
-> 
-> I admit that it's still not 100% clear to me that the latter is
-> genuinely more useful than the former.
+> IIRC the only callsite of the _protected thing that remains at the end
+> is in the hotplug path. So who cares ;-)
 
-We've just discussed this on irc and the fact that most problems can be
-addressed by interfaces we already have makes it questionable what ebpf
-brings to the game here. Especially since the discussion gave the
-impression that if ebpf ever makes it to seccomp it will basically be
-because it allows a nice implementation of the trap to userspace. If
-it's even unclear whether it is really the better choice for this task
-then we could consider to no try and make this patchset use it. (I
-probably sound way more polemic than I intend to.)
-
-> 
-> The case where I think the synchronous function call is a huge win is this one:
-> 
-> if (nr  == SYS_mount) {
->   log("Someone called mount with args %lx\n", ...);
->   return RET_KILL;
-> }
-> 
-> The idea being that the log message wouldn't show up in the kernel log
-> -- it would get sent to the listener socket belonging to whoever
-> created the filter, and that process could then go and log it
-> properly.  This would work perfectly in containers and in totally
-> unprivileged applications like Chromium.
-
-Hm, that is a decent point but that's also a non-essential feature. I
-also wonder if there's any reason to not simply extend it to use ebpf
-later if seccomp every uses it?
-
-Christian
+Hey, I see you trying to sneak in overhead out of hatred against the hotplug
+code ;-)
