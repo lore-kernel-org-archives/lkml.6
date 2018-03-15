@@ -1,70 +1,72 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1115141-1521144735-2-13053521592904802255
+X-Cyrus-Session-Id: sloti22d1t05-1142589-1521145310-2-3434120576460506941
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='name', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521144734; b=EJR8or5QLXvTngurjahteKkkZ9h274/KlDfMCjYTP/nMTGV
-    blRBEpadjwY+D5yqcsLJWqCBOYX1w6Zle+BmarWm7v8v9hdpz+AjU1swbjw5wZez
-    /nD1MvZEuv+BiMva3qajUZYL7zInXW1ywiCEwjQB/HbOrfVEJLmsnwbmbckiwDJu
-    AklkEIUPd75udN8P1FpASbEE6mbqLbVP3ehS9IyqO5at+WAZvDT/XMWEHq9qruRw
-    kfsS5aKy9h0khCJoaMePkHZTKp7kp0+SfxVMsVugJF9YjswsTfEg8kJ8nnQqCCVG
-    H/MAWIFGABYLQViTwcUy9y1UduDT+v053nlok6w==
+    t=1521145309; b=rRS0ZiErbca5w2KOm5KkZeVPP29+DbBk482xmfEL+n/9sgG
+    28MudOkdbQR2IUaG4+nD+uIo8ytqn4tQRJtILIaJQ4GU57iqeq44hVzZ3emFZ9e1
+    +TKW98qvcWVBBiP1YVAae1mIjh+5HDuJIVk9IyHSQs+fCIXOMWpBpWGWn72DEpgO
+    GscwCEf8Yuv0xZJ1drTIwsjHz65A7n3i2dOkY5JwVFzzNHIoFtOYDF5Y4tUVI7UA
+    XtQCCmmn1ThM1PM8MCgPhy5xlv8a+YRQOv5qnjyh0S7lJRbOqnxn/tzfPb9oUeY3
+    atpFYFj7BUMSGCCpbqL5WWTYcpQlLEDu4kRIlgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:in-reply-to
-    :references:message-id:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1521144734; bh=v42ICUqaQJ6zn7IEBKXn/lW8Efx
-    V+0KBzVxLGrRiBfs=; b=l3CozWPHDwMgrf+Elm2/FgvTlXIgFqKbLiLfj4FwNwe
-    edxIwCiKU5SDKfmuvtj3hyUsKjXm6jVqmOrdC+td+hlY1+H3IJpSFGBF9xvGfg6W
-    IDbHOU9SwE3nPDaduJI0a9i4qgKxEO1AI+WPn2V8mWkpHpjPpp7N8aqHHyWfkBJ0
-    +l93dHFvWV8fN/tbQbLm34eOJPBNB+WJSGMr2XC67TKfAtIQQ765ugmJJcI15KB6
-    XZKFfMwL/iVihODBcHfo4Z98bpMtKp67bIG6vH4CnV+XTQ0EhO+mxR6J5oPh/58A
-    9E92MUgFO8gdrjn26kHqI12n6eo6Z8gcSCiLjvQ8m+w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc
+    :content-transfer-encoding:content-type:sender; s=arctest; t=
+    1521145309; bh=KrLHGL3fLFCTC3/WYAkyipJdaZyhhcaZZ9eiasZA5OA=; b=j
+    pT5EcmzwX6gMPV2nY5V0yWOYcK+2YU5N5O6bFWC1X107RBauBD1sLT3na5JeKfVU
+    OOnvvHPGZ0v8OqsOyYRN1x8/Y/ElQ4Kcw6Munqt+HQDkgEZC8WbEIHXiLkRh51uH
+    aots/GXYuTjtWf+iju8iZtN3lk3sYwEzr5ITFzejXVDYUWku+0LtFxEMBIbPg5WJ
+    o6XfYmqPqi5f4jpoy2MOtMtOWlCBlsrIqQQkE7T6LgL6noqt9EYl/iqzVu+ipsPq
+    Ey0MKVUfknrudkLWQH5a+VNLIk2Wk1ZoslUHS/pvMA2f/b+lXXqVEa9kvXbeu+d8
+    pobtlwevW1D+UcAbaUtnw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=phrozen.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=brown.name header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=phrozen.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=phrozen.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=brown.name header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=phrozen.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neil@brown.name>
-To: John Crispin <john@phrozen.org>
-Date: Fri, 16 Mar 2018 07:12:00 +1100
 Subject: Re: [PATCH 00/13] staging: add drivers to support Mediatek mt7621 in
  gnubee-pc1
-In-Reply-To: <be0d1e2d-67c5-bac1-63d4-72568dbf9d23@phrozen.org>
+To: NeilBrown <neil@brown.name>
 References: <152105892255.22262.1902152685410223215.stgit@noble>
  <20180315104853.bthffdd4hzklzo6d@mwanda>
  <be0d1e2d-67c5-bac1-63d4-72568dbf9d23@phrozen.org>
-Message-ID: <87muz9ayjz.fsf@notabene.neil.brown.name>
+ <87muz9ayjz.fsf@notabene.neil.brown.name>
+From: John Crispin <john@phrozen.org>
+Message-ID: <9e8e07b4-1a4d-3434-402f-920c19c65122@phrozen.org>
+Date: Thu, 15 Mar 2018 21:21:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <87muz9ayjz.fsf@notabene.neil.brown.name>
+Content-Language: en-US
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -77,100 +79,59 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  lkml <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: multipart/mixed; boundary="===============4713637934009758055=="
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---===============4713637934009758055==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 15 2018, John Crispin wrote:
-
-> On 15/03/18 11:48, Dan Carpenter wrote:
->> This all seems fine.  Generally the requirements for staging are that it
->> has a TODO, someone to work on it, and it doesn't break the build.  But
->> some of the patches don't have commit message and those are required and
->> some of the commit messages are just the changes you have made not don't
->> describe the actual code...
->>
->> John Crispin's email is john@phrozen.org.
->>
->> regards,
->> dan carpenter
->>
-> Hi All,
->
-> looks like i was CC'ed on the openwrt addr, which no longer exists. This=
-=20
-> series makes no sense. None of the stuff posted is anywhere near ready=20
-> to be upstreamed.
->
-> * we dont need a dedicated pinctrl driver, pinctrl-single will work fine=
-=20
-> on these SoCs
-> * the DMA/sdhci driver is a hacked up version of the SDK driver.
-> * drivers/net/ethernet/mediatek/* works on mt7623 and is easily portable=
-=20
-> to mt7621, same goes for the gsw driver.
-
-Hi John,
- I think it makes sense in that, with the patches, the hardware works, and
- without the patches (at least the first) you cannot even build with
- CONFIG_SOC_MT7621=3Dy as pcibios_map_irq() is undefined.  Having
- working code is a great starting point for further development.
- It certainly isn't ready for upstream, which is why it is heading for
- drivers/staging.  This is explicitly for code that isn't yet ready.
- By putting the code there it should be safe from bit-rot, and can be
- worked on by multiple people.  It gets increased visibility so people
- can say how bad it is (as you have done - thanks).  This feed back is a
- valuable part of improving the code and getting it out of staging.
-
- I'll add notes to various TODO files based on your comments.  If you
- have anything else to add, it would be most welcome.  Thank you for
- making these patches available in the first place, so that my hardware
- can work!
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqq05AACgkQOeye3VZi
-gbk5Iw/+NPdW6TS1ThKS/gXFj6owZBOnEcfDFU/vfLviOKra13dVetLwTnLLM1M3
-Gh1GUN+hkPCnFXRbxVkrAd7OGOogJsOw1hFAx1MijiFpikW3P4vxM7XI1D9wUvr3
-EUCtKW6HzwaKt6A52hbgP7oZj1uDUqTue3SG729Z9fP0kyBmUm2d1I4nfmnqRYeA
-/VBjc9QhCY+jf6uVsbC/sUFUhQ8KEDrob7S8hitaysBzjjkyVFqZZv7ZTL5Zat5b
-qI+33Dg85x4pLNj26M8M+cow5UW7DoKomklN/zDwpPQiDfrwv3M29KyQPXDFGyaz
-JlpXHq5X+rSA5Efx9qlxtH4EzWZZmqX8W9Drg5VsqTac798DBIhErApsd4uQ71c1
-OkrQ0vK83TdGXqpPcp9g+AZiFdLuX70QKPtQ2v8QOqrjgTwoOBhq7e5Yt73iSpkb
-ANWlJdlp8pURdygFa6Oc3XwSGl91gBXn0w3zWAb2j7PQtBx0mI123mReivy/+yzL
-KwWP6Fbxly/qiBxo02qTwuW1lHIZ5o+W0TX7/dcBcOlewOmnUr70Uvk/yJcNJfsO
-nV5dceAjQetD1hJ1wjVEN6Vme4QbXa1IIv9Rf0+n/aGdL0NcP34ZhVAL9hXmchCw
-/iDYsAli1bwXqP1738jlD6M0As8FTfI36pRh5z8fSmbNZc46R9U=
-=kppU
------END PGP SIGNATURE-----
---=-=-=--
-
---===============4713637934009758055==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============4713637934009758055==--
+CgpPbiAxNS8wMy8xOCAyMToxMiwgTmVpbEJyb3duIHdyb3RlOgo+IE9uIFRodSwgTWFyIDE1IDIw
+MTgsIEpvaG4gQ3Jpc3BpbiB3cm90ZToKPgo+PiBPbiAxNS8wMy8xOCAxMTo0OCwgRGFuIENhcnBl
+bnRlciB3cm90ZToKPj4+IFRoaXMgYWxsIHNlZW1zIGZpbmUuICBHZW5lcmFsbHkgdGhlIHJlcXVp
+cmVtZW50cyBmb3Igc3RhZ2luZyBhcmUgdGhhdCBpdAo+Pj4gaGFzIGEgVE9ETywgc29tZW9uZSB0
+byB3b3JrIG9uIGl0LCBhbmQgaXQgZG9lc24ndCBicmVhayB0aGUgYnVpbGQuICBCdXQKPj4+IHNv
+bWUgb2YgdGhlIHBhdGNoZXMgZG9uJ3QgaGF2ZSBjb21taXQgbWVzc2FnZSBhbmQgdGhvc2UgYXJl
+IHJlcXVpcmVkIGFuZAo+Pj4gc29tZSBvZiB0aGUgY29tbWl0IG1lc3NhZ2VzIGFyZSBqdXN0IHRo
+ZSBjaGFuZ2VzIHlvdSBoYXZlIG1hZGUgbm90IGRvbid0Cj4+PiBkZXNjcmliZSB0aGUgYWN0dWFs
+IGNvZGUuLi4KPj4+Cj4+PiBKb2huIENyaXNwaW4ncyBlbWFpbCBpcyBqb2huQHBocm96ZW4ub3Jn
+Lgo+Pj4KPj4+IHJlZ2FyZHMsCj4+PiBkYW4gY2FycGVudGVyCj4+Pgo+PiBIaSBBbGwsCj4+Cj4+
+IGxvb2tzIGxpa2UgaSB3YXMgQ0MnZWQgb24gdGhlIG9wZW53cnQgYWRkciwgd2hpY2ggbm8gbG9u
+Z2VyIGV4aXN0cy4gVGhpcwo+PiBzZXJpZXMgbWFrZXMgbm8gc2Vuc2UuIE5vbmUgb2YgdGhlIHN0
+dWZmIHBvc3RlZCBpcyBhbnl3aGVyZSBuZWFyIHJlYWR5Cj4+IHRvIGJlIHVwc3RyZWFtZWQuCj4+
+Cj4+ICogd2UgZG9udCBuZWVkIGEgZGVkaWNhdGVkIHBpbmN0cmwgZHJpdmVyLCBwaW5jdHJsLXNp
+bmdsZSB3aWxsIHdvcmsgZmluZQo+PiBvbiB0aGVzZSBTb0NzCj4+ICogdGhlIERNQS9zZGhjaSBk
+cml2ZXIgaXMgYSBoYWNrZWQgdXAgdmVyc2lvbiBvZiB0aGUgU0RLIGRyaXZlci4KPj4gKiBkcml2
+ZXJzL25ldC9ldGhlcm5ldC9tZWRpYXRlay8qIHdvcmtzIG9uIG10NzYyMyBhbmQgaXMgZWFzaWx5
+IHBvcnRhYmxlCj4+IHRvIG10NzYyMSwgc2FtZSBnb2VzIGZvciB0aGUgZ3N3IGRyaXZlci4KPiBI
+aSBKb2huLAo+ICAgSSB0aGluayBpdCBtYWtlcyBzZW5zZSBpbiB0aGF0LCB3aXRoIHRoZSBwYXRj
+aGVzLCB0aGUgaGFyZHdhcmUgd29ya3MsIGFuZAo+ICAgd2l0aG91dCB0aGUgcGF0Y2hlcyAoYXQg
+bGVhc3QgdGhlIGZpcnN0KSB5b3UgY2Fubm90IGV2ZW4gYnVpbGQgd2l0aAo+ICAgQ09ORklHX1NP
+Q19NVDc2MjE9eSBhcyBwY2liaW9zX21hcF9pcnEoKSBpcyB1bmRlZmluZWQuICBIYXZpbmcKPiAg
+IHdvcmtpbmcgY29kZSBpcyBhIGdyZWF0IHN0YXJ0aW5nIHBvaW50IGZvciBmdXJ0aGVyIGRldmVs
+b3BtZW50Lgo+ICAgSXQgY2VydGFpbmx5IGlzbid0IHJlYWR5IGZvciB1cHN0cmVhbSwgd2hpY2gg
+aXMgd2h5IGl0IGlzIGhlYWRpbmcgZm9yCj4gICBkcml2ZXJzL3N0YWdpbmcuICBUaGlzIGlzIGV4
+cGxpY2l0bHkgZm9yIGNvZGUgdGhhdCBpc24ndCB5ZXQgcmVhZHkuCj4gICBCeSBwdXR0aW5nIHRo
+ZSBjb2RlIHRoZXJlIGl0IHNob3VsZCBiZSBzYWZlIGZyb20gYml0LXJvdCwgYW5kIGNhbiBiZQo+
+ICAgd29ya2VkIG9uIGJ5IG11bHRpcGxlIHBlb3BsZS4gIEl0IGdldHMgaW5jcmVhc2VkIHZpc2li
+aWxpdHkgc28gcGVvcGxlCj4gICBjYW4gc2F5IGhvdyBiYWQgaXQgaXMgKGFzIHlvdSBoYXZlIGRv
+bmUgLSB0aGFua3MpLiAgVGhpcyBmZWVkIGJhY2sgaXMgYQo+ICAgdmFsdWFibGUgcGFydCBvZiBp
+bXByb3ZpbmcgdGhlIGNvZGUgYW5kIGdldHRpbmcgaXQgb3V0IG9mIHN0YWdpbmcuCj4KPiAgIEkn
+bGwgYWRkIG5vdGVzIHRvIHZhcmlvdXMgVE9ETyBmaWxlcyBiYXNlZCBvbiB5b3VyIGNvbW1lbnRz
+LiAgSWYgeW91Cj4gICBoYXZlIGFueXRoaW5nIGVsc2UgdG8gYWRkLCBpdCB3b3VsZCBiZSBtb3N0
+IHdlbGNvbWUuICBUaGFuayB5b3UgZm9yCj4gICBtYWtpbmcgdGhlc2UgcGF0Y2hlcyBhdmFpbGFi
+bGUgaW4gdGhlIGZpcnN0IHBsYWNlLCBzbyB0aGF0IG15IGhhcmR3YXJlCj4gICBjYW4gd29yayEK
+Pgo+IFRoYW5rcywKPiBOZWlsQnJvd24KCkhpIE5laWwsCgpJIHVuZGVyc3RhbmQgeW91ciByZWFz
+b25pbmcsIGhvd2V2ZXIgLi4uCm9ubHkgdGhlIHBjaWUgZHJpdmVyIGlzIHdvcnRoIG1lcmdpbmcu
+IGFsbCBvdGhlciBkcml2ZXJzIGFyZSBhbHJlYWR5IAppbnNpZGUgdGhlIGtlcm5lbCBmb3IgbXQ3
+NjIzIGFuZCBjYW4gYmUgZWFzaWx5IGFkYXB0ZWQgdG8gd29yayBvbiAKbXQ3NjIxLiBoYXZpbmcg
+ZHVwbGljYXRlIGRyaXZlcnMgaXMgYSBjZXJ0YWluIG5vLWdvLgpjbGVhbmluZyB1cCB0aGUgcGNp
+IGRyaXZlciBpcyBhIG1hdHRlciBvZiBhIGZldyBkYXlzIHdvcmsuIG1lcmdpbmcgYSAKc2hpdHR5
+IHBjaSBkcml2ZXIganVzdCB0byBwb3N0cG9uZSBkb2luZyB0aGUgMy01IGRheXMgd29yayBpbnZv
+bHZlZCB0byAKcG9saXNoIGl0IHNlZW1zIGEgcmFsbHkgYmFkIHRyYWRlLW9mZi4KaSBzdHJvbmds
+eSBvcHBvc2UgaGF2aW5nIGFueSBvZiB0aGlzIGNvZGUgbWVyZ2VkIGludG8gdGhlIGtlcm5lbCwg
+ZXZlbiAKaWYgaXQgaXMgb25seSB0aGUgc3RhZ2luZyBhcmVhLgoKIMKgwqDCoCBKb2huCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRldmVsIG1haWxpbmcg
+bGlzdApkZXZlbEBsaW51eGRyaXZlcnByb2plY3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGludXhk
+cml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
