@@ -1,167 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932646AbeCOPpp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:45:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46834 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932457AbeCOPpn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:45:43 -0400
-Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
- interpretive execution
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
- <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
- <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 16:45:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031515-0020-0000-0000-000004054FC2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031515-0021-0000-0000-000042995921
-Message-Id: <5ed8017b-0168-9a50-234b-cfe9258eab72@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150174
+        id S932672AbeCOPpx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:45:53 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47936 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932480AbeCOPpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:45:50 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/9] x86/dumpstack: Unexport oops_begin()
+Date: Thu, 15 Mar 2018 16:44:41 +0100
+Message-Id: <20180315154448.16222-3-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
+References: <20180315154448.16222-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/2018 16:26, Tony Krowiak wrote:
-> On 03/15/2018 09:00 AM, Pierre Morel wrote:
->> On 14/03/2018 22:57, Halil Pasic wrote:
->>>
->>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
->>>> The VFIO AP device model exploits interpretive execution of AP
->>>> instructions (APIE) to provide guests passthrough access to AP
->>>> devices. This patch introduces a new device attribute in the
->>>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
->>>> the VFIO AP device defined on the guest.
->>>>
->>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>>> ---
->>> [..]
->>>
->>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>>> index a60c45b..bc46b67 100644
->>>> --- a/arch/s390/kvm/kvm-s390.c
->>>> +++ b/arch/s390/kvm/kvm-s390.c
->>>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm 
->>>> *kvm, struct kvm_device_attr *attr)
->>>> sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
->>>>           VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
->>>>           break;
->>>> +    case KVM_S390_VM_CRYPTO_INTERPRET_AP:
->>>> +        if (attr->addr) {
->>>> +            if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
->>> Unlock mutex before returning?
->>>
->>> Maybe flip conditions (don't allow manipulating apie if feature not 
->>> there).
->>> Clearing the anyways clear apie if feature not there ain't too bad, but
->>> rejecting the operation appears nicer to me.
->>>
->>>> +                return -EOPNOTSUPP;
->>>> +            kvm->arch.crypto.apie = 1;
->>>> +            VM_EVENT(kvm, 3, "%s",
->>>> +                 "ENABLE: AP interpretive execution");
->>>> +        } else {
->>>> +            kvm->arch.crypto.apie = 0;
->>>> +            VM_EVENT(kvm, 3, "%s",
->>>> +                 "DISABLE: AP interpretive execution");
->>>> +        }
->>>> +        break;
->>>>       default:
->>>>           mutex_unlock(&kvm->lock);
->>>>           return -ENXIO;
->>> I wonder how the loop after this switch works for 
->>> KVM_S390_VM_CRYPTO_INTERPRET_AP:
->>>
->>>          kvm_for_each_vcpu(i, vcpu, kvm) {
->>>                  kvm_s390_vcpu_crypto_setup(vcpu);
->>>                  exit_sie(vcpu);
->>>          }
->>>
->>>  From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
->>>
->>>          if (kvm->created_vcpus) {
->>>                  mutex_unlock(&kvm->lock);
->>>                  return -EBUSY;
->>> and from the aforementioned loop I guess ECA.28 can be changed
->>> for a running guest.
->>>
->>> If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
->>> changed (set) these will be taken out of SIE by exit_sie(). Then for 
->>> the
->>> corresponding threads the control probably goes to QEMU (the 
->>> emulator in
->>> the userspace). And it puts that vcpu back into the SIE, and then that
->>> cpu starts acting according to the new ECA.28 value.  While other vcpus
->>> may still work with the old value of ECA.28.
->>>
->>> I'm not saying what I describe above is necessarily something broken.
->>> But I would like to have it explained, why is it OK -- provided I 
->>> did not
->>> make any errors in my reasoning (assumptions included).
->>>
->>> Can you help me understand this code?
->>>
->>> Regards,
->>> Halil
->>>
->>> [..]
->>>
->>
->> I have the same concerns as Halil.
->>
->> We do not need to change the virtulization type
->> (hardware/software) on the fly for the current use case.
->>
->> Couldn't we delay this until we have one and in between only make the 
->> vCPU hotplug clean?
->>
->> We only need to let the door open for the day we have such a use case.
-> Are you suggesting this code be removed? If so, then where and under 
-> what conditions would
-> you suggest setting ECA.28 given you objected to setting it based on 
-> whether the
-> AP feature is installed?
+From: Borislav Petkov <bp@suse.de>
 
-I would only call kvm_s390_vcpu_crypto_setup() from inside 
-kvm_arch_vcpu_init()
-as it is already.
+The only user outside of arch/ is not a module since
 
+  86cd47334b00 ("ACPI, APEI, GHES, Prevent GHES to be built as module")
 
->>
->>
->> Pierre
->>
->>
->>
->
+No functional changes.
 
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/dumpstack.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 593db796374d..579455c2b91e 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -268,7 +268,6 @@ unsigned long oops_begin(void)
+ 	bust_spinlocks(1);
+ 	return flags;
+ }
+-EXPORT_SYMBOL_GPL(oops_begin);
+ NOKPROBE_SYMBOL(oops_begin);
+ 
+ void __noreturn rewind_stack_do_exit(int signr);
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+2.13.0
