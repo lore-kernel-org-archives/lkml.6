@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeCOLlp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 07:41:45 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59352 "EHLO
+        id S1752041AbeCOLln (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 07:41:43 -0400
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59316 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751805AbeCOLlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751881AbeCOLlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Mar 2018 07:41:40 -0400
 From: Chen-Yu Tsai <wens@csie.org>
 To: Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -13,108 +13,72 @@ To: Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] drm/sun4i: Add support for A80 TCONs
-Date: Thu, 15 Mar 2018 19:41:31 +0800
-Message-Id: <20180315114136.24747-4-wens@csie.org>
+Subject: [PATCH 0/8] ARM: sun9i: a80: Add display support
+Date: Thu, 15 Mar 2018 19:41:28 +0800
+Message-Id: <20180315114136.24747-1-wens@csie.org>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180315114136.24747-1-wens@csie.org>
-References: <20180315114136.24747-1-wens@csie.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner A80 SoC has 2 documented TCONs. The display pipeline
-diagram from the user manual shows a third TCON, but it's missing
-an interrupt line, and its registers are not explained either.
-It's also not used in Allwinner's vendor BSP.
+Hi everyone,
 
-The first TCON only has channel 0, for LCD panel output. The TCON
-hardware setup is peculiar in that the eDP reset must also be
-deasserted to allow access to the TCON. How the eDP module is wired
-in the SoC itself is never explained.
+This series adds basic support for the display pipelines found on the
+Allwinner A80 SoC. Currently only parallel RGB output via TCON0 is
+supported. TCON1 drives the HDMI encoder, which I've not been able to
+get working yet.
 
-The second TCON only has channel 1, and its output is connected to
-the HDMI encoder block.
+Patch 1 adds device tree bindings for the TCONs on the A80. In
+particular, TCON0 requires the eDP reset control in addition to its own.
 
-This patch adds a "needs_edp_reset" field to the tcon quirks structure,
-and adds quirks and compatible strings for the 2 documented TCONs.
+Patch 2 adds a device tree binding for the Detail Enhancement Unit found
+only on the A80.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 27 +++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 2 files changed, 28 insertions(+)
+Patch 3 adds driver support for the TCONs.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index d4a29847dadd..b4cef03861f7 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -855,6 +855,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	struct sunxi_engine *engine;
- 	struct device_node *remote;
- 	struct sun4i_tcon *tcon;
-+	struct reset_control *edp_rstc;
- 	bool has_lvds_rst, has_lvds_alt, can_lvds;
- 	int ret;
- 
-@@ -879,6 +880,20 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		return PTR_ERR(tcon->lcd_rst);
- 	}
- 
-+	if (tcon->quirks->needs_edp_reset) {
-+		edp_rstc = devm_reset_control_get_shared(dev, "edp");
-+		if (IS_ERR(edp_rstc)) {
-+			dev_err(dev, "Couldn't get edp reset line\n");
-+			return PTR_ERR(edp_rstc);
-+		}
-+
-+		ret = reset_control_deassert(edp_rstc);
-+		if (ret) {
-+			dev_err(dev, "Couldn't deassert edp reset line\n");
-+			return ret;
-+		}
-+	}
-+
- 	/* Make sure our TCON is reset */
- 	ret = reset_control_reset(tcon->lcd_rst);
- 	if (ret) {
-@@ -1176,6 +1191,16 @@ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
- 	.has_channel_0		= true,
- };
- 
-+static const struct sun4i_tcon_quirks sun9i_a80_tcon_lcd_quirks = {
-+	.has_channel_0	= true,
-+	.needs_edp_reset = true,
-+};
-+
-+static const struct sun4i_tcon_quirks sun9i_a80_tcon_tv_quirks = {
-+	.has_channel_1	= true,
-+	.needs_edp_reset = true,
-+};
-+
- /* sun4i_drv uses this list to check if a device node is a TCON */
- const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun4i-a10-tcon", .data = &sun4i_a10_quirks },
-@@ -1187,6 +1212,8 @@ const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
-+	{ .compatible = "allwinner,sun9i-a80-tcon-lcd", .data = &sun9i_a80_tcon_lcd_quirks },
-+	{ .compatible = "allwinner,sun9i-a80-tcon-tv", .data = &sun9i_a80_tcon_tv_quirks },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index abdc6ad6b384..c4979559b591 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -176,6 +176,7 @@ struct sun4i_tcon_quirks {
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
-+	bool	needs_edp_reset; /* a80 edp reset needed for tcon0 access */
- 	bool	supports_lvds;   /* Does the TCON support an LVDS output? */
- 
- 	/* callback to handle tcon muxing options */
+Patch 4 adds compatible strings to the device tree bindings for all the 
+remaining peripherals covered by this series.
+
+Patch 5 adds support for the compatible strings from the previous patch
+to the sun4i-drm driver.
+
+Patch 6 adds the display pipeline device nodes to the A80 .dtsi file.
+
+Patch 7 adds a pinmux setting for RGB888 output for TCON0.
+
+Patch 8 enables VGA output on the Cubieboard4 via an external DAC and
+an I2C bus from the SoC for DDC.
+
+
+I've had these patches for quite some time now, rebasing them as more
+features were added to sun4i-drm. Please have a look.
+
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (8):
+  drm/sun4i: Add compatible strings for A80 TCONs
+  drm/sun4i: Add DT binding for Detail Enhancement Unit in Allwinner A80
+    SoC
+  drm/sun4i: Add support for A80 TCONs
+  drm/sun4i: Add compatible strings for the A80 display pipeline
+  drm/sun4i: Add driver support for A80 display pipeline
+  ARM: dts: sun9i: Add device nodes for documented display pipelines for
+    A80
+  ARM: dts: sun9i: Add pinmux settings for LCD0 RGB888 output.
+  ARM: dts: sun9i: cubieboard4: Enable VGA display output
+
+ .../bindings/display/sunxi/sun4i-drm.txt           |  39 +-
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts        |  68 ++++
+ arch/arm/boot/dts/sun9i-a80.dtsi                   | 392 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_backend.c              |   7 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  12 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  27 ++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ drivers/gpu/drm/sun4i/sun6i_drc.c                  |   1 +
+ 8 files changed, 541 insertions(+), 6 deletions(-)
+
 -- 
 2.16.2
