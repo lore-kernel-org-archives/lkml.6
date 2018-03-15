@@ -1,64 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeCOSN4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:13:56 -0400
-Received: from vern.gendns.com ([206.190.152.46]:36537 "EHLO vern.gendns.com"
+        id S1752730AbeCOSO3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:14:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751864AbeCOSNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:13:54 -0400
-From: David Lechner <david@lechnology.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: davinci: DA8XX: simplify CFGCHIP regmap_config
-Date: Thu, 15 Mar 2018 13:13:41 -0500
-Message-Id: <1521137621-6491-1-git-send-email-david@lechnology.com>
-X-Mailer: git-send-email 2.7.4
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1751945AbeCOSO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 14:14:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A7A20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To: Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1520542640-9185-2-git-send-email-eajames@linux.vnet.ibm.com>
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+        eajames@linux.vnet.ibm.com, mine260309@gmail.com,
+        ryan_chen@aspeedtech.com
+References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1520542640-9185-2-git-send-email-eajames@linux.vnet.ibm.com>
+Message-ID: <152113766641.111154.15925874974920514772@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 1/2] clk: aspeed: Fix is_enabled for certain clocks
+Date: Thu, 15 Mar 2018 11:14:26 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 8253bb3f8255 ("regmap: potentially duplicate the name
-string stored in regmap"), the name field of struct regmap_config
-is copied in __regmap_init(), so we no longer need to worry about
-keeping our own copy of the name.
+Quoting Eddie James (2018-03-08 12:57:19)
+> Some of the Aspeed clocks are disabled by setting the relevant bit in
+> the "clock stop control" register to one, while others are disabled by
+> setting their bit to zero. The driver already uses a flag per gate  to
+> identify this behavior, but doesn't apply it in the clock is_enabled
+> function.
+> 
+> Use the existing gate flag to correctly return whether or not a clock
+> is enabled in the aspeed_clk_is_enabled function.
+> 
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
 
-Just use a string literal in the initialization of da8xx_cfgchip_config
-instead of creating a separate variable for the name.
-
-Signed-off-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/devices-da8xx.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 273b6c2..1fd3619 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -1095,11 +1095,8 @@ int __init da850_register_sata(unsigned long refclkpn)
- 
- static struct regmap *da8xx_cfgchip;
- 
--/* regmap doesn't make a copy of this, so we need to keep the pointer around */
--static const char da8xx_cfgchip_name[] = "cfgchip";
--
- static const struct regmap_config da8xx_cfgchip_config __initconst = {
--	.name		= da8xx_cfgchip_name,
-+	.name		= "cfgchip",
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
- 	.reg_stride	= 4,
--- 
-2.7.4
+Applied to clk-fixes
