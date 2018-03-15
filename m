@@ -1,195 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932459AbeCOOzu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:55:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752705AbeCOOzr (ORCPT
+        id S1752679AbeCOO6M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:58:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51412 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752330AbeCOO6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:55:47 -0400
-Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
- <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
- <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 15:55:39 +0100
+        Thu, 15 Mar 2018 10:58:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3438060134
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH 3/3] irqchip/gic-v3: Allow LPIs to be disabled from the
+ command line
+To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180313172103.24281-1-marc.zyngier@arm.com>
+ <20180313172103.24281-4-marc.zyngier@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <f3fee732-2c07-e303-4ec2-2d79668b868e@codeaurora.org>
+Date: Thu, 15 Mar 2018 09:58:07 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180313172103.24281-4-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031514-0020-0000-0000-0000040545AA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031514-0021-0000-0000-000042994ECA
-Message-Id: <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150165
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/2018 15:48, Tony Krowiak wrote:
-> On 03/15/2018 08:26 AM, Pierre Morel wrote:
->> On 14/03/2018 19:25, Tony Krowiak wrote:
->>> This patch refactors the code that initializes the crypto
->>> configuration for a guest. The crypto configuration is contained in
->>> a crypto control block (CRYCB) which is a satellite control block to
->>> our main hardware virtualization control block. The CRYCB is
->>> attached to the main virtualization control block via a CRYCB
->>> designation (CRYCBD) designation field containing the address of
->>> the CRYCB as well as its format.
->>>
->>> Prior to the introduction of AP device virtualization, there was
->>> no need to provide access to or specify the format of the CRYCB for
->>> a guest unless the MSA extension 3 (MSAX3) facility was installed
->>> on the host system. With the introduction of AP device virtualization,
->>> the CRYCB and its format must be made accessible to the guest
->>> regardless of the presence of the MSAX3 facility.
->>>
->>> The crypto initialization code is restructured as follows:
->>>
->>> * A new compilation unit is introduced to contain all interfaces
->>>    and data structures related to configuring a guest's CRYCB for
->>>    both the refactoring of crypto initialization as well as all
->>>    subsequent patches introducing AP virtualization support.
->>>
->>> * Currently, the asm code for querying the AP configuration is
->>>    duplicated in the AP bus as well as in KVM. Since the KVM
->>>    code was introduced, the AP bus has externalized the interface
->>>    for querying the AP configuration. The KVM interface will be
->>>    replaced with a call to the AP bus interface. Of course, this
->>>    will be moved to the new compilation unit mentioned above.
->>>
->>> * An interface to format the CRYCBD field will be provided via
->>>    the new compilation unit and called from the KVM vm
->>>    initialization.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> ---
->>>   MAINTAINERS                      |   10 ++++++
->>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++
->>>   arch/s390/include/asm/kvm_host.h |    1 +
->>>   arch/s390/kvm/Kconfig            |    1 +
->>>   arch/s390/kvm/Makefile           |    2 +-
->>>   arch/s390/kvm/kvm-ap.c           |   48 +++++++++++++++++++++++++++++
->>>   arch/s390/kvm/kvm-s390.c         |   61 
->>> ++++---------------------------------
->>>   7 files changed, 84 insertions(+), 55 deletions(-)
->>>   create mode 100644 arch/s390/include/asm/kvm-ap.h
->>>   create mode 100644 arch/s390/kvm/kvm-ap.c
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 0ec5881..72742d5 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -11875,6 +11875,16 @@ W: 
->>> http://www.ibm.com/developerworks/linux/linux390/
->>>   S:    Supported
->>>   F:    drivers/s390/crypto/
->>>
->>> +S390 VFIO AP DRIVER
->>> +M:    Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> +M:    Christian Borntraeger <borntraeger@de.ibm.com>
->>> +M:    Martin Schwidefsky <schwidefsky@de.ibm.com>
->>> +L:    linux-s390@vger.kernel.org
->>> +W:    http://www.ibm.com/developerworks/linux/linux390/
->>> +S:    Supported
->>> +F:    arch/s390/include/asm/kvm/kvm-ap.h
->>> +F:    arch/s390/kvm/kvm-ap.c
->>> +
->>>   S390 ZFCP DRIVER
->>>   M:    Steffen Maier <maier@linux.vnet.ibm.com>
->>>   M:    Benjamin Block <bblock@linux.vnet.ibm.com>
->>> diff --git a/arch/s390/include/asm/kvm-ap.h 
->>> b/arch/s390/include/asm/kvm-ap.h
->>> new file mode 100644
->>> index 0000000..362846c
->>> --- /dev/null
->>> +++ b/arch/s390/include/asm/kvm-ap.h
->>> @@ -0,0 +1,16 @@
->>> +/*
->>> + * Adjunct Processor (AP) configuration management for KVM guests
->>> + *
->>> + * Copyright IBM Corp. 2017
->>> + *
->>> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
->>> + */
->>> +
->>> +#ifndef _ASM_KVM_AP
->>> +#define _ASM_KVM_AP
->>> +#include <linux/types.h>
->>> +#include <linux/kvm_host.h>
->>> +
->>> +void kvm_ap_build_crycbd(struct kvm *kvm);
->>> +
->>> +#endif /* _ASM_KVM_AP */
->>> diff --git a/arch/s390/include/asm/kvm_host.h 
->>> b/arch/s390/include/asm/kvm_host.h
->>> index 34c9b5b..65a944e 100644
->>> --- a/arch/s390/include/asm/kvm_host.h
->>> +++ b/arch/s390/include/asm/kvm_host.h
->>> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
->>>       __u8    reservedf0[12];        /* 0x00f0 */
->>>   #define CRYCB_FORMAT1 0x00000001
->>>   #define CRYCB_FORMAT2 0x00000003
->>> +#define CRYCB_FORMAT_MASK 0x00000003
->>>       __u32    crycbd;            /* 0x00fc */
->>>       __u64    gcr[16];        /* 0x0100 */
->>>       __u64    gbea;            /* 0x0180 */
->>> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
->>> index a3dbd45..4ca9077 100644
->>> --- a/arch/s390/kvm/Kconfig
->>> +++ b/arch/s390/kvm/Kconfig
->>> @@ -33,6 +33,7 @@ config KVM
->>>       select HAVE_KVM_INVALID_WAKEUPS
->>>       select SRCU
->>>       select KVM_VFIO
->>> +    select ZCRYPT
->>
->> I do not think it is a good solution to *always* enable ZCRYPT
->> when we have KVM.
-> If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed() 
-> function will not compile
-> because it calls a zcrypt interface. How would you suggest we make 
-> sure zcrypt interfaces
-> used in KVM are built if CONFIG_ZCRYPT is not selected?
 
-if zcrypt is not configured, I suppose that the KVM code initializaing CRYCB
-has no use but the function will be called from KVM.
-So I would do something like:
+Hi Marc,
 
-#ifdef ZCRYPT
-external definitions.
-#else
-stubs returning error -ENOZCRYPT (or whatever)
-#endif
+On 03/13/2018 12:21 PM, Marc Zyngier wrote:
+> For most GICv3 implementations, enabling LPIs is a one way switch.
+> Once they're on, there is no turning back, which completely kills
+> kexec (pending tables will always be live, and we can't tell the
+> secondary kernel where they are).
+> 
+> This is really annoying if you plan to use Linux as a bootloader,
+> as it pretty much guarantees that the secondary kernel won't be
+> able to use MSIs, and may even see some memory corruption. Bad.
+> 
+> A workaround for this unfortunate situation is to allow the kernel
+> not to enable LPIs, even if the feature is present in the HW. This
+> would allow Linux-as-a-bootloader to leave LPIs alone, and let the
+> secondary kernel to do whatever it wants with them.
+> 
+> Let's introduce a boolean "irqchip.gicv3_nolpi" command line option
+> that serves that purpose.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+>  drivers/irqchip/irq-gic-v3.c                    | 10 +++++++++-
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1d1d53f85ddd..60130231db3b 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1743,6 +1743,14 @@
+>  			of a GICv2 controller even if the memory range
+>  			exposed by the device tree is too small.
+>  
+> +	irqchip.gicv3_nolpi=
+> +			[ARM, ARM64]
+> +			Force the kernel to ignore the availability of
+> +			LPIs (and by consequence ITSs). Intended for system
+> +			that use the kernel as a bootloader, and thus want
+> +			to let secondary kernels in charge of setting up
+> +			LPIs.
+> +
+>  	irqfixup	[HW]
+>  			When an interrupt is not handled search all handlers
+>  			for it. Intended to get systems with badly broken
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 0ea02504115d..3e9eeb6cb294 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -613,9 +613,17 @@ static void gic_cpu_sys_reg_init(void)
+>  		pr_crit_once("RSS is required but GICD doesn't support it\n");
+>  }
+>  
+> +static bool gicv3_nolpi;
+> +
+> +static int __init gicv3_nolpi_cfg(char *buf)
+> +{
+> +	return strtobool(buf, &gicv3_nolpi);
+> +}
+> +early_param("irqchip.gicv3_nolpi", gicv3_nolpi_cfg);
+> +
+>  static int gic_dist_supports_lpis(void)
+>  {
+> -	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS);
+> +	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS) && !gicv3_nolpi;
 
+Thanks for this patch series especially for KDUMP case. It would be nice if we disable GIC-ITS and
+GICR-LPI functionality completely to avoid in flight LPIs which were triggered by first kernel.
 
-
->>
->> Pierre
->>
->>
->
+  
+>  }
+>  
+>  static void gic_cpu_init(void)
+> 
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
