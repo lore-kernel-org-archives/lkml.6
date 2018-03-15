@@ -1,81 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751854AbeCOKL1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:11:27 -0400
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:45884 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeCOKLZ (ORCPT
+        id S1751659AbeCOKM6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:12:58 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40659 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeCOKMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:11:25 -0400
-X-Google-Smtp-Source: AG47ELsnoED0TEA6Svs48CsbWeCCsZLbfFCuR1ZYv2HS7OsDUhAQ4NTL5UC0mhhFPHqC40gXAbW46A==
-From: Daniel Drake <drake@endlessm.com>
-To: jarkko.sakkinen@linux.intel.com
-Cc: chiu@endlessm.com, linux@endlessm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: TPM driver breaks S3 suspend
-Date: Thu, 15 Mar 2018 18:11:19 +0800
-Message-Id: <20180315101119.30222-1-drake@endlessm.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
-References: <20180102144305.jjjss4nj5yviyiwd@linux.intel.com>
+        Thu, 15 Mar 2018 06:12:55 -0400
+X-Google-Smtp-Source: AG47ELv5AJ4VrX3fKs5RHhJ90I4g6HLojsqFSYGDsGvrfpm+0qvC21lr6wdRmJOlLec4x9RQQeefM/WolYUYm4Jb4FU=
+MIME-Version: 1.0
+In-Reply-To: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
+References: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 15 Mar 2018 11:12:54 +0100
+Message-ID: <CAPDyKFo8jFwDO1E=tNSd4yTn3qtefzvHK0V70fcEqzB=SibrJA@mail.gmail.com>
+Subject: Re: [PATCH v10] mmc: Export host capabilities to debugfs.
+To: Harish Jenny K N <harish_kandiga@mentor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 13 March 2018 at 06:10, Harish Jenny K N <harish_kandiga@mentor.com> wrote:
+> This patch exports the host capabilities to debugfs
+>
+> This idea of sharing host capabilities over debugfs
+> came up from Abbas Raza <Abbas_Raza@mentor.com>
+> Earlier discussions:
+> https://lkml.org/lkml/2018/3/5/357
+> https://www.spinics.net/lists/linux-mmc/msg48219.html
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+> ---
+>
+> Changes in v10:
+> - minor review comment addressed.
+> - Added "Reviewed-by" line
+>
+> Changes in v9
+> - More code cleanup as suggested by Andy Shevchenko.
+>
+> Changes in v8
+> - Changes to use for_each_set_bit as suggested by Andy Shevchenko.
+>
+> Changes in v7
+> - Moved additional capabilities also to caps file as mentioned by Ulf Hansson
+> - compacting the code with macros
+>
+> Changes in v6:
+> - Used DEFINE_SHOW_ATTRIBUTE
+>
+> Changes in v5:
+> - Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
+> - Changed Author
+>
+> Changes in v4:
+> - Moved the creation of nodes to mmc_add_host_debugfs
+> - Exported caps2
+> - Renamed host_caps to caps
+>
+> Changes in v3:
+> - Removed typecasting of &host->caps to (u32 *)
+>
+> Changes in v2:
+> - Changed Author
+>
+>  drivers/mmc/core/debugfs.c | 107 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>
+> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+> index c51e0c0..826d361 100644
+> --- a/drivers/mmc/core/debugfs.c
+> +++ b/drivers/mmc/core/debugfs.c
+> @@ -225,6 +225,110 @@ static int mmc_clock_opt_set(void *data, u64 val)
+>  DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
+>         "%llu\n");
+>
+> +/*
+> + * mmc_host_capabilities - MMC host capabilities
+> + *
+> + * This must be in sync with caps definitions in the mmc/host.h
+> + */
+> +static const char * const mmc_host_capabilities[] = {
+> +       "4-bit transfers allowed",
+> +       "Supports MMC high-speed timing",
+> +       "Supports SD high-speed timing",
+> +       "Can signal pending SDIO IRQs",
+> +       "Talks only SPI protocols",
+> +       "Needs polling for card-detection",
+> +       "8 bit transfers allowed",
+> +       "Suspends (e)MMC/SD at idle",
+> +       "Nonremovable",
+> +       "Waits while card is busy",
+> +       "Allows erase/trim commands",
+> +       "Supports DDR mode at 3.3V",
+> +       "Supports DDR mode at 1.8V",
+> +       "Supports DDR mode at 1.2V",
+> +       "Can power off after boot",
+> +       "CMD14/CMD19 bus width ok",
+> +       "Supports UHS SDR12 mode",
+> +       "Supports UHS SDR25 mode",
+> +       "Supports UHS SDR50 mode",
+> +       "Supports UHS SDR104 mode",
+> +       "Supports UHS DDR50 mode",
+> +       "Unknown (bit 21)",
+> +       "Unknown (bit 22)",
+> +       "Supports Driver Type A",
+> +       "Supports Driver Type C",
+> +       "Supports Driver Type D",
+> +       "Unknown (bit 26)",
+> +       "RW reqs can be completed within mmc_request_done()",
+> +       "Supports Enable card detect wake",
+> +       "Can send commands during data transfer",
+> +       "CMD23 supported",
+> +       "Supports Hardware reset"
+> +};
+> +
+> +/*
+> + * mmc_host_capabilities2 - MMC host additional capabilities
+> + *
+> + * This must be in sync with caps2 definitions in the mmc/host.h
+> + */
+> +static const char * const mmc_host_capabilities2[] = {
+> +       "No access to Boot partition",
+> +       "Unknown (bit 1)",
+> +       "Can do full power cycle",
+> +       "Unknown (bit 3)",
+> +       "Unknown (bit 4)",
+> +       "Supports HS200 1.8V SDR",
+> +       "Supports HS200 1.2V SDR",
+> +       "Unknown (bit 7)",
+> +       "Unknown (bit 8)",
+> +       "Unknown (bit 9)",
+> +       "Card-detect signal active high",
+> +       "Write-protect signal active high",
+> +       "Unknown (bit 12)",
+> +       "Unknown (bit 13)",
+> +       "Can do complete power cycle of the card",
+> +       "Supports HS400 1.8V",
+> +       "Support HS400 1.2V",
+> +       "SDIO IRQ - Nothread",
+> +       "No physical write protect pin, assume always read-write",
+> +       "Do not send SDIO commands during initialization",
+> +       "Supports enhanced strobe",
+> +       "Do not send SD commands during initialization",
+> +       "Do not send (e)MMC commands during initialization",
+> +       "Has eMMC command queue engine",
+> +       "CQE can issue a direct command",
+> +       "Unknown (bit 25)",
+> +       "Unknown (bit 26)",
+> +       "Unknown (bit 27)",
+> +       "Unknown (bit 28)",
+> +       "Unknown (bit 29)",
+> +       "Unknown (bit 30)",
+> +       "Unknown (bit 31)"
+> +};
 
-Sorry for the delayed response.
+Honestly, I don't like this, but maybe other people do, then I am fine
+with this approach.
 
-Unfortunately we had to return the affected machine to the vendor
-(Acer Veriton X4110G) although given we have a fairly complete
-understanding of the problem, perhaps we can find and push a fix
-anyway.
+If were to decide, I would just rather print the caps field in a
+hexadecimal bit form and leave the translation to the user.
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> Can you try it on git://git.infradead.org/users/jjs/linux-tpmdd.git ?
-> Maybe it is related to the LPC #CLKRUN issues we've had.
+> +
+> +static int mmc_caps_show(struct seq_file *s, void *unused)
+> +{
+> +       struct mmc_host *host = s->private;
+> +       unsigned long caps = host->caps;
+> +       unsigned long caps2 = host->caps2;
+> +       int bit;
+> +
+> +       seq_puts(s, "MMC Host capabilities are:\n");
+> +       seq_puts(s, "=============================================\n");
+> +
+> +       for_each_set_bit(bit, &caps, ARRAY_SIZE(mmc_host_capabilities))
+> +               seq_printf(s, "%s\n", mmc_host_capabilities[bit]);
+> +
+> +       seq_puts(s, "=============================================\n");
+> +       seq_puts(s, "MMC Host additional capabilities are:\n");
+> +       seq_puts(s, "=============================================\n");
+> +
+> +       for_each_set_bit(bit, &caps2, ARRAY_SIZE(mmc_host_capabilities2))
+> +               seq_printf(s, "%s\n", mmc_host_capabilities2[bit]);
+> +
+> +       return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(mmc_caps);
+> +
+>  void mmc_add_host_debugfs(struct mmc_host *host)
+>  {
+>         struct dentry *root;
+> @@ -243,6 +347,9 @@ void mmc_add_host_debugfs(struct mmc_host *host)
+>         if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
+>                 goto err_node;
+>
+> +       if (!debugfs_create_file("caps", 0400, root, host, &mmc_caps_fops))
+> +               goto err_node;
+> +
+>         if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
+>                         &mmc_clock_fops))
+>                 goto err_node;
+> --
+> 1.9.1
+>
 
-I don't see anything relevant in that git tree, and it seems like
-a distant issue from the CLKRUN changes that have been made.
-
-To recap, the first suspend works OK, and then the TPM shows shows the
-following message on the first resume:
-  tpm tpm0: A TPM error(38) occured continue selftest
-And error(38) is TPM_ERR_INVALID_POSTINIT which means the TPM is
-not in the correct state. Then the following suspend will always
-fail with the following messages.
-  tpm tpm0: Error (38) sending savestate before suspend
-  PM: Device 00:0b failed to suspend: error 38
-
-tpm_crb is the driver here (not tpm2).
-
-This exact problem was also discussed in depth years ago at
-https://lists.gt.net/linux/kernel/1358716
-
-The patch that we used to avoid the issue is below. What do you think?
-
-Thanks
-Daniel
-
-
----
- drivers/char/tpm/tpm-interface.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1d6729be4cd6..444ae2df4a06 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -953,6 +953,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 	loops = jiffies_to_msecs(duration) / delay_msec;
- 
- 	rc = tpm_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
- 	/* This may fail if there was no TPM driver during a suspend/resume
- 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
- 	 */
--- 
-2.14.1
+Kind regards
+Uffe
