@@ -1,141 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752768AbeCOUQ5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 16:16:57 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:44031 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752640AbeCOUQz (ORCPT
+        id S1752813AbeCOURK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 16:17:10 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54536 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeCOURI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 16:16:55 -0400
-X-Google-Smtp-Source: AG47ELumtPNkCMbdKZPTPcGlGIOPkt39hKYLXSDNO6prQTlxxWXDNsP9Cz41lQMr4PxLld66FWh9VA==
-Date: Thu, 15 Mar 2018 13:16:53 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Roman Gushchin <guro@fb.com>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch -mm v3 1/3] mm, memcg: introduce per-memcg oom policy
- tunable
-In-Reply-To: <20180315171039.GB1853@castle.DHCP.thefacebook.com>
-Message-ID: <alpine.DEB.2.20.1803151301480.44030@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803121757080.192200@chino.kir.corp.google.com> <20180314123851.GB20850@castle.DHCP.thefacebook.com> <alpine.DEB.2.20.1803141341180.163553@chino.kir.corp.google.com>
- <20180315171039.GB1853@castle.DHCP.thefacebook.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 15 Mar 2018 16:17:08 -0400
+Date: Thu, 15 Mar 2018 21:17:05 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: jason.vas.dias@gmail.com
+cc: linux-kernel@vger.kernel.org, x86@kernel.org, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: Re: [PATCH v4.16-rc5 (3)] x86/vdso: on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW
+In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+Message-ID: <alpine.DEB.2.21.1803152047380.1520@nanos.tec.linutronix.de>
+References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018, Roman Gushchin wrote:
+Jason,
 
-> >  - Does not lock the entire system into a single methodology.  Users
-> >    working in a subtree can default to what they are used to: per-process
-> >    oom selection even though their subtree might be targeted by a system
-> >    policy level decision at the root.  This allow them flexibility to
-> >    organize their subtree intuitively for use with other controllers in a
-> >    single hierarchy.
-> > 
-> >    The real-world example is a user who currently organizes their subtree
-> >    for this purpose and has defined oom_score_adj appropriately and now
-> >    regresses if the admin mounts with the needless "groupoom" option.
-> 
-> I find this extremely confusing.
-> 
-> The problem is that OOM policy defines independently how the OOM
-> of the corresponding scope is handled, not like how it prefers
-> to handle OOMs from above.
-> 
-> As I've said, if you're inside a container, you can have OOMs
-> of different types, depending on settings, which you don't even know about.
-> Sometimes oom_score_adj works, sometimes not.
-> Sometimes all processes are killed, sometimes not.
-> IMO, this adds nothing but mess.
-> 
+On Thu, 15 Mar 2018, jason.vas.dias@gmail.com wrote:
 
-There are many additional problems with the cgroup aware oom killer in 
--mm, yes, the fact that memory.oom_group is factored into the selection 
-logic is another problem.  Users who prefer to account their subtree for 
-comparison (the only way to avoid allowing users to evade the oom killer 
-completely) should use the memory.oom_policy of "tree" introduced later.  
-memory.oom_group needs to be completely separated from the policy of 
-selecting a victim, it shall only be a mechanism that defines if a single 
-process is oom killed or all processes attached to the victim mem cgroup 
-as a property of the workload.
+>   Resent to address reviewer comments.
 
-> The mount option (which I'm not a big fan of too) was added only
-> to provide a 100% backward compatibility, what was forced by Michal.
-> But I doubt that mixing per-process and per-cgroup approach
-> makes any sense.
-> 
+I was being patient so far and tried to guide you through the patch
+submission process, but unfortunately this turns out to be just waste of my
+time.
 
-It makes absolute sense and has real users who can immediately use this if 
-it's merged.  There is nothing wrong with a user preferring to kill the 
-largest process from their subtree on mem cgroup oom.  It's what they've 
-always experienced, with cgroup v1 and v2.  It's the difference between 
-users in a subtree being able to use /proc/pid/oom_score_adj or not.  
-Without it, their oom_score_adj values become entirely irrelevant.  We 
-have users who tune their oom_score_adj and are running in a subtree they 
-control.
+You have not addressed any of the comments I made here:
 
-If an overcomitted ancestor is oom, which is up to the admin to define in 
-the organization of the hierarchy and imposing limits, the user does not 
-control which process or group of processes is oom killed.  That's a 
-decision for the ancestor which controls all descendant cgroups, including 
-limits and oom policies.
+[1]  https://lkml.kernel.org/r/alpine.DEB.2.21.1803141511340.2481@nanos.tec.linutronix.de
+[2]  https://lkml.kernel.org/r/alpine.DEB.2.21.1803141527300.2481@nanos.tec.linutronix.de
 
-> > 
-> >  - Allows changing the oom policy at runtime without remounting the entire
-> >    cgroup fs.  Depending on how cgroups are going to be used, per-process 
-> >    vs cgroup-aware may be mandated separately.  This is a trait only of
-> >    the mem cgroup controller, the root level oom policy is no different
-> >    from the subtree and depends directly on how the subtree is organized.
-> >    If other controllers are already being used, requiring a remount to
-> >    change the system-wide oom policy is an unnecessary burden.
-> > 
-> >    The real-world example is systems software that either supports user
-> >    subtrees or strictly subtrees that it maintains itself.  While other
-> >    controllers are used, the mem cgroup oom policy can be changed at
-> >    runtime rather than requiring a remount and reorganizing other
-> >    controllers exactly as before.
-> 
-> Btw, what the problem with remounting? You don't have to re-create cgroups,
-> or something like this; the operation is as trivial as adding a flag.
-> 
+But still you claim that you addressed reviewer comments.
 
-Remounting is for the entire mem cgroup hierarchy.  The point of this 
-entire patchset is that different subtrees will have different policies, 
-it cannot be locked into a single selection logic.
+The delta between the two patch series shows clearly that you ignored both
+review mails completely. You merily changed the implementation of a
+function, which I not even reviewed, and fiddled in the big fat comment.
 
-This completely avoids users being able to evade the cgroup-aware oom 
-killer by creating subcontainers.
+Feel free to ignore me, but rest assured that this is the last chance
+before you end up in the /dev/null mail filter.
 
-Obviously I've been focused on users controlling subtrees in a lot of my 
-examples.  Those users may already prefer oom killing the largest process 
-on the system (or their subtree).  They can still do that with this patch 
-and opt out of cgroup awareness for their subtree.
+I recommend you to try to fixup only the first patch and once that is good
+to go you might try to submit the rest. But please take your time and
+address _ALL_ of my comments and follow the documented rules.
 
-It also provides all the functionality that the current implementation in 
--mm provides.
+If you have questions regarding my comments or the process after working
+through them and the Documentation I pointed to, feel free to ask them on
+the list and not in private mail. If you think that my comments or
+recommendations are wrong, discuss them on list instead of silently
+ignoring them.
 
-> > 
-> >  - Can be extended to cgroup v1 if necessary.  There is no need for a
-> >    new cgroup v1 mount option and mem cgroup oom selection is not
-> >    dependant on any functionality provided by cgroup v2.  The policies
-> >    introduced here work exactly the same if used with cgroup v1.
-> > 
-> >    The real-world example is a cgroup configuration that hasn't had
-> >    the ability to move to cgroup v2 yet and still would like to use
-> >    cgroup-aware oom selection with a very trivial change to add the
-> >    memory.oom_policy file to the cgroup v1 filesystem.
-> 
-> I assume that v1 interface is frozen.
-> 
+Yours grumpy
 
-It requires adding the memory.oom_policy file to the cgroup v1 fs, that's 
-it.  No other support is needed.  If that's allowed upstream, great; if 
-not, it's a very simple patch to carry for a distribution.
+      tglx
