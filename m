@@ -1,172 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752799AbeCOPk3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:40:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60482 "EHLO mail.bootlin.com"
+        id S932594AbeCOPpg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:45:36 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47922 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752776AbeCOPk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:40:27 -0400
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 02/12] crypto: inside-secure - move cache result dma mapping to request
-Date: Thu, 15 Mar 2018 16:38:41 +0100
-Message-Id: <20180315153851.9958-3-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
-References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
+        id S1752525AbeCOPpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:45:34 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/9] x86/dumstack: Remove code_bytes
+Date: Thu, 15 Mar 2018 16:44:40 +0100
+Message-Id: <20180315154448.16222-2-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
+References: <20180315154448.16222-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In heavy traffic the DMA mapping is overwritten by multiple requests as
-the DMA address is stored in a global context. This patch moves this
-information to the per-hash request context so that it can't be
-overwritten.
+From: Borislav Petkov <bp@suse.de>
 
-As now the cache is directly mapped from safexcel_ahash_req, it's not
-dynamically allocated anymore.
+This was added by
 
-Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+  86c418374223 ("[PATCH] i386: add option to show more code in oops reports")
+
+long time ago but experience shows that 64 instruction bytes are plenty
+when deciphering an oops. So get rid of it.
+
+Removing it will simplify further enhancements to the opcodes dumping
+machinery coming in the following patches.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- drivers/crypto/inside-secure/safexcel.c      | 14 ----------
- drivers/crypto/inside-secure/safexcel.h      |  7 -----
- drivers/crypto/inside-secure/safexcel_hash.c | 42 ++++++++++++----------------
- 3 files changed, 18 insertions(+), 45 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  5 -----
+ arch/x86/kernel/dumpstack.c                     | 27 ++++---------------------
+ 2 files changed, 4 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 0c33bdbe48fc..384b4ceb37f0 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -537,20 +537,6 @@ void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring)
- 	       EIP197_HIA_CDR(priv, ring) + EIP197_HIA_xDR_PREP_COUNT);
- }
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b37c1c30c16f..2c74c1694d9d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -587,11 +587,6 @@
+ 			Sets the size of memory pool for coherent, atomic dma
+ 			allocations, by default set to 256K.
  
--void safexcel_free_context(struct safexcel_crypto_priv *priv,
--			   struct crypto_async_request *req)
--{
--	struct safexcel_context *ctx = crypto_tfm_ctx(req->tfm);
+-	code_bytes	[X86] How many bytes of object code to print
+-			in an oops report.
+-			Range: 0 - 8192
+-			Default: 64
 -
--	if (ctx->cache) {
--		dma_unmap_single(priv->dev, ctx->cache_dma, ctx->cache_sz,
--				 DMA_TO_DEVICE);
--		kfree(ctx->cache);
--		ctx->cache = NULL;
--		ctx->cache_sz = 0;
--	}
--}
--
- void safexcel_complete(struct safexcel_crypto_priv *priv, int ring)
- {
- 	struct safexcel_command_desc *cdesc;
-diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index 4e14c7e730c4..d8dff65fc311 100644
---- a/drivers/crypto/inside-secure/safexcel.h
-+++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -578,11 +578,6 @@ struct safexcel_context {
- 	int ring;
- 	bool needs_inv;
- 	bool exit_inv;
--
--	/* Used for ahash requests */
--	void *cache;
--	dma_addr_t cache_dma;
--	unsigned int cache_sz;
- };
+ 	com20020=	[HW,NET] ARCnet - COM20020 chipset
+ 			Format:
+ 			<io>[,<irq>[,<nodeID>[,<backplane>[,<ckp>[,<timeout>]]]]]
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 18fa9d74c182..593db796374d 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -22,9 +22,10 @@
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
  
- /*
-@@ -606,8 +601,6 @@ struct safexcel_inv_result {
- 
- void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring);
- void safexcel_complete(struct safexcel_crypto_priv *priv, int ring);
--void safexcel_free_context(struct safexcel_crypto_priv *priv,
--				  struct crypto_async_request *req);
- int safexcel_invalidate_cache(struct crypto_async_request *async,
- 			      struct safexcel_crypto_priv *priv,
- 			      dma_addr_t ctxr_dma, int ring,
-diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index e33f089185d6..4953a2a86c10 100644
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -43,6 +43,9 @@ struct safexcel_ahash_req {
- 	u64 processed;
- 
- 	u8 cache[SHA256_BLOCK_SIZE] __aligned(sizeof(u32));
-+	dma_addr_t cache_dma;
-+	unsigned int cache_sz;
++#define OPCODE_BUFSIZE 64
 +
- 	u8 cache_next[SHA256_BLOCK_SIZE] __aligned(sizeof(u32));
- };
+ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+-static unsigned int code_bytes = 64;
+ static int die_counter;
  
-@@ -165,7 +168,11 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 		sreq->result_dma = 0;
- 	}
- 
--	safexcel_free_context(priv, async);
-+	if (sreq->cache_dma) {
-+		dma_unmap_single(priv->dev, sreq->cache_dma, sreq->cache_sz,
-+				 DMA_TO_DEVICE);
-+		sreq->cache_dma = 0;
-+	}
- 
- 	cache_len = sreq->len - sreq->processed;
- 	if (cache_len)
-@@ -227,24 +234,15 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 
- 	/* Add a command descriptor for the cached data, if any */
- 	if (cache_len) {
--		ctx->base.cache = kzalloc(cache_len, EIP197_GFP_FLAGS(*async));
--		if (!ctx->base.cache) {
--			ret = -ENOMEM;
--			goto unlock;
--		}
--		memcpy(ctx->base.cache, req->cache, cache_len);
--		ctx->base.cache_dma = dma_map_single(priv->dev, ctx->base.cache,
--						     cache_len, DMA_TO_DEVICE);
--		if (dma_mapping_error(priv->dev, ctx->base.cache_dma)) {
--			ret = -EINVAL;
--			goto free_cache;
--		}
-+		req->cache_dma = dma_map_single(priv->dev, req->cache,
-+						cache_len, DMA_TO_DEVICE);
-+		if (dma_mapping_error(priv->dev, req->cache_dma))
-+			return -EINVAL;
- 
--		ctx->base.cache_sz = cache_len;
-+		req->cache_sz = cache_len;
- 		first_cdesc = safexcel_add_cdesc(priv, ring, 1,
- 						 (cache_len == len),
--						 ctx->base.cache_dma,
--						 cache_len, len,
-+						 req->cache_dma, cache_len, len,
- 						 ctx->base.ctxr_dma);
- 		if (IS_ERR(first_cdesc)) {
- 			ret = PTR_ERR(first_cdesc);
-@@ -328,16 +326,12 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 	for (i = 0; i < n_cdesc; i++)
- 		safexcel_ring_rollback_wptr(priv, &priv->ring[ring].cdr);
- unmap_cache:
--	if (ctx->base.cache_dma) {
--		dma_unmap_single(priv->dev, ctx->base.cache_dma,
--				 ctx->base.cache_sz, DMA_TO_DEVICE);
--		ctx->base.cache_sz = 0;
-+	if (req->cache_dma) {
-+		dma_unmap_single(priv->dev, req->cache_dma, req->cache_sz,
-+				 DMA_TO_DEVICE);
-+		req->cache_sz = 0;
- 	}
--free_cache:
--	kfree(ctx->base.cache);
--	ctx->base.cache = NULL;
- 
--unlock:
- 	spin_unlock_bh(&priv->ring[ring].egress_lock);
- 	return ret;
+ bool in_task_stack(unsigned long *stack, struct task_struct *task,
+@@ -356,26 +357,6 @@ void die(const char *str, struct pt_regs *regs, long err)
+ 	oops_end(flags, regs, sig);
  }
+ 
+-static int __init code_bytes_setup(char *s)
+-{
+-	ssize_t ret;
+-	unsigned long val;
+-
+-	if (!s)
+-		return -EINVAL;
+-
+-	ret = kstrtoul(s, 0, &val);
+-	if (ret)
+-		return ret;
+-
+-	code_bytes = val;
+-	if (code_bytes > 8192)
+-		code_bytes = 8192;
+-
+-	return 1;
+-}
+-__setup("code_bytes=", code_bytes_setup);
+-
+ void show_regs(struct pt_regs *regs)
+ {
+ 	bool all = true;
+@@ -393,8 +374,8 @@ void show_regs(struct pt_regs *regs)
+ 	 * time of the fault..
+ 	 */
+ 	if (!user_mode(regs)) {
+-		unsigned int code_prologue = code_bytes * 43 / 64;
+-		unsigned int code_len = code_bytes;
++		unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
++		unsigned int code_len = OPCODE_BUFSIZE;
+ 		unsigned char c;
+ 		u8 *ip;
+ 
 -- 
-2.14.3
+2.13.0
