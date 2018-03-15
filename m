@@ -1,132 +1,126 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-124355-1521114182-2-4089801911917917406
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521114182; b=kU+tKZ118hC8wX/e1bLjaAGJS8gNwnYGbWWvJQYNQARcfN8
-    1ysesOjL03S8hpuUEPULcvBAn6eNi2ukYE4GDqO4E79nFEX0bJv6QvFhtA6Qsc9v
-    /y5bLAr6M461kS8O+D/hl30GKWj6nXLF9OpmNyPBLui0zDlEJkZUJ1iQfwcNm5zJ
-    gWVhqT6e/+xI2SeBkdbAYv8ejN+3gIdjPalhkNkyNITDtV+PW+G6ZIwuywWIpJ1b
-    NFEw+h3KJScz3awoAa0xsuQddEJM4afkjsZh0yoIwjFGQFT7VZ3qhdRbERdMbQKo
-    eRG1D+3DsOx6SCGf7CwoGaQSLCnTaEvMR8pt5pQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1521114182; bh=e5q0ZPTuXiPWnYxGyfH+d4Z6Hq5a2gacAbOH+x3oAkk=; b=R
-    IJXWEee5fObeXw08BmWcJoGe1xhkXbRcvuSQGhrv98tpOXwGcF/HPfflWumV3cWM
-    2MrbBMPHCgW3H7YJt2yhjpEx1NZ7sg6MkQVqB3l8qu3ZT5Qkp404Le0yjIXo6fMe
-    qIntg9KiNXoqQl107IBnKgJ0SkcIM0tWhEVcKcm0LghDw5f1HKPJZ+0bNhyDVbow
-    fGrzuBS4fkAqOynDK7FDwQnQnhAwO7P40MJxhl5ALcyQJoUIeeEJfJR/7ld0se3/
-    MOthaHqkNNqziwdbc3GK7J3TfliJ6fwjaJFTkTP6qVuUSY/7aFwqveUFEQ7Ywixv
-    LVbjhcMrIAvi6tBfpqnPQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeCOLmo (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 07:42:44 -0400
-Received: from mga17.intel.com ([192.55.52.151]:38144 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751481AbeCOLmm (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:42:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
-   d="scan'208";a="38211924"
+Return-Path: <chiu@endlessm.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521120489; cv=none;
+        d=google.com; s=arc-20160816;
+        b=QiJZuKLNFJ4H36nnq5X6L5YL4ba4hVf545GsTrxJvBtJKNyRsC6B27eL3gDZesy/aN
+         VyTOGKDJKSXAoKxPu6lefev0aDcf7KVozmplRyeY4L7vvo/Nvb9+5i4GmO5UhqH97o44
+         KsIKUepRZImpVj7cBw2j/6qttsrFSS83HY3OyBboWRLaI3yW4+9sDjsaXvaCiFiOmNOj
+         1x4ZVfnSvwXQEy8LSi0bxRXFP2xK6gbmx/DWDBEwM0CGZVFJIbshPUhDA/7HVn8eSmfv
+         dFTl9h/Q9TKovp+NI21/9D+3LEGFNyxphDXRcoBvWfmEce+ea8OOxXnMPfqeRtbe6mWh
+         BvDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=NOiA2IRMusa669mftKTicxII6KFxlvjnMdmD8qfzyx8=;
+        b=SfPbgNqnFOkKq0ohVj1FsLcjdkxtLZaWhXvqrIi8YDFhjL4BJzXwPUHe3/zZUVQ+Lv
+         ZumBOhQegOE8m/j0GUZCx6QXVmN/FaODxOi2UIJ6yi12FjhdqX+mOFaBgoQ7Z18eZUpz
+         XDMhE27XxhjfEK/ENHf9bURIcMfAW9WTCiMSJHAD+vfdV0lumryPyODMMphhrE4GdGFQ
+         /w5AfYeWlLTR9E3OwZ/Xi5P93OWC0tANCCbbsvcWn16NDCodgI/HlrBQvC5m7ttxGF1E
+         SgxugPduHpxyfFkE1jaau+cOru9aabBEnZ0nt9NdbKodbDMp2zM7KvMtDz5ioLT/d72G
+         1MjA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=cd/4nunS;
+       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=cd/4nunS;
+       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
+X-Google-Smtp-Source: AG47ELuTP4ZTRDWplOI4m3NOqztg6XY+WzpbCL7hPMuqPQn2afcczoMP7gKqP551OBlRgjVam6cM20PpsG8I0RM1p8A=
+MIME-Version: 1.0
+In-Reply-To: <6c8df688-b456-6f07-9325-6f4dfd8f0883@linux.intel.com>
+References: <CAB4CAwf_k-WsF3zL4epm9TKAOu0h=Bv1XhXV_gY3bziOo_NPKA@mail.gmail.com>
+ <6c8df688-b456-6f07-9325-6f4dfd8f0883@linux.intel.com>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Thu, 15 Mar 2018 21:28:08 +0800
+Message-ID: <CAB4CAwf39wW2LmuY-TZNdfgL=SBiDZuXvRNu7MD7j5Nc8O-bkg@mail.gmail.com>
 Subject: Re: Intel GemniLake xHCI connected devices can never wake up the
  system from suspend
-To: Chris Chiu <chiu@endlessm.com>, mathias.nyman@intel.com,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAB4CAwf_k-WsF3zL4epm9TKAOu0h=Bv1XhXV_gY3bziOo_NPKA@mail.gmail.com>
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <6c8df688-b456-6f07-9325-6f4dfd8f0883@linux.intel.com>
-Date: Thu, 15 Mar 2018 13:46:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAB4CAwf_k-WsF3zL4epm9TKAOu0h=Bv1XhXV_gY3bziOo_NPKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594977262317953417?=
+X-GMAIL-MSGID: =?utf-8?q?1595010437897695296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 15.03.2018 06:40, Chris Chiu wrote:
-> Hi,
->      I  have a ASUS AIO V222GA and another Acer Desktop XC-830 both
-> have Intel CPU J5005 and they both hit the same problem. The XHCI
-> connected USB keyboard/mouse can never wakeup the system from suspend.
-> It reminds me that similiar thing happens on ApolloLake too which
-> needs the XHCI_PME_STUCK_QUIRK to get it work. It's also mentioned in
-> https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/pentium-celeron-n-series-spec-update.pdf
-> page #14 for N-seris intel CPU. And I also find the same problem
-> description in https://www.intel.com/content/dam/www/public/us/en/documents/product-briefs/silver-celeron-spec-update.pdf
-> page #16 for J-series Intel CPU. Seems that they have different
-> workaround so I can not simply apply XHCI_PME_STUCK_QUIRK to make it
-> work.
-> 
->      Anyone can help here?
-> 
+On Thu, Mar 15, 2018 at 7:46 PM, Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
+> On 15.03.2018 06:40, Chris Chiu wrote:
+>>
+>> Hi,
+>>      I  have a ASUS AIO V222GA and another Acer Desktop XC-830 both
+>> have Intel CPU J5005 and they both hit the same problem. The XHCI
+>> connected USB keyboard/mouse can never wakeup the system from suspend.
+>> It reminds me that similiar thing happens on ApolloLake too which
+>> needs the XHCI_PME_STUCK_QUIRK to get it work. It's also mentioned in
+>>
+>> https://www.intel.com/content/dam/www/public/us/en/documents/specificati=
+on-updates/pentium-celeron-n-series-spec-update.pdf
+>> page #14 for N-seris intel CPU. And I also find the same problem
+>> description in
+>> https://www.intel.com/content/dam/www/public/us/en/documents/product-bri=
+efs/silver-celeron-spec-update.pdf
+>> page #16 for J-series Intel CPU. Seems that they have different
+>> workaround so I can not simply apply XHCI_PME_STUCK_QUIRK to make it
+>> work.
+>>
+>>      Anyone can help here?
+>>
+>
+> N-Series
+> CHP8: USB xHCI Controller May Not Re-Enter D3 State After a USB Wake Even=
+t
+> - needs XHCI_PME_STUCK_QUIRK in driver (sets bit 28 at offset 80a4)
+>
+> Intel=C2=AE Pentium=C2=AE Silver N5000
+> Intel=C2=AE Pentium=C2=AE Silver J5005
+> Intel=C2=AE Celeron=C2=AE N4000 and N4100
+> Intel=C2=AE Celeron=C2=AE J4105 and J4005
+>
+> USB xHCI Controller May Not Re-enter a D3 State After a USB Wake Even
+> Need to clear PME_EN bit of of the standard PCI PM_CSR register.
+> I think Linux does this anyway (clears enabling PME when reaching D0)
+> So if I remember correct there was no specific workaround needed for this=
+.
+>
+> what is the PCI ID of your xhci controller? (lspci -nn)
 
-N-Series
-CHP8: USB xHCI Controller May Not Re-Enter D3 State After a USB Wake Event
-- needs XHCI_PME_STUCK_QUIRK in driver (sets bit 28 at offset 80a4)
+They're both 8086:31a8. So you mean from the workaround description, it sho=
+uld
+work w/o any extra code? "Software should clear bit 8 (PME_EN) of PM_CSR" h=
+as
+been handled somewhere else?
 
-Intel® Pentium® Silver N5000
-Intel® Pentium® Silver J5005
-Intel® Celeron® N4000 and N4100
-Intel® Celeron® J4105 and J4005
+>
+> One other possible cause is that xHCI never reaches PCI device D3 suspend
+> state during system suspend.
+> xHC can't generate PME# wake event from normal running PCI device D0 stat=
+e.
+>
+> PCI code in Linux will check with ACPI about the lowest possible D state
+> when suspending,
+> If there is something missing from the xHCI entry in ACPI DSDT table it
+> might select D0.
+> as the suspend state, causing wake failure.
+>
 
-USB xHCI Controller May Not Re-enter a D3 State After a USB Wake Even
-Need to clear PME_EN bit of of the standard PCI PM_CSR register.
-I think Linux does this anyway (clears enabling PME when reaching D0)
-So if I remember correct there was no specific workaround needed for this.
+Here's the DSDT ASL of the ASUS machine.
+https://gist.github.com/mschiu77/8e9c8a0e5a98b70a6dfff45620340bf1
 
-what is the PCI ID of your xhci controller? (lspci -nn)
+Don't know if the "lspci -vvv" output for the USB xHCI controller
+provide any useful
+information. There's "PME(D0-,D1-,D2-,D3hot+,D3cold+)" in the
+following lspci log
+https://gist.github.com/mschiu77/8cf523f0e564c1fca44398ebeb21b7bc
 
-One other possible cause is that xHCI never reaches PCI device D3 suspend state during system suspend.
-xHC can't generate PME# wake event from normal running PCI device D0 state.
 
-PCI code in Linux will check with ACPI about the lowest possible D state when suspending,
-If there is something missing from the xHCI entry in ACPI DSDT table it might select D0.
-as the suspend state, causing wake failure.
+> Is there a BIOS update available for your ASUS and Acer?
+>
+> -Mathias
 
-Is there a BIOS update available for your ASUS and Acer?
-
--Mathias
-
-  
-  
+ASUS said the BIOS has no problem on USB wakeup under Windows so I don't th=
+ink
+there's any update. Anything else could be cause for this?
