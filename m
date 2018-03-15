@@ -1,134 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeCOKsa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 06:48:30 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45786 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbeCOKs2 (ORCPT
+        id S1752018AbeCOKsi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 06:48:38 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:39423 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbeCOKsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 06:48:28 -0400
-Subject: Re: [PATCH] percpu: Allow to kill tasks doing pcpu_alloc() and
- waiting for pcpu_balance_workfn()
-To: Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
-Cc: cl@linux.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <152102825828.13166.9574628787314078889.stgit@localhost.localdomain>
- <20180314135631.3e21b31b154e9f3036fa6c52@linux-foundation.org>
- <20180314220909.GE2943022@devbig577.frc2.facebook.com>
- <20180314152203.c06fce436d221d34d3e4cf4a@linux-foundation.org>
- <c5c1c98b-9e0c-ec09-36c6-4266ad239ef1@virtuozzo.com>
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <5a4a1aae-8c61-de28-d3cd-2f8f4355f050@i-love.sakura.ne.jp>
-Date: Thu, 15 Mar 2018 19:48:13 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 06:48:36 -0400
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Martin Steigerwald <martin@lichtvoll.de>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
+Date: Thu, 15 Mar 2018 11:48:29 +0100
+Message-ID: <52455167.vuuyuMgTrX@merkaba>
+In-Reply-To: <3573548.kp1edD77Gq@merkaba>
+References: <27165802.vQ9JbjrmvU@merkaba> <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com> <3573548.kp1edD77Gq@merkaba>
 MIME-Version: 1.0
-In-Reply-To: <c5c1c98b-9e0c-ec09-36c6-4266ad239ef1@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/03/15 17:58, Kirill Tkhai wrote:
-> On 15.03.2018 01:22, Andrew Morton wrote:
->> On Wed, 14 Mar 2018 15:09:09 -0700 Tejun Heo <tj@kernel.org> wrote:
->>
->>> Hello, Andrew.
->>>
->>> On Wed, Mar 14, 2018 at 01:56:31PM -0700, Andrew Morton wrote:
->>>> It would benefit from a comment explaining why we're doing this (it's
->>>> for the oom-killer).
->>>
->>> Will add.
->>>
->>>> My memory is weak and our documentation is awful.  What does
->>>> mutex_lock_killable() actually do and how does it differ from
->>>> mutex_lock_interruptible()?  Userspace tasks can run pcpu_alloc() and I
->>>
->>> IIRC, killable listens only to SIGKILL.
-
-I think that killable listens to any signal which results in termination of
-that process. For example, if a process is configured to terminate upon SIGINT,
-fatal_signal_pending() becomes true upon SIGINT.
-
->>>
->>>> wonder if there's any way in which a userspace-delivered signal can
->>>> disrupt another userspace task's memory allocation attempt?
->>>
->>> Hmm... maybe.  Just honoring SIGKILL *should* be fine but the alloc
->>> failure paths might be broken, so there are some risks.  Given that
->>> the cases where userspace tasks end up allocation percpu memory is
->>> pretty limited and/or priviledged (like mount, bpf), I don't think the
->>> risks are high tho.
->>
->> hm.  spose so.  Maybe.  Are there other ways?  I assume the time is
->> being spent in pcpu_create_chunk()?  We could drop the mutex while
->> running that stuff and take the appropriate did-we-race-with-someone
->> testing after retaking it.  Or similar.
+Martin Steigerwald - 14.03.18, 12:01:
+> Hans de Goede - 11.03.18, 15:37:
+> > Hi Martin,
+> > 
+> > On 11-03-18 09:20, Martin Steigerwald wrote:
+> > > Hello.
+> > > 
+> > > Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+> > > with SMART checks occassionally failing like this:
+> > > 
+> > > smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending
+> > > checks
+> > > udisksd[24408]: Error performing housekeeping for drive
+> > > /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
+> > > SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
+> > > data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
+> > > 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00 
+> > > 00
+> > > 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
+> > > udisksd[24408]: Error performing housekeeping for drive
+> > > /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error
+> > > updating
+> > > SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected
+> > > sense
+> > > data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
+> > > 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
+> > > 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+> > > 
+> > > (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
+> > > 
+> > > However when I then check manually with smartctl -a | -x | -H the device
+> > > reports SMART data just fine.
+> > > 
+> > > As smartd correctly detects that device is in sleep mode, this may be an
+> > > userspace issue in udisksd.
+> > > 
+> > > Also at some boot attempts the boot hangs with a message like "could not
+> > > connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
+> > > on to LVs (each on one of the SSDs). A configuration that requires a
+> > > manual
+> > > adaption to InitRAMFS in order to boot (basically vgchange -ay before
+> > > btrfs device scan).
+> > > 
+> > > I wonder whether that has to do with the new SATA LPM policy stuff, but
+> > > as
+> > > I had issues with
+> > > 
+> > >   3 => Medium power with Device Initiated PM enabled
+> > > 
+> > > (machine did not boot, which could also have been caused by me
+> > > accidentally
+> > > removing all TCP/IP network support in the kernel with that setting)
+> > > 
+> > > I set it back to
+> > > 
+> > > CONFIG_SATA_MOBILE_LPM_POLICY=0
+> > > 
+> > > (firmware settings)
+> > 
+> > Right, so at that settings the LPM policy changes are effectively
+> > disabled and cannot explain your SMART issues.
+> > 
+> > Still I would like to zoom in on this part of your bug report, because
+> > for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
+> > and AFAIK Ubuntu has similar plans.
+> > 
+> > I suspect that the issue you were seeing with
+> > CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've attached
+> > a patch for you to test, which disabled LPM for your model Crucial SSD
+> > (but
+> > keeps it on for the Intel disk) if you can confirm that with that patch
+> > you
+> > can run with
+> > CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
+> 
+> With 4.16-rc5 with CONFIG_SATA_MOBILE_LPM_POLICY=3 the system successfully
+> booted three times in a row. So feel free to add tested-by.
 >
-> The balance work spends its time in pcpu_populate_chunk(). There are
-> two stacks of this problem:
+> Let´s see whether the blk_mq_terminate_expired or the smartd/udisks error
+> messages reappear with rc5. I still think they are a different issue.
 
-Will you show me more contexts? Unless CONFIG_MMU=n kernels, the OOM reaper
-reclaims memory from the OOM victim. Therefore, "If tasks doing pcpu_alloc()
-are choosen by OOM killer, they can't exit, because they are waiting for the
-mutex." should not cause problems. Of course, giving up upon SIGKILL is nice
-regardless.
+As expected these two other issues still happen with 4.16-rc5
 
->
-> [  106.313267] kworker/2:2     D13832   936      2 0x80000000
-> [  106.313740] Workqueue: events pcpu_balance_workfn
-> [  106.314109] Call Trace:
-> [  106.314293]  ? __schedule+0x267/0x750
-> [  106.314570]  schedule+0x2d/0x90
-> [  106.314803]  schedule_timeout+0x17f/0x390
-> [  106.315106]  ? __next_timer_interrupt+0xc0/0xc0
-> [  106.315429]  __alloc_pages_slowpath+0xb73/0xd90
-> [  106.315792]  __alloc_pages_nodemask+0x16a/0x210
-> [  106.316148]  pcpu_populate_chunk+0xce/0x300
-> [  106.316479]  pcpu_balance_workfn+0x3f3/0x580
-> [  106.316853]  ? _raw_spin_unlock_irq+0xe/0x30
-> [  106.317227]  ? finish_task_switch+0x8d/0x250
-> [  106.317632]  process_one_work+0x1b7/0x410
-> [  106.317970]  worker_thread+0x26/0x3d0
-> [  106.318304]  ? process_one_work+0x410/0x410
-> [  106.318649]  kthread+0x10e/0x130
-> [  106.318916]  ? __kthread_create_worker+0x120/0x120
-> [  106.319360]  ret_from_fork+0x35/0x40
->
-> [  106.453375] a.out           D13400  3670      1 0x00100004
-> [  106.453880] Call Trace:
-> [  106.454114]  ? __schedule+0x267/0x750
-> [  106.454427]  schedule+0x2d/0x90
-> [  106.454829]  schedule_preempt_disabled+0xf/0x20
-> [  106.455422]  __mutex_lock.isra.2+0x181/0x4d0
-> [  106.455988]  ? pcpu_alloc+0x3c4/0x670
-> [  106.456465]  pcpu_alloc+0x3c4/0x670
-> [  106.456973]  ? preempt_count_add+0x63/0x90
-> [  106.457401]  ? __local_bh_enable_ip+0x2e/0x60
-> [  106.457882]  ipv6_add_dev+0x121/0x490
-> [  106.458330]  addrconf_notify+0x27b/0x9a0
-> [  106.458823]  ? inetdev_init+0xd7/0x150
-> [  106.459270]  ? inetdev_event+0x339/0x4b0
-> [  106.459738]  ? preempt_count_add+0x63/0x90
-> [  106.460243]  ? _raw_spin_lock_irq+0xf/0x30
-> [  106.460747]  ? notifier_call_chain+0x42/0x60
-> [  106.461271]  notifier_call_chain+0x42/0x60
-> [  106.461819]  register_netdevice+0x415/0x530
-> [  106.462364]  register_netdev+0x11/0x20
-> [  106.462849]  loopback_net_init+0x43/0x90
-> [  106.463216]  ops_init+0x3b/0x100
-> [  106.463516]  setup_net+0x7d/0x150
-> [  106.463831]  copy_net_ns+0x14b/0x180
-> [  106.464134]  create_new_namespaces+0x117/0x1b0
-> [  106.464481]  unshare_nsproxy_namespaces+0x5b/0x90
-> [  106.464864]  SyS_unshare+0x1b0/0x300
->
-> [  106.536845] Kernel panic - not syncing: Out of memory and no killable processes...
-
-These two stacks of this problem are not blocked at mutex_lock().
-
-Why all OOM-killable threads were killed? There were only few?
-Does pcpu_alloc() allocate so much enough to deplete memory reserves?
+Thanks,
+-- 
+Martin
