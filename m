@@ -1,221 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCOQ3v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:29:51 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39623 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbeCOQ3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:29:49 -0400
-X-Google-Smtp-Source: AG47ELvJFaIMFxzDxM2dlC2EoJwSWSzFFjmTbwGQihojScBl2zzbuGGv9KTX8wLGgH8E92HnF+y693aL7VaCSTGxrXw=
-MIME-Version: 1.0
-In-Reply-To: <20180311123815.17916-1-ard.biesheuvel@linaro.org>
-References: <20180311123815.17916-1-ard.biesheuvel@linaro.org>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 15 Mar 2018 16:29:48 +0000
-Message-ID: <CAKv+Gu_k75i+tWWjTTQoAEaXj61FqxvhqwD_3G8r9WtrB+BA=w@mail.gmail.com>
-Subject: Re: [PATCH v8 0/6] add support for relative references in special sections
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Nicolas Pitre <nico@linaro.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+        id S1752038AbeCOQaB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:30:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41311 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751781AbeCOQ35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:29:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
+   d="scan'208";a="39199738"
+Message-ID: <3f6082da29c0f779faed7a14f068b601c87d92c6.camel@linux.intel.com>
+Subject: Re: [PATCH v2 2/8] tpm: move tpm_getcap to tpm1-cmd.c
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 15 Mar 2018 18:29:48 +0200
+In-Reply-To: <20180310082428.31519-3-tomas.winkler@intel.com>
+References: <20180310082428.31519-1-tomas.winkler@intel.com>
+         <20180310082428.31519-3-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 March 2018 at 12:38, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> This adds support for emitting special sections such as initcall arrays,
-> PCI fixups and tracepoints as relative references rather than absolute
-> references. This reduces the size by 50% on 64-bit architectures, but
-> more importantly, it removes the need for carrying relocation metadata
-> for these sections in relocatable kernels (e.g., for KASLR) that needs
-> to be fixed up at boot time. On arm64, this reduces the vmlinux footprint
-> of such a reference by 8x (8 byte absolute reference + 24 byte RELA entry
-> vs 4 byte relative reference)
->
-> Patch #3 was sent out before as a single patch. This series supersedes
-> the previous submission. This version makes relative ksymtab entries
-> dependent on the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS rather
-> than trying to infer from kbuild test robot replies for which architectures
-> it should be blacklisted.
->
-> Patch #1 introduces the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS,
-> and sets it for the main architectures that are expected to benefit the
-> most from this feature, i.e., 64-bit architectures or ones that use
-> runtime relocations.
->
-> Patch #2 add support for #define'ing __DISABLE_EXPORTS to get rid of
-> ksymtab/kcrctab sections in decompressor and EFI stub objects when
-> rebuilding existing C files to run in a different context.
->
-> Patches #4 - #6 implement relative references for initcalls, PCI fixups
-> and tracepoints, respectively, all of which produce sections with order
-> ~1000 entries on an arm64 defconfig kernel with tracing enabled. This
-> means we save about 28 KB of vmlinux space for each of these patches.
->
-> [From the v7 series blurb, which included the jump_label patches as well]:
->   For the arm64 kernel, all patches combined reduce the memory footprint of
->   vmlinux by about 1.3 MB (using a config copied from Ubuntu that has KASLR
->   enabled), of which ~1 MB is the size reduction of the RELA section in .init,
->   and the remaining 300 KB is reduction of .text/.data.
->
-> Branch:
-> git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git relative-special-sections-v8
->
+On Sat, 2018-03-10 at 10:24 +0200, Tomas Winkler wrote:
+> 1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
+> 2. Remove unused tpm_getcap_header with unused constant
+> as this functionality is already implemented using tpm_buf construct.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-All,
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-I think this has converged to a mergeable state now (taking the
-mini-tweak for patch #3 into account I provided in a reply)
-
-Are there any objections to this being merged?
-
-Andrew,
-
-If nobody objects, is this something you would care to pick up for the
-next cycle? Do I need to respin to incorporate the mini-tweak and
-apply Nico's ack to patch #2?
-
-Thanks,
-Ard.
-
-
-> Changes since v7:
-> - dropped the jump_label patches, these will be revisited in a separate series
-> - reorder __DISABLE_EXPORTS with __KSYM_DEPS__ check in #2
-> - use offset_to_ptr() helper function to abstract the relative pointer
->   conversion [int *off -> (ulong)off + *off] (#3 - #6)
-> - rebase onto v4.16-rc3
->
-> Changes since v6:
-> - drop S390 from patch #1 introducing HAVE_ARCH_PREL32_RELOCATIONS: kbuild
->   robot threw me some s390 curveballs, and given that s390 does not define
->   CONFIG_RELOCATABLE in the first place, it does not benefit as much from
->   relative references as arm64, x86 and power do
-> - add patch to allow symbol exports to be disabled at compilation unit
->   granularity (#2)
-> - get rid of arm64 vmlinux.lds.S hunk to ensure code generated by __ADDRESSABLE
->   gets discarded from the EFI stub - it is no longer needed after adding #2 (#1)
-> - change _ADDRESSABLE() to emit a data reference, not a code reference - this
->   is another simplification made possible by patch #2 (#3)
-> - add Steven's ack to #6
-> - split x86 jump_label patch into two (#9, #10)
->
-> Changes since v5:
-> - add missing jump_label prototypes to s390 jump_label.h (#6)
-> - fix inverted condition in call to jump_entry_is_module_init() (#6)
->
-> Changes since v4:
-> - add patches to convert x86 and arm64 to use relative references for jump
->   tables (#6 - #8)
-> - rename PCI patch and add Bjorn's ack (#4)
-> - rebase onto v4.15-rc5
->
-> Changes since v3:
-> - fix module unload issue in patch #5 reported by Jessica, by reusing the
->   updated routine for_each_tracepoint_range() for the quiescent check at
->   module unload time; this requires this routine to be moved before
->   tracepoint_module_going() in kernel/tracepoint.c
-> - add Jessica's ack to #2
-> - rebase onto v4.14-rc1
->
-> Changes since v2:
-> - Revert my slightly misguided attempt to appease checkpatch, which resulted
->   in needless churn and worse code. This v3 is based on v1 with a few tweaks
->   that were actually reasonable checkpatch warnings: unnecessary braces (as
->   pointed out by Ingo) and other minor whitespace misdemeanors.
->
-> Changes since v1:
-> - Remove checkpatch errors to the extent feasible: in some cases, this
->   involves moving extern declarations into C files, and switching to
->   struct definitions rather than typedefs. Some errors are impossible
->   to fix: please find the remaining ones after the diffstat.
-> - Used 'int' instead if 'signed int' for the various offset fields: there
->   is no ambiguity between architectures regarding its signedness (unlike
->   'char')
-> - Refactor the different patches to be more uniform in the way they define
->   the section entry type and accessors in the .h file, and avoid the need to
->   add #ifdefs to the C code.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Thomas Garnier <thgarnie@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Petr Mladek <pmladek@suse.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Morris <james.l.morris@oracle.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Nicolas Pitre <nico@linaro.org>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Jessica Yu <jeyu@kernel.org>
->
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: x86@kernel.org
->
-> Ard Biesheuvel (6):
->   arch: enable relative relocations for arm64, power and x86
->   module: allow symbol exports to be disabled
->   module: use relative references for __ksymtab entries
->   init: allow initcall tables to be emitted using relative references
->   PCI: Add support for relative addressing in quirk tables
->   kernel: tracepoints: add support for relative references
->
->  arch/Kconfig                          | 10 ++++
->  arch/arm64/Kconfig                    |  1 +
->  arch/powerpc/Kconfig                  |  1 +
->  arch/x86/Kconfig                      |  1 +
->  arch/x86/boot/compressed/kaslr.c      |  5 +-
->  arch/x86/include/asm/Kbuild           |  1 +
->  arch/x86/include/asm/export.h         |  5 --
->  drivers/firmware/efi/libstub/Makefile |  3 +-
->  drivers/pci/quirks.c                  | 12 +++--
->  include/asm-generic/export.h          | 12 ++++-
->  include/linux/compiler.h              | 19 +++++++
->  include/linux/export.h                | 57 +++++++++++++++-----
->  include/linux/init.h                  | 44 +++++++++++----
->  include/linux/pci.h                   | 20 +++++++
->  include/linux/tracepoint.h            | 19 +++++--
->  init/main.c                           | 32 +++++------
->  kernel/module.c                       | 32 ++++++++---
->  kernel/printk/printk.c                |  4 +-
->  kernel/tracepoint.c                   | 49 +++++++++--------
->  security/security.c                   |  4 +-
->  20 files changed, 240 insertions(+), 91 deletions(-)
->  delete mode 100644 arch/x86/include/asm/export.h
->
-> --
-> 2.15.1
->
+/Jarkko
