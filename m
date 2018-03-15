@@ -1,73 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751975AbeCOHom (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 03:44:42 -0400
-Received: from ozlabs.org ([103.22.144.67]:54917 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751753AbeCOHok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 03:44:40 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 18:44:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: linux-next: manual merge of the y2038 tree with the asm-generic
- tree
-Message-ID: <20180315184409.73d85ca6@canb.auug.org.au>
+        id S1752011AbeCOHo6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 03:44:58 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:42181 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeCOHoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 03:44:32 -0400
+X-Google-Smtp-Source: AG47ELuSZ23snA/YWQJl+GlCCb48YivOjGpHSyl0X7Sf6dQfhS8v/qk5BdPf0lkfkDKsWT0AQthRbqGMwzLpY8bLOdE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/95N.MK/hsUzFNwT6AbPtzX6"; protocol="application/pgp-signature"
+In-Reply-To: <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
+References: <20180314192937.12888-1-ard.biesheuvel@linaro.org>
+ <CACjP9X_A1VsprX20XfEi31XVrySkScZDJsxUTh3Lf_6xr70Mug@mail.gmail.com> <CAKv+Gu-NfXm5YLWXAPsf6zycPs7Ti9qPLQ7FvpOrjdPz5hEP7Q@mail.gmail.com>
+From: Daniel Vacek <neelx@redhat.com>
+Date: Thu, 15 Mar 2018 08:44:31 +0100
+Message-ID: <CACjP9X_xjyvQD_b1XNAZi=vjX0wGUmQuGJN8HahBmXx55OUE6A@mail.gmail.com>
+Subject: Re: [PATCH v2] Revert "mm/page_alloc: fix memmap_init_zone pageblock alignment"
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Paul Burton <paul.burton@imgtec.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/95N.MK/hsUzFNwT6AbPtzX6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 15, 2018 at 8:36 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 15 March 2018 at 02:23, Daniel Vacek <neelx@redhat.com> wrote:
+>> On Wed, Mar 14, 2018 at 8:29 PM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> This reverts commit 864b75f9d6b0100bb24fdd9a20d156e7cda9b5ae.
+>>>
+>>> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
+>>> alignment") modified the logic in memmap_init_zone() to initialize
+>>> struct pages associated with invalid PFNs, to appease a VM_BUG_ON()
+>>> in move_freepages(), which is redundant by its own admission, and
+>>> dereferences struct page fields to obtain the zone without checking
+>>> whether the struct pages in question are valid to begin with.
+>>>
+>>> Commit 864b75f9d6b0 only makes it worse, since the rounding it does
+>>> may cause pfn assume the same value it had in a prior iteration of
+>>> the loop, resulting in an infinite loop and a hang very early in the
+>>> boot. Also, since it doesn't perform the same rounding on start_pfn
+>>> itself but only on intermediate values following an invalid PFN, we
+>>> may still hit the same VM_BUG_ON() as before.
+>>>
+>>> So instead, let's fix this at the core, and ensure that the BUG
+>>> check doesn't dereference struct page fields of invalid pages.
+>>>
+>>> Fixes: 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock alignment")
+>>> Cc: Daniel Vacek <neelx@redhat.com>
+>>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>>> Cc: Michal Hocko <mhocko@suse.com>
+>>> Cc: Paul Burton <paul.burton@imgtec.com>
+>>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>> ---
+>>>  mm/page_alloc.c | 13 +++++--------
+>>>  1 file changed, 5 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index 3d974cb2a1a1..635d7dd29d7f 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -1910,7 +1910,9 @@ static int move_freepages(struct zone *zone,
+>>>          * Remove at a later date when no bug reports exist related to
+>>>          * grouping pages by mobility
+>>>          */
+>>> -       VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
+>>> +       VM_BUG_ON(pfn_valid(page_to_pfn(start_page)) &&
+>>> +                 pfn_valid(page_to_pfn(end_page)) &&
+>>> +                 page_zone(start_page) != page_zone(end_page));
+>>
+>> Hi, I am on vacation this week and I didn't have a chance to test this
+>> yet but I am not sure this is correct. Generic pfn_valid() unlike the
+>> arm{,64} arch specific versions returns true for all pfns in a section
+>> if there is at least some memory mapped in that section. So I doubt
+>> this prevents the crash I was targeting. I believe pfn_valid() does
+>> not change a thing here :(
+>>
+>
+> If this is the case, memblock_next_valid_pfn() is broken since it
+> skips valid PFNs, and we should be fixing that instead.
 
-Hi Arnd,
+How do you define valid pfn? Maybe the generic version of pfn_valid()
+should be fixed???
 
-Today's linux-next merge of the y2038 tree got a conflict in:
+-nX
 
-  arch/tile/include/asm/compat.h
-
-between commit:
-
-  0373506fe580 ("arch: remove tile port")
-
-from the asm-generic tree and commit:
-
-  f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
-
-from the y2038 tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/95N.MK/hsUzFNwT6AbPtzX6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqJEkACgkQAVBC80lX
-0GzkHwf/feJkFc6M6GujNpLunhosE46bOxDS6g9HR3bbfY2zj9evfOm/sSWMuXk1
-WihJI3zYRWutygCoK6kjCAJELwyUCnD7hhpGYqNBMa8oAufHXPYM8ErQy96b24j2
-8dFWU/CpESjjE8h+JANuwgWwuMwudCGzIwzorqvrc7ZsfKroVm7WisiZmMI1oYfU
-wtqnnV9KBD57tp5iXGMXkiAq8NumIOueS+kY1BbNdwO1bdm5mYJmHb/uCtrvQRyv
-s0gaBXq1oWidhYcwWVK3RyLdDZtL9bTc1kguIBzC2S7S8L2JCZOq4S3C1Aj2HB5S
-PCd8PuJnMbDkNhz83g+9iIna3e7tHg==
-=ZoKL
------END PGP SIGNATURE-----
-
---Sig_/95N.MK/hsUzFNwT6AbPtzX6--
+>> ------------------------
+>> include/linux/mmzone.h:
+>> pfn_valid(pfn)
+>>   valid_section(__nr_to_section(pfn_to_section_nr(pfn)))
+>>     return (section && (section->section_mem_map & SECTION_HAS_MEM_MAP))
+>>
+>> arch/arm64/mm/init.c:
+>> #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>> int pfn_valid(unsigned long pfn)
+>> {
+>>     return memblock_is_map_memory(pfn << PAGE_SHIFT);
+>> }
+>> EXPORT_SYMBOL(pfn_valid);
+>> #endif
+>> ------------------------
+>>
+>> Also I already sent a fix to Andrew yesterday which was reported to
+>> fix the loop.
+>>
+>> Moreover, you also reported this:
+>>
+>>>    Early memory node ranges
+>>>      node   0: [mem 0x0000000080000000-0x00000000febeffff]
+>>>      node   0: [mem 0x00000000febf0000-0x00000000fefcffff]
+>>>      node   0: [mem 0x00000000fefd0000-0x00000000ff43ffff]
+>>>      node   0: [mem 0x00000000ff440000-0x00000000ff7affff]
+>>>      node   0: [mem 0x00000000ff7b0000-0x00000000ffffffff]
+>>>      node   0: [mem 0x0000000880000000-0x0000000fffffffff]
+>>>    Initmem setup node 0 [mem 0x0000000080000000-0x0000000fffffffff]
+>>>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>>>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>>>    pfn:febf0 oldnext:febf0 newnext:fe9ff
+>>>    etc etc
+>>
+>> I am wondering how come pfn_valid(0xfebf0) returns false here. Should
+>> it be true or do I miss something?
+>>
+>> --nX
