@@ -1,53 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932699AbeCOPqK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:46:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32960 "EHLO mail.bootlin.com"
+        id S932735AbeCOPqY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:24 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47994 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752525AbeCOPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:46:06 -0400
-Date: Thu, 15 Mar 2018 16:45:54 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: Re: [PATCH 00/12] crypto: inside-secure - hmac(sha256/sha224) support
-Message-ID: <20180315154554.GD2947@kwain>
-References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752812AbeCOPqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:22 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6/9] x86/fault: Dump user opcode bytes on fatal faults
+Date: Thu, 15 Mar 2018 16:44:45 +0100
+Message-Id: <20180315154448.16222-7-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
+References: <20180315154448.16222-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+From: Borislav Petkov <bp@suse.de>
 
-On Thu, Mar 15, 2018 at 04:38:39PM +0100, Antoine Tenart wrote:
-> 
-> This series brings hmac(sha256) and hmac(sha224) support to the Inside
-> Secure cryptographic engine driver.
-> 
-> The first 10 patches are fixes and reworks needed for the hmac(sha256)
-> and hmac(224) support to land in. Then 2 patches adds the 2 new
-> algorithms.
+Sometimes it is useful to see which user opcode bytes RIP points to
+when a fault happens: be it to rule out RIP corruption, to dump info
+early during boot, when doing core dumps is impossible due to not having
+writable fs yet.
 
-I made a small mistake as the first 3 patches of the series already
-were merged into your tree, as they already were sent in a previous
-series. You can just ignore them.
+Sometimes it is useful if debugging an issue and one doesn't have access
+to the executable which caused the fault in order to disassemble it.
 
-Sending a v2 is probably unnecessary but I can if needed.
+That last aspect might have some security implications so
+show_unhandled_signals could be revisited for that or a new config
+option added.
 
-Sorry for this,
-Antoine
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/mm/fault.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 26865147a507..b3c19f734442 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -850,6 +850,8 @@ static inline void
+ show_signal_msg(struct pt_regs *regs, unsigned long error_code,
+ 		unsigned long address, struct task_struct *tsk)
+ {
++	const char *loglvl = task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG;
++
+ 	if (!unhandled_signal(tsk, SIGSEGV))
+ 		return;
+ 
+@@ -857,13 +859,14 @@ show_signal_msg(struct pt_regs *regs, unsigned long error_code,
+ 		return;
+ 
+ 	printk("%s%s[%d]: segfault at %lx ip %px sp %px error %lx",
+-		task_pid_nr(tsk) > 1 ? KERN_INFO : KERN_EMERG,
+-		tsk->comm, task_pid_nr(tsk), address,
++		loglvl, tsk->comm, task_pid_nr(tsk), address,
+ 		(void *)regs->ip, (void *)regs->sp, error_code);
+ 
+ 	print_vma_addr(KERN_CONT " in ", regs->ip);
+ 
+ 	printk(KERN_CONT "\n");
++
++	show_opcodes((u8 *)regs->ip, loglvl);
+ }
+ 
+ static void
 -- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.13.0
