@@ -1,83 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeCOPhl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:37:41 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:43735 "EHLO
+        id S1752578AbeCOPjA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:39:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:48165 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeCOPhj (ORCPT
+        with ESMTP id S1751840AbeCOPi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:37:39 -0400
+        Thu, 15 Mar 2018 11:38:58 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Frank Rowand <frank.rowand@sony.com>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
-Date: Thu, 15 Mar 2018 16:37:08 +0100
-Message-Id: <20180315153730.3798004-1-arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpu/hotplug: fix unused function warning
+Date: Thu, 15 Mar 2018 16:38:04 +0100
+Message-Id: <20180315153829.3819606-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:qEtmfOnqvmjtpQLBMWmKxtMsGEFcUPj/bNLzLfxjiUwbCkKIjjE
- bXkqHY+DdbRS5htn+eQzD2Lrvk0g4WrJ+mJf4JAx9aOrWBVk1FEcIdu2BRHwf05fT4SAmLp
- 7gClbJXevL1gikoJ0EPY7olTjNi2qQ8wQpUEoTfGhPF5cbqH3IvpigFHIUn6qEvKmk21tf0
- ImBWNb6dIvru5Glikbp4Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:u5wXBL6WzYw=:Waqvkps3M0gVoeLBbceuHL
- STpCMXhWQuMCWIoHcxBGVdMNB7l9w47EeO7/KToy75WDxlANOA2pEbCHtd2tY4wfT4M1egNnC
- 2owZ5QyveCHGtz+pEHupxvgdc9L7j95s1R8Ez2sHirmnckYDndYDO+Q1zyhvoz+1MG5EDStYa
- syz7pPnUHJuIH5JoYqqj/Bko+rKEgm6cxNQ4z/WwGAZ9SEwiysk7lJ2V5GUwysNHDKM/u/fi2
- zout41ip2KQ9RQxkODus0ocBXtDKBHjLx2czWq9hBPyeFZ1bwn8Mf5CX1tGbOIV/zmpiX4u4e
- pBpjjuqgE+lo3jzhMjydtHSzHOW53PSJc310q11bXgAOE/ZmNn+aaAl8uv3vOeAmikRe5iOXO
- AGrebgIr8vxUUA4oAO0mrsJ//EjRibmcdACxg23TCTSQtNtw3IEjFJEY+2QiWTAiu0p8F6IKZ
- XyquxanN/2K85U1KiV1LmY1Ot9xCD/9QsZH2PXR+s4+R59PO3pPZFspP/hxzQmpOjbvDqNveV
- 1rNRksctz5zA9zwAjHPS1ySCgkiMXMzwExy3QsBXt7PFGpF+X/kqildJiCiMjEKsvl77N2b9j
- 5dhwQfUstRmBI3ToUOk4/rXDNSbYmO4eYTCTt0kKdo1lcktnGFVQqxUI8+u/iu2VgXU8AICwp
- T5RlG/foGIC9EV10Ja2loWKzM3yCiIfnJneeBrJRtegaWX2zaXZKiv11Cv9ObvCkEc0yCZ7Xo
- mbap15k2Ud+NVL0LZzjMAvRsGgyDBm4FrAuFng==
+X-Provags-ID: V03:K0:J+yHwgJ38KnYt2rrG6M038BZEXBYgICtq1NUm2XdvDwaUp4EuiW
+ Q/64GIxwAfkIvvqc1l24QqEW4Yz7oWm7dKFnsO1lq2PRH02hYNNsWWZiKg66ylbEGjonSW4
+ 1Itlj3Cmin39xSxy6PrhBgdwqkAndTXgnHKB8J4eSlXwUuSzZ7ESwdpvo84OJefJ/RZ2dIT
+ 0G6z1nZTE6+kfxw8lZbjw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bndKs1VCD4A=:0XP1cTj3W5zJ1LkM5IpCoD
+ teeAZmCC3lW1DSXcASsF+bHU9QEw3FrjXxYCJd6tepa8r+W/Qw0x/YegEJCzUNswmglnIotpa
+ aZhJ3SGtY+uygrbJkx3T+NLEYQ0M3EwTC4GGwian47t/J1DygdrxKwdDfM0/tkZTl6hFvPhr0
+ JL8ihHo2tLJcFuR/JVSy4OF1e3FVLPotWslYDshPrkjXLAvXoMKCT1BK0trx9v7PFKBdpIysz
+ mYHoiB537CzrRzPNF9aYUWLhU33LfkKejbgvagbL9wvMwAXGPJAwXd1OzBg5PLvJUmAdKorg2
+ WQi13ofHqFzD8i39SUD9O7dTZo7854NjkOsFuAOWJ94u3L38dnOueatX9nzBBVDvOpO+lxVwt
+ cIW5sh5N3U5TthxhVvYUXZpJRFSPOIJwkyiI/9pZNvT51nVTycRXZB1wN3g8WhkgrwluTm/FK
+ RNjvo6X55RlWSFR9eJKCr94imaD+uDx1wyOG7PPBdUanJWgXFo/WqWkPjscEAT0NuFLecer+r
+ 5elLce57mXQhMbC1VevDfdcQoyuePVmq7/Wox3mqtTNTyq5uc6sLYsgL6r37SquKOPE2Oo4/w
+ AXnoVCVZIHPagyHYREsGYI61zHUcayTMYXf1SVlsGZ4DNa6AF9H7DNXDTLogg7tNf8SS+ZUvc
+ Vzc4hRDnPGnfJ9Z+L3X0YudNZY1j2XNs+PKsBsY4j7rTy1jHJHbn1qS8T8sd04Jig0rK2wK3Z
+ YktO1YbczUvDyU2jSnMYEy7ntFhLusFCgQFkuw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The *.dtb and *.dtb.S files get removed by 'make' during the build process,
-and later seem to be missed during the 'modpost' stage:
+The cpuhp_is_ap_state() function is no longer called outside of the
+CONFIG_SMP #ifdef section, causing a harmless warning:
 
-rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
-WARNING: could not open drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or directory
+kernel/cpu.c:129:13: error: 'cpuhp_is_ap_state' defined but not used [-Werror=unused-function]
 
-As a workaround, this adds all those files to the 'extra-y' target list,
-but that's really ugly. Any ideas for a better fix?
+This moves the function into the #ifdef to get a clean build again.
 
-Fixes: 81c0e3dd8292 ("drm: rcar-du: Fix legacy DT to create LVDS encoder nodes")
+Fixes: 17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/rcar-du/Makefile | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ kernel/cpu.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-index 3e58ed93d5b1..e5fc6ec0b8cc 100644
---- a/drivers/gpu/drm/rcar-du/Makefile
-+++ b/drivers/gpu/drm/rcar-du/Makefile
-@@ -12,6 +12,21 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
- 					   rcar_du_of_lvds_r8a7793.dtb.o \
- 					   rcar_du_of_lvds_r8a7795.dtb.o \
- 					   rcar_du_of_lvds_r8a7796.dtb.o
-+
-+extra-y					+= rcar_du_of_lvds_r8a7790.dtb \
-+					   rcar_du_of_lvds_r8a7790.dtb \
-+					   rcar_du_of_lvds_r8a7791.dtb \
-+					   rcar_du_of_lvds_r8a7793.dtb \
-+					   rcar_du_of_lvds_r8a7795.dtb \
-+					   rcar_du_of_lvds_r8a7796.dtb
-+
-+extra-y					+= rcar_du_of_lvds_r8a7790.dtb.S \
-+					   rcar_du_of_lvds_r8a7790.dtb.S \
-+					   rcar_du_of_lvds_r8a7791.dtb.S \
-+					   rcar_du_of_lvds_r8a7793.dtb.S \
-+					   rcar_du_of_lvds_r8a7795.dtb.S \
-+					   rcar_du_of_lvds_r8a7796.dtb.S
-+
- rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index a1860d42aacf..0db8938fbb23 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -126,15 +126,6 @@ struct cpuhp_step {
+ static DEFINE_MUTEX(cpuhp_state_mutex);
+ static struct cpuhp_step cpuhp_hp_states[];
  
- obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+-static bool cpuhp_is_ap_state(enum cpuhp_state state)
+-{
+-	/*
+-	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
+-	 * purposes as that state is handled explicitly in cpu_down.
+-	 */
+-	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
+-}
+-
+ static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
+ {
+ 	return cpuhp_hp_states + state;
+@@ -235,6 +226,15 @@ static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
+ }
+ 
+ #ifdef CONFIG_SMP
++static bool cpuhp_is_ap_state(enum cpuhp_state state)
++{
++	/*
++	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
++	 * purposes as that state is handled explicitly in cpu_down.
++	 */
++	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
++}
++
+ static inline void wait_for_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
+ {
+ 	struct completion *done = bringup ? &st->done_up : &st->done_down;
 -- 
 2.9.0
