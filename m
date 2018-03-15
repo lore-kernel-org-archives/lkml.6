@@ -1,73 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751542AbeCOJ3T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:29:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbeCOJ3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:29:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C5620779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Thu, 15 Mar 2018 18:29:14 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, wangnan0@huawei.com, mingo@redhat.com,
-        srikar@linux.vnet.ibm.com, oleg@redhat.com, mhiramat@kernel.org,
-        namhyung@kernel.org
-Subject: Re: [PATCH v2 1/2] trace_uprobe: Use %lx to display offset
-Message-Id: <20180315182914.ec9640e5272abfd516141bc2@kernel.org>
-In-Reply-To: <20180315082756.9050-1-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180315082756.9050-1-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751659AbeCOJ3k (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:29:40 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40355 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeCOJ3h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:29:37 -0400
+X-Google-Smtp-Source: AG47ELtnpNcDv61WRhuECuJJTOPZwkALf35K9lTO2TWwsWnaayvdHoAhIiJxZ7Jn8PyiJiG2mgspyQ==
+References: <20180313113311.8617-3-rui.silva@linaro.org> <201803150338.2LzbxAYM%fengguang.wu@intel.com>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ryan Harkin <ryan.harkin@linaro.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>
+Subject: Re: [PATCH v3 2/2] media: ov2680: Add Omnivision OV2680 sensor driver
+In-reply-to: <201803150338.2LzbxAYM%fengguang.wu@intel.com>
+Date: Thu, 15 Mar 2018 09:29:33 +0000
+Message-ID: <m3a7v98z5u.fsf@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 13:57:55 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+Hi,
+On Wed 14 Mar 2018 at 19:39, kbuild test robot wrote:
+> Hi Rui,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on v4.16-rc4]
+> [cannot apply to next-20180314]
+> [if your patch is applied to the wrong git tree, please drop us 
+> a note to help improve the system]
+>
+> url: 
+> https://github.com/0day-ci/linux/commits/Rui-Miguel-Silva/media-Introduce-Omnivision-OV2680-driver/20180315-020617
+> config: sh-allmodconfig (attached as .config)
+> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget 
+>         https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross 
+>         -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=sh 
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/media/i2c/ov2680.c: In function 'ov2680_set_fmt':
+>>> drivers/media/i2c/ov2680.c:713:9: error: implicit declaration 
+>>> of function 'v4l2_find_nearest_size'; did you mean 
+>>> 'v4l2_find_nearest_format'? 
+>>> [-Werror=implicit-function-declaration]
+>      mode = v4l2_find_nearest_size(ov2680_mode_data,
+>             ^~~~~~~~~~~~~~~~~~~~~~
+>             v4l2_find_nearest_format
 
-> tu->offset is unsigned long, not a pointer, thus %lx should
-> be used to print it, not the %px.
-> 
+As requested by maintainer this series depend on this patch [0], 
+which
+introduce this macro. I am not sure of the status of that patch 
+though.
 
-This looks good to me.
+---
+Cheers,
+	Rui
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+[0] https://patchwork.kernel.org/patch/10207087/
 
-Thanks,
-
-> Fixes: 0e4d819d0893 ("trace_uprobe: Display correct offset in uprobe_events")
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+>>> drivers/media/i2c/ov2680.c:714:41: error: 'width' undeclared 
+>>> (first use in this function)
+>               ARRAY_SIZE(ov2680_mode_data), width,
+>                                             ^~~~~
+>    drivers/media/i2c/ov2680.c:714:41: note: each undeclared 
+>    identifier is reported only once for each function it appears 
+>    in
+>>> drivers/media/i2c/ov2680.c:715:11: error: 'height' undeclared 
+>>> (first use in this function); did you mean 'hweight8'?
+>               height, fmt->width, fmt->height);
+>               ^~~~~~
+>               hweight8
+>    cc1: some warnings being treated as errors
+>
+> vim +713 drivers/media/i2c/ov2680.c
+>
+>    693	
+>    694	static int ov2680_set_fmt(struct v4l2_subdev *sd,
+>    695				  struct 
+>    v4l2_subdev_pad_config *cfg,
+>    696				  struct 
+>    v4l2_subdev_format *format)
+>    697	{
+>    698		struct ov2680_dev *sensor = 
+>    to_ov2680_dev(sd);
+>    699		struct v4l2_mbus_framefmt *fmt = 
+>    &format->format;
+>    700		const struct ov2680_mode_info *mode;
+>    701		int ret = 0;
+>    702	
+>    703		if (format->pad != 0)
+>    704			return -EINVAL;
+>    705	
+>    706		mutex_lock(&sensor->lock);
+>    707	
+>    708		if (sensor->is_streaming) {
+>    709			ret = -EBUSY;
+>    710			goto unlock;
+>    711		}
+>    712	
+>  > 713		mode = 
+>  > v4l2_find_nearest_size(ov2680_mode_data,
+>  > 714 
+>  > ARRAY_SIZE(ov2680_mode_data), width,
+>  > 715					      height, 
+>  > fmt->width, fmt->height);
+>    716		if (!mode) {
+>    717			ret = -EINVAL;
+>    718			goto unlock;
+>    719		}
+>    720	
+>    721		if (format->which == 
+>    V4L2_SUBDEV_FORMAT_TRY) {
+>    722			fmt = 
+>    v4l2_subdev_get_try_format(sd, cfg, 0);
+>    723	
+>    724			*fmt = format->format;
+>    725			goto unlock;
+>    726		}
+>    727	
+>    728		fmt->width = mode->width;
+>    729		fmt->height = mode->height;
+>    730		fmt->code = sensor->fmt.code;
+>    731		fmt->colorspace = sensor->fmt.colorspace;
+>    732	
+>    733		sensor->current_mode = mode;
+>    734		sensor->fmt = format->format;
+>    735		sensor->mode_pending_changes = true;
+>    736	
+>    737	unlock:
+>    738		mutex_unlock(&sensor->lock);
+>    739	
+>    740		return ret;
+>    741	}
+>    742	
+>
 > ---
-> v2 changelog:
->  - Keep prefixed 0s as is.
-> 
->  kernel/trace/trace_uprobe.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 2014f4351ae0..0298bd15be83 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -608,7 +608,7 @@ static int probes_seq_show(struct seq_file *m, void *v)
->  
->  	/* Don't print "0x  (null)" when offset is 0 */
->  	if (tu->offset) {
-> -		seq_printf(m, "0x%px", (void *)tu->offset);
-> +		seq_printf(m, "0x%0*lx", (int)(sizeof(void *) * 2), tu->offset);
->  	} else {
->  		switch (sizeof(void *)) {
->  		case 4:
-> -- 
-> 2.13.6
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> 0-DAY kernel test infrastructure                Open Source 
+> Technology Center
+> https://lists.01.org/pipermail/kbuild-all 
+> Intel Corporation
