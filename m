@@ -1,283 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeCOQKD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:10:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:12480 "EHLO mga06.intel.com"
+        id S1752450AbeCOQKZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:10:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35298 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932694AbeCOQAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:00:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="38270829"
-Subject: [PATCH v6 01/15] dax: store pfns in the radix
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        david@fromorbit.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:51:28 -0700
-Message-ID: <152112908811.24669.5995044545442928838.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1751739AbeCOQKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:10:24 -0400
+Date: Thu, 15 Mar 2018 17:10:06 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: dwmw2@infradead.org, boris.brezillon@free-electrons.com,
+        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
+        computersforpeace@gmail.com
+Subject: Re: [PATCH 3/3] mtd: Remove print after allocation failure
+Message-ID: <20180315171006.258edcca@bbrezillon>
+In-Reply-To: <1521041718-32492-3-git-send-email-arushisinghal19971997@gmail.com>
+References: <1521041718-32492-1-git-send-email-arushisinghal19971997@gmail.com>
+        <1521041718-32492-3-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for examining the busy state of dax pages in the truncate
-path, switch from sectors to pfns in the radix.
+Hi Arushi,
 
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/dax/super.c |   15 +++++++--
- fs/dax.c            |   83 +++++++++++++++++++--------------------------------
- 2 files changed, 43 insertions(+), 55 deletions(-)
+On Wed, 14 Mar 2018 21:05:18 +0530
+Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index ecdc292aa4e4..2b2332b605e4 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -124,10 +124,19 @@ int __bdev_dax_supported(struct super_block *sb, int blocksize)
- 		return len < 0 ? len : -EIO;
- 	}
- 
--	if ((IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn))
--			|| pfn_t_devmap(pfn))
-+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
-+		/*
-+		 * An arch that has enabled the pmem api should also
-+		 * have its drivers support pfn_t_devmap()
-+		 *
-+		 * This is a developer warning and should not trigger in
-+		 * production. dax_flush() will crash since it depends
-+		 * on being able to do (page_address(pfn_to_page())).
-+		 */
-+		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
-+	} else if (pfn_t_devmap(pfn)) {
- 		/* pass */;
--	else {
-+	} else {
- 		pr_debug("VFS (%s): error: dax support not enabled\n",
- 				sb->s_id);
- 		return -EOPNOTSUPP;
-diff --git a/fs/dax.c b/fs/dax.c
-index 0276df90e86c..b646a46e4d12 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -73,16 +73,15 @@ fs_initcall(init_dax_wait_table);
- #define RADIX_DAX_ZERO_PAGE	(1 << (RADIX_TREE_EXCEPTIONAL_SHIFT + 2))
- #define RADIX_DAX_EMPTY		(1 << (RADIX_TREE_EXCEPTIONAL_SHIFT + 3))
- 
--static unsigned long dax_radix_sector(void *entry)
-+static unsigned long dax_radix_pfn(void *entry)
- {
- 	return (unsigned long)entry >> RADIX_DAX_SHIFT;
- }
- 
--static void *dax_radix_locked_entry(sector_t sector, unsigned long flags)
-+static void *dax_radix_locked_entry(unsigned long pfn, unsigned long flags)
- {
- 	return (void *)(RADIX_TREE_EXCEPTIONAL_ENTRY | flags |
--			((unsigned long)sector << RADIX_DAX_SHIFT) |
--			RADIX_DAX_ENTRY_LOCK);
-+			(pfn << RADIX_DAX_SHIFT) | RADIX_DAX_ENTRY_LOCK);
- }
- 
- static unsigned int dax_radix_order(void *entry)
-@@ -526,12 +525,13 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
-  */
- static void *dax_insert_mapping_entry(struct address_space *mapping,
- 				      struct vm_fault *vmf,
--				      void *entry, sector_t sector,
-+				      void *entry, pfn_t pfn_t,
- 				      unsigned long flags, bool dirty)
- {
- 	struct radix_tree_root *page_tree = &mapping->page_tree;
--	void *new_entry;
-+	unsigned long pfn = pfn_t_to_pfn(pfn_t);
- 	pgoff_t index = vmf->pgoff;
-+	void *new_entry;
- 
- 	if (dirty)
- 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
-@@ -546,7 +546,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 	}
- 
- 	spin_lock_irq(&mapping->tree_lock);
--	new_entry = dax_radix_locked_entry(sector, flags);
-+	new_entry = dax_radix_locked_entry(pfn, flags);
- 
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		/*
-@@ -657,17 +657,14 @@ static void dax_mapping_entry_mkclean(struct address_space *mapping,
- 	i_mmap_unlock_read(mapping);
- }
- 
--static int dax_writeback_one(struct block_device *bdev,
--		struct dax_device *dax_dev, struct address_space *mapping,
--		pgoff_t index, void *entry)
-+static int dax_writeback_one(struct dax_device *dax_dev,
-+		struct address_space *mapping, pgoff_t index, void *entry)
- {
- 	struct radix_tree_root *page_tree = &mapping->page_tree;
--	void *entry2, **slot, *kaddr;
--	long ret = 0, id;
--	sector_t sector;
--	pgoff_t pgoff;
-+	void *entry2, **slot;
-+	unsigned long pfn;
-+	long ret = 0;
- 	size_t size;
--	pfn_t pfn;
- 
- 	/*
- 	 * A page got tagged dirty in DAX mapping? Something is seriously
-@@ -683,10 +680,10 @@ static int dax_writeback_one(struct block_device *bdev,
- 		goto put_unlocked;
- 	/*
- 	 * Entry got reallocated elsewhere? No need to writeback. We have to
--	 * compare sectors as we must not bail out due to difference in lockbit
-+	 * compare pfns as we must not bail out due to difference in lockbit
- 	 * or entry type.
- 	 */
--	if (dax_radix_sector(entry2) != dax_radix_sector(entry))
-+	if (dax_radix_pfn(entry2) != dax_radix_pfn(entry))
- 		goto put_unlocked;
- 	if (WARN_ON_ONCE(dax_is_empty_entry(entry) ||
- 				dax_is_zero_entry(entry))) {
-@@ -712,33 +709,15 @@ static int dax_writeback_one(struct block_device *bdev,
- 	/*
- 	 * Even if dax_writeback_mapping_range() was given a wbc->range_start
- 	 * in the middle of a PMD, the 'index' we are given will be aligned to
--	 * the start index of the PMD, as will the sector we pull from
--	 * 'entry'.  This allows us to flush for PMD_SIZE and not have to
--	 * worry about partial PMD writebacks.
-+	 * the start index of the PMD, as will the pfn we pull from 'entry'.
-+	 * This allows us to flush for PMD_SIZE and not have to worry about
-+	 * partial PMD writebacks.
- 	 */
--	sector = dax_radix_sector(entry);
-+	pfn = dax_radix_pfn(entry);
- 	size = PAGE_SIZE << dax_radix_order(entry);
- 
--	id = dax_read_lock();
--	ret = bdev_dax_pgoff(bdev, sector, size, &pgoff);
--	if (ret)
--		goto dax_unlock;
--
--	/*
--	 * dax_direct_access() may sleep, so cannot hold tree_lock over
--	 * its invocation.
--	 */
--	ret = dax_direct_access(dax_dev, pgoff, size / PAGE_SIZE, &kaddr, &pfn);
--	if (ret < 0)
--		goto dax_unlock;
--
--	if (WARN_ON_ONCE(ret < size / PAGE_SIZE)) {
--		ret = -EIO;
--		goto dax_unlock;
--	}
--
--	dax_mapping_entry_mkclean(mapping, index, pfn_t_to_pfn(pfn));
--	dax_flush(dax_dev, kaddr, size);
-+	dax_mapping_entry_mkclean(mapping, index, pfn);
-+	dax_flush(dax_dev, page_address(pfn_to_page(pfn)), size);
- 	/*
- 	 * After we have flushed the cache, we can clear the dirty tag. There
- 	 * cannot be new dirty data in the pfn after the flush has completed as
-@@ -749,8 +728,6 @@ static int dax_writeback_one(struct block_device *bdev,
- 	radix_tree_tag_clear(page_tree, index, PAGECACHE_TAG_DIRTY);
- 	spin_unlock_irq(&mapping->tree_lock);
- 	trace_dax_writeback_one(mapping->host, index, size >> PAGE_SHIFT);
-- dax_unlock:
--	dax_read_unlock(id);
- 	put_locked_mapping_entry(mapping, index);
- 	return ret;
- 
-@@ -808,8 +785,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 				break;
- 			}
- 
--			ret = dax_writeback_one(bdev, dax_dev, mapping,
--					indices[i], pvec.pages[i]);
-+			ret = dax_writeback_one(dax_dev, mapping, indices[i],
-+					pvec.pages[i]);
- 			if (ret < 0) {
- 				mapping_set_error(mapping, ret);
- 				goto out;
-@@ -877,6 +854,7 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 	int ret = VM_FAULT_NOPAGE;
- 	struct page *zero_page;
- 	void *entry2;
-+	pfn_t pfn;
- 
- 	zero_page = ZERO_PAGE(0);
- 	if (unlikely(!zero_page)) {
-@@ -884,14 +862,15 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 		goto out;
- 	}
- 
--	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, 0,
-+	pfn = page_to_pfn_t(zero_page);
-+	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			RADIX_DAX_ZERO_PAGE, false);
- 	if (IS_ERR(entry2)) {
- 		ret = VM_FAULT_SIGBUS;
- 		goto out;
- 	}
- 
--	vm_insert_mixed(vmf->vma, vaddr, page_to_pfn_t(zero_page));
-+	vm_insert_mixed(vmf->vma, vaddr, pfn);
- out:
- 	trace_dax_load_hole(inode, vmf, ret);
- 	return ret;
-@@ -1200,8 +1179,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 		if (error < 0)
- 			goto error_finish_iomap;
- 
--		entry = dax_insert_mapping_entry(mapping, vmf, entry,
--						 dax_iomap_sector(&iomap, pos),
-+		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 						 0, write && !sync);
- 		if (IS_ERR(entry)) {
- 			error = PTR_ERR(entry);
-@@ -1280,13 +1258,15 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 	void *ret = NULL;
- 	spinlock_t *ptl;
- 	pmd_t pmd_entry;
-+	pfn_t pfn;
- 
- 	zero_page = mm_get_huge_zero_page(vmf->vma->vm_mm);
- 
- 	if (unlikely(!zero_page))
- 		goto fallback;
- 
--	ret = dax_insert_mapping_entry(mapping, vmf, entry, 0,
-+	pfn = page_to_pfn_t(zero_page);
-+	ret = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			RADIX_DAX_PMD | RADIX_DAX_ZERO_PAGE, false);
- 	if (IS_ERR(ret))
- 		goto fallback;
-@@ -1409,8 +1389,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 		if (error < 0)
- 			goto finish_iomap;
- 
--		entry = dax_insert_mapping_entry(mapping, vmf, entry,
--						dax_iomap_sector(&iomap, pos),
-+		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 						RADIX_DAX_PMD, write && !sync);
- 		if (IS_ERR(entry))
- 			goto finish_iomap;
+> The prints after [k|v][m|z|c]alloc() functions are not needed, because
+> in case of failure, allocator will print their internal error prints
+> anyway.
+> 
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> ---
+>  drivers/mtd/inftlmount.c | 6 +-----
+
+I didn't check but I'm pretty sure you missed some of them here too.
+
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
+> index 8d6bb189..6b94646 100644
+> --- a/drivers/mtd/inftlmount.c
+> +++ b/drivers/mtd/inftlmount.c
+> @@ -562,12 +562,8 @@ int INFTL_mount(struct INFTLrecord *s)
+>  
+>  	/* Temporary buffer to store ANAC numbers. */
+>  	ANACtable = kcalloc(s->nb_blocks, sizeof(u8), GFP_KERNEL);
+> -	if (!ANACtable) {
+> -		printk(KERN_WARNING "INFTL: allocation of ANACtable "
+> -				"failed (%zd bytes)\n",
+> -				s->nb_blocks * sizeof(u8));
+> +	if (!ANACtable)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	/*
+>  	 * First pass is to explore each physical unit, and construct the
+
+
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
