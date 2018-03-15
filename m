@@ -1,117 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932923AbeCOQBB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:01:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12040 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932898AbeCOQA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:00:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="39191712"
-Subject: [PATCH v6 05/15] ext4, dax: introduce ext4_dax_aops
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, david@fromorbit.com, hch@lst.de,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:51:50 -0700
-Message-ID: <152112911073.24669.9909626935784919021.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S932980AbeCOQBI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:01:08 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38818 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932941AbeCOQBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:01:05 -0400
+X-Google-Smtp-Source: AG47ELvcv1cyfXmVsnbHlnXvEeiGls+1EWDY4k2fRnvMnfWhMw9qFVWTvE3yDUAcSo9qSaBjPhhyMg==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc5 3/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Thu, 15 Mar 2018 16:00:48 +0000
+Message-Id: <1521129648-20889-4-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
+In-Reply-To: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
+References: <1521129648-20889-1-git-send-email-jason.vas.dias@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the dax implementation to start associating dax pages
-to inodes via page->mapping, we need to provide a 'struct
-address_space_operations' instance for dax. Otherwise, direct-I/O
-triggers incorrect page cache assumptions and warnings.
-
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/ext4/inode.c |   38 +++++++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c94780075b04..f9884e41cb39 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2725,12 +2725,6 @@ static int ext4_writepages(struct address_space *mapping,
- 	percpu_down_read(&sbi->s_journal_flag_rwsem);
- 	trace_ext4_writepages(inode, wbc);
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index 03f3904..61d9633 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -21,12 +21,15 @@
+ #include <linux/math64.h>
+ #include <linux/time.h>
+ #include <linux/kernel.h>
++#include <uapi/asm/vdso_tsc_calibration.h>
  
--	if (dax_mapping(mapping)) {
--		ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev,
--						  wbc);
--		goto out_writepages;
--	}
--
- 	/*
- 	 * No pages to write? This is mainly a kludge to avoid starting
- 	 * a transaction for special inodes like journal inode on last iput()
-@@ -2955,6 +2949,27 @@ static int ext4_writepages(struct address_space *mapping,
- 	return ret;
+ #define gtod (&VVAR(vsyscall_gtod_data))
+ 
+ extern int __vdso_clock_gettime(clockid_t clock, struct timespec *ts);
+ extern int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz);
+ extern time_t __vdso_time(time_t *t);
++extern unsigned int __vdso_tsc_calibration(
++	struct linux_tsc_calibration_s *tsc_cal);
+ 
+ #ifdef CONFIG_PARAVIRT_CLOCK
+ extern u8 pvclock_page
+@@ -383,3 +386,25 @@ notrace time_t __vdso_time(time_t *t)
  }
- 
-+static int ext4_dax_writepages(struct address_space *mapping,
-+			       struct writeback_control *wbc)
+ time_t time(time_t *t)
+ 	__attribute__((weak, alias("__vdso_time")));
++
++notrace	unsigned int
++__vdso_linux_tsc_calibration(struct linux_tsc_calibration_s *tsc_cal)
 +{
-+	int ret;
-+	long nr_to_write = wbc->nr_to_write;
-+	struct inode *inode = mapping->host;
-+	struct ext4_sb_info *sbi = EXT4_SB(mapping->host->i_sb);
++	unsigned long seq;
 +
-+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-+		return -EIO;
++	do {
++		seq = gtod_read_begin(gtod);
++		if ((gtod->vclock_mode == VCLOCK_TSC) &&
++		    (tsc_cal != ((void *)0UL))) {
++			tsc_cal->tsc_khz = gtod->tsc_khz;
++			tsc_cal->mult    = gtod->raw_mult;
++			tsc_cal->shift   = gtod->raw_shift;
++			return 1;
++		}
++	} while (unlikely(gtod_read_retry(gtod, seq)));
 +
-+	percpu_down_read(&sbi->s_journal_flag_rwsem);
-+	trace_ext4_writepages(inode, wbc);
-+
-+	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
-+	trace_ext4_writepages_result(inode, wbc, ret,
-+				     nr_to_write - wbc->nr_to_write);
-+	percpu_up_read(&sbi->s_journal_flag_rwsem);
-+	return ret;
++	return 0;
 +}
 +
- static int ext4_nonda_switch(struct super_block *sb)
- {
- 	s64 free_clusters, dirty_clusters;
-@@ -3946,6 +3961,13 @@ static const struct address_space_operations ext4_da_aops = {
- 	.error_remove_page	= generic_error_remove_page,
- };
++unsigned int linux_tsc_calibration(struct linux_tsc_calibration_s *tsc_cal)
++	__attribute((weak, alias("__vdso_linux_tsc_calibration")));
+diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
+index d3a2dce..e0b5cce 100644
+--- a/arch/x86/entry/vdso/vdso.lds.S
++++ b/arch/x86/entry/vdso/vdso.lds.S
+@@ -25,6 +25,8 @@ VERSION {
+ 		__vdso_getcpu;
+ 		time;
+ 		__vdso_time;
++		linux_tsc_calibration;
++		__vdso_linux_tsc_calibration;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/x86/entry/vdso/vdso32/vdso32.lds.S b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
+index 422764a..17fd07f 100644
+--- a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
++++ b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
+@@ -26,6 +26,7 @@ VERSION
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
+ 		__vdso_time;
++		__vdso_linux_tsc_calibration;
+ 	};
  
-+static const struct address_space_operations ext4_dax_aops = {
-+	.direct_IO		= ext4_direct_IO,
-+	.writepages		= ext4_dax_writepages,
-+	.set_page_dirty		= noop_set_page_dirty,
-+	.invalidatepage		= noop_invalidatepage,
+ 	LINUX_2.5 {
+diff --git a/arch/x86/entry/vdso/vdsox32.lds.S b/arch/x86/entry/vdso/vdsox32.lds.S
+index 05cd1c5..7acac71 100644
+--- a/arch/x86/entry/vdso/vdsox32.lds.S
++++ b/arch/x86/entry/vdso/vdsox32.lds.S
+@@ -21,6 +21,7 @@ VERSION {
+ 		__vdso_gettimeofday;
+ 		__vdso_getcpu;
+ 		__vdso_time;
++		__vdso_linux_tsc_calibration;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/x86/include/uapi/asm/vdso_tsc_calibration.h b/arch/x86/include/uapi/asm/vdso_tsc_calibration.h
+new file mode 100644
+index 0000000..ce4b5a45
+--- /dev/null
++++ b/arch/x86/include/uapi/asm/vdso_tsc_calibration.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _ASM_X86_VDSO_TSC_CALIBRATION_H
++#define _ASM_X86_VDSO_TSC_CALIBRATION_H
++/*
++ * Programs that want to use rdtsc / rdtscp instructions
++ * from user-space can make use of the Linux kernel TSC calibration
++ * by calling :
++ *    __vdso_linux_tsc_calibration(struct linux_tsc_calibration_s *);
++ * ( one has to resolve this symbol as in
++ *   tools/testing/selftests/vDSO/parse_vdso.c
++ * )
++ * which fills in a structure
++ * with the following layout :
++ */
++
++/** struct linux_tsc_calibration_s -
++ * mult:    amount to multiply 64-bit TSC value by
++ * shift:   the right shift to apply to (mult*TSC) yielding nanoseconds
++ * tsc_khz: the calibrated TSC frequency in KHz from which previous
++ *          members calculated
++ */
++struct linux_tsc_calibration_s {
++
++	unsigned int mult;
++	unsigned int shift;
++	unsigned int tsc_khz;
++
 +};
 +
- void ext4_set_aops(struct inode *inode)
- {
- 	switch (ext4_inode_journal_mode(inode)) {
-@@ -3958,7 +3980,9 @@ void ext4_set_aops(struct inode *inode)
- 	default:
- 		BUG();
- 	}
--	if (test_opt(inode->i_sb, DELALLOC))
-+	if (IS_DAX(inode))
-+		inode->i_mapping->a_ops = &ext4_dax_aops;
-+	else if (test_opt(inode->i_sb, DELALLOC))
- 		inode->i_mapping->a_ops = &ext4_da_aops;
- 	else
- 		inode->i_mapping->a_ops = &ext4_aops;
++/* To use:
++ *
++ *  static unsigned
++ *  (*linux_tsc_cal)(struct linux_tsc_calibration_s *linux_tsc_cal) =
++ *    vdso_sym("LINUX_2.6", "__vdso_linux_tsc_calibration");
++ *  if(linux_tsc_cal == ((void *)0))
++ *  { fprintf(stderr,"the patch providing __vdso_linux_tsc_calibration"
++ *                   " is not applied to the kernel.\n");
++ *    return ERROR;
++ *  }
++ *  static struct linux_tsc_calibration clock_source={0};
++ *  if((clock_source.mult==0) && ! (*linux_tsc_cal)(&clock_source) )
++ *    fprintf(stderr,"TSC is not the system clocksource.\n");
++ *  unsigned int tsc_lo, tsc_hi, tsc_cpu;
++ *  asm volatile
++ *  ( "rdtscp" : (=a) tsc_hi,  (=d) tsc_lo, (=c) tsc_cpu );
++ *  unsigned long tsc = (((unsigned long)tsc_hi) << 32) | tsc_lo;
++ *  unsigned long nanoseconds =
++ *   (( clock_source . mult ) * tsc ) >> (clock_source . shift);
++ *
++ *  nanoseconds is now TSC value converted to nanoseconds,
++ *  according to Linux' clocksource calibration values.
++ *  Incidentally, 'tsc_cpu' is the number of the CPU the task is running on.
++ *
++ * But better results are obtained by applying this to the difference (delta)
++ * and adding this to some previous timespec value:
++ *   static u64 previous_tsc=0, previous_nsec=0, previous_sec=0;
++ *   u64  tsc      = rdtscp();
++ *   u64  delta    = tsc - previous_tsc;
++ *   u64  nsec     = ((delta * clock_source.mult) + previous_nsec )
++ *	           >> clock_source.shift;
++ *   ts->tv_sec    = previous_sec + (nsec / NSEC_PER_SEC);
++ *   ts->tv_nsec   = nsec % NSEC_PER_SEC;
++ *   previous_tsc  = tsc
++ *   previous_sec  = ts->tv_sec;
++ *   previous_nsec = ts->tv_nsec << clock_source.shift;
++ *   return ts;
++ * This is broadly like the approach taken by Linux kernel & in VDSO .
++ *
++ * Or, in user-space, with floating point, one could use the rdtscp value as
++ * number of picoseconds :
++ *     u64 ns = lround(   ((double)rdtscp())
++ *                     / (((double)clock_source.tsc_khz) / 1e3)
++ *                    );
++ * (ie. if tsc_khz is 3000 , there are 3 tsc ticks per nanosecond,
++ *  so divide tsc ticks by 3).
++ *
++ * There should actually be very little difference between the two
++ * values obtained (@ 0.02% ) by either method.
++ */
++
++#endif
