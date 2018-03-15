@@ -1,51 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeCORyv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 13:54:51 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:37368 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751394AbeCORyu (ORCPT
+        id S1752581AbeCOR5I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 13:57:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752332AbeCOR5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 13:54:50 -0400
-Date: Thu, 15 Mar 2018 13:54:22 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/14] swiotlb: remove swiotlb_set_mem_attributes
-Message-ID: <20180315175422.GE19870@char.us.oracle.com>
-References: <20180314175213.20256-1-hch@lst.de>
- <20180314175213.20256-12-hch@lst.de>
- <20180315175159.GR13391@char.us.oracle.com>
+        Thu, 15 Mar 2018 13:57:07 -0400
+Subject: Re: [PATCH v3 04/14] KVM: s390: device attribute to set AP
+ interpretive execution
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <d86ad01e-1c79-c14c-b4da-09d9a31572bd@linux.vnet.ibm.com>
+ <21bd029b-3500-3461-ce98-68ad3ae9b647@linux.vnet.ibm.com>
+ <46a7e838-2be2-9587-6eb2-3bba95485609@linux.vnet.ibm.com>
+ <5ed8017b-0168-9a50-234b-cfe9258eab72@linux.vnet.ibm.com>
+ <17683324-f6e4-4328-54c1-1fce572faecd@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 18:56:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315175159.GR13391@char.us.oracle.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8832 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=875
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803150169
+In-Reply-To: <17683324-f6e4-4328-54c1-1fce572faecd@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031517-0040-0000-0000-00000421664E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031517-0041-0000-0000-0000262470B9
+Message-Id: <8e10f1cb-3722-d231-2603-b7867420ac0a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150195
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 01:51:59PM -0400, Konrad Rzeszutek Wilk wrote:
-> On Wed, Mar 14, 2018 at 06:52:10PM +0100, Christoph Hellwig wrote:
-> > Now that set_memory_decrypted is always available we can just call it
-> > directly.
-> > 
-> 
-> Won't this break ARM build?
+On 15/03/2018 18:21, Tony Krowiak wrote:
+> On 03/15/2018 11:45 AM, Pierre Morel wrote:
+>> On 15/03/2018 16:26, Tony Krowiak wrote:
+>>> On 03/15/2018 09:00 AM, Pierre Morel wrote:
+>>>> On 14/03/2018 22:57, Halil Pasic wrote:
+>>>>>
+>>>>> On 03/14/2018 07:25 PM, Tony Krowiak wrote:
+>>>>>> The VFIO AP device model exploits interpretive execution of AP
+>>>>>> instructions (APIE) to provide guests passthrough access to AP
+>>>>>> devices. This patch introduces a new device attribute in the
+>>>>>> KVM_S390_VM_CRYPTO device attribute group to set APIE from
+>>>>>> the VFIO AP device defined on the guest.
+>>>>>>
+>>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>>>> ---
+>>>>> [..]
+>>>>>
+>>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>>>> index a60c45b..bc46b67 100644
+>>>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>>>> @@ -815,6 +815,19 @@ static int kvm_s390_vm_set_crypto(struct kvm 
+>>>>>> *kvm, struct kvm_device_attr *attr)
+>>>>>> sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>>>>>>           VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping 
+>>>>>> support");
+>>>>>>           break;
+>>>>>> +    case KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>>>>>> +        if (attr->addr) {
+>>>>>> +            if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP))
+>>>>> Unlock mutex before returning?
+>>>>>
+>>>>> Maybe flip conditions (don't allow manipulating apie if feature 
+>>>>> not there).
+>>>>> Clearing the anyways clear apie if feature not there ain't too 
+>>>>> bad, but
+>>>>> rejecting the operation appears nicer to me.
+>>>>>
+>>>>>> +                return -EOPNOTSUPP;
+>>>>>> +            kvm->arch.crypto.apie = 1;
+>>>>>> +            VM_EVENT(kvm, 3, "%s",
+>>>>>> +                 "ENABLE: AP interpretive execution");
+>>>>>> +        } else {
+>>>>>> +            kvm->arch.crypto.apie = 0;
+>>>>>> +            VM_EVENT(kvm, 3, "%s",
+>>>>>> +                 "DISABLE: AP interpretive execution");
+>>>>>> +        }
+>>>>>> +        break;
+>>>>>>       default:
+>>>>>>           mutex_unlock(&kvm->lock);
+>>>>>>           return -ENXIO;
+>>>>> I wonder how the loop after this switch works for 
+>>>>> KVM_S390_VM_CRYPTO_INTERPRET_AP:
+>>>>>
+>>>>>          kvm_for_each_vcpu(i, vcpu, kvm) {
+>>>>>                  kvm_s390_vcpu_crypto_setup(vcpu);
+>>>>>                  exit_sie(vcpu);
+>>>>>          }
+>>>>>
+>>>>>  From not doing something like for KVM_S390_VM_CRYPTO_INTERPRET_AP
+>>>>>
+>>>>>          if (kvm->created_vcpus) {
+>>>>>                  mutex_unlock(&kvm->lock);
+>>>>>                  return -EBUSY;
+>>>>> and from the aforementioned loop I guess ECA.28 can be changed
+>>>>> for a running guest.
+>>>>>
+>>>>> If there are running vcpus when KVM_S390_VM_CRYPTO_INTERPRET_AP is
+>>>>> changed (set) these will be taken out of SIE by exit_sie(). Then 
+>>>>> for the
+>>>>> corresponding threads the control probably goes to QEMU (the 
+>>>>> emulator in
+>>>>> the userspace). And it puts that vcpu back into the SIE, and then 
+>>>>> that
+>>>>> cpu starts acting according to the new ECA.28 value. While other 
+>>>>> vcpus
+>>>>> may still work with the old value of ECA.28.
+>>>>>
+>>>>> I'm not saying what I describe above is necessarily something broken.
+>>>>> But I would like to have it explained, why is it OK -- provided I 
+>>>>> did not
+>>>>> make any errors in my reasoning (assumptions included).
+>>>>>
+>>>>> Can you help me understand this code?
+>>>>>
+>>>>> Regards,
+>>>>> Halil
+>>>>>
+>>>>> [..]
+>>>>>
+>>>>
+>>>> I have the same concerns as Halil.
+>>>>
+>>>> We do not need to change the virtulization type
+>>>> (hardware/software) on the fly for the current use case.
+>>>>
+>>>> Couldn't we delay this until we have one and in between only make 
+>>>> the vCPU hotplug clean?
+>>>>
+>>>> We only need to let the door open for the day we have such a use case.
+>>> Are you suggesting this code be removed? If so, then where and under 
+>>> what conditions would
+>>> you suggest setting ECA.28 given you objected to setting it based on 
+>>> whether the
+>>> AP feature is installed?
+>>
+>> I would only call kvm_s390_vcpu_crypto_setup() from inside 
+>> kvm_arch_vcpu_init()
+>> as it is already.
+> It is not called from kvm_arch_vcpu_init(), it is called from 
+> kvm_arch_vcpu_setup(). 
 
-<brainfart> And of course right after asking that question I went back to
-the previous patch as I had that in my mind it was arch/x86/include, not the global
-one.
+hum, sorry for this.
+However, the idea pertains, not to call this function from inside an 
+ioctl changing crypto parameters, but only during vcpu creation.
 
-So pls ignore my query and instead:
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Also,
+> this loop was already here, I did not put it in. Assuming whomever put 
+> it there did so
+> for a reason, it is not my place to remove it. According to a trace I 
+> ran, the calls to this
+> function occur after the vcpus are created. Consequently, the 
+> kvm_s390_vcpu_crypto_setup()
+> function would not be called without the loop and neither the key 
+> wrapping support nor the
+> ECA_APIE would be configured in the vcpu's SIE descriptor.
+>
+> If you have a better idea for where/how to set this flag, I'm all
+> ears. It would be nice if it could be set before the vcpus are 
+> created, but I haven't
+> found a good candidate. I suspect that the loop was put in to make 
+> sure that all vcpus
+> get updated regardless of whether they are running or not, but I don't 
+> know what happens
+> after a vcpu is kicked out of SIE. I suspect, as Halil surmised, that 
+> QEMU
+> restores the vcpus to SIE. This would seemingly cause the 
+> kvm_arch_vcpu_setup() to get
+> called at which time the ECA_APIE value as well as the key wrapping 
+> values will get set.
+> If somebody has knowledge of the flow here, please feel free to pitch in.
+>>
+>>
+>>
+>>>>
+>>>>
+>>>> Pierre
+>>>>
+>>>>
+>>>>
+>>>
+>>
+>
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
