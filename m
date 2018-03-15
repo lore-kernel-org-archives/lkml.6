@@ -1,96 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932505AbeCOPZE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:25:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:41262 "EHLO foss.arm.com"
+        id S932534AbeCOPZT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:25:19 -0400
+Received: from foss.arm.com ([217.140.101.70]:41288 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751983AbeCOPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:25:03 -0400
-Subject: Re: [PATCH v1 13/16] kvm: arm64: Configure VTCR per VM
-To: Christoffer Dall <cdall@kernel.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        KVM <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S932101AbeCOPZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:25:17 -0400
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <cdall@linaro.org>
-References: <20180109190414.4017-1-suzuki.poulose@arm.com>
- <20180109190414.4017-14-suzuki.poulose@arm.com>
- <CAMJs5B_yvM8XNT=g8uN63G1G6uwGQcYF_0dxbC1Gaeb+j6UvpQ@mail.gmail.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <514dda83-dd08-3318-b5a2-6c41fc1c992d@arm.com>
-Date: Thu, 15 Mar 2018 15:24:58 +0000
+        Will Deacon <will.deacon@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+        Leo Li <leoyang.li@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: Re: [PATCH 3/3] arm64: dts: update the cpu idle node
+To: Ran Wang <ran.wang_1@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+References: <20180208075436.38443-1-ran.wang_1@nxp.com>
+ <20180208075436.38443-3-ran.wang_1@nxp.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <346ad3d2-04e4-7df3-5187-36124b3c717b@arm.com>
+Date: Thu, 15 Mar 2018 15:25:12 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMJs5B_yvM8XNT=g8uN63G1G6uwGQcYF_0dxbC1Gaeb+j6UvpQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <20180208075436.38443-3-ran.wang_1@nxp.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+(sorry for replying so late, just found this by accident when clearing
+ old emails)
 
-Hi Christoffer,
-
-On 08/02/18 18:04, Christoffer Dall wrote:
-> On Tue, Jan 09, 2018 at 07:04:08PM +0000, Suzuki K Poulose wrote:
->> We set VTCR_EL2 very early during the stage2 init and don't
->> touch it ever. This is fine as we had a fixed IPA size. This
->> patch changes the behavior to set the VTCR for a given VM,
->> depending on its stage2 table. The common configuration for
->> VTCR is still performed during the early init. But the SL0
->> and T0SZ are programmed for each VM and is cleared once we
->> exit the VM.
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
->> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
->> index f7c651f3a8c0..523471f0af7b 100644
->> --- a/arch/arm64/kvm/hyp/switch.c
->> +++ b/arch/arm64/kvm/hyp/switch.c
->> @@ -157,11 +157,20 @@ static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
->>   static void __hyp_text __activate_vm(struct kvm_vcpu *vcpu)
->>   {
->>    struct kvm *kvm = kern_hyp_va(vcpu->kvm);
->> + u64 vtcr = read_sysreg(vtcr_el2);
->> +
->> + vtcr &= ~VTCR_EL2_PRIVATE_MASK;
->> + vtcr |= VTCR_EL2_SL0(stage2_pt_levels(kvm)) |
->> + VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
->> + write_sysreg(vtcr, vtcr_el2);
+On 08/02/18 07:54, Ran Wang wrote:
+> From: Yuantian Tang <andy.tang@nxp.com>
 > 
-> If we're writing VTCR_EL2 on each entry, do we really need to read the
-> value back first and calculate things on every entry to the VM?  It
-> seems to me we should be able to compute the vtcr_el2 and store it on
-> struct kvm, and simply restore that per-VM value upon entering the VM?
-
-I took a look at this and we need to do this to make sure we retain the
-Hardware update of Access flags for stage2 (VTCR_EL2_HA) bits on the CPUs
-that has it and it is safe to run a mix of CPUs with and without the feature.
-
->>    write_sysreg(kvm->arch.vttbr, vttbr_el2);
->>   }
->>
->>   static void __hyp_text __deactivate_vm(struct kvm_vcpu *vcpu)
->>   {
->> + u64 vtcr = read_sysreg(vtcr_el2) & ~VTCR_EL2_PRIVATE_MASK;
->> +
->> + write_sysreg(vtcr, vtcr_el2);
+> According to PSCI standard v0.2, for CPU_SUSPEND call, which is
+> used by cpu idle framework, bit[16] of state parameter must be 0.
+> So update bit[16] of property 'arm,psci-suspend-param', which is
+> used as state parameter, to 0.
 > 
-> Why do we need to care about restoring VTCR when returning to the host?
+This changelog makes zero sense to me.
 
-Yes, this can be skipped.
+1. PSCI specification makes no reference to "cpu idle framework".
+   It's not a Linux specification to reference anything specific to
+   Linux CPUIdle framework.
 
-Cheers
-Suzuki
+2. "for CPU_SUSPEND call,...bit[16] of state parameter must be 0."
+   Where exactly to you see that ? Specification tells what value of
+   0 or 1 in bit[16] means.
+
+3. Is this retention state and doesn't need any save restore ? If not
+   this change is wrong and will break if and when we use
+   CPU_PM_CPU_IDLE_ENTER_RETENTION if this bit is not set.
+
+-- 
+Regards,
+Sudeep
