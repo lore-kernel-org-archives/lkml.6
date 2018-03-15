@@ -1,170 +1,127 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtBGi5Nd2zcs4VNkHgxsIodPXPIZ/7NR6SAo4ELFPezRxPMQ6wd4ayTRaJEBItogJGu+KTp
-ARC-Seal: i=1; a=rsa-sha256; t=1521120226; cv=none;
-        d=google.com; s=arc-20160816;
-        b=TWp1nPcKyePSU269/Pd9Vfh7cwESXjTkAfaEJRInIHf1XiPdD34NpsK7Z9ofORok40
-         xzUn0D9eJ2HqggAr/q/zouCN/M0wS2b7ZOHcOI2Pj5A2OjQJq8IYRwMVlaGbH52K+lKW
-         Pi53cgCabXU8gJzyuKTWHCPZVhGnet1xjHBlxEhgL1S/WMpMhnSaC3ILDOa845lnHycv
-         4sF5wFfAH1/3KuQaQO8DrC+9lzAHEHlklyvjFVZhBWbGQB6jdtEHMFrc3bkmz9s+e2Bm
-         +bir/0PKzDxB1Iu7oYCp52X+nRYO4ImO+eInWBqC45wOFJHg8B5W9X2m+Kyb2uWT7MX7
-         EZWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=2dWIrGqUZlWMDXyLJw/orhwveCGbU9yATLfjHS7NQOA=;
-        b=grGSP5SoOLW9g3ATMeuAjty9KXtrSS4RMp8k+Dc5A+7iVXz0m6AhFHWuF5DJ5N8yev
-         4uehsOi7spGwtsKg9ZXxB7QJ+HU+TMzVJX3LgXKFgE3Zib8J+jRujuNUt2I7sI4om7bw
-         v+NpaK7K8haTKlN8GSI5n5LTgIIrcNpY62668rcPfDExnulYbww7rXBtTP1qGbpUUbfo
-         cbjYuD1wbAvavIjQCJo5HM+KWwlQPwiyfvXYOl23+pwGo7I0/AP1O4Nqdhw0CaptVn8d
-         tUCbcQCyKeNsuN+n2o4JmIhf2/vTsbzmYsWaj0BHg5gVGyu2DqvrxyiOXDUvcbnATmNl
-         4uvQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
-   d="scan'208";a="211820063"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] lib/kobject: Join string literals back
-Date: Thu, 15 Mar 2018 15:23:43 +0200
-Message-Id: <20180315132343.83346-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-247771-1521118288-2-760519838779826089
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521118288; b=R9yCGgrF+XPpulIko1HOmYvdW1H5dJpWoNodKoaKww33NGM
+    uLifhxnYlmhHHbtJD8J546gEQ7UAF9ar4SJaEKBaVyMHjqGnWJWR+CnaUh8a+Nfw
+    nLHMaU2F7xPhLVA6p8VZHHbHKEfR58blsrZeKTdtCWI7RSbndSCudA30hZW7aYm9
+    cimONR8vvejfNlx2M8VSLkZqOnop/B9/cXgcjC9poXURy9Ull0KR9WdSjOj8VjLr
+    YYj8yhjN3dt9Mnt6LLLFIRCkTDvTP6Rpm9dfUSfifobtG5bM5g7Hw3M4nczxe+kU
+    lgQaAwMPeyZYLZPS9IIdyyCTAzULORNwbXah/iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521118288; bh=HzrNvzMRMWMco61cJAYlcqCeg4
+    g33JOoGLy+AjS4CfE=; b=jOzCif0ShC5O+ocCttPkzo2AmJH+tfjyxfLi6Y3bv5
+    Bs7mVLuFNpdnVJuFfs8YRPCsiGeMgNjkxnGhl9EsfW9dbpvoW/dN3MQqe81CYGzD
+    3qIwBDOGGDldU+XcmAUXHBJCsBFLhUHYBntzORkfl7NcM+2YeynR3rwVNxP+xtIC
+    VX5qqjCqUdAzQTgAGH3UPPSrljAeGsUsjOOVjm4a0vRVSEXHkwIdiUGsQI0EZBsK
+    WCdZzZDmFDNnXQoUYxj5xmBk5CVAMprl+M45uEuAuSt5bJEtsF+XerHqPTTphLuq
+    evZrzVb2wsPm46QWPIKbY1E+EYBCDmLkIJHrCwQ2/swQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752131AbeCOMv0 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Mar 2018 08:51:26 -0400
+Received: from mail.efficios.com ([167.114.142.138]:48400 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbeCOMvZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Mar 2018 08:51:25 -0400
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH] Fix: tracepoint: do not warn on ENOMEM
+Date: Thu, 15 Mar 2018 08:44:24 -0400
+Message-Id: <20180315124424.32319-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595010162847719045?=
-X-GMAIL-MSGID: =?utf-8?q?1595010162847719045?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There is no need to split string literals. Moreover, it would be simpler
-to grep for an actual code line, when debugging, by using almost any
-part of the string literal in question.
+Tracepoint should only warn when a kernel API user does not respect the
+required preconditions (e.g. same tracepoint enabled twice, or called
+to remove a tracepoint that does not exist).
 
-While here, replace printk(LEVEL) by pr_lvl() macros.
+Silence warning in out-of-memory conditions, given that the error is
+returned to the caller.
 
-No functional change intended.
+This ensures that out-of-memory error-injection testing does not trigger
+warnings in tracepoint.c, which were seen by syzbot.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reported-by: syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com
+Reported-by: syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Jiri Olsa <jolsa@redhat.com>
+CC: Arnaldo Carvalho de Melo <acme@kernel.org>
+CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: Namhyung Kim <namhyung@kernel.org>
+CC: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/001a114465e241a8720567419a72@google.com
+Link: https://lkml.kernel.org/r/001a1140e0de15fc910567464190@google.com
 ---
- lib/kobject.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ kernel/tracepoint.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/kobject.c b/lib/kobject.c
-index afd5a3fc6123..e1d1f290bf35 100644
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -204,8 +204,9 @@ static int kobject_add_internal(struct kobject *kobj)
- 		return -ENOENT;
- 
- 	if (!kobj->name || !kobj->name[0]) {
--		WARN(1, "kobject: (%p): attempted to be registered with empty "
--			 "name!\n", kobj);
-+		WARN(1,
-+		     "kobject: (%p): attempted to be registered with empty name!\n",
-+		     kobj);
- 		return -EINVAL;
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 671b13457387..1e37da2e0c25 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -207,7 +207,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+ 			lockdep_is_held(&tracepoints_mutex));
+ 	old = func_add(&tp_funcs, func, prio);
+ 	if (IS_ERR(old)) {
+-		WARN_ON_ONCE(1);
++		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+ 		return PTR_ERR(old);
  	}
  
-@@ -232,9 +233,8 @@ static int kobject_add_internal(struct kobject *kobj)
- 
- 		/* be noisy on error issues */
- 		if (error == -EEXIST)
--			WARN(1, "%s failed for %s with "
--			     "-EEXIST, don't try to register things with "
--			     "the same name in the same directory.\n",
-+			WARN(1,
-+			     "%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
- 			     __func__, kobject_name(kobj));
- 		else
- 			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
-@@ -334,8 +334,8 @@ void kobject_init(struct kobject *kobj, struct kobj_type *ktype)
- 	}
- 	if (kobj->state_initialized) {
- 		/* do not error out as sometimes we can recover */
--		printk(KERN_ERR "kobject (%p): tried to init an initialized "
--		       "object, something is seriously wrong.\n", kobj);
-+		pr_err("kobject (%p): tried to init an initialized object, something is seriously wrong.\n",
-+		       kobj);
- 		dump_stack();
+@@ -239,7 +239,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
+ 			lockdep_is_held(&tracepoints_mutex));
+ 	old = func_remove(&tp_funcs, func);
+ 	if (IS_ERR(old)) {
+-		WARN_ON_ONCE(1);
++		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+ 		return PTR_ERR(old);
  	}
  
-@@ -344,7 +344,7 @@ void kobject_init(struct kobject *kobj, struct kobj_type *ktype)
- 	return;
- 
- error:
--	printk(KERN_ERR "kobject (%p): %s\n", kobj, err_str);
-+	pr_err("kobject (%p): %s\n", kobj, err_str);
- 	dump_stack();
- }
- EXPORT_SYMBOL(kobject_init);
-@@ -357,7 +357,7 @@ static __printf(3, 0) int kobject_add_varg(struct kobject *kobj,
- 
- 	retval = kobject_set_name_vargs(kobj, fmt, vargs);
- 	if (retval) {
--		printk(KERN_ERR "kobject: can not set name properly!\n");
-+		pr_err("kobject: can not set name properly!\n");
- 		return retval;
- 	}
- 	kobj->parent = parent;
-@@ -399,8 +399,7 @@ int kobject_add(struct kobject *kobj, struct kobject *parent,
- 		return -EINVAL;
- 
- 	if (!kobj->state_initialized) {
--		printk(KERN_ERR "kobject '%s' (%p): tried to add an "
--		       "uninitialized object, something is seriously wrong.\n",
-+		pr_err("kobject '%s' (%p): tried to add an uninitialized object, something is seriously wrong.\n",
- 		       kobject_name(kobj), kobj);
- 		dump_stack();
- 		return -EINVAL;
-@@ -590,9 +589,9 @@ struct kobject *kobject_get(struct kobject *kobj)
- {
- 	if (kobj) {
- 		if (!kobj->state_initialized)
--			WARN(1, KERN_WARNING "kobject: '%s' (%p): is not "
--			       "initialized, yet kobject_get() is being "
--			       "called.\n", kobject_name(kobj), kobj);
-+			WARN(1, KERN_WARNING
-+				"kobject: '%s' (%p): is not initialized, yet kobject_get() is being called.\n",
-+			     kobject_name(kobj), kobj);
- 		kref_get(&kobj->kref);
- 	}
- 	return kobj;
-@@ -622,8 +621,7 @@ static void kobject_cleanup(struct kobject *kobj)
- 		 kobject_name(kobj), kobj, __func__, kobj->parent);
- 
- 	if (t && !t->release)
--		pr_debug("kobject: '%s' (%p): does not have a release() "
--			 "function, it is broken and must be fixed.\n",
-+		pr_debug("kobject: '%s' (%p): does not have a release() function, it is broken and must be fixed.\n",
- 			 kobject_name(kobj), kobj);
- 
- 	/* send "remove" if the caller did not do it but sent "add" */
-@@ -686,9 +684,9 @@ void kobject_put(struct kobject *kobj)
- {
- 	if (kobj) {
- 		if (!kobj->state_initialized)
--			WARN(1, KERN_WARNING "kobject: '%s' (%p): is not "
--			       "initialized, yet kobject_put() is being "
--			       "called.\n", kobject_name(kobj), kobj);
-+			WARN(1, KERN_WARNING
-+				"kobject: '%s' (%p): is not initialized, yet kobject_put() is being called.\n",
-+			     kobject_name(kobj), kobj);
- 		kref_put(&kobj->kref, kobject_release);
- 	}
- }
-@@ -752,8 +750,7 @@ struct kobject *kobject_create_and_add(const char *name, struct kobject *parent)
- 
- 	retval = kobject_add(kobj, parent, "%s", name);
- 	if (retval) {
--		printk(KERN_WARNING "%s: kobject_add error: %d\n",
--		       __func__, retval);
-+		pr_warn("%s: kobject_add error: %d\n", __func__, retval);
- 		kobject_put(kobj);
- 		kobj = NULL;
- 	}
 -- 
-2.16.1
+2.11.0
