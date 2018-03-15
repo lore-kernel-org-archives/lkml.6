@@ -1,51 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeCOG00 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 02:26:26 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:39003 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750720AbeCOG0Z (ORCPT
+        id S1751788AbeCOG12 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 02:27:28 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:34739 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOG11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 02:26:25 -0400
-X-Google-Smtp-Source: AG47ELu1wmfWgcbVtSDXl1dN3NXAV8RTU/az4v0qd9mDxD4JxPxMbBJYXUQbNYcsdhMRVOgedJAYkQ==
-Subject: [PATCH 1/4] scsi: arcmsr: Rename ACB_F_BUS_HANG_ON to
- ACB_F_ADAPTER_REMOVED for adapter hot-plug
-From: Ching Huang <ching2048@areca.com.tw>
-To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
+        Thu, 15 Mar 2018 02:27:27 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2F6RMZg001949
+X-Nifty-SrcIP: [209.85.217.175]
+X-Google-Smtp-Source: AG47ELtCqy1eSSfR3XZtPKE59VQdrdFMl8VbPAhHiTxtVxy4jkny2pPclfUF916XXLHvIMXRqZuOPrp3VQwI7Iur4kw=
+MIME-Version: 1.0
+In-Reply-To: <nycvar.YSQ.7.76.1803141324420.28583@knanqh.ubzr>
+References: <1521045861-22418-1-git-send-email-yamada.masahiro@socionext.com>
+ <1521045861-22418-3-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1803141324420.28583@knanqh.ubzr>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 15 Mar 2018 15:26:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQMLA9-wOJ5Tgr1tuOTox33544cty3rVzAxvvyGQgs5Dg@mail.gmail.com>
+Message-ID: <CAK7LNAQMLA9-wOJ5Tgr1tuOTox33544cty3rVzAxvvyGQgs5Dg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] kbuild: touch autoksyms.h when it is really missing
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jarod Wilson <jarod@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 15 Mar 2018 14:26:15 +0800
-Message-ID: <1521095175.31371.26.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ching Huang <ching2048@areca.com.tw>
+2018-03-15 2:26 GMT+09:00 Nicolas Pitre <nicolas.pitre@linaro.org>:
+> On Thu, 15 Mar 2018, Masahiro Yamada wrote:
+>
+>> From the comment, I expect this code creates autoksyms.h in case it
+>> is missing, but it actually touches it when it does exists.
+>
+> Oops, indeed.
+>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> I do not know when this code is useful...
+>>
+>> If autoksyms.h were missing, build should have already failed because
+>> include/{linux,asm-generic}/export.h need it.
+>>
+>> Maybe for standalone test?
+>> Or, in order to make this script self-contained?
+>
+> I agree it isn't very useful. Proof: it was wrong and wouldn't have
+> worked as intended. So the best fix might be to simply remove that line.
+>
 
-Rename ACB_F_BUS_HANG_ON to ACB_F_ADAPTER_REMOVED for adapter hot-plug.
+OK, I will remove the code.
 
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
----
 
-diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
-index f375f35..842b77a 100755
---- a/drivers/scsi/arcmsr/arcmsr.h
-+++ b/drivers/scsi/arcmsr/arcmsr.h
-@@ -779,12 +779,12 @@ struct AdapterControlBlock
- /* message clear rqbuffer */
- #define ACB_F_MESSAGE_WQBUFFER_READED   0x0040
- #define ACB_F_BUS_RESET               	0x0080
--#define ACB_F_BUS_HANG_ON		0x0800/* need hardware reset bus */
- 
- #define ACB_F_IOP_INITED              	0x0100
- /* iop init */
- #define ACB_F_ABORT			0x0200
- #define ACB_F_FIRMWARE_TRAP           	0x0400
-+#define ACB_F_ADAPTER_REMOVED		0x0800
- #define ACB_F_MSG_GET_CONFIG		0x1000
- 	struct CommandControlBlock *	pccb_pool[ARCMSR_MAX_FREECCB_NUM];
- 	/* used for memory free */
+
+
+-- 
+Best Regards
+Masahiro Yamada
