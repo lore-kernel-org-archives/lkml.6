@@ -1,165 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeCOSoO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 14:44:14 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38332 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbeCOSoK (ORCPT
+        id S1752804AbeCOSpj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 14:45:39 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39660 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752217AbeCOSph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 14:44:10 -0400
-X-Google-Smtp-Source: AG47ELvR+hWbzqOovAPwWZOe/YI95mayv2F6FMFCJYLTqcx4WVsppkTaARTtE/s/oTmZwqYzyTA6BQ==
-Subject: [pci PATCH v7 5/5] pci-pf-stub: Add PF driver stub for PFs that
- function only to enable VFs
-From: Alexander Duyck <alexander.duyck@gmail.com>
-To: bhelgaas@google.com, alexander.h.duyck@intel.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
-        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
-        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
-Date: Thu, 15 Mar 2018 11:44:07 -0700
-Message-ID: <20180315184356.3102.71367.stgit@localhost.localdomain>
-In-Reply-To: <20180315183449.3102.64791.stgit@localhost.localdomain>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Mar 2018 14:45:37 -0400
+Message-ID: <1521139535.5348.89.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace
+ support
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: mkayaalp@cs.binghamton.edu,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>, sunyuqiong1988@gmail.com,
+        containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        david.safford@ge.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+Date: Thu, 15 Mar 2018 11:45:35 -0700
+In-Reply-To: <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
+         <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
+         <87vadxfwqj.fsf@xmission.com>
+         <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
+         <1521135192.5348.64.camel@HansenPartnership.com>
+         <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+On Thu, 2018-03-15 at 14:26 -0400, Stefan Berger wrote:
+> On 03/15/2018 01:33 PM, James Bottomley wrote:
+> > 
+> > On Thu, 2018-03-15 at 11:26 -0400, Stefan Berger wrote:
+[...]
+> > > 
+> > > IMA measures the files described by these paths. The files also
+> > > may hold signatures (security.ima xattr) needed for IMA
+> > > appraisal.
+> > The xattr is an inode property, which isn't namespaced by the
+> > mount_ns.
+> > 
+> > When we had this discussion last year, we talked about possibly
+> > using the user_ns instead.  It makes sense because for IMA
+> > signatures you're
+> 
+> 'using the user_ns' I suppose means hooking IMA namespace to it...
 
-Add a new driver called "pci-pf-stub" to act as a "white-list" for PF
-devices that provide no other functionality other then acting as a means of
-allocating a set of VFs. For now I only have one example ID provided by
-Amazon in terms of devices that require this functionality. The general
-idea is that in the future we will see other devices added as vendors come
-up with devices where the PF is more or less just a lightweight shim used
-to allocate VFs.
+Yes, making it belong to the user ns instead of the mnt ns.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
----
+I'm not saying it has to, but I equally don't see a good reason IMA has
+to have its own namespace, especially as the keyrings are tied to the
+user_ns.
 
-v6: New driver to address concerns about Amazon devices left unsupported
-v7: Dropped pci_id table explanation from pci-pf-stub driver
+> > going to need some type of keyring namespace and there's already
+> > one hanging off the user_ns:
+> > 
+> > commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
+> > Author: David Howells <dhowells@redhat.com>
+> > Date:   Tue Sep 24 10:35:19 2013 +0100
+> > 
+> >      KEYS: Add per-user_namespace registers for persistent per-UID
+> > kerberos caches
+> 
+> The benefit for IMA would be that this would then tie the keys needed
+> for appraising to the IMA namespace's policy.
+> However, if you have an appraise policy in your IMA namespace, which
+> is now hooked to the user namespace, and you join that user namespace
+> but your files don't have signatures, nothing will execute anymore.
+> That's now a side effect of joining this user namespace unless we
+> have a magic  exception. My feeling is, people may not like that...
 
- drivers/pci/Kconfig       |   12 ++++++++++
- drivers/pci/Makefile      |    2 ++
- drivers/pci/pci-pf-stub.c |   54 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pci_ids.h   |    2 ++
- 4 files changed, 70 insertions(+)
- create mode 100644 drivers/pci/pci-pf-stub.c
+Agree, but I think the magic might be to populate the ima keyring with
+the parent on user_ns creation.  That way the user_ns owner can delete
+the parent keys if they don't like them, but by default the parent
+appraisal policy should just work.
 
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 34b56a8f8480..cdef2a2a9bc5 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -71,6 +71,18 @@ config PCI_STUB
- 
- 	  When in doubt, say N.
- 
-+config PCI_PF_STUB
-+	tristate "PCI PF Stub driver"
-+	depends on PCI
-+	depends on PCI_IOV
-+	help
-+	  Say Y or M here if you want to enable support for devices that
-+	  require SR-IOV support, while at the same time the PF itself is
-+	  not providing any actual services on the host itself such as
-+	  storage or networking.
-+
-+	  When in doubt, say N.
-+
- config XEN_PCIDEV_FRONTEND
-         tristate "Xen PCI Frontend"
-         depends on PCI && X86 && XEN
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index 941970936840..4e133d3df403 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -43,6 +43,8 @@ obj-$(CONFIG_PCI_SYSCALL) += syscall.o
- 
- obj-$(CONFIG_PCI_STUB) += pci-stub.o
- 
-+obj-$(CONFIG_PCI_PF_STUB) += pci-pf-stub.o
-+
- obj-$(CONFIG_PCI_ECAM) += ecam.o
- 
- obj-$(CONFIG_XEN_PCIDEV_FRONTEND) += xen-pcifront.o
-diff --git a/drivers/pci/pci-pf-stub.c b/drivers/pci/pci-pf-stub.c
-new file mode 100644
-index 000000000000..9d5fdf20d485
---- /dev/null
-+++ b/drivers/pci/pci-pf-stub.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* pci-pf-stub - simple stub driver for PCI SR-IOV PF device
-+ *
-+ * This driver is meant to act as a "white-list" for devices that provde
-+ * SR-IOV functionality while at the same time not actually needing a
-+ * driver of their own.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+
-+/**
-+ * pci_pf_stub_white_list - White list of devices to bind pci-pf-stub onto
-+ *
-+ * This table provides the list of IDs this driver is supposed to bind
-+ * onto. You could think of this as a list of "quirked" devices where we
-+ * are adding support for SR-IOV here since there are no other drivers
-+ * that they would be running under.
-+ */
-+static const struct pci_device_id pci_pf_stub_white_list[] = {
-+	{ PCI_VDEVICE(AMAZON, 0x0053) },
-+	/* required last entry */
-+	{ 0 }
-+};
-+MODULE_DEVICE_TABLE(pci, pci_pf_stub_white_list);
-+
-+static int pci_pf_stub_probe(struct pci_dev *dev,
-+			     const struct pci_device_id *id)
-+{
-+	pci_info(dev, "claimed by pci-pf-stub\n");
-+	return 0;
-+}
-+
-+static struct pci_driver pf_stub_driver = {
-+	.name			= "pci-pf-stub",
-+	.id_table		= pci_pf_stub_white_list,
-+	.probe			= pci_pf_stub_probe,
-+	.sriov_configure	= pci_sriov_configure_simple,
-+};
-+
-+static int __init pci_pf_stub_init(void)
-+{
-+	return pci_register_driver(&pf_stub_driver);
-+}
-+
-+static void __exit pci_pf_stub_exit(void)
-+{
-+	pci_unregister_driver(&pf_stub_driver);
-+}
-+
-+module_init(pci_pf_stub_init);
-+module_exit(pci_pf_stub_exit);
-+
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index a6b30667a331..b10621896017 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2548,6 +2548,8 @@
- #define PCI_VENDOR_ID_CIRCUITCO		0x1cc8
- #define PCI_SUBSYSTEM_ID_CIRCUITCO_MINNOWBOARD	0x0001
- 
-+#define PCI_VENDOR_ID_AMAZON		0x1d0f
-+
- #define PCI_VENDOR_ID_TEKRAM		0x1de1
- #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
- 
+> > > > I saw that Serge even recently mentioned that you need to take
+> > > > this aspect of the changes back to the drawing board.  With my
+> > > > namespace maintainer hat on I repeat that.
+> > > Drawing board is here now (tuning on the text...):
+> > > 
+> > > http://kernsec.org/wiki/index.php/IMA_Namespacing_design_consider
+> > > ations
+> > You mention an abuse case here which is basically a way of relaxing
+> > security policy.  Cannot we fix that by making policy hierarchical,
+> > so a child namespace must have the same or a more strict policy
+> > than the parent?
+> 
+> I updated the page now with a hopefully better idea. So that root
+> cannot escape IMA-appraisal by spawning IMA namespaces and setting an
+> IMA NULL policy, root's activities will *always* be evaluated against
+> the init_ima_ns policy with keys found in the init_user_ns. In other
+> word, if there is an appraisal policy (rule) on the host's
+> init_ima_ns and root does something as uid 0 in any namespace, file
+> activity for appraising purposes must pass signature checking. So
+> just spawning a MNT namespace, mounting a filesystem with unknown
+> apps won't execute any of them unless the stuff is signed.
+
+So this would mean that most orchestration systems' ideas of privileged
+containers (i.e. containers which run real root) would be unable to
+have their own IMA namespace ... that's also going to be surprising.
+
+James
