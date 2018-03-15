@@ -1,74 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeCOJGb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:06:31 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22097 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751755AbeCOJG3 (ORCPT
+        id S1751727AbeCOJJA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:09:00 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:44994 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeCOJI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:06:29 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "arm@kernel.org" <arm@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: [GIT PULL] STi DT update for v4.17 round 2
-Thread-Topic: [GIT PULL] STi DT update for v4.17 round 2
-Thread-Index: AQHTvDzXpYopfEu1o0+2IKDEW9xFQQ==
-Date: Thu, 15 Mar 2018 09:06:01 +0000
-Message-ID: <af473935-7cb6-e59a-3b52-055d8492248c@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
+        Thu, 15 Mar 2018 05:08:57 -0400
+X-AuditID: 0a3aad10-289ff7000001805c-02-5aaa3828390a
+From: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+        Wolfgang Grandegger <wg@grandegger.com>
+CC: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hs@denx.de" <hs@denx.de>,
+        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
+Subject: Re: [PATCH] can: enable multi-queue for SocketCAN devices
+Thread-Topic: [PATCH] can: enable multi-queue for SocketCAN devices
+Thread-Index: AdO8OuhOVzxLUlpJTSaFvMZhLk/1Rw==
+Date: Thu, 15 Mar 2018 09:08:49 +0000
+Message-ID: <d2afad3064f6458390ad692bec0edff9@de.bosch.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
+x-originating-ip: [10.19.142.147]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <4F929E22060A714FB5FB2C8A6C45BC2C@st.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_05:,,
- signatures=0
+X-Brightmail-Tracker: H4sIAAAAAAAAA22Tf0wbZRjHeblrezTcdlwpPKujjBrjnBmlwlyFhSiMDCfbiNEYq4kWuNFG
+        2mKvENj4g42J8mPZYGWyCg0u0HSdG6w6rcAsIwsKJjpBDGRugKLZUBYmjOEaOq89WPuH/1y+
+        9/0+n+d93udyBEa7CRmhN1oYs1FbohCKcXH6hYTtW9UuTcq9mTS159cpTO160IKpx3rbhOru
+        s1ZcPdQRp+669bXgRWGu3fYdnntv9AbKPbGakrvolufjGvGuIqZEX86YlZnvinWN94tK75IV
+        NUPjomo0QNajKAKoNLh+wY8HNE19HAm//KuqR2JOX0FQZ3WK+GABwdnru/ngMoL2ppsY/9KP
+        oPXYdBAXUunwoeP7IBFLvQ7+k+2CQBFGHYmEmom7wSIJlQW+OyOIL8qGI96PhLxOht6fPVhA
+        49RTMPvVsWA9SWVAu30y2BRRCdDT82OwBqPiwf3nAwF/Bwo6+3kfKCnc+d3P+QSnk6CtNSsg
+        MeoZ6O5V8mQSWBtmRHz3GBg+M4ufRHG2sKa2EGELI2xhRAfCXUh6kEkpN+x8QaVONhcw7KEU
+        VXKhyeBG/JejPMg2XDCIKAIposmobS4NLdCWs5WGQbSDiFRISa/VqaE3FJiKKnVaVveOuayE
+        YRUyEkVERNCSxzZbVmDQs6zeZBxEQGCKWHLq/XMamizSVh5izCYeG0RPELginmwsqtLQVLHW
+        wrzHMKWMeT3NIAgFkP7nuRlizEwxU3FQX2JZjxUJ/Jlx4Un4sZFE1CBKJaK5s+U7uRYkW6o1
+        sPriNXwTj9PrbggdQQeI5SvTtRgxcfsv7vmF4+9ajMaNJiMjiyf3BsahApSuzPh4GtlmUiDk
+        AmlYEOo4hyYQt08JKQgMEs39LKE5gPRI2t6kY9bMEPRcJ8dQN0VgP2oG7+QYgm7/PAZLI00i
+        WBl4RMDKZ04x9NmPR4P3k+YN4Guu2QgPz7RshBM/XJbCpZVrcrD6f5PDP7aORFi6/+12eNR8
+        XgmnmjxKGPf3p4Hn9IwaTq0uZMAfLdUvweToajb0TU/mgHe47WXwzI6+AquO6jxY8p3Og4u1
+        7n0ccXUfXOrq3Q911z49AN7Fufw5bseR3I71XzoDO7ZoLf+z4zU3dDlZNUrvmsqbrK9a9u2u
+        vDW20LC3YqFPqW3NFtqTe0s3p0bnpDZM5SfGZroXC51vHCfiFmTCXU9mV3dRb111nfO8XfGa
+        GX96KGnZkZkoX9nxTbrETTTM3zAMVH0QMZ7jezVry+Hzqbf3bzq6WvesI2Ve0tj5+ZZCVWJj
+        z0X6oeAn9+Gte1oUOKvTqrZhZlb7H7lq//LFBAAA
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2F96dQa008408
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2F999eT008700
 
-Hi Arnd, Kevin, Olof
+Hello Marc,
 
-PLease consider this second round of STi dts update for v4.17
+> > The driver consists of two layers because the HW is accessed via SPI.
+> 
+> Normal SPI?
 
-The following changes since commit 0e04ce02e6a2ac30d21294d8bb2aeceb8489e52b:
+Yes, normal SPI (CLK, MOSI, MISO, SEL) plus two GPIOs for flow control.
+The CAN peripheral (SPI slave) asserts the additional signals to
+request a transfer and to signal that it is busy.
 
-   ARM: dts: STi: Remove unused clk_ext2f_a9 clock (2018-02-13 13:31:38 
-+0100)
+> > I will have to check but I am pretty confident that we would be willing
+> > to publish the driver on these mailing lists as well. We will anyhow
+> > ship the source code (or a written offer) with every distribution.
+> 
+> Sure - can I find your devices used and low priced on ebay :) ?
 
-are available in the git repository at:
+That is rather unlikely. Though, you could buy a building containing
+one.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/pchotard/sti.git
+> > If you are really serious about the review I will get the process
+> > rolling for an early publication of our driver.
+> 
+> Yes, please go ahead!
 
-for you to fetch changes up to 9a5f4879cd8de167e82f335317c63f2ffdc80129:
+Ok, I'll kick off the process and start to collect the required signatures.
 
-   ARM: dts: stih4xx: Add missing #sound-dai-cells (2018-03-15 09:52:25 
-+0100)
+Greetings,
+Mark
 
-----------------------------------------------------------------
+Bosch Building Technologies, Panel Software Fire (ST-FIR/ENG1) 
+Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY | www.boschsecurity.com
 
-STi DT update:
-
-Add missing #sound-dai-cells which fix DT dtc warnings when building 
-with W=1
-
-----------------------------------------------------------------
-Rob Herring (1):
-       ARM: dts: stih4xx: Add missing #sound-dai-cells
-
-  arch/arm/boot/dts/stih407.dtsi | 1 +
-  arch/arm/boot/dts/stih410.dtsi | 1 +
-  2 files changed, 2 insertions(+)
+Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118 
+Aufsichtsratsvorsitzender: Stefan Hartung; Geschäftsführung: Gert van Iperen, Andreas Bartz, Thomas Quante, Bernhard Schuster
