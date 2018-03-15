@@ -1,50 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeCOJCY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 05:02:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38570 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751826AbeCOJCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 05:02:21 -0400
-From: Honggang LI <honli@redhat.com>
-To: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org
-Cc: noaos@mellanox.com, linux-kernel@vger.kernel.org, honli@redhat.com
-Subject: [PATCH 1/2] IB/core: Set speed string to SDR for invalid active rates
-Date: Thu, 15 Mar 2018 17:02:13 +0800
-Message-Id: <20180315090214.21706-2-honli@redhat.com>
-In-Reply-To: <20180315090214.21706-1-honli@redhat.com>
-References: <20180315090214.21706-1-honli@redhat.com>
+        id S1751597AbeCOJFF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 05:05:05 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39611 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeCOJFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 05:05:02 -0400
+X-Google-Smtp-Source: AG47ELt1kLA1bezhUMXAllDULduX9ejxEu5VGMG0T1tQHUM/wB2zONrYwPlUBJsgY96Xjvlcvx705j2wMK0dDoyksLA=
+MIME-Version: 1.0
+In-Reply-To: <CAD4SzjtHmBTisX6vQYuEnJf0fKsF==w5GHqsdks6xGv1go7Lzw@mail.gmail.com>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+ <1520705944-6723-4-git-send-email-jix024@eng.ucsd.edu> <20180315045401.GB4860@magnolia>
+ <CAD4SzjtHmBTisX6vQYuEnJf0fKsF==w5GHqsdks6xGv1go7Lzw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 15 Mar 2018 10:05:00 +0100
+X-Google-Sender-Auth: KQqmVkthjY2vHwjLQc3WGTNSEQk
+Message-ID: <CAK8P3a1OJqHEOgiHk1ZQytGW7b1c2Nam5xjSxxkfx=h2x7f_mg@mail.gmail.com>
+Subject: Re: [RFC v2 03/83] Add super.h.
+To: Andiry Xu <jix024@eng.ucsd.edu>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
+        Steven Swanson <swanson@cs.ucsd.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        swhiteho@redhat.com, miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
+        Andiry Xu <jix024@cs.ucsd.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honggang Li <honli@redhat.com>
+On Thu, Mar 15, 2018 at 7:11 AM, Andiry Xu <jix024@eng.ucsd.edu> wrote:
+> On Wed, Mar 14, 2018 at 9:54 PM, Darrick J. Wong
+> <darrick.wong@oracle.com> wrote:
+>> On Sat, Mar 10, 2018 at 10:17:44AM -0800, Andiry Xu wrote:
 
-commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-active_speed in RoCE"). Before this patch applied, the mlx5_ib
-driver set default active_width and active_speed to IB_WIDTH_4X
-and IB_SPEED_QDR.
+>>> +     /* s_mtime and s_wtime should be together and their order should not be
+>>> +      * changed. we use an 8 byte write to update both of them atomically
+>>> +      */
+>>> +     __le32          s_mtime;                /* mount time */
+>>> +     __le32          s_wtime;                /* write time */
+>>
+>> Hmmm, 32-bit timestamps?  2038 isn't that far away...
+>>
+>
+> I will try fixing this in the next version.
 
-Now, the active_width and active_speed are zeros if the RoCE port
-is in DOWN state. The speed string should be set to " SDR" instead of
-a blank string when active_speed is zero.
+I would also recommend adding nanosecond-resolution timestamps.
+In theory, a signed 64-bit nanosecond field is sufficient for each timestamp
+(it's good for several hundred years), but the more common format uses
+64-bit seconds and 32-bit nanoseconds in other file systems.
 
-Signed-off-by: Honggang Li <honli@redhat.com>
----
- drivers/infiniband/core/sysfs.c | 1 +
- 1 file changed, 1 insertion(+)
+Unfortunately it looks, you will have to come up with a more sophisticated
+update method above, even if you leave out the nanoseconds, you can't
+easily rely on a 16-byte atomic update across architectures to deal with
+the two 64-bit timestamps. For the superblock fields, you might be able
+to get away with using second resolution, and then encoding the
+timestamps as a signed 64-bit 'mkfs time' along with two unsigned
+32-bit times added on top, which gives you a range of 136 years mount
+a file system after its creation.
 
-diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-index 8ae1308eecc7..cf36ff1f0068 100644
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -273,6 +273,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
- 		break;
- 	case IB_SPEED_SDR:
- 	default:		/* default to SDR for invalid rates */
-+		speed = " SDR";
- 		rate = 25;
- 		break;
- 	}
--- 
-2.14.GIT
+      Arnd
