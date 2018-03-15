@@ -1,129 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeCOPgk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:36:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60378 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752336AbeCOPgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:36:39 -0400
-Date: Thu, 15 Mar 2018 16:36:20 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>, han.xu@nxp.com
-Cc: boris.brezillon@free-electrons.com, max.oss.09@gmail.com,
-        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        dwmw2@infradead.org
-Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
- strength
-Message-ID: <20180315163620.6122d752@bbrezillon>
-In-Reply-To: <20180304200602.11475-1-stefan@agner.ch>
-References: <20180304200602.11475-1-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932366AbeCOPhn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:37:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51504 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752375AbeCOPhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:37:39 -0400
+Subject: Re: [PATCH v3 11/14] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <fee58106-a481-aaf8-7fb6-8d51c4b7e906@linux.vnet.ibm.com>
+ <f86c2e7d-198b-0900-e0ed-f22fedf39b04@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 15 Mar 2018 16:35:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f86c2e7d-198b-0900-e0ed-f22fedf39b04@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18031515-0008-0000-0000-000004DE4AD0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031515-0009-0000-0000-00001E71558B
+Message-Id: <34a1772c-26cd-47aa-946b-7579f9ecec7a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803150172
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 15/03/2018 15:52, Tony Krowiak wrote:
+> On 03/15/2018 05:42 AM, Pierre Morel wrote:
+>> On 14/03/2018 19:25, Tony Krowiak wrote:
+>>> Provides a sysfs interface to view the AP matrix configured for the
+>>> mediated matrix device.
+>>>
+>>> The relevant sysfs structures are:
+>>>
+>>> /sys/devices/vfio_ap
+>>> ... [matrix]
+>>> ...... [mdev_supported_types]
+>>> ......... [vfio_ap-passthrough]
+>>> ............ [devices]
+>>> ...............[$uuid]
+>>> .................. matrix
+>>>
+>>> To view the matrix configured for the mediated matrix device,
+>>> print the matrix file:
+>>>
+>>>     cat matrix
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>> ---
+>>>   drivers/s390/crypto/vfio_ap_ops.c |   39 
+>>> +++++++++++++++++++++++++++++++++++++
+>>>   1 files changed, 39 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>>> b/drivers/s390/crypto/vfio_ap_ops.c
+>>> index 461d450..04f7a92 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>> @@ -692,6 +692,44 @@ static ssize_t control_domains_show(struct 
+>>> device *dev,
+>>>   }
+>>>   DEVICE_ATTR_RO(control_domains);
+>>>
+>>> +static ssize_t matrix_show(struct device *dev, struct 
+>>> device_attribute *attr,
+>>> +               char *buf)
+>>> +{
+>>> +    struct mdev_device *mdev = mdev_from_dev(dev);
+>>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>> +    char *bufpos = buf;
+>>> +    unsigned long apid;
+>>> +    unsigned long apqi;
+>>> +    int nchars = 0;
+>>> +    int n;
+>>> +
+>>> +    n = sprintf(bufpos, "ADAPTER.DOMAIN\n");
+>>
+>> For easy parsing it is better to only report the interesting data
+>> and let a user space utility make fancy presentation.
+> Is that your way of saying take the above line out?
 
-On Sun,  4 Mar 2018 21:06:01 +0100
-Stefan Agner <stefan@agner.ch> wrote:
+yes, (also wanted to explain why)
 
-> Add support for specified ECC strength/size using device tree
-> properties nand-ecc-strength/nand-ecc-step-size.
-
-Han, we didn't hear back from you on that. Are you okay with adding
-these new properties? IIRC, you feared there would be a delta between
-u-boot and linux support.
-
-Stephan, there's no changelog. Has anything changed in this version or
-is this just a RESEND?
-
-Regards,
-
-Boris
-
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> index 61fdd733492f..d04754289c03 100644
-> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
->   *
->   * We may have available oob space in this case.
->   */
-> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
-> +				    unsigned int ecc_strength,
-> +				    unsigned int ecc_step)
->  {
->  	struct bch_geometry *geo = &this->bch_geometry;
->  	struct nand_chip *chip = &this->nand;
->  	struct mtd_info *mtd = nand_to_mtd(chip);
->  	unsigned int block_mark_bit_offset;
->  
-> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> -		return -EINVAL;
-> -
-> -	switch (chip->ecc_step_ds) {
-> +	switch (ecc_step) {
->  	case SZ_512:
->  		geo->gf_len = 13;
->  		break;
-> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->  			chip->ecc_strength_ds, chip->ecc_step_ds);
->  		return -EINVAL;
->  	}
-> -	geo->ecc_chunk_size = chip->ecc_step_ds;
-> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-> +	geo->ecc_chunk_size = ecc_step;
-> +	geo->ecc_strength = round_up(ecc_strength, 2);
->  	if (!gpmi_check_ecc(this))
->  		return -EINVAL;
->  
-> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->  	if (geo->ecc_chunk_size < mtd->oobsize) {
->  		dev_err(this->dev,
->  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
-> -			chip->ecc_step_ds, mtd->oobsize);
-> +			ecc_step, mtd->oobsize);
->  		return -EINVAL;
->  	}
->  
-> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
->  
->  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->  {
-> +	struct nand_chip *chip = &this->nand;
-> +
-> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
-> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
-> +						chip->ecc.size);
-> +
->  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> -				|| legacy_set_geometry(this))
-> -		return set_geometry_by_ecc_info(this);
-> +				|| legacy_set_geometry(this)) {
-> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> +			return -EINVAL;
-> +
-> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
-> +						chip->ecc_step_ds);
-> +	}
->  
->  	return 0;
->  }
-
-
+>>
+>>
+>>> +    bufpos += n;
+>>> +    nchars += n;
+>>> +
+>>> +    n = sprintf(bufpos, "--------------\n");
+>>> +    bufpos += n;
+>>> +    nchars += n;
+>>> +
+>>> +    for_each_set_bit_inv(apid, matrix_mdev->matrix->apm,
+>>> +                 matrix_mdev->matrix->apm_max) {
+>>> +        n = sprintf(bufpos, "%02lx\n", apid);
+>>> +        bufpos += n;
+>>> +        nchars += n;
+>>> +
+>>> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix->aqm,
+>>> +                     matrix_mdev->matrix->aqm_max) {
+>>> +            n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+>>> +            bufpos += n;
+>>> +            nchars += n;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    return nchars;
+>>> +}
+>>> +DEVICE_ATTR_RO(matrix);
+>>> +
+>>> +
+>>>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>>>       &dev_attr_assign_adapter.attr,
+>>>       &dev_attr_unassign_adapter.attr,
+>>> @@ -700,6 +738,7 @@ static ssize_t control_domains_show(struct 
+>>> device *dev,
+>>>       &dev_attr_assign_control_domain.attr,
+>>>       &dev_attr_unassign_control_domain.attr,
+>>>       &dev_attr_control_domains.attr,
+>>> +    &dev_attr_matrix.attr,
+>>>       NULL,
+>>>   };
+>>>
+>>
+>
 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
