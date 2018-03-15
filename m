@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeCOTMZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 15:12:25 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:36144 "EHLO
+        id S932592AbeCOTGU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 15:06:20 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:35784 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932475AbeCOTGV (ORCPT
+        with ESMTP id S932475AbeCOTGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 15:06:21 -0400
+        Thu, 15 Mar 2018 15:06:19 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc: luto@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de
-Subject: [PATCH v2 01/36] syscalls: define goal to not call sys_xyzzy() from within the kernel
-Date: Thu, 15 Mar 2018 20:04:54 +0100
-Message-Id: <20180315190529.20943-2-linux@dominikbrodowski.net>
+        arnd@arndb.de, "Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v2 02/36] kernel: use kernel_wait4() instead of sys_wait4()
+Date: Thu, 15 Mar 2018 20:04:55 +0100
+Message-Id: <20180315190529.20943-3-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180315190529.20943-1-linux@dominikbrodowski.net>
 References: <20180315190529.20943-1-linux@dominikbrodowski.net>
@@ -22,80 +22,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
-and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
-through kernel entry points, but not from the kernel itself. This
-will allow cleanups and optimizations to the entry paths *and* to
-the parts of the kernel code which currently need to pretend to be
-userspace in order to make use of syscalls.
+All call sites of sys_wait4() set *rusage to NULL. Therefore, there is
+no need for the copy_to_user() handling of *rusage, and we can use
+kernel_wait4() directly.
 
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- Documentation/process/adding-syscalls.rst | 14 --------------
- include/linux/syscalls.h                  |  7 +++++++
- 2 files changed, 7 insertions(+), 14 deletions(-)
+ kernel/exit.c          | 2 +-
+ kernel/pid_namespace.c | 6 +++---
+ kernel/umh.c           | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/process/adding-syscalls.rst
-index 8cc25a06f353..35a14b730da9 100644
---- a/Documentation/process/adding-syscalls.rst
-+++ b/Documentation/process/adding-syscalls.rst
-@@ -201,12 +201,6 @@ followed by the (type, name) pairs for the parameters as arguments.  Using
- this macro allows metadata about the new system call to be made available for
- other tools.
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 995453d9fb55..c3c7ac560114 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1691,7 +1691,7 @@ SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
+  */
+ SYSCALL_DEFINE3(waitpid, pid_t, pid, int __user *, stat_addr, int, options)
+ {
+-	return sys_wait4(pid, stat_addr, options, NULL);
++	return kernel_wait4(pid, stat_addr, options, NULL);
+ }
  
--The new entry point also needs a corresponding function prototype, in
--``include/linux/syscalls.h``, marked as asmlinkage to match the way that system
--calls are invoked::
--
--    asmlinkage long sys_xyzzy(...);
--
- Some architectures (e.g. x86) have their own architecture-specific syscall
- tables, but several other architectures share a generic syscall table. Add your
- new system call to the generic list by adding an entry to the list in
-@@ -240,7 +234,6 @@ To summarize, you need a commit that includes:
- 
-  - ``CONFIG`` option for the new function, normally in ``init/Kconfig``
-  - ``SYSCALL_DEFINEn(xyzzy, ...)`` for the entry point
-- - corresponding prototype in ``include/linux/syscalls.h``
-  - generic table entry in ``include/uapi/asm-generic/unistd.h``
-  - fallback stub in ``kernel/sys_ni.c``
- 
-@@ -302,12 +295,6 @@ needed to deal with them.  (Typically, the ``compat_sys_`` version converts the
- values to 64-bit versions and either calls on to the ``sys_`` version, or both of
- them call a common inner implementation function.)
- 
--The compat entry point also needs a corresponding function prototype, in
--``include/linux/compat.h``, marked as asmlinkage to match the way that system
--calls are invoked::
--
--    asmlinkage long compat_sys_xyzzy(...);
--
- If the system call involves a structure that is laid out differently on 32-bit
- and 64-bit systems, say ``struct xyzzy_args``, then the include/linux/compat.h
- header file should also include a compat version of the structure (``struct
-@@ -344,7 +331,6 @@ version; the entry in ``include/uapi/asm-generic/unistd.h`` should use
- To summarize, you need:
- 
-  - a ``COMPAT_SYSCALL_DEFINEn(xyzzy, ...)`` for the compat entry point
-- - corresponding prototype in ``include/linux/compat.h``
-  - (if needed) 32-bit mapping struct in ``include/linux/compat.h``
-  - instance of ``__SC_COMP`` not ``__SYSCALL`` in
-    ``include/uapi/asm-generic/unistd.h``
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a78186d826d7..0526286a0314 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -941,4 +941,11 @@ asmlinkage long sys_pkey_free(int pkey);
- asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 			  unsigned mask, struct statx __user *buffer);
- 
-+
-+/*
-+ * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
-+ * Instead, use one of the functions which work equivalently, such as
-+ * the ksys_xyzyyz() functions prototyped below.
-+ */
-+
  #endif
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 0b53eef7d34b..93b57f026688 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -242,16 +242,16 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
+ 
+ 	/*
+ 	 * Reap the EXIT_ZOMBIE children we had before we ignored SIGCHLD.
+-	 * sys_wait4() will also block until our children traced from the
++	 * kernel_wait4() will also block until our children traced from the
+ 	 * parent namespace are detached and become EXIT_DEAD.
+ 	 */
+ 	do {
+ 		clear_thread_flag(TIF_SIGPENDING);
+-		rc = sys_wait4(-1, NULL, __WALL, NULL);
++		rc = kernel_wait4(-1, NULL, __WALL, NULL);
+ 	} while (rc != -ECHILD);
+ 
+ 	/*
+-	 * sys_wait4() above can't reap the EXIT_DEAD children but we do not
++	 * kernel_wait4() above can't reap the EXIT_DEAD children but we do not
+ 	 * really care, we could reparent them to the global init. We could
+ 	 * exit and reap ->child_reaper even if it is not the last thread in
+ 	 * this pid_ns, free_pid(pid_allocated == 0) calls proc_cleanup_work(),
+diff --git a/kernel/umh.c b/kernel/umh.c
+index 18e5fa4b0e71..f4b557cadf08 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -135,7 +135,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+ 		 *
+ 		 * Thus the __user pointer cast is valid here.
+ 		 */
+-		sys_wait4(pid, (int __user *)&ret, 0, NULL);
++		kernel_wait4(pid, (int __user *)&ret, 0, NULL);
+ 
+ 		/*
+ 		 * If ret is 0, either call_usermodehelper_exec_async failed and
 -- 
 2.16.2
