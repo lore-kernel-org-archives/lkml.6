@@ -1,185 +1,176 @@
-Return-Path: <Minas.Harutyunyan@synopsys.com>
-X-Google-Smtp-Source: AG47ELtHb7lAUdJOZ66qtl2jFH1JMf1DRiCi/JKx7vmP0dsvcq9TO2i7V+1RAfUI6zV+Ca0WEU9t
-ARC-Seal: i=1; a=rsa-sha256; t=1521188307; cv=none;
+Return-Path: <sfr@canb.auug.org.au>
+X-Google-Smtp-Source: AG47ELuux8To5+ZblB3UDsiwZ5kouzQXbtSFxwiiEnIc5iRTxPNDozuRBQ79jxcLoipslrsZ/DeU
+ARC-Seal: i=1; a=rsa-sha256; t=1521152071; cv=none;
         d=google.com; s=arc-20160816;
-        b=tC4qS87Q++3DNjr0OPNcBFbkQ/5X2UMYktw6jifwLxlpWA6O2hJqDYzTaYu4tVZIAt
-         OUhGxjzQrkvcZMZdwSuMI8IMppde2HERhWDACppyR+ZNajvJQ5QGK+lkxW6b5VvAh7is
-         J0cfDWCTnJ+dta8Fq2ZghxVN10sNrIK4AO2Pq2U70HH1g6+y3DlHGWOTcfKxo9sJf4YA
-         Zcyx90lMmika2lMAXEDdNWsub1mLPcZtWYwth67ag8/2I/IjfMk9tqXwx12bQZgOzaKp
-         Vp/wnZrbJYN83PF9S7+S+lQQwwSwqYVM88HDx1B3x/enZXu+MfD8BkZroTOgxXT3Ia7u
-         6qkA==
+        b=1F8kuwjWunWQJ/vDj0rY3wRbzubm90VOGko81zLM2GXtq29LXoBnL4EZuHXMukMGCE
+         xO7RfgmNCczN/KwGKQ+6sDvplEMyBixZXNYK2LpEoTCWgtS1KNnr0eoTMuBxFNjOYA86
+         StYgMnnFOgW/tsvulzQZgUqMvIacKPBwVAQcIwDOwov+uITArxNr48rz1UU1eYOcnEpF
+         QJVv0ZkZBNMXW12Ee2nVwZlDZ4KhGiviWchp2eAURBawfqH1/djDXQG/IILQcvB8Flgp
+         Ggw9b7lLJ3RFv8n42cTzmtC06Q2N88YfbxivYPqUoGUoMBsn5jUwNrWk2LfWT3eA1Mrg
+         xzvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=ZbueZJTSRKre9ftRiRTTv2OcCOq/OoB5uZLxU052+MU=;
-        b=MMZ4gjlIjnlo7Lpz6aaVGv/dvVB4EZ7/djJBg88a39LMXn/w6APveZEn8qhevg3la2
-         HhZnuF7ks3D0Ny5Rg4IWWYQFlQCkiu/np0se9FnzAMMP7pDI9FrY6n2UY6TJYz+QmQcC
-         cPZBJrJ4K4E5n3ESgm/r+B0Rp8Ssdj5B7VsBFX5uQPIhBwIv7Ot+QvhfoiKmlJPYVPyn
-         E/gKDGAqbrvhnL6zXVtw3OieJ7Hyka0GYBrOeKUf5c0+MNp1YZwR4VEpS763kQfGuUIQ
-         vpbvJxDtGRUpmoHDa7BvW87dPssS9oJEtacL2qGrrCxDUrf0g7U7p9XkV18D2uSIa3D9
-         fUSA==
+        h=mime-version:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=i0R/HhSawsadDUr9DeT0ymGqySx6bpOljfsd2t30eCo=;
+        b=SBWoRiP12NsWD2ABUH6iJwenCdBncP9qtUFUcggfDEjZ2mdqF+z2zoGLznY5k2IApD
+         TgUm90KsShL5NXl60c5p/y/4oj4Tn0q5aR+VPO3yb7Q23DCwZsW9oKJiVbgQpruwZFM0
+         iUjVX279Ngi2sTNh+kS41Ew3JOLXsArYfMa83ogAmP2COaQonzmLSeDx0LcUsv6XxV3p
+         af5EeAK7YYeg6QDcVAgJdOpd+uaG8KnMJvKcEn98qfThMMkGJguajSylGQT6/Rrx4Ye7
+         xJ/7gmzhT9P4MYj3g22s1P8OGmu6Ur6u2ED6gb/TqM7b10YKyqgK23kMpJ3V/9tqFXfe
+         aVyA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of minas.harutyunyan@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=Minas.Harutyunyan@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=sxIFOhNn;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of minas.harutyunyan@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=Minas.Harutyunyan@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To: "Zengtao (B)" <prime.zeng@hisilicon.com>, Minas Harutyunyan
-	<Minas.Harutyunyan@synopsys.com>, "johnyoun@synopsys.com"
-	<John.Youn@synopsys.com>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?UmU6ILTwuLQ6ILTwuLQ6IFBvc3NpYmxlIHVzYl9yZXF1ZXN0IGxlYWsgaW4g?=
- =?gb2312?B?dGhlIGZ1bmN0aW9uIGR3YzJfZ2FkZ2V0X2NvbXBsZXRlX2lzb2NfcmVxdWVz?=
- =?gb2312?Q?t=5Fddma?=
-Thread-Topic: =?gb2312?B?tPC4tDogtPC4tDogUG9zc2libGUgdXNiX3JlcXVlc3QgbGVhayBpbiB0aGUg?=
- =?gb2312?B?ZnVuY3Rpb24gZHdjMl9nYWRnZXRfY29tcGxldGVfaXNvY19yZXF1ZXN0X2Rk?=
- =?gb2312?Q?ma?=
-Thread-Index: AQHTsH6zU1BbgxUqlUykEmiFUhyGow==
-Date: Fri, 16 Mar 2018 08:18:23 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A560113ABB025@am04wembxa.internal.synopsys.com>
-References: <678F3D1BB717D949B966B68EAEB446ED0C861F47@DGGEMM506-MBX.china.huawei.com>
- <410670D7E743164D87FA6160E7907A560113A9C13B@am04wembxb.internal.synopsys.com>
- <678F3D1BB717D949B966B68EAEB446ED0C865E22@DGGEMM506-MBX.china.huawei.com>
- <410670D7E743164D87FA6160E7907A560113AADA2D@am04wembxa.internal.synopsys.com>
- <410670D7E743164D87FA6160E7907A560113AAFA78@am04wembxa.internal.synopsys.com>
- <678F3D1BB717D949B966B68EAEB446ED0C86EBD1@DGGEMM506-MBX.china.huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.62]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=sxIFOhNn;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 2401:3900:2:1::2 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 16 Mar 2018 09:13:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Aaron Wu <aaron.wu@analog.com>, Bin Liu
+ <b-liu@ti.com>
+Subject: linux-next: build failure after merge of the asm-generic tree
+Message-ID: <20180316091355.2d2b7b04@canb.auug.org.au>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/umKnlmX/lxALQopnVGFj6me"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593634636290967368?=
-X-GMAIL-MSGID: =?utf-8?q?1595081551145954144?=
+X-GMAIL-THRID: =?utf-8?q?1595043554282877699?=
+X-GMAIL-MSGID: =?utf-8?q?1595043554282877699?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkgWmVuZ3RhbywKCk9uIDMvNy8yMDE4IDc6MzggQU0sIFplbmd0YW8gKEIpIHdyb3RlOgo+IEhp
-ICBNaW5hczoKPiAKPj4gLS0tLS3Tyrz+1K28/i0tLS0tCj4+ILeivP7IyzogTWluYXMgSGFydXR5
-dW55YW4gW21haWx0bzpNaW5hcy5IYXJ1dHl1bnlhbkBzeW5vcHN5cy5jb21dCj4+ILeiy83Ksbzk
-OiAyMDE4xOoz1MIyyNUgMTg6MjcKPj4gytW8/sjLOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0Bo
-aXNpbGljb24uY29tPjsgTWluYXMgSGFydXR5dW55YW4KPj4gPE1pbmFzLkhhcnV0eXVueWFuQHN5
-bm9wc3lzLmNvbT47IGpvaG55b3VuQHN5bm9wc3lzLmNvbQo+PiA8Sm9obi5Zb3VuQHN5bm9wc3lz
-LmNvbT4KPj4gs63LzTogZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGxpbnV4LXVzYkB2Z2Vy
-Lmtlcm5lbC5vcmc7Cj4+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKPj4g1vfM4jogUmU6
-ILTwuLQ6IFBvc3NpYmxlIHVzYl9yZXF1ZXN0IGxlYWsgaW4gdGhlIGZ1bmN0aW9uCj4+IGR3YzJf
-Z2FkZ2V0X2NvbXBsZXRlX2lzb2NfcmVxdWVzdF9kZG1hCj4+Cj4+IE9uIDMvMi8yMDE4IDI6MTAg
-UE0sIE1pbmFzIEhhcnV0eXVueWFuIHdyb3RlOgo+PiBSZS1zZW5kaW5nIG9uY2UgdGltZSBtb3Jl
-IGJlY2F1c2UgbWFpbCBkb2Vzbid0IGRlbGl2ZXJlZCB0byBsaW51eC11c2IgYW5kCj4+IGxpbnV4
-LWtlcm5lbCBtYWlsaW5nIGxpc3QuCj4+Cj4+IEhpIFplbnRhZ28sCj4+Pgo+Pj4gT24gMy8yLzIw
-MTggNTo0OCBBTSwgWmVuZ3RhbyAoQikgd3JvdGU6Cj4+Pj4gSGkgTWluYXM6Cj4+Pj4KPj4+PiBU
-aGFua3MgZm9yIHlvdXIgcmVwbHkuCj4+Pj4KPj4+Pj4gLS0tLS3Tyrz+1K28/i0tLS0tCj4+Pj4+
-ILeivP7IyzogTWluYXMgSGFydXR5dW55YW4gW21haWx0bzpNaW5hcy5IYXJ1dHl1bnlhbkBzeW5v
-cHN5cy5jb21dCj4+Pj4+ILeiy83KsbzkOiAyMDE4xOoy1MIyOMjVIDE4OjI3Cj4+Pj4+IMrVvP7I
-yzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNvbT47Cj4+IGpvaG55b3VuQHN5
-bm9wc3lzLmNvbQo+Pj4+PiA8Sm9obi5Zb3VuQHN5bm9wc3lzLmNvbT4KPj4+Pj4gs63LzTogZ3Jl
-Z2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmc7Cj4+Pj4+
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcKPj4+Pj4g1vfM4jogUmU6IFBvc3NpYmxlIHVz
-Yl9yZXF1ZXN0IGxlYWsgaW4gdGhlIGZ1bmN0aW9uCj4+Pj4+IGR3YzJfZ2FkZ2V0X2NvbXBsZXRl
-X2lzb2NfcmVxdWVzdF9kZG1hCj4+Pj4+Cj4+Pj4+IEhpLAo+Pj4+Pgo+Pj4+PiBPbiAyLzI4LzIw
-MTggMTowMCBQTSwgWmVuZ3RhbyAoQikgd3JvdGU6Cj4+Pj4+PiBIaSBqb2hueW91bjoKPj4+Pj4+
-Cj4+Pj4+PiBJIGZvdW5kIGEgc3VzcGVjdGVkIGJ1ZywgYW5kIEkgYW0gd3JpdGluZyB0byBjb25m
-aXJtIHdpdGggeW91Lgo+Pj4+Pj4KPj4+Pj4+IEluIHRoZSBmdW5jdGlvbgo+Pj4+PiBkd2MyX2dh
-ZGdldF9jb21wbGV0ZV9pc29jX3JlcXVlc3RfZGRtYShkcml2ZXJzL3VzYi9kd2MyL2dhZGdldC5j
-KS4KPj4+Pj4+IE9ubHkgdGhlIGZpcnN0IHJlcXVlc3QgZnJvbSB0aGUgZXEgcXVldWUgaXMgcHJv
-Y2Vzc2VkIHdoaWxlIG1heWJlCj4+Pj4+PiB0aGVyZSBhcmUKPj4+Pj4gbW9yZSB0aGFuIG9uZSBk
-ZXNjcmlwdG9ycyBkb25lIGJ5IHRoZSBIVy4KPj4+Pj4+Cj4+Pj4+PiAxLiBFYWNoIHVzYiByZXF1
-ZXN0IGlzIGFzc29jaWF0ZWQgd2l0aCBhIERNQSBkZXNjcmlwdG9yLCBidXQgdGhpcwo+Pj4+Pj4g
-aXMgbm90IHJlZmxlY3QgaW4gdGhlIGRyaXZlciwgc28gd2hlbiBvbmUgRE1BIGRlc2NyaXB0b3Ig
-aXMgZG9uZSwKPj4+Pj4+IHdlIGRvbid0IGtub3cgd2hpY2ggdXNiIHJlcXVlc3QgaXMgZG9uZSwg
-YnV0IEkgdGhpbmsgaWYgb25seSBvbmUKPj4+Pj4+IERNQSBkZXNjcmlwdG9yIGlzCj4+Pj4+IGRv
-bmUsIHdlIGNhbiBrbm93IHRoYXQgdGhlIGZpcnN0IFVTQiByZXF1ZXN0IGluIGVxIHF1ZXVlIGlz
-IGRvbmUsCj4+Pj4+IGJlY2F1c2UgdGhlIEhXIERNQSBkZXNjcmlwdG9yIGFuZCBTVyB1c2IgcmVx
-dWVzdCBhcmUgYm90aCBpbiBzZXF1ZW5jZS4KPj4+Pj4+Cj4+Pj4+PiAyLiBJbiB0aGUgZnVuY3Rp
-b24gZHdjMl9nYWRnZXRfY29tcGxldGVfaXNvY19yZXF1ZXN0X2RkbWEsIHdlIG1heQo+Pj4+Pj4g
-Y29tcGxldGUgbW9yZSB0aGFuIG9uZSBETUEgZGVzY3JpcHRvciBidXQgb25seSB0aGUgZmlyc3Qg
-VXNiCj4+Pj4+PiByZXF1ZXN0IGlzCj4+Pj4+IHByb2Nlc3NlZCwgYnV0IGluIGZhY3QsIHdlIHNo
-b3VsZCBhbGwgdGhlIHVzYiByZXF1ZXN0cyBhc3NvY2lhdGVkCj4+Pj4+IHdpdGggYWxsIHRoZSBk
-b25lIERNQSBkZXNjcmlwdG9ycy4KPj4+Pj4+Cj4+Pj4+PiAzLiBJIG5vdGljZWQgdGhhdCBlYWNo
-IERNQSBkZXNjcmlwdG9yIGlzIGNvbmZpZ3VyZWQgdG8gcmVwb3J0IGFuCj4+Pj4+PiBpbnRlcnJ1
-cHQsIGFuZCBpZiBlYWNoIERNQSBkZXNjcmlwdG9yIGdlbmVyYXRlIGFuIGludGVycnVwdCwgdGhl
-Cj4+Pj4+PiBhYm92ZSBGbG93Cj4+Pj4+IHNob3VsZCBiZSBvaywgYnV0IHRoZSBpbnRlcnJ1cHRz
-IGNhbiBtZXJnZSBhbmQgd2UgaGF2ZSB1c2VkIHRoZQo+Pj4+PiBkZXBkbWEgdG8gZmlndXJlIG91
-dCB0aGUgbGFyZ2VzdCBmaW5pc2hlZCBETUEgZGVzY3JpcHRvciBpbmRleC4KPj4+Pj4+Cj4+Pj4+
-Cj4+Pj4+IFdoeSB5b3Ugc3VzcGVjdCB0aGF0IHN1YnNlcXVlbnQgaW50ZXJydXB0cyBjYW4gYmUg
-bWVyZ2VkPyBEaWQgeW91Cj4+Pj4+IHNlZSB0aGlzIGNhc2U/IENhbiB5b3UgcHJvdmlkZSBhIGxv
-Zz8KPj4+Pj4gRXZlbiBpbiBjYXNlIG9mIG1pbmltYWwgaW50ZXJ2YWw9MSwgdGltZSBiZXR3ZWVu
-IDIgc3Vic2VxdWVudAo+Pj4+PiBpbnRlcnJ1cHRzIHNob3VsZCBiZSBhYm91dCAxMjV1cy4gSXQn
-cyBmdWxseSBlbm91Z2ggdG8gcHJvY2Vzcwo+Pj4+PiB0YXJnZXQgZGVzY3JpcHRvciwgY29tcGxl
-dGUgcmVxdWVzdCwgZW5xdWV1ZSBuZXcgcmVxdWVzdCBhbmQgcHJlcGFyZQo+PiBuZXcgZGVzY3Jp
-cHRvci4KPj4+Pj4KPj4+PiBZZXMsIEkgaGF2ZSBzZWVuIHRoYXMgY2FzZSBvbiBteSBwbGF0Zm9y
-bS4KPj4+Pgo+Pj4+IEkgdGhpbmsgdGhlIGZvbGxvd2luZyBzaG91bGQgYmUgY29uc2lkZXJlZC4K
-Pj4+Pgo+Pj4+IDEuIFRoZSBjdXJyZW50bHkgZHJpdmVyIGNvZGUgY2hlY2tzIHRoZSBkZXBkbWEg
-cmVnaXN0ZXIgdG8gZmlndXJlIG91dAo+Pj4+IHRoZSBsYXRlc3QgZmluaXNoZWQgZGVzY3JpcHRv
-ciwgYW5kIGV2ZW4gaW4gdGhlIGludGVycnVwdCBoYW5kbGVyCj4+Pj4gdHJpZ2dlcmVkIGJ5IG9u
-ZSBkZXNjcmlwdG9yLCB0aGUgZGVwZG1hIG1heSBjb250aW51ZSB0byBpbmNyZWFzZSwKPj4KPj4g
-Tm8sIGRlcGRtYSBpbmNyZWFzaW5nIG9ubHkgYWZ0ZXIgZmV0Y2hpbmcgZGVzY3JpcHRvciB0byBw
-cm9jZXNzLgo+PiBEZXNjcmlwdG9yIGZldGNoZWQgYnkgY29yZSBhdCBmb2xsb3cgdGltZToKPj4g
-MS4gSVNPQyBJTi4gSWYgZGVzY3JpcHRvciBwcm9ncmFtbWVkIGZvciBOIHVmIHRoZW4gZGVzY3Jp
-cHRvciBmZXRjaGVkIGF0Cj4+IE4tMSB1ZiwgcGVyZm9ybWluZyBETUEgKGJ1ZmZlcnMgZGF0YSB0
-byBUeEZJRk8pIGFuZCBvbiBETUEgY29tcGxldGlvbgo+PiBnZW5lcmF0ZSBYZmVyQ29tcGxldGUg
-aW50ZXJydXB0IGlmIElPQyBiaXQgc2V0Lgo+PiAyLiBJU09DIE9VVC4gRGVzY3JpcHRvciBmZXRj
-aGVkIG9ubHkgd2hlbiBpZiBSeEZJRk8gbm90IGVtcHR5LCBwZXJmb3JtaW5nIERNQQo+PiAoUnhG
-SUZPIHRvIGJ1ZmZlcnMpIGFuZCBvbiBETUEgY29tcGxldGlvbiBnZW5lcmF0ZSBYZmVyQ29tcGxl
-dGUgaW50ZXJydXB0IGlmCj4+IElPQyBiaXQgc2V0Lgo+PiBJbiBib3RoIGNhc2UgZ2FwIGJldHdl
-ZW4gaW50ZXJydXB0cyBpcyAxMjV1cyAqIGludGVydmFsLgo+PiBPbmUgZXhjZXB0aW9uIGZvciBJ
-U09DIElOLiBEZXNjcmlwdG9yIGNhbiBiZSBmZXRjaGVkIG11Y2ggZWFybGllciB0aGFuICh0YXJn
-ZXQKPj4gdWYgLSAxKSBpZiBJZ25vcmUgRnJhbWUgTnVtYmVyIGZlYXR1cmUgZW5hYmxlZCBpbiBE
-Q1RMIGJpdCAxNS4KPj4gQnV0IHRoaXMgZmVhdHVyZSBub3QgaW1wbGVtZW50ZWQgaW4gZHdjMiBk
-cml2ZXIgYWxsLiBXZSBwbGFubmluZyB0byBhZGQgdGhpcwo+PiBmZWF0dXJlIGluIGRyaXZlciBs
-YXRlci4KPj4KPj4KPiAKPiBJIGRvbid0IHF1aXRlIHVuZGVyc3RhbmQgeW91ciBkZXNjcmlwdGlv
-biwgYnV0IGl0IHNlZW1zIHRoaXMgaXMgbm90IGFuIGVmZmVjdCBoYW5kbGluZywKPiBBdCBsZWFz
-dCB0aGUgaGFyZHdhcmUgYW5kIHNvZnR3YXJlIGFyZSBub3QgcnVubmluZyBpbiBwYXJhbGxlbCBm
-b3IgZGVzY3JpcHRvcnMuKGh3IGFuZCBzdwo+IFByb2Nlc3MgdGhlIGRlc2NyaXB0b3JzIGluIHBh
-cmFsbGVsIHdpdGggbGVzcyBkZXBlbmRlbmN5KQo+IAo+Pj4+IHNvIEkgdGhpbmsgeW91IHNob3Vs
-ZCBub3QgYXQgbGVhc3QgZGVwZW5kIG9uIHRoZSBkZXBkbWEgaWYgeW91IHRoaW5rCj4+Pj4gb24g
-ZGVzY3JpcHRvciBzaG91bGQgYmUgcHJvY2Vzc2VkIGluIHRoZSBpbnRlcnJ1cHQgaGFuZGxlci4K
-Pj4+Pgo+PiBUaGlzIGltcGxlbWVudGF0aW9uIGJhc2VkIG9uIGNvcmUgcHJvZ3JhbW1pbmcgZmxv
-dy4KPj4KPj4+PiAyLiBUaGUgTGludXggc3lzdGVtIGNhbid0IGFzc3VyZSB0aGF0IHRoZSBzeXN0
-ZW0gaXMgYXZhaWxhYmxlIGluCj4+Pj4gZXZlcnkgMTI1dXMsIGZvciBleGFtcGxlIFNvbWUgb3Ro
-ZXIga2VybmVsIG1vZHVsZXMgbmVlZCB0byBkaXNhYmxlCj4+Pj4gdGhlIGludGVycnVwdHMgb3Ig
-b3RoZXIgaW50ZXJydXB0cyBoYW5kbGVyIGNvc3QgbW9yZSB0aGFuIDEyNXVzLCBhbmQKPj4+PiB0
-aGlzIHVuZm9ydHVuYXRlbHkgaGFwcGVuZWQgb24gb3VyIHBsYXRmb3JtLCBidXQgdGhhdCBpcyBu
-b3QgYW4gaWxsZWdhbCBjYXNlLgo+PiBJIHN1c3BlY3QsIGlmIHRoZSBzeXN0ZW0vcGxhdGZvcm0g
-aGF2ZSBtb3JlIHRoYW4gMTI1dXMgSVJRIGxhdGVuY3kgdGhlbiBpdCBjYW4ndAo+PiBiZSB1c2Vk
-IGZvciBJU09DcyB0cmFmZmljLgo+Pgo+IEZvciB0aGUgY3VycmVudCBEdyBkcml2ZXIgaW1wbGVt
-ZW50YXRpb24sIGlmIHRoZSBzeXN0ZW0gaGFzIG1vcmUgdGhlIDEyNXVzIElSUSBsYXRlbmN5LAo+
-IEl0IHdpbGwgaGF2ZSBwYWNrZXRzIGRyb3AgZm9yIElTQ08gdHJhZmZpYy4gQnV0IGlmIHdlIGRv
-bid0IGRlc2lnbiB0aGUgMiBjaHVua3Mgb2YgZGVzY3JpcHRvcnMKPiBBbmQgZG9uJ3QgZ2VuZXJh
-dGUgb25lIGludGVycnVwdCBmb3IgZWFjaCBkZXNjcmlwdG9yLCBhbmQgaWYgd2lsbCBoYXZlIGNp
-cmNsZSBkZXNjcmlwdG9ycwo+IExpc3QgYW5kIGdlbmVyYXRlIG9uZSBpbnRlcnJ1cHQgZm9yIG11
-bHRpcGxlIGRlc2NyaXB0b3JzLCB3ZSBjYW4gdG9sZXJhbnQgbW9yZSBJUlEgbGF0ZW5jeQo+ICAg
-aml0dGVycwo+IAo+Pj4+Cj4+Pj4gMy4gVGhlIGhhcmR3YXJlIGFsbG93cyBlYWNoIGRtYSBkZXNj
-cmlwdG9yIHRvIHNldCBpdCdzIG93biBpb2MgYml0LAo+Pj4+IHNvIHdlIGNhbid0IGp1c3QgYXNz
-dW1lIFRoYXQgZXZlcnkgZG1hIGRlc2NyaXB0b3IgbXVzdCBzZXQgdGhlIGlvYwo+Pj4+IGJpdCB0
-byAxLiBBbmQgaWYgd2UgZW5mb3JjZSBlYWNoIGRlc2NyaXB0b3IgdG8gZ2VuZXJhdGUgYW4gaW50
-ZXJydXB0LCB0aGVuIHRvbwo+PiBmcmVxdWVudCBpbnRlcnJ1cHRzKDEyNXVzKSB3aWxsIGJlIHJl
-YWxseSBhIGJ1cmRlbiBmb3IgdGhlIHN5c3RlbS4KPj4+Pgo+PiBTbywgeW91IHN1Z2dlc3Rpbmcg
-dG8gbm90IHNldCBJT0MgYml0IG9uIGVhY2ggZGVzY3JpcHRvciwgYnV0IG9ubHkgb24gbGFzdCBv
-bmUuCj4+IEluIHRoaXMgY2FzZSwgYXMgc29vbiBhcyBjb3JlIHdpbGwgcHJvY2VzcyBsYXN0IGRl
-c2NyaXB0b3IgKGJpdCBMPTEpIGFuZCBnZW5lcmF0ZQo+PiBYZmVyQ29tcGxldGUgKElPQz0xKSwg
-Y29yZSB3aWxsIHJldHVybiB0byBmaXJzdCBkZXNjcmlwdG9yIHdoaWNoIGFscmVhZHkKPj4gcHJv
-Y2Vzc2VkIGJ5IGNvcmUgYW5kIEJOQSBpbnRlcnJ1cHQgd2lsbCBiZSBhc3NlcnRlZC4KPj4gQmVj
-YXVzZSB0byBwcm9jZXNzIGFsbCBkZXNjcmlwdG9ycywgY29tcGxldGUgYWxsIHJlcXVlc3RzLCBm
-aWxsIGRlc2NyaXB0b3JzIGZvciBuZXcKPj4gcmVxdWVzdCwgcmUtZW5hYmxpbmcgRVAsIGV0Yy4g
-Y2FuIGdldCBtb3JlIHRoYW4gMTI1dXMuCj4+Cj4+IEFjdHVhbGx5LCBjdXJyZW50IGltcGxlbWVu
-dGF0aW9uIG9mIElTT0MgSU4vT1VUIGluIERETUEgYmFzZWQgb24gMiBjaHVua3Mgb2YKPj4gZGVz
-Y3JpcHRvcnMgd2hpY2ggaXMgbm90IHNvIGNvcnJlY3QuIFdlIHByZXBhcmVkIHBhdGNoZXMgdG8g
-ZnVsbHkgdXBkYXRlIElTT0MKPj4gSU4vT1VUIGZsb3cgZm9yIERETUEgbW9kZS4gQXMgc29vbiBh
-cyB3ZSBmaW5pc2ggdGVzdGluZyB3ZSB3aWxsIHN1Ym1pdCB0bwo+PiBrZXJuZWwuCj4+Pgo+IElm
-IHlvdSBkb24ndCBtaW5kLCBJIGNhbiBoZWxwIHRvIHRlc3Qgb24gb3VyIHBsYXRmb3JtLCBpdCBz
-ZWVtcyB0aGF0IHRoZSBuZXcgZGVzaWduIHNvbWV3aGF0Cj4gc29sdmVzIHRoZSBpc3N1ZSAyIGFi
-b3ZlLgo+IAo+Pj4+IFRoYW5rIHlvdS4KPj4+Pgo+Pj4+Pj4KPj4+Pj4+IFRvIHVuc3Vic2NyaWJl
-IGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC11c2IiCj4+
-Pj4+PiBpbiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
-ZyBNb3JlCj4+Pj4+PiBtYWpvcmRvbW8gaW5mbyBhdAo+Pj4+Pj4KPj4KPiAKPiAKUGxlYXNlIHRl
-c3Qgc2VyaWVzIG9mIHBhdGNoZXMgIltQQVRDSCAwLzNdIHVzYjogZHdjMjogZ2FkZ2V0OiBVcGRh
-dGUgCklTT0MgRERNQSBmbG93LiIgb24geW91ciBwbGF0Zm9ybSBhbmQgbGV0IG1lIGtub3cgb24g
-cmVzdWx0cy4KClRoYW5rcywKTWluYXMKCg==
+--Sig_/umKnlmX/lxALQopnVGFj6me
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Arnd,
+
+After merging the asm-generic tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+drivers/usb/musb/musb_host.c: In function 'musb_rx_reinit':
+drivers/usb/musb/musb_host.c:577:10: error: 'struct musb' has no member nam=
+ed 'double_buffer_not_ok'
+  if (musb->double_buffer_not_ok)
+          ^~
+drivers/usb/musb/musb_host.c: In function 'musb_ep_program':
+drivers/usb/musb/musb_host.c:807:12: error: 'struct musb' has no member nam=
+ed 'double_buffer_not_ok'
+    if (musb->double_buffer_not_ok) {
+            ^~
+
+Caused by commit
+
+  8312c0cad792 ("usb: musb: remove blackfin port")
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 16 Mar 2018 08:58:41 +1100
+Subject: [PATCH] usb: musb: more blackfin removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/musb/musb_gadget.c | 21 +++++++--------------
+ drivers/usb/musb/musb_host.c   | 12 +++---------
+ 2 files changed, 10 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index 58a41b54763b..e564695c6c8d 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -995,15 +995,11 @@ static int musb_gadget_enable(struct usb_ep *ep,
+ 		/* Set TXMAXP with the FIFO size of the endpoint
+ 		 * to disable double buffering mode.
+ 		 */
+-		if (musb->double_buffer_not_ok) {
+-			musb_writew(regs, MUSB_TXMAXP, hw_ep->max_packet_sz_tx);
+-		} else {
+-			if (can_bulk_split(musb, musb_ep->type))
+-				musb_ep->hb_mult =3D (hw_ep->max_packet_sz_tx /
+-							musb_ep->packet_sz) - 1;
+-			musb_writew(regs, MUSB_TXMAXP, musb_ep->packet_sz
+-					| (musb_ep->hb_mult << 11));
+-		}
++		if (can_bulk_split(musb, musb_ep->type))
++			musb_ep->hb_mult =3D (hw_ep->max_packet_sz_tx /
++						musb_ep->packet_sz) - 1;
++		musb_writew(regs, MUSB_TXMAXP, musb_ep->packet_sz
++				| (musb_ep->hb_mult << 11));
+=20
+ 		csr =3D MUSB_TXCSR_MODE | MUSB_TXCSR_CLRDATATOG;
+ 		if (musb_readw(regs, MUSB_TXCSR)
+@@ -1038,11 +1034,8 @@ static int musb_gadget_enable(struct usb_ep *ep,
+ 		/* Set RXMAXP with the FIFO size of the endpoint
+ 		 * to disable double buffering mode.
+ 		 */
+-		if (musb->double_buffer_not_ok)
+-			musb_writew(regs, MUSB_RXMAXP, hw_ep->max_packet_sz_tx);
+-		else
+-			musb_writew(regs, MUSB_RXMAXP, musb_ep->packet_sz
+-					| (musb_ep->hb_mult << 11));
++		musb_writew(regs, MUSB_RXMAXP, musb_ep->packet_sz
++				| (musb_ep->hb_mult << 11));
+=20
+ 		/* force shared fifo to OUT-only mode */
+ 		if (hw_ep->is_shared_fifo) {
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index 45ed32c2cba9..3a8451a15f7f 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -574,11 +574,8 @@ musb_rx_reinit(struct musb *musb, struct musb_qh *qh, =
+u8 epnum)
+ 	/* Set RXMAXP with the FIFO size of the endpoint
+ 	 * to disable double buffer mode.
+ 	 */
+-	if (musb->double_buffer_not_ok)
+-		musb_writew(ep->regs, MUSB_RXMAXP, ep->max_packet_sz_rx);
+-	else
+-		musb_writew(ep->regs, MUSB_RXMAXP,
+-				qh->maxpacket | ((qh->hb_mult - 1) << 11));
++	musb_writew(ep->regs, MUSB_RXMAXP,
++			qh->maxpacket | ((qh->hb_mult - 1) << 11));
+=20
+ 	ep->rx_reinit =3D 0;
+ }
+@@ -804,10 +801,7 @@ static void musb_ep_program(struct musb *musb, u8 epnu=
+m,
+ 		/* protocol/endpoint/interval/NAKlimit */
+ 		if (epnum) {
+ 			musb_writeb(epio, MUSB_TXTYPE, qh->type_reg);
+-			if (musb->double_buffer_not_ok) {
+-				musb_writew(epio, MUSB_TXMAXP,
+-						hw_ep->max_packet_sz_tx);
+-			} else if (can_bulk_split(musb, qh->type)) {
++			if (can_bulk_split(musb, qh->type)) {
+ 				qh->hb_mult =3D hw_ep->max_packet_sz_tx
+ 						/ packet_sz;
+ 				musb_writew(epio, MUSB_TXMAXP, packet_sz
+--=20
+2.16.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/umKnlmX/lxALQopnVGFj6me
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq8CMACgkQAVBC80lX
+0GzSfAf/QV1gaMeA64E61bLdUEgrJZSNBnl0z9J922HO5JWmPpqVKEZQx+miQT0H
+tBlqt+pgkQt7iBC/CBhM4WZLyAiazvnwUVu/F4LRNvqPx/J85Iq0kZ8EbzHvBsJp
+frnVoMidQPotuS5O6LahBi2CUaoDBU0Wh8TDu0rpR4PNgeuVlHt9hfQzFMLjl1iN
+zDcjGK0MAslCmx7IacxATIWk3/SKKaN7lE0h91dQJltoodSwVlQ+5Q9RyjQgG/bu
+vlgyWaElz6vZtah9B7hNbUSHAOckHDpKHBbFPERO9NOfOTJQQhMD9xKMXuHnF54G
+ZpOd27pB5qYSjE4YnSc/BYTCVV65cA==
+=1kQm
+-----END PGP SIGNATURE-----
+
+--Sig_/umKnlmX/lxALQopnVGFj6me--
