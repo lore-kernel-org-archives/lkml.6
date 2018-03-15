@@ -1,115 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932779AbeCOPrV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:47:21 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:41227 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932427AbeCOPrS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:47:18 -0400
-X-Google-Smtp-Source: AG47ELvuFFiJVzMXfm4iiafJ62/+p7Yk+4FjEm1cQrFyC4hUH8DlJNBrAcjZaHhJoOSa4TF4ZT/low==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 3/8] gpio: pci-idio-16: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:47:11 -0400
-Message-Id: <b856f88b5f52e1787860f7dbca44673905f79744.1521128287.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
-References: <cover.1521128287.git.vilhelm.gray@gmail.com>
+        id S932725AbeCOPqL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:46:11 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47974 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752503AbeCOPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:46:06 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code: section
+Date: Thu, 15 Mar 2018 16:44:43 +0100
+Message-Id: <20180315154448.16222-5-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180315154448.16222-1-bp@alien8.de>
+References: <20180315154448.16222-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ACCES I/O PCI-IDIO-16 series of devices provides 16
-optically-isolated digital inputs accessed via two 8-bit ports. Since
-eight input lines are acquired on a single port input read, the
-PCI-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
-get_multiple callback. This patch implements the
-idio_16_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+From: Borislav Petkov <bp@suse.de>
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+The code used to iterate byte-by-byte over the bytes around RIP and that
+is expensive: disabling pagefaults around it, copy_from_user, etc...
+
+Make it read the whole buffer of OPCODE_BUFSIZE size in one go. Use a
+statically allocated 64 bytes buffer so that concurrent show_opcodes()
+do not interleave in the output even though in the majority of the cases
+we sync on die_lock. Except the #PF path which doesn't...
+
+Also, do the PAGE_OFFSET check outside of the function because latter
+will be reused in other context.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- drivers/gpio/gpio-pci-idio-16.c | 50 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ arch/x86/kernel/dumpstack.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 57d1b7fbf07b..ef43a37ccaff 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -11,6 +11,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * General Public License for more details.
-  */
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -103,6 +104,54 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(ioread8(&idio16gpio->reg->in8_15) & (mask >> 24));
- }
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index eb9d6c00a52f..3f781a8dddb8 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -22,8 +22,6 @@
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
  
-+static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-+	size_t i;
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long mask_word;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
-+	unsigned long port_state;
-+	const u8 __iomem ports[] = {
-+		idio16gpio->reg->out0_7, idio16gpio->reg->out8_15,
-+		idio16gpio->reg->in0_7, idio16gpio->reg->in8_15
-+	};
-+
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
-+
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
-+
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
-+
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = ioread8(ports + i);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	int value)
+-#define OPCODE_BUFSIZE 64
+-
+ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+ static int die_counter;
+@@ -72,29 +70,25 @@ static void printk_stack_address(unsigned long address, int reliable,
+ 
+ static void show_opcodes(u8 *rip)
  {
-@@ -299,6 +348,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
- 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
- 	idio16gpio->chip.get = idio_16_gpio_get;
-+	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
- 	idio16gpio->chip.set = idio_16_gpio_set;
- 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+-	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
+-	unsigned int code_len = OPCODE_BUFSIZE;
+-	unsigned char c;
++#define OPCODE_BUFSIZE 64
++	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
++	u8 opcodes[OPCODE_BUFSIZE];
+ 	u8 *ip;
+ 	int i;
  
+ 	printk(KERN_DEFAULT "Code: ");
+ 
+ 	ip = (u8 *)rip - code_prologue;
+-	if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
+-		/* try starting at IP */
+-		ip = (u8 *)rip;
+-		code_len = code_len - code_prologue + 1;
++	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
++		pr_cont(" Bad RIP value.\n");
++		return;
+ 	}
+-	for (i = 0; i < code_len; i++, ip++) {
+-		if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
+-			pr_cont(" Bad RIP value.");
+-			break;
+-		}
+-		if (ip == (u8 *)rip)
+-			pr_cont("<%02x> ", c);
++
++	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
++		if (ip == rip)
++			pr_cont("<%02x> ", opcodes[i]);
+ 		else
+-			pr_cont("%02x ", c);
++			pr_cont("%02x ", opcodes[i]);
+ 	}
+ 	pr_cont("\n");
+ }
+@@ -402,6 +396,10 @@ void show_regs(struct pt_regs *regs)
+ 	 */
+ 	if (!user_mode(regs)) {
+ 		show_trace_log_lvl(current, regs, NULL, KERN_DEFAULT);
+-		show_opcodes((u8 *)regs->ip);
++
++		if (regs->ip < PAGE_OFFSET)
++			pr_cont(" Bad RIP value.\n");
++		else
++			show_opcodes((u8 *)regs->ip);
+ 	}
+ }
 -- 
-2.16.2
+2.13.0
