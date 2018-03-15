@@ -1,82 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752254AbeCOQVX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:21:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48814 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbeCOQVV (ORCPT
+        id S1751870AbeCOQY5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:24:57 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:38676 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeCOQYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:21:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48B9460590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 7/7] ixgbevf: eliminate duplicate barriers on
- weakly-ordered archs
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Timur Tabi <timur@codeaurora.org>, Netdev <netdev@vger.kernel.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
- <1520997629-17361-7-git-send-email-okaya@codeaurora.org>
- <12150aa0-77ba-878e-31f4-d4f8d6a28ccb@codeaurora.org>
- <2a4f4dec64b7462ae64152f6c2df9754@codeaurora.org>
- <CAKgT0UcriMiyV0q6y_x9r3-HJRAWp5_CpsK2jTqh3qvOV=Kkzw@mail.gmail.com>
- <d565406d-1bc7-6fb0-3f36-87a28ac69070@codeaurora.org>
- <CAKgT0UeBHGDmr0uXfuPQJKOomiH9uvXRVYpyDwMOzjkxAZMSYg@mail.gmail.com>
- <53bf7dfe-32ee-1861-e6ea-81f667590a43@codeaurora.org>
- <CAKgT0UcBQRoSPPZ73bdu1oEBGqBA8_c3ZAjti20=+9UwEqpXbw@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <eee8269d-b711-828c-ab84-5933bf86d024@codeaurora.org>
-Date: Thu, 15 Mar 2018 12:21:17 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 12:24:55 -0400
+X-Google-Smtp-Source: AG47ELtw4wsFJcYKz7SabOsq7ain1hzosa2JHy8LQb8ctEZNs6CqjrI2J8TvZf63KQn5kvhZtt/z8w==
+Subject: Re: [RFC PATCH] clk: qcom: rpmcc: Add support to XO buffered clocks
+To: Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: david.brown@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org
+References: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <f2757455-c825-01d6-cf53-8b2504b9b2f8@linaro.org>
+Date: Thu, 15 Mar 2018 16:24:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UcBQRoSPPZ73bdu1oEBGqBA8_c3ZAjti20=+9UwEqpXbw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/15/2018 10:32 AM, Alexander Duyck wrote:
-> We tend to do something like:
->   update tx_buffer_info
->   update tx_desc
->   wmb()
->   point first tx_buffer_info next_to_watch value at last tx_desc
->   update next_to_use
->   notify device via writel
-> 
-> We do it this way because we have to synchronize between the Tx
-> cleanup path and the hardware so we basically lump the two barriers
-> together. instead of invoking both a smp_wmb and a wmb. Now that I
-> look at the pseudocode though I wonder if we shouldn't move the
-> next_to_use update before the wmb, but that might be material for
-> another patch. Anyway, in the Tx cleanup path we should have an
-> smp_rmb() after we read the next_to_watch values so that we avoid
-> reading any of the other fields in the buffer_info if either the field
-> is NULL or the descriptor pointed to has not been written back.
 
-How do you feel about keeping wmb() very close to writel_relaxed() like this?
 
-   update tx_buffer_info
-   update tx_desc
-   point first tx_buffer_info next_to_watch value at last tx_desc
-   update next_to_use
-   wmb()
-   notify device via writel_relaxed()
+On 15/03/18 14:37, srinivas.kandagatla@linaro.org wrote:
+>   
+>   struct clk_rpm {
+>   	const int rpm_clk_id;
+> +	const int xo_offset;
+> +	u32 xo_buffer_value;
+>   	const bool active_only;
+Just realized that this would not work when more than one xo are active, 
+I will have a closer look and send an new version.
 
-I'm afraid that if the order of wmb() and writel() is not very
-obvious or hidden in multiple functions, somebody can introduce a very nasty
-bug in the future.
-
-We also have to think about code maintenance.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+thanks,
+srini
