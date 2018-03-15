@@ -1,66 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeCONJH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:09:07 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23950 "EHLO mga14.intel.com"
+        id S1751640AbeCONOW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:14:22 -0400
+Received: from mga01.intel.com ([192.55.52.88]:24237 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751549AbeCONJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:09:06 -0400
+        id S1751512AbeCONOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:14:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
-   d="scan'208";a="24296830"
-Message-ID: <1521119343.10722.665.camel@linux.intel.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date: Thu, 15 Mar 2018 15:09:03 +0200
-In-Reply-To: <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
-References: <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
-         <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
-         <1520330185.10722.401.camel@linux.intel.com>
-         <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
-         <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
-         <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
-         <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
-         <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
-         <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
-         <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
-         <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+   d="scan'208";a="211586168"
+Subject: Re: [PATCH v3 07/11] mmc: sdhci: Program a relatively accurate SW
+ timeout value
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180307132020.30951-1-kishon@ti.com>
+ <20180307132020.30951-8-kishon@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1e87e5f9-13e1-765b-f077-26a55359b2c3@intel.com>
+Date: Thu, 15 Mar 2018 15:13:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180307132020.30951-8-kishon@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-14 at 15:09 +0100, Petr Mladek wrote:
-> We already prevent crash when dereferencing some obviously broken
-> pointers. But the handling is not consistent. Sometimes we print
-> "(null)"
-> only for pure NULL pointer, sometimes for pointers in the first
-> page and 
+On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
+> sdhci has a 10 second timeout to catch devices that stop responding.
+> Instead of programming 10 second arbitrary value, calculate the total time
+> it would take for the entire transfer to happen and program the timeout
+> value accordingly.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/mmc/host/sdhci.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>  drivers/mmc/host/sdhci.h | 10 ++++++++++
+>  2 files changed, 50 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 1dd117cbeb6e..baab67bfa39b 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -709,6 +709,36 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+>  		return sg_dma_address(host->data->sg);
+>  }
+>  
+> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
+> +				  struct mmc_command *cmd,
+> +				  unsigned int target_timeout)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +	struct mmc_host *mmc = host->mmc;
+> +	u64 transfer_time;
+> +	struct mmc_ios *ios = &mmc->ios;
+> +	unsigned char bus_width = 1 << ios->bus_width;
+> +	unsigned int blksz;
+> +	unsigned int freq;
+> +
+> +	if (data) {
+> +		blksz = data->blksz;
+> +		freq = host->mmc->actual_clock ? : host->clock;
+> +		transfer_time = (u64)blksz * NSEC_PER_SEC * (8 / bus_width);
+> +		do_div(transfer_time, freq);
+> +		/* multiply by '2' to account for any unknowns */
+> +		transfer_time = transfer_time * 2;
+> +		/* calculate timeout for the entire data */
+> +		host->data_timeout = (data->blocks * ((target_timeout *
+> +						       NSEC_PER_USEC) +
+> +						       transfer_time));
+
+(target_timeout * NSEC_PER_USEC) might be 32-bit and therefore overflow
+for timeouts greater than about 4 seconds.
+
+> +	} else {
+> +		host->data_timeout = (u64)target_timeout * NSEC_PER_USEC;
+> +	}
+> +
+> +	host->data_timeout += MMC_CMD_TRANSFER_TIME;
+
+Need to allow for target_timeout == 0 so:
+
+	if (host->data_timeout)
+		host->data_timeout += MMC_CMD_TRANSFER_TIME;
+
+> +}
+> +
+>  static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  {
+>  	u8 count;
+> @@ -766,6 +796,7 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  		if (count >= 0xF)
+>  			break;
+>  	}
+> +	sdhci_calc_sw_timeout(host, cmd, target_timeout);
+
+If you make the changes I suggest for patch 6, then this would
+move sdhci_calc_sw_timeout() into sdhci_set_timeout().
+
+I suggest you factor out the target_timeout calculation e.g.
+
+static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+					 struct mmc_command *cmd,
+					 struct mmc_data *data)
+{
+	unsigned int target_timeout;
+
+	/* timeout in us */
+	if (!data)
+		target_timeout = cmd->busy_timeout * 1000;
+	else {
+		target_timeout = DIV_ROUND_UP(data->timeout_ns, 1000);
+		if (host->clock && data->timeout_clks) {
+			unsigned long long val;
+
+			/*
+			 * data->timeout_clks is in units of clock cycles.
+			 * host->clock is in Hz.  target_timeout is in us.
+			 * Hence, us = 1000000 * cycles / Hz.  Round up.
+			 */
+			val = 1000000ULL * data->timeout_clks;
+			if (do_div(val, host->clock))
+				target_timeout++;
+			target_timeout += val;
+		}
+	}
+
+	return target_timeout;
+}
+
+And call it from sdhci_calc_sw_timeout()
+
+>  
+>  	return count;
+>  }
+> @@ -1175,13 +1206,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  		mdelay(1);
+>  	}
+>  
+> -	timeout = jiffies;
+> -	if (!cmd->data && cmd->busy_timeout > 9000)
+> -		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
+> -	else
+> -		timeout += 10 * HZ;
+> -	sdhci_mod_timer(host, cmd->mrq, timeout);
+> -
+>  	host->cmd = cmd;
+>  	if (sdhci_data_line_cmd(cmd)) {
+>  		WARN_ON(host->data_cmd);
+> @@ -1221,6 +1245,15 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
+>  		flags |= SDHCI_CMD_DATA;
+>  
+> +	timeout = jiffies;
+> +	if (host->data_timeout > 0) {
+
+This can be just:
+
+	if (host->data_timeout) {
+
+> +		timeout += nsecs_to_jiffies(host->data_timeout);
+> +		host->data_timeout = 0;
+
+It would be better to initialize host->data_timeout = 0 at the top of
+sdhci_prepare_data().
+
+Also still need:
+
+	else if (!cmd->data && cmd->busy_timeout > 9000) {
+		timeout += DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ;
 
 
-> sometimes also for pointers in the last page (error codes).
-
-I still think that printing a hex value of the error code is much better
-than some odd "(efault)".
-
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> +	} else {
+> +		timeout += 10 * HZ;
+> +	}
+> +	sdhci_mod_timer(host, cmd->mrq, timeout);
+> +
+>  	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index ff283ee08854..29b242fd17de 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -332,6 +332,14 @@ struct sdhci_adma2_64_desc {
+>  /* Allow for a a command request and a data request at the same time */
+>  #define SDHCI_MAX_MRQS		2
+>  
+> +/*
+> + * 48bit command and 136 bit response in 100KHz clock could take upto 2.48ms.
+> + * However since the start time of the command, the time between
+> + * command and response, and the time between response and start of data is
+> + * not known, set the command transfer time to 10ms.
+> + */
+> +#define MMC_CMD_TRANSFER_TIME	(10 * NSEC_PER_MSEC) /* max 10 ms */
+> +
+>  enum sdhci_cookie {
+>  	COOKIE_UNMAPPED,
+>  	COOKIE_PRE_MAPPED,	/* mapped by sdhci_pre_req() */
+> @@ -555,6 +563,8 @@ struct sdhci_host {
+>  	/* Host SDMA buffer boundary. */
+>  	u32			sdma_boundary;
+>  
+> +	u64			data_timeout;
+> +
+>  	unsigned long private[0] ____cacheline_aligned;
+>  };
+>  
+> 
