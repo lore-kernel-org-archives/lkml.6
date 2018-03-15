@@ -1,57 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752363AbeCONB4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 09:01:56 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53361 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752343AbeCONBz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 09:01:55 -0400
-Date: Thu, 15 Mar 2018 14:01:53 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Subject: Re: [PATCH 05/10] iommu/amd: remove the special case from
- get_irq_table()
-Message-ID: <20180315130153.3ba2loj5oplogdew@linutronix.de>
-References: <20180223222736.18542-1-bigeasy@linutronix.de>
- <20180223222736.18542-6-bigeasy@linutronix.de>
- <20180315125342.q74wurk6bdbhl6hy@8bytes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180315125342.q74wurk6bdbhl6hy@8bytes.org>
-User-Agent: NeoMutt/20180223
+        id S1752407AbeCONCN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 09:02:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:60360 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752071AbeCONCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 09:02:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,310,1517904000";
+   d="scan'208";a="35249851"
+Message-ID: <1521118928.10722.658.camel@linux.intel.com>
+Subject: Re: [PATCH v10] mmc: Export host capabilities to debugfs.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
+Date: Thu, 15 Mar 2018 15:02:08 +0200
+In-Reply-To: <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+References: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
+         <CAPDyKFo8jFwDO1E=tNSd4yTn3qtefzvHK0V70fcEqzB=SibrJA@mail.gmail.com>
+         <1521109575.10722.654.camel@linux.intel.com>
+         <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-15 13:53:42 [+0100], Joerg Roedel wrote:
-> On Fri, Feb 23, 2018 at 11:27:31PM +0100, Sebastian Andrzej Siewior wrote:
-> > @@ -4103,10 +4093,26 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
-> >  		return ret;
-> >  
-> >  	if (info->type == X86_IRQ_ALLOC_TYPE_IOAPIC) {
-> > -		if (get_irq_table(devid, true))
-> > +		struct irq_remap_table *table;
-> > +		struct amd_iommu *iommu;
-> > +
-> > +		table = get_irq_table(devid);
-> > +		if (table) {
-> > +			if (!table->min_index) {
-> > +				/*
-> > +				 * Keep the first 32 indexes free for IOAPIC
-> > +				 * interrupts.
-> > +				 */
-> > +				table->min_index = 32;
-> > +				iommu = amd_iommu_rlookup_table[devid];
-> > +				for (i = 0; i < 32; ++i)
-> > +					iommu->irte_ops->set_allocated(table, i);
-> > +			}
+On Thu, 2018-03-15 at 13:29 +0100, Ulf Hansson wrote:
+> On 15 March 2018 at 11:26, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, 2018-03-15 at 11:12 +0100, Ulf Hansson wrote:
+> > > On 13 March 2018 at 06:10, Harish Jenny K N <harish_kandiga@mentor
+> > > .com
+> > > > wrote:
+> > > > 
+> > > Honestly, I don't like this, but maybe other people do, then I am
+> > > fine
+> > > with this approach.
+> > > 
+> > > If were to decide, I would just rather print the caps field in a
+> > > hexadecimal bit form and leave the translation to the user.
+> > 
+> > A compromise would be to print both:
+> > 
+> > 0xHHHHHHHH\n
+> > Description of each enabled field, one per line
+> > 
+> > 
+> > Another format would be:
+> > 
+> > Bit XX: Description of a field
 > 
-> I think this needs to be protected by the table->lock.
+> If we were to print the description, there is no point in printing the
+> bits in hex. Or is it?
 
-Which part any why? The !->min_index part plus extending(setting to 32)?
+It is helpful for scripting (since it's debugfs, under scripting I mean
+something rather for test suites than for actual use).
 
-Sebastian
+> As I said, if you and other folkz thinks this is valuable, then I am
+> fine as well. Just saying, it's not my preferred option.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
