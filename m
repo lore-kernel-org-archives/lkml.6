@@ -1,64 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752344AbeCOO2O (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 10:28:14 -0400
-Received: from mga03.intel.com ([134.134.136.65]:4784 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752348AbeCOO2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:28:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="211602943"
-Subject: Re: [PATCH v3 04/11] mmc: sdhci-omap: Invoke sdhci_get_of_property to
- read sdhci dt properties
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180307132020.30951-1-kishon@ti.com>
- <20180307132020.30951-5-kishon@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <e7c61727-0ff5-edb5-b3eb-679f07afbce6@intel.com>
-Date: Thu, 15 Mar 2018 16:27:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752377AbeCOOaT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 10:30:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42376 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751980AbeCOOaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 10:30:17 -0400
+Date: Thu, 15 Mar 2018 11:30:12 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: New -Werror=restrict error with incremental gcc
+Message-ID: <20180315143012.GA2221@redhat.com>
+References: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180307132020.30951-5-kishon@ti.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <34478c69-e238-90db-bf1e-9622a060c778@redhat.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 15:20, Kishon Vijay Abraham I wrote:
-> Invoke sdhci_get_of_property defined in sdhci-pltfm.c to read
-> sdhci specific properties from dt node.
+Em Wed, Mar 14, 2018 at 02:19:41PM -0700, Laura Abbott escreveu:
+> Hi,
 > 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Fedora picked up a new gcc (8.0.1-0.18.fc29) and it seems to have introduced a new error:
+> 
+>   gcc -Wp,-MD,/home/labbott/linux/tools/objtool/.str_error_r.o.d -Wp,-MT,/home/labbott/linux/tools/objtool/str_error_r.o -Wall -Werror -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wshadow -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef -Wwrite-strings -Wformat -Wstrict-aliasing=3 -Wno-switch-default -Wno-switch-enum -Wno-packed -fomit-frame-pointer -O2 -g -I/home/labbott/linux/tools/include -I/home/labbott/linux/tools/arch/x86/include/uapi -I/home/labbott/linux/tools/objtool/arch/x86/include -I/home/labbott/linux/tools/lib -D"BUILD_STR(s)=#s" -c -o /home/labbott/linux/tools/objtool/str_error_r.o ../lib/str_error_r.c
+> ../lib/str_error_r.c: In function ‘str_error_r’:
+> ../lib/str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+>    snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+>    ^~
+> 
+> This looks like gcc is now warning about the aliasing from printing out buf
+> while printing to the buffer. I can work around this pretty easily but I
+> know people have strong opinions about gcc warnings. Any thoughts?
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+I couldn't reproduce it here:
 
-> ---
->  drivers/mmc/host/sdhci-omap.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> index fbc20a4fbb23..314dbe4d7412 100644
-> --- a/drivers/mmc/host/sdhci-omap.c
-> +++ b/drivers/mmc/host/sdhci-omap.c
-> @@ -893,6 +893,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
->  	host->ioaddr += offset;
->  
->  	mmc = host->mmc;
-> +	sdhci_get_of_property(pdev);
->  	ret = mmc_of_parse(mmc);
->  	if (ret)
->  		goto err_pltfm_free;
-> 
+[perfbuilder@b34646cdb12b perf]$ gcc -v
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap
+--enable-languages=c,c++,objc,obj-c++,fortran,ada,go,lto --prefix=/usr
+--mandir=/usr/share/man --infodir=/usr/share/info
+--with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-shared
+--enable-threads=posix --enable-checking=release --enable-multilib
+--with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions
+--enable-gnu-unique-object --enable-linker-build-id
+--with-gcc-major-version-only --with-linker-hash-style=gnu
+--enable-plugin --enable-initfini-array --with-isl --enable-libmpx
+--enable-offload-targets=nvptx-none --without-cuda-driver
+--enable-gnu-indirect-function --with-tune=generic --with-arch_32=i686
+--build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.0.1 20180310 (Red Hat 8.0.1-0.17) (GCC) 
+[perfbuilder@b34646cdb12b perf]$ rpm -q gcc
+gcc-8.0.1-0.17.fc29.x86_64
+[perfbuilder@b34646cdb12b perf]$
+
+[perfbuilder@b34646cdb12b perf]$ make O=/tmp/build/kernel/ 
+make[1]: Entering directory '/tmp/build/kernel'
+  CHK     include/config/kernel.release
+  Using /git/perf as source for kernel
+  GEN     ./Makefile
+  CHK     include/generated/uapi/linux/version.h
+  CHK     include/generated/utsrelease.h
+  CHK     include/generated/bounds.h
+  CHK     include/generated/timeconst.h
+  CHK     include/generated/asm-offsets.h
+  CALL    /git/perf/scripts/checksyscalls.sh
+  DESCEND  objtool
+  CC       /tmp/build/kernel/tools/objtool/str_error_r.o
+  LD       /tmp/build/kernel/tools/objtool/objtool-in.o
+  LINK     /tmp/build/kernel/tools/objtool/objtool
+  CHK     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/asn1_compiler
+
+
+:-\
+
+But I noticed some of those warnings and started action on then for
+tools/perf, things like:
+
+"perf annotate: Use asprintf when formatting objdump command line"
+
+https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?id=f22ed8ad2ca0
+
+- Arnaldo
