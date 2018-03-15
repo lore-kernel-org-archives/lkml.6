@@ -1,396 +1,863 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3134603-1522401233-3-4475087914938171244
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522401232; b=h5Ci75vw3IyeskOiDgDaw4iZuZlQQAiANMJivQ+adEhHXlJhAj
-    7xPyF3uFyXTmZvcDSPaP37MhT2Hpg6AaFKi/mQN8kGLqwCREb4zZ9ciW/TOdnLy4
-    RojLJm7bAlm71iwarbDRa3DWKd3GF3Bje00od3nhFtioHeiCILVV6qSBBxMZho+/
-    4gkWoDtedzh9iIkfanMJ0sS1pVhLAGIXp3ty5sJvw37e+ausdufobc8Qfdck/4KN
-    F8MKuE9WheCgUHr+zD+14860Lp/ojG3W3c9A7lG4fYxI41Dw/xkO1CLMQzwDqAg3
-    IH3mKYwkuSKhmTPJpLBgUh0dM5Z+8YOcs18Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522401232; bh=+Vph3
-    BdPppo7yEbWhmhbKHm1CC9kJHBIjIBhoq1CDRo=; b=LtjUD7ByxEdUjR2jxLayV
-    OVazUxagoJw4WgupHO35PBaV9n3XvSgnLNLqoxXwpoqfXDuy215ogF9GRZ6CUZSk
-    q4Hy7+jd2oabPwzMW56KzynriP/EGbbc8HmPZ8YcCiy+4/FkTKBTBFIXEiXOCBhc
-    MLAHo09EkwL6Rnv5c2MC9k6hcrhWzpBFBPdiOqq7eJRXRbeyCWCAuRHsH9DqgA3B
-    rjZ+vyRhZR00omrNy1+dPnV2AipuscUdWhcfLbyiLVz4AuBSmbs7EPBvavAUulOT
-    3Tx+n2aDA23L8ftR5ZqP1Z5yWDc+RmaAdn9SWMkCy+I0NqCh8FrxZ9J3K1yQZMNb
-    Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIRl2fToEXChJORK19RO6O6vt+zLq9MrcafP6kC0ld+uXv8NGCd5czcTsAgf2NXaIC2S73eyfSjhFYek8IonfuMk/Xu1IqU1NR+SC6mbWlKdPFegGYjr
-    uvLhSnV4GsClxbaUTFf26XaGBJLAbLsqQ1O/uSGCZHQ/hBJWT3OLlFai0Ke+C59jS4SK/2UacN1rOl49k8Ugx0kpHIel3huzaRWX82AtAADaUlICKcPLTyXH
-    cKCiD6XekQxGED6boyVpMg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=8b9GpE9nAAAA:8 a=JOA0iUbgAAAA:8 a=jtbBNqsHAAAA:8 a=XYAwZIGsAAAA:8
-    a=8AirrxEcAAAA:8 a=yC-0_ovQAAAA:8 a=DDOyTI_5AAAA:8 a=hLaCA-7ODhTW-bIc2LoA:9
-    a=gPT-JFiBhUCMOxS2:21 a=-z6eNua5abzaG1io:21 a=QEXdDO2ut3YA:10
-    a=aTf_0Hi-Eh8A:10 a=pwgGltORyH8A:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=T3LWEMljR5ZiDmsYVIUa:22 a=nG9pSErA777cby-CJFl-:22 a=RWaeYqt-Cn-VcsFsiLGo:22
-    a=E8ToXWR_bxluHZ7gmE-Z:22 a=ST-jHhOKWsTCqRlWije3:22 a=QsnFDINu91a9xkgZirup:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C13820838
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Fri, 30 Mar 2018 10:13:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: John Syne <john3909@gmail.com>
-Subject: Re: meter ABI: (was Re: [PATCH v2 1/3] staging:iio:meter: Replaces
- IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR)
-Message-ID: <20180330101337.73d3413c@archlinux>
-In-Reply-To: <AA2E74B3-EA99-46F7-9FC8-29C8FE6CDC14@gmail.com>
+Return-Path: <john3909@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521094217; cv=none;
+        d=google.com; s=arc-20160816;
+        b=h75fKCgEwC8ClMUZANryJ6t1lKemFLVsQN3MgA1jo5KMs+nTvUjB5vV4Z14wnzGyiC
+         uUZAUK3E9s8x/Gr7/LRF1PhBxvYdFjVOTS+5P+W7TDOy4lymk7HBw+mFUYmvVte203XB
+         n9LngSExk8sDEEA/nLweI7vzbIWZN67EC1A7GXQ0ZV2BgOI9QPi9BCpteY2kx0LxclE5
+         x/SZP1zo7JKgnkbBZJ9sHhdYhqqh6RFUNtKkIDHz5Tfbpanhe3IKxDTbe5QIhnTxnX7l
+         69+wfXeXFsk66To4CaNdhaA6a81BSLCiH7iDWUv0XqNxRwh3ckNQu+SGowlEDWBFQ6xY
+         K3wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:dkim-signature:arc-authentication-results;
+        bh=Exsl7DlZOCx0m6WGj9wSLVHl3JmPCr1Jb9ufBCbzet4=;
+        b=TJMxH16W6wGhlnu791Vg3zukVY3WnfQUFllZ+P+H/Ln7LmoxC66qc+8Bizw7dI2SXa
+         +LXJvM4JlPh2Wd8suC4FZbotVzX5bOBnvNcuA1gq7r5Id5H5PbmfY9jyr2WlwaVMcnkf
+         9kHllSo5PJA7ABTzSVGyDcbK7Y1Iyq0MtxzQ3gH0C4sTuPqV0XrPeG7Ac1dsbBbbI2tk
+         S4FMPm23xtDxv7x6Wicev8sj7wODML/d/FVtNySp6Yf4S2vNxKB0ZSJC8dhIVVP3m7QK
+         KOS3uxwlLS/ZXU7iC4LkS32gOxwQ4veE5CJaoXNgiRkcMBhLHjM65ArRo10N0gajuqG5
+         h39g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ij4mGmFs;
+       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ij4mGmFs;
+       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELv+keQvf94BaZ6jbRBieFD+zwETGfYxiSkIAKZfK3P1QxTgrphoMlcOjtKPKKa0T2Ldfxxm3w==
+From: John Syne <john3909@gmail.com>
+Message-Id: <4D87E044-D5D7-4103-9CFE-ED4B1267D1AE@gmail.com>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_D9FF0FE0-2D25-4736-B142-E2EC969D5280"
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH v2 1/3] staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF by
+ IIO_DEVICE_ATTR
+Date: Wed, 14 Mar 2018 23:10:08 -0700
+In-Reply-To: <20180310151045.4570e85d@archlinux>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ devel@driverdev.osuosl.org,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Hartmut Knaack <knaack.h@gmx.de>,
+ daniel.baluta@nxp.com
+To: Jonathan Cameron <jic23@kernel.org>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180307200730.08ed3c2f@archlinux>
  <20180309003733.aichruo53vqryafg@smtp.gmail.com>
  <20180310151045.4570e85d@archlinux>
- <79D3051B-FF2F-4DD3-AF75-F6A4BAD81838@gmail.com>
- <20180317203037.1093cc11@archlinux>
- <A8E3184B-765B-4730-A076-C3FCF487EAE3@gmail.com>
- <20180318122312.0d395367@archlinux>
- <C4AC18E6-E89B-4915-9B71-09EFC09B490D@gmail.com>
- <20180324150205.709aa211@archlinux>
- <D48DD58E-EB75-48F4-8E34-69D619206BA1@gmail.com>
- <20180325172911.39c0e42f@archlinux>
- <AA2E74B3-EA99-46F7-9FC8-29C8FE6CDC14@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <michael.hennerich@analog.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
- daniel.baluta@nxp.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594237578169642590?=
+X-GMAIL-MSGID: =?utf-8?q?1594982889394254628?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gU3VuLCAyNSBNYXIgMjAxOCAxMzozNjo0MCAtMDcwMApKb2huIFN5bmUgPGpvaG4zOTA5QGdt
-YWlsLmNvbT4gd3JvdGU6Cgo+ID4gT24gTWFyIDI1LCAyMDE4LCBhdCA5OjI5IEFNLCBKb25hdGhh
-biBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPiB3cm90ZToKPiA+IAo+ID4gT24gU2F0LCAyNCBN
-YXIgMjAxOCAxNTo0NToyMSAtMDcwMAo+ID4gSm9obiBTeW5lIDxqb2huMzkwOUBnbWFpbC5jb20+
-IHdyb3RlOgo+ID4gICAKPiA+Pj4gT24gTWFyIDI0LCAyMDE4LCBhdCA4OjAyIEFNLCBKb25hdGhh
-biBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPiB3cm90ZToKPiA+Pj4gCj4gPj4+IE9uIE1vbiwg
-MTkgTWFyIDIwMTggMjI6NTc6MTYgLTA3MDAKPiA+Pj4gSm9obiBTeW5lIDxqb2huMzkwOUBnbWFp
-bC5jb20+IHdyb3RlOgo+ID4+PiAgIAo+ID4+Pj4gSGkgSm9uYXRoYW4sCj4gPj4+PiAKPiA+Pj4+
-IFRoYW5rIHlvdSBmb3IgYWxsIHlvdXIgaGFyZCB3b3JrLiBZb3VyIGZlZWRiYWNrIGlzIHJlYWxs
-eSBoZWxwZnVsLiBJ4oCZbSBzdXJwcmlzZWQgdGhhdCBubyBvbmUgZnJvbSBBbmFsb2cgRGV2aWNl
-IGhhcyBvZmZlcmVkIGFueSBzdWdnZXN0aW9ucy4KPiA+Pj4+ICAgCj4gPj4+IAo+ID4+PiBTYWRs
-eSB0aG9zZSBhY3RpdmUgaW4gdGhlIG1haW5saW5lIGxpbnV4IGtlcm5lbCBmcm9tIEFESSBhcmUg
-Zm9jdXNlZCBpbgo+ID4+PiBvdGhlciBhcmVhcyBjdXJyZW50bHkgOiggICAgCj4gPj4gR29vZCBw
-b2ludC4gSSB3aWxsIHJlYWNoIG91dCB0byBBbmFsb2cgRGV2aWNlcyBhbmQgZ2V0IGEgbmFtZSBv
-ZiBzb21lb25lIAo+ID4+IHdobyBpcyBrbm93bGVkZ2VhYmxlIGluIHRoaXMgYXJlYS4gUGVyaGFw
-cyBMYXJzLVBldGVycyBoYXMgYSBzdWdnZXN0aW9uLiAgIAo+ID4gWWVzLCBMYXJzIG9yIE1pY2hh
-ZWwgSGVubmVyaWNoICgrQ0MpIGFyZSBteSBub3JtYWwgY29udGFjdCBwb2ludHMuCj4gPiBJIGJl
-bGlldmUgdGhpcyBpcyBvdXRzaWRlIGJvdGggb2YgdGhlaXIgYXJlYXMsIGJ1dCB0aGV5IG1heSBi
-ZSBhYmxlIHRvCj4gPiBwdXQgeW91IGluIGNvbnRhY3Qgd2l0aCB0aGUgcmlnaHQgcGVyc29uLiAg
-SWYgbm90aGluZyBlbHNlIGl0IHdvdWxkIGJlCj4gPiBnb29kIHRvIG1ha2Ugc29tZW9uZSBpbiBB
-REkgYXdhcmUgdGhhdCBwZW9wbGUgY2FyZSBhYm91dCBsaW51eCBzdXBwb3J0IGZvcgo+ID4gdGhl
-c2UgcGFydHMhICAKPiBJIHNlbnQgaW4gYSByZXF1ZXN0IHRvIEFESSBmb3IgYSBjb250YWN0IHBl
-cnNvbiB0byBoZWxwIHdpdGggdGhlIHJldmlldy4KCkNvb2wuCgo+ID4gICAKPiA+Pj4+IEFueXdh
-eSwgcGxlYXNlIHNlZSBteSBjb21tZW50cyBpbmxpbmUgYmVsb3cKPiA+Pj4+IAo+ID4+Pj4gUmVn
-YXJkcywKPiA+Pj4+IEpvaG4KPiA+Pj4+IAo+ID4+Pj4gCj4gPj4+PiAKPiA+Pj4+IAo+ID4+Pj4g
-ICAKPiA+Pj4+PiBPbiBNYXIgMTgsIDIwMTgsIGF0IDU6MjMgQU0sIEpvbmF0aGFuIENhbWVyb24g
-PGppYzIzQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4+Pj4+IAo+ID4+Pj4+IE9uIFNhdCwgMTcgTWFy
-IDIwMTggMjM6MTE6NDUgLTA3MDAKPiA+Pj4+PiBKb2huIFN5bmUgPGpvaG4zOTA5QGdtYWlsLmNv
-bT4gd3JvdGU6Cj4gPj4+Pj4gICAKPiA+Pj4+Pj4gSGkgSm9uYXRoYW4sICAgICAgCj4gPj4+Pj4g
-SGkgSm9obiBhbmQgQWxsLAo+ID4+Pj4+IAo+ID4+Pj4+IEknZCBsb3ZlIHRvIGdldCBzb21lIGFk
-ZGl0aW9uYWwgaW5wdXQgb24gdGhpcyBmcm9tIGFueW9uZSBpbnRlcmVzdGVkLgo+ID4+Pj4+IFRo
-ZXJlIGFyZSBhIGxvdCBvZiB3ZWlyZCBhbmQgd29uZGVyZnVsIGRlcml2ZWQgcXVhbnRpdGllcyBp
-biBhbiBlbmVyZ3kKPiA+Pj4+PiBtZXRlciBhbmQgaXQgc2VlbXMgd2UgbmVlZCB0byBtYWtlIHNv
-bWUgZnVuZGFtZW50YWwgY2hhbmdlcyB0byBzdXBwb3J0Cj4gPj4+Pj4gdGhlbSAtIGluY2x1ZGlu
-ZyBwb3RlbnRpYWxseSBhIHVzZXJzcGFjZSBicmVha2luZyBjaGFuZ2UgdG8gdGhlIGV2ZW50Cj4g
-Pj4+Pj4gY29kZSBkZXNjcmlwdGlvbi4KPiA+Pj4+PiAgIAo+ID4+Pj4+PiAKPiA+Pj4+Pj4gSGVy
-ZSBpcyB0aGUgY29tcGxldGUgbGlzdCBvZiByZWdpc3RlcnMgZm9yIHRoZSBBREU3ODc4IHdoaWNo
-IEkgY29waWVkIGZyb20gdGhlIGRhdGEgc2hlZXQuIEkgYWRkZWQgYSBjb2x1bW4g4oCcSUlPIEF0
-dHJpYnV0ZeKAnSB3aGljaCBJIGhvcGUgZm9sbG93cyB5b3VyIElJTyBBQkkuIFBsZWFzZSBtYWtl
-IGFueSBjaGFuZ2VzIHlvdSBmZWVsIGFyZSBpbmNvcnJlY3QuIEJUVywgdGhlcmUgYXJlIHNldmVy
-YWwgcmVnaXN0ZXJzIHRoYXQgY2Fubm90IGJlIGdlbmVyYWxpemVkIGFuZCBhcmUgdXNlZCBwdXJl
-bHkgZm9yIGNoaXAgY29uZmlndXJhdGlvbi4gSSB0aGluayB3ZSBzaG91bGQgYWRkIGEgbmV3IG5h
-bWluZyBjb252ZW50aW9uLCBuYW1lbHkge3JlZ2lzdGVyfV97PGNoaXAtcmVnaXN0ZXItbmFtZT59
-LiBBbHNvLCBJIHNlZSBpbiB0aGUgc3lzX2J1c19paW8gZG9jICAgIAo+ID4gCj4gPiBObywgcmVn
-aXN0ZXJzIGNhbiBhbHdheXMgYmUgYnJva2VuIHVwIGluIHRvIHJlYWwgbWVhbmluZ2Z1bCB2YWx1
-ZXMgaWYKPiA+IHRoZXkgYXJlIGV4cG9zZWQgdG8gdXNlcnNwYWNlIGFuZCB1c2Vyc3BhY2UgaGFz
-IGEgcmVhc29uIHRvIHR3ZWFrCj4gPiB0aGVtLgo+ID4gCj4gPiBXZSBuZXZlciBleHBvc2UgcmF3
-IHJlZ2lzdGVycyB0byB1c2Vyc3BhY2UgZXhjZXB0IHRocm91Z2gKPiA+IGRlYnVnZnMgYW5kIHRo
-ZSBjbHVlIGlzIGluIHRoZSBuYW1lIC0gcHVyZWx5IGZvciBkZWJ1Zy4gIAo+IE9LCj4gPiAKPiA+
-ICAgCj4gPj4+IAo+ID4+PiAKPiA+Pj4gCj4gPj4+ICAgCj4gPj4+Pj4+IGluX2FjY2VsX3hfcGVh
-a19yYXcKPiA+Pj4+Pj4gCj4gPj4+Pj4+IHNvIHNob3VsZG7igJl0IHRoZSBwaGFzZSBiZSByZXBy
-ZXNlbnRlZCBhcyBmb2xsb3dzOgo+ID4+Pj4+PiAKPiA+Pj4+Pj4gaW5fY3VycmVudF9BX3NjYWxl
-ICAgICAgCj4gPj4+Pj4gSSdtIHN0aWxsIGNvbmZ1c2VkLiAgV2hhdCBkb2VzIEEgcmVwcmVzZW50
-IGhlcmU/ICBJIGFzc3VtZWQgdGhhdCB3YXMgYSB3aWxkCj4gPj4+Pj4gY2FyZCBmb3IgdGhlIGNo
-YW5uZWwgbnVtYmVyIGJlZm9yZSBidXQgY2xlYXJseSBub3QuCj4gPj4+Pj4gCj4gPj4+Pj4gQWgs
-IHlvdSBhcmUgbGFiZWxsaW5nIHRoZSAzIHNlcGFyYXRlIHBoYXNlcyBhcyBBLCBCIGFuZCBDLiBI
-bW0uCj4gPj4+Pj4gSSBndWVzcyB0aGV5IHNvcnQgb2YgbG9vayBsaWtlIGF4aXMsIGFuZCBzb3J0
-IG9mIGxpa2UgaW5kZXBlbmRlbnQgY2hhbm5lbHMuCj4gPj4+Pj4gU28gY291bGQgYmUgaW5kZXhl
-ZCBvciBkb25lIHZpYSBtb2RpZmllcnMgZGVwZW5kaW5nIG9uIGhvdyB5b3UgbG9vayBhdCBpdC4g
-ICAgICAKPiA+Pj4+IEluIG1ldGVyaW5nIHRlcm1pbm9sb2d5LCB0aGUgdGhyZWUgcGhhc2VzIGFy
-ZSBjb21tb25seSByZWZlcnJlZCB0byBhcyBSRUQsIEdSRUVOLCBCTFVFIG9yIFBoYXNlQSwgUGhh
-c2VCLCBQaGFzZUMgYW5kIE5ldXRyYWwuIEFuYWxvZyBEZXZpY2VzIHVzZXMgdGhlIEFCQ04gbm9t
-ZW5jbGF0dXJlIHNvIGFueW9uZSB1c2luZyB0aGlzIGRyaXZlciB3aWxsIHByb2JhYmx5IGhhdmUg
-cmVmZXJlbmNlZCB0aGUgQW5hbG9nIERldmljZXMgZGF0YXNoZWV0IHNvIHRoaXMgdGVybWlub2xv
-Z3kgc2hvdWxkIGJlIGZhbWlsaWFyLiAgICAgCj4gPj4+IFdoaWNoIGlzIG1vcmUgY29tbW9ubHkg
-dXNlZCBpbiBnZW5lcmFsPyAgV2UgYXJlIGRlc2lnbmluZyB3aGF0IHdlIGhvcGUKPiA+Pj4gd2ls
-bCBiZSBhIGdlbmVyYWwgaW50ZXJmYWNlIGFuZCBsYXN0IHRoaW5nIHdlIHdhbnQgaXMgdG8gaGF2
-ZSBldmVyeW9uZQo+ID4+PiBub3QgdXNpbmcgQURJIHBhcnRzIGNvbmZ1c2VkISAgUGVyc29uYWxs
-eSBub3QgYXNzaWduaW5nICdjb2xvdXJzJyBtYWtlcwo+ID4+PiBtb3JlIHNlbnNlIHRvIG1lLiAg
-ICAKPiA+PiBJIGRpZCBhIGxpdHRsZSByZXNlYXJjaCBhbmQgaGVyZSBpcyB0aGUgbmFtaW5nIHVz
-ZWQgYnkgdmVuZG9yOgo+ID4+IAo+ID4+IFNUIE1pY3JvZWxlY3Ryb25pY3M6IFAxLCBQMiwgUDMs
-IE4KPiA+PiBodHRwOi8vd3d3LnN0LmNvbS9jb250ZW50L2NjYy9yZXNvdXJjZS90ZWNobmljYWwv
-ZG9jdW1lbnQvYXBwbGljYXRpb25fbm90ZS81ZS9mNC8yMi80ZC85MC85Ni80Yy9jNC9DRDAwMTUz
-MjY0LnBkZi9maWxlcy9DRDAwMTUzMjY0LnBkZi9qY3I6Y29udGVudC90cmFuc2xhdGlvbnMvZW4u
-Q0QwMDE1MzI2NC5wZGYKPiA+PiAKPiA+PiBUZXJpZGlhbjogQUJDTgo+ID4+IGh0dHBzOi8vd3d3
-Lm1vdXNlci5jb20vZHMvMi8yNTYvNzFNNjUxMy03MU02NTEzSC0yMjYwMy5wZGYKPiA+PiAKPiA+
-PiBNYXhpbSBJbnRlZ3JhdGVkOiBBQkNOCj4gPj4gaHR0cHM6Ly9kYXRhc2hlZXRzLm1heGltaW50
-ZWdyYXRlZC5jb20vZW4vZHMvNzhNNjYzMS5wZGYKPiA+PiAKPiA+PiBNaWNyb2NoaXA6IEFCQ04K
-PiA+PiBodHRwOi8vd3cxLm1pY3JvY2hpcC5jb20vZG93bmxvYWRzL2VuL0RldmljZURvYy81MTY0
-M2IucGRmCj4gPj4gCj4gPj4gTlhQOiBMMSwgTDIsIEwzLCBOCj4gPj4gaHR0cHM6Ly93d3cubnhw
-LmNvbS9zdXBwb3J0L2RldmVsb3Blci1yZXNvdXJjZXMvcmVmZXJlbmNlLWRlc2lnbnMva2luZXRp
-cy1rbTN4LTI1Ni1tY3UtdGhyZWUtcGhhc2UtbWV0ZXJpbmctcmVmZXJlbmNlLWRlc2lnbjpSRC1L
-TTN4LTI1Ni0zUEgtTUVURVJJTkcKPiA+PiAKPiA+PiBSZW5lc2FzOiBBQkNOCj4gPj4gaHR0cHM6
-Ly93d3cucmVuZXNhcy5jb20vZW4tdXMvc29sdXRpb25zL2hvbWUvbWV0ZXJpbmcvcG93ZXItbWV0
-ZXItdGhyZWUuaHRtbAo+ID4+IAo+ID4+IFNvIHRoZSBtb3N0IGNvbnNpc3RlbnQgd291bGQgYmUg
-QUJDTiAgCj4gPiBDb29sLiAgIE1ha2VzIHNlbnNlIHRvIGdvIHdpdGggdGhhdC4gIFRoYW5rcyBm
-b3IgY2hlY2tpbmcgdGhpcyBvdXQuCj4gPiAgIAo+ID4+IAo+ID4+IAo+ID4+IEFsbCB2ZW5kb3Ig
-cHJvdmlkaW5nIHRocmVlIHBoYXNlIGVuZXJneSBtZXRlcmluZyBJQ3MgdXNlIHRoZSBBQkNOIHRl
-cm1pbm9sb2d5LiAgIAo+ID4+PiAKPiA+Pj4gKGJ0dyBwbGVhc2Ugd3JhcCBhbnkgbGluZXMgdGhh
-dCBkb24ndCBuZWVkIHRvIGJlIGxvbmcgdG8gYXJvdW5kIDgwIGNoYXJhY3RlcnMpLgo+ID4+PiAg
-IAo+ID4+Pj4+IAo+ID4+Pj4+IEhtbS4gV2l0aCBuZXV0cmFsIGluIHRoZXJlIGFzIHdlbGwgSSBn
-dWVzcyB3ZSBuZWVkIHRvIG1ha2UgdGhlbQo+ID4+Pj4+IG1vZGlmaWVycyAoYnV0IG1pZ2h0IGNo
-YW5nZSBteSBtaW5kIGxhdGVyIDspCj4gPj4+Pj4gCj4gPj4+Pj4gUGFydGljdWxhcmx5IGFzIHdl
-IGFyZSB1c2luZyB0aGUgdGhlIG1vZGlmaWVyIGZvciBSTVMgdW5kZXIgdGhlIHByZXZpb3VzCj4g
-Pj4+Pj4gcGxhbi4uLiBJdCBhcHBlYXJzIHdlIHNob3VsZCB0cmVhdCB0aGF0IGluc3RlYWQgbGlr
-ZSB3ZSBkaWQgZm9yIHBlYWsKPiA+Pj4+PiBhbmQgZG8gaXQgYXMgYW4gYWRkaXRpb25hbCBpbmZv
-IG1hc2sgZWxlbWVudC4gIFRoZSBwcm9ibGVtIHdpdGggZG9pbmcgdGhhdAo+ID4+Pj4+IG9uIGEg
-Y29udGludW91cyBtZWFzdXJlbWVudCBpcyB0aGF0IHdlIGNhbid0IHRyZWF0IGl0IGFzIGEgY2hh
-bm5lbCB0bwo+ID4+Pj4+IGJlIG91dHB1dCB0aHJvdWdoIHRoZSBidWZmZXJlZCBpbnRlcmZhY2Uu
-ICAgICAgCj4gPj4+PiBJ4oCZdmUgY2hhbmdlZCB0aGUgbGF5b3V0IG9mIHRoZSBzcHJlYWRzaGVl
-dCB0byBicmVha291dCB0aGUgRGlyZWN0aW9uLCBUeXBlLCBJbmRleCwgTW9kaWZpZXIgYW5kIElu
-Zm8gTWFzayB0byBtYWtlIHN1cmUgdGhlcmUgaXMgbm8gbWlzcy11bmRlcnN0YW5kaW5nIGFuZCB3
-aWxsIGhlbHAgaWRlbnRpZnkgYWxsIHRoZSBpdGVtcyB3ZSBuZWVkIHRvIGFkZC4KPiA+Pj4+IAo+
-ID4+Pj4gVGhlIEFERTc4NzggY2hhbm5lbHMgdGhhdCB3aWxsIHVzZSB0aGUgYnVmZmVyIGFyZSBJ
-QVdWLCBWQVdWLCBJQldWLCBWQldWLCBJQ1dWLCBWQ1dWLCBJTldWLCBBVkEsIEJWQSwgQ1ZBLCBB
-V0FUVCwgQldBVFQsIENXQVRULCBBVkFSLCBCVkFSLCBhbmQgQ1ZBUi4gU28gSSBndWVzcyB3ZSBo
-YXZlIHRvIGFkZCBhbiBpbmRleCAgICAKPiA+Pj4gUHJvYmFibHkgYSBnb29kIGlkZWEgYW55d2F5
-LCB3ZSBhcmUgc29ydCBvZiBzbG93bHkgbW92aW5nIGF3YXkKPiA+Pj4gZnJvbSBpbmRleCBsZXNz
-IGNoYW5uZWxzLiAgVGhlIEFCSSBhbHdheXMgYWxsb3dlZCBpbmRleCBhc3NpZ25tZW50Cj4gPj4+
-IGFuZCBpdCBtYWtlcyBmb3IgZWFzaWVyIHVzZXJzcGFjZSBjb2RlLgo+ID4+PiAgIAo+ID4+Pj4g
-Cj4gPj4+PiBBZGRyZXNzIFJlZ2lzdGVyIAlJSU8gQXR0cmlidXRlCQkJCQkJCURpcglUeXBlCQlJ
-bmRleCAJTW9kaWZpZXIJSW5mbyBNYXNrCVIvVwlCaXQJCUJpdCBMZW5ndGgJVHlwZQlEZWZhdWx0
-CURlc2NyaXB0aW9uIAo+ID4+Pj4gCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCUxlbmd0aCAJRHVy
-aW5nIENvbW0JCQlWYWx1ZQkKPiA+Pj4+IDB4RTUwQwlJQVdWCWluX2N1cnJlbnQwX3BoYXNlQV9p
-bnN0YW50YW5lb3VzCQlpbgljdXJyZW50CQkJMAlwaGFzZUEJaW5zdGFudGFuZW91cwlSCTI0CQkz
-MiBTRQkJUwkJTi9BCQlJbnN0YW50YW5lb3VzIHZhbHVlIG9mIFBoYXNlIEEgY3VycmVudC4gICAg
-Cj4gPj4+IAo+ID4+PiBJJ20gdW5jb252aW5jZWQgYnkgImluc3RhbnRhbmVvdXMiLiAgVGhhdCBp
-cyB0aGUgZGVmYXVsdCBhc3N1bXB0aW9uIHRoYXQgeW91IGFyZQo+ID4+PiBtZWFzdXJpbmcgY3Vy
-cmVudCBhdCB0aGlzIHBvaW50IGluIHRpbWUuICBJJ20gc3RpbGwgY29uZnVzZWQgb24gd2hhdCB0
-aGlzIGFjdHVhbGx5Cj4gPj4+IGlzLiBJcyBpdCBlZmZlY3RpdmVseSB0aGUgREMgY3VycmVudD8g
-SS5lLiB0aGUgd2F2ZSBmb3JtIHZhbHVlIGZvciBjdXJyZW50PyAKPiA+Pj4gWW91IGFuc3dlciB0
-aGlzIGJlbG93LiAgVGhleSBhcmUgREMgbWVhc3VyZW1lbnRzLi4gICAgCj4gPj4gTm8sIHRoZXkg
-YXJlIHRoZSBvdXRwdXQgb2YgdGhlIEFEQyBhdCBhIHBvaW50IGluIHRpbWUuIFRoZSBBREMgc2Ft
-cGxlcyAKPiA+PiBjb250aW51b3VzIGF0IDgsMDAwIHNhbXBsZXMgcGVyIHNlY29uZCwgc28gd2hl
-biB5b3UgcmVhZCB0aGlzIHJlZ2lzdGVyCj4gPj4geW91IGFyZSBnZXR0aW5nIHRoZSBzYW1wbGUg
-bWVhc3VyZWQganVzdCBiZWZvcmUgeW91ciByZWFkLiBJIGRvbuKAmXQga25vdwo+ID4+IHdoeSBh
-bnlvbmUgd291bGQgcmVhZCB0aGlzIHJlZ2lzdGVyLiBUaGUgc2FtcGxlcyBhcmUgc3RyZWFtZWQg
-dmlhCj4gPj4gdGhlIFNQSSBpbnRlcmZhY2UsIHdpdGggSUFXViwgVkFXViwgSUJXViwgVkJXViwg
-SUNXViwgVkNXViwgSU5XViwgCj4gPj4gQVZBLCBCVkEsIENWQSwgQVdBVFQsIEJXQVRULCBDV0FU
-VCwgQVZBUiwgQlZBUiwgYW5kIENWQVIgdHJhbnNtaXR0ZWQgCj4gPj4gZXZlcnkgMTI1dVMuIFBy
-b2JhYmx5IGJldHRlciBub3QgdG8gZXhwb3NlIHRoZXNlIHJlZ2lzdGVycyB0byB1c2VyIHNwYWNl
-LiAgCj4gPiBJJ20gaGFwcHkgbm90IHRvIGV4cG9zZSB0aGVtLCBidXQgaWYgdGhleSBhcmUgdGhl
-IGluc3RhbnRhbmVvdXMgdmFsdWVzCj4gPiB0aGV5IGFyZSB3aGF0IEkgbWVhbiBieSBEQyB2YWx1
-ZXMsIGxpdGVyYWxseSB0aGUgbnVtYmVyIHlvdSB3b3VsZAo+ID4gc2VlIG9uIGFuIG9zY2lsbG9z
-Y29wZSBpZiB5b3Ugd2VyZSB0byBwcm9iZSB0aGVtLiAgCj4gSWYgeW91IGNvdWxkIHJlYWQgdGhl
-IGluc3RhbnRhbmVvdXMgcmVnaXN0ZXIgYWZ0ZXIgZWFjaCBzYW1wbGUsIHRoZW4geW91IAo+IHdv
-dWxkIGdldCBhbiBvc2NpbGxvc2NvcGUgZGlzcGxheSBvZiBhIHNpbmUgd2F2ZS4gSG93ZXZlciwg
-c2luY2UgYSB1c2VyIAo+IHNwYWNlIGFwcCBjYW5ub3QgcmVhZCB0aGlzIG9uIGVhY2ggc2FtcGxl
-LCB0aGUgb3V0cHV0IHdvdWxkIGxvb2sgcHJldHR5Cj4gcmFuZG9tLiBDZXJ0YWlubHkgbm90IGEg
-REMgdmFsdWUsIHdoaWNoIGlzIG11Y2ggbW9yZSBjb25zaXN0ZW50LgpXZSBhcmUgdmlvbGVudGx5
-IGFncmVlaW5nIGJ5IHRoZSBzb3VuZCBvZiBpdCAtIGp1c3QgaGF2ZSBhIHNsaWdodGx5IGRpZmZl
-cmVudAp2aWV3IG9mIHRlcm1pbm9sb2d5LCBJJ20gaGFwcHkgdG8gaGF2ZSBhIHJhcGlkbHkgdmFy
-eWluZyBEQyB2b2x0YWdlIGFzCm15IHZpZXcsIHlvdSB3YW50IHRvIHRoaW5rIG9mIGl0IGRpZmZl
-cmVudGx5LgoKQW55aG93IHRoZSBvc2NpbGxvc2NvcGUgYml0IG1ha2VzIGl0IGNsZWFyIHdlIGFy
-ZSB0YWxraW5nIGFib3V0IHRoZSBzYW1lCnRoaW5nIDspICAKIAo+ID4gICAKPiA+PiAKPiA+PiAg
-IAo+ID4+PiAKPiA+Pj4gV2hpY2ggYWN0dWFsbHkgcmFpc2VzIGEgcG9pbnQgSSdkIGZvcmdvdHRl
-bi4gIFdlIGhhdmUgYW4gZXhwbGljaXQgdHlwZSAKPiA+Pj4gZm9yIGFsdHZvbHRhZ2UgKGRlZmlu
-ZWQgZm9yIEREUyBkZXZpY2VzIGFzIHRoZSB3YXZlZm9ybSBhbXBsaXR1ZGUgSUlSQykuCj4gPj4+
-IFdlIHNob3VsZCBiZSBjb25zaXN0ZW50IHdpdGggdGhhdCBpZiBwb3NzaWJsZS4KPiA+Pj4gCj4g
-Pj4+IFNvIEkgdGhpbmsgdGhpcyBzaG91bGQgYmUuCj4gPj4+IGluX2N1cnJlbnQwX3BoYXNlQV9y
-YXcgICAgCj4gPj4gWWVhaCwgdGhhdCBzb3VuZHMgY29ycmVjdCwgd2hpY2ggcmVtaW5kcyBtZSBv
-ZiBhbm90aGVyIGlzc3VlIHRoYXQgZG9lcyBub3QgbWFrZQo+ID4+IHNlbnNlLiBUbyBtZSwgZ2Fp
-biBpcyBzb21ldGhpbmcgdGhhdCBpcyBoYXJkd2FyZSByZWxhdGVkIGFuZCBpcyB1c2VkIHRvIG1h
-Z25pZnkgCj4gPj4gYW4gaW5wdXQgc2lnbmFsIG9yIGlzIHVzZWQgdG8gY2FsaWJyYXRlIGEgbWVh
-c3VyZW1lbnQuIFNjYWxlIG9uIHRoZSBvdGhlciBoYWQgaXMgCj4gPj4gc29tZXRoaW5nIHRoYXQg
-aXMgdXNlZCB0byBjb252ZXJ0IGEgcmF3IG1lYXN1cmVtZW50IGludG8gc29tZXRoaW5nIHRoYXQg
-aXMgbW9yZSAKPiA+PiBtZWFuaW5nZnVsLCBzdWNoIGFzIDB4ODIwMDAwID0gMjIwVi4gU28gZXZl
-cnl3aGVyZSB3ZSBoYXZlIHVzZWQgc2NhbGUgYW5kIGdhaW4gCj4gPj4gaW50ZXJjaGFuZ2VhYmxl
-IGlzIGNvbmZ1c2luZy4gIAo+ID4gCj4gPiBBZ3JlZWQgLSB1cCB0byBhIHBvaW50LiAgSWYgeW91
-IGhhdmUgYSBoYXJkd2FyZSBnYWluIGNvbnRyb2wgd2hpY2ggZm9yIHdoYXRldmVyCj4gPiByZWFz
-b24gcmVzdWx0cyBpbiBhIGRpZmZlcmVudCBzY2FsaW5nIG5lZWRpbmcgdG8gYmUgYXBwbGllZCB0
-byBnbyBmcm9tIHVzZXJzcGFjZQo+ID4gdmFsdWUgdG8gcmVhbCB3b3JsZCB2YWx1ZSAoc29tZXRp
-bWVzIGhhcHBlbnMgd2l0aCBtdWx0aSByYW5nZSBkZXZpY2VzKSB0aGVuIHdlCj4gPiBleHBvc2Ug
-aXQgb25seSBvbmNlIC0gYXMgc2NhbGUuCj4gPiAKPiA+IFdlIGhhdmUgaGFyZHdhcmVnYWluIGFu
-ZCBjYWxpYmdhaW4gZm9yIHR3ZWFraW5nIHRoZSBnYWluIHRvIGFjY291bnQgZm9yIGNhc2VzCj4g
-PiB3aGVyZSBpdCBpc24ndCBhcHBhcmVudCBpbiB0aGUgb3V0cHV0IHZhbHVlIChoYXJkd2FyZSBn
-YWluIC0gbm9ybWFsbHkgdXNlZAo+ID4gd2hlbiB3ZSBhcmUgbWVhc3VyaW5nIHNvbWV0aGluZyBh
-Ym91dCB0aGUgc2lnbmFsIHRoYXQgaXNuJ3QgaXQncyBtYWduaXR1ZGUpLAo+ID4gb3IgaXMgY29t
-cGVuc2F0aW5nIGZvciBpbmFjY3VyYWNpZXMgaW4gdGhlIGNpcmN1aXRyeSBvciBzZW5zb3IgKGNh
-bGliZ2FpbikgIAo+IFRoYXQgaXMgd2hhdCB3ZSBoYXZlLCB0aGUgQURFNzg1NCBoYXMgYSBoYXJk
-d2FyZWdhaW4gYmVmb3JlIHRoZSBBREMgdG8gYWxsb3cKPiB2YXJpb3VzIGlucHV0IHZvbHRhZ2Ug
-YW5kIGN1cnJlbnQgcmFuZ2VzOiAwLTI1MG1WLCAwLTAuNVYsIGV0Yy4gQWxzbywgd2UgaGF2ZQo+
-IGNhbGliZ2Fpbiwgd2hpY2ggaXMgdXNlZCB0byBjb21wZW5zYXRlIGZvciB0aGUgc2VsZWN0ZWQg
-Y3VycmVudCB0cmFuc2Zvcm1lciBvciAKPiByb2dvd3NraSBjb2lsIGFuZCB0aGUgdGVybWluYXRp
-b24gcmVzaXN0b3JzLiAKPiAKPiBNYXliZSB3ZSBzaG91bGQgYWRkIGFkZGl0aW9uYWwgYXR0cmli
-dXRlcyBmb3Igc2NhbGUgYW5kIHRoZSByZWFsIHdvcmxkIHZhbHVlcz8KPiBUaGUgc2NhbGUgYXR0
-cmlidXRlIHdvdWxkIGNvbnZlcnQgdGhlIHJhdyB2YWx1ZSB0byByZWFsIHdvcmxkIHZhbHVlICgy
-MjBWLCAxMDBBCj4gMjVLV2gsIGV0YykKClNvIGl0IHNob3VsZCBiZSBwb3NzaWJsZSB0byBkZWZp
-bmUgZXZlcnl0aGluZyB1c2luZyBleGlzdGluZyBhdHRyaWJ1dGVzIGFuZCBJCndvdWxkIHJlYWxs
-eSBsaWtlIHRvIGF2b2lkIGFkZGluZyBtb3JlIGlmIHdlIHBvc3NpYmx5IGNhbi4gSXQncyB3YXkg
-dG8gZWFzeQp0byBlbmQgdXAgd2l0aCBtb3JlIHRoYW4gb25lIHdheSBvZiBkZXNjcmliaW5nIHRo
-aW5ncy4KCmNhbGliZ2FpbiBpcyBnb29kIGZvciBtYXBwaW5nIGZyb20gc29tZSBtZWFzdXJlbWVu
-dCB0byBhbiBleHBlY3RlZCBnYWluLgpUaGF0IGhhcmR3YXJlZ2FpbiBoYXMgdHdvIG9wdGlvbnMu
-CjEpIFRoZSBkZXZpY2UgaXMgaW50ZXJuYWxseSBjb21wZW5zYXRpbmcgZm9yIGl0IHNvIGlmIHlv
-dSB3ZXJlIHRvIGhhdmUgYSAyNTBtVgp2YWx1ZSBpdCB3b3VsZCBoYXZlIHRoZSBzYW1lIHJhdyBj
-b3VudHMgdmFsdWUgKHNlZW1zIHVubGlrZWx5IGJ1dCB0aGVyZSBhcmUKZGV2aWNlcyB0aGF0IGRv
-IHRoaXMpCjIpIFRoZSBkZXZpY2UgaXMgbm90IGNvbXBlbnNhdGluZyBmb3IgaXQsIGluIHdoaWNo
-IGNhc2UgaXQgaXMgc2ltcGx5ICdzY2FsZScuCgpTbyB3ZSB0d2VhayB0aGUgY2FsaWJnYWluIHRv
-IGFkanVzdCBmb3IgdGhlIGFuYWxvZyBjaXJjdWl0IHRoZW4gc2V0IHRoZQp0aGUgc2NhbGUgdG8g
-dGhlIHJpZ2h0IHJhbmdlLiAgQXQgdGhhdCBwb2ludCBpbiB1c2Vyc3BhY2Ugd2UgdGFrZQpfcmF3
-ICogX3NjYWxlIGFuZCBnZXQgdGhlIHJlYWwgd29ybGQgdmFsdWUgb2YgdGhlIHJlbGV2YW50IHRo
-aW5nLgoKSWYgZm9yIHdoYXRldmVyIHJlYXNvbiB0aGlzIGlzbid0IHBvc3NpYmxlICh1c3VhbGx5
-IGEgbm9uIGxpbmVhciB0cmFuc2Zvcm0KZnJvbSB0aGUgYWRjIHJlYWRpbmcgdG8gcmVhbCB3b3Js
-ZCkgdGhlbiB3ZSBkbyBoYXZlIHRoZSBvcHRpb24gb2YgcHJvdmlkaW5nCl9QUk9DRVNTRUQgb3V0
-cHV0cyB3aGljaCBhcmUgaW4gdGhlIGJhc2UgdW5pdHMgb2YgdGhlIHJlbGV2YW50IElJTyB1bml0
-LgpIb3dldmVyLCB3ZSBvbmx5IGRvIHRoaXMgaWYgd2UgJ2Nhbid0JyBkbyB0aGUgY29udmVyc2lv
-biBpbiB1c2Vyc3BhY2UuCgoKPiA+PiBTVEFUVVMwOjYJUkVWQVBBCUFDQ01PREUgaGFzIGNoYW5n
-ZWQgc2lnbi4gUG93ZXIgaXMgZXhwb3J0ZWQgcmF0aGVyCj4gPj4gdGhhbiBpbXBvcnRlZC4gVXNl
-ciBzcGFjZSBhcHBsaWNhdGlvbiB3b3VsZCB1c2UgdGhpcyB0byBpbmRpY2F0ZSB0aGUgZGlyZWN0
-aW9uCj4gPj4gb2YgcG93ZXIgZmxvdy4gIAo+ID4gVGhpcyBpcyB3aGVyZSB3ZSBzdGFydCB0byBy
-dW4gaW50byBhIHByb2JsZW0gLSBtb3N0bHkgSUlPIG9ubHkgYWxsb3dzIGZvcgo+ID4gYSBzaW5n
-bGUgdGhyZXNob2xkIGZvciByaXNpbmcgYW5kIGZhbGxpbmcgb24gYSBnaXZlbiBjaGFubmVsLiAg
-Tm8gd2F5IHRvCj4gPiB0ZWxsIHdoaWNoIG9uZSB0cmlnZ2VyZWQgaW4gdGhlIEFCSSAtIGV2ZW4g
-Y29kZSBzYXlzIHdoYXQgYW5kIG9uIHdoYXQgY2hhbm5lbAo+ID4gaXQgZG9lc24ndCBkaXN0aW5n
-dWlzaCBtdWx0aXBsZSBsZXZlbHMuICAKPiBZZWFoLCB0aGVyZSBpcyBubyB0aHJlc2hvbGQgaGVy
-ZS4gSXQgb2NjdXJzIHdpdGggdGhlIHBoYXNlIGV4Y2VlZHMgOTAgZGVnLAo+IHdoaWNoIGluZGlj
-YXRlcyB0aGF0IHRoZSBwb3dlciBpcyBub3cgYmVpbmcgZXhwb3J0ZWQgdG8gdGhlIGdyaWQuCldl
-IGNvdWxkIHBlcmhhcHMgdXNlIGEgZml4ZWQgdGhyZXNob2xkIHRvIHJlcHJlc2VudCB0aGlzIHRo
-ZW4uCldvdWxkIG5lZWQgYSBwaGFzZSBjaGFubmVsIHRvIGFzc29jaWF0ZSBpdCB3aXRoIGJ1dCB0
-aGF0IHNob3VsZCBiZSBmaW5lLgpOb3RoaW5nIHNheXMgYSB0aHJlc2hvbGQgbmVlZHMgdG8gYmUg
-Y2hhbmdlYWJsZSA6KQoKaW5fcGhhc2UwX3RocmVzaF9laXRoZXJfdmFsdWUgPSA5MCBkZWdyZWVz
-Cgo+ID4gCj4gPiBXZSBjYW4gcGxheSBnYW1lcyB3aXRoIGRlZmluaW5nIGFkZGl0aW9uYWwgY2hh
-bm5lbHMgYnV0IGl0IGlzbid0IHRoYXQgZWxlZ2FudC4KPiA+IE5vdyBhc3N1bWluZyB3ZSB3YW50
-IHRvIGRvIGJvdGggZGlyZWN0aW9ucyBvZiBjaGFuZ2UuLiAgCj4gQ29ycmVjdCwgd2UgbmVlZCB0
-byBrbm93IHdoZW4gdGhlIHBvd2VyIGlzIGZsb3dpbmcgZnJvbSB0aGUgcG93ZXIgZ3JpZCBvcgo+
-IGZsb3dpbmcgdG8gdGhlIHBvd2VyIGdyaWQuIFRoaXMgaXMgY29tbW9uIHdpdGggRGlzdHJpYnV0
-ZWQgRW5lcmd5IFJlc291cmNlcwo+IChERVIpIHN1Y2ggYXMgc29sYXIgcGFuZWxzIG9yIHdpbmQg
-ZmFybXMuIAo+ID4gCj4gPiBpbl9wb3dlcjBfdGhyZXNoX2VpdGhlcl92YWx1ZSA9IDAKPiA+ICh0
-byBpbmRpY2F0ZSBhIHRyYW5zaXRpb24gYWNyb3NzIDAgcG93ZXIgLSBJIGFzc3VtZSB0aGUgb3Ro
-ZXIgZGlyZWN0aW9uIGlzCj4gPiBuZWdhdGl2ZT8pCj4gPiBhbmQgYXNzb2NpYXRlZCBldmVudCBj
-b2RlLgo+ID4gICAKPiA+PiAKPiA+PiBTVEFUVVMxOjAJTkxPQUQJQXQgbGVhc3Qgb25lIHBoYXNl
-IGhhcyBlbnRlcmVkIG5vIGxvYWQgY29uZGl0aW9uLiBVc2VyIAo+ID4+IHNwYWNlIGFwcCB3b3Vs
-ZCBwcm9iYWJseSBhbGVydCB0aGUgdXNlciBvZiBhIGZhdWx0eSBjb25kaXRpb24uICAKPiA+IE5v
-dCBzdXJlIHdoYXQgdGhpcyBtYXBzIHRvIC0gYnV0IHdvdWxkIGJlIGJhc2VkIG9uIGhvdyBpdCB3
-YXMgZGV0ZWN0ZWQuCj4gPiBJcyB0aGlzIGVmZmVjdGl2ZWx5IDAgY3VycmVudD8gIAo+IFRoZSBB
-REMgaXMgbm9pc3kgYW5kIGRvZXNu4oCZdCBvdXRwdXQgMHgwMDAgd2hlbiB0aGUgY3VycmVudCBp
-cyAwQSwgc28gYW55dGhpbmcgCj4gYmVsb3cgYSBkZWZpbmVkIHRocmVzaG9sZCBpcyBjb25zaWRl
-cmVkIHRvIGJlIE5vTG9hZC4KU28gdGhhdCdzIGEgc2ltcGxlIGxvdyBjdXJyZW50IHRocmVzaG9s
-ZCAtIGFnYWluIHdpdGggYSBmaXhlZCB2YWx1ZSB3aGljaCBpcwpmaW5lIHRvIHJlcHJlc2VudCBh
-cyB3aXRoIHRoZSBwaGFzZSBvbmUgYWJvdmUuCgo+ID4gICAKPiA+PiAKPiA+PiBTVEFUVVMxOjMJ
-WlhUT1ZBCUluZGljYXRlcyBQaGFzZSBBIHZvbHRhZ2UgemVybyBjcm9zc2luZyBpcyBtaXNzaW5n
-LiBUaGlzIAo+ID4+IGlzIGFub3RoZXIgZmF1bHQgY29uZGl0aW9uLiAgCj4gPiAKPiA+IFNpbWls
-YXIgdG8gdGhlIHJhdGUgb2YgY2hhbmdlIGRldGVjdGlvbiBpbiBzb21lIHdheXMsIGJ1dCBvbmx5
-IGV4cGxpY2l0bHkgbG9va3MKPiA+IGF0IHRoZSAwIHBvaW50LiAgV2Ugd291bGQgbmVlZCBzb21l
-dGhpbmcgbmV3IHRvIHJlcHJlc2VudCB0aGlzIEkgdGhpbmvigKYgIAo+IFRoaXMgb2NjdXJzIHdo
-ZW4gd2UgaGF2ZSBhIHBoYXNlIGZhaWx1cmUgKHRyYW5zZm9ybWVyIGZhaWx1cmUsIGV0Yykgb3Ig
-YSBzZW5zb3IgCj4gZmFpbHVyZSAod2lyaW5nIGZhaWx1cmUsIGV0YykuIElmIHBoYXNlIGZhaWx1
-cmUgb2NjdXJzLCBpdCBjb3VsZCBjYXVzZSBkYW1hZ2UgdG8gCj4gZXF1aXBtZW50IGxpa2UgYSBt
-b3Rvci4KClRoaXMgbmVlZHMgc29tZSB0aG91Z2h0LiAgQ291bGQgYmUgdGhlIGtlcm5lbCdzIFJB
-UyBpbmZyYXN0cnVjdHVyZSBpcyB0aGUgd2F5CnRvIGdvIGJ1dCB0aGlzIGlzIGFuIG9kZCB0aGlu
-ZyB0byBtYXAgdG8gaXQgKGFuZCB0aGF0IGlzIGEgcmF0aGVyIGNvbnNlcnZhdGl2ZQpwYXJ0IG9m
-IHRoZSBrZXJuZWwgLSBpdCdzIGhhcmQgZW5vdWdoIGdldHRpbmcgcGVvcGxlIHRvIGFncmVlIG9u
-IGNvbXB1dGVyIGhhcmR3YXJlCmZhdWx0IGRlc2NyaXB0aW9ucykuCj4gPiAgIAo+ID4+IAouLgo+
-ID4+Pj4+IE9LLCB0aGlzIGlzIGdldHRpbmcgc2lsbHkuICBJIHByZXN1bWUgdGhpcyBtZWFucyB0
-aGUgdmFsdWVzIGFib3ZlIGFyZSBmaWx0ZXJlZCBhbmQgdGhlc2UKPiA+Pj4+PiBhcmVuJ3Q/ICBJ
-ZiBzbyB5b3UgbmVlZCB0byBoYXZlIGNoYW5uZWxzIGZvciBib3RoIGFuZCBkaWZmZXJlbnQgZmls
-dGVyIHZhbHVlcy4gICAgICAKPiA+Pj4+IFRoZXNlIGFyZSB0aGUgYWN0dWFsIHNhbXBsZXMgZnJv
-bSB0aGUgQURDIGFuZCBub3QgYSBjYWxjdWxhdGVkIG1lYXN1cmVtZW50IG92ZXIgMTAvMTIgY3lj
-bGVzLiBUaGVzZSBhcmUgdGhlIHNhbXBsZXMgdGhhdCBhcmUgcGxhY2VkIGluIHRoZSBidWZmZXIu
-ICAgIAo+ID4+PiBPSywgc28gREMgdmFsdWVzIHdoaWNoIGFuc3dlcnMgbXkgcXVlc3Rpb24gYWJv
-dmUuCj4gPj4+IFNvIHRoaXMgaXMgdGhlICdub3JtYWwnIG1lYXN1cmVtZW50LiAgRm9yIHRoZSBt
-dWx0aSBjeWNsZSBvbmVzIHdlIG5lZWQgdG8KPiA+Pj4gcmVwcmVzZW50IHRoZW0gYXMgYWRkaXRp
-b25hbCBtZWFzdXJlbWVudHMgdXNpbmcgdGhlIGluZGV4IGFuZCBkZXNjcmliZSB0aGUKPiA+Pj4g
-ZmlsdGVyaW5nIGFwcGxpZWQgdG8gdGhlbSAob3IgdXNlIGFsdHZvbHRhZ2UgZXRjIHRvIHNheSB3
-ZSBhcmUgbG9va2luZwo+ID4+PiBhdCBtZWFzdXJlbWVudHMgcmVsYXRlZCB0byB0aGUgZmFjdCB0
-aGV5IGFyZSBhbHRlcm5hdGluZyByYXRoZXIgdGhhbiBEQy4gICAgCj4gPj4gSSBhbnN3ZXJlZCB0
-aGlzIGFib3ZlLiBJIHRoaW5rIHdlIHNob3VsZCByZW1vdmUgdGhlc2UgcmVnaXN0ZXJzIGFzIEkg
-Y2Fubm90IHNlZSBob3cgYW55b25lIHdvdWxkIHVzZSAKPiA+PiB0aGVtICAKPiA+IENvb2wuIEV2
-ZW4gZWFzaWVyLiAgIFRob3VnaCBpZiB3ZSBoYXZlIGEgZGV2aWNlIHRoYXQgd2lsbCBhbGxvdyB1
-cyB0byBwdXNoIHRoZXNlCj4gPiB0aHJvdWdoIHRoZSBidWZmZXJlZCBpbnRlcmZhY2UgKHJhdGhl
-ciB0aGFuIHRoZSBTUEkgbWFzdGVyIHN0dWZmIG9uIGhlcmUpCj4gPiB0aGVuIHdlIHdvdWxkIGhh
-dmUgdGhlIGNoYW5uZWxzLCBidXQgbm90IGV4cG9ydCB0aGUgX1JBVyBhdHRyaWJ1dGUgLSB0aHVz
-Cj4gPiBtYWtpbmcgdGhlbSByZWFkYWJsZSBvbmx5IGFzIGEgc3RyZWFtIG9mIGRhdGEuICAKPiBU
-aGVyZSBpcyBubyB3YXkgdG8gcmVhZCBhbGwgdGhlc2UgaW5zdGFudGFuZW91cyByZWdpc3RlcnMg
-ZXZlcnkgMTI1dVMuIFRoZSAKPiBTUEkgbWFzdGVyIGludGVyZmFjZSBpcyB0aGUgb25seSB3YXkg
-dG8gcmV0cmlldmUgdGhlc2UgbWVhc3VyZW1lbnRzLCAKPiBydW5uaW5nIGF0IGFib3V0IDRNYnBz
-LiAKU291bmRzIGxpa2UgYmVzdCBwbGFuIGlzIGRvbid0IGhhdmUgdXNlcnNwYWNlIGFjY2VzcyB0
-byB0aGVtIC0ganVzdCBoYXZlIHRoZSBjaGFubmVscwpmb3IgYXNzb2NpYXRlZCBldmVudHMgaWYg
-dGhlcmUgYXJlIGFueS4KCi4uLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9y
-ZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcml2ZXJkZXYtZGV2ZWwK
+
+--Apple-Mail=_D9FF0FE0-2D25-4736-B142-E2EC969D5280
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
+
+Hi Jonathan,
+
+I have been looking at the IIO ABI docs and if I understand correctly, =
+the idea is to use consistent naming conventions? So for example, =
+looking at the ADE7854 datasheet, the naming matching the ADE7854 =
+registers would be as follows:
+
+{direction}_{type}_{index}_{modifier}_{info_mask}
+
+AIGAIN	-	In_current_a_gain
+AVGAIN	-	in_voltage_a_gain
+BIGAIN	-	in_current_b_gain
+BVGAIN	-	in_voltage_b_gain
+=E2=80=94
+How do we represent the rms and offset
+AIRMSOS	-	in_current_a_rmsoffset
+AVRMSOS	-	in_voltage_a_rmsoffset
+=E2=80=94
+Here I don=E2=80=99t understand how to represent both the phase and the =
+active/reactive/apparent power components. Do we combine the phase and =
+quadrature part like this
+AVAGAIN		-	in_power_a_gain				/* =
+apparent power */
+=E2=80=94
+AWGAIN		-	in_power_ai_gain				=
+/* active power */
+=E2=80=94
+AVARGAIN	-	in_power_aq_gain				=
+/* reactive power */
+=E2=80=94
+Now here it becomes more complicated. Not sure how this gets handled.=20
+AFWATTOS	-	in_power_a_active/fundamental/offset
+=E2=80=94
+AWATTHR	-	in_energy_ai_accumulation
+=E2=80=94
+AVARHR		-	in_energy_aq_accumulation
+=E2=80=94
+IPEAK		-	in_current_peak
+=E2=80=94
+
+I=E2=80=99ll leave it there, because there are some even more =
+complicated register naming issues.
+
+Regards,
+John
+
+
+
+
+
+> On Mar 10, 2018, at 7:10 AM, Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>=20
+> On Thu, 8 Mar 2018 21:37:33 -0300
+> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com =
+<mailto:rodrigosiqueiramelo@gmail.com>> wrote:
+>=20
+>> On 03/07, Jonathan Cameron wrote:
+>>> On Tue, 6 Mar 2018 21:43:47 -0300
+>>> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
+>>>=20
+>>>> The macro IIO_DEV_ATTR_CH_OFF is a wrapper for IIO_DEVICE_ATTR, =
+with a
+>>>> tiny change in the name definition. This extra macro does not =
+improve
+>>>> the readability and also creates some checkpatch errors.
+>>>>=20
+>>>> This patch fixes the checkpatch.pl errors:
+>>>>=20
+>>>> staging/iio/meter/ade7753.c:391: ERROR: Use 4 digit octal (0777) =
+not
+>>>> decimal permissions
+>>>> staging/iio/meter/ade7753.c:395: ERROR: Use 4 digit octal (0777) =
+not
+>>>> decimal permissions
+>>>> staging/iio/meter/ade7759.c:331: ERROR: Use 4 digit octal (0777) =
+not
+>>>> decimal permissions
+>>>> staging/iio/meter/ade7759.c:335: ERROR: Use 4 digit octal (0777) =
+not
+>>>> decimal permissions
+>>>>=20
+>>>> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> =20
+>>>=20
+>>> Hmm. I wondered a bit about this one. It's a correct patch in of
+>>> itself but the interface in question doesn't even vaguely conform
+>>> to any of defined IIO ABI.  Anyhow, it's still and improvement so
+>>> I'll take it. =20
+>>=20
+>> I am not sure if I understood the comment about the ABI. The meter
+>> interface is wrong because it uses things like IIO_DEVICE_ATTR? It
+>> should use iio_info together with *write_raw and *read_raw. Right? Is =
+it
+>> the ABI problem that you refer?
+> The ABI is about the userspace interface of IIO.  It is defined
+> in Documentation/ABI/testing/sysfs-bus-iio*
+> So this documents the naming of sysfs attributes and (more or less)
+> describes a consistent interface to userspace across lots of different
+> types of devices.
+>=20
+> A lot of these older drivers in staging involve a good deal of ABI =
+that
+> was not reviewed or discussed.  That is one of the biggest reasons we
+> didn't take them out of staging in the first place.
+>=20
+> In order for generic userspace programs to have any idea what to do
+> with these devices this all needs to be fixed.
+>=20
+> There may well be cases where we need to expand the existing ABI to
+> cover new things.   That's fine, but it has to be done with full
+> review of the relevant documentation patches.
+>=20
+> Incidentally if you want an easy driver to work on moving out of =
+staging
+> then first thing to do is to compare what it shows to userspace with =
+these
+> docs.  If it's totally different then you have a big job on your hands
+> as often ABI can take a lot of discussion and a long time to establish
+> a consensus.
+>=20
+> Jonathan
+>=20
+>=20
+>>=20
+>> Thanks :)
+>>=20
+>>> Applied to the togreg branch of iio.git and pushed out as testing
+>>> for the autobuilders to play with it.
+>>>=20
+>>> I also added the removal of the header define which is no
+>>> longer used.
+>>>=20
+>>> Please note, following discussions with Michael, I am going to send
+>>> an email announcing an intent to drop these meter drivers next
+>>> cycle unless someone can provide testing for any attempt to
+>>> move them out of staging.  I'm still taking patches on the basis
+>>> that 'might' happen - but I wouldn't focus on these until we
+>>> have some certainty on whether they will be around long term!
+>>>=20
+>>> Jonathan
+>>>=20
+>>>> ---
+>>>> drivers/staging/iio/meter/ade7753.c | 18 ++++++++++--------
+>>>> drivers/staging/iio/meter/ade7759.c | 18 ++++++++++--------
+>>>> 2 files changed, 20 insertions(+), 16 deletions(-)
+>>>>=20
+>>>> diff --git a/drivers/staging/iio/meter/ade7753.c =
+b/drivers/staging/iio/meter/ade7753.c
+>>>> index c44eb577dc35..275e8dfff836 100644
+>>>> --- a/drivers/staging/iio/meter/ade7753.c
+>>>> +++ b/drivers/staging/iio/meter/ade7753.c
+>>>> @@ -388,14 +388,16 @@ static IIO_DEV_ATTR_VPERIOD(0444,
+>>>> 		ade7753_read_16bit,
+>>>> 		NULL,
+>>>> 		ADE7753_PERIOD);
+>>>> -static IIO_DEV_ATTR_CH_OFF(1, 0644,
+>>>> -		ade7753_read_8bit,
+>>>> -		ade7753_write_8bit,
+>>>> -		ADE7753_CH1OS);
+>>>> -static IIO_DEV_ATTR_CH_OFF(2, 0644,
+>>>> -		ade7753_read_8bit,
+>>>> -		ade7753_write_8bit,
+>>>> -		ADE7753_CH2OS);
+>>>> +
+>>>> +static IIO_DEVICE_ATTR(choff_1, 0644,
+>>>> +			ade7753_read_8bit,
+>>>> +			ade7753_write_8bit,
+>>>> +			ADE7753_CH1OS);
+>>>> +
+>>>> +static IIO_DEVICE_ATTR(choff_2, 0644,
+>>>> +			ade7753_read_8bit,
+>>>> +			ade7753_write_8bit,
+>>>> +			ADE7753_CH2OS);
+>>>>=20
+>>>> static int ade7753_set_irq(struct device *dev, bool enable)
+>>>> {
+>>>> diff --git a/drivers/staging/iio/meter/ade7759.c =
+b/drivers/staging/iio/meter/ade7759.c
+>>>> index 1decb2b8afab..c078b770fa53 100644
+>>>> --- a/drivers/staging/iio/meter/ade7759.c
+>>>> +++ b/drivers/staging/iio/meter/ade7759.c
+>>>> @@ -328,14 +328,16 @@ static IIO_DEV_ATTR_ACTIVE_POWER_GAIN(0644,
+>>>> 		ade7759_read_16bit,
+>>>> 		ade7759_write_16bit,
+>>>> 		ADE7759_APGAIN);
+>>>> -static IIO_DEV_ATTR_CH_OFF(1, 0644,
+>>>> -		ade7759_read_8bit,
+>>>> -		ade7759_write_8bit,
+>>>> -		ADE7759_CH1OS);
+>>>> -static IIO_DEV_ATTR_CH_OFF(2, 0644,
+>>>> -		ade7759_read_8bit,
+>>>> -		ade7759_write_8bit,
+>>>> -		ADE7759_CH2OS);
+>>>> +
+>>>> +static IIO_DEVICE_ATTR(choff_1, 0644,
+>>>> +			ade7759_read_8bit,
+>>>> +			ade7759_write_8bit,
+>>>> +			ADE7759_CH1OS);
+>>>> +
+>>>> +static IIO_DEVICE_ATTR(choff_2, 0644,
+>>>> +			ade7759_read_8bit,
+>>>> +			ade7759_write_8bit,
+>>>> +			ADE7759_CH2OS);
+>>>>=20
+>>>> static int ade7759_set_irq(struct device *dev, bool enable)
+>>>> { =20
+>>>=20
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" =
+in
+>> the body of a message to majordomo@vger.kernel.org =
+<mailto:majordomo@vger.kernel.org>
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html =
+<http://vger.kernel.org/majordomo-info.html>
+>=20
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org <mailto:devel@linuxdriverproject.org>
+> =
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel =
+<http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>=
+
+
+--Apple-Mail=_D9FF0FE0-2D25-4736-B142-E2EC969D5280
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=utf-8
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dutf-8"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D"">Hi =
+Jonathan,<div class=3D""><br class=3D""></div><div class=3D"">I have =
+been looking at the IIO ABI docs and if I understand correctly, the idea =
+is to use consistent naming conventions? So for example, looking at the =
+ADE7854 datasheet, the naming matching the ADE7854 registers would be as =
+follows:</div><div class=3D""><br class=3D""></div><div =
+class=3D"">{direction}_{type}_{index}_{modifier}_{info_mask}</div><div =
+class=3D""><br class=3D""></div><div class=3D"">AIGAIN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>-<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>In_current_a_gain</div><div class=3D"">AVGAIN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>-<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_voltage_a_gain</div><div class=3D"">BIGAIN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>-<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current_b_gain</div><div class=3D"">BVGAIN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>-<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_voltage_b_gain</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">How do we represent the rms and offset</div><div =
+class=3D"">AIRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current_a_rmsoffset</div><div =
+class=3D"">AVRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_voltage_a_rmsoffset</div><div =
+class=3D"">=E2=80=94</div><div class=3D"">Here I don=E2=80=99t =
+understand how to represent both the phase and the =
+active/reactive/apparent power components. Do we combine the phase and =
+quadrature part like this</div><div class=3D"">AVAGAIN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>-<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_power_a_gain<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">				</span>/* =
+apparent power */</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">AWGAIN<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+		</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power_ai_gain<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+</span>/* active power */</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">AVARGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power_aq_gain<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+</span>/* reactive power */</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">Now here it becomes more complicated. Not sure how this gets =
+handled.&nbsp;</div><div class=3D"">AFWATTOS<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power_a_active/fundamental/offset</div><div =
+class=3D"">=E2=80=94</div><div class=3D"">AWATTHR<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>-<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_energy_ai_accumulation</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">AVARHR<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+		</span>-<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energy_aq_accumulation</div><div class=3D"">=E2=80=94</div><div =
+class=3D"">IPEAK<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+	</span>-<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current_peak</div><div class=3D"">=E2=80=94</div><div =
+class=3D""><br class=3D""></div><div class=3D"">I=E2=80=99ll leave it =
+there, because there are some even more complicated register naming =
+issues.<br class=3D""><div class=3D"">
+<div style=3D"color: rgb(0, 0, 0); font-family: Helvetica; font-size: =
+12px; font-style: normal; font-variant-caps: normal; font-weight: =
+normal; letter-spacing: normal; orphans: auto; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; widows: =
+auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px; word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
+class=3D""><br class=3D"Apple-interchange-newline">Regards,</div><div =
+class=3D"">John</div><div class=3D""><br class=3D""></div><div =
+class=3D""><br class=3D""></div></div><br =
+class=3D"Apple-interchange-newline" style=3D"color: rgb(0, 0, 0); =
+font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+orphans: auto; text-align: start; text-indent: 0px; text-transform: =
+none; white-space: normal; widows: auto; word-spacing: 0px; =
+-webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;"><br =
+class=3D"Apple-interchange-newline">
+
+</div>
+<div><br class=3D""><blockquote type=3D"cite" class=3D""><div =
+class=3D"">On Mar 10, 2018, at 7:10 AM, Jonathan Cameron &lt;<a =
+href=3D"mailto:jic23@kernel.org" class=3D"">jic23@kernel.org</a>&gt; =
+wrote:</div><br class=3D"Apple-interchange-newline"><div class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">On Thu, 8 Mar 2018 21:37:33 =
+-0300</span><br style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px;" class=3D""><span style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; display: =
+inline !important;" class=3D"">Rodrigo Siqueira &lt;</span><a =
+href=3D"mailto:rodrigosiqueiramelo@gmail.com" style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; orphans: auto; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px;" =
+class=3D"">rodrigosiqueiramelo@gmail.com</a><span style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; display: =
+inline !important;" class=3D"">&gt; wrote:</span><br style=3D"font-family:=
+ Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><blockquote type=3D"cite" style=3D"font-family: Helvetica; =
+font-size: 12px; font-style: normal; font-variant-caps: normal; =
+font-weight: normal; letter-spacing: normal; orphans: auto; text-align: =
+start; text-indent: 0px; text-transform: none; white-space: normal; =
+widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px;" class=3D"">On 03/07, Jonathan Cameron =
+wrote:<br class=3D""><blockquote type=3D"cite" class=3D"">On Tue, 6 Mar =
+2018 21:43:47 -0300<br class=3D"">Rodrigo Siqueira &lt;<a =
+href=3D"mailto:rodrigosiqueiramelo@gmail.com" =
+class=3D"">rodrigosiqueiramelo@gmail.com</a>&gt; wrote:<br class=3D""><br =
+class=3D""><blockquote type=3D"cite" class=3D"">The macro =
+IIO_DEV_ATTR_CH_OFF is a wrapper for IIO_DEVICE_ATTR, with a<br =
+class=3D"">tiny change in the name definition. This extra macro does not =
+improve<br class=3D"">the readability and also creates some checkpatch =
+errors.<br class=3D""><br class=3D"">This patch fixes the checkpatch.pl =
+errors:<br class=3D""><br class=3D"">staging/iio/meter/ade7753.c:391: =
+ERROR: Use 4 digit octal (0777) not<br class=3D"">decimal permissions<br =
+class=3D"">staging/iio/meter/ade7753.c:395: ERROR: Use 4 digit octal =
+(0777) not<br class=3D"">decimal permissions<br =
+class=3D"">staging/iio/meter/ade7759.c:331: ERROR: Use 4 digit octal =
+(0777) not<br class=3D"">decimal permissions<br =
+class=3D"">staging/iio/meter/ade7759.c:335: ERROR: Use 4 digit octal =
+(0777) not<br class=3D"">decimal permissions<br class=3D""><br =
+class=3D"">Signed-off-by: Rodrigo Siqueira &lt;<a =
+href=3D"mailto:rodrigosiqueiramelo@gmail.com" =
+class=3D"">rodrigosiqueiramelo@gmail.com</a>&gt; &nbsp;<br =
+class=3D""></blockquote><br class=3D"">Hmm. I wondered a bit about this =
+one. It's a correct patch in of<br class=3D"">itself but the interface =
+in question doesn't even vaguely conform<br class=3D"">to any of defined =
+IIO ABI. &nbsp;Anyhow, it's still and improvement so<br class=3D"">I'll =
+take it. &nbsp;<br class=3D""></blockquote><br class=3D"">I am not sure =
+if I understood the comment about the ABI. The meter<br =
+class=3D"">interface is wrong because it uses things like =
+IIO_DEVICE_ATTR? It<br class=3D"">should use iio_info together with =
+*write_raw and *read_raw. Right? Is it<br class=3D"">the ABI problem =
+that you refer?<br class=3D""></blockquote><span style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; display: =
+inline !important;" class=3D"">The ABI is about the userspace interface =
+of IIO. &nbsp;It is defined</span><br style=3D"font-family: Helvetica; =
+font-size: 12px; font-style: normal; font-variant-caps: normal; =
+font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">in =
+Documentation/ABI/testing/sysfs-bus-iio*</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">So this documents the naming of =
+sysfs attributes and (more or less)</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">describes a consistent interface =
+to userspace across lots of different</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">types of devices.</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><br=
+ style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">A lot of these older drivers in staging involve =
+a good deal of ABI that</span><br style=3D"font-family: Helvetica; =
+font-size: 12px; font-style: normal; font-variant-caps: normal; =
+font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">was not reviewed or discussed. =
+&nbsp;That is one of the biggest reasons we</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">didn't take them out of staging in the first =
+place.</span><br style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px;" class=3D""><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">In order for generic userspace =
+programs to have any idea what to do</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">with these devices this all =
+needs to be fixed.</span><br style=3D"font-family: Helvetica; font-size: =
+12px; font-style: normal; font-variant-caps: normal; font-weight: =
+normal; letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px;" class=3D""><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">There may well be cases where we =
+need to expand the existing ABI to</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">cover new things. =
+&nbsp;&nbsp;That's fine, but it has to be done with full</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">review of the relevant documentation =
+patches.</span><br style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px;" class=3D""><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">Incidentally if you want an easy =
+driver to work on moving out of staging</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">then first thing to do is to =
+compare what it shows to userspace with these</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">docs. &nbsp;If it's totally different then you =
+have a big job on your hands</span><br style=3D"font-family: Helvetica; =
+font-size: 12px; font-style: normal; font-variant-caps: normal; =
+font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">as often ABI can take a lot of =
+discussion and a long time to establish</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><span =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; =
+display: inline !important;" class=3D"">a consensus.</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><br=
+ style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">Jonathan</span><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><br=
+ style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><blockquote type=3D"cite" style=3D"font-family: Helvetica; =
+font-size: 12px; font-style: normal; font-variant-caps: normal; =
+font-weight: normal; letter-spacing: normal; orphans: auto; text-align: =
+start; text-indent: 0px; text-transform: none; white-space: normal; =
+widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px;" class=3D""><br class=3D"">Thanks :)<br =
+class=3D""><br class=3D""><blockquote type=3D"cite" class=3D"">Applied =
+to the togreg branch of iio.git and pushed out as testing<br =
+class=3D"">for the autobuilders to play with it.<br class=3D""><br =
+class=3D"">I also added the removal of the header define which is no<br =
+class=3D"">longer used.<br class=3D""><br class=3D"">Please note, =
+following discussions with Michael, I am going to send<br class=3D"">an =
+email announcing an intent to drop these meter drivers next<br =
+class=3D"">cycle unless someone can provide testing for any attempt =
+to<br class=3D"">move them out of staging. &nbsp;I'm still taking =
+patches on the basis<br class=3D"">that 'might' happen - but I wouldn't =
+focus on these until we<br class=3D"">have some certainty on whether =
+they will be around long term!<br class=3D""><br class=3D"">Jonathan<br =
+class=3D""><br class=3D""><blockquote type=3D"cite" class=3D"">---<br =
+class=3D"">drivers/staging/iio/meter/ade7753.c | 18 =
+++++++++++--------<br class=3D"">drivers/staging/iio/meter/ade7759.c | =
+18 ++++++++++--------<br class=3D"">2 files changed, 20 insertions(+), =
+16 deletions(-)<br class=3D""><br class=3D"">diff --git =
+a/drivers/staging/iio/meter/ade7753.c =
+b/drivers/staging/iio/meter/ade7753.c<br class=3D"">index =
+c44eb577dc35..275e8dfff836 100644<br class=3D"">--- =
+a/drivers/staging/iio/meter/ade7753.c<br class=3D"">+++ =
+b/drivers/staging/iio/meter/ade7753.c<br class=3D"">@@ -388,14 +388,16 =
+@@ static IIO_DEV_ATTR_VPERIOD(0444,<br class=3D""><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7753_read_16bit,<br class=3D""><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>NULL,<br class=3D""><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7753_PERIOD);<br class=3D"">-static IIO_DEV_ATTR_CH_OFF(1, =
+0644,<br class=3D"">-<span class=3D"Apple-tab-span" style=3D"white-space: =
+pre;">	</span><span class=3D"Apple-tab-span" style=3D"white-space: =
+pre;">	</span>ade7753_read_8bit,<br class=3D"">-<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7753_write_8bit,<br class=3D"">-<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ADE7753_CH1OS);<br =
+class=3D"">-static IIO_DEV_ATTR_CH_OFF(2, 0644,<br class=3D"">-<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7753_read_8bit,<br class=3D"">-<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7753_write_8bit,<br =
+class=3D"">-<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7753_CH2OS);<br class=3D"">+<br class=3D"">+static =
+IIO_DEVICE_ATTR(choff_1, 0644,<br class=3D"">+<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7753_read_8bit,<br class=3D"">+<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7753_write_8bit,<br =
+class=3D"">+<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7753_CH1OS);<br class=3D"">+<br class=3D"">+static =
+IIO_DEVICE_ATTR(choff_2, 0644,<br class=3D"">+<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7753_read_8bit,<br class=3D"">+<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7753_write_8bit,<br =
+class=3D"">+<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7753_CH2OS);<br class=3D""><br class=3D"">static int =
+ade7753_set_irq(struct device *dev, bool enable)<br class=3D"">{<br =
+class=3D"">diff --git a/drivers/staging/iio/meter/ade7759.c =
+b/drivers/staging/iio/meter/ade7759.c<br class=3D"">index =
+1decb2b8afab..c078b770fa53 100644<br class=3D"">--- =
+a/drivers/staging/iio/meter/ade7759.c<br class=3D"">+++ =
+b/drivers/staging/iio/meter/ade7759.c<br class=3D"">@@ -328,14 +328,16 =
+@@ static IIO_DEV_ATTR_ACTIVE_POWER_GAIN(0644,<br class=3D""><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7759_read_16bit,<br class=3D""><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7759_write_16bit,<br =
+class=3D""><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7759_APGAIN);<br class=3D"">-static IIO_DEV_ATTR_CH_OFF(1, =
+0644,<br class=3D"">-<span class=3D"Apple-tab-span" style=3D"white-space: =
+pre;">	</span><span class=3D"Apple-tab-span" style=3D"white-space: =
+pre;">	</span>ade7759_read_8bit,<br class=3D"">-<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7759_write_8bit,<br class=3D"">-<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ADE7759_CH1OS);<br =
+class=3D"">-static IIO_DEV_ATTR_CH_OFF(2, 0644,<br class=3D"">-<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7759_read_8bit,<br class=3D"">-<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7759_write_8bit,<br =
+class=3D"">-<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7759_CH2OS);<br class=3D"">+<br class=3D"">+static =
+IIO_DEVICE_ATTR(choff_1, 0644,<br class=3D"">+<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7759_read_8bit,<br class=3D"">+<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7759_write_8bit,<br =
+class=3D"">+<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7759_CH1OS);<br class=3D"">+<br class=3D"">+static =
+IIO_DEVICE_ATTR(choff_2, 0644,<br class=3D"">+<span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	</span><span =
+class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ade7759_read_8bit,<br class=3D"">+<span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span><span class=3D"Apple-tab-span" =
+style=3D"white-space: pre;">	</span>ade7759_write_8bit,<br =
+class=3D"">+<span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span><span class=3D"Apple-tab-span" style=3D"white-space: pre;">	=
+</span>ADE7759_CH2OS);<br class=3D""><br class=3D"">static int =
+ade7759_set_irq(struct device *dev, bool enable)<br class=3D"">{ =
+&nbsp;<br class=3D""></blockquote><br class=3D""></blockquote>--<br =
+class=3D"">To unsubscribe from this list: send the line "unsubscribe =
+linux-iio" in<br class=3D"">the body of a message to<span =
+class=3D"Apple-converted-space">&nbsp;</span><a =
+href=3D"mailto:majordomo@vger.kernel.org" =
+class=3D"">majordomo@vger.kernel.org</a><br class=3D"">More majordomo =
+info at &nbsp;<a href=3D"http://vger.kernel.org/majordomo-info.html" =
+class=3D"">http://vger.kernel.org/majordomo-info.html</a><br =
+class=3D""></blockquote><br style=3D"font-family: Helvetica; font-size: =
+12px; font-style: normal; font-variant-caps: normal; font-weight: =
+normal; letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px;" class=3D""><span style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px; float: none; display: =
+inline !important;" =
+class=3D"">_______________________________________________</span><br =
+style=3D"font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; word-spacing: 0px; -webkit-text-stroke-width: 0px;" =
+class=3D""><span style=3D"font-family: Helvetica; font-size: 12px; =
+font-style: normal; font-variant-caps: normal; font-weight: normal; =
+letter-spacing: normal; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; float: none; display: inline =
+!important;" class=3D"">devel mailing list</span><br style=3D"font-family:=
+ Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><a =
+href=3D"mailto:devel@linuxdriverproject.org" style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; orphans: auto; =
+text-align: start; text-indent: 0px; text-transform: none; white-space: =
+normal; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px;" =
+class=3D"">devel@linuxdriverproject.org</a><br style=3D"font-family: =
+Helvetica; font-size: 12px; font-style: normal; font-variant-caps: =
+normal; font-weight: normal; letter-spacing: normal; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; =
+word-spacing: 0px; -webkit-text-stroke-width: 0px;" class=3D""><a =
+href=3D"http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev=
+-devel" style=3D"font-family: Helvetica; font-size: 12px; font-style: =
+normal; font-variant-caps: normal; font-weight: normal; letter-spacing: =
+normal; orphans: auto; text-align: start; text-indent: 0px; =
+text-transform: none; white-space: normal; widows: auto; word-spacing: =
+0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;" =
+class=3D"">http://driverdev.linuxdriverproject.org/mailman/listinfo/driver=
+dev-devel</a></div></blockquote></div><br class=3D""></div></body></html>=
+
+--Apple-Mail=_D9FF0FE0-2D25-4736-B142-E2EC969D5280--
