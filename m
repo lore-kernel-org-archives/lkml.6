@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeCOPkV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 11:40:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60463 "EHLO mail.bootlin.com"
+        id S1752889AbeCOPkm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 11:40:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60539 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932427AbeCOPkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 11:40:19 -0400
+        id S1752843AbeCOPkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 11:40:37 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, igall@marvell.com,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH 01/12] crypto: inside-secure - move hash result dma mapping to request
-Date: Thu, 15 Mar 2018 16:38:40 +0100
-Message-Id: <20180315153851.9958-2-antoine.tenart@bootlin.com>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: [PATCH 04/12] crypto: inside-secure - move the digest to the request context
+Date: Thu, 15 Mar 2018 16:38:43 +0100
+Message-Id: <20180315153851.9958-5-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180315153851.9958-1-antoine.tenart@bootlin.com>
 References: <20180315153851.9958-1-antoine.tenart@bootlin.com>
@@ -23,112 +23,156 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ofer Heifetz <oferh@marvell.com>
-
-In heavy traffic the DMA mapping is overwritten by multiple requests as
-the DMA address is stored in a global context. This patch moves this
-information to the per-hash request context so that it can't be
-overwritten.
+This patches moves the digest information from the transformation
+context to the request context. This fixes cases where HMAC init
+functions were called and override the digest value for a short period
+of time, as the HMAC init functions call the SHA init one which reset
+the value. This lead to a small percentage of HMAC being incorrectly
+computed under heavy load.
 
 Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
-Signed-off-by: Ofer Heifetz <oferh@marvell.com>
-[Antoine: rebased the patch, small fixes, commit message.]
+Suggested-by: Ofer Heifetz <oferh@marvell.com>
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+[Ofer here did all the work, from seeing the issue to understanding the
+root cause. I only made the patch.]
 ---
- drivers/crypto/inside-secure/safexcel.c      |  7 +------
- drivers/crypto/inside-secure/safexcel.h      |  4 +---
- drivers/crypto/inside-secure/safexcel_hash.c | 17 ++++++++++++-----
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/crypto/inside-secure/safexcel_hash.c | 30 +++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 956a37692e42..0c33bdbe48fc 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -538,15 +538,10 @@ void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring)
- }
- 
- void safexcel_free_context(struct safexcel_crypto_priv *priv,
--			   struct crypto_async_request *req,
--			   int result_sz)
-+			   struct crypto_async_request *req)
- {
- 	struct safexcel_context *ctx = crypto_tfm_ctx(req->tfm);
- 
--	if (ctx->result_dma)
--		dma_unmap_single(priv->dev, ctx->result_dma, result_sz,
--				 DMA_FROM_DEVICE);
--
- 	if (ctx->cache) {
- 		dma_unmap_single(priv->dev, ctx->cache_dma, ctx->cache_sz,
- 				 DMA_TO_DEVICE);
-diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index caaf6a81b162..4e14c7e730c4 100644
---- a/drivers/crypto/inside-secure/safexcel.h
-+++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -580,7 +580,6 @@ struct safexcel_context {
- 	bool exit_inv;
- 
- 	/* Used for ahash requests */
--	dma_addr_t result_dma;
- 	void *cache;
- 	dma_addr_t cache_dma;
- 	unsigned int cache_sz;
-@@ -608,8 +607,7 @@ struct safexcel_inv_result {
- void safexcel_dequeue(struct safexcel_crypto_priv *priv, int ring);
- void safexcel_complete(struct safexcel_crypto_priv *priv, int ring);
- void safexcel_free_context(struct safexcel_crypto_priv *priv,
--				  struct crypto_async_request *req,
--				  int result_sz);
-+				  struct crypto_async_request *req);
- int safexcel_invalidate_cache(struct crypto_async_request *async,
- 			      struct safexcel_crypto_priv *priv,
- 			      dma_addr_t ctxr_dma, int ring,
 diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index a4960a934eef..e33f089185d6 100644
+index 77268c9f1620..bb2be12a8f4a 100644
 --- a/drivers/crypto/inside-secure/safexcel_hash.c
 +++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -34,6 +34,7 @@ struct safexcel_ahash_req {
- 	bool needs_inv;
+@@ -21,7 +21,6 @@ struct safexcel_ahash_ctx {
+ 	struct safexcel_crypto_priv *priv;
  
+ 	u32 alg;
+-	u32 digest;
+ 
+ 	u32 ipad[SHA1_DIGEST_SIZE / sizeof(u32)];
+ 	u32 opad[SHA1_DIGEST_SIZE / sizeof(u32)];
+@@ -36,6 +35,8 @@ struct safexcel_ahash_req {
  	int nents;
-+	dma_addr_t result_dma;
+ 	dma_addr_t result_dma;
  
++	u32 digest;
++
  	u8 state_sz;    /* expected sate size, only set once */
  	u32 state[SHA256_DIGEST_SIZE / sizeof(u32)] __aligned(sizeof(u32));
-@@ -158,7 +159,13 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 		sreq->nents = 0;
- 	}
  
--	safexcel_free_context(priv, async, sreq->state_sz);
-+	if (sreq->result_dma) {
-+		dma_unmap_single(priv->dev, sreq->result_dma, sreq->state_sz,
-+				 DMA_FROM_DEVICE);
-+		sreq->result_dma = 0;
-+	}
+@@ -53,6 +54,8 @@ struct safexcel_ahash_export_state {
+ 	u64 len;
+ 	u64 processed;
+ 
++	u32 digest;
 +
-+	safexcel_free_context(priv, async);
+ 	u32 state[SHA256_DIGEST_SIZE / sizeof(u32)];
+ 	u8 cache[SHA256_BLOCK_SIZE];
+ };
+@@ -86,9 +89,9 @@ static void safexcel_context_control(struct safexcel_ahash_ctx *ctx,
  
- 	cache_len = sreq->len - sreq->processed;
- 	if (cache_len)
-@@ -291,15 +298,15 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 	/* Add the token */
- 	safexcel_hash_token(first_cdesc, len, req->state_sz);
+ 	cdesc->control_data.control0 |= CONTEXT_CONTROL_TYPE_HASH_OUT;
+ 	cdesc->control_data.control0 |= ctx->alg;
+-	cdesc->control_data.control0 |= ctx->digest;
++	cdesc->control_data.control0 |= req->digest;
  
--	ctx->base.result_dma = dma_map_single(priv->dev, req->state,
--					      req->state_sz, DMA_FROM_DEVICE);
--	if (dma_mapping_error(priv->dev, ctx->base.result_dma)) {
-+	req->result_dma = dma_map_single(priv->dev, req->state, req->state_sz,
-+					 DMA_FROM_DEVICE);
-+	if (dma_mapping_error(priv->dev, req->result_dma)) {
- 		ret = -EINVAL;
- 		goto cdesc_rollback;
- 	}
+-	if (ctx->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED) {
++	if (req->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED) {
+ 		if (req->processed) {
+ 			if (ctx->alg == CONTEXT_CONTROL_CRYPTO_ALG_SHA1)
+ 				cdesc->control_data.control0 |= CONTEXT_CONTROL_SIZE(6);
+@@ -116,7 +119,7 @@ static void safexcel_context_control(struct safexcel_ahash_ctx *ctx,
+ 			if (req->finish)
+ 				ctx->base.ctxr->data[i] = cpu_to_le32(req->processed / blocksize);
+ 		}
+-	} else if (ctx->digest == CONTEXT_CONTROL_DIGEST_HMAC) {
++	} else if (req->digest == CONTEXT_CONTROL_DIGEST_HMAC) {
+ 		cdesc->control_data.control0 |= CONTEXT_CONTROL_SIZE(10);
  
- 	/* Add a result descriptor */
--	rdesc = safexcel_add_rdesc(priv, ring, 1, 1, ctx->base.result_dma,
-+	rdesc = safexcel_add_rdesc(priv, ring, 1, 1, req->result_dma,
- 				   req->state_sz);
- 	if (IS_ERR(rdesc)) {
- 		ret = PTR_ERR(rdesc);
+ 		memcpy(ctx->base.ctxr->data, ctx->ipad, digestsize);
+@@ -553,7 +556,7 @@ static int safexcel_ahash_enqueue(struct ahash_request *areq)
+ 	if (ctx->base.ctxr) {
+ 		if (priv->version == EIP197 &&
+ 		    !ctx->base.needs_inv && req->processed &&
+-		    ctx->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED)
++		    req->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED)
+ 			/* We're still setting needs_inv here, even though it is
+ 			 * cleared right away, because the needs_inv flag can be
+ 			 * set in other functions and we want to keep the same
+@@ -588,7 +591,6 @@ static int safexcel_ahash_enqueue(struct ahash_request *areq)
+ 
+ static int safexcel_ahash_update(struct ahash_request *areq)
+ {
+-	struct safexcel_ahash_ctx *ctx = crypto_ahash_ctx(crypto_ahash_reqtfm(areq));
+ 	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
+ 	struct crypto_ahash *ahash = crypto_ahash_reqtfm(areq);
+ 
+@@ -604,7 +606,7 @@ static int safexcel_ahash_update(struct ahash_request *areq)
+ 	 * We're not doing partial updates when performing an hmac request.
+ 	 * Everything will be handled by the final() call.
+ 	 */
+-	if (ctx->digest == CONTEXT_CONTROL_DIGEST_HMAC)
++	if (req->digest == CONTEXT_CONTROL_DIGEST_HMAC)
+ 		return 0;
+ 
+ 	if (req->hmac)
+@@ -663,6 +665,8 @@ static int safexcel_ahash_export(struct ahash_request *areq, void *out)
+ 	export->len = req->len;
+ 	export->processed = req->processed;
+ 
++	export->digest = req->digest;
++
+ 	memcpy(export->state, req->state, req->state_sz);
+ 	memcpy(export->cache, req->cache, crypto_ahash_blocksize(ahash));
+ 
+@@ -683,6 +687,8 @@ static int safexcel_ahash_import(struct ahash_request *areq, const void *in)
+ 	req->len = export->len;
+ 	req->processed = export->processed;
+ 
++	req->digest = export->digest;
++
+ 	memcpy(req->cache, export->cache, crypto_ahash_blocksize(ahash));
+ 	memcpy(req->state, export->state, req->state_sz);
+ 
+@@ -719,7 +725,7 @@ static int safexcel_sha1_init(struct ahash_request *areq)
+ 	req->state[4] = SHA1_H4;
+ 
+ 	ctx->alg = CONTEXT_CONTROL_CRYPTO_ALG_SHA1;
+-	ctx->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
++	req->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
+ 	req->state_sz = SHA1_DIGEST_SIZE;
+ 
+ 	return 0;
+@@ -786,10 +792,10 @@ struct safexcel_alg_template safexcel_alg_sha1 = {
+ 
+ static int safexcel_hmac_sha1_init(struct ahash_request *areq)
+ {
+-	struct safexcel_ahash_ctx *ctx = crypto_ahash_ctx(crypto_ahash_reqtfm(areq));
++	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
+ 
+ 	safexcel_sha1_init(areq);
+-	ctx->digest = CONTEXT_CONTROL_DIGEST_HMAC;
++	req->digest = CONTEXT_CONTROL_DIGEST_HMAC;
+ 	return 0;
+ }
+ 
+@@ -1027,7 +1033,7 @@ static int safexcel_sha256_init(struct ahash_request *areq)
+ 	req->state[7] = SHA256_H7;
+ 
+ 	ctx->alg = CONTEXT_CONTROL_CRYPTO_ALG_SHA256;
+-	ctx->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
++	req->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
+ 	req->state_sz = SHA256_DIGEST_SIZE;
+ 
+ 	return 0;
+@@ -1089,7 +1095,7 @@ static int safexcel_sha224_init(struct ahash_request *areq)
+ 	req->state[7] = SHA224_H7;
+ 
+ 	ctx->alg = CONTEXT_CONTROL_CRYPTO_ALG_SHA224;
+-	ctx->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
++	req->digest = CONTEXT_CONTROL_DIGEST_PRECOMPUTED;
+ 	req->state_sz = SHA256_DIGEST_SIZE;
+ 
+ 	return 0;
 -- 
 2.14.3
