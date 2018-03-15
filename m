@@ -1,103 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752150AbeCOIxY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 04:53:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12000 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751679AbeCOIxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 04:53:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,308,1517904000";
-   d="scan'208";a="211520993"
-Subject: Re: [PATCH v3 00/11] mmc: sdhci-omap: Add UHS/HS200 mode support
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180307132020.30951-1-kishon@ti.com>
- <CAPDyKFrnPQs3B2QN7tf3UH0JYjqkpS1YDhq0s3scads3exPCCg@mail.gmail.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <1b7e25b2-4949-5427-1c36-0b253c79ff8d@intel.com>
-Date: Thu, 15 Mar 2018 10:52:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751977AbeCOIwS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 04:52:18 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:9374 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751578AbeCOIwQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 04:52:16 -0400
+From: Zong Li <zong@andestech.com>
+To: <palmer@sifive.com>, <albert@sifive.com>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <zong@andestech.com>, <zongbox@gmail.com>
+CC: <greentime@andestech.com>
+Subject: [PATCH v2 08/11] RISC-V: Support ADD32 relocation type in kernel module
+Date: Thu, 15 Mar 2018 16:50:48 +0800
+Message-ID: <b3a04b497ae4171cb4e8af91c3091af68d31c129.1521103173.git.zong@andestech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1521103167.git.zong@andestech.com>
+References: <cover.1521103167.git.zong@andestech.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrnPQs3B2QN7tf3UH0JYjqkpS1YDhq0s3scads3exPCCg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w2F8m7aB081045
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/03/18 10:47, Ulf Hansson wrote:
-> On 7 March 2018 at 14:20, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> Add UHS/HS200 mode support in sdhci-omap. The programming sequence
->> for voltage switching, tuning is followed from AM572x TRM
->> http://www.ti.com/lit/ug/spruhz6i/spruhz6i.pdf
->> (Similar to all AM57x/DRA7x SoCs). The patch series also implements
->> workaround for errata published in
->> http://www.ti.com/lit/er/sprz429k/sprz429k.pdf
->>
->> patches are created on top of
->> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
->>
->> Patches in v2 already applied to mmc -next are dropped from the
->> series.
->>
->> Changes from v2:
->> *) Changed SW timeout logic as per Adrians's suggestion
->> *) Validated SDIO with the current patches (added a couple of fixes
->>    found while adding SDIO support).
->> *) Used soc_device_match() instead of pdata-quirks as per Tony's
->>    suggestions.
->>
->> Changes from v1:
->> *) Only poll on DAT0 and DATI for card_busy status
->> *) Cleanup iodelay patch as suggested by Tony.
->> *) Added quirk to disable HW timeout
->> *) Use the existing data timer but program a relatively accurate
->>    SW timeout value (Impacts all platforms)
->> *) Fix a bug in sdhci which was using data_timer for non data line
->>    commands
->>
->> Kishon Vijay Abraham I (11):
->>   mmc: sdhci-omap: Fix when capabilities are obtained from
->>     SDHCI_CAPABILITIES reg
->>   mmc: sdhci-omap: Remove setting ADMA capability in driver
->>   mmc: sdhci-omap: Workaround for Errata i843
->>   mmc: sdhci-omap: Invoke sdhci_get_of_property to read sdhci dt
->>     properties
->>   mmc: sdhci: Disable HS200 mode if controller can't support 1.8v
->>   mmc: sdhci: Add quirk to disable HW timeout
->>   mmc: sdhci: Program a relatively accurate SW timeout value
->>   mmc: sdhci-omap: Workaround for Errata i834
->>   dt-bindings: sdhci-omap: Add K2G specific binding
->>   mmc: sdhci-omap: Add support for MMC/SD controller in k2g SoC
->>   mmc: sdhci-omap: Add sdhci_omap specific ops for enable_sdio_irq
->>
->>  .../devicetree/bindings/mmc/sdhci-omap.txt         |  2 +
->>  drivers/mmc/host/sdhci-omap.c                      | 78 +++++++++++++++++++---
->>  drivers/mmc/host/sdhci.c                           | 75 +++++++++++++++++----
->>  drivers/mmc/host/sdhci.h                           | 15 +++++
->>  4 files changed, 148 insertions(+), 22 deletions(-)
->>
->> --
->> 2.11.0
->>
-> 
-> Overall this looks good to me, however it seems like we need to give
-> Adrian a little more time to comment.
-> 
+Signed-off-by: Zong Li <zong@andestech.com>
+---
+ arch/riscv/kernel/module.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I will try to look at it today.
+diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+index 957933e669b1..73ea36c73d3b 100644
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -249,6 +249,13 @@ static int apply_r_riscv_align_rela(struct module *me, u32 *location,
+ 	return -EINVAL;
+ }
+ 
++static int apply_r_riscv_add32_rela(struct module *me, u32 *location,
++				    Elf_Addr v)
++{
++	*(u32 *)location += (*(u32 *)v);
++	return 0;
++}
++
+ static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
+ 				Elf_Addr v) = {
+ 	[R_RISCV_64]			= apply_r_riscv_64_rela,
+@@ -267,6 +274,7 @@ static int (*reloc_handlers_rela[]) (struct module *me, u32 *location,
+ 	[R_RISCV_CALL]			= apply_r_riscv_call_rela,
+ 	[R_RISCV_RELAX]			= apply_r_riscv_relax_rela,
+ 	[R_RISCV_ALIGN]			= apply_r_riscv_align_rela,
++	[R_RISCV_ADD32]			= apply_r_riscv_add32_rela,
+ };
+ 
+ int apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+-- 
+2.16.1
