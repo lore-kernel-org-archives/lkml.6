@@ -1,129 +1,239 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521190383; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521072751; cv=none;
         d=google.com; s=arc-20160816;
-        b=uQ0U+72JmLCgU+QtF+RFf37gjUmWsgq+pPouzHeixTNbE8M3rCaDCM9pZ6YG/UQQsC
-         Lzo/Y6gGkbsOTl0v4y4LgS9aKiAwWElRFiWD0YM1fPH3R7M/Jw3fLfibu4Gn+ceaIFJW
-         9IRiTlcAudR8fz2PWQldDnXl5sAQt8XbohRdBk0IvW3o8Rctf/rrlsTzOExMramaDxGW
-         u2vXqycyxUUmA78vA0nlpHmPCPhT2Ahn3VCvmBI3sCmsxFAjJWcvQq5GszvQQPuGyxYD
-         /53v1yr2CfnJ2uAIws0fG6Q8XcOfR31J2xy4BbihwBxPDOzcJn6mIw6Ok3kavTuBjZ0V
-         Y1JA==
+        b=jgIPXR902MZM923uL4XZGnL6Zsq8ASksTIG3wPFMtcdnZ4P5FSuhsbMUTwD9L4PFYF
+         d9v3Roh7vClsXVxuLi21n3gIrgPbfOMH0msGyzGqgLH+bnND60m3uhpcoJ9qlxgtbgO7
+         0+vArxGT84SpwX5CTPOaTcIAA4ldhELsqhr5qnBKDvmc4j7amamzzdo2rUX14wPaZZgk
+         HV0c4sZ8iLgSp4iEFEAl3VxDXEu3NQeP48ER6MKfmsO1ZbU/OIr15yK3MU9uw40XSKEU
+         qnau7yqY/LTp3yzMTBoPqTN37I4CC6+WqXVsz4rAbbbLeE1JE/LWLD/gcp/r5hDR+SXq
+         omsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=UmarsF5MbxV3e5fKXnAFFr46IpH0jMaRp1xAiK1ftno=;
-        b=LeT4wF/byeINK2ghv4BxR6JiR43e6oWSHUJ81w61b7W3oMsXEkdDGwAaSKBkXNlryo
-         +LJq7dHU/EfHFIC8WlpiMQ7mzE7XsYsSMM+pTg8J3fUFJnvtlrGmCCwWM4sd0KXRVmom
-         n6XLSEYCmj4bbe2YjJmYm3Nkm3zadk3eX0dHh2Wf+nNqE/8wfj8t+m9TX3pOR14X+W4j
-         pxQ+AItzWNqf1leefOikQXsaZWU/6I6ATFerVJE6qvTILxNqINYVJzcyI/GDGbZ7C9dh
-         d15rsC36fl0snWP/r2CgM7NwLJ5vC9t/f7FvteSrx0cC20ZanBvJMXG20UsWbuoOjItC
-         7TEA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=DvkbaM72HLYP6nI1NnrPrEUuFhKULRoKMw8+naZZNZ4=;
+        b=uY5iESuNbBZEpHZ5Kh+pEwqPTi3l5PM5F3iAxIXUeWPKxQ3AYS7246KueQkdP+7jKa
+         WslY4kOGjlbqiH1ycA9ekOdI1P/X4ryXBu74gVcybBy1gjnPXLYTUljp1zd3xI2LeJan
+         KzZs4jCXTzJJOps94ZCmfM/eExzML/UlJHw010N3YjO3MegIVKq5Hy1XhbCfLiAykh+D
+         32Bx8HyC880TjcUqX8haaj+p9KbhCNUOrub6Sb92fTHzkfRj6ButYvKTooJY/ToRRomt
+         WWIQz89kht6o6Da0kHJjHNt6g6VEi9XEZqTg5R6I7p9tnErY9rwIa/qNCbklt1+1ZoQa
+         /yaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=WDvtXkQD;
-       spf=pass (google.com: domain of benjamin.gaignard@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=benjamin.gaignard@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=WDvtXkQD;
-       spf=pass (google.com: domain of benjamin.gaignard@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=benjamin.gaignard@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtqqCMfl97X6zgAEMk+6wBPcZSVAFsA8L9HAHdDZsMPyozPEwzlHGx46AUe2S1JEw+9gq0LBAXe7GhIXYWpQbk=
-MIME-Version: 1.0
-In-Reply-To: <20180315171059.GA10254@kroah.com>
-References: <20180227140926.22996-1-benjamin.gaignard@st.com>
- <20180227140926.22996-2-benjamin.gaignard@st.com> <20180315171059.GA10254@kroah.com>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Fri, 16 Mar 2018 09:53:02 +0100
-Message-ID: <CA+M3ks5DHQNoEZQ9AM_g2fSGafFbMtpP=D7hfL9EXLvc-GH65w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] driver core: check notifier_call_chain return value
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>,
-	devicetree@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="UTF-8"
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AG47ELvas2PLyIAfFBcqDyrq7nIoqAkkoxg9cgNld2pvhISae+67auH2u8jn6TZT6FLSNZH3AhE0Fg==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	gregkh@linuxfoundation.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: serge@hallyn.com,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH] netns: send uevent messages
+Date: Thu, 15 Mar 2018 01:12:14 +0100
+Message-Id: <20180315001214.19462-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593563501482605185?=
-X-GMAIL-MSGID: =?utf-8?q?1595083727770431297?=
+X-GMAIL-THRID: =?utf-8?q?1594960381230985208?=
+X-GMAIL-MSGID: =?utf-8?q?1594960381230985208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-15 18:10 GMT+01:00 Greg KH <gregkh@linuxfoundation.org>:
-> On Tue, Feb 27, 2018 at 03:09:24PM +0100, Benjamin Gaignard wrote:
->> When being notified that a driver is about to be bind a listener
->> could return NOTIFY_BAD.
->> Check the return to be sure that the driver could be bind.
->>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->> ---
->>  drivers/base/dd.c | 9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index de6fd092bf2f..9275f2c0fed2 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -304,9 +304,12 @@ static int driver_sysfs_add(struct device *dev)
->>  {
->>       int ret;
->>
->> -     if (dev->bus)
->> -             blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->> -                                          BUS_NOTIFY_BIND_DRIVER, dev);
->> +     if (dev->bus) {
->> +             if (blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->> +                                              BUS_NOTIFY_BIND_DRIVER, dev) ==
->> +                                              NOTIFY_BAD)
->> +                     return -EINVAL;
->
-> checkpatch does not complain about this?
+This patch adds a receive method to NETLINK_KOBJECT_UEVENT netlink sockets
+to allow sending uevent messages into the network namespace the socket
+belongs to.
 
-No (even with --strict), it should be indented with tabs
+Currently non-initial network namespaces are already isolated and don't
+receive uevents. There are a number of cases where it is beneficial for a
+sufficiently privileged userspace process to send a uevent into a network
+namespace.
 
->
-> And what is going to break when we enable this, as we have never checked
-> this before?
+One such use case would be debugging and fuzzing of a piece of software
+which listens and reacts to uevents. By running a copy of that software
+inside a network namespace, specific uevents could then be presented to it.
+More concretely, this would allow for easy testing of udevd/ueventd.
 
-I could have miss some occurences but when greping with BUS_NOTIFY_*
-patern I haven't any problematic cases.
-When notifiers don't care of the message they almost all return
-NOTIFY_DONE, some return NOTIFY_OK but none
-return NOTIFY_BAD. That I wrote the test like "== NOTIFY_BAD" and not
-"!= NOTIFY_OK".
+This will also allow some piece of software to run components inside a
+separate network namespace and then effectively filter what that software
+can receive. Some examples of software that do directly listen to uevents
+and that we have in the past attempted to run inside a network namespace
+are rbd (CEPH client) or the X server.
 
-I have checked this list of files (I hope I haven't forgot any occurence)
-arch/powerpc/kernel/isa-bridge.c
-arch/powerpc/kernel/iommu.c
-arch/powerpc/kernel/dma-swiotlb.c
-arch/powerpc/platforms/pasemi/setup.c
-arch/powerpc/platforms/512x/pdm360ng.c
-arch/powerpc/platforms/cell/iommu.c
-arch/arm/mach-mvebu/coherency.c
-arch/arm/common/sa1111.c
-arch/arm/mach-keystone/keystone.c -> this one return NOTIFY_BAD if dev
-is NULL which is never the case.
-arch/arm/mach-highbank/highbank.c
-arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-arch/arm/mach-omap2/omap_device.c
-drivers/base/power/clock_ops.c
-drivers/platform/x86/silead_dmi.c
-drivers/input/serio/i8042.c
-drivers/input/mouse/psmouse-smbus.c
-drivers/w1/w1.c
-drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-drivers/i2c/i2c-dev.c drivers/acpi/acpi_lpss.c
-drivers/gpu/vga/vgaarb.c
-drivers/xen/pci.c drivers/xen/xen-pciback/pci_stub.c
-drivers/xen/arm-device.c
-drivers/iommu/s390-iommu.c
-drivers/iommu/iommu.c
-drivers/iommu/dmar.c
-drivers/iommu/intel-iommu.c
-drivers/usb/core/usb.c
-drivers/s390/cio/ccwgroup.c
-drivers/net/ethernet/ibm/emac/core.c
+Implementation:
+The implementation has been kept as simple as possible from the kernel's
+perspective. Specifically, a simple input method uevent_net_rcv() is added
+to NETLINK_KOBJECT_UEVENT sockets which completely reuses existing
+af_netlink infrastructure and does neither add an additional netlink family
+nor requires any user-visible changes.
 
-Benjamin
+For example, by using netlink_rcv_skb() we can make use of existing netlink
+infrastructure to report back informative error messages to userspace.
 
->
-> thanks,
->
-> greg k-h
+Furthermore, this implementation does not introduce any overhead for
+existing uevent generating codepaths. The struct netns gets a new uevent
+socket member that records the uevent socket associated with that network
+namespace. Since we record the uevent socket for each network namespace in
+struct net we don't have to walk the whole uevent socket list.
+Instead we can directly retrieve the relevant uevent socket and send the
+message. This keeps the codepath very performant without introducing
+needless overhead.
+
+Uevent sequence numbers are kept global. When a uevent message is sent to
+another network namespace the implementation will simply increment the
+global uevent sequence number and append it to the received uevent. This
+has the advantage that the kernel will never need to parse the received
+uevent message to replace any existing uevent sequence numbers. Instead it
+is up to the userspace process to remove any existing uevent sequence
+numbers in case the uevent message to be sent contains any.
+
+Security:
+In order for a caller to send uevent messages to a target network namespace
+the caller must have CAP_SYS_ADMIN in the owning user namespace of the
+target network namespace. Additionally, any received uevent message is
+verified to not exceed size UEVENT_BUFFER_SIZE. This includes the space
+needed to append the uevent sequence number.
+
+Testing:
+This patch has been tested and verified to work with the following udev
+implementations:
+1. CentOS 6 with udevd version 147
+2. Debian Sid with systemd-udevd version 237
+3. Android 7.1.1 with ueventd
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ include/net/net_namespace.h |  1 +
+ lib/kobject_uevent.c        | 88 ++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 88 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index f306b2aa15a4..467bde763a9b 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -78,6 +78,7 @@ struct net {
+ 
+ 	struct sock 		*rtnl;			/* rtnetlink socket */
+ 	struct sock		*genl_sock;
++	struct sock		*uevent_sock;		/* uevent socket */
+ 
+ 	struct list_head 	dev_base_head;
+ 	struct hlist_head 	*dev_name_head;
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 9fe6ec8fda28..10b2144b9fc3 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -25,6 +25,7 @@
+ #include <linux/uuid.h>
+ #include <linux/ctype.h>
+ #include <net/sock.h>
++#include <net/netlink.h>
+ #include <net/net_namespace.h>
+ 
+ 
+@@ -602,12 +603,94 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ EXPORT_SYMBOL_GPL(add_uevent_var);
+ 
+ #if defined(CONFIG_NET)
++static int uevent_net_send(struct sock *usk, struct sk_buff *skb,
++			   struct netlink_ext_ack *extack)
++{
++	int ret;
++	u64 seqnum;
++	/* u64 to chars: 2^64 - 1 = 21 chars */
++	char buf[sizeof("SEQNUM=") + 21];
++	struct sk_buff *skbc;
++
++	/* bump sequence number */
++	mutex_lock(&uevent_sock_mutex);
++	seqnum = ++uevent_seqnum;
++	mutex_unlock(&uevent_sock_mutex);
++
++	/* prepare sequence number */
++	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", seqnum);
++	if (ret < 0 || (size_t)ret >= sizeof(buf))
++		return -ENOMEM;
++	ret++;
++
++	/* verify message does not overflow */
++	if ((skb->len + ret) > UEVENT_BUFFER_SIZE) {
++		NL_SET_ERR_MSG(extack, "uevent message too big");
++		return -EINVAL;
++	}
++
++	/* copy skb and extend to accommodate sequence number */
++	skbc = skb_copy_expand(skb, 0, ret, GFP_KERNEL);
++	if (!skbc)
++		return -ENOMEM;
++
++	/* append sequence number */
++	skb_put_data(skbc, buf, ret);
++
++	/* remove msg header */
++	skb_pull(skbc, NLMSG_HDRLEN);
++
++	/* set portid 0 to inform userspace message comes from kernel */
++	NETLINK_CB(skbc).portid = 0;
++	NETLINK_CB(skbc).dst_group = 1;
++
++	ret = netlink_broadcast(usk, skbc, 0, 1, GFP_KERNEL);
++	/* ENOBUFS should be handled in userspace */
++	if (ret == -ENOBUFS || ret == -ESRCH)
++		ret = 0;
++
++	return ret;
++}
++
++static int uevent_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
++			  struct netlink_ext_ack *extack)
++{
++	void *msg;
++	struct net *target_net;
++	struct sock *target_sk;
++
++	msg = nlmsg_data(nlh);
++	if (!msg)
++		return -EINVAL;
++
++	target_net = sock_net(NETLINK_CB(skb).sk);
++	target_sk = target_net->uevent_sock;
++
++	/*
++	 * Verify that we are allowed to send messages to the target network
++	 * namespace. The caller must have CAP_SYS_ADMIN in the owning user
++	 * namespace of the target network namespace.
++	 */
++	if (!netlink_ns_capable(skb, target_net->user_ns, CAP_SYS_ADMIN)) {
++		NL_SET_ERR_MSG(extack, "missing CAP_SYS_ADMIN capability");
++		return -EPERM;
++	}
++
++	return uevent_net_send(target_sk, skb, extack);
++}
++
++static void uevent_net_rcv(struct sk_buff *skb)
++{
++	netlink_rcv_skb(skb, &uevent_rcv_msg);
++}
++
+ static int uevent_net_init(struct net *net)
+ {
+ 	struct uevent_sock *ue_sk;
+ 	struct netlink_kernel_cfg cfg = {
+ 		.groups	= 1,
+-		.flags	= NL_CFG_F_NONROOT_RECV,
++		.input = uevent_net_rcv,
++		.flags	= NL_CFG_F_NONROOT_RECV
+ 	};
+ 
+ 	ue_sk = kzalloc(sizeof(*ue_sk), GFP_KERNEL);
+@@ -621,6 +704,9 @@ static int uevent_net_init(struct net *net)
+ 		kfree(ue_sk);
+ 		return -ENODEV;
+ 	}
++
++	net->uevent_sock = ue_sk->sk;
++
+ 	mutex_lock(&uevent_sock_mutex);
+ 	list_add_tail(&ue_sk->list, &uevent_sock_list);
+ 	mutex_unlock(&uevent_sock_mutex);
+-- 
+2.15.1
