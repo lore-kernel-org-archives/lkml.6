@@ -1,93 +1,190 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELuAF/CQC5LPvK3gng962bT1dbQF211WiWmfgTXSl8JVfXdtcH0WQLgrLNVl1l+AXVu4RFiZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521300324; cv=none;
+Return-Path: <djkurtz@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521078500; cv=none;
         d=google.com; s=arc-20160816;
-        b=XuCQskywE2GW+unGK66qlduQ0f2MH5P+YrFblTN3WvlB2GFv+Bav/ahoRRw0R8cgFZ
-         0yPLWWTOtwCvqhOt2TzWycsQoD6+aJBNm4d63naSC7yElWnn+XzpT7/5+kjRqQRhrFIs
-         TkerF+lHII5/K77bJtBw/ZqcRQaMHNEBRLOG7IItvIJEMUyoj7dJ/bxnTkQxBg37+UWM
-         Z/IXa1Qzsm1rqBH44N3d5Ajs7B6sSIUroMmngF8DPg3phTu2Ev7BL/WhTnU8izPvJbLQ
-         nb/OzavNZgtjaP7uwOtzRYBENHcmRyWb2d8wcEOAZhjQ/1F91lVSIIuhBCP+8VBdiDau
-         OLvw==
+        b=khGRWuQQpwMQ4R5ThMEISbDjqcWHtO+jsH+v+wkCYpTnIJyiexHXbvE2/OI6tkrpvh
+         Ya5ujLBoC2TB95JIxf12H/oqyBtuPzRdZf6twhi4vU7nuvBDrXFeug4tcCw0866Bzm2q
+         s7lDiN41n9lWlpygW2CpgiBahtriH1fqA0ZCAod2qrlXmQz7ROZ234XQJz9J4ZZhxKB4
+         kV8PVg7aGlTpKJMn6uUPPVs9W6CyrSIE2yTTTNbhPjzEuLqM/dsCHc//pShQS983kv8j
+         nbad9nl3VDciF/OkUhWqIx3P1208gg+7Q7igkXQKq8iFVZlXOjGydXPhY4hSYNgCvpCN
+         driw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=YcAtj3tFZIAaVyleFMIP+qeDwAVQoHnRnmLlThVFQSI=;
-        b=GMbLRiUoQ5y9fw7tTuH+4yupH5RmokBblJjBKNDpdEDjkVBWJXuGp/QF++i4EoXxLa
-         acWDhIFETOEf2ZNF4WJJIprqxt3wYWtfsY07S4E2SJy7623o5uH2jo64rLeJyXTKCXC6
-         9JvXkvK994Y/9/0cEUw/wHcrI0GGIErUBdicckdR5rBMH7z38erJL4ShAETO/6OK2r+I
-         KXn6h2FiUsawPTgIIJyexrER0WrQDHYh7Znaez6/yDKikY7aO/InPUz4m3ybKE7PlZ/1
-         QUqgW1n18q9CvQwvszCF9FKluwFt1KlYVVL0tDoQC6qejoSeX0My0sy7vUo3GpPGGvSu
-         JdvA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=aj2ddwvURJbGfgfGhO89UKUdo3orZYMlK4Q13q2MRAw=;
+        b=PpBisn2BKYbznmJDV1MbvLZGIO2k6at3nW6RcDf0IHkNHBvalV3eTUdLDXIg/U/+C8
+         T8q/KvJ0ql8fQL/pDzhy0oLGsK6QTIw6bj/s0FcUUvrpXN/YvoWkKs5I69EdUzQTW7Nm
+         hMGP9hnYfSpIkPWx0mcx9UPnburqAjmhcra84TpVST8rU6tLKHNyBj0ILfoN+MJ/dKc+
+         mKWd1MjXBRJIKu2GMTP9QGA+p+wh7Pa02ySEEekbSpjyn3hqN1JV0YI39EcQY2LxPhHn
+         d0WdGVhEY2PtZYhSu0rUNQPEKLht+CCxmhUsYKFtrCfAeJSOYXkZgJcM6AMUSzUmuupz
+         OpiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=jtl+mjEF;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeCQPZL (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 17 Mar 2018 11:25:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752077AbeCQPZL (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 17 Mar 2018 11:25:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB2A21737
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-From: Andy Lutomirski <luto@kernel.org>
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, linux-kselftest@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH] selftests/x86/ptrace_syscall: Fix for yet more glibc interference
-Date: Sat, 17 Mar 2018 08:25:07 -0700
-Message-Id: <bc80338b453afa187bc5f895bd8e2c8d6e264da2.1521300271.git.luto@kernel.org>
-X-Mailer: git-send-email 2.14.3
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=jtl+mjEF;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELuMDvMpwbYAu4dbTY9G1kgtiPPelO9GcPhxryu8b5Gs+WzKEkVj9olostzQWoXDExy12PhuiQ==
+From: Daniel Kurtz <djkurtz@chromium.org>
+To: Peter Hurley <peter@hurleysoftware.com>,
+	Rob Herring <robh@kernel.org>
+Cc: adurbin@chromium.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Grant Likely <grant.likely@linaro.org>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Jiri Slaby <jslaby@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE),
+	linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+	linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES)
+Subject: [PATCH v2] earlycon: Fix __earlycon_table stride... again
+Date: Wed, 14 Mar 2018 19:48:16 -0600
+Message-Id: <20180315014817.142930-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595199009159269471?=
-X-GMAIL-MSGID: =?utf-8?q?1595199009159269471?=
+X-GMAIL-THRID: =?utf-8?q?1594966410142318420?=
+X-GMAIL-MSGID: =?utf-8?q?1594966410142318420?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-glibc keeps getting cleverer, and my version now turns raise() into
-more than one syscall.  Since the test relies on ptrace seeing an
-exact set of syscalls, this breaks the test.  Replace raise(SIGSTOP)
-with syscall(SYS_tgkill, ...) to force glibc to get out of our way.
+Commit 470ca0de69fe ("serial: earlycon: Enable earlycon without command
+line param") added EARLYCON_TABLE().
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") referenced
+commit 07fca0e57fca92 ("tracing: Properly align linker defined symbols")
+and tried to fix EARLYCON_TABLE() using __aligned(32).
+
+However, the fix copied just works around compiler behavior.  In fact, it
+was subsequently re-implemented for tracing using a table of pointers in
+commit 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with
+pointer array"), commit 654986462939 ("tracepoints: Fix section alignment
+using pointer array") and commit e4a9ea5ee7c8 ("tracing: Replace
+trace_event struct array with pointer array").
+
+Let's do the same "array of pointers to structs" approach for
+EARLYCON_TABLE.
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- tools/testing/selftests/x86/ptrace_syscall.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Changes since v1:
+ * Change __earlycon_table to an array of pointers.
 
-diff --git a/tools/testing/selftests/x86/ptrace_syscall.c b/tools/testing/selftests/x86/ptrace_syscall.c
-index 1ae1c5a7392e..6f22238f3217 100644
---- a/tools/testing/selftests/x86/ptrace_syscall.c
-+++ b/tools/testing/selftests/x86/ptrace_syscall.c
-@@ -183,8 +183,10 @@ static void test_ptrace_syscall_restart(void)
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
+Note: I do not have a convenient system to test the of/fdt.c part of this
+patch, so would apreciate help verifying it.  Thanks!
+
+ drivers/of/fdt.c                  |  7 +++++--
+ drivers/tty/serial/earlycon.c     |  6 ++++--
+ include/asm-generic/vmlinux.lds.h |  2 +-
+ include/linux/serial_core.h       | 21 ++++++++++++++-------
+ 4 files changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 84aa9d676375..6da20b9688f7 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -942,7 +942,7 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 	int offset;
+ 	const char *p, *q, *options = NULL;
+ 	int l;
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 	const void *fdt = initial_boot_params;
  
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
+ 	offset = fdt_path_offset(fdt, "/chosen");
+@@ -969,7 +969,10 @@ int __init early_init_dt_scan_chosen_stdout(void)
+ 		return 0;
+ 	}
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
 +
- 		printf("\tChild will make one syscall\n");
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
+ 		if (!match->compatible[0])
+ 			continue;
  
- 		syscall(SYS_gettid, 10, 11, 12, 13, 14, 15);
- 		_exit(0);
-@@ -301,9 +303,11 @@ static void test_restart_under_ptrace(void)
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index a24278380fec..22683393a0f2 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -169,7 +169,7 @@ static int __init register_earlycon(char *buf, const struct earlycon_id *match)
+  */
+ int __init setup_earlycon(char *buf)
+ {
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
  
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
+ 	if (!buf || !buf[0])
+ 		return -EINVAL;
+@@ -177,7 +177,9 @@ int __init setup_earlycon(char *buf)
+ 	if (early_con.flags & CON_ENABLED)
+ 		return -EALREADY;
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
+ 		size_t len = strlen(match->name);
+ 
+ 		if (strncmp(buf, match->name, len))
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 1ab0e520d6fc..e17de55c2542 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -179,7 +179,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() STRUCT_ALIGN();			\
++#define EARLYCON_TABLE() . = ALIGN(8);				\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 KEEP(*(__earlycon_table))		\
+ 			 VMLINUX_SYMBOL(__earlycon_table_end) = .;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index b32df49a3bd5..93b7add47087 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -351,10 +351,10 @@ struct earlycon_id {
+ 	char	name[16];
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-} __aligned(32);
++};
+ 
+-extern const struct earlycon_id __earlycon_table[];
+-extern const struct earlycon_id __earlycon_table_end[];
++extern const struct earlycon_id *__earlycon_table[];
++extern const struct earlycon_id *__earlycon_table_end[];
+ 
+ #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
+ #define EARLYCON_USED_OR_UNUSED	__used
+@@ -362,12 +362,19 @@ extern const struct earlycon_id __earlycon_table_end[];
+ #define EARLYCON_USED_OR_UNUSED	__maybe_unused
+ #endif
+ 
+-#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
+-	static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name)	\
+-	     EARLYCON_USED_OR_UNUSED __section(__earlycon_table)	\
++#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)		\
++	static const struct earlycon_id unique_id			\
++	     EARLYCON_USED_OR_UNUSED __initdata				\
+ 		= { .name = __stringify(_name),				\
+ 		    .compatible = compat,				\
+-		    .setup = fn  }
++		    .setup = fn  };					\
++	static const struct earlycon_id EARLYCON_USED_OR_UNUSED		\
++		__section(__earlycon_table)				\
++		* const __PASTE(__p, unique_id) = &unique_id
 +
- 		printf("\tChild will take a nap until signaled\n");
- 		setsigign(SIGUSR1, SA_RESTART);
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
++#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
++	_OF_EARLYCON_DECLARE(_name, compat, fn,				\
++			     __UNIQUE_ID(__earlycon_##_name))
  
- 		syscall(SYS_pause, 0, 0, 0, 0, 0, 0);
- 		_exit(0);
+ #define EARLYCON_DECLARE(_name, fn)	OF_EARLYCON_DECLARE(_name, "", fn)
+ 
 -- 
-2.14.3
-
+2.16.2.804.g6dcf76e118-goog
