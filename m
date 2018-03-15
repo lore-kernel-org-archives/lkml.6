@@ -1,160 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932789AbeCOQAq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 12:00:46 -0400
-Received: from mga09.intel.com ([134.134.136.24]:4862 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932750AbeCOQAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:00:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,311,1517904000";
-   d="scan'208";a="211627512"
-Subject: [PATCH v6 00/15] dax: fix dma vs truncate/hole-punch
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
-        Jan Kara <jack@suse.com>, Michal Hocko <mhocko@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Dave Chinner <david@fromorbit.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Thu, 15 Mar 2018 08:51:22 -0700
-Message-ID: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1751617AbeCOQH6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 12:07:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52859 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751475AbeCOQHz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 12:07:55 -0400
+X-Google-Smtp-Source: AG47ELs66TIGVlzc/rIzTvyh1sIZQud4Rs8KiGoS6EwBr+AbPIqT1Q+h2J7/WLgoN1SMEtN2Qm55gw==
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kaihua Zhong <zhongkaihua@huawei.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Ruyi Wang <wangruyi@huawei.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v7 0/3] Add support for Hi3660 mailbox driver
+Date: Fri, 16 Mar 2018 00:07:35 +0800
+Message-Id: <1521130058-24796-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v5 [1]:
-* Split the introduction of dax-specific address_space_operations into
-  its own patch, and place them in fs/libfs.c (Christoph)
+Hi3660 mailbox controller is used to send message within multiple
+processors, MCU, HIFI, etc. This patch series is to implement an
+initial version for Hi3660 mailbox driver with "automatic
+acknowledge" mode.
 
-* Kill some more straggling dead code implementing dax support for block
-  devices.
+The patch set have been verified with Hi3660 stub clock driver, so
+we can send message to MCU to execute CPU frequency scaling. This is
+tested on 96boards Hikey960.
 
-* Mark devm_memremap_pages EXPORT_SYMBOL_GPL (Christoph)
+Changes from v6:
+* Rebased patches on latest mainline kernel: commit 0aa3fdb8b3a6
+  ("Merge branch 'percpu_ref-rcu-audit-fixes' of git://git.kernel.org/
+   pub/scm/linux/kernel/git/tj/misc")
 
-* Introduce {xfs,ext4,ext2}_dax_writepages() and kill the dynamic check
-  for IS_DAX() in the typical _writepages() implementations in these
-  filesystems. (Christoph)
+Changes from v5:
+* Changed to use writel()/readl() to replace {writel|readl}_relaxed()
+  to make safe for memory ordering;
 
-* Rework xfs_break_layouts() to assume the XFS_MMAPLOCK_EXCL is held at
-  entry. (Christoph)
+Changes from v4:
+* According to Jassi suggestion, refactored mailbox driver and removed
+  "inline" for function declaration;
 
-* Replace the XFS_BREAK_WRITE and XFS_BREAK_MAPS flags with the
-  BREAK_WRITE and BREAK_TRUNCATE enum values since BREAK_WRITE is a
-  subset of BREAK_TRUNCATE. (Christoph)
+Changes from v3:
+* According to Jassi suggestion, refined structure name to
+  "struct hi3660_chan_info";
+* According to Jassi suggestion, moved channel 'lock'+'acquire'
+  operations into .startup();
 
-* Replace wait_for_atomic_one() with Peter's new wait_var_event()
-  facility [2]. (Peter)
+Changes from v2:
+* According to Mark Rutland suggestions, removed sev()/wfe() from
+  driver, the system has no two masters sharing the same channel for
+  data transferring so we don't need these instructions;
+* Refined DT binding and doc according to Rob suggestions;
+* Refined driver according to Julien suggestions;
 
-[1]: https://lists.01.org/pipermail/linux-nvdimm/2018-March/014585.html
-[2]: https://patchwork.kernel.org/patch/10284383/
-
----
-
-Background:
-
-get_user_pages() in the filesystem pins file backed memory pages for
-access by devices performing dma. However, it only pins the memory pages
-not the page-to-file offset association. If a file is truncated the
-pages are mapped out of the file and dma may continue indefinitely into
-a page that is owned by a device driver. This breaks coherency of the
-file vs dma, but the assumption is that if userspace wants the
-file-space truncated it does not matter what data is inbound from the
-device, it is not relevant anymore. The only expectation is that dma can
-safely continue while the filesystem reallocates the block(s).
-
-Problem:
-
-This expectation that dma can safely continue while the filesystem
-changes the block map is broken by dax. With dax the target dma page
-*is* the filesystem block. The model of leaving the page pinned for dma,
-but truncating the file block out of the file, means that the filesytem
-is free to reallocate a block under active dma to another file and now
-the expected data-incoherency situation has turned into active
-data-corruption.
-
-Solution:
-
-Defer all filesystem operations (fallocate(), truncate()) on a dax mode
-file while any page/block in the file is under active dma. This solution
-assumes that dma is transient. Cases where dma operations are known to
-not be transient, like RDMA, have been explicitly disabled via
-commits like 5f1d43de5416 "IB/core: disable memory registration of
-filesystem-dax vmas".
-
-The dax_layout_busy_page() routine is called by filesystems with a lock
-held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
-The process of looking up a busy page invalidates all mappings
-to trigger any subsequent get_user_pages() to block on i_mmap_lock.
-The filesystem continues to call dax_layout_busy_page() until it finally
-returns no more active pages. This approach assumes that the page
-pinning is transient, if that assumption is violated the system would
-have likely hung from the uncompleted I/O.
-
----
-
-Dan Williams (15):
-      dax: store pfns in the radix
-      fs, dax: prepare for dax-specific address_space_operations
-      block, dax: remove dead code in blkdev_writepages()
-      xfs, dax: introduce xfs_dax_aops
-      ext4, dax: introduce ext4_dax_aops
-      ext2, dax: introduce ext2_dax_aops
-      fs, dax: use page->mapping to warn if truncate collides with a busy page
-      mm, dax: enable filesystems to trigger dev_pagemap ->page_free callbacks
-      mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
-      memremap: mark devm_memremap_pages() EXPORT_SYMBOL_GPL
-      mm, fs, dax: handle layout changes to pinned dax mappings
-      xfs: require mmap lock for xfs_break_layouts()
-      xfs: communicate lock drop events from xfs_break_layouts()
-      xfs: prepare xfs_break_layouts() for another layout type
-      xfs, dax: introduce xfs_break_dax_layouts()
+Changes from v1:
+* Added cover letter to track the changelog;
+* Added document for DT binding;
+* Refactored and simplized mailbox driver with "automatic ack" mode;
+* Refined commit logs for patches;
 
 
- drivers/dax/super.c      |   96 ++++++++++++++++---
- drivers/nvdimm/pmem.c    |    3 -
- fs/Kconfig               |    1 
- fs/block_dev.c           |    5 -
- fs/dax.c                 |  232 ++++++++++++++++++++++++++++++++++++----------
- fs/ext2/ext2.h           |    1 
- fs/ext2/inode.c          |   43 +++++----
- fs/ext2/namei.c          |   18 ----
- fs/ext2/super.c          |    6 +
- fs/ext4/inode.c          |   38 ++++++--
- fs/ext4/super.c          |    6 +
- fs/libfs.c               |   27 +++++
- fs/xfs/xfs_aops.c        |   21 +++-
- fs/xfs/xfs_aops.h        |    1 
- fs/xfs/xfs_file.c        |   87 ++++++++++++++++-
- fs/xfs/xfs_inode.h       |   16 +++
- fs/xfs/xfs_ioctl.c       |    8 --
- fs/xfs/xfs_iops.c        |   21 +++-
- fs/xfs/xfs_pnfs.c        |   17 ++-
- fs/xfs/xfs_pnfs.h        |    4 -
- fs/xfs/xfs_super.c       |   20 ++--
- include/linux/dax.h      |   51 +++++++++-
- include/linux/fs.h       |    3 +
- include/linux/memremap.h |   28 ++----
- include/linux/mm.h       |   61 +++++++++---
- kernel/memremap.c        |   32 +++++-
- mm/Kconfig               |    5 +
- mm/gup.c                 |    5 +
- mm/hmm.c                 |   13 ---
- mm/swap.c                |    3 -
- 30 files changed, 653 insertions(+), 219 deletions(-)
+Kaihua Zhong (2):
+  mailbox: Add support for Hi3660 mailbox
+  dts: arm64: Add mailbox binding for hi3660
+
+Leo Yan (1):
+  dt-bindings: mailbox: Introduce Hi3660 controller binding
+
+ .../bindings/mailbox/hisilicon,hi3660-mailbox.txt  |  51 ++++
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   8 +
+ drivers/mailbox/Kconfig                            |   8 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/hi3660-mailbox.c                   | 312 +++++++++++++++++++++
+ 5 files changed, 381 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
+ create mode 100644 drivers/mailbox/hi3660-mailbox.c
+
+-- 
+1.9.1
