@@ -1,79 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeCNX7E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Mar 2018 19:59:04 -0400
-Received: from ozlabs.org ([103.22.144.67]:53879 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751751AbeCNX7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Mar 2018 19:59:02 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 15 Mar 2018 10:58:31 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Tejun Heo <tj@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak
- symbol
-Message-ID: <20180315105831.327ff20f@canb.auug.org.au>
-In-Reply-To: <20180314194237.45e2709c@vmware.local.home>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
-        <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
-        <20180307022127.GB802@jagdpanzerIV>
-        <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
-        <20180307104002.GA505@jagdpanzerIV>
-        <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
-        <20180307114845.GA894@jagdpanzerIV>
-        <20180309095054.vrngc6fz7wo3hd4x@pathway.suse.cz>
-        <20180314194237.45e2709c@vmware.local.home>
+        id S1751966AbeCOADs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Mar 2018 20:03:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751835AbeCOADq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Mar 2018 20:03:46 -0400
+References: <20180314202020.3794-1-bauerman@linux.vnet.ibm.com> <20180314202020.3794-4-bauerman@linux.vnet.ibm.com> <20180314214045.GC14289@mail.hallyn.com>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: Re: [PATCH 3/4] ima: Improvements in ima_appraise_measurement()
+In-reply-to: <20180314214045.GC14289@mail.hallyn.com>
+Date: Wed, 14 Mar 2018 21:03:36 -0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3ea8B=M9/S259IXrRb_Id_x"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18031500-0004-0000-0000-000013CD9AE6
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008675; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01003137; UDB=6.00510491; IPR=6.00782468;
+ MB=3.00020039; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-15 00:03:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031500-0005-0000-0000-000086776C33
+Message-Id: <87efkmjjc7.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803140255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3ea8B=M9/S259IXrRb_Id_x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hello Serge,
 
-On Wed, 14 Mar 2018 19:42:37 -0400 Steven Rostedt <rostedt@goodmis.org> wro=
-te:
+Thanks for quickly reviewing these patches!
+
+Serge E. Hallyn <serge@hallyn.com> writes:
+
+> Quoting Thiago Jung Bauermann (bauerman@linux.vnet.ibm.com):
+>> From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+>> @@ -241,16 +241,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+>>  	}
+>>  
+>>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
+>> -	if ((status != INTEGRITY_PASS) &&
+>> -	    (status != INTEGRITY_PASS_IMMUTABLE) &&
+>> -	    (status != INTEGRITY_UNKNOWN)) {
+>> -		if ((status == INTEGRITY_NOLABEL)
+>> -		    || (status == INTEGRITY_NOXATTRS))
+>> -			cause = "missing-HMAC";
+>> -		else if (status == INTEGRITY_FAIL)
+>> -			cause = "invalid-HMAC";
+>> +	switch (status) {
+>> +	case INTEGRITY_PASS:
+>> +	case INTEGRITY_PASS_IMMUTABLE:
+>> +	case INTEGRITY_UNKNOWN:
 >
-> I still would like to keep it in lib. If blackfin is going to be nuked
-> in 4.17, and nds32 is the only one that is causing a issue. I would
-> highly recommend fixing nds32 and have Stephen stop building blackfin.
+> Wouldn't it be more future-proof to replace this with a 'default', or
+> to at least add a "default: BUG()" to catch new status values?
 
-nds32 was "fixed" a few days ago and I stopped building blackfin a while
-ago as well.
+I agree. I like the "default: BUG()" option.
 
---=20
-Cheers,
-Stephen Rothwell
+>> +		break;
+>> +	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+>> +	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+>> +		cause = "missing-HMAC";
+>> +		goto out;
+>> +	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+>> +		cause = "invalid-HMAC";
+>>  		goto out;
+>>  	}
+>> +
+>>  	switch (xattr_value->type) {
+>>  	case IMA_XATTR_DIGEST_NG:
+>>  		/* first byte contains algorithm id */
+>> @@ -316,17 +320,20 @@ int ima_appraise_measurement(enum ima_hooks func,
+>>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+>>  				    op, cause, rc, 0);
+>>  	} else if (status != INTEGRITY_PASS) {
+>> +		/* Fix mode, but don't replace file signatures. */
+>>  		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+>>  		    (!xattr_value ||
+>>  		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+>>  			if (!ima_fix_xattr(dentry, iint))
+>>  				status = INTEGRITY_PASS;
+>> -		} else if ((inode->i_size == 0) &&
+>> -			   (iint->flags & IMA_NEW_FILE) &&
+>> -			   (xattr_value &&
+>> -			    xattr_value->type == EVM_IMA_XATTR_DIGSIG)) {
+>> +		}
+>> +
+>> +		/* Permit new files with file signatures, but without data. */
+>> +		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+>
+> This may be correct, but it's not identical to what you're replacing.
+> Since in either case you're setting status to INTEGRITY_PASS the final
+> result is the same, but with a few extra possible steps.  Not sure
+> whether that matters.
 
---Sig_/3ea8B=M9/S259IXrRb_Id_x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Good point. I'll have to defer this one to Mimi though.
 
------BEGIN PGP SIGNATURE-----
+>
+>> +		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
+>>  			status = INTEGRITY_PASS;
+>>  		}
+>> +
+>>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+>>  				    op, cause, rc, 0);
+>>  	} else {
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqptycACgkQAVBC80lX
-0GzOlwf+OtyLHiBOwdQzuR2OTmUwyn7wgnhmGmOdgoq3shh+rCmW8hZqM+wMIY34
-Wtvh6GOqVs8sY3Vp6A+yJxk/dOtN06Wg7qIDo1GQBdZXD23rnuzquuvgqw8DrfTd
-+ccxjsarL5wizkOz/bEuxHsNjy80bmnodqDfLmumVXwj1Th8KwDMJVrNyFGFWeXn
-hM5r5C7PIwf3eALF0z4eVpWwx4Lidzd1qTjaDey/vNG978FAuj/0BYFMBn+nYbql
-GYvwdX3OWDpjtPRSs1K/rhNOYHHNNmvU2ZgrLdEAa8cpaisi2DxNNJH+aa2tzE6B
-QFkkXxDV0/dniTVekRzyh39Efs8kgw==
-=1GtF
------END PGP SIGNATURE-----
 
---Sig_/3ea8B=M9/S259IXrRb_Id_x--
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
