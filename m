@@ -1,27 +1,28 @@
 Return-Path: <msuchanek@suse.de>
-X-Google-Smtp-Source: AG47ELslJH6IPASYPF9mciZy946ADNrJB8dw76CdVBELY5jr7eHQRta+YYBmJ0lpIN8LRb5c7qLI
-ARC-Seal: i=1; a=rsa-sha256; t=1521141380; cv=none;
+X-Google-Smtp-Source: AG47ELt6b0XkgeN451clY2d2Yi9Uz4dNys3TVtBxIyYeWwoPbcrhB+5T0FFQDGZ3dhF7Q7xzfK5L
+ARC-Seal: i=1; a=rsa-sha256; t=1521141387; cv=none;
         d=google.com; s=arc-20160816;
-        b=Yyfr0nEiX7T9/5Hn/35CB/A8zu1Pe1LaCHUyuO7Xxgi7Q2JDHXqDm382qr7lBa/bAO
-         iCsv2N+5Zwjg3KmmvbqOatyX1tg4liWkUs4DWN14cVkgH2Pq9ZBo7roVRk1TvnvJS41v
-         GOWTzpPlmb5mLc4hONB2ya6CpE2HsCassK3psyTO05M4kyh3CQ+XGpSxLXDKfWML4RaS
-         GUbFhsIFDzS96vr0x+y2Wu6OSZ/t1npZ1knJ2RrGrbuQBAXTjpxEQxMTY70FZJ8HNo8s
-         MKajIjDfrB/a7+ifJ1nBhsZxOL1pBg/1hAEPBf/jjFsAHYgqpVNPM+n8p26u9FxFRZmr
-         DjhQ==
+        b=qmTGnS1Vw0TgxQmmH6hjym0f9U2LXuGGgFnvslYtTlWKtmOfsvSKgKphw/FCrKtY9s
+         4l34Kumb32J9+blXUdSiQzkOpKTIuWWUXBJnpS3oi7t4TM9GoSJ/Euxqs5v1e3zr6GkT
+         YUyCKQ92f9LybymKbLqELPSCBpGZHxVgGxKvNoq/yCPoolaaxfBURKZUQALGlp7nTWVw
+         Ek4mo2SVevcMvB1hrlZxfBtveJDCyKVtwBmWonFrvtkiM88cGkD48ZgmPIfxKFKboNYf
+         pO12bFlV7b9BrfOIw7ehzOXjoiwFP53GdPKRyrZpWomdt7wwUcExtGbRrrEaWbhx8dXf
+         Or8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=8ieE+khBH5jALyL7Pqni9NQ0LlR7Dwf3Fo29WFf8V8c=;
-        b=tpnftWCGg3vWvygKfcZ6rn2wDETmjZGFHzp6oTjLlYfCyucW6sjWX4xAmzJSvtl+ob
-         GiSmNSEwKAh/M15juyuC4G1EvhzUOKgFlsn8OUvD7eorGopGjGZUftlxFZE9qAQ4036I
-         r2ic64J2/S9ISknIJcbcOl0CqWElYnNQdyCEekfHO2zgklYpkxpf0881EQAeEjTetFGo
-         0UKpPMfFPuwh5Rz/5CwWiEAh85KK357iWXrAvuJ6EiK8NJmv1FcxXl8AMKT1eGPXwcTy
-         CKnXo59gIUP0vTtFj7xAmxnGGmTd+ngkpdLHJgtRx6j6UgYvZ6bOYmcG7SKw8VrBX6xV
-         OuCw==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=0yTnIIBWE7fpy+1xtrqFwpk1aX5ho+G4OYcNFB0ayOk=;
+        b=ThanMLOP0RCrKKGFTWKfSBumgKDTm6TWjlW3g1e+8wi3RKzUEqqrFYw5iVD6JBKGk1
+         Lrbk4yrmKCRacGvOzf8/dBG80WRL2+jQDdefQfs0GLWSqwKleKmkojFhXWophPBQVJoP
+         6B+4HPDuhqg7iDJzQXbSLb6LB+2eK9FArfOYi9mW4bqSpru137Qiy6QY8vijPqoicwEG
+         e5PVgvnsxZBDFUuaF2bMml1duxCGODrpnH5WT2LUmncIrZvzxbtd4mQSVp6Wc+6/Amwf
+         ZglFx3xF3Eim8Ug93aFKqsmLCQ/gKT9NKfyPVWg2hb1XOjvWN/2uhYannBuPsDIl65sO
+         R6hA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of msuchanek@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=msuchanek@suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Michal Suchanek <msuchanek@suse.de>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: Kate Stewart <kstewart@linuxfoundation.org>,
@@ -47,53 +48,72 @@ Cc: Kate Stewart <kstewart@linuxfoundation.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	"Tobin C. Harding" <me@tobin.cc>,
 	Michal Suchanek <msuchanek@suse.de>
-Subject: [PATCH RFC rebase 0/9] powerpc barrier_nospec
-Date: Thu, 15 Mar 2018 20:15:49 +0100
-Message-Id: <cover.1521141122.git.msuchanek@suse.de>
+Subject: [PATCH RFC rebase 9/9] powerpc/64: barrier_nospec: Add commandline trigger
+Date: Thu, 15 Mar 2018 20:15:58 +0100
+Message-Id: <1dcf7403042daddcdb8109f6b852b9bb9d768f89.1521141122.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
+In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
 References: <20180313200108.GA4082@hirez.programming.kicks-ass.net>
+ <cover.1521141122.git.msuchanek@suse.de>
+In-Reply-To: <cover.1521141122.git.msuchanek@suse.de>
+References: <cover.1521141122.git.msuchanek@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595032344364253632?=
-X-GMAIL-MSGID: =?utf-8?q?1595032344364253632?=
+X-GMAIL-THRID: =?utf-8?q?1595032351746751096?=
+X-GMAIL-MSGID: =?utf-8?q?1595032351746751096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Yes, it is good idea to add some commit messages.
+Add commandline options spectre_v2 and nospectre_v2
 
-Also I rebased the patches on top v3 of series
+These are named same as similar x86 options regardless of actual effect
+to not require platform-specific configuration.
 
-Setup RFI flush after PowerVM LPM migration
+Supported options:
+nospectre_v2 or spectre_v2=off - speculation barrier not used
+spectre_v2=on or spectre_v2=auto - speculation barrier used
 
-Thanks
+Changing the settings after boot is not supported and VM migration may
+change requirements so auto is same as on.
 
-Michal
+Based on s390 implementation
 
-Michal Suchanek (9):
-  powerpc: Add barrier_nospec
-  powerpc: Use barrier_nospec in copy_from_user
-  powerpc/64: Use barrier_nospec in syscall entry
-  powerpc/64s: Use barrier_nospec in RFI_FLUSH_SLOT
-  powerpc/64s: Add support for ori barrier_nospec patching
-  powerpc/64: Patch barrier_nospec in modules
-  powerpc/64: barrier_nospec: Add debugfs trigger
-  powerpc/64s: barrier_nospec: Add hcall triggerr
-  powerpc/64: barrier_nospec: Add commandline trigger
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/kernel/setup_64.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
- arch/powerpc/include/asm/barrier.h        |  9 ++++
- arch/powerpc/include/asm/exception-64s.h  |  2 +-
- arch/powerpc/include/asm/feature-fixups.h |  9 ++++
- arch/powerpc/include/asm/setup.h          | 11 ++++
- arch/powerpc/include/asm/uaccess.h        | 11 +++-
- arch/powerpc/kernel/entry_64.S            |  3 ++
- arch/powerpc/kernel/module.c              |  6 +++
- arch/powerpc/kernel/setup_64.c            | 87 +++++++++++++++++++++++++++++++
- arch/powerpc/kernel/vmlinux.lds.S         |  7 +++
- arch/powerpc/lib/feature-fixups.c         | 47 ++++++++++++++---
- arch/powerpc/platforms/pseries/mobility.c |  2 +-
- arch/powerpc/platforms/pseries/pseries.h  |  2 +-
- arch/powerpc/platforms/pseries/setup.c    | 37 +++++++++----
- 13 files changed, 213 insertions(+), 20 deletions(-)
-
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index f6678a7b6114..c74e656265df 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -840,6 +840,28 @@ static int __init handle_no_pti(char *p)
+ }
+ early_param("nopti", handle_no_pti);
+ 
++static int __init nospectre_v2_setup_early(char *str)
++{
++	no_nospec = true;
++	return 0;
++}
++early_param("nospectre_v2", nospectre_v2_setup_early);
++
++static int __init spectre_v2_setup_early(char *str)
++{
++	if (str && !strncmp(str, "on", 2))
++		no_nospec = false;
++
++	if (str && !strncmp(str, "off", 3))
++		no_nospec = true;
++
++	if (str && !strncmp(str, "auto", 4))
++		no_nospec = false;
++
++	return 0;
++}
++early_param("spectre_v2", spectre_v2_setup_early);
++
+ static void do_nothing(void *unused)
+ {
+ 	/*
 -- 
 2.13.6
