@@ -1,70 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3328118-1521214496-2-3990597748278790859
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214495; b=THbnOhP3FPAO/5c2tuEKfDABqHuDx3bcsjNGKVrpsuifhJU
-    d6tJn+ldU5jlpVjr3+k1CPfxoy6/o8U7JhhIg5QR1fpmFoKfSDx2mnsMorf8Cu/x
-    p5Ep1CG/pLsqcihftSVAyAtp2voK3FE08h817LEifbh2rp4uQQjJcHTC9FQrGlAY
-    3cvKAaCRryR+OOallhlwvsE+EnBDcI4hPaae51II1eav/6XFSdox4/10kTnvxZXh
-    OfKwt6lZ1GKP0r7yXUeAtgRXyjyZnX6TA0ivuMoMu3SB1xKUlehZq9XlBxR+NiAE
-    7TcIkKzDtyVZOxy9Y6W8Ki0Jw1qEXbb8mnqXTcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214495; bh=nhryQ9KFIqyL66UHhiAuQ2TCq3
-    3rwFSt8FB+u9cJwOg=; b=iMdzuntwutNRJnVqQnfuld4IrJx+KDMI55L/c8l7wX
-    k1neKcsoa5zninvsVEcxtbbqwIZSG9I7G88JXJDsi/Rv9mDilga1Co7aXQmsXHDQ
-    SgKkC2NE2UuWamJ5n1DTBFacgDjuZEIylcvNI8u3L3j+b0sU6KoS544bZWXtX/1v
-    Lt5rxejMswhqRWrwoMJs0r/Ze14CwNRThTPWf5Wk1qGuMYtRMOAnT19PB09JsGRg
-    yK5LLsluGhWKUDHxp1z67l6Alqbl4g6xMb1kCn7Ikuy+qnIEpGWnUWkm4oZPbIuY
-    OGIpyFZgYRrpgBpEXYydYvfl7XxKjrkpWUiUmNCdI9nA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933420AbeCPPex (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:34:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39604 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933415AbeCPPev (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:34:51 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsbA7NydqXadrzyNgetlJZZVAM/BLMrMrkiu5J/XkTauAwQSgbxHCT1AS8Nc69LovkIPApG
+ARC-Seal: i=1; a=rsa-sha256; t=1521214471; cv=none;
+        d=google.com; s=arc-20160816;
+        b=L4HDm575ELePRRIT+5t416TgLoXWT0nghqOzB7zHchxptxCsAA+W+6FNIkPTCYmPYu
+         yk3u96Z7hEGitcQpAp/r4aeVR+tpoMkHkRjnHQ/bGKE18on2fSbI6SBs5GjysYuvJHWO
+         daU6NUmXzuknEy/feREAsF/UQ83HUBgwmYESwd7MdN7p8tMv3bNpEqfW9uT9fB/WLJuz
+         2UrZxkrXXlJXvclH8/7b4uuKloiEKhoOL1wcMQ4lwP9M72Qr+gwuN69ED2M6+qh/6kVr
+         GTluPFEGItmsN+geWQDE7vOjtMssvsVGqvm0O71aquvZGYqoczr2a+E4I5vIzv0dCu3d
+         u8Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=s6pa9uZY21OWX4Nb/GkNe0jPmgFAHCsOePJ47s+hAsQ=;
+        b=fHgQbBbIG3HjneuYd5z2c3bHivUqPvQa2+zh3RrO6/03wOkj789jHM2aQimtlPJDqZ
+         i/zjogv+FvfsSXJTSHLOfLDgHeKe7CDkik5OJYWUuPBui9uZdCoD8dvC+dB+GGcQ1tGN
+         2okBq7KOy6Lw/wIm1nWwOuuQrG41X0Nvof6kneXeh9wIJqPOB4+bJTRjD1iBXp9NK8G1
+         7xZCP6T3WytvzzB2+/6cL7E2fAK+q7Hzzh9uSs+fR0okhfVdZXC7PEMnPMzSW8XLqVe7
+         IutizYUCp3pNlF4xZ8V6uggR0FD5D/G0PN6I2VlkAhxKUuqr2Eppo/s1NTM9DPuflccp
+         ovUw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.vnet.ibm.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 025/109] dm mpath: fix passing integrity data
-Date: Fri, 16 Mar 2018 16:22:54 +0100
-Message-Id: <20180316152331.320267295@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Fredrik Noring <noring@nocrew.org>,
+	Pete Zaitcev <zaitcev@redhat.com>
+Subject: [PATCH 4.14 019/109] usb: usbmon: Read text within supplied buffer size
+Date: Fri, 16 Mar 2018 16:22:48 +0100
+Message-Id: <20180316152331.000616179@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -72,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108322348681273?=
+X-GMAIL-MSGID: =?utf-8?q?1595108986285202958?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,43 +49,181 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Maier <maier@linux.vnet.ibm.com>
+From: Pete Zaitcev <zaitcev@kotori.zaitcev.us>
 
-commit 8c5c147339d2e201108169327b1f99aa6d57d2cd upstream.
+commit a5f596830e27e15f7a0ecd6be55e433d776986d8 upstream.
 
-After v4.12 commit e2460f2a4bc7 ("dm: mark targets that pass integrity
-data"), dm-multipath, e.g. on DIF+DIX SCSI disk paths, does not support
-block integrity any more. So add it to the whitelist.
+This change fixes buffer overflows and silent data corruption with the
+usbmon device driver text file read operations.
 
-This is also a pre-requisite to use block integrity with other dm layer(s)
-on top of multipath, such as kpartx partitions (dm-linear) or LVM.
-
-Also, bump target version to reflect this fix.
-
-Fixes: e2460f2a4bc7 ("dm: mark targets that pass integrity data")
-Cc: <stable@vger.kernel.org> #4.12+
-Bisected-by: Fedor Loshakov <loshakov@linux.vnet.ibm.com>
-Signed-off-by: Steffen Maier <maier@linux.vnet.ibm.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-mpath.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/mon/mon_text.c |  124 +++++++++++++++++++++++++++------------------
+ 1 file changed, 77 insertions(+), 47 deletions(-)
 
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -1941,8 +1941,9 @@ static int multipath_busy(struct dm_targ
-  *---------------------------------------------------------------*/
- static struct target_type multipath_target = {
- 	.name = "multipath",
--	.version = {1, 12, 0},
--	.features = DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
-+	.version = {1, 13, 0},
-+	.features = DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE |
-+		    DM_TARGET_PASSES_INTEGRITY,
- 	.module = THIS_MODULE,
- 	.ctr = multipath_ctr,
- 	.dtr = multipath_dtr,
+--- a/drivers/usb/mon/mon_text.c
++++ b/drivers/usb/mon/mon_text.c
+@@ -85,6 +85,8 @@ struct mon_reader_text {
+ 
+ 	wait_queue_head_t wait;
+ 	int printf_size;
++	size_t printf_offset;
++	size_t printf_togo;
+ 	char *printf_buf;
+ 	struct mutex printf_lock;
+ 
+@@ -376,75 +378,103 @@ err_alloc:
+ 	return rc;
+ }
+ 
+-/*
+- * For simplicity, we read one record in one system call and throw out
+- * what does not fit. This means that the following does not work:
+- *   dd if=/dbg/usbmon/0t bs=10
+- * Also, we do not allow seeks and do not bother advancing the offset.
+- */
++static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
++    char __user * const buf, const size_t nbytes)
++{
++	const size_t togo = min(nbytes, rp->printf_togo);
++
++	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
++		return -EFAULT;
++	rp->printf_togo -= togo;
++	rp->printf_offset += togo;
++	return togo;
++}
++
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_t(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	ep = mon_text_read_wait(rp, file);
+-	if (IS_ERR(ep))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+-
+-	mon_text_read_head_t(rp, &ptr, ep);
+-	mon_text_read_statset(rp, &ptr, ep);
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+ 
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_t(rp, &ptr, ep);
++		mon_text_read_statset(rp, &ptr, ep);
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
++	}
++
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_u(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	ep = mon_text_read_wait(rp, file);
+-	if (IS_ERR(ep))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+ 
+-	mon_text_read_head_u(rp, &ptr, ep);
+-	if (ep->type == 'E') {
+-		mon_text_read_statset(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
+-		mon_text_read_isostat(rp, &ptr, ep);
+-		mon_text_read_isodesc(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
+-		mon_text_read_intstat(rp, &ptr, ep);
+-	} else {
+-		mon_text_read_statset(rp, &ptr, ep);
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_u(rp, &ptr, ep);
++		if (ep->type == 'E') {
++			mon_text_read_statset(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
++			mon_text_read_isostat(rp, &ptr, ep);
++			mon_text_read_isodesc(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
++			mon_text_read_intstat(rp, &ptr, ep);
++		} else {
++			mon_text_read_statset(rp, &ptr, ep);
++		}
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
+ 	}
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+ 
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
+ static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
