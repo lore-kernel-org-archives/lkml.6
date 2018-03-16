@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELslJUdElqznTe3sncPDjBqbTjC00EC9WXamMAeeypf1BR3XDrQ+p2E4zpycHJldMuN2uNyw
-ARC-Seal: i=1; a=rsa-sha256; t=1521214294; cv=none;
+X-Google-Smtp-Source: AG47ELsuPNldeStQ619e3tOPy9goWlN1zMAj0c/zGVwapy9AOM4l4dwOD8YdZDnnyCd9nzznhuSs
+ARC-Seal: i=1; a=rsa-sha256; t=1521214291; cv=none;
         d=google.com; s=arc-20160816;
-        b=URZ4Lz71Yo6wP6AiJVbWb10xMVBm+zAYcIECoIzGHDnZNz5p+sg3EQkChh1STvBil9
-         lbt3Bx4Xam1UGf9S8HkOgG/uU8QDHImse5T7pSvILFkVjWq3Rxt7T9OrLOIbpV9Le0os
-         7/k6rdAG55+N7yUh6UI20FrxIDCZv9PzpYTK9C6g/Y0JWe1wuF/WwMO085kJQa+6rNpN
-         x3hrz1+INg4g0a6peoEQlFl7H5dOHMIa3EcSWVGdgs43DJ+h1bEQmaB7U9EU4k4g+sc4
-         meIhwfL/co0Vvui8w8Lw6VOVuHpa6nhIJufO8aj+mUtVxodjghqt6MiFFDugGzZlgY4R
-         YiLQ==
+        b=hJkVHk11Q5IRLVIAMNFygzjCYanB61HqYfP4wYEUN9shCTaN+hBBYx6jxTf1foMBbE
+         Tv7zudYu/zZJ2vSy4NN/HOrp2VF02MrhjixMLwEc0vCQhuzUc7TnKbjHTP0fOKQCnhwp
+         b3+Jpx9jzVIWON6Sm49IeJSZYrhVKi52paU9OrnHk0jBZwl6nQk/ymb3wHQLpKWI4BKe
+         DvR5goUZTLWSxQEyO6cHpRfli0TojK7HkF0t5oYGYbxYrqxWm5lFjOTjJIWTZ46p7J/I
+         IXGKHQ3Q1kzfateC+8gIpGTvfeBIRjQVLMUQNpsvRAII5+XmGVcekQmprtUctRWfoe2z
+         Y82g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1GFXUn+yaZ/Ttlk2banZJy8O8hV+f6wU5zJBhbl6kIc=;
-        b=RaJAC8Le+kNWIin0KLa5VGelPvEycr9UFME3yN7nDpi+KcJFXDKMaVsfy1XLFrCBck
-         EvLMQqS5SlZG5S0IFhlh0aRqABTCd4/8ff5dFhPifTMgxyNZaWwj8+YgH+BloFG2bvN8
-         vqHmeG0qNXJcecHgNVvbH+gV6x3B3IR+WRcfr12gxT1zuLJAPeUfw49ISZNX6zd7hKv2
-         QEBSJRdaEeabNwAvGCkBY/bs/SZrE6FSY45E9l8r023fMeC6/FaApTO2/59UCDaf0dHs
-         6Cch1YX2y6CHVTHijC9dv0iDzpk/nRKqE6ylj2S9l7awRKoTyfz79rcOm5l1yTc6JDpn
-         5qQA==
+        bh=o6W2R/n1g7pWX5faZtfPda/Z/9c1p3MYoeRcDJJh0f4=;
+        b=MH+2E1KFratshFMBorYdBXWp8E4ghxoGxBu/aK7SPKTMIM1fqDuQTx/qJiqwj7g/1Q
+         SZyFP6OVDvL5qfifPJRWRVx7xxYC8ELT9yNaaEY3sfucwAYIf5O280XpK7G2bztCMJ1s
+         oFg4b+/kvSHMLL4XbX1NifKnv/PG1xKzsDLWrq6EzQKS++8zyGuxCImzzu2YHYwSyITJ
+         aFpjYf8vT3I4BAfBh6KrYFfS7MvGAHJG4p2d4P99HhxCXLfFudLiqaGS60X4u7C/gsJ3
+         tKeFmdHNcsEjwnqkNDyzNX1zONbavXIO4X8CQl7gLDbN70sGljhNgHlgSQ5gbTSPgwg9
+         IMbA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -39,9 +39,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	pbonzini@redhat.com,
 	rkrcmar@redhat.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 42/86] x86/retpoline: Support retpoline builds with Clang
-Date: Fri, 16 Mar 2018 16:23:05 +0100
-Message-Id: <20180316152320.293252344@linuxfoundation.org>
+Subject: [PATCH 4.9 41/86] x86/speculation: Use IBRS if available before calling into firmware
+Date: Fri, 16 Mar 2018 16:23:04 +0100
+Message-Id: <20180316152320.170938513@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108799998637439?=
-X-GMAIL-MSGID: =?utf-8?q?1595108799998637439?=
+X-GMAIL-THRID: =?utf-8?q?1595108797191140981?=
+X-GMAIL-MSGID: =?utf-8?q?1595108797191140981?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,7 +62,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 87358710c1fb4f1bf96bbe2349975ff9953fc9b2 upstream.
+commit dd84441a797150dcc49298ec95c459a8891d8bb1 upstream.
+
+Retpoline means the kernel is safe because it has no indirect branches.
+But firmware isn't, so use IBRS for firmware calls if it's available.
+
+Block preemption while IBRS is set, although in practice the call sites
+already had to be doing that.
+
+Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
+code, from an NMI handler. I don't want to touch that with a bargepole.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
@@ -76,77 +85,194 @@ Cc: karahmed@amazon.de
 Cc: kvm@vger.kernel.org
 Cc: pbonzini@redhat.com
 Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-5-git-send-email-dwmw@amazon.co.uk
+Link: http://lkml.kernel.org/r/1519037457-7643-2-git-send-email-dwmw@amazon.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Makefile              |    5 ++++-
- include/linux/compiler-clang.h |    5 +++++
- include/linux/compiler-gcc.h   |    4 ++++
- include/linux/init.h           |    8 ++++----
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/apm.h           |    6 +++++
+ arch/x86/include/asm/cpufeatures.h   |    1 
+ arch/x86/include/asm/efi.h           |   17 +++++++++++++--
+ arch/x86/include/asm/nospec-branch.h |   39 ++++++++++++++++++++++++++---------
+ arch/x86/kernel/cpu/bugs.c           |   12 +++++++++-
+ 5 files changed, 63 insertions(+), 12 deletions(-)
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -184,7 +184,10 @@ KBUILD_AFLAGS += $(mflags-y)
+--- a/arch/x86/include/asm/apm.h
++++ b/arch/x86/include/asm/apm.h
+@@ -6,6 +6,8 @@
+ #ifndef _ASM_X86_MACH_DEFAULT_APM_H
+ #define _ASM_X86_MACH_DEFAULT_APM_H
  
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
-+    RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+    RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++#include <asm/nospec-branch.h>
 +
-+    RETPOLINE_CFLAGS += $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-     ifneq ($(RETPOLINE_CFLAGS),)
-         KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-     endif
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -15,3 +15,8 @@
-  * with any version that can compile the kernel
-  */
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-+
-+/* Clang doesn't have a way to turn it off per-function, yet. */
-+#ifdef __noretpoline
-+#undef __noretpoline
-+#endif
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -88,6 +88,10 @@
- #define __weak		__attribute__((weak))
- #define __alias(symbol)	__attribute__((alias(#symbol)))
+ #ifdef APM_ZERO_SEGS
+ #	define APM_DO_ZERO_SEGS \
+ 		"pushl %%ds\n\t" \
+@@ -31,6 +33,7 @@ static inline void apm_bios_call_asm(u32
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -43,6 +46,7 @@ static inline void apm_bios_call_asm(u32
+ 		  "=S" (*esi)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ }
  
-+#ifdef RETPOLINE
-+#define __noretpoline __attribute__((indirect_branch("keep")))
-+#endif
-+
+ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+@@ -55,6 +59,7 @@ static inline bool apm_bios_call_simple_
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
++	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -67,6 +72,7 @@ static inline bool apm_bios_call_simple_
+ 		  "=S" (si)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
++	firmware_restrict_branch_speculation_end();
+ 	return error;
+ }
+ 
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -203,6 +203,7 @@
+ #define X86_FEATURE_KAISER	( 7*32+31) /* CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
+ 
+ #define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
++#define X86_FEATURE_USE_IBRS_FW	( 7*32+22) /* "" Use IBRS during runtime firmware calls */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -5,6 +5,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/processor-flags.h>
+ #include <asm/tlb.h>
++#include <asm/nospec-branch.h>
+ 
  /*
-  * it doesn't make sense on ARM (currently the only user of __naked)
-  * to trace naked functions because then mcount is called without
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -5,10 +5,10 @@
- #include <linux/types.h>
+  * We map the EFI regions needed for runtime services non-contiguously,
+@@ -35,8 +36,18 @@
  
- /* Built-in __init functions needn't be compiled with retpoline */
--#if defined(RETPOLINE) && !defined(MODULE)
--#define __noretpoline __attribute__((indirect_branch("keep")))
-+#if defined(__noretpoline) && !defined(MODULE)
-+#define __noinitretpoline __noretpoline
- #else
--#define __noretpoline
-+#define __noinitretpoline
+ extern unsigned long asmlinkage efi_call_phys(void *, ...);
+ 
+-#define arch_efi_call_virt_setup()	kernel_fpu_begin()
+-#define arch_efi_call_virt_teardown()	kernel_fpu_end()
++#define arch_efi_call_virt_setup()					\
++({									\
++	kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
++})
++
++#define arch_efi_call_virt_teardown()					\
++({									\
++	firmware_restrict_branch_speculation_end();			\
++	kernel_fpu_end();						\
++})
++
+ 
+ /*
+  * Wrap all the virtual calls in a way that forces the parameters on the stack.
+@@ -72,6 +83,7 @@ struct efi_scratch {
+ 	efi_sync_low_kernel_mappings();					\
+ 	preempt_disable();						\
+ 	__kernel_fpu_begin();						\
++	firmware_restrict_branch_speculation_start();			\
+ 									\
+ 	if (efi_scratch.use_pgd) {					\
+ 		efi_scratch.prev_cr3 = read_cr3();			\
+@@ -90,6 +102,7 @@ struct efi_scratch {
+ 		__flush_tlb_all();					\
+ 	}								\
+ 									\
++	firmware_restrict_branch_speculation_end();			\
+ 	__kernel_fpu_end();						\
+ 	preempt_enable();						\
+ })
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -219,17 +219,38 @@ static inline void vmexit_fill_RSB(void)
  #endif
+ }
  
- /* These macros are used to mark some functions or 
-@@ -46,7 +46,7 @@
++#define alternative_msr_write(_msr, _val, _feature)		\
++	asm volatile(ALTERNATIVE("",				\
++				 "movl %[msr], %%ecx\n\t"	\
++				 "movl %[val], %%eax\n\t"	\
++				 "movl $0, %%edx\n\t"		\
++				 "wrmsr",			\
++				 _feature)			\
++		     : : [msr] "i" (_msr), [val] "i" (_val)	\
++		     : "eax", "ecx", "edx", "memory")
++
+ static inline void indirect_branch_prediction_barrier(void)
+ {
+-	asm volatile(ALTERNATIVE("",
+-				 "movl %[msr], %%ecx\n\t"
+-				 "movl %[val], %%eax\n\t"
+-				 "movl $0, %%edx\n\t"
+-				 "wrmsr",
+-				 X86_FEATURE_USE_IBPB)
+-		     : : [msr] "i" (MSR_IA32_PRED_CMD),
+-			 [val] "i" (PRED_CMD_IBPB)
+-		     : "eax", "ecx", "edx", "memory");
++	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
++			      X86_FEATURE_USE_IBPB);
++}
++
++/*
++ * With retpoline, we must use IBRS to restrict branch prediction
++ * before calling into firmware.
++ */
++static inline void firmware_restrict_branch_speculation_start(void)
++{
++	preempt_disable();
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
++			      X86_FEATURE_USE_IBRS_FW);
++}
++
++static inline void firmware_restrict_branch_speculation_end(void)
++{
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
++			      X86_FEATURE_USE_IBRS_FW);
++	preempt_enable();
+ }
  
- /* These are for everybody (although not all archs will actually
-    discard it in modules) */
--#define __init		__section(.init.text) __cold notrace __latent_entropy __noretpoline
-+#define __init		__section(.init.text) __cold notrace __latent_entropy __noinitretpoline
- #define __initdata	__section(.init.data)
- #define __initconst	__section(.init.rodata)
- #define __exitdata	__section(.exit.data)
+ #endif /* __ASSEMBLY__ */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -299,6 +299,15 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+ 		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+ 	}
++
++	/*
++	 * Retpoline means the kernel is safe because it has no indirect
++	 * branches. But firmware isn't, so use IBRS to protect that.
++	 */
++	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
++		pr_info("Enabling Restricted Speculation for firmware calls\n");
++	}
+ }
+ 
+ #undef pr_fmt
+@@ -325,8 +334,9 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
+ 
+-	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 		       spectre_v2_module_string());
+ }
+ #endif
