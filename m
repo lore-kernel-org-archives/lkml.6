@@ -1,82 +1,82 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2161282-1521181891-5-11853622188231994543
+X-Cyrus-Session-Id: sloti22d1t05-2161282-1521181866-8-1520785419083915552
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521181891; b=jlcGoeWqnNN/prVlSr4QQeHcOnStsNaH2X2it4sqHoyII6r
-    eT6J0DiSR+OEXbSVhaHlBJ6DNa8vgXMD32okw8v2rfoqGK9iezQVJQcwoDxDJ8lv
-    V1N8Zriv1OlueV19EHWSP53mbNRZtim/PS/EEsUr/KPacgNGxhX3EHnsxaAx9SAQ
-    clr3Biu6lIBpkP0UaC8oswX65652OYNGTcPcUrhlLD0yAyW2q8tVeadPeji3oGUN
-    5mXyLKdyJMoInD/2LNOzf4lyghJOufg/pE4DiSLlmId/ZLtfgzh1PFNT6dF+v512
-    LSj7pw5cUPgIDhYzsmWhBxiZ27ksgstWBuQtDsw==
+    t=1521181866; b=C6noHSZ25LMzQW7XGZN0Y4PWy4ROIMP/bZrrgrqp88vV7Gi
+    l8u0JlOuuGdjv9V9fPqz6KqKLJdDgoPxdkMbGTNl6ZHxGZckw3fqvujKBufGaszw
+    aX6n25xN8TxvCvPrh7M/HRxLIMCG5aFu9QxUkY2SrtXlAcrSRvxmvuN2leS0tki4
+    susaZz2kKxd+efOi9EQsQwAOLaFa6ONZAcpKwcHZPEzcJyd9lyt3aQ/5l+RmCos8
+    kd/EoJUX9iI85q/DQYXrCOiIHXYrrJk9XLIHLWMewurUu/oOPLa0iN06tfDyjZgD
+    qivJAYyl9hj4TO73OJohlVv8c6rvGy6PQlagr1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521181891; bh=U
-    /O4Ss1NFkeaYUoRZOrkyQlbSmSkJPN6WATF8V8lD5w=; b=G7Po/jCAfqFkCmnii
-    EQ9RfF2L0l6WQr/MKB36gTmnKetfBLZsJoPq31B0qDz7ZhDA1K7+r/2RHAcmujcl
-    Y/+e2t9u8O7ZM3G/4q/n9jL1gjZsRtjfXvbK8lX7yFpfewANkD+VPPxDFwoYIqWw
-    YqG0F2MxLuJCF6WayfPc6aah2CP2IX+8FOWHDvPgOgtLBDjFdTTI4ld/IBQv453c
-    gQtQ2KvsCUyFT46novNbm8vkgFHvdtZTBkZHlyOjb3Bb1iszrP1j6V5sgFlcr+MT
-    jC+2oGKvnP9OYvlZgfBdgdYjhE7R+LQja7YhAr/PLGpqe8V+hQD3nL6RsN9P79Gu
-    hUKYA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1521181866; bh=T
+    dF306mnMStNp3BtK9Bt6dVnVG1/q07tT2syBDlr7SE=; b=H1cRkN0v1jWV330yn
+    dmOeDk4fBWE/1BG5b2mJDNdu3itjHny23CPXy4WqfFuVSBQIO/0exJGhjt6Kfo7w
+    j1cPn0xdsY//wYxv6s7jMpjnyUPUhv90wLtt6XT8Pld9U8TK1Fos61/osvNJeW9A
+    5dL0IGn4GML7WzM4TQhEkpXf7nVVXV5r7iJiFWg912uoFRaBju8v1wdPixZz6iV2
+    PbhyZUUEMTbw1O9fxu2rNxGZNl9XS6GD2faAzsx5enoR68GZaISYm984shyCYTit
+    fcTDtoiemmyHRThL8KUsBAg9cPKzjbe8vqJcRXqjIvpEDc/7YlzVmYWaO4/g4hMs
+    bd+HQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 5/6] staging: ks7010: Fix line over 80 characters.
-Date: Thu, 15 Mar 2018 23:30:34 -0700
-Message-Id: <20180316063035.3037-4-quytelda@tamalin.org>
+Subject: [PATCH 4/6] staging: ks7010: Remove unnecessary braces.
+Date: Thu, 15 Mar 2018 23:30:33 -0700
+Message-Id: <20180316063035.3037-3-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316063035.3037-1-quytelda@tamalin.org>
 References: <20180316063035.3037-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:nKfiAL322gHwX2UjJjJ+Tc9WxlRVU0wdS4loxpB07+ftrz0/sOQ
- /IJ9CID4896A0Rtzf3gflEVqJy6T/dTlYIa1MQecKksVITwY6HfLSoumc+zzwNHBtXE7D2E
- xxatz+u6UN5ZOdOM/HWH2llm7SmP4hIlG88P68cqOFPqxX+iDySa27CsxpDw3Ofv2c+xcyk
- FNe1GmZj5RxrNT5y7Fz5w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0RjiMdkZYA4=:FEFXawoLw2CNnE2kWEfFSU
- cNhjKB67gQZYj3ubqtaf8ICMAgcExztzBxcirDw+SDiQ7S9Y/SXmgbkwMa19w3s5P4DQFUMMa
- amGE0iUbsOmLuRIkgmmvaYtmr0ytdacSRyWvhqstNkTmw5TKOZY7cf4yovBZSPJHjDN+bbvMp
- ZK/y3Z4PpN/QFDNA+/HPUKg8F4q+1STEw9oPXankxFknfCeusi2maox3rHtmDnXbK3An6WkG3
- GqJqkNM4lim6EdCowweTRYHtPsc6saXW/odwAIJ5uszyFKiZdhHaMD2QF7H6O8CpZkh8K0y4E
- lNhxb7SXoiFBfYQ44bDqU3VFRlc4WRGQzKZvdaCt3fn/oQVRUrDdi3HKI9YLpGnJA7dREEHYP
- IbB4hFaLgTZBMxyTY3UsUf9OKWfELPdnyXiNn3mrZFrjX1aGeF+SAFHIlsRo4TADli8TizMsL
- TShj5j+uaW+dapnj+o1uWiAEfcF851yzwhmfZR4a7fYMPDrD3aISQrJRpKED2CkH6ym6l1quu
- rk8RHo/DJjHsbo1Njg21mwxF+VAvnZzmcs6j2BFmlfNdyPcveVixXqgbO51HV6ztJc4zsiEd5
- Uq1N+WkFkdj9ZjIjaVRLyDiTzx2NmuTgJJr6ux7dhQhbw2rNg4bOF3nN8xuKkvNheotAf87gL
- U/ph7kj6X2iOTzpe0rDHqkaWz6QKcg2Q9SYZFiRBfXVpqQHKtU4aZDVmj+c2MUjHcuP+a6hQn
- VPjG+A9HgSC8Uc8lv0+cy7mgMkJ1jBIEZRDECg==
+X-Provags-ID: V03:K0:w3BjFT4CjvQLmzPLnJoIwuYv0hRFODoccKupPYN8VE6s1f54LDh
+ 8UpJPQiBQyQ7EA6ouPLpsHxccTYlKcZosfxYo+4gLlF83KJDBob7mzqjuNsjJjhAiIur/PC
+ JV1uI3Q99+kr6sInxUKD3WsB8X14KeXC+XuJ/Uq9H5N0eqg7HvSMKdogO8ZE5OI1XVC9Wwp
+ Ot9mxMv2tOdZcp3vah3yA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d005+mjLZ0g=:BhSe9XzIxsXZwSPFkXid7r
+ NX5ImMpsxypzX8vZB/VfNzwRSkkYzdjaE+VY9Hx9cUhNfm/Q1oF6ZXvJQeIW19Ei6/Wex/LLN
+ 5QnXE+EnZ8ubVJerVzvxOorBqplu5CohshjAfe+fmGxfJY5J5kZfEjbFHE/8bDg/JB1KjMzAy
+ OU6BFU5NuwwTp3R5SvBckzubJMZpyvpoPaAgdkIWey6Pwt+MadtaFczFLCanNqpZfenVDsYor
+ SdCopedolPNMPIDWvWzrLjtxx7aF9wJTmmA5ZyRCAsB2ta9cRkyxVie9mD0BdhoHDg2Beig5/
+ kpOw8yMntUTJMYbEJ3MPgRZ1sAqVqQYslcrFXgHL5IFyFIRVQ8lKNsLC+sejKDLPIF4ySzkfv
+ 6nMhudIqEet+X29k15tbgIKx2OlFcjBBdzlIKXL1gmU8fKSpYJgVxNwUv4mPxV+hEn6taxUe0
+ /sLzj7Z08PLFmeOrWm27L0xpRt+K53TZsIBCoADIdfMa+UqSH6KMP/YlSuJYOfjmIZKl0nYCl
+ Qr3D8S4/9YFO+qXvMfQKMSQLJ3/rd8mjlEJymKX1g/Vnfpyd1jw/m+zTjFJ75AXtM3GVjJ4E2
+ JwrFWaEhQCG0owN68yccHnUTyo92VMquUsi/eGmzIjO8untqA5DtbfUXmgu4+xinMECzrdPxt
+ Su9jqIGoSp7EAqekcPtmtNV1tFeGx/VtXJGrdz/7pggjIgWSG146Us8GP23IgueXpvREgbMZp
+ U0nW1iuAxgYZa4E0YYuKcBA0J9kzi9frD/G59Q==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -98,28 +98,28 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There is no reason for comment describing the BSSID check for loop
-to be spaced so far to the right.  Move it above the for loop.
+Braces aren't required for a single line if statement.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/ks7010/ks_hostif.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 2de4dbbcd9de..6fc2c3647908 100644
+index 00b97e8e9b4f..2de4dbbcd9de 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -844,7 +844,8 @@ void hostif_scan_indication(struct ks_wlan_private *priv)
- 	ap_info = (struct ap_info_t *)(priv->rxp);
+@@ -1387,9 +1387,8 @@ static __le16 ks_wlan_cap(struct ks_wlan_private *priv)
+ {
+ 	u16 capability = 0x0000;
  
- 	if (priv->scan_ind_count) {
--		for (i = 0; i < priv->aplist.size; i++) {	/* bssid check */
-+		/* bssid check */
-+		for (i = 0; i < priv->aplist.size; i++) {
- 			if (memcmp(ap_info->bssid,
- 				   priv->aplist.ap[i].bssid, ETH_ALEN) != 0)
- 				continue;
+-	if (priv->reg.preamble == SHORT_PREAMBLE) {
++	if (priv->reg.preamble == SHORT_PREAMBLE)
+ 		capability |= WLAN_CAPABILITY_SHORT_PREAMBLE;
+-	}
+ 
+ 	capability &= ~(WLAN_CAPABILITY_PBCC);	/* pbcc not support */
+ 
 -- 
 2.16.2
 
