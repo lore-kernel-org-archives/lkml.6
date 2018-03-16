@@ -1,264 +1,295 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751694AbeCPUyS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:54:18 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:42123 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751524AbeCPUyQ (ORCPT
+        id S1752188AbeCPU4d (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:56:33 -0400
+Received: from smtprelay0177.hostedemail.com ([216.40.44.177]:49279 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751269AbeCPU4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:54:16 -0400
-X-Google-Smtp-Source: AG47ELsFmp4uQmdU5v6nnk2ha7F9rHyMYYPWdjf6xBubLWXFRCbkSWA3OuGHyBcb+IQ89w+bsLgfUQ==
-Date: Fri, 16 Mar 2018 13:54:13 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jdelvare@suse.com, joel@jms.id.au,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v6 2/2] hwmon: (ucd9000) Add debugfs attributes to
- provide mfr_status
-Message-ID: <20180316205413.GA9493@roeck-us.net>
-References: <1521228359-32396-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1521228359-32396-3-git-send-email-eajames@linux.vnet.ibm.com>
- <20180316195953.GA2470@roeck-us.net>
- <505dc3ae-a4d3-0373-dd34-c429a215e3a4@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <505dc3ae-a4d3-0373-dd34-c429a215e3a4@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 16 Mar 2018 16:56:31 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:1:41:69:355:379:541:800:960:968:973:988:989:1260:1345:1437:1605:1730:1747:1777:1792:1981:2194:2199:2393:2559:2562:2636:3138:3139:3140:3141:3142:3865:3866:3867:3868:3870:3871:4321:4419:4559:4605:5007:6119:6261:8603:9592:10004:10848:11026:11232:11233:11473:11658:11914:12043:12048:12291:12296:12438:12555:12683:12895:12986:13161:13229:14394:21080:21433:21451:21627:30012:30054:30070:30075,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: bead75_72e43968d9503
+X-Filterd-Recvd-Size: 10784
+From: Joe Perches <joe@perches.com>
+To: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: Reduce object size of DRM_DEV_<LEVEL> uses
+Date: Fri, 16 Mar 2018 13:56:27 -0700
+Message-Id: <e5c164946e15375ac71b69b75f296efdf0b76e6d.1521233717.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 03:04:47PM -0500, Eddie James wrote:
-> 
-> 
-> On 03/16/2018 02:59 PM, Guenter Roeck wrote:
-> >On Fri, Mar 16, 2018 at 02:25:59PM -0500, Eddie James wrote:
-> >>From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> >>
-> >>Expose the gpiN_fault fields of mfr_status as individual debugfs
-> >>attributes. This provides a way for users to be easily notified of gpi
-> >>faults. Also provide the whole mfr_status register in debugfs.
-> >>
-> >>Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> >>Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> >>Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> >>---
-> >>  drivers/hwmon/pmbus/ucd9000.c | 138 +++++++++++++++++++++++++++++++++++++++++-
-> >>  1 file changed, 137 insertions(+), 1 deletion(-)
-> >>
-> >>diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
-> >>index ef2c5bf..88c98fb 100644
-> >>--- a/drivers/hwmon/pmbus/ucd9000.c
-> >>+++ b/drivers/hwmon/pmbus/ucd9000.c
-> >>@@ -19,6 +19,7 @@
-> >>   * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-> >>   */
-> >>+#include <linux/debugfs.h>
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/module.h>
-> >>  #include <linux/of_device.h>
-> >>@@ -37,6 +38,7 @@
-> >>  #define UCD9000_NUM_PAGES		0xd6
-> >>  #define UCD9000_FAN_CONFIG_INDEX	0xe7
-> >>  #define UCD9000_FAN_CONFIG		0xe8
-> >>+#define UCD9000_MFR_STATUS		0xf3
-> >>  #define UCD9000_GPIO_SELECT		0xfa
-> >>  #define UCD9000_GPIO_CONFIG		0xfb
-> >>  #define UCD9000_DEVICE_ID		0xfd
-> >>@@ -64,15 +66,24 @@
-> >>  #define UCD901XX_NUM_GPIOS	26
-> >>  #define UCD90910_NUM_GPIOS	26
-> >>+#define UCD9000_DEBUGFS_NAME_LEN	24
-> >>+#define UCD9000_GPI_COUNT		8
-> >>+
-> >>  struct ucd9000_data {
-> >>  	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
-> >>  	struct pmbus_driver_info info;
-> >>  #ifdef CONFIG_GPIOLIB
-> >>  	struct gpio_chip gpio;
-> >>  #endif
-> >>+	struct dentry *debugfs;
-> >>  };
-> >>  #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
-> >>+struct ucd9000_debugfs_entry {
-> >>+	struct i2c_client *client;
-> >>+	u8 index;
-> >>+};
-> >>+
-> >>  static int ucd9000_get_fan_config(struct i2c_client *client, int fan)
-> >>  {
-> >>  	int fan_config = 0;
-> >>@@ -359,6 +370,122 @@ static void ucd9000_probe_gpio(struct i2c_client *client,
-> >>  }
-> >>  #endif /* CONFIG_GPIOLIB */
-> >>+#ifdef CONFIG_DEBUG_FS
-> >>+static int ucd9000_get_mfr_status(struct i2c_client *client, u8 *buffer)
-> >>+{
-> >>+	int ret = pmbus_set_page(client, 0);
-> >>+
-> >>+	if (ret < 0)
-> >>+		return ret;
-> >>+
-> >>+	return i2c_smbus_read_block_data(client, UCD9000_MFR_STATUS, buffer);
-> >>+}
-> >>+
-> >>+static int ucd9000_debugfs_show_mfr_status_bit(void *data, u64 *val)
-> >>+{
-> >>+	struct ucd9000_debugfs_entry *entry = data;
-> >>+	struct i2c_client *client = entry->client;
-> >>+	u8 buffer[I2C_SMBUS_BLOCK_MAX];
-> >>+	int ret;
-> >>+
-> >>+	ret = ucd9000_get_mfr_status(client, buffer);
-> >>+	if (ret < 0)
-> >>+		return ret;
-> >>+
-> >>+	/*
-> >>+	 * Attribute only created for devices with gpi fault bits at bits
-> >>+	 * 16-23, which is the second byte of the response.
-> >>+	 */
-> >>+	*val = !!(buffer[1] & BIT(entry->index));
-> >>+
-> >>+	return 0;
-> >>+}
-> >>+DEFINE_DEBUGFS_ATTRIBUTE(ucd9000_debugfs_mfr_status_bit,
-> >>+			 ucd9000_debugfs_show_mfr_status_bit, NULL, "%1lld\n");
-> >>+
-> >>+static ssize_t ucd9000_debugfs_read_mfr_status(struct file *file,
-> >>+					       char __user *buf, size_t count,
-> >>+					       loff_t *ppos)
-> >>+{
-> >>+	struct i2c_client *client = file->private_data;
-> >>+	u8 buffer[I2C_SMBUS_BLOCK_MAX];
-> >>+	char str[(I2C_SMBUS_BLOCK_MAX * 2) + 2];
-> >>+	char *res;
-> >>+	int rc;
-> >>+
-> >>+	rc = ucd9000_get_mfr_status(client, buffer);
-> >>+	if (rc < 0)
-> >>+		return rc;
-> >>+
-> >>+	res = bin2hex(str, buffer, min(rc, I2C_SMBUS_BLOCK_MAX));
-> >>+	*res++ = '\n';
-> >>+	*res++ = 0;
-> >>+
-> >Unless I am missing something, this now returns the terminating '\0'
-> >to the user. Is this really what you want ?
-> 
-> Yes, that was my intention. I thought that was normal. It worked fine when I
-> cat'ed the file. Up to you, I can change it if you like.
-> 
-Please do. I suspect that you'll see the '\0' if you send the output to od.
-That is unexpected. I browsed through the kernel and was unable to find
-any other code doing the same, so we should not be the ones starting it.
+These macros are similar to the DRM_<LEVEL> with the addition
+of a struct device * to the arguments.
 
-Example is DEFINE_DEBUGFS_ATTRIBUTE, which ends up calling simple_attr_read().
-This in turn passes the result of scnprintf() or strlen() to
-simple_read_from_buffer(). Both not include the terminating '\0'.
+Convert the single drm_dev_printk function into 2 separate functions.
+drm_dev_printk with a KERN_<LEVEL> * for generic use and drm_dev_dbg
+for conditional masked use.
 
-Thanks,
-Guenter
+Remove the __func__ argument and use __builtin_return_address(0) to be
+similar to the DRM_<LEVEL> macros uses.
 
-> Thanks,
-> Eddie
-> 
-> >
-> >I see other code adding the terminator, but it doesn't usually return it
-> >to the user.
-> >
-> >Guenter
-> >
-> >>+	return simple_read_from_buffer(buf, count, ppos, str, res - str);
-> >>+}
-> >>+
-> >>+static const struct file_operations ucd9000_debugfs_show_mfr_status_fops = {
-> >>+	.llseek = noop_llseek,
-> >>+	.read = ucd9000_debugfs_read_mfr_status,
-> >>+	.open = simple_open,
-> >>+};
-> >>+
-> >>+static int ucd9000_init_debugfs(struct i2c_client *client,
-> >>+				const struct i2c_device_id *mid,
-> >>+				struct ucd9000_data *data)
-> >>+{
-> >>+	struct dentry *debugfs;
-> >>+	struct ucd9000_debugfs_entry *entries;
-> >>+	int i;
-> >>+	char name[UCD9000_DEBUGFS_NAME_LEN];
-> >>+
-> >>+	debugfs = pmbus_get_debugfs_dir(client);
-> >>+	if (!debugfs)
-> >>+		return -ENOENT;
-> >>+
-> >>+	data->debugfs = debugfs_create_dir(client->name, debugfs);
-> >>+	if (!data->debugfs)
-> >>+		return -ENOENT;
-> >>+
-> >>+	/*
-> >>+	 * Of the chips this driver supports, only the UCD9090, UCD90160,
-> >>+	 * and UCD90910 report GPI faults in their MFR_STATUS register, so only
-> >>+	 * create the GPI fault debugfs attributes for those chips.
-> >>+	 */
-> >>+	if (mid->driver_data == ucd9090 || mid->driver_data == ucd90160 ||
-> >>+	    mid->driver_data == ucd90910) {
-> >>+		entries = devm_kzalloc(&client->dev,
-> >>+				       sizeof(*entries) * UCD9000_GPI_COUNT,
-> >>+				       GFP_KERNEL);
-> >>+		if (!entries)
-> >>+			return -ENOMEM;
-> >>+
-> >>+		for (i = 0; i < UCD9000_GPI_COUNT; i++) {
-> >>+			entries[i].client = client;
-> >>+			entries[i].index = i;
-> >>+			scnprintf(name, UCD9000_DEBUGFS_NAME_LEN,
-> >>+				  "gpi%d_alarm", i + 1);
-> >>+			debugfs_create_file(name, 0444, data->debugfs,
-> >>+					    &entries[i],
-> >>+					    &ucd9000_debugfs_mfr_status_bit);
-> >>+		}
-> >>+	}
-> >>+
-> >>+	scnprintf(name, UCD9000_DEBUGFS_NAME_LEN, "mfr_status");
-> >>+	debugfs_create_file(name, 0444, data->debugfs, client,
-> >>+			    &ucd9000_debugfs_show_mfr_status_fops);
-> >>+
-> >>+	return 0;
-> >>+}
-> >>+#else
-> >>+static int ucd9000_init_debugfs(struct i2c_client *client,
-> >>+				const struct i2c_device_id *mid,
-> >>+				struct ucd9000_data *data)
-> >>+{
-> >>+	return 0;
-> >>+}
-> >>+#endif /* CONFIG_DEBUG_FS */
-> >>+
-> >>  static int ucd9000_probe(struct i2c_client *client,
-> >>  			 const struct i2c_device_id *id)
-> >>  {
-> >>@@ -475,7 +602,16 @@ static int ucd9000_probe(struct i2c_client *client,
-> >>  	ucd9000_probe_gpio(client, mid, data);
-> >>-	return pmbus_do_probe(client, mid, info);
-> >>+	ret = pmbus_do_probe(client, mid, info);
-> >>+	if (ret)
-> >>+		return ret;
-> >>+
-> >>+	ret = ucd9000_init_debugfs(client, mid, data);
-> >>+	if (ret)
-> >>+		dev_warn(&client->dev, "Failed to register debugfs: %d\n",
-> >>+			 ret);
-> >>+
-> >>+	return 0;
-> >>  }
-> >>  /* This is the driver that will be inserted */
-> >>-- 
-> >>1.8.3.1
-> >>
-> >>--
-> >>To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> >>the body of a message to majordomo@vger.kernel.org
-> >>More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Convert the DRM_DEV_<LEVEL> macros to remove now unnecessary arguments
+and use a consistent style.
+
+These macros are rarely used in the generic gpu/drm code so the code
+size does not change much for a defconfig, but when more drivers are
+enabled, there is ~4k savings.
+
+Many of these macros have no existing use at all.
+
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+1877530	  44651	    995	1923176	 1d5868	(TOTALS)
+
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+1877527	  44651	    995	1923173	 1d5865	(TOTALS)
+
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+17166750	2689238	 108352	19964340	130a1b4	(TOTALS)
+
+$ size -t drivers/gpu/drm/built-in.a | tail -1
+17168888	2691734	 108352	19968974	130b3ce	(TOTALS)
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/gpu/drm/drm_print.c | 37 +++++++++++++-----
+ include/drm/drm_print.h     | 94 ++++++++++++++++++++++-----------------------
+ 2 files changed, 74 insertions(+), 57 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+index 79abf6d5b4db..b25f98f33f6c 100644
+--- a/drivers/gpu/drm/drm_print.c
++++ b/drivers/gpu/drm/drm_print.c
+@@ -63,16 +63,34 @@ void drm_printf(struct drm_printer *p, const char *f, ...)
+ }
+ EXPORT_SYMBOL(drm_printf);
+ 
+-#define DRM_PRINTK_FMT "[" DRM_NAME ":%s]%s %pV"
+-
+ void drm_dev_printk(const struct device *dev, const char *level,
+-		    unsigned int category, const char *function_name,
+-		    const char *prefix, const char *format, ...)
++		    const char *format, ...)
++{
++	struct va_format vaf;
++	va_list args;
++
++	va_start(args, format);
++	vaf.fmt = format;
++	vaf.va = &args;
++
++	if (dev)
++		dev_printk(level, dev, "[" DRM_NAME ":%ps] %pV",
++			   __builtin_return_address(0), &vaf);
++	else
++		printk("%s" "[" DRM_NAME ":%ps] %pV",
++		       level, __builtin_return_address(0), &vaf);
++
++	va_end(args);
++}
++EXPORT_SYMBOL(drm_dev_printk);
++
++void drm_dev_dbg(const struct device *dev, unsigned int category,
++		 const char *format, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
+ 
+-	if (category != DRM_UT_NONE && !(drm_debug & category))
++	if (!(drm_debug & category))
+ 		return;
+ 
+ 	va_start(args, format);
+@@ -80,14 +98,15 @@ void drm_dev_printk(const struct device *dev, const char *level,
+ 	vaf.va = &args;
+ 
+ 	if (dev)
+-		dev_printk(level, dev, DRM_PRINTK_FMT, function_name, prefix,
+-			   &vaf);
++		dev_printk(KERN_DEBUG, dev, "[" DRM_NAME ":%ps] %pV",
++			   __builtin_return_address(0), &vaf);
+ 	else
+-		printk("%s" DRM_PRINTK_FMT, level, function_name, prefix, &vaf);
++		printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
++		       __builtin_return_address(0), &vaf);
+ 
+ 	va_end(args);
+ }
+-EXPORT_SYMBOL(drm_dev_printk);
++EXPORT_SYMBOL(drm_dev_dbg);
+ 
+ void drm_dbg(unsigned int category, const char *format, ...)
+ {
+diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+index 3a40c5a3a5fa..e1a46e9991cc 100644
+--- a/include/drm/drm_print.h
++++ b/include/drm/drm_print.h
+@@ -196,10 +196,13 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
+ #define DRM_UT_STATE		0x40
+ #define DRM_UT_LEASE		0x80
+ 
+-__printf(6, 7)
++__printf(3, 4)
+ void drm_dev_printk(const struct device *dev, const char *level,
+-		    unsigned int category, const char *function_name,
+-		    const char *prefix, const char *format, ...);
++		    const char *format, ...);
++__printf(3, 4)
++void drm_dev_dbg(const struct device *dev, unsigned int category,
++		 const char *format, ...);
++
+ __printf(2, 3)
+ void drm_dbg(unsigned int category, const char *format, ...);
+ __printf(1, 2)
+@@ -208,10 +211,7 @@ void drm_err(const char *format, ...);
+ /* Macros to make printk easier */
+ 
+ #define _DRM_PRINTK(once, level, fmt, ...)				\
+-	do {								\
+-		printk##once(KERN_##level "[" DRM_NAME "] " fmt,	\
+-			     ##__VA_ARGS__);				\
+-	} while (0)
++	printk##once(KERN_##level "[" DRM_NAME "] " fmt, ##__VA_ARGS__)
+ 
+ #define DRM_INFO(fmt, ...)						\
+ 	_DRM_PRINTK(, INFO, fmt, ##__VA_ARGS__)
+@@ -234,8 +234,7 @@ void drm_err(const char *format, ...);
+  * @fmt: printf() like format string.
+  */
+ #define DRM_DEV_ERROR(dev, fmt, ...)					\
+-	drm_dev_printk(dev, KERN_ERR, DRM_UT_NONE, __func__, " *ERROR*",\
+-		       fmt, ##__VA_ARGS__)
++	drm_dev_printk(dev, KERN_ERR, "*ERROR* " fmt, ##__VA_ARGS__)
+ #define DRM_ERROR(fmt, ...)						\
+ 	drm_err(fmt, ##__VA_ARGS__)
+ 
+@@ -258,8 +257,7 @@ void drm_err(const char *format, ...);
+ 	DRM_DEV_ERROR_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_INFO(dev, fmt, ...)					\
+-	drm_dev_printk(dev, KERN_INFO, DRM_UT_NONE, __func__, "", fmt,	\
+-		       ##__VA_ARGS__)
++	drm_dev_printk(dev, KERN_INFO, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_INFO_ONCE(dev, fmt, ...)				\
+ ({									\
+@@ -276,53 +274,46 @@ void drm_err(const char *format, ...);
+  * @dev: device pointer
+  * @fmt: printf() like format string.
+  */
+-#define DRM_DEV_DEBUG(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_CORE, __func__, "", fmt,	\
+-		       ##args)
++#define DRM_DEV_DEBUG(dev, fmt, ...)					\
++	drm_dev_dbg(dev, DRM_UT_CORE, fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG(fmt, ...)						\
+ 	drm_dbg(DRM_UT_CORE, fmt, ##__VA_ARGS__)
+ 
+-#define DRM_DEV_DEBUG_DRIVER(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_DRIVER, __func__, "",	\
+-		       fmt, ##args)
++#define DRM_DEV_DEBUG_DRIVER(dev, fmt, ...)				\
++	drm_dev_dbg(dev, DRM_UT_DRIVER,	fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG_DRIVER(fmt, ...)					\
+ 	drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+ 
+-#define DRM_DEV_DEBUG_KMS(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_KMS, __func__, "", fmt,	\
+-		       ##args)
++#define DRM_DEV_DEBUG_KMS(dev, fmt, ...)				\
++	drm_dev_dbg(dev, DRM_UT_KMS, fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG_KMS(fmt, ...)						\
+ 	drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
+ 
+-#define DRM_DEV_DEBUG_PRIME(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_PRIME, __func__, "",	\
+-		       fmt, ##args)
++#define DRM_DEV_DEBUG_PRIME(dev, fmt, ...)				\
++	drm_dev_dbg(dev, DRM_UT_PRIME, fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG_PRIME(fmt, ...)					\
+ 	drm_dbg(DRM_UT_PRIME, fmt, ##__VA_ARGS__)
+ 
+-#define DRM_DEV_DEBUG_ATOMIC(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ATOMIC, __func__, "",	\
+-		       fmt, ##args)
++#define DRM_DEV_DEBUG_ATOMIC(dev, fmt, ...)				\
++	drm_dev_dbg(dev, DRM_UT_ATOMIC,	fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG_ATOMIC(fmt, ...)					\
+ 	drm_dbg(DRM_UT_ATOMIC, fmt, ##__VA_ARGS__)
+ 
+-#define DRM_DEV_DEBUG_VBL(dev, fmt, args...)				\
+-	drm_dev_printk(dev, KERN_DEBUG, DRM_UT_VBL, __func__, "", fmt,	\
+-		       ##args)
++#define DRM_DEV_DEBUG_VBL(dev, fmt, ...)				\
++	drm_dev_dbg(dev, DRM_UT_VBL, fmt, ##__VA_ARGS__)
+ #define DRM_DEBUG_VBL(fmt, ...)						\
+ 	drm_dbg(DRM_UT_VBL, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEBUG_LEASE(fmt, ...)					\
+ 	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
+ 
+-#define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, level, fmt, args...)	\
++#define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, category, fmt, ...)	\
+ ({									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+ 				      DEFAULT_RATELIMIT_INTERVAL,	\
+ 				      DEFAULT_RATELIMIT_BURST);		\
+ 	if (__ratelimit(&_rs))						\
+-		drm_dev_printk(dev, KERN_DEBUG, DRM_UT_ ## level,	\
+-			       __func__, "", fmt, ##args);		\
++		drm_dev_dbg(dev, category, fmt, ##__VA_ARGS__);		\
+ })
+ 
+ /**
+@@ -331,21 +322,28 @@ void drm_err(const char *format, ...);
+  * @dev: device pointer
+  * @fmt: printf() like format string.
+  */
+-#define DRM_DEV_DEBUG_RATELIMITED(dev, fmt, args...)			\
+-	DEV__DRM_DEFINE_DEBUG_RATELIMITED(dev, CORE, fmt, ##args)
+-#define DRM_DEBUG_RATELIMITED(fmt, args...)				\
+-	DRM_DEV_DEBUG_RATELIMITED(NULL, fmt, ##args)
+-#define DRM_DEV_DEBUG_DRIVER_RATELIMITED(dev, fmt, args...)		\
+-	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRIVER, fmt, ##args)
+-#define DRM_DEBUG_DRIVER_RATELIMITED(fmt, args...)			\
+-	DRM_DEV_DEBUG_DRIVER_RATELIMITED(NULL, fmt, ##args)
+-#define DRM_DEV_DEBUG_KMS_RATELIMITED(dev, fmt, args...)		\
+-	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, KMS, fmt, ##args)
+-#define DRM_DEBUG_KMS_RATELIMITED(fmt, args...)				\
+-	DRM_DEV_DEBUG_KMS_RATELIMITED(NULL, fmt, ##args)
+-#define DRM_DEV_DEBUG_PRIME_RATELIMITED(dev, fmt, args...)		\
+-	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, PRIME, fmt, ##args)
+-#define DRM_DEBUG_PRIME_RATELIMITED(fmt, args...)			\
+-	DRM_DEV_DEBUG_PRIME_RATELIMITED(NULL, fmt, ##args)
++#define DRM_DEV_DEBUG_RATELIMITED(dev, fmt, ...)			\
++	_DEV_DRM_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_CORE,		\
++					  fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_RATELIMITED(fmt, ...)					\
++	DRM_DEV_DEBUG_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
++
++#define DRM_DEV_DEBUG_DRIVER_RATELIMITED(dev, fmt, ...)			\
++	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_DRIVER,		\
++					  fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_DRIVER_RATELIMITED(fmt, ...)				\
++	DRM_DEV_DEBUG_DRIVER_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
++
++#define DRM_DEV_DEBUG_KMS_RATELIMITED(dev, fmt, ...)			\
++	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_KMS,		\
++					  fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_KMS_RATELIMITED(fmt, ...)				\
++	DRM_DEV_DEBUG_KMS_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
++
++#define DRM_DEV_DEBUG_PRIME_RATELIMITED(dev, fmt, ...)			\
++	_DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, DRM_UT_PRIME,		\
++					  fmt, ##__VA_ARGS__)
++#define DRM_DEBUG_PRIME_RATELIMITED(fmt, ...)				\
++	DRM_DEV_DEBUG_PRIME_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
+ 
+ #endif /* DRM_PRINT_H_ */
+-- 
+2.15.0
