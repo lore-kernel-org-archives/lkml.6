@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsk6Po9PTXWd9J31YOCqyEo3TrMtLGGsgKj46rr8r4/Y/rrPlrQ58uXNQ6AOfjETF5DyaYb
-ARC-Seal: i=1; a=rsa-sha256; t=1521214868; cv=none;
+X-Google-Smtp-Source: AG47ELsOWBI4Y73aP/QJC6YjjafNRaZzZiqG72hj+5wrjbVaC5d7fcz3+794WJRrD704ii79yALw
+ARC-Seal: i=1; a=rsa-sha256; t=1521214859; cv=none;
         d=google.com; s=arc-20160816;
-        b=RHUuoGWJQjMP767z5XarIWABAX3jowwjjkdsEAiA8z7UzqWvUphx8D52l5LfnqO3l+
-         Hv1UYOrmoOmzRVKFeOoI3uLCggLzrrrkWeo0gO09GrmLhnxRnJF29JICZb5Egvlb4FvP
-         k3fiXgoDYWzbt13ucYHogJTp/XUVT13RKSX9gnbhtEgTz85I/N5O0MCBhSudEKWrO0ed
-         P8BmDh3LEY1ZCTuCgM9GGNDa9NcTJioxFFkEKZNsKDDG7DOpfmUeQ0IG6HfrSN1hzeAG
-         KaZkGZm+gP+SSNuD1FzIKNzWnUBJhCVYu6NnwGZN8h3kqFXyOm5HHzH5xz8G0DaALFJm
-         g6Sg==
+        b=UqhfD8lYuW3d5AV9GqBy38LI/T32RRvTErQF5IefsYdsVTSl38ZTG8QkpxqI+qiKO7
+         9OD3XkX+17gKhrId7PxnkVKfrWMGb99wHjWI/Sr7vvetATMC3vqw1yWkBRp6ViTcAdlH
+         GqSidMH23YI5v/D6rdf9ZFl1bwIwhsOhnQu3aqoQ8ZiHSCyIsSUZczf0SizKJRXeTj4e
+         1XuBaNp7lqE5AQuPwGZ2iw0xO+lgxawEiokRyFt4GfK1fVXZYp1e2GocZNWpQMq/Iybd
+         2SBDEVznztgr7WVWKDJCEx5Xv8NHJHfWMlkOakXCVKIWihz3j+RRAYs5GGHK2+hzpAll
+         ehuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BeuYRk9GDG42v1lLWOnPHeJK+yoibCcj3A6ueC89vA8=;
-        b=bPO9ldsbOe0LyaSvMe9gAcmeiEfAdfNp6sOpv8j5VowBy3LFe0XcM/Tl8Omn99SJdC
-         S2acQcS/YgX/qt2MOzbXg9i2ZFwvBmIOR8EERQe84PZtxZrRkY0/rNttk5td5NWz/5/X
-         +MVv4NVeF9fX5s6sMR8E+Asdm9VAEi/f+zHR/+rhuFfbH3UY2vmjaw38am7xzxhZlsY2
-         GH9tIkk1VlB9VEkzUOjVavLhHUUNA8dg9jlMHojQaMJx/jww8qUY+zmbHFPHukDaiMoz
-         /2E6VQ7HGk6yBKlVeCb04jrp/RCo28pYgaat0ApDDA8tWwBG+kb0JkQr+7FYv5gR657R
-         u9Bw==
+        bh=Yr7k/eOEJOv0/8NwK2sHLymB27YcjSlIXekZvtEumnM=;
+        b=egiDr9dB+wVgLZAF59SmNY2LYE8wNJyciCXKyFvj1UR+BWeG+vjjKqYurE+IULXjPB
+         ib9mXtt5wxwOxMnW5cFoOvV+72Jnu04fAPsfkT+cjqmuqq+1MYYeBexz/CFn8FAuVqqs
+         /oQUaCjPi0vEFgmU6eefmjpWRLn+BLWUyo0f88YqNK94LV1gMsNhNxNg1yFR0NW3ON5Z
+         bLHrwXe22tEJSYD9Iv8LnnHsZPQta5YK3DRzuig+L/G8v0nlqZZkMn5P4bLKphMj3wK/
+         LyO9uno8GLdbFMa5YtzPiWQNayg8lqjTpihN+BZbeos6r7Q6h3oyQFqrzAghCcTr7CyJ
+         itCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 047/128] sched: Stop resched_cpu() from sending IPIs to offline CPUs
-Date: Fri, 16 Mar 2018 16:23:08 +0100
-Message-Id: <20180316152339.163139756@linuxfoundation.org>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Subject: [PATCH 4.15 009/128] serial: sh-sci: prevent lockup on full TTY buffers
+Date: Fri, 16 Mar 2018 16:22:30 +0100
+Message-Id: <20180316152336.670371434@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109051046270878?=
-X-GMAIL-MSGID: =?utf-8?q?1595109401868012491?=
+X-GMAIL-THRID: =?utf-8?q?1595108493927910261?=
+X-GMAIL-MSGID: =?utf-8?q?1595109392350436061?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,71 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
+commit 7842055bfce4bf0170d0f61df8b2add8399697be upstream.
 
-[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
+When the TTY buffers fill up to the configured maximum, a system lockup
+occurs:
 
-The rcutorture test suite occasionally provokes a splat due to invoking
-resched_cpu() on an offline CPU:
+[  598.820128] INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  598.825796]  0-...!: (1 GPs behind) idle=5a6/2/0 softirq=1974/1974 fqs=1
+[  598.832577]  (detected by 3, t=62517 jiffies, g=296, c=295, q=126)
+[  598.838755] Task dump for CPU 0:
+[  598.841977] swapper/0       R  running task        0     0      0 0x00000022
+[  598.849023] Call trace:
+[  598.851476]  __switch_to+0x98/0xb0
+[  598.854870]            (null)
 
-WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
-Modules linked in:
-CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-task: ffff902ede9daf00 task.stack: ffff96c50010c000
-RIP: 0010:native_smp_send_reschedule+0x37/0x40
-RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
-RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
-RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
-RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
-R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
-FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
-Call Trace:
- resched_curr+0x8f/0x1c0
- resched_cpu+0x2c/0x40
- rcu_implicit_dynticks_qs+0x152/0x220
- force_qs_rnp+0x147/0x1d0
- ? sync_rcu_exp_select_cpus+0x450/0x450
- rcu_gp_kthread+0x5a9/0x950
- kthread+0x142/0x180
- ? force_qs_rnp+0x1d0/0x1d0
- ? kthread_create_on_node+0x40/0x40
- ret_from_fork+0x27/0x40
-Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
----[ end trace 26df9e5df4bba4ac ]---
+This can be prevented by doing a dummy read of the RX data register.
 
-This splat cannot be generated by expedited grace periods because they
-always invoke resched_cpu() on the current CPU, which is good because
-expedited grace periods require that resched_cpu() unconditionally
-succeed.  However, other parts of RCU can tolerate resched_cpu() acting
-as a no-op, at least as long as it doesn't happen too often.
+This issue affects both HSCIF and SCIF ports. Reported for R-Car H3 ES2.0;
+reproduced and fixed on H3 ES1.1. Probably affects other R-Car platforms
+as well.
 
-This commit therefore makes resched_cpu() invoke resched_curr() only if
-the CPU is either online or is the current CPU.
-
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/sched/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -508,7 +508,8 @@ void resched_cpu(int cpu)
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&rq->lock, flags);
--	resched_curr(rq);
-+	if (cpu_online(cpu) || cpu == smp_processor_id())
-+		resched_curr(rq);
- 	raw_spin_unlock_irqrestore(&rq->lock, flags);
- }
- 
+---
+ drivers/tty/serial/sh-sci.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -885,6 +885,8 @@ static void sci_receive_chars(struct uar
+ 		/* Tell the rest of the system the news. New characters! */
+ 		tty_flip_buffer_push(tport);
+ 	} else {
++		/* TTY buffers full; read from RX reg to prevent lockup */
++		serial_port_in(port, SCxRDR);
+ 		serial_port_in(port, SCxSR); /* dummy read */
+ 		sci_clear_SCxSR(port, SCxSR_RDxF_CLEAR(port));
+ 	}
