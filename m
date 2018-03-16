@@ -1,95 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932738AbeCPBAn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 21:00:43 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50160 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751791AbeCPBAl (ORCPT
+        id S932950AbeCPBFM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 21:05:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41850 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932852AbeCPBFJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 21:00:41 -0400
-X-UUID: 0deeee01abff4d12936bffaa8ab8c4b2-20180316
-Message-ID: <1521161889.13458.1.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] of_pci_irq: add a check to fallback to standard
- device tree parsing
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Fri, 16 Mar 2018 08:58:09 +0800
-In-Reply-To: <20180315174329.GB22176@e107981-ln.cambridge.arm.com>
-References: <31c765c53e85e41bfc001d110d69e46c9967f4e7.1516961656.git.ryder.lee@mediatek.com>
-         <20180315174329.GB22176@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Mar 2018 21:05:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9321A60F8E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: netdev@vger.kernel.org, timur@ocdeaurora.org, sulrich@ocdeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/6] igb: eliminate duplicate barriers on weakly-ordered archs
+Date: Thu, 15 Mar 2018 21:04:54 -0400
+Message-Id: <1521162296-19729-5-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521162296-19729-1-git-send-email-okaya@codeaurora.org>
+References: <1521162296-19729-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-X-MTK: N
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-15 at 17:43 +0000, Lorenzo Pieralisi wrote:
-> On Wed, Jan 31, 2018 at 03:41:49PM +0800, Ryder Lee wrote:
-> > A root complex usually consist of a host bridge and multiple P2P bridges,
-> > and someone may express that in the form of a root node with many subnodes
-> > and list all four interrupts for each slot (child node) in the root node
-> > like this:
-> > 
-> > 	pcie-controller {
-> > 		...
-> > 		interrupt-map-mask = <0xf800 0 0 7>;
-> > 		interrupt-map = <0x0000 0 0 {INTx} &{interrupt parent} ...>
-> > 				 0x0800 0 0 {INTx} &{interrupt parent} ...>;
-> > 
-> > 		pcie@0,0 {
-> > 			reg = <0x0000 0 0 0 0>;
-> > 			...
-> > 		};
-> > 
-> > 		pcie@1,0 {
-> > 			reg = <0x0800 0 0 0 0>;
-> > 			...
-> > 		};
-> > 	};
-> > 
-> > As shown above, we'd like to propagate IRQs from a root port to the devices
-> > in the hierarchy below it in this way.  However, it seems that the current
-> > parser couldn't handle such cases and will get something unexpected below:
-> > 
-> > 	pcieport 0000:00:01.0: assign IRQ: got 213
-> > 	igb 0000:01:00.0: assign IRQ: got 212
-> > 
-> > There is a device which is connected to 2nd slot, but the port doesn't share
-> > the same IRQ with its downstream devices.  The problem here is that, if the
-> > loop found a P2P bridge, it wouldn't check whether the reg property exists
-> > in ppnode or not but just pass the subordinate devfn to of_irq_parse_raw(),
-> > thus the subsequent flow couldn't correctly resolve them.
-> > 
-> > Fix this by adding a check to fallback to standard device tree parsing.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> > Please refer to the previous discussion thread: https://patchwork.ozlabs.org/patch/829108/
-> > ---
-> >  drivers/of/of_pci_irq.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> Hi Ryder,
-> 
-> from the thread discussion I gather I can drop this series from the PCI
-> queue and you will update the DT as agreed with Ben, that looks like
-> the most reasonable solution to the problem you are facing, please
-> let me know if there is anything I am missing.
-> 
-> Thanks,
-> Lorenzo
-> 
+Code includes wmb() followed by writel(). writel() already has a barrier
+on some architectures like arm64.
 
-Yes, please drop the series.
+This ends up CPU observing two barriers back to back before executing the
+register write.
 
-Thanks
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
+
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index b88fae7..82aea92 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -5671,7 +5671,7 @@ static int igb_tx_map(struct igb_ring *tx_ring,
+ 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
+ 
+ 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-		writel(i, tx_ring->tail);
++		writel_relaxed(i, tx_ring->tail);
+ 
+ 		/* we need this if more than one processor can write to our tail
+ 		 * at a time, it synchronizes IO on IA64/Altix systems
+@@ -8072,7 +8072,7 @@ void igb_alloc_rx_buffers(struct igb_ring *rx_ring, u16 cleaned_count)
+ 		 * such as IA-64).
+ 		 */
+ 		wmb();
+-		writel(i, rx_ring->tail);
++		writel_relaxed(i, rx_ring->tail);
+ 	}
+ }
+ 
+-- 
+2.7.4
