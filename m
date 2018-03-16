@@ -1,77 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753497AbeCPQwY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:52:24 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:55013 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753481AbeCPQwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:52:20 -0400
-X-Google-Smtp-Source: AG47ELv7GES3TAfdvwT9aX3WBxZ1I4llbxTgHmfx68UIv82Z3mcJAi4qCQ8ssWPSkT/7eOzQ8ZCg27miSD49QFcH6b0=
+        id S1753523AbeCPQwn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:52:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36240 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751448AbeCPQwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:52:41 -0400
+Date: Fri, 16 Mar 2018 17:52:39 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Erica Bugden <ebugden@efficios.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: uprobes misses breakpoint insertion into VM_WRITE mappings
+Message-ID: <20180316165239.GA28462@redhat.com>
+References: <670124481.11073.1521146881571.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
- <26a25069-ea1d-5fb3-549c-ab653f454a30@arm.com> <CAAeHK+zq4-mw3pCNf3nob3gN-s+aWVq7vUy1p8yY4bU4QYNNMg@mail.gmail.com>
- <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
-In-Reply-To: <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Fri, 16 Mar 2018 16:52:08 +0000
-Message-ID: <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
-Subject: Re: arm64 kvm built with clang doesn't boot
-To: marc.zyngier@arm.com
-Cc: Andrey Konovalov <andreyknvl@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Greg Hackmann <ghackmann@google.com>, christoffer.dall@linaro.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        kernel-dynamic-tools <kernel-dynamic-tools@google.com>,
-        Sami Tolvanen <samitolvanen@google.com>, takahiro.akashi@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670124481.11073.1521146881571.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Sami (Google), Takahiro (Linaro)
+On 03/15, Mathieu Desnoyers wrote:
+>
+> Hi,
+>
+> Erica has been working on extending test-cases for uprobes, and found
+> something unexpected:
+>
+> Since commit e40cfce626a5 "uprobes: Restrict valid_vma(false) to skip VM_SHARED vmas"
+> uprobes does not insert breakpoints into mappings mprotect'd as writeable.
 
-Just so I fully understand the problem enough to articulate it, we'd be
-looking for the compiler to keep the jump tables for speed (I would guess
--fno-jump-tables would emit an if-else chain) but only emit relative jumps
-(not absolute jumps)?
+Not really, VM_WRITE was illegal from the very beginning, this commit only
+affects the "is_register == false" case.
 
-> Perhaps Nick can comment on whether something like
--fno-absolute-addressing would be feasible in clang.
+> This issue can be reproduced by compiling a library without PIC (not using GOT),
+> and then concurrently:
+>
+> A) Load the library (dynamic loader mprotect the code as writeable to do
+>    the relocations, and then mprotect as executable),
+>
+> B) Enable a uprobe through perf.
+>
+> (it is a race window between the two mprotect syscalls)
+>
+> It appears that the following restriction in valid_vma() is responsible
+> for this behavior:
+>
+>         if (is_register)
+>                 flags |= VM_WRITE;
+>
+> I don't figure a clear explanation for this flag based on the function
+> comment nor the commit changelog. Any idea on whether this is really
+> needed ?
 
-Checked with some of my LLVM friends.  They mentioned that this is tricky
-because you need to move the addresses of the jump table from a data
-section back into the text section.
+Because we do not want to modify the writable area. If nothing else, this
+can break the application which writes to the page we are going to replace.
 
-Looks like LLVM has an interesting method
-`shouldPutJumpTableInFunctionSection` [0]. Unfortunately, it gets
-overridden for ELF to always return false. [1]
+> Note that on uprobes unregister, it allows removing a breakpoint event
+> on a writeable mapping,
 
-It looks like there's also a flag `no-jump-tables` [2].  Looks like Sami
-has used this in the past in kvm. [3]
+Yes. Because a probed apllication can do mprotect() after the kernel installs
+the breakpoint. And we have to remove this breakpoint in any case, even if
+this is unsafe too.
 
-It's still probably possible to add this to LLVM, so I can pursue that with
-LLVM devs.
-
-> But just for the reference, I'm using 4.16-rc4 with a patch to fix SMCCC
-issues that you mentioned.
-
-Is this in regards to: commit "arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
-hardening support"? Has anyone tried to upstream a fix for this?  We
-probably want to be very explicit with register widths here.
-
-[0]
-https://github.com/llvm-mirror/llvm/blob/a5bd54307b1adacb3df297b9b8010979b9afa4d7/lib/Target/TargetLoweringObjectFile.cpp#L280
-[1]
-https://github.com/llvm-mirror/llvm/blob/e7676fec11b02e4b698b5ffc99e1901246a7bf66/lib/CodeGen/TargetLoweringObjectFileImpl.cpp#L494
-[2]
-https://github.com/llvm-mirror/llvm/blob/11f5adb29bf90bc1a40b8bb512afcff4b1ac0f56/lib/Transforms/Utils/SimplifyCFG.cpp#L5233
-[3] https://patchwork.kernel.org/patch/10060301/
-
---
-Thanks,
-~Nick Desaulniers
+Oleg.
