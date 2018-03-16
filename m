@@ -1,121 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751650AbeCPVcS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:32:18 -0400
-Received: from linode.aoot.com ([69.164.194.13]:54398 "EHLO linode.aoot.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeCPVcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:32:13 -0400
-From: "Steve Wise" <swise@opengridcomputing.com>
-To: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
-        <timur@codeaurora.org>, <sulrich@codeaurora.org>
-Cc: <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>,
-        "'Jason Gunthorpe'" <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "'Michael Werner'" <werner@chelsio.com>,
-        "'Casey Leedom'" <leedom@chelsio.com>
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
-In-Reply-To: <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
-Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 16:05:10 -0500
-Message-ID: <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6hepPPFF3A=
-Content-Language: en-us
+        id S1752061AbeCPVdP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:33:15 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:45398 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751944AbeCPVdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:33:12 -0400
+X-Google-Smtp-Source: AG47ELuJGwHjBT6QBtGx7a/V8yS8mqtaX4HaGp5XMivzhKAOAM+jQgI618l85qDMDD2Xse+CtgCYSQ==
+From: Rob Herring <robh@kernel.org>
+To: linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: uclinux-h8-devel@lists.sourceforge.jp
+Subject: [PATCH] h8300: switch to NO_BOOTMEM
+Date: Fri, 16 Mar 2018 16:33:06 -0500
+Message-Id: <20180316213306.20424-1-robh@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Code includes wmb() followed by writel(). writel() already has a barrier
-on
-> some architectures like arm64.
-> 
-> This ends up CPU observing two barriers back to back before executing the
-> register write.
-> 
-> Since code already has an explicit barrier call, changing writel() to
-> writel_relaxed().
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+inadvertently switched the DT unflattening allocations from memblock to
+bootmem which doesn't work because the unflattening happens before
+bootmem is initialized. Swapping the order of bootmem init and
+unflattening could also fix this, but removing bootmem is desired. So
+enable NO_BOOTMEM on h8300 like other architectures have done.
 
-NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
-writeX().  
+Fixes: 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: uclinux-h8-devel@lists.sourceforge.jp
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+I haven't seen any reports, but 4.16 is likely broken. This is compile 
+tested only.
 
-I was just looking at this with Chelsio developers, and they said the
-writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
-get rid of the extra barrier for all architectures.
+Moving unflattening after bootmem_init should also work if a smaller 
+change for 4.16 is desired.
 
-Also, t4.h:pio_copy() needs to  use __raw_writeq() to enable the write
-combining fastpath for ARM and PowerPC.  The code as it stands doesn't
-achieve any write combining on PowerPC at least.  
+Rob
 
-And the writel()s at the end of the ring functions (the non bar2 udb path)
-needs a mmiowb() afterwards if you're going to use __raw_writeX() there.
-However that path is only used for very old hardware (T4), so I wouldn't
-worry about them. 
+ arch/h8300/Kconfig        |  1 +
+ arch/h8300/kernel/setup.c | 36 ++++++++----------------------------
+ 2 files changed, 9 insertions(+), 28 deletions(-)
 
-Steve.
-
-
-> ---
->  drivers/infiniband/hw/cxgb4/t4.h | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/cxgb4/t4.h
-> b/drivers/infiniband/hw/cxgb4/t4.h
-> index 8369c7c..7a48c9e 100644
-> --- a/drivers/infiniband/hw/cxgb4/t4.h
-> +++ b/drivers/infiniband/hw/cxgb4/t4.h
-> @@ -477,15 +477,15 @@ static inline void t4_ring_sq_db(struct t4_wq *wq,
-> u16 inc, union t4_wr *wqe)
->  				 (u64 *)wqe);
->  		} else {
->  			pr_debug("DB wq->sq.pidx = %d\n", wq->sq.pidx);
-> -			writel(PIDX_T5_V(inc) | QID_V(wq->sq.bar2_qid),
-> -			       wq->sq.bar2_va + SGE_UDB_KDOORBELL);
-> +			writel_relaxed(PIDX_T5_V(inc) | QID_V(wq-
-> >sq.bar2_qid),
-> +				       wq->sq.bar2_va +
-> SGE_UDB_KDOORBELL);
->  		}
-> 
->  		/* Flush user doorbell area writes. */
->  		wmb();
->  		return;
->  	}
-> -	writel(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
-> +	writel_relaxed(QID_V(wq->sq.qid) | PIDX_V(inc), wq->db);
->  }
-> 
->  static inline void t4_ring_rq_db(struct t4_wq *wq, u16 inc,
-> @@ -502,15 +502,15 @@ static inline void t4_ring_rq_db(struct t4_wq *wq,
-> u16 inc,
->  				 (void *)wqe);
->  		} else {
->  			pr_debug("DB wq->rq.pidx = %d\n", wq->rq.pidx);
-> -			writel(PIDX_T5_V(inc) | QID_V(wq->rq.bar2_qid),
-> -			       wq->rq.bar2_va + SGE_UDB_KDOORBELL);
-> +			writel_relaxed(PIDX_T5_V(inc) | QID_V(wq-
-> >rq.bar2_qid),
-> +				       wq->rq.bar2_va +
-> SGE_UDB_KDOORBELL);
->  		}
-> 
->  		/* Flush user doorbell area writes. */
->  		wmb();
->  		return;
->  	}
-> -	writel(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
-> +	writel_relaxed(QID_V(wq->rq.qid) | PIDX_V(inc), wq->db);
->  }
-> 
->  static inline int t4_wq_in_error(struct t4_wq *wq)
-> --
-> 2.7.4
+diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
+index 091d6d04b5e5..efc602634064 100644
+--- a/arch/h8300/Kconfig
++++ b/arch/h8300/Kconfig
+@@ -16,6 +16,7 @@ config H8300
+ 	select OF_IRQ
+ 	select OF_EARLY_FLATTREE
+ 	select HAVE_MEMBLOCK
++	select NO_BOOTMEM
+ 	select TIMER_OF
+ 	select H8300_TMR8
+ 	select HAVE_KERNEL_GZIP
+diff --git a/arch/h8300/kernel/setup.c b/arch/h8300/kernel/setup.c
+index a4d0470c10a9..33ed980e7aea 100644
+--- a/arch/h8300/kernel/setup.c
++++ b/arch/h8300/kernel/setup.c
+@@ -71,10 +71,6 @@ void __init h8300_fdt_init(void *fdt, char *bootargs)
+ 
+ static void __init bootmem_init(void)
+ {
+-	int bootmap_size;
+-	unsigned long ram_start_pfn;
+-	unsigned long free_ram_start_pfn;
+-	unsigned long ram_end_pfn;
+ 	struct memblock_region *region;
+ 
+ 	memory_end = memory_start = 0;
+@@ -88,33 +84,17 @@ static void __init bootmem_init(void)
+ 	if (!memory_end)
+ 		panic("No memory!");
+ 
+-	ram_start_pfn = PFN_UP(memory_start);
+-	/* free_ram_start_pfn is first page after kernel */
+-	free_ram_start_pfn = PFN_UP(__pa(_end));
+-	ram_end_pfn = PFN_DOWN(memblock_end_of_DRAM());
++	/* setup bootmem globals (we use no_bootmem, but mm still depends on this) */
++	min_low_pfn = PFN_UP(memory_start);
++	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
++	max_pfn = max_low_pfn;
+ 
+-	max_pfn = ram_end_pfn;
++	memblock_reserve(__pa(_stext), _end - _stext);
+ 
+-	/*
+-	 * give all the memory to the bootmap allocator,  tell it to put the
+-	 * boot mem_map at the start of memory
+-	 */
+-	bootmap_size = init_bootmem_node(NODE_DATA(0),
+-					 free_ram_start_pfn,
+-					 0,
+-					 ram_end_pfn);
+-	/*
+-	 * free the usable memory,  we have to make sure we do not free
+-	 * the bootmem bitmap so we then reserve it after freeing it :-)
+-	 */
+-	free_bootmem(PFN_PHYS(free_ram_start_pfn),
+-		     (ram_end_pfn - free_ram_start_pfn) << PAGE_SHIFT);
+-	reserve_bootmem(PFN_PHYS(free_ram_start_pfn), bootmap_size,
+-			BOOTMEM_DEFAULT);
++	early_init_fdt_reserve_self();
++	early_init_fdt_scan_reserved_mem();
+ 
+-	for_each_memblock(reserved, region) {
+-		reserve_bootmem(region->base, region->size, BOOTMEM_DEFAULT);
+-	}
++	memblock_dump_all();
+ }
+ 
+ void __init setup_arch(char **cmdline_p)
+-- 
+2.14.1
