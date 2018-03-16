@@ -1,87 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753429AbeCPJGz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 05:06:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58050 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751094AbeCPJGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:06:49 -0400
-Date: Fri, 16 Mar 2018 10:06:47 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Jia He <hejianet@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>, Daniel Vacek <neelx@redhat.com>,
-        linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>
-Subject: Re: [PATCH] Revert "mm/memblock.c: hardcode the end_pfn being -1"
-Message-ID: <20180316090647.GC23100@dhcp22.suse.cz>
-References: <1521168966-5245-1-git-send-email-hejianet@gmail.com>
+        id S1753479AbeCPJLF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 05:11:05 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41190 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750847AbeCPJK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 05:10:59 -0400
+Subject: Re: [PATCH 0/2] iio: stm32-dfsdm-adc: fix filter & rate setting
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>
+References: <1520950986-23116-1-git-send-email-fabrice.gasnier@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <1ddfcfad-f06e-738f-53cf-11dc56e61da1@st.com>
+Date: Fri, 16 Mar 2018 10:10:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521168966-5245-1-git-send-email-hejianet@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1520950986-23116-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-03-18 19:56:06, Jia He wrote:
-> This reverts commit 379b03b7fa05f7db521b7732a52692448a3c34fe.
-> 
-> Commit 864b75f9d6b0 ("mm/page_alloc: fix memmap_init_zone pageblock
-> alignment") introduced boot hang issues in arm/arm64 machines, so
-> Ard Biesheuvel reverted in commit 3e04040df6d4. But there is a
-> preparation patch for commit 864b75f9d6b0. So just revert it for
-> the sake of caution.
+Hello,
 
-Why? Is there anything wrong with this one?
+For the series:
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-> 
-> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
-> ---
->  mm/memblock.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index b6ba6b7..5a9ca2a 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1107,7 +1107,7 @@ unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
->  	struct memblock_type *type = &memblock.memory;
->  	unsigned int right = type->cnt;
->  	unsigned int mid, left = 0;
-> -	phys_addr_t addr = PFN_PHYS(++pfn);
-> +	phys_addr_t addr = PFN_PHYS(pfn + 1);
->  
->  	do {
->  		mid = (right + left) / 2;
-> @@ -1118,15 +1118,15 @@ unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
->  				  type->regions[mid].size))
->  			left = mid + 1;
->  		else {
-> -			/* addr is within the region, so pfn is valid */
-> -			return pfn;
-> +			/* addr is within the region, so pfn + 1 is valid */
-> +			return min(pfn + 1, max_pfn);
->  		}
->  	} while (left < right);
->  
->  	if (right == type->cnt)
-> -		return -1UL;
-> +		return max_pfn;
->  	else
-> -		return PHYS_PFN(type->regions[right].base);
-> +		return min(PHYS_PFN(type->regions[right].base), max_pfn);
->  }
->  
->  /**
-> -- 
-> 2.7.4
-> 
+Thanks,
+Arnaud
 
--- 
-Michal Hocko
-SUSE Labs
+On 03/13/2018 03:23 PM, Fabrice Gasnier wrote:
+> This series brings fixes to STM32 DFSDM ADC driver.
+> 
+> Fabrice Gasnier (2):
+>   iio: adc: stm32-dfsdm: fix successive oversampling settings
+>   iio: adc: stm32-dfsdm: fix sample rate for div2 spi clock
+> 
+>  drivers/iio/adc/stm32-dfsdm-adc.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
