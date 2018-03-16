@@ -1,68 +1,79 @@
-Return-Path: <davem@davemloft.net>
-X-Google-Smtp-Source: AG47ELsoMxA0q9WkTUkIgc5zaeqdVvzJHdRCKqByXrt8IWIqIYYPooTWykRLDlpY60IphPFRmPr2
-ARC-Seal: i=1; a=rsa-sha256; t=1521508515; cv=none;
+Return-Path: <grygorii.strashko@ti.com>
+X-Google-Smtp-Source: AG47ELuNwujEPBIUzamdjwmS5OXLVV095v9y60zgY7F+aEt0Qi0k9IOey938I0uoa+sdVkVDr1s9
+ARC-Seal: i=1; a=rsa-sha256; t=1521238119; cv=none;
         d=google.com; s=arc-20160816;
-        b=E0g99pVZcHWhX+N4UmLsIsi91npBzLdgJT4mjY2UEsq3702WgetufN4Kv8Zn9APfJR
-         SOaAkZ05gjdLwOO6Rqw/4JweVRhXj227REa40NnS6LZZ5WVqSaDRhSG8nrnu6XjsvnxQ
-         yM3S98Pe9zR4PdRLJdYd9ktkV/LKyhN0P4yQRAghtIBkIb8szi9lLCfhPZOd8yjruz68
-         L/99f/UGvSTf6i46NFawzMr95+fobqgw1kmThqR5bzT0yQNrUifedZ4KCLuejCBJhC9n
-         d+4I2c04tlC42CoShs47QU874Lxe0c0RRHZ12K5uVLXlQP0I6AZ75YjBd905wJ1K4xOi
-         ucig==
+        b=v8Chv8X0C+jdYLucWWOFI1nsprSER5/TdKRUzpaYv3GLwuhTwmn65I58/bmBqplPR8
+         0RSkOPuOoZNrLgxWlOkWDYMswrBrXHSySIZ2tlY1xwYtp4VZj1C4au0/1iZgr795x2rm
+         hOcDdfyW5UH8/x5KpzTGvS2F1Km9BhovxZ9Ua3HoVAlBrWqxHKt7/Rx/Jvq/TG2oVG/0
+         d5Hg3w9kNAVubFdbyJj4I18+SjLejkOCS/qZ9CovRyZCawwd5pfSVfoHn0tr5o33r8v4
+         R6CjtVl2/WjGniwDdB1pRyTsNRlGWKHiTtWUCilh5/Q/tNrZ+6ijFRbw4+qBxTQVvfZL
+         1L0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:arc-authentication-results;
-        bh=j/z6t7mNq4c9ud79a7YyAvB4OZEsr6KQJlhSvYw6a1Y=;
-        b=j7SjGbvlPuN3Cm2ISUIXRaN3kDhrr3Cwg+mwqsBj0vXf3sYqVKyomLB8vab8RvKi0V
-         fRulEeim8MIW7A12KSNHrYWIMk1fSsrdA9SrpPlnH6gPb3zYxSOPxjcNfm3wuXLcuJ81
-         hpcRPLjhjpkw9dy7J7HpihjDGT64uHbg6HM7no2oOwxFpsif2aNKR3jnomdt6Q5/i0vu
-         kjy3XxcAK/n1B5qj2ob883tHGFwhP+wkfPz4v4K2iTrmJcRQgjVvP3HJFqyUqkO6zVmc
-         Rm3U/QwRNlNpZqtdMZLbnCU7dw0AbJNtd9FbsIxwqQFGBVYWoeXBXmKsycxPY3koSglC
-         PK0A==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=85MVZ1nvu5Cl7nkAMKYu3qfCxv4FUsnN2W03S4ypBzM=;
+        b=Q/dvtBsJ4uAn47Z7Fb/8Igggmwqyq53cAplz4ZHKEKrCTj3Kt9a4ave2ZwMeOHaHEX
+         BHKqmlXnSdR60xpIBeoZfZZCiefzQKm0YSP8dBF5xhba+Pdi0za+hIusViZESiok83MJ
+         Y2otdeW56ugEc17LSD8+i5GYdoNpkzKjERKWAcfUVm6z7Iwa3twhSSx1zQin4l0oK4hJ
+         VngAq6vZEZdBre0ARkfc7LeV/oK5aYQFP8NISLgz8TXG+8lOq2mfkjbehHphIDwZ1iwY
+         stlVxhHcBezTqPEulukX+r1nV4MIiXPaSy4PaWJ6zr/yZ7U5urlfnj/gv7TEwlcu/yX/
+         JMJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=TGmwke0e;
+       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
-Date: Mon, 19 Mar 2018 21:15:12 -0400 (EDT)
-Message-Id: <20180319.211512.2145226173040811016.davem@davemloft.net>
-To: grygorii.strashko@ti.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
- gregkh@linuxfoundation.org, nsekhar@ti.com, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] net: phy: relax error checking when creating
- sysfs link netdev->phydev
-From: David Miller <davem@davemloft.net>
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=TGmwke0e;
+       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.19.16 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Andrew
+ Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH v2 1/2] sysfs: symlink: export sysfs_create_link_nowarn()
+Date: Fri, 16 Mar 2018 17:08:34 -0500
+Message-ID: <20180316220835.30006-2-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.10.5
 In-Reply-To: <20180316220835.30006-1-grygorii.strashko@ti.com>
 References: <20180316220835.30006-1-grygorii.strashko@ti.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595133782136044428?=
-X-GMAIL-MSGID: =?utf-8?q?1595417313362916864?=
+X-GMAIL-THRID: =?utf-8?q?1595133781788624576?=
+X-GMAIL-MSGID: =?utf-8?q?1595133781788624576?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Fri, 16 Mar 2018 17:08:33 -0500
+The sysfs_create_link_nowarn() is going to be used in phylib framework in
+subsequent patch which can be built as module. Hence, export
+sysfs_create_link_nowarn() to avoid build errors.
 
-> Some ethernet drivers (like TI CPSW) may connect and manage >1 Net PHYs per
-> one netdevice, as result such drivers will produce warning during system
-> boot and fail to connect second phy to netdevice when PHYLIB framework
-> will try to create sysfs link netdev->phydev for second PHY
-> in phy_attach_direct(), because sysfs link with the same name has been
-> created already for the first PHY.
-> As result, second CPSW external port will became unusable.
-> This regression was introduced by commits:
-> 5568363f0cb3 ("net: phy: Create sysfs reciprocal links for attached_dev/phydev"
-> a3995460491d ("net: phy: Relax error checking on sysfs_create_link()"
-> 
-> Patch 1: exports sysfs_create_link_nowarn() function as preparation for Patch 2.
-> Patch 2: relaxes error checking when PHYLIB framework is creating sysfs
-> link netdev->phydev in phy_attach_direct(), suppresses warning by using
-> sysfs_create_link_nowarn() and adds error message instead, so links creation
-> failure is not fatal any more and system can continue working,
-> which fixes TI CPSW issue and makes boot logs accessible
-> in case of NFS boot, for example.
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Fixes: a3995460491d ("net: phy: Relax error checking on sysfs_create_link()")
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+"Fixes" added as there is dependency this and subsequent patch.
+ fs/sysfs/symlink.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Series applied and queued up for -stable, thanks.
+diff --git a/fs/sysfs/symlink.c b/fs/sysfs/symlink.c
+index 8664db2..215c225 100644
+--- a/fs/sysfs/symlink.c
++++ b/fs/sysfs/symlink.c
+@@ -106,6 +106,7 @@ int sysfs_create_link_nowarn(struct kobject *kobj, struct kobject *target,
+ {
+ 	return sysfs_do_create_link(kobj, target, name, 0);
+ }
++EXPORT_SYMBOL_GPL(sysfs_create_link_nowarn);
+ 
+ /**
+  *	sysfs_delete_link - remove symlink in object's directory.
+-- 
+2.10.5
