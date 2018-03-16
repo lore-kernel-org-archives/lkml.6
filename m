@@ -1,114 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752354AbeCPVtS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:49:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:21899 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751413AbeCPVsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:48:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="212077304"
-Subject: [PATCH 2/3] x86, pkeys, selftests: save off 'prot' for allocations
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
-        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
-        shuah@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 16 Mar 2018 14:46:57 -0700
-References: <20180316214654.895E24EC@viggo.jf.intel.com>
-In-Reply-To: <20180316214654.895E24EC@viggo.jf.intel.com>
-Message-Id: <20180316214657.107D5C58@viggo.jf.intel.com>
+        id S1752419AbeCPVt2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:49:28 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:17482 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752370AbeCPVt0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 17:49:26 -0400
+From: Ronak Doshi <doshir@vmware.com>
+To: <netdev@vger.kernel.org>
+CC: <rachel_lunnon@stormagic.com>, Ronak Doshi <doshir@vmware.com>,
+        Shrikrishna Khare <skhare@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 net 2/2] vmxnet3: use correct flag to indicate LRO feature
+Date: Fri, 16 Mar 2018 14:49:19 -0700
+Message-ID: <20180316214919.20716-1-doshir@vmware.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+'Commit 45dac1d6ea04 ("vmxnet3: Changes for vmxnet3 adapter version 2
+(fwd)")' introduced a flag "lro" in structure vmxnet3_adapter which is
+used to indicate whether LRO is enabled or not. However, the patch
+did not set the flag and hence it was never exercised.
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+So, when LRO is enabled, it resulted in poor TCP performance due to
+delayed acks. This issue is seen with packets which are larger than
+the mss getting a delayed ack rather than an immediate ack, thus
+resulting in high latency.
 
-This makes it possible to to tell what 'prot' a given allocation
-is supposed to have.  That way, if we want to change just the
-pkey, we know what 'prot' to pass to mprotect_pkey().
+This patch removes the lro flag and directly uses device features
+against NETIF_F_LRO to check if lro is enabled.
 
-Also, keep a record of the most recent allocation so the tests
-can easily find it.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
+Fixes: 45dac1d6ea04 ("vmxnet3: Changes for vmxnet3 adapter version 2 (fwd)")
+Reported-by: Rachel Lunnon <rachel_lunnon@stormagic.com>
+Signed-off-by: Ronak Doshi <doshir@vmware.com>
+Acked-by: Shrikrishna Khare <skhare@vmware.com>
 ---
+Changes in v2:
+ - Added "Fixes:" tag for the commit which introduced this issue
 
- b/tools/testing/selftests/x86/protection_keys.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c | 3 ++-
+ drivers/net/vmxnet3/vmxnet3_int.h | 5 ++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-store-malloc-record tools/testing/selftests/x86/protection_keys.c
---- a/tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-store-malloc-record	2018-03-16 14:46:39.582285474 -0700
-+++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-16 14:46:39.585285474 -0700
-@@ -702,10 +702,12 @@ int mprotect_pkey(void *ptr, size_t size
- struct pkey_malloc_record {
- 	void *ptr;
- 	long size;
-+	int prot;
- };
- struct pkey_malloc_record *pkey_malloc_records;
-+struct pkey_malloc_record *pkey_last_malloc_record;
- long nr_pkey_malloc_records;
--void record_pkey_malloc(void *ptr, long size)
-+void record_pkey_malloc(void *ptr, long size, int prot)
- {
- 	long i;
- 	struct pkey_malloc_record *rec = NULL;
-@@ -737,6 +739,8 @@ void record_pkey_malloc(void *ptr, long
- 		(int)(rec - pkey_malloc_records), rec, ptr, size);
- 	rec->ptr = ptr;
- 	rec->size = size;
-+	rec->prot = prot;
-+	pkey_last_malloc_record = rec;
- 	nr_pkey_malloc_records++;
- }
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index b466a422b72d..e04937f44f33 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -1473,7 +1473,8 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
+ 			vmxnet3_rx_csum(adapter, skb,
+ 					(union Vmxnet3_GenericDesc *)rcd);
+ 			skb->protocol = eth_type_trans(skb, adapter->netdev);
+-			if (!rcd->tcp || !adapter->lro)
++			if (!rcd->tcp ||
++			    !(adapter->netdev->features & NETIF_F_LRO))
+ 				goto not_lro;
  
-@@ -781,7 +785,7 @@ void *malloc_pkey_with_mprotect(long siz
- 	pkey_assert(ptr != (void *)-1);
- 	ret = mprotect_pkey((void *)ptr, PAGE_SIZE, prot, pkey);
- 	pkey_assert(!ret);
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 	rdpkru();
+ 			if (segCnt != 0 && mss != 0) {
+diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
+index b94fdfd0b6f1..99387a4a20a8 100644
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,10 +69,10 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.12.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.13.0-k"
  
- 	dprintf1("%s() for pkey %d @ %p\n", __func__, pkey, ptr);
-@@ -802,7 +806,7 @@ void *malloc_pkey_anon_huge(long size, i
- 	size = ALIGN_UP(size, HPAGE_SIZE * 2);
- 	ptr = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
- 	pkey_assert(ptr != (void *)-1);
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 	mprotect_pkey(ptr, size, prot, pkey);
+ /* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040c00
++#define VMXNET3_DRIVER_VERSION_NUM      0x01040d00
  
- 	dprintf1("unaligned ptr: %p\n", ptr);
-@@ -875,7 +879,7 @@ void *malloc_pkey_hugetlb(long size, int
- 	pkey_assert(ptr != (void *)-1);
- 	mprotect_pkey(ptr, size, prot, pkey);
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
+@@ -343,7 +343,6 @@ struct vmxnet3_adapter {
+ 	u8                              version;
  
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
+ 	bool				rxcsum;
+-	bool				lro;
  
- 	dprintf1("mmap()'d hugetlbfs for pkey %d @ %p\n", pkey, ptr);
- 	return ptr;
-@@ -897,7 +901,7 @@ void *malloc_pkey_mmap_dax(long size, in
- 
- 	mprotect_pkey(ptr, size, prot, pkey);
- 
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 
- 	dprintf1("mmap()'d for pkey %d @ %p\n", pkey, ptr);
- 	close(fd);
-_
+ #ifdef VMXNET3_RSS
+ 	struct UPT1_RSSConf		*rss_conf;
+-- 
+2.11.0
