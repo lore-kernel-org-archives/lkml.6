@@ -1,49 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753051AbeCPSQI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:16:08 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40074 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751607AbeCPSQG (ORCPT
+        id S1753801AbeCPRdm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:33:42 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:39690 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752948AbeCPRdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:16:06 -0400
-Subject: Re: [RESEND PATCH v2] sched/fair: Remove check in idle_balance
- against migration_cost
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
-        steven.sistare@oracle.com, joelaf@google.com, jbacik@fb.com,
-        juri.lelli@redhat.com, dhaval.giani@oracle.com, efault@gmx.de,
-        riel@surriel.com
-References: <1521052607-24622-1-git-send-email-rohit.k.jain@oracle.com>
- <20180316143550.GH4064@hirez.programming.kicks-ass.net>
- <48b63847-123c-6a28-d558-392b8122cd7e@oracle.com>
- <20180316174241.GB4043@hirez.programming.kicks-ass.net>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <00edde63-76fc-09c3-0a7f-24532426ed38@oracle.com>
-Date: Fri, 16 Mar 2018 11:14:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180316174241.GB4043@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Mar 2018 13:33:39 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "peterz@infradead.org" <peterz@infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: arc_usr_cmpxchg and preemption
+Thread-Topic: arc_usr_cmpxchg and preemption
+Thread-Index: AQHTu7KSgtMaj81NvU2WaxKl+xOkrqPP4yWAgAAPhQCAAx70AA==
+Date: Fri, 16 Mar 2018 17:33:27 +0000
+Message-ID: <1521221606.4805.16.camel@synopsys.com>
+References: <1521045375.11552.27.camel@synopsys.com>
+         <fdf30e76-f75d-9dda-26ca-ac011c41ee64@synopsys.com>
+         <20180314175352.GP4064@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180314175352.GP4064@hirez.programming.kicks-ass.net>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8833 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803160153
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.67]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D9D0AE192006194686F339D488803AF7@internal.synopsys.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2GIFL0e031508
 
-On 03/16/2018 10:42 AM, Peter Zijlstra wrote:
+Hi Peter, Vineet,
 
-<snip>
-> You need to look at:
->
->    https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/
->
-> my queue.git is the sporadic push of my quilt tree on top of that.
+On Wed, 2018-03-14 at 18:53 +0100, Peter Zijlstra wrote:
+> On Wed, Mar 14, 2018 at 09:58:19AM -0700, Vineet Gupta wrote:
+> 
+> > Well it is broken wrt the semantics the syscall is supposed to provide.
+> > Preemption disabling is what prevents a concurrent thread from coming in and
+> > modifying the same location (Imagine a variable which is being cmpxchg
+> > concurrently by 2 threads).
+> > 
+> > One approach is to do it the MIPS way, emulate the llsc flag - set it under
+> > preemption disabled section and clear it in switch_to
+> 
+> *shudder*... just catch the -EFAULT, force the write fault and retry.
 
-Thanks found it! I will re-test and send v3 as needed.
+More I look at this initially quite simple thing more it looks like
+a can of worms...
+
+> Something like:
+> 
+> int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
+> {
+
+That functions is supposed to return old value stored in memory.
+At least that's how it is used in case of ARC and M68K.
+
+Remember there's already libc that relies on that established API
+and we cannot just change it... even though it might be a good idea.
+For example return "errno" and pass old value via pointer in an argument.
+But now I guess it's better to use what we have now.
+
+> 	u32 val;
+> 	int ret;
+> 
+> again:
+> 	ret = 0;
+> 
+> 	preempt_disable();
+> 	val = get_user(user_ptr);
+
+What if get_user() fails?
+In Peter's implementation we will return 0, in Vineet's
+we will return -EFAULT... and who knows what kind of unexpected behavior happens
+further down the line in user-space... so I think it would be safer to kill
+the process then.
+
+And that's my take:
+-------------------------->8------------------------
+int sys_cmpxchg(u32 __user *user_ptr, u32 old, u32 new)
+{
+	u32 val;
+	int ret;
+
+again:
+	ret = 0;
+
+	preempt_disable();
+
+	ret = get_user(val, user_ptr);
+	if(ret == -EFAULT) {
+		struct page *page;
+
+		preempt_enable();
+		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
+		if (ret < 0) {
+			force_sig(SIGSEGV, current);
+			return ret;
+		}
+
+		put_page(page);
+		goto again;
+	}
+
+	if (val == old)
+		ret = put_user(new, user_ptr);
+
+	preempt_enable();
+
+	if (ret == -EFAULT) {
+		struct page *page;
+
+		ret = get_user_pages_fast((unsigned long)user_ptr, 1, 1, &page);
+		if (ret < 0) {
+			force_sig(SIGSEGV, current);
+			return ret;
+		}
+
+		put_page(page);
+		goto again;
+	}
+
+	return ret;
+}
+-------------------------->8------------------------
+
+-Alexey
