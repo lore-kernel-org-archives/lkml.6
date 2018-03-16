@@ -1,38 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvdowmI1xDbRwltGEXnzIf6XdMmqW41/ykj+HpkyQG0+/QSGuPU6TILrbCmDfvhiZJoW+UW
-ARC-Seal: i=1; a=rsa-sha256; t=1521214723; cv=none;
-        d=google.com; s=arc-20160816;
-        b=XJLeFfhs+ENOYt6e2niF65cIqOcClmtsHwimroh7JkjTbOjIjyShwWLuoOc6a89Vkx
-         aLEzx9cXOhM3YL+2XxUeGkuMGGnpgUujdTtpbmt8D5o8yB3HkvefgRpGD5IRUlP/7l2Y
-         Mn5OVOr/ZcMoBZhdkfbulRqRKIk6hwJNHIGKYmDjn63QWAneE8IIjo4/1p2i4TAI1FDc
-         H47vdg/pehovx4peoEJNSQa3W4MUoAAXWYY6y9jBaPqTwL8xHV7B+YiJ6kx4B2yx34Ui
-         aENjqVRQPqEfR6YtMdOG56KTSpiVIhvxXS+dvXk7E9GtWe6gE3TirJGdvAR3Y2XySCBG
-         cMrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=YhRP8hXNTlfsHigBTUZHPpmN2ajqI/0r4uan94uCiE0=;
-        b=lHgC+xWO7OBWPbcyNI3oT/KaaChumwR2wxm7f5SPQyleSTWp34IhRXGUquDEZKontQ
-         S4ZsRJEszRei1ABrwNGR7Kx31pzDsL+lC/nGzE1xGDYKD5hmIrsgUijfLCq5W5o5Ny0f
-         8+1pIkkxZXKRc/bfjj89qnkoH5Qa12NwsOm+59UmP5QBStxVwckfxMP2CwcWwhtU3XIP
-         VDZqQUUh5BvJ+FtfXXlvUxn5pvpzb3QjEIsz7WqFTNfn6mdvUzb7h80DU3e6kbZ4PfMT
-         oxxYL52b5Wx3+JGvTqIvhL0bcBP0YNVgfs16RAylX5iRvKIG7W0rkvSQuvP4d8Gjo9Vg
-         tW5w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214721-2-13817544381352302463
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214720; b=bvUcqlK94cKux3c3Rx/H6rXYg8hRzslsYlQJh2cQKxWJC4R
+    Gc1j10oLUkn/GO+JVJvUPwTb/rOtnhuyIZmORspnCbc2MSIOwj5Cc7Zv0g/HoOjk
+    G2HFtvB7WELXFUWFeTE/BU5cpML7nQh77XO6BNzbsSv1kN84GInzqiJrzKJpK5Ob
+    Is5YwZIed4SbEiL+MxmQF5uE51h1ONNKM+FV0GMeoihNe8nkxjtZu+GyFSbWB6M8
+    JAhb3PX7DWhIjlHltgwH7r+GL6vsYqisQJFhzd1ynT2ltXMw906TD6AboAiV0J9Q
+    z74uRE9kleNAK56P4YiI4dR71SclracV4pcKpRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214720; bh=2QJ4Y2zKdeISjVlA6BrYmdt6HJ
+    A/R+HNSiXjYyCFPYo=; b=ECQTw5hVjVkEKP17AQDs6fwLI8XUXbk7I8CYPPhYJf
+    qEQXH94QEpQRLmoAhAxIqfjnI92SqZOHtMPJk54PyMVC2B0mpXNRJBR3xu4UJwL2
+    TBXYMyzp5RHVfECQWtIYqREL4wquOu75MIHd64Lv/qs1eWRd6cN2n7vM/UZoegnL
+    PIIKGru5+v353IGXN5tsgwz1rnn9msdKMjSF4rpgHhcxKtG/5yO5dIDv0SvErhuz
+    OnaRnRQfK5ZBfezjAUMl53twMcJL1OVWGoqPehsmFcmo1gEls3Ruj1UDB3a96qmN
+    DLseuwY5lK5puctNwLttjupX8fD/fxnDz43+WumO3dFA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933599AbeCPPif (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:38:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42960 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933255AbeCPPif (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:38:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 070/109] pinctrl: sh-pfc: r8a7791: Add can_clk function
-Date: Fri, 16 Mar 2018 16:23:39 +0100
-Message-Id: <20180316152333.799246058@linuxfoundation.org>
+        stable@vger.kernel.org, Li Dongyang <dongyang.li@anu.edu.au>,
+        Jason Ozolins <jason.ozolins@hpe.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 067/109] scsi: ses: dont ask for diagnostic pages repeatedly during probe
+Date: Fri, 16 Mar 2018 16:23:36 +0100
+Message-Id: <20180316152333.641237416@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -40,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109249726392128?=
-X-GMAIL-MSGID: =?utf-8?q?1595109249726392128?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +82,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Li Dongyang <dongyang.li@anu.edu.au>
 
 
-[ Upstream commit 57eec02caee60332b8052615e7257f932ae07abc ]
+[ Upstream commit 9c0a50022b8ac7e863e6ec8342fa476fe5d1d75c ]
 
-This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
-and allows for independent configuration.
-We keep the can_clk* pins definitions from within can0_groups and
-can1_groups for uniformity and backwards compatibility.
+We are testing if there is a match with the ses device in a loop by
+calling ses_match_to_enclosure(), which will issue scsi receive
+diagnostics commands to the ses device for every device on the same
+host.  On one of our boxes with 840 disks, it takes a long time to load
+the driver:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[root@g1b-oss06 ~]# time modprobe ses
+
+real	40m48.247s
+user	0m0.001s
+sys	0m0.196s
+
+With the patch:
+
+[root@g1b-oss06 ~]# time modprobe ses
+
+real	0m17.915s
+user	0m0.008s
+sys	0m0.053s
+
+Note that we still need to refresh page 10 when we see a new disk to
+create the link.
+
+Signed-off-by: Li Dongyang <dongyang.li@anu.edu.au>
+Tested-by: Jason Ozolins <jason.ozolins@hpe.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/scsi/ses.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4826,6 +4826,10 @@ static const char * const can0_groups[]
- 	"can0_data_d",
- 	"can0_data_e",
- 	"can0_data_f",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4837,6 +4841,21 @@ static const char * const can1_groups[]
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+/*
-+ * can_clk_groups allows for independent configuration, use can_clk function
-+ * in new designs.
-+ */
-+static const char * const can_clk_groups[] = {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -5308,7 +5327,7 @@ static const char * const vin2_groups[]
- };
+--- a/drivers/scsi/ses.c
++++ b/drivers/scsi/ses.c
+@@ -615,13 +615,16 @@ static void ses_enclosure_data_process(s
+ }
  
- static const struct {
--	struct sh_pfc_function common[56];
-+	struct sh_pfc_function common[57];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions = {
- 	.common = {
-@@ -5316,6 +5335,7 @@ static const struct {
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
-+		SH_PFC_FUNCTION(can_clk),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(du0),
- 		SH_PFC_FUNCTION(du1),
+ static void ses_match_to_enclosure(struct enclosure_device *edev,
+-				   struct scsi_device *sdev)
++				   struct scsi_device *sdev,
++				   int refresh)
+ {
++	struct scsi_device *edev_sdev = to_scsi_device(edev->edev.parent);
+ 	struct efd efd = {
+ 		.addr = 0,
+ 	};
+ 
+-	ses_enclosure_data_process(edev, to_scsi_device(edev->edev.parent), 0);
++	if (refresh)
++		ses_enclosure_data_process(edev, edev_sdev, 0);
+ 
+ 	if (scsi_is_sas_rphy(sdev->sdev_target->dev.parent))
+ 		efd.addr = sas_get_address(sdev);
+@@ -652,7 +655,7 @@ static int ses_intf_add(struct device *c
+ 		struct enclosure_device *prev = NULL;
+ 
+ 		while ((edev = enclosure_find(&sdev->host->shost_gendev, prev)) != NULL) {
+-			ses_match_to_enclosure(edev, sdev);
++			ses_match_to_enclosure(edev, sdev, 1);
+ 			prev = edev;
+ 		}
+ 		return -ENODEV;
+@@ -768,7 +771,7 @@ page2_not_supported:
+ 	shost_for_each_device(tmp_sdev, sdev->host) {
+ 		if (tmp_sdev->lun != 0 || scsi_device_enclosure(tmp_sdev))
+ 			continue;
+-		ses_match_to_enclosure(edev, tmp_sdev);
++		ses_match_to_enclosure(edev, tmp_sdev, 0);
+ 	}
+ 
+ 	return 0;
