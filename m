@@ -1,114 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeCPEKO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 00:10:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49164 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751485AbeCPEIz (ORCPT
+        id S1750876AbeCPEUw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 00:20:52 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:60942 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeCPEUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 00:08:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E36AE60C65
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 4/7] soc: qcom: rpmpd: Add support for get/set performance state
-Date: Fri, 16 Mar 2018 09:38:21 +0530
-Message-Id: <20180316040824.21472-5-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180316040824.21472-1-rnayak@codeaurora.org>
-References: <20180316040824.21472-1-rnayak@codeaurora.org>
+        Fri, 16 Mar 2018 00:20:51 -0400
+Subject: Re: [PATCH v10] mmc: Export host capabilities to debugfs.
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, <avri.altman@wdc.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
+References: <1520917812-20047-1-git-send-email-harish_kandiga@mentor.com>
+ <CAPDyKFo8jFwDO1E=tNSd4yTn3qtefzvHK0V70fcEqzB=SibrJA@mail.gmail.com>
+ <1521109575.10722.654.camel@linux.intel.com>
+ <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+Message-ID: <b93613a1-f35d-d246-5e1d-dc7821eb5976@mentor.com>
+Date: Fri, 16 Mar 2018 09:50:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFrZaDx2NdvaFdgOxWBuwtjMnJE41p=x5b2x2moFEO3kXQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With genpd now expecting powerdomain drivers supporting performance
-state to support get/set performance state callbacks, add support for it
-in the rpmpd driver.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/soc/qcom/rpmpd.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index c8754d867c33..4058c5b450c6 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
- #include <linux/soc/qcom/smd-rpm.h>
- 
- #include <dt-bindings/mfd/qcom-rpm.h>
-@@ -29,6 +30,8 @@
- #define KEY_ENABLE		0x6e657773 /* swen */
- #define KEY_FLOOR_CORNER	0x636676   /* vfc */
- 
-+#define MAX_RPMPD_STATE		6
-+
- #define DEFINE_RPMPD_CORN_SMPA(_platform, _name, _active, r_id)		\
- 	static struct rpmpd _platform##_##_active;			\
- 	static struct rpmpd _platform##_##_name = {			\
-@@ -222,6 +225,43 @@ static int rpmpd_power_off(struct generic_pm_domain *domain)
- 	return ret;
- }
- 
-+static int rpmpd_set_performance(struct generic_pm_domain *domain,
-+			     unsigned int state)
-+{
-+	int ret = 0;
-+	struct rpmpd *pd = domain_to_rpmpd(domain);
-+
-+	mutex_lock(&rpmpd_lock);
-+
-+	if (state > MAX_RPMPD_STATE)
-+		goto out;
-+
-+	pd->corner = state;
-+
-+	if (!pd->enabled && (pd->key != KEY_FLOOR_CORNER))
-+		goto out;
-+
-+	ret = rpmpd_aggregate_corner(pd);
-+
-+out:
-+	mutex_unlock(&rpmpd_lock);
-+
-+	return ret;
-+}
-+
-+static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
-+					  struct dev_pm_opp *opp)
-+{
-+	struct device_node *np;
-+	unsigned int corner = 0;
-+
-+	np = dev_pm_opp_get_of_node(opp);
-+	of_property_read_u32(np, "qcom,level", &corner);
-+	of_node_put(np);
-+
-+	return corner;
-+}
-+
- static int rpmpd_probe(struct platform_device *pdev)
- {
- 	int i;
-@@ -259,6 +299,8 @@ static int rpmpd_probe(struct platform_device *pdev)
- 		rpmpds[i]->rpm = rpm;
- 		rpmpds[i]->pd.power_off = rpmpd_power_off;
- 		rpmpds[i]->pd.power_on = rpmpd_power_on;
-+		rpmpds[i]->pd.set_performance_state = rpmpd_set_performance;
-+		rpmpds[i]->pd.get_performance_state = rpmpd_get_performance;
- 		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
- 
- 		data->domains[i] = &rpmpds[i]->pd;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On Thursday 15 March 2018 05:59 PM, Ulf Hansson wrote:
+> On 15 March 2018 at 11:26, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>> On Thu, 2018-03-15 at 11:12 +0100, Ulf Hansson wrote:
+>>> On 13 March 2018 at 06:10, Harish Jenny K N <harish_kandiga@mentor.com
+>>>> wrote:
+>>>>
+>>> Honestly, I don't like this, but maybe other people do, then I am fine
+>>> with this approach.
+>>>
+>>> If were to decide, I would just rather print the caps field in a
+>>> hexadecimal bit form and leave the translation to the user.
+>> A compromise would be to print both:
+>>
+>> 0xHHHHHHHH\n
+>> Description of each enabled field, one per line
+>>
+>>
+>> Another format would be:
+>>
+>> Bit XX: Description of a field
+> If we were to print the description, there is no point in printing the
+> bits in hex. Or is it?
+Yes. I also do not see the use of printing hex value if we are printing the description.
+
+>
+> As I said, if you and other folkz thinks this is valuable, then I am
+> fine as well. Just saying, it's not my preferred option.
+>
+>
+
+
+I just want to inform that the idea of printing the description came after discussion in https://www.spinics.net/lists/linux-mmc/msg48246.html, where it was decided adding utility in mmc-utils was not going to work ( reason:  We may very well be changing the bit offsets for the caps and caps2 in the mmc kernel header, keeping a copy of them is not a good idea. It's just a matter of *when* it will break).
+
+On Thu, 2018-03-15 at 11:12 +0100, Ulf Hansson wrote:
+> If were to decide, I would just rather print the caps field in a hexadecimal bit form and leave the translation to the user.
+
+I think translation becomes difficult for the above reason and hence I would prefer printing the description.
+
+Note: Printing values in Hex was the original idea and it is also available in https://www.spinics.net/lists/linux-mmc/msg48213.html just in case if it is required.
+
+
+
+
+Thanks & Regards,
+Harish Jenny K N
