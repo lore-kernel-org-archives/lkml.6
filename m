@@ -1,288 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753353AbeCPHmG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:42:06 -0400
-Received: from mga05.intel.com ([192.55.52.43]:64798 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753120AbeCPHmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:42:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
-   d="scan'208";a="211869577"
-Date: Fri, 16 Mar 2018 15:40:29 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
-Message-ID: <20180316074028.lun2jy45qqnfeymw@debian>
-References: <20180223111801.15240-1-tiwei.bie@intel.com>
- <20180223111801.15240-3-tiwei.bie@intel.com>
- <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
- <20180316061047.o2xdyuqhak3mzjyw@debian>
- <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
+        id S1753249AbeCPHpS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:45:18 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:45176 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeCPHpR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:45:17 -0400
+X-Google-Smtp-Source: AG47ELvWgYSdK6LMRzW+oEkpuQEsPdrYSlkk8/i0SkxQeRNlwhbHlgCgY5hXssFqP2eOW+cBaz+3d7qJ26fXNxBosHc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180301163838.10818-1-greentime@andestech.com>
+References: <20180301163838.10818-1-greentime@andestech.com>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Fri, 16 Mar 2018 15:44:35 +0800
+Message-ID: <CAEbi=3dTwumbFkvQQekqpqh8v5j1=hJp3iK+-TN5iZwj9y=Ctg@mail.gmail.com>
+Subject: Re: [PATCH] cris: add ioremap_nocache declaration before include asm-generic/io.h.
+To: linux-cris-kernel@axis.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Greentime <greentime@andestech.com>, Green Hu <green.hu@gmail.com>,
+        jesper.nilsson@axis.com, starvik@axis.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:44:12PM +0800, Jason Wang wrote:
-> On 2018年03月16日 14:10, Tiwei Bie wrote:
-> > On Fri, Mar 16, 2018 at 12:03:25PM +0800, Jason Wang wrote:
-> > > On 2018年02月23日 19:18, Tiwei Bie wrote:
-> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > ---
-> > > >    drivers/virtio/virtio_ring.c | 699 +++++++++++++++++++++++++++++++++++++------
-> > > >    include/linux/virtio_ring.h  |   8 +-
-> > > >    2 files changed, 618 insertions(+), 89 deletions(-)
-[...]
-> > > >    			      cpu_addr, size, direction);
-> > > >    }
-> > > > -static void vring_unmap_one(const struct vring_virtqueue *vq,
-> > > > -			    struct vring_desc *desc)
-> > > > +static void vring_unmap_one(const struct vring_virtqueue *vq, void *_desc)
-> > > >    {
-> > > Let's split the helpers to packed/split version like other helpers?
-> > > (Consider the caller has already known the type of vq).
-> > Okay.
-> > 
-> 
-> [...]
-> 
-> > > > +				desc[i].flags = flags;
-> > > > +
-> > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-> > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
-> > > If it's a part of chain, we only need to do this for last buffer I think.
-> > I'm not sure I've got your point about the "last buffer".
-> > But, yes, id just needs to be set for the last desc.
-> 
-> Right, I think I meant "last descriptor" :)
-> 
-> > 
-> > > > +			prev = i;
-> > > > +			i++;
-> > > It looks to me prev is always i - 1?
-> > No. prev will be (vq->vring_packed.num - 1) when i becomes 0.
-> 
-> Right, so prev = i ? i - 1 : vq->vring_packed.num - 1.
+2018-03-02 0:38 GMT+08:00 Greentime Hu <green.hu@gmail.com>:
+> A future commit for the nds32 architecture bootstrap("asm-generic/io.h:
+> move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef
+> CONFIG_MMU") will move the ioremap_nocache out of the CONFIG_MMU ifdef.
+> This means that in order to suppress re-definition errors we need to
+> setup #define's before importing asm-generic/io.h.
+>
+> Signed-off-by: Greentime Hu <greentime@andestech.com>
+> ---
+>  arch/cris/include/asm/io.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/cris/include/asm/io.h b/arch/cris/include/asm/io.h
+> index c92712d30f54..3867db75c314 100644
+> --- a/arch/cris/include/asm/io.h
+> +++ b/arch/cris/include/asm/io.h
+> @@ -20,6 +20,7 @@ static inline void __iomem * ioremap (unsigned long offset, unsigned long size)
+>  extern void iounmap(volatile void * __iomem addr);
+>
+>  extern void __iomem * ioremap_nocache(unsigned long offset, unsigned long size);
+> +#define ioremap_nocache ioremap_nocache
+>
+>  #include <asm-generic/io.h>
+>
+> --
+> I am picking up the patch in the nds32 tree that caused the regression.
+> Subject: [linux-next:master 3188/3885] include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+> head:   eced78aae9cba83072d5335fbc9b2282a9270469
+> commit: b3ada9d0ce8d286c8bbbb02fdbddec5036242b42 [3188/3885] asm-generic/io.h: move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef CONFIG_MMU
+> config: cris-etrax-100lx_v2_defconfig (attached as .config)
+> compiler: cris-linux-gcc (GCC) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout b3ada9d0ce8d286c8bbbb02fdbddec5036242b42
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=cris
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from arch/cris/include/asm/io.h:24:0,
+>                     from include/linux/io.h:25,
+>                     from include/linux/irq.h:25,
+>                     from include/asm-generic/hardirq.h:13,
+>                     from ./arch/cris/include/generated/asm/hardirq.h:1,
+>                     from include/linux/hardirq.h:9,
+>                     from include/linux/trace_events.h:9,
+>                     from include/trace/syscall.h:7,
+>                     from include/linux/syscalls.h:82,
+>                     from init/main.c:20:
+>>> include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
+>     void __iomem *ioremap(phys_addr_t phys_addr, size_t size);
+>                   ^~~~~~~
+>
 
-Yes, i wraps together with vq->wrap_counter in following code:
-
-> > > > +			if (!indirect && i >= vq->vring_packed.num) {
-> > > > +				i = 0;
-> > > > +				vq->wrap_counter ^= 1;
-> > > > +			}
-
-
-> > > > +		}
-> > > > +	}
-> > > > +	for (; n < (out_sgs + in_sgs); n++) {
-> > > > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-> > > > +			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_FROM_DEVICE);
-> > > > +			if (vring_mapping_error(vq, addr))
-> > > > +				goto unmap_release;
-> > > > +
-> > > > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
-> > > > +					VRING_DESC_F_WRITE |
-> > > > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
-> > > > +					VRING_DESC_F_USED(!vq->wrap_counter));
-> > > > +			if (!indirect && i == head)
-> > > > +				head_flags = flags;
-> > > > +			else
-> > > > +				desc[i].flags = flags;
-> > > > +
-> > > > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-> > > > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
-> > > > +			prev = i;
-> > > > +			i++;
-> > > > +			if (!indirect && i >= vq->vring_packed.num) {
-> > > > +				i = 0;
-> > > > +				vq->wrap_counter ^= 1;
-> > > > +			}
-> > > > +		}
-> > > > +	}
-> > > > +	/* Last one doesn't continue. */
-> > > > +	if (!indirect && (head + 1) % vq->vring_packed.num == i)
-> > > > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> > > I can't get the why we need this here.
-> > If only one desc is used, we will need to clear the
-> > VRING_DESC_F_NEXT flag from the head_flags.
-> 
-> Yes, I meant why following desc[prev].flags won't work for this?
-
-Because the update of desc[head].flags (in above case,
-prev == head) has been delayed. The flags is saved in
-head_flags.
-
-> 
-> > 
-> > > > +	else
-> > > > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> > > > +
-> > > > +	if (indirect) {
-> > > > +		/* FIXME: to be implemented */
-> > > > +
-> > > > +		/* Now that the indirect table is filled in, map it. */
-> > > > +		dma_addr_t addr = vring_map_single(
-> > > > +			vq, desc, total_sg * sizeof(struct vring_packed_desc),
-> > > > +			DMA_TO_DEVICE);
-> > > > +		if (vring_mapping_error(vq, addr))
-> > > > +			goto unmap_release;
-> > > > +
-> > > > +		head_flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_INDIRECT |
-> > > > +					     VRING_DESC_F_AVAIL(wrap_counter) |
-> > > > +					     VRING_DESC_F_USED(!wrap_counter));
-> > > > +		vq->vring_packed.desc[head].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > > > +		vq->vring_packed.desc[head].len = cpu_to_virtio32(_vq->vdev,
-> > > > +				total_sg * sizeof(struct vring_packed_desc));
-> > > > +		vq->vring_packed.desc[head].id = cpu_to_virtio32(_vq->vdev, head);
-> > > > +	}
-> > > > +
-> > > > +	/* We're using some buffers from the free list. */
-> > > > +	vq->vq.num_free -= descs_used;
-> > > > +
-> > > > +	/* Update free pointer */
-> > > > +	if (indirect) {
-> > > > +		n = head + 1;
-> > > > +		if (n >= vq->vring_packed.num) {
-> > > > +			n = 0;
-> > > > +			vq->wrap_counter ^= 1;
-> > > > +		}
-> > > > +		vq->free_head = n;
-> > > detach_buf_packed() does not even touch free_head here, so need to explain
-> > > its meaning for packed ring.
-> > Above code is for indirect support which isn't really
-> > implemented in this patch yet.
-> > 
-> > For your question, free_head stores the index of the
-> > next avail desc. I'll add a comment for it or move it
-> > to union and give it a better name in next version.
-> 
-> Yes, something like avail_idx might be better.
-> 
-> > 
-> > > > +	} else
-> > > > +		vq->free_head = i;
-> > > ID is only valid in the last descriptor in the list, so head + 1 should be
-> > > ok too?
-> > I don't really get your point. The vq->free_head stores
-> > the index of the next avail desc.
-> 
-> I think I get your idea now, free_head has two meanings:
-> 
-> - next avail index
-> - buffer id
-
-In my design, free_head is just the index of the next
-avail desc.
-
-Driver can set anything to buffer ID. And in my design,
-I save desc index in buffer ID.
-
-I'll add comments for them.
-
-> 
-> If I'm correct, let's better add a comment for this.
-> 
-> > 
-> > > > +
-> > > > +	/* Store token and indirect buffer state. */
-> > > > +	vq->desc_state[head].num = descs_used;
-> > > > +	vq->desc_state[head].data = data;
-> > > > +	if (indirect)
-> > > > +		vq->desc_state[head].indir_desc = desc;
-> > > > +	else
-> > > > +		vq->desc_state[head].indir_desc = ctx;
-> > > > +
-> > > > +	virtio_wmb(vq->weak_barriers);
-> > > Let's add a comment to explain the barrier here.
-> > Okay.
-> > 
-> > > > +	vq->vring_packed.desc[head].flags = head_flags;
-> > > > +	vq->num_added++;
-> > > > +
-> > > > +	pr_debug("Added buffer head %i to %p\n", head, vq);
-> > > > +	END_USE(vq);
-> > > > +
-> > > > +	return 0;
-> > > > +
-> > > > +unmap_release:
-> > > > +	err_idx = i;
-> > > > +	i = head;
-> > > > +
-> > > > +	for (n = 0; n < total_sg; n++) {
-> > > > +		if (i == err_idx)
-> > > > +			break;
-> > > > +		vring_unmap_one(vq, &desc[i]);
-> > > > +		i++;
-> > > > +		if (!indirect && i >= vq->vring_packed.num)
-> > > > +			i = 0;
-> > > > +	}
-> > > > +
-> > > > +	vq->wrap_counter = wrap_counter;
-> > > > +
-> > > > +	if (indirect)
-> > > > +		kfree(desc);
-> > > > +
-> > > > +	END_USE(vq);
-> > > > +	return -EIO;
-> > > > +}
-[...]
-> > > > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
-> > > >    	if (!queue) {
-> > > >    		/* Try to get a single page. You are my only hope! */
-> > > > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
-> > > > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
-> > > > +							     packed),
-> > > >    					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
-> > > >    	}
-> > > >    	if (!queue)
-> > > >    		return NULL;
-> > > > -	queue_size_in_bytes = vring_size(num, vring_align);
-> > > > -	vring_init(&vring, num, queue, vring_align);
-> > > > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
-> > > > +	if (packed)
-> > > > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
-> > > > +	else
-> > > > +		vring_init(&vring.vring_split, num, queue, vring_align);
-> > > Let's rename vring_init to vring_init_split() like other helpers?
-> > The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
-> > I don't think we can rename it.
-> 
-> I see, then this need more thoughts to unify the API.
-
-My thought is to keep the old API as is, and introduce
-new types and helpers for packed ring.
-
-More details can be found in this patch:
-https://lkml.org/lkml/2018/2/23/243
-(PS. The type which has bit fields is just for reference,
- and will be changed in next version.)
-
-Do you have any other suggestions?
-
-Best regards,
-Tiwei Bie
-
-> 
-> > 
-> > > > -	vq = __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-> > > > -				   notify, callback, name);
-> > > > +	vq = __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
-> > > > +				   context, notify, callback, name);
-> > > >    	if (!vq) {
-> > > >    		vring_free_queue(vdev, queue_size_in_bytes, queue,
-> > > >    				 dma_addr);
-[...]
+Drop this patch due to not supporting cris port.
+https://lkml.org/lkml/2018/3/13/200
