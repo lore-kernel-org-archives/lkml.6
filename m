@@ -1,60 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753133AbeCPTAn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:00:43 -0400
-Received: from mga04.intel.com ([192.55.52.120]:29291 "EHLO mga04.intel.com"
+        id S1753144AbeCPTBU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:01:20 -0400
+Received: from verein.lst.de ([213.95.11.211]:48394 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752966AbeCPTAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:00:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="25330856"
-Subject: Re: [PATCH 13/22] signal: Move addr_lsb into the _sigfault union for
- clarity
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-References: <87k1wimybi.fsf_-_@xmission.com>
- <20180116004009.31036-13-ebiederm@xmission.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
-Date: Fri, 16 Mar 2018 12:00:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750941AbeCPTBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:01:19 -0400
+Date: Fri, 16 Mar 2018 20:01:17 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 11/15] mm, fs, dax: handle layout changes to pinned
+        dax mappings
+Message-ID: <20180316190117.GE3671@lst.de>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112914418.24669.11429662058087306821.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180116004009.31036-13-ebiederm@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152112914418.24669.11429662058087306821.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/15/2018 04:40 PM, Eric W. Biederman wrote:
-> The addr_lsb fields is only valid and available when the
-> signal is SIGBUS and the si_code is BUS_MCEERR_AR or BUS_MCEERR_AO.
-> Document this with a comment and place the field in the _sigfault union
-> to make this clear.
-> 
-> All of the fields stay in the same physical location so both the old
-> and new definitions of struct siginfo will continue to work.
+Looks good (at least up to my comprehension of the mm code :))
 
-This breaks the ABI and breaks protection keys.  The physical locations
-*DO* change.
-
-Before this patch:
-
-#define si_pkey         _sifields._sigfault._pkey
-(gdb) print &((siginfo_t *)0)->_sifields._sigfault._pkey
-$1 = (__u32 *) 0x20 <irq_stack_union+32>
-
-and after:
-
-+#define si_pkey                _sifields._sigfault._addr_pkey._pkey
-(gdb) print &((siginfo_t *)0)->_sifields._sigfault._addr_pkey._pkey
-$1 = (__u32 *) 0x1c
-
-Can we revert this, please?
+Reviewed-by: Christoph Hellwig <hch@lst.de>
