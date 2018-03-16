@@ -1,63 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeCPIwn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 04:52:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53060 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752421AbeCPIwl (ORCPT
+        id S1753294AbeCPIxw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 04:53:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53304 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeCPIxu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 04:52:41 -0400
-Date: Fri, 16 Mar 2018 01:52:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, luto@kernel.org, mingo@kernel.org,
-        akpm@linux-foundation.org, arnd@arndb.de, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 18/36] fs: add ksys_write() helper; remove in-kernel
- calls to sys_write()
-Message-ID: <20180316085240.GG4151@infradead.org>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
- <20180315190529.20943-19-linux@dominikbrodowski.net>
+        Fri, 16 Mar 2018 04:53:50 -0400
+Date: Fri, 16 Mar 2018 11:47:12 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] ASoC: mediatek: mt2701: drop unnessary
+ snd_soc_unregister_component()
+Message-ID: <20180316084712.hh4ll7hfsncqqsos@mwanda>
+References: <1521185516-164333-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180315190529.20943-19-linux@dominikbrodowski.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1521185516-164333-1-git-send-email-weiyongjun1@huawei.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8833 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=615
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803160005
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I really don't like this, as this is the wrong level of abstraction.
+On Fri, Mar 16, 2018 at 07:31:56AM +0000, Wei Yongjun wrote:
+> It's not necessary to unregister a component registered
+> with devm_snd_soc_register_component().
+> 
+> Fixes: f1b5bf07365d ("ASoC: mt2701/mt8173: replace platform to componen")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-> diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
-> index 79b7a3438d54..5a9cfde5fc28 100644
-> --- a/arch/s390/kernel/compat_linux.c
-> +++ b/arch/s390/kernel/compat_linux.c
-> @@ -468,7 +468,7 @@ COMPAT_SYSCALL_DEFINE3(s390_write, unsigned int, fd, const char __user *, buf, c
->  	if ((compat_ssize_t) count < 0)
->  		return -EINVAL; 
->  
-> -	return sys_write(fd, buf, count);
-> +	return ksys_write(fd, buf, count);
->  }
 
-This looks bogus to me.  Why does s390 have its own compat version of
-write but not any of the other read and write familty calls?
+This fixes a double free on unload, right?
 
-> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-> index 99e0b649fc0e..2d365c398ccc 100644
-> --- a/init/do_mounts_rd.c
-> +++ b/init/do_mounts_rd.c
-> @@ -270,7 +270,7 @@ int __init rd_load_image(char *from)
->  			printk("Loading disk #%d... ", disk);
->  		}
->  		sys_read(in_fd, buf, BLOCK_SIZE);
-> -		sys_write(out_fd, buf, BLOCK_SIZE);
-> +		ksys_write(out_fd, buf, BLOCK_SIZE);
->  #if !defined(CONFIG_S390)
->  		if (!(i % 16)) {
->  			pr_cont("%c\b", rotator[rotate & 0x3]);
-
-All the do_mounts / initramfs code should be rewritten to use filp_open
-and vfs_read/vfs_write instead of adding hacks like this.
+regards,
+dan carpenter
