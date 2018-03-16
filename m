@@ -1,185 +1,251 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2310776-1521843308-2-12248909908907213353
+X-Cyrus-Session-Id: sloti22d1t05-2400037-1521186817-2-7952730827338502070
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  RCVD_IN_SBL 0.141, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='ISO-8859-15'
-X-Attached: 0001-tracing-probeevent-Fix-to-support-minus-offset-from-.patch
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521843307; b=blpez/CPcvqGaDdGjLpL6RWYwZos9c73AKj3ebo7Iro22h3
-    IgTROB1IfFf47GuT+h9HATIA9ShYLWIznEKsUFPqKWUTmnCnzyfT42dTNF9vSec/
-    Uyrx15Jtzky7G95RoJ7eLhs1dh7miQPK4TO9iZIw/noTuN7OZ9lK9BJQIhmWYCRi
-    byHowtzqJNRLaPOW0YiINem0QFVCtx/M5k8UBnIHXdIyfOOOgR0C4WpIF0sm6ZFe
-    3H10kuQ2VEi4p4wDrQMJSoFgE+24vSLNZJZqA6JbjemiNYMkHW3yUBtvvtnbOnyb
-    EIXk4ssvL2YoAEz1p7KuhaycPa584gtDeEXSMiQ==
+    t=1521186816; b=qEErV+FD7zoKRdLjabRsyR4lAAuKRSB7PvNASxBjjVcrmYD
+    n5CToAQzP3eJ1jBO1cK8S81MhEu5EblpORP2z1c9V+FB0+GK9Xw4xKfeFxz/Iaz8
+    lpVOo7C204r9ULKrInUhnAeuR2b21d7Q7yg6kXyDlEx6HoEr9+VAN4P9pXHjv6ji
+    zlLY8NHB+sdWH5pR+cwgIoMaljmUVMVWGzGYvtdnddDD8Ba5edVhDqER/+ltt9q+
+    KCJabz11EIDZIQoJ+fmLulySnLSkB+drbz7y0sR9F+RAUFXPd/LPx0KJ9YCD4f23
+    dWGSM+sXan7knrwRw04kulKHiGYM01yctnxXEFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:date:from:to:cc:subject
-    :references:mime-version:content-type:sender:list-id; s=arctest;
-    t=1521843307; bh=0jzjlqQf8Zp7MqglzhXVLEJAoWkg9tALDF7t2tY+l+M=; b=
-    sObQgCLoZlaj/IdDxgb0PDbP4fmNqZBtp00hsbe0mbLrXQhjCCsBXHm+Ej8ml3jt
-    3QRRzo5sIWJW3lIAJigcklqUr5s4ln9KIK7j/b9zt/fV449zTFyAukNmTzbT7KK2
-    2Kknu0W2nryXl0m3oXry73uaHREul8L+JQ8G5Lgm8CeHEGrW0J/JSZAVy1VpL7lL
-    WhL2BUj4yqWWP1G2NxpJaQeRXfYYWLT6TbolMurzS1QygPJiqdoCKExnMWNRs0nV
-    BvbqLcZMa6YWP1QgiwLi1YI3WUaNgh8kxtNyL9d7TRkSWyZ44UtE0ZaZXzdIZOA+
-    pZPITLP7/KctC547BSeRzQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521186816; bh=YZECEmSH1FB2QZl184sOHadjXb
+    lm6aatIV8GIgxd6jI=; b=oeh7qPtvJcgDICqFULc0nXokZ0wmnUr9pSyyNcwtDN
+    mY2A2pdvZdHNjiIUU/DAzwwf4ayDcli8koo1pkAJRxSrsGGuCp7BAgXKTTmnYMWl
+    dXw3DRU2LTZ5Qm8bVuQuXHkchFRSonVHH38BZ8KgYGOf3P+Zm4OTLHg0T7+xN/+s
+    yXywG74ljk+v2urbqmT1TySe2zHLkDFkGl5ZQM5bja0d0SbSjx4azbc1jamUbuQV
+    s9g5KSQ3/LMcQn6YPrytFq4e1JvVz6XkOOoPUJc7gkGtpNMYzbt2lBAF42APHQSc
+    q2LKR4WLNQpv+BDwJew5/XZYOtRaMH0DO0gNwgL6BAMA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VsGB52IV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lemote.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SqQH9Nu+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lemote.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VsGB52IV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lemote.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SqQH9Nu+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lemote.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751873AbeCWWPF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 18:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751776AbeCWWO3 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:14:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8363E2177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180323221427.568405340@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Fri, 23 Mar 2018 18:13:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        stable@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/4] tracing: probeevent: Fix to support minus offset from symbol
-References: <20180323221311.405667933@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0001-tracing-probeevent-Fix-to-support-minus-offset-from-.patch
+        id S1752565AbeCPHxW (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 03:53:22 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33830 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752538AbeCPHxV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 03:53:21 -0400
+X-Google-Smtp-Source: AG47ELsKZQLvfvTaqiwZmswd3huEQq9MAXcvrW43tW3ygizmg3l7tdH4l2tjgSeivds154OlKEhryw==
+From: Huacai Chen <chenhc@lemote.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
+        Russell King <linux@arm.linux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Huacai Chen <chenhc@lemote.com>, stable@vger.kernel.org
+Subject: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
+Date: Fri, 16 Mar 2018 15:55:16 +0800
+Message-Id: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
+X-Mailer: git-send-email 2.7.0
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+Call __stack_chk_guard_setup() in decompress_kernel() is too late that
+stack checking always fails for decompress_kernel() itself. So remove
+__stack_chk_guard_setup() and initialize __stack_chk_guard before we
+call decompress_kernel().
 
-In Documentation/trace/kprobetrace.txt, it says
+Original code comes from ARM but also used for MIPS and SH, so fix them
+together. If without this fix, compressed booting of these archs will
+fail because stack checking is enabled by default (>=4.16).
 
- @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+V2: Fix build on ARM.
+V3: Fix build on SuperH.
 
-However, the parser doesn't parse minus offset correctly, since
-commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-unsigned") drops minus ("-") offset support for kprobe probe
-address usage.
-
-This fixes the traceprobe_split_symbol_offset() to parse minus
-offset again with checking the offset range, and add a minus
-offset check in kprobe probe address usage.
-
-Link: http://lkml.kernel.org/r/152129028983.31874.13419301530285775521.stgit@devbox
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Cc: stable@vger.kernel.org
-Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
 ---
- kernel/trace/trace_kprobe.c | 4 ++--
- kernel/trace/trace_probe.c  | 8 +++-----
- kernel/trace/trace_probe.h  | 2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ arch/arm/boot/compressed/head.S        | 4 ++++
+ arch/arm/boot/compressed/misc.c        | 7 -------
+ arch/mips/boot/compressed/decompress.c | 7 -------
+ arch/mips/boot/compressed/head.S       | 4 ++++
+ arch/sh/boot/compressed/head_32.S      | 8 ++++++++
+ arch/sh/boot/compressed/head_64.S      | 4 ++++
+ arch/sh/boot/compressed/misc.c         | 7 -------
+ 7 files changed, 20 insertions(+), 21 deletions(-)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 1fad24acd444..ae4147eaebd4 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -659,7 +659,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 	char *symbol = NULL, *event = NULL, *group = NULL;
- 	int maxactive = 0;
- 	char *arg;
--	unsigned long offset = 0;
-+	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 45c8823..bae1fc6 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -547,6 +547,10 @@ not_relocated:	mov	r0, #0
+ 		bic	r4, r4, #1
+ 		blne	cache_on
  
-@@ -747,7 +747,7 @@ static int create_trace_kprobe(int argc, char **argv)
- 		symbol = argv[1];
- 		/* TODO: support .init module functions */
- 		ret = traceprobe_split_symbol_offset(symbol, &offset);
--		if (ret) {
-+		if (ret || offset < 0 || offset > UINT_MAX) {
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index d59357308677..daf54bda4dc8 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_function(const struct fetch_type *type,
- }
++		ldr	r0, =__stack_chk_guard
++		ldr	r1, =0x000a0dff
++		str	r1, [r0]
++
+ /*
+  * The C runtime environment should now be setup sufficiently.
+  * Set up some pointers, and start decompressing.
+diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
+index 16a8a80..e518ef5 100644
+--- a/arch/arm/boot/compressed/misc.c
++++ b/arch/arm/boot/compressed/misc.c
+@@ -130,11 +130,6 @@ asmlinkage void __div0(void)
  
- /* Split symbol and offset. */
--int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-+int traceprobe_split_symbol_offset(char *symbol, long *offset)
- {
- 	char *tmp;
- 	int ret;
-@@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
- 	if (!offset)
- 		return -EINVAL;
+ unsigned long __stack_chk_guard;
  
--	tmp = strchr(symbol, '+');
-+	tmp = strpbrk(symbol, "+-");
- 	if (tmp) {
--		/* skip sign because kstrtoul doesn't accept '+' */
--		ret = kstrtoul(tmp + 1, 0, offset);
-+		ret = kstrtol(tmp, 0, offset);
- 		if (ret)
- 			return ret;
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
 -
- 		*tmp = '\0';
- 	} else
- 		*offset = 0;
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index e101c5bb9eda..6a4d3fa94042 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -365,7 +365,7 @@ extern int traceprobe_conflict_field_name(const char *name,
- extern void traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+ void __stack_chk_fail(void)
+ {
+ 	error("stack-protector: Kernel stack is corrupted\n");
+@@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
+ {
+ 	int ret;
  
--extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-+extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
+-	__stack_chk_guard_setup();
+-
+ 	output_data		= (unsigned char *)output_start;
+ 	free_mem_ptr		= free_mem_ptr_p;
+ 	free_mem_end_ptr	= free_mem_ptr_end_p;
+diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
+index fdf99e9..5ba431c 100644
+--- a/arch/mips/boot/compressed/decompress.c
++++ b/arch/mips/boot/compressed/decompress.c
+@@ -78,11 +78,6 @@ void error(char *x)
  
- /* Sum up total data length for dynamic arraies (strings) */
- static nokprobe_inline int
+ unsigned long __stack_chk_guard;
+ 
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
+-
+ void __stack_chk_fail(void)
+ {
+ 	error("stack-protector: Kernel stack is corrupted\n");
+@@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boot_heap_start)
+ {
+ 	unsigned long zimage_start, zimage_size;
+ 
+-	__stack_chk_guard_setup();
+-
+ 	zimage_start = (unsigned long)(&__image_begin);
+ 	zimage_size = (unsigned long)(&__image_end) -
+ 	    (unsigned long)(&__image_begin);
+diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed/head.S
+index 409cb48..00d0ee0 100644
+--- a/arch/mips/boot/compressed/head.S
++++ b/arch/mips/boot/compressed/head.S
+@@ -32,6 +32,10 @@ start:
+ 	bne	a2, a0, 1b
+ 	 addiu	a0, a0, 4
+ 
++	PTR_LA	a0, __stack_chk_guard
++	PTR_LI	a1, 0x000a0dff
++	sw	a1, 0(a0)
++
+ 	PTR_LA	a0, (.heap)	     /* heap address */
+ 	PTR_LA	sp, (.stack + 8192)  /* stack address */
+ 
+diff --git a/arch/sh/boot/compressed/head_32.S b/arch/sh/boot/compressed/head_32.S
+index 7bb1681..e84237d 100644
+--- a/arch/sh/boot/compressed/head_32.S
++++ b/arch/sh/boot/compressed/head_32.S
+@@ -76,6 +76,10 @@ l1:
+ 	mov.l	init_stack_addr, r0
+ 	mov.l	@r0, r15
+ 
++	mov.l	__stack_chk_guard_addr, r0
++	mov.l	__stack_chk_guard_val, r1
++	mov.l	r1, @r0
++
+ 	/* Decompress the kernel */
+ 	mov.l	decompress_kernel_addr, r0
+ 	jsr	@r0
+@@ -97,6 +101,10 @@ kexec_magic:
+ 	.long	0x400000F0	/* magic used by kexec to parse zImage format */
+ init_stack_addr:
+ 	.long	stack_start
++__stack_chk_guard_val:
++	.long	0x000A0DFF
++__stack_chk_guard_addr:
++	.long	__stack_chk_guard
+ decompress_kernel_addr:
+ 	.long	decompress_kernel
+ kernel_start_addr:
+diff --git a/arch/sh/boot/compressed/head_64.S b/arch/sh/boot/compressed/head_64.S
+index 9993113..8b4d540 100644
+--- a/arch/sh/boot/compressed/head_64.S
++++ b/arch/sh/boot/compressed/head_64.S
+@@ -132,6 +132,10 @@ startup:
+ 	addi	r22, 4, r22
+ 	bne	r22, r23, tr1
+ 
++	movi	datalabel __stack_chk_guard, r0
++	movi	0x000a0dff, r1
++	st.l	r0, 0, r1
++
+ 	/*
+ 	 * Decompress the kernel.
+ 	 */
+diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
+index 627ce8e..fe4c079 100644
+--- a/arch/sh/boot/compressed/misc.c
++++ b/arch/sh/boot/compressed/misc.c
+@@ -106,11 +106,6 @@ static void error(char *x)
+ 
+ unsigned long __stack_chk_guard;
+ 
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
+-
+ void __stack_chk_fail(void)
+ {
+ 	error("stack-protector: Kernel stack is corrupted\n");
+@@ -130,8 +125,6 @@ void decompress_kernel(void)
+ {
+ 	unsigned long output_addr;
+ 
+-	__stack_chk_guard_setup();
+-
+ #ifdef CONFIG_SUPERH64
+ 	output_addr = (CONFIG_MEMORY_START + 0x2000);
+ #else
 -- 
-2.15.1
+2.7.0
