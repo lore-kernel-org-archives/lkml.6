@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuRMAFeGsNUky0EwvAXHv2N8WklHf1EXMR7XPIBk9GAtSiVWLjCwoTxG7THGJE7gXMls36A
+X-Google-Smtp-Source: AG47ELtHpl6SeCBgC13XVjt5+ntTqSQa52bsUmnpm/DDYIHrXybz6cCffdXnpLr7cdCzuzu9CR4T
 ARC-Seal: i=1; a=rsa-sha256; t=1521214683; cv=none;
         d=google.com; s=arc-20160816;
-        b=XNpAozOZ2RZ0cBsAJ9Woq0/G+WbXd5mXkiMMi9zA/mMDbXgQfBhtgS2TKVzDMO9+kf
-         KYODzOTyw0IekiicYAxLLWkgjl4nQ/8QsXGnretgY6bnkX1N2PFM4hCmOBVgzrkwM6H5
-         7Mi9qXt537Z/iBjVf6L6ICzQpxJhB4rYWMgIhjA3c4gXeTx8OlOSHSrFfzt+fBrEOzY+
-         DG4rISpPt0DN3ZjOnOK9tdR+wwsT6U2jEPT4yXaW0JdzRh6cL64qEugQzHBYijOh5T51
-         TunGH6Lqfcpm42uXt85JTNNBQFBD53uZ9a9k6cXM3t+O0zZYEl8LaTWFuqHPg/HHMkf/
-         RA0w==
+        b=iyFvKjBqIr1G3IZnjVCJuJtuwo/vcpQICQ7qn78EhVeSwbVxi/xRjrhlrXdqR+cY3p
+         AXA2kCaXshV0cP1U15pxDGlhVsBsQIY5AXdoko1B+AZbN0kFv+e57prOnns++Wd+tD9W
+         zma4UTbhfh7S7DuXecLWBXqTXAW+10vJbENHY7lTSipo/6wtgt7jr/TI1zZF8/gMkZoX
+         l8tCAQwkQHUpf2w+YBW6ItX0HBcbdnfJl8OPXpV8iQ0cICgZ2nJAenpWYRNyvQsrTFJQ
+         L5FsLAlrLYN0hxmAW5i2UH6NfbqT/6GdWyNJ5ONmDi4Qoo/FoK0eFU2k4HDTinzbbPVW
+         jpwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rcRpeHKEY3TYIyHCnPiYWjA7eg1lySW6ttXBREUAlbA=;
-        b=JngTiu50Cw5GnIFy4Q6O8t7du3GcPt6La6DHKbRQXpU+uQeCNdLfMlLfUJ+E0o4C4i
-         NQnzKvBEkdktvZI7jBcIEmNV5cgv42CKKu+iQKRudgN6zPZEF6zplacgEcqv1Df/7eTr
-         GA+vgCOcAeFseOVaeN98gCYGzhKTwxRc4kcZp5vugz0MnsbBBChydo8+QTZe5f888ld8
-         OnM32mOQeiPKfLJ6eka6sblRXF+zsvIBPeRHpUfz+pa4utmbyiKcG4SMoy30k4oyvYZ7
-         RFhWIIXPCSOOrxGvXjy+GirDp/+kG95ZgGJQH3x4p5a+fJu6gVbvfPihraLU36q9Zys9
-         Id7Q==
+        bh=6zD5hMPmcWDWTKV7ke9bMDqQocD6T3tyc12pUFQw4GM=;
+        b=m6eXZefEbwi+RXpR9tMVCKHUWcMGJk1XEDuiywvuGjha06NEbMTPKI5gbChRwq9Nt+
+         klVflIvmU+39CkWDJVLem1pf1BhCd4rcpU9JldkpxPnb2IMHViGLUMmHU//Y0dxHSssn
+         1efK5rJ5OQAn0GbJTi4Vxz3zgSRY0pnPJ0ZC8enQ0lLwy1XbmAEv9/EOxSGOSZRtIU5t
+         tPtWk/0DZfOer4sqt3VwM+Iv4XmefYcbEqXLb55NlE2QtcER7o7gC7nYT0zu+g/2Y1QL
+         ZwQwbmoQnu1zFudSs7EAmuW1vLwoYstfVdii1fphcQfBejKmPJVtoI6ELF/tw9n7pXIO
+         eGCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
+	Stephen Hemminger <sthemmin@microsoft.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 089/109] virtio_net: Disable interrupts if napi_complete_done rescheduled napi
-Date: Fri, 16 Mar 2018 16:23:58 +0100
-Message-Id: <20180316152334.770534110@linuxfoundation.org>
+Subject: [PATCH 4.14 091/109] veth: set peer GSO values
+Date: Fri, 16 Mar 2018 16:24:00 +0100
+Message-Id: <20180316152334.862430052@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109207160623399?=
-X-GMAIL-MSGID: =?utf-8?q?1595109207160623399?=
+X-GMAIL-THRID: =?utf-8?q?1595109208388318849?=
+X-GMAIL-MSGID: =?utf-8?q?1595109208388318849?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,79 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
 
-[ Upstream commit fdaa767aefc1685f9a41e91f447c9aea94103df6 ]
+[ Upstream commit 72d24955b44a4039db54a1c252b5031969eeaac3 ]
 
-Since commit 39e6c8208d7b ("net: solve a NAPI race") napi has been able
-to be rescheduled within napi_complete_done() even in non-busypoll case,
-but virtnet_poll() always enabled interrupts before complete, and when
-napi was rescheduled within napi_complete_done() it did not disable
-interrupts.
-This caused more interrupts when event idx is disabled.
+When new veth is created, and GSO values have been configured
+on one device, clone those values to the peer.
 
-According to commit cbdadbbf0c79 ("virtio_net: fix race in RX VQ
-processing") we cannot place virtqueue_enable_cb_prepare() after
-NAPI_STATE_SCHED is cleared, so disable interrupts again if
-napi_complete_done() returned false.
+For example:
+   # ip link add dev vm1 gso_max_size 65530 type veth peer name vm2
 
-Tested with vhost-user of OVS 2.7 on host, which does not have the event
-idx feature.
+This should create vm1 <--> vm2 with both having GSO maximum
+size set to 65530.
 
-* Before patch:
-
-$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
-MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.150.253 () port 0 AF_INET
-Socket  Message  Elapsed      Messages
-Size    Size     Time         Okay Errors   Throughput
-bytes   bytes    secs            #      #   10^6bits/sec
-
-212992    1472   60.00     32763206      0    6430.32
-212992           60.00     23384299           4589.56
-
-Interrupts on guest: 9872369
-Packets/interrupt:   2.37
-
-* After patch
-
-$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
-MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.150.253 () port 0 AF_INET
-Socket  Message  Elapsed      Messages
-Size    Size     Time         Okay Errors   Throughput
-bytes   bytes    secs            #      #   10^6bits/sec
-
-212992    1472   60.00     32794646      0    6436.49
-212992           60.00     32793501           6436.27
-
-Interrupts on guest: 4941299
-Packets/interrupt:   6.64
-
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/veth.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -260,9 +260,12 @@ static void virtqueue_napi_complete(stru
- 	int opaque;
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -410,6 +410,9 @@ static int veth_newlink(struct net *src_
+ 	if (ifmp && (dev->ifindex != 0))
+ 		peer->ifindex = ifmp->ifi_index;
  
- 	opaque = virtqueue_enable_cb_prepare(vq);
--	if (napi_complete_done(napi, processed) &&
--	    unlikely(virtqueue_poll(vq, opaque)))
--		virtqueue_napi_schedule(napi, vq);
-+	if (napi_complete_done(napi, processed)) {
-+		if (unlikely(virtqueue_poll(vq, opaque)))
-+			virtqueue_napi_schedule(napi, vq);
-+	} else {
-+		virtqueue_disable_cb(vq);
-+	}
- }
- 
- static void skb_xmit_done(struct virtqueue *vq)
++	peer->gso_max_size = dev->gso_max_size;
++	peer->gso_max_segs = dev->gso_max_segs;
++
+ 	err = register_netdevice(peer);
+ 	put_net(net);
+ 	net = NULL;
