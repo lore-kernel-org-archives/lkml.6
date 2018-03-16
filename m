@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtJQ9CF9zsRVez2VQ5wSkxInyxqC9iUJEgQi8PhBcub34ACmO5w0NyHY99t+yKSFene+bxq
-ARC-Seal: i=1; a=rsa-sha256; t=1521214140; cv=none;
+X-Google-Smtp-Source: AG47ELtai4XHG4G4R2XZE6NX6OM/CPxLd5C02n1Prdb7/N6zN7bpcb0VHl6MkM2jsUH52c4VzQ9/
+ARC-Seal: i=1; a=rsa-sha256; t=1521214137; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gk9bCveQXvL44S3+r+LuN6xk/hYsjriUwwhyP9APKrKYB3VSu3kCIesOg4OG7jmLgi
-         MtQSzV+BMBtX0fm/lPI3/pnfbNDwj3qq0jU199Zvui7QXCQzhMwj9t8EDtGNyVg7fLu7
-         bR2VtJtGoa818OYnwt9RSQ/C7WhOU74j0fgXaEBhtiVNWyAWJGz6oG8bMLA2M+mExEM0
-         Ns+RTqZGmlumb7pc2nvrxYparHg5naJSu4Vpnu7NIvQkyDhLXIeZFPFavPkf8wBVrjBy
-         p3CP9RVQ17Q3ojdxVaK+HS4qy4UmrZNVpF1e3WgbsXmV8bFPxMzmEYcHYphjy5DRY4OR
-         0f7g==
+        b=eKTRgub5+keoRBmHZKt7AfWc8cDI0b28Km7lcQ9K4akGkX9XrGivPWLSsGW9fydtY9
+         KFB4PtuZIo0HIXEBvvMR6ZXeikMFwnq0k4/xthXrlNTzt8pfzh1os1jAjLftsTTYXhKE
+         O9I0D9utsnx6p15k5JNonohXKii6fYMHya9wLM82wEktLfsICaK+uroF9WVt3sVmKOYl
+         V3JguNXS8TQz1C/TpUnIOomzgj3tKUk59bviKKsNeU3ASL+T6HcNc7U0oAShKPtrzrCm
+         uns+51D1ozvV+vhKtwxPfXrfuiNV9VLOeOQZ+JKxbigGx+DO1ceQ9D4WOJhpNWWbgQWT
+         FfqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Lf4zu0l7yxgQWGPAI+P8c3D+ekGl09YxXJUYKSlDNH4=;
-        b=PPCccfDqKpccCao9GUpkeZhL2nDW2+DR/XdZb2yTQu95QL7ep51PZebYexrecS67/V
-         l4cj34uuWC+O95iICK5+Sm/uo5eY6mqRYwbp9vM/6by2KHL7CrCaIfGnlFLgcUCQBmls
-         EMq8an/2RvXwL8fSRUIFjB5ROnjoOVr8mmlvApHhYgY44zEo2hM/55DNhLIfYV34DrWH
-         MhFnYWiZqr2bRwCXLLNXJC13p3C0a5plOExi7sRYvm09E6yzSaIqrzW5RcFb1cyVNmsu
-         VLN+IU5bHY6hjChpy9DehBCMszYGl+XVGP009Af9AI5alitbEva4YGpqUUR88aQ6RTnx
-         2hcg==
+        bh=Pg4WZBqVnFdQ+o7/USlwZIzo9yI9FsTFxhJO0jCWdMo=;
+        b=C2bv/8AUTjmA8HQq5Vo1IbOOPGl2Bmp8CBk6kQ+WEKcdR0I8Ry6u89+sioWECKd3sP
+         5OxsUxOYL/CLRo54B+cSv15vOMPJtMQ7PRuQdOPvTAcqTvQ4n4A9cXzC8BmAixeiWVW3
+         4YrHZf7zdc2xJHSTy/aJRVhE8SAdq3ESK4Ncp2YYVnQ+wd3J4ko1hQW/CL5ehf8n+yFT
+         TvQL3UxN1E2eHYSaDZogZb+vgt+x0N08fm7GgR1cnmEfVM1l0YAIfKKl2bfVbFRy81/e
+         ufbMICvYkqFopY0TJp1peib41lHamWExRmyPUfgUyI8QPZZjjjESlYvIzlTxHZu43fAY
+         BVvA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Frank Mori Hess <fmh6jj@gmail.com>,
-	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.4 55/63] staging: comedi: fix comedi_nsamples_left.
-Date: Fri, 16 Mar 2018 16:23:27 +0100
-Message-Id: <20180316152305.984404523@linuxfoundation.org>
+	Oliver Neukum <oneukum@suse.com>,
+	stable@kernel.org,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.4 54/63] uas: fix comparison for error code
+Date: Fri, 16 Mar 2018 16:23:26 +0100
+Message-Id: <20180316152305.882197844@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108638756515720?=
-X-GMAIL-MSGID: =?utf-8?q?1595108638756515720?=
+X-GMAIL-THRID: =?utf-8?q?1595108310839479923?=
+X-GMAIL-MSGID: =?utf-8?q?1595108636245155000?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,32 +50,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Frank Mori Hess <fmh6jj@gmail.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit a42ae5905140c324362fe5036ae1dbb16e4d359c upstream.
+commit 9a513c905bb95bef79d96feb08621c1ec8d8c4bb upstream.
 
-A rounding error was causing comedi_nsamples_left to
-return the wrong value when nsamples was not a multiple
-of the scan length.
+A typo broke the comparison.
 
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Fixes: cbeef22fd611 ("usb: uas: unconditionally bring back host after reset")
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+CC: stable@kernel.org
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/storage/uas.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers.c
-+++ b/drivers/staging/comedi/drivers.c
-@@ -484,8 +484,7 @@ unsigned int comedi_nsamples_left(struct
- 	struct comedi_cmd *cmd = &async->cmd;
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -1052,7 +1052,7 @@ static int uas_post_reset(struct usb_int
+ 		return 0;
  
- 	if (cmd->stop_src == TRIG_COUNT) {
--		unsigned int nscans = nsamples / cmd->scan_end_arg;
--		unsigned int scans_left = __comedi_nscans_left(s, nscans);
-+		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
- 		unsigned int scan_pos =
- 		    comedi_bytes_to_samples(s, async->scan_progress);
- 		unsigned long long samples_left = 0;
+ 	err = uas_configure_endpoints(devinfo);
+-	if (err && err != ENODEV)
++	if (err && err != -ENODEV)
+ 		shost_printk(KERN_ERR, shost,
+ 			     "%s: alloc streams error %d after reset",
+ 			     __func__, err);
