@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtmVbShxmm5E3A3yTFSqL5CGavwQwXcuDZmg+wwyPabw6k4Ey4yM18svJSa0b5JbN+oyXtV
-ARC-Seal: i=1; a=rsa-sha256; t=1521214208; cv=none;
+X-Google-Smtp-Source: AG47ELsrl918s/I97WCVw+JO7x6ZyasctOTexRZtxGEdFOygiAMa0Bi8u51W31Og+HA1XaUD5wZu
+ARC-Seal: i=1; a=rsa-sha256; t=1521214205; cv=none;
         d=google.com; s=arc-20160816;
-        b=xXA/vFtZXwBmrC3jJN3dOtMdXQuVruX/raH5s3IXDFIIli8M7T0FbYPd6CZLIVoi4L
-         NAWOrKskJcEZ/bTVvB+v39knWfKl5DVVVEk6STzGvYrh8imzixS/W/evK8v+BI0X6xBZ
-         PV153goiTv0glOmqqavs4N7pCDNb6i0f+SUe4V/lLmqBbKUjWuK7jeTEEFpqjmxo4YfM
-         q4XPLAvvKyDpaNqDaiYqGSkHPcaGq7vn/nuP//f4POYMmEeSpfCIGAEwj2MAPusAsEhp
-         iML1SXaUFsPpRg3ZFKuesnOIwbFna0P7zaoeiyIGoKDyw1bg9IPrY31OdnVGhwfDqNkH
-         BM4Q==
+        b=PvrQcDMn9NZcnrRPAEieyOE/7jUJVFRqdeHv7m1C/WL1EdDKLKctr+NLvQudi6eMmf
+         MN3MGlCI8t9G+iaxNDdIXvEoey06hVoq/2cuK7SRa/OmAgbCMXbWcjEMhokFHrl5yCqt
+         TvDKENC2G1D09kt6jcZm9Er1p0GGUma2m931MKYK+GOYqCd7rpl5Sz5q0RcfVej88zqv
+         P6LH9jYy3lz8PabTcFo0XjyHaMn20X1f5s9urMM4RB8kAbeWZZv6/O8sB5zSUSgbZXak
+         JB1YD5zp5qFt7CM0xxyvoZFVgzSAYuqr8gbMX48y0JlWxaWYyh4bMCjpi+jysm8XPoV+
+         d3Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3wD2VK13w1Dk3FGCgfryJDRKho80YmZho7M04m3OJNA=;
-        b=qTlDG9tCsCVF37XBQt+9s58Nl3wf/Nm10BT6mSJKtfVdJVTXY6NTdvo+4LxIPlNbqf
-         kPtQF/aqYGBV5xIXxu4tfWtA3g3sh8bgJKZN2IDFnqsQA1yJ7ZfBceVfGukBSTOJ06j0
-         VYgz/4HbQ32hdAlujkt+DpMGx/xPeQDFeGyxq2NrMtKRRUQB9JENgAqlPCbYFIDhJb6s
-         YMWmisAKi/sxcxB9VRQedpZc0COvwkcQxcZMvU7CuqdhgF5cF60n7NZNydse/bj2HpmL
-         5uqOHRVMpP7FNBFD26ckYtkR0fEXxKkh0Eh2VYNbdtwp/CK5Bhf7RsqZWfaUj/d1HL1+
-         Rxgw==
+        bh=akDi8fMDUx3goXC1g83WPQPGhIolDkMDfDoWtUElkGc=;
+        b=TDoWGyNXfEJ6V3giiflYN9+bPtNF9BEhjp6VpkHnXyxvM5P1/6Inlx7+TgG728vf7o
+         Ch/VDqwkFF2FTK55qSCF1etsoqOIahVSF7mwk40D9+5Ible1eXWzfImO9ggK5X8B8b8I
+         VoJwdiaMyjiKj3Saavp6XO8nfgDSaGbxEiUfnD8vzzeh/4jC/dycb7xIA+UsnB+CpaMF
+         NbeAdslH81bcA8RdjPK3GxBAOZ9Arvp41wXOSR9v42+l0fE318Epm095/lvx9vPHq7x8
+         oFJHLMxeUOWYRQ4/LNMvJa52uR0Bg+8KheNoPhoEKe8Dj2qsGZ4oSwVpPifM4aCgklLi
+         fNHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Nivedita Swaminathan <nivedita.swaminathan@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Patrik Jakobsson <patrik.jakobsson@linux.intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.9 06/86] drm/i915: Always call to intel_display_set_init_power() in resume_early.
-Date: Fri, 16 Mar 2018 16:22:29 +0100
-Message-Id: <20180316152317.652617970@linuxfoundation.org>
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 05/86] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
+Date: Fri, 16 Mar 2018 16:22:28 +0100
+Message-Id: <20180316152317.587981580@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108709721850142?=
-X-GMAIL-MSGID: =?utf-8?q?1595108709721850142?=
+X-GMAIL-THRID: =?utf-8?q?1595108284443623794?=
+X-GMAIL-MSGID: =?utf-8?q?1595108706169675380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +50,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
 
-commit d13a8479f3584613b6aacbb793eae64578b8f69a upstream.
+commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
 
-intel_power_domains_init_hw() calls set_init_power, but when using
-runtime power management this call is skipped. This prevents hw readout
-from taking place.
+This patch fixes NULL pointer crash due to active timer running for abort
+IOCB.
 
-Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104172
-Link: https://patchwork.freedesktop.org/patch/msgid/20180116155324.75120-1-maarten.lankhorst@linux.intel.com
-Fixes: bc87229f323e ("drm/i915/skl: enable PC9/10 power states during suspend-to-idle")
-Cc: Nivedita Swaminathan <nivedita.swaminathan@intel.com>
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: Patrik Jakobsson <patrik.jakobsson@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: <stable@vger.kernel.org> # v4.5+
-Reviewed-by: Imre Deak <imre.deak@intel.com>
-(cherry picked from commit ac25dfed15d470d7f23dd817e965b54aa3f94a1e)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>From crash dump analysis it was discoverd that get_next_timer_interrupt()
+encountered a corrupted entry on the timer list.
+
+ #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
+    [exception RIP: get_next_timer_interrupt+440]
+    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
+    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
+    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
+    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
+    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
+    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+
+Looking at the assembly of get_next_timer_interrupt(), address came
+from %r8 (ffff95e1f6451188) which is pointing to list_head with single
+entry at ffff95e5ff621178.
+
+ 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
+ 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
+ 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
+ 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
+ 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
+
+ crash> rd ffff95e1f6451188 10
+ ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
+ ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
+ ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
+ ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
+ ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
+
+ crash> rd ffff95e5ff621178 10
+ ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
+ ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
+ ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
+ ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
+ ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
+
+ ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
+
+ CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
+ ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
+   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
+   FREE / [ALLOCATED]
+    ffff95e5ff621080  (cpu 6 cache)
+
+Examining the contents of that memory reveals a pointer to a constant string
+in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
+
+ crash> rd ffffffffc059277c 20
+ ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
+ ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
+ ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
+ ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
+ ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
+ ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
+ ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
+ ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
+ ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
+ ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
+
+ crash> struct -ox srb_iocb
+ struct srb_iocb {
+           union {
+               struct {...} logio;
+               struct {...} els_logo;
+               struct {...} tmf;
+               struct {...} fxiocb;
+               struct {...} abt;
+               struct ct_arg ctarg;
+               struct {...} mbx;
+               struct {...} nack;
+    [0x0 ] } u;
+    [0xb8] struct timer_list timer;
+    [0x108] void (*timeout)(void *);
+ }
+ SIZE: 0x110
+
+ crash> ! bc
+ ibase=16
+ obase=10
+ B8+40
+ F8
+
+The object is a srb_t, and at offset 0xf8 within that structure
+(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
+
+Cc: <stable@vger.kernel.org> #4.4+
+Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_drv.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -1703,6 +1703,8 @@ static int i915_drm_resume_early(struct
- 	if (IS_BROXTON(dev_priv) ||
- 	    !(dev_priv->suspended_to_idle && dev_priv->csr.dmc_payload))
- 		intel_power_domains_init_hw(dev_priv, true);
-+	else
-+		intel_display_set_init_power(dev_priv, true);
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -369,6 +369,7 @@ qla24xx_abort_sp_done(void *data, void *
+ 	srb_t *sp = (srb_t *)ptr;
+ 	struct srb_iocb *abt = &sp->u.iocb_cmd;
  
- 	enable_rpm_wakeref_asserts(dev_priv);
++	del_timer(&sp->u.iocb_cmd.timer);
+ 	complete(&abt->u.abt.comp);
+ }
  
