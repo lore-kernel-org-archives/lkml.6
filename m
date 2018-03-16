@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuJVk9fJ3WXXqnpghmBhyAhnvxKfIIyI5ETyNb8xAFkQ4uQPV49nnGrYBLRNDl13ljtutT8
-ARC-Seal: i=1; a=rsa-sha256; t=1521214900; cv=none;
+X-Google-Smtp-Source: AG47ELvUWkrhgkwll7/lk7Qi1f73tlhKSmFdkt+xYct7ZlPkzkjXTft4rbCBFJfO2wCtyrVU+vy+
+ARC-Seal: i=1; a=rsa-sha256; t=1521214897; cv=none;
         d=google.com; s=arc-20160816;
-        b=FZswXZrBz81LzqN7ltW9Z0o6XbnZkfFaZcmTVytmFw8vjSr3jiRiszQ9RFyIQu7+k/
-         fJFPrwoRdyBSjJDz5Bc6M+0iZJ2HrAomjCYd8AoIF4Y9gD9XwEEoLDYlJ582+xyHEibw
-         xqw8CO2DDeOLxfVTFylJGFLbZxztAkg8+NH1RAnv/7vu2i4rjEEmNVQS/OooN01jCkXZ
-         Np0QpATWxr3opwtXBQz5Bgk7ENVaIeoDJRbF/PFC1JVdsloMDKRoa3NNfIhGB0phIDVH
-         g7GR4IadYHUvq07gngBtlShGrLiRFnV41bAt6E6lLNUxTg15r8rKG8+YbtXdm2uOeuLC
-         MmWQ==
+        b=kF1ppkjLucSpseKllZ37AMwby1tbZV8YiKNnuvEG9e0oXvETkQWsymkubfrH35pAkG
+         UlASSHAKb7zLdj0DGK69RCm61bGmIqg+xj3OQLOsEM7rVSIDbO/PpoE+TVKJJvuiuU24
+         zcWqfc54544jD2I96aBObd/r1cpnv2EH4o5GPsd8M1OrpTydFHkESO0idzVg9aUC3I/k
+         q5jpyF/gV+fO7ZC9J2jChJaOXBcNaimHsq+Q1R4W9B3RC6FTUVO5H8A2AgHra6A9l1Uu
+         7HSadkOWo3H3Tr4Uq6JysWZUsj1dlVZUqbx7941pOzanlfdMSqsAj9jcT/DpiUNqxLe8
+         mctA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hMfcw88TKNYXHsZNdiDJ47ntVnZKETechUiaVomQWRI=;
-        b=uewSeV1e93lP9Sq3k5DejqRDj3f9KxJw74puvOc9jYBvm2v0YBKBymR3wuPMkkvwRl
-         sLlOcTcaPyy7TgL+gHbwZ/LO0RSmESbWUyrJYb+mvWEWmrVBnXQtTsdXHxuvJPQRhH4E
-         Vxlj3MXZQM1Lb01W4czfK7/ImsnKhQ/4bxA2LlNVbf1g0VU+SldXUNKCuHb2q8Ro2LSN
-         nVmrf7/7ic1jDvLr9Nn8CK7eC1qESmV4Idl7RtYUTR/5qVbHWGm4mDcYorwGJbrnyrFI
-         TP5sO//15Bc1ueqKVCPe1+k4q3JaGGH/LKSLrluNM850cVp5nasstE/Q0tNh1Hkvrnig
-         owZg==
+        bh=Hq+ZMqW39npB4NL/kiXzcCihXjXaS3qXsC9zkbjulXM=;
+        b=UMTAAEdaxBmyNN2J20dxemVxfpel+ifr9I9NqadJRu1dExSlJeI837+Nzdrw6UWVaM
+         uHhZmCYWZU9pE9u5IXxTCaOTziNcPd/c5rhShMsVCEHZ4DpQsRDKnORxymVNLjkcw5Mx
+         ApRVWo9LxgYwJeAwSzkwDphBHYPeZfwFz9KCqCV9T78lYqvaRexOIMtTxgZVlmyhk8r8
+         5FNSQyAekFybmlYvZEmXsxSRdlfRp+vnU3eXo7Dy91OZU1FNNjMI4WsIlsI0SJq2eejy
+         rTMOBXWrsVpf5/WqxIaT+92V00F1WuF63t86SsI2D8TSAng6HchyQy+N/VdJ1R2deOdU
+         5HKA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lorenzo Colitti <lorenzo@google.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
+	Xingyu Chen <xingyu.chen@amlogic.com>,
+	Yixun Lan <yixun.lan@amlogic.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 057/128] net: xfrm: allow clearing socket xfrm policies.
-Date: Fri, 16 Mar 2018 16:23:18 +0100
-Message-Id: <20180316152339.672814818@linuxfoundation.org>
+Subject: [PATCH 4.15 039/128] clk: meson: gxbb: fix wrong clock for SARADC/SANA
+Date: Fri, 16 Mar 2018 16:23:00 +0100
+Message-Id: <20180316152338.654185961@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109072211741027?=
-X-GMAIL-MSGID: =?utf-8?q?1595109435947325766?=
+X-GMAIL-THRID: =?utf-8?q?1595109135350374663?=
+X-GMAIL-MSGID: =?utf-8?q?1595109432269228766?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lorenzo Colitti <lorenzo@google.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
 
 
-[ Upstream commit be8f8284cd897af2482d4e54fbc2bdfc15557259 ]
+[ Upstream commit 75eccf5ed83250c0aeaeeb76f7288254ac0a87b4 ]
 
-Currently it is possible to add or update socket policies, but
-not clear them. Therefore, once a socket policy has been applied,
-the socket cannot be used for unencrypted traffic.
+According to the datasheet, in Meson-GXBB/GXL series,
+The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
+while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
 
-This patch allows (privileged) users to clear socket policies by
-passing in a NULL pointer and zero length argument to the
-{IP,IPV6}_{IPSEC,XFRM}_POLICY setsockopts. This results in both
-the incoming and outgoing policies being cleared.
+Test passed at gxl-s905x-p212 board.
 
-The simple approach taken in this patch cannot clear socket
-policies in only one direction. If desired this could be added
-in the future, for example by continuing to pass in a length of
-zero (which currently is guaranteed to return EMSGSIZE) and
-making the policy be a pointer to an integer that contains one
-of the XFRM_POLICY_{IN,OUT} enum values.
+The following published datasheets are wrong and should be updated
+[1] GXBB v1.1.4
+[2] GXL v0.3_20170314
 
-An alternative would have been to interpret the length as a
-signed integer and use XFRM_POLICY_IN (i.e., 0) to clear the
-input policy and -XFRM_POLICY_OUT (i.e., -1) to clear the output
-policy.
-
-Tested: https://android-review.googlesource.com/539816
-Signed-off-by: Lorenzo Colitti <lorenzo@google.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_policy.c |    2 +-
- net/xfrm/xfrm_state.c  |    7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1256,7 +1256,7 @@ EXPORT_SYMBOL(xfrm_policy_delete);
- 
- int xfrm_sk_policy_insert(struct sock *sk, int dir, struct xfrm_policy *pol)
- {
--	struct net *net = xp_net(pol);
-+	struct net *net = sock_net(sk);
- 	struct xfrm_policy *old_pol;
- 
- #ifdef CONFIG_XFRM_SUB_POLICY
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2056,6 +2056,13 @@ int xfrm_user_policy(struct sock *sk, in
- 	struct xfrm_mgr *km;
- 	struct xfrm_policy *pol = NULL;
- 
-+	if (!optval && !optlen) {
-+		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
-+		xfrm_sk_policy_insert(sk, XFRM_POLICY_OUT, NULL);
-+		__sk_dst_reset(sk);
-+		return 0;
-+	}
-+
- 	if (optlen <= 0 || optlen > PAGE_SIZE)
- 		return -EMSGSIZE;
- 
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1386,7 +1386,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_M
+ static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
+ static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
+ static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
+-static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
++static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
+ static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
+ static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
+ static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
+@@ -1437,7 +1437,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge,
+ static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
+ static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
+ static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
+-static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
++static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
+ static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
+ static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+ static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
