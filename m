@@ -1,50 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753175AbeCPT1Q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:27:16 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:36474 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751724AbeCPT1O (ORCPT
+        id S1752689AbeCPTcO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:32:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56280 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751748AbeCPTcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:27:14 -0400
-Date: Fri, 16 Mar 2018 15:27:12 -0400 (EDT)
-Message-Id: <20180316.152712.1584177628223195375.davem@davemloft.net>
-To: christophe.jaillet@wanadoo.fr
-Cc: heiko@sntech.de, branislav@radocaj.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: arc: Fix a potential memory leak if an
- optional regulator is deferred
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
-References: <7fd57a4e7f7a41dccf55430cbc43de3b0a7f7826.1521061530.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Mar 2018 15:32:08 -0400
+Date: Fri, 16 Mar 2018 12:31:52 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Balbir Singh <bsingharora@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Ingo Molnar <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+        <linuxppc-dev@lists.ozlabs.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
+        Haren Myneni/Beaverton/IBM <hbabu@us.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        fweimer@redhat.com, msuchanek@suse.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ulrich.Weigand@de.ibm.com,
+        Ram Pai <ram.n.pai@gmail.com>
+Subject: Re: [PATCH v4] mm, pkey: treat pkey-0 special
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com>
+ <CAKTCnzmSCT+VecdSRpyY2Rb_AW2ngCi3UTZfLE3VOLNSQn6vsA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKTCnzmSCT+VecdSRpyY2Rb_AW2ngCi3UTZfLE3VOLNSQn6vsA@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18031619-0040-0000-0000-0000044219FC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031619-0041-0000-0000-000020E52A11
+Message-Id: <20180316193152.GG1060@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 14 Mar 2018 22:09:34 +0100
+On Fri, Mar 16, 2018 at 10:02:22PM +1100, Balbir Singh wrote:
+> On Fri, Mar 16, 2018 at 9:33 PM, Ram Pai <linuxram@us.ibm.com> wrote:
+> > Applications need the ability to associate an address-range with some
+> > key and latter revert to its initial default key. Pkey-0 comes close to
+> > providing this function but falls short, because the current
+> > implementation disallows applications to explicitly associate pkey-0 to
+> > the address range.
+> >
+> > Clarify the semantics of pkey-0 and provide the corresponding
+> > implementation.
+> >
+> > Pkey-0 is special with the following semantics.
+> > (a) it is implicitly allocated and can never be freed. It always exists.
+> > (b) it is the default key assigned to any address-range.
+> > (c) it can be explicitly associated with any address-range.
+> >
+> > Tested on powerpc only. Could not test on x86.
+> 
+> 
+> Ram,
+> 
+> I was wondering if we should check the AMOR values on the ppc side to make sure
+> that pkey0 is indeed available for use as default. I am still of the
+> opinion that we
 
-> diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
-> index 16f9bee992fe..8ee9dfd0e363 100644
-> --- a/drivers/net/ethernet/arc/emac_rockchip.c
-> +++ b/drivers/net/ethernet/arc/emac_rockchip.c
-> @@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
->  	/* Optional regulator for PHY */
->  	priv->regulator = devm_regulator_get_optional(dev, "phy");
->  	if (IS_ERR(priv->regulator)) {
-> -		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
-> -			return -EPROBE_DEFER;
-> +		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
-> +			ret = -EPROBE_DEFER;
-> +			goto out_clk_disable;
-> +		}
+AMOR cannot be read/written by the OS in priviledge-non-hypervisor-mode.
+We could try testing if key-0 is available to the OS by temproarily
+changing the bits key-0 bits of AMR or IAMR register. But will be
+dangeorous to do, for you might disable read,execute of all the pages,
+since all pages are asscoiated with key-0 bydefault.
 
-Please build test your changes.
+May be we can play with UAMOR register and check if its key-0 can be
+modified. That is a good indication that key-0 is available.
+If it is not available, disable the pkey-subsystem, and operate
+the legacy way; no pkeys.
 
-There is no 'ret' variable in this function, perhaps you meant 'err'.
+
+> should consider non-0 default pkey in the long run. I'm OK with the patches for
+> now, but really 0 is not special except for it being the default bit
+> values present
+> in the PTE.
+
+it will be a pain. Any new pte that gets instantiated will now have to
+explicitly initialize its key to this default-non-zero-key.  I hope
+we or any architecture goes there ever.
+
+-- 
+Ram Pai
