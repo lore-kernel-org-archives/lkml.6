@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvhROllq4Jtwmb4qFD/JRv2LHQaiH1F8TqAwS5UbZdpGc4ZswjSR1KZAPWuNyEAPRMsB5l2
-ARC-Seal: i=1; a=rsa-sha256; t=1521214689; cv=none;
+X-Google-Smtp-Source: AG47ELtFNK7c6SPoW+YjzWaFx+GvLeoEjx2uTTWvXd6HdKrvsvhB0C3HjANAyz1+Q7v1IRqiVjBj
+ARC-Seal: i=1; a=rsa-sha256; t=1521214686; cv=none;
         d=google.com; s=arc-20160816;
-        b=tE0ixxb9XUv9XFWQIgd8uUg4KfUA+PuhSSY/O1DR+JuWuN9SRDH3wbM4CJjdQUkhIi
-         5ONoIAUs7xPdvR5qfwYicfFd6YQ2kkki+7FwnEbS63uSG7/oP3ZekvlwH9002WlsKVET
-         P/1yDC0BzWOkq7QlX0LW5VnpbLeseIFecD04xpHvouWdzXu2hj3UhqFna3FHxuG0AZOH
-         mxygwFOsZ4n9ZrHtpS3UgEWJ4Bc0cGKbK8KiLs8YIUQzxBdRLsJpxSkTeNUd7yO6IVSr
-         BGep17I07JmThmjJfZfNacQoS1kyKOrowSGMBp0dOCanuTGE1HVMqfQfMPng14thMB+i
-         WaqA==
+        b=wt/2IsSfi47NWmikcDKI+9SQ8zfPN3eXQQOyhGvIaDAOwk2RH+kuEZt4S5eZX80wPJ
+         56g1G3Y0khiH43RjIBwfSnxEiqFABJh1oswlrXYKL8UTevji0mOSCZ7puzDGoT8gTvba
+         +nTcY26F427vdbCAsGVRYe9oUwNEs0xaXYOBnOnRYiZbRsW4VTgySl9Lt3SxksvQaJe/
+         8Ak8sFogqBAA0yfyTqhi998thZgYnqyKD9WTDXAT/F3/C88669dLauM3MQPObUaSP6z9
+         FTnr3TVqdloSICMQuLqgxpmnS4j+IdAyi5XDRObqr0N/BdAe0bpHqr/bcd3/5/0KDTWc
+         ZXQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6TW5MAXvNYXwelzG6rgACMqpjrGkLbgeh69SckMcyuo=;
-        b=jWg/h8Za0kc0E519waEIBSktT1aBrTe6D25IyRbkeFxgps6g3OgLdlUT8cXR6iPzEc
-         RaPvi344ubvfFzmOofEG/t0ztDu3T9or6K4BnGczTXghTYkGFQK07/7Vlzp/hCuIAYTh
-         tcbd3vKDzJRcmHcnH/whWzT54xBAw1OtykmyKDFGw+CAVSnXo26sLBDPUvFPSk3ZmIUq
-         4rUIgx9ZR1QmSD6V7hN1zxov3Tj5dpQ/6Si1HugUBuLmUuk6yvHkmvtX15zBY9IiHTDy
-         HElk0SVjRAoZArfcO71/dfhK8jXtzhsKC3RqQlu1D3uYvv9WnyUScxbuUx7zVxVz8wqE
-         QBiQ==
+        bh=G1zM9bp/mIbvHJr5MqVW58TugdJUFfBlhYNB/p0YSb0=;
+        b=mWU9OC3YHz4CGQTN/4COnud1QQXxYHF1baErCHMQ+OI6EfFHGAE8GWBkr5e+bTCbXC
+         kYuwA1SphIXQgL06jrKbvz7uAoOdm4xoAnGj3ffwBliIWl55UR15eYBLDRR6RVFNqU1P
+         AhM4PXv2HQV3TVsNCYBMHOrxCMEVF4KzNysNxWZOiR7r8zob/UKRQ3BlP/UiTFPRCP/8
+         XyhtyTw673AVZotu4btguZQGwfKUsM8gfBbNAa85B2S8ptmstwF76tAStTNfHEwPwJwE
+         l/cRy/oABHFmpDI8f0c0BKYF/GzCuyMf9X3s1ydFa6AscGIYg5k7X8ZKxuuvurvoNW09
+         eRkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
+	Monk Liu <Monk.Liu@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 093/109] powerpc/modules: Dont try to restore r2 after a sibling call
-Date: Fri, 16 Mar 2018 16:24:02 +0100
-Message-Id: <20180316152334.964491242@linuxfoundation.org>
+Subject: [PATCH 4.14 066/109] drm/amdgpu:fix random missing of FLR NOTIFY
+Date: Fri, 16 Mar 2018 16:23:35 +0100
+Message-Id: <20180316152333.579970276@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109214413990117?=
-X-GMAIL-MSGID: =?utf-8?q?1595109214413990117?=
+X-GMAIL-THRID: =?utf-8?q?1595109211229389408?=
+X-GMAIL-MSGID: =?utf-8?q?1595109211229389408?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,80 +51,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Monk Liu <Monk.Liu@amd.com>
 
 
-[ Upstream commit b9eab08d012fa093947b230f9a87257c27fb829b ]
+[ Upstream commit 34a4d2bf06b3ab92024b8e26d6049411369d1f1a ]
 
-When attempting to load a livepatch module, I got the following error:
-
-  module_64: patch_module: Expect noop after relocate, got 3c820000
-
-The error was triggered by the following code in
-unregister_netdevice_queue():
-
-  14c:   00 00 00 48     b       14c <unregister_netdevice_queue+0x14c>
-                         14c: R_PPC64_REL24      net_set_todo
-  150:   00 00 82 3c     addis   r4,r2,0
-
-GCC didn't insert a nop after the branch to net_set_todo() because it's
-a sibling call, so it never returns.  The nop isn't needed after the
-branch in that case.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Reviewed-and-tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Monk Liu <Monk.Liu@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/code-patching.h |    1 +
- arch/powerpc/kernel/module_64.c          |   12 +++++++++++-
- arch/powerpc/lib/code-patching.c         |    5 +++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/include/asm/code-patching.h
-+++ b/arch/powerpc/include/asm/code-patching.h
-@@ -33,6 +33,7 @@ int patch_branch(unsigned int *addr, uns
- int patch_instruction(unsigned int *addr, unsigned int instr);
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+@@ -276,9 +276,17 @@ static int xgpu_ai_mailbox_rcv_irq(struc
+ 		/* see what event we get */
+ 		r = xgpu_ai_mailbox_rcv_msg(adev, IDH_FLR_NOTIFICATION);
  
- int instr_is_relative_branch(unsigned int instr);
-+int instr_is_relative_link_branch(unsigned int instr);
- int instr_is_branch_to_addr(const unsigned int *instr, unsigned long addr);
- unsigned long branch_target(const unsigned int *instr);
- unsigned int translate_branch(const unsigned int *dest,
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -486,7 +486,17 @@ static bool is_early_mcount_callsite(u32
-    restore r2. */
- static int restore_r2(u32 *instruction, struct module *me)
- {
--	if (is_early_mcount_callsite(instruction - 1))
-+	u32 *prev_insn = instruction - 1;
+-		/* only handle FLR_NOTIFY now */
+-		if (!r)
+-			schedule_work(&adev->virt.flr_work);
++		/* sometimes the interrupt is delayed to inject to VM, so under such case
++		 * the IDH_FLR_NOTIFICATION is overwritten by VF FLR from GIM side, thus
++		 * above recieve message could be failed, we should schedule the flr_work
++		 * anyway
++		 */
++		if (r) {
++			DRM_ERROR("FLR_NOTIFICATION is missed\n");
++			xgpu_ai_mailbox_send_ack(adev);
++		}
 +
-+	if (is_early_mcount_callsite(prev_insn))
-+		return 1;
-+
-+	/*
-+	 * Make sure the branch isn't a sibling call.  Sibling calls aren't
-+	 * "link" branches and they don't return, so they don't need the r2
-+	 * restore afterwards.
-+	 */
-+	if (!instr_is_relative_link_branch(*prev_insn))
- 		return 1;
++		schedule_work(&adev->virt.flr_work);
+ 	}
  
- 	if (*instruction != PPC_INST_NOP) {
---- a/arch/powerpc/lib/code-patching.c
-+++ b/arch/powerpc/lib/code-patching.c
-@@ -302,6 +302,11 @@ int instr_is_relative_branch(unsigned in
- 	return instr_is_branch_iform(instr) || instr_is_branch_bform(instr);
- }
- 
-+int instr_is_relative_link_branch(unsigned int instr)
-+{
-+	return instr_is_relative_branch(instr) && (instr & BRANCH_SET_LINK);
-+}
-+
- static unsigned long branch_iform_target(const unsigned int *instr)
- {
- 	signed long imm;
+ 	return 0;
