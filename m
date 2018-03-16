@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCPL4Z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:56:25 -0400
-Received: from smtp-out6.electric.net ([192.162.217.191]:55091 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeCPL4X (ORCPT
+        id S1751535AbeCPL5z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:57:55 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55515 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeCPL5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:56:23 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Borislav Petkov'" <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-CC: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Thread-Topic: [PATCH 4/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Thread-Index: AQHTvInvQ04RH5ZYEE2cCUdW+6SuaqPSwjfA
-Date: Fri, 16 Mar 2018 11:57:15 +0000
-Message-ID: <107ab804c8f44a9fba4cb52a60ee1f0d@AcuMS.aculab.com>
-References: <20180315154448.16222-1-bp@alien8.de>
- <20180315154448.16222-5-bp@alien8.de>
- <20180315181054.3fuuetu6fxpzlpcn@treble> <20180315181612.GH27816@pd.tnic>
-In-Reply-To: <20180315181612.GH27816@pd.tnic>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        Fri, 16 Mar 2018 07:57:54 -0400
+Date: Fri, 16 Mar 2018 12:57:50 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: John Stultz <john.stultz@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v3] y2038: introduce struct __kernel_old_timeval
+In-Reply-To: <20180315161739.576085-1-arnd@arndb.de>
+Message-ID: <alpine.DEB.2.21.1803161256190.1598@nanos.tec.linutronix.de>
+References: <20180315161739.576085-1-arnd@arndb.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2GBuTSk027423
 
-From: Borislav Petkov
-> Sent: 15 March 2018 18:16
-> On Thu, Mar 15, 2018 at 01:10:54PM -0500, Josh Poimboeuf wrote:
-> > I liked OPCODE_BUFSIZE where it was before :-)  Here it disrupts the
-> > readability of the function a bit IMO.
-> 
-> My thinking is have it close by so that you don't have to go search for
-> its definition.
-> 
-> But I don't have a strong opinion on where it should be so...
+On Thu, 15 Mar 2018, Arnd Bergmann wrote:
+> diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+> index 4ed5bd3a3145..94adfae599e0 100644
+> --- a/include/uapi/linux/time.h
+> +++ b/include/uapi/linux/time.h
+> @@ -50,6 +50,18 @@ struct __kernel_timespec {
+>  #endif
+>
 
-Is OPCODE_BUFSIZE even needed?
-Maybe replace with 64 and use sizeof() and/or ARRAY_SIZE() elsewhere.
-Then no one has to check that the bound is appropriate for the array.
+This does neither apply against mainline nor against tip/timers/core
 
-	David
+That #endif is nowhere ....
+
+>  /*
+> + * legacy timeval structure, only embedded in structures that
+> + * traditionally used 'timeval' to pass time intervals (not absolute
+> + * times). Do not add new users. If user space fails to compile
+> + * here, this is probably because it is not y2038 safe and needs to
+> + * be changed to use another interface.
+> + */
+> +struct __kernel_old_timeval {
+> +	__kernel_long_t tv_sec;
+> +	__kernel_long_t tv_usec;
+> +};
