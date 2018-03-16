@@ -1,70 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214813-2-11407867035543878025
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214813; b=dI4WAIdWpIEowVHdpZqNQtRtX+gAZzz014qUrHI7Fjj9JEG
-    lEoXn9uEhTnMo0mrCV4A3mu0+imR6jOi8wmdGfJOMZyh9BJXYYSz8jDeEY74C+WR
-    sM9FFv0+nnBTv3i0YvyP/pE/SLSyUbA0pYfNJ3WBaJHnAAUIcv3rsf7ZoM/s03rr
-    iNMtTXHM7xgAMTi9P5/zQbnAHsy6mxji+mh951FLyIo21uU/fAPoRSYUdx3gLc41
-    vo7FEPJaNmcC8Ytf7l76Q/I5aQdXrhZf869GW125iircmd/TrPBdRsirxFaF0uDC
-    ty0jSnovrTXyy3AOPr15f8WntkSwA8GScPdE4VQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214813; bh=EnlbDRM+n7d0Q9hUYvXVlbpCEC
-    gTvNKOrTJAd9/dolo=; b=uyea5Ch0MEHyg3CM7C9YBFU+s0feMPD5hLqHABWgdR
-    U5i6ayQ/SXn/1NAo6TpLt+59QKj0JaBoBA1Xzbbj6HSDaIVOS1YUuoR9YbSyxT5G
-    mrR4bGA65GqdMFIoga7VCeoGxoESoaUpFvEfwtAmhZ/oXBVadvrU1xgRkpduevbs
-    5rkJwxARsnhTS4WNocw9CRUJDmkrqOgyG0ssGKUJ3S4NQVeAOPz/mqMApToqpqxL
-    0BsOaDXIKLvkC1zEef97IOui9FI77HiCFYNLQVG2+eV0mc0qY8W3Re28ppGFZpUS
-    OkmmGxmixdoNNnzddD3YrqGOpOQzzPqmfc+xxLvjaAKg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964981AbeCPPkG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:40:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43464 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934286AbeCPPkE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:40:04 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtKpcgHX1GUA4PoQHJrAgDI9Dt46pT3FDNRt97YcwvsbVoTxMlNdoCv+GldHECSH7m5B9/t
+ARC-Seal: i=1; a=rsa-sha256; t=1521214813; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bfJ9wmMsHMXasRqBMH07PsTb173aJmRESPZ4i2NB81KjDFro/PYJrD3xjNWwmLCYOO
+         4yj3lASVRGAoYEQDlJHlnH0nS3Z8iAVXG/FWrVOwe3/n5+mYGs+S5b0lpv97uICkAmF4
+         v6nrzR7U//rFyBacR0CLOblcddKInua4N4j5XIlvOq4XiOfMVrPWekTfssyzrQbMHiQK
+         hdNBTd+7IT7eIW8Pf7C17yD+he0jsIDNFo6owSMz44rs4P55g/RqWvrXWiNPNiZhWLum
+         MIBytDT771WkfGU0hLxMEoDtsLK1VGdAb/LO3/yjxnkKiyJld7+Si/dOaDuyp+XlpcFs
+         dM4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/gcu4Gol5ZerFI+aVbFAoMNyazz+ifLzPhnQ/DuSDM4=;
+        b=yKoVg7Z1hVJ7MiKVPNkvEdlI6T66TLYKOW6mfdELaRrKkU+kQGiuBjP5UEAiIEeW9X
+         9rKIKSNw7oTURV35hB5jyPpuGQnUji7BF0P7PeReGEDPwq85HYUjCSwlMii4qnyXXOL1
+         C6qvR/xUOiEbRAvwxXcKTAzEf5t4UE/Hb3LXZRlb5aox6e/QJ2M+IpzNnzR93BHx4b54
+         g0oot2UVQspjt4UdnAcliUH08CRi2B+MoULcuKGn4wPRhkRgfb/X6Uchuh1ZpMxgSjm4
+         3zivl7Z++P4b9SEm8tU6HFrepcH0Q0shpEo8qtl/54lbCEPv7j9Vbrx8NENgupuWKk+j
+         PI2A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.vnet.ibm.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.15 024/128] dm mpath: fix passing integrity data
-Date: Fri, 16 Mar 2018 16:22:45 +0100
-Message-Id: <20180316152337.711806161@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH 4.15 027/128] gfs2: Fixes to "Implement iomap for block_map" (2)
+Date: Fri, 16 Mar 2018 16:22:48 +0100
+Message-Id: <20180316152337.877284662@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -72,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109343746769374?=
+X-GMAIL-MSGID: =?utf-8?q?1595109343746769374?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,43 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steffen Maier <maier@linux.vnet.ibm.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit 8c5c147339d2e201108169327b1f99aa6d57d2cd upstream.
+commit 3b5da96e4585a2788da6a07619bda3518d76eb30 upstream.
 
-After v4.12 commit e2460f2a4bc7 ("dm: mark targets that pass integrity
-data"), dm-multipath, e.g. on DIF+DIX SCSI disk paths, does not support
-block integrity any more. So add it to the whitelist.
+It turns out that commit 3229c18c0d6b2 'Fixes to "Implement iomap for
+block_map"' introduced another bug in gfs2_iomap_begin that can cause
+gfs2_block_map to set bh->b_size of an actual buffer to 0.  This can
+lead to arbitrary incorrect behavior including crashes or disk
+corruption.  Revert the incorrect part of that commit.
 
-This is also a pre-requisite to use block integrity with other dm layer(s)
-on top of multipath, such as kpartx partitions (dm-linear) or LVM.
-
-Also, bump target version to reflect this fix.
-
-Fixes: e2460f2a4bc7 ("dm: mark targets that pass integrity data")
-Cc: <stable@vger.kernel.org> #4.12+
-Bisected-by: Fedor Loshakov <loshakov@linux.vnet.ibm.com>
-Signed-off-by: Steffen Maier <maier@linux.vnet.ibm.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-mpath.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/gfs2/bmap.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -1968,8 +1968,9 @@ static int multipath_busy(struct dm_targ
-  *---------------------------------------------------------------*/
- static struct target_type multipath_target = {
- 	.name = "multipath",
--	.version = {1, 12, 0},
--	.features = DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
-+	.version = {1, 13, 0},
-+	.features = DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE |
-+		    DM_TARGET_PASSES_INTEGRITY,
- 	.module = THIS_MODULE,
- 	.ctr = multipath_ctr,
- 	.dtr = multipath_dtr,
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -811,9 +811,6 @@ do_alloc:
+ 			iomap->length = hole_size(inode, lblock, &mp);
+ 		else
+ 			iomap->length = size - pos;
+-	} else {
+-		if (height <= ip->i_height)
+-			iomap->length = hole_size(inode, lblock, &mp);
+ 	}
+ 	goto out_release;
+ }
