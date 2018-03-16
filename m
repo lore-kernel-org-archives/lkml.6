@@ -1,48 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753300AbeCPUd3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:33:29 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52723 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeCPUdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:33:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="25347999"
-Subject: Re: [PATCH 13/22] signal: Move addr_lsb into the _sigfault union for
- clarity
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-References: <87k1wimybi.fsf_-_@xmission.com>
- <20180116004009.31036-13-ebiederm@xmission.com>
- <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
- <818f8945-f990-a770-476e-f82bdc77dbda@intel.com>
- <87efkjeqe8.fsf@xmission.com>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>, linux-arch@vger.kernel.org,
-        Ram Pai <linuxram@us.ibm.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <ccd9afa6-15d1-3e41-c1a4-3352d09c37a4@intel.com>
-Date: Fri, 16 Mar 2018 13:33:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753421AbeCPUgA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:36:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45120 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753370AbeCPUf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 16:35:58 -0400
+From: jglisse@redhat.com
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 12/14] mm/hmm: factor out pte and pmd handling to simplify hmm_vma_walk_pmd()
+Date: Fri, 16 Mar 2018 16:35:50 -0400
+Message-Id: <20180316203552.4155-3-jglisse@redhat.com>
+In-Reply-To: <20180316203552.4155-1-jglisse@redhat.com>
+References: <20180316203552.4155-1-jglisse@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <87efkjeqe8.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/16/2018 01:06 PM, Eric W. Biederman wrote:
->> It does not revert cleanly so I reverted it manually.  Patch doing that
->> is attached.  Should we do this, or is there a better option?
-> Please see:
-> 859d880cf544 ("signal: Correct the offset of si_pkey in struct siginfo")
+From: Jérôme Glisse <jglisse@redhat.com>
 
-It would be really nice to actually cc the folks that wrote and maintain
-the code when you both break their stuff and fix it.  I don't see myself
-or the x86 maintainers cc'd on any of this: the patch that caused the
-breakage *or* the fix.
+No functional change, just create one function to handle pmd and one
+to handle pte (hmm_vma_handle_pmd() and hmm_vma_handle_pte()).
+
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+---
+ mm/hmm.c | 174 +++++++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 102 insertions(+), 72 deletions(-)
+
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 3a708f500b80..40aaa757f262 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -332,6 +332,99 @@ static int hmm_vma_walk_hole(unsigned long addr,
+ 	return hmm_vma_walk->fault ? -EAGAIN : 0;
+ }
+ 
++static int hmm_vma_handle_pmd(struct mm_walk *walk,
++			      unsigned long addr,
++			      unsigned long end,
++			      uint64_t *pfns,
++			      pmd_t pmd)
++{
++	struct hmm_vma_walk *hmm_vma_walk = walk->private;
++	unsigned long pfn, i;
++	uint64_t flag = 0;
++
++	if (pmd_protnone(pmd))
++		return hmm_vma_walk_hole(addr, end, walk);
++
++	if ((hmm_vma_walk->fault & hmm_vma_walk->write) && !pmd_write(pmd))
++		return hmm_vma_walk_hole(addr, end, walk);
++
++	pfn = pmd_pfn(pmd) + pte_index(addr);
++	flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
++	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++)
++		pfns[i] = hmm_pfn_from_pfn(pfn) | flag;
++	hmm_vma_walk->last = end;
++	return 0;
++}
++
++static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
++			      unsigned long end, pmd_t *pmdp, pte_t *ptep,
++			      uint64_t *pfns)
++{
++	struct hmm_vma_walk *hmm_vma_walk = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	pte_t pte = *ptep;
++
++	*pfns = 0;
++
++	if (pte_none(pte)) {
++		*pfns = 0;
++		if (hmm_vma_walk->fault)
++			goto fault;
++		return 0;
++	}
++
++	if (!pte_present(pte)) {
++		swp_entry_t entry = pte_to_swp_entry(pte);
++
++		if (!non_swap_entry(entry)) {
++			if (hmm_vma_walk->fault)
++				goto fault;
++			return 0;
++		}
++
++		/*
++		 * This is a special swap entry, ignore migration, use
++		 * device and report anything else as error.
++		 */
++		if (is_device_private_entry(entry)) {
++			*pfns = hmm_pfn_from_pfn(swp_offset(entry));
++			if (is_write_device_private_entry(entry)) {
++				*pfns |= HMM_PFN_WRITE;
++			} else if ((hmm_vma_walk->fault & hmm_vma_walk->write))
++				goto fault;
++			*pfns |= HMM_PFN_DEVICE_PRIVATE;
++			return 0;
++		}
++
++		if (is_migration_entry(entry)) {
++			if (hmm_vma_walk->fault) {
++				pte_unmap(ptep);
++				hmm_vma_walk->last = addr;
++				migration_entry_wait(vma->vm_mm,
++						pmdp, addr);
++				return -EAGAIN;
++			}
++			return 0;
++		}
++
++		/* Report error for everything else */
++		*pfns = HMM_PFN_ERROR;
++		return -EFAULT;
++	}
++
++	if ((hmm_vma_walk->fault & hmm_vma_walk->write) && !pte_write(pte))
++		goto fault;
++
++	*pfns = hmm_pfn_from_pfn(pte_pfn(pte));
++	*pfns |= pte_write(pte) ? HMM_PFN_WRITE : 0;
++	return 0;
++
++fault:
++	pte_unmap(ptep);
++	/* Fault all pages in range if ask for */
++	return hmm_vma_walk_hole(addr, end, walk);
++}
++
+ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 			    unsigned long start,
+ 			    unsigned long end,
+@@ -339,25 +432,20 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ {
+ 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+ 	struct hmm_range *range = hmm_vma_walk->range;
+-	struct vm_area_struct *vma = walk->vma;
+ 	uint64_t *pfns = range->pfns;
+ 	unsigned long addr = start, i;
+-	bool write_fault;
+ 	pte_t *ptep;
+ 
+ 	i = (addr - range->start) >> PAGE_SHIFT;
+-	write_fault = hmm_vma_walk->fault & hmm_vma_walk->write;
+ 
+ again:
+ 	if (pmd_none(*pmdp))
+ 		return hmm_vma_walk_hole(start, end, walk);
+ 
+-	if (pmd_huge(*pmdp) && vma->vm_flags & VM_HUGETLB)
++	if (pmd_huge(*pmdp) && (range->vma->vm_flags & VM_HUGETLB))
+ 		return hmm_pfns_bad(start, end, walk);
+ 
+ 	if (pmd_devmap(*pmdp) || pmd_trans_huge(*pmdp)) {
+-		unsigned long pfn;
+-		uint64_t flag = 0;
+ 		pmd_t pmd;
+ 
+ 		/*
+@@ -373,17 +461,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 		barrier();
+ 		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
+ 			goto again;
+-		if (pmd_protnone(pmd))
+-			return hmm_vma_walk_hole(start, end, walk);
+ 
+-		if (write_fault && !pmd_write(pmd))
+-			return hmm_vma_walk_hole(start, end, walk);
+-
+-		pfn = pmd_pfn(pmd) + pte_index(addr);
+-		flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
+-		for (; addr < end; addr += PAGE_SIZE, i++, pfn++)
+-			pfns[i] = hmm_pfn_from_pfn(pfn) | flag;
+-		return 0;
++		return hmm_vma_handle_pmd(walk, addr, end, &pfns[i], pmd);
+ 	}
+ 
+ 	if (pmd_bad(*pmdp))
+@@ -391,67 +470,18 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 
+ 	ptep = pte_offset_map(pmdp, addr);
+ 	for (; addr < end; addr += PAGE_SIZE, ptep++, i++) {
+-		pte_t pte = *ptep;
++		int r;
+ 
+-		pfns[i] = 0;
+-
+-		if (pte_none(pte)) {
+-			pfns[i] = 0;
+-			if (hmm_vma_walk->fault)
+-				goto fault;
+-			continue;
+-		}
+-
+-		if (!pte_present(pte)) {
+-			swp_entry_t entry = pte_to_swp_entry(pte);
+-
+-			if (!non_swap_entry(entry)) {
+-				if (hmm_vma_walk->fault)
+-					goto fault;
+-				continue;
+-			}
+-
+-			/*
+-			 * This is a special swap entry, ignore migration, use
+-			 * device and report anything else as error.
+-			 */
+-			if (is_device_private_entry(entry)) {
+-				pfns[i] = hmm_pfn_from_pfn(swp_offset(entry));
+-				if (is_write_device_private_entry(entry)) {
+-					pfns[i] |= HMM_PFN_WRITE;
+-				} else if (write_fault)
+-					goto fault;
+-				pfns[i] |= HMM_PFN_DEVICE_PRIVATE;
+-			} else if (is_migration_entry(entry)) {
+-				if (hmm_vma_walk->fault) {
+-					pte_unmap(ptep);
+-					hmm_vma_walk->last = addr;
+-					migration_entry_wait(vma->vm_mm,
+-							     pmdp, addr);
+-					return -EAGAIN;
+-				}
+-				continue;
+-			} else {
+-				/* Report error for everything else */
+-				pfns[i] = HMM_PFN_ERROR;
+-			}
+-			continue;
++		r = hmm_vma_handle_pte(walk, addr, end, pmdp, ptep, &pfns[i]);
++		if (r) {
++			/* hmm_vma_handle_pte() did unmap pte directory */
++			hmm_vma_walk->last = addr;
++			return r;
+ 		}
+-
+-		if (write_fault && !pte_write(pte))
+-			goto fault;
+-
+-		pfns[i] = hmm_pfn_from_pfn(pte_pfn(pte));
+-		pfns[i] |= pte_write(pte) ? HMM_PFN_WRITE : 0;
+-		continue;
+-
+-fault:
+-		pte_unmap(ptep);
+-		/* Fault all pages in range if ask for */
+-		return hmm_vma_walk_hole(start, end, walk);
+ 	}
+ 	pte_unmap(ptep - 1);
+ 
++	hmm_vma_walk->last = addr;
+ 	return 0;
+ }
+ 
+-- 
+2.14.3
