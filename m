@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELt/MCnkbYTN6uqYXQk5wnzWb+szW61GLX1Kygqs5De64WxNriBv6JF/+gccM43JSeXM6wbj
-ARC-Seal: i=1; a=rsa-sha256; t=1521228607; cv=none;
+X-Google-Smtp-Source: AG47ELvsIOPgrJ3SRfBmj19POE0xP1E+6jDm1IfSWNo0InC3AKxODU6wriFw21YvcVjA+WrUq4fF
+ARC-Seal: i=1; a=rsa-sha256; t=1521228605; cv=none;
         d=google.com; s=arc-20160816;
-        b=b7HEmlcDlZ1HNPepUvwKevhcIYb/i0+3LJ9nKIAOtiVSAEgl5rGBEixUTBALoi2Hi+
-         R/wCqe0xPH4nmqTg9b24WBo8tdzDLc2jvf6NGkAOGGrzeDm61/SD1Y2bQ1l/fcQkObFA
-         9cLwl8G4A4Nw7uSSG9OmNyBgJNvzY2xDea5D6uG57VOCaG8vIxRHTNZzinwLiTDUPm7k
-         ST3FnrCxy77G9Y0rcOcJTVLw3JJXlTcok0GWq5crVhfn2C4V+Lm7qeItW4pOouZgEAqQ
-         nCWGWTJ7uE8kxo/0+vUWFRLkwA4cjansQmJc+Qzw+G1fP2pihuw8q2XwzYg5WF6GJwKH
-         Z4CQ==
+        b=nQit5+c6ZHaEcY3fxH7E1HjQb+Mfx/CxoW5kcZRgt5BbRO+pri9s/YcIrCovd9VIBS
+         ROKsiGN74MljcQZwAlVCF2oSZxJiODkO4cMPOk+co0kzdKmXTG2rlEjPCoGkMbpw9tCI
+         CwqriIEK3uc1V81wvK9bZmZsPVsV9xgSyD6FCZpW9GjzrFxWYMRqAqJK2xRxU7Q4zF8i
+         KfL1+xfF8xMX3MVeaedtYYD85xCS98Bvx6efodg/mXu18URvi1xp9/4dJVKmjWFyKd/d
+         ksDsTfe4eUjzB90agVw+UTYF7YK+mZOqJLgifVafC+z5cKqzhYOaATp0Z85aD6C7+a9Z
+         b5FA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=7wxU1JdaqMrrLeiQH+kjgidPpJwS+jcuKTYyoPqngwY=;
-        b=M9DTrKxJtO/pfGecszbimh8kU6vzQVbXWYL/mev99N7c0FCgbkSjagPUJ1VEKTS9iM
-         YruM5RbTnilkMITyKk6SbHISuAkSdmQ69ZZ5B9xp35w3aLuV16scO2wfevShh/Y/EQbh
-         EHpjU1PMpxOTR+Wdj3nEZoSsnEQBv7reRZuJwNv4QgiMpnrJ/54Zt3vxlIz1kQAmKvK0
-         iireqA5ACEYAqFYZjSG66lKLQzcUS7lLoeEvEeuiUVJZY0DpeTozUnrjG0duwUbinSN7
-         paSJGCDh/uRVN3PqpoV4QlOGJerMh89v11KhmEO28Rcf12K3lGcKYhHTSsXy17cxsQ5G
-         yi1w==
+        bh=59MhfMU72c18caWRDgmz/TzHGVoGLjlnnaF4XkAcR74=;
+        b=ty6r//qm3f8CSJcprqjpfvR+JMcLasXJdBTa+LG/P9dgJ5c3QPk2706kMD5MOEzw8q
+         zMzYDQ38/VJAHMYMBaPClVxunh8P51VLNm7s4QLxYKAT++uSCu6Llvc2zsHPuxpEmkGO
+         1e5h/stsQ+r6by5d7eGhXE7AlFxgNCqxYFsIIvZRIdu28i0aB6XLb8q+AGoF3iPYivNG
+         DlpP79GpWZsL+BwOfqaZ2U4oxbHCKKo6AvgsOSeC7qoQWagslRmxIvZ66dniH+Ovpiw3
+         yUtyjlKtt5uX41p9iD003LLDB4kH5qEhfAqRdkklg+Eil5i9Wfsm/whtNF/LgbDVpBD2
+         IMlg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=JHR3S/g5;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=OmD+Qruy;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=JHR3S/g5;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=OmD+Qruy;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,121 +57,45 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 14/35] x86/entry/32: Add PTI cr3 switches to NMI handler code
-Date: Fri, 16 Mar 2018 20:29:32 +0100
-Message-Id: <1521228593-3820-15-git-send-email-joro@8bytes.org>
+Subject: [PATCH 16/35] x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
+Date: Fri, 16 Mar 2018 20:29:34 +0100
+Message-Id: <1521228593-3820-17-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123808342051960?=
-X-GMAIL-MSGID: =?utf-8?q?1595123808342051960?=
+X-GMAIL-THRID: =?utf-8?q?1595123806464996100?=
+X-GMAIL-MSGID: =?utf-8?q?1595123806464996100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The NMI handler is special, as it needs to leave with the
-same cr3 as it was entered with. We need to do this because
-we could enter the NMI handler from kernel code with
-user-cr3 already loaded.
+With PTI we need to map the per-process LDT into the kernel
+address-space for each process, so we need separate kernel
+PMDs per PGD.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 41 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable-3level_types.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 86b3fe6d..0250b79 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -77,6 +77,8 @@
- #endif
- .endm
+diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
+index 876b4c7..ed8a200 100644
+--- a/arch/x86/include/asm/pgtable-3level_types.h
++++ b/arch/x86/include/asm/pgtable-3level_types.h
+@@ -21,9 +21,10 @@ typedef union {
+ #endif	/* !__ASSEMBLY__ */
  
-+#define PTI_SWITCH_MASK         (1 << PAGE_SHIFT)
-+
+ #ifdef CONFIG_PARAVIRT
+-#define SHARED_KERNEL_PMD	(pv_info.shared_kernel_pmd)
++#define SHARED_KERNEL_PMD	((!static_cpu_has(X86_FEATURE_PTI) &&	\
++				 (pv_info.shared_kernel_pmd)))
+ #else
+-#define SHARED_KERNEL_PMD	1
++#define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
+ #endif
+ 
  /*
-  * User gs save/restore
-  *
-@@ -213,8 +215,19 @@
- 
- .endm
- 
--.macro SAVE_ALL_NMI
-+.macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
-+
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We can enter with either user or kernel cr3, the code will
-+	 * store the old cr3 in \cr3_reg and switches to the kernel cr3
-+	 * if necessary.
-+	 */
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=\cr3_reg
-+
-+.Lend_\@:
- .endm
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-@@ -262,7 +275,23 @@
- 	POP_GS_EX
- .endm
- 
--.macro RESTORE_ALL_NMI pop=0
-+.macro RESTORE_ALL_NMI cr3_reg:req pop=0
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We enter with kernel cr3 and switch the cr3 to the value
-+	 * stored on \cr3_reg, which is either a user or a kernel cr3.
-+	 */
-+	ALTERNATIVE "jmp .Lswitched_\@", "", X86_FEATURE_PTI
-+
-+	testl	$PTI_SWITCH_MASK, \cr3_reg
-+	jz	.Lswitched_\@
-+
-+	/* User cr3 in \cr3_reg - write it to hardware cr3 */
-+	movl	\cr3_reg, %cr3
-+
-+.Lswitched_\@:
-+
- 	RESTORE_REGS pop=\pop
- .endm
- 
-@@ -1323,7 +1352,7 @@ ENTRY(nmi)
- #endif
- 
- 	pushl	%eax				# pt_regs->orig_ax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# zero error code
- 	movl	%esp, %eax			# pt_regs pointer
-@@ -1351,7 +1380,7 @@ ENTRY(nmi)
- 
- .Lnmi_return:
- 	CHECK_AND_APPLY_ESPFIX
--	RESTORE_ALL_NMI pop=4
-+	RESTORE_ALL_NMI cr3_reg=%edi pop=4
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1367,12 +1396,12 @@ ENTRY(nmi)
- 	pushl	16(%esp)
- 	.endr
- 	pushl	%eax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	FIXUP_ESPFIX_STACK			# %eax == %esp
- 	xorl	%edx, %edx			# zero error code
- 	call	do_nmi
--	RESTORE_ALL_NMI
-+	RESTORE_ALL_NMI cr3_reg=%edi
- 	lss	12+4(%esp), %esp		# back to espfix stack
- 	jmp	.Lirq_return
- #endif
 -- 
 2.7.4
