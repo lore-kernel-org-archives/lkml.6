@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvifnyIZVuEzNPvEpKliyl8b6mkgcCzVuAwFabWjCOAAMKF0cmMV+YTxVKRO4f5XG5Xmo+4
-ARC-Seal: i=1; a=rsa-sha256; t=1521213836; cv=none;
+X-Google-Smtp-Source: AG47ELvWP4MOukh5229dhnSop3F999KZ/SWH1Ggr5dofNxftDYz/MQy6uDNVDyPgtOkvihjZdV2g
+ARC-Seal: i=1; a=rsa-sha256; t=1521213833; cv=none;
         d=google.com; s=arc-20160816;
-        b=bkLsMaWxy4NuHfFcOYMWhn5MDZ78WG+LOPR+qNU1CfKPDqSBiRCd/ITVCjHVixCs/D
-         RiiH40PhaW+mhZ/eiBd+SwGaulI3m/R5wNWLxyEOARcdActmB2bUqGQf1HrBLy+OwYPF
-         D7Mw6EvjZOZ+TgBNdizvRwStbW0kv7fdNV9tPxwMlzTfAICUOW3JVcrSjkBDs98gY/fX
-         4l8V7r8X30eVieC7am3NCJ7ZmSvdR6tercUiMRMk4qeutLtkmVeqzkMdKKTN2nGmnYDR
-         rb7mkXkNg+pc7elh5auEUVLKN/d9UVo+0DP44bsX1FjX0WzRr8lf94mJTYU+TM2NFKnz
-         XDdQ==
+        b=yGTWlDN5a6AtMZYOZP3whzCEfTAguSZNe4z7+U5L+j8p9IRf2BmrgIBRKeT0PdYm2q
+         g89Vv2rvErcJeZrZA/4F5fX6fD5MNtUN5reB8syMPdtYbSjMTs1GagkWePYY9qvpk6HY
+         +l3VhDMnDQJzKIciWCGQptWcqpgADHe704RiFB19mBfi7lJMcOoxVyTzRQULuSL6IWaT
+         Jsey/91JPJIeD0ydwLeXUM3+F5cmcN5HYs3ZNnatmcryonke5Rzl0xEgpYp3c3ikxbzB
+         mQMAB9RLKQY0aGKo8LT7DDv3R5B2omRNDzusB0uc9nQSaMTl2wSYAzV308uehLwFF7eC
+         dVUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rk7at0+25eF0Yq5zx/ja6HMBRb76tWC6gTGC8HugvaA=;
-        b=rQF8tJaJPji/lobq55E2M82Eu9BjpZ7cCXnd+k2rj5Qxe8fgakF5/bSSFgw8QD+9IV
-         D2An+EWni5x2bf+jAgKQGCUOHvMzFUa2x3kZUDs0sB2VfZRXBU2lv5kSCSATT72dnvbZ
-         a6NhAbjMeoRy37GHMiotGmbXyKqeuPdEQ2HjijWvzCeuCW8sX03uiPTq86nExnDWwmge
-         juxgmGIxs/GKRZazvkZuhHrKOvNP1SH9xGC7p6w9URS49V/BEkfnFwo+uaJZ6ZPCKC/C
-         Z59iB2wdJ1K6mEb/ocZXtqmes0vnp2XXy4JGCXwPMIfkqqSHNqv2tA1D2ufcVH5yq9xT
-         yYjQ==
+        bh=RzCT8kyb21WzMRdU8QzJ1H7hcij8dS1IY1F6RQAurJg=;
+        b=kWj73Wm8w0DinnUEmJ89nHqnUwkqMaSHpU26V5YFHpL4HV+2z3JMsviedOF3NRdN59
+         OQFNwEVw4fQMERW1DvUZjFPzDyUoUNTfU4Ww37ODqEfBTjsTohNbkZ1gZ+3B9kuRU/IZ
+         Jv7ykaS/pgpwwqLN5HMlxChY9Wcg7xuvK4Lkw7jtJ7/NgQ+IDYGSzePxkXiJP1yeEYfn
+         ghLN7KSD2CEJwNdwdWvcCbEvAqIEUa3a/1mwqTtF3ncwyYsm5v9onU/P+3e1FhTR+Lg5
+         acpuZtk6ZabLnHhlI7hs1NYcLh22qzsGgw1hGG08kNYrKFPUW8oiTnlKNgI6keyfGD6q
+         qWKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 3.18 22/25] USB: usbmon: remove assignment from IS_ERR argument
-Date: Fri, 16 Mar 2018 16:23:09 +0100
-Message-Id: <20180316152233.646858453@linuxfoundation.org>
+	Danilo Krummrich <danilokrummrich@dk-develop.de>
+Subject: [PATCH 3.18 21/25] usb: quirks: add control message delay for 1b1c:1b20
+Date: Fri, 16 Mar 2018 16:23:08 +0100
+Message-Id: <20180316152233.607744351@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108319813454723?=
-X-GMAIL-MSGID: =?utf-8?q?1595108319813454723?=
+X-GMAIL-THRID: =?utf-8?q?1595108316565102090?=
+X-GMAIL-MSGID: =?utf-8?q?1595108316565102090?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,53 +48,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
-commit 46c236dc7d1212d7417e6fb0317f91c44c719322 upstream.
+commit cb88a0588717ba6c756cb5972d75766b273a6817 upstream.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Corsair Strafe RGB keyboard does not respond to usb control messages
+sometimes and hence generates timeouts.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S1,S2;
-@@
+Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
+Strafe RGB keyboard") tried to fix those timeouts by adding
+USB_QUIRK_DELAY_INIT.
 
-+e1 = e2;
-if (IS_ERR(
-    e1
--   = e2
-   )) S1 else S2
-// </smpl>
+Unfortunately, even with this quirk timeouts of usb_control_msg()
+can still be seen, but with a lower frequency (approx. 1 out of 15):
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[   29.103520] usb 1-8: string descriptor 0 read error: -110
+[   34.363097] usb 1-8: can't set config #1, error -110
+
+Adding further delays to different locations where usb control
+messages are issued just moves the timeouts to other locations,
+e.g.:
+
+[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
+[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
+
+The only way to reliably avoid those issues is having a pause after
+each usb control message. In approx. 200 boot cycles no more timeouts
+were seen.
+
+Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
+to have the delay in hub_port_connect() after hub_port_init().
+
+The overall boot time seems not to be influenced by these additional
+delays, even on fast machines and lightweight distributions.
+
+Fixes: de3af5bf259d ("usb: quirks: add delay init quirk for Corsair Strafe RGB keyboard")
+Cc: stable@vger.kernel.org
+Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/mon/mon_text.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/core/message.c |    4 ++++
+ drivers/usb/core/quirks.c  |    3 ++-
+ include/linux/usb/quirks.h |    3 +++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -386,7 +386,8 @@ static ssize_t mon_text_read_t(struct fi
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -147,6 +147,10 @@ int usb_control_msg(struct usb_device *d
  
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
-@@ -413,7 +414,8 @@ static ssize_t mon_text_read_u(struct fi
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
+ 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
  
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
++	/* Linger a bit, prior to the next control message. */
++	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
++		msleep(200);
++
+ 	kfree(dr);
+ 
+ 	return ret;
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -219,7 +219,8 @@ static const struct usb_device_id usb_qu
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
+ 	/* Corsair Strafe RGB */
+-	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
++	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
+ 
+ 	/* Corsair K70 LUX */
+ 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -56,4 +56,7 @@
+  */
+ #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
+ 
++/* Device needs a pause after every control message. */
++#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
++
+ #endif /* __LINUX_USB_QUIRKS_H */
