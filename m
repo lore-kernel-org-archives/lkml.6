@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtvp3DPBRMZZrcOOHxNCAZMQsVbaNZtsKsEgsdxRTpMIQpdT5bZyILa9Pn6HTorgXHd697Z
-ARC-Seal: i=1; a=rsa-sha256; t=1521214675; cv=none;
+X-Google-Smtp-Source: AG47ELucL+k+KrvcrvXJI/Q3X1Ply/8PykCxf9iu97HtjHTMVkHXwxBJzYCtpOjXfxNW9rftqQyW
+ARC-Seal: i=1; a=rsa-sha256; t=1521214668; cv=none;
         d=google.com; s=arc-20160816;
-        b=gyKODyCjcBXIRK51DsX3Q56N56Nz1dkxY6enBUS7eQJlOIjno1i8Rkpcuv/irA+cg/
-         VsaQzJMPNX7/5cg4CTMWu8a8PmOUb/XpbnxN9DrO/zwQ3Jn1zM6l0LF5wEi4bk+022yA
-         qKkawpF5y2Tk/aZesNIc9GsvGClz5cAhhAN6+0b/j+Z+Z9He1HNsj24e0qhha2iEieSt
-         rrJOyVr9P9JHq2t4/NwQtgPmyzJvsXWRvSYWl3udR+d1CKILd24RL4KOgSzsrwCnRaeO
-         gNYMDLkxk4AwbRJ9j6kaWqY4tqSMuyjFKMoQQeSEUYv+sw79vkKYP8kY8L5FigxL4Cfd
-         mN4g==
+        b=NLe07RrPfZ+toLE2fy8mQyBH6iIGjVGXGmeC/qqinFXZchk0g4ZQ8+Z2O0aZz4smO4
+         vWmH5myehL2469SfqgNVW8BND+up7X74Rx81OOG0FkL5C0q8MluzIFOL9SiiLzW+DpjY
+         njabIacZqtpvAqug52J/rjs/M5NWebxEZuc760cVOyogWBSFpYPvuIN0t58TNRW/lVfM
+         kVdL4h/tKFgSZBMvdjkiqQkugyQmYHsWHAgBYOLdqyurVF1E96w8BZdv/cjkdcQvtbpu
+         cn2w4quFQu6ZCApMMEHTbn66tvNMTHlNb9bpRiWuomaSOJ7a+CzGAeQz0gG2wu89e85o
+         N41w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rVCbdaT7mJwc4D6klXp95MFaCtuw3BsZgzlbbYGC6eo=;
-        b=ZrXZ/YWql52Y2UZIiBJ5f8abT/2ARNqoYDB0EJe8HynWob6oDgCaWkBfkkinkD+GFN
-         /y0tagyHXvXmy1STYsqGXcUrurJKAlBGrgu2u8Oq4zN5VZtwZX+OPLwRPSHGqpSNJ9TN
-         6wlL7oONRuwHjxlzrkJjpxkWrV6SGYTh+eWpANCG/FyPQFVdRqZDy6C4J4U2OtItwNu1
-         0bdlmPa3SM3c80sbY9q/sdjOG30NxvU838rjjoCsgJeDwijX3nZVU/THtSWhVGfjBM0+
-         HxRKGL/qm6gs7pPz/AnLSLE4c8b4h7/W/yn6tMrbhSMQ3hE1hJzWKUTGUCLW3IWlQz1v
-         yKhg==
+        bh=SkWRxqovN4ALoiQCVv8HRiLpkcjt8cQTRSPaRqvgsXM=;
+        b=zqMa+gmZJkXUZ9JXMFmBjSU4aC+qf3YUS4nJZoIymkhe9sYOUTekFuIQuIe0NoPCy8
+         /Vr5L/WUMK0JMpimkDt+vwPwApjITFrGPLzHI2lfsbUrcFRbLPHs9qA8ruAOyuKcscRn
+         vE9GykD4/oAifTi/IPm8I5FUdTRx8gjxsrsoMhByo3BYvE+/lsWal3PNsLl1wm89rZfv
+         Q07VIwrdNuzZCIWf3zhFaVdwk9359n7vxBleEVVllKR1ucVta98MSMbbeBq+Fe+UPcsx
+         GlefaVLMOEW+oZ6sSplklJ2f2YIbv8g3X8lR/CM62le+BwHOsaOvXpMeoq8Krjfhvcxc
+         ToJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 085/109] media: vsp1: Prevent suspending and resuming DRM pipelines
-Date: Fri, 16 Mar 2018 16:23:54 +0100
-Message-Id: <20180316152334.555684549@linuxfoundation.org>
+Subject: [PATCH 4.14 082/109] scsi: core: scsi_get_device_flags_keyed(): Always return device flags
+Date: Fri, 16 Mar 2018 16:23:51 +0100
+Message-Id: <20180316152334.415032962@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109199606669126?=
-X-GMAIL-MSGID: =?utf-8?q?1595109199606669126?=
+X-GMAIL-THRID: =?utf-8?q?1595109192059346605?=
+X-GMAIL-MSGID: =?utf-8?q?1595109192059346605?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,59 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
 
-[ Upstream commit a17d2d6cd9985ca09a9e384f1bc71d710f7e5203 ]
+[ Upstream commit a44c9d36509c83cf64f33b93f6ab2e63822c01eb ]
 
-When used as part of a display pipeline, the VSP is stopped and
-restarted explicitly by the DU from its suspend and resume handlers.
-There is thus no need to stop or restart pipelines in the VSP suspend
-and resume handlers, and doing so would cause the hardware to be
-left in a misconfigured state.
+Since scsi_get_device_flags_keyed() callers do not check whether or not
+the returned value is an error code, change that function such that it
+returns a flags value even if the 'key' argument is invalid.  Note:
+since commit 28a0bc4120d3 ("scsi: sd: Implement blacklist option for
+WRITE SAME w/ UNMAP") bit 31 is a valid device information flag so
+checking whether bit 31 is set in the return value is not sufficient to
+tell the difference between an error code and a flags value.
 
-Ensure that the VSP suspend and resume handlers do not affect DRM-based
-pipelines.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/vsp1/vsp1_drv.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/scsi/scsi_devinfo.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -571,7 +571,13 @@ static int __maybe_unused vsp1_pm_suspen
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -595,17 +595,12 @@ int scsi_get_device_flags_keyed(struct s
+ 				int key)
  {
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct scsi_dev_info_list *devinfo;
+-	int err;
  
--	vsp1_pipelines_suspend(vsp1);
-+	/*
-+	 * When used as part of a display pipeline, the VSP is stopped and
-+	 * restarted explicitly by the DU.
-+	 */
-+	if (!vsp1->drm)
-+		vsp1_pipelines_suspend(vsp1);
-+
- 	pm_runtime_force_suspend(vsp1->dev);
+ 	devinfo = scsi_dev_info_list_find(vendor, model, key);
+ 	if (!IS_ERR(devinfo))
+ 		return devinfo->flags;
  
- 	return 0;
-@@ -582,7 +588,13 @@ static int __maybe_unused vsp1_pm_resume
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+-	err = PTR_ERR(devinfo);
+-	if (err != -ENOENT)
+-		return err;
+-
+-	/* nothing found, return nothing */
++	/* key or device not found: return nothing */
+ 	if (key != SCSI_DEVINFO_GLOBAL)
+ 		return 0;
  
- 	pm_runtime_force_resume(vsp1->dev);
--	vsp1_pipelines_resume(vsp1);
-+
-+	/*
-+	 * When used as part of a display pipeline, the VSP is stopped and
-+	 * restarted explicitly by the DU.
-+	 */
-+	if (!vsp1->drm)
-+		vsp1_pipelines_resume(vsp1);
- 
- 	return 0;
- }
