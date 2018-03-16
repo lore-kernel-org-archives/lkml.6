@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvWQEOm11tOFRcBwHP+I32QUHtSNXOD28RD/UXqiMy/KtIw2IUmc5WrOUGNvhCPL+0I/2Zw
-ARC-Seal: i=1; a=rsa-sha256; t=1521214129; cv=none;
+X-Google-Smtp-Source: AG47ELtjnBNRZIeJViJEbmD5Gmro/iwslZ2HzInjzBqkJj/UFkkn1RE9D4840XHTGC0RBXY7gyc4
+ARC-Seal: i=1; a=rsa-sha256; t=1521214126; cv=none;
         d=google.com; s=arc-20160816;
-        b=RWeMzfxzt8H8x+qwhAgi7iHeLI6seEU/8b56nhHCG4ber4/eRfMluPq3kRGqmkYoLP
-         PECRsXwbpRTz1YeNPEMoPEXdCYtczR4paBmOZyZEZFR2GdhFjicpYPWPRSW2HTCypvBL
-         iW3xKfkbq00iB5pPgJOS7GDN7xt/VU2Je9JLrVVYh2eQ1c+5lp94HFzzFxrW8EZfhoMF
-         Q7cv85sxrIQdCVIVEC4Agfm/hsYWh0Bxo60EtJJ7feHQ5rC0Q5bPsM04EabaEf8YXfZ7
-         aeae4Bgo8YM+e1aNu+IYBhs1jGVnDfOcV9rauvUx8rtDImL9zq0YOmqH3WyLn4XHVF4r
-         D+2w==
+        b=c69My+zuxOVTtUKTnCZ5+/jNbjroAd1RmrizbDd7Bl2IsWXgJMSQVjrquV+vCOobWs
+         hCLZMNZk9dr5JR1ZY54VidZQTGLGo/MzTxWqI4Kgfo0mMbBzbyLPSVmR+cIE8Z7ia6nf
+         leSe3lB4QiAJnAvhpW02jBjfg3YeB/TOIUW31vKLIOvgzPNPhKspH8bjsX+TTtOnoM+r
+         Fzv4pH91YK4NDyEba7wEwB0N/+t/rZfC4o8NrLitr9Ae+HbAHdEJwAT7upuCCFxXc2JP
+         gYjLCGfw3NwFMtRUPqJtcoSFeAkPPBieXkW3KDjN+JzL4oeyD1lreehD7nTMtXPYcT/9
+         2YVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cFtn8glGYSMV9R5x0kBIwy0NwyKSrAHKHfO3a+u0hf0=;
-        b=vmT2xN5tNsrjMCCI5oOyHnEihq4H5S6NbMVcfW+lFSCT5s0uD2b8T9bRaz9woqEFa+
-         eRxHuO5090BlDf/W36wIje8sSyUaWKMtR2psnPUTt6uZoAppDdLmy/ASuNKicp6wlpO3
-         35ODMEB7oq0QRuHjIMKfAabbTDkA77+ps2gmJbdsR4llo7tFLjZiSo8Kjg2eoxfnkeja
-         rADMZw86ouMf6gq/Pjt8yStmGZKhjgptRSLV/02khUYDs2fxt6IagA6a6cKq8hLFhhC0
-         MXSU0I/7ZSJ2YLa0U+6npE+ugr49oICV7jh7/rWE7WA2How5++PnKN3MpLPpJYMrvYuK
-         9eEw==
+        bh=VlliM+IobCHDCczrfU3T4JGKug1Z90NERPWR36LDd6I=;
+        b=Usrfb0k+HF9JEXAKWRJ96F44x4YYsSuuipBMh89Nn0FJ+00yNYBNH0lUy61DZvfu4y
+         SLzawZPzNFqtqiajlYPpQQQff/ydP7x1gtccTSt2uWqm0MJGmOmY5tKPg6zhXBh6SIRg
+         GJwaoAatRTKmB3SHiDbewUk6uaH96DB/dNHHgc/sZPbZHhGnxyvSTT/fU035T5htdRmp
+         ziN9DhoziCH4gEczTn3QUj5VKOZXVSVH2QP81oS8PPjh8z+wwqWbxNaDFsIKcfnEl4it
+         PKXwana2dONo7dDGZ5jVeRXd4/0PmDdHli1kgJT0wgZ8dTqnQhAYsNDTjMK5J8BuFe+g
+         PbLA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"H.J. Lu" <hjl.tools@gmail.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	jeyu@kernel.org,
+	live-patching@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
 	Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 4.4 51/63] x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
-Date: Fri, 16 Mar 2018 16:23:23 +0100
-Message-Id: <20180316152305.620032754@linuxfoundation.org>
+Subject: [PATCH 4.4 50/63] x86/module: Detect and skip invalid relocations
+Date: Fri, 16 Mar 2018 16:23:22 +0100
+Message-Id: <20180316152305.414292807@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108490440452142?=
-X-GMAIL-MSGID: =?utf-8?q?1595108626813159466?=
+X-GMAIL-THRID: =?utf-8?q?1595108487521219025?=
+X-GMAIL-MSGID: =?utf-8?q?1595108623662718348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,86 +55,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: H.J. Lu <hjl.tools@gmail.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit b21ebf2fb4cde1618915a97cc773e287ff49173e upstream.
+commit eda9cec4c9a12208a6f69fbe68f72a6311d50032 upstream.
 
-On i386, there are 2 types of PLTs, PIC and non-PIC.  PIE and shared
-objects must use PIC PLT.  To use PIC PLT, you need to load
-_GLOBAL_OFFSET_TABLE_ into EBX first.  There is no need for that on
-x86-64 since x86-64 uses PC-relative PLT.
+There have been some cases where external tooling (e.g., kpatch-build)
+creates a corrupt relocation which targets the wrong address.  This is a
+silent failure which can corrupt memory in unexpected places.
 
-On x86-64, for 32-bit PC-relative branches, we can generate PLT32
-relocation, instead of PC32 relocation, which can also be used as
-a marker for 32-bit PC-relative branches.  Linker can always reduce
-PLT32 relocation to PC32 if function is defined locally.   Local
-functions should use PC32 relocation.  As far as Linux kernel is
-concerned, R_X86_64_PLT32 can be treated the same as R_X86_64_PC32
-since Linux kernel doesn't use PLT.
+On x86, the bytes of data being overwritten by relocations are always
+initialized to zero beforehand.  Use that knowledge to add sanity checks
+to detect such cases before they corrupt memory.
 
-R_X86_64_PLT32 for 32-bit PC-relative branches has been enabled in
-binutils master branch which will become binutils 2.31.
-
-[ hjl is working on having better documentation on this all, but a few
-  more notes from him:
-
-   "PLT32 relocation is used as marker for PC-relative branches. Because
-    of EBX, it looks odd to generate PLT32 relocation on i386 when EBX
-    doesn't have GOT.
-
-    As for symbol resolution, PLT32 and PC32 relocations are almost
-    interchangeable. But when linker sees PLT32 relocation against a
-    protected symbol, it can resolved locally at link-time since it is
-    used on a branch instruction. Linker can't do that for PC32
-    relocation"
-
-  but for the kernel use, the two are basically the same, and this
-  commit gets things building and working with the current binutils
-  master   - Linus ]
-
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jeyu@kernel.org
+Cc: live-patching@vger.kernel.org
+Link: http://lkml.kernel.org/r/37450d6c6225e54db107fba447ce9e56e5f758e9.1509713553.git.jpoimboe@redhat.com
+[ Restructured the messages, as it's unclear whether the relocation or the target is corrupted. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/machine_kexec_64.c |    1 +
- arch/x86/kernel/module.c           |    1 +
- arch/x86/tools/relocs.c            |    3 +++
- 3 files changed, 5 insertions(+)
+ arch/x86/kernel/module.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -519,6 +519,7 @@ int arch_kexec_apply_relocations_add(con
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			value -= (u64)address;
- 			*(u32 *)location = value;
- 			break;
 --- a/arch/x86/kernel/module.c
 +++ b/arch/x86/kernel/module.c
-@@ -189,6 +189,7 @@ int apply_relocate_add(Elf64_Shdr *sechd
+@@ -170,19 +170,27 @@ int apply_relocate_add(Elf64_Shdr *sechd
+ 		case R_X86_64_NONE:
+ 			break;
+ 		case R_X86_64_64:
++			if (*(u64 *)loc != 0)
++				goto invalid_relocation;
+ 			*(u64 *)loc = val;
+ 			break;
+ 		case R_X86_64_32:
++			if (*(u32 *)loc != 0)
++				goto invalid_relocation;
+ 			*(u32 *)loc = val;
+ 			if (val != *(u32 *)loc)
+ 				goto overflow;
+ 			break;
+ 		case R_X86_64_32S:
++			if (*(s32 *)loc != 0)
++				goto invalid_relocation;
+ 			*(s32 *)loc = val;
+ 			if ((s64)val != *(s32 *)loc)
  				goto overflow;
  			break;
  		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			if (*(u32 *)loc != 0)
- 				goto invalid_relocation;
++			if (*(u32 *)loc != 0)
++				goto invalid_relocation;
  			val -= (u64)loc;
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -769,9 +769,12 @@ static int do_reloc64(struct section *se
- 		break;
+ 			*(u32 *)loc = val;
+ #if 0
+@@ -198,6 +206,11 @@ int apply_relocate_add(Elf64_Shdr *sechd
+ 	}
+ 	return 0;
  
- 	case R_X86_64_PC32:
-+	case R_X86_64_PLT32:
- 		/*
- 		 * PC relative relocations don't need to be adjusted unless
- 		 * referencing a percpu symbol.
-+		 *
-+		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
- 		 */
- 		if (is_percpu_sym(sym, symname))
- 			add_reloc(&relocs32neg, offset);
++invalid_relocation:
++	pr_err("x86/modules: Skipping invalid relocation target, existing value is nonzero for type %d, loc %p, val %Lx\n",
++	       (int)ELF64_R_TYPE(rel[i].r_info), loc, val);
++	return -ENOEXEC;
++
+ overflow:
+ 	pr_err("overflow in relocation type %d val %Lx\n",
+ 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
