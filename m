@@ -1,129 +1,229 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521242407; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtv9u8JMz8cDL7Kwmv/dokAt2PaZTUNYeKVSWoWKly8pQckJOV1mnsKoWXImHXxZ/880XU+
+ARC-Seal: i=1; a=rsa-sha256; t=1521214440; cv=none;
         d=google.com; s=arc-20160816;
-        b=HQHEvFDgReiBb03po0ueUWr8noZn3deE9IFb5ovKU5Lhz5tKOSg9672n74lbCbgF7Q
-         dtpUe7ojTvKJY0zNWKeOAWJs/MKI8Tz7uUyIxOIbWLiEwgQIRZHqrEItndpBcnhiKZ1q
-         heG5BdEuKCoFiFlIAKHFo0jB4L8BpiklJSQjRhdsSVP4xHV86+H8IpR2GLGQEHjeJQnq
-         2xaoiCilNRaiQAwkb3+WWTcxnXlZ3ZDIzYkCNK6oNO83vLSnzj3ikCF7fX8/7WfGrnP4
-         WcGdfDq/jW8cw2T3ipeIU++5+4qVgioh0qeqebSkRp9G3T0L7HB3jQaxT7i6gyXwwfbr
-         yZvA==
+        b=haENBPddu4yz4NGXeu19Y9Z4+tAEJ+0UPtvp6vUQ3JT5xOipQWZiYYT58Gb7yEckwo
+         iolmumDDYr5qjt8iwUlDsfatBBq3CWD2C1RosZlOCwR/hXAyYN2k3LufeFDohxvzx2bU
+         FPpnqMCMKN7ZDo/QbVjUkMqafKoelviB+b2Z/YsmoATY0HUC//rBuaFOXWPgjn6QZ0Mn
+         R4GSTnUiy0J/6L7vAZ5YLrMC9JO/2KLyR5pjiPsxbNe08X9N1m/4sYGQf9VWuI/BFK5k
+         GDOrKVQ3CatJ56LU9W2GIQ4T4akvOdqSnzVUAovQfTyHS9WU0cofoe0qbjBpilln7zgB
+         4bRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=LJgPWccRxIHXgPcgrq9O3mDqKiFsRaNy3/sZzTeZoVo=;
-        b=kAtr1a73i68ktK584kzn2NeFWVFPc68eysyt5MLfshluJ2zcQx49ufx+8+K8sCWKhq
-         xKBh5NVPzbU7xBRZK21GRVY2Z9Vo+nznCs7bo6fbhcm+5/XTYCu18Chs1Ya2Z6U50i6c
-         9ZzUnuRK6WHDMxvfQ1LrKKG8KG883lJ9XQr+lHlqQa7GZ4by1y4A+95Mw+TnY+yV1Uq5
-         S1dLBH5tLDN9Fg8ZUt3kV1+wSXoify3ZBXTXsqczS9+YTzgk+xNilxlUvQ1XfL/2pwPv
-         PwbHSfFmAmqk5faHHDJ3RBmM0KDgQB/WtjIgdF3rpb/G16lYBPBif0vOlryI0Gzno4na
-         I7Xg==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=3Uc0Q57mPGSnODFc7RIbg7dDCWdmmdlILzvlXj6sJec=;
+        b=Xz3YBaS50dMlI6z5qErGPqsGpo5Lt/JG/2PlPNOIaDQz6iTKLfRg5Aqd0c9E0v1cmw
+         V8Sy+/5lOqX0NhCmpVh3ry0rSo7RPu04JagXwZQz7lW0Gd3FWhXmsP3669N7RZBc2StX
+         DY2qFjfUBnv0QQ3OJ7xKWbcnSSge+UQSf9EKxyqHcrKL+hSusTrwWt0ImvaK+3WSSbz6
+         gie+K/YJzWP8VQZwihuOfi4qWOK9RbslMvJshGnoq1rOfhzQz7JVNwNYWhl6caSEtxq0
+         0a03b49MHTIkrcRNVp/KIPhtWZGPD9PXbtBTk1le+QXrWZiUyEc7DQwTGMGNfe/hAtRK
+         ZCAA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELsVOrXSd98Crq3BCPFMop1lvUiCMHlVF4m5na3imNFph5w8uOkIlWi8l9X/5U/PqOfu4ox8lA==
-Message-ID: <5aac5126.89c5df0a.9807c.7028@mx.google.com>
-Date: Fri, 16 Mar 2018 16:20:06 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Kernel: v4.9.87-87-gc854dd85ec72
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Fredrik Noring <noring@nocrew.org>,
+	Pete Zaitcev <zaitcev@redhat.com>
+Subject: [PATCH 4.9 81/86] usb: usbmon: Read text within supplied buffer size
+Date: Fri, 16 Mar 2018 16:23:44 +0100
+Message-Id: <20180316152322.800823379@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/86] 4.9.88-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595108715713522943?=
-X-GMAIL-MSGID: =?utf-8?q?1595138278818011388?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108322348681273?=
+X-GMAIL-MSGID: =?utf-8?q?1595108952711764277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.9.y boot: 115 boots: 1 failed, 92 passed with 20 offline,=
- 2 untried/unknown (v4.9.87-87-gc854dd85ec72)
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.87-87-gc854dd85ec72/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.87-87-gc854dd85ec72/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.87-87-gc854dd85ec72
-Git Commit: c854dd85ec7201a4fef08919c0ea66f96d81c1a3
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 62 unique boards, 21 SoC families, 19 builds out of 183
+From: Pete Zaitcev <zaitcev@kotori.zaitcev.us>
 
-Boot Regressions Detected:
+commit a5f596830e27e15f7a0ecd6be55e433d776986d8 upstream.
 
-arm64:
+This change fixes buffer overflows and silent data corruption with the
+usbmon device driver text file read operations.
 
-    defconfig:
-        meson-gxbb-p200:
-            lab-baylibre-seattle: failing since 4 days (last pass: v4.9.86 =
-- first fail: v4.9.87)
-
-Boot Failure Detected:
-
-arm64:
-
-    defconfig
-        meson-gxbb-p200: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5410-odroidxu: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    socfpga_defconfig:
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/usb/mon/mon_text.c |  124 +++++++++++++++++++++++++++------------------
+ 1 file changed, 77 insertions(+), 47 deletions(-)
+
+--- a/drivers/usb/mon/mon_text.c
++++ b/drivers/usb/mon/mon_text.c
+@@ -83,6 +83,8 @@ struct mon_reader_text {
+ 
+ 	wait_queue_head_t wait;
+ 	int printf_size;
++	size_t printf_offset;
++	size_t printf_togo;
+ 	char *printf_buf;
+ 	struct mutex printf_lock;
+ 
+@@ -374,75 +376,103 @@ err_alloc:
+ 	return rc;
+ }
+ 
+-/*
+- * For simplicity, we read one record in one system call and throw out
+- * what does not fit. This means that the following does not work:
+- *   dd if=/dbg/usbmon/0t bs=10
+- * Also, we do not allow seeks and do not bother advancing the offset.
+- */
++static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
++    char __user * const buf, const size_t nbytes)
++{
++	const size_t togo = min(nbytes, rp->printf_togo);
++
++	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
++		return -EFAULT;
++	rp->printf_togo -= togo;
++	rp->printf_offset += togo;
++	return togo;
++}
++
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_t(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	ep = mon_text_read_wait(rp, file);
+-	if (IS_ERR(ep))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+-
+-	mon_text_read_head_t(rp, &ptr, ep);
+-	mon_text_read_statset(rp, &ptr, ep);
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+ 
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_t(rp, &ptr, ep);
++		mon_text_read_statset(rp, &ptr, ep);
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
++	}
++
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
++/* ppos is not advanced since the llseek operation is not permitted. */
+ static ssize_t mon_text_read_u(struct file *file, char __user *buf,
+-				size_t nbytes, loff_t *ppos)
++    size_t nbytes, loff_t *ppos)
+ {
+ 	struct mon_reader_text *rp = file->private_data;
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
++	ssize_t ret;
+ 
+-	ep = mon_text_read_wait(rp, file);
+-	if (IS_ERR(ep))
+-		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+-	ptr.cnt = 0;
+-	ptr.pbuf = rp->printf_buf;
+-	ptr.limit = rp->printf_size;
+ 
+-	mon_text_read_head_u(rp, &ptr, ep);
+-	if (ep->type == 'E') {
+-		mon_text_read_statset(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
+-		mon_text_read_isostat(rp, &ptr, ep);
+-		mon_text_read_isodesc(rp, &ptr, ep);
+-	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
+-		mon_text_read_intstat(rp, &ptr, ep);
+-	} else {
+-		mon_text_read_statset(rp, &ptr, ep);
++	if (rp->printf_togo == 0) {
++
++		ep = mon_text_read_wait(rp, file);
++		if (IS_ERR(ep)) {
++			mutex_unlock(&rp->printf_lock);
++			return PTR_ERR(ep);
++		}
++		ptr.cnt = 0;
++		ptr.pbuf = rp->printf_buf;
++		ptr.limit = rp->printf_size;
++
++		mon_text_read_head_u(rp, &ptr, ep);
++		if (ep->type == 'E') {
++			mon_text_read_statset(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
++			mon_text_read_isostat(rp, &ptr, ep);
++			mon_text_read_isodesc(rp, &ptr, ep);
++		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
++			mon_text_read_intstat(rp, &ptr, ep);
++		} else {
++			mon_text_read_statset(rp, &ptr, ep);
++		}
++		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
++		    " %d", ep->length);
++		mon_text_read_data(rp, &ptr, ep);
++
++		rp->printf_togo = ptr.cnt;
++		rp->printf_offset = 0;
++
++		kmem_cache_free(rp->e_slab, ep);
+ 	}
+-	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
+-	    " %d", ep->length);
+-	mon_text_read_data(rp, &ptr, ep);
+ 
+-	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
+-		ptr.cnt = -EFAULT;
++	ret = mon_text_copy_to_user(rp, buf, nbytes);
+ 	mutex_unlock(&rp->printf_lock);
+-	kmem_cache_free(rp->e_slab, ep);
+-	return ptr.cnt;
++	return ret;
+ }
+ 
+ static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
