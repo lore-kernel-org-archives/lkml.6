@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214945-2-11151305774146038443
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214943; b=GCGXKdJ/6mrxex5r8cPJZMXK5dmHOpP91QnSDlmFuNTPNA1
-    E9G4b4cDCa3S71WmHVkH+HvNCfC39ErUjLNUEM09cRQ1skd4X6wY8Cel3GkBYvmt
-    N2Es778VABI43UGLUc9iYITv9eDDni/PHf2EpqkUd/TD/mk/z7OzJ0HyYQb22ImP
-    SsuoPot6VzbP6wY92xJSxt84UYTKFRTcsOQplvYxHBjxXPwT1jLzosPg4oDa44f6
-    i3LLiUhUG08wzoBB/y5lgH9aNXbSeaLngEq1/L6FbQx6qPLXmYND8Xps6NM5jejU
-    /Xq6g/g5a/ZZlNTQBfvWOAfxwPZ0iQucnhf22UQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214943; bh=G1icvRSvC88h2l9/vzJV3UVicM
-    4Whxo9mUu2057KjI0=; b=OskUEm1Mjo7hLJDhoOv5QRGVtcnqg/sjn6yBZ0c9jn
-    dZQ8Z8JaIypY3RTSQLgnQceiEhHMV/L5UBDdcw6t8485YyBccx3u9+88pNFCw2tr
-    oNv1RK2vF6iDIl+O0LrvzytBcQMVWE2uv6sGcsxMNjm3sCJTSQZcpgJzoEyPgI4Y
-    6QSdJdzrySGAwuA1g9H0TVmwY7nUxcf/Hlg6hFtxhfICsP7QiS7HARUBoeMqyhR6
-    ydwqc8mkfsSd4yhbGJWFqkTDzxMrh8xKpPBmhxzyYuZNL1ubAeZKgOi+7RqtRFDn
-    o+hOfPgUsClTe++VRolLvVw0Vl7xa2qB4Euw52X7Th3g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754844AbeCPPmP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:42:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44370 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754843AbeCPPmJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:42:09 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvR5ywwFPStbnYaT4ml16JXgJHSPWvtEnU9DMUX9yNd0e5GejSVMjpq3MkbxccFKVTmWaZS
+ARC-Seal: i=1; a=rsa-sha256; t=1521214943; cv=none;
+        d=google.com; s=arc-20160816;
+        b=C6OQqbx9Jc9+Xc3auT0y444YeldBb4tsU1aXKXRhKeN1TICUunkH5hGTBPvweHarQW
+         X6yAl1PVMW9Xsw/B1vhwp8C5A6vMX73j12J79hxIX2rwFiwV4aOFplUL1F/q8ae216ST
+         JersOYYKNEBFA4bThcDDMtFB7w0ibzbwqrZMjXlS4RKacZ9fogfUOPklxG6UUZs1Xc6C
+         vBurCXpOFZDVJGNTeCXa/tKSZTUCJcJ8aUA/MdJpCpQtB0AN12CHqVHCBeQTzEL6MIcH
+         Duf1p5BT0dPyec5N8tMBJ0OeoSjAVN452ehJNWOApZ/rpK/dhHbbetP7VyUMqrYjwllJ
+         zoag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JfM1zW7m2Ie126FqldR6xJlRe9zRTUX6GIbMLpCq1ik=;
+        b=gp0MKtjp4gVhNMqhtNrkbQRJwZDHjKlnDtx+cfLUG3Y/1GTXUqP+d+JMRlys/7caHr
+         C3HiR4MGpHqW92Bzc7XTwBG6nRPW2+0Qs2s6DssVebOOnQgjtIR3i4SDq7nyKNqxzYts
+         6lFaz53hiQt8FWU8r09ox16JAeqn4Y6yBNgEcoHwYTnoWWlMd5YXWsGBfzslXObt+mrv
+         PSXn2nsTsW8Rr8AjW+e3ORnKG7jPThXDtBrJ+FJx5KzIgsa5EhyN3L+ohSYMOjJdIEy4
+         93NlLVVVv0e4umeA6I4YZUwhlLDyWhvVzPS32z/ZMS14MwQ4I4qewZkaHiIBNiDmQfSK
+         9B6w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Shields <simon@lineageos.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 040/128] ARM: dts: exynos: Correct Trats2 panel reset line
-Date: Fri, 16 Mar 2018 16:23:01 +0100
-Message-Id: <20180316152338.720256679@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 071/128] power: supply: ab8500_charger: Bail out in case of error in ab8500_charger_init_hw_registers()
+Date: Fri, 16 Mar 2018 16:23:32 +0100
+Message-Id: <20180316152340.254833015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109109307642633?=
+X-GMAIL-MSGID: =?utf-8?q?1595109480013532936?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,33 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Simon Shields <simon@lineageos.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 1b377924841df1e13ab5b225be3a83f807a92b52 ]
+[ Upstream commit 09edcb647542487864e23aa8d2ef26be3e08978a ]
 
-Trats2 uses gpf2-1 as the panel reset GPIO. gpy4-5 was only used
-on early revisions of the board.
+If an error occurs when we enable the backup battery charging, we should
+go through the error handling path directly.
 
-Fixes: 420ae8451a22 ("ARM: dts: exynos4412-trats2: add panel node")
-Signed-off-by: Simon Shields <simon@lineageos.org>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Before commit db43e6c473b5 ("ab8500-bm: Add usb power path support") this
+was the case, but this commit has added some code between the last test and
+the 'out' label.
+So, in case of error, this added code is executed and the error may be
+silently ignored.
+
+Fix it by adding the missing 'goto out', as done in all other error
+handling paths.
+
+Fixes: db43e6c473b5 ("ab8500-bm: Add usb power path support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/ab8500_charger.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -454,7 +454,7 @@
- 		reg = <0>;
- 		vdd3-supply = <&lcd_vdd3_reg>;
- 		vci-supply = <&ldo25_reg>;
--		reset-gpios = <&gpy4 5 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpf2 1 GPIO_ACTIVE_HIGH>;
- 		power-on-delay= <50>;
- 		reset-delay = <100>;
- 		init-delay = <100>;
+--- a/drivers/power/supply/ab8500_charger.c
++++ b/drivers/power/supply/ab8500_charger.c
+@@ -3221,8 +3221,10 @@ static int ab8500_charger_init_hw_regist
+ 	ret = abx500_mask_and_set_register_interruptible(di->dev,
+ 		AB8500_RTC, AB8500_RTC_CTRL_REG,
+ 		RTC_BUP_CH_ENA, RTC_BUP_CH_ENA);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		dev_err(di->dev, "%s mask and set failed\n", __func__);
++		goto out;
++	}
+ 
+ 	if (is_ab8540(di->parent)) {
+ 		ret = abx500_mask_and_set_register_interruptible(di->dev,
