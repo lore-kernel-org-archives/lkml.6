@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsq/MlqRdbevHk6zwTWB5L+PIuhleqOw34fLNVb4RZvPRFTyf22WERkjJjT7mo1f9HIWjpE
-ARC-Seal: i=1; a=rsa-sha256; t=1521214200; cv=none;
+X-Google-Smtp-Source: AG47ELsMLsKiCNsnabJ148oAizBG/0el2ZfRjop/Q93CRduZ7If9vzfsO8ss8U/tWQwiDpQg0mzX
+ARC-Seal: i=1; a=rsa-sha256; t=1521214197; cv=none;
         d=google.com; s=arc-20160816;
-        b=0XSxp2R9C1UQWv2Wg7J1gv0upgWk/5LNQ+mPoF6hp/wmM+ShyrSkdZDoIZGyDjhTR3
-         YuVZul1IuBK9h7EHHi6gw5bMM5M9Lo/EdZDoPDuNJpuuR7CaaoyqPa1amf8KqI/bhXbG
-         7qFwFXYPiYI6YNUjm1NWafZYeQTdoYqOq1qwDEbi2rKl7WEa1RR3c39DCbKy/oYmSK8i
-         DYiQfoctOgESAczTqELPLMW4ptg4NPLiJKqbKgKX3DitGPzdSxKv4h+k4su7aNTY/21X
-         hyvsaevHvT170y1krTGhbnQFYgPLN6DkN58ent/jR0uj2qITJixFa0C40JwkKdC80ztx
-         /lzw==
+        b=gSkHPaESqtoHY/Vn72FWrfCLORRgNsZHdiLQeUA5nPUjKLVEzBEOtZlJ3DyeqjdQPL
+         4dnfA8I42h9XgVeh/cZncR/TUak0UI0yesQhUYqF4SKLBrKhZiKBLJO0mAu+gJGX4qN7
+         rpD3BXh17rELoUnrUABCEthhpTpWJdDiSpd0r92tAKrQ/j6u5To2aGVt/+WNU0TBJfdQ
+         ppb/2jisdzDcrTbCaDK8IFZdSSrAC0aXZtKc816S2sIVem8Ay4h6JZY8QRjoGgbLqEW3
+         NVjfiv5KGh1z5WZMgEg6wwL3cj2xfhbmydjqJqHGiQq6SCmmqtINMD4UQPyjR4rm7Vv3
+         +dAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=w5uv58DlqQ+tEHjGjSAAZoBaAkIVxDzD50woRsDhKho=;
-        b=VUpkA7a3mX1zNN+4sWmu+dyupnjeV/dvvxJ/MPAGSYny9YlPyur0RQXmbW8MlbscLG
-         z0fEv8tLLGeD33YIKpuUKZNSts0uxW/bsVcLBklbQFMeF68/t9uiH417/kdCTaH18n0n
-         naoJEPX3DVj7GT7D0qix1kGPOHMOY24qwTNRlI7mQEFuY2DO7rFOwcbApAoRSEsTrtN+
-         Iwg+ITW0fdOgDe0INB1ItrFwqZP5/x5taldAUMyOhPW1FdkwvdLujTOM3dbZyC79alyB
-         +ziJz/t0X0mwHlrwxRyCk/JFRowOK5s0dxm1ptBAnf7yDex90DRYyrHr4uys99qDWlYu
-         3JZQ==
+        bh=bEgoJxB04wUDdoGYnceTwNagjwapa1oC5skLfuP0tXo=;
+        b=hG4ln8TIGIh9s2DL7saOQbVlie09+tWVnGh9QPFbace8jy623/yDCjTHQ3jucZP/Ef
+         uHdDYUlPqA0AhSDMkWa5xgUF6je9pqBdLU/nN2DW9oxzKMJU4Y7WRu/6sbau0YPVisr5
+         aVDKg14Vgog5lMZvbG6mtQ50icttGxepoEoj+u7JCney5J2M3kCpbsmE+xjK0VZ44OFx
+         FLaEoSYGTt6V0sFGovqGZxZ5BLCzw5ivya9j+DPiNcfqGuCzUEeSEenCxHMOKoooZZb0
+         5e6t5uJWs7g3WIaZcRNqMqkoyzF8JZ/0WkSdXWeTVmDQWcvbG+uj64fzMy0FiKc1S5fy
+         iDXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.9 04/86] drm/i915: Try EDID bitbanging on HDMI after failed read
-Date: Fri, 16 Mar 2018 16:22:27 +0100
-Message-Id: <20180316152317.509047523@linuxfoundation.org>
+	syzkaller <syzkaller@googlegroups.com>,
+	Noa Osherovich <noaos@mellanox.com>,
+	Yishai Hadas <yishaih@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.9 03/86] RDMA/mlx5: Fix integer overflow while resizing CQ
+Date: Fri, 16 Mar 2018 16:22:26 +0100
+Message-Id: <20180316152317.443634666@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108701452876074?=
-X-GMAIL-MSGID: =?utf-8?q?1595108701452876074?=
+X-GMAIL-THRID: =?utf-8?q?1595108505856983674?=
+X-GMAIL-MSGID: =?utf-8?q?1595108698115415882?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +52,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 90024a5951029685acc5396258f1b0de9b23cf4a upstream.
+commit 28e9091e3119933c38933cb8fc48d5618eb784c8 upstream.
 
-The ACK/NACK implementation as found in e.g. the G965 has the falling
-clock edge and the release of the data line after the ACK for the received
-byte happen at the same time.
+The user can provide very large cqe_size which will cause to integer
+overflow as it can be seen in the following UBSAN warning:
 
-This is conformant with the I2C specification, which allows a zero hold
-time, see footnote [3]: "A device must internally provide a hold time of
-at least 300 ns for the SDA signal (with respect to the V IH(min) of the
-SCL signal) to bridge the undefined region of the falling edge of SCL."
+=======================================================================
+UBSAN: Undefined behaviour in drivers/infiniband/hw/mlx5/cq.c:1192:53
+signed integer overflow:
+64870 * 65536 cannot be represented in type 'int'
+CPU: 0 PID: 267 Comm: syzkaller605279 Not tainted 4.15.0+ #90 Hardware
+name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+ dump_stack+0xde/0x164
+ ? dma_virt_map_sg+0x22c/0x22c
+ ubsan_epilogue+0xe/0x81
+ handle_overflow+0x1f3/0x251
+ ? __ubsan_handle_negate_overflow+0x19b/0x19b
+ ? lock_acquire+0x440/0x440
+ mlx5_ib_resize_cq+0x17e7/0x1e40
+ ? cyc2ns_read_end+0x10/0x10
+ ? native_read_msr_safe+0x6c/0x9b
+ ? cyc2ns_read_end+0x10/0x10
+ ? mlx5_ib_modify_cq+0x220/0x220
+ ? sched_clock_cpu+0x18/0x200
+ ? lookup_get_idr_uobject+0x200/0x200
+ ? rdma_lookup_get_uobject+0x145/0x2f0
+ ib_uverbs_resize_cq+0x207/0x3e0
+ ? ib_uverbs_ex_create_cq+0x250/0x250
+ ib_uverbs_write+0x7f9/0xef0
+ ? cyc2ns_read_end+0x10/0x10
+ ? print_irqtrace_events+0x280/0x280
+ ? ib_uverbs_ex_create_cq+0x250/0x250
+ ? uverbs_devnode+0x110/0x110
+ ? sched_clock_cpu+0x18/0x200
+ ? do_raw_spin_trylock+0x100/0x100
+ ? __lru_cache_add+0x16e/0x290
+ __vfs_write+0x10d/0x700
+ ? uverbs_devnode+0x110/0x110
+ ? kernel_read+0x170/0x170
+ ? sched_clock_cpu+0x18/0x200
+ ? security_file_permission+0x93/0x260
+ vfs_write+0x1b0/0x550
+ SyS_write+0xc7/0x1a0
+ ? SyS_read+0x1a0/0x1a0
+ ? trace_hardirqs_on_thunk+0x1a/0x1c
+ entry_SYSCALL_64_fastpath+0x1e/0x8b
+RIP: 0033:0x433549
+RSP: 002b:00007ffe63bd1ea8 EFLAGS: 00000217
+=======================================================================
 
-Some HDMI-to-VGA converters apparently fail to adhere to this requirement
-and latch SDA at the falling clock edge, so instead of an ACK
-sometimes a NACK is read and the slave (i.e. the EDID ROM) ends the
-transfer.
-
-The bitbanging releases the data line for the ACK only 1/4 bit time after
-the falling clock edge, so a slave will see the correct value no matter
-if it samples at the rising or the falling clock edge or in the center.
-
-Fallback to bitbanging is already done for the CRT connector.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=92685
-Signed-off-by: Stefan Brüns <stefan.bruens@rwth-aachen.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/a39f080b-81a5-4c93-b3f7-7cb0a58daca3@rwthex-w2-a.rwth-ad.de
-(cherry picked from commit cfb926e148e99acc02351d72e8b85e32b5f786ef)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: syzkaller <syzkaller@googlegroups.com>
+Cc: <stable@vger.kernel.org> # 3.13
+Fixes: bde51583f49b ("IB/mlx5: Add support for resize CQ")
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Reviewed-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_hdmi.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx5/cq.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1452,12 +1452,20 @@ intel_hdmi_set_edid(struct drm_connector
- 	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
- 	struct edid *edid;
- 	bool connected = false;
-+	struct i2c_adapter *i2c;
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -1117,7 +1117,12 @@ static int resize_user(struct mlx5_ib_de
+ 	if (ucmd.reserved0 || ucmd.reserved1)
+ 		return -EINVAL;
  
- 	intel_display_power_get(dev_priv, POWER_DOMAIN_GMBUS);
- 
--	edid = drm_get_edid(connector,
--			    intel_gmbus_get_adapter(dev_priv,
--			    intel_hdmi->ddc_bus));
-+	i2c = intel_gmbus_get_adapter(dev_priv, intel_hdmi->ddc_bus);
+-	umem = ib_umem_get(context, ucmd.buf_addr, entries * ucmd.cqe_size,
++	/* check multiplication overflow */
++	if (ucmd.cqe_size && SIZE_MAX / ucmd.cqe_size <= entries - 1)
++		return -EINVAL;
 +
-+	edid = drm_get_edid(connector, i2c);
-+
-+	if (!edid && !intel_gmbus_is_forced_bit(i2c)) {
-+		DRM_DEBUG_KMS("HDMI GMBUS EDID read failed, retry using GPIO bit-banging\n");
-+		intel_gmbus_force_bit(i2c, true);
-+		edid = drm_get_edid(connector, i2c);
-+		intel_gmbus_force_bit(i2c, false);
-+	}
- 
- 	intel_hdmi_dp_dual_mode_detect(connector, edid != NULL);
- 
++	umem = ib_umem_get(context, ucmd.buf_addr,
++			   (size_t)ucmd.cqe_size * entries,
+ 			   IB_ACCESS_LOCAL_WRITE, 1);
+ 	if (IS_ERR(umem)) {
+ 		err = PTR_ERR(umem);
