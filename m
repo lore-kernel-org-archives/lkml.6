@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtOqpWmH4JGPG4c9nAj3RPNXj18w083ISwNIqFany0LZ59JkcaUra9iwYyCviNcF0MuQC2L
-ARC-Seal: i=1; a=rsa-sha256; t=1521214351; cv=none;
+X-Google-Smtp-Source: AG47ELuBrfZjdtslohuKr/NxMu0cfI7ZXAwOxgvkLNz+EzlYnyh1vnQhq9ga+oZFBxyYFfB2K7jc
+ARC-Seal: i=1; a=rsa-sha256; t=1521214348; cv=none;
         d=google.com; s=arc-20160816;
-        b=Pv00CjrwWDBW9wW3gR3Lro8WpLXafU0THYvE7NwKcG/mr7bMv8K7cUtLQL1MtfaoRU
-         jxIum97yOpu8kyxKAzwihqDFrIo0+HwkNQtlvsd4b4FFMYSFNu8yiYUDDOsD3RCr/ogD
-         5gK706JBwqnFtxEfENqw2UgIayHZJrn9CZLV3o7TCU7rlhTlkwAM1SayspHyU6PweICf
-         yvi0d/lhVskdpMx0aXxVhoO28lfUd2O1xJX9ZKTV6VLUAUSeqHpQ9xy8K9ydpidU0yco
-         xNkGVE749s4DQXH9+mQZgCCLvWb5QsWRnhpHjmsXq3MQd6MPpb2Hs1YExQCma7rQLZ7/
-         vFYw==
+        b=WC0Bvddo0DKcdw/HiLgPsp5EOymszzhNT/7qGJXRx8u0SeHyip83V7cVuJ5a2fU2cI
+         /PmR9qykiRcntPGOJc7fXEwstrk767xxjwG4EMGxjbvrHdo40lLODfPNf3oh73CXuO57
+         YwxghNLCqOGWFMTk6hjuYGdzsKU9dVvc9S0he2n4ZZt8WUH1A07KhdSRSF81mLZGzHgf
+         /29bJGmZwqM0NDjEkZkAWHmrLcP7teqSI1MvzMno79OUYJYYoEB2yW3TMCG9MDOdNQXh
+         eFHO1OGci3vda6RQpAegl69zf8C4tMxGopWiVcjJ3B5OvzsdKJ/ReuGvB6ZxofHvtagj
+         EsYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+6mvDr7I6p7iI4mFOVD2G9uRGJirf/Psw/2N7W8mkYs=;
-        b=q7n6waKRKLoBjhGgjR5oUQI4379PN2+OAG3QwD07bRLgn3vDMC7OM5cVq5ANJEROcb
-         g25CwodWxBgcA2aww0+EZntyLRsL/K/1kEGDXEbUgBnI/hMdrkT1ypd90QIz1czLnfSQ
-         YmQAeGWSCnfKyX9TlAxSf1zTYICyTjlZjNQL9tDoNnTedbHV7NRNSTe54TU2yjGT3Hov
-         pXABxvX693LFz/Xc52XAwWYbYyXSQf60E1yxFkPQa6btfQvuw+t4Y5Og0rMVMvE9s7qE
-         5oOM3n1QxlN7bQqYV9D2k8MnolWH6gvnSIWlVAB89wtoSnm0zzW0iZUm1XUNdwml8Qiv
-         B0Zg==
+        bh=X7ApD6Lph2yKUs3bFhby+teuTrG1pRTP58dAsXJXNbE=;
+        b=Kw8tV9Tt41oxhYmbgL6Tu8+UFV1VwAxpUGe03L3lUwO8Jfox8Vg8Z+v2G4kXGXgR1l
+         Zj6agz0BDbTvJ1mKEynZ+A8z6SyxQ5a/Myc0Z78mJvyPhQ0ldk67hw+CFPdHK6q5jklB
+         1wS+EaV0B8DWjQ+aXT/jSfyt58cjLk0frnK1z21+WJ7kgEfVYaGFgVm0t/Xphl76iV57
+         iFVG4Vl3EqG8KSx1FKwnZZsHPBH/Pi+YIjbc9C0LhI+S8ZPbDv8RvyQ5RRSBROAk/sgk
+         FOfaEMGjQgPci0Ca0O+rV+UTkEIAULnGY9AkERtO16qo+fWXLoRHQOg4fGfW4jL4u2MZ
+         uYTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 63/86] netfilter: x_tables: pack percpu counter allocations
-Date: Fri, 16 Mar 2018 16:23:26 +0100
-Message-Id: <20180316152321.630850276@linuxfoundation.org>
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	arjan.van.de.ven@intel.com,
+	bp@alien8.de,
+	dave.hansen@intel.com,
+	jmattson@google.com,
+	karahmed@amazon.de,
+	kvm@vger.kernel.org,
+	pbonzini@redhat.com,
+	rkrcmar@redhat.com,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 45/86] x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
+Date: Fri, 16 Mar 2018 16:23:08 +0100
+Message-Id: <20180316152320.495213037@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -41,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108674352758169?=
-X-GMAIL-MSGID: =?utf-8?q?1595108859877944971?=
+X-GMAIL-THRID: =?utf-8?q?1595108857207652737?=
+X-GMAIL-MSGID: =?utf-8?q?1595108857207652737?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,234 +60,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit ae0ac0ed6fcf5af3be0f63eb935f483f44a402d2 upstream.
+commit d72f4e29e6d84b7ec02ae93088aa459ac70e733b upstream.
 
-instead of allocating each xt_counter individually, allocate 4k chunks
-and then use these for counter allocation requests.
+firmware_restrict_branch_speculation_*() recently started using
+preempt_enable()/disable(), but those are relatively high level
+primitives and cause build failures on some 32-bit builds.
 
-This should speed up rule evaluation by increasing data locality,
-also speeds up ruleset loading because we reduce calls to the percpu
-allocator.
+Since we want to keep <asm/nospec-branch.h> low level, convert
+them to macros to avoid header hell...
 
-As Eric points out we can't use PAGE_SIZE, page_allocator would fail on
-arches with 64k page size.
-
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/netfilter/x_tables.h |    7 ++++++-
- net/ipv4/netfilter/arp_tables.c    |    9 ++++++---
- net/ipv4/netfilter/ip_tables.c     |    9 ++++++---
- net/ipv6/netfilter/ip6_tables.c    |    9 ++++++---
- net/netfilter/x_tables.c           |   34 +++++++++++++++++++++++++---------
- 5 files changed, 49 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/include/linux/netfilter/x_tables.h
-+++ b/include/linux/netfilter/x_tables.h
-@@ -375,8 +375,13 @@ static inline unsigned long ifname_compa
- 	return ret;
- }
- 
-+struct xt_percpu_counter_alloc_state {
-+	unsigned int off;
-+	const char __percpu *mem;
-+};
- 
--bool xt_percpu_counter_alloc(struct xt_counters *counters);
-+bool xt_percpu_counter_alloc(struct xt_percpu_counter_alloc_state *state,
-+			     struct xt_counters *counter);
- void xt_percpu_counter_free(struct xt_counters *cnt);
- 
- static inline struct xt_counters *
---- a/net/ipv4/netfilter/arp_tables.c
-+++ b/net/ipv4/netfilter/arp_tables.c
-@@ -419,13 +419,14 @@ static inline int check_target(struct ar
- }
- 
- static inline int
--find_check_entry(struct arpt_entry *e, const char *name, unsigned int size)
-+find_check_entry(struct arpt_entry *e, const char *name, unsigned int size,
-+		 struct xt_percpu_counter_alloc_state *alloc_state)
- {
- 	struct xt_entry_target *t;
- 	struct xt_target *target;
- 	int ret;
- 
--	if (!xt_percpu_counter_alloc(&e->counters))
-+	if (!xt_percpu_counter_alloc(alloc_state, &e->counters))
- 		return -ENOMEM;
- 
- 	t = arpt_get_target(e);
-@@ -533,6 +534,7 @@ static inline void cleanup_entry(struct
- static int translate_table(struct xt_table_info *newinfo, void *entry0,
- 			   const struct arpt_replace *repl)
- {
-+	struct xt_percpu_counter_alloc_state alloc_state = { 0 };
- 	struct arpt_entry *iter;
- 	unsigned int *offsets;
- 	unsigned int i;
-@@ -595,7 +597,8 @@ static int translate_table(struct xt_tab
- 	/* Finally, each sanity check must pass */
- 	i = 0;
- 	xt_entry_foreach(iter, entry0, newinfo->size) {
--		ret = find_check_entry(iter, repl->name, repl->size);
-+		ret = find_check_entry(iter, repl->name, repl->size,
-+				       &alloc_state);
- 		if (ret != 0)
- 			break;
- 		++i;
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -540,7 +540,8 @@ static int check_target(struct ipt_entry
- 
- static int
- find_check_entry(struct ipt_entry *e, struct net *net, const char *name,
--		 unsigned int size)
-+		 unsigned int size,
-+		 struct xt_percpu_counter_alloc_state *alloc_state)
- {
- 	struct xt_entry_target *t;
- 	struct xt_target *target;
-@@ -549,7 +550,7 @@ find_check_entry(struct ipt_entry *e, st
- 	struct xt_mtchk_param mtpar;
- 	struct xt_entry_match *ematch;
- 
--	if (!xt_percpu_counter_alloc(&e->counters))
-+	if (!xt_percpu_counter_alloc(alloc_state, &e->counters))
- 		return -ENOMEM;
- 
- 	j = 0;
-@@ -685,6 +686,7 @@ static int
- translate_table(struct net *net, struct xt_table_info *newinfo, void *entry0,
- 		const struct ipt_replace *repl)
- {
-+	struct xt_percpu_counter_alloc_state alloc_state = { 0 };
- 	struct ipt_entry *iter;
- 	unsigned int *offsets;
- 	unsigned int i;
-@@ -744,7 +746,8 @@ translate_table(struct net *net, struct
- 	/* Finally, each sanity check must pass */
- 	i = 0;
- 	xt_entry_foreach(iter, entry0, newinfo->size) {
--		ret = find_check_entry(iter, net, repl->name, repl->size);
-+		ret = find_check_entry(iter, net, repl->name, repl->size,
-+				       &alloc_state);
- 		if (ret != 0)
- 			break;
- 		++i;
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -570,7 +570,8 @@ static int check_target(struct ip6t_entr
- 
- static int
- find_check_entry(struct ip6t_entry *e, struct net *net, const char *name,
--		 unsigned int size)
-+		 unsigned int size,
-+		 struct xt_percpu_counter_alloc_state *alloc_state)
- {
- 	struct xt_entry_target *t;
- 	struct xt_target *target;
-@@ -579,7 +580,7 @@ find_check_entry(struct ip6t_entry *e, s
- 	struct xt_mtchk_param mtpar;
- 	struct xt_entry_match *ematch;
- 
--	if (!xt_percpu_counter_alloc(&e->counters))
-+	if (!xt_percpu_counter_alloc(alloc_state, &e->counters))
- 		return -ENOMEM;
- 
- 	j = 0;
-@@ -713,6 +714,7 @@ static int
- translate_table(struct net *net, struct xt_table_info *newinfo, void *entry0,
- 		const struct ip6t_replace *repl)
- {
-+	struct xt_percpu_counter_alloc_state alloc_state = { 0 };
- 	struct ip6t_entry *iter;
- 	unsigned int *offsets;
- 	unsigned int i;
-@@ -772,7 +774,8 @@ translate_table(struct net *net, struct
- 	/* Finally, each sanity check must pass */
- 	i = 0;
- 	xt_entry_foreach(iter, entry0, newinfo->size) {
--		ret = find_check_entry(iter, net, repl->name, repl->size);
-+		ret = find_check_entry(iter, net, repl->name, repl->size,
-+				       &alloc_state);
- 		if (ret != 0)
- 			break;
- 		++i;
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -39,6 +39,8 @@ MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Harald Welte <laforge@netfilter.org>");
- MODULE_DESCRIPTION("{ip,ip6,arp,eb}_tables backend module");
- 
-+#define XT_PCPU_BLOCK_SIZE 4096
-+
- struct compat_delta {
- 	unsigned int offset; /* offset in kernel */
- 	int delta; /* delta in 32bit user land */
-@@ -1622,6 +1624,7 @@ EXPORT_SYMBOL_GPL(xt_proto_fini);
- /**
-  * xt_percpu_counter_alloc - allocate x_tables rule counter
-  *
-+ * @state: pointer to xt_percpu allocation state
-  * @counter: pointer to counter struct inside the ip(6)/arpt_entry struct
-  *
-  * On SMP, the packet counter [ ip(6)t_entry->counters.pcnt ] will then
-@@ -1630,21 +1633,34 @@ EXPORT_SYMBOL_GPL(xt_proto_fini);
-  * Rule evaluation needs to use xt_get_this_cpu_counter() helper
-  * to fetch the real percpu counter.
-  *
-+ * To speed up allocation and improve data locality, a 4kb block is
-+ * allocated.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -257,20 +257,22 @@ static inline void indirect_branch_predi
+ /*
+  * With retpoline, we must use IBRS to restrict branch prediction
+  * before calling into firmware.
 + *
-+ * xt_percpu_counter_alloc_state contains the base address of the
-+ * allocated page and the current sub-offset.
-+ *
-  * returns false on error.
++ * (Implemented as CPP macros due to header hell.)
   */
--bool xt_percpu_counter_alloc(struct xt_counters *counter)
-+bool xt_percpu_counter_alloc(struct xt_percpu_counter_alloc_state *state,
-+			     struct xt_counters *counter)
- {
--	void __percpu *res;
-+	BUILD_BUG_ON(XT_PCPU_BLOCK_SIZE < (sizeof(*counter) * 2));
+-static inline void firmware_restrict_branch_speculation_start(void)
+-{
+-	preempt_disable();
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+-			      X86_FEATURE_USE_IBRS_FW);
+-}
++#define firmware_restrict_branch_speculation_start()			\
++do {									\
++	preempt_disable();						\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
++			      X86_FEATURE_USE_IBRS_FW);			\
++} while (0)
  
- 	if (nr_cpu_ids <= 1)
- 		return true;
+-static inline void firmware_restrict_branch_speculation_end(void)
+-{
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+-			      X86_FEATURE_USE_IBRS_FW);
+-	preempt_enable();
+-}
++#define firmware_restrict_branch_speculation_end()			\
++do {									\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
++			      X86_FEATURE_USE_IBRS_FW);			\
++	preempt_enable();						\
++} while (0)
  
--	res = __alloc_percpu(sizeof(struct xt_counters),
--			     sizeof(struct xt_counters));
--	if (!res)
--		return false;
--
--	counter->pcnt = (__force unsigned long)res;
-+	if (!state->mem) {
-+		state->mem = __alloc_percpu(XT_PCPU_BLOCK_SIZE,
-+					    XT_PCPU_BLOCK_SIZE);
-+		if (!state->mem)
-+			return false;
-+	}
-+	counter->pcnt = (__force unsigned long)(state->mem + state->off);
-+	state->off += sizeof(*counter);
-+	if (state->off > (XT_PCPU_BLOCK_SIZE - sizeof(*counter))) {
-+		state->mem = NULL;
-+		state->off = 0;
-+	}
- 	return true;
- }
- EXPORT_SYMBOL_GPL(xt_percpu_counter_alloc);
-@@ -1653,7 +1669,7 @@ void xt_percpu_counter_free(struct xt_co
- {
- 	unsigned long pcnt = counters->pcnt;
+ #endif /* __ASSEMBLY__ */
  
--	if (nr_cpu_ids > 1)
-+	if (nr_cpu_ids > 1 && (pcnt & (XT_PCPU_BLOCK_SIZE - 1)) == 0)
- 		free_percpu((void __percpu *)pcnt);
- }
- EXPORT_SYMBOL_GPL(xt_percpu_counter_free);
