@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvLNd+nSanbmnGctL/3W7uEwoAHWZNpapugA8ItxdFdA+nez9uBWT1W520aB/ttnbeIjkL9
-ARC-Seal: i=1; a=rsa-sha256; t=1521214681; cv=none;
+X-Google-Smtp-Source: AG47ELsoTBcqFIrdDzbExdeWd7AwaZF1pwngyF1zCdQOk1a+/2JAmYf3RekROxUNkwE0AqYf/ybs
+ARC-Seal: i=1; a=rsa-sha256; t=1521214680; cv=none;
         d=google.com; s=arc-20160816;
-        b=nxdOqluCsDOzQok+wUE/fiR4rr4gMqjHtvUN2Ffh7YC2DJGIyM2uS3c9i4RSB4RW1x
-         V0P8tIZMVBND3DurMqXRP9TB6NOdsWLvsXcT9SQh2mZlOUHUIJMVXjbrZRIUV8M/CKH0
-         N4yeYO7BxYUd8bja736Nb+ijRXWx/KrYFTOlMpb3pp387Y17OMwJ02+KJHGYVshkV+uF
-         qN8u+ZjOKdoCm06GoNIBGr4FA66lYV2Hrh1arNl91wN1B9qTSX0Q/7Bd3TsRssk3gjaJ
-         D0n+xNiCPIrw6uLxMlbVzkuAZnF9JiEHZGMgt0sN5i1sZZx4+VTOPyGJjEuGEFLuzMgA
-         w6aQ==
+        b=OsoWkFhlDCMQlbhE6kgw/C0rL3Vr01XsohQ7j6Q5Xp4nmwY42I8xJdNSs+QqQtpf0Y
+         7xu//gFdIfBPLAJ4dOL9ULdqGPl3RHyghp3H0zX2ZSduNY/umtyVzuUT8DbUkQGDY1lm
+         QRIgd1JVboUj1v8sCeJ5cuAU4TbX9ZKl31xqVmXEtChY1JTaKzPqQ35h4D4Klnk+MF4P
+         KAfRpzFrxycwfBCcOCDg+x52DCC+C94tMfmWK8AA/LnHU479Dj9yC3G3yAUaDwJ3TLLA
+         2CYEyFJL28NS1ZXYhINw1uz/BHGfdTopiPBS5rkqL8OaAqSaJhsB0L+w/OgM/AkmQOqO
+         qIZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sd2xeFsndEGIMFn4UhPENaBfhk5yeaSmIWaTdQbZqmk=;
-        b=jERHWrV9sYtW1DzPnd/r1Ec4XL1Q8Cm52JKKmn1Eaf5OvujYYUCpc+5UKL5PZBvFLb
-         j/iL6qT3R0iEhngRJ1N/QkTyr/CH/Abq4pvQIXgfAMP/B8r47ZSm1q6gP2X89Xa8N5P4
-         V4D/ZGN54isLyPd4dBZtkml+kEKBMpoFP/mkce22ARUtbi3L2mIaYJM9W3ubF2wjkc2e
-         nPzRkSk//jmG3CS5oVM+KMOgiRcViczK+yoBWpZFftpw7iKzx3+4Jkkt6vrRwtlaD65a
-         MengPjNGtRxWGvGhAFyfm3QEOSCsCdfRN/FNRXfvP0nebziB3cdFtDKdm0i56aDuD+Jm
-         urVA==
+        bh=RL9b4wQ3bdODx9HNwcRTyWydaYDK7nV9jk8kQHbQ0/0=;
+        b=NCgpq4jyy8awlYkDUfeY/l6bC5FfGd0r4a5zd9FxLyOy0GZL+guFhEOf1yp5E4sQqG
+         5x/FUg0uLt+8svHgpZcHUA4eC5nH5RE+JV2RsxoEa8Dckss/W8BVvxWE25Iibxi4dF77
+         AIXng+3u64VjVmmRPF9jthdUKvhjSpVEYGUg+wnGcjIML4zC332iNcFFQ+OHQ6F1UYBv
+         OwK3dWi3LgEkOTvvE3OFc60ODCe+Zn+z+RVWkJhqxMWguFfwfrUNgP9L0nqvOQgY+FE+
+         WjXjVFXwao4O5oqQ2paaCVUH5QEN2nf+th40YalT0FbLjWulXB50OA6jSuCDwcSeiNU1
+         Qugg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
 	Hannes Reinecke <hare@suse.de>,
-	Christophe Varoqui <christophe.varoqui@opensvc.com>,
+	Takahiro Yasui <takahiro.yasui@hds.com>,
+	Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
 	SCSI ML <linux-scsi@vger.kernel.org>,
-	device-mapper development <dm-devel@redhat.com>,
 	Xose Vazquez Perez <xose.vazquez@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 084/109] scsi: dh: add new rdac devices
-Date: Fri, 16 Mar 2018 16:23:53 +0100
-Message-Id: <20180316152334.514320863@linuxfoundation.org>
+Subject: [PATCH 4.14 083/109] scsi: devinfo: apply to HP XP the same flags as Hitachi VSP
+Date: Fri, 16 Mar 2018 16:23:52 +0100
+Message-Id: <20180316152334.456044960@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -47,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109205834642512?=
-X-GMAIL-MSGID: =?utf-8?q?1595109205834642512?=
+X-GMAIL-THRID: =?utf-8?q?1595109204487036069?=
+X-GMAIL-MSGID: =?utf-8?q?1595109204487036069?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,46 +58,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Xose Vazquez Perez <xose.vazquez@gmail.com>
 
 
-[ Upstream commit 4b3aec2bbbce1c35f50e7475a9fd78d24b9ea4ea ]
+[ Upstream commit b369a0471503130cfc74f9f62071db97f48948c3 ]
 
-Add IBM 3542 and 3552, arrays: FAStT200 and FAStT500.
+Commit 56f3d383f37b ("scsi: scsi_devinfo: Add TRY_VPD_PAGES to HITACHI
+OPEN-V blacklist entry") modified some Hitachi entries:
 
-Add full STK OPENstorage family, arrays: 9176, D173, D178, D210, D220,
-D240 and D280.
+    HITACHI is always supporting VPD pages, even though it's claiming to
+    support SCSI Revision 3 only.
 
-Add STK BladeCtlr family, arrays: B210, B220, B240 and B280.
+The same should have been done also for HP-rebranded.
 
-These changes were done in multipath-tools time ago.
+[mkp: checkpatch and tweaked commit message]
 
-Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
 Cc: Hannes Reinecke <hare@suse.de>
-Cc: Christophe Varoqui <christophe.varoqui@opensvc.com>
+Cc: Takahiro Yasui <takahiro.yasui@hds.com>
+Cc: Matthias Rudolph <Matthias.Rudolph@hitachivantara.com>
 Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
 Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Cc: device-mapper development <dm-devel@redhat.com>
 Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_dh.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi_devinfo.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_dh.c
-+++ b/drivers/scsi/scsi_dh.c
-@@ -56,10 +56,13 @@ static const struct scsi_dh_blist scsi_d
- 	{"IBM", "1815",			"rdac", },
- 	{"IBM", "1818",			"rdac", },
- 	{"IBM", "3526",			"rdac", },
-+	{"IBM", "3542",			"rdac", },
-+	{"IBM", "3552",			"rdac", },
- 	{"SGI", "TP9",			"rdac", },
- 	{"SGI", "IS",			"rdac", },
--	{"STK", "OPENstorage D280",	"rdac", },
-+	{"STK", "OPENstorage",		"rdac", },
- 	{"STK", "FLEXLINE 380",		"rdac", },
-+	{"STK", "BladeCtlr",		"rdac", },
- 	{"SUN", "CSM",			"rdac", },
- 	{"SUN", "LCSM100",		"rdac", },
- 	{"SUN", "STK6580_6780",		"rdac", },
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -181,7 +181,7 @@ static struct {
+ 	{"HITACHI", "6586-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
+ 	{"HITACHI", "6588-", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
+ 	{"HP", "A6189A", NULL, BLIST_SPARSELUN | BLIST_LARGELUN},	/* HP VA7400 */
+-	{"HP", "OPEN-", "*", BLIST_REPORTLUN2}, /* HP XP Arrays */
++	{"HP", "OPEN-", "*", BLIST_REPORTLUN2 | BLIST_TRY_VPD_PAGES}, /* HP XP Arrays */
+ 	{"HP", "NetRAID-4M", NULL, BLIST_FORCELUN},
+ 	{"HP", "HSV100", NULL, BLIST_REPORTLUN2 | BLIST_NOSTARTONADD},
+ 	{"HP", "C1557A", NULL, BLIST_FORCELUN},
