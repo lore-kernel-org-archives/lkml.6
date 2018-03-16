@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3552852-1521221721-2-18299521441716662079
+X-Cyrus-Session-Id: sloti22d1t05-3555996-1521221718-2-1626063551768623138
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521221721; b=DWtUz5E3tgu887odkdnKTzZZq16J/NLgo4VjPLkS5pPPNPf
-    JD7DvuTKlfKcs53kylSP9Yfsut/oIO3BAMtLICHcFlbtd9ekVB00UXSPpicPZUFw
-    dlu6Fet5aSavMeQ9oRw9k44KsgI8qrMvUiR3GyhrpPHjRWtvVAIDwurLmNGLeNgf
-    LpRflilvXmyytxTLvWMaDjDcXSEetVZrm/HEbtmoaJtxzmlU9fHCb4ovr0p9d4LO
-    iJvbVMywrzx8zjmMNhFYOi3pPwrkxhbJY3c80WCZoUZclU/zUnA/+7j+sIu+Mvzc
-    fEi+jVeaa4hmm37noRn6vgeQNwWILLui10F3Ucw==
+    t=1521221717; b=G0EA4ya51Ei7GdpfFT5erQHko312TUZu765NsqGlJLBoaNH
+    JB/e446NjX8KppSrCV5USbJNpvX5qz+0b9X/Loodx/jyH13MU/FhtnweDZwoFnYI
+    gaa7oULWLpIrmDqftZmAU6ROwE+ZRRPSAEfjtdtSt5qVpcYZSKI4T1R0Jx0pB8q1
+    1cZt0GDfiiQBftJurOtAhdySV3cAp5CXZSxRnCudEOfhpWNRjjsBkhr2VMS9o0Y2
+    FKUCfPVfM6AGFCButXsWcy1anW3oVCMp9BOn1jfr4qWrm8oQh1ORg2SjENHb8XcP
+    i4Gr+C68Jr49NgqQyHerjkxZ6t7QS/UGIlikkvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521221721; bh=SfyaXvf0Y6jq+G8MytGKkuLGS7
-    ZtouXTeCR4oBdT+2U=; b=mMe49Zr9C7MbCqikScwD5NojNWI6Wp/4x86IAP/DGs
-    OGIlM8m9LpeyRxcS6oBHRyPsYwk2i78289d/IWRywk9+KCuvhzuIJx+fWfG98X+P
-    nBqrSQy0KDo5LJteqfAqxRD4Gf6yUJHJ36zQcCEL8zSOHu4jcidep4Uakjy8ccSY
-    xutS5jlr7kRDgO5d32+pEzkzAZN31vFHc/8Ab6LVq8YdXCe1YRvwoVl98NLbVb7N
-    nfzwjmwMW7wUjL4kgeYYX4cYWDjwicW4M05+9LAbLyd0DQcIUwZNhw5+mPeKrcpv
-    SGyccF5Vs7cX1PlzY4H3oCuOy/2+PqYbUI1sTozMYM1A==
+    :list-id; s=arctest; t=1521221717; bh=kkVYLl3ybmgwHvzrGsYeGhrKAJ
+    /7oQXiTCVgMLYtNtk=; b=o2DNN7tryAKUpmAwlsPDplEKJ0pITGEhPUglPKU28u
+    IICuZtlAlEId8avzTiPAWjc7jG8w1w4JnIq6Y9rnw/swXE4Caa+Pf71wV42xJGC2
+    8zT97y9fNXRGqhLYkPf234a22CzVmDhbjy2MUxZudPwon+tMpJbOsjxQG69vjEXd
+    zU+ptsfZToyMFU4fSRa85pTox17GIn6DjH0ksAJ75y5FaSmi0pjro5I22EP6HST8
+    6LvpdBSBq5d7avvK4N02DEi7yJq9ShBjwQbxwn6I6RBQRrPTBnuvij5xVsGq88Ss
+    7RCNM8JaDnM/RgQZbKV08eIPYv18W+xF419Z+1Lgfn5A==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,24 +49,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754152AbeCPP1B (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:27:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34030 "EHLO
+        id S1753033AbeCPRej (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 13:34:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754171AbeCPP1A (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:00 -0400
+        with ESMTP id S1754188AbeCPP1C (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Dave Airlie <airlied@redhat.com>,
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         Alex Deucher <alexander.deucher@amd.com>,
-        Tejun Heo <tj@kernel.org>, Lyude Paul <lyude@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 4.4 05/63] workqueue: Allow retrieval of current tasks work struct
-Date: Fri, 16 Mar 2018 16:22:37 +0100
-Message-Id: <20180316152300.616874568@linuxfoundation.org>
+        Lyude Paul <lyude@redhat.com>, Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH 4.4 06/63] drm: Allow determining if current task is output poll worker
+Date: Fri, 16 Mar 2018 16:22:38 +0100
+Message-Id: <20180316152300.761879094@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -86,65 +84,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit 27d4ee03078aba88c5e07dcc4917e8d01d046f38 upstream.
+commit 25c058ccaf2ebbc3e250ec1e199e161f91fe27d4 upstream.
 
-Introduce a helper to retrieve the current task's work struct if it is
-a workqueue worker.
+Introduce a helper to determine if the current task is an output poll
+worker.
 
 This allows us to fix a long-standing deadlock in several DRM drivers
-wherein the ->runtime_suspend callback waits for a specific worker to
-finish and that worker in turn calls a function which waits for runtime
-suspend to finish.  That function is invoked from multiple call sites
-and waiting for runtime suspend to finish is the correct thing to do
-except if it's executing in the context of the worker.
+wherein the ->runtime_suspend callback waits for the output poll worker
+to finish and the worker in turn calls a ->detect callback which waits
+for runtime suspend to finish.  The ->detect callback is invoked from
+multiple call sites and waiting for runtime suspend to finish is the
+correct thing to do except if it's executing in the context of the
+worker.
 
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+v2: Expand kerneldoc to specifically mention deadlock between
+    output poll worker and autosuspend worker as use case. (Lyude)
+
 Cc: Dave Airlie <airlied@redhat.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Tejun Heo <tj@kernel.org>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/2d8f603074131eb87e588d2b803a71765bd3a2fd.1518338788.git.lukas@wunner.de
+Link: https://patchwork.freedesktop.org/patch/msgid/3549ce32e7f1467102e70d3e9cbf70c46bfe108e.1518593424.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/workqueue.h |    1 +
- kernel/workqueue.c        |   16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ drivers/gpu/drm/drm_probe_helper.c |   20 ++++++++++++++++++++
+ include/drm/drm_crtc_helper.h      |    1 +
+ 2 files changed, 21 insertions(+)
 
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -451,6 +451,7 @@ extern bool cancel_delayed_work_sync(str
- 
- extern void workqueue_set_max_active(struct workqueue_struct *wq,
- 				     int max_active);
-+extern struct work_struct *current_work(void);
- extern bool current_is_workqueue_rescuer(void);
- extern bool workqueue_congested(int cpu, struct workqueue_struct *wq);
- extern unsigned int work_busy(struct work_struct *work);
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4048,6 +4048,22 @@ void workqueue_set_max_active(struct wor
- EXPORT_SYMBOL_GPL(workqueue_set_max_active);
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -412,6 +412,26 @@ out:
+ }
  
  /**
-+ * current_work - retrieve %current task's work struct
++ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
 + *
-+ * Determine if %current task is a workqueue worker and what it's working on.
-+ * Useful to find out the context that the %current task is running in.
++ * Determine if %current task is an output poll worker.  This can be used
++ * to select distinct code paths for output polling versus other contexts.
 + *
-+ * Return: work struct if %current task is a workqueue worker, %NULL otherwise.
++ * One use case is to avoid a deadlock between the output poll worker and
++ * the autosuspend worker wherein the latter waits for polling to finish
++ * upon calling drm_kms_helper_poll_disable(), while the former waits for
++ * runtime suspend to finish upon calling pm_runtime_get_sync() in a
++ * connector ->detect hook.
 + */
-+struct work_struct *current_work(void)
++bool drm_kms_helper_is_poll_worker(void)
 +{
-+	struct worker *worker = current_wq_worker();
++	struct work_struct *work = current_work();
 +
-+	return worker ? worker->current_work : NULL;
++	return work && work->func == output_poll_execute;
 +}
-+EXPORT_SYMBOL(current_work);
++EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
 +
 +/**
-  * current_is_workqueue_rescuer - is %current workqueue rescuer?
+  * drm_kms_helper_poll_disable - disable output polling
+  * @dev: drm_device
   *
-  * Determine whether %current is a workqueue rescuer.  Can be used from
+--- a/include/drm/drm_crtc_helper.h
++++ b/include/drm/drm_crtc_helper.h
+@@ -241,5 +241,6 @@ extern void drm_kms_helper_hotplug_event
+ extern void drm_kms_helper_poll_disable(struct drm_device *dev);
+ extern void drm_kms_helper_poll_enable(struct drm_device *dev);
+ extern void drm_kms_helper_poll_enable_locked(struct drm_device *dev);
++extern bool drm_kms_helper_is_poll_worker(void);
+ 
+ #endif
