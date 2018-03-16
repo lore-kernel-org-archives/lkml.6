@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELtPQbcq4y0z+EbkbOwsq4l5JYR+ERrbq4O/5VuKF7YqdGFK+Ld68JrFMG0tvF7K48ka8ugI
+X-Google-Smtp-Source: AG47ELsepMfCidgF+p8H5p6aKGL6enR1E7coEC2ZUQUfTNpQsQUdJc5xQ6nLqFpH31AmW0ZE5ezb
 ARC-Seal: i=1; a=rsa-sha256; t=1521228604; cv=none;
         d=google.com; s=arc-20160816;
-        b=XL0n2xjKhOYU4vrHGJUYSUTnFxSW+pEYNMeKWF5BD1Pm4i0210YM/Vz04oNBdsNSjA
-         +5q0SiOMzmIZFUWflp/s+AFGQcREs4Lsj5R7yucglcqLz5tN7S1V8OdHollbnbz96FB3
-         VUrnBSUgCfNbw0TEDBZh5iCBRfR1CGKhVV7ZAMgOnabBX6P8owr/4uzHwA/qIcblt61b
-         Sek5FV/gUqdafjdanVHWk44mkDcg/tWqMqLlB9RL+o6A3JBiTroTab8hyKKADBltBJkC
-         fZBHHyFcxaUUfz7wBERrIZJ63FexuhVwY8vcjdXbi1oFl3I994HrZdct0Bqo7IkNQFg+
-         Zibg==
+        b=HInC+T6AzujDiAa6AZ28tMlEVqPRDkvTIndDxP7VM0DZ0M0lh9avux4/G1qqTtGovE
+         DfBtWhXkuOt39m2eElWsdSUEsCbYrZKji8TTLGFVdvtYR6HLwf8sZZlLeY+I7HhKo7BQ
+         Z0IZrWpvtbxaUWbueOoXjENtvdVIIpzBPpJTAwL7dAH8fI6F/i23S2flOaslXRnDpsWo
+         i1VR9JFfWfbQSqC1TH+ijsGBG483FaPctXYppuTYWE8XaI4ERiehtoOGQwCcJuPSZpAO
+         ZPMD72gtj4SCRIqdXQirVsWXQqSrRt2WrXxxtZemit5IgTwEmqiGoG+V0A4w357WActn
+         X51A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=YezuAPxlJMP42Enbh8mmngV2fQl2fjWxXRax15qN5kA=;
-        b=jfFoyZ8pv81Sur+ZmNPEYHgnegkk3zgS6pvmVt61jtUdnAExetOEehLajkJeAjjVee
-         6Avp5enaIQTlJ2ZMdg1ByPHrscR28QOt5AkAKVOJMTei/obLT7hzKJCFN0aUOiRCggZu
-         1wXn/rlXSSizaX7xKXGQmjTS5NGmuClFkJ395tVyk4ZwrE6kZLMWQiHEtfexqXfDR2wB
-         WE3AsQSeTL4Vz06E9Oj/1HO/4XtEoJIIl8dst2XeAd+2urwGF581jS3Fkbeq+UOJeoSF
-         wsRK6evK+FSq0+Vbi9MLDzesS/+TRNBG0iY2BepY5Y3m4D0w8C0vTgE07TIpLF7/RqPI
-         zLZA==
+        bh=+Nm20vfM6DCcJoMA0+5AZwJaYVt5DbZUP88AFOdkYkk=;
+        b=EAE5kJ4wPnpLMoIdb1uzoj7t0V4+k7WQRYkm5uo283MnYUiEi2SFu15doERFPvZF9H
+         d74o9JhEzrXA8CIQrzVlgrwMldrgrnP0VhKVN1SFkEP3tfwNZKBFCpa6YUVQ9Ssbo8Ej
+         5CrgDIIM6+lPUsaYPGQ8I7e7GtNubY1bSLtwLSc1O99iVmeNx5vTKpAnZIP8yo4fLAB8
+         lnuxKRzbkyrp3YhP1McOowQM+sJM/WCHALesV3pW4HAZnTWB18K7symHSCLRQ4JRS7tS
+         zQDKoG/YtlBeY0B72zpwr4aZVDXga46VQo0ShzWs0iM8m45r5qWxpsHkfZcCQrK9fjYj
+         5GZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dNmKKgyu;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=gJtq8Xuj;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dNmKKgyu;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=gJtq8Xuj;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,148 +57,94 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 08/35] x86/entry/32: Leave the kernel via trampoline stack
-Date: Fri, 16 Mar 2018 20:29:26 +0100
-Message-Id: <1521228593-3820-9-git-send-email-joro@8bytes.org>
+Subject: [PATCH 12/35] x86/32: Use tss.sp1 as cpu_current_top_of_stack
+Date: Fri, 16 Mar 2018 20:29:30 +0100
+Message-Id: <1521228593-3820-13-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123805543481336?=
-X-GMAIL-MSGID: =?utf-8?q?1595123805543481336?=
+X-GMAIL-THRID: =?utf-8?q?1595123805550280769?=
+X-GMAIL-MSGID: =?utf-8?q?1595123805550280769?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Switch back to the trampoline stack before returning to
-userspace.
+Now that we store the task-stack in tss.sp1 we can also use
+it as cpu_current_top_of_stack. This unifies the handling
+with x86-64.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 79 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 77 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/processor.h   | 4 ----
+ arch/x86/include/asm/thread_info.h | 2 --
+ arch/x86/kernel/cpu/common.c       | 4 ----
+ arch/x86/kernel/process_32.c       | 6 ------
+ 4 files changed, 16 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 88aefb9..73cde25 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -347,6 +347,60 @@
- .endm
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 513f960..b7c238e 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -374,12 +374,8 @@ DECLARE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw);
+ #define __KERNEL_TSS_LIMIT	\
+ 	(IO_BITMAP_OFFSET + IO_BITMAP_BYTES + sizeof(unsigned long) - 1)
+ 
+-#ifdef CONFIG_X86_32
+-DECLARE_PER_CPU(unsigned long, cpu_current_top_of_stack);
+-#else
+ /* The RO copy can't be accessed with this_cpu_xyz(), so use the RW copy. */
+ #define cpu_current_top_of_stack cpu_tss_rw.x86_tss.sp1
+-#endif
  
  /*
-+ * Switch back from the kernel stack to the entry stack.
-+ *
-+ * The %esp register must point to pt_regs on the task stack. It will
-+ * first calculate the size of the stack-frame to copy, depending on
-+ * whether we return to VM86 mode or not. With that it uses 'rep movsl'
-+ * to copy the contents of the stack over to the entry stack.
-+ *
-+ * We must be very careful here, as we can't trust the contents of the
-+ * task-stack once we switched to the entry-stack. When an NMI happens
-+ * while on the entry-stack, the NMI handler will switch back to the top
-+ * of the task stack, overwriting our stack-frame we are about to copy.
-+ * Therefore we switch the stack only after everything is copied over.
-+ */
-+.macro SWITCH_TO_ENTRY_STACK
-+
-+	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-+
-+	/* Bytes to copy */
-+	movl	$PTREGS_SIZE, %ecx
-+
-+#ifdef CONFIG_VM86
-+	testl	$(X86_EFLAGS_VM), PT_EFLAGS(%esp)
-+	jz	.Lcopy_pt_regs_\@
-+
-+	/* Additional 4 registers to copy when returning to VM86 mode */
-+	addl    $(4 * 4), %ecx
-+
-+.Lcopy_pt_regs_\@:
-+#endif
-+
-+	/* Initialize source and destination for movsl */
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+	subl	%ecx, %edi
-+	movl	%esp, %esi
-+
-+	/* Save future stack pointer in %ebx */
-+	movl	%edi, %ebx
-+
-+	/* Copy over the stack-frame */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/*
-+	 * Switch to entry-stack - needs to happen after everything is
-+	 * copied because the NMI handler will overwrite the task-stack
-+	 * when on entry-stack
-+	 */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
-+.endm
-+
-+/*
-  * %eax: prev task
-  * %edx: next task
+  * Save the original ist values for checking stack pointers during debugging
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index eda3b68..ea7e118 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -207,9 +207,7 @@ static inline int arch_within_stack_frames(const void * const stack,
+ 
+ #else /* !__ASSEMBLY__ */
+ 
+-#ifdef CONFIG_X86_64
+ # define cpu_current_top_of_stack (cpu_tss_rw + TSS_sp1)
+-#endif
+ 
+ #endif
+ 
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index a0ed348..de1c595 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1503,10 +1503,6 @@ EXPORT_PER_CPU_SYMBOL(__preempt_count);
+  * the top of the kernel stack.  Use an extra percpu variable to track the
+  * top of the kernel stack directly.
   */
-@@ -587,25 +641,45 @@ ENTRY(entry_SYSENTER_32)
- 
- /* Opportunistic SYSEXIT */
- 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
-+
-+	/*
-+	 * Setup entry stack - we keep the pointer in %eax and do the
-+	 * switch after almost all user-state is restored.
-+	 */
-+
-+	/* Load entry stack pointer and allocate frame for eflags/eax */ 
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %eax
-+	subl	$(2*4), %eax
-+
-+	/* Copy eflags and eax to entry stack */
-+	movl	PT_EFLAGS(%esp), %edi
-+	movl	PT_EAX(%esp), %esi
-+	movl	%edi, (%eax)
-+	movl	%esi, 4(%eax)
-+
-+	/* Restore user registers and segments */
- 	movl	PT_EIP(%esp), %edx	/* pt_regs->ip */
- 	movl	PT_OLDESP(%esp), %ecx	/* pt_regs->sp */
- 1:	mov	PT_FS(%esp), %fs
- 	PTGS_TO_GS
-+
- 	popl	%ebx			/* pt_regs->bx */
- 	addl	$2*4, %esp		/* skip pt_regs->cx and pt_regs->dx */
- 	popl	%esi			/* pt_regs->si */
- 	popl	%edi			/* pt_regs->di */
- 	popl	%ebp			/* pt_regs->bp */
--	popl	%eax			/* pt_regs->ax */
-+
-+	/* Switch to entry stack */
-+	movl	%eax, %esp
+-DEFINE_PER_CPU(unsigned long, cpu_current_top_of_stack) =
+-	(unsigned long)&init_thread_union + THREAD_SIZE;
+-EXPORT_PER_CPU_SYMBOL(cpu_current_top_of_stack);
+-
+ #ifdef CONFIG_CC_STACKPROTECTOR
+ DEFINE_PER_CPU_ALIGNED(struct stack_canary, stack_canary);
+ #endif
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 3f3a8c6..8c29fd5 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -290,12 +290,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	update_sp0(next_p);
+ 	refresh_sysenter_cs(next);
+ 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+-	/*
+-	 * TODO: Find a way to let cpu_current_top_of_stack point to
+-	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
+-	 * iret exceptions.
+-	 */
+-	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
  
  	/*
- 	 * Restore all flags except IF. (We restore IF separately because
- 	 * STI gives a one-instruction window in which we won't be interrupted,
- 	 * whereas POPF does not.)
- 	 */
--	addl	$PT_EFLAGS-PT_DS, %esp	/* point esp at pt_regs->flags */
- 	btr	$X86_EFLAGS_IF_BIT, (%esp)
- 	popfl
-+	popl	%eax
- 
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
-@@ -674,6 +748,7 @@ ENTRY(entry_INT80_32)
- 
- restore_all:
- 	TRACE_IRQS_IRET
-+	SWITCH_TO_ENTRY_STACK
- .Lrestore_all_notrace:
- 	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
+ 	 * Restore %gs if needed (which is common)
 -- 
 2.7.4
