@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215145-2-10173470818204610110
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521215144; b=l+5WBq+qQW0tcZk7aooMCBaP65kWlVjGbfP0Gfl2uabrc4p
-    u8pxGXd44ibWRMI2lasH3sy32EU2A1hXUc7F4VwZg+7jzFksS+fJKMTrzjYrKItq
-    UtwWVjabGPmo+/eGQ+ABZIWtvAL44/yhNtCdbynHLXb2M0SPlj2wgsFV4NGpkoue
-    xSxb1BxII7uUmh7ogGk7qP/My3+rkJH6oeRbcSzji/lyku5fwDK0oTnVtavlizOH
-    lOgs28ICi5oGGu7ARdtzdpzIgFrU++2ahUdAMH2eassNKfOG5oid8xPlIqr3Zdqj
-    lBNr1OhxcbAYXP/eHbbMvsUFJS8gUYf56pDbt8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521215144; bh=lsPXSWtRUhZKTN5zQ/IHDlRoSM
-    P3OQemdcbo/Y2e0/A=; b=SVzRfqlKjfnESziZ1IbSclS7NEIr7MsRMQ6sZdLwIE
-    UH0dam2GDrgvEwTRDaKeU0ILNlmehMDkTZCbvZFUVMoLLRXE62tz7oyOzdnKJTxe
-    /9EfOCFEmVXCnS0qNJ1W51vKMqPGsaqf8/M1oO087X5d9tqlxWpeZNYcCHA29GwV
-    qh4CFQVVsEQK1TFJewcnFEKu9N4LpY1X+EnDA+GxaPNsWzlGdge/glmjjWmAdCZ/
-    /YK+loHtZI+egwg3JFhfVjsKvBGtppOL/R1Fqox13CHuoTT9NeZmE8/Lw6DtJIPQ
-    IKbjlXjB/OfOLApf18+8Rnwg3vRNm+a3D7K77aNBexQw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeCPPp0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:45:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46336 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965548AbeCPPpY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:45:24 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELt/jVIJLnwlqQY/mUR3id0SwEp1KQdXKMxjzwLvn/ppJ+Bg2LF7cV4snthzRedwrXcZicxL
+ARC-Seal: i=1; a=rsa-sha256; t=1521215107; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Lv1vVCU4NokrFQBc0h1DX7HZi+A13VCadqJthPqfz4d2Kfdf8a2hC4MW0CPbWjuNP+
+         07/VZpI9YLvMkxdZmEIzaLg8QaGR79eDKcfVt7FGUq+DTuoUq8K8GFlzg22zO2ocIN/J
+         cocqDqiKeAD8zdF3xcZc/eVba1lDnb8ej57mZ/3WXHJQiKCnRz4bE7xlH8pBa1BGizNl
+         gZRxapWp2fbYd/vdLf6aonYzMhj2iP/nZ9TR8ROhlB8exqddSebAkrCi5T5widWBJVsq
+         W9WGG8sO5wLjr3pRE7zoE8+wnY0jM/GCHFFtytgT3bkEq8cjsmbbpOwSY2zgkt2x9ZIL
+         zXJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=WJQe1C6vtN+fkvgqLiaA60i/plVQMzWbomF8AEQqZ+k=;
+        b=FYA0aMjxB5vEk5VXGiyG6/vM8MzItY9Mspmw83h+TToEx20jRh1xBIF70z8WFVnOAw
+         zn6LRt21pLvDqs6CdkWBn47rZ25rEdO4XB27/UiRiWSa0509x9L7xsECyCk6Epd3f2jz
+         6OSMWqphzV3mpnJPyiEg7eR7OX/ppuMHZN+7pvxOtWSZu5fY1cDT0BhyZ6wDbkFuGHhL
+         B6/qOHk9oG6UZuQqAQ0tw0YgNjuZq7PQjAe+IdojfUT+8eeoEsHnpvsOAuEzoN1vs0Sg
+         9oF/OZXzpV/pnzxxzy0Lwe2CqW0GSkqRx5DwNpvPDoA+DLgogXhzDK+P7NGPV9vswFCF
+         t84A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 114/128] arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
-Date: Fri, 16 Mar 2018 16:24:15 +0100
-Message-Id: <20180316152342.185758068@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 118/128] crypto: caam/qi - use correct print specifier for size_t
+Date: Fri, 16 Mar 2018 16:24:19 +0100
+Message-Id: <20180316152342.344342092@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595109231762934341?=
+X-GMAIL-MSGID: =?utf-8?q?1595109652847411945?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,41 +50,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: "Horia Geantă" <horia.geanta@nxp.com>
 
 
-[ Upstream commit f5bbcd533a9d1af97b8a0862a421bb8455f1bf6d ]
+[ Upstream commit 9db09e3bad65393dc23b0279beb7f3754d77065c ]
 
-Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
-This allows the driver to reset the PHY during probe and after system
-resume.
+Fix below warnings on ARMv7 by using %zu for printing size_t values:
 
-This fixes Ethernet operation after resume from s2ram on Salvator-XS,
-where the enable pin of the regulator providing PHY power is connected
-to PRESETn, and PSCI powers down the SoC during system suspend.
+drivers/crypto/caam/caamalg_qi.c: In function aead_edesc_alloc:
+drivers/crypto/caam/caamalg_qi.c:417:17: warning: format %lu expects argument of type long unsigned int, but argument 4 has type unsigned int [-Wformat=]
+   sizeof(struct qm_sg_entry))
+                 ^
+drivers/crypto/caam/caamalg_qi.c:672:16: note: in expansion of macro CAAM_QI_MAX_AEAD_SG
+    qm_sg_ents, CAAM_QI_MAX_AEAD_SG);
+                ^
+drivers/crypto/caam/caamalg_qi.c: In function ablkcipher_edesc_alloc:
+drivers/crypto/caam/caamalg_qi.c:440:17: warning: format %lu expects argument of type long unsigned int, but argument 4 has type unsigned int [-Wformat=]
+   sizeof(struct qm_sg_entry))
+                 ^
+drivers/crypto/caam/caamalg_qi.c:909:16: note: in expansion of macro CAAM_QI_MAX_ABLKCIPHER_SG
+    qm_sg_ents, CAAM_QI_MAX_ABLKCIPHER_SG);
+                ^
+drivers/crypto/caam/caamalg_qi.c: In function ablkcipher_giv_edesc_alloc:
+drivers/crypto/caam/caamalg_qi.c:440:17: warning: format %lu expects argument of type long unsigned int, but argument 4 has type unsigned int [-Wformat=]
+   sizeof(struct qm_sg_entry))
+                 ^
+drivers/crypto/caam/caamalg_qi.c:1062:16: note: in expansion of macro CAAM_QI_MAX_ABLKCIPHER_SG
+    qm_sg_ents, CAAM_QI_MAX_ABLKCIPHER_SG);
+                ^
 
-On Salvator-X, the enable pin is always pulled high, but the driver may
-still need to reset the PHY if this wasn't done by the bootloader
-before.
-
-Inspired by patches in the BSP for the individual Salvator-X/XS boards
-by Kazuya Mizuguchi.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: eb9ba37dc15a ("crypto: caam/qi - handle large number of S/Gs case")
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/caam/caamalg_qi.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -263,6 +263,7 @@
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
- 	};
- };
+--- a/drivers/crypto/caam/caamalg_qi.c
++++ b/drivers/crypto/caam/caamalg_qi.c
+@@ -668,7 +668,7 @@ static struct aead_edesc *aead_edesc_all
+ 	qm_sg_ents = 1 + !!ivsize + mapped_src_nents +
+ 		     (mapped_dst_nents > 1 ? mapped_dst_nents : 0);
+ 	if (unlikely(qm_sg_ents > CAAM_QI_MAX_AEAD_SG)) {
+-		dev_err(qidev, "Insufficient S/G entries: %d > %lu\n",
++		dev_err(qidev, "Insufficient S/G entries: %d > %zu\n",
+ 			qm_sg_ents, CAAM_QI_MAX_AEAD_SG);
+ 		caam_unmap(qidev, req->src, req->dst, src_nents, dst_nents,
+ 			   iv_dma, ivsize, op_type, 0, 0);
+@@ -905,7 +905,7 @@ static struct ablkcipher_edesc *ablkciph
  
+ 	qm_sg_ents += mapped_dst_nents > 1 ? mapped_dst_nents : 0;
+ 	if (unlikely(qm_sg_ents > CAAM_QI_MAX_ABLKCIPHER_SG)) {
+-		dev_err(qidev, "Insufficient S/G entries: %d > %lu\n",
++		dev_err(qidev, "Insufficient S/G entries: %d > %zu\n",
+ 			qm_sg_ents, CAAM_QI_MAX_ABLKCIPHER_SG);
+ 		caam_unmap(qidev, req->src, req->dst, src_nents, dst_nents,
+ 			   iv_dma, ivsize, op_type, 0, 0);
+@@ -1058,7 +1058,7 @@ static struct ablkcipher_edesc *ablkciph
+ 	}
+ 
+ 	if (unlikely(qm_sg_ents > CAAM_QI_MAX_ABLKCIPHER_SG)) {
+-		dev_err(qidev, "Insufficient S/G entries: %d > %lu\n",
++		dev_err(qidev, "Insufficient S/G entries: %d > %zu\n",
+ 			qm_sg_ents, CAAM_QI_MAX_ABLKCIPHER_SG);
+ 		caam_unmap(qidev, req->src, req->dst, src_nents, dst_nents,
+ 			   iv_dma, ivsize, GIVENCRYPT, 0, 0);
