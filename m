@@ -1,141 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932994AbeCPDVV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 23:21:21 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:23931 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbeCPDVT (ORCPT
+        id S1752833AbeCPD2E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 23:28:04 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36190 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752378AbeCPD2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 23:21:19 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G3Ku2k020621
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v3 7/7] kbuild: link vmlinux only once for CONFIG_TRIM_UNUSED_KSYMS
-Date: Fri, 16 Mar 2018 12:20:49 +0900
-Message-Id: <1521170449-31194-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Mar 2018 23:28:02 -0400
+X-Google-Smtp-Source: AG47ELso9QmFVm+Nm7UiJNdsAuzArXx7l3SnunoN8WzYDkaTuNmUV/GIahpOdtFvn7SrN1+KAhgSyw7dq3+jjA9B0pQ=
+MIME-Version: 1.0
+In-Reply-To: <201803161102.KN3yR10g%fengguang.wu@intel.com>
+References: <20180313214327.37475-2-joelaf@google.com> <201803161102.KN3yR10g%fengguang.wu@intel.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Thu, 15 Mar 2018 20:28:01 -0700
+Message-ID: <CAJWu+ooJ7yDRxHfKUiUJHfurJ+oXhzFP4MCFGm71BD=KuMdNpA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] tracing: Improve design of preemptirq tracepoints
+ and its users
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_TRIM_UNUSED_KSYMS is enabled and the kernel is built from
-a pristine state, the vmlinux is linked twice.
+On Thu, Mar 15, 2018 at 8:13 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Joel,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc5 next-20180314]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes/tracing-Improve-design-of-preemptirq-tracepoints-and-its-users/20180316-012211
+> config: i386-randconfig-a1-201810 (attached as .config)
+> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>    kernel/locking/lockdep.c: In function 'lockdep_init':
+>>> kernel/locking/lockdep.c:4325:2: error: implicit declaration of function 'register_trace_irq_disable' [-Werror=implicit-function-declaration]
+>      register_trace_irq_disable(lockdep_hardirqs_off, NULL);
+>      ^
+>>> kernel/locking/lockdep.c:4326:2: error: implicit declaration of function 'register_trace_irq_enable' [-Werror=implicit-function-declaration]
+>      register_trace_irq_enable(lockdep_hardirqs_on, NULL);
+>      ^
+>    cc1: some warnings being treated as errors
+>
+> vim +/register_trace_irq_disable +4325 kernel/locking/lockdep.c
 
-[1] A user runs "make"
+Can't reproduce this. Kbuild bot might be testing old patches. With
+the latest patches and the config kbuild shared, I don't get any
+errors.
 
-[2] First build with empty autoksyms.h
+thanks,
 
-[3] adjust_autoksyms.sh updates autoksyms.h and recurses "make vmlinux"
-
-  --------(begin sub-make)--------
-  [4] Second build with new autoksyms.h
-
-  [5] link-vmlinux.sh is invoked because "vmlinux" is missing
-  ---------(end sub-make)---------
-
-[6] link-vmlinux.sh is invoked again despite "vmlinux" is up-to-date.
-
-The reason of [6] is probably because Make already decided to update
-"vmlinux" at the time of [2] because "vmlinux" was missing when Make
-built up the dependency graph.
-
-Because 'if_changed' is implemented based on '$?', this issue can be
-narrowed down to how Make handles '$?'.
-
-You can test it with the following simple code:
-
-[Test Makefile]
-  A: B
-          @echo newer prerequisite: $?
-          cp B A
-
-  B: C
-          cp C B
-          touch A
-
-[Result]
-  $ rm -f A B
-  $ touch C
-  $ make
-  cp C B
-  touch A
-  newer prerequisite: B
-  cp B A
-
-Here, 'A' has been touched in the recipe of 'B'.  So, the dependency
-'A: B' has already been met before the recipe of 'A' is executed.
-However, Make does not notice the fact that the recipe of 'B' also
-updates 'A' as a side-effect.
-
-The situation is similar in this case; 'vmlinux' has actually been
-updated in the 'vmlinux_prereq' target.  Make cannot predict this, so
-judges 'vmlinux' is old.
-
-link-vmlinus.sh is costly, so it is better to not run it when unneeded.
-Split CONFIG_TRIM_UNUSED_KSYMS recursion to a dedicated target.
-
-The reason of commit 2441e78b1919 ("kbuild: better abstract vmlinux
-sequential prerequisites") was to cater to CONFIG_BUILD_DOCSRC, but
-it was later removed by commit 184892925118 ("samples: move blackfin
-gptimers-example from Documentation").
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v3:
-  - autoksyms_recursive should be surrounded by
-    ifdef CONFIG_TRIM_UNUSED_KSYMS
-
-Changes in v2:
-  - Discard my wrong change to adjust_autoksyms.sh
-  - Add more commit log to explain how Make is working
-
- Makefile | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 5fee703..ff62b8e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -998,17 +998,9 @@ export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Doc
- 
- vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
- 
--# Include targets which we want to execute sequentially if the rest of the
--# kernel build went well. If CONFIG_TRIM_UNUSED_KSYMS is set, this might be
--# evaluated more than once.
--PHONY += vmlinux_prereq
--vmlinux_prereq: $(vmlinux-deps) FORCE
--ifdef CONFIG_HEADERS_CHECK
--	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
--endif
--ifdef CONFIG_GDB_SCRIPTS
--	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
--endif
-+# Recurse until adjust_autoksyms.sh is satisfied
-+PHONY += autoksyms_recursive
-+autoksyms_recursive: $(vmlinux-deps)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
- 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
- 	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
-@@ -1034,7 +1026,13 @@ cmd_link-vmlinux =                                                 \
- 	$(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) ;    \
- 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
- 
--vmlinux: scripts/link-vmlinux.sh vmlinux_prereq $(vmlinux-deps) FORCE
-+vmlinux: scripts/link-vmlinux.sh autoksyms_recursive $(vmlinux-deps) FORCE
-+ifdef CONFIG_HEADERS_CHECK
-+	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
-+endif
-+ifdef CONFIG_GDB_SCRIPTS
-+	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
-+endif
- 	+$(call if_changed,link-vmlinux)
- 
- # Build samples along the rest of the kernel
--- 
-2.7.4
+- Joel
