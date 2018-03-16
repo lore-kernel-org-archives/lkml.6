@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtMGuEI6pwveaKpCmvZ6p5M7DgFtwXk7i5NcicdcLz8g7wzY1C1UUTSQtOqg+xgjLg61Sy2
-ARC-Seal: i=1; a=rsa-sha256; t=1521214777; cv=none;
+X-Google-Smtp-Source: AG47ELv2BlrNAQXVlGRMAOEl6sIyu0UpmeNEtrKdu7sUrT4X1SNkwFMl09xzvpEb1dof3SV3zpr0
+ARC-Seal: i=1; a=rsa-sha256; t=1521214774; cv=none;
         d=google.com; s=arc-20160816;
-        b=TLd9X4KStMvwnkJmkIg5CK+rwOfRnWK7Ed7ZhzjM08V3Ta2k9RpRbC/WcofinMf93D
-         YzhMF+ZopkZhec8hRCj0J1bSOQ31AK1egvri5vZ3FqNySTCv9ewIjqwApKujxKyKz1p5
-         FXUANja3A3xPlql/2sKD/9nP6G8C76+N15NWomqiXcSaUbw0+aZL8Z+gvHpigH69vj3z
-         LsOuTd18b/iit83MZtktEr7jua+7SNh+WjAzkIYknZKGn9Wyjw1MytmXc6fo3o9a7JRb
-         vllo/BLaBDKGPM5wDKrMdFLXvLA0gVKIjmb6BDjXKs6JN/9KKMfE/StDtkZPgA6CZiwV
-         Bn6A==
+        b=gDRGxANczh611ReY3SyK/oEuYO+CFRnUxQtYvSMEx51jWulBJeDIokW1itE8b1BQvB
+         bkxG9L1hNx+fAKRt8SNzQloGQdjqZCMSoDSsS9kXH6WT0DyPTYMC40qWIj+Za+ErnyfT
+         p0EvcJ+OVO6xjsGkBgAjkgFVJykIjlPFcg+bxXHe1wd5o5v/xPE+mZUjDBnwtEN2HwlB
+         0cv5M7mEL5kQE0tNGV7Oq+EwJdkPnMCJzhThr3fzxTmj64rIhKM1KVjcXZiiqjXmbFM7
+         cicRessQ5IIAevVtPbvo23Y9XZOsAOhvzWuYFrzzvBVjdNiMQIScOFrqc8mBsKomFzFW
+         +lzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=no+fIsZ82Drx+o2muN/Bc7yiWhpsOrpyBGz9x3ooDso=;
-        b=E5GYH00mJTn79jYEJcB/vxdE1IqpTWW7nKkyeGalPVlCgRKCiDnb6fUf94vy1SxfLO
-         EHPc1XfUlzp15MsN6NQuE1s0M8bCGduksRldZrLE0JvrGwVLNMaE/cnWQ9sbvtZdQWwL
-         jAclJoPFQ6ZRSQh/vEDaWJ42D0BzxKSDI+2/4sfoPIKsQO3Q14lxPKkU857SRmPBs57K
-         xdiTIxJ8OC3qZzXfhNMM7oI1gKu3Hv90HV9rhDiyBA4LBIQLn2H/3YiY8lEOdow0NB5f
-         YameZLIFWYdXZzzBYJgRIiDwkuWaHx3Bfk9V9V9jnL+xDOSZ4MVkfb1jMpDmKMSgx/kk
-         Vs4Q==
+        bh=KdxdUt5yJSQU5STBcsKGLSb2KRg4e7wKMPZC+v1zgGQ=;
+        b=rzGJXnUgkB5UXqrKBZ0ydKyZiUqIzeFWovzLyybZqIZtSWJbUmwaUTmqi7hl8sI2qM
+         SB0IXbLXiaAu72w9TtIqLg7TF/I7tVX1DdO9XXd2XJIbaJbOi96Mi/e9Vkobgei6CYa8
+         GyhXW4vJOLdKxf+CKcaMOa2bdDtBx6PPsVFuYNu+C2lIOg/eaAxF/KUZcxlsEJGzI7Ko
+         10hiklXA3ePrAraXIm9mUN5/FZGlDIgvUbMXF2CjrWb3lPgbDTqj42dReQGpIXvsapok
+         pze1boSLZj33WnmPcL42y75tOwauubIEXtfusUTKLC3BCTAczUXYJOFoRpuGjxlpYAh2
+         bfIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
-	Krzysztof Opasiak <k.opasiak@samsung.com>
-Subject: [PATCH 4.15 016/128] usbip: vudc: fix null pointer dereference on udc->lock
-Date: Fri, 16 Mar 2018 16:22:37 +0100
-Message-Id: <20180316152337.208011989@linuxfoundation.org>
+	Teijo Kinnunen <teijo.kinnunen@code-q.fi>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.15 015/128] USB: storage: Add JMicron bridge 152d:2567 to unusual_devs.h
+Date: Fri, 16 Mar 2018 16:22:36 +0100
+Message-Id: <20180316152337.144888382@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108911326820981?=
-X-GMAIL-MSGID: =?utf-8?q?1595109306602039578?=
+X-GMAIL-THRID: =?utf-8?q?1595108644866552778?=
+X-GMAIL-MSGID: =?utf-8?q?1595109303799528716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
 
-commit df3334c223a033f562645712e832ca4cbb326bbf upstream.
+commit 5126a504b63d82785eaece3a9c30c660b313785a upstream.
 
-Currently the driver attempts to spin lock on udc->lock before a NULL
-pointer check is performed on udc, hence there is a potential null
-pointer dereference on udc->lock.  Fix this by moving the null check
-on udc before the lock occurs.
+This USB-SATA controller seems to be similar with JMicron bridge
+152d:2566 already on the list. Adding it here fixes "Invalid
+field in cdb" errors.
 
-Fixes: ea6873a45a22 ("usbip: vudc: Add SysFS infrastructure for VUDC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
-Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Teijo Kinnunen <teijo.kinnunen@code-q.fi>
+Cc: stable@vger.kernel.org
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vudc_sysfs.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/storage/unusual_devs.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/usb/usbip/vudc_sysfs.c
-+++ b/drivers/usb/usbip/vudc_sysfs.c
-@@ -105,10 +105,14 @@ static ssize_t store_sockfd(struct devic
- 	if (rv != 0)
- 		return -EINVAL;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2124,6 +2124,13 @@ UNUSUAL_DEV(  0x152d, 0x2566, 0x0114, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_BROKEN_FUA ),
  
-+	if (!udc) {
-+		dev_err(dev, "no device");
-+		return -ENODEV;
-+	}
- 	spin_lock_irqsave(&udc->lock, flags);
- 	/* Don't export what we don't have */
--	if (!udc || !udc->driver || !udc->pullup) {
--		dev_err(dev, "no device or gadget not bound");
-+	if (!udc->driver || !udc->pullup) {
-+		dev_err(dev, "gadget not bound");
- 		ret = -ENODEV;
- 		goto unlock;
- 	}
++/* Reported by Teijo Kinnunen <teijo.kinnunen@code-q.fi> */
++UNUSUAL_DEV(  0x152d, 0x2567, 0x0117, 0x0117,
++		"JMicron",
++		"USB to ATA/ATAPI Bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BROKEN_FUA ),
++
+ /* Reported-by George Cherian <george.cherian@cavium.com> */
+ UNUSUAL_DEV(0x152d, 0x9561, 0x0000, 0x9999,
+ 		"JMicron",
