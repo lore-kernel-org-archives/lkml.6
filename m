@@ -1,38 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeCPW5d convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 18:57:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
+        id S1752654AbeCPXEn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 19:04:43 -0400
+Received: from linode.aoot.com ([69.164.194.13]:54456 "EHLO linode.aoot.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751454AbeCPW5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 18:57:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375A620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1750915AbeCPXEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 19:04:42 -0400
+From: "Steve Wise" <swise@opengridcomputing.com>
+To: "'Jason Gunthorpe'" <jgg@ziepe.ca>
+Cc: "'Sinan Kaya'" <okaya@codeaurora.org>, <netdev@vger.kernel.org>,
+        <timur@codeaurora.org>, <sulrich@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org> <1521216991-28706-19-git-send-email-okaya@codeaurora.org> <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com> <20180316221347.GA958@ziepe.ca>
+In-Reply-To: <20180316221347.GA958@ziepe.ca>
+Subject: RE: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 16 Mar 2018 18:04:40 -0500
+Message-ID: <004401d3bd7b$2a2e70b0$7e8b5210$@opengridcomputing.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180220151531.3379003-1-arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180220151531.3379003-1-arnd@arndb.de>
-Message-ID: <152124105054.242365.69354305607503548@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: hisilicon: mark wdt_mux_p[] as const
-Date: Fri, 16 Mar 2018 15:57:30 -0700
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE6mTD+J/QLr4bfMbM+wOAMMt4Q1AI7R6heAYll0hoCtp09oKTR6VDQ
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Arnd Bergmann (2018-02-20 07:15:21)
-> The symbol is in the __initconst section but not marked init, which
-> caused a warning when building with LTO.
 > 
-> This makes it 'const' as was obviously intended.
+> On Fri, Mar 16, 2018 at 04:05:10PM -0500, Steve Wise wrote:
+> > > Code includes wmb() followed by writel(). writel() already has a
+barrier
+> > on
+> > > some architectures like arm64.
+> > >
+> > > This ends up CPU observing two barriers back to back before executing
+> the
+> > > register write.
+> > >
+> > > Since code already has an explicit barrier call, changing writel() to
+> > > writel_relaxed().
+> > >
+> > > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> >
+> > NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is
+just
+> > writeX().
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> ?? Why is changing writex() to writeX() a NAK then?
 
-Applied to clk-next
+Because I want it correct for PPC as well.
+
+> 
+> > I was just looking at this with Chelsio developers, and they said the
+> > writeX() should be replaced with __raw_writeX(), not writeX_relaxed(),
+to
+> > get rid of the extra barrier for all architectures.
+> 
+> That doesn't seem semanticaly sane.
+> 
+> __raw_writeX() should not appear in driver code, IMHO. Only the arch
+> code can know what the exact semantics of that accessor are..
+> 
+> If ppc can't use writel_relaxed to optimize then we probably need yet
+> another io accessor semantic defined :(
+
+
+Anybody understand why the PPC implementation of writeX_relaxed() isn't
+relaxed?
+
+
+Steve.
