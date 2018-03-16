@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs9Dw73VZ6Kh92Hr/DV8jU/WMHlHZ7ZcoGB6DvVBBx7GsFWZGXN51qizCMGduOnwFXvnhto
-ARC-Seal: i=1; a=rsa-sha256; t=1521214536; cv=none;
+X-Google-Smtp-Source: AG47ELtsev8fsuq7qDHXQEo6dL4F6Xg2XwrSYY5jHXm0dwoGwX/ozF8VddYjPR796rpdjHoSu0DR
+ARC-Seal: i=1; a=rsa-sha256; t=1521214533; cv=none;
         d=google.com; s=arc-20160816;
-        b=sXMfDa6GF/C7CPh2WNGfcjodaAEWKqWIHho+K/p2cWTq2ty9b9fFPY79mL7oPUr9U/
-         +Tg3orbuHn42umDth/XopxInmaM4OHcIwBQhWtH86eL7iwiPcR7pTIZ9wfz3Fx2Zf6eQ
-         +OBB+1VpsDFNBnDtV+y76XytDkiR7N3dq9NVOq9MzdR2F8z5GdQ+fNMopoNGltDnXC9p
-         Dd+UyA/1kYPUy8XNeN9zQ4ygvTdEQGIrxnIAoGaUvUJ6R1wDdqJlSuBZ+yPuTEqbgDFw
-         lL6JFa9GZJkXuPHIlJ0zBzubk+pfmypj0LOa2JA+6DvmJ74ZAnCk2w6wZ1tPo6fdc+86
-         +zng==
+        b=hZvVv3Oqc2sdSIeaF5fYA/bVe6eI1aPsxKflt6kaDxpdpE0K1XgSPO+MzqEkwXt+jm
+         Ofk9rNsWY8gzO9jhQSie1JHRzdMjHNfRkXqdrE4Es7NcHsVloXvLSGbawwAEAKPCxA0S
+         hUXE+/hy9vrynBYUISUK+5qOGDPnCojDJPhFjPKlOT4GfPBK/BWPVzByltisDMrTkRlG
+         rWfj5p9/p0vb6MLKoyRxVR0IDQlIB7WiNIm5CkEl3B6Qkw61PoyEocbvvU7nWr1pOUuH
+         D5GYmM9vuZ0NZQRa4p6YTAmhIkpQUCUqOgYlvx0DO6noa9ebg3m3Ba/ztGPsS5Tb+ovq
+         +wrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HQv/LtyifTYPNNaAUeh5X0ghgGSEkBLfiQJk07UIKyA=;
-        b=y+hHbW5+wGCLIj6sCOhiMQGbR8tH/RZW8mOe3A8NwHH6EoEbiYfkXrzVfBDy5es2eR
-         ZYgjiQLwZBoQZ0UlILbTPYjyAYbwCNr9Az9cAeyyW65evvpeNEuisJr1pGHqUHRAwTNE
-         vFo737FLSSZF3rubCWyNrZidvi4HFlbTsQxvLYYrkLGFPyFL9pHDhtKK/MjeMLi1feC6
-         xASNNygBeuZCOh+IZYgmoG7V/Ou+YVJWrhhk3pDxBVoOdHK8qYtlRnwEBTGSIA8xHfcl
-         5f4zD/JwjsfhAvFvsGtqWNAqXY4yPwDC5fNjbgCR547frQDCLZcw59Y6nVwT+Z+eHwgJ
-         +Gsw==
+        bh=7whDJqGLus6GnHTrehLn8ha+pIX8j2xn5px8lkvW5oQ=;
+        b=dZ+4I6MGdusojVLRfAXqxb9vkHHNm+nle8RdplZhj8KZNs6LfuJ94BEKeaMxQAjyfo
+         g7g96CeGiTKYwBLavfnCHRkjpVeqxjhA3fimGCI2a4IUBuV+3XODda/iHuPpdc/zdiFj
+         8KNIq/HkK/5YJB/9V2Dnmz9ZEU1qewdWhQB7DsvrTM40mQkR/oPnw+4SIvZQjh94pPMO
+         N8ZSsr5Zq+T6uVlUhXn9cFia7YwEHB8o0j5RVWZeKOl6U5CnU+sLqHiklD/Rul0VK0l0
+         kNFH8rmtyj69PJcmbg4xJO60yiJNGXwXzenxGJ5ORUtW/c3F/hgTm0dKiRdJi1qTYQb8
+         WqOA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pierre Ducroquet <pinaraf@pinaraf.info>,
-	PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 042/109] crypto: ecc - Fix NULL pointer deref. on no default_rng
-Date: Fri, 16 Mar 2018 16:23:11 +0100
-Message-Id: <20180316152332.238232657@linuxfoundation.org>
+Subject: [PATCH 4.14 041/109] sched: Stop resched_cpu() from sending IPIs to offline CPUs
+Date: Fri, 16 Mar 2018 16:23:10 +0100
+Message-Id: <20180316152332.182026981@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109054048113937?=
-X-GMAIL-MSGID: =?utf-8?q?1595109054048113937?=
+X-GMAIL-THRID: =?utf-8?q?1595109051046270878?=
+X-GMAIL-MSGID: =?utf-8?q?1595109051046270878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pierre <pinaraf@pinaraf.info>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
-[ Upstream commit 4c0e22c90510308433272d7ba281b1eb4eda8209 ]
+[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
 
-If crypto_get_default_rng returns an error, the
-function ecc_gen_privkey should return an error.
-Instead, it currently tries to use the default_rng
-nevertheless, thus creating a kernel panic with a
-NULL pointer dereference.
-Returning the error directly, as was supposedly
-intended when looking at the code, fixes this.
+The rcutorture test suite occasionally provokes a splat due to invoking
+resched_cpu() on an offline CPU:
 
-Signed-off-by: Pierre Ducroquet <pinaraf@pinaraf.info>
-Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
+Modules linked in:
+CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+task: ffff902ede9daf00 task.stack: ffff96c50010c000
+RIP: 0010:native_smp_send_reschedule+0x37/0x40
+RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
+RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
+RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
+R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
+FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+Call Trace:
+ resched_curr+0x8f/0x1c0
+ resched_cpu+0x2c/0x40
+ rcu_implicit_dynticks_qs+0x152/0x220
+ force_qs_rnp+0x147/0x1d0
+ ? sync_rcu_exp_select_cpus+0x450/0x450
+ rcu_gp_kthread+0x5a9/0x950
+ kthread+0x142/0x180
+ ? force_qs_rnp+0x1d0/0x1d0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x27/0x40
+Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
+---[ end trace 26df9e5df4bba4ac ]---
+
+This splat cannot be generated by expedited grace periods because they
+always invoke resched_cpu() on the current CPU, which is good because
+expedited grace periods require that resched_cpu() unconditionally
+succeed.  However, other parts of RCU can tolerate resched_cpu() acting
+as a no-op, at least as long as it doesn't happen too often.
+
+This commit therefore makes resched_cpu() invoke resched_curr() only if
+the CPU is either online or is the current CPU.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/ecc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -964,7 +964,7 @@ int ecc_gen_privkey(unsigned int curve_i
- 	 * DRBG with a security strength of 256.
- 	 */
- 	if (crypto_get_default_rng())
--		err = -EFAULT;
-+		return -EFAULT;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -506,7 +506,8 @@ void resched_cpu(int cpu)
+ 	unsigned long flags;
  
- 	err = crypto_rng_get_bytes(crypto_default_rng, (u8 *)priv, nbytes);
- 	crypto_put_default_rng();
+ 	raw_spin_lock_irqsave(&rq->lock, flags);
+-	resched_curr(rq);
++	if (cpu_online(cpu) || cpu == smp_processor_id())
++		resched_curr(rq);
+ 	raw_spin_unlock_irqrestore(&rq->lock, flags);
+ }
+ 
