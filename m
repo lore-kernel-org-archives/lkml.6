@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2571388-1521191381-2-7295439630383792125
+X-Cyrus-Session-Id: sloti22d1t05-2539098-1521191366-2-3501046593537075134
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,22 +14,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521191380; b=q2OuoA7auU9rMEs3DncCL6dBHGZoDrNRA7DPbQETKPAJWlL
-    hqpy6lxhuB24hdHgv50KMY4IxM2Lqu818IoEbxPZgzCHSQTaXdXJnDQiZNYJ0kL0
-    lCtFpzzA/9asNlmbQC+LAM7pHRx86rGEOyNh3hitxMqBNfKHqUZ13huhC4cGbgq3
-    IO0iTnWCkMAPaphVVvyrTJ2jWevicHGE07LINR8R/QbEUWO3HJQzO4imjNJv3IRH
-    rOvrN0KHvPp4h5AmUG08LZ1ENS44wXRFwKdL8+/yYFRjQEApKBzUKe6yaih0q/PC
-    /ua/m0KH2vBDhJNsthT0T9pnq0hZTL9pd2yrrjA==
+    t=1521191365; b=tlYCvn/rVyI6JXYo2rAz1zJ6609vYGWx8+0Uv4ZwoNl+P3i
+    nVs+YlgJ0r8wKUNdwasgSRqMrAB1OR9LAmvL8TUDoqqs7FCL6RsNARwAXuAyimCF
+    xfCl6zm/fNZLtb2O9eh7pMN+jJQqWb8yeO9gq+WkGO+i2lnaB8XiLJvyyne5AVVd
+    pmPeuwXFtsYnTyuS8re65BMFsRvRaFbtRipyB0nfyFQcfW48nzZwzrwq5i8NenBw
+    LiQmIEdF6z+vcY4ZYBbO3+QacOnJcsAOdWBo182pCD/y2AVeTetkrzcC/nDiBvqv
+    qjOlwJnd4u1A0LSCTmgbZnD3A80uCmVPSyXTsZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1521191380; bh=xFoEPDL1bR3M1sg/coX4YuwKXOUlq/9itjE
-    k1AbZy0s=; b=l5Er5tuReUYoA4axF0iKg61FTPkCBs1crPSiLjKMgqUoxxzvkAa
-    CfucjK5QaZYEIAatxnR3zxkHGB5fSbZ4U+M1xXcSArheTSrTY9iwVJ/S24/bsz4t
-    mF+ev/Vb4ej8So3RjU4D9xVHI4d5ACmhqaTHo0Hlj1+CAntxi67uSlqpjsn3vdxs
-    Vs+3dkZKzqnr0ieeN7K0dAjPvndHuK1h6uh6ADTNooub0L59SXm23lShPqbau1q/
-    V32fw6cbqF8/HTl53U9fJfiWpPsaMlkn1QvS9gSKvNRstU8O32+qae5+ZVIH62Yn
-    Llht7/6iNXzzmyipmgoAzx7KwRrFPT/yPpw==
+    s=arctest; t=1521191365; bh=Nz0QCHC/Co0xwSLCbH4KK3T79/ywkdPvBXJ
+    aglJPy6I=; b=k4+kYTcEgEOVYLZb6wG0tMO+pyN2cAHg3qUDJwWJS7wiQgtCxld
+    9yAH5Aoj8IzsknGn7h12pTMliR/MQclyftGdoe37oa69+99ClX04sgP0UnWUQrwU
+    uIxcwJhpUsskGGc7h8D/1pMEkjf3lQW2aV772X+8Xiyvks5HQhLk47vhbxkYStRM
+    BpcjzURRYY9cS63tLyrHTwZ8JQGWh5ebPgNwY6JEawkmDTkUpXASpuNRfE2qRfqY
+    DMpDutZxUjRKJoR3pV73xR495CVqJi//RwXxQEl4V65pjmooljJgSJUuF3mSkjob
+    y3fPCiJc6hm8MHP3DrwIQwtXDLzCOgdHXOQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -50,12 +50,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753098AbeCPJGw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 05:06:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51404 "EHLO mx1.redhat.com"
+        id S1751094AbeCPJJB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 05:09:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751724AbeCPJGt (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:06:49 -0400
+        id S1752048AbeCPJHK (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Fri, 16 Mar 2018 05:07:10 -0400
 From: Richard Guy Briggs <rgb@redhat.com>
 To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
         viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
         eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
         madzcar@gmail.com, Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak32 V2 07/13] audit: add container aux record to watch/tree/mark
-Date: Fri, 16 Mar 2018 05:00:34 -0400
-Message-Id: <737f914a88d048b9985984c0ce1f946c30ca374c.1521179281.git.rgb@redhat.com>
+Subject: [RFC PATCH ghak32 V2 10/13] audit: add containerid support for seccomp and anom_abend records
+Date: Fri, 16 Mar 2018 05:00:37 -0400
+Message-Id: <11174597083f89352f1d6491ec94e27f882625d9.1521179281.git.rgb@redhat.com>
 In-Reply-To: <cover.1521179281.git.rgb@redhat.com>
 References: <cover.1521179281.git.rgb@redhat.com>
 In-Reply-To: <cover.1521179281.git.rgb@redhat.com>
@@ -79,110 +79,60 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add container ID auxiliary record to mark, watch and tree rule
-configuration standalone records.
+Add container ID auxiliary records to secure computing and abnormal end
+standalone records.
 
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- kernel/audit_fsnotify.c |  5 ++++-
- kernel/audit_tree.c     |  5 ++++-
- kernel/audit_watch.c    | 33 +++++++++++++++++++--------------
- 3 files changed, 27 insertions(+), 16 deletions(-)
+ kernel/auditsc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-index 52f368b..18c110d 100644
---- a/kernel/audit_fsnotify.c
-+++ b/kernel/audit_fsnotify.c
-@@ -124,10 +124,11 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 7103d23..2f02ed9 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2571,6 +2571,7 @@ static void audit_log_task(struct audit_buffer *ab)
+ void audit_core_dumps(long signr)
  {
  	struct audit_buffer *ab;
- 	struct audit_krule *rule = audit_mark->rule;
 +	struct audit_context *context = audit_alloc_local();
  
  	if (!audit_enabled)
  		return;
--	ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
-+	ab = audit_log_start(context, GFP_NOFS, AUDIT_CONFIG_CHANGE);
+@@ -2578,19 +2579,22 @@ void audit_core_dumps(long signr)
+ 	if (signr == SIGQUIT)	/* don't care for those */
+ 		return;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_ANOM_ABEND);
++	ab = audit_log_start(context, GFP_KERNEL, AUDIT_ANOM_ABEND);
  	if (unlikely(!ab))
  		return;
- 	audit_log_format(ab, "auid=%u ses=%u op=%s",
-@@ -138,6 +139,8 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
- 	audit_log_key(ab, rule->filterkey);
- 	audit_log_format(ab, " list=%d res=1", rule->listnr);
+ 	audit_log_task(ab);
+ 	audit_log_format(ab, " sig=%ld res=1", signr);
  	audit_log_end(ab);
-+	audit_log_container_info(context, "config", audit_get_containerid(current));
++	audit_log_container_info(context, "abend", audit_get_containerid(current));
 +	audit_free_context(context);
  }
  
- void audit_remove_mark(struct audit_fsnotify_mark *audit_mark)
-diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-index 67e6956..7c085be 100644
---- a/kernel/audit_tree.c
-+++ b/kernel/audit_tree.c
-@@ -496,8 +496,9 @@ static int tag_chunk(struct inode *inode, struct audit_tree *tree)
- static void audit_tree_log_remove_rule(struct audit_krule *rule)
+ void __audit_seccomp(unsigned long syscall, long signr, int code)
  {
  	struct audit_buffer *ab;
 +	struct audit_context *context = audit_alloc_local();
  
--	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-+	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_SECCOMP);
++	ab = audit_log_start(context, GFP_KERNEL, AUDIT_SECCOMP);
  	if (unlikely(!ab))
  		return;
- 	audit_log_format(ab, "op=remove_rule");
-@@ -506,6 +507,8 @@ static void audit_tree_log_remove_rule(struct audit_krule *rule)
- 	audit_log_key(ab, rule->filterkey);
- 	audit_log_format(ab, " list=%d res=1", rule->listnr);
+ 	audit_log_task(ab);
+@@ -2598,6 +2602,8 @@ void __audit_seccomp(unsigned long syscall, long signr, int code)
+ 			 signr, syscall_get_arch(), syscall,
+ 			 in_compat_syscall(), KSTK_EIP(current), code);
  	audit_log_end(ab);
-+	audit_log_container_info(context, "config", audit_get_containerid(current));
++	audit_log_container_info(context, "seccomp", audit_get_containerid(current));
 +	audit_free_context(context);
  }
  
- static void kill_rules(struct audit_tree *tree)
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 9eb8b35..60d75a2 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -238,20 +238,25 @@ static struct audit_watch *audit_dupe_watch(struct audit_watch *old)
- 
- static void audit_watch_log_rule_change(struct audit_krule *r, struct audit_watch *w, char *op)
- {
--	if (audit_enabled) {
--		struct audit_buffer *ab;
--		ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
--		if (unlikely(!ab))
--			return;
--		audit_log_format(ab, "auid=%u ses=%u op=%s",
--				 from_kuid(&init_user_ns, audit_get_loginuid(current)),
--				 audit_get_sessionid(current), op);
--		audit_log_format(ab, " path=");
--		audit_log_untrustedstring(ab, w->path);
--		audit_log_key(ab, r->filterkey);
--		audit_log_format(ab, " list=%d res=1", r->listnr);
--		audit_log_end(ab);
--	}
-+	struct audit_buffer *ab;
-+	struct audit_context *context = audit_alloc_local();
-+
-+	if (!audit_enabled)
-+		return;
-+
-+	ab = audit_log_start(context, GFP_NOFS, AUDIT_CONFIG_CHANGE);
-+	if (unlikely(!ab))
-+		return;
-+	audit_log_format(ab, "auid=%u ses=%u op=%s",
-+			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
-+			 audit_get_sessionid(current), op);
-+	audit_log_format(ab, " path=");
-+	audit_log_untrustedstring(ab, w->path);
-+	audit_log_key(ab, r->filterkey);
-+	audit_log_format(ab, " list=%d res=1", r->listnr);
-+	audit_log_end(ab);
-+	audit_log_container_info(context, "config", audit_get_containerid(current));
-+	audit_free_context(context);
- }
- 
- /* Update inode info in audit rules based on filesystem event. */
+ struct list_head *audit_killed_trees(void)
 -- 
 1.8.3.1
 
