@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754755AbeCPQRN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:17:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39194 "EHLO
+        id S1754794AbeCPQSW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:18:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40058 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934637AbeCPQQy (ORCPT
+        with ESMTP id S1754758AbeCPQRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:16:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78C38603AF
+        Fri, 16 Mar 2018 12:17:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A19060F78
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/18] ixgbevf: eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 16 Mar 2018 12:16:19 -0400
-Message-Id: <1521216991-28706-7-git-send-email-okaya@codeaurora.org>
+        Sinan Kaya <okaya@codeaurora.org>, Yishai Hadas <yishaih@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 16/18] IB/mlx4: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 16 Mar 2018 12:16:29 -0400
+Message-Id: <1521216991-28706-17-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
 References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
@@ -28,8 +28,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel() in multiple places. writel()
-already has a barrier on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
 This ends up CPU observing two barriers back to back before executing the
 register write.
@@ -39,30 +39,23 @@ writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
+ drivers/infiniband/hw/mlx4/qp.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 6bf778a..774b2a6 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -659,7 +659,7 @@ static void ixgbevf_alloc_rx_buffers(struct ixgbevf_ring *rx_ring,
- 		 * such as IA-64).
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index f045491..74b27b0 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -3880,8 +3880,8 @@ int mlx4_ib_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
  		 */
  		wmb();
--		writel(i, rx_ring->tail);
-+		writel_relaxed(i, rx_ring->tail);
- 	}
- }
  
-@@ -3644,7 +3644,7 @@ static void ixgbevf_tx_map(struct ixgbevf_ring *tx_ring,
- 	tx_ring->next_to_use = i;
+-		writel(qp->doorbell_qpn,
+-		       to_mdev(ibqp->device)->uar_map + MLX4_SEND_DOORBELL);
++		writel_relaxed(qp->doorbell_qpn,
++			to_mdev(ibqp->device)->uar_map + MLX4_SEND_DOORBELL);
  
- 	/* notify HW of packet */
--	writel(i, tx_ring->tail);
-+	writel_relaxed(i, tx_ring->tail);
- 
- 	return;
- dma_error:
+ 		/*
+ 		 * Make sure doorbells don't leak out of SQ spinlock
 -- 
 2.7.4
