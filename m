@@ -1,68 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeCPQdf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:33:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43160 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752815AbeCPQd3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:33:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DDFC60F78
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [Intel-wired-lan] [PATCH v3 09/18] fm10k: Eliminate duplicate
- barriers on weakly-ordered archs
+        id S1753180AbeCPQe5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:34:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752219AbeCPQez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:34:55 -0400
+Date: Fri, 16 Mar 2018 18:34:53 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
 To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Netdev <netdev@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
- <1521216991-28706-10-git-send-email-okaya@codeaurora.org>
- <CAKgT0UcKdCpzFgX4qn7EdYnedOsJa9as5g24tfb6qFLXTxZ29A@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <2d346b70-70d4-5996-24ce-94031ee68c90@codeaurora.org>
-Date: Fri, 16 Mar 2018 12:33:14 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Cc: bhelgaas@google.com, alexander.h.duyck@intel.com,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
+        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
+        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+Message-ID: <20180316183042-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UcKdCpzFgX4qn7EdYnedOsJa9as5g24tfb6qFLXTxZ29A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315184132.3102.90947.stgit@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/16/2018 12:30 PM, Alexander Duyck wrote:
-> On Fri, Mar 16, 2018 at 9:16 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> Code includes wmb() followed by writel(). writel() already has a
->> barrier on some architectures like arm64.
->>
->> This ends up CPU observing two barriers back to back before executing
->> the register write.
->>
->> Since code already has an explicit barrier call, changing writel() to
->> writel_relaxed().
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
 > 
-> You can update the writel call in fm10k_tx_map as well.
+> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> patch enables its use. The device in question is an upcoming Intel
+> NIC that implements both a virtio_net PF and virtio_net VFs. These
+> are hardware realizations of what has been up to now been a software
+> interface.
 > 
-> Of the drivers updated in drivers/net/ethernet/intel/* it looks like
-> this is the only one that still requires any additional changes.
+> The device in question has the following 4-part PCI IDs:
+> 
+> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+> 
+> The patch currently needs no check for device ID, because the callback
+> will never be made for devices that do not assert the capability or
+> when run on a platform incapable of SR-IOV.
+> 
+> One reason for this patch is because the hardware requires the
+> vendor ID of a VF to be the same as the vendor ID of the PF that
+> created it. So it seemed logical to simply have a fully-functioning
+> virtio_net PF create the VFs. This patch makes that possible.
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
 
-will do. thanks for the feedback.
+So if and when virtio PFs can manage the VFs, then we can
+add a feature bit for that?
+Seems reasonable.
 
-> 
-> Thanks.
-> 
-> - Alex
-> 
+Also, I am guessing that hardware implementations will want
+to add things like stong memory barriers - I guess we
+will add new feature bits for that too down the road?
 
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> ---
+> 
+> v4: Dropped call to pci_disable_sriov in virtio_pci_remove function
+> v5: Replaced call to pci_sriov_configure_unmanaged with
+>         pci_sriov_configure_simple
+> v6: Dropped "#ifdef" checks for IOV wrapping sriov_configure definition
+> v7: No code change, added Reviewed-by
+> 
+>  drivers/virtio/virtio_pci_common.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> index 48d4d1cf1cb6..67a227fd7aa0 100644
+> --- a/drivers/virtio/virtio_pci_common.c
+> +++ b/drivers/virtio/virtio_pci_common.c
+> @@ -596,6 +596,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+>  #ifdef CONFIG_PM_SLEEP
+>  	.driver.pm	= &virtio_pci_pm_ops,
+>  #endif
+> +	.sriov_configure = pci_sriov_configure_simple,
+>  };
+>  
+>  module_pci_driver(virtio_pci_driver);
+> 
+> 
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
