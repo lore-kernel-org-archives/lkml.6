@@ -1,220 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753439AbeCPJkS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 05:40:18 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:43719 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeCPJkC (ORCPT
+        id S1753459AbeCPJlB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 05:41:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40402 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753019AbeCPJjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:40:02 -0400
-X-Originating-IP: 2.224.242.101
-Date: Fri, 16 Mar 2018 10:39:53 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car
- V3M Eagle
-Message-ID: <20180316093953.GC31710@w540>
-References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521130316-1221-4-git-send-email-jacopo+renesas@jmondi.org>
- <20180316000004.GC3432@bigcity.dyn.berto.se>
+        Fri, 16 Mar 2018 05:39:46 -0400
+X-Google-Smtp-Source: AG47ELud/6/gBGm5qebL65EevtuBmXUBlEZ/aRKVOZ+5Umz7DSpTwTQSP1b5MCHY9mAS/EPzd7y3ZQ==
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="M38YqGLZlgb6RLPS"
-Content-Disposition: inline
-In-Reply-To: <20180316000004.GC3432@bigcity.dyn.berto.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <658946b9-4f49-ff24-3b84-da1eb9b7d9ad@micronovasrl.com>
+References: <1521121410-17103-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180316064731.muiw5yumhmfnwxg2@flea> <658946b9-4f49-ff24-3b84-da1eb9b7d9ad@micronovasrl.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 16 Mar 2018 17:39:23 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66bdH4kr=T=A0MNKShOCKkvp=+dWDZLskBoUJn_pUJDgw@mail.gmail.com>
+Message-ID: <CAGb2v66bdH4kr=T=A0MNKShOCKkvp=+dWDZLskBoUJn_pUJDgw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888 output.
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---M38YqGLZlgb6RLPS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Niklas,
-   thanks for review,
-
-On Fri, Mar 16, 2018 at 01:00:04AM +0100, Niklas S=C3=B6derlund wrote:
-> Hi Jacopo,
+On Fri, Mar 16, 2018 at 5:19 PM, Giulio Benetti
+<giulio.benetti@micronovasrl.com> wrote:
+> Hi Maxime,
 >
-> Thanks for your patch.
+> Il 16/03/2018 07:47, Maxime Ripard ha scritto:
+>>
+>> Hi Giulio,
+>>
+>> On Thu, Mar 15, 2018 at 02:43:30PM +0100, Giulio Benetti wrote:
+>>>
+>>> The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setting
+>>> for the needed pins.
+>>>
+>>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+>>
+>>
+>> Like we discussed last time, we only merge this kind of patches if
+>> there's an immediate user.
 >
-> This one must depend on '[PATCH v2 0/5] arm64: dts: renesas: r8a77970:
-> enable HDMI output' or something similar not yet in renesas-drivers
-> repository correct?
-
-Yes, I have listed dependencies of this series in my v1 cover letter:
-
----------------------------------------------------------------------------
-The series is based on Laurent's drm/next/du branch with patches on top for:
-- Sergei: Enable PFC, I2c, GPIOs for r8a77970
-- Sergei: Add support for r8a77970 in DU and add display device nodes in
-  r8a77970 DTSI
-- Niklas: Connect DU LVDS output to HDMI bridge adv7511w in Eagle DTS
-- Sergei: fix video output on R8A77970
-
-A base branch with these patches applied is available at
-git://jmondi.org/linux v3m/v4.16-rc3/base
----------------------------------------------------------------------------
-
-My bad I have not reported this in all cover letters (and I have not
-reported the full name of the series)
-
-PFC, GPIO and I2c support I have listed as dependencies seems to have
-landed in renesas-drivers, while I don't see yet:
-
-Sergei:
-[PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
-
-whose patches for r8a77970 dtsi are included in yours:
-[PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
-
-On top I also have Sergei's/Laurent's:
-[PATCH v4] v4l: vsp1: Fix video output on R8A77970
-
 >
-> In the next version would you care to include the LVDS commit from the
-> dependency  series and squash this change into that one or in some other
-> good manger stack to two? Laurent told me he did not like 5/5 in that
-> patch-set as it did not yet have the LVDS decoder node due to no driver
-> existed at that time when I posted that even if it's not strictly needed
-> to get the display working :-)
-
-
-I'll let Simon suggest how he preferes to handle this, if he wants me
-to re-submit your series with this patch squashed on top or he prefers
-to deal with this himself.
+> You're right.
+> In few time(I hope), I'm going to send dts for Linova1-4_3 and Linova1-7,
+> where I use those pins.
+> I have also to send 2 patches for 2 new panels for panel-simple.
 >
-> I also think you should split this last patch out to a separate series
-> as it should go in Simon's tree while the driver and documentation is
-> going in earlier in a different tree right?
-
-I assume bindings and driver go through DRM and Simon is to pick up
-the Eagle changes.
-
+> So I think I have to send 2 displays' patches before.
+> And a patchset for the 2 boards and rgb888 pins.
 >
-> On a side note, do you plan to update the Gen2 boards DTS files which
-> also have a decoder which are not yet described in DT?
+> One question: do I have to wait for panels' patches to applied and then send
+> patchset for boards dts?
+> Or can I send a unique patchset?
+> Because as I understand those patches should be applied to 2 different
+> repositories, right?
 
-Actually I'm not aware of Gen2 boards with this chip and similar
-display pipelines. Can you point me to which one needs to have its
-DTS brushed?
+If none of them have been merged yet, it's best to send all of them
+as part of the same series, and to all parties involved. That way,
+people have the full picture of what you're trying to achieve when
+they review your patches. Unless your series is really big.
 
-Thanks
-   j
+Maintainers will pick up patches that need to go through their trees.
+In general you don't need to do much coordination beyond pointing out
+whether the patches are safe to go in independently or there are
+dependencies that the maintainers need to be aware of.
 
->
-> On 2018-03-15 17:11:56 +0100, Jacopo Mondi wrote:
-> > The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-> > decoder, connected to the on-chip LVDS encoder output on one side
-> > and to HDMI encoder ADV7511w on the other one.
-> >
-> > As the decoder does not need any configuration it has been so-far
-> > omitted from DTS. Now that a driver is available, describe it in DT
-> > as well.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 ++++++++++++++++++=
-+++++---
-> >  1 file changed, 30 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm6=
-4/boot/dts/renesas/r8a77970-eagle.dts
-> > index c0fd144..69f43b8 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > @@ -42,6 +42,33 @@
-> >  			};
-> >  		};
-> >  	};
-> > +
-> > +	thc63lvd1024: lvds-decoder {
-> > +		compatible =3D "thine,thc63lvd1024";
-> > +
-> > +		ports {
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +
-> > +			port@0 {
-> > +				reg =3D <0>;
-> > +
-> > +				thc63lvd1024_in_0: endpoint {
-> > +					remote-endpoint =3D <&lvds0_out>;
-> > +				};
-> > +			};
-> > +
-> > +			port@2{
-> > +				reg =3D <2>;
-> > +
-> > +				thc63lvd1024_out_2: endpoint {
-> > +					remote-endpoint =3D <&adv7511_in>;
-> > +				};
-> > +
-> > +			};
-> > +
-> > +		};
-> > +	};
-> >  };
-> >
-> >  &avb {
-> > @@ -98,7 +125,7 @@
-> >  			port@0 {
-> >  				reg =3D <0>;
-> >  				adv7511_in: endpoint {
-> > -					remote-endpoint =3D <&lvds0_out>;
-> > +					remote-endpoint =3D <&thc63lvd1024_out_2>;
-> >  				};
-> >  			};
-> >
-> > @@ -152,8 +179,8 @@
-> >
-> >  	ports {
-> >  		port@1 {
-> > -			endpoint {
-> > -				remote-endpoint =3D <&adv7511_in>;
-> > +			lvds0_out: endpoint {
-> > +				remote-endpoint =3D <&thc63lvd1024_in_0>;
-> >  			};
-> >  		};
-> >  	};
-> > --
-> > 2.7.4
-> >
->
-> --
-> Regards,
-> Niklas S=C3=B6derlund
-
---M38YqGLZlgb6RLPS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJaq5DpAAoJEHI0Bo8WoVY8jXIQAI/LCqBAyacbszZzrLPD/oZm
-4lGPffK6PfzPyx0QFwQ1xFprF5RfPdkSW/hCfn2gc8RHWuJIE3k8KQQYFXIyyNO4
-zXS3zQ+d24Bg6p3qI8aeMklqmxxL1KEyHSQBSRkuK8q5gSrUuo2n3Mny3CFURGOE
-XyQC8zGkz4NTy2tso5bfg9PXmSZWoFW572zkJ2G8uWkeFJ5qeasJiFql/wc7RtuE
-+V6rMvMuMhfVnhKXBPXFE2xhkwU8BcZF5imyldGD8x6jWe1/r9IOPqrGX5Ca0iQp
-e+XlKABiHnk48uirTNK7JLfsXBtJhBcDvDt6N12rL1Xf/COg2dLRuaMKCgO/Bv4Z
-pVuEs5wCs411kF2GC2Nn0OXQay/Y01F5FrJfLOmDikuea2/llU3p6MBPQyM6PvWh
-wWd7kvqZsf5La4mTD5j32dHKtdlQ0rPf9REG8dUnlg0IGlK5R7B0K0sRfAorz/qW
-GziH4X54DpVdxP1R/fcRaVgrx9mmlaROjynNUguFgn+J2xcHtkWsDQfmZHMb/Xnn
-067Rq4R2iK64O1SGZetOK3i7tNFeudHBQPlCU4fqqcAJAcBTK2MBNW1Vmlu/pmvw
-TSQeWg6qORgHNDTrUuqr0Z+rxxMq+GgguCTYlV7shWoY8ixZR+BXj1S6Ik7WPCyC
-ql6WM9NSeEwyOFv1RqpJ
-=JQpo
------END PGP SIGNATURE-----
-
---M38YqGLZlgb6RLPS--
+ChenYu
