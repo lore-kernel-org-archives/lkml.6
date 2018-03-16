@@ -1,86 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753249AbeCPHpS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:45:18 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:45176 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752014AbeCPHpR (ORCPT
+        id S1753412AbeCPHsd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:48:33 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:48234 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeCPHsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:45:17 -0400
-X-Google-Smtp-Source: AG47ELvWgYSdK6LMRzW+oEkpuQEsPdrYSlkk8/i0SkxQeRNlwhbHlgCgY5hXssFqP2eOW+cBaz+3d7qJ26fXNxBosHc=
+        Fri, 16 Mar 2018 03:48:32 -0400
+From: Richard Weinberger <richard@nod.at>
+To: arvindY <arvind.yadav.cs@gmail.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
+        cyrille.pitchen@wedev4u.fr, dedekind1@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 2/2 v2] mtd: ubi: use put_device() if device_register fail
+Date: Fri, 16 Mar 2018 08:50:06 +0100
+Message-ID: <1800631.Ura3nHEcOL@blindfold>
+In-Reply-To: <5AAAB066.90900@gmail.com>
+References: <1521098431-29565-1-git-send-email-arvind.yadav.cs@gmail.com> <11250cfc-f092-b299-1044-50334c518bf1@gmail.com> <5AAAB066.90900@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301163838.10818-1-greentime@andestech.com>
-References: <20180301163838.10818-1-greentime@andestech.com>
-From: Greentime Hu <green.hu@gmail.com>
-Date: Fri, 16 Mar 2018 15:44:35 +0800
-Message-ID: <CAEbi=3dTwumbFkvQQekqpqh8v5j1=hJp3iK+-TN5iZwj9y=Ctg@mail.gmail.com>
-Subject: Re: [PATCH] cris: add ioremap_nocache declaration before include asm-generic/io.h.
-To: linux-cris-kernel@axis.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Greentime <greentime@andestech.com>, Green Hu <green.hu@gmail.com>,
-        jesper.nilsson@axis.com, starvik@axis.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-02 0:38 GMT+08:00 Greentime Hu <green.hu@gmail.com>:
-> A future commit for the nds32 architecture bootstrap("asm-generic/io.h:
-> move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef
-> CONFIG_MMU") will move the ioremap_nocache out of the CONFIG_MMU ifdef.
-> This means that in order to suppress re-definition errors we need to
-> setup #define's before importing asm-generic/io.h.
->
-> Signed-off-by: Greentime Hu <greentime@andestech.com>
-> ---
->  arch/cris/include/asm/io.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/cris/include/asm/io.h b/arch/cris/include/asm/io.h
-> index c92712d30f54..3867db75c314 100644
-> --- a/arch/cris/include/asm/io.h
-> +++ b/arch/cris/include/asm/io.h
-> @@ -20,6 +20,7 @@ static inline void __iomem * ioremap (unsigned long offset, unsigned long size)
->  extern void iounmap(volatile void * __iomem addr);
->
->  extern void __iomem * ioremap_nocache(unsigned long offset, unsigned long size);
-> +#define ioremap_nocache ioremap_nocache
->
->  #include <asm-generic/io.h>
->
-> --
-> I am picking up the patch in the nds32 tree that caused the regression.
-> Subject: [linux-next:master 3188/3885] include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> head:   eced78aae9cba83072d5335fbc9b2282a9270469
-> commit: b3ada9d0ce8d286c8bbbb02fdbddec5036242b42 [3188/3885] asm-generic/io.h: move ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef CONFIG_MMU
-> config: cris-etrax-100lx_v2_defconfig (attached as .config)
-> compiler: cris-linux-gcc (GCC) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout b3ada9d0ce8d286c8bbbb02fdbddec5036242b42
->         # save the attached .config to linux build tree
->         make.cross ARCH=cris
->
-> All errors (new ones prefixed by >>):
->
->    In file included from arch/cris/include/asm/io.h:24:0,
->                     from include/linux/io.h:25,
->                     from include/linux/irq.h:25,
->                     from include/asm-generic/hardirq.h:13,
->                     from ./arch/cris/include/generated/asm/hardirq.h:1,
->                     from include/linux/hardirq.h:9,
->                     from include/linux/trace_events.h:9,
->                     from include/trace/syscall.h:7,
->                     from include/linux/syscalls.h:82,
->                     from init/main.c:20:
->>> include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
->     void __iomem *ioremap(phys_addr_t phys_addr, size_t size);
->                   ^~~~~~~
->
+Arvind,
 
-Drop this patch due to not supporting cris port.
-https://lkml.org/lkml/2018/3/13/200
+Am Donnerstag, 15. März 2018, 18:41:58 CET schrieb arvindY:
+> On Thursday 15 March 2018 02:17 PM, Arvind Yadav wrote:
+> > On Thursday 15 March 2018 01:25 PM, Richard Weinberger wrote:
+> >> Am Donnerstag, 15. März 2018, 08:20:31 CET schrieb Arvind Yadav:
+> >>> if device_register() returned an error! Always use put_device()
+> >>> to give up the reference initialized.
+> >> 
+> >> Like DaveM said, there is no need to shout and use "!".
+> > 
+> > I will fix this and send you update patch.
+> > 
+> >>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> >>> ---
+> >>> 
+> >>> change in v2:
+> >>>          Fix use-after-free bug. move put_device() after cdev_del().
+> >>>   
+> >>>   drivers/mtd/ubi/vmt.c | 1 +
+> >>>   1 file changed, 1 insertion(+)
+> >>> 
+> >>> diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+> >>> index 3fd8d7f..93c6163 100644
+> >>> --- a/drivers/mtd/ubi/vmt.c
+> >>> +++ b/drivers/mtd/ubi/vmt.c
+> >>> @@ -610,6 +610,7 @@ int ubi_add_volume(struct ubi_device *ubi, struct
+> >>> ubi_volume *vol)
+> >>> 
+> >>>   out_cdev:
+> >>>       cdev_del(&vol->cdev);
+> >>> 
+> >>> +    put_device(&vol->dev);
+> >>> 
+> >>>       return err;
+> >> 
+> >> The more I dig into device code, the more questions I have.
+> >> Why is cdev_del() not part of the release function?
+> >> 
+> >> Thanks,
+> >> //richard
+> > 
+> > Yes, It's should be a part release function.
+> > 
+> > ~arvind
+> 
+> I was wrong, We can not add cdev_del() in release(vol_release)
+> function.
+> Function's ubi_create_volume and ubi_add_volume both are using
+> same release function to release a volume devices.
+> ubi_add_volume is registering character device for the volume.
+> So we will have to release character device here.
+
+This is not what I meant.
+The question was whether we should free all this data structures from the 
+device model's point of view.
+That we have to massage UBI code for that is clear.
+
+Thanks,
+//richard
