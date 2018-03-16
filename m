@@ -1,246 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeCPT76 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:59:58 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33563 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeCPT74 (ORCPT
+        id S1752376AbeCPUBH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:01:07 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42769 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752257AbeCPUAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:59:56 -0400
-X-Google-Smtp-Source: AG47ELsLwwR571FZSzs1oueDUoElYNFTQTm+43z+kDJ6o0gnTXHtW7YmERsbe+JiLSpURfrVZvdRxA==
-Date: Fri, 16 Mar 2018 12:59:53 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jdelvare@suse.com, joel@jms.id.au,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v6 2/2] hwmon: (ucd9000) Add debugfs attributes to
- provide mfr_status
-Message-ID: <20180316195953.GA2470@roeck-us.net>
-References: <1521228359-32396-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1521228359-32396-3-git-send-email-eajames@linux.vnet.ibm.com>
+        Fri, 16 Mar 2018 16:00:45 -0400
+X-Google-Smtp-Source: AG47ELuxvLY7Al3WtIEZ0FtAdS9IzlMkQQRXQbayhM7KV/MkZsT0YeOmK3zwd3q+yK/eZE0BaWXlUw==
+Date: Fri, 16 Mar 2018 12:55:22 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: Re: [PATCH v4 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Message-ID: <20180316195522.GC15968@tuxbook-pro>
+References: <20180226175802.20052-1-ilina@codeaurora.org>
+ <20180226175802.20052-3-ilina@codeaurora.org>
+ <20180305231455.GJ18510@minitux>
+ <20180306155703.GA4930@codeaurora.org>
+ <20180307190249.GW93895@bjorns-mbp-2.lan>
+ <152122480915.70929.13116557401450122973@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521228359-32396-3-git-send-email-eajames@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <152122480915.70929.13116557401450122973@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 02:25:59PM -0500, Eddie James wrote:
-> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> 
-> Expose the gpiN_fault fields of mfr_status as individual debugfs
-> attributes. This provides a way for users to be easily notified of gpi
-> faults. Also provide the whole mfr_status register in debugfs.
-> 
-> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> ---
->  drivers/hwmon/pmbus/ucd9000.c | 138 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 137 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
-> index ef2c5bf..88c98fb 100644
-> --- a/drivers/hwmon/pmbus/ucd9000.c
-> +++ b/drivers/hwmon/pmbus/ucd9000.c
-> @@ -19,6 +19,7 @@
->   * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->  
-> +#include <linux/debugfs.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> @@ -37,6 +38,7 @@
->  #define UCD9000_NUM_PAGES		0xd6
->  #define UCD9000_FAN_CONFIG_INDEX	0xe7
->  #define UCD9000_FAN_CONFIG		0xe8
-> +#define UCD9000_MFR_STATUS		0xf3
->  #define UCD9000_GPIO_SELECT		0xfa
->  #define UCD9000_GPIO_CONFIG		0xfb
->  #define UCD9000_DEVICE_ID		0xfd
-> @@ -64,15 +66,24 @@
->  #define UCD901XX_NUM_GPIOS	26
->  #define UCD90910_NUM_GPIOS	26
->  
-> +#define UCD9000_DEBUGFS_NAME_LEN	24
-> +#define UCD9000_GPI_COUNT		8
-> +
->  struct ucd9000_data {
->  	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
->  	struct pmbus_driver_info info;
->  #ifdef CONFIG_GPIOLIB
->  	struct gpio_chip gpio;
->  #endif
-> +	struct dentry *debugfs;
->  };
->  #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
->  
-> +struct ucd9000_debugfs_entry {
-> +	struct i2c_client *client;
-> +	u8 index;
-> +};
-> +
->  static int ucd9000_get_fan_config(struct i2c_client *client, int fan)
->  {
->  	int fan_config = 0;
-> @@ -359,6 +370,122 @@ static void ucd9000_probe_gpio(struct i2c_client *client,
->  }
->  #endif /* CONFIG_GPIOLIB */
->  
-> +#ifdef CONFIG_DEBUG_FS
-> +static int ucd9000_get_mfr_status(struct i2c_client *client, u8 *buffer)
-> +{
-> +	int ret = pmbus_set_page(client, 0);
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return i2c_smbus_read_block_data(client, UCD9000_MFR_STATUS, buffer);
-> +}
-> +
-> +static int ucd9000_debugfs_show_mfr_status_bit(void *data, u64 *val)
-> +{
-> +	struct ucd9000_debugfs_entry *entry = data;
-> +	struct i2c_client *client = entry->client;
-> +	u8 buffer[I2C_SMBUS_BLOCK_MAX];
-> +	int ret;
-> +
-> +	ret = ucd9000_get_mfr_status(client, buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * Attribute only created for devices with gpi fault bits at bits
-> +	 * 16-23, which is the second byte of the response.
-> +	 */
-> +	*val = !!(buffer[1] & BIT(entry->index));
-> +
-> +	return 0;
-> +}
-> +DEFINE_DEBUGFS_ATTRIBUTE(ucd9000_debugfs_mfr_status_bit,
-> +			 ucd9000_debugfs_show_mfr_status_bit, NULL, "%1lld\n");
-> +
-> +static ssize_t ucd9000_debugfs_read_mfr_status(struct file *file,
-> +					       char __user *buf, size_t count,
-> +					       loff_t *ppos)
-> +{
-> +	struct i2c_client *client = file->private_data;
-> +	u8 buffer[I2C_SMBUS_BLOCK_MAX];
-> +	char str[(I2C_SMBUS_BLOCK_MAX * 2) + 2];
-> +	char *res;
-> +	int rc;
-> +
-> +	rc = ucd9000_get_mfr_status(client, buffer);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	res = bin2hex(str, buffer, min(rc, I2C_SMBUS_BLOCK_MAX));
-> +	*res++ = '\n';
-> +	*res++ = 0;
-> +
-Unless I am missing something, this now returns the terminating '\0'
-to the user. Is this really what you want ?
+On Fri 16 Mar 11:26 PDT 2018, Stephen Boyd wrote:
 
-I see other code adding the terminator, but it doesn't usually return it
-to the user.
-
-Guenter
-
-> +	return simple_read_from_buffer(buf, count, ppos, str, res - str);
-> +}
-> +
-> +static const struct file_operations ucd9000_debugfs_show_mfr_status_fops = {
-> +	.llseek = noop_llseek,
-> +	.read = ucd9000_debugfs_read_mfr_status,
-> +	.open = simple_open,
-> +};
-> +
-> +static int ucd9000_init_debugfs(struct i2c_client *client,
-> +				const struct i2c_device_id *mid,
-> +				struct ucd9000_data *data)
-> +{
-> +	struct dentry *debugfs;
-> +	struct ucd9000_debugfs_entry *entries;
-> +	int i;
-> +	char name[UCD9000_DEBUGFS_NAME_LEN];
-> +
-> +	debugfs = pmbus_get_debugfs_dir(client);
-> +	if (!debugfs)
-> +		return -ENOENT;
-> +
-> +	data->debugfs = debugfs_create_dir(client->name, debugfs);
-> +	if (!data->debugfs)
-> +		return -ENOENT;
-> +
-> +	/*
-> +	 * Of the chips this driver supports, only the UCD9090, UCD90160,
-> +	 * and UCD90910 report GPI faults in their MFR_STATUS register, so only
-> +	 * create the GPI fault debugfs attributes for those chips.
-> +	 */
-> +	if (mid->driver_data == ucd9090 || mid->driver_data == ucd90160 ||
-> +	    mid->driver_data == ucd90910) {
-> +		entries = devm_kzalloc(&client->dev,
-> +				       sizeof(*entries) * UCD9000_GPI_COUNT,
-> +				       GFP_KERNEL);
-> +		if (!entries)
-> +			return -ENOMEM;
-> +
-> +		for (i = 0; i < UCD9000_GPI_COUNT; i++) {
-> +			entries[i].client = client;
-> +			entries[i].index = i;
-> +			scnprintf(name, UCD9000_DEBUGFS_NAME_LEN,
-> +				  "gpi%d_alarm", i + 1);
-> +			debugfs_create_file(name, 0444, data->debugfs,
-> +					    &entries[i],
-> +					    &ucd9000_debugfs_mfr_status_bit);
-> +		}
-> +	}
-> +
-> +	scnprintf(name, UCD9000_DEBUGFS_NAME_LEN, "mfr_status");
-> +	debugfs_create_file(name, 0444, data->debugfs, client,
-> +			    &ucd9000_debugfs_show_mfr_status_fops);
-> +
-> +	return 0;
-> +}
-> +#else
-> +static int ucd9000_init_debugfs(struct i2c_client *client,
-> +				const struct i2c_device_id *mid,
-> +				struct ucd9000_data *data)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_DEBUG_FS */
-> +
->  static int ucd9000_probe(struct i2c_client *client,
->  			 const struct i2c_device_id *id)
->  {
-> @@ -475,7 +602,16 @@ static int ucd9000_probe(struct i2c_client *client,
->  
->  	ucd9000_probe_gpio(client, mid, data);
->  
-> -	return pmbus_do_probe(client, mid, info);
-> +	ret = pmbus_do_probe(client, mid, info);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ucd9000_init_debugfs(client, mid, data);
-> +	if (ret)
-> +		dev_warn(&client->dev, "Failed to register debugfs: %d\n",
-> +			 ret);
-> +
-> +	return 0;
->  }
->  
->  /* This is the driver that will be inserted */
-> -- 
-> 1.8.3.1
+> Quoting Bjorn Andersson (2018-03-07 11:02:49)
+> > On Tue 06 Mar 07:57 PST 2018, Lina Iyer wrote:
+> > 
+> > > On Mon, Mar 05 2018 at 16:15 -0700, Bjorn Andersson wrote:
+> > > > On Mon 26 Feb 09:58 PST 2018, Lina Iyer wrote:
+> > 
+> > > > As such I think you should just describe only the 0x85fe0000 + 0x20000
+> > > > region here and to support the dynamic aspect of this from a system
+> > > > point of view you can have the boot loader read the information at
+> > > > 0xc3f000c and adjust the reserved memory. (Or just keep the step of
+> > > > manually update the dts without caring about the indirection)
+> > > > 
+> > > It would be incorrect and very board specific to just use the 0x85fe000
+> > > as the address. It is not how the SoC defines the location. Upon request
+> > > earlier, this memory location was added in DT and the location is
+> > > typical reference platform usage only.
+> > > 
+> > 
+> > The problem is that as the db resides in a chunk of memory in the middle
+> > of what Linux considers System RAM the DTS must specify this region as
+> > reserved. Which means that as you, like described above, update the
+> > dictionary something (in your scheme a person) has to update the
+> > reserved-memory region as well.
+> > 
+> > That's why I'm proposing that the appropriate implementation for this
+> > is to have the boot loader to the dictionary part of this and Linux only
+> > care about the actual reserved-memory region. This way you would still
+> > implement the dictionary lookup on a system level, but the Linux
+> > part no longer depend on a human updating the DTS to match the values of
+> > the dictionary.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Agreed. I thought SMEM had a similar design of a cookie in IMEM to
+> indicate location and size because coordinating changes across all the
+> various software images is a hard problem. But coordinating between
+> linux and the linux bootloader shouldn't be as hard.
+> 
+
+Correct, SMEM has exactly the same mechanism.
+
+I get that the coordinating of these addresses between all involved
+images can be a tricky thing, but the only way to make this automatic on
+the application CPU is to split this between boot and Linux; as any
+all-Linux solution requires a human to update the reserved-memory node
+to match the values in the indirection.
+
+So for SMEM we agreed that we implement this as "someone needs to tell
+Linux where SMEM is" and that can be a human or the boot loader.
+
+Regards,
+Bjorn
