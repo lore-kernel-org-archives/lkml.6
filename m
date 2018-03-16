@@ -1,81 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeCPTTN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:19:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750921AbeCPTTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:19:12 -0400
-Date: Fri, 16 Mar 2018 15:19:09 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: Re: [PATCH 4/4] mm/hmm: change CPU page table snapshot functions to
- simplify drivers
-Message-ID: <20180316191909.GA4861@redhat.com>
-References: <20180315183700.3843-1-jglisse@redhat.com>
- <20180315183700.3843-5-jglisse@redhat.com>
- <cc1bfc05-9b06-1de8-7b14-ca1a6bc6496c@nvidia.com>
+        id S1751963AbeCPTW6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:22:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56724 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeCPTW4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:22:56 -0400
+Date: Fri, 16 Mar 2018 20:22:41 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Paolo Bonzini <pbonzini@redhat.com>
+cc: Radim Krcmar <rkrcmar@redhat.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        kvm@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Len Brown <len.brown@intel.com>,
+        Kyle Huey <me@kylehuey.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v5 1/3] x86/msr: Add AMD Core Perf Extension MSRs
+In-Reply-To: <150643f7-b464-0bd0-6ae8-6403b4d34700@redhat.com>
+Message-ID: <alpine.DEB.2.21.1803162022190.1509@nanos.tec.linutronix.de>
+References: <cover.1517850302.git.Janakarajan.Natarajan@amd.com> <7cf7bd5fa6d24cd46a9ea50024b0010bf3d01088.1517850303.git.Janakarajan.Natarajan@amd.com> <20180306210338.GD12128@flask> <150643f7-b464-0bd0-6ae8-6403b4d34700@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cc1bfc05-9b06-1de8-7b14-ca1a6bc6496c@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 10:08:21PM -0700, John Hubbard wrote:
-> On 03/15/2018 11:37 AM, jglisse@redhat.com wrote:
-> > From: Jérôme Glisse <jglisse@redhat.com>
+On Fri, 16 Mar 2018, Paolo Bonzini wrote:
+
+> On 06/03/2018 22:03, Radim Krcmar wrote:
+> >>  /* Fam 15h MSRs */
+> >>  #define MSR_F15H_PERF_CTL		0xc0010200
+> >> +#define MSR_F15H_PERF_CTL0		MSR_F15H_PERF_CTL
+> >> +#define MSR_F15H_PERF_CTL1		(MSR_F15H_PERF_CTL + 2)
+> >> +#define MSR_F15H_PERF_CTL2		(MSR_F15H_PERF_CTL + 4)
+> >> +#define MSR_F15H_PERF_CTL3		(MSR_F15H_PERF_CTL + 6)
+> >> +#define MSR_F15H_PERF_CTL4		(MSR_F15H_PERF_CTL + 8)
+> >> +#define MSR_F15H_PERF_CTL5		(MSR_F15H_PERF_CTL + 10)
+> >> +
+> >>  #define MSR_F15H_PERF_CTR		0xc0010201
+> >> +#define MSR_F15H_PERF_CTR0		MSR_F15H_PERF_CTR
+> >> +#define MSR_F15H_PERF_CTR1		(MSR_F15H_PERF_CTR + 2)
+> >> +#define MSR_F15H_PERF_CTR2		(MSR_F15H_PERF_CTR + 4)
+> >> +#define MSR_F15H_PERF_CTR3		(MSR_F15H_PERF_CTR + 6)
+> >> +#define MSR_F15H_PERF_CTR4		(MSR_F15H_PERF_CTR + 8)
+> >> +#define MSR_F15H_PERF_CTR5		(MSR_F15H_PERF_CTR + 10)
+> >> +
+> > x86 maintainers,
 > > 
-> > This change hmm_vma_fault() and hmm_vma_get_pfns() API to allow HMM
-> > to directly write entry that can match any device page table entry
-> > format. Device driver now provide an array of flags value and we use
-> > enum to index this array for each flag.
-> > 
-> > This also allow the device driver to ask for write fault on a per page
-> > basis making API more flexible to service multiple device page faults
-> > in one go.
-> > 
-> 
-> Hi Jerome,
-> 
-> This is a large patch, so I'm going to review it in two passes. The first 
-> pass is just an overview plus the hmm.h changes (now), and tomorrow I will
-> review the hmm.c, which is where the real changes are.
-> 
-> Overview: the hmm.c changes are doing several things, and it is difficult to
-> review, because refactoring, plus new behavior, makes diffs less useful here.
-> It would probably be good to split the hmm.c changes into a few patches, such
-> as:
-> 
-> 	-- HMM_PFN_FLAG_* changes, plus function signature changes (mm_range* 
->            being passed to functions), and
->         -- New behavior in the page handling loops, and 
-> 	-- Refactoring into new routines (hmm_vma_handle_pte, and others)
-> 
-> That way, reviewers can see more easily that things are correct. 
+> > are you ok with this going through the kvm tree?
 
-So i resent patchset and i splitted this patch in many (11 patches now).
-I included your comments so far in the new version so probably better if
-you look at new one.
+yes.
 
-[...[
-
-> > - * HMM_PFN_READ:  CPU page table has read permission set
-> 
-> So why is it that we don't need the _READ flag anymore? I looked at the corresponding
-> hmm.c but still don't quite get it. Is it that we just expect that _READ is
-> always set if there is an entry at all? Or something else?
-
-Explained why in the commit message, !READ when WRITE make no sense so
-now VALID imply READ as does WRITE (write by itself is meaningless
-without valid).
-
-Cheers,
-Jérôme
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
