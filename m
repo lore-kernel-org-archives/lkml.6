@@ -1,55 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeCPRSU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:18:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:33594 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752212AbeCPRSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:18:17 -0400
-Subject: Re: arm64 kvm built with clang doesn't boot
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Greg Hackmann <ghackmann@google.com>, christoffer.dall@linaro.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sami Tolvanen <samitolvanen@google.com>, takahiro.akashi@linaro.org
-References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
- <26a25069-ea1d-5fb3-549c-ab653f454a30@arm.com>
- <CAAeHK+zq4-mw3pCNf3nob3gN-s+aWVq7vUy1p8yY4bU4QYNNMg@mail.gmail.com>
- <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
- <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <38b3c636-38cd-2cc5-79d0-8ccf234e2b26@arm.com>
-Date: Fri, 16 Mar 2018 17:18:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1753627AbeCPRMh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:12:37 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43122 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753775AbeCPRHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:07:00 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 10/22] net: socket: add __sys_socketpair() helper; remove in-kernel call to syscall
+Date: Fri, 16 Mar 2018 18:06:02 +0100
+Message-Id: <20180316170614.5392-11-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/18 16:52, Nick Desaulniers wrote:
+Using the net-internal helper __sys_socketpair() allows us to avoid the
+internal calls to the sys_socketpair() syscall.
 
-[dropping kernel-dynamic-tools@google.com which keeps bouncing]
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ include/linux/socket.h |  2 ++
+ net/compat.c           |  2 +-
+ net/socket.c           | 11 ++++++++---
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
-> Is this in regards to: commit "arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP
-> hardening support"? Has anyone tried to upstream a fix for this?  We
-> probably want to be very explicit with register widths here.
-What do you mean? The current code is as strict as it gets, and
-explicitly tells the compiler to use the right register width, based on
-the SMC call parameter types.
-
-Thanks,
-
-	M.
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 9ba003e92fea..dbdddf0d079e 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -372,5 +372,7 @@ extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
+ 			     int __user *usockaddr_len);
+ extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
+ 			     int __user *usockaddr_len);
++extern int __sys_socketpair(int family, int type, int protocol,
++			    int __user *usockvec);
+ 
+ #endif /* _LINUX_SOCKET_H */
+diff --git a/net/compat.c b/net/compat.c
+index 74017f618eb1..04db26316438 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -832,7 +832,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = __sys_getpeername(a0, compat_ptr(a1), compat_ptr(a[2]));
+ 		break;
+ 	case SYS_SOCKETPAIR:
+-		ret = sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
++		ret = __sys_socketpair(a0, a1, a[2], compat_ptr(a[3]));
+ 		break;
+ 	case SYS_SEND:
+ 		ret = sys_send(a0, compat_ptr(a1), a[2], a[3]);
+diff --git a/net/socket.c b/net/socket.c
+index 007fb9483279..5861821f46f5 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1368,8 +1368,7 @@ SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
+  *	Create a pair of connected sockets.
+  */
+ 
+-SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
+-		int __user *, usockvec)
++int __sys_socketpair(int family, int type, int protocol, int __user *usockvec)
+ {
+ 	struct socket *sock1, *sock2;
+ 	int fd1, fd2, err;
+@@ -1454,6 +1453,12 @@ SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
++		int __user *, usockvec)
++{
++	return __sys_socketpair(family, type, protocol, usockvec);
++}
++
+ /*
+  *	Bind a name to a socket. Nothing much to do here since it's
+  *	the protocol's responsibility to handle the local address.
+@@ -2521,7 +2526,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 				      (int __user *)a[2]);
+ 		break;
+ 	case SYS_SOCKETPAIR:
+-		err = sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
++		err = __sys_socketpair(a0, a1, a[2], (int __user *)a[3]);
+ 		break;
+ 	case SYS_SEND:
+ 		err = sys_send(a0, (void __user *)a1, a[2], a[3]);
 -- 
-Jazz is not dead. It just smells funny...
+2.16.2
