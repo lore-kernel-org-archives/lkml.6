@@ -1,103 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753275AbeCPIu0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 04:50:26 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34548 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeCPIuW (ORCPT
+        id S1753286AbeCPIuf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 04:50:35 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:42311 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753179AbeCPIuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 04:50:22 -0400
-X-Google-Smtp-Source: AG47ELtIKSwBj28+FRNAJJGu75NsX5iTX44EB3UDhZwqeK07ul4s1FBanVpdZ7vgq+Sbq1a9R8nXWjuEC5RNqrMCw8U=
+        Fri, 16 Mar 2018 04:50:25 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37878403"
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+To: <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
+Subject: [PATCH] x86/build: drop a superfluous macro
+Date: Fri, 16 Mar 2018 16:49:44 +0800
+Message-ID: <20180316084944.3997-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-In-Reply-To: <20180315224202.96668-4-dmitry.torokhov@gmail.com>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com> <20180315224202.96668-4-dmitry.torokhov@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Mar 2018 09:50:21 +0100
-X-Google-Sender-Auth: ASCo0CgcbGtnpbYfnaAC66Z-05U
-Message-ID: <CAMuHMdX9CsWmGYN20mDge7h8UjRDWQMAXD+L2uKFjO3x=R5gLw@mail.gmail.com>
-Subject: Re: [RFC 3/4] sh: ecovec24: convert backlight to use device properties
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 709AA4D0EFFC.AC0C0
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Some .<target>.cmd files under arch/x86 report -D__KERNEL__ appears two
+times in the command line, like arch/x86/boot, arch/x86/realmode/rm.
+It is already defined in KBUILD_CPPFLAGS from top Makefile. so it can be
+dropped saftely from these Makefiles.
 
-On Thu, Mar 15, 2018 at 11:42 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> Instead of backlight legacy platform data, let's switch to using device
-> properties and GPIO lookup tables.
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+ arch/x86/Makefile                 | 3 +--
+ arch/x86/boot/compressed/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Thanks for your patch!
-
-> --- a/arch/sh/boards/mach-ecovec24/setup.c
-> +++ b/arch/sh/boards/mach-ecovec24/setup.c
-
-> @@ -367,17 +368,21 @@ static struct platform_device lcdc_device = {
->         },
->  };
->
-> -static struct gpio_backlight_platform_data gpio_backlight_data = {
-> -       .gpio = GPIO_PTR1,
-> -       .def_value = 1,
-> -       .name = "backlight",
-> +static struct gpiod_lookup_table gpio_backlight_gpios_table = {
-
-gpio_backlight_gpios_table is unused?
-
-> +       .dev_id = "gpio-backlight.0",
-> +       .table = {
-> +               GPIO_LOOKUP_IDX("sh7724_pfc", GPIO_PTR1, NULL, 0, GPIO_ACTIVE_HIGH);
-> +               { }
-> +       },
-> +};
-> +
-> +static struct property_entry gpio_backlight_properties[] = {
-
-const
-
-> +       PROPERTY_ENTRY_BOOL("default-on"),
-> +       { }
->  };
->
->  static struct platform_device gpio_backlight_device = {
->         .name = "gpio-backlight",
-> -       .dev = {
-> -               .platform_data = &gpio_backlight_data,
-> -       },
->  };
->
->  /* CEU0 */
-> @@ -1436,6 +1441,8 @@ static int __init arch_setup(void)
->                 return error;
->
->         if (use_backlight) {
-> +               device_add_properties(&gpio_backlight_device.dev,
-> +                                     gpio_backlight_properties);
->                 error = platform_device_add(&gpio_backlight_device);
->                 if (error)
->                         pr_warn("%s: failed to register backlight: %d\n",
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index a20eacd9c7e9..592489a15d94 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -31,8 +31,7 @@ endif
+ CODE16GCC_CFLAGS := -m32 -Wa,$(srctree)/arch/x86/boot/code16gcc.h
+ M16_CFLAGS	 := $(call cc-option, -m16, $(CODE16GCC_CFLAGS))
+ 
+-REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os -D__KERNEL__ \
+-		   -DDISABLE_BRANCH_PROFILING \
++REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os -DDISABLE_BRANCH_PROFILING \
+ 		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
+ 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
+ 		   -mno-mmx -mno-sse
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 4b7575b00563..78e3400c22d7 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -26,7 +26,7 @@ KCOV_INSTRUMENT		:= n
+ targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
+ 	vmlinux.bin.xz vmlinux.bin.lzo vmlinux.bin.lz4
+ 
+-KBUILD_CFLAGS := -m$(BITS) -D__KERNEL__ -O2
++KBUILD_CFLAGS := -m$(BITS) -O2
+ KBUILD_CFLAGS += -fno-strict-aliasing $(call cc-option, -fPIE, -fPIC)
+ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+ cflags-$(CONFIG_X86_32) := -march=i386
+-- 
+2.14.3
