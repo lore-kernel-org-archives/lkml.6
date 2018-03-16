@@ -1,88 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753346AbeCPR4U (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:56:20 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52813 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751829AbeCPR4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:56:18 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 5/7] arm64: allwinner: a64: add DE2 CCU related device tree nodes
-Date: Sat, 17 Mar 2018 01:53:52 +0800
-Message-Id: <20180316175354.21437-6-icenowy@aosc.io>
-In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
+        id S1753861AbeCPRJH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:09:07 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:43206 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbeCPRHC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:07:02 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org
+Subject: [PATCH -next 22/22] net: socket: add __compat_sys_...msg() helpers; remove in-kernel calls to compat syscalls
+Date: Fri, 16 Mar 2018 18:06:14 +0100
+Message-Id: <20180316170614.5392-23-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
+References: <20180316170614.5392-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we have all necessary parts to enable the DE2 CCU on the Allwinner
-A64 SoC, add the needed device tree nodes, including the SRAM controller
-node, SRAM C node, DE2 bus node and DE2 CCU node.
+Using the net-internal helpers __compat_sys_...msg() allows us to avoid
+the internal calls to the compat_sys_...msg() syscalls.
+compat_sys_recvmmsg() is handled in a different patch.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 42 +++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ net/compat.c | 37 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 1b6dc31e7d91..1f92015503ea 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -148,6 +148,48 @@
- 		#size-cells = <1>;
- 		ranges;
+diff --git a/net/compat.c b/net/compat.c
+index 7b2ae42a1598..5ae7437d3853 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -747,25 +747,48 @@ static unsigned char nas[21] = {
+ };
+ #undef AL
  
-+		de2@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2";
-+			reg = <0x1000000 0x400000>;
-+			allwinner,sram = <&de2_sram 1>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x1000000 0x400000>;
+-COMPAT_SYSCALL_DEFINE3(sendmsg, int, fd, struct compat_msghdr __user *, msg, unsigned int, flags)
++static inline long __compat_sys_sendmsg(int fd,
++					struct compat_msghdr __user *msg,
++					unsigned int flags)
+ {
+ 	return __sys_sendmsg(fd, (struct user_msghdr __user *)msg,
+ 			     flags | MSG_CMSG_COMPAT, false);
+ }
+ 
+-COMPAT_SYSCALL_DEFINE4(sendmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
+-		       unsigned int, vlen, unsigned int, flags)
++COMPAT_SYSCALL_DEFINE3(sendmsg, int, fd, struct compat_msghdr __user *, msg,
++		       unsigned int, flags)
++{
++	return __compat_sys_sendmsg(fd, msg, flags);
++}
 +
-+			display_clocks: clock@0 {
-+				compatible = "allwinner,sun50i-a64-de2-clk";
-+				reg = <0x0 0x100000>;
-+				clocks = <&ccu CLK_DE>,
-+					 <&ccu CLK_BUS_DE>;
-+				clock-names = "mod",
-+					      "bus";
-+				resets = <&ccu RST_BUS_DE>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+		};
++static inline long __compat_sys_sendmmsg(int fd,
++					 struct compat_mmsghdr __user *mmsg,
++					 unsigned int vlen, unsigned int flags)
+ {
+ 	return __sys_sendmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
+ 			      flags | MSG_CMSG_COMPAT, false);
+ }
+ 
+-COMPAT_SYSCALL_DEFINE3(recvmsg, int, fd, struct compat_msghdr __user *, msg, unsigned int, flags)
++COMPAT_SYSCALL_DEFINE4(sendmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
++		       unsigned int, vlen, unsigned int, flags)
++{
++	return __compat_sys_sendmmsg(fd, mmsg, vlen, flags);
++}
 +
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun50i-a64-sram-controller";
-+			reg = <0x01c00000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
++static inline long __compat_sys_recvmsg(int fd,
++					struct compat_msghdr __user *msg,
++					unsigned int flags)
+ {
+ 	return __sys_recvmsg(fd, (struct user_msghdr __user *)msg,
+ 			     flags | MSG_CMSG_COMPAT, false);
+ }
+ 
++COMPAT_SYSCALL_DEFINE3(recvmsg, int, fd, struct compat_msghdr __user *, msg,
++		       unsigned int, flags)
++{
++	return __compat_sys_recvmsg(fd, msg, flags);
++}
 +
-+			sram_c: sram@18000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00018000 0x28000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00018000 0x28000>;
-+
-+				de2_sram: sram-section@0 {
-+					compatible = "allwinner,sun50i-a64-sram-c";
-+					reg = <0x0000 0x28000>;
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
+ static inline long __compat_sys_recvfrom(int fd, void __user *buf,
+ 					 compat_size_t len, unsigned int flags,
+ 					 struct sockaddr __user *addr,
+@@ -893,13 +916,13 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 					      compat_ptr(a[4]));
+ 		break;
+ 	case SYS_SENDMSG:
+-		ret = compat_sys_sendmsg(a0, compat_ptr(a1), a[2]);
++		ret = __compat_sys_sendmsg(a0, compat_ptr(a1), a[2]);
+ 		break;
+ 	case SYS_SENDMMSG:
+-		ret = compat_sys_sendmmsg(a0, compat_ptr(a1), a[2], a[3]);
++		ret = __compat_sys_sendmmsg(a0, compat_ptr(a1), a[2], a[3]);
+ 		break;
+ 	case SYS_RECVMSG:
+-		ret = compat_sys_recvmsg(a0, compat_ptr(a1), a[2]);
++		ret = __compat_sys_recvmsg(a0, compat_ptr(a1), a[2]);
+ 		break;
+ 	case SYS_RECVMMSG:
+ 		ret = __compat_sys_recvmmsg(a0, compat_ptr(a1), a[2], a[3],
 -- 
-2.15.1
+2.16.2
