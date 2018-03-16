@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuEOui7ZCVtZ5l0mrhMVZkaw3H6rz14lHWdG94ACfqElTlNITAWYJg2Y9PFLxJj6iAcKG1I
-ARC-Seal: i=1; a=rsa-sha256; t=1521214114; cv=none;
+X-Google-Smtp-Source: AG47ELvLDckE08fNO5EgSL86uFEXekdWPgO+xZe141dPDGqf7QTSvYBIBrt/dSji/rlIAkPoCUAf
+ARC-Seal: i=1; a=rsa-sha256; t=1521214112; cv=none;
         d=google.com; s=arc-20160816;
-        b=BgxQa2Kv8nfd4ki2FHM7RIOuNwRzU8j6338jm2QPIxjfzXCiN/ScrvJRGfJre3XpzU
-         /TwTujlJ/3fRZguXoCu1n9pcHi0dhDpV/+pQXMefkDmwUG4PGg+72oRf9YLcUHmA04mf
-         ceS3fFKoerCwbINVKFniBYwEz/CXDOx7Oz6pGhhmRZ0iSU6/2Cr/Kx65sKvwsomsy1b2
-         8okMVpNybITduDP4fiZ7dGGzwKcc4s3fh5j5Fgs74L/gJKKeiYyouyoCPaQ7WfZYpuIS
-         3/4jwDVeF1fqcxKrCm/g+I3fcKZ2T3B0zWlQiMNteNtOQCXBb83oM8erhkgnVAeujePP
-         A5DQ==
+        b=LvfOWeQM7Pq5XPb3tkilgmalMigRJfIx2Xll1hu9FSaY1H5dVA4h+uudr4f0I5Qfcx
+         fjGc+xIFOZ2IlzP0v8bRIrhVVqeRifPi5QK6eGZvolawAChSx7ITPtCsmzD5lmACMbvH
+         jl9nmm+LF++YXEaQVeXnqIZY8e7L40gC9g3BTUykaaZNsULyzvUPtpEmXvqFuRkRZVID
+         9PtMhHeJb+64q0YQ9nOPUwWmhE+/ev0+27viocFx2EYafLEzqXib9lJOaRJYmszW3N2Y
+         BC+bmuWWZTCKbafRjd1PNQVT1bV0Hxm/Q6XEiat15SjmJLqJoCbHdUwQR8Ng8wn+HP93
+         5Ltg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=B6f7yUlgEad58RRW7z8UibXqv/Y7Osc/W5IHAf2vWfw=;
-        b=R+EuUiWOx2pSquhINPjXnMu7gI5R9fEHzng3xAIDWeAS2e80IYE2e4iyv1ovsSO0LR
-         n454ERWphKH9jEwwgDKHyNWm1VkuSJdxLKxwK7C9WUPCy736C/UkOB16mj6MREHd9FMv
-         sWlsdjXC/j40qkUyAZI9VzCdSG3Q6fSwkY2kSVXKgqv+MuCJf1wbnGA0fZ+H2mAWOBlI
-         zbUElNMp04cnnQR83vDZpgCdGMT/vu3OGN/9Tcvmi3+N2OuY1hoxkHBdou8XzS4Ih7T+
-         HalGCu0UO8Hxzeb1P3XId/pzK80ipLdCRUpAdyz/Hw8/rZupx7lJeKq0sdKO/vCC74XY
-         WpWg==
+        bh=vaJZr6qozbGFGQ/gLUWXZfd2ZIJCtyPn8xLavc3xd08=;
+        b=O1uqvkITqPGNsR1GF8cmfDY5EHsrUzOCL7XJNfVDEfVbrLgriXef7U6iG+BpVfZRAK
+         C8G9cywdoH4DFeXtPu6wVWHj/QxwVHdFisCHgOaB7cTgIOV5ZTadtq4LHvR6RphcQspi
+         9pZfDzd2tgGIs6nvMt4TY5UaMaE2toZn4+NLaitui4gNzccJjfrEew9XmILmwZ8ydW0z
+         IJ4VWmUPxKvG0lhJ8Ko5P//kgaKL1H9syNvtMkaar6AO5YnssHirDfKa/9hhUgI9+HJM
+         Wil1xVdLpByga8RNH78ibsyuywaPjLjPuUdllYavR6EfXqSTnp554vsZNFfxiDkIfiVZ
+         ienA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.4 18/63] kbuild: Handle builtin dtb file names containing hyphens
-Date: Fri, 16 Mar 2018 16:22:50 +0100
-Message-Id: <20180316152302.085094735@linuxfoundation.org>
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christoph Hellwig <hch@lst.de>,
+	Ming Lei <ming.lei@redhat.com>,
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.4 17/63] loop: Fix lost writes caused by missing flag
+Date: Fri, 16 Mar 2018 16:22:49 +0100
+Message-Id: <20180316152301.935250657@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108611771881527?=
-X-GMAIL-MSGID: =?utf-8?q?1595108611771881527?=
+X-GMAIL-THRID: =?utf-8?q?1595108608526044429?=
+X-GMAIL-MSGID: =?utf-8?q?1595108608526044429?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,68 +52,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit 55fe6da9efba102866e2fb5b40b04b6a4b26c19e upstream.
+commit 1d037577c323e5090ce281e96bc313ab2eee5be2 upstream.
 
-cmd_dt_S_dtb constructs the assembly source to incorporate a devicetree
-FDT (that is, the .dtb file) as binary data in the kernel image. This
-assembly source contains labels before and after the binary data. The
-label names incorporate the file name of the corresponding .dtb file.
-Hyphens are not legal characters in labels, so .dtb files built into the
-kernel with hyphens in the file name result in errors like the
-following:
+The following commit:
 
-bcm3368-netgear-cvg834g.dtb.S: Assembler messages:
-bcm3368-netgear-cvg834g.dtb.S:5: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:5: Error: junk at end of line, first unrecognized character is `-'
-bcm3368-netgear-cvg834g.dtb.S:6: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_begin:'
-bcm3368-netgear-cvg834g.dtb.S:8: Error: unrecognized opcode `__dtb_bcm3368-netgear-cvg834g_end:'
-bcm3368-netgear-cvg834g.dtb.S:9: Error: : no such section
-bcm3368-netgear-cvg834g.dtb.S:9: Error: junk at end of line, first unrecognized character is `-'
+commit aa4d86163e4e ("block: loop: switch to VFS ITER_BVEC")
 
-Fix this by updating cmd_dt_S_dtb to transform all hyphens from the file
-name to underscores when constructing the labels.
+replaced __do_lo_send_write(), which used ITER_KVEC iterators, with
+lo_write_bvec() which uses ITER_BVEC iterators.  In this change, though,
+the WRITE flag was lost:
 
-As of v4.16-rc2, 1139 .dts files across ARM64, ARM, MIPS and PowerPC
-contain hyphens in their names, but the issue only currently manifests
-on Broadcom MIPS platforms, as that is the only place where such files
-are built into the kernel. For example when CONFIG_DT_NETGEAR_CVG834G=y,
-or on BMIPS kernels when the dtbs target is used (in the latter case it
-admittedly shouldn't really build all the dtb.o files, but thats a
-separate issue).
+-       iov_iter_kvec(&from, ITER_KVEC | WRITE, &kvec, 1, len);
++       iov_iter_bvec(&i, ITER_BVEC, bvec, 1, bvec->bv_len);
 
-Fixes: 695835511f96 ("MIPS: BMIPS: rename bcm96358nb4ser to bcm6358-neufbox4-sercom")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+This flag is necessary for the DAX case because we make decisions based on
+whether or not the iterator is a READ or a WRITE in dax_iomap_actor() and
+in dax_iomap_rw().
+
+We end up going through this path in configurations where we combine a PMEM
+device with 4k sectors, a loopback device and DAX.  The consequence of this
+missed flag is that what we intend as a write actually turns into a read in
+the DAX code, so no data is ever written.
+
+The very simplest test case is to create a loopback device and try and
+write a small string to it, then hexdump a few bytes of the device to see
+if the write took.  Without this patch you read back all zeros, with this
+you read back the string you wrote.
+
+For XFS this causes us to fail or panic during the following xfstests:
+
+	xfs/074 xfs/078 xfs/216 xfs/217 xfs/250
+
+For ext4 we have a similar issue where writes never happen, but we don't
+currently have any xfstests that use loopback and show this issue.
+
+Fix this by restoring the WRITE flag argument to iov_iter_bvec().  This
+causes the xfstests to all pass.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: stable@vger.kernel.org
+Fixes: commit aa4d86163e4e ("block: loop: switch to VFS ITER_BVEC")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.lib |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/block/loop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -270,11 +270,11 @@ cmd_dt_S_dtb=						\
- 	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
- 	echo '.section .dtb.init.rodata,"a"';		\
- 	echo '.balign STRUCT_ALIGNMENT';		\
--	echo '.global __dtb_$(*F)_begin';		\
--	echo '__dtb_$(*F)_begin:';			\
-+	echo '.global __dtb_$(subst -,_,$(*F))_begin';	\
-+	echo '__dtb_$(subst -,_,$(*F))_begin:';		\
- 	echo '.incbin "$<" ';				\
--	echo '__dtb_$(*F)_end:';			\
--	echo '.global __dtb_$(*F)_end';			\
-+	echo '__dtb_$(subst -,_,$(*F))_end:';		\
-+	echo '.global __dtb_$(subst -,_,$(*F))_end';	\
- 	echo '.balign STRUCT_ALIGNMENT'; 		\
- ) > $@
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -263,7 +263,7 @@ static int lo_write_bvec(struct file *fi
+ 	struct iov_iter i;
+ 	ssize_t bw;
  
+-	iov_iter_bvec(&i, ITER_BVEC, bvec, 1, bvec->bv_len);
++	iov_iter_bvec(&i, ITER_BVEC | WRITE, bvec, 1, bvec->bv_len);
+ 
+ 	file_start_write(file);
+ 	bw = vfs_iter_write(file, &i, ppos);
