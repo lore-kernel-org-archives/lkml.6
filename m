@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvno9DgQbRlBlNXfZ+w2yOBXVB6B8wy071O5hnUt0l0j4RmVORp6/Ej3BsanZxXvlIQME3f
-ARC-Seal: i=1; a=rsa-sha256; t=1521228613; cv=none;
+X-Google-Smtp-Source: AG47ELv9HGku4Ep7Qd0QtHPGqF9DiZqwYsuaP7C4pmUmItTwoMy57Ng+xzL2SIJQewUvonZ+6Q3c
+ARC-Seal: i=1; a=rsa-sha256; t=1521228611; cv=none;
         d=google.com; s=arc-20160816;
-        b=d1kJFw9DSJP63/v1JnuxbwN2pcVLcvqAVgTbtU+qMENv5jf93vjAUsLMw4doeDV82H
-         CESC0eCglLiZn6fVqgt9AD9kAxMxGtxWBmJNyUNHs13eFlbT11kRNXwwg7iEbhnio05M
-         OOvDDTKSbCcVMIx7f+82hXgHtfMUkyylHNnyRfiOY1+cGKZmykg2ju2tK3cASuwftW0u
-         w49R8huKXokFlLk6HgK8XE/yRiunYpGCUmsBues3dVW5vTcY9HaAgPy5aDe2UJBYEUXA
-         vTw8RInBX2NdlVdiC1iztWnYIFTCdXAXQ59dB9BL25kzFa4w0jpk9dwGui/n5Glr3UTY
-         XDNA==
+        b=Cx4n6yCxtL8q/99HBvKjhD7DjVslTuJMWj2kBNP+zjyQaz7o/OX71idjbOMxT+BWh2
+         kcrg8s9C2VlbDDJzYzwQsfHSXNmmtulVqlC933R430eBrUTD3lIEzslZY/hyjO4Za94h
+         vMjyE0bvkYSjbGWCfXvgVhvsMGSfqob8OR7f/2OKvk7qJgQ3ETcbz+3I01V/FBegyZRy
+         dGnXtrKyl+d7ci2d8HZxf+NRTPj2+ns02rUcrbR2HHlcRiR3x6iWfxLRy6qW+lkXp47Q
+         JTiNj/jeG9ys7yNEnoI48A133IkOInTJyVVLcwkDdoVPVGHbLiQ2YavAtxpY7f9FJdO3
+         Rj9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=6pKXJr3dQB+EZKAI6Uh1IKsDamXmlHYF3SRvL1fh3Yw=;
-        b=fkrMILaStRz3RzvRoLeJ+Vg8K+A2S6s/JXu3+BhOFI96OZNf+SG7EkhC03l2FzZZqf
-         0hIrIixPA/jhfEihWOXqGlIDu6FBuZnRJwsSrj5aKxr3egOhEL3WzsMwX5BkeWdGuiOK
-         LwWT/b9gXT5IibFMOECFG6qCaaH4hI3HXFbcPVznjvmaOGchRscy8L+pft3qW4mtdbfJ
-         D/rBb6AontkAA5Uaa/JSMuTppp9uA6u7+VMIQOOL7HYpwOuq1KGMmr/dbuQ6tjctMPtT
-         1quRm7GFBkQCjpu1X9VdaKJsSuo2JV2Jmoqd1/gT3uv+sscn35J3vOR6ILnf1RyIlmky
-         P+yA==
+        bh=S/IFyE5s2WbwnTT/5msmNTwuegueAW0gy7hAJnfhu+M=;
+        b=R0/zQJSvg+X28SZf6xV+nViUqhuuImiNdwzisuOo4RvA0wR+vYG2MvKYArd6gMxDXh
+         LoQife10UI5q/NHCe3Br5JUJxX56H+dLpnzwF3/18a5uR0UxuM+AWSb+jzl5u6p2IUCK
+         lX53hJd5eSdrmTZjQMzqvGtoRfx1SeOAvTO4MsdLso0X09iK02dRaHAez/t8sY8BOb/w
+         bn8+HHnPtncG18IVvgXBXITA+gASmdx1AGnwQMHdc5ec+qMl++F3tGsQQxAv3c8g8Ye1
+         aGj1VS361Ad9Wyup3+lJ2Kzj8xCziZrF9dEgotT0SMg82Xmo3dSqQl6zI+HG+A096y1t
+         I6kw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NeSCcwVf;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hF+xr0Gp;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NeSCcwVf;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hF+xr0Gp;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,39 +57,44 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 33/35] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-Date: Fri, 16 Mar 2018 20:29:51 +0100
-Message-Id: <1521228593-3820-34-git-send-email-joro@8bytes.org>
+Subject: [PATCH 24/35] x86/mm/pti: Add an overflow check to pti_clone_pmds()
+Date: Fri, 16 Mar 2018 20:29:42 +0100
+Message-Id: <1521228593-3820-25-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123814616371996?=
-X-GMAIL-MSGID: =?utf-8?q?1595123814616371996?=
+X-GMAIL-THRID: =?utf-8?q?1595123813092757960?=
+X-GMAIL-MSGID: =?utf-8?q?1595123813092757960?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allow PTI to be compiled on x86_32.
+The addr counter will overflow if we clone the last PMD of
+the address space, resulting in an endless loop.
+
+Check for that and bail out of the loop when it happens.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- security/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/pti.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index b0cb9a5..93d85fd 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -57,7 +57,7 @@ config SECURITY_NETWORK
- config PAGE_TABLE_ISOLATION
- 	bool "Remove the kernel mapping in user mode"
- 	default y
--	depends on X86_64 && !UML
-+	depends on X86 && !UML
- 	help
- 	  This feature reduces the number of hardware side channels by
- 	  ensuring that the majority of kernel addresses are not mapped
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 8f53d21..96a690e 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -282,6 +282,10 @@ pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
+ 		p4d_t *p4d;
+ 		pud_t *pud;
+ 
++		/* Overflow check */
++		if (addr < start)
++			break;
++
+ 		pgd = pgd_offset_k(addr);
+ 		if (WARN_ON(pgd_none(*pgd)))
+ 			return;
 -- 
 2.7.4
