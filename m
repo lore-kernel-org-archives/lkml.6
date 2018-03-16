@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvb2pbBbOQ+SVE78eX1o3loz556AkdVaKC1IawUwLZUM4rorLoMW1aUiTeMQFWMCDs9T7pF
-ARC-Seal: i=1; a=rsa-sha256; t=1521214871; cv=none;
+X-Google-Smtp-Source: AG47ELsk6Po9PTXWd9J31YOCqyEo3TrMtLGGsgKj46rr8r4/Y/rrPlrQ58uXNQ6AOfjETF5DyaYb
+ARC-Seal: i=1; a=rsa-sha256; t=1521214868; cv=none;
         d=google.com; s=arc-20160816;
-        b=SAGdogef8LuPzS769av87dQ72Ph47vVq0r1Ag6TKPzA0CateMag3yOIsZ+GQKPNsHR
-         ozVdoRgH9v6dTON4r5wfHtcLOA3DU3BlnXDH69h9jEQePb0wMtUbCc/QqioIiHtA7nHy
-         J+DfH9LWZW17K/XFTiCtYFD/Rp8aRfViLrkQ/BunQuUPy/YCIFaYFnMkWnCV91duixJm
-         yip0qI1xG+WkuZeFYBcXwbprMmA6PQuhz1gkxaTAIDPeupKSlOH7uTyghUC6reirZyby
-         ZdEpS/SUzoeS5vSGaIyU5qBBL6j8A/GJgMtu0IUMvpUpr5N2A4/nAE7jEBmlMif+jNSO
-         3ezw==
+        b=RHUuoGWJQjMP767z5XarIWABAX3jowwjjkdsEAiA8z7UzqWvUphx8D52l5LfnqO3l+
+         Hv1UYOrmoOmzRVKFeOoI3uLCggLzrrrkWeo0gO09GrmLhnxRnJF29JICZb5Egvlb4FvP
+         k3fiXgoDYWzbt13ucYHogJTp/XUVT13RKSX9gnbhtEgTz85I/N5O0MCBhSudEKWrO0ed
+         P8BmDh3LEY1ZCTuCgM9GGNDa9NcTJioxFFkEKZNsKDDG7DOpfmUeQ0IG6HfrSN1hzeAG
+         KaZkGZm+gP+SSNuD1FzIKNzWnUBJhCVYu6NnwGZN8h3kqFXyOm5HHzH5xz8G0DaALFJm
+         g6Sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=c7RWe3UDtojRrkU9Y3eAMRrGtKBH1Pej5evB3XxCEaU=;
-        b=C+NqjqYgDgkECSBCNU6EvMy5NLE6C20IHUGyhai1OCI2pHNoYnQAJiQmGf+iNuMbfe
-         O1jsYYhgxCUIxgsQNszQNLN85xTVCmw5s59cBfFom3NXwN9Td1rWLHlkfFGCjtJUWXFK
-         kATcC2uTgBbyy0CbUbJl5qn38xmzr7VcjZiQ5ngWpGyIX2L5IrMuQFnpktBewNYCMvx4
-         nf4pUbbJhLRzIcX43wdIXRLyUFygwe2/2dwZRjjb/hgHe7j5BaBS+T5vVZc6Y2zKorF7
-         i1ViTsoOiqykBJ4aUmRdIqSaJKhEGqNIUGUeSyT65S4vwVvUNThB8sCiL4+3dPdypRTC
-         Y0DA==
+        bh=BeuYRk9GDG42v1lLWOnPHeJK+yoibCcj3A6ueC89vA8=;
+        b=bPO9ldsbOe0LyaSvMe9gAcmeiEfAdfNp6sOpv8j5VowBy3LFe0XcM/Tl8Omn99SJdC
+         S2acQcS/YgX/qt2MOzbXg9i2ZFwvBmIOR8EERQe84PZtxZrRkY0/rNttk5td5NWz/5/X
+         +MVv4NVeF9fX5s6sMR8E+Asdm9VAEi/f+zHR/+rhuFfbH3UY2vmjaw38am7xzxhZlsY2
+         GH9tIkk1VlB9VEkzUOjVavLhHUUNA8dg9jlMHojQaMJx/jww8qUY+zmbHFPHukDaiMoz
+         /2E6VQ7HGk6yBKlVeCb04jrp/RCo28pYgaat0ApDDA8tWwBG+kb0JkQr+7FYv5gR657R
+         u9Bw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 048/128] crypto: chelsio - Fix an error code in chcr_hash_dma_map()
-Date: Fri, 16 Mar 2018 16:23:09 +0100
-Message-Id: <20180316152339.222836322@linuxfoundation.org>
+Subject: [PATCH 4.15 047/128] sched: Stop resched_cpu() from sending IPIs to offline CPUs
+Date: Fri, 16 Mar 2018 16:23:08 +0100
+Message-Id: <20180316152339.163139756@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109404736628376?=
-X-GMAIL-MSGID: =?utf-8?q?1595109404736628376?=
+X-GMAIL-THRID: =?utf-8?q?1595109051046270878?=
+X-GMAIL-MSGID: =?utf-8?q?1595109401868012491?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
-[ Upstream commit 7814f552ff826fefa5e1b24083c7a06a9378e9ef ]
+[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
 
-The dma_map_sg() function returns zero on error and positive values on
-success.  We want to return -ENOMEM on failure here and zero on success.
+The rcutorture test suite occasionally provokes a splat due to invoking
+resched_cpu() on an offline CPU:
 
-Fixes: 2f47d5804311 ("crypto: chelsio - Move DMA un/mapping to chcr from lld cxgb4 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kernel/smp.c:128 native_smp_send_reschedule+0x37/0x40
+Modules linked in:
+CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+task: ffff902ede9daf00 task.stack: ffff96c50010c000
+RIP: 0010:native_smp_send_reschedule+0x37/0x40
+RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
+RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
+RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
+R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
+FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+Call Trace:
+ resched_curr+0x8f/0x1c0
+ resched_cpu+0x2c/0x40
+ rcu_implicit_dynticks_qs+0x152/0x220
+ force_qs_rnp+0x147/0x1d0
+ ? sync_rcu_exp_select_cpus+0x450/0x450
+ rcu_gp_kthread+0x5a9/0x950
+ kthread+0x142/0x180
+ ? force_qs_rnp+0x1d0/0x1d0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x27/0x40
+Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
+---[ end trace 26df9e5df4bba4ac ]---
+
+This splat cannot be generated by expedited grace periods because they
+always invoke resched_cpu() on the current CPU, which is good because
+expedited grace periods require that resched_cpu() unconditionally
+succeed.  However, other parts of RCU can tolerate resched_cpu() acting
+as a no-op, at least as long as it doesn't happen too often.
+
+This commit therefore makes resched_cpu() invoke resched_curr() only if
+the CPU is either online or is the current CPU.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/chelsio/chcr_algo.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -2414,7 +2414,7 @@ static inline int chcr_hash_dma_map(stru
- 	error = dma_map_sg(dev, req->src, sg_nents(req->src),
- 			   DMA_TO_DEVICE);
- 	if (!error)
--		return error;
-+		return -ENOMEM;
- 	req_ctx->is_sg_map = 1;
- 	return 0;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -508,7 +508,8 @@ void resched_cpu(int cpu)
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&rq->lock, flags);
+-	resched_curr(rq);
++	if (cpu_online(cpu) || cpu == smp_processor_id())
++		resched_curr(rq);
+ 	raw_spin_unlock_irqrestore(&rq->lock, flags);
  }
+ 
