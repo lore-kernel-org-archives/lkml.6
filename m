@@ -1,505 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeCPQ1A (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:27:00 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35451 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbeCPQ0z (ORCPT
+        id S1752882AbeCPQ3D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:29:03 -0400
+Received: from mail.efficios.com ([167.114.142.138]:46174 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752825AbeCPQ3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:26:55 -0400
-X-Google-Smtp-Source: AG47ELvMGNYcRWpyLGtahvoX4U0uynDFo/gmVm9z5OWSDKDAPIprxD53BvmOXpiQ64+mzfRWmRk3pQ==
-Date: Fri, 16 Mar 2018 09:26:54 -0700
-From: Moritz Fischer <mdf@kernel.org>
-To: Paolo Pisati <p.pisati@gmail.com>
-Cc: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-Message-ID: <20180316162654.bcr7d46om2tnhm7l@us-sjc-wireless-10-16-34-48.amer.corp.natinst.com>
-References: <1521215669-23874-1-git-send-email-p.pisati@gmail.com>
- <1521215669-23874-3-git-send-email-p.pisati@gmail.com>
+        Fri, 16 Mar 2018 12:29:00 -0400
+Date: Fri, 16 Mar 2018 12:28:59 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: rostedt <rostedt@goodmis.org>
+Cc: Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180316112517.66bdd85a@gandalf.local.home>
+References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com> <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com> <20170714142900.1c91949c@gandalf.local.home> <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com> <20180316112517.66bdd85a@gandalf.local.home>
+Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
+ blacklist
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521215669-23874-3-git-send-email-p.pisati@gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.6_GA_1906 (ZimbraWebClient - FF52 (Linux)/8.8.6_GA_1906)
+Thread-Topic: kprobe: fix: Add ftrace_ops_assist_func to kprobe blacklist
+Thread-Index: pKtWse2SN6fh4PXYN0suT7IF83Uzxg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 04:54:29PM +0100, Paolo Pisati wrote:
-> This patch adds support to the FPGA manager for programming
-> MachXO2 device’s internal flash memory, via slave SPI.
-> 
-> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-> ---
->  drivers/fpga/Kconfig       |   8 +
->  drivers/fpga/Makefile      |   1 +
->  drivers/fpga/machxo2-spi.c | 410 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 419 insertions(+)
->  create mode 100644 drivers/fpga/machxo2-spi.c
-> 
-> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> index ad5448f..65ccbc5 100644
-> --- a/drivers/fpga/Kconfig
-> +++ b/drivers/fpga/Kconfig
-> @@ -38,6 +38,14 @@ config FPGA_MGR_ALTERA_PS_SPI
->  	  FPGA manager driver support for Altera Arria/Cyclone/Stratix
->  	  using the passive serial interface over SPI.
->  
-> +config FPGA_MGR_MACHXO2_SPI
-> +	tristate "Lattice MachXO2 SPI"
-> +	depends on SPI
-> +	help
-> +	  FPGA manager driver support for Lattice MachXO2 configuration
-> +	  over slave SPI interface.
-> +
-> +
->  config FPGA_MGR_SOCFPGA
->  	tristate "Altera SOCFPGA FPGA Manager"
->  	depends on ARCH_SOCFPGA || COMPILE_TEST
-> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-> index f98dcf1..38abb08 100644
-> --- a/drivers/fpga/Makefile
-> +++ b/drivers/fpga/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_FPGA)			+= fpga-mgr.o
->  obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
->  obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)	+= altera-ps-spi.o
->  obj-$(CONFIG_FPGA_MGR_ICE40_SPI)	+= ice40-spi.o
-> +obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)	+= machxo2-spi.o
->  obj-$(CONFIG_FPGA_MGR_SOCFPGA)		+= socfpga.o
->  obj-$(CONFIG_FPGA_MGR_SOCFPGA_A10)	+= socfpga-a10.o
->  obj-$(CONFIG_FPGA_MGR_TS73XX)		+= ts73xx-fpga.o
-> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
-> new file mode 100644
-> index 0000000..3c7fc3e
-> --- /dev/null
-> +++ b/drivers/fpga/machxo2-spi.c
-> @@ -0,0 +1,410 @@
-> +/**
-> + * Lattice MachXO2 Slave SPI Driver
-> + *
-> + * Copyright (C) 2018 Paolo Pisati <p.pisati@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-SPDX please.
-> + *
-> + * Manage Lattice FPGA firmware that is loaded over SPI using
-> + * the slave serial configuration interface.
+----- On Mar 16, 2018, at 11:25 AM, rostedt rostedt@goodmis.org wrote:
 
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/fpga/fpga-mgr.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/spi/spi.h>
-> +
-> +//#define MACHXO2_DEBUG
-?! No ;-)
-> +
-> +/* MachXO2 Programming Guide - sysCONFIG Programming Commands */
-> +#define IDCODE_PUB			{0xe0, 0x00, 0x00, 0x00}
-> +#define ISC_ENABLE			{0xc6, 0x08, 0x00, 0x00}
-> +#define ISC_ERASE			{0x0e, 0x04, 0x00, 0x00}
-> +#define ISC_PROGRAMDONE		{0x5e, 0x00, 0x00, 0x00}
-> +#define LSC_INITADDRESS		{0x46, 0x00, 0x00, 0x00}
-> +#define LSC_PROGINCRNV		{0x70, 0x00, 0x00, 0x01}
-> +#define LSC_READ_STATUS		{0x3c, 0x00, 0x00, 0x00}
-> +#define LSC_REFRESH			{0x79, 0x00, 0x00, 0x00}
-> +
-> +/*
-> + * Max CCLK in Slave SPI mode according to 'MachXO2 Family Data
-> + * Sheet' sysCONFIG Port Timing Specifications (3-36)
-> + */
-> +#define MACHXO2_MAX_SPEED			66000000
-> +
-> +#define MACHXO2_LOW_DELAY			5		/* us */
-> +#define MACHXO2_HIGH_DELAY			200		/* us */
-> +#define MACHXO2_REFRESH				4800	/* us */
-> +#define MACHXO2_MAX_BUSY_LOOP		128
-> +#define MACHXO2_MAX_REFRESH_LOOP	16
-> +
-> +#define MACHXO2_PAGE_SIZE			16
-> +#define MACHXO2_BUF_SIZE			(MACHXO2_PAGE_SIZE + 4)
-> +
-> +/* Status register bits, errors and error mask */
-> +#define BUSY	12
-> +#define DONE	8
-> +#define DVER	27
-> +#define ENAB	9
-> +#define ERRBITS	23
-> +#define ERRMASK	7
-> +#define FAIL	13
-> +
-> +#define ENOERR	0 /* no error */
-> +#define EID		1
-> +#define ECMD	2
-> +#define	ECRC	3
-> +#define EPREAM	4 /* preamble error */
-> +#define EABRT	5 /* abort error */
-> +#define EOVERFL 6 /* overflow error */
-> +#define ESDMEOF 7 /* SDM EOF */
-> +
-> +static inline u8 get_err(unsigned long *status)
-> +{
-> +	return (*status >> ERRBITS) & ERRMASK;
-> +}
-> +
-> +static int get_status(struct spi_device *spi, unsigned long *status)
-> +{
-> +	struct spi_message msg;
-> +	struct spi_transfer rx, tx;
-> +	u8 cmd[] = LSC_READ_STATUS;
-> +	int ret;
-> +
-> +	memset(&rx, 0, sizeof(rx));
-> +	memset(&tx, 0, sizeof(tx));
-> +	tx.tx_buf = cmd;
-> +	tx.len = sizeof(cmd);
-> +	rx.rx_buf = status;
-> +	rx.len = 4;
-> +	spi_message_init(&msg);
-> +	spi_message_add_tail(&tx, &msg);
-> +	spi_message_add_tail(&rx, &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*status = be32_to_cpu(*status);
-> +	return 0;
-> +}
-> +
-> +#ifdef MACHXO2_DEBUG
-Not a fan of this ...
-> +static void dump_status_reg(unsigned long *status)
-> +{
-> +	char *ferr;
-> +
-> +	switch (get_err(status)) {
-> +	case ENOERR:
-> +		ferr = "No Error";
-> +		break;
-> +	case EID:
-> +		ferr = "ID ERR";
-> +		break;
-> +	case ECMD:
-> +		ferr = "CMD ERR";
-> +		break;
-> +	case ECRC:
-> +		ferr = "CRC ERR";
-> +		break;
-> +	case EPREAM:
-> +		ferr = "Preamble ERR";
-> +		break;
-> +	case EABRT:
-> +		ferr = "Abort ERR";
-> +		break;
-> +	case EOVERFL:
-> +		ferr = "Overflow ERR";
-> +		break;
-> +	case ESDMEOF:
-> +		ferr = "SDM EOF";
-> +		break;
-> +	default:
-> +		ferr = "Default switch case";
-> +	}
-> +	printk(KERN_DEBUG "machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
-> +	       *status, test_bit(DONE, status), test_bit(ENAB, status),
-> +	       test_bit(BUSY, status), test_bit(FAIL, status),
-> +		   test_bit(DVER, status), ferr);
-Not sure we need this function in the first place, if you really think
-you need it at least use pr_dbg() or pr_err() here.
-> +}
-> +#else
-> +static void dump_status_reg(unsigned long *status) {}
-> +#endif
-> +
-> +static int wait_until_not_busy(struct spi_device *spi)
-> +{
-> +	unsigned long status;
-> +	int ret, loop = 0;
-> +
-> +	do {
-> +		ret = get_status(spi, &status);
-> +		if (ret)
-> +			break;
-> +		if (++loop >= MACHXO2_MAX_BUSY_LOOP) {
-> +			ret = -EBUSY;
-> +			break;
-> +		}
-> +	} while (test_bit(BUSY, &status));
-> +
-> +	return ret;
-> +}
-> +
-> +static int machxo2_cleanup(struct fpga_manager *mgr)
-> +{
-> +	struct spi_device *spi = mgr->priv;
-> +	struct spi_message msg;
-> +	struct spi_transfer tx[2];
-> +	u8 erase[] = ISC_ERASE;
-> +	u8 refresh[] = LSC_REFRESH;
-> +	int ret;
-> +
-> +	memset(tx, 0, sizeof(tx));
-> +	spi_message_init(&msg);
-> +	tx[0].tx_buf = &erase;
-> +	tx[0].len = sizeof(erase);
-> +	spi_message_add_tail(&tx[0], &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	ret = wait_until_not_busy(spi);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	spi_message_init(&msg);
-> +	tx[1].tx_buf = &refresh;
-> +	tx[1].len = sizeof(refresh);
-> +	tx[1].delay_usecs = MACHXO2_REFRESH;
-> +	spi_message_add_tail(&tx[1], &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	return 0;
-> +fail:
-> +	dev_err(&mgr->dev, "Cleanup failed\n");
-> +	return ret;
-> +}
-> +
-> +static enum fpga_mgr_states machxo2_spi_state(struct fpga_manager *mgr)
-> +{
-> +	return FPGA_MGR_STATE_UNKNOWN;
-> +}
-
-To understand this correctly: Further up you have a way to determine the
-state you're in, but then you only use that for debug printout, while
-here where you should provide the status you say FPGA_MGR_STATE_UNKNOWN?
-
-Am I missing something here?
-> +
-> +static int machxo2_write_init(struct fpga_manager *mgr,
-> +			      struct fpga_image_info *info,
-> +			      const char *buf, size_t count)
-> +{
-> +	struct spi_device *spi = mgr->priv;
-> +	struct spi_message msg;
-> +	struct spi_transfer tx[3];
-> +	u8 enable[] = ISC_ENABLE;
-> +	u8 erase[] = ISC_ERASE;
-> +	u8 initaddr[] = LSC_INITADDRESS;
-> +	unsigned long status;
-> +	int ret;
-> +
-> +	if ((info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
-> +		dev_err(&mgr->dev,
-> +			"Partial reconfiguration is not supported\n");
-> +		return -ENOTSUPP;
-> +	}
-> +
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +	memset(tx, 0, sizeof(tx));
-> +	spi_message_init(&msg);
-> +	tx[0].tx_buf = &enable;
-> +	tx[0].len = sizeof(enable);
-> +	tx[0].delay_usecs = MACHXO2_LOW_DELAY;
-> +	spi_message_add_tail(&tx[0], &msg);
-> +
-> +	tx[1].tx_buf = &erase;
-> +	tx[1].len = sizeof(erase);
-> +	spi_message_add_tail(&tx[1], &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	ret = wait_until_not_busy(spi);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	get_status(spi, &status);
-> +	if (test_bit(FAIL, &status))
-> +		goto fail;
-> +	dump_status_reg(&status);
-> +
-> +	spi_message_init(&msg);
-> +	tx[2].tx_buf = &initaddr;
-> +	tx[2].len = sizeof(initaddr);
-> +	spi_message_add_tail(&tx[2], &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +	return 0;
-> +fail:
-> +	dev_err(&mgr->dev, "Error during FPGA init.\n");
-> +	return ret;
-> +}
-> +
-> +static int machxo2_write(struct fpga_manager *mgr, const char *buf,
-> +			 size_t count)
-> +{
-> +	struct spi_device *spi = mgr->priv;
-> +	struct spi_message msg;
-> +	struct spi_transfer tx;
-> +	u8 progincr[] = LSC_PROGINCRNV;
-> +	u8 payload[MACHXO2_BUF_SIZE];
-> +	unsigned long status;
-> +	int i, ret;
-> +
-> +	if (count % MACHXO2_PAGE_SIZE != 0) {
-> +		dev_err(&mgr->dev, "Malformed payload.\n");
-> +		return -EINVAL;
-> +	}
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +	memcpy(payload, &progincr, sizeof(progincr));
-> +	for (i = 0; i < count; i += MACHXO2_PAGE_SIZE) {
-> +		memcpy(&payload[sizeof(progincr)], &buf[i], MACHXO2_PAGE_SIZE);
-> +		memset(&tx, 0, sizeof(tx));
-> +		spi_message_init(&msg);
-> +		tx.tx_buf = payload;
-> +		tx.len = MACHXO2_BUF_SIZE;
-> +		tx.delay_usecs = MACHXO2_HIGH_DELAY;
-> +		spi_message_add_tail(&tx, &msg);
-> +		ret = spi_sync(spi, &msg);
-> +		if (ret) {
-> +			dev_err(&mgr->dev, "Error loading the bitstream.\n");
-> +			return ret;
-> +		}
-> +	}
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +
-> +	return 0;
-> +}
-> +
-> +static int machxo2_write_complete(struct fpga_manager *mgr,
-> +				  struct fpga_image_info *info)
-> +{
-> +	struct spi_device *spi = mgr->priv;
-> +	struct spi_message msg;
-> +	struct spi_transfer tx[2];
-> +	u8 progdone[] = ISC_PROGRAMDONE;
-> +	u8 refresh[] = LSC_REFRESH;
-> +	unsigned long status;
-> +	int ret, refreshloop = 0;
-> +
-> +	memset(tx, 0, sizeof(tx));
-> +	spi_message_init(&msg);
-> +	tx[0].tx_buf = &progdone;
-> +	tx[0].len = sizeof(progdone);
-> +	spi_message_add_tail(&tx[0], &msg);
-> +	ret = spi_sync(spi, &msg);
-> +	if (ret)
-> +		goto fail;
-> +	ret = wait_until_not_busy(spi);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +	if (!test_bit(DONE, &status)) {
-> +		machxo2_cleanup(mgr);
-> +		goto fail;
-> +	}
-> +
-> +	do {
-> +		spi_message_init(&msg);
-> +		tx[1].tx_buf = &refresh;
-> +		tx[1].len = sizeof(refresh);
-> +		tx[1].delay_usecs = MACHXO2_REFRESH;
-> +		spi_message_add_tail(&tx[1], &msg);
-> +		ret = spi_sync(spi, &msg);
-> +		if (ret)
-> +			goto fail;
-> +
-> +		/* check refresh status */
-> +		get_status(spi, &status);
-> +		dump_status_reg(&status);
-> +		if (!test_bit(BUSY, &status) && test_bit(DONE, &status) &&
-> +			get_err(&status) == ENOERR)
-> +				break;
-> +		if (++refreshloop == MACHXO2_MAX_REFRESH_LOOP) {
-> +			machxo2_cleanup(mgr);
-> +			goto fail;
-> +		}
-> +	} while (1);
-> +
-> +	get_status(spi, &status);
-> +	dump_status_reg(&status);
-> +	return 0;
-> +fail:
-> +	dev_err(&mgr->dev, "Refresh failed.\n");
-> +	return ret;
-> +}
-> +
-> +static const struct fpga_manager_ops machxo2_ops = {
-> +	.state = machxo2_spi_state,
-> +	.write_init = machxo2_write_init,
-> +	.write = machxo2_write,
-> +	.write_complete = machxo2_write_complete,
-> +};
-> +
-> +static int machxo2_spi_probe(struct spi_device *spi)
-> +{
-> +	struct device *dev = &spi->dev;
-> +
-> +	if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
-> +		dev_err(dev, "Speed is too high\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return fpga_mgr_register(dev, "Lattice MachXO2 SPI FPGA Manager",
-> +				 &machxo2_ops, spi);
-> +}
-> +
-> +static int machxo2_spi_remove(struct spi_device *spi)
-> +{
-> +	struct device *dev = &spi->dev;
-> +
-> +	fpga_mgr_unregister(dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id of_match[] = {
-> +	{ .compatible = "lattice,machxo2-slave-spi", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, of_match);
-> +
-> +static const struct spi_device_id lattice_ids[] = {
-> +	{ "machxo2-slave-spi", 0 },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(spi, lattice_ids);
-> +
-> +static struct spi_driver machxo2_spi_driver = {
-> +	.driver = {
-> +		.name = "machxo2-slave-spi",
-> +		.of_match_table = of_match_ptr(of_match),
-> +	},
-> +	.probe = machxo2_spi_probe,
-> +	.remove = machxo2_spi_remove,
-> +	.id_table = lattice_ids,
-> +};
-> +
-> +module_spi_driver(machxo2_spi_driver)
-> +
-> +MODULE_AUTHOR("Paolo Pisati <p.pisati@gmail.com>");
-> +MODULE_DESCRIPTION("Load Lattice FPGA firmware over SPI");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.7.4
+> On Fri, 16 Mar 2018 11:18:25 -0400
+> Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
 > 
+>> Hi Steven,
+>> 
+>> I completely forgot about this issue until recently when I encountered it again.
+>> Instrumenting the ftrace_ops_assist_func symbol and some other symbol
+>> seems to be causing problems.
+>> 
+>> Placing kretprobes like in the following configuration crashes my
+>> kernel (4.16.0-rc5) on a Qemu/KVM virtual machine:
+>> 
+>> config 1:
+>> echo "r:event_1 __fdget" >> kprobe_events
+>> echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
+>> 
+>> config 2:
+>> echo "r:event_1 __fdget_pos" >> kprobe_events
+>> echo "r:event_2 ftrace_ops_assist_func" >> kprobe_events
+>> 
+>> config 3:
+>> echo 'r:event_1 arch_dup_task_struct' >> kprobe_events
+>> echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
+>> 
+>> config 4:
+>> echo 'r:event_1 sys_open' >> kprobe_events
+>> echo 'r:event_2 ftrace_ops_assist_func' >> kprobe_events
+>> 
+>> Here is my kernel config [1]:
+>> 
+>> In a previous email [2], you mentioned that you would like to add the
+>> ftrace-related symbols to a section to un-blacklist them all at once
+>> on demand but wanted to discuss it at Linux Plumbers. Do you still
+>> think that it's the right approach?
+> 
+> We probably didn't discuss it (as there was a lot to discuss, and this
+> was probably overshadowed by that). But yes, you should not probe
+> ftrace called functions. That is guaranteed to crash and that crash is
+> not a bug, but a feature.
+
+Are you really arguing that crashing the kernel from an ABI visible from
+userspace (even if it's only root user) is not a bug ? You are joking right ?
+Is there an EXPERIMENTAL config option that people need to select in order to
+make sure those ftrace interfaces don't end up on production systems ?
+
+> 
+> The ftrace and ring buffer files should be blacklisted from being
+> probed. Perhaps the entire directory.
+
+All code reachable from a kprobe handler should be blacklisted from
+kprobes, yes.
+
+> 
+> Anyway, I don't see this as much of an urgent matter, as it's one of
+> those "Patient: Doc, it hurts when I do this. Doc: Don't do that"
+> cases. And there's a lot of urgent issues that currently need to be
+> dealt with.
+
+OK, short-term we'll remove everything related to ftrace functions
+from our CI fuzzer coverage. Arguably, the fact that a root user can
+crash the kernel through tracefs files is not that great security-wise
+though.
+
+Considering that our current focus is to test the kprobe instrumentation
+layer (and not ftrace per se), we will move our fuzzer to the LTTng ABI
+instead, which should take care of removing crashes introduced by ftrace
+from our fuzzing results.
+
+Thanks,
+
+Mathieu
+
+
+> 
+> -- Steve
+> 
+> 
+>> 
+>> I can easily test any patch regarding this issue.
+>> 
+>> [1] http://paste.ubuntu.com/p/BJWvgMnW8z/
+>> [2] https://lkml.org/lkml/2017/7/14/568
+>> 
+>> Thank you,
+>> 
+>> 2017-07-14 14:29 GMT-04:00 Steven Rostedt <rostedt@goodmis.org>:
+>> > On Fri, 14 Jul 2017 10:58:35 -0400
+>> > Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
+>> >  
+>> >> This function is called when a kprobe is hit. Thus it should be
+>> >> blacklisted to prevent kprobe to be triggered by kprobes.
+>> >>
+>> >> Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+>> >> ---
+>> >>  kernel/trace/ftrace.c | 2 ++
+>> >>  1 file changed, 2 insertions(+)
+>> >>
+>> >> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+>> >> index b308be3..c473d9b 100644
+>> >> --- a/kernel/trace/ftrace.c
+>> >> +++ b/kernel/trace/ftrace.c
+>> >> @@ -36,6 +36,7 @@
+>> >>
+>> >>  #include <trace/events/sched.h>
+>> >>
+>> >> +#include <asm/kprobes.h>
+>> >>  #include <asm/sections.h>
+>> >>  #include <asm/setup.h>
+>> >>
+>> >> @@ -5739,6 +5740,7 @@ static void ftrace_ops_assist_func(unsigned long ip,
+>> >> unsigned long parent_ip,
+>> >>       preempt_enable_notrace();
+>> >>       trace_clear_recursion(bit);
+>> >>  }
+>> >> +NOKPROBE_SYMBOL(ftrace_ops_assist_func);
+>> >
+>> > Continuing from what I said in the other email, this is fixing a
+>> > symptom and not the problem. The real fix will be much more involved. I
+>> > have a good idea on how to accomplish it too.
+>> >
+>> > -- Steve
+>> >
+>> >  
+>> >>
+>> >>  /**
+>> >>   * ftrace_ops_get_func - get the function a trampoline should call
+>> >  
+>> 
+>> 
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
