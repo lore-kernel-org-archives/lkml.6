@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuxVd6zF/SDv64N2uYp6TaAMCfSF6CoRukWFlong3N7vQgOtEYTf1CNRqraayfEOGsHjt4i
-ARC-Seal: i=1; a=rsa-sha256; t=1521214331; cv=none;
+X-Google-Smtp-Source: AG47ELulm543L6bH18Cn/3wYfBGh4y1ZQuGwV38IEJNMqwzw/iukXIGOEuuf9GY1+EPlsGUBULbN
+ARC-Seal: i=1; a=rsa-sha256; t=1521214219; cv=none;
         d=google.com; s=arc-20160816;
-        b=mfxMSidFM2GZNAbIjX7QVZvLT/g+C0QvtzXxPQecfcx/KcjXgneaoPj0+/SCfBg1b3
-         s6/gBW/4F5M9ATay4DlTHTFLz0waJdFvMP9zaeKgY7mHQWqjHDzNvAiGabaxvEX3JOsK
-         VoOGoj2ptB0zSHskcSe83MN3gkPMhzy/L1NWIVqrdAQJgAPKW7D9t1gGT07cnYSTTGvC
-         xth9h0rGFgkXAP2hXnPf0xdb408tWKacrYEfsfIfRmt8y6z/SwoQDU5vglunyLG1hM9D
-         XbI/L1tLN6ch44+3wgu6CjZ6bEdiSIF50WPt9ZQ0nbjU1UTy3FCLyzLthLcsjLNy9cGs
-         6e0Q==
+        b=EyIC2mvNygso+dfE4qSl0vXA3Vo8Ab+YhR44prW5OY4svstMwQljkwxqXYjN0eVgib
+         wns1q9QzjvFqcJL0YG0T/nWgqRCnVHxSkMe44Y0f+7W3NOD/eFXyvNWoQIlIwx/5i8fm
+         Vc0HNIUQXZBvNcXfKVIpAOX93UZzp5XNTD8iHmCtqJvevbPgwEpuaDDfUk9+heAlKcwC
+         YLcfmLqqcm+NAjMkbyFem17XmT6eIrMp53ypGzXCRQcRX1/+Z2pkeRIyDkNjXRP53mAX
+         RBhFzfkoCUck3/jzpCh0djtaPh29DUPIFk+ys5FAJS/oNUxkZupivAAfiukyFdvt555u
+         V3Zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AgXAA/fD2HJHQ1cqJQKL5hpkrWRoNtCVQgm7AaoYbCY=;
-        b=m+IkBmgBUlvqt88a2M24JnWoXB7o1xltr5Dxe4IT9B8syDkLMyLTyMqbDBrfUHCoU5
-         ru2F4K2DIQ5nGswgOMkB+/EVKkpv9o96lzrmxsdLgLTHyfiZDsjwjlzEq+ceXfMOdvsI
-         9mfRH1rZ61992G4cbTLHpTiyVe0s/QDG9wfIeRts3lpUJZR1mzFXc7V31Us9gpIfBfgL
-         OyHV8HcVlWSkWGGEy7iy0qoKB7IWwJWw6gHdZqA9Z2oHXs7Of3tGPmwrJ/Z4pKPmFnF0
-         Pj/RfdxnzY6HGbttnSaA7XBI5QDNuGeGwKWp4t92cH/3tEDzevXIa4fPJ6op/GF+Kadq
-         5lJA==
+        bh=YQAR7MU8EA3kzQnU3kH99+9iPiBzVxr2+DMdQ96zfFg=;
+        b=pcTxtYPP6utLaBp7vQ+sNp3qK1i2472TjUnAosfVr40JCcdoDFMM9XlAx983kRHT9M
+         Sp5BAtmuXIAMtb0ng6ENczsgrnQgT/6BxD2EF6Yo0UARx2GMDCgEFXWCnHmEoj5Utwyh
+         GQw9rH9M+u8dkLBEc+LISFvHeb60xxYCnq04qptxryT5Jqj1hwfKJYaAHPaeJwzs+h1F
+         ZZpDMQ96kKXbg3bPPfHjkyqwmJgPIhdzBSEJc26mUNXLzp3GGj6H9nq3Rrn6GLqqa9Ui
+         gZ2YbuKdzVEc3BK3UQPvxtX5zqpwfORDxP6Fm6WIZVJ/CugiCT3umId4j1UkIz5AWyud
+         RyOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 57/86] netfilter: IDLETIMER: be syzkaller friendly
-Date: Fri, 16 Mar 2018 16:23:20 +0100
-Message-Id: <20180316152321.235985867@linuxfoundation.org>
+	Colin Ian King <colin.king@canonical.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.9 18/86] MIPS: ath25: Check for kzalloc allocation failure
+Date: Fri, 16 Mar 2018 16:22:41 +0100
+Message-Id: <20180316152318.571317500@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108304690754494?=
-X-GMAIL-MSGID: =?utf-8?q?1595108838946136632?=
+X-GMAIL-THRID: =?utf-8?q?1595108599350842793?=
+X-GMAIL-MSGID: =?utf-8?q?1595108721622216703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,123 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit cfc2c740533368b96e2be5e0a4e8c3cace7d9814 upstream.
+commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
 
-We had one report from syzkaller [1]
+Currently there is no null check on a failed allocation of board_data,
+and hence a null pointer dereference will occurr. Fix this by checking
+for the out of memory null pointer.
 
-First issue is that INIT_WORK() should be done before mod_timer()
-or we risk timer being fired too soon, even with a 1 second timer.
-
-Second issue is that we need to reject too big info->timeout
-to avoid overflows in msecs_to_jiffies(info->timeout * 1000), or
-risk looping, if result after overflow is 0.
-
-[1]
-WARNING: CPU: 1 PID: 5129 at kernel/workqueue.c:1444 __queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 5129 Comm: syzkaller159866 Not tainted 4.16.0-rc1+ #230
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x257 lib/dump_stack.c:53
- panic+0x1e4/0x41c kernel/panic.c:183
- __warn+0x1dc/0x200 kernel/panic.c:547
- report_bug+0x211/0x2d0 lib/bug.c:184
- fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
- fixup_bug arch/x86/kernel/traps.c:247 [inline]
- do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
- do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
- invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
-RIP: 0010:__queue_work+0xdf4/0x1230 kernel/workqueue.c:1444
-RSP: 0018:ffff8801db507538 EFLAGS: 00010006
-RAX: ffff8801aeb46080 RBX: ffff8801db530200 RCX: ffffffff81481404
-RDX: 0000000000000100 RSI: ffffffff86b42640 RDI: 0000000000000082
-RBP: ffff8801db507758 R08: 1ffff1003b6a0de5 R09: 000000000000000c
-R10: ffff8801db5073f0 R11: 0000000000000020 R12: 1ffff1003b6a0eb6
-R13: ffff8801b1067ae0 R14: 00000000000001f8 R15: dffffc0000000000
- queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1488
- queue_work include/linux/workqueue.h:488 [inline]
- schedule_work include/linux/workqueue.h:546 [inline]
- idletimer_tg_expired+0x44/0x60 net/netfilter/xt_IDLETIMER.c:116
- call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:541 [inline]
- smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:777 [inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x5e/0xba kernel/locking/spinlock.c:184
-RSP: 0018:ffff8801c20173c8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff12
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000006
-RDX: 1ffffffff0d592cd RSI: 1ffff10035d68d23 RDI: 0000000000000282
-RBP: ffff8801c20173d8 R08: 1ffff10038402e47 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8820e5c8
-R13: ffff8801b1067ad8 R14: ffff8801aea7c268 R15: ffff8801aea7c278
- __debug_object_init+0x235/0x1040 lib/debugobjects.c:378
- debug_object_init+0x17/0x20 lib/debugobjects.c:391
- __init_work+0x2b/0x60 kernel/workqueue.c:506
- idletimer_tg_create net/netfilter/xt_IDLETIMER.c:152 [inline]
- idletimer_tg_checkentry+0x691/0xb00 net/netfilter/xt_IDLETIMER.c:213
- xt_check_target+0x22c/0x7d0 net/netfilter/x_tables.c:850
- check_target net/ipv6/netfilter/ip6_tables.c:533 [inline]
- find_check_entry.isra.7+0x935/0xcf0 net/ipv6/netfilter/ip6_tables.c:575
- translate_table+0xf52/0x1690 net/ipv6/netfilter/ip6_tables.c:744
- do_replace net/ipv6/netfilter/ip6_tables.c:1160 [inline]
- do_ip6t_set_ctl+0x370/0x5f0 net/ipv6/netfilter/ip6_tables.c:1686
- nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
- nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
- ipv6_setsockopt+0x10b/0x130 net/ipv6/ipv6_sockglue.c:927
- udpv6_setsockopt+0x45/0x80 net/ipv6/udp.c:1422
- sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2976
- SYSC_setsockopt net/socket.c:1850 [inline]
- SyS_setsockopt+0x189/0x360 net/socket.c:1829
- do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.19+
+Patchwork: https://patchwork.linux-mips.org/patch/18657/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_IDLETIMER.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/mips/ath25/board.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -147,11 +147,11 @@ static int idletimer_tg_create(struct id
- 		    (unsigned long) info->timer);
- 	info->timer->refcnt = 1;
- 
-+	INIT_WORK(&info->timer->work, idletimer_tg_work);
-+
- 	mod_timer(&info->timer->timer,
- 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
- 
--	INIT_WORK(&info->timer->work, idletimer_tg_work);
--
- 	return 0;
- 
- out_free_attr:
-@@ -192,7 +192,10 @@ static int idletimer_tg_checkentry(const
- 		pr_debug("timeout value is zero\n");
- 		return -EINVAL;
+--- a/arch/mips/ath25/board.c
++++ b/arch/mips/ath25/board.c
+@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
  	}
--
-+	if (info->timeout >= INT_MAX / 1000) {
-+		pr_debug("timeout value is too big\n");
-+		return -EINVAL;
-+	}
- 	if (info->label[0] == '\0' ||
- 	    strnlen(info->label,
- 		    MAX_IDLETIMER_LABEL_SIZE) == MAX_IDLETIMER_LABEL_SIZE) {
+ 
+ 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
++	if (!board_data)
++		goto error;
+ 	ath25_board.config = (struct ath25_boarddata *)board_data;
+ 	memcpy_fromio(board_data, bcfg, 0x100);
+ 	if (broken_boarddata) {
