@@ -1,210 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933382AbeCPRNN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:13:13 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43112 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753186AbeCPRG7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:06:59 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 15/22] net: socket: move check for forbid_cmsg_compat to __sys_...msg()
-Date: Fri, 16 Mar 2018 18:06:07 +0100
-Message-Id: <20180316170614.5392-16-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        id S1753650AbeCPRN5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:13:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:33484 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750757AbeCPRNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:13:55 -0400
+Date: Fri, 16 Mar 2018 17:13:49 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: marc.zyngier@arm.com, Andrey Konovalov <andreyknvl@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Greg Hackmann <ghackmann@google.com>, christoffer.dall@linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-dynamic-tools <kernel-dynamic-tools@google.com>,
+        Sami Tolvanen <samitolvanen@google.com>, takahiro.akashi@linaro.org
+Subject: Re: arm64 kvm built with clang doesn't boot
+Message-ID: <20180316171349.fodlraapz2sq2hhs@lakrids.cambridge.arm.com>
+References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
+ <26a25069-ea1d-5fb3-549c-ab653f454a30@arm.com>
+ <CAAeHK+zq4-mw3pCNf3nob3gN-s+aWVq7vUy1p8yY4bU4QYNNMg@mail.gmail.com>
+ <2e84a842-96e8-aec4-8b85-9ee879bb323a@arm.com>
+ <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOd=-TeLJn9=V_Dmj-X+qcRBcfH8tcktbm33xAx671VCYUw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The non-compat codepaths for sys_...msg() verify that MSG_CMSG_COMPAT
-is not set. By moving this check to the __sys_...msg() functions
-(and making it dependent on a static flag passed to this function), we
-can call the __sys...msg() functions instead of the syscall functions
-in all cases. __sys_recvmmsg() does not need this trickery, as the
-check is handled within the do_sys_recvmmsg() function internal to
-net/socket.c.
+On Fri, Mar 16, 2018 at 04:52:08PM +0000, Nick Desaulniers wrote:
+> + Sami (Google), Takahiro (Linaro)
+> 
+> Just so I fully understand the problem enough to articulate it, we'd be
+> looking for the compiler to keep the jump tables for speed (I would guess
+> -fno-jump-tables would emit an if-else chain) but only emit relative jumps
+> (not absolute jumps)?
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/socket.h | 13 +++++++++----
- net/compat.c           |  8 +++++---
- net/socket.c           | 38 +++++++++++++++++++++++---------------
- 3 files changed, 37 insertions(+), 22 deletions(-)
+Our main concern is that there is no absolute addressing. If that rules
+out using a relative jump table, that's ok.
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index cad120e4ed4b..e2b6bd4fe977 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -346,13 +346,18 @@ extern int put_cmsg(struct msghdr*, int level, int type, int len, void *data);
- 
- struct timespec;
- 
--/* The __sys_...msg variants allow MSG_CMSG_COMPAT */
--extern long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned flags);
--extern long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned flags);
-+/* The __sys_...msg variants allow MSG_CMSG_COMPAT iff
-+ * forbid_cmsg_compat==false
-+ */
-+extern long __sys_recvmsg(int fd, struct user_msghdr __user *msg,
-+			  unsigned int flags, bool forbid_cmsg_compat);
-+extern long __sys_sendmsg(int fd, struct user_msghdr __user *msg,
-+			  unsigned int flags, bool forbid_cmsg_compat);
- extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 			  unsigned int flags, struct timespec *timeout);
- extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
--			  unsigned int vlen, unsigned int flags);
-+			  unsigned int vlen, unsigned int flags,
-+			  bool forbid_cmsg_compat);
- 
- /* helpers which do the actual work for syscalls */
- extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
-diff --git a/net/compat.c b/net/compat.c
-index f1ec23e9dfce..5caa48987bb2 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -736,19 +736,21 @@ static unsigned char nas[21] = {
- 
- COMPAT_SYSCALL_DEFINE3(sendmsg, int, fd, struct compat_msghdr __user *, msg, unsigned int, flags)
- {
--	return __sys_sendmsg(fd, (struct user_msghdr __user *)msg, flags | MSG_CMSG_COMPAT);
-+	return __sys_sendmsg(fd, (struct user_msghdr __user *)msg,
-+			     flags | MSG_CMSG_COMPAT, false);
- }
- 
- COMPAT_SYSCALL_DEFINE4(sendmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
- 		       unsigned int, vlen, unsigned int, flags)
- {
- 	return __sys_sendmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
--			      flags | MSG_CMSG_COMPAT);
-+			      flags | MSG_CMSG_COMPAT, false);
- }
- 
- COMPAT_SYSCALL_DEFINE3(recvmsg, int, fd, struct compat_msghdr __user *, msg, unsigned int, flags)
- {
--	return __sys_recvmsg(fd, (struct user_msghdr __user *)msg, flags | MSG_CMSG_COMPAT);
-+	return __sys_recvmsg(fd, (struct user_msghdr __user *)msg,
-+			     flags | MSG_CMSG_COMPAT, false);
- }
- 
- COMPAT_SYSCALL_DEFINE4(recv, int, fd, void __user *, buf, compat_size_t, len, unsigned int, flags)
-diff --git a/net/socket.c b/net/socket.c
-index 72cdaaeccb85..3dcace0ca3d9 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2137,12 +2137,16 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
-  *	BSD sendmsg interface
-  */
- 
--long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned flags)
-+long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
-+		   bool forbid_cmsg_compat)
- {
- 	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
- 
-+	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
-+		return -EINVAL;
-+
- 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
- 	if (!sock)
- 		goto out;
-@@ -2156,9 +2160,7 @@ long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned flags)
- 
- SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int, flags)
- {
--	if (flags & MSG_CMSG_COMPAT)
--		return -EINVAL;
--	return __sys_sendmsg(fd, msg, flags);
-+	return __sys_sendmsg(fd, msg, flags, true);
- }
- 
- /*
-@@ -2166,7 +2168,7 @@ SYSCALL_DEFINE3(sendmsg, int, fd, struct user_msghdr __user *, msg, unsigned int
-  */
- 
- int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
--		   unsigned int flags)
-+		   unsigned int flags, bool forbid_cmsg_compat)
- {
- 	int fput_needed, err, datagrams;
- 	struct socket *sock;
-@@ -2176,6 +2178,9 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 	struct used_address used_address;
- 	unsigned int oflags = flags;
- 
-+	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
-+		return -EINVAL;
-+
- 	if (vlen > UIO_MAXIOV)
- 		vlen = UIO_MAXIOV;
- 
-@@ -2232,9 +2237,7 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- SYSCALL_DEFINE4(sendmmsg, int, fd, struct mmsghdr __user *, mmsg,
- 		unsigned int, vlen, unsigned int, flags)
- {
--	if (flags & MSG_CMSG_COMPAT)
--		return -EINVAL;
--	return __sys_sendmmsg(fd, mmsg, vlen, flags);
-+	return __sys_sendmmsg(fd, mmsg, vlen, flags, true);
- }
- 
- static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
-@@ -2307,12 +2310,16 @@ static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
-  *	BSD recvmsg interface
-  */
- 
--long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned flags)
-+long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
-+		   bool forbid_cmsg_compat)
- {
- 	int fput_needed, err;
- 	struct msghdr msg_sys;
- 	struct socket *sock;
- 
-+	if (forbid_cmsg_compat && (flags & MSG_CMSG_COMPAT))
-+		return -EINVAL;
-+
- 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
- 	if (!sock)
- 		goto out;
-@@ -2327,9 +2334,7 @@ long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned flags)
- SYSCALL_DEFINE3(recvmsg, int, fd, struct user_msghdr __user *, msg,
- 		unsigned int, flags)
- {
--	if (flags & MSG_CMSG_COMPAT)
--		return -EINVAL;
--	return __sys_recvmsg(fd, msg, flags);
-+	return __sys_recvmsg(fd, msg, flags, true);
- }
- 
- /*
-@@ -2580,13 +2585,16 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 				     (int __user *)a[4]);
- 		break;
- 	case SYS_SENDMSG:
--		err = sys_sendmsg(a0, (struct user_msghdr __user *)a1, a[2]);
-+		err = __sys_sendmsg(a0, (struct user_msghdr __user *)a1,
-+				    a[2], true);
- 		break;
- 	case SYS_SENDMMSG:
--		err = sys_sendmmsg(a0, (struct mmsghdr __user *)a1, a[2], a[3]);
-+		err = __sys_sendmmsg(a0, (struct mmsghdr __user *)a1, a[2],
-+				     a[3], true);
- 		break;
- 	case SYS_RECVMSG:
--		err = sys_recvmsg(a0, (struct user_msghdr __user *)a1, a[2]);
-+		err = __sys_recvmsg(a0, (struct user_msghdr __user *)a1,
-+				    a[2], true);
- 		break;
- 	case SYS_RECVMMSG:
- 		err = do_sys_recvmmsg(a0, (struct mmsghdr __user *)a1, a[2],
--- 
-2.16.2
+We want to avoid the fragility of collecting -f-no-* options as future
+compiler transformations end up introducing absolute addressing.
+
+Thanks,
+Mark.
