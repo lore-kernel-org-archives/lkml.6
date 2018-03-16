@@ -1,80 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3278546-1521214070-2-167509823691214642
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214069; b=Brok1BBtHK15LBJPf5y6i6TFxvp6NbU8SY4/DIkhLK9Rd+T
-    wEpQ8YWFxG98shynZfhaYboG2OkCh2Qmc/lfBg38xa5PvsHQ5dXQzdh+qRPAbZUv
-    j4nitmU4jHlGo7gfqgmoLrYdleiq+JINs0Fjl9FhHRvu18X/8DbvmjXHl0F845ac
-    VbvP3zcOTWnSA7WqE21uUeY7ZAF3SLWZZsV7jq9/p0f6GlL5WYahcE+f5r2iW1/Y
-    EJLq7QHy4g7edaFk/mmUJ50Hu7PDkpwoL3w+SdCnPKh4f0fQegX9fTH8AD3HjmBF
-    AYw6CBbiQqyUVxuz6HJJjWI6z6Kw2tUsJv5dTVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214069; bh=4VHeFIFvwiB6rJJy8fQeTy2nEd
-    0Vr2AYJ87pdBFblOk=; b=YUubnqnk1vJKScZINtRXyDpYKpshvx9cFG2amKZ6u7
-    c1Omy44vjvtQEkkHuGbl0P08KQA/1xieMP5meVolw128ydZJCXoRAq14XZUkzqmr
-    YIDRnTbINkA+7nRFn8sh7Bssii/efUWt8ImxnZmFq6X2ybGMEkugE1zUJQXX9xVi
-    +qB+l9qEJjwBvtUZ8gQ1gocyTDX/CjpjJzlg32rJXXmWhmJzeqSDqhdPDOCQZ8tO
-    rMaeOsScFx4RMoDO/ZzG2nVprEaKNZ78gjA6A5FlxyHCviCuxz9Gyl7QVagXdj77
-    ItOVFHolY4umvAbPPK+h+kASe9h8GtMDOFWG2wh9R1Jg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932666AbeCPP1q (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:27:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34784 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754267AbeCPP1o (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:44 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvmZR9jz5qp1xZmtzJIPCpSh7ecV9yun/M4oIfIOh9BSVZi/fHXVsXV3B2kN5r0wvtpEV1T
+ARC-Seal: i=1; a=rsa-sha256; t=1521214066; cv=none;
+        d=google.com; s=arc-20160816;
+        b=isfkNLMoep5n6PzHJOQXvbgQytn3TZYBc29GO0t+euPklR1/7iFvmADjvkKHzRn04L
+         gKr/YdckBu+sbJXR3rttkZsUWOuaFDlmH5ngmx/mw51gREN6BSQ6gFh+oH4tDn6SzsB9
+         SV7LM7+mn+sNoVpz9m233O807+h9E4YtgBDFy7yoECSIpB4qHn84s0OmVMkrtgmziRqh
+         NZTsfZ+Qkf34euJxx7oR4Wc3CdFmJWnt67ZyI15f+aqdWkMus9iPFeyIR6hoZoCkax77
+         YBpBFWeJ9L+3pQMGUMp7Z/Jfpjdtu8ax4H4tvDZSYhlp9SFhWURfnOkKuT1MIQYdf7ke
+         2SBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=0BPwhYdhdEcHNREXdTluTowHDuV3+GjnAEJQtJzvc2Y=;
+        b=AOLEQnRA2U/E3I/QoXlS+8s1XotuxWO7GNUCv8SPuaopybAPEW7wRSDxE8vCXfU9CE
+         HuHscTCmluHjpvRKo7Ta/43Z1gPqyVFTY6hOmSX4TT9Bv3fyxZzl8XT2s6zd9fhM+Ut8
+         dQkfeDfIS+5uxMo9ija7ErTptgBLueTpxFw/tUc0b1xd7CR+jWjr4s8J33GzPSJl0imh
+         dA8AxmmP6+6KcsPP8RfCxjKqAtNczH2cE5FSzudhJ+O3C3sJvyLkoqXbqtkrgFHUbW4p
+         NPeLOfv23pZ8Mzy6pAz9v+DXYhzQ3PIdmaIqnv8GII/kKXsuBDSWfzcG5jK7a7Zolx2v
+         jEbg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 26/63] nospec: Include <asm/barrier.h> dependency
-Date: Fri, 16 Mar 2018 16:22:58 +0100
-Message-Id: <20180316152302.923159611@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.4 11/63] drm/radeon: fix KV harvesting
+Date: Fri, 16 Mar 2018 16:22:43 +0100
+Message-Id: <20180316152301.331346683@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -82,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595108561510314044?=
+X-GMAIL-MSGID: =?utf-8?q?1595108561510314044?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,47 +49,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit eb6174f6d1be16b19cfa43dac296bfed003ce1a6 upstream.
+commit 0b58d90f89545e021d188c289fa142e5ff9e708b upstream.
 
-The nospec.h header expects the per-architecture header file
-<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
-that dependency to prevent inadvertent fallback to the default
-array_index_mask_nospec() implementation.
+Always set the graphics values to the max for the
+asic type.  E.g., some 1 RB chips are actually 1 RB chips,
+others are actually harvested 2 RB chips.
 
-The default implementation may not provide a full mitigation
-on architectures that perform data value speculation.
-
-Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: https://bugs.freedesktop.org/show_bug.cgi?id=99353
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/nospec.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/radeon/cik.c |   31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -5,6 +5,7 @@
- 
- #ifndef _LINUX_NOSPEC_H
- #define _LINUX_NOSPEC_H
-+#include <asm/barrier.h>
- 
- /**
-  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+--- a/drivers/gpu/drm/radeon/cik.c
++++ b/drivers/gpu/drm/radeon/cik.c
+@@ -3599,35 +3599,8 @@ static void cik_gpu_init(struct radeon_d
+ 	case CHIP_KAVERI:
+ 		rdev->config.cik.max_shader_engines = 1;
+ 		rdev->config.cik.max_tile_pipes = 4;
+-		if ((rdev->pdev->device == 0x1304) ||
+-		    (rdev->pdev->device == 0x1305) ||
+-		    (rdev->pdev->device == 0x130C) ||
+-		    (rdev->pdev->device == 0x130F) ||
+-		    (rdev->pdev->device == 0x1310) ||
+-		    (rdev->pdev->device == 0x1311) ||
+-		    (rdev->pdev->device == 0x131C)) {
+-			rdev->config.cik.max_cu_per_sh = 8;
+-			rdev->config.cik.max_backends_per_se = 2;
+-		} else if ((rdev->pdev->device == 0x1309) ||
+-			   (rdev->pdev->device == 0x130A) ||
+-			   (rdev->pdev->device == 0x130D) ||
+-			   (rdev->pdev->device == 0x1313) ||
+-			   (rdev->pdev->device == 0x131D)) {
+-			rdev->config.cik.max_cu_per_sh = 6;
+-			rdev->config.cik.max_backends_per_se = 2;
+-		} else if ((rdev->pdev->device == 0x1306) ||
+-			   (rdev->pdev->device == 0x1307) ||
+-			   (rdev->pdev->device == 0x130B) ||
+-			   (rdev->pdev->device == 0x130E) ||
+-			   (rdev->pdev->device == 0x1315) ||
+-			   (rdev->pdev->device == 0x1318) ||
+-			   (rdev->pdev->device == 0x131B)) {
+-			rdev->config.cik.max_cu_per_sh = 4;
+-			rdev->config.cik.max_backends_per_se = 1;
+-		} else {
+-			rdev->config.cik.max_cu_per_sh = 3;
+-			rdev->config.cik.max_backends_per_se = 1;
+-		}
++		rdev->config.cik.max_cu_per_sh = 8;
++		rdev->config.cik.max_backends_per_se = 2;
+ 		rdev->config.cik.max_sh_per_se = 1;
+ 		rdev->config.cik.max_texture_channel_caches = 4;
+ 		rdev->config.cik.max_gprs = 256;
