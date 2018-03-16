@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933379AbeCPDB0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 23:01:26 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55335 "EHLO vern.gendns.com"
+        id S932974AbeCPCx2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:53:28 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55298 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752244AbeCPCxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:53:31 -0400
+        id S1751774AbeCPCx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:53:26 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,12 +16,13 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 04/42] clk: davinci: Add platform information for TI DA850 PLL
-Date: Thu, 15 Mar 2018 21:52:20 -0500
-Message-Id: <1521168778-27236-5-git-send-email-david@lechnology.com>
+Subject: =?UTF-8?q?=5BPATCH=20v8=2000/42=5D=20ARM=3A=20davinci=3A=20convert=20to=20common=20clock=20framework=E2=80=8B?=
+Date: Thu, 15 Mar 2018 21:52:16 -0500
+Message-Id: <1521168778-27236-1-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - vern.gendns.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -36,295 +37,259 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds platform-specific declarations for the PLL clocks on TI DA850/
-OMAP-L138/AM18XX SoCs.
+This series converts mach-davinci to use the common clock framework.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+The series works like this, the first 19 patches create new clock drivers
+using the common clock framework. There are basically 3 groups of clocks -
+PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+unique init data, which is the reason for so many patches.
 
-v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
+Then, starting with "ARM: davinci: pass clock as parameter to
+davinci_timer_init()", we get the mach code ready for the switch by adding the
+code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+around the legacy clocks so that we can switch easily between the old and the
+new.
 
-v7 changes:
-- include clkdev lookup registration here instead of in mach-davinci
-- split registration functions for each PLL
-- Add platform_device_id lookup
+"ARM: davinci: switch to common clock framework" actually flips the switch
+to start using the new clock drivers. Then the next 8 patches remove all
+of the old clock code.
 
-v6 changes:
-- Added da850_pll{0,1}_info with controller-specific information
-- Added OBSCLK data
-- Add empty lines between function calls
+The final three patches add device tree clock support to the one SoC that
+supports it.
+
+This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+OMAP-L138 LCDK (both device tree and legacy board file).
 
 
- drivers/clk/davinci/Makefile    |   1 +
- drivers/clk/davinci/pll-da850.c | 212 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |   4 +
- drivers/clk/davinci/pll.h       |   5 +
- 4 files changed, 222 insertions(+)
+Changes:
+
+v8 changes (also see individual patches for details):
+- Rebased on linux-davinci/master
+- Dropped use of __init and __initconst attributes in clk drivers
+- Add clkdev lookups for PLL SYSCLKs
+- Fix genpd clock reference counting issue
+- Fix PSC clock driver loading order issue
+- Fix typo in device tree and add more power-domains properties
+
+v7 changes (also see individual patches for details):
+- Rebased on linux-davinci/master (v4.16-rc)
+- Convert clock drivers to platform devices
+- New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
+- Fix issues with lcdk and aemif clock lookups and power domains
+- Fixed other minor issues brought up in v6 review
+
+v6 changes (also see individual patches for details):
+- All of the device tree bindings are changed
+- All of the clock drivers are changed significantly
+- Fixed issues brought up during review of v5
+- "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
+  series and submitted separately
+
+v5 changes:
+- Basically, this is an entirely new series
+- Patches are broken up into bite-sized pieces
+- Converted PSC clock driver to use regmap
+- Restored "force" flag for certain DA850 clocks
+- Added device tree bindings
+- Moved more of the clock init to drivers/clk
+- Fixed frequency scaling (maybe*)
+
+* I have frequency scaling using cpufreq-dt, so I know the clocks are doing
+  what they need to do to make this work, but I haven't figured out how to
+  test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
+  sent separately after this series has landed.)
+
+
+Dependencies:
+
+- "ARM: davinci: fix the GPIO lookup for omapl138-hawk"[1] (in linux-davinci/fixes)
+- "drm/tilcdc: Fix setting clock divider for omap-l138"[2] (new)
+- "ARM: davinci: DA8XX: fix oops in USB PHY driver due to stack allocated
+   platform platform_data"[3] (new)
+- "ARM: davinci: DA8XX: simplify CFGCHIP regmap_config"[4] (new)
+- "clk: divider: export clk_div_mask() helper"[5] (in clk/fixes)
+- "clk: divider: read-only divider can propagate rate change"[6] (in clk/fixes)
+- "gpio: Handle deferred probing in of_find_gpio() properly"[7] (in v4.16-rc4)
+- "gpiolib: Keep returning EPROBE_DEFER when we should"[8] (in v4.16-rc4)
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci.git/commit/?h=fixes&id=c4dc56be7e26040bfc60ce73425353516a356955
+[2]: https://patchwork.freedesktop.org/patch/210696/
+[3]: https://patchwork.kernel.org/patch/10285679/
+[4]: https://patchwork.kernel.org/patch/10285605/
+[5]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=e6d3cc7b1fac3d7f1313faf8ac9b23830113e3ec
+[6]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=b15ee490e16324c35b51f04bad54ae45a2cefd29
+[7]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ce27fb2c56db6ccfe8099343bb4afdab15e77e7b
+[8]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6662ae6af82df10259a70c7569b4c12ea7f3ba93
+
+You can find a working branch with everything included (plus a few extras, like
+cpufreq-dt) in the "common-clk-v8" branch of https://github.com/dlech/ev3dev-kernel.git.
+
+
+Testing/debugging for the uninitiated:
+
+I only have one device to test with, which is based on da850, so I will
+have to rely on others to do some testing here. Since we are dealing with
+clocks, if something isn't working, you most likely won't see output on
+the serial port. To figure out what is going on, you need to enable...
+
+	CONFIG_DEBUG_LL=y
+	CONFIG_EARLY_PRINTK=y
+
+and add "earlyprintk clk_ignore_unused" to the kernel command line options.
+You may need to select a different UART for this depending on your board. I
+think UART1 is the default in the kernel configuration.
+
+On da850 devices comment out the lines:
+
+	else
+		clk_set_parent(clk, parent->clk);
+
+in da850.c or, if using device tree, comment out the lines:
+
+	assigned-clocks = <&async3_clk>;
+	assigned-clock-parents = <&pll1_sysclk 2>;
+
+in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
+source will change during boot and cause garbled output after a point. 
+
+David Lechner (42):
+  dt-bindings: clock: Add new bindings for TI Davinci PLL clocks
+  clk: davinci: New driver for davinci PLL clocks
+  clk: davinci: Add platform information for TI DA830 PLL
+  clk: davinci: Add platform information for TI DA850 PLL
+  clk: davinci: Add platform information for TI DM355 PLL
+  clk: davinci: Add platform information for TI DM365 PLL
+  clk: davinci: Add platform information for TI DM644x PLL
+  clk: davinci: Add platform information for TI DM646x PLL
+  dt-bindings: clock: New bindings for TI Davinci PSC
+  clk: davinci: New driver for davinci PSC clocks
+  clk: davinci: Add platform information for TI DA830 PSC
+  clk: davinci: Add platform information for TI DA850 PSC
+  clk: davinci: Add platform information for TI DM355 PSC
+  clk: davinci: Add platform information for TI DM365 PSC
+  clk: davinci: Add platform information for TI DM644x PSC
+  clk: davinci: Add platform information for TI DM646x PSC
+  dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
+  clk: davinci: New driver for TI DA8XX CFGCHIP clocks
+  clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks
+  ARM: davinci: pass clock as parameter to davinci_timer_init()
+  ARM: davinci: da830: add new clock init using common clock framework
+  ARM: davinci: da850: add new clock init using common clock framework
+  ARM: davinci: dm355: add new clock init using common clock framework
+  ARM: davinci: dm365: add new clock init using common clock framework
+  ARM: davinci: dm644x: add new clock init using common clock framework
+  ARM: davinci: dm646x: add new clock init using common clock framework
+  ARM: davinci: da8xx: add new USB PHY clock init using common clock
+    framework
+  ARM: davinci: da8xx: add new sata_refclk init using common clock
+    framework
+  ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
+  ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
+  ARM: davinci: switch to common clock framework
+  ARM: davinci: da830: Remove legacy clock init
+  ARM: davinci: da850: Remove legacy clock init
+  ARM: davinci: dm355: Remove legacy clock init
+  ARM: davinci: dm365: Remove legacy clock init
+  ARM: davinci: dm644x: Remove legacy clock init
+  ARM: davinci: dm646x: Remove legacy clock init
+  ARM: davinci: da8xx: Remove legacy USB and SATA clock init
+  ARM: davinci: remove legacy clocks
+  ARM: davinci: add device tree support to timer
+  ARM: davinci: da8xx-dt: switch to device tree clocks
+  ARM: dts: da850: Add clocks
+
+ .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    |  93 +++
+ .../devicetree/bindings/clock/ti/davinci/pll.txt   |  96 +++
+ .../devicetree/bindings/clock/ti/davinci/psc.txt   |  71 ++
+ MAINTAINERS                                        |   7 +
+ arch/arm/Kconfig                                   |   5 +-
+ arch/arm/boot/dts/da850-enbw-cmc.dts               |   4 +
+ arch/arm/boot/dts/da850-evm.dts                    |   4 +
+ arch/arm/boot/dts/da850-lcdk.dts                   |   9 +
+ arch/arm/boot/dts/da850-lego-ev3.dts               |   4 +
+ arch/arm/boot/dts/da850.dtsi                       | 167 ++++
+ arch/arm/configs/davinci_all_defconfig             |   1 -
+ arch/arm/mach-davinci/Kconfig                      |  13 +-
+ arch/arm/mach-davinci/Makefile                     |   4 +-
+ arch/arm/mach-davinci/board-da830-evm.c            |  12 +-
+ arch/arm/mach-davinci/board-da850-evm.c            |   2 +
+ arch/arm/mach-davinci/board-dm355-evm.c            |   2 +
+ arch/arm/mach-davinci/board-dm355-leopard.c        |   2 +
+ arch/arm/mach-davinci/board-dm365-evm.c            |   2 +
+ arch/arm/mach-davinci/board-dm644x-evm.c           |   2 +
+ arch/arm/mach-davinci/board-dm646x-evm.c           |   2 +
+ arch/arm/mach-davinci/board-mityomapl138.c         |   2 +
+ arch/arm/mach-davinci/board-neuros-osd2.c          |   2 +
+ arch/arm/mach-davinci/board-omapl138-hawk.c        |  11 +-
+ arch/arm/mach-davinci/board-sffsdr.c               |   2 +
+ arch/arm/mach-davinci/clock.c                      | 745 -----------------
+ arch/arm/mach-davinci/clock.h                      |  76 --
+ arch/arm/mach-davinci/common.c                     |   3 -
+ arch/arm/mach-davinci/da830.c                      | 469 ++---------
+ arch/arm/mach-davinci/da850.c                      | 789 ++++--------------
+ arch/arm/mach-davinci/da8xx-dt.c                   |  60 --
+ arch/arm/mach-davinci/davinci.h                    |   8 +
+ arch/arm/mach-davinci/devices-da8xx.c              |  43 +-
+ arch/arm/mach-davinci/devices.c                    |   1 -
+ arch/arm/mach-davinci/dm355.c                      | 425 ++--------
+ arch/arm/mach-davinci/dm365.c                      | 517 ++----------
+ arch/arm/mach-davinci/dm644x.c                     | 363 ++-------
+ arch/arm/mach-davinci/dm646x.c                     | 394 ++-------
+ arch/arm/mach-davinci/include/mach/clock.h         |   3 -
+ arch/arm/mach-davinci/include/mach/common.h        |  11 +-
+ arch/arm/mach-davinci/include/mach/da8xx.h         |   6 +-
+ arch/arm/mach-davinci/pm_domain.c                  |   5 +
+ arch/arm/mach-davinci/psc.c                        | 137 ----
+ arch/arm/mach-davinci/psc.h                        |  12 -
+ arch/arm/mach-davinci/time.c                       |  46 +-
+ arch/arm/mach-davinci/usb-da8xx.c                  | 242 +-----
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/davinci/Makefile                       |  21 +
+ drivers/clk/davinci/da8xx-cfgchip.c                | 790 ++++++++++++++++++
+ drivers/clk/davinci/pll-da830.c                    |  70 ++
+ drivers/clk/davinci/pll-da850.c                    | 212 +++++
+ drivers/clk/davinci/pll-dm355.c                    |  79 ++
+ drivers/clk/davinci/pll-dm365.c                    | 145 ++++
+ drivers/clk/davinci/pll-dm644x.c                   |  80 ++
+ drivers/clk/davinci/pll-dm646x.c                   |  84 ++
+ drivers/clk/davinci/pll.c                          | 901 +++++++++++++++++++++
+ drivers/clk/davinci/pll.h                          | 141 ++++
+ drivers/clk/davinci/psc-da830.c                    | 116 +++
+ drivers/clk/davinci/psc-da850.c                    | 149 ++++
+ drivers/clk/davinci/psc-dm355.c                    |  88 ++
+ drivers/clk/davinci/psc-dm365.c                    |  96 +++
+ drivers/clk/davinci/psc-dm644x.c                   |  83 ++
+ drivers/clk/davinci/psc-dm646x.c                   |  80 ++
+ drivers/clk/davinci/psc.c                          | 552 +++++++++++++
+ drivers/clk/davinci/psc.h                          | 108 +++
+ include/linux/platform_data/clk-da8xx-cfgchip.h    |  21 +
+ include/linux/platform_data/clk-davinci-pll.h      |  21 +
+ 66 files changed, 4876 insertions(+), 3836 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+ delete mode 100644 arch/arm/mach-davinci/clock.c
+ delete mode 100644 arch/arm/mach-davinci/psc.c
+ create mode 100644 drivers/clk/davinci/Makefile
+ create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
+ create mode 100644 drivers/clk/davinci/pll-da830.c
  create mode 100644 drivers/clk/davinci/pll-da850.c
+ create mode 100644 drivers/clk/davinci/pll-dm355.c
+ create mode 100644 drivers/clk/davinci/pll-dm365.c
+ create mode 100644 drivers/clk/davinci/pll-dm644x.c
+ create mode 100644 drivers/clk/davinci/pll-dm646x.c
+ create mode 100644 drivers/clk/davinci/pll.c
+ create mode 100644 drivers/clk/davinci/pll.h
+ create mode 100644 drivers/clk/davinci/psc-da830.c
+ create mode 100644 drivers/clk/davinci/psc-da850.c
+ create mode 100644 drivers/clk/davinci/psc-dm355.c
+ create mode 100644 drivers/clk/davinci/psc-dm365.c
+ create mode 100644 drivers/clk/davinci/psc-dm644x.c
+ create mode 100644 drivers/clk/davinci/psc-dm646x.c
+ create mode 100644 drivers/clk/davinci/psc.c
+ create mode 100644 drivers/clk/davinci/psc.h
+ create mode 100644 include/linux/platform_data/clk-da8xx-cfgchip.h
+ create mode 100644 include/linux/platform_data/clk-davinci-pll.h
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 9061e19..13049d4 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -3,4 +3,5 @@
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
-+obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- endif
-diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
-new file mode 100644
-index 0000000..2a038b7
---- /dev/null
-+++ b/drivers/clk/davinci/pll-da850.c
-@@ -0,0 +1,212 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DA850/OMAP-L138/AM18XX
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/of.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+#define OCSEL_OCSRC_OSCIN		0x14
-+#define OCSEL_OCSRC_PLL0_SYSCLK(n)	(0x16 + (n))
-+#define OCSEL_OCSRC_PLL1_OBSCLK		0x1e
-+#define OCSEL_OCSRC_PLL1_SYSCLK(n)	(0x16 + (n))
-+
-+static const struct davinci_pll_clk_info da850_pll0_info = {
-+	.name = "pll0",
-+	.unlock_reg = CFGCHIP(0),
-+	.unlock_mask = CFGCHIP0_PLL_MASTER_LOCK,
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
-+		 PLL_HAS_EXTCLKSRC,
-+};
-+
-+/*
-+ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
-+ * meaning that we could change the divider as long as we keep the correct
-+ * ratio between all of the clocks, but we don't support that because there is
-+ * currently not a need for it.
-+ */
-+
-+SYSCLK(1, pll0_sysclk1, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0);
-+SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
-+SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_ARM_RATE | SYSCLK_FIXED_DIV);
-+SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
-+
-+static const char * const da850_pll0_obsclk_parent_names[] = {
-+	"oscin",
-+	"pll0_sysclk1",
-+	"pll0_sysclk2",
-+	"pll0_sysclk3",
-+	"pll0_sysclk4",
-+	"pll0_sysclk5",
-+	"pll0_sysclk6",
-+	"pll0_sysclk7",
-+	"pll1_obsclk",
-+};
-+
-+static u32 da850_pll0_obsclk_table[] = {
-+	OCSEL_OCSRC_OSCIN,
-+	OCSEL_OCSRC_PLL0_SYSCLK(1),
-+	OCSEL_OCSRC_PLL0_SYSCLK(2),
-+	OCSEL_OCSRC_PLL0_SYSCLK(3),
-+	OCSEL_OCSRC_PLL0_SYSCLK(4),
-+	OCSEL_OCSRC_PLL0_SYSCLK(5),
-+	OCSEL_OCSRC_PLL0_SYSCLK(6),
-+	OCSEL_OCSRC_PLL0_SYSCLK(7),
-+	OCSEL_OCSRC_PLL1_OBSCLK,
-+};
-+
-+static const struct davinci_pll_obsclk_info da850_pll0_obsclk_info = {
-+	.name = "pll0_obsclk",
-+	.parent_names = da850_pll0_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(da850_pll0_obsclk_parent_names),
-+	.table = da850_pll0_obsclk_table,
-+	.ocsrc_mask = GENMASK(4, 0),
-+};
-+
-+int da850_pll0_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk1, base);
-+	clk_register_clkdev(clk, "pll0_sysclk1", "da850-psc0");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-psc1");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-async3-clksrc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk3, base);
-+	clk_register_clkdev(clk, "pll0_sysclk3", "da850-async1-clksrc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk4, base);
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da850-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da850-psc1");
-+
-+	davinci_pll_sysclk_register(dev, &pll0_sysclk5, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk6, base);
-+	clk_register_clkdev(clk, "pll0_sysclk6", "da850-psc0");
-+
-+	davinci_pll_sysclk_register(dev, &pll0_sysclk7, base);
-+
-+	davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
-+
-+	clk = clk_register_fixed_factor(dev, "async2", "pll0_auxclk",
-+					CLK_IS_CRITICAL, 1, 1);
-+
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+
-+	davinci_pll_obsclk_register(dev, &da850_pll0_obsclk_info, base);
-+
-+	return 0;
-+}
-+
-+static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
-+	&pll0_sysclk1,
-+	&pll0_sysclk2,
-+	&pll0_sysclk3,
-+	&pll0_sysclk4,
-+	&pll0_sysclk5,
-+	&pll0_sysclk6,
-+	&pll0_sysclk7,
-+	NULL
-+};
-+
-+int of_da850_pll0_init(struct device *dev, void __iomem *base)
-+{
-+	return of_davinci_pll_init(dev, &da850_pll0_info,
-+				   &da850_pll0_obsclk_info,
-+				   da850_pll0_sysclk_info, 7, base);
-+}
-+
-+static const struct davinci_pll_clk_info da850_pll1_info = {
-+	.name = "pll1",
-+	.unlock_reg = CFGCHIP(3),
-+	.unlock_mask = CFGCHIP3_PLL1_MASTER_LOCK,
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_POSTDIV,
-+};
-+
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, 0);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, 0);
-+
-+static const char * const da850_pll1_obsclk_parent_names[] = {
-+	"oscin",
-+	"pll1_sysclk1",
-+	"pll1_sysclk2",
-+	"pll1_sysclk3",
-+};
-+
-+static u32 da850_pll1_obsclk_table[] = {
-+	OCSEL_OCSRC_OSCIN,
-+	OCSEL_OCSRC_PLL1_SYSCLK(1),
-+	OCSEL_OCSRC_PLL1_SYSCLK(2),
-+	OCSEL_OCSRC_PLL1_SYSCLK(3),
-+};
-+
-+static const struct davinci_pll_obsclk_info da850_pll1_obsclk_info = {
-+	.name = "pll1_obsclk",
-+	.parent_names = da850_pll1_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(da850_pll1_obsclk_parent_names),
-+	.table = da850_pll1_obsclk_table,
-+	.ocsrc_mask = GENMASK(4, 0),
-+};
-+
-+int da850_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base);
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
-+	clk_register_clkdev(clk, "pll1_sysclk2", "da850-async3-clksrc");
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
-+
-+	davinci_pll_obsclk_register(dev, &da850_pll1_obsclk_info, base);
-+
-+	return 0;
-+}
-+
-+static const struct davinci_pll_sysclk_info *da850_pll1_sysclk_info[] = {
-+	&pll1_sysclk1,
-+	&pll1_sysclk2,
-+	&pll1_sysclk3,
-+	NULL
-+};
-+
-+int of_da850_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	return of_davinci_pll_init(dev, &da850_pll1_info,
-+				   &da850_pll1_obsclk_info,
-+				   da850_pll1_sysclk_info, 3, base);
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index eaf8049..535f725 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -771,11 +771,15 @@ int of_davinci_pll_init(struct device *dev,
- }
- 
- static const struct of_device_id davinci_pll_of_match[] = {
-+	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
-+	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
- 	{ }
- };
- 
- static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
-+	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
-+	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 0de2c61..53b8d51 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -121,4 +121,9 @@ int of_davinci_pll_init(struct device *dev,
- 
- int da830_pll_init(struct device *dev, void __iomem *base);
- 
-+int da850_pll0_init(struct device *dev, void __iomem *base);
-+int da850_pll1_init(struct device *dev, void __iomem *base);
-+int of_da850_pll0_init(struct device *dev, void __iomem *base);
-+int of_da850_pll1_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
 2.7.4
