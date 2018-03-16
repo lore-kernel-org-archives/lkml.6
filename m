@@ -1,58 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeCPML6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 08:11:58 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45678 "EHLO mail.skyhub.de"
+        id S1752435AbeCPMN6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 08:13:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:55078 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751413AbeCPML5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 08:11:57 -0400
-Date: Fri, 16 Mar 2018 13:11:17 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive
- summary
-Message-ID: <20180316121117.GE5852@pd.tnic>
-References: <20180315154448.16222-1-bp@alien8.de>
- <20180315154448.16222-9-bp@alien8.de>
- <20180315190132.2d653yu7ezf2zplh@treble>
- <20180316114849.GD5852@pd.tnic>
- <20180316120112.mqjvkdgl27scds6p@treble>
+        id S1751236AbeCPMN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 08:13:56 -0400
+Date: Fri, 16 Mar 2018 12:13:50 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: honghui.zhang@mediatek.com, bhelgaas@google.com,
+        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com, xinping.qian@mediatek.com
+Subject: Re: [PATCH v5 2/2] PCI: mediatek: Set up class type and vendor ID
+ for MT7622
+Message-ID: <20180316121350.GB24325@e107981-ln.cambridge.arm.com>
+References: <1514336394-17747-1-git-send-email-honghui.zhang@mediatek.com>
+ <1514336394-17747-3-git-send-email-honghui.zhang@mediatek.com>
+ <20171227184542.GA79892@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316120112.mqjvkdgl27scds6p@treble>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20171227184542.GA79892@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 07:01:12AM -0500, Josh Poimboeuf wrote:
-> Hm, the "Code: Bad RIP value" will always be shown for syscall regs,
-> which will probably cause some unnecessary confusion/worry.  Should we
-> just skip printing it for the "regs->ip < PAGE_OFFSET" case?
+On Wed, Dec 27, 2017 at 12:45:42PM -0600, Bjorn Helgaas wrote:
 
-How about we remove that check altogether?
+[...]
 
-I mean, __copy_from_user_inatomic() by way of probe_kernel_read() should
-be able to handle every address.
+> > +		/* Set up class code for MT7622 */
+> > +		val = PCI_CLASS_BRIDGE_PCI << 16;
+> > +		writel(val, port->base + PCIE_CONF_CLASS);
+> 
+> 1) Your comments mention MT7622 specifically, but this code is run for
+> both mt2712-pcie and mt7622-pcie.  If this code is safe and necessary
+> for both mt2712-pcie and mt7622-pcie, please remove the mention of
+> MT7622.
+> 
+> 2) The first comment mentions both "vendor ID and device ID" but you
+> don't write the device ID.  Since this code applies to both
+> mt2712-pcie and mt7622-pcie, my guess is that you don't *want* to
+> write the device ID.  If that's the case, please fix the comment.
+> 
+> 3) If you only need to set the vendor ID, you're performing a 32-bit
+> write (writel()) to update a 16-bit value.  Please use writew()
+> instead.
+> 
+> 4) If you only need to set the vendor ID, please use a definition like
+> "PCIE_CONF_VENDOR_ID" instead of the ambiguous "PCIE_CONF_ID".
+> 
+> 5) If you only need to set the vendor ID, please update the changelog
+> to mention "vendor ID" specifically instead of the ambiguous "IDs".
+> 
+> 6) Please add a space before the closing "*/" of the first comment.
+> 
+> 7) PCI_CLASS_BRIDGE_PCI is for a PCI-to-PCI bridge, i.e., one that has
+> PCI on both the primary (upstream) side and the secondary (downstream)
+> side.  That kind of bridge has a type 1 config header (see
+> PCI_HEADER_TYPE) and the PCI_PRIMARY_BUS and PCI_SECONDARY_BUS
+> registers tell us the bus number of the primary and secondary sides.
+> 
+> I don't believe this device is a PCI-to-PCI bridge.  I think it's a
+> *host* bridge that has some non-PCI interface on the upstream side and
+> should have a type 0 config header.  If that's the case you should use
+> PCI_CLASS_BRIDGE_HOST instead.
 
-And if it doesn't, it says so:
+I think these registers actually programme the root port register space
+in the RC (whether real or fake - that depends on the RC design) so
+the class is PCI_CLASS_BRIDGE_PCI, that's what most of host bridge
+drivers in drivers/pci/host do.
 
-        if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
-                pr_cont("Bad RIP value.\n");
+I would like to get to the bottom of this since it is indeed misleading
+(and I do not have HW to test it myself to check my understanding).
 
-
-And if we *can* print opcode bytes, why not do so? It is one more hint
-when debugging, who knows, might prove useful...
-
-Hmm?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thanks,
+Lorenzo
