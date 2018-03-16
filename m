@@ -1,38 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsEes4AZZau6ux/XO7uU6ptDAyiYqphaRpdlbH4FaVvzmz5vPT3xduQ+Gg7SjwJ/4y6lYxu
-ARC-Seal: i=1; a=rsa-sha256; t=1521214772; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tEVpQ1FJcYGKNxV9FPC8ix9eyFFtNk/cAt1cwWRrjvpfFmR+gz7qnnRmz5mBKBoOg8
-         Z8I2Ad6mU/41ac3BVMidalpdMrMXHSZhV1OBXm9IY9ju/vPInXMOX0yg+So6TOx2jQ1Q
-         dDyP+lxOivhdqy8wYB+tEcoH9vuZSCeehU+20y4c4HGyLnARPEIPzPGmROI3CM2Bdlns
-         95m3OIOA/EWPbcYnJQfTxrFLoXf9FWsQ+KSR85tGS/hyQUahdjZd0JY9E9A0agvn+HvO
-         2L6EFVGHkRvg/nYWRUu+xak2FzODw1uelFNYRjxPh2Sese+MlNNwgUJcSFSjFnyg0nFP
-         8niw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=L84Y1r64jX6icNJpi02WBkf0q8fNPb2a6awXT/Vto74=;
-        b=XkNmBcIxQiCyVrxR7kITkD0WdylDsRTSlDSPWZulHX2X0Na7s90QgKS/UyUmbeVnwB
-         r56MVA0yB+x02QeBdKO1dyXm+pVDpggCoa8AhxCwHM7BZeGj/aAKbZPHzYi8029SqS+g
-         fWkAqLJZIawLmjCDVUErzFA79c4B/+elH1ywJbyHcXuQDlCpAWHpA16/iS88kuz8pzds
-         CoAq6+lxIIDXCu7OAt83GzIaGKvNTVLjs2Th4sQr5ttPzlkL5I/Y3sGPv06WRrhDueKR
-         hzErXJr4fqe5fSPF1mfeE9CUejqSLRm81N6m/4AHVtw6xmd18mAgQ4fVM+ffHnsmpfyg
-         oP3Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3328118-1521214772-2-10588821781710505203
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214771; b=s57LyL+G4p4X4bnpfQ4LfJSRB4fyp+XiFdb0dYHqp+Ic8oQ
+    qe0P2Xwm1jJFHOtd3VqQAmN3sIiAh/aBJwc6SMFJ0gW1e2593gnbSP7N0Er1g9im
+    os5gQgKIUn0nrTqh4ZCLsIKdQ9z5lJyWD0hnIaU5DISmr1SPfy5VJZSbUil2GDG4
+    FGzhvPp24fLNcqhWAvM12UntpqcPl0omOn/d+m1kKVRCRJaJ5y+BZgEv0uiHK/5T
+    iqxNGMt9YqMz42h32POqKsNz0j4zKOpKNzzxnVQagUTIJmv/98kEabRqRP1hbBfU
+    yrlYWUPBljOMiUxN2Boj1vvyUW4y2jgQSsgUmkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214771; bh=vaqw5UURa9hyr03f3g0V1jPvGe
+    KOzS7WXhgKULBstIk=; b=Xz35l960ZV+8/qIAQzmf234CdGqP1c7mUhHCZY4vUg
+    rQUFgpC9HBDPZnlMcAsYVSXR6Z+t3ObUPTaUJKMCuzY0O7jiAfgloJ09vtZjBZC+
+    vlGnqNY5prKq3n4GiXLKJuhqkXWNzzxwLssJjHf0r1DgEj7mS0Qe7HOa29EzobpD
+    gdOQyLkQkBtjGAwJXW8BkY3O7cOS17F96j1ND9V5gnXT8d04txzbnSlfIwuOspFz
+    sjYRd/CUdrU+MVhxc9VLGTWuAAFRCoudWXxYmHm57GspHOOXWggUcc8+zp0o92dq
+    gEZha93qIKLYvEUPCUVbbCJbjMsMbe/4nNf4fquAFOmQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754628AbeCPPj2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:39:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43250 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754613AbeCPPj0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:39:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"David.butterfield" <david.butterfield@wdc.com>,
-	Damien Le Moal <damien.lemoal@wdc.com>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 014/128] scsi: sd_zbc: Fix potential memory leak
-Date: Fri, 16 Mar 2018 16:22:35 +0100
-Message-Id: <20180316152337.075974962@linuxfoundation.org>
+        stable@vger.kernel.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.15 012/128] staging: comedi: fix comedi_nsamples_left.
+Date: Fri, 16 Mar 2018 16:22:33 +0100
+Message-Id: <20180316152336.881831240@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -40,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109300677505902?=
-X-GMAIL-MSGID: =?utf-8?q?1595109300677505902?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,101 +80,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Frank Mori Hess <fmh6jj@gmail.com>
 
-commit 4b433924b2755a94f99258c178684a0e05c344de upstream.
+commit a42ae5905140c324362fe5036ae1dbb16e4d359c upstream.
 
-Rework sd_zbc_check_zone_size() to avoid a memory leak due to an early
-return if sd_zbc_report_zones() fails.
+A rounding error was causing comedi_nsamples_left to
+return the wrong value when nsamples was not a multiple
+of the scan length.
 
-Reported-by: David.butterfield <david.butterfield@wdc.com>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd_zbc.c |   35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+ drivers/staging/comedi/drivers.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -486,7 +486,7 @@ static int sd_zbc_check_capacity(struct
-  */
- static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
- {
--	u64 zone_blocks;
-+	u64 zone_blocks = 0;
- 	sector_t block = 0;
- 	unsigned char *buf;
- 	unsigned char *rec;
-@@ -504,10 +504,8 @@ static int sd_zbc_check_zone_size(struct
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -484,8 +484,7 @@ unsigned int comedi_nsamples_left(struct
+ 	struct comedi_cmd *cmd = &async->cmd;
  
- 	/* Do a report zone to get the same field */
- 	ret = sd_zbc_report_zones(sdkp, buf, SD_ZBC_BUF_SIZE, 0);
--	if (ret) {
--		zone_blocks = 0;
--		goto out;
--	}
-+	if (ret)
-+		goto out_free;
- 
- 	same = buf[4] & 0x0f;
- 	if (same > 0) {
-@@ -547,7 +545,7 @@ static int sd_zbc_check_zone_size(struct
- 			ret = sd_zbc_report_zones(sdkp, buf,
- 						  SD_ZBC_BUF_SIZE, block);
- 			if (ret)
--				return ret;
-+				goto out_free;
- 		}
- 
- 	} while (block < sdkp->capacity);
-@@ -555,35 +553,32 @@ static int sd_zbc_check_zone_size(struct
- 	zone_blocks = sdkp->zone_blocks;
- 
- out:
--	kfree(buf);
--
- 	if (!zone_blocks) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Devices with non constant zone "
- 				  "size are not supported\n");
--		return -ENODEV;
--	}
--
--	if (!is_power_of_2(zone_blocks)) {
-+		ret = -ENODEV;
-+	} else if (!is_power_of_2(zone_blocks)) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Devices with non power of 2 zone "
- 				  "size are not supported\n");
--		return -ENODEV;
--	}
--
--	if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
-+		ret = -ENODEV;
-+	} else if (logical_to_sectors(sdkp->device, zone_blocks) > UINT_MAX) {
- 		if (sdkp->first_scan)
- 			sd_printk(KERN_NOTICE, sdkp,
- 				  "Zone size too large\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+	} else {
-+		sdkp->zone_blocks = zone_blocks;
-+		sdkp->zone_shift = ilog2(zone_blocks);
- 	}
- 
--	sdkp->zone_blocks = zone_blocks;
--	sdkp->zone_shift = ilog2(zone_blocks);
-+out_free:
-+	kfree(buf);
- 
--	return 0;
-+	return ret;
- }
- 
- static int sd_zbc_setup(struct scsi_disk *sdkp)
+ 	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int nscans = nsamples / cmd->scan_end_arg;
+-		unsigned int scans_left = __comedi_nscans_left(s, nscans);
++		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+ 		unsigned int scan_pos =
+ 		    comedi_bytes_to_samples(s, async->scan_progress);
+ 		unsigned long long samples_left = 0;
