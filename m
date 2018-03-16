@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs2H0sL2HsOc0+DQom+exl4Nq68DtkY9PB3UNEE16r4BW+SvNwuZZw+F3moC5QqhpcNTbe5
-ARC-Seal: i=1; a=rsa-sha256; t=1521215014; cv=none;
+X-Google-Smtp-Source: AG47ELuxtxCp/G7BlTJ0k03cSV1hEYotLAS4lPt1BgSl20WHySuUIIKYy5yxz5pzR5wDuxEnu4K9
+ARC-Seal: i=1; a=rsa-sha256; t=1521215011; cv=none;
         d=google.com; s=arc-20160816;
-        b=J74SCq9q+LEBBHe7YvXv6bhJxzHbFasHJFl9AV9zi9LOXm2Y6jqoNc42nLQ73wvlU2
-         Uf2FKFGDtFIvkNzv+LkZIUu0XAbWS1dIWa4rhJYb/TX4EzTV59/gVF7EmWMhBsVkfZVN
-         0UGsnwaGbz+JzjAfz1T5rrhiKXNoK24vtpT73nyqkaOQFv0vwfujf64WL+nIay/E13/H
-         6n/GaZxImqLICElNBZIhCIo4anbogcA73pFFQszbgkJ1WPG0DMp3Q9AdkRNxxgRy9ZU5
-         x2y9KdviOf8QapnTPiGe1oZoep0a1pgRdOUfndHBTafdy6gfHNsEO9+R2r84naKs1tKg
-         jTJA==
+        b=PXUwEhhAB6hENGW4oa3xdfktBwYi2giYm+23TexoymppTre4HdybSay1ezKl+jkn8v
+         j1dUM6xA2wWDJehBaEVJ+GL+c3iyVlwlATQkRSKIga3clLTd0nMXXlJ0IL22YVRNK5+E
+         UEvMTSB0xvc7tJoDHiRYiG6IvXSl9AoZOafrtas1PmfFN2PVrZXZc6Wfl3Va4IfgxGuG
+         jqJYL7HG1nu4NX4rYFNgHUXrv8O1ewILLDi847AKgFia5qs1cHgT3TflIF4iJ5FBDobf
+         PS47uLS9YycX74YvyrgA1iLJbu9PGTS7MqGmScRiUxoxvuW1KWhL5VEG5Ni1PMsNKmQw
+         PsWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DU156U4cPJprZu/pfnnCxFVftZgx0wDFcILFs0GkNc8=;
-        b=A24pxHC+bFLqQVvBvPSxouzWJbb/b9zN13+LURgiUBcjK7P5eOLlA04pnScjyKrABa
-         FCIXBHT/ulRj+tvj0bJ1mrtgCXaRwSqiJXHOCuUKLYDZ21uebd/IGtQmgGpE5IG4QX/s
-         t/higWj2Q37HkSi7/diCh00jaioeGAagYu6+cmODlJQ0k+UVZr89Vqdl5VqvOzKm0eYX
-         hwDAPunhOD8XLBU9YepVSK1eG8f4uBFFb9Z5f8CIP2YEpyVGru+qM9CHXhhyuR5KWkym
-         7nHc53PTRDU0OC79TZGLBMLcbuip3nZFy4ucpO+IQvDaWRREQs6BcqQYjMLF/YxAtwC7
-         QFdw==
+        bh=ww/cajx/joBZDxiUOLgXn8UK+LdLYd0Qve25EGsHunk=;
+        b=ly4sYlRdekEaHNj0FcZcyXgDEJ+fAgNzoJHG23+y2YLrxJrozKRAt5kPewTcPGgB0Q
+         Pn3ZMmKKSbuUJ5WJpwYKHtg/nUdf7lww/3+9mdlicbPHaog5Y0oSwZN65xY3YxPfYNw3
+         93e0aHpRRXn5tAp4LhthEOWM0ZyLWrsKkmW0Sy/iOajcR6qOcKgtiw+IAGK1zq6LE5gI
+         YmzpeNnvgioOO2TATeBNjWwdJ/TDq/5zR67YhdwHrE+ULmhW0USxWqp1BIwTzAM2x6Va
+         J19JUm8NOFk+1VxCfWh/ZELA0llHMZB8NHw0DsyNTHYIBH20Oags83kn9NmBHpyNExj1
+         j53w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mark Brown <broonie@kernel.org>,
+	Julien BOIBESSOT <julien.boibessot@armadeus.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 097/128] spi: sun6i: disable/unprepare clocks on remove
-Date: Fri, 16 Mar 2018 16:23:58 +0100
-Message-Id: <20180316152341.389442285@linuxfoundation.org>
+Subject: [PATCH 4.15 096/128] tools/usbip: fixes build with musl libc toolchain
+Date: Fri, 16 Mar 2018 16:23:57 +0100
+Message-Id: <20180316152341.345441462@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109179268049737?=
-X-GMAIL-MSGID: =?utf-8?q?1595109554719434222?=
+X-GMAIL-THRID: =?utf-8?q?1595109176956118610?=
+X-GMAIL-MSGID: =?utf-8?q?1595109552047977935?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+From: Julien BOIBESSOT <julien.boibessot@armadeus.com>
 
 
-[ Upstream commit 2d9bbd02c54094ceffa555143b0d68cd06504d63 ]
+[ Upstream commit 77be4c878c72e411ad22af96b6f81dd45c26450a ]
 
-sun6i_spi_probe() uses sun6i_spi_runtime_resume() to prepare/enable
-clocks, so sun6i_spi_remove() should use sun6i_spi_runtime_suspend() to
-disable/unprepare them if we're not suspended.
-Replacing pm_runtime_disable() by pm_runtime_force_suspend() will ensure
-that sun6i_spi_runtime_suspend() is called if needed.
+Indeed musl doesn't define old SIGCLD signal name but only new one SIGCHLD.
+SIGCHLD is the new POSIX name for that signal so it doesn't change
+anything on other libcs.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+This fixes this kind of build error:
 
-Fixes: 3558fe900e8af (spi: sunxi: Add Allwinner A31 SPI controller driver)
-Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+usbipd.c: In function ‘set_signal’:
+usbipd.c:459:12: error: 'SIGCLD' undeclared (first use in this function)
+  sigaction(SIGCLD, &act, NULL);
+            ^~~~~~
+usbipd.c:459:12: note: each undeclared identifier is reported only once
+	for each function it appears in
+Makefile:407: recipe for target 'usbipd.o' failed
+make[3]: *** [usbipd.o] Error 1
+
+Signed-off-by: Julien BOIBESSOT <julien.boibessot@armadeus.com>
+Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-sun6i.c |    2 +-
+ tools/usb/usbip/src/usbipd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-sun6i.c
-+++ b/drivers/spi/spi-sun6i.c
-@@ -541,7 +541,7 @@ err_free_master:
- 
- static int sun6i_spi_remove(struct platform_device *pdev)
- {
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_force_suspend(&pdev->dev);
- 
- 	return 0;
+--- a/tools/usb/usbip/src/usbipd.c
++++ b/tools/usb/usbip/src/usbipd.c
+@@ -456,7 +456,7 @@ static void set_signal(void)
+ 	sigaction(SIGTERM, &act, NULL);
+ 	sigaction(SIGINT, &act, NULL);
+ 	act.sa_handler = SIG_IGN;
+-	sigaction(SIGCLD, &act, NULL);
++	sigaction(SIGCHLD, &act, NULL);
  }
+ 
+ static const char *pid_file;
