@@ -1,79 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752977AbeCPOmw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:42:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752052AbeCPOmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:42:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C9C21741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 16 Mar 2018 10:42:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [RFC PATCH 2/2] powerpc: Only support DYNAMIC_FTRACE not static
-Message-ID: <20180316104248.6aa11792@gandalf.local.home>
-In-Reply-To: <20180316134633.10584-2-mpe@ellerman.id.au>
-References: <20180316134633.10584-1-mpe@ellerman.id.au>
-        <20180316134633.10584-2-mpe@ellerman.id.au>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753242AbeCPOq0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:46:26 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:32852 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752777AbeCPOqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:46:24 -0400
+Date: Fri, 16 Mar 2018 15:45:54 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, luto@kernel.org, mingo@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        x86@kernel.org
+Subject: Re: [PATCH v2 13/36] x86/ioport: add ksys_ioperm() helper; remove
+ in-kernel calls to sys_ioperm()
+Message-ID: <20180316144554.GC14069@light.dominikbrodowski.net>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-14-linux@dominikbrodowski.net>
+ <alpine.DEB.2.21.1803161259530.1598@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1803161259530.1598@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 17 Mar 2018 00:46:33 +1100
-Michael Ellerman <mpe@ellerman.id.au> wrote:
-
-> We've had dynamic ftrace support for over 9 years since Steve first
-> wrote it, all the distros use dynamic, and static is basically
-> untested these days, so drop support for static ftrace.
+On Fri, Mar 16, 2018 at 01:00:48PM +0100, Thomas Gleixner wrote:
+> On Thu, 15 Mar 2018, Dominik Brodowski wrote:
 > 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  arch/powerpc/Kconfig                           |  1 +
->  arch/powerpc/include/asm/ftrace.h              |  4 +---
->  arch/powerpc/include/asm/module.h              |  5 -----
->  arch/powerpc/kernel/trace/ftrace.c             |  2 --
->  arch/powerpc/kernel/trace/ftrace_32.S          | 20 ------------------
->  arch/powerpc/kernel/trace/ftrace_64.S          | 29 --------------------------
->  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  3 ---
->  arch/powerpc/kernel/trace/ftrace_64_pg.S       |  2 --
->  8 files changed, 2 insertions(+), 64 deletions(-)
+> > Using this helper allows us to avoid the in-kernel calls to the sys_ioperm()
+> > syscall.
+> > 
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Jiri Slaby <jslaby@suse.com>
+> > Cc: x86@kernel.org
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 73ce5dd07642..23a325df784a 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -189,6 +189,7 @@ config PPC
->  	select HAVE_DEBUG_STACKOVERFLOW
->  	select HAVE_DMA_API_DEBUG
->  	select HAVE_DYNAMIC_FTRACE
-> +	select HAVE_DYNAMIC_FTRACE_ONLY
+> Please add a few lines explaining the ksys_ prefix as you did in your reply
+> to Christoph. Other than that:
+> 
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-I still think adding:
+Thanks! The commit message now reads
 
-	select DYNAMIC_FTRACE			if FUNCTION_TRACER
+	Using this helper allows us to avoid the in-kernel calls to the sys_ioperm()
+	syscall. The ksys_ prefix denotes that this function is meant as a drop-in
+	replacement for the syscall. In particular, it uses the same calling
+	convention as sys_ioperm().
 
-is the better approach.
+Does that sound OK?
 
-But I'm all for this patch. I've debated doing the same thing for x86,
-but the only reason I have not, was because it's the only way I test
-the !DYNAMIC_FTRACE code. I've broken the static function tracing
-several times and only find out during my test suite that still tests
-that case. But yeah, it would be nice to just nuke static function
-tracing for all archs. Perhaps after we finish removing unused archs,
-that may be the way to go forward.
-
--- Steve
-
-
-
->  	select HAVE_DYNAMIC_FTRACE_WITH_REGS	if MPROFILE_KERNEL
->  	select HAVE_EBPF_JIT			if PPC64
->  	select HAVE_EFFICIENT_UNALIGNED_ACCESS	if !(CPU_LITTLE_ENDIAN && POWER7_CPU)
+Thanks,
+	Dominik
