@@ -1,58 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeCPTCd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:02:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
+        id S1752819AbeCPTEQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:04:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750921AbeCPTCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:02:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA4B21741
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 16 Mar 2018 15:02:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
- blacklist
-Message-ID: <20180316150226.7129a42e@gandalf.local.home>
-In-Reply-To: <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
-References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
-        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
-        <20170714142900.1c91949c@gandalf.local.home>
-        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
-        <20180316112517.66bdd85a@gandalf.local.home>
-        <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
-        <20180316124134.30fa47d5@gandalf.local.home>
-        <20180316124840.3e83bbec@gandalf.local.home>
-        <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751236AbeCPTEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:04:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDC7217D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELv9RLIbNlZXlL1VMAHEdWkU1mfjlP7lioixyLZeE0niR8+6tQ7cwo8iNk2qFzofPonUw7ugRn2ay4QjU4Sv2vg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180316184348.GA20184@localhost.localdomain>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-4-linux@dominikbrodowski.net> <20180316184348.GA20184@localhost.localdomain>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 16 Mar 2018 19:03:53 +0000
+X-Gmail-Original-Message-ID: <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
+Message-ID: <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/36] mm: use do_futex() instead of sys_futex() in mm_release()
+To: Darren Hart <dvhart@infradead.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Mar 2018 13:53:01 -0400 (EDT)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Fri, Mar 16, 2018 at 6:43 PM, Darren Hart <dvhart@infradead.org> wrote:
+> On Thu, Mar 15, 2018 at 08:04:56PM +0100, Dominik Brodowski wrote:
+>> sys_futex() is a wrapper to do_futex() which does not modify any
+>> values here:
+>>
+>> - uaddr, val and val3 are kept the same
+>>
+>> - op is masked with FUTEX_CMD_MASK, but is always set to FUTEX_WAKE.
+>>   Therefore, val2 is always 0.
+>>
+>> - as utime is set to NULL, *timeout is NULL
+>>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Darren Hart <dvhart@infradead.org>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+>
+> Hi Dominik,
+>
+> I'm missing the "why" part here. What is it you are trying to address?
+>
+> do_futex is not currently in use outside of the futex implementation,
+> while sys_futex is. This decouples the interface from the
+> implementation. While this is perhaps less critical within the
+> kernel, I don't see a compelling reason to increase the coupling
+> between the mm and futex implementations.
+>
+> Without a compelling WHY, Nack from me.
+>
 
-> Would the general approach you envision be based on emitting all code
-> generated by compilation of all objects under kernel/tracing and
-> kernel/events into a specific "nokprobes" text section of the kernel ?
-> Perhaps we could create a specific linker scripts for those directories,
-> or do you have in mind a neater way to do this ?
-
-I was thinking of adding it to the objtool work. I need to consolidate
-the recordmcount code and objtool for doing this, and that is on my
-agenda (it has to do with some of the current "urgent" needs).
-
-But this will take a bit of effort. In the mean time and not against
-just adding the whack-a-mole approach and add the functions that the
-original patch selected as nokprobes.
-
--- Steve
+We want to make some changes to the way that the syscall entry code
+invokes syscalls, and these changes will make it impossible to call
+sys_xyz() functions from the kernel.  So we can make sys_futex() be a
+trivial wrapper around a new ksys_futex(), or we can do a patch like
+this.
