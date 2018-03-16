@@ -1,37 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu1GQw8zcmUAyXAoFi5lw4FhylAZTO9zlRZeAuSzbUKN2t7QiFmQIK2kwEzKLEEWGBgP0pE
-ARC-Seal: i=1; a=rsa-sha256; t=1521214049; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dy78Z0jp1I374fCj8QRHjqS3l4QoIpBQ6YEhmtD4/T0ymiqoK/ti8saH4QtE6F4d4b
-         jIl9Itn8d7GrDHQkF0XLnAqbqC3eRcol3CenFdoq3rbhkO+BJRlY017aKZKZ2ve9HAPF
-         fkTgVwnrBBslCzFwFpVWRKmxVQmxmKE+hPBduScWXSlIgb6EasuIrsN0vBdoglAPts9o
-         9KSW8ffQohL1RTk3EaX1ctuAhQjdUqGQK+UswSCe90wY2ROh8gvgALVa6YGXqHwpWaZS
-         iaebcAOZUCoWlnCgp1wNOcJfM52k+wwCq8vSq7+6CCQaye+XGIsci07Hvg7ehBH+5sTf
-         BSRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=X94hNI5F/1GVztmWZ6ahYTYsXH+1j90f3T6xDC3hhRk=;
-        b=MsVa/kW+XoyrncHSZBBXjW4FUy1hSgZe3SqEtbrWj6Pgqhl3J7QJwI99hOfqTV/mBI
-         iBu9db8vqOeYxo8GyO2gLnCxx8ONvmzr9O4BgVXfE/sN+UOcqlD2SlUQST06MkkaMGkA
-         BdRfArDjiqddGBBWbefwdNRXWt1KzhPVT5h4oEldqeZ/hvLtwLEdBTeXkkdzqpIG6epq
-         hyUW0BM4GmBTGFVKbqXgag4ux4jQ/0+hptE8VXj7JhQ1x5OFB4KItGdm31YpuP4dp77w
-         5h1rFniYV+yhP0Ni0CrUQSl8iOCapRJMo4XRf3DvCSMeWlGBZyJuTd1uF5bVgc4nQCEU
-         EQvQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214049-2-4210595597002092872
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521214048; b=TjeVnw6nuOUN6EdI15D3mjwbDHeG7pECEIfGJyM2hhsWcoh
+    abct8x2mjMZ/D8PWuaxzOtBPOlhkVD6+tBaWJStTbvGzEWuMPu5YO6Y3o6u4YaEt
+    NWc8yHMKT9CKUveTgwz0Lq2KomwOQKvh9LSoFhQExDS6Hu92+hcPEZHy7NoTsYRI
+    YAfZKDYcXHiultYcGg+Z57f2yk0X6xMMZHnEFDl1iiRkFplEOaknYXpiEnokT/cc
+    DsFF3I32pC3j4zxiZJEJ9IIIXX9d8Zvbo+zQ4KBTzKjRD4xeB4nJ2bd8ayFGEq3r
+    SoXDAmofl+PoOAZ0VDrCBlErZ5fXSTHp/QLKl3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521214048; bh=1O5mdM4Zwvt9DT8bLum+Uf3itB
+    VzDPWtySkKYdnW23s=; b=BbXwPXQWEdEt284XR8ShjxQswTw35tfMpMtdtxJiS6
+    px5sYFYv2FAymFAUtuci6IqSY8XM6TVzU5PCUKjVfg16PCVW4mbw0a9setx7ADuR
+    iT1Pj6ibq2rbUWZJYsqVGa0FeA03I1rz5BiPwMcPfuMwdBF0R1dUyXFQOIX50CX8
+    GCHet0Hn17bDw1n/oubSVSvetaCRR7eZm88lTsrmJme8if76EiCM7qE4T56nLLpn
+    7F3iLhyi1D2Dz/NhI3/6xXL6tCAmxaVJgl+1quKq2Lo3ylF6DiMXYGy6KzSeUZVL
+    2gsP7ZM0UXQDNjnnqNa3MSED/zD7WkZl8GkGm6vOu0VA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753018AbeCPP10 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:27:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34186 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754098AbeCPP1Y (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:27:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Nicolai Stange <nstange@suse.de>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 23/63] ALSA: seq: More protection for concurrent write and ioctl races
-Date: Fri, 16 Mar 2018 16:22:55 +0100
-Message-Id: <20180316152302.687787272@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 21/63] ALSA: hda/realtek - Fix dock line-out volume on Dell Precision 7520
+Date: Fri, 16 Mar 2018 16:22:53 +0100
+Message-Id: <20180316152302.422372162@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
 References: <20180316152259.964532775@linuxfoundation.org>
@@ -39,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108299103257252?=
-X-GMAIL-MSGID: =?utf-8?q?1595108542553883580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,172 +81,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 7bd80091567789f1c0cb70eb4737aac8bcd2b6b9 upstream.
+commit e312a869cd726c698a75caca0d9e5c22fd3f1534 upstream.
 
-This patch is an attempt for further hardening against races between
-the concurrent write and ioctls.  The previous fix d15d662e89fc
-("ALSA: seq: Fix racy pool initializations") covered the race of the
-pool initialization at writer and the pool resize ioctl by the
-client->ioctl_mutex (CVE-2018-1000004).  However, basically this mutex
-should be applied more widely to the whole write operation for
-avoiding the unexpected pool operations by another thread.
+The dock line-out pin (NID 0x17 of ALC3254 codec) on Dell Precision
+7520 may route to three different DACs, 0x02, 0x03 and 0x06.  The
+first two DACS have the volume amp controls while the last one
+doesn't.  And unfortunately, the auto-parser assigns this pin to DAC3,
+resulting in the non-working volume control for the line out.
 
-The only change outside snd_seq_write() is the additional mutex
-argument to helper functions, so that we can unlock / relock the given
-mutex temporarily during schedule() call for blocking write.
+Fix it by disabling the routing to DAC3 on the corresponding pin.
 
-Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
-Reported-by: 范龙飞 <long7573@126.com>
-Reported-by: Nicolai Stange <nstange@suse.de>
-Reviewed-and-tested-by: Nicolai Stange <nstange@suse.de>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199029
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_clientmgr.c |   18 +++++++++++-------
- sound/core/seq/seq_fifo.c      |    2 +-
- sound/core/seq/seq_memory.c    |   14 ++++++++++----
- sound/core/seq/seq_memory.h    |    3 ++-
- 4 files changed, 24 insertions(+), 13 deletions(-)
+ sound/pci/hda/patch_realtek.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -919,7 +919,8 @@ int snd_seq_dispatch_event(struct snd_se
- static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
- 					struct snd_seq_event *event,
- 					struct file *file, int blocking,
--					int atomic, int hop)
-+					int atomic, int hop,
-+					struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	int err;
-@@ -957,7 +958,8 @@ static int snd_seq_client_enqueue_event(
- 		return -ENXIO; /* queue is not allocated */
- 
- 	/* allocate an event cell */
--	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
-+	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
-+				file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -1026,12 +1028,11 @@ static ssize_t snd_seq_write(struct file
- 		return -ENXIO;
- 
- 	/* allocate the pool now if the pool is not allocated yet */ 
-+	mutex_lock(&client->ioctl_mutex);
- 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
--		mutex_lock(&client->ioctl_mutex);
- 		err = snd_seq_pool_init(client->pool);
--		mutex_unlock(&client->ioctl_mutex);
- 		if (err < 0)
--			return -ENOMEM;
-+			goto out;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4722,6 +4722,16 @@ static void alc298_fixup_speaker_volume(
  	}
- 
- 	/* only process whole events */
-@@ -1082,7 +1083,7 @@ static ssize_t snd_seq_write(struct file
- 		/* ok, enqueue it */
- 		err = snd_seq_client_enqueue_event(client, &event, file,
- 						   !(file->f_flags & O_NONBLOCK),
--						   0, 0);
-+						   0, 0, &client->ioctl_mutex);
- 		if (err < 0)
- 			break;
- 
-@@ -1093,6 +1094,8 @@ static ssize_t snd_seq_write(struct file
- 		written += len;
- 	}
- 
-+ out:
-+	mutex_unlock(&client->ioctl_mutex);
- 	return written ? written : err;
  }
  
-@@ -2350,7 +2353,8 @@ static int kernel_client_enqueue(int cli
- 	if (! cptr->accept_output)
- 		result = -EPERM;
- 	else /* send it */
--		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
-+		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
-+						      atomic, hop, NULL);
- 
- 	snd_seq_client_unlock(cptr);
- 	return result;
---- a/sound/core/seq/seq_fifo.c
-+++ b/sound/core/seq/seq_fifo.c
-@@ -123,7 +123,7 @@ int snd_seq_fifo_event_in(struct snd_seq
- 		return -EINVAL;
- 
- 	snd_use_lock_use(&f->use_lock);
--	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
-+	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
- 	if (err < 0) {
- 		if ((err == -ENOMEM) || (err == -EAGAIN))
- 			atomic_inc(&f->overflow);
---- a/sound/core/seq/seq_memory.c
-+++ b/sound/core/seq/seq_memory.c
-@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_ev
-  */
- static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
- 			      struct snd_seq_event_cell **cellp,
--			      int nonblock, struct file *file)
-+			      int nonblock, struct file *file,
-+			      struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	unsigned long flags;
-@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		add_wait_queue(&pool->output_sleep, &wait);
- 		spin_unlock_irq(&pool->lock);
-+		if (mutexp)
-+			mutex_unlock(mutexp);
- 		schedule();
-+		if (mutexp)
-+			mutex_lock(mutexp);
- 		spin_lock_irq(&pool->lock);
- 		remove_wait_queue(&pool->output_sleep, &wait);
- 		/* interrupted? */
-@@ -288,7 +293,7 @@ __error:
-  */
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
- 		      struct snd_seq_event_cell **cellp, int nonblock,
--		      struct file *file)
-+		      struct file *file, struct mutex *mutexp)
- {
- 	int ncells, err;
- 	unsigned int extlen;
-@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_poo
- 	if (ncells >= pool->total_elements)
- 		return -ENOMEM;
- 
--	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
-+	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_poo
- 			int size = sizeof(struct snd_seq_event);
- 			if (len < size)
- 				size = len;
--			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
-+			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
-+						 mutexp);
- 			if (err < 0)
- 				goto __error;
- 			if (cell->event.data.ext.ptr == NULL)
---- a/sound/core/seq/seq_memory.h
-+++ b/sound/core/seq/seq_memory.h
-@@ -66,7 +66,8 @@ struct snd_seq_pool {
- void snd_seq_cell_free(struct snd_seq_event_cell *cell);
- 
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
--		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
-+		      struct snd_seq_event_cell **cellp, int nonblock,
-+		      struct file *file, struct mutex *mutexp);
- 
- /* return number of unused (free) cells */
- static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
++/* disable DAC3 (0x06) selection on NID 0x17 as it has no volume amp control */
++static void alc295_fixup_disable_dac3(struct hda_codec *codec,
++				      const struct hda_fixup *fix, int action)
++{
++	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		hda_nid_t conn[2] = { 0x02, 0x03 };
++		snd_hda_override_conn_list(codec, 0x17, 2, conn);
++	}
++}
++
+ /* Hook to update amp GPIO4 for automute */
+ static void alc280_hp_gpio4_automute_hook(struct hda_codec *codec,
+ 					  struct hda_jack_callback *jack)
+@@ -4871,6 +4881,7 @@ enum {
+ 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
+ 	ALC255_FIXUP_DELL_SPK_NOISE,
+ 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
++	ALC295_FIXUP_DISABLE_DAC3,
+ 	ALC280_FIXUP_HP_HEADSET_MIC,
+ 	ALC221_FIXUP_HP_FRONT_MIC,
+ 	ALC292_FIXUP_TPT460,
+@@ -5560,6 +5571,10 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC298_FIXUP_DELL_AIO_MIC_NO_PRESENCE,
+ 	},
++	[ALC295_FIXUP_DISABLE_DAC3] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc295_fixup_disable_dac3,
++	},
+ 	[ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+@@ -5617,6 +5632,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x0725, "Dell Inspiron 3162", ALC255_FIXUP_DELL_SPK_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x075b, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x075d, "Dell AIO", ALC298_FIXUP_SPK_VOLUME),
++	SND_PCI_QUIRK(0x1028, 0x07b0, "Dell Precision 7520", ALC295_FIXUP_DISABLE_DAC3),
+ 	SND_PCI_QUIRK(0x1028, 0x0798, "Dell Inspiron 17 7000 Gaming", ALC256_FIXUP_DELL_INSPIRON_7559_SUBWOOFER),
+ 	SND_PCI_QUIRK(0x1028, 0x082a, "Dell XPS 13 9360", ALC256_FIXUP_DELL_XPS_13_HEADPHONE_NOISE),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
