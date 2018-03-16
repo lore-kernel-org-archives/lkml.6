@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303463-1521214008-2-332429548190654725
+X-Cyrus-Session-Id: sloti22d1t05-3303463-1521213989-2-15163539503567240491
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214007; b=VqenS/TcRPDxSEgy3hsUxcG/1ib8Rc4sV2xt9CvVphIQzeF
-    DjLyG2uGAkM51bzJFMbCwwYedgbI4NlZ+zVE3oWQx//Q8KFse8/+wyT8On5+e8rr
-    /3BJHvCEqW8Pi7XJVylSPAaqy7+fP/SHJ+dzcJ4q3uoXClKevv29ZB/E0G3NqUpf
-    gB2S/mfKQqPKX+9ySmkydItcYUDDv+g+v/Wy7CMCT8hVKuqzS7OtqeKv/yoBoCIn
-    cNjF117mjborv6PmxttN+EsRiWE0HEHzkIvcIsBuNnCwXflS/5OXJDUA8rU6vXUv
-    jnIUF2kJRUUXKAXJYcUk2/xe2D9A12nEMkLMeCg==
+    t=1521213988; b=HCBPUXcJ9B9AsCxtISKHrdnTAUM28YdRulwrkBu5ls1IkZy
+    3kv7ajO0e1QKEicIE5tuDmkZDhKpklfK6DOpr3DPipov+Z48Y07KCwPY0xfS1m++
+    a4+m1K8gR7qHPxXWm6a0Rx9pHPtxqFCcnOPzYJ3/hW8tW+pORhDEwjMGt6uqzV7q
+    5aLG7JtbWXH3S1NbH38uum2COB1wONwrEYIsHSSWc1mnjiSdmUwp5CTDxsRJbfJL
+    HbKxoH+Woj4y2f3tB+eMgkNcmCZS8+ryl5fl6DYq2o8qS5MGodH4I2ZSj6LVCs0I
+    vMH0XRxm8ADZVk1xvwBFYVxZapOwIDjrqXnAVuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214007; bh=bFG6tGdpZxoPNyKCLCBJB723Xu
-    R1YMTv/kRDreDiSNE=; b=GXpn5aXIZRPbDmLrAE1L6ExgWN5RoMX+lE4PCscvne
-    RpIhUjTvmyYQ2gPbKR/ykKrK6NjW2mchLv40e9ZEjPuAyAKQXbM0ZLKYQylAgpdk
-    vjAl31KsFizrKSPZ8YaXxkNlzChwVaK09NY2ATBIhiX18/ZmiPR4mVLDdIA9HyfK
-    ZiJF/rMGbTmiL0FCGU0FL0IVnOyqN4PEOiPYPJrpjgDI2JKSturbzCOUa7msVGXY
-    66BzoABcpZYWkXJiN2q4ASHKRRhzpBchDXcFzFFnjo9Gm0sUmM0rHdJlac7HDZZU
-    mQPpen+EZ2V6IB+yELbJq2NY8+kGSSaLpbZJ9UgZg0Lw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521213988; bh=L2xJZVXEOcdLfpjrnkXut++XFO
+    2duORqTcczXoy7xmw=; b=wWZm/k70kIs1Qpoub0n7w9V8u7x8QZ+n+/AhvNHQup
+    gqhhWFUSzJNTtwgvRb/r1M+vzx9p1j4QnRSKvVcw4qs9+sDFsdOrc+1vM3YXEZsB
+    q7ehVI031FADAdFAYxGaUPJwoEBbNCa1FaAnj7CbKoScZUxSwNprWhksCJkaqJXt
+    R0gr0bIj/nMQmkNkEjMDyTm+8hoPgsaKbdve6A7vP67QUDKZ9j0y+qoBqEN3CWae
+    lTzMdmUZsznNjp+ZC6lyyE1fbBOz6smdba8RQvijT1pzCAbPgDRPin8gRU0em2+4
+    pEwWI5eRSY2xPEygXAbEk8CYTV5InPg2ANspqzsGGiZA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,21 +49,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeCPP0m (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:26:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33922 "EHLO
+        id S1754088AbeCPP0X (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:26:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932573AbeCPP0j (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:39 -0400
+        with ESMTP id S1753882AbeCPP0W (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 3.18 16/25] x86: Treat R_X86_64_PLT32 as R_X86_64_PC32
-Date: Fri, 16 Mar 2018 16:23:03 +0100
-Message-Id: <20180316152233.419132991@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 3.18 10/25] netfilter: ebtables: CONFIG_COMPAT: dont trust userland offsets
+Date: Fri, 16 Mar 2018 16:22:57 +0100
+Message-Id: <20180316152233.175386099@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152232.750180431@linuxfoundation.org>
 References: <20180316152232.750180431@linuxfoundation.org>
@@ -81,86 +82,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: H.J. Lu <hjl.tools@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit b21ebf2fb4cde1618915a97cc773e287ff49173e upstream.
+commit b71812168571fa55e44cdd0254471331b9c4c4c6 upstream.
 
-On i386, there are 2 types of PLTs, PIC and non-PIC.  PIE and shared
-objects must use PIC PLT.  To use PIC PLT, you need to load
-_GLOBAL_OFFSET_TABLE_ into EBX first.  There is no need for that on
-x86-64 since x86-64 uses PC-relative PLT.
+We need to make sure the offsets are not out of range of the
+total size.
+Also check that they are in ascending order.
 
-On x86-64, for 32-bit PC-relative branches, we can generate PLT32
-relocation, instead of PC32 relocation, which can also be used as
-a marker for 32-bit PC-relative branches.  Linker can always reduce
-PLT32 relocation to PC32 if function is defined locally.   Local
-functions should use PC32 relocation.  As far as Linux kernel is
-concerned, R_X86_64_PLT32 can be treated the same as R_X86_64_PC32
-since Linux kernel doesn't use PLT.
+The WARN_ON triggered by syzkaller (it sets panic_on_warn) is
+changed to also bail out, no point in continuing parsing.
 
-R_X86_64_PLT32 for 32-bit PC-relative branches has been enabled in
-binutils master branch which will become binutils 2.31.
+Briefly tested with simple ruleset of
+-A INPUT --limit 1/s' --log
+plus jump to custom chains using 32bit ebtables binary.
 
-[ hjl is working on having better documentation on this all, but a few
-  more notes from him:
-
-   "PLT32 relocation is used as marker for PC-relative branches. Because
-    of EBX, it looks odd to generate PLT32 relocation on i386 when EBX
-    doesn't have GOT.
-
-    As for symbol resolution, PLT32 and PC32 relocations are almost
-    interchangeable. But when linker sees PLT32 relocation against a
-    protected symbol, it can resolved locally at link-time since it is
-    used on a branch instruction. Linker can't do that for PC32
-    relocation"
-
-  but for the kernel use, the two are basically the same, and this
-  commit gets things building and working with the current binutils
-  master   - Linus ]
-
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: <syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/machine_kexec_64.c |    1 +
- arch/x86/kernel/module.c           |    1 +
- arch/x86/tools/relocs.c            |    3 +++
- 3 files changed, 5 insertions(+)
+ net/bridge/netfilter/ebtables.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -516,6 +516,7 @@ int arch_kexec_apply_relocations_add(con
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			value -= (u64)address;
- 			*(u32 *)location = value;
- 			break;
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -186,6 +186,7 @@ int apply_relocate_add(Elf64_Shdr *sechd
- 				goto overflow;
- 			break;
- 		case R_X86_64_PC32:
-+		case R_X86_64_PLT32:
- 			if (*(u32 *)loc != 0)
- 				goto invalid_relocation;
- 			val -= (u64)loc;
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -769,9 +769,12 @@ static int do_reloc64(struct section *se
- 		break;
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2019,7 +2019,9 @@ static int ebt_size_mwt(struct compat_eb
+ 		if (match_kern)
+ 			match_kern->match_size = ret;
  
- 	case R_X86_64_PC32:
-+	case R_X86_64_PLT32:
- 		/*
- 		 * PC relative relocations don't need to be adjusted unless
- 		 * referencing a percpu symbol.
-+		 *
-+		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
- 		 */
- 		if (is_percpu_sym(sym, symname))
- 			add_reloc(&relocs32neg, offset);
+-		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
++		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
++			return -EINVAL;
++
+ 		match32 = (struct compat_ebt_entry_mwt *) buf;
+ 	}
+ 
+@@ -2076,6 +2078,15 @@ static int size_entry_mwt(struct ebt_ent
+ 	 *
+ 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
+ 	 */
++	for (i = 0; i < 4 ; ++i) {
++		if (offsets[i] >= *total)
++			return -EINVAL;
++		if (i == 0)
++			continue;
++		if (offsets[i-1] > offsets[i])
++			return -EINVAL;
++	}
++
+ 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
+ 		struct compat_ebt_entry_mwt *match32;
+ 		unsigned int size;
