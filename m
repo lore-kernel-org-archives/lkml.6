@@ -1,158 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752415AbeCPTYy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:24:54 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30325 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751562AbeCPTYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:24:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,317,1517904000";
-   d="scan'208";a="25336226"
-Subject: Re: [PATCH 13/22] signal: Move addr_lsb into the _sigfault union for
- clarity
-From: Dave Hansen <dave.hansen@intel.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-References: <87k1wimybi.fsf_-_@xmission.com>
- <20180116004009.31036-13-ebiederm@xmission.com>
- <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>
-Message-ID: <818f8945-f990-a770-476e-f82bdc77dbda@intel.com>
-Date: Fri, 16 Mar 2018 12:24:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <29eb3438-0891-36ee-e5f6-36e26ccf2b89@intel.com>
-Content-Type: multipart/mixed;
- boundary="------------E4E5380CCEAD534ACA4BA262"
-Content-Language: en-US
+        id S1752903AbeCPT0J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:26:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50964 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752269AbeCPT0I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:26:08 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        joel@jms.id.au, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v6 0/2] hwmon: (ucd9000) Add gpio and debugfs interfaces
+Date: Fri, 16 Mar 2018 14:25:57 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18031619-0024-0000-0000-00000337E183
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008686; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01004004; UDB=6.00511006; IPR=6.00783293;
+ MB=3.00020077; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 19:26:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031619-0025-0000-0000-000047599E49
+Message-Id: <1521228359-32396-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160230
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------E4E5380CCEAD534ACA4BA262
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+The ucd9000 series chips have gpio pins. Add a gpio chip interface to the ucd
+device so that users can query and set the state of the gpio pins.
 
-On 03/16/2018 12:00 PM, Dave Hansen wrote:
-> On 01/15/2018 04:40 PM, Eric W. Biederman wrote:
->> The addr_lsb fields is only valid and available when the
->> signal is SIGBUS and the si_code is BUS_MCEERR_AR or BUS_MCEERR_AO.
->> Document this with a comment and place the field in the _sigfault union
->> to make this clear.
->>
->> All of the fields stay in the same physical location so both the old
->> and new definitions of struct siginfo will continue to work.
-> 
-> This breaks the ABI and breaks protection keys.  The physical locations
-> *DO* change.
-> 
-> Before this patch:
-> 
-> #define si_pkey         _sifields._sigfault._pkey
-> (gdb) print &((siginfo_t *)0)->_sifields._sigfault._pkey
-> $1 = (__u32 *) 0x20 <irq_stack_union+32>
-> 
-> and after:
-> 
-> +#define si_pkey                _sifields._sigfault._addr_pkey._pkey
-> (gdb) print &((siginfo_t *)0)->_sifields._sigfault._addr_pkey._pkey
-> $1 = (__u32 *) 0x1c
-> 
-> Can we revert this, please?
+Add a debugfs interface using the existing pmbus debugfs directory to provide
+MFR_STATUS and the status of the gpi faults to users.
 
-It does not revert cleanly so I reverted it manually.  Patch doing that
-is attached.  Should we do this, or is there a better option?
+Changes since v5:
+ - enclose gpio code in #ifdef GPIOLIB
+ - don't initialize buffers for mfr_status; set last char to 0 instead
+ - cap the size argument to bin2hex
 
---------------E4E5380CCEAD534ACA4BA262
-Content-Type: text/x-patch;
- name="revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b.patch"
+Changes since v4:
+ - max-sized buffers for smbus transfers
+ - used bin2hex instead of my own code
 
+Changes since v3:
+ - remove setting of gpio_chip->owner
+ - format the mfr_status data
+ - switch to #ifdef rather than #if IS_ENABLED for debugfs
 
-index e698ec1..8f8e3ef 100644
+Changes since v2:
+ - split the gpio registration into it's own function
 
----
+Changes since v1:
+ - dropped dev_err messages
+ - made gpio chip registration conditional on having gpio pins
+ - made mfr_status debugfs attribute more simple
 
- b/include/linux/compat.h             |   12 ++----------
- b/include/uapi/asm-generic/siginfo.h |   14 +++-----------
- 2 files changed, 5 insertions(+), 21 deletions(-)
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
 
-diff -puN include/linux/compat.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b include/linux/compat.h
---- a/include/linux/compat.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b	2018-03-16 12:02:22.156310058 -0700
-+++ b/include/linux/compat.h	2018-03-16 12:03:11.341309936 -0700
-@@ -222,23 +222,15 @@ typedef struct compat_siginfo {
- #ifdef __ARCH_SI_TRAPNO
- 			int _trapno;	/* TRAP # which caused the signal */
- #endif
-+			short int _addr_lsb;	/* Valid LSB of the reported address. */
- 			union {
--				/*
--				 * used when si_code=BUS_MCEERR_AR or
--				 * used when si_code=BUS_MCEERR_AO
--				 */
--				short int _addr_lsb;	/* Valid LSB of the reported address. */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					compat_uptr_t _dummy_bnd;
- 					compat_uptr_t _lower;
- 					compat_uptr_t _upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				struct {
--					compat_uptr_t _dummy_pkey;
--					u32 _pkey;
--				} _addr_pkey;
-+				u32 _pkey;
- 			};
- 		} _sigfault;
- 
-diff -puN include/uapi/asm-generic/siginfo.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b include/uapi/asm-generic/siginfo.h
---- a/include/uapi/asm-generic/siginfo.h~revert-b68a68d3dcc15ebbf23cbe91af1abf57591bd96b	2018-03-16 12:02:22.157310058 -0700
-+++ b/include/uapi/asm-generic/siginfo.h	2018-03-16 12:03:37.071309872 -0700
-@@ -94,23 +94,15 @@ typedef struct siginfo {
- 			unsigned int _flags;	/* see ia64 si_flags */
- 			unsigned long _isr;	/* isr */
- #endif
-+			short _addr_lsb; /* LSB of the reported address */
- 			union {
--				/*
--				 * used when si_code=BUS_MCEERR_AR or
--				 * used when si_code=BUS_MCEERR_AO
--				 */
--				short _addr_lsb; /* LSB of the reported address */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					void *_dummy_bnd;
- 					void __user *_lower;
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				struct {
--					void *_dummy_pkey;
--					__u32 _pkey;
--				} _addr_pkey;
-+				__u32 _pkey;
- 			};
- 		} _sigfault;
- 
-@@ -150,7 +142,7 @@ typedef struct siginfo {
- #define si_addr_lsb	_sifields._sigfault._addr_lsb
- #define si_lower	_sifields._sigfault._addr_bnd._lower
- #define si_upper	_sifields._sigfault._addr_bnd._upper
--#define si_pkey		_sifields._sigfault._addr_pkey._pkey
-+#define si_pkey		_sifields._sigfault._pkey
- #define si_band		_sifields._sigpoll._band
- #define si_fd		_sifields._sigpoll._fd
- #define si_call_addr	_sifields._sigsys._call_addr
-_
+Christopher Bostic (2):
+  hwmon: (ucd9000) Add gpio chip interface
+  hwmon: (ucd9000) Add debugfs attributes to provide mfr_status
 
---------------E4E5380CCEAD534ACA4BA262--
+ drivers/hwmon/pmbus/ucd9000.c | 350 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 349 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
