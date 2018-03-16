@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeCPSa0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 14:30:26 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:35684 "EHLO
+        id S1751724AbeCPShn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 14:37:43 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:35758 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750876AbeCPSaZ (ORCPT
+        with ESMTP id S1750877AbeCPShl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 14:30:25 -0400
-Date: Fri, 16 Mar 2018 14:30:21 -0400 (EDT)
-Message-Id: <20180316.143021.1158193720540239477.davem@davemloft.net>
-To: linux@dominikbrodowski.net
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH -next 00/22] remove in-kernel syscall invocations (part
- 2 == netdev)
+        Fri, 16 Mar 2018 14:37:41 -0400
+Date: Fri, 16 Mar 2018 14:37:39 -0400 (EDT)
+Message-Id: <20180316.143739.424933240477251284.davem@davemloft.net>
+To: andrew@lunn.ch
+Cc: grygorii.strashko@ti.com, netdev@vger.kernel.org, nsekhar@ti.com,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: enable vlan rx vlan
+ offload
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+In-Reply-To: <20180316002935.GB13119@lunn.ch>
+References: <20180315201550.21487-1-grygorii.strashko@ti.com>
+        <20180316002935.GB13119@lunn.ch>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -25,50 +26,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Fri, 16 Mar 2018 18:05:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Fri, 16 Mar 2018 01:29:35 +0100
 
-> The rationale of this change is described in patch 1 of part 1[*] as follows:
+> On Thu, Mar 15, 2018 at 03:15:50PM -0500, Grygorii Strashko wrote:
+>> In VLAN_AWARE mode CPSW can insert VLAN header encapsulation word on Host
+>> port 0 egress (RX) before the packet data if RX_VLAN_ENCAP bit is set in
+>> CPSW_CONTROL register. VLAN header encapsulation word has following format:
+>> 
+>>  HDR_PKT_Priority bits 29-31 - Header Packet VLAN prio (Highest prio: 7)
+>>  HDR_PKT_CFI 	  bits 28 - Header Packet VLAN CFI bit.
+>>  HDR_PKT_Vid 	  bits 27-16 - Header Packet VLAN ID
+>>  PKT_Type         bits 8-9 - Packet Type. Indicates whether the packet is
+>>                  	VLAN-tagged, priority-tagged, or non-tagged.
+>> 	00: VLAN-tagged packet
+>> 	01: Reserved
+>> 	10: Priority-tagged packet
+>> 	11: Non-tagged packet
+>> 
+>> This feature can be used to implement TX VLAN offload in case of
+>> VLAN-tagged packets and to insert VLAN tag in case Non-tagged packet was
+>> received on port with PVID set. As per documentation, CPSW never modifies
+>> packet data on Host egress (RX) and as result, without this feature
+>> enabled, Host port will not be able to receive properly packets which
+>> entered switch non-tagged through external Port with PVID set (when
+>> non-tagged packet forwarded from external Port with PVID set to another
+>> external Port - packet will be VLAN tagged properly).
 > 
-> 	The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
-> 	and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
-> 	through kernel entry points, but not from the kernel itself. This
-> 	will allow cleanups and optimizations to the entry paths *and* to
-> 	the parts of the kernel code which currently need to pretend to be
-> 	userspace in order to make use of syscalls.
-> 
-> At present, these patches are based on v4.16-rc5; there is one trivial
-> conflict against net-next. Dave, I presume that you prefer to take them
-> through net-next? If you want to, I can re-base them against net-next.
-> If you prefer otherwise, though, I can route them as part of my whole
-> syscall series.
+> So, i think it is time to discuss the future of this driver. It should
+> really be replaced by a switchdev/DSA driver. There are plenty of
+> carrots for a new driver: Better statistics, working ethtool support
+> for all the PHYs, better user experience, etc. But maybe now it is
+> time for the stick. Should we Maintainers decide that no new features
+> should be added to the existing drivers, just bug fixes?
 
-So the transformations themeselves are relatively trivial, so on that
-aspect I don't have any problems with these changes.
+Andrew, I totally share your concerns.
 
-But overall I have to wonder.
+However, I think the reality is that at best we can strongly urge
+people to do such a large amount of work such as writing a new
+switchdev/DSA driver for this cpsw hardware.
 
-I imagine one of the things you'd like to do is declare that syscall
-entries use a different (better) argument passing scheme.  For
-example, passing values in registers instead of on the stack.
+We can't really compel them.
 
-But in situations where you split out the system call function
-completely into one of these "helpers", the compiler is going
-to have two choices:
+And a stick could have the opposite of it's intended effect.  If still
+nobody wants to do the switchdev/DSA driver, then this existing one
+rots and even worse we can end up with an out-of-tree version of this
+driver that has the changes (such as this one) that people want.
 
-1) Expand the helper into the syscall function inline, thus we end up
-   with two copies of the function.
+I'd like to see the switchdev/DSA driver for cpsw as much as you do,
+but I am not convinced that rejecting patches like this one will
+necessarily make that happen.
 
-2) Call the helper from the syscall function.  Well, then the compiler
-   will need to pop the syscal obtained arguments from the registers
-   onto the stack.
+Also, it would be a completely different situation if we had someone
+working on the switchdev/DSA version already.
 
-So this doesn't seem like such a total win to me.
+So as it stands I really don't think we can block this patch.
 
-Maybe you can explain things better to ease my concerns.
-
-About merging, I'm fine with you taking this via your tree.  I do not
-see there being any terribly difficult conflicts arising (famous
-last words).
-
-Thanks.
+Thank you.
