@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933319AbeCPC5Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:57:16 -0400
-Received: from vern.gendns.com ([206.190.152.46]:55455 "EHLO vern.gendns.com"
+        id S933123AbeCPCxu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:53:50 -0400
+Received: from vern.gendns.com ([206.190.152.46]:55416 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933064AbeCPCxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:53:51 -0400
+        id S933064AbeCPCxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:53:44 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v8 17/42] dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
-Date: Thu, 15 Mar 2018 21:52:33 -0500
-Message-Id: <1521168778-27236-18-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 13/42] clk: davinci: Add platform information for TI DM355 PSC
+Date: Thu, 15 Mar 2018 21:52:29 -0500
+Message-Id: <1521168778-27236-14-git-send-email-david@lechnology.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
@@ -36,132 +36,158 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new binding for the clocks present in the CFGCHIP syscon
-registers in TI DA8XX SoCs.
+This adds platform-specific declarations for the PSC clocks on TI
+DM355 based systems.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
 v8 changes:
-- none
+- drop use of __init and __initconst attributes
+- add parent clock mappings
 
 v7 changes:
-- none
+- split registration function into two, one for each PSC
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
 
 v6 changes:
-- combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
-  "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
-  "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
-  file containing all CFGCHIP clocks bindings
-- added compatible = "ti,da830-div4p5ena"
-- added compatible = "ti,da850-async1-clksrc"
-- renamed other compatible strings
-- changed and added some clk-names strings
-- USB PHY clocks are combined into a single node with #clock-cells = <1>
+- change how clkdev lookups are declared
 
- .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm355.c | 88 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c       |  1 +
+ drivers/clk/davinci/psc.h       |  1 +
+ 4 files changed, 91 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm355.c
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index aef0390..e0da5c3 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -12,4 +12,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
 new file mode 100644
-index 0000000..1e03dce
+index 0000000..249a053
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-@@ -0,0 +1,93 @@
-+Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP clocks
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
 +
-+TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
-+registers call CFGCHIPn. Some of these registers function as clock
-+gates. This document describes the bindings for those clocks.
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
 +
-+All of the clock nodes described below must be child nodes of a CFGCHIP node
-+(compatible = "ti,da830-cfgchip").
++#include "psc.h"
 +
-+USB PHY clocks
-+--------------
-+Required properties:
-+- compatible: shall be "ti,da830-usb-phy-clocks".
-+- #clock-cells: from common clock binding; shall be set to 1.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "fck", "usb_refclkin", "auxclk"
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
++LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"dm6441-mmc.1");
++LPSC_CLKDEV1(mcbsp1_clkdev,		NULL,		"davinci-mcbsp.1");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"dm6441-mmc.0");
++LPSC_CLKDEV1(mcbsp0_clkdev,		NULL,		"davinci-mcbsp.0");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,		NULL,		"serial8250.2");
++LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
 +
-+This node provides two clocks. The clock at index 0 is the USB 2.0 PHY 48MHz
-+clock and the clock at index 1 is the USB 1.1 PHY 48MHz clock.
++static const struct davinci_lpsc_clk_info dm355_psc_info[] = {
++	LPSC(0,  0, vpss_master, pll1_sysclk4, vpss_master_clkdev, 0),
++	LPSC(1,  0, vpss_slave,  pll1_sysclk4, vpss_slave_clkdev,  0),
++	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
++	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
++	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
++	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
++	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
++	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
++	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
++	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
++	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
++	LPSC(21, 0, uart2,       pll1_sysclk2, uart2_clkdev,       0),
++	LPSC(22, 0, spi0,        pll1_sysclk2, spi0_clkdev,        0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk2, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll1_sysclk1, NULL,               LPSC_ALWAYS_ENABLED),
++	LPSC(40, 0, mjcp,        pll1_sysclk1, NULL,               0),
++	LPSC(41, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	{ }
++};
 +
-+eHRPWM Time Base Clock (TBCLK)
-+------------------------------
-+Required properties:
-+- compatible: shall be "ti,da830-tbclksync".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "fck"
++static int dm355_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(base, dm355_psc_info, 42, base);
++}
 +
-+PLL DIV4.5 divider
-+------------------
-+Required properties:
-+- compatible: shall be "ti,da830-div4p5ena".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "pll0_pllout"
++static struct clk_bulk_data dm355_psc_parent_clks[] = {
++	{ .id = "pll1_sysclk1" },
++	{ .id = "pll1_sysclk2" },
++	{ .id = "pll1_sysclk3" },
++	{ .id = "pll1_sysclk4" },
++	{ .id = "pll1_auxclk"  },
++};
 +
-+EMIFA clock source (ASYNC1)
-+---------------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async1-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk3", "div4.5"
-+
-+ASYNC3 clock source
-+-------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async3-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk2", "pll1_sysclk2"
-+
-+Examples:
-+
-+	cfgchip: syscon@1417c {
-+		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
-+		reg = <0x1417c 0x14>;
-+
-+		usb_phy_clk: usb-phy-clocks {
-+			compatible = "ti,da830-usb-phy-clocks";
-+			#clock-cells = <1>;
-+			clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
-+			clock-names = "fck", "usb_refclkin", "auxclk";
-+		};
-+		ehrpwm_tbclk: ehrpwm_tbclk {
-+			compatible = "ti,da830-tbclksync";
-+			#clock-cells = <0>;
-+			clocks = <&psc1 17>;
-+			clock-names = "fck";
-+		};
-+		div4p5_clk: div4.5 {
-+			compatible = "ti,da830-div4p5ena";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_pllout>;
-+			clock-names = "pll0_pllout";
-+		};
-+		async1_clk: async1 {
-+			compatible = "ti,da850-async1-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
-+			clock-names = "pll0_sysclk3", "div4.5";
-+		};
-+		async3_clk: async3 {
-+			compatible = "ti,da850-async3-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
-+			clock-names = "pll0_sysclk2", "pll1_sysclk2";
-+		};
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
++const struct davinci_psc_init_data dm355_psc_init_data = {
++	.parent_clks		= dm355_psc_parent_clks,
++	.num_parent_clks	= ARRAY_SIZE(dm355_psc_parent_clks),
++	.psc_init		= &dm355_psc_init,
++};
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index fa39536..0825b62 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -492,6 +492,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)&da830_psc1_init_data },
+ 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
++	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index 476bd74..d672e72 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -100,5 +100,6 @@ extern const struct davinci_psc_init_data da850_psc0_init_data;
+ extern const struct davinci_psc_init_data da850_psc1_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc0_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
++extern const struct davinci_psc_init_data dm355_psc_init_data;
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
 -- 
 2.7.4
