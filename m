@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsrLFEk7jvTvue2N6lGsFYRVi8B0Zl5cf86F/G269f9ooGkG6zOOhDArnOAaCoyLEfLeuCx
-ARC-Seal: i=1; a=rsa-sha256; t=1521214216; cv=none;
+X-Google-Smtp-Source: AG47ELuK0dizP5pemIGtcDjAtAOrRC+JkmDHnFnU3lrTpbUf0oraL345r55HP3ow7AmjeD/qmF13
+ARC-Seal: i=1; a=rsa-sha256; t=1521214211; cv=none;
         d=google.com; s=arc-20160816;
-        b=zvKSuHLUYB5DALjxD4fasv6EgkvJWB2Z5OWtILnqfqDmeY5Y87HpWtuRp5EFJT7Rqw
-         aQXNJRL9dQ3lfW4npDJUQi0rz6OFL66N4TI69hDDJS6FhNcMMaLR0Sqol+y/tXUxEAQz
-         y4UiGK11HGIesrrTbo+vtT3Xprt4imIURQoAdqYBPplNco2f1IpxkMMnPlJIoudsllkF
-         zx1rwvUVK2rv1UISuaj+pG1fQdexEgf5R4hOQVVetp3gUH427SGqu26RJ2kqdS8OmhF5
-         o2nR2GwqYmei7XXnwdtapnlYqly0oWUXDWzUoJl6oORA2++Qbyi/0mun9H3+oVzxCLKF
-         TB5g==
+        b=ew0yRN47e6kIVKmEiISd+dGbpnCXZcuQESc9y2p77MHah3C1c/PC4FqeCQLKM6nVRT
+         nnbbc4xnPnqeMNEWLWTShi7+GPvYx8xV8ATV1eH8mC+cjbvcRUb3wp4hXu2Cg0LQdGhR
+         8aMpBpSYjmamRYalNfMjR0Z5nnvR2xnfv6KScUPiRjebx/jCTB1ZpADwhQaTOYQ4kLcK
+         HCFOZVkPGpk0Sn7EdMnD1AuCI6RtVux4HlkZIFoKunwRDiFxZS8mMjKLCyTTS4z2PikX
+         FLx14xnexJqDJZHgJPnR86+opRgR22qFG10C0RsgHUBCp0DFM4Aga7D5HpwCW0xKBXDd
+         2tlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yN2s38K6JIydtqO4ZatNa9gzKvgL5GoVczVjmxw4Wrc=;
-        b=y2l3p/6sZlSAvMJvrTSRBhxPVRs2eeiKPkUEY09KZYf1A7w92O1fIoiTOdP3nFLeHu
-         ZfFkoOIySSbEafZS5J7fGhC4isI4D2mf4OOVis5yoHJa/jFasTKZQkcN0gqmlh1qH8kP
-         oNkM4sQVT9gID7M1t2MVwjmvru/fP16M185dynOdUKEnfVyVbTsGC5DAzDRgY4J1zAN1
-         JJgtdnIisj+s7Rlup30gLecYkd5kLSULZzb0m7kHINXyr4D7Fdf+26AIcoGEwWWvl4Sn
-         GHkjLnONJnBy78qZqr39A4IXgzLNlSdpUhbibN3Pc/0R6I6nIDLANOgrjgDKHiVA6zM2
-         H1aQ==
+        bh=Ivwxt1zghRRMtPhuRilXfPxiXbcz1KSxY6p08Oe0DHs=;
+        b=p5ITdgXeSNKXYhAO5GFcHzXMiUKmtNimrbvR2mRm4RA2s1G1IXp9Qi8C4NeRsHOoId
+         e1bAT7woSXeqv8uCvmrmLVt4oRyd9p+bgh6MSoVq2RXaK53fK45lLCRJzCROwB148sod
+         gj8pEZNGoTAuHE79BL/hXiiV+1yGYXoglLq7IZgeoILs80eoRGVxXtymKJI7/fv4oUVY
+         FEiKWdCJby7LM2XiAFB2nvz6Fq1joydl2r4mf7iQUQyQTjgEcfUUJjCIoUvWBJymopac
+         XaHqhInhabLpBhT4cH/ZHJkfiahHThh95pYbNm2cRdZQguIX3mAl/fML7Qjje2sLn0tu
+         SRBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Skeggs <bskeggs@redhat.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Dave Airlie <airlied@redhat.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Tejun Heo <tj@kernel.org>,
 	Lyude Paul <lyude@redhat.com>,
 	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH 4.9 09/86] drm/nouveau: Fix deadlock on runtime suspend
-Date: Fri, 16 Mar 2018 16:22:32 +0100
-Message-Id: <20180316152317.885130071@linuxfoundation.org>
+Subject: [PATCH 4.9 07/86] workqueue: Allow retrieval of current tasks work struct
+Date: Fri, 16 Mar 2018 16:22:30 +0100
+Message-Id: <20180316152317.743198327@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108517918869110?=
-X-GMAIL-MSGID: =?utf-8?q?1595108718752136509?=
+X-GMAIL-THRID: =?utf-8?q?1595108512007687466?=
+X-GMAIL-MSGID: =?utf-8?q?1595108712296855348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,111 +56,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit d61a5c1063515e855bedb1b81e20e50b0ac3541e upstream.
+commit 27d4ee03078aba88c5e07dcc4917e8d01d046f38 upstream.
 
-nouveau's ->runtime_suspend hook calls drm_kms_helper_poll_disable(),
-which waits for the output poll worker to finish if it's running.
+Introduce a helper to retrieve the current task's work struct if it is
+a workqueue worker.
 
-The output poll worker meanwhile calls pm_runtime_get_sync() in
-nouveau_connector_detect() which waits for the ongoing suspend to finish,
-causing a deadlock.
+This allows us to fix a long-standing deadlock in several DRM drivers
+wherein the ->runtime_suspend callback waits for a specific worker to
+finish and that worker in turn calls a function which waits for runtime
+suspend to finish.  That function is invoked from multiple call sites
+and waiting for runtime suspend to finish is the correct thing to do
+except if it's executing in the context of the worker.
 
-Fix by not acquiring a runtime PM ref if nouveau_connector_detect() is
-called in the output poll worker's context.  This is safe because
-the poll worker is only enabled while runtime active and we know that
-->runtime_suspend waits for it to finish.
-
-Other contexts calling nouveau_connector_detect() do require a runtime
-PM ref, these comprise:
-
-  status_store() drm sysfs interface
-  ->fill_modes drm callback
-  drm_fb_helper_probe_connector_modes()
-  drm_mode_getconnector()
-  nouveau_connector_hotplug()
-  nouveau_display_hpd_work()
-  nv17_tv_set_property()
-
-Stack trace for posterity:
-
-  INFO: task kworker/0:1:58 blocked for more than 120 seconds.
-  Workqueue: events output_poll_execute [drm_kms_helper]
-  Call Trace:
-   schedule+0x28/0x80
-   rpm_resume+0x107/0x6e0
-   __pm_runtime_resume+0x47/0x70
-   nouveau_connector_detect+0x7e/0x4a0 [nouveau]
-   nouveau_connector_detect_lvds+0x132/0x180 [nouveau]
-   drm_helper_probe_detect_ctx+0x85/0xd0 [drm_kms_helper]
-   output_poll_execute+0x11e/0x1c0 [drm_kms_helper]
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
-
-  INFO: task kworker/0:2:252 blocked for more than 120 seconds.
-  Workqueue: pm pm_runtime_work
-  Call Trace:
-   schedule+0x28/0x80
-   schedule_timeout+0x1e3/0x370
-   wait_for_completion+0x123/0x190
-   flush_work+0x142/0x1c0
-   nouveau_pmops_runtime_suspend+0x7e/0xd0 [nouveau]
-   pci_pm_runtime_suspend+0x5c/0x180
-   vga_switcheroo_runtime_suspend+0x1e/0xa0
-   __rpm_callback+0xc1/0x200
-   rpm_callback+0x1f/0x70
-   rpm_suspend+0x13c/0x640
-   pm_runtime_work+0x6e/0x90
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
-
-Bugzilla: https://bugs.archlinux.org/task/53497
-Bugzilla: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=870523
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=70388#c33
-Fixes: 5addcf0a5f0f ("nouveau: add runtime PM support (v0.9)")
-Cc: stable@vger.kernel.org # v3.12+: 27d4ee03078a: workqueue: Allow retrieval of current task's work struct
-Cc: stable@vger.kernel.org # v3.12+: 25c058ccaf2e: drm: Allow determining if current task is output poll worker
-Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
 Cc: Dave Airlie <airlied@redhat.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/b7d2cbb609a80f59ccabfdf479b9d5907c603ea1.1518338789.git.lukas@wunner.de
+Link: https://patchwork.freedesktop.org/patch/msgid/2d8f603074131eb87e588d2b803a71765bd3a2fd.1518338788.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ include/linux/workqueue.h |    1 +
+ kernel/workqueue.c        |   16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -271,9 +271,15 @@ nouveau_connector_detect(struct drm_conn
- 		nv_connector->edid = NULL;
- 	}
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -453,6 +453,7 @@ extern bool cancel_delayed_work_sync(str
  
--	ret = pm_runtime_get_sync(connector->dev->dev);
--	if (ret < 0 && ret != -EACCES)
--		return conn_status;
-+	/* Outputs are only polled while runtime active, so acquiring a
-+	 * runtime PM ref here is unnecessary (and would deadlock upon
-+	 * runtime suspend because it waits for polling to finish).
-+	 */
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		ret = pm_runtime_get_sync(connector->dev->dev);
-+		if (ret < 0 && ret != -EACCES)
-+			return conn_status;
-+	}
+ extern void workqueue_set_max_active(struct workqueue_struct *wq,
+ 				     int max_active);
++extern struct work_struct *current_work(void);
+ extern bool current_is_workqueue_rescuer(void);
+ extern bool workqueue_congested(int cpu, struct workqueue_struct *wq);
+ extern unsigned int work_busy(struct work_struct *work);
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -4130,6 +4130,22 @@ void workqueue_set_max_active(struct wor
+ EXPORT_SYMBOL_GPL(workqueue_set_max_active);
  
- 	nv_encoder = nouveau_connector_ddc_detect(connector);
- 	if (nv_encoder && (i2c = nv_encoder->i2c) != NULL) {
-@@ -348,8 +354,10 @@ detect_analog:
- 
-  out:
- 
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return conn_status;
- }
+ /**
++ * current_work - retrieve %current task's work struct
++ *
++ * Determine if %current task is a workqueue worker and what it's working on.
++ * Useful to find out the context that the %current task is running in.
++ *
++ * Return: work struct if %current task is a workqueue worker, %NULL otherwise.
++ */
++struct work_struct *current_work(void)
++{
++	struct worker *worker = current_wq_worker();
++
++	return worker ? worker->current_work : NULL;
++}
++EXPORT_SYMBOL(current_work);
++
++/**
+  * current_is_workqueue_rescuer - is %current workqueue rescuer?
+  *
+  * Determine whether %current is a workqueue rescuer.  Can be used from
