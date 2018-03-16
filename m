@@ -1,43 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932345AbeCPLOM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:14:12 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55026 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753865AbeCPLOK (ORCPT
+        id S1753829AbeCPLPH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:15:07 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:51028 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753441AbeCPLPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:14:10 -0400
-X-Google-Smtp-Source: AG47ELsepo94XVYBZQmMFpAWXSuXnfUPAKGP4oKx74hOGtoTCLzvFscdVE4v7deumUCj3DLKlwGFQA==
-From: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-To: Junio C Hamano <gitster@pobox.com>
-Cc: git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [ANNOUNCE] Git v2.17.0-rc0
-References: <xmqqwoyc3kir.fsf@gitster-ct.c.googlers.com>
-User-agent: Debian GNU/Linux 9.3 (stretch); Emacs 25.1.1; mu4e 1.1.0
-In-reply-to: <xmqqwoyc3kir.fsf@gitster-ct.c.googlers.com>
-Date: Fri, 16 Mar 2018 12:14:06 +0100
-Message-ID: <87fu50e0ht.fsf@evledraar.gmail.com>
+        Fri, 16 Mar 2018 07:15:06 -0400
+Date: Fri, 16 Mar 2018 12:13:04 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, luto@kernel.org, mingo@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
+Subject: Re: [PATCH v2 13/36] x86/ioport: add ksys_ioperm() helper; remove
+ in-kernel calls to sys_ioperm()
+Message-ID: <20180316111304.GA5302@light.dominikbrodowski.net>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <20180315190529.20943-14-linux@dominikbrodowski.net>
+ <20180316084308.GB4151@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment
+In-Reply-To: <20180316084308.GB4151@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 16, 2018 at 01:43:08AM -0700, Christoph Hellwig wrote:
+> On Thu, Mar 15, 2018 at 08:05:06PM +0100, Dominik Brodowski wrote:
+> > Using this helper allows us to avoid the in-kernel calls to the sys_ioperm()
+> > syscall.
+> 
+> Why not do_ioperm or kernel_ioperm as for most other syscalls?
 
-On Fri, Mar 16 2018, Junio C. Hamano jotted:
+The newly introduced ksys_*() functions/helpers/wrappers take the same
+parameters and use the same calling conventions as the "real" syscalls, and
+are made available through include/linux/syscalls.h for (at least temporary)
+in-kernel use.
 
->       gitweb: hard-depend on the Digest::MD5 5.8 module
+Contrary to that, do_*() are mostly kept internal to one file or subsystem,
+and seem to be more flexible with the calling convention. Same for
+kernel_*().
 
-I've just noticed this now, but while this module is in 5.8 RedHat's
-butchered perl doesn't have it in the base system, thus this introduces
-the do-we-even-care regression that git's full test suite won't pass on
-a RedHat (or CentOS) base system, because the gitweb tests will fail to
-"use" Digest::MD5.
+But if you prefer the do_*() or kernel_*() namespace for the
+in-kernel-syscall-equivalent for fs/*, I'm fine with that, just let me know.
 
-I'm slightly leaning towards not caring about it, since there's no other
-perl distributor that does this sort of split-out of the core, and if
-you're on a RedHat system they're solving your package problems, so this
-really only impacts the edge case of git developers and redhat
-packagers, both of whom can just do "yum install -y perl-Digest-MD5" to
-fix it.
+Thanks,
+	Dominik
