@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753359AbeCPHUt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:20:49 -0400
-Received: from mail-cys01nam02on0052.outbound.protection.outlook.com ([104.47.37.52]:31165
+        id S1753345AbeCPHUq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:20:46 -0400
+Received: from mail-cys01nam02on0078.outbound.protection.outlook.com ([104.47.37.78]:37088
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753180AbeCPHR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:58 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+        id S1753181AbeCPHR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:59 -0400
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 25/28] staging: Remove Blackfin iio trigger timer support
-Date: Fri, 16 Mar 2018 15:08:23 +0800
-Message-ID: <1521184106-24475-23-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 23/28] char: Remove Blackfin OTP support
+Date: Fri, 16 Mar 2018 15:08:21 +0800
+Message-ID: <1521184106-24475-21-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,452 +24,356 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(39380400002)(346002)(396003)(2980300002)(438002)(199004)(189003)(186003)(336012)(107886003)(86362001)(316002)(16586007)(575784001)(2906002)(106002)(426003)(6666003)(6916009)(8676002)(2950100002)(36756003)(8936002)(246002)(106466001)(72206003)(2351001)(305945005)(4326008)(50226002)(26005)(478600001)(76176011)(50466002)(5660300001)(7696005)(59450400001)(51416003)(48376002)(77096007)(7636002)(47776003)(356003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1484;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC001;1:E5HlobwM4M28MQRQ1i1oFOnmfalHKXXvovZI3HRUjkyRCgFFdyJvbkMzUwJWOOfGuv76Ap3rmgExlnYfC3abCov1uNTxjY98vU4H3ufpl6cinQI/QFfBxYNkrgLqZSAS
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(39380400002)(39860400002)(346002)(2980300002)(438002)(199004)(189003)(4326008)(6916009)(8936002)(106466001)(246002)(8676002)(2906002)(47776003)(48376002)(50466002)(50226002)(5660300001)(6306002)(72206003)(107886003)(186003)(26005)(77096007)(305945005)(426003)(356003)(7636002)(6666003)(966005)(478600001)(2351001)(336012)(16586007)(36756003)(51416003)(86362001)(316002)(106002)(7696005)(59450400001)(76176011)(2950100002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1482;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC003;1:NGlA1SAP+kPAeYVmv6eXuwNi0grch0WkoeAHrfge6eiGdFahbdjiu9zy18KlClHtfXsjZ5NSkW53at+NIFjaN/gm4m44SPhDcGQqFLfG7pnV9UCXp03iPwSC8b+14YLs
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a5cf78d2-8a1d-4d50-8d1e-08d58b0e0a25
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1484;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;3:j8076Cyj0gxRenvxz8Kl7yqyhx9V5gUTuXilJv2i/k7/RNts8+er5OB0Eqm+2uEiHVU8dHEpumgTol93qS42tpGte/y0LhkvM21MY7Ezd2sC5O0MWag99iVVCHdec2fZqk1gYO2UrjECZAwvSKp4KNXz39vEBXTkKbdmE6rFMX9jLhyBr/7L8rbhELcGK5M8L1wuaXnKjsGC6C3/e4qkVSjADqEG28A3SPNvoyAa7g4DuNe3iywxN0vVEhoClMn9NPx+sD0bPy7IZKxEuJGOSteY6x0doJuRVOcatmOkh2SrsYtve3nDMht7MIT0dT6qktiv5lOpPBVWHq0MgHxKaA==;25:N4nGondgnUnKyqA+0sXnImQtkCHq75eOGel+sByapo91MPgDlKrHpq/FbdY8mzTmGQqruHL/qeJfB/KUltuiVcA1tUYgL1qxi65acXOVLFpQx0D4MYPah9+0+wRnQxGrNpahIdcNqm14pmCzOGDJIQQ2RuirwlH0YLETnKHt3TWgz2+E36vayESGuaysRwTFWVE8aznczIDrS1udLdBgGkk1fIp3vGvBeOb2KI1nte+gwCc4yc0xNDuv57LLMdf+a3Mgln3yFZ1snSjiKoE/hY9txJUbbr/WjqaBv74qKu0DLnjeAQz8tDgW69bkI/9k8ycvht/HgV36ueWc0WQ9nQ==;31:dzFARS85yz0yBmG8G1iZ3mM3lI0Xk5I+tMphYMBccItxvp90lQgtfafO8c3zlHCZu+13+5/rn0I+fvbn5gz0H9Na3fZlDcxeINerbWo1BAxaR3eLE9zfl0YZvL63GArROfjLE5Tt98ibQVhHCiFpIjd2UAM4hmrwgS1j8+qOEMTMnW2BOnNsbyjApllbuCcUYYoiRyeRCRKPvUSTI8dETbQ+8kLXB3v+RmBoP9Aseqg=
-X-MS-TrafficTypeDiagnostic: BY1PR03MB1484:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;20:rCmcW9jFOsUY1A+LU/v3uEyCSlqEl5suVcXSU5YxGr8rtEG9djh7Sseubb85yBMjyDJOTRjmUuHeb65V+c5zadhNKcI7hgQNAtDIBIZ2hZbrDiwZ4Ebwz5stpWqj6ttWP9XBnnIn2bAdUacd58S8V8THb/4LAz95xQD/W99WXR2cFkRia36N9vi0K8+E2r52GDamuaWfwSq1jF0y8DY2t0m9olNw/dg68e8wtZ0M9poDD7TSYMmo7PGnCJ1aOoROcGmMgSYQqjB0SpMlbtpwX3gM5+U1kgtUi1B+qy6KWWmeejBbQ/zmxeiltArcmSaah76S4yFPTs3p97BjQUjg4lcXXRPZn30F//7HpRxQZ2OH8DWlTLs2K3Ib6NXPNv2hijTDcgT0ae77R/bMGqx/VZdgP8LveBa+/eAg0AV7qf+ZdWdubWXUTdu4tk4HI9nc3gbmwibDaC0iL1IkwDTIngzlf3PqDAxWam90S9GWwcyaoSN7pjmySiJ/q/linRkR;4:8aAIz0+mS/HVcD1nXZWvmOcUN4EkOIHCRZS4kpUJk9e8w+tzyuJ6hw4GsQ072vR7cuaj/dpKakItOBTV9+ADE1WQICZldpVz6jyYveK2IbypwvNk2Va8sS9RPnTUfUjsHhDFfWjwyNOvzlR+ABb3UIl2wmggd4y4BIDD4zh6Mw9y2JQ3JVSMGqMeCNvhHXv5F9LmDi8ns+icaLnt4L1Y85ShH9eDqlY5y1oQj3mKkQeEMihnPsUqGkFkkfzoRXoXU4BUCsKS67AFyNJmtYjN5V/9edvr7HygN+tkrxwrdnf0+Ni2rXbTcN11ITASfDrm
-X-Microsoft-Antispam-PRVS: <BY1PR03MB1484BC1F36B14A989FB3965CE0D70@BY1PR03MB1484.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d03befa0-1544-4d4f-3bdb-08d58b0e086e
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1482;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;3:eYPBr+EcYkTkHO0PK4HJuNgmgk0RryfshgMUTQ3jqSpelCSSEGDHWNT4JUVw7riRGAjrtaxJuiKsCDeaDwqmLYVELlOv2CBzZ2EUCKjB8R+SQr+MN+S/7hczOQ0GPwJZ8P0y324EKJD09nC0NFm2xdu8Tk3tpiKTjYhqr5Kdzj9S/Ii1d8K6+y/Hbkb80zVcIKphKg+XEr8ZKLPk1Vcl7+k2XvYA9hh03G/6zvBD46NGbxnJFVmdw2Vt0BXsnXIJlpdWjEXYe1iJ5GThkMylDxqIeCk71FLPQcPNFsnPmKNsvn75O0Y8KuTEORMfTAI+U/S9LSsv63jKx00g9ed7WA==;25:ydEHaBLWWVXhPAks6RdT7P/IvtrVkvD+kINlNYj3PS1PJsIQJHOXVV38VwzDtHOnFAk2Xii1Zed1+YLlw+RTgWec1hchlramjZA6DU5zYyhHhb8bZy4j7Q1idpRSxXeMBxNhHF7/w4relrMbuSRYPGtvLMjIzdd9c0Oh8yUxzjEddlNI++zC5eh01o4XQ+KcHSmMXCQB+BABQWC007PKI/1l9kU7rOasf/TpyIeFg81914FI91CFMLzHXhY6b92BdZCRO1eeutjXhEB4YGmvaFcoD8jFQMPNNssue5qlB3xKKGGYm/U0tewJ2vjCdQwUyVIFHqSNyAfIuqYgdCMsIw==;31:zrJGdWBvP7sePeEuPB7056pco3Mu6U6odnHohueCkcusytcsOzqhJzTWXeA9DEd2FAdt0KlRYk8UAO+zW17SsMqnAlTHc4ks/WwJh86VU7VIs9ozIR0UdzdiHl2s1fqAcoPKRt8fZjWOqHNondG3zdQJA0Gor/xvrFNfQCuyTOD/tfrKKJjM7hpsOyE4u744t5UgHsLOxXzGEMQI73C4wQhC+C8AOzohUPl2zvB5DRQ=
+X-MS-TrafficTypeDiagnostic: BY1PR03MB1482:
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;20:BJ+ENle88NvBwUiB2YRUiXL24ZeuDAMKmWOlFK5yTgsarRL0neTDdL0fofRjwxwYC4hN36ygLr++24/KVUF+NFbp8UcrsNGfMsfmIuQI3fxLO9EMavnpETKGlvdKgSA345V3dWxHfnTaElUjoXilm1EpSazVH58ADGT1BkkK6nWIBd6SMM7FPJsBOPSofOYScGigu84FhTMBSQw1e1bssqN2dPfgcmZg2g5SWXKG4tUuGAmRyFXwC/n5SVuQ4ENEFpQwYv5NZkcBX2x2jADTfaZRz9oPnzKNA+7APyu56KckUK/idbvi4Rg/w9uv3+G5iwTv0s+4rpYXJV+aV0Z4p+0eG0nDKvkZyhSc3TPgMI8LEl/DVe494ZJ9kKqt36gd+Y5tnIv9bJDybWLAG/E4H2zHXJdllXULOl6tbBTBCvV6gmDJhy0Y7t6lRB9EGiRW9JlCmrYy5ANt5KiIPm/SEQYuer0Lj2RxzFjEYdcGyAcJRtfBdcUbm+ci1XvmeMyV;4:TghnUP/RnjbGPReo+WQRTSZEZSMwdmCKpKGKHXe03V88hzqgJGcICa07UBTaKJD6Ab/8ScqWqOzBa7Th9uOEX5qw4mmdk8Ito0TlxIGPClaQrrcT5q1pdyLQmRPlMMmOMjRLFrFBVMpmCtNXiCYgz73oPmrm4Zx9ena8UpOrJQ/iXbFf5TDkzTWjP+z+phdRs7rtMha9sxznGHhnA0PaLUoniQQiYC4HGzh/wIDle5hWnN8aPFTRsvdYR2Tfypz7zktZJP/UmvQYw0pnIj3FnVp3o84rcuiDyBKxpNpAxR7297iRWcN2ZjWLZSAGdG5s
+X-Microsoft-Antispam-PRVS: <BY1PR03MB14828991F106A534EF1F97A0E0D70@BY1PR03MB1482.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1484;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1484;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1482;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1482;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1484;23:5zaG6hVlmi3bB6+6xeauoBMGZIT1aWxGSgcpJzqwY?=
- =?us-ascii?Q?MnPdzA/Na6+jc3hhQQRj7s9Qzgu9EU2NL646EWcuRkUm36tbBDNHsoL6iXsP?=
- =?us-ascii?Q?Q1pWKAv5xBIeGESA71/3+y7c/LCSsHx6t0zEU3pocuRgd4ibW+k4X62dNy6y?=
- =?us-ascii?Q?n4E9Amsj8RK1terj2rPVJ68BPNshbfGQVf0NTPrV57CsO04PX1q6AIpe+Pns?=
- =?us-ascii?Q?k7SazSga3ywd0icVIvw40XxGZJ5TEAGq2HZsMsiz25uXsnbUYCZtV1ZSurW+?=
- =?us-ascii?Q?W1/WNYE3kmJnBhC+OsQEYILaQ0p4mOOWbG4N1OsISEz36d8p6T3LxJ38YVGs?=
- =?us-ascii?Q?ZBGUxrJp0CXip4M2nm4bd0w+R3PsQVHXyHGhqWxcB9wsLnDacbuYio+jxU0n?=
- =?us-ascii?Q?Ckm/F4BuxyEwxKAQcuARw3i5VFm7en6x3i/ilQLR/U+oBnCiQfWQZd2KxXRZ?=
- =?us-ascii?Q?ESj4Db2qk6/toe+ZDoFf8rGth244Wnz2D3E0SL0YmT8As2GvKjGlBc2D3vF+?=
- =?us-ascii?Q?CQzl4LV+EnHNUomTt0ZdbGyEv17qupwi3tOjwvxRHSXiAtQYZTNSSV5Wqdrm?=
- =?us-ascii?Q?oW22ebbbEr0JtXzEH52NVD6rXowcLK2mwTzr/ShbnIPrji7dOS/kVzcQVLkD?=
- =?us-ascii?Q?m15o5Lo0dBLoIrOvlWWmZyIH1d5wojbZkEN1abk891AfckEQjJgOzbbBNqt9?=
- =?us-ascii?Q?4oTlNZlCdmWim+jsIGtOnplQh/5GfxraQ2grCezNAUkyFEBZj3f7mkRu+0Mg?=
- =?us-ascii?Q?f2BSEvBA6gEP98aoZ6LJtGlEZIAW9/NIc4eFwUu7qjeKVA5/iXVPjrDBPhG3?=
- =?us-ascii?Q?3rOmYl1T2suBKA5n7rN1/OLnbPGF70GKTcr3PcW0AjwAcys3Itkjr7yLNmvC?=
- =?us-ascii?Q?wFR0pXiexOHz61IrPbpLLoxwlAK/3eOry/ZKCOBe3dRFi0urUXm4fHXdnGWH?=
- =?us-ascii?Q?zdq9UVe4w0ybJVhqaWYEuSCQIQhMfu/kI7QaB5VQBto0+BNv1vXwxars9I/P?=
- =?us-ascii?Q?slKjS2X8XKxxC04NBWw4ojvNTYXWKXYpRYNDNNF6oZ1kQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Cc7IKrxCPYOUC8j5Hb57HISxGsy43QeKZSNHioN85Gm8qCUXnsEe/aux4UObbo2A47M9nfUg0d2hIGX7kCsnV9XRFSPLeA0a1q6sZLCUd3LXoxNxB/EpwCQ0KkmJdD/BL9UcEVbfzC4zAhgIyxzOxNcM3TN1zEo5lpufaJ2h2FmmVd1fDvPqVA8mkfAm2t/6
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1484;6:yc4ZcmJkIQfT9BB+p139u11jmB96eR4I1Gw77MB1lh0poxAsdNPM1kTQu0MLpGAGqB57bzsZaydmUz++aXYDpjSLW8L9hQEheIunzRXSZVoTkoU3B+zJNE9zFXCdRwHGo+2/9Kpr3w/jmNP5+QfRvF7Tn7au+nxfTT21ToMybKdLo6ZDo7MdAGO+rKZqhLv+e3+//2MDPiR3algM/M8IpXX0UV7Xe5jGfLnk6jzTmdTP3izGMtkhexbVj3vmdB5GkCYzNs4edrUbckOXKwbedNJdeqdNFePpNuQHDB1OAUTgeT+Lku/5Xe1gqhYToPefatYdQTLG2MU/C8Bn4X8B2gwjiO85SngynTYkbygqreg=;5:AE9g2gnIffABKchYmS30vnIGzV2AgsLd0+P2eagsuzV6DIElAOssq3m3/4m39J1gfUwrP0m1FuAYD5wrzrg4MjC03YCFUdKoUrNrPDC48pN3xwSBIwWXV5MYKOfcvzNrVkR0+pIWM9H2EH5rvkD+pNcm37j1CsxStnHpW5FrWOI=;24:47On0FBW0i76icSvH/JskXdMIgXLyJrlSh0UwLSmWbSqNsSoA0AsRnfsd1yCcz3eWwgI1H6xQD4tPM8W83C1PzjTbTxGw6Hqj7xfWjvWC+Q=;7:Ye3POMP1X3bz368VddYYbrxUy44b3UcX+pwxdTKVLFJuTthciXnKvoMwv6t+SKGudMiMHj3FUnwXlRRFajquZfV6Keay7QTNN/+3CRWPMSii3dMV7+TrGr1ErlDFrk0rn5Knz+i3S0tFRglVDQAEMgnQ/TbTyh1xa1J9JM1InuFZDihh1M3zY3FxzBYjVMh1tXcXhF6CbalQcaFslcQ5E+b4GRp/7AtljCUIBBErwuvmrVk63u1cG/ooEoWWXXgZ
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1482;23:jOTdqUTaHbtDwu4qVJFkwezc158r1j0a5h8axAjvH?=
+ =?us-ascii?Q?2JReFiX+eBmoP0FYAdajfXozTxCbfHQtDgW2Y4yhdcRAbmHfgZSf9zN+SA6s?=
+ =?us-ascii?Q?8qKF8MLJ86JrQaAwtyMJXeAWcC4oQXCR2qnNLf/ORTzwY00jJf4sx0J7ocSi?=
+ =?us-ascii?Q?Uce7axvA2pJLKqkorsOhLxlXMUP/KPpGocRS8Leq1mMHyswpQBPqHsEWBtbW?=
+ =?us-ascii?Q?MkU+DiuVDA6L1KRU5jF1Cn6IBgi3qmIPOcnwFU6NuwUh9+rAvDMGQZEqnF5R?=
+ =?us-ascii?Q?kle2y80ckTNG3Beakqo58Z7cCdXx5yBK04g64Du1VB/p5JweKOk7lImXOTLZ?=
+ =?us-ascii?Q?Uf9EC/j6FXPa3Z5ybop7d6N2a1WeSPvUA23MNKqbXPVte3J6ChVMsAIv4f/5?=
+ =?us-ascii?Q?WH5dobhHz64UTD5hWmevlrvy5L30nhpHOEZybNbAuXLGRZI77W0ZVejVb7lO?=
+ =?us-ascii?Q?ptKWyMuPQEyz9Vd0PyiUZLbCYMDw6r8TrsxL2BZHeTnPRdRXnD5TDau1u+59?=
+ =?us-ascii?Q?Tdyk/Zw7NXVDzUZo9BqkHFJkocISOuntlO3TTGWwZA/DXWBFhp7S3Zerqek/?=
+ =?us-ascii?Q?gTgFmgr/WCC8Cxv71RJ4w8SdcBzgKurYZfPmpIbdiZ5ebC+gVF0jqI9ESejl?=
+ =?us-ascii?Q?6/8zs4NKBY24rCxvQCO9E95/m0kXO+w62krTmcNvipuHzuWzKXwvM25rCPFH?=
+ =?us-ascii?Q?QPDa9udRLcuTWMV8bnIj53zBbBKU3MEzJ961ClTULm4+P+CQbnKbNej7704X?=
+ =?us-ascii?Q?1R9PBpk5iil9c+WyJK/2xazAvIsk5ddSxLKKgth3hCN4+PbHZvK8TPtT7rGa?=
+ =?us-ascii?Q?utXJIen9ZfStAgf8IKmqhSmTgdxLNk6SUlr1vZd8tV2fXLfYuaWOMcof/Enq?=
+ =?us-ascii?Q?+XRRTgcEKJNnd5EWnzWMJAMUCAyfUUYfAza76dgDatEWlQixUWbphs9YkfCz?=
+ =?us-ascii?Q?2pJvuL3uMT2lQz5GcmCDdU825jGfCh+UWM5N4SlclEsLUEhM8woQJpPM98rH?=
+ =?us-ascii?Q?TBYghtSd1BHe1Ry1+GW2tG/E3zBqnUtVxiLStAfyFEYrlEHf39Uagz54yAX6?=
+ =?us-ascii?Q?hPiZEc=3D?=
+X-Microsoft-Antispam-Message-Info: 3jzCAHUmbhw7EKiEZpmlJQI+i/60rV90xBPDjrCV+p2VvuOFi8j9ivln6f4xY3GnGwgVXFlAQD2cEBx3G0a5BVHXc1GDN2pOquuOfndQGn6NSFqheHFWXG9ny+l3ZaFrfo+CF2HicxC2eH1qjoSGyFWFZoJjC9BfzruR60lHc9rkjJk+sAYshSkB/VLuKjpi
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1482;6:woSddsatQfwwacC0S0H7HR2aD2BmOxO0vXivS9Y75chp1Z9giXKB3FxqurJf62c6fI8RNta/LyqnvzrCqOaaY9Ie/k4SnhgAaKMO+7LyoVmpGXWH20xjjupyIpn2XGz0EDIefkNDV0Zm9dxi2meKIkq4vdka1FJeZUWyLWWC1Xe8/SPXplHMP+3Gum3g7o5HzQ0RK8WD8wkBoGU5HJKHe/KDkiFoqGAErjI8s5Bwp+z1nYI6aEw/iHY87Ucndp8OjIRSdMCnkGOohyUoRIg4hoiss5xcxlNI89us06xcVDO/EwN5rJb8V0TJRsPH1Vn2SRLa7p+sVgUTCqwDbuFhWa0ERqYX4L5sgs53m2gCLdw=;5:VRKH07wuwFBHdlUZNjFinp6TSDQauHxyYKkI5DlWHYJ757fIQs8aLaev662xnzPh/VA1YoDk8EwOaSJ2DIpTCHjKRI3Drg7u51/Wz8ExbwG99DNv/qy4V8gcObodMuKjpvqrCxUxVEuZXgMRGzQb3uoZ/7pJuxWQUoRf7ZbMLyg=;24:18ie0OvHCDdkrjdI9b6wpTMMvokrHPxOmr41VCtQeaHKi6DAkb14vMszHQbMkYF3IR3VHc1QLjazUaA9BM15taqbKaJBD4/S6zli3vjcAf4=;7:LEtxphXgpvscoK67R4252jVLx8EZqPQdc8JBnszBy9pc7m7CQ8aH7CHkMopraG1YMoRzUaT7mhKCJ2o7bQ0V5qycly5ABbb0Ocmf1QWU+8kylGqBpcCgo66RRVlFHf1/nvbO7zxfcCrbQdIIt2eQvbN+0t+qRZIsujDUK6YL/4L4F9QtVhL0oji+rx8F1XktAI5yKRDmsgK9Il89dKmar58MV/bbAJhjqCmDlAKFk7NHndNKstLc7wDzNldhz6W9
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:55.5865
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:52.5358
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5cf78d2-8a1d-4d50-8d1e-08d58b0e0a25
+X-MS-Exchange-CrossTenant-Network-Message-Id: d03befa0-1544-4d4f-3bdb-08d58b0e086e
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1484
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1482
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin iio trigger timer support
+Remove Blackfin OTP support
 ---
- drivers/staging/iio/Kconfig                       |   1 -
- drivers/staging/iio/Makefile                      |   1 -
- drivers/staging/iio/trigger/Kconfig               |  19 --
- drivers/staging/iio/trigger/Makefile              |   5 -
- drivers/staging/iio/trigger/iio-trig-bfin-timer.c | 292 ----------------------
- drivers/staging/iio/trigger/iio-trig-bfin-timer.h |  25 --
- 6 files changed, 343 deletions(-)
- delete mode 100644 drivers/staging/iio/trigger/Kconfig
- delete mode 100644 drivers/staging/iio/trigger/Makefile
- delete mode 100644 drivers/staging/iio/trigger/iio-trig-bfin-timer.c
- delete mode 100644 drivers/staging/iio/trigger/iio-trig-bfin-timer.h
+ drivers/char/Kconfig    |  28 ------
+ drivers/char/Makefile   |   1 -
+ drivers/char/bfin-otp.c | 237 ------------------------------------------------
+ 3 files changed, 266 deletions(-)
+ delete mode 100644 drivers/char/bfin-otp.c
 
-diff --git a/drivers/staging/iio/Kconfig b/drivers/staging/iio/Kconfig
-index 8abc1ab..bd94459 100644
---- a/drivers/staging/iio/Kconfig
-+++ b/drivers/staging/iio/Kconfig
-@@ -14,6 +14,5 @@ source "drivers/staging/iio/impedance-analyzer/Kconfig"
- source "drivers/staging/iio/light/Kconfig"
- source "drivers/staging/iio/meter/Kconfig"
- source "drivers/staging/iio/resolver/Kconfig"
--source "drivers/staging/iio/trigger/Kconfig"
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index c28dca0..8f64ce8 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -66,34 +66,6 @@ config TTY_PRINTK
  
- endmenu
-diff --git a/drivers/staging/iio/Makefile b/drivers/staging/iio/Makefile
-index 455bffc..e99a375 100644
---- a/drivers/staging/iio/Makefile
-+++ b/drivers/staging/iio/Makefile
-@@ -13,4 +13,3 @@ obj-y += impedance-analyzer/
- obj-y += light/
- obj-y += meter/
- obj-y += resolver/
--obj-y += trigger/
-diff --git a/drivers/staging/iio/trigger/Kconfig b/drivers/staging/iio/trigger/Kconfig
-deleted file mode 100644
-index 0b01d24..0000000
---- a/drivers/staging/iio/trigger/Kconfig
-+++ /dev/null
-@@ -1,19 +0,0 @@
--  #
--# Industrial I/O standalone triggers
--#
--comment "Triggers - standalone"
--
--if IIO_TRIGGER
--
--config IIO_BFIN_TMR_TRIGGER
--	tristate "Blackfin TIMER trigger"
--	depends on BLACKFIN
--	select BFIN_GPTIMERS
+ 	  If unsure, say N.
+ 
+-config BFIN_OTP
+-	tristate "Blackfin On-Chip OTP Memory Support"
+-	depends on BLACKFIN && (BF51x || BF52x || BF54x)
+-	default y
 -	help
--	  Provides support for using a Blackfin timer as IIO triggers.
--	  If unsure, say N (but it's safe to say "Y").
+-	  If you say Y here, you will get support for a character device
+-	  interface into the One Time Programmable memory pages that are
+-	  stored on the Blackfin processor.  This will not get you access
+-	  to the secure memory pages however.  You will need to write your
+-	  own secure code and reader for that.
 -
--	  To compile this driver as a module, choose M here: the
--	  module will be called iio-trig-bfin-timer.
+-	  To compile this driver as a module, choose M here: the module
+-	  will be called bfin-otp.
 -
--endif # IIO_TRIGGER
-diff --git a/drivers/staging/iio/trigger/Makefile b/drivers/staging/iio/trigger/Makefile
+-	  If unsure, it is safe to say Y.
+-
+-config BFIN_OTP_WRITE_ENABLE
+-	bool "Enable writing support of OTP pages"
+-	depends on BFIN_OTP
+-	default n
+-	help
+-	  If you say Y here, you will enable support for writing of the
+-	  OTP pages.  This is dangerous by nature as you can only program
+-	  the pages once, so only enable this option when you actually
+-	  need it so as to not inadvertently clobber data.
+-
+-	  If unsure, say N.
+-
+ config PRINTER
+ 	tristate "Parallel printer support"
+ 	depends on PARPORT
+diff --git a/drivers/char/Makefile b/drivers/char/Makefile
+index 7dc3abe..f28d07b 100644
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@ -14,7 +14,6 @@ obj-$(CONFIG_MSPEC)		+= mspec.o
+ obj-$(CONFIG_UV_MMTIMER)	+= uv_mmtimer.o
+ obj-$(CONFIG_IBM_BSR)		+= bsr.o
+ obj-$(CONFIG_SGI_MBCS)		+= mbcs.o
+-obj-$(CONFIG_BFIN_OTP)		+= bfin-otp.o
+ 
+ obj-$(CONFIG_PRINTER)		+= lp.o
+ 
+diff --git a/drivers/char/bfin-otp.c b/drivers/char/bfin-otp.c
 deleted file mode 100644
-index 1300a21..0000000
---- a/drivers/staging/iio/trigger/Makefile
+index 0584025..0000000
+--- a/drivers/char/bfin-otp.c
 +++ /dev/null
-@@ -1,5 +0,0 @@
--#
--# Makefile for triggers not associated with iio-devices
--#
--
--obj-$(CONFIG_IIO_BFIN_TMR_TRIGGER) += iio-trig-bfin-timer.o
-diff --git a/drivers/staging/iio/trigger/iio-trig-bfin-timer.c b/drivers/staging/iio/trigger/iio-trig-bfin-timer.c
-deleted file mode 100644
-index 71f11d7..0000000
---- a/drivers/staging/iio/trigger/iio-trig-bfin-timer.c
-+++ /dev/null
-@@ -1,292 +0,0 @@
+@@ -1,237 +0,0 @@
 -/*
-- * Copyright 2011 Analog Devices Inc.
+- * Blackfin On-Chip OTP Memory Interface
 - *
-- * Licensed under the GPL-2.
+- * Copyright 2007-2009 Analog Devices Inc.
 - *
+- * Enter bugs at http://blackfin.uclinux.org/
+- *
+- * Licensed under the GPL-2 or later.
 - */
 -
--#include <linux/kernel.h>
+-#include <linux/device.h>
+-#include <linux/errno.h>
+-#include <linux/fs.h>
+-#include <linux/init.h>
+-#include <linux/miscdevice.h>
 -#include <linux/module.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/interrupt.h>
--#include <linux/irq.h>
--#include <linux/delay.h>
+-#include <linux/mutex.h>
+-#include <linux/types.h>
+-#include <mtd/mtd-abi.h>
 -
--#include <asm/gptimers.h>
--#include <asm/portmux.h>
+-#include <asm/blackfin.h>
+-#include <asm/bfrom.h>
+-#include <linux/uaccess.h>
 -
--#include <linux/iio/iio.h>
--#include <linux/iio/trigger.h>
+-#define stamp(fmt, args...) pr_debug("%s:%i: " fmt "\n", __func__, __LINE__, ## args)
+-#define stampit() stamp("here i am")
+-#define pr_init(fmt, args...) ({ static const __initconst char __fmt[] = fmt; printk(__fmt, ## args); })
 -
--#include "iio-trig-bfin-timer.h"
+-#define DRIVER_NAME "bfin-otp"
+-#define PFX DRIVER_NAME ": "
 -
--struct bfin_timer {
--	unsigned short id, bit;
--	unsigned long irqbit;
--	int irq;
--	int pin;
--};
--
--/*
-- * this covers all hardware timer configurations on
-- * all Blackfin derivatives out there today
-- */
--
--static struct bfin_timer iio_bfin_timer_code[MAX_BLACKFIN_GPTIMERS] = {
--	{TIMER0_id,  TIMER0bit,  TIMER_STATUS_TIMIL0,  IRQ_TIMER0, P_TMR0},
--	{TIMER1_id,  TIMER1bit,  TIMER_STATUS_TIMIL1,  IRQ_TIMER1, P_TMR1},
--	{TIMER2_id,  TIMER2bit,  TIMER_STATUS_TIMIL2,  IRQ_TIMER2, P_TMR2},
--#if (MAX_BLACKFIN_GPTIMERS > 3)
--	{TIMER3_id,  TIMER3bit,  TIMER_STATUS_TIMIL3,  IRQ_TIMER3, P_TMR3},
--	{TIMER4_id,  TIMER4bit,  TIMER_STATUS_TIMIL4,  IRQ_TIMER4, P_TMR4},
--	{TIMER5_id,  TIMER5bit,  TIMER_STATUS_TIMIL5,  IRQ_TIMER5, P_TMR5},
--	{TIMER6_id,  TIMER6bit,  TIMER_STATUS_TIMIL6,  IRQ_TIMER6, P_TMR6},
--	{TIMER7_id,  TIMER7bit,  TIMER_STATUS_TIMIL7,  IRQ_TIMER7, P_TMR7},
--#endif
--#if (MAX_BLACKFIN_GPTIMERS > 8)
--	{TIMER8_id,  TIMER8bit,  TIMER_STATUS_TIMIL8,  IRQ_TIMER8, P_TMR8},
--	{TIMER9_id,  TIMER9bit,  TIMER_STATUS_TIMIL9,  IRQ_TIMER9, P_TMR9},
--	{TIMER10_id, TIMER10bit, TIMER_STATUS_TIMIL10, IRQ_TIMER10, P_TMR10},
--#if (MAX_BLACKFIN_GPTIMERS > 11)
--	{TIMER11_id, TIMER11bit, TIMER_STATUS_TIMIL11, IRQ_TIMER11, P_TMR11},
--#endif
--#endif
--};
--
--struct bfin_tmr_state {
--	struct iio_trigger	*trig;
--	struct bfin_timer	*t;
--	unsigned int		timer_num;
--	bool			output_enable;
--	unsigned int		duty;
--	int			irq;
--};
--
--static int iio_bfin_tmr_set_state(struct iio_trigger *trig, bool state)
--{
--	struct bfin_tmr_state *st = iio_trigger_get_drvdata(trig);
--
--	if (get_gptimer_period(st->t->id) == 0)
--		return -EINVAL;
--
--	if (state)
--		enable_gptimers(st->t->bit);
--	else
--		disable_gptimers(st->t->bit);
--
--	return 0;
--}
--
--static ssize_t frequency_store(struct device *dev,
--			       struct device_attribute *attr,
--			       const char *buf, size_t count)
--{
--	struct iio_trigger *trig = to_iio_trigger(dev);
--	struct bfin_tmr_state *st = iio_trigger_get_drvdata(trig);
--	unsigned int val;
--	bool enabled;
--	int ret;
--
--	ret = kstrtouint(buf, 10, &val);
--	if (ret)
--		return ret;
--
--	if (val > 100000)
--		return -EINVAL;
--
--	enabled = get_enabled_gptimers() & st->t->bit;
--
--	if (enabled)
--		disable_gptimers(st->t->bit);
--
--	if (!val)
--		return count;
--
--	val = get_sclk() / val;
--	if (val <= 4 || val <= st->duty)
--		return -EINVAL;
--
--	set_gptimer_period(st->t->id, val);
--	set_gptimer_pwidth(st->t->id, val - st->duty);
--
--	if (enabled)
--		enable_gptimers(st->t->bit);
--
--	return count;
--}
--
--static ssize_t frequency_show(struct device *dev,
--			      struct device_attribute *attr,
--			      char *buf)
--{
--	struct iio_trigger *trig = to_iio_trigger(dev);
--	struct bfin_tmr_state *st = iio_trigger_get_drvdata(trig);
--	unsigned int period = get_gptimer_period(st->t->id);
--	unsigned long val;
--
--	if (!period)
--		val = 0;
--	else
--		val = get_sclk() / get_gptimer_period(st->t->id);
--
--	return sprintf(buf, "%lu\n", val);
--}
--
--static DEVICE_ATTR_RW(frequency);
--
--static struct attribute *iio_bfin_tmr_trigger_attrs[] = {
--	&dev_attr_frequency.attr,
--	NULL,
--};
--
--static const struct attribute_group iio_bfin_tmr_trigger_attr_group = {
--	.attrs = iio_bfin_tmr_trigger_attrs,
--};
--
--static const struct attribute_group *iio_bfin_tmr_trigger_attr_groups[] = {
--	&iio_bfin_tmr_trigger_attr_group,
--	NULL
--};
--
--static irqreturn_t iio_bfin_tmr_trigger_isr(int irq, void *devid)
--{
--	struct bfin_tmr_state *st = devid;
--
--	clear_gptimer_intr(st->t->id);
--	iio_trigger_poll(st->trig);
--
--	return IRQ_HANDLED;
--}
--
--static int iio_bfin_tmr_get_number(int irq)
--{
--	int i;
--
--	for (i = 0; i < MAX_BLACKFIN_GPTIMERS; i++)
--		if (iio_bfin_timer_code[i].irq == irq)
--			return i;
--
--	return -ENODEV;
--}
--
--static const struct iio_trigger_ops iio_bfin_tmr_trigger_ops = {
--	.set_trigger_state = iio_bfin_tmr_set_state,
--};
--
--static int iio_bfin_tmr_trigger_probe(struct platform_device *pdev)
--{
--	struct iio_bfin_timer_trigger_pdata *pdata;
--	struct bfin_tmr_state *st;
--	unsigned int config;
--	int ret;
--
--	st = devm_kzalloc(&pdev->dev, sizeof(*st), GFP_KERNEL);
--	if (!st)
--		return -ENOMEM;
--
--	st->irq = platform_get_irq(pdev, 0);
--	if (st->irq < 0) {
--		dev_err(&pdev->dev, "No IRQs specified");
--		return st->irq;
--	}
--
--	ret = iio_bfin_tmr_get_number(st->irq);
--	if (ret < 0)
--		return ret;
--
--	st->timer_num = ret;
--	st->t = &iio_bfin_timer_code[st->timer_num];
--
--	st->trig = iio_trigger_alloc("bfintmr%d", st->timer_num);
--	if (!st->trig)
--		return -ENOMEM;
--
--	st->trig->ops = &iio_bfin_tmr_trigger_ops;
--	st->trig->dev.groups = iio_bfin_tmr_trigger_attr_groups;
--	iio_trigger_set_drvdata(st->trig, st);
--	ret = iio_trigger_register(st->trig);
--	if (ret)
--		goto out;
--
--	ret = request_irq(st->irq, iio_bfin_tmr_trigger_isr,
--			  0, st->trig->name, st);
--	if (ret) {
--		dev_err(&pdev->dev,
--			"request IRQ-%d failed", st->irq);
--		goto out1;
--	}
--
--	config = PWM_OUT | PERIOD_CNT | IRQ_ENA;
--
--	pdata =	dev_get_platdata(&pdev->dev);
--	if (pdata && pdata->output_enable) {
--		unsigned long long val;
--
--		st->output_enable = true;
--
--		ret = peripheral_request(st->t->pin, st->trig->name);
--		if (ret)
--			goto out_free_irq;
--
--		val = (unsigned long long)get_sclk() * pdata->duty_ns;
--		do_div(val, NSEC_PER_SEC);
--		st->duty = val;
--
--		/**
--		 * The interrupt will be generated at the end of the period,
--		 * since we want the interrupt to be generated at end of the
--		 * pulse we invert both polarity and duty cycle, so that the
--		 * pulse will be generated directly before the interrupt.
--		 */
--		if (pdata->active_low)
--			config |= PULSE_HI;
--	} else {
--		st->duty = 1;
--		config |= OUT_DIS;
--	}
--
--	set_gptimer_config(st->t->id, config);
--
--	dev_info(&pdev->dev, "iio trigger Blackfin TMR%d, IRQ-%d",
--		 st->timer_num, st->irq);
--	platform_set_drvdata(pdev, st);
--
--	return 0;
--out_free_irq:
--	free_irq(st->irq, st);
--out1:
--	iio_trigger_unregister(st->trig);
--out:
--	iio_trigger_free(st->trig);
--	return ret;
--}
--
--static int iio_bfin_tmr_trigger_remove(struct platform_device *pdev)
--{
--	struct bfin_tmr_state *st = platform_get_drvdata(pdev);
--
--	disable_gptimers(st->t->bit);
--	if (st->output_enable)
--		peripheral_free(st->t->pin);
--	free_irq(st->irq, st);
--	iio_trigger_unregister(st->trig);
--	iio_trigger_free(st->trig);
--
--	return 0;
--}
--
--static struct platform_driver iio_bfin_tmr_trigger_driver = {
--	.driver = {
--		.name = "iio_bfin_tmr_trigger",
--	},
--	.probe = iio_bfin_tmr_trigger_probe,
--	.remove = iio_bfin_tmr_trigger_remove,
--};
--
--module_platform_driver(iio_bfin_tmr_trigger_driver);
--
--MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
--MODULE_DESCRIPTION("Blackfin system timer based trigger for the iio subsystem");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:iio-trig-bfin-timer");
-diff --git a/drivers/staging/iio/trigger/iio-trig-bfin-timer.h b/drivers/staging/iio/trigger/iio-trig-bfin-timer.h
-deleted file mode 100644
-index fb05a2a..0000000
---- a/drivers/staging/iio/trigger/iio-trig-bfin-timer.h
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __IIO_BFIN_TIMER_TRIGGER_H__
--#define __IIO_BFIN_TIMER_TRIGGER_H__
+-static DEFINE_MUTEX(bfin_otp_lock);
 -
 -/**
-- * struct iio_bfin_timer_trigger_pdata - timer trigger platform data
-- * @output_enable: Enable external trigger pulse generation.
-- * @active_low: Whether the trigger pulse is active low.
-- * @duty_ns: Length of the trigger pulse in nanoseconds.
+- *	bfin_otp_read - Read OTP pages
 - *
-- * This struct is used to configure the output pulse generation of the blackfin
-- * timer trigger. If output_enable is set to true an external trigger signal
-- * will generated on the pin corresponding to the timer. This is useful for
-- * converters which needs an external signal to start conversion. active_low and
-- * duty_ns are used to configure the type of the trigger pulse. If output_enable
-- * is set to false no external trigger pulse will be generated and active_low
-- * and duty_ns are ignored.
-- **/
--struct iio_bfin_timer_trigger_pdata {
--	bool output_enable;
--	bool active_low;
--	unsigned int duty_ns;
+- *	All reads must be in half page chunks (half page == 64 bits).
+- */
+-static ssize_t bfin_otp_read(struct file *file, char __user *buff, size_t count, loff_t *pos)
+-{
+-	ssize_t bytes_done;
+-	u32 page, flags, ret;
+-	u64 content;
+-
+-	stampit();
+-
+-	if (count % sizeof(u64))
+-		return -EMSGSIZE;
+-
+-	if (mutex_lock_interruptible(&bfin_otp_lock))
+-		return -ERESTARTSYS;
+-
+-	bytes_done = 0;
+-	page = *pos / (sizeof(u64) * 2);
+-	while (bytes_done < count) {
+-		flags = (*pos % (sizeof(u64) * 2) ? OTP_UPPER_HALF : OTP_LOWER_HALF);
+-		stamp("processing page %i (0x%x:%s)", page, flags,
+-			(flags & OTP_UPPER_HALF ? "upper" : "lower"));
+-		ret = bfrom_OtpRead(page, flags, &content);
+-		if (ret & OTP_MASTER_ERROR) {
+-			stamp("error from otp: 0x%x", ret);
+-			bytes_done = -EIO;
+-			break;
+-		}
+-		if (copy_to_user(buff + bytes_done, &content, sizeof(content))) {
+-			bytes_done = -EFAULT;
+-			break;
+-		}
+-		if (flags & OTP_UPPER_HALF)
+-			++page;
+-		bytes_done += sizeof(content);
+-		*pos += sizeof(content);
+-	}
+-
+-	mutex_unlock(&bfin_otp_lock);
+-
+-	return bytes_done;
+-}
+-
+-#ifdef CONFIG_BFIN_OTP_WRITE_ENABLE
+-static bool allow_writes;
+-
+-/**
+- *	bfin_otp_init_timing - setup OTP timing parameters
+- *
+- *	Required before doing any write operation.  Algorithms from HRM.
+- */
+-static u32 bfin_otp_init_timing(void)
+-{
+-	u32 tp1, tp2, tp3, timing;
+-
+-	tp1 = get_sclk() / 1000000;
+-	tp2 = (2 * get_sclk() / 10000000) << 8;
+-	tp3 = (0x1401) << 15;
+-	timing = tp1 | tp2 | tp3;
+-	if (bfrom_OtpCommand(OTP_INIT, timing))
+-		return 0;
+-
+-	return timing;
+-}
+-
+-/**
+- *	bfin_otp_deinit_timing - set timings to only allow reads
+- *
+- *	Should be called after all writes are done.
+- */
+-static void bfin_otp_deinit_timing(u32 timing)
+-{
+-	/* mask bits [31:15] so that any attempts to write fail */
+-	bfrom_OtpCommand(OTP_CLOSE, 0);
+-	bfrom_OtpCommand(OTP_INIT, timing & ~(-1 << 15));
+-	bfrom_OtpCommand(OTP_CLOSE, 0);
+-}
+-
+-/**
+- *	bfin_otp_write - write OTP pages
+- *
+- *	All writes must be in half page chunks (half page == 64 bits).
+- */
+-static ssize_t bfin_otp_write(struct file *filp, const char __user *buff, size_t count, loff_t *pos)
+-{
+-	ssize_t bytes_done;
+-	u32 timing, page, base_flags, flags, ret;
+-	u64 content;
+-
+-	if (!allow_writes)
+-		return -EACCES;
+-
+-	if (count % sizeof(u64))
+-		return -EMSGSIZE;
+-
+-	if (mutex_lock_interruptible(&bfin_otp_lock))
+-		return -ERESTARTSYS;
+-
+-	stampit();
+-
+-	timing = bfin_otp_init_timing();
+-	if (timing == 0) {
+-		mutex_unlock(&bfin_otp_lock);
+-		return -EIO;
+-	}
+-
+-	base_flags = OTP_CHECK_FOR_PREV_WRITE;
+-
+-	bytes_done = 0;
+-	page = *pos / (sizeof(u64) * 2);
+-	while (bytes_done < count) {
+-		flags = base_flags | (*pos % (sizeof(u64) * 2) ? OTP_UPPER_HALF : OTP_LOWER_HALF);
+-		stamp("processing page %i (0x%x:%s) from %p", page, flags,
+-			(flags & OTP_UPPER_HALF ? "upper" : "lower"), buff + bytes_done);
+-		if (copy_from_user(&content, buff + bytes_done, sizeof(content))) {
+-			bytes_done = -EFAULT;
+-			break;
+-		}
+-		ret = bfrom_OtpWrite(page, flags, &content);
+-		if (ret & OTP_MASTER_ERROR) {
+-			stamp("error from otp: 0x%x", ret);
+-			bytes_done = -EIO;
+-			break;
+-		}
+-		if (flags & OTP_UPPER_HALF)
+-			++page;
+-		bytes_done += sizeof(content);
+-		*pos += sizeof(content);
+-	}
+-
+-	bfin_otp_deinit_timing(timing);
+-
+-	mutex_unlock(&bfin_otp_lock);
+-
+-	return bytes_done;
+-}
+-
+-static long bfin_otp_ioctl(struct file *filp, unsigned cmd, unsigned long arg)
+-{
+-	stampit();
+-
+-	switch (cmd) {
+-	case OTPLOCK: {
+-		u32 timing;
+-		int ret = -EIO;
+-
+-		if (!allow_writes)
+-			return -EACCES;
+-
+-		if (mutex_lock_interruptible(&bfin_otp_lock))
+-			return -ERESTARTSYS;
+-
+-		timing = bfin_otp_init_timing();
+-		if (timing) {
+-			u32 otp_result = bfrom_OtpWrite(arg, OTP_LOCK, NULL);
+-			stamp("locking page %lu resulted in 0x%x", arg, otp_result);
+-			if (!(otp_result & OTP_MASTER_ERROR))
+-				ret = 0;
+-
+-			bfin_otp_deinit_timing(timing);
+-		}
+-
+-		mutex_unlock(&bfin_otp_lock);
+-
+-		return ret;
+-	}
+-
+-	case MEMLOCK:
+-		allow_writes = false;
+-		return 0;
+-
+-	case MEMUNLOCK:
+-		allow_writes = true;
+-		return 0;
+-	}
+-
+-	return -EINVAL;
+-}
+-#else
+-# define bfin_otp_write NULL
+-# define bfin_otp_ioctl NULL
+-#endif
+-
+-static const struct file_operations bfin_otp_fops = {
+-	.owner          = THIS_MODULE,
+-	.unlocked_ioctl = bfin_otp_ioctl,
+-	.read           = bfin_otp_read,
+-	.write          = bfin_otp_write,
+-	.llseek		= default_llseek,
 -};
 -
--#endif
+-static struct miscdevice bfin_otp_misc_device = {
+-	.minor    = MISC_DYNAMIC_MINOR,
+-	.name     = DRIVER_NAME,
+-	.fops     = &bfin_otp_fops,
+-};
+-module_misc_device(bfin_otp_misc_device);
+-
+-MODULE_AUTHOR("Mike Frysinger <vapier@gentoo.org>");
+-MODULE_DESCRIPTION("Blackfin OTP Memory Interface");
+-MODULE_LICENSE("GPL");
 -- 
 2.7.4
