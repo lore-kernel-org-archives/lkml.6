@@ -1,69 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932988AbeCPAvG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 20:51:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58096 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932227AbeCPAvE (ORCPT
+        id S1752865AbeCPAyb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 20:54:31 -0400
+Received: from mail-io0-f176.google.com ([209.85.223.176]:41525 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752549AbeCPAy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 20:51:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE5D860AFB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 6/7] e1000: eliminate duplicate barriers on weakly-ordered
- archs
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Netdev <netdev@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1520997629-17361-1-git-send-email-okaya@codeaurora.org>
- <1520997629-17361-6-git-send-email-okaya@codeaurora.org>
- <CAKgT0UfJwYFy5g_2TE5W4MgdEvyH2CvBAS2imdw9UUiumuUOhQ@mail.gmail.com>
- <39dc5bb4-02b1-bf7e-fbfc-17fc484e4fb7@codeaurora.org>
- <CAKgT0UcfEwL9Jas149a=h3R4zeu4oA=uywJ9dpYD9kDdnpWQFA@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <95118f6e-d406-f2b6-dc67-249dc5f648f9@codeaurora.org>
-Date: Thu, 15 Mar 2018 20:50:58 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Mar 2018 20:54:29 -0400
+X-Google-Smtp-Source: AG47ELs6RK+Z+JyL9MFPzSYD1K0PFhnHUzaD/NSJIT2gL/boA12Pciaqs2K4yZOR2yNBNJz5k5n1WOiA3mXyG8H41Pw=
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UcfEwL9Jas149a=h3R4zeu4oA=uywJ9dpYD9kDdnpWQFA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CALCETrX_1pxfB10k-uj7vSyXm7hH4MeJiEY=+A3FzViaozb+BA@mail.gmail.com>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <CAK8P3a2-XfeM5J0dq0kiOSiQC4T4p7cggNbuMDoCmnqjKC9tEQ@mail.gmail.com> <CALCETrX_1pxfB10k-uj7vSyXm7hH4MeJiEY=+A3FzViaozb+BA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 15 Mar 2018 17:54:27 -0700
+X-Google-Sender-Auth: GTpuzadTmD3Oms8Yyf30WwCnCxA
+Message-ID: <CA+55aFyJBTaBuA1LjG5RjcD7ZCivYYQWqb3A+HbJZGUdZE9i6w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/15/2018 8:25 PM, Alexander Duyck wrote:
-> On Thu, Mar 15, 2018 at 4:30 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> On 3/14/2018 9:41 PM, Alexander Duyck wrote:
->>>>  }
->>>>
->>> So you missed the writel in e1000_xmit_frame. You should probably get
->>> that one too while you are doing these updates. The wmb() is in
->>> e1000_tx_queue().
->>>
->>
->> I brought wmb() outside along with the next descriptor assignment to be
->> similar to the rest of the other code.
->>
->> if wmb() and writel() are not visible in the same function, let's not touch
->> the code.
-> 
-> Maybe for e1000 we should just skip the driver entirely. Odds are you
-> aren't going to have any e1000 parts running on ARM anyway since most
-> of them are legacy PCI or PCI-X parts that were made over 10 years
-> ago. Most of your efforts would probably be best spent on igb, igbvf,
-> ixgbe, ixgbevf, i40e, i40evf, and fm10k.
-> 
+On Thu, Mar 15, 2018 at 5:38 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>
+> I don't think this patch series should wait for any of these cleanups,
+> though.  We need these patches to change the x86_64 internal syscall
+> function signature, which we've been wanting to do for a little while.
 
-Sure. I'll drop it.
+Yes. And honestly, I'd rather have these kinds of "just change the
+calling convention" almost automated patches separately - and then the
+cleanups later.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Mixing the calling convention change and the cleanup together is just
+confusing and potentially causes subtle issues.
+
+                         Linus
