@@ -1,64 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753135AbeCPOVt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:21:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55948 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753119AbeCPOVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:21:47 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-rt-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [RT PATCH 1/2] kernel/cpu_chill: use schedule_hrtimeout()
-Date: Fri, 16 Mar 2018 15:21:34 +0100
-Message-Id: <20180316142135.9664-1-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.16.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S1753167AbeCPOW1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:22:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753008AbeCPOWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:22:25 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/7] Enlightened VMCS support for KVM on Hyper-V
+Date: Fri, 16 Mar 2018 15:22:13 +0100
+Message-Id: <20180316142220.32506-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpu_chill() uses __hrtimer_nanosleep() with a hack to get
-TASK_UNINTERRUPTIBLE state. It seems to work but it does not.
-The problem is that we may have a signal pending and receive a sporadic
-wake up _before_ the timer expires. At that point the code will look at
-->restart_block and use it based on its value from the previous syscall
-resulting in a possible copy-to-user.
-Instead all this trouble, we could use schedule_hrtimeout() which is not
-an user-space interface and does not have this side effects.
+Changes since v3:
+- Add Michael's Reviewed-by to PATCH2,5,6
+- PATCH1:
+  - Decipher 'TLFS' and add a reference where it can be obtained
+    [Christoph Hellwig]
+- PATCH4:
+  - remove vfree() from hv_cpu_die() [Thomas Gleixner]
+  - free hv_vp_assist_page() in the error path [Thomas Gleixner]
+    While on it, add cpuhp_remove_state() call when we fail to allocate
+    hypercall page to make the error path complete.
+  - check hv_vp_assist_page != NULL in hv_get_vp_assist_page()
+    [Thomas Gleixner]
+- PATCH7:
+  - split off vmx_evmcs.h [Paolo Bonzini]
+  - merge get_evmcs_offset() and get_evmcs_offset_cf() [Paolo Bonzini]
+  - move evmcs_sanitize_exec_ctrls() to setup_vmcs_config [Paolo Bonzini]
+  - rename vmcs_load_enlightened() -> evmcs_load() [Paolo Bonzini]
+  - drop evmcs_sanitize_exec_ctrls() from dump_vmcs() [Paolo Bonzini]
 
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/time/hrtimer.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+When running nested KVM on Hyper-V it's possible to use so called
+'Enlightened VMCS' and do normal memory reads/writes instead of
+doing VMWRITE/VMREAD instructions. In addition, clean field mask
+provides a huge room for optimization on L0's side.
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 6c77643eaf02..c0efc22ba635 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1873,14 +1873,13 @@ COMPAT_SYSCALL_DEFINE2(nanosleep, struct compat_tim=
-espec __user *, rqtp,
-  */
- void cpu_chill(void)
- {
--	struct timespec64 tu =3D {
--		.tv_nsec =3D NSEC_PER_MSEC,
--	};
-+	ktime_t chill_time;
- 	unsigned int freeze_flag =3D current->flags & PF_NOFREEZE;
-=20
-+	chill_time =3D ktime_set(0, NSEC_PER_MSEC);
-+	set_current_state(TASK_UNINTERRUPTIBLE);
- 	current->flags |=3D PF_NOFREEZE;
--	__hrtimer_nanosleep(&tu, HRTIMER_MODE_REL_HARD, CLOCK_MONOTONIC,
--			    TASK_UNINTERRUPTIBLE);
-+	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
- 	if (!freeze_flag)
- 		current->flags &=3D ~PF_NOFREEZE;
- }
---=20
-2.16.2
+Tight CPUID loop test shows significant speedup (E5-2667 v4 @ 3.20GHz):
+  Before: 18890 cycles
+  After: 8304 cycles
+
+Ladi Prosek (1):
+  x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+    HV_X64_MSR_VP_ASSIST_PAGE
+
+Vitaly Kuznetsov (6):
+  x86/hyper-v: move hyperv.h out of uapi
+  x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
+  x86/hyper-v: allocate and use Virtual Processor Assist Pages
+  x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+  x86/hyper-v: detect nested features
+  x86/kvm: use Enlightened VMCS when running on Hyper-V
+
+ MAINTAINERS                          |   2 +-
+ arch/x86/hyperv/hv_init.c            |  45 ++-
+ arch/x86/include/asm/hyperv-tlfs.h   | 702 +++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/kvm_host.h      |   1 +
+ arch/x86/include/asm/mshyperv.h      |  94 +----
+ arch/x86/include/uapi/asm/hyperv.h   | 421 ---------------------
+ arch/x86/include/uapi/asm/kvm_para.h |   1 -
+ arch/x86/kernel/cpu/mshyperv.c       |  21 +-
+ arch/x86/kvm/hyperv.c                |   8 +-
+ arch/x86/kvm/lapic.h                 |   2 +-
+ arch/x86/kvm/vmx.c                   | 301 ++++++++++++++-
+ arch/x86/kvm/vmx_evmcs.h             | 324 ++++++++++++++++
+ arch/x86/kvm/x86.c                   |   2 +-
+ drivers/hv/connection.c              |   1 -
+ drivers/hv/hv.c                      |   1 -
+ drivers/hv/hyperv_vmbus.h            |   1 +
+ drivers/hv/vmbus_drv.c               |   1 -
+ include/linux/hyperv.h               |   1 -
+ 18 files changed, 1396 insertions(+), 533 deletions(-)
+ create mode 100644 arch/x86/include/asm/hyperv-tlfs.h
+ delete mode 100644 arch/x86/include/uapi/asm/hyperv.h
+ create mode 100644 arch/x86/kvm/vmx_evmcs.h
+
+-- 
+2.14.3
