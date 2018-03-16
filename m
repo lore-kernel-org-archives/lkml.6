@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsMNnd20xFwrhOeHXgCKbahtiSS0Omc0iZFACsVh2HUvJJd2lcI/tuuwSIStnamBtrdBZGg
-ARC-Seal: i=1; a=rsa-sha256; t=1521214965; cv=none;
+X-Google-Smtp-Source: AG47ELvoRoA10ipED3f2hXO+l2UkHFubk8PzGuB78KxF73ZavBZ2N9aQTAcxODTXtQRk8eDFfrSN
+ARC-Seal: i=1; a=rsa-sha256; t=1521214962; cv=none;
         d=google.com; s=arc-20160816;
-        b=TEez/jyq5GRbjvZ80DLdQ9rCz2QwmplHKNiTftkPELOpE4s6M/RUkY0Xz0Q2FKVMEy
-         IBj9bG7j00y2p93E5kAeMDDuofiT/mCq2Au3N3LLBL7tvgnYg56pW/6MdxycF2qWvBZB
-         HYgFLlTHe6vT/T2t8xWXjgwatnSvDpHP04Spd3h00TsHb/qRaALjrw9tBj8WnTXJP8lJ
-         TWNmGgNQxPaPysVyaOsjEd8AFj6O3CInMWQH4kyNaiZpsI4nxINyFGBHFSfFK2FWfVUy
-         FXj+2IXNvg0MruospNAkQqyTLijxym3emCu9h7jpA/98QODfnorM+RRQ8Kd25mqxV0tn
-         JTiw==
+        b=fki40vtkTZgsLVHhHeyhOLPZlDplyKIPWOeD4xnNoIUau9xajKRrTyT9D03e5vYxv2
+         g/P9n/GMD0YA172Ja5AnLuaWUjhj+ihN22nVY1SyqVo6xy1NDyOkubKN3OGMnHldgyua
+         RRpUn1pe0Nnzcr8UgOX7MnJOw/c5ZquYZkjmhXv83TSW0jCf3+WZvJQ3U+BMzcAHQmmW
+         BIJnhGwMTIFKEHdKvZcYpTjKrqN6XJ5Ym0Kcm1mJYWztpD9oVBtpFfyGmRo1RnkEHCKZ
+         TEpaDXdwzfGLynGsrSJKqswjQr0iCyQDaGn8sh1G613aeipE37Sa2YkqWFVS+rwoOC38
+         Lmtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2e6jLe9FrCVmqXH7zmzNB76PGncZDyEPYjJj7WTuL5w=;
-        b=BqgmaJG9qU+x3K/qgsLx7YXNZTb7an+/O8eYJOPUSUNxJP+b7p4U4tj7XBpoqdN49g
-         viORDmZihcGRe1ZGHV9DS2uNvq3itbbtsV/eUyrIO6T/2qwuulTLYf48iLroeyxjHNDg
-         kJGgDxedUE/aNdXe8Fzi1ycXbwbj7EL0XHjEJu4c/YmdNmjI9p5eC2mQu0mQJM+qJDPH
-         SuYnyP3EmPjclOfxYr/JMQYlZVr34p+6qgohSVwxhPsB5L0795y+Loy6xYITtowibj++
-         pJFNhzeC/INWg5MvobV+g7j/sSlMxXRpHr+O20OMfi5GA6JrTbHahOW2Wep3iW8jb7Bt
-         f6kQ==
+        bh=AS1lXyZnX4kF2YP+L1LjvMfhcbvwlXpuLwBY41oenOo=;
+        b=asWvIwUJmZeJJx/0Jm77enHP2dtmYjQpz8AjbTFv6nwTuzsYBXcYdOHWzBFP9eWWal
+         44I7neH0wEe5L3c2dNkdZPo6jatpAgT413ZD49f/bZHpB02rzOKk5+v3qYmhUfgT0m7I
+         ZGYfc0Hbdhg52brfSijCMbY9P/yS5knZ4QInKu8By4gmIq8/cvNWu7lBG7y0P1Z8p3x5
+         tehLFWgzyzJs4zqNjKMTbxUw4//EwCArrQ+Rbje75lgToi97GBDWsvL2TNfziCoQJlSb
+         Ixuxz2dWZrisZoRmV+pJbSJXeOHkFuU+Z4OG58IUO1TuJoK3P0FTVbJnpt7ZXY0viByh
+         fcfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Johan Hovold <johan@kernel.org>,
+	Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 044/128] USB: ledtrig-usbport: fix of-node leak
-Date: Fri, 16 Mar 2018 16:23:05 +0100
-Message-Id: <20180316152339.001329604@linuxfoundation.org>
+Subject: [PATCH 4.15 043/128] typec: tcpm: fusb302: Resolve out of order messaging events
+Date: Fri, 16 Mar 2018 16:23:04 +0100
+Message-Id: <20180316152338.933623386@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109045086411487?=
-X-GMAIL-MSGID: =?utf-8?q?1595109503822206126?=
+X-GMAIL-THRID: =?utf-8?q?1595109042483154217?=
+X-GMAIL-MSGID: =?utf-8?q?1595109500894182532?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
 
-[ Upstream commit 03310a15484ab6a8f6d91bbf7fe486b17275c09a ]
+[ Upstream commit ab69f61321140ff632d560775bc226259a78dfa2 ]
 
-This code looks up a USB device node from a given parent USB device but
-never dropped its reference to the returned node.
+The expectation in the FUSB302 driver is that a TX_SUCCESS event
+should occur after a message has been sent, but before a GCRCSENT
+event is raised to indicate successful receipt of a message from
+the partner. However in some circumstances it is possible to see
+the hardware raise a GCRCSENT event before a TX_SUCCESS event
+is raised. The upshot of this is that the GCRCSENT handling portion
+of code ends up reporting the GoodCRC message to TCPM because the
+TX_SUCCESS event hasn't yet arrived to trigger a consumption of it.
+When TX_SUCCESS is then raised by the chip it ends up consuming the
+actual message that was meant for TCPM, and this incorrect sequence
+results in a hard reset from TCPM.
 
-As only the address of the node is used for a later matching, the
-reference can be dropped immediately.
+To avoid this problem, this commit updates the message reading
+code to check whether a GoodCRC message was received or not. Based
+on this check it will either report that the previous transmission
+has completed or it will pass the msg data to TCPM for futher
+processing. This way the incorrect ordering of the events no longer
+matters.
 
-Note that this trigger implementation confuses the description of the
-USB device connected to a port with the port itself (which does not have
-a device-tree representation).
-
-Fixes: 4f04c210d031 ("usb: core: read USB ports from DT in the usbport LED trigger driver")
-Cc: Rafał Miłecki <rafal@milecki.pl>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/core/ledtrig-usbport.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/typec/fusb302/fusb302.c |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/core/ledtrig-usbport.c
-+++ b/drivers/usb/core/ledtrig-usbport.c
-@@ -137,11 +137,17 @@ static bool usbport_trig_port_observed(s
- 	if (!led_np)
- 		return false;
+--- a/drivers/usb/typec/fusb302/fusb302.c
++++ b/drivers/usb/typec/fusb302/fusb302.c
+@@ -1543,6 +1543,21 @@ static int fusb302_pd_read_message(struc
+ 	fusb302_log(chip, "PD message header: %x", msg->header);
+ 	fusb302_log(chip, "PD message len: %d", len);
  
--	/* Get node of port being added */
 +	/*
-+	 * Get node of port being added
++	 * Check if we've read off a GoodCRC message. If so then indicate to
++	 * TCPM that the previous transmission has completed. Otherwise we pass
++	 * the received message over to TCPM for processing.
 +	 *
-+	 * FIXME: This is really the device node of the connected device
++	 * We make this check here instead of basing the reporting decision on
++	 * the IRQ event type, as it's possible for the chip to report the
++	 * TX_SUCCESS and GCRCSENT events out of order on occasion, so we need
++	 * to check the message type to ensure correct reporting to TCPM.
 +	 */
- 	port_np = usb_of_get_child_node(usb_dev->dev.of_node, port1);
- 	if (!port_np)
- 		return false;
- 
-+	of_node_put(port_np);
++	if ((!len) && (pd_header_type_le(msg->header) == PD_CTRL_GOOD_CRC))
++		tcpm_pd_transmit_complete(chip->tcpm_port, TCPC_TX_SUCCESS);
++	else
++		tcpm_pd_receive(chip->tcpm_port, msg);
 +
- 	/* Amount of trigger sources for this LED */
- 	count = of_count_phandle_with_args(led_np, "trigger-sources",
- 					   "#trigger-source-cells");
+ 	return ret;
+ }
+ 
+@@ -1650,13 +1665,12 @@ static irqreturn_t fusb302_irq_intn(int
+ 
+ 	if (interrupta & FUSB_REG_INTERRUPTA_TX_SUCCESS) {
+ 		fusb302_log(chip, "IRQ: PD tx success");
+-		/* read out the received good CRC */
+ 		ret = fusb302_pd_read_message(chip, &pd_msg);
+ 		if (ret < 0) {
+-			fusb302_log(chip, "cannot read in GCRC, ret=%d", ret);
++			fusb302_log(chip,
++				    "cannot read in PD message, ret=%d", ret);
+ 			goto done;
+ 		}
+-		tcpm_pd_transmit_complete(chip->tcpm_port, TCPC_TX_SUCCESS);
+ 	}
+ 
+ 	if (interrupta & FUSB_REG_INTERRUPTA_HARDRESET) {
+@@ -1677,7 +1691,6 @@ static irqreturn_t fusb302_irq_intn(int
+ 				    "cannot read in PD message, ret=%d", ret);
+ 			goto done;
+ 		}
+-		tcpm_pd_receive(chip->tcpm_port, &pd_msg);
+ 	}
+ done:
+ 	mutex_unlock(&chip->lock);
