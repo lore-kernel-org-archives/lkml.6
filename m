@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsKB6k7/khQd2h3t9SB/l7GdC3DKskb1W7ScNLw8lurvSLEt3+G1JyI2VaJTt4JfAOn5Fcp
-ARC-Seal: i=1; a=rsa-sha256; t=1521214631; cv=none;
+X-Google-Smtp-Source: AG47ELv8waSokUCHcPYc4wQWYltCt5OwW9C3n8DWs1jg2mnd13LTxdonHPzqUSVm7Ud0OD346HJe
+ARC-Seal: i=1; a=rsa-sha256; t=1521214628; cv=none;
         d=google.com; s=arc-20160816;
-        b=YmwzqMYyy2E5M5BaTUoXD5henxDbdO2RQKSJPHRJL7jzScBg3GGCjnOfo4EuqvZR17
-         76BCMD/YKfmrktramtPoTkgJksAwMqBmp5KSBAl4dE9OVkckzE5VlM/puLgKjIBuoXsp
-         SlsYSxLY1RfIfs1xGmNCX6TaWTHj7/Meg2LhtXo/E2Evq7z/bg9z/cUFsomU3+h8JdYw
-         j9CtkwNzSiEr7xQ/Zj+gMBF1f9lc+TJ4v+j6jRml/fH5fqHlUEzvkdTWJ+eueYJVyHlz
-         6vcZY1pXZ6APbR6JiZq8e5dBIgj3W3/z0eYfXeqhgQNRftH4DRtzjCVaBZNKOLH18QYn
-         8hzA==
+        b=d+/+/9AqZD21l5eo8XTekNnM8u0xTP9eWwZ0TGHC2dprU+P9xvJzazQqE+gfwlWzBc
+         UuOZJEQsvNOFmicoJULVOzLJUSF6GpyNWVLmTK7QCG5ITJ2HD7C8XvTN48jQiHv64GKF
+         XFc2PPXrup2o05JBrQD4AkukUH2CeFcET7ykHI9mOfkUf6Qyw1XXX8RVgux9EuW1QSfP
+         DEM1R9jMqUI31pK2mal3bWNSSp9oSg+gpKLoXWvp2gHbkfbavqrHgwDMFn0ovx2KwCc1
+         bm2VS1wR9rop3XO6e9BguT+58nGrk04CVVV4/ysnLP2HaVeu8cAsrQoe11jclHyaBj3r
+         TSpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xi/QLXe2HxqEO6XxAEOVjOJj4hp9y1ilB7s2PaqOJ+0=;
-        b=lD5WB4xhIxz2fAzw6DDM3VRJ5ULgCNCf20w6KQ0wdLgqW2XZX9kVytfZAuES6JcZpJ
-         8V5/cyGsc+94BZnjKtbKZOjOTwFJNvFfnQIakLLvN8IXwOmmUDVSd5Gm73Dge210RpTk
-         mwroY2mU7kJTcayY5ld5vPdbQ3JYXDE4kc2KzoHuYjdC5+ihwIus5DqzW3f3ylqS+bAe
-         FIK5E0WHCiZtUEyGYNMlirb13fae/FshGkUoFkL2HAY8ntCltzg9WVqZEvlP/vXSdU5r
-         xXZMUKbvSeF6kvGxqZXayi1Rr/0H6/YArY2HCUygKScCWxVcWAj691AptWsrlkC4CAW1
-         7JEw==
+        bh=YyDe9nuFG9RaNEebmWhqes86o5U3yyqcDTMoA9Q2KME=;
+        b=XgceZbOl5hvrtWqAX6S9xs0IJUMBFQXc3c7rpxon1POZfvtqZ0bxar6+smWkHZJ8Gv
+         cw8ErvoAXY5T6gQm34htXEHXXDxun1Vhf+ZGAzMWtAFQIrJ4GZqLsAb+O6JbfbefehL0
+         OJZZOniV20usykPNJeMDSahLKkP2sTuOixsi+tMoe8j93CEcvKtPirQ8rUHoiV3eD24B
+         PEZTKHgTDtMjKlZzKJhOMy4NPW0VAA2hYWNkNrycJ6OT7CwlGSXK62z9ud+0cEy6QbJM
+         8ixM2W0P3qesuwOJ2qPheb7UzNVL3qjY7B7fB+fyHOu0ATEdEwlvikyvEjmUY9YyPL0c
+         FNbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Monk Liu <Monk.Liu@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+	Sara Sharon <sara.sharon@intel.com>,
+	Luca Coelho <luciano.coelho@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/109] drm/amdgpu:fix virtual dce bug
-Date: Fri, 16 Mar 2018 16:23:44 +0100
-Message-Id: <20180316152334.052644249@linuxfoundation.org>
+Subject: [PATCH 4.14 074/109] iwlwifi: mvm: avoid dumping assert log when device is stopped
+Date: Fri, 16 Mar 2018 16:23:43 +0100
+Message-Id: <20180316152334.002036821@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109153792103743?=
-X-GMAIL-MSGID: =?utf-8?q?1595109153792103743?=
+X-GMAIL-THRID: =?utf-8?q?1595109150650656229?=
+X-GMAIL-MSGID: =?utf-8?q?1595109150650656229?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Monk Liu <Monk.Liu@amd.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
 
-[ Upstream commit 129d65c18ecfb249aceb540c31fdaf79bd5a11ff ]
+[ Upstream commit 6362ab721ef5c4ecfa01f53ad4137d3d984f0c6c ]
 
-this fix the issue that access memory after freed
-after driver unloaded.
+We might erroneously get to error dumping code when the
+device is already stopped.
 
-Signed-off-by: Monk Liu <Monk.Liu@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+In that case the driver will detect a defective value and will try to
+reset the HW, assuming it is only a bus issue.  The driver than
+proceeds with the dumping.
+
+The result has two side effects:
+
+1. The device won't be stopped again, since the transport status is
+already stopped, so the device remains powered on while it actually
+should be stopped.
+
+2. The dump in that case is completely garbaged and useless.
+
+Detect and avoid this.  It will also make debugging such issues
+easier.
+
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/dce_virtual.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/utils.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/dce_virtual.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_virtual.c
-@@ -437,6 +437,8 @@ static int dce_virtual_sw_fini(void *han
- 	drm_kms_helper_poll_fini(adev->ddev);
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
+@@ -603,6 +603,12 @@ static void iwl_mvm_dump_lmac_error_log(
  
- 	drm_mode_config_cleanup(adev->ddev);
-+	/* clear crtcs pointer to avoid dce irq finish routine access freed data */
-+	memset(adev->mode_info.crtcs, 0, sizeof(adev->mode_info.crtcs[0]) * AMDGPU_MAX_CRTCS);
- 	adev->mode_info.mode_config_initialized = false;
- 	return 0;
- }
-@@ -723,7 +725,7 @@ static void dce_virtual_set_crtc_vblank_
- 							int crtc,
- 							enum amdgpu_interrupt_state state)
+ void iwl_mvm_dump_nic_error_log(struct iwl_mvm *mvm)
  {
--	if (crtc >= adev->mode_info.num_crtc) {
-+	if (crtc >= adev->mode_info.num_crtc || !adev->mode_info.crtcs[crtc]) {
- 		DRM_DEBUG("invalid crtc %d\n", crtc);
- 		return;
- 	}
++	if (!test_bit(STATUS_DEVICE_ENABLED, &mvm->trans->status)) {
++		IWL_ERR(mvm,
++			"DEVICE_ENABLED bit is not set. Aborting dump.\n");
++		return;
++	}
++
+ 	iwl_mvm_dump_lmac_error_log(mvm, mvm->error_event_table[0]);
+ 
+ 	if (mvm->error_event_table[1])
