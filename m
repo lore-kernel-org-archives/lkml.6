@@ -1,67 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeCPUh4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:37:56 -0400
-Received: from mail-by2nam03on0050.outbound.protection.outlook.com ([104.47.42.50]:52192
+        id S932360AbeCPUiD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:38:03 -0400
+Received: from mail-by2nam03on0059.outbound.protection.outlook.com ([104.47.42.59]:55584
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751672AbeCPUhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:37:52 -0400
+        id S1753536AbeCPUh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 16:37:56 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Babu.Moger@amd.com;
 From: Babu Moger <babu.moger@amd.com>
 To: joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, babu.moger@amd.com
-Subject: [PATCH v2 0/5] KVM: x86: Implement Pause Loop Exit for SVM
-Date: Fri, 16 Mar 2018 16:37:21 -0400
-Message-Id: <1521232646-79580-1-git-send-email-babu.moger@amd.com>
+Subject: [PATCH v2 2/5] KVM: VMX: Remove ple_window_actual_max
+Date: Fri, 16 Mar 2018 16:37:23 -0400
+Message-Id: <1521232646-79580-3-git-send-email-babu.moger@amd.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1521232646-79580-1-git-send-email-babu.moger@amd.com>
+References: <1521232646-79580-1-git-send-email-babu.moger@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [165.204.77.1]
 X-ClientProxiedBy: BN6PR17CA0018.namprd17.prod.outlook.com
  (2603:10b6:404:65::28) To MWHPR12MB1776.namprd12.prod.outlook.com
  (2603:10b6:300:113::7)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f2036fe8-3a60-4902-5bf5-08d58b7dc92e
+X-MS-Office365-Filtering-Correlation-Id: 12150ad9-4e78-422e-5062-08d58b7dcb6f
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR12MB1776;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;3:QsVmUPDlNnbuotJupIAr6YY+208Jd2CU3qnythd7IIbI3mHz8NjZYWeZpNgABzPNQ3QnixUgO0BmZ9lG2VfchjOBwuln7UjNKNQS1CxPYl6NEcV6l3Sq7PHjS1oVab+lZ4cfnbOYCXu4iwf1+uXZB0IvNi8bjHNeUM6HjnKaULJW3bSGDUo2O4KeSEeGqBW4Qvgs1HtwPR081usWA4aXpHkpn1s4nKxBLGX5iZevL1U8PDgqB/2VKFHyCyl00H1U;25:KV2MRbHvJkpOnlrxgN4e6HgPM4nsoHtbw3ZpHBW+qdeclbTiorprnrBiEOhZqarW4tU2nSl3NfjVxzPx+8iRaJv06XdGRGVLuPd/MBLVIOmyA3LkS+cbNgsyVGH1y0hU4efNPs9wMgp2lr2My6X5cUI/9gs8/fsHKZGNy07QclzZUco+HNz+1z8G1wHDyeymaNRc+qUDebO1QGVKZ8g5tKF6MHqf/lkKmrDQrf9RVPAYgM6A0iKTGgOH3Q3lP3EBmU8GUMin8upAJxatlF7mRtC5lE+osXHaw+sohdYjQBdAlFZndhf+b4Qg8a5/iohu/xDo6XnzVesXWD87Kx+mfg==;31:ELDUZwFpcGM1P3Ku9pa1pVTKjfclCYQN3ZoFenBeXATmKbf+y6i7V5YxwkbBNBoLYc4zXanUraw0uDrGBAyf1k4CSw4SAicXaKyMuC9BvwWcd3KMuSqSjEiTip7+fXS1qOO1ePpRnEJG8AjRihkMNlbakM6egfk2l2eqvLK29dPs0MKXO31T/w+ttJGjg2nrUh6yK1zh/D5+D4s8DVMdYWYGSAiSQMEkhrNCtbytk1Q=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;3:/MXoBzoUKK22vFvsP6mH+canABAXI81fsCiBoc2342U8FIYtJWTBYps6Kz35ljEeKZm0gPNOGaecdPbNvXtEYz0Rgw0iVU3rN9U0etRpnffdYXsqvccGY7toEpdJ+IIGhnFlD+4jm23LaPKBWYnvQy+9t/WRHPVJ0DWXp7aVOJlkFJVmsQ7x5hlNeT1D6B85Q5PulELheg3xvsLZb5r/2sjuKWNuMzTaWrdko3UBkBBG/2blK7HqfcDUG09PSSxG;25:9VFA2yo5wl2JwN/Gz7bwvKJHEJf9aGk3Ib7QPj9TBukXLCZbyV68eFFpuSfYEKUzXTxoaOzAQvMTEbhCNmP2MElaIblw0WC6BF07C9rhgJlbXo+nWNnAnLoElob/fkayawoYOx0tQc39KBRwoiQPNlU4/Ej79g6i7R23QQVvH8CY7MYGdnlMBuo+mGHUZJ+uCzlDSD08LLJhL1c2rkqODAekDAa1EivrEoQMHq9JWl5gXnTxXF4Qa9nz+E+hV8407OHwO+RKEWry6EPkzDKWSDfstelHOrjKhqtZZpv4arGHtWeVjL+woUqy71U6GE9OGU7HVJuQSwv1N84ffS5Apg==;31:GvARgqrBoY58drV+2OulmlLN7KINh76MUZUIVWThJflUYpVVvRT/gSPq+gV7kLuhUVx4YYaMs80Pz59eaMZdgovl6RLSptdhfCp8pvySncE9f0kYJr8ALZSQfW1QbzkyXW6txJY9o35NHgNtyvCamMHQha74qKfs5n0WomPMObBgDLOw86rBnwyqm1emnzuMwlVxS3Z16V+usXe86g3Mcwi1UhhqTD8qxMZePlDi+xs=
 X-MS-TrafficTypeDiagnostic: MWHPR12MB1776:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:xl9q7SRyDL+Pebp0bHJbMTt5X7mhat26IhYr16v74nQYCuhO2LxjqBvy/wkePyBV9QOuaME7/JYkAP5z6XRMG+9/w26gq4rkHPFBtG2r6cFXQYojKYPwSTa77fHzp/CX609sK1CudxdStG1PE4HQCqbzIGqdwWknvy3uBttLGnV9ZzEE2B17ZbxkNxUqltzF4fVuCpZM5YrDnLz138zkVXxZkHfyc/o1iw9UYNGNY017k/AYwC99+ihaZCzqwzhnCMzqt7emUzfhYgWSbpKPA5o1YwDfCsbqO8w2jynfNcbQXQaJ7wa7nVdGl7VcMKb5CerNU5yDBTMna51uA6JkLXWgmR6p+MgIylsKqOwEmtUAaCHxtU84HYWPg00Vtq6x40Y9OjIxT+8/ybG+IoAHV+fQUtOpD7sXW7GWxNFouAFb1yfkna9rwn/5TQQIyogy5eY8tgmRXPvS9MRyJtXOE5cf5NR1QqUq03pHIkzMxiJbwPxIobrNzMSoIXuBBPN6;4:+cH3UrLJz5Idn6DmxqOS3xVG7Cjnh8sqRpQgnvtaMHIWTDg1+Ug0VxOHpoL5CQS/uURAngjJQVXxYa6tsLvLG8itM653ZgLGIGTRCqL9hv17FqV6l4uWIgDKJ9RrUJguskLX+kZ8Dz/uTdZeKyEs3I9vis0FoZHfHzQVYFF3R88OQHDX86NiUfFLXE5Xpev8XUT65XXj2XPWVd46yOX2BKkM+HcroC/sh0Va2KCVf8acpdUSuuMRyZ380QlzhGgN/rg1ttEScnQnxBAXgj3H/w==
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1776A361C60FB5982B07D6C295D70@MWHPR12MB1776.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:fKCqaBJYyTTHISiQ6xWw8tg/Wlh68tAdUhKr+dysJqsY4KpuU0dQOzZ7YEge4O1F8TB2p4/Q9GmbqqstOl99cYUVPSzYt+uscey1HakTaP1BFRoheCxIaJTCysa10ceBMMYKSaSdvtzsJh06+dJnK8z2RJ5psSrAp55+0bYPtnXXsplv7qj3V6ijAY+HuG6IHauMdBoksgdqx9QqCzjJssslBqIrgY6GMpeYhjcIqIjFCX8Ea49w5GBH+eoR7m2NwRgMYs4h9/yY40LnrbB/fECGG8SbdA5TeswrXZgNVZLW0/h486T5hKMLIL4grhXBn+K9rfIeOkJeeJ3jGwThqfC+LjjCK03X+aGYcjt6IoxKUOSwT9Sgrp7NwWZccr+3avUe91RaabZNCugrxFis9928lqSegKjAQCAc030HGV46gagnZHM4BcbjNnxIWxO8cBqhbf5XcfHkEPszczoUM/pvPK6s64h0i01jPZqF+QgzNjgIBAzzPglbKwJ0tKb/;4:tPKDSGjc/6i9UFAVODaoSio4cz3qAUKz/DxVw6+ACddUhn98qXWP7lDZ3NoYz4U7X8mT2pz/emn/DaVAgHL91FTx9eH8BRcr/D9DK0c3hxkQ25Vh3dxD/MhtIntPTA8TQBbKRXJ6GCNalV/2ftlQHYW648xNdIvkbGfW6uDBe77oDBC3Jjra1IRjjwBeqb6MQ89whqdOw+19Dhy2aM6gdN01uMNsXlk3bQGT6W4UT9ig23dCq8dBTE0W9CL13H176QAKWce7Sn28wSU0gdJMuMMd/M9sL53QP5cQ5CdgTOyR8dhzvdSC3sxzBP6OceUC
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1776BEA1B5508209A15B095395D70@MWHPR12MB1776.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1776;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1776;
 X-Forefront-PRVS: 0613912E23
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(39860400002)(346002)(39380400002)(189003)(199004)(81166006)(8676002)(81156014)(50226002)(6116002)(7736002)(186003)(16526019)(3846002)(26005)(305945005)(106356001)(16586007)(478600001)(4720700003)(386003)(6666003)(25786009)(316002)(66066001)(97736004)(8936002)(4326008)(50466002)(48376002)(52116002)(51416003)(7696005)(68736007)(53936002)(72206003)(36756003)(105586002)(53416004)(2906002)(6486002)(47776003)(5660300001)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1776;H:linux-pyp0.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1776;23:bOh7wMNZR/CMnyhm7LSn+tV0rs9R/gQkuCFNfhE0Z?=
- =?us-ascii?Q?hdpeiSSEk6WtHFiJzKdFePmVTgJD5O13uuYr9esY2Aus4BZzGvFBrWUmbBVy?=
- =?us-ascii?Q?NtuKA0eBUCbx+5fHK6UlCr3W4fbqNfR8vDsn4xtRirT0YCiIy6Yxl2m/cFgA?=
- =?us-ascii?Q?kdgQlm0VvstbbjmcxXOU179ipXjnVZwsGRaILn0UEK/MXh1W3mvO7VvzPUKQ?=
- =?us-ascii?Q?XDVX1EZK9GluH6Kv8VMiPZ8Dt3yASMUf8JonUSAnCFWm5xM6BPKcQbDVFojd?=
- =?us-ascii?Q?KVc8YpSaHXTrg95GIXgMxWdodJxGX85+Yk6t2DNywSr0uzKSxSThLcm0I0tA?=
- =?us-ascii?Q?o6iKwtMqeq7uGdY58eqPMSG9OS1dL9fmVedrG7Ag9z/gTiqKyDfkvOciOpBk?=
- =?us-ascii?Q?ETG8CTf9uP8HJFQMM3jGl4fc2789RxE5fM06fYEREBCeHpJYPUkgNVBKTYBG?=
- =?us-ascii?Q?CqDNvmTxqOHCeEb3Y/1vC4QibnHzj+twD7h8ugohIZ4Iu39clVB37lk1OfRw?=
- =?us-ascii?Q?fRybcMV6IQ3iku75SMp4aOkItgBT45p0A+U3D6rUdFKl9aRpt6PTGguOFBpX?=
- =?us-ascii?Q?0cCyyV0jeMDoTt9eSl13I225pTvxbVRKPEJLmEwTIwIO17796bAMIpgyD29y?=
- =?us-ascii?Q?Nsvf7UGskBmfuCIZj6xtXSNQ6Ibe7vcBp4iIUKWtCW0wz28Q0oLda0utgSlh?=
- =?us-ascii?Q?epUYFtrEMKpMLnVRjxB9bfkOcWar31oiriOEI+3RB+kwyvGrbTIoFbt23iIa?=
- =?us-ascii?Q?LxG+SIGkcRkH4wa4sVEHw2QoyTuxs0JxY+UV/vwAadr1N//+71ErtEmaIrGG?=
- =?us-ascii?Q?YvxfPJkgrlVmFll0pje4BPjILw6erGvRNrNtCXQegJhYm91LIxYeaDxtaJcZ?=
- =?us-ascii?Q?jvVtFUGx+BZmG8zfh1UiumZg4bfQsRTz7aEZaFdSrAtECY0a0c0CqIRjTxdI?=
- =?us-ascii?Q?/vKJQuOZe/QJpyerskSJojGUNPjVDhTynmYOXc12snwh2mkWWrUBLfolzYzg?=
- =?us-ascii?Q?qqi9WdBSKUnIB8ZVpRbqXHAwsXpCokozxjwmJgmvx/p5c8+ioByEPr2rMgS7?=
- =?us-ascii?Q?1Gu+1Ag2SW+pXXz1FS8FuPk3M1e?=
-X-Microsoft-Antispam-Message-Info: kQPp3mK4WppqNPbfCsyTQhJhRGM0i5vnynFMXYyliHOKS61Huklz10Z4Ov2T7nQ8hWHni0mBcXRR5t/iMjqNRbegNb0jyheStb8W8qnsx8kGCBhbv8fK8VJ1F10YSsrnsidYeyIlMDVEf8xtiVp+Ikm0Mq9UxloAZLMxWr+8PGhmCpoSEBRWidkn84F52xl8
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;6:gjQz2GsV4XWBkjFWsWe0lUBq9oZLl3iLc7tB25BW/aFUDGzK+Hf3zZiYjwEducDmzQZKu6wx2yc37h0OKzPiot4w5sHuT9ZOFfqGUWPhUE0aoin9uPpm0pZAWym+tRpI/gKgYlKjXGDXMNY1jYDbEgdMgqxon9oH/WoFtvAYcJsBCquvVStzskTBtLJm2FJ7BU6Hmh76sfgQsLFPbLvDXhoX6X9swK8qtwuXbj9G1D5JISni5p0kVCdK9SG7GaJ6KHak4K/3RhT7+8RUdeYB35tF0SUqVO3HO3/wvSjYKbgvuJvkMLDen4bpu+KqENW/rKJqkNiVLrb7oG+EjjvOSf29bGzPMKjfys88SJxZF+M=;5:kpHBfWjVUGuHWB1Vsl9D7RaDFchzkPSpgHUTx4MtNQyDjt8BaxtjXuH2JvJM7fNetQU2TxW9x2bbM5LmymOggdK4yO+k2b0w+ywbXP1RpZnPihcL3zpoqQajGkOtKnTa7N5/1SpqCiiQzZPLeo7aRZJO9ChnDTb9eVRkoj0r2gw=;24:5q6J/98LsYjEdQHqKLE0IZdNM5DVJDYO06kCbID5V5ZuiZ3QXG7SW9Tz/ixF5alIvVPgogkNFULzX1wDJ69KoqQ40V9LnISOFK6KAIa+JwI=;7:NRy/x+OOXHWMLIDDEdMwrAPagGMahIUTnjcMqAO39CJ5rd44Ddjsr1TYXSDHxTzggBeHN6R5wrB0yL2rF8Yh9aZhoU/2Ht3R6WtDNqExXCgsXbZiTtRG2uU9kspNSkyBoNGaUSYcHGIPBzoElBm/Rc8o1QNUL9ddCWrGcZSu2wnsinxVezvqW4m7lcFFN0VHDrxr1QtM+YNTQDHsKuIoFY40upAwWzNy3bjJzfJGJkG/FlziKZaoVuQeYjllc02+
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(39860400002)(346002)(39380400002)(189003)(199004)(81166006)(8676002)(81156014)(50226002)(6116002)(7736002)(186003)(16526019)(3846002)(26005)(305945005)(106356001)(2950100002)(478600001)(4720700003)(386003)(6666003)(25786009)(316002)(59450400001)(66066001)(97736004)(8936002)(4326008)(50466002)(23676004)(52116002)(7696005)(68736007)(53936002)(76176011)(72206003)(36756003)(2870700001)(105586002)(53416004)(2906002)(6486002)(47776003)(5660300001)(86362001)(358055004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1776;H:linux-pyp0.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxNzc2OzIzOlI1TU5aMVNCMldva01QUmcxdnB5cE5wTDlr?=
+ =?utf-8?B?dVVyNkFvLzAvTm9yM0h5bmFxOWZ4MExSeU9NWFRWb2VDSmRFbDVyYkN5UTE4?=
+ =?utf-8?B?TkNBdmNodVczTFhwakJjLzFGWTI5aC9JTndqbjQzRWRINTFLQWh4VWVtRVNv?=
+ =?utf-8?B?a0RiMUlvbk1MdUZOcVluRzhVTjhabzJ4QmE2Z201TEFTY092SjFidlVOQVpV?=
+ =?utf-8?B?WTNWRlBreEVKdzhYVGQ2d3hwaXlMeUp3QnE4eG9qQW5mTzU2UmZIN2dhekVr?=
+ =?utf-8?B?WTMwTS9KSnE0bkNWd0ZDMm1IMkszUlFyRFlXYzF3QnA3aDVmZ0gycmVnNGtR?=
+ =?utf-8?B?ZWtHWHB5ckFleXJ0d2JPUTZsWXhWRkZlRE95TUw5cFdZYTdJek1aWHNEVTgr?=
+ =?utf-8?B?SDV2aWU5MUpvMHFTQWdYVkN3SzVIaGI1U1pRa1pXMzhzSW1oWFZVWlVkbnZl?=
+ =?utf-8?B?YlRadjB0YUxHdGlmSFpHV3UyVmQ5MWZ1UTUxd2tIY3E3SnZHcU0yK1lyRzkz?=
+ =?utf-8?B?SndKTGx1OHVSUEFUUXdVb1IwdjIrSjRNeWxRZ1RnZnBRa3UrTk80bmlhWHg3?=
+ =?utf-8?B?M2F2Z0wrSGhpQjVtTHo3Z3hJQ0ltUzdjV3NiOG9OS0JqWERWc2hSWEFRV3N1?=
+ =?utf-8?B?blQwdG5FZ0gzSmZHdjM2cEZ4Q0JKQ28rRWlrNmJ4bWtzL2x4WUhhK0NqWkdo?=
+ =?utf-8?B?aXJ6R0hTOERGY2M5QnU3ZFdqNUxyS0ZoVlYrMWNONUhpR2NzOW43cmVEUTNh?=
+ =?utf-8?B?d1BYcjIzMDNId1d4Sm1yNS9WTmhpVmJxdkEwdlJKbDJQMVhLRTEzNWRPcFkr?=
+ =?utf-8?B?OExaQldmWVl4dkZraTdseUQ5bE5GZWZ3Lzc0Nnhha3A1WWJZK2RsaW83bjMx?=
+ =?utf-8?B?QzRpekFyNHlUdHYrWWV0aTJqU0tobUFhSUphOTB3U1VGZlNPUWE5QVNDcklT?=
+ =?utf-8?B?Szc2QTg3ZG03YWdzenJhZFYvMUhuMDlyZnNUdVZJbHl2cXdZcE15bG16QVJX?=
+ =?utf-8?B?aGtxdkN1dDVtbHRuR3BDeW1xbmJPSkMyRkJ3RGdGMGZ2d1RjdEFDd0d3WHZL?=
+ =?utf-8?B?aE1FMXp1OEFWQ2dvSFFvK2pKR0JiUE5NbllYVmk2TnBYMExjc1JWalZlSDlM?=
+ =?utf-8?B?NklzZFBKMWFKSVZGMUU5WEZ3M1Fmbm94bVkrUzZZckdZOWlvdmhOUmdkUGhl?=
+ =?utf-8?B?ZldQUkVmTk9xbkNadlN1U2pscUJCbGRuUFdQWlVqUTZQd1VLaXNHTXFLOGFP?=
+ =?utf-8?B?UmlhaUtzaGpDdnd3K2dJQ1ZOSUJ1WlB6RVhEc3JxTlIvME5DaWg0eTVpZGxV?=
+ =?utf-8?B?ZllJRE8xOS8zenl0MjFmbWtmS0pwZDV1Nm5zSU94eXBxUDRpN0tCS1hudVhx?=
+ =?utf-8?B?aGp6U0JNQW1MT0hrQ2V6dExzVjkyU3E1NFhUMXN5VGxCQzFPeGxubTdjUmV3?=
+ =?utf-8?B?elYwR2dKLzJrNEp6RHhpQTJKeW5QTHAxSDgzWWRtazhwSzU5bjZ4MFUrS2tT?=
+ =?utf-8?B?Vk5hSGZ0dnI3czh4WEdqVHFqSkhOS0ZVdzZPSkQwQlFBbmtFWTMwMTVEbEZp?=
+ =?utf-8?B?RmQ1MXpacmljSU5Ec25rcEhHeXArS3c9PQ==?=
+X-Microsoft-Antispam-Message-Info: UrsQnh7EqPVtwPRzQUz/Ls0fCA7550Q4N5OB3715HhmSrhg5xnAHivxIs4JVNGzxHU7Igm1zoBiByD3t44ZEJhCosLoOVzhb9Lh8I1DjQedhIoMvFdy9TYd3etI7jid+hZlNB67NnraXOyEhy14Mu/IIe92Hae8QRwIf9Fl4QDZBl8sYF1mYmnHZkRYIO4wF
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;6:yg6N+wq2q/L9TS98cc82nj0kph3Nj6DxIiKgoihmDlYrz9tqGCcNubdgXaCSDaK7+N8H2B1JI97FYgrPv16C9vXT+rADG4clZBlfQX6yz8hDMECSVJz4xCHATzFyznXhzFssKsm7UpWO9LRKoclltjmDydeCLVUjLzW9MGvN7LV9/29XoOg3AAyYKQHbZ6RqNqnzYRPQpll/XKJvWIEh1Jwc64HrtNI0JzCDGmvK4GDTcTI5NuVG05XCZfhHyzDPN3X776CThfwpOEU5L1CvNdLTWSwhUDYUjGDuEDMOqf3b6aYzdaOTe1w0bj8SVELBy3lUU/5szQeJYyGkiPBw2UyQ64AsJ1YaMtGC96pNSRg=;5:rTsw4xmWQ/o77Cx6syi2y7LZHwolGuw0L8OmSfzIRXKdr6jWtXzKjdQT1ICiQndMJ70h9pSoqYQA5QsRtNivWZ8X1g/0xg+NFuRNxNyqrdQ+0Y+QhajHoupu9DywdQMV+4S+fd/ilsFrdY3YpicZqupgSkNyW8H+8TtOGGG6Wdo=;24:jVjTym3KPbGi1L2qnCH37obqGDReBVEJVW1uVOPuroobowgOq+39ZzMvn/pGDu6w9IxnX7OTnpEe9tMiqK9iirG/bHtCq8rVhHog4ERAu9Q=;7:IBOVYgQiqywAnEtNJueKKgtLxuL7vaLqwa8I8cZwyFGOTbBxgHHYZqII7m8GBN9FnVA0vSIqlh41dg+VFsW0opwOFsUpO7BoDnb3VNdbwlKQiRctr9P8/cp9lx48wykJXEzUe7atRe0BkIaSfAO28X8cbFZ9uIqUTNk3ObDsnvbr387SMiF/VbSb7peZrlaSRK0CG9LerdpMpaZx+bmnLn0Tz71M256D8qB1GdONj9xO8R8ElfKQVgpqRF6K6dip
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:JvN7PWwyQvb0L2LVd6pebw185TSLfBPx5lyY37Vfebi9b/i16m1NIe4BQifMZKm+addw/y529zvZCd+lWtF6Q7H+hGxmngeNX1J1+c0cJ4SlZDpI+mLmGN+l1gJ5SAnFdBM97tlWujA+JzPynbP2voVdIZQ5O3hqsy2HzhwXli6bfh0AqGcVZuKoiLfuWCgYOC2799RHlS8b/FislurXAkbTAQ4Ia8K4s8Da2X1gbu6+cxiZ9ofZ1McF67kMBrt9
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1776;20:rKoheN1ILhNeIVxUBHR65aCbj+dbvG5uyPa/gjgv+WkO5AsTVvkRS940qJwCYurcefLkQWTlTj2X8a1ROo3djzOH51QXQ/8CKqsOo++s/VS9WkyBGENkSE2LdbVHQ0ixMOyGR3dEA7M+5trpOzRcbxUpyiZpT6jV9b5/irKFzmk6mk4ctT9OlcBk9pzwmpKeWYeGN/hEm8kNrWmr60KvoZLYpBO7bCOO/T7sHpRTmolEHN0rjE4fUKeJlE2x36s4
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 20:37:49.0537 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2036fe8-3a60-4902-5bf5-08d58b7dc92e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 20:37:52.8348 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12150ad9-4e78-422e-5062-08d58b7dcb6f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1776
@@ -69,46 +80,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds PLE(pause loop exit) logic from VMX to SVM.
+Get rid of ple_window_actual_max, because its benefits are really
+minuscule and the logic is complicated.
 
-We have noticed considerable reduction in number of VMEXITS due to pause
-interceptions after these changes. Here are the numbers on one guest with
-32 vcpus on AMD EPYC system. We have used boot parameter idle=poll to
-simulate extensive pauses on the guest.
+The overflows(and underflow) are controlled in __ple_window_grow
+and _ple_window_shrink respectively.
 
-Here are VMEXITS in 10 seconds interval.
+Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+---
+ arch/x86/kvm/vmx.c | 22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
-#VMEXITS(in 10s) 	Before the change  After the change
-Pauses			810199			504
-Total			882184			325415
-
-v2:
-Handled most of the Radim's comments. Here are the changes.
-1. Fixed the module parameters to unsigned variants
-1. Kept the default pause_filter_count = 3000 for AMD.
-2. Removed the ple_window_actual_max parameter. Added a check
-   in __grow_ple_window to avoid overflow.
-3. Fixed the naming conventions for SVM module parameters.
-   They are now called as pause_filter_count, pause_filter_thresh,
-   pause_filter_shrink and pause_filter_grow.
-4. Taken care of intercept setting and clearing.
-5. Fixed few more text changes.
-
-v1:
-Initial RFC version
-
-Babu Moger (5):
-  KVM: VMX: Fix the module parameters for vmx
-  KVM: VMX: Remove ple_window_actual_max
-  KVM: VMX: Bring the common code to header file
-  KVM: SVM: Add pause filter threshold
-  KVM: SVM: Implement pause loop exit logic in SVM
-
- arch/x86/include/asm/svm.h |   3 +-
- arch/x86/kvm/svm.c         | 108 ++++++++++++++++++++++++++++++++++++++++++++-
- arch/x86/kvm/vmx.c         |  82 +++++++---------------------------
- arch/x86/kvm/x86.h         |  37 ++++++++++++++++
- 4 files changed, 161 insertions(+), 69 deletions(-)
-
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index c9a9080..b992d81 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -178,7 +178,6 @@
+ module_param(ple_window_shrink, uint, 0444);
+ 
+ /* Default is to compute the maximum so we can never overflow. */
+-static uint ple_window_actual_max = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
+ static uint ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
+ module_param(ple_window_max, uint, 0444);
+ 
+@@ -6645,14 +6644,12 @@ static uint __grow_ple_window(uint val)
+ 	if (ple_window_grow < 1)
+ 		return ple_window;
+ 
+-	val = min(val, ple_window_actual_max);
+-
+ 	if (ple_window_grow < ple_window)
+ 		val *= ple_window_grow;
+ 	else
+ 		val += ple_window_grow;
+ 
+-	return val;
++	return min(val, ple_window_max);
+ }
+ 
+ static uint __shrink_ple_window(uint val, uint modifier, uint minimum)
+@@ -6696,21 +6693,6 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
+ }
+ 
+ /*
+- * ple_window_actual_max is computed to be one grow_ple_window() below
+- * ple_window_max. (See __grow_ple_window for the reason.)
+- * This prevents overflows, because ple_window_max is int.
+- * ple_window_max effectively rounded down to a multiple of ple_window_grow in
+- * this process.
+- * ple_window_max is also prevented from setting vmx->ple_window < ple_window.
+- */
+-static void update_ple_window_actual_max(void)
+-{
+-	ple_window_actual_max =
+-			__shrink_ple_window(max(ple_window_max, ple_window),
+-			                    ple_window_grow, INT_MIN);
+-}
+-
+-/*
+  * Handler for POSTED_INTERRUPT_WAKEUP_VECTOR.
+  */
+ static void wakeup_handler(void)
+@@ -6876,8 +6858,6 @@ static __init int hardware_setup(void)
+ 	else
+ 		kvm_disable_tdp();
+ 
+-	update_ple_window_actual_max();
+-
+ 	/*
+ 	 * Only enable PML when hardware supports PML feature, and both EPT
+ 	 * and EPT A/D bit features are enabled -- PML depends on them to work.
 -- 
 1.8.3.1
