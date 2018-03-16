@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuDp6K4CGW6IjOS+kGjc4V5/+Ekpk39A6kBP6Ijlrjp64Y/0FZJDLyWdoBBwYn84JYkCGHw
-ARC-Seal: i=1; a=rsa-sha256; t=1521214614; cv=none;
+X-Google-Smtp-Source: AG47ELtVbNWZT017aSO2PhzZeYY9jZ9+eZzuSGsCLHvHg+BY1P7PWJcKbBJ1ClrfB0lF5ylLOFBH
+ARC-Seal: i=1; a=rsa-sha256; t=1521214611; cv=none;
         d=google.com; s=arc-20160816;
-        b=oDkdSxvT7lOeTU80dMKNkk/7eQdtIVAEq1kTxPX2pVU/zoqrFOeVeRgWhcVR/u8Tms
-         U5UiDV2CSr9kBzkS0WMs/UECfqLFQYkBb2sbwcSWJCE/VsDLZy9/iQDlkgv3RpT2ytyK
-         SpkfH6qbeI8i8bZCP//K0iefahgNCS9F3znNce3MnF1WXQhbKJcvm+jO+5lbO/Gl2SUr
-         wn6VTSKif5S4+ZJPaRNNWrH8MzQ0jJWop3Nq0APyj1ghzWko3pV6ZATjT80pKmrQibfr
-         Q6gv8agSVQP9pQ9T/MbadhZIxcH4FPyxij7z8T6TliU3KT2RvgfyH0ar63sWuYJAMseR
-         W2Cw==
+        b=VEUNLQnUeYEF0g59iKXD3hojc5E4zxb7THivg15NbG6jJEmW33cyplSOpqJuYuoG9q
+         Vxnh9SoutcuZOTkrpRbBCRMIXjSuNs7BGNW5qikIscSF83EcTQTxwsnk3JHQwVsKvONW
+         SUYDDTLrdya8gl/cvTo7f3h1j4V8ksnwtZZybLlSjCCcTjKDBuHDb167kHGfiyXaiADW
+         XzhHV/2fm8inAJAlePydd+I01vRk0BMctJCklp481G7CgSFK06sPWxhhHDvORRH3xhOH
+         pfACAnGs+4WMjGZYGoOjVxPpOeTi2jBSYJsf+trpsMOhq2+knFiqlANhSCs4Bk/7Tb8j
+         cyjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r+5foTHKAcg9ApSpAEyesywIfRaCRYAjqKQC2QSxdUE=;
-        b=Y9ojdk8mbl794bOH7OS7p+MQjVjRCoAxk/gDmy8wx5gq6SXhGSBLbvsJlKApjpNHYG
-         Z/t0sVzXEQhoGlRyfoJM7XuVJ5BLqumfUT//tluqjsDgnO/s+K++LiJEk71dhd/oDaLw
-         lkjtJAKJ83lOq4K3Aa+ibO/8IuUKMoWSgy9IrV1OHBkS9wct5km1vLCZU7Ro7joL5bMj
-         dh+gppfGvMzoRGCrySeXm6L9wGzUjFaRtVjI0LkBtDN0Scets9jM9DUh46kYSfUV0io/
-         0XaDBOlaxwsH1TZWfvi9fi+ii67YzutB8KbjiCc7AXx4g/P75kc/b09m4+a4TcGRcF2z
-         8cdw==
+        bh=ggOEnT9TVVhga6Tp+bIi4M+L0k+FmLjtTdykb37Nhck=;
+        b=JnNxqVBRV1//Ycd4HV4cMxJudYYIvgYjq1lCPNP8gQOw37JRfTX4zcU7spnUJvlmMS
+         dCx3EpPGZShgEAYe4zC7SP5GPdCfvmsgdf2oSoHC9h7VYlS/qsXEjQzvW0t90vH+myvw
+         sunDNvSoVMvpamAgM6ETa9ce4ezIz/+ifrQmZ5S1+Zc6Uw6YqbOaNESyV5FL6C+yC8HB
+         7pYG3bSQi5XkPHxnkQF4wAitz/f5x5rPGn/PDLktHdOE7o9kPCtJv829G5hKoBcOt6Lo
+         Ce940j/1tFeHUIDhTrC8OIUaHMqrkae9eRLITWskjZMPES86H/r0GaKDJ40DizBE9chz
+         GhYA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xingyu Chen <xingyu.chen@amlogic.com>,
-	Yixun Lan <yixun.lan@amlogic.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 034/109] clk: meson: gxbb: fix wrong clock for SARADC/SANA
-Date: Fri, 16 Mar 2018 16:23:03 +0100
-Message-Id: <20180316152331.813912773@linuxfoundation.org>
+Subject: [PATCH 4.14 033/109] ARM: dts: koelsch: Move cec_clock to root node
+Date: Fri, 16 Mar 2018 16:23:02 +0100
+Message-Id: <20180316152331.762985823@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109135350374663?=
-X-GMAIL-MSGID: =?utf-8?q?1595109135350374663?=
+X-GMAIL-THRID: =?utf-8?q?1595109132377182024?=
+X-GMAIL-MSGID: =?utf-8?q?1595109132377182024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +50,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
 
-[ Upstream commit 75eccf5ed83250c0aeaeeb76f7288254ac0a87b4 ]
+[ Upstream commit d72f4f03854d1225c72d682bf0e01377e7016419 ]
 
-According to the datasheet, in Meson-GXBB/GXL series,
-The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+cec-clock is a fixed clock generator that is not controlled by i2c5 and
+thus should not be a child of the i2c5 bus node. Rather, it should be
+a child of the root node of the DT.
 
-Test passed at gxl-s905x-p212 board.
-
-The following published datasheets are wrong and should be updated
-[1] GXBB v1.1.4
-[2] GXL v0.3_20170314
-
-Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
-Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 02a5ab18d366 ("ARM: dts: koelsch: Add CEC clock for HDMI transmitter")
+Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/meson/gxbb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1139,7 +1139,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_M
- static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
- static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
- static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
--static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-+static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
- static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
- static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
- static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-@@ -1190,7 +1190,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge,
- static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
- static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
- static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
--static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-+static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
- static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
- static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
- static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -278,6 +278,12 @@
+ 		};
+ 	};
+ 
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
++
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -642,12 +648,6 @@
+ 		};
+ 	};
+ 
+-	cec_clock: cec-clock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <12000000>;
+-	};
+-
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
