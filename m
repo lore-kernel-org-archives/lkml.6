@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2645812-1521191940-2-16225135632930735809
+X-Cyrus-Session-Id: sloti22d1t05-2571388-1521191926-2-10793130458405669445
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enfrro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -14,23 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521191940; b=UfxMmV+UwjNr//iMfS/rW/LHZv87j6Gv0ohbF/qSBSrGGPm
-    lWyduLdBacgNo5HWvt75+rc/pv9KqhMifKoded7nvRfwPEJuzeUQl5U1HJjWkTYL
-    NxxkaIanzVzZdMXc7vWHzqsSfNzGPrlcRGLZN9wW9Vg4T50rRsUqCwxHDeMrUAE+
-    cpxTCm1vd0AGN4PIqWhe6m7Um8XM/Pn8+Tsfs3zHrjhr6H1T/GDmUQK+qwPcVghb
-    gFRrh4egSJIwvmQo8gxfMquQTEf9i0ZvpWEmpv2C5jLhg+chDBMPmdpCTO3VN1v2
-    C68Fha3wibS27D2ORxcqW118D1CNpT+iTVZYb1g==
+    t=1521191926; b=L5xFgsqY9TPNqnVCzBcS8H441urFn4q5OcIsaQJOBfMrFyN
+    fVH+t3UsmkyAQRIdjx86ZYFsZxQGrGMxxRj5hi4s8DKmWqb+hc9CpxX/soeJ3R4y
+    TejQXc5Mvt6hC9huSDu0H0lQG5FF3h5GMi22cHm0Lqqv2pQPKrx4YxYybiF0YkCk
+    Knf0DLVsVB6kNnBj71zhsPaPu26JCIAR0v3hGA0MxzUrySGJKrfgR54jX7CwBMH+
+    UswJat9ZHH/BVIdMmgqQgFQMkDMKyriImoS1H4GUl+gIPJ0aBOAAyFq4oU73UNLS
+    XUxRTxSnktA/uGAG4bmGX/xyTTt1i6a9oDqZm3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521191940;
-    bh=Vd9ONbmXmhwAtTgxY2Fs/CG/KUPfhCATw+wnQ8sHVQY=; b=MtOdiy8+eNpU
-    DhRnrXTpWd9MZTpAHHkGqwwKYtxgB+r97iaWgdUGjRKhkgr62+urKT8/m3RdfLRM
-    AthLiDUwhVx4TVPQaC45k56W8yZ+yG4M5SMoq/R0PhDic9q4tbESqsnJJhu7ZRrY
-    +NfY7yJX9Kn+0YvclaJTTTbnxD29SN4ckqwGZSvYvTDALfaGOIu6xJs02+XeFCXh
-    R+wVqzaYiQxS2rm9wCLNho7su109pcg+tJ1r3dWBiASHoVNVMXJZSnvvEeeIkF2h
-    8WduuqxvvWVDcP6ouYlSYuo7AgsDnRHJ2QDdA+NeWo6o7hwFka0EqQcyAxZ3rXs9
-    +2rv1YFNeQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521191926;
+    bh=nlpoCTjIXJCC/TKk5/ZHvl5GgcxoP3gGQS88I3mRI90=; b=u7UP4ipL+MUM
+    8TyCEOZih7mXtaCLUEQ1xv9Ld9o6oTDvVxr3+TXyvAJwJLDZ0MyzrWaOXPut6Njq
+    m8YeWMgl3YsIRBaIZNAHpw5Sr2K7dovs7OE4FLaFhvBnWCijd0uuT5rFzMz+nV2g
+    POOXi0JjE0qT+InjUFqbTaKAEqvVxLqNOdMjsrzW/wP+GzJr8O1pfWYP3m1Q92BA
+    fzqXm0kbiuxbd4C3X/5sEXMG6BtBHpc6e7IGhMxhFC6GsEH7AavZQHpQfJhrPVku
+    VvS1r+P+JBmkFrufXVkUOVlFxNucbMjtD9Ug6qhCdOSMUMk5Mbyll8v6Cfi+irQ+
+    DVQcl8SHpA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -50,12 +50,12 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753318AbeCPJSR (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 05:18:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52770 "EHLO mx1.redhat.com"
+        id S1753364AbeCPJS0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 05:18:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52780 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753253AbeCPJSP (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Fri, 16 Mar 2018 05:18:15 -0400
+        id S1753253AbeCPJSS (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Fri, 16 Mar 2018 05:18:18 -0400
 From: Richard Guy Briggs <rgb@redhat.com>
 To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
         viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
         eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
         madzcar@gmail.com, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghau40 v2 4/5] add ausearch containerid support
-Date: Fri, 16 Mar 2018 05:12:28 -0400
-Message-Id: <1521191549-19764-5-git-send-email-rgb@redhat.com>
+Subject: [PATCH ghau40 v2 5/5] start normalization containerid support
+Date: Fri, 16 Mar 2018 05:12:29 -0400
+Message-Id: <1521191549-19764-6-git-send-email-rgb@redhat.com>
 In-Reply-To: <1521191549-19764-1-git-send-email-rgb@redhat.com>
 References: <1521191549-19764-1-git-send-email-rgb@redhat.com>
 Sender: linux-api-owner@vger.kernel.org
@@ -77,371 +77,23 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add support to ausearch for searching on the containerid field in
-records.
-
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- src/aureport-options.c |   1 +
- src/ausearch-llist.c   |   2 +
- src/ausearch-llist.h   |   1 +
- src/ausearch-match.c   |   3 +
- src/ausearch-options.c |  46 ++++++++++++-
- src/ausearch-options.h |   1 +
- src/ausearch-parse.c   | 171 +++++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 224 insertions(+), 1 deletion(-)
+ auparse/normalize_record_map.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/src/aureport-options.c b/src/aureport-options.c
-index 9b914ed..ffff436 100644
---- a/src/aureport-options.c
-+++ b/src/aureport-options.c
-@@ -62,6 +62,7 @@ const char *event_vmname = NULL;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int event_ppid = -1, event_session_id = -2;
-+unsigned long long int event_container_id = -2;
- int event_debug = 0, event_machine = -1;
+diff --git a/auparse/normalize_record_map.h b/auparse/normalize_record_map.h
+index 1507bb5..c529e2e 100644
+--- a/auparse/normalize_record_map.h
++++ b/auparse/normalize_record_map.h
+@@ -25,6 +25,7 @@
  
- /* These are used by aureport */
-diff --git a/src/ausearch-llist.c b/src/ausearch-llist.c
-index ef5503c..c910724 100644
---- a/src/ausearch-llist.c
-+++ b/src/ausearch-llist.c
-@@ -60,6 +60,7 @@ void list_create(llist *l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.container_id = -2;
- 	l->s.uuid = NULL;
- 	l->s.vmname = NULL;
- 	l->s.tuid = NULL;
-@@ -211,6 +212,7 @@ void list_clear(llist* l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.container_id = -2;
- 	free(l->s.uuid);
- 	l->s.uuid = NULL;
- 	free(l->s.vmname);
-diff --git a/src/ausearch-llist.h b/src/ausearch-llist.h
-index 64e4ee1..1c651c5 100644
---- a/src/ausearch-llist.h
-+++ b/src/ausearch-llist.h
-@@ -56,6 +56,7 @@ typedef struct
-   int arch;             // arch
-   int syscall;          // syscall
-   uint32_t session_id;  // Login session id
-+  __u64 container_id;// Container id
-   long long exit;       // Syscall exit code
-   int exit_is_set;      // Syscall exit code is valid
-   char *hostname;       // remote hostname
-diff --git a/src/ausearch-match.c b/src/ausearch-match.c
-index 61a11d3..51dccb0 100644
---- a/src/ausearch-match.c
-+++ b/src/ausearch-match.c
-@@ -113,6 +113,9 @@ int match(llist *l)
- 				if ((event_session_id != -2) &&
- 					(event_session_id != l->s.session_id))
- 					return 0;
-+				if ((event_container_id != -2) &&
-+					(event_container_id != l->s.container_id))
-+					return 0;
- 				if (event_exit_is_set) {
- 					if (l->s.exit_is_set == 0)
- 						return 0;
-diff --git a/src/ausearch-options.c b/src/ausearch-options.c
-index a3f08e7..1d095a7 100644
---- a/src/ausearch-options.c
-+++ b/src/ausearch-options.c
-@@ -60,6 +60,7 @@ int event_syscall = -1, event_machine = -1;
- int event_ua = 0, event_ga = 0, event_se = 0;
- int just_one = 0;
- uint32_t event_session_id = -2;
-+unsigned long long int event_container_id = -2;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int line_buffered = 0;
-@@ -88,7 +89,7 @@ struct nv_pair {
- 
- enum { S_EVENT, S_COMM, S_FILENAME, S_ALL_GID, S_EFF_GID, S_GID, S_HELP,
- S_HOSTNAME, S_INTERP, S_INFILE, S_MESSAGE_TYPE, S_PID, S_SYSCALL, S_OSUCCESS,
--S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID,
-+S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID, S_CONTAINERID,
- S_VERSION, S_EXACT_MATCH, S_EXECUTABLE, S_CONTEXT, S_SUBJECT, S_OBJECT,
- S_PPID, S_KEY, S_RAW, S_NODE, S_IN_LOGS, S_JUST_ONE, S_SESSION, S_EXIT,
- S_LINEBUFFERED, S_UUID, S_VMNAME, S_DEBUG, S_CHECKPOINT, S_ARCH, S_FORMAT,
-@@ -169,6 +170,7 @@ static struct nv_pair optiontab[] = {
- 	{ S_UUID, "--uuid" },
- 	{ S_LOGINID, "-ul" },
- 	{ S_LOGINID, "--loginuid" },
-+	{ S_CONTAINERID, "--containerid" },
- 	{ S_VERSION, "-v" },
- 	{ S_VERSION, "--version" },
- 	{ S_VMNAME, "-vm" },
-@@ -1182,6 +1184,48 @@ int check_params(int count, char *vars[])
- 			}
- 			c++;
- 			break;
-+		case S_CONTAINERID:
-+			if (!optarg) {
-+				if ((c+1 < count) && vars[c+1])
-+					optarg = vars[c+1];
-+				else {
-+					fprintf(stderr,
-+						"Argument is required for %s\n",
-+						vars[c]);
-+					retval = -1;
-+					break;
-+				}
-+			}
-+			{
-+			size_t len = strlen(optarg);
-+			if (isdigit(optarg[0])) {
-+				errno = 0;
-+				event_container_id = strtoull(optarg,NULL,0);
-+				if (errno) {
-+					fprintf(stderr, 
-+			"Numeric container ID conversion error (%s) for %s\n",
-+						strerror(errno), optarg);
-+					retval = -1;
-+				}
-+			} else if (len >= 2 && *(optarg)=='-' &&
-+					(isdigit(optarg[1]))) {
-+				errno = 0;
-+				event_container_id = strtoll(optarg, NULL, 0);
-+				if (errno) {
-+					retval = -1;
-+					fprintf(stderr, "Error converting %s\n",
-+						optarg);
-+				}
-+			} else {
-+				fprintf(stderr, 
-+			"Container ID is non-numeric and unknown (%s)\n",
-+						optarg);
-+				retval = -1;
-+				break;
-+			}
-+			}
-+			c++;
-+			break;
- 		case S_UUID:
- 			if (!optarg) {
- 				fprintf(stderr,
-diff --git a/src/ausearch-options.h b/src/ausearch-options.h
-index 1372762..b7830a1 100644
---- a/src/ausearch-options.h
-+++ b/src/ausearch-options.h
-@@ -40,6 +40,7 @@ extern int line_buffered;
- extern int event_debug;
- extern pid_t event_ppid;
- extern uint32_t event_session_id;
-+extern unsigned long long int event_container_id;
- extern ilist *event_type;
- 
- /* Data type to govern output format */
-diff --git a/src/ausearch-parse.c b/src/ausearch-parse.c
-index 07bad89..b9b49c4 100644
---- a/src/ausearch-parse.c
-+++ b/src/ausearch-parse.c
-@@ -52,6 +52,8 @@ static int parse_path(const lnode *n, search_items *s);
- static int parse_user(const lnode *n, search_items *s);
- static int parse_obj(const lnode *n, search_items *s);
- static int parse_login(const lnode *n, search_items *s);
-+static int parse_container(const lnode *n, search_items *s);
-+static int parse_container_info(const lnode *n, search_items *s);
- static int parse_daemon1(const lnode *n, search_items *s);
- static int parse_daemon2(const lnode *n, search_items *s);
- static int parse_sockaddr(const lnode *n, search_items *s);
-@@ -112,6 +114,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_LOGIN:
- 				ret = parse_login(n, s);
- 				break;
-+			case AUDIT_CONTAINER:
-+				ret = parse_container(n, s);
-+				break;
- 			case AUDIT_IPC:
- 			case AUDIT_OBJ_PID:
- 				ret = parse_obj(n, s);
-@@ -177,6 +182,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_TTY:
- 				ret = parse_tty(n, s);
- 				break;
-+			case AUDIT_CONTAINER_INFO:
-+				ret = parse_container_info(n, s);
-+				break;
- 			default:
- 				if (event_debug)
- 					fprintf(stderr,
-@@ -1379,6 +1387,169 @@ static int parse_login(const lnode *n, search_items *s)
- 	return 0;
- }
- 
-+static int parse_container(const lnode *n, search_items *s)
-+{
-+	char *ptr, *str, *term = n->message;
-+
-+	// skip op
-+	// get pid
-+	if (event_pid != -1) {
-+		str = strstr(term, "pid=");
-+		if (str == NULL)
-+			return 1;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 2;
-+		*term = 0;
-+		errno = 0;
-+		s->pid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 3;
-+		*term = ' ';
-+	}
-+	// get uid
-+	if (event_uid != -1 || event_tuid) {
-+		str = strstr(term, "uid=");
-+		if (str == NULL)
-+			return 4;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 5;
-+		*term = 0;
-+		errno = 0;
-+		s->uid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 6;
-+		*term = ' ';
-+		s->tuid = lookup_uid("uid", s->uid);
-+	}
-+	// get subj
-+	if (event_subject) {
-+		str = strstr(term, "subj=");
-+		if (str) {
-+			ptr = str + 5;
-+			term = strchr(ptr, ' ');
-+			if (term == NULL)
-+				return 12;
-+			*term = 0;
-+			if (audit_avc_init(s) == 0) {
-+				anode an;
-+
-+				anode_init(&an);
-+				an.scontext = strdup(str);
-+				alist_append(s->avc, &an);
-+				*term = ' ';
-+			} else
-+				return 13;
-+			*term = ' ';
-+		}
-+	}
-+	// get loginuid
-+	if (event_loginuid != -2 || event_tauid) {
-+		str = strstr(term, "auid=");
-+		if (str == NULL) {
-+			return 7;
-+		} else
-+			ptr = str + 5;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			*term = 0;
-+		errno = 0;
-+		s->loginuid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 8;
-+		if (term)
-+			*term = ' ';
-+		s->tauid = lookup_uid("auid", s->loginuid);
-+	}
-+	// skip tty
-+	// ses
-+	if (event_session_id != -2 ) {
-+		if (term == NULL)
-+			term = n->message;
-+		str = strstr(term, "ses=");
-+		if (str == NULL)
-+			return 14;
-+		else
-+			ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			*term = 0;
-+		errno = 0;
-+		s->session_id = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 11;
-+		if (term)
-+			*term = ' ';
-+	}
-+	// skip opid
-+	// skip old-contid
-+	// get containerid
-+	if (event_container_id != -2) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL) {
-+			return 7;
-+		} else
-+			ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			*term = 0;
-+		errno = 0;
-+		s->container_id = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 8;
-+		if (term)
-+			*term = ' ';
-+	}
-+	// success
-+	if (event_success != S_UNSET) {
-+		if (term == NULL)
-+			term = n->message;
-+		str = strstr(term, "res=");
-+		if (str != NULL) {
-+			ptr = str + 4;
-+			term = strchr(ptr, ' ');
-+			if (term)
-+				*term = 0;
-+			errno = 0;
-+			s->success = strtoul(ptr, NULL, 10);
-+			if (errno)
-+				return 9;
-+			if (term)
-+				*term = ' ';
-+		} else
-+			return 7;
-+	}
-+	return 0;
-+}
-+
-+static int parse_container_info(const lnode *n, search_items *s)
-+{
-+	char *ptr, *str, *term = n->message;
-+
-+	// skip op
-+	// get containerid
-+	if (event_container_id != -2) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL) {
-+			return 7;
-+		} else
-+			ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			*term = 0;
-+		errno = 0;
-+		s->container_id = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 8;
-+		if (term)
-+			*term = ' ';
-+	}
-+	return 0;
-+}
-+
- static int parse_daemon1(const lnode *n, search_items *s)
- {
- 	char *ptr, *str, *term, saved, *mptr;
+ _S(AUDIT_USER, "sent-message")
+ _S(AUDIT_LOGIN, "changed-login-id-to")
++_S(AUDIT_CONTAINER, "changed-container-id-to")
+ _S(AUDIT_USER_AUTH, "authenticated")
+ _S(AUDIT_USER_ACCT, "was-authorized")
+ _S(AUDIT_USER_MGMT, "modified-user-account")
 -- 
 1.8.3.1
 
