@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751607AbeCPVg1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 17:36:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43882 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeCPVgZ (ORCPT
+        id S1751829AbeCPVi4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 17:38:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45242 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751236AbeCPVix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 17:36:25 -0400
-X-Google-Smtp-Source: AG47ELueSBHVDwBkYFBCbtUDeD6iEg4abLS38Aza0Lrl4Wp4izlO7ML4gNt63VCB9Fi59QPPDcnjJw==
-From: Shakeel Butt <shakeelb@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Greg Thelen <gthelen@google.com>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        John Sperbeck <jsperbeck@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Subject: SIGSEGV on OSPKE machine
-Date: Fri, 16 Mar 2018 14:36:04 -0700
-Message-Id: <20180316213604.167305-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
+        Fri, 16 Mar 2018 17:38:53 -0400
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH v6 00/12] Appended signatures support for IMA appraisal
+In-reply-to: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+Date: Fri, 16 Mar 2018 18:38:38 -0300
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18031621-0016-0000-0000-00000867EAAB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008687; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01004048; UDB=6.00511032; IPR=6.00783338;
+ MB=3.00020080; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-16 21:38:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031621-0017-0000-0000-00003DDF48B5
+Message-Id: <87zi37og4h.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803160253
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-The following simple program is producing SIGSEGV on machines which have
-X86_FEATURE_OSPKE feature on 4.15 kernel.
+Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> writes:
 
-#include <sys/mman.h>
+> Now the modsig is only ignored if it references a signature that is not
+> present in IMA's keyring (or if there's a parsing error, obviously). If the
 
-int main(int argc, char *argv[])
-{
-	void *p = mmap(0, 4096, PROT_EXEC, MAP_ANONYMOUS|MAP_PRIVATE,
-		       -1, 0);
-	mprotect(p, 4096, PROT_NONE);
-	mprotect(p, 4096, PROT_READ);
-	(void)*(volatile unsigned char *)p;
-}
+The above should read "Now the modsig is only ignored if it references a
+*key* that is not present in IMA's keyring".
 
-On further inspection it seems like transition from PROT_EXEC to
-PROT_NONE leaves the exec-only pkey lingering in the vma flags.  That
-is, new_vma_pkey is non-zero in do_mprotect_pkey().  Later, then
-enabling PROT_READ, the pkey remains and overrides the normal page
-protections.
+Sorry, I only noticed the mistake after sending the emails.
 
-This change seems to help but is this the right way to solve it?
-
----
- arch/x86/mm/pkeys.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index d7bc0eea20a5..4a837a220516 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -94,6 +94,10 @@ int __arch_override_mprotect_pkey(struct vm_area_struct *vma, int prot, int pkey
- 	 */
- 	if (pkey != -1)
- 		return pkey;
-+
-+	if ((prot & (PROT_READ|PROT_WRITE|PROT_EXEC)) == 0)
-+		return 0;
-+
- 	/*
- 	 * Look for a protection-key-drive execute-only mapping
- 	 * which is now being given permissions that are not
--- 
-2.16.2.804.g6dcf76e118-goog
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
