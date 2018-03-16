@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3COXGzDEgBhEm+ISKStlRR/LVrHL128jxwdY6qXQMCQfd0au9YVmBSBskeeS3dmm794Jn
-ARC-Seal: i=1; a=rsa-sha256; t=1521214574; cv=none;
+X-Google-Smtp-Source: AG47ELvfsiKlIdG0VHWUOd9rL7ejh+Mw1adbevYVsu7RIVQ1Ml+8MMGSSFvXqoa7z+3L8qPGriZv
+ARC-Seal: i=1; a=rsa-sha256; t=1521214571; cv=none;
         d=google.com; s=arc-20160816;
-        b=RpHzKimPFCXW+ByOuKsE+LvqwJi3SpMxmJ+mjEjB6SPc0P2PZC5RzHy5+JsXwqmwOG
-         9ZdHCvCZf2dE/Z5c1Teew2yszaE3a9OWCg9w8mAbLlg9JFRrSsb9zxo+rMmxo47MxPpe
-         gW5h8H7W34UrkLRjdxnH8nAOtU0lgr/9OAQOYPeSoDWjT3CvgyES1Ty6ch/7ohfJXOY7
-         SjnOo8MGTBtbYxIKtAO5U+aGpzrVa5NNxNxbbAnvaJri3wd0wXxmERVxWAtIOnyQCF6r
-         PovpPSLhj4l3e6Fptc9u5xQopmce+VxdOKIXoCfAaxqvTO7GJt4Ejy6LYn/2HqIxSH6/
-         dxlg==
+        b=BCf0YWfgo1gHRYe6hLksHwAWCut4dt9yD1B7Mov/4icz+ohrujufkRdPVHPH+RoMYm
+         rjM79OdLtlh+riQYamRRjR71KGkZW0I7mAJNjAuanc8hGnr7MHZ9UQoTnpE+YjmPavvN
+         Has0l7mT0ViYC3AWgCjXxxNY8Ar9wLP/vQ4BbFDyylNgJhbcMnSRXAKOLpgcdjLKKODQ
+         rSx9YV9iMqhruqFumQpfQ2i7NW9vtZQ6LyMoh6YnCNPOPuuRbLquez/oGD9SWPuGlJVn
+         QHKBKjj2FOdQtPCXXUwCrd5CWUDdE/OPtNeibzY+2oBZJ0Q3fWfuw7+/0VqZ8efk16yb
+         X/7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=txbLnoIWiGhyJDlaqKrzfPVoAebu74T3mf3qusmgkoI=;
-        b=d24r208uXO/B21b+12A9PUhzzk0bPTZNP2+UfyR3W6xJ/QYr/aFZCS+s8TwsBif4Vg
-         3njB+CctYBco9JwwXMKwFCEqD0DJ6f8XwvKFN388xZFH1BGEnrAM8fV0Q8qKicO3fP7U
-         9UIAsf4hLU9BUM89vNiSPQhHMbeNzSKWsAyCoEtBtTas1rcF+Gphpo1RZbi01cVkYSxq
-         jxCYSp7r/iB0fdGJZjdUWUk/U2FDG+EsLg+jT+8AZmmwWWh/6jG1Xl7F6bFlLFYzhTpk
-         XLPiyCCMSt9FFtk/uyUveyd5OKxUxUffNv83zACqNzQntD1uNLqkN5aVuG2MpiumBBNF
-         hnLw==
+        bh=Uz6UCUCMVHrky2aMmTpUd1/7de4sESoNCEx9jd4iGAg=;
+        b=VJaNL9ML4MRi60eWI/c0DLl3pIob4MOczDk8l6PI3HdndSQPlCpSat+gJ+NgDEIwx8
+         arwPrd7fAwVYbuTpJ3FOqTFekSA36LXUjHUW2Wq5Qs6qDsIQyuowID5tAm2jkUDUw0Z1
+         SucLEl7cgK3a+kKouJE0xl5m+yD+TFOvOnkw++ixIvhWJIdwFhannk3E/x8XLY77mbCk
+         OJ+Bd+uMnbg1RfUEt7cSjzRuheNVdCKOqXBObmTxPY13nWONIzwkO+rbCXyR5ZmmPHEp
+         IuKdDdN4LkOVSCytYWddswJ/eGhwS/0HqojbE9RiXiEONSHzS3eV8fyO0cQXJNshUuhg
+         pgmw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yossef Efraim <yossefe@mellanox.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
+	Ian Kent <raven@themaw.net>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/109] xfrm: Fix xfrm_replay_overflow_offload_esn
-Date: Fri, 16 Mar 2018 16:23:23 +0100
-Message-Id: <20180316152332.896959188@linuxfoundation.org>
+Subject: [PATCH 4.14 053/109] userns: Dont fail follow_automount based on s_user_ns
+Date: Fri, 16 Mar 2018 16:23:22 +0100
+Message-Id: <20180316152332.845764016@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109093729326146?=
-X-GMAIL-MSGID: =?utf-8?q?1595109093729326146?=
+X-GMAIL-THRID: =?utf-8?q?1595109090594701612?=
+X-GMAIL-MSGID: =?utf-8?q?1595109090594701612?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yossef Efraim <yossefe@mellanox.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
 
-[ Upstream commit 0ba23a211360af7b6658e4fcfc571970bbbacc55 ]
+[ Upstream commit bbc3e471011417598e598707486f5d8814ec9c01 ]
 
-In case of wrap around, replay_esn->oseq_hi is not updated
-before it is tested for it's actual value, leading function
-to fail with overflow indication and packets being dropped.
+When vfs_submount was added the test to limit automounts from
+filesystems that with s_user_ns != &init_user_ns accidentially left
+in follow_automount.  The test was never about any security concerns
+and was always about how do we implement this for filesystems whose
+s_user_ns != &init_user_ns.
 
-This patch updates replay_esn->oseq_hi in the right place.
+At the moment this check makes no difference as there are no
+filesystems that both set FS_USERNS_MOUNT and implement d_automount.
 
-Fixes: d7dbefc45cf5 ("xfrm: Add xfrm_replay_overflow functions for offloading")
-Signed-off-by: Yossef Efraim <yossefe@mellanox.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Remove this check now while I am thinking about it so there will not
+be odd booby traps for someone who does want to make this combination
+work.
+
+vfs_submount still needs improvements to allow this combination to work,
+and vfs_submount contains a check that presents a warning.
+
+The autofs4 filesystem could be modified to set FS_USERNS_MOUNT and it would
+need not work on this code path, as userspace performs the mounts.
+
+Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
+Fixes: aeaa4a79ff6a ("fs: Call d_automount with the filesystems creds")
+Acked-by:  Ian Kent <raven@themaw.net>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_replay.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/namei.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/net/xfrm/xfrm_replay.c
-+++ b/net/xfrm/xfrm_replay.c
-@@ -666,7 +666,7 @@ static int xfrm_replay_overflow_offload_
- 		if (unlikely(oseq < replay_esn->oseq)) {
- 			XFRM_SKB_CB(skb)->seq.output.hi = ++oseq_hi;
- 			xo->seq.hi = oseq_hi;
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1133,9 +1133,6 @@ static int follow_automount(struct path
+ 	    path->dentry->d_inode)
+ 		return -EISDIR;
+ 
+-	if (path->dentry->d_sb->s_user_ns != &init_user_ns)
+-		return -EACCES;
 -
-+			replay_esn->oseq_hi = oseq_hi;
- 			if (replay_esn->oseq_hi == 0) {
- 				replay_esn->oseq--;
- 				replay_esn->oseq_hi--;
-@@ -678,7 +678,6 @@ static int xfrm_replay_overflow_offload_
- 		}
- 
- 		replay_esn->oseq = oseq;
--		replay_esn->oseq_hi = oseq_hi;
- 
- 		if (xfrm_aevent_is_on(net))
- 			x->repl->notify(x, XFRM_REPLAY_UPDATE);
+ 	nd->total_link_count++;
+ 	if (nd->total_link_count >= 40)
+ 		return -ELOOP;
