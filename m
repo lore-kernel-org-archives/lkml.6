@@ -1,61 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965236AbeCPPxs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:53:48 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51374 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754150AbeCPPxo (ORCPT
+        id S934540AbeCPPzn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:55:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49838 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753465AbeCPPzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:53:44 -0400
-Date: Fri, 16 Mar 2018 15:53:07 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, kishon@ti.com, gregory.clement@bootlin.com,
-        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 02/10] net: phy: phylink: allow 10GKR interface
- to use in-band negotiation
-Message-ID: <20180316155307.GQ9418@n2100.armlinux.org.uk>
-References: <20180316103351.16616-1-antoine.tenart@bootlin.com>
- <20180316103351.16616-3-antoine.tenart@bootlin.com>
+        Fri, 16 Mar 2018 11:55:40 -0400
+Date: Fri, 16 Mar 2018 15:55:38 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: Niklas Cassel <niklass@axis.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dcache: remove trailing whitespace
+Message-ID: <20180316155538.GD30522@ZenIV.linux.org.uk>
+References: <20180316143400.8698-1-niklas.cassel@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316103351.16616-3-antoine.tenart@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180316143400.8698-1-niklas.cassel@axis.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 11:33:43AM +0100, Antoine Tenart wrote:
-> The PHY mode 10GKR can use in-band negotiation. This patches allows this
-> mode to be used with MLO_AN_INBAND in phylink.
+On Fri, Mar 16, 2018 at 03:34:00PM +0100, Niklas Cassel wrote:
+> Remove trailing whitespace.
+> Remove empty line and trailing whitespace after function comments.
+> Remove an extra space in one of the comments.
+> Fix a typo in of the comments.
 > 
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 > ---
->  drivers/net/phy/phylink.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> index 51a011a349fe..7224b005f0dd 100644
-> --- a/drivers/net/phy/phylink.c
-> +++ b/drivers/net/phy/phylink.c
-> @@ -768,7 +768,8 @@ int phylink_of_phy_connect(struct phylink *pl, struct device_node *dn,
->  	/* Fixed links and 802.3z are handled without needing a PHY */
->  	if (pl->link_an_mode == MLO_AN_FIXED ||
->  	    (pl->link_an_mode == MLO_AN_INBAND &&
-> -	     phy_interface_mode_is_8023z(pl->link_interface)))
-> +	     (phy_interface_mode_is_8023z(pl->link_interface) ||
-> +	      pl->link_interface == PHY_INTERFACE_MODE_10GKR)))
+> I know that these type of patches are not really appreciated,
+> however, there is enough trailing whitespace in this file to
+> distract me from reading the real code.
 
-There is no inband negotiation like there is with 802.3z or SGMII,
-so this makes no sense.
+No, they are not, and here's why:
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Applying: dcache: remove trailing whitespace
+error: patch failed: fs/dcache.c:254
+error: fs/dcache.c: patch does not apply
+Patch failed at 0001 dcache: remove trailing whitespace
+
+... which, BTW, happens in *all* branches.  If you do that kind
+of stuff, at least do it against something in the public trees
+and _tell_ _what_ _it_ _is_ _against_.
+
+Or send a sed script for doing that[1] - even Linus takes those
+for search-and-replace stuff.
+
+[1] sed -i -e 's/[[:space:]]*$//' fs/dcache.c
+or, if you are not sending to Linus,
+ed fs/dcache.c <<'EOF'
+%s/[[:space:]]*$//
+wq
+EOF
+
+Not applied.  Please, do it sanely.  BTW, which editor is _that_
+annoying?  Anything that shoves trailing whitespace in my face
+would've been either configured (with considerable cursing at
+the people who'd set such defaults) or, should that prove
+impossible, given a boot...
