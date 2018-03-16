@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs2kdzQ8pUtpHvQvTJKrIjbYXBL924/WOhuE6MTTfIgozuMw4NwIe9C8dddeBPQsukObPPd
-ARC-Seal: i=1; a=rsa-sha256; t=1521214743; cv=none;
+X-Google-Smtp-Source: AG47ELttaEBgq16wvtnelHADWz76De0yD5eQyb0CAacABb/siPentjTKPXS7lKvV9b9aufSUgIoz
+ARC-Seal: i=1; a=rsa-sha256; t=1521214740; cv=none;
         d=google.com; s=arc-20160816;
-        b=MsHU8NkZENSxC6dAWOIgCe6pz1BHaSJ+wt4Oo9pQqSgoMSLz+PJeOUxOc25rnDRm1S
-         zgDY7aP/9IyaZyL8kYKNyPU+9nX0EOsD+zgOKKDSLwBcJpX2GdydufQ903HsBPNnIoHp
-         njaNnzCa21pKO6Mcp+FjqjR6VCJG7EQ9avvD7/0zgzqUE0DtJhSQVQ4NwmWG33S3Cp9W
-         5hesOw+pNHJDkJnN/taXG7I5A3ZIz5rJwQiUNdYz3nsmCJ6YnKu+q5/COsskPiygGdah
-         6AblUwM6EIq3Tdv4bvQGexsGe0Uj6ZX+02KQodL3MjCxCaL67l9MBoLukt9FXTdMam/I
-         9xzw==
+        b=DIcs2vr/hxye8XTwdi5d2tx5RkiO1Fh16gYnZ9eP3ID5omPpA4VFwreFOhJLx3BhoJ
+         UXQP1EPjXheyi6cjhM34Rus88UpVI3/kVu7zcHObrEI/ieF6Ki4KSNbYJyVssA+D7yo5
+         wvr7twzSE3r2+AyJ+uqc+w6ackdptnnqLUDdWbTRTv7J2Gz4HBt7AXb/zHfyfNvp/d5c
+         gXovBvCAaVh0+aDuIWWOfvhZ9Fa0wBCVGcSU6P0eTLUh4rT8CBKflfAEvW4bJcNSiPR/
+         REiyNrmPWBKAe8voV5jB3kooVOlLjs4uSCE46243DJGfaCqA4AaOL73IH54GqeHamhYO
+         0Ttg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qXvf3SO8Ouc+UJeFb94Dfyh8mD4wC4WZxRb6ERRgI5M=;
-        b=GfpvM9JC4MmsfgSthieN5pS/beidZjoDUGPDzRJ66KTB5TE2BfSY9IyW5hY6dkTB0R
-         jUN8WAbHl22xfKrnDkLJT8rExJstDtdkICxvplIueULaU2ffB7DX15VJq6vphIfZYTzM
-         LAkV08vAhbyoeSpoTmr3El04jPbrQS7HxjcNT4oE+6fQSxqgeS/1wTbat4vSFUpU6cfb
-         g2qvSZY0P2Iy69bjYX3ybhTjXJB2ECLQLJ+QCqZH3qiTZk03diY9Gh4AdE5LU6JtiDpi
-         ux46vyWnYG+F7gAaDJihcToAMvUhX4G7uDqYZpPpbzjoQ05kdr8zhAO39kkR1TKZrCur
-         1bQQ==
+        bh=RK1/+JV5WbrWjAMqluuNZw1tGCsnxK2GH5hFCZslYfQ=;
+        b=Na01WN1HqyILyW1ito9bWaOkzQzX2ZBjhS3hqD+uJoC1U/lMPcHJCcXsoM/UT9FcXL
+         nvIfx19dEAKLosrxoi3ugPl9+6X9+XgynViMEZpymAbGXw40F9m2hj58HLzJQ9n/iQOy
+         0goPt50PxEYW4dj1SN6VkN7vg6X9rcoBzZ+ARQgJBjA+20kuhZdhQY5YqXNQpMThUtnu
+         uMTEyO/hSRE1pWBX5D13t3pbU2T9aaok9gPJaKW2c8o2oMsOmgc/PMfFroSXYQhoChcE
+         eLml5m8DJlLeeuLx2T6kL31bBvpWEqrjZMyBHY3GfhPq2++splGcfveQChfI7lxqtFGH
+         CM8w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Davidlohr Bueso <dbueso@suse.de>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 106/109] ima: relax requiring a file signature for new files with zero length
-Date: Fri, 16 Mar 2018 16:24:15 +0100
-Message-Id: <20180316152335.598768675@linuxfoundation.org>
+Subject: [PATCH 4.14 105/109] locking/locktorture: Fix num reader/writer corner cases
+Date: Fri, 16 Mar 2018 16:24:14 +0100
+Message-Id: <20180316152335.544518276@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109271252967331?=
-X-GMAIL-MSGID: =?utf-8?q?1595109271252967331?=
+X-GMAIL-THRID: =?utf-8?q?1595109267893386747?=
+X-GMAIL-MSGID: =?utf-8?q?1595109267893386747?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +51,144 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
 
-[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
+[ Upstream commit 2ce77d16db4240dd2e422fc0a5c26d3e2ec03446 ]
 
-Custom policies can require file signatures based on LSM labels.  These
-files are normally created and only afterwards labeled, requiring them
-to be signed.
+Things can explode for locktorture if the user does combinations
+of nwriters_stress=0 nreaders_stress=0. Fix this by not assuming
+we always want to torture writer threads.
 
-Instead of requiring file signatures based on LSM labels, entire
-filesystems could require file signatures.  In this case, we need the
-ability of writing new files without requiring file signatures.
-
-The definition of a "new" file was originally defined as any file with
-a length of zero.  Subsequent patches redefined a "new" file to be based
-on the FILE_CREATE open flag.  By combining the open flag with a file
-size of zero, this patch relaxes the file signature requirement.
-
-Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Reported-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/ima/ima_appraise.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/locking/locktorture.c |   76 ++++++++++++++++++++++++-------------------
+ 1 file changed, 44 insertions(+), 32 deletions(-)
 
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -223,7 +223,8 @@ int ima_appraise_measurement(enum ima_ho
- 		if (opened & FILE_CREATED)
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
--		    !(iint->flags & IMA_DIGSIG_REQUIRED))
-+		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-+		     (inode->i_size == 0)))
- 			status = INTEGRITY_PASS;
- 		goto out;
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -715,8 +715,7 @@ static void __torture_print_stats(char *
+ {
+ 	bool fail = 0;
+ 	int i, n_stress;
+-	long max = 0;
+-	long min = statp[0].n_lock_acquired;
++	long max = 0, min = statp ? statp[0].n_lock_acquired : 0;
+ 	long long sum = 0;
+ 
+ 	n_stress = write ? cxt.nrealwriters_stress : cxt.nrealreaders_stress;
+@@ -823,7 +822,7 @@ static void lock_torture_cleanup(void)
+ 	 * such, only perform the underlying torture-specific cleanups,
+ 	 * and avoid anything related to locktorture.
+ 	 */
+-	if (!cxt.lwsa)
++	if (!cxt.lwsa && !cxt.lrsa)
+ 		goto end;
+ 
+ 	if (writer_tasks) {
+@@ -898,6 +897,13 @@ static int __init lock_torture_init(void
+ 		firsterr = -EINVAL;
+ 		goto unwind;
  	}
++
++	if (nwriters_stress == 0 && nreaders_stress == 0) {
++		pr_alert("lock-torture: must run at least one locking thread\n");
++		firsterr = -EINVAL;
++		goto unwind;
++	}
++
+ 	if (cxt.cur_ops->init)
+ 		cxt.cur_ops->init();
+ 
+@@ -921,17 +927,19 @@ static int __init lock_torture_init(void
+ #endif
+ 
+ 	/* Initialize the statistics so that each run gets its own numbers. */
++	if (nwriters_stress) {
++		lock_is_write_held = 0;
++		cxt.lwsa = kmalloc(sizeof(*cxt.lwsa) * cxt.nrealwriters_stress, GFP_KERNEL);
++		if (cxt.lwsa == NULL) {
++			VERBOSE_TOROUT_STRING("cxt.lwsa: Out of memory");
++			firsterr = -ENOMEM;
++			goto unwind;
++		}
+ 
+-	lock_is_write_held = 0;
+-	cxt.lwsa = kmalloc(sizeof(*cxt.lwsa) * cxt.nrealwriters_stress, GFP_KERNEL);
+-	if (cxt.lwsa == NULL) {
+-		VERBOSE_TOROUT_STRING("cxt.lwsa: Out of memory");
+-		firsterr = -ENOMEM;
+-		goto unwind;
+-	}
+-	for (i = 0; i < cxt.nrealwriters_stress; i++) {
+-		cxt.lwsa[i].n_lock_fail = 0;
+-		cxt.lwsa[i].n_lock_acquired = 0;
++		for (i = 0; i < cxt.nrealwriters_stress; i++) {
++			cxt.lwsa[i].n_lock_fail = 0;
++			cxt.lwsa[i].n_lock_acquired = 0;
++		}
+ 	}
+ 
+ 	if (cxt.cur_ops->readlock) {
+@@ -948,19 +956,21 @@ static int __init lock_torture_init(void
+ 			cxt.nrealreaders_stress = cxt.nrealwriters_stress;
+ 		}
+ 
+-		lock_is_read_held = 0;
+-		cxt.lrsa = kmalloc(sizeof(*cxt.lrsa) * cxt.nrealreaders_stress, GFP_KERNEL);
+-		if (cxt.lrsa == NULL) {
+-			VERBOSE_TOROUT_STRING("cxt.lrsa: Out of memory");
+-			firsterr = -ENOMEM;
+-			kfree(cxt.lwsa);
+-			cxt.lwsa = NULL;
+-			goto unwind;
+-		}
+-
+-		for (i = 0; i < cxt.nrealreaders_stress; i++) {
+-			cxt.lrsa[i].n_lock_fail = 0;
+-			cxt.lrsa[i].n_lock_acquired = 0;
++		if (nreaders_stress) {
++			lock_is_read_held = 0;
++			cxt.lrsa = kmalloc(sizeof(*cxt.lrsa) * cxt.nrealreaders_stress, GFP_KERNEL);
++			if (cxt.lrsa == NULL) {
++				VERBOSE_TOROUT_STRING("cxt.lrsa: Out of memory");
++				firsterr = -ENOMEM;
++				kfree(cxt.lwsa);
++				cxt.lwsa = NULL;
++				goto unwind;
++			}
++
++			for (i = 0; i < cxt.nrealreaders_stress; i++) {
++				cxt.lrsa[i].n_lock_fail = 0;
++				cxt.lrsa[i].n_lock_acquired = 0;
++			}
+ 		}
+ 	}
+ 
+@@ -990,12 +1000,14 @@ static int __init lock_torture_init(void
+ 			goto unwind;
+ 	}
+ 
+-	writer_tasks = kzalloc(cxt.nrealwriters_stress * sizeof(writer_tasks[0]),
+-			       GFP_KERNEL);
+-	if (writer_tasks == NULL) {
+-		VERBOSE_TOROUT_ERRSTRING("writer_tasks: Out of memory");
+-		firsterr = -ENOMEM;
+-		goto unwind;
++	if (nwriters_stress) {
++		writer_tasks = kzalloc(cxt.nrealwriters_stress * sizeof(writer_tasks[0]),
++				       GFP_KERNEL);
++		if (writer_tasks == NULL) {
++			VERBOSE_TOROUT_ERRSTRING("writer_tasks: Out of memory");
++			firsterr = -ENOMEM;
++			goto unwind;
++		}
+ 	}
+ 
+ 	if (cxt.cur_ops->readlock) {
