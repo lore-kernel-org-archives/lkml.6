@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753234AbeCPUSy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:18:54 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57132 "EHLO
+        id S932257AbeCPUT2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:19:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57143 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbeCPUSt (ORCPT
+        with ESMTP id S1753133AbeCPUSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:18:49 -0400
+        Fri, 16 Mar 2018 16:18:52 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: Joerg Roedel <joro@8bytes.org>
 Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 06/10] iommu/amd: remove the special case from get_irq_table()
-Date: Fri, 16 Mar 2018 21:18:32 +0100
-Message-Id: <20180316201836.7864-7-bigeasy@linutronix.de>
+Subject: [PATCH 09/10] iommu/amd: drop the lock while allocating new irq remap table
+Date: Fri, 16 Mar 2018 21:18:35 +0100
+Message-Id: <20180316201836.7864-10-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316201836.7864-1-bigeasy@linutronix.de>
 References: <20180316201836.7864-1-bigeasy@linutronix.de>
@@ -23,134 +23,136 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_irq_table() has a special ioapic argument. If set then it will
-pre-allocate / reserve the first 32 indexes. The argument is only once
-true and it would make get_irq_table() a little simpler if we would
-extract the special bits to the caller.
+The irq_remap_table is allocated while the iommu_table_lock is held with
+interrupts disabled. While this works it makes RT scream very loudly.
+>From looking at the call sites, all callers are in the early device
+initialisation (apic_bsp_setup(), pci_enable_device(),
+pci_enable_msi()) so make sense to drop the lock which also enables
+interrupts and try to allocate that memory with GFP_KERNEL instead
+GFP_ATOMIC.
+
+Since during the allocation the iommu_table_lock is dropped, we need to
+recheck if table exists after the lock has been reacquired. I *think*
+that it is impossible that the "devid" entry appears in irq_lookup_table
+while the lock is dropped since the same device can only be probed once.
+It is more likely that another device added an `alias' entry. However I
+check for both cases, just to be sure.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/iommu/amd_iommu.c | 42 ++++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ drivers/iommu/amd_iommu.c | 65 +++++++++++++++++++++++++++++++++----------=
+----
+ 1 file changed, 46 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 30ad2a3fbe15..e1628ff5f6bd 100644
+index 7dd4c27a941d..0a7ca5e95288 100644
 --- a/drivers/iommu/amd_iommu.c
 +++ b/drivers/iommu/amd_iommu.c
-@@ -3602,7 +3602,7 @@ static void set_dte_irq_entry(u16 devid, struct irq_r=
-emap_table *table)
+@@ -3602,6 +3602,30 @@ static void set_dte_irq_entry(u16 devid, struct irq_=
+remap_table *table)
  	amd_iommu_dev_table[devid].data[2] =3D dte;
  }
 =20
--static struct irq_remap_table *get_irq_table(u16 devid, bool ioapic)
-+static struct irq_remap_table *get_irq_table(u16 devid)
++static struct irq_remap_table *alloc_irq_table(void)
++{
++	struct irq_remap_table *table;
++
++	table =3D kzalloc(sizeof(*table), GFP_ATOMIC);
++	if (!table)
++		return NULL;
++
++	table->table =3D kmem_cache_alloc(amd_iommu_irq_cache, GFP_KERNEL);
++	if (!table->table) {
++		kfree(table);
++		return NULL;
++	}
++	raw_spin_lock_init(&table->lock);
++
++	if (!AMD_IOMMU_GUEST_IR_GA(amd_iommu_guest_ir))
++		memset(table->table, 0,
++		       MAX_IRQS_PER_TABLE * sizeof(u32));
++	else
++		memset(table->table, 0,
++		       (MAX_IRQS_PER_TABLE * (sizeof(u64) * 2)));
++	return table;
++}
++
+ static void set_remap_table_entry(struct amd_iommu *iommu, u16 devid,
+ 				  struct irq_remap_table *table)
+ {
+@@ -3613,6 +3637,7 @@ static void set_remap_table_entry(struct amd_iommu *i=
+ommu, u16 devid,
+ static struct irq_remap_table *get_irq_table(u16 devid)
  {
  	struct irq_remap_table *table =3D NULL;
++	struct irq_remap_table *new_table =3D NULL;
  	struct amd_iommu *iommu;
-@@ -3636,10 +3636,6 @@ static struct irq_remap_table *get_irq_table(u16 dev=
-id, bool ioapic)
- 	/* Initialize table spin-lock */
- 	raw_spin_lock_init(&table->lock);
+ 	unsigned long flags;
+ 	u16 alias;
+@@ -3631,42 +3656,44 @@ static struct irq_remap_table *get_irq_table(u16 de=
+vid)
+ 	table =3D irq_lookup_table[alias];
+ 	if (table) {
+ 		set_remap_table_entry(iommu, devid, table);
+-		goto out;
++		goto out_wait;
+ 	}
++	raw_spin_unlock_irqrestore(&iommu_table_lock, flags);
 =20
--	if (ioapic)
--		/* Keep the first 32 indexes free for IOAPIC interrupts */
--		table->min_index =3D 32;
--
- 	table->table =3D kmem_cache_alloc(amd_iommu_irq_cache, GFP_ATOMIC);
- 	if (!table->table) {
- 		kfree(table);
-@@ -3654,12 +3650,6 @@ static struct irq_remap_table *get_irq_table(u16 dev=
-id, bool ioapic)
- 		memset(table->table, 0,
- 		       (MAX_IRQS_PER_TABLE * (sizeof(u64) * 2)));
-=20
--	if (ioapic) {
--		int i;
--
--		for (i =3D 0; i < 32; ++i)
--			iommu->irte_ops->set_allocated(table, i);
--	}
-=20
- 	irq_lookup_table[devid] =3D table;
- 	set_dte_irq_entry(devid, table);
-@@ -3689,7 +3679,7 @@ static int alloc_irq_index(u16 devid, int count, bool=
- align)
- 	if (!iommu)
- 		return -ENODEV;
-=20
--	table =3D get_irq_table(devid, false);
-+	table =3D get_irq_table(devid);
- 	if (!table)
- 		return -ENODEV;
-=20
-@@ -3740,7 +3730,7 @@ static int modify_irte_ga(u16 devid, int index, struc=
-t irte_ga *irte,
- 	if (iommu =3D=3D NULL)
- 		return -EINVAL;
-=20
--	table =3D get_irq_table(devid, false);
-+	table =3D get_irq_table(devid);
- 	if (!table)
- 		return -ENOMEM;
-=20
-@@ -3773,7 +3763,7 @@ static int modify_irte(u16 devid, int index, union ir=
-te *irte)
- 	if (iommu =3D=3D NULL)
- 		return -EINVAL;
-=20
--	table =3D get_irq_table(devid, false);
-+	table =3D get_irq_table(devid);
- 	if (!table)
- 		return -ENOMEM;
-=20
-@@ -3797,7 +3787,7 @@ static void free_irte(u16 devid, int index)
- 	if (iommu =3D=3D NULL)
- 		return;
-=20
--	table =3D get_irq_table(devid, false);
-+	table =3D get_irq_table(devid);
- 	if (!table)
- 		return;
-=20
-@@ -4115,10 +4105,26 @@ static int irq_remapping_alloc(struct irq_domain *d=
-omain, unsigned int virq,
- 		return ret;
-=20
- 	if (info->type =3D=3D X86_IRQ_ALLOC_TYPE_IOAPIC) {
--		if (get_irq_table(devid, true))
-+		struct irq_remap_table *table;
-+		struct amd_iommu *iommu;
+ 	/* Nothing there yet, allocate new irq remapping table */
+-	table =3D kzalloc(sizeof(*table), GFP_ATOMIC);
+-	if (!table)
++	new_table =3D alloc_irq_table();
++	if (!new_table)
++		return NULL;
 +
-+		table =3D get_irq_table(devid);
-+		if (table) {
-+			if (!table->min_index) {
-+				/*
-+				 * Keep the first 32 indexes free for IOAPIC
-+				 * interrupts.
-+				 */
-+				table->min_index =3D 32;
-+				iommu =3D amd_iommu_rlookup_table[devid];
-+				for (i =3D 0; i < 32; ++i)
-+					iommu->irte_ops->set_allocated(table, i);
-+			}
- 			index =3D info->ioapic_pin;
--		else
-+			WARN_ON(table->min_index !=3D 32);
-+		} else {
- 			ret =3D -ENOMEM;
-+		}
- 	} else {
- 		bool align =3D (info->type =3D=3D X86_IRQ_ALLOC_TYPE_MSI);
++	raw_spin_lock_irqsave(&iommu_table_lock, flags);
++
++	table =3D irq_lookup_table[devid];
++	if (table)
+ 		goto out_unlock;
 =20
-@@ -4398,7 +4404,7 @@ int amd_iommu_update_ga(int cpu, bool is_run, void *d=
-ata)
- 	if (!iommu)
- 		return -ENODEV;
+-	/* Initialize table spin-lock */
+-	raw_spin_lock_init(&table->lock);
+-
+-	table->table =3D kmem_cache_alloc(amd_iommu_irq_cache, GFP_ATOMIC);
+-	if (!table->table) {
+-		kfree(table);
+-		table =3D NULL;
+-		goto out_unlock;
++	table =3D irq_lookup_table[alias];
++	if (table) {
++		set_remap_table_entry(iommu, devid, table);
++		goto out_wait;
+ 	}
 =20
--	irt =3D get_irq_table(devid, false);
-+	irt =3D get_irq_table(devid);
- 	if (!irt)
- 		return -ENODEV;
+-	if (!AMD_IOMMU_GUEST_IR_GA(amd_iommu_guest_ir))
+-		memset(table->table, 0,
+-		       MAX_IRQS_PER_TABLE * sizeof(u32));
+-	else
+-		memset(table->table, 0,
+-		       (MAX_IRQS_PER_TABLE * (sizeof(u64) * 2)));
+-
++	table =3D new_table;
++	new_table =3D NULL;
+=20
+ 	set_remap_table_entry(iommu, devid, table);
+ 	if (devid !=3D alias)
+ 		set_remap_table_entry(iommu, alias, table);
+=20
+-out:
++out_wait:
+ 	iommu_completion_wait(iommu);
+=20
+ out_unlock:
+ 	raw_spin_unlock_irqrestore(&iommu_table_lock, flags);
+=20
++	if (new_table) {
++		kmem_cache_free(amd_iommu_irq_cache, new_table->table);
++		kfree(new_table);
++	}
+ 	return table;
+ }
 =20
 --=20
 2.16.2
