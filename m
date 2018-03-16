@@ -1,107 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeCPK4a (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:56:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37119 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753040AbeCPK43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:56:29 -0400
-From: Yufen Yu <yuyufen@huawei.com>
-To: <dwmw2@infradead.org>
-CC: <viro@zeniv.linux.org.uk>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>
-Subject: [PATCH] jffs2: remove fd from the f->dents list immediately.
-Date: Fri, 16 Mar 2018 19:05:22 +0800
-Message-ID: <20180316110522.1120-1-yuyufen@huawei.com>
-X-Mailer: git-send-email 2.13.6
+        id S1753557AbeCPK53 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:57:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40870 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeCPK51 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 06:57:27 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 16 Mar 2018 16:27:25 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v2 13/13] ARM: dts: ipq8074: Enable few peripherals for
+ hk01 board
+In-Reply-To: <1521193101-4586-14-git-send-email-sricharan@codeaurora.org>
+References: <1521193101-4586-1-git-send-email-sricharan@codeaurora.org>
+ <1521193101-4586-14-git-send-email-sricharan@codeaurora.org>
+Message-ID: <7284d03a864202fd0baaeeea093068ee@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 15953580e79b ("[JFFS2] Improve getdents vs. f_pos handling on NOR flash.")
-is introduced to resolve 'rm -r', which cannot remove all files:
-    http://lists.infradead.org/pipermail/linux-mtd/2007-October/019658.html
+On 2018-03-16 15:08, Sricharan R wrote:
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq8074-hk01.dts | 103 
+> ++++++++++++++++++++++++++++++
+>  1 file changed, 103 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> index 6a838b5..81dff867 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> @@ -21,6 +21,7 @@
+> 
+>  	aliases {
+>  		serial0 = &blsp1_uart5;
+> +		serial1 = &serial_blsp2;
+>  	};
+> 
+>  	chosen {
+> @@ -41,6 +42,47 @@
+>  					bias-disable;
+>  				};
+>  			};
+> +
+> +			 i2c_0_pins: i2c_0_pinmux {
+> +				  mux {
+> +					   pins = "gpio42", "gpio43";
+> +					   function = "blsp1_i2c";
+> +					   drive-strength = <8>;
+> +					   bias-disable;
+> +				  };
+> +			 };
+> +
+> +			 spi_0_pins: spi_0_pins {
+> +				  mux {
+> +					   pins = "gpio38", "gpio39", "gpio40", "gpio41";
+> +					   function = "blsp0_spi";
+> +					   drive-strength = <8>;
+> +					   bias-disable;
+> +				  };
+> +			 };
+> +
+> +			 hsuart_pins: hsuart_pins {
+> +				  mux {
+> +					   pins = "gpio46", "gpio47", "gpio48", "gpio49";
+> +					   function = "blsp2_uart";
+> +					   drive-strength = <8>;
+> +					   bias-disable;
+> +				  };
+> +			 };
+> +
+> +			 qpic_pins: qpic_pins {
+> +				mux {
+> +					   pins = "gpio1", "gpio3", "gpio4",
+> +						  "gpio5", "gpio6", "gpio7",
+> +						  "gpio8", "gpio10", "gpio11",
+> +						  "gpio12", "gpio13", "gpio14",
+> +						  "gpio15", "gpio16", "gpio17";
+> +					   function = "qpic";
+> +					   drive-strength = <8>;
+> +					   bias-disable;
+> +				  };
+> +			};
+> +
+>  		};
+> 
+>  		serial@78b3000 {
+> @@ -48,5 +90,66 @@
+>  			pinctrl-names = "default";
+>  			status = "ok";
+>  		};
+> +
+> +		spi@78b5000 {
+> +			 pinctrl-0 = <&spi_0_pins>;
+> +			 pinctrl-names = "default";
+> +			 status = "ok";
+> +
+> +			 m25p80@0 {
+> +				  #address-cells = <1>;
+> +				  #size-cells = <1>;
+> +				  compatible = "n25q128a11", "jedec,spi-nor";
+> +				  reg = <0>;
+> +				  spi-max-frequency = <50000000>;
+> +			 };
+> +		};
+> +
+> +		serial@78B1000 {
 
-However, it can cause the following issues:
+  s/78B1000/78b1000
 
-1. 'deletion' dirents is alway in the f->dents list, wasting memory
-    resource. For example:
-        There is a file named 'file1'. Then we rename it:
-        mv file1 file2;
-        mv file2 file3;
-        ...
-        mv file99999 file1000000
+  With that,
+  Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
 
-        When CONFIG_JFFS2_SUMMARY is not set, file1~file1000000
-        always in the f->dents list.
-
-2. Since the list become longer and longer, more CPU time is used
-    to traverse it.
-
-After reverting the commit, we test 'rm -r', which can remove all
-files, and all seems OK!
-
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
----
- fs/jffs2/write.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
-
-diff --git a/fs/jffs2/write.c b/fs/jffs2/write.c
-index cda9a361368e..1deed35beb50 100644
---- a/fs/jffs2/write.c
-+++ b/fs/jffs2/write.c
-@@ -598,31 +598,32 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
- 		jffs2_add_fd_to_list(c, fd, &dir_f->dents);
- 		mutex_unlock(&dir_f->sem);
- 	} else {
-+		struct jffs2_full_dirent **prev = &dir_f->dents;
- 		uint32_t nhash = full_name_hash(NULL, name, namelen);
- 
--		fd = dir_f->dents;
- 		/* We don't actually want to reserve any space, but we do
- 		   want to be holding the alloc_sem when we write to flash */
- 		mutex_lock(&c->alloc_sem);
- 		mutex_lock(&dir_f->sem);
- 
--		for (fd = dir_f->dents; fd; fd = fd->next) {
--			if (fd->nhash == nhash &&
--			    !memcmp(fd->name, name, namelen) &&
--			    !fd->name[namelen]) {
--
--				jffs2_dbg(1, "Marking old dirent node (ino #%u) @%08x obsolete\n",
--					  fd->ino, ref_offset(fd->raw));
--				jffs2_mark_node_obsolete(c, fd->raw);
--				/* We don't want to remove it from the list immediately,
--				   because that screws up getdents()/seek() semantics even
--				   more than they're screwed already. Turn it into a
--				   node-less deletion dirent instead -- a placeholder */
--				fd->raw = NULL;
--				fd->ino = 0;
--				break;
-+		while ((*prev) && (*prev)->nhash <= nhash) {
-+			if ((*prev)->nhash == nhash &&
-+				!memcmp((*prev)->name, name, namelen) &&
-+				!(*prev)->name[namelen]) {
-+
-+					struct jffs2_full_dirent *this = *prev;
-+
-+					jffs2_dbg(1, "Marking old dirent node (ino #%u) @%08x obsolete\n",
-+							this->ino, ref_offset(this->raw));
-+					*prev = this->next;
-+					jffs2_mark_node_obsolete(c, this->raw);
-+					jffs2_free_full_dirent(this);
-+
-+					break;
- 			}
-+			prev = &((*prev)->next);
- 		}
-+
- 		mutex_unlock(&dir_f->sem);
- 	}
- 
--- 
-2.13.6
+> +			 pinctrl-0 = <&hsuart_pins>;
+> +			 pinctrl-names = "default";
+> +			 status = "ok";
+> +		};
+> +
+> +		i2c_0@78b6000 {
+> +			 pinctrl-0 = <&i2c_0_pins>;
+> +			 pinctrl-names = "default";
+> +			 status = "ok";
+> +		};
+> +
+> +		dma@7984000 {
+> +			 status = "ok";
+> +		};
+> +
+> +		nand@79b0000 {
+> +			pinctrl-0 = <&qpic_pins>;
+> +			pinctrl-names = "default";
+> +			status = "ok";
+> +
+> +			nand@0 {
+> +				reg = <0>;
+> +				nand-ecc-strength = <4>;
+> +				nand-ecc-step-size = <512>;
+> +				nand-bus-width = <8>;
+> +			};
+> +		};
+> +
+> +		phy@86000 {
+> +			status = "ok";
+> +		};
+> +
+> +		phy@8e000 {
+> +			status = "ok";
+> +		};
+> +
+> +		pci@20000000 {
+> +			status = "ok";
+> +			perst-gpio = <&tlmm 58 0x1>;
+> +		};
+> +
+> +		pci@10000000 {
+> +			status = "ok";
+> +			perst-gpio = <&tlmm 61 0x1>;
+> +		};
+>  	};
+>  };
