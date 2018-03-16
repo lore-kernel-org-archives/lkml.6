@@ -1,105 +1,117 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521231607; cv=none;
-        d=google.com; s=arc-20160816;
-        b=efXP7mep5xp2gHHCI/La8VdjW/GIytlssmjqh3jFUuet7OwNsX1Kh3xPqCCoWfu3uH
-         0n04UYKUhJi6VQF6Rz4KNxbzwUny69e3/ijnaiYvPc/7we95PUj8UI3l96haf23hg8Lc
-         U3tozJnTmCNru38WBAlfDoD9MnRvItNR/GQsol/6Fy0GILSTec/agmIXg8BXyQ2X0h0o
-         3nJVcUQ6NThJnfkwnwqBAAO9KO1YzQe6IYiqRaIHKiRLbHMB4+NwBmOE9F9Bd/P3vzpW
-         Yf/P9umTz6OfThBIW0EXUBqTtZO7/9Ny74yb5XTZqOeN5xkY3v9anFOsqwrHVZD3s9xo
-         0MkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=0zFeQ8z6d8QTfP861ZacDqAXuhY01bRbrR6GSDYn4Mo=;
-        b=N2XAQKK6FbPSkdt0T6xl1MYn6mo8BxsxMROw7KoURqw3XTtekSxNMA1HLoaysqt8dX
-         E4M8Aek/TEbZ/g8W6WJ2LHDrPN2MZkp/P5U+PUO3Vc3uyvQI/kN5Wbvmgm8on+3+JMqT
-         qTX+450pn/g/UB71p2hz2QZ39RtT2T2BTimqFq4og+oERwy1DGm7pcKx8mJNprvOjPGC
-         D5Zia7LxQmg9O2RMibk0ETus0/xjeR2Cf7Qs7CfDrUKorDE4TqNssZZfphO8S8UU33DO
-         prH1zCv7xgmHK2r3g9IAr5jhZT7SrAEszCHK6BWdaIkgN+cr2AeF9xoUlpLLlCIdLgpP
-         aQtA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELuklNHHrslaCKi1cyGLSrG1Z24U+6EQyu7ydspRC805K9LYq5RJVDDtkWp6Bz5pDggc6q3hSQ==
-Message-ID: <5aac26f6.89981c0a.32845.a10e@mx.google.com>
-Date: Fri, 16 Mar 2018 13:20:06 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.15.y
-X-Kernelci-Kernel: v4.15.10-129-gadfb64c5bcd2
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3328118-1521215617-2-13508705101274068516
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521215616; b=m9yFcuiG7rUrdwmY8FD9ZLv6hpRQlPa+x1dEOJv5OLOLcZV
+    zH6NUwO77NxhZo1KlT5E/mGu4Q22YhgukIqYJUMRXh1p8Ycrk5f0HP9GPO2zZ83r
+    pvP+oq3FI1UThB7l4j76B9Xi87BuvRO4PIW+5Zpj56gbkcAoOo8X8ieF4sF215Cc
+    y+NFl/IRnA93ngOWX0aziRfuTUzVCwfFZm721fpuXxXzvDn0upNt0r0coRq33JXj
+    /afqZTy+uVxxpyjRU9X+pdTqgbE23KcHPfPdBmI/CtSyKtMSNEREZ/qFoGZ4VF4o
+    boov0myjeuHFoVkZT0LMXWSSXebRFs9uzVnlaSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521215616; bh=TVBNM0vrtmFVfxhPFWpVvDClA5
+    98jN9Sxa7wymBXkRE=; b=mrANhEhHaBNmGrCuFRXWwrG+y8M+tY7Xficlxw7Jy9
+    AhkxRrB9tJcEko2ndhunyONVd34xuSOAQjrkr/ANFBCQoKhqioqHkdzVJLdYz/iM
+    f+K8JljYXlI4JglqsJHzivLQATxU2t7pyhV5+MEB66RkRUfUYmcGZfKKAVVRa5Bt
+    0Zux7WjZuFnrrXeHj0VFEyUVuIIIAcF9vIbaOqkvERZ2sAbfEz+mCJjB2CLo9xKB
+    AV8Nc+aI8ud2yDfqNbtfUvcC9HOuvf9Gfz+lzGVk7W2cl28Y8KPqcL3AP1MEkLR2
+    Jm0DocIqjlUfjE60tpT8u4zuFuFun9m2yAXNRfFcVJWw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932608AbeCPPxT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:53:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45824 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965350AbeCPPoG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:44:06 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 107/128] media: davinci: vpif_capture: add NULL check on devm_kzalloc return value
+Date: Fri, 16 Mar 2018 16:24:08 +0100
+Message-Id: <20180316152341.874211000@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
-Subject: Re: [PATCH 4.15 000/128] 4.15.11-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595109395590505536?=
-X-GMAIL-MSGID: =?utf-8?q?1595126954487854486?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.15.y boot: 45 boots: 0 failed, 38 passed with 5 offline, =
-1 untried/unknown, 1 conflict (v4.15.10-129-gadfb64c5bcd2)
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.15.y/kernel/v4.15.10-129-gadfb64c5bcd2/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.15.=
-y/kernel/v4.15.10-129-gadfb64c5bcd2/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.15.y
-Git Describe: v4.15.10-129-gadfb64c5bcd2
-Git Commit: adfb64c5bcd2c15abb5e2a114550e454e5d95268
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 37 unique boards, 11 SoC families, 13 builds out of 185
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 5a18c2434f8bfc8bc2fb0f8af3e44f7408d63e4f ]
 
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.15.9-1=
-46-g2ad27e8a3cad - first fail: v4.15.10)
+Check return value from call to devm_kzalloc() in order to prevent
+a NULL pointer dereference.
 
-Offline Platforms:
+This issue was detected with the help of Coccinelle.
 
-arm:
+Fixes: 4a5f8ae50b66 ("[media] davinci: vpif_capture: get subdevs from DT when available")
 
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-collabora: PASS
-            lab-baylibre-seattle: FAIL
-
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/media/platform/davinci/vpif_capture.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -1550,6 +1550,8 @@ vpif_capture_get_pdata(struct platform_d
+ 					    sizeof(*chan->inputs) *
+ 					    VPIF_CAPTURE_NUM_CHANNELS,
+ 					    GFP_KERNEL);
++		if (!chan->inputs)
++			return NULL;
+ 
+ 		chan->input_count++;
+ 		chan->inputs[i].input.type = V4L2_INPUT_TYPE_CAMERA;
