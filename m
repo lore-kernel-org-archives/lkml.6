@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsRAI2ZbvhpeqddCM8Zy/opCFjTISlHfClNcjg+Gw2K/YLEs+t9n5evRbw76mpeFsR5YyXT
-ARC-Seal: i=1; a=rsa-sha256; t=1521214746; cv=none;
+X-Google-Smtp-Source: AG47ELs2kdzQ8pUtpHvQvTJKrIjbYXBL924/WOhuE6MTTfIgozuMw4NwIe9C8dddeBPQsukObPPd
+ARC-Seal: i=1; a=rsa-sha256; t=1521214743; cv=none;
         d=google.com; s=arc-20160816;
-        b=ul9hQHIfl2rNsdFw9Tg0iKHoUJPtUbC0unYWeDb0ePynKrdFur8b60OUw3XmFn2Zly
-         RwaDYj4epZdxlSoFtWwchKCw7rj1KqOqm/di1XOzMu1O1NmLgkEX3m+A0YDowBLkpI2X
-         BkjajHxTwTs1inanG7lhOAOgYk4SDJES4xzQcp9P0XNxWscwFZU7wFy1xxa9gqxKxU6z
-         VLovFeuPzmrhU9RHNTuBsxpwIarcOxdwiZNqIOeRYlB3TflyFBpM/b5dXMemCQ0IAPUW
-         wellGVk/STTqbXWVFbGn7a8kuWff+ia495xW3CdRyo58E4dAD8oj/dIBgykZZigjoQsN
-         eeFg==
+        b=MsHU8NkZENSxC6dAWOIgCe6pz1BHaSJ+wt4Oo9pQqSgoMSLz+PJeOUxOc25rnDRm1S
+         zgDY7aP/9IyaZyL8kYKNyPU+9nX0EOsD+zgOKKDSLwBcJpX2GdydufQ903HsBPNnIoHp
+         njaNnzCa21pKO6Mcp+FjqjR6VCJG7EQ9avvD7/0zgzqUE0DtJhSQVQ4NwmWG33S3Cp9W
+         5hesOw+pNHJDkJnN/taXG7I5A3ZIz5rJwQiUNdYz3nsmCJ6YnKu+q5/COsskPiygGdah
+         6AblUwM6EIq3Tdv4bvQGexsGe0Uj6ZX+02KQodL3MjCxCaL67l9MBoLukt9FXTdMam/I
+         9xzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SJPB9NUFaimNdoOsc4wf+4vODhgP0Q1dYlVorfZh3dY=;
-        b=D2ji/DucbPYFvN8HLQKwL0pRR91BOZ59UBAMIJHKTI83I+NbXXqTOegvyHCKnpX+Te
-         CJSrt6FEa9R3xX1B+nDZT6sABOZKYgfJQFjZTYDuuodIzJwdY7J9Jt3Cs0/3BKAY1dVQ
-         rHqRdMdVISXAT6qj/HhIEwIt0dSXaPHAjdQYahOheoAat7mcd3Jvqzn/ZcKpALx5h/H/
-         wxljgZDMPSGuBIIADGqzOCkYzVagCtEtOPXiOJCFgxCy3tpEL57BeNfZ2eXM0CfqSt+h
-         9RV3Jj+9xvaGICqRqI1dJhOnDgHX5YfwY/0piYSN6ft/L2WzhxI2KcbZCnRWi1Xhr8ia
-         HDqw==
+        bh=qXvf3SO8Ouc+UJeFb94Dfyh8mD4wC4WZxRb6ERRgI5M=;
+        b=GfpvM9JC4MmsfgSthieN5pS/beidZjoDUGPDzRJ66KTB5TE2BfSY9IyW5hY6dkTB0R
+         jUN8WAbHl22xfKrnDkLJT8rExJstDtdkICxvplIueULaU2ffB7DX15VJq6vphIfZYTzM
+         LAkV08vAhbyoeSpoTmr3El04jPbrQS7HxjcNT4oE+6fQSxqgeS/1wTbat4vSFUpU6cfb
+         g2qvSZY0P2Iy69bjYX3ybhTjXJB2ECLQLJ+QCqZH3qiTZk03diY9Gh4AdE5LU6JtiDpi
+         ux46vyWnYG+F7gAaDJihcToAMvUhX4G7uDqYZpPpbzjoQ05kdr8zhAO39kkR1TKZrCur
+         1bQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 107/109] IB/mlx5: revisit -Wmaybe-uninitialized warning
-Date: Fri, 16 Mar 2018 16:24:16 +0100
-Message-Id: <20180316152335.655237781@linuxfoundation.org>
+Subject: [PATCH 4.14 106/109] ima: relax requiring a file signature for new files with zero length
+Date: Fri, 16 Mar 2018 16:24:15 +0100
+Message-Id: <20180316152335.598768675@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109274281837049?=
-X-GMAIL-MSGID: =?utf-8?q?1595109274281837049?=
+X-GMAIL-THRID: =?utf-8?q?1595109271252967331?=
+X-GMAIL-MSGID: =?utf-8?q?1595109271252967331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,54 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
 
-[ Upstream commit 1b19b95169cd52fe82cd442fec0b279fe25cc838 ]
+[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
 
-A warning that I thought I had fixed before occasionally comes
-back in rare randconfig builds (I found 7 instances in the last
-100000 builds, originally it was much more frequent):
+Custom policies can require file signatures based on LSM labels.  These
+files are normally created and only afterwards labeled, requiring them
+to be signed.
 
-drivers/infiniband/hw/mlx5/mr.c: In function 'mlx5_ib_reg_user_mr':
-drivers/infiniband/hw/mlx5/mr.c:1229:5: error: 'order' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (order <= mr_cache_max_order(dev)) {
-     ^
-drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'ncont' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'page_shift' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-drivers/infiniband/hw/mlx5/mr.c:1260:2: error: 'npages' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Instead of requiring file signatures based on LSM labels, entire
+filesystems could require file signatures.  In this case, we need the
+ability of writing new files without requiring file signatures.
 
-I've looked at all those findings again and noticed that they are all
-with CONFIG_INFINIBAND_USER_MEM=n, which means ib_umem_get() returns
-an error unconditionally and we never initialize or use those variables.
-This triggers a condition in gcc iff mr_umem_get() is partially but not
-entirely inlined, which in turn depends on the exact combination of
-optimization settings. This is a known problem with gcc, with no
-easy solution in the compiler, so this adds another workaround that
-should be more reliable than my previous attempt.
+The definition of a "new" file was originally defined as any file with
+a length of zero.  Subsequent patches redefined a "new" file to be based
+on the FILE_CREATE open flag.  By combining the open flag with a file
+size of zero, this patch relaxes the file signature requirement.
 
-Returning an error from mlx5_ib_reg_user_mr() earlier means that we
-can completely bypass the logic that caused the warning, the compiler
-can now see that the variable is never accessed.
-
-Fixes: 14ab8896f5d9 ("IB/mlx5: avoid bogus -Wmaybe-uninitialized warning")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/mr.c |    3 +++
- 1 file changed, 3 insertions(+)
+ security/integrity/ima/ima_appraise.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1206,6 +1206,9 @@ struct ib_mr *mlx5_ib_reg_user_mr(struct
- 	int err;
- 	bool use_umr = true;
- 
-+	if (!IS_ENABLED(CONFIG_INFINIBAND_USER_MEM))
-+		return ERR_PTR(-EINVAL);
-+
- 	mlx5_ib_dbg(dev, "start 0x%llx, virt_addr 0x%llx, length 0x%llx, access_flags 0x%x\n",
- 		    start, virt_addr, length, access_flags);
- 
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -223,7 +223,8 @@ int ima_appraise_measurement(enum ima_ho
+ 		if (opened & FILE_CREATED)
+ 			iint->flags |= IMA_NEW_FILE;
+ 		if ((iint->flags & IMA_NEW_FILE) &&
+-		    !(iint->flags & IMA_DIGSIG_REQUIRED))
++		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
++		     (inode->i_size == 0)))
+ 			status = INTEGRITY_PASS;
+ 		goto out;
+ 	}
