@@ -1,265 +1,489 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeCPOg3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 10:36:29 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35911 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751233AbeCPOg2 (ORCPT
+        id S1752964AbeCPOha (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 10:37:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59227 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbeCPOhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:36:28 -0400
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH v2 2/2] reset: stm32mp1: Enable stm32mp1 reset driver
-Thread-Topic: [PATCH v2 2/2] reset: stm32mp1: Enable stm32mp1 reset driver
-Thread-Index: AQHTu7G2MI13qlmdg0yaOXoGEu7t/aPSzZKAgAASQgA=
-Date: Fri, 16 Mar 2018 14:35:16 +0000
-Message-ID: <0aa41806-22c9-c8ef-6fe4-1353cbbd680a@st.com>
-References: <1521045001-30788-1-git-send-email-gabriel.fernandez@st.com>
- <1521045001-30788-3-git-send-email-gabriel.fernandez@st.com>
- <1521206991.5061.5.camel@pengutronix.de>
-In-Reply-To: <1521206991.5061.5.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5BE38ABF8E1FF64DBEEC588A588AD7A7@st.com>
+        Fri, 16 Mar 2018 10:37:22 -0400
+Date: Fri, 16 Mar 2018 07:36:53 -0700
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-7eb709f29593aced51901cb53565477762800722@git.kernel.org>
+Cc: hpa@zytor.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mark.rutland@arm.com
+In-Reply-To: <20180315170129.GX4043@hirez.programming.kicks-ass.net>
+References: <20180315170129.GX4043@hirez.programming.kicks-ass.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf: Fix sibling iteration
+Git-Commit-ID: 7eb709f29593aced51901cb53565477762800722
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-16_08:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2GEabrl007654
 
+Commit-ID:  7eb709f29593aced51901cb53565477762800722
+Gitweb:     https://git.kernel.org/tip/7eb709f29593aced51901cb53565477762800722
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Thu, 15 Mar 2018 17:36:56 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 16 Mar 2018 15:34:10 +0100
 
-Hi Philipp,
+perf: Fix sibling iteration
 
-Thanks for reviewing.
+Mark noticed that the change to sibling_list changed some iteration
+semantics; because previously we used group_list as list entry,
+sibling events would always have an empty sibling_list.
 
-On 03/16/2018 02:29 PM, Philipp Zabel wrote:
-> Hi Gabriel,
->
-> this looks mostly good to me, a few questions and comments below:
->
-> On Wed, 2018-03-14 at 17:30 +0100, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> stm32mp1 RCC IP 1 has a reset SET register and a reset CLEAR register.
->>
->> Writing '0' on reset SET register has no effect
->> Writing '1' on reset SET register
->> 	activates the reset of the corresponding peripheral
->>
->> Writing '0' on reset CLEAR register	has no effect
->> Writing '1' on reset CLEAR register
->> 	releases the reset of the corresponding peripheral
->>
->> See Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>   drivers/reset/Kconfig          |   6 ++
->>   drivers/reset/Makefile         |   1 +
->>   drivers/reset/reset-stm32mp1.c | 122 +++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 129 insertions(+)
->>   create mode 100644 drivers/reset/reset-stm32mp1.c
->>
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 1efbc6c..c0b292b 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -97,6 +97,12 @@ config RESET_SIMPLE
->>   	   - Allwinner SoCs
->>   	   - ZTE's zx2967 family
->>   
->> +config RESET_STM32MP157
->> +	bool "STM32MP157 Reset Driver" if COMPILE_TEST
->> +	default MACH_STM32MP157
->> +	help
->> +	  This enables the RCC reset controller driver for STM32 MPUs.
->> +
->>   config RESET_SUNXI
->>   	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
->>   	default ARCH_SUNXI
->> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->> index 132c24f..c1261dc 100644
->> --- a/drivers/reset/Makefile
->> +++ b/drivers/reset/Makefile
->> @@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_MESON) += reset-meson.o
->>   obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->>   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->>   obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->> +obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
->>   obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
->>   obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
->>   obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
->> diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
->> new file mode 100644
->> index 0000000..5e25388
->> --- /dev/null
->> +++ b/drivers/reset/reset-stm32mp1.c
->> @@ -0,0 +1,122 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
->> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
->> + */
->> +
->> +#include <linux/arm-smccc.h>
-> This does not seem to be necessary.
-right
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
-> This does not seem to be necessary either.
-ok
->> +#include <linux/platform_device.h>
->> +#include <linux/reset-controller.h>
->> +
->> +#define CLR_OFFSET 0x4
->> +
->> +struct stm32_reset_data {
->> +	struct reset_controller_dev	rcdev;
->> +	void __iomem			*membase;
->> +};
->> +
->> +static inline struct stm32_reset_data *
->> +to_stm32_reset_data(struct reset_controller_dev *rcdev)
->> +{
->> +	return container_of(rcdev, struct stm32_reset_data, rcdev);
->> +}
->> +
->> +static int stm32_reset_update(struct reset_controller_dev *rcdev,
->> +			      unsigned long id, bool assert)
->> +{
->> +	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
->> +	int reg_width = sizeof(u32);
->> +	int bank = id / (reg_width * BITS_PER_BYTE);
->> +	int offset = id % (reg_width * BITS_PER_BYTE);
->> +	void __iomem *addr;
->> +
->> +	addr = data->membase + (bank * reg_width);
->> +	if (!assert)
->> +		addr += CLR_OFFSET;
->> +
->> +	writel(BIT(offset), addr);
->> +
->> +	return 0;
->> +}
->> +
->> +static int stm32_reset_assert(struct reset_controller_dev *rcdev,
->> +			      unsigned long id)
->> +{
->> +	return stm32_reset_update(rcdev, id, true);
->> +}
->> +
->> +static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
->> +				unsigned long id)
->> +{
->> +	return stm32_reset_update(rcdev, id, false);
->> +}
->> +
->> +static int stm32_reset_status(struct reset_controller_dev *rcdev,
->> +			      unsigned long id)
->> +{
->> +	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
->> +	int reg_width = sizeof(u32);
->> +	int bank = id / (reg_width * BITS_PER_BYTE);
->> +	int offset = id % (reg_width * BITS_PER_BYTE);
->> +	u32 reg;
->> +
->> +	reg = readl(data->membase + (bank * reg_width));
->> +
->> +	return !(reg & BIT(offset));
->> +}
-> So the SET register can be read back and returns 0 for reset lines that
-> are currently asserted and returns 1 for reset lines that are currently
-> deasserted?
-yes you have spotted a error, i will replace by'return !!(reg & 
-BIT(offset));'
->> +
->> +const struct reset_control_ops stm32_reset_ops = {
->> +	.assert		= stm32_reset_assert,
->> +	.deassert	= stm32_reset_deassert,
->> +	.status		= stm32_reset_status,
->> +};
->> +
->> +static const struct of_device_id stm32_reset_dt_ids[] = {
->> +	{ .compatible = "st,stm32mp1-rcc"},
->> +	{ /* sentinel */ },
->> +};
->  From the DT bindings it looks like the clock and reset drivers are
-> sharing the same node. Is there just no clock platform_driver at all?
-there is one hardware block that is used for clock, reset and power, 
-they share the same node but each have it own platform_driver
+But because we now use sibling_list for both list head and list entry,
+siblings will report as having siblings.
 
->> +
->> +static int stm32_reset_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct stm32_reset_data *data;
->> +	void __iomem *membase;
->> +	struct resource *res;
->> +
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	membase = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(membase))
->> +		return PTR_ERR(membase);
->> +
->> +	data->membase = membase;
->> +	data->rcdev.owner = THIS_MODULE;
->> +	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
->> +	data->rcdev.ops = &stm32_reset_ops;
->> +	data->rcdev.of_node = dev->of_node;
->> +
->> +	return devm_reset_controller_register(dev, &data->rcdev);
->> +}
->> +
->> +static struct platform_driver stm32_reset_driver = {
->> +	.probe	= stm32_reset_probe,
->> +	.driver = {
->> +		.name		= "stm32mp1-reset",
->> +		.of_match_table	= stm32_reset_dt_ids,
->> +	},
->> +};
->> +
->> +static int __init stm32_reset_init(void)
->> +{
->> +	return platform_driver_register(&stm32_reset_driver);
->> +}
->> +
->> +postcore_initcall(stm32_reset_init);
-> Isn't builtin_platform_driver early enough?
-ok
+Fix this with a custom for_each_sibling_event() iterator.
 
-Best Regards
+Fixes: 8343aae66167 ("perf/core: Remove perf_event::group_entry")
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: vincent.weaver@maine.edu
+Cc: alexander.shishkin@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: alexey.budankov@linux.intel.com
+Cc: valery.cherepennikov@intel.com
+Cc: eranian@google.com
+Cc: acme@redhat.com
+Cc: linux-tip-commits@vger.kernel.org
+Cc: davidcc@google.com
+Cc: kan.liang@intel.com
+Cc: Dmitry.Prohorov@intel.com
+Cc: jolsa@redhat.com
+Link: https://lkml.kernel.org/r/20180315170129.GX4043@hirez.programming.kicks-ass.net
 
-Gabriel
+---
+ arch/alpha/kernel/perf_event.c           |  2 +-
+ arch/arm/mach-imx/mmdc.c                 |  2 +-
+ arch/arm/mm/cache-l2x0-pmu.c             |  2 +-
+ arch/mips/kernel/perf_event_mipsxx.c     |  2 +-
+ arch/powerpc/perf/core-book3s.c          |  2 +-
+ arch/powerpc/perf/core-fsl-emb.c         |  2 +-
+ arch/sparc/kernel/perf_event.c           |  2 +-
+ arch/x86/events/core.c                   |  2 +-
+ arch/x86/events/intel/uncore.c           |  2 +-
+ drivers/bus/arm-cci.c                    |  2 +-
+ drivers/bus/arm-ccn.c                    |  4 ++--
+ drivers/perf/arm_dsu_pmu.c               |  2 +-
+ drivers/perf/arm_pmu.c                   |  2 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.c |  2 +-
+ drivers/perf/qcom_l2_pmu.c               |  6 ++----
+ drivers/perf/qcom_l3_pmu.c               |  2 +-
+ drivers/perf/xgene_pmu.c                 |  4 ++--
+ include/linux/perf_event.h               |  4 ++++
+ kernel/events/core.c                     | 34 +++++++++++++++-----------------
+ 19 files changed, 40 insertions(+), 40 deletions(-)
 
->
-> regards
-> Philipp
+diff --git a/arch/alpha/kernel/perf_event.c b/arch/alpha/kernel/perf_event.c
+index 435864c24479..5613aa378a83 100644
+--- a/arch/alpha/kernel/perf_event.c
++++ b/arch/alpha/kernel/perf_event.c
+@@ -351,7 +351,7 @@ static int collect_events(struct perf_event *group, int max_count,
+ 		evtype[n] = group->hw.event_base;
+ 		current_idx[n++] = PMC_NO_INDEX;
+ 	}
+-	list_for_each_entry(pe, &group->sibling_list, sibling_list) {
++	for_each_sibling_event(pe, group) {
+ 		if (!is_software_event(pe) && pe->state != PERF_EVENT_STATE_OFF) {
+ 			if (n >= max_count)
+ 				return -1;
+diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
+index 27a9ca20933e..04b3bf71de94 100644
+--- a/arch/arm/mach-imx/mmdc.c
++++ b/arch/arm/mach-imx/mmdc.c
+@@ -269,7 +269,7 @@ static bool mmdc_pmu_group_is_valid(struct perf_event *event)
+ 			return false;
+ 	}
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (!mmdc_pmu_group_event_is_valid(sibling, pmu, &counter_mask))
+ 			return false;
+ 	}
+diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
+index 3a89ea4c2b57..afe5b4c7b164 100644
+--- a/arch/arm/mm/cache-l2x0-pmu.c
++++ b/arch/arm/mm/cache-l2x0-pmu.c
+@@ -293,7 +293,7 @@ static bool l2x0_pmu_group_is_valid(struct perf_event *event)
+ 	else if (!is_software_event(leader))
+ 		return false;
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (sibling->pmu == pmu)
+ 			num_hw++;
+ 		else if (!is_software_event(sibling))
+diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
+index 46097ff3208b..ee73550f0b9a 100644
+--- a/arch/mips/kernel/perf_event_mipsxx.c
++++ b/arch/mips/kernel/perf_event_mipsxx.c
+@@ -711,7 +711,7 @@ static int validate_group(struct perf_event *event)
+ 	if (mipsxx_pmu_alloc_counter(&fake_cpuc, &leader->hw) < 0)
+ 		return -EINVAL;
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (mipsxx_pmu_alloc_counter(&fake_cpuc, &sibling->hw) < 0)
+ 			return -EINVAL;
+ 	}
+diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
+index 7c1f66050433..f8908ea4ea73 100644
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1426,7 +1426,7 @@ static int collect_events(struct perf_event *group, int max_count,
+ 		flags[n] = group->hw.event_base;
+ 		events[n++] = group->hw.config;
+ 	}
+-	list_for_each_entry(event, &group->sibling_list, sibling_list) {
++	for_each_sibling_event(event, group) {
+ 		if (event->pmu->task_ctx_nr == perf_hw_context &&
+ 		    event->state != PERF_EVENT_STATE_OFF) {
+ 			if (n >= max_count)
+diff --git a/arch/powerpc/perf/core-fsl-emb.c b/arch/powerpc/perf/core-fsl-emb.c
+index 94c2e63662c6..85f1d18e5fd3 100644
+--- a/arch/powerpc/perf/core-fsl-emb.c
++++ b/arch/powerpc/perf/core-fsl-emb.c
+@@ -277,7 +277,7 @@ static int collect_events(struct perf_event *group, int max_count,
+ 		ctrs[n] = group;
+ 		n++;
+ 	}
+-	list_for_each_entry(event, &group->sibling_list, sibling_list) {
++	for_each_sibling_event(event, group) {
+ 		if (!is_software_event(event) &&
+ 		    event->state != PERF_EVENT_STATE_OFF) {
+ 			if (n >= max_count)
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index a0a86d369119..d3149baaa33c 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -1342,7 +1342,7 @@ static int collect_events(struct perf_event *group, int max_count,
+ 		events[n] = group->hw.event_base;
+ 		current_idx[n++] = PIC_NO_INDEX;
+ 	}
+-	list_for_each_entry(event, &group->sibling_list, sibling_list) {
++	for_each_sibling_event(event, group) {
+ 		if (!is_software_event(event) &&
+ 		    event->state != PERF_EVENT_STATE_OFF) {
+ 			if (n >= max_count)
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 77a4125b6b1f..bfc8f43909c1 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -990,7 +990,7 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
+ 	if (!dogrp)
+ 		return n;
+ 
+-	list_for_each_entry(event, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(event, leader) {
+ 		if (!is_x86_event(event) ||
+ 		    event->state <= PERF_EVENT_STATE_OFF)
+ 			continue;
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 9e374cd22ad2..a7956fc7ca1d 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -354,7 +354,7 @@ uncore_collect_events(struct intel_uncore_box *box, struct perf_event *leader,
+ 	if (!dogrp)
+ 		return n;
+ 
+-	list_for_each_entry(event, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(event, leader) {
+ 		if (!is_box_event(box, event) ||
+ 		    event->state <= PERF_EVENT_STATE_OFF)
+ 			continue;
+diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+index c98435bdb64f..c4c0c8560cce 100644
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -1311,7 +1311,7 @@ validate_group(struct perf_event *event)
+ 	if (!validate_event(event->pmu, &fake_pmu, leader))
+ 		return -EINVAL;
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (!validate_event(event->pmu, &fake_pmu, sibling))
+ 			return -EINVAL;
+ 	}
+diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
+index 1c310a4be000..65b7e4042ece 100644
+--- a/drivers/bus/arm-ccn.c
++++ b/drivers/bus/arm-ccn.c
+@@ -846,11 +846,11 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
+ 			!is_software_event(event->group_leader))
+ 		return -EINVAL;
+ 
+-	list_for_each_entry(sibling, &event->group_leader->sibling_list,
+-			sibling_list)
++	for_each_sibling_event(sibling, event->group_leader) {
+ 		if (sibling->pmu != event->pmu &&
+ 				!is_software_event(sibling))
+ 			return -EINVAL;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
+index 660680d78147..660cb8ac886a 100644
+--- a/drivers/perf/arm_dsu_pmu.c
++++ b/drivers/perf/arm_dsu_pmu.c
+@@ -536,7 +536,7 @@ static bool dsu_pmu_validate_group(struct perf_event *event)
+ 	memset(fake_hw.used_mask, 0, sizeof(fake_hw.used_mask));
+ 	if (!dsu_pmu_validate_event(event->pmu, &fake_hw, leader))
+ 		return false;
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (!dsu_pmu_validate_event(event->pmu, &fake_hw, sibling))
+ 			return false;
+ 	}
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index 628d7a7b9526..344e2083e941 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -311,7 +311,7 @@ validate_group(struct perf_event *event)
+ 	if (!validate_event(event->pmu, &fake_pmu, leader))
+ 		return -EINVAL;
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (!validate_event(event->pmu, &fake_pmu, sibling))
+ 			return -EINVAL;
+ 	}
+diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+index e3356087fd76..44df61397a38 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+@@ -82,7 +82,7 @@ static bool hisi_validate_event_group(struct perf_event *event)
+ 			counters++;
+ 	}
+ 
+-	list_for_each_entry(sibling, &event->group_leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, event->group_leader) {
+ 		if (is_software_event(sibling))
+ 			continue;
+ 		if (sibling->pmu != event->pmu)
+diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+index 5e535a718965..1a7889f63c9a 100644
+--- a/drivers/perf/qcom_l2_pmu.c
++++ b/drivers/perf/qcom_l2_pmu.c
+@@ -534,8 +534,7 @@ static int l2_cache_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 	}
+ 
+-	list_for_each_entry(sibling, &event->group_leader->sibling_list,
+-			    sibling_list)
++	for_each_sibling_event(sibling, event->group_leader) {
+ 		if (sibling->pmu != event->pmu &&
+ 		    !is_software_event(sibling)) {
+ 			dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
+@@ -571,8 +570,7 @@ static int l2_cache_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 	}
+ 
+-	list_for_each_entry(sibling, &event->group_leader->sibling_list,
+-			    sibling_list) {
++	for_each_sibling_event(sibling, event->group_leader) {
+ 		if ((sibling != event) &&
+ 		    !is_software_event(sibling) &&
+ 		    (L2_EVT_GROUP(sibling->attr.config) ==
+diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
+index 5dedf4b1a552..2dc63d61f2ea 100644
+--- a/drivers/perf/qcom_l3_pmu.c
++++ b/drivers/perf/qcom_l3_pmu.c
+@@ -468,7 +468,7 @@ static bool qcom_l3_cache__validate_event_group(struct perf_event *event)
+ 	counters = event_num_counters(event);
+ 	counters += event_num_counters(leader);
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sibling, leader) {
+ 		if (is_software_event(sibling))
+ 			continue;
+ 		if (sibling->pmu != event->pmu)
+diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
+index f1f4a56cab5e..6bdb1dad805f 100644
+--- a/drivers/perf/xgene_pmu.c
++++ b/drivers/perf/xgene_pmu.c
+@@ -949,11 +949,11 @@ static int xgene_perf_event_init(struct perf_event *event)
+ 			!is_software_event(event->group_leader))
+ 		return -EINVAL;
+ 
+-	list_for_each_entry(sibling, &event->group_leader->sibling_list,
+-			sibling_list)
++	for_each_sibling_event(sibling, event->group_leader) {
+ 		if (sibling->pmu != event->pmu &&
+ 				!is_software_event(sibling))
+ 			return -EINVAL;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 2bb200e1bbea..ff39ab011376 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -536,6 +536,10 @@ struct pmu_event_list {
+ 	struct list_head	list;
+ };
+ 
++#define for_each_sibling_event(sibling, event)			\
++	if ((event)->group_leader == (event))			\
++		list_for_each_entry((sibling), &(event)->sibling_list, sibling_list)
++
+ /**
+  * struct perf_event - performance event kernel representation:
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3b4c7792a6ac..4d7a460d6669 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -643,7 +643,7 @@ static void perf_event_update_sibling_time(struct perf_event *leader)
+ {
+ 	struct perf_event *sibling;
+ 
+-	list_for_each_entry(sibling, &leader->sibling_list, sibling_list)
++	for_each_sibling_event(sibling, leader)
+ 		perf_event_update_time(sibling);
+ }
+ 
+@@ -1828,7 +1828,7 @@ static void perf_group_attach(struct perf_event *event)
+ 
+ 	perf_event__header_size(group_leader);
+ 
+-	list_for_each_entry(pos, &group_leader->sibling_list, sibling_list)
++	for_each_sibling_event(pos, group_leader)
+ 		perf_event__header_size(pos);
+ }
+ 
+@@ -1928,7 +1928,7 @@ static void perf_group_detach(struct perf_event *event)
+ out:
+ 	perf_event__header_size(event->group_leader);
+ 
+-	list_for_each_entry(tmp, &event->group_leader->sibling_list, sibling_list)
++	for_each_sibling_event(tmp, event->group_leader)
+ 		perf_event__header_size(tmp);
+ }
+ 
+@@ -1951,13 +1951,13 @@ static inline int __pmu_filter_match(struct perf_event *event)
+  */
+ static inline int pmu_filter_match(struct perf_event *event)
+ {
+-	struct perf_event *child;
++	struct perf_event *sibling;
+ 
+ 	if (!__pmu_filter_match(event))
+ 		return 0;
+ 
+-	list_for_each_entry(child, &event->sibling_list, sibling_list) {
+-		if (!__pmu_filter_match(child))
++	for_each_sibling_event(sibling, event) {
++		if (!__pmu_filter_match(sibling))
+ 			return 0;
+ 	}
+ 
+@@ -2031,7 +2031,7 @@ group_sched_out(struct perf_event *group_event,
+ 	/*
+ 	 * Schedule out siblings (if any):
+ 	 */
+-	list_for_each_entry(event, &group_event->sibling_list, sibling_list)
++	for_each_sibling_event(event, group_event)
+ 		event_sched_out(event, cpuctx, ctx);
+ 
+ 	perf_pmu_enable(ctx->pmu);
+@@ -2310,7 +2310,7 @@ group_sched_in(struct perf_event *group_event,
+ 	/*
+ 	 * Schedule in siblings as one group (if any):
+ 	 */
+-	list_for_each_entry(event, &group_event->sibling_list, sibling_list) {
++	for_each_sibling_event(event, group_event) {
+ 		if (event_sched_in(event, cpuctx, ctx)) {
+ 			partial_group = event;
+ 			goto group_error;
+@@ -2326,7 +2326,7 @@ group_error:
+ 	 * partial group before returning:
+ 	 * The events up to the failed event are scheduled out normally.
+ 	 */
+-	list_for_each_entry(event, &group_event->sibling_list, sibling_list) {
++	for_each_sibling_event(event, group_event) {
+ 		if (event == partial_group)
+ 			break;
+ 
+@@ -3863,7 +3863,7 @@ static void __perf_event_read(void *info)
+ 
+ 	pmu->read(event);
+ 
+-	list_for_each_entry(sub, &event->sibling_list, sibling_list) {
++	for_each_sibling_event(sub, event) {
+ 		if (sub->state == PERF_EVENT_STATE_ACTIVE) {
+ 			/*
+ 			 * Use sibling's PMU rather than @event's since
+@@ -4711,7 +4711,7 @@ static int __perf_read_group_add(struct perf_event *leader,
+ 	if (read_format & PERF_FORMAT_ID)
+ 		values[n++] = primary_event_id(leader);
+ 
+-	list_for_each_entry(sub, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sub, leader) {
+ 		values[n++] += perf_event_count(sub);
+ 		if (read_format & PERF_FORMAT_ID)
+ 			values[n++] = primary_event_id(sub);
+@@ -4905,7 +4905,7 @@ static void perf_event_for_each(struct perf_event *event,
+ 	event = event->group_leader;
+ 
+ 	perf_event_for_each_child(event, func);
+-	list_for_each_entry(sibling, &event->sibling_list, sibling_list)
++	for_each_sibling_event(sibling, event)
+ 		perf_event_for_each_child(sibling, func);
+ }
+ 
+@@ -6077,7 +6077,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
+ 
+ 	__output_copy(handle, values, n * sizeof(u64));
+ 
+-	list_for_each_entry(sub, &leader->sibling_list, sibling_list) {
++	for_each_sibling_event(sub, leader) {
+ 		n = 0;
+ 
+ 		if ((sub != event) &&
+@@ -10662,8 +10662,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 		perf_remove_from_context(group_leader, 0);
+ 		put_ctx(gctx);
+ 
+-		list_for_each_entry(sibling, &group_leader->sibling_list,
+-				    sibling_list) {
++		for_each_sibling_event(sibling, group_leader) {
+ 			perf_remove_from_context(sibling, 0);
+ 			put_ctx(gctx);
+ 		}
+@@ -10684,8 +10683,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 		 * By installing siblings first we NO-OP because they're not
+ 		 * reachable through the group lists.
+ 		 */
+-		list_for_each_entry(sibling, &group_leader->sibling_list,
+-				    sibling_list) {
++		for_each_sibling_event(sibling, group_leader) {
+ 			perf_event__state_init(sibling);
+ 			perf_install_in_context(ctx, sibling, sibling->cpu);
+ 			get_ctx(ctx);
+@@ -11324,7 +11322,7 @@ static int inherit_group(struct perf_event *parent_event,
+ 	 * case inherit_event() will create individual events, similar to what
+ 	 * perf_group_detach() would do anyway.
+ 	 */
+-	list_for_each_entry(sub, &parent_event->sibling_list, sibling_list) {
++	for_each_sibling_event(sub, parent_event) {
+ 		child_ctr = inherit_event(sub, parent, parent_ctx,
+ 					    child, leader, child_ctx);
+ 		if (IS_ERR(child_ctr))
