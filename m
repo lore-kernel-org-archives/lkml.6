@@ -1,72 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeCPTEQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:04:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49604 "EHLO mail.kernel.org"
+        id S1752836AbeCPTEr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:04:47 -0400
+Received: from verein.lst.de ([213.95.11.211]:48406 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeCPTEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:04:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDC7217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELv9RLIbNlZXlL1VMAHEdWkU1mfjlP7lioixyLZeE0niR8+6tQ7cwo8iNk2qFzofPonUw7ugRn2ay4QjU4Sv2vg=
+        id S1750921AbeCPTEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:04:45 -0400
+Date: Fri, 16 Mar 2018 20:04:43 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 12/15] xfs: require mmap lock for xfs_break_layouts()
+Message-ID: <20180316190443.GF3671@lst.de>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180316184348.GA20184@localhost.localdomain>
-References: <20180315190529.20943-1-linux@dominikbrodowski.net>
- <20180315190529.20943-4-linux@dominikbrodowski.net> <20180316184348.GA20184@localhost.localdomain>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 16 Mar 2018 19:03:53 +0000
-X-Gmail-Original-Message-ID: <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
-Message-ID: <CALCETrUQzPGjzGrO_J5DmG4Tp+11O+1jB3KY8XX2GTYsZ3-VTw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/36] mm: use do_futex() instead of sys_futex() in mm_release()
-To: Darren Hart <dvhart@infradead.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Andrew Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152112914933.24669.5543317105428477772.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 6:43 PM, Darren Hart <dvhart@infradead.org> wrote:
-> On Thu, Mar 15, 2018 at 08:04:56PM +0100, Dominik Brodowski wrote:
->> sys_futex() is a wrapper to do_futex() which does not modify any
->> values here:
->>
->> - uaddr, val and val3 are kept the same
->>
->> - op is masked with FUTEX_CMD_MASK, but is always set to FUTEX_WAKE.
->>   Therefore, val2 is always 0.
->>
->> - as utime is set to NULL, *timeout is NULL
->>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Darren Hart <dvhart@infradead.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
->
-> Hi Dominik,
->
-> I'm missing the "why" part here. What is it you are trying to address?
->
-> do_futex is not currently in use outside of the futex implementation,
-> while sys_futex is. This decouples the interface from the
-> implementation. While this is perhaps less critical within the
-> kernel, I don't see a compelling reason to increase the coupling
-> between the mm and futex implementations.
->
-> Without a compelling WHY, Nack from me.
->
+On Thu, Mar 15, 2018 at 08:52:29AM -0700, Dan Williams wrote:
+> In preparation for adding coordination between truncate operations and
+> busy dax-pages, extend xfs_break_layouts() to assume it must be called
+> with the mmap lock held. This locking scheme will be required for
+> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
+> pages mapped into the file's address space).
 
-We want to make some changes to the way that the syscall entry code
-invokes syscalls, and these changes will make it impossible to call
-sys_xyz() functions from the kernel.  So we can make sys_futex() be a
-trivial wrapper around a new ksys_futex(), or we can do a patch like
-this.
+This requirement wasn't really there in the last series, why do we
+require it now?
+
+As far as I can tell all we'd need is to just drop this assert:
+
+> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
+> +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
+> +				| XFS_MMAPLOCK_EXCL));
+
+entirely.
+
+>  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
+>  		xfs_iunlock(ip, *iolock);
+>  		error = break_layout(inode, true);
+> -		*iolock = XFS_IOLOCK_EXCL;
+> +		*iolock &= ~XFS_IOLOCK_SHARED;
+> +		*iolock |= XFS_IOLOCK_EXCL;
+>  		xfs_ilock(ip, *iolock);
+
+And take this one hunk from your patch.
+
+To enable the DAX use case.
