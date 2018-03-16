@@ -1,95 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933474AbeCPRJb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 13:09:31 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:43116 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933422AbeCPRHC (ORCPT
+        id S1753139AbeCPRm4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 13:42:56 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751576AbeCPRmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:07:02 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org
-Subject: [PATCH -next 11/22] net: socket: add __sys_shutdown() helper; remove in-kernel call to syscall
-Date: Fri, 16 Mar 2018 18:06:03 +0100
-Message-Id: <20180316170614.5392-12-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316170614.5392-1-linux@dominikbrodowski.net>
-References: <20180316170614.5392-1-linux@dominikbrodowski.net>
+        Fri, 16 Mar 2018 13:42:55 -0400
+Date: Fri, 16 Mar 2018 18:42:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rohit Jain <rohit.k.jain@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        steven.sistare@oracle.com, joelaf@google.com, jbacik@fb.com,
+        juri.lelli@redhat.com, dhaval.giani@oracle.com, efault@gmx.de,
+        riel@surriel.com
+Subject: Re: [RESEND PATCH v2] sched/fair: Remove check in idle_balance
+ against migration_cost
+Message-ID: <20180316174241.GB4043@hirez.programming.kicks-ass.net>
+References: <1521052607-24622-1-git-send-email-rohit.k.jain@oracle.com>
+ <20180316143550.GH4064@hirez.programming.kicks-ass.net>
+ <48b63847-123c-6a28-d558-392b8122cd7e@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48b63847-123c-6a28-d558-392b8122cd7e@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_shutdown() allows us to avoid the
-internal calls to the sys_shutdown() syscall.
+On Fri, Mar 16, 2018 at 10:21:54AM -0700, Rohit Jain wrote:
+> Hi Peter,
+> 
+> On 03/16/2018 07:35 AM, Peter Zijlstra wrote:
+> > On Wed, Mar 14, 2018 at 11:36:47AM -0700, Rohit Jain wrote:
+> > > Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> > > 
+> > > Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> > Surely you only need a single on of those.
+> 
+> Oh wow! I don't know how I missed this :) Thanks!
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- include/linux/socket.h | 1 +
- net/compat.c           | 2 +-
- net/socket.c           | 9 +++++++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+> However, when I clone from
+> https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/
+> I cannot see the commit.
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index dbdddf0d079e..b205138b69f1 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -374,5 +374,6 @@ extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
- 			     int __user *usockaddr_len);
- extern int __sys_socketpair(int family, int type, int protocol,
- 			    int __user *usockvec);
-+extern int __sys_shutdown(int fd, int how);
- 
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index 04db26316438..f1ec23e9dfce 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -849,7 +849,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 					  compat_ptr(a[4]), compat_ptr(a[5]));
- 		break;
- 	case SYS_SHUTDOWN:
--		ret = sys_shutdown(a0, a1);
-+		ret = __sys_shutdown(a0, a1);
- 		break;
- 	case SYS_SETSOCKOPT:
- 		ret = compat_sys_setsockopt(a0, a1, a[2],
-diff --git a/net/socket.c b/net/socket.c
-index 5861821f46f5..ad5dfd6a1d59 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1942,7 +1942,7 @@ SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
-  *	Shutdown a socket.
-  */
- 
--SYSCALL_DEFINE2(shutdown, int, fd, int, how)
-+int __sys_shutdown(int fd, int how)
- {
- 	int err, fput_needed;
- 	struct socket *sock;
-@@ -1957,6 +1957,11 @@ SYSCALL_DEFINE2(shutdown, int, fd, int, how)
- 	return err;
- }
- 
-+SYSCALL_DEFINE2(shutdown, int, fd, int, how)
-+{
-+	return __sys_shutdown(fd, how);
-+}
-+
- /* A couple of helpful macros for getting the address of the 32/64 bit
-  * fields which are the same type (int / unsigned) on our platforms.
-  */
-@@ -2544,7 +2549,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 				     (int __user *)a[5]);
- 		break;
- 	case SYS_SHUTDOWN:
--		err = sys_shutdown(a0, a1);
-+		err = __sys_shutdown(a0, a1);
- 		break;
- 	case SYS_SETSOCKOPT:
- 		err = sys_setsockopt(a0, a1, a[2], (char __user *)a[3], a[4]);
--- 
-2.16.2
+You need to look at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/
+
+my queue.git is the sporadic push of my quilt tree on top of that.
