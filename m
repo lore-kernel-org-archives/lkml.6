@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuWA75JVyJCjhZVzCtzvTqIXfx8KJgqFnjJySkiIV9JsPwlJkA4MAvpIXgWZGMZJq6csBLa
-ARC-Seal: i=1; a=rsa-sha256; t=1521214891; cv=none;
+X-Google-Smtp-Source: AG47ELuISdrgxub1ySABvVgaBATqMMvVcmegAodZchViTfGLN9A58xPxWt5qenTJcL7Hc7jveHHQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521214888; cv=none;
         d=google.com; s=arc-20160816;
-        b=sXn3vgCTf/lkdfEgBBXogTzztPXQsUm1fOx2Hwz0fDHga6iE7YeTo5p3T9VyYBCj/K
-         Z6PGcJ3tNhdFPhFtpyRgh5yR+f6WFlEGtRAAJilSc+olwd3WvM+/2nr9NDXPDbZvMCeV
-         CnDXY9kMCS6o5c9vtJhNtAV0fB6Neg9qrgzZzbxArPUTr7KRGEjU3xE17lJLvHT74Rf0
-         d5XF6zL3A5rrpOR3go/lfhFd5y//zyM/39HCS/PnZogB07pafmgZzoZ/yM+yjrcvdCb/
-         pkbvHA3Q2T/t1yR62CtW4H3odGLfRaq7GCAbjjSNOjbRGC+9fJINwAp8UkJnqKnN7PIT
-         1fPA==
+        b=HN71evt2RkagXgOn+4dxe6G8gPI1/82EVPCdbWGna8+9zE1S8pHWSDejp9zG7iXgiY
+         dDPkjTa73Am1NmEKMQfD5i5sQx+3WdkDrYV0+/8btWeoohUDxRXkqdopJ5qs2vY9R0Em
+         W2Wjp5ljxDLGaY6utZgAO5mrI0IwpkF0stnW85K3p3C02fc5wOWt4GRztDCqWZK9Dj1F
+         JEAaHaF29LxyLjwmICKeJmsekDTntrPsiT7p9NsCsiirr2+Al6YP3eD1jBToe+oFpo4q
+         NnVcpbZaaxKt1LrGdqDqHdw70uwPGWw4nKldVnYOQ6JCwAuLnx+301w8p7WWUHmXDNAu
+         x2SQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nN+0Tp2Fn/aK7OWasrac07mO9jPhsJBCgOJhvuEomkQ=;
-        b=TScydZeDAD+lEuKfBU/F8qXyn0PZ4L4yzTwv+Lm8ruDQ4KdwDW5P5INRwmI3bxJfRG
-         YLGG+y1YSM8GsAG/OqO35MrJ3jDjeHk95e9hxDJsomIaUW9my+Q1pLV92vItfB7oMdAB
-         JRPI6Rj0+b1/JIBjf48PDaJb1kUm7MFxx95wa6P/IU2hL70+SIMj1CnohVOMj3m5vNTq
-         Evs+V6pGP1ZPCT1VXueVWF95gMwOluEZ1ZJnHya4alMnAZ7hfnbs6VIUrKTov1tSDWvb
-         Ci+VZ+mUkShP0ADi6AkXfek/jw4eZzpzKV1EQpayYiPxugnnhn/t9cvo5Iboen/URQQz
-         e7rg==
+        bh=O09WsFbrnjHonwTDNTViQgyOb69b5H10dF+cjrNh7gU=;
+        b=OGRfZASIO6ZYKTMvp7OoN0Ba65SGARBnvLBsLYbtZSRGnf3wMNwRmKpYRMT6A+PdZ5
+         9rXABsBznD9WVLYs2xo9SSmurXjp3RzjuFyZa1PYg5Jx3ZU7K9zMLXqjH9WIgMGl17F7
+         wMwHuWUvO7JHAubRzK6Blvcc+nmpMtcogCE7Y3ntHolBGUIiBv5isPR62QwvXPI08Qut
+         SJ9s90svEZt9uNqgxRcB2kXbw+gRzX2hvRv+64DlorC0pi9kZpGauKBClhoRQa8Sr9Ty
+         jUSw2i7pnsfmXpEme1I5UkJJIwdwNmWOQDSQSkBtCim9L0nZxs37TeNmbeXTuynyCiDM
+         hq8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Stefan Schmidt <stefan@osg.samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 055/128] rtc: brcmstb-waketimer: fix error handling in brcmstb_waketmr_probe()
-Date: Fri, 16 Mar 2018 16:23:16 +0100
-Message-Id: <20180316152339.581555300@linuxfoundation.org>
+Subject: [PATCH 4.15 054/128] net: ieee802154: adf7242: Fix bug if defined DEBUG
+Date: Fri, 16 Mar 2018 16:23:15 +0100
+Message-Id: <20180316152339.542391941@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109068875020438?=
-X-GMAIL-MSGID: =?utf-8?q?1595109426585117633?=
+X-GMAIL-THRID: =?utf-8?q?1595109062996502048?=
+X-GMAIL-MSGID: =?utf-8?q?1595109422861011169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Michael Hennerich <michael.hennerich@analog.com>
 
 
-[ Upstream commit f2eef045de9defbc6fc6b72b17f0941cbe26c81d ]
+[ Upstream commit 388b3b2b03701f3b3c10975c272892d7f78080df ]
 
-brcmstb_waketmr_probe() does not disable timer->clk on error paths.
+This fixes undefined reference to struct adf7242_local *lp in
+case DEBUG is defined.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Fixes: c4f07ecee22e ("rtc: brcmstb-waketimer: Add Broadcom STB wake-timer")
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Stefan Schmidt <stefan@osg.samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-brcmstb-waketimer.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/ieee802154/adf7242.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/rtc/rtc-brcmstb-waketimer.c
-+++ b/drivers/rtc/rtc-brcmstb-waketimer.c
-@@ -253,7 +253,7 @@ static int brcmstb_waketmr_probe(struct
- 	ret = devm_request_irq(dev, timer->irq, brcmstb_waketmr_irq, 0,
- 			       "brcmstb-waketimer", timer);
- 	if (ret < 0)
--		return ret;
-+		goto err_clk;
+--- a/drivers/net/ieee802154/adf7242.c
++++ b/drivers/net/ieee802154/adf7242.c
+@@ -888,7 +888,7 @@ static const struct ieee802154_ops adf72
+ 	.set_cca_ed_level = adf7242_set_cca_ed_level,
+ };
  
- 	timer->reboot_notifier.notifier_call = brcmstb_waketmr_reboot;
- 	register_reboot_notifier(&timer->reboot_notifier);
-@@ -262,12 +262,21 @@ static int brcmstb_waketmr_probe(struct
- 					 &brcmstb_waketmr_ops, THIS_MODULE);
- 	if (IS_ERR(timer->rtc)) {
- 		dev_err(dev, "unable to register device\n");
--		unregister_reboot_notifier(&timer->reboot_notifier);
--		return PTR_ERR(timer->rtc);
-+		ret = PTR_ERR(timer->rtc);
-+		goto err_notifier;
- 	}
+-static void adf7242_debug(u8 irq1)
++static void adf7242_debug(struct adf7242_local *lp, u8 irq1)
+ {
+ #ifdef DEBUG
+ 	u8 stat;
+@@ -932,7 +932,7 @@ static irqreturn_t adf7242_isr(int irq,
+ 		dev_err(&lp->spi->dev, "%s :ERROR IRQ1 = 0x%X\n",
+ 			__func__, irq1);
  
- 	dev_info(dev, "registered, with irq %d\n", timer->irq);
+-	adf7242_debug(irq1);
++	adf7242_debug(lp, irq1);
  
-+	return 0;
-+
-+err_notifier:
-+	unregister_reboot_notifier(&timer->reboot_notifier);
-+
-+err_clk:
-+	if (timer->clk)
-+		clk_disable_unprepare(timer->clk);
-+
- 	return ret;
- }
+ 	xmit = test_bit(FLAG_XMIT, &lp->flags);
  
