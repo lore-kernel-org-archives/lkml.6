@@ -1,199 +1,89 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3504153-1520957161-2-10745494575614982911
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520957160; b=VirHE3UPLVneqoqO+h0Lj4LQYhsT6Et7SkBoAG7s2xWfBU6
-    AbJmspXSXiAH4oNDYiTK01iFqrYiVDycrZr/7havDzYAcl5Wt1t/BRyuHU4+lCIO
-    ALS/xBfeqRuoS2ljuM1/pcp5XwNGoxh6h79GtYqrVO1A2d7Z6P9m1dEexdT3t0cP
-    4zpTWpXpPnQkE31EZ+9LHGWULqVQTqsdgRHUvfzVJhT89x4ketmWBJAsWG25qjMn
-    KoZy70QgjTRAO1OlHYCkkDiZeQ2kDgg+pLU35UNCvV+IzopfvCJvQT4pwAWU3y0R
-    hY7cz8G1asAWbFq7/PrdKHTD3FnUJnS33y7kN1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520957160; bh=F
-    ADGrLxHWcHkTLJYXZgXmbjxw2vCq+FNjUhnk0G0hmI=; b=BhLxLsWrSPiUj5LoE
-    V8Yea/LQJ0HH9iJc/jl8/Clt+sowMF/C0ygNsmNRdN4p+esDBokBlAgUsMHAeXrx
-    GdLgT+IsemUv/8VyLyfBn1U4ikQepp5BaoNK9PV2HG/Fl7+EwPfq5rTRaYuc/6oC
-    +v46EdDKihQxgDvEhl2Be80T/wniY1kggwa8YStKK5OGohMkMt4TykW66zeaBsOq
-    acAF2KJ+FEGO03iU2WK0wzEAf/MWFP914sQA+BNj1uqiyMgSj1XyjIqUuPoWID+p
-    p7yy5NiP2v9yFZPjBVCO6mEbytXUvJkEzRcNoPdG/5ZEKkx3iEgV/9psnOijIEv8
-    +HUKw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TVSZCO/m x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aB9Woa2c;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TVSZCO/m x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aB9Woa2c;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELvkU5vViFzAptIdmli23IrMEJaNg3wNl+bHtMFWLxX2Wm56DywdMvMCtfauviwtcEzqp0zqCQ==
-Date: Tue, 13 Mar 2018 13:05:48 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Graff Yang <graff.yang@gmail.com>
-Subject: [PATCH v2 2/3] staging:iio:ad2s1210: Add frequency handler in read_raw
-Message-ID: <9296eddbaaa4f815978ce9433c7970a3a498d85b.1520956563.git.rodrigosiqueiramelo@gmail.com>
-References: <cover.1520956563.git.rodrigosiqueiramelo@gmail.com>
+Return-Path: <grygorii.strashko@ti.com>
+X-Google-Smtp-Source: AG47ELvdLnwWpOBPBbP0STcnX59PFE8B4nJWTE6BseLarTQJY/HkV8GEiQoUEciuk61AvCrIS5C3
+ARC-Seal: i=1; a=rsa-sha256; t=1521238119; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lZn3uB6rPPLIc3fzaeOqIF66N9nArJI+B5g70aao1ZQUxt8grO76wxyG8wK7SFHja/
+         0/y86X0twU/2DUntYQoF/O7ZipKivgVG8HFbs/zqX6vWXgBBGttJEwlxhNcj5/e0Pvly
+         DmUD0r45pTsx8SpQma/jUbx2R1KJ+yj4ESfF2DTpnhMiCphG9y63pWC/3UU/YtwiLQFy
+         xC+yiWHZ/3asHxA2Sti2NT/bm8Ih3+2voGg7Cov2aD5GCwM77XLlg4k/jovBx2a/H5wW
+         eN/yWTNYE2JlqYFcWeartamoMmoLT6vBXHubEuv7jwkGxXm2wD/DKtfGwWKwRtDLjSrd
+         x9CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=5Bp0YIlhaMxIC0CTFAY43mKdEKWYhPOl2XxTyQVIfOo=;
+        b=NNqsKxpnbtCTi3Zy8lzXS+/PmMaNfa7pnDfIrrUOPF1fHMB4Mel9mFTNoTE5MB/DJA
+         oRa0JJmjZXOLLdquf1KB2uo23uG2+GAKifmu2l1C/iXpLj+8lKN6VaLI4ZA5lJdg9JqB
+         md0d7X4aof+SQJy2WgSkYiWgkC7mlp1J+rnxEofyUWZQUuJOi14X1Wqt6OL5VKnMefuR
+         vSAwqLt6zugOSke8PA61EiCIe/31km+SiKy40ps83dvvKluMy9yjbD8nJDuk27vl3i6F
+         /eJWzU2c4GDs8wwHvUXEnZqjPURTlIho5nKeOmRzSXO0ChHKb7rl+3+OXTPXgqPCQaN9
+         aC6A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=bUda7GHK;
+       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=bUda7GHK;
+       spf=pass (google.com: domain of grygorii.strashko@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=grygorii.strashko@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Andrew
+ Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH v2 0/2] net: phy: relax error checking when creating sysfs link netdev->phydev
+Date: Fri, 16 Mar 2018 17:08:33 -0500
+Message-ID: <20180316220835.30006-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.10.5
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <cover.1520956563.git.rodrigosiqueiramelo@gmail.com>
-User-Agent: NeoMutt/20171215
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
- daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595133782136044428?=
+X-GMAIL-MSGID: =?utf-8?q?1595133782136044428?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Read data from fclkin and fexcit does not utilize the ad2s1210_read_raw
-function. This patch, append the required handler in the
-ad2s1210_read_raw to return the correct value. Also, this patch removes
-the legacy code related to the read function
+Some ethernet drivers (like TI CPSW) may connect and manage >1 Net PHYs per
+one netdevice, as result such drivers will produce warning during system
+boot and fail to connect second phy to netdevice when PHYLIB framework
+will try to create sysfs link netdev->phydev for second PHY
+in phy_attach_direct(), because sysfs link with the same name has been
+created already for the first PHY.
+As result, second CPSW external port will became unusable.
+This regression was introduced by commits:
+5568363f0cb3 ("net: phy: Create sysfs reciprocal links for attached_dev/phydev"
+a3995460491d ("net: phy: Relax error checking on sysfs_create_link()"
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/staging/iio/resolver/ad2s1210.c | 45 +++++++++++++++------------------
- 1 file changed, 20 insertions(+), 25 deletions(-)
+Patch 1: exports sysfs_create_link_nowarn() function as preparation for Patch 2.
+Patch 2: relaxes error checking when PHYLIB framework is creating sysfs
+link netdev->phydev in phy_attach_direct(), suppresses warning by using
+sysfs_create_link_nowarn() and adds error message instead, so links creation
+failure is not fatal any more and system can continue working,
+which fixes TI CPSW issue and makes boot logs accessible
+in case of NFS boot, for example.
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index 28c3fd439663..27a42ed10fcd 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -210,15 +210,6 @@ static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
- 	return ad2s1210_config_write(st, 0x0);
- }
- 
--static ssize_t ad2s1210_show_fclkin(struct device *dev,
--				    struct device_attribute *attr,
--				    char *buf)
--{
--	struct ad2s1210_state *st = iio_priv(dev_to_iio_dev(dev));
--
--	return sprintf(buf, "%u\n", st->fclkin);
--}
--
- static ssize_t ad2s1210_store_fclkin(struct device *dev,
- 				     struct device_attribute *attr,
- 				     const char *buf,
-@@ -249,15 +240,6 @@ static ssize_t ad2s1210_store_fclkin(struct device *dev,
- 	return ret < 0 ? ret : len;
- }
- 
--static ssize_t ad2s1210_show_fexcit(struct device *dev,
--				    struct device_attribute *attr,
--				    char *buf)
--{
--	struct ad2s1210_state *st = iio_priv(dev_to_iio_dev(dev));
--
--	return sprintf(buf, "%u\n", st->fexcit);
--}
--
- static ssize_t ad2s1210_store_fexcit(struct device *dev,
- 				     struct device_attribute *attr,
- 				     const char *buf, size_t len)
-@@ -486,7 +468,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 			     struct iio_chan_spec const *chan,
- 			     int *val,
- 			     int *val2,
--			     long m)
-+			     long mask)
- {
- 	struct ad2s1210_state *st = iio_priv(indio_dev);
- 	u16 negative;
-@@ -535,23 +517,36 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 		*val = vel;
- 		ret = IIO_VAL_INT;
- 		break;
-+	case IIO_CHAN_INFO_FREQUENCY:
-+		ret = IIO_VAL_INT;
-+		switch (chan->channel) {
-+		case FCLKIN:
-+			*val = st->fclkin;
-+			goto unlock_mutex;
-+		case FEXCIT:
-+			*val = st->fexcit;
-+			goto unlock_mutex;
-+		default:
-+			ret = -EINVAL;
-+			goto unlock_mutex;
-+		}
-+		break;
- 	default:
--		mutex_unlock(&st->lock);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto unlock_mutex;
- 	}
- 
- error_ret:
- 	gpio_set_value(st->pdata->sample, 1);
- 	/* delay (2 * tck + 20) nano seconds */
- 	udelay(1);
-+unlock_mutex:
- 	mutex_unlock(&st->lock);
- 	return ret;
- }
- 
--static IIO_DEVICE_ATTR(fclkin, 0644,
--		       ad2s1210_show_fclkin, ad2s1210_store_fclkin, 0);
--static IIO_DEVICE_ATTR(fexcit, 0644,
--		       ad2s1210_show_fexcit,	ad2s1210_store_fexcit, 0);
-+static IIO_DEVICE_ATTR(fclkin, 0644, NULL, ad2s1210_store_fclkin, 0);
-+static IIO_DEVICE_ATTR(fexcit, 0644, NULL, ad2s1210_store_fexcit, 0);
- static IIO_DEVICE_ATTR(control, 0644,
- 		       ad2s1210_show_control, ad2s1210_store_control, 0);
- static IIO_DEVICE_ATTR(bits, 0644,
+This can be stable material 4.13+.
+
+Changes in v2:
+- commit messages updated.
+
+v1: 
+ https://patchwork.ozlabs.org/cover/886058/
+
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Grygorii Strashko (2):
+  sysfs: symlink: export sysfs_create_link_nowarn()
+  net: phy: relax error checking when creating sysfs link netdev->phydev
+
+ drivers/net/phy/phy_device.c | 15 +++++++++++----
+ fs/sysfs/symlink.c           |  1 +
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
 -- 
-2.16.2
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.10.5
