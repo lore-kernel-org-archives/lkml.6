@@ -1,49 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeCPNtD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 09:49:03 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:36957 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeCPNtC (ORCPT
+        id S1753385AbeCPNtd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 09:49:33 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:59806 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeCPNtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 09:49:02 -0400
-X-Google-Smtp-Source: AG47ELvgUedjUiS7SkAORr1eT1RbGkWxUZV5wOFemgNDoAne3GXU1IHjXgFR317hu9q3wSxIs2J69sLiAqwe+2p+AHE=
-MIME-Version: 1.0
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Fri, 16 Mar 2018 14:49:00 +0100
-Message-ID: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
-Subject: arm64 kvm built with clang doesn't boot
-To: Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: kernel-dynamic-tools <kernel-dynamic-tools@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 16 Mar 2018 09:49:31 -0400
+Date: Fri, 16 Mar 2018 09:49:28 -0400 (EDT)
+Message-Id: <20180316.094928.699803274284942791.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rxrpc: remove redundant initialization of variable
+ 'len'
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180312172538.31707-1-colin.king@canonical.com>
+References: <20180312172538.31707-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 12 Mar 2018 17:25:38 +0000
 
-I've recently tried to boot clang built kernel on real hardware
-(Odroid C2 board) instead of using a VM. The issue that I stumbled
-upon is that arm64 kvm built with clang doesn't boot.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable 'len' is being initialized with a value that is never
+> read and it is re-assigned later, hence the initialization is redundant
+> and can be removed.
+> 
+> Cleans up clang warning:
+> net/rxrpc/recvmsg.c:275:15: warning: Value stored to 'len' during its
+> initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Adding -fno-jump-tables compiler flag to arch/arm64/kvm/* helps. There
-was a patch some time ago that did exactly that
-(https://patchwork.kernel.org/patch/10060381/), but it wasn't accepted
-AFAICT (see the discussion on that thread).
+Hehe, if the diff provided just 2 more lines of context at the bottom
+we'd be able to see the overriding assignment :-)
 
-What would be the best way to get this fixed?
+> @@ -272,7 +272,7 @@ static int rxrpc_locate_data(struct rxrpc_call *call, struct sk_buff *skb,
+>  			     unsigned int *_offset, unsigned int *_len)
+>  {
+>  	unsigned int offset = sizeof(struct rxrpc_wire_header);
+> -	unsigned int len = *_len;
+> +	unsigned int len;
+>  	int ret;
+>  	u8 annotation = *_annotation;
+>  
+> -- 
+> 2.15.1
+> 
 
-I've also had to disable CONFIG_JUMP_LABEL to get the kernel boot
-(even without kvm enabled), but that might be a different (though
-related) issue.
-
-Thanks!
+Applied, thanks Colin.
