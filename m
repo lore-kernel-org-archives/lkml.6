@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELtegNXRZQsyebgYgxEPN+AnlDZsqugw5wCqHdBidNB1HpH8iOJ/pgwq2emZP9nAipNSyyKC
-ARC-Seal: i=1; a=rsa-sha256; t=1521228598; cv=none;
+X-Google-Smtp-Source: AG47ELvX7FPKbOmJojk4U7cdL5QFDipTkyZwpSnOJGzIYucicccNG9NdczdxSY4jO4sjkwo3bXzs
+ARC-Seal: i=1; a=rsa-sha256; t=1521228615; cv=none;
         d=google.com; s=arc-20160816;
-        b=siLxJcgJH6c6gipsAGUfxgECsYBvhjBNDSVkaqzA3ZgSgYmWobmIKU1q8Kviub+8Us
-         CNg+HnRKwtx2utOTDI6wZkyapxrewSKx8Ldij3LRGOhE1a3MG/FWhunx3EIieiz8FoSJ
-         jU1pvvH9CXKiG3Te74L6pup0TgWc25Or29LkIXOU5oZhV51GuZ1QGxTdk8rOPCNen7Tm
-         8lbNHjLqvPci+XFa3Ckk0bO+j3qMwGHM2ZswKfApYUgSQsbjqR4BVxEbbObbVeEfWRGW
-         TzyKEYGa3Ss1Lxip75NsYFdOLYsdAk1N1AaNwc9NDWOsmnakva0EemujyLEHMJJDYgRK
-         dDgg==
+        b=QklpXBqWAAb3BVMK/Xp0fai0RvMKPPvTsxLsoQTu5hu/SEKmxo+6Bt34nI/kA4JDBL
+         TMuRPXMRoA75Hjt44t1fLaoXwVZh5HRuNU2RPwFmcMdboe7MWoMJOrkYra9DQaliKvlQ
+         aGo8ugv0s7bi08s+xHziT2FgEDjLqskPlvUgwlMcpVlWtJozeQ32fudeL9S92p58xwPT
+         CA4ZkTk+MtcNb2kuRuGk2N5g0S7LfcPmxT1LlOHVbqvyvF7UY2VMPYqE9yknVLlmU/4z
+         aivteafxS4QnWI6Zih2ivs2wHWeXEwSv1CT0AIdtHIxm9W++KgoI6gTccHCMWaUpgiBI
+         PI+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=KL2Vuz7RoczjlwRi6Ij559MN33Y2/5R33ErPOWCLZc0=;
-        b=xIqSyh3nNBTNmxlhAFvjfEdgNbd4N/Xj5rLEXZ26F/QTQbm0cr1+lAoGhHUj6QeV8O
-         tU2C7PLJwt7Ck4SM76c7jt+DAJ9pQuzxtdnfitmYEEVhzexOAozZDxV6P5W+gPlreJEp
-         bPPpf7M7+L7bqECgpJqi0ikcIKxlmXkDnejpZvM8lKKr5uaoQj6xMdSrRmbzorMBBjeV
-         n0rMZzS9GFKjyYem+dmCp6C/5xBa2+n6CX63KeRCUkh0sCCA7Q3EzwOHtK8+RS/0zUjq
-         1jk5PaBItLRo24xTDPTcX7tg0DVXsaKI29/74sPf+UGd4OSqQePQg2EZ5uCBPZS5/oP+
-         jS/g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=RGA25vQ8gBPaSKGy/lT4lV6mDQVKRyvseZa9z9ApG6o=;
+        b=Rvrio85V7mmdu7tCjylQ1S81V8xANZFG653ImfuuRXtfphKRTE7P+VoP7MDMIgWtpK
+         AqqRQxjskr6oJbXNJIoIeYtDcuncYiaJKA/OdSzdGuZOyXM4BsbuTaOpfswKNfKLD2ym
+         kQOYqfHgOj/kwEdyfvT3Ei3RlRB8Tdyj4PNfPf9kxee8wK73N12HbuF/GF7+eKeovZq9
+         ZZOdNHlPp4xajweiB6bSpiWTgxW0LPxB/y0PXy9OKQ/eKKrn+9ngqrrhwBUP0Xvv2yPM
+         MIlUoqglnAaYdZNG5ERT57t8+V9Vlma10RDR7dH0WK3xnmjUVMjJgxLl/3DV0pHqQ2LI
+         Wdrw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=bTXeH9yy;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ll680rTV;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=bTXeH9yy;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ll680rTV;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,145 +57,75 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 00/35 v4] PTI support for x32
-Date: Fri, 16 Mar 2018 20:29:18 +0100
-Message-Id: <1521228593-3820-1-git-send-email-joro@8bytes.org>
+Subject: [PATCH 30/35] x86/ldt: Define LDT_END_ADDR
+Date: Fri, 16 Mar 2018 20:29:48 +0100
+Message-Id: <1521228593-3820-31-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
+References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595123798871267483?=
-X-GMAIL-MSGID: =?utf-8?q?1595123798871267483?=
+X-GMAIL-THRID: =?utf-8?q?1595123816823144910?=
+X-GMAIL-MSGID: =?utf-8?q?1595123816823144910?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: Joerg Roedel <jroedel@suse.de>
 
-here is an updated version of my PTI enablement patches for
-the x86-32 architecture. I worked in the review comments for
-v3 and updated the patches here and there. The patch that
-re-organized RESTORE_REGS to load segments first is dropped
-now.
+It marks the end of the address-space range reserved for the
+LDT. The LDT-code will use it when unmapping the LDT for
+user-space.
 
-A notable addition in this version is the last
-patch which adds debug-checks to the kernel entry/exit
-points that will cause a BUG if they find a wrong CR3. The
-checks can be enabled with a config-option and are for
-debugging only. I used them for testing this series, the
-checks did not trigger during my tests. I included the patch
-because I am not sure whether it is wanted upstream, if not,
-just tell me and I'll drop it.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/pgtable_32_types.h | 2 ++
+ arch/x86/include/asm/pgtable_64_types.h | 2 ++
+ arch/x86/kernel/ldt.c                   | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-While at testing: I tested the patches again on a real
-machine (4C/8T, 16GB RAM) and ran 'perf top' for the NMI
-load, the x86 self-tests in a loop, and a -j16 kernel
-compile loop in parallel for a couple of hours. This didn't
-trigger any problems. I also boot-tested various
-combinations of PAE/non-PAE and HIGHMEM/no-HIGHMEM, also
-without any issues.
-
-In particular, the changes to v3 are:
-
-	* Dropped the RESTORE_REGS splitting
-
-	* Changed the cpu_current_top_of_stack to just point
-	  to tss.sp1, like it does on x86-64.
-
-	* Simplified SAVE_ALL_NMI to just use
-	  SWITCH_TO_KERNEL_CR3 now that this macro returns
-	  the old cr3
-
-	* Added a debug Kconfig option which adds checks to
-	  the kernel entry/exit paths if the cpu is on the
-	  expected cr3 and which will BUG if not.
-
-	* Explicitly clear the high word of the CS slot in
-	  pt_regs for hardware that doesn't do it for us.
-
-There is also a again branch with these patches on git.kernel.org:
-
-	  git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v4
-
-The previous version of this patch-set can be found at:
-
-	* For v3:
-	  Post : https://marc.info/?l=linux-kernel&m=152024559419876&w=2
-	  Git  : git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v3
-
-	* For v2:
-	  Post : https://marc.info/?l=linux-kernel&m=151816914932088&w=2
-	  Git  : git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v2
-
-Please review.
-
-Thanks,
-
-	Joerg
-
-Joerg Roedel (35):
-  x86/asm-offsets: Move TSS_sp0 and TSS_sp1 to asm-offsets.c
-  x86/entry/32: Rename TSS_sysenter_sp0 to TSS_entry_stack
-  x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
-  x86/entry/32: Put ESPFIX code into a macro
-  x86/entry/32: Unshare NMI return path
-  x86/entry/32: Split off return-to-kernel path
-  x86/entry/32: Enter the kernel via trampoline stack
-  x86/entry/32: Leave the kernel via trampoline stack
-  x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
-  x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-  x86/entry/32: Simplify debug entry point
-  x86/32: Use tss.sp1 as cpu_current_top_of_stack
-  x86/entry/32: Add PTI cr3 switch to non-NMI entry/exit points
-  x86/entry/32: Add PTI cr3 switches to NMI handler code
-  x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
-  x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
-  x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
-  x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
-  x86/pgtable: Move pti_set_user_pgtbl() to pgtable.h
-  x86/pgtable: Move two more functions from pgtable_64.h to pgtable.h
-  x86/mm/pae: Populate valid user PGD entries
-  x86/mm/pae: Populate the user page-table with user pgd's
-  x86/mm/legacy: Populate the user page-table with user pgd's
-  x86/mm/pti: Add an overflow check to pti_clone_pmds()
-  x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
-  x86/mm/pti: Clone CPU_ENTRY_AREA on PMD level on x86_32
-  x86/mm/dump_pagetables: Define INIT_PGD
-  x86/pgtable/pae: Use separate kernel PMDs for user page-table
-  x86/ldt: Reserve address-space range on 32 bit for the LDT
-  x86/ldt: Define LDT_END_ADDR
-  x86/ldt: Split out sanity check in map_ldt_struct()
-  x86/ldt: Enable LDT user-mapping for PAE
-  x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-  x86/mm/pti: Add Warning when booting on a PCID capable CPU
-  x86/entry/32: Add debug code to check entry/exit cr3
-
- arch/x86/Kconfig.debug                      |  12 +
- arch/x86/entry/entry_32.S                   | 640 +++++++++++++++++++++++-----
- arch/x86/include/asm/mmu_context.h          |   4 -
- arch/x86/include/asm/pgtable-2level.h       |   9 +
- arch/x86/include/asm/pgtable-2level_types.h |   3 +
- arch/x86/include/asm/pgtable-3level.h       |   7 +
- arch/x86/include/asm/pgtable-3level_types.h |   6 +-
- arch/x86/include/asm/pgtable.h              |  88 ++++
- arch/x86/include/asm/pgtable_32_types.h     |   9 +-
- arch/x86/include/asm/pgtable_64.h           |  89 +---
- arch/x86/include/asm/pgtable_64_types.h     |   4 +
- arch/x86/include/asm/pgtable_types.h        |  28 +-
- arch/x86/include/asm/processor-flags.h      |   8 +-
- arch/x86/include/asm/processor.h            |   4 -
- arch/x86/include/asm/switch_to.h            |   6 +-
- arch/x86/include/asm/thread_info.h          |   2 -
- arch/x86/kernel/asm-offsets.c               |   5 +
- arch/x86/kernel/asm-offsets_32.c            |   2 +-
- arch/x86/kernel/asm-offsets_64.c            |   2 -
- arch/x86/kernel/cpu/common.c                |   9 +-
- arch/x86/kernel/head_32.S                   |  20 +-
- arch/x86/kernel/ldt.c                       | 137 ++++--
- arch/x86/kernel/process.c                   |   2 -
- arch/x86/kernel/process_32.c                |   4 +-
- arch/x86/mm/dump_pagetables.c               |  21 +-
- arch/x86/mm/pgtable.c                       | 105 ++++-
- arch/x86/mm/pti.c                           |  42 +-
- security/Kconfig                            |   2 +-
- 28 files changed, 969 insertions(+), 301 deletions(-)
-
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index eb2e97a..02bd445 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -51,6 +51,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ #define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+ 
++#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
++
+ #define PKMAP_BASE		\
+ 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
+ 
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index e57003a..15188baa 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -90,12 +90,14 @@ typedef struct { pteval_t pte; } pte_t;
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-112, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #else
+ # define VMALLOC_SIZE_TB	_AC(32, UL)
+ # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-3, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #endif
+ 
+ #ifdef CONFIG_RANDOMIZE_MEMORY
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 26d713e..f3c2fbf 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -202,7 +202,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	struct mmu_gather tlb;
+ 	unsigned long start = LDT_BASE_ADDR;
+-	unsigned long end = start + (1UL << PGDIR_SHIFT);
++	unsigned long end = LDT_END_ADDR;
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
