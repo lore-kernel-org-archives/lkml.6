@@ -1,102 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932327AbeCPUTk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:19:40 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43677 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932274AbeCPUTh (ORCPT
+        id S1753381AbeCPUT0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:19:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57146 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753156AbeCPUSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:19:37 -0400
-X-Google-Smtp-Source: AG47ELvzWW8ZdDaxm2pR5ZFBwd70x/rVZnDZRgwsCPlfButrO0sRp87TUSKIWhU76YRoItBNpgE3Ug==
-Date: Sat, 17 Mar 2018 01:49:25 +0530
-From: Himanshu Jha <himanshujha199640@gmail.com>
-To: Manish Narani <manish.narani@xilinx.com>
-Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        michal.simek@xilinx.com, lee.jones@linaro.org, broonie@kernel.org,
-        arnaud.pouliquen@st.com, quentin.schulz@free-electrons.com,
-        linus.walleij@linaro.org, ksenija.stanojevic@gmail.com, arnd@arndb.de,
-        martenli@axis.com, jan.kiszka@siemens.com, lukas@wunner.de,
-        vilhelm.gray@gmail.com, geert+renesas@glider.be, fabio.estevam@nxp.com,
-        jackoalan@gmail.com, mnarani@xilinx.com, mike.looijmans@topic.nl,
-        alexander.sverdlin@gmail.com, jacopo+renesas@jmondi.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] iio: adc: Add Xilinx AMS driver
-Message-ID: <20180316201925.GA18013@himanshu-Vostro-3559>
-References: <1521124947-18950-1-git-send-email-mnarani@xilinx.com>
+        Fri, 16 Mar 2018 16:18:52 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 10/10] iommu/amd: make amd_iommu_devtable_lock a spin_lock
+Date: Fri, 16 Mar 2018 21:18:36 +0100
+Message-Id: <20180316201836.7864-11-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180316201836.7864-1-bigeasy@linutronix.de>
+References: <20180316201836.7864-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521124947-18950-1-git-send-email-mnarani@xilinx.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:12:27PM +0530, Manish Narani wrote:
-> The AMS includes an ADC as well as on-chip sensors that can be used to
-> sample external voltages and monitor on-die operating conditions, such as
-> temperature and supply voltage levels. The AMS has two SYSMON blocks.
-> PL-SYSMON block is capable of monitoring off chip voltage and temperature.
-> PL-SYSMON block has DRP, JTAG and I2C interface to enable monitoring from
-> external master. Out of these interface currently only DRP is supported.
-> Other block PS-SYSMON is memory mapped to PS.
-> 
-> The AMS can use internal channels to monitor voltage and temperature
-> as well as one primary and up to 16 auxiliary channels for measuring
-> external voltages.
-> 
-> The voltage and temperature monitoring channels also have event
-> capability which allows to generate an interrupt when their value
-> falls below or raises above a set threshold.
-> 
-> Signed-off-by: Manish Narani <mnarani@xilinx.com>
-> ---
+Before commit 0bb6e243d7fb ("iommu/amd: Support IOMMU_DOMAIN_DMA type
+allocation") amd_iommu_devtable_lock had a read_lock() user but now
+there are none. In fact, after the mentioned commit we had only
+write_lock() user of the lock. Since there is no reason to keep it as
+writer lock, change its type to a spin_lock.
+I *think* that we might even be able to remove the lock because all its
+current user seem to have their own protection.
 
-[..]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ drivers/iommu/amd_iommu.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> +static const struct of_device_id ams_of_match_table[] = {
-> +       { .compatible = "xlnx,zynqmp-ams", &ams_pl_apb },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, ams_of_match_table);
-
-[..]
-
-> +static int ams_probe(struct platform_device *pdev)
-> +{
-> +       struct iio_dev *indio_dev;
-> +       struct ams *ams;
-> +       struct resource *res;
-> +       const struct of_device_id *id;
-> +       int ret;
-> +
-> +       if (!pdev->dev.of_node)
-> +               return -ENODEV;
-> +
-> +       id = of_match_node(ams_of_match_table, pdev->dev.of_node);
-> +       if (!id)
-> +               return -ENODEV;
-
-Is the above check required ?
-
-Isn't the probe function called if and only if a match is found in
-ams_of_match_table[] since it is a pure OF driver ?
-
-And therefore the above condition would never happen!
-
-> +static struct platform_driver ams_driver = {
-> +       .probe = ams_probe,
-> +       .remove = ams_remove,
-> +       .driver = {
-> +               .name = "ams",
-> +               .pm     = &ams_pm_ops,
-> +               .of_match_table = ams_of_match_table,
-> +       },
-> +};
-> +module_platform_driver(ams_driver);
-
-
--- 
-Thanks
-Himanshu Jha
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 0a7ca5e95288..6ed59f1f6d33 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -80,7 +80,7 @@
+  */
+ #define AMD_IOMMU_PGSIZES	((~0xFFFUL) & ~(2ULL << 38))
+=20
+-static DEFINE_RWLOCK(amd_iommu_devtable_lock);
++static DEFINE_SPINLOCK(amd_iommu_devtable_lock);
+ static DEFINE_SPINLOCK(pd_bitmap_lock);
+ static DEFINE_RAW_SPINLOCK(iommu_table_lock);
+=20
+@@ -2097,9 +2097,9 @@ static int attach_device(struct device *dev,
+ 	}
+=20
+ skip_ats_check:
+-	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
++	spin_lock_irqsave(&amd_iommu_devtable_lock, flags);
+ 	ret =3D __attach_device(dev_data, domain);
+-	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
++	spin_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
+=20
+ 	/*
+ 	 * We might boot into a crash-kernel here. The crashed kernel
+@@ -2149,9 +2149,9 @@ static void detach_device(struct device *dev)
+ 	domain   =3D dev_data->domain;
+=20
+ 	/* lock device table */
+-	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
++	spin_lock_irqsave(&amd_iommu_devtable_lock, flags);
+ 	__detach_device(dev_data);
+-	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
++	spin_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
+=20
+ 	if (!dev_is_pci(dev))
+ 		return;
+@@ -2814,7 +2814,7 @@ static void cleanup_domain(struct protection_domain *=
+domain)
+ 	struct iommu_dev_data *entry;
+ 	unsigned long flags;
+=20
+-	write_lock_irqsave(&amd_iommu_devtable_lock, flags);
++	spin_lock_irqsave(&amd_iommu_devtable_lock, flags);
+=20
+ 	while (!list_empty(&domain->dev_list)) {
+ 		entry =3D list_first_entry(&domain->dev_list,
+@@ -2822,7 +2822,7 @@ static void cleanup_domain(struct protection_domain *=
+domain)
+ 		__detach_device(entry);
+ 	}
+=20
+-	write_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
++	spin_unlock_irqrestore(&amd_iommu_devtable_lock, flags);
+ }
+=20
+ static void protection_domain_free(struct protection_domain *domain)
+--=20
+2.16.2
