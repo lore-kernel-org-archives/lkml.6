@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6WXEUZb1LF6zLPoLStC8H4vw/VocbqTrKyuOuNDQk83PGSxsgvFDD0pkR0URMhO/avVo7
-ARC-Seal: i=1; a=rsa-sha256; t=1521214508; cv=none;
+X-Google-Smtp-Source: AG47ELsAUEMW84aHlP4R5GtNiJ7m62PnuzPocI7FuCfTZ/CtcLxzfCYHVdQa0fXkwftPm0s0Av92
+ARC-Seal: i=1; a=rsa-sha256; t=1521214502; cv=none;
         d=google.com; s=arc-20160816;
-        b=KqkHIU9XK1XX5+SMi75bfpJ25vNBIGMh6znhpepB9u56aOjYy5jOBECMwcqBcG7yVa
-         bO5QU2k55K1fp0KI5Vhmr+3yIFuxs5p+4mLsqZ52A/iQrcVYVlEnoSjHhJgKrDKA/kjg
-         JloGpK3QDOG3baa35UFqhqzMoUIBqHwfNF2NASTL/yVfYmN0qAd1cE+qTrU77s8bHYF0
-         z+pdcdig29LOVXxT04sOgaXZ2tgmloP4nVT/vT4f4bV/dojN4R9YDQ1eASX+mBqmTbWz
-         bDvfgcosg15FNWBuJTB5z/juI2K+ToNpbwo+yLMIUkE4kUp4T9LPXw+Fnx6/QEkXfhbv
-         4C/Q==
+        b=FXPitngCOZu66qB+iAK/F86QG5ICZYaQz7x2PwJvFk571ZK8BELAU/kKI5O59NUF3A
+         +W+BuML7VNlZ9PLnTtyvwpaNLC/JP7hy4d+RNm0U4hLqrFLJPTueNOyP2zmgrLZswpbk
+         R4Q5sEElX6PSFwA6EgGBRpY+L4E+VAK7OIexO1oemQ3eyhQP8e4mZViXNrKihDfcG4Zu
+         PlqSOGt/dfLZRpQKhFuhLn94Wc8UxQ70TtIjjtOaE1uiINYP1y7d1q8Ws9LRdfqsQQv+
+         ejZk9hgasfKe7xjDvZKTH/8m0TwKgASkLG2dNu9TWjKwYWSoyTWXMayma8PrXS5MRp9G
+         JX2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CknbOVSbEtcZ/QNKmpzlxKXcNUJzt+7XW0ErshXPRiQ=;
-        b=YtuxR7iBbS66Vt1FfepRNaIU3dXeolf986gTTvrgRfzq74mIhdB31WqNo0vj4Osgrt
-         l9mAeMuuaetNCDKDxjMuRzcAtJgiFEIeLZnYcJTUg3itPbZ1jdDes0Lt2nP5qCFcgK0n
-         /ZmbFy8NcP6pq2OgCS9OcgAREdJPJ1AoE8gJGR9ZNk4AB+kUsLmQIpYad5EGEpoOnnRR
-         2V9lcIQtbBMWLhGUtekmlqTN6qMpfksjfFni9a2ZIgVAkmmn2NnfMG9Kxmw8qOUXArat
-         Cj1NsCwoolgEHxis52zMUtd+TH78uEsw9HiKlChV2KQrJuoiv25JgvSDWMjcksJuoclE
-         VQ4g==
+        bh=nPhYOmG/VBmztX0WnbEtEhVhUos3nR0Ll3WGvoqBILo=;
+        b=HBP3G5fmaIwRwI+j8dDdbfpE7XFIFX0Safp2upjDWCvXKTzDCs70gmO0g1DqYLQwJb
+         9DF2/PlqR28oO6HTYhugWv/wkcL/UtT80gDx5cnPOrVBdFrPvjgWLA6oTzhEJfFPCJwN
+         we1xijR6W9XOeKXn+wFpYI7hXN1Q7vw5qTgvhbJR7HL7dQ0BFJENAMFFeYOcv5xXTpeG
+         TJRytlOZThjxLoA2sXq0USNEGIQbLKojsQpIsXiF1o8p4Og1xhjr3U4WKcwF4aDw5Hqs
+         Be+w5oXMDvrFacLtDNk+HnY2kPCF+U8DIu+QTfwP1zwDc3SAlux09qP+95Ba0Crg0y0a
+         GveQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.14 008/109] usb: host: xhci-rcar: add support for r8a77965
-Date: Fri, 16 Mar 2018 16:22:37 +0100
-Message-Id: <20180316152330.291889287@linuxfoundation.org>
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 006/109] ASoC: wm_adsp: For TLV controls only register TLV get/set
+Date: Fri, 16 Mar 2018 16:22:35 +0100
+Message-Id: <20180316152330.179436218@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109024955266276?=
-X-GMAIL-MSGID: =?utf-8?q?1595109024955266276?=
+X-GMAIL-THRID: =?utf-8?q?1595109018264296181?=
+X-GMAIL-MSGID: =?utf-8?q?1595109018264296181?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-commit 015dbeb2282030bf56762e21d25f09422edfd750 upstream.
+commit d7789f5bcdb298c4a302db471b1b20f74a20de95 upstream.
 
-This patch adds support for r8a77965 (R-Car M3-N).
+Normal 512-byte get/set of a TLV isn't supported but we were
+registering the normal get/set anyway and relying on omitting
+the SNDRV_CTL_ELEM_ACCESS_[READ|WRITE] flags to prevent them
+being called.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Trouble is if this gets broken in the core ALSA code - as it has
+been since at least 4.14 - the standard get/set can be called
+unexpectedly and corrupt memory.
+
+There's no point providing functions that won't be called and
+it's a trivial change. The benefit is that if the ALSA core gets
+broken again we get a big fat immediate NULL dereference instead
+of a memory corruption timebomb.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/usb/usb-xhci.txt |    1 +
- drivers/usb/host/xhci-rcar.c                       |    4 ++++
- 2 files changed, 5 insertions(+)
+ sound/soc/codecs/wm_adsp.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -12,6 +12,7 @@ Required properties:
-     - "renesas,xhci-r8a7793" for r8a7793 SoC
-     - "renesas,xhci-r8a7795" for r8a7795 SoC
-     - "renesas,xhci-r8a7796" for r8a7796 SoC
-+    - "renesas,xhci-r8a77965" for r8a77965 SoC
-     - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 compatible device
-     - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible device
-     - "xhci-platform" (deprecated)
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -86,6 +86,10 @@ static const struct soc_device_attribute
- 		.soc_id = "r8a7796",
- 		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
- 	},
-+	{
-+		.soc_id = "r8a77965",
-+		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
-+	},
- 	{ /* sentinel */ },
- };
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -1204,12 +1204,14 @@ static int wmfw_add_ctl(struct wm_adsp *
+ 		kcontrol->put = wm_coeff_put_acked;
+ 		break;
+ 	default:
+-		kcontrol->get = wm_coeff_get;
+-		kcontrol->put = wm_coeff_put;
+-
+-		ctl->bytes_ext.max = ctl->len;
+-		ctl->bytes_ext.get = wm_coeff_tlv_get;
+-		ctl->bytes_ext.put = wm_coeff_tlv_put;
++		if (kcontrol->access & SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK) {
++			ctl->bytes_ext.max = ctl->len;
++			ctl->bytes_ext.get = wm_coeff_tlv_get;
++			ctl->bytes_ext.put = wm_coeff_tlv_put;
++		} else {
++			kcontrol->get = wm_coeff_get;
++			kcontrol->put = wm_coeff_put;
++		}
+ 		break;
+ 	}
  
