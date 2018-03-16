@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELulm543L6bH18Cn/3wYfBGh4y1ZQuGwV38IEJNMqwzw/iukXIGOEuuf9GY1+EPlsGUBULbN
-ARC-Seal: i=1; a=rsa-sha256; t=1521214219; cv=none;
+X-Google-Smtp-Source: AG47ELtCg6WmfXu3ewJox+F7cxsAl3ncDJkjfBydY7yd3QLNpoPzDpWxJGLQ9OAqZ3ix/5N8+6b7
+ARC-Seal: i=1; a=rsa-sha256; t=1521214328; cv=none;
         d=google.com; s=arc-20160816;
-        b=EyIC2mvNygso+dfE4qSl0vXA3Vo8Ab+YhR44prW5OY4svstMwQljkwxqXYjN0eVgib
-         wns1q9QzjvFqcJL0YG0T/nWgqRCnVHxSkMe44Y0f+7W3NOD/eFXyvNWoQIlIwx/5i8fm
-         Vc0HNIUQXZBvNcXfKVIpAOX93UZzp5XNTD8iHmCtqJvevbPgwEpuaDDfUk9+heAlKcwC
-         YLcfmLqqcm+NAjMkbyFem17XmT6eIrMp53ypGzXCRQcRX1/+Z2pkeRIyDkNjXRP53mAX
-         RBhFzfkoCUck3/jzpCh0djtaPh29DUPIFk+ys5FAJS/oNUxkZupivAAfiukyFdvt555u
-         V3Zw==
+        b=Q6hmRXiCwXRF/Qu9OMGELqB6w1QJz0yEfmjprAIC0RHcbjPyUuKhDfQGXkGNZP/nHI
+         /GASKc9JIWZwC6CJD6rZ+ZFaXRKUWSjI3EyhitKQ1hGxbie0L6ObEY2f7QEDWmqqSsig
+         OpBzVxISIaZdrW9twfV5f6fvyq9/d8VQ8HfpePUrHKZ3ZyeUU/mS3qmvkkJHsdZorDXq
+         Z6zMIoeQLox8Q/Pe/EzKMwa00HObQBtHuu0YzelDU0orE3Sp3i79uWV12KcS0+1VGDMB
+         SgVkGeFO+yqrDoIkJ0zaosXaDu2JCcoxrPNWL59+A0yyUxei6efhgw4EZLTmHjemPv5W
+         Yy5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YQAR7MU8EA3kzQnU3kH99+9iPiBzVxr2+DMdQ96zfFg=;
-        b=pcTxtYPP6utLaBp7vQ+sNp3qK1i2472TjUnAosfVr40JCcdoDFMM9XlAx983kRHT9M
-         Sp5BAtmuXIAMtb0ng6ENczsgrnQgT/6BxD2EF6Yo0UARx2GMDCgEFXWCnHmEoj5Utwyh
-         GQw9rH9M+u8dkLBEc+LISFvHeb60xxYCnq04qptxryT5Jqj1hwfKJYaAHPaeJwzs+h1F
-         ZZpDMQ96kKXbg3bPPfHjkyqwmJgPIhdzBSEJc26mUNXLzp3GGj6H9nq3Rrn6GLqqa9Ui
-         gZ2YbuKdzVEc3BK3UQPvxtX5zqpwfORDxP6Fm6WIZVJ/CugiCT3umId4j1UkIz5AWyud
-         RyOQ==
+        bh=ChN0aB2GfA6zQxB18ZzitzzCq4TP+jgkuhENAoMmCZ4=;
+        b=FRnmV7jgc09W6xvoeL/dabePsLqag/psL6nMCeQ/GHf167mzZST/TDzfn/yZeg5ao5
+         Y9xSds55KAc41vCsDXpttQVzAc5atzwbIVQOAUC5rY1/vUoBI9W8ngrYO6B1EzgMTfOl
+         Vbs47wVaOsycyuxKJoRZ8zb96fYXHx/0U97d0YjMtmbsStzEeqG4QEfKNNRX+A4QOYbp
+         Q9Degl45a73DxLN9/mvay44M8hv76zeQoPMIFsG8Pd/1ICtlIU8DRBVuR+5IcuvyVpKO
+         guffmxvVxy9PzrLVB+Hv5ivOwGUSy+TtTebq29LhvR42bVzliAl5mXTvxDOmMCs9g1tc
+         +3lw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.9 18/86] MIPS: ath25: Check for kzalloc allocation failure
-Date: Fri, 16 Mar 2018 16:22:41 +0100
-Message-Id: <20180316152318.571317500@linuxfoundation.org>
+	syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 56/86] netfilter: nat: cope with negative port range
+Date: Fri, 16 Mar 2018 16:23:19 +0100
+Message-Id: <20180316152321.173126554@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108599350842793?=
-X-GMAIL-MSGID: =?utf-8?q?1595108721622216703?=
+X-GMAIL-THRID: =?utf-8?q?1595108496271257744?=
+X-GMAIL-MSGID: =?utf-8?q?1595108835651005552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +50,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 1b22b4b28fd5fbc51855219e3238b3ab81da8466 upstream.
+commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
 
-Currently there is no null check on a failed allocation of board_data,
-and hence a null pointer dereference will occurr. Fix this by checking
-for the out of memory null pointer.
+syzbot reported a division by 0 bug in the netfilter nat code:
 
-Fixes: a7473717483e ("MIPS: ath25: add board configuration detection")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.19+
-Patchwork: https://patchwork.linux-mips.org/patch/18657/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+divide error: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88
+RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
+RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
+RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
+RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
+R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
+R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
+FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
+  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
+  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
+  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
+  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
+  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
+  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
+  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
+  nf_nat_ipv6_local_fn+0x33/0x5d0
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
+  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook include/linux/netfilter.h:243 [inline]
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
+  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
+  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
+  dccp_connect+0x369/0x670 net/dccp/output.c:564
+  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
+  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
+  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
+  SYSC_connect+0x213/0x4a0 net/socket.c:1639
+  SyS_connect+0x24/0x30 net/socket.c:1620
+  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x441c69
+RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
+RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
+R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
+Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
+45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
+c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
+RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
+net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
+
+The problem is that currently we don't have any check on the
+configured port range. A port range == -1 triggers the bug, while
+other negative values may require a very long time to complete the
+following loop.
+
+This commit addresses the issue swapping the two ends on negative
+ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
+the nft nat loads the port values from nft registers at runtime.
+
+v1 -> v2: use the correct 'Fixes' tag
+v2 -> v3: update commit message, drop unneeded READ_ONCE()
+
+Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
+Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ath25/board.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/netfilter/nf_nat_proto_common.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/mips/ath25/board.c
-+++ b/arch/mips/ath25/board.c
-@@ -135,6 +135,8 @@ int __init ath25_find_config(phys_addr_t
+--- a/net/netfilter/nf_nat_proto_common.c
++++ b/net/netfilter/nf_nat_proto_common.c
+@@ -41,7 +41,7 @@ void nf_nat_l4proto_unique_tuple(const s
+ 				 const struct nf_conn *ct,
+ 				 u16 *rover)
+ {
+-	unsigned int range_size, min, i;
++	unsigned int range_size, min, max, i;
+ 	__be16 *portptr;
+ 	u_int16_t off;
+ 
+@@ -71,7 +71,10 @@ void nf_nat_l4proto_unique_tuple(const s
+ 		}
+ 	} else {
+ 		min = ntohs(range->min_proto.all);
+-		range_size = ntohs(range->max_proto.all) - min + 1;
++		max = ntohs(range->max_proto.all);
++		if (unlikely(max < min))
++			swap(max, min);
++		range_size = max - min + 1;
  	}
  
- 	board_data = kzalloc(BOARD_CONFIG_BUFSZ, GFP_KERNEL);
-+	if (!board_data)
-+		goto error;
- 	ath25_board.config = (struct ath25_boarddata *)board_data;
- 	memcpy_fromio(board_data, bcfg, 0x100);
- 	if (broken_boarddata) {
+ 	if (range->flags & NF_NAT_RANGE_PROTO_RANDOM) {
