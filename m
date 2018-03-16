@@ -1,22 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753384AbeCPHUy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:20:54 -0400
-Received: from mail-dm3nam03on0048.outbound.protection.outlook.com ([104.47.41.48]:8984
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1753370AbeCPHUv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:20:51 -0400
+Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:19184
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753176AbeCPHRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:17:53 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=analog.com;
+        id S1753178AbeCPHRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 03:17:54 -0400
 From: Aaron Wu <aaron.wu@analog.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <aaron.wu@analog.com>
-Subject: [Blackfin removal] [PATCH 22/28] can: Remove Blackfin CAN bus support
-Date: Fri, 16 Mar 2018 15:08:20 +0800
-Message-ID: <1521184106-24475-20-git-send-email-aaron.wu@analog.com>
+Subject: [Blackfin removal] [PATCH 19/28] ata: Remove Blackfin PATA support
+Date: Fri, 16 Mar 2018 15:08:17 +0800
+Message-ID: <1521184106-24475-17-git-send-email-aaron.wu@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
 References: <1521184106-24475-1-git-send-email-aaron.wu@analog.com>
@@ -24,884 +20,1806 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(39380400002)(346002)(2980300002)(438002)(199004)(189003)(106466001)(356003)(6916009)(2950100002)(6666003)(86362001)(575784001)(478600001)(4326008)(72206003)(966005)(36756003)(2351001)(107886003)(7696005)(51416003)(6306002)(426003)(48376002)(50466002)(336012)(5660300001)(47776003)(316002)(106002)(186003)(26005)(2906002)(7636002)(8936002)(50226002)(76176011)(16586007)(77096007)(59450400001)(8676002)(246002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB2616;H:nwd2mta1.analog.com;FPR:;SPF:Pass;PTR:nwd2mail10.analog.com;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD010;1:VuT2W/Jz9cy3mHpp7LF6lnGdT5R81p/rNwppC0EosEK1VGHf8m6joGWSFUjZt/opBkDRcbT13VfuvErvQz1hMqE3mCEcbmflUYt9aFZHG8gvd+2oM7RvO7CPhx/ePoRO
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(2980300002)(438002)(199004)(189003)(50944005)(106002)(5660300001)(336012)(966005)(47776003)(551934003)(72206003)(2351001)(16586007)(2906002)(76176011)(6666003)(2950100002)(6346003)(6916009)(26005)(59450400001)(77096007)(426003)(478600001)(7696005)(316002)(186003)(51416003)(8676002)(5890100001)(356003)(107886003)(246002)(8936002)(86362001)(50226002)(575784001)(50466002)(48376002)(36756003)(106466001)(4326008)(53946003)(6306002)(305945005)(7636002)(2004002)(579004)(559001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR03MB1483;H:nwd2mta4.analog.com;FPR:;SPF:Pass;PTR:nwd2mail11.analog.com;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD022;1:opZdXL5R+eS3PKlgk+HBuRreyWBE/AlFGrwyC5K59B/RckQvwFIV6ixc7sraKMkpDe3uTDlZAVw0NMEB3XuVOjxrNJfIOIe83W7ss2IfGNR9lGiC0RYN3o9mUR+NSEaK
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e9036e42-fbde-4a51-2a30-08d58b0e06f4
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY4PR03MB2616;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;3:k71fqo3jXPBHWZdBkFJutmdkykWdsoawzFIt2sFjFoRe68zVUbyxIXUSZ3JkAc1RPPBexRN+ybJSimxcSOyUQ/HPslKdqGinXRHcNtfVOBQUt+A4RH1O8cH9UymRA+8tqsvfZr4HSjZpZhPPp3GAuL3ls57Hyv9od2IolW+I/gIb65Kr7WO2t+cNugyoGm55CDHNHU+J1EGD6rT9GxZXKh3JewmuqqP4Iep6uIEdBNVMT++dWvv8350QGYzU6TN9lw/gHYcYwrt2EnNS0X8sInjCGt2eDiiZvIcUA9M8yoc2kGgIt6xePCzq6o9bLDk4LDkuJI9Fmd1/KvOlpU7F2Q==;25:h0gEjTatGMEVEfMPgbkAtbUFqe+vAPAI/T3MO4jwnRpBviF1lXFp634K33oUezh3NHbvA3SDNcrixBai3Xx75vEo97xrHVsBY4DReqjPhiPgMOrX3LlRJCp8lVtpAgx3JRxULF7RWQWGOwC+fP++lblmij8j/qm+cr/ODuhxEAPAgAUpEp8EXKH/gZKR5mrMQWu3GUVXY7dEEd6kclW0PMVQMrl3+TH1mjvo3htQVQPcaaqdmgcmDC61DufIPDpP91DEjSe1YNurgOvoyFIN3p/IN8nlbVqqxJcrE29Hh2Yy/YqJV2AakWgqoSgRzHmjxpjPnwavWNOySmqWnq0Yfw==;31:RV4dMpi/Zi6rKqOwQo2Gjm5zv5k+J6NHLJeCcEWxJpN0pXnyicVkKqLKhRnKYVJZ9xysuRdTvqSIndi7PCWBsj0Q8FmkifR8CIhEV8+145lrNg01Jze/DmRsf6fFtI/PWUiIq2rycS6JT1mZ9Ym79oIQvUBSdvmGHNq1Y4Bf4LXsAUs8e5RxFlSVHeH2+xmrP/akWXIkg4Vz0cxAnAK7tnHijnIq3EXK9BYtjF9LAq8=
-X-MS-TrafficTypeDiagnostic: CY4PR03MB2616:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;20:tvLgrnxGmaYSOLhyajb/1WP/OydXMwH8w1Jwdpwh11eX85aaVzWNEM5TpONka85HAr2iu67uxsApzSHi8I13qQR2vjHeM3v9yT7hRihMKncID99gm+KQkOioCa3P9z+WPR+AMDx8C/W5bW76UhZ4PM7anqlRNy4EH/OIsmMLyXqQysIImA8j0iqAfj9VxLBMAYJZ9gDHXSqV1qoTbqA4gL+aessCCEp3Xxudgg90lu74VQoIMwk3fs6JmIn/2eDZkxTlXpwfUWzQFVgbdOBnX/J9TY23yMh6YNGiyZzGcFjdTWidUbCcusY+igwxEHR9PzMWUgvQwNq99dmmEpRDkHb7/pdv9R2UeIax3jVdLtVNIbFuXGsALDRqTBPG6h90Z8PgsX9czmeOF6kIknET/woLfCOoOMKWK8EcjZIWrOIzPYTOYoNSKVEoD77HgYbOBOAZTiIfFHooK3VZLvrn1jQw8gt8xN28Fu5BTDp0JHHLx80s6f8k2HUTx62uFPK9;4:PYpMCk7xy4Zb1MGlnHKsyLYj9qJ4iK4W2C9QS6UPe+FRvlhgEEIs1uY1I+wxz+tDFcA3WDi9cKIUKMTuk53FmY60xTeyqNr7ltM4m7BX3DweaK2QoW9f6aYv74+SzZe3eXoKerNwVGWXTbWT258P4wUC31vUeZPfDWoErSRStcBsrzufL3XPjqI5hbUUr8Oada6A4WWb3BkH0Pj+PPeL98J+kRlUGCSq24TCCAAf4jxTtCyaqTqDdc1DhzRfeYa3wCwqSnBth8NR58Rw0NxxVzGT9zvhbTevClw1tXr4+wz9Evvduhb2VZwt2IDrBWnqJqS3p+vyeAmD/ap1AZ+z8aWqPECDjBrhkmhXVI9sMHg=
-X-Microsoft-Antispam-PRVS: <CY4PR03MB2616E20EDF5AAB8B8CBCC8B2E0D70@CY4PR03MB2616.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(85827821059158);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501244)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:CY4PR03MB2616;BCL:0;PCL:0;RULEID:;SRVR:CY4PR03MB2616;
+X-MS-Office365-Filtering-Correlation-Id: b7c15596-f5c5-433b-fb15-08d58b0e0464
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY1PR03MB1483;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;3:hNQiWCJPQHILcVFiAyebFzP29mKx3M66gYjWM79gb9damZe40LTg3PzVMswD582v8HgeXITJy7ic/fcYKi1EIU5oJspiio2xfyvBy6yiNYRPwl7x31MgbvplO7XQRV/mQJnIP/WpNNnHfSIzuxvKcH+pnaMZEgWFD7gqx08A6XTRVxxAURj4BmDdN06PQ/H9ctKLz3L9upL3DCuce3ZMwaxF7G/BofTnfQxMF3vf2BqeMYx2ZMcRxcYQlZjzkFkKrxSL2fuN5gfiFSfLwbza2UjiRoeI+MTUICOHfipj35/fju8Sxjib/VumKtt+fSWGIxWlIOE8JFAta4Vnels1mQ==;25:NcVA65sd7Z1KAoh/DvMxPlbHzzA0z1XUF5OIAKWmgIkhwxTVVcHAED+o34rSWua7a3SJinr+2mmh9Pn+/UgkA312ROCvL7dyOEzIbUGCcM5HLNak2dMmCQbX3St2jxAEBxzFyv/vjff3R/CU9/+5H4LtoiEZ7qYNJIzZQqv05d3VoJ1kgHrBnifTjw1tYdVnz889Z/sDAdZD5AQuWeMc3JRUHug0xfnZtSRKp8XL7TS4umvrrK0mEnvZKtEEtLiNtte/nnuaYEqP+qqoDUVFEbNznpdqNaRh6PjiSp0xjUYPX/ayhcigzP7NvpA0F6G63E33H9iOMyVlxe1WRxHpwg==;31:sxSh+F5oxwqFOtbl7+/lymokb7SAxU2qaVUUJmXebjH6re2eiPMHoN7l/gqStOY6Hm0d52Dyw/MFCQInRvYm0njId7dixxLz889+qAM+6lGO67cXVO/7rcDFh2+N5PA0D1aNeRZnicrSV39H0dPc7bVFXVKnBCxEPPhvIdzh2Q9cKd4r/8k4rFY2joDXmkW5kYZuXZHYxy+4dnoVZBuusQEnuyzPMMhIvtjQKhND8Yg=
+X-MS-TrafficTypeDiagnostic: BY1PR03MB1483:
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;20:QjyzbDAwWDusLxc0xfXhmPMq7XYanuTZJrExLjIKuPkyxsaN3kSVOc00iNTKljSatLojxqtqrTIwZd26lPWvi8PwdJeZ0grIgEf1i+Gq24HjJZDoz7pBqv+vB/oPC+OvabePnowvDt1laRZT8XeJ8tOLGQQdOpPNubdszyNtT/j3SfSlIO2ID6a5CBVDh0jxkQa6+pF0fWP3J9Zx+ovq/KWf5GOZlbP89lZQeDhTzGxgj6Fk/E/kz2BbgsuNegJ0kysCMReTmfR336kS5XU/eBiYdoPXZw915aY3UlrGQWmwnPxgzAdVc8nW8bbhelRqWNQPAhLKsr8QMgpz4iU3H0mD3QpH1tLnIVXoAZ5P4Wr1wCP2toA2HYicEA28/4MloW1MXHxH/zEuralRvwLGtEawc81SRl9TGJUsIvVaCBFqKZrioA9Ko0bQ4/VboCXDy75a8fCOyky3bwLvvuhqULw8wsyOoqsxHABJtuFl53BLa69M2F2qwPzmEYcAdUa5;4:3U9pzKmQWEi9y19qskFOLPiVGgMjo9UK6csvHJvkFTbX7BCYAgHogltSCOQKFM+dLo7C+RYqgj/Hqk4JwfYs56o/K3VbUjeC4DS+mztcpYdpD62BiJ5mbmosOYGOChC0vQyBrq5hXr6/pYgirjqugIEIS9lAgeRgtlH198zgk0DZHclzPI5A0PmUTSqUcq493MmwaMzBhbWMAblJRIzZe/nojuPcrblI8eiR2Nh5WqujSSQH0S800H9Gf1cBWPnVtQR8c8dtIOlQ/Xvi94xQoJ9/4zIWJ+oNBqFDRLLIepVsIBgQgZ9bflvWz1aJ7kJW
+X-Microsoft-Antispam-PRVS: <BY1PR03MB1483C52EA86B8AAC1E66B878E0D70@BY1PR03MB1483.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501281)(52105095)(93006095)(93004095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BY1PR03MB1483;BCL:0;PCL:0;RULEID:;SRVR:BY1PR03MB1483;
 X-Forefront-PRVS: 0613912E23
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB2616;23:rLC3Wqy2y+zEolbczAzmnOCfy5OaeDGB3JF1P+x9O?=
- =?us-ascii?Q?Uy5ZRRfFM7DRIBfzhXNOdszowl4/9OcEVRtJAdh42KFoI6f7YrfhZNwSYkEB?=
- =?us-ascii?Q?BYhRmALwjxVltFzo8sDMXYFD6U1FD1zeJ3JCRmR/okBD5Wm+5TaAf0jI7CTn?=
- =?us-ascii?Q?xmuEIQDNiG2pg3333SvO39Dl+/p820izYwxooUXuxNY9AZl/qa3rdkoAOnwr?=
- =?us-ascii?Q?0rwA74N/zRtBdV0tdCywhZqILwUa1pP5UYCn0q7rn9Rl+0k/3/vnFsk/cUqY?=
- =?us-ascii?Q?7WtkLqY0e57kpFwIU0xcGg2hlE01EmVrBe3RaAxdmf+H2/k/kr0/HI/lyVDv?=
- =?us-ascii?Q?lIyk7H+Xm4O6wCEdIVWTCLFYx+j9TlfdLVzkNcXURQ6BDwa86YHhywb0jOpN?=
- =?us-ascii?Q?U+M4XiZqVUzDMip8aq2jtg5ZnzfPkN/PtYvhXNyDt4OVvUtrSZ1hyqcqMalg?=
- =?us-ascii?Q?2fScYvUdjm27YEL7DXlW1xGuSiFqLksVh1U8iDx1HbLkiLXIo/wxmll/kGBf?=
- =?us-ascii?Q?AQBhNTQIG4WgzACprncwu+ktSb9ebe9HzHIYd25NMggqu+vWgBGo7ta/TRgx?=
- =?us-ascii?Q?y/jPYy7H1c/EWS44XfJWN3QLgjnwRAhsPIAQ1SB/IhqR3XYbyBsaQpYjEA3n?=
- =?us-ascii?Q?C+RyUHllXfxSgsxI5PIz2QJOyAiiO1AG6cYJ/N/1s28uAA/LlvfLY/QBzHG9?=
- =?us-ascii?Q?4U2NCzWvrOgIPtUmhgu1axqzwVVkS//kUlAg0phX2PZe9SxOrEvFfCcywtDe?=
- =?us-ascii?Q?0BRNlqYJvRa7grm2sjlQbK3vc3ZGCygHHIL5oMQ58RofVwyPsJl1rjBqkkyg?=
- =?us-ascii?Q?KGmuGekTBDltsf82bvXOIeSwSNxCCgsinThHFXc9UAqvT9+PXNoMTIfUmQVZ?=
- =?us-ascii?Q?vbf7KDEiXYDw2O5L29xD1t4gUE1WQEj33eOu5I9iyko6GIseS0nA2tzi111S?=
- =?us-ascii?Q?6tnV3BnYmS4pNai+5C9cOsygPW0MnI2qGk2QXc3tqQz7L2PCRi5zQdVxPAAz?=
- =?us-ascii?Q?aAXR/wG2fib0iyyX4vCXoARAv9ar3D9YVRrfHRJcGOcBVP2zD+OGohMA8JFU?=
- =?us-ascii?Q?huWs0ffqVDQHIByjSZ7J+glU/zh?=
-X-Microsoft-Antispam-Message-Info: QLTIm9toA9KINixLfPf72SE3blvbyIXt8LJ9wRJajpwvRp0Vb42r3iVTwFXIvp+vQ76UvUHJ9IcK2ljXoowvb/+tJrIva6VgTGAUrgvW0gDX1IUUiwbvkvzvolMMuZcHaAt1n9uowMj/qmnyB39zv+ttwqXevdVvPkcEHoc9LqvEM5my2U22EqaKlC9RF01Y
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2616;6:r/AA2rWO3rRP5hocMU3qSAelUVoP4rZl1kk3DoUXxwM0pTBqsdtbXa7gZOfk9JH4TrpLpMAPhcppCeXx/nwPSPmpFrVwoR8zJfQC2DqdxfA2OGY0uCpcGzYPJJV2KO82vJXj7K8POKYwoNpKEp1zWV4oYTFk+Mug3Y1oSgX5tH2jTmRb1KBPqgYF2i3YgvxE+Vg4dPNsbYgL0/Zm0Zof2ZW9B6/wH4OODZzEowFVyxe2CTpAIZ94rl0BOncmihrGvwhcyPKA+hqSpDB/RXzpwTMJilKkiNRB/DE3NTBIJ5bRulBK2uv2nMFSyQ0NmAyt4mR24lFT6e9dEcgEyGfhb7tXX0OqMI+fFI5tF86ckmk=;5:mf67XoxnNNxt2n+oDLy4zRGesxwb7YshzlDWHithhvy6jw9w/ORAxeRQUT+DI1rqEFsGjRPtxwbk+sRXTiuw9LnSPDxXECD11tTyOWAmzzLH8Ef5yw4LaUtwVcBzruY+dN229OXTVA12s48/bD3ndkqAHel0L78+d+HmBUNm/ms=;24:2SJruZA6/auXx78ex3cJzYaeMVB7f8jo6QxT4W96fnYy4nXdBrVJr6+pLfk6ZYb1zLn1BZ8vd7F2gUSyxLB9Q8CAYP1y/gH0kqMWRtiXBcU=;7:/QNtYgtMo73kZBagThdVepZIO/5NhPsfeLBmr5yt8vOSFApoNWMmtqI3PysSufG/lPw3SLVTc9Gk6L3YIm0YnTS7kP1xRLDtKDXHn1b26h8RnRu25F64p0KwYYzkhhq3CvVD+08XLhJ/Idqj2J0NgEWnZwdn94DgehDjO61l+BGLtzOQ4PpqdpY57wbIiqGNaDBwBrjxiVYvXucVP7Qyh8iEFvUymxQy7YMtujbjuP/O9sdQvAHrSXN0XkT02QMp
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR03MB1483;23:0V99SbzYWtlB/C0m8Bgy4S535w2VNzja8H1MWvCCJ?=
+ =?us-ascii?Q?+jHZ+o3sGwCC6y83tcxGsKKotke+RfonWhtRA/1CsXDr1JFpjrvCoxIB2QQf?=
+ =?us-ascii?Q?gymvmZ5K3Pb8Xvyk/xebBC2MkOtMKkDUYDuaJ9cR6vJCfrToQHdin9KFDXBJ?=
+ =?us-ascii?Q?pdEKxx9LyGcWftcWOBfqE+j7NtEvDXIW74xUMhg/ZLUHjI8gvtZk4AFvD0KK?=
+ =?us-ascii?Q?rO6dOteidPj9kCutmRZS72/0eSzZ+5QcpOySrHnK013vdqWXurEINBajPoin?=
+ =?us-ascii?Q?WKimlOHweaQXpXcOFOV63jyzY7lbU5awse30Aa9yq3NeIR+KaNGhTOZcWBk/?=
+ =?us-ascii?Q?0zYA6e1U0X6j/UZaTVULbsMh3+zP73GKyNBziM1tNvUtRziwk3Wojtn/ae4Y?=
+ =?us-ascii?Q?qTc00AwtqO8BDFO5w8VVE4x45A8gF16kSYwBlIiOMW6h95aJcroy1VVLkFGx?=
+ =?us-ascii?Q?wvqngjGHKeW2BZU0snr9kwFuCGdBBDLV2sVWIsc9X6kE+4igrrgrMIkJQc+p?=
+ =?us-ascii?Q?B8wthCVq+bOzce2jDfRVSUrtDzIhPckKJktfPTvMMMiA57TESJYuqJiOCHIm?=
+ =?us-ascii?Q?qVtHgrfmX/zKJnn5cELRNwlCFpe725ajYxBDlozJfyHKmAP6ajQkKDw1EwTA?=
+ =?us-ascii?Q?ns1n+ZBnc8UsUUwYsydJd7Fxq1PM/WpLNx3dc9TaRzpGL3xsAgNeZienasxo?=
+ =?us-ascii?Q?Wk6btpw9RPXo1uD1YRrnQF+PfAmOQRrTlmnk9s44NNBZU883hyb7ZRmnnv8S?=
+ =?us-ascii?Q?UF9FbLSdTh7phHRQP8fCyVdwyX/Ugao4tHI/hc6dpj9R9b0BVo+E7WZpLPjB?=
+ =?us-ascii?Q?fwFuqnDTTvBxXuZ4soaJ8yLOIOS8L7XpS4WTxYJ44jz365M//m9RPflFrVvJ?=
+ =?us-ascii?Q?l8JotcoKcV7XAmiBHBPp4lsDn5FbUULHmoKAMYPSJ5ksXlF5i66kNYupb5fU?=
+ =?us-ascii?Q?X5VOX9NEQqYgII2EOrSwEhDuRUw9YEGBFxkp4ypPbmkU2PmUTFQQ4wKl+pZm?=
+ =?us-ascii?Q?vMg7DMa2Z+hgqszsHdkdg7POIZFm32KJo5kMOSw5cacKNXbu1cUqYZZhBj9Q?=
+ =?us-ascii?Q?mmzx8PtPq+QqTTy3zvgFkq7eAyH2n98+jX5RzbXBXJm40mrpTLlEAQkVMLih?=
+ =?us-ascii?Q?4iibmWVSnlPEieo5T7pmRFMi26VXmBtBImjIfkGdfp3/9WLQMLlFp7xPggTg?=
+ =?us-ascii?Q?Cr+IlwRXV/gWZovrLMdP6zDRD78ysKcFMUsLbczZ/jIABXXDraox8bxOQ=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: 4f+pN3k58vLWPZOvanByvOBI0VfKTf//hnJs28iJo9C+SWBeNtV5PHHTxYtKNOCTpgYSNzmVqbXTDiXaaSN7u7SPV8k962fhd4T+qqajKUPZvgREo83KHD9yUX/oMk/AHxSkKkeQZ2Cj9PCmouHqlXDmG7v1Qfcc8r02rTDX/7V+0OFh7XXOu5JjNDQ0rVSu
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR03MB1483;6:66HYq6mGRiy5xXi4VJBDGvfVub9Oun0uBK1u0mnrXe2md+ZZy3ZnvCL2PSVTeLOTZSz8diYund/KPLLhpdTMcZqp9iO7L4iZ7Of1UMCSHTMjwcLy4zOji4gHcbtf2n4YOcNyMgxp2YgG/wi3lVb0/DIuXRYtZXMnUtlm4NDb6HOMm/qBSG6ojccxKR7ChDSm6hmIop1zXw23zGHZw0LZukz2JUI6iLc+O6s7PMWSeH3Y57q2djUpb6b0j92zwWJzky7dHMx5gGSGjTQY007A0JteAiZQ00A8ek3Oah5UwyjNA1gp/bU95iHHkxN+0gbv42LKZkcQKCF5dkPTnPxe0+JVmRv8qJs5ahsu7L5sTzc=;5:mQB/3Q25HV36I+AB7JuHinnUONI0Bs3vb4Oj696ecCb4GqpZogQiRd/qss6Up1NueV09vAPvd5fdngHGA7wO2i0AMVeQbRUUxZX0O4wWkAq4LvKNzkmK8hLIfXUc4CI7YBA9t+sWfwZm2JcNwSarwkvihFbH3z3g+R4WvROZiok=;24:g7q//I2bEQ4XAvCTmL9ExrTbGnGvf1KWTIS4FS7u3xItS9hLzh/4tXwjaNXDLrsghvsQwlC3q+JlHQYMn0ISVEigdrTPALww6Ka7thifkpM=;7:gjMFL8PyuGlKKbmXAGjkIjQEsncHUpyJfYVA2ST2P4dsW+BzzFK6Zn8bJRsUs9k39A75rZS91qhvMbqf4RwewJy9aoybxRPzbS7n692Fi1OYGRuC/u/ZRvQRjBDYZEv5qiB2zUiAUfkf8nQv7x9CZUhmssDGH5o9NDVxrt2Hf8pyfoRRlNdBYFB5KNgXreMQ2lY4hT/unTOW2UPaWV/S6Wo+6gfxU6tOBB7Rjd7ZbWLyH0Pi8nTgLI0yK+ZryjtB
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:50.4013
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2018 07:17:46.1074
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9036e42-fbde-4a51-2a30-08d58b0e06f4
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7c15596-f5c5-433b-fb15-08d58b0e0464
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB2616
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB1483
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Aaron Wu <aaron.wu@analog.com>
 
-Remove Blackfin CAN bus support
+Remove Blackfin PATA support
 ---
- drivers/net/can/Kconfig    |   9 -
- drivers/net/can/Makefile   |   1 -
- drivers/net/can/bfin_can.c | 784 ---------------------------------------------
- 3 files changed, 794 deletions(-)
- delete mode 100644 drivers/net/can/bfin_can.c
+ drivers/ata/Kconfig      |    9 -
+ drivers/ata/Makefile     |    1 -
+ drivers/ata/pata_bf54x.c | 1703 ----------------------------------------------
+ 3 files changed, 1713 deletions(-)
+ delete mode 100644 drivers/ata/pata_bf54x.c
 
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index ac4ff39..2cb7598 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -88,15 +88,6 @@ config CAN_AT91
- 	  This is a driver for the SoC CAN controller in Atmel's AT91SAM9263
- 	  and AT91SAM9X5 processors.
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index a7120d6..4582fa2 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -549,15 +549,6 @@ config PATA_ATP867X
  
--config CAN_BFIN
--	depends on BF534 || BF536 || BF537 || BF538 || BF539 || BF54x
--	tristate "Analog Devices Blackfin on-chip CAN"
--	---help---
--	  Driver for the Analog Devices Blackfin on-chip CAN controllers
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called bfin_can.
--
- config CAN_FLEXCAN
- 	tristate "Support for Freescale FLEXCAN based chips"
- 	depends on ARM || PPC
-diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
-index 02b8ed7..44922bf 100644
---- a/drivers/net/can/Makefile
-+++ b/drivers/net/can/Makefile
-@@ -19,7 +19,6 @@ obj-y				+= usb/
- obj-y				+= softing/
+ 	  If unsure, say N.
  
- obj-$(CONFIG_CAN_AT91)		+= at91_can.o
--obj-$(CONFIG_CAN_BFIN)		+= bfin_can.o
- obj-$(CONFIG_CAN_CC770)		+= cc770/
- obj-$(CONFIG_CAN_C_CAN)		+= c_can/
- obj-$(CONFIG_CAN_FLEXCAN)	+= flexcan.o
-diff --git a/drivers/net/can/bfin_can.c b/drivers/net/can/bfin_can.c
+-config PATA_BF54X
+-	tristate "Blackfin 54x ATAPI support"
+-	depends on BF542 || BF548 || BF549
+-	help
+-	  This option enables support for the built-in ATAPI controller on
+-	  Blackfin 54x family chips.
+-
+-	  If unsure, say N.
+-
+ config PATA_BK3710
+ 	tristate "Palmchip BK3710 PATA support"
+ 	depends on ARCH_DAVINCI
+diff --git a/drivers/ata/Makefile b/drivers/ata/Makefile
+index f1f5a3f..6dae8c9 100644
+--- a/drivers/ata/Makefile
++++ b/drivers/ata/Makefile
+@@ -53,7 +53,6 @@ obj-$(CONFIG_PATA_AMD)		+= pata_amd.o
+ obj-$(CONFIG_PATA_ARTOP)	+= pata_artop.o
+ obj-$(CONFIG_PATA_ATIIXP)	+= pata_atiixp.o
+ obj-$(CONFIG_PATA_ATP867X)	+= pata_atp867x.o
+-obj-$(CONFIG_PATA_BF54X)	+= pata_bf54x.o
+ obj-$(CONFIG_PATA_BK3710)	+= pata_bk3710.o
+ obj-$(CONFIG_PATA_CMD64X)	+= pata_cmd64x.o
+ obj-$(CONFIG_PATA_CS5520)	+= pata_cs5520.o
+diff --git a/drivers/ata/pata_bf54x.c b/drivers/ata/pata_bf54x.c
 deleted file mode 100644
-index 1deb8ff9..0000000
---- a/drivers/net/can/bfin_can.c
+index 0e55a8d..0000000
+--- a/drivers/ata/pata_bf54x.c
 +++ /dev/null
-@@ -1,784 +0,0 @@
+@@ -1,1703 +0,0 @@
 -/*
-- * Blackfin On-Chip CAN Driver
+- * File:         drivers/ata/pata_bf54x.c
+- * Author:       Sonic Zhang <sonic.zhang@analog.com>
 - *
-- * Copyright 2004-2009 Analog Devices Inc.
+- * Created:
+- * Description:  PATA Driver for blackfin 54x
 - *
-- * Enter bugs at http://blackfin.uclinux.org/
+- * Modified:
+- *               Copyright 2007 Analog Devices Inc.
 - *
-- * Licensed under the GPL-2 or later.
+- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see the file COPYING, or write
+- * to the Free Software Foundation, Inc.,
+- * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 - */
 -
--#include <linux/module.h>
 -#include <linux/kernel.h>
--#include <linux/bitops.h>
--#include <linux/interrupt.h>
--#include <linux/errno.h>
--#include <linux/netdevice.h>
--#include <linux/skbuff.h>
+-#include <linux/module.h>
+-#include <linux/pci.h>
+-#include <linux/init.h>
+-#include <linux/blkdev.h>
+-#include <linux/delay.h>
+-#include <linux/device.h>
+-#include <scsi/scsi_host.h>
+-#include <linux/libata.h>
 -#include <linux/platform_device.h>
--
--#include <linux/can/dev.h>
--#include <linux/can/error.h>
--
+-#include <linux/gpio.h>
+-#include <asm/dma.h>
 -#include <asm/portmux.h>
 -
--#define DRV_NAME "bfin_can"
--#define BFIN_CAN_TIMEOUT 100
--#define TX_ECHO_SKB_MAX  1
+-#define DRV_NAME		"pata-bf54x"
+-#define DRV_VERSION		"0.9"
 -
--/* transmit and receive channels */
--#define TRANSMIT_CHL 24
--#define RECEIVE_STD_CHL 0
--#define RECEIVE_EXT_CHL 4
--#define RECEIVE_RTR_CHL 8
--#define RECEIVE_EXT_RTR_CHL 12
--#define MAX_CHL_NUMBER 32
+-#define ATA_REG_CTRL		0x0E
+-#define ATA_REG_ALTSTATUS	ATA_REG_CTRL
 -
--/* All Blackfin system MMRs are padded to 32bits even if the register
-- * itself is only 16bits.  So use a helper macro to streamline this
+-/* These are the offset of the controller's registers */
+-#define ATAPI_OFFSET_CONTROL		0x00
+-#define ATAPI_OFFSET_STATUS		0x04
+-#define ATAPI_OFFSET_DEV_ADDR		0x08
+-#define ATAPI_OFFSET_DEV_TXBUF		0x0c
+-#define ATAPI_OFFSET_DEV_RXBUF		0x10
+-#define ATAPI_OFFSET_INT_MASK		0x14
+-#define ATAPI_OFFSET_INT_STATUS		0x18
+-#define ATAPI_OFFSET_XFER_LEN		0x1c
+-#define ATAPI_OFFSET_LINE_STATUS	0x20
+-#define ATAPI_OFFSET_SM_STATE		0x24
+-#define ATAPI_OFFSET_TERMINATE		0x28
+-#define ATAPI_OFFSET_PIO_TFRCNT		0x2c
+-#define ATAPI_OFFSET_DMA_TFRCNT		0x30
+-#define ATAPI_OFFSET_UMAIN_TFRCNT	0x34
+-#define ATAPI_OFFSET_UDMAOUT_TFRCNT	0x38
+-#define ATAPI_OFFSET_REG_TIM_0		0x40
+-#define ATAPI_OFFSET_PIO_TIM_0		0x44
+-#define ATAPI_OFFSET_PIO_TIM_1		0x48
+-#define ATAPI_OFFSET_MULTI_TIM_0	0x50
+-#define ATAPI_OFFSET_MULTI_TIM_1	0x54
+-#define ATAPI_OFFSET_MULTI_TIM_2	0x58
+-#define ATAPI_OFFSET_ULTRA_TIM_0	0x60
+-#define ATAPI_OFFSET_ULTRA_TIM_1	0x64
+-#define ATAPI_OFFSET_ULTRA_TIM_2	0x68
+-#define ATAPI_OFFSET_ULTRA_TIM_3	0x6c
+-
+-
+-#define ATAPI_GET_CONTROL(base)\
+-	bfin_read16(base + ATAPI_OFFSET_CONTROL)
+-#define ATAPI_SET_CONTROL(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_CONTROL, val)
+-#define ATAPI_GET_STATUS(base)\
+-	bfin_read16(base + ATAPI_OFFSET_STATUS)
+-#define ATAPI_GET_DEV_ADDR(base)\
+-	bfin_read16(base + ATAPI_OFFSET_DEV_ADDR)
+-#define ATAPI_SET_DEV_ADDR(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_DEV_ADDR, val)
+-#define ATAPI_GET_DEV_TXBUF(base)\
+-	bfin_read16(base + ATAPI_OFFSET_DEV_TXBUF)
+-#define ATAPI_SET_DEV_TXBUF(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_DEV_TXBUF, val)
+-#define ATAPI_GET_DEV_RXBUF(base)\
+-	bfin_read16(base + ATAPI_OFFSET_DEV_RXBUF)
+-#define ATAPI_SET_DEV_RXBUF(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_DEV_RXBUF, val)
+-#define ATAPI_GET_INT_MASK(base)\
+-	bfin_read16(base + ATAPI_OFFSET_INT_MASK)
+-#define ATAPI_SET_INT_MASK(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_INT_MASK, val)
+-#define ATAPI_GET_INT_STATUS(base)\
+-	bfin_read16(base + ATAPI_OFFSET_INT_STATUS)
+-#define ATAPI_SET_INT_STATUS(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_INT_STATUS, val)
+-#define ATAPI_GET_XFER_LEN(base)\
+-	bfin_read16(base + ATAPI_OFFSET_XFER_LEN)
+-#define ATAPI_SET_XFER_LEN(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_XFER_LEN, val)
+-#define ATAPI_GET_LINE_STATUS(base)\
+-	bfin_read16(base + ATAPI_OFFSET_LINE_STATUS)
+-#define ATAPI_GET_SM_STATE(base)\
+-	bfin_read16(base + ATAPI_OFFSET_SM_STATE)
+-#define ATAPI_GET_TERMINATE(base)\
+-	bfin_read16(base + ATAPI_OFFSET_TERMINATE)
+-#define ATAPI_SET_TERMINATE(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_TERMINATE, val)
+-#define ATAPI_GET_PIO_TFRCNT(base)\
+-	bfin_read16(base + ATAPI_OFFSET_PIO_TFRCNT)
+-#define ATAPI_GET_DMA_TFRCNT(base)\
+-	bfin_read16(base + ATAPI_OFFSET_DMA_TFRCNT)
+-#define ATAPI_GET_UMAIN_TFRCNT(base)\
+-	bfin_read16(base + ATAPI_OFFSET_UMAIN_TFRCNT)
+-#define ATAPI_GET_UDMAOUT_TFRCNT(base)\
+-	bfin_read16(base + ATAPI_OFFSET_UDMAOUT_TFRCNT)
+-#define ATAPI_GET_REG_TIM_0(base)\
+-	bfin_read16(base + ATAPI_OFFSET_REG_TIM_0)
+-#define ATAPI_SET_REG_TIM_0(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_REG_TIM_0, val)
+-#define ATAPI_GET_PIO_TIM_0(base)\
+-	bfin_read16(base + ATAPI_OFFSET_PIO_TIM_0)
+-#define ATAPI_SET_PIO_TIM_0(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_PIO_TIM_0, val)
+-#define ATAPI_GET_PIO_TIM_1(base)\
+-	bfin_read16(base + ATAPI_OFFSET_PIO_TIM_1)
+-#define ATAPI_SET_PIO_TIM_1(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_PIO_TIM_1, val)
+-#define ATAPI_GET_MULTI_TIM_0(base)\
+-	bfin_read16(base + ATAPI_OFFSET_MULTI_TIM_0)
+-#define ATAPI_SET_MULTI_TIM_0(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_MULTI_TIM_0, val)
+-#define ATAPI_GET_MULTI_TIM_1(base)\
+-	bfin_read16(base + ATAPI_OFFSET_MULTI_TIM_1)
+-#define ATAPI_SET_MULTI_TIM_1(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_MULTI_TIM_1, val)
+-#define ATAPI_GET_MULTI_TIM_2(base)\
+-	bfin_read16(base + ATAPI_OFFSET_MULTI_TIM_2)
+-#define ATAPI_SET_MULTI_TIM_2(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_MULTI_TIM_2, val)
+-#define ATAPI_GET_ULTRA_TIM_0(base)\
+-	bfin_read16(base + ATAPI_OFFSET_ULTRA_TIM_0)
+-#define ATAPI_SET_ULTRA_TIM_0(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_ULTRA_TIM_0, val)
+-#define ATAPI_GET_ULTRA_TIM_1(base)\
+-	bfin_read16(base + ATAPI_OFFSET_ULTRA_TIM_1)
+-#define ATAPI_SET_ULTRA_TIM_1(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_ULTRA_TIM_1, val)
+-#define ATAPI_GET_ULTRA_TIM_2(base)\
+-	bfin_read16(base + ATAPI_OFFSET_ULTRA_TIM_2)
+-#define ATAPI_SET_ULTRA_TIM_2(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_ULTRA_TIM_2, val)
+-#define ATAPI_GET_ULTRA_TIM_3(base)\
+-	bfin_read16(base + ATAPI_OFFSET_ULTRA_TIM_3)
+-#define ATAPI_SET_ULTRA_TIM_3(base, val)\
+-	bfin_write16(base + ATAPI_OFFSET_ULTRA_TIM_3, val)
+-
+-/**
+- * PIO Mode - Frequency compatibility
 - */
--#define __BFP(m) u16 m; u16 __pad_##m
+-/* mode: 0         1         2         3         4 */
+-static const u32 pio_fsclk[] =
+-{ 33333333, 33333333, 33333333, 33333333, 33333333 };
 -
--/* bfin can registers layout */
--struct bfin_can_mask_regs {
--	__BFP(aml);
--	__BFP(amh);
--};
--
--struct bfin_can_channel_regs {
--	/* data[0,2,4,6] -> data{0,1,2,3} while data[1,3,5,7] is padding */
--	u16 data[8];
--	__BFP(dlc);
--	__BFP(tsv);
--	__BFP(id0);
--	__BFP(id1);
--};
--
--struct bfin_can_regs {
--	/* global control and status registers */
--	__BFP(mc1);		/* offset 0x00 */
--	__BFP(md1);		/* offset 0x04 */
--	__BFP(trs1);		/* offset 0x08 */
--	__BFP(trr1);		/* offset 0x0c */
--	__BFP(ta1);		/* offset 0x10 */
--	__BFP(aa1);		/* offset 0x14 */
--	__BFP(rmp1);		/* offset 0x18 */
--	__BFP(rml1);		/* offset 0x1c */
--	__BFP(mbtif1);		/* offset 0x20 */
--	__BFP(mbrif1);		/* offset 0x24 */
--	__BFP(mbim1);		/* offset 0x28 */
--	__BFP(rfh1);		/* offset 0x2c */
--	__BFP(opss1);		/* offset 0x30 */
--	u32 __pad1[3];
--	__BFP(mc2);		/* offset 0x40 */
--	__BFP(md2);		/* offset 0x44 */
--	__BFP(trs2);		/* offset 0x48 */
--	__BFP(trr2);		/* offset 0x4c */
--	__BFP(ta2);		/* offset 0x50 */
--	__BFP(aa2);		/* offset 0x54 */
--	__BFP(rmp2);		/* offset 0x58 */
--	__BFP(rml2);		/* offset 0x5c */
--	__BFP(mbtif2);		/* offset 0x60 */
--	__BFP(mbrif2);		/* offset 0x64 */
--	__BFP(mbim2);		/* offset 0x68 */
--	__BFP(rfh2);		/* offset 0x6c */
--	__BFP(opss2);		/* offset 0x70 */
--	u32 __pad2[3];
--	__BFP(clock);		/* offset 0x80 */
--	__BFP(timing);		/* offset 0x84 */
--	__BFP(debug);		/* offset 0x88 */
--	__BFP(status);		/* offset 0x8c */
--	__BFP(cec);		/* offset 0x90 */
--	__BFP(gis);		/* offset 0x94 */
--	__BFP(gim);		/* offset 0x98 */
--	__BFP(gif);		/* offset 0x9c */
--	__BFP(control);		/* offset 0xa0 */
--	__BFP(intr);		/* offset 0xa4 */
--	__BFP(version);		/* offset 0xa8 */
--	__BFP(mbtd);		/* offset 0xac */
--	__BFP(ewr);		/* offset 0xb0 */
--	__BFP(esr);		/* offset 0xb4 */
--	u32 __pad3[2];
--	__BFP(ucreg);		/* offset 0xc0 */
--	__BFP(uccnt);		/* offset 0xc4 */
--	__BFP(ucrc);		/* offset 0xc8 */
--	__BFP(uccnf);		/* offset 0xcc */
--	u32 __pad4[1];
--	__BFP(version2);	/* offset 0xd4 */
--	u32 __pad5[10];
--
--	/* channel(mailbox) mask and message registers */
--	struct bfin_can_mask_regs msk[MAX_CHL_NUMBER];		/* offset 0x100 */
--	struct bfin_can_channel_regs chl[MAX_CHL_NUMBER];	/* offset 0x200 */
--};
--
--#undef __BFP
--
--#define SRS 0x0001		/* Software Reset */
--#define SER 0x0008		/* Stuff Error */
--#define BOIM 0x0008		/* Enable Bus Off Interrupt */
--#define CCR 0x0080		/* CAN Configuration Mode Request */
--#define CCA 0x0080		/* Configuration Mode Acknowledge */
--#define SAM 0x0080		/* Sampling */
--#define AME 0x8000		/* Acceptance Mask Enable */
--#define RMLIM 0x0080		/* Enable RX Message Lost Interrupt */
--#define RMLIS 0x0080		/* RX Message Lost IRQ Status */
--#define RTR 0x4000		/* Remote Frame Transmission Request */
--#define BOIS 0x0008		/* Bus Off IRQ Status */
--#define IDE 0x2000		/* Identifier Extension */
--#define EPIS 0x0004		/* Error-Passive Mode IRQ Status */
--#define EPIM 0x0004		/* Enable Error-Passive Mode Interrupt */
--#define EWTIS 0x0001		/* TX Error Count IRQ Status */
--#define EWRIS 0x0002		/* RX Error Count IRQ Status */
--#define BEF 0x0040		/* Bit Error Flag */
--#define FER 0x0080		/* Form Error Flag */
--#define SMR 0x0020		/* Sleep Mode Request */
--#define SMACK 0x0008		/* Sleep Mode Acknowledge */
--
--/*
-- * bfin can private data
+-/**
+- * MDMA Mode - Frequency compatibility
 - */
--struct bfin_can_priv {
--	struct can_priv can;	/* must be the first member */
--	struct net_device *dev;
--	void __iomem *membase;
--	int rx_irq;
--	int tx_irq;
--	int err_irq;
--	unsigned short *pin_list;
--};
+-/*               mode:      0         1         2        */
+-static const u32 mdma_fsclk[] = { 33333333, 33333333, 33333333 };
 -
--/*
-- * bfin can timing parameters
+-/**
+- * UDMA Mode - Frequency compatibility
+- *
+- * UDMA5 - 100 MB/s   - SCLK  = 133 MHz
+- * UDMA4 - 66 MB/s    - SCLK >=  80 MHz
+- * UDMA3 - 44.4 MB/s  - SCLK >=  50 MHz
+- * UDMA2 - 33 MB/s    - SCLK >=  40 MHz
 - */
--static const struct can_bittiming_const bfin_can_bittiming_const = {
--	.name = DRV_NAME,
--	.tseg1_min = 1,
--	.tseg1_max = 16,
--	.tseg2_min = 1,
--	.tseg2_max = 8,
--	.sjw_max = 4,
--	/*
--	 * Although the BRP field can be set to any value, it is recommended
--	 * that the value be greater than or equal to 4, as restrictions
--	 * apply to the bit timing configuration when BRP is less than 4.
--	 */
--	.brp_min = 4,
--	.brp_max = 1024,
--	.brp_inc = 1,
--};
+-/* mode: 0         1         2         3         4          5 */
+-static const u32 udma_fsclk[] =
+-{ 33333333, 33333333, 40000000, 50000000, 80000000, 133333333 };
 -
--static int bfin_can_set_bittiming(struct net_device *dev)
+-/**
+- * Register transfer timing table
+- */
+-/*               mode:       0    1    2    3    4    */
+-/* Cycle Time                     */
+-static const u32 reg_t0min[]   = { 600, 383, 330, 180, 120 };
+-/* DIOR/DIOW to end cycle         */
+-static const u32 reg_t2min[]   = { 290, 290, 290, 70,  25  };
+-/* DIOR/DIOW asserted pulse width */
+-static const u32 reg_teocmin[] = { 290, 290, 290, 80,  70  };
+-
+-/**
+- * PIO timing table
+- */
+-/*               mode:       0    1    2    3    4    */
+-/* Cycle Time                     */
+-static const u32 pio_t0min[]   = { 600, 383, 240, 180, 120 };
+-/* Address valid to DIOR/DIORW    */
+-static const u32 pio_t1min[]   = { 70,  50,  30,  30,  25  };
+-/* DIOR/DIOW to end cycle         */
+-static const u32 pio_t2min[]   = { 165, 125, 100, 80,  70  };
+-/* DIOR/DIOW asserted pulse width */
+-static const u32 pio_teocmin[] = { 165, 125, 100, 70,  25  };
+-/* DIOW data hold                 */
+-static const u32 pio_t4min[]   = { 30,  20,  15,  10,  10  };
+-
+-/* ******************************************************************
+- * Multiword DMA timing table
+- * ******************************************************************
+- */
+-/*               mode:       0   1    2        */
+-/* Cycle Time                     */
+-static const u32 mdma_t0min[]  = { 480, 150, 120 };
+-/* DIOR/DIOW asserted pulse width */
+-static const u32 mdma_tdmin[]  = { 215, 80,  70  };
+-/* DMACK to read data released    */
+-static const u32 mdma_thmin[]  = { 20,  15,  10  };
+-/* DIOR/DIOW to DMACK hold        */
+-static const u32 mdma_tjmin[]  = { 20,  5,   5   };
+-/* DIOR negated pulse width       */
+-static const u32 mdma_tkrmin[] = { 50,  50,  25  };
+-/* DIOR negated pulse width       */
+-static const u32 mdma_tkwmin[] = { 215, 50,  25  };
+-/* CS[1:0] valid to DIOR/DIOW     */
+-static const u32 mdma_tmmin[]  = { 50,  30,  25  };
+-/* DMACK to read data released    */
+-static const u32 mdma_tzmax[]  = { 20,  25,  25  };
+-
+-/**
+- * Ultra DMA timing table
+- */
+-/*               mode:         0    1    2    3    4    5       */
+-static const u32 udma_tcycmin[]  = { 112, 73,  54,  39,  25,  17 };
+-static const u32 udma_tdvsmin[]  = { 70,  48,  31,  20,  7,   5  };
+-static const u32 udma_tenvmax[]  = { 70,  70,  70,  55,  55,  50 };
+-static const u32 udma_trpmin[]   = { 160, 125, 100, 100, 100, 85 };
+-static const u32 udma_tmin[]     = { 5,   5,   5,   5,   3,   3  };
+-
+-
+-static const u32 udma_tmlimin = 20;
+-static const u32 udma_tzahmin = 20;
+-static const u32 udma_tenvmin = 20;
+-static const u32 udma_tackmin = 20;
+-static const u32 udma_tssmin = 50;
+-
+-#define BFIN_MAX_SG_SEGMENTS 4
+-
+-/**
+- *
+- *	Function:       num_clocks_min
+- *
+- *	Description:
+- *	calculate number of SCLK cycles to meet minimum timing
+- */
+-static unsigned short num_clocks_min(unsigned long tmin,
+-				unsigned long fsclk)
 -{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	struct can_bittiming *bt = &priv->can.bittiming;
--	u16 clk, timing;
+-	unsigned long tmp ;
+-	unsigned short result;
 -
--	clk = bt->brp - 1;
--	timing = ((bt->sjw - 1) << 8) | (bt->prop_seg + bt->phase_seg1 - 1) |
--		((bt->phase_seg2 - 1) << 4);
+-	tmp = tmin * (fsclk/1000/1000) / 1000;
+-	result = (unsigned short)tmp;
+-	if ((tmp*1000*1000) < (tmin*(fsclk/1000))) {
+-		result++;
+-	}
 -
--	/*
--	 * If the SAM bit is set, the input signal is oversampled three times
--	 * at the SCLK rate.
--	 */
--	if (priv->can.ctrlmode & CAN_CTRLMODE_3_SAMPLES)
--		timing |= SAM;
--
--	writew(clk, &reg->clock);
--	writew(timing, &reg->timing);
--
--	netdev_info(dev, "setting CLOCK=0x%04x TIMING=0x%04x\n", clk, timing);
--
--	return 0;
+-	return result;
 -}
 -
--static void bfin_can_set_reset_mode(struct net_device *dev)
+-/**
+- *	bfin_set_piomode - Initialize host controller PATA PIO timings
+- *	@ap: Port whose timings we are configuring
+- *	@adev: um
+- *
+- *	Set PIO mode for device.
+- *
+- *	LOCKING:
+- *	None (inherited from caller).
+- */
+-
+-static void bfin_set_piomode(struct ata_port *ap, struct ata_device *adev)
 -{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	int timeout = BFIN_CAN_TIMEOUT;
--	int i;
+-	int mode = adev->pio_mode - XFER_PIO_0;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned int fsclk = get_sclk();
+-	unsigned short teoc_reg, t2_reg, teoc_pio;
+-	unsigned short t4_reg, t2_pio, t1_reg;
+-	unsigned short n0, n6, t6min = 5;
 -
--	/* disable interrupts */
--	writew(0, &reg->mbim1);
--	writew(0, &reg->mbim2);
--	writew(0, &reg->gim);
+-	/* the most restrictive timing value is t6 and tc, the DIOW - data hold
+-	* If one SCLK pulse is longer than this minimum value then register
+-	* transfers cannot be supported at this frequency.
+-	*/
+-	n6 = num_clocks_min(t6min, fsclk);
+-	if (mode >= 0 && mode <= 4 && n6 >= 1) {
+-		dev_dbg(adev->link->ap->dev, "set piomode: mode=%d, fsclk=%ud\n", mode, fsclk);
+-		/* calculate the timing values for register transfers. */
+-		while (mode > 0 && pio_fsclk[mode] > fsclk)
+-			mode--;
 -
--	/* reset can and enter configuration mode */
--	writew(SRS | CCR, &reg->control);
--	writew(CCR, &reg->control);
--	while (!(readw(&reg->control) & CCA)) {
--		udelay(10);
--		if (--timeout == 0) {
--			netdev_err(dev, "fail to enter configuration mode\n");
--			BUG();
--		}
--	}
+-		/* DIOR/DIOW to end cycle time */
+-		t2_reg = num_clocks_min(reg_t2min[mode], fsclk);
+-		/* DIOR/DIOW asserted pulse width */
+-		teoc_reg = num_clocks_min(reg_teocmin[mode], fsclk);
+-		/* Cycle Time */
+-		n0  = num_clocks_min(reg_t0min[mode], fsclk);
 -
--	/*
--	 * All mailbox configurations are marked as inactive
--	 * by writing to CAN Mailbox Configuration Registers 1 and 2
--	 * For all bits: 0 - Mailbox disabled, 1 - Mailbox enabled
--	 */
--	writew(0, &reg->mc1);
--	writew(0, &reg->mc2);
+-		/* increase t2 until we meed the minimum cycle length */
+-		if (t2_reg + teoc_reg < n0)
+-			t2_reg = n0 - teoc_reg;
 -
--	/* Set Mailbox Direction */
--	writew(0xFFFF, &reg->md1);   /* mailbox 1-16 are RX */
--	writew(0, &reg->md2);   /* mailbox 17-32 are TX */
+-		/* calculate the timing values for pio transfers. */
 -
--	/* RECEIVE_STD_CHL */
--	for (i = 0; i < 2; i++) {
--		writew(0, &reg->chl[RECEIVE_STD_CHL + i].id0);
--		writew(AME, &reg->chl[RECEIVE_STD_CHL + i].id1);
--		writew(0, &reg->chl[RECEIVE_STD_CHL + i].dlc);
--		writew(0x1FFF, &reg->msk[RECEIVE_STD_CHL + i].amh);
--		writew(0xFFFF, &reg->msk[RECEIVE_STD_CHL + i].aml);
--	}
+-		/* DIOR/DIOW to end cycle time */
+-		t2_pio = num_clocks_min(pio_t2min[mode], fsclk);
+-		/* DIOR/DIOW asserted pulse width */
+-		teoc_pio = num_clocks_min(pio_teocmin[mode], fsclk);
+-		/* Cycle Time */
+-		n0  = num_clocks_min(pio_t0min[mode], fsclk);
 -
--	/* RECEIVE_EXT_CHL */
--	for (i = 0; i < 2; i++) {
--		writew(0, &reg->chl[RECEIVE_EXT_CHL + i].id0);
--		writew(AME | IDE, &reg->chl[RECEIVE_EXT_CHL + i].id1);
--		writew(0, &reg->chl[RECEIVE_EXT_CHL + i].dlc);
--		writew(0x1FFF, &reg->msk[RECEIVE_EXT_CHL + i].amh);
--		writew(0xFFFF, &reg->msk[RECEIVE_EXT_CHL + i].aml);
--	}
+-		/* increase t2 until we meed the minimum cycle length */
+-		if (t2_pio + teoc_pio < n0)
+-			t2_pio = n0 - teoc_pio;
 -
--	writew(BIT(TRANSMIT_CHL - 16), &reg->mc2);
--	writew(BIT(RECEIVE_STD_CHL) + BIT(RECEIVE_EXT_CHL), &reg->mc1);
+-		/* Address valid to DIOR/DIORW */
+-		t1_reg = num_clocks_min(pio_t1min[mode], fsclk);
 -
--	priv->can.state = CAN_STATE_STOPPED;
--}
+-		/* DIOW data hold */
+-		t4_reg = num_clocks_min(pio_t4min[mode], fsclk);
 -
--static void bfin_can_set_normal_mode(struct net_device *dev)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	int timeout = BFIN_CAN_TIMEOUT;
--
--	/*
--	 * leave configuration mode
--	 */
--	writew(readw(&reg->control) & ~CCR, &reg->control);
--
--	while (readw(&reg->status) & CCA) {
--		udelay(10);
--		if (--timeout == 0) {
--			netdev_err(dev, "fail to leave configuration mode\n");
--			BUG();
--		}
--	}
--
--	/*
--	 * clear _All_  tx and rx interrupts
--	 */
--	writew(0xFFFF, &reg->mbtif1);
--	writew(0xFFFF, &reg->mbtif2);
--	writew(0xFFFF, &reg->mbrif1);
--	writew(0xFFFF, &reg->mbrif2);
--
--	/*
--	 * clear global interrupt status register
--	 */
--	writew(0x7FF, &reg->gis); /* overwrites with '1' */
--
--	/*
--	 * Initialize Interrupts
--	 * - set bits in the mailbox interrupt mask register
--	 * - global interrupt mask
--	 */
--	writew(BIT(RECEIVE_STD_CHL) + BIT(RECEIVE_EXT_CHL), &reg->mbim1);
--	writew(BIT(TRANSMIT_CHL - 16), &reg->mbim2);
--
--	writew(EPIM | BOIM | RMLIM, &reg->gim);
--}
--
--static void bfin_can_start(struct net_device *dev)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--
--	/* enter reset mode */
--	if (priv->can.state != CAN_STATE_STOPPED)
--		bfin_can_set_reset_mode(dev);
--
--	/* leave reset mode */
--	bfin_can_set_normal_mode(dev);
--}
--
--static int bfin_can_set_mode(struct net_device *dev, enum can_mode mode)
--{
--	switch (mode) {
--	case CAN_MODE_START:
--		bfin_can_start(dev);
--		if (netif_queue_stopped(dev))
--			netif_wake_queue(dev);
--		break;
--
--	default:
--		return -EOPNOTSUPP;
--	}
--
--	return 0;
--}
--
--static int bfin_can_get_berr_counter(const struct net_device *dev,
--				     struct can_berr_counter *bec)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--
--	u16 cec = readw(&reg->cec);
--
--	bec->txerr = cec >> 8;
--	bec->rxerr = cec;
--
--	return 0;
--}
--
--static int bfin_can_start_xmit(struct sk_buff *skb, struct net_device *dev)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	struct can_frame *cf = (struct can_frame *)skb->data;
--	u8 dlc = cf->can_dlc;
--	canid_t id = cf->can_id;
--	u8 *data = cf->data;
--	u16 val;
--	int i;
--
--	if (can_dropped_invalid_skb(dev, skb))
--		return NETDEV_TX_OK;
--
--	netif_stop_queue(dev);
--
--	/* fill id */
--	if (id & CAN_EFF_FLAG) {
--		writew(id, &reg->chl[TRANSMIT_CHL].id0);
--		val = ((id & 0x1FFF0000) >> 16) | IDE;
--	} else
--		val = (id << 2);
--	if (id & CAN_RTR_FLAG)
--		val |= RTR;
--	writew(val | AME, &reg->chl[TRANSMIT_CHL].id1);
--
--	/* fill payload */
--	for (i = 0; i < 8; i += 2) {
--		val = ((7 - i) < dlc ? (data[7 - i]) : 0) +
--			((6 - i) < dlc ? (data[6 - i] << 8) : 0);
--		writew(val, &reg->chl[TRANSMIT_CHL].data[i]);
--	}
--
--	/* fill data length code */
--	writew(dlc, &reg->chl[TRANSMIT_CHL].dlc);
--
--	can_put_echo_skb(skb, dev, 0);
--
--	/* set transmit request */
--	writew(BIT(TRANSMIT_CHL - 16), &reg->trs2);
--
--	return 0;
--}
--
--static void bfin_can_rx(struct net_device *dev, u16 isrc)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct net_device_stats *stats = &dev->stats;
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	struct can_frame *cf;
--	struct sk_buff *skb;
--	int obj;
--	int i;
--	u16 val;
--
--	skb = alloc_can_skb(dev, &cf);
--	if (skb == NULL)
--		return;
--
--	/* get id */
--	if (isrc & BIT(RECEIVE_EXT_CHL)) {
--		/* extended frame format (EFF) */
--		cf->can_id = ((readw(&reg->chl[RECEIVE_EXT_CHL].id1)
--			     & 0x1FFF) << 16)
--			     + readw(&reg->chl[RECEIVE_EXT_CHL].id0);
--		cf->can_id |= CAN_EFF_FLAG;
--		obj = RECEIVE_EXT_CHL;
--	} else {
--		/* standard frame format (SFF) */
--		cf->can_id = (readw(&reg->chl[RECEIVE_STD_CHL].id1)
--			     & 0x1ffc) >> 2;
--		obj = RECEIVE_STD_CHL;
--	}
--	if (readw(&reg->chl[obj].id1) & RTR)
--		cf->can_id |= CAN_RTR_FLAG;
--
--	/* get data length code */
--	cf->can_dlc = get_can_dlc(readw(&reg->chl[obj].dlc) & 0xF);
--
--	/* get payload */
--	for (i = 0; i < 8; i += 2) {
--		val = readw(&reg->chl[obj].data[i]);
--		cf->data[7 - i] = (7 - i) < cf->can_dlc ? val : 0;
--		cf->data[6 - i] = (6 - i) < cf->can_dlc ? (val >> 8) : 0;
--	}
--
--	stats->rx_packets++;
--	stats->rx_bytes += cf->can_dlc;
--	netif_rx(skb);
--}
--
--static int bfin_can_err(struct net_device *dev, u16 isrc, u16 status)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	struct net_device_stats *stats = &dev->stats;
--	struct can_frame *cf;
--	struct sk_buff *skb;
--	enum can_state state = priv->can.state;
--
--	skb = alloc_can_err_skb(dev, &cf);
--	if (skb == NULL)
--		return -ENOMEM;
--
--	if (isrc & RMLIS) {
--		/* data overrun interrupt */
--		netdev_dbg(dev, "data overrun interrupt\n");
--		cf->can_id |= CAN_ERR_CRTL;
--		cf->data[1] = CAN_ERR_CRTL_RX_OVERFLOW;
--		stats->rx_over_errors++;
--		stats->rx_errors++;
--	}
--
--	if (isrc & BOIS) {
--		netdev_dbg(dev, "bus-off mode interrupt\n");
--		state = CAN_STATE_BUS_OFF;
--		cf->can_id |= CAN_ERR_BUSOFF;
--		priv->can.can_stats.bus_off++;
--		can_bus_off(dev);
--	}
--
--	if (isrc & EPIS) {
--		/* error passive interrupt */
--		netdev_dbg(dev, "error passive interrupt\n");
--		state = CAN_STATE_ERROR_PASSIVE;
--	}
--
--	if ((isrc & EWTIS) || (isrc & EWRIS)) {
--		netdev_dbg(dev, "Error Warning Transmit/Receive Interrupt\n");
--		state = CAN_STATE_ERROR_WARNING;
--	}
--
--	if (state != priv->can.state && (state == CAN_STATE_ERROR_WARNING ||
--				state == CAN_STATE_ERROR_PASSIVE)) {
--		u16 cec = readw(&reg->cec);
--		u8 rxerr = cec;
--		u8 txerr = cec >> 8;
--
--		cf->can_id |= CAN_ERR_CRTL;
--		if (state == CAN_STATE_ERROR_WARNING) {
--			priv->can.can_stats.error_warning++;
--			cf->data[1] = (txerr > rxerr) ?
--				CAN_ERR_CRTL_TX_WARNING :
--				CAN_ERR_CRTL_RX_WARNING;
+-		ATAPI_SET_REG_TIM_0(base, (teoc_reg<<8 | t2_reg));
+-		ATAPI_SET_PIO_TIM_0(base, (t4_reg<<12 | t2_pio<<4 | t1_reg));
+-		ATAPI_SET_PIO_TIM_1(base, teoc_pio);
+-		if (mode > 2) {
+-			ATAPI_SET_CONTROL(base,
+-				ATAPI_GET_CONTROL(base) | IORDY_EN);
 -		} else {
--			priv->can.can_stats.error_passive++;
--			cf->data[1] = (txerr > rxerr) ?
--				CAN_ERR_CRTL_TX_PASSIVE :
--				CAN_ERR_CRTL_RX_PASSIVE;
+-			ATAPI_SET_CONTROL(base,
+-				ATAPI_GET_CONTROL(base) & ~IORDY_EN);
 -		}
+-
+-		/* Disable host ATAPI PIO interrupts */
+-		ATAPI_SET_INT_MASK(base, ATAPI_GET_INT_MASK(base)
+-			& ~(PIO_DONE_MASK | HOST_TERM_XFER_MASK));
+-		SSYNC();
 -	}
--
--	if (status) {
--		priv->can.can_stats.bus_error++;
--
--		cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
--
--		if (status & BEF)
--			cf->data[2] |= CAN_ERR_PROT_BIT;
--		else if (status & FER)
--			cf->data[2] |= CAN_ERR_PROT_FORM;
--		else if (status & SER)
--			cf->data[2] |= CAN_ERR_PROT_STUFF;
--	}
--
--	priv->can.state = state;
--
--	stats->rx_packets++;
--	stats->rx_bytes += cf->can_dlc;
--	netif_rx(skb);
--
--	return 0;
 -}
 -
--static irqreturn_t bfin_can_interrupt(int irq, void *dev_id)
+-/**
+- *	bfin_set_dmamode - Initialize host controller PATA DMA timings
+- *	@ap: Port whose timings we are configuring
+- *	@adev: um
+- *
+- *	Set UDMA mode for device.
+- *
+- *	LOCKING:
+- *	None (inherited from caller).
+- */
+-
+-static void bfin_set_dmamode(struct ata_port *ap, struct ata_device *adev)
 -{
--	struct net_device *dev = dev_id;
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	struct net_device_stats *stats = &dev->stats;
--	u16 status, isrc;
+-	int mode;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned long fsclk = get_sclk();
+-	unsigned short tenv, tack, tcyc_tdvs, tdvs, tmli, tss, trp, tzah;
+-	unsigned short tm, td, tkr, tkw, teoc, th;
+-	unsigned short n0, nf, tfmin = 5;
+-	unsigned short nmin, tcyc;
 -
--	if ((irq == priv->tx_irq) && readw(&reg->mbtif2)) {
--		/* transmission complete interrupt */
--		writew(0xFFFF, &reg->mbtif2);
--		stats->tx_packets++;
--		stats->tx_bytes += readw(&reg->chl[TRANSMIT_CHL].dlc);
--		can_get_echo_skb(dev, 0);
--		netif_wake_queue(dev);
--	} else if ((irq == priv->rx_irq) && readw(&reg->mbrif1)) {
--		/* receive interrupt */
--		isrc = readw(&reg->mbrif1);
--		writew(0xFFFF, &reg->mbrif1);
--		bfin_can_rx(dev, isrc);
--	} else if ((irq == priv->err_irq) && readw(&reg->gis)) {
--		/* error interrupt */
--		isrc = readw(&reg->gis);
--		status = readw(&reg->esr);
--		writew(0x7FF, &reg->gis);
--		bfin_can_err(dev, isrc, status);
--	} else {
--		return IRQ_NONE;
--	}
+-	mode = adev->dma_mode - XFER_UDMA_0;
+-	if (mode >= 0 && mode <= 5) {
+-		dev_dbg(adev->link->ap->dev, "set udmamode: mode=%d\n", mode);
+-		/* the most restrictive timing value is t6 and tc,
+-		 * the DIOW - data hold. If one SCLK pulse is longer
+-		 * than this minimum value then register
+-		 * transfers cannot be supported at this frequency.
+-		 */
+-		while (mode > 0 && udma_fsclk[mode] > fsclk)
+-			mode--;
 -
--	return IRQ_HANDLED;
--}
+-		nmin = num_clocks_min(udma_tmin[mode], fsclk);
+-		if (nmin >= 1) {
+-			/* calculate the timing values for Ultra DMA. */
+-			tdvs = num_clocks_min(udma_tdvsmin[mode], fsclk);
+-			tcyc = num_clocks_min(udma_tcycmin[mode], fsclk);
+-			tcyc_tdvs = 2;
 -
--static int bfin_can_open(struct net_device *dev)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	int err;
+-			/* increase tcyc - tdvs (tcyc_tdvs) until we meed
+-			 * the minimum cycle length
+-			 */
+-			if (tdvs + tcyc_tdvs < tcyc)
+-				tcyc_tdvs = tcyc - tdvs;
 -
--	/* set chip into reset mode */
--	bfin_can_set_reset_mode(dev);
+-			/* Mow assign the values required for the timing
+-			 * registers
+-			 */
+-			if (tcyc_tdvs < 2)
+-				tcyc_tdvs = 2;
 -
--	/* common open */
--	err = open_candev(dev);
--	if (err)
--		goto exit_open;
+-			if (tdvs < 2)
+-				tdvs = 2;
 -
--	/* register interrupt handler */
--	err = request_irq(priv->rx_irq, &bfin_can_interrupt, 0,
--			"bfin-can-rx", dev);
--	if (err)
--		goto exit_rx_irq;
--	err = request_irq(priv->tx_irq, &bfin_can_interrupt, 0,
--			"bfin-can-tx", dev);
--	if (err)
--		goto exit_tx_irq;
--	err = request_irq(priv->err_irq, &bfin_can_interrupt, 0,
--			"bfin-can-err", dev);
--	if (err)
--		goto exit_err_irq;
--
--	bfin_can_start(dev);
--
--	netif_start_queue(dev);
--
--	return 0;
--
--exit_err_irq:
--	free_irq(priv->tx_irq, dev);
--exit_tx_irq:
--	free_irq(priv->rx_irq, dev);
--exit_rx_irq:
--	close_candev(dev);
--exit_open:
--	return err;
--}
--
--static int bfin_can_close(struct net_device *dev)
--{
--	struct bfin_can_priv *priv = netdev_priv(dev);
--
--	netif_stop_queue(dev);
--	bfin_can_set_reset_mode(dev);
--
--	close_candev(dev);
--
--	free_irq(priv->rx_irq, dev);
--	free_irq(priv->tx_irq, dev);
--	free_irq(priv->err_irq, dev);
--
--	return 0;
--}
--
--static struct net_device *alloc_bfin_candev(void)
--{
--	struct net_device *dev;
--	struct bfin_can_priv *priv;
--
--	dev = alloc_candev(sizeof(*priv), TX_ECHO_SKB_MAX);
--	if (!dev)
--		return NULL;
--
--	priv = netdev_priv(dev);
--
--	priv->dev = dev;
--	priv->can.bittiming_const = &bfin_can_bittiming_const;
--	priv->can.do_set_bittiming = bfin_can_set_bittiming;
--	priv->can.do_set_mode = bfin_can_set_mode;
--	priv->can.do_get_berr_counter = bfin_can_get_berr_counter;
--	priv->can.ctrlmode_supported = CAN_CTRLMODE_3_SAMPLES;
--
--	return dev;
--}
--
--static const struct net_device_ops bfin_can_netdev_ops = {
--	.ndo_open               = bfin_can_open,
--	.ndo_stop               = bfin_can_close,
--	.ndo_start_xmit         = bfin_can_start_xmit,
--	.ndo_change_mtu         = can_change_mtu,
--};
--
--static int bfin_can_probe(struct platform_device *pdev)
--{
--	int err;
--	struct net_device *dev;
--	struct bfin_can_priv *priv;
--	struct resource *res_mem, *rx_irq, *tx_irq, *err_irq;
--	unsigned short *pdata;
--
--	pdata = dev_get_platdata(&pdev->dev);
--	if (!pdata) {
--		dev_err(&pdev->dev, "No platform data provided!\n");
--		err = -EINVAL;
--		goto exit;
--	}
--
--	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rx_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	tx_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
--	err_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 2);
--	if (!res_mem || !rx_irq || !tx_irq || !err_irq) {
--		err = -EINVAL;
--		goto exit;
--	}
--
--	/* request peripheral pins */
--	err = peripheral_request_list(pdata, dev_name(&pdev->dev));
--	if (err)
--		goto exit;
--
--	dev = alloc_bfin_candev();
--	if (!dev) {
--		err = -ENOMEM;
--		goto exit_peri_pin_free;
--	}
--
--	priv = netdev_priv(dev);
--
--	priv->membase = devm_ioremap_resource(&pdev->dev, res_mem);
--	if (IS_ERR(priv->membase)) {
--		err = PTR_ERR(priv->membase);
--		goto exit_peri_pin_free;
--	}
--
--	priv->rx_irq = rx_irq->start;
--	priv->tx_irq = tx_irq->start;
--	priv->err_irq = err_irq->start;
--	priv->pin_list = pdata;
--	priv->can.clock.freq = get_sclk();
--
--	platform_set_drvdata(pdev, dev);
--	SET_NETDEV_DEV(dev, &pdev->dev);
--
--	dev->flags |= IFF_ECHO;	/* we support local echo */
--	dev->netdev_ops = &bfin_can_netdev_ops;
--
--	bfin_can_set_reset_mode(dev);
--
--	err = register_candev(dev);
--	if (err) {
--		dev_err(&pdev->dev, "registering failed (err=%d)\n", err);
--		goto exit_candev_free;
--	}
--
--	dev_info(&pdev->dev,
--		"%s device registered"
--		"(&reg_base=%p, rx_irq=%d, tx_irq=%d, err_irq=%d, sclk=%d)\n",
--		DRV_NAME, priv->membase, priv->rx_irq,
--		priv->tx_irq, priv->err_irq, priv->can.clock.freq);
--	return 0;
--
--exit_candev_free:
--	free_candev(dev);
--exit_peri_pin_free:
--	peripheral_free_list(pdata);
--exit:
--	return err;
--}
--
--static int bfin_can_remove(struct platform_device *pdev)
--{
--	struct net_device *dev = platform_get_drvdata(pdev);
--	struct bfin_can_priv *priv = netdev_priv(dev);
--
--	bfin_can_set_reset_mode(dev);
--
--	unregister_candev(dev);
--
--	peripheral_free_list(priv->pin_list);
--
--	free_candev(dev);
--	return 0;
--}
--
--#ifdef CONFIG_PM
--static int bfin_can_suspend(struct platform_device *pdev, pm_message_t mesg)
--{
--	struct net_device *dev = platform_get_drvdata(pdev);
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
--	int timeout = BFIN_CAN_TIMEOUT;
--
--	if (netif_running(dev)) {
--		/* enter sleep mode */
--		writew(readw(&reg->control) | SMR, &reg->control);
--		while (!(readw(&reg->intr) & SMACK)) {
--			udelay(10);
--			if (--timeout == 0) {
--				netdev_err(dev, "fail to enter sleep mode\n");
--				BUG();
+-			tack = num_clocks_min(udma_tackmin, fsclk);
+-			tss = num_clocks_min(udma_tssmin, fsclk);
+-			tmli = num_clocks_min(udma_tmlimin, fsclk);
+-			tzah = num_clocks_min(udma_tzahmin, fsclk);
+-			trp = num_clocks_min(udma_trpmin[mode], fsclk);
+-			tenv = num_clocks_min(udma_tenvmin, fsclk);
+-			if (tenv <= udma_tenvmax[mode]) {
+-				ATAPI_SET_ULTRA_TIM_0(base, (tenv<<8 | tack));
+-				ATAPI_SET_ULTRA_TIM_1(base,
+-					(tcyc_tdvs<<8 | tdvs));
+-				ATAPI_SET_ULTRA_TIM_2(base, (tmli<<8 | tss));
+-				ATAPI_SET_ULTRA_TIM_3(base, (trp<<8 | tzah));
 -			}
 -		}
 -	}
 -
+-	mode = adev->dma_mode - XFER_MW_DMA_0;
+-	if (mode >= 0 && mode <= 2) {
+-		dev_dbg(adev->link->ap->dev, "set mdmamode: mode=%d\n", mode);
+-		/* the most restrictive timing value is tf, the DMACK to
+-		 * read data released. If one SCLK pulse is longer than
+-		 * this maximum value then the MDMA mode
+-		 * cannot be supported at this frequency.
+-		 */
+-		while (mode > 0 && mdma_fsclk[mode] > fsclk)
+-			mode--;
+-
+-		nf = num_clocks_min(tfmin, fsclk);
+-		if (nf >= 1) {
+-			/* calculate the timing values for Multi-word DMA. */
+-
+-			/* DIOR/DIOW asserted pulse width */
+-			td = num_clocks_min(mdma_tdmin[mode], fsclk);
+-
+-			/* DIOR negated pulse width */
+-			tkw = num_clocks_min(mdma_tkwmin[mode], fsclk);
+-
+-			/* Cycle Time */
+-			n0  = num_clocks_min(mdma_t0min[mode], fsclk);
+-
+-			/* increase tk until we meed the minimum cycle length */
+-			if (tkw + td < n0)
+-				tkw = n0 - td;
+-
+-			/* DIOR negated pulse width - read */
+-			tkr = num_clocks_min(mdma_tkrmin[mode], fsclk);
+-			/* CS{1:0] valid to DIOR/DIOW */
+-			tm = num_clocks_min(mdma_tmmin[mode], fsclk);
+-			/* DIOR/DIOW to DMACK hold */
+-			teoc = num_clocks_min(mdma_tjmin[mode], fsclk);
+-			/* DIOW Data hold */
+-			th = num_clocks_min(mdma_thmin[mode], fsclk);
+-
+-			ATAPI_SET_MULTI_TIM_0(base, (tm<<8 | td));
+-			ATAPI_SET_MULTI_TIM_1(base, (tkr<<8 | tkw));
+-			ATAPI_SET_MULTI_TIM_2(base, (teoc<<8 | th));
+-			SSYNC();
+-		}
+-	}
+-	return;
+-}
+-
+-/**
+- *
+- *    Function:       wait_complete
+- *
+- *    Description:    Waits the interrupt from device
+- *
+- */
+-static inline void wait_complete(void __iomem *base, unsigned short mask)
+-{
+-	unsigned short status;
+-	unsigned int i = 0;
+-
+-#define PATA_BF54X_WAIT_TIMEOUT		10000
+-
+-	for (i = 0; i < PATA_BF54X_WAIT_TIMEOUT; i++) {
+-		status = ATAPI_GET_INT_STATUS(base) & mask;
+-		if (status)
+-			break;
+-	}
+-
+-	ATAPI_SET_INT_STATUS(base, mask);
+-}
+-
+-/**
+- *
+- *    Function:       write_atapi_register
+- *
+- *    Description:    Writes to ATA Device Resgister
+- *
+- */
+-
+-static void write_atapi_register(void __iomem *base,
+-		unsigned long ata_reg, unsigned short value)
+-{
+-	/* Program the ATA_DEV_TXBUF register with write data (to be
+-	 * written into the device).
+-	 */
+-	ATAPI_SET_DEV_TXBUF(base, value);
+-
+-	/* Program the ATA_DEV_ADDR register with address of the
+-	 * device register (0x01 to 0x0F).
+-	 */
+-	ATAPI_SET_DEV_ADDR(base, ata_reg);
+-
+-	/* Program the ATA_CTRL register with dir set to write (1)
+-	 */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | XFER_DIR));
+-
+-	/* ensure PIO DMA is not set */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~PIO_USE_DMA));
+-
+-	/* and start the transfer */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | PIO_START));
+-
+-	/* Wait for the interrupt to indicate the end of the transfer.
+-	 * (We need to wait on and clear rhe ATA_DEV_INT interrupt status)
+-	 */
+-	wait_complete(base, PIO_DONE_INT);
+-}
+-
+-/**
+- *
+- *	Function:       read_atapi_register
+- *
+- *Description:    Reads from ATA Device Resgister
+- *
+- */
+-
+-static unsigned short read_atapi_register(void __iomem *base,
+-		unsigned long ata_reg)
+-{
+-	/* Program the ATA_DEV_ADDR register with address of the
+-	 * device register (0x01 to 0x0F).
+-	 */
+-	ATAPI_SET_DEV_ADDR(base, ata_reg);
+-
+-	/* Program the ATA_CTRL register with dir set to read (0) and
+-	 */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~XFER_DIR));
+-
+-	/* ensure PIO DMA is not set */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~PIO_USE_DMA));
+-
+-	/* and start the transfer */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | PIO_START));
+-
+-	/* Wait for the interrupt to indicate the end of the transfer.
+-	 * (PIO_DONE interrupt is set and it doesn't seem to matter
+-	 * that we don't clear it)
+-	 */
+-	wait_complete(base, PIO_DONE_INT);
+-
+-	/* Read the ATA_DEV_RXBUF register with write data (to be
+-	 * written into the device).
+-	 */
+-	return ATAPI_GET_DEV_RXBUF(base);
+-}
+-
+-/**
+- *
+- *    Function:       write_atapi_register_data
+- *
+- *    Description:    Writes to ATA Device Resgister
+- *
+- */
+-
+-static void write_atapi_data(void __iomem *base,
+-		int len, unsigned short *buf)
+-{
+-	int i;
+-
+-	/* Set transfer length to 1 */
+-	ATAPI_SET_XFER_LEN(base, 1);
+-
+-	/* Program the ATA_DEV_ADDR register with address of the
+-	 * ATA_REG_DATA
+-	 */
+-	ATAPI_SET_DEV_ADDR(base, ATA_REG_DATA);
+-
+-	/* Program the ATA_CTRL register with dir set to write (1)
+-	 */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | XFER_DIR));
+-
+-	/* ensure PIO DMA is not set */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~PIO_USE_DMA));
+-
+-	for (i = 0; i < len; i++) {
+-		/* Program the ATA_DEV_TXBUF register with write data (to be
+-		 * written into the device).
+-		 */
+-		ATAPI_SET_DEV_TXBUF(base, buf[i]);
+-
+-		/* and start the transfer */
+-		ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | PIO_START));
+-
+-		/* Wait for the interrupt to indicate the end of the transfer.
+-		 * (We need to wait on and clear rhe ATA_DEV_INT
+-		 * interrupt status)
+-		 */
+-		wait_complete(base, PIO_DONE_INT);
+-	}
+-}
+-
+-/**
+- *
+- *	Function:       read_atapi_register_data
+- *
+- *	Description:    Reads from ATA Device Resgister
+- *
+- */
+-
+-static void read_atapi_data(void __iomem *base,
+-		int len, unsigned short *buf)
+-{
+-	int i;
+-
+-	/* Set transfer length to 1 */
+-	ATAPI_SET_XFER_LEN(base, 1);
+-
+-	/* Program the ATA_DEV_ADDR register with address of the
+-	 * ATA_REG_DATA
+-	 */
+-	ATAPI_SET_DEV_ADDR(base, ATA_REG_DATA);
+-
+-	/* Program the ATA_CTRL register with dir set to read (0) and
+-	 */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~XFER_DIR));
+-
+-	/* ensure PIO DMA is not set */
+-	ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) & ~PIO_USE_DMA));
+-
+-	for (i = 0; i < len; i++) {
+-		/* and start the transfer */
+-		ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base) | PIO_START));
+-
+-		/* Wait for the interrupt to indicate the end of the transfer.
+-		 * (PIO_DONE interrupt is set and it doesn't seem to matter
+-		 * that we don't clear it)
+-		 */
+-		wait_complete(base, PIO_DONE_INT);
+-
+-		/* Read the ATA_DEV_RXBUF register with write data (to be
+-		 * written into the device).
+-		 */
+-		buf[i] = ATAPI_GET_DEV_RXBUF(base);
+-	}
+-}
+-
+-/**
+- *	bfin_tf_load - send taskfile registers to host controller
+- *	@ap: Port to which output is sent
+- *	@tf: ATA taskfile register set
+- *
+- *	Note: Original code is ata_sff_tf_load().
+- */
+-
+-static void bfin_tf_load(struct ata_port *ap, const struct ata_taskfile *tf)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned int is_addr = tf->flags & ATA_TFLAG_ISADDR;
+-
+-	if (tf->ctl != ap->last_ctl) {
+-		write_atapi_register(base, ATA_REG_CTRL, tf->ctl);
+-		ap->last_ctl = tf->ctl;
+-		ata_wait_idle(ap);
+-	}
+-
+-	if (is_addr) {
+-		if (tf->flags & ATA_TFLAG_LBA48) {
+-			write_atapi_register(base, ATA_REG_FEATURE,
+-						tf->hob_feature);
+-			write_atapi_register(base, ATA_REG_NSECT,
+-						tf->hob_nsect);
+-			write_atapi_register(base, ATA_REG_LBAL, tf->hob_lbal);
+-			write_atapi_register(base, ATA_REG_LBAM, tf->hob_lbam);
+-			write_atapi_register(base, ATA_REG_LBAH, tf->hob_lbah);
+-			dev_dbg(ap->dev, "hob: feat 0x%X nsect 0x%X, lba 0x%X "
+-				 "0x%X 0x%X\n",
+-				tf->hob_feature,
+-				tf->hob_nsect,
+-				tf->hob_lbal,
+-				tf->hob_lbam,
+-				tf->hob_lbah);
+-		}
+-
+-		write_atapi_register(base, ATA_REG_FEATURE, tf->feature);
+-		write_atapi_register(base, ATA_REG_NSECT, tf->nsect);
+-		write_atapi_register(base, ATA_REG_LBAL, tf->lbal);
+-		write_atapi_register(base, ATA_REG_LBAM, tf->lbam);
+-		write_atapi_register(base, ATA_REG_LBAH, tf->lbah);
+-		dev_dbg(ap->dev, "feat 0x%X nsect 0x%X lba 0x%X 0x%X 0x%X\n",
+-			tf->feature,
+-			tf->nsect,
+-			tf->lbal,
+-			tf->lbam,
+-			tf->lbah);
+-	}
+-
+-	if (tf->flags & ATA_TFLAG_DEVICE) {
+-		write_atapi_register(base, ATA_REG_DEVICE, tf->device);
+-		dev_dbg(ap->dev, "device 0x%X\n", tf->device);
+-	}
+-
+-	ata_wait_idle(ap);
+-}
+-
+-/**
+- *	bfin_check_status - Read device status reg & clear interrupt
+- *	@ap: port where the device is
+- *
+- *	Note: Original code is ata_check_status().
+- */
+-
+-static u8 bfin_check_status(struct ata_port *ap)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	return read_atapi_register(base, ATA_REG_STATUS);
+-}
+-
+-/**
+- *	bfin_tf_read - input device's ATA taskfile shadow registers
+- *	@ap: Port from which input is read
+- *	@tf: ATA taskfile register set for storing input
+- *
+- *	Note: Original code is ata_sff_tf_read().
+- */
+-
+-static void bfin_tf_read(struct ata_port *ap, struct ata_taskfile *tf)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	tf->command = bfin_check_status(ap);
+-	tf->feature = read_atapi_register(base, ATA_REG_ERR);
+-	tf->nsect = read_atapi_register(base, ATA_REG_NSECT);
+-	tf->lbal = read_atapi_register(base, ATA_REG_LBAL);
+-	tf->lbam = read_atapi_register(base, ATA_REG_LBAM);
+-	tf->lbah = read_atapi_register(base, ATA_REG_LBAH);
+-	tf->device = read_atapi_register(base, ATA_REG_DEVICE);
+-
+-	if (tf->flags & ATA_TFLAG_LBA48) {
+-		write_atapi_register(base, ATA_REG_CTRL, tf->ctl | ATA_HOB);
+-		tf->hob_feature = read_atapi_register(base, ATA_REG_ERR);
+-		tf->hob_nsect = read_atapi_register(base, ATA_REG_NSECT);
+-		tf->hob_lbal = read_atapi_register(base, ATA_REG_LBAL);
+-		tf->hob_lbam = read_atapi_register(base, ATA_REG_LBAM);
+-		tf->hob_lbah = read_atapi_register(base, ATA_REG_LBAH);
+-	}
+-}
+-
+-/**
+- *	bfin_exec_command - issue ATA command to host controller
+- *	@ap: port to which command is being issued
+- *	@tf: ATA taskfile register set
+- *
+- *	Note: Original code is ata_sff_exec_command().
+- */
+-
+-static void bfin_exec_command(struct ata_port *ap,
+-			      const struct ata_taskfile *tf)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	dev_dbg(ap->dev, "ata%u: cmd 0x%X\n", ap->print_id, tf->command);
+-
+-	write_atapi_register(base, ATA_REG_CMD, tf->command);
+-	ata_sff_pause(ap);
+-}
+-
+-/**
+- *	bfin_check_altstatus - Read device alternate status reg
+- *	@ap: port where the device is
+- */
+-
+-static u8 bfin_check_altstatus(struct ata_port *ap)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	return read_atapi_register(base, ATA_REG_ALTSTATUS);
+-}
+-
+-/**
+- *	bfin_dev_select - Select device 0/1 on ATA bus
+- *	@ap: ATA channel to manipulate
+- *	@device: ATA device (numbered from zero) to select
+- *
+- *	Note: Original code is ata_sff_dev_select().
+- */
+-
+-static void bfin_dev_select(struct ata_port *ap, unsigned int device)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	u8 tmp;
+-
+-	if (device == 0)
+-		tmp = ATA_DEVICE_OBS;
+-	else
+-		tmp = ATA_DEVICE_OBS | ATA_DEV1;
+-
+-	write_atapi_register(base, ATA_REG_DEVICE, tmp);
+-	ata_sff_pause(ap);
+-}
+-
+-/**
+- *	bfin_set_devctl - Write device control reg
+- *	@ap: port where the device is
+- *	@ctl: value to write
+- */
+-
+-static void bfin_set_devctl(struct ata_port *ap, u8 ctl)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	write_atapi_register(base, ATA_REG_CTRL, ctl);
+-}
+-
+-/**
+- *	bfin_bmdma_setup - Set up IDE DMA transaction
+- *	@qc: Info associated with this ATA transaction.
+- *
+- *	Note: Original code is ata_bmdma_setup().
+- */
+-
+-static void bfin_bmdma_setup(struct ata_queued_cmd *qc)
+-{
+-	struct ata_port *ap = qc->ap;
+-	struct dma_desc_array *dma_desc_cpu = (struct dma_desc_array *)ap->bmdma_prd;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned short config = DMAFLOW_ARRAY | NDSIZE_5 | RESTART | WDSIZE_16 | DMAEN;
+-	struct scatterlist *sg;
+-	unsigned int si;
+-	unsigned int channel;
+-	unsigned int dir;
+-	unsigned int size = 0;
+-
+-	dev_dbg(qc->ap->dev, "in atapi dma setup\n");
+-	/* Program the ATA_CTRL register with dir */
+-	if (qc->tf.flags & ATA_TFLAG_WRITE) {
+-		channel = CH_ATAPI_TX;
+-		dir = DMA_TO_DEVICE;
+-	} else {
+-		channel = CH_ATAPI_RX;
+-		dir = DMA_FROM_DEVICE;
+-		config |= WNR;
+-	}
+-
+-	dma_map_sg(ap->dev, qc->sg, qc->n_elem, dir);
+-
+-	/* fill the ATAPI DMA controller */
+-	for_each_sg(qc->sg, sg, qc->n_elem, si) {
+-		dma_desc_cpu[si].start_addr = sg_dma_address(sg);
+-		dma_desc_cpu[si].cfg = config;
+-		dma_desc_cpu[si].x_count = sg_dma_len(sg) >> 1;
+-		dma_desc_cpu[si].x_modify = 2;
+-		size += sg_dma_len(sg);
+-	}
+-
+-	/* Set the last descriptor to stop mode */
+-	dma_desc_cpu[qc->n_elem - 1].cfg &= ~(DMAFLOW | NDSIZE);
+-
+-	flush_dcache_range((unsigned int)dma_desc_cpu,
+-		(unsigned int)dma_desc_cpu +
+-			qc->n_elem * sizeof(struct dma_desc_array));
+-
+-	/* Enable ATA DMA operation*/
+-	set_dma_curr_desc_addr(channel, (unsigned long *)ap->bmdma_prd_dma);
+-	set_dma_x_count(channel, 0);
+-	set_dma_x_modify(channel, 0);
+-	set_dma_config(channel, config);
+-
+-	SSYNC();
+-
+-	/* Send ATA DMA command */
+-	bfin_exec_command(ap, &qc->tf);
+-
+-	if (qc->tf.flags & ATA_TFLAG_WRITE) {
+-		/* set ATA DMA write direction */
+-		ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base)
+-			| XFER_DIR));
+-	} else {
+-		/* set ATA DMA read direction */
+-		ATAPI_SET_CONTROL(base, (ATAPI_GET_CONTROL(base)
+-			& ~XFER_DIR));
+-	}
+-
+-	/* Reset all transfer count */
+-	ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base) | TFRCNT_RST);
+-
+-	/* Set ATAPI state machine contorl in terminate sequence */
+-	ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base) | END_ON_TERM);
+-
+-	/* Set transfer length to the total size of sg buffers */
+-	ATAPI_SET_XFER_LEN(base, size >> 1);
+-}
+-
+-/**
+- *	bfin_bmdma_start - Start an IDE DMA transaction
+- *	@qc: Info associated with this ATA transaction.
+- *
+- *	Note: Original code is ata_bmdma_start().
+- */
+-
+-static void bfin_bmdma_start(struct ata_queued_cmd *qc)
+-{
+-	struct ata_port *ap = qc->ap;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	dev_dbg(qc->ap->dev, "in atapi dma start\n");
+-
+-	if (!(ap->udma_mask || ap->mwdma_mask))
+-		return;
+-
+-	/* start ATAPI transfer*/
+-	if (ap->udma_mask)
+-		ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base)
+-			| ULTRA_START);
+-	else
+-		ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base)
+-			| MULTI_START);
+-}
+-
+-/**
+- *	bfin_bmdma_stop - Stop IDE DMA transfer
+- *	@qc: Command we are ending DMA for
+- */
+-
+-static void bfin_bmdma_stop(struct ata_queued_cmd *qc)
+-{
+-	struct ata_port *ap = qc->ap;
+-	unsigned int dir;
+-
+-	dev_dbg(qc->ap->dev, "in atapi dma stop\n");
+-
+-	if (!(ap->udma_mask || ap->mwdma_mask))
+-		return;
+-
+-	/* stop ATAPI DMA controller*/
+-	if (qc->tf.flags & ATA_TFLAG_WRITE) {
+-		dir = DMA_TO_DEVICE;
+-		disable_dma(CH_ATAPI_TX);
+-	} else {
+-		dir = DMA_FROM_DEVICE;
+-		disable_dma(CH_ATAPI_RX);
+-	}
+-
+-	dma_unmap_sg(ap->dev, qc->sg, qc->n_elem, dir);
+-}
+-
+-/**
+- *	bfin_devchk - PATA device presence detection
+- *	@ap: ATA channel to examine
+- *	@device: Device to examine (starting at zero)
+- *
+- *	Note: Original code is ata_devchk().
+- */
+-
+-static unsigned int bfin_devchk(struct ata_port *ap,
+-				unsigned int device)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	u8 nsect, lbal;
+-
+-	bfin_dev_select(ap, device);
+-
+-	write_atapi_register(base, ATA_REG_NSECT, 0x55);
+-	write_atapi_register(base, ATA_REG_LBAL, 0xaa);
+-
+-	write_atapi_register(base, ATA_REG_NSECT, 0xaa);
+-	write_atapi_register(base, ATA_REG_LBAL, 0x55);
+-
+-	write_atapi_register(base, ATA_REG_NSECT, 0x55);
+-	write_atapi_register(base, ATA_REG_LBAL, 0xaa);
+-
+-	nsect = read_atapi_register(base, ATA_REG_NSECT);
+-	lbal = read_atapi_register(base, ATA_REG_LBAL);
+-
+-	if ((nsect == 0x55) && (lbal == 0xaa))
+-		return 1;	/* we found a device */
+-
+-	return 0;		/* nothing found */
+-}
+-
+-/**
+- *	bfin_bus_post_reset - PATA device post reset
+- *
+- *	Note: Original code is ata_bus_post_reset().
+- */
+-
+-static void bfin_bus_post_reset(struct ata_port *ap, unsigned int devmask)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned int dev0 = devmask & (1 << 0);
+-	unsigned int dev1 = devmask & (1 << 1);
+-	unsigned long deadline;
+-
+-	/* if device 0 was found in ata_devchk, wait for its
+-	 * BSY bit to clear
+-	 */
+-	if (dev0)
+-		ata_sff_busy_sleep(ap, ATA_TMOUT_BOOT_QUICK, ATA_TMOUT_BOOT);
+-
+-	/* if device 1 was found in ata_devchk, wait for
+-	 * register access, then wait for BSY to clear
+-	 */
+-	deadline = ata_deadline(jiffies, ATA_TMOUT_BOOT);
+-	while (dev1) {
+-		u8 nsect, lbal;
+-
+-		bfin_dev_select(ap, 1);
+-		nsect = read_atapi_register(base, ATA_REG_NSECT);
+-		lbal = read_atapi_register(base, ATA_REG_LBAL);
+-		if ((nsect == 1) && (lbal == 1))
+-			break;
+-		if (time_after(jiffies, deadline)) {
+-			dev1 = 0;
+-			break;
+-		}
+-		ata_msleep(ap, 50);	/* give drive a breather */
+-	}
+-	if (dev1)
+-		ata_sff_busy_sleep(ap, ATA_TMOUT_BOOT_QUICK, ATA_TMOUT_BOOT);
+-
+-	/* is all this really necessary? */
+-	bfin_dev_select(ap, 0);
+-	if (dev1)
+-		bfin_dev_select(ap, 1);
+-	if (dev0)
+-		bfin_dev_select(ap, 0);
+-}
+-
+-/**
+- *	bfin_bus_softreset - PATA device software reset
+- *
+- *	Note: Original code is ata_bus_softreset().
+- */
+-
+-static unsigned int bfin_bus_softreset(struct ata_port *ap,
+-				       unsigned int devmask)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	/* software reset.  causes dev0 to be selected */
+-	write_atapi_register(base, ATA_REG_CTRL, ap->ctl);
+-	udelay(20);
+-	write_atapi_register(base, ATA_REG_CTRL, ap->ctl | ATA_SRST);
+-	udelay(20);
+-	write_atapi_register(base, ATA_REG_CTRL, ap->ctl);
+-
+-	/* spec mandates ">= 2ms" before checking status.
+-	 * We wait 150ms, because that was the magic delay used for
+-	 * ATAPI devices in Hale Landis's ATADRVR, for the period of time
+-	 * between when the ATA command register is written, and then
+-	 * status is checked.  Because waiting for "a while" before
+-	 * checking status is fine, post SRST, we perform this magic
+-	 * delay here as well.
+-	 *
+-	 * Old drivers/ide uses the 2mS rule and then waits for ready
+-	 */
+-	ata_msleep(ap, 150);
+-
+-	/* Before we perform post reset processing we want to see if
+-	 * the bus shows 0xFF because the odd clown forgets the D7
+-	 * pulldown resistor.
+-	 */
+-	if (bfin_check_status(ap) == 0xFF)
+-		return 0;
+-
+-	bfin_bus_post_reset(ap, devmask);
+-
 -	return 0;
 -}
 -
--static int bfin_can_resume(struct platform_device *pdev)
--{
--	struct net_device *dev = platform_get_drvdata(pdev);
--	struct bfin_can_priv *priv = netdev_priv(dev);
--	struct bfin_can_regs __iomem *reg = priv->membase;
+-/**
+- *	bfin_softreset - reset host port via ATA SRST
+- *	@ap: port to reset
+- *	@classes: resulting classes of attached devices
+- *
+- *	Note: Original code is ata_sff_softreset().
+- */
 -
--	if (netif_running(dev)) {
--		/* leave sleep mode */
--		writew(0, &reg->intr);
+-static int bfin_softreset(struct ata_link *link, unsigned int *classes,
+-			  unsigned long deadline)
+-{
+-	struct ata_port *ap = link->ap;
+-	unsigned int slave_possible = ap->flags & ATA_FLAG_SLAVE_POSS;
+-	unsigned int devmask = 0, err_mask;
+-	u8 err;
+-
+-	/* determine if device 0/1 are present */
+-	if (bfin_devchk(ap, 0))
+-		devmask |= (1 << 0);
+-	if (slave_possible && bfin_devchk(ap, 1))
+-		devmask |= (1 << 1);
+-
+-	/* select device 0 again */
+-	bfin_dev_select(ap, 0);
+-
+-	/* issue bus reset */
+-	err_mask = bfin_bus_softreset(ap, devmask);
+-	if (err_mask) {
+-		ata_port_err(ap, "SRST failed (err_mask=0x%x)\n",
+-				err_mask);
+-		return -EIO;
+-	}
+-
+-	/* determine by signature whether we have ATA or ATAPI devices */
+-	classes[0] = ata_sff_dev_classify(&ap->link.device[0],
+-				devmask & (1 << 0), &err);
+-	if (slave_possible && err != 0x81)
+-		classes[1] = ata_sff_dev_classify(&ap->link.device[1],
+-					devmask & (1 << 1), &err);
+-
+-	return 0;
+-}
+-
+-/**
+- *	bfin_bmdma_status - Read IDE DMA status
+- *	@ap: Port associated with this ATA transaction.
+- */
+-
+-static unsigned char bfin_bmdma_status(struct ata_port *ap)
+-{
+-	unsigned char host_stat = 0;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	if (ATAPI_GET_STATUS(base) & (MULTI_XFER_ON | ULTRA_XFER_ON))
+-		host_stat |= ATA_DMA_ACTIVE;
+-	if (ATAPI_GET_INT_STATUS(base) & ATAPI_DEV_INT)
+-		host_stat |= ATA_DMA_INTR;
+-
+-	dev_dbg(ap->dev, "ATAPI: host_stat=0x%x\n", host_stat);
+-
+-	return host_stat;
+-}
+-
+-/**
+- *	bfin_data_xfer - Transfer data by PIO
+- *	@qc: queued command
+- *	@buf: data buffer
+- *	@buflen: buffer length
+- *	@write_data: read/write
+- *
+- *	Note: Original code is ata_sff_data_xfer().
+- */
+-
+-static unsigned int bfin_data_xfer(struct ata_queued_cmd *qc,
+-				   unsigned char *buf,
+-				   unsigned int buflen, int rw)
+-{
+-	struct ata_port *ap = qc->dev->link->ap;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-	unsigned int words = buflen >> 1;
+-	unsigned short *buf16 = (u16 *)buf;
+-
+-	/* Transfer multiple of 2 bytes */
+-	if (rw == READ)
+-		read_atapi_data(base, words, buf16);
+-	else
+-		write_atapi_data(base, words, buf16);
+-
+-	/* Transfer trailing 1 byte, if any. */
+-	if (unlikely(buflen & 0x01)) {
+-		unsigned short align_buf[1] = { 0 };
+-		unsigned char *trailing_buf = buf + buflen - 1;
+-
+-		if (rw == READ) {
+-			read_atapi_data(base, 1, align_buf);
+-			memcpy(trailing_buf, align_buf, 1);
+-		} else {
+-			memcpy(align_buf, trailing_buf, 1);
+-			write_atapi_data(base, 1, align_buf);
+-		}
+-		words++;
+-	}
+-
+-	return words << 1;
+-}
+-
+-/**
+- *	bfin_irq_clear - Clear ATAPI interrupt.
+- *	@ap: Port associated with this ATA transaction.
+- *
+- *	Note: Original code is ata_bmdma_irq_clear().
+- */
+-
+-static void bfin_irq_clear(struct ata_port *ap)
+-{
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	dev_dbg(ap->dev, "in atapi irq clear\n");
+-	ATAPI_SET_INT_STATUS(base, ATAPI_GET_INT_STATUS(base)|ATAPI_DEV_INT
+-		| MULTI_DONE_INT | UDMAIN_DONE_INT | UDMAOUT_DONE_INT
+-		| MULTI_TERM_INT | UDMAIN_TERM_INT | UDMAOUT_TERM_INT);
+-}
+-
+-/**
+- *	bfin_thaw - Thaw DMA controller port
+- *	@ap: port to thaw
+- *
+- *	Note: Original code is ata_sff_thaw().
+- */
+-
+-void bfin_thaw(struct ata_port *ap)
+-{
+-	dev_dbg(ap->dev, "in atapi dma thaw\n");
+-	bfin_check_status(ap);
+-	ata_sff_irq_on(ap);
+-}
+-
+-/**
+- *	bfin_postreset - standard postreset callback
+- *	@ap: the target ata_port
+- *	@classes: classes of attached devices
+- *
+- *	Note: Original code is ata_sff_postreset().
+- */
+-
+-static void bfin_postreset(struct ata_link *link, unsigned int *classes)
+-{
+-	struct ata_port *ap = link->ap;
+-	void __iomem *base = (void __iomem *)ap->ioaddr.ctl_addr;
+-
+-	/* re-enable interrupts */
+-	ata_sff_irq_on(ap);
+-
+-	/* is double-select really necessary? */
+-	if (classes[0] != ATA_DEV_NONE)
+-		bfin_dev_select(ap, 1);
+-	if (classes[1] != ATA_DEV_NONE)
+-		bfin_dev_select(ap, 0);
+-
+-	/* bail out if no device is present */
+-	if (classes[0] == ATA_DEV_NONE && classes[1] == ATA_DEV_NONE) {
+-		return;
+-	}
+-
+-	/* set up device control */
+-	write_atapi_register(base, ATA_REG_CTRL, ap->ctl);
+-}
+-
+-static void bfin_port_stop(struct ata_port *ap)
+-{
+-	dev_dbg(ap->dev, "in atapi port stop\n");
+-	if (ap->udma_mask != 0 || ap->mwdma_mask != 0) {
+-		dma_free_coherent(ap->dev,
+-			BFIN_MAX_SG_SEGMENTS * sizeof(struct dma_desc_array),
+-			ap->bmdma_prd,
+-			ap->bmdma_prd_dma);
+-
+-		free_dma(CH_ATAPI_RX);
+-		free_dma(CH_ATAPI_TX);
+-	}
+-}
+-
+-static int bfin_port_start(struct ata_port *ap)
+-{
+-	dev_dbg(ap->dev, "in atapi port start\n");
+-	if (!(ap->udma_mask || ap->mwdma_mask))
+-		return 0;
+-
+-	ap->bmdma_prd = dma_alloc_coherent(ap->dev,
+-				BFIN_MAX_SG_SEGMENTS * sizeof(struct dma_desc_array),
+-				&ap->bmdma_prd_dma,
+-				GFP_KERNEL);
+-
+-	if (ap->bmdma_prd == NULL) {
+-		dev_info(ap->dev, "Unable to allocate DMA descriptor array.\n");
+-		goto out;
+-	}
+-
+-	if (request_dma(CH_ATAPI_RX, "BFIN ATAPI RX DMA") >= 0) {
+-		if (request_dma(CH_ATAPI_TX,
+-			"BFIN ATAPI TX DMA") >= 0)
+-			return 0;
+-
+-		free_dma(CH_ATAPI_RX);
+-		dma_free_coherent(ap->dev,
+-			BFIN_MAX_SG_SEGMENTS * sizeof(struct dma_desc_array),
+-			ap->bmdma_prd,
+-			ap->bmdma_prd_dma);
+-	}
+-
+-out:
+-	ap->udma_mask = 0;
+-	ap->mwdma_mask = 0;
+-	dev_err(ap->dev, "Unable to request ATAPI DMA!"
+-		" Continue in PIO mode.\n");
+-
+-	return 0;
+-}
+-
+-static unsigned int bfin_ata_host_intr(struct ata_port *ap,
+-				   struct ata_queued_cmd *qc)
+-{
+-	struct ata_eh_info *ehi = &ap->link.eh_info;
+-	u8 status, host_stat = 0;
+-
+-	VPRINTK("ata%u: protocol %d task_state %d\n",
+-		ap->print_id, qc->tf.protocol, ap->hsm_task_state);
+-
+-	/* Check whether we are expecting interrupt in this state */
+-	switch (ap->hsm_task_state) {
+-	case HSM_ST_FIRST:
+-		/* Some pre-ATAPI-4 devices assert INTRQ
+-		 * at this state when ready to receive CDB.
+-		 */
+-
+-		/* Check the ATA_DFLAG_CDB_INTR flag is enough here.
+-		 * The flag was turned on only for atapi devices.
+-		 * No need to check is_atapi_taskfile(&qc->tf) again.
+-		 */
+-		if (!(qc->dev->flags & ATA_DFLAG_CDB_INTR))
+-			goto idle_irq;
+-		break;
+-	case HSM_ST_LAST:
+-		if (qc->tf.protocol == ATA_PROT_DMA ||
+-		    qc->tf.protocol == ATAPI_PROT_DMA) {
+-			/* check status of DMA engine */
+-			host_stat = ap->ops->bmdma_status(ap);
+-			VPRINTK("ata%u: host_stat 0x%X\n",
+-				ap->print_id, host_stat);
+-
+-			/* if it's not our irq... */
+-			if (!(host_stat & ATA_DMA_INTR))
+-				goto idle_irq;
+-
+-			/* before we do anything else, clear DMA-Start bit */
+-			ap->ops->bmdma_stop(qc);
+-
+-			if (unlikely(host_stat & ATA_DMA_ERR)) {
+-				/* error when transferring data to/from memory */
+-				qc->err_mask |= AC_ERR_HOST_BUS;
+-				ap->hsm_task_state = HSM_ST_ERR;
+-			}
+-		}
+-		break;
+-	case HSM_ST:
+-		break;
+-	default:
+-		goto idle_irq;
+-	}
+-
+-	/* check altstatus */
+-	status = ap->ops->sff_check_altstatus(ap);
+-	if (status & ATA_BUSY)
+-		goto busy_ata;
+-
+-	/* check main status, clearing INTRQ */
+-	status = ap->ops->sff_check_status(ap);
+-	if (unlikely(status & ATA_BUSY))
+-		goto busy_ata;
+-
+-	/* ack bmdma irq events */
+-	ap->ops->sff_irq_clear(ap);
+-
+-	ata_sff_hsm_move(ap, qc, status, 0);
+-
+-	if (unlikely(qc->err_mask) && (qc->tf.protocol == ATA_PROT_DMA ||
+-				       qc->tf.protocol == ATAPI_PROT_DMA))
+-		ata_ehi_push_desc(ehi, "BMDMA stat 0x%x", host_stat);
+-
+-busy_ata:
+-	return 1;	/* irq handled */
+-
+-idle_irq:
+-	ap->stats.idle_irq++;
+-
+-#ifdef ATA_IRQ_TRAP
+-	if ((ap->stats.idle_irq % 1000) == 0) {
+-		ap->ops->irq_ack(ap, 0); /* debug trap */
+-		ata_port_warn(ap, "irq trap\n");
+-		return 1;
+-	}
+-#endif
+-	return 0;	/* irq not handled */
+-}
+-
+-static irqreturn_t bfin_ata_interrupt(int irq, void *dev_instance)
+-{
+-	struct ata_host *host = dev_instance;
+-	unsigned int i;
+-	unsigned int handled = 0;
+-	unsigned long flags;
+-
+-	/* TODO: make _irqsave conditional on x86 PCI IDE legacy mode */
+-	spin_lock_irqsave(&host->lock, flags);
+-
+-	for (i = 0; i < host->n_ports; i++) {
+-		struct ata_port *ap = host->ports[i];
+-		struct ata_queued_cmd *qc;
+-
+-		qc = ata_qc_from_tag(ap, ap->link.active_tag);
+-		if (qc && (!(qc->tf.flags & ATA_TFLAG_POLLING)))
+-			handled |= bfin_ata_host_intr(ap, qc);
+-	}
+-
+-	spin_unlock_irqrestore(&host->lock, flags);
+-
+-	return IRQ_RETVAL(handled);
+-}
+-
+-
+-static struct scsi_host_template bfin_sht = {
+-	ATA_BASE_SHT(DRV_NAME),
+-	.sg_tablesize		= BFIN_MAX_SG_SEGMENTS,
+-	.dma_boundary		= ATA_DMA_BOUNDARY,
+-};
+-
+-static struct ata_port_operations bfin_pata_ops = {
+-	.inherits		= &ata_bmdma_port_ops,
+-
+-	.set_piomode		= bfin_set_piomode,
+-	.set_dmamode		= bfin_set_dmamode,
+-
+-	.sff_tf_load		= bfin_tf_load,
+-	.sff_tf_read		= bfin_tf_read,
+-	.sff_exec_command	= bfin_exec_command,
+-	.sff_check_status	= bfin_check_status,
+-	.sff_check_altstatus	= bfin_check_altstatus,
+-	.sff_dev_select		= bfin_dev_select,
+-	.sff_set_devctl		= bfin_set_devctl,
+-
+-	.bmdma_setup		= bfin_bmdma_setup,
+-	.bmdma_start		= bfin_bmdma_start,
+-	.bmdma_stop		= bfin_bmdma_stop,
+-	.bmdma_status		= bfin_bmdma_status,
+-	.sff_data_xfer		= bfin_data_xfer,
+-
+-	.qc_prep		= ata_noop_qc_prep,
+-
+-	.thaw			= bfin_thaw,
+-	.softreset		= bfin_softreset,
+-	.postreset		= bfin_postreset,
+-
+-	.sff_irq_clear		= bfin_irq_clear,
+-
+-	.port_start		= bfin_port_start,
+-	.port_stop		= bfin_port_stop,
+-};
+-
+-static struct ata_port_info bfin_port_info[] = {
+-	{
+-		.flags		= ATA_FLAG_SLAVE_POSS,
+-		.pio_mask	= ATA_PIO4,
+-		.mwdma_mask	= 0,
+-		.udma_mask	= 0,
+-		.port_ops	= &bfin_pata_ops,
+-	},
+-};
+-
+-/**
+- *	bfin_reset_controller - initialize BF54x ATAPI controller.
+- */
+-
+-static int bfin_reset_controller(struct ata_host *host)
+-{
+-	void __iomem *base = (void __iomem *)host->ports[0]->ioaddr.ctl_addr;
+-	int count;
+-	unsigned short status;
+-
+-	/* Disable all ATAPI interrupts */
+-	ATAPI_SET_INT_MASK(base, 0);
+-	SSYNC();
+-
+-	/* Assert the RESET signal 25us*/
+-	ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base) | DEV_RST);
+-	udelay(30);
+-
+-	/* Negate the RESET signal for 2ms*/
+-	ATAPI_SET_CONTROL(base, ATAPI_GET_CONTROL(base) & ~DEV_RST);
+-	msleep(2);
+-
+-	/* Wait on Busy flag to clear */
+-	count = 10000000;
+-	do {
+-		status = read_atapi_register(base, ATA_REG_STATUS);
+-	} while (--count && (status & ATA_BUSY));
+-
+-	/* Enable only ATAPI Device interrupt */
+-	ATAPI_SET_INT_MASK(base, 1);
+-	SSYNC();
+-
+-	return (!count);
+-}
+-
+-/**
+- *	atapi_io_port - define atapi peripheral port pins.
+- */
+-static unsigned short atapi_io_port[] = {
+-	P_ATAPI_RESET,
+-	P_ATAPI_DIOR,
+-	P_ATAPI_DIOW,
+-	P_ATAPI_CS0,
+-	P_ATAPI_CS1,
+-	P_ATAPI_DMACK,
+-	P_ATAPI_DMARQ,
+-	P_ATAPI_INTRQ,
+-	P_ATAPI_IORDY,
+-	P_ATAPI_D0A,
+-	P_ATAPI_D1A,
+-	P_ATAPI_D2A,
+-	P_ATAPI_D3A,
+-	P_ATAPI_D4A,
+-	P_ATAPI_D5A,
+-	P_ATAPI_D6A,
+-	P_ATAPI_D7A,
+-	P_ATAPI_D8A,
+-	P_ATAPI_D9A,
+-	P_ATAPI_D10A,
+-	P_ATAPI_D11A,
+-	P_ATAPI_D12A,
+-	P_ATAPI_D13A,
+-	P_ATAPI_D14A,
+-	P_ATAPI_D15A,
+-	P_ATAPI_A0A,
+-	P_ATAPI_A1A,
+-	P_ATAPI_A2A,
+-	0
+-};
+-
+-/**
+- *	bfin_atapi_probe	-	attach a bfin atapi interface
+- *	@pdev: platform device
+- *
+- *	Register a bfin atapi interface.
+- *
+- *
+- *	Platform devices are expected to contain 2 resources per port:
+- *
+- *		- I/O Base (IORESOURCE_IO)
+- *		- IRQ	   (IORESOURCE_IRQ)
+- *
+- */
+-static int bfin_atapi_probe(struct platform_device *pdev)
+-{
+-	int board_idx = 0;
+-	struct resource *res;
+-	struct ata_host *host;
+-	unsigned int fsclk = get_sclk();
+-	int udma_mode = 5;
+-	const struct ata_port_info *ppi[] =
+-		{ &bfin_port_info[board_idx], NULL };
+-
+-	/*
+-	 * Simple resource validation ..
+-	 */
+-	if (unlikely(pdev->num_resources != 2)) {
+-		dev_err(&pdev->dev, "invalid number of resources\n");
+-		return -EINVAL;
+-	}
+-
+-	/*
+-	 * Get the register base first
+-	 */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL)
+-		return -EINVAL;
+-
+-	while (bfin_port_info[board_idx].udma_mask > 0 &&
+-			udma_fsclk[udma_mode] > fsclk) {
+-		udma_mode--;
+-		bfin_port_info[board_idx].udma_mask >>= 1;
+-	}
+-
+-	/*
+-	 * Now that that's out of the way, wire up the port..
+-	 */
+-	host = ata_host_alloc_pinfo(&pdev->dev, ppi, 1);
+-	if (!host)
+-		return -ENOMEM;
+-
+-	host->ports[0]->ioaddr.ctl_addr = (void *)res->start;
+-
+-	if (peripheral_request_list(atapi_io_port, "atapi-io-port")) {
+-		dev_err(&pdev->dev, "Requesting Peripherals failed\n");
+-		return -EFAULT;
+-	}
+-
+-	if (bfin_reset_controller(host)) {
+-		peripheral_free_list(atapi_io_port);
+-		dev_err(&pdev->dev, "Fail to reset ATAPI device\n");
+-		return -EFAULT;
+-	}
+-
+-	if (ata_host_activate(host, platform_get_irq(pdev, 0),
+-		bfin_ata_interrupt, IRQF_SHARED, &bfin_sht) != 0) {
+-		peripheral_free_list(atapi_io_port);
+-		dev_err(&pdev->dev, "Fail to attach ATAPI device\n");
+-		return -ENODEV;
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- *	bfin_atapi_remove	-	unplug a bfin atapi interface
+- *	@pdev: platform device
+- *
+- *	A bfin atapi device has been unplugged. Perform the needed
+- *	cleanup. Also called on module unload for any active devices.
+- */
+-static int bfin_atapi_remove(struct platform_device *pdev)
+-{
+-	struct ata_host *host = platform_get_drvdata(pdev);
+-
+-	ata_host_detach(host);
+-
+-	peripheral_free_list(atapi_io_port);
+-
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int bfin_atapi_suspend(struct platform_device *pdev, pm_message_t state)
+-{
+-	struct ata_host *host = platform_get_drvdata(pdev);
+-	if (host)
+-		return ata_host_suspend(host, state);
+-	else
+-		return 0;
+-}
+-
+-static int bfin_atapi_resume(struct platform_device *pdev)
+-{
+-	struct ata_host *host = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	if (host) {
+-		ret = bfin_reset_controller(host);
+-		if (ret) {
+-			printk(KERN_ERR DRV_NAME ": Error during HW init\n");
+-			return ret;
+-		}
+-		ata_host_resume(host);
 -	}
 -
 -	return 0;
 -}
 -#else
--#define bfin_can_suspend NULL
--#define bfin_can_resume NULL
--#endif	/* CONFIG_PM */
+-#define bfin_atapi_suspend NULL
+-#define bfin_atapi_resume NULL
+-#endif
 -
--static struct platform_driver bfin_can_driver = {
--	.probe = bfin_can_probe,
--	.remove = bfin_can_remove,
--	.suspend = bfin_can_suspend,
--	.resume = bfin_can_resume,
+-static struct platform_driver bfin_atapi_driver = {
+-	.probe			= bfin_atapi_probe,
+-	.remove			= bfin_atapi_remove,
+-	.suspend		= bfin_atapi_suspend,
+-	.resume			= bfin_atapi_resume,
 -	.driver = {
--		.name = DRV_NAME,
+-		.name		= DRV_NAME,
 -	},
 -};
 -
--module_platform_driver(bfin_can_driver);
+-#define ATAPI_MODE_SIZE		10
+-static char bfin_atapi_mode[ATAPI_MODE_SIZE];
 -
--MODULE_AUTHOR("Barry Song <21cnbao@gmail.com>");
+-static int __init bfin_atapi_init(void)
+-{
+-	pr_info("register bfin atapi driver\n");
+-
+-	switch(bfin_atapi_mode[0]) {
+-	case 'p':
+-	case 'P':
+-		break;
+-	case 'm':
+-	case 'M':
+-		bfin_port_info[0].mwdma_mask = ATA_MWDMA2;
+-		break;
+-	default:
+-		bfin_port_info[0].udma_mask = ATA_UDMA5;
+-	};
+-
+-	return platform_driver_register(&bfin_atapi_driver);
+-}
+-
+-static void __exit bfin_atapi_exit(void)
+-{
+-	platform_driver_unregister(&bfin_atapi_driver);
+-}
+-
+-module_init(bfin_atapi_init);
+-module_exit(bfin_atapi_exit);
+-/*
+- * ATAPI mode:
+- * pio/PIO
+- * udma/UDMA (default)
+- * mwdma/MWDMA
+- */
+-module_param_string(bfin_atapi_mode, bfin_atapi_mode, ATAPI_MODE_SIZE, 0);
+-
+-MODULE_AUTHOR("Sonic Zhang <sonic.zhang@analog.com>");
+-MODULE_DESCRIPTION("PATA driver for blackfin 54x ATAPI controller");
 -MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("Blackfin on-chip CAN netdevice driver");
+-MODULE_VERSION(DRV_VERSION);
 -MODULE_ALIAS("platform:" DRV_NAME);
 -- 
 2.7.4
