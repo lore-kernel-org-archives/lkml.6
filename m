@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753437AbeCPHio (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 03:38:44 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:20832 "EHLO
+        id S1753290AbeCPHhr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 03:37:47 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:20641 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeCPHhs (ORCPT
+        with ESMTP id S1751624AbeCPHhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 03:37:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOa9029139
+        Fri, 16 Mar 2018 03:37:43 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2G7bOa7029139
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
 Cc: Michal Marek <michal.lkml@markovi.net>,
         Nicolas Pitre <nicolas.pitre@linaro.org>, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v4 6/7] kbuild: move include/config/ksym/* to include/ksym/*
-Date: Fri, 16 Mar 2018 16:37:14 +0900
-Message-Id: <1521185836-19120-7-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v4 4/7] kbuild: restore touching autoksyms.h to the top Makefile
+Date: Fri, 16 Mar 2018 16:37:12 +0900
+Message-Id: <1521185836-19120-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1521185836-19120-1-git-send-email-yamada.masahiro@socionext.com>
@@ -24,12 +24,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idea of using fixdep was inspired by Kconfig, but autoksyms
-belongs to a different group.  So, I want to move those touched
-files under include/config/ksym/ to include/ksym/.
+Commit d3fc425e819b ("kbuild: make sure autoksyms.h exists early")
+moved the code that touches autoksyms.h to scripts/kconfig/Makefile
+with obscure reason.
 
-The directory include/ksym/ can be removed by 'make clean' because
-it is meaningless for the external module building.
+>From Nicolas' comment [1], he did not seem to be sure about the root
+cause.
+
+I guess I figured it out, so here is a fix-up I think is more correct.
+According to the error log in the original post [2], the build failed
+in scripts/mod/devicetable-offsets.c
+
+scripts/mod/Makefile is descended from scripts/Makefile, which is
+invoked from the top-level Makefile by the 'scripts' target.
+
+To build vmlinux and/or modules, Kbuild descend into $(vmlinux-dirs).
+This depends on 'prepare' and 'scripts' as follows:
+
+  $(vmlinux-dirs): prepare scripts
+
+Because there is no dependency between 'prepare' and 'scripts', the
+parallel building can run them simultaneously.
+
+'prepare' depends on 'prepare1', which touched autoksyms.h, whereas
+'scripts' descends into script/, then scripts/mod/, which needs
+<generated/autoksyms.h> if CONFIG_TRIM_UNUSED_KSYMS.  It was the
+reason of the race.
+
+I am not happy to have unrelated code in the Kconfig Makefile, so
+getting it back to the top Makefile.
+
+I removed the standalone test target because I want to use it to
+create an empty autoksyms.h file.  Here is a little improvement;
+unnecessary autoksyms.h is not created when CONFIG_TRIM_UNUSED_KSYMS
+is disabled.
+
+[1] https://lkml.org/lkml/2016/11/30/734
+[2] https://lkml.org/lkml/2016/11/30/531
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Acked-by: Nicolas Pitre <nico@linaro.org>
@@ -37,103 +68,61 @@ Acked-by: Nicolas Pitre <nico@linaro.org>
 
 Changes in v4: None
 Changes in v3: None
-Changes in v2:
- - Rebase on linux-next
-   (resolve a conflict to https://patchwork.kernel.org/patch/10204653/)
+Changes in v2: None
 
- .gitignore                  | 1 +
- Makefile                    | 2 +-
- scripts/Kbuild.include      | 2 +-
- scripts/adjust_autoksyms.sh | 2 +-
- scripts/basic/fixdep.c      | 8 ++++----
- 5 files changed, 8 insertions(+), 7 deletions(-)
+ Makefile                 | 12 +++++++-----
+ scripts/kconfig/Makefile |  2 --
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/.gitignore b/.gitignore
-index 1be78fd..85bcc26 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -87,6 +87,7 @@ modules.builtin
- #
- include/config
- include/generated
-+include/ksym
- arch/*/include/generated
- 
- # stgit generated dirs
 diff --git a/Makefile b/Makefile
-index ef42adb..5fee703 100644
+index 9bf6697..0a3895c 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1338,7 +1338,7 @@ endif # CONFIG_MODULES
- # make distclean Remove editor backup files, patch leftover files and the like
+@@ -1021,9 +1021,11 @@ ifdef CONFIG_TRIM_UNUSED_KSYMS
+ 	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
+ endif
  
- # Directories & files removed with 'make clean'
--CLEAN_DIRS  += $(MODVERDIR)
-+CLEAN_DIRS  += $(MODVERDIR) include/ksym
+-# standalone target for easier testing
+-include/generated/autoksyms.h: FORCE
+-	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh true
++autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
++
++$(autoksyms_h):
++	$(Q)mkdir -p $(dir $@)
++	$(Q)touch $@
  
- # Directories & files removed with 'make mrproper'
- MRPROPER_DIRS  += include/config usr/include include/generated          \
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index f9c2f07..cce31ee 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -366,7 +366,7 @@ ksym_dep_filter =                                                            \
- 	    $(CPP) $(call flags_nodeps,a_flags) -D__KSYM_DEPS__ $< ;;        \
- 	  boot*|build*|cpp_its_S|*cpp_lds_S|dtc|host*|vdso*) : ;;            \
- 	  *) echo "Don't know how to preprocess $(1)" >&2; false ;;          \
--	esac | tr ";" "\n" | sed -n 's/^.*=== __KSYM_\(.*\) ===.*$$/KSYM_\1/p'
-+	esac | tr ";" "\n" | sed -n 's/^.*=== __KSYM_\(.*\) ===.*$$/_\1/p'
+ ARCH_POSTLINK := $(wildcard $(srctree)/arch/$(SRCARCH)/Makefile.postlink)
  
- cmd_and_fixdep =                                                             \
- 	$(echo-cmd) $(cmd_$(1));                                             \
-diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
-index e0dd0d5..f11cae6 100755
---- a/scripts/adjust_autoksyms.sh
-+++ b/scripts/adjust_autoksyms.sh
-@@ -80,7 +80,7 @@ sort "$cur_ksyms_file" "$new_ksyms_file" | uniq -u |
- sed -n 's/^#define __KSYM_\(.*\) 1/\1/p' | tr "A-Z_" "a-z/" |
- while read sympath; do
- 	if [ -z "$sympath" ]; then continue; fi
--	depfile="include/config/ksym/${sympath}.h"
-+	depfile="include/ksym/${sympath}.h"
- 	mkdir -p "$(dirname "$depfile")"
- 	touch "$depfile"
- 	echo $((count += 1))
-diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-index 449b68c..f387538 100644
---- a/scripts/basic/fixdep.c
-+++ b/scripts/basic/fixdep.c
-@@ -113,11 +113,11 @@ static void usage(void)
- /*
-  * Print out a dependency path from a symbol name
-  */
--static void print_config(const char *m, int slen)
-+static void print_dep(const char *m, int slen, const char *dir)
- {
- 	int c, i;
+@@ -1067,7 +1069,7 @@ include/config/kernel.release: include/config/auto.conf FORCE
+ # in parallel
+ PHONY += scripts
+ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+-	 asm-generic gcc-plugins
++	 asm-generic gcc-plugins $(autoksyms_h)
+ 	$(Q)$(MAKE) $(build)=$(@)
  
--	printf("    $(wildcard include/config/");
-+	printf("    $(wildcard %s/", dir);
- 	for (i = 0; i < slen; i++) {
- 		c = m[i];
- 		if (c == '_')
-@@ -140,7 +140,7 @@ static void do_extra_deps(void)
- 			fprintf(stderr, "fixdep: bad data on stdin\n");
- 			exit(1);
- 		}
--		print_config(buf, len - 1);
-+		print_dep(buf, len - 1, "include/ksym");
- 	}
- }
+ # Things we need to do before we recursively start building the kernel
+@@ -1097,7 +1099,7 @@ endif
+ # that need to depend on updated CONFIG_* values can be checked here.
+ prepare2: prepare3 prepare-compiler-check outputmakefile asm-generic
  
-@@ -208,7 +208,7 @@ static void use_config(const char *m, int slen)
- 	    return;
+-prepare1: prepare2 $(version_h) include/generated/utsrelease.h \
++prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+ 	$(cmd_crmodverdir)
  
- 	define_config(m, slen, hash);
--	print_config(m, slen);
-+	print_dep(m, slen, "include/config");
- }
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 78c96aa..f9bdd02 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -38,8 +38,6 @@ nconfig: $(obj)/nconf
+ # for external use.
+ syncconfig: $(obj)/conf
+ 	$(Q)mkdir -p include/config include/generated
+-	$(Q)test -e include/generated/autoksyms.h || \
+-	    touch   include/generated/autoksyms.h
+ 	$< $(silent) --$@ $(Kconfig)
  
- /* test if s ends in sub */
+ localyesconfig localmodconfig: $(obj)/conf
 -- 
 2.7.4
