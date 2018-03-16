@@ -1,64 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934540AbeCPPzn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 11:55:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49838 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753465AbeCPPzk (ORCPT
+        id S965368AbeCPPzt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 11:55:49 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:59570 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754041AbeCPPzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:55:40 -0400
-Date: Fri, 16 Mar 2018 15:55:38 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: Niklas Cassel <niklass@axis.com>, linux-fsdevel@vger.kernel.org,
+        Fri, 16 Mar 2018 11:55:46 -0400
+Date: Fri, 16 Mar 2018 23:55:36 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>, linux-crypto@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dcache: remove trailing whitespace
-Message-ID: <20180316155538.GD30522@ZenIV.linux.org.uk>
-References: <20180316143400.8698-1-niklas.cassel@axis.com>
+Subject: Re: [PATCH 0/2] crypto: introduce SM4 symmetric cipher algorithm
+Message-ID: <20180316155536.GE7095@gondor.apana.org.au>
+References: <1520329484-23317-1-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316143400.8698-1-niklas.cassel@axis.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1520329484-23317-1-git-send-email-gilad@benyossef.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 03:34:00PM +0100, Niklas Cassel wrote:
-> Remove trailing whitespace.
-> Remove empty line and trailing whitespace after function comments.
-> Remove an extra space in one of the comments.
-> Fix a typo in of the comments.
+On Tue, Mar 06, 2018 at 09:44:41AM +0000, Gilad Ben-Yossef wrote:
+> Introduce the SM4 cipher algorithms (OSCCA GB/T 32907-2016) and
+> related tests.
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> ---
-> I know that these type of patches are not really appreciated,
-> however, there is enough trailing whitespace in this file to
-> distract me from reading the real code.
+> SM4 (GBT.32907-2016) is a cryptographic standard issued by the
+> Organization of State Commercial Administration of China (OSCCA)
+> as an authorized cryptographic algorithms for the use within China.
+> 
+> SMS4 was originally created for use in protecting wireless
+> networks, and is mandated in the Chinese National Standard for
+> Wireless LAN WAPI (Wired Authentication and Privacy Infrastructure)
+> (GB.15629.11-2003).
+> 
+> Tested on arm 64 and 32 bit.
+> 
+> Gilad Ben-Yossef (2):
+>   crypto: introduce SM4 symmetric cipher algorithm
+>   crypto: introduce SM4 testmgr tests
+> 
+>  crypto/Kconfig       |  25 ++++++
+>  crypto/Makefile      |   1 +
+>  crypto/sm4_generic.c | 244 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  crypto/tcrypt.c      |   3 +
+>  crypto/testmgr.c     |   9 ++
+>  crypto/testmgr.h     | 131 +++++++++++++++++++++++++++
+>  include/crypto/sm4.h |  28 ++++++
+>  7 files changed, 441 insertions(+)
+>  create mode 100644 crypto/sm4_generic.c
+>  create mode 100644 include/crypto/sm4.h
 
-No, they are not, and here's why:
-
-Applying: dcache: remove trailing whitespace
-error: patch failed: fs/dcache.c:254
-error: fs/dcache.c: patch does not apply
-Patch failed at 0001 dcache: remove trailing whitespace
-
-... which, BTW, happens in *all* branches.  If you do that kind
-of stuff, at least do it against something in the public trees
-and _tell_ _what_ _it_ _is_ _against_.
-
-Or send a sed script for doing that[1] - even Linus takes those
-for search-and-replace stuff.
-
-[1] sed -i -e 's/[[:space:]]*$//' fs/dcache.c
-or, if you are not sending to Linus,
-ed fs/dcache.c <<'EOF'
-%s/[[:space:]]*$//
-wq
-EOF
-
-Not applied.  Please, do it sanely.  BTW, which editor is _that_
-annoying?  Anything that shoves trailing whitespace in my face
-would've been either configured (with considerable cursing at
-the people who'd set such defaults) or, should that prove
-impossible, given a boot...
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
