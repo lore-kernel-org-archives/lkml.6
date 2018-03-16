@@ -1,84 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeCPKMG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 06:12:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55170 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753066AbeCPKK5 (ORCPT
+        id S1753252AbeCPKMi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 06:12:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38332 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeCPKLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 06:10:57 -0400
-Date: Fri, 16 Mar 2018 11:10:52 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: John Stultz <john.stultz@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [v3] y2038: introduce struct __kernel_old_timeval
-In-Reply-To: <CAK8P3a2PApN7arpHa9LUT8sbt-=4AgCOK9X+VSxChBg-=Qrxdg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1803161109440.1598@nanos.tec.linutronix.de>
-References: <20180315161739.576085-1-arnd@arndb.de> <alpine.DEB.2.21.1803160059380.1520@nanos.tec.linutronix.de> <CAK8P3a2PApN7arpHa9LUT8sbt-=4AgCOK9X+VSxChBg-=Qrxdg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 16 Mar 2018 06:11:30 -0400
+Date: Fri, 16 Mar 2018 11:11:24 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: Do we need to disable preemption in flush_tlb_range()?
+Message-ID: <20180316101124.GB4064@hirez.programming.kicks-ass.net>
+References: <1519917189.13866.6.camel@synopsys.com>
+ <5a5c67c1-9f45-f908-2c8d-0914cd616a18@synopsys.com>
+ <20180315082720.GT4064@hirez.programming.kicks-ass.net>
+ <1521106770.11552.70.camel@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521106770.11552.70.camel@synopsys.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Mar 2018, Arnd Bergmann wrote:
-> On Fri, Mar 16, 2018 at 1:02 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Thu, 15 Mar 2018, Arnd Bergmann wrote:
-> >> + * legacy timeval structure, only embedded in structures that
-> >> + * traditionally used 'timeval' to pass time intervals (not absolute
-> >> + * times). Do not add new users. If user space fails to compile
-> >> + * here, this is probably because it is not y2038 safe and needs to
-> >> + * be changed to use another interface.
-> >> + */
-> >> +struct __kernel_old_timeval {
-> >> +     __kernel_long_t tv_sec;
-> >> +     __kernel_long_t tv_usec;
-> >> +};
-> >> +
-> >> +/*
-> >>   * The IDs of the various system clocks (for POSIX.1b interval timers):
-> >>   */
-> >>  #define CLOCK_REALTIME                       0
-> >> diff --git a/kernel/time/time.c b/kernel/time/time.c
-> >> index 5db8f15ec056..6fa99213fc72 100644
-> >> --- a/kernel/time/time.c
-> >> +++ b/kernel/time/time.c
-> >> @@ -486,6 +486,18 @@ struct timeval ns_to_timeval(const s64 nsec)
-> >>  }
-> >>  EXPORT_SYMBOL(ns_to_timeval);
-> >>
-> >> +struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec)
-> >> +{
-> >> +     struct timespec64 ts = ns_to_timespec64(nsec);
-> >> +     struct __kernel_old_timeval tv;
-> >> +
-> >> +     tv.tv_sec = ts.tv_sec;
-> >
-> > We might think about adding some debug aid here which yells when ts.tv_sec
-> > is > than the cutoff.
-> >
-> > Hmm?
+On Thu, Mar 15, 2018 at 09:39:31AM +0000, Alexey Brodkin wrote:
+> Hi Peter,
 > 
-> We discussed those before (a long time ago) and couldn't really
-> reach consensus. If we do that, I'd like to have it done consistently
-> across the kernel, and in a separate patch series.
+> On Thu, 2018-03-15 at 09:27 +0100, Peter Zijlstra wrote:
+> > On Wed, Mar 14, 2018 at 01:19:01PM -0700, Vineet Gupta wrote:
+> > > +CC Peter since we have his attention ;-)
+> > 
+> > Yeah, timezone collision there, I typically sleep at 1am ;-)
+> > 
+> > > On 03/01/2018 07:13 AM, Alexey Brodkin wrote:
+> > > > Hi Vineet,
+> > > > 
+> > > > Just noticed that in comments for smp_call_function_many() it is said that
+> > > > preemption must be disabled during its execution. And that function gets executed
+> > > > among other ways like that:
+> > > > -------------------------->8-----------------------
+> > > >    flush_tlb_range()
+> > > >      -> on_each_cpu_mask()
+> > > >           -> smp_call_function_many()
+> > > > -------------------------->8-----------------------
+> > > 
+> > > In general I prefer not to - Peter what say you ?
+> > 
+> > The comment with smp_call_function_many() is correct, it relies on
+> > preemption being disabled in a number of ways. I would expect
+> > this_cpu_ptr() for example to complain when used with preemption
+> > enabled (CONFIG_DEBUG_PREEMPT).
 
-Sure.
-
-> In particular, we need to decide on a policy for how to handle
-> it depending on the caller, e.g. do we want to have a way to
-> WARN_ONCE() for any process calling an unsafe function even
-> if it doesn't overflow, should we try to return an error to a syscall
-> when it does overflow, should the behavior be configurable etc.
-
-Yeah. Needs some thought.
-
-I didn't mean that we need this now, but in the long run some form of debug
-aid might be required.
-
-Thanks,
-
-	tglx
+So on_each_cpu_mask() already disables preemption around calling
+smp_call_function_many().
