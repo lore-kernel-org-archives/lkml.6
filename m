@@ -1,158 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932257AbeCPUT2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 16:19:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57143 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeCPUSw (ORCPT
+        id S932327AbeCPUTk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 16:19:40 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43677 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932274AbeCPUTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 16:18:52 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 09/10] iommu/amd: drop the lock while allocating new irq remap table
-Date: Fri, 16 Mar 2018 21:18:35 +0100
-Message-Id: <20180316201836.7864-10-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316201836.7864-1-bigeasy@linutronix.de>
-References: <20180316201836.7864-1-bigeasy@linutronix.de>
+        Fri, 16 Mar 2018 16:19:37 -0400
+X-Google-Smtp-Source: AG47ELvzWW8ZdDaxm2pR5ZFBwd70x/rVZnDZRgwsCPlfButrO0sRp87TUSKIWhU76YRoItBNpgE3Ug==
+Date: Sat, 17 Mar 2018 01:49:25 +0530
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: Manish Narani <manish.narani@xilinx.com>
+Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        michal.simek@xilinx.com, lee.jones@linaro.org, broonie@kernel.org,
+        arnaud.pouliquen@st.com, quentin.schulz@free-electrons.com,
+        linus.walleij@linaro.org, ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        martenli@axis.com, jan.kiszka@siemens.com, lukas@wunner.de,
+        vilhelm.gray@gmail.com, geert+renesas@glider.be, fabio.estevam@nxp.com,
+        jackoalan@gmail.com, mnarani@xilinx.com, mike.looijmans@topic.nl,
+        alexander.sverdlin@gmail.com, jacopo+renesas@jmondi.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] iio: adc: Add Xilinx AMS driver
+Message-ID: <20180316201925.GA18013@himanshu-Vostro-3559>
+References: <1521124947-18950-1-git-send-email-mnarani@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521124947-18950-1-git-send-email-mnarani@xilinx.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The irq_remap_table is allocated while the iommu_table_lock is held with
-interrupts disabled. While this works it makes RT scream very loudly.
->From looking at the call sites, all callers are in the early device
-initialisation (apic_bsp_setup(), pci_enable_device(),
-pci_enable_msi()) so make sense to drop the lock which also enables
-interrupts and try to allocate that memory with GFP_KERNEL instead
-GFP_ATOMIC.
+On Thu, Mar 15, 2018 at 08:12:27PM +0530, Manish Narani wrote:
+> The AMS includes an ADC as well as on-chip sensors that can be used to
+> sample external voltages and monitor on-die operating conditions, such as
+> temperature and supply voltage levels. The AMS has two SYSMON blocks.
+> PL-SYSMON block is capable of monitoring off chip voltage and temperature.
+> PL-SYSMON block has DRP, JTAG and I2C interface to enable monitoring from
+> external master. Out of these interface currently only DRP is supported.
+> Other block PS-SYSMON is memory mapped to PS.
+> 
+> The AMS can use internal channels to monitor voltage and temperature
+> as well as one primary and up to 16 auxiliary channels for measuring
+> external voltages.
+> 
+> The voltage and temperature monitoring channels also have event
+> capability which allows to generate an interrupt when their value
+> falls below or raises above a set threshold.
+> 
+> Signed-off-by: Manish Narani <mnarani@xilinx.com>
+> ---
 
-Since during the allocation the iommu_table_lock is dropped, we need to
-recheck if table exists after the lock has been reacquired. I *think*
-that it is impossible that the "devid" entry appears in irq_lookup_table
-while the lock is dropped since the same device can only be probed once.
-It is more likely that another device added an `alias' entry. However I
-check for both cases, just to be sure.
+[..]
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/iommu/amd_iommu.c | 65 +++++++++++++++++++++++++++++++++----------=
-----
- 1 file changed, 46 insertions(+), 19 deletions(-)
+> +static const struct of_device_id ams_of_match_table[] = {
+> +       { .compatible = "xlnx,zynqmp-ams", &ams_pl_apb },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, ams_of_match_table);
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 7dd4c27a941d..0a7ca5e95288 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -3602,6 +3602,30 @@ static void set_dte_irq_entry(u16 devid, struct irq_=
-remap_table *table)
- 	amd_iommu_dev_table[devid].data[2] =3D dte;
- }
-=20
-+static struct irq_remap_table *alloc_irq_table(void)
-+{
-+	struct irq_remap_table *table;
-+
-+	table =3D kzalloc(sizeof(*table), GFP_ATOMIC);
-+	if (!table)
-+		return NULL;
-+
-+	table->table =3D kmem_cache_alloc(amd_iommu_irq_cache, GFP_KERNEL);
-+	if (!table->table) {
-+		kfree(table);
-+		return NULL;
-+	}
-+	raw_spin_lock_init(&table->lock);
-+
-+	if (!AMD_IOMMU_GUEST_IR_GA(amd_iommu_guest_ir))
-+		memset(table->table, 0,
-+		       MAX_IRQS_PER_TABLE * sizeof(u32));
-+	else
-+		memset(table->table, 0,
-+		       (MAX_IRQS_PER_TABLE * (sizeof(u64) * 2)));
-+	return table;
-+}
-+
- static void set_remap_table_entry(struct amd_iommu *iommu, u16 devid,
- 				  struct irq_remap_table *table)
- {
-@@ -3613,6 +3637,7 @@ static void set_remap_table_entry(struct amd_iommu *i=
-ommu, u16 devid,
- static struct irq_remap_table *get_irq_table(u16 devid)
- {
- 	struct irq_remap_table *table =3D NULL;
-+	struct irq_remap_table *new_table =3D NULL;
- 	struct amd_iommu *iommu;
- 	unsigned long flags;
- 	u16 alias;
-@@ -3631,42 +3656,44 @@ static struct irq_remap_table *get_irq_table(u16 de=
-vid)
- 	table =3D irq_lookup_table[alias];
- 	if (table) {
- 		set_remap_table_entry(iommu, devid, table);
--		goto out;
-+		goto out_wait;
- 	}
-+	raw_spin_unlock_irqrestore(&iommu_table_lock, flags);
-=20
- 	/* Nothing there yet, allocate new irq remapping table */
--	table =3D kzalloc(sizeof(*table), GFP_ATOMIC);
--	if (!table)
-+	new_table =3D alloc_irq_table();
-+	if (!new_table)
-+		return NULL;
-+
-+	raw_spin_lock_irqsave(&iommu_table_lock, flags);
-+
-+	table =3D irq_lookup_table[devid];
-+	if (table)
- 		goto out_unlock;
-=20
--	/* Initialize table spin-lock */
--	raw_spin_lock_init(&table->lock);
--
--	table->table =3D kmem_cache_alloc(amd_iommu_irq_cache, GFP_ATOMIC);
--	if (!table->table) {
--		kfree(table);
--		table =3D NULL;
--		goto out_unlock;
-+	table =3D irq_lookup_table[alias];
-+	if (table) {
-+		set_remap_table_entry(iommu, devid, table);
-+		goto out_wait;
- 	}
-=20
--	if (!AMD_IOMMU_GUEST_IR_GA(amd_iommu_guest_ir))
--		memset(table->table, 0,
--		       MAX_IRQS_PER_TABLE * sizeof(u32));
--	else
--		memset(table->table, 0,
--		       (MAX_IRQS_PER_TABLE * (sizeof(u64) * 2)));
--
-+	table =3D new_table;
-+	new_table =3D NULL;
-=20
- 	set_remap_table_entry(iommu, devid, table);
- 	if (devid !=3D alias)
- 		set_remap_table_entry(iommu, alias, table);
-=20
--out:
-+out_wait:
- 	iommu_completion_wait(iommu);
-=20
- out_unlock:
- 	raw_spin_unlock_irqrestore(&iommu_table_lock, flags);
-=20
-+	if (new_table) {
-+		kmem_cache_free(amd_iommu_irq_cache, new_table->table);
-+		kfree(new_table);
-+	}
- 	return table;
- }
-=20
---=20
-2.16.2
+[..]
+
+> +static int ams_probe(struct platform_device *pdev)
+> +{
+> +       struct iio_dev *indio_dev;
+> +       struct ams *ams;
+> +       struct resource *res;
+> +       const struct of_device_id *id;
+> +       int ret;
+> +
+> +       if (!pdev->dev.of_node)
+> +               return -ENODEV;
+> +
+> +       id = of_match_node(ams_of_match_table, pdev->dev.of_node);
+> +       if (!id)
+> +               return -ENODEV;
+
+Is the above check required ?
+
+Isn't the probe function called if and only if a match is found in
+ams_of_match_table[] since it is a pure OF driver ?
+
+And therefore the above condition would never happen!
+
+> +static struct platform_driver ams_driver = {
+> +       .probe = ams_probe,
+> +       .remove = ams_remove,
+> +       .driver = {
+> +               .name = "ams",
+> +               .pm     = &ams_pm_ops,
+> +               .of_match_table = ams_of_match_table,
+> +       },
+> +};
+> +module_platform_driver(ams_driver);
+
+
+-- 
+Thanks
+Himanshu Jha
