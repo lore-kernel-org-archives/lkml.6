@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeCPTIE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 15:08:04 -0400
-Received: from verein.lst.de ([213.95.11.211]:48422 "EHLO newverein.lst.de"
+        id S1753005AbeCPTIg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 15:08:36 -0400
+Received: from verein.lst.de ([213.95.11.211]:48429 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750826AbeCPTIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 15:08:02 -0400
-Date: Fri, 16 Mar 2018 20:08:01 +0100
+        id S1751828AbeCPTIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 15:08:35 -0400
+Date: Fri, 16 Mar 2018 20:08:33 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Dan Williams <dan.j.williams@intel.com>
 Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
@@ -14,63 +14,19 @@ Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
         Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 13/15] xfs: communicate lock drop events from
-        xfs_break_layouts()
-Message-ID: <20180316190801.GG3671@lst.de>
-References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112915950.24669.2377167541944853596.stgit@dwillia2-desk3.amr.corp.intel.com>
+Subject: Re: [PATCH v6 14/15] xfs: prepare xfs_break_layouts() for another
+        layout type
+Message-ID: <20180316190833.GH3671@lst.de>
+References: <152112908134.24669.10222746224538377035.stgit@dwillia2-desk3.amr.corp.intel.com> <152112916514.24669.8643877835071945330.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152112915950.24669.2377167541944853596.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152112916514.24669.8643877835071945330.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:52:39AM -0700, Dan Williams wrote:
-> In preparation for adding a new layout type, teach xfs_break_layouts()
-> to return a positive number if it needed to drop locks while trying to
-> break leases. For all layouts to be successfully broken each layout type
-> needs to be able to assert that the layouts were broken with the locks
-> held.
-> 
-> The existing a xfs_break_layouts() is pushed down a level to
-> xfs_break_leased_layouts() and the new xfs_break_layouts() will
-> coordinate interpreting the return code from the low level 'break'
-> helpers.
+Looks fine:
 
-With that the subject line is rather confusing, given that the
-externally visible xfs_break_layouts does not communicate the lock
-drop events.  So maybe this should just be titled something about
-refactoring.  Or just merged into the next patch which reshuffles
-everything again anyway.
-
->  int
-> -xfs_break_layouts(
-> +xfs_break_leased_layouts(
->  	struct inode		*inode,
->  	uint			*iolock)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	int			error;
-> -
-> -	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
-> -				| XFS_MMAPLOCK_EXCL));
-> +	int			did_unlock = 0;
->  
->  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
->  		xfs_iunlock(ip, *iolock);
-> +		did_unlock = 1;
->  		error = break_layout(inode, true);
->  		*iolock &= ~XFS_IOLOCK_SHARED;
->  		*iolock |= XFS_IOLOCK_EXCL;
->  		xfs_ilock(ip, *iolock);
->  	}
->  
-> -	return error;
-> +	if (error < 0)
-> +		return error;
-> +	return did_unlock;
-
-And I suspect the cleaner interface would be to just pass a 
-bool *did_unlock argument.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
