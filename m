@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6J+WrB5vi+MGM9I1Ww/NlwBITbH2yTOv7liRIHOLtVtZlYQ0lf2Kb6eiaCAhgf/gZ9ljc
-ARC-Seal: i=1; a=rsa-sha256; t=1521215000; cv=none;
+X-Google-Smtp-Source: AG47ELvi/3Ox8iq/rcqsIbhrbsrIuN9DwMN77PPITiOlexMbJoIsQtj48Ms4xdC5HIP6xoZJs4+Y
+ARC-Seal: i=1; a=rsa-sha256; t=1521214997; cv=none;
         d=google.com; s=arc-20160816;
-        b=AyDe/yKHxXl4ckpyEZ0TXpuxhhGxwGn9CmTNcFIIjzO1BNzA5Rt5qwnos3GOW0KP66
-         ZBwPWg7ffXcPO3CgBFUvspZRTvINLOy9XbFnTO2B2lpTam2ozDYy7PFDJFjpu31UNBtN
-         AhtMvki4HaJGEoLOANWNPR04TBGRpQzjcHqRSYvjBqlQrEeQQw2jDQPmWP7bcijN2rxa
-         DviFbByDfvHdERVp9SlohUrc/yiq7cVJLTWd/ZrXALGcPUBqKgutZ+xZqVwqTYe//KSC
-         UfhVGyA4W78ffWoox88FxVs8LKSdsGpkBLFKeZqSh2pNIh4qnTr99NtaAYl0tEwieRWd
-         9hqw==
+        b=jZDtv9wxG2jL28JOze+wtC+0GvdgliPcIMCtExDNLoudZMfTqkoinn0hGmVpaTkOHs
+         DeNlqV1KpmK5Yz4XWu3IdzF1l7p1wRB40xQ+cJmtaA3OZMPbteauYmZmloA+E2jP0NdJ
+         G26M4BR4+XHOwDYeSrVdcDrJMcLDTZWO62GOHOh7G07BTyhpvFqGUmib02eK7nK1SE4N
+         vtPkE8lK3Y5/jRuXKP02OuM5rzwEkqoVSVm5qLWWsUDabjHwDcoB9V3JOc1VY7wmlwVv
+         HKXjp/noLft8X/EZXehDnSBR6AayIC/QcecIRRK9psthhMaa4pQPM1olMZ9yiRLMjIoH
+         qqEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LqYdWgp1sS4yVwatn2NWUIgd6huE8d8NchwHJaqyNwU=;
-        b=coKaDi+wzSdJoQRkz03dbKSUgBLrVr48dgQ0exE3yu7eTjnRInytgXyvlzAp4o4d8/
-         ZOIrVDpnVnIOTonKVBha2Dhfbp4JffE8hleUU/56Kmvam+7OP9BC0h6olVv6ch/vaz5E
-         ga7dIRFs0ONCYIV0ON3LxvkaeJd9cvO5JH6Lglj2qJMDIRbE25iUyh34cgusyO7dqB3l
-         gLS5Qby2R0Fao1DKSsLik6w2xjUrGSYuc7zKyGanvtXmdStWcjJtrX2/x5t5eHUVVhJt
-         B/Lvyn52dbBjwdlTSPqtTYSvm2SifmNQRFZGm4C/pz787hHKvGww0z+U8YdiGUmMLvcx
-         ZKLA==
+        bh=uYP7Hw7RphgTe5vWvcVu5fzrb8puPvdX1j6Gupv1Ugo=;
+        b=Dn78VwMhZSXMKtDg3ygGc5Le1CS/N/kjHhRH3wx7+M3POhGheci9dfrk3Fvfqm+aUh
+         lBPq4Y5BpYO79ao/jWPgb3Wt73qwMbXvtmfqTbVy3Al7hDvi5aNxi4qPLaWArHiO4CYh
+         1HLicjWSWpUTFHGBJ5A1Uh+Bn/ba3zSaebJHsYdV9Crl3FqKsufmLNkXJsyEf5agOACc
+         N6QA42JM8mn5RQ/4KVdME5Ylp8DyPrTxn28x8IPSz76IEJOS4ZRYlHXqow4GUwuvUWVY
+         fB19kYH9zhSpSoEWVexhEZLwzHoFWJW9nBlIQFaNW77xCJJWreV2HEkuo3sPm0qUvILz
+         05sQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 093/128] clk: qcom: msm8916: fix mnd_width for codec_digcodec
-Date: Fri, 16 Mar 2018 16:23:54 +0100
-Message-Id: <20180316152341.189191757@linuxfoundation.org>
+Subject: [PATCH 4.15 092/128] bnxt_en: Uninitialized variable in bnxt_tc_parse_actions()
+Date: Fri, 16 Mar 2018 16:23:53 +0100
+Message-Id: <20180316152341.132311918@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109156723385177?=
-X-GMAIL-MSGID: =?utf-8?q?1595109540241611037?=
+X-GMAIL-THRID: =?utf-8?q?1595109536783199250?=
+X-GMAIL-MSGID: =?utf-8?q?1595109536783199250?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit d8e488e8242ecf129eebc440c92d800a99ca109d ]
+[ Upstream commit 92425c40676d498efccae6fecdb8f8e4dcf7e4a4 ]
 
-This patch fixes missing mnd_width for codec_digital clk, this is now set to
-8 inline with datasheet.
+Smatch warns that:
 
-Fixes: 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+    drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c:160 bnxt_tc_parse_actions()
+    error: uninitialized symbol 'rc'.
+
+"rc" is either uninitialized or set to zero here so we can just remove
+the check.
+
+Fixes: 8c95f773b4a3 ("bnxt_en: add support for Flower based vxlan encap/decap offload")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/qcom/gcc-msm8916.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1438,6 +1438,7 @@ static const struct freq_tbl ftbl_codec_
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -148,9 +148,6 @@ static int bnxt_tc_parse_actions(struct
+ 		}
+ 	}
  
- static struct clk_rcg2 codec_digcodec_clk_src = {
- 	.cmd_rcgr = 0x1c09c,
-+	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
- 	.freq_tbl = ftbl_codec_clk,
+-	if (rc)
+-		return rc;
+-
+ 	if (actions->flags & BNXT_TC_ACTION_FLAG_FWD) {
+ 		if (actions->flags & BNXT_TC_ACTION_FLAG_TUNNEL_ENCAP) {
+ 			/* dst_fid is PF's fid */
+@@ -164,7 +161,7 @@ static int bnxt_tc_parse_actions(struct
+ 		}
+ 	}
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ #define GET_KEY(flow_cmd, key_type)					\
