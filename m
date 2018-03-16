@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3450821-1521219115-2-7010069222708985540
+X-Cyrus-Session-Id: sloti22d1t05-3443417-1521219094-2-5807370027111198257
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521219114; b=hKdoIeF9A5oUkHDcL46cXfPMULZ57pY7RI6pygW0uDk+U98
-    67rt/gfDn9mqKjCr7S2g0EdcD0Spk9QgGZ0gih0sSCCkycSOz8UAFyIrI8C4/oXH
-    OwAEIFVmbjA1vpdWQLFsRtVfy7avKey6UHb6B5hGLRQHAA+nB3Qu7837jqRsb/MM
-    XIXaOjG+fiam9orSzzCrT+9OOII7AKTHrrRmtWj7d9vcnpm6KcsjOrQ0oumC5Gi1
-    xBiaSfXUcGD2lHpSLxkql/rIfnB8pPlZ5bW6hLP5LnRI+0T+H8uwYygv/xHPIFKG
-    Iw+tJ/Xl3Aum97riY/qkk6fJohTwpl1LnVAWjDA==
+    t=1521219093; b=pZuKHGJY9Bxyk1t+lcb4Q8mHONhTkDTKzuIyo0oiAf/cCEn
+    tACWIZZztRQxtN3YVNA5KS5PXhHejxayslGQswZ5gsuhoasSF1W5p+J/lyvBb8VY
+    9JwTSpzWXFrDu2KBdufzegcVY6C3xQPHDG8d/G1MvIicUsl/mw+byeTUNjid417y
+    scb3N410U0J1Ib/6erWa4bL5WBUbulC/+QMPat61RcXWF5EamEGI7GeGTvlHzQTl
+    3QcozbtP04yCzrzypwF53oP6XV9VPEhi4IPHSLE6vj/voi0ZZhsNpjf7P7z/JRUL
+    mei56b1FUGee+Va692jNqKZPADiIQgdlEz8s0Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521219114; bh=/+WrHXjhqle3ZnRpw9Ly6D4QuE
-    qVXSWCYEufJ7ywMm4=; b=KSosRerhdWkwTrzUd0P6Yb/WGcW2RJa1U+smoeL4L7
-    9bGYPXqcFIUPzTfRP5tlX9yiRudpe7/01Se0TK4pGCOP/SxwdG7X0L2W2151tNSE
-    Jp5py491rhNXhYmGXqxExbNc/SQchdIHjf7w8KoGTNBVyWjJeJj+8gyJbR+KFFvA
-    rUl9ds7uKCRdbmWqVuwS82gQMbn3lJe/nrwspJ2AryYTksf7m7G+3I/0ypqX/Rfq
-    gJizWs2kY0VTLN7VURl2wbyG1FIGXmrU58C3DOTVtkSIDu9S3bNxVMI+5M/JHoKD
-    JI0X8HyGRZsE74r8tyAnJ7bpYj6rmK6Wqa2XlhPBnvhQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521219093; bh=0WRZfGKYphnfEXu2boQdW1Cn3R
+    oPA01oPT+j2NrtTbM=; b=QHhWdcYrPliHVfXeUMNyR4O11gyW8zAx6Dy7iz4rGz
+    dwXom03eCcL/DCse6s+4cbKrOCSvUBdqYq9IUXrz9LCfFyBGy7hOzwEOGNuwekuJ
+    xWc0UWNpYTxSMveSblNqh7jWmSAPcP60dCdTQ5uqiTAfUtnnkmm6MQF2ofAGi5jd
+    4ILErtrDHA4cfYegyreQure35KHu1uvqVg7wPlRID1MzF5Ow9uVq3LnelPChwqfT
+    p19NRAXSyFZcPhbtyeRddj3mCsaaDfpQwpmCUC0YWgZe4bXfDFiFU3w7UFryds42
+    LGrrNmf+SFc1vwyb8/g7a3FE1soGTfNGKnFW3L4BrFRg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeCPQvg (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 12:51:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39494 "EHLO
+        id S933969AbeCPPei (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Mar 2018 11:34:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbeCPPee (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:34:34 -0400
+        with ESMTP id S933576AbeCPPeh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:34:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 002/109] net: phy: Restore phy_resume() locking assumption
-Date: Fri, 16 Mar 2018 16:22:31 +0100
-Message-Id: <20180316152329.963710543@linuxfoundation.org>
+        stable@vger.kernel.org, Xinyong <xinyong.fang@linux.alibaba.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 020/109] usb: gadget: f_fs: Fix use-after-free in ffs_fs_kill_sb()
+Date: Fri, 16 Mar 2018 16:22:49 +0100
+Message-Id: <20180316152331.058679257@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152329.844663293@linuxfoundation.org>
 References: <20180316152329.844663293@linuxfoundation.org>
@@ -82,99 +80,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Xinyong <xinyong.fang@linux.alibaba.com>
 
-commit 9c2c2e62df3fa30fb13fbeb7512a4eede729383b upstream.
+commit 1a087f032111a88e826877449dfb93ceb22b78b9 upstream.
 
-commit f5e64032a799 ("net: phy: fix resume handling") changes the
-locking semantics for phy_resume() such that the caller now needs to
-hold the phy mutex. Not all call sites were adopted to this new
-semantic, resulting in warnings from the added
-WARN_ON(!mutex_is_locked(&phydev->lock)).  Rather than change the
-semantics, add a __phy_resume() and restore the old behavior of
-phy_resume().
+When I debug a kernel crash issue in funcitonfs, found ffs_data.ref
+overflowed, While functionfs is unmounting, ffs_data is put twice.
 
-Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
-Fixes: f5e64032a799 ("net: phy: fix resume handling")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Commit 43938613c6fd ("drivers, usb: convert ffs_data.ref from atomic_t to
+refcount_t") can avoid refcount overflow, but that is risk some situations.
+So no need put ffs data in ffs_fs_kill_sb, already put in ffs_data_closed.
+
+The issue can be reproduced in Mediatek mt6763 SoC, ffs for ADB device.
+KASAN enabled configuration reports use-after-free errro.
+
+BUG: KASAN: use-after-free in refcount_dec_and_test+0x14/0xe0 at addr ffffffc0579386a0
+Read of size 4 by task umount/4650
+====================================================
+BUG kmalloc-512 (Tainted: P        W  O   ): kasan: bad access detected
+-----------------------------------------------------------------------------
+
+INFO: Allocated in ffs_fs_mount+0x194/0x844 age=22856 cpu=2 pid=566
+    alloc_debug_processing+0x1ac/0x1e8
+    ___slab_alloc.constprop.63+0x640/0x648
+    __slab_alloc.isra.57.constprop.62+0x24/0x34
+    kmem_cache_alloc_trace+0x1a8/0x2bc
+    ffs_fs_mount+0x194/0x844
+    mount_fs+0x6c/0x1d0
+    vfs_kern_mount+0x50/0x1b4
+    do_mount+0x258/0x1034
+INFO: Freed in ffs_data_put+0x25c/0x320 age=0 cpu=3 pid=4650
+    free_debug_processing+0x22c/0x434
+    __slab_free+0x2d8/0x3a0
+    kfree+0x254/0x264
+    ffs_data_put+0x25c/0x320
+    ffs_data_closed+0x124/0x15c
+    ffs_fs_kill_sb+0xb8/0x110
+    deactivate_locked_super+0x6c/0x98
+    deactivate_super+0xb0/0xbc
+INFO: Object 0xffffffc057938600 @offset=1536 fp=0x          (null)
+......
+Call trace:
+[<ffffff900808cf5c>] dump_backtrace+0x0/0x250
+[<ffffff900808d3a0>] show_stack+0x14/0x1c
+[<ffffff90084a8c04>] dump_stack+0xa0/0xc8
+[<ffffff900826c2b4>] print_trailer+0x158/0x260
+[<ffffff900826d9d8>] object_err+0x3c/0x40
+[<ffffff90082745f0>] kasan_report_error+0x2a8/0x754
+[<ffffff9008274f84>] kasan_report+0x5c/0x60
+[<ffffff9008273208>] __asan_load4+0x70/0x88
+[<ffffff90084cd81c>] refcount_dec_and_test+0x14/0xe0
+[<ffffff9008d98f9c>] ffs_data_put+0x80/0x320
+[<ffffff9008d9d904>] ffs_fs_kill_sb+0xc8/0x110
+[<ffffff90082852a0>] deactivate_locked_super+0x6c/0x98
+[<ffffff900828537c>] deactivate_super+0xb0/0xbc
+[<ffffff90082af0c0>] cleanup_mnt+0x64/0xec
+[<ffffff90082af1b0>] __cleanup_mnt+0x10/0x18
+[<ffffff90080d9e68>] task_work_run+0xcc/0x124
+[<ffffff900808c8c0>] do_notify_resume+0x60/0x70
+[<ffffff90080866e4>] work_pending+0x10/0x14
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Xinyong <xinyong.fang@linux.alibaba.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/phy/phy.c        |    2 +-
- drivers/net/phy/phy_device.c |   18 +++++++++++++-----
- include/linux/phy.h          |    1 +
- 3 files changed, 15 insertions(+), 6 deletions(-)
+ drivers/usb/gadget/function/f_fs.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -841,7 +841,7 @@ void phy_start(struct phy_device *phydev
- 		break;
- 	case PHY_HALTED:
- 		/* if phy was suspended, bring the physical link up again */
--		phy_resume(phydev);
-+		__phy_resume(phydev);
- 
- 		/* make sure interrupts are re-enabled for the PHY */
- 		if (phy_interrupt_is_valid(phydev)) {
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -135,9 +135,7 @@ static int mdio_bus_phy_resume(struct de
- 	if (!mdio_bus_phy_may_suspend(phydev))
- 		goto no_resume;
- 
--	mutex_lock(&phydev->lock);
- 	ret = phy_resume(phydev);
--	mutex_unlock(&phydev->lock);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -1028,9 +1026,7 @@ int phy_attach_direct(struct net_device
- 	if (err)
- 		goto error;
- 
--	mutex_lock(&phydev->lock);
- 	phy_resume(phydev);
--	mutex_unlock(&phydev->lock);
- 	phy_led_triggers_register(phydev);
- 
- 	return err;
-@@ -1156,7 +1152,7 @@ int phy_suspend(struct phy_device *phyde
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1539,7 +1539,6 @@ ffs_fs_kill_sb(struct super_block *sb)
+ 	if (sb->s_fs_info) {
+ 		ffs_release_dev(sb->s_fs_info);
+ 		ffs_data_closed(sb->s_fs_info);
+-		ffs_data_put(sb->s_fs_info);
+ 	}
  }
- EXPORT_SYMBOL(phy_suspend);
  
--int phy_resume(struct phy_device *phydev)
-+int __phy_resume(struct phy_device *phydev)
- {
- 	struct phy_driver *phydrv = to_phy_driver(phydev->mdio.dev.driver);
- 	int ret = 0;
-@@ -1173,6 +1169,18 @@ int phy_resume(struct phy_device *phydev
- 
- 	return ret;
- }
-+EXPORT_SYMBOL(__phy_resume);
-+
-+int phy_resume(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	mutex_lock(&phydev->lock);
-+	ret = __phy_resume(phydev);
-+	mutex_unlock(&phydev->lock);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(phy_resume);
- 
- int phy_loopback(struct phy_device *phydev, bool enable)
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -817,6 +817,7 @@ void phy_device_remove(struct phy_device
- int phy_init_hw(struct phy_device *phydev);
- int phy_suspend(struct phy_device *phydev);
- int phy_resume(struct phy_device *phydev);
-+int __phy_resume(struct phy_device *phydev);
- int phy_loopback(struct phy_device *phydev, bool enable);
- struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
- 			      phy_interface_t interface);
