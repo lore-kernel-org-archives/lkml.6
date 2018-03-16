@@ -1,111 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeCPWMN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 18:12:13 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:64095 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750915AbeCPWML (ORCPT
+        id S1752600AbeCPWOF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 18:14:05 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39182 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752537AbeCPWOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 18:12:11 -0400
-Date: Fri, 16 Mar 2018 18:12:09 -0400
-From: Todd Zullinger <tmz@pobox.com>
-To: Junio C Hamano <gitster@pobox.com>
-Cc: =?iso-8859-1?Q?=C6var_Arnfj=F6r=F0?= Bjarmason <avarab@gmail.com>,
-        git@vger.kernel.org, git-packagers@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RelNotes: add details on Perl module changes
-Message-ID: <20180316221209.GT6611@zaya.teonanacatl.net>
-References: <xmqq7eqb3nct.fsf@gitster-ct.c.googlers.com>
- <20180316220748.4279-1-tmz@pobox.com>
+        Fri, 16 Mar 2018 18:14:02 -0400
+X-Google-Smtp-Source: AG47ELvWfdXFK27VHWvA3NDcM9gRS3zqPrauMkeXuzQ/uxxEPCBVVys8cyCTwlbkwYdKkXrLuHAnMA==
+Date: Fri, 16 Mar 2018 16:13:47 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Steve Wise <swise@opengridcomputing.com>
+Cc: "'Sinan Kaya'" <okaya@codeaurora.org>, netdev@vger.kernel.org,
+        timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "'Michael Werner'" <werner@chelsio.com>,
+        "'Casey Leedom'" <leedom@chelsio.com>
+Subject: Re: [PATCH v3 18/18] infiniband: cxgb4: Eliminate duplicate barriers
+ on weakly-ordered archs
+Message-ID: <20180316221347.GA958@ziepe.ca>
+References: <1521216991-28706-1-git-send-email-okaya@codeaurora.org>
+ <1521216991-28706-19-git-send-email-okaya@codeaurora.org>
+ <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316220748.4279-1-tmz@pobox.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Pobox-Relay-ID: 12E70B3A-2967-11E8-A11E-44CE1968708C-09356542!pb-smtp1.pobox.com
+In-Reply-To: <003601d3bd6a$783d6970$68b83c50$@opengridcomputing.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I wrote:
-> Document changes to core and non-core Perl module handling in 2.17.
-
-This should have:
-
-Signed-off-by: Todd Zullinger <tmz@pobox.com>
-
-And perhaps also:
-
-Helped-by: Junio C Hamano <gitster@pobox.com>
-
-since I borrowed liberally from your initial text. :)
-
-> ---
-> Junio C Hamano <gitster@pobox.com> writes:
+On Fri, Mar 16, 2018 at 04:05:10PM -0500, Steve Wise wrote:
+> > Code includes wmb() followed by writel(). writel() already has a barrier
+> on
+> > some architectures like arm64.
+> > 
+> > This ends up CPU observing two barriers back to back before executing the
+> > register write.
+> > 
+> > Since code already has an explicit barrier call, changing writel() to
+> > writel_relaxed().
+> > 
+> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 > 
->>> I haven't wordsmithed it fully, but it should say something along
->>> the lines of ...
->>>
->>>  Documentation/RelNotes/2.16.0.txt | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
->>
->> Eh, of course the addition should go to 2.17 release notes ;-)  I
->> just happened to be reviewing a topic forked earlier.
-> 
-> Maybe something like this?  I had intended to suggest a note about
-> NO_PERL_CPAN_FALLBACKS as well, so that's included too.  I don't know if that
-> should be expanded to provide more of a hint to users/packagers on platforms
-> where these modules are harder to install, letting them know that we now have
-> fallbacks to Error and Mail::Address.  That might allow scripts which were
-> previously excluded to be included on their platforms.
-> 
->  Documentation/RelNotes/2.17.0.txt | 14 ++++++++++++++
->  INSTALL                           |  3 ++-
->  2 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/RelNotes/2.17.0.txt b/Documentation/RelNotes/2.17.0.txt
-> index c828d37345..085bf1dba1 100644
-> --- a/Documentation/RelNotes/2.17.0.txt
-> +++ b/Documentation/RelNotes/2.17.0.txt
-> @@ -75,6 +75,20 @@ Performance, Internal Implementation, Development Support etc.
->   * The build procedure for perl/ part has been greatly simplified by
->     weaning ourselves off of MakeMaker.
->  
-> + * Perl 5.8 or greater has been required since Git 1.7.4 released in
-> +   2010, but we continued to assume some core modules may not exist and
-> +   used a conditional "eval { require <<module>> }"; we no longer do
-> +   this.  Some platforms (Fedora/RedHat/CentOS, for example) ship Perl
-> +   without all core modules by default (e.g. Digest::MD5, File::Temp,
-> +   File::Spec, Net::Domain, Net::SMTP).  Users on such platforms may
-> +   need to install these additional modules.
-> +
-> + * As a convenience, we install copies of Perl modules we require which
-> +   are not part of the core Perl distribution (e.g. Error and
-> +   Mail::Address).  Users and packagers whose operating system provides
-> +   these modules can set NO_PERL_CPAN_FALLBACKS to avoid installing the
-> +   bundled modules.
-> +
->   * In preparation for implementing narrow/partial clone, the machinery
->     for checking object connectivity used by gc and fsck has been
->     taught that a missing object is OK when it is referenced by a
-> diff --git a/INSTALL b/INSTALL
-> index 60e515eaf7..c39006e8e7 100644
-> --- a/INSTALL
-> +++ b/INSTALL
-> @@ -126,7 +126,8 @@ Issues of note:
->  	  Redhat/Fedora are reported to ship Perl binary package with some
->  	  core modules stripped away (see http://lwn.net/Articles/477234/),
->  	  so you might need to install additional packages other than Perl
-> -	  itself, e.g. Time::HiRes.
-> +	  itself, e.g. Digest::MD5, File::Spec, File::Temp, Net::Domain,
-> +	  Net::SMTP, and Time::HiRes.
->  
->  	- git-imap-send needs the OpenSSL library to talk IMAP over SSL if
->  	  you are using libcurl older than 7.34.0.  Otherwise you can use
+> NAK - This isn't correct for PowerPC.  For PowerPC, writeX_relaxed() is just
+> writeX().  
 
--- 
-Todd
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The secret of life is honesty and fair dealing. If you can fake that,
-you've got it made.
-    -- Groucho Marx
+?? Why is changing writex() to writeX() a NAK then?
+
+> I was just looking at this with Chelsio developers, and they said the
+> writeX() should be replaced with __raw_writeX(), not writeX_relaxed(), to
+> get rid of the extra barrier for all architectures.
+
+That doesn't seem semanticaly sane.
+
+__raw_writeX() should not appear in driver code, IMHO. Only the arch
+code can know what the exact semantics of that accessor are..
+
+If ppc can't use writel_relaxed to optimize then we probably need yet
+another io accessor semantic defined :(
+
+Jason
