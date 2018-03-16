@@ -1,72 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932821AbeCPCTy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:19:54 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:44539 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752884AbeCPCTM (ORCPT
+        id S932734AbeCPCYf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:24:35 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35679 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752244AbeCPCYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:19:12 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w2G2IoBO003525
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] kbuild: move 'scripts' target below
-Date: Fri, 16 Mar 2018 11:18:40 +0900
-Message-Id: <1521166725-24157-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521166725-24157-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1521166725-24157-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 15 Mar 2018 22:24:34 -0400
+X-Google-Smtp-Source: AG47ELsRQUB7IEIPfponno4T1tYaAXrr+gBUXgwaGg9c9i/rR2Za01BbdDUU170ETs/uOdfM4WOK6g==
+Date: Thu, 15 Mar 2018 22:24:32 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] kbuild: remove wrong 'touch' in
+ adjust_autoksyms.sh
+In-Reply-To: <1521166725-24157-3-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1803152224090.28583@knanqh.ubzr>
+References: <1521166725-24157-1-git-send-email-yamada.masahiro@socionext.com> <1521166725-24157-3-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a trivial change to prepare for the next commit.
-This target is still invisible from external module building.
+On Fri, 16 Mar 2018, Masahiro Yamada wrote:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> The comment mentions it creates autoksyms.h in case it is missing,
+> but the actual code touches it when it does exists.
+> 
+> The build system creates it anyway because <linux/export.h> and
+> <asm-generic/export.h> need it.
+> 
+> The code would not have worked as intended, and people have not
+> noticed it.  This is a proof that we can simply remove it.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Changes in v2: None
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
- Makefile | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index ac8755d..f8e9e12 100644
---- a/Makefile
-+++ b/Makefile
-@@ -567,14 +567,6 @@ endif
- export KBUILD_MODULES KBUILD_BUILTIN
- 
- ifeq ($(KBUILD_EXTMOD),)
--# Additional helpers built in scripts/
--# Carefully list dependencies so we do not try to build scripts twice
--# in parallel
--PHONY += scripts
--scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
--	 asm-generic gcc-plugins
--	$(Q)$(MAKE) $(build)=$(@)
--
- # Objects we will link into vmlinux / subdirs we need to visit
- init-y		:= init/
- drivers-y	:= drivers/ sound/ firmware/
-@@ -1070,6 +1062,13 @@ endef
- include/config/kernel.release: include/config/auto.conf FORCE
- 	$(call filechk,kernel.release)
- 
-+# Additional helpers built in scripts/
-+# Carefully list dependencies so we do not try to build scripts twice
-+# in parallel
-+PHONY += scripts
-+scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
-+	 asm-generic gcc-plugins autoksyms
-+	$(Q)$(MAKE) $(build)=$(@)
- 
- # Things we need to do before we recursively start building the kernel
- # or the modules are listed in "prepare".
--- 
-2.7.4
+> ---
+> 
+> Changes in v2:
+>   - Remove the code instead of fixing it
+> 
+>  scripts/adjust_autoksyms.sh | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+> index a162258..e0dd0d5 100755
+> --- a/scripts/adjust_autoksyms.sh
+> +++ b/scripts/adjust_autoksyms.sh
+> @@ -48,9 +48,6 @@ case "${KCONFIG_CONFIG}" in
+>  	. "./${KCONFIG_CONFIG}"
+>  esac
+>  
+> -# In case it doesn't exist yet...
+> -if [ -e "$cur_ksyms_file" ]; then touch "$cur_ksyms_file"; fi
+> -
+>  # Generate a new ksym list file with symbols needed by the current
+>  # set of modules.
+>  cat > "$new_ksyms_file" << EOT
+> -- 
+> 2.7.4
+> 
+> 
