@@ -1,131 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753026AbeCPCjA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Mar 2018 22:39:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751791AbeCPCi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Mar 2018 22:38:58 -0400
-Date: Fri, 16 Mar 2018 10:38:54 +0800
-From: Honggang LI <honli@redhat.com>
-To: Hal Rosenstock <hal@dev.mellanox.co.il>
-Cc: dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        noaos@mellanox.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] IB/core: Set width to 1X for invalid active widths
- when port is down
-Message-ID: <20180316023854.GA30019@dhcp-13-42.nay.redhat.com>
-References: <20180315090214.21706-1-honli@redhat.com>
- <20180315090214.21706-3-honli@redhat.com>
- <74460de7-9603-146b-28ec-2e16b8b5bb52@dev.mellanox.co.il>
- <f3d70fc6-08ec-3af1-90c3-a0a431c81ce2@dev.mellanox.co.il>
- <20180315124342.GA29859@dhcp-13-42.nay.redhat.com>
- <bdd750e3-83e7-e776-e487-8a41112944a4@dev.mellanox.co.il>
+        id S932914AbeCPCvy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Mar 2018 22:51:54 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:55487 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932651AbeCPCvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Mar 2018 22:51:52 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37866834"
+Subject: Re: [RFC PATCH v2] ACPI / processor: Fix possible CPUs map
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>, <rafael@kernel.org>,
+        <dedekind1@gmail.com>, Ming Lei <ming.lei@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20180315030756.5548-1-douly.fnst@cn.fujitsu.com>
+ <alpine.DEB.2.21.1803151436200.1525@nanos.tec.linutronix.de>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <cb79c370-8c6f-2ef7-9a0a-ed33bd485113@cn.fujitsu.com>
+Date: Fri, 16 Mar 2018 10:51:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdd750e3-83e7-e776-e487-8a41112944a4@dev.mellanox.co.il>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <alpine.DEB.2.21.1803151436200.1525@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 78D7248AE761.AA798
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 08:47:44AM -0400, Hal Rosenstock wrote:
-> On 3/15/2018 8:43 AM, Honggang LI wrote:
-> > On Thu, Mar 15, 2018 at 08:32:02AM -0400, Hal Rosenstock wrote:
-> >> On 3/15/2018 8:01 AM, Hal Rosenstock wrote:
-> >>> On 3/15/2018 5:02 AM, Honggang LI wrote:
-> >>>> From: Honggang Li <honli@redhat.com>
-> >>>>
-> >>>> commit f1b65df5a232 ("IB/mlx5: Add support for active_width and
-> >>>> active_speed in RoCE"). Before this patch applied, the mlx5_ib
-> >>>> driver set default active_width and active_speed to IB_WIDTH_4X
-> >>>> and IB_SPEED_QDR.
-> >>>>
-> >>>> When the RoCE port is down, the RoCE port did not negotiate the
-> >>>> active width with remote side. The active width is zero. If run
-> >>>> ibstat to require the port status, ibstat will panic as it read
-> >>>> invalid width from sys file.
-> >>>>
-> >>>> Signed-off-by: Honggang Li <honli@redhat.com>
-> >>>> ---
-> >>>>  drivers/infiniband/core/sysfs.c | 15 +++++++++++----
-> >>>>  1 file changed, 11 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-> >>>> index cf36ff1f0068..722e4571f4d2 100644
-> >>>> --- a/drivers/infiniband/core/sysfs.c
-> >>>> +++ b/drivers/infiniband/core/sysfs.c
-> >>>> @@ -240,6 +240,7 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
-> >>>>  	struct ib_port_attr attr;
-> >>>>  	char *speed = "";
-> >>>>  	int rate;		/* in deci-Gb/sec */
-> >>>> +	int width;
-> >>>>  	ssize_t ret;
-> >>>>  
-> >>>>  	ret = ib_query_port(p->ibdev, p->port_num, &attr);
-> >>>> @@ -278,13 +279,19 @@ static ssize_t rate_show(struct ib_port *p, struct port_attribute *unused,
-> >>>>  		break;
-> >>>>  	}
-> >>>>  
-> >>>> -	rate *= ib_width_enum_to_int(attr.active_width);
-> >>>> -	if (rate < 0)
-> >>>> -		return -EINVAL;
-> >>>> +	width = ib_width_enum_to_int(attr.active_width);
-> >>>> +	if (width < 0) {
-> >>>> +		if (attr.state != IB_PORT_ACTIVE)
-> >>>
-> >>> Link width is valid in any PortState other than Down so I think that
-> >>> this check should be:
-> >>> 		if (attr.state != IB_PORT_DOWN)
-> >>>
-> >>> However, I don't think overriding width should be needed for this case
-> >>> and just returning -EINVAL should be fine regardless of port state.
-> >>> AFAIK it's the driver responsibility to populate acceptable defaults for
-> >>> such parameters. What driver(s) have this issue ? Shouldn't it be fixed
-> >>> there rather than here ?
-> >>
-> >> I just noticed that you reference commit f1b65df5a232 ("IB/mlx5: Add
-> >> support for active_width and active_speed in RoCE"). Before this patch
-> >> applied, the mlx5_ib driver set default active_width and active_speed to
-> >> IB_WIDTH_4X and IB_SPEED_QDR.
-> >>
-> >> Should the fix be to hw/mlx5/main.c:translate_eth_proto_oper which now has:
-> >>
-> >>         switch (eth_proto_oper) {
-> >> ...
-> >>         default:
-> >>                 return -EINVAL;
-> >>         }
-> >>
-> >>         return 0;
-> >>
-> >> and change default case to:
-> >> 		*active_width = IB_WIDTH_1X;
-> >>
-> >> ?
-> > 
-> > I suggest to restore previous behavior before apply f1b65df5a232.
-> > 
-> > diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-> > index 033b6af90de9..0d73d2772d9b 100644
-> > --- a/drivers/infiniband/hw/mlx5/main.c
-> > +++ b/drivers/infiniband/hw/mlx5/main.c
-> > @@ -388,6 +388,9 @@ static int mlx5_query_port_roce(struct ib_device *device, u8 port_num,
-> >  	if (err)
-> >  		goto out;
-> >  
-> > +        props->active_width     = IB_WIDTH_4X;
-> > +        props->active_speed     = IB_SPEED_QDR;
-> > +
-> >  	translate_eth_proto_oper(eth_prot_oper, &props->active_speed,
-> >  				 &props->active_width);
-> >  
+Hi Thomas,
+
+At 03/15/2018 09:45 PM, Thomas Gleixner wrote:
+[...]
+
+> I tested this on a machine which claims to have gazillion of hotplugable
+> CPUs:
+
+I really appreciate your test.
+
 > 
-> Sure; makes sense that it should preserve the original behavior for this
-> case.
+> 	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
+> 	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
+> 	smp: Brought up 2 nodes, 32 CPUs
+> 
+> Now with your patch applied it's still saying:
+> 
+> 	smpboot: Allowing 152 CPUs, 120 hotplug CPUs
+> 	setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:152 nr_node_ids:2
+> 	smp: Brought up 2 nodes, 32 CPUs
+> 
+> and the above code runs later on and the result is:
+> 
+> 	nr_unique_ids 1 nr_cpu_ids 152
+> 	Allowing 1 possible CPU
+> 
+> which subsequently causes the machine to die as we have already 32 CPUs
+> online.
+> 
 
-[PATCH] IB/mlx5: Set the default active rate and width to QDR and 4X
+That is so interesting, it proofs that this strategy is risky.
 
-This new patch had been sent to upstream mailing list for review.
+I've been wondering how to determine the number of possible CPUs. Due to
+the diversity of ACPI in different systems, that seems impossible. Why 
+don't I change my mind? Here is a new strategy and I think it is more
+reasonable and minimally invasive.
 
-thanks
+   As we all know, we reset possible CPUs in the prefill_possible_map(),
+   If CONFIG_HOTPLUG_CPU = y :
+       nr_possible_CPUs = num_processors + disabled_cpus.
+
+   Before the prefill_possible_map(), *Fix the inaccurate disabled_cpus*:
+
+     1) For each disabled CPUs, get it's processor id from ACPI MADT
+
+     2) Check whether this processor id is existed in ACPI namespace or not.
+        If false, disabled_cpus--;
+
+I will show you the code and test it later. And IMO, the code logic in
+prefill_possible_map() is a little mess, will try to sort it out first.
+
+> So nr_unique_ids is not what it should be and even if it would be the code
+> runs way too late. It needs to run _before_ setup_percpu() is invoked to
+> scale everything correctly.
+> 
+
+Yes, Got it.
+
+Thanks,
+	dou
+
+> Thanks,
+> 
+> 	tglx
+> 
+> 
+> 
+> 
+> 
+> 
