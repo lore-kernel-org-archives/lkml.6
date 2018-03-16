@@ -1,71 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753568AbeCPLLr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 07:11:47 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42736 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeCPLLp (ORCPT
+        id S1753719AbeCPLLw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 07:11:52 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:62630 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753585AbeCPLLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 07:11:45 -0400
-X-Google-Smtp-Source: AG47ELvuizPKckP0YrgKxuXPrFbxO7ermGxszL/Wbvbe/q+sONX7Kxp72f1RUpGX/9ltCdS79A/OvA==
-Date: Fri, 16 Mar 2018 11:11:40 +0000
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sh@vger.kernel.org, Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 0/4] gpio-backlight: remove platform data support
-Message-ID: <20180316111140.ez6lmyx4ntf2nbxz@holly.lan>
-References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+        Fri, 16 Mar 2018 07:11:49 -0400
+From: Roger Quadros <rogerq@ti.com>
+To: <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] ARM: dts: am43xx: Enable dual-role mode for USB1
+Date: Fri, 16 Mar 2018 13:11:43 +0200
+Message-ID: <1521198703-27352-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 03:41:58PM -0700, Dmitry Torokhov wrote:
-> Hi,
-> 
-> This series attempts to remove platform data support from gpio_blackllist
-> driver and switch it over to generic device properties/GPIO tables.
-> The only user of platform data was SuperH Ecovec24 board; please take a
-> look at patch #2 that tries to only register backlight when the board is
-> using LDC and not DVI.
+USB1 port is micro-AB type and can function as peripheral
+as well as host. Enable dual-role mode for USB1.
 
-Can't comment on patch #2 but, from the backlight side of things I have
-no objections.
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+Tony,
 
+The USB driver side patches are already in Felipe's next branch.
 
-Daniel.
+ arch/arm/boot/dts/am437x-gp-evm.dts  | 2 +-
+ arch/arm/boot/dts/am437x-sk-evm.dts  | 2 +-
+ arch/arm/boot/dts/am43x-epos-evm.dts | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> Please note that I do not have the hardware (do we even care about
-> ecovec24? I'd like to rip out platform data support from tsc2007 as
-> well, but ecovec24 is using custom pendown handler and GPIOs have
-> to be switched off from interrupt mode to GPIO and back in that
-> pendown handler, which is all quite messy. If we do not care about
-> this board I'd much rather removed that custom pendown).
-> 
-> Thanks!
-> 
-> Dmitry Torokhov (4):
->   backlight: gpio_backlight: use generic device properties
->   sh: ecovec24: conditionally register backlight device
->   sh: ecovec24: convert backlight to use device properties
->   backlight: gpio_backlight: remove platform data support
-> 
->  arch/sh/boards/mach-ecovec24/setup.c         | 47 ++++++----
->  drivers/video/backlight/gpio_backlight.c     | 93 +++-----------------
->  include/linux/platform_data/gpio_backlight.h | 20 -----
->  3 files changed, 46 insertions(+), 114 deletions(-)
->  delete mode 100644 include/linux/platform_data/gpio_backlight.h
-> 
-> -- 
-> Dmitry
-> 
+diff --git a/arch/arm/boot/dts/am437x-gp-evm.dts b/arch/arm/boot/dts/am437x-gp-evm.dts
+index c3b1a3f..8fe95cd 100644
+--- a/arch/arm/boot/dts/am437x-gp-evm.dts
++++ b/arch/arm/boot/dts/am437x-gp-evm.dts
+@@ -805,7 +805,7 @@
+ };
+ 
+ &usb1 {
+-	dr_mode = "peripheral";
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm/boot/dts/am437x-sk-evm.dts b/arch/arm/boot/dts/am437x-sk-evm.dts
+index 3fa3b22..4118802 100644
+--- a/arch/arm/boot/dts/am437x-sk-evm.dts
++++ b/arch/arm/boot/dts/am437x-sk-evm.dts
+@@ -600,7 +600,7 @@
+ };
+ 
+ &usb1 {
+-	dr_mode = "peripheral";
++	dr_mode = "otg";
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&usb1_pins>;
+diff --git a/arch/arm/boot/dts/am43x-epos-evm.dts b/arch/arm/boot/dts/am43x-epos-evm.dts
+index 00c3d1d..a669418 100644
+--- a/arch/arm/boot/dts/am43x-epos-evm.dts
++++ b/arch/arm/boot/dts/am43x-epos-evm.dts
+@@ -856,7 +856,7 @@
+ };
+ 
+ &usb1 {
+-	dr_mode = "peripheral";
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
