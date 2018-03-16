@@ -1,835 +1,1133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751018AbeCPGMS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 02:12:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50189 "EHLO mga17.intel.com"
+        id S1751705AbeCPGM2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 02:12:28 -0400
+Received: from mga03.intel.com ([134.134.136.65]:49278 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbeCPGMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 02:12:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1751269AbeCPGMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 02:12:24 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,313,1517904000";
-   d="gz'50?scan'50,208,50";a="183286946"
-Date: Fri, 16 Mar 2018 14:11:19 +0800
-From: kbuild test robot <lkp@intel.com>
-To: jason.vas.dias@gmail.com
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-        andi@firstfloor.org
-Subject: Re: [PATCH v4.16-rc5 1/3] x86/vdso: on Intel, VDSO should handle
- CLOCK_MONOTONIC_RAW
-Message-ID: <201803161439.haTsAZDK%fengguang.wu@intel.com>
-References: <1521001222-10712-2-git-send-email-jason.vas.dias@gmail.com>
+   d="scan'208";a="26164191"
+Date: Fri, 16 Mar 2018 14:10:47 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
+Message-ID: <20180316061047.o2xdyuqhak3mzjyw@debian>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-3-tiwei.bie@intel.com>
+ <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="rwEMma7ioTxnRzrJ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1521001222-10712-2-git-send-email-jason.vas.dias@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 16, 2018 at 12:03:25PM +0800, Jason Wang wrote:
+> On 2018年02月23日 19:18, Tiwei Bie wrote:
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 699 +++++++++++++++++++++++++++++++++++++------
+> >   include/linux/virtio_ring.h  |   8 +-
+> >   2 files changed, 618 insertions(+), 89 deletions(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index eb30f3e09a47..393778a2f809 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -58,14 +58,14 @@
+> >   struct vring_desc_state {
+> >   	void *data;			/* Data for callback. */
+> > -	struct vring_desc *indir_desc;	/* Indirect descriptor, if any. */
+> > +	void *indir_desc;		/* Indirect descriptor, if any. */
+> > +	int num;			/* Descriptor list length. */
+> >   };
+> >   struct vring_virtqueue {
+> >   	struct virtqueue vq;
+> > -	/* Actual memory layout for this queue */
+> > -	struct vring vring;
+> > +	bool packed;
+> >   	/* Can we use weak barriers? */
+> >   	bool weak_barriers;
+> > @@ -87,11 +87,28 @@ struct vring_virtqueue {
+> >   	/* Last used index we've seen. */
+> >   	u16 last_used_idx;
+> > -	/* Last written value to avail->flags */
+> > -	u16 avail_flags_shadow;
+> > -
+> > -	/* Last written value to avail->idx in guest byte order */
+> > -	u16 avail_idx_shadow;
+> > +	union {
+> > +		/* Available for split ring */
+> > +		struct {
+> > +			/* Actual memory layout for this queue */
+> > +			struct vring vring;
+> > +
+> > +			/* Last written value to avail->flags */
+> > +			u16 avail_flags_shadow;
+> > +
+> > +			/* Last written value to avail->idx in
+> > +			 * guest byte order */
+> > +			u16 avail_idx_shadow;
+> > +		};
+> > +
+> > +		/* Available for packed ring */
+> > +		struct {
+> > +			/* Actual memory layout for this queue */
+> > +			struct vring_packed vring_packed;
+> > +			u8 wrap_counter : 1;
+> > +			bool chaining;
+> > +		};
+> > +	};
+> >   	/* How to notify other side. FIXME: commonalize hcalls! */
+> >   	bool (*notify)(struct virtqueue *vq);
+> > @@ -201,26 +218,37 @@ static dma_addr_t vring_map_single(const struct vring_virtqueue *vq,
+> >   			      cpu_addr, size, direction);
+> >   }
+> > -static void vring_unmap_one(const struct vring_virtqueue *vq,
+> > -			    struct vring_desc *desc)
+> > +static void vring_unmap_one(const struct vring_virtqueue *vq, void *_desc)
+> >   {
+> 
+> Let's split the helpers to packed/split version like other helpers?
+> (Consider the caller has already known the type of vq).
 
---rwEMma7ioTxnRzrJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Okay.
 
-Hi,
+> 
+> > +	u64 addr;
+> > +	u32 len;
+> >   	u16 flags;
+> >   	if (!vring_use_dma_api(vq->vq.vdev))
+> >   		return;
+> > -	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+> > +	if (vq->packed) {
+> > +		struct vring_packed_desc *desc = _desc;
+> > +
+> > +		addr = virtio64_to_cpu(vq->vq.vdev, desc->addr);
+> > +		len = virtio32_to_cpu(vq->vq.vdev, desc->len);
+> > +		flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+> > +	} else {
+> > +		struct vring_desc *desc = _desc;
+> > +
+> > +		addr = virtio64_to_cpu(vq->vq.vdev, desc->addr);
+> > +		len = virtio32_to_cpu(vq->vq.vdev, desc->len);
+> > +		flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+> > +	}
+> >   	if (flags & VRING_DESC_F_INDIRECT) {
+> >   		dma_unmap_single(vring_dma_dev(vq),
+> > -				 virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> > -				 virtio32_to_cpu(vq->vq.vdev, desc->len),
+> > +				 addr, len,
+> >   				 (flags & VRING_DESC_F_WRITE) ?
+> >   				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> >   	} else {
+> >   		dma_unmap_page(vring_dma_dev(vq),
+> > -			       virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> > -			       virtio32_to_cpu(vq->vq.vdev, desc->len),
+> > +			       addr, len,
+> >   			       (flags & VRING_DESC_F_WRITE) ?
+> >   			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> >   	}
+> > @@ -235,8 +263,9 @@ static int vring_mapping_error(const struct vring_virtqueue *vq,
+> >   	return dma_mapping_error(vring_dma_dev(vq), addr);
+> >   }
+> > -static struct vring_desc *alloc_indirect(struct virtqueue *_vq,
+> > -					 unsigned int total_sg, gfp_t gfp)
+> > +static struct vring_desc *alloc_indirect_split(struct virtqueue *_vq,
+> > +					       unsigned int total_sg,
+> > +					       gfp_t gfp)
+> >   {
+> >   	struct vring_desc *desc;
+> >   	unsigned int i;
+> > @@ -257,14 +286,32 @@ static struct vring_desc *alloc_indirect(struct virtqueue *_vq,
+> >   	return desc;
+> >   }
+> > -static inline int virtqueue_add(struct virtqueue *_vq,
+> > -				struct scatterlist *sgs[],
+> > -				unsigned int total_sg,
+> > -				unsigned int out_sgs,
+> > -				unsigned int in_sgs,
+> > -				void *data,
+> > -				void *ctx,
+> > -				gfp_t gfp)
+> > +static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
+> > +						       unsigned int total_sg,
+> > +						       gfp_t gfp)
+> > +{
+> > +	struct vring_packed_desc *desc;
+> > +
+> > +	/*
+> > +	 * We require lowmem mappings for the descriptors because
+> > +	 * otherwise virt_to_phys will give us bogus addresses in the
+> > +	 * virtqueue.
+> > +	 */
+> > +	gfp &= ~__GFP_HIGHMEM;
+> > +
+> > +	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
+> > +
+> > +	return desc;
+> > +}
+> > +
+> > +static inline int virtqueue_add_split(struct virtqueue *_vq,
+> > +				      struct scatterlist *sgs[],
+> > +				      unsigned int total_sg,
+> > +				      unsigned int out_sgs,
+> > +				      unsigned int in_sgs,
+> > +				      void *data,
+> > +				      void *ctx,
+> > +				      gfp_t gfp)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> >   	struct scatterlist *sg;
+> > @@ -303,7 +350,7 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> >   	/* If the host supports indirect descriptor tables, and we have multiple
+> >   	 * buffers, then go indirect. FIXME: tune this threshold */
+> >   	if (vq->indirect && total_sg > 1 && vq->vq.num_free)
+> > -		desc = alloc_indirect(_vq, total_sg, gfp);
+> > +		desc = alloc_indirect_split(_vq, total_sg, gfp);
+> >   	else {
+> >   		desc = NULL;
+> >   		WARN_ON_ONCE(total_sg > vq->vring.num && !vq->indirect);
+> > @@ -437,6 +484,243 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> >   	return -EIO;
+> >   }
+> > +static inline int virtqueue_add_packed(struct virtqueue *_vq,
+> > +				       struct scatterlist *sgs[],
+> > +				       unsigned int total_sg,
+> > +				       unsigned int out_sgs,
+> > +				       unsigned int in_sgs,
+> > +				       void *data,
+> > +				       void *ctx,
+> > +				       gfp_t gfp)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	struct vring_packed_desc *desc;
+> > +	struct scatterlist *sg;
+> > +	unsigned int i, n, descs_used, uninitialized_var(prev), err_idx;
+> > +	__virtio16 uninitialized_var(head_flags), flags;
+> > +	int head, wrap_counter;
+> > +	bool indirect;
+> > +
+> > +	START_USE(vq);
+> > +
+> > +	BUG_ON(data == NULL);
+> > +	BUG_ON(ctx && vq->indirect);
+> > +
+> > +	if (unlikely(vq->broken)) {
+> > +		END_USE(vq);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	if (total_sg > 1 && !vq->chaining && !vq->indirect) {
+> > +		END_USE(vq);
+> > +		return -ENOTSUPP;
+> > +	}
+> > +
+> > +#ifdef DEBUG
+> > +	{
+> > +		ktime_t now = ktime_get();
+> > +
+> > +		/* No kick or get, with .1 second between?  Warn. */
+> > +		if (vq->last_add_time_valid)
+> > +			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
+> > +					    > 100);
+> > +		vq->last_add_time = now;
+> > +		vq->last_add_time_valid = true;
+> > +	}
+> > +#endif
+> > +
+> > +	BUG_ON(total_sg == 0);
+> > +
+> > +	head = vq->free_head;
+> > +	wrap_counter = vq->wrap_counter;
+> > +
+> > +	/* If the host supports indirect descriptor tables, and we have multiple
+> > +	 * buffers, then go indirect. FIXME: tune this threshold */
+> > +	if (vq->indirect && total_sg > 1 && vq->vq.num_free)
+> > +		desc = alloc_indirect_packed(_vq, total_sg, gfp);
+> > +	else {
+> > +		desc = NULL;
+> > +		WARN_ON_ONCE(total_sg > vq->vring.num && !vq->indirect);
+> > +	}
+> > +
+> > +	if (desc) {
+> > +		/* Use a single buffer which doesn't continue */
+> > +		indirect = true;
+> > +		/* Set up rest to use this indirect table. */
+> > +		i = 0;
+> > +		descs_used = 1;
+> > +	} else {
+> > +		indirect = false;
+> > +		desc = vq->vring_packed.desc;
+> > +		i = head;
+> > +		descs_used = total_sg;
+> > +
+> > +		if (total_sg > 1 && !vq->chaining) {
+> > +			END_USE(vq);
+> > +			return -ENOTSUPP;
+> > +		}
+> > +	}
+> > +
+> > +	if (vq->vq.num_free < descs_used) {
+> > +		pr_debug("Can't add buf len %i - avail = %i\n",
+> > +			 descs_used, vq->vq.num_free);
+> > +		/* FIXME: for historical reasons, we force a notify here if
+> > +		 * there are outgoing parts to the buffer.  Presumably the
+> > +		 * host should service the ring ASAP. */
+> > +		if (out_sgs)
+> > +			vq->notify(&vq->vq);
+> > +		if (indirect)
+> > +			kfree(desc);
+> > +		END_USE(vq);
+> > +		return -ENOSPC;
+> > +	}
+> > +
+> > +	for (n = 0; n < out_sgs; n++) {
+> > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> > +			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_TO_DEVICE);
+> > +			if (vring_mapping_error(vq, addr))
+> > +				goto unmap_release;
+> > +
+> > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
+> > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
+> > +					VRING_DESC_F_USED(!vq->wrap_counter));
+> > +			if (!indirect && i == head)
+> > +				head_flags = flags;
+> > +			else
+> > +				desc[i].flags = flags;
+> > +
+> > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
+> 
+> If it's a part of chain, we only need to do this for last buffer I think.
 
-Thank you for the patch! Yet something to improve:
+I'm not sure I've got your point about the "last buffer".
+But, yes, id just needs to be set for the last desc.
 
-[auto build test ERROR on v4.16-rc4]
-[also build test ERROR on next-20180315]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> > +			prev = i;
+> > +			i++;
+> 
+> It looks to me prev is always i - 1?
 
-url:    https://github.com/0day-ci/linux/commits/jason-vas-dias-gmail-com/x86-vdso-on-Intel-VDSO-should-handle-CLOCK_MONOTONIC_RAW/20180316-070319
-config: x86_64-rhel (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+No. prev will be (vq->vring_packed.num - 1) when i becomes 0.
 
-All errors (new ones prefixed by >>):
+> 
+> > +			if (!indirect && i >= vq->vring_packed.num) {
+> > +				i = 0;
+> > +				vq->wrap_counter ^= 1;
+> > +			}
+> > +		}
+> > +	}
+> > +	for (; n < (out_sgs + in_sgs); n++) {
+> > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> > +			dma_addr_t addr = vring_map_one_sg(vq, sg, DMA_FROM_DEVICE);
+> > +			if (vring_mapping_error(vq, addr))
+> > +				goto unmap_release;
+> > +
+> > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
+> > +					VRING_DESC_F_WRITE |
+> > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
+> > +					VRING_DESC_F_USED(!vq->wrap_counter));
+> > +			if (!indirect && i == head)
+> > +				head_flags = flags;
+> > +			else
+> > +				desc[i].flags = flags;
+> > +
+> > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
+> > +			prev = i;
+> > +			i++;
+> > +			if (!indirect && i >= vq->vring_packed.num) {
+> > +				i = 0;
+> > +				vq->wrap_counter ^= 1;
+> > +			}
+> > +		}
+> > +	}
+> > +	/* Last one doesn't continue. */
+> > +	if (!indirect && (head + 1) % vq->vring_packed.num == i)
+> > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> 
+> I can't get the why we need this here.
 
-   arch/x86/entry/vdso/vclock_gettime.o: In function `__vdso_clock_gettime':
-   vclock_gettime.c:(.text+0xf7): undefined reference to `__x86_indirect_thunk_rax'
-   /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o: relocation R_X86_64_PC32 against undefined symbol `__x86_indirect_thunk_rax' can not be used when making a shared object; recompile with -fPIC
-   /usr/bin/ld: final link failed: Bad value
->> collect2: error: ld returned 1 exit status
---
->> arch/x86/entry/vdso/vdso32.so.dbg: undefined symbols found
---
->> objcopy: 'arch/x86/entry/vdso/vdso64.so.dbg': No such file
+If only one desc is used, we will need to clear the
+VRING_DESC_F_NEXT flag from the head_flags.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> > +	else
+> > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> > +
+> > +	if (indirect) {
+> > +		/* FIXME: to be implemented */
+> > +
+> > +		/* Now that the indirect table is filled in, map it. */
+> > +		dma_addr_t addr = vring_map_single(
+> > +			vq, desc, total_sg * sizeof(struct vring_packed_desc),
+> > +			DMA_TO_DEVICE);
+> > +		if (vring_mapping_error(vq, addr))
+> > +			goto unmap_release;
+> > +
+> > +		head_flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_INDIRECT |
+> > +					     VRING_DESC_F_AVAIL(wrap_counter) |
+> > +					     VRING_DESC_F_USED(!wrap_counter));
+> > +		vq->vring_packed.desc[head].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > +		vq->vring_packed.desc[head].len = cpu_to_virtio32(_vq->vdev,
+> > +				total_sg * sizeof(struct vring_packed_desc));
+> > +		vq->vring_packed.desc[head].id = cpu_to_virtio32(_vq->vdev, head);
+> > +	}
+> > +
+> > +	/* We're using some buffers from the free list. */
+> > +	vq->vq.num_free -= descs_used;
+> > +
+> > +	/* Update free pointer */
+> > +	if (indirect) {
+> > +		n = head + 1;
+> > +		if (n >= vq->vring_packed.num) {
+> > +			n = 0;
+> > +			vq->wrap_counter ^= 1;
+> > +		}
+> > +		vq->free_head = n;
+> 
+> detach_buf_packed() does not even touch free_head here, so need to explain
+> its meaning for packed ring.
 
---rwEMma7ioTxnRzrJ
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+Above code is for indirect support which isn't really
+implemented in this patch yet.
 
-H4sICBtbq1oAAy5jb25maWcAlDzLdtw2svt8RR9nM7NIIskeXc+5RwuQBLvhJgkGAFuPDY9G
-bic+Y0sZSZ6b/P2tKvABgMXOTBaRWVV4FQr1QqG//+77jfj2+vT1/vXzw/2XL39sfjk+Hp/v
-X48fN58+fzn+76bQm0a7jSyU+xGIq8+P337/6ff3l/3lu827H88vfzz74fnh3WZ/fH48ftnk
-T4+fPv/yDTr4/PT43fff5bop1RZoM+Wu/hg/b6h59D1/qMY60+VO6aYvZK4LaWak7lzbub7U
-phbu6s3xy6fLdz/AbH64fPdmpBEm30HL0n9evbl/fvgVZ/zTA03uZZh9//H4yUOmlpXO94Vs
-e9u1rTbBhK0T+d4Zkcslrq67+YPGrmvR9qYpeli07WvVXF28P0Ugbq7eXvAEua5b4eaOVvqJ
-yKC788uRrpGy6Ita9EgKy3Bynizh7JbQlWy2bjfjtrKRRuW9sgLxS0TWbVlgb2QlnDrIvtWq
-cdLYJdnuWqrtzqVsE7f9TmDDvC+LfMaaayvr/ibfbUVR9KLaaqPcrl72m4tKZQbWCNtfiduk
-/52wfd52NMEbDifynewr1cAmq7uATzQpK13X9q001IcwUiSMHFGyzuCrVMa6Pt91zX6FrhVb
-yZP5GalMmkbQMWi1tSqrZEJiO9tK2P0V9LVoXL/rYJS2hn3ewZw5CmKeqIjSVdlMcqeBE7D3
-by+CZh3oAWq8mAsdC9vr1qka2FfAQQZeqma7RllIFBdkg6jg5CX8RtmpenezUBu9rdu1LrvW
-6EwGEleqm14KU93Cd1/LQGbarRPAMxD8g6zs1btJ/Zif+2ttgu3IOlUVsCjZyxvfxkYKwO1A
-GHC5pYb/9U5YbAzK7/vNlpTpl83L8fXbb7M6BLa4XjYHmD0oHWCXCxRAbmA76UQr2NI3b6Cb
-EeNhvZPWbT6/bB6fXrHnQHuJ6gAHDkQG2zFg2D+nE0bvQcyA09s71fKYDDAXPKq6C1VDiLm5
-W2uxMn51FxiEeE4TA8IJhQxICXBap/A3d6db69Podwzzwd6IroLzpq1rRA0b95fHp8fjX6dt
-sNci4K+9tQfV5gsA/s1dFYiptiDC9c+d7CQPXTTxAgTCrs1tLxyYruCwdlaCjkwOdLIjdKYI
-gV3D4UzIeShoExepBQI6I+V4GuBobV6+/ePlj5fX49f5NEymBk4enV/GCgHK7vQ1j5FlKXMy
-OaIswYzY/ZIOFSXoIqTnO6nV1pC2DTwRABe6FiqBWVVzRKCyQZEC726XI9RW8UMPiMU40dSE
-M7DdpCWF04anMtJKc/AGowavKZ4ieEw56GSvqyKlbFthrBxmNwl72DMp6tIyUp+jx2R1B337
-7S90qu5DkkK4QF2EmANY7gINdyXQHt7mFSMFpIMPC+mbrD/2B9q8cYzLESD7zGhR5DDQaTLw
-t3pRfOhYulqjtSm8P0XS7T5/PT6/cALuVL7vwZiCBAddNbrf3aFOr0nmJs4DEFwEpQuVs2rI
-t1NFJZkN8ciyI/4kTRCKQrTWLNAC4J2hPBHHyYGjFYLX8pO7f/nn5hWWurl//Lh5eb1/fdnc
-Pzw8fXt8/fz4y7zmgzLOe0p5rrvGRSLHIJGz4ZRR7mi/ZxJm3pktUGXkEhQeEAbcTTH94W1g
-sUFFoC9sY5D3GpOOCHHDwJRm14bLUlZXoy4hzpm821hGMEA59oALFw6f4GeABHAm3nrisHkC
-wpX1EQg7hMXC3k+yFmB8DCC3eVapUNDhjwN3p8egZ+8XGPghMc4rF2a6NIDOM2RK4k9BrNJc
-BPZP7YdwbQGhbZzBlcYeSjAHqnRXF2chHHkP4U+AP5/cqtaAR7nvrShl0sf528j6dRB/ei8P
-woHCa4Q1f7PpIHTKRCWafOnoknedoVaEbroGAzDwr/uy6uyq9wxzPL94HyiJlQFi+OR9yAZn
-XgTbuDW6awM5p6iDpDYMq8FZyLfJZ+KxzLDlKFm1H0YKxcT79zOOsx+E6K8hnpOZCPk8YGgP
-AndeKNOzmLwEvS6a4loVYRgLeoYn99BWFXYBNFG8OwBLOGt3IcsG+CJqAhmEUDHkOIgvDjRg
-Fj0U8qByGZ0vjwB6VDvrbAMlUS66y9qS6Yv2glMoINwTTWSd0YkF1yAPo6kORT74Roc1/Ib1
-mQiAyw6/G+mib3/EMChZSA+Y+RJjxNZIcHpkwamXOMhHSQNmUnRlgr2mb1FDb97ZCGIjUyRx
-DwCScAcgcZQDgDC4IbxOvoNQJs+nkBj1JG0aZq+aZM8TMsxAcPuV+PqiAW9PNeDuBVz1akwV
-50FWzTcEy5LLllxEymYlbdrctnuYIhgvnGPA2jYQNG+dgl2PR6pBESmUhGBwOCPolvcL383v
-8gwOtx/nO2AYTpQ7OO3VIiaaPJZI7afffVOr0CAFuk9WJejHMFWyzhUBfvPga42z6sAyJp9w
-CoLuWx2tX20bUZWBtNICQgB5oyHA7qJEhlCB9InioKwc2RbwAZpkwhgVqbCdzPeUpUNnz0WL
-3mPz29ouIX20gTM0A6cHlosCHpn7iYLYNWYHI9niBADBHzDXVF2LWwvuMyMDKGVk+EL2TPm8
-ecnQf5Mnu0ppuiK0Cf4IQI/9FERMs2nz87Mo7Ce3bkh6t8fnT0/PX+8fH44b+e/jI7jEApzj
-HJ1iCAlmf2+l8yERhkhYUX+oKdJj1nuofevRgIeatOoy31F0ihA6WG46aTEbo8wS5o/NnkXb
-SmScMoLe49E0TyZwEmYrRz8lbgRYtK7of/YGDrWuVycxE+6EKSAW48wCLdpnWI1TItY2TtZk
-6PoDxFilypOQH4x1qarI1SJFSackdBWMsLtEovbyRqZSpn2H8uprChl2krRlW4VKg+Rwarjo
-CnWX1xLB0Gne80NXtxBLZzJWqhDzQPC6l3CgLCi6lUQiGKK0v2EAkJ++TCzHnHOdQ1hcAd35
-wPEFDYc2PsdQjBmMaGUJW6GQH10Tt0jONZ4PjB8g5oIQL3JQ90Yupk0OCcA700Ag4mDDQ675
-PDPsF7rm0DTNgy246qHMOMOW8fATvCN82TX+tksaA5ZfNR9kHkslkUUma87TUY87rfcJEi91
-4Nupbac7JiFiQUAwiTCkhBj9CcYOOHY7ek1LAvBmhzQjOzGfFveXef31Dlz8OMScgiRw827B
-3cQMDzkJ1CLp0sgt2Jim8Fdxg3D0ok15klccI4BuUo4hbncNOk8KbwQTXK1uQApntKU5pF7W
-nwtYoPSZPUQ9hhEm+egONn5wEblOmPFHo2EGvhRdnWbxic2RPoj4CiG6D3dLn6mNN9nLnY+a
-87rFO7i0++G4DvuM8WW6Jb6dv4hYwRW6W7nAGkwThho+UTnecDC0uioCeo4PVuZI0IMijQLg
-NTi13IJz3lbdVjWRlgvAa3oNKGhfULnQ3kZxQYwC+WnSkCChAAHoKmF4E76ghh3RcdbsBDHG
-YMwq3A6ToMA5cNlS2fN8V0Tipa80GDSmW7zMJIXo9VxgpKWX6cAVZdhgPlsON5+MNK7S9W2X
-OoP+EOANKvhk7LmyunR9AUtIVWCti4GilTk6GoErrouuAnuAtgyjDXSJmeXKGzCfGN3hjYMT
-iyQUamBqTi7T8sJ6WWmQENAArPaPW83FC0y/QeXBWichCdPVgCZyDBGW8tPejsbEVSnWC95w
-faCSTPq8h+CtsQcByxuyjgwJ5wiBPoEIbbhnDxLIw5wHvMjTkVGeGx24NSV7fTJP8DCUZ4S7
-HMGmrolcUwwvqvFO0lzfsMtbIx4dcWZOs3V34Ca4oFGgLddRaXMv7GxzDjU1b3fgozod155M
-WIPVPV0TBRIjjCLyRai2zfXhh3/cvxw/bv7po7bfnp8+ff7iLy0Cna4Pw7pO8YbIRn88CVy9
-yRi8LO+F7SRqGi6DhQEAaMdQ6ClMthgDXp0lKiPVIT7xDoY1PMEDqmsG8DSxqI1Hs0IDdION
-tWt47MeafKoqiBm+oFS8FRrQeJhMEhxMNCAqNUwWdGXR7zGNwHBxVKh0H1KBK9wFujqL8/eY
-JLS5VSAuP3cydEfH9GFmtywwujafc41Obo0i9T+nLgYkFtBwAeqIB6WmnauS25UlFtZ0zTKH
-cut1QSVL5BzxrgGSXWec/PmxMPtQ2nQOyHHdiuVRau+fXz9jfd/G/fHbMUxvYLxNkYwoDpjg
-jMRPQGTczDS8vlI3PMWokG054wO9UIMSjhBzj04YdbLPWuRcn7UttOUQeLNYKLtPvOlaNTB5
-22VME7wONMpSAROD7qDlNTgjUbfTCqqiPjl/u1X80kG/mz/hp+0abkJ7YWrBIWS5MhaWr1y+
-/5PdDUR1dUZ0XAf7Gh+3+ue+zdUChv4jZUB9iYne2Idfjx+/fYkSb0r7m4ZG60A1jNACXAuc
-2BKTl0HJBnwMl0kDekaN929BT0F2z+OgOcuVEY9zO1FYNI755uPx/iOYreN0iQFMWF9JgNzf
-ZhTazM7PgMjimY2nGbRp3boprI0uEeO7ImGb84B5ja+hbCEuQDMD+xmVvgx4cug8/hSObUsX
-hmuNQ2TcOr5rFU5jzsHUQVkRWWM/dVBj+roJg0Ffh7qCpNFWcFPqigq2CiKj4peZZB2TNjbX
-fNMFfHbFxux3n8kS/2DCIC4Rmq83vYp/fno4vrw8PW9eQcVTqcen4/3rt+dQ3Y/1oYGeC5MP
-qOxKKVwHAzZxXEgoLPQZ8ZiITPA3F+CT5zGsbsnKRUE4+OClir37ySF0rU7ONRWVmiIpKoXw
-FPx7rM2d73imEZAAr9shBm7ZA4wEB1g6MwVEdYe0N27OEYGfZq0452HGV621adeinhcx3Cwz
-fSi0o3WmEmVAsNWrYux+OjtDdWEpVNWZaEO8SoGT5Xw6YCwD58Kf21aag7La9NvYF4NtFqjY
-w45H2OoEJ4LwEE3Nh1Pij6kTnDd0E6Yd4KNvD+l3IuIAg9j7LKXaHWoGtGz7t/OLbRaDrE92
-jrdx8+biUIOnxsuNH4ZZ1h6GHvk7F7Meara/lJerSZeJYiyQmbr+AEKx06ixaFS+3CzT2vlr
-zDkc2L/nw4TW8pVwNeo0vhC4RuXOjDzV74U3lOORMniPPjwD8KVBlyFJdb6OczZRVUNiM3nl
-gnWDh0Sngd9YdzWlDEpwZKvbq8t3IQHtUu6q2kbGeyhuwzyfrCRfJgJdWnRXUF0EfswABl2x
-BOYQqIouzIC20qXXTQSTdVdhxaZxwdKLMMG9BT8P9Ip/IDN7gaICxK1HcD7ptdJRRQ0R9jtZ
-tVHJkriJzlNDryospsO2aOi2+Frm/O8XPB7UPYsdLygZXATzWs7W4RshAtX5EoJFBzreu9G1
-ajj1PKIPuoJTJ8wt0/ZEszEzEooupt77pUHFGsYF0Ehwcp0vQ8mM3oNiwdOKrlRio+vwWmgA
-YG1dJbciv12gUkEcwZEgjkDM+NkdWEquG7whm69U6QDuwKWBNR7GNLv3Y4Kb+a9Pj59fn56j
-KtXwbsYb1a5Jij8WFEa01Sl8Pr6ymrcsoCEDra9XIvVD/f5yxfSeXy6e0EnbluomVTFjgfRw
-QOOK9vf7mW3g/IIOidzACZRu1YyINmsGYyqUdGgpFkJhTQyA06Si1AAC/0YPcdaSbpQOFEVh
-epc+JvTP/fCSj0WTClUGxKLfZpjn5zxksESgEnJz20ZGEjcrQHGWrIvyk0AfQ4YnSyJvVYKh
-mi0svodoAYW3H4u45qptrPGUrI4cGvvy1bNoOb6c389aMG/GJvRcixHhyZiM/h0GCVVCMaCS
-lxp+l7DUcU+RBl75BHJXoUqoRl8Q8/WdvDr7HWPZs+C/SXOemsW8hFo0neAwAZuxvnkssui5
-QrlpPdLKUG8GjLxxBv7BoQ7wv3oqieUoqJan97Nte6e3Enf7RF/L6SUpzAhMS+qXzUZHZ9ul
-j+UKBerBFEzHAyfC6vWwy8Fl8w/dmlhv+JY77fBCdA0+rDXy+WKCMdmhKZLnknUTPeyIPkQc
-ryDkaJ3PH6G9fhct2+/QSIZa2LGrz3DDonyfB/icVFKYwcGYh0ThBKbrxj+hc7uWIzmhCDOw
-+6Hu9f67xvutYHZ1xxQq7G1wZMZNIMH2j2AKc/Xu7O+X0TzXY8GYoQv47hrUgKW61diOn769
-Ze9sfXVgKFEsWe3rItesiy9CQY7HJUUMJOmd6h0oKgiEopKiSWCl0TBE1FVO1iBIjoplZLvE
-8s+w0PoZKezV/0RHK7ieZlrdxfO5a7UOdOld1kU2+u5tCTae7aYe3+/OHs/wuBYkqFUrNQhj
-u7VofNRg9Hx3LNO6ihOr0pi49ISKvfmbXqx1IpKxEOHUBZ/PbY2V+eOMOeDUZFdH0Sx8wuHB
-iq6VrC92g5HBAbzFkyRdVimuGtSnVw5JXcmYLrT+FdcBRKOsxJbzelosBEwcVYoD8WkUO6Ut
-PjAAb2hXi7hUNHB3WhQ8HwEsmJXgYxeeypH7TGl8/WxM16aXDEiERghTD/WoXmZS38HKrPzr
-SLwevA7i69qZMKSEr94KkCAVPfWI4aOCHv2nsxUyUhNYsoMB5Eh8HnFCpN4X7VuLN0KkP9K6
-DF/qEbPTRrZ/zg52tWLhdXvDgievzvnqw34QjoFSlir6ACGJi38RRiVzXEjvq6ui43HXn5+d
-sUIGqIu/raLexq2i7oJE3O7u6jx0KCkU3xl8ihmYPazYjbJiVMKLt/qclqWa37jCzjf4EMHQ
-RCuMt+EcGZCP389j59ZIesc7OIxz/cJYx0MVAFx8P/ZLJXfLfkcnKn5sN52XAH0Wq1HMAobY
-UyXih8Lyr+OHEz9Fnw2V+XM/U5AQDnmkcEqLvpI8yeJGEVbJhY4QOGABa1W45csTcmkrmGI7
-PFufRx+BpwwE/hIJF00OymHNIeZpUl8Wc6eDLqYgkHx8Cpl9VuPp/47Pm6/3j/e/HL8eH1/p
-fgZDzM3Tb3gvH9zRLH5KZCdF9IM6Q23TAhDcCM2p/QFl96qlSyXuIA5jYR61qvBNXxhvzRMJ
-jgu4Ka4IrpXn51mIqqRsY2KEDLn02XLVVMFIOFZSgOBa7CVdC3Bnq47GSGqFsfehooFB4eXV
-ko/TTBePMgqai38svzZX/1tDxnEsBrSvcp4aXP/sc0pBwdmJAq88LJqmzMRw3kgl2UUFjY/6
-8Qd7hoI1bNKGP9BDkOFxhZ8I5cBs8GNJQRnIWIu9ZS+FfF9tbnqXpC9opm2U+iHaQULiETAV
-Udplqi2kMfLQw7kzRhWS+xEdpAHtPvjds7NCCJGuPxPOybAU3kM756IQD4EHGFAn/ZUipSri
-h8cIoksCI2G7o5cR44L9fUCe/MxTglbFYpF52+Z9/LMgUZsErtpaJbNnbU8ysNhuwRuiH7CI
-Gw+526ThkC6LtzXvrNNwPm1xsnbRd0tatmshhi7SFZ/CJSfcryJHQdOp7MG/nVDxXX/IjvR1
-RIRUOs69e2nOUkGL3cCACbV0O10k1NmWOW4QJHWou/CxARUa6abiIkLP91IFMfl84kUrFw9Q
-Rnj8sIEhnym3O5mKLsGBw1IsGEmotUTCTCFV8yE9nwTHX9diFLArT2sG5rdMSBncuAqAX0NV
-rfDhLsj1aknbICfwbzZ29yFResNmyd0ef3VjUz4f//Xt+Pjwx+bl4f5LdIUxqoQgsTAqia0+
-4O//4A2hW0Evf35kQqdh+ZJiTBRhR8Gz5v+iEe4B3nj/502wdIWepa/cdy4a6KaQMK2CXWNI
-CLjhB3T+m/lQYNE5xbmfEafjd98sxciNFfy09BV8sFJ+q+f1scxYXc4khp9SMdx8fP7876jS
-bo4o28QMkaDndPVO8hrF/qN1O42Bv1nSIfKs0df9/n3SrC4GMZaNBb/ygDW6wcGl0LmVsgCn
-xd96G9VwL2BolHe+yqEmdUvsePn1/vn4celwx/2iTf068099/HKMT+5gjKPNoEwVbkYFQQar
-oyKqWjbR/ToZQbz2sDNdrru2YkNzv1fDNGii2beXcVmbv4BW3hxfH378a3BnGhZhol30t2sx
-rK79RwyNCmyoKf3qVfLSGra7yS7OKqx4U2yaCW0F+pVRZns0q9gBEkQjxaYFAeDZmXxBs8hJ
-E9y2dTJFgq1XIs0Ei/fOE+608ovJ0JH+j4h5LRwuu61lOh0wiP9P2bc1x40ja/4VxXnYmImY
-3i6ybqyN6AcUSFbB4k0Eq4ryC0Mta9qKsS2HJJ/T3l+/SAAkATDB8k6Ee1T5Je4gkEgkMnED
-G5WgwQxpoJflwxn0KkJOAc4mBNTVGWBypCfzwK8PB7RWfiP747TnBZuU3BxdlbSVogys7KVi
-XhzcPCktH1FAgGUgS6SDxun8ZqZxj5yHtdMHFeEsdnJ0Db6BqEzjsPP1OMvxqW8f71ykY/vc
-XAZNnMLHPltix48VHRa0h09PYFch6E83jy/f3l9fvnxRHtC+f395FYOl+OKnt+e/vl3Ecgms
-N/RF/MEHFmciXqT14vTJgUj4+eXt3SjH2HoM84kYTZp8+/T95fmbWx5YAckbaTTR2/88vz9+
-vlKi7JQL2CwJgbFJ8M9IPzLDVl/lXdd+xyytCPbmJIH7WnuG5JQRbGMQjGpR1M347fHh9dPN
-n6/Pn/4yTXfvwcprXOTkz640vN4oSs1oeXSJDXMpSZF0zcm0s9WcJT+yvXWIq0VLY4ZrEOXW
-ec/T/WQ4kr+fHn+8P/z55Uk6pb6RNj3vbze/3yRff3x5cLbgPSvSvIG3kYYk1L9BnELih23y
-I+0XQM07utXKUq04M99pqbw4rZltNaKORuUJfXCjEuWM07H7oUBbrczIMrTsd8a5BIibudWF
-7TLEZobqANOXr/vIQrOA2dcJbFZAy5zbJhHaSambUpkpnuVULk1vY0UyzV/QMlbcCrmFc1uB
-Ct6hWHGoLbcPQEx6mpwNxdP7/7y8/gfEz4n4JcTj28QyJIbfQkQhh7G/4b2NoWyFdzuaYbxF
-ztCzWmq6/4Ff0hu1Q7J9H0kSP+07sEW3jOIAUDf8icsOfjp4wyh3ANH5cI/y1eyc2+R+Qpjm
-y6yhYJWyibGdYArqoOaUJoC1haVsD8/xks5xndhnBgY2SoVoYcqYUHEQ0zfbgJ2Tel/yBEFo
-Rri1YQqkKir3dxcfqaUC1GR5+YEvyYqhJjVmti8nYsWcjmbVARYG8Vm2LgDLXyF28Sk/lgXi
-fxT6UDYZIc32bsVynnfnACOG5pcLBizlLZt8b9W5YXYlTzHenrQ8TQhj27k91zpyHJklIeGV
-+YX1tK5MU/cpqsniTnlJlB+DW0eJoET1qcElirLfAJW0l2M+g32SuGntxUXVglYYGXrWXWkk
-UJOLBPC52hci5h74dMA0d1Cg+PNgvrx0oT0z9pyBSk97Uwk50C+irEtp6hcH6Cj+wsjcQ7/f
-ZwShn5MD4dai2yMFJvkOKFzkyauBaZYZVv45KUqEfJ+YU3Qgs0zsTiXDKxZT8Sf+Tnnozxgf
-xXEY9tiRfnglqIdj8jywTlD1RA/32f/xX48//nx+/C+zXXm85pZn1eq8sX/p5R6MIFMMkTZ/
-DqDcFcIu1cUktr/+zeTz32Df/+YXFoDNdAWA0nNWbazsgMgyTChWuXiXjI2HenXR2FxZNTaz
-y4aJyj7W7h+VxOe2TCzSWMsA4qa6vqd0G8sDJlALMPyUV8mNOFw64FB/u1ixW/mKtXaDnjLt
-BzlWk/3LLkVIR/B0Hz0gyfSTnXEgzu2NgsnYCJ0ik8Omyy6quh4JoWc75gS7hgU51n4CLigQ
-OQLMXcA+yt5oq6bS4kx6P01SHe/lFYAQrfLK9vSbNK5TooGErPb7msWHxEjVn9bh2C0kZ3F+
-ehdHWU+cnjFnTA7XkBbgLVlAQ+oBk64EllYzCLFrJmflgRvJvsdVNIQZBnVL08Pg0LMopNmf
-RZUuo9UFiDHxNSCyEkcafNx1aZCremyDltU5k8CEplPERMHQkHswdbHtAae+JS0YZhh+Lp2w
-yYnoKUVOe6cKjTQdK8UOSSscsYVhA+C08SQR8lLGrIhFZjUIXHYQT9+nTeVBjstw6YFYTT3I
-KLLjuJgU0nCx4B4GXuS+ClWVt66cFIkPYr5EzaTtjfHNWjNjPI0jU2PknHxfh+wkDmeeiVQQ
-u5cKeehPLF+rmuyZMyOEzYARncwcgJBpAWS3U4DmjjfQ3H4F2qRHgVgn+uIDWYfEcUvUsL23
-Eukdyh4CbXMDEgHe9wOLf0FKG7iZPsa1WRy8npE6PiMrUWlfKQ3YWxwSzCUHgLKZFjs4f6zl
-vu3NEVi8nrd6hj1rcoIewtPBz63dLmdxb3QEJad+OeG4vw3ZDTB2njLV9LXYy/0HIRh7c5Pb
-0QxaNng0IlWTD/jjXdV8qWezGgsd6swhIT5f1CyZ3a7aQUSSEkErFapvN48vX/98/vb06ebr
-C7hNecOkgbZRmxky1dtGLj0zMJeir1Xm+8PrX0/vvqIaUh9AgyBDE+F5ahZp8c1P+RWuXuya
-55pvhcHVb97zjFeqHnNazXMcsyv49UrAva6yLJllg2AO8wzWJ4cwzFTF3g6QtAU4h7/SF0V6
-tQpF6hULDabSFQMRJtCcJvxKreeW/5FLZHSFwd0nMB7pNHiW5ZemZEOrnPOrPOIgCh76Kvej
-/frw/vh5Zn1oIGpYHNfyeIkXopggmsBXTLwYOLwBQzDe7MQb7wzXPELKTwrfWPU8RbG/bxJf
-B41c6th3lUvvSvNcM6M2Ms3NWc1VnWZxKWLNMiRnFYJjlsm/ZimGhBbzOJ9PD5vb9X7TriBm
-WbIrM0wplX5thrFKOo2YLZBV5/mJk4XNfNt1BNZZlqtdkxN6Bb8y3ZQ+xdJ1IVxF6juiDywl
-T+dx6SJrjkNfmM2yHO+5mLnzPLfN1RVJymizHPN7guZJSOYTRXoOem0ZkmeaWQZpVneNQypm
-r3DVoGiaY5ndMDSLkC5mGU7L0FQHamnQ+i1DFofrjUNVJ4OOVRP+AbGmuw06+tpqOI2oDM2b
-QAPxvGu0meayBgypsYEWSTNXvseExOD6FZ4CfJ/Jsq60ZqY2Avql9P7uECBLLdlFozKEhzsT
-zAVU/uwvKszanbnX6k6h4pCjXE0HoXYJKVbmm/fXh29vYHIEbn/fXx5fvtx8eXn4dPPnw5eH
-b49gSjBaLVnZKUVDQ+075wE4xR6AqM0OxbwAOeJ0recYm/PW+7h0q1vXbh9epqSMTpgkyenn
-FDfTUWB5Tr1DkO2nJQBtUpH46FL4lGKeTRSpuOtFU9kZ/OjvDzEJhwkRGWkevn//8vwotd83
-n5++fJ+mtFQ+utyUNpMBSrTGSOf9f35ByZ7CrV1N5B3DyqeKVJB5zIdYberGHgtAbOiSnFzh
-mAzhafVN3iTjXgkxydniicGR2BwDmIfMMPS181hcpEMBf0x18d40AE460WjNVOPn6RsMk0RQ
-I50SeCWE46DXhQe7bKpJxNXeEnE1vkC09dJidgk6qwaloUXXh60jTrekcBOoq+FSCEGbJnMB
-nH04Adum0hY41YAq2NIGWCnGnvYwuHoCpzLucbxvWnHIfDnqoyPzZYp0ZH9MnvZVTS4uSZzK
-T7V6eGDRxXzGx5X4RkgAY1P0UvPfm//fxWbjX2w2f/gWG8whmbXYbLAPalhsnIzNxWZzbbHx
-M+jFxlO3PrlnWbDpeg3ZTD5IX9MMzOyx6WqB1Y5VG9+HvfF92QaQnNhm5cFglD0QqHQ80DHz
-ANAA/VocZ8h9lcQmsQk7EqcB8Rp7dK9ZELWoRjzFedcpE8UWqg2+cmyQz3zjfOduuwrUt834
-/eircucb0bf4cIPj205lDGPJhpkZayuAtEv27kTTmADgVvNkniUNqJl0qgVay7iBRIuwW6II
-yUvztGkidYXSmY+8QemOcsRAbKWHAUxUAwbGG7z4c0YKXzPqpMruUTD2dRjUrcOh6ZZmVs+X
-oaUnN+iOBl1sK7ZOUFkZ0tFwUT3eEIQbSln8NtlgzAOBTAds4dzpbOBaOoe6EbiavEnr/qn6
-WEEdh/P48PgfJ55Ln2wmW61wGb1ciN9dvD/ArR8t8PtSxdOb7Em7WmkmBKZ2mP8bHzs/ksDs
-Cy+jx1Os5HfKN4x+XVQXZ464KtGxSa1jzBarYZVpQAoPAXIxRYl9CCaNoQITP4SQZStcehp4
-gWYU1cECS6ZMH6xkeVViBn4A7etwE63cBIoqRlktZpg3GkstC7+m/h4k9WyEf5IE5qZLTO2t
-tXwcrCUun653ky+WHcSxgkNICMsYTKOwBun1eRoITX7H3Hp1o0lI82VOYtEOjFe3I607nE1D
-LQPIFWBYqVJcV5TZmgXxE3fYTRqS4cFn23CN0jNS7VGgOpY+a4pNVl4qghk5sCRJoGlraw6N
-1K7I9B8y/DWD6ySCPfo2kigZ2hh4QocijJHpY4nIdevux9OPJ7GI/a7DmFhv/TV3R/d3kyy6
-Y7NHiCmnU6r1jfZE6aR6QpX3AUhptXNlLIk8RarAUyR5k9xlCHXvXgzq5mLLUY8e0KrEfHLV
-Ieni/xOk8XFdI22/w/uEHsvbZEq+wxpKpe/aCTm9G5BJcz1xYoYhPXosUfpxZB4zEIn2dp3T
-4Qc/VUhtEEdCaoP98vD29vxvrUSz5yjNnFcmgjBRkmhyQ1kRJ+0UkLLpakpPL1OadcmgCU4Y
-1Z46tcyVhfFzhVRBUDdIDcCJ4ISq7qyRdk9uu4dMPF7AexZ5JnJiqxksSa49l01oOmrgMkQg
-6r4f03R5940iVucadG1fNgWk72enyX3ppECjmhgsrLIuBvrOIKbuFYgEzEThitCpNdAhJKO5
-/SqL0v00A/DQKZcPq7KAcJJXPoMqyQCvPicFu8YuqpaJa8ikSmDuUEjq7R5np8rOaVJR2JW9
-0wgYxAScxak2Q5hlEtXKSzxe4NAhqccITuPK2B6eJ3p6FYaZmf5LhhWRma9PYmoMZFxANEhe
-Zmd5Vh0K3Ys9jshAdEhhZZUUZ/Vme+xng2grbU3g3FrHv7Pa4vmU4jz/OufS79I5p8xMNL5c
-l1HMBgjtR+UTAOUZ+0ua59pli3nsLMdA6Q68NGsgabDm4p5xIVlhWx4euX/5Ut3lNaDvsiXo
-yuCiGK7vHVG1oBx77VKbL4vrlMsg4GY4icqyfFfrscwQtnHsTfTIMXloCsS6hWf797DKGMXs
-78wfVdp9sJxwCwJv6oTkOiKjnaU01VSaCvs1883709v7RNirbhuIhWytBXFdVl1eFky5/TWe
-nec1ifGGmnNW/LCVWEDY09wmHC69CkD8uomf/vv58ekmdr39AOdZ5T72O9Ba6lmUAOUZRWVw
-wCxrDiBQklG4v4PHUXagTECzJMY/Fpm0m6sFpdutx9WpQFnK4P9TfMkDjnw29yoht9KnxUwO
-/AMBF65+vEzdr3EYEQ4Bi7+9P73+++HxyXJJASmPbBkEeEhgWXVahWsbHzI+8f1MxkkOcavx
-c5fEeQw4fsaT82o+/e2ZQDD7ORbZs3MMEbgimGPI6Z7MMiiXuMp5NT699vj5kqRi0ag93nQE
-eEsxXzqe9QLuOGo77O+F1UlmPcvqKZ0Vb+OSSLNs06uFJMHjoQmJGU5raHqAI2pgCRry5BtI
-P6fwXBHvNp0Qei3JxJZZd2LHK8T09XyfPT9NaohGQJV72rJA/aQM3BC1V7QYQgoX4KUgOcT7
-ae2lA90+OjWwOM6sjcoqVZuzc4yw1+P+UP06JoabUxe+WMOSsf2kd3uaV0WptQbBRI8QqFDY
-ZmT5HqgpBG6AeZXNo93Rcl2CspyPmGLHZB0iRsyW2TvD+q+vz9/e3l+fvnSf3/9rwpgn/Iik
-h4UeIfe6OqwN2sGINJ/2BSGwM5K+1ObaKs5VvQ1WK+bgx+SPxZjXhQkqJrektywzdADqt9Mi
-TWRFdbKjmiv6oUI3dpAHds6Zc1eNMXEtsUoAbeI/KuwQLbmxKjL8EEGTCuxS8bW0SD1+xaaH
-K6sqvpME9mC3PwfwpnNibgjpTlQvy7jbEWKJAjEZHeh7uXZoDkezmozSnvZs5UhFKtL807en
-1+dHTb4pXRc1J/lIcxLPziJ30lPK6Ahb1KfJK/PZZ08RkqAV7U3M0CImWWl6Y6pqlXfKanUM
-2Z+YGVctvcgQ8mZtIOQRGRIYNRl4pZubSStQuEu1K3DjliADQRg2asP5kaFNlvuv2Jk8GpJh
-g649+7NikJ65VTad8rGOMks2IqPkamYZ3Arbqe+5EbXUrLIRWBITHBAu8FfnBNEy4fMpEz/I
-nmWssby2iA3NCvmgfncspBMaN92KgXMmfiQQMGV/SlPbtTuAaVJQtVpiTQcOFbJGz/1/P/z4
-ohyyPf/14+XH283Xp68vrz9vHl6fHm7env/v0/8xzglQNoQ2yNULi3CMWjBAHKJQKNgJizPA
-4BMf9O4HXzQAMyvmC0JuMqELtgynM3i/ika3mJ/kB2+ef0qxHNnxV2QMtOEddr+uNJaOSfxU
-IY/xPakBwSaWMRfBK76fywyo7uci9XbKofzDPby+P0sbyO8Pr2/GGnYSP25y9R7whnz7dNOA
-/azytHaTPfy0DoFQxj67FbPe0IMoYklv3XarqGU1bluaNrgzhsIHMC9Sp7E3O87TGN+ZeO5N
-BJUvy8rfzxBOyQsO4Q0gHJ3UfExGoyb573WZ/55+eXj7fPP4+fk75nFQjnvKvAV9SOKE+tYv
-YICFYU+KWyGvxM2xC6xZ6qLhLLqy5K4p7onni1QCt/RCOFHndrpPOuY0RtJCt5KSipupDrC/
-5mKU/Fjpx8gewgtOBj1/+P7dcKQMrg3V0D88QgT2yciXIDi1fWAt/2RUfn3PEFYS30LlpMxI
-47RHFsifvvz7N1jZH+TDYMGqlz7fhKxyul4H3nJi0pA0870El6NMj1W4vA3X/onAeROu/Z8m
-z+ZGpjrOoeLfHCyXrBB6we2o+PntP7+V336jMGITcdDug5Ielt4iClLgeiK56hSJi8vcsyqO
-65v/pf4/vKlo3u/BnmFSCbw9CM7/S8xIAtDTntmruyB0l8yI02tGCOwZ9sleqzvDhV0aoKlY
-CPOZRRN4wNXE3r/cyUJgfFCOEnuk4MYzqSiszvYBvid8dQidaQLT04Sky4h1lTtyy7sL/BA0
-8kjvzh6vqD3bwRMEvcdJG0XbHWZy2nMEYbSatBBeREOjRnphB9YpquFsrPx1TqUI/aLGdMNZ
-VLYfYiEfaE2/TeiKkzjdih/W3Y2DdUq7oFxzO3EWnCSpYQpAY7EeO6PCYtRcUqcGfS3nsB6w
-ahm2rZn4o2+F6BPHhO42uDK3ZznlyXweVByKlEeimVpmQgoxDIYMqozWqTwSLZDMIYZxCXzz
-7aj3+FI0DMsVnN9iN7wD2kbTyou+RYm6McEGw6T+Jdgso5U14nBpQuOzOxF6sj78wHOg8Uxg
-MVykHgFbOMBJMhwPLUsvcCauxN/Bmbg5bwwYjsC4q3F9/be3wzqN1I47V2KTTncGzUW5nMzq
-wumcJ4YD7l7CFlSlMZ6MA0CWPhhYB3+uuLwOLB7lj8SU8fVUGnp+e5yesiCEQ1lzeDW4zM6L
-0OpfEq/DddvFVYmr5ONTnt+D33n8/LDPxckf/yirIymaElXYH8DXOzWMUxqW5k73SdK2bS1t
-L6N8twz5ahEg2Yrzd1byE6i3QcNATattKLI1PvujOPFnpY0f6pNlyKpIXsUyqWK+ixYhycy3
-ATwLd4vF0qWEC6MsPR6NQNZrBNgfg+0WocsSdwtrXT3mdLNc4xdGMQ82ESbw6+v0Plazkd2J
-7/Xlc5dysltF+IosBN8GgquKo9JSu/LHz4O+Vd90Hy/P8riEAi4XxcnbcxUXwg48+QiSpIKD
-xORBqqKLVSi0bBRHMmZ6rFE33qom56TdRNv1hL5b0naDFLJbtu0KF9E1hzikddHuWCUc1azs
-t8Gi/07GfpBU3zQ1UPGp8lMug70Oboyap78f3m4Y3Cj8gGCIb31olvHJ7xdxirn5JJaW5+/w
-pykVNxAcAvvCjSVHqtZGk2awuiWgZ60sf58qiKoh8gykzo64MdKbFttlDFORfslm396fvtzk
-jAph//Xpy8O7aJ4TZWFkAUWVOoNYhvCqVEbdSATqwEdZ6kkIEJrmLOQIPIlA0BRjHY8Qy2FI
-6IAUQhbYoKyfl//l++sLHJbF0Zm/i84Rh+ohNOY/aMnzf7o6eqj7tN6HpLjc4arFhB5x8Zy2
-2SReqwWS9NRrlX3KI2DzXaGUswUM60vnxO5AOJwL7375hRMQi+0ZagvJegSEAKKVAJOVCUDw
-ZGsooAmLZewxcwujZkQYmSaWCmWTok2Y7EcRkPsQdgv7WoFDKl7TYV2QFdY1vXn/+f3p5h9i
-CfjPv27eH74//euGxr+J5coIazTIp6bgeKwVrZnSSm5Sh9Q1RgMX1LGpJB4yPiCFmUZpsmWD
-XODQxd9w3WMqmiU9Kw8H612ApHKwbJC3HFYXNf0y+eaMJ6gDkBEUYh1KZvK/GMIhIKOHLqY9
-J3gCd2YA9ViC3wjTMamC6gotISsvGZgjGIuypFt+yhVJatsh+oibB20P+6ViQpAViuyLNvQC
-rejB0hSzk7BnnUj1y0vXiv/Jz8k3748VJ04xItmubdspldsO19WQQdAYX+aEUCh7mohRIdpi
-W/wA78wKaALcWIDPhLqPDL9yGSBOO9zQZuS+y/kfwRoCXI/CvuZS0oAK/IRJthZbTvjtH0gm
-EJq9qpOmgbDnThSgSWt3K39r8zPWr5LqlWoMlkbULzOjc2jslLNJpnHVCHEE34pUVcEjtJjH
-3pGpac7rSb6JqEjoUQ0K0VEu50VyOXjsBwYeJWdiKsSeY/q5C4FuiVJD6B1paXEQB/0wwlLN
-4SE2LPAupKnuMANTiZ9SfqSxUxlFlEG33PwE1MUXKtYU7x5sZSFOHhCizf81C+m2mpQixCmx
-qjPMD7mWF6uzu4iA5kGt2P4YZ9qmmDdlTcxnaGJdTqnz01y0pr+6tGB02tsF81y0qe2/XQa7
-AFcnqXlJPC+gVcNODZyWVUA5P9shbrBn5f22NR1TVnm/H1bALd40RcHAltNfh6qaaQfLvfOB
-N0k77dX7fL2kkVjDsMOxbkLtzGFB0Z4kf07orgGGBO7kjAO18cJXyl1GutQa9YbmQA1nNgdI
-NNnx1H5deXRGarbQ5W7998zSB52y2+I3e5LjEm+DnbdeKk6w3WlV3u9/NjVaLILpR5oSR+ll
-otooy5EhjknGWel8T6o6R1dYPnZ1bIYd76nHquOXKTnJEV6SnVzBquSxmtZ2aO4BO2Vu+4Ea
-yz1THpTF4uv0hGTwqZ1sr9SgVC2UIBvjgghw6BBRXVLXVjhyAemLhrECQPxYlTEq1ABY5YM3
-LWrELfyf5/fPgv/bbzxNb749vIvj4WgJbQjHstAjNWU7IOXlnmWJmMN577lwMUkyLP/W3AFU
-DAANNiE6OVUrRedgxXKWhYYiUpLSdBDxRVMe3TY+/nh7f/l6Iw5fWPuqWAj4cDCzy7nj9uyQ
-BbVOyfs8Hk2EgAWvgGQbS5Rjwlg76RSxr/r6Iz87dSlcAqijGE+m3TWhcJdyvjiUU+Z2+5m5
-HXRmTcL54J+n+tXWV3J4zQIUJY9dSt2YFz+K1oh+mxKraLNtHaoQvTcrq48V+b6CB6Geu0WI
-7pgS7E5YYkJaWW42TkFAnJQOxDYsMOpyUidF7uQExQtmTRQGSyc3SXQL/pAzWpduwUIIFOfC
-zKEWSUMRKis+EPkG0q5lwaPtKsCUrhIus9id1IouJLyZlonPL1yEk/6Dr7LM4klu8OQHF/cV
-HFMnI0u9oChCAkxqCEPDXYRlm2gxIbpsfZxPt25NzdIswZa0avyE7CQXVuxLxNShYuVvL9++
-/HS/KCsW6zDLF15RXA0+jIsfVuOKy3LDCPpRTMJ3xuyj++zHMhz+98OXL38+PP7n5vebL09/
-PTz+nEZZr4aNz1p+tf3opFf9p7J4eiNv0vJYmqnGSWNF+BZksDskxn6Qx1JJsZhQgillyrRa
-byzaGC3SpEr1n+VkSRC1Dzf8ctR3kzvcdefSFroxw1GPmFmS4JxVQcY6GrhpbwtXzfZZoefS
-VpA5KcSpq5ZBpfFnl5CJEA+FrMXNNSyWob7Fl9iAXXfsiFQCPRXShTsa8l3A0hTAyo4XpOLH
-0iY2R1bAPnpmQkYtLG/BkIk0t59QxAn7zqlNUmPLHXQpk/KcmQf4tQLbcV5ZjmMFYgvigvAx
-qUuLgEwbk9qZPicsgNvtluoni6Ks863BTTNihV4VJLGMOl7ABmKXJpgsAz3vvEPWfXCpWWNH
-ixEA3OIcIDskqyFAhXUJLY5jrLfDNWipEFVZadMq90wGRBgK7JAJZiR7GW1IFuvkbrp/VRrX
-nmu8ZDDoSpWKn9v2FWIsoMH0xFV4ZOu3NHs3StJU9GTWpzDVT5qGKJY0Qk3nj5o26tzV7VSS
-JDfBcre6+Uf6/Pp0Ef/+Ob03SVmdwAM+IzdN6UpL0h/IojtChOx4cR7pJUeXfXgQBbu2vpmy
-X1ZB4Om8FAO/b4y+LWT4IWmUMDIzZjE4Tw5hJ7cXDbDFMCua3J2E5PsR9cwkn0sbJ1jmOpdp
-EpJPKTreIhKvy2Koy1MR1+LIVng5xIG09BZAaCN6Dr4AJ2aCwQMvYfYkgwh9xj5GqO1CDggN
-cXySu04dNNC7HzCvLBPPq5ZDg7nWEqXxhFqjJv7iZWZ70dC0Lr4vSM5sfvs5vHymLihwG9XU
-4g/zOVBzMhrqNFJg3VlOmrrkvEMV+WfL0krbQxWmrrzI8tIZwrN0+zIqGGrXNZWhe8j7L2Ai
-jckXb6MNwSf7Ajl+fnt/ff7zB9zEc3Gqe/x8Q14fPz+/Pz2+/3h9mkpsoiHwHtUSoqZP9NQ9
-YbekHkNyg4fEpGrQPcVkEtKFdbWbNMEywCRyM1FGKGw+0rfMuBBnjJaec6KVuElKXBerLSca
-7vOq0meRk4920PukIEMHXq1A7vMv0zOINadomOUgjdx57ErNdLX9GQx0qFjJTaVUZqzR4ldg
-/0rsn5ZtiXVcNAs5CTkJE6LkB0RieLrlPILFbvuNHNUKWRrx7PcrQ5sjfkgbJxD/eZJZ4r/G
-YLGfww1C0Zr+mQorEDU7lIXhW0/97o6X3J4D8uoUl/KLFvWxarUV+siskOO5SDNScman3Cy2
-OYp9AiIfMtp5/OiYLOfrLPsD3gyTpz6g1lOydhBJ1qxhxu5OLPZYj/dgh7rrN1uuFNHW0zut
-m24wW8UBNJQwA82yTxup4LlnLqvVOZ1mBr4+0aESAqThFCgpXOdiPR8E5Cisr522XUJRv7xx
-4bqe0rnEzp4pdi9wa2k8xw2DxcpQ2mhCF/Ns1AP3iYw9EBxh5hfsNlJjuT0oiioOa1iSOFm1
-hjGfVqZ00co4ccf5LlgYX6PIbx1uTHUTzSkjXctqWk4cTvXd4Xk/bbAIITJLWuOTS0Krc9Xv
-4TtHMvhIj3ZvmWBL/M6HNM/RE95pwE/kklhXB0fmXFdOE0k7Omtvcq79DPLCmJ7wM3F/i9ab
-xjvssLd+uJ0jSOYXwsShyf5lxsiGn5MMJNHynyVJVq6rhWWcCb/dD9cCPUtemgcLv0uxvjej
-cI1eFH5wogr1CXq97ShFnaUcNarib81rbPjl6mUkDeRmUGQa1PvQTHcfuunMWogqkKI0Znee
-tavO9NSkCXZnS6J9QJckp6SBDappP1/M2rVEcCuMrOWXWTi9XBsR0JajDhYcntL9OIUEEkYf
-PA9gBNiGK4Fin4qZ831tiA3wK1jY3tHThGQFvoEa+RRESJk5tkSaTIk4rxSlbZ1bpPjrGDPd
-WeyoPllM85S3RjuE6Fo6m1NFZHiFpDiwwir/KKRf0bVI7vcJ+ExI3QOrLlBd1o9l3mVkaZmA
-3WW23KV+d7xm5dlMJqnWrNU0Zy25y5yIeGBu4piA3KH6R7PW4vgP753MHrgTBPAFiVsC1HmB
-qoKMTCEMW5NYJqQEPQtHwXJnBnaC301ZTghdZe/BPVmcYJOuuTBX/+ywRUG4c5PDXQ74l5Pm
-bkjaOgo2O3TtqWHlIhOfJj0aX9m/anAeWKM5c5Lzk+1ijcsNI/G98jHSJonfa23Pw+Y8VQ5M
-Pl+/PUOZkToV/0w7FlPhKH5Ifws/LQKNwUK5sKnO5B8YR2Xe2BMCS2GyXjkl8pwbX2FSMSp2
-evObAIZdgJ7BJbQyX9pY7abgPaBtPCPPG7ksX+3f09UhaJLjyXPBZXJd5TgzT/CKkeXCPl79
-nPl9UVb83prxYHDXZgffIpHGMV47sWdV/nrzvXsv129EcILSFquW/gbs8lwKa/aksFwpS7rr
-wclG9eEPuyo93qtwB/0kuQiKdf5LYrhpPcBFkoAmiqycsRugT17w92tjDs/jLbVsryJx8xtW
-02ixbN1Ee5qDSbAnjUCjbdsnGolqN1RtHOlaN2FzUyYO8cQtVp/vPMXG4sg8ZjTOnypaRmHo
-JrLxVTSPb7aeQlPWJqpPRzGbVtmJu9VQj3LaC7n35JSBCWQTLIKA2n2RtY1N0IKxW0JPFmKU
-pwgl8E3S9SKetwskBwhZnnwL6dCPZHY17/oUI0lv124N9D7nLR82MqyCxlpqlyN26WDR2iro
-pCZi/jE6KUYzaJset24tE+fftjuITyus4b/eHgJ/xzza7dY5vhZW4jSPffSVadNTVd2ew/fg
-EONE7IOm024g6rA9P01aXlUOl7z6tF2cCXJpBQYAgpWsscsv7dgZkK16XmKRpFutxoyBxjMz
-dAbPjtTGpJMTsElKzE0cAGm77SilK3XXAn9hzg/gPajymutcdAFASUNtyi25wJWDRauSA+En
-J2ndZFGwXmBEy1IIyELs2UboMRdQ8c+6F+hrDA4dgm3rA3ZdsI0MLWaP0phKVfk0nUC6JMlx
-oKC5W22pnpE6kp5jpn+BI9+zfFqhON9tFlaUmx7h9W7rsZk2WCJ0Sx4YxHe+XbdIN0lpCkUO
-2SZckCm9gKU2WkwBWLv3U3JO+TZaIvx1ETP1WAnvbH7ac3n6g/crcyw2RjIhw643y9AhF+E2
-dGqxT7Jb06hF8tW5+OJPTockFS+LMIoi50OgYbBDmvaRnGr3W5B1bqNwGSxs1wg9eEuynCFz
-9U7sBZeLeRkKyJGXU1axVa6DNrALZtVx8rVyltQ16Saf1Dnb2IL4UPPjLkSn2AXuWo1pO7ja
-vaDhkYB9vJzL3RNonEdhgGnSrXSNdecGpil+n5wCXeMaNol4beAEuvOm2912xwaXqimps13g
-8Zktkm5uce9MpF6vQ9z10YWJT9Fjaidy9GkQL7RYbtAF1e7M3FbVSoKnrO2Grhe+R7Jmrsa9
-2Sj6rvDmCfrU9G5E4SmW7wgDYOqASG36W5CxJazGHMWaaSYqbFZdQt/jFcBCH3bJVrsNHp1J
-YMvdyotdWIrpuNxq1mCubWrHSnh3jx/tkjr3OAOt1ivEq84I14znayymslmdUfNsXK7tk7oh
-eKE9KI3owJEqLiNCRyS4PjO/ZBF2yWLVCgKwOUtNLibzIjjheQrs7xC7gDdzrYn7Brtuwta7
-SM4o3qRE5PHBobAtpv1qMlhtYsv8TbLvQoortzXqeSevUY/vckC34ZLMovuZnKMomS13BhWb
-wky50F58IAEVp23MW7U1JNy64BI/ux2qezITcUvGppfAvz+O2iBrp8yC0OMOEKAWn+8CiryQ
-e6uB1OHjfWzrRWGH/xiL2uNVASgI6suVbKUuJCnsK+S7poDVGYIR1Jn0G4YdrQc/7RfOUPFa
-CYoXRy+qvMB8e/jzy9PN5Rl81P5DRwkBT5EvyqH0P2/eXwT30837555rotq52AKMKEauF0hV
-j3FmnMLgl44RMq6vmuZqg01Y7UZ2NmntENTZVrax/d/h+ncZx6931CAy/vT8Bi3/ZJn2Uybm
-oDhK4rODFC2+r1d0uVg0pcfZLKnhcIoreDil2I4gGmCYZcIvsBM1fYmJ0xy2sxlhAfuj6FcE
-S8ltku0tHdEIkiba1Gm49OzGI2MuuFYfVlf5KA3X4VUu0vhiZZhMcboNV7gbJ7NEEjnynuaR
-t0fSxNTrRU3DM17U8lbwWM+J0tMH1vBTh3rj1o+fXZsPcGRsHmQZj807dPGrY6vMxuWs/ulS
-uvMHh5hbbJa+ZuyuPrVW+mCzCVjISVkQmjRwZpASOOIpM2RBu/n304O0SXz78edX5dJ5XCFk
-oljORybtKIdkq+z524+/bz4/vH76nwfLolG7jn57gweSjwK3XuGoHEW3HhlHvWtLBkpsG234
-7XU9PqSQ/zHvR0YkZ3GcJRfrWshOJ+pk2587YP/GdLISA471g1l1cs6dciFHQd0H3T6ozEUD
-Q88rb+pmNjVdTXoxYRS9pBpSHtiBWCH2NEENiunTXtPFbEe/6x6XZt1omMKeAxwYTcvLg8Ua
-pVpPq4dSPO+Jj/fwfX61fvZN6TdiZrHkqit45ZKyoGTD5vRVfjz+cVdJjim1xmegSg0rQgdN
-kkMVQ5nWrPno0nmVJDF8zQ4dzhNFUk5adNlsdqFLFAvaBysIrcqiInRC4+aDLlXf2A7fW5yn
-zqLZt+8/3r2uofqAJuZPJ/SJoqWpOMzkmRWbVCFgXW6FBVNkLuMl3eaO6bzEctLUrL11fAsP
-ru2/PHz7ZAe5slPD4wcnLp2NQASTE7q42Wyc1onYudo/gkW4mue5/2O7idzyPpT3eAw9BSdn
-tJbJ2flSjHHyRXJTKW+T+30pDl5mnj1NbPHVeh3hntEdph1S5ZGlud3jJdw1wcKjXzJ4wsBj
-ZTTwxDoKYr2JcA3EwJnd3nq82Q4s3otbi0PO0uRKVg0lm5XH173JFK2CK92sJviVtuXR0qN3
-s3iWV3iEgLtdrndXmCiuBhkZqloct+Z5iuTSeJQ0Aw9E44TD4JXitDHLFaamvJALwdVzI9ep
-uDpJmjzsmvJEj0500yln29yirnqNVcHYuOCnWGxChNSRzAyIOdL39zFGBgMx8f+mADqC4iBE
-KrgInQU7ntsGDwOL9iKAlsvSZF+WtxgGEt+t9KGKoUkGJ28zxLFRpwS0mNLibVRujfnKoWBo
-3LKBKS0p6KvsZy4jfM7l37NZoP0xuIO3qKSqskTWy0X2NF/vtiuXTO9JZT3rVWToFPBI6q3X
-mbdtS5CUnhhiutLDGFveTl1QSS/TXYoLFNNVKoYG7rmMIVa/1aUUTSgxnvWaEKtAm4hBh4Za
-76oN6EiKC0HfUhtMt3vxw5OBvu5Fv2LNpka4uxBxPMO0BLrVMNhqdzeaPhLhZXUF0Q/tiEcm
-B4n5NvI43LX5ttF2+2ts+EJuscE9SZe3+Fsri/MExpEtZbgxvsm6P4mDf4BvNSYfvY9okx8C
-z62Qzdo0vPIbPE95V7/GDK8eK48tncl3JHnFj+wXckwSj72cxXQgGTw6lrPrOncLyq3rvaRV
-IFf5DmUZe0QKq80sThL8CsZkYxkT4309O77h99sNLhdYtTsVH3+hm2+bNAzC619C4jNFtZmw
-9dLkkCtAd9HewLwMaklFyxDCVRBEHg21xUj5+leGO895EOBv6S22JEvBeyKrfoFX/rg+5EXS
-ekRlK7fbbYDrCa21MSlkZMPrgxSLs2OzbhfXV0n5dw2BX36N9eJxKmjV89dWv0vcSPNHZ+PG
-efPd1nMPYrJJA6Yyr0rOmutfhvybibPT9RW44VSuQdeHUnCGi8X1CaT48KPYlO/611vnnSfe
-nbW0sCwhuNxus/FfGhbeBOHy+sTlTZ7+SuVOtUc/73ClQkJadtxjtmwxt9Fm/QuDUfHNerG9
-PsE+Js0m9BwgLb60rD23staglcdcSQF2nvb5h3E6VWgIuSVY4RVWDPucBGvPRYZSiSzbhSi8
-aXDVqNIzUV7d1ogyKRcH8jV2aaFrV5EiyabpDlWIG332MFiLi73U47zI4IoTWuLW4boGTSbW
-8n1TTHRnpGEy8mmThC4EIbFFzTU8rf5t23zA9Di9Uu6S1LllfaqA+0QZDzhkmgeLnUs8Ke3g
-pOiKptHa48hTc1zy630HTGe2r6+OQl02pL6HV2puN08mYpstZ2ciy7moPi5t9T1BXLnNwuGq
-63Yf+27CdDFxIqYdRL0Tf+09b2EVa1yfw82iFcKqPMJd49ysf5lzO8tZ52wqbktN5LHXqbPf
-yxvX9TxsPONxCYnV5nDInx2LFqvQJYr/6qhuQ6UUQJsopFvPCUOxVKT2KX00AwVtCjKKCs7Y
-3lLbKKq6U7dI2isGMH+dlMHD3BPxQKWtqU6oyfpGc1DjTnJUqkqOb2Mn/65/IHmCBquhnx9e
-Hx7fn16nYZvA6Hto/9k4/lPtXKapScEz0odzGTh7BowmZrz47EfkeEG5R3K3Z8oL0WgNWrB2
-F3VVY78pUpZ6kuzpcHHkNzzVWnY18KqucTuob+49zUhs+/Ki9x/BwA0Ntli2RNnoZebDZkmW
-BvDWc+f7gtrLbU8xHwv0tO5g3nSXH0vbwzzj6ItZxzhEnMW4Zcwir22FGIV6BBDLWJ5YxpKC
-cuvEwdNBR1+fH75M79l0z4OhzT21XvApIAqlGb410TVZlFXV4OohiaXTRjF4/qGVCZzohyaU
-wphgTTSZJnPRqo0V7cQs1XSWYgLg5gBHiro7QUznP5YhBtfi6MTyRPOs8Lxha7HeWBhoTgrx
-LZS1FVzEwGUkcQir5u968BnpBl7DqsqJt8s5dqlslXLxpa2bMIrQV5YGU1ZxT/tyFvtyhi9x
-MnuLl2+/ASoochpLa6bxNtTNSBz7l15/8SYLLmtoFhjdzDn92Ry2QzaD6J2pH+yPW1M5pUWL
-a30GjmDDuO/gqpn0ZvehIQeo+y+wXmNjabtpN5g01edTU3vLVTT4gNT0DiZ51hW+P2pYzEox
-ca5VTJoq+dTIfcgRbDmRQGKdQ7KqHy6Mv7Iux49nqi3MjE1S0NSnahBaUy2tCaPEOW6myuna
-ZLqwKmegbI+zxLQaAGoM/+SRxWGXIZpk61Ji+6tSMAE/A9LTJiYdy6zlI1wjD7tk23+lInGG
-uT6S2IU09BiXBycXebYpU8MpihAntDvAnxNSBwutkJtgm5sm0Nb2CGA5+B7JlmNxkyw3/vHd
-/hlippoiyHK3wU9McPPEfB7l8gs5Y7MKLD3daQQeMSU9OfM/wDZ5qGZl3u7ALzg0WzvpQJzx
-oStm04EeE3AqCl1qPAI6i6QOraHiX4UPiEmWfIw7K6GmWvcumtGratE4C+nMSxKTq7fTucpY
-nM4lrpkAroJTu9nqYYtFMkyCrBLaxJcrrfdu688NxC6oyxa/wh46qFkuP1bhyq81cxk56q1K
-fBfU9kwrJpZ7YGtZlt2jwQRF4VNro9B4zwn+sWX3lkIIPFiOYoEqT0ii30qbDCpV0jg0IezY
-FkiCmJ+GkLr5jy/vz9+/PP0tjkFQLxkOHtn8dTK/SUnPkDV0tfRotHueipLdeoVfHNg8eMyU
-nkf0zSyeZy2tMtRkQXAckwzCeYEbQLvPnKtx+dVkh3LPmilRVHMwPRXdN+gHILykE+eyojci
-Z0H/DCEkR0/wWMh7lT0L1kvPO6Qe3+BKzgFvUYUloHm8NV2Xj7SOr6IonCBREAQ2kUWLwO4R
-ZrnoV5S8sSngwX5lkwqphg1RoqjNLlpbeyMMEePr9c7fNwLfLFFFlQJ3pts4oFl7lyZU0ke3
-HBb4IKfnO5kZzZk5A95+vr0/fb35U4yz5r/5x1cx4F9+3jx9/fPp06enTze/a67fhOT9KD64
-f7pDT8UE9Bk9AC6O5OxQyOBZtk8uB8RitjgsPMN3UTcnO9aUg+7JvThKM3xfAd4kT84eC3uB
-zi4q5cRkypxMlHgbWbXEfUhqTYJcnPLcNMo9wmTFTv5+f3r9Js5Ggud39RE/fHr4/m59vGbX
-sBJsXU6mPYqsElFqPYzYZaArdCtUl/uySU8fP3alIw1abA0puRA/sWfuEmbiSGyZ76opXoHd
-uNK2yXaW75/VPqAbacziyWYwu7by5rSffLPuTHNmEwQX8No4jCyw6l5hcTbd/nTjBFuqmD/E
-IZjlE65eNygVj/j+84c3GPEx8JJhi2plqw6A+BEL4FaFKFUu1Lxs2h2PHz81cJTIcJGHy+cB
-0ruup4Hj92udmgG5+AMCKhh8e3px7+cMYJZvF12WeQ7kgqFU09VTafFRh1Z40IE2CXEokN7T
-ircwcfSPxFax8JyaBUcLz2/96GS9sOCP98VdXnWHO0eMHKZU9fry/vL48kXPrclMEv8cK2q7
-M4dQBr4w7sDVZMkmbD0aGyjE+2HyKvd4o0L1rVVlHUvEz+kXpkShit88fnlWMc+nwiYkpBmD
-ACG38uyEl9XzZDHjluuWAZmstwYGs7Rf96A+f0EMm4f3l9ep4NZUorYvj/+ZSu0C6oJ1FHXq
-ODAIQ+BlSQbzMd342MzdrfnwpmIFberMIuSmwwtgEH+NBB0xxwAMPTWsgjpLdPw05rocn+A5
-rcIlX+Am3T0Tb4P1AtNX9gy9eGBNDo2JU3Nd359Zgvv3HLIQZzufgfWQFSmKsoDYJvNsSUxq
-ITDgDhp6LrFynpP6WpGHJGcFu1pkllwY359qfDEf+vFU1Iwn0qgY6U2YsJY/NXkjpmMI2jyg
-MnO9nKpJ4REqZVYqhrTe8PKnry+vP2++Pnz/LiRWmQyRBFQV8rjCVx9lAnCBZ7Je2OsPWaLD
-LJ8LTSU5GcUe90oouy9aZar91UmU76MN32JzV8GlDJLx00l1bqP1erqoiZXhN91fcD0822fp
-NnB0/E5rmgg3JlIj5bFp68Gl46VxOJ3IOj39/f3h2yd0JGfeyagOgQcVHuX/yODxdq9ucOFc
-v5xlAAuKGYamYjSM7CtwNWXTeNpAffRmV5uuTrgzLcs6Vs50O4QckP7qPa9keqZEcYW4xlMZ
-dcR0GSIjCBLDlWbIqxfHTwI2hHMNpctl5HF8oRrBeMlnvtm2JsFqsZxUH95iX6n+eCRBs7/g
-1ZZa746c0ViCEpPOaq3tZyTDfxuC3n8rLn6qqux+mlrRZ9wcVeDzEVhxXaModgbeExDvRfY8
-3HpGw2LBu8ZiwaXcnoXv8SsfUCGCh04f3oeC8+F9/vu7cNt6Ltl6HrAp3i485oUOE96avraM
-V8A0yyMyinYLXIPW82RVtPVYZfcs3vPOkEdDlxuPV5GeR/TOKljjvWPx7PDOMXnC9XyFgWfr
-0SwaPOtoh6nQhvmQ75errbml9gN0IKdDAq0Odx4tb59H3exWaywOqeOyW/4Uq4NlF6SIWnHg
-nPLUzbaKhIzYZRS8rHlHxBH7dDjVJ/Oa1YEsnwwDGm+XAfZ8xmBYBSskW6BHGD0PFmHgA9Y+
-YOMDdh5giZexC81AGyPQbNtggfdAI7oAv7weOVaBJ9dVgNZDAJvQA2x9WW2x3uF0u8H68zZq
-Esu+qKcHCxxISR6sj2qdRsqBp3E8p1gN9q777AGBx/FzPde0FVL1mG9CpA9iHqAtjcF5Ls/z
-KcLWt0Lc2SNtFULpYp3iQBSmBwxZL7drjgBCDM1jrP1pw5vk1JAG1er2XIdsHUQcqb0AwgUK
-bDcLghUoAJ9VhGI4suMmQK8Lhi7b5yTBunKfV0mLFcrWa9RStsdB04nPOBD9sRw/UM+W1zOI
-OVoHYThXqox9a4elGCC5XOObgsWDbgoGh9jGkOkIQBisPSWvwhA3SDU4Vv7EHisakyPAEssn
-TKhrS5Njs9ggS4xEAmSdlcAGWeQB2KFDK6X2bTg/vIJpswmvVHazWeJV2mxWyMoqgTWyqkhg
-rrKzsyCn1VJtZ5PUDfW99BgXdYo6yBzGM9+gmzJolmeTbZfItMyx7UNQtygVGdUsj5D+A+8E
-KBUtLUJL26H57pBhFFS0tN06XCJSiARW2EcqAaSKFY22yw1SHwBWIVL9oqEdOHPOGW/KGhuv
-gjbiM8Hup02O7Rb97AUkTkXzHwzw7BZzYprUNeyMjqjk1f+0lTgZJKoQr5/YGDqaphV+JBq4
-6uU6nP2kszxcLzaImCeXYjkfsSVxGQWYVO2saivP5x0utp7Tir0GRFfKWK5WmFgJx65NhFa9
-qfhKnOzmx1UwrZebLfbCp2c50Xi3WCBlAxBiwMds45HX+LGZ7UyB40udAJa4AYvBQedGX5s5
-IMJdngTbJfLZJTkF3QtWHQGFwWLuexMcm0u4QBYG8Ei+2uYzCLYsKWy/3CEVFeLhetO22rut
-B8cWFgksN2iHNw2/NnOFRLzxOP41NqAgjOLI9mQzYeLBIkAPZnwbhejsltB2bsCJGIEIk+ZZ
-QcIFsrMDvcUF0IIsQ4/bmnEz3s4tj80xp5hw0OSVCsQ4zRAQXKFiscz1rGBYYXMQ6FjXnBnp
-aHXChWkBbqINQYAGXKhidPAGj7XtEi232yVqLmBwREE8zRSAnRcIfQCyp0s6uuMoRJxXJ7d+
-U8ZMLN0NsqEpaFMgBz0Bic/xiBwOFZJIaFKrFi5wJooZ3Jxq+AjA+tF34G5uF4GpVZAyBjEu
-TjUBTI5qUTi8i9JG0XAkJvddzo2wpprZUTf15EvNpN8UiFJkeizqcW0Q3B3KMwRpqboL45Zx
-OMaYElarRyi4WhhJAs/bwGuc760ykkTrxLOspEQIYMh86FPZdZo20m0cAoOdivwPDo/Vx/rm
-Sm1HnaG8NdepUI44Oad1cjfLM06Pk3q/h/SMCm4k60QzYi4rQnDpqlvQ3efVMPUmYZF4Sbu4
-4Vg9xukvWJerRQtOkF+/Wq/HzNyABcvHrik9GpXR0PBC4KdL6Q3Kx2uVHijKC7kvT9hVyMCj
-Hk50+7Lsw4DEaF7yNnnS9MvD++PnTy9/eb358TJtkNcNl5g04IrC7Gwdy6hnRof7I2M1vL6d
-ZdJ2UvNM8WUehxPzsr1SHULvTqxOoCU4Hp+V4zCXo8czloNRsO4Kg7oV0ohNldq8KLGJvFoL
-MbdrTGfXfE+7lDUVDc2OH+qUnOpypkpsvxUZWoWAtoxbZ74LScX37clgs1wsEr6XeYzmxAlI
-h3a2otYOE1CG8ICVtsAfQCFrhambR7S1KccKmW7HSvB0Rf8ayI2oSMGvvHcQ5Zk4WHqaW5w7
-xwXYZqFais/N6rT25CQDhenbfvfbAGy53W9Va5HEIDVZ/dBv8BNqtN1OibsJEYK/fpxUQ0yt
-pBJS/nL+u1DrWJ4wbz8UbAeR+/ww3S6CyIvn4PIrDDyd0So/N398HcwFfvvz4e3p07hcUe0s
-ehhiVlFslWqUFWJ/330lG8FhZWMvkdXr0/vz16eXH+83hxexSn57sbeHYamt6gTM5MqT3Pqx
-mQLO4UrOmRW0iZsGwcDCq9p8JyZTUQaRS/DUPWp9GxDCabWU5hD7msUH1PwUCotZOZN1D7t5
-g2ucwmPrKGCvRS9g8lEY1Ew+I8XLtZnc0jXqsaLa05wg2QJ57GjJpBpOmYd7wM3yR0DIF77S
-x+o7OfY1h9APNC8mGXta5jCh1pzyDdG/f3x7hOgO3mCdeRpPBA+gEb7ceuxuqpxRZZPkcfUv
-05MmjLaLmeDhgkk6qlx4jA8kQ7xbb4P8gtvaynLaKlz43WDJ5tVghY/jsi0xgUXMmx7gdeh9
-xmewzNVCsuAajh723IcNMH6C17DPXZGEs8KfdU4DCOw9276ex9fAYwMPJjijeBUBFkmdhwlW
-CWqruTuR+hZ9fKJZs4qCSeH4FQFBPW9CpH0Y3ZmNrWfp6LG5/CpjTH2RisdmgBcAeV7+FT6f
-TT+wfSDFR7EuCFHHE+pX8NyKQ89Mx0ZRlUce28AR909MiW88bgPk3CBtsFp7nIVqhu12s/PP
-XskQeUKeaYZo53HjNuChvw0S311Jv8MNLCXebJZzyZMiDYN9jk+h5KN8NolF3YDE1nMfK1sh
-PnhibgmwoularAh4n53oPlgtriy+iDmjjTfrhSd/CdN1s478OE/ofPmcrbabdsJjcuRrO3LD
-QJwJfg0st/eRmJL+JQ/EcPygt2/X1/pNnKCpx/4c4IZ1JF8u1y04HySxf0PIquVuZs6DhZvH
-5lcXk+Uz04NkuSeOHLjrCxYemzbly8/nKnfO0Z+slGSIcEvbkcFjK9czRCuPy/6+3aJnZrZr
-WUa0ucKw87TRYJjfzwemuX1TMIm1d+lxxnrJVovlzGwTDJvF6sp0hPhn2+U8T5Yv1zOfcpPj
-frxhdQKbevcTJDX7WBZktnt6nrneueTRamZnEvAymBftNMuVQpbrxbVcdjvc+qFODqCQRDW1
-NXWe+QqCEzwkYzV2Jqhp74HRfNBed0UyAIZupIa11kPfoPQPZzwfXhb3OECK+xJHjqSuUCSn
-CbgVRLE2R9LIVp8ZTYxG19TwKGllkRT2b2bdR6ry7bezgqdJOsrsqigvWxZJe8ewuzKJa9Is
-7bY3dULyj6SyqBdW7Msi1gWNkqIo/lDWVXY64DFfJcOJFMTKrYFYaHZOok/6F4S4TCpq5vfo
-DShD3cBBpL5BH2c6mvj69On54ebx5RUJt6NSUZKD76SJMk+hok1ZKZars48hZgfWkGyGoybw
-+mIEDQ2RrHU8aBI9eiRZy4T+CldZNDXEVsE66cziBD4EwzWHIp1XmXW1qqgkPs88NFA8KWsT
-ISOyQsZBLQ6ofaVibU6F+cFI4v6UwnMrhBqLoz8/IMA5l1c2WJKz8cGIH/0CNqrTBS3PUWEV
-ICsIdgNatS5JpHrKyhX8+pCYVBBv94/IRMARPhykZHdYz1IlmoB/ECE5wg2Q+AjE6Sjz6f0F
-+ylLfLoPOaOnyg45AWRQ72GmKeXe05+PD1+nHidlnG85NDQjZiApB3DCJxlMB658kRikfL1Z
-hDaJN+fFxnxALZNmkWnbNeTW7ZPiDqMLQuLmoYCKEUuQHqG4odwR8yc8SVPmHMsXXARVDC3y
-QwLXQB9QKAPf3Xsa4zW6FZlSTB1ssJQFc3tVITmp0Zrm9Q4M49E0xSVaoG0oz2vTktQCTAM+
-B+jQNBWh4WLrQbZLd0YYkGkPMUI8scwxDKDYiZLCyI+hjRWyAWv3XgQdSfjPeoHOUQXhFZTQ
-2g9t/BDeKoA23rKCtacz7naeWgBAPcjS031gAbHCZ7TAgmCJGauZPGIFiPCuPBVCqkCndbMJ
-lii9VF5ykMo05anC3Y4aPOdovUQn5JkuliHaAUKwIzkGtKyWrmIpazD4I126C191oW7dBcl7
-idDjnhB2epkWSyBmyy5DOtfLzcqthBi0S7KftImHoX0gUtkLqDlPtiHy7eHLy183AgGRcLK7
-qKTVuRao0dsWeXj+jYKwn0+aOoDQXyzFDiCK8RgLVrdckfTMdOxWJ2M5jzcLbRw4I/Icyq0T
-dcHojt8/Pf/1/P7w5Uq3kNMiMr9bk6qksUnDNYgeufQsaENxXmzdXDVZpHQ7ukdIxokvlSVU
-aUEu31h2riYVzUtDKivZWfGVXpICkB08S5O8H8qAsz04jDffR/UQicxqGwmk4IKX1oOdNHPC
-XMS4rEjBAlpssbJPedMtAgSgrXX868n5ztrgxvzFEeQ8pZ+r7cI0rTfpIZLPoYoqfjulF+VZ
-rJud/SX3oDzkIfS4aYQodJoCEMaLBMjwpLvFAqmtok+O0T1c0ea8WocIEl/CYIHUjAohrD7c
-dw1a6/M6wIYqrZnpSnyo3Ech726RXknosWCc+HrtjNCgoYGnA5YYvbjnCdJuctpssEkFdV0g
-daXJJlwi/AkNzDdFwywRojsyfFmehGus2LzNgiDg6RSpmyyM2vaEfnnnPb/F/Uz1LB/jwPEq
-YDDIadntT/HBjOc7InFivqDMuSq0dr6ifUjDLs2SlpYVtiK5+MyBGdgJD+wHJMYB7V+wGv7j
-wdpG/jm3iSQ5dN50J1N0uY149wrNg63WGkIWfo2YLqLVoROOys6hUx1SHx++62DqE4dLKss8
-ucc1u3pTLrNy03q02XpzuawjjyvfnmGD3zSMsEefrhg+lrUd/Wzavt8fBlloomNSmbBzc56O
-FFBNr/uspE2GX2wYCWDQvAOb7j1lHZOWnXLtPWimCM1X1mxWCspb3L+O1jE1ywBxV4N12u+f
-f/75+vxppu9oG0xEJaB55ZbIfPGmtXjKP7rtrm1IsY7QB1E9HiHFR77iBbDPCL3dszpGUeTD
-knRl2Cr25uVivZqKaoJDQ1jivEpcZVm3b6KVs3wL0lRA5IRsg+UkX01Gm9ljU5myR5BWSkg+
-ADPVWKMkCLYCRLm4dERBct4GwaJjhnftkWy3ULOWPLZ51Ubg3GmMAEbrzEj1Bpm4e4QiV2Aa
-N7N7OL4CMXxWuBXH5KZ0pIY4F411JIOqCdxyqgbTgeWkGFx9OxpOAGzasawqU30rFaYH6x5D
-VihWBnhuDXp6l3OmJrp3j+Q5A5dFXrxImlMFYWnED3wJWmWD7y5tY+ZZU1dg/5mH4t9VPuk5
-Z45JDZG/VOVNSa1wT59u8pz+DvaGvVNX0xxdCCMA2dKIukQYFM8/bXqTkPV2bQkD+taBrbYe
-+5aRwRPmUApvtc++Rko7fI8/nFB556Rl8q+58o/E4xbPwH0RmPbdbZJ4/JlKAZPAqaHAy5fN
-IzuPXyqjXz3iha6fWNW2iw3upavPJBUyBt4GxaHuuSfTpXn6++Hthn17e3/98VV6rgTG6O+b
-NNf6/5t/8OZGGvz+s3c8Ns6x9Pn16SL+3fyDJUlyEyx3q396VtiU1UnsHiE1Ueme3EstpSfp
-AwX1Yt/jy9evYJCpKvfyHcwzJ4Ir7NGrYLIPNWf3ukXHSYeK5NpprJlif0pDZ/ka6fpOa0IX
-H3tZcTSF72Yp9N5GhdNLJ3NNR3fA1cZD7s5G/8tFgJFCfETWuIz02gr9ONLlHoI8g1H77cO3
-x+cvXx5ef46uwt9/fBP//y/B+e3tBf54Dh/Fr+/P/7r59+vLt/enb5/e/uneM/HTXixP0pM9
-T7KETu9Nm4aYtoxagK11eF+lM/vx6flFHG8eXz7JGnx/fRHnHKiEqOenm6/Pf1sTtZ8m5BSb
-R3FNjsl2tZxoGnNeLVdTbRXly+ViKtbx9dLUl4zUbBlOhKBLHm23E26gmv4w9A1rFW55Xg0x
-EOqYD+12Gyimw2YtZU7Jen7+9PQyxywEntZmhs57sPoWTbbFdIXrSL6fN3J7+jaTh9R9qHPd
-w9en1wc9i4wzqwTTLw9vn12iyv756/+j7Nqa28aV9F/R09Y5tXVqRFKS6d3KA0RSFGLeQoAS
-lReWk9HMuMqJU3ZydvPvtxsgJQJoKLMvidUfrs1Go3Hrhs/+7zPqtwV6pnfq6Zp0s1pGgfMB
-NKCcXlzF6TddKiiib68gS3g9nCwVuXy3Dvdiyi3SdqGGwiW9HjZPb5/PMGK+nl8wjsL5+dss
-hSlq6/Du/sI7oUfT4gc+xoBGvL18Hj5rFumRZ48o63x8RkTH8U2R0RjIfaCCuvnQOLy/Bc6F
-wC33LvCi9/HchYgBqknTl1OBnpylDJe9p0GIbTw9UVjkxcK5NwsLCyJPQz/IwNianWO9dQhp
-Ymtje9zEVl6s7AvIOPdr5aJ30oMmq5WIlz4OsD4MNs6aeP6dA09ndslyGXgYpLDwBuZpzlij
-J2fm59AuAe3k414ctwKPGTwckh1YektPTwQPg7VHJLm8DyKPSLZx6KvvQxmkATBBeUC63kZ6
-+w66+fH198U/3h6/g1p5+n7+53WWNW0yIbfL+H42lYzEjbM/jeer98v/JYj28hiIG1gyukk3
-RqgVtQoEieutQwLgciqiYBl5OvX58dPzefGfCzAwQfl+x9h+3u6lbW8dNUwqJwnT1GogNwVY
-taWK49VdSBEvzQPSv8Tf4TVMfCtnL0ERw8iqQUaBVenHAr5ItKGI9tdb74NVSHy9MI7d77yk
-vnPoSoT6pJRELB3+xss4cpm+XMYbN2lo7/IfMhH093b+cZSkgdNcDWnWurVC+b2dnrmyrbNv
-KOId9blsRoDk2FIsBWhvKx2ItdN+9NTN7Ko1v9S8eBExCUb035B40cCUabcPab3TkdA5LtRE
-e/+n7a2RUmxWd3FANXll1VL10pUwkO41Id3R2vp+0ynrliYnDvkOySS1IRtrDQd1NGa1IUtI
-RRhtHLlIQ1DULUFdBfaeljqSsg/DNDF0JWtj+Ny5nPAMO+rVB8L6hBXwufgko+L0Cg4OvNiW
-WM2okPzWttLSiuNiqjMpoM7q5fX7XwsGJunT58evvz28vJ4fvy7kVZB/S5Q6h/Wnt2UgROHS
-PpKu27Xp6GYiBjYPt0kZOWeGRZ7KKLILHalrkjr3tqPJ8G1s2UDdu7SUJ+vidRhStMHZDhnp
-h1VBFBxcFAIX6d/XCPf294NBEdOKKFwKowpzXvuP/1e9MsEnnRfTZLqOMcsKS5bnn3o99PZb
-UxRmfiBQqh7vOSxtDTeDZqujLJnC0U2rwsUfsGxUE7ZjJ0T3/em99YWr7T60haHaNjY/Fc36
-wFyAlrQlSRHt3JpoDSZcUUW2vIk4t6cZJrdgL9m6BAboZrO2DDAO6+7l2pI3ZdKGjjCo2wAX
-C0e+vDy/Lb7jSv/f5+eXb4uv5/8xvrq5Dd+V5cnSTipN/vr47a+nz2/uGRzLZ/Hj4QdGLdis
-TJKO2mqQBBcmAaPdXZ+DqBeiuZztGh1yNrB26xDUfeu86cS7zWoOiSOXGMilnkVSTNv5FNOW
-Q8kxdpQw3rQjPYVudP0UqZLez8dkys93WQ4iK3Z2vKNZuodSjKEdzeqRvttO0LyZQMaQxxeP
-QBRYH7JW70iCRp/DRc3SAdYa6XVj1MguZfluFh5w3L9ZwPCity8wjw7cCfPxxuyCjltX6HM7
-i171jdoIuI+NgweEW5b6QrkiDDIEn9S9Q5c0i3/oTcHkpZk2A/+J4c/+ePrzx+sjbidPGzMY
-R6h4+vSKe5mvLz++P309G/IOH1fQu/LYgqruDhnrPB+U35tugyfawIpmz6h3GHbChDWya7Mh
-a9va+vQar0u9t+1LgA6sGtnakquw/CAd3v3++uW3JwAX6fnTjz//fPr6pzH4p6xHVZ+XLSrN
-jTssUxJxBC2C/ov0EKm377NEeg7GnDw6anHKflUHMejcVEV9HIrsAOpEtizRkYx+0RDd5sO2
-YNXDkB1AVD1f8pBnlkI5lMd811M0GLSJPY7z0rxBPtLA7HbSRQ6xSwszJxPS0m45y0O7/IS3
-bSeGD6BaTOBDX9giva2TvZ9XYyxza6DOEjSsUmp/tCHevj0//lw0j1/Pz2+27KmkoBVEs8XY
-Wxghru6g8qTNyJjLqnX6JPmnU+UVMWrmMOe9/vH4+bzYvj79/ufZaYR+ysV7+KO/iz2eOTDh
-ngsO//gevSsdy6tT6okNpXR0lrOEvC566UXdYlA4pf4HdNH1IOzBjmG1dJRuZ7jvXh+/nBef
-fvzxB8aEtC+I7Yyb09MsoeYMokkwRSVlin7ar8ze4a1PyXdGDJodHuRTF5ABUM7ZYKFCPKTD
-8nd4nFgUrXFSNAJJ3ZygecwBeMnybFtwaTUCsRZmyIb3WYHvk4btSVKDGNKJk7jW/MUCLjXb
-wLXmL0bNTVvjZv+AFz7gZ1eVrGkyfBGc0cE3sd91m/G8GrIq5YwS9qmVxrkk8jrbwWBR98Is
-BgiwgEA4fDWWDN1qZPTQxm/FkgcV+tVbAOQezRbqQR+kkLxQ/JHaT5krk39NYakJJ4P4CZWa
-8tXflPRpOWY8gQZBq9iXgLX0qEUILBn4BN5u81JILwgs94TZQkFAyac5hYgh2dmOW5+zWnm8
-EaHxmHsFq25gOrUjFRtiEqTKtY0Pr0CWubf4lh+8GL/zBEwCrMji5fqOvnOJWdH290uubGtv
-e29Ylfh15SkIvdUySV8mRjbR118QYQeW09dLEOVezh/8bK2yGpQL9wrpw6ml76sAFqU7L3MO
-dZ3WtVeODjLehN6OSphRfT7O1Jiir+iooeotNGFt6Ys2jOxDZyd+UCSdv7NgHHnlawsGVS9X
-a7+KQMum8zwxR798ev21a2sQ1Yr2PoSymoGsVnXp7SBu24T+0bdtYR0n9lnmZ3tXDw/BPRno
-FFXDCfTzwZqh9Fmxn613AXUr/DIjDEWSujM4EvVbYO3kYF4nYsVqt1yGq1B6HHGrNKUI4yjf
-edwxqSTyEK2XH+gFOSYA9X0fekI9TnjkcdyGuEzrcEUbbQgf8jxcRSGjHJQjToV9V/zaZJuo
-9FdbpPe+AHMIs1JEm/tdvqSnl5F5MFgedjf4u+/jyAzC5nxb4xPOvfFdUoyxT8lKrqmaIxX1
-/YqrEFVzJs2ylvH9KhiORUaPq2tKwfbME9F8VlPaxPHGF7vPSOXxuzOT/DLaRMtf1ahS3f8q
-UROvPU6IZrz2+j28lnNYh8s7T+Tya7Jtugk8HsRmTGiTPqk8d/pzWFwy0oTepyWfDLzk5evb
-yzOYdOOKa7zm597bz9V7fVHPnUwCEf7SzpZh3VcXBbbtVzjos48Zbv3N20qlQ1OVC4lhtseb
-9NvT5J2cWoapnVCnkQYZ/i+6shLv4iWNt/VRvAvXF5XcsjLbdjv0O+yUTIDQPAmrElhUwHKj
-Pd1O29bS2imEtayxLsDfGG2r6wfvnddZGseedZMkRSfDcLbZK+qumkcOwJ8DerIYvWySdPQV
-C5qHz928GqVU6PmqNFzvV+gErjQJ+2OaNSZJZB+uM9KM3rJjCaatSXxviNtEGV9WG74thG49
-7s4adywrdHXSw0cBkGTv2G4bt1DdWaO2fUtwwPEnMm8H69G+SsW7KDTrHyfvoS5gZjF9R83b
-0dbJsLMKPaCzPpEpcCfsrl9RMOFpe1C12ucOF4soQc/YfdeXa0HcTTJ82w63C1vik+ModMg6
-NfLezTHyd1IITk0DisuQHbJKupldUbrmQBFxILAv3Txl062WwdCx1qqibooIt3poKhY4n0pH
-bDVhPk73bpEsub8b0G9VYsmZfq1gMqVJhDXYCK4z9OVkkui+y4Yd7F6UUnhu1ms+oheooQs2
-6zUZY+3CUrtclP6SVWFPxpmZ+DDGU2aHzOy3BV4kZm0yh1u50iCO7+2WsEL4IpeP8GpJR2xU
-KF+vjLCGSBR831jMhWmB9w1FU/s4lhZlXRwbIVJHWkjQoqXTo6MnThZiH2UUhWSYHUC3Ut9z
-MbIoojroUpE2PFkTtgzm51KKpl4JWUOmP4H9SgwlRbfrTsQqjMnASBo0XBZdabB+Pw6paMzv
-n8h+Z7UmZW3BbK7mKqiSSSvYyU2oc6+I3Csqt0WE+Z9ZFG4RsmRfR7lJ41XK85qicZKavqfT
-9nRiiwy6M1g+BCRx1HouYJdRiSC6W1JERy9kIriPfOKJoBFA80Kzn7/MEPV4x54md2VMPkpX
-03xqK1WkWCMUrJngbn7H8EK0P7PaSov7JU21in2o2zwI7XKLurAEo+g3q80qsybRkmVCtnVE
-UykegaWkpzqDO1UZrimrU2vVft/aGVreSE6e0Cm0zCKrR0C63xCkdWgXjb6fkgPf0kGB0SrV
-u2L2BMfi0NYNI5FSuGqzqRbWADr0Yeg06FTuLIfZatm1T/+lDsVnTwSV5DBblNh4E8Mha9PZ
-ElQEwDJXBK+8stE+3maZpfJMTPX83dKtQT2LVVcWSJ+EUzJllkBz8KH2g9sBDesDPB8qeF4y
-svsaP9gq8AqpRa4H0ycVXhTd0jFbRmY4M2OHuagtvzbqTjazFOrKuZ8h5nvxCR03eVyAMHuW
-btFt5uaENo7fmBASvEzhUBv81jDp6wX+OggNI7qx7Ct0vWETBusd2ETuWLAMCLLow5NLThhn
-HzxkSq3pooIwLNxMG3wxaQ9qBPZ85wukpsygJPWeaE1FNDW9YTbD97dTSBBVr/vQKdGBgdlN
-hkKu1HWj7Mhby2KeqKPhZS4G+Y1u1/3u6KmJC9yzsktTNdXtg3/xvc22NX0sarQUHSYtPc+i
-jYSSiYTRG8ZGurL2uLOfUt38/nRwFUT6eDNX26inhqLJtOh78ohTJfdoL83mKLWq0QGF9ZTC
-U3fbDojXLws/hi2TsFo/KV/BVS73Btqy48wbKOb9Ms87KZlx61B8O3/Ga6VYseO6FNOzFbpM
-MjqL1CTp1E0RamdS4W1nrCouxGG38+VRu9M/HZLpqFiRRUeZBgrqUH+ZXd5mxQOv7C5sM1k3
-/tbgHcb53p+mcfh1sksC1SsY6f4Y0aatU/6QnYTdCz1JkMKn4CYMyDMhBeoX2Gbz4NPnddVi
-aEbjQtFEtTpr1JbhlUgfL/AhcV3a7c8KStIV8hH6a3Mpz0r0veJtQb5rqdMLhPb1aH1cMyjK
-rQ7lchNHvm8CzVPSa8rJwykzCV2C95ISk3gEU2i+uaIqO7V6E9igcgwmaHONS1rfIPaebVvq
-tgJi8sirPbNqeIAlFQcNMN9+RnqRWDFTFTFL7cYUWVUffF8R+z6OfYI6zBeZBgA/GtMh/YR4
-PhfibVdui6xhaXgrVX6/Wt7Cj/sMLx55BVkd8Jd1Z0Zm1chpV1gXU+cwx4BO9U6azCjxJLrN
-LDVRgoHGJ/kyaqkkte+rkZbnZjFgEsxNbqVLwKIFvVTUZuCWGfnWkGiyCvpeUccuGpasOFW9
-VSWovCJJSaK+z0bQL6dbNIzl0UCWChpJ5k6GFFAwdKkOK0U7B57aOHNPi5cCyOWqQuskYdLs
-I6h0h/+ClaKbh0RWRJwS5hYRBjzwiqBosgzv9NklS5RcmJnnC3wFXBzxmv0pfZKU49VNJtTy
-45LlQvQ3TN9aGPToMJtQsla+r092O+Z0f7mSH2qzPFCfIssskZJ7UGSlTYMVnhzPJmYVz+m3
-BL5DY2hoBOVlSavypLaqPHI+urM0Suo5DB1PKR+ztrZZM9H8bPl4SsEeMj3eKmar6NbDvqPN
-ZWXjFI3rRgQdEpLWo17nOANuRhhT6KO2y/MEsjB8XqBNSp3u6/fz84KD2jRTX5qrH5RAAsxF
-cEL5Hd0nYDxzKYtsvItpNs259aLWgcrNjUljLc4+TAz7xOydmcw4JND+OitQi0mmt5Av0UII
-NxPIZMd5jnYvqcNtj6fd89lFwcaJIflhFSckffV+xIbjHlRSwT1X76dUys0dpvIKkXILCqoW
-N9LyHMYQEDwPJ5QzJpvRR8MJ7kQZki0zAr8bgCdoghLbl7fveIcBX50947Vp92aqKmVz1y+X
-+HE97exRkPS3NzIqerrN6XholxSOXGjqdLfIgLJrVTa1xQvXwPlBSgKVEqVMwOqCymuF+ZzX
-dGmI/9v3XRgs943NISMRF00QbPpfpok24c00O5A0qO1mGpiGo1UY3PhiNcnG+tJllx31LXbM
-0nUeWehw5+5Wo0URB06TjRRtjC8FYd1+K9FxrN/TvP2RqdZZowU7htFVvcViAiH8oxpx5RKv
-tIydy2Abg60nz49vb+6KX6nDxHI/ry4WzFcTqoOplUqWF/9RFcyg/7VQ3JR1izd1fz9/w3eP
-6HBHJIIvPv34vtgWD6htB5Euvjz+nJ6PPT6/vSw+nRdfz+ffz7//NzT+bJS0Pz9/U09Sv2Do
-oKevf7yYrR/T2ZwdyTf9+U9pnN3ukaC8ajWWJrgUzCTbMUstTuAOzC/D1JiDXKShHc9iwuBv
-JmlIpGm7vPdj6zWNve/KRuxrT6msYF3KaKyuMmvVPEcfWFt6Mk7+4oBFiYdDWQWd3W4Mh0l6
-0/iyN4bSy7884hM6OmhOmSaxzUi1cLM2D4DOG3/wOpVNDaaU9OqvXZgnkTPJA00FZb6RZ8iZ
-cmtKZU07VsDsUbjjtnl+/A4i/2WRP/84j9Pj5E/QskOwIEJtAt3vqzHZc7AHPQ9lpgnhzrzN
-efki2AZaj3RC3IW2XKvbI9YI0jdKEvtm3gy7blqag1qj7tVqNw3jbYK3D6nm4DX6yPBlMsPG
-zUMKSvbRKiARZajtM2foahR3uXEHNSuyMSwaUXYDs6sdHWSExtFUxiScmT6HZ8hOphyYVZPg
-gcOyg0R4Mz+ImQN0+gwk3NuvCYRloaOix1bGQRj5hfWaah1R5yFzqVHvHDx9OtL0riPpuH/b
-sGpoHN1o4DRWCE4D9ZaD9CY0p8pEDl0YhR42qVcOt/tf1uLOMwI1FqyHhrXu4mqWRnsdJBvQ
-dzfWDGOiih1KD1uaIozmntFmUC35Jl7T4v0hYR09Lj6A/sRlIQmKJmni3p4SR4ztaL2AAHAI
-VsYpySDBs7ZleNBUZHagtinJqdzWBQlJWirUQzp1J5ZCe9BjjiExKp2jh9PaFywNlRWvMloA
-MVviydfjNsVQSo9sHGHFv62rX+hkIbrAMXzGbyl9ct816V28W95F1P28uZJFQ29uOpgreXLG
-ykq+sSJQASm0JgaWdtIVwYNQWtdcKfB6Td4jRLDI8lqau/SK7K4KJoWfnO6Sjd8ldHLCTWDf
-goin1s6eWsXhjJAVttyoY7cUZv2Cnax+cgH/HXJbC05knMXNoVI43ZEtq5LswLetJ8atam59
-ZC3wr3Vy+zwPqK+1F5nUC6Ad79HRg694dY69O9qlnyCLb1bJPiqW9Y5k4mIf/g/XQU/FYFVJ
-BE/wj2itVJ6ZfcRWmyV97VaxEaOZwedQnjpvcCDZs1rAbORpB5O27sDtaMKqT3o8rbVs8Yzl
-ReYU0atFSjkfa81fP9+ePj8+L4rHn2CqkoOt2c+OTaoxTEufZPxgm3n4IGc4bD3PkicDlQ45
-o/KTNrem3nCqYSfC5+qeN71uUup8epYKezOoo/qQQKdFUdWVg35uIiDdlbvn16dvf51fgb/X
-XTN7t2zaoOk80eBVde1NeNro8CZoehZ6IrOrRdThZvEIRzd2j7Buvx24TZObpbMyXa+jza0k
-MPGF4Z2/CoXHfi/7ef1AXy5R2iIPl/5hqt8r+feHCr5FTzS14NJW2UOJjwU92xz6z51fSvFg
-ws8z+/aK2SNJu+1RrBiqxL8zqcX6Rqt2XaXC73qHza0+j4NGsjb3PNnVLbwRv1pVge9GdFk3
-Chn3wvz6N02Gy5e7UQ5LyqG8oUz0IfIN3DpPsdB0m9OPEzWsg0ySCeSpyfxDBswCdWjgTdAV
-DR+25PWc7jjf+zmqTVCTgJumJoUHq3geq66cu7CEH8MW3ycQpOlx1iUQtIrc0Vk3nzG5PZ3q
-Yx8VBkRHAvkbxxNYjm9nETGRGj27kIbGJrdgcu9VN3+6qVnS0KUUclfa/dLQDv+PaB32f4w9
-SXfjOM5/Ja9OPYf+Jt5i+1AHrTbboqSIlO3URa8m7U77VSWul6TedP37DyApiZRAZw61GIAo
-bgIBEAtSHUJB8SA1MSzl8PSoXTJ2DTFRuHQSc3Pl2wtNjFZtX2M+UhdWi200fFcNnWd3VZFR
-QrR65f3WLd+jOl6ILQtV+TPvuLknUq6fuWOSF1RWGJ5wAYqRY1FsYd7K4M+X11/i/fz4jUq7
-0j1d50rjBGG/5pTkykVZFd2W758XGnb1vf5dPOyFWnfu5Ds3mD+UNTVvZqsjga3guO7BeJfq
-unOoG0dd0tyOju2gzcgBxyUKK5TZc9SEtgcUdPONG6yuxowB7MQcqxYCMmWWQmV8tnDDqlrw
-3ZyWEBS+jIL1wmOtUgTDYHKn8XK2ns/H7wTwgnL8M9jF4nhs77+fRzg7VWYPnBHAuynx6tWC
-FKPNKiV7LB7EstGDah48kfUdwd3sCkEcRJPpXNyuPGkoVCMHT44ItT1ikNW806YdEYSY66uW
-wbDlbLH2ZHBQ1+RRcLfwBPJrgixarCeelCLd/lr8c2W3qjut/3w/v3z7baLLS1ab8MakY/j5
-gokiCV/dm9963xmrFoyeENQZ+WiwPDtGZUYLD4oAMxz6sTmLlqvwSI5Evp6fnhymYnsZDFlB
-63wwiLB2cAV87vquajDhBh8zQfNxh4pL6oxzSLYJiAahY7F38L1Hm68rUUkrAw5RAGLunnlS
-HjmU1xhHN3rjdaIYgVqF8493zA39dvOul6LfPPnp/a/z93fMMqqydt78hiv2/vX16fQ+3Dnd
-ylRBjnXhfJMCMmRSBd4ZKQPYLB+PFNQsX7JXvCQRgoUs880Zg79zOOxzaoUTYCpNIAt0vRFR
-VVuOQAo18ixC6IBGJwzsKqJ3L1ZIn8xnkBju03A3LY9CbbZkbJvur8rjO3xCQXVSUhgzZvVk
-pHSiiJPlwi4jrWBsNV3rSnQO1M2ub2ADHqmhyWwyJY2ZCn2crYbNLObjppdumJIhJPrgFns2
-D89GMDEua6jhO5oXK2SZx9Q5UclIhcr8sgE8mszvVpPVGNNKMhZoG4Ho+UAD23wYn17fH28/
-9T1CEkDLYkt/Koj3bTPE5XsQwFpvNQDcnNt0mxYbRkI4AdNuGw/hmFmCAGuXQKcvLbypWaLS
-LPh7Xe1p5Qq9C7GnhJjWPheE4eJL4kkA1xMdV2QOrpYgFpOZXVjbhYMUqT3bRg0bfAScr64o
-U6pNuHQ+VhfTHGLqgswiurMrpbRwHhzvnCohLaISi2hGPcFEBl/nyoeYEo8cAb4Yg8soXWl5
-cTQmhbr13EA4RLM7yuXWIbHLQjmIFYHg84lcEfOh4TjL7uZFXHg/m+6oYQiQ9Ne3VJxFS5Hy
-2cRVBroFgB03oZigRbCw63zYD06J6U74TNepH79qv1q5acV0wBao3x98PDgrHnHWIfGUz7Q/
-Ak9xTJuEltdtkvn1vigSWri2Sda0EcP5ZjyJQLspXS99VUW7ZZovVh+RYFmf6yT4mc7plJfu
-N359fuF7mE48ySG7dqJyuV54diS6awdd3G63f7AO4ZgJj+Z8Np0RfEPD/cxTd5pKeNfvbNhY
-64hoW2O6tl3np6u9jXghxjwA9s3ULqFkwRcT4itF+ILkfciqV4smDTjLPjgRlnNy1qbz2/kY
-LuRuspTBinonn6/kikrKYBPMCKaC8MWagAt+N6V6F97PV7fUepSL6JaYJ1ymrmbI5eV31H0+
-YEqphP8NeGcX8qqLMn7UhBUegTojMTExD3r//e75HuqxzwHBOFc3pr9K8o2TfRthJkmpMkDl
-SSZcrDLRWu82Be652MQet14TIgFoT9YlQ1AE0tfEfVRgcnR8P99w+vqip6Hm7YCdjwbp4gy0
-X/6WzPGU34oaoe3nii+Ivp+xKrJVrEQ85FEjj4awny+UD632uylvqkBFqLRNhnU6DrxQjeKl
-rBX3flDQHhDUx9aRwYnXns+XK+oc3wnYo5YcpX+r3FWfb/+ZLVcDRJxg090lbpQGG2Q5c+uq
-o4fBqGTyeWpl42AcJydiDP0+yHUrMSc9dZvi+PGxoolY6gJK/GY2Sc4qJ1EZomIsra5RdNNN
-YCcjQ4BIqqgQs8ErImZlrXBeAVq952YYn6tqT6Y+xPIUuJQXu91T2VANwT4FClZwXquLLIt1
-KQx8u/dp7ALtjiuivFAN+Fov3QuHFoZ5G6880nAeWOlCOjB83EcKvHEiFxScD6wk7Raq7pvw
-oUQDOg/yYOOGyiG3osreW2hmVeoxtSV4ktcjoPPV9zBjIRmhQkwj4ooIBqOyd5Dr276eu7Yv
-E4n1+Hp5u/z1frP99eP0+vv+5unn6e2dSJfQpl92fjdSRGVg160w8FqyTIyo296bM+54evFm
-VcXM1MRgEYylUgyK5fSlqfW0qoFePTTbQpYZqfCrNtGQ1eBQrKMHEapw0V5GW+taQLce7ZI8
-dohT4dLglXUgDcZpFU0Xek6Ug7CDgz/ox9Im5B6OfpN7DXsKXQW5SvDZqIQzxHDFgRUyC5Ha
-fbHkdjYnhMBGxJbasT67ryr3EbxDXE8dbhOadrx0GMRCEdlNwUcX8djtJooHytiSCOH6tiGW
-RwmGsXsa3GL+n3IPrMmdDF23wH5JLYvmmOFZ82v48uHi8sFyq5fsS/sdQgYbXU2iP7aq2CPM
-lDTTz6Oy8fh/wDwJPkXnARINOzOJ6XvcSmaryXpKcWpAOekG9e8mqh5KmJso4qUPJ3fMizsk
-Lgrf7tgeEbaczkKK1Var5WRaO9SryWqV0LcG1Wo1nYa0B0klxWJ6S6uXe3l3t6BVcoXyVsoQ
-fLnwJuY/bsbZz8SP09dvP3/gdYJKPv3243R6/NuW20WZBLua9kMxm6oZ5UDRNcRe/ny9nP90
-LnBl0oAMvZzOyaz7bcIfE2DSrVJ6kPJBZeWVhUSvcxDk7JJ1PR6z9hq0nbo3yz3+QPEmpy22
-G+Az5SbAwjv0jtabSewSRmf9rnMGXFeUAX0Nh2UhUrrpA8uw+Oqt8nb5gKL0OEcUHu/SnVje
-euwemyp5GPj89M6Kl/+qSkjf8fD8pUwPEs7v30lNT5W3Cosj1vKh+1+y+YyyLR5Xd11IqBXD
-3WoBmID4wB3BTcOM7z7RIuK3sRPQHGQsyVXFpgOZfgHzEjVZUOr8MP2okiyD7ytkhRg+SNII
-7qlfhTS6eT+e7lmLagJX4O3gvrz/pl/FauXJg6YIqlCSBZTqP5gE9bCbkgFcYkSWpf+hcaVo
-qnTHMsfFYFPilwmHrWxSslLTttTxVPZDALuyuoi1cwtyOM+H3QTVK1C5KEcYJS5lI7DK/EEB
-4dDXEla/JTHgrgxiYruIusKsZDPPUuJl/w6fdL3BHDCmMLYLfnVtu1TKGgLvwutV5nFtJp74
-H+iMJxPe8340hEZ97P3EuEiQhXfJA6x+ZkUNaiOQwHyFpZN2Q5tKQHvJCiqDXZIk5Xgx1Vfr
-bAYFyUMXqB8eMhH17DUmAmNwmsGPLeRFOu42YuS2zmPM504WR8BNOugAHLH3vo1SlHDKVqPx
-tu5xoSQ+tRa5DUrPfjAEHg6I4wXpKhoPD/6Gc2cKerKvvoamUwnE9r6iR5pmT/Mb8yJqT5Q8
-8kf8YmkiEN0oDUQn/BnNIT9yd1n1W4pgJyvtHzVo4N72jFTxNc2GuynydBOV5/g1DkyYcgcg
-eRJRG6Tcl+hz4Yjq3fBZScsrht+gWjJrwlpKTykv0xJIJ9LbFs+O1xNV6EZkDVtcSV3UWY6d
-Ra8NexjRtgJFoGub3psczqIgL+gutA1lO1QUQd8G0dQyBqDeAzjMfwqCl6U5aU87xH3uyq08
-P19ebqLvl8dvurjefy+v35wat90zjWCL2YK+UbKoojhKlp46QzaZqjvdRPT5bxHmxw9JfM50
-NsmR1vJsEhZ53B+3BxAxc9IvVc+cuPx8fTyNr3Sg2WQv0WFlMbPOS/zZKNfXXxZlmMUdZc+V
-JcedyjwpVbfa5Qz41AcEXNaetPotheS0+paYaiKg55De0sAjQMztR1JGzkfb3hqEBaXsaPtm
-YCvzGtQf+Lp4+Onl9Hp+vNHmzPLr00k5h40zB+inWbG3jPMBjzWcADV7u3I7sCQtyVndMVcW
-+vHRTYbq6/4ag9A0vX+bn9krwjQryvKhOdilzKv7pkq00VX7xpyeL++nH6+XR/KOKcG0X2iZ
-Ge3W6sfz2xP5TMmFuVjZqPg8ANAKuyLUxk16P2FhHhQjxlo2dOg38evt/fR8UwDP+fv841+o
-aj+e/4KV7Z24tdr8/P3yBGBxsbUrhQpfL1//fLw8U7jz//EjBb//+fU7PDJ8xjo48iNrROVL
-xFtgDMFoRMfz9/PLP742jyCL5sdmH1FWnVKpdmmV3HdXQ/rnzeYCDb1cbDZiUM2m2JsMEbCP
-YtgRrnnQJiuTCk8NDE/16DoWLYbuYkruDynRnxaU+f+lzUAIth9vgnaURORJPyVjoanlRUeU
-GNoZS/55f4TDy6QBIlrU5P4qaAbfCXWz+Zo+twwhZoGaeUxShqSSq/VyRp81hkTwxcLjLWEo
-2khRj2SAlnWa4ZB+trl0cmbDT2R/tG1TYnQ1fZQonLewKmLFgcloKz0xV0gBp+imLDzXB0gg
-i8LfPu5p/5Po4OvNPb4HgYsO5QLZwTq7DnzoV4igrLRTIrQQN+KphxIVHBGpwgbckADtQljd
-3zwCLxzfxgRYtx1T7YFwmVefJ9ahajD7WcM8pehZiZXHfJHGVYLR5fBDYnU7j5N8yscnSLl9
-gEP3P2+KjfddNdeYJhK6ayGMeLMr8kDFlCOSNoRtH1A+a6arnKsQ8o+psD1qMZGTRfbtpNFE
-gtJRDXkUjkd2ekXfnK8vwEtAJj6/X4gLsipw3DHgZxN59rtH//UZhYGXVwWZWDJjYb6PmZ0N
-pM03VjqXR5icPts5vwdF8VQ9JMtKFdqJ/bA8SmpduOmXKtivASwOLIHP/QG9igPLN9sAhl01
-rr7t+WoH4sOPUSEwAIFgUUVJl1uJwhGRDxY2BRZhV/Ez+tt2DHG/7A66IWkFCQVVmWrXTRXU
-wf22KDS/0whBSeNwhoL46OQHUBZ4nRPJxw0E8xTEFhnjlDU8Pb8+q8rro9C7JHZEEvjZFGTi
-2JRVXNmfYSM4/gTGCmtNXxzFYSBsMZ3ZOV+xYMGAaStQFOCJHW3RBycv1OVikwbDmqBM3X+y
-MMU8G/bVco+wB5Qemijd6PfRFwhFsQH5rB3eaOqgFze/geRyenk7owbTTSVrnd3/NdZqsOv7
-wA47QkginIAPQ9OUGFyeeBGdKhIz4ao6SFjVOWp7jV6Sfh3V3O3a1aJEM+vhA/DbUkdJOS3g
-PZIu4dIePbQUBKTAxEWdJURVH4fMm0BE26VACYJ+eA3C+hQMpAxUlLVkm8ATi1KrPpWq9ozT
-AcWFA/y0YYbdjqrllqen1683f7WLrNWEVitJz3jZqI5SW9qPYNPCJGIKdB011C9RKlBNHKzN
-UU59N9KAm9EZPAAzd6pzKkCNpRWKSrU5QMGrMRXAEfqUjVEiieqKyYcBJsnVFaFTVLZ9xMHZ
-PZ57o0T+COOpTYy/vcTwCh6quXSO7ITBOgHOM2N/jFAGcVQIywcCft/XhbQU9SM9Rwh27y4Q
-UuQZciblA+N5nU785LQDahVsaPgWpZ17cJOKqdM5A1BGJrybjjPrtMXKqy55C2mKqZ3VsgN3
-eh/W6xVOAtWOBqs7i+FLdAoZHogdVtWyZsBGk9Mdymow4S3EmeJe1GyxsN6q5K5MNpUv1K4j
-Bo7ViCAHOsVK6C2hqf1ntMbrlfngdUmKNW5ZSncrZ5meTGo3TwfToQA46c5XbMiaI3C1agwm
-p65Ftt8wLW9Mu7m91j/PV62wrGiUCOZvXx9M14ICcSFseVP/BrkndmAkp0LtcBD5aGAm0UZR
-kiNj6hxSH1LfHBpfMOnXgwc/nIoOnBcS1t+SVYYApgHqo7MeDIZ0LcQcEqgecyZAlsut/TDg
-UOonOrQqI5/K/4IXJpa6i0lhDBnIL/nAW0ojfBxXY2WVOBz3PuWy2VOh+BozHXQvktkYMrp0
-Rs+wVLhHWKqOL+sbiZw0cVgENgseNEXPiToofJ4xq7BcekyWQKIog+wQgHidghZdHBwG1xOD
-WJmMo8yjr49/2076qdBn1fMA0DFWS/TXiC0DgW7js1m2VFd0C0NRhPi9NcNs/O0cIo3KF2bP
-Wg+98gKLiOyrnof496rg/473sZKHRuIQKC7ru7tbZ13/KDKWWJvhCxDZG6GOU4cef+dZVwkh
-LsS/4QT9dy7pV6aaqVoeFfCEA9kPSfB3K1hjrLTyz53PlhSeFdEWpUX5+dPXt8fz2Qqhtclq
-mdKOcbkcySjagvF2+vnnBYRNYkijYuwKsHOjJBRszwkg6DvOZ6mAOEasqMCk7U2rUKB1ZXFl
-+7rukspxyB1obJKXo58UF9eIwem2rTfA0UK7AQNqXD/prqzGBkR90FWiAV7/ow9aWy0C9ckB
-AZ/V4RoY7pxw5+ssKszm4hcwg/gKLvXjEnWY+LBb/4OA0vVbPNLNlb6GV7pzTYQeSzG9PSJk
-Pgk7AvbgcG/1W5/Ng/Btg6KzYYj7OhBbu6UWos/qkU7gojVnv9KuSofAywbrlWV0Q4bCn/mM
-pMQjPCIT+3Tkg53fwb/ooP5x+9kXskZ9jy6I1o5fyLa+COmp/9lSzJVdMlTOAl881Shb2oSH
-CeYjvta9tAo2PAGJxByFWMh1Zpn1j/5dyFkOzMODLPiV76X04+7z4/wq9s6PrYiXtjxzYLIx
-lpovymEbtocpkNjbwjUeFq9D0zbzlm5O0rlU0TBrvYHjjS/x8nQky7t4+EIdV8AHsffyhCts
-5lj4Jg2kWKzUOuDDLbJl4v2pCZA9dWmgEDP30f3MPXYUzMmOgBBxIE1hmriZDB9vLEm3zFt2
-A0JiUVsWa4UZ5ALU1FlyJJ9o39eoq2H8XJQZq8E6mgUPWP7507fT68vp+/9dXp8+DWYEn+Ns
-U/ksX4ao1Q3h5WFiTYwqEZSPZxolcZNvJs7J1TNEKBckGRK50zWwfQAodkYcw2KO1igeLmRM
-rWSMS+n2N9YzrmeWFrqQCE3CH9G0yzSmc3swntJBOx/qwptK+bolFSss7VedloOfesDW7MKU
-jFMGIWJYjEzUeVVGw9/Nxr4QNTC0q5tIYmt/lBGME+mbXRUuRg+1y9yf7Em59YgHzBEOmGVz
-6p/uoNSXrrCHJECPMRQDrXqgClWXGDI1AA5OXAVTgukA5uwyBRmPrYPS1/89Hi/ASlWKwTeM
-2O7vYPw8nE08fnpa+FKnKU1QxIFfOvVw4nXpSMfqJ21q0ijK0NTuQTsKHX50VeI//Xz/a/XJ
-xrRqVgNqlvtMh1nOrJQ5Lma58GBWdt2eAWbqxfhb8/Vgded9z93Ei/H2wE5CM8DMvRhvr+/u
-vJi1B7Oe+Z5Ze2d0PfONZz33vWe1HIwHdP/VarFuVp4HJlPv+wE1mGoVwe7uprb9Cf3aKQ2e
-0WBP3xc0+I4GL2nwmgZPPF2ZePoyGXRmV7BVUxGw2oVhOgWQce0KDC04SkC7iSh4LpO6KghM
-VYBEQrb1ULEso1rbBAkNrxK7BFoLZhGWi4gJRF4z6Rkb2SVZVzsmti4CzTfWnXXGnR/d4aAs
-Nzslnt38/fXx2/nlqbfaKBEb/T/TLNiIoVPsj9fzy/s3FYf25/Pp7WmcVkJZc3fKf9cxcqCc
-j+G5WbJH2cuw2M5YxUFPwM9jRNHFGuJNbtu6zhvR27NNgVBngNHl+cf5++n39/Pz6ebx79Pj
-tzfV70cNf7W63p0V+iBkeepx3svx9loZqYEUdJsokKQyaQh5LaS+wLAMxqCk6CY+T2/nfYJt
-WbESWAFvo4qt28MgVq0BklZlchBqY1Mrx6OUqQJ0hzyhbMztjZhlyUrwBlwMu64JhRYO0SDF
-A2kXOB9i9EQVeWYtlVAX3/sgY3EwvLExHSnQc0aLTOPEoO12wVLkqOBV9/b9SAfsLJp6JT7f
-/jOhqIYF1XQPtH7Q7iOdBvomPv3n59OT/lTceU2OEgvJe+I+dJNIOIrTd5spCyb8iQ76ZvBG
-z7uKVYGVFNXF4nhmtdHd44+T1WFLRg9EUSg5l3i7CgAxs8cTnsHqjd/fYq4MUG+PGlnBFao9
-FZrSGVoNjU40NO6FQXin0KSRYDmz9BQDVLdfDHalnUrU9YdWy6T3LXq0fDBZarx4b5Pqu5zx
-ZIyR6nE12l0gAucLUoBrc7OLCseoib+9MyG2rOp9xXH/32SXx28/f2hGuv368mQnKwatry7h
-UQlzYlvnRZFKL3IbVPEAqZxuSQp9F4xHC0wNL6+20iPx4CgDYLs2WWkivT6kQV5VJ7YnbE9r
-jawcZuv9kNg0fGtvHux6s8WINxl4UjMf7oGtAnONyUwXumXgwUVR2jcvNrgbkYPEWUUTz223
-bFhleWgT0cD/b+zIluPGcb/iytNu1e6Uj9jjPORBB7tb07pMSe62X1SexDtx1dhO2e2a5O8X
-AEmJByinKpNMAxBvgiCIAw9IDxZcixWl2s8CzUJx7hb2NNa/FaL1GKCKjo0OTxMDPvrX6/eH
-J3SCev3P0ePb4f7HPfzP/eHLb7/99u/wNJc9nMO92EcMsvRSZ5ytPJL3C9ntFBGwymaHFloL
-tPT4v3AiSNj35oWfpaACcNSj29eEbi5hVEM2aMx0kragQDuBLYpdD+wnTAc26oBj82KceqxL
-4BTruASUHazVCBINoP/o6yxEDktFgmDcxFz36fhQ51e0v/DfNRo/d8JnpGXBHYfQ8Wg2eL0q
-ls5icxYsrYhMQtdquFS4cplyjMqGiFBBcy9ZH57YRAA1sc3AOtHCe99aGDyrYJrKcuICF8du
-2XEjGsSKq6Uneb05rrRkJ+PB3vU80pIDqQrfdSJBQKDBOs4T7QHBGXeaixF3ZjsZHdvq/YNd
-hVnn6TgDHleTatuLqFxNQWtsY4ukKLsy4SP6IFLJgbG4T0RRoeWsFFeDJwkSEq2i1ETHq6B0
-Our7ONEKN/8Suo4aVbkDxFxCMAJTnd2g4/hsZNGRU6hhKIw+uWnVWpWevDSN+zJ2LZN2w9OY
-S+bK8LI4ctwV/QZGb9359Sh0lTVD3QNB1sjcI0GzB9qJSAl3groPCgGOIm88YKZLU0VbxgvU
-FRXCx223akrm+gRLPBJU0jzLGgFd44jeMTfDLYe7VPlgBYNmFUVLdUdvV279TnnGoccvSBOG
-k+3PRHSOY9NrsVwhqrZHr1fqbMS/SV6BELfS33NHHck8YfGbHSzm+Gd6VeiZ74LJ6+pE5Zy3
-Q5G4qOnKEXkfTDFr6AaPFnrOq5tauP1X8KQGBoc6Df1BRNyZyGGdcoTOXd+fDONIZEwzZ8wW
-yk2FngFr0/PgtF0FMJ4ytnPf37TTwtE9dmYVG6CbjJc0WeTc03Rky8+MUk9+n8Dp3Ma9CzCq
-Y+z52+wQx6kFzd/s5DHu0iHOMqbAYTdVIrecyGDt34nOkTksgnebr3oprjH1ddLSM/RCR9QM
-kkOqM7kY7GZsNllxcvbpIwW81df0WYTAKMJcqB3TaO0vgg1VEdTsWJ3lNu8dEwJKhotSIlzf
-IpbWRBLFqgXS2RbfvNnTfKaBKB0V41K0dPUkODKpxYFlcMq6xwOqi8HFx0lqnwdAhRrG8MEX
-gYxJHd2IPb4TLoxET+tiI8qWD5pKVFsg6xvLZ4+gpN1decC06HFd+w0ZhkgKR8JKfGqlsApx
-mo2XL82Z8m3lNYNEj6xpb/zmtU4wInTowiYvbi2dYlm5a3nlabNHr3Kl8PYo0eYioxdbD7Ot
-GjfxoKjiC480fiOpDYE3yaH1Jbb5Sp+gsUdUo6VUUuvcMQrD30sKqSGFnaF2R3FLJ4r9NZHt
-EuQFirBuxnooI2lI03eUX3DqYOTmolPyiJ2WHldt1msKuwUYu9nGccr+RJY35mVi6KxENxhW
-T19JSRFkh8yxv+KhlIbUbouDRKc+9o3Ca824z1Nex0BB/3p69Y/Gdppp+MpWxdiu+zFKoO9+
-XByWvBlge6pHnuBujqa15RDJZ2jCm/AcntbidFqGUiN2SSWXkgwDxPDeuNcoAPZ4vL88njVi
-Pg4W0AmPG7zA5i6WpK+zAEeVuUvPICLhBScKVd8yDdbK6k6MhbjVxLnP+kpOb2+oxnRNX9q4
-Y0YDfKTCLV2g05nn06FKpXvMkoalKpYUS2oi6drYOoFyVJAtPOWirRvqHbpIyLGRTuigCa6e
-6UhKiuUrNqTrwbNxVKFn7r+8vTwcfoYvpMSwf9q/Ak8TPDpB6MBrF+DxQLUF36CMXqKHXO5B
-tS/QDJ+ZsrgZ882Ijqr0CBd5EjLGYnklOvJcJUbICfqBJ+b07Q7+ptfLTdNsu5BgxcCMmaWt
-v14LFSUJTQbKxNWp+N+N+5V0mPhE4CtlLQkKxKe9NQNlV1HQebTpHZM8l58vzs/Pzh0mg08F
-cGfNSTZA0UCpZBL1+jDf/nwyXmECTAo9q1TkAH5C1IGPxcABL5SItTAduHmKetgzI6Ux8/PE
-r9D4DwcBZeDeHVLg276t0QkokuvM9+sMaOgtQYorkK378H1mJq+SiEZ/IgEe0dxEokoZmqSF
-3lcNzwVmi8omydtISOKJ6CZhE4hMnqPWOWRAY1es6wQVtxwS5PWqErgvvc0/k1jMQTr6FquU
-IbcfOws7zUiBaVFE0qHmuM3kWOT7zyfHNha3ihxKN2sMInpRYWQa7tRBNL5yaQr/y65Yv/e1
-ObemIj48PN799+mvDxwRivpjt0lO/Ip8gtNIiG+O9vyEM/j0KT9/eP12d/LBLQq5Ip4uZZFF
-Tm0gQsMPhsaigJUJVzX7vcOGcpubpiVYEE61aUnJWrvp6Ik2EJf8uD8//sQJxddWrfADQx6g
-QxNe2xyZFlBL5ZihZHiaJS14NHnC6cV9MpiZ+78fnt5+TEtm30j1+mBdqNSN2E28qWBwG8js
-66CC7hvpg9orH6Iu2KgMsjJtqMjm5r09e/n5/fB89OX55f7o+eXo2/3f3ymKg0MMB87aiWTo
-gE9DOCwpFhiSpuU2K9qNrbnzMeFHnoHzDAxJpaNKnmAs4WQMFjQ92pIk1vpt2zLUKIAxVXeJ
-I+4qaM7fSjRWZDknYmisyTHj16ThYRPII/uRpzbnrYojEHy6Xp2cXlZDGSDwBs0Cw+pb+jdo
-AEpZV4MYRPAB/ZOHLY7Ak6HfgJwawF2FlSFG1bGSegJcV1Rh6WuQDPQHeFsI8DpBmc5Sk7wd
-vt0/HR6+3B3uvx6Jpy+4A0F0P/rn4fDtKHl9ff7yQKj87nAX7MQsq8L6s4pZP9kmgT+nx8Da
-b/wMkF6nxFVxHQyxgK/hRnVt2p1SPNjH56+2a7epK83CKerD9Zcx60dkaQAr5S7oZYuV+MC9
-5yShN5+4wUA9wWVpc/f6LdYDJ4eaYSlVEvZrz7XjWn2uTJge/rp/PYQ1yOzslBkmAqu7QVAs
-IXkojEeJu45B9ifHebHialKY2KdrzVf94eRWUIyGrssXnGOm2aL5x3Db5uchqypg/WGc+CIc
-bVnlwHNYsO16MINB3uLAZ6chtRbfQuDYdZ044+ih9DgSxLc48mSs0liJPAaLi37DtRs+4MBO
-/kwDrrhA34ZVruXJp3At7lqsgF1JI62ysS6mxa0kjofv39xQ0kY+4LYyQEc2OrOFV0uOETg6
-u3IPWQ9p0YVgmYXLE2S13cqxgvcQxrcsitctDPZqgsHQiySKeO9D7CN0Mbne/zrlaZwUzcj5
-niDunIcu19714c4j6NJnuReRY4KejSIX77KYFS9NbDfJbRKe3h2m4eAYgYLPbYwdsEts0dC8
-22a0TgubIGQr6rAnGg58RURn09AsDLNFEi2mF+Hq7HcNux00PLaGDDpWk4Mez3b2S5RH43Rq
-csN4uX99BUEq4Cwg1rt51oyUQREC/Cm7/BhxYTQf8VkvZ/SGiU5+9/T1+fGofnv88/5FhXy/
-O3BNTeoOo/HhrSXYFDL135FtjJZVgk1DuCTyxGETgbwWX55IEdT7R9H3QqJ6Hd8ruSvFyN0a
-DYK/xk3Ybr5a+e2daGREbeDT4d0z3jk6rFxjY4PZhYNNYRFz14s9xNFxtoSHM5jlcRhKoAQW
-mVTTmiA7g45/XbO+y2IZJ2aSKwzCs7n8dP4je7c4pM3O9nve8M4nvDj9JTpT+TUf7pqr/hdJ
-oQHvU9YFrNX9mNX1+fn7HcvgTtexgcctIp2c1da8WKpS9cz1k0G2Q1pqmm5IXTJUUo0Zhvdc
-Fej7pUNwWg8V26z7fXJmm7Dz0xTh1SO94FV/qO8V+dgKFauBYvdhZd6rvGKu9y8HTGUA19LX
-o/9h9OiHv57uDm8v2uPN8exTASvi+uAQ333+YCkuNV7se5nYgxBTeTd1nshA/8xTq6IXVY+a
-lF5etrZ20UDQPi/bFH5aGo1Z+YaWGj7KZuidcZiwZIVkf4dAfFl2IVrJt2JKqLqCgaJFjhRl
-slemO5loe7dESqzsQIxtZA6L+qZs1lo5LBv0GHFJ/bdEp7Mq1fGM1M5Qxa33pIYD/GiX6gnr
-1G9b46KGZvCfEq43DcxmLRxDIgXEwBbsYlDo685zx7CxYWmZbDoMf5gXSa2jgHBmkEWNS1Lb
-GWlNa/nw58vdy8+jl+e3w8OTrYJQalpbfZsCnxKYDdp5spjNX2Y8Z71Fg+wEUdXT2vWyztob
-zLBbeUEYbZJS1BEsjLBOxRygyCJpVUhlShXiKWF245gOGpQHph5iAJWsavfZRvmGSLHyKNDU
-ZoVXFgow1ZaFq+/M4DwsekeXm51cuBShogQa0w+jI3GjBsYRQVD5smAvoAmAuYv05pL5VGFi
-UiSRJHIX43iKIo2kTQJstODfmcaWRRrqpTJLtbLfk5RmZ9PDraemQCekZjK9z9ab5G6zPGIU
-DArkL1dIJ2ggutuBoVyoCjfmwz+ycAz3NRfz6IAt+nkUbhFsHdD0m5S9PowSNbQhbZHYKgoN
-TGTFwfrNUKUBAnPNhuWm2R/2GtPQyEjPfRvXt4UTmn5CpIA4ZTHlrf1iayEoqBpH30TgH0Mm
-YNs0mLUj0LWvKRvnNmlD0fjkkv8AK7RQ6ELQCVy1HGzc2rmmLXhaseBVZ6es0GFh9U/HTtZq
-W5IXe2U7SwyrkbnNsOC4bLICODexeJk4jhcUGl1UPggNzjxjbDQ/tCepW5dqZJ2HTHw7VkFe
-m0gCSSTBQzsSOFh5yDImAyBzYEhszIxAZvkOZpRuOoQr+4gqG8egE38v8Yy69IIXlbdouWMB
-YIALJ8NlnnMXXBRX3MSlVVuokIOWpOx1sylyNOEHEdL2kBmy7lQbJs/AVYOKmjDJK8LZmMxI
-f/nj0ivh8gcdXrMoi86kZcGaSWG2mMbq0HRcdjhzGDUtRGESE/e2PtvO6ijMZClpIkyaurTZ
-tN0yZZnNzd3/ARqVYMoDiAIA
+For your question, free_head stores the index of the
+next avail desc. I'll add a comment for it or move it
+to union and give it a better name in next version.
 
---rwEMma7ioTxnRzrJ--
+> 
+> > +	} else
+> > +		vq->free_head = i;
+> 
+> ID is only valid in the last descriptor in the list, so head + 1 should be
+> ok too?
+
+I don't really get your point. The vq->free_head stores
+the index of the next avail desc.
+
+> 
+> > +
+> > +	/* Store token and indirect buffer state. */
+> > +	vq->desc_state[head].num = descs_used;
+> > +	vq->desc_state[head].data = data;
+> > +	if (indirect)
+> > +		vq->desc_state[head].indir_desc = desc;
+> > +	else
+> > +		vq->desc_state[head].indir_desc = ctx;
+> > +
+> > +	virtio_wmb(vq->weak_barriers);
+> 
+> Let's add a comment to explain the barrier here.
+
+Okay.
+
+> 
+> > +	vq->vring_packed.desc[head].flags = head_flags;
+> > +	vq->num_added++;
+> > +
+> > +	pr_debug("Added buffer head %i to %p\n", head, vq);
+> > +	END_USE(vq);
+> > +
+> > +	return 0;
+> > +
+> > +unmap_release:
+> > +	err_idx = i;
+> > +	i = head;
+> > +
+> > +	for (n = 0; n < total_sg; n++) {
+> > +		if (i == err_idx)
+> > +			break;
+> > +		vring_unmap_one(vq, &desc[i]);
+> > +		i++;
+> > +		if (!indirect && i >= vq->vring_packed.num)
+> > +			i = 0;
+> > +	}
+> > +
+> > +	vq->wrap_counter = wrap_counter;
+> > +
+> > +	if (indirect)
+> > +		kfree(desc);
+> > +
+> > +	END_USE(vq);
+> > +	return -EIO;
+> > +}
+> > +
+> > +static inline int virtqueue_add(struct virtqueue *_vq,
+> > +				struct scatterlist *sgs[],
+> > +				unsigned int total_sg,
+> > +				unsigned int out_sgs,
+> > +				unsigned int in_sgs,
+> > +				void *data,
+> > +				void *ctx,
+> > +				gfp_t gfp)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +
+> > +	return vq->packed ? virtqueue_add_packed(_vq, sgs, total_sg, out_sgs,
+> > +						 in_sgs, data, ctx, gfp) :
+> > +			    virtqueue_add_split(_vq, sgs, total_sg, out_sgs,
+> > +						in_sgs, data, ctx, gfp);
+> > +}
+> > +
+> >   /**
+> >    * virtqueue_add_sgs - expose buffers to other end
+> >    * @vq: the struct virtqueue we're talking about.
+> > @@ -561,6 +845,12 @@ bool virtqueue_kick_prepare(struct virtqueue *_vq)
+> >   	 * event. */
+> >   	virtio_mb(vq->weak_barriers);
+> > +	if (vq->packed) {
+> > +		/* FIXME: to be implemented */
+> > +		needs_kick = true;
+> > +		goto out;
+> > +	}
+> > +
+> >   	old = vq->avail_idx_shadow - vq->num_added;
+> >   	new = vq->avail_idx_shadow;
+> >   	vq->num_added = 0;
+> > @@ -579,6 +869,8 @@ bool virtqueue_kick_prepare(struct virtqueue *_vq)
+> >   	} else {
+> >   		needs_kick = !(vq->vring.used->flags & cpu_to_virtio16(_vq->vdev, VRING_USED_F_NO_NOTIFY));
+> >   	}
+> > +
+> > +out:
+> >   	END_USE(vq);
+> >   	return needs_kick;
+> >   }
+> > @@ -628,8 +920,8 @@ bool virtqueue_kick(struct virtqueue *vq)
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_kick);
+> > -static void detach_buf(struct vring_virtqueue *vq, unsigned int head,
+> > -		       void **ctx)
+> > +static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+> > +			     void **ctx)
+> >   {
+> >   	unsigned int i, j;
+> >   	__virtio16 nextflag = cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_NEXT);
+> > @@ -677,29 +969,81 @@ static void detach_buf(struct vring_virtqueue *vq, unsigned int head,
+> >   	}
+> >   }
+> > -static inline bool more_used(const struct vring_virtqueue *vq)
+> > +static void detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > +			      void **ctx)
+> > +{
+> > +	struct vring_packed_desc *desc;
+> > +	unsigned int i, j;
+> > +
+> > +	/* Clear data ptr. */
+> > +	vq->desc_state[head].data = NULL;
+> > +
+> > +	i = head;
+> > +
+> > +	for (j = 0; j < vq->desc_state[head].num; j++) {
+> > +		desc = &vq->vring_packed.desc[i];
+> > +		vring_unmap_one(vq, desc);
+> > +		i++;
+> > +		if (i >= vq->vring_packed.num)
+> > +			i = 0;
+> > +	}
+> > +
+> > +	vq->vq.num_free += vq->desc_state[head].num;
+> 
+> It looks to me vq->free_head grows always, how can we make sure it does not
+> exceeds vq.num here?
+
+The vq->free_head stores the index of the next avail
+desc. You can find it wraps together with vq->wrap_counter
+in virtqueue_add_packed().
+
+> 
+> > +
+> > +	if (vq->indirect) {
+> > +		u32 len;
+> > +
+> > +		desc = vq->desc_state[head].indir_desc;
+> > +		/* Free the indirect table, if any, now that it's unmapped. */
+> > +		if (!desc)
+> > +			return;
+> > +
+> > +		len = virtio32_to_cpu(vq->vq.vdev,
+> > +				      vq->vring_packed.desc[head].len);
+> > +
+> > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
+> > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
+> > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
+> > +
+> > +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
+> > +			vring_unmap_one(vq, &desc[j]);
+> > +
+> > +		kfree(desc);
+> > +		vq->desc_state[head].indir_desc = NULL;
+> > +	} else if (ctx) {
+> > +		*ctx = vq->desc_state[head].indir_desc;
+> > +	}
+> > +}
+> > +
+> > +static inline bool more_used_split(const struct vring_virtqueue *vq)
+> >   {
+> >   	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
+> >   }
+> > -/**
+> > - * virtqueue_get_buf - get the next used buffer
+> > - * @vq: the struct virtqueue we're talking about.
+> > - * @len: the length written into the buffer
+> > - *
+> > - * If the device wrote data into the buffer, @len will be set to the
+> > - * amount written.  This means you don't need to clear the buffer
+> > - * beforehand to ensure there's no data leakage in the case of short
+> > - * writes.
+> > - *
+> > - * Caller must ensure we don't call this with other virtqueue
+> > - * operations at the same time (except where noted).
+> > - *
+> > - * Returns NULL if there are no used buffers, or the "data" token
+> > - * handed to virtqueue_add_*().
+> > - */
+> > -void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+> > -			    void **ctx)
+> > +static inline bool more_used_packed(const struct vring_virtqueue *vq)
+> > +{
+> > +	u16 last_used, flags;
+> > +	bool avail, used;
+> > +
+> > +	if (vq->vq.num_free == vq->vring.num)
+> > +		return false;
+> > +
+> > +	last_used = vq->last_used_idx;
+> > +	flags = virtio16_to_cpu(vq->vq.vdev,
+> > +				vq->vring_packed.desc[last_used].flags);
+> > +	avail = flags & VRING_DESC_F_AVAIL(1);
+> > +	used = flags & VRING_DESC_F_USED(1);
+> > +
+> > +	return avail == used;
+> > +}
+> > +
+> > +static inline bool more_used(const struct vring_virtqueue *vq)
+> > +{
+> > +	return vq->packed ? more_used_packed(vq) : more_used_split(vq);
+> > +}
+> > +
+> > +void *virtqueue_get_buf_ctx_split(struct virtqueue *_vq, unsigned int *len,
+> > +				  void **ctx)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> >   	void *ret;
+> > @@ -735,9 +1079,9 @@ void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+> >   		return NULL;
+> >   	}
+> > -	/* detach_buf clears data, so grab it now. */
+> > +	/* detach_buf_split clears data, so grab it now. */
+> >   	ret = vq->desc_state[i].data;
+> > -	detach_buf(vq, i, ctx);
+> > +	detach_buf_split(vq, i, ctx);
+> >   	vq->last_used_idx++;
+> >   	/* If we expect an interrupt for the next entry, tell host
+> >   	 * by writing event index and flush out the write before
+> > @@ -754,6 +1098,87 @@ void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+> >   	END_USE(vq);
+> >   	return ret;
+> >   }
+> > +
+> > +void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq, unsigned int *len,
+> > +				   void **ctx)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	void *ret;
+> > +	unsigned int i;
+> > +	u16 last_used;
+> > +
+> > +	START_USE(vq);
+> > +
+> > +	if (unlikely(vq->broken)) {
+> > +		END_USE(vq);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	if (!more_used(vq)) {
+> > +		pr_debug("No more buffers in queue\n");
+> > +		END_USE(vq);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	/* Only get used array entries after they have been exposed by host. */
+> > +	virtio_rmb(vq->weak_barriers);
+> > +
+> > +	last_used = vq->last_used_idx;
+> > +
+> > +	i = virtio32_to_cpu(_vq->vdev, vq->vring_packed.desc[last_used].id);
+> > +	*len = virtio32_to_cpu(_vq->vdev, vq->vring_packed.desc[last_used].len);
+> > +
+> > +	if (unlikely(i >= vq->vring_packed.num)) {
+> > +		BAD_RING(vq, "id %u out of range\n", i);
+> > +		return NULL;
+> > +	}
+> > +	if (unlikely(!vq->desc_state[i].data)) {
+> > +		BAD_RING(vq, "id %u is not a head!\n", i);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	/* detach_buf_packed clears data, so grab it now. */
+> > +	ret = vq->desc_state[i].data;
+> > +	detach_buf_packed(vq, i, ctx);
+> > +
+> > +	vq->last_used_idx += vq->desc_state[i].num;
+> > +	if (vq->last_used_idx >= vq->vring_packed.num)
+> > +		vq->last_used_idx %= vq->vring_packed.num;
+> 
+> '-=' should be sufficient here?
+
+Good suggestion. I think so.
+
+> 
+> > +
+> > +	// FIXME: implement the desc event support
+> > +
+> > +#ifdef DEBUG
+> > +	vq->last_add_time_valid = false;
+> > +#endif
+> > +
+> > +	END_USE(vq);
+> > +	return ret;
+> > +}
+> > +
+> > +/**
+> > + * virtqueue_get_buf - get the next used buffer
+> > + * @vq: the struct virtqueue we're talking about.
+> > + * @len: the length written into the buffer
+> > + *
+> > + * If the device wrote data into the buffer, @len will be set to the
+> > + * amount written.  This means you don't need to clear the buffer
+> > + * beforehand to ensure there's no data leakage in the case of short
+> > + * writes.
+> > + *
+> > + * Caller must ensure we don't call this with other virtqueue
+> > + * operations at the same time (except where noted).
+> > + *
+> > + * Returns NULL if there are no used buffers, or the "data" token
+> > + * handed to virtqueue_add_*().
+> > + */
+> > +void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+> > +			    void **ctx)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +
+> > +	return vq->packed ? virtqueue_get_buf_ctx_packed(_vq, len, ctx) :
+> > +			    virtqueue_get_buf_ctx_split(_vq, len, ctx);
+> > +}
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_buf_ctx);
+> >   void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
+> > @@ -761,6 +1186,24 @@ void *virtqueue_get_buf(struct virtqueue *_vq, unsigned int *len)
+> >   	return virtqueue_get_buf_ctx(_vq, len, NULL);
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_buf);
+> > +
+> > +static void virtqueue_disable_cb_split(struct virtqueue *_vq)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +
+> > +	if (!(vq->avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT)) {
+> > +		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > +		if (!vq->event)
+> > +			vq->vring.avail->flags = cpu_to_virtio16(_vq->vdev,
+> > +							vq->avail_flags_shadow);
+> > +	}
+> > +}
+> > +
+> > +static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
+> > +{
+> > +	// FIXME: to be implemented
+> > +}
+> > +
+> >   /**
+> >    * virtqueue_disable_cb - disable callbacks
+> >    * @vq: the struct virtqueue we're talking about.
+> > @@ -774,12 +1217,10 @@ void virtqueue_disable_cb(struct virtqueue *_vq)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > -	if (!(vq->avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT)) {
+> > -		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > -		if (!vq->event)
+> > -			vq->vring.avail->flags = cpu_to_virtio16(_vq->vdev, vq->avail_flags_shadow);
+> > -	}
+> > -
+> > +	if (vq->packed)
+> > +		virtqueue_disable_cb_packed(_vq);
+> > +	else
+> > +		virtqueue_disable_cb_split(_vq);
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_disable_cb);
+> > @@ -802,6 +1243,12 @@ unsigned virtqueue_enable_cb_prepare(struct virtqueue *_vq)
+> >   	START_USE(vq);
+> > +	if (vq->packed) {
+> > +		// FIXME: to be implemented
+> > +		last_used_idx = vq->last_used_idx;
+> > +		goto out;
+> > +	}
+> > +
+> >   	/* We optimistically turn back on interrupts, then check if there was
+> >   	 * more to do. */
+> >   	/* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
+> > @@ -813,6 +1260,7 @@ unsigned virtqueue_enable_cb_prepare(struct virtqueue *_vq)
+> >   			vq->vring.avail->flags = cpu_to_virtio16(_vq->vdev, vq->avail_flags_shadow);
+> >   	}
+> >   	vring_used_event(&vq->vring) = cpu_to_virtio16(_vq->vdev, last_used_idx = vq->last_used_idx);
+> > +out:
+> >   	END_USE(vq);
+> >   	return last_used_idx;
+> >   }
+> > @@ -832,6 +1280,12 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned last_used_idx)
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> >   	virtio_mb(vq->weak_barriers);
+> > +	if (vq->packed) {
+> > +		u16 flags = virtio16_to_cpu(vq->vq.vdev,
+> > +				vq->vring_packed.desc[last_used_idx].flags);
+> > +		return !(flags & VRING_DESC_F_AVAIL(1)) ==
+> > +		       !(flags & VRING_DESC_F_USED(1));
+> > +	}
+> >   	return (u16)last_used_idx != virtio16_to_cpu(_vq->vdev, vq->vring.used->idx);
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_poll);
+> > @@ -874,6 +1328,11 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
+> >   	START_USE(vq);
+> > +	if (vq->packed) {
+> > +		// FIXME: to be implemented
+> > +		goto out;
+> > +	}
+> > +
+> >   	/* We optimistically turn back on interrupts, then check if there was
+> >   	 * more to do. */
+> >   	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > @@ -896,6 +1355,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
+> >   		return false;
+> >   	}
+> > +out:
+> >   	END_USE(vq);
+> >   	return true;
+> >   }
+> > @@ -922,14 +1382,20 @@ void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
+> >   			continue;
+> >   		/* detach_buf clears data, so grab it now. */
+> >   		buf = vq->desc_state[i].data;
+> > -		detach_buf(vq, i, NULL);
+> > -		vq->avail_idx_shadow--;
+> > -		vq->vring.avail->idx = cpu_to_virtio16(_vq->vdev, vq->avail_idx_shadow);
+> > +		if (vq->packed)
+> > +			detach_buf_packed(vq, i, NULL);
+> > +		else {
+> > +			detach_buf_split(vq, i, NULL);
+> > +			vq->avail_idx_shadow--;
+> > +			vq->vring.avail->idx = cpu_to_virtio16(_vq->vdev,
+> > +							vq->avail_idx_shadow);
+> > +		}
+> >   		END_USE(vq);
+> >   		return buf;
+> >   	}
+> >   	/* That should have freed everything. */
+> > -	BUG_ON(vq->vq.num_free != vq->vring.num);
+> > +	BUG_ON(vq->vq.num_free != (vq->packed ? vq->vring_packed.num :
+> > +						vq->vring.num));
+> >   	END_USE(vq);
+> >   	return NULL;
+> > @@ -957,7 +1423,8 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+> >   EXPORT_SYMBOL_GPL(vring_interrupt);
+> >   struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > -					struct vring vring,
+> > +					union vring_union vring,
+> > +					bool packed,
+> >   					struct virtio_device *vdev,
+> >   					bool weak_barriers,
+> >   					bool context,
+> > @@ -965,19 +1432,20 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> >   					void (*callback)(struct virtqueue *),
+> >   					const char *name)
+> >   {
+> > -	unsigned int i;
+> > +	unsigned int num, i;
+> >   	struct vring_virtqueue *vq;
+> > -	vq = kmalloc(sizeof(*vq) + vring.num * sizeof(struct vring_desc_state),
+> > +	num = packed ? vring.vring_packed.num : vring.vring_split.num;
+> > +
+> > +	vq = kmalloc(sizeof(*vq) + num * sizeof(struct vring_desc_state),
+> >   		     GFP_KERNEL);
+> >   	if (!vq)
+> >   		return NULL;
+> > -	vq->vring = vring;
+> >   	vq->vq.callback = callback;
+> >   	vq->vq.vdev = vdev;
+> >   	vq->vq.name = name;
+> > -	vq->vq.num_free = vring.num;
+> > +	vq->vq.num_free = num;
+> >   	vq->vq.index = index;
+> >   	vq->we_own_ring = false;
+> >   	vq->queue_dma_addr = 0;
+> > @@ -986,9 +1454,8 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> >   	vq->weak_barriers = weak_barriers;
+> >   	vq->broken = false;
+> >   	vq->last_used_idx = 0;
+> > -	vq->avail_flags_shadow = 0;
+> > -	vq->avail_idx_shadow = 0;
+> >   	vq->num_added = 0;
+> > +	vq->packed = packed;
+> >   	list_add_tail(&vq->vq.list, &vdev->vqs);
+> >   #ifdef DEBUG
+> >   	vq->in_use = false;
+> > @@ -999,18 +1466,41 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> >   		!context;
+> >   	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > +	if (vq->packed) {
+> > +		vq->vring_packed = vring.vring_packed;
+> > +		vq->free_head = 0;
+> > +		vq->wrap_counter = 1;
+> > +
+> > +#if 0
+> > +		vq->chaining = virtio_has_feature(vdev,
+> > +						  VIRTIO_RING_F_LIST_DESC);
+> > +#else
+> > +		vq->chaining = true;
+> 
+> Looks like in V10 there's no F_LIST_DESC.
+
+Yes. I kept this in this patch just because the
+desc chaining is optional in the old spec draft
+when sending out this patch set. I'll remove it
+in next version.
+
+> 
+> > +#endif
+> > +	} else {
+> > +		vq->vring = vring.vring_split;
+> > +		vq->avail_flags_shadow = 0;
+> > +		vq->avail_idx_shadow = 0;
+> > +
+> > +		/* Put everything in free lists. */
+> > +		vq->free_head = 0;
+> > +		for (i = 0; i < num-1; i++)
+> > +			vq->vring.desc[i].next = cpu_to_virtio16(vdev, i + 1);
+> > +	}
+> > +
+> >   	/* No callback?  Tell other side not to bother us. */
+> >   	if (!callback) {
+> > -		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > -		if (!vq->event)
+> > -			vq->vring.avail->flags = cpu_to_virtio16(vdev, vq->avail_flags_shadow);
+> > +		if (packed) {
+> > +			// FIXME: to be implemented
+> > +		} else {
+> > +			vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > +			if (!vq->event)
+> > +				vq->vring.avail->flags = cpu_to_virtio16(vdev,
+> > +						vq->avail_flags_shadow);
+> > +		}
+> >   	}
+> > -	/* Put everything in free lists. */
+> > -	vq->free_head = 0;
+> > -	for (i = 0; i < vring.num-1; i++)
+> > -		vq->vring.desc[i].next = cpu_to_virtio16(vdev, i + 1);
+> > -	memset(vq->desc_state, 0, vring.num * sizeof(struct vring_desc_state));
+> > +	memset(vq->desc_state, 0, num * sizeof(struct vring_desc_state));
+> >   	return &vq->vq;
+> >   }
+> > @@ -1058,6 +1548,14 @@ static void vring_free_queue(struct virtio_device *vdev, size_t size,
+> >   	}
+> >   }
+> > +static inline int
+> > +__vring_size(unsigned int num, unsigned long align, bool packed)
+> > +{
+> > +	if (packed)
+> > +		return vring_packed_size(num, align);
+> > +	return vring_size(num, align);
+> > +}
+> > +
+> >   struct virtqueue *vring_create_virtqueue(
+> >   	unsigned int index,
+> >   	unsigned int num,
+> > @@ -1074,7 +1572,8 @@ struct virtqueue *vring_create_virtqueue(
+> >   	void *queue = NULL;
+> >   	dma_addr_t dma_addr;
+> >   	size_t queue_size_in_bytes;
+> > -	struct vring vring;
+> > +	union vring_union vring;
+> > +	bool packed;
+> >   	/* We assume num is a power of 2. */
+> >   	if (num & (num - 1)) {
+> > @@ -1082,9 +1581,13 @@ struct virtqueue *vring_create_virtqueue(
+> >   		return NULL;
+> >   	}
+> > +	packed = virtio_has_feature(vdev, VIRTIO_F_RING_PACKED);
+> > +
+> >   	/* TODO: allocate each queue chunk individually */
+> > -	for (; num && vring_size(num, vring_align) > PAGE_SIZE; num /= 2) {
+> > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
+> > +	for (; num && __vring_size(num, vring_align, packed) > PAGE_SIZE;
+> > +			num /= 2) {
+> > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
+> > +							     packed),
+> >   					  &dma_addr,
+> >   					  GFP_KERNEL|__GFP_NOWARN|__GFP_ZERO);
+> >   		if (queue)
+> > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
+> >   	if (!queue) {
+> >   		/* Try to get a single page. You are my only hope! */
+> > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
+> > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
+> > +							     packed),
+> >   					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
+> >   	}
+> >   	if (!queue)
+> >   		return NULL;
+> > -	queue_size_in_bytes = vring_size(num, vring_align);
+> > -	vring_init(&vring, num, queue, vring_align);
+> > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
+> > +	if (packed)
+> > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
+> > +	else
+> > +		vring_init(&vring.vring_split, num, queue, vring_align);
+> 
+> Let's rename vring_init to vring_init_split() like other helpers?
+
+The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
+I don't think we can rename it.
+
+> 
+> > -	vq = __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
+> > -				   notify, callback, name);
+> > +	vq = __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
+> > +				   context, notify, callback, name);
+> >   	if (!vq) {
+> >   		vring_free_queue(vdev, queue_size_in_bytes, queue,
+> >   				 dma_addr);
+> > @@ -1132,10 +1639,17 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
+> >   				      void (*callback)(struct virtqueue *vq),
+> >   				      const char *name)
+> >   {
+> > -	struct vring vring;
+> > -	vring_init(&vring, num, pages, vring_align);
+> > -	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
+> > -				     notify, callback, name);
+> > +	union vring_union vring;
+> > +	bool packed;
+> > +
+> > +	packed = virtio_has_feature(vdev, VIRTIO_F_RING_PACKED);
+> > +	if (packed)
+> > +		vring_packed_init(&vring.vring_packed, num, pages, vring_align);
+> > +	else
+> > +		vring_init(&vring.vring_split, num, pages, vring_align);
+> > +
+> > +	return __vring_new_virtqueue(index, vring, packed, vdev, weak_barriers,
+> > +				     context, notify, callback, name);
+> >   }
+> >   EXPORT_SYMBOL_GPL(vring_new_virtqueue);
+> > @@ -1145,7 +1659,9 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+> >   	if (vq->we_own_ring) {
+> >   		vring_free_queue(vq->vq.vdev, vq->queue_size_in_bytes,
+> > -				 vq->vring.desc, vq->queue_dma_addr);
+> > +				 vq->packed ? (void *)vq->vring_packed.desc :
+> > +					      (void *)vq->vring.desc,
+> > +				 vq->queue_dma_addr);
+> >   	}
+> >   	list_del(&_vq->list);
+> >   	kfree(vq);
+> > @@ -1159,14 +1675,18 @@ void vring_transport_features(struct virtio_device *vdev)
+> >   	for (i = VIRTIO_TRANSPORT_F_START; i < VIRTIO_TRANSPORT_F_END; i++) {
+> >   		switch (i) {
+> > +#if 0 // FIXME: to be implemented
+> >   		case VIRTIO_RING_F_INDIRECT_DESC:
+> >   			break;
+> > +#endif
+> >   		case VIRTIO_RING_F_EVENT_IDX:
+> >   			break;
+> >   		case VIRTIO_F_VERSION_1:
+> >   			break;
+> >   		case VIRTIO_F_IOMMU_PLATFORM:
+> >   			break;
+> > +		case VIRTIO_F_RING_PACKED:
+> > +			break;
+> >   		default:
+> >   			/* We don't understand this bit. */
+> >   			__virtio_clear_bit(vdev, i);
+> > @@ -1187,7 +1707,7 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > -	return vq->vring.num;
+> > +	return vq->packed ? vq->vring_packed.num : vq->vring.num;
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
+> > @@ -1224,6 +1744,7 @@ dma_addr_t virtqueue_get_desc_addr(struct virtqueue *_vq)
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_desc_addr);
+> > +/* Only available for split ring */
+> 
+> Interesting, I think we need this for correctly configure pci. e.g in
+> setup_vq()?
+
+Yes. The setup_vq() should be updated. But it requires
+QEMU change, so I just kept it as is in this RFC patch.
+
+> 
+> >   dma_addr_t virtqueue_get_avail_addr(struct virtqueue *_vq)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > @@ -1235,6 +1756,7 @@ dma_addr_t virtqueue_get_avail_addr(struct virtqueue *_vq)
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_avail_addr);
+> > +/* Only available for split ring */
+> >   dma_addr_t virtqueue_get_used_addr(struct virtqueue *_vq)
+> 
+> Maybe it's better to rename this to get_device_addr().
+
+It's a kernel API which has been exported by EXPORT_SYMBOL_GPL(),
+I'm not sure whether it's a good idea to rename it.
+
+Best regards,
+Tiwei Bie
+
+> 
+> Thanks
+> 
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > @@ -1246,6 +1768,7 @@ dma_addr_t virtqueue_get_used_addr(struct virtqueue *_vq)
+> >   }
+> >   EXPORT_SYMBOL_GPL(virtqueue_get_used_addr);
+> > +/* Only available for split ring */
+> >   const struct vring *virtqueue_get_vring(struct virtqueue *vq)
+> >   {
+> >   	return &to_vvq(vq)->vring;
+> > diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
+> > index bbf32524ab27..a0075894ad16 100644
+> > --- a/include/linux/virtio_ring.h
+> > +++ b/include/linux/virtio_ring.h
+> > @@ -60,6 +60,11 @@ static inline void virtio_store_mb(bool weak_barriers,
+> >   struct virtio_device;
+> >   struct virtqueue;
+> > +union vring_union {
+> > +	struct vring vring_split;
+> > +	struct vring_packed vring_packed;
+> > +};
+> > +
+> >   /*
+> >    * Creates a virtqueue and allocates the descriptor ring.  If
+> >    * may_reduce_num is set, then this may allocate a smaller ring than
+> > @@ -79,7 +84,8 @@ struct virtqueue *vring_create_virtqueue(unsigned int index,
+> >   /* Creates a virtqueue with a custom layout. */
+> >   struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > -					struct vring vring,
+> > +					union vring_union vring,
+> > +					bool packed,
+> >   					struct virtio_device *vdev,
+> >   					bool weak_barriers,
+> >   					bool ctx,
+> 
