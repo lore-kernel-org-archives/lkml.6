@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtQoDgugXXSQCjhGC+UgxDN1TiqtKJoT9ydijDf+hlXj0wnGO+pPfjM1VrZ+qs26esIXGeY
-ARC-Seal: i=1; a=rsa-sha256; t=1521214844; cv=none;
+X-Google-Smtp-Source: AG47ELtRMK24WbRFNO2JuUyeoOUwL7RfwTOMMDy5KApYGGaj2j7CXlf1zeC4K+cm7OG4byxzQJnO
+ARC-Seal: i=1; a=rsa-sha256; t=1521214841; cv=none;
         d=google.com; s=arc-20160816;
-        b=XE3LRocvS8tYBiksSqnmg7TRbHXQeJN9xt1DuB17ZoOQZd1EBhV6z9XwYnRPKijc0b
-         yw7rugAFxznhzIh2caKiWYLPRFjSTATuQRTq8+yXL0xcwAdjavIC1qSPvA/hccWUNlIy
-         ha5qAwJJH1EU8pIo9XvgoMlYzihVrvpA4i8jEa9GKFAdXnrorgTgzlqH1InCFV6RrK9b
-         iZk1YBuDIO4vYufC5RRabWkhKwm9vHza5I5MGrh3B7qy3dNGR7LiO/F5EtvgJAysKGGk
-         TtL2WiOavHczrFnt61b4en6nmb8XCOEhkoDax+pSfIOwODPzbBaDzGEUef8PcpE0cjxV
-         E43A==
+        b=UxtWBYb8guJwj4Eg9p6DsiqNWRMQyVMF7vO3PEFgcs83iSgElecmUGD61Iky4eLIOy
+         Kn/FtByG3SRqwCis+O3+SUGpun2/anvdMX5gcDTVU8UQrNdc5fY8Boji3lmJOoLADySt
+         1mzjlKXKbzsxmr16XOFV4QieaSxwQttkBfbT0Zf1cNGdqbR3nNwcwccZ5A+Pq3qiJjgG
+         G+I3Vu5kN9ugYTtXv8fDxK9wZJ+m/FA8/IiejkNL5QStlSF+3q1yGqa9a/qWXXGoAkkQ
+         fUCzidT/nB1mBBBD3o3NAULy9BuGTYWZsALyCQVk9/vrPXfefv88lufO6FaINa9wrssg
+         4tjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eNeAsf+V/Qv0/NhgMz1rmUKVN11agHSHdiRr2NHp64A=;
-        b=qRny3wmZBEZhSG7+4izK2MoGuGsNGVt9E/kUthBGNMqT9DQ41GkHP8po9Ecibrd6KP
-         guFRAJY4mNup9ajtGXsH6ej4qC1Gae8bwQm68diaf2KEZLY/5XUEpC/iXh3E2CvKidbb
-         +cP/vEZwGgUCFJXKmmtYbBpO64//wFzk2Qn3Gk7s6nftRc3hYB5qyrA9uUl58sDLVn3h
-         no3qBIqbisELRH0HjDOtXNBbcLstCXL43P40hgvdc2NQybkQguB+7JpFzUILUIbeGWNu
-         nXfsjK1cnjP6WFnpf3pvPXYFIHtBxO/Af2OA9j+gq5x20GQLfXIdqrLZtUtFo5WymJN/
-         EVmw==
+        bh=JJQGoN0/omvaMsAjiwTb1Q3rYcxLwG9IgVN4/9tftmc=;
+        b=jAvJfBaRrqxHZVktfM8uIPvtSXItD/DUzeKEa1/sF+CMaM11kSHVebNkABUBrwKZJq
+         7YF/xVWZtlnj5fXkVCMdGtJq4IaCa8cBkmTIeJhwuc84PuEd7rpwJ2fsFWvZtsuS0zzw
+         j9TeDK+UTaBgdMj8J1WMgdp1EoCoVXjmqcHU166uXhOb1qhRIocLv9VfxVK1Qos0RI6B
+         A59Dr52VfgInEniRjad0/xGhamsySCU+Qe9iv2jKs94mqOq9cviBUKumUvJNn7btpQI7
+         QBagDwq4RUzxEWD+HI0rx15OaWmR9GftsV4feYwPAQYGQDw2LtHuySRp7lZyl8OvB2Sp
+         4i6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.15 004/128] ASoC: wm_adsp: For TLV controls only register TLV get/set
-Date: Fri, 16 Mar 2018 16:22:25 +0100
-Message-Id: <20180316152336.430113758@linuxfoundation.org>
+	Jiri Kosina <jkosina@suse.cz>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 036/128] HID: elo: clear BTN_LEFT mapping
+Date: Fri, 16 Mar 2018 16:22:57 +0100
+Message-Id: <20180316152338.468166408@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109018264296181?=
-X-GMAIL-MSGID: =?utf-8?q?1595109376921587154?=
+X-GMAIL-THRID: =?utf-8?q?1595109126338282477?=
+X-GMAIL-MSGID: =?utf-8?q?1595109373560474248?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit d7789f5bcdb298c4a302db471b1b20f74a20de95 upstream.
 
-Normal 512-byte get/set of a TLV isn't supported but we were
-registering the normal get/set anyway and relying on omitting
-the SNDRV_CTL_ELEM_ACCESS_[READ|WRITE] flags to prevent them
-being called.
+[ Upstream commit 9abd04af951e5734c9d5cfee9b49790844b734cf ]
 
-Trouble is if this gets broken in the core ALSA code - as it has
-been since at least 4.14 - the standard get/set can be called
-unexpectedly and corrupt memory.
+ELO devices have one Button usage in GenDesk field, which makes hid-input map
+it to BTN_LEFT; that confuses userspace, which then considers the device to be
+a mouse/touchpad instead of touchscreen.
 
-There's no point providing functions that won't be called and
-it's a trivial change. The benefit is that if the ALSA core gets
-broken again we get a big fat immediate NULL dereference instead
-of a memory corruption timebomb.
+Fix that by unmapping BTN_LEFT and keeping only BTN_TOUCH in place.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/soc/codecs/wm_adsp.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/hid/hid-elo.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -1204,12 +1204,14 @@ static int wmfw_add_ctl(struct wm_adsp *
- 		kcontrol->put = wm_coeff_put_acked;
- 		break;
- 	default:
--		kcontrol->get = wm_coeff_get;
--		kcontrol->put = wm_coeff_put;
--
--		ctl->bytes_ext.max = ctl->len;
--		ctl->bytes_ext.get = wm_coeff_tlv_get;
--		ctl->bytes_ext.put = wm_coeff_tlv_put;
-+		if (kcontrol->access & SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK) {
-+			ctl->bytes_ext.max = ctl->len;
-+			ctl->bytes_ext.get = wm_coeff_tlv_get;
-+			ctl->bytes_ext.put = wm_coeff_tlv_put;
-+		} else {
-+			kcontrol->get = wm_coeff_get;
-+			kcontrol->put = wm_coeff_put;
-+		}
- 		break;
- 	}
+--- a/drivers/hid/hid-elo.c
++++ b/drivers/hid/hid-elo.c
+@@ -42,6 +42,12 @@ static int elo_input_configured(struct h
+ {
+ 	struct input_dev *input = hidinput->input;
  
++	/*
++	 * ELO devices have one Button usage in GenDesk field, which makes
++	 * hid-input map it to BTN_LEFT; that confuses userspace, which then
++	 * considers the device to be a mouse/touchpad instead of touchscreen.
++	 */
++	clear_bit(BTN_LEFT, input->keybit);
+ 	set_bit(BTN_TOUCH, input->keybit);
+ 	set_bit(ABS_PRESSURE, input->absbit);
+ 	input_set_abs_params(input, ABS_PRESSURE, 0, 256, 0, 0);
