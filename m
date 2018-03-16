@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELts9T8zZU6SIrTa2scSa6pbduNaxL/JdLy3r1QB50B9oZKXL8NWKIM1ef4ggLx/k3qHk/j4
-ARC-Seal: i=1; a=rsa-sha256; t=1521214316; cv=none;
+X-Google-Smtp-Source: AG47ELskrIejojSf8F59cwIn/XLmKA9GpW5rqjenuuJenICn0h87oUKgysNWxOeMWECH1jN3W8bn
+ARC-Seal: i=1; a=rsa-sha256; t=1521214313; cv=none;
         d=google.com; s=arc-20160816;
-        b=yWF2mQ7V3szJcMVknBmWGKNF7l1NxRFaIApN9urcEhYI7ymQ/1ukdVCvqZArfTDunR
-         2VuThxqhKcB6hfelsyYjzQPPtzYQ3CSYYEKP68BJlSYuy7o+PIcYnH/t7qxzvIE0qCrs
-         hhyZU/qwmpy8e/yZ7dJ+7VvWICvVdwydV0SncsPbofA5KARlaGxncaIC3AjDJgnjXSjC
-         nF/y6EEMLkyFIydov9NPJnf5ciVSqsLCuvUroF88P6a65Iwmose7hcasy8j/hM4RzlX6
-         ti90Wj3fKfqqbvcVJCo3ObCsfSa2ntOJ8Cv2NFu7JJOehGf3BC8GHSo5zh063jDZ6oXk
-         upGw==
+        b=s+KBsgeM73yQJvckTDQYGgJIRUQ3iitT26qajkpt7NVI1PuioMJBT5Zvlt89GkMcLu
+         /bf9AsfFGTWDm8okMQtzb8IGdtRZhfkc4Ih/AjHqQQMTyqzQkQnbSv9Rpvq2rXMK6Ckm
+         6jj/449YO8ifFFYzCrM6Khak4tvjXYsb5GCHME0VEv64/EgwcJJDoqnk6xxcyhkI1akW
+         MyOVmAc64t94TVOz9CgMV9ywv+ivu4letDqnQb4lByWfbs7wMqF71n0UzjKJ7MleNP1Y
+         VOH23xU/IRLvZ6puiobRwhoyPLwojxFVbVn8VD4X4ZtspGupAGZ7noaeA10/rYoRiXAy
+         c2IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Jer0p39QTM0yYE70//mKIqJj1FaBkSEZLI3hXbRkv8s=;
-        b=yCPqEvt0GQeEOnvyzRKHfSYYwOleX3d/jQK1SKrgowGVPaeUCL7egKRGiftBfanHrz
-         Znq6UyK9K3UvoT2ybk17LyMKnyk8vtWGRNOGTQyhC4lw0TKPsULDYFSNm/QwuB5KfZsi
-         096Rlmby9/QF28WnX4KwLM8NEhlQeqSacRc3dujZLDMEF1KjlcSyYmhXJknNWxFy8KNf
-         DeLEhpy4ZUbv5kzFABkM8ESJuScLNx5JADPPY3q8qrb0R72GbZo/nvraFG/wUNAXOX3I
-         wmWEmizi48+feu9dD9PwnECC+fs9De8Jm4pyLCAB9gXPylU7N6xp3Ku+WiKOlYmrQYk8
-         IJCg==
+        bh=MKW3pRKmhzZ9moZYskI9+/i3AoPaYCtLau4CnF6x3Lo=;
+        b=lNxIGxVVpoY590edgUsGUOyJkzpZpZYBnZHEX+hMqLKoGjt4fuoAX6ClaTYVY3jPNg
+         fd9C9EqEWK4GFMJHeEqsDyR4jB4T99OEhq39qpMlcfrynQTOLtgprd5bEbnDr237yVtC
+         LzYacwRNZVgj0nAxDK9vUKBaOHEeMLqxnW3eNp3GtpI9uo31bFAlkTIzr39bCu29hoEB
+         dLfwuIzAWeO/rpC8ttV6XAu9QmPffITtE0d1L0tV4OUSXmm+vph12N5fs/U5MXmg+6xU
+         TVGMl623AVJxp692X/ZSA5kp4BiCB1ihUFTdt9BglUUthCf/6214GpSfX0eyisMIalrx
+         gs7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 44/86] x86/boot, objtool: Annotate indirect jump in secondary_startup_64()
-Date: Fri, 16 Mar 2018 16:23:07 +0100
-Message-Id: <20180316152320.444560453@linuxfoundation.org>
+	Dave Airlie <airlied@redhat.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH 4.9 08/86] drm: Allow determining if current task is output poll worker
+Date: Fri, 16 Mar 2018 16:22:31 +0100
+Message-Id: <20180316152317.837266563@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152317.167709497@linuxfoundation.org>
 References: <20180316152317.167709497@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595108823278614581?=
-X-GMAIL-MSGID: =?utf-8?q?1595108823278614581?=
+X-GMAIL-THRID: =?utf-8?q?1595108514671263314?=
+X-GMAIL-MSGID: =?utf-8?q?1595108820506428293?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,49 +52,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit bd89004f6305cbf7352238f61da093207ee518d6 upstream.
+commit 25c058ccaf2ebbc3e250ec1e199e161f91fe27d4 upstream.
 
-The objtool retpoline validation found this indirect jump. Seeing how
-it's on CPU bringup before we run userspace it should be safe, annotate
-it.
+Introduce a helper to determine if the current task is an output poll
+worker.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This allows us to fix a long-standing deadlock in several DRM drivers
+wherein the ->runtime_suspend callback waits for the output poll worker
+to finish and the worker in turn calls a ->detect callback which waits
+for runtime suspend to finish.  The ->detect callback is invoked from
+multiple call sites and waiting for runtime suspend to finish is the
+correct thing to do except if it's executing in the context of the
+worker.
+
+v2: Expand kerneldoc to specifically mention deadlock between
+    output poll worker and autosuspend worker as use case. (Lyude)
+
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/3549ce32e7f1467102e70d3e9cbf70c46bfe108e.1518593424.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/head_64.S |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/drm_probe_helper.c |   20 ++++++++++++++++++++
+ include/drm/drm_crtc_helper.h      |    1 +
+ 2 files changed, 21 insertions(+)
 
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -22,6 +22,7 @@
- #include <asm/nops.h>
- #include "../entry/calling.h"
- #include <asm/export.h>
-+#include <asm/nospec-branch.h>
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -461,6 +461,26 @@ out:
+ }
  
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -200,6 +201,7 @@ ENTRY(secondary_startup_64)
+ /**
++ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
++ *
++ * Determine if %current task is an output poll worker.  This can be used
++ * to select distinct code paths for output polling versus other contexts.
++ *
++ * One use case is to avoid a deadlock between the output poll worker and
++ * the autosuspend worker wherein the latter waits for polling to finish
++ * upon calling drm_kms_helper_poll_disable(), while the former waits for
++ * runtime suspend to finish upon calling pm_runtime_get_sync() in a
++ * connector ->detect hook.
++ */
++bool drm_kms_helper_is_poll_worker(void)
++{
++	struct work_struct *work = current_work();
++
++	return work && work->func == output_poll_execute;
++}
++EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
++
++/**
+  * drm_kms_helper_poll_disable - disable output polling
+  * @dev: drm_device
+  *
+--- a/include/drm/drm_crtc_helper.h
++++ b/include/drm/drm_crtc_helper.h
+@@ -74,5 +74,6 @@ extern void drm_kms_helper_hotplug_event
+ extern void drm_kms_helper_poll_disable(struct drm_device *dev);
+ extern void drm_kms_helper_poll_enable(struct drm_device *dev);
+ extern void drm_kms_helper_poll_enable_locked(struct drm_device *dev);
++extern bool drm_kms_helper_is_poll_worker(void);
  
- 	/* Ensure I am executing from virtual addresses */
- 	movq	$1f, %rax
-+	ANNOTATE_RETPOLINE_SAFE
- 	jmp	*%rax
- 1:
- 
+ #endif
