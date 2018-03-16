@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv0YGEVPgZMqjNglerZAr2JP6QbzS3JLHn0J6QtUAyHdvnetnfyD11DtN7kuw7KVNmKp97V
-ARC-Seal: i=1; a=rsa-sha256; t=1521215102; cv=none;
+X-Google-Smtp-Source: AG47ELtVV90bUSuChdCfA4/E8YMU1sZedSf+gI1sxUh0JLvF4EeWAHNHQ68Y0sXMvHKXUVgjj4z6
+ARC-Seal: i=1; a=rsa-sha256; t=1521215093; cv=none;
         d=google.com; s=arc-20160816;
-        b=M7R2tbbqJMV0gBaG+r3M0AYd5UGkj+pFfHUEgmJMZXvkl7SpAzu4fgs2UbK35S8W7a
-         qJJYJFYWD7ymcaTk9BoNe827NdlDePSQkqRNhvNke+KJ96CIoWnChqxZYzYobduDSKLx
-         Yx7/Ii7zNT921X0BO3AFffdqTs6H45YZsSHMl/V7gBw6ebc+nbiHL5DYytLvj1XGu5vY
-         4r/TqGNj8rvyomgjMPZlI8smg/uiLs6IiEKl+8Wc6EjHaUXWvi0MFxboJ4OTI2se0Gpm
-         CNvYEDrLdh/4y7A2lcF8mpLbNpSl5SMlePSBevUX+q4Y880XvL/u5QxfgVqFjJAy8IQo
-         15/g==
+        b=o2REtIXaiAW/lGwiT76dVwifPlfICGKzloHRGF/bVPxhSO9ya27utHGe4g7M9Xanj1
+         wlLelTDI7cZDdhr/mXHhWtw8336oIH1eEQSrJY3RtfnnLhM6pnQY06VksnFbJKyebn1z
+         X9A5979MooxleKqlid/FSt280XIHx2oM06364/xnAjroCTSxmn4mPVg3q4+/ZPpjjaDr
+         iStTik8PQnsY9vImRBjimBYPN43N/FwgWtHz5+K2M7AwYTrrJfP0fvXNHFFp4TEp9G+d
+         p9PlA+AKWaHc0BBSY1xmyrQ1wp/eU1evejD5LyUsqO5CByBpQMTGkQpemdPl72YlCamw
+         dj+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=++qFeA2L7El+2wOcWzla3jzupk28U+f1UNNU+Xf+a58=;
-        b=KT42BkcXY7UAOuDve8sCGe6IP0330MVxj3+YLUYEVOY+K1spnBL3clt4kWrHGdqtXN
-         x3tObqGebwxGGVzZphIMPfb/gAXKkBYVtsg3awGg4usGE8UBiP2AVQjxoryE+rp8Nikd
-         dREQMHZGEtkqu/zYOvF1PClQzKVR2CCF7S183hvdVLXGzsoSNcn0pccVEB0b+/g8Qs5f
-         9FSaWnwXEv4nZLyksLyMCmYAtdLCAmrPgieeKIFMp5fbz/jx/YZoVtTZZos9V2Q0eZss
-         AnK+FejSBUPsjiB4coZ49kWlIpOm3Jp0cEPQdPad38d5tenOuc0nCizCTPzu8RHtL5A/
-         zsAA==
+        bh=c2lPHNpoojhHKtPQPLvR6Q9uSmY7A2YgMWzdVVaKdNg=;
+        b=xBo+6UZ61pw5NHTle5yJU7THOhUaEXfK3Hmo8k8vVv8o/+NNhsk2mxVe4KajGov+L5
+         rs/JiP2eFz0LnzR6ekVkQVGWBq71SSQvKSLsgF9p9PjzCOGSN2WEEyIuHl+1T3nVNmJd
+         hlCn0LcvLV/Nrk/qluHRlIcScunAE1iqbMy1iEB/cxeOVmZCm+j8oKusXRS+aCcfgmOr
+         FJej9RaY25atQn9wOJvg1MBMxUNY8nhqyXnskgFgxPgU0yHOQwQdxZJVhOq1FFCdzXP7
+         8gYI/+B9W7hiy1UI+JNikKm5ICxvX3NNxAw4n8lVHNMpyHMl+GCFf8udPh7Rbs2BfINr
+         KdZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adiel Aloni <adiel.aloni@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 116/128] mac80211_hwsim: enforce PS_MANUAL_POLL to be set after PS_ENABLED
-Date: Fri, 16 Mar 2018 16:24:17 +0100
-Message-Id: <20180316152342.264923312@linuxfoundation.org>
+Subject: [PATCH 4.15 126/128] IB/mlx5: revisit -Wmaybe-uninitialized warning
+Date: Fri, 16 Mar 2018 16:24:27 +0100
+Message-Id: <20180316152342.717305290@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180316152336.199007505@linuxfoundation.org>
 References: <20180316152336.199007505@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595109226193268055?=
-X-GMAIL-MSGID: =?utf-8?q?1595109647261398697?=
+X-GMAIL-THRID: =?utf-8?q?1595109274281837049?=
+X-GMAIL-MSGID: =?utf-8?q?1595109638457433270?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +50,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adiel Aloni <adiel.aloni@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit e16ea4bb516bc21ea2202f2107718b29218bea59 ]
+[ Upstream commit 1b19b95169cd52fe82cd442fec0b279fe25cc838 ]
 
-Enforce using PS_MANUAL_POLL in ps hwsim debugfs to trigger a poll,
-only if PS_ENABLED was set before.
-This is required due to commit c9491367b759 ("mac80211: always update the
-PM state of a peer on MGMT / DATA frames") that enforces the ap to
-check only mgmt/data frames ps bit, and then update station's power save
-accordingly.
-When sending only ps-poll (control frame) the ap will not be aware that
-the station entered power save.
-Setting ps enable before triggering ps_poll, will send NDP with PM bit
-enabled first.
+A warning that I thought I had fixed before occasionally comes
+back in rare randconfig builds (I found 7 instances in the last
+100000 builds, originally it was much more frequent):
 
-Signed-off-by: Adiel Aloni <adiel.aloni@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+drivers/infiniband/hw/mlx5/mr.c: In function 'mlx5_ib_reg_user_mr':
+drivers/infiniband/hw/mlx5/mr.c:1229:5: error: 'order' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (order <= mr_cache_max_order(dev)) {
+     ^
+drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'ncont' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'page_shift' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+drivers/infiniband/hw/mlx5/mr.c:1260:2: error: 'npages' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+
+I've looked at all those findings again and noticed that they are all
+with CONFIG_INFINIBAND_USER_MEM=n, which means ib_umem_get() returns
+an error unconditionally and we never initialize or use those variables.
+This triggers a condition in gcc iff mr_umem_get() is partially but not
+entirely inlined, which in turn depends on the exact combination of
+optimization settings. This is a known problem with gcc, with no
+easy solution in the compiler, so this adds another workaround that
+should be more reliable than my previous attempt.
+
+Returning an error from mlx5_ib_reg_user_mr() earlier means that we
+can completely bypass the logic that caused the warning, the compiler
+can now see that the variable is never accessed.
+
+Fixes: 14ab8896f5d9 ("IB/mlx5: avoid bogus -Wmaybe-uninitialized warning")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -729,16 +729,21 @@ static int hwsim_fops_ps_write(void *dat
- 	    val != PS_MANUAL_POLL)
- 		return -EINVAL;
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1206,6 +1206,9 @@ struct ib_mr *mlx5_ib_reg_user_mr(struct
+ 	int err;
+ 	bool use_umr = true;
  
--	old_ps = data->ps;
--	data->ps = val;
--
--	local_bh_disable();
- 	if (val == PS_MANUAL_POLL) {
-+		if (data->ps != PS_ENABLED)
-+			return -EINVAL;
-+		local_bh_disable();
- 		ieee80211_iterate_active_interfaces_atomic(
- 			data->hw, IEEE80211_IFACE_ITER_NORMAL,
- 			hwsim_send_ps_poll, data);
--		data->ps_poll_pending = true;
--	} else if (old_ps == PS_DISABLED && val != PS_DISABLED) {
-+		local_bh_enable();
-+		return 0;
-+	}
-+	old_ps = data->ps;
-+	data->ps = val;
++	if (!IS_ENABLED(CONFIG_INFINIBAND_USER_MEM))
++		return ERR_PTR(-EINVAL);
 +
-+	local_bh_disable();
-+	if (old_ps == PS_DISABLED && val != PS_DISABLED) {
- 		ieee80211_iterate_active_interfaces_atomic(
- 			data->hw, IEEE80211_IFACE_ITER_NORMAL,
- 			hwsim_send_nullfunc_ps, data);
+ 	mlx5_ib_dbg(dev, "start 0x%llx, virt_addr 0x%llx, length 0x%llx, access_flags 0x%x\n",
+ 		    start, virt_addr, length, access_flags);
+ 
