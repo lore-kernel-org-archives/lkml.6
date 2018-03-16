@@ -1,27 +1,27 @@
 Return-Path: <geert@linux-m68k.org>
-X-Google-Smtp-Source: AG47ELvwR7TtqG0fqTnp/BeP9ZwJ/1j/CK+WUEoXYW8jva69RK59sNyKQKIh+teK3cE86PwDnBSN
+X-Google-Smtp-Source: AG47ELtjbGTBUE/WDOedxKqRJcUSxTaTO5kpv6CChXvqD//LCzYLCNGLIG2ID1gCMIT0mGnKNRHd
 ARC-Seal: i=1; a=rsa-sha256; t=1521208373; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jgnl0eJqLLOQTyYdY5ujufa92TXFn90DBbxzAQiz+Hn0eYcu9wHizk42pbPQMIFiow
-         y5l84s6QyIqwJsWuECqGIBiRsS1KZklb3w6l6CqqoL5MJwm5dYyJAxofr9vN4015MANF
-         jQ4n2pGRw0OAsoPNbwpk5qMeVeHMdO7eaM7aAIlhIbBgSTpBQemLZk3P2IK5zKSOUC1f
-         OPgqygDqIbVXSPX8nnUY4TUPdJBLfG4oZUjwAeOF1cKSxBNl5YD5+YK8EHR/MTuzo0L5
-         3cvK9qZTS0hfHSjFe5NDK7KUqar1lwMcyIFl/041YLf9Iq48/D6SSghKJljjk7LlaLNp
-         JstA==
+        b=RrRPNtZKhMSKZWG+2Mfjilxyqb9HiORjBx11Lb0/vLRGcbzh6L5l/EFw0PMrgWpmTE
+         eOVUEPpkZ97ZKq0D73wx+2jHvAiSXt/N1knvY5W76TRYFPGBmOXfc2w7hnWNRi18k2CF
+         OBRStezF+qyYnzevMvDz/dqM1NkkrGs91dhxCGMG7Y9+PbijtoHLjKInUFXlC1FosVPV
+         yco0hXoMYOOzhuWZ1lVcLYC0Dimz0PEq6PDinltikm6io2ZW1ItlWFvhNjq6SeBNCcNf
+         OtBySuTIzzPkGU018s7t/qHcym1ZKI+x5XsknNf7E0bA22zE9kYAMmLITLwFNObN+InF
+         oDGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=V5XC5uwXlUxPBIwRJIcCCen6rH00rP6D7aDihmVczuA=;
-        b=uhnQ7nVj9nn1PM+33Cih59TURwzH9nXMZwWN8gnkvWiD9vOHdTEl9pwLg+HUlYiLL2
-         vzp+q8H2DL2166t8YKkSzDe9uA9iK082LC6aU47bbUi+GZYE4T05Wgmi2o9mWKI0jiRz
-         Pp8t58kaEH4aHJVAXHVjnAb/o66VfT5IRnvJnyo6qNrU3oDY7dQB0zvH1GGJ2Miv8WoW
-         uF26nl2XrN/NSmHsBAkQ40fzw/bQWy26EIBg/OzPMqy2eaoCQ6SeGsi2eb2SE7r/03p5
-         MOgkwiO/gq49Lq5qmuEE8NJ91rOepBfzzQQXjAaspBAR2b4S5SkU3+vYV7atwNnULKs9
-         IkEw==
+        bh=rqhnFvcNjoT7F5fIX9MP8urI37AOXVEmhlS22UmDrOA=;
+        b=HCCUmnKZ9dNGeq1VXHiG4GaE7y+PtixkqdiFM7MFbF1L1UHWtwkZdDaYyXgPm/IbvG
+         qVIJ3gBuQHlo6eIlqDvczRikjCQJhfpHcy08vaAUKvKSrS595ASbTgdr0av+yyUrt9n9
+         MAd+6vmmECsNYQPjmw21wClVEqsGELLPhsW1TmrxKYX8J3Q7ks7nlvjlQ04XdMmvR5hY
+         6oT/I8m4rtmdA3opRW8SngrMeMDebDq2090r5H7Le4YxG+GQ7PjF7yKFricSDRxOM7rK
+         +6xyHZo0veBXRVAQP7JrtL7m9vHM4jr6vFUwHd1FyRawhOUgpQDK1hxiku5O5i+5Z7Hm
+         jT2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 2a02:1800:120:4::f00:15 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
+       spf=neutral (google.com: 2a02:1800:120:4::f00:13 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 2a02:1800:120:4::f00:15 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
+       spf=neutral (google.com: 2a02:1800:120:4::f00:13 is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Christoph Hellwig <hch@lst.de>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -80,15 +80,15 @@ Cc: iommu@lists.linux-foundation.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 05/21] firewire: Remove depends on HAS_DMA in case of platform dependency
-Date: Fri, 16 Mar 2018 14:51:38 +0100
-Message-Id: <1521208314-4783-6-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v2 02/21] ata: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:35 +0100
+Message-Id: <1521208314-4783-3-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595102591233077781?=
-X-GMAIL-MSGID: =?utf-8?q?1595102591233077781?=
+X-GMAIL-THRID: =?utf-8?q?1595102591356211871?=
+X-GMAIL-MSGID: =?utf-8?q?1595102591356211871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -112,18 +112,28 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/firewire/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/ata/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
-index 145974f9662b63e6..4199849e37585181 100644
---- a/drivers/firewire/Kconfig
-+++ b/drivers/firewire/Kconfig
-@@ -1,5 +1,4 @@
- menu "IEEE 1394 (FireWire) support"
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index a7120d6211546949..9eaeed1fb237fa33 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -398,7 +398,6 @@ config SATA_DWC_VDEBUG
+ 
+ config SATA_HIGHBANK
+ 	tristate "Calxeda Highbank SATA support"
 -	depends on HAS_DMA
- 	depends on PCI || COMPILE_TEST
- 	# firewire-core does not depend on PCI but is
- 	# not useful without PCI controller driver
+ 	depends on ARCH_HIGHBANK || COMPILE_TEST
+ 	help
+ 	  This option enables support for the Calxeda Highbank SoC's
+@@ -408,7 +407,6 @@ config SATA_HIGHBANK
+ 
+ config SATA_MV
+ 	tristate "Marvell SATA support"
+-	depends on HAS_DMA
+ 	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
+ 		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
+ 	select GENERIC_PHY
 -- 
 2.7.4
