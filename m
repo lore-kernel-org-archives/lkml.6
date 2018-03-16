@@ -1,75 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeCPQq1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Mar 2018 12:46:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60682 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753388AbeCPQqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:46:23 -0400
-Subject: Re: [PATCH 0/2] irqchip/gic*: Complain about the use of IRQ_TYPE_NONE
-To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org
-References: <20180316145511.28362-1-marc.zyngier@arm.com>
- <5f274a06-3a9c-7d41-2e4d-9733e4ac6078@arm.com>
- <399d5e06-c530-6a29-8a4d-9e8ca62167c4@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <0c775a8f-07a8-3904-13cf-162a7f23ef49@arm.com>
-Date: Fri, 16 Mar 2018 16:46:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753199AbeCPQrz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Mar 2018 12:47:55 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40655 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeCPQrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:47:53 -0400
+X-Google-Smtp-Source: AG47ELsc7t1fLXd8PakLD9G96eg/9buk5Dgft7QnmGmvNTcxrIl4XJT90+UXOBETqH0Rw5HFNGbLM1HcikW3EdRksUc=
 MIME-Version: 1.0
-In-Reply-To: <399d5e06-c530-6a29-8a4d-9e8ca62167c4@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180316142043.GC30522@ZenIV.linux.org.uk>
+References: <20180315190529.20943-1-linux@dominikbrodowski.net>
+ <CAK8P3a2-XfeM5J0dq0kiOSiQC4T4p7cggNbuMDoCmnqjKC9tEQ@mail.gmail.com>
+ <CALCETrX_1pxfB10k-uj7vSyXm7hH4MeJiEY=+A3FzViaozb+BA@mail.gmail.com>
+ <CA+55aFyJBTaBuA1LjG5RjcD7ZCivYYQWqb3A+HbJZGUdZE9i6w@mail.gmail.com>
+ <20180316085423.GH4151@infradead.org> <20180316142043.GC30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Mar 2018 09:47:52 -0700
+X-Google-Sender-Auth: jREQBH2Pw2_BZ4OYpGBhX8o_YdE
+Message-ID: <CA+55aFwCTRNCm26RKtBti9rYZghsrt4G8eeG=Byj4dZrzr-PEw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/36] remove in-kernel syscall invocations (part 1)
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/03/18 16:39, Marc Zyngier wrote:
-> On 16/03/18 16:19, Robin Murphy wrote:
->> On 16/03/18 14:55, Marc Zyngier wrote:
->>> Grepping through the dts files, the documentation, and reviewing
->>> patches, one can only notice the use of IRQ_TYPE_NONE in interrupt
->>> specifiers. At least for the GIC, this doesn't mean anything. The
->>> unsuspecting driver will end-up with whatever was there before, and
->>> there is a 50% probability that it is not what it wants.
->>>
->>> I'd love to fix it myself, but I also have a 50% probability of
->>> getting it wrong. In order to make the user aware they are walking on
->>> thin ice, let's add some warnings. Hopefully, they'll be annoying
->>> enough that people will fix their firmware. Croudsourcing debugging...
+On Fri, Mar 16, 2018 at 7:20 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Fri, Mar 16, 2018 at 01:54:23AM -0700, Christoph Hellwig wrote:
 >>
->> I guess there's also the alternative nuclear option of breaking their
->> build ;)
->>
->> Robin.
->>
->> ----->8-----
->> diff --git a/include/dt-bindings/interrupt-controller/irq.h
->> b/include/dt-bindings/interrupt-controller/irq.h
->> index a8b310555f14..de79af80d01e 100644
->> --- a/include/dt-bindings/interrupt-controller/irq.h
->> +++ b/include/dt-bindings/interrupt-controller/irq.h
->> @@ -10,7 +10,7 @@
->>    #ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
->>    #define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_H
->>
->> -#define IRQ_TYPE_NONE		0
->> +#define IRQ_TYPE_NONE		"This is nonsense and needs fixing"
->>    #define IRQ_TYPE_EDGE_RISING	1
->>    #define IRQ_TYPE_EDGE_FALLING	2
->>    #define IRQ_TYPE_EDGE_BOTH	(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING)
->>
-> 
-> What really annoys me with this patch is that you haven't put a SoB on it...
+>> A lot of the issues here is that the initramfs / do_mount code
+>> is written as if it was user space code, but in kernel space.  E.g.
+>> using file desriptors etc.
 
-On a more serious note, though, it dawns on me that this might be 
-something DTC could realistically scream about for us, although I guess 
-not all irqchip bindings include a type specifier so it would probably 
-need to special-case known ones.
+Yeah, some of it could probably pass a 'struct filp *' around instead.
 
-Robin.
+So there are definitely things we could do once we no longer use the
+raw system calls anyway.
+
+> ... and I still wonder if it would make more sense to kick that crap
+> out into userland.
+
+Oh, no, let's not do that. Even if we were to still maintain control
+of user space, it would mean yet another nasty special case for the
+compiler and linker scripts and for our initrd generation.
+
+And if we were to spin it out entirely (aka udevd and friends), it
+would become one of those nasty situations where there's some *very*
+odd code that we need to keep compatibility with because you might run
+a new kernel and some old "pre-init user code" stuff.
+
+I'd much rather just make it look more like kernel code.
+
+And maybe remove some code entirely. Christ, we still have the logic
+in there to change *floppies* if the ramdisk doesn't fit on a single
+floppy disk.  Does it work? Probably not, since presumably it hasn't
+been used in ages. But it's still there.
+
+So some of the ioctl's etc are due to insanely old legacy cases.
+
+                 Linus
