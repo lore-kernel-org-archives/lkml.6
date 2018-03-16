@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELs5CBLhgEMV5En07SQDnAay7YexpUk54uFj3bM+GKN6tu1SmhTUKvA3hiaditBiECLcqJ6B
-ARC-Seal: i=1; a=rsa-sha256; t=1521215338; cv=none;
+X-Google-Smtp-Source: AG47ELv6TyzNR3YUso4jXv6BCsiZlXmMov+5i7dvetvLYIMdMDJZBlHKS5mwMaLqjWHX5Azft4+z
+ARC-Seal: i=1; a=rsa-sha256; t=1521215349; cv=none;
         d=google.com; s=arc-20160816;
-        b=Il+zNswFRQp5t7ifCckE+gn9GrK/5DjAytjEyoP7ExG8WE2bFnQ73HRuYoZMQ5LO/2
-         zJ2dpwTORuXeuYWvFl9L4a7azqlr9gu/+oX/W8V2p3jM16VzFuU0sWfi7JD1Ynu5JiHT
-         ERnwRTuHz6taJnDHYc9NcFtuUjKWUvNvAfp0yEMId/gjtt0VUaet68gxQOfab8KOGb2Y
-         oAjDyg6s2LGhrHLtGCbkYXSXkt62s0WS0sfxKJqE2AfWseTnjOLuHXE9MgpmVRxu2EjW
-         klqZX712y5dqkEqnAlC67/aPHtcPRW3mRgnXSvTfW5CTEGC7Einz89Net5OD+3+rBC/H
-         vdrg==
+        b=Lw0Qt9dc3Tn4lu3uIA3bCy9Bz00EoMqpkOeV1aJV/CTiFXwn9PeHriZ/HhB+Urb4GN
+         sxss0bf32bKkcB+VOIQys6AGQ9AELdIg3rDXrhyJ4taVDLNZS18XgoKHRszKgAq8yjYh
+         5Dfe94XOxnXdyVYDxs3smfg1qPShTQI/10cRzoyDLeQtaHW6Yum4MWD8tUJdFBWUggQk
+         lcd7FED4JKff4L4k3zSVddUl+/2VWNOP6Z4ehHlSpu3S+Vb8VxEMtBitauFegxj6GGFV
+         tKtJfPRf5UWh/MmDqPYd+0OSx/qtasRNepYFR+45+RQU0sYswcALXNb6Ktr4joyFxNlu
+         oD3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:mime-version:message-id:date:cc
-         :to:from:arc-authentication-results;
-        bh=o3fAr6oQ0d+C3XQDz/sxyZSeHDAFM+x5AJz1wnXJJe4=;
-        b=IM5gVhypvHjIvvBPWlX1Iaao/79+iwFPCr1I+w99mfKZJe67G1dmsrxBN02pYcaXaf
-         SS8/PsD2sQcwqykLzxc6T/EzD8tgHz0ZTzFXLgvQSttKnAlbqNmktasRJzcM7gRCpBFJ
-         qygb4cAvteoRIWYuI4DjoXC4//ArvCUSQ/kjK4vJ7zeu7wfl4SCzaKQFpBZNwClqxljP
-         rTqSvptha9ZtgKCnr+TRX8QMKjhNibS+A5pdUk7+brrG2VetHJgiJ5mwoEleMvF/6sRT
-         RCkeAqNT9EnHndKDyiBS8EU6hbt01X9sg4dGAtcWHI8DHq57AwAYth1YZ9XiBehEM+aD
-         3pyA==
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
+         :arc-authentication-results;
+        bh=vPIYhx/iapWgjMkks4tmy5yuHZy5fgHBuNRlMj9FX/Y=;
+        b=ypNx3OQzoyfKQadRz9PZq+lnCj8fn8LWs0UlmNJ1Wjx94p7NiuR+u6sBcw8t4OaKex
+         Lef7FrzWFCcIOFJto9NqoDN+KdEEo0EZ6TOZ/TBKnjxSm5/GySRStFJtNs2mCK9N5X6W
+         vy8xv983OqdJNiMbvT0YSc4wVWERfl+WQh6ulFiPma/IYbATMLgr1l5VuwpUwBg2yPMJ
+         V2fAYfOwOIZ368c0z5H39RCw9rn12JsxeMXZdjpCLyynuY1y4ZABymbk0Scyw31J10l8
+         BZzDoM54EIjze/nobr8ChREnxr/LXFHjSXxwQAyL3laU+jft5xGxnCE28ttS6fANMF42
+         92bA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -31,120 +31,80 @@ To: linux-kernel@vger.kernel.org,
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>
-Date: Fri, 16 Mar 2018 09:48:43 -0600
-Message-Id: <20180316154852.13206-1-logang@deltatee.com>
+	Logan Gunthorpe <logang@deltatee.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>
+Date: Fri, 16 Mar 2018 09:48:44 -0600
+Message-Id: <20180316154852.13206-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180316154852.13206-1-logang@deltatee.com>
+References: <20180316154852.13206-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, pombredanne@nexb.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v12 0/9] Add io{read|write}64 to io-64-atomic headers
+Subject: [PATCH v12 1/9] iomap: Fix sparse endian check warnings
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595109894903575150?=
-X-GMAIL-MSGID: =?utf-8?q?1595109894903575150?=
+X-GMAIL-THRID: =?utf-8?q?1595109905747636881?=
+X-GMAIL-MSGID: =?utf-8?q?1595109905747636881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is v12 of my cleanup series to push a number of instances of people
-defining their own io{read|write}64 functions into common headers seing
-they don't exist in non-64bit systems. This series adds inline functions to the
-io-64-nonatomic headers and then cleans up the drivers that defined their
-own copies.
+Warnings of the form:
 
-This cleanup was originally requested by Greg after he reviewed my
-Switchtec NTB code. And I hope someone can pick it up or at least give
-feedback on it soon as it's been around relatively unchanged for a few
-cycles now and I'm getting a bit tired of resubmitting it with little to
-no interest.
+lib/iomap.c:84:9: warning: cast to restricted __be16
 
-Thanks,
+Are found when running sparse checker with:
 
-Logan
+make C=2 CF=-D__CHECK_ENDIAN__
 
---
+This patch casts them with __force to suppress the warnings.
 
-Changes since v11:
-- Rebased onto v4.16-rc5
-- Added a patch (0001) to fix some old and new sparse warnings
-  that the kbuild robot warned about this cycle. The latest version
-  of sparse was required to reproduce these.
-- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
-  robot also found errors for this cycle
+Also, it looks like the wrong conversion function was used in
+the mmio_writeXXbe macros: 'val' is a cpu value to be written to
+a big endian register. Therefore cpu_to_beXX should have been used
+instead of beXX_to_cpu. Both are equivalent, functionally, but have
+different meanings. So there was no real bug just confusion
+for people reading the code and the sparse endian check.
 
-Changes since v10:
-- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
-  picked up by that tree and is already in 4.16.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+---
+ lib/iomap.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Changes since v9:
-- Rebased onto v4.15-rc6
-- Fixed a couple of issues in the new version of the CAAM patch as
-  pointed out by Horia
-
-Changes since v8:
-- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
-  some similar cleanup in that area.
-- Added a patch to clean up the Switchtec NTB driver which landed in
-  v4.15-rc1
-
-Changes since v7:
-- Fix minor nits from Andy Shevchenko
-- Rebased onto v4.14-rc1
-
-Changes since v6:
- ** none **
-
-Changes since v5:
-- Added a fix to the tilcdc driver to ensure it doesn't use the
-  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
-  defines).
-
-Changes since v4:
-- Add functions so the powerpc implementation of iomap.c compiles. (As
-  noticed by Horia)
-
-Changes since v3:
-
-- I noticed powerpc didn't use the appropriate functions seeing
-  readq/writeq were not defined when iomap.h was included. Thus I've
-  included a patch to adjust this
-- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
-  headers
-- Fixed a typo noticed by Horia.
-
-(earlier versions were drastically different)
-
---
-
-Logan Gunthorpe (9):
-  iomap: Fix sparse endian check warnings
-  parisc: iomap: introduce io{read|write}64
-  powerpc: io.h: move iomap.h include so that it can use readq/writeq
-    defs
-  powerpc: iomap.c: introduce io{read|write}64_{lo_hi|hi_lo}
-  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
-  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-  crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
-  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
-    header
-
- arch/parisc/include/asm/io.h           |   9 +++
- arch/parisc/lib/iomap.c                |  64 +++++++++++++++
- arch/powerpc/include/asm/io.h          |   6 +-
- arch/powerpc/kernel/iomap.c            |  40 +++++++++
- drivers/crypto/caam/regs.h             |  30 +------
- drivers/ntb/hw/intel/ntb_hw_intel.c    |  30 +------
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +--------
- include/asm-generic/iomap.h            |  26 ++++--
- include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++++++
- include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++++++
- lib/iomap.c                            | 143 ++++++++++++++++++++++++++++++++-
- 11 files changed, 412 insertions(+), 100 deletions(-)
-
---
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..a05d9fa21794 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
+ #endif
+ 
+ #ifndef mmio_read16be
+-#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
+-#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
++#define mmio_read16be(addr) be16_to_cpu((__be16 __force)__raw_readw(addr))
++#define mmio_read32be(addr) be32_to_cpu((__be32 __force)__raw_readl(addr))
+ #endif
+ 
+ unsigned int ioread8(void __iomem *addr)
+@@ -106,8 +106,10 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
+ 
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val, port) \
++	__raw_writew((u16 __force)cpu_to_be16(val), port)
++#define mmio_write32be(val, port) \
++	__raw_writel((u32 __force)cpu_to_be32(val), port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
+-- 
 2.11.0
